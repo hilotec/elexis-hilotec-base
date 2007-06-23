@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.sgam.informatics.exchange.preferences.ExchangePreferences"
+            id="xChange-Preferences"
+            name="xChange"/>
+   </extension>
+   <extension
+         point="ch.elexis.SecureTransport">
+      <SecureTransporter
+            Transporter="ch.sgam.informatics.exchange.Transporter"
+            name="Sgam-Exchange.Transporter"/>
+   </extension>
+   <extension
+         point="ch.elexis.FremdDatenImport">
+      <importer
+            Class="ch.sgam.informatics.exchange.Importer"
+            name="Sgam-Exchange.importer"/>
+   </extension>
+
+</plugin>
