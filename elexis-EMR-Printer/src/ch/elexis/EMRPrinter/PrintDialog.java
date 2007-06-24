@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintDialog.java 2579 2007-06-23 21:09:06Z rgw_ch $
+ *  $Id: PrintDialog.java 2626 2007-06-24 14:23:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.EMRPrinter;
 
@@ -22,24 +22,17 @@ import org.jdom.Element;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
-import ch.elexis.exchange.elements.AnamnesisElement;
+import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
 
 public class PrintDialog extends TitleAreaDialog implements ICallback{
-	Document doc;
-	Element base;
-	Element eMedical, eAnamnesen;
-	 
-		
-	public PrintDialog(Document doc, Element base){
+	XChangeExporter exporter;	
+	
+	public PrintDialog(XChangeExporter exp){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
-		this.doc=doc;
-		this.base=base;
-		eMedical=base.getChild("medical",base.getNamespace());
-		eAnamnesen=eMedical.getChild("anamnesis",base.getNamespace());
-
+		exporter=exp;
 	}
 
 	@Override
@@ -52,14 +45,11 @@ public class PrintDialog extends TitleAreaDialog implements ICallback{
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, "KG-Ausdruck", Brief.UNKNOWN, Hub.actUser, "KG");
+		
 		//text.getPlugin().insertText("[Einträge]", title.toString(), SWT.RIGHT);
 		return ret;
 	}
 
-	private String getAttr(String name){
-		String ret=base.getAttributeValue(name);
-		return ret==null ? "" : ret;
-	}
 	@Override
 	public void create() {
 		super.create();

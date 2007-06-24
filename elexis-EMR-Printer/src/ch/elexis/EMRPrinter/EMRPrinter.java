@@ -18,7 +18,7 @@ import ch.elexis.util.Result;
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EMRPrinter.java 2620 2007-06-24 11:05:49Z rgw_ch $
+ *  $Id: EMRPrinter.java 2626 2007-06-24 14:23:19Z rgw_ch $
  *******************************************************************************/
 
 public class EMRPrinter extends XChangeExporter{
@@ -36,7 +36,7 @@ public class EMRPrinter extends XChangeExporter{
 	}
 
 	public boolean finalizeExport() {
-		new PrintDialog(getDocument(),base.getElement()).open();
+		new PrintDialog(this).open();
 		return bSuccess;
 	}
 
