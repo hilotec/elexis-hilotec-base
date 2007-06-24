@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: E-Banking Modul für Schweizer Zahlungsverkehr
+Bundle-SymbolicName: ch.elexis.ebanking_ch;singleton:=true
+Bundle-Version: 0.3.3
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ org.eclipse.swt,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms
+Export-Package: ch.elexis.banking
