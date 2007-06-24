@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2006, Daniel Lutz and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Daniel Lutz - initial implementation
+ *    
+ * $Id$
+-->
+<project name="elexis-iatrix" default="all">
+	<property name="sourcedir" value="${source}/elexis-iatrix/"/>
+	<property name="plugindir" value="${dist}/plugins/org.iatrix_${version}"/>
+	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
+	
+	<!-- Pfade für -classpath des Java-compilers festlegen -->
+	<path id="eclipseclasses">
+		<fileset dir="${dist}/plugins">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${plugindir}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="checkout" unless="unplugged">
+			<exec executable="svn" dir="${sourcedir}"><arg line="update"/></exec>	
+	</target>
+		
+	<target name="all">
+		
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
+			 <property name="copydest" value="${plugindir}"/>
+			 <property name="copysrc" value="${sourcedir}"/>
+		</ant>
+	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
+	 	 debug="no" optimize="yes" target="1.5" encoding="UTF-8"/>
+		<tstamp/>
+		<zip basedir="${plugindir}" destfile="${updatefiles}/org.iatrix_${version}.${DSTAMP}.zip"/>
+
+	</target>
+</project>

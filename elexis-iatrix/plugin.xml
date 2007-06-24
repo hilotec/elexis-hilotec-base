@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.iatrix"
+            class="org.iatrix.views.JournalView"
+            fastViewWidthRatio="0.2"
+            id="org.iatrix.views.JournalView"
+            name="KG Iatrix"/>
+      <view
+            category="org.iatrix"
+            class="org.iatrix.views.AlleBriefe"
+            id="org.iatrix.views.AlleBriefe"
+            name="Iatrix Alle Briefe"/>
+      <category
+            id="org.iatrix"
+            name="Iatrix"/>
+      <view
+            category="org.iatrix"
+            class="org.iatrix.views.ProblemView"
+            id="org.iatrix.views.ProblemView"
+            name="Problem"/>
+   </extension>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="org.iatrix.data.ProblemFactory"
+            name="Problem"/>
+   </extension>
+</plugin>
