@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!-- $Id: plugin.xml 1461 2006-12-25 20:44:16Z rgw_ch $ 
+ * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+-->
+<plugin>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.data.ArzttarifFactory"
+            name="Arzttarife"/>
+   </extension>
+   <extension
+         point="ch.elexis.Verrechnungscode">
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.TarmedDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.TarmedCodeSelectorFactory"
+            ComparatorClass="ch.elexis.data.TarmedLeistung$TarmedComparator"
+            ElementFactory="ch.elexis.data.ArzttarifFactory"
+            ImporterClass="ch.elexis.data.TarmedImporter"
+            MandandFilterClass="ch.elexis.data.TarmedLeistung$MandantFilter"
+            OptifyerClass="ch.elexis.data.TarmedOptifier"
+            name="TarmedLeistung"/>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.LaborleistungDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.LaborleistungCodeSelectorFactory"
+            ElementFactory="ch.elexis.data.ArzttarifFactory"
+            ImporterClass="ch.elexis.data.LaborleistungImporter"
+            name="Laborleistung"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.tarmedprefs.TarmedPrefs"
+            id="ch.elexis.arzttarife-tarmedpreference"
+            name="Tarmed"/>
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.tarmedprefs.LaborleistungPrefs"
+            id="ch.elexis.arzttarife-laborpreference"
+            name="Labortarif"/>
+      <page
+            category="ch.elexis.arzttarife-tarmedpreference"
+            class="ch.elexis.tarmedprefs.RechnungsPrefs"
+            id="ch.elexis.tarmedrechnungspref"
+            name="Rechnungseinstellungen"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.views.RnPrintView"
+            id="elexis-arzttarife-schweiz.printView"
+            name="Rechnung Drucken"/>
+   </extension>
+   <extension
+         point="ch.elexis.RechnungsManager">
+      <Rechnung
+            name="Tarmed-Drucker"
+            outputter="ch.elexis.TarmedRechnung.RechnungsDrucker"/>
+      <Rechnung
+            name="Tarmed-XML-Export"
+            outputter="ch.elexis.TarmedRechnung.XMLExporter"/>
+   </extension>
+
+</plugin>
