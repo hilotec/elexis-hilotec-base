@@ -18,17 +18,15 @@ import ch.elexis.util.Result;
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EMRPrinter.java 2579 2007-06-23 21:09:06Z rgw_ch $
+ *  $Id: EMRPrinter.java 2620 2007-06-24 11:05:49Z rgw_ch $
  *******************************************************************************/
 
-public class EMRPrinter implements IDataSender {
+public class EMRPrinter extends XChangeExporter{
 	Patient mine;
 	ContactElement base;
 	boolean bSuccess;
-	XChangeExporter exporter;
 	
 	public EMRPrinter() {
-		exporter=new XChangeExporter();
 	}
 	public boolean canHandle(Class clazz) {
 		if(clazz.equals(Patient.class)){
@@ -38,14 +36,14 @@ public class EMRPrinter implements IDataSender {
 	}
 
 	public boolean finalizeExport() {
-		new PrintDialog(exporter.getDocument(),base.getElement()).open();
+		new PrintDialog(getDocument(),base.getElement()).open();
 		return bSuccess;
 	}
 
 	public Result<Element> store(Object output) {
 		if(output instanceof Patient){
 			mine=(Patient)output;
-			base=exporter.addContact(mine, true);
+			base=addContact(mine, true);
 			bSuccess=true;
 			return new Result<Element>(base.getElement());
 		}
