@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: DocumentElement.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,6 +21,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.exchange.Container;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.rgw.tools.TimeTool;
@@ -35,7 +36,7 @@ public class DocumentElement extends XChangeElement{
 		super(parent,e);
 	}
 	
-	public DocumentElement(XChangeContainer parent, MedicalElement eMed, Brief b){
+	public DocumentElement(XChangeContainer parent, Brief b){
 		this(parent);
 		e.setAttribute("type",b.getMimeType());
 		e.setAttribute("id",b.getId());

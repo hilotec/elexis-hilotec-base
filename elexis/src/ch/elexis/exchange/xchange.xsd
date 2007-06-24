@@ -14,13 +14,10 @@
 	</xs:element>
 	<xs:element name="address">
 		<xs:complexType>
-			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="city" maxOccurs="1"/>
-				<xs:element ref="country"/>
-				<xs:element ref="phone"/>
-				<xs:element ref="street"/>
-				<xs:element ref="zip"/>
-			</xs:choice>
+			<xs:attribute name="street" type="xs:string" use="optional"/>
+			<xs:attribute name="zip" type="xs:NMTOKEN" use="optional"/>
+			<xs:attribute name="city" type="xs:string" use="optional"/>
+			<xs:attribute name="country" type="xs:NMTOKEN" use="optional"/>
 			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
 	</xs:element>

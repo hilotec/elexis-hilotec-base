@@ -8,30 +8,77 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 2583 2007-06-23 21:14:16Z rgw_ch $
+ *  $Id: ContactElement.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.jdom.Element;
 
-import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
-import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
+/**
+ * A Contact can contain elements of the types address, 
+ * connection, and medical
+ * @author Gerry
+ *
+ */
 public class ContactElement extends XChangeElement{
 
+	
 	public ContactElement(XChangeContainer parent, Element el){
 		super(parent, el);
 	}
-	public ContactElement(XChangeContainer parent){
-		super(parent);
-		e=new Element("contact",XChangeContainer.ns);
-		
+
+	public void add(AddressElement ae){
+		add(ae);
+	}
+	public void add(ConnectionElement ce){
+		add(ce);
+	}
+	public void add(ContactrefElement cre){
+		add(cre);
+	}
+	public void add(MedicalElement me){
+		add(me);
+	}
+	
+	public List<AddressElement> getAddresses(){
+		List<AddressElement> ret=new LinkedList<AddressElement>();
+		for(Element el:getElements("address")){
+			ret.add(new AddressElement(parent,el));
+		}
+		return ret;
+	}
+	public List<ConnectionElement> getConnections(){
+		List<ConnectionElement> ret=new LinkedList<ConnectionElement>();
+		for(Element el:getElements("connection")){
+			ret.add(new ConnectionElement(parent,el));
+		}
+		return ret;
+	}
+	public List<ContactrefElement> getContactrefs(){
+		List<ContactrefElement> ret=new LinkedList<ContactrefElement>();
+		for(Element el:getElements("contactref")){
+			ret.add(new ContactrefElement(parent,el));
+		}
+		return ret;
+	}
+	
+	public MedicalElement getMedical(){
+		Element medical=e.getChild("medical", XChangeContainer.ns);
+		if(medical!=null){
+			return new MedicalElement(parent,medical);	
+		}
+		return null;
 	}
 	public ContactElement(XChangeContainer parent, Kontakt k){
 		super(parent);
@@ -57,31 +104,13 @@ public class ContactElement extends XChangeElement{
 			e.setAttribute("type","organization");
 			e.setAttribute("name", k.getLabel());
 		}
-		e.addContent(createAddress(k.getAnschrift(),"default"));
+		add(new AddressElement(parent, k.getAnschrift(),"default"));
 		parent.callExportHooks(e, k);
 		
 	}
-	public void addMedical(MedicalElement element) {
-		// TODO Auto-generated method stub
-		
-	}
-	/**
-	 * Create an address element
-	 */
-	public Element createAddress(Anschrift an, String bezug){
-		Element eAd=new Element("address",XChangeContainer.ns);
-		eAd.setAttribute("type", bezug);
-		Element eStreet=new Element("street",XChangeContainer.ns);
-		eStreet.addContent(an.getStrasse());
-		eAd.addContent(eStreet);
-		Element eZip=new Element("zip",XChangeContainer.ns);
-		eZip.addContent(an.getPlz());
-		eAd.addContent(eZip);
-		Element eCity=new Element("city",XChangeContainer.ns);
-		eCity.addContent(an.getOrt());
-		eAd.addContent(eCity);
-		Element eCountry=new Element("country",XChangeContainer.ns);
-		eCountry.addContent(an.getLand());
-		return eAd;
+
+	public ContactElement(XChangeContainer parent, Patient p){
+		this(parent,(Kontakt)p);
+		add(new MedicalElement(parent,p));
 	}
 }

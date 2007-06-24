@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anschrift.java 2484 2007-06-05 21:04:30Z rgw_ch $
+ *  $Id: Anschrift.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -30,7 +30,7 @@ public class Anschrift{
         Ort=values[2];
         Land=values[3];
     }
-    
+    public Anschrift(){}
     /** 
      * Eine Etikette der Anschrift liefern
      * @param withName TODO

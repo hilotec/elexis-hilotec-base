@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContainer.java 2582 2007-06-23 21:11:15Z rgw_ch $
+ *  $Id: XChangeContainer.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -22,6 +22,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import ch.elexis.Hub;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
@@ -30,6 +31,9 @@ import ch.elexis.data.Person;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.util.Extensions;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * The Container is a Java representation of an Sgam.xChange-archive. An xChange archive consists of an XML-document conforming 
@@ -56,16 +60,43 @@ public static final String Version="0.2.0";
 	protected boolean bValid;
 	protected List<ContactElement> contacts=new ArrayList<ContactElement>();
 
+	/**
+	 * Create a new, empty container
+	 *
+	 */
 	public XChangeContainer(){
 		doc=new Document();
-		eRoot=new Element("EMR",ns);
+		eRoot=new Element("xChange",ns);
 		eRoot.addNamespaceDeclaration(nsxsi);
 		eRoot.addNamespaceDeclaration(nsschema);
 		doc.setRootElement(eRoot);
+		Element eDocument=new Element("document",ns);
+		eDocument.setAttribute("version", Version);
+		eDocument.setAttribute("creatorName","Elexis");
+		eDocument.setAttribute("creatorID","ch.elexis");
+		eDocument.setAttribute("creatorVersion",Hub.Version);
+		eDocument.setAttribute("date",new TimeTool().toString(TimeTool.DATE_ISO));
+		eDocument.setAttribute("id",StringTool.unique("Exchange"));
+		eRoot.addContent(eDocument);
+		if(Hub.actMandant==null){
+			SWTHelper.showError("Kein Mandant angemeldet", "Bitte melden Sie zuerst einen Mandanten an");
+			bValid=false;
+		}else{
+			ContactElement eResponsible=addContact(Hub.actMandant, false);
+			String id=eResponsible.getElement().getAttributeValue("id");
+			eDocument.setAttribute("responsible",id);
+			bValid=true;
+		}
 	}
 	
 	public boolean isValid(){
 		return bValid;
+	}
+	public Document getDocument(){
+		return doc;
+	}
+	public Element getRoot(){
+		return doc.getRootElement();
 	}
 	
 	
@@ -107,6 +138,31 @@ public static final String Version="0.2.0";
 		return ret;
 	}
 	
+	/**
+	 * Add a new Contact to the file. It will only be added, if it does not yet exist
+	 * Rule for the created ID: If a Contact has a really unique ID (EAN, Unique Patient Identifier)
+	 * then this shold be used. Otherwise a unique id should be generated (here we take the existing
+	 * id from Elexis which is by definition already a UUID)
+	 * @param k the contact to insert
+	 * @param withMedical append a medical record if the contact happens to be (also) a patient.
+	 * @return the Element node of the newly inserted (or earlier inserted) contact
+	 */
+	public ContactElement addContact(Kontakt k, boolean withMedical){
+		List<Element> lContacts=eRoot.getChildren("contact", ns);
+		String id=k.getId();
+		for(Element e:lContacts){
+			if(e.getAttributeValue("id").equals(id)){
+				return new ContactElement(this,e);
+			}
+		}
+		ContactElement contact=new ContactElement(this,k);
+		eRoot.addContent(contact.getElement());
+		if(withMedical && k.istPatient()){
+			contact.add(new MedicalElement(this,Patient.load(k.getId())));
+		}
+		return contact;
+	}
+
 	public boolean callExportHooks(Element e, PersistentObject o){
 		for(IExchangeContributor iex:lex){
 			iex.exportHook(this, e, o);

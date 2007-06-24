@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IExchangeContributor.java 2582 2007-06-23 21:11:15Z rgw_ch $
+ *  $Id: IExchangeContributor.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -32,7 +32,7 @@ public interface IExchangeContributor extends IExecutableExtension{
 	 * @param exporting the newly created Element containing the data
 	 * @param object the data to be exported
 	 */
-	public void exportHook(XChangeExporter container, Element exporting, PersistentObject object);
+	public void exportHook(XChangeContainer container, Element exporting, PersistentObject object);
 	
 	/**
 	 * An Element ist to be imported. The method can fetch data it can handle
@@ -40,5 +40,5 @@ public interface IExchangeContributor extends IExecutableExtension{
 	 * @param importing the element to be imported
 	 * @param target object
 	 */
-	public void importHook (XChangeImporter container, Element importing, PersistentObject dest);
+	public void importHook (XChangeContainer container, Element importing, PersistentObject dest);
 }

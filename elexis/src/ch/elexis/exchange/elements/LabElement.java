@@ -37,13 +37,38 @@ public class LabElement extends XChangeElement{
 		e=new Element("analyse",Container.ns);
 	}
 	
-	public LabElement(XChangeContainer container, MedicalElement eMed, LabResult lr) {
-		this(container);
+	public LabElement(XChangeContainer container, Element el) {
+		super(container,el);
 	}
 
-	public LabElement(XChangeContainer parent, Element e, Patient p){
+	public LabElement(XChangeContainer parent, LabResult lr){
 		this(parent);
-		this.e=e;
+		LabItem li=lr.getItem();
+		e.setAttribute("date", new TimeTool(lr.getDate()).toString(TimeTool.DATE_ISO));
+		e.setAttribute("classification","lab");
+		e.setAttribute("param", li.getKuerzel());
+		Labor lab=li.getLabor();
+	    ContactElement cLabor=parent.addContact(lab,false);
+		e.setAttribute("lab",cLabor.e.getAttributeValue("id"));
+		if(li.getTyp().equals(LabItem.typ.NUMERIC)){
+			e.setAttribute("type","number");
+			e.setAttribute("normrange",li.getRefM());		// TODO anpassen
+			e.setAttribute("unit",li.getEinheit());
+			
+		}else if(li.getTyp().equals(LabItem.typ.ABSOLUTE)){
+			e.setAttribute("type","absolute");
+		}else if(li.getTyp().equals(LabItem.typ.TEXT)){
+			e.setAttribute("type","docref");
+		}
+		Element eResult=new Element("result",Container.ns);
+		e.addContent(eResult);
+		eResult.setText(lr.getResult());
+		e.setAttribute("abnormal","indeterminate");
+		parent.callExportHooks(e, lr);
+	}
+	
+	public LabElement(XChangeContainer parent, Patient p){
+		this(parent);
 		Kontakt kLab=parent.findContact(e.getAttributeValue("lab"));
 		Result<String> ret=new Result<String>("OK");
 		if(kLab==null){
@@ -89,33 +114,5 @@ public class LabElement extends XChangeElement{
 		LabResult lr=new LabResult(p,tt,li,e.getChildText("result",Container.ns),"");
 		parent.callImportHooks(e, lr);
 	}
-	
-	public Result<Element>create(LabResult lr){
-		LabItem li=lr.getItem();
-		e.setAttribute("date", new TimeTool(lr.getDate()).toString(TimeTool.DATE_ISO));
-		e.setAttribute("classification","lab");
-		e.setAttribute("param", li.getKuerzel());
-		Labor lab=li.getLabor();
-	    ContactElement cLabor=parent.addContact(lab,false);
-		e.setAttribute("lab",cLabor.e.getAttributeValue("id"));
-		if(li.getTyp().equals(LabItem.typ.NUMERIC)){
-			e.setAttribute("type","number");
-			e.setAttribute("normrange",li.getRefM());		// TODO anpassen
-			e.setAttribute("unit",li.getEinheit());
-			
-		}else if(li.getTyp().equals(LabItem.typ.ABSOLUTE)){
-			e.setAttribute("type","absolute");
-		}else if(li.getTyp().equals(LabItem.typ.TEXT)){
-			e.setAttribute("type","docref");
-		}
-		Element eResult=new Element("result",Container.ns);
-		e.addContent(eResult);
-		eResult.setText(lr.getResult());
-		e.setAttribute("abnormal","indeterminate");
-		parent.callExportHooks(e, lr);
-		
-		return new Result<Element>(e);
-	}
-
 	
 }

@@ -10,7 +10,7 @@
 * Contributors:
 *    G. Weirich - initial implementation
 *    
-*  $Id: EMRSample.xml 1292 2006-11-19 09:55:29Z rgw_ch $
+*  $Id: EMRSample.xml 2618 2007-06-24 10:08:05Z rgw_ch $
 *******************************************************************************/
 -->
 <XCHANGE xmlns="SgamXChange" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -25,25 +25,15 @@
 		firstname="Armeswesen" birthdate="1950-10-12" sex="male"
 		id="165.23.456.212">
 		
-		<address type="default">
-			<street>DieseGasse 27</street>
-			<zip>9999</zip>
-			<city>Elexikon</city>
-			<country>CH</country>
-			<phone>555-123456</phone>
-		</address>
-		
+		<address type="default" street="DieseGasse 27" zip="9999" city="Elexikon" country="CH"/>
+		<address type="work" street="Hauptstrasse 27" zip="8888" city="Anderswo"/>
+				
 		<connection type="mobile" identification="555-99123"/>
 		<connection type="e-mail" identification="testperson@armeswesen.ch"/>
 		<connection type="skype" identification="armtestwesen"/>
-		<connection type="web"
-			identification="http://www.testperson-armeswesen.ch"/>
-		
-		<address type="work">
-			<street>Hauptstrasse 27</street>
-			<zip>8888</zip>
-			<city>Anderswo</city>
-		</address>
+		<connection type="web"	identification="http://www.testperson-armeswesen.ch"/>
+
+
 		<contactref type="spouse" id="165.23.456.23"/>
 		
 		<medical>
@@ -198,11 +188,7 @@
 	
 	<contact type="organization" name="SWICA Gesundheitsorganisation"
 		id="7601003002041">
-		<address type="work">
-			<street>Bahnhofstrasse 8</street>
-			<zip>8200</zip>
-			<city>Schaffhausen</city>
-		</address>
+		<address type="work" street="Bahnhofstrasse 8" zip="8200" city="Schaffhausen"/>
 	</contact>
 	
 	<contact type="person" lastname="Busch" middlename="Dabbeljuh"
@@ -212,20 +198,12 @@
 	
 	<contact type="person" lastname="Testerella" firstname="Kunigunde"
 		birthdate="1955-03-08" id="165.23.456.23">
-		<address type="home">
-			<street>Marktstrasse 7</street>
-			<zip>D-992344</zip>
-			<city>Deutschhausen</city>
-		</address>
+		<address type="home" street="Marktstrasse 7" zip="D-992344" city="Deutschhausen" country="D"/>
 	</contact>
 	
 	<contact type="organization" name="Labor Prof. Dr. V. Ampir" id="122345">
-		<address type="default">
-			<street>Hintergasse 27</street>
-			<zip>9998</zip>
-			<city>Ost-Elexikon</city>
-			<phone>555-123456</phone>
-		</address>
+		<address type="default" street="Hintergasse 27" zip="9998" city="Ost-Elexikon"/>
+		<connection type="phone" identification="555-999777"/>
 		<connection type="fax" identification="555-999888"/>
 		<connection type="fernabfrage"
 			identification="https://www.vampir.ch/befunde"/>

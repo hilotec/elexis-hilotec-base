@@ -27,19 +27,119 @@ import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.exchange.XChangeImporter;
+import ch.elexis.text.Samdas.Analyse;
 import ch.elexis.util.Result;
 
 public class MedicalElement extends XChangeElement{
-	AnamnesisElement anamnesis;
-	List<RecordElement> records;
-	List<DocumentElement> documents;
-	List<LabElement> analyses;
+	private Element eRecords, eAnalyses, eDocuments, eAllergies, eMedications;
+	private AnamnesisElement elAnamnesis; 
 	
-	public MedicalElement(XChangeExporter parent, Patient p){
+	public MedicalElement(XChangeContainer parent, Element el){
+		super(parent,el);
+	}
+	
+	public void add(AnamnesisElement ae){
+		elAnamnesis=ae;
+		add(ae);
+	}
+
+	public AnamnesisElement getAnamnesis(){
+		if(elAnamnesis==null){
+			Element eAnamnesis=e.getChild("anamnesis", XChangeContainer.ns);
+			if(eAnamnesis==null){
+				elAnamnesis=new AnamnesisElement(this);
+			}else{
+				elAnamnesis=new AnamnesisElement(this,eAnamnesis);
+			}
+		}
+		return elAnamnesis;
+	}
+	public void addRecord(RecordElement rc){
+		if(eRecords==null){
+			eRecords=e.getChild("records", XChangeContainer.ns);
+		}
+		if(eRecords==null){
+			eRecords=new Element("records",XChangeContainer.ns);
+			e.addContent(eRecords);
+		}
+		eRecords.addContent(rc.getElement());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RecordElement> getRecords(){
+		List<RecordElement> ret=new LinkedList<RecordElement>();
+		if(eRecords==null){
+			eRecords=e.getChild("records", XChangeContainer.ns);
+		}
+		if(eRecords!=null){
+			List<Element> records=eRecords.getChildren("record", XChangeContainer.ns);
+			for(Element el:records){
+				ret.add(new RecordElement(parent,el));
+			}
+		}
+		return ret;
+	}
+	
+	public void addAnalyse(LabElement le){
+		if(eAnalyses==null){
+			eAnalyses=e.getChild("analyses", XChangeContainer.ns);
+		}
+		if(eAnalyses==null){
+			eAnalyses=new Element("analyses",XChangeContainer.ns);
+			e.addContent(eAnalyses);
+		}
+		eAnalyses.addContent(le.getElement());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<LabElement> getAnalyses(){
+		List<LabElement> ret=new LinkedList<LabElement>();
+		if(eAnalyses==null){
+			eAnalyses=e.getChild("analyses", XChangeContainer.ns);
+		}
+		if(eAnalyses!=null){
+			List<Element> analyses=eAnalyses.getChildren("analyse", XChangeContainer.ns);
+			for(Element el:analyses){
+				ret.add(new LabElement(parent,el));
+			}
+		}
+		return ret;
+	}
+	
+	public void addDocument(DocumentElement de){
+		if(eDocuments==null){
+			eDocuments=e.getChild("documents", XChangeContainer.ns);
+		}
+		if(eDocuments==null){
+			eDocuments=new Element("documents",XChangeContainer.ns);
+			e.addContent(eDocuments);
+		}
+		eDocuments.addContent(de.getElement());
+	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DocumentElement> getDocuments(){
+		List<DocumentElement> ret=new LinkedList<DocumentElement>();
+		if(eDocuments==null){
+			eDocuments=e.getChild("documents", XChangeContainer.ns);
+		}
+		if(eDocuments!=null){
+			List<Element> documents=eDocuments.getChildren("documents", XChangeContainer.ns);
+			for(Element el:documents){
+				ret.add(new DocumentElement(parent,el));
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Create a new MedicalElement from the EMR of Patient p
+	 */
+	public MedicalElement(XChangeContainer parent, Patient p){
 		super(parent);
 		e=new Element("medical",XChangeContainer.ns);
-		anamnesis=new AnamnesisElement(parent,this,p);
-		e.addContent(anamnesis.e);
+		add(new AnamnesisElement(this));
 		Element eRecords=new Element("records",XChangeContainer.ns);
 		e.addContent(eRecords);
 		Fall[] faelle=p.getFaelle();
@@ -47,8 +147,8 @@ public class MedicalElement extends XChangeElement{
 			Konsultation[] kons=fall.getBehandlungen(false);
 			for(Konsultation k:kons){
 				RecordElement record=new RecordElement(parent,e,k);
-				anamnesis.add(k, record);
-				eRecords.addContent(record.e);
+				getAnamnesis().add(k, record);
+				addRecord(record);
 			}
 		}
 		
@@ -56,22 +156,16 @@ public class MedicalElement extends XChangeElement{
 		qbe.add("PatientID", "=", p.getId());
 		List<LabResult> labs=qbe.execute();
 		if(labs!=null){
-			Element eAnalyses=new Element("analyses",XChangeContainer.ns);
-			e.addContent(eAnalyses);
 			for(LabResult lr:labs){
-				LabElement eLab=new LabElement(parent,this,lr);
-				eAnalyses.addContent(eLab.e);
+				addAnalyse(new LabElement(parent,lr));
 			}
 		}
 		Query <Brief> qb=new Query<Brief>(Brief.class);
 		qb.add("PatientID", "=", p.getId());
 		List<Brief> lBriefe=qb.execute();
 		if((lBriefe!=null) && (lBriefe.size())>0){
-			Element eDocuments=new Element("documents",XChangeContainer.ns);
-			e.addContent(eDocuments);
 			for(Brief b:lBriefe){
-				DocumentElement eDoc=new DocumentElement(parent,this,b);
-				eDocuments.addContent(eDoc.e);
+				addDocument(new DocumentElement(parent,b));
 			}
 
 		}
@@ -88,43 +182,7 @@ public class MedicalElement extends XChangeElement{
 		super(parent,e);
 		p.set("istPatient", "1");
 		Patient pat=Patient.load(p.getId());
-		Element eAnamnesis=e.getChild("anamnesis",XChangeContainer.ns);
-		if(eAnamnesis!=null){
-			anamnesis=new AnamnesisElement(parent,eAnamnesis);
-		}
-		
-		Element eRecords=e.getChild("records",XChangeContainer.ns);
-		if(eRecords!=null){
-			List<Element> lRecords=eRecords.getChildren("record", XChangeContainer.ns);
-			records=new LinkedList<RecordElement>();
-			if(lRecords!=null){
-				for(Element er:lRecords){
-					records.add(new RecordElement(parent,er));
-				}
-			}	
-		}
-		
-		Element eDocuments=e.getChild("documents",XChangeContainer.ns);
-		if(eDocuments!=null){
-			List<Element> lDocuments=eDocuments.getChildren("document",XChangeContainer.ns);
-			if(lDocuments!=null){
-				documents=new LinkedList<DocumentElement>();
-				for(Element eDoc:lDocuments){
-					documents.add(new DocumentElement(parent,e));		
-				}
-			}
-			
-		}
-		Element eAnalyses=e.getChild("analyses",XChangeContainer.ns);
-		if(eAnalyses!=null){
-			List<Element> lAnalyses=eAnalyses.getChildren("analyse", XChangeContainer.ns);
-			if(lAnalyses!=null){
-				analyses=new LinkedList<LabElement>();
-				for(Element ea:lAnalyses){
-					analyses.add(new LabElement(parent,ea,p));
-				}
-			}
-		}
+				
 	}
 
 }

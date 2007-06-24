@@ -35,20 +35,16 @@ public class AnamnesisElement extends XChangeElement{
 	HashMap<String,Element> hElements;
 	MedicalElement eMed;
 	
-	public AnamnesisElement(XChangeContainer p, MedicalElement eMed){
-		super(p);
-		e=new Element("anamnesis",Container.ns);
+	public AnamnesisElement(MedicalElement eMed){
+		super(eMed.parent);
+		e=new Element("anamnesis",XChangeContainer.ns);
 		this.eMed=eMed;
 		
 	}
 	
-	public AnamnesisElement(XChangeContainer p, MedicalElement eMed, Patient pat){
-		this(p,eMed);
-		
-	}
 	
-	public AnamnesisElement(XChangeContainer p, Element e1){
-		super(p,e1);
+	public AnamnesisElement(MedicalElement eMed, Element e1){
+		super(eMed.parent,e1);
 		hBacklink=new HashMap<Element,IDiagnose>();
 		hElements=new HashMap<String,Element>();
 		List<Element> episodes=e1.getChildren("episode",Container.ns);
