@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMR Print application for Elexis
+Bundle-SymbolicName: ch.elexis.EMRPrinter;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ ch.elexis.jdomwrapper,
+ org.eclipse.jface,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
