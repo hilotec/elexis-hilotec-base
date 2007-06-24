@@ -1,0 +1,166 @@
+/*******************************************************************************
+ * Copyright (c) 2007, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: NotesDetail.java 1751 2007-02-06 21:05:13Z rgw_ch $
+ *******************************************************************************/
+package ch.elexis.notes;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+
+import ch.elexis.Desk;
+import ch.elexis.text.ETFTextPlugin;
+import ch.elexis.text.ITextPlugin.ICallback;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
+
+public class NotesDetail extends Composite {
+	private ETFTextPlugin etf;
+	List lRefs;
+	ScrolledForm fNote, fRefs;
+	FormToolkit tk=Desk.theToolkit;
+	private IAction newRefAction, delRefAction;
+	Note actNote;
+	
+	NotesDetail(Composite parent){
+		super(parent,SWT.NONE);
+		etf=new ETFTextPlugin();
+		setLayout(new GridLayout());
+		SashForm sash=new SashForm(this,SWT.VERTICAL);
+		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		fNote=tk.createScrolledForm(sash);
+		fNote.getBody().setLayout(new GridLayout());
+		etf.createContainer(fNote.getBody(),new SaveCallback()).setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		etf.setSaveOnFocusLost(true);
+		
+		/*
+		editor.getControl().addFocusListener(new FocusAdapter(){
+			@Override
+			public void focusLost(FocusEvent e) {
+				if(etf.isDirty()){
+					String tx=etf.getDocumentAsText();
+					Note act=(Note)GlobalEvents.getInstance().getSelectedObject(Note.class);
+					act.setText(tx);
+				}
+			}
+			
+		});
+		*/
+		//tk.adapt(, true, true);
+		fRefs=tk.createScrolledForm(sash);
+		fRefs.getBody().setLayout(new GridLayout());
+		lRefs=new List(fRefs.getBody(),SWT.SINGLE);
+		lRefs.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				String[] sel=lRefs.getSelection();
+				if(sel.length>0){
+					execute(sel[0]);
+				}
+			}
+			
+		});
+		lRefs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		fRefs.setText("Querverweise");
+		makeActions();
+		fRefs.getToolBarManager().add(newRefAction);
+		fRefs.getToolBarManager().add(delRefAction);
+		fRefs.updateToolBar();
+		tk.adapt(lRefs, true, true);
+		sash.setWeights(new int[]{80,20});
+	}
+	
+	public void setNote(Note note){
+		actNote=note;
+		fNote.setText(note.get("Title"));
+		etf.loadFromByteArray(note.getContent(), false);
+		//etf.insertText("",note.get("Contents"),SWT.LEFT);
+		lRefs.removeAll();
+		for(String s:note.getRefs()){
+			lRefs.add(s);
+		}
+	}
+	
+	public void execute(String filename){
+		try{
+			int r=filename.lastIndexOf('.');
+			String ext="";
+			if(r!=-1){
+				ext=filename.substring(r+1);
+			}
+			Program proggie=Program.findProgram(ext);
+			if(proggie!=null){
+				proggie.execute(filename);
+			}else{
+				if(Program.launch(filename)==false){
+					Runtime.getRuntime().exec(filename);	
+				}
+								
+			}
+
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			SWTHelper.showError("Konnte Datei nicht starten", ex.getMessage());
+		}
+	}
+	
+	private void makeActions(){
+		newRefAction=new Action("Neu..."){
+			{
+				setToolTipText("Einen neuen Querverweis erstellen");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+			}
+			public void run(){
+				if(new AddLinkDialog(getShell(),actNote).open()==Dialog.OK){
+					setNote(actNote);
+				}
+			}
+		};
+		delRefAction=new Action("Löschen..."){
+			{
+				setToolTipText("Querverweis löschen");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+			}
+			public void run(){
+				String actRef=lRefs.getSelection()[0];
+				if(SWTHelper.askYesNo("Querverweis löschen", "Wirklich diesen Querverweis löschen?")){
+					actNote.removeRef(actRef);
+					setNote(actNote);
+				}
+			}
+		};
+	}
+	
+	class SaveCallback implements ICallback{
+
+		public void save() {
+			byte[] cnt=etf.storeToByteArray();
+			actNote.setContent(cnt);
+			
+		}
+
+		public boolean saveAs() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+	}
+}
