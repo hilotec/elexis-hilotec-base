@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentElement.java 2618 2007-06-24 10:08:05Z rgw_ch $
+ *  $Id: DocumentElement.java 2623 2007-06-24 11:06:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -19,9 +19,7 @@ import ch.elexis.data.Brief;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
-import ch.elexis.exchange.Container;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.rgw.tools.TimeTool;
@@ -30,7 +28,7 @@ public class DocumentElement extends XChangeElement{
 		
 	public DocumentElement(XChangeContainer parent){
 		super(parent);
-		e=new Element("document",Container.ns);
+		e=new Element("document",XChangeContainer.ns);
 	}
 	public DocumentElement(XChangeContainer parent, Element e){
 		super(parent,e);

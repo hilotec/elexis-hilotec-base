@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 2618 2007-06-24 10:08:05Z rgw_ch $
+ *  $Id: ContactElement.java 2623 2007-06-24 11:06:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -39,16 +39,16 @@ public class ContactElement extends XChangeElement{
 	}
 
 	public void add(AddressElement ae){
-		add(ae);
+		super.add(ae);
 	}
 	public void add(ConnectionElement ce){
-		add(ce);
+		super.add(ce);
 	}
 	public void add(ContactrefElement cre){
-		add(cre);
+		super.add(cre);
 	}
 	public void add(MedicalElement me){
-		add(me);
+		super.add(me);
 	}
 	
 	public List<AddressElement> getAddresses(){

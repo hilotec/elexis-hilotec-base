@@ -13,6 +13,7 @@
 
 package ch.elexis.exchange.elements;
 
+import java.awt.Container;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,8 +21,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.jdom.Element;
 
-import ch.elexis.data.*;
-import ch.elexis.exchange.Container;
+import ch.elexis.data.ICodeElement;
+import ch.elexis.data.IDiagnose;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.Extensions;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
@@ -47,11 +50,11 @@ public class AnamnesisElement extends XChangeElement{
 		super(eMed.parent,e1);
 		hBacklink=new HashMap<Element,IDiagnose>();
 		hElements=new HashMap<String,Element>();
-		List<Element> episodes=e1.getChildren("episode",Container.ns);
+		List<Element> episodes=e1.getChildren("episode",XChangeContainer.ns);
 		if(episodes!=null){
 			for(Element ep:episodes){
 				hElements.put(ep.getAttributeValue("id"), ep);
-				Element eDiag=ep.getChild("diagnosis", Container.ns);
+				Element eDiag=ep.getChild("diagnosis", XChangeContainer.ns);
 				String codesys=eDiag.getAttributeValue("codesystem");
 				String dgCode=eDiag.getAttributeValue("code");
 				List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.Diagnosecode");
@@ -76,30 +79,36 @@ public class AnamnesisElement extends XChangeElement{
 		}
 	}
 	
-	public void add(Konsultation k, RecordElement r){
+	/**
+	 * link a record element to this anamnesis (every episodehas a number of treatments related to that episode)
+	 * We try to find an episode for each of the diagnoses of the Konsultation given
+	 * @param k
+	 * @param r
+	 */
+	public void link(Konsultation k, RecordElement r){
 		List<IDiagnose> kdl=k.getDiagnosen();
 		for(IDiagnose dg:kdl){
 			Element episode=hLink.get(dg);
 			if(episode==null){
-				episode=new Element("episode",Container.ns);
+				episode=new Element("episode",XChangeContainer.ns);
 				hLink.put(dg,episode);
 				e.addContent(episode);
 				episode.setAttribute("date",new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
 				episode.setAttribute("id",StringTool.unique("episode"));
-				Element eDiag=new Element("diagnosis",Container.ns);
+				Element eDiag=new Element("diagnosis",XChangeContainer.ns);
 				episode.addContent(eDiag);
 				eDiag.setAttribute("codesystem",dg.getCodeSystemName());
 				eDiag.setAttribute("code",dg.getCode());
 				episode.setAttribute("title",dg.getLabel());
 			}
-			Element episodeRef=new Element("episode",Container.ns);
+			Element episodeRef=new Element("episode",XChangeContainer.ns);
 			episodeRef.setAttribute("id", episode.getAttributeValue("id"));
 			r.e.addContent(episodeRef);
 		}
 	}
 	
 	public void doImport(RecordElement r, Konsultation k){
-		List<Element> eRefs=r.e.getChildren("episode",Container.ns);
+		List<Element> eRefs=r.e.getChildren("episode",XChangeContainer.ns);
 		if(eRefs!=null){
 			for(Element eRef:eRefs){
 				String id=eRef.getAttributeValue("id");

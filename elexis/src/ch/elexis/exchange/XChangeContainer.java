@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContainer.java 2618 2007-06-24 10:08:05Z rgw_ch $
+ *  $Id: XChangeContainer.java 2623 2007-06-24 11:06:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -31,6 +31,7 @@ import ch.elexis.data.Person;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.util.Extensions;
+import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -198,6 +199,15 @@ public static final String Version="0.2.0";
 	 */
 	public byte[] getBinary(String id){
 		return binFiles.get(id);
+	}
+	
+	private Result<String> importDocuments(Patient p, Element ed){
+		List<Element> eDocs=ed.getChildren("document", ns);
+		Result<String> ret=new Result<String>("OK");
+		if(eDocs!=null){
+			
+		}
+		return ret;
 	}
 	
 	public String mapExtToIntID(String idExt){

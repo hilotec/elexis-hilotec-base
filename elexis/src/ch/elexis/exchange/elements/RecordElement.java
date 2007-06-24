@@ -16,7 +16,6 @@ package ch.elexis.exchange.elements;
 import org.jdom.Element;
 
 import ch.elexis.data.*;
-import ch.elexis.exchange.Container;
 import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.Samdas;
@@ -30,15 +29,15 @@ public class RecordElement extends XChangeElement{
 	
 	public RecordElement(XChangeContainer c){
 		super(c);
-		e=new Element("record",Container.ns);
+		e=new Element("record",XChangeContainer.ns);
 	}
 	
 	public RecordElement(XChangeContainer c,Element el){
 		super(c,el);
 	}
 	
-	public RecordElement(XChangeContainer c, Element el, Konsultation k){
-		this(c,el);
+	public RecordElement(XChangeContainer c, Konsultation k){
+		this(c);
 		e.setAttribute("date",new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
 		ContactElement cMandant=parent.addContact(k.getMandant(), false);
 		e.setAttribute("responsible",cMandant.e.getAttributeValue("id"));
@@ -54,7 +53,7 @@ public class RecordElement extends XChangeElement{
 				//Samdas.Record record=new Samdas.Record(sRecord);
 				Element sText=sRecord.getChild("text",Samdas.ns);
 				if(sText!=null){
-					Element eText=new Element("text",Container.ns);
+					Element eText=new Element("text",XChangeContainer.ns);
 					eText.addContent(sText.getText());
 					e.addContent(eText);
 				}
@@ -81,7 +80,7 @@ public class RecordElement extends XChangeElement{
 		k.setDatum(e.getAttributeValue("date"), true);
 		Samdas samdas=new Samdas();
 		Samdas.Record rec=samdas.getRecord();
-		Element eText=e.getChild("text", Container.ns);
+		Element eText=e.getChild("text", XChangeContainer.ns);
 		if(eText!=null){
 			String text=eText.getText();
 			if(text!=null){

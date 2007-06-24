@@ -25,10 +25,7 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.exchange.XChangeImporter;
-import ch.elexis.text.Samdas.Analyse;
-import ch.elexis.util.Result;
 
 public class MedicalElement extends XChangeElement{
 	private Element eRecords, eAnalyses, eDocuments, eAllergies, eMedications;
@@ -40,7 +37,7 @@ public class MedicalElement extends XChangeElement{
 	
 	public void add(AnamnesisElement ae){
 		elAnamnesis=ae;
-		add(ae);
+		super.add(ae);
 	}
 
 	public AnamnesisElement getAnamnesis(){
@@ -140,14 +137,12 @@ public class MedicalElement extends XChangeElement{
 		super(parent);
 		e=new Element("medical",XChangeContainer.ns);
 		add(new AnamnesisElement(this));
-		Element eRecords=new Element("records",XChangeContainer.ns);
-		e.addContent(eRecords);
 		Fall[] faelle=p.getFaelle();
 		for(Fall fall:faelle){
 			Konsultation[] kons=fall.getBehandlungen(false);
 			for(Konsultation k:kons){
-				RecordElement record=new RecordElement(parent,e,k);
-				getAnamnesis().add(k, record);
+				RecordElement record=new RecordElement(parent,k);
+				getAnamnesis().link(k, record);
 				addRecord(record);
 			}
 		}

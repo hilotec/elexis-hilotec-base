@@ -23,7 +23,6 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.exchange.Container;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
@@ -34,7 +33,7 @@ public class LabElement extends XChangeElement{
 	
 	LabElement(XChangeContainer p){
 		super(p);
-		e=new Element("analyse",Container.ns);
+		e=new Element("analyse",XChangeContainer.ns);
 	}
 	
 	public LabElement(XChangeContainer container, Element el) {
@@ -60,7 +59,7 @@ public class LabElement extends XChangeElement{
 		}else if(li.getTyp().equals(LabItem.typ.TEXT)){
 			e.setAttribute("type","docref");
 		}
-		Element eResult=new Element("result",Container.ns);
+		Element eResult=new Element("result",XChangeContainer.ns);
 		e.addContent(eResult);
 		eResult.setText(lr.getResult());
 		e.setAttribute("abnormal","indeterminate");
@@ -111,7 +110,7 @@ public class LabElement extends XChangeElement{
 			}
 		}
 		TimeTool tt=new TimeTool(e.getAttributeValue("date"));
-		LabResult lr=new LabResult(p,tt,li,e.getChildText("result",Container.ns),"");
+		LabResult lr=new LabResult(p,tt,li,e.getChildText("result",XChangeContainer.ns),"");
 		parent.callImportHooks(e, lr);
 	}
 	

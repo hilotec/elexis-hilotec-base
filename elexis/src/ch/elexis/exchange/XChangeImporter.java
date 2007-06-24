@@ -21,6 +21,9 @@ import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
 
 public class XChangeImporter extends XChangeContainer{
+	public XChangeImporter(){
+		bValid=false;
+	}
 	/**
 	 * Create a Container from an existing xChange Document
 	 * @param input a valid and well formed xml-document

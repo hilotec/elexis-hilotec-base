@@ -8,41 +8,21 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeExporter.java 2618 2007-06-24 10:08:05Z rgw_ch $
+ *  $Id: XChangeExporter.java 2623 2007-06-24 11:06:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
-import java.util.List;
-
-import org.jdom.Document;
-import org.jdom.Element;
-
-import ch.elexis.Hub;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
-import ch.elexis.exchange.elements.ContactElement;
-import ch.elexis.exchange.elements.MedicalElement;
-import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 /**
  * this is, at present, merely a stub for the export-personality of the Container
  * @author gerry
  *
  */
-public class XChangeExporter extends XChangeContainer{
+public abstract class XChangeExporter extends XChangeContainer implements IDataSender{
 	
-	/**
-	 * Create a default xChange Document with the actually logged-in mandator as responsible. 
-	 *
-	 */
-	@SuppressWarnings("unchecked")
-	public XChangeExporter(){
-		
-		
+	public boolean canHandle(Class clazz) {
+		return true;
 	}
-	
-	
+
 
 }
