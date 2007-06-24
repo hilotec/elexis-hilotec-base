@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Omnivore
+Bundle-SymbolicName: ch.elexis.omnivore; singleton:=true
+Bundle-Version: 0.3.3
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis
+Eclipse-LazyStart: true
+Bundle-Vendor: elexis.ch
