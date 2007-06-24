@@ -13,8 +13,8 @@
 
 package ch.elexis.exchange.elements;
 
-import java.awt.Container;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,6 +37,11 @@ public class AnamnesisElement extends XChangeElement{
 	HashMap<Element,IDiagnose> hBacklink;
 	HashMap<String,Element> hElements;
 	MedicalElement eMed;
+
+	public List<EpisodeElement> getEpisodes(){
+		List<EpisodeElement> ret=new LinkedList<EpisodeElement>();
+		return ret;
+	}
 	
 	public AnamnesisElement(MedicalElement eMed){
 		super(eMed.parent);
@@ -46,6 +51,7 @@ public class AnamnesisElement extends XChangeElement{
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public AnamnesisElement(MedicalElement eMed, Element e1){
 		super(eMed.parent,e1);
 		hBacklink=new HashMap<Element,IDiagnose>();
@@ -107,6 +113,7 @@ public class AnamnesisElement extends XChangeElement{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void doImport(RecordElement r, Konsultation k){
 		List<Element> eRefs=r.e.getChildren("episode",XChangeContainer.ns);
 		if(eRefs!=null){
@@ -121,6 +128,10 @@ public class AnamnesisElement extends XChangeElement{
 				}
 			}
 		}
+	}
+	
+	public String toString(){
+		return "";
 	}
 	/*
 	public Result<Element> create(Patient p){

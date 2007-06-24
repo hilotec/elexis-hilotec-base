@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContainer.java 2623 2007-06-24 11:06:17Z rgw_ch $
+ *  $Id: XChangeContainer.java 2627 2007-06-24 14:23:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -47,6 +48,7 @@ import ch.rgw.tools.TimeTool;
  * @author gerry
  *
  */
+@SuppressWarnings("unchecked")
 public class XChangeContainer {
 public static final String Version="0.2.0";
 	
@@ -100,6 +102,15 @@ public static final String Version="0.2.0";
 		return doc.getRootElement();
 	}
 	
+	@SuppressWarnings("unchecked")
+	List<ContactElement> getContacts(){
+		List<ContactElement> ret=new LinkedList<ContactElement>();
+		List<Element> contacts=getRoot().getChildren("contact", ns);
+		for(Element el:contacts){
+			ret.add(new ContactElement(this,el));
+		}
+		return ret;
+	}
 	
 	/**
 	 * check whether a given &lt;contact&gt;-Element exists already as Kontakt. If not, create it
@@ -201,7 +212,7 @@ public static final String Version="0.2.0";
 		return binFiles.get(id);
 	}
 	
-	private Result<String> importDocuments(Patient p, Element ed){
+	Result<String> importDocuments(Patient p, Element ed){
 		List<Element> eDocs=ed.getChildren("document", ns);
 		Result<String> ret=new Result<String>("OK");
 		if(eDocs!=null){
@@ -218,4 +229,5 @@ public static final String Version="0.2.0";
 	public void putExtToIntIDMapping(String idExt, String idInt){
 		idMap.put(idExt,idInt);
 	}
+	
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AddressElement.java 2618 2007-06-24 10:08:05Z rgw_ch $
+ *  $Id: AddressElement.java 2627 2007-06-24 14:23:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -49,5 +49,14 @@ public class AddressElement extends XChangeElement {
 		ret.setPlz(getAttr("zip"));
 		ret.setStrasse(getAttr("street"));
 		return ret;
+	}
+	
+	public String toString(){
+		StringBuilder ret=new StringBuilder();
+		ret.append(getAttr("street")).append(", ")
+			.append(getAttr("zip")).append(" ")
+			.append(getAttr("city")).append(" ")
+			.append(getAttr("country"));
+		return ret.toString();
 	}
 }
