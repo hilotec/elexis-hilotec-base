@@ -10,16 +10,13 @@
             name="xChange"/>
    </extension>
    <extension
-         point="ch.elexis.SecureTransport">
-      <SecureTransporter
-            Transporter="ch.sgam.informatics.exchange.Transporter"
-            name="Sgam-Exchange.Transporter"/>
-   </extension>
-   <extension
          point="ch.elexis.FremdDatenImport">
       <importer
             Class="ch.sgam.informatics.exchange.Importer"
             name="Sgam-Exchange.importer"/>
+   </extension>
+   <extension
+         point="ch.elexis.Transporter">
    </extension>
 
 </plugin>

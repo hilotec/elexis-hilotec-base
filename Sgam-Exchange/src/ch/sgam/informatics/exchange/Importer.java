@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Importer.java 1301 2006-11-20 20:15:14Z rgw_ch $
+ *  $Id: Importer.java 2621 2007-06-24 11:05:57Z rgw_ch $
  *******************************************************************************/
 package ch.sgam.informatics.exchange;
 
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
-import ch.elexis.exchange.Container;
+import ch.elexis.exchange.XChangeImporter;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
@@ -79,7 +79,7 @@ public class Importer extends ImporterPage {
 			
 			String inter=Hub.localCfg.get(PreferenceConstants.ABL_BASEPATH, "")+File.separator+StringTool.unique("zip")+".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if(gpg.decrypt(file, inter, decodepwd)){
-				Container xChange=new Container();
+				XChangeImporter xChange=new XChangeImporter();
 				ZipInputStream zis=new ZipInputStream(new FileInputStream(inter));
 				ZipEntry zip;
 				while((zip=zis.getNextEntry())!=null){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Transporter.java 1288 2006-11-17 17:08:49Z rgw_ch $
+ *  $Id: Transporter.java 2621 2007-06-24 11:05:57Z rgw_ch $
  *******************************************************************************/
 package ch.sgam.informatics.exchange;
 
@@ -30,7 +30,11 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Desk;
-import ch.elexis.exchange.Container;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
+import ch.elexis.exchange.XChangeExporter;
+import ch.elexis.exchange.elements.ContactElement;
+import ch.elexis.util.Result;
 import ch.rgw.tools.BinConverter;
 import ch.rgw.tools.ExHandler;
 import ch.sgam.informatics.exchange.ui.GPGExportDialog;
@@ -44,11 +48,8 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
  *
  */
 @SuppressWarnings("serial") //$NON-NLS-1$
-public class Transporter extends Container{
+public class Transporter extends XChangeExporter{
 	
-	
-	
-	@Override
 	public boolean doExport() {
 		Element eDoc=eRoot.getChild("document",ns); //$NON-NLS-1$
 		String id=eDoc.getAttributeValue("id"); //$NON-NLS-1$
@@ -115,8 +116,15 @@ public class Transporter extends Container{
 			return null;
 		}
 	}
-	@Override
-	public String getDescription() {
-		return Messages.getString("Transporter.asymetricGPG"); //$NON-NLS-1$
+	public boolean finalizeExport() {
+		return doExport();
 	}
+	public Result<Element> store(Object output) {
+		if(output instanceof Patient){
+			ContactElement ret=addContact((Kontakt)output,true);
+			return new Result<Element>(ret.getElement());
+		}
+		return null;
+	}
+	
 }
