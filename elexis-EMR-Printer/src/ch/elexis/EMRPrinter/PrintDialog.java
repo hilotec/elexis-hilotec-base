@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintDialog.java 2626 2007-06-24 14:23:19Z rgw_ch $
+ *  $Id: PrintDialog.java 2628 2007-06-24 16:31:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.EMRPrinter;
 
@@ -46,7 +46,7 @@ public class PrintDialog extends TitleAreaDialog implements ICallback{
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, "KG-Ausdruck", Brief.UNKNOWN, Hub.actUser, "KG");
 		
-		//text.getPlugin().insertText("[Einträge]", title.toString(), SWT.RIGHT);
+		text.getPlugin().insertText("[Einträge]", exporter.toString(), SWT.LEFT);
 		return ret;
 	}
 
