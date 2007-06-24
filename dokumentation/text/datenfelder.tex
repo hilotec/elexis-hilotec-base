@@ -1,0 +1,58 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id$
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+% Dieses Dokument enthält die Dokumentation der Platzhalter für Datenfelder
+
+\section{Platzhalter für Datentypen}
+\label{Platzhalter}
+Diese Platzhalter können beispielsweise in Textdokumentvorlagen eingesetzt
+werden, in eckige Klammern gesetzt, also z.B.[Patient.Name].
+Sie können auch in der View 'Datenansicht' als Datenquellen eingesetzt werden.
+Die folgende Liste erhebt keinen Anspruch auf Vollständigkeit; insbesondere
+können durch Plugins zusätzliche Felder eingeführt werden.
+\begin{description}
+  \item [Anwender.Name] Name des aktuell eingeloggten Anwenders
+  \item [Anwender.Vorname] Vorname des aktuell eingeloggten Anwenders
+  \item [Anwender.Titel] Titel des aktuell eingeloggten Anwenders
+  \item [Anwender.Kuerzel] Initialen des aktuell eingeloggten Anwenders
+  \item [Anwender.Label] Login-Name des aktuell eingeloggten Anwenders
+  \item [Mandant.Name,Vorname,Titel,Kuerzel,Label] dieselben Felder, wie bei Anwender, bezogen auf den aktuell
+  aktiven Mandanten. 	
+  \item [Mandant.EAN] Die EAN des aktuell aktiven Mandanten. Nur vorhanden, wenn
+  das Plugin Arzttarife Schweiz geladen ist.
+  \item [Mandant.KSK] Die KSK (bzw. ZSR)-Nummer des aktuell aktiven Mandanten.
+  Nur vorhanden, wenn das Plugin Arzttarife Schweiz geladen ist.
+  \item [Patient.Name,Vorname,Titel] Name etc.des aktuell selektierten Patienten
+  \item [Patient.Geburtsdatum] Geburtsdatum des aktuell selektierten Patienten
+  \item [Patient.Diagnosen] Diagnosen wie auf dem Titelblatt genannt
+  \item [Patient.Allergien] Allergien wie auf dem Titelblatt
+  \item [Patient.Strasse, Patient.Plz, Patient.Ort] Adresse des aktuell
+  selektierten Patienten.
+  \item [Patient.PersAnamnese] Anamnese wie auf dem Titelblatt
+  \item [Patient.Telefon1, Patient.Telefon2, Patient.Natel] Telefonnummern
+  \item [Patient.Medikation] Aktuelle Fixmedikation des aktuell selektierten
+  Patienten
+  \item [AUF.von] Beginn der aktuell ausgewählten Arbeitsunfähigkeit
+  \item [AUF.bis] Ende der aktuell ausgewählten Arbeitsunfähigkeit
+  \item [AUF.Prozent] Prozentsatz der aktuell ausgewählten AUF
+  \item [AUF.Grund] Grund der aktuellen AUF (Unfall Krankheit)
+  \item [AUF.Zusatz] Allfälliger Zusatztext
+  \item [Fall.ArbeitgeberName] Name des Arbeitgebers, wenn eingetragen
+  \item [Fall.Kostentraeger] Bezeichnung des Kostenträgers
+  \item [Fall.KostentraegerKuerzel] Kürzel des Kostenträgers
+  \item [Konsultation.Datum] Datum der aktuell ausgewählten Konsultation
+  \item [Konsultation.Eintrag] Text der aktuell ausgewählten Konsultation
+  \item [Konsultation.Diagnose] Diagnosen der aktuell ausgewählten Konsultation
+
+\end{description}
+

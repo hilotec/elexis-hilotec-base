@@ -1,0 +1,112 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% *  $Id: icpc-plugin.tex 1951 2007-02-26 09:34:52Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+
+\section{Sgam-xChange}
+Sgam-xChange ist ein Plugin, das den Austausch von beliebigen Daten zwischen elKG-Systemen ermöglicht. Sie können beispielsweise ein Laborblatt oder eine ganze KG aus Ihrem Programm exportieren, verschlüsselt zu einem Kollegen transportieren, der es dann in seine elKG importieren kann - sofern diese ebenfalls xChange-fähig ist.Sgam-xChange ist ein Plugin, das den Austausch von beliebigen Daten zwischen elKG-Systemen ermöglicht. Sie können beispielsweise ein Laborblatt oder eine ganze KG aus Ihrem Programm exportieren, verschlüsselt zu einem Kollegen transportieren, der es dann in seine elKG importieren kann - sofern diese ebenfalls xChange-fähig ist.
+
+xChange ist ein offener Standard, der folgende Elemente beinhaltet:
+\begin{itemize}
+ \item Transport-Datenformat, damit die beteiligten elKG-Programme die Daten \textit{verstehen} können, die sie intern vermutlich auf ganz unterschiedliche Weise speichern.
+\item Transport-Container, welcher eine Verschlüsselungs- und Transfertechnologie definiert, damit diese Daten sicher und vertraulich vom Sender zum Empfänger gelangen.
+\end{itemize}
+Um es jedem Hersteller von Praxisprogrammen zu ermöglichen, xChange zu implementieren, wurde der Standard bewusst auf die wesentlichsten Elemente limitiert, und er wird jedem Interessenten kostenlos zur Verfügung gestellt, inklusive einer Beispielanwendung, die konkrete Implementationshinweise gibt.
+
+Sgam-xChange entstand im Auftrag und unter Sponsoring der Arbeitsgruppe \href{http://www.sgam.ch/informatics}{Sgam.informatics} , welche auch Ansprechpartner für alle Lizenzfragen ist.
+
+\subsection{Voraussetzungen}
+
+
+Eine Erläuterung und Beschreibung der technischen Hintergründe finden Sie hier .
+ Dieser Artikel beschränkt sich im Folgenden auf die Beschreibung der in Elexis eingebauten Implementation von Sgam.xChange.
+
+Um Daten aus Elexis mittels Sgam.xChange transportieren zu können, benötigen Sie ausser Elexis und dem Sgam.xChange-Plugin (welches standardmässig integriert ist), noch das Verschlüsselungsprogramm \href{http://www.gnupg.org}{GnuPG}.
+
+ GnuPG ist für die meisten wichtigen Betriebssysteme (Windows, Linux, Mac) erhältlich und ist kostenlos. Es ist ein OpenSource-Verschlüsselungssystem, das seit 1999 existiert und weltweit einen ausgezeichneten Ruf geniesst (ist beispielsweise in manchen Ländern verboten, weil es von Geheimdiensten nicht geknackt werden kann). In der Schweiz ist seine Anwendung legal.
+
+\subsection{Installation und Konfiguration}
+
+GPG kann an beliebiger Stelle installiert werden; es muss dann lediglich an Elexis bekanntgemacht werden, wo es liegt. Öffnen Sie dazu im Menü \textit{Datei-Einstellungen} den Reiter \textit{xChange}:
+
+\includegraphics[width=3in]{images/xc1.png}
+% xc1.png: 590x350 pixel, 96dpi, 15.61x9.26 cm, bb=0 0 442 262
+
+Folgende Einstellungen können hier vorgenommen werden:
+\begin{itemize}
+ \item GnuPG-Programm: Den vollständigen Pfad zu gpg.exe
+\item Verzeichnis für Transferdaten: Ein existierendes Verzeichnis, in das xChange Dateien zwischenspeichern kann
+\item Titel für Schlüsselanfragen: xChange kann automatische Mails generieren, um  den öffentlichen Schlüssel des Austauschpartners anzufordern. Hier können Sie den Titel einsetzen, den eine solche Mail haben soll.
+\item Text für Schlüsselanfragen: Hierhin kommt der Text, welcher in eine Schlüsselanforderungs-Mail gesetzt werden soll.
+\item Titel für Antworten: Auch für die Beantwortung einer Schlüsselanfrage kann xChange automatisch eine E-Mail generieren. Hierhin kommt der Titel einer solchen Antwort
+\item Text für Antworten: Der Textinhalt einer Antwort-Mail
+Signaturschlüssel (E-Mail): Hier sollten Sie denjenigen Schlüssel angeben, der standardmässig für xChange verwendet werden soll. Oft wird das sowieso Ihr einziger Schlüssel sein. Geben Sie dabei die E-Mail ein, die mit diesem Schlüssel Verknüpft ist.
+
+\item
+\item Neues Schlüsselpaar erstellen: Falls Sie noch keinen GPG-Schlüssel haben, können Sie nach Klick auf diesem Knopf ein Paar erstellen (Ein Schlüsselpaar besteht aus einem mit einem Passwort gesicherten privaten Schlüssel, den Sie zum Signieren und zum Entschlüsseln brauchen, und aus dem dazu passenden öffentlichen Schlüssel, den Sie jedem Interessenten geben können, um damit Nachrichten an Sie verschlüsseln und Signaturen von Ihnen verifizieren zu können)
+
+\end{itemize}
+
+Nach Knopfdruck erscheint dieses Fenster:
+
+\includegraphics[width=3in]{images/xc2.png}
+% xc2.png: 438x351 pixel, 96dpi, 11.59x9.29 cm, bb=0 0 328 263
+
+Die Angaben sind selbsterklärend. xChange wird Ihre Sendungen jeweils mit diesem Schlüssel signieren und wird Sendungen, die an Sie gerichtet sind, mit diesem Schlüssel zu decodieren versuchen.
+(Genauere Erklärungen zu den Schlüsseln finden Sie \href{http://www.elexis.ch/jp/index.php?option=content&task=view&id=64}{hier})
+\subsection{Eine Krankengeschichte exportieren}
+Klicken Sie mit der rechten Maustaste auf den gewünschten Patienteneintrag und wählen Sie \textit{KG Exportieren}
+
+\includegraphics[width=3in]{images/xc3.png}
+% xc3.png: 284x436 pixel, 96dpi, 7.51x11.53 cm, bb=0 0 213 327
+
+ Es erscheint folgender Dialog:
+
+\includegraphics[width=3in]{images/xc4.png}
+% xc4.png: 438x244 pixel, 96dpi, 11.59x6.46 cm, bb=0 0 328 183
+
+Nach Klick auf \textit{OK} wird die KG automatisch verschlüsselt und an den Empfänger gesandt, der sie nur mit seinem, oben unter \textit{Empfänger} genannten Schlüssel wieder entschlüsseln kann.
+
+\subsection{Die Empfängerseite}
+Auf der Empfängerseite kommt nun die eben abgeschickte E-Mail an:
+
+\includegraphics[width=3in]{images/import1.png}
+% import1.png: 644x369 pixel, 72dpi, 22.72x13.02 cm, bb=0 0 644 369
+
+Der Mail-Anhang ist die xChange-Datei.
+
+\includegraphics[width=3in]{images/import2.png}
+% import2.png: 540x134 pixel, 72dpi, 19.05x4.73 cm, bb=0 0 540 134
+
+Diese kann gespeichert und direkt nach Elexis eingelesen werden aus dem Menu Datei-Import.
+
+\includegraphics[width=3in]{images/import3.png}
+% import3.png: 613x399 pixel, 72dpi, 21.63x14.08 cm, bb=0 0 613 399
+
+
+
+Sofern Sie im Besitz des korrekten Schlüssels sind, wird die KG jetzt in Ihrem Programm importiert.
+
+Zum Konzept der Schlüsselverwaltung lesen Sie bitte \href{http://www.elexis.ch/jp/index.php?option=content&task=view&id=64}{hier} mehr Einzelheiten.
+
+
+\section{Elexis-Iatrix}
+Alternativer KG-Stil mit problemorientiertem Ansatz. Dieses Plugin ist Teil von Iatrix.
+
+ Die Iatrix-Entwicklung wird von Dr. med. P. Schönbucher, Luzern finanziert, der es allen Elexis-Anwendern kostenlos zur Verfügung stellt. Hauptentwickler ist \href{http://www.elexis.ch/jp/component/option,com_contact/task,view/contact_id,2/Itemid,32/}{Daniel Lutz}. Anfragen zu diesem Plugin deshalb bitte an ihn.
+
+\section{Elexis-externe-Dokumente}
+Einbindung von Dokumenten, die in einem bestimmten Verzeichnis gespeichert sind. Dieses Plugin ist Teil von \href{http://www.iatrix.org}{Iatrix}.
+
+\section{Elexis-ebanking-Schweiz}
+Einbindung des Schweizer ESR/DTA-Systems zum bargeldlosen Zahlungsverkehr. Dieses Plugin ist Teil der Standard-Distribution. Es hat selbst keine Benutzerfunktionen, muss aber vorhanden sein, wenn andere Plugins diese E-Banking-Funktionen nutzen wollen.
+
+%\section{Elexis Laborimport Viollier}
+

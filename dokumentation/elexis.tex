@@ -1,0 +1,196 @@
+% *******************************************************************************
+% * Copyright (c) 2007 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich, U. Berner
+% *
+% *  $Id: elexis.tex 2538 2007-06-20 14:57:29Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+%
+% Dies ist das Zentraldokument für die Elexis-Dokumentation. Einzelne
+% Kapitel und Unterkapitel können mit \include eingesetzt werden.
+
+\documentclass[a4paper,BCOR8.25mm,twoside]{scrbook}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+% Hier ein etwas skurriler Block, der dazu dient, die Unterschiede
+% zwischen PDFLaTeX und latex auszubügeln
+% Grafiken müssen als png oder gif (für PDFLaTeX) und als eps (für Latex)
+% vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
+% das System nimmt je nach Renderer die geeignete Variante.
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+	\pdffalse              	%normales LaTeX wird ausgeführt
+\else
+	\pdfoutput=1
+	\pdftrue               	%PDFLaTeX wird ausgeführt
+\fi
+
+\ifpdf
+	\usepackage[pdftex]{graphicx}
+	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+\else
+	\usepackage[dvips]{graphicx}
+	\DeclareGraphicsExtensions{.eps}
+\fi
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\title{Das Elexis-Handbuch}
+\begin{document}
+
+\maketitle
+%
+%weiche Trennung wie? -> Trennvorschlag: "- Trennzwang: \-
+%Sonderzeichen, Befehlszeichen wie auskommentieren? -> \backslash schreibt \
+%hyperref mit weiteren Optionen?
+%farbige Schrift? -> \color{red}
+%Modell-pgn wie umwandeln?  -> png und eps (z.B. mit GIMP umwandeln)
+\tableofcontents
+\part{Einführung}
+\chapter{Vorbemerkung zum Handbuch}
+Dieses Handbuch ist -- ebenso wie das Programm selbst -- in laufender Entwicklung
+begriffen. Die vorliegende Version ist nur ein Ausschnitt aus dem
+Entwicklungsprozess. Es kann nicht garantiert werden, dass das Handbuch immer
+exakt auf dem gleichen Entwicklungsstand ist, wie die Software selbst (und
+umgekehrt). Es ist möglich, dass einige Kapitel noch unfertig sind und abrupt
+enden. Wir denken dennoch, dass dieses Handbuch eine nützliche Hilfe beim
+Einstieg in Elexis sein kann, und veröffentlichen es deswegen in dieser Form,
+wobei wir Neuerungen jeweils in unregelmässigen Abständen ohne spezielle
+Ankündigung in die zum Download bereitgestellte Version übertragen.
+
+Wenn Sie immer die neuesten Entwicklungen sehen möchten, empfehlen wir Ihnen,
+die Handbuch-Quellen wie auf Seite \pageref{dokumentation} beschrieben zu
+installieren.
+
+\chapter{Kurzbeschreibung und Schnelleinstieg}
+Elexis -- die elektronische Praxis -- ist
+\begin{itemize}
+	\item ein Projekt zur gemeinschaftlichen Entwicklung eines quelloffenen (OpenSource) Praxisprogramms,
+speziell angepasst an Schweizer Verhältnisse.
+	\item  ein universelles Praxisprogramm:  Das Programm ist für alle Medizinalberufe geeignet. Ob Arzt- oder
+Zahnarztpraxis, Physio- Ergo- Logopädie, Psychotherapie oder Homöopathie: Elexis lässt sich benutzerspezifisch
+flexibel anpassen und beliebig mit Modulen erweitern.
+	\item Aus der Praxis für die Praxis: Im Gegensatz zu den meisten anderen Programmen mit ähnlichen Anspruch entstand und entsteht Elexis in der Praxis für die Praxis. Das Programm wird von Fachleuten aus dem Medizinbereich entwickelt und unter realen Praxisbedingungen getestet.
+
+	\item lauffähig unter Windows, Linux und MacOS X\footnote{Bei MacOS X
+	allerdings mit der Einschränkung, dass die Textverarbeitung mit einem separaten
+	Programm erfolgen muss, da die Einbettung von OpenOffice hier noch nicht
+	möglich ist.}. Auch
+	in gemischten Umgebungen mit verschiedenen Computersystemen am selben Server.
+	\item Quelloffen: Elexis ist kein proprietäres Programm, Sie sind somit nicht
+	von einer Herstellerfirma abhängig. Interessenten haben jederzeit Zugriff auf
+	den Quellcode und können bei Bedarf die Funktionalität des Programmes erweitern.
+Jedermann mit genügend Computerkenntnissen kann das System verstehen und weiterentwickeln.
+Die Lizenz, unter der Elexis vertrieben wird, erlaubt eine solche Weiterentwicklung durch Dritte ausdrücklich
+und ohne spezielle Bedingungen oder Kosten.
+
+	\item Alles in einem: Krankengeschichte, Lagerbewirtschaftung,
+	Bestellwesen, Abrechnung, Debitorenkontrolle, Agenda und vieles mehr.
+  	\item kontaktfreudig: Kann Daten anderer Programme (sofern von deren
+ 	Hersteller vorgesehen) importieren und kann eigene Daten in Standardformate
+ 	exportieren.
+ 	\item Unterstützt von der Arbeitsgruppe Informatik der Schweizerischen
+Gesellschaft für Allgemeinmedizin %\href{URL}{Sgam.informatics}
+\end{itemize}
+\pagebreak[3]
+\textbf{Unterstützung}
+Elexis enthält alle Komponenten um per Doppelklick starten zu können.
+Eine elektronische Krankengeschichte ist allerdings ein komplexes Gebilde, und nicht vom Stand weg zu
+beherrschen. Wir versuchen Ihnen mit unserer Dokumentation den Einstieg zu
+erleichtern. Wenn Sie sich lieber nicht mit Computerinterna beschäftigen, bieten
+wir Ihnen auch Unterstützung in Form von Installations- und Wartungsverträgen
+an. Gerne machen wir Ihnen auf Anfrage eine Offerte.
+
+\include{installs/default}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Geführte Tour}
+\chapter{Eine neue Patientin erfassen}
+\label{tour}
+	\include{tour/patneu}
+\chapter{Benutzeroberfläche einrichten}
+	\label{customize}
+	\include{tour/customize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Systematische Referenz}
+\chapter{Konzepte}
+	\include{konzepte}
+\chapter{Menü und Toolbar} 					
+	\include{menu}
+\chapter{Einstellungen}
+	\include{settings}
+\chapter{Views des Kernsystems}
+	\include{views/einfuehrung}
+	\include{views/stammdaten}
+	\include{views/abrechnung}
+	\include{views/konsviews}
+	\include{views/rest}
+	
+\chapter{Standardplugins}
+	\include{plugins/einleitung}
+	\include{plugins/agenda}
+	\include{plugins/notizen}
+	\include{plugins/omnivore}
+	\include{plugins/icpc}
+	\include{plugins/trustx}
+	\include{plugins/privatnotizen}
+	\include{plugins/tessinercode}
+	\include{plugins/bildanzeige}
+	\include{plugins/email}
+	\include{plugins/aerztekasseimporter}
+	\include{plugins/befunde}
+	\include{plugins/arzttarife}
+	\include{plugins/artikel}
+	
+\chapter{Das Textsystem}
+	\include{text/einleitung}
+	\include{text/vorlagen}
+	\include{text/datenfelder}
+
+
+\chapter{Mehrmandantenbetrieb}
+	\include{multiuser}
+	
+\part{Mitmachen}
+\include{mitmachen}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Anhänge}
+\appendix
+
+\chapter{Systemvoraussetzungen}
+	\include{appendix/voraussetzungen}
+\chapter{Demo in Vollprogramm umwandeln}
+	\include{appendix/vollversion}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%\include{installs/serverinst}
+	%\include{installs/windowsinst}
+	%\include{installs/linuxinst}
+	%\include{installs/macinst}
+	%\include{installs/dbanbindung}
+	%\label{installs/server}
+	%\include{installs/server}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Zusatzplugins}
+    \include{appendix/extplugins}
+\chapter{Überlegungen zur Datensicherheit}	
+	\include{appendix/sicherheit}
+
+\chapter{Index}
+\printindex
+\end{document}
