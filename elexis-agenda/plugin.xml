@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="ch.elexis.views.TagesView"
+            icon="icons/calendar.png"
+            id="ch.elexis.agenda.tagesview"
+            name="Agenda"/>
+      <view
+            class="ch.elexis.views.AgendaGross"
+            id="ch.elexis.agenda.largeview"
+            name="Agenda gross"/>
+   </extension>
+      <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.preferences.AgendaDefinitionen"
+            id="ch.elexis.Agendaprefs"
+            name="Agenda"/>
+      <page
+            category="ch.elexis.preferences.UserPreferences"
+            class="ch.elexis.preferences.AgendaFarben"
+            id="ch.Agendapref.colors"
+            name="%Farben"/>
+      <page
+            category="ch.elexis.preferences.UserPreferences"
+            class="ch.elexis.preferences.AgendaImages"
+            id="elexis-agenda.imageprefs"
+            name="Agenda-Icons"/>
+      <page
+            category="ch.elexis.Agendaprefs"
+            class="ch.elexis.preferences.Zeitvorgaben"
+            id="ch.agendaprefs.zeiten"
+            name="%Zeitvorgaben"/>
+      <page
+            category="ch.elexis.Agendaprefs"
+            class="ch.elexis.preferences.Tageseinteilung"
+            id="ch.elexis.agenda.tageseinteilung"
+            name="%Tageseinteilung"/>
+      </extension>
+      <extension
+         point="ch.elexis.FremdDatenImport">
+      <importer
+            Class="ch.elexis.data.Import_Agenda"
+            name="JavaAgenda - Importer"/>
+   	</extension>
+      <extension
+            point="ch.elexis.ACLContribution">
+         <ACLContribution
+               ACLContributor="ch.elexis.agenda.acl.ACLContributor"
+               name="elexis-agenda.ACLContribution"/>
+      </extension>
+   
+
+</plugin>

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Agenda Plugin für Elexis
+Bundle-SymbolicName: ch.elexis.agenda;singleton:=true
+Bundle-Version: 0.3.3
+Bundle-Vendor: elexis.ch
+Bundle-Activator: ch.elexis.actions.Activator
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ org.eclipse.core.jobs,
+ org.eclipse.jface,
+ org.eclipse.swt,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms
+Eclipse-LazyStart: true

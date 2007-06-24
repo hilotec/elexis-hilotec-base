@@ -1,0 +1,35 @@
+/*******************************************************************************
+ * Copyright (c) 2006, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: PreferenceConstants.java 926 2006-09-14 11:00:42Z rgw_ch $
+ *******************************************************************************/
+
+package ch.elexis.preferences;
+
+public class PreferenceConstants {
+	public static final String AG_BEREICHE			= "agenda/bereiche";
+	public static final String AG_TERMINTYPEN		= "agenda/TerminTypen";				
+	public static final String AG_TERMINSTATUS		= "agenda/TerminStatus";
+	public static final String AG_SHOWDELETED		= "agenda/zeige_geloeschte";
+	//public static final String AG_USERS				= "agenda/anwender";
+	public static final String AG_TYPCOLOR_PREFIX	= "agenda/farben/typ/";
+	public static final String AG_STATCOLOR_PREFIX	= "agenda/farben/status/";
+	public static final String AG_TYPIMAGE_PREFIX	= "agenda/bilder/typ/";
+	public static final String AG_TIMEPREFERENCES	= "agenda/zeitvorgaben";
+	public static final String AG_DAYPREFERENCES	= "agenda/tagesvorgaben";
+	
+	public static final String AG_SYNC_TYPE			= "agenda/sync/db_type";
+	public static final String AG_SYNC_HOST			= "agenda/sync/db_host";
+	public static final String AG_SYNC_CONNECTOR	= "agenda/sync/db_connect";
+	public static final String AG_SYNC_DBUSER		= "agenda/sync/db_user";
+	public static final String AG_SYNC_DBPWD		= "agenda/sync/db_pwd";
+	public static final String AG_SYNC_MAPPING		= "agenda/sync/mapping";
+	public static final String AG_SYNC_ENABLED		= "agenda/sync/enabled";
+}
