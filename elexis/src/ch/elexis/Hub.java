@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2570 2007-06-23 11:09:32Z rgw_ch $
+ *    $Id: Hub.java 2625 2007-06-24 12:07:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -271,7 +271,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2570 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2625 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -317,6 +317,9 @@ public class Hub extends AbstractUIPlugin {
     public static List<Mandant>getMandantenList(){
     	Query<Mandant> qbe=new Query<Mandant>(Mandant.class);
     	return qbe.execute();
+    }
+    public static Shell getActiveShell(){
+    	return plugin.getWorkbench().getActiveWorkbenchWindow().getShell();
     }
     
     /**
