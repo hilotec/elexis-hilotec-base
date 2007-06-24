@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML>
+<!--
+/*******************************************************************************
+ * Copyright (c) 2006, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: package.html 1140 2006-10-21 13:50:39Z rgw_ch $
+ *******************************************************************************/
+-->
+<html xmlns="XHTML">
+	<head>
+		<title>eXChange</title>
+	</head>
+	<body>
+		<h1>eXChange</h1>
+		<p>This package handles the exchange of data between different instances of elexis or
+		other electronic medical record (EMR) systems.</p>
+		<p>Unlike the earlier defined import-interface, we here handle not only import of a specific
+		type of input, but rather a more global view on the collection of data stored in a EMR-System as a
+		whole.</p>
+		<p>For this purpose we define an XML-Schema (eXChange.xsd) which will, in cooperation with the informatics
+			group of SGAM (Schweizerische Gesellschaft für Allgemeinmedizin), contain the minimal set of data required to
+			exchange EMR contents between different EMR installations.
+		</p>
+		<h2>Informal description of the SgamXChange Schema</h2>
+		<p>First we have to decide, what are the topmost entities we deal with. Is the Patient our central element or is it his/her
+			 medical record? Or maybe his/her address? Or do we handle rather "Documents", that can, in turn, relate to patients?</p>
+			<p>For this document, we use the following rules:</p>
+			<p>The work in a medical practice is essentially about: interaction with persons or institutions. We have a different 
+			"deep" knowledge about different enitities. For some, we have a whole medical record, others are only known by name
+			or address. However, they all are "Contacts".</p>
+		<p>And thus, the topmost entity in the SgamXChange Schema is the "contact". contacts may only be defined at the top level
+			of the file, but they can be referenced from deeper levels (see contactref)</p>
+					
+	</body>
+</html>

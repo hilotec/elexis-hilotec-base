@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from EMRSample.xml by XMLBuddy -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="SgamXChange"
+           xmlns="SgamXChange"
+           elementFormDefault="qualified">
+	<xs:element name="XCHANGE">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="contact" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="address">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="city" maxOccurs="1"/>
+				<xs:element ref="country"/>
+				<xs:element ref="phone"/>
+				<xs:element ref="street"/>
+				<xs:element ref="zip"/>
+			</xs:choice>
+			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="allergies">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="allergy" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="allergy">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="confirmed" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="first" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="substance" type="xs:string" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="analyse">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="image" maxOccurs="1"/>
+				<xs:element ref="result" maxOccurs="1"/>
+			</xs:choice>
+			<xs:attribute name="abnormal" type="xs:boolean"/>
+			<xs:attribute name="classification" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="date" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="id" type="xs:NMTOKEN"/>
+			<xs:attribute name="lab" type="xs:integer" use="required"/>
+			<xs:attribute name="normRange" type="xs:NMTOKEN"/>
+			<xs:attribute name="param" type="xs:string" use="required"/>
+			<xs:attribute name="type" type="xs:NMTOKEN"/>
+			<xs:attribute name="unit" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="analyses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="analyse" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="anamnesis">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="episode" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="city" type="xs:string"/>
+	<xs:element name="connection">
+		<xs:complexType>
+			<xs:attribute name="identification" type="xs:string" use="required"/>
+			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="contact">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="address"/>
+				<xs:element ref="connection"/>
+				<xs:element ref="contactref"/>
+				<xs:element ref="medical"/>
+			</xs:choice>
+			<xs:attribute name="birthdate" type="xs:NMTOKEN"/>
+			<xs:attribute name="firstname" type="xs:NMTOKEN"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="lastname" type="xs:NMTOKEN"/>
+			<xs:attribute name="middlename" type="xs:NMTOKEN"/>
+			<xs:attribute name="name" type="xs:string"/>
+			<xs:attribute name="salutation" type="xs:NMTOKEN"/>
+			<xs:attribute name="sex" type="xs:NMTOKEN"/>
+			<xs:attribute name="title" type="xs:NMTOKEN"/>
+			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="contactref">
+		<xs:complexType>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="country" type="xs:string"/>
+	<xs:element name="diagnosis">
+		<xs:complexType>
+			<xs:attribute name="code" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="codesystem" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="summary" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="content" type="xs:NMTOKEN"/>
+			<xs:attribute name="creatorID" type="xs:NMTOKEN"/>
+			<xs:attribute name="creatorName" type="xs:NMTOKEN"/>
+			<xs:attribute name="date" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="dest" type="xs:integer"/>
+			<xs:attribute name="hint" type="xs:string"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="origin" type="xs:integer"/>
+			<xs:attribute name="record" type="xs:NMTOKEN"/>
+			<xs:attribute name="responsible" type="xs:integer"/>
+			<xs:attribute name="title" type="xs:string"/>
+			<xs:attribute name="type" type="xs:string"/>
+			<xs:attribute name="version" type="xs:NMTOKEN"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="documents">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="episode">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="diagnosis" minOccurs="0"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="date" type="xs:NMTOKEN"/>
+			<xs:attribute name="id" type="xs:integer" use="required"/>
+			<xs:attribute name="inactive" type="xs:NMTOKEN"/>
+			<xs:attribute name="title" type="xs:NMTOKEN"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="image">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="content" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="hint" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="id" type="xs:string" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="medical">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="anamnesis"/>
+				<xs:element ref="records"/>
+				<xs:element ref="analyses"/>
+				<xs:element ref="documents"/>
+				<xs:element ref="medications"/>
+				<xs:element ref="allergies"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="medication">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="dosage" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="id" type="xs:integer" use="required"/>
+					<xs:attribute name="last" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="start" type="xs:NMTOKEN" use="required"/>
+					<xs:attribute name="substance" type="xs:string" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="medications">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="medication" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="phone" type="xs:string"/>
+	<xs:element name="record">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="text"/>
+				<xs:element ref="episode" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="author" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="date" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="responsible" type="xs:NMTOKEN"/>
+			<xs:attribute name="responsibleEAN" type="xs:integer"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="records">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="record" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="result" type="xs:string"/>
+	<xs:element name="section">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="street" type="xs:string"/>
+	<xs:element name="summary" type="xs:string"/>
+	<xs:element name="text">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="section"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="zip" type="xs:string"/>
+</xs:schema>

@@ -1,0 +1,514 @@
+#/*******************************************************************************
+# * Copyright (c) 2005-2007, G. Weirich and Elexis
+# * All rights reserved. This program and the accompanying materials
+# * are made available under the terms of the Eclipse Public License v1.0
+# * which accompanies this distribution, and is available at
+# * http://www.eclipse.org/legal/epl-v10.html
+# *
+# * Contributors:
+# *    G. Weirich - initial implementation
+# *    
+# * $Id: createDB.script 2556 2007-06-22 14:36:56Z rgw_ch $
+# *******************************************************************************
+
+# Universelles create-Script für Elexis.
+# Wird von JdbcLink automatisch für mySQL, hsqldb und PostgreSQL angepasst
+# Bei mySQL und PostgreSQL: Database Elexis muss schon existieren, darf aber
+# noch keine Tabellen enthalten.
+# ---------------------------------------------
+
+# Sammeltabelle für alle Kontaktspezifischen Daten
+CREATE TABLE KONTAKT(
+	ID				VARCHAR(25) primary key,
+	istOrganisation	CHAR(1) default '0',
+	istPerson		CHAR(1) default '0',
+	istPatient		CHAR(1)	default '0',
+	istAnwender		CHAR(1) default '0',
+	istMandant	    CHAR(1) default '0',
+	istLabor		CHAR(1)	default '0',
+	Land			CHAR(3),
+	Geburtsdatum	CHAR(8),
+	Geschlecht		CHAR(1),
+	TITEL			VARCHAR(20),
+	Bezeichnung1	VARCHAR(80),
+	Bezeichnung2	VARCHAR(80),
+	Bezeichnung3	VARCHAR(80),
+	Strasse			VARCHAR(40),
+	Plz				VARCHAR(6),
+	Ort				VARCHAR(40),
+	Telefon1		VARCHAR(20),
+	Telefon2		VARCHAR(20),
+	Fax				VARCHAR(20),
+	NatelNr			VARCHAR(20),
+	EMail			VARCHAR(30),
+	Website			VARCHAR(40),
+	Gruppe			VARCHAR(10),
+	PatientNr		VARCHAR(10),
+	Anschrift		TEXT,
+	Bemerkung		TEXT,
+	Diagnosen		BLOB,
+	PersAnamnese	BLOB,
+	SysAnamnese		BLOB,
+	FamAnamnese	    BLOB,
+	Risiken			TEXT,
+	Allergien		TEXT,
+	ExtInfo			BLOB
+);
+
+CREATE INDEX k0 ON KONTAKT(Bezeichnung1);
+
+
+# Verbindung von Kontakten zu Adressbezügen mit einem
+# BezugsTEXT
+CREATE TABLE KONTAKT_ADRESS_JOINT(
+	ID			VARCHAR(25) primary key,
+	myID		VARCHAR(25),
+	otherID		VARCHAR(25),
+	Bezug		VARCHAR(30)
+);
+
+CREATE INDEX aij1 on KONTAKT_ADRESS_JOINT (myId);
+
+# Ein Fall ist eine benannte Serie von Behandlungen, welche demselben
+# Patienten und demselben Garanten zugeordnet werden. (Aber nicht
+# notwendigerweise demselben Mandanten)
+CREATE TABLE FAELLE(
+	ID				VARCHAR(25) primary key,
+	PatientID		VARCHAR(25),
+	GarantID		VARCHAR(25),
+	KostentrID		VARCHAR(25),
+	VersNummer		VARCHAR(25),
+	FallNummer		VARCHAR(25),
+	BetriebsNummer	VARCHAR(25),
+	Diagnosen		VARCHAR(25),
+	DatumVon		CHAR(8),
+	DatumBis		CHAR(8),
+	Bezeichnung		VARCHAR(20),
+	Grund			VARCHAR(20),
+	Gesetz			VARCHAR(10),
+	Status			VARCHAR(80),
+	ExtInfo			BLOB
+);
+
+CREATE INDEX i3 on FAELLE (PatientID);
+
+# Eine Behandlung ist ein einzelner Mandant/Patient - Kontakt
+CREATE TABLE BEHANDLUNGEN(
+	ID				VARCHAR(25) primary key,
+	FallID			VARCHAR(25),
+	MandantID		VARCHAR(25),
+	RechnungsID		VARCHAR(25),
+	Datum			CHAR(8),
+	Diagnosen		VARCHAR(25),
+	Leistungen		VARCHAR(25),
+	Eintrag			BLOB
+);
+
+CREATE INDEX i4 on BEHANDLUNGEN (FallID);
+
+CREATE TABLE ARTIKEL(
+	ID				VARCHAR(25) primary key,
+	SubID			VARCHAR(20),
+	LieferantID		VARCHAR(25),
+	Klasse			VARCHAR(80),
+	Name			VARCHAR(80),
+	Name_intern		VARCHAR(80),
+	Maxbestand		CHAR(4),
+	Minbestand		CHAR(4),
+	Istbestand		CHAR(4),
+	EK_Preis		CHAR(6),
+	VK_Preis		CHAR(6),
+	Typ				VARCHAR(15),
+	Codeclass		CHAR(5),
+	ExtID			VARCHAR(25),
+	ExtInfo			BLOB
+);
+
+CREATE INDEX i5 on ARTIKEL (Name);
+CREATE INDEX art1 on ARTIKEL (SubID);
+CREATE INDEX art2 on ARTIKEL (Typ);
+CREATE INDEX art3 on ARTIKEL (Codeclass);
+
+
+CREATE TABLE PATIENT_ARTIKEL_JOINT(
+	ID				VARCHAR(25) primary key,
+	PatientID		VARCHAR(25),
+	ArtikelID		VARCHAR(25),
+	RezeptID		VARCHAR(25),
+	DateFrom		CHAR(8),
+	DateUntil		CHAR(8),
+	Dosis			VARCHAR(10),
+	Anzahl			CHAR(3),
+	Bemerkung		VARCHAR(80),
+	ExtInfo			BLOB
+);
+
+CREATE INDEX paj1 on PATIENT_ARTIKEL_JOINT(PATIENTID);
+CREATE INDEX PAJ2 on PATIENT_ARTIKEL_JOINT(REZEPTID);
+
+CREATE TABLE PATIENT_GARANT_JOINT(
+	PatientID		VARCHAR(25) primary key,
+	GarantID		VARCHAR(25),
+	VersTyp			VARCHAR(10)
+);
+
+# Das Konto ist eine Liste sämtlicher Forderungen und Zahlungen
+# Somit lässt sich für jeden Patienten über alle bisherigen
+# Rechnungen eine übergreifende Bilanz erstellen und verrechnen.
+CREATE TABLE KONTO(
+	ID				VARCHAR(25) primary key,
+	PatientID		VARCHAR(25),
+	RechnungsID		VARCHAR(25),
+	ZahlungsID		VARCHAR(25),
+	Betrag			CHAR(8),
+	Datum			CHAR(8),
+	Bemerkung		VARCHAR(80)
+);
+
+CREATE INDEX konto1 on KONTO (Datum);
+CREATE INDEX konto2 on KONTO (PatientID);
+
+# Eine Leistung ist eine einzelne Verrechnungsposition
+CREATE TABLE LEISTUNGEN(
+	ID				VARCHAR(25) primary key,
+	BEHANDLUNG		VARCHAR(25),
+	LEISTG_TXT		VARCHAR(255),
+	LEISTG_CODE		VARCHAR(25),
+	KLASSE			VARCHAR(80),
+	ZAHL			CHAR(3),
+	EK_KOSTEN		CHAR(6),
+	VK_TP			CHAR(6),
+	VK_SCALE		CHAR(6),
+	VK_PREIS		CHAR(6),
+	SCALE			CHAR(4) DEFAULT '100',
+	DETAIL			BLOB
+);
+
+CREATE INDEX lst1 on LEISTUNGEN(BEHANDLUNG);
+CREATE INDEX lst2 on LEISTUNGEN(KlASSE,LEISTG_CODE);
+
+# Ein Leistungsblock ist eine benannte Kombination beliebig vieler Leistungen
+CREATE TABLE LEISTUNGSBLOCK(
+	ID				VARCHAR(25) primary key,
+	MandantID		VARCHAR(25),
+	Name			VARCHAR(30),
+	Leistungen		BLOB
+);
+
+CREATE INDEX block1 on LEISTUNGSBLOCK(Name);
+CREATE INDEX block2 on LEISTUNGSBLOCK(MandantID);
+
+
+CREATE TABLE EK_PREISE(
+	TYP				VARCHAR(80),
+	ID				VARCHAR(25),
+	DATUM_VON		CHAR(8),
+	DATUM_BIS		CHAR(8),
+	MULTIPLIKATOR	CHAR(4)
+);
+
+CREATE INDEX ekp1 ON EK_PREISE (TYP);
+CREATE INDEX ekp2 ON EK_PREISE (DATUM_VON);
+
+CREATE TABLE VK_PREISE(
+	TYP				VARCHAR(80),
+	ID				VARCHAR(25),
+	DATUM_VON		CHAR(8),
+	DATUM_BIS		CHAR(8),
+	MULTIPLIKATOR	CHAR(4)
+);
+
+CREATE INDEX vkp1 on VK_PREISE (TYP);
+CREATE INDEX vkp2 on VK_PREISE (DATUM_VON);
+
+
+CREATE TABLE DIAGNOSEN(
+	ID				VARCHAR(25) primary key,
+	DG_TXT			VARCHAR(255),
+	DG_CODE			VARCHAR(25),
+	KLASSE			VARCHAR(80)
+);
+
+CREATE INDEX dg1 on DIAGNOSEN (KLASSE,DG_CODE);
+
+CREATE TABLE BEHDL_DG_JOINT(
+	ID				VARCHAR(25) primary key,
+	BehandlungsID	VARCHAR(25),
+	DiagnoseID		VARCHAR(25)
+);
+
+CREATE INDEX bdg1 on BEHDL_DG_JOINT (BehandlungsID);
+
+# Verschiedene Konfigurationsdaten
+CREATE TABLE CONFIG(
+	param			VARCHAR(80) primary key,
+	wert			TEXT
+);
+
+# Briefe werden nicht in der Datenbank selbst gespeichert.
+# Hier befinden sich nur Verweise und Metainformationen zu
+# den eigentlichen Briefen.
+CREATE TABLE BRIEFE(
+	ID				VARCHAR(25) primary key,
+	Betreff			VARCHAR(80),
+	Datum			CHAR(8),
+	modifiziert		CHAR(8),
+	gedruckt		CHAR(8),
+	geloescht		CHAR(2),
+	AbsenderID		VARCHAR(25),
+	DestID			VARCHAR(25),
+	BehandlungsID	VARCHAR(25),
+	PatientID		VARCHAR(25),
+	Typ				VARCHAR(30),
+	MimeType		VARCHAR(80),
+	Path			TEXT
+);
+
+CREATE INDEX i8 on BRIEFE (BehandlungsID);
+
+CREATE TABLE RECHNUNGEN(
+	ID				VARCHAR(25) primary key,
+	RnNummer		VARCHAR(8),
+	FallID			VARCHAR(25),
+	MandantID		VARCHAR(25),
+	RnDatum			CHAR(8),
+	RnStatus		VARCHAR(20),
+	RnDatumVon	    CHAR(8),
+	RnDatumBis		CHAR(8),
+	Betrag			CHAR(8),
+	StatusDatum		CHAR(8),
+	ExtInfo			BLOB
+);
+
+CREATE INDEX Rn1 on RECHNUNGEN (FallID);
+CREATE INDEX Rn2 on RECHNUNGEN (MandantID);
+CREATE INDEX Rn3 ON RECHNUNGEN (RnStatus);
+CREATE INDEX Rn4 ON RECHNUNGEN (RnDatumVon);
+CREATE INDEX Rn5 ON RECHNUNGEN (RnDatumBis);
+
+CREATE TABLE ZAHLUNGEN(
+	ID				VARCHAR(25) primary key,
+	RechnungsID		VARCHAR(25),
+	Betrag			CHAR(8),
+	Datum			CHAR(8),
+	Bemerkung		VARCHAR(80)
+);
+
+CREATE INDEX zahl1 on ZAHLUNGEN(RechnungsID);
+
+
+CREATE TABLE TARMED(
+	ID				VARCHAR(14),
+	Parent			VARCHAR(14),
+	DigniQuanti		CHAR(5),
+	DigniQuali		CHAR(4),
+	Sparte			CHAR(4),
+	GueltigVon		CHAR(8),
+	GueltigBis		CHAR(8),
+	Nickname		VARCHAR(25),
+	tx255			VARCHAR(255)
+	
+);
+
+CREATE INDEX tarmed_id on TARMED(ID);
+CREATE INDEX tarmed2 on TARMED (Parent);
+
+CREATE TABLE TARMED_DEFINITIONEN(
+	Spalte			VARCHAR(20),
+	Kuerzel			VARCHAR(5),
+	titel   		VARCHAR(255)
+);
+
+CREATE INDEX tarmed3 on TARMED_DEFINITIONEN (Spalte);
+
+CREATE TABLE TARMED_EXTENSION(
+	Code			VARCHAR(14),
+	limits			BLOB,
+	med_interpret	TEXT,
+	tech_interpret	TEXT
+);
+
+CREATE INDEX tarmed4 on TARMED_EXTENSION (Code);
+
+CREATE TABLE TARMED_DATEN(
+	Parameter		VARCHAR(80),
+	DatumVon		CHAR(8),
+	DatumBis		CHAR(8),
+	Wert			VARCHAR(10)
+);
+
+CREATE INDEX tarmed5 on TARMED_DATEN (Parameter);
+
+
+CREATE TABLE PLZ(
+	ID				VARCHAR(25) primary key,
+	Plz				VARCHAR(6),
+	Ort				VARCHAR(20),
+	Kanton			VARCHAR(2)
+);
+
+CREATE INDEX plz0 on PLZ (Plz);
+CREATE INDEX plz1 on PLZ (Ort);
+
+CREATE TABLE REMINDERS(
+	ID				VARCHAR(25) primary key,
+	IdentID			VARCHAR(25),
+	OriginID		VARCHAR(25),
+	Responsible  	VARCHAR(25),
+	DateDue			CHAR(8),
+	Status			VARCHAR(1),
+	Typ				VARCHAR(1),
+	Params			TEXT,
+	Message			TEXT
+);
+
+CREATE TABLE REMINDERS_RESPONSIBLE_LINK(
+	ID				VARCHAR(25) primary key,
+	ReminderID		VARCHAR(25),
+	ResponsibleID	VARCHAR(25)
+);
+
+CREATE INDEX rrl1 on REMINDERS_RESPONSIBLE_LINK (ReminderID);
+CREATE INDEX rrl2 on REMINDERS_RESPONSIBLE_LINK (ResponsibleID);
+
+CREATE INDEX rem1 on REMINDERS (IdentID);
+CREATE INDEX rem2 on REMINDERS (DateDue);
+CREATE INDEX rem3 ON REMINDERS (Responsible);
+
+
+# Die Trace-Table kann (wenn Trace eingeschaltet wurde) jeden Schreibzugriff
+# auf die Datenbank protokollieren, und zwar mit Zeit, Datum, Arbeitsstation 
+# und dort angemeldetem Benutzer. so können Fehlbedienungen besser erfasst und
+# korrigiert werden.
+CREATE TABLE TRACES(
+	logtime			BIGINT,
+	Workstation		VARCHAR(30),
+	Username		VARCHAR(30),
+	action			TEXT
+);
+
+CREATE INDEX trace1 on TRACES(logtime);
+CREATE INDEX trace2 on TRACES(Username);
+
+# Das Schwarze Brett der Praxis
+CREATE TABLE BBS(
+	ID			VARCHAR(25) primary key,
+	reference	VARCHAR(25),
+	topic		VARCHAR(80),
+	date		CHAR(8),
+	time		CHAR(4),
+	authorID	VARCHAR(25),
+	message		TEXT
+);
+
+CREATE INDEX bbs1 on BBS (reference);
+
+# Ein Laboritem ist ein möglicher Laborbefund. Jedes
+# Laboritem hat ein Labor, von dem es gemacht wird
+# und den von diesem Labor stammenden Referenzbereich
+# Typ des Werts ist entweder numerisch(0), TEXT (1) oder pos/neg (2)
+# Ausserdem gehört jedes Laboritem zu einer Gruppe (unter der es im Laborblatt
+# aufgelistet wird, und eine Priorität mit der es innerhalb dieser Gruppe
+# gelistet ist.
+
+CREATE TABLE LABORITEMS(
+	ID			VARCHAR(25) primary key,
+	kuerzel		VARCHAR(80),
+	titel		VARCHAR(80),
+	laborID		VARCHAR(25),
+	RefMann		VARCHAR(80),
+	RefFrauOrTx TEXT,
+	Einheit		VARCHAR(10),
+	typ			CHAR(1),
+	Gruppe		VARCHAR(25),
+	prio		CHAR(3)
+);
+	
+CREATE INDEX labit1 on LABORITEMS(kuerzel);
+CREATE INDEX labit2 on LABORITEMS(laborID);
+
+# Laborwerte sind zuordnungen von Laboritems zu Datum und Patient
+# mit dem entsprechenden Resultat.
+
+CREATE TABLE LABORWERTE(
+	ID			VARCHAR(25) primary key,
+	PatientID	VARCHAR(25),
+	datum		CHAR(8),
+	ItemID		VARCHAR(25),
+	Resultat	VARCHAR(80),
+	Flags		VARCHAR(10),
+	Kommentar	TEXT
+);
+
+CREATE INDEX labor1 on LABORWERTE (PatientID);
+CREATE INDEX labor2 on LABORWERTE (datum);
+CREATE INDEX labor3 on LABORWERTE (ItemID);
+
+CREATE TABLE LABGROUPS(
+   ID VARCHAR(25) primary key,
+   name VARCHAR(30)
+); 
+
+CREATE TABLE LABGROUP_ITEM_JOINT(
+     GroupID        VARCHAR(25),
+     ItemID         VARCHAR(25),
+     Comment        TEXT
+); 
+
+
+CREATE TABLE REZEPTE(
+	ID			VARCHAR(25) primary key,
+	PatientID	VARCHAR(25),
+	MandantID	VARCHAR(25),
+	BriefID		VARCHAR(25),
+	datum		CHAR(8),
+	RpTxt		TEXT,
+	RpZusatz	VARCHAR(80)
+);	
+
+CREATE INDEX rp1 on REZEPTE(PatientID);
+
+# Tabelle zum Speichern von benannten BLOB's verschiedener Herkunft
+CREATE TABLE HEAP(
+	ID			VARCHAR(80) primary key,
+	inhalt		BLOB,
+	datum		CHAR(8)
+);
+
+CREATE TABLE AUF(
+	ID			VARCHAR(25) primary key,
+	PatientID	VARCHAR(25),
+	FallID		VARCHAR(25),
+	BriefID		VARCHAR(25),
+	Prozent		CHAR(3),
+	DatumVon	CHAR(8),
+	DatumBis	CHAR(8),
+	Grund		VARCHAR(10),
+	AUFZusatz	VARCHAR(80)
+);
+	
+CREATE INDEX AUF1 on AUF(PatientID);
+
+CREATE TABLE EIGENLEISTUNGEN(
+	ID			VARCHAR(25) primary key,
+	Code		VARCHAR(20),
+	Bezeichnung VARCHAR(80),
+	EK_PREIS	CHAR(6),
+	VK_PREIS	CHAR(6),
+	ZEIT		CHAR(4)
+);
+
+CREATE TABLE HEAP2(
+	ID		    VARCHAR(50) primary key,
+	Contents	BLOB
+);
+
+CREATE TABLE USERCONFIG(
+	UserID		VARCHAR(25),
+	Param		VARCHAR(80),
+	Value		TEXT
+);
+CREATE INDEX UCFG ON USERCONFIG(Param);
+CREATE INDEX UCFG2 ON USERCONFIG(UserID);
+
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.5.0');

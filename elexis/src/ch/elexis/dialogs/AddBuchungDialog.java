@@ -1,0 +1,82 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: AddBuchungDialog.java 1662 2007-01-25 14:25:24Z rgw_ch $
+ *******************************************************************************/
+package ch.elexis.dialogs;
+
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
+import ch.elexis.Desk;
+import ch.elexis.data.AccountTransaction;
+import ch.elexis.data.Patient;
+import ch.elexis.util.Money;
+import ch.elexis.util.SWTHelper;
+
+/**
+ * Eine Buchung zu einem Patientenkonto zufügen
+ * @author gerry
+ *
+ */
+public class AddBuchungDialog extends TitleAreaDialog {
+
+	Text betrag,text;
+	int result;
+	Patient pat;
+	
+	public AddBuchungDialog(Shell parentShell, Patient p) {
+		super(parentShell);
+		pat=p;
+	}
+
+	@Override
+	protected Control createDialogArea(Composite parent) {
+		Composite ret=new Composite(parent,SWT.NONE);
+		ret.setLayout(new GridLayout());
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		new Label(ret,SWT.NONE).setText(Messages.getString("AddBuchungDialog.amountAs000")); //$NON-NLS-1$
+		betrag=new Text(ret,SWT.BORDER);
+		betrag.setLayoutData(new GridData(GridData.FILL,GridData.FILL,false,false));
+		new Label(ret,SWT.NONE).setText(Messages.getString("AddBuchungDialog.textForBooking")); //$NON-NLS-1$
+		text=SWTHelper.createText(ret, 4, SWT.NONE);
+		return ret;
+	}
+
+	@Override
+	public void create() {
+		super.create();
+		setTitle(Messages.getString("AddBuchungDialog.enterBooking")); //$NON-NLS-1$
+		setMessage(Messages.getString("AddBuchungDialog.dontManual")); //$NON-NLS-1$
+		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		getShell().setText(Messages.getString("AddBuchungDialog.manual")); //$NON-NLS-1$
+	}
+
+	@Override
+	protected void okPressed() {
+		try{
+			Money mBetrag=new Money	(betrag);
+			new AccountTransaction(pat,null,mBetrag,null,text.getText());
+		}catch(Exception ex){
+			SWTHelper.showError("Fehler bei Betrageingabe", "Kann den eingegebenen Betrag nicht interpretieren");
+		}
+		super.okPressed();
+	}
+
+	
+
+}

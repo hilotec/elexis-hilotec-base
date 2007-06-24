@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id: build.xml 1196 2006-10-30 15:50:21Z rgw_ch $
+
+-->
+<project name="elexis-basis" default="all">
+	<property name="elexis_src" value="${source}/elexis/"/>
+	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
+	<property name="elexis_feature"
+		value="${dist}/features/ch.elexis_${version}"/>
+	<!-- Pfade für -classpath des Java-compilers festlegen -->
+	<path id="eclipseclasses">
+		<fileset dir="${dist}/plugins">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${elexis_plugin}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="checkout" unless="unplugged">
+		<exec executable="svn" dir="${elexis_src}">
+			<arg line="update"/>
+		</exec>
+	</target>
+	
+	<target name="all">
+		<mkdir dir="${elexis_plugin}/bin"/>
+		<mkdir dir="${elexis_feature}"/>
+		<!-- Plugindateien, icons und Hilfeseiten kopieren -->
+		<copy todir="${elexis_plugin}">
+			<fileset dir="${elexis_src}">
+				<include name="*.jar"/>
+				<include name="*.xml"/>
+				<include name="*.bmp"/>
+				<include name="*.properties"/>
+				<include name="rsc/*.*"/>
+				<include name="rsc/demodata/*.*"/>
+				<include name="html/**/*.*"/>
+				<include name="META-INF/MANIFEST.MF"/>
+				<include name="meta-inf/manifest.mf"/>
+				<include name="schema/*.*"/>
+				<include name="bin/**/*.script"/>
+				<include name="bin/**/*.properties"/>
+			</fileset>
+		</copy>
+		<copy todir="${elexis_plugin}/bin">
+			<fileset dir="${elexis_src}/src" includes="**/*.script"/>
+			<fileset dir="${elexis_src}/src" includes="**/*.properties"/>
+		</copy>
+		<copy todir="${elexis_feature}">
+			<fileset dir="${source}/elexis basic feature">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		<tstamp/>
+	     <copy overwrite="yes" file="${elexis_src}/rsc/compiletime.txt" todir="${elexis_plugin}/rsc">
+	       <filterset>
+	         <filter token="TODAY" value="${DSTAMP}${TSTAMP}"/>
+	       </filterset>
+	     </copy> 
+		
+		<javac srcdir="${elexis_src}" destdir="${elexis_plugin}/bin"
+			classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="1.5"
+			encoding="UTF-8"/>
+		<zip basedir="${elexis_plugin}" destfile="${updatefiles}/ch.elexis_${version}.${DSTAMP}.zip"/>
+	</target>
+</project>

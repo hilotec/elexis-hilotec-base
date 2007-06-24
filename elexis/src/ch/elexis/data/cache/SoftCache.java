@@ -1,0 +1,130 @@
+/*******************************************************************************
+ * Copyright (c) 2006, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *    $Id: SoftCache.java 1483 2006-12-28 15:42:16Z rgw_ch $
+ *******************************************************************************/
+
+package ch.elexis.data.cache;
+
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
+
+import ch.elexis.util.Log;
+
+/**
+ * A Cache with soft references and optional expiring items
+ * The cache keeps count on numbes of items that are added, removed or expired and
+ * can display its statistic
+ * @author Gerry
+ */
+@SuppressWarnings("unchecked")
+public class SoftCache<K> {
+	protected HashMap<K,CacheEntry> cache;
+	protected long hits,misses,removed,inserts,expired;
+	protected Log log=Log.get("SoftCache");
+	
+	public SoftCache(){
+		cache=new HashMap<K,CacheEntry>();
+	}
+	public SoftCache(int num,float load){
+		cache=new HashMap<K,CacheEntry>(num,load);
+	}
+	public SoftCache(int num){
+		cache=new HashMap<K,CacheEntry>(num);
+	}
+	
+	
+	/**
+	 * Insert an Object that will stay until it is manually removed, or memory gets low, or
+	 * at most for ICacheable#getCacheTime seconds
+	 */
+	public void put(K key, Object object, int timeToCacheInSeconds){
+		cache.put(key, new CacheEntry(object,timeToCacheInSeconds));
+		inserts++;
+	}
+	
+	
+	
+	/**
+	 * retrieve a previously inserted object
+	 * @return the object or null, if the object was expired or removed bei the garbage collector.
+	 */
+	public Object get(K key){
+		CacheEntry ref= cache.get(key);
+		if(ref==null){
+			misses++;
+			return null;
+		}
+		Object ret=ref.get();
+		if(ret==null){
+			remove(key);
+			return null;
+		}else{
+			hits++;
+			return ret;
+		}
+	}
+	
+	public void remove(K key){
+		cache.remove(key);
+		removed++;
+	}
+	
+	public void clear(){
+		purge();
+		cache.clear();
+	}
+	/**
+	 * write statistics to log
+	 */
+	public void stat(){
+		long total=hits+misses+removed+expired;
+		if(total!=0){
+			StringBuilder sb=new StringBuilder();
+			sb.append("--------- cache statistics ------\n")
+				.append("Total read:\t").append(total).append("\n")
+				.append("cache hits:\t").append(hits).append(" (").append(hits*100/total).append("%)\n")
+				.append("object expired:\t").append(expired).append(" (").append(expired*100/total).append("%)\n")
+				.append("cache missed:\t").append(misses).append(" (").append(misses*100/total).append("%)\n")
+				.append("object removed:\t").append(removed).append(" (").append(removed*100/total).append("%)\n")
+				.append("Object inserts:\t").append(inserts).append("\n");
+			log.log(sb.toString(), Log.INFOS);
+		}
+		
+	}
+	
+	/**
+	 * Remove all expired Objects (without removing the SoftReferences, to avoid
+	 * ConcurrentModificationExceptions)
+	 *
+	 */
+	public void purge(){
+		for(CacheEntry s:cache.values()){
+			s.get();
+		}
+	}
+	public class CacheEntry extends SoftReference{
+		long expires;
+		public CacheEntry(Object obj, int timeInSeconds){
+			super(obj);
+			expires=System.currentTimeMillis()+timeInSeconds*1000;
+		}
+		public Object get(){
+			Object ret=super.get();
+			if(System.currentTimeMillis()>expires){
+				expired++;
+				super.clear();
+				ret=null;
+			}
+			return ret;
+		}
+	}
+	 
+}
