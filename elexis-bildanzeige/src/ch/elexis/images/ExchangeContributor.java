@@ -14,8 +14,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.Container;
 import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.XChangeExporter;
-import ch.elexis.exchange.XChangeImporter;
 import ch.elexis.text.Samdas;
 import ch.elexis.text.Samdas.Record;
 import ch.elexis.text.Samdas.XRef;
@@ -23,7 +21,7 @@ import ch.rgw.tools.ExHandler;
 
 public class ExchangeContributor implements IExchangeContributor {
 
-	public void exportHook(XChangeExporter container, Element exporting, PersistentObject object) {
+	public void exportHook(XChangeContainer container, Element exporting, PersistentObject object) {
 		if(object instanceof Konsultation){
 			Konsultation k=(Konsultation)object;
 			Samdas smd=new Samdas(k.getEintrag().getHead());
@@ -54,7 +52,8 @@ public class ExchangeContributor implements IExchangeContributor {
 		
 	}
 
-	public void importHook(XChangeImporter container, Element importing, PersistentObject dest) {
+	@SuppressWarnings("unchecked")
+	public void importHook(XChangeContainer container, Element importing, PersistentObject dest) {
 		if(dest instanceof Konsultation){
 			Konsultation k=(Konsultation)dest;
 			List<Element> xrefs=importing.getChildren("xref", Container.ns);
