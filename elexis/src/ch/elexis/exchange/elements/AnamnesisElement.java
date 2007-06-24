@@ -131,7 +131,21 @@ public class AnamnesisElement extends XChangeElement{
 	}
 	
 	public String toString(){
-		return "";
+		StringBuilder ret=new StringBuilder();
+		List<EpisodeElement> episodes=getEpisodes();
+		for(EpisodeElement episode:episodes){
+			ret.append(episode.getDiagnosis()).append(": ")
+				.append(new TimeTool(episode.getBeginDate()).toString(TimeTool.DATE_GER));
+			String end=episode.getEndDate();
+			if(end.equals("")){
+				ret.append(": offen.");
+			}else{
+				ret.append("-").append(new TimeTool(end).toString(TimeTool.DATE_GER));
+			}
+			ret.append("\n").append(episode.getText()).append("\n");
+		}
+		
+		return ret.toString();
 	}
 	/*
 	public Result<Element> create(Patient p){

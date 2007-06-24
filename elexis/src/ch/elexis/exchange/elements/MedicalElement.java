@@ -180,4 +180,10 @@ public class MedicalElement extends XChangeElement{
 				
 	}
 
+	public String toString(){
+		StringBuilder ret=new StringBuilder();
+		ret.append(getAnamnesis().toString());
+		
+		return ret.toString();
+	}
 }

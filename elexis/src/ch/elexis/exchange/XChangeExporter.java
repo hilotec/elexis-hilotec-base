@@ -8,16 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeExporter.java 2627 2007-06-24 14:23:27Z rgw_ch $
+ *  $Id: XChangeExporter.java 2629 2007-06-24 16:31:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
 import java.util.List;
 
-import ch.elexis.exchange.elements.AddressElement;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.MedicalElement;
-import ch.rgw.tools.TimeTool;
 
 
 /**
@@ -38,29 +36,12 @@ public abstract class XChangeExporter extends XChangeContainer implements IDataS
 		for(ContactElement contact:contacts){
 			MedicalElement me=contact.getMedical();
 			if(me!=null){
-				String patientData=writeContact(contact);
+				sb.append(contact.toString());
 			}
 		}
-		
 		return sb.toString();
 	}
 	
-	private String writeContact(ContactElement c){
-		StringBuilder sb=new StringBuilder();
-		sb.append("Name\t\t").append(c.getAttr("lastname")).append("\n");
-		sb.append("Vorname(n)\t\t").append(c.getAttr("firstname"));
-		String middle=c.getAttr("middlename");
-		if(middle.length()>0){
-			sb.append(" ").append(middle);
-		}
-		sb.append("\nGeburtsdatum\t\t");
-		TimeTool geb=new TimeTool(c.getAttr("birthdate"));
-		sb.append(geb.toString(TimeTool.DATE_GER)).append("\n");
-		sb.append("PID: ").append(c.getAttr("id")).append("\n\n");
-		List<AddressElement> addresses=c.getAddresses();
-		for(AddressElement adr:addresses){
-			
-		}
-		return sb.toString();
-	}
+	
+		
 }

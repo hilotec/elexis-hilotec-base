@@ -15,9 +15,48 @@ package ch.elexis.exchange.elements;
 
 import org.jdom.Element;
 
-public class EpisodeElement {
-	Element e;
-	public EpisodeElement(Element e){
-		this.e=e;
+import ch.elexis.exchange.XChangeContainer;
+
+public class EpisodeElement extends XChangeElement{
+	
+	public EpisodeElement(XChangeContainer parent, Element el){
+		super(parent,el);
+	}
+	public String getBeginDate(){
+		return getAttr("date");
+	}
+	public String getEndDate(){
+		return getAttr("inactive");
+	}
+	public String getTitle(){
+		return getAttr("title");
+	}
+	public String getText(){
+		Element text=e.getChild("text", XChangeContainer.ns);
+		if(text!=null){
+			return text.getText();
+		}
+		return "";
+	}
+	
+	public String getDiagnosis(){
+		Element dia=e.getChild("diagnosis", XChangeContainer.ns);
+		if(dia!=null){
+			DiagnosisElement de=new DiagnosisElement(parent,dia);
+			String ret=de.getCode()+" ("+de.getCodeSystem()+")";
+			return ret;
+		}
+		return "";
+	}
+	static class DiagnosisElement extends XChangeElement{
+		public DiagnosisElement(XChangeContainer parent, Element el) {
+			super(parent,el);
+		}
+		public String getCodeSystem(){
+			return getAttr("codesystem");
+		}
+		public String getCode(){
+			return getAttr("code");
+		}
 	}
 }

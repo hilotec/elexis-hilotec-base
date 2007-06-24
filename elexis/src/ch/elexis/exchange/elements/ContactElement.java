@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 2623 2007-06-24 11:06:17Z rgw_ch $
+ *  $Id: ContactElement.java 2629 2007-06-24 16:31:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -112,5 +112,29 @@ public class ContactElement extends XChangeElement{
 	public ContactElement(XChangeContainer parent, Patient p){
 		this(parent,(Kontakt)p);
 		add(new MedicalElement(parent,p));
+	}
+	
+	public String toString(){
+		StringBuilder sb=new StringBuilder();
+		sb.append("Name\t\t").append(getAttr("lastname")).append("\n");
+		sb.append("Vorname(n)\t\t").append(getAttr("firstname"));
+		String middle=getAttr("middlename");
+		if(middle.length()>0){
+			sb.append(" ").append(middle);
+		}
+		sb.append("\nGeburtsdatum\t\t");
+		TimeTool geb=new TimeTool(getAttr("birthdate"));
+		sb.append(geb.toString(TimeTool.DATE_GER)).append("\n");
+		sb.append("PID: ").append(getAttr("id")).append("\n\n");
+		List<AddressElement> addresses=getAddresses();
+		for(AddressElement adr:addresses){
+			sb.append(adr.toString()).append("\n");
+		}
+		MedicalElement me=getMedical();
+		if(me!=null){
+			sb.append(me.toString());
+		}
+		return sb.toString();
+	
 	}
 }
