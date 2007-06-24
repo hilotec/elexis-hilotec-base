@@ -11,7 +11,6 @@ import sun.misc.BASE64Decoder;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.exchange.Container;
 import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.Samdas;
@@ -32,7 +31,7 @@ public class ExchangeContributor implements IExchangeContributor {
 					Bild bild=new Bild(xref.getID());
 					byte[] data=bild.getData();
 					if(data!=null && data.length>0){
-						Element eXref=new Element("xref",Container.ns);
+						Element eXref=new Element("xref",XChangeContainer.ns);
 						eXref.setAttribute("id",bild.getId());
 						eXref.setAttribute("type","image/jpeg");
 						eXref.setAttribute("pos",Integer.toString(xref.getPos()));
@@ -56,7 +55,7 @@ public class ExchangeContributor implements IExchangeContributor {
 	public void importHook(XChangeContainer container, Element importing, PersistentObject dest) {
 		if(dest instanceof Konsultation){
 			Konsultation k=(Konsultation)dest;
-			List<Element> xrefs=importing.getChildren("xref", Container.ns);
+			List<Element> xrefs=importing.getChildren("xref", XChangeContainer.ns);
 			Samdas smd=new Samdas(k.getEintrag().getHead());
 			if(xrefs!=null){
 				for(Element e:xrefs){
