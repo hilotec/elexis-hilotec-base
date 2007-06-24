@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis"
+      label="elexis basic feature"
+      version="0.3.3"
+      provider-name="elexis.ch"
+      plugin="ch.elexis">
+
+   <description>
+      Elexis Praxisprogramm Beta
+   </description>
+
+   <copyright>
+      (c)2006-2007 by G. Weirich and Elexis
+   </copyright>
+
+   <license>
+      Veröffentlicht unter der eclipse common public license
+   </license>
+
+   <url>
+      <update label="Elexis Update Site" url="http://www.elexis.ch/update"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.apache.lucene"/>
+      <import plugin="org.eclipse.help.appserver"/>
+      <import plugin="org.eclipse.help.base"/>
+      <import plugin="org.eclipse.help.ui"/>
+      <import plugin="org.eclipse.help.webapp"/>
+      <import plugin="org.eclipse.tomcat"/>
+      <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.core.jobs"/>
+   </requires>
+
+   <plugin
+         id="ch.elexis"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"/>
+
+   <plugin
+         id="ch.elexis.arzttarife_ch"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.artikel_ch"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.diagnosecodes_ch"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.laborimport_krech"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.rgw.OOWrapper"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"/>
+
+   <plugin
+         id="ch.elexis.befunde"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.jdomwrapper"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"/>
+
+   <plugin
+         id="ch.elexis.ebanking_ch"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.agenda"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.AerztekasseImport"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.elexis_help"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"/>
+
+   <plugin
+         id="ch.elexis.externe_dokumente"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="org.iatrix"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.bildanzeige"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.icpc"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.mail"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.privatnotizen"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.omnivore"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.sgam.xchange"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.buchhaltung.basis"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.laborimport_risch"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.Textplugin"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.laborimport_viollier"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.import.vitodata"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.notes"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.importer.div"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.importer.praxisdesktop"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.noatext"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.update_tool"
+         download-size="0"
+         install-size="0"
+         version="0.3.3"
+         unpack="false"/>
+
+</feature>
