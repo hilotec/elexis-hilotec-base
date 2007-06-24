@@ -1,0 +1,5 @@
+eclipse=d:/dev/eclipse
+source=\\\\lxgerry\\gerry\\workspace
+makeself=/home/gerry/tools/makeself-2.1.4/makeself.sh
+nsis=d:/dev/nsis/makensis.exe
+jre=c:/programme/java/jre1.5.0_06

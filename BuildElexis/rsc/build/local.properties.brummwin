@@ -1,0 +1,6 @@
+eclipse=d:/software/elexis/rcp-win32
+source=d:/source/eclipse
+makeself=/home/gerry/tools/makeself-2.1.4/makeself.sh
+nsis=e:/dev/nsis/makensis.exe
+jre=d:/software/java150/jre
+dest=d:/software/elexis/deploy

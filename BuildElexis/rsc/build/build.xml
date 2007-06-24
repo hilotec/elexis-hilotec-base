@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id: build.xml 2554 2007-06-22 10:36:41Z rgw_ch $
+
+	Dieses Ant-Script erstellt die Release-Versionen von Elexis
+	Targets:
+	windows		: Windows-Installer erstellen
+	Linux x86	: Linux x386 - Installer erstellen
+	clean       : Letzten Build wegräumen
+
+	Es werden jeweils plugin, full install und full install mit jre erstellt.
+
+	Voraussetzungen:
+	- Ant muss installiert sein
+	- Version muss unter Eclipse auf dieser Maschine korrekt lauffähig sein
+	- LaTeX inklusive KOMA muss installiert sein, es muss ein kommando 'texify'
+	  existieren, welches makeindex und pdflatex laufen lässt
+	- Für Windows-Installer: NSIS muss installiert sein
+	- Es muss ein externes file namens local.properties im selben Verzeichnis wie dieses
+	  build.xml existieren, das folgende systemspezifischen Daten enthält:
+	  - svnrepo=svn://localhost/pd2/	# localhost gegen passende Adresse austauschen
+	  - eclipse=e:/dev/eclipse	    	# Welche Eclipsebasis verwendet werden soll (RCP-Basis)
+	  - keystore=u:/keys/hwkeys			# Zum Signieren der Jars
+	  - source=/home/src/eclipse		# Wo die Quellcodes sind
+	  - makeself				        # Pfad zum makeself -executable (für Linux-Distri)
+	  - nsis				            # Pfad zum nsis-Executable (für Windows-Distri)
+	  - jre					            # Pfad zum einzubindenden jre
+	  - dest				            # Pfad zum Ausgabe-Verzeichnis
+	  - ooo								# Pfad zum OpenOffice Verzeichnis
+	(c) 2005-2007 G. Weirich
+-->
+
+<project name="elexis" default="all" basedir="../../">
+	<description>
+	    	Elexis - die Praxis
+	</description>
+	<property environment="env"/>
+	<property name="version" value="0.3.3"/>
+	<property file="rsc/build/local.properties"/>
+	<property name="dist"  value="${dest}/Elexis-${version}"/>
+	<property name="name" value="Elexis"/>
+	<property name="doc"   value="${dist}/doc"/>
+	<property name="output" value="${dest}/output"/>
+	<property name="updatefiles" value="${output}/updater"/>
+	<property name="additions" value="${output}/additional"/>
+	<property name="rsc" value="rsc"/>
+	<property name="debug" value="yes"/>
+	<property name="optimize" value="no"/>
+
+	<!-- Pfade für -classpath des Java-compilers festlegen -->
+	<path id="eclipseclasses">
+		<pathelement location="${dist}/plugins/"/>
+		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${elexis_plugin}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${eclipse}/plugins">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${elexis_ebanking_plugin}"/>
+		<pathelement location="${elexis_artikel_plugin}"/>
+	</path>
+	<path id="unoclasses">
+		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${eclipse}/plugins">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${elexis_oowrapper_plugin}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="prepare">
+		<mkdir dir="${dest}"/>
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${output}"/>
+		<mkdir dir="${updatefiles}"/>
+		<mkdir dir="${additions}"/>
+		<copy todir="${dist}">
+			<fileset dir="${eclipse}"/>
+		</copy>
+		<exec command="texify elexis.tex" dir="${source}/dokumentation" />
+		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
+		<mkdir dir="${dist}/demoDB"/>
+		<copy todir="${dist}/demoDB">
+			<fileset dir="${dest}/../demoDB"/>	
+		</copy>
+	</target>
+
+	<!-- Hier alle einzubindenden Plugins eintragen. Reihenfolge nicht ändern. -->
+
+	<!-- Zentraldistribution ohne optionale Plugins -->
+	<target name="main" depends="prepare">
+		<ant antfile="../jdomwrapper/build.xml"/>
+		<ant antfile="../elexis/build.xml"/>
+		<ant antfile="../elexis-importer/build.xml"/>
+		<ant antfile="../noatext/build.xml"/>
+		<ant antfile="../OOwrapper/build.xml"/>
+		<ant antfile="../elexis-agenda/build.xml"/>
+		<ant antfile="../elexis-artikel-schweiz/build.xml"/>
+		<ant antfile="../elexis-ebanking-schweiz/build.xml"/>
+		<ant antfile="../elexis-arzttarife-schweiz/build.xml"/>
+		<ant antfile="../elexis-befunde/build.xml"/>
+		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml"/>
+		<ant antfile="../elexis-simpletext/build.xml"/>
+		<ant antfile="../elexis-updater/build.xml"/>
+		<ant antfile="../elexis-privatnotizen/build.xml"/>
+		<ant antfile="../elexis-bildanzeige/build.xml"/>
+		<ant antfile="../elexis-omnivore/build.xml"/>
+		<ant antfile="../elexis-notes/build.xml"/>
+		<ant antfile="../elexis-mail/build.xml"/>
+	</target>
+
+	<!-- Optionale Plugins -->
+	<target name="options" depends="prepare">
+		<ant antfile="../elexis-externe-dokumente/build.xml"/>
+		<ant antfile="../elexis-icpc/build.xml"/>
+		<ant antfile="../elexis-iatrix/build.xml"/>
+		<ant antfile="../Sgam-Exchange/build.xml"/>
+		<ant antfile="../elexis-artikel-oesterreich/build.xml"/>
+	</target>
+
+	<!-- Importer-Plugins -->
+	<target name="importers" depends="prepare">
+		<ant antfile="../elexis-importer-aerztekasse/build.xml"/>
+		<ant antfile="../Laborimport-Viollier/build.xml"/>
+	</target>
+
+	<!-- These plugins are not part of the standard distribution -->
+	<target name="elexis-pro" depends="all">
+		<ant antfile="../elexis-pro/build.xml"/>
+		<ant antfile="../elexis-kassenbuch/build.xml"/>
+		<ant antfile="../elexis-galexis/build.xml"/>
+		<ant antfile="../Laborimport-Krech/build.xml"/>
+		<ant antfile="../elexis-importer-vitodata/build.xml"/>
+		<ant antfile="../Laborimport-Risch/build.xml"/>
+		<ant antfile="../elexis-importer-praxisdesktop/build.xml"/>
+	</target>
+
+	<target name="all" depends="main,options,importers"/>
+
+
+	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
+	<!-- make_addition, pluginname  -->
+	<target name="make_addition">
+		<mkdir dir="${additions}/${pluginname}"/>
+		<mkdir dir="${additions}/${pluginname}/plugins"/>
+		<mkdir dir="${additions}/${pluginname}/plugins/${targetdir}"/>
+		<copy todir="${additions}/${pluginname}/plugins/${targetdir}">
+			<fileset dir="${dist}/plugins/${targetdir}"/>
+		</copy>
+		<zip basedir="${additions}/${pluginname}" destfile="${additions}/${pluginname}.zip"/>
+		<deltree dir="${additions}/${pluginname}"/>
+	</target>
+
+	<target name="copy_plugin">
+		<echo message="${copydest} , und ${copysrc}"/>
+		<mkdir dir="${copydest}"/>
+		<copy todir="${copydest}">
+			<fileset dir="${copysrc}">
+				<include name="*.jar"/>
+				<include name="*.xml"/>
+				<include name="*.bmp"/>
+				<include name="*.properties"/>
+				<include name="bin/**/*.properties"/>
+				<include name="icons/**/*.*"/>
+				<include name="rsc/**/*.*"/>
+				<include name="lib/**/*.*"/>
+				<include name= "META-INF/MANIFEST.MF"/>
+				<include name="meta-inf/manifest.mf"/>
+			</fileset>
+		</copy>
+		<copy todir="${copydest}" failonerror="false">
+			<fileset dir="${copysrc}/src" includes="**/*.script"/>
+			<fileset dir="${copysrc}/src" includes="**/*.properties"/>
+		</copy>
+	</target>
+
+	<!-- Windows - Version der Distribution -->
+	<target name="windows" depends="main">
+		<ant antfile="../elexis-trustx-embed/build.xml"/>
+		 <mkdir dir="${dist}/jre"/>
+		 <copy todir="${dist}/jre">
+			 <fileset dir="${jre}"/>
+		 </copy>
+		<mkdir dir="${dist}/ooo"/>
+		<copy todir="${dist}/ooo">
+			<fileset dir="${ooo}"/>
+		</copy>
+		<exec dir="rsc/build" executable="${nsis}">
+			<arg line="elexis-windows.nsi"/>
+		</exec>
+		<!--exec dir="rsc/build" executable="${nsis}">
+			<arg line="elexis.nsi"/>
+		</exec>
+		<exec dir="rsc/build" executable="${nsis}">
+			<arg line="elexis-jre.nsi"/>
+		</exec-->
+	</target>
+
+	<!-- Linux x86 Version der Distribution -->
+	<target name="Linux" depends="main">
+		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
+		<!-- we can not use the copy-task, since this doesnt preserve the attributes-->
+		<!-- (ooo is included in all supported linuces anyway) exec executable="cp">
+			<arg line="-r ${ooo} ${dist}/ooo"/>
+		</exec -->
+		<exec executable="cp">
+			<arg line="-r ${jre} ${dist}/jre"/>
+		</exec>
+		 <!-- exec executable="${makeself}">
+			 <arg value="- -notemp"/>
+			 <arg value="${dist}"/>
+			 <arg value="${output}/elexis-linux-i386-${version}.run"/>
+			 <arg value="Elexis ${version}"/>
+			 <arg value="chmod +x elexis"/>
+		 </exec-->
+		<exec executable="chmod" dir="${dist}">
+					<arg line="+x elexis"/>
+		</exec>
+		<exec executable="tar" dir="${dest}">
+		    <arg line="-czf ${output}/elexis-linux-i386-${version}.tgz Elexis-${version}"/>
+		</exec>
+		
+
+	</target>
+	
+	 <!--@deprecated-->
+	 <target name="Linux-installers" depends="all">
+		 <copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
+		 <exec executable="${makeself}">
+			 <arg value="--notemp"/>
+			 <arg value="${dist}"/>
+			 <arg value="${output}/elexis-linux-i386-${version}.run"/>
+			 <arg value="Elexis ${version} Beta"/>
+			 <arg value="chmod +x elexis"/>
+		 </exec>
+
+		<antcall target="copyjre"/>
+		<exec executable="${makeself}">
+			<arg value="--notemp"/>
+			<arg value="${dist}"/>
+			<arg value="${dest}/output/elexis-linux-jre-i386-${version}.run"/>
+			<arg value="Elexis ${version} Beta"/>
+			<arg value="chmod +x elexis; chmod +x jre/bin/java"/>
+		 </exec>
+
+	 </target>
+
+	<!-- Mac OSX Version der Distribution -->
+	<target name="mac" depends="all">
+		<copy file="${rsc}/elexis-mac.icns" tofile="${dist}/elexis-mac.icns"/>
+		<zip basedir="${dist}" destfile="${dest}/output/elexis-macosx-${version}.zip"/>
+	</target>
+
+	<!-- Alles aufräumen -->
+	<target name="clean" description="Alle vom Build erstellen files löschen">
+		<delete dir="${dest}"/>
+	</target>
+
+	<target name="copyjre" description="Java runtime holen">
+		 <mkdir dir="${dist}/jre"/>
+		 <copy todir="${dist}/jre">
+			 <fileset dir="${jre}"/>
+		 </copy>
+    </target>
+</project>
