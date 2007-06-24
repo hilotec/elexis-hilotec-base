@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Diagnosecodes Schweiz
+Bundle-SymbolicName: ch.elexis.diagnosecodes_ch; singleton:=true
+Bundle-Version: 0.3.3
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.swt,
+ org.eclipse.jface,
+ org.eclipse.ui.forms,
+ org.eclipse.ui
