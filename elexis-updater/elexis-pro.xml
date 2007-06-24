@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Integration code for Elexis Professional Services
+ * (c) G. Weirich 2007. All rights reserved
+ * $Id: elexis-pro.xml 2442 2007-05-28 18:50:14Z rgw_ch $
+-->
+<eps:ElexisProfessionalServices xmlns:eps="http://www.elexis.ch/eps" 
+	xmlns:xsi="http://www.w3.org/2001/XML Schema-instance" 
+	xmlns:schemaLocation="http://www.elexis.ch/eps eps.xsd">
+	<eps:header>
+		<eps:version>1.0</eps:version>
+		<eps:created>2007-05-13</eps:created>
+		<eps:lastChange>2007-05-13</eps:lastChange>
+	</eps:header>
+	<eps:services>
+		<eps:service type="plugin" name="Elexis-Updater" group="system" language="de">
+			<eps:provider title="Elexis" user="gerry">
+				<eps:address>
+					Gerry Weirich
+					Rietstrasse 30
+					8200 Schaffhausen
+				</eps:address>
+				<eps:contact>
+					<eps:phone>+41 52 624 40 77</eps:phone>
+					<eps:fax>+41 52 624 40 38</eps:fax>
+					<eps:mail>admin@elexis.ch</eps:mail>
+					<eps:website>http://www.elexis.ch</eps:website>
+				</eps:contact>
+			</eps:provider>
+			<eps:keywords>
+				update, aktualisierung, system
+			</eps:keywords>
+			<eps:description>
+				Ein Plugin, das Ihnen ermöglicht, Elexis-updates automatisch aufzusuchen und zu
+				installieren.
+			</eps:description>
+			<eps:price charge="eps" currency="CHF">
+				25.00
+			</eps:price>
+		</eps:service>
+	</eps:services>
+</eps:ElexisProfessionalServices>

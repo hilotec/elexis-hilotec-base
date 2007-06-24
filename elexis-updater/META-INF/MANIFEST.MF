@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis update tool
+Bundle-SymbolicName: ch.elexis.update_tool;singleton:=true
+Bundle-Version: 0.3.3
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ ch.elexis,
+ org.eclipse.ui
+Export-Package: ch.elexis.update
+Eclipse-LazyStart: false
