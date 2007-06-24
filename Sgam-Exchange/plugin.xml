@@ -17,6 +17,10 @@
    </extension>
    <extension
          point="ch.elexis.Transporter">
+      <Transporter
+            AcceptableTypes="ch.elexis.data.Patient"
+            ExporterClass="ch.sgam.informatics.exchange.Transporter"
+            name="SGAM-xChange (verschlüsselt)"/>
    </extension>
 
 </plugin>
