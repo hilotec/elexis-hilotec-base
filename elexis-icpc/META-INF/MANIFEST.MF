@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Plugin für ICPC 2
+Bundle-SymbolicName: ch.elexis.icpc;singleton:=true
+Bundle-Version: 0.3.3
+Bundle-Vendor: elexis.ch
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.jface,
+ org.eclipse.swt,
+ ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms
+Eclipse-LazyStart: false
+Bundle-Activator: ch.elexis.icpc.Activator
