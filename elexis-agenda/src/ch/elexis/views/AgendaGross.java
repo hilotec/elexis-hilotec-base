@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 1864 2007-02-20 21:47:44Z rgw_ch $
+ *  $Id: AgendaGross.java 2630 2007-06-25 14:18:52Z danlutz $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -47,9 +47,8 @@ public class AgendaGross extends BaseAgendaView {
 	Text terminDetail;
 	Label lbDetails;
 	Label lbDayString;
-	private static final String[] columnTitles={"von","bis","Typ","Status","Personalien"};
-	private static final int[] columnWidths={30,30,50,70,300};
-	
+	private static final String[] columnTitles={"von","bis","Typ","Status","Personalien", "Grund"};
+	private static final int[] columnWidths={30,30,50,70,300, 200};
 
 	@Override
 	public void create(Composite parent) {
@@ -243,6 +242,18 @@ public class AgendaGross extends BaseAgendaView {
 					return ip.getStatus();
 				case 4:
 					return ip.getTitle();
+				case 5:
+					if (ip instanceof Termin) {
+						Termin termin = (Termin) ip;
+						String grund = termin.getGrund();
+						if (grund != null) {
+							String[] tokens = grund.split("[\r\n]+");
+							grund = tokens[0];
+						}
+						return grund;
+					} else {
+						return "";
+					}
 				}
 			}
 			return "?"; //$NON-NLS-1$

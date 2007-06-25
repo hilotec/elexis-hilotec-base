@@ -30,11 +30,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
 import ch.elexis.data.*;
 import ch.elexis.dialogs.DateSelectorDialog;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.*;
@@ -187,6 +189,20 @@ public class TagesView extends BaseAgendaView{
 				StringBuilder sb=new StringBuilder();
 				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
 					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
+				
+				// show reason if its configured
+				if (Hub.globalCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
+					if (p instanceof Termin) {
+						String grund = ((Termin) p).getGrund();
+						if (grund != null) {
+							String[] tokens = grund.split("[\n\r]+");
+							if (tokens.length > 0) {
+								sb.append(", " + tokens[0]);
+							}
+						}
+					}
+				}
+				
 				return sb.toString();
 			}
 			return "?"; //$NON-NLS-1$

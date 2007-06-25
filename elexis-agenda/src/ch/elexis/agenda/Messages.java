@@ -104,6 +104,9 @@ public final class Messages extends NLS {
 	public static String Zeitvorgaben_terminTypes;
 	public static String AgendaDefinitionen_shortCutsForBer;
 	
+	public static String AgendaAnzeige_options;
+	public static String AgendaAnzeige_showReason;
+	
 	public static String Synchronizer_connctNotSuccessful;
 	public static String AgendaActions_unblock;
 	public static String AgendaActions_state;
