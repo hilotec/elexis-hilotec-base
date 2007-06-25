@@ -51,7 +51,7 @@
 			<fileset dir="${elexis_src}/src" includes="**/*.properties"/>
 		</copy>
 		<copy todir="${elexis_feature}">
-			<fileset dir="${source}/elexis basic feature">
+			<fileset dir="${source}/ElexisBasicFeature">
 				<include name="*.xml"/>
 			</fileset>
 		</copy>
