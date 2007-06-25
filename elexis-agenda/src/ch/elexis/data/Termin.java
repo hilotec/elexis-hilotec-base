@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 2296 2007-04-25 15:57:45Z danlutz $
+ *    $Id: Termin.java 2632 2007-06-25 15:07:57Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.agenda.acl.ACLContributor;
+import ch.elexis.agenda.Messages;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.*;
@@ -815,7 +816,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 		}
 
 		public String getTitle() {
-			return "-";
+			//return "-";
+			return String.format(Messages.MinutesFree, length);
 		}
 
 		public String getType() {

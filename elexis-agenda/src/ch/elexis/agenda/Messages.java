@@ -112,6 +112,8 @@ public final class Messages extends NLS {
 	public static String AgendaActions_state;
 	public static String AgendaActions_deleteDate;
 
+	public static String MinutesFree;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
