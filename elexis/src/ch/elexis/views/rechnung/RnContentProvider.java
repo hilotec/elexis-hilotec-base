@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 2276 2007-04-19 20:07:18Z rgw_ch $
+ * $Id: RnContentProvider.java 2634 2007-06-25 20:17:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -53,7 +53,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 	CommonViewer cv;
 	Tree[] result;
 	int iPat, iRn;
-	Money mAmount;
+	Money mAmount, mOpen;
 	TreeComparator treeComparator=new TreeComparator();
 	PatientComparator patientComparator=new PatientComparator();
 	RechnungsListeView rlv;
@@ -251,13 +251,14 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		iPat=0;
 		iRn=rechnungen.size();
 		mAmount=new Money();
-		
+		mOpen=new Money();
 		for(Rechnung rn:rechnungen){
 			if(rn==null || (!rn.exists())){
 				log.log("Fehlerhafte Rechnung", Log.ERRORS);
 				continue;
 			}
 			mAmount.addMoney(rn.getOffenerBetrag());
+			mOpen.addMoney(rn.getAnzahlung());
 			Fall fall=rn.getFall();
 			if(fall==null){
 				log.log("Rechnung "+rn.getId()+" hat keinen Fall", Log.WARNINGS);
@@ -287,6 +288,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 			rlv.tPat.setText(Integer.toString(iPat));
 			rlv.tRn.setText(Integer.toString(iRn));
 			rlv.tSum.setText(mAmount.getAmountAsString());
+			rlv.tOpen.setText(mOpen.getAmountAsString());
 		}
 		monitor.worked(1);
 		monitor.subTask(Messages.getString("RnContentProvider.prepareSort")); //$NON-NLS-1$

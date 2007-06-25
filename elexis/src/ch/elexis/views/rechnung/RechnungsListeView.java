@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 1604 2007-01-14 15:41:22Z rgw_ch $
+ * $Id: RechnungsListeView.java 2634 2007-06-25 20:17:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -64,7 +64,7 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
     RnContentProvider cntp;
     RnControlFieldProvider cfp;
 
-    Text tPat, tRn, tSum;
+    Text tPat, tRn, tSum, tOpen;
     NumberInput niDaysTo1st, niDaysTo2nd, niDaysTo3rd;
     MoneyInput mi1st,mi2nd,mi3rd;
     SelectionListener mahnWizardListener;
@@ -137,7 +137,9 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
     	tk.createLabel(cSum,Messages.getString("RechnungsListeView.sumInList")); //$NON-NLS-1$
     	tSum=SWTHelper.createText(tk, cSum, 1, SWT.BORDER|SWT.READ_ONLY);
     	tSum.setLayoutData(new GridData(100,SWT.DEFAULT));
-    	
+    	tk.createLabel(cSum,Messages.getString("RechnungsListeView.paidInList"));  //$NON-NLS-1$
+    	tOpen=SWTHelper.createText(tk,cSum, 1, SWT.BORDER|SWT.READ_ONLY);
+    	tOpen.setLayoutData(new GridData(100,SWT.DEFAULT));
     	Composite cW=fWizard.getBody();
     	cW.setLayout(new GridLayout(4,true));
     	
