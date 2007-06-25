@@ -40,6 +40,11 @@
             class="ch.elexis.preferences.Tageseinteilung"
             id="ch.elexis.agenda.tageseinteilung"
             name="%Tageseinteilung"/>
+      <page
+            category="ch.elexis.Agendaprefs"
+            class="ch.elexis.preferences.AgendaAnzeige"
+            id="ch.elexis.agenda.anzeige"
+            name="%Ansicht"/>
       </extension>
       <extension
          point="ch.elexis.FremdDatenImport">
