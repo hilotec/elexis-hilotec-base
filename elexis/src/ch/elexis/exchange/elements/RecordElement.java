@@ -13,10 +13,14 @@
 
 package ch.elexis.exchange.elements;
 
+import java.util.List;
+
 import org.jdom.Element;
 
-import ch.elexis.data.*;
-import ch.elexis.exchange.IExchangeContributor;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.Samdas;
 import ch.elexis.util.Result;
@@ -39,8 +43,13 @@ public class RecordElement extends XChangeElement{
 	public RecordElement(XChangeContainer c, Konsultation k){
 		this(c);
 		e.setAttribute("date",new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
-		ContactElement cMandant=parent.addContact(k.getMandant(), false);
-		e.setAttribute("responsible",cMandant.e.getAttributeValue("id"));
+		Kontakt kMandant=k.getMandant();
+		if(kMandant==null){
+			e.setAttribute("responsible","unknown");
+		}else{
+			ContactElement cMandant=parent.addContact(kMandant, false);
+			e.setAttribute("responsible",cMandant.e.getAttributeValue("id"));
+		}
 		e.setAttribute("id",k.getId());
 		VersionedResource vr=k.getEintrag();
     	ResourceItem entry=vr.getVersion(vr.getHeadVersion());
@@ -99,4 +108,26 @@ public class RecordElement extends XChangeElement{
 		return new Result<String>("OK");
 	}
 	
+	@SuppressWarnings("unchecked")
+	public String toString(){
+		StringBuilder sb=new StringBuilder();
+		sb.append("\nEintrag vom ").append(getAttr("date")).append(" erstellt von ")
+			.append(getAttr("author")).append("\n");
+		List<Element> children=e.getChildren();
+		if(children!=null){
+			for(Element child:children){
+				if(child.getName().equals("text")){
+					continue;
+				}
+				sb.append(child.getName()).append(":\n");
+				sb.append(child.getText()).append("\n");
+			}
+		}
+		Element eText=e.getChild("text", XChangeContainer.ns);
+		if(eText!=null){
+			String text=eText.getText();
+			sb.append(text).append("\n------------------------------\n");
+		}
+		return sb.toString();
+	}
 }

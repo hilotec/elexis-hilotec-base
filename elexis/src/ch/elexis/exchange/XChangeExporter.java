@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeExporter.java 2629 2007-06-24 16:31:32Z rgw_ch $
+ *  $Id: XChangeExporter.java 2636 2007-06-26 18:19:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -33,11 +33,20 @@ public abstract class XChangeExporter extends XChangeContainer implements IDataS
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
 		contacts=getContacts();
+		ContactElement first=null;
 		for(ContactElement contact:contacts){
 			MedicalElement me=contact.getMedical();
 			if(me!=null){
+				first=contact;
 				sb.append(contact.toString());
 			}
+		}
+		sb.append("\nBezugskontakte: \n");
+		for(ContactElement contact:contacts){
+			if(contact.equals(first)){
+				continue;
+			}
+			sb.append(contact.toString());
 		}
 		return sb.toString();
 	}

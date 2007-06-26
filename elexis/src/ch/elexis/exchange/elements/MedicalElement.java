@@ -183,6 +183,10 @@ public class MedicalElement extends XChangeElement{
 	public String toString(){
 		StringBuilder ret=new StringBuilder();
 		ret.append(getAnamnesis().toString());
+		List<RecordElement> records=getRecords();
+		for(RecordElement record:records){
+			ret.append("\n......\n").append(record.toString());
+		}
 		
 		return ret.toString();
 	}

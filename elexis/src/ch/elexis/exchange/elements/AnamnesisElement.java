@@ -40,6 +40,10 @@ public class AnamnesisElement extends XChangeElement{
 
 	public List<EpisodeElement> getEpisodes(){
 		List<EpisodeElement> ret=new LinkedList<EpisodeElement>();
+		List<Element> episodes=getElements("episode");
+		for(Element episode:episodes){
+			ret.add(new EpisodeElement(eMed.parent,episode));
+		}
 		return ret;
 	}
 	
@@ -54,6 +58,7 @@ public class AnamnesisElement extends XChangeElement{
 	@SuppressWarnings("unchecked")
 	public AnamnesisElement(MedicalElement eMed, Element e1){
 		super(eMed.parent,e1);
+		this.eMed=eMed;
 		hBacklink=new HashMap<Element,IDiagnose>();
 		hElements=new HashMap<String,Element>();
 		List<Element> episodes=e1.getChildren("episode",XChangeContainer.ns);

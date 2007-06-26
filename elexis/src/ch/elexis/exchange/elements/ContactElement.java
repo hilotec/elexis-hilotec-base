@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 2629 2007-06-24 16:31:32Z rgw_ch $
+ *  $Id: ContactElement.java 2636 2007-06-26 18:19:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -116,8 +116,8 @@ public class ContactElement extends XChangeElement{
 	
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
-		sb.append("Name\t\t").append(getAttr("lastname")).append("\n");
-		sb.append("Vorname(n)\t\t").append(getAttr("firstname"));
+		sb.append("Name\t\t\t\t").append(getAttr("lastname")).append("\n");
+		sb.append("Vorname(n)\t\t\t").append(getAttr("firstname"));
 		String middle=getAttr("middlename");
 		if(middle.length()>0){
 			sb.append(" ").append(middle);
