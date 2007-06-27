@@ -28,7 +28,12 @@ public class ReplaceJob implements ShutdownJob {
 	 * 
 	 */
 	public void doit() throws Exception{
+		if(downloads.size()==0){
+			AutoUpdate.log.log("Updater: Nothing to to", Log.INFOS);
+			return;
+		}
 		AutoUpdate.log.log("Updater: replacing files", Log.INFOS);
+		
 		for(ReplaceInfo ri:downloads){
 			
 			String rfname=ri.file.getName();

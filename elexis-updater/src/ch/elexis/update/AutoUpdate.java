@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 2562 2007-06-23 04:51:56Z rgw_ch $
+ * $Id: AutoUpdate.java 2637 2007-06-27 16:05:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -74,9 +74,11 @@ public class AutoUpdate {
 			for(String sub:dirs){
 				String f=sub+".zip";
 				monitor.subTask(f);
-				log.log(f, Log.INFOS);
+				
 				try{
+					log.log("check: "+f, Log.INFOS);
 					int newer=ucl.checkUpdate(f, url);
+					log.log("Result: "+Integer.toString(newer), Log.INFOS);
 					monitor.worked(1);
 					if(newer>UpdateClient.FILE_SAME){
 						monitor.subTask(sub);
@@ -85,6 +87,8 @@ public class AutoUpdate {
 							downloads.add(new ReplaceInfo(rFile,sub,newer));
 							log.log(f+" ok.", Log.INFOS);
 							filecounter++;
+						}else{
+							log.log("Error downloading "+f, Log.ERRORS);
 						}
 					}
 					monitor.worked(1);
@@ -92,6 +96,7 @@ public class AutoUpdate {
 						return Status.CANCEL_STATUS;
 					}
 				}catch(Exception ex){
+					log.log("Exception during update "+ex.getMessage(), Log.ERRORS);
 					ExHandler.handle(ex);
 				}
 			} // for
