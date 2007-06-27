@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 2638 2007-06-27 16:05:30Z rgw_ch $
+ * $Id: GlobalActions.java 2641 2007-06-27 17:06:38Z rgw_ch $
  *******************************************************************************/
 
 
@@ -133,14 +133,11 @@ public class GlobalActions {
     					
     					try {
 							Runtime.getRuntime().exec(book);
-						} catch (IOException e) {
+						} catch (Exception e) {
 							ExHandler.handle(e);
 						}	
-    				}else{
-    					SWTHelper.showError("Acrobat nicht gefunden", "Sie benötigen den Acrobat reader, um das Handbuch anzuzeigen");
     				}
     			}
-
         	}
         };
         savePerspectiveAsAction=ActionFactory.SAVE_PERSPECTIVE.create(window);
