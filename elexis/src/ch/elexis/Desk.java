@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 2438 2007-05-24 14:37:47Z rgw_ch $
+ *    $Id: Desk.java 2638 2007-06-27 16:05:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -81,6 +81,7 @@ public class Desk implements IPlatformRunnable {
 	public static final String IMG_AUSRUFEZ_ROT="ausrufezeichen_rot"; //$NON_NLS-1$
 	public static final String IMG_AUSRUFEZ="ausrufezeichen"; //$NON_NLS-1$
 	public static final String IMG_NETWORK="netzwerk"; //$NON_NLS-1$
+	public static final String IMG_BOOK= "buch";
 	
 	public static final String FONT_SMALL="small";
     
@@ -140,6 +141,7 @@ public class Desk implements IPlatformRunnable {
 	        theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor("rsc/ausrufez_rot.ico")); //$NON_NLS-1$
 	        theImageRegistry.put(IMG_REMOVEITEM, Hub.getImageDescriptor("rsc/minus.ico")); //$NON_NLS-1$
 	        theImageRegistry.put(IMG_NETWORK, Hub.getImageDescriptor("rsc/netzwerk.ico")); //$NON_NLS-1$
+	        theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor("rsc/book.png"));  //$NON_NLS-1$
 		}
 		try {
 				// 	Wir wollen die schicken runden Tabs von Eclipse 3.x

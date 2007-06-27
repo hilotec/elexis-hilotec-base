@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 2511 2007-06-11 11:45:13Z danlutz $
+ * $Id: GlobalActions.java 2638 2007-06-27 16:05:30Z rgw_ch $
  *******************************************************************************/
 
 
@@ -16,6 +16,8 @@ package ch.elexis.actions;
 
 import static ch.elexis.admin.AccessControlDefaults.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -98,8 +101,8 @@ public class GlobalActions {
         pasteAction.setText(Messages.getString("GlobalActions.Paste")); //$NON-NLS-1$
         aboutAction = ActionFactory.ABOUT.create(window);
         aboutAction.setText(Messages.getString("GlobalActions.MenuAbout")); //$NON-NLS-1$
-        helpAction=ActionFactory.HELP_CONTENTS.create(window);
-        helpAction.setText(Messages.getString("GlobalActions.HelpIndex")); //$NON-NLS-1$
+        //helpAction=ActionFactory.HELP_CONTENTS.create(window);
+        //helpAction.setText(Messages.getString("GlobalActions.HelpIndex")); //$NON-NLS-1$
         prefsAction=ActionFactory.PREFERENCES.create(window);
         prefsAction.setText(Messages.getString("GlobalActions.Preferences")); //$NON-NLS-1$
         savePerspectiveAction=new Action(Messages.getString("GlobalActions.SavePerspective")){ //$NON-NLS-1$
@@ -113,6 +116,33 @@ public class GlobalActions {
         	}
         };
      
+        helpAction=new Action("Handbuch"){
+        	{
+        		setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_BOOK));
+        		setToolTipText("Handbuch öffnen");
+        		
+        	}
+        	public void run(){
+        		File base=new File(Hub.getBasePath()).getParentFile().getParentFile();
+        		String book=base.getAbsolutePath()+File.separator+"elexis.pdf";
+        		Program proggie=Program.findProgram(".pdf");
+    			if(proggie!=null){
+    				proggie.execute(book);
+    			}else{
+    				if(Program.launch(book)==false){
+    					
+    					try {
+							Runtime.getRuntime().exec(book);
+						} catch (IOException e) {
+							ExHandler.handle(e);
+						}	
+    				}else{
+    					SWTHelper.showError("Acrobat nicht gefunden", "Sie benötigen den Acrobat reader, um das Handbuch anzuzeigen");
+    				}
+    			}
+
+        	}
+        };
         savePerspectiveAsAction=ActionFactory.SAVE_PERSPECTIVE.create(window);
        
         	//ActionFactory.SAVE_PERSPECTIVE.create(window);
