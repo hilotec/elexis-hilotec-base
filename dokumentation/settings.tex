@@ -8,14 +8,14 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: settings.tex 2563 2007-06-23 04:56:40Z rgw_ch $
+% *  $Id: settings.tex 2651 2007-06-28 19:46:29Z rgw_ch $
 % *******************************************************************************
 %
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
 \label{settings}
 Die Einstellungen sind alle im selben Dialog zusammengefasst, welcher unter
-\textsc{Datei-Einstellungen} erreicht werden kann (Abb. \ref{fig:settingsmain}). 
+\textsc{Datei-Einstellungen} erreicht werden kann (Abb. \ref{fig:settingsmain}).
 %\usepackage{graphics} is needed for \includegraphics
 \begin{figure}[htp]
 \begin{center}
@@ -28,7 +28,7 @@ Die Einstellungen sind alle im selben Dialog zusammengefasst, welcher unter
 
 Wie üblich in Elexis ist der genaue Inhalt dieses Dialogs davon abhängig,
 welche Plugins installiert sind. Mit den Reitern auf der linken Seite wählt man
-einen Bereich aus, für den man EInstellungen ändern möchte. Wir gehen hier auf
+einen Bereich aus, für den man Einstellungen ändern möchte. Wir gehen hier auf
 diejenigen Seiten ein, die zur Grundausstattung von Elexis gehören. Grundsätzlich
 sollten alle Einstellungen \glqq Ab Werk\grqq{}vernünftige Grundeinstellungen
 aufweisen, so dass es zunächst nicht nötig ist, hier etwas zu ändern. Sie
@@ -88,4 +88,49 @@ speichern nach\ldots\grqq{} betreffen hierbei die anwenderspetifischen
 Einstellungen(im Wesentlichen alles was im Zweig \textsc{Anwender} der
 Einstellungen vorhanden ist), während die Buttons \glqq
 Arbeitsplatzeinstellungen \ldots\grqq{} die auf der lokalen Station
-gespeicherten Perspektivenlayouts betreffen. 
+gespeicherten Perspektivenlayouts betreffen.
+\section{Datenaustausch}
+Dies ist eine Sammelkategorie für Einstellungen von Plugins, die Datenaustausch von und nach Elexis anbieten. Ob und welche Einstellungsseiten hier zu finden sind, hängt von den installierten Transport-Plugins ab. 
+\section{Datenbank}
+Anzeige von Einstellungsdetails der aktuellen Datenbankverbindung
+\section{Druckereinstellungen}
+Hier kann man für jede Papierart den dazugehörigen Drucker und -Schacht auswählen. Beim Labeldrucker kann man ausserdem einstellen, ob der Druckerauswahldiealog überhaupt jedesmal vor dem Drucken angezeigt werden soll (wenn man z.B. mehrere Labeldrucker hat).
+\section{E-Mail}
+Diese Einstellungen sind für das Versenden von E-Mails aus Elexis wichtig. Dies wird inbesondere beim automatischen Versenden von Fehlermeldungen verwendet. Dies wird auf Seite \pageref{senderrors} genauer beschrieben.
+\section{Gruppen und Rechte}
+Dies ist die zentrale Benutzerverwaltung. Auf diesen Einstellungsseiten können Anwender und Mandanten eingerichtet und die Zugriffsrechte verteilt werden. Das Konzept der Gruppen ist auf Seite \pageref{sec:gruppen} genauer erläutert.
+Legen Sie zunächst unter \textsc{Gruppen und Rechte} fest, welche Anwendergruppen Sie benötigen. 
+Um einen neuen Anwender oder Mandanten einzurichten, müssen Sie diesen zunächst als \glqq Kontakt \grqq{} erfassen, und dort unter Kontakt-Details als Anwender bzw. Mandant kennzeichnen. Dann können Sie unter \textsc{Gruppen und Rechte - Mandanten} dem Mandanten einen Benutzernamen und ein Passwort zuordnen, und angeben, welchen Gruppen er zugehörig sein soll.
+Unter \textsc{Gruppen und Rechte - Anwender} können Sie dasselbe für Anwender angeben, ausserdem noch, für welchen Mandant dieser Anwender normalerweise tätig ist. 
+Unter \textsc{Gruppen und Rechte - Zugriffsteuerung} können für jede Gruppe und jeden Anwender einzeln Rechte zugeordnet werden.  (S. \ref{sec:gruppen}).
+\section{Laborwerte}
+Hier können die in der Praxis benötigten Laborparameter definiert werden. Dies kann manuell geschehen, oder, bei Laborimport-Plugins können Laboritems auch automatisch mit den vom Labor gelieferten Angaben erstellt werden.
+Jedes Laboritems ist durch folgende Eckdaten gekennzeichnet:
+\begin{itemize}
+\item{Einen Namen}
+\item{Ein Kürzel}
+\item{Das Labor, von dem es stammt}
+\item{Den Normbereich, gegeben durch die Methode, z.T. auch geschlechts- alters- zyklusabhängig}
+\item{Eine Gruppe, unter der des aufgelistet wird (z.B. Hämatologie)}
+\item{Eine Sequenznummer, die angibt, an welcher Stelle innerhalb der Gruppe es einsortiert wird.}
+\item{einen Typ (numerisch, absolut, text)}
+\end{itemize}
+
+Jedes Laborresultat ist durch ein solches Item, ein Datum und einen Patienten eindeutig identifiziert. 
+Es kann deswegen durchaus mehrere Items für ein- und denselben Parameter geben. Beispielsweise kann es ein Item \textsc{Vitamin B12} von verschiedenen Labors geben, welche nicht zwingend denselben Normbereich haben müssen.
+ 
+Mit \textsc{Neuer Laborparameter} können Sie ein neues Item erstellen und die oben genannten Angaben eingeben. Hier ist es sehr wichtig, dass Sie sich im Voraus genau überlegen, welche Laborparameter Sie benötigen, und wie Sie diese gruppiert haben wollen.
+
+Sie können die Liste der Tabelle durch Klick auf die Spaltenköpfe umsortieren.
+\section{Leistungscodes}
+Dies ist wieder eine Sammelrubrik, die je nach vorhandenen Plugins für die Leistungsabrechnung unterschiedlich gefüllt sein kann. In der Schweiz ist hier standardmössig Labortarif und Tarmed vorhanden. Diese sind auf Seite \pageref{arzttarife} genauer erklärt.
+\section{Textverarbeitung}
+Auch die verwendete Textverarbeitung für Briefe etc. ist in Elexis ja durch Plugins frei definierbar. Welche Textverarbeitung verwendet werden soll, kann hier eingestellt werden. Diese Einstellung sollte normalerweise nicht mehr verändert werden, wenn erste Dokumente erstellt wurden, da diese sonst eventuell nicht mehr ohne weiteres lesbar wären. Wir empfehlen, unter Windows das Plugin NOAText und unter Linux Office-Wrapper zu verwenden. 
+\section{Update-Einstellungen}
+Elexis kann automatisch im Internet nach neuen Versionen des Kernprogramms und aller aktuell installierten Plugins suchen und diese ggf. auch automatisch herunterladen und installieren. Dieses Verhalten kann hier eingestellt werden.
+\begin{itemize}
+\item{update-site} Hier müssen Sie angeben auf welcher Site Elexis nach updates sehen soll. Verwenden Sie normalerweise die Voreinstellung.
+\item{Alle (0-nie) Tage automatisch suchen} Wenn Sie hier einen Wert ungleich null eintragen, dann gibt dieser Wert die Zahl der Tage an, die Elexis vor einem automatischen Update verstreichen lässt. Wenn der Wert null ist, dann wird Elexis nie von allein einen update-Vorgang starten (Dieser kann aber trotzdem immer manuell im Menu \textsc{Datei-Update} ausgelöst werden).
+\item{Verzeichnis für Zwischenspeicherung} Dies gibt das Verzeichnis an, in dem Elexis hehruntergeladene Updates zwischenspeichern kann bis zum Programmende.
+\end{itemize} 
+Da Elexis nicht Teile von sich selber im laufenden Betrieb austauschen kann, geht das Update so vor: Zu ersetzende Programmteile werden zunächst in einem Verzeichnis zwischengespeichert. Erst beim nächsten Programmende werden diese Änderungen eingespielt und stehen beim nächsten Programmstart zur Verfügung. Sie werden deshalb eventuell beim Programm beenden nach einem Update eine Meldung sehen, die besagt, dass Sie den PC noch nicht ausschalten sollen, bis Elexis den Update-Vorgang fertiggestellt hat.
