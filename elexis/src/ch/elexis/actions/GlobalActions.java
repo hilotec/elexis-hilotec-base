@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 2641 2007-06-27 17:06:38Z rgw_ch $
+ * $Id: GlobalActions.java 2644 2007-06-28 12:33:21Z rgw_ch $
  *******************************************************************************/
 
 
@@ -17,7 +17,6 @@ package ch.elexis.actions;
 import static ch.elexis.admin.AccessControlDefaults.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
