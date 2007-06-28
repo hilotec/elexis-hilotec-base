@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Datenbank.java 1044 2006-10-05 15:25:40Z rgw_ch $
+ *  $Id: Datenbank.java 2650 2007-06-28 19:45:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -65,6 +65,7 @@ public class Datenbank extends PreferencePage implements IWorkbenchPreferencePag
 		new Text(ret,SWT.READ_ONLY).setText(cfg.get(PreferenceConstants.DB_TYP,""));
 		
 		new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		if(false){ // TODO 
 		new Label(ret,SWT.NONE).setText("Datenbankreorganisation");
 		bRepair=new Button(ret,SWT.CHECK);
 		bRepair.setText("Fehler gleich reparieren");
@@ -107,6 +108,7 @@ public class Datenbank extends PreferencePage implements IWorkbenchPreferencePag
 					MessageDialog.openError(getShell(), "Fehler beim Log erstellen", "Konnter Logdatei nicht erstellen");
 				}
 			}});
+		} // false
 		return ret;
 	}
     
