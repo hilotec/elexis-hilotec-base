@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2625 2007-06-24 12:07:23Z rgw_ch $
+ *    $Id: Hub.java 2666 2007-06-29 13:39:32Z danlutz $
  *******************************************************************************/
 
 package ch.elexis;
@@ -109,9 +109,9 @@ public class Hub extends AbstractUIPlugin {
 		log=Log.get("Elexis startup"); //$NON-NLS-1$
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
  		userCfg=localCfg; // Damit Anfragen auf userCfg bei nicht eingeloggtem User keine NPE werfen
-        Log.setLevel(localCfg.get(PreferenceConstants.ABL_LOGLEVEL,Log.ERRORS));
-		Log.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE,"elexis.log")); //$NON-NLS-1$
-		Log.setAlertLevel(localCfg.get(PreferenceConstants.ABL_LOGALERT,Log.ERRORS));
+
+ 		// initialize log with default configuration
+ 		initializeLog(localCfg);
 
 		// Kommandozeile lesen und lokale Konfiguration einlesen
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
@@ -121,14 +121,12 @@ public class Hub extends AbstractUIPlugin {
 				String[] c=s.split("="); //$NON-NLS-1$
 				log.log(Messages.Hub_12+c[1],Log.INFOS);
 				localCfg=localCfg.getBranch(c[1], true);
-				Log.setLevel(localCfg.get(PreferenceConstants.ABL_LOGLEVEL,Log.ERRORS));
-				Log.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE,"elexis.log")); //$NON-NLS-1$
-				Log.setAlertLevel(localCfg.get(PreferenceConstants.ABL_LOGALERT,Log.ERRORS));
+				
+				// initialize log with special configuration
+				initializeLog(localCfg);
 				break;
 			}
 		}
-
-
 		
 		// Exception handler initialiseren, Output wie log, auf eigene Klassen begrenzen
         ExHandler.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE,"")); //$NON-NLS-1$
@@ -156,6 +154,25 @@ public class Hub extends AbstractUIPlugin {
         //jobPool.addJob(new ListLoader<Plz>("Plz",new Query(Plz.class),new String[]{"Plz","Ort"}));
 
 	}
+    
+    /*
+     * called by constructor
+     */
+    private void initializeLog(Settings cfg) {
+		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, "elexis.log"); //$NON-NLS-1$
+		int maxLogfileSize = -1;
+		try {
+			String defaultValue = new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString();
+			String value = cfg.get(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, defaultValue);
+			maxLogfileSize = Integer.parseInt(value.trim());
+		} catch (NumberFormatException ex) {
+			// do nothing
+		}
+
+		Log.setLevel(cfg.get(PreferenceConstants.ABL_LOGLEVEL,Log.ERRORS));
+		Log.setOutput(logfileName, maxLogfileSize);
+		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT,Log.ERRORS));
+    }
 
 	/**
 	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench,
@@ -271,7 +288,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2625 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2666 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

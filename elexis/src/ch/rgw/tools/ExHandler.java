@@ -1,4 +1,4 @@
-// $Id: ExHandler.java 1182 2006-10-29 14:48:00Z rgw_ch $
+// $Id: ExHandler.java 2666 2007-06-29 13:39:32Z danlutz $
 
 package ch.rgw.tools;
 import java.io.*;
@@ -32,8 +32,11 @@ public class ExHandler {
     else
     { try{
         File f=new File(name);
-        f.createNewFile();
-        out=new PrintStream(new FileOutputStream(f));
+        
+        if(!f.exists()){
+        	f.createNewFile();
+        }
+        out=new PrintStream(new FileOutputStream(f, true));
       }
       catch(Exception ex)
       { System.err.println(Messages.getString("ExHandler.cantRedirectOutput")); //$NON-NLS-1$

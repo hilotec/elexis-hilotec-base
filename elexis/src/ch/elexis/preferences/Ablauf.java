@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Ablauf.java 1840 2007-02-18 16:25:30Z rgw_ch $
+ *  $Id: Ablauf.java 2666 2007-06-29 13:39:32Z danlutz $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -41,6 +41,9 @@ public class Ablauf  extends FieldEditorPreferencePage
 		
 		addField(ffe);
 		
+		addField(new StringFieldEditor(PreferenceConstants.ABL_LOGFILE_MAX_SIZE,
+				Messages.Ablauf_31,
+				getFieldEditorParent()));
 
 		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.ABL_LOGLEVEL,

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 1862 2007-02-20 15:27:32Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 2666 2007-06-29 13:39:32Z danlutz $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -26,6 +26,7 @@ import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Brief;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.util.Log;
 
 /**
  * Vorgabewerte setzen, wo nötig. Bitte in den drei Funktionen dieser Klasse
@@ -58,6 +59,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         	userhome.mkdirs();
         }
         localstore.setDefault(PreferenceConstants.ABL_LOGFILE,userhome.getAbsolutePath()+File.separator+"elexis.log");
+        localstore.setDefault(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString());
         localstore.setDefault(PreferenceConstants.ABL_LOGLEVEL,5);
         localstore.setDefault(PreferenceConstants.ABL_LOGALERT,1);
         localstore.setDefault(PreferenceConstants.ABL_TRACE,"none");

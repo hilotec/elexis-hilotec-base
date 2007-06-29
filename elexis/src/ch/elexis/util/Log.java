@@ -1,4 +1,4 @@
-// $Id: Log.java 1183 2006-10-29 15:11:21Z rgw_ch $ 
+// $Id: Log.java 2666 2007-06-29 13:39:32Z danlutz $ 
 package ch.elexis.util;
 
 import java.io.File;
@@ -48,6 +48,8 @@ public class Log {
 	  /** Immer auszugebende Meldungen, automatisch mit einem Timestamp versehen */
 	  public static final int SYNCMARK=-1;
 	  
+	  public static final int DEFAULT_LOGFILE_MAX_SIZE = 200000;
+	  
 	  private static PrintStream out;
 	  String prefix;
 	  private static int LogLevel;
@@ -65,8 +67,9 @@ public class Log {
 	   * Ausgabeziel einstellen. Ist immer global f�r alle Klassen des aktuellen Pogramms.
 	   * @param name null oder "" oder none: Ausgabe nach stdout, andernfalls ein
 	   * Dateiname, der die Ausgabedatei definiert.
+	   * @param maxSize maximale Grösse (unbeschränkt, falls <= 0)
 	   */
-	  static public void setOutput(String name)
+	  static public void setOutput(String name, int maxSize)
 	  { if( (name==null) || (name.equals("")) || (name.equals("none")) ) //$NON-NLS-1$ //$NON-NLS-2$
 	    { out=System.out;
 	    }
@@ -74,13 +77,15 @@ public class Log {
 	    { try{
 	        File f=new File(name);
 	        if(f.exists()){
-	        	if(f.length()>200000){
-	        		f.createNewFile();
+	        	if (maxSize > 0) {
+	        		if(f.length()>maxSize){
+	        			f.createNewFile();
+	        		}
 	        	}
 	        }else{
 	        	f.createNewFile();
 	        }
-	        out=new PrintStream(new FileOutputStream(f));
+	        out=new PrintStream(new FileOutputStream(f, true));
 	      }
 	      catch (Exception ex)
 	      { ExHandler.handle(ex);
