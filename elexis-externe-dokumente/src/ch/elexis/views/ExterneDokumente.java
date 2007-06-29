@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: ExterneDokumente.java 2391 2007-05-18 12:46:08Z danlutz $
+ *  $Id: ExterneDokumente.java 2662 2007-06-29 12:23:41Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -106,7 +106,9 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 	private Action openAction;
 	private Action editAction;
 	private Action renameAction;
+/*
 	private Action verifyAction;
+*/
 	
 	private Patient actPatient;
 	/*
@@ -498,7 +500,9 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		manager.add(openAction);
 		manager.add(renameAction);
 		manager.add(editAction);
+/*
 		manager.add(verifyAction);
+*/
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -570,6 +574,7 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
 		GlobalActions.registerActionHandler(this, renameAction);
 
+/*
 		verifyAction = new Action() {
 			public void run() {
 				new VerifierDialog(getViewSite().getShell(), actPatient).open();
@@ -580,6 +585,7 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		};
 		verifyAction.setText("Dateien überprüfen");
 		verifyAction.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
+*/
 	}
 
 	private void hookDoubleClickAction() {
