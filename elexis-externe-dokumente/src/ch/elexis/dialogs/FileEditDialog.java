@@ -16,20 +16,19 @@ package ch.elexis.dialogs;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
@@ -53,8 +52,17 @@ public class FileEditDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		String fileName = file.getName();
-		// TODO ext
-		String fileExtension = null;
+		String fileExtension = "";
+		
+		// extract name and extension
+		Pattern p = Pattern.compile("^(.+)\\.([^.]+)$");
+		Matcher m = p.matcher(fileName);
+		if (m.matches()) {
+			// replace fileName with prefix and fileExtension with suffix
+			
+			fileName = m.group(1);
+			fileExtension = m.group(2);
+		}
 		
 		Composite area = new Composite(parent, SWT.NONE);
 		area.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -70,9 +78,9 @@ public class FileEditDialog extends TitleAreaDialog {
 		label.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		tDateiname=new Text(area,SWT.BORDER);
-		// TODO ext
 		tDateiname.setText(fileName);
 		tDateiname.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		SWTHelper.setSelectOnFocus(tDateiname);
 		
 		// date label
 		label = new Label(area, SWT.NONE);
@@ -102,10 +110,9 @@ public class FileEditDialog extends TitleAreaDialog {
 
 		// extension text
 		tExtension = new Text(area, SWT.BORDER);
-		// TODO ext
-		//tExtension.setText(file.getName());
+		tExtension.setText(fileExtension);
 		tExtension.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+		SWTHelper.setSelectOnFocus(tExtension);
 		
 		return area;
 	}
@@ -119,8 +126,17 @@ public class FileEditDialog extends TitleAreaDialog {
 	}
 	@Override
 	protected void okPressed() {
-		// TODO ext
-		String dateiname = tDateiname.getText();
+		String fileName = tDateiname.getText();
+		String fileExtension = tExtension.getText();
+		
+		String dateiname;
+		if (StringTool.isNothing(fileExtension)) {
+			dateiname = fileName;
+		} else {
+			// re-assemble prefix and suffix
+			dateiname = fileName + "." + fileExtension;
+		}
+
 		Date datum = dp.getDate();
 		
 		if (datum != null && datum.getTime() != file.lastModified()) {
