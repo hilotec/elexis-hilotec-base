@@ -98,7 +98,7 @@ public class FileEditDialog extends TitleAreaDialog {
 		 */
 		//dp.setDate(new Date(file.lastModified()));
 		// TODO DEBUG
-		System.out.println("old time: " + file.lastModified());
+		//System.out.println("old time: " + file.lastModified());
 
 		// extension text
 		tExtension = new Text(area, SWT.BORDER);
