@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 2383 2007-05-18 11:51:18Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 2667 2007-06-29 13:43:47Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -43,6 +43,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.widgets.Composite;
@@ -133,7 +134,23 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
     public void createPartControl(Composite parent)
     {
         vc=new ViewerConfigurer(new BasicTreeContentProvider(),
-                new ViewerConfigurer.TreeLabelProvider(),
+                new ViewerConfigurer.TreeLabelProvider() {
+        			// extend the TreeLabelProvider by getImage()
+        	
+            		public Image getImage(Object element) {
+            			if (element instanceof Tree) {
+            				Tree tree = (Tree) element;
+            				PersistentObject po = (PersistentObject) tree.contents;
+            				if(po.isValid()){
+            					return Desk.theImageRegistry.get(Desk.IMG_OK);
+            				}else{
+            					return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+            				}
+            			}
+            			
+            			return null;
+            		}
+        		},
                 null, //new DefaultControlFieldProvider(cv, new String[]{"Datum","Name","Vorname","Geb. Dat"}),
                 new ViewerConfigurer.DefaultButtonProvider(),
                 new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,SWT.MULTI|SWT.V_SCROLL,cv)
