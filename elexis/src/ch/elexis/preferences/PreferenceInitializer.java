@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 2666 2007-06-29 13:39:32Z danlutz $
+ *  $Id: PreferenceInitializer.java 2673 2007-06-29 14:59:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -60,7 +60,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         }
         localstore.setDefault(PreferenceConstants.ABL_LOGFILE,userhome.getAbsolutePath()+File.separator+"elexis.log");
         localstore.setDefault(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString());
-        localstore.setDefault(PreferenceConstants.ABL_LOGLEVEL,5);
+        localstore.setDefault(PreferenceConstants.ABL_LOGLEVEL,2);
         localstore.setDefault(PreferenceConstants.ABL_LOGALERT,1);
         localstore.setDefault(PreferenceConstants.ABL_TRACE,"none");
         localstore.setDefault(PreferenceConstants.ABL_BASEPATH, userhome.getAbsolutePath());
@@ -69,8 +69,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         Hub.localCfg.set(PreferenceConstants.ABL_BASEPATH, userhome.getAbsolutePath());
         
         // Texterstellung
-        localstore.setDefault(PreferenceConstants.P_TEXTMODUL,"OpenOffice");
-        localstore.setDefault(PreferenceConstants.P_OOBASEDIR,"");	
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
+        	localstore.setDefault(PreferenceConstants.P_TEXTMODUL,"NOA-Text");
+		}else{
+			localstore.setDefault(PreferenceConstants.P_TEXTMODUL, "OpenOffice Wrapper");
+		}
+        File elexisbase=new File(Hub.getBasePath());
+    	File fDef=new File(elexisbase.getParentFile().getParent()+"/ooo");
+    	String defaultbase;
+    	if(fDef.exists()){
+    		defaultbase=fDef.getAbsolutePath();
+    		Hub.localCfg.set(PreferenceConstants.P_OOBASEDIR, defaultbase);
+    	}else{
+    		defaultbase=Hub.localCfg.get(PreferenceConstants.P_OOBASEDIR,".");
+    	}
+		System.setProperty("openoffice.path.name",defaultbase);
+		localstore.setDefault(PreferenceConstants.P_OOBASEDIR,defaultbase);	
         
                 
         // sample
