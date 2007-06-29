@@ -212,8 +212,11 @@ public class JournalView extends ViewPart implements SelectionListener,
     private static final int BEZEICHNUNG = 2;
     private static final int THERAPIE = 3;
     private static final int DIAGNOSEN = 4;
+/*
     private static final int GESETZ = 5;
     private static final int STATUS = 6;
+*/
+    private static final int STATUS = 5;
     
     private static final String[] COLUMN_TEXT = {
     	"Datum",             // DATUM
@@ -221,7 +224,9 @@ public class JournalView extends ViewPart implements SelectionListener,
     	"Problem/Diagnose",  // BEZEICHNUNG
     	"Procedere",         // THERAPIE
     	"Rg-Dx",             // DIAGNOSEN
+/*
     	"Fall",              // GESETZ
+*/
     	""                   // STATUS
     };
     
@@ -231,7 +236,9 @@ public class JournalView extends ViewPart implements SelectionListener,
     	120,  // BEZEICHNUNG
     	120,  // THERAPIE
     	80,   // DIAGNOSEN
+    	/*
     	40,   // GESETZ
+*/
     	20    // STATUS
     };
     
@@ -242,7 +249,9 @@ public class JournalView extends ViewPart implements SelectionListener,
     	CFG_BASE_KEY + "/" + "description", // BEZEICHNUNG
     	CFG_BASE_KEY + "/" + "therapy",     // THERAPIE
     	CFG_BASE_KEY + "/" + "diagnoses",   // DIAGNOSEN
+/*
     	CFG_BASE_KEY + "/" + "law",         // GESETZ
+*/
     	CFG_BASE_KEY + "/" + "status",      // STATUS
     };
 
@@ -2155,8 +2164,10 @@ public class JournalView extends ViewPart implements SelectionListener,
             	lineSeparator = System.getProperty("line.separator");
             	text = diagnosen.replaceAll(Problem.TEXT_SEPARATOR, lineSeparator);
                 return text;
+/*                
             case GESETZ:
             	return problem.getGesetz();
+*/
             	/*
             case RECHNUNGSDATEN:
             	return "not yet implemented";
@@ -2776,8 +2787,10 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    				lineSeparator = System.getProperty("line.separator");
 	    				text = diagnosen.replaceAll(Problem.TEXT_SEPARATOR, lineSeparator);
 	    				return text;
+/*
 	    			case GESETZ:
 	    				return problem.getGesetz();
+*/
 	    				/*
 	                case RECHNUNGSDATEN:
 	            	    return "not yet implemented";
@@ -2861,7 +2874,11 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    			}
 	    			
 	    			problem = new Problem(actPatient, "");
-	    			problems[rowIndex] = problem;
+	                String currentDate = new TimeTool().toString(TimeTool.DATE_ISO);
+	                problem.setDatum(currentDate);
+	                GlobalEvents.getInstance().fireSelectionEvent(problem);
+
+	                problems[rowIndex] = problem;
 
 	    			addElement(new DummyProblem());
 	    			
