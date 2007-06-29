@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 2673 2007-06-29 14:59:54Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 2675 2007-06-29 15:14:53Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -71,6 +71,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         // Texterstellung
         if(System.getProperty("os.name").toLowerCase().startsWith("win")){
         	localstore.setDefault(PreferenceConstants.P_TEXTMODUL,"NOA-Text");
+        	localstore.setValue(PreferenceConstants.P_TEXTMODUL,"NOA-Text");
 		}else{
 			localstore.setDefault(PreferenceConstants.P_TEXTMODUL, "OpenOffice Wrapper");
 		}
@@ -79,13 +80,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     	String defaultbase;
     	if(fDef.exists()){
     		defaultbase=fDef.getAbsolutePath();
-    		Hub.localCfg.set(PreferenceConstants.P_OOBASEDIR, defaultbase);
     	}else{
     		defaultbase=Hub.localCfg.get(PreferenceConstants.P_OOBASEDIR,".");
     	}
 		System.setProperty("openoffice.path.name",defaultbase);
 		localstore.setDefault(PreferenceConstants.P_OOBASEDIR,defaultbase);	
-        
+        localstore.setValue(PreferenceConstants.P_OOBASEDIR,defaultbase);
                 
         // sample
 		localstore.setDefault(PreferenceConstants.P_BOOLEAN, true);
