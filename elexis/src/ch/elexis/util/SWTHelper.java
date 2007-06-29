@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2524 2007-06-17 15:18:50Z rgw_ch $
+ * $Id: SWTHelper.java 2664 2007-06-29 13:19:53Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -22,7 +24,12 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -33,6 +40,12 @@ import ch.rgw.tools.StringTool;
 
 /** statische Hilfsfunktionen für SWT-Objekte */
 public class SWTHelper {
+	/**
+	 * Singleton-Variable, die einen FocusListener enthaelt, der in einem
+	 * Text-Control den Text selektiert, wenn das Control den Focus erhaelt.
+	 * Siehe setSelectOnFocus(). 
+	 */
+	private static FocusListener selectOnFocusListener = null;
 
 	/** Ein Objekt innerhalb des parents zentrieren */
 	public static void center(Shell parent, Composite child){
@@ -258,5 +271,30 @@ public class SWTHelper {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Adds a FocusListener to <code>text</code> so that the text is selected as soon as
+	 * the control gets the focus. The selection is cleared when the focus is lost.
+	 * @param text the Text control to add a focus listener to
+	 */
+	public static void setSelectOnFocus(Text text) {
+		if (selectOnFocusListener == null) {
+			selectOnFocusListener = new FocusListener() {
+				public void focusGained(FocusEvent e) {
+					Text t = (Text) e.widget;
+					t.selectAll();
+				}
+
+				public void focusLost(FocusEvent e) {
+					Text t = (Text) e.widget;
+					if (t.getSelectionCount() > 0) {
+						t.clearSelection();
+					}
+				}
+			};
+		}
+		
+		text.addFocusListener(selectOnFocusListener);
 	}
 }
