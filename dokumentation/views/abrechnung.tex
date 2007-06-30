@@ -5,7 +5,7 @@
 % * which accompanies this distribution, and is available at
 % * http://www.eclipse.org/legal/epl-v10.html
 % *
-% *  $Id: abrechnung.tex 2470 2007-06-03 07:01:57Z rgw_ch $
+% *  $Id: abrechnung.tex 2683 2007-06-30 04:56:04Z rgw_ch $
 %
 %*******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -50,8 +50,7 @@ die Konsultationen des aktuellen Mandanten angezeigt.
 \end{figure}
 Hierzu gibt es folgende Möglichkeiten:
 \begin{itemize}
-  \item Automatische Auswahl: Dabei werden die Konsultationen nach einem
-  bestimmten Algorithmus automatisch ausgewählt und in die Auswahlliste
+  \item Automatische Auswahl (Zauberstab-Icon): Dabei werden die Konsultationen nach bestimmten Regeln automatisch ausgewählt und in die Auswahlliste
   übertragen.
   \item Patientennamen aus der Liste in die Auswahl ziehen: Dadurch werden alle
   Konsultationen aller Fälle des gewählten Patienten zur Abrechnung markiert.
@@ -72,6 +71,13 @@ befindlichen Elemente erstellt. Dabei werden immer alle Konsultationen, die zu
 einem Fall gehören, zusammengefasst. Wenn von einem Patienten also mehrere Fälle
 in der Auswahl sind, werden auch mehrere Rechnungen erstellt.
 
+\subsection{Rechnungen}
+In dieser View sehen Sie die erstellten Rechnungen. Eine Rechnung hat immer einen bestimmten Status:
+\begin{itemize}
+    \item {Offen} Unmittelbar nach dem Erstellen.
+    \item{Offen und gedruckt} Die Rechnung wurde mindestens einmal ausgegeben (über den Drucker oder eine andere Exportmethode). Ab diesem Zeitpunkt beginnt die Zahlungsfrist zu laufen. (Elexis kann allerdings nicht feststellen, ob beispielsweise der Drucker die Rechnung nicht korrekt ausgedruckt hat, oder ob sie nicht abgeschickt wurde. Deshalb liegt in diesem Punkt eine potentielle Fehlerquelle)
+\end{itemize}
+
 \subsection{Konto}
 \index{Konto}In dieser View sehen Sie alle Kontobewegungen eines bestimmten Patienten.
 Rechnungen werden als negative, Zahlungen und Storno als positive
@@ -84,5 +90,5 @@ Diese Liste zeigt alle Kontobewegungen insgesamt an.
 \subsection{Leistungen}
 
 
-\subsection{Rechnungen}
+
 
