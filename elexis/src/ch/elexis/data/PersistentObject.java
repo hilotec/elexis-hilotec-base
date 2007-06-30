@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2523 2007-06-16 04:45:04Z rgw_ch $
+ *    $Id: PersistentObject.java 2682 2007-06-30 04:42:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -140,6 +140,12 @@ public abstract class PersistentObject{
     public static boolean connect(Settings cfg){
     	File base=new File(Hub.getBasePath());
     	File demo=new File(base.getParentFile().getParent()+"/demoDB");
+    	log.log("Verzeichnis Demo-Datenbank: "+demo.getAbsolutePath(), Log.DEBUGMSG);
+    	if(System.getProperty("os.name").toLowerCase().startsWith("mac")){
+    		demo=demo.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+    		demo=new File(demo,"demoDB");
+    		log.log("Verzeichnis Demo-Datenbank mac-korrigiert: "+demo.getAbsolutePath(), Log.DEBUGMSG);
+    	}
     	if(demo.exists() && demo.isDirectory()){
     		j=JdbcLink.createInProcHsqlDBLink(demo.getAbsolutePath()+"/db");
     		if(j.connect("sa", "")){
