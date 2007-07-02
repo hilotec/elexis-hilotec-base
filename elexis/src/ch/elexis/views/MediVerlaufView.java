@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MediVerlaufView.java 2692 2007-07-02 12:57:01Z rgw_ch $
+ *  $Id: MediVerlaufView.java 2695 2007-07-02 15:53:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -171,7 +171,11 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 								Map<TimeTool,String> terms=p.getTerms();
 								TimeTool[] tts=terms.keySet().toArray(new TimeTool[0]);
 								for(int i=0;i<tts.length-1;i++){
-									alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER),tts[i+1].toString(TimeTool.DATE_GER),p));
+									if(i<tts.length-1){
+										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER),tts[i+1].toString(TimeTool.DATE_GER),p));
+									}else{
+										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER)," ... ",p));
+									}
 								}
 								alle.add(new MediAbgabe(tts[tts.length-1].toString(TimeTool.DATE_GER)," ... ",p));
 							}
