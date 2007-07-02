@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MediVerlaufView.java 2526 2007-06-17 16:57:28Z rgw_ch $
+ *  $Id: MediVerlaufView.java 2692 2007-07-02 12:57:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -166,6 +166,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 							List<Prescription> list=qbe.execute();
 							LinkedList<MediAbgabe> alle=new LinkedList<MediAbgabe>();
 							monitor.subTask("suche Medikamente...");
+							try{
 							for(Prescription p:list){
 								Map<TimeTool,String> terms=p.getTerms();
 								TimeTool[] tts=terms.keySet().toArray(new TimeTool[0]);
@@ -173,6 +174,9 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 									alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER),tts[i+1].toString(TimeTool.DATE_GER),p));
 								}
 								alle.add(new MediAbgabe(tts[tts.length-1].toString(TimeTool.DATE_GER)," ... ",p));
+							}
+							}catch(Exception ex){
+								ExHandler.handle(ex);
 							}
 							monitor.subTask("sortiere...");
 							mListe=alle.toArray(new MediAbgabe[0]);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2664 2007-06-29 13:19:53Z danlutz $
+ * $Id: SWTHelper.java 2692 2007-07-02 12:57:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -175,7 +175,7 @@ public class SWTHelper {
 	 * @return the GridData (that is already set to the control)
 	 */
 	public static GridData setGridDataHeight(Control control, int lines, boolean fillHorizontal){
-		int h=control.getFont().getFontData()[0].height;
+		int h=Math.round(control.getFont().getFontData()[0].height);
 		GridData gd=getFillGridData(1, fillHorizontal, 1, false);
 		gd.heightHint=lines*(h+2);
 		control.setLayoutData(gd);
@@ -233,7 +233,7 @@ public class SWTHelper {
 		}
 		Text ret=new Text(parent,SWT.BORDER|flags|lNum);
 		GridData gd=getFillGridData(1, true, 1, false);
-		int h=ret.getFont().getFontData()[0].height;
+		int h=Math.round(ret.getFont().getFontData()[0].height);
 		gd.minimumHeight=(lines+1)*(h+2);
 		gd.heightHint=gd.minimumHeight;
 		ret.setLayoutData(gd);
@@ -246,7 +246,7 @@ public class SWTHelper {
 		}
 		Text ret=tk.createText(parent, "", lNum|flags|SWT.BORDER);
 		GridData gd=getFillGridData(1, true, 1, false);
-		int h=ret.getFont().getFontData()[0].height;
+		int h=Math.round(ret.getFont().getFontData()[0].height);
 		gd.minimumHeight=(lines+1)*(h+2);
 		gd.heightHint=gd.minimumHeight;
 		ret.setLayoutData(gd);
