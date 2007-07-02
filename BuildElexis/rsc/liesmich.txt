@@ -11,39 +11,34 @@ Haftungsausschluss.
 
 a) Beschreibung, Umfang  und Mindestvoraussetzungen
 ---------------------------------------------------
-Diese CD enthält eine vollständige Elexis-Installation für Windows inklusive Java Runtime, welche mit einer Demo-Datenbank verknüpft ist. Ebenfalls dabei ist eine Minimalinstallation von OpenOffice (nur writer).
+Dies ist eine vollständige Elexis-Installation für Windows inklusive Java Runtime und OpenOffice, welche mit einer Demo-Datenbank verknüpft ist. 
 
-Diese Version läuft nur auf Microsoft Windows 2000 oder neuer. Der Computer sollte mindestens 256MB RAM haben (besser 512) und auf der Festplatte müssen mindestens 350MB frei sein.
+Diese Version läuft nur auf Microsoft Windows 2000 oder XP. Der Computer sollte mindestens 256MB RAM haben (besser 512) und auf der Festplatte müssen mindestens 350MB frei sein.
 
-
-b) Installation
----------------
-Starten Sie  elexis-setup.exe und folgen Sie den Anweisungen auf dem Bildschirm.
-
-c) Programmstart
+b) Programmstart
 ----------------
-Diese Version enthält eine Datenbank mit einigen Demo-Daten zum Ausprobieren. Melden Sie sich mit Anwendernamen udn Passwort "test" an, Sie haben dann vollen Zugriff auf alle Programteile.
+Diese Version enthält eine Datenbank mit einigen Demo-Daten zum Ausprobieren. Melden Sie sich mit Anwendernamen und Passwort "test" an, Sie haben dann vollen Zugriff auf alle Programteile.
 
-c) Deinstallation
+d) Deinstallation
 -----------------
 Im Startmenu finden Sie nebst Elexis auch einen Menuepunkt "Deinstallation". Wählen Sie diesen Punkt, um Elexis vollständig zu löschen (Achtung: Dies löscht auch alle Daten, die Sie vielleicht seit der Installation in Elexis eingegeben haben).
 Sie können auch einfach den Elexis-Ordner löschen. Auch dies deinstalliert das Programm vollständig.
 
 
-d) Upgrade auf die Vollversion
------------------------------- 
+e) Upgrade auf die Vollversion
+------------------------------
 Löschen Sie einfach das Unterverzeichnis "demoDB" im Elexis-Verzeichnis. Das Programm ist dann identisch mit der Normalversion (muss also auch konfiguriert und parametrisiert werden)
 
 
-e) Zusatzmaterialien und Handbuch
+f) Zusatzmaterialien und Handbuch
 ---------------------------------
-Bitte beachten Sie, dass das Handbuch und andere Dokumentationsmaterialien auf dieser CD vielleicht nicht ganz demselben Entwicklungsstand entstammen, wie das Programm selber, und dass es deshalb Differenzen im Aussehen und der Bedienung geben kann.
+Ein Handbuch (elexis.pdf) wurde ebenfalls mitinstalliert. Bitte lesen Sie dort zunächst nach, wenn Probleme auftreten.
 
 
 --------------------------------------------------------------------------------------
 Elexis Lizenz
 
-Copyright (c) 2005-2006 G. Weirich und Elexis-Team
+Copyright (c) 2005-2007 G. Weirich und Elexis-Team
 http://www.elexis.ch
 
 

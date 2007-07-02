@@ -1,16 +1,16 @@
-Elexis Lizenz
+﻿Elexis Lizenz
 
-Copyright (c) 2005 G. Weirich und Elexis-Team
+Copyright (c) 2005-2007 G. Weirich und Elexis-Team
 http://www.elexis.ch
 
  
  Sie erhalten das Recht zur nicht-exklusiven Nutzung dieses Programms auf
  beliebig vielen Rechnern und zur Weitergabe an andere, nach eigenem Ermessen.
- Sie m�ssen aber diesen Text unver�ndert beilegen und Sie d�rfen keine Copyright-
+ Sie m�ssen aber diesen Text unverändert beilegen und Sie dürfen keine Copyright-
  Hinweise aus dem Programm bzw. dessen Quelltexten entfernen.
  
  
- Die Ver�ffentlichung dieses Programms erfolgt in der Hoffnung, dass es Ihnen von
+ Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es Ihnen von
  Nutzen sein wird, aber OHNE IRGENDEINE Garantie, sogar ohne die implizite Garantie
  der MARKTREIFE oder der VERWENDBARKEIT F�R EINEN BESTIMMTEN ZWECK.
 
