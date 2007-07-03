@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2666 2007-06-29 13:39:32Z danlutz $
+ *    $Id: Hub.java 2696 2007-07-03 12:49:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -39,6 +39,7 @@ import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.IO.*;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
@@ -253,7 +254,14 @@ public class Hub extends AbstractUIPlugin {
 			if(pat==null){
 				sb.append("  -  Kein Patient ausgewählt");
 			}else{
-				sb.append("  / ").append(pat.getLabel());
+				String nr=pat.getPatCode();
+				int act=new TimeTool().get(TimeTool.YEAR);
+				int patg=new TimeTool(pat.getGeburtsdatum()).get(TimeTool.YEAR);
+				int alter=act-patg;
+				sb.append("  / ").append(pat.getLabel())
+					.append("(").append(alter).append(") - ")
+					.append("[").append(nr).append("]");
+				
 				if(Reminder.findForPatient(pat,Hub.actUser).size()!=0){
 					sb.append("    *** Reminders *** ");
 				}
@@ -288,7 +296,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2666 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2696 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
