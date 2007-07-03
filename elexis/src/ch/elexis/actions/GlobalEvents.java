@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 2529 2007-06-18 14:33:06Z danlutz $
+ * $Id: GlobalEvents.java 2698 2007-07-03 12:51:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -293,7 +293,8 @@ public class GlobalEvents implements IPartListener2 {
      * Eine Information schicken, dass der Datenbestand eines bestimmten Typs verändert wurde.
      * @param clazz
      */
-    public void fireUpdateEvent(Class clazz){
+    @SuppressWarnings("unchecked")
+	public void fireUpdateEvent(Class clazz){
     	for(BackingStoreListener lis:storeListeners){
     		lis.reloadContents(clazz);
     	}
@@ -306,7 +307,8 @@ public class GlobalEvents implements IPartListener2 {
      */
     public interface SelectionListener{
         public void selectionEvent(PersistentObject obj);
-        public void clearEvent(Class template);
+        @SuppressWarnings("unchecked")
+		public void clearEvent(Class template);
     }
     
     /**
@@ -317,7 +319,8 @@ public class GlobalEvents implements IPartListener2 {
      *
      */
     public interface BackingStoreListener{
-    	public void reloadContents(Class clazz);
+    	@SuppressWarnings("unchecked")
+		public void reloadContents(Class clazz);
     }
     
     private class GlobalListener implements ISelectionChangedListener{
@@ -349,7 +352,8 @@ public class GlobalEvents implements IPartListener2 {
      * oder null, wenn kein Patient selektiert ist
      * @return
      */
-    public PersistentObject getSelectedObject(Class template){
+    @SuppressWarnings("unchecked")
+	public PersistentObject getSelectedObject(Class template){
     	return SelectionTracker.getObject(template);
     }
     @SuppressWarnings("unchecked") //$NON-NLS-1$
@@ -374,7 +378,8 @@ public class GlobalEvents implements IPartListener2 {
     
     private static class SelectionTracker{
     	static SelectionTracker tracker;
-    	Hashtable<Class,PersistentObject> objects=new Hashtable<Class,PersistentObject>();
+    	@SuppressWarnings("unchecked")
+		Hashtable<Class,PersistentObject> objects=new Hashtable<Class,PersistentObject>();
     	// IWorkbenchWindow window;
     	/*
     	SelectionTracker next;
@@ -385,11 +390,13 @@ public class GlobalEvents implements IPartListener2 {
     		return root.findFor(win);
     	}
     	*/
-    	static PersistentObject getObject(/*IWorkbenchWindow win,*/ Class template){
+    	@SuppressWarnings("unchecked")
+		static PersistentObject getObject(/*IWorkbenchWindow win,*/ Class template){
     		//SelectionTracker t=find(win);
     		return tracker==null ? null : tracker.objects.get(template);
     	}
-    	static void clearObject(/*IWorkbenchWindow win,*/ Class template){
+    	@SuppressWarnings("unchecked")
+		static void clearObject(/*IWorkbenchWindow win,*/ Class template){
     		//SelectionTracker t=find(win);
     		if(tracker!=null){
     			tracker.objects.remove(template);

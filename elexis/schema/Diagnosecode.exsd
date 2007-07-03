@@ -18,7 +18,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="Diagnosesystem"/>
+            <element ref="Diagnosesystem" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

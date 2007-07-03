@@ -14,7 +14,7 @@ Die Perspektive muss dazu in der Standard Eclipse Perspective-Extension eingebun
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="Perspektive"/>
+            <element ref="Perspektive" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

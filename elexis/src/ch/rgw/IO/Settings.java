@@ -1,4 +1,4 @@
-// $Id: Settings.java 1870 2007-02-21 14:28:40Z rgw_ch $
+// $Id: Settings.java 2698 2007-07-03 12:51:47Z rgw_ch $
 
 package ch.rgw.IO;
 import java.util.ArrayList;
@@ -232,16 +232,16 @@ public Settings getBranch(String name, boolean CreateIfNotExist)
 		return null;
 	}
   }
-  public ArrayList getAll()
+  public ArrayList<String> getAll()
   {		
-  		ArrayList ret=new ArrayList();
+  		ArrayList<String> ret=new ArrayList<String>();
   		addNode(ret,"",node);
   		return ret;
   }
-  public Iterator iterator()
+  public Iterator<String> iterator()
   {
-  	ArrayList al=getAll();
-  	Iterator it=al.iterator();
+  	ArrayList<String> al=getAll();
+  	Iterator<String> it=al.iterator();
   	return it;
   }
   @SuppressWarnings("unchecked")
@@ -264,7 +264,7 @@ private void addNode(ArrayList dest, String name, Hashtable n)
    */    
   public void dump(Log l2)
   {
-    ArrayList keys=getAll();
+    ArrayList<String> keys=getAll();
     
      for (int i=0;i<keys.size();i++)
      {  String a=(String)keys.get(i);
@@ -288,7 +288,7 @@ private void addNode(ArrayList dest, String name, Hashtable n)
    */
   private long getHashCode(String ex)
   {  long hc=0;
-  	 ArrayList keys=getAll();
+  	 ArrayList<String> keys=getAll();
      for (int i=0;i<keys.size();i++)
      {  String a=(String)keys.get(i);
         if(a.equals(ex))
@@ -481,7 +481,7 @@ private void addNode(ArrayList dest, String name, Hashtable n)
   
   public void overlay(Settings other, int mode)
   {
-  	ArrayList otherEntries=other.getAll();
+  	ArrayList<String> otherEntries=other.getAll();
   		
     if((mode&OVL_REPLACE)!=0) {
           node.clear();

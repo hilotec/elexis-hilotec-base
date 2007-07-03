@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 2178 2007-03-27 13:53:51Z rgw_ch $
+ *  $Id: TextContainer.java 2698 2007-07-03 12:51:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -116,16 +116,6 @@ public class TextContainer {
 		qbe.endGroup();
 		List<Brief> list=qbe.execute();
 		if((list==null) || (list.size()==0)){
-			/*
-			Desk.theDisplay.asyncExec(new Runnable(){
-				public void run() {
-					new MessageDialog(site.getShell(),"Dokumentvorlage nicht gefunden",null,"Die benötigte Formatvorlage "+templatename+" wurde nicht gefunden.",
-							SWT.ICON_ERROR,new String[]{"OK"},0).open();
-				}
-			});
-			
-			return null;
-			*/
 			SWTHelper.showError("Dokumentvorlage nicht gefunden", "Die benötigte Formatvorlage "+templatename+" wurde nicht gefunden.");
 			return null;
 		}

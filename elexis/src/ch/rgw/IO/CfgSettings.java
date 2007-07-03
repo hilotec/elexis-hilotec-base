@@ -1,4 +1,4 @@
-// $Id: CfgSettings.java 536 2006-07-08 04:58:10Z rgw_ch $
+// $Id: CfgSettings.java 2698 2007-07-03 12:51:47Z rgw_ch $
 package ch.rgw.IO;
 
 import java.io.BufferedReader;
@@ -98,8 +98,8 @@ public static final String Version(){return "1.0.2";}
     	  try{
     		  BufferedWriter fo=new BufferedWriter(new FileWriter(filename));
     		  fo.write("#"+message);
-    		  ArrayList all=getAll();
-    		  Iterator it=all.iterator();
+    		  ArrayList<String> all=getAll();
+    		  Iterator<String> it=all.iterator();
     		  while(it.hasNext()){
     			  String el=(String)it.next();
     			  String v=get(el,null);

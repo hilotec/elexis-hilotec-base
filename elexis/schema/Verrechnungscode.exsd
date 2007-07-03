@@ -13,8 +13,8 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="Artikel"/>
-            <element ref="Leistung"/>
+            <element ref="Artikel" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="Leistung" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
