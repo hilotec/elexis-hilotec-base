@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 2512 2007-06-12 05:11:08Z rgw_ch $
+ *  $Id: NOAText.java 2699 2007-07-04 17:11:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -21,7 +21,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.osgi.framework.Bundle;
 
 import ag.ion.bion.officelayer.application.IOfficeApplication;
+import ag.ion.bion.officelayer.application.OfficeApplicationException;
 import ag.ion.bion.officelayer.document.DocumentDescriptor;
+import ag.ion.bion.officelayer.event.ICloseEvent;
+import ag.ion.bion.officelayer.event.ICloseListener;
+import ag.ion.bion.officelayer.event.IEvent;
 import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.text.ITextTable;
@@ -111,6 +115,7 @@ public class NOAText implements ITextPlugin {
 			fos.close();
 			panel.loadDocument(false, myFile.getAbsolutePath(), DocumentDescriptor.DEFAULT);
 			doc=(ITextDocument)panel.getDocument();
+			doc.addCloseListener(new closeListener(office));
 			return true;
 			/*
 			doc=(ITextDocument)office.getDocumentService().constructNewDocument(IDocument.WRITER, DocumentDescriptor.DEFAULT);
@@ -145,6 +150,7 @@ public class NOAText implements ITextPlugin {
 			fout.close();
 			panel.loadDocument(false, myFile.getAbsolutePath(), DocumentDescriptor.DEFAULT);
 			doc=(ITextDocument)panel.getDocument();
+			doc.addCloseListener(new closeListener(office));
 			//doc=(ITextDocument)office.getDocumentService().loadDocument(iFrame, makeURL());
 			return true;
 		}catch(Exception ex){
@@ -167,6 +173,7 @@ public class NOAText implements ITextPlugin {
 				doc.close();
 				panel.loadDocument(false, myFile.getAbsolutePath(), DocumentDescriptor.DEFAULT);
 				doc=(ITextDocument)panel.getDocument();
+				doc.addCloseListener(new closeListener(office));
 			}
 		} catch (Exception e) {
 			ExHandler.handle(e);
@@ -525,7 +532,71 @@ public class NOAText implements ITextPlugin {
 	    	  case SWT.BOLD:	charProps.setPropertyValue("CharWeight",FontWeight.BOLD); break;
 	    	  }
 	      }
+	      
 		return charProps;
 	}
 	
+		
+	static class closeListener implements ICloseListener {
+
+		private IOfficeApplication officeAplication = null;
+		
+	  //----------------------------------------------------------------------------
+		/**
+		 * Constructs a new SnippetDocumentCloseListener
+		 * 
+		 * @author Sebastian Rösgen
+		 * @date 17.03.2006
+		 */
+		public closeListener(IOfficeApplication officeAplication) {
+			this.officeAplication = officeAplication;
+		}
+	  //----------------------------------------------------------------------------
+	  /**
+	   * Is called when someone tries to close a listened object. Not needed in
+	   * here.
+	   * 
+	   * @param closeEvent close event
+	   * @param getsOwnership information about the ownership
+	   * 
+	   * @author Sebastian Rösgen
+		 * @date 17.03.2006
+	   */ 
+		public void queryClosing(ICloseEvent closeEvent, boolean getsOwnership) {
+			//nothing to do in here
+		}
+	  //----------------------------------------------------------------------------
+	  /**
+	   * Is called when the listened object is closed really.
+	   * 
+	   * @param closeEvent close event
+	   * 
+	   * @author Sebastian Rösgen
+		 * @date 17.03.2006
+	   */
+		public void notifyClosing(ICloseEvent closeEvent) {
+			try {
+				//officeAplication.deactivate(); // this is really necessary
+				System.out.println("Office application deactivated.");
+			} 
+			catch (Exception exception) {
+				System.err.println("Error closing office application!");
+				exception.printStackTrace();
+			}			
+		}		
+	  //----------------------------------------------------------------------------
+	  /**
+	   * Is called when the broadcaster is about to be disposed. 
+	   * 
+	   * @param event source event
+	   * 
+	   * @author Sebastian Rösgen
+		 * @date 17.03.2006
+	   */
+		public void disposing(IEvent event) {
+			//nothing to do in here
+		}
+	  //----------------------------------------------------------------------------
+		
+	}
 }
