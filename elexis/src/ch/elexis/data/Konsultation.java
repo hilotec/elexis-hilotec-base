@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2524 2007-06-17 15:18:50Z rgw_ch $
+ *  $Id: Konsultation.java 2701 2007-07-04 17:12:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -619,7 +619,7 @@ public class Konsultation extends PersistentObject implements Comparable{
 			if(rs!=null && rs.next()){
 				byte[] blob=rs.getBytes(1);
 				if(blob!=null && blob.length>1){
-					ret=StringTool.fold(blob,StringTool.GLZ,null);
+					ret=StringTool.fold(blob,StringTool.GUESS,null);
 				}
 				rs.close();
 			}
@@ -635,8 +635,8 @@ public class Konsultation extends PersistentObject implements Comparable{
     	if(!isEditable(true)){
     		return;
     	}
-    	byte[] bin=StringTool.flatten(hash,StringTool.GLZ,null);
-    	Hashtable res=StringTool.fold(bin,StringTool.GLZ,null);
+    	byte[] bin=StringTool.flatten(hash,StringTool.ZIP,null);
+    	Hashtable res=StringTool.fold(bin,StringTool.GUESS,null);
     	if(res==null){
     		MessageDialog.openError(null,"Interner Fehler","Hashtable nicht wiederherstellbar.\nBitte melden Sie diesen Fehler, und wie\ner genau entstand");
     		return;

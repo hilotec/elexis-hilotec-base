@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 2526 2007-06-17 16:57:28Z rgw_ch $
+ *  $Id: KonsDetailView.java 2701 2007-07-04 17:12:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -347,6 +347,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	public void visible(boolean mode) {
 		if(mode==true){
 			GlobalEvents.getInstance().addSelectionListener(this);
+			adaptMenus();
 			selectionEvent(GlobalEvents.getInstance().getSelectedObject(Patient.class));
 		}else{
 			GlobalEvents.getInstance().removeSelectionListener(this);
