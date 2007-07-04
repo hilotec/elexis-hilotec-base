@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2521 2007-06-14 19:52:40Z rgw_ch $
+ * $Id: RnPrintView.java 2700 2007-07-04 17:12:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -39,6 +39,7 @@ import ch.elexis.text.ReplaceCallback;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.IRnOutputter;
+import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.XMLTool;
@@ -56,6 +57,7 @@ public class RnPrintView extends ViewPart {
 	private static double cmMiddlePage=21.0;	// Platz auf Folgeseiten
 	private static double cmFooter=4.5;			// Platz für Endabrechnung
 	private int existing; 
+	private Log log=Log.get("RnPrint");
 	
 	//TextContainer text;
 	TarmedACL ta=TarmedACL.getInstance();
@@ -394,6 +396,7 @@ public class RnPrintView extends ViewPart {
 			} catch (NumberFormatException ex) {
 				// avoid dead letters
 				clearItems();
+				log.log("Fehlerhaftes Format für amount bei "+sb.toString(), Log.ERRORS);
 				Hub.setMandant(mSave);
 				return false;
 			}
