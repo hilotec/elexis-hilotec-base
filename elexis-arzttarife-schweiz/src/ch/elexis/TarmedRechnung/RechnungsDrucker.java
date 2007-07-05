@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 2521 2007-06-14 19:52:40Z rgw_ch $
+ * $Id: RechnungsDrucker.java 2704 2007-07-05 12:42:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -83,7 +83,6 @@ public class RechnungsDrucker implements IRnOutputter{
 			      },
 			      null);
 
-			
 			rnPage.hideView(rnp);
 
 		}catch(Exception ex){

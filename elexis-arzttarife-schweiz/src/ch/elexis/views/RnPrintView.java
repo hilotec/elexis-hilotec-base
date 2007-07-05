@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2700 2007-07-04 17:12:01Z rgw_ch $
+ * $Id: RnPrintView.java 2704 2007-07-05 12:42:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -63,6 +65,7 @@ public class RnPrintView extends ViewPart {
 	TarmedACL ta=TarmedACL.getInstance();
 	CTabFolder ctab;
 	
+	
 	public RnPrintView() {
 		
 	}
@@ -71,7 +74,6 @@ public class RnPrintView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		ctab=new CTabFolder(parent,SWT.BOTTOM);
 		ctab.setLayout(new FillLayout());
-		
 	}
 
 	CTabItem addItem(final String template, final String title, final Kontakt adressat){
@@ -89,6 +91,20 @@ public class RnPrintView extends ViewPart {
 		ret.setData("brief",actBrief); //$NON-NLS-1$
 		ret.setData("text",text); //$NON-NLS-1$
 		ret.setText(title);
+		ret.addDisposeListener(new DisposeListener(){
+
+			public void widgetDisposed(DisposeEvent e) {
+				CTabItem item=(CTabItem)e.getSource();
+				TextContainer text=(TextContainer)item.getData("text"); //$NON-NLS-1$
+				Brief brief=(Brief)item.getData("brief"); //$NON-NLS-1$
+				if (brief != null && brief.exists()) {
+					text.saveBrief(brief,Brief.RECHNUNG);
+					brief.delete();
+					item.setData("brief", null);
+					text.dispose();
+				}		
+			
+			}});
 		return ret;
 	}
 	@Override
@@ -108,6 +124,7 @@ public class RnPrintView extends ViewPart {
 		for(int i=0;i<ctab.getItems().length;i++){
 			if (!ctab.getItem(i).isDisposed()) {
 				useItem(i,null, null);
+				ctab.getItem(i).dispose();
 			}
 		}
 	}
@@ -115,7 +132,7 @@ public class RnPrintView extends ViewPart {
 		CTabItem item=ctab.getItem(idx);
 		TextContainer text=(TextContainer)item.getData("text"); //$NON-NLS-1$
 		String betreff = Messages.RnPrintView_tarmedBill;
-
+		
 		// save and delete old brief
 		Brief brief=(Brief)item.getData("brief"); //$NON-NLS-1$
 		if (brief != null && brief.exists()) {
