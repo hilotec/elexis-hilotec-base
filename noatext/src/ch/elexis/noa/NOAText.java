@@ -8,14 +8,23 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 2699 2007-07-04 17:11:56Z rgw_ch $
+ *  $Id: NOAText.java 2703 2007-07-05 12:41:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
 import java.awt.Frame;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.LinkedList;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.framework.Bundle;
@@ -23,6 +32,7 @@ import org.osgi.framework.Bundle;
 import ag.ion.bion.officelayer.application.IOfficeApplication;
 import ag.ion.bion.officelayer.application.OfficeApplicationException;
 import ag.ion.bion.officelayer.document.DocumentDescriptor;
+import ag.ion.bion.officelayer.document.DocumentException;
 import ag.ion.bion.officelayer.event.ICloseEvent;
 import ag.ion.bion.officelayer.event.ICloseListener;
 import ag.ion.bion.officelayer.event.IEvent;
@@ -45,19 +55,29 @@ import ch.rgw.tools.StringTool;
 
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.Size;
-import com.sun.star.beans.*;
+import com.sun.star.beans.PropertyValue;
+import com.sun.star.beans.PropertyVetoException;
+import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XPropertySet;
 import com.sun.star.drawing.XShape;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.ParagraphAdjust;
-import com.sun.star.text.*;
+import com.sun.star.text.HoriOrientation;
+import com.sun.star.text.RelOrientation;
+import com.sun.star.text.TextContentAnchorType;
+import com.sun.star.text.VertOrientation;
+import com.sun.star.text.XText;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextFrame;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.view.PrintableState;
 import com.sun.star.view.XPrintable;
 
 public class NOAText implements ITextPlugin {
 	public static final String MIMETYPE_OO2="application/vnd.oasis.opendocument.text";
-
+	public static LinkedList<NOAText> noas=new LinkedList<NOAText>(); 
 	OfficePanel panel;
 	ITextDocument doc;
 	ICallback textHandler;
@@ -82,8 +102,56 @@ public class NOAText implements ITextPlugin {
 		System.setProperty("openoffice.path.name",defaultbase);
 	}
 	
+	/*
+	 * We keep track on opened office windows 
+	 */
+	private void createMe(){
+		if(office==null){
+			office=EditorCorePlugin.getDefault().getManagedLocalOfficeApplication();
+		}
+		doc=(ITextDocument)panel.getDocument();
+		if(doc!=null){
+			doc.addCloseListener(new closeListener(office));
+			noas.add(this);
+		}
+	}
+	/*
+	 * We deactivate the office application as the user closes the last office window
+	 */
+	private void removeMe(){
+
+		try{
+			if(textHandler!=null){
+				textHandler.save();
+				noas.remove(this);
+				if(doc!=null){
+					doc.setModified(false);
+					doc.close();
+				}
+			}
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+		}
+		if(noas.isEmpty()){
+			try {
+				office.deactivate();
+				log.log("Office deactivated", Log.INFOS);
+			} catch (OfficeApplicationException e) {
+				ExHandler.handle(e);
+				log.log("Office deactivation failed", Log.ERRORS);
+			} 
+		}
+	}
 	public boolean clear() {
-		// TODO Auto-generated method stub
+		if(textHandler!=null){
+			try {
+				textHandler.save();
+				doc.setModified(false);
+				return true;
+			} catch (DocumentException e) {
+				ExHandler.handle(e);
+			}
+		}
 		return false;
 	}
 	/**
@@ -114,8 +182,7 @@ public class NOAText implements ITextPlugin {
 			is.close();
 			fos.close();
 			panel.loadDocument(false, myFile.getAbsolutePath(), DocumentDescriptor.DEFAULT);
-			doc=(ITextDocument)panel.getDocument();
-			doc.addCloseListener(new closeListener(office));
+			createMe();
 			return true;
 			/*
 			doc=(ITextDocument)office.getDocumentService().constructNewDocument(IDocument.WRITER, DocumentDescriptor.DEFAULT);
@@ -149,9 +216,7 @@ public class NOAText implements ITextPlugin {
 			fout.write(bs);
 			fout.close();
 			panel.loadDocument(false, myFile.getAbsolutePath(), DocumentDescriptor.DEFAULT);
-			doc=(ITextDocument)panel.getDocument();
-			doc.addCloseListener(new closeListener(office));
-			//doc=(ITextDocument)office.getDocumentService().loadDocument(iFrame, makeURL());
+			createMe();
 			return true;
 		}catch(Exception ex){
 			ExHandler.handle(ex);
@@ -172,8 +237,7 @@ public class NOAText implements ITextPlugin {
 				doc.getPersistenceService().store(myFile.getAbsolutePath());
 				doc.close();
 				panel.loadDocument(false, myFile.getAbsolutePath(), DocumentDescriptor.DEFAULT);
-				doc=(ITextDocument)panel.getDocument();
-				doc.addCloseListener(new closeListener(office));
+				createMe();
 			}
 		} catch (Exception e) {
 			ExHandler.handle(e);
@@ -209,6 +273,7 @@ public class NOAText implements ITextPlugin {
 	 * Destroy the Panel with the OOo frame
 	 */
 	public void dispose() {
+		doc.close();
 		doc=null;
 		panel.dispose();
 
@@ -537,7 +602,7 @@ public class NOAText implements ITextPlugin {
 	}
 	
 		
-	static class closeListener implements ICloseListener {
+	class closeListener implements ICloseListener {
 
 		private IOfficeApplication officeAplication = null;
 		
@@ -576,8 +641,7 @@ public class NOAText implements ITextPlugin {
 	   */
 		public void notifyClosing(ICloseEvent closeEvent) {
 			try {
-				//officeAplication.deactivate(); // this is really necessary
-				System.out.println("Office application deactivated.");
+				removeMe();
 			} 
 			catch (Exception exception) {
 				System.err.println("Error closing office application!");
