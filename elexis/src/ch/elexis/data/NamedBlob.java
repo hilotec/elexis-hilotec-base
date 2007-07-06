@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 2514 2007-06-12 05:11:38Z rgw_ch $
+ *  $Id: NamedBlob.java 2706 2007-07-06 09:38:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.util.Hashtable;
 
+import ch.elexis.Hub;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.rgw.Compress.CompEx;
+import ch.rgw.tools.TimeTool;
 
 /**
  * A named Blob is just that: An arbitrarly named piece of arbitrary data. The name must be unique (among
@@ -38,6 +41,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public void put(Hashtable in){
 		setHashtable("inhalt",in);
+		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	/**
 	 * return the contents as String (will probably fail if the data was not stored using putString) 
@@ -61,6 +65,7 @@ public class NamedBlob extends PersistentObject {
 	public void putString(String string){
 		byte[] comp=CompEx.Compress(string, CompEx.ZIP);
 		setBinary("inhalt", comp);
+		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	@Override
 	public String getLabel() {
@@ -104,4 +109,21 @@ public class NamedBlob extends PersistentObject {
 		super(id);
 	}
 
+	/**
+	 * remove all BLOBS with a given name prefix and a last write time older than the given value
+	 * needs the administrative right AC_PURGE
+	 * @param prefix
+	 * @param older
+	 */
+	public static void cleanup(String prefix,TimeTool older){
+		if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
+			Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
+			qbe.add("Datum", "<", older.toString(TimeTool.DATE_COMPACT));
+			for(NamedBlob nb:qbe.execute()){
+				if(nb.getId().startsWith(prefix)){
+					nb.delete();
+				}
+			}
+		}
+	}
 }
