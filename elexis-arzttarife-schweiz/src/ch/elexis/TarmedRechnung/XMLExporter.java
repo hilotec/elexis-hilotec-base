@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2521 2007-06-14 19:52:40Z rgw_ch $
+ * $Id: XMLExporter.java 2705 2007-07-06 09:02:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -419,7 +419,7 @@ public class XMLExporter implements IRnOutputter {
 			}
 		}
 		mTotal.addMoney(mTarmedAL).addMoney(mTarmedTL).addMoney(mAnalysen).addMoney(mMedikament)
-			.addMoney(mUebrige).addMoney(mKant).addMoney(mPhysio);
+			.addMoney(mUebrige).addMoney(mKant).addMoney(mPhysio).addMoney(mMigel);
 
 		Element balance=new Element("balance",ns);													// 10300
 		balance.setAttribute("currency",curr);														// 10310
