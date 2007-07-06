@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OOwrapper Plug-in
 Bundle-SymbolicName: ch.rgw.OOWrapper; singleton:=true
-Bundle-Version: 0.3.3
+Bundle-Version: 1.0.1
 Bundle-ClassPath: bin/,
  juh.jar,
  jurt.jar,
