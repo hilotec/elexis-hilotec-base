@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 2516 2007-06-12 15:56:07Z rgw_ch $
+ *    $Id: Messwert.java 2735 2007-07-07 14:07:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -41,7 +41,7 @@ import ch.rgw.tools.ExHandler;
  *
  */
 public class Messwert extends PersistentObject {
-	public static final int VERSION=1;
+	public static final int VERSION=2;
 	static final String SETUP_SEPARATOR=";;";
 	static final String SETUP_CHECKSEPARATOR=":/:";
 	/**
@@ -159,27 +159,31 @@ public class Messwert extends PersistentObject {
 			Hashtable names=setup.getHashtable("Befunde");
 			String v=(String)names.get("VERSION");
 			if(v==null || Integer.parseInt(v)<VERSION){
-				StringBuilder titles=new StringBuilder();
-				Map.Entry[] entryset=(Map.Entry[])names.entrySet().toArray(new Map.Entry[0]);
-				for(Map.Entry entry:entryset){
-					String param=(String)entry.getKey();
-					if(param.equals("names") || param.equals("VERSION") || param.matches(".+_FIELDS")){
-						continue;
+				if(Integer.parseInt(v)==1){ // version 1 auf 2
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+				}else{ // version 0 auf 1
+					StringBuilder titles=new StringBuilder();
+					Map.Entry[] entryset=(Map.Entry[])names.entrySet().toArray(new Map.Entry[0]);
+					for(Map.Entry entry:entryset){
+						String param=(String)entry.getKey();
+						if(param.equals("names") || param.equals("VERSION") || param.matches(".+_FIELDS")){
+							continue;
+						}
+						titles.append(param).append(SETUP_SEPARATOR);
+						String vals=(String)entry.getValue();
+						StringBuilder flds=new StringBuilder();
+						for(String s:vals.split(",")){
+							flds.append(s).append(SETUP_CHECKSEPARATOR).append("s").append(SETUP_SEPARATOR);
+						}
+						if(flds.length()>SETUP_CHECKSEPARATOR.length()){
+							flds.setLength(flds.length()-SETUP_CHECKSEPARATOR.length());
+							names.put(param+"_FIELDS", flds.toString());
+						}
 					}
-					titles.append(param).append(SETUP_SEPARATOR);
-					String vals=(String)entry.getValue();
-					StringBuilder flds=new StringBuilder();
-					for(String s:vals.split(",")){
-						flds.append(s).append(SETUP_CHECKSEPARATOR).append("s").append(SETUP_SEPARATOR);
+					if(titles.length()>SETUP_SEPARATOR.length()){
+						titles.setLength(titles.length()-SETUP_SEPARATOR.length());
+						names.put("names", titles.toString());
 					}
-					if(flds.length()>SETUP_CHECKSEPARATOR.length()){
-						flds.setLength(flds.length()-SETUP_CHECKSEPARATOR.length());
-						names.put(param+"_FIELDS", flds.toString());
-					}
-				}
-				if(titles.length()>SETUP_SEPARATOR.length()){
-					titles.setLength(titles.length()-SETUP_SEPARATOR.length());
-					names.put("names", titles.toString());
 				}
 				names.put("VERSION", Integer.toString(VERSION));
 				setup.setHashtable("Befunde", names);
@@ -247,6 +251,7 @@ public class Messwert extends PersistentObject {
 	 */
 	private static final String create="CREATE TABLE "+TABLENAME+" ("+ //$NON-NLS-1$ //$NON-NLS-2$
 	"ID			VARCHAR(25) primary key,"+ 	//$NON-NLS-1$
+	"deleted	CHAR(1) default '0',"+		//$NON-NLS-1$
 	"PatientID	VARCHAR(25),"+ 				//$NON-NLS-1$
 	"Name		VARCHAR(20),"+ 				//$NON-NLS-1$
 	"Datum		CHAR(8),"+ 					//$NON-NLS-1$
