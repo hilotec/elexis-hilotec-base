@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Plugin für ICPC 2
 Bundle-SymbolicName: ch.elexis.icpc;singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface,
