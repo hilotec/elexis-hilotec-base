@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Encounter.java 1723 2007-02-02 21:17:08Z rgw_ch $
+ *  $Id: Encounter.java 2744 2007-07-07 15:49:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -19,13 +19,15 @@ import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.VersionInfo;
 
 public class Encounter extends PersistentObject {
-	private static final String VERSION="0.1.0";
+	private static final String VERSION="0.2.0";
 	private static final String TABLENAME="CH_ELEXIS_ICPC_ENCOUNTER";
 	
 	private static final String createDB="CREATE TABLE "+TABLENAME+" ("+
 	"ID				VARCHAR(25),"+
+	"deleted		CHAR(1) default '0',"+
 	"KONS			VARCHAR(25),"+
 	"EPISODE		VARCHAR(25),"+
 	"RFE			CHAR(4),"+
@@ -38,12 +40,21 @@ public class Encounter extends PersistentObject {
 	
 	static{
 		addMapping(TABLENAME,"KonsID=KONS","EpisodeID=EPISODE","RFE","Diag","Proc","ExtInfo");
-		if(!load("1").exists()){
+		Encounter version=load("1");
+		if(!version.exists()){
 			try{
 				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
 				j.execScript(bais,true, false);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
+			}
+		}else{
+			VersionInfo vi=new VersionInfo(version.get("KonsID"));
+			if(vi.isOlder(VERSION)){
+				if(vi.isOlder("0.2.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					version.set("KonsID", VERSION);
+				}
 			}
 		}
 	}

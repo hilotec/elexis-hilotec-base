@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Episode.java 1712 2007-02-02 06:21:46Z rgw_ch $
+ *  $Id: Episode.java 2744 2007-07-07 15:49:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -18,14 +18,16 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.VersionInfo;
 
 public class Episode extends PersistentObject {
-	private static final String VERSION="0.1.0";
+	private static final String VERSION="0.2.0";
 	private final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
 		
 	private final static String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25),"+
+		"deleted 		CHAR(1) default '0',"+
 		"PatientID		VARCHAR(25),"+
 		"Title			VARCHAR(80)"+
 		");"+
@@ -36,13 +38,21 @@ public class Episode extends PersistentObject {
 	
 	static{
 		addMapping(TABLENAME, "PatientID","Title");
-		
-		if(!load("1").exists()){
+		Episode version=load("1");
+		if(!version.exists()){
 			try{
 				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
 				j.execScript(bais,true, false);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
+			}
+		}else{
+			VersionInfo vi=new VersionInfo(version.get("Title"));
+			if(vi.isOlder(VERSION)){
+				if(vi.isOlder("0.2.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					version.set("Title", VERSION);
+				}
 			}
 		}
 	}
