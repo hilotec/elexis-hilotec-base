@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 2736 2007-07-07 14:07:40Z rgw_ch $
+# * $Id: createDB.script 2754 2007-07-07 18:08:41Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -487,6 +487,16 @@ CREATE TABLE HEAP2(
 	Contents	BLOB
 );
 
+CREATE TABLE LOGS(
+	ID			VARCHAR(25) primary key,		# log entry's id
+	OID			VARCHAR(80),				# foreign key on modified object
+	datum		CHAR(8),					# date of modification
+	typ			VARCHAR(20),				
+	userID		VARCHAR(25),				# foreign key on modifying user
+	station		VARCHAR(25),				# modifying workstation name
+	ExtInfo		BLOB
+);
+
 CREATE TABLE USERCONFIG(
 	UserID		VARCHAR(25),
 	Param		VARCHAR(80),
@@ -495,14 +505,5 @@ CREATE TABLE USERCONFIG(
 CREATE INDEX UCFG ON USERCONFIG(Param);
 CREATE INDEX UCFG2 ON USERCONFIG(UserID);
 
-CREATE TABLE LOGS(
-	ID			VARCHAR(25) primary key		# log entry's id
-	OID			VARCHAR(80),				# foreign key on modified object
-	datum		CHAR(8),					# date of modification
-	typ			VARCHAR(20),				
-	user		VARCHAR(25),				# foreign key on modifying user
-	station		VARCHAR(25),				# modifying workstation name
-	ExtInfo		BLOB
-);
 
 INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.0');

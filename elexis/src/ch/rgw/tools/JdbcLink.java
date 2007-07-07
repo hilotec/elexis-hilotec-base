@@ -1,4 +1,4 @@
-// $Id: JdbcLink.java 2517 2007-06-12 20:07:18Z rgw_ch $
+// $Id: JdbcLink.java 2754 2007-07-07 18:08:41Z rgw_ch $
 
 package ch.rgw.tools;
 import java.io.BufferedWriter;
@@ -620,6 +620,7 @@ public synchronized void releaseStatement(Stm s){
               try{
             	  stm.execute(sql);
               } catch(Exception ex){
+            	  ExHandler.handle(ex);
             	  if(stopOnError==true){
             		  return false;
             	  }
