@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 1586 2007-01-09 06:01:16Z rgw_ch $
+ *  $Id: DocHandle.java 2741 2007-07-07 15:48:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -31,10 +31,11 @@ import ch.rgw.tools.VersionInfo;
 
 public class DocHandle extends PersistentObject {
 	public static final String TABLENAME="CH_ELEXIS_OMNIVORE_DATA";
-	public static final String DBVERSION="1.0.0";
+	public static final String DBVERSION="1.1.0";
 	public static final String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25) primary key,"+
+		"deleted        CHAR(1) default '0',"+
 		"PatID			VARCHAR(25),"+
 		"Datum			CHAR(8),"+
 		"Title 			VARCHAR(80),"+	
@@ -55,10 +56,15 @@ public class DocHandle extends PersistentObject {
 		if(start==null){
 			init();
 		}else{
-			VersionInfo vi=new VersionInfo(DBVERSION);
-			if(vi.isNewer(start.get("Titel"))){
-				MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
+			VersionInfo vi=new VersionInfo(start.get("Titel"));
+			if(vi.isOlder(DBVERSION)){
+				if(vi.isOlder("1.1.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					start.set("Titel", DBVERSION);
+				}else{
+					MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
 						"Die Datentabelle für Dokumentspeicherung (Omnivore) hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
+				}
 			}
 		}
 	}
