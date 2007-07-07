@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 1853 2007-02-19 16:17:02Z rgw_ch $
+ *  $Id: Note.java 2743 2007-07-07 15:49:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -22,14 +22,16 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 
 public class Note extends PersistentObject {
 	private static final String TABLENAME="CH_ELEXIS_NOTES";
-	private static final String DBVERSION="0.1.0";
+	private static final String DBVERSION="0.2.0";
 	
 	private static final String create=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25),"+
+		"deleted 		CHAR(1) default '0',"+	
 		"Parent 		VARCHAR(25),"+
 		"Title			VARCHAR(80),"+
 		"Date			CHAR(8),"+
@@ -46,6 +48,14 @@ public class Note extends PersistentObject {
 				j.execScript(bais,true, false);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
+			}
+		}else{
+			VersionInfo vi=new VersionInfo(start.get("Title"));
+			if(vi.isOlder(DBVERSION)){
+				if(vi.isOlder("0.2.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					start.set("Title", DBVERSION);
+				}
 			}
 		}
 	}
