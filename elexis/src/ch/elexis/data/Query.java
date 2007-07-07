@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 2517 2007-06-12 20:07:18Z rgw_ch $
+ * $Id: Query.java 2736 2007-07-07 14:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -79,9 +79,17 @@ public class Query<T>{
 		sql.append("SELECT ID FROM ").append(table);
 		String cns=template.getConstraint();
 		if(cns.equals("")){
-			link=" WHERE ";
+			if(PersistentObject.isShowDeleted()){
+				link=" WHERE ";
+			}else{
+				sql.append(" WHERE deleted=").append(JdbcLink.wrap("0"));
+				link=" AND ";
+			}
 		}else{
 			sql.append(" WHERE ").append(cns);
+			if(!PersistentObject.isShowDeleted()){
+				sql.append(" AND deleted=").append(JdbcLink.wrap("0"));
+			}
 			link=" AND ";
 		}
 	}

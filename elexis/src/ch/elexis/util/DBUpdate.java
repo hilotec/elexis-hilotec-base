@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 2570 2007-06-23 11:09:32Z rgw_ch $
+ * $Id: DBUpdate.java 2736 2007-07-07 14:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -34,7 +34,7 @@ public class DBUpdate {
 	  static final String[] versions={"1.3.0","1.3.1","1.3.2","1.3.3","1.3.4","1.3.5","1.3.6","1.3.7",
 		  							"1.3.8","1.3.9","1.3.10","1.3.11","1.3.12","1.3.13",
 		  							"1.4.0","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6",
-		  							"1.5.0"};
+		  							"1.5.0","1.6.0"};
 	  static final String[] cmds={"CREATE TABLE EIGENLEISTUNGEN("+
 			"ID			VARCHAR(25) primary key,"+
 			"Code		VARCHAR(20),"+
@@ -133,8 +133,47 @@ public class DBUpdate {
 			
 			// 1.5.0
 			"ALTER TABLE HEAP MODIFY ID VARCHAR(80);",
-			"ALTER TABLE HEAP ADD datum CHAR(8);"
 			
+			
+			// 1.6.0
+			"ALTER TABLE HEAP ADD datum CHAR(8);"+
+			"ALTER TABLE KONTAKT ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE KONTAKT_ADRESS_JOINT ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE FAELLE ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE BEHANDLUNGEN ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE LABORWERTE ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE ARTIKEL ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE PATIENT_ARTIKEL_JOINT ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE KONTO ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE LEISTUNGEN ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE LEISTUNGSBLOCK ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE DIAGNOSEN ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE BEHDL_DG_JOINT ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE BRIEFE ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE RECHNUNGEN ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE ZAHLUNGEN ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE REMINDERS ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE REMINDERS_RESPONSIBLE_LINK ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE BBS ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE LABORITEMS ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE LABGROUPS ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE REZEPTE ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE HEAP ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE AUF ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE EIGENLEISTUNGEN ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE HEAP2 ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE HEAP2 MODIFY ID VARCHAR(80);"+
+			"ALTER TABLE HEAP2 ADD datum CHAR(8);"+
+			"ALTER TABLE TARMED ADD deleted CHAR(1) default '0';"+
+			"ALTER TABLE LABORWERTE ADD Origin VARCHAR(30);"+
+			"INSERT INTO TARMED (ID,Nickname) VALUES ('Version','1.0.1');"+
+			"CREATE TABLE LOGS(ID			VARCHAR(25) primary key,"+
+						"OID		VARCHAR(80),"+
+						"datum		CHAR(8),"+
+						"typ		VARCHAR(20),"+				
+						"user		VARCHAR(25),"+
+						"station	VARCHAR(25),"+
+						"ExtInfo		BLOB);"
 	  };
 	  static Log log=Log.get("DBUpdate");
 	  

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2682 2007-06-30 04:42:49Z rgw_ch $
+ *    $Id: PersistentObject.java 2736 2007-07-07 14:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -43,7 +43,12 @@ import ch.rgw.IO.Resource;
 import ch.rgw.IO.Settings;
 import ch.rgw.IO.SqlSettings;
 import ch.rgw.net.NetTool;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
+import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.JdbcLink.Stm;
 
 
@@ -94,6 +99,7 @@ public abstract class PersistentObject{
     private static String pcname;
     private static String tracetable;
     protected static int default_lifetime;
+    private static boolean showDeleted=false;
     
 	static{
 		mapping=new Hashtable<String,String>();
@@ -284,6 +290,7 @@ public abstract class PersistentObject{
     			mapping.put(prefix+def[0],def[1]);
     		}
     	}
+    	mapping.put(prefix+"deleted", "deleted");
     }
     /**
      * Trace (protokollieren aller Schreibvorgänge) ein- und ausschalten. Die Trace-Tabelle muss folgende
@@ -445,15 +452,30 @@ public abstract class PersistentObject{
 	}
 	/**
      * Feststellen, ob ein PersistentObject bereits in der Datenbank existiert
-     * @return true wenn es existiert
+     * @return true wenn es existiert, false wenn es nicht existiert oder gelöscht wurde
      */
     public boolean exists(){
-        if(StringTool.isNothing(getId())){
-        	return false;
-        }
-    	String ch=j.queryString("SELECT ID FROM "+getTableName()+" WHERE "+"ID="+getWrappedId());
-        return ch==null ? false : true;
+	        if(StringTool.isNothing(getId())){
+	        	return false;
+	        }
+	    	String ch=j.queryString("SELECT ID FROM "+getTableName()+" WHERE "+"ID="+getWrappedId());
+	        if(ch==null){
+	        	return false;
+	        }
+	        String deleted=get("deleted");
+	        if(deleted==null){		// if we cant't find the column called 'deleted', the object exists anyway
+	        	return true;
+	        }
+	       return showDeleted ? true :  deleted.equals("0");
     }
+    /**
+     * Feststellen, ob ein PersistentObject als gelöscht markiert wurde 
+     * @return true wenn es gelöscht ist
+     */
+    public boolean isDeleted(){
+    	return get("deleted").equals("1");
+    }
+   
     /**
      * Darf dieses Objekt mit Drag&Drop verschoben werden
      * @return true wenn ja.
@@ -502,6 +524,7 @@ public abstract class PersistentObject{
 	 * @return Der Inhalt des Felds (kann auch null sein), oder **ERROR**, 
 	 * wenn versucht werden sollte, ein nicht existierendes Feld auszulesen
 	 */
+	@SuppressWarnings("unchecked")
 	public String get(String field)
 	{
         String key=getKey(field);
@@ -650,6 +673,7 @@ public abstract class PersistentObject{
      * @param field Feldname der Hashtable
      * @return eine Hashtable (ggf. leer)
      */
+	@SuppressWarnings("unchecked")
 	public Hashtable getHashtable(String field){
         String key=getKey(field);
         Object o=cache.get(key);
@@ -813,7 +837,8 @@ public abstract class PersistentObject{
 	 * @param hash
 	 * @return 0 bei Fehler
 	 */
-    public int setHashtable(String field, Hashtable hash){
+    @SuppressWarnings("unchecked")
+	public int setHashtable(String field, Hashtable hash){
         if(hash==null){
             return 0;
         }
@@ -1005,9 +1030,17 @@ public abstract class PersistentObject{
 	}
 	/**
 	 * Ein Objekt aus der Datenbank löschen
-	 * @return
+	 * @return true on success
 	 */
 	public boolean delete(){
+		// we change this to ratehr set the deleted-flag than really delete
+		if(set("deleted","1")){
+			new DBLog(this,DBLog.TYP.DELETE);
+			GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.delete);
+			return true;
+		}
+		return false;
+		/*
 		StringBuilder sql=new StringBuilder();
 		sql.append("DELETE FROM ").append(getTableName())
 			.append(" WHERE ID=").append(getWrappedId());
@@ -1015,8 +1048,21 @@ public abstract class PersistentObject{
 		GlobalEvents.getInstance().clearSelection(getClass());
 		cache.clear();
 		return (j.exec(sql.toString())!=0);
+		*/
 	}
 	
+	/**
+	 * We can undelete any object by simply clearing the deleted-flag
+	 * @return true on success
+	 */
+	public boolean undelete(){
+		if(set("deleted","0")){
+			new DBLog(this,DBLog.TYP.UNDELETE);
+			GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.create);
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Eine zur konkreten Klasse des aufrufenden Objekts passende Query zurückliefern
 	 * @return leere Query für die Klasse dieses Objekts.
@@ -1384,6 +1430,12 @@ public abstract class PersistentObject{
 	 */
 	public int getCacheTime(){
 		return default_lifetime;
+	}
+	public static boolean isShowDeleted() {
+		return showDeleted;
+	}
+	public static void setShowDeleted(boolean showDeleted) {
+		PersistentObject.showDeleted = showDeleted;
 	}
 
 }

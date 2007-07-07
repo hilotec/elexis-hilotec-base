@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 2556 2007-06-22 14:36:56Z rgw_ch $
+# * $Id: createDB.script 2736 2007-07-07 14:07:40Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -20,6 +20,7 @@
 # Sammeltabelle für alle Kontaktspezifischen Daten
 CREATE TABLE KONTAKT(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	istOrganisation	CHAR(1) default '0',
 	istPerson		CHAR(1) default '0',
 	istPatient		CHAR(1)	default '0',
@@ -62,6 +63,7 @@ CREATE INDEX k0 ON KONTAKT(Bezeichnung1);
 # BezugsTEXT
 CREATE TABLE KONTAKT_ADRESS_JOINT(
 	ID			VARCHAR(25) primary key,
+	deleted		CHAR(1) default '0',
 	myID		VARCHAR(25),
 	otherID		VARCHAR(25),
 	Bezug		VARCHAR(30)
@@ -74,6 +76,7 @@ CREATE INDEX aij1 on KONTAKT_ADRESS_JOINT (myId);
 # notwendigerweise demselben Mandanten)
 CREATE TABLE FAELLE(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	PatientID		VARCHAR(25),
 	GarantID		VARCHAR(25),
 	KostentrID		VARCHAR(25),
@@ -95,6 +98,7 @@ CREATE INDEX i3 on FAELLE (PatientID);
 # Eine Behandlung ist ein einzelner Mandant/Patient - Kontakt
 CREATE TABLE BEHANDLUNGEN(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	FallID			VARCHAR(25),
 	MandantID		VARCHAR(25),
 	RechnungsID		VARCHAR(25),
@@ -108,6 +112,7 @@ CREATE INDEX i4 on BEHANDLUNGEN (FallID);
 
 CREATE TABLE ARTIKEL(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	SubID			VARCHAR(20),
 	LieferantID		VARCHAR(25),
 	Klasse			VARCHAR(80),
@@ -132,6 +137,7 @@ CREATE INDEX art3 on ARTIKEL (Codeclass);
 
 CREATE TABLE PATIENT_ARTIKEL_JOINT(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	PatientID		VARCHAR(25),
 	ArtikelID		VARCHAR(25),
 	RezeptID		VARCHAR(25),
@@ -157,6 +163,7 @@ CREATE TABLE PATIENT_GARANT_JOINT(
 # Rechnungen eine übergreifende Bilanz erstellen und verrechnen.
 CREATE TABLE KONTO(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	PatientID		VARCHAR(25),
 	RechnungsID		VARCHAR(25),
 	ZahlungsID		VARCHAR(25),
@@ -171,6 +178,7 @@ CREATE INDEX konto2 on KONTO (PatientID);
 # Eine Leistung ist eine einzelne Verrechnungsposition
 CREATE TABLE LEISTUNGEN(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	BEHANDLUNG		VARCHAR(25),
 	LEISTG_TXT		VARCHAR(255),
 	LEISTG_CODE		VARCHAR(25),
@@ -190,6 +198,7 @@ CREATE INDEX lst2 on LEISTUNGEN(KlASSE,LEISTG_CODE);
 # Ein Leistungsblock ist eine benannte Kombination beliebig vieler Leistungen
 CREATE TABLE LEISTUNGSBLOCK(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	MandantID		VARCHAR(25),
 	Name			VARCHAR(30),
 	Leistungen		BLOB
@@ -224,6 +233,7 @@ CREATE INDEX vkp2 on VK_PREISE (DATUM_VON);
 
 CREATE TABLE DIAGNOSEN(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	DG_TXT			VARCHAR(255),
 	DG_CODE			VARCHAR(25),
 	KLASSE			VARCHAR(80)
@@ -233,6 +243,7 @@ CREATE INDEX dg1 on DIAGNOSEN (KLASSE,DG_CODE);
 
 CREATE TABLE BEHDL_DG_JOINT(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	BehandlungsID	VARCHAR(25),
 	DiagnoseID		VARCHAR(25)
 );
@@ -250,6 +261,7 @@ CREATE TABLE CONFIG(
 # den eigentlichen Briefen.
 CREATE TABLE BRIEFE(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	Betreff			VARCHAR(80),
 	Datum			CHAR(8),
 	modifiziert		CHAR(8),
@@ -268,6 +280,7 @@ CREATE INDEX i8 on BRIEFE (BehandlungsID);
 
 CREATE TABLE RECHNUNGEN(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	RnNummer		VARCHAR(8),
 	FallID			VARCHAR(25),
 	MandantID		VARCHAR(25),
@@ -288,6 +301,7 @@ CREATE INDEX Rn5 ON RECHNUNGEN (RnDatumBis);
 
 CREATE TABLE ZAHLUNGEN(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	RechnungsID		VARCHAR(25),
 	Betrag			CHAR(8),
 	Datum			CHAR(8),
@@ -295,49 +309,6 @@ CREATE TABLE ZAHLUNGEN(
 );
 
 CREATE INDEX zahl1 on ZAHLUNGEN(RechnungsID);
-
-
-CREATE TABLE TARMED(
-	ID				VARCHAR(14),
-	Parent			VARCHAR(14),
-	DigniQuanti		CHAR(5),
-	DigniQuali		CHAR(4),
-	Sparte			CHAR(4),
-	GueltigVon		CHAR(8),
-	GueltigBis		CHAR(8),
-	Nickname		VARCHAR(25),
-	tx255			VARCHAR(255)
-	
-);
-
-CREATE INDEX tarmed_id on TARMED(ID);
-CREATE INDEX tarmed2 on TARMED (Parent);
-
-CREATE TABLE TARMED_DEFINITIONEN(
-	Spalte			VARCHAR(20),
-	Kuerzel			VARCHAR(5),
-	titel   		VARCHAR(255)
-);
-
-CREATE INDEX tarmed3 on TARMED_DEFINITIONEN (Spalte);
-
-CREATE TABLE TARMED_EXTENSION(
-	Code			VARCHAR(14),
-	limits			BLOB,
-	med_interpret	TEXT,
-	tech_interpret	TEXT
-);
-
-CREATE INDEX tarmed4 on TARMED_EXTENSION (Code);
-
-CREATE TABLE TARMED_DATEN(
-	Parameter		VARCHAR(80),
-	DatumVon		CHAR(8),
-	DatumBis		CHAR(8),
-	Wert			VARCHAR(10)
-);
-
-CREATE INDEX tarmed5 on TARMED_DATEN (Parameter);
 
 
 CREATE TABLE PLZ(
@@ -352,6 +323,7 @@ CREATE INDEX plz1 on PLZ (Ort);
 
 CREATE TABLE REMINDERS(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	IdentID			VARCHAR(25),
 	OriginID		VARCHAR(25),
 	Responsible  	VARCHAR(25),
@@ -364,6 +336,7 @@ CREATE TABLE REMINDERS(
 
 CREATE TABLE REMINDERS_RESPONSIBLE_LINK(
 	ID				VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	ReminderID		VARCHAR(25),
 	ResponsibleID	VARCHAR(25)
 );
@@ -393,6 +366,7 @@ CREATE INDEX trace2 on TRACES(Username);
 # Das Schwarze Brett der Praxis
 CREATE TABLE BBS(
 	ID			VARCHAR(25) primary key,
+	deleted			CHAR(1) default '0',
 	reference	VARCHAR(25),
 	topic		VARCHAR(80),
 	date		CHAR(8),
@@ -413,6 +387,7 @@ CREATE INDEX bbs1 on BBS (reference);
 
 CREATE TABLE LABORITEMS(
 	ID			VARCHAR(25) primary key,
+	deleted		CHAR(1) default '0',
 	kuerzel		VARCHAR(80),
 	titel		VARCHAR(80),
 	laborID		VARCHAR(25),
@@ -432,11 +407,13 @@ CREATE INDEX labit2 on LABORITEMS(laborID);
 
 CREATE TABLE LABORWERTE(
 	ID			VARCHAR(25) primary key,
+	deleted		CHAR(1) default '0',
 	PatientID	VARCHAR(25),
 	datum		CHAR(8),
 	ItemID		VARCHAR(25),
 	Resultat	VARCHAR(80),
 	Flags		VARCHAR(10),
+	Origin		VARCHAR(30),
 	Kommentar	TEXT
 );
 
@@ -446,6 +423,7 @@ CREATE INDEX labor3 on LABORWERTE (ItemID);
 
 CREATE TABLE LABGROUPS(
    ID VARCHAR(25) primary key,
+   deleted		CHAR(1) default '0',
    name VARCHAR(30)
 ); 
 
@@ -458,6 +436,7 @@ CREATE TABLE LABGROUP_ITEM_JOINT(
 
 CREATE TABLE REZEPTE(
 	ID			VARCHAR(25) primary key,
+	deleted		CHAR(1) default '0',
 	PatientID	VARCHAR(25),
 	MandantID	VARCHAR(25),
 	BriefID		VARCHAR(25),
@@ -471,12 +450,14 @@ CREATE INDEX rp1 on REZEPTE(PatientID);
 # Tabelle zum Speichern von benannten BLOB's verschiedener Herkunft
 CREATE TABLE HEAP(
 	ID			VARCHAR(80) primary key,
+	deleted		CHAR(1) default '0',
 	inhalt		BLOB,
 	datum		CHAR(8)
 );
 
 CREATE TABLE AUF(
 	ID			VARCHAR(25) primary key,
+	deleted		CHAR(1) default '0',
 	PatientID	VARCHAR(25),
 	FallID		VARCHAR(25),
 	BriefID		VARCHAR(25),
@@ -491,6 +472,7 @@ CREATE INDEX AUF1 on AUF(PatientID);
 
 CREATE TABLE EIGENLEISTUNGEN(
 	ID			VARCHAR(25) primary key,
+	deleted		CHAR(1) default '0',
 	Code		VARCHAR(20),
 	Bezeichnung VARCHAR(80),
 	EK_PREIS	CHAR(6),
@@ -499,7 +481,9 @@ CREATE TABLE EIGENLEISTUNGEN(
 );
 
 CREATE TABLE HEAP2(
-	ID		    VARCHAR(50) primary key,
+	ID		    VARCHAR(80) primary key,
+	deleted		CHAR(1) default '0',
+	datum		CHAR(8),
 	Contents	BLOB
 );
 
@@ -511,4 +495,14 @@ CREATE TABLE USERCONFIG(
 CREATE INDEX UCFG ON USERCONFIG(Param);
 CREATE INDEX UCFG2 ON USERCONFIG(UserID);
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.5.0');
+CREATE TABLE LOGS(
+	ID			VARCHAR(25) primary key		# log entry's id
+	OID			VARCHAR(80),				# foreign key on modified object
+	datum		CHAR(8),					# date of modification
+	typ			VARCHAR(20),				
+	user		VARCHAR(25),				# foreign key on modifying user
+	station		VARCHAR(25),				# modifying workstation name
+	ExtInfo		BLOB
+);
+
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.0');

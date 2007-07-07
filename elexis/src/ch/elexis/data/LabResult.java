@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2145 2007-03-21 10:55:06Z rgw_ch $
+ *  $Id: LabResult.java 2736 2007-07-07 14:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -25,7 +25,7 @@ public class LabResult extends PersistentObject {
 	}
 	static{
 		addMapping("LABORWERTE","PatientID","Datum=S:D:Datum",
-				"ItemID","Resultat","Kommentar","Flags");
+				"ItemID","Resultat","Kommentar","Flags","Quelle=Origin");
 		
 	}
 	public LabResult(Patient p,TimeTool date,LabItem item,String result,String comment){
