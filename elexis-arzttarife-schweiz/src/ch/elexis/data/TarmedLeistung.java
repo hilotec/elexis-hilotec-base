@@ -8,11 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2388 2007-05-18 12:29:47Z danlutz $
+ * $Id: TarmedLeistung.java 2740 2007-07-07 14:08:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Comparator;
@@ -21,6 +24,8 @@ import java.util.Hashtable;
 import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.util.IOptifier;
+import ch.elexis.util.PlatformHelper;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.*;
 import ch.rgw.tools.JdbcLink.Stm;
 
@@ -38,6 +43,20 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     public static final TimeTool INFINITE = new TimeTool("19991231");
     
     static{
+    	String checkExist=PersistentObject.j.queryString("SELECT * FROM TARMED WHERE ID LIKE '10%'");
+    	if(checkExist==null){
+    		String filepath=PlatformHelper.getBasePath("ch.elexis.arzttarife_ch")+File.separator+"ch"+File.separator+"elexis"+
+    			File.separator+"data"+File.separator+"createDB.script";
+    		try {
+				FileInputStream fis=new FileInputStream(filepath);
+				Stm stm=PersistentObject.j.getStatement();
+				stm.execScript(fis, true, true);
+			} catch (FileNotFoundException e) {
+				ExHandler.handle(e);
+				SWTHelper.showError("Kann Tarmed-Datenbank nicht erstellen", "create-Script nicht gefunden in "+filepath);
+			}
+    		
+    	}
         addMapping("TARMED","Parent","DigniQuali","DigniQuanti", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 "Sparte","Text=tx255","Name=tx255","Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 "GueltigVon=S:D:GueltigVon","GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
