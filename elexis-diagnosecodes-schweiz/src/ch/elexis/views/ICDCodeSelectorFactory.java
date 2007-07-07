@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICDCodeSelectorFactory.java 1284 2006-11-15 16:33:23Z rgw_ch $
+ *    $Id: ICDCodeSelectorFactory.java 2742 2007-07-07 15:48:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -34,7 +34,9 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 	public ICDCodeSelectorFactory(){
 		dataloader=(LazyTreeLoader)JobPool.getJobPool().getJob("ICD"); //$NON-NLS-1$
 		if(dataloader==null){
+			
 			Query<ICD10> check=new Query<ICD10>(ICD10.class);
+			/*
 			check.add("Code","=","xyz"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			List l=check.execute();
 			if(l==null){
@@ -43,6 +45,7 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 				}
 				check.clear();
 			}
+			*/
 			dataloader=new LazyTreeLoader<ICD10>("ICD",check,"parent",new String[]{"Code","Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		    JobPool.getJobPool().addJob(dataloader);
 		}
