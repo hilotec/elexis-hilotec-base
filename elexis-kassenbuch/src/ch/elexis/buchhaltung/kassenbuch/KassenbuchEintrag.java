@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenbuchEintrag.java 2348 2007-05-07 14:57:47Z rgw_ch $
+ *  $Id: KassenbuchEintrag.java 2738 2007-07-07 14:07:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -22,6 +22,7 @@ import ch.elexis.util.Money;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 
 /**
  * A single cash journal entry.
@@ -30,9 +31,10 @@ import ch.rgw.tools.TimeTool;
  */
 public class KassenbuchEintrag extends PersistentObject implements Comparable{
 	private static final String TABLENAME="CH_ELEXIS_KASSENBUCH";
-	public static final String VERSION="0.1.0";
+	public static final String VERSION="1.0.0";
 	private static final String createDB="CREATE TABLE "+TABLENAME+"("+
 		"ID		VARCHAR(25) primary key,"+
+		"deleted CHAR(1) default '0',"+
 		"Nr	    VARCHAR(25),"+
 		"Date   CHAR(8),"+
 		"Amount CHAR(8),"+
@@ -52,6 +54,14 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable{
 				j.execScript(bais,true, false);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
+			}
+		}else{
+			VersionInfo vi=new VersionInfo(version.getText());
+			if(vi.isOlder(VERSION)){
+				if(vi.isOlder("1.0.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					version.set("Text", VERSION);
+				}
 			}
 		}
 	}
