@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 1723 2007-02-02 21:17:08Z rgw_ch $
+ *    $Id: IcpcCode.java 2739 2007-07-07 14:07:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -24,11 +24,14 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.Tree;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.VersionInfo;
 
 public class IcpcCode extends PersistentObject implements IDiagnose {
 	static final String TABLENAME="CH_ELEXIS_ICPC";
+	static final String VERSION="1.1.0";
 	public static final String createDB="CREATE TABLE "+TABLENAME+" ("+
 	"ID			CHAR(3) primary key,"+
+	"deleted	CHAR(1) default '0',"+
 	"component	CHAR(2),"+
 	"short		VARCHAR(80),"+
 	"icd10		    TEXT,"+
@@ -39,7 +42,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	"consider		TEXT,"+
 	"note			TEXT);"+
 	"create index "+TABLENAME+"_IDX1 ON "+TABLENAME+" (component);"+
-	"INSERT INTO "+TABLENAME+" (ID,txt) VALUES ('ver','1.0.0');";
+	"INSERT INTO "+TABLENAME+" (ID,txt) VALUES ('ver','"+VERSION+"');";
 	
 	private static Tree root;
 	private String realCode;
@@ -139,6 +142,14 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 			if(!IcpcCode.initialize()){
 				MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Fehler bei ICPC-Code", "Konnte die Datenbank nicht erstellen");
 				return;
+			}
+		}else{
+			VersionInfo vi=new VersionInfo(ic.getText());
+			if(vi.isOlder(VERSION)){
+				if(vi.isOlder("1.1.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					ic.set("text", VERSION);
+				}
 			}
 		}
 		IcpcCode.root=new Tree(null,null);
