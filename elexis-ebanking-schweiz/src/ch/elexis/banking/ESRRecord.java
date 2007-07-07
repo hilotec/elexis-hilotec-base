@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 1721 2007-02-02 19:53:09Z rgw_ch $
+ *  $Id: ESRRecord.java 2737 2007-07-07 14:07:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import ch.elexis.data.*;
 import ch.elexis.util.Money;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -25,6 +26,9 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class ESRRecord extends PersistentObject{
+	private static final String VERSION="1";
+	private static final String TABLENAME="ESRRECORDS";
+	
 	public static enum MODE{Gutschrift_edv,Storno_edv,Korrektur_edv,
 			Gutschrift_Schalter,Storno_Schalter,Korrektur_Schalter,
 			Summenrecord,Unbekannt};
@@ -32,12 +36,13 @@ public class ESRRecord extends PersistentObject{
 	public static enum REJECT{OK,ESRREJECT,MASSENREJECT,BETRAG,
 		MANDANT,RN_NUMMER,PAT_NUMMER,DUPLIKAT,ANDERE,PAT_FALSCH};
 
-	private static final String createDB="DROP TABLE ESRRECORDS;" +
+	private static final String createDB="DROP TABLE "+TABLENAME+";" +
 		"DROP INDEX ESR1;"+
 		"DROP INDEX ESR2;"+
 		"DROP INDEX ESR3;"+
-		"CREATE TABLE ESRRECORDS(" +
+		"CREATE TABLE "+TABLENAME+"(" +
 		"ID			VARCHAR(25) PRIMARY KEY," +
+		"deleted	CHAR(1) default '0',"+
 		"DATUM			CHAR(8)," +
 		"EINGELESEN		CHAR(8)," +
 		"VERARBEITET	CHAR(8)," +
@@ -51,26 +56,33 @@ public class ESRRecord extends PersistentObject{
 		"KOSTEN		 CHAR(4)," +
 		"GEBUCHT	 CHAR(8)," +
 		"FILE		 VARCHAR(80));"+
-		"CREATE INDEX ESR1 ON ESRRECORDS (DATUM);"+
-		"CREATE INDEX ESR2 ON ESRRECORDS (PATIENTID);"+
-		"CREATE INDEX ESR3 ON ESRRECORDS (REJECTCODE);" +
-		"INSERT INTO ESRRECORDS (ID) VALUES ('1');";
+		"CREATE INDEX ESR1 ON "+TABLENAME+" (DATUM);"+
+		"CREATE INDEX ESR2 ON "+TABLENAME+" (PATIENTID);"+
+		"CREATE INDEX ESR3 ON "+TABLENAME+" (REJECTCODE);" +
+		"INSERT INTO "+TABLENAME+" (ID,FILE) VALUES ('1','"+VERSION+"');";
 
 		
 	static{
-		addMapping("ESRRECORDS","ID","Datum=S:D:DATUM",
+		addMapping(TABLENAME,"ID","Datum=S:D:DATUM",
 				"Eingelesen=S:D:EINGELESEN",
 				"Verarbeitet=S:D:VERARBEITET",
 				"Gutgeschrieben=S:D:GUTSCHRIFT",
 				"BetragInRp=BETRAGINRP",
 				"Code","RechnungsID","PatientID","MandantID","RejectCode","Gebucht=S:D:GEBUCHT","File"
 		);
-		if(load("1")==null){
+		ESRRecord init=load("1");
+		if(init==null){
 			try{
 				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
 				j.execScript(bais,true, false);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
+			}
+		}else{
+			String v=init.get("File");
+			if(StringTool.isNothing(v)){ // < version 1
+				PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+				init.set("File", VERSION);
 			}
 		}
 	}
