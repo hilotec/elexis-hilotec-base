@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICD10.java 2742 2007-07-07 15:48:55Z rgw_ch $
+ *    $Id: ICD10.java 2749 2007-07-07 16:16:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import org.eclipse.jface.action.IAction;
 
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
 public class ICD10 extends PersistentObject implements IDiagnose {
@@ -37,16 +38,18 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 					"ICDTxt   TEXT,"+ //$NON-NLS-1$
 					"ExtInfo  BLOB);"+ //$NON-NLS-1$
 					"CREATE INDEX icd1 ON ICD10 (parent);"+ //$NON-NLS-1$
-					"CREATE INDEX icd2 ON ICD10 (ICDCode);"; //$NON-NLS-1$
+					"CREATE INDEX icd2 ON ICD10 (ICDCode);"+ //$NON-NLS-1$
+					"INSERT INTO "+TABLENAME+" (ID,ICDTxt) VALUES ('1',"+JdbcLink.wrap(VERSION)+");";
 	
 	static{
 		addMapping("ICD10","parent","Code=ICDCode","Text=ICDTxt","encoded","ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		String check=PersistentObject.j.queryString("SELECT ID FROM "+TABLENAME+" WHERE ID LIKE 'A%'");
 		ICD10 version=load("1");
-		if(!version.exists()){
+		if(check==null){
 			createTable();
 		}else{
 			VersionInfo vi=new VersionInfo(version.get("Text"));
-			if(vi.isOlder(VERSION)){
+			if((!version.exists()) || vi.isOlder(VERSION)){
 				if(vi.isOlder("1.0.1")){
 					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					version.set("Text", VERSION);
