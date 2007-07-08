@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *    $Id: Kontakt.java 2761 2007-07-08 12:48:24Z rgw_ch $
  *******************************************************************************/
 
 
@@ -46,7 +46,7 @@ public class Kontakt extends PersistentObject{
 	static{
 		addMapping("KONTAKT",
 		"BezugsKontakte = JOINT:myID:otherID:KONTAKT_ADRESS_JOINT",
-		"Reminders		= LIST:IdentID:REMINDERS",	
+		"MyReminders		= LIST:IdentID:REMINDERS",	
 		"Bezeichnung1",
 		"Bezeichnung2",
 		"Bezeichnung3",
@@ -219,7 +219,7 @@ public class Kontakt extends PersistentObject{
 
 	/** Die Reminders zu diesem Kontakt holen */
 	public Reminder[] getRelatedReminders(){
-		List<String> l=getList("Reminders",false);
+		List<String> l=getList("MyReminders",false);
 		Reminder[] ret=new Reminder[l.size()];
 		int i=0;
 		for(String id:l){
