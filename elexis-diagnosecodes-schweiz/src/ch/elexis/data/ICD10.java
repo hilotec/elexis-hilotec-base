@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICD10.java 2749 2007-07-07 16:16:52Z rgw_ch $
+ *    $Id: ICD10.java 2756 2007-07-08 05:41:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,7 +45,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 		addMapping("ICD10","parent","Code=ICDCode","Text=ICDTxt","encoded","ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		String check=PersistentObject.j.queryString("SELECT ID FROM "+TABLENAME+" WHERE ID LIKE 'A%'");
 		ICD10 version=load("1");
-		if(check==null){
+		if(check==null) {
 			createTable();
 		}else{
 			VersionInfo vi=new VersionInfo(version.get("Text"));
