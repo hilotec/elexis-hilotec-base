@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 1175 2006-10-27 14:39:06Z rgw_ch $
+ *    $Id: Bild.java 2759 2007-07-08 11:28:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -26,10 +26,12 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Bild extends PersistentObject {
-	public static final String DBVERSION="1.0.1";
+	public static final String DBVERSION="1.1.0";
+	public static final String TABLENAME="BILDANZEIGE";
 	public static final String createDB=
-		"CREATE TABLE BILDANZEIGE ("+
+		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25) primary key,"+
+		"deleted		CHAR(1) default '0',"+
 		"PatID			VARCHAR(25),"+
 		"Datum			CHAR(8),"+
 		"Title 			VARCHAR(30),"+	
@@ -37,23 +39,28 @@ public class Bild extends PersistentObject {
 		"Keywords		VARCHAR(80),"+
 		"isRef			char(2),"+
 		"Bild			BLOB);"+
-		"CREATE INDEX BANZ1 ON BILDANZEIGE (PatID);"+
-		"CREATE INDEX BANZ2 ON BILDAZEIGE (Keywords);" +
-		"INSERT INTO BILDANZEIGE (ID, TITLE) VALUES ('1','"+DBVERSION+"');";
+		"CREATE INDEX BANZ1 ON "+TABLENAME+" (PatID);"+
+		"CREATE INDEX BANZ2 ON "+TABLENAME+" (Keywords);" +
+		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');";
 		
 
 	static{
 		addMapping(
-			"BILDANZEIGE","PatID","Datum=S:D:Datum","Titel=Title","Keywords","Bild","Info"
+			TABLENAME,"PatID","Datum=S:D:Datum","Titel=Title","Keywords","Bild","Info"
 				);
 		Bild start=load("1");
 		if(start==null){
 			init();
 		}else{
-			VersionInfo vi=new VersionInfo(DBVERSION);
-			if(vi.isNewer(start.get("Titel"))){
-				MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
+			VersionInfo vi=new VersionInfo(start.get("Titel"));
+			if(vi.isOlder(DBVERSION)){
+				if(vi.isOlder("1.1.0")){
+					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					start.set("Titel", DBVERSION);
+				}else{
+					MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
 						"Die Datentabelle für Bildanzeige hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
+				}
 			}
 		}
 	}
