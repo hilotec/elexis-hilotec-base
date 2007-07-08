@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Mandant.java 1795 2007-02-13 05:31:27Z rgw_ch $
+ *    $Id: Mandant.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -39,32 +39,39 @@ public class Mandant extends Anwender {
     /** EAN lesen 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */
+	/*
 	@Deprecated
     public String getEan() {
          return checkNull((String)getInfoElement("EAN"));
     }
+    */
     /** EAN setzen. Es erfolgt keine Prüfung auf Plausibilit�t 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */
+	/*
     @Deprecated
     public void setEan(String ean) {
         setInfoElement("EAN",ean);
     }
-    
+    */
     /** KSK-Nr lesen 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */
+	
     @Deprecated
     public String getKsk() {
         return checkNull((String)getInfoElement("KSK"));
     }
+    
     /** KSK-Nr. setzen. Es erfolgt keine Prüfung auf Plausibilit�t 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */
+	/*
     @Deprecated
     public void setKsk(String ksk) {
         setInfoElement("KSK",ksk);
     }
+    */
     /** NIF lesen 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */

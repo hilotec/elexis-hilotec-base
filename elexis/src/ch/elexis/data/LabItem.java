@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 1402 2006-12-10 14:17:55Z rgw_ch $
+ *  $Id: LabItem.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -25,7 +25,7 @@ import ch.rgw.tools.StringTool;
  * @author Gerry
  *
  */
-public class LabItem extends PersistentObject implements Comparable{
+public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	@Override
 	protected String getTableName() {
 		return "LABORITEMS";
@@ -96,20 +96,7 @@ public class LabItem extends PersistentObject implements Comparable{
 		return typ.ABSOLUTE;
 		
 	}
-	/*
-	public String getNormRange(){
-		String[] fields={"RefMann","RefFrauOrTx","Typ","Einheit"};
-		String[] vals=new String[fields.length];
-		get(fields,vals);
-		StringBuilder sb=new StringBuilder();
-		if(StringTool.isNothing(vals[0])){
-			sb.append(vals[1]);
-		}else{
-			sb.append("m: ").append(vals[0]).append("\n")
-				.append("w: ").append(vals[1]);
-		}
-		return sb.toString();
-	}*/
+	
 	public String getRefW(){
 		return checkNull(get("RefFrauOrTx"));
 	}
@@ -163,8 +150,7 @@ public class LabItem extends PersistentObject implements Comparable{
 		return sb.toString();
 	}
 	
-	public int compareTo(Object arg0) {
-		LabItem other=(LabItem)arg0;
+	public int compareTo(LabItem other) {
 		String mine=getPrio();
 		String others=other.getPrio();
 		if((mine.matches("[0-9]+")) && (others.matches("[0-9]+"))){

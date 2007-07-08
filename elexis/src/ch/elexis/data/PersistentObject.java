@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2760 2007-07-08 12:14:32Z rgw_ch $
+ *    $Id: PersistentObject.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -684,7 +684,7 @@ public abstract class PersistentObject{
         if(blob==null){
             return new Hashtable();
         }
-        Hashtable ret=StringTool.fold(blob,StringTool.GUESS,null);
+        Hashtable<Object,Object> ret=StringTool.fold(blob,StringTool.GUESS,null);
         if(ret==null){
         	return new Hashtable();
         }

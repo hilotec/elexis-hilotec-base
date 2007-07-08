@@ -1,4 +1,4 @@
-// $Id: StringTool.java 2524 2007-06-17 15:18:50Z rgw_ch $
+// $Id: StringTool.java 2762 2007-07-08 20:35:24Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -127,13 +127,14 @@ public static List<String> splitAL(String m, String delim)
    *  a=b-Paaren um.
    */
   public static final String flattenSeparator="~#<";
-  public static String flattenStrings(Hashtable h)
+  @SuppressWarnings("unchecked")
+public static String flattenStrings(Hashtable h)
   {
   	return flattenStrings(h,null);
   }
-  public static String flattenStrings(Hashtable h, flattenFilter fil)
+  public static String flattenStrings(Hashtable<Object,Object> h, flattenFilter fil)
   { if(h==null) return null;
-  	Enumeration keys=h.keys();
+  	Enumeration<Object> keys=h.keys();
     StringBuffer res=new StringBuffer(1000);
     res.append("FS1").append(flattenSeparator);
     while(keys.hasMoreElements())
@@ -189,7 +190,8 @@ public static List<String> splitAL(String m, String delim)
    * @param ExtInfo	Je nach Kompressmode nötige zusatzinfo
    * @return das byte-Array mit der komprimierten Hashtable
    */
-  public static byte[] flatten(Hashtable hash, int compressMode, Object ExtInfo)
+  @SuppressWarnings("unchecked")
+public static byte[] flatten(Hashtable hash, int compressMode, Object ExtInfo)
   {	  ByteArrayOutputStream baos=null;
       OutputStream os=null;
   	  ObjectOutputStream oos=null;
@@ -225,7 +227,8 @@ public static List<String> splitAL(String m, String delim)
    * @param ExtInfo
    * @return die Hastbale
    */
-  public static Hashtable fold(byte[] flat, int compressMode, Object ExtInfo)
+  @SuppressWarnings("unchecked")
+public static Hashtable fold(byte[] flat, int compressMode, Object ExtInfo)
   {	
       ObjectInputStream ois=null;
       try{
@@ -239,7 +242,7 @@ public static List<String> splitAL(String m, String delim)
 					ois=new ObjectInputStream(zis);
 					break;
           	case GUESS:
-          		Hashtable res=fold(flat,ZIP,null);
+          		Hashtable<Object,Object> res=fold(flat,ZIP,null);
           		if(res==null){
           			res=fold(flat,GLZ,null);
           			if(res==null){
@@ -258,7 +261,7 @@ public static List<String> splitAL(String m, String delim)
           	break;
           }
           
-          Hashtable res=(Hashtable)ois.readObject();
+          Hashtable<Object,Object> res=(Hashtable<Object,Object>)ois.readObject();
           ois.close();
           bais.close();
           return res;
@@ -709,7 +712,8 @@ public static Hashtable foldStrings(String s)
     	return lines[0];
     }
 
-    public static void dumpHashtable(Log log, Hashtable table){
+    @SuppressWarnings("unchecked")
+	public static void dumpHashtable(Log log, Hashtable table){
     	Set<String> keys=table.keySet();
     	log.log("Dump Hashtable\n", Log.INFOS);
     	for(String key:keys){

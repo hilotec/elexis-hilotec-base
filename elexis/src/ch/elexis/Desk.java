@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 2638 2007-06-27 16:05:30Z rgw_ch $
+ *    $Id: Desk.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
 import org.eclipse.core.runtime.IPlatformRunnable;
+import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageRegistry;

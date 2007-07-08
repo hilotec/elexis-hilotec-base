@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 2706 2007-07-06 09:38:30Z rgw_ch $
+ *  $Id: NamedBlob.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -32,6 +32,7 @@ public class NamedBlob extends PersistentObject {
 	 * return the contents as Hashtable (will probably fail if the data was not stored using put(Hashtable)
 	 * @return the previously stored Hashtable
 	 */
+	@SuppressWarnings("unchecked")
 	public Hashtable getHashtable(){
 		return getHashtable("inhalt");
 	}
@@ -39,6 +40,7 @@ public class NamedBlob extends PersistentObject {
 	 * Put the contents as Hashtable. The Hashtable will be compressed
 	 * @param in a Hashtable
 	 */
+	@SuppressWarnings("unchecked")
 	public void put(Hashtable in){
 		setHashtable("inhalt",in);
 		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2736 2007-07-07 14:07:40Z rgw_ch $
+ *    $Id: Hub.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -22,24 +22,35 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.actions.*;
+import ch.elexis.actions.GlobalActions;
+import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.Heartbeat;
+import ch.elexis.actions.JobPool;
+import ch.elexis.actions.ListLoader;
 import ch.elexis.admin.AccessControl;
-import ch.elexis.data.*;
+import ch.elexis.data.Anwender;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.PersistentObjectFactory;
+import ch.elexis.data.Query;
+import ch.elexis.data.Reminder;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.IO.*;
+import ch.rgw.IO.FileTool;
+import ch.rgw.IO.Settings;
+import ch.rgw.IO.SqlSettings;
+import ch.rgw.IO.SysSettings;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
@@ -55,7 +66,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID="ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX=PLUGIN_ID+".commands."; //$NON-NLS-1$
 	static final String neededJRE="1.5.0"; //$NON-NLS-1$
-    public static final String Version="1.0.1"; //$NON-NLS-1$
+    public static final String Version="1.0.2"; //$NON-NLS-1$
     public static final String DBVersion="1.6.0"; //$NON-NLS-1$
     static final String[] mine={"ch.elexis","ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
     private static List<ShutdownJob> shutdownJobs=new LinkedList<ShutdownJob>();
@@ -296,7 +307,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2736 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2762 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

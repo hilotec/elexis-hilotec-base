@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Prescription.java 2524 2007-06-17 15:18:50Z rgw_ch $
+ * $Id: Prescription.java 2762 2007-07-08 20:35:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -136,6 +136,7 @@ public class Prescription extends PersistentObject {
 	 * We store the old dose and its beginning date in the field "terms".
 	 * @param dose a dosage definition of the form "1-0-0-0" or "0" to stop the article
 	 */
+	@SuppressWarnings("unchecked")
 	public void addTerm(TimeTool begin, String dose){
 		Hashtable<String, Object> extInfo=getHashtable("ExtInfo");
 		String raw=(String)extInfo.get("terms");
