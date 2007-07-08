@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2007, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 2205 2007-04-13 08:28:15Z danlutz $
+ *  $Id: HistoryLoader.java 2760 2007-07-08 12:14:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -62,6 +62,9 @@ public class HistoryLoader extends BackgroundJob {
 			TimeTool t1=new TimeTool();
 			TimeTool t2=new TimeTool();
 			public int compare(Konsultation o1, Konsultation o2) {
+				if((o1==null) || (o2==null)){
+					return 0;
+				}
 				t1.set(o1.getDatum());
 				t2.set(o2.getDatum());
 				if(t1.isBefore(t2)){

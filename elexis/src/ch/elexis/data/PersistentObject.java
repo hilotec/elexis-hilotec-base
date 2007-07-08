@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *    $Id: PersistentObject.java 2760 2007-07-08 12:14:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -716,8 +716,11 @@ public abstract class PersistentObject{
 				if(m.length>2){
 					//String order=null;
 					
-					sql.append("SELECT ID FROM ").append(m[2]).append(" WHERE ")
-					.append(m[1]).append("=").append(getWrappedId());
+					sql.append("SELECT ID FROM ").append(m[2]).append(" WHERE ");
+					if(showDeleted==false){
+						sql.append("deleted=").append(JdbcLink.wrap("0")).append(" AND ");
+					}
+					sql.append(m[1]).append("=").append(getWrappedId());
 					if(m.length>3){
 						sql.append(" ORDER by ").append(m[3]);
 						if(reverse){
@@ -1036,7 +1039,8 @@ public abstract class PersistentObject{
 		// we change this to ratehr set the deleted-flag than really delete
 		if(set("deleted","1")){
 			new DBLog(this,DBLog.TYP.DELETE);
-			if(GlobalEvents.getInstance().getSelectedObject(this.getClass()).equals(this)){
+			PersistentObject sel=GlobalEvents.getInstance().getSelectedObject(this.getClass());
+			if((sel!=null) && sel.equals(this)){
 				GlobalEvents.getInstance().clearSelection(this.getClass());
 			}
 			GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.delete);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Brief.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *  $Id: Brief.java 2760 2007-07-08 12:14:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -159,7 +159,7 @@ public class Brief extends PersistentObject {
 		String konsID=get("BehandlungsID");
 		if(!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))){
 			Konsultation kons=Konsultation.load(konsID);
-			if(kons.isEditable(false)){
+			if((kons!=null) && (kons.isEditable(false))){
 				kons.removeXRef(XrefExtension.providerID, getId());
 			}
 		}
