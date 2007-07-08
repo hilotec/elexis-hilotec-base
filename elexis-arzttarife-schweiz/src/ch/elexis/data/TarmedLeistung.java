@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2755 2007-07-08 05:41:30Z rgw_ch $
+ * $Id: TarmedLeistung.java 2763 2007-07-08 20:35:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,7 +26,10 @@ import org.eclipse.jface.viewers.IFilter;
 import ch.elexis.util.IOptifier;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
 /**
