@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2740 2007-07-07 14:08:00Z rgw_ch $
+ * $Id: TarmedLeistung.java 2755 2007-07-08 05:41:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,8 +45,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     static{
     	String checkExist=PersistentObject.j.queryString("SELECT * FROM TARMED WHERE ID LIKE '10%'");
     	if(checkExist==null){
-    		String filepath=PlatformHelper.getBasePath("ch.elexis.arzttarife_ch")+File.separator+"ch"+File.separator+"elexis"+
-    			File.separator+"data"+File.separator+"createDB.script";
+    		String filepath=PlatformHelper.getBasePath("ch.elexis.arzttarife_ch")+File.separator+"createDB.script";
     		try {
 				FileInputStream fis=new FileInputStream(filepath);
 				Stm stm=PersistentObject.j.getStatement();

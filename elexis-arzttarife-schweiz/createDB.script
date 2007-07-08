@@ -1,4 +1,4 @@
-# $Id: createDB.script 2740 2007-07-07 14:08:00Z rgw_ch $
+# $Id: createDB.script 2755 2007-07-08 05:41:30Z rgw_ch $
 
 CREATE TABLE TARMED(
 	ID				VARCHAR(14),
