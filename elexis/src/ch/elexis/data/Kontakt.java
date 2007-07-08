@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 2581 2007-06-23 21:10:11Z rgw_ch $
+ *    $Id: Kontakt.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 
@@ -228,6 +228,17 @@ public class Kontakt extends PersistentObject{
 		return ret;
 	}
    
+	@Override
+	public boolean delete() {
+		for(Reminder r:getRelatedReminders()){
+			r.delete();
+		}
+		for(BezugsKontakt bk:getBezugsKontakte()){
+			bk.delete();
+		}
+		return super.delete();
+	}
+
 	/** Ein Element aus dem Infostore auslesen 
 	 *	Der Rückgabewert ist ein Object oder Null. 
 	 *  Wenn die Rechte des aktuellen Anwenders zum Lesen
@@ -310,18 +321,7 @@ public class Kontakt extends PersistentObject{
     	*/
     }
     
-    public boolean remove(){
-    	/*
-        String id=j.queryString("SELECT id from Adressen WHERE IDENTID="+getWrappedId());
-        if(StringTool.isNothing(id)){
-            
-            j.exec("DELETE FROM KONTAKT WHERE ID="+getWrappedId());
-            return true;
-        }
-        return false;
-        */
-    	return super.delete();
-    }
+    
     /** 
      * Einen Kontakt finden, der einen bestimmten Eintrag im Infostore enthält.
      * Falls mehrere passende Kontakte vorhanden sind, wird nur der erste 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 2383 2007-05-18 11:51:18Z rgw_ch $
+ *  $Id: Rechnung.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -23,7 +23,9 @@ import org.eclipse.swt.SWT;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.*;
+import ch.elexis.util.Log;
+import ch.elexis.util.Money;
+import ch.elexis.util.Result;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -70,7 +72,7 @@ public class Rechnung extends PersistentObject {
         TimeTool actDate=new TimeTool();
         Mandant m=null;
         Kontakt garant=null;
-        Kontakt kostentraeger=null;
+        //Kontakt kostentraeger=null;
         List<IDiagnose> diagnosen=null;
         Fall f=null;
         //int summe=0;
@@ -136,7 +138,7 @@ public class Rechnung extends PersistentObject {
         	garant=Hub.actMandant;
         }else{
         	garant=f.getGarant();
-        	kostentraeger=f.getKostentraeger();
+        	//kostentraeger=f.getKostentraeger();
         }
         
         // check if there are any Konsultationen
@@ -433,6 +435,7 @@ public class Rechnung extends PersistentObject {
 	 * @param name Name des Eintragstyps (z.B. "Zahlungen")
 	 * @return eine List<String>, welche leer sein kann
 	 */
+	@SuppressWarnings("unchecked")
 	public List<String> getTrace(String name){
 		Hashtable hash=loadExtension();
 		byte[] raw=(byte[])hash.get(name);
@@ -477,6 +480,7 @@ public class Rechnung extends PersistentObject {
 	public Hashtable<String,String> loadExtension(){
 		return getHashtable("ExtInfo");
 	}
+	@SuppressWarnings("unchecked")
 	public void flushExtension(Hashtable ext){
 		setHashtable("ExtInfo",ext);
 	}
@@ -523,6 +527,15 @@ public class Rechnung extends PersistentObject {
 		super(id);
 	}
 
+	@Override
+	public boolean delete() {
+		for(Zahlung z:getZahlungen()){
+			z.set("RechnungsID","");		// avoid log entries
+			z.delete();
+			z.set("RechnungsID", getId());
+		}
+		return super.delete();
+	}
 	@Override
 	public String getLabel() {
 		StringBuilder sb=new StringBuilder();

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientMenuPopulator.java 2575 2007-06-23 14:59:57Z rgw_ch $
+ *  $Id: PatientMenuPopulator.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -68,7 +68,7 @@ public class PatientMenuPopulator implements IMenuPopulator {
                 Patient p=mine.getSelectedPatient();
                 if(p!=null){
                     if(MessageDialog.openConfirm(mine.getViewSite().getShell(),"Wirklich löschen?",p.getLabel())==true){
-                    	if(p.remove(true)==false){
+                    	if(p.delete(false)==false){
                             SWTHelper.alert("Konnte Patient nicht löschen",
                                     "Ein Patient kann nur gelöscht werden, wenn keine Fälle mehr dazu existieren.");
                         }else{

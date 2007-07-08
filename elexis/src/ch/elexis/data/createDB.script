@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 2754 2007-07-07 18:08:41Z rgw_ch $
+# * $Id: createDB.script 2758 2007-07-08 11:22:28Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -16,44 +16,46 @@
 # Bei mySQL und PostgreSQL: Database Elexis muss schon existieren, darf aber
 # noch keine Tabellen enthalten.
 # ---------------------------------------------
+# This script can create the elexis database on mysql, hsql and postresql servers
+# Tha database should exist already, but shpuld not contain any tables.
 
-# Sammeltabelle für alle Kontaktspezifischen Daten
+# Table for all kinds of contact information (Patients, Relations, Labs)
 CREATE TABLE KONTAKT(
-	ID				VARCHAR(25) primary key,
-	deleted			CHAR(1) default '0',
-	istOrganisation	CHAR(1) default '0',
-	istPerson		CHAR(1) default '0',
-	istPatient		CHAR(1)	default '0',
-	istAnwender		CHAR(1) default '0',
-	istMandant	    CHAR(1) default '0',
-	istLabor		CHAR(1)	default '0',
-	Land			CHAR(3),
-	Geburtsdatum	CHAR(8),
-	Geschlecht		CHAR(1),
-	TITEL			VARCHAR(20),
-	Bezeichnung1	VARCHAR(80),
-	Bezeichnung2	VARCHAR(80),
-	Bezeichnung3	VARCHAR(80),
-	Strasse			VARCHAR(40),
-	Plz				VARCHAR(6),
-	Ort				VARCHAR(40),
-	Telefon1		VARCHAR(20),
-	Telefon2		VARCHAR(20),
+	ID				VARCHAR(25) primary key,	# UUID
+	deleted			CHAR(1) default '0',		# indicates that this object is marked deleted
+	istOrganisation	CHAR(1) default '0',		# this object is an organization 
+	istPerson		CHAR(1) default '0',		# this object is a person
+	istPatient		CHAR(1)	default '0',		# is a patient
+	istAnwender		CHAR(1) default '0',		# is an elexis user
+	istMandant	    CHAR(1) default '0',		# is an elexis mandator
+	istLabor		CHAR(1)	default '0',		# is a lab
+	Land			CHAR(3),					# country
+	Geburtsdatum	CHAR(8),					# bithdate as yyyymmdd
+	Geschlecht		CHAR(1),					# sex m or w
+	TITEL			VARCHAR(20),				# title
+	Bezeichnung1	VARCHAR(80),				# name1
+	Bezeichnung2	VARCHAR(80),				# name2
+	Bezeichnung3	VARCHAR(80),				# name3
+	Strasse			VARCHAR(40),				# street
+	Plz				VARCHAR(6),					# zip-code
+	Ort				VARCHAR(40),				# place
+	Telefon1		VARCHAR(20),				# phone1
+	Telefon2		VARCHAR(20),				# phone2
 	Fax				VARCHAR(20),
-	NatelNr			VARCHAR(20),
-	EMail			VARCHAR(30),
+	NatelNr			VARCHAR(20),				# mobile
+	EMail			VARCHAR(30),				
 	Website			VARCHAR(40),
-	Gruppe			VARCHAR(10),
-	PatientNr		VARCHAR(10),
-	Anschrift		TEXT,
-	Bemerkung		TEXT,
-	Diagnosen		BLOB,
-	PersAnamnese	BLOB,
+	Gruppe			VARCHAR(10),				# mandator group
+	PatientNr		VARCHAR(10),				# external identifier
+	Anschrift		TEXT,						# postal (address sticker)
+	Bemerkung		TEXT,						# remarks
+	Diagnosen		BLOB,						# diagnoses	
+	PersAnamnese	BLOB,						# anamnesis
 	SysAnamnese		BLOB,
 	FamAnamnese	    BLOB,
-	Risiken			TEXT,
-	Allergien		TEXT,
-	ExtInfo			BLOB
+	Risiken			TEXT,						# risk factors
+	Allergien		TEXT,						# allergies
+	ExtInfo			BLOB						# other informations (Hashtable)
 );
 
 CREATE INDEX k0 ON KONTAKT(Bezeichnung1);
@@ -110,6 +112,7 @@ CREATE TABLE BEHANDLUNGEN(
 
 CREATE INDEX i4 on BEHANDLUNGEN (FallID);
 
+# 
 CREATE TABLE ARTIKEL(
 	ID				VARCHAR(25) primary key,
 	deleted			CHAR(1) default '0',

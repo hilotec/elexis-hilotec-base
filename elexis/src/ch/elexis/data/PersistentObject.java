@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2736 2007-07-07 14:07:40Z rgw_ch $
+ *    $Id: PersistentObject.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1036,6 +1036,9 @@ public abstract class PersistentObject{
 		// we change this to ratehr set the deleted-flag than really delete
 		if(set("deleted","1")){
 			new DBLog(this,DBLog.TYP.DELETE);
+			if(GlobalEvents.getInstance().getSelectedObject(this.getClass()).equals(this)){
+				GlobalEvents.getInstance().clearSelection(this.getClass());
+			}
 			GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.delete);
 			return true;
 		}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 2238 2007-04-18 15:55:14Z rgw_ch $
+ * $Id: KontakteView.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -70,7 +70,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
         		Object[] o=cv.getSelection();
         		if(o!=null){
         			Kontakt k=(Kontakt)o[0];
-        			k.remove();
+        			k.delete();
         			cv.notify(CommonViewer.Message.update);
         		}
         	}

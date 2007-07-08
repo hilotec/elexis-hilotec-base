@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 2736 2007-07-07 14:07:40Z rgw_ch $
+ * $Id: Query.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -50,7 +50,7 @@ public class Query<T>{
     private LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
   
 /**
- * Der einzige öffentliche Konstruktor 
+ * Konstruktor 
  * @param cl Die Klasse, auf die die Abfrage angewendet werden soll (z.B. Patient.class)
  */
     public Query(Class<? extends PersistentObject> cl){
@@ -68,6 +68,27 @@ public class Query<T>{
 
 		
 	}
+    /**
+     * Bequemöichkeits-Konstruktor, der gleich eine Bedingung einträgt
+     * @param cl Klasse, auf die Abfrage angewendet wird
+     * @param field Feldname
+     * @param value Gesuchter Wert von Feldname
+     */
+    public Query(Class<? extends PersistentObject> cl,String field,String value){
+		try{
+			template=Hub.poFactory.createTemplate(cl);
+           //template=cl.newInstance();
+            load=cl.getMethod("load",new Class[]{String.class});
+            clear();
+            add(field,"=",value);
+            
+		}
+		catch(Throwable ex){
+		    log.log("Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
+            ExHandler.handle(ex);
+        }
+
+    }    
     /** 
      * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue
      * Abfrage zu verwenden.

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 2537 2007-06-20 14:53:56Z danlutz $
+ *  $Id: Patient.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -426,7 +426,14 @@ public class Patient extends Person{
 			return getPersonalia();
 		}
 	}
-  
+
+	/**
+	 * We do not allow direct deletion -> use remove instead
+	 */
+	@Override
+	public boolean delete() {
+		return delete(false);
+	}
 	/**
 	 * Einen Patienten aus der Datenbank entfernen. Dabei werden auch alle verknüpften Daten
 	 * gelöscht (Labor, Rezepte, AUF, Rechnungen etc.)
@@ -436,25 +443,31 @@ public class Patient extends Person{
 	 * Fälle von ihm existieren.
 	 * @return false wenn der Patient nicht gelöscht werden konnte.
 	 */
-    public boolean remove(boolean force){
+    public boolean delete(boolean force){
         Fall[] fl=getFaelle();
         if((fl.length==0) || ((force==true) && (Hub.acl.request(AccessControlDefaults.DELETE_FORCED)==true))){
         	for(Fall f:fl){
-        		f.remove(true);
+        		f.delete(true);
         	}
-        	j.exec("DELETE FROM LABORWERTE WHERE PATIENTID="+getWrappedId());
-        	j.exec("DELETE FROM REZEPTE WHERE PATIENTID="+getWrappedId());
-        	j.exec("DELETE FROM KONTO WHERE PATIENTID="+getWrappedId());
-        	Query<Brief> qbe=new Query<Brief>(Brief.class);
-        	qbe.add("PatientID","=",getId());
-        	List<Brief> lets=qbe.execute();
-        	for(Brief b:lets){
-        		b.delete();
-        	}
-        	GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.delete);
-        	return super.remove();
+        	delete_dependent();
+        	return super.delete();
         }
         return false;
+    }
+    private boolean delete_dependent(){
+    	for(LabResult lr:new Query<LabResult>(LabResult.class,"PatientID",getId()).execute()){
+    		lr.delete();
+    	}
+    	for(Rezept rp:new Query<Rezept>(Rezept.class,"PatientID",getId()).execute()){
+    		rp.delete();
+    	}
+    	for(Brief br:new Query<Brief>(Brief.class,"PatientID",getId()).execute()){
+    		br.delete();
+    	}
+    	for(AccountTransaction at:new Query<AccountTransaction>(AccountTransaction.class,"PatientID",getId()).execute()){
+    		at.delete();
+    	}
+    	return true;
     }
 	@Override
 	public boolean isDragOK() {

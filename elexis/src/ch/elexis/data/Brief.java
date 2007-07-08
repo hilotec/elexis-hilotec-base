@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Brief.java 2533 2007-06-18 16:54:40Z rgw_ch $
+ *  $Id: Brief.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -154,19 +154,24 @@ public class Brief extends PersistentObject {
 		}*/
 		return true;
 	}
-	/** Einen Brief unwiederruflich löschen */
 	public boolean delete(){
+		j.exec("UPDATE HEAP SET deleted='1' WHERE ID="+getWrappedId());
+		String konsID=get("BehandlungsID");
+		if(!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))){
+			Konsultation kons=Konsultation.load(konsID);
+			if(kons.isEditable(false)){
+				kons.removeXRef(XrefExtension.providerID, getId());
+			}
+		}
+		return super.delete();
+	}
+
+	/** Einen Brief unwiederruflich löschen */
+	public boolean remove(){
 		j.setAutoCommit(false);
 		try{
-			String konsID=get("BehandlungsID");
 			j.exec("DELETE FROM HEAP WHERE ID="+getWrappedId());
 			j.exec("DELETE FROM BRIEFE WHERE ID="+getWrappedId());
-			if(!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))){
-				Konsultation kons=Konsultation.load(konsID);
-				if(kons.isEditable(false)){
-					kons.removeXRef(XrefExtension.providerID, getId());
-				}
-			}
 			j.commit();
 		}catch(Throwable ex){
 			ExHandler.handle(ex);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2701 2007-07-04 17:12:07Z rgw_ch $
+ *  $Id: Konsultation.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -658,19 +658,32 @@ public class Konsultation extends PersistentObject implements Comparable{
         }
 
     }
-    public boolean remove(boolean forced){
+    
+    @Override
+	public boolean delete() {
+		return delete(true);
+	}
+	public boolean delete(boolean forced){
     	if(forced || isEditable(true)){
 	    	List<Verrechnet> vv=getLeistungen();
 			//VersionedResource vr=getEintrag();
 	    	if((vv.size()==0) || 
 	    	(forced==true) && (Hub.acl.request(AccessControlDefaults.DELETE_FORCED)==true)){
-	    		j.exec("DELETE FROM LEISTUNGEN WHERE BEHANDLUNG="+getWrappedId());
-	    		j.exec("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID="+getWrappedId());
+	    		delete_dependent();
 	    		return super.delete();
 	    	}
     	}
     	return false;
     }
+	
+	private boolean delete_dependent(){
+		for(Verrechnet vv:new Query<Verrechnet>(Verrechnet.class,"Konsultation",getId()).execute()){
+			vv.delete();
+		}
+		j.exec("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID="+getWrappedId());
+		return true;
+	}
+	
     /** Interface Comparable, um die Behandlungen nach Datum sortieren zu können */
 	public int compareTo(Object o) {
 		if(o instanceof Konsultation){

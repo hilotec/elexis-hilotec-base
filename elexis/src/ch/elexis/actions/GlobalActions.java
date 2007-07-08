@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 2644 2007-06-28 12:33:21Z rgw_ch $
+ * $Id: GlobalActions.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 
@@ -474,7 +474,7 @@ public class GlobalActions {
 			@Override
 			public void run() {
 				Fall actFall=GlobalEvents.getSelectedFall();
-				if( (actFall!=null) && (actFall.remove(false)==false)){
+				if( (actFall!=null) && (actFall.delete(false)==false)){
 					SWTHelper.alert(Messages.getString("GlobalActions.CouldntDeleteCaseMessage"), //$NON-NLS-1$
 							Messages.getString("GlobalActions.CouldntDeleteCaseExplanation") + //$NON-NLS-1$
 							Messages.getString("GlobalActions.93")); //$NON-NLS-1$
@@ -486,7 +486,7 @@ public class GlobalActions {
 			@Override
 			public void run() {
 				Konsultation k=GlobalEvents.getSelectedKons();
-				if((k!=null) && (k.remove(false)==false)){
+				if((k!=null) && (k.delete(false)==false)){
 					SWTHelper.alert(Messages.getString("GlobalActions.CouldntDeleteKons"), //$NON-NLS-1$
 							Messages.getString("GlobalActions.CouldntDeleteKonsExplanation") + //$NON-NLS-1$
 							Messages.getString("GlobalActions.97")); //$NON-NLS-1$

@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2373 2007-05-15 11:28:40Z rgw_ch $
+ *    $Id: Fall.java 2758 2007-07-08 11:22:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -267,31 +268,43 @@ public class Fall extends PersistentObject{
         ret.append(v[3]).append("-").append(ed).append(")");    
         return ret.toString();
     }
-    public boolean remove(boolean force){
+    
+    @Override
+	public boolean delete() {
+		return delete(false);
+	}
+    /**
+     * Mark this Fall as deleted. This will fail if there exist Konsultationen fpr this Fall, unless
+     * force is set 
+     * @param force delete even if KOnsultationene xist (in that case, all Konsultationen will be deleted as well)
+     * @return true if this Fall could be (and has been) deleted.
+     */
+	public boolean delete(boolean force){
     	Konsultation[] bh=getBehandlungen(false);
-    	if(bh.length==0){
+    	if( (bh.length==0) || ((force==true) && (Hub.acl.request(AccessControlDefaults.DELETE_FORCED)==true))){
+    		for(Konsultation b:bh){
+    			b.delete(true);
+    		}
+    		delete_dependent();
     		return super.delete();
     	}
-    	if((force==true) && (Hub.acl.request(AccessControlDefaults.DELETE_FORCED)==true)){
-    		for(Konsultation b:bh){
-    			b.remove(true);
-    		}
-    		j.exec("DELETE FROM AUF WHERE FALLID="+getWrappedId());
-    		j.exec("DELETE FROM RECHNUNGEN WHERE FALLID="+getWrappedId());
-    		GlobalEvents.getInstance().clearSelection(getClass());
-    		return true;
-    	}
     	return false;
-    	/*
-    	String id=j.queryString("SELECT ID FROM BEHANDLUNGEN WHERE FALLID="+getWrappedId());
-    	if(StringTool.isNothing(id)){
-    		j.exec("DELETE FROM FAELLE WHERE ID="+getWrappedId());
-    		return true;
-    	}
-    	return false;
-    	*/
     }
-    public String getInfoString(String name){
+	private boolean delete_dependent(){
+		Query<AUF> qAUF=new Query<AUF>(AUF.class);
+		qAUF.add("FallID", "=", getId());
+		for(AUF auf:qAUF.execute()){
+			auf.delete();
+		}
+		Query<Rechnung> qRn=new Query<Rechnung>(Rechnung.class);
+		qRn.add("FallID", "=", getId());
+		for(Rechnung rn:qRn.execute()){
+			rn.delete();
+		}
+		return true;
+	}
+    @SuppressWarnings("unchecked")
+	public String getInfoString(String name){
     	Hashtable extinfo=getHashtable("ExtInfo");
     	return checkNull((String)extinfo.get(name));
     }
