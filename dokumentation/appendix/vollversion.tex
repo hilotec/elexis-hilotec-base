@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: vollversion.tex 2707 2007-07-06 11:03:07Z rgw_ch $
+% *  $Id: vollversion.tex 2757 2007-07-08 05:41:40Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -48,13 +48,13 @@ Bevor Sie mit der Konfiguration beginnen, sollten Sie die folgenden Programme un
   \item Eine Aufstellung der bei Ihnen gültigen Taxpunktwerte
   \item Eine Vorstellung, wie Ihr Briefkopf auf Briefen, Rezepten, AUF-Zeugnissen aussehen soll
   \item Eine Liste der in Ihrem Praxislabor durchgeführten Untersuchungen, eingeteilt in Gruppen
-  \item Medikamentenliste ICD-10, Tarmed, Analysenliste, MiGel, soweit benötigt 
+  \item Medikamentenliste ICD-10, Tarmed, Analysenliste, MiGel, soweit benötigt
   \item EAN-Nummern der Krankenkassen und Unfallversicherer
-\end{itemize} 
+\end{itemize}
 
 \section{Datenbank-Engine installieren}
 \label{dbengine}
-Eine Elexis-Installation besteht aus zwei Teilen: Einem sogenannten \textit{Server}, auf dem die Daten 
+Eine Elexis-Installation besteht aus zwei Teilen: Einem sogenannten \textit{Server}, auf dem die Daten
 abgelegt sind, und einem oder mehreren \textit{Clients}, welche auf die Daten zugreifen und diese darstellen
 und bearbeiten lassen. Server und Client können auf ein- und demselben oder auf verschiedenen Computern sein.
 Ein \textit{\textit{Server}} in einem weiteren Sinn ist ein eigener Computer, auf dem ein oder mehrere
@@ -77,23 +77,23 @@ ein OpenSource Datenbankserver. Er beherrscht einen grösseren Befehlssatz als M
  ein Wert, der wohl nur in den wenigsten Arztpraxen erreicht werden dürfte. PostgreSQL ist kostenlos für alle
  Zwecke.
 
-\item HSQLDB: Dies ist eine in Java geschriebene OpenSource-Datenbank. Sie kann sowohl als separater Server, als auch 
-im Programm integriert verwendet werden. HSQL ist etwas langsamer, als die beiden erstgenannten Systeme, für kleinere 
-Umgebungen aber eventuell genügend. Allerdings muss man ein besonderes Augenmerkt auf die Datensicherung legen, da ein 
-Computerabsturz (oder versehentliches Ausschalten des PC, ohne das Programm herunterzufahren) die Datenbank unbrauchbar 
+\item HSQLDB: Dies ist eine in Java geschriebene OpenSource-Datenbank. Sie kann sowohl als separater Server, als auch
+im Programm integriert verwendet werden. HSQL ist etwas langsamer, als die beiden erstgenannten Systeme, für kleinere
+Umgebungen aber eventuell genügend. Allerdings muss man ein besonderes Augenmerkt auf die Datensicherung legen, da ein
+Computerabsturz (oder versehentliches Ausschalten des PC, ohne das Programm herunterzufahren) die Datenbank unbrauchbar
 machen kann. HSQL ist kostenlos.
 \end{itemize}
 
 \textbf{Achtung}: Wir empfehlen den für die Demo verwendeten einfachen HSQL-Datenbankserver ausdrücklich \textit{nicht} für den Praxisgebrauch (Gefahr des Datenverlustes). Installieren Sie lieber MySQL oder PostgreSQL.
 \begin{itemize}
- \item Wählen Sie am besten einen eigenen Computer als Server, an dem nicht direkt gearbeitet wird. Es dürfen aber ohne 
- weiteres mehrere Serverprogramme darauf laufen (z.B. Mailserver, Fax-Server, Druck-Server etc.).
+ \item Wählen Sie am besten einen eigenen Computer als Server, an dem nicht direkt gearbeitet wird. Es dürfen aber ohne
+ weiteres mehrere Serverprogramme darauf laufen (z.B. Mailserver, Fax-Server, Druck-Server etc.). \textbf{Achtung}: Falls Sie den Datenbankserver nicht auf einem separaten Computer, sondern auf einem Arbeitsplatz-PC installieren, dann muss dieser mindestens 1GB, besser 2GB Arbeitsspeicher haben!
  \item Installieren Sie dort den Datenbankserver Ihrer Wahl (Wir empfehlen mysql oder PostgeSQL)
  \item Erstellen Sie auf der Datenbank einen User-Account mit dem Namen elexisuser
  \item Erstellen Sie eine (leere) Datenbank mit dem Namen elexis, auf den 'elexisuser' Vollzugriff hat
  \item Entscheiden Sie sich unbedingt für eine Backupstrategie. Mehr Informationen dazu weiter unten.
- \item Die weitere Konfiguration erfolgt von den Clients aus. Der Server braucht im Alltagsbetrieb auch nicht unbedingt 
- Bildschirm und Tastatur, sondern er kann an irgendeiner kühlen Stelle der Praxis oder im Keller unauffällig 
+ \item Die weitere Konfiguration erfolgt von den Clients aus. Der Server braucht im Alltagsbetrieb auch nicht unbedingt
+ Bildschirm und Tastatur, sondern er kann an irgendeiner kühlen Stelle der Praxis oder im Keller unauffällig
  aufgestellt werden.
 \end{itemize}
 
@@ -104,14 +104,14 @@ Elexis speichert sämtliche Daten in dieser Datenbank. Eine Zerstörung der Date
 Ein Stromausfall kann die Festplatte  \glqq  auf dem linken Fuss\grqq{}  erwischen,
 ein mechanischer Schaden kann wichtige Sektoren der Platte vernichten und sie
 unlesbar machen, ein Fehler eines Programms kann die Daten löschen, ein Virus
-kann sich an Ihren Daten austoben. Es gibt viele Datensicherungsstrategien, 
+kann sich an Ihren Daten austoben. Es gibt viele Datensicherungsstrategien,
 einige wollen wir hier vorstellen:
 
 \begin{description}
 \item[ Replikation ] Einige Datenbanken, wie z.B. MySQL ab Version 4.0 können ihre Daten laufend auf einen
 auf einem anderen Computer laufenden Server kopieren. Da jeweils nur die geänderten Daten im Hintergrund
-übertragen werden, kostet das weniger Leistung, als man vielleicht zunächst denken würde. Dieses Verfahren 
-nennt man \textit{Replikation} . Im Endeffekt hat man dadurch zwei Datenbanken mit identischem Inhalt. 
+übertragen werden, kostet das weniger Leistung, als man vielleicht zunächst denken würde. Dieses Verfahren
+nennt man \textit{Replikation} . Im Endeffekt hat man dadurch zwei Datenbanken mit identischem Inhalt.
 Wenn der Server kaputt geht, kann man innert weniger Minuten den zweiten Rechner zum Server ernennen und
 praktisch ohne Unterbruch weiterarbeiten.
 \item [Virtual Machine] Ein verwandtes Konzept: Man lässt den Datenbankserver auf einer hierfür reservierten
@@ -144,8 +144,8 @@ Starten Sie Elexis und wählen Sie im Menu Datei -> Verbindung.
 
 
 
-Geben Sie den Typ der Datenbank (hier mysql), die Adresse des Servers (hier 192.168.0.2) oder dessen Internet-Namen 
-(z.B. testserver.elexis.ch) ein, sowie den Namen der Datenbank (hier  elexistest) ein und klicken Sie auf 
+Geben Sie den Typ der Datenbank (hier mysql), die Adresse des Servers (hier 192.168.0.2) oder dessen Internet-Namen
+(z.B. testserver.elexis.ch) ein, sowie den Namen der Datenbank (hier  elexistest) ein und klicken Sie auf
 \textit{weiter}.
 
 \includegraphics[width=0.9\textwidth]{images/verbindung12.png}
@@ -165,7 +165,7 @@ Sie können sich jetzt mit dem Namen \textit{Administrator} und dem Passwort \te
 \section{Stammdaten einlesen}
 \subsection{Tarmed}
 \index{Tarmed}
-Von www.tarmedsuisse.ch kann eine Microsoft-Access-Datenbank heruntergeladen werden. Binden Sie diese auf einem Windows-Computer als System-DSN ein. Gehen Sie in Elexis auf die Perspektive \textit{Codes}, wählen Sie dort den Reiter \textit{Tarmed} und rufen Sie das ViewMenu rechts auf. wählen Sie den Eintrag \textit{import} und geben Sie die eben konfigurierte Tarmed-DSN ein. Je nach Geschwindigkeit des PC wird der Import der gesamten Tarmed-Datenbank zwischen einer und 5 Minuten dauern. 
+Von www.tarmedsuisse.ch kann eine Microsoft-Access-Datenbank heruntergeladen werden. Binden Sie diese auf einem Windows-Computer als System-DSN ein. Gehen Sie in Elexis auf die Perspektive \textit{Codes}, wählen Sie dort den Reiter \textit{Tarmed} und rufen Sie das ViewMenu rechts auf. wählen Sie den Eintrag \textit{import} und geben Sie die eben konfigurierte Tarmed-DSN ein. Je nach Geschwindigkeit des PC wird der Import der gesamten Tarmed-Datenbank zwischen einer und 5 Minuten dauern.
 \subsection{ICD-10}
 \index{ICD-10}
 Von DIMDI können Sie den ICD-Katalog der WHO in computerlesbarer Form herunterladen. Sie benötigen die \textit{ICD-10-WHO-Systematik EDV-Fassung ASCII} und die \textit{ICD-10-WHO-2006 Systematik Metadaten ASCII}. Enpacken Sie beite Zip's ins selbe Verzeichnis. Die Warnung, dass eine Datei überschrieben wird, können Sie getrost ignorieren. Gehen Sie in Elexis auf die Codes-Perspektive und dort auf den Reiter \textit{ICD-10} und wählen Sie wieder \textit{import} aus dem View-Menu. Geben Sie in der folgenden Dialogbox das Verzeichnis an, in das Sie den ICD-Code entpackt haben.
