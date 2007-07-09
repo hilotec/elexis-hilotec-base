@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ *  $Id: NamedBlob.java 2765 2007-07-09 10:47:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -101,8 +101,8 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public static NamedBlob load(String id){
 		NamedBlob ni=new NamedBlob(id);
-		if(ni.exists()==false){
-			ni.create(id);
+		if(ni.existence()<DELETED){
+			ni.create(id);			
 		}
 		return ni;
 	}

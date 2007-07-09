@@ -60,7 +60,7 @@ public class XChangeImporter extends XChangeContainer{
 		for(Element e:eCont){
 			String iex=e.getAttributeValue("id");
 			Kontakt insert=Kontakt.load(idMap.get(iex));
-			if((insert==null) || (!insert.exists())){
+			if((insert==null) || (insert.existence()<PersistentObject.DELETED)){
 				String[] params, values;
 				boolean isPerson;
 				if(e.getAttributeValue("type").equals("organization")){

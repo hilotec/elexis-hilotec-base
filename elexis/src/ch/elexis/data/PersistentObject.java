@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ *    $Id: PersistentObject.java 2765 2007-07-09 10:47:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -407,7 +407,7 @@ public abstract class PersistentObject{
 	 * @return true wenn die Daten gültig (nicht notwendigerweise korrekt) sind
 	 */
 	public boolean isValid(){
-		if(!exists()){
+		if(existence()<EXISTS){
 			return false;
 		}
 		return true;
@@ -450,24 +450,38 @@ public abstract class PersistentObject{
 		sb.append(getClass().getName()).append("::").append(getId());
 		return sb.toString();
 	}
+	public static final int INEXISTENT=0;
+	public static final int INVALID_ID=1;
+	public static final int DELETED=2;
+	public static final int EXISTS=3;
+	
+	public int existence(){
+		if(StringTool.isNothing(getId())){
+			return INVALID_ID;
+		}
+		String ch=j.queryString("SELECT ID FROM "+getTableName()+" WHERE "+"ID="+getWrappedId());
+        if(ch==null){
+        	return INEXISTENT;
+        }
+        String deleted=get("deleted");
+        if(deleted==null){		// if we cant't find the column called 'deleted', the object exists anyway
+        	return EXISTS;
+        }
+        if(showDeleted){
+        	return EXISTS;
+        }else{
+        	return deleted.equals("1") ? DELETED : EXISTS;
+        }
+	}
 	/**
      * Feststellen, ob ein PersistentObject bereits in der Datenbank existiert
      * @return true wenn es existiert, false wenn es nicht existiert oder gelöscht wurde
      */
+	
     public boolean exists(){
-	        if(StringTool.isNothing(getId())){
-	        	return false;
-	        }
-	    	String ch=j.queryString("SELECT ID FROM "+getTableName()+" WHERE "+"ID="+getWrappedId());
-	        if(ch==null){
-	        	return false;
-	        }
-	        String deleted=get("deleted");
-	        if(deleted==null){		// if we cant't find the column called 'deleted', the object exists anyway
-	        	return true;
-	        }
-	       return showDeleted ? true :  deleted.equals("0");
+    	return existence()==EXISTS;
     }
+    
     /**
      * Feststellen, ob ein PersistentObject als gelöscht markiert wurde 
      * @return true wenn es gelöscht ist

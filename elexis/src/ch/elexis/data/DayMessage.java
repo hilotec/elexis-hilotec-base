@@ -1,4 +1,4 @@
-// $Id: DayMessage.java 240 2006-05-01 13:49:53Z rgw_ch $
+// $Id: DayMessage.java 2765 2007-07-09 10:47:39Z rgw_ch $
 /*
  * Created on 05.08.2005
  */
@@ -29,7 +29,9 @@ public class DayMessage extends PersistentObject {
     }
     public static DayMessage load(String day){
         DayMessage ret=new DayMessage(day);
-        if(!ret.exists()){
+        if(ret.existence()==DELETED){
+        	ret.undelete();
+        }else if(ret.existence()<DELETED){
             ret.create(day);
             ret.isNew=true;
         }

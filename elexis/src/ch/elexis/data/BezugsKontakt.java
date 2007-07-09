@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BezugsKontakt.java 1100 2006-10-12 20:50:25Z rgw_ch $
+ * $Id: BezugsKontakt.java 2765 2007-07-09 10:47:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,7 +26,7 @@ public class BezugsKontakt extends PersistentObject {
 	@Override
 	public String getLabel() {
 		Kontakt k=Kontakt.load(get("otherID"));
-		if(k.exists()){
+		if(k.isValid()){
 			return get("Bezug")+": "+k.getLabel();
 		}else{
 			return "Angegebener Kontakt nicht vorhanden";

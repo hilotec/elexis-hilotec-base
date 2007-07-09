@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Reminder.java 2347 2007-05-07 14:57:30Z rgw_ch $
+ *  $Id: Reminder.java 2765 2007-07-09 10:47:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -224,7 +224,7 @@ public class Reminder extends PersistentObject implements Comparable{
 	}
 	public Patient getKontakt() {
 		Patient ret=Patient.load(get("IdentID"));
-		if(ret!=null && ret.exists()){
+		if(ret.exists()){
 			return ret;
 		}
 		return null;

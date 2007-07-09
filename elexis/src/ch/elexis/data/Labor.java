@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Labor.java 1402 2006-12-10 14:17:55Z rgw_ch $
+ *  $Id: Labor.java 2765 2007-07-09 10:47:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -37,7 +37,7 @@ public class Labor extends Organisation {
 	}
 	public static Labor load(String id){
 		 Labor ret=new Labor(id);
-		 if(ret.exists()==true){
+		 if(ret.exists()){
 	        return ret;
 		 }
 		 return null;
