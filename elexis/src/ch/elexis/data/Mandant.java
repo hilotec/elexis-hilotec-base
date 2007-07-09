@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Mandant.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ *    $Id: Mandant.java 2764 2007-07-09 04:31:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -66,12 +66,12 @@ public class Mandant extends Anwender {
     /** KSK-Nr. setzen. Es erfolgt keine Prüfung auf Plausibilit�t 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */
-	/*
+	
     @Deprecated
     public void setKsk(String ksk) {
         setInfoElement("KSK",ksk);
     }
-    */
+    
     /** NIF lesen 
      * @Deprecated belongs to Arzttarife-Schweiz
      * */
