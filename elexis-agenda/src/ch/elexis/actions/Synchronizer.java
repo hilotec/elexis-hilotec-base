@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Synchronizer.java 2382 2007-05-18 09:12:08Z danlutz $
+ *  $Id: Synchronizer.java 2766 2007-07-09 10:47:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -121,17 +121,19 @@ public class Synchronizer{
 					int d=res.getInt("deleted"); //$NON-NLS-1$
 					String id=res.getString("ID"); //$NON-NLS-1$
 					Termin t=Termin.load(id);		// Existiert dieser Termin schon lokal?
-					if(t==null){
+					if(t.existence()<PersistentObject.EXISTS){
 						if(d!=0){					// Wenn nein, ist er sowieso gelöscht, dann nicht synchronisieren
 							continue;
 						}
-						t=new Termin(				// Sonst lokal neu erstellen
-							id,
-							base.getBereich(),
-							res.getString("Tag"),von,bis, //$NON-NLS-1$
-							res.getString("TerminTyp"), //$NON-NLS-1$
-							res.getString("TerminStatus") //$NON-NLS-1$
-							);
+						if(t.existence()<PersistentObject.DELETED){
+							t=new Termin(				// Sonst lokal neu erstellen
+								id,
+								base.getBereich(),
+								res.getString("Tag"),von,bis, //$NON-NLS-1$
+								res.getString("TerminTyp"), //$NON-NLS-1$
+								res.getString("TerminStatus") //$NON-NLS-1$
+								);
+						}
 						setTermin(t, res);
 					}else{							// Termin existiert schon lokal
 						if(d!=0){					// remote gelöscht, dann lokal auch löschen.
@@ -192,7 +194,7 @@ public class Synchronizer{
 					String pers=res.getString("PatID"); //$NON-NLS-1$
 					Patient pat=Patient.load(pers);
 					int nr=0;
-					if(pat.exists()){
+					if(pat.existence()>PersistentObject.INVALID_ID){
 						nr=Integer.parseInt(pat.getPatCode());
 						pers=pat.getLabel();
 					}

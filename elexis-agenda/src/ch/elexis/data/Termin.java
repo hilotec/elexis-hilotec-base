@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 2632 2007-06-25 15:07:57Z danlutz $
+ *    $Id: Termin.java 2766 2007-07-09 10:47:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -146,12 +146,20 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   public Termin(String id){
       super(id);
   }
+  /**
+   * exists() liefert false wenn der Termin gelöscht ist...
+   * @param id
+   * @return
+   */
   public static Termin load(String id){
+	  return new Termin(id);
+	  /*
       Termin ret= new Termin(id);
       if(ret.exists()){
     	  return ret;
       }
       return null;
+      */
   }
   
   public Termin(String bereich, String Tag,int von, int bis, String typ, String status){
