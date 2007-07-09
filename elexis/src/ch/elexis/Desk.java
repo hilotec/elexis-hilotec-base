@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ *    $Id: Desk.java 2769 2007-07-09 19:12:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -147,6 +147,8 @@ public class Desk implements IPlatformRunnable {
 		try {
 				// 	Wir wollen die schicken runden Tabs von Eclipse 3.x
 				PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+				// Aber die Animationen sind eher nervend, nicht?
+				PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 				
 				int returnCode = PlatformUI.createAndRunWorkbench(theDisplay, new ApplicationWorkbenchAdvisor());
 				// Die Funktion kehrt erst beim Programmende zurück.
