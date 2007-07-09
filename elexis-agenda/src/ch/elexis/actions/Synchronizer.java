@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Synchronizer.java 2766 2007-07-09 10:47:45Z rgw_ch $
+ *  $Id: Synchronizer.java 2768 2007-07-09 10:52:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -121,11 +121,11 @@ public class Synchronizer{
 					int d=res.getInt("deleted"); //$NON-NLS-1$
 					String id=res.getString("ID"); //$NON-NLS-1$
 					Termin t=Termin.load(id);		// Existiert dieser Termin schon lokal?
-					if(t.existence()<PersistentObject.EXISTS){
+					if(t.state()<PersistentObject.EXISTS){
 						if(d!=0){					// Wenn nein, ist er sowieso gelöscht, dann nicht synchronisieren
 							continue;
 						}
-						if(t.existence()<PersistentObject.DELETED){
+						if(t.state()<PersistentObject.DELETED){
 							t=new Termin(				// Sonst lokal neu erstellen
 								id,
 								base.getBereich(),
@@ -194,7 +194,7 @@ public class Synchronizer{
 					String pers=res.getString("PatID"); //$NON-NLS-1$
 					Patient pat=Patient.load(pers);
 					int nr=0;
-					if(pat.existence()>PersistentObject.INVALID_ID){
+					if(pat.state()>PersistentObject.INVALID_ID){
 						nr=Integer.parseInt(pat.getPatCode());
 						pers=pat.getLabel();
 					}
