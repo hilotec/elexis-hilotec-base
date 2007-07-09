@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContainer.java 2765 2007-07-09 10:47:39Z rgw_ch $
+ *  $Id: XChangeContainer.java 2767 2007-07-09 10:51:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -122,7 +122,7 @@ public static final String Version="0.2.0";
 		Kontakt ret;
 		if(id!=null){	
 			ret=Kontakt.load(id);
-			if(ret.existence()>PersistentObject.INVALID_ID){
+			if(ret.state()>PersistentObject.INVALID_ID){
 				return ret;						// Object existiert -> zurückgeben
 			}
 		}			// Sonst nachsehen, ob <contakt> mit dieser ID im File existiert

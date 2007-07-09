@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2765 2007-07-09 10:47:39Z rgw_ch $
+ *    $Id: PersistentObject.java 2767 2007-07-09 10:51:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -407,7 +407,7 @@ public abstract class PersistentObject{
 	 * @return true wenn die Daten gültig (nicht notwendigerweise korrekt) sind
 	 */
 	public boolean isValid(){
-		if(existence()<EXISTS){
+		if(state()<EXISTS){
 			return false;
 		}
 		return true;
@@ -455,7 +455,7 @@ public abstract class PersistentObject{
 	public static final int DELETED=2;
 	public static final int EXISTS=3;
 	
-	public int existence(){
+	public int state(){
 		if(StringTool.isNothing(getId())){
 			return INVALID_ID;
 		}
@@ -479,7 +479,7 @@ public abstract class PersistentObject{
      */
 	
     public boolean exists(){
-    	return existence()==EXISTS;
+    	return state()==EXISTS;
     }
     
     /**

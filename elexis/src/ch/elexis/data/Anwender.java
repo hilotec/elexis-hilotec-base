@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 2765 2007-07-09 10:47:39Z rgw_ch $
+ *  $Id: Anwender.java 2767 2007-07-09 10:51:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -132,7 +132,7 @@ public class Anwender extends Person {
     }
     public static Anwender load(String id){
     	Anwender ret=new Anwender(id);
-    	if(ret.existence()>PersistentObject.INVALID_ID){
+    	if(ret.state()>PersistentObject.INVALID_ID){
     		return ret;
     	}
     	return null;

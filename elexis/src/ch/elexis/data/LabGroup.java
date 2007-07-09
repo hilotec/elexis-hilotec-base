@@ -118,7 +118,7 @@ public class LabGroup extends PersistentObject implements Comparable{
     		while(rs.next()) {
     			String id = rs.getString(1);
     			LabItem item = LabItem.load(id);
-    			if (item.existence()==EXISTS) {
+    			if (item.state()==EXISTS) {
     				items.add(item);
     			}
     		}
@@ -137,7 +137,7 @@ public class LabGroup extends PersistentObject implements Comparable{
 	 * @param item the new item to be added
 	 */
     public void addItem(LabItem item) {
-    	if (item != null && (item.existence()==EXISTS)) {
+    	if (item != null && (item.state()==EXISTS)) {
     		// add item if it doesn't yet exists
     		String exists = j.queryString("SELECT ItemID FROM " + GROUP_ITEM_TABLENAME + " WHERE GroupID = " + getWrappedId() + " AND ItemID = " + item.getWrappedId());
     		if (StringTool.isNothing(exists)) {
