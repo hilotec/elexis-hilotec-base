@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2522 2007-06-14 19:53:08Z rgw_ch $
+ *  $Id: TrustXTransmit.java 2774 2007-07-10 15:58:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -133,6 +133,10 @@ public class TrustXTransmit implements IRnOutputter{
 		return "Übermittlung via TrustX";
 	}
 
+	public boolean canStorno(Rechnung rn){
+		// we need to know when a bill is cancelled, because we have to send the storno message to the trust center
+		return true;
+	}
 	public Control createSettingsControl(Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
