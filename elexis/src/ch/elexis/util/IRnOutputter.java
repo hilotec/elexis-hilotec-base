@@ -40,7 +40,16 @@ public interface IRnOutputter {
 	 * @param rnn		collection with all bills to process
 	 * @return a result indicating errors 
 	 */
-	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn); 
+	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn);
+	
+	/**
+	 * Cancelling an already output bill: Depending on the type of the outputter, this 
+	 * might result in propagataing the cancel information to the final destination of the bill.
+	 * @param rn the specific bill to cancel or null, if it is just a general question
+	 * @return true if this outputter wants to be informed if this (or any in case of Rn==null) bill is cancelled.
+	 * If an outputter does need to react on storno messages, it should return false.
+	 */
+	public boolean canStorno(Rechnung rn);
 
 	/**
 	 * Create a Control to perform necessary setings for his outputter.
