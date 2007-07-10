@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: vollversion.tex 2757 2007-07-08 05:41:40Z rgw_ch $
+% *  $Id: vollversion.tex 2773 2007-07-10 15:58:33Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -23,6 +23,7 @@ Um Die Demo in eine Vollversion umzuwandeln, sind folgende Schritte nötig:
   \item \glqq Echte\grqq{}Datenbank-Engine installieren. (\ref{dbengine})
   \item Die Demo-Datenbank löschen.
   \item Elexis mit dieser Datenbank-Engine verbinden (\ref{connect})
+  \item Eventuell mit einer existierenden OpenOffice-Version verbinden \ref{config:ooo}
   \item Aktuelle Versionen der Stammdaten einlesen
   \item Elexis-Grundkonfiguration für Ihre Praxis erstellen
 \end{itemize}
@@ -162,6 +163,17 @@ Geben Sie hier in der oberen Zeile den Benutzernamen für die Datenbank (hier te
 
 Sie können sich jetzt mit dem Namen \textit{Administrator} und dem Passwort \textit{admin} an ihrem eben erstellten Elexis-System anmelden.
 
+\section{Mit OpenOffice verbinden}
+\label{config:ooo}
+Die Installationsdatei enthält bereits eine OpernOffice-Vollversion. Falls Sie mit dieser weiterarbeiten möchten. brauchen Sie nichts zu unternehmen. 
+
+Wenn Sie allerdings bereits eine andere Version von OpenOffice auf Ihrem Computer installiert haben, dann könnte die von Elexis mitgebrachte Version zu Konflikten führen. Gehen Sie in diesem Fall so vor:
+\begin{itemize}
+\item Löschen Sie das Verzeichnis ooo im Elexis-Verzeichnis (oder benennen Sie es um)
+\item Starten Sie Elexis neu
+\item Gehen Sie bei \textsc{Datei-Einstellungen-NOAText} Klicken Sie auf \glqq definieren\grqq{} und wählen Sie das Verzeichnis Ihrer existierenden OpenOffice-Installation aus. Klicken Sie auf \textit{Anwenden}.
+
+\end{itemize}
 \section{Stammdaten einlesen}
 \subsection{Tarmed}
 \index{Tarmed}
