@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICD10.java 2756 2007-07-08 05:41:35Z rgw_ch $
+ *    $Id: ICD10.java 2771 2007-07-10 12:04:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -49,7 +49,10 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 			createTable();
 		}else{
 			VersionInfo vi=new VersionInfo(version.get("Text"));
-			if((!version.exists()) || vi.isOlder(VERSION)){
+			if(!version.exists()){
+				version.create("1");
+			}
+			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("1.0.1")){
 					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					version.set("Text", VERSION);
