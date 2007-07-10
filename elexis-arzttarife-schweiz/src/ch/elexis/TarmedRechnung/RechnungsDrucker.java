@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 2704 2007-07-05 12:42:15Z rgw_ch $
+ * $Id: RechnungsDrucker.java 2772 2007-07-10 15:58:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -111,5 +111,10 @@ public class RechnungsDrucker implements IRnOutputter{
 		bIgnoreFaults=new Button(ret,SWT.CHECK);
 		bIgnoreFaults.setText(Messages.RechnungsDrucker_IgnoreFaults);
 		return ret;
+	}
+
+	public boolean canStorno(Rechnung rn) {
+		// We do not need to react on cancel messages
+		return false;
 	}
 }

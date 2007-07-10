@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2705 2007-07-06 09:02:15Z rgw_ch $
+ * $Id: XMLExporter.java 2772 2007-07-10 15:58:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -88,6 +88,14 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return ret;
 	}
+	
+	/**
+	 * Wa want to be informed on cancellings of any bills
+	 * @param rn we don't mind, we always return true
+	 */
+	public boolean canStorno(Rechnung rn){
+		return true;
+	}
 
 	/**
 	 * Export a bill as XML. We do, in fact first check whether this bill was exported already. And if so
@@ -97,7 +105,7 @@ public class XMLExporter implements IRnOutputter {
 	 * @param rechnung the bill to export
 	 * @param dest a full filepath  to save the final document (or null to not save it)
 	 * @param isCopy true to mark  as copy 
-	 * @param isStorno mark this bill to anulate
+	 * @param isStorno mark this bill to cancel
 	 * @param doVerify true if the bill should be sent trough a verifyer after creation.
 	 * @return the jdom XML-Document that contains the bill 
 	 */
