@@ -28,7 +28,7 @@ public class XMLTool {
 	public static String moneyToXmlDouble(Money money) {
 		int cents = money.getCents();
 		// we force to use a literal "."
-		String xmlDouble = String.format("%d.%02d", cents / 100, cents % 100);
+		String xmlDouble = String.format("%d.%02d", cents / 100, Math.abs(cents % 100));
 		return xmlDouble;
 	}
 	

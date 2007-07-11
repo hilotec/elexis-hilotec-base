@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2692 2007-07-02 12:57:01Z rgw_ch $
+ * $Id: SWTHelper.java 2780 2007-07-11 15:59:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -296,5 +298,21 @@ public class SWTHelper {
 		}
 		
 		text.addFocusListener(selectOnFocusListener);
+	}
+	
+	public static class SimpleDialog extends Dialog{
+		IControlProvider dialogAreaProvider;
+		public SimpleDialog(IControlProvider control){
+			super(Desk.theDisplay.getActiveShell());
+			dialogAreaProvider=control;
+		}
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			return dialogAreaProvider.getControl(parent);
+		}
+		
+	}
+	public interface IControlProvider{
+		public Control getControl(Composite parent);
 	}
 }

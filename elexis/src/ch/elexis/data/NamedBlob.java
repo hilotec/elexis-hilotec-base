@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 2767 2007-07-09 10:51:59Z rgw_ch $
+ *  $Id: NamedBlob.java 2780 2007-07-11 15:59:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -80,7 +80,7 @@ public class NamedBlob extends PersistentObject {
 	}
 	
 	static{
-		addMapping("HEAP","inhalt","S:D:Datum=datum");
+		addMapping("HEAP","inhalt","Datum=S:D:datum");
 	}
 	/**
 	 * Ask if this NamedBlob exists 
@@ -93,7 +93,7 @@ public class NamedBlob extends PersistentObject {
 	}
 	
 	/**
-	 * Load or create a NamedBloc with a given Name. Caution: This will never return an inexistent
+	 * Load or create a NamedBlob with a given Name. Caution: This will never return an inexistent
 	 * NamedBlob, because it will be created if necessary. Use exists() to check, whether a NamedBlob
 	 * exists.
 	 * @param id the unique name
