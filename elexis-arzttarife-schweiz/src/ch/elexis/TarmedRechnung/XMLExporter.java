@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2772 2007-07-10 15:58:23Z rgw_ch $
+ * $Id: XMLExporter.java 2779 2007-07-11 15:59:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -18,7 +18,9 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,6 +33,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.artikel_ch.data.Medikament;
@@ -81,6 +84,16 @@ public class XMLExporter implements IRnOutputter {
 
 	public Result<Rechnung> doOutput(IRnOutputter.TYPE type, Collection<Rechnung> rnn) {
 		Result<Rechnung> ret=new Result<Rechnung>();
+		if(outputDir==null){
+			SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
+				public Control getControl(Composite parent) {
+					return createSettingsControl(parent);
+				}
+			});
+			if(dlg.open()!=Dialog.OK){
+				return ret;
+			}
+		}
 		for(Rechnung rn:rnn){
 			if(doExport(rn,outputDir+File.separator+rn.getNr()+".xml",type, false)==null){
 				ret.add(Log.ERRORS, 1, "Fehler in Rechnung "+rn.getNr(), rn, true);
@@ -140,6 +153,16 @@ public class XMLExporter implements IRnOutputter {
 				}
 				if(type.equals(IRnOutputter.TYPE.COPY)){
 					invoice.setAttribute("resend", Boolean.toString(true));
+				}else if(type.equals(TYPE.STORNO)){
+					Element detail=invoice.getChild("detail", ns);
+					Element services=detail.getChild("services", ns);
+					List<Element> sr=services.getChildren();
+					for(Element el:sr){
+							Money betrag=XMLTool.xmlDoubleToMoney(el.getAttributeValue("amount"));
+							el.setAttribute("amount", XMLTool.moneyToXmlDouble(betrag.negate()));
+					}
+					Money betrag=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));
+					balance.setAttribute("amount",XMLTool.moneyToXmlDouble(betrag.negate()));
 				}
 				
 				if(dest!=null){
@@ -156,7 +179,10 @@ public class XMLExporter implements IRnOutputter {
 				// What should we do -> We create it from scratch
 			}
 		}
-		
+		if(type.equals(TYPE.STORNO)){
+			SWTHelper.showError("Storno unmöglich", "Diese Rechnung scheint noch gar nie ausgegeben worden zu sein");
+			return null;
+		}
 
 		actFall=rn.getFall();
 		actPatient=actFall.getPatient();
@@ -819,6 +845,6 @@ public class XMLExporter implements IRnOutputter {
 					(status_vorher==RnStatus.MAHNUNG_3)){
 				rn.setStatus(status_vorher+1);
 			}
-			rn.addTrace(Rechnung.OUTPUT, "in XML-Datei, "+RnStatus.Text[rn.getStatus()]);		
+			rn.addTrace(Rechnung.OUTPUT, getDescription()+": "+RnStatus.Text[rn.getStatus()]);		
 	}
 }
