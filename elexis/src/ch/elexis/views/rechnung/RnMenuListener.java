@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnMenuListener.java 1773 2007-02-09 20:56:39Z rgw_ch $
+ * $Id: RnMenuListener.java 2782 2007-07-11 16:10:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -49,6 +49,12 @@ public class RnMenuListener implements IMenuListener {
 						manager.add(view.actions.increaseLevelAction);
 						manager.add(new Separator());
 						manager.add(view.actions.stornoAction);
+						boolean bSomething=rn.getStatus()!=RnStatus.STORNIERT;
+						view.actions.rnExportAction.setEnabled(bSomething);
+						view.actions.addPaymentAction.setEnabled(bSomething);
+						view.actions.addExpenseAction.setEnabled(bSomething);
+						view.actions.increaseLevelAction.setEnabled(bSomething);
+						view.actions.stornoAction.setEnabled(bSomething);
 					}
 				}else if(t.contents instanceof Fall){
 					//Fall fall=(Fall)t.contents;
