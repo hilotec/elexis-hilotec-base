@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2774 2007-07-10 15:58:37Z rgw_ch $
+ *  $Id: TrustXTransmit.java 2778 2007-07-11 15:59:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -101,7 +101,7 @@ public class TrustXTransmit implements IRnOutputter{
 		    			boolean status=xlog.read();
 		    			monitor.worked(2);
 		    			if(status){
-		    				rn.addTrace(Rechnung.OUTPUT,"An TrustCenter "+trustx.trustCenter());
+		    				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+trustx.trustCenter());
     						continue;
 		    			}
 		    			rn.reject(RnStatus.REJECTCODE.REJECTED_BY_PEER, xlog.getLastErrorString());
@@ -129,7 +129,7 @@ public class TrustXTransmit implements IRnOutputter{
 
 		
 	
-		public String getDescription() {
+	public String getDescription() {
 		return "Übermittlung via TrustX";
 	}
 
