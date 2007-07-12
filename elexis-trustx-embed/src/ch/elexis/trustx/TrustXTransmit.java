@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2785 2007-07-12 11:44:48Z rgw_ch $
+ *  $Id: TrustXTransmit.java 2789 2007-07-12 19:31:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -115,7 +115,7 @@ public class TrustXTransmit implements IRnOutputter{
 		     			}
      					trustx.trustCenter(tc);
      					trustx.asasLogin(asas);
-     					Hub.mandantCfg.set(PreferenceCostants.TRUSTX_ASASLOGIN, cbASAS.getText());
+     					Hub.mandantCfg.set(PreferenceCostants.TRUSTX_ASASLOGIN, asas);
 
 		     			xlog.init();
 		     			monitor.worked(1);
