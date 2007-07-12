@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2783 2007-07-12 04:19:54Z rgw_ch $
+ *  $Id: TrustXTransmit.java 2785 2007-07-12 11:44:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -30,6 +33,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.jdom.Document;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Hub;
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -50,7 +56,7 @@ import ch.rgw.tools.TimeTool;
  * Note: This works only on Windows, because TrustX and ASAS are Closed-Source 
  * COM-DLL's
  * Prerequisites: ASAS installed and configured, Trustx installed and configured.
- * Dependencies: elexis-arzttarife-schweiz
+ * Dependencies: elexis-arzttarife-schweiz, jdomwrapper
  * @author Gerry
  *
  */
@@ -59,6 +65,8 @@ public class TrustXTransmit implements IRnOutputter{
 	ITrustx trustx;
 	ICode icode;
 	String inputdir;
+	String tc,asas;
+
 	TrustXLog xlog;
 	//private Log log=Log.get("TrustX");
 	
@@ -71,25 +79,7 @@ public class TrustXTransmit implements IRnOutputter{
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn) {
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res=new Result<Rechnung>();
-		if(cbTC==null){
-			SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
-				public Control getControl(Composite parent) {
-					return createSettingsControl(parent);
-				}
-			});
-			if(dlg.open()!=Dialog.OK){
-				return res;
-			}
-		}
-		final String tc=cbTC.getText();
-		if(StringTool.isNothing(tc)){
-			SWTHelper.alert("Kein Truscenter", "Bitte wählen Sie ein TrustCenter aus der Liste (TC Test für Tests)");
-			return res;
-		}
-		trustx.trustCenter(tc);
-		trustx.asasLogin(cbASAS.getText());
-		Hub.mandantCfg.set(PreferenceCostants.TRUSTX_ASASLOGIN, cbASAS.getText());
-		
+	
 		try{
 			progressService.runInUI(
 			      PlatformUI.getWorkbench().getProgressService(),
@@ -98,13 +88,63 @@ public class TrustXTransmit implements IRnOutputter{
 		        	 monitor.beginTask("Exportiere Rechnungen...",rnn.size()*10);
 		        	 int errors=0;
 		     		 for(Rechnung rn:rnn){
+		     			if(tc==null){
+		     				if(cbTC==null){
+		     					if(!initTrustX()){
+		     						SWTHelper.showError("Fehler mit TrustX", "Konnte TrustX oder ASAS nicht starten");
+		     						return;
+		     					}
+		     					if(type.equals(IRnOutputter.TYPE.STORNO)){
+		     						List<String> msgs=rn.getTrace(Rechnung.OUTPUT);
+		     						for(String msg:msgs){
+		     							if(msg.indexOf(getDescription())!=-1){
+		     								String[] fields=msg.split("\\s*:\\s*");
+		     								asas=fields[fields.length-1];
+		     								tc=fields[fields.length-2];
+		     							}
+		     						}
+		     					}
+		     				}else{
+		     					tc=cbTC.getText();
+		     					asas=cbASAS.getText();
+		     					if(StringTool.isNothing(tc)){
+		     						SWTHelper.alert("Kein Trustcenter", "Bitte wählen Sie ein TrustCenter aus der Liste (TC Test für Tests)");
+		     						return;
+		     					}
+		     				}
+		     			}
+     					trustx.trustCenter(tc);
+     					trustx.asasLogin(asas);
+     					Hub.mandantCfg.set(PreferenceCostants.TRUSTX_ASASLOGIN, cbASAS.getText());
+
 		     			xlog.init();
 		     			monitor.worked(1);
 		    			XMLExporter ex=new XMLExporter();
-		    			ex.doExport(rn, inputdir+File.separator+rn.getNr()+".xml", type,true);
+		    			Document dRn=ex.doExport(rn, null, type, true);
+		    			//ex.doExport(rn, inputdir+File.separator+rn.getNr()+".xml", type,true);
 		    			monitor.worked(2);
 		    			if(rn.getStatus()==RnStatus.FEHLERHAFT){
 		    				errors++;
+		    				continue;
+		    			}
+		    			String fname=inputdir+File.separator+rn.getNr()+".xml";
+		    			try{
+			    			FileOutputStream fout=new FileOutputStream(fname);
+			    			OutputStreamWriter cout=new OutputStreamWriter(fout,"UTF-8");
+			    			XMLOutputter xout=new XMLOutputter(Format.getPrettyFormat());
+			    			xout.output(dRn,cout);
+			    			cout.close(); fout.close();
+			    			int status_vorher=rn.getStatus();
+		    				if( (status_vorher==RnStatus.OFFEN) ||
+		    						(status_vorher==RnStatus.MAHNUNG_1) ||
+		    						(status_vorher==RnStatus.MAHNUNG_2) ||
+		    						(status_vorher==RnStatus.MAHNUNG_3)){
+		    					rn.setStatus(status_vorher+1);
+		    				}
+		    			}catch(Exception e1){
+		    				ExHandler.handle(e1);
+		    				SWTHelper.showError("Fehler bei Trustx", "Konnte Datei "+fname+" nicht schreiben");
+		    				rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: "+fname);
 		    				continue;
 		    			}
 		    			trustx.auto();
@@ -112,7 +152,7 @@ public class TrustXTransmit implements IRnOutputter{
 		    			boolean status=xlog.read();
 		    			monitor.worked(2);
 		    			if(status){
-		    				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+trustx.trustCenter());
+		    				rn.addTrace(Rechnung.OUTPUT,getDescription()+":"+trustx.trustCenter()+":"+trustx.asasLogin());
     						continue;
 		    			}
 		    			rn.reject(RnStatus.REJECTCODE.REJECTED_BY_PEER, xlog.getLastErrorString());
@@ -131,7 +171,7 @@ public class TrustXTransmit implements IRnOutputter{
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 			res.add(Log.ERRORS,2,ex.getMessage(),null,true);
-			ErrorDialog.openError(null,"Fehler beim Drucken","Konnte Drucker-View nicht starten",
+			ErrorDialog.openError(null,"Fehler bei der Ausgabe","Konnte TrustX-Transmit nicht starten",
 					res.asStatus());
 			return res;
 		}
@@ -139,6 +179,24 @@ public class TrustXTransmit implements IRnOutputter{
 	}
 
 		
+	boolean initTrustX(){
+		try{
+			trustx=ClassFactory.createCTrustx();
+			inputdir=trustx.inputDirectory();
+			String base=trustx.workDirectory();
+			String session=trustx.session();
+			if(StringTool.isNothing(session)){
+				session=new TimeTool().toString(TimeTool.DATE_ISO);
+			}
+			xlog=new TrustXLog(base+File.separator+"logs"+File.separator+session+".log");
+			return true;
+
+		}catch(Throwable ex){
+			ExHandler.handle(ex);
+			return false;
+		}
+
+	}
 	
 	public String getDescription() {
 		return "Übermittlung via TrustX";
@@ -156,16 +214,9 @@ public class TrustXTransmit implements IRnOutputter{
 		trustxver.setText("TrustX nicht gefunden oder falsch konfiguriert");
 		asasver.setText("ASAS nicht vorhanden oder nicht gestartet");
 		cbASAS=new Combo(ret,SWT.READ_ONLY);
-		try{
-			trustx=ClassFactory.createCTrustx();
+		if(initTrustX()){
 			String tv=trustx.trustxVersion();
 			trustxver.setText("TrustX Version "+tv);
-			inputdir=trustx.inputDirectory();
-			String base=trustx.workDirectory();
-			String session=trustx.session();
-			if(StringTool.isNothing(session)){
-				session=new TimeTool().toString(TimeTool.DATE_ISO);
-			}
 			asasver.setText(trustx.asasVersion());
 			IAsasCollection asasLogins=trustx.asasLogins();
 			int iLogins=asasLogins.count();
@@ -178,24 +229,20 @@ public class TrustXTransmit implements IRnOutputter{
 				def=cbASAS.getItem(0);
 			}
 			cbASAS.setText(Hub.mandantCfg.get(PreferenceCostants.TRUSTX_ASASLOGIN,def));
-			xlog=new TrustXLog(base+File.separator+"logs"+File.separator+session+".log");
-
-		}catch(Throwable ex){
-			ExHandler.handle(ex);
-		}
-		cbTC=new Combo(ret,SWT.READ_ONLY);
-		cbTC.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		for(String s:TrustCenters.getTCList()){
-			cbTC.add(s);
-		}
-		cbTC.setText(Hub.localCfg.get(PreferenceConstants.TARMEDTC,"TC test"));
-		cbTC.addSelectionListener(new SelectionAdapter(){
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Hub.localCfg.set(PreferenceConstants.TARMEDTC, cbTC.getText());
+			cbTC=new Combo(ret,SWT.READ_ONLY);
+			cbTC.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			for(String s:TrustCenters.getTCList()){
+				cbTC.add(s);
 			}
-			
-		});
+			cbTC.setText(Hub.localCfg.get(PreferenceConstants.TARMEDTC,"TC test"));
+			cbTC.addSelectionListener(new SelectionAdapter(){
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Hub.localCfg.set(PreferenceConstants.TARMEDTC, cbTC.getText());
+				}
+				
+			});
+		}
 		return ret;
 	}
 
