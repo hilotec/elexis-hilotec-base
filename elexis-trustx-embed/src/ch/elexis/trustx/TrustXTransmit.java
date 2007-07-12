@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2778 2007-07-11 15:59:12Z rgw_ch $
+ *  $Id: TrustXTransmit.java 2783 2007-07-12 04:19:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -70,6 +71,16 @@ public class TrustXTransmit implements IRnOutputter{
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn) {
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res=new Result<Rechnung>();
+		if(cbTC==null){
+			SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
+				public Control getControl(Composite parent) {
+					return createSettingsControl(parent);
+				}
+			});
+			if(dlg.open()!=Dialog.OK){
+				return res;
+			}
+		}
 		final String tc=cbTC.getText();
 		if(StringTool.isNothing(tc)){
 			SWTHelper.alert("Kein Truscenter", "Bitte wählen Sie ein TrustCenter aus der Liste (TC Test für Tests)");
