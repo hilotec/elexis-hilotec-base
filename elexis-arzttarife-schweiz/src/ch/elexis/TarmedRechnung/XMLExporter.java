@@ -8,24 +8,35 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2779 2007-07-11 15:59:17Z rgw_ch $
+ * $Id: XMLExporter.java 2784 2007-07-12 04:20:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -33,17 +44,39 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.banking.ESR;
-import ch.elexis.data.*;
+import ch.elexis.data.Artikel;
+import ch.elexis.data.Fall;
+import ch.elexis.data.IDiagnose;
+import ch.elexis.data.IVerrechenbar;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.LaborLeistung;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.NamedBlob;
+import ch.elexis.data.Organisation;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
+import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.tarmedprefs.PreferenceConstants;
-import ch.elexis.util.*;
-import ch.rgw.tools.*;
+import ch.elexis.util.IRnOutputter;
+import ch.elexis.util.Log;
+import ch.elexis.util.Money;
+import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.XMLTool;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 
 
 
