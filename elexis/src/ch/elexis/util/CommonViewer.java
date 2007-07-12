@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CommonViewer.java 2498 2007-06-08 09:52:25Z danlutz $
+ * $Id: CommonViewer.java 2786 2007-07-12 11:44:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -250,8 +250,8 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 				if((sel!=null) && (!sel.isEmpty())){
 					Object element = sel.getFirstElement();
 					PersistentObject po;
-					if (element instanceof LazyTree) {
-						po = (PersistentObject) ((LazyTree) element).contents;
+					if (element instanceof Tree) {
+						po = (PersistentObject) ((Tree) element).contents;
 					} else {
 						po = (PersistentObject) element;
 					}

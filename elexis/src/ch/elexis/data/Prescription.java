@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-20076, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Prescription.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ * $Id: Prescription.java 2786 2007-07-12 11:44:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,7 +35,7 @@ public class Prescription extends PersistentObject {
 	
 	public Prescription(Artikel a, Patient p, String d, String b){
 		create(null);
-		set(new String[]{"ArtikelID","PatientID","Dosis","Bemerkung"},a.getId(),p.getId(),d,b);
+		set(new String[]{"ArtikelID","PatientID","Dosis","Bemerkung","DatumVon"},a.getId(),p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	public Prescription(Prescription other){
 		String[] fields=new String[]{"ArtikelID","PatientID","Dosis","Bemerkung"};
@@ -43,8 +43,8 @@ public class Prescription extends PersistentObject {
 		if(other.get(fields, vals)){
 			create(null);
 			set(fields,vals);
+			addTerm(new TimeTool(), vals[2]);
 		}
-		addTerm(new TimeTool(), vals[2]);
 	}
 	public static Prescription load(String id){
 		return new Prescription(id);
@@ -140,6 +140,9 @@ public class Prescription extends PersistentObject {
 	public void addTerm(TimeTool begin, String dose){
 		Hashtable<String, Object> extInfo=getHashtable("ExtInfo");
 		String raw=(String)extInfo.get("terms");
+		if(raw==null){
+			raw="";
+		}
 		String lastBegin=get("DatumVon");
 		String lastDose=get("Dosis");
 		StringBuilder line=new StringBuilder();
@@ -170,7 +173,10 @@ public class Prescription extends PersistentObject {
 			for(String term:terms){
 				String[] flds=term.split("::");
 				TimeTool date=new TimeTool(flds[0]);
-				String dose=flds[1];
+				String dose="n/a";
+				if(flds.length>1){
+					dose=flds[1];
+				}
 				ret.put(date, dose);
 			}
 		}

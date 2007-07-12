@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnStatus.java 2283 2007-04-22 19:18:34Z rgw_ch $
+ *  $Id: RnStatus.java 2786 2007-07-12 11:44:58Z rgw_ch $
  *******************************************************************************/
 
 
@@ -48,7 +48,7 @@ public class RnStatus {
         "von heute","nicht von heute","nicht von Ihnen","fehlerhaft"};
     
     public static enum REJECTCODE{
-    	NO_DIAG,NO_MANDATOR,NO_CASE,NO_DEBITOR,NO_GUARANTOR,VALIDATION_ERROR,REJECTED_BY_PEER,SUM_MISMATCH;
+    	NO_DIAG,NO_MANDATOR,NO_CASE,NO_DEBITOR,NO_GUARANTOR,VALIDATION_ERROR,REJECTED_BY_PEER,SUM_MISMATCH,INTERNAL_ERROR;
     };
    
     public static final String[] RejectStrings={"Keine Diagnose",
