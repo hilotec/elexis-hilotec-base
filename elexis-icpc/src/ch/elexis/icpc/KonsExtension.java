@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 2131 2007-03-19 16:33:53Z rgw_ch $
+ *  $Id: KonsExtension.java 2788 2007-07-12 15:26:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -24,6 +24,7 @@ import ch.elexis.util.IKonsExtension;
 
 public class KonsExtension implements IKonsExtension {
 	EnhancedTextField mine;
+	static final String EPISODE_TITLE="Problem: ";
 	
 	public String connect(EnhancedTextField tf) {
 		mine=tf;
@@ -53,7 +54,7 @@ public class KonsExtension implements IKonsExtension {
 		if(o instanceof Episode){
 			Episode ep=(Episode)o;
 			Encounter enc=new Encounter(GlobalEvents.getSelectedKons(),ep);
-			mine.insertXRef(pos, "ICPC-Episode: "+ep.getLabel(), Activator.PLUGIN_ID, enc.getId());
+			mine.insertXRef(pos, EPISODE_TITLE+ep.getLabel(), Activator.PLUGIN_ID, enc.getId());
 		}
 
 	}
