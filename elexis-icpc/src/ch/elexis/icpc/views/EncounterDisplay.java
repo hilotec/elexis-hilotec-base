@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterDisplay.java 1775 2007-02-09 21:30:59Z rgw_ch $
+ *    $Id: EncounterDisplay.java 2787 2007-07-12 11:45:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Activator;
 import ch.elexis.icpc.Encounter;
@@ -47,7 +48,8 @@ public class EncounterDisplay extends Composite {
 	Group gRfe,gDiag,gProc;
 	Label lRfe,lDiag,lProc;
 	Encounter actEncounter;
-	ClickReact clicker=new ClickReact();
+	PersistentObjectDropTarget podRfe, podDiag,podProc;
+
 	public EncounterDisplay(Composite parent){
 		super(parent,SWT.NONE);
 		form=Activator.getToolkit().createForm(this);
@@ -58,7 +60,7 @@ public class EncounterDisplay extends Composite {
 		gRfe=new Group(body,SWT.NONE);
 		gRfe.setText("RFE / Problem");
 		gRfe.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new PersistentObjectDropTarget(gRfe,new PersistentObjectDropTarget.Receiver(){
+		podRfe=new PersistentObjectDropTarget(gRfe,new PersistentObjectDropTarget.Receiver(){
 
 			public boolean accept(PersistentObject o) {
 				if(o instanceof IcpcCode){
@@ -75,14 +77,15 @@ public class EncounterDisplay extends Composite {
 			}
 			
 		});
+		
 		gRfe.setLayout(new FillLayout());
-		gRfe.addMouseListener(clicker);
+		gRfe.addMouseListener(new ClickReact(podRfe));
 		lRfe=new Label(gRfe,SWT.WRAP);
 		
 		gDiag=new Group(body,SWT.NONE);
 		gDiag.setText("Diagnose");
 		gDiag.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new PersistentObjectDropTarget(gDiag,new PersistentObjectDropTarget.Receiver(){
+		podDiag=new PersistentObjectDropTarget(gDiag,new PersistentObjectDropTarget.Receiver(){
 
 			public boolean accept(PersistentObject o) {
 				if(o instanceof IcpcCode){
@@ -100,11 +103,11 @@ public class EncounterDisplay extends Composite {
 			
 		});
 		gDiag.setLayout(new FillLayout());
-		gDiag.addMouseListener(clicker);
+		gDiag.addMouseListener(new ClickReact(podDiag));
 		lDiag=new Label(gDiag,SWT.WRAP);
 		gProc=new Group(body,SWT.NONE);
 		gProc.setText("Procedere");
-		new PersistentObjectDropTarget(gProc,new PersistentObjectDropTarget.Receiver(){
+		podProc=new PersistentObjectDropTarget(gProc,new PersistentObjectDropTarget.Receiver(){
 
 			public boolean accept(PersistentObject o) {
 				if(o instanceof IcpcCode){
@@ -123,7 +126,7 @@ public class EncounterDisplay extends Composite {
 		});
 		gProc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gProc.setLayout(new FillLayout());
-		gProc.addMouseListener(clicker);
+		gProc.addMouseListener(new ClickReact(podProc));
 		lProc=new Label(gProc,SWT.WRAP);
 	}
 	
@@ -145,11 +148,16 @@ public class EncounterDisplay extends Composite {
 		}
 	}
 	class ClickReact extends MouseAdapter{
-
+		PersistentObjectDropTarget pod;
+		ClickReact(PersistentObjectDropTarget pod){
+			this.pod=pod;
+		}
+		
 		@Override
 		public void mouseUp(MouseEvent arg0) {
 			try{
 				Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DiagnosenView.ID);
+				GlobalEvents.getInstance().setCodeSelectorTarget(pod);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
 				
