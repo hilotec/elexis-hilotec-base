@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="ch.elexis.abrechnungKategorie"
             class="ch.elexis.banking.ESRView"
             id="elexis-ebanking-schweiz.ESRView"
             name="ESR"/>
