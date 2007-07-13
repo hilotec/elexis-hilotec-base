@@ -33,10 +33,11 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.data.LabResult;
+import ch.elexis.data.Patient;
 
 /**
  * This view displays all LabResults that are not marked as seen by the doctor. One can mark them individually
- * or globally as sen from this view.
+ * or globally as seen from this view.
  * @author gerry
  *
  */
@@ -44,7 +45,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener {
 	public final static String ID="ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
 	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
-	private static final int[] colWidths=new int[]{200,100,50,50,50};
+	private static final int[] colWidths=new int[]{250,100,60,70,50};
 	
 	public LabNotSeenView() {
 	}
@@ -97,8 +98,14 @@ public class LabNotSeenView extends ViewPart implements ActivationListener {
 			LabResult lr=(LabResult)element;
 			switch(columnIndex){
 			case 0: return lr.getPatient().getLabel();
-			case 1: return lr.getItem().getLabel();
-			case 2: return lr.getItem().getRefM();
+			case 1: return lr.getItem().getName();
+			case 2: 
+				Patient pat=lr.getPatient();
+				if(pat.getGeschlecht().equalsIgnoreCase("m")){
+					return lr.getItem().getRefM();
+				}else{
+					return lr.getItem().getRefW();
+				}
 			case 3: return lr.getDate();
 			case 4:	return lr.getResult();
 			}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2792 2007-07-13 14:31:05Z rgw_ch $
+ *  $Id: LabResult.java 2793 2007-07-13 17:00:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -36,7 +36,7 @@ public class LabResult extends PersistentObject {
 		String[] fields={"PatientID","Datum","ItemID","Resultat","Kommentar"};
 		String[] vals=new String[]{
 			p.getId(),
-			date==null ? new TimeTool().toString(TimeTool.DATE_COMPACT) : date.toString(TimeTool.DATE_COMPACT),
+			date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date.toString(TimeTool.DATE_GER),
 			item.getId(),result,comment	};
 		set(fields,vals);
 		addToUnseen();
