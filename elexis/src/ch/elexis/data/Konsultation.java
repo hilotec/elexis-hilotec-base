@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *  $Id: Konsultation.java 2794 2007-07-13 18:35:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -534,7 +534,7 @@ public class Konsultation extends PersistentObject implements Comparable{
     	double sum=0.0;
     	Stm stm=j.getStatement();
     	try{
-	    	ResultSet res=stm.query("SELECT VK_PREIS,ZAHL,SCALE FROM LEISTUNGEN WHERE BEHANDLUNG="+getWrappedId());
+	    	ResultSet res=stm.query("SELECT VK_PREIS,ZAHL,SCALE FROM LEISTUNGEN WHERE deleted='0' AND BEHANDLUNG="+getWrappedId());
 	    	while((res!=null) && res.next()){
 	    		double scale=res.getDouble(3)/100.0;
 	    		sum+=(res.getDouble(1)*res.getDouble(2))*scale;

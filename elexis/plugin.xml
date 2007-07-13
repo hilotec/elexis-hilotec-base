@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 2792 2007-07-13 14:31:05Z rgw_ch $ 
+<!-- $Id: plugin.xml 2794 2007-07-13 18:35:41Z rgw_ch $ 
  * Copyright (c) 2005-2006, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -380,6 +380,7 @@
             id="ch.elexis.medverlaufview"
             name="Medikamente-Verlauf"/>
       <view
+            category="ch.elexis.messungenKategorie"
             class="ch.elexis.views.LabNotSeenView"
             fastViewWidthRatio="0.4"
             icon="rsc/reagensask.ico"
