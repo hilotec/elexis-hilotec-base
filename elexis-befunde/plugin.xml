@@ -9,7 +9,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- $Id: plugin.xml 2516 2007-06-12 15:56:07Z rgw_ch $ 
+ $Id: plugin.xml 2795 2007-07-13 18:35:46Z rgw_ch $ 
 -->
 <plugin>
    <extension
@@ -30,6 +30,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
+            category="ch.elexis.messungenKategorie"
             class="ch.elexis.befunde.FindingsView"
             icon="icons/chart_curve.png"
             id="elexis-befunde.findingsView"
