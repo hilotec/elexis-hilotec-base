@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2794 2007-07-13 18:35:41Z rgw_ch $
+ *  $Id: Konsultation.java 2796 2007-07-13 18:40:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -505,7 +505,7 @@ public class Konsultation extends PersistentObject implements Comparable{
     	*/
     	Stm stm=j.getStatement();
     	try{
-	    	ResultSet res=stm.query("SELECT EK_KOSTEN FROM LEISTUNGEN WHERE BEHANDLUNG="+getWrappedId());
+	    	ResultSet res=stm.query("SELECT EK_KOSTEN FROM LEISTUNGEN WHERE deleted='0' AND BEHANDLUNG="+getWrappedId());
 	    	while((res!=null) && res.next()){
 	    		sum+=res.getInt(1);
 	    	}
