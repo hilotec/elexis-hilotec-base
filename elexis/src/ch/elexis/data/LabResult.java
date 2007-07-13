@@ -8,10 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2736 2007-07-07 14:07:40Z rgw_ch $
+ *  $Id: LabResult.java 2792 2007-07-13 14:31:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import ch.rgw.tools.TimeTool;
 
@@ -28,7 +31,7 @@ public class LabResult extends PersistentObject {
 				"ItemID","Resultat","Kommentar","Flags","Quelle=Origin");
 		
 	}
-	public LabResult(Patient p,TimeTool date,LabItem item,String result,String comment){
+	public LabResult(final Patient p,final TimeTool date,final LabItem item,final String result,final String comment){
 		create(null);
 		String[] fields={"PatientID","Datum","ItemID","Resultat","Kommentar"};
 		String[] vals=new String[]{
@@ -36,8 +39,9 @@ public class LabResult extends PersistentObject {
 			date==null ? new TimeTool().toString(TimeTool.DATE_COMPACT) : date.toString(TimeTool.DATE_COMPACT),
 			item.getId(),result,comment	};
 		set(fields,vals);
+		addToUnseen();
 	}
-	public static LabResult load(String id){
+	public static LabResult load(final String id){
 		return new LabResult(id);
 	}
 	
@@ -53,17 +57,17 @@ public class LabResult extends PersistentObject {
 	public String getResult(){
 		return checkNull(get("Resultat"));
 	}
-	public void setResult(String res){
+	public void setResult(final String res){
 		set("Resultat",checkNull(res));
 	}
 	public String getComment(){
 		return checkNull(get("Kommentar"));
 		
 	}
-	public boolean isFlag(int flag){
+	public boolean isFlag(final int flag){
 		return (getFlags()&flag)!=0;
 	}
-	public void setFlag(int flag, boolean set){
+	public void setFlag(final int flag, final boolean set){
 		int flags=getFlags();
 		if(set){
 			flags|=flag;
@@ -78,7 +82,7 @@ public class LabResult extends PersistentObject {
 	protected LabResult() {	}
 
 	
-	protected LabResult(String id) {
+	protected LabResult(final String id) {
 		super(id);
 	}
 
@@ -87,6 +91,32 @@ public class LabResult extends PersistentObject {
 		return getResult();
 	}
 
+	public void addToUnseen(){
+		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
+		String results=unseen.getString();
+		results+=","+getId();
+		unseen.putString(results);
+	}
 	
-
+	public void removeFromUnseen(){
+		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
+		String results=unseen.getString();
+		results=results.replaceAll(getId(), "");
+		unseen.putString(results.replaceAll(",,", ","));
+	}
+	public static List<LabResult> getUnseen(){
+		LinkedList<LabResult> ret=new LinkedList<LabResult>();
+		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
+		String results=unseen.getString();
+		if(results.length()>0){
+			for(String id:results.split(",")){
+				LabResult lr=load(id);
+				if(lr.exists()){
+					ret.add(lr);
+				}
+			}
+		}
+		return ret;
+	}
+	
 }

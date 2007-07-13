@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 2780 2007-07-11 15:59:24Z rgw_ch $
+ *  $Id: NamedBlob.java 2792 2007-07-13 14:31:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -41,16 +41,19 @@ public class NamedBlob extends PersistentObject {
 	 * @param in a Hashtable
 	 */
 	@SuppressWarnings("unchecked")
-	public void put(Hashtable in){
+	public void put(final Hashtable in){
 		setHashtable("inhalt",in);
 		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	/**
 	 * return the contents as String (will probably fail if the data was not stored using putString) 
-	 * @return the previously stored string
+	 * @return the previously stored string. 
 	 */
 	public String getString(){
 		byte[] comp=getBinary("inhalt");
+		if((comp==null) || (comp.length==0)){
+			return "";
+		}
 		byte[] exp=CompEx.expand(comp);
 		try{
 			return new String(exp,"utf-8");
@@ -64,7 +67,7 @@ public class NamedBlob extends PersistentObject {
 	 * Store a String. The String will be stored as compressed byte[]
 	 * @param string
 	 */
-	public void putString(String string){
+	public void putString(final String string){
 		byte[] comp=CompEx.Compress(string, CompEx.ZIP);
 		setBinary("inhalt", comp);
 		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
@@ -87,7 +90,7 @@ public class NamedBlob extends PersistentObject {
 	 * @param id the unique name of the NamedBlob to query
 	 * @return true if a NamedBlob with this name exists
 	 */
-	public static boolean exists(String id){
+	public static boolean exists(final String id){
 		NamedBlob ni=new NamedBlob(id);
 		return ni.exists();
 	}
@@ -99,7 +102,7 @@ public class NamedBlob extends PersistentObject {
 	 * @param id the unique name
 	 * @return the NamedBlob with that Name (which may be just newly created)
 	 */
-	public static NamedBlob load(String id){
+	public static NamedBlob load(final String id){
 		NamedBlob ni=new NamedBlob(id);
 		if(ni.state()<DELETED){
 			ni.create(id);			
@@ -107,7 +110,7 @@ public class NamedBlob extends PersistentObject {
 		return ni;
 	}
 	private NamedBlob(){};
-	private NamedBlob(String id){
+	private NamedBlob(final String id){
 		super(id);
 	}
 
@@ -117,7 +120,7 @@ public class NamedBlob extends PersistentObject {
 	 * @param prefix
 	 * @param older
 	 */
-	public static void cleanup(String prefix,TimeTool older){
+	public static void cleanup(final String prefix,final TimeTool older){
 		if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
 			Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
 			qbe.add("Datum", "<", older.toString(TimeTool.DATE_COMPACT));
