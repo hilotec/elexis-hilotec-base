@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 2634 2007-06-25 20:17:22Z rgw_ch $
+ * $Id: RechnungsListeView.java 2800 2007-07-14 04:37:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -144,6 +144,7 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
     	cW.setLayout(new GridLayout(4,true));
     	
     	tk.createLabel(cW, "Abstand in Tagen");
+
     	niDaysTo1st=new NumberInput(cW,"1. Mahnung");
     	niDaysTo1st.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     	niDaysTo1st.getControl().addSelectionListener(mahnWizardListener);

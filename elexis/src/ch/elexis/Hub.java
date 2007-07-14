@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ *    $Id: Hub.java 2800 2007-07-14 04:37:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -120,8 +120,9 @@ public class Hub extends AbstractUIPlugin {
 		// Log und Exception-Handler initialisieren
 		log=Log.get("Elexis startup"); //$NON-NLS-1$
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
- 		userCfg=localCfg; // Damit Anfragen auf userCfg bei nicht eingeloggtem User keine NPE werfen
-
+ 	// Damit Anfragen auf userCfg und mandantCfg bei nicht eingeloggtem User keine NPE werfen
+ 		userCfg=localCfg; 
+ 		mandantCfg=localCfg;
  		// initialize log with default configuration
  		initializeLog(localCfg);
 
@@ -307,7 +308,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2762 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2800 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

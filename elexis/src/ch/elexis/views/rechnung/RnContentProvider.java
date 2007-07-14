@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 2634 2007-06-25 20:17:22Z rgw_ch $
+ * $Id: RnContentProvider.java 2800 2007-07-14 04:37:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -88,7 +88,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 			ExHandler.handle(ex);
 		}
 		
-		return result;
+		return result==null ? new Tree[0] : result;
 	}
 
 	public void dispose() {
@@ -194,6 +194,9 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		final String[] val=cv.getConfigurer().getControlFieldProvider().getValues();
 		q1=new Query<Rechnung>(Rechnung.class);
 		if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
+			if(Hub.actMandant==null){
+				return;
+			}
 			q1.add("MandantID", "=", Hub.actMandant.getId());
 		}
 		if(Integer.parseInt(val[0])==RnStatus.ZU_DRUCKEN){
