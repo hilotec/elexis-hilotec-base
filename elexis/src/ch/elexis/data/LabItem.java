@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 2762 2007-07-08 20:35:24Z rgw_ch $
+ *  $Id: LabItem.java 2807 2007-07-14 20:03:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -34,7 +34,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		addMapping("LABORITEMS","kuerzel","titel","LaborID",
 				"RefMann","RefFrauOrTx","Einheit","Typ","Gruppe","prio");
 	}
-	public enum typ{NUMERIC,TEXT,ABSOLUTE};
+	public enum typ{NUMERIC,TEXT,ABSOLUTE,FORMULA};
 	
 	public LabItem(String k,String t, Kontakt labor, String RefMann, String RefFrau, 
 			String Unit, typ type,String grp,String seq){
