@@ -18,11 +18,16 @@ import java.util.List;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -30,12 +35,15 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 
 /**
  * This view displays all LabResults that are not marked as seen by the doctor. One can mark them individually
@@ -43,7 +51,7 @@ import ch.elexis.data.Patient;
  * @author gerry
  *
  */
-public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener {
+public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener{
 	public final static String ID="ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
 	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
@@ -68,7 +76,17 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		tv.setLabelProvider(new LabNotSeenLabelProvider());
 		tv.setUseHashlookup(true);
 		GlobalEvents.getInstance().addActivationListener(this, this);
-		Hub.heart.addListener(this);
+
+		tv.addSelectionChangedListener(new ISelectionChangedListener(){
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection sel=(IStructuredSelection)event.getSelection();
+				if(!sel.isEmpty()){
+					LabResult lr=(LabResult)sel.getFirstElement();
+					GlobalEvents.getInstance().fireSelectionEvent(lr.getPatient());
+				}
+				
+			}});
 		tv.addCheckStateListener(new ICheckStateListener(){
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				LabResult lr=(LabResult)event.getElement();
@@ -87,7 +105,6 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	@Override
 	public void dispose() {
 		GlobalEvents.getInstance().removeActivationListener(this, this);
-		Hub.heart.removeListener(this);
 		super.dispose();
 	}
 
@@ -97,7 +114,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 
 	}
 
-	static class LabNotSeenLabelProvider extends LabelProvider implements ITableLabelProvider{
+	static class LabNotSeenLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider{
 
 		public Image getColumnImage(final Object element, final int columnIndex) {
 			// TODO Auto-generated method stub
@@ -121,6 +138,20 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 			}
 			return "?";
 		}
+
+		public Color getBackground(Object element) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public Color getForeground(Object element) {
+			LabResult lr=(LabResult)element;
+			if(lr.isFlag(LabResult.PATHOLOGIC)){
+				return Desk.theColorRegistry.get(Desk.COL_RED);
+			}else{
+				return Desk.theColorRegistry.get(Desk.COL_BLACK);
+			}
+		}
 		
 	}
 	
@@ -139,16 +170,22 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	}
 
 	public void activation(final boolean mode) {
-		if(mode){
-			tv.refresh();
-		}
+		// don't mind
 	}
 
 	public void visible(final boolean mode) {
-		// don't mind
+		if(mode){
+			tv.refresh();
+			Hub.heart.addListener(this);
+		}else{
+			Hub.heart.removeListener(this);
+		}
+
 	}
 
 	public void heartbeat() {
 		tv.refresh();
 	}
+
+
 }

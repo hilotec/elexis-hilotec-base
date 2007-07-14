@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2793 2007-07-13 17:00:00Z rgw_ch $
+ *  $Id: LabResult.java 2806 2007-07-14 15:57:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -31,13 +31,43 @@ public class LabResult extends PersistentObject {
 				"ItemID","Resultat","Kommentar","Flags","Quelle=Origin");
 		
 	}
+	
+	/**
+	 * create a new LabResult. If the type is numeric, we'll check whether it's pathologic
+	 */
 	public LabResult(final Patient p,final TimeTool date,final LabItem item,final String result,final String comment){
 		create(null);
-		String[] fields={"PatientID","Datum","ItemID","Resultat","Kommentar"};
+		String[] fields={"PatientID","Datum","ItemID","Resultat","Kommentar","Flags"};
+		int flags=0;
+		if(item.getTyp().equals(LabItem.typ.NUMERIC)){
+			String nr;
+			if(p.getGeschlecht().equalsIgnoreCase("m")){
+				nr=item.getRefM();
+			}else{
+				nr=item.getRefW();
+			}
+			String[] range=nr.split("\\s*-\\s*");
+			if(range.length==2){
+				try{
+					double lower=Double.parseDouble(range[0]);
+					double upper=Double.parseDouble(range[1]);
+					double val=Double.parseDouble(result);
+					if((val<lower) || (val>upper)){
+						flags=PATHOLOGIC;
+					}
+				}catch(NumberFormatException nre){
+					// we don't mind here
+				}
+			}
+		}else if(item.getTyp().equals(LabItem.typ.ABSOLUTE)){
+			if(result.toLowerCase().startsWith("pos")){
+				flags=PATHOLOGIC;
+			}
+		}
 		String[] vals=new String[]{
 			p.getId(),
 			date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date.toString(TimeTool.DATE_GER),
-			item.getId(),result,comment	};
+			item.getId(),result,comment,Integer.toString(flags)};
 		set(fields,vals);
 		addToUnseen();
 	}
