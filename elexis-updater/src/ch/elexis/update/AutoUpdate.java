@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 2637 2007-06-27 16:05:25Z rgw_ch $
+ * $Id: AutoUpdate.java 2805 2007-07-14 08:51:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -61,16 +61,16 @@ public class AutoUpdate {
 		String[] dirs;
 		UpdateClient ucl=new UpdateClient();
 		
-		UpdateJob(String [] d){
+		UpdateJob(final String [] d){
 			super("Elexis-Update");
 			dirs=d;
 		}
 		@Override
-		protected IStatus run(IProgressMonitor monitor) {
+		protected IStatus run(final IProgressMonitor monitor) {
 			monitor.beginTask("Update", dirs.length*2);
 			String tempdir=Hub.localCfg.get(Preferences.TEMPDIR, System.getenv("TEMP"));
-			String url=Hub.globalCfg.get(Preferences.UPDATE_SITE, "http://www.rgw.ch/update.php");
-			
+			//String url=Hub.globalCfg.get(Preferences.UPDATE_SITE, "http://www.rgw.ch/update.php");
+			String url="http://www.rgw.ch/update110.php";
 			for(String sub:dirs){
 				String f=sub+".zip";
 				monitor.subTask(f);
@@ -116,7 +116,7 @@ public class AutoUpdate {
 		
 	}
 	static class ReplaceInfo{
-		ReplaceInfo(File f, String s, int m){
+		ReplaceInfo(final File f, final String s, final int m){
 			file=f; sub=s; mode=m;
 		}
 		public File file;
