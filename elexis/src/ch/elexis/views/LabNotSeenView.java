@@ -30,8 +30,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 
@@ -41,7 +43,7 @@ import ch.elexis.data.Patient;
  * @author gerry
  *
  */
-public class LabNotSeenView extends ViewPart implements ActivationListener {
+public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener {
 	public final static String ID="ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
 	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
@@ -66,6 +68,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener {
 		tv.setLabelProvider(new LabNotSeenLabelProvider());
 		tv.setUseHashlookup(true);
 		GlobalEvents.getInstance().addActivationListener(this, this);
+		Hub.heart.addListener(this);
 		tv.addCheckStateListener(new ICheckStateListener(){
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				LabResult lr=(LabResult)event.getElement();
@@ -79,6 +82,13 @@ public class LabNotSeenView extends ViewPart implements ActivationListener {
 			
 		});
 		tv.setInput(this);
+	}
+
+	@Override
+	public void dispose() {
+		GlobalEvents.getInstance().removeActivationListener(this, this);
+		Hub.heart.removeListener(this);
+		super.dispose();
 	}
 
 	@Override
@@ -136,5 +146,9 @@ public class LabNotSeenView extends ViewPart implements ActivationListener {
 
 	public void visible(final boolean mode) {
 		// don't mind
+	}
+
+	public void heartbeat() {
+		tv.refresh();
 	}
 }

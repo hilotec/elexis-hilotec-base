@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2800 2007-07-14 04:37:50Z rgw_ch $
+ *    $Id: Hub.java 2803 2007-07-14 08:51:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -66,7 +66,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID="ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX=PLUGIN_ID+".commands."; //$NON-NLS-1$
 	static final String neededJRE="1.5.0"; //$NON-NLS-1$
-    public static final String Version="1.0.2"; //$NON-NLS-1$
+    public static final String Version="1.1.0"; //$NON-NLS-1$
     public static final String DBVersion="1.6.0"; //$NON-NLS-1$
     static final String[] mine={"ch.elexis","ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
     private static List<ShutdownJob> shutdownJobs=new LinkedList<ShutdownJob>();
@@ -171,7 +171,7 @@ public class Hub extends AbstractUIPlugin {
     /*
      * called by constructor
      */
-    private void initializeLog(Settings cfg) {
+    private void initializeLog(final Settings cfg) {
 		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, "elexis.log"); //$NON-NLS-1$
 		int maxLogfileSize = -1;
 		try {
@@ -191,7 +191,8 @@ public class Hub extends AbstractUIPlugin {
 	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench,
 	 * durchgeführt werden sollen.
 	 */
-	public void start(BundleContext context) throws Exception {
+	@Override
+	public void start(final BundleContext context) throws Exception {
         //log.log("Basedir: "+getBasePath(),Log.DEBUGMSG);
     	super.start(context);
     	heart=Heartbeat.getInstance();
@@ -200,7 +201,8 @@ public class Hub extends AbstractUIPlugin {
 	/**
 	 * Programmende
 	 */
-	public void stop(BundleContext context) throws Exception {
+	@Override
+	public void stop(final BundleContext context) throws Exception {
 		heart.stop();
 		JobPool.getJobPool().dispose();
 		if(Hub.actUser!=null){
@@ -228,7 +230,7 @@ public class Hub extends AbstractUIPlugin {
 		}
 	}
 
-	public static void setMandant(Mandant m){
+	public static void setMandant(final Mandant m){
 		if(actMandant!=null){
 			//Hub.mandantCfg.dump(null);
 			mandantCfg.flush();
@@ -293,7 +295,7 @@ public class Hub extends AbstractUIPlugin {
 	 * @param path the path
 	 * @return the image descriptor
 	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
+	public static ImageDescriptor getImageDescriptor(final String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis", path); //$NON-NLS-1$
 	}
     public static String getId(){
@@ -306,9 +308,9 @@ public class Hub extends AbstractUIPlugin {
 	 *  Wenn diese Instanz nicht von ANT erstellt wurde, handelt es sich um eine
 	 *  Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
-    public static String getRevision(boolean withdate)
+    public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2800 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2803 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -371,7 +373,7 @@ public class Hub extends AbstractUIPlugin {
     	 */
     	public void doit() throws Exception;
     }
-    public static void addShutdownJob(ShutdownJob job){
+    public static void addShutdownJob(final ShutdownJob job){
     	if(!shutdownJobs.contains(job)){
     		shutdownJobs.add(job);
     	}
