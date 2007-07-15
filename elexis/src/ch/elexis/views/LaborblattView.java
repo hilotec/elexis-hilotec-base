@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborblattView.java 1728 2007-02-03 10:08:17Z rgw_ch $
+ *  $Id: LaborblattView.java 2812 2007-07-15 15:25:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

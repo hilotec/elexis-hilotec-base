@@ -8,12 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 2807 2007-07-14 20:03:29Z rgw_ch $
+ *  $Id: LabItem.java 2812 2007-07-15 15:25:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import java.util.List;
+
+import bsh.EvalError;
+import bsh.Interpreter;
+
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Ein Laboritem, also ein anzeigbarer Laborwert. Jedes Laboritem hat einen
@@ -92,13 +98,62 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			return typ.NUMERIC;
 		}else if(t.equals("1")){
 			return typ.TEXT;
+		}else if(t.equals("2")){
+			return typ.ABSOLUTE;
+		}else{
+			return typ.FORMULA;
 		}
-		return typ.ABSOLUTE;
 		
 	}
-	
+	/**
+	 * Evaluate a formula-based LabItem for a given Patient at a given date.
+	 * It will try to retrieve all LabValues it depends on of that Patient and date 
+	 * and then calculate the result. If there are not all necessare values given,
+	 * it will return null. 
+	 * @param date The date to consider for calculating
+	 * @return the result or null if no result could be calculated.
+	 */
+	public String evaluate(Patient pat,TimeTool date){
+		if(!getTyp().equals(typ.FORMULA)){
+			return  null;
+		}
+		Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
+		qbe.add("PatientID", "=", pat.getId());
+		qbe.add("Datum", "=", date.toString(TimeTool.DATE_COMPACT));
+		List<LabResult> results=qbe.execute();
+		String formel=getFormula();
+		boolean bMatched=false;
+		for(LabResult result:results){
+			String var=result.getItem().makeVarName();
+			if(formel.indexOf(var)!=-1){
+				formel=formel.replaceAll(var, result.getResult());
+				bMatched=true;
+			}
+		}
+		if(!bMatched){
+			return null;
+		}
+		Interpreter scripter=new Interpreter();
+		
+		try {
+			return scripter.eval(formel).toString();
+		} catch (EvalError e) {
+			return "?formel?";
+		}
+
+	}
+	/**
+	 * Return the variable Name that identifies this item (in a script)
+	 * @return a name that is made of the group and the priority values.
+	 */
+	public String makeVarName(){
+		String[] group=getGroup().split(" ",2);
+		String num=getPrio();
+		return group[0]+"_"+num;
+	}
 	public String getRefW(){
-		return checkNull(get("RefFrauOrTx"));
+		String ret= checkNull(get("RefFrauOrTx")).split("##")[0];
+		return ret;
 	}
 	public String getRefM(){
 		return checkNull(get("RefMann"));
@@ -108,6 +163,18 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	}
 	public void setRefM(String r){
 		set("RefMann",r);
+	}
+	
+	public void setFormula(String f){
+		String val=getRefW();
+		if(!StringTool.isNothing(f)){
+			val+="##"+f;
+		}
+		set("RefFrauOrTx",val);
+	}
+	public String getFormula(){
+		String[] all=get("RefFrauOrTx").split("##");
+		return all.length>1 ? all[1] : "";
 	}
 	protected LabItem() {/* leer */}
 	

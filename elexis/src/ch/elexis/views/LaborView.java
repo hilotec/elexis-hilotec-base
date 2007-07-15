@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 2444 2007-05-28 18:50:44Z rgw_ch $
+ *  $Id: LaborView.java 2812 2007-07-15 15:25:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -18,6 +18,8 @@ import java.io.OutputStreamWriter;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
@@ -97,6 +99,11 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	private ViewMenus menu;
 	private FormToolkit tk=Desk.theToolkit;
 	private Form form;
+	// Formula handling
+	private Pattern varsPattern=Pattern.compile("[a-zA-Z]+_[0-9]+");
+	private HashMap<String, List<LabItem>> formulaRelations=new HashMap<String,List<LabItem>>();
+	private ArrayList<LabItem> lFormulas=new ArrayList<LabItem>();
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
@@ -291,13 +298,39 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 							it.setData("Values",lrs);
 						}
 						LabResult lr=lrs[idx-COL_OFFSET];
+						TimeTool ttDaten=new TimeTool(sDaten[idx_values]);
 						if(lr==null){
-							lr=new LabResult(actPatient,new TimeTool(sDaten[idx_values]),lit,text.getText(),"");
+							lr=new LabResult(actPatient,ttDaten,lit,text.getText(),"");
 							lrs[idx-COL_OFFSET]=lr;
 						}else{
 							lr.setResult(text.getText());
 						}
+						List<LabItem> toCalc=formulaRelations.get(lr.getItem().makeVarName());
+						boolean bEval=false;
+						for(LabItem litem:toCalc){
+							String evaluated=litem.evaluate(actPatient, ttDaten);
+							if(evaluated!=null){
+								LabResult artifact=LabResult.getForDate(actPatient, ttDaten, litem);
+								if(artifact==null){
+									artifact=new LabResult(actPatient,ttDaten,litem,evaluated,"");
+								}else{
+									artifact.setResult(evaluated);
+								}
+								Integer row=hLabItems.get(litem.getId());
+								if(row==null){
+									continue;
+								}
+								rows[row].setText(idx,evaluated);
+
+								bEval=true;
+							}
+						}
+						if(bEval){
+							
+							//table.redraw();
+						}
 					}
+					
 					it.setText(idx,text.getText());
 					text.dispose();
 					cursorDown();
@@ -488,7 +521,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 				continue;
 			}
 			TableItem ti=new TableItem(table,SWT.NONE);
-			ti.setForeground(Desk.theDisplay.getSystemColor(SWT.COLOR_BLUE));
+			ti.setForeground(Desk.theDisplay.getSystemColor(SWT.COLOR_DARK_BLUE));
 			String[] gn=g.split(" +");
 			if(gn.length>1){
 				ti.setText(0,gn[1]);
@@ -506,6 +539,19 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 				ti2.setText(it.getShortLabel());
 				ti2.setData("Text",it.getShortLabel());
 				lTI.add(ti2);
+				if(it.getTyp().equals(LabItem.typ.FORMULA)){
+					String formel=it.getFormula();
+					Matcher matcher=varsPattern.matcher(formel);
+					while(matcher.find()){
+						String var=matcher.group();
+						List<LabItem> itList=formulaRelations.get(var);
+						if(itList==null){
+							itList=new ArrayList<LabItem>();
+							formulaRelations.put(var, itList);
+						}
+						itList.add(it);
+					}
+				}
 				hLabItems.put(it.getId(),line++);
 			}
 			TableItem tiSpace=new TableItem(table,SWT.NONE);

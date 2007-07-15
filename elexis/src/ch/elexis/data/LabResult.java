@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2806 2007-07-14 15:57:22Z rgw_ch $
+ *  $Id: LabResult.java 2812 2007-07-15 15:25:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -121,6 +121,17 @@ public class LabResult extends PersistentObject {
 		return getResult();
 	}
 
+	public static LabResult getForDate(Patient pat,TimeTool date,LabItem item){
+		Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
+		qbe.add("ItemID", "=", item.getId());
+		qbe.add("PatientID", "=", pat.getId());
+		qbe.add("Datum", "=", date.toString(TimeTool.DATE_COMPACT));
+		List<LabResult> res=qbe.execute();
+		if((res!=null) && (res.size()>0)){
+			return res.get(0);
+		}
+		return null;
+	}
 	public void addToUnseen(){
 		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
 		String results=unseen.getString();

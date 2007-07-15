@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help.webapp,
  org.eclipse.tomcat,
  org.eclipse.update.core,
- ch.elexis.jdomwrapper
+ ch.elexis.jdomwrapper,
+ ch.elexis.scripting
 Eclipse-LazyStart: true
 Bundle-ClassPath: bin/,
  hsqldb.jar,

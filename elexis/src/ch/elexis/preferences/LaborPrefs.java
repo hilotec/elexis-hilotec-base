@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborPrefs.java 2485 2007-06-06 11:11:57Z rgw_ch $
+ *  $Id: LaborPrefs.java 2812 2007-07-15 15:25:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
@@ -36,6 +37,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.*;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.WidgetFactory;
+import ch.rgw.tools.StringTool;
 
 public class LaborPrefs extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -61,6 +63,7 @@ public class LaborPrefs extends PreferencePage implements
 		
 		Composite ret=new Composite(parn,SWT.NONE);
 		ret.setLayout(new GridLayout());
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		table=new Table(ret,SWT.SINGLE|SWT.V_SCROLL);
 		for(int i=0;i<headers.length;i++){
 			TableColumn tc=new TableColumn(table,SWT.LEFT);
@@ -247,7 +250,7 @@ public class LaborPrefs extends PreferencePage implements
 					return "Absolut";
 			case 4: return li.getEinheit();
 			case 5: return li.get("RefMann");
-			case 6: return li.get("RefFrauOrTx");
+			case 6: return li.getRefW();
 			case 7: return li.getGroup()+" - "+li.getPrio();
 			default:
 				return "?col?";
@@ -276,7 +279,8 @@ public class LaborPrefs extends PreferencePage implements
 		//private String[] fields={"Kürzel","Titel","Typ","Referenzbereich","Einheit"};
 		Text iKuerzel,iTitel,iRef,iRfF, iUnit,iPrio;
 		Combo cGroup;
-		Button alph,numeric,abs;
+		Button alph,numeric,abs,formula;
+		String formel;
 		org.eclipse.swt.widgets.List labors;
 		Hashtable<String,Labor> lablist=new Hashtable<String,Labor>();
 		Labor actLabor;
@@ -346,6 +350,22 @@ public class LaborPrefs extends PreferencePage implements
 			alph.setText("Text");
 			abs=new Button(grp,SWT.RADIO);
 			abs.setText("Absolut");
+			formula=new Button(grp,SWT.RADIO);
+			formula.setText("Formel");
+			formula.addSelectionListener(new SelectionAdapter(){
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if(formula.getSelection()){
+						InputDialog inp=new InputDialog(getShell(),"Formel für Laborwert eingeben",
+								"Geben Sie bitte an, wie dieser Parameter errechnet werden soll",formel,null);
+						if(inp.open()==Dialog.OK){
+							formel=inp.getValue();
+						}
+					}
+				}
+				
+			});
 			WidgetFactory.createLabel(ret,"Referenz M");
 	
 			iRef=new Text(ret,SWT.BORDER);
@@ -370,14 +390,19 @@ public class LaborPrefs extends PreferencePage implements
 				iTitel.setText(result.getName());
 				if(result.getTyp()==LabItem.typ.NUMERIC){
 					numeric.setSelection(true);
-				}else{
+				}else if(result.getTyp()==LabItem.typ.TEXT){
 					alph.setSelection(true);
+				}else if(result.getTyp()==LabItem.typ.ABSOLUTE){
+					abs.setSelection(true);
+				}else{
+					formula.setSelection(true);
 				}
 				iUnit.setText(result.getEinheit());
 				iRef.setText(result.get("RefMann"));
-				iRfF.setText(result.get("RefFrauOrTx"));
+				iRfF.setText(result.getRefW());
 				cGroup.setText(result.getGroup());
 				iPrio.setText(result.getPrio());
+				formel=result.getFormula();
 			}
 			return ret;
 		}
@@ -397,6 +422,8 @@ public class LaborPrefs extends PreferencePage implements
 				typ=LabItem.typ.NUMERIC;
 			}else if (abs.getSelection()==true){
 				typ=LabItem.typ.ABSOLUTE;
+			}else if(formula.getSelection()){
+				typ=LabItem.typ.FORMULA;
 			}else{
 				typ=LabItem.typ.TEXT;
 			}
@@ -409,6 +436,8 @@ public class LaborPrefs extends PreferencePage implements
 					t="1";
 				}else if(typ==LabItem.typ.ABSOLUTE){
 					t="2";
+				}else if(typ==LabItem.typ.FORMULA){
+					t="3";
 				}
 				result.set(new String[]{"kuerzel","titel","LaborID",
 				"RefMann","RefFrauOrTx","Einheit","Typ","Gruppe","prio"},
@@ -416,7 +445,9 @@ public class LaborPrefs extends PreferencePage implements
 				iUnit.getText(),t,cGroup.getText(),iPrio.getText()
 				);
 			}
-			
+			if(!StringTool.isNothing(formel)){
+				result.setFormula(formel);
+			}
 			super.okPressed();
 		}
 		
