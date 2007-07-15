@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,21 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EditFindingDialog.java 1405 2006-12-10 17:48:59Z rgw_ch $
+ *    $Id: EditFindingDialog.java 2809 2007-07-15 10:30:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
 import java.util.Date;
 import java.util.Hashtable;
 
+import javax.swing.event.HyperlinkListener;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -27,6 +31,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Patient;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
+import bsh.*;
 
 public class EditFindingDialog extends TitleAreaDialog {
 	Messwert mw;
@@ -37,6 +42,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 	boolean[] multiline;
 	String[] values;
 	Text[] inputs;
+	HyperlinkListener scriptListener; 
 	
 	EditFindingDialog(Shell parent, Messwert m, String n){
 		super(parent);
@@ -70,9 +76,17 @@ public class EditFindingDialog extends TitleAreaDialog {
 				}
 			}
 			for(int i=0;i<flds.length;i++){
-				new Label(ret,SWT.NONE).setText(flds[i]);
+				final String[] heading=flds[i].split("=");
+				if(heading.length==1){
+					new Label(ret,SWT.NONE).setText(flds[i]);
+				}else{
+					SWTHelper.createHyperlink(ret, heading[0], new ScriptListener(heading[1],i));
+				}
 				inputs[i]=SWTHelper.createText(ret, multiline[i] ? 4 : 1 , SWT.NONE);
 				inputs[i].setText(values[i]==null ? "" : values[i]);
+				if(heading.length>1){
+					inputs[i].setEditable(false);
+				}
 			}
 		}
 		return ret;
@@ -109,4 +123,36 @@ public class EditFindingDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 	
+	class ScriptListener extends HyperlinkAdapter{
+		int v;
+		String script;
+		ScriptListener(String scr,int i){
+			script=scr;
+			v=i;
+		}
+		@Override
+		public void linkActivated(HyperlinkEvent e) {
+			
+			Interpreter scripter=new Interpreter();
+			for(int vals=0;vals<inputs.length;vals++){
+				String sval=values[vals];
+				if(!StringTool.isNothing(sval)){
+					double dval=0.0;
+					try{
+						dval=Double.parseDouble(sval);
+					}catch(NumberFormatException nfe){
+						// don't mind
+					}
+					script=script.replaceAll("F"+Integer.toString(vals+1), Double.toString(dval));
+				}
+			}
+			try {
+				values[v]=Double.toString((Double)scripter.eval(script));
+			} catch (EvalError e1) {
+				values[v]="?eval?";
+			}
+			inputs[v].setText(values[v]);
+		}
+
+	}
 }

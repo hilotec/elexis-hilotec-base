@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 2516 2007-06-12 15:56:07Z rgw_ch $
+ *    $Id: FindingsView.java 2809 2007-07-15 10:30:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -27,20 +26,20 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
-import ch.elexis.data.*;
-import ch.elexis.text.ITextPlugin;
-import ch.elexis.text.TextContainer;
-import ch.elexis.text.ITextPlugin.ICallback;
-import ch.elexis.util.Money;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.StringTool;
@@ -186,7 +185,11 @@ public class FindingsView extends ViewPart implements ActivationListener,
 				for(int i=1;i<=flds.length;i++){
 					tc[i]=new TableColumn(table,SWT.NONE);
 					flds[i-1]=flds[i-1].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-					tc[i].setText(flds[i-1]);
+					String[] header=flds[i-1].split("=");
+					tc[i].setText(header[0]);
+					if(header.length>1){
+						tc[i].setData("script", header[1]);
+					}
 					tc[i].setWidth(80);
 				}
 				tc[flds.length].setWidth(600);

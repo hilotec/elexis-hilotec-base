@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PrefsPage.java 2516 2007-06-12 15:56:07Z rgw_ch $
+ *    $Id: PrefsPage.java 2809 2007-07-15 10:30:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
@@ -36,7 +37,7 @@ public class PrefsPage extends Composite {
 	
 	PrefsPage(final Composite parent, final Hashtable<String,String> hash, final String name){
 		super(parent,SWT.NONE);
-		setLayout(new GridLayout(2,false));
+		setLayout(new GridLayout(3,false));
 		this.hash=hash;
 		this.name=name;
 
@@ -57,6 +58,7 @@ public class PrefsPage extends Composite {
 		if(StringTool.isNothing(fields)){
 			texts=new Text[1];
 			checkboxes=new Button[1];
+			new Label(this,SWT.NONE).setText("F1");
 			texts[0]=SWTHelper.createText(this, 1, SWT.NONE);
 			checkboxes[0]=new Button(this,SWT.CHECK);
 			checkboxes[0].setText("mehrzeilig");
@@ -66,6 +68,7 @@ public class PrefsPage extends Composite {
 			texts=new Text[mNames.length+1];
 			checkboxes=new Button[texts.length];
 			for(int i=0;i<texts.length;i++){
+				new Label(this,SWT.NONE).setText("F"+Integer.toString(i+1));
 				texts[i]=SWTHelper.createText(this, 1, SWT.NONE);
 				checkboxes[i]=new Button(this,SWT.CHECK);
 				checkboxes[i].setText("mehrzeilig");
