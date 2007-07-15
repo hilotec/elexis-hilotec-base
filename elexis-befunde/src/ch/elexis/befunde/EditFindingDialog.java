@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EditFindingDialog.java 2809 2007-07-15 10:30:52Z rgw_ch $
+ *    $Id: EditFindingDialog.java 2813 2007-07-15 15:26:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -135,7 +135,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 			
 			Interpreter scripter=new Interpreter();
 			for(int vals=0;vals<inputs.length;vals++){
-				String sval=values[vals];
+				String sval=inputs[vals].getText();
 				if(!StringTool.isNothing(sval)){
 					double dval=0.0;
 					try{
@@ -147,7 +147,9 @@ public class EditFindingDialog extends TitleAreaDialog {
 				}
 			}
 			try {
-				values[v]=Double.toString((Double)scripter.eval(script));
+				Object result=scripter.eval(script);
+				values[v]=result.toString();
+				//values[v]=Double.toString((Double)scripter.eval(script));
 			} catch (EvalError e1) {
 				values[v]="?eval?";
 			}
