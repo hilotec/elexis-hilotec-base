@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Scripting Plug-in
+Bundle-SymbolicName: ch.elexis.scripting
+Bundle-Version: 0.1.0
+Bundle-ClassPath: bsh-core-2.0b4.jar
+Export-Package: bsh
+Bundle-Vendor: elexis.ch
