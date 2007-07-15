@@ -2,7 +2,6 @@ package ch.elexis.EMRPrinter;
 import org.jdom.Element;
 
 import ch.elexis.data.Patient;
-import ch.elexis.exchange.IDataSender;
 import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.util.Log;
@@ -18,9 +17,12 @@ import ch.elexis.util.Result;
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EMRPrinter.java 2626 2007-06-24 14:23:19Z rgw_ch $
+ *  $Id: EMRPrinter.java 2808 2007-07-15 10:30:43Z rgw_ch $
  *******************************************************************************/
 
+/**
+ * Class to export electronic medical records (EMR) to a printer
+ */
 public class EMRPrinter extends XChangeExporter{
 	Patient mine;
 	ContactElement base;

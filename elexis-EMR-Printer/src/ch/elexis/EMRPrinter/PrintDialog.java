@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintDialog.java 2628 2007-06-24 16:31:23Z rgw_ch $
+ *  $Id: PrintDialog.java 2808 2007-07-15 10:30:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.EMRPrinter;
 
@@ -17,8 +17,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.jdom.Document;
-import org.jdom.Element;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
@@ -27,6 +25,12 @@ import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
 
+/**
+ * Here we crate a document using the standard text plugin and let the user
+ * print it (or cancel).
+ * @author Gerry
+ *
+ */
 public class PrintDialog extends TitleAreaDialog implements ICallback{
 	XChangeExporter exporter;	
 	
