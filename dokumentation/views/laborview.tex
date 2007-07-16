@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: laborview.tex 2819 2007-07-16 13:38:22Z rgw_ch $
+% *  $Id: laborview.tex 2821 2007-07-16 14:51:35Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -45,8 +45,8 @@ Um Laborwerte manuell einzutragen, gehen Sie so vor:
 \begin{itemize}
     \item Wenn für das gewünschte Datum noch keine Spalte exstiert, klicken Sie auf das grüne Pluszeichen rechts oben, um ein Datum anzugeben.
     \item klicken Sie auf die Zeile und Spalte, wo Sie einen Laborwert eingeben möchten. Tippen Sie den Wert ein und verlassen Sie das Feld mit der Eingabetaste, oder der Pfeil-nach-unten-Taste.
-\end{itemize} 
-Wenn ein Laborparameter numerisch ist, und der eingegebene Wert ausserhalb des Referenzbereichs ist, wird der Wert in rot angezeigt. Sie können diese ANzeige auch manuell ein- und ausschalten, indem Sie den Wert mit der rechten Maustaste anklicken und das Häkchen vor "pathologisch" setzen oder löschen.
+\end{itemize}
+Wenn ein Laborparameter numerisch ist, und der eingegebene Wert ausserhalb des Referenzbereichs ist, wird der Wert in rot angezeigt. Sie können diese Anzeige auch manuell ein- und ausschalten, indem Sie den Wert mit der rechten Maustaste anklicken und das Häkchen vor "pathologisch" setzen oder löschen.
 
 \subsection{Automatisches Einlesen}
 \index{Labor:automatisches Einlesen}
@@ -55,5 +55,19 @@ Elexis kann Laborwerte selbstverständlich auch automatisch einlesen. Hierfür d
 Klicken Sie auf \textit{import} und wählen Sie in der dann erscheinenden Dialogbox die Quelle für die einzulesenden Laborwerte aus. Was für Quellen hier angeboten werden, hängt von den vorhandenen Laborimport-Plugins ab. In Frage kommen Laborgeräte und verschiedene externe Labors. Eine aktuelle Liste aller vorhandenen Laborimport-Plugins finden Sie auf http://www.elexis.ch
 
 \subsection{Laborblatt drucken}
-Um ein Laborblatt auszudrucken, klciken Sie auf das Drucker-Symbol rechts oben. Dies erstellt eine Tabelle innterhalb einer Textvorlage
- 
+Um ein Laborblatt auszudrucken, klicken Sie auf das Drucker-Symbol rechts oben. Dies erstellt eine Tabelle innerhalb einer System-Textvorlage \glqq Laborblatt\grqq{}, welche einen Platzhalter [Laborwerte] enthalten muss (s. auch \ref{textvorlagen}).
+
+\section{Labor Neu}
+Diese View dient dazu, alle Laborwerte anzuzeigen, welche noch nicht als \glqq gesehen\grqq{} markiert worden sind, und erlaubt es auch gleich, sie als gesehen zu markieren (S. Abb. \ref{fig:labneu}).
+
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{images/labneu1}\\
+  \caption{Anzeige neuer Laborwerte}\label{fig:labneu}
+\end{figure}
+
+Werte ausserhalb des Referenzbereichs werden rot dargestellt. Man kann gesehene Werte mit einem Häkchen in der Checkbox links markieren. Nach einiger Zeit werden diese dann aus der Liste entfernt (Solange sie noch nicht entfernt sind, kann man die Markierung mit einem erneuten Klick wieder löschen).
+
+Mit einem Klick auf das grüne Häkchen-Symbol rechts oben kann man alle angezeigten Werte gleichzeitig als gesehen markieren.
+
+Um die Werte einzeln oder gesamthaft als gesehen zu markieren, ist das Recht \textit{Daten/Patient/Labor abhaken} erforderlich (s. \ref{sec:gruppen}, S. \pageref{sec:gruppen}ff.)
