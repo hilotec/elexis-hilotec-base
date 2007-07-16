@@ -18,6 +18,9 @@
 		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="${dist}/plugins/ch.elexis.scripting_${version}">
+			<include name="*.jar"/>
+		</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
