@@ -8,13 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 2769 2007-07-09 19:12:33Z rgw_ch $
+ *    $Id: Desk.java 2820 2007-07-16 14:32:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
 import org.eclipse.core.runtime.IPlatformRunnable;
-import org.eclipse.equinox.app.IApplication;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -73,6 +72,7 @@ public class Desk implements IPlatformRunnable {
     public static final String IMG_EDIT="edit"; //$NON-NLS-1$
     public static final String IMG_ACHTUNG="achtung"; //$NON-NLS-1$
     public static final String IMG_OK="AllesOK"; //$NON-NLS-1$
+    public static final String IMG_TICK="abgehakt"; //$NON-NLS-1$
 	public static final String IMG_FEHLER = "fehler"; //$NON-NLS-1$
 	public static final String IMG_REFRESH="refresh"; //$NON-NLS-1$
 	public static final String IMG_WIZARD="wizard"; //$NON-NLS-1$
@@ -93,7 +93,7 @@ public class Desk implements IPlatformRunnable {
 	 * Diese Funktion startet die Workbench
 	 * (Nach der Initialisierung des Programms und Hub#start()
 	 */
-	public Object run(Object args) throws Exception {
+	public Object run(final Object args) throws Exception {
 		for(String arg:(String[])args){
 			if(arg.equalsIgnoreCase("--clean_all")){ //$NON-NLS-1$
 				String p=PreferenceInitializer.getDefaultDBPath();
@@ -133,6 +133,7 @@ public class Desk implements IPlatformRunnable {
 	        theImageRegistry.put(IMG_EDIT, Hub.getImageDescriptor("rsc/schreiben.ico")); //$NON-NLS-1$
 	        theImageRegistry.put(IMG_ACHTUNG, Hub.getImageDescriptor("rsc/achtung.png")); //$NON-NLS-1$
 	        theImageRegistry.put(IMG_OK, Hub.getImageDescriptor("rsc/ok.ico")); //$NON-NLS-1$
+	        theImageRegistry.put(IMG_TICK, Hub.getImageDescriptor("rsc/tick.png")); //$NON-NLS-1$
 	        theImageRegistry.put(IMG_FEHLER,Hub.getImageDescriptor("rsc/fehler.ico")); //$NON-NLS-1$
 	        theImageRegistry.put(IMG_REFRESH, Hub.getImageDescriptor("rsc/refresh.png")); //$NON-NLS-1$
 	        theImageRegistry.put(IMG_WIZARD, Hub.getImageDescriptor("rsc/wizard.ico")); //$NON-NLS-1$
@@ -180,7 +181,7 @@ public class Desk implements IPlatformRunnable {
 	 * @param coldesc Die Farbe als Beschreibung in Hex-Form
 	 * @return die Farbe als Color, ist in Regisry gespeichert
 	 */
-	public static Color getColorFromRGB(String coldesc){
+	public static Color getColorFromRGB(final String coldesc){
 		String col=StringTool.pad(SWT.LEFT, '0', coldesc, 6);
 		if(!theColorRegistry.hasValueFor(col)){
 			RGB rgb=new RGB(Integer.parseInt(col.substring(0,2),16),
@@ -196,7 +197,7 @@ public class Desk implements IPlatformRunnable {
 	 * @param rgb Die Farbe in RGB-Form
 	 * @return
 	 */
-	public static String createColor(RGB rgb){
+	public static String createColor(final RGB rgb){
 		StringBuilder sb=new StringBuilder();
 		sb.append(StringTool.pad(SWT.LEFT, '0', Integer.toHexString(rgb.red),2))
 			.append(StringTool.pad(SWT.LEFT, '0', Integer.toHexString(rgb.green),2))

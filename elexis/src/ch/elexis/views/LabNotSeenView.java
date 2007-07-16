@@ -15,6 +15,7 @@ package ch.elexis.views;
 
 import java.util.List;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -38,12 +39,13 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
+import ch.elexis.util.ViewMenus;
 
 /**
  * This view displays all LabResults that are not marked as seen by the doctor. One can mark them individually
@@ -56,6 +58,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	CheckboxTableViewer tv;
 	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
 	private static final int[] colWidths=new int[]{250,100,60,70,50};
+	private IAction markAllAction;
 	
 	public LabNotSeenView() {
 	}
@@ -79,7 +82,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 
 		tv.addSelectionChangedListener(new ISelectionChangedListener(){
 
-			public void selectionChanged(SelectionChangedEvent event) {
+			public void selectionChanged(final SelectionChangedEvent event) {
 				IStructuredSelection sel=(IStructuredSelection)event.getSelection();
 				if(!sel.isEmpty()){
 					LabResult lr=(LabResult)sel.getFirstElement();
@@ -88,17 +91,29 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 				
 			}});
 		tv.addCheckStateListener(new ICheckStateListener(){
+			boolean bDaempfung;
 			public void checkStateChanged(final CheckStateChangedEvent event) {
-				LabResult lr=(LabResult)event.getElement();
-				boolean state=event.getChecked();
-				if(state){
-					lr.removeFromUnseen();
-				}else{
-					lr.addToUnseen();
+				if(bDaempfung==false){
+					bDaempfung=true;
+					LabResult lr=(LabResult)event.getElement();
+					boolean state=event.getChecked();
+					if(state){
+						if(Hub.acl.request(AccessControlDefaults.LAB_SEEN)){
+							lr.removeFromUnseen();
+						}else{
+							tv.setChecked(lr, false);
+						}
+					}else{
+						lr.addToUnseen();
+					}
+					bDaempfung=false;
 				}
 			}
 			
 		});
+		makeActions();
+		ViewMenus menu=new ViewMenus(getViewSite());
+		menu.createToolbar(markAllAction);
 		tv.setInput(this);
 	}
 
@@ -139,12 +154,12 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 			return "?";
 		}
 
-		public Color getBackground(Object element) {
+		public Color getBackground(final Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		public Color getForeground(Object element) {
+		public Color getForeground(final Object element) {
 			LabResult lr=(LabResult)element;
 			if(lr.isFlag(LabResult.PATHOLOGIC)){
 				return Desk.theColorRegistry.get(Desk.COL_RED);
@@ -187,5 +202,21 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		tv.refresh();
 	}
 
+	private void makeActions(){
+		markAllAction=new RestrictedAction(AccessControlDefaults.LAB_SEEN,"Alle markieren"){
+			{
+				setToolTipText("Alle Einträge als gelesen markieren");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_TICK));
+			}
+			@Override
+			public void doRun() {
+				tv.setAllChecked(true);
+				for(LabResult lr:LabResult.getUnseen()){
+					lr.removeFromUnseen();
+				}
+			}
+			
+		};
+	}
 
 }

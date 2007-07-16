@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 2570 2007-06-23 11:09:32Z rgw_ch $
+ * $Id: AccessControlDefaults.java 2820 2007-07-16 14:32:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -111,6 +111,7 @@ public class AccessControlDefaults {
     public static final String PATIENT_INSERT=PATIENT+"/Erstellen";
     public static final String PATIENT_MODIFY=PATIENT+ "/Ändern";
     public static final String MEDICATION_MODIFY=PATIENT+"/Medikation ändern";
+    public static final String LAB_SEEN=PATIENT+"/Labor abhaken";
     
     public static final String MANDANT=DATA+"/Mandant";
     public static final String MANDANT_CREATE= MANDANT+"/Erstellen";
