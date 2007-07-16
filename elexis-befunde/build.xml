@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 1560 2007-01-07 15:47:05Z rgw_ch $
+ * $Id: build.xml 2815 2007-07-16 07:57:14Z rgw_ch $
 -->
 <project name="elexis-befunde" default="all">
 	<property name="sourcedir" value="${source}/elexis-befunde/"/>
@@ -22,6 +22,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${dist}/plugins/ch.elexis.scripting_${version}">
+					<include name="*.jar"/>
+		</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
