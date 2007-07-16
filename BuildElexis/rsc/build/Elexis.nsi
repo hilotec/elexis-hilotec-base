@@ -1,4 +1,4 @@
-; $Id: Elexis.nsi 2734 2007-07-06 13:59:47Z rgw_ch $
+; $Id: Elexis.nsi 2816 2007-07-16 07:57:22Z rgw_ch $
 
 ;******************************************************************************************
 ; Dieses NSIS-Script erstellt den Windows-Installer für Elexis
@@ -15,7 +15,7 @@
 ;******************************************************************************************
 
 !define APPNAME "Elexis"
-!define VERSION "1.0.1"
+!define VERSION "1.1.0"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Haupteinstellungen

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 2804 2007-07-14 08:51:11Z rgw_ch $
+<!-- $Id: build.xml 2816 2007-07-16 07:57:22Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -91,6 +91,7 @@
 	<!-- Zentraldistribution ohne optionale Plugins -->
 	<target name="main" depends="prepare">
 		<ant antfile="../jdomwrapper/build.xml"/>
+		<ant antfile="../elexis-scripting/build.xml"/>
 		<ant antfile="../elexis/build.xml"/>
 		<ant antfile="../elexis-importer/build.xml"/>
 		<ant antfile="../noatext/build.xml"/>
