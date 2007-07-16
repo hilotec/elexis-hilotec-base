@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Starter.java 1182 2006-10-29 14:48:00Z rgw_ch $
+ *  $Id: Starter.java 2814 2007-07-16 06:32:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -34,14 +34,15 @@ import ch.rgw.tools.ExHandler;
 public class Starter extends ViewPart {
 	private Composite contents;
 	public static final String ID="Starter";
-	private SwitchPerspective switcher=new SwitchPerspective();
+	private final SwitchPerspective switcher=new SwitchPerspective();
 	
 	public Starter() {
 		super();
         this.setPartName(Messages.getString("Starter.partname")); //$NON-NLS-1$
 	}
 
-	public void createPartControl(Composite parent) {
+	@Override
+	public void createPartControl(final Composite parent) {
 	
 		contents=new Composite(parent,SWT.NONE);
 		contents.setLayout(new FillLayout(SWT.VERTICAL));
@@ -58,20 +59,23 @@ public class Starter extends ViewPart {
 		String[] pers=sbdef.split(",");
 		for(String per:pers){
 			String[] def=per.split(":");
-	    	if(PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(def[1])==null){
-	    		sbdef=sbdef.replaceFirst(per,"");
-	    		sbdef=sbdef.replaceAll(",,",",");
-	    		Hub.localCfg.set(PreferenceConstants.SIDEBAR,sbdef);
-	    		continue;
-	    	}
-			createPushButton(contents,def[0],1,def[1]);
+			if(def.length>1){
+		    	if(PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(def[1])==null){
+		    		sbdef=sbdef.replaceFirst(per,"");
+		    		sbdef=sbdef.replaceAll(",,",",");
+		    		Hub.localCfg.set(PreferenceConstants.SIDEBAR,sbdef);
+		    		continue;
+		    	}
+				createPushButton(contents,def[0],1,def[1]);
+			}
 		}
 	}
 
+	@Override
 	public void setFocus() {
 
 	}
-    Button createPushButton(Composite parent, String text, int col, String perspektiveID)
+    Button createPushButton(final Composite parent, final String text, final int col, final String perspektiveID)
     {
         Button r=new Button(parent,SWT.PUSH);
         r.setText(text);
@@ -81,7 +85,8 @@ public class Starter extends ViewPart {
         return r;
     }
     class SwitchPerspective extends SelectionAdapter{
-    	public void widgetSelected(SelectionEvent e) {
+    	@Override
+		public void widgetSelected(final SelectionEvent e) {
 			Button b=(Button)e.getSource();
 			String p=(String)b.getData();
 			try{

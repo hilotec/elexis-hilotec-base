@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 2812 2007-07-15 15:25:59Z rgw_ch $
+ *  $Id: LaborView.java 2814 2007-07-16 06:32:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -16,23 +16,43 @@ package ch.elexis.views;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableCursor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -49,10 +69,18 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
-import ch.elexis.data.*;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.LabItem;
+import ch.elexis.data.LabResult;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.DisplayTextDialog;
-import ch.elexis.util.*;
+import ch.elexis.util.Importer;
+import ch.elexis.util.Log;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -97,15 +125,15 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	
 	private Action fwdAction, backAction, printAction, importAction, xmlAction, newAction, setStateAction;
 	private ViewMenus menu;
-	private FormToolkit tk=Desk.theToolkit;
+	private final FormToolkit tk=Desk.theToolkit;
 	private Form form;
 	// Formula handling
-	private Pattern varsPattern=Pattern.compile("[a-zA-Z]+_[0-9]+");
-	private HashMap<String, List<LabItem>> formulaRelations=new HashMap<String,List<LabItem>>();
-	private ArrayList<LabItem> lFormulas=new ArrayList<LabItem>();
+	private final Pattern varsPattern=Pattern.compile("[a-zA-Z]+_[0-9]+");
+	private final HashMap<String, List<LabItem>> formulaRelations=new HashMap<String,List<LabItem>>();
+	private final ArrayList<LabItem> lFormulas=new ArrayList<LabItem>();
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
 		form=tk.createForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
@@ -119,7 +147,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		
 		table.addListener(SWT.PaintItem, new Listener(){
 
-			private void paintCell(String text, Event event, Color foregnd, Color backgnd){
+			private void paintCell(final String text, final Event event, final Color foregnd, final Color backgnd){
 				Point size = event.gc.textExtent(text);
 				int offset1= Math.max(0,(event.width-size.x)/2);
 				int offset2 = Math.max(0, (event.height - size.y) / 2);
@@ -129,7 +157,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 				gc.setForeground(foregnd);
 				event.gc.drawText(text, event.x+offset1, event.y + offset2, true);
 			}
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 		          TableItem item = (TableItem) event.item;
 		          String text = item.getText(event.index);
 		          LabItem it=(LabItem)item.getData("Item");
@@ -137,7 +165,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		        	  LabResult[] lrs=(LabResult[])item.getData("Values");
 		        	  if(lrs!=null){
 		        		  int screenIdx=event.index-COL_OFFSET;
-		        		  if(screenIdx>=0 && screenIdx<lrs.length){
+		        		  if((screenIdx>=0) && (screenIdx<lrs.length)){
 		        			  LabResult lr=lrs[screenIdx];
 							  if(lr!=null){
 							  if( lr.isFlag(LabResult.PATHOLOGIC)){
@@ -168,11 +196,13 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		 */
 		cursor.addSelectionListener(new SelectionAdapter() {
 			// Tabellenauswahl soll dem Cursor folgen
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
 				table.setSelection(new TableItem[] {cursor.getRow()});
 			}
 			// Eingabetaste
-			public void widgetDefaultSelected(SelectionEvent e){
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e){
 
 				TableItem row = cursor.getRow();
 				LabItem li=(LabItem)row.getData("Item");
@@ -189,7 +219,8 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		});
 		// Sonstige Taste
 		cursor.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
+			@Override
+			public void keyPressed(final KeyEvent e) {
 				TableItem row = cursor.getRow();
 				e.doit=false;
 				if(row.getData("Item")==null){
@@ -208,7 +239,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		cursor.addMouseListener(new MouseAdapter(){
 
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(final MouseEvent e) {
 				LabResult lr=actResult();
 				LabItem li=lr.getItem();
 				if(li.getTyp().equals(LabItem.typ.TEXT) || (lr.getComment().length()>0)){
@@ -228,7 +259,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		Menu menu=mgr.createContextMenu(cursor);
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener(){
-			public void menuAboutToShow(IMenuManager manager) {
+			public void menuAboutToShow(final IMenuManager manager) {
 				LabResult lr=getSelectedResult();
 				if(lr!=null){
 					mgr.add(setStateAction);
@@ -280,12 +311,13 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	/* Tabellenzelle editieren. CR oder Pfeil unten verlässt die Zelle mit Speichern und
 	 * geht zur nächst unteren Zelle. Esc verlässt die Zelle ohne speichern
 	 */
-	private void doEdit(String inp){
+	private void doEdit(final String inp){
 		final Text text = new Text(cursor, SWT.NONE);
 		text.setText(inp);
 		text.setSelection(inp.length());
 		text.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
+			@Override
+			public void keyPressed(final KeyEvent e) {
 				if ((e.character == SWT.CR) || (e.keyCode == SWT.ARROW_DOWN)){
 					TableItem it = cursor.getRow();
 					int idx = cursor.getColumn();				// Spalte der Anzeige
@@ -306,28 +338,24 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 							lr.setResult(text.getText());
 						}
 						List<LabItem> toCalc=formulaRelations.get(lr.getItem().makeVarName());
-						boolean bEval=false;
-						for(LabItem litem:toCalc){
-							String evaluated=litem.evaluate(actPatient, ttDaten);
-							if(evaluated!=null){
-								LabResult artifact=LabResult.getForDate(actPatient, ttDaten, litem);
-								if(artifact==null){
-									artifact=new LabResult(actPatient,ttDaten,litem,evaluated,"");
-								}else{
-									artifact.setResult(evaluated);
+						if(toCalc!=null){
+							for(LabItem litem:toCalc){
+								String evaluated=litem.evaluate(actPatient, ttDaten);
+								if(evaluated!=null){
+									LabResult artifact=LabResult.getForDate(actPatient, ttDaten, litem);
+									if(artifact==null){
+										artifact=new LabResult(actPatient,ttDaten,litem,evaluated,"");
+									}else{
+										artifact.setResult(evaluated);
+									}
+									Integer row=hLabItems.get(litem.getId());
+									if(row==null){
+										continue;
+									}
+									rows[row].setText(idx,evaluated);
+	
 								}
-								Integer row=hLabItems.get(litem.getId());
-								if(row==null){
-									continue;
-								}
-								rows[row].setText(idx,evaluated);
-
-								bEval=true;
 							}
-						}
-						if(bEval){
-							
-							//table.redraw();
 						}
 					}
 					
@@ -364,7 +392,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 
 	}
 
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
 			actPatient=(Patient)obj;
 			loadValues();
@@ -428,7 +456,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	/*
 	 * Eine Seite mit Laborwerten (=NUMCOLUMNS Spalten) einlesen
 	 */
-	private void loadPage(int p){
+	private void loadPage(final int p){
 		// Zuerst prüfen, ob die angeforderte Seite gültig ist
 		if(p<0){
 			return;
@@ -620,7 +648,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			columns[i].addSelectionListener(new SelectionAdapter(){
 
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					TimeTool dOld=new TimeTool();
 					if(dOld.set(((TableColumn)e.getSource()).getText())==true){
 						DateSelectorDialog dsl=new DateSelectorDialog(getViewSite().getShell());
@@ -650,11 +678,13 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 
 	private void makeActions(){
 		fwdAction=new Action("Nächste Seite"){
+			@Override
 			public void run(){
 				loadPage(actPage+1);
 			}
 		};
 		backAction=new Action("vorherige Seite"){
+			@Override
 			public void run(){
 				if(actPage>0){
 					loadPage(actPage-1);
@@ -662,6 +692,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			}
 		};
 		printAction=new Action("Drucken..."){
+			@Override
 			public void run(){
 				try{
 				    LaborblattView lb=(LaborblattView)getViewSite().getPage().showView(LaborblattView.ID);
@@ -681,6 +712,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT));
 				setToolTipText("Laborwerte von externen Labors oder Apparaten importieren");
 			}
+			@Override
 			public void run(){
 				Importer imp=new Importer(getViewSite().getShell(),"ch.elexis.LaborDatenImport");
         		imp.create();
@@ -691,6 +723,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			}
 		};
 		xmlAction=new Action("XML export..."){
+			@Override
 			public void run() {
 				Document doc=makeXML();
 				if(doc!=null){
@@ -713,6 +746,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			}
 		};
 		newAction=new Action("Neues Datum..."){
+			@Override
 			public void run(){
 				DateSelectorDialog dsd=new DateSelectorDialog(getViewSite().getShell());
 				dsd.create();
@@ -731,6 +765,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			}
 		};
 		setStateAction=new Action("pathologisch",Action.AS_CHECK_BOX){
+			@Override
 			public void run(){
 				LabResult lr=getSelectedResult();
 				lr.setFlag(LabResult.PATHOLOGIC, isChecked());
@@ -812,7 +847,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	return doc;
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode==true){
 			GlobalEvents.getInstance().addSelectionListener(this);
 			Patient act=(Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class);
@@ -825,10 +860,10 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		}
 		
 	}
-	public void activation(boolean mode){
+	public void activation(final boolean mode){
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class template) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -841,7 +876,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;
@@ -853,7 +888,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		return true;
 	}
 
-	public void reloadContents(Class clazz) {
+	public void reloadContents(final Class clazz) {
 		if(clazz.equals(LabItem.class)){
 			Desk.theDisplay.asyncExec(new Runnable(){
 				public void run() {
