@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 2703 2007-07-05 12:41:41Z rgw_ch $
+ *  $Id: NOAText.java 2824 2007-07-17 05:26:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -289,7 +289,12 @@ public class NOAText implements ITextPlugin {
 			if(cb!=null){
 				for(ITextRange r:textRanges){
 					String orig=r.getXTextRange().getString();
-					r.setText(cb.replace(orig));
+					String replace=cb.replace(orig);
+					if(replace==null){
+						r.setText("??Auswahl??");
+					}else{
+						r.setText(replace);
+					}
 				}
 			}
 			return true;
