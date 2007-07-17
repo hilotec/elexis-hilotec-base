@@ -1,5 +1,7 @@
 package ch.elexis.textplugin;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,16 +15,12 @@ import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.printing.Printer;
-import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -37,6 +35,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import ch.elexis.Desk;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ITextPlugin.ICallback;
+import ch.rgw.tools.ExHandler;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * @author bogdan314
@@ -63,14 +66,14 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	private ToolItem printToolItem;
 	private Combo fontCombo;
 	private Combo fontHeigtCombo;
-	private Listener caretListener;
+	private final Listener caretListener;
 	private StyledText lastSelectedText;
-	private Vector<StyleRange> cachedStyles = new Vector<StyleRange>();
-	private ImageRegistry imageRegistry = Desk.theImageRegistry;
+	private final Vector<StyleRange> cachedStyles = new Vector<StyleRange>();
+	private final ImageRegistry imageRegistry = Desk.theImageRegistry;
 
-	private ICallback handler;
+	private final ICallback handler;
 
-	protected ElexisEditor(Composite parent, ICallback handler) {
+	protected ElexisEditor(final Composite parent, final ICallback handler) {
 		super(parent, SWT.NONE);
 
 		this.handler = handler;
@@ -78,7 +81,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		setLayout(layout);
 
 		caretListener = new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				caretUpdate(event);
 			}
 		};
@@ -98,7 +101,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	 *            the path
 	 * @return the image descriptor
 	 */
-	private ImageDescriptor getImageDescriptor(String path) {
+	private ImageDescriptor getImageDescriptor(final String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.Textplugin", path); //$NON-NLS-1$
 	}
 
@@ -179,7 +182,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		updateControls();
 	}
 
-	private void addCaretListener(StyledText text) {
+	private void addCaretListener(final StyledText text) {
 		text.addListener(SWT.MouseDown, caretListener);
 		text.addListener(SWT.KeyDown, caretListener);
 	}
@@ -308,11 +311,13 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 				} else if (e.widget == fontHeigtCombo) {
 					changeFontHeight();
 				} else if (e.widget == saveToolItem) {
-					if (handler != null)
+					if (handler != null) {
 						handler.save();
+					}
 				} else if (e.widget == saveAsToolItem) {
-					if (handler != null)
+					if (handler != null) {
 						handler.saveAs();
+					}
 				} else if (e.widget == printToolItem) {
 					print();
 				}
@@ -352,6 +357,18 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	}
 
 	public void print() {
+		Document pdfDoc=new Document();
+		try{
+			File outFile=File.createTempFile("doc", "stx");
+			PdfWriter writer = PdfWriter.getInstance(pdfDoc, new FileOutputStream(outFile));
+			pdfDoc.open();
+			PdfContentByte pdfContent=writer.getDirectContent();
+			page.print(pdfContent);
+			pdfDoc.close();
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+		}
+		/*
 		PrinterData data = Printer.getDefaultPrinterData();
 		if (data == null) {
 			System.out.println("Warning: No default printer.");
@@ -375,6 +392,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 				printer.endJob();
 			}
 		}
+		*/
 	}
 
 	private void changeFont() {
@@ -397,8 +415,8 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		return box;
 	}
 
-	protected void insertTable(int start, int end, String[][] contents, boolean header,
-			boolean grid, String fontName, int fontHeight, int fontStyle) {
+	protected void insertTable(final int start, final int end, final String[][] contents, final boolean header,
+			final boolean grid, final String fontName, final int fontHeight, final int fontStyle) {
 
 		Table table = new Table(page, SWT.FULL_SELECTION | (grid ? SWT.BORDER : SWT.NONE));
 
@@ -424,7 +442,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 			TableItem row = new TableItem(table, SWT.NONE);
 			for (int j = 0; j < rowcontent.length; j++) {
 				row.setText(j, rowcontent[j]);
-				if (i == 0 && header) {
+				if ((i == 0) && header) {
 					row.setBackground(j, getDisplay().getSystemColor(SWT.COLOR_GRAY));
 				}
 			}
@@ -462,13 +480,13 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 			page.textBoxes.remove(text);
 			text.dispose();
 			if (!page.textBoxes.isEmpty()) {
-				((TextBox) page.textBoxes.get(page.textBoxes.size() - 1)).forceFocus();
+				(page.textBoxes.get(page.textBoxes.size() - 1)).forceFocus();
 			}
 			updateControls();
 		}
 	}
 
-	public void setSelectedText(EStyledText text) {
+	public void setSelectedText(final EStyledText text) {
 		lastSelectedText = text;
 	}
 
@@ -476,8 +494,9 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		int fontStyle = (isBold ? SWT.BOLD : SWT.NONE) | (isItalic ? SWT.ITALIC : SWT.NONE);
 		StyledText text = lastSelectedText;
 		Point sel = text.getSelectionRange();
-		if ((sel == null) || (sel.y == 0))
+		if ((sel == null) || (sel.y == 0)) {
 			return;
+		}
 		StyleRange style = new StyleRange();
 		for (int i = sel.x; i < sel.x + sel.y; i++) {
 			StyleRange range = text.getStyleRangeAtOffset(i);
@@ -508,8 +527,8 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		isItalic = (style.fontStyle & SWT.ITALIC) != 0;
 		isUnderline = style.underline;
 
-		if (style.font != null && style.font.getFontData() != null
-				&& style.font.getFontData().length > 0) {
+		if ((style.font != null) && (style.font.getFontData() != null)
+				&& (style.font.getFontData().length > 0)) {
 			FontData data = style.font.getFontData()[0];
 			isBold = (data.getStyle() & SWT.BOLD) != 0;
 			isItalic = (data.getStyle() & SWT.ITALIC) != 0;
@@ -524,14 +543,14 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		fontHeigtCombo.select(fontHeigtCombo.indexOf(String.valueOf(fontHeight)));
 	}
 
-	public void caretUpdate(Event ev) {
+	public void caretUpdate(final Event ev) {
 		updateControls();
 	}
 
 	/*
 	 * Cache the style information for text that has been cutToolItem or copied.
 	 */
-	void handleCutCopy(StyledText text) {
+	void handleCutCopy(final StyledText text) {
 		// Save the cutToolItem/copied style info so that during pasteToolItem we will
 		// maintain
 		// the style information. Cut/copied text is put in the clipboard in
@@ -549,7 +568,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 				if (!cachedStyles.isEmpty()) {
 					StyleRange lastStyle = cachedStyles.lastElement();
 					if (lastStyle.similarTo(style)
-							&& lastStyle.start + lastStyle.length == style.start) {
+							&& (lastStyle.start + lastStyle.length == style.start)) {
 						lastStyle.length++;
 					} else {
 						cachedStyles.addElement(style);
@@ -561,12 +580,13 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		}
 	}
 
-	public void modifyText(ExtendedModifyEvent event) {
+	public void modifyText(final ExtendedModifyEvent event) {
 		StyledText text = (StyledText) event.widget;
-		if (event.length == 0)
+		if (event.length == 0) {
 			return;
+		}
 		StyleRange style;
-		if (event.length == 1
+		if ((event.length == 1)
 				|| text.getTextRange(event.start, event.length).equals(text.getLineDelimiter())) {
 			// Have the new text take on the style of the text to its right
 			// (during
@@ -583,16 +603,19 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 			} else {
 				style = new StyleRange(event.start, event.length, null, null, SWT.NORMAL);
 			}
-			if (isBold)
+			if (isBold) {
 				style.fontStyle |= SWT.BOLD;
-			if (isItalic)
+			}
+			if (isItalic) {
 				style.fontStyle |= SWT.ITALIC;
+			}
 			style.underline = isUnderline;
 
 			style.font = new Font(getDisplay(), fontName, fontHeight, style.fontStyle);
 
-			if (!style.isUnstyled())
+			if (!style.isUnstyled()) {
 				text.setStyleRange(style);
+			}
 		} else {
 			// pasteToolItem occurring, have text take on the styles it had when it was
 			// cutToolItem/copied

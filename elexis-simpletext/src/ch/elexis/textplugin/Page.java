@@ -35,6 +35,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import ch.rgw.tools.ExHandler;
+
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfContentByte;
+
 /**
  * @author bogdan314
  */
@@ -55,9 +60,9 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 	private boolean highlight;
 
-	private List<Integer> offsets;
+	private final List<Integer> offsets;
 
-	private List<Control> controls;
+	private final List<Control> controls;
 
 	private final static int STATE_NONE = 0;
 
@@ -73,7 +78,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 	private static final int MARGIN = 1;
 
-	public Page(Composite parent, ElexisEditor editor) {
+	public Page(final Composite parent, final ElexisEditor editor) {
 		super(parent, editor, SWT.BORDER | SWT.WRAP);
 		setSize(602, 800);
 		textBoxes = new ArrayList<TextBox>();
@@ -114,7 +119,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		return box;
 	}
 
-	public void setHightlight(boolean b) {
+	public void setHightlight(final boolean b) {
 		this.highlight = b;
 		for (Iterator<TextBox> it = textBoxes.iterator(); it.hasNext();) {
 			TextBox box = it.next();
@@ -122,26 +127,26 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		}
 	}
 
-	public void mouseDoubleClick(MouseEvent e) {
+	public void mouseDoubleClick(final MouseEvent e) {
 	}
 
-	public void mouseDown(MouseEvent e) {
+	public void mouseDown(final MouseEvent e) {
 		mouseDown = true;
 		mouseWidgetLoc = new Point(e.x, e.y);
 		mouseScreenLoc = getDisplay().getCursorLocation();
 	}
 
-	public void mouseUp(MouseEvent e) {
+	public void mouseUp(final MouseEvent e) {
 		mouseDown = false;
 	}
 
-	public void mouseMove(MouseEvent e) {
+	public void mouseMove(final MouseEvent e) {
 		mouseWidgetLoc = new Point(e.x, e.y);
 
 		Object o = e.getSource();
 		Control control = (Control) o;
 
-		if (mouseDown && control instanceof TextBox) {
+		if (mouseDown && (control instanceof TextBox)) {
 			TextBox box = (TextBox) control;
 			switch (state) {
 			case STATE_MOVE:
@@ -166,20 +171,20 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 	}
 
-	private void resizeDown(TextBox box) {
+	private void resizeDown(final TextBox box) {
 		Point mouseNewLoc = getDisplay().getCursorLocation();
 
 		int diff = mouseNewLoc.y - mouseScreenLoc.y;
 		Rectangle bounds = box.getBounds();
 
 		bounds.height += diff;
-		if (bounds.height > TextBox.MIN_SIZE && bounds.y + bounds.height < getSize().y) {
+		if ((bounds.height > TextBox.MIN_SIZE) && (bounds.y + bounds.height < getSize().y)) {
 			box.setBounds(bounds);
 			mouseScreenLoc = mouseNewLoc;
 		}
 	}
 
-	private void resizeUp(TextBox box) {
+	private void resizeUp(final TextBox box) {
 		Point mouseNewLoc = getDisplay().getCursorLocation();
 
 		int diff = mouseNewLoc.y - mouseScreenLoc.y;
@@ -187,26 +192,26 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 		bounds.y += diff;
 		bounds.height -= diff;
-		if (bounds.y > 0 && bounds.height > TextBox.MIN_SIZE) {
+		if ((bounds.y > 0) && (bounds.height > TextBox.MIN_SIZE)) {
 			box.setBounds(bounds);
 			mouseScreenLoc = mouseNewLoc;
 		}
 	}
 
-	private void resizeRight(TextBox box) {
+	private void resizeRight(final TextBox box) {
 		Point mouseNewLoc = getDisplay().getCursorLocation();
 
 		int diff = mouseNewLoc.x - mouseScreenLoc.x;
 		Rectangle bounds = box.getBounds();
 
 		bounds.width += diff;
-		if (bounds.width > TextBox.MIN_SIZE && bounds.x + bounds.width < getSize().x) {
+		if ((bounds.width > TextBox.MIN_SIZE) && (bounds.x + bounds.width < getSize().x)) {
 			box.setBounds(bounds);
 			mouseScreenLoc = mouseNewLoc;
 		}
 	}
 
-	private void resizeLeft(TextBox box) {
+	private void resizeLeft(final TextBox box) {
 		Point mouseNewLoc = getDisplay().getCursorLocation();
 
 		int diff = mouseNewLoc.x - mouseScreenLoc.x;
@@ -214,13 +219,13 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 		bounds.x += diff;
 		bounds.width -= diff;
-		if (bounds.x > 0 && bounds.width > TextBox.MIN_SIZE) {
+		if ((bounds.x > 0) && (bounds.width > TextBox.MIN_SIZE)) {
 			box.setBounds(bounds);
 			mouseScreenLoc = mouseNewLoc;
 		}
 	}
 
-	private void moveBox(TextBox box) {
+	private void moveBox(final TextBox box) {
 		Point loc = box.getLocation();
 		Point size = getSize();
 		Point boxSize = box.getSize();
@@ -233,7 +238,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		mouseScreenLoc = mouseNewLoc;
 	}
 
-	private void updateState(Control control) {
+	private void updateState(final Control control) {
 
 		if (altDown) {
 			state = checkResize(control);
@@ -266,7 +271,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		}
 	}
 
-	private int checkResize(Control control) {
+	private int checkResize(final Control control) {
 		int diff = control.getBorderWidth() + 4;
 		if (mouseWidgetLoc.x < diff) {
 			return STATE_RESIZE_LEFT;
@@ -280,12 +285,12 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		return STATE_NONE;
 	}
 
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(final KeyEvent e) {
 		altDown = e.keyCode == SWT.ALT;
 		updateState((Control) e.getSource());
 	}
 
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(final KeyEvent e) {
 		if (e.keyCode == SWT.ALT) {
 			altDown = false;
 		}
@@ -302,7 +307,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 	}
 
 	@Override
-	public void readFrom(DataInputStream in) throws IOException {
+	public void readFrom(final DataInputStream in) throws IOException {
 		clear();
 		int boxesCount = in.readInt();
 		super.readFrom(in);
@@ -313,7 +318,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 	}
 
 	@Override
-	public void writeTo(DataOutputStream out) throws IOException {
+	public void writeTo(final DataOutputStream out) throws IOException {
 		out.writeInt(textBoxes.size());
 		super.writeTo(out);
 		for (Iterator<TextBox> it = textBoxes.iterator(); it.hasNext();) {
@@ -336,7 +341,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		setStyleRange(style);
 
 		table.addListener(SWT.MouseWheel, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				TableItem item = table.getItem(new Point(event.x, event.y));
 				int x = event.x;
 				int index = 0;
@@ -374,7 +379,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		});
 	}
 
-	public void verifyText(VerifyEvent e) {
+	public void verifyText(final VerifyEvent e) {
 		int start = e.start;
 		int replaceCharCount = e.end - e.start;
 		int newCharCount = e.text.length();
@@ -382,22 +387,23 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 		for (Iterator<Integer> it = offsets.iterator(); it.hasNext(); index++) {
 			int offset = it.next();
-			if (start <= offset && offset < start + replaceCharCount) {
+			if ((start <= offset) && (offset < start + replaceCharCount)) {
 				// this widget is being deleted from the text
 				Control control = controls.get(index);
-				if (control != null && !control.isDisposed()) {
+				if ((control != null) && !control.isDisposed()) {
 					control.dispose();
 					control = null;
 				}
 				offset = -1;
 			}
-			if (offset != -1 && offset >= start)
+			if ((offset != -1) && (offset >= start)) {
 				offset += newCharCount - replaceCharCount;
+			}
 			offsets.set(index, offset);
 		}
 	}
 
-	public void paintObject(PaintObjectEvent event) {
+	public void paintObject(final PaintObjectEvent event) {
 		StyleRange style = event.style;
 		int start = style.start;
 		int index = 0;
@@ -414,14 +420,27 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		}
 	}
 
-	private Rectangle centerRect(Point containerSize, Point childSize) {
+	private Rectangle centerRect(final Point containerSize, final Point childSize) {
 		int x = (containerSize.x - childSize.x) / 2;
 		int y = (containerSize.y - childSize.y) / 2;
 		Rectangle rect = new Rectangle(x, y, childSize.x, childSize.y);
 		return rect;
 	}
 
-	public void print(Printer printer, GC gc) {
+	public void print(final PdfContentByte content){
+		List<StyleRange> styles=getStyles();
+		try{
+			for(StyleRange style:styles){
+				BaseFont font=BaseFont.createFont(style.font.getFontData()[0].getName(), BaseFont.CP1257, true);
+				content.setFontAndSize(font, style.font.getFontData()[0].height);
+				String text = getText(style.start, style.start + style.length - 1);
+				content.showText(text);
+			}
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+		}
+	}
+	public void print(final Printer printer, final GC gc) {
 		Rectangle clientArea = printer.getClientArea();
 		Rectangle trim = printer.computeTrim(0, 0, 0, 0);
 		Point dpi = printer.getDPI();
@@ -480,7 +499,7 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		}
 	}
 
-	private List<String> split(String text) {
+	private List<String> split(final String text) {
 		List<String> words = new ArrayList<String>();
 		String delims = " \n\r";
 		boolean previosWordIsLineReturn = false;
