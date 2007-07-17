@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BefundePrefs.java 2516 2007-06-12 15:56:07Z rgw_ch $
+ *    $Id: BefundePrefs.java 2825 2007-07-17 13:51:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -66,9 +66,9 @@ public class BefundePrefs extends PreferencePage implements
 	 * Diese Methode erledigt den eigentlichen Aufbau der Seite.
 	 * Here we create the contents of the preference page
 	 */	
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
+	@SuppressWarnings("unchecked") 
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ctabs =new CTabFolder(ret,SWT.NONE);
@@ -76,7 +76,7 @@ public class BefundePrefs extends PreferencePage implements
 		ctabs.setLayout(new FillLayout());
 		setup=Messwert.getSetup();
 		fields=setup.getHashtable("Befunde");
-		names=(String)fields.get("names");
+		names=fields.get("names");
 		if(!StringTool.isNothing(names)){
 			for(String f:names.split(Messwert.SETUP_SEPARATOR)){
 				CTabItem ci=new CTabItem(ctabs,SWT.NONE);
@@ -89,7 +89,7 @@ public class BefundePrefs extends PreferencePage implements
 		lastIDX=0;
 		ctabs.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				if(lastIDX!=-1){
 					flush(lastIDX);
 					lastIDX=ctabs.getSelectionIndex();
@@ -102,7 +102,7 @@ public class BefundePrefs extends PreferencePage implements
 		Button bAdd=new Button(cButtons,SWT.PUSH);
 		bAdd.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e){
 				InputDialog id=new InputDialog(getShell(),"Name eingeben","Geben Sie bitte einen Namen für den neuen Befund ein","",null);
 				if(id.open()==Dialog.OK){
 					String name=id.getValue();
@@ -127,7 +127,7 @@ public class BefundePrefs extends PreferencePage implements
 		bRemove.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				CTabItem ci=ctabs.getSelection();
 				if(ci!=null){
 					PrefsPage pp=(PrefsPage)ci.getControl();
@@ -156,12 +156,12 @@ public class BefundePrefs extends PreferencePage implements
 	 * 
 	 * Here we are able to solve things that needs to be made before createContents
 	 */
-	public void init(IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void flush(int idx){
+	private void flush(final int idx){
 		CTabItem it=ctabs.getItem(idx);
 		PrefsPage pp=(PrefsPage)it.getControl();
 		pp.flush();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PrefsPage.java 2809 2007-07-15 10:30:52Z rgw_ch $
+ *    $Id: PrefsPage.java 2825 2007-07-17 13:51:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -32,6 +32,7 @@ public class PrefsPage extends Composite {
 	String[] mNames;
 	Text[] texts;
 	Button[] checkboxes;
+	Label[] labels;
 	Hashtable<String,String> hash;
 	String name;
 	
@@ -49,16 +50,20 @@ public class PrefsPage extends Composite {
 			for(int i=0;i<texts.length;i++){
 				texts[i].dispose();
 				checkboxes[i].dispose();
+				labels[i].dispose();
 			}
 			mNames=null;
 			checkboxes=null;
+			labels=null;
 			texts=null;
 		}
 		String fields=hash.get(name+"_FIELDS");
 		if(StringTool.isNothing(fields)){
 			texts=new Text[1];
 			checkboxes=new Button[1];
-			new Label(this,SWT.NONE).setText("F1");
+			labels=new Label[1];
+			labels[0]=new Label(this,SWT.NONE);
+			labels[0].setText("F1");
 			texts[0]=SWTHelper.createText(this, 1, SWT.NONE);
 			checkboxes[0]=new Button(this,SWT.CHECK);
 			checkboxes[0].setText("mehrzeilig");
@@ -67,8 +72,10 @@ public class PrefsPage extends Composite {
 			mNames=fields.split(Messwert.SETUP_SEPARATOR);
 			texts=new Text[mNames.length+1];
 			checkboxes=new Button[texts.length];
+			labels=new Label[texts.length];
 			for(int i=0;i<texts.length;i++){
-				new Label(this,SWT.NONE).setText("F"+Integer.toString(i+1));
+				labels[i]=new Label(this,SWT.NONE);
+				labels[i].setText("F"+Integer.toString(i+1));
 				texts[i]=SWTHelper.createText(this, 1, SWT.NONE);
 				checkboxes[i]=new Button(this,SWT.CHECK);
 				checkboxes[i].setText("mehrzeilig");
