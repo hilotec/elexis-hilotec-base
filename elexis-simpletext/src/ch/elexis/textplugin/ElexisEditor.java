@@ -38,6 +38,7 @@ import ch.elexis.text.ITextPlugin.ICallback;
 import ch.rgw.tools.ExHandler;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -359,10 +360,11 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	public void print() {
 		Document pdfDoc=new Document();
 		try{
-			File outFile=File.createTempFile("doc", "stx");
+			File outFile=File.createTempFile("stx", ".pdf");
 			PdfWriter writer = PdfWriter.getInstance(pdfDoc, new FileOutputStream(outFile));
 			pdfDoc.open();
 			PdfContentByte pdfContent=writer.getDirectContent();
+			pdfContent.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
 			page.print(pdfContent);
 			pdfDoc.close();
 		}catch(Exception ex){

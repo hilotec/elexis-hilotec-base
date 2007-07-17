@@ -37,8 +37,10 @@ import org.eclipse.swt.widgets.TableItem;
 
 import ch.rgw.tools.ExHandler;
 
+import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfTemplate;
 
 /**
  * @author bogdan314
@@ -429,13 +431,29 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 
 	public void print(final PdfContentByte content){
 		List<StyleRange> styles=getStyles();
+		PdfTemplate tmp=content.createTemplate(300, 100);
+		tmp.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
 		try{
 			for(StyleRange style:styles){
-				BaseFont font=BaseFont.createFont(style.font.getFontData()[0].getName(), BaseFont.CP1257, true);
-				content.setFontAndSize(font, style.font.getFontData()[0].height);
-				String text = getText(style.start, style.start + style.length - 1);
-				content.showText(text);
+				BaseFont helvetica =
+					  BaseFont.createFont(
+					    BaseFont.HELVETICA,
+					    BaseFont.CP1252,
+					    BaseFont.NOT_EMBEDDED);
+				//BaseFont font=BaseFont.createFont(style.font.getFontData()[0].getName(), BaseFont.CP1257, true);
+				tmp.setFontAndSize(helvetica, style.font.getFontData()[0].height);
+				String[] lines = getText(style.start, style.start + style.length - 1).split("[\\r*\\n*]");
+				tmp.beginText();
+				tmp.setTextMatrix(0,0);
+				for(String text:lines){
+					if(text.length()>0){
+						tmp.showText(text);
+					}
+					tmp.newlineText();
+				}
+				tmp.endText();
 			}
+			content.addTemplate(tmp, 0,0);
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 		}
