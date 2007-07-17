@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt.java 2531 2007-06-18 14:39:55Z danlutz $
+ *  $Id: FallDetailBlatt.java 2822 2007-07-17 05:02:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -276,8 +276,10 @@ public class FallDetailBlatt extends Composite {
         {
             String newval=((Text)e.getSource()).getText();
             Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
-            fall.set(field,newval);
-            GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+            if(fall!=null){
+            	fall.set(field,newval);
+            	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+            }
         }
         
     }
