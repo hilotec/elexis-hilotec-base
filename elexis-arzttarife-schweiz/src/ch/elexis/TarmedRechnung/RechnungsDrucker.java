@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 2779 2007-07-11 15:59:17Z rgw_ch $
+ * $Id: RechnungsDrucker.java 2835 2007-07-18 16:55:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -27,10 +27,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
-import ch.elexis.util.*;
+import ch.elexis.util.IRnOutputter;
+import ch.elexis.util.Log;
+import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
 import ch.elexis.views.RnPrintView;
 import ch.rgw.tools.ExHandler;
 
@@ -53,7 +57,7 @@ public class RechnungsDrucker implements IRnOutputter{
 			progressService.runInUI(
 			      PlatformUI.getWorkbench().getProgressService(),
 			      new IRunnableWithProgress() {
-			         public void run(IProgressMonitor monitor) {
+			         public void run(final IProgressMonitor monitor) {
 			        	 monitor.beginTask(Messages.RechnungsDrucker_PrintingBills,rechnungen.size()*10);
 			        	 int errors=0;
 			        	 for(Rechnung rn:rechnungen){
@@ -99,7 +103,7 @@ public class RechnungsDrucker implements IRnOutputter{
 		return Messages.RechnungsDrucker_PrintAsTarmed;
 	}
 
-	public Control createSettingsControl(Composite parent){
+	public Control createSettingsControl(final Composite parent){
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
 		bESR=new Button(ret,SWT.CHECK);
@@ -113,8 +117,12 @@ public class RechnungsDrucker implements IRnOutputter{
 		return ret;
 	}
 
-	public boolean canStorno(Rechnung rn) {
+	public boolean canStorno(final Rechnung rn) {
 		// We do not need to react on cancel messages
 		return false;
+	}
+
+	public boolean canBill(final Fall fall) {
+		return true;
 	}
 }

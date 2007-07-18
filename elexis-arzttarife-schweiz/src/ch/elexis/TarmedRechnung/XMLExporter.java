@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2784 2007-07-12 04:20:00Z rgw_ch $
+ * $Id: XMLExporter.java 2835 2007-07-18 16:55:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -95,16 +95,16 @@ public class XMLExporter implements IRnOutputter {
 	String diagnosen, dgsys;
 	Rechnung rn;
 	
-	private Money mTarmed=new Money();
-	private Money mTarmedTL=new Money();
-	private Money mTarmedAL=new Money();
-	private Money mKant=new Money();
-	private Money mUebrige=new Money();
-	private Money mAnalysen=new Money();
-	private Money mMigel=new Money();
-	private Money mPhysio=new Money();
-	private Money mMedikament=new Money();
-	private Money mTotal=new Money();
+	private final Money mTarmed=new Money();
+	private final Money mTarmedTL=new Money();
+	private final Money mTarmedAL=new Money();
+	private final Money mKant=new Money();
+	private final Money mUebrige=new Money();
+	private final Money mAnalysen=new Money();
+	private final Money mMigel=new Money();
+	private final Money mPhysio=new Money();
+	private final Money mMedikament=new Money();
+	private final Money mTotal=new Money();
 	private Money mPaid=new Money();
 	private Money mDue=new Money();
 	static TarmedACL ta;
@@ -115,7 +115,7 @@ public class XMLExporter implements IRnOutputter {
 		ta=TarmedACL.getInstance();	
 	}
 
-	public Result<Rechnung> doOutput(IRnOutputter.TYPE type, Collection<Rechnung> rnn) {
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn) {
 		Result<Rechnung> ret=new Result<Rechnung>();
 		if(outputDir==null){
 			SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
@@ -139,7 +139,7 @@ public class XMLExporter implements IRnOutputter {
 	 * Wa want to be informed on cancellings of any bills
 	 * @param rn we don't mind, we always return true
 	 */
-	public boolean canStorno(Rechnung rn){
+	public boolean canStorno(final Rechnung rn){
 		return true;
 	}
 
@@ -156,7 +156,7 @@ public class XMLExporter implements IRnOutputter {
 	 * @return the jdom XML-Document that contains the bill 
 	 */
 	@SuppressWarnings("unchecked")
-	public Document doExport(Rechnung rechnung, String dest, IRnOutputter.TYPE type, boolean doVerify) {
+	public Document doExport(final Rechnung rechnung, final String dest, final IRnOutputter.TYPE type, final boolean doVerify) {
 		
 		
 		Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XMLSchema-instance");
@@ -714,7 +714,7 @@ public class XMLExporter implements IRnOutputter {
 		return "Tarmed-XML 4.0-Datei für TrustCenter";
 	}
 	
-	public Element buildAdressElement(Kontakt k){
+	public Element buildAdressElement(final Kontakt k){
 		Element ret;
 		if(k.istPerson()==false){
 			ret=new Element("company",ns);
@@ -740,7 +740,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return ret;
 	}
-	public Element buildPostalElement(Kontakt k){
+	public Element buildPostalElement(final Kontakt k){
 		Element ret=new Element("postal",ns);
 		addElementIfExists(ret,"pobox",null,k.getInfoString("Postfach"),null);
 		addElementIfExists(ret,"street",null,k.get("Strasse"),null);
@@ -749,19 +749,19 @@ public class XMLExporter implements IRnOutputter {
 		addElementIfExists(ret, "city", null, k.get("Ort"),"Unbekannt");
 		return ret;
 	}
-	public Element buildOnlineElement(Kontakt k){
+	public Element buildOnlineElement(final Kontakt k){
 		Element ret=new Element("online",ns);
 		addElementIfExists(ret, "email", null, k.get("E-Mail"),"mail@invalid.invalid");
 		addElementIfExists(ret, "url", null, k.get("Website"),null);
 		return ret;
 	}
-	public Element buildTelekomElement(Kontakt k){
+	public Element buildTelekomElement(final Kontakt k){
 		Element ret=new Element("telecom",ns);
 		addElementIfExists(ret, "phone", null, k.get("Telefon1"),"555-555 55 55");
 		addElementIfExists(ret, "fax", null, k.get("Fax"),null);
 		return ret;
 	}
-	public static String makeTarmedDatum(String datum){
+	public static String makeTarmedDatum(final String datum){
 		return new TimeTool(datum).toString(TimeTool.DATE_MYSQL)+"T00:00:00";
 	}
 	/*
@@ -770,7 +770,7 @@ public class XMLExporter implements IRnOutputter {
 			e.setAttribute(attr,val);
 		}
 	}*/
-	private Element addElementIfExists(Element parent, String name, String attr, String val, String defValue){
+	private Element addElementIfExists(final Element parent, final String name, final String attr, String val, final String defValue){
 		if(StringTool.isNothing(val)){
 			val=defValue;
 		}
@@ -787,7 +787,7 @@ public class XMLExporter implements IRnOutputter {
 		return null;
 	}
 	
-	private boolean setAttributeIfNotEmpty(Element element,String name, String value){
+	private boolean setAttributeIfNotEmpty(final Element element,final String name, final String value){
 		if(element==null){
 			return false;
 		}
@@ -801,7 +801,7 @@ public class XMLExporter implements IRnOutputter {
 		return true;
 	}
 	
-	private String match_type(String type){
+	private String match_type(final String type){
 		if(type==null){
 			return "disease";
 		}
@@ -823,7 +823,7 @@ public class XMLExporter implements IRnOutputter {
 		return "disease";
 	}
 	
-	private String match_diag(String name){
+	private String match_diag(final String name){
 		if(name==null){
 			return "freetext";
 		}
@@ -853,7 +853,7 @@ public class XMLExporter implements IRnOutputter {
 		Button b=new Button(ret,SWT.PUSH);
 		b.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				outputDir=new DirectoryDialog(parent.getShell(),SWT.OPEN).open();
 				Hub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, outputDir);
 				text.setText(outputDir);
@@ -865,7 +865,7 @@ public class XMLExporter implements IRnOutputter {
 		return ret;
 	}
 
-	void writeFile(Document doc, String dest) throws IOException{
+	void writeFile(final Document doc, final String dest) throws IOException{
 		FileOutputStream fout=new FileOutputStream(dest);
 		OutputStreamWriter cout=new OutputStreamWriter(fout,"UTF-8");
 		XMLOutputter xout=new XMLOutputter(Format.getPrettyFormat());
@@ -879,5 +879,9 @@ public class XMLExporter implements IRnOutputter {
 				rn.setStatus(status_vorher+1);
 			}
 			rn.addTrace(Rechnung.OUTPUT, getDescription()+": "+RnStatus.Text[rn.getStatus()]);		
+	}
+
+	public boolean canBill(final Fall fall) {
+		return true;
 	}
 }
