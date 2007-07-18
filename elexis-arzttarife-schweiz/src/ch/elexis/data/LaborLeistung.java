@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 1625 2007-01-19 20:01:59Z rgw_ch $
+ * $Id: LaborLeistung.java 2838 2007-07-18 17:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -29,8 +29,8 @@ public class LaborLeistung extends VerrechenbarAdapter{
 		j.exec("DELETE FROM ARTIKEL WHERE TYP='Laborleistung'"); //$NON-NLS-1$
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	LaborLeistung(String code, String text, String tp_vk){
+	@SuppressWarnings("unchecked") 
+	LaborLeistung(final String code, String text, final String tp_vk){
 		create(null);
 		if(text.length()>78){
 			Hashtable<String,String> ex=getHashtable("ExtInfo"); //$NON-NLS-1$
@@ -47,34 +47,38 @@ public class LaborLeistung extends VerrechenbarAdapter{
 	public String[] getDisplayedFields(){
 		return new String[]{"Code","Text"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	@Override
 	public String getCode() {
 		return get("Code"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getText() {
 		return checkNull(get("Text")); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getCodeSystemName() {
 		return "Laborleistung"; //$NON-NLS-1$
 	}
 
-	public int getPreis(TimeTool dat, String subgroup) {
+	public int getPreis(final TimeTool dat, final String subgroup) {
 		String r=get("VK_Preis"); //$NON-NLS-1$
 		return StringTool.isNothing(r) ? 0 : 
 			(int)Math.round(Double.parseDouble(r)*getVKMultiplikator(dat, null)*100); 
 	}
 
-	public Money getKosten(TimeTool dat) {
+	@Override
+	public Money getKosten(final TimeTool dat) {
 		String r=get("EK_Preis"); //$NON-NLS-1$
 		return StringTool.isNothing(r) ? new Money(0) : 
 			new Money((int)Math.round(Double.parseDouble(r)*getEKMultiplikator(dat, null)*100)); 
 	}
-	public static LaborLeistung load(String id){
+	public static LaborLeistung load(final String id){
 		return new LaborLeistung(id);
 	}
 	public LaborLeistung(){}
-	protected LaborLeistung(String id){
+	protected LaborLeistung(final String id){
 		super(id);
 	}
 
@@ -95,16 +99,17 @@ public class LaborLeistung extends VerrechenbarAdapter{
 		return ret.toString();
 	}
 	
+	@Override
 	public boolean isDragOK() {
 		return true;
 	}
 
-	public int getTP(TimeTool date, String subgroup) {
+	public int getTP(final TimeTool date, final Fall fall) {
 		return checkZero(get("VK_Preis"))*100; //$NON-NLS-1$
 	}
 
-	public double getFactor(TimeTool date, String subgroup) {
-		return getVKMultiplikator(date, null);
+	public double getFactor(final TimeTool date, final Fall fall) {
+		return getVKMultiplikator(date, fall);
 	}
 
 }

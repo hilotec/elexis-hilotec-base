@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Validator.java 1625 2007-01-19 20:01:59Z rgw_ch $
+ * $Id: Validator.java 2838 2007-07-18 17:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -23,7 +23,7 @@ import ch.rgw.tools.StringTool;
 
 public class Validator {
 	
-	public Result<Rechnung> checkBill(XMLExporter xp, Result<Rechnung> res){
+	public Result<Rechnung> checkBill(final XMLExporter xp, final Result<Rechnung> res){
 		Rechnung rn=xp.rn;
 		Kontakt m=rn.getMandant();
 		if(rn.getStatus()>RnStatus.OFFEN){
@@ -41,11 +41,12 @@ public class Validator {
 			rn.reject(RnStatus.REJECTCODE.NO_CASE, Messages.Validator_NoCase);
 			res.add(Log.ERRORS,4,Messages.Validator_NoCase,rn,true);
 		}
+		/*
 		String g=fall.getGesetz();
 		if(g.equalsIgnoreCase(Fall.LAW_OTHER)){
 			return res;
 		}
-		
+		*/
 		String ean=m.getInfoString("EAN"); //$NON-NLS-1$
 		if(StringTool.isNothing(ean)){
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);

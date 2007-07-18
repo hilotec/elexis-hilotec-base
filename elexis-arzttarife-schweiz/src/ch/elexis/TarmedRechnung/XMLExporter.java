@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2835 2007-07-18 16:55:27Z rgw_ch $
+ * $Id: XMLExporter.java 2838 2007-07-18 17:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -363,7 +363,7 @@ public class XMLExporter implements IRnOutputter {
 					}else{
 						tlTl=tl.getTL();
 						tlAL=tl.getAL();
-						mult=tl.getVKMultiplikator(tt, actFall.getGesetz());
+						mult=tl.getVKMultiplikator(tt, actFall);
 					}
 					if(tl.getText().indexOf('%')!=-1){		// %-Zuschlag
 						if(tlTl==0.0){
@@ -665,7 +665,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		detail.addContent(diagnosis);
 		
-		String gesetz=actFall.getGesetz();															// 16000
+		String gesetz=actFall.getAbrechnungsSystemName();															// 16000
 		if(StringTool.isNothing(gesetz)){
 			gesetz="kvg";
 		}

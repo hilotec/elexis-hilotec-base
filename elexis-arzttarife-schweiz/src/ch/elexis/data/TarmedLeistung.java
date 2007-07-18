@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2763 2007-07-08 20:35:31Z rgw_ch $
+ * $Id: TarmedLeistung.java 2838 2007-07-18 17:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -69,14 +69,14 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     
     
     /** Text zu einem Code der qualitativen Dignität holen */
-    public static String getTextForDigniQuali(String dql){
+    public static String getTextForDigniQuali(final String dql){
         if(dql==null){
             return ""; //$NON-NLS-1$
         }
         return checkNull(j.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUALI' AND KUERZEL="+JdbcLink.wrap(dql))); //$NON-NLS-1$
     }
     /** Kurz-Code für eine qualitative Dignität holen */
-    public static String getCodeForDigniQuali(String kurz){
+    public static String getCodeForDigniQuali(final String kurz){
         if(kurz==null){
             return ""; //$NON-NLS-1$
         }
@@ -85,7 +85,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     
     
     /** Text für einen Code für quantitative Dignität holen */
-    public static String getTextForDigniQuanti(String dqn){
+    public static String getTextForDigniQuanti(final String dqn){
         if(dqn==null){
             return ""; //$NON-NLS-1$
         }
@@ -93,7 +93,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Text für einen Sparten-Code holen */
-    public static String getTextForSparte(String sparte){
+    public static String getTextForSparte(final String sparte){
         if(sparte==null){
             return ""; //$NON-NLS-1$
         }
@@ -101,7 +101,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Text für eine Anästhesie-Risikoklasse holen */
-    public static String getTextForRisikoKlasse(String klasse){
+    public static String getTextForRisikoKlasse(final String klasse){
         if(klasse==null){
             return ""; //$NON-NLS-1$
         }
@@ -109,7 +109,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Text für einen ZR_EINHEIT-Code holen (Sitzung, Monat usw.) */
-    public static String getTextForZR_Einheit(String einheit){
+    public static String getTextForZR_Einheit(final String einheit){
         if(einheit==null){
             return ""; //$NON-NLS-1$
         }
@@ -122,7 +122,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Konstruktor wird nur vom Importer gebraucht */
-    public TarmedLeistung(String code, String parent, String DigniQuali, String DigniQuanti, String sparte){
+    public TarmedLeistung(final String code, final String parent, final String DigniQuali, final String DigniQuanti, final String sparte){
         create(code);
         j.exec("INSERT INTO TARMED_EXTENSION (CODE) VALUES ("+getWrappedId()+")"); //$NON-NLS-1$ //$NON-NLS-2$
         set(new String[]{"Parent","DigniQuali","DigniQuanti","Sparte"},parent,DigniQuali,DigniQuanti,sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -143,23 +143,25 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
 
     /** Code liefern */
-    public String getCode()
+    @Override
+	public String getCode()
     {   
         return getId();
     }
 
     /** Text liefern */
-    public String getText()
+    @Override
+	public String getText()
     {
         return get("Text"); //$NON-NLS-1$
     }
     /** Text setzen (wird nur vom Importer gebraucht */
-    public void setText(String tx){
+    public void setText(final String tx){
         set("Text",tx); //$NON-NLS-1$
     }
     
     /** Erweiterte Informationen laden */
-    @SuppressWarnings("unchecked") //$NON-NLS-1$
+    @SuppressWarnings("unchecked") 
 	public Hashtable<String,String> loadExtension(){
         Stm stm=j.getStatement();
         ResultSet res=stm.query("SELECT limits FROM TARMED_EXTENSION WHERE CODE="+getWrappedId()); //$NON-NLS-1$
@@ -203,7 +205,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Medizinische Interpretation setzen (Wird nur vom Importer gebraucht) */
-    public void setMedInterpretation(String text){
+    public void setMedInterpretation(final String text){
         j.exec("UPDATE TARMED_EXTENSION SET med_interpret="+JdbcLink.wrap(text)+" WHERE CODE="+getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
@@ -212,7 +214,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
         return checkNull(j.queryString("SELECT tech_interpret FROM TARMED_EXTENSION WHERE CODE="+getWrappedId())); //$NON-NLS-1$
     }
     /** Technische Intepretation setzen (Wird nur vom Importer gebraucht */
-    public void setTechInterpretation(String text){
+    public void setTechInterpretation(final String text){
         j.exec("UPDATE TARMED_EXTENSION SET tech_interpret="+JdbcLink.wrap(text)+" WHERE CODE="+getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
@@ -226,7 +228,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Qualitative Dinität setzen (Wird nur vom Importer gebraucht) */ 
-    public void setDigniQuali(String dql){
+    public void setDigniQuali(final String dql){
         set("DigniQuali",dql); //$NON-NLS-1$
     }
     
@@ -250,23 +252,24 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     }
     
     /** Name des verwendeten Codesystems holen (liefert immer "Tarmed") */
-    public String getCodeSystemName()
+    @Override
+	public String getCodeSystemName()
     {
         return "Tarmed"; //$NON-NLS-1$
     }
 
-    protected TarmedLeistung(String id){
+    protected TarmedLeistung(final String id){
         super(id);
     }
     public TarmedLeistung(){/* leer */}
     
     /** Eine Position einlesen */
-    public static TarmedLeistung load(String id){
+    public static TarmedLeistung load(final String id){
         return new TarmedLeistung(id);
     }
     
     /** Eine Position vom code einlesen */
-    public static IVerrechenbar getFromCode(String code)
+    public static IVerrechenbar getFromCode(final String code)
     {
         return new TarmedLeistung(code);
     }
@@ -281,11 +284,11 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     public static class MandantFilter implements IFilter{
 
         
-        MandantFilter(Mandant m){
+        MandantFilter(final Mandant m){
         	
         }
 
-        public boolean select(Object object)
+        public boolean select(final Object object)
         {
             if (object instanceof TarmedLeistung) {
                  /*TarmedLeistung tl = (TarmedLeistung) object;*/
@@ -306,7 +309,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
      */
     static class TarmedComparator implements Comparator{
 
-		public int compare(Object o1, Object o2) {
+		public int compare(final Object o1, final Object o2) {
 				TarmedLeistung tl1 = (TarmedLeistung) o1;
 				TarmedLeistung tl2 = (TarmedLeistung) o2;
 				return tl1.getCode().compareTo(tl2.getCode());
@@ -314,15 +317,18 @@ public class TarmedLeistung extends VerrechenbarAdapter{
 		
 	}
     
-    public IOptifier getOptifier() {
+    @Override
+	public IOptifier getOptifier() {
 		return tarmedOptifier;
 	}
 
+	@Override
 	public Comparator getComparator() {
 		return tarmedComparator;
 	}
 
-	public IFilter getFilter(Mandant m) {
+	@Override
+	public IFilter getFilter(final Mandant m) {
 		return new MandantFilter(m);
 	}
 
@@ -362,7 +368,8 @@ public class TarmedLeistung extends VerrechenbarAdapter{
         return (int)Math.round((tl+al)*tp);
     }
     */
-    public int getMinutes(){
+    @Override
+	public int getMinutes(){
     	loadExtension();
     	double min=checkZeroDouble(ext.get("LSTGIMES_MIN")); //$NON-NLS-1$
     	min+=checkZeroDouble(ext.get("VBNB_MIN")); //$NON-NLS-1$
@@ -374,7 +381,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     	loadExtension();
     	return checkNull(ext.get("exclusion")); //$NON-NLS-1$
     }
-	public int getTP(TimeTool date, String subgroup) {
+	public int getTP(final TimeTool date, final Fall fall) {
 		loadExtension();
         String t=ext.get("TP_TL"); //$NON-NLS-1$
         String a=ext.get("TP_AL"); //$NON-NLS-1$
@@ -392,8 +399,8 @@ public class TarmedLeistung extends VerrechenbarAdapter{
         }
 		return (int)Math.round((tl+al)*100.0);
 	}
-	public double getFactor(TimeTool date, String subgroup) {
-        return getVKMultiplikator(date, subgroup);
+	public double getFactor(final TimeTool date, final Fall fall) {
+        return getVKMultiplikator(date, fall);
 	}
 	
 	/**

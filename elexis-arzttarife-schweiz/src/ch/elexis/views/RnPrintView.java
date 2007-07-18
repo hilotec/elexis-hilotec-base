@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2704 2007-07-05 12:42:15Z rgw_ch $
+ * $Id: RnPrintView.java 2838 2007-07-18 17:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -35,7 +35,14 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.banking.ESR;
-import ch.elexis.data.*;
+import ch.elexis.data.Brief;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
+import ch.elexis.data.Zahlung;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ReplaceCallback;
 import ch.elexis.text.TextContainer;
@@ -59,7 +66,7 @@ public class RnPrintView extends ViewPart {
 	private static double cmMiddlePage=21.0;	// Platz auf Folgeseiten
 	private static double cmFooter=4.5;			// Platz für Endabrechnung
 	private int existing; 
-	private Log log=Log.get("RnPrint");
+	private final Log log=Log.get("RnPrint");
 	
 	//TextContainer text;
 	TarmedACL ta=TarmedACL.getInstance();
@@ -71,7 +78,7 @@ public class RnPrintView extends ViewPart {
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		ctab=new CTabFolder(parent,SWT.BOTTOM);
 		ctab.setLayout(new FillLayout());
 	}
@@ -93,11 +100,11 @@ public class RnPrintView extends ViewPart {
 		ret.setText(title);
 		ret.addDisposeListener(new DisposeListener(){
 
-			public void widgetDisposed(DisposeEvent e) {
+			public void widgetDisposed(final DisposeEvent e) {
 				CTabItem item=(CTabItem)e.getSource();
 				TextContainer text=(TextContainer)item.getData("text"); //$NON-NLS-1$
 				Brief brief=(Brief)item.getData("brief"); //$NON-NLS-1$
-				if (brief != null && brief.exists()) {
+				if ((brief != null) && brief.exists()) {
 					text.saveBrief(brief,Brief.RECHNUNG);
 					brief.delete();
 					item.setData("brief", null);
@@ -128,14 +135,14 @@ public class RnPrintView extends ViewPart {
 			}
 		}
 	}
-	public void useItem(int idx, String template, Kontakt adressat){
+	public void useItem(final int idx, final String template, final Kontakt adressat){
 		CTabItem item=ctab.getItem(idx);
 		TextContainer text=(TextContainer)item.getData("text"); //$NON-NLS-1$
 		String betreff = Messages.RnPrintView_tarmedBill;
 		
 		// save and delete old brief
 		Brief brief=(Brief)item.getData("brief"); //$NON-NLS-1$
-		if (brief != null && brief.exists()) {
+		if ((brief != null) && brief.exists()) {
 			text.saveBrief(brief,Brief.RECHNUNG);
 			brief.delete();
 			item.setData("brief", null);
@@ -155,8 +162,8 @@ public class RnPrintView extends ViewPart {
 	 * @param monitor 
 	 * @return
 	 */ 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public boolean doPrint(Rechnung rn, IRnOutputter.TYPE rnType, boolean withESR, boolean withForms, boolean doVerify, IProgressMonitor monitor){
+	@SuppressWarnings("unchecked") 
+	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType, final boolean withESR, final boolean withForms, final boolean doVerify, final IProgressMonitor monitor){
 		Mandant mSave=Hub.actMandant;
 		monitor.subTask(rn.getLabel());
 		GlobalEvents.getInstance().fireSelectionEvent(rn);
@@ -202,11 +209,11 @@ public class RnPrintView extends ViewPart {
 			CTabItem ctEZ;
 			TextContainer text;
 			String tmpl = "Tarmedrechnung_EZ"; //$NON-NLS-1$
-			if (rn.getStatus() == RnStatus.MAHNUNG_1 || rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT) {
+			if ((rn.getStatus() == RnStatus.MAHNUNG_1) || (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
 				tmpl="Tarmedrechnung_M1"; //$NON-NLS-1$
-			}else if(rn.getStatus() == RnStatus.MAHNUNG_2 || rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT){
+			}else if((rn.getStatus() == RnStatus.MAHNUNG_2) || (rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT)){
 				tmpl="Tarmedrechnung_M2"; //$NON-NLS-1$
-			}else if(rn.getStatus() == RnStatus.MAHNUNG_3 || rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT){
+			}else if((rn.getStatus() == RnStatus.MAHNUNG_3) || (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)){
 				tmpl = "Tarmedrechnung_M3"; //$NON-NLS-1$
 			}
 			if(--existing<0){
@@ -225,12 +232,12 @@ public class RnPrintView extends ViewPart {
 			String sMigel=balance.getAttributeValue("amount_migel");
 			String sPhysio=balance.getAttributeValue("amount_physio");
 			String sOther=balance.getAttributeValue("amount_unclassified");
-			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed).append("\n"); //$NON-NLS-2$
-			sb.append(Messages.RnPrintView_medicaments).append(sMedikament).append("\n"); //$NON-NLS-2$
-			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append("\n"); //$NON-NLS-2$
-			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append("\n"); //$NON-NLS-2$
-			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio).append("\n"); //$NON-NLS-2$
-			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append("\n"); //$NON-NLS-2$
+			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed).append("\n"); 
+			sb.append(Messages.RnPrintView_medicaments).append(sMedikament).append("\n"); 
+			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append("\n"); 
+			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append("\n"); 
+			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio).append("\n"); 
+			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append("\n"); 
 			/*
 			sb.append(Messages.RnPrintView_tarmedPoints).append(xmlex.mTarmed.getAmountAsString()).append("\n"); //$NON-NLS-2$
 			sb.append(Messages.RnPrintView_medicaments).append(xmlex.mMedikament.getAmountAsString()).append("\n"); //$NON-NLS-2$
@@ -251,14 +258,14 @@ public class RnPrintView extends ViewPart {
 			sb.append(Messages.RnPrintView_sum).append(mEZDue);
 			
 			if(!mPaid.isZero()){
-				sb.append(Messages.RnPrintView_prepaid).append(mPaid.getAmountAsString()).append("\n"); //$NON-NLS-2$
+				sb.append(Messages.RnPrintView_prepaid).append(mPaid.getAmountAsString()).append("\n"); 
 				//sb.append("Noch zu zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
-				sb.append(Messages.RnPrintView_topay).append(mEZDue.subtractMoney(mPaid).roundTo5().getAmountAsString()).append("\n"); //$NON-NLS-2$
+				sb.append(Messages.RnPrintView_topay).append(mEZDue.subtractMoney(mPaid).roundTo5().getAmountAsString()).append("\n"); 
 			}
 			
 			text.getPlugin().setFont("Serif",SWT.NORMAL, 9); //$NON-NLS-1$
 			text.replace("\\[Leistungen\\]",new ReplaceCallback(){ //$NON-NLS-1$
-				public String replace(String in) {
+				public String replace(final String in) {
 					return sb.toString();
 				}
 				
@@ -316,7 +323,7 @@ public class RnPrintView extends ViewPart {
 		// Vergütungsart F17
 		// replaced with Fall.payment
 	
-		if(fall.getGesetz().equals("UVG")){ //$NON-NLS-1$
+		if(fall.getAbrechnungsSystemName().equals("UVG")){ //$NON-NLS-1$
 			text.replace("\\[F58\\]",fall.getBeginnDatum()); //$NON-NLS-1$
 		}else{
 			text.replace("\\[F58\\]",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -346,7 +353,7 @@ public class RnPrintView extends ViewPart {
 		if(remark!=null){
 			final String rem=remark.getText();
 			text.getPlugin().findOrReplace(Messages.RnPrintView_remark,new ReplaceCallback(){
-				public String replace(String in) {
+				public String replace(final String in) {
 					return Messages.RnPrintView_remarksp+rem;
 				}
 			});
@@ -537,7 +544,7 @@ public class RnPrintView extends ViewPart {
 		Hub.setMandant(mSave);
 		return true;
 	}
-	private TextContainer insertPage(int page, Kontakt adressat, TextContainer text, Rechnung rn){
+	private TextContainer insertPage(final int page, final Kontakt adressat, TextContainer text, final Rechnung rn){
 		CTabItem ctF;
 		if(--existing<0){
 			ctF=addItem("Tarmedrechnung_S2",Messages.RnPrintView_page+page,adressat); //$NON-NLS-1$
@@ -551,7 +558,7 @@ public class RnPrintView extends ViewPart {
 		return text;
 		
 	}
-	private Object print(Object cur, ITextPlugin p, boolean small, String text){
+	private Object print(final Object cur, final ITextPlugin p, final boolean small, final String text){
 		if(small){
 			p.setFont("Helvetica",SWT.BOLD,7); //$NON-NLS-1$
 		}else{
@@ -559,7 +566,7 @@ public class RnPrintView extends ViewPart {
 		}
 		return p.insertText(cur,text,SWT.LEFT);
 	}
-	private String getValue(Element s,String field){
+	private String getValue(final Element s,final String field){
 		String ret=s.getAttributeValue(field);
 		if(StringTool.isNothing(ret)){
 			return " "; //$NON-NLS-1$
@@ -567,7 +574,7 @@ public class RnPrintView extends ViewPart {
 		return ret;
 	}
 	
-	private void replaceHeaderFields(TextContainer text, Rechnung rn){
+	private void replaceHeaderFields(final TextContainer text, final Rechnung rn){
 		Fall fall=rn.getFall();
 		Mandant m=rn.getMandant();
 		text.replace("\\[F1\\]",rn.getRnId()); //$NON-NLS-1$
@@ -605,7 +612,7 @@ public class RnPrintView extends ViewPart {
 		text.replace("\\[Titel\\]",titel); //$NON-NLS-1$
 		text.replace("\\[TitelMahnung\\]", titelMahnung); //$NON-NLS-1$
 		
-		if(fall.getGesetz().equals("IV")){ //$NON-NLS-1$
+		if(fall.getAbrechnungsSystemName().equals("IV")){ //$NON-NLS-1$
 			text.replace("\\[NIF\\]",m.getNif()); //$NON-NLS-1$
 			text.replace("\\[F60]\\",fall.getVersNummer()); //$NON-NLS-1$
 		}else{
