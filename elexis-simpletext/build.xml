@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 1574 2007-01-07 21:45:15Z rgw_ch $
+ * $Id: build.xml 2834 2007-07-18 16:55:19Z rgw_ch $
 -->
 <project name="elexis-simpletext" default="all">
 	<property name="sourcedir" value="${source}/elexis-simpletext/"/>
@@ -22,6 +22,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${plugindir}">
+				<include name="*.jar"/>
+		</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
