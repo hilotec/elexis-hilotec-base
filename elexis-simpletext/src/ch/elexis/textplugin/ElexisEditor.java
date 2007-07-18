@@ -364,8 +364,8 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 			PdfWriter writer = PdfWriter.getInstance(pdfDoc, new FileOutputStream(outFile));
 			pdfDoc.open();
 			PdfContentByte pdfContent=writer.getDirectContent();
-			pdfContent.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
-			page.print(pdfContent);
+			//pdfContent.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
+			page.print(pdfDoc, pdfContent);
 			pdfDoc.close();
 		}catch(Exception ex){
 			ExHandler.handle(ex);

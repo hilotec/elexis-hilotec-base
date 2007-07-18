@@ -37,6 +37,8 @@ import org.eclipse.swt.widgets.TableItem;
 
 import ch.rgw.tools.ExHandler;
 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -429,20 +431,29 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 		return rect;
 	}
 
-	public void print(final PdfContentByte content){
+	public void print(Document pdfDoc, final PdfContentByte content){
 		List<StyleRange> styles=getStyles();
-		PdfTemplate tmp=content.createTemplate(300, 100);
-		tmp.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
+		//PdfTemplate tmp=content.createTemplate(300, 100);
+		//tmp.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
+
 		try{
+			BaseFont helvetica =
+				  BaseFont.createFont(
+				    BaseFont.HELVETICA,
+				    BaseFont.CP1252,
+				    BaseFont.NOT_EMBEDDED);
+
 			for(StyleRange style:styles){
-				BaseFont helvetica =
-					  BaseFont.createFont(
-					    BaseFont.HELVETICA,
-					    BaseFont.CP1252,
-					    BaseFont.NOT_EMBEDDED);
+				String[] lines = getText(style.start, style.start + style.length - 1).split("\\r?\\n");
+				for(String line:lines){
+					Chunk chunk=new Chunk(line);
+					pdfDoc.add(chunk);
+					pdfDoc.add(Chunk.NEWLINE);
+				}
 				//BaseFont font=BaseFont.createFont(style.font.getFontData()[0].getName(), BaseFont.CP1257, true);
+				/*
 				tmp.setFontAndSize(helvetica, style.font.getFontData()[0].height);
-				String[] lines = getText(style.start, style.start + style.length - 1).split("[\\r*\\n*]");
+				String[] lines = getText(style.start, style.start + style.length - 1).split("\\r?\\n");
 				tmp.beginText();
 				tmp.setTextMatrix(0,0);
 				for(String text:lines){
@@ -452,8 +463,9 @@ public class Page extends EStyledText implements MouseListener, MouseMoveListene
 					tmp.newlineText();
 				}
 				tmp.endText();
+				*/
 			}
-			content.addTemplate(tmp, 0,0);
+			//content.addTemplate(tmp, 0,0);
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 		}
