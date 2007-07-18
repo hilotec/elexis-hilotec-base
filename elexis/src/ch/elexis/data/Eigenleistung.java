@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Eigenleistung.java 2219 2007-04-15 16:05:13Z rgw_ch $
+ * $Id: Eigenleistung.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,42 +26,45 @@ public class Eigenleistung extends VerrechenbarAdapter {
 		return "EIGENLEISTUNGEN";
 	}
 
+	@Override
 	public String getCode() {
 		return get("Code");
 	}
 
+	@Override
 	public String getText() {
 		return get("Bezeichnung");
 	}
 	public String[] getDisplayedFields(){
 		return new String[]{"Code","Bezeichnung"};
 	}
+	@Override
 	public String getCodeSystemName() {
 		return "Eigenleistung";
 	}
 
 	
 	@Override
-	public Money getKosten(TimeTool dat) {
+	public Money getKosten(final TimeTool dat) {
 		return new Money(checkZero(get("EK_Preis")));
 	}
 
-	public Money getPreis(TimeTool dat, String subgroup) {
+	public Money getPreis(final TimeTool dat, final Fall fall) {
 		return new Money(checkZero(get("VK_Preis")));
 	}
 
 
-	public Eigenleistung(String code, String name, String ek, String vk){
+	public Eigenleistung(final String code, final String name, final String ek, final String vk){
 		create(null);
 		set(new String[]{"Code","Bezeichnung","EK_Preis","VK_Preis"},
 				code,name,ek,vk);
 	}
 	protected Eigenleistung(){
 	}
-	protected Eigenleistung(String id){
+	protected Eigenleistung(final String id){
 		super(id);
 	}
-	public static Eigenleistung load(String id){
+	public static Eigenleistung load(final String id){
 		return new Eigenleistung(id);
 	}
 
@@ -70,15 +73,16 @@ public class Eigenleistung extends VerrechenbarAdapter {
 		return true;
 	}
 
+	@Override
 	public String getCodeSystemCode() {
 		return "999";
 	}
 
-	public int getTP(TimeTool date, String subgroup) {
-		return getPreis(date,subgroup).getCents();
+	public int getTP(final TimeTool date, final Fall fall) {
+		return getPreis(date,fall).getCents();
 	}
 
-	public double getFactor(TimeTool date, String subgroup) {
+	public double getFactor(final TimeTool date, final Fall fall) {
 		return 1.0;
 	}
 	

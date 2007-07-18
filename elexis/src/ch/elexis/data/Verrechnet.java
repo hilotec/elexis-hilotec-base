@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 2307 2007-04-30 15:46:55Z rgw_ch $
+ * $Id: Verrechnet.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -36,12 +36,12 @@ public class Verrechnet extends PersistentObject {
 				"Scale","ExtInfo=Detail");
 	}
 	
-	public Verrechnet(IVerrechenbar iv, Konsultation kons, int zahl){
+	public Verrechnet(final IVerrechenbar iv, final Konsultation kons, final int zahl){
 		create(null);
 		TimeTool dat=new TimeTool(kons.getDatum());
-		String subgroup=kons.getFall().getGesetz();
-		int tp=iv.getTP(dat,subgroup);
-		double factor=iv.getFactor(dat,subgroup);
+		Fall fall=kons.getFall();
+		int tp=iv.getTP(dat,fall);
+		double factor=iv.getFactor(dat,fall);
 		long preis=Math.round(tp*factor);
 		set(new String[]{"Konsultation","Leistg_txt","Leistg_code","Klasse","Zahl","EK_Kosten",
 				"VK_TP","VK_Scale","VK_Preis","Scale"},
@@ -59,7 +59,7 @@ public class Verrechnet extends PersistentObject {
 		set("VK_Preis",Integer.toString(p));
 	}
 	*/
-	public void setPreis(Money m){
+	public void setPreis(final Money m){
 		set("VK_Preis",m.getCentsAsString());
 	}
 	/** Den effektiv verrechneten Preis holen (braucht nicht TP*Scale zu sein */
@@ -82,20 +82,20 @@ public class Verrechnet extends PersistentObject {
 	public Money getStandardPreis(){
 		IVerrechenbar v=getVerrechenbar();
 		Konsultation k=getKons();
+		Fall fall=k.getFall();
 		TimeTool date=new TimeTool(k.getDatum());
-		String subgroup=k.getFall().getGesetz();
-		double factor=v.getFactor(date, subgroup);
-		int tp=v.getTP(date, subgroup);
+		double factor=v.getFactor(date, fall);
+		int tp=v.getTP(date, fall);
 		return new Money((int)Math.round(factor*tp));
 	}
 	/** Bequemlichkeits-Shortcut für Standardbetrag setzen */
 	public void setStandardPreis(){
 		IVerrechenbar v=getVerrechenbar();
 		Konsultation k=getKons();
+		Fall fall=k.getFall();
 		TimeTool date=new TimeTool(k.getDatum());
-		String subgroup=k.getFall().getGesetz();
-		double factor=v.getFactor(date, subgroup);
-		int tp=v.getTP(date, subgroup);
+		double factor=v.getFactor(date, fall);
+		int tp=v.getTP(date, fall);
 		long preis=Math.round(tp*factor);
 		set(new String[]{"VK_Scale","VK_TP","VK_Preis"},
 				Double.toString(factor),Integer.toString(tp),Long.toString(preis));
@@ -108,7 +108,7 @@ public class Verrechnet extends PersistentObject {
 	public int getZahl(){
 		return checkZero(get("Zahl"));
 	}
-	public void setZahl(int z){
+	public void setZahl(final int z){
 		set("Zahl",Integer.toString(z));
 	}
 	public String getCode(){
@@ -120,19 +120,19 @@ public class Verrechnet extends PersistentObject {
 		}
 	}
 	
-	public void setExtInfo(String key, String value){
+	public void setExtInfo(final String key, final String value){
 		Hashtable ext=getHashtable("Detail");
 		ext.put(key,value);
 		setHashtable("Detail", ext);
 		
 	}
 	
-	public String getExtInfo(String key){
+	public String getExtInfo(final String key){
 		Hashtable ext=getHashtable("Detail");
 		return (String)ext.get(key);
 	}
 	/** Frage, ob dieses Verrechnet aus dem IVerrechenbar tmpl entstanden ist */
-	public boolean isInstance(IVerrechenbar tmpl){
+	public boolean isInstance(final IVerrechenbar tmpl){
 		String[] res=new String[2];
 		get(new String[]{"Klasse","Leistg_code"},res);
 		if(tmpl.getClass().getName().equals(res[0])){
@@ -162,11 +162,11 @@ public class Verrechnet extends PersistentObject {
 		return "LEISTUNGEN";
 	}
 
-	public static Verrechnet load(String id){
+	public static Verrechnet load(final String id){
 		return new Verrechnet(id);
 	}
 	protected Verrechnet(){}
-	protected Verrechnet(String id){
+	protected Verrechnet(final String id){
 		super(id);
 	}
 }

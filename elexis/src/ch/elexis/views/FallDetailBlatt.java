@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt.java 2836 2007-07-18 16:55:33Z rgw_ch $
+ *  $Id: FallDetailBlatt.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -77,6 +77,7 @@ public class FallDetailBlatt extends Composite {
 			public void linkActivated(final HyperlinkEvent e) {
 				// copy data from previous Fall of the same Gesetz
 				
+				/* fix this later
 				Fall f=GlobalEvents.getSelectedFall();
 				// don't do anything if no Fall is selected
 				if (f == null) {
@@ -101,6 +102,7 @@ public class FallDetailBlatt extends Composite {
 					}
 				}
 		    	setFall(f);
+		    	*/
 			}
 		});
 		for(String s:Abrechnungstypen){
@@ -115,15 +117,15 @@ public class FallDetailBlatt extends Composite {
                 Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
                 if(fall!=null){
                 	if(fall.getBehandlungen(false).length>0){
-                		SWTHelper.alert("Gesetz kann nicht geändert werden", "Bei einem Fall, zu dem schon Konsultationen existieren, kann das Gestz nicht geändert werden.");
-                		String gesetz=fall.getGesetz();
+                		SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Bei einem Fall, zu dem schon Konsultationen existieren, kann das Gestz nicht geändert werden.");
+                		String gesetz=fall.getAbrechnungsSystemName();
                 		if(ch.rgw.tools.StringTool.isNothing(gesetz)){
                 			gesetz="frei";
                 		}
                 		cGesetz.select(cGesetz.indexOf(gesetz));
                 		
                 	}else{
-                		fall.setGesetz(Abrechnungstypen[i].split(";")[0]);
+                		fall.setAbrechnungsSystem(Abrechnungstypen[i]);
                 		GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
                 	// Falls noch kein Garant gesetzt ist: Garanten des letzten Falles zum selben Gesetz nehmen
                 	}
@@ -305,11 +307,12 @@ public class FallDetailBlatt extends Composite {
 			ix=0;
 		}
 		cReason.select(ix);
-		String gesetz=f.getGesetz();
+		String gesetz=f.getAbrechnungsSystemName();
 		if(ch.rgw.tools.StringTool.isNothing(gesetz)){
-			gesetz="frei";
+			cGesetz.select(0);
+		}else{
+			cGesetz.select(cGesetz.indexOf(gesetz));
 		}
-		cGesetz.select(cGesetz.indexOf(gesetz));
 		TimeTool tt=new TimeTool();
 		if(tt.set(f.getBeginnDatum())==true){
 			dpBeginn.setDate(tt.getTime());

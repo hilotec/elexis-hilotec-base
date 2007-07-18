@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 1204 2006-11-01 15:56:38Z rgw_ch $
+ * $Id: IVerrechenbar.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -40,10 +40,9 @@ public interface IVerrechenbar extends ICodeElement{
     /** Einen Filter liefern, um Elemente dieses Typs nach Mandant zu filtern */
     public IFilter getFilter(Mandant m);
     /** Betrag dieser Verrechenbar (in TP*100) an einem bestimmten Datum liefern 
-     * @param subgroup Untereinteilung des Codes wenn nötig
      * */
-    public int getTP(TimeTool date, String subgroup);
-    public double getFactor(TimeTool date, String subgroup);
+    public int getTP(TimeTool date, Fall fall);
+    public double getFactor(TimeTool date, Fall fall);
 
     /** Eigene Kosten für diese Leistung 
      * @param dat Datum, für das die Kosten geliefert werden sollen */
@@ -54,7 +53,7 @@ public interface IVerrechenbar extends ICodeElement{
     public String [] getDisplayedFields();
     
     public static class DefaultComparator implements Comparator{
-		public int compare(Object o1, Object o2) {
+		public int compare(final Object o1, final Object o2) {
 			IVerrechenbar v1=(IVerrechenbar)o1;
 			IVerrechenbar v2=(IVerrechenbar)o2;
 			int i=v1.getCodeSystemName().compareTo(v2.getCodeSystemName());
@@ -66,24 +65,24 @@ public interface IVerrechenbar extends ICodeElement{
     	
     }
     public static class DefaultFilter implements IFilter{
-		public boolean select(Object toTest) {
+		public boolean select(final Object toTest) {
 			return true;
 		}
     	
     }
     public static class DefaultOptifier implements IOptifier{
 
-		public Result<Konsultation> optify(Konsultation kons) {
+		public Result<Konsultation> optify(final Konsultation kons) {
 			return new Result<Konsultation>(kons);
 		}
 
-		public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons) {
+		public Result<IVerrechenbar> add(final IVerrechenbar code, final Konsultation kons) {
 			List<Verrechnet> old=kons.getLeistungen();
 			old.add(new Verrechnet(code,kons,1));
 			return new Result<IVerrechenbar>(code);
 		}
 
-		public Result<Verrechnet> remove(Verrechnet v, Konsultation kons) {
+		public Result<Verrechnet> remove(final Verrechnet v, final Konsultation kons) {
 			List<Verrechnet> old=kons.getLeistungen();
 			old.remove(v);
 			v.delete();

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2836 2007-07-18 16:55:33Z rgw_ch $
+ *    $Id: Fall.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -80,15 +80,17 @@ public class Fall extends PersistentObject{
 			return false;
 		}
 		
-		
+		/*
 		if(getPaymentMode().equalsIgnoreCase("TG")){
 			if(!getKostentraeger().exists()){
 				return false;
 			}
 		}
+		*/
 		if(!getGarant().exists()){
 			return false;
 		}
+		/*
 		if(getGesetz().equalsIgnoreCase(LAW_ACCIDENT)){
 			if(StringTool.isNothing(getFallNummer())){
 				return false;
@@ -98,6 +100,7 @@ public class Fall extends PersistentObject{
 				return false;
 			}
 		}
+		*/
 		IRnOutputter outputter=getOutputter();
 		if(outputter!=null){
 			if(!outputter.canBill(this)){
@@ -234,6 +237,9 @@ public class Fall extends PersistentObject{
 	
 	public String getAbrechnungsSystemName(){
 		String rn=getAbrechnungsSytem();
+		if(rn.length()==0){ // compatibility helper
+			return get("Gesetz");
+		}
 		return rn.length()==0 ? "?" : rn.split(";")[0];
 
 	}
@@ -298,12 +304,14 @@ public class Fall extends PersistentObject{
     public void setGrund(final String g){
         set("Grund",g);
     }
+    /*
 	public String getGesetz(){
 		return checkNull(get("Gesetz"));
 	}
     public void setGesetz(final String g){
         set("Gesetz",g);
     }
+    */
     @Override
 	public String getLabel(){
     	String[] f=new String[]{"Gesetz","Grund","Bezeichnung","DatumVon","DatumBis"};

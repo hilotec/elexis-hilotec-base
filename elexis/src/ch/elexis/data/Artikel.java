@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 2497 2007-06-08 09:50:16Z danlutz $
+ * $Id: Artikel.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -28,6 +28,7 @@ import ch.rgw.tools.TimeTool;
 public class Artikel extends VerrechenbarAdapter{
 	public static final String TABLENAME="ARTIKEL";
 	
+	@Override
 	protected String getTableName() {
 		return TABLENAME;
 	}
@@ -40,7 +41,7 @@ public class Artikel extends VerrechenbarAdapter{
      * This implementation of PersistentObject#load is special in that it tries to load
      * the actual appropriate subclass
      */
-	public static Artikel load(String id){
+	public static Artikel load(final String id){
 		if(id==null){
 			return null;
 		}
@@ -63,14 +64,15 @@ public class Artikel extends VerrechenbarAdapter{
      * @param Name
      * @param Typ
      */
-	public Artikel(String Name,String Typ){
+	public Artikel(final String Name,final String Typ){
 		create(null);
 		set(new String[]{"Name","Typ"},new String[]{Name,Typ});
 	}
-	public Artikel(String Name, String Typ, String subid){
+	public Artikel(final String Name, final String Typ, final String subid){
 		create(null);
 		set(new String[]{"Name","Typ","SubID"},Name,Typ,subid);
 	}
+	@Override
 	public String getLabel(){
 		return getInternalName();
 	}
@@ -82,7 +84,7 @@ public class Artikel extends VerrechenbarAdapter{
 	 * in der Artikelauswahl und auf der Rechnung.
 	 * @param nick Der "Spitzname"
 	 */
-	public void setInternalName(String nick){
+	public void setInternalName(final String nick){
 		set("Eigenname",nick);
 	}
 	/**
@@ -109,7 +111,7 @@ public class Artikel extends VerrechenbarAdapter{
 	 * nicht geändert werden.
 	 * @param name der neue "echte" Name
 	 */
-	public void setName(String name){
+	public void setName(final String name){
 		set("Name",name);
 	}
 	
@@ -182,13 +184,13 @@ public class Artikel extends VerrechenbarAdapter{
 		}
 		return 0;
 	}
-	public void setMaxbestand(int s){
+	public void setMaxbestand(final int s){
 		set("Maxbestand",Integer.toString(s));
 	}
-	public void setMinbestand(int s){
+	public void setMinbestand(final int s){
 		set("Minbestand",Integer.toString(s));
 	}
-	public void setIstbestand(int s){
+	public void setIstbestand(final int s){
 		set("Istbestand",Integer.toString(s));
 	}
 	public int getBruchteile(){
@@ -196,7 +198,7 @@ public class Artikel extends VerrechenbarAdapter{
 	}
 	
 	public boolean isLagerartikel() {
-		if (getMinbestand() > 0 || getMaxbestand() > 0) {
+		if ((getMinbestand() > 0) || (getMaxbestand() > 0)) {
 			return true;
 		} else {
 			return false;
@@ -214,11 +216,11 @@ public class Artikel extends VerrechenbarAdapter{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void einzelAbgabe(int n){
+	public void einzelAbgabe(final int n){
 		Hashtable<String,String> ext=getHashtable("ExtInfo");
-		int anbruch=checkZero((String)ext.get("Anbruch"));
-		int ve=checkZero((String)ext.get("Verkaufseinheit"));
-		int vk=checkZero((String)ext.get("Verpackungseinheit"));
+		int anbruch=checkZero(ext.get("Anbruch"));
+		int ve=checkZero(ext.get("Verkaufseinheit"));
+		int vk=checkZero(ext.get("Verpackungseinheit"));
 		if(vk==0){
 			if(ve!=0){
 				vk=ve;
@@ -247,11 +249,11 @@ public class Artikel extends VerrechenbarAdapter{
 		}
 	}
 	@SuppressWarnings("unchecked")
-	public void einzelRuecknahme(int n){
+	public void einzelRuecknahme(final int n){
 		Hashtable<String,String> ext=getHashtable("ExtInfo");
-		int anbruch=checkZero((String)ext.get("Anbruch"));
-		int ve=checkZero((String)ext.get("Verkaufseinheit"));
-		int vk=checkZero((String)ext.get("Verpackungseinheit"));
+		int anbruch=checkZero(ext.get("Anbruch"));
+		int ve=checkZero(ext.get("Verkaufseinheit"));
+		int vk=checkZero(ext.get("Verpackungseinheit"));
 		int num=n*ve;
 		if(vk==ve){
 			setIstbestand(getIstbestand()+n);
@@ -276,7 +278,7 @@ public class Artikel extends VerrechenbarAdapter{
 	public Kontakt getLieferant(){
 		return Kontakt.load(get("LieferantID"));
 	}
-	public void setLieferant(Kontakt l){
+	public void setLieferant(final Kontakt l){
 		set("LieferantID",l.getId());
 	}
 	public int getVerpackungsEinheit(){
@@ -288,16 +290,16 @@ public class Artikel extends VerrechenbarAdapter{
 		return checkZero((String)ext.get("Verkaufseinheit"));
 	}
 	@SuppressWarnings("unchecked")
-	public void setExt(String name, String value){
+	public void setExt(final String name, final String value){
 		Hashtable h=getHashtable("ExtInfo");
 		h.put(name,value);
 		setHashtable("ExtInfo",h);
 	}
-	public String getExt(String name){
+	public String getExt(final String name){
 		Hashtable h=getHashtable("ExtInfo");
 		return checkNull((String)h.get(name));
 	}
-	protected Artikel(String id){
+	protected Artikel(final String id){
 		super(id);
 	}
 	protected 
@@ -306,11 +308,14 @@ public class Artikel extends VerrechenbarAdapter{
 	
 	
 	/************************ Verrechenbar ************************/
+	@Override
 	public String getCode() { return getId();}
+	@Override
 	public String getText() { return get("Name");}
+	@Override
 	public String getCodeSystemName() { return "Artikel";}
 	
-	public int getPreis(TimeTool dat, String subgroup) {
+	public int getPreis(final TimeTool dat, final Fall fall) {
 		double vkt= checkZeroDouble(get("VK_Preis"));
 		Hashtable ext=getHashtable("ExtInfo");
 		double vpe= checkZeroDouble((String)ext.get("Verpackungseinheit"));
@@ -321,7 +326,8 @@ public class Artikel extends VerrechenbarAdapter{
 			return (int)Math.round(vkt);
 		}
 	}
-	public Money getKosten(TimeTool dat){
+	@Override
+	public Money getKosten(final TimeTool dat){
 		double vkt= checkZeroDouble(get("EK_Preis"));
 		Hashtable ext=getHashtable("ExtInfo");
 		double vpe= checkZeroDouble((String)ext.get("Verpackungseinheit"));
@@ -332,10 +338,10 @@ public class Artikel extends VerrechenbarAdapter{
 			return new Money((int)Math.round(vkt));
 		}
 	}
-	public int getTP(TimeTool date, String subgroup) {
-		return getPreis(date,subgroup);
+	public int getTP(final TimeTool date, final Fall fall) {
+		return getPreis(date,fall);
 	}
-	public double getFactor(TimeTool date, String subgroup) {
+	public double getFactor(final TimeTool date, final Fall fall) {
 		return 1.0;
 	}
 }

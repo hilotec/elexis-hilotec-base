@@ -8,15 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockDetailDisplay.java 2238 2007-04-18 15:55:14Z rgw_ch $
+ *  $Id: BlockDetailDisplay.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -30,7 +30,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -75,7 +76,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	private Action removeLeistung,moveUpAction,moveDownAction,editAction;
 	IViewSite site;
 	
-	public Composite createDisplay(Composite parent, final IViewSite site) {
+	public Composite createDisplay(final Composite parent, final IViewSite site) {
 		tk=Desk.theToolkit;
 		this.site=site;
 		form=tk.createScrolledForm(parent);
@@ -97,7 +98,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		cbMandant.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				int idx=cbMandant.getSelectionIndex();
 				Leistungsblock lb=(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(Leistungsblock.class);
 				if(idx>0){
@@ -121,8 +122,8 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		
 		lLst.setContentProvider(new IStructuredContentProvider(){
 			public void dispose() {}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){	}
-			public Object[] getElements(Object inputElement) {
+			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){	}
+			public Object[] getElements(final Object inputElement) {
 				Leistungsblock lb=(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(Leistungsblock.class);
 				if(lb==null){
 					return new Object[0];
@@ -138,7 +139,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		lLst.setLabelProvider(new LabelProvider(){
 
 			@Override
-			public String getText(Object element) {
+			public String getText(final Object element) {
 				ICodeElement v=(ICodeElement)element;
 				return v.getCode()+" "+v.getText();
 			}
@@ -147,20 +148,20 @@ public class BlockDetailDisplay implements IDetailDisplay {
         final TextTransfer textTransfer = TextTransfer.getInstance();
         Transfer[] types = new Transfer[] {textTransfer};
 		lLst.addDropSupport(DND.DROP_COPY,types,new DropTargetListener(){
-			public void dragEnter(DropTargetEvent event) {
+			public void dragEnter(final DropTargetEvent event) {
                 event.detail=DND.DROP_COPY;
 			}
 
-			public void dragLeave(DropTargetEvent event) {
+			public void dragLeave(final DropTargetEvent event) {
 			}
 
-			public void dragOperationChanged(DropTargetEvent event) {
+			public void dragOperationChanged(final DropTargetEvent event) {
 			}
 
-			public void dragOver(DropTargetEvent event) {
+			public void dragOver(final DropTargetEvent event) {
 			}
 
-			public void drop(DropTargetEvent event) {
+			public void drop(final DropTargetEvent event) {
 			    String drp=(String)event.data;
                 String[] dl=drp.split(",");
                 for(String obj:dl){
@@ -177,7 +178,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
             				
 			}
 
-			public void dropAccept(DropTargetEvent event) {
+			public void dropAccept(final DropTargetEvent event) {
 				// TODO Automatisch erstellter Methoden-Stub
 				
 			}
@@ -188,7 +189,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		bNew.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				try{
 					site.getPage().showView(LeistungenView.ID);
 				}catch(Exception ex){
@@ -204,7 +205,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		bEigen.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		bEigen.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				EigenLeistungDlg dlg=new EigenLeistungDlg(site.getShell(),null);
 				if(dlg.open()==Dialog.OK){
                 	Leistungsblock lb=(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(Leistungsblock.class);
@@ -236,7 +237,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		return Leistungsblock.class;
 	}
 
-	public void display(Object obj) {
+	public void display(final Object obj) {
 		if(obj==null){
 			bNew.setEnabled(false);
 			tName.setText("");
@@ -263,7 +264,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		Text tName,tKurz,tEK,tVK,tTime;
 		//Eigenleistung result;
 		IVerrechenbar result;
-		EigenLeistungDlg(Shell shell, IVerrechenbar lstg){
+		EigenLeistungDlg(final Shell shell, final IVerrechenbar lstg){
 			super(shell);
 			result=lstg;
 		}
@@ -280,7 +281,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			getShell().setText("Eigenleistung");
 		}
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(final Composite parent) {
 			Composite ret=new Composite(parent,SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 			ret.setLayout(new GridLayout(2,false));
@@ -304,7 +305,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 				tName.setText(el.get("Bezeichnung"));
 				tKurz.setText(el.get("Code"));
 				tEK.setText(el.getKosten(new TimeTool()).getCentsAsString());
-				tVK.setText(el.getPreis(new TimeTool(), "").getCentsAsString());
+				tVK.setText(el.getPreis(new TimeTool(), null).getCentsAsString());
 			}
 			return ret;
 		}
@@ -323,6 +324,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	};
 	private void makeActions(){
 		removeLeistung=new Action("Entfernen"){
+			@Override
 			public void run(){
 				Leistungsblock lb=(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(Leistungsblock.class);
             	if(lb!=null){
@@ -336,11 +338,13 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			}
 		};
 		moveUpAction=new Action("nach oben"){
+			@Override
 			public void run(){
 				moveElement(-1);
 			}
 		};
 		moveDownAction=new Action("nach unten"){
+			@Override
 			public void run(){
 				moveElement(1);
 			}
@@ -358,7 +362,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			}
 		};
 	}
-	private void moveElement(int off){
+	private void moveElement(final int off){
 		Leistungsblock lb=(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(Leistungsblock.class);
     	if(lb!=null){
     		IStructuredSelection sel=(IStructuredSelection) lLst.getSelection();

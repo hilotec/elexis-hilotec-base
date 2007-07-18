@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 1204 2006-11-01 15:56:38Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 2839 2007-07-18 17:44:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -66,7 +66,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 		return comparator;
 	}
 
-	public IFilter getFilter(Mandant m) {
+	public IFilter getFilter(final Mandant m) {
 		return ifilter;
 	}
 	
@@ -78,36 +78,32 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 	}
 
 
-	public Double getVKMultiplikator(TimeTool date, String subgroup){
-		return getMultiplikator(date,"VK_PREISE",subgroup);
+	public Double getVKMultiplikator(final TimeTool date, final Fall fall){
+		return getMultiplikator(date,"VK_PREISE",fall);
 	}
-	public Double getEKMultiplikator(TimeTool date, String subgroup){
-		return getMultiplikator(date,"EK_PREISE",subgroup);
+	public Double getEKMultiplikator(final TimeTool date, final Fall fall){
+		return getMultiplikator(date,"EK_PREISE",fall);
 	}
-	private Double getMultiplikator(TimeTool date, String table,String subgroup){
+	private Double getMultiplikator(final TimeTool date, final String table,final Fall fall){
 		String actdat=JdbcLink.wrap(date.toString(TimeTool.DATE_COMPACT));
 		StringBuilder sql=new StringBuilder();
-		sql.append("SELECT MULTIPLIKATOR FROM ").append(table).append(" WHERE TYP=");
-		if(subgroup==null){
-			sql.append(JdbcLink.wrap(getClass().getName()));
-		}else{
-			sql.append(JdbcLink.wrap(getClass().getName()+subgroup));
-		}
-		 sql.append(" AND DATUM_VON <=").append(actdat)
-		 .append(" AND DATUM_BIS >").append(actdat);
+		sql.append("SELECT MULTIPLIKATOR FROM ").append(table).append(" WHERE TYP=")
+			.append(fall.getAbrechnungsSystemName())
+			.append(" AND DATUM_VON <=").append(actdat)
+			.append(" AND DATUM_BIS >").append(actdat);
 		String res=j.queryString(sql.toString()+" AND ID="+getWrappedId());
 		if(res==null){
 			res=j.queryString(sql.toString());
 		}
 		return res==null ? 1.0 : Double.parseDouble(res);
 	}
-	public Money getKosten(TimeTool dat) {
+	public Money getKosten(final TimeTool dat) {
 		return new Money(0);
 	}
 	public int getMinutes(){
 		return 0;
 	}
-	protected VerrechenbarAdapter(String id){
+	protected VerrechenbarAdapter(final String id){
 		super(id);
 	}
 	public String getCodeSystemCode(){
@@ -119,6 +115,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 	
 	private void makeActions(final ICodeElement el){
 		addToBlockAction=new Action("Zu Leistungsblock..."){
+			@Override
 			public void run(){
 				AddElementToBlockDialog adb=new AddElementToBlockDialog(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 				if(adb.open()==Dialog.OK){
