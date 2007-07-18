@@ -8,20 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt.java 2822 2007-07-17 05:02:03Z rgw_ch $
+ *  $Id: FallDetailBlatt.java 2836 2007-07-18 16:55:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -32,8 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -42,24 +32,25 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class FallDetailBlatt extends Composite {
-	private FormToolkit tk;
-	private ScrolledForm form;
+	private final FormToolkit tk;
+	private final ScrolledForm form;
+	String[] Abrechnungstypen=Hub.globalCfg.keys(Leistungscodes.CFG_KEY);
+	/*
     public static final String[] Gesetze={Fall.LAW_DISEASE,Fall.LAW_ACCIDENT,Fall.LAW_INSURANCE,
     	Fall.LAW_INVALIDITY,Fall.LAW_MILITARY,Fall.LAW_OTHER};
+    */
     public static final String[] Reasons={Fall.TYPE_DISEASE,
     	Fall.TYPE_ACCIDENT,Fall.TYPE_MATERNITY,Fall.TYPE_PREVENTION,Fall.TYPE_BIRTHDEFECT,Fall.TYPE_OTHER};
     public static final String[] dgsys=null;
@@ -68,14 +59,14 @@ public class FallDetailBlatt extends Composite {
 	DatePickerCombo dpBeginn, dpEnd;
     Button accept,reject;
     Hyperlink garant, kostentraeger, arbeitgeber,autoFill;
-	public FallDetailBlatt(Composite parent){
+	public FallDetailBlatt(final Composite parent){
 		super(parent,SWT.NONE);
 		tk=Desk.theToolkit;
 		form=tk.createScrolledForm(this);
 		Composite top=form.getBody();
 		setLayout(new FillLayout());
 		top.setLayout(new GridLayout(2,false));
-		tk.createLabel(top,"Gesetz");
+		tk.createLabel(top,"Abrechnungsmethode");
 		Composite cpGesetz=new Composite(top,SWT.NONE);
 		cpGesetz.setLayout(new GridLayout(2,false));
 		cGesetz=new Combo(cpGesetz,SWT.READ_ONLY);
@@ -83,7 +74,7 @@ public class FallDetailBlatt extends Composite {
 		autoFill.addHyperlinkListener(new HyperlinkAdapter(){
 
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(final HyperlinkEvent e) {
 				// copy data from previous Fall of the same Gesetz
 				
 				Fall f=GlobalEvents.getSelectedFall();
@@ -112,10 +103,13 @@ public class FallDetailBlatt extends Composite {
 		    	setFall(f);
 			}
 		});
-		cGesetz.setItems(Gesetze);
+		for(String s:Abrechnungstypen){
+			cGesetz.add(s.split(";")[0]);
+		}
+
         cGesetz.addSelectionListener(new SelectionAdapter(){
             @Override
-            public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(final SelectionEvent e)
             {
                 int i=cGesetz.getSelectionIndex();
                 Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
@@ -129,7 +123,7 @@ public class FallDetailBlatt extends Composite {
                 		cGesetz.select(cGesetz.indexOf(gesetz));
                 		
                 	}else{
-                		fall.setGesetz(Gesetze[i]);
+                		fall.setGesetz(Abrechnungstypen[i].split(";")[0]);
                 		GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
                 	// Falls noch kein Garant gesetzt ist: Garanten des letzten Falles zum selben Gesetz nehmen
                 	}
@@ -146,7 +140,7 @@ public class FallDetailBlatt extends Composite {
 		cReason.setItems(Reasons);
 		cReason.addSelectionListener(new SelectionAdapter(){
 			@Override
-            public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(final SelectionEvent e)
             {
                 int i=cReason.getSelectionIndex();
                 Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
@@ -157,12 +151,14 @@ public class FallDetailBlatt extends Composite {
             }
 		});
         cReason.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+        /*
         tk.createLabel(top,"Zahlungsmethode");
+       
         cPaymentMode=new Combo(top,SWT.READ_ONLY);
         cPaymentMode.setItems(new String[]{"Tiers Garant","Tiers Payant"});
         cPaymentMode.addSelectionListener(new SelectionAdapter(){
         	@Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
         		int i=cPaymentMode.getSelectionIndex();
         		Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
                 if(fall!=null){
@@ -178,6 +174,7 @@ public class FallDetailBlatt extends Composite {
             
             }
         });
+        */
 		tk.createLabel(top,"Beginndatum/Unfalldatum");
 		dpBeginn=new DatePickerCombo(top,SWT.NONE);
         dpBeginn.addSelectionListener(new SelectionAdapter(){
@@ -186,7 +183,7 @@ public class FallDetailBlatt extends Composite {
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             @Override
-            public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(final SelectionEvent e)
             {
                 TimeTool beg=new TimeTool(dpBeginn.getDate().getTime());
                 Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
@@ -200,7 +197,7 @@ public class FallDetailBlatt extends Composite {
 		dpEnd=new DatePickerCombo(top,SWT.NONE);
         dpEnd.addSelectionListener(new SelectionAdapter(){
             @Override
-            public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(final SelectionEvent e)
             {
                 TimeTool end=new TimeTool(dpEnd.getDate().getTime());
                 Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
@@ -239,12 +236,12 @@ public class FallDetailBlatt extends Composite {
 	
 	private final class KontaktAdapter extends HyperlinkAdapter {
     	String t,m;
-    	KontaktAdapter(String titel, String msg){
+    	KontaktAdapter(final String titel, final String msg){
     		t=titel;
     		m=msg;
     	}
 		@Override
-		public void linkActivated(HyperlinkEvent e) {
+		public void linkActivated(final HyperlinkEvent e) {
 			Hyperlink source=(Hyperlink)e.getSource();
 			KontaktSelektor ksl=new KontaktSelektor(getShell(),	Kontakt.class,t,m, true);
 			if(ksl.open()==Dialog.OK){
@@ -265,14 +262,14 @@ public class FallDetailBlatt extends Composite {
 		}
 	}
 	class Focusreact implements FocusListener{
-        private String field;
-        Focusreact(String dbField){
+        private final String field;
+        Focusreact(final String dbField){
             field=dbField;
         }
-        public void focusGained(FocusEvent e)
+        public void focusGained(final FocusEvent e)
         { /* nichts */}
 
-        public void focusLost(FocusEvent e)
+        public void focusLost(final FocusEvent e)
         {
             String newval=((Text)e.getSource()).getText();
             Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
@@ -283,7 +280,7 @@ public class FallDetailBlatt extends Composite {
         }
         
     }
-	public void setFall(Fall f){
+	public void setFall(final Fall f){
 		if(f==null){
 			form.setText("Kein Fall ausgewählt");
 			tBezeichnung.setText("");
@@ -295,7 +292,7 @@ public class FallDetailBlatt extends Composite {
 			tArbeitgeber.setText("");
 			dpBeginn.setDate(null);
 			dpEnd.setDate(null);
-			cPaymentMode.select(0);
+			//cPaymentMode.select(0);
 			return;
 		}
     	
@@ -329,7 +326,7 @@ public class FallDetailBlatt extends Composite {
             tGarant.setText("");
         }else{
             tGarant.setText(garant1.getLabel());
-        }
+        }/*
         if(f.getPaymentMode().equals("TG")){
         	cPaymentMode.select(0);
         }else if(f.getPaymentMode().equals("TP")){
@@ -338,7 +335,7 @@ public class FallDetailBlatt extends Composite {
         	f.setPaymentMode("TG");
         	cPaymentMode.select(0);
         }
-        
+        */
         Kontakt ktr=f.getKostentraeger();
         if((ktr==null) || (!ktr.exists())){
         	tKostentraeger.setText("");

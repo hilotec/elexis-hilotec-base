@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *    $Id: Fall.java 2836 2007-07-18 16:55:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,13 +17,18 @@ package ch.elexis.data;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Extensions;
+import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -43,6 +48,7 @@ public class Fall extends PersistentObject{
 	public static final String TYPE_BIRTHDEFECT="Geburtsgebrechen";
 	public static final String TYPE_OTHER="Anderes";
 	
+	/* das ist zu schweizlastig */
 	public static final String LAW_DISEASE="KVG";
 	public static final String LAW_ACCIDENT="UVG";
 	public static final String LAW_INVALIDITY="IV";
@@ -51,6 +57,7 @@ public class Fall extends PersistentObject{
 	public static final String LAW_OTHER="privat";
 	
 	
+	@Override
 	protected String getTableName() {
 		return "FAELLE";
 	}
@@ -62,11 +69,18 @@ public class Fall extends PersistentObject{
 				"VersNummer","FallNummer","BetriebsNummer","ExtInfo");
 	}
 	
+	@Override
 	public boolean isValid(){
+		
+		if(!super.isValid()){
+			return false;
+		}
 		Patient p=Patient.load(get("PatientID"));
 		if((p==null) || (!p.isValid())){
 			return false;
 		}
+		
+		
 		if(getPaymentMode().equalsIgnoreCase("TG")){
 			if(!getKostentraeger().exists()){
 				return false;
@@ -84,10 +98,16 @@ public class Fall extends PersistentObject{
 				return false;
 			}
 		}
-		return super.isValid();
+		IRnOutputter outputter=getOutputter();
+		if(outputter!=null){
+			if(!outputter.canBill(this)){
+			return false;
+			}
+		}
+		return true;
 	}
 	protected Fall(){/* leer */}
-	protected Fall(String id){
+	protected Fall(final String id){
 		super(id);
 	}
 	/**
@@ -96,7 +116,7 @@ public class Fall extends PersistentObject{
 	 * @param PatientID
 	 * @param Bezeichnung
 	 */
-	Fall(String PatientID, String Bezeichnung, String Grund, String Gesetz)
+	Fall(final String PatientID, final String Bezeichnung, final String Grund, final String Gesetz)
 	{
 		create(null);
 		set(new String[]{"PatientID","Bezeichnung","Grund","Gesetz","DatumVon"},
@@ -104,7 +124,7 @@ public class Fall extends PersistentObject{
 		GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.create);
 	}
 	/** Einen Fall anhand der ID aus der Datenbank laden */
-	public static Fall load(String id){
+	public static Fall load(final String id){
 		Fall ret= new Fall(id);
 		if(ret.exists()){
 			return ret;
@@ -119,14 +139,14 @@ public class Fall extends PersistentObject{
 	 public String getBezeichnung(){
 		 return checkNull(get("Bezeichnung"));
 	 }
-     public void setBezeichnung(String t){
+     public void setBezeichnung(final String t){
          set("Bezeichnung",t);
      }
 	/** 
 	 * Anfangsdatum setzen 
 	 * Zul�ssige Formate: dd.mm.yy, dd.mm.yyyy, yyyymmdd, yy-mm-dd
 	 * */
-	public void setBeginnDatum(String dat){
+	public void setBeginnDatum(final String dat){
 		set("DatumVon",dat);
 	}
 	/** Enddatum lesen oder null: Fall noch nicht abgeschlossen */
@@ -134,7 +154,7 @@ public class Fall extends PersistentObject{
 		return checkNull(get("DatumBis"));
 	}
 	/** Enddatum setzen. Setzt zugleich den Fall auf abgeschlossen */
-	public void setEndDatum(String dat){
+	public void setEndDatum(final String dat){
 		set("DatumBis",dat);
 	}
 	
@@ -143,10 +163,10 @@ public class Fall extends PersistentObject{
 		return Kontakt.load(get("GarantID"));
 	}
 	/** Garant setzen */
-	public void setGarant(Kontakt garant){
+	public void setGarant(final Kontakt garant){
 		set("GarantID",garant==null ? "" : garant.getId());
 	}
-	public void setArbeitgeber(Kontakt arbeitgeber){
+	public void setArbeitgeber(final Kontakt arbeitgeber){
 		if(arbeitgeber==null){
 			clearInfoString("Arbeitgeber");
 		}else{
@@ -158,7 +178,7 @@ public class Fall extends PersistentObject{
 	public Kontakt getArbeitgeber(){
 		String id=getInfoString("Arbeitgeber");
 		Kontakt ret=null;
-		if(StringTool.isNothing(id) || (ret=Kontakt.load(id)).exists()==false){
+		if(StringTool.isNothing(id) || ((ret=Kontakt.load(id)).exists()==false)){
 			return null;
 		}
 		return ret;
@@ -176,7 +196,7 @@ public class Fall extends PersistentObject{
 		return Kontakt.load(get("Kostentraeger"));
 	}
 	/** Kostenträger setzen */
-	public void setKostentraeger(Kontakt k){
+	public void setKostentraeger(final Kontakt k){
 		if(k!=null){
 			set("Kostentraeger",k.getId());
 		}
@@ -186,7 +206,7 @@ public class Fall extends PersistentObject{
 		return checkNull(get("VersNummer"));
 	}
 	/** Versichertennummer setzen */
-	public void setVersNummer(String nr){
+	public void setVersNummer(final String nr){
 		set("VersNummer",nr);
 	}
 	/** Fallnummer lesen */
@@ -194,7 +214,7 @@ public class Fall extends PersistentObject{
 		return checkNull(get("FallNummer"));
 	}
 	/** Fallnummer setzen */
-	public void setFallNummer(String nr){
+	public void setFallNummer(final String nr){
 		set("FallNummer",nr);
 	}
 	/** Feststellen, ob der Fall noch offen ist */
@@ -204,8 +224,41 @@ public class Fall extends PersistentObject{
 		}
 		return false;
 	}
+	
+	public void setAbrechnungsSystem(final String system){
+		setInfoString("billing",system);
+	}
+	public String getAbrechnungsSytem(){
+		return getInfoString("billing");
+	}
+	
+	public String getAbrechnungsSystemName(){
+		String rn=getAbrechnungsSytem();
+		return rn.length()==0 ? "?" : rn.split(";")[0];
+
+	}
+	
+	public IRnOutputter getOutputter(){
+		String rn=getAbrechnungsSytem();
+		if(rn.length()>0){
+			String outputterName=rn.split(";")[2];
+			List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.RechnungsManager");
+			for(IConfigurationElement ic:list){
+				if(ic.getAttribute("name").equals(outputterName)){
+					try {
+						IRnOutputter ret=(IRnOutputter)ic.createExecutableExtension("outputter");
+						return ret;
+					} catch (CoreException e) {
+						ExHandler.handle(e);
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	/** Behandlungen zu diesem Fall holen */
-	public Konsultation[] getBehandlungen(boolean sortReverse)
+	public Konsultation[] getBehandlungen(final boolean sortReverse)
 	{
 		List<String> list=getList("Behandlungen",sortReverse);
 		int i=0;
@@ -242,16 +295,17 @@ public class Fall extends PersistentObject{
 	public String getGrund(){
 		return checkNull(get("Grund"));
 	}
-    public void setGrund(String g){
+    public void setGrund(final String g){
         set("Grund",g);
     }
 	public String getGesetz(){
 		return checkNull(get("Gesetz"));
 	}
-    public void setGesetz(String g){
+    public void setGesetz(final String g){
         set("Gesetz",g);
     }
-    public String getLabel(){
+    @Override
+	public String getLabel(){
     	String[] f=new String[]{"Gesetz","Grund","Bezeichnung","DatumVon","DatumBis"};
     	String[] v=new String[f.length];
     	get(f,v);
@@ -279,7 +333,7 @@ public class Fall extends PersistentObject{
      * @param force delete even if KOnsultationene xist (in that case, all Konsultationen will be deleted as well)
      * @return true if this Fall could be (and has been) deleted.
      */
-	public boolean delete(boolean force){
+	public boolean delete(final boolean force){
     	Konsultation[] bh=getBehandlungen(false);
     	if( (bh.length==0) || ((force==true) && (Hub.acl.request(AccessControlDefaults.DELETE_FORCED)==true))){
     		for(Konsultation b:bh){
@@ -304,18 +358,18 @@ public class Fall extends PersistentObject{
 		return true;
 	}
     @SuppressWarnings("unchecked")
-	public String getInfoString(String name){
+	public String getInfoString(final String name){
     	Hashtable extinfo=getHashtable("ExtInfo");
     	return checkNull((String)extinfo.get(name));
     }
     @SuppressWarnings("unchecked")
-	public void setInfoString(String name, String wert){
+	public void setInfoString(final String name, final String wert){
     	Hashtable<String, String> extinfo=getHashtable("ExtInfo");
     	extinfo.put(name,wert);
     	setHashtable("ExtInfo",extinfo);
     }
     @SuppressWarnings("unchecked")
-    public void clearInfoString(String string) {
+    public void clearInfoString(final String string) {
     	Hashtable<String, String> extinfo=getHashtable("ExtInfo");
     	extinfo.remove(string);
     	setHashtable("ExtInfo",extinfo);
@@ -325,7 +379,7 @@ public class Fall extends PersistentObject{
 	public boolean isDragOK() {
 		return true;
 	}
-	public void setPaymentMode(String string) {
+	public void setPaymentMode(final String string) {
 		setInfoString("payment",string);
 		
 	}

@@ -18,6 +18,7 @@ import java.util.Collection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 
 /**
@@ -50,6 +51,15 @@ public interface IRnOutputter {
 	 * If an outputter does need to react on storno messages, it should return false.
 	 */
 	public boolean canStorno(Rechnung rn);
+	
+	/**
+	 * check whether a case could be billed, i.e. all billing data are present.
+	 * This should only check for required absolutely mandatory data. At output
+	 * time, the outputter still can reject. 
+	 * @param fall the case to check
+	 * @return true if we can send a bill from this case 
+	 */
+	public boolean canBill(Fall fall);
 
 	/**
 	 * Create a Control to perform necessary setings for his outputter.
