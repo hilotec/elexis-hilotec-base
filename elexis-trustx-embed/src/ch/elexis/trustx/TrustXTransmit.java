@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2789 2007-07-12 19:31:38Z rgw_ch $
+ *  $Id: TrustXTransmit.java 2833 2007-07-18 16:55:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -39,13 +38,14 @@ import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Hub;
 import ch.elexis.TarmedRechnung.XMLExporter;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.tarmedprefs.PreferenceConstants;
+import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
-import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -84,7 +84,7 @@ public class TrustXTransmit implements IRnOutputter{
 			progressService.runInUI(
 			      PlatformUI.getWorkbench().getProgressService(),
 			      new IRunnableWithProgress() {
-			         public void run(IProgressMonitor monitor) {
+			         public void run(final IProgressMonitor monitor) {
 		        	 monitor.beginTask("Exportiere Rechnungen...",rnn.size()*10);
 		        	 int errors=0;
 		     		 for(Rechnung rn:rnn){
@@ -202,11 +202,11 @@ public class TrustXTransmit implements IRnOutputter{
 		return "Übermittlung via TrustX";
 	}
 
-	public boolean canStorno(Rechnung rn){
+	public boolean canStorno(final Rechnung rn){
 		// we need to know when a bill is cancelled, because we have to send the storno message to the trust center
 		return true;
 	}
-	public Control createSettingsControl(Composite parent) {
+	public Control createSettingsControl(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
 		Label trustxver=new Label(ret, SWT.NONE);
@@ -237,13 +237,18 @@ public class TrustXTransmit implements IRnOutputter{
 			cbTC.setText(Hub.localCfg.get(PreferenceConstants.TARMEDTC,"TC test"));
 			cbTC.addSelectionListener(new SelectionAdapter(){
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					Hub.localCfg.set(PreferenceConstants.TARMEDTC, cbTC.getText());
 				}
 				
 			});
 		}
 		return ret;
+	}
+
+
+	public boolean canBill(final Fall fall) {
+		return true;
 	}
 
 }
