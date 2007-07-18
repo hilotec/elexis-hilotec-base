@@ -13,6 +13,7 @@
 
 package ch.elexis.privatrechnung.data;
 
+import ch.elexis.data.Fall;
 import ch.elexis.data.VerrechenbarAdapter;
 import ch.rgw.tools.TimeTool;
 
@@ -56,12 +57,12 @@ public class Leistung extends VerrechenbarAdapter {
 		return null;
 	}
 
-	public double getFactor(TimeTool date, String subgroup) {
+	public double getFactor(final TimeTool date, final Fall fall) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	public int getTP(TimeTool date, String subgroup) {
+	public int getTP(final TimeTool date, final Fall fall) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
