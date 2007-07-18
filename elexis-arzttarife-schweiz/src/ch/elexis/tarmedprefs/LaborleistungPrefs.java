@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungPrefs.java 1625 2007-01-19 20:01:59Z rgw_ch $
+ * $Id: LaborleistungPrefs.java 2831 2007-07-18 15:05:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -20,16 +20,17 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.data.LaborLeistung;
+import ch.elexis.preferences.inputs.MultiplikatorEditor;
 
 public class LaborleistungPrefs extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	@Override
-	protected Control createContents(Composite parent) {
-		return new MultiplikatorEditor(parent,LaborLeistung.class,""); //$NON-NLS-1$
+	protected Control createContents(final Composite parent) {
+		return new MultiplikatorEditor(parent,LaborLeistung.class.getName()); 
 	}
 
-	public void init(IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		
 	}
 
