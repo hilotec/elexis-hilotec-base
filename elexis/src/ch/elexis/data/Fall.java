@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2839 2007-07-18 17:44:17Z rgw_ch $
+ *    $Id: Fall.java 2841 2007-07-19 05:19:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.IRnOutputter;
@@ -48,14 +49,14 @@ public class Fall extends PersistentObject{
 	public static final String TYPE_BIRTHDEFECT="Geburtsgebrechen";
 	public static final String TYPE_OTHER="Anderes";
 	
-	/* das ist zu schweizlastig */
+	/* das ist zu schweizlastig 
 	public static final String LAW_DISEASE="KVG";
 	public static final String LAW_ACCIDENT="UVG";
 	public static final String LAW_INVALIDITY="IV";
 	public static final String LAW_MILITARY="MV";
 	public static final String LAW_INSURANCE="VVG";
 	public static final String LAW_OTHER="privat";
-	
+	*/
 	
 	@Override
 	protected String getTableName() {
@@ -119,11 +120,12 @@ public class Fall extends PersistentObject{
 	 * @param PatientID
 	 * @param Bezeichnung
 	 */
-	Fall(final String PatientID, final String Bezeichnung, final String Grund, final String Gesetz)
+	Fall(final String PatientID, final String Bezeichnung, final String Grund, final String Abrechnungsmethode)
 	{
 		create(null);
-		set(new String[]{"PatientID","Bezeichnung","Grund","Gesetz","DatumVon"},
-				PatientID,Bezeichnung,Grund,Gesetz,new TimeTool().toString(TimeTool.DATE_GER));
+		set(new String[]{"PatientID","Bezeichnung","Grund","DatumVon"},
+				PatientID,Bezeichnung,Grund,new TimeTool().toString(TimeTool.DATE_GER));
+		setAbrechnungsSystem(Abrechnungsmethode);
 		GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.create);
 	}
 	/** Einen Fall anhand der ID aus der Datenbank laden */
@@ -235,6 +237,12 @@ public class Fall extends PersistentObject{
 		return getInfoString("billing");
 	}
 	
+	/*
+	 * Update from older system
+	 */
+	public static void doUpdateAbrechnung(){
+		
+	}
 	public String getAbrechnungsSystemName(){
 		String rn=getAbrechnungsSytem();
 		if(rn.length()==0){ // compatibility helper
@@ -314,20 +322,21 @@ public class Fall extends PersistentObject{
     */
     @Override
 	public String getLabel(){
-    	String[] f=new String[]{"Gesetz","Grund","Bezeichnung","DatumVon","DatumBis"};
+    	String[] f=new String[]{"Grund","Bezeichnung","DatumVon","DatumBis"};
     	String[] v=new String[f.length];
     	get(f,v);
         StringBuilder ret=new StringBuilder();
         if(!isOpen()){
         	ret.append("-GESCHLOSSEN- ");
         }
-        ret.append(v[0]).append(": ").append(v[1]).append(" - ");
-        ret.append(v[2]).append("(");
-        String ed=v[4];
+        String ges=getAbrechnungsSystemName();
+        ret.append(ges).append(": ").append(v[0]).append(" - ");
+        ret.append(v[1]).append("(");
+        String ed=v[3];
         if((ed==null) || StringTool.isNothing(ed.trim())){
             ed=" offen ";
         }
-        ret.append(v[3]).append("-").append(ed).append(")");    
+        ret.append(v[2]).append("-").append(ed).append(")");    
         return ret.toString();
     }
     
@@ -387,14 +396,31 @@ public class Fall extends PersistentObject{
 	public boolean isDragOK() {
 		return true;
 	}
+	/*
 	public void setPaymentMode(final String string) {
 		setInfoString("payment",string);
 		
 	}
+	*/
 	public String getPaymentMode(){
-		return getInfoString("payment");
+		String tiers="TG";
+		Kontakt garant=getGarant();
+		if(!garant.isValid()){
+			garant=getPatient();
+		}
+		Kontakt kk=getKostentraeger();
+		if(!garant.isValid()){
+			tiers="TP";
+		}else{
+			if(kk.isValid()){
+				if(kk.equals(garant)){
+					tiers="TP";
+				}
+			}
+		}
+		return tiers;
 	}
-
+	 
 	public static String getDefaultCaseLabel(){
 		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASELABEL, "Allgemein");
 	}
@@ -402,6 +428,22 @@ public class Fall extends PersistentObject{
 		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASEREASON, "Krankheit");
 	}
 	public static String getDefaultCaseLaw(){
-		return Hub.userCfg.get(PreferenceConstants.USR_DEFLAW, LAW_DISEASE);
+		return Hub.userCfg.get(PreferenceConstants.USR_DEFLAW, getAbrechnungsSysteme()[0]);
+	}
+	
+	public static String[] getAbrechnungsSysteme(){
+		String[] ret= Hub.globalCfg.keys(Leistungscodes.CFG_KEY);
+		if(ret==null){
+			List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.RechnungsManager");
+			for(IConfigurationElement ic:list){
+				if(ic.getAttribute("name").startsWith("Tarmed")){
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG;TarmedLeistung;TarmedRechnung", "1");
+					
+				}
+			}
+			return Hub.globalCfg.keys(Leistungscodes.CFG_KEY);
+		}else{
+			return new String[]{"KVG"};
+		}
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 2832 2007-07-18 15:05:58Z rgw_ch $
+ * $Id: Leistungscodes.java 2841 2007-07-19 05:19:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -54,8 +54,8 @@ public class Leistungscodes extends PreferencePage implements
 	List<IConfigurationElement> ll=Extensions.getExtensions("ch.elexis.Verrechnungscode");
 	String[] systeme=Hub.globalCfg.keys(CFG_KEY);
 	Table table;
-	String[] tableCols={"Name","Abrechnungs-System","Standard-Ausgabe","Multiplikator"};
-	int[] tableWidths={60,100,100,60};
+	String[] tableCols={"Name","Leistungscode-System","Standard-Ausgabe","Multiplikator"};
+	int[] tableWidths={60,120,120,70};
 	
 	@Override
 	protected Control createContents(final Composite parent) {
@@ -71,6 +71,7 @@ public class Leistungscodes extends PreferencePage implements
 				AbrechnungsTypDialog at=new AbrechnungsTypDialog(getShell(),null);
 				if(at.open()==Dialog.OK){
 					Hub.globalCfg.set(CFG_KEY+"/"+at.getResult(), "1");
+					systeme=Hub.globalCfg.keys(CFG_KEY);
 					reload();
 				}
 			}
@@ -130,9 +131,8 @@ public class Leistungscodes extends PreferencePage implements
 				}
 				it.setText(3,tp);
 			}
-			
-				
 		}
+		//table.redraw();
 	}
 
 	

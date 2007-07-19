@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 2527 2007-06-18 04:54:06Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 2841 2007-07-19 05:19:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -69,7 +69,7 @@ public class VerrechnungsDisplay extends Composite {
 				try{
 					// TODO
 					if(StringTool.isNothing(LeistungenView.ID)){
-						SWTHelper.alert("Fehler", "LeistungebView.ID");
+						SWTHelper.alert("Fehler", "LeistungenView.ID");
 					}
 					page.showView(LeistungenView.ID);
 					GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
