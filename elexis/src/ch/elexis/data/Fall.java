@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2841 2007-07-19 05:19:56Z rgw_ch $
+ *    $Id: Fall.java 2842 2007-07-19 07:56:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -233,29 +233,33 @@ public class Fall extends PersistentObject{
 	public void setAbrechnungsSystem(final String system){
 		setInfoString("billing",system);
 	}
-	public String getAbrechnungsSytem(){
-		return getInfoString("billing");
+	public String getAbrechnungsSystem(){
+		String ret=getInfoString("billing");
+		if(StringTool.isNothing(ret)){
+			String[] systeme=getAbrechnungsSysteme();
+			String altGesetz=get("Gesetz");
+			int idx=StringTool.getIndex(systeme, altGesetz);
+			if(idx==-1){
+				ret=systeme[0];
+			}else{
+				ret=systeme[idx];
+			}
+			setAbrechnungsSystem(ret);
+		}
+		return ret;
+	}
+		
+	public String getCodeSystemName(){
+		return getCodeSystem(getAbrechnungsSystem());
 	}
 	
-	/*
-	 * Update from older system
-	 */
-	public static void doUpdateAbrechnung(){
-		
-	}
-	public String getAbrechnungsSystemName(){
-		String rn=getAbrechnungsSytem();
-		if(rn.length()==0){ // compatibility helper
-			return get("Gesetz");
-		}
-		return rn.length()==0 ? "?" : rn.split(";")[0];
-
+	public String getOutputterName(){
+		return getDefaultPrintSystem(getAbrechnungsSystem());
 	}
 	
 	public IRnOutputter getOutputter(){
-		String rn=getAbrechnungsSytem();
-		if(rn.length()>0){
-			String outputterName=rn.split(";")[2];
+		String outputterName=getOutputterName();
+		if(outputterName.length()>0){
 			List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.RechnungsManager");
 			for(IConfigurationElement ic:list){
 				if(ic.getAttribute("name").equals(outputterName)){
@@ -329,7 +333,7 @@ public class Fall extends PersistentObject{
         if(!isOpen()){
         	ret.append("-GESCHLOSSEN- ");
         }
-        String ges=getAbrechnungsSystemName();
+        String ges=getAbrechnungsSystem();
         ret.append(ges).append(": ").append(v[0]).append(" - ");
         ret.append(v[1]).append("(");
         String ed=v[3];
@@ -431,19 +435,61 @@ public class Fall extends PersistentObject{
 		return Hub.userCfg.get(PreferenceConstants.USR_DEFLAW, getAbrechnungsSysteme()[0]);
 	}
 	
+	/**
+	 * Find all installed bolling systems. If we do not find any, we assume that this is an old installation and
+	 * try to update. If we find a tarmed-Plugin installed, we create default-tarmed billings.
+	 * @return
+	 */
 	public static String[] getAbrechnungsSysteme(){
-		String[] ret= Hub.globalCfg.keys(Leistungscodes.CFG_KEY);
+		String[] ret= Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);
 		if(ret==null){
 			List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.RechnungsManager");
 			for(IConfigurationElement ic:list){
 				if(ic.getAttribute("name").startsWith("Tarmed")){
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG;TarmedLeistung;TarmedRechnung", "1");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/name", "KVG");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/leistungscodes", "TarmedLeistung");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/standardausgabe", "Tarmed-Drucker");
+
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/name", "UVG");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/leistungscodes", "TarmedLeistung");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/standardausgabe", "Tarmed-Drucker");
 					
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/name", "IV");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/leistungscodes", "TarmedLeistung");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/standardausgabe", "Tarmed-Drucker");
+					
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/name", "MV");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/leistungscodes", "TarmedLeistung");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/standardausgabe", "Tarmed-Drucker");
+
+					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='UVG' WHERE typ='ch.elexis.data.TarmedLeistungUVG'");
+					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");
+					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='IV' WHERE typ='ch.elexis.data.TarmedLeistungIV'");
+					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='MV' WHERE typ='ch.elexis.data.TarmedLeistungMV'");
 				}
 			}
-			return Hub.globalCfg.keys(Leistungscodes.CFG_KEY);
-		}else{
-			return new String[]{"KVG"};
+			ret= Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);
+			if(ret==null){
+				return new String[]{"undefiniert"};
+			}
 		}
+		return ret;
+	}
+	public static String getCodeSystem(final String billingSystem){
+		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/leistungscodes", null);
+		if(ret==null){		// compatibility
+			getAbrechnungsSysteme();
+			ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/leistungscodes", "?");
+		}
+		return ret;
+	}
+	
+	public static String getDefaultPrintSystem(final String billingSystem){
+		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/standardausgabe", null);
+		if(ret==null){		// compatibility
+			getAbrechnungsSysteme();
+			ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/standardausgabe", "?");
+		}
+		return ret;
 	}
 }

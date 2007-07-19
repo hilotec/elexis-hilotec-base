@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt.java 2839 2007-07-18 17:44:17Z rgw_ch $
+ *  $Id: FallDetailBlatt.java 2842 2007-07-19 07:56:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -32,12 +32,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
@@ -46,7 +44,7 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
 public class FallDetailBlatt extends Composite {
 	private final FormToolkit tk;
 	private final ScrolledForm form;
-	String[] Abrechnungstypen=Hub.globalCfg.keys(Leistungscodes.CFG_KEY);
+	String[] Abrechnungstypen=Fall.getAbrechnungsSysteme();
 	/*
     public static final String[] Gesetze={Fall.LAW_DISEASE,Fall.LAW_ACCIDENT,Fall.LAW_INSURANCE,
     	Fall.LAW_INVALIDITY,Fall.LAW_MILITARY,Fall.LAW_OTHER};
@@ -105,9 +103,7 @@ public class FallDetailBlatt extends Composite {
 		    	*/
 			}
 		});
-		for(String s:Abrechnungstypen){
-			cGesetz.add(s.split(";")[0]);
-		}
+		cGesetz.setItems(Abrechnungstypen);
 
         cGesetz.addSelectionListener(new SelectionAdapter(){
             @Override
@@ -118,7 +114,7 @@ public class FallDetailBlatt extends Composite {
                 if(fall!=null){
                 	if(fall.getBehandlungen(false).length>0){
                 		SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Bei einem Fall, zu dem schon Konsultationen existieren, kann das Gestz nicht geändert werden.");
-                		String gesetz=fall.getAbrechnungsSystemName();
+                		String gesetz=fall.getAbrechnungsSystem();
                 		if(ch.rgw.tools.StringTool.isNothing(gesetz)){
                 			gesetz="frei";
                 		}
@@ -307,7 +303,7 @@ public class FallDetailBlatt extends Composite {
 			ix=0;
 		}
 		cReason.select(ix);
-		String gesetz=f.getAbrechnungsSystemName();
+		String gesetz=f.getAbrechnungsSystem();
 		if(ch.rgw.tools.StringTool.isNothing(gesetz)){
 			cGesetz.select(0);
 		}else{

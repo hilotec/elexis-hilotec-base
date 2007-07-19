@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 2839 2007-07-18 17:44:17Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 2842 2007-07-19 07:56:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -88,7 +88,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 		String actdat=JdbcLink.wrap(date.toString(TimeTool.DATE_COMPACT));
 		StringBuilder sql=new StringBuilder();
 		sql.append("SELECT MULTIPLIKATOR FROM ").append(table).append(" WHERE TYP=")
-			.append(fall.getAbrechnungsSystemName())
+			.append(JdbcLink.wrap(fall.getAbrechnungsSystem()))
 			.append(" AND DATUM_VON <=").append(actdat)
 			.append(" AND DATUM_BIS >").append(actdat);
 		String res=j.queryString(sql.toString()+" AND ID="+getWrappedId());

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 2841 2007-07-19 05:19:56Z rgw_ch $
+ * $Id: Leistungscodes.java 2842 2007-07-19 07:56:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -39,6 +39,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import ch.elexis.Hub;
+import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.util.Extensions;
@@ -52,7 +53,7 @@ public class Leistungscodes extends PreferencePage implements
 	public final static String CFG_KEY="billing/systems";
 	List<IConfigurationElement> lo=Extensions.getExtensions("ch.elexis.RechnungsManager");
 	List<IConfigurationElement> ll=Extensions.getExtensions("ch.elexis.Verrechnungscode");
-	String[] systeme=Hub.globalCfg.keys(CFG_KEY);
+	String[] systeme=Hub.globalCfg.nodes(CFG_KEY);
 	Table table;
 	String[] tableCols={"Name","Leistungscode-System","Standard-Ausgabe","Multiplikator"};
 	int[] tableWidths={60,120,120,70};
@@ -70,8 +71,12 @@ public class Leistungscodes extends PreferencePage implements
 			public void linkActivated(final HyperlinkEvent e) {
 				AbrechnungsTypDialog at=new AbrechnungsTypDialog(getShell(),null);
 				if(at.open()==Dialog.OK){
-					Hub.globalCfg.set(CFG_KEY+"/"+at.getResult(), "1");
-					systeme=Hub.globalCfg.keys(CFG_KEY);
+					String[] result=at.getResult();
+					String key=CFG_KEY+"/"+result[0];
+					Hub.globalCfg.set(key+"/name",result[0]);
+					Hub.globalCfg.set(key+"/leistungscodes",result[1]);
+					Hub.globalCfg.set(key+"/standardausgabe", result[2]);
+					systeme=Hub.globalCfg.nodes(CFG_KEY);
 					reload();
 				}
 			}
@@ -95,7 +100,11 @@ public class Leistungscodes extends PreferencePage implements
 					String ssel=sel.getText(0);
 					for(String s1:systeme){
 						if(s1.startsWith(ssel)){
-							AbrechnungsTypDialog at=new AbrechnungsTypDialog(getShell(),s1);
+							String[] pre=new String[3];
+							pre[0]=s1;
+							pre[1]=Fall.getCodeSystem(s1);
+							pre[2]=Fall.getDefaultPrintSystem(s1);
+							AbrechnungsTypDialog at=new AbrechnungsTypDialog(getShell(),pre);
 							if(at.open()==Dialog.OK){
 								reload();
 							}
@@ -114,15 +123,16 @@ public class Leistungscodes extends PreferencePage implements
 		//new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		if(systeme!=null){
 			for(String s:systeme){
-				String[] system=s.split(";");
+				String cfgkey=CFG_KEY+"/"+s+"/";
 				TableItem it=new TableItem(table,SWT.NONE);
-				it.setText(0,system[0]);
-				it.setText(1,system[1]);
-				it.setText(2,system[2]);
+				String name=Hub.globalCfg.get(cfgkey+"name", "default");
+				it.setText(0,name);
+				it.setText(1,Hub.globalCfg.get(cfgkey+"leistungscodes", "?"));
+				it.setText(2,Hub.globalCfg.get(cfgkey+"standardausgabe", "?"));
 				StringBuilder sql=new StringBuilder();
 				String actdat=new TimeTool().toString(TimeTool.DATE_COMPACT);
 				sql.append("SELECT MULTIPLIKATOR FROM ").append("VK_PREISE").append(" WHERE TYP=")
-					.append(JdbcLink.wrap(system[0]))
+					.append(JdbcLink.wrap(name))
 					.append(" AND DATUM_VON <=").append(actdat)
 				 .append(" AND DATUM_BIS >").append(actdat);
 				String tp=PersistentObject.getConnection().queryString(sql.toString());
@@ -145,13 +155,12 @@ public class Leistungscodes extends PreferencePage implements
 		Combo cbLstg;
 		Combo cbRechn;
 		Label lbTaxp;
-		String result;
+		String[] result;
 		MultiplikatorEditor mke;
 		
-		AbrechnungsTypDialog(final Shell shell, final String abrdef){
+		AbrechnungsTypDialog(final Shell shell, final String[] abrdef){
 			super(shell);
 			result=abrdef;
-			
 		}
 
 		@Override
@@ -186,22 +195,17 @@ public class Leistungscodes extends PreferencePage implements
 			lbTaxp=new Label(ret,SWT.NONE);
 			lbTaxp.setText("Multiplikator");
 			lbTaxp.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+			String name="default";
 			if(result!=null){
-				String[] elem=result.split(";");
-				tName.setText(elem[0]);
-				cbLstg.setText(elem[1]);
-				cbRechn.setText(elem[2]);
+				tName.setText(result[0]);
+				cbLstg.setText(result[1]);
+				cbRechn.setText(result[2]);
+				name=result[0];
 			}
-			String name=result;
-			if(StringTool.isNothing(name)){
-				name="default";
-			}else{
-				name=result.split(";")[0];
-			}
-		
+			
 			mke=new MultiplikatorEditor(ret,name);
 			mke.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
-		
+	
 			return ret;
 		}
 
@@ -216,10 +220,13 @@ public class Leistungscodes extends PreferencePage implements
 
 		@Override
 		protected void okPressed() {
-			result=tName.getText()+";"+cbLstg.getText()+";"+cbRechn.getText();
+			result=new String[3];
+			result[0]=tName.getText();
+			result[1]=cbLstg.getText();
+			result[2]=cbRechn.getText();
 			super.okPressed();
 		}
-		public String getResult(){
+		public String[] getResult(){
 			return result;
 		}
 		
