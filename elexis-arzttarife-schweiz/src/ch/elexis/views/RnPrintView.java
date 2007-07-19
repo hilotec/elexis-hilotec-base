@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2840 2007-07-19 05:19:49Z rgw_ch $
+ * $Id: RnPrintView.java 2843 2007-07-19 07:56:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -325,7 +325,7 @@ public class RnPrintView extends ViewPart {
 		// Vergütungsart F17
 		// replaced with Fall.payment
 	
-		if(fall.getAbrechnungsSystemName().equals("UVG")){ //$NON-NLS-1$
+		if(fall.getAbrechnungsSystem().equals("UVG")){ //$NON-NLS-1$
 			text.replace("\\[F58\\]",fall.getBeginnDatum()); //$NON-NLS-1$
 		}else{
 			text.replace("\\[F58\\]",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -614,7 +614,7 @@ public class RnPrintView extends ViewPart {
 		text.replace("\\[Titel\\]",titel); //$NON-NLS-1$
 		text.replace("\\[TitelMahnung\\]", titelMahnung); //$NON-NLS-1$
 		
-		if(fall.getAbrechnungsSystemName().equals("IV")){ //$NON-NLS-1$
+		if(fall.getAbrechnungsSystem().equals("IV")){ //$NON-NLS-1$
 			text.replace("\\[NIF\\]",m.getNif()); //$NON-NLS-1$
 			text.replace("\\[F60]\\",fall.getVersNummer()); //$NON-NLS-1$
 		}else{

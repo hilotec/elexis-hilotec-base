@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2840 2007-07-19 05:19:49Z rgw_ch $
+ * $Id: XMLExporter.java 2843 2007-07-19 07:56:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -676,7 +676,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		detail.addContent(diagnosis);
 		
-		String gesetz=actFall.getAbrechnungsSystemName();															// 16000
+		String gesetz=actFall.getAbrechnungsSystem();															// 16000
 		if(StringTool.isNothing(gesetz)){
 			gesetz="kvg";
 		}
