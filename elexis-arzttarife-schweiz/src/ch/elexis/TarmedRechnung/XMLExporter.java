@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2838 2007-07-18 17:44:06Z rgw_ch $
+ * $Id: XMLExporter.java 2840 2007-07-19 05:19:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -565,7 +565,22 @@ public class XMLExporter implements IRnOutputter {
 		}
 		invoice.addContent(esr);
 		//String tiers=actMandant.getInfoString(ta.TIERS);
-		String tiers=actFall.getPaymentMode();
+		String tiers="TG";
+		Patient pat=actFall.getPatient();
+		Kontakt garant=actFall.getGarant();
+		if(!garant.isValid()){
+			garant=pat;
+		}
+		Kontakt kk=actFall.getKostentraeger();
+		if(!garant.isValid()){
+			tiers="TP";
+		}else{
+			if(kk.isValid()){
+				if(kk.equals(garant)){
+					tiers="TP";
+				}
+			}
+		}
 		Element eTiers=null;
 		if(tiers.equals("TG")){								
 			eTiers=new Element("tiers_garant",ns);												//  11020
@@ -599,7 +614,7 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(insurance);
 			
 		Element patient=new Element("patient",ns);												// 	11100
-		Patient pat=rn.getFall().getPatient();
+		
 		patient.setAttribute("unique_id",rn.getFall().getVersNummer());
 		String gender="male";
 		if(pat==null){
@@ -622,10 +637,6 @@ public class XMLExporter implements IRnOutputter {
 		patient.addContent(buildAdressElement(pat));
 		eTiers.addContent(patient);
 			
-		Kontakt garant=rn.getFall().getGarant();			
-		if((garant==null) || (!garant.exists())){
-			garant=pat;
-		}
 		Element guarantor=new Element("guarantor",ns);											//	11110
 		guarantor.addContent(buildAdressElement(garant));
 		eTiers.addContent(guarantor);

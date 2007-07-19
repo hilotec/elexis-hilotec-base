@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2838 2007-07-18 17:44:06Z rgw_ch $
+ * $Id: RnPrintView.java 2840 2007-07-19 05:19:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -189,9 +189,11 @@ public class RnPrintView extends ViewPart {
 			adressat=fall.getKostentraeger();
 		}else{
 			adressat=fall.getGarant();
+			/*
 			if(StringTool.isNothing(payment)){
 				fall.setPaymentMode("TG"); //$NON-NLS-1$
 			}
+			*/
 			payment="TG"; //$NON-NLS-1$
 		}
 		if((adressat==null) || (!adressat.exists())){
