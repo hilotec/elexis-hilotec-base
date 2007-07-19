@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *  $Id: Patient.java 2844 2007-07-19 08:17:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -16,10 +16,12 @@ import java.sql.ResultSet;
 import java.util.List;
 
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.util.Money;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool.TimeFormatException;
 
@@ -66,7 +68,8 @@ public class Patient extends Person{
 	}
  
     protected Patient(){/* leer */  }
-    public boolean isValid(){
+    @Override
+	public boolean isValid(){
     	if(!super.isValid()){
     		return false;
     	}
@@ -81,7 +84,7 @@ public class Patient extends Person{
      * @param Geburtsdatum Als String in Notation dd.mm.jj
      * @param s	Geschlecht m oder f
      */
-    public Patient(String Name, String Vorname, String Geburtsdatum, String s)
+    public Patient(final String Name, final String Vorname, final String Geburtsdatum, final String s)
     {
     	super(Name, Vorname,Geburtsdatum,s);
     }
@@ -94,7 +97,7 @@ public class Patient extends Person{
      * @param s will be checked for undefined values
      * @throws TimeFormatException
      */
-    public Patient(String name, String vorname, TimeTool gebDat, String s) throws PersonDataException{
+    public Patient(final String name, final String vorname, final TimeTool gebDat, final String s) throws PersonDataException{
     	super(name, vorname, gebDat,s);
     }
 	/**
@@ -146,7 +149,7 @@ public class Patient extends Person{
 	 * @return die letzte Konsultation oder null
 	 */
 	
-    public Konsultation getLetzteKons(boolean create){
+    public Konsultation getLetzteKons(final boolean create){
     	Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
     	qbe.add("MandantID", "=", Hub.actMandant.getId());
     	//qbe.add("Datum", "=", new TimeTool().toString(TimeTool.DATE_COMPACT));
@@ -220,11 +223,9 @@ public class Patient extends Person{
 	 * Einen neuen Fall erstellen und an den Patienten binden 
 	 * @return der eben erstellte Fall oder null bei Fehler
 	 * */
-	public Fall neuerFall(String Bezeichnung, String grund, String gesetz)
+	public Fall neuerFall(final String Bezeichnung, final String grund, final String Abrechnungsmethode)
 	{
-		//Fall[] faelle=getFaelle();
-		
-		Fall fall=new Fall(getId(),Bezeichnung,grund,gesetz);
+		Fall fall=new Fall(getId(),Bezeichnung,grund,Abrechnungsmethode);
 		return fall;
 	}
 	
@@ -263,13 +264,13 @@ public class Patient extends Person{
 			String[] ret=new String[3];
 			if(get(new String[]{"Name","Vorname","Geburtsdatum"},ret)==true){
 				StringBuffer code=new StringBuffer(12); 
-				if((ret[0]!=null) && ret[0].length()>1){
+				if((ret[0]!=null) && (ret[0].length()>1)){
 					code.append(ret[0].substring(0,2));
 				}
-				if((ret[1]!=null) && ret[1].length()>1){
+				if((ret[1]!=null) && (ret[1].length()>1)){
 					code.append(ret[1].substring(0,2));
 				}
-				if((ret[2]!=null) && ret[2].length()==10){
+				if((ret[2]!=null) && (ret[2].length()==10)){
 					int quersumme=Integer.parseInt(ret[2].substring(8));
 					quersumme+=Integer.parseInt(ret[2].substring(3,5));
 					quersumme+=Integer.parseInt(ret[2].substring(0,2));
@@ -338,7 +339,7 @@ public class Patient extends Person{
     	
     	// let the database engine do the filtering
     	Fall[] faelle=getFaelle();
-    	if(faelle!=null && faelle.length>0){
+    	if((faelle!=null) && (faelle.length>0)){
     		rQuery.startGroup();
     		for(Fall fall:faelle){
         		rQuery.add("FallID", "=", fall.getId());
@@ -353,7 +354,7 @@ public class Patient extends Person{
     			Fall fall=rechnung.getFall();
     			if(fall!=null){	// of course this should never happen
 					Kontakt rnGarant = fall.getGarant();
-					if (rnGarant == null || rnGarant.getId().equals(getId())) {
+					if ((rnGarant == null) || rnGarant.getId().equals(getId())) {
 						Query<AccountTransaction> atQuery = new Query<AccountTransaction>(AccountTransaction.class);
 						atQuery.add("PatientID", "=", getId());
 						atQuery.add("RechnungsID", "=", rechnung.getId());
@@ -381,7 +382,7 @@ public class Patient extends Person{
     		Money sum = new Money();
     		for (AccountTransaction transaction : transactions) {
     			Rechnung rechnung = transaction.getRechnung();
-    			if (rechnung == null || !rechnung.exists()) {
+    			if ((rechnung == null) || !rechnung.exists()) {
     				sum.addMoney(transaction.getAmount());
     			}
     		}
@@ -392,13 +393,13 @@ public class Patient extends Person{
     }
 
 	/** Einen Patienten mit gegebener ID aus der Datenbank einlesen */
-	public static Patient load(String id){
+	public static Patient load(final String id){
         Patient ret=new Patient(id);
         return ret;
     }
     
 	
-    private Patient(String id){
+    private Patient(final String id){
     	super(id);
     }
    
@@ -407,7 +408,8 @@ public class Patient extends Person{
     {
         return "istPatient='1'";
     }
-    protected void setConstraint(){
+    @Override
+	protected void setConstraint(){
         set(new String[]{"istPatient","istPerson"},"1","1");
     }
 	@Override
@@ -419,7 +421,7 @@ public class Patient extends Person{
 	 * 
 	 * @return a label describing this Patient
 	 */
-	public String getLabel(boolean shortLabel) {
+	public String getLabel(final boolean shortLabel) {
 		if (shortLabel) {
 			return super.getLabel(true);
 		} else {
@@ -443,7 +445,7 @@ public class Patient extends Person{
 	 * Fälle von ihm existieren.
 	 * @return false wenn der Patient nicht gelöscht werden konnte.
 	 */
-    public boolean delete(boolean force){
+    public boolean delete(final boolean force){
         Fall[] fl=getFaelle();
         if((fl.length==0) || ((force==true) && (Hub.acl.request(AccessControlDefaults.DELETE_FORCED)==true))){
         	for(Fall f:fl){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2842 2007-07-19 07:56:52Z rgw_ch $
+ *    $Id: Fall.java 2844 2007-07-19 08:17:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -120,11 +120,15 @@ public class Fall extends PersistentObject{
 	 * @param PatientID
 	 * @param Bezeichnung
 	 */
-	Fall(final String PatientID, final String Bezeichnung, final String Grund, final String Abrechnungsmethode)
+	Fall(final String PatientID, final String Bezeichnung, final String Grund, String Abrechnungsmethode)
 	{
 		create(null);
 		set(new String[]{"PatientID","Bezeichnung","Grund","DatumVon"},
 				PatientID,Bezeichnung,Grund,new TimeTool().toString(TimeTool.DATE_GER));
+		if(Abrechnungsmethode==null){
+			String[] billings=getAbrechnungsSysteme();
+			Abrechnungsmethode=billings[0];
+		}
 		setAbrechnungsSystem(Abrechnungsmethode);
 		GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.create);
 	}
