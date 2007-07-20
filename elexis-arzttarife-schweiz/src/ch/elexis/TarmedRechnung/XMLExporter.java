@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2843 2007-07-19 07:56:58Z rgw_ch $
+ * $Id: XMLExporter.java 2847 2007-07-20 13:29:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -421,7 +421,7 @@ public class XMLExporter implements IRnOutputter {
 					el=new Element("record_lab",ns);											//	28000
 					el.setAttribute("tariff_type","316");										//	28060
 					LaborLeistung ll=(LaborLeistung)v;
-					double mult=ll.getVKMultiplikator(tt,null);
+					double mult=ll.getFactor(tt,actFall);
 					Money preis=vv.getEffPreis(); // b.getEffPreis(v);	
 					double korr=preis.getCents()/mult;
 					el.setAttribute("unit",XMLTool.doubleToXmlDouble(korr/100.0, 2));	 		//	28470

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 2838 2007-07-18 17:44:06Z rgw_ch $
+ * $Id: LaborLeistung.java 2847 2007-07-20 13:29:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -62,12 +62,13 @@ public class LaborLeistung extends VerrechenbarAdapter{
 		return "Laborleistung"; //$NON-NLS-1$
 	}
 
+	/*
 	public int getPreis(final TimeTool dat, final String subgroup) {
 		String r=get("VK_Preis"); //$NON-NLS-1$
 		return StringTool.isNothing(r) ? 0 : 
-			(int)Math.round(Double.parseDouble(r)*getVKMultiplikator(dat, null)*100); 
+			(int)Math.round(Double.parseDouble(r)*getVKMultiplikator(dat, "EAL")*100); 
 	}
-
+	 */
 	@Override
 	public Money getKosten(final TimeTool dat) {
 		String r=get("EK_Preis"); //$NON-NLS-1$
@@ -109,7 +110,14 @@ public class LaborLeistung extends VerrechenbarAdapter{
 	}
 
 	public double getFactor(final TimeTool date, final Fall fall) {
-		return getVKMultiplikator(date, fall);
+		double ret= getVKMultiplikator(date, "EAL");
+		if(ret==1.0){	// compatibility layer
+			ret=getVKMultiplikator(date, "ch.elexis.data.LaborLeistung");
+			if(ret!=1.0){
+				PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='EAL' WHERE typ='ch.elexis.data.LaborLeistung'");
+			}
+		}
+		return ret;
 	}
 
 }
