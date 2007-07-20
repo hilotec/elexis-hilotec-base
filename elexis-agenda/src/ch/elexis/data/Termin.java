@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 2766 2007-07-09 10:47:45Z rgw_ch $
+ *    $Id: Termin.java 2848 2007-07-20 13:29:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,11 +21,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeSpan;
+import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 /**
  * Termin-Klasse für Agenda
  */
@@ -143,7 +147,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 
   }
   public Termin(){/* leer */}
-  public Termin(String id){
+  public Termin(final String id){
       super(id);
   }
   /**
@@ -151,18 +155,16 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
    * @param id
    * @return
    */
-  public static Termin load(String id){
-	  return new Termin(id);
-	  /*
+  public static Termin load(final String id){
       Termin ret= new Termin(id);
-      if(ret.exists()){
+      if(ret.state()>PersistentObject.INVALID_ID){
     	  return ret;
       }
       return null;
-      */
+      
   }
   
-  public Termin(String bereich, String Tag,int von, int bis, String typ, String status){
+  public Termin(final String bereich, final String Tag,final int von, final int bis, final String typ, final String status){
 	  create(null);
 	  
 	  String ts=createTimeStamp();
@@ -172,7 +174,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   }
   
   /** Einen Termin mit vorgegebener ID erstellen. Wird nur vom Importer gebraucth */
-  public Termin(String ID, String bereich, String Tag,int von, int bis, String typ, String status){
+  public Termin(final String ID, final String bereich, final String Tag,final int von, final int bis, final String typ, final String status){
 	  create(ID);
 	  String ts=createTimeStamp();
       set(new String[]{"BeiWem","Tag","Beginn","Dauer","Typ","Status","ErstelltWann","lastedit"},
@@ -188,7 +190,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
               typ,status,ts,ts);
   }
   */
-  public Object clone()
+  @Override
+public Object clone()
   {  
 	  Termin ret=new Termin(get("BeiWem"),get("Tag"),getStartMinute(),getStartMinute()+getDauer(),getType(),getStatus());
 	  ret.setPatient(getPatient());
@@ -221,8 +224,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	  return true;
   }
   */
-  public static List<Termin> getLinked(Termin orig)
-  {	if(orig.getFlag(SW_LINKED)==false) return null;
+  public static List<Termin> getLinked(final Termin orig)
+  {	if(orig.getFlag(SW_LINKED)==false) {
+	return null;
+}
     if(StringTool.isNothing(orig.get("linkgroup"))){
     	return null;
     }
@@ -259,24 +264,24 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	  int min=checkZero(get("ErstelltWann"));
 	  return new TimeTool(min,60000);
   }
-  public void setFlag(byte flag){
+  public void setFlag(final byte flag){
       int flags=checkZero(get("flags"));
       flags|=1<<flag;
       set(new String[]{"flags","lastedit"},new String[]{Integer.toString(flags),createTimeStamp()});
   }
-  public void clrFlag(byte flag){
+  public void clrFlag(final byte flag){
       int flags=checkZero(get("flags"));
       flags&=~(1<<flag);
       set(new String[]{"flags","lastedit"},new String[]{Integer.toString(flag),createTimeStamp()});
   }
-  public boolean getFlag(byte flag){
+  public boolean getFlag(final byte flag){
       int flags=checkZero(get("flags"));
       return((flags&(1<<flag))!=0);
   }
   public boolean isLocked(){
 	  return getFlag(SW_LOCKED);
   }
-  public void setLocked(boolean mode){
+  public void setLocked(final boolean mode){
 	  if(mode){
 		  setFlag(SW_LOCKED);
 	  }else{
@@ -323,7 +328,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     return true;
   }
   
-  public void setType(String Type)
+  public void setType(final String Type)
   { 
 	if(!checkLock()){
 		if(StringTool.isNothing(Type))
@@ -337,10 +342,11 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	}
   }
   
-  public void setStatus(String stat)
+  public void setStatus(final String stat)
   { 
-	  if(StringTool.isNothing(stat))
-	       return;
+	  if(StringTool.isNothing(stat)) {
+		return;
+	}
 	  if(!checkLock()){
 	    set(new String[]{"Status","lastedit"},stat,createTimeStamp());
 	  }
@@ -348,12 +354,13 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     
   public boolean isValid()
   { int l=checkZero(get("Dauer"));
-    if(l<=0)
-        return false;
+    if(l<=0) {
+		return false;
+	}
     return true;
   }
   
-  public void setGrund(String grund){
+  public void setGrund(final String grund){
 	  if(!checkLock()){
 		  set(new String[]{"Grund","lastedit"},grund,createTimeStamp());
 	  }
@@ -361,7 +368,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   public String getGrund(){
 	  return get("Grund");
   }
-  public void set(String bereich, String tag, int von, int bis, String typ, String status)
+  public void set(final String bereich, final String tag, final int von, final int bis, final String typ, final String status)
   { 
 	  if(!checkLock()){
 		  set(new String[]{"BeiWem","Tag","Beginn","Dauer","Typ","Status","lastedit"},
@@ -369,8 +376,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
               typ,status,createTimeStamp());
 	  }
   }
-  public void set(String bereich, TimeTool wann, int dauer, String typ, String status,
-          Patient pat, String Grund)
+  public void set(final String bereich, final TimeTool wann, final int dauer, final String typ, final String status,
+          final Patient pat, final String Grund)
   {
       String Tag=wann.toString(TimeTool.DATE_COMPACT);
       int Beginn=wann.get(TimeTool.HOUR_OF_DAY)*60+wann.get(TimeTool.MINUTE);
@@ -407,13 +414,13 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   public int getLastedit(){
       return getInt("lastedit");
   }
-  public void setPatient(Patient pers)
+  public void setPatient(final Patient pers)
   {
 	  if(!checkLock()){
 		  set(new String[]{"Wer","lastedit"},pers.getId(),createTimeStamp());
 	  }
   }
-  public void setText(String text){
+  public void setText(final String text){
 	  if(!checkLock()){
 		  set(new String[]{"Wer","lastedit"},text,createTimeStamp());
 	  }
@@ -445,7 +452,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	* @return Ein StringArray mit 3 Elementen: Name, Vorname, GebDat. Jedes Element
 	* kann "" sein, keines ist null.
 	*/
-  public static String[] findID(String pers)
+  public static String[] findID(final String pers)
   {
   
       String[] ret=new String[3];
@@ -466,8 +473,9 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
       for(int i=p1.length-1;i>=0;i--)
       { p1[i]=p1[i].trim();
         if(p1[i].matches("\\d{1,2}\\.\\d{1,2}\\.\\d{2,4}"))
-        { if(gd==null)
-            gd=p1[i];
+        { if(gd==null) {
+			gd=p1[i];
+		}
         }
         else
         {	if(vn==null)
@@ -495,7 +503,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
       return get("deleted").equals("1");
   }
   /** standard equals: Gleiche Zeit, gleiche Dauer, gleicher Bereich */
-  public boolean equals(Object o)
+  public boolean equals(final Object o)
   {
       if(o instanceof Termin){
           return super.isMatching((Termin)o,0,"Tag","Beginn","Dauer", "BeiWem");
@@ -503,7 +511,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
       return false;
   }
   /** Exakte �bereinstimmung */
-  public boolean isEqual(Termin ae)
+  public boolean isEqual(final Termin ae)
   {	
     return super.isMatching(ae,0,"Tag","Beginn","Dauer","BeiWem","Typ","Status","ErstelltVon", "Wer");
   }
@@ -525,7 +533,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
       start.addMinutes(checkZero(res[1]));
       return new TimeSpan(start,checkZero(res[2]));
   }
-  public boolean setStartTime(TimeTool t)
+  public boolean setStartTime(final TimeTool t)
   { 
 	  if(checkLock()){
 		  return false;
@@ -539,7 +547,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     }
     return false;
   }
-  public void setEndTime(TimeTool o)
+  public void setEndTime(final TimeTool o)
   { 
 	  if(!checkLock()){
 		  TimeSpan ts=getTimeSpan();
@@ -555,7 +563,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
       return true;
   }
  */
-  public void setBereich(String bereich){
+  public void setBereich(final String bereich){
 	  if(!checkLock()){
 		  set(new String[]{"BeiWem","lastedit"},bereich,createTimeStamp());
 	  }
@@ -565,7 +573,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   {
       return toString(2);
   }
-  public String toString(int level)
+  public String toString(final int level)
   {	
       String[] vals=new String[4];
       get(new String[]{"Tag","Dauer","Beginn","BeiWem"},vals);
@@ -585,7 +593,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   public int getBeginn(){
       return getInt("Beginn");
   }
-  public static String intTimeToString(int t){
+  public static String intTimeToString(final int t){
       int hour=t/60;
       int minute=t-(hour*60);
       StringBuffer ret=new StringBuffer();
@@ -597,7 +605,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
   public int getDauer(){
       return getInt("Dauer");
   }
-  static int TimeInMinutes(TimeTool t)
+  static int TimeInMinutes(final TimeTool t)
   {
       return t.get(TimeTool.HOUR_OF_DAY*60)+t.get(TimeTool.MINUTE);
   }
@@ -610,7 +618,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     static{
         addMapping("agnRemarks","remark");
     }
-  	public remark(String id)
+  	public remark(final String id)
   	{
         super(id);
         if(exists()){
@@ -620,7 +628,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
             bemerkung="";
         }
   	}
-  	public void set(String newval)
+  	public void set(final String newval)
   	{
   		if(StringTool.isNothing(newval))
   		{	
@@ -642,7 +650,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 /* (non-Javadoc)
  * @see java.lang.Comparable#compareTo(java.lang.Object)
  */
-    public int compareTo(Object arg0) {
+    public int compareTo(final Object arg0) {
         Termin o=(Termin)arg0;
         TimeSpan t0=getTimeSpan();
         TimeSpan t1=o.getTimeSpan();
@@ -776,12 +784,12 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	public String getType() {
 		return get("Typ");
 	}
-	public void setStartMinute(int min){
+	public void setStartMinute(final int min){
 		if(!checkLock()){
 			set(new String[]{"Beginn","lastedit"},Integer.toString(min),createTimeStamp());
 		}
 	}
-	public void setDurationInMinutes(int min){
+	public void setDurationInMinutes(final int min){
 		if(!checkLock()){
 			set(new String[]{"Dauer","lastedit"},Integer.toString(min),createTimeStamp());
 		}
@@ -798,7 +806,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 		String day;
 		int start,length;
 		
-		public Free(String d, int s, int l){
+		public Free(final String d, final int s, final int l){
 			day=d;
 			start=s;
 			length=l;
@@ -831,10 +839,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 		public String getType() {
 			return Termin.typFrei();
 		}
-		public void setStartMinute(int min){
+		public void setStartMinute(final int min){
 			start=min;
 		}
-		public void setDurationInMinutes(int min){
+		public void setDurationInMinutes(final int min){
 			length=min;
 		}
 	}
