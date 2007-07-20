@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2844 2007-07-19 08:17:57Z rgw_ch $
+ *    $Id: Fall.java 2849 2007-07-20 20:29:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -446,7 +446,7 @@ public class Fall extends PersistentObject{
 	 */
 	public static String[] getAbrechnungsSysteme(){
 		String[] ret= Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);
-		if(ret==null){
+		if((ret==null) || (ret.length==0)){
 			List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.RechnungsManager");
 			for(IConfigurationElement ic:list){
 				if(ic.getAttribute("name").startsWith("Tarmed")){
