@@ -10,5 +10,13 @@
             name="PrivatLeistung">
       </Leistung>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.privatrechnung.views.Preferences"
+            id="ch.elexis.privatrechnung.prefs"
+            name="Privatrechnung">
+      </page>
+   </extension>
 
 </plugin>
