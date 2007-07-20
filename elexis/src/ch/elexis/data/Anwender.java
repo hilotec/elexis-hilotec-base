@@ -8,11 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 2767 2007-07-09 10:51:59Z rgw_ch $
+ *  $Id: Anwender.java 2845 2007-07-20 13:29:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -25,8 +28,8 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.IO.SqlSettings;
-import ch.rgw.tools.*;
-import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 /** 
  * Ein Anwender ist eine Person (und damit auch ein Kontakt), die zusätzlich das Recht hat, diese 
@@ -45,7 +48,7 @@ public class Anwender extends Person {
 				"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
 	}
 	
-	public Anwender(String Username, String Password){
+	public Anwender(final String Username, final String Password){
 		create(null);
 		set(new String[]{"Name"},Username);
 		setLabel(Username);
@@ -60,15 +63,16 @@ public class Anwender extends Person {
 	 * ("Label") is available. 
 	 * </p>
 	 */
+	@Override
 	public boolean isValid(){
-		if (super.isValid()) {
-			String label = get("Label");
-			if (!StringTool.isNothing(label)) {
-				return true;
-			}
+		String label = get("Label");
+		if (StringTool.isNothing(label)) {
+			return false;
 		}
-		
-		return false;
+		if(label.equals("Administrator")) {
+			return true;	// Admin is always valid
+		}
+		return super.isValid();
 	}
 	
 	/**
@@ -78,7 +82,8 @@ public class Anwender extends Person {
 	 * 
 	 * @return a label describing this Person
 	 */
-	public String getLabel(boolean shortLabel) {
+	@Override
+	public String getLabel(final boolean shortLabel) {
 		String l=get("Label");
 		if(StringTool.isNothing(l)){
 			l=checkNull(get("Name"))+" "+checkNull(get("Vorname"));
@@ -93,14 +98,14 @@ public class Anwender extends Person {
 	/** Kurzname setzen. Zuerst prüfen, ob es wirklich ein neuer Name ist,
 	 * um unnötigen Netzwerkverkehr zu vermeiden 
 	 */
-    public void setLabel(String label){
+    public void setLabel(final String label){
     	String oldlabel=getLabel();
     	if(!label.equals(oldlabel)){
     		set("Label",label);
     	}
     }
     /** Passwort setzen */
-    public void setPwd(String pwd){
+    public void setPwd(final String pwd){
     	setInfoElement("UsrPwd",pwd);
     }
 
@@ -109,7 +114,7 @@ public class Anwender extends Person {
      * @param k related kontakt or null: all Reminders
      * @return a List sorted by date
      */
-    public SortedSet<Reminder> getReminders(Kontakt k){
+    public SortedSet<Reminder> getReminders(final Kontakt k){
     	TreeSet<Reminder> ret=new TreeSet<Reminder>();
     	List<String[]> rem=getList("Reminders", (String[])null);
     	String kid=k==null ? null : k.getId();
@@ -125,19 +130,21 @@ public class Anwender extends Person {
     	return ret;
     }
 
-    public String getKuerzel(){
+    @Override
+	public String getKuerzel(){
     	String[] res=new String[2];
     	get(new String[]{"Name","Vorname"},res);
     	return res[0].substring(0,1)+res[1].substring(0,1);
     }
-    public static Anwender load(String id){
+    public static Anwender load(final String id){
     	Anwender ret=new Anwender(id);
     	if(ret.state()>PersistentObject.INVALID_ID){
     		return ret;
     	}
     	return null;
     }
-    protected String getConstraint(){
+    @Override
+	protected String getConstraint(){
 		return "istAnwender='1'";
 	}
     @Override
@@ -146,7 +153,7 @@ public class Anwender extends Person {
     }
     protected Anwender(){/* leer */}
     
-    protected Anwender(String id){
+    protected Anwender(final String id){
     	super(id);
     }
     
@@ -181,7 +188,7 @@ public class Anwender extends Person {
      * @param text2 Passwort
      * @return true - erfolgreich angemeldet, Hub.actUser gesetzt. 
      */
-	public static boolean login(String text, String text2) {
+	public static boolean login(final String text, final String text2) {
 		logoff();
 		Hub.actUser=null;
 		Hub.mainActions.adaptForUser();
@@ -217,8 +224,8 @@ public class Anwender extends Person {
 					Hub.setMandant(m);
 				}else{
 					List<Mandant> ml=new Query<Mandant>(Mandant.class).execute();
-					if(ml!=null && ml.size()>0){
-						m=(Mandant)ml.get(0);
+					if((ml!=null) && (ml.size()>0)){
+						m=ml.get(0);
 						Hub.setMandant(m);
 						
 					}else{

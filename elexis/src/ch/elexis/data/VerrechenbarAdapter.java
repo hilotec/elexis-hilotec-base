@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 2842 2007-07-19 07:56:52Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 2845 2007-07-20 13:29:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -78,17 +78,20 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 	}
 
 
+	public Double getVKMultiplikator(final TimeTool date, final String typ){
+		return getMultiplikator(date,"VK_PREISE",typ);
+	}
 	public Double getVKMultiplikator(final TimeTool date, final Fall fall){
-		return getMultiplikator(date,"VK_PREISE",fall);
+		return getMultiplikator(date,"VK_PREISE",fall.getAbrechnungsSystem());
 	}
 	public Double getEKMultiplikator(final TimeTool date, final Fall fall){
-		return getMultiplikator(date,"EK_PREISE",fall);
+		return getMultiplikator(date,"EK_PREISE",fall.getAbrechnungsSystem());
 	}
-	private Double getMultiplikator(final TimeTool date, final String table,final Fall fall){
+	private Double getMultiplikator(final TimeTool date, final String table,final String typ){
 		String actdat=JdbcLink.wrap(date.toString(TimeTool.DATE_COMPACT));
 		StringBuilder sql=new StringBuilder();
 		sql.append("SELECT MULTIPLIKATOR FROM ").append(table).append(" WHERE TYP=")
-			.append(JdbcLink.wrap(fall.getAbrechnungsSystem()))
+			.append(JdbcLink.wrap(typ))
 			.append(" AND DATUM_VON <=").append(actdat)
 			.append(" AND DATUM_BIS >").append(actdat);
 		String res=j.queryString(sql.toString()+" AND ID="+getWrappedId());

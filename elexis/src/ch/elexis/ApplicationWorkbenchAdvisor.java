@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 2290 2007-04-23 15:07:21Z danlutz $
+ *  $Id: ApplicationWorkbenchAdvisor.java 2845 2007-07-20 13:29:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -42,8 +42,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	private static final String PERSPECTIVE_ID = PatientPerspektive.ID;
 	private Shell loginshell;
 	
+	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
-			IWorkbenchWindowConfigurer configurer) {
+			final IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
@@ -51,7 +52,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
      * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize(org.eclipse.ui.application.IWorkbenchConfigurer)
      */
     @Override
-    public void initialize(IWorkbenchConfigurer configurer)
+    public void initialize(final IWorkbenchConfigurer configurer)
     {
         loginshell=new Shell(Desk.theDisplay);
         Log.setAlert(loginshell);
@@ -89,27 +90,30 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		dlg.setMessage(Messages.ApplicationWorkbenchAdvisor_9);
 		dlg.open();
 	
+		/** Had to remove this, because it prevents us from starting from scratch */
 		// check if there is a valid user
-		if (Hub.actUser == null || !Hub.actUser.isValid()) {
+		if ((Hub.actUser == null) || !Hub.actUser.isValid()) {
 			// no valid user, exit (don't consider this as an error)
+			Hub.log.log("Exit because no valid user logged-in", Log.WARNINGS);
             PersistentObject.disconnect();
             System.exit(0);
 		}
     }
     
-    public String getInitialWindowPerspectiveId() {
+    @Override
+	public String getInitialWindowPerspectiveId() {
 		return PERSPECTIVE_ID;
 	}
 
 	@Override
-	public void eventLoopException(Throwable exception) {
+	public void eventLoopException(final Throwable exception) {
 		Hub.log.log(Messages.ApplicationWorkbenchAdvisor_10+exception.getMessage(),Log.ERRORS);
 		ExHandler.handle(exception);
 		super.eventLoopException(exception);
 	}
 
 	@Override
-	public void eventLoopIdle(Display display) {
+	public void eventLoopIdle(final Display display) {
 		super.eventLoopIdle(display);
 	}
 
