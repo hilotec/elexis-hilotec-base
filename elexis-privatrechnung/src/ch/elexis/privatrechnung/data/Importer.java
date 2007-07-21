@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 2855 2007-07-21 10:19:02Z rgw_ch $
+ * $Id: Importer.java 2858 2007-07-21 16:24:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -28,13 +28,14 @@ import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
  * A class to import codes from an external source to this code system.
  * the external source must be an CSV or Excel(tm) file with the fields:
- * parentCode,codeID,codeName,cost,price,validFrom,validUntil,factor
+ * parentCode,codeID,codeName,cost,price,time,validFrom,validUntil,factor
  * <ul>
  * 	<li>parentCode: If this code system is organized as tree: codeID of the parent or null if thos is a 
  *      top level code. If this code system is a flat list, parentCode is always 0</li>
@@ -42,6 +43,7 @@ import ch.rgw.tools.TimeTool;
  *  <li>codeName: the human understandable name of the code</li>
  *  <li>cost: the internal cost of this service (what do we have to pay for it), in cents/Rp</li>
  *  <li>price: the external cost of this service (what have cliebnts to pay us for it), in cents/Rp</li>
+ *  <li>time: the average time needed (in minutes) for this service
  *  <li>validFrom: the date as YYYYMMDD when this code with this price starts being valid</li>
  *  <li>validUntil: the date as YYYYMMDD when the validity of this entry expires</li>
  *  <li>factor: a multiplicator to apply to the price before calculating the end-user-price. Sometimes referred to as
@@ -67,6 +69,7 @@ public class Importer extends ImporterPage {
 		FileBasedImporter fbi=new FileBasedImporter(parent,this);
 		fbi.setFilter(new String[]{"csv","xls","*"},
 				new String[]{"Character Separated Values","Microsoft Excel 97","All Files"});
+		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
 	}
 
@@ -136,7 +139,7 @@ public class Importer extends ImporterPage {
 
 	}
 	 
-	// parentCode 0,codeID 1,codeName 2,cost 3,price 4 ,validFrom 5,validUntil 6,factor 7
+	// parentCode 0,codeID 1,codeName 2,cost 3,price 4 ,time 5, validFrom 6,validUntil 7,factor 8
 	private void importLine(final String[] line){
 		if(line[5].equals("")){
 			line[5]=TimeTool.BEGINNING_OF_UNIX_EPOCH;
@@ -144,8 +147,8 @@ public class Importer extends ImporterPage {
 		if(line[6].equals("")){
 			line[6]=TimeTool.END_OF_UNIX_EPOCH;
 		}
-		Leistung lst=new Leistung(line[0],line[2],line[1],line[3],line[4],null,line[5],line[6]);
+		Leistung lst=new Leistung(line[0],line[2],line[1],line[3],line[4],line[5],null,line[6],line[7]);
 		
-		lst.setVKMultiplikator(new TimeTool(line[5]), new TimeTool(line[6]), Double.parseDouble(line[7]), lst.getCodeSystemName());
+		lst.setVKMultiplikator(new TimeTool(line[6]), new TimeTool(line[7]), Double.parseDouble(line[8]), lst.getCodeSystemName());
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 2857 2007-07-21 15:57:46Z rgw_ch $
+ * $Id: Leistung.java 2858 2007-07-21 16:24:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -55,6 +55,7 @@ public class Leistung extends VerrechenbarAdapter {
 		"short			VARCHAR(20),"+
 		"cost			CHAR(6),"+				// use always fixed char fields for amounts
 		"price			CHAR(6),"+				// amounts are always in cents/rp
+		"time			CHAR(4),"+	
 		"subsystem		VARCHAR(25),"+
 		"valid_from		CHAR(8),"+				// use always char(8) for dates
 		"valid_until	CHAR(8),"+
@@ -71,7 +72,7 @@ public class Leistung extends VerrechenbarAdapter {
 	 */
 	static{
 		addMapping(TABLENAME, "parent", "Name=name","Kuerzel=short","Kosten=cost","Preis=price","subsystem",
-				"DatumVon=S:D:valid_from","DatumBis=S:D:valid_until","ExtInfo");
+				"Zeit=time","DatumVon=S:D:valid_from","DatumBis=S:D:valid_until","ExtInfo");
 		Leistung check=load("VERSION");
 		if(check.state()<PersistentObject.DELETED){		// Object never existed, so we have to create the database
 			ByteArrayInputStream bais;
@@ -79,9 +80,6 @@ public class Leistung extends VerrechenbarAdapter {
 				bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
 				if(j.execScript(bais,true,false)==false){
 					MessageDialog.openError(null,"Datenbank-Fehler","Konnte Tabelle nicht erstellen");
-				}else{
-					check.create("VERSION");
-					check.set("name", VERSION);
 				}
 			} catch (UnsupportedEncodingException e) {
 				// should really never happen
@@ -98,7 +96,7 @@ public class Leistung extends VerrechenbarAdapter {
 	}
 	
 	public Leistung(String subsystem,String parent, final String name, final String kuerzel, 
-			final String kostenInRp, final String preisInRp,String DatumVon, String DatumBis){
+			final String kostenInRp, final String preisInRp, String ZeitInMin, String DatumVon, String DatumBis){
 		create(null);
 		if(subsystem==null){
 			subsystem="";
@@ -112,8 +110,8 @@ public class Leistung extends VerrechenbarAdapter {
 		if(parent==null){
 			parent="0";
 		}
-		set(new String[]{"parent","Name","Kuerzel","Kosten","Preis","subsystem","DatumVon","DatumBis"},
-			new String[]{parent,name,kuerzel,kostenInRp,preisInRp,subsystem,DatumVon,DatumBis});
+		set(new String[]{"parent","Name","Kuerzel","Kosten","Preis","Zeit","subsystem","DatumVon","DatumBis"},
+			new String[]{parent,name,kuerzel,kostenInRp,preisInRp,ZeitInMin,subsystem,DatumVon,DatumBis});
 	}
 	
 	/**
