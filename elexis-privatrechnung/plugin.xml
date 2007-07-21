@@ -26,5 +26,12 @@
             name="Privatrechnung">
       </Factory>
    </extension>
+   <extension
+         point="ch.elexis.RechnungsManager">
+      <Rechnung
+            name="ch.elexis.privatrechnung.rechnung"
+            outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">
+      </Rechnung>
+   </extension>
 
 </plugin>
