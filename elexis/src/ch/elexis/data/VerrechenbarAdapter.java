@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 2845 2007-07-20 13:29:32Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 2856 2007-07-21 10:19:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -78,6 +78,16 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 	}
 
 
+	public void setVKMultiplikator(final TimeTool von, final TimeTool bis, final double factor, final String typ){
+		StringBuilder sql=new StringBuilder();
+		sql.append("INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,MULTIPLIKATOR,TYP) VALUES (")
+			.append(JdbcLink.wrap(von.toString(TimeTool.DATE_COMPACT))).append(",")
+			.append(JdbcLink.wrap(bis.toString(TimeTool.DATE_COMPACT))).append(",")
+			.append(JdbcLink.wrap(Double.toString(factor))).append(",")
+			.append(JdbcLink.wrap(typ)).append(");");
+			
+	}
+	
 	public Double getVKMultiplikator(final TimeTool date, final String typ){
 		return getMultiplikator(date,"VK_PREISE",typ);
 	}
