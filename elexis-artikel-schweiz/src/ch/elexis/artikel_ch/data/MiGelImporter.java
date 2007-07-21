@@ -8,11 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MiGelImporter.java 1742 2007-02-06 20:48:17Z rgw_ch $
+ * $Id: MiGelImporter.java 2853 2007-07-21 06:54:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,13 +29,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import au.com.bytecode.opencsv.CSVReader;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
-
-import com.Ostermiller.util.CSVParser;
 
 public class MiGelImporter extends ImporterPage
 {
@@ -48,7 +53,7 @@ public class MiGelImporter extends ImporterPage
 	}
 
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
 		mode=" (Modus: Daten ergänzen/update)";
 		if(bDelete==true){
 			PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='MiGeL'");
@@ -96,7 +101,7 @@ public class MiGelImporter extends ImporterPage
 		bDelete=bClear.getSelection();
 	}
 	@Override
-	public Composite createPage(Composite parent) {
+	public Composite createPage(final Composite parent) {
 		Composite ret=new ImporterPage.FileBasedImporter(parent,this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		bClear=new Button(parent,SWT.CHECK|SWT.WRAP);
@@ -110,7 +115,7 @@ public class MiGelImporter extends ImporterPage
 		static final String codeline="[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9].+";
 		String prev;
 		BufferedReader br;
-		LineFeeder(BufferedReader b) throws Exception{
+		LineFeeder(final BufferedReader b) throws Exception{
 			br=b;
 			prev=br.readLine();
 		}
@@ -164,12 +169,12 @@ public class MiGelImporter extends ImporterPage
 		}
 	}
 
-	private IStatus importCSV(File file, IProgressMonitor monitor) throws FileNotFoundException,IOException{
-		CSVParser parser=new CSVParser(new BufferedReader(new FileReader(file)));
-		String[] line=parser.getLine();
+	private IStatus importCSV(final File file, final IProgressMonitor monitor) throws FileNotFoundException,IOException{
+		CSVReader reader = new CSVReader(new FileReader(file.getAbsolutePath()));
+	    String [] line;
 		monitor.subTask("MiGel einlesen");
-		while(((line=parser.getLine()))!=null){
-			Money betrag;
+	    while ((line = reader.readNext()) != null) {
+	    	Money betrag;
 			try{
 				betrag=new Money(Double.parseDouble(line[3]));
 			}catch(Exception ex){
