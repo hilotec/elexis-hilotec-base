@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsselektor.java 2857 2007-07-21 15:57:46Z rgw_ch $
+ * $Id: Leistungsselektor.java 2859 2007-07-21 18:32:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.views;
@@ -16,7 +16,6 @@ package ch.elexis.privatrechnung.views;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.Query;
@@ -35,17 +34,19 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
  *
  */
 public class Leistungsselektor extends CodeSelectorFactory{
-	private AbstractDataLoaderJob dataloader;
+	private LazyTreeLoader<Leistung> dataloader;
 	private static final String LOADER_NAME="Privatcodes";
 	
 	/**
 	 * On Creation we initiate a dataloader. We can simply use the existing LazyXXXLoader framework.
 	 */
+	@SuppressWarnings("unchecked")
 	public Leistungsselektor(){
-		dataloader=(AbstractDataLoaderJob)JobPool.getJobPool().getJob(LOADER_NAME); //$NON-NLS-1$
+		dataloader=(LazyTreeLoader<Leistung>) JobPool.getJobPool().getJob(LOADER_NAME); //$NON-NLS-1$
 		
 		if(dataloader==null){
 			dataloader=new LazyTreeLoader<Leistung>(LOADER_NAME,new Query<Leistung>(Leistung.class),"parent",new String[]{"Kuerzel","Name"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			dataloader.setParentField("Kuerzel");
 			JobPool.getJobPool().addJob(dataloader);
 		}
 		JobPool.getJobPool().activate(LOADER_NAME,Job.SHORT); //$NON-NLS-1$

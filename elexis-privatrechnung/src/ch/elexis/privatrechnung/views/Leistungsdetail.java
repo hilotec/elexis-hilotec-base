@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsdetail.java 2857 2007-07-21 15:57:46Z rgw_ch $
+ * $Id: Leistungsdetail.java 2859 2007-07-21 18:32:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.views;
@@ -36,8 +36,8 @@ public class Leistungsdetail implements IDetailDisplay {
 	LabeledInputField.AutoForm tblPls;
 	InputData[] data=new InputData[]{
 			new InputData("Kuerzel"), //$NON-NLS-1$
-			new InputData("Kosten"), //$NON-NLS-1$
-			new InputData("Preis"), //$NON-NLS-1$
+			new InputData("Kosten","Kosten",InputData.Typ.CURRENCY,null), //$NON-NLS-1$
+			new InputData("Preis","Preis",InputData.Typ.CURRENCY,null), //$NON-NLS-1$
 	};
 	/**
 	 * Select the given Objetc to display
@@ -46,6 +46,7 @@ public class Leistungsdetail implements IDetailDisplay {
 		if(obj instanceof Leistung){	// should always be true...
 			Leistung ls=(Leistung)obj;
 			form.setText(ls.getLabel());
+			tblPls.reload(ls);
 		}
 
 	}

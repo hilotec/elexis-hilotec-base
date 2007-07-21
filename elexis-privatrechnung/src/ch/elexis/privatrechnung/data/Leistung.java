@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 2858 2007-07-21 16:24:13Z rgw_ch $
+ * $Id: Leistung.java 2859 2007-07-21 18:32:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.VerrechenbarAdapter;
+import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -108,7 +109,7 @@ public class Leistung extends VerrechenbarAdapter {
 			DatumBis=TimeTool.END_OF_UNIX_EPOCH;
 		}
 		if(parent==null){
-			parent="0";
+			parent="NIL";
 		}
 		set(new String[]{"parent","Name","Kuerzel","Kosten","Preis","Zeit","subsystem","DatumVon","DatumBis"},
 			new String[]{parent,name,kuerzel,kostenInRp,preisInRp,ZeitInMin,subsystem,DatumVon,DatumBis});
@@ -135,9 +136,22 @@ public class Leistung extends VerrechenbarAdapter {
 	 */
 	@Override
 	public String getLabel() {
-		return get("name");
+		return get("Name");
 	}
 
+	public String getText() {
+		return get("Name");
+	}
+	public String getCode(){
+		return get("Kuerzel");
+	}
+	
+	public Money getKosten(final TimeTool dat) {
+		return new Money(checkZero(get("Kosten")));
+	}
+	public int getMinutes(){
+		return checkZero(get("Zeit"));
+	}
 	/**
 	 * Mandatory method: return the table where elements of this class are stored
 	 */
@@ -165,7 +179,7 @@ public class Leistung extends VerrechenbarAdapter {
 	 * base price at a given date for this service
 	 */
 	public int getTP(final TimeTool date, final Fall fall) {
-		return checkZero(get("price"));
+		return checkZero(get("Preis"));
 	}
 	
 	/**

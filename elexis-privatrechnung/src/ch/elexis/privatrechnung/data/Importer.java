@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 2858 2007-07-21 16:24:13Z rgw_ch $
+ * $Id: Importer.java 2859 2007-07-21 18:32:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -37,8 +37,8 @@ import ch.rgw.tools.TimeTool;
  * the external source must be an CSV or Excel(tm) file with the fields:
  * parentCode,codeID,codeName,cost,price,time,validFrom,validUntil,factor
  * <ul>
- * 	<li>parentCode: If this code system is organized as tree: codeID of the parent or null if thos is a 
- *      top level code. If this code system is a flat list, parentCode is always 0</li>
+ * 	<li>parentCode: If this code system is organized as tree: codeID of the parent or 'NIL' if this is a 
+ *      top level code. If this code system is a flat list, parentCode is always 'NIL'</li>
  *  <li>codeID: The (within this code system unique) identification of the code. e.g. 10.00.01 for al Tarmed-style system</li>
  *  <li>codeName: the human understandable name of the code</li>
  *  <li>cost: the internal cost of this service (what do we have to pay for it), in cents/Rp</li>
@@ -147,7 +147,7 @@ public class Importer extends ImporterPage {
 		if(line[6].equals("")){
 			line[6]=TimeTool.END_OF_UNIX_EPOCH;
 		}
-		Leistung lst=new Leistung(line[0],line[2],line[1],line[3],line[4],line[5],null,line[6],line[7]);
+		Leistung lst=new Leistung(null,line[0],line[2],line[1],line[3],line[4],line[5],line[6],line[7]);
 		
 		lst.setVKMultiplikator(new TimeTool(line[6]), new TimeTool(line[7]), Double.parseDouble(line[8]), lst.getCodeSystemName());
 	}
