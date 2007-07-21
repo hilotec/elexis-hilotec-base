@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 2855 2007-07-21 10:19:02Z rgw_ch $
+ * $Id: Leistung.java 2857 2007-07-21 15:57:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -38,7 +38,8 @@ public class Leistung extends VerrechenbarAdapter {
 	 * note: replace dots in the id with underscores
 	 */
 	private static final String TABLENAME="CH_ELEXIS_PRIVATRECHNUNG";
-	
+	public static final String CODESYSTEM_NAME="Privat";
+	public static final String CODESYSTEM_CODE="999";
 	private static final String VERSION="0.1.0";
 	
 	/**
@@ -87,7 +88,7 @@ public class Leistung extends VerrechenbarAdapter {
 				e.printStackTrace();
 			}
 		}else{	// found existing table, check version
-			VersionInfo v=new VersionInfo(check.get("name"));
+			VersionInfo v=new VersionInfo(check.get("Name"));
 			if(v.isOlder(VERSION)){
 				SWTHelper.showError("Privatrechnung: Falsche Version", "Die Datenbank hat eine zu alte Version dieser Tabelle");
 				
@@ -120,7 +121,7 @@ public class Leistung extends VerrechenbarAdapter {
 	 */
 	@Override
 	public String getCodeSystemCode() {
-		return "999";
+		return CODESYSTEM_CODE;
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class Leistung extends VerrechenbarAdapter {
 	 */
 	@Override
 	public String getCodeSystemName() {
-		return "privat";
+		return CODESYSTEM_NAME;
 	}
 
 	/**

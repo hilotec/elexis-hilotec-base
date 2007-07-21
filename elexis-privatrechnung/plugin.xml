@@ -19,5 +19,12 @@
             name="Privatrechnung">
       </page>
    </extension>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.privatrechnung.data.LeistungsFactory"
+            name="Privatrechnung">
+      </Factory>
+   </extension>
 
 </plugin>
