@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 2856 2007-07-21 10:19:10Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 2860 2007-07-21 18:32:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -85,6 +85,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 			.append(JdbcLink.wrap(bis.toString(TimeTool.DATE_COMPACT))).append(",")
 			.append(JdbcLink.wrap(Double.toString(factor))).append(",")
 			.append(JdbcLink.wrap(typ)).append(");");
+		j.exec(sql.toString());
 			
 	}
 	

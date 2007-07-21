@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTreeLoader.java 1131 2006-10-19 13:56:13Z rgw_ch $
+ * $Id: LazyTreeLoader.java 2860 2007-07-21 18:32:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -37,6 +37,7 @@ import ch.elexis.util.LazyTree.LazyTreeListener;
  */
 public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTreeListener{
 	String parentColumn;
+	String parentField;
 	IFilter filter;
 	IProgressMonitor monitor;
 	
@@ -51,7 +52,9 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 	        ((Tree)result).setFilter(f);
         }
 	}
-	
+	public void setParentField(String f){
+		parentField=f;
+	}
 	@SuppressWarnings("unchecked") //$NON-NLS-1$
 	@Override
 	public IStatus execute(IProgressMonitor moni) {
@@ -81,7 +84,7 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 		 qbe.clear();
 		 PersistentObject obj=(PersistentObject) l.contents;
 		 if(obj!=null){
-			 qbe.add(parentColumn,"=",obj.getId()); //$NON-NLS-1$
+			 qbe.add(parentColumn,"=",parentField==null ? obj.getId() : obj.get(parentField)); //$NON-NLS-1$
 			 List ret=load();
 			 for(PersistentObject o:(List<PersistentObject>)ret){
 				 l.add(o,this);
@@ -90,7 +93,7 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 	}
 	public boolean hasChildren(LazyTree l) {
 		fetchChildren(l);
-		return true;
+		return (l.getFirstChild()==null);
 	}
 
 }
