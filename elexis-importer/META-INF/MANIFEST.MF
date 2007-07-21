@@ -12,11 +12,9 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui.forms,
  org.eclipse.ui
 Bundle-ClassPath: .,
- poi-2.5.1-final-20040804.jar,
- ostermillerutils_1_06_00.jar
-Export-Package: ch.elexis.importers,
- com.Ostermiller.util,
- gnu.getopt,
+ poi-2.5.1-final-20040804.jar
+Export-Package: au.com.bytecode.opencsv,
+ ch.elexis.importers,
  org.apache.poi.ddf,
  org.apache.poi.dev,
  org.apache.poi.hpsf,
