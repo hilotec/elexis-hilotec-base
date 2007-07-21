@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - DBBased Importer
  *    
- * $Id: ImporterPage.java 2297 2007-04-25 17:13:57Z rgw_ch $
+ * $Id: ImporterPage.java 2851 2007-07-21 05:00:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -48,7 +48,8 @@ import ch.rgw.tools.StringTool;
  */
 public abstract class ImporterPage implements IExecutableExtension{
 	public String [] results;
-
+	protected Log log=Log.get("Import");
+	
 	/** Nur intern gebraucht; kann bei Bedarf überschrieben oder erweitert werden */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		
@@ -114,6 +115,8 @@ public abstract class ImporterPage implements IExecutableExtension{
 	public static class FileBasedImporter extends Composite{
 	
 		public Text tFname;
+		private String[] filterExts={"*"};
+		private String[] filterNames={Messages.getString("ImporterPage.allFiles")};
 		public FileBasedImporter(final Composite parent, final ImporterPage home){
 			super(parent,SWT.BORDER);
 			setLayout(new GridLayout(1,false));
@@ -132,8 +135,8 @@ public abstract class ImporterPage implements IExecutableExtension{
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					FileDialog fdl=new FileDialog(parent.getShell(),SWT.OPEN);
-					fdl.setFilterExtensions(new String[]{"*"}); //$NON-NLS-1$
-					fdl.setFilterNames(new String[]{Messages.getString("ImporterPage.allFiles")}); //$NON-NLS-1$
+					fdl.setFilterExtensions(filterExts); 
+					fdl.setFilterNames(filterNames);
 					String filename=fdl.open();
 					if(filename!=null){
 						tFname.setText(filename);
@@ -145,6 +148,10 @@ public abstract class ImporterPage implements IExecutableExtension{
 			});
 
 			
+		}
+		public void setFilter(String[] extensions, String[] names){
+			filterExts=extensions;
+			filterNames=names;
 		}
 	}
 	
