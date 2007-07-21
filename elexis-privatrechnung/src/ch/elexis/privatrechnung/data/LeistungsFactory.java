@@ -8,17 +8,38 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2763 2007-07-08 20:35:31Z rgw_ch $
+ * $Id: LeistungsFactory.java 2850 2007-07-21 05:00:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
 
+import java.lang.reflect.Method;
+
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
 public class LeistungsFactory extends PersistentObjectFactory {
 
-	public LeistungsFactory() {
-		// TODO Auto-generated constructor stub
-	}
+	public PersistentObject createFromString(String code){
+		 try{
+		        String[] ci=code.split("::"); //$NON-NLS-1$
+		        Class clazz=Class.forName(ci[0]);
+		        Method load=clazz.getMethod("load",new Class[]{String.class}); //$NON-NLS-1$
+		        return  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
+		    }catch(Exception ex){
+		    	//ExHandler.handle(ex);
+		    	return null;
+		    }
+		}
+		@Override
+		public PersistentObject doCreateTemplate(Class typ) {
+			try {
+				return (PersistentObject) typ.newInstance();
+			} catch (Exception ex) {
+				//ExHandler.handle(ex);
+				return null;
+			}
+		}
+
 
 }

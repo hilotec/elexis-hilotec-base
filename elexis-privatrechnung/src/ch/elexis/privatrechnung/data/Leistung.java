@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2763 2007-07-08 20:35:31Z rgw_ch $
+ * $Id: Leistung.java 2850 2007-07-21 05:00:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -32,14 +32,12 @@ public class Leistung extends VerrechenbarAdapter {
 	
 	@Override
 	public String getCodeSystemCode() {
-		// TODO Auto-generated method stub
-		return super.getCodeSystemCode();
+		return "999";
 	}
 
 	@Override
 	public String getCodeSystemName() {
-		// TODO Auto-generated method stub
-		return super.getCodeSystemName();
+		return "privat";
 	}
 
 	@Override
@@ -53,18 +51,15 @@ public class Leistung extends VerrechenbarAdapter {
 	}
 
 	public String[] getDisplayedFields() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[]{"name","price"};
 	}
 
 	public double getFactor(final TimeTool date, final Fall fall) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getVKMultiplikator(date, fall);
 	}
 
 	public int getTP(final TimeTool date, final Fall fall) {
-		// TODO Auto-generated method stub
-		return 0;
+		return checkZero(get("price"));
 	}
 
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2763 2007-07-08 20:35:31Z rgw_ch $
+ * $Id: Leistungsdetail.java 2850 2007-07-21 05:00:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.views;

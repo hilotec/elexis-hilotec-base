@@ -7,6 +7,7 @@
             CodeDetailDisplay="ch.elexis.privatrechnung.views.Leistungsdetail"
             CodeSelectorFactory="ch.elexis.privatrechnung.views.Leistungsselektor"
             ElementFactory="ch.elexis.privatrechnung.data.LeistungsFactory"
+            ImporterClass="ch.elexis.privatrechnung.data.Importer"
             name="PrivatLeistung">
       </Leistung>
    </extension>
