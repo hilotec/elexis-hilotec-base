@@ -8,26 +8,49 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 2850 2007-07-21 05:00:02Z rgw_ch $
+ * $Id: Importer.java 2855 2007-07-21 10:19:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
 
 import java.io.File;
+import java.io.FileReader;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
-import sun.util.logging.resources.logging;
+import au.com.bytecode.opencsv.CSVReader;
 
+import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
+import ch.elexis.util.Log;
+import ch.elexis.util.Result;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.TimeTool;
 
 /**
  * A class to import codes from an external source to this code system.
  * the external source must be an CSV or Excel(tm) file with the fields:
- * codeID,codeName,cost,price,validFrom,validUntil,factor
+ * parentCode,codeID,codeName,cost,price,validFrom,validUntil,factor
+ * <ul>
+ * 	<li>parentCode: If this code system is organized as tree: codeID of the parent or null if thos is a 
+ *      top level code. If this code system is a flat list, parentCode is always 0</li>
+ *  <li>codeID: The (within this code system unique) identification of the code. e.g. 10.00.01 for al Tarmed-style system</li>
+ *  <li>codeName: the human understandable name of the code</li>
+ *  <li>cost: the internal cost of this service (what do we have to pay for it), in cents/Rp</li>
+ *  <li>price: the external cost of this service (what have cliebnts to pay us for it), in cents/Rp</li>
+ *  <li>validFrom: the date as YYYYMMDD when this code with this price starts being valid</li>
+ *  <li>validUntil: the date as YYYYMMDD when the validity of this entry expires</li>
+ *  <li>factor: a multiplicator to apply to the price before calculating the end-user-price. Sometimes referred to as
+ *      "Taxpunktwert"</li>
+ * </ul>
+ *  
+ *  Please note: the codeID needs not to be a unique key. instead we might have several entries with the same codeID, but different
+ *  validity-dates and prices/factors. At a given date however, only one ellement of each code should be valid.
+ *   
  * 
  * This Importer will be displayed, when the user selects "Import" from the
  * Details-View of the codes of this plugin
@@ -40,7 +63,7 @@ public class Importer extends ImporterPage {
 	 * For simplicity, we use the default FileBasedImporter of our superclass.
 	 */
 	@Override
-	public Composite createPage(Composite parent) {
+	public Composite createPage(final Composite parent) {
 		FileBasedImporter fbi=new FileBasedImporter(parent,this);
 		fbi.setFilter(new String[]{"csv","xls","*"},
 				new String[]{"Character Separated Values","Microsoft Excel 97","All Files"});
@@ -55,18 +78,24 @@ public class Importer extends ImporterPage {
 	 * Our file based importer saves the user input in results[0]
 	 */
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
 		File file=new File(results[0]);
 		if(!file.canRead()){
-			log.log("Can't read "+results[0], log.ERRORS);
+			log.log("Can't read "+results[0], Log.ERRORS);
 			return new Status(Status.ERROR,"ch.elexis.privatrechnung","Can't read "+results[0]);
 		}
+		if(results[0].endsWith(".xls")){
+			return importExcel(file.getAbsolutePath(),monitor).asStatus();
+		}else if(results[0].endsWith(".csv")){
+			return importCSV(file.getAbsolutePath(), monitor).asStatus();
+		}else{
+			return new Status(Status.ERROR,"ch.elexis.privatrechnung","Unsupported file format");	
+		}
 		
-		return Status.OK_STATUS;
 	}
 
 	/**
-	 * return a description to display in the messagr area of the import dialog
+	 * return a description to display in the message area of the import dialog
 	 */
 	@Override
 	public String getDescription() {
@@ -80,5 +109,43 @@ public class Importer extends ImporterPage {
 	public String getTitle() {
 		return "Privatleistungen";
 	}
+	private Result<String> importExcel(final String file,final IProgressMonitor mon){
+		ExcelWrapper xl=new ExcelWrapper();
+		if(!xl.load(file, 0)){
+			return new Result<String>(Status.ERROR,1,"Bad file format",file,true);				
+		}
+		for(int i=xl.getFirstRow();i<=xl.getLastRow();i++){
+			List<String> row=xl.getRow(i);
+			importLine(row.toArray(new String[0]));
+		}
+		return new Result<String>("OK");
+	}
+	
+	private Result<String> importCSV(final String file, final IProgressMonitor mon){
+		try{
+			CSVReader cr=new CSVReader(new FileReader(file));
+			String[] line;
+			while((line=cr.readNext())!=null){
+				importLine(line);
+			}
+			return new Result<String>("OK");
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return new Result<String>(Log.ERRORS,1,"Could not read "+file,ex.getMessage(),true);
+		}
 
+	}
+	 
+	// parentCode 0,codeID 1,codeName 2,cost 3,price 4 ,validFrom 5,validUntil 6,factor 7
+	private void importLine(final String[] line){
+		if(line[5].equals("")){
+			line[5]=TimeTool.BEGINNING_OF_UNIX_EPOCH;
+		}
+		if(line[6].equals("")){
+			line[6]=TimeTool.END_OF_UNIX_EPOCH;
+		}
+		Leistung lst=new Leistung(line[0],line[2],line[1],line[3],line[4],null,line[5],line[6]);
+		
+		lst.setVKMultiplikator(new TimeTool(line[5]), new TimeTool(line[6]), Double.parseDouble(line[7]), lst.getCodeSystemName());
+	}
 }
