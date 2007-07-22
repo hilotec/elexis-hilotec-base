@@ -29,7 +29,7 @@
    <extension
          point="ch.elexis.RechnungsManager">
       <Rechnung
-            name="ch.elexis.privatrechnung.rechnung"
+            name="Privatrechnung"
             outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">
       </Rechnung>
    </extension>
