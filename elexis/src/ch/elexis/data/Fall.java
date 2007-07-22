@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2864 2007-07-22 08:59:41Z rgw_ch $
+ *    $Id: Fall.java 2865 2007-07-22 15:26:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -107,7 +107,7 @@ public class Fall extends PersistentObject{
 			for(String req:reqs.split(";")){
 				String[] r=req.split(":");
 				String localReq=getInfoString(r[0]);
-				if(localReq==null){
+				if(StringTool.isNothing(localReq)){
 					return false;
 				}
 				if(r[1].equals("K")){
@@ -273,6 +273,9 @@ public class Fall extends PersistentObject{
 		return getCodeSystem(getAbrechnungsSystem());
 	}
 	
+	public String getRequirements(){
+		return getRequirements(getAbrechnungsSystem());
+	}
 	public String getOutputterName(){
 		return getDefaultPrintSystem(getAbrechnungsSystem());
 	}

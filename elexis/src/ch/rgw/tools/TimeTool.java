@@ -1,4 +1,4 @@
-// $Id: TimeTool.java 2856 2007-07-21 10:19:10Z rgw_ch $
+// $Id: TimeTool.java 2865 2007-07-22 15:26:06Z rgw_ch $
 
 package ch.rgw.tools;
 
@@ -135,71 +135,82 @@ public class TimeTool extends GregorianCalendar{
 	 if(StringTool.isNothing(s)){
 		 return false;
 	 }
-    if(s.startsWith("#") || s.startsWith("'") || s.startsWith("\""))
-    { s=s.substring(1,s.length()-1);
-    }
-    String trc=" ";
-    if(s.indexOf(',')!=-1)
-    { trc=",";
-    }else if(s.indexOf("T")!=-1){
-    	trc="T";
-    }
-    String[] s1=s.split(trc);
-    // int[] ret=new int[6];
-    if(s1.length!=2)          // kein Abstand
-    { int[] r=parseTime(s);   // Ist es ein Zeit-String?
-      if(r==null)             // Nein. Ist es ein Datum-String?
-      { r=parseDate(s);
-        if(r==null)           // Nein: Ist es ein timestamp?
-        { if(s.length()==14)
-          { set(Integer.parseInt(s.substring(0,4)),
-                Integer.parseInt(s.substring(4,6))-1,
-                Integer.parseInt(s.substring(6,8)),
-                Integer.parseInt(s.substring(8,10)),
-                Integer.parseInt(s.substring(10,12)),
-                Integer.parseInt(s.substring(12,14)));
-          	set(MILLISECOND, 0);
-          }
-          else
-          {  return false;      // Nein, Fehler
-          }
-        }
-        else                  // Ja, Datum-String
-        { set(r[2],r[1]-1,r[0],0,0,0);
-      	  set(MILLISECOND, 0);
-        }
-      }
-      else                    // Ja, Zeit-String
-      { set(HOUR_OF_DAY,r[0]);
-        set(MINUTE,r[1]);
-        set(SECOND,r[2]);
-      	set(MILLISECOND, 0);
-      }
-    }
-    else                        // Ja, Abstand
-    { int[] d=parseDate(s1[0]); // Datum
-      if(d==null) {
-		return false;
-	}
-      int[] t=parseTime(s1[1]); // Und Zeit einsetzen
-      if(t==null) {
-		return false;
-	}
-      set(d[2],d[1]-1,d[0],t[0],t[1],t[2]);
-      set(MILLISECOND, 0);
-    }
-    return true;
+	 try{
+	    if(s.startsWith("#") || s.startsWith("'") || s.startsWith("\""))
+	    { s=s.substring(1,s.length()-1);
+	    }
+	    String trc=" ";
+	    if(s.indexOf(',')!=-1)
+	    { trc=",";
+	    }else if(s.indexOf("T")!=-1){
+	    	trc="T";
+	    }
+	    String[] s1=s.split(trc);
+	    // int[] ret=new int[6];
+	    if(s1.length!=2)          // kein Abstand
+	    { int[] r=parseTime(s);   // Ist es ein Zeit-String?
+	      if(r==null)             // Nein. Ist es ein Datum-String?
+	      { r=parseDate(s);
+	        if(r==null)           // Nein: Ist es ein timestamp?
+	        { if(s.length()==14)
+	          { set(Integer.parseInt(s.substring(0,4)),
+	                Integer.parseInt(s.substring(4,6))-1,
+	                Integer.parseInt(s.substring(6,8)),
+	                Integer.parseInt(s.substring(8,10)),
+	                Integer.parseInt(s.substring(10,12)),
+	                Integer.parseInt(s.substring(12,14)));
+	          	set(MILLISECOND, 0);
+	          }
+	          else
+	          {  return false;      // Nein, Fehler
+	          }
+	        }
+	        else                  // Ja, Datum-String
+	        { set(r[2],r[1]-1,r[0],0,0,0);
+	      	  set(MILLISECOND, 0);
+	        }
+	      }
+	      else                    // Ja, Zeit-String
+	      { set(HOUR_OF_DAY,r[0]);
+	        set(MINUTE,r[1]);
+	        set(SECOND,r[2]);
+	      	set(MILLISECOND, 0);
+	      }
+	    }
+	    else                        // Ja, Abstand
+	    { int[] d=parseDate(s1[0]); // Datum
+	      if(d==null) {
+			return false;
+		}
+	      int[] t=parseTime(s1[1]); // Und Zeit einsetzen
+	      if(t==null) {
+			return false;
+		}
+	      set(d[2],d[1]-1,d[0],t[0],t[1],t[2]);
+	      set(MILLISECOND, 0);
+	    }
+	    return true;
+	 }catch(Exception ex){
+		 ExHandler.handle(ex);
+		 return false;
+	 }
   }
   // nur Datum setzen, Zeit unver�ndert lassen
   public boolean setDate(final String dat)
-  { int [] d=parseDate(dat);
-    if(d==null) {
-		return false;
-	}
-    set(YEAR,d[2]);
-    set(MONTH,d[1]-1);
-    set(DAY_OF_MONTH,d[0]);
-    return true;
+  { 
+	  try{
+		  int [] d=parseDate(dat);
+	    if(d==null) {
+			return false;
+		}
+	    set(YEAR,d[2]);
+	    set(MONTH,d[1]-1);
+	    set(DAY_OF_MONTH,d[0]);
+	    return true;
+	  }catch(Exception ex){
+		  ExHandler.handle(ex);
+		  return false;
+	  }
   }
   public void setDate(final TimeTool o)
   { set(YEAR,o.get(YEAR));

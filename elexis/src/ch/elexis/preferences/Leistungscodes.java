@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 2864 2007-07-22 08:59:41Z rgw_ch $
+ * $Id: Leistungscodes.java 2865 2007-07-22 15:26:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -230,9 +230,11 @@ public class Leistungscodes extends PreferencePage implements
 					if(inp.open()==Dialog.OK){
 						String req=inp.getValue();
 						if(l.startsWith("Ko")){
-							req+=":K";
+							req+=":K";							// Kontakt
+						}else if(l.trim().startsWith("T")){
+							req+=":T";							// Text
 						}else{
-							req+=":T";
+							req+=":D";							// Date
 						}
 						ld.add(req);
 					}
@@ -241,14 +243,20 @@ public class Leistungscodes extends PreferencePage implements
 				public String getLabel(Object o) {
 					String[] l=((String)o).split(":");
 					if(l.length>1){
-						return (l[1].equals("T") ? "Text: " : "Kontakt: ")+l[0];
+						String type="Datum: ";
+						if(l[1].equals("T")){
+							type="Text: ";
+						}else if(l[1].equals("K")){
+							type="Kontakt: ";
+						}
+						return type+l[0];
 					}else{
 						return "? "+l[0];
 					}
 				}
 				
 			});
-			ld.addHyperlinks("Kontakt... "," Text...");
+			ld.addHyperlinks("Kontakt... "," Text... "," Datum... ");
 			ld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			if((result!=null) && (result.length>3) &&(result[3]!=null)){
 				String[] reqs=result[3].split(";");

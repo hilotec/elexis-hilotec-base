@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailView.java 2390 2007-05-18 12:35:03Z danlutz $
+ *  $Id: FallDetailView.java 2865 2007-07-22 15:26:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -30,12 +30,12 @@ import ch.elexis.util.SWTHelper;
 
 public class FallDetailView extends ViewPart implements SelectionListener, ISaveablePart2 {
 	public static final String ID="ch.elexis.FallDetailView";
-	FallDetailBlatt fdb;
+	FallDetailBlatt2 fdb;
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
-		fdb=new FallDetailBlatt(parent);
+		fdb=new FallDetailBlatt2(parent);
 		fdb.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		GlobalEvents.getInstance().addSelectionListener(this);
 	}
