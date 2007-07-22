@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2849 2007-07-20 20:29:56Z rgw_ch $
+ *    $Id: Fall.java 2864 2007-07-22 08:59:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -102,6 +102,22 @@ public class Fall extends PersistentObject{
 			}
 		}
 		*/
+		String reqs=getRequirements(getAbrechnungsSystem());
+		if(reqs!=null){
+			for(String req:reqs.split(";")){
+				String[] r=req.split(":");
+				String localReq=getInfoString(r[0]);
+				if(localReq==null){
+					return false;
+				}
+				if(r[1].equals("K")){
+					Kontakt k=Kontakt.load(localReq);
+					if(!k.isValid()){
+						return false;
+					}
+				}
+			}
+		}
 		IRnOutputter outputter=getOutputter();
 		if(outputter!=null){
 			if(!outputter.canBill(this)){
@@ -494,6 +510,10 @@ public class Fall extends PersistentObject{
 			getAbrechnungsSysteme();
 			ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/standardausgabe", "?");
 		}
+		return ret;
+	}
+	public static String getRequirements(final String billingSystem) {
+		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/bedingungen", null);
 		return ret;
 	}
 }

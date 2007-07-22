@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 2842 2007-07-19 07:56:52Z rgw_ch $
+ * $Id: Leistungscodes.java 2864 2007-07-22 08:59:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -43,6 +44,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.util.Extensions;
+import ch.elexis.util.ListDisplay;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -76,6 +78,7 @@ public class Leistungscodes extends PreferencePage implements
 					Hub.globalCfg.set(key+"/name",result[0]);
 					Hub.globalCfg.set(key+"/leistungscodes",result[1]);
 					Hub.globalCfg.set(key+"/standardausgabe", result[2]);
+					Hub.globalCfg.set(key+"/bedingungen",result[3]);
 					systeme=Hub.globalCfg.nodes(CFG_KEY);
 					reload();
 				}
@@ -100,12 +103,20 @@ public class Leistungscodes extends PreferencePage implements
 					String ssel=sel.getText(0);
 					for(String s1:systeme){
 						if(s1.startsWith(ssel)){
-							String[] pre=new String[3];
+							String[] pre=new String[4];
 							pre[0]=s1;
 							pre[1]=Fall.getCodeSystem(s1);
 							pre[2]=Fall.getDefaultPrintSystem(s1);
+							pre[3]=Fall.getRequirements(s1);
 							AbrechnungsTypDialog at=new AbrechnungsTypDialog(getShell(),pre);
 							if(at.open()==Dialog.OK){
+								String[] result=at.getResult();
+								String key=CFG_KEY+"/"+result[0];
+								Hub.globalCfg.set(key+"/name",result[0]);
+								Hub.globalCfg.set(key+"/leistungscodes",result[1]);
+								Hub.globalCfg.set(key+"/standardausgabe", result[2]);
+								Hub.globalCfg.set(key+"/bedingungen",result[3]);
+								systeme=Hub.globalCfg.nodes(CFG_KEY);
 								reload();
 							}
 							
@@ -157,6 +168,7 @@ public class Leistungscodes extends PreferencePage implements
 		Label lbTaxp;
 		String[] result;
 		MultiplikatorEditor mke;
+		ListDisplay<String> ld;
 		
 		AbrechnungsTypDialog(final Shell shell, final String[] abrdef){
 			super(shell);
@@ -192,9 +204,14 @@ public class Leistungscodes extends PreferencePage implements
 			for(IConfigurationElement ic:lo){
 				cbRechn.add(ic.getAttribute("name"));
 			}
+			new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 			lbTaxp=new Label(ret,SWT.NONE);
 			lbTaxp.setText("Multiplikator");
-			lbTaxp.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+			lbTaxp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
+			Label lbReq=new Label(ret,SWT.NONE);
+			lbReq.setText("Notwendige Daten");
+						
 			String name="default";
 			if(result!=null){
 				tName.setText(result[0]);
@@ -204,8 +221,41 @@ public class Leistungscodes extends PreferencePage implements
 			}
 			
 			mke=new MultiplikatorEditor(ret,name);
-			mke.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
-	
+			mke.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			ld=new ListDisplay<String>(ret, SWT.NONE, new ListDisplay.LDListener(){
+
+				public void hyperlinkActivated(String l) {
+					String msg="Bitte geben Sie den Namen für diese Vorbedingung ein";
+					InputDialog inp=new InputDialog(getShell(),l+" hinzufügen",msg,"",null);
+					if(inp.open()==Dialog.OK){
+						String req=inp.getValue();
+						if(l.startsWith("Ko")){
+							req+=":K";
+						}else{
+							req+=":T";
+						}
+						ld.add(req);
+					}
+				}
+
+				public String getLabel(Object o) {
+					String[] l=((String)o).split(":");
+					if(l.length>1){
+						return (l[1].equals("T") ? "Text: " : "Kontakt: ")+l[0];
+					}else{
+						return "? "+l[0];
+					}
+				}
+				
+			});
+			ld.addHyperlinks("Kontakt... "," Text...");
+			ld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			if((result!=null) && (result.length>3) &&(result[3]!=null)){
+				String[] reqs=result[3].split(";");
+				for(String req:reqs){
+					ld.add(req);
+				}
+			}
 			return ret;
 		}
 
@@ -220,10 +270,11 @@ public class Leistungscodes extends PreferencePage implements
 
 		@Override
 		protected void okPressed() {
-			result=new String[3];
+			result=new String[4];
 			result[0]=tName.getText();
 			result[1]=cbLstg.getText();
 			result[2]=cbRechn.getText();
+			result[3]=StringTool.join(ld.getAll(), ";");
 			super.okPressed();
 		}
 		public String[] getResult(){
