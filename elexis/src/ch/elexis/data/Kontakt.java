@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 2761 2007-07-08 12:48:24Z rgw_ch $
+ *    $Id: Kontakt.java 2868 2007-07-22 20:36:01Z rgw_ch $
  *******************************************************************************/
 
 
@@ -21,6 +21,7 @@ import java.util.List;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
+import ch.elexis.util.MFUList;
 import ch.rgw.tools.StringTool;
 
 
@@ -418,6 +419,28 @@ public class Kontakt extends PersistentObject{
 			return -1;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void statForString(String typ,String toStat){
+		Hashtable exi=getHashtable("ExtInfo");
+		MFUList<String> l=(MFUList<String>)exi.get(typ);
+		if(l==null){
+			l=new MFUList<String>(5,15);
+		}
+		l.count(toStat);
+		exi.put(typ, l);
+		setHashtable("ExtInfo", exi);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getStatForString(String typ){
+    	Hashtable exi=getHashtable("ExtInfo");
+    	MFUList<String> al=(MFUList<String>)exi.get(typ);
+    	if(al==null){
+    		al=new MFUList<String>(5,15);
+    	}
+    	return al.getAll();
+    }
 	
 	public String getKuerzel(){
 		return get("Kuerzel");

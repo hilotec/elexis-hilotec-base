@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LeistungenView.java 2867 2007-07-22 19:27:12Z rgw_ch $
+ *  $Id: LeistungenView.java 2868 2007-07-22 20:36:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -67,7 +67,9 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 					page.cv.getConfigurer().getControlFieldProvider().clearValues();
 				}
 				selected=ctab.getSelection();
-
+				if(Hub.actUser!=null){
+					Hub.actUser.statForString("LeistungenMFU", selected.getText());
+				}
 				((cPage)selected.getControl()).refresh();
 				setFocus();
 			}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 2867 2007-07-22 19:27:12Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 2868 2007-07-22 20:36:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -53,6 +53,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
+import ch.elexis.util.MFUList;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.CommonViewer.DoubleClickListener;
@@ -81,6 +82,8 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 		ITEMS_TO_SHOW_IN_MFU_LIST=Hub.userCfg.get(PreferenceConstants.USR_MFU_LIST_SIZE, 15);
 		java.util.List<IConfigurationElement> list=Extensions.getExtensions(point);
 		ctab.setSimple(false);
+		java.util.List<String> mfu=Hub.actUser.getStatForString("LeistungenMFU");
+
 		if(list!=null){
 			for(IConfigurationElement ic:list){
 				try {
@@ -89,7 +92,6 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 					if(cs==null){
 						SWTHelper.alert("Fehler", "CodeSelectorFactory is null");
 					}
-					CTabItem ct=new CTabItem(ctab,SWT.NONE);
 					ICodeElement ics=(ICodeElement)po.createTemplate(cs.getElementClass());
 					if(ics==null){
 						SWTHelper.alert("Fehler", "CodeElement is null");
@@ -99,7 +101,14 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 						SWTHelper.alert("Fehler", "codesystemname");
 						cname="??";
 					}
-					
+					int idx=-1; //mfu.indexOf(cname);
+					CTabItem ct;
+					if(idx==-1){
+						ct=new CTabItem(ctab,SWT.NONE);
+					}else{
+						ct=new CTabItem(ctab,SWT.NONE,idx);
+					}
+									
 					ct.setText(cname);
 					ct.setData(ics);
 					cPage page=new cPage(ctab, site,ics,cs);	

@@ -8,38 +8,78 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MFUList.java 2867 2007-07-22 19:27:12Z rgw_ch $
+ *  $Id: MFUList.java 2868 2007-07-22 20:36:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * A class to keep track of the usage of certain objects
  * @author Gerry
  *
- * @param <T>
+ * @param <T> must implement Serializable
  */
-public class MFUList<T> extends ArrayList{
+
+public class MFUList<T> implements Iterable<T>, Serializable{
 	private static final long serialVersionUID = 3966224865760348882L;
+	private ArrayList<Entry<T>> list;
 	int maxNum;
 	
 	public MFUList(int objectsToStart, int objectsToKeep){
-		super(objectsToStart);
+		list=new ArrayList<Entry<T>>(objectsToStart);
 		maxNum=objectsToKeep;
 	}
 	
 	public void count(T obj){
-		for(Entry<T> e:(List<Entry<T>>)this){
-			
+		for(Entry<T> e:list){
+			if(e.o.equals(obj)){
+				if(e.count++>20000){
+					for(Entry<T> x:list){
+						if(x.count>0){
+							x.count-=20000;
+						}
+					}
+				}
+				Collections.sort(list);
+				return;
+			}
+		}
+		while(list.size()>maxNum){
+			list.remove(list.size()-1);
 		}
 
+		list.add(new Entry<T>(obj));
+		Collections.sort(list);
 	}
-	static class Entry<X> implements Comparable<Entry<X>>{
+	
+	public List<T> getAll(){
+		ArrayList<T> ret=new ArrayList<T>();
+		for(Entry<T> e:list){
+			ret.add(e.o);
+		}
+		return ret;
+	}
+	
+	public int getIndex(T obj){
+		for(int i=0;i<list.size();i++){
+			if(list.get(i).o.equals(obj)){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	
+	class Entry<X> implements Comparable<Entry<X>>, Serializable{
+		private static final long serialVersionUID = 5090900795191382845L;
 		int count;
-		Object o;
+		X o;
 		public Entry(X obj){
 			o=obj;
 			count=0;
@@ -51,6 +91,28 @@ public class MFUList<T> extends ArrayList{
 		public boolean equals(Object obj) {
 			
 			return super.equals(obj);
+		}
+		
+	}
+
+	public Iterator<T> iterator() {
+		return new It();
+	}
+	class It implements Iterator<T>{
+		Iterator<Entry<T>> li;
+		It(){
+			li=list.iterator();
+		}
+		public boolean hasNext() {
+			return li.hasNext();
+		}
+
+		public T next() {
+			return li.next().o;
+		}
+
+		public void remove() {
+			li.remove();
 		}
 		
 	}
