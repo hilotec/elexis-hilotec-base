@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2865 2007-07-22 15:26:06Z rgw_ch $
+ *    $Id: Fall.java 2866 2007-07-22 17:30:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -185,9 +185,23 @@ public class Fall extends PersistentObject{
 	
 	/** Garant holen (existiert ev. nicht) */
 	public Kontakt getGarant(){
+		// TODO compatibility
+		if(getInfoString("Rechnungsempfänger").equals("")){
+			update();
+		}
 		return Kontakt.load(get("GarantID"));
 	}
-	/** Garant setzen */
+	/**
+	 * This is an update only for swiss installations that takes the old
+	 * tarmed cases to the new system
+	 */
+	private void update(){
+		setInfoString("Kostenträger",checkNull(get("Kostentraeger")));
+		setInfoString("Rechnungsempfänger", checkNull(get("GarantID")));
+		setInfoString("Versicherungsnummer",checkNull(get("VersNummer")));
+		setInfoString("Fallnummer",checkNull(get("FallNummer")));
+	}
+	/** Garant setzen 
 	public void setGarant(final Kontakt garant){
 		set("GarantID",garant==null ? "" : garant.getId());
 	}
@@ -200,6 +214,7 @@ public class Fall extends PersistentObject{
 	
 	}
 
+*/
 	public Kontakt getArbeitgeber(){
 		String id=getInfoString("Arbeitgeber");
 		Kontakt ret=null;
@@ -218,22 +233,34 @@ public class Fall extends PersistentObject{
 	}
 	/** Kostenträger laden */
 	public Kontakt getKostentraeger(){
+		// TODO compatibility
+		if(getInfoString("Kostenträger").equals("")){
+			update();
+		}
+
 		return Kontakt.load(get("Kostentraeger"));
 	}
-	/** Kostenträger setzen */
+	/** Kostenträger setzen 
 	public void setKostentraeger(final Kontakt k){
 		if(k!=null){
 			set("Kostentraeger",k.getId());
 		}
 	}
+	*/
 	/** Versichertennummer holen */
 	public String getVersNummer(){
+		// TODO compatibility
+		if(getInfoString("Versicherungsnummer").equals("")){
+			update();
+		}
+
 		return checkNull(get("VersNummer"));
 	}
-	/** Versichertennummer setzen */
+	/** Versichertennummer setzen 
 	public void setVersNummer(final String nr){
 		set("VersNummer",nr);
 	}
+	*/
 	/** Fallnummer lesen */
 	public String getFallNummer(){
 		return checkNull(get("FallNummer"));

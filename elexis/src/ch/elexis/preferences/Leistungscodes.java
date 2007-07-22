@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 2865 2007-07-22 15:26:06Z rgw_ch $
+ * $Id: Leistungscodes.java 2866 2007-07-22 17:30:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -24,11 +24,15 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -256,7 +260,7 @@ public class Leistungscodes extends PreferencePage implements
 				}
 				
 			});
-			ld.addHyperlinks("Kontakt... "," Text... "," Datum... ");
+			ld.addHyperlinks("Kontakt... ","  Text... "," Datum... ");
 			ld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			if((result!=null) && (result.length>3) &&(result[3]!=null)){
 				String[] reqs=result[3].split(";");
@@ -264,6 +268,18 @@ public class Leistungscodes extends PreferencePage implements
 					ld.add(req);
 				}
 			}
+			Menu menu=new Menu(ld);
+			MenuItem del=new MenuItem(menu,SWT.NONE);
+			del.setText("Löschen");
+			del.addSelectionListener(new SelectionAdapter(){
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					String sel=ld.getSelection();
+					ld.remove(sel);
+				}
+				
+			});
+			ld.setMenu(menu);
 			return ret;
 		}
 

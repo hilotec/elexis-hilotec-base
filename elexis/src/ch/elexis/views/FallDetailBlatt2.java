@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2865 2007-07-22 15:26:06Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 2866 2007-07-22 17:30:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -52,7 +53,7 @@ public class FallDetailBlatt2 extends Composite {
 	private final FormToolkit tk;
 	private final ScrolledForm form;
 	String[] Abrechnungstypen=Fall.getAbrechnungsSysteme();
-	
+	private Fall actFall;
 	
     public static final String[] Reasons={Fall.TYPE_DISEASE,
     	Fall.TYPE_ACCIDENT,Fall.TYPE_MATERNITY,Fall.TYPE_PREVENTION,Fall.TYPE_BIRTHDEFECT,Fall.TYPE_OTHER};
@@ -115,7 +116,7 @@ public class FallDetailBlatt2 extends Composite {
             public void widgetSelected(final SelectionEvent e)
             {
                 int i=cAbrechnung.getSelectionIndex();
-                Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
+                Fall fall=getFall();
                 if(fall!=null){
                 	if(fall.getBehandlungen(false).length>0){
                 		SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Bei einem Fall, zu dem schon Konsultationen existieren, kann das Gestz nicht geändert werden.");
@@ -137,7 +138,17 @@ public class FallDetailBlatt2 extends Composite {
         });
 		tk.createLabel(top,"Bezeichnung");
 		tBezeichnung=tk.createText(top,"");
-        tBezeichnung.addFocusListener(new Focusreact("Bezeichnung"));
+        tBezeichnung.addFocusListener(new FocusAdapter(){
+			@Override
+			public void focusLost(FocusEvent e) {
+				String newval=((Text)e.getSource()).getText();
+	            Fall fall=getFall();
+	            if(fall!=null){
+	            	fall.set("Bezeichnung",newval);
+	            	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+	            }	
+				super.focusLost(e);
+			}});
         tBezeichnung.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		tk.createLabel(top,"Grund für Versicherung");
 		cReason=new Combo(top,SWT.READ_ONLY);
@@ -147,7 +158,7 @@ public class FallDetailBlatt2 extends Composite {
             public void widgetSelected(final SelectionEvent e)
             {
                 int i=cReason.getSelectionIndex();
-                Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
+                Fall fall=getFall();
                 if(fall!=null){
                 	fall.setGrund(Reasons[i]);
                 	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
@@ -157,7 +168,7 @@ public class FallDetailBlatt2 extends Composite {
         cReason.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 
 		        tk.paintBordersFor(top);
-		setFall((Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class));
+		setFall(getFall());
 
 	}
 	
@@ -172,7 +183,7 @@ public class FallDetailBlatt2 extends Composite {
         public void focusLost(final FocusEvent e)
         {
             String newval=((Text)e.getSource()).getText();
-            Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
+            Fall fall=getFall();
             if(fall!=null){
             	fall.setInfoString(field,newval);
             	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
@@ -181,10 +192,12 @@ public class FallDetailBlatt2 extends Composite {
         
     }
 	public void setFall(final Fall f){
+		actFall=f;
 		for(Control c:lReqs){
 			c.dispose();
 		}
 		lReqs.clear();
+		cAbrechnung.setItems(Fall.getAbrechnungsSysteme());
 		if(f==null){
 			form.setText("Kein Fall ausgewählt");
 			tBezeichnung.setText("");
@@ -253,7 +266,7 @@ public class FallDetailBlatt2 extends Composite {
 									"Bitte wählen Sie den Kontakt für "+r[0]+" aus", true);
 							if(ksl.open()==Dialog.OK){
 								Kontakt sel=(Kontakt)ksl.getSelection();
-						        Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
+						        Fall fall=getFall();
 						        if(fall!=null){
 						        	fall.setInfoString(r[0], sel.getId());
 						        	setFall(fall);
@@ -274,4 +287,13 @@ public class FallDetailBlatt2 extends Composite {
 		
 	}
 
+	private Fall getFall(){
+		if(actFall==null){
+			Fall ret= GlobalEvents.getSelectedFall();
+			if(ret!=null){
+				actFall=ret;
+			}
+		}
+		return actFall;
+	}
 }

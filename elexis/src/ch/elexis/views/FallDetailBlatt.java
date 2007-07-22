@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt.java 2842 2007-07-19 07:56:52Z rgw_ch $
+ *  $Id: FallDetailBlatt.java 2866 2007-07-22 17:30:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -247,11 +247,11 @@ public class FallDetailBlatt extends Composite {
 		        Fall fall=(Fall)GlobalEvents.getInstance().getSelectedObject(Fall.class);
 		        if(fall!=null){
 		        	if(source.equals(garant)){
-		        		fall.setGarant(sel);
+		        		fall.setInfoString("Rechnungsempfänger",sel.getId());
 		        	}else if(source.equals(arbeitgeber)){
-		        		fall.setArbeitgeber(sel);
+		        		fall.setInfoString("Arbeitgeber",sel.getId());
 		        	}else{
-		        		fall.setKostentraeger(sel);
+		        		fall.setInfoString("Kostentraeger",sel.getId());
 		        	}
 		        	setFall(fall);
                 	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());

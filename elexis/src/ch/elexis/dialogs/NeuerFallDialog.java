@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: NeuerFallDialog.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ *    $Id: NeuerFallDialog.java 2866 2007-07-22 17:30:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
-import ch.elexis.views.FallDetailBlatt;
+import ch.elexis.views.FallDetailBlatt2;
 
 public class NeuerFallDialog extends TitleAreaDialog {
 	Fall fall;
@@ -39,7 +39,7 @@ public class NeuerFallDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		FallDetailBlatt fdb=new FallDetailBlatt(parent);
+		FallDetailBlatt2 fdb=new FallDetailBlatt2(parent);
 		return fdb;
 	}
 
