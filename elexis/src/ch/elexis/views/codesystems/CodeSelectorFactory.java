@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 2500 2007-06-08 09:56:34Z danlutz $
+ *  $Id: CodeSelectorFactory.java 2867 2007-07-22 19:27:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -104,6 +104,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 					ct.setData(ics);
 					cPage page=new cPage(ctab, site,ics,cs);	
 					ct.setControl(page);
+					
 				} catch (CoreException ex) {
 					ExHandler.handle(ex);
 				}

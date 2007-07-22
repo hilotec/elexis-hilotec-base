@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LeistungenView.java 2500 2007-06-08 09:56:34Z danlutz $
+ *  $Id: LeistungenView.java 2867 2007-07-22 19:27:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -67,6 +67,7 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 					page.cv.getConfigurer().getControlFieldProvider().clearValues();
 				}
 				selected=ctab.getSelection();
+
 				((cPage)selected.getControl()).refresh();
 				setFocus();
 			}

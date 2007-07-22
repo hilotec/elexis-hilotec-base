@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2866 2007-07-22 17:30:40Z rgw_ch $
+ *    $Id: Fall.java 2867 2007-07-22 19:27:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -189,7 +189,7 @@ public class Fall extends PersistentObject{
 		if(getInfoString("Rechnungsempfänger").equals("")){
 			update();
 		}
-		return Kontakt.load(get("GarantID"));
+		return Kontakt.load(getInfoString("Rechnungsempfänger"));
 	}
 	/**
 	 * This is an update only for swiss installations that takes the old
@@ -200,6 +200,7 @@ public class Fall extends PersistentObject{
 		setInfoString("Rechnungsempfänger", checkNull(get("GarantID")));
 		setInfoString("Versicherungsnummer",checkNull(get("VersNummer")));
 		setInfoString("Fallnummer",checkNull(get("FallNummer")));
+		setInfoString("Unfallnummer",checkNull(get("FallNummer")));
 	}
 	/** Garant setzen 
 	public void setGarant(final Kontakt garant){
@@ -238,7 +239,7 @@ public class Fall extends PersistentObject{
 			update();
 		}
 
-		return Kontakt.load(get("Kostentraeger"));
+		return Kontakt.load(getInfoString("Kostenträger"));
 	}
 	/** Kostenträger setzen 
 	public void setKostentraeger(final Kontakt k){
@@ -254,7 +255,7 @@ public class Fall extends PersistentObject{
 			update();
 		}
 
-		return checkNull(get("VersNummer"));
+		return checkNull(getInfoString("Versicherungsnummer"));
 	}
 	/** Versichertennummer setzen 
 	public void setVersNummer(final String nr){
