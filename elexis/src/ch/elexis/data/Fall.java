@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2867 2007-07-22 19:27:12Z rgw_ch $
+ *    $Id: Fall.java 2871 2007-07-23 08:43:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -81,27 +81,6 @@ public class Fall extends PersistentObject{
 			return false;
 		}
 		
-		/*
-		if(getPaymentMode().equalsIgnoreCase("TG")){
-			if(!getKostentraeger().exists()){
-				return false;
-			}
-		}
-		*/
-		if(!getGarant().exists()){
-			return false;
-		}
-		/*
-		if(getGesetz().equalsIgnoreCase(LAW_ACCIDENT)){
-			if(StringTool.isNothing(getFallNummer())){
-				return false;
-			}
-		}else if(getGesetz().equalsIgnoreCase(LAW_DISEASE)){
-			if(StringTool.isNothing(getVersNummer())){
-				return false;
-			}
-		}
-		*/
 		String reqs=getRequirements(getAbrechnungsSystem());
 		if(reqs!=null){
 			for(String req:reqs.split(";")){
@@ -196,11 +175,22 @@ public class Fall extends PersistentObject{
 	 * tarmed cases to the new system
 	 */
 	private void update(){
-		setInfoString("Kostenträger",checkNull(get("Kostentraeger")));
-		setInfoString("Rechnungsempfänger", checkNull(get("GarantID")));
-		setInfoString("Versicherungsnummer",checkNull(get("VersNummer")));
-		setInfoString("Fallnummer",checkNull(get("FallNummer")));
-		setInfoString("Unfallnummer",checkNull(get("FallNummer")));
+		String is=getInfoString("Kostenträger");
+		if(getInfoString("Kostenträger").equals("")){
+			setInfoString("Kostenträger",checkNull(get("Kostentraeger")));
+		}
+		if(getInfoString("Rechnungsempfänger").equals("")){
+			setInfoString("Rechnungsempfänger", checkNull(get("GarantID")));
+		}
+		if(getInfoString("Versicherungsnummer").equals("")){
+			setInfoString("Versicherungsnummer",checkNull(get("VersNummer")));
+		}
+		if(getInfoString("Fallnummer").equals("")){
+			setInfoString("Fallnummer",checkNull(get("FallNummer")));
+		}
+		if(getInfoString("Unfallnummer").equals("")){
+			setInfoString("Unfallnummer",checkNull(get("FallNummer")));
+		}
 	}
 	/** Garant setzen 
 	public void setGarant(final Kontakt garant){

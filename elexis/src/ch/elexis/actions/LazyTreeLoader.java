@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTreeLoader.java 2860 2007-07-21 18:32:26Z rgw_ch $
+ * $Id: LazyTreeLoader.java 2871 2007-07-23 08:43:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -41,23 +41,23 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 	IFilter filter;
 	IProgressMonitor monitor;
 	
-	public LazyTreeLoader(String Jobname, Query q, String parent, String[] orderBy){
+	public LazyTreeLoader(final String Jobname, final Query q, final String parent, final String[] orderBy){
 		super(Jobname,q,orderBy);
         setReverseOrder(true);
 		parentColumn=parent;
 	}
-	public void setFilter(IFilter f){
+	public void setFilter(final IFilter f){
 	    filter=f;
 	    if(isValid()==true){
 	        ((Tree)result).setFilter(f);
         }
 	}
-	public void setParentField(String f){
+	public void setParentField(final String f){
 		parentField=f;
 	}
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
+	@SuppressWarnings("unchecked") 
 	@Override
-	public IStatus execute(IProgressMonitor moni) {
+	public IStatus execute(final IProgressMonitor moni) {
 		monitor=moni;
     	if(monitor!=null){
         	monitor.subTask(getJobname());
@@ -79,8 +79,8 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 	public int getSize() {
 		return qbe.size();
 	}
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public void fetchChildren(LazyTree l) {
+	@SuppressWarnings("unchecked") 
+	public void fetchChildren(final LazyTree l) {
 		 qbe.clear();
 		 PersistentObject obj=(PersistentObject) l.contents;
 		 if(obj!=null){
@@ -91,9 +91,9 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 			 }
 		 }
 	}
-	public boolean hasChildren(LazyTree l) {
+	public boolean hasChildren(final LazyTree l) {
 		fetchChildren(l);
-		return (l.getFirstChild()==null);
+		return (l.getFirstChild()!=null);
 	}
 
 }

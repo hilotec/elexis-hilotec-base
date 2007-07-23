@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2866 2007-07-22 17:30:40Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 2871 2007-07-23 08:43:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -140,7 +140,7 @@ public class FallDetailBlatt2 extends Composite {
 		tBezeichnung=tk.createText(top,"");
         tBezeichnung.addFocusListener(new FocusAdapter(){
 			@Override
-			public void focusLost(FocusEvent e) {
+			public void focusLost(final FocusEvent e) {
 				String newval=((Text)e.getSource()).getText();
 	            Fall fall=getFall();
 	            if(fall!=null){
@@ -225,10 +225,7 @@ public class FallDetailBlatt2 extends Composite {
 				}
 				if(r[1].equals("T")){
 					lReqs.add(tk.createLabel(form.getBody(), r[0]));
-					String val=f.get(r[0]);
-					if(val.startsWith("**ERROR")){
-						val="";
-					}
+					String val=f.getInfoString(r[0]);
 					Text tx=tk.createText(form.getBody(), val);
 					tx.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					tx.addFocusListener(new Focusreact(r[0]));
@@ -236,7 +233,7 @@ public class FallDetailBlatt2 extends Composite {
 				}else if(r[1].equals("D")){
 					lReqs.add(tk.createLabel(form.getBody(), r[0]));
 					final DatePickerCombo dp=new DatePickerCombo(form.getBody(),SWT.NONE);
-					String dat=f.get(r[0]);
+					String dat=f.getInfoString(r[0]);
 					TimeTool tt=new TimeTool();
 					if(tt.set(dat)){
 						dp.setDate(tt.getTime());
@@ -244,14 +241,14 @@ public class FallDetailBlatt2 extends Composite {
 					dp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					dp.addSelectionListener(new SelectionAdapter(){
 						@Override
-						public void widgetSelected(SelectionEvent e) {
+						public void widgetSelected(final SelectionEvent e) {
 							TimeTool tt=new TimeTool(dp.getDate().getTime());
 							f.setInfoString(r[0], tt.toString(TimeTool.DATE_GER));
 						}});
 					lReqs.add(dp);
 				}else if(r[1].equals("K")){
 					Hyperlink hl=tk.createHyperlink(form.getBody(), r[0], SWT.NONE);
-					String val=f.get(r[0]);
+					String val=f.getInfoString(r[0]);
 					if(val.startsWith("**ERROR")){
 						val="";
 					}else{
