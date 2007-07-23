@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 2816 2007-07-16 07:57:22Z rgw_ch $
+<!-- $Id: build.xml 2874 2007-07-23 11:08:21Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -100,6 +100,7 @@
 		<ant antfile="../elexis-artikel-schweiz/build.xml"/>
 		<ant antfile="../elexis-ebanking-schweiz/build.xml"/>
 		<ant antfile="../elexis-arzttarife-schweiz/build.xml"/>
+		<ant antfile="../elexis-privatrechnung/build.xml"/>
 		<ant antfile="../elexis-befunde/build.xml"/>
 		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml"/>
 		<ant antfile="../elexis-simpletext/build.xml"/>
