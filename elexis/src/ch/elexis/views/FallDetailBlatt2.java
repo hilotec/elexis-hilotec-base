@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2871 2007-07-23 08:43:55Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 2876 2007-07-23 15:47:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -79,14 +79,50 @@ public class FallDetailBlatt2 extends Composite {
 
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
+				Fall f=getFall();
+				if (f == null) {
+					return;
+				}
+				String abr=f.getAbrechnungsSystem();
+				// make sure compatibility methods are called
+
+				String ktNew=f.getInfoString("Kostenträger");
+				String ktOld=f.get("Kostentraeger");
+
+				String gNew=f.getInfoString("Rechnungsempfänger");
+				String gOld=f.get("GarantID");
+				
+				
+				String vnNew=f.getInfoString("Versicherungsnummer");
+				String vnOld=f.getVersNummer();
+				
+				Fall[] faelle = f.getPatient().getFaelle();
+				for(Fall f0:faelle){
+					if (f0.getId().equals(f.getId())) {
+						// ignore current Fall
+						continue;
+					}
+					
+					if(f0.getAbrechnungsSystem().equals(abr)){
+						if(f.getInfoString("Rechnungsempfänger").equals("")){
+							f.setInfoString("Rechnungsempfänger",f0.get("GarantID"));
+						}
+						if(f.getInfoString("Kostenträger").equals("")) {
+							f.setInfoString("Kostenträger",f0.get("Kostentraeger"));
+						}
+						
+						// TODO break? or looking for the most current Fall?
+						break;
+					}
+				}
+		    	setFall(f);
+				
 				// copy data from previous Fall of the same Gesetz
 				
 				/* fix this later
 				Fall f=GlobalEvents.getSelectedFall();
 				// don't do anything if no Fall is selected
-				if (f == null) {
-					return;
-				}
+				
 				
 				Fall[] faelle = f.getPatient().getFaelle();
 				String g=f.getGesetz();
