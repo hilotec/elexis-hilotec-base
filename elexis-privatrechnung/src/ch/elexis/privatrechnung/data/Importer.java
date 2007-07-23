@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 2872 2007-07-23 08:44:07Z rgw_ch $
+ * $Id: Importer.java 2882 2007-07-23 19:10:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -68,7 +68,7 @@ public class Importer extends ImporterPage {
 	@Override
 	public Composite createPage(final Composite parent) {
 		FileBasedImporter fbi=new FileBasedImporter(parent,this);
-		fbi.setFilter(new String[]{"csv","xls","*"},
+		fbi.setFilter(new String[]{"*.csv","*.xls","*"},
 				new String[]{"Character Separated Values","Microsoft Excel 97","All Files"});
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
