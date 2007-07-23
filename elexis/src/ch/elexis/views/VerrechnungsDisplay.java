@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 2841 2007-07-19 05:19:56Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 2869 2007-07-23 05:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -98,6 +98,7 @@ public class VerrechnungsDisplay extends Composite {
 			        		SWTHelper.alert("Fehlende Rechte","Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 			        	}else{
 			        		Result result=actKons.addLeistung((IVerrechenbar)o);
+			        		
 			        		if(!result.isOK()){
 			        			SWTHelper.alert("Diese Verrechnung ist ungültig",result.toString());
 			        		}

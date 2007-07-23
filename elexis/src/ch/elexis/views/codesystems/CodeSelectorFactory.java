@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 2868 2007-07-22 20:36:01Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 2869 2007-07-23 05:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -82,7 +82,6 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 		ITEMS_TO_SHOW_IN_MFU_LIST=Hub.userCfg.get(PreferenceConstants.USR_MFU_LIST_SIZE, 15);
 		java.util.List<IConfigurationElement> list=Extensions.getExtensions(point);
 		ctab.setSimple(false);
-		java.util.List<String> mfu=Hub.actUser.getStatForString("LeistungenMFU");
 
 		if(list!=null){
 			for(IConfigurationElement ic:list){
@@ -101,13 +100,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 						SWTHelper.alert("Fehler", "codesystemname");
 						cname="??";
 					}
-					int idx=-1; //mfu.indexOf(cname);
-					CTabItem ct;
-					if(idx==-1){
-						ct=new CTabItem(ctab,SWT.NONE);
-					}else{
-						ct=new CTabItem(ctab,SWT.NONE,idx);
-					}
+					CTabItem ct=new CTabItem(ctab,SWT.NONE);
 									
 					ct.setText(cname);
 					ct.setData(ics);

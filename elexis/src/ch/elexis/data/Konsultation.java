@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2796 2007-07-13 18:40:40Z rgw_ch $
+ *  $Id: Konsultation.java 2869 2007-07-23 05:07:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -482,6 +482,7 @@ public class Konsultation extends PersistentObject implements Comparable{
 	        	// Statistik nachführen
 	        	getFall().getPatient().countItem(l);
 	        	Hub.actUser.countItem(l);
+	        	Hub.actUser.statForString("LeistungenMFU", l.getCodeSystemName());
 	        	if(l instanceof Artikel){
 	        		Artikel art=(Artikel)l;
 	        		art.einzelAbgabe(1);

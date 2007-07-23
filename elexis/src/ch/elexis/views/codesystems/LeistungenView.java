@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LeistungenView.java 2868 2007-07-22 20:36:01Z rgw_ch $
+ *  $Id: LeistungenView.java 2869 2007-07-23 05:07:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -21,6 +21,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
@@ -31,6 +32,7 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.data.Eigenartikel;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Leistungsblock;
+import ch.elexis.util.MFUList;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.artikel.EigenartikelSelektor;
 import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
@@ -55,6 +57,7 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 		ctab=new CTabFolder(parent,SWT.BOTTOM);
 		ctab.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		ctab.setSimple(false);
+		ctab.setMRUVisible(false);
 		ctab.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -67,9 +70,6 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 					page.cv.getConfigurer().getControlFieldProvider().clearValues();
 				}
 				selected=ctab.getSelection();
-				if(Hub.actUser!=null){
-					Hub.actUser.statForString("LeistungenMFU", selected.getText());
-				}
 				((cPage)selected.getControl()).refresh();
 				setFocus();
 			}
@@ -110,15 +110,48 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 		}
 	}
 
+	void switchTabs(int iLeft, int iRight){
+		CTabItem ctLeft=ctab.getItem(iLeft);
+		CTabItem ctRight=ctab.getItem(iRight);
+		String t=ctLeft.getText();
+		Control c=ctLeft.getControl();
+		ctLeft.setText(ctRight.getText());
+		ctLeft.setControl(ctRight.getControl());
+		ctRight.setText(t);
+		ctRight.setControl(c);
+	}
+	
 	public void activation(boolean mode) {
 		if(mode==false){
 			if(selected!=null){
 				cPage page=(cPage)selected.getControl();
 				page.cv.getConfigurer().getControlFieldProvider().clearValues();
 			}
-			
 			// remove any ICodeSelectiorTarget, since it's no more needed
 			GlobalEvents.getInstance().removeCodeSelectorTarget();
+		}else{
+			if(selected!=null){
+				cPage page=(cPage)selected.getControl();
+				page.refresh();
+				MFUList<String> mfu=Hub.actUser.getMFU("LeistungenMFU");
+				CTabItem[] items=ctab.getItems();
+				if(items.length>2){
+					for(int i=2;i<items.length-1;i++){
+						int iLeft=mfu.getIndex(items[i-1].getText());
+						int iRight=mfu.getIndex(items[i].getText());
+						if(iLeft==-1){
+							if(iRight==-1){
+								continue;
+							}
+							switchTabs(i-1, i);
+						}else{
+							if(iLeft>iRight){
+								switchTabs(i-1,i);
+							}
+						}
+					}
+				}
+			}
 		}
 		
 	}

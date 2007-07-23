@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 2868 2007-07-22 20:36:01Z rgw_ch $
+ *    $Id: Kontakt.java 2869 2007-07-23 05:07:40Z rgw_ch $
  *******************************************************************************/
 
 
@@ -442,6 +442,21 @@ public class Kontakt extends PersistentObject{
     	return al.getAll();
     }
 	
+	@SuppressWarnings("unchecked")
+	public MFUList<String> getMFU(String typ){
+		Hashtable exi=getHashtable("ExtInfo");
+		MFUList<String> l=(MFUList<String>)exi.get(typ);
+		if(l==null){
+			l=new MFUList<String>(5,15);
+		}
+		return l;
+	}
+	@SuppressWarnings("unchecked")
+	public void setMFU(String typ, MFUList<String> mfu){
+		Hashtable exi=getHashtable("ExtInfo");
+		exi.put(typ, mfu);
+		setHashtable("ExtInfo", exi);
+	}
 	public String getKuerzel(){
 		return get("Kuerzel");
 	}
