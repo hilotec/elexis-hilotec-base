@@ -8,16 +8,37 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DiagnoseCodeFactory.java 1749 2007-02-06 21:04:45Z rgw_ch $
+ *    $Id: EigendiagnoseFactory.java 2881 2007-07-23 19:10:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
+import java.lang.reflect.Method;
+
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
 public class EigendiagnoseFactory extends PersistentObjectFactory {
 
-	public EigendiagnoseFactory() {
-		// TODO Auto-generated constructor stub
-	}
+	public PersistentObject createFromString(String code){
+		 try{
+		        String[] ci=code.split("::"); //$NON-NLS-1$
+		        Class clazz=Class.forName(ci[0]);
+		        Method load=clazz.getMethod("load",new Class[]{String.class}); //$NON-NLS-1$
+		        return  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
+		    }catch(Exception ex){
+		    	//ExHandler.handle(ex);
+		    	return null;
+		    }
+		}
+		@Override
+		public PersistentObject doCreateTemplate(Class typ) {
+			try {
+				return (PersistentObject) typ.newInstance();
+			} catch (Exception ex) {
+				//ExHandler.handle(ex);
+				return null;
+			}
+		}
+
 
 }

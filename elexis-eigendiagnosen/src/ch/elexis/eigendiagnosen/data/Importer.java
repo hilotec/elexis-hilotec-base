@@ -8,44 +8,119 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DiagnoseCodeFactory.java 1749 2007-02-06 21:04:45Z rgw_ch $
+ *    $Id: Importer.java 2881 2007-07-23 19:10:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
+import au.com.bytecode.opencsv.CSVReader;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
+import ch.elexis.util.Log;
+import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 
 public class Importer extends ImporterPage {
-
-	public Importer() {
-		// TODO Auto-generated constructor stub
-	}
-
+	/**
+	 * Create the page that will let the user select a file to import.
+	 * For simplicity, we use the default FileBasedImporter of our superclass.
+	 */
 	@Override
-	public Composite createPage(Composite parent) {
-		// TODO Auto-generated method stub
-		return null;
+	public Composite createPage(final Composite parent) {
+		FileBasedImporter fbi=new FileBasedImporter(parent,this);
+		fbi.setFilter(new String[]{"*.csv","*.xls","*"},
+				new String[]{"Character Separated Values","Microsoft Excel 97","All Files"});
+		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		return fbi;
 	}
 
+	/**
+	 * The import process starts when the user has selected a file and clicked "OK".
+	 * Warning: We can not read fields of the page created in createPage here! (The 
+	 * page is already disposed when doImport is called). If we have to transfer field
+	 * values between createPage and doImport, we must override collect().
+	 * Our file based importer saves the user input in results[0]
+	 */
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+		PersistentObject.getConnection().exec("DROP TABLE "+Eigendiagnose.TABLENAME+";");
+		Eigendiagnose.createTable();
+		File file=new File(results[0]);
+		if(!file.canRead()){
+			log.log("Can't read "+results[0], Log.ERRORS);
+			return new Status(Status.ERROR,"ch.elexis.privatrechnung","Can't read "+results[0]);
+		}
+		Result<String> res;
+		if(results[0].endsWith(".xls")){
+				res=importExcel(file.getAbsolutePath(),monitor);;
+		}else if(results[0].endsWith(".csv")){
+				res=importCSV(file.getAbsolutePath(), monitor);
+		}else{
+				return new Status(Status.ERROR,"ch.elexis.privatrechnung","Unsupported file format");	
+		}
+		if(res.isOK()){
+			
+		}
+		return res.asStatus();
 	}
 
+	/**
+	 * return a description to display in the message area of the import dialog
+	 */
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Import aus CSV und Excel";
 	}
 
+	/**
+	 * return a title to display in the title bar of the import dialog
+	 */
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Privatleistungen";
 	}
+	private Result<String> importExcel(final String file,final IProgressMonitor mon){
+		ExcelWrapper xl=new ExcelWrapper();
+		if(!xl.load(file, 0)){
+			return new Result<String>(Status.ERROR,1,"Bad file format",file,true);				
+		}
+		for(int i=xl.getFirstRow();i<=xl.getLastRow();i++){
+			List<String> row=xl.getRow(i);
+			importLine(row.toArray(new String[0]));
+		}
+		return new Result<String>("OK");
+	}
+	
+	private Result<String> importCSV(final String file, final IProgressMonitor mon){
+		try{
+			CSVReader cr=new CSVReader(new FileReader(file));
+			String[] line;
+			while((line=cr.readNext())!=null){
+				importLine(line);
+			}
+			return new Result<String>("OK");
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return new Result<String>(Log.ERRORS,1,"Could not read "+file,ex.getMessage(),true);
+		}
 
+	}
+	 
+
+	private void importLine(final String[] line){
+	
+	
+		
+
+	}
 }
