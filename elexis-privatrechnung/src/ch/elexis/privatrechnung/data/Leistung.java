@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 2859 2007-07-21 18:32:20Z rgw_ch $
+ * $Id: Leistung.java 2872 2007-07-23 08:44:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -38,10 +38,10 @@ public class Leistung extends VerrechenbarAdapter {
 	 * if a plugins needs only one table, the name might as well be just the ID by itself.
 	 * note: replace dots in the id with underscores
 	 */
-	private static final String TABLENAME="CH_ELEXIS_PRIVATRECHNUNG";
+	static final String TABLENAME="CH_ELEXIS_PRIVATRECHNUNG";
 	public static final String CODESYSTEM_NAME="Privat";
 	public static final String CODESYSTEM_CODE="999";
-	private static final String VERSION="0.1.0";
+	static final String VERSION="0.2.0";
 	
 	/**
 	 * If the table does not exist when this plugin is loaded, it must create it on the fly.
@@ -76,16 +76,7 @@ public class Leistung extends VerrechenbarAdapter {
 				"Zeit=time","DatumVon=S:D:valid_from","DatumBis=S:D:valid_until","ExtInfo");
 		Leistung check=load("VERSION");
 		if(check.state()<PersistentObject.DELETED){		// Object never existed, so we have to create the database
-			ByteArrayInputStream bais;
-			try {
-				bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				if(j.execScript(bais,true,false)==false){
-					MessageDialog.openError(null,"Datenbank-Fehler","Konnte Tabelle nicht erstellen");
-				}
-			} catch (UnsupportedEncodingException e) {
-				// should really never happen
-				e.printStackTrace();
-			}
+			createTable();
 		}else{	// found existing table, check version
 			VersionInfo v=new VersionInfo(check.get("Name"));
 			if(v.isOlder(VERSION)){
@@ -96,8 +87,20 @@ public class Leistung extends VerrechenbarAdapter {
 		
 	}
 	
+	static void createTable(){
+		ByteArrayInputStream bais;
+		try {
+			bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
+			if(j.execScript(bais,true,false)==false){
+				MessageDialog.openError(null,"Datenbank-Fehler","Konnte Tabelle nicht erstellen");
+			}
+		} catch (UnsupportedEncodingException e) {
+			// should really never happen
+			e.printStackTrace();
+		}
+	}
 	public Leistung(String subsystem,String parent, final String name, final String kuerzel, 
-			final String kostenInRp, final String preisInRp, String ZeitInMin, String DatumVon, String DatumBis){
+			final String kostenInRp, final String preisInRp, final String ZeitInMin, String DatumVon, String DatumBis){
 		create(null);
 		if(subsystem==null){
 			subsystem="";
@@ -139,16 +142,20 @@ public class Leistung extends VerrechenbarAdapter {
 		return get("Name");
 	}
 
+	@Override
 	public String getText() {
 		return get("Name");
 	}
+	@Override
 	public String getCode(){
 		return get("Kuerzel");
 	}
 	
+	@Override
 	public Money getKosten(final TimeTool dat) {
 		return new Money(checkZero(get("Kosten")));
 	}
+	@Override
 	public int getMinutes(){
 		return checkZero(get("Zeit"));
 	}

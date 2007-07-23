@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 2859 2007-07-21 18:32:20Z rgw_ch $
+ * $Id: Importer.java 2872 2007-07-23 08:44:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
@@ -82,19 +83,25 @@ public class Importer extends ImporterPage {
 	 */
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+		PersistentObject.getConnection().exec("DROP TABLE "+Leistung.TABLENAME+";");
+		Leistung.createTable();
 		File file=new File(results[0]);
 		if(!file.canRead()){
 			log.log("Can't read "+results[0], Log.ERRORS);
 			return new Status(Status.ERROR,"ch.elexis.privatrechnung","Can't read "+results[0]);
 		}
+		Result<String> res;
 		if(results[0].endsWith(".xls")){
-			return importExcel(file.getAbsolutePath(),monitor).asStatus();
+				res=importExcel(file.getAbsolutePath(),monitor);;
 		}else if(results[0].endsWith(".csv")){
-			return importCSV(file.getAbsolutePath(), monitor).asStatus();
+				res=importCSV(file.getAbsolutePath(), monitor);
 		}else{
-			return new Status(Status.ERROR,"ch.elexis.privatrechnung","Unsupported file format");	
+				return new Status(Status.ERROR,"ch.elexis.privatrechnung","Unsupported file format");	
 		}
-		
+		if(res.isOK()){
+			
+		}
+		return res.asStatus();
 	}
 
 	/**
@@ -149,6 +156,6 @@ public class Importer extends ImporterPage {
 		}
 		Leistung lst=new Leistung(null,line[0],line[2],line[1],line[3],line[4],line[5],line[6],line[7]);
 		
-		lst.setVKMultiplikator(new TimeTool(line[6]), new TimeTool(line[7]), Double.parseDouble(line[8]), lst.getCodeSystemName());
+		//lst.setVKMultiplikator(new TimeTool(line[6]), new TimeTool(line[7]), Double.parseDouble(line[8]), lst.getCodeSystemName());
 	}
 }
