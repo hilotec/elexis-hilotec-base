@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Synchronizer.java 2768 2007-07-09 10:52:05Z rgw_ch $
+ *  $Id: Synchronizer.java 2870 2007-07-23 08:43:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -21,12 +21,18 @@ import java.util.List;
 
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
-import ch.elexis.data.*;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Termin;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.Log;
 import ch.elexis.views.BaseAgendaView;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 /**
  * Der Synchromizer synchronisiert die lokalen Daten mit dem Agenda-Server.
@@ -40,7 +46,7 @@ public class Synchronizer{
 	int lastSync;
 	static boolean pingPause=false;
 	private Hashtable<String,String> map;
-	private BaseAgendaView base;
+	private final BaseAgendaView base;
 	
 	Query<Patient> qPat=new Query<Patient>(Patient.class);
 	/**
@@ -49,7 +55,7 @@ public class Synchronizer{
 		dann erfolgt bei jedem Heartbeat eine Synchronisation (ausser, wenn pingPause
 	 * auf true gesetzt wurde). 
 	 */
-	public Synchronizer(BaseAgendaView dayView){
+	public Synchronizer(final BaseAgendaView dayView){
 		base=dayView;
 		if(Hub.globalCfg.get(PreferenceConstants.AG_SYNC_ENABLED, false)==true){
 			String base=PreferenceInitializer.getDefaultDBPath();
@@ -85,7 +91,7 @@ public class Synchronizer{
 	 * Sync unterbrechen
 	 * @param p
 	 */
-	static public void pause(boolean p){
+	static public void pause(final boolean p){
 		pingPause=p;
 	}
 
@@ -121,11 +127,11 @@ public class Synchronizer{
 					int d=res.getInt("deleted"); //$NON-NLS-1$
 					String id=res.getString("ID"); //$NON-NLS-1$
 					Termin t=Termin.load(id);		// Existiert dieser Termin schon lokal?
-					if(t.state()<PersistentObject.EXISTS){
+					if((t==null) || (t.state()<PersistentObject.EXISTS)){
 						if(d!=0){					// Wenn nein, ist er sowieso gelöscht, dann nicht synchronisieren
 							continue;
 						}
-						if(t.state()<PersistentObject.DELETED){
+						if((t==null) || (t.state()<PersistentObject.DELETED)){
 							t=new Termin(				// Sonst lokal neu erstellen
 								id,
 								base.getBereich(),
@@ -221,7 +227,7 @@ public class Synchronizer{
 		GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
 	}
 	
-	private void setTermin(Termin t, ResultSet res) throws SQLException{
+	private void setTermin(final Termin t, final ResultSet res) throws SQLException{
 		t.set("Grund", res.getString("Grund")); //$NON-NLS-1$ //$NON-NLS-2$
 		String pers=res.getString("Personalien"); //$NON-NLS-1$
 		String[] px=Termin.findID(pers);
@@ -235,7 +241,7 @@ public class Synchronizer{
 		}
 	}
 	
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
+	@SuppressWarnings("unchecked") 
 	public static Hashtable<String, String> getBereichMapping(){
 		Hashtable<String,String> ret=StringTool.foldStrings(Hub.globalCfg.get(PreferenceConstants.AG_SYNC_MAPPING, null));
 		if(ret==null){
@@ -243,7 +249,7 @@ public class Synchronizer{
 		}
 		return ret;
 	}
-	public static void setBereichMapping(Hashtable<String,String> map){
+	public static void setBereichMapping(final Hashtable<String,String> map){
 		Hub.globalCfg.set(PreferenceConstants.AG_SYNC_MAPPING, StringTool.flattenStrings(map));
 	}
 
