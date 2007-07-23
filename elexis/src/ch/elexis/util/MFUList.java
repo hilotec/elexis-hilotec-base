@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MFUList.java 2868 2007-07-22 20:36:01Z rgw_ch $
+ *  $Id: MFUList.java 2877 2007-07-23 18:38:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -87,10 +87,14 @@ public class MFUList<T> implements Iterable<T>, Serializable{
 		public int compareTo(Entry<X> obj) {
 			return obj.count-count;
 		}
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object obj) {
-			
-			return super.equals(obj);
+			if(obj instanceof Entry){
+				Entry<X> e=(Entry<X>)obj;
+				return o.equals(e.o);
+			}
+			return false;
 		}
 		
 	}

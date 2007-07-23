@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LeistungenView.java 2869 2007-07-23 05:07:40Z rgw_ch $
+ *  $Id: LeistungenView.java 2877 2007-07-23 18:38:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
+
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -57,7 +59,7 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 		ctab=new CTabFolder(parent,SWT.BOTTOM);
 		ctab.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		ctab.setSimple(false);
-		ctab.setMRUVisible(false);
+		ctab.setMRUVisible(true);
 		ctab.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -110,7 +112,7 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 		}
 	}
 
-	void switchTabs(int iLeft, int iRight){
+	void swapTabs(int iLeft, int iRight){
 		CTabItem ctLeft=ctab.getItem(iLeft);
 		CTabItem ctRight=ctab.getItem(iRight);
 		String t=ctLeft.getText();
@@ -133,26 +135,30 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 			if(selected!=null){
 				cPage page=(cPage)selected.getControl();
 				page.refresh();
-				MFUList<String> mfu=Hub.actUser.getMFU("LeistungenMFU");
-				CTabItem[] items=ctab.getItems();
-				if(items.length>2){
-					for(int i=2;i<items.length-1;i++){
-						int iLeft=mfu.getIndex(items[i-1].getText());
-						int iRight=mfu.getIndex(items[i].getText());
-						if(iLeft==-1){
-							if(iRight==-1){
-								continue;
-							}
-							switchTabs(i-1, i);
-						}else{
-							if(iLeft>iRight){
-								switchTabs(i-1,i);
-							}
+				
+			}
+			/*
+			int idx=ctab.getSelectionIndex();
+			MFUList<String> mfu=Hub.actUser.getMFU("LeistungenMFU");
+			CTabItem[] items=ctab.getItems();
+			Iterator<String> it=mfu.iterator();
+			int i=0;
+			while(it.hasNext()){
+				String tab=it.next();
+				for(int j=0;j<items.length;j++){
+					if(items[j].getText().equals(tab)){
+						if(j!=i){
+							swapTabs(i,j);
+							break;
 						}
 					}
 				}
+				i++;
 			}
+			ctab.showItem(items[0]);
+			*/
 		}
+		
 		
 	}
 	public void visible(boolean mode){}
