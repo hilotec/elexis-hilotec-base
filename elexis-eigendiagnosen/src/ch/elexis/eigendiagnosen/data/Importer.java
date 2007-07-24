@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Importer.java 2881 2007-07-23 19:10:44Z rgw_ch $
+ *    $Id: Importer.java 2883 2007-07-24 05:17:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -118,9 +118,7 @@ public class Importer extends ImporterPage {
 	 
 
 	private void importLine(final String[] line){
-	
-	
-		
+		new Eigendiagnose(line[0],line[1],line[2],line[3]);
 
 	}
 }

@@ -8,22 +8,25 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 2881 2007-07-23 19:10:44Z rgw_ch $
+ *    $Id: Eigendiagnose.java 2883 2007-07-24 05:17:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 
+import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.VersionInfo;
 
-public class Eigendiagnose extends PersistentObject {
+public class Eigendiagnose extends PersistentObject implements IDiagnose{
 	static final String VERSION="0.1.0";
 	static final String TABLENAME="CH_ELEXIS_EIGENDIAGNOSEN";
+	public static final String CODESYSTEM_NAME="Eigendiagnosen";
 	private static final String createDB="CREATE TABLE "+TABLENAME+"("
 		+"ID			VARCHAR(25) primary key,"	// must always be present
 		+"deleted		CHAR(1) default '0',"		// must always be present
@@ -48,13 +51,17 @@ public class Eigendiagnose extends PersistentObject {
 		}else{	// found existing table, check version
 			VersionInfo v=new VersionInfo(check.get("Text"));
 			if(v.isOlder(VERSION)){
-				SWTHelper.showError("Eigendiagnise: Falsche Version", "Die Datenbank hat eine zu alte Version dieser Tabelle");
+				SWTHelper.showError("Eigendiagnose: Falsche Version", "Die Datenbank hat eine zu alte Version dieser Tabelle");
 				
 			}
 		}
 		
 	}
-	
+	public Eigendiagnose(String parent, String code, String text, String comment){
+		create(null);
+		set(new String[]{"parent","Kuerzel","Text","Kommentar"},
+			new String[]{parent==null ? "NIL" : parent,code,text,comment});
+	}
 	static void createTable(){
 		ByteArrayInputStream bais;
 		try {
@@ -69,13 +76,15 @@ public class Eigendiagnose extends PersistentObject {
 	}
 	@Override
 	public String getLabel() {
-		return get("code")+" "+get("title");
+		return get("Kuerzel")+" "+get("Text");
 	}
 
+	
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
 	}
+	
 	
 	public static Eigendiagnose load(String id){
 		return new Eigendiagnose(id);
@@ -84,4 +93,20 @@ public class Eigendiagnose extends PersistentObject {
 		super(id);
 	}
 	protected Eigendiagnose(){}
+	public Iterable<IAction> getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getCode() {
+		return get("Kuerzel");
+	}
+	public String getCodeSystemCode() {
+		return "ED";
+	}
+	public String getCodeSystemName() {
+		return CODESYSTEM_NAME;
+	}
+	public String getText() {
+		return get("Text");
+	}
 }
