@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOText.java 2460 2007-06-01 17:05:56Z rgw_ch $
+ *  $Id: OOText.java 2892 2007-07-24 15:46:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.oowrapper;
@@ -83,7 +83,7 @@ import com.sun.star.view.XPrintable;
 
 public class OOText implements ITextPlugin{
 	OOoBean bean=null;
-	private Log log=Log.get("OOText");
+	private final Log log=Log.get("OOText");
 	private SaveHandler saveHandler;
 	private ICallback textHandler;
 	private String font;
@@ -111,7 +111,7 @@ public class OOText implements ITextPlugin{
 	/* (Kein Javadoc)
 	 * @see ch.rgw.oowrapper.ITextPlugin#createContainer(org.eclipse.swt.widgets.Composite)
 	 */
-	public Composite createContainer(Composite parent, ICallback handler){
+	public Composite createContainer(final Composite parent, final ICallback handler){
 		parent.setLayout(new FillLayout());
 		Composite awtContainer = new Composite(parent, SWT.EMBEDDED);
 		awtContainer.setLayout(new FillLayout());
@@ -157,7 +157,7 @@ public class OOText implements ITextPlugin{
 			bean.getOOoDesktop();
 			bean.addFocusListener(new FocusAdapter(){
 				@Override
-				public void focusLost(FocusEvent e) {
+				public void focusLost(final FocusEvent e) {
 					if(bSaveOnFocusLost){
 						textHandler.save();
 						/*
@@ -206,7 +206,7 @@ public class OOText implements ITextPlugin{
 	/* (Kein Javadoc)
 	 * @see ch.rgw.oowrapper.ITextPlugin#showMenu(boolean)
 	 */
-	public void showMenu(boolean b){
+	public void showMenu(final boolean b){
 		try{
 			com.sun.star.beans.XPropertySet xPropSet = 
 			  (com.sun.star.beans.XPropertySet) UnoRuntime.queryInterface(
@@ -227,7 +227,7 @@ public class OOText implements ITextPlugin{
 	/* (Kein Javadoc)
 	 * @see ch.rgw.oowrapper.ITextPlugin#showToolbar(boolean)
 	 */
-	public void showToolbar(boolean b){
+	public void showToolbar(final boolean b){
 		try{
 			com.sun.star.beans.XPropertySet xPropSet = 
 			  (com.sun.star.beans.XPropertySet) UnoRuntime.queryInterface(
@@ -253,7 +253,7 @@ public class OOText implements ITextPlugin{
 			return slave;
 		}
 
-		public void setSlaveDispatchProvider(XDispatchProvider arg0) {
+		public void setSlaveDispatchProvider(final XDispatchProvider arg0) {
 			slave=arg0;
 		}
 
@@ -261,11 +261,11 @@ public class OOText implements ITextPlugin{
 			return master;
 		}
 
-		public void setMasterDispatchProvider(XDispatchProvider arg0) {
+		public void setMasterDispatchProvider(final XDispatchProvider arg0) {
 			master=arg0;
 		}
 
-		public XDispatch queryDispatch(URL arg0, String arg1, int arg2) {
+		public XDispatch queryDispatch(final URL arg0, final String arg1, final int arg2) {
 			//log.log("queryDispatch; "+arg0.Complete,Log.DEBUGMSG);
 			if(arg0.Complete.equals(".uno:Save")){
 				//System.out.println("--"+arg0.Main+"\n--"+arg0.Arguments+"\n--"+arg0.Name);
@@ -283,7 +283,7 @@ public class OOText implements ITextPlugin{
 			return slave.queryDispatch(arg0,arg1,arg2);
 		}
 
-		public XDispatch[] queryDispatches(DispatchDescriptor[] arg0) {
+		public XDispatch[] queryDispatches(final DispatchDescriptor[] arg0) {
 			log.log("queryDispatches",Log.DEBUGMSG);
 			/*
 			for(DispatchDescriptor d0:arg0){
@@ -306,7 +306,7 @@ public class OOText implements ITextPlugin{
 			event.Requery=false;
 			event.State=new Boolean(false);
 		}
-		public void dispatch(URL arg0, PropertyValue[] arg1) {
+		public void dispatch(final URL arg0, final PropertyValue[] arg1) {
 			/*
 			System.out.println("dispatch: "+arg0.Complete);
 			if(arg1!=null && arg1.length>0){
@@ -322,14 +322,14 @@ public class OOText implements ITextPlugin{
 			}
 		}
 
-		public void addStatusListener(XStatusListener arg0, URL arg1) {
+		public void addStatusListener(final XStatusListener arg0, final URL arg1) {
 			log.log("addstatuslistener "+arg1.Complete,Log.DEBUGMSG);
 			listeners.add(arg0);
 			event.FeatureURL=arg1;
 			arg0.statusChanged(event);
 		}
 
-		public void removeStatusListener(XStatusListener arg0, URL arg1) {
+		public void removeStatusListener(final XStatusListener arg0, final URL arg1) {
 			listeners.remove(arg0);
 		}
 		
@@ -360,8 +360,8 @@ public class OOText implements ITextPlugin{
 	}
 	/* (Kein Javadoc)
 	 * @see ch.rgw.oowrapper.ITextPlugin#loadFromByteArray(byte[])
-	 */
-	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
+	 	*/
+	public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate) {
 		if(bs==null){
 			log.log("Null-Array zum speichern!",Log.ERRORS);
 			return false;
@@ -390,7 +390,7 @@ public class OOText implements ITextPlugin{
 	/* (Kein Javadoc)
 	 * @see ch.rgw.oowrapper.ITextPlugin#findOrReplace(java.lang.String, ch.rgw.oowrapper.OOText.ReplaceCallback)
 	 */
-	public boolean findOrReplace(String pattern, ReplaceCallback cb){
+	public boolean findOrReplace(final String pattern, final ReplaceCallback cb){
 		if(bean==null){
 			if(reconnect()==false){
 				return false;
@@ -406,11 +406,40 @@ public class OOText implements ITextPlugin{
 			for(int i=0;i<count;i++){
 				Object found=res.getByIndex(i);
 				XTextRange text=(XTextRange)UnoRuntime.queryInterface(XTextRange.class,found);
-				String out=cb.replace(text.getString());
-				/*
-				String in=text.getString().replaceAll("[\\[\\]]","");
-				ing out=genderize(in);*/
-				text.setString(out==null? "" : out.replaceAll("\r",""));
+				Object out=cb.replace(text.getString());
+				if(out instanceof String[][]){
+					String[][] tbl=(String[][])out;
+					XTextDocument myDoc=(XTextDocument) UnoRuntime.queryInterface(com.sun.star.text.XTextDocument.class,bean.getDocument());
+					com.sun.star.text.XTextTable xTT = null;
+					com.sun.star.lang.XMultiServiceFactory xDocMSF = //bean.getMultiServiceFactory();
+						(com.sun.star.lang.XMultiServiceFactory) UnoRuntime.queryInterface(
+								com.sun.star.lang.XMultiServiceFactory.class, myDoc);
+					Object oInt = xDocMSF.createInstance("com.sun.star.text.TextTable");
+					xTT = (com.sun.star.text.XTextTable)
+						UnoRuntime.queryInterface(com.sun.star.text.XTextTable.class,oInt);
+					xTT.initialize(tbl.length,tbl[0].length);
+
+			        XPropertySet xTableProps = (XPropertySet)UnoRuntime.queryInterface(
+			                  XPropertySet.class, xTT );
+			        com.sun.star.text.XText xText = myDoc.getText();
+			        com.sun.star.text.XTextCursor xTCursor=null;
+	                xTCursor = xText.createTextCursorByRange(text);
+					setFormat(xTCursor);
+					xText.insertTextContent(xTCursor, xTT, false);
+					text.setString("");
+					for(int row=0;row<tbl.length;row++){
+		        	  String[] zeile=tbl[row];
+		        	  String adr=Integer.toString(row+1);
+		        	  for(int col=0;col<zeile.length;col++){
+		        		  StringBuilder sb=new StringBuilder();
+		        		  sb.append((char)('A'+col));
+		        		  sb.append(adr);
+		        		  insertIntoCell(sb.toString(),zeile[col],xTT);
+		        	  }
+					}
+				}else{
+					text.setString(out==null? "" : ((String)out).replaceAll("\r",""));
+				}
 			}
 			return true;
 		}catch(NoConnectionException nce){
@@ -474,7 +503,7 @@ public class OOText implements ITextPlugin{
 		}
 		return true;
 	}
-	public boolean loadFromStream(InputStream is, boolean asTemplate) {
+	public boolean loadFromStream(final InputStream is, final boolean asTemplate) {
 		if(bean==null){
 			if(reconnect()==false){
 				return false;
@@ -496,11 +525,11 @@ public class OOText implements ITextPlugin{
 			return false;
 		}
 	}
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		// TODO Automatisch erstellter Methoden-Stub
 		
 	}
-	public boolean print(String printer, String tray, boolean waitUntilFinished){
+	public boolean print(final String printer, final String tray, final boolean waitUntilFinished){
 		if(bean==null){
 			if(reconnect()==false){
 				return false;
@@ -544,7 +573,7 @@ public class OOText implements ITextPlugin{
 			//bean.getDocument().print(pprops);
 			xPrintable.print(pprops);
 			long timeout=System.currentTimeMillis();
-			while (myXPrintJobListener.getStatus() == null || myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED) {
+			while ((myXPrintJobListener.getStatus() == null) || (myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED)) {
 				Thread.sleep(100);
 				long to=System.currentTimeMillis();
 				if((to-timeout) > 10000){
@@ -571,7 +600,7 @@ public class OOText implements ITextPlugin{
 	 * @return true bei erfolg
 	 */
 	
-	public boolean insertTable(String marke, int properties, String[][] values, int[] columnSizes){
+	public boolean insertTable(final String marke, final int properties, final String[][] values, final int[] columnSizes){
 		if(bean==null){
 			if(reconnect()==false){
 				return false;
@@ -656,8 +685,8 @@ public class OOText implements ITextPlugin{
 		}
 		return true;
 	}
-    static void insertIntoCell(String CellName, String theText,
-            com.sun.star.text.XTextTable xTTbl) {
+    static void insertIntoCell(final String CellName, final String theText,
+            final com.sun.star.text.XTextTable xTTbl) {
 
     	com.sun.star.text.XText xTableText = (com.sun.star.text.XText)
     		UnoRuntime.queryInterface(com.sun.star.text.XText.class,
@@ -679,7 +708,7 @@ public class OOText implements ITextPlugin{
 	}
 	*/
 	//inserting some Text
-    if(xTableText!=null && !StringTool.isNothing(theText)){
+    if((xTableText!=null) && !StringTool.isNothing(theText)){
     	xTableText.setString( theText );
     }
 
@@ -709,7 +738,7 @@ public class OOText implements ITextPlugin{
 		}
 		return PageFormat.USER;
 	}
-	public void setFormat(ch.elexis.text.ITextPlugin.PageFormat f) {
+	public void setFormat(final ch.elexis.text.ITextPlugin.PageFormat f) {
 		if(bean==null){
 			if(reconnect()==false){
 				return;
@@ -734,7 +763,7 @@ public class OOText implements ITextPlugin{
 		}
 		
 	}
-	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust){
+	public Object insertTextAt(final int x, final int y, final int w, final int h, final String text, final int adjust){
 		
 	    // Integer ZOrder = new Integer( 1 );
 	    	    try
@@ -820,8 +849,8 @@ public class OOText implements ITextPlugin{
 	 * The same as insertTextAt above. Uses TextShape instead of TextFrame.
 	 * Additionally, allow vertical alignment. (That's possible with TextShape.)
 	 */
-	public Object insertTextAt(int x, int y, int w, int h, String text,
-			int adjust, int verticalAdjust) {
+	public Object insertTextAt(final int x, final int y, final int w, final int h, final String text,
+			final int adjust, final int verticalAdjust) {
 
 		try {
 			XTextDocument myDoc = (XTextDocument) UnoRuntime.queryInterface(
@@ -929,7 +958,7 @@ public class OOText implements ITextPlugin{
 		}
 	}
 
-	private com.sun.star.beans.XPropertySet setFormat(XTextCursor xtc) throws UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException {
+	private com.sun.star.beans.XPropertySet setFormat(final XTextCursor xtc) throws UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException {
 		com.sun.star.beans.XPropertySet charProps = (com.sun.star.beans.XPropertySet)
           UnoRuntime.queryInterface(com.sun.star.beans.XPropertySet.class,
                                     xtc);
@@ -944,7 +973,7 @@ public class OOText implements ITextPlugin{
 	      }
 		return charProps;
 	}
-	public Object insertText(String marke, String text, int adjust){
+	public Object insertText(final String marke, final String text, final int adjust){
 		try{
 	    	XTextDocument myDoc=(XTextDocument) UnoRuntime.queryInterface(com.sun.star.text.XTextDocument.class,bean.getDocument());
 			  /*
@@ -981,7 +1010,7 @@ public class OOText implements ITextPlugin{
 			return null;
 		}
 	}
-	public Object insertText(Object pos,String text, int adjust){
+	public Object insertText(final Object pos,final String text, final int adjust){
 		XTextCursor cursor=(XTextCursor)pos;
 		
 		try {
@@ -993,7 +1022,7 @@ public class OOText implements ITextPlugin{
 		cursor.collapseToEnd();
 		return cursor;
 	}
-	public boolean setFont(String name, int style, float size) {
+	public boolean setFont(final String name, final int style, final float size) {
 		font=name;
 		hi=size;
 		stil=style;
@@ -1002,7 +1031,7 @@ public class OOText implements ITextPlugin{
 	public String getMimeType() {
 		return MIMETYPE_OO2;
 	}
-	public void setSaveOnFocusLost(boolean bSave) {
+	public void setSaveOnFocusLost(final boolean bSave) {
 		bSaveOnFocusLost=bSave;
 	}
 
