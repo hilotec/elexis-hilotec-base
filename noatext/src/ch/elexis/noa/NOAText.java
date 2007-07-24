@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 2890 2007-07-24 15:45:51Z rgw_ch $
+ *  $Id: NOAText.java 2895 2007-07-24 16:29:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -294,6 +294,29 @@ public class NOAText implements ITextPlugin {
 						r.setText("??Auswahl??");
 					}else if(replace instanceof String){
 						r.setText((String)replace);
+					}else if(replace instanceof String[][]){
+						String[][]contents=(String[][])replace;
+						try{
+							ITextTable textTable = doc.getTextTableService().constructTextTable(contents.length, contents[0].length);				
+							doc.getTextService().getTextContentService().insertTextContent(r,textTable);
+							r.setText("");
+							ITextTablePropertyStore props=textTable.getPropertyStore();
+							// long w=props.getWidth();
+							//long percent=w/100;
+					        for(int row=0;row<contents.length;row++){
+					        	String[] zeile=contents[row];
+					        	  for(int col=0;col<zeile.length;col++){
+					        		  textTable.getCell(col,row).getTextService().getText().setText(zeile[col]);
+					        	  }
+					         }
+				        	textTable.spreadColumnsEvenly();
+				        
+							return true;
+						}catch(Exception ex){
+							ExHandler.handle(ex);
+							r.setText("Fehler beim Ersetzen");
+						}
+
 					}else{
 						r.setText("Not a String");
 					}
