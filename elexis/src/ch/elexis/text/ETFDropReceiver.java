@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFDropReceiver.java 1724 2007-02-02 21:17:21Z rgw_ch $
+ *  $Id: ETFDropReceiver.java 2897 2007-07-24 20:12:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -24,18 +24,19 @@ import ch.elexis.util.PersistentObjectDropTarget.Receiver;
 
 public class ETFDropReceiver implements Receiver{
 	EnhancedTextField etf;
-	Hashtable<Class, IKonsExtension> targets;
+	@SuppressWarnings("unchecked")
+	Hashtable<Class<?>, IKonsExtension> targets;
 	
 	ETFDropReceiver(EnhancedTextField et){
 		etf=et;
-		targets=new Hashtable<Class, IKonsExtension>();
+		targets=new Hashtable<Class<?>, IKonsExtension>();
 	}
 	
-	public void addReceiver(Class clazz, IKonsExtension rec){
+	public void addReceiver(Class<?> clazz, IKonsExtension rec){
 		targets.put(clazz, rec);
 	}
 	
-	public void removeReceiver(Class clazz, IKonsExtension rec){
+	public void removeReceiver(Class<?> clazz, IKonsExtension rec){
 		targets.remove(clazz);
 	}
 	

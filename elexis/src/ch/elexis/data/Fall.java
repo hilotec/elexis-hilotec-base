@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2871 2007-07-23 08:43:55Z rgw_ch $
+ *    $Id: Fall.java 2897 2007-07-24 20:12:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -175,7 +175,7 @@ public class Fall extends PersistentObject{
 	 * tarmed cases to the new system
 	 */
 	private void update(){
-		String is=getInfoString("Kostenträger");
+		//String is=getInfoString("Kostenträger");
 		if(getInfoString("Kostenträger").equals("")){
 			setInfoString("Kostenträger",checkNull(get("Kostentraeger")));
 		}

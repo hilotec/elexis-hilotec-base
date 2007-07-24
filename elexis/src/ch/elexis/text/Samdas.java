@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Samdas.java 2552 2007-06-22 04:24:18Z rgw_ch $
+ *  $Id: Samdas.java 2897 2007-07-24 20:12:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -111,45 +111,17 @@ public class Samdas {
 	public Record getRecord(){
 		return new Record(getRecordElement());
 	}
-	@SuppressWarnings("unchecked")
-	/**
-	 * Get a list of all records
-	 */
-	/*
-	public List<Record> getRecords(){
-		List<Element> lRec=eRoot.getChildren("record",ns);	// Workaround wg. alter Version
-		if(lRec.size()==0){
-			Element eRec=eRoot.getChild("records", ns);
-			lRec=eRec.getChildren("record",ns);
-		}
-		List<Record> ret=new ArrayList<Record>(lRec.size());
-		for(Element e:lRec){
-			ret.add(new Record(e));
-		}
-		
-		return ret;
-	}
-*/
+	
 	public void add(Record r){
 		eRoot.addContent(r.eRecord);
 	}
 	
+	
 	/**
-	 * Zwei Samdas-Dokumente zusammenlegen
-	 * @param s
+	 * A record is an EMR entry
+	 * @author Gerry
+	 *
 	 */
-	/*
-	@SuppressWarnings("unchecked")
-	public void add(Samdas s){
-		List<Record> records=s.getRecords();
-		for(Record r:records){
-			add(r);
-		}
-		Element analyses=eRoot.getChild("analyses",ns);
-		List<Element> sAnalyses=s.eRoot.getChild("analyses",ns).getChildren();
-		analyses.addContent(sAnalyses);
-	}
-	*/
 	public static class Record{
 		private Element eRecord;
 		public Record(Element e){
@@ -198,6 +170,17 @@ public class Samdas {
 			}
 			return ret;
 		}
+		
+		@SuppressWarnings("unchecked")
+		public List<Section> getSections(){
+			List<Element> lElm=eRecord.getChildren("section", ns);
+			List<Section> ret=new ArrayList<Section>(lElm.size());
+			for(Element el:lElm){
+				ret.add(new Section(el));
+			}
+			return ret;
+		}
+		
 		public void add(Range x){
 			eRecord.addContent(x.el);
 		}
@@ -206,6 +189,10 @@ public class Samdas {
 		}
 	}
 	
+	/**
+	 * A Range is a part of the text. It is defined by a position, a length and a type.
+	 * 
+	 */
 	static class Range{
 		protected Element el;
 		Range(Element e){
@@ -226,6 +213,12 @@ public class Samdas {
 			return Integer.parseInt(el.getAttributeValue("length"));
 		}
 	}
+	/**
+	 * An XRef is a range that defines a crossreference to some other piece of information
+	 * it can define a class that can handle its contents
+	 * @author Gerry
+	 *
+	 */
 	public static class XRef extends Range{
 		
 		XRef(Element e){
@@ -245,6 +238,11 @@ public class Samdas {
 			return el.getAttributeValue("id");
 		}
 	}
+	/**
+	 * A Markup is a Range that defines some text attributes
+	 * @author Gerry
+	 *
+	 */
 	public static class Markup extends Range{
 		Markup(Element e){
 			super(e);
@@ -257,6 +255,22 @@ public class Samdas {
 			return el.getAttributeValue("type");
 		}
 	}
+	
+	/**
+	 * A Section is a Markup that summarizes a piece of text unter a section header.
+	 * @author Gerry
+	 *
+	 */
+	public static class Section extends Range{
+		Section(Element e){
+			super(e);
+		}
+		public Section(int pos, int length, String name){
+			super("section",pos,length);
+			el.setAttribute("name",name);
+		}
+	}
+	
 	public static class Finding{
 		protected Element el;
 		

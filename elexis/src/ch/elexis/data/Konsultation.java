@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2869 2007-07-23 05:07:40Z rgw_ch $
+ *  $Id: Konsultation.java 2897 2007-07-24 20:12:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -28,7 +28,10 @@ import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.text.Samdas;
-import ch.elexis.util.*;
+import ch.elexis.util.Log;
+import ch.elexis.util.Money;
+import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -46,9 +49,9 @@ import ch.rgw.tools.JdbcLink.Stm;
  * 
  * @author gerry
  */
-public class Konsultation extends PersistentObject implements Comparable{
+public class Konsultation extends PersistentObject implements Comparable<Konsultation>{
 	volatile int actEntry;
-    protected String getTableName() {
+	protected String getTableName() {
 		return "BEHANDLUNGEN";
 	}
 	static{
@@ -102,7 +105,10 @@ public class Konsultation extends PersistentObject implements Comparable{
     /** Eine neue Konsultation zu einem Fall erstellen */
 	Konsultation(Fall fall){
 		if(fall==null){
-			MessageDialog.openError(null,"Kein Fall ausgewählt","Bitte zunächst einen Fall auswählen, dem die neue Konsultation zugeordnet werden soll");
+			fall=GlobalEvents.getSelectedFall();
+			if(fall==null){
+				MessageDialog.openError(null,"Kein Fall ausgewählt","Bitte zunächst einen Fall auswählen, dem die neue Konsultation zugeordnet werden soll");
+			}
 		}
 		if(fall.isOpen()==false){
 			MessageDialog.openError(null,"Fall geschlossen","Zu einem abgeschlossenen Fall kann keine neue Konsultation erstellt werden");
@@ -113,6 +119,7 @@ public class Konsultation extends PersistentObject implements Comparable{
 					fall.getId(),
 					Hub.actMandant.getId());
 			fall.getPatient().setInfoElement("LetzteBehandlung",getId());
+			GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.create);
 		}
 	}
     /** Eine Konsultation anhand ihrer ID von der Datenbank einlesen */
@@ -130,6 +137,28 @@ public class Konsultation extends PersistentObject implements Comparable{
     public VersionedResource getEintrag(){
         VersionedResource vr=getVersionedResource("Eintrag",true);
         return vr;
+    }
+    
+    public void addSection(String title, int pos){
+    	VersionedResource vr=getEintrag();
+    	String ntext=vr.getHead();
+    	Samdas samdas=new Samdas(ntext);
+    	Samdas.Record record=samdas.getRecord();
+    	String recText=record.getText();
+    	if((pos==-1)|| pos>recText.length()){
+    		pos=recText.length();
+    		recText+=title;
+    	}else{
+    		recText=recText.substring(0,pos)+title+recText.substring(pos);
+    	}
+    	record.setText(recText);
+    	Samdas.Section section=new Samdas.Section(pos,title.length(),title);
+    	record.add(section);
+    	updateEintrag(samdas.toString(),true); // XRefs may always be added
+    }
+    
+    public void removeSection(int pos){
+    	
     }
     
     /**
@@ -154,7 +183,7 @@ public class Konsultation extends PersistentObject implements Comparable{
     	record.setText(recText);
     	Samdas.XRef xref=new Samdas.XRef(provider,id,pos,text.length());
     	record.add(xref);
-    	updateEintrag(samdas.toString(),true); // XRefs my always be added
+    	updateEintrag(samdas.toString(),true); // XRefs may always be added
     }
     
     /**
@@ -455,12 +484,12 @@ public class Konsultation extends PersistentObject implements Comparable{
      * @return Ein Optifier- Resultat
      */
 
-	public Result removeLeistung(Verrechnet ls)
+	public Result<Verrechnet> removeLeistung(Verrechnet ls)
     {
     	if(isEditable(true)){
     		IVerrechenbar v=ls.getVerrechenbar();
     		int z=ls.getZahl();
-	        Result result=v.getOptifier().remove(ls,this);
+	        Result<Verrechnet> result=v.getOptifier().remove(ls,this);
 	        if(result.isOK()){
 	            if(v instanceof Artikel){
 	        		Artikel art=(Artikel)v;
@@ -475,9 +504,9 @@ public class Konsultation extends PersistentObject implements Comparable{
     /** Eine Verrechenbar zu dieser Konsultation zufügen 
      *	@return ein Verifier-Resultat. 
      * */
-	public Result addLeistung(IVerrechenbar l){
+	public Result<IVerrechenbar> addLeistung(IVerrechenbar l){
     	if(isEditable(false)){
-	    	Result result=l.getOptifier().add(l,this);
+	    	Result<IVerrechenbar> result=l.getOptifier().add(l,this);
 	    	if(result.isOK()){
 	        	// Statistik nachführen
 	        	getFall().getPatient().countItem(l);
@@ -606,7 +635,8 @@ public class Konsultation extends PersistentObject implements Comparable{
     	}
     }
     
-    public Hashtable getDetailsFor(IVerrechenbar v){
+    @SuppressWarnings("unchecked")
+	public Hashtable getDetailsFor(IVerrechenbar v){
     	Stm stm=j.getStatement();
     	try {
         	StringBuilder sb=new StringBuilder();
@@ -632,7 +662,8 @@ public class Konsultation extends PersistentObject implements Comparable{
 			j.releaseStatement(stm);
 		}
     }
-    public void flushDetailsFor(IVerrechenbar v, Hashtable hash){
+    @SuppressWarnings("unchecked")
+	public void flushDetailsFor(IVerrechenbar v, Hashtable hash){
     	if(!isEditable(true)){
     		return;
     	}
@@ -686,21 +717,17 @@ public class Konsultation extends PersistentObject implements Comparable{
 	}
 	
     /** Interface Comparable, um die Behandlungen nach Datum sortieren zu können */
-	public int compareTo(Object o) {
-		if(o instanceof Konsultation){
-			Konsultation b=(Konsultation)o;
-			TimeTool me=new TimeTool(getDatum());
-			TimeTool other=new TimeTool(b.getDatum());
-			return me.compareTo(other);
-		}
-		return -1;
+	public int compareTo(Konsultation b) {
+		TimeTool me=new TimeTool(getDatum());
+		TimeTool other=new TimeTool(b.getDatum());
+		return me.compareTo(other);
 	}
 	/**
 	 * Helper:
 	 * Get the "active" cons. Normally, it is the actually selected cons.
 	 * if the actually selected cons does not match the actually selected patient, then it is
 	 * rather the latest cons of the actually selected patient.
-	 * @return the consultation that letter will belong to
+	 * @return the active Kons
 	 * @author gerry new concept due to some obscure selection problems
 	 */
 	public static Konsultation getAktuelleKons(){
@@ -713,19 +740,17 @@ public class Konsultation extends PersistentObject implements Comparable{
 			ret= pat.getLetzteKons(true);
 			return ret;
 		}
-		SWTHelper.showError("Kein Patient ausgewählt", "Bitte wählen Sie zuerst aus, wem dieses Dokument zugeordnet werden soll");
+		SWTHelper.showError("Kein Patient ausgewählt", "Bitte wählen Sie zuerst einen Patienten aus");
 		return null;
 	}
 	protected Konsultation(){}
-    static class BehandlungsComparator implements Comparator{
+    static class BehandlungsComparator implements Comparator<Konsultation>{
         boolean rev;
         BehandlungsComparator(boolean reverse){
             rev=reverse;
         }
-        public int compare(Object arg0, Object arg1)
+        public int compare(Konsultation b1, Konsultation b2)
         {
-            Konsultation b1 = (Konsultation) arg0;
-            Konsultation b2 = (Konsultation) arg1;
             TimeTool t1=new TimeTool(b1.getDatum());
             TimeTool t2=new TimeTool(b2.getDatum());
             if(rev==true){
@@ -741,4 +766,7 @@ public class Konsultation extends PersistentObject implements Comparable{
 		return true;
 	}
 
+	public interface Listener{
+		public boolean creatingKons(Konsultation k);
+	}
 }
