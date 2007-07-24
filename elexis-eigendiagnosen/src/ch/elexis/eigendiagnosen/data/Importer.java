@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Importer.java 2883 2007-07-24 05:17:52Z rgw_ch $
+ *    $Id: Importer.java 2886 2007-07-24 08:15:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -87,7 +87,7 @@ public class Importer extends ImporterPage {
 	 */
 	@Override
 	public String getTitle() {
-		return "Privatleistungen";
+		return Eigendiagnose.CODESYSTEM_NAME;
 	}
 	private Result<String> importExcel(final String file,final IProgressMonitor mon){
 		ExcelWrapper xl=new ExcelWrapper();
