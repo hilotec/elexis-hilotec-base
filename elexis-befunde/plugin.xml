@@ -9,7 +9,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- $Id: plugin.xml 2795 2007-07-13 18:35:46Z rgw_ch $ 
+ $Id: plugin.xml 2893 2007-07-24 15:46:11Z rgw_ch $ 
 -->
 <plugin>
    <extension
@@ -54,6 +54,13 @@
       <ACLContribution
             ACLContributor="ch.elexis.befunde.ACLContributor"
             name="Befunde-ACLs"/>
+   </extension>
+   <extension
+         point="ch.elexis.DataAccess">
+      <DataAccess
+            class="ch.elexis.befunde.DataAccessor"
+            name="Befunde-Data">
+      </DataAccess>
    </extension>
 
 </plugin>
