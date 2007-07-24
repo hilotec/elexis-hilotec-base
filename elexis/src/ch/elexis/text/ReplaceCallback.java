@@ -8,12 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ReplaceCallback.java 23 2006-03-24 15:36:01Z rgw_ch $
+ *  $Id: ReplaceCallback.java 2891 2007-07-24 15:45:59Z rgw_ch $
  *******************************************************************************/
 
 
 package ch.elexis.text;
 
 public interface ReplaceCallback {
-	public String replace(String in);
+	public Object replace(String in);
 }

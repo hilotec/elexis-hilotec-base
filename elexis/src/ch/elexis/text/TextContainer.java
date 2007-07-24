@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 2698 2007-07-03 12:51:47Z rgw_ch $
+ *  $Id: TextContainer.java 2891 2007-07-24 15:45:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -17,13 +17,26 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -31,11 +44,18 @@ import org.eclipse.ui.forms.widgets.FormText;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.data.*;
+import ch.elexis.data.Brief;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Person;
+import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.ScriptUtil;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -77,12 +97,12 @@ public class TextContainer {
 			plugin= new DefaultTextPlugin();
 		}
 	}
-	public TextContainer(IViewSite s){
+	public TextContainer(final IViewSite s){
 		this();
 		shell=s.getShell();
 	}
 	
-	public TextContainer(Shell s){
+	public TextContainer(final Shell s){
 		this();
 		shell=s;
 	}
@@ -104,7 +124,7 @@ public class TextContainer {
 	 * @param subject TODO
 	 * @return	Ein Brief-Objekt oder null bei Fehler
 	 */
-	public Brief createFromTemplateName(final Konsultation kons, final String templatename, String typ, Kontakt adressat, String subject){
+	public Brief createFromTemplateName(final Konsultation kons, final String templatename, final String typ, final Kontakt adressat, final String subject){
 		Query<Brief> qbe=new Query<Brief>(Brief.class);
 		qbe.add("Typ","=",Brief.TEMPLATE);
 		qbe.and();
@@ -119,7 +139,7 @@ public class TextContainer {
 			SWTHelper.showError("Dokumentvorlage nicht gefunden", "Die benötigte Formatvorlage "+templatename+" wurde nicht gefunden.");
 			return null;
 		}
-		Brief template=(Brief)list.get(0);
+		Brief template=list.get(0);
 		return createFromTemplate(kons, template,typ,adressat, subject);
 	}
 	
@@ -133,7 +153,7 @@ public class TextContainer {
 	 * @param Adressat der Adressat
 	 * @return true bei Erfolg
 	 */
-	public Brief createFromTemplate(final Konsultation kons, Brief template, String typ, Kontakt adressat, String subject){
+	public Brief createFromTemplate(final Konsultation kons, final Brief template, final String typ, Kontakt adressat, final String subject){
 		if(adressat==null){
 			KontaktSelektor ksel=new KontaktSelektor(shell,
 				Kontakt.class,"Adressaten auswählen","Bitte wählen Sie den Adressaten für den Brief aus");
@@ -151,14 +171,20 @@ public class TextContainer {
 		}else{
 			final Brief ret=new Brief(subject==null ? template.getBetreff():subject,null,Hub.actUser,adressat,kons,typ);
 			if(plugin.loadFromByteArray(template.loadBinary(), true)==true){
-				plugin.findOrReplace("\\[[a-zA-Z]+\\.[-a-zA-Z0-9]+\\]",new ReplaceCallback(){
-					public String replace(String in) {
+				plugin.findOrReplace("\\[[-a-zA-Z]+\\.[-a-zA-Z0-9]+\\]",new ReplaceCallback(){
+					public Object replace(final String in) {
 						return replaceFields(ret,in.replaceAll("[\\[\\]]",""));
 					}
 				});
 				plugin.findOrReplace("\\[[a-zA-Z]+:mwn?:[^\\[]+\\]",new ReplaceCallback(){
-					public String replace(String in) {
+					public String replace(final String in) {
 						return genderize(ret,in.replaceAll("[\\[\\]]",""));
+					}
+				});
+				plugin.findOrReplace("\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+\\]",new ReplaceCallback(){
+					public Object replace(final String in) {
+						String[][] ref=ScriptUtil.loadDataFromPlugin(in.replaceAll("[\\[\\]]",""));
+						return ref;
 					}
 				});
 				saveBrief(ret,typ);
@@ -168,7 +194,7 @@ public class TextContainer {
 		}
 		return null;
 	}
-	private String replaceFields(Brief brief, String b){
+	private Object replaceFields(final Brief brief, final String b){
 		String[] q=b.split("\\.");
 		if(q.length!=2){
 			log.log("falsches Variablenformat "+b,Log.WARNINGS);		// Kann eigentlich nie vorkommen ?!?
@@ -176,6 +202,9 @@ public class TextContainer {
 		}
 		if(q[0].equals("Datum")){
 			return new TimeTool().toString(TimeTool.DATE_GER);
+		}if(q[0].indexOf(":")!=-1){
+			String[][] ref=ScriptUtil.loadDataFromPlugin(b);
+			return ref;
 		}
 		PersistentObject o=resolveObject(brief,q[0]);
 		if(o==null){
@@ -211,7 +240,7 @@ public class TextContainer {
 	 * [Feld:mw:formulierung Mann/formulierung Frau] oder
 	 * [Feld:mwn:mann/frau/neutral]
 	 */
-	private String genderize(Brief brief, String in) {
+	private String genderize(final Brief brief, final String in) {
 		String[] q=in.split(":");
 		PersistentObject o=resolveObject(brief, q[0]);
 		if(o==null){
@@ -251,7 +280,7 @@ public class TextContainer {
 		}
 	}
 
-	private PersistentObject resolveObject(Brief actBrief, String k){
+	private PersistentObject resolveObject(final Brief actBrief, final String k){
 		PersistentObject ret=null;
 		if(k.equalsIgnoreCase("Mandant")){
 			ret=Hub.actMandant;
@@ -276,7 +305,7 @@ public class TextContainer {
 	
 	
 	
-	private void addBriefToKons(Brief brief, Konsultation kons){
+	private void addBriefToKons(final Brief brief, final Konsultation kons){
 		if(kons!=null){
 			String label="\n[ "+brief.getLabel()+" ]";
 			kons.addXRef(XrefExtension.providerID, brief.getId(), -1, label);
@@ -288,7 +317,7 @@ public class TextContainer {
 	 * @param brief das zu speichernde Dokument
 	 * @param typ Typ des Dokuments
 	 */
-	public void saveBrief(Brief brief, String typ){
+	public void saveBrief(Brief brief, final String typ){
 		if((brief==null) || (brief.getAdressat()==null)){
 			KontaktSelektor ksl=new KontaktSelektor(shell,Kontakt.class,"Adressat auswählen","Geben Sie bitte den Adressaten für den Brief an");
 			if(ksl.open()==Dialog.OK){
@@ -336,7 +365,7 @@ public class TextContainer {
 		}
 	}
 	/** Einen Brief einlesen */
-	public boolean open(Brief brief) {
+	public boolean open(final Brief brief) {
 		if(brief==null){
 			log.log("Null brief zum öffnen", Log.WARNINGS);
 			return false;
@@ -359,7 +388,7 @@ public class TextContainer {
 		boolean bSysTemplate;
 		List<Mandant> lMands;
 		Mandant selectedMand;
-		protected SaveTemplateDialog(Shell parentShell) {
+		protected SaveTemplateDialog(final Shell parentShell) {
 			super(parentShell);
 		}
 
@@ -372,7 +401,7 @@ public class TextContainer {
 		}
 
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(final Composite parent) {
 			Composite ret=new Composite(parent,SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
@@ -404,7 +433,7 @@ public class TextContainer {
 				if(i==0){
 					selectedMand=null;
 				}else{
-					selectedMand=(Mandant)lMands.get(i-1);
+					selectedMand=lMands.get(i-1);
 				}
 			}
 			Query<Brief> qbe=new Query<Brief>(Brief.class);
@@ -432,13 +461,13 @@ public class TextContainer {
 		}
 		
 	}
-	public boolean replace(String pattern, ReplaceCallback cb){
+	public boolean replace(final String pattern, final ReplaceCallback cb){
 		return plugin.findOrReplace(pattern,cb);
 	}
 	
-	public boolean replace(String pattern, final String repl){
+	public boolean replace(final String pattern, final String repl){
 		return plugin.findOrReplace(pattern,new ReplaceCallback(){
-			public String replace(String in) {
+			public String replace(final String in) {
 				return repl;
 			}
 		});
@@ -450,7 +479,7 @@ public class TextContainer {
 		"<li>Das Text-Plugin wurde nicht richtig konfiguriert</li>"+
 		"<li>Ein externes Textprogramm wurde gelöscht</li></form>";
 		
-		public Composite createContainer(Composite parent, ITextPlugin.ICallback h) {
+		public Composite createContainer(final Composite parent, final ITextPlugin.ICallback h) {
 			parent.setLayout(new FillLayout());
 			//Composite ret=new Composite(parent,SWT.BORDER);
 			Form form=Desk.theToolkit.createForm(parent);
@@ -464,19 +493,19 @@ public class TextContainer {
 		public void dispose() {
 		}
 
-		public void showMenu(boolean b) {}
+		public void showMenu(final boolean b) {}
 
-		public void showToolbar(boolean b) {}
+		public void showToolbar(final boolean b) {}
 
 		public boolean createEmptyDocument() {
 			return false;
 		}
 
-		public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
+		public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate) {
 			return false;
 		}
 
-		public boolean findOrReplace(String pattern, ReplaceCallback cb) {
+		public boolean findOrReplace(final String pattern, final ReplaceCallback cb) {
 			return false;
 		}
 
@@ -488,18 +517,18 @@ public class TextContainer {
 			return false;
 		}
 
-		public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		}
 
-		public boolean loadFromStream(InputStream is, boolean asTemplate) {
+		public boolean loadFromStream(final InputStream is, final boolean asTemplate) {
 			// TODO Automatisch erstellter Methoden-Stub
 			return false;
 		}
-		public boolean print(String printer, String tray, boolean waitUntilFinished){
+		public boolean print(final String printer, final String tray, final boolean waitUntilFinished){
 			return false;
 		}
 
-		public boolean insertTable(String marke, int props, String[][] contents, int[] columnSizes) {
+		public boolean insertTable(final String marke, final int props, final String[][] contents, final int[] columnSizes) {
 			return false;
 		}
 		public void setFocus(){
@@ -510,24 +539,24 @@ public class TextContainer {
 			return PageFormat.USER;
 		}
 
-		public void setFormat(PageFormat f) {
+		public void setFormat(final PageFormat f) {
 			
 		}
 
-		public Object insertTextAt(int x, int y, int w, int h, String text, int adjust) {
+		public Object insertTextAt(final int x, final int y, final int w, final int h, final String text, final int adjust) {
 				return null;
 		}
 
-		public boolean setFont(String name, int style, float size) {
+		public boolean setFont(final String name, final int style, final float size) {
 			return false;
 		}
 
-		public Object insertText(String marke, String text, int adjust) {
+		public Object insertText(final String marke, final String text, final int adjust) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		public Object insertText(Object pos, String text, int adjust) {
+		public Object insertText(final Object pos, final String text, final int adjust) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -536,7 +565,7 @@ public class TextContainer {
 			return "text/nothing";
 		}
 
-		public void setSaveOnFocusLost(boolean bSave) {
+		public void setSaveOnFocusLost(final boolean bSave) {
 			// TODO Auto-generated method stub
 			
 		}
