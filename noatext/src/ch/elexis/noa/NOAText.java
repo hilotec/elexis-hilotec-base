@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 2824 2007-07-17 05:26:02Z rgw_ch $
+ *  $Id: NOAText.java 2890 2007-07-24 15:45:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -82,7 +82,7 @@ public class NOAText implements ITextPlugin {
 	ITextDocument doc;
 	ICallback textHandler;
 	File myFile;
-	private Log log=Log.get("NOAText");
+	private final Log log=Log.get("NOAText");
 	IOfficeApplication office;
 	private String font;
 	private float hi;
@@ -158,7 +158,7 @@ public class NOAText implements ITextPlugin {
 	 * Create the OOo-Container that will appear inside the view or dialog for Text-Display.
 	 * Here we use a slightly adapted OfficePanel from NOA4e (www.ubion.org)
 	 */
-	public Composite createContainer(Composite parent, ICallback handler){
+	public Composite createContainer(final Composite parent, final ICallback handler){
 		new Frame();
 		panel= new OfficePanel(parent,SWT.NONE);
 		panel.setBuildAlwaysNewFrames(false);
@@ -205,7 +205,7 @@ public class NOAText implements ITextPlugin {
 	 * Load a file from a byte array. Again, wie store it first into a temporary disk file
 	 * because OOo does not like documents that have no representation on disk.
 	 */
-	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
+	public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate) {
 		if(bs==null){
 			log.log("Null-Array zum speichern!",Log.ERRORS);
 			return false;
@@ -229,7 +229,7 @@ public class NOAText implements ITextPlugin {
 	/**
 	 * Load a file from an input stream. Explanations @see loadFromByteArray() 
 	 */
-	public boolean loadFromStream(InputStream is, boolean asTemplate) {
+	public boolean loadFromStream(final InputStream is, final boolean asTemplate) {
 		try {
 			clean();
 			doc=(ITextDocument)office.getDocumentService().loadDocument(is, DocumentDescriptor.DEFAULT_HIDDEN);
@@ -279,7 +279,7 @@ public class NOAText implements ITextPlugin {
 
 	}
 
-	public boolean findOrReplace(String pattern, ReplaceCallback cb) {
+	public boolean findOrReplace(final String pattern, final ReplaceCallback cb) {
 		SearchDescriptor search=new SearchDescriptor(pattern);
 		search.setUseRegularExpression(true);
 		
@@ -289,11 +289,13 @@ public class NOAText implements ITextPlugin {
 			if(cb!=null){
 				for(ITextRange r:textRanges){
 					String orig=r.getXTextRange().getString();
-					String replace=cb.replace(orig);
+					Object replace=cb.replace(orig);
 					if(replace==null){
 						r.setText("??Auswahl??");
+					}else if(replace instanceof String){
+						r.setText((String)replace);
 					}else{
-						r.setText(replace);
+						r.setText("Not a String");
 					}
 				}
 			}
@@ -318,8 +320,8 @@ public class NOAText implements ITextPlugin {
 	 * @param columnsizes int-array describing the relative width of each column (all columns
 	 * together are taken as 100%). May be null, in that case the columns will bhe spread evenly
 	 */
-	public boolean insertTable(String place, int properties,
-			String[][] contents, int[] columnSizes) {
+	public boolean insertTable(final String place, final int properties,
+			final String[][] contents, final int[] columnSizes) {
 		int offset=0;
 		if((properties&ITextPlugin.FIRST_ROW_IS_HEADER)==0){
 			offset=1;
@@ -366,7 +368,7 @@ public class NOAText implements ITextPlugin {
 	 * We can not avoid using UNO here, because NOA does not give us enough control
 	 * over the text cursor
 	 */
-	public Object insertText(String marke, String text, int adjust) {
+	public Object insertText(final String marke, final String text, final int adjust) {
 		SearchDescriptor search=new SearchDescriptor(marke);
 		search.setIsCaseSensitive(true);
 		ISearchResult searchResult = doc.getSearchService().findFirst(search);
@@ -391,7 +393,7 @@ public class NOAText implements ITextPlugin {
 	/**
 	 * Insert text at a position returned by insertText(String,text,adjust)
 	 */
-	public Object insertText(Object pos, String text, int adjust) {
+	public Object insertText(final Object pos, final String text, final int adjust) {
 		XTextCursor cur=(XTextCursor)pos;
 		if(cur!=null){
 			cur.setString(text);
@@ -409,12 +411,12 @@ public class NOAText implements ITextPlugin {
 	 * Insert Text inside a rectangular area. Again we need UNO to get access to a 
 	 * Text frame.
 	 */
-	public Object insertTextAt(int x, int y, int w, int h, String text,
-			int adjust) {
+	public Object insertTextAt(final int x, final int y, final int w, final int h, final String text,
+			final int adjust) {
 		
 	    try
 	    {
-	    	XTextDocument myDoc=(XTextDocument)doc.getXTextDocument();
+	    	XTextDocument myDoc=doc.getXTextDocument();
 			com.sun.star.lang.XMultiServiceFactory documentFactory =
 		            (com.sun.star.lang.XMultiServiceFactory) UnoRuntime.queryInterface(
 		                com.sun.star.lang.XMultiServiceFactory.class, myDoc);
@@ -479,8 +481,8 @@ public class NOAText implements ITextPlugin {
 	 * Print the contents of the panel. NOA does no allow us to select printer and tray, so we do
 	 * it with UNO again.
 	 */
-	public boolean print(String toPrinter, String toTray,
-			boolean waitUntilFinished) {
+	public boolean print(final String toPrinter, final String toTray,
+			final boolean waitUntilFinished) {
 		try{
 			PropertyValue[] pprops;
 			if(StringTool.isNothing(toPrinter)){
@@ -518,7 +520,7 @@ public class NOAText implements ITextPlugin {
 			//bean.getDocument().print(pprops);
 			xPrintable.print(pprops);
 			long timeout=System.currentTimeMillis();
-			while (myXPrintJobListener.getStatus() == null || myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED) {
+			while ((myXPrintJobListener.getStatus() == null) || (myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED)) {
 				Thread.sleep(100);
 				long to=System.currentTimeMillis();
 				if((to-timeout) > 10000){
@@ -538,28 +540,28 @@ public class NOAText implements ITextPlugin {
 
 	}
 
-	public void setFormat(PageFormat f) {
+	public void setFormat(final PageFormat f) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void setSaveOnFocusLost(boolean bSave) {
+	public void setSaveOnFocusLost(final boolean bSave) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void showMenu(boolean b) {
+	public void showMenu(final boolean b) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void showToolbar(boolean b) {
+	public void showToolbar(final boolean b) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(final IConfigurationElement config,
+			final String propertyName, final Object data) throws CoreException {
 		// TODO Auto-generated method stub
 
 	}
@@ -582,14 +584,14 @@ public class NOAText implements ITextPlugin {
 		}
 	}
 	
-	public boolean setFont(String name, int style, float size) {
+	public boolean setFont(final String name, final int style, final float size) {
 		font=name;
 		hi=size;
 		stil=style;
 		return true;
 	}
 	
-	private com.sun.star.beans.XPropertySet setFormat(XTextCursor xtc) throws UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException {
+	private com.sun.star.beans.XPropertySet setFormat(final XTextCursor xtc) throws UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException {
 		com.sun.star.beans.XPropertySet charProps = (com.sun.star.beans.XPropertySet)
           UnoRuntime.queryInterface(com.sun.star.beans.XPropertySet.class,
                                     xtc);
@@ -618,7 +620,7 @@ public class NOAText implements ITextPlugin {
 		 * @author Sebastian Rösgen
 		 * @date 17.03.2006
 		 */
-		public closeListener(IOfficeApplication officeAplication) {
+		public closeListener(final IOfficeApplication officeAplication) {
 			this.officeAplication = officeAplication;
 		}
 	  //----------------------------------------------------------------------------
@@ -632,7 +634,7 @@ public class NOAText implements ITextPlugin {
 	   * @author Sebastian Rösgen
 		 * @date 17.03.2006
 	   */ 
-		public void queryClosing(ICloseEvent closeEvent, boolean getsOwnership) {
+		public void queryClosing(final ICloseEvent closeEvent, final boolean getsOwnership) {
 			//nothing to do in here
 		}
 	  //----------------------------------------------------------------------------
@@ -644,7 +646,7 @@ public class NOAText implements ITextPlugin {
 	   * @author Sebastian Rösgen
 		 * @date 17.03.2006
 	   */
-		public void notifyClosing(ICloseEvent closeEvent) {
+		public void notifyClosing(final ICloseEvent closeEvent) {
 			try {
 				removeMe();
 			} 
@@ -662,7 +664,7 @@ public class NOAText implements ITextPlugin {
 	   * @author Sebastian Rösgen
 		 * @date 17.03.2006
 	   */
-		public void disposing(IEvent event) {
+		public void disposing(final IEvent event) {
 			//nothing to do in here
 		}
 	  //----------------------------------------------------------------------------
