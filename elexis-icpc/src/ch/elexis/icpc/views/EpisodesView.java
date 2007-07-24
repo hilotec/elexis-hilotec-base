@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesView.java 2888 2007-07-24 14:50:07Z danlutz $
+ *    $Id: EpisodesView.java 2896 2007-07-24 20:11:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -23,14 +23,16 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEvents.ObjectListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 
-public class EpisodesView extends ViewPart implements SelectionListener, ActivationListener {
+public class EpisodesView extends ViewPart implements SelectionListener, ActivationListener, ObjectListener {
 	public static final String ID="ch.elexis.icpc.episodesView";
 	EpisodesDisplay display;
 	private IAction addEpisodeAction,removeEpisodeAction,editEpisodeAction;
@@ -46,7 +48,7 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		ViewMenus menu=new ViewMenus(getViewSite());
-		menu.createViewerContextMenu(display.lvEpisodes, removeEpisodeAction, editEpisodeAction);
+		menu.createViewerContextMenu(display.tvEpisodes, removeEpisodeAction, editEpisodeAction);
 		menu.createToolbar(addEpisodeAction,editEpisodeAction);
 		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
 	}
@@ -84,30 +86,30 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 	}
 
 	private void makeActions(){
-		addEpisodeAction=new Action("Neue Episode"){
+		addEpisodeAction=new Action("Neues Problem"){
 			{
-				setToolTipText("Eine neue Episode erstellen");
+				setToolTipText("Eine neues Problem erstellen");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
 			}
 			public void run(){
 				EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), null);
 				if (dlg.open() == Dialog.OK) {
-					display.lvEpisodes.refresh();
+					display.tvEpisodes.refresh();
 				}
 			}
 		};
-		removeEpisodeAction=new Action("Episdoe löschen"){
+		removeEpisodeAction=new Action("Problem löschen"){
 			{
-				setToolTipText("Die gewählte Episode unwiderriflich löschen");
+				setToolTipText("Das gewählte Problem unwiderriflich löschen");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
 			}
 			public void run(){
 				
 			}
 		};
-		editEpisodeAction=new Action("Episode bearbeiten"){
+		editEpisodeAction=new Action("Problem bearbeiten"){
 			{
-				setToolTipText("Titel der Episode ändern");
+				setToolTipText("Titel des Problems ändern");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
 			}
 			public void run(){
@@ -115,10 +117,27 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 				if(ep!=null){
 					EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), ep);
 					if (dlg.open() == Dialog.OK) {
-						display.lvEpisodes.refresh();
+						display.tvEpisodes.refresh();
 					}
 				}
 			}
 		};
+	}
+
+	public void objectChanged(PersistentObject o) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void objectCreated(PersistentObject o) {
+		if(o instanceof Konsultation){
+			Konsultation k=(Konsultation)o;
+			
+		}
+	}
+
+	public void objectDeleted(PersistentObject o) {
+		// TODO Auto-generated method stub
+		
 	}
 }

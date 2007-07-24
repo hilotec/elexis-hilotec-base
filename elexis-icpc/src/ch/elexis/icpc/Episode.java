@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Episode.java 2888 2007-07-24 14:50:07Z danlutz $
+ *  $Id: Episode.java 2896 2007-07-24 20:11:38Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -92,23 +92,27 @@ public class Episode extends PersistentObject {
 	@Override
 	public String getLabel() {
 		String title = get("Title");
-		String startDate = get("StartDate");
+		//String startDate = get("StartDate");
 		String number = get("Number");
 		int status = getStatus();
 		
 		StringBuffer sb = new StringBuffer();
-		
+		/*
 		if (!StringTool.isNothing(startDate)) {
 			sb.append(startDate);
 			sb.append(": ");
 		}
-		
+		*/
+		if(!StringTool.isNothing(number)){
+			sb.append(number).append(": ");
+		}
 		sb.append(title);
 		
+		/*
 		if (!StringTool.isNothing(number)) {
 			sb.append(" (" + number + ")");
 		}
-		
+		*/
 		if (status == INACTIVE) {
 			sb.append(" [" + getStatusText() + "]");
 		}
