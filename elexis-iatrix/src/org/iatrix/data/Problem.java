@@ -34,6 +34,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.JdbcLink.Stm;
 
 /** 
@@ -73,11 +74,12 @@ public class Problem extends PersistentObject {
     private static final String PROBLEM_DG_TABLENAME = "IATRIX_PROBLEM_DG_JOINT";
     private static final String PROBLEM_DAUERMEDIKATION_TABLENAME = "IATRIX_PROBLEM_DAUERMEDIKATION_JOINT";
     
-    private static final String DB_VERSION = "0.1.0";
+    private static final String DB_VERSION = "0.2.0";
 
     private static final String CREATE =
     "CREATE TABLE " + PROBLEM_TABLENAME + " ("+
     "ID          VARCHAR(25) primary key,"+
+	"deleted     CHAR(1) default '0',"+
     "PatientID   VARCHAR(25),"+
     "Bezeichnung VARCHAR(50),"+
     "Nummer      VARCHAR(10),"+
@@ -112,11 +114,6 @@ public class Problem extends PersistentObject {
     ""+
     "INSERT INTO " + PROBLEM_TABLENAME + " (ID) VALUES ('__SETUP__');";
 
-    /*
-     * TODO: ALTER TABLE IATRIX_PROBLEM ALTER COLUMN Datum TYPE VARCHAR(20)
-     *       for <= 0.1.0 
-     */
-    
     static{
         addMapping(PROBLEM_TABLENAME,
                 "PatientID",
@@ -175,6 +172,7 @@ public class Problem extends PersistentObject {
     public static Problem getSetup(){
         Problem setup = new Problem("__SETUP__");
         if(!setup.exists()){
+        	// create tables
             try{
                 ByteArrayInputStream bais=new ByteArrayInputStream(CREATE.getBytes("UTF-8"));
                 if(j.execScript(bais,true,false)==false){
@@ -190,9 +188,29 @@ public class Problem extends PersistentObject {
         }
         
         if (setup.exists()) {
+        	// update tables if required
+        	
         	Hashtable extInfo = setup.getHashtable("ExtInfo");
         	String version = (String) extInfo.get("Version");
-        	// update if needed
+        	
+			VersionInfo vi = new VersionInfo(version);
+			if (vi.isOlder(DB_VERSION)) {
+				if(vi.isOlder("0.2.0")){
+				    String sql;
+				    
+				    // update column Datum
+				    sql =  "ALTER TABLE " + PROBLEM_TABLENAME + " MODIFY Datum VARCHAR(20);";
+					j.exec(j.translateFlavor(sql));
+					
+					// add column deleted
+				    sql = "ALTER TABLE " + PROBLEM_TABLENAME + " ADD deleted CHAR(1) default '0';";
+					j.exec(j.translateFlavor(sql));
+				}
+				
+				// update to the current version
+				extInfo.put("Version", DB_VERSION);
+                setup.setHashtable("ExtInfo", extInfo);
+			}
         }
         	
         return setup;
