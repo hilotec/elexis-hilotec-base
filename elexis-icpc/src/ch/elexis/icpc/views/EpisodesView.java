@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesView.java 1836 2007-02-18 09:13:08Z rgw_ch $
+ *    $Id: EpisodesView.java 2888 2007-07-24 14:50:07Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -16,7 +16,6 @@ package ch.elexis.icpc.views;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -91,9 +90,8 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
 			}
 			public void run(){
-				InputDialog inp=new InputDialog(getViewSite().getShell(),"Neue Episode erstellen","Bitte geben Sie einen Titel für diese Episode ein","",null);
-				if(inp.open()==Dialog.OK){
-					new Episode(GlobalEvents.getSelectedPatient(),inp.getValue());
+				EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), null);
+				if (dlg.open() == Dialog.OK) {
 					display.lvEpisodes.refresh();
 				}
 			}
@@ -115,9 +113,8 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 			public void run(){
 				Episode ep=display.getSelectedEpisode();
 				if(ep!=null){
-					InputDialog inp=new InputDialog(getViewSite().getShell(),"Episode umbenennen","Bitte geben Sie einen neuen Titel für diese Episode ein",ep.get("Title"),null);
-					if(inp.open()==Dialog.OK){
-						new Episode(GlobalEvents.getSelectedPatient(),inp.getValue());
+					EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), ep);
+					if (dlg.open() == Dialog.OK) {
 						display.lvEpisodes.refresh();
 					}
 				}
