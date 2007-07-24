@@ -53,7 +53,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return true;
 	}
 
-	public Composite createContainer(Composite parent, ICallback handler) {
+	public Composite createContainer(final Composite parent, final ICallback handler) {
 		if (editor == null) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout grid = new GridLayout();
@@ -84,8 +84,8 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return "Mime-Type";
 	}
 
-	public boolean insertTable(String place, int properties, String[][] contents,
-			int[] columnSizes) {
+	public boolean insertTable(final String place, final int properties, final String[][] contents,
+			final int[] columnSizes) {
 		
 		if (editor == null) {
 			return false;
@@ -105,18 +105,18 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return false;
 	}
 	
-	public Object insertText(String marke, final String text, int adjust) {
+	public Object insertText(final String marke, final String text, final int adjust) {
 		if (editor == null) {
 			return false;
 		}
 		return findOrReplace(marke, new ReplaceCallback() {
-			public String replace(String in) {
+			public String replace(final String in) {
 				return text;
 			}}, true);
 	}
 
-	public Object insertText(Object pos, String text, int adjust) {
-		if (editor == null || !(pos instanceof Pos)) {
+	public Object insertText(final Object pos, final String text, final int adjust) {
+		if ((editor == null) || !(pos instanceof Pos)) {
 			return false;
 		}
 		Pos pospos = (Pos) pos;
@@ -144,28 +144,28 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return null;
 	}
 
-	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust) {
+	public Object insertTextAt(final int x, final int y, final int w, final int h, final String text, final int adjust) {
 		TextBox box = editor.insertBox(x, y, w, h);
 		box.setText(text);
 		return new Pos(box, text.length());
 	}
 
-	public boolean loadFromStream(InputStream is, boolean asTemplate) {
+	public boolean loadFromStream(final InputStream is, final boolean asTemplate) {
 		return false;
 	}
 
-	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished) {
+	public boolean print(final String toPrinter, final String toTray, final boolean waitUntilFinished) {
 		return false;
 	}
 
-	public boolean setFont(String name, int style, float size) {
+	public boolean setFont(final String name, final int style, final float size) {
 		this.font = name;
 		this.style = style;
 		this.size = size;
 		return true;
 	}
 
-	public void showMenu(boolean b) {
+	public void showMenu(final boolean b) {
 	}
 
 	public void showToolbar(boolean b) {
@@ -195,7 +195,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 		}
 	}
 
-	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
+	public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate) {
 		ByteArrayInputStream bin = new ByteArrayInputStream(bs);
 		DataInputStream in = new DataInputStream(bin);
 		try {
@@ -209,18 +209,18 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return true;
 	}
 
-	public boolean findOrReplace(String pattern, ReplaceCallback cb) {
+	public boolean findOrReplace(final String pattern, final ReplaceCallback cb) {
 		return findOrReplace(pattern, cb, false) != null;
 	}
 	
-	private Pos findOrReplace(String pattern, ReplaceCallback cb, boolean firstTimeOnly) {
+	private Pos findOrReplace(final String pattern, final ReplaceCallback cb, final boolean firstTimeOnly) {
 		// carefull, might throw: PatternSyntaxException
 		if (editor != null) {
 			Pattern regexp = Pattern.compile(pattern);
 			Pos result = null;
 			
 			result = findOrReplace(regexp, editor.page, cb, firstTimeOnly);
-			if (result != null && (cb == null || firstTimeOnly)) {
+			if ((result != null) && ((cb == null) || firstTimeOnly)) {
 				// no reason to keep searching
 				return result;
 			}
@@ -228,7 +228,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 			for (Iterator<TextBox> it = editor.page.textBoxes.iterator(); it.hasNext(); ) {
 				TextBox box = it.next();
 				result = findOrReplace(regexp, box, cb, firstTimeOnly);
-				if (result != null && (cb == null || firstTimeOnly)) {
+				if ((result != null) && ((cb == null) || firstTimeOnly)) {
 					// no reason to keep searching
 					return result;
 				}
@@ -238,7 +238,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return null;
 	}
 	
-	private Pos findOrReplace(Pattern pattern, StyledText styledText, ReplaceCallback callback, boolean firstTimeOnly) {
+	private Pos findOrReplace(final Pattern pattern, final StyledText styledText, final ReplaceCallback callback, final boolean firstTimeOnly) {
 		String text = styledText.getText();
 		Matcher matcher = pattern.matcher(text);
 		if (!matcher.find()) {
@@ -250,7 +250,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 			int end = matcher.end();
 			String str = text.substring(start, end);
 			if (callback != null) {
-				String replace = callback.replace(str);
+				String replace = (String) callback.replace(str);
 				StyleRange style = styledText.getStyleRangeAtOffset(start + diff);
 				style = (StyleRange) style.clone();
 				if (firstTimeOnly) {
@@ -288,7 +288,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 		}
 	}
 
-	public void setFormat(PageFormat f) {
+	public void setFormat(final PageFormat f) {
 		this.pageFormat = f;
 	}
 
@@ -300,18 +300,18 @@ public class ElexisTextPlugin implements ITextPlugin {
 		StyledText text;
 		int caret;
 		public Pos() {}
-		public Pos(StyledText text, int caret) {
+		public Pos(final StyledText text, final int caret) {
 			this.text = text;
 			this.caret = caret;
 		}
 	}
 
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void setSaveOnFocusLost(boolean bSave) {
+	public void setSaveOnFocusLost(final boolean bSave) {
 		// TODO Auto-generated method stub
 		
 	}
