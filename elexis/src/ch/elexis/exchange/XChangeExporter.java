@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeExporter.java 2636 2007-06-26 18:19:20Z rgw_ch $
+ *  $Id: XChangeExporter.java 2912 2007-07-25 12:27:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
 import java.util.List;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.MedicalElement;
 
@@ -26,10 +27,11 @@ import ch.elexis.exchange.elements.MedicalElement;
 public abstract class XChangeExporter extends XChangeContainer implements IDataSender{
 	List<ContactElement> contacts;
 	
-	public boolean canHandle(Class clazz) {
+	public boolean canHandle(final Class<? extends PersistentObject> clazz) {
 		return true;
 	}
 
+	@Override
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
 		contacts=getContacts();

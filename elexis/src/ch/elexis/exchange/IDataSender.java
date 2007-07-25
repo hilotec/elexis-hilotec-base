@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IDataSender.java 2582 2007-06-23 21:11:15Z rgw_ch $
+ *  $Id: IDataSender.java 2912 2007-07-25 12:27:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
 
 import org.jdom.Element;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Result;
 
 /**
@@ -43,5 +44,5 @@ public interface IDataSender{
 	 * @param clazz the class in question
 	 * @return true if it can handle objects of that class.
 	 */
-	public boolean canHandle(Class clazz);
+	public boolean canHandle(Class<? extends PersistentObject> clazz);
 }
