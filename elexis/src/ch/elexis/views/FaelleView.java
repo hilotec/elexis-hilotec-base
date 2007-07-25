@@ -174,6 +174,7 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 					GlobalEvents.getInstance().getObjectFilters().unregisterObjectFilter(Konsultation.class, filter);
 				}else{
 					GlobalEvents.getInstance().getObjectFilters().registerObjectFilter(Konsultation.class, filter);
+					filter.setFall(GlobalEvents.getSelectedFall());
 				}
 			}
 			
