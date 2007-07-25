@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 2698 2007-07-03 12:51:47Z rgw_ch $
+ * $Id: GlobalEvents.java 2904 2007-07-25 10:52:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -16,6 +16,7 @@ package ch.elexis.actions;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -63,22 +64,24 @@ import ch.elexis.views.codesystems.ICodeSelectorTarget;
 public class GlobalEvents implements IPartListener2 {
     private static Log log = Log.get("GlobalEvents"); //$NON-NLS-1$
    
-    private LinkedList<SelectionListener> selectionListeners;
-    private LinkedList<BackingStoreListener> storeListeners;
-    private LinkedList<ObjectListener> objectListeners;
-    private Hashtable<IWorkbenchPart,LinkedList<ActivationListener>> activationListeners;
+    private final LinkedList<SelectionListener> selectionListeners;
+    private final LinkedList<BackingStoreListener> storeListeners;
+    private final LinkedList<ObjectListener> objectListeners;
+    private final Hashtable<IWorkbenchPart,LinkedList<ActivationListener>> activationListeners;
+    private final ObjectFilterRegistry filters=new ObjectFilterRegistry();
     
     private ICodeSelectorTarget codeSelectorTarget = null;
-    
     private static GlobalEvents theInstance;
     private static GlobalListener theListener;
-    
+        
+
     private GlobalEvents(){
         selectionListeners=new LinkedList<SelectionListener>();
         storeListeners=new LinkedList<BackingStoreListener>();
         activationListeners=new Hashtable<IWorkbenchPart,LinkedList<ActivationListener>>();
         objectListeners=new LinkedList<ObjectListener>();
         theListener=new GlobalListener();
+
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(this);
      }
     /**
@@ -120,7 +123,7 @@ public class GlobalEvents implements IPartListener2 {
      * @param o ein ObjectListener oder ObjectListenerAdapter
      */
     
-    public void addObjectListener(ObjectListener o){
+    public void addObjectListener(final ObjectListener o){
     	objectListeners.add(o);
     }
     
@@ -128,7 +131,7 @@ public class GlobalEvents implements IPartListener2 {
      * Einen ObjectListener entfernen. Dies muss unbedingt spätestens bei Dispose gemacht werden.
      * @param o ein ObjectListener, der zuvor mit addObjectListener hinzugefügt wurde
      */
-    public void removeObjectListener(ObjectListener o){
+    public void removeObjectListener(final ObjectListener o){
     	objectListeners.remove(o);
     }
     /**
@@ -137,7 +140,7 @@ public class GlobalEvents implements IPartListener2 {
      * @param l den Listener
      * @param win das Fenster, das beobachtet werden soll.
      */
-    public void addSelectionListener(SelectionListener l /*, IWorkbenchWindow win */){
+    public void addSelectionListener(final SelectionListener l /*, IWorkbenchWindow win */){
     	/*
     	if(win==null){
     		win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -158,7 +161,7 @@ public class GlobalEvents implements IPartListener2 {
      * da es sonst beim nächsten Aufrufversuch eine Exception gibt.
      * @param l
      */
-    public void removeSelectionListener(SelectionListener l /*,IWorkbenchWindow win */){
+    public void removeSelectionListener(final SelectionListener l /*,IWorkbenchWindow win */){
     	/*
     	if(win==null){
     		win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -171,15 +174,15 @@ public class GlobalEvents implements IPartListener2 {
     	selectionListeners.remove(l);
     }
     
-    public void addBackingStoreListener(BackingStoreListener l){
+    public void addBackingStoreListener(final BackingStoreListener l){
     	storeListeners.add(l);
     }
     
-    public void removeBackingStoreListener(BackingStoreListener l){
+    public void removeBackingStoreListener(final BackingStoreListener l){
     	storeListeners.remove(l);
     }
     
-    public void addActivationListener(ActivationListener l, IWorkbenchPart part){
+    public void addActivationListener(final ActivationListener l, final IWorkbenchPart part){
     	LinkedList<ActivationListener> list=activationListeners.get(part);
     	if(list==null){
     		list=new LinkedList<ActivationListener>();
@@ -187,7 +190,7 @@ public class GlobalEvents implements IPartListener2 {
     	}
     	list.add(l);
     }
-    public void removeActivationListener(ActivationListener l, IWorkbenchPart part){
+    public void removeActivationListener(final ActivationListener l, final IWorkbenchPart part){
     	LinkedList<ActivationListener> list=activationListeners.get(part);
     	if(list!=null){
     		list.remove(l);
@@ -263,7 +266,7 @@ public class GlobalEvents implements IPartListener2 {
     }
     static PersistentObject sourceObj;
     //static IWorkbenchWindow sourceWin;
-    private void doDispatchEvent(/*IWorkbenchWindow win,*/PersistentObject obj){
+    private void doDispatchEvent(/*IWorkbenchWindow win,*/final PersistentObject obj){
     	if((obj==null) || /*((sourceWin==win) &&*/ (sourceObj==obj)){
     		return;
     	}
@@ -294,13 +297,13 @@ public class GlobalEvents implements IPartListener2 {
      * @param clazz
      */
     @SuppressWarnings("unchecked")
-	public void fireUpdateEvent(Class clazz){
+	public void fireUpdateEvent(final Class clazz){
     	for(BackingStoreListener lis:storeListeners){
     		lis.reloadContents(clazz);
     	}
     }
     /**
-     * Ein SelectionListener dient dazu, sich über die Auswal eines
+     * Ein SelectionListener dient dazu, sich über die Auswahl eines
      * PersistentObjects informieren zu lassen
      * @author Gerry
      *
@@ -325,7 +328,7 @@ public class GlobalEvents implements IPartListener2 {
     
     private class GlobalListener implements ISelectionChangedListener{
     	boolean daempfung;
-        public void selectionChanged(SelectionChangedEvent event)
+        public void selectionChanged(final SelectionChangedEvent event)
         {	
         	if(daempfung){
         		return;
@@ -334,7 +337,7 @@ public class GlobalEvents implements IPartListener2 {
             StructuredSelection sel=(StructuredSelection)event.getSelection();
             
             Object[] obj=sel.toArray();
-            if(obj!=null && obj.length!=0){
+            if((obj!=null) && (obj.length!=0)){
                 if(obj[0] instanceof PersistentObject){
                     GlobalEvents.getInstance().fireSelectionEvent((PersistentObject)obj[0]);
                 }else if(obj[0] instanceof Tree){
@@ -353,10 +356,10 @@ public class GlobalEvents implements IPartListener2 {
      * @return
      */
     @SuppressWarnings("unchecked")
-	public PersistentObject getSelectedObject(Class template){
+	public PersistentObject getSelectedObject(final Class template){
     	return SelectionTracker.getObject(template);
     }
-    @SuppressWarnings("unchecked") //$NON-NLS-1$
+    @SuppressWarnings("unchecked") 
 	public void clearSelection(final Class template /*, IWorkbenchWindow win*/){
     	log.log("clearSelection: " + template.getName(), Log.DEBUGMSG); //$NON-NLS-1$
 
@@ -391,18 +394,18 @@ public class GlobalEvents implements IPartListener2 {
     	}
     	*/
     	@SuppressWarnings("unchecked")
-		static PersistentObject getObject(/*IWorkbenchWindow win,*/ Class template){
+		static PersistentObject getObject(/*IWorkbenchWindow win,*/ final Class template){
     		//SelectionTracker t=find(win);
     		return tracker==null ? null : tracker.objects.get(template);
     	}
     	@SuppressWarnings("unchecked")
-		static void clearObject(/*IWorkbenchWindow win,*/ Class template){
+		static void clearObject(/*IWorkbenchWindow win,*/ final Class template){
     		//SelectionTracker t=find(win);
     		if(tracker!=null){
     			tracker.objects.remove(template);
     		}
     	}
-    	static boolean change(/* IWorkbenchWindow win,*/ PersistentObject sel){
+    	static boolean change(/* IWorkbenchWindow win,*/ final PersistentObject sel){
     		if(/*(win==null) ||*/ (sel==null)){
     			return false;
     		}
@@ -449,16 +452,16 @@ public class GlobalEvents implements IPartListener2 {
     
     public static class ObjectListenerAdapter implements ObjectListener{
 
-		public void objectChanged(PersistentObject o) {}
-		public void objectCreated(PersistentObject o) {}
-		public void objectDeleted(PersistentObject o) {}
+		public void objectChanged(final PersistentObject o) {}
+		public void objectCreated(final PersistentObject o) {}
+		public void objectDeleted(final PersistentObject o) {}
     	
     }
 	public interface ActivationListener{
 		public void activation(boolean mode);
 		public void visible(boolean mode);
 	}
-	public void partActivated(IWorkbenchPartReference partRef) {
+	public void partActivated(final IWorkbenchPartReference partRef) {
 		LinkedList<ActivationListener> list=activationListeners.get(partRef.getPart(false));
 		if(list!=null){
 			for(ActivationListener l:list){
@@ -466,15 +469,15 @@ public class GlobalEvents implements IPartListener2 {
 			}
 		}
 	}
-	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	public void partBroughtToTop(final IWorkbenchPartReference partRef) {
 		// TODO Auto-generated method stub
 		
 	}
-	public void partClosed(IWorkbenchPartReference partRef) {
+	public void partClosed(final IWorkbenchPartReference partRef) {
 		// TODO Auto-generated method stub
 		
 	}
-	public void partDeactivated(IWorkbenchPartReference partRef) {
+	public void partDeactivated(final IWorkbenchPartReference partRef) {
 		LinkedList<ActivationListener> list=activationListeners.get(partRef.getPart(false));
 		if(list!=null){
 			for(ActivationListener l:list){
@@ -484,11 +487,11 @@ public class GlobalEvents implements IPartListener2 {
 
 		
 	}
-	public void partOpened(IWorkbenchPartReference partRef) {
+	public void partOpened(final IWorkbenchPartReference partRef) {
 		// TODO Auto-generated method stub
 		
 	}
-	public void partHidden(IWorkbenchPartReference partRef) {
+	public void partHidden(final IWorkbenchPartReference partRef) {
 		LinkedList<ActivationListener> list=activationListeners.get(partRef.getPart(false));
 		if(list!=null){
 			for(ActivationListener l:list){
@@ -497,7 +500,7 @@ public class GlobalEvents implements IPartListener2 {
 		}
 		
 	}
-	public void partVisible(IWorkbenchPartReference partRef) {
+	public void partVisible(final IWorkbenchPartReference partRef) {
 		LinkedList<ActivationListener> list=activationListeners.get(partRef.getPart(false));
 		if(list!=null){
 			for(ActivationListener l:list){
@@ -506,7 +509,7 @@ public class GlobalEvents implements IPartListener2 {
 		}
 			
 	}
-	public void partInputChanged(IWorkbenchPartReference partRef) {
+	public void partInputChanged(final IWorkbenchPartReference partRef) {
 		// TODO Auto-generated method stub
 		
 	};
@@ -517,7 +520,7 @@ public class GlobalEvents implements IPartListener2 {
 	 * 
 	 * @param target the ICodeSelectorTarget to set.
 	 */
-	public void setCodeSelectorTarget(ICodeSelectorTarget target) {
+	public void setCodeSelectorTarget(final ICodeSelectorTarget target) {
 		if (codeSelectorTarget != null) {
 			codeSelectorTarget.registered(false);
 		}
@@ -543,5 +546,16 @@ public class GlobalEvents implements IPartListener2 {
 	 */
 	public ICodeSelectorTarget getCodeSelectorTarget() {
 		return codeSelectorTarget;
+	}
+	
+	public ObjectFilterRegistry getObjectFilters(){
+		return filters;
+	}
+	public interface IObjectFilterProvider{
+		public void activate();
+		public void deactivate();
+		public String getId();
+		public void changed();
+		public IFilter getFilter();
 	}
 }

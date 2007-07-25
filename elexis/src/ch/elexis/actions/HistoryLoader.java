@@ -8,17 +8,22 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 2760 2007-07-08 12:14:32Z rgw_ch $
+ *  $Id: HistoryLoader.java 2904 2007-07-25 10:52:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.data.Konsultation;
 import ch.elexis.text.Samdas;
@@ -34,19 +39,20 @@ public class HistoryLoader extends BackgroundJob {
 	StringBuilder sb;
 	List<Konsultation> lKons;
 	KonsFilter filter;
+	IFilter globalFilter;
 	
 	boolean multiline = false;
 	
-	public void setFilter(KonsFilter kf){
+	public void setFilter(final KonsFilter kf){
 		filter=kf;
 	}
 	/*
 	 * multine == true: show Konsultation text with newlines
 	 */
-	public HistoryLoader(StringBuilder sb,ArrayList<Konsultation> lKons){
+	public HistoryLoader(final StringBuilder sb,final ArrayList<Konsultation> lKons){
 		this(sb, lKons, false);
 	}
-	public HistoryLoader(StringBuilder sb,ArrayList<Konsultation> lKons, boolean multiline){
+	public HistoryLoader(final StringBuilder sb,final ArrayList<Konsultation> lKons, final boolean multiline){
 		super(Messages.getString("HistoryLoader.LoadKonsMessage")); //$NON-NLS-1$
 		this.sb=sb;
 		this.lKons=lKons;
@@ -55,13 +61,13 @@ public class HistoryLoader extends BackgroundJob {
 		this.setUser(false);
 	}
 	@Override
-	public IStatus execute(IProgressMonitor monitor) {
+	public IStatus execute(final IProgressMonitor monitor) {
 		monitor.beginTask(Messages.getString("HistoryLoader.LoadKonsMessage"), lKons.size()+100); //$NON-NLS-1$
 		monitor.subTask(Messages.getString("HistoryLoader.Sorting")); //$NON-NLS-1$
 		Collections.sort(lKons, new Comparator<Konsultation>(){
 			TimeTool t1=new TimeTool();
 			TimeTool t2=new TimeTool();
-			public int compare(Konsultation o1, Konsultation o2) {
+			public int compare(final Konsultation o1, final Konsultation o2) {
 				if((o1==null) || (o2==null)){
 					return 0;
 				}
@@ -78,6 +84,7 @@ public class HistoryLoader extends BackgroundJob {
 		monitor.worked(50);
 		Iterator it=lKons.iterator();
 		sb.append("<form>"); //$NON-NLS-1$
+		globalFilter=GlobalEvents.getInstance().getObjectFilters().getFilterFor(Konsultation.class);
 		while(!monitor.isCanceled()){
 			if(!it.hasNext()){
 				sb.append("</form>"); //$NON-NLS-1$
@@ -89,6 +96,11 @@ public class HistoryLoader extends BackgroundJob {
 			Konsultation k=(Konsultation)it.next();
 			if(filter!=null){
 				if(filter.pass(k)==false){
+					continue;
+				}
+			}
+			if(globalFilter!=null){
+				if(globalFilter.select(k)==false){
 					continue;
 				}
 			}
