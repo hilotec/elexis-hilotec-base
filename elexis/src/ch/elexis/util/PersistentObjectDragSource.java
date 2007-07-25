@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource.java 1717 2007-02-02 16:30:45Z rgw_ch $
+ * $Id: PersistentObjectDragSource.java 2913 2007-07-25 14:36:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 
 import ch.elexis.data.PersistentObject;
 
@@ -28,20 +32,20 @@ import ch.elexis.data.PersistentObject;
  *
  */
 public class PersistentObjectDragSource implements DragSourceListener {
-	private StructuredViewer viewer;
+	private final StructuredViewer viewer;
 	private IStructuredSelection ts;
-	public PersistentObjectDragSource(StructuredViewer v){
+	public PersistentObjectDragSource(final StructuredViewer v){
 		viewer=v;
 		v.addDragSupport(DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, this);
 	}
 	
-	public void dragStart(DragSourceEvent event)
+	public void dragStart(final DragSourceEvent event)
 	{	//System.out.println("Drag start");
 		ts=(IStructuredSelection)viewer.getSelection();
 		//IStructuredSelection select=(IStructuredSelection)viewer.getSelection();
 	    //Object[] sel=select.toArray();
 		Object[] sel=ts.toArray();
-	    if(sel==null || sel.length==0){
+	    if((sel==null) || (sel.length==0)){
 	        event.doit=false;
 	    }else{
 		    Object s=sel[0];
@@ -60,7 +64,7 @@ public class PersistentObjectDragSource implements DragSourceListener {
 	    }
 	}
 
-	public void dragSetData(DragSourceEvent event)
+	public void dragSetData(final DragSourceEvent event)
 	{
 		//IStructuredSelection select=(IStructuredSelection)viewer.getSelection();
 	    //Object[] sel=select.toArray();
@@ -81,7 +85,7 @@ public class PersistentObjectDragSource implements DragSourceListener {
 	    event.data=sb.toString().replace(",$",""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void dragFinished(DragSourceEvent event)
+	public void dragFinished(final DragSourceEvent event)
 	{
 	    // TODO Auto-generated method stub
 	    

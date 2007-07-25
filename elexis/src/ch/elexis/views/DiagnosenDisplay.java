@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenDisplay.java 2528 2007-06-18 10:52:49Z rgw_ch $
+ *  $Id: DiagnosenDisplay.java 2913 2007-07-25 14:36:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -32,30 +33,33 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
+import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.PersistentObjectDropTarget;
+import ch.elexis.util.PersistentObjectDragSource2.Draggable;
 import ch.elexis.views.codesystems.DiagnosenView;
 import ch.rgw.tools.ExHandler;
 
-public class DiagnosenDisplay extends Composite {
+public class DiagnosenDisplay extends Composite implements Draggable {
 	Table tDg;
-	private Hyperlink hDg;
-	private Log log=Log.get("DiagnosenDisplay");
-	private PersistentObjectDropTarget dropTarget;
+	private final Hyperlink hDg;
+	private final Log log=Log.get("DiagnosenDisplay");
+	private final PersistentObjectDropTarget dropTarget;
 	
-	public DiagnosenDisplay(final IWorkbenchPage page, Composite parent, int style){
+	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent, final int style){
 		super(parent,style);
 		setLayout(new GridLayout());
 		hDg=Desk.theToolkit.createHyperlink(this,"Behandlungsdiagnosen",SWT.NONE);
         hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
         hDg.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(final HyperlinkEvent e) {
 				try{
 					page.showView(DiagnosenView.ID);
 					GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
@@ -69,15 +73,16 @@ public class DiagnosenDisplay extends Composite {
         tDg.setLayoutData(new GridData(GridData.FILL_BOTH));
         tDg.setMenu(createDgMenu());
       
-
+        //new PersistentObjectDragSource()
         dropTarget=new PersistentObjectDropTarget("Diagnosen", tDg,new DropReceiver());
+        new PersistentObjectDragSource2(tDg,this);
 
 	}
 	public void clear(){
 		tDg.removeAll();
 	}
 	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
-		public void dropped(PersistentObject o, DropTargetEvent ev) {
+		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 			 Konsultation actKons=GlobalEvents.getSelectedKons();
 			 if(o instanceof IDiagnose){
 				 actKons.addDiagnose((IDiagnose)o);
@@ -85,7 +90,7 @@ public class DiagnosenDisplay extends Composite {
 		     }
 		}
 
-		public boolean accept(PersistentObject o) {
+		public boolean accept(final PersistentObject o) {
 			if(o instanceof IVerrechenbar){
 				return true;
 			}
@@ -95,7 +100,7 @@ public class DiagnosenDisplay extends Composite {
 			return false;
 		}
 	}
-	void setDiagnosen(Konsultation b){
+	void setDiagnosen(final Konsultation b){
         List<IDiagnose> dgl=b.getDiagnosen();
         tDg.removeAll();
         for(IDiagnose dg:dgl){
@@ -114,7 +119,8 @@ public class DiagnosenDisplay extends Composite {
         return ret;
     }
 	class delDgListener extends SelectionAdapter{
-        public void widgetSelected(SelectionEvent e) {
+        @Override
+		public void widgetSelected(final SelectionEvent e) {
         	int sel=tDg.getSelectionIndex();
         	TableItem ti=tDg.getItem(sel);
             GlobalEvents.getSelectedKons().removeDiagnose((IDiagnose)ti.getData());
@@ -122,4 +128,16 @@ public class DiagnosenDisplay extends Composite {
             // setBehandlung(actBehandlung);
         }
     }
+	public List<PersistentObject> getSelection() {
+		TableItem[] sel=tDg.getSelection();
+		ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>();
+		if((sel!=null) && (sel.length>0)){
+			for(TableItem ti:sel){
+				IDiagnose id=(IDiagnose)ti.getData();
+				String clazz=id.getClass().getName();
+				ret.add(Hub.poFactory.createFromString(clazz+"::"+id.getCode()));
+			}
+		}
+		return ret;
+	}
 }
