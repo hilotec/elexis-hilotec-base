@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2767 2007-07-09 10:51:59Z rgw_ch $
+ *    $Id: PersistentObject.java 2909 2007-07-25 11:51:26Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -480,6 +480,19 @@ public abstract class PersistentObject{
 	
     public boolean exists(){
     	return state()==EXISTS;
+    }
+    
+    /**
+     * Check whether the object exists in the database. This is the case for all objects
+     * in the database for which state() returns neither INVALID_ID nor INEXISTENT.
+     * @return true, if the object is available in the database, false otherwise
+     */
+    public boolean isAvailable() {
+    	if (state() >= DELETED) {
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
     
     /**
