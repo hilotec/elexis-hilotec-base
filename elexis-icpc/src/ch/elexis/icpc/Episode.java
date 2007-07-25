@@ -9,15 +9,17 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2902 2007-07-25 10:33:33Z danlutz $
+ *  $Id: Episode.java 2905 2007-07-25 10:53:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
 import java.io.ByteArrayInputStream;
 import java.util.Hashtable;
+import java.util.List;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -94,7 +96,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		}
 	}
 	
-	public Episode(Patient pat, String title){
+	public Episode(final Patient pat, final String title){
 		create(null);
 		set(new String[]{"PatientID","Title"},pat.getId(),title);
 	}
@@ -134,11 +136,11 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		return TABLENAME;
 	}
 	
-	public static Episode load(String id){
+	public static Episode load(final String id){
 		return new Episode(id);
 	}
 	
-	protected Episode(String id){
+	protected Episode(final String id){
 		super(id);
 	}
 	protected Episode(){}
@@ -184,7 +186,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
      * Set the status of an episode
      * @param status Episode.ACTIVE or Episode.INACTIVE
      */
-    public void setStatus(int status) {
+    public void setStatus(final int status) {
     	switch (status) {
     	case ACTIVE:
     		set("Status", ACTIVE_VALUE);
@@ -197,7 +199,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     		break;
     	}
     }
-	public int compareTo(Episode e2) {
+	public int compareTo(final Episode e2) {
 		VersionInfo v1=new VersionInfo(get("Number"));
 		VersionInfo v2=new VersionInfo(e2.get("Number"));
 		if(v1.isNewer(v2)){
@@ -233,9 +235,21 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     }
 
 	@SuppressWarnings("unchecked")
-	public void setExtField(String name, String text){
+	public void setExtField(final String name, final String text){
 		Hashtable extInfo=getHashtable("ExtInfo");
 		extInfo.put(name, text);
 		setHashtable("ExtInfo", extInfo);
+	}
+	/**
+	 * find an Episode with a given name
+	 * @param name the name to find
+	 * @return the Episode with that name or null if none or more than one exist
+	 */
+	public static Episode findEpisode(final String name){
+		List<Episode> res=new Query<Episode>(Episode.class,"Title",name).execute();
+		if(res.size()==1){
+			return res.get(0);
+		}
+		return null;
 	}
 }

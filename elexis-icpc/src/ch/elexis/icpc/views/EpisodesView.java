@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesView.java 2899 2007-07-25 05:06:12Z rgw_ch $
+ *    $Id: EpisodesView.java 2905 2007-07-25 10:53:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -29,6 +29,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
+import ch.elexis.icpc.KonsFilter;
 import ch.elexis.text.Samdas;
 import ch.elexis.text.Samdas.Record;
 import ch.elexis.util.SWTHelper;
@@ -37,21 +38,23 @@ import ch.elexis.util.ViewMenus;
 public class EpisodesView extends ViewPart implements SelectionListener, ActivationListener, ObjectListener {
 	public static final String ID="ch.elexis.icpc.episodesView";
 	EpisodesDisplay display;
-	private IAction addEpisodeAction,removeEpisodeAction,editEpisodeAction;
-	
+	KonsFilter episodesFilter=new KonsFilter(this);
+	private IAction addEpisodeAction,removeEpisodeAction,editEpisodeAction,activateEpisodeAction,konsFilterAction;
+		
 	public EpisodesView() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
 		display=new EpisodesDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		ViewMenus menu=new ViewMenus(getViewSite());
-		menu.createViewerContextMenu(display.tvEpisodes, removeEpisodeAction, editEpisodeAction);
-		menu.createToolbar(addEpisodeAction,editEpisodeAction);
+
+		menu.createViewerContextMenu(display.tvEpisodes, activateEpisodeAction, editEpisodeAction, null,removeEpisodeAction);
+		menu.createToolbar(konsFilterAction,addEpisodeAction,editEpisodeAction);
 		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
 	}
 
@@ -61,24 +64,34 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class template) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
 			display.setPatient((Patient)obj);
+		}else if(obj instanceof Episode){
+			Episode ep=(Episode)obj;
+			if(ep.getStatus()==Episode.ACTIVE){
+				activateEpisodeAction.setChecked(true);
+			}else{
+				activateEpisodeAction.setChecked(false);
+			}
+			if(konsFilterAction.isChecked()){
+				episodesFilter.setProblem(ep);
+			}
 		}
 		
 	}
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode){
 			display.setPatient(GlobalEvents.getSelectedPatient());
 			GlobalEvents.getInstance().addSelectionListener(this);			
@@ -94,6 +107,7 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 				setToolTipText("Eine neues Problem erstellen");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
 			}
+			@Override
 			public void run(){
 				EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), null);
 				if (dlg.open() == Dialog.OK) {
@@ -103,11 +117,16 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 		};
 		removeEpisodeAction=new Action("Problem löschen"){
 			{
-				setToolTipText("Das gewählte Problem unwiderriflich löschen");
+				setToolTipText("Das gewählte Problem unwiderruflich löschen");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
 			}
+			@Override
 			public void run(){
-				
+				Episode act=display.getSelectedEpisode();
+				if(act!=null){
+					act.delete();
+					display.tvEpisodes.refresh();
+				}
 			}
 		};
 		editEpisodeAction=new Action("Problem bearbeiten"){
@@ -115,6 +134,7 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 				setToolTipText("Titel des Problems ändern");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
 			}
+			@Override
 			public void run(){
 				Episode ep=display.getSelectedEpisode();
 				if(ep!=null){
@@ -125,14 +145,47 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 				}
 			}
 		};
+		activateEpisodeAction=new Action("Aktiv",Action.AS_CHECK_BOX){
+			{
+				setToolTipText("Problem aktivieren oder deaktivieren");
+			}
+			@Override
+			public void run(){
+				Episode ep=display.getSelectedEpisode();
+				if(ep!=null){
+					ep.setStatus(activateEpisodeAction.isChecked() ? Episode.ACTIVE : Episode.INACTIVE);
+					display.tvEpisodes.refresh();
+				}
+			}
+			
+		};
+		
+		konsFilterAction=new Action("Konsultationen filtern",Action.AS_CHECK_BOX){
+			{
+				setToolTipText("Konsultationslisten auf markiertes Problem gebrenzen");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_FILTER));
+			}
+			@Override
+			public void run(){
+				if(!isChecked()){
+					GlobalEvents.getInstance().getObjectFilters().unregisterObjectFilter(Konsultation.class, episodesFilter);
+				}else{
+					GlobalEvents.getInstance().getObjectFilters().registerObjectFilter(Konsultation.class, episodesFilter);
+				}
+			}
+		};
 	}
 
-	public void objectChanged(PersistentObject o) {
+	public void activateKonsFilterAction(final boolean bActivate){
+		konsFilterAction.setChecked(bActivate);
+	}
+	
+	public void objectChanged(final PersistentObject o) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void objectCreated(PersistentObject o) {
+	public void objectCreated(final PersistentObject o) {
 		if(o instanceof Konsultation){
 			Konsultation k=(Konsultation)o;
 			Samdas entry=k.getEntryRaw();
@@ -141,7 +194,7 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 		}
 	}
 
-	public void objectDeleted(PersistentObject o) {
+	public void objectDeleted(final PersistentObject o) {
 		// TODO Auto-generated method stub
 		
 	}
