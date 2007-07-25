@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesView.java 2917 2007-07-25 17:09:08Z rgw_ch $
+ *    $Id: EpisodesView.java 2919 2007-07-25 19:15:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -171,6 +171,8 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 					GlobalEvents.getInstance().getObjectFilters().unregisterObjectFilter(Konsultation.class, episodesFilter);
 				}else{
 					GlobalEvents.getInstance().getObjectFilters().registerObjectFilter(Konsultation.class, episodesFilter);
+					Episode ep=display.getSelectedEpisode();
+					episodesFilter.setProblem(ep);
 				}
 			}
 		};
