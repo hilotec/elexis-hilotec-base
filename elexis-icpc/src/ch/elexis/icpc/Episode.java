@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2905 2007-07-25 10:53:10Z rgw_ch $
+ *  $Id: Episode.java 2914 2007-07-25 14:36:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -52,7 +52,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		"INSERT INTO "+TABLENAME+" (ID,Title) VALUES ('1',"+JdbcLink.wrap(VERSION)+");";
 	
 	static{
-		addMapping(TABLENAME, "PatientID","Title", "StartDate", "Number", "Status");
+		addMapping(TABLENAME, "PatientID","Title", "StartDate", "Number", "Status","ExtInfo");
 		Episode version=load("1");
 		if(!version.exists()){
 			try{
@@ -162,7 +162,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 	 */
     public int getStatus() {
         String statusText = get("Status");
-        if (statusText != null && statusText.equals(ACTIVE_VALUE)) {
+        if ((statusText != null) && statusText.equals(ACTIVE_VALUE)) {
             return ACTIVE;
         } else {
             return INACTIVE;
@@ -214,7 +214,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
         return get("StartDate");
     }
     
-    public void setStartDate(String startDate) {
+    public void setStartDate(final String startDate) {
     	set("StartDate", startDate);
     }
     
@@ -222,7 +222,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
         return get("Title");
     }
     
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
     	set("Title", title);
     }
     
@@ -230,7 +230,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     	return get("Number");
     }
     
-    public void setNumber(String number) {
+    public void setNumber(final String number) {
     	set("Number", number);
     }
 

@@ -26,10 +26,11 @@
             class="ch.elexis.icpc.views.EpisodesView"
             icon="icons/wonca.ico"
             id="ch.elexis.icpc.episodesView"
-            name="Episoden"/>
+            name="Probleme"/>
       <view
             category="ch.elexis.icpcCategory"
             class="ch.elexis.icpc.views.EncounterView"
+            icon="icons/wonca.ico"
             id="ch.elexis.icpc.encounterView"
             name="Encounters"/>
    </extension>

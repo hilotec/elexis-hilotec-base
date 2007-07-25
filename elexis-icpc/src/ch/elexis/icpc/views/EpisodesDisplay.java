@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 2905 2007-07-25 10:53:10Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 2914 2007-07-25 14:36:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +23,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -31,11 +34,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.Activator;
 import ch.elexis.icpc.Episode;
 import ch.elexis.util.PersistentObjectDragSource;
+import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 
 public class EpisodesDisplay extends Composite {
@@ -56,6 +62,7 @@ public class EpisodesDisplay extends Composite {
 		tvEpisodes.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 		/* PersistentObjectDragSource pods=*/new PersistentObjectDragSource(tvEpisodes);
 		//lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, pods);
+		new PersistentObjectDropTarget(tvEpisodes.getControl(), new Receiver());
 		setPatient(GlobalEvents.getSelectedPatient());
 	}
 	public void setPatient(final Patient pat){
@@ -68,13 +75,20 @@ public class EpisodesDisplay extends Composite {
 	public Episode getSelectedEpisode() {
 		Tree widget=tvEpisodes.getTree();
 		TreeItem[] sel=widget.getSelection();
+		if((sel==null) || (sel.length==0)){
+			return null;
+		}
 		TreeItem f=sel[0];
 		TreeItem p=f;
 		do{
 			f=p;
 			p=f.getParentItem();
 		}while(p!=null);
-		String etext=f.getText();
+		return getEpisodeFromItem(f);
+	}
+	
+	private Episode getEpisodeFromItem(final TreeItem t){
+		String etext=t.getText();
 		for(Object o:((ITreeContentProvider)tvEpisodes.getContentProvider()).getElements(actPatient)){
 			if(o instanceof Episode){
 				Episode ep=(Episode)o;
@@ -90,8 +104,14 @@ public class EpisodesDisplay extends Composite {
 		public Object[] getChildren(final Object parentElement) {
 			if(parentElement instanceof Episode){
 				Episode ep=(Episode)parentElement;
-				return new Object[]{"Seit: "+ep.get("StartDate"),
-						"Status: "+ep.getStatusText()};
+				ArrayList<String> ret=new ArrayList<String>();
+				ret.add("Seit: "+ep.get("StartDate"));
+				ret.add("Status: "+ep.getStatusText());
+				String diag=ep.get("Diagnosen");
+				if(!diag.startsWith("**")){
+					ret.add("KK-Diagnose: "+diag);
+				}
+				return ret.toArray();
 			}
 				
 			
@@ -157,6 +177,30 @@ public class EpisodesDisplay extends Composite {
 				}
 			}
 			return Desk.theColorRegistry.get(Desk.COL_BLACK);
+		}
+		
+	}
+	class Receiver implements PersistentObjectDropTarget.Receiver{
+
+		public boolean accept(final PersistentObject o) {
+			if(o instanceof IDiagnose){
+				return true;
+			}
+			return false;
+		}
+
+		public void dropped(final PersistentObject o, final DropTargetEvent e) {
+			Tree tree=tvEpisodes.getTree();
+			Point point=tree.toControl(e.x, e.y);
+			TreeItem item=tree.getItem(point);
+			if(item!=null){
+				Episode hit=getEpisodeFromItem(item);
+				if(hit!=null){
+					hit.setExtField("Diagnosen", o.getLabel());
+					//new TreeItem(item,SWT.NONE).setText(o.getLabel());
+					tvEpisodes.refresh();
+				}
+			}
 		}
 		
 	}
