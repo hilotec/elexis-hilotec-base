@@ -8,11 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 2896 2007-07-24 20:11:38Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 2899 2007-07-25 05:06:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IColorProvider;
@@ -53,6 +55,7 @@ public class EpisodesDisplay extends Composite {
 		tvEpisodes.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tvEpisodes.setLabelProvider(new EpisodesLabelProvider());
 		tvEpisodes.setContentProvider(new EpisodecontentProvider());
+		/*
 		tvEpisodes.setSorter(new ViewerSorter(){
 
 			@Override
@@ -70,13 +73,16 @@ public class EpisodesDisplay extends Composite {
 			}
 			
 		});
+		*/
 		/* PersistentObjectDragSource pods=*/new PersistentObjectDragSource(tvEpisodes);
 		//lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, pods);
 		setPatient(GlobalEvents.getSelectedPatient());
 	}
 	public void setPatient(Patient pat){
 		actPatient=pat;
-		tvEpisodes.setInput(pat);
+		if(pat!=null){
+			tvEpisodes.setInput(pat);
+		}
 		tvEpisodes.refresh();
 	}
 	public Episode getSelectedEpisode() {
@@ -91,7 +97,8 @@ public class EpisodesDisplay extends Composite {
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof Episode){
 				Episode ep=(Episode)parentElement;
-				return new Object[]{ep.get("StartDate")};
+				return new Object[]{"Seit: "+ep.get("StartDate"),
+						"Status: "+ep.getStatusText()};
 			}
 				
 			
@@ -115,6 +122,7 @@ public class EpisodesDisplay extends Composite {
 				Query<Episode> qbe=new Query<Episode>(Episode.class);
 				qbe.add("PatientID", "=", actPatient.getId());
 				List<Episode> list=qbe.execute();
+				Collections.sort(list);
 				return list.toArray();
 			}
 			return new Object[0];

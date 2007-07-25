@@ -7,12 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2896 2007-07-24 20:11:38Z rgw_ch $
+ *  $Id: Episode.java 2899 2007-07-25 05:06:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
 import java.io.ByteArrayInputStream;
+import java.util.Hashtable;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -21,11 +23,11 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
-public class Episode extends PersistentObject {
+public class Episode extends PersistentObject implements Comparable<Episode>{
     public static final int INACTIVE = 0;
     public static final int ACTIVE = 1;
 
-	private static final String VERSION="0.3.0";
+	private static final String VERSION="0.3.1";
 	private final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
 		
     private static final String INACTIVE_VALUE = "0";
@@ -39,7 +41,8 @@ public class Episode extends PersistentObject {
 		"Title			VARCHAR(80),"+
 	    "StartDate      VARCHAR(20),"+  // date of first occurrence; may be simply a year or any text 
 	    "Number         VARCHAR(10),"+  // number for individual, possibly hierarchical, organization
-	    "Status         CHAR(1) DEFAULT '1'"+  // status, '1' == active, '0' == inactive
+	    "Status         CHAR(1) DEFAULT '1',"+  // status, '1' == active, '0' == inactive
+	    "ExtInfo		BLOB"+
 		");"+
 		
 		"CREATE INDEX "+TABLENAME+"1 ON "+TABLENAME+" (PatientID);"+
@@ -60,7 +63,7 @@ public class Episode extends PersistentObject {
 			VersionInfo vi=new VersionInfo(version.get("Title"));
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("0.2.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					PersistentObject.j.exec(j.translateFlavor("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';"));
 					version.set("Title", VERSION);
 				}
 
@@ -79,6 +82,12 @@ public class Episode extends PersistentObject {
 					sql = "ALTER TABLE " + TABLENAME + " ADD Status CHAR(1) DEFAULT '1';";
 					j.exec(j.translateFlavor(sql));
 
+					version.set("Title", VERSION);
+				}
+				
+				if(vi.isOlder("0.3.1")){
+					String sql="ALTER TABLE "+TABLENAME+" ADD ExtInfo BLOB;";
+					j.exec(j.translateFlavor(sql));
 					version.set("Title", VERSION);
 				}
 			}
@@ -182,5 +191,21 @@ public class Episode extends PersistentObject {
     		break;
     	}
     }
+	public int compareTo(Episode e2) {
+		VersionInfo v1=new VersionInfo(get("Number"));
+		VersionInfo v2=new VersionInfo(e2.get("Number"));
+		if(v1.isNewer(v2)){
+			return 1;
+		}else if(v1.isOlder(v2)){
+			return -1;
+		}
+		return 0;
+	}
 
+	@SuppressWarnings("unchecked")
+	public void setExtField(String name, String text){
+		Hashtable extInfo=getHashtable("ExtInfo");
+		extInfo.put(name, text);
+		setHashtable("ExtInfo", extInfo);
+	}
 }

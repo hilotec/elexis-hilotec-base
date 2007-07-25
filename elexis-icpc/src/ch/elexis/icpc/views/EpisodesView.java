@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesView.java 2896 2007-07-24 20:11:38Z rgw_ch $
+ *    $Id: EpisodesView.java 2899 2007-07-25 05:06:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -29,6 +29,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
+import ch.elexis.text.Samdas;
+import ch.elexis.text.Samdas.Record;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 
@@ -78,6 +80,7 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 
 	public void visible(boolean mode) {
 		if(mode){
+			display.setPatient(GlobalEvents.getSelectedPatient());
 			GlobalEvents.getInstance().addSelectionListener(this);			
 		}else{
 			GlobalEvents.getInstance().removeSelectionListener(this);
@@ -132,6 +135,8 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 	public void objectCreated(PersistentObject o) {
 		if(o instanceof Konsultation){
 			Konsultation k=(Konsultation)o;
+			Samdas entry=k.getEntryRaw();
+			Record record=entry.getRecord();
 			
 		}
 	}
