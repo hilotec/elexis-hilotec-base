@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 2701 2007-07-04 17:12:07Z rgw_ch $
+ *  $Id: KonsDetailView.java 2916 2007-07-25 17:08:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -87,7 +87,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     
     
 	@Override
-	public void createPartControl(Composite p) {
+	public void createPartControl(final Composite p) {
 		SashForm sash=new SashForm(p,SWT.VERTICAL);
 		
         tk=Desk.theToolkit;
@@ -104,7 +104,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         cbFall.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				Fall[] faelle=(Fall[])cbFall.getData();
 				int i=cbFall.getSelectionIndex();
 				Fall nFall=faelle[i];
@@ -211,7 +211,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	/**
 	 * Aktuelle Konsultation setzen.
 	 */
-	private void setKons(Konsultation b){
+	private void setKons(final Konsultation b){
 		boolean inChange=false;
 		if(!inChange){
 			inChange=true;
@@ -257,7 +257,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     }
     
     
-    void setKonsText(Konsultation b, int version){
+    void setKonsText(final Konsultation b, final int version){
     	String ntext="";
         if((version>=0) && (version<=b.getHeadVersion())){
         	VersionedResource vr=b.getEintrag();
@@ -282,14 +282,14 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     
 	
 	
-	public void selectionEvent(PersistentObject first) {
+	public void selectionEvent(final PersistentObject first) {
 		if(first instanceof Konsultation){
 			setKons((Konsultation)first);
 		}
 		else if(first instanceof Patient){
 			// letzte Konsultation waehlen, falls aktuelle Konsultation nicht zum Patienten gehoert
 			if((actKons==null) ||
-				 (!(actKons.getFall().getPatient().equals((Patient)first)))){ {
+				 (!(actKons.getFall().getPatient().equals(first)))){ {
 					setKons(((Patient)first).getLetzteKons(false));
 				}
 			}
@@ -323,7 +323,8 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	        
         };
         versionFwdAction=new Action("nächste Version"){
-            public void run()
+            @Override
+			public void run()
             {
             	if(MessageDialog.openConfirm(getViewSite().getShell(), "Konsultationstext ersetzen", "Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")){
             		setKonsText(actKons,displayedVersion+1);
@@ -333,7 +334,14 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         };
     }
 
-	public void activation(boolean mode) {
+	public void save(){
+		if(actKons!=null){
+			actKons.updateEintrag(text.getDocumentAsText(), false);
+			log.log("saved.",Log.DEBUGMSG);
+		}
+	}
+	
+	public void activation(final boolean mode) {
 		if((mode==false) &&  (text.isDirty())){
 			if(actKons!=null){
 				actKons.updateEintrag(text.getDocumentAsText(), false);
@@ -344,7 +352,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode==true){
 			GlobalEvents.getInstance().addSelectionListener(this);
 			adaptMenus();
@@ -355,7 +363,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 		
 	}
 
-	public void clearEvent(Class template) { 
+	public void clearEvent(final Class template) { 
 		if(template.equals(Konsultation.class) || template.equals(Patient.class) || template.equals(Fall.class)){
 			setKons(null);
 		}
@@ -376,7 +384,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;
@@ -388,7 +396,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 		return true;
 	}
 
-	public void objectChanged(PersistentObject o) {
+	public void objectChanged(final PersistentObject o) {
 		if( (o!=null) &&
 			(actKons!=null) &&
 			(o.getId().equals(actKons.getId()))){
@@ -397,7 +405,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 		
 	}
 
-	public void objectCreated(PersistentObject o) {
+	public void objectCreated(final PersistentObject o) {
 		if(o instanceof Fall){
 			if(actKons != null){
 				Fall fall=(Fall)o;
@@ -409,7 +417,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 		
 	}
 
-	public void objectDeleted(PersistentObject o) {
+	public void objectDeleted(final PersistentObject o) {
 		if(o instanceof Konsultation){
 			setKons(null);
 		}
