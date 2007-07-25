@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 2883 2007-07-24 05:17:52Z rgw_ch $
+ *    $Id: Eigendiagnose.java 2920 2007-07-25 19:15:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -98,7 +98,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose{
 		return null;
 	}
 	public String getCode() {
-		return get("Kuerzel");
+		return getId();
 	}
 	public String getCodeSystemCode() {
 		return "ED";
