@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ * $Id: Patientenblatt.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 
 
@@ -18,22 +18,49 @@ package ch.elexis.views;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.data.*;
-import ch.elexis.dialogs.*;
-import ch.elexis.util.*;
+import ch.elexis.data.BezugsKontakt;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.dialogs.AddBuchungDialog;
+import ch.elexis.dialogs.AnschriftEingabeDialog;
+import ch.elexis.dialogs.KontaktDetailDialog;
+import ch.elexis.dialogs.KontaktSelektor;
+import ch.elexis.util.DynamicListDisplay;
+import ch.elexis.util.LabeledInputField;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.ViewMenus;
+import ch.elexis.util.WidgetFactory;
 import ch.elexis.util.DynamicListDisplay.DLDListener;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -42,29 +69,29 @@ import ch.rgw.tools.TimeTool;
  * Detailansicht eines Patientrecords
  */
 public class Patientenblatt extends Composite implements GlobalEvents.SelectionListener, ActivationListener{
-	private FormToolkit tk;
+	private final FormToolkit tk;
 	private final static String[] lbSimple={"Name","Vorname","Geburtsdatum","Geschlecht","Telefon 1",
 			"Telefon 2","Mobil","Fax","E-Mail","Gruppe","Konto"};
 	private final static String[] dfSimple={"Name","Vorname","Geburtsdatum","Geschlecht","Telefon1",
 			"Telefon2","Natel","Fax","E-Mail","Gruppe","Konto"};
-	private Text[] txSimple=new Text[lbSimple.length];
+	private final Text[] txSimple=new Text[lbSimple.length];
 	private final static String[] lbExpandable={"Diagnosen","Persönliche Anamnese",/*"Familienanamnese",
 			"Systemanamnese",*/"Allergien","Risiken","Bemerkungen"};
-	private Text[] txExpandable=new Text[lbExpandable.length];
+	private final Text[] txExpandable=new Text[lbExpandable.length];
 	private final static String[] dfExpandable={"Diagnosen","PersAnamnese",/*"FamilienAnamnese",
 			"SystemAnamnese",*/"Allergien","Risiken","Bemerkung"};
-	private ExpandableComposite[] ec=new ExpandableComposite[lbExpandable.length];
+	private final ExpandableComposite[] ec=new ExpandableComposite[lbExpandable.length];
 	private final static String[] lbLists={"Fixmedikation","Reminders"};
-	private FormText inpAdresse;
-	private DynamicListDisplay inpZusatzAdresse, dlReminder;
-	private DauerMediDisplay dmd;
+	private final FormText inpAdresse;
+	private final DynamicListDisplay inpZusatzAdresse, dlReminder;
+	private final DauerMediDisplay dmd;
 	Patient actPatient;
 	IViewSite viewsite;
-	private Hyperlinkreact hr=new Hyperlinkreact();
-    private ScrolledForm form;
-    private ViewMenus viewmenu;
+	private final Hyperlinkreact hr=new Hyperlinkreact();
+    private final ScrolledForm form;
+    private final ViewMenus viewmenu;
     
-	Patientenblatt(Composite parent, IViewSite site)
+	Patientenblatt(final Composite parent, final IViewSite site)
 	{
 		super(parent,SWT.NONE);
 		viewsite=site;
@@ -87,7 +114,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		li.getLabelComponent().setForeground(Desk.theColorRegistry.get("blau"));
 		li.getLabelComponent().addMouseListener(new MouseAdapter(){
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void mouseDown(final MouseEvent e) {
 				if(new AddBuchungDialog(getShell(),actPatient).open()==Dialog.OK){
 					setPatient(actPatient);
 				}
@@ -112,11 +139,11 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         ExpandableComposite ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
         
 		inpZusatzAdresse=new DynamicListDisplay(ecZA,SWT.NONE,new DLDListener(){
-			public boolean dropped(PersistentObject dropped) {
+			public boolean dropped(final PersistentObject dropped) {
 				return false;
 			}
 
-			public void hyperlinkActivated(String l) {
+			public void hyperlinkActivated(final String l) {
 				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Kontakt für Zusatzadresse","Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
 				if(ksl.open()==Dialog.OK){
 					Kontakt k=(Kontakt) ksl.getSelection();
@@ -141,7 +168,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
             ec[i].setData("dbfield",dfExpandable[i]);
             ec[i].addExpansionListener(new ExpansionAdapter(){
                 @Override
-                public void expansionStateChanging(ExpansionEvent e)
+                public void expansionStateChanging(final ExpansionEvent e)
                 {
                     if(e.getState()==true){
                         ExpandableComposite src=(ExpandableComposite)e.getSource();
@@ -167,6 +194,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         tk.paintBordersFor(form.getBody());
 	}
     
+	@Override
 	public void dispose(){
 		GlobalEvents.getInstance().removeSelectionListener(this);
 		GlobalEvents.getInstance().removeActivationListener(this,viewsite.getPart());
@@ -180,7 +208,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
             delZA.setText("Adresse entfernen");
             delZA.addSelectionListener(new SelectionAdapter(){
                 @Override
-                public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(final SelectionEvent e)
                 {
                     BezugsKontakt a=(BezugsKontakt)inpZusatzAdresse.getSelection();
                     actPatient.removeBezugsKontakt(Kontakt.load(a.get("otherID")));
@@ -192,7 +220,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
             showZA.setText("Adresse zeigen...");
             showZA.addSelectionListener(new SelectionAdapter(){
             	 @Override
-                 public void widgetSelected(SelectionEvent e)
+                 public void widgetSelected(final SelectionEvent e)
                  {
                      Kontakt a=Kontakt.load(((BezugsKontakt)inpZusatzAdresse.getSelection()).get("otherID"));
                      KontaktDetailDialog kdd=new KontaktDetailDialog(form.getShell(),a);
@@ -203,8 +231,9 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
     }
     class Hyperlinkreact extends HyperlinkAdapter{
     	
+		@Override
 		@SuppressWarnings("synthetic-access")
-        public void linkActivated(HyperlinkEvent e)
+        public void linkActivated(final HyperlinkEvent e)
         {  
 			if(actPatient!=null){
 				AnschriftEingabeDialog  aed=new AnschriftEingabeDialog(form.getShell(),actPatient);
@@ -218,12 +247,12 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		}
 	}
 	class Focusreact extends FocusAdapter{
-		private String field;
-		Focusreact(String f){
+		private final String field;
+		Focusreact(final String f){
 			field=f;
 		}
 		@Override
-		public void focusLost(FocusEvent e) {
+		public void focusLost(final FocusEvent e) {
 			if(actPatient==null){
 				return;
 			}
@@ -239,7 +268,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 			}
 		}
 	}
-	void setPatient(Patient p)
+	void setPatient(final Patient p)
 	{
 		actPatient=p;
 	
@@ -288,7 +317,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         //wf.getForm().redraw();
     }
 
-    public void selectionEvent(PersistentObject obj)
+    public void selectionEvent(final PersistentObject obj)
     {
         if((obj instanceof Patient)){
             setPatient((Patient)obj);
@@ -298,12 +327,12 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 	private void makeActions(){
 	}
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode==true){
 			setPatient((Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class));
 			GlobalEvents.getInstance().addSelectionListener(this);
@@ -313,7 +342,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 2372 2007-05-14 14:45:25Z danlutz $
+ * $Id: ReminderView.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -72,13 +72,13 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		cv=new CommonViewer();
 		filter=new ReminderFilter();
 		vc=new ViewerConfigurer(
 				new ViewerConfigurer.ContentProviderAdapter(){
 					@Override
-					public Object[] getElements(Object inputElement) {
+					public Object[] getElements(final Object inputElement) {
 						// Display reminders only if one is logged in
 						if(Hub.actUser==null){
 							return new Object[0];
@@ -121,7 +121,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 		}
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener(){
-			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
+			public void doubleClicked(final PersistentObject obj, final CommonViewer cv) {
 				new EditReminderDialog(getViewSite().getShell(),(Reminder)obj).open();
 				cv.notify(CommonViewer.Message.update);
 			}
@@ -147,7 +147,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	}
 	class ReminderLabelProvider extends DefaultLabelProvider implements IColorProvider{
 		
-		public Color getBackground(Object element) {
+		public Color getBackground(final Object element) {
 			if(element instanceof Reminder){
 				Reminder.Status stat=((Reminder)element).getStatus();
 				cfg=Hub.userCfg.getBranch(PreferenceConstants.USR_REMINDERCOLORS, true);			
@@ -164,7 +164,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			return null;
 		}
 
-		public Color getForeground(Object element) {
+		public Color getForeground(final Object element) {
 			return null;
 		}
 		
@@ -176,6 +176,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
 				setToolTipText("Einen neuen Reminder erstellen");
 			}
+			@Override
 			public void run(){
 				EditReminderDialog erd=new EditReminderDialog(getViewSite().getShell(),null);
 				erd.open();
@@ -187,9 +188,10 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Markierten Reminder löschen");
 			}
+			@Override
 			public void run(){
 				Object[] sel=cv.getSelection();
-				if(sel!=null && sel.length>0){
+				if((sel!=null) && (sel.length>0)){
 					Reminder r=(Reminder)sel[0];
 					r.delete();
 					cv.notify(CommonViewer.Message.update_keeplabels);
@@ -200,6 +202,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			{
 				setToolTipText("Nur aktive Reminder anzeigen");
 			}
+			@Override
 			public void run(){
 				boolean bChecked=onlyOpenReminderAction.isChecked();
 				Hub.userCfg.set(PreferenceConstants.USR_REMINDERSOPEN, bChecked);
@@ -210,6 +213,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			{
 				setToolTipText("Auch von mir erstellte Reminder für andere Anwender anzeigen");
 			}
+			@Override
 			public void run(){
 				boolean bChecked=ownReminderAction.isChecked();
 				Hub.userCfg.set(PreferenceConstants.USR_REMINDEROWN, bChecked);
@@ -220,6 +224,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			{
 				setToolTipText("Auch Reminders anderer Anwender anzeigen");
 			}
+			@Override
 			public void doRun(){
 				Hub.userCfg.set(PreferenceConstants.USR_REMINDEROTHERS, othersReminderAction.isChecked());
 				cv.notify(CommonViewer.Message.update_keeplabels);
@@ -228,11 +233,11 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 		
 	}
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		/* egal */
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		bVisible=mode;
 		if(mode){
 			
@@ -249,13 +254,13 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 		
 	}
 
-	public void reloadContents(Class clazz) {
+	public void reloadContents(final Class<? extends PersistentObject> clazz) {
 		if(clazz.equals(Reminder.class)){
 			cv.notify(CommonViewer.Message.update);
 		}
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		if(template.equals(Patient.class)){
 			
 		}
@@ -302,7 +307,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	}
 	class ReminderFilter extends ViewerFilter{
 		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
+		public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
 			if(element instanceof Reminder){
 				Reminder check=(Reminder)element;
 				if(onlyOpenReminderAction.isChecked()){

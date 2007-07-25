@@ -8,13 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 2575 2007-06-23 14:59:57Z rgw_ch $
+ * $Id: PatientenListeView.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 
 
 package ch.elexis.views;
-
-import java.util.SortedSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -37,10 +35,20 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.*;
+import ch.elexis.data.FilterFactory;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Reminder;
 import ch.elexis.data.FilterFactory.Filter;
 import ch.elexis.dialogs.PatientErfassenDialog;
-import ch.elexis.util.*;
+import ch.elexis.util.CommonViewer;
+import ch.elexis.util.DefaultControlFieldProvider;
+import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.LazyContentProvider;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SimpleWidgetProvider;
+import ch.elexis.util.ViewMenus;
+import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
 
 public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2, HeartListener{
@@ -75,7 +83,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     	cv.notify(CommonViewer.Message.update);
     }
 	@Override
-    public void createPartControl(Composite parent)
+    public void createPartControl(final Composite parent)
     {
 		cv=new CommonViewer();
 		
@@ -110,7 +118,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 
     	
 		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Image getColumnImage(final Object element, final int columnIndex) {
 			if(element instanceof Patient){
 				Patient pat=(Patient)element;
 				
@@ -132,12 +140,12 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 			}
 		}
 
-		public Color getBackground(Object element, int columnIndex) {
+		public Color getBackground(final Object element, final int columnIndex) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		public Color getForeground(Object element, int columnIndex) {
+		public Color getForeground(final Object element, final int columnIndex) {
 			if(element instanceof Patient){
 				if(((Patient)element).getBemerkung().contains(":VIP:")){
 					return Desk.theColorRegistry.get(Desk.COL_RED);
@@ -175,7 +183,8 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         		setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
         		setToolTipText("Neuen Patienteneintrag erstellen");
         	}
-        	public void run(){
+        	@Override
+			public void run(){
             	// access rights guard
             	if (!Hub.acl.request(AccessControlDefaults.PATIENT_INSERT)) {
             		SWTHelper.alert("Fehlende Rechte",
@@ -213,7 +222,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         */
     }
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		if(mode==true){
 			newPatAction.setEnabled(Hub.acl.request(AccessControlDefaults.PATIENT_INSERT));
 			
@@ -225,7 +234,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -239,7 +248,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return GlobalActions.fixLayoutAction.isChecked();
@@ -273,11 +282,11 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	 * (This listener only implements selected().)
 	 */
 	class ControlFieldSelectionListener implements ControlFieldListener {
-		public void changed(String[] fields, String[] values) {
+		public void changed(final String[] fields, final String[] values) {
 			// nothing to do (handled by LazyContentProvider) 
 		}
 
-		public void reorder(String field) {
+		public void reorder(final String field) {
 			// nothing to do (handled by LazyContentProvider) 
 		}
 		
@@ -288,7 +297,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		public void selected() {
 	    	StructuredViewer viewer = cv.getViewerWidget();
 	    	Object[] elements = cv.getConfigurer().getContentProvider().getElements(viewer.getInput());
-	    	if (elements != null && elements.length > 0) {
+	    	if ((elements != null) && (elements.length > 0)) {
 	    		Object element = elements[0];
 	    		/*
 	    		 * just selecting the element in the viewer doesn't work if the

@@ -28,7 +28,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -36,16 +40,33 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.*;
+import ch.elexis.actions.AbstractDataLoaderJob;
+import ch.elexis.actions.BackgroundJob;
+import ch.elexis.actions.GlobalActions;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.*;
+import ch.elexis.data.Brief;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
-import ch.elexis.util.*;
+import ch.elexis.util.CommonViewer;
+import ch.elexis.util.DefaultContentProvider;
+import ch.elexis.util.DefaultControlFieldProvider;
+import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.Money;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SimpleWidgetProvider;
+import ch.elexis.util.ViewMenus;
+import ch.elexis.util.ViewerConfigurer;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
@@ -61,12 +82,12 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	TimeTool datVon,datBis;
 	boolean bOnlyOpen;
 	private Konsultation[] kons;
-	private KonsLoader kload;
+	private final KonsLoader kload;
 	private int numPat;
 	private double sumTime;
 	private double sumAll;
 	//private double sumSelected;
-	private Query<Konsultation> qbe;
+	private final Query<Konsultation> qbe;
 	
 	public PatHeuteView() {
 		super();
@@ -78,7 +99,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		setPartName(Messages.getString("PatHeuteView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		Composite top=new Composite(parent,SWT.BORDER);
@@ -88,7 +109,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		dpc.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				datVon.setTimeInMillis(dpc.getDate().getTime());
 			}
 			
@@ -98,7 +119,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		dpb.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				datBis.setTimeInMillis(dpb.getDate().getTime());
 			}
 			
@@ -106,7 +127,8 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		final Button bKonsType=new Button(top,SWT.TOGGLE);
 		bKonsType.setText(Messages.getString("PatHeuteView.onlyOpen")); //$NON-NLS-1$
 		bKonsType.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e){
+			@Override
+			public void widgetSelected(final SelectionEvent e){
 				bOnlyOpen=bKonsType.getSelection();
 			}
 		});
@@ -115,7 +137,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		bReload.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				kons=null;
 				kload.schedule();
 			}
@@ -125,7 +147,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		vc=new ViewerConfigurer(
 				new DefaultContentProvider(cv,Patient.class){
 					@Override
-					public Object[] getElements(Object inputElement) {
+					public Object[] getElements(final Object inputElement) {
 						if(kons==null){
 							kons=new Konsultation[0];
 							kload.schedule();
@@ -136,7 +158,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				new DefaultLabelProvider(){
 
 					@Override
-					public String getText(Object element) {
+					public String getText(final Object element) {
 						if(element instanceof Konsultation){
 							Fall fall=((Konsultation)element).getFall();
 							if(fall==null){
@@ -217,7 +239,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		
 	}
 
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Konsultation){
 			tTime2.setText(Integer.toString(((Konsultation)obj).getMinutes()));
 			double m=((Konsultation)obj).getUmsatz();
@@ -234,9 +256,9 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		
 	}
 
-	public void activation(boolean mode) { /* leer */}
+	public void activation(final boolean mode) { /* leer */}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode==true){
 			GlobalEvents.getInstance().addSelectionListener(this);
 		}else{
@@ -245,7 +267,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -259,7 +281,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;
@@ -273,14 +295,14 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	
 	class KonsLoader extends AbstractDataLoaderJob{
 
-		KonsLoader(Query<Konsultation> qbe){
+		KonsLoader(final Query<Konsultation> qbe){
 			super("Lade Konsultationen",qbe,new String[]{"Datum"});
 			setPriority(Job.LONG);
 			setUser(true);
 		}
 		
 		@Override
-		public IStatus execute(IProgressMonitor monitor) {
+		public IStatus execute(final IProgressMonitor monitor) {
 			if(Hub.actUser==null){
 				return Status.CANCEL_STATUS;
 			}
@@ -298,7 +320,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			if(bOnlyOpen){
 				qbe.add("RechnungsID", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			@SuppressWarnings("unchecked") //$NON-NLS-1$
+			@SuppressWarnings("unchecked") 
 		    List<Konsultation> list=qbe.execute();
 		    monitor.worked(100);
 		    numPat=0;
@@ -333,7 +355,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		}
 		
 	}
-	public void jobFinished(BackgroundJob j) {
+	public void jobFinished(final BackgroundJob j) {
 		if(j.isValid()){
 			kons=(Konsultation[])j.getData();
 			tPat.setText(Integer.toString(numPat));
@@ -362,12 +384,12 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	}
 	
 	class TerminListeDialog extends TitleAreaDialog implements ICallback{
-		public TerminListeDialog(Shell shell) {
+		public TerminListeDialog(final Shell shell) {
 			super(shell);
 		}
 
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(final Composite parent) {
 			Composite ret=new Composite(parent,SWT.NONE);
 			TextContainer text=new TextContainer(getShell());
 			ret.setLayout(new FillLayout());

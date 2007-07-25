@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2007, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 		}
 	}
 
-	public void clearEvent(final Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		if(template.equals(Patient.class)){
 			tv.refresh();
 		}

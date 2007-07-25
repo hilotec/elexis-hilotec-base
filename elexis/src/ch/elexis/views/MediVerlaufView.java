@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MediVerlaufView.java 2695 2007-07-02 15:53:18Z rgw_ch $
+ *  $Id: MediVerlaufView.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -67,7 +67,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new FillLayout());
 		tv=new TableViewer(parent,SWT.NONE);
 		Table table=tv.getTable();
@@ -79,7 +79,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 			tc.addSelectionListener(new SelectionAdapter(){
 
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					int i=(Integer)((TableColumn)e.getSource()).getData();
 					sortCol=i;
 					reload();
@@ -108,7 +108,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 	}
 	class MediVerlaufContentProvider implements IStructuredContentProvider{
 
-		public Object[] getElements(Object inputElement) {
+		public Object[] getElements(final Object inputElement) {
 			return mListe == null ? new MediAbgabe[0] : mListe;
 		}
 
@@ -117,7 +117,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 			
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -126,12 +126,12 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 	
 	static class MediVerlaufLabelProvider extends LabelProvider implements ITableLabelProvider{
 
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Image getColumnImage(final Object element, final int columnIndex) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		public String getColumnText(Object element, int columnIndex) {
+		public String getColumnText(final Object element, final int columnIndex) {
 			if(element instanceof MediAbgabe){
 				MediAbgabe ma=(MediAbgabe)element;
 				switch(columnIndex){
@@ -147,7 +147,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -158,7 +158,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 			progressService.runInUI(
 					PlatformUI.getWorkbench().getProgressService(),
 					new IRunnableWithProgress(){
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							monitor.beginTask("Medikamente einlesen", IProgressMonitor.UNKNOWN);
 							monitor.subTask("Suche Verschreibungen...");
 							Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
@@ -193,7 +193,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 		}
 	}
 	
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
 			reload();		
 		}
@@ -204,14 +204,14 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 		String von,bis;
 		String medi;
 		String dosis;
-		MediAbgabe(String v, String b, Prescription p){
+		MediAbgabe(final String v, final String b, final Prescription p){
 			von=v;
 			bis=b;
 			orderA=new TimeTool(v).toString(TimeTool.DATE_COMPACT);
 			medi=p.getSimpleLabel();
 			dosis=p.getDosis();
 		}
-		public int compareTo(MediAbgabe o) {
+		public int compareTo(final MediAbgabe o) {
 			switch(sortCol){
 			case 0:
 				int res= orderA.compareTo(o.orderA);
@@ -230,12 +230,12 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 		}
 	}
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode){
 			GlobalEvents.getInstance().addSelectionListener(this);
 			selectionEvent(GlobalEvents.getSelectedPatient());
@@ -248,7 +248,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 	class MediSorter extends ViewerSorter{
 
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2) {
+		public int compare(final Viewer viewer, final Object e1, final Object e2) {
 			return ((MediAbgabe)e1).compareTo((MediAbgabe)e2);
 		}
 

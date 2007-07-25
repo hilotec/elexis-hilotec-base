@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 2528 2007-06-18 10:52:49Z rgw_ch $
+ *  $Id: RezepteView.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 
 
@@ -28,8 +28,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -69,7 +67,7 @@ import ch.rgw.tools.ExHandler;
  */
 public class RezepteView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2 {
 	public static final String ID="ch.elexis.Rezepte";
-	private FormToolkit tk=Desk.theToolkit;
+	private final FormToolkit tk=Desk.theToolkit;
 	private Form master;
 	ListViewer lv;
 	Label ausgestellt;
@@ -82,7 +80,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 	private PersistentObjectDropTarget dropTarget;
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
 		master=tk.createForm(parent);
 		master.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
@@ -91,7 +89,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		lv=new ListViewer(sash,SWT.V_SCROLL);
 		lv.setContentProvider(new IStructuredContentProvider(){
 
-			public Object[] getElements(Object inputElement) {
+			public Object[] getElements(final Object inputElement) {
 				Query<Rezept> qbe=new Query<Rezept>(Rezept.class);
 				Patient act=(Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class);
 				if(act!=null){
@@ -105,12 +103,12 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			}
 
 			public void dispose() { /* leer */}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { /* leer */ }
+			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) { /* leer */ }
 			
 		});
 		lv.setLabelProvider(new LabelProvider(){
 			@Override
-			public String getText(Object element) {
+			public String getText(final Object element) {
 				if(element instanceof Rezept){
 					Rezept rp=(Rezept)element;
 					return rp.getLabel();
@@ -207,7 +205,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			master.setText(rp.getPatient().getLabel());
 		}
 	}
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
 			actPatient=(Patient)obj;
 			GlobalEvents.getInstance().clearSelection(Rezept.class);
@@ -227,6 +225,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 	}
 	private void makeActions(){
 		newRpAction = new Action("Neues Rezept"){
+			@Override
 			public void run(){
 				Patient act=(Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class);
 				if(act==null){
@@ -241,6 +240,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			}
 		};
 		deleteRpAction=new Action("Rezept löschen"){
+			@Override
 			public void run(){
 				Rezept rp=(Rezept)GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 				if(MessageDialog.openConfirm(getViewSite().getShell(), "Rezept löschen", "Wollen Sie wirklich das Rezept vom "+rp.getDate()+" unwiderruflich löschen?")){
@@ -250,6 +250,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			}
 		};
 		removeLineAction=new Action("Zeile löschen"){
+				@Override
 				public void run(){
 					Rezept rp=(Rezept)GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 					IStructuredSelection sel=(IStructuredSelection)lvRpLines.getSelection();
@@ -268,6 +269,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 				}
 		};
 		addLineAction=new Action("Neue Zeile"){
+			@Override
 			public void run(){
 				try {
 					LeistungenView lv1=(LeistungenView)getViewSite().getPage().showView(LeistungenView.ID);
@@ -286,6 +288,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			}
 		};
 		printAction=new Action("Drucken"){
+			@Override
 			public void run(){
 				try{
 				    RezeptBlatt rp=(RezeptBlatt)getViewSite().getPage().showView(RezeptBlatt.ID);
@@ -300,12 +303,12 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		printAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor("print"));
 		newRpAction.setImageDescriptor(Hub.getImageDescriptor("rsc/rpneu.ico"));
 	}
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode==true){
 			GlobalEvents.getInstance().addSelectionListener(this);
 			Rezept actRezept=(Rezept)GlobalEvents.getInstance().getSelectedObject(Rezept.class);
@@ -323,7 +326,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 
 	class RezeptContentProvider implements IStructuredContentProvider{
 
-		public Object[] getElements(Object inputElement) {
+		public Object[] getElements(final Object inputElement) {
 			Rezept rp=(Rezept)GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 			if(rp==null){
 				return new Prescription[0];
@@ -332,13 +335,13 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			return list.toArray();
 		}
 		public void dispose() { /* leer */}
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { /*leer*/}
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) { /*leer*/}
 	}
 
 	class RezeptLabelProvider extends LabelProvider{
 
 		@Override
-		public String getText(Object element) {
+		public String getText(final Object element) {
 			if(element instanceof Prescription){
 				Prescription z=(Prescription)element;
 				return z.getLabel();
@@ -347,7 +350,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		}
 		
 	}
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		lvRpLines.refresh();
 	}
 	/* ******
@@ -359,7 +362,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;

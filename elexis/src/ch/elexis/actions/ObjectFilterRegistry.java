@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich and D. Lutz - initial implementation
  *    
- * $Id: ObjectFilterRegistry.java 2904 2007-07-25 10:52:02Z rgw_ch $
+ * $Id: ObjectFilterRegistry.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -41,7 +41,7 @@ public class ObjectFilterRegistry {
 		GlobalEvents.getInstance().fireUpdateEvent(clazz);
 	}
 	
-	public IFilter getFilterFor(final Class clazz){
+	public IFilter getFilterFor(final Class<? extends PersistentObject> clazz){
 		IObjectFilterProvider prov=hash.get(clazz);
 		if(prov!=null){
 			return prov.getFilter();

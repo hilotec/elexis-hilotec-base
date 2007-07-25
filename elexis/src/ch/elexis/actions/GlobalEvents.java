@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 2904 2007-07-25 10:52:02Z rgw_ch $
+ * $Id: GlobalEvents.java 2908 2007-07-25 11:51:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -310,8 +310,7 @@ public class GlobalEvents implements IPartListener2 {
      */
     public interface SelectionListener{
         public void selectionEvent(PersistentObject obj);
-        @SuppressWarnings("unchecked")
-		public void clearEvent(Class template);
+		public void clearEvent(Class<? extends PersistentObject> template);
     }
     
     /**
@@ -322,8 +321,7 @@ public class GlobalEvents implements IPartListener2 {
      *
      */
     public interface BackingStoreListener{
-    	@SuppressWarnings("unchecked")
-		public void reloadContents(Class clazz);
+		public void reloadContents(Class<? extends PersistentObject> clazz);
     }
     
     private class GlobalListener implements ISelectionChangedListener{
@@ -359,8 +357,8 @@ public class GlobalEvents implements IPartListener2 {
 	public PersistentObject getSelectedObject(final Class template){
     	return SelectionTracker.getObject(template);
     }
-    @SuppressWarnings("unchecked") 
-	public void clearSelection(final Class template /*, IWorkbenchWindow win*/){
+
+	public void clearSelection(final Class<? extends PersistentObject> template /*, IWorkbenchWindow win*/){
     	log.log("clearSelection: " + template.getName(), Log.DEBUGMSG); //$NON-NLS-1$
 
     	/*
