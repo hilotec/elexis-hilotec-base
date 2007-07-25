@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2897 2007-07-24 20:12:10Z rgw_ch $
+ *  $Id: Konsultation.java 2900 2007-07-25 05:10:15Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -185,7 +185,17 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
     	record.add(xref);
     	updateEintrag(samdas.toString(),true); // XRefs may always be added
     }
+   
+    public Samdas getEntryRaw(){
+    	VersionedResource vr=getEintrag();
+    	String ntext=vr.getHead();
+    	Samdas samdas=new Samdas(ntext);
+    	return samdas;
+    }
     
+    public void updateEntryRaw(Samdas samdas){
+    	updateEintrag(samdas.toString(), false);
+    }
     /**
      * Remove an XREF from the EMR text. Will remove all XREFS of the given provider with the given ID from
      * this EMR. Warning: The IKonsExtension's removeXRef method will not be called.
