@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ * $Id: Heartbeat.java 2903 2007-07-25 10:34:21Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -19,6 +19,7 @@ import java.util.TimerTask;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.preferences.PreferenceConstants;
 
 /**
  * Heartbeat is an event source, that fires events at user-definable intervals to all HeartListeners.
@@ -48,7 +49,7 @@ public class Heartbeat {
 		theBeat=new beat();
 		listeners=new LinkedList<HeartListener>();
 		pacer=new Timer(true);
-		int interval=Hub.localCfg.get("heartbeatrate", 30); //$NON-NLS-1$
+		int interval=Hub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30); //$NON-NLS-1$
 		isSuspended=true;
 		pacer.schedule(theBeat, 0, interval*1000L);
 	}
