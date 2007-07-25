@@ -68,6 +68,7 @@ public class DataAccessor implements IDataAccess {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Result<Object> getObject(final String name, final PersistentObject ref,final String... params) {
 		Result<Object> ret=null;
 		if(!(ref instanceof Patient)){
