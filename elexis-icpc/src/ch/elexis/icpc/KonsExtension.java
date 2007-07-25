@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 2788 2007-07-12 15:26:35Z rgw_ch $
+ *  $Id: KonsExtension.java 2901 2007-07-25 10:32:33Z danlutz $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -60,7 +60,8 @@ public class KonsExtension implements IKonsExtension {
 	}
 
 	public void removeXRef(String refProvider, String refID) {
-		// TODO Auto-generated method stub
+		Encounter encounter = Encounter.load(refID);
+		encounter.delete();
 
 	}
 
