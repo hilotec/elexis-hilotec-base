@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KonsFilter.java 2905 2007-07-25 10:53:10Z rgw_ch $
+ * $Id: KonsFilter.java 2907 2007-07-25 11:19:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -26,6 +26,7 @@ import ch.elexis.icpc.views.EpisodesView;
 public class KonsFilter implements IObjectFilterProvider, IFilter {
 	Episode mine;
 	EpisodesView home;
+	boolean bDaemfung;
 	
 	public KonsFilter(final EpisodesView home){
 		this.home=home;
@@ -36,13 +37,17 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 	}
 	
 	public void activate() {
+		bDaemfung=true;
 		home.activateKonsFilterAction(true);
+		bDaemfung=false;
 	}
 	public void changed() {
 		// should we mind?
 	}
 	public void deactivate() {
+		bDaemfung=true;
 		home.activateKonsFilterAction(false);
+		bDaemfung=false;
 	}
 	public IFilter getFilter() {
 		return this;
