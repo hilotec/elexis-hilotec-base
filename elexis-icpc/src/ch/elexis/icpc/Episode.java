@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2899 2007-07-25 05:06:12Z rgw_ch $
+ *  $Id: Episode.java 2902 2007-07-25 10:33:33Z danlutz $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -148,13 +148,19 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		return true;
 	}
 
+	public Patient getPatient() {
+		String id = get("PatientID");
+		Patient patient = Patient.load(id);
+		return patient;
+	}
+
 	/**
 	 * Get the status of an episode
 	 * @return Episode.ACTIVE or Episode.INACTIVE
 	 */
     public int getStatus() {
         String statusText = get("Status");
-        if (statusText.equals(ACTIVE_VALUE)) {
+        if (statusText != null && statusText.equals(ACTIVE_VALUE)) {
             return ACTIVE;
         } else {
             return INACTIVE;
@@ -201,6 +207,30 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		}
 		return 0;
 	}
+
+    public String getStartDate() {
+        return get("StartDate");
+    }
+    
+    public void setStartDate(String startDate) {
+    	set("StartDate", startDate);
+    }
+    
+    public String getTitle() {
+        return get("Title");
+    }
+    
+    public void setTitle(String title) {
+    	set("Title", title);
+    }
+    
+    public String getNumber() {
+    	return get("Number");
+    }
+    
+    public void setNumber(String number) {
+    	set("Number", number);
+    }
 
 	@SuppressWarnings("unchecked")
 	public void setExtField(String name, String text){
