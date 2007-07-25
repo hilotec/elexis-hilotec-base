@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 2901 2007-07-25 10:32:33Z danlutz $
+ *  $Id: KonsExtension.java 2917 2007-07-25 17:09:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -18,7 +18,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.data.IDiagnose;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.text.EnhancedTextField;
 import ch.elexis.util.IKonsExtension;
 
@@ -26,18 +30,18 @@ public class KonsExtension implements IKonsExtension {
 	EnhancedTextField mine;
 	static final String EPISODE_TITLE="Problem: ";
 	
-	public String connect(EnhancedTextField tf) {
+	public String connect(final EnhancedTextField tf) {
 		mine=tf;
 		mine.addDropReceiver(Episode.class, this);
 		return Activator.PLUGIN_ID;
 	}
 
-	public boolean doLayout(StyleRange n, String provider, String id) {
+	public boolean doLayout(final StyleRange n, final String provider, final String id) {
 		n.background=Desk.theColorRegistry.get(Desk.COL_GREEN);
 		return true;
 	}
 
-	public boolean doXRef(String refProvider, String refID) {
+	public boolean doXRef(final String refProvider, final String refID) {
 		Encounter enc=Encounter.load(refID);
 		if(enc.exists()){
 			GlobalEvents.getInstance().fireSelectionEvent(enc);
@@ -50,23 +54,33 @@ public class KonsExtension implements IKonsExtension {
 		return null;
 	}
 
-	public void insert(Object o, int pos) {
+	public void insert(final Object o, final int pos) {
 		if(o instanceof Episode){
 			Episode ep=(Episode)o;
-			Encounter enc=new Encounter(GlobalEvents.getSelectedKons(),ep);
+			final Konsultation k=GlobalEvents.getSelectedKons();
+			Encounter enc=new Encounter(k,ep);
+			String diag=ep.get("Diagnosen");
+			if(!diag.startsWith("**")){
+				PersistentObject dg=Hub.poFactory.createFromString(diag);
+				if(dg instanceof IDiagnose){
+					k.addDiagnose((IDiagnose)dg);
+				}
+			}
 			mine.insertXRef(pos, EPISODE_TITLE+ep.getLabel(), Activator.PLUGIN_ID, enc.getId());
+			k.updateEintrag(mine.getDocumentAsText(), false);
+    		GlobalEvents.getInstance().fireObjectEvent(k, GlobalEvents.CHANGETYPE.update);
 		}
 
 	}
 
-	public void removeXRef(String refProvider, String refID) {
+	public void removeXRef(final String refProvider, final String refID) {
 		Encounter encounter = Encounter.load(refID);
 		encounter.delete();
 
 	}
 
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(final IConfigurationElement config,
+			final String propertyName, final Object data) throws CoreException {
 		// TODO Auto-generated method stub
 
 	}

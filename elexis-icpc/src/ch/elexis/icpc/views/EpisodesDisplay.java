@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 2914 2007-07-25 14:36:50Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 2917 2007-07-25 17:09:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
@@ -109,7 +110,10 @@ public class EpisodesDisplay extends Composite {
 				ret.add("Status: "+ep.getStatusText());
 				String diag=ep.get("Diagnosen");
 				if(!diag.startsWith("**")){
-					ret.add("KK-Diagnose: "+diag);
+					PersistentObject dg=Hub.poFactory.createFromString(diag);
+					if(dg!=null){
+						ret.add("KK-Diagnose: "+dg.getLabel());
+					}
 				}
 				return ret.toArray();
 			}
@@ -196,7 +200,7 @@ public class EpisodesDisplay extends Composite {
 			if(item!=null){
 				Episode hit=getEpisodeFromItem(item);
 				if(hit!=null){
-					hit.setExtField("Diagnosen", o.getLabel());
+					hit.setExtField("Diagnosen", o.storeToString());
 					//new TreeItem(item,SWT.NONE).setText(o.getLabel());
 					tvEpisodes.refresh();
 				}

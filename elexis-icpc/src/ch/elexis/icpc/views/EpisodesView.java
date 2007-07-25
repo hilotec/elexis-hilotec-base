@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesView.java 2907 2007-07-25 11:19:55Z rgw_ch $
+ *    $Id: EpisodesView.java 2917 2007-07-25 17:09:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -64,7 +64,7 @@ public class EpisodesView extends ViewPart implements SelectionListener, Activat
 
 	}
 
-	public void clearEvent(final Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		// TODO Auto-generated method stub
 		
 	}
