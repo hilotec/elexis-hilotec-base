@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 2517 2007-06-12 20:07:18Z rgw_ch $
+ *  $Id: Person.java 2910 2007-07-25 11:52:32Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -54,19 +54,9 @@ public class Person extends Kontakt {
 	}
 	
 	public boolean isValid(){
-		if(!super.isValid()){
-			return false;
-		}
-		String geb=(get("Geburtsdatum"));
-		if(geb.equals("WERT?")){
-			return false;
-		}
-		String g=get("Geschlecht");
-		if(g.equals("m") || g.equals("w")){
-			return true;
-		}
-		return false;
+    	return super.isValid();
 	}
+
 	/** Eine Person mit gegebener Id aus der Datenbank einlesen */
 	public static Person load(String id){
 	    Person ret=new Person(id);

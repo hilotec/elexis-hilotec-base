@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 2844 2007-07-19 08:17:57Z rgw_ch $
+ *  $Id: Patient.java 2910 2007-07-25 11:52:32Z danlutz $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -70,10 +70,18 @@ public class Patient extends Person{
     protected Patient(){/* leer */  }
     @Override
 	public boolean isValid(){
-    	if(!super.isValid()){
-    		return false;
-    	}
-    	return true;
+		if(!super.isValid()){
+			return false;
+		}
+		String geb=(get("Geburtsdatum"));
+		if(geb.equals("WERT?")){
+			return false;
+		}
+		String g=get("Geschlecht");
+		if(g.equals("m") || g.equals("w")){
+			return true;
+		}
+		return false;
     }
     
     /**
