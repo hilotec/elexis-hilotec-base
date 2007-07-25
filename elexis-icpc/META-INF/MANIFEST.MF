@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.forms
 Eclipse-LazyStart: false
 Bundle-Activator: ch.elexis.icpc.Activator
+Export-Package: ch.elexis.icpc
