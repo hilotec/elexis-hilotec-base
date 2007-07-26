@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 2904 2007-07-25 10:52:02Z rgw_ch $
+ *  $Id: HistoryLoader.java 2921 2007-07-26 20:43:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -64,6 +64,9 @@ public class HistoryLoader extends BackgroundJob {
 	public IStatus execute(final IProgressMonitor monitor) {
 		monitor.beginTask(Messages.getString("HistoryLoader.LoadKonsMessage"), lKons.size()+100); //$NON-NLS-1$
 		monitor.subTask(Messages.getString("HistoryLoader.Sorting")); //$NON-NLS-1$
+		if(lKons.size()==0){
+			return Status.OK_STATUS;
+		}
 		Collections.sort(lKons, new Comparator<Konsultation>(){
 			TimeTool t1=new TimeTool();
 			TimeTool t2=new TimeTool();

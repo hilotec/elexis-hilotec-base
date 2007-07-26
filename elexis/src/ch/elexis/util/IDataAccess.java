@@ -55,10 +55,12 @@ public interface IDataAccess {
 	
 	/**
 	 * return specified data
-	 * @param name	Name of the element to retrieve
+	 * @param descriptor description of the Object to retrieve (name and fields)
+	 * @param dependentObject Type of PersistentObject this data depends on
+	 * @param dates date definition. either a date string or "all" or "last"
 	 * @param params parameters that might be required for this element
-	 * @return
+	 * @return some object depending of the request
 	 */
-	public Result<Object> getObject(String name, PersistentObject ref, String...params);
+	public Result<Object> getObject(String descriptor, PersistentObject dependentObject, String dates, String[] params);
 	
 }

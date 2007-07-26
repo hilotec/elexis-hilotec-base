@@ -21,32 +21,40 @@ import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 
 public class ScriptUtil {
+	
+	/**
+	 * Get a data type from a plugin that implements IDataAccess and plugs into the EP DatAccess
+	 * @param connector the string describing the desitred data. 
+	 * the connector string follows the general form 
+	 * "plugin:dependent_object:all|date|last:data-name[.Field]:parameters"
+	 * @return the result of the
+	 */
 	public static String[][] loadDataFromPlugin(final String connector){
 		String[] adr=connector.split(":");
-		if(adr.length!=2){
+		if(adr.length<4){
+			SWTHelper.showError("Datenzugriff-Fehler", "Das Datenfeld "+connector+" wird falsch angesprochen");
 			return null;
 		}
-		String[] parms=adr[1].split("\\.");
-		String name=parms[0];
-		String rf=parms[1];
-		String[] extra=null;
-		PersistentObject ref=null;
-		if(parms.length>2){
-			extra=new String[parms.length-2];
-			for(int i=0;i<extra.length;i++){
-				extra[i]=parms[2+i];
-			}
+		String plugin=adr[0];
+		String dependendObject=adr[1];
+		String dates=adr[2];
+		String desc=adr[3];
+		String[] params=null;
+		if(adr.length==5){
+			params=adr[4].split(".");
 		}
-		if(rf.equals("Patient")){
+		
+		PersistentObject ref=null;
+		if(dependendObject.equals("Patient")){
 			ref=GlobalEvents.getSelectedPatient();
 		}
 		for(IConfigurationElement ic:Extensions.getExtensions("ch.elexis.DataAccess")){
 			String icName=ic.getAttribute("name");
-			if(icName.equals(adr[0])){
+			if(icName.equals(plugin)){
 				IDataAccess ida;
 				try {
 					ida = (IDataAccess) ic.createExecutableExtension("class");
-					Result<Object> ret=ida.getObject(name, ref, extra);
+					Result<Object> ret=ida.getObject(desc, ref, dates, params);
 					if(ret.isOK()){
 						return (String[][])ret.get();
 					}else{

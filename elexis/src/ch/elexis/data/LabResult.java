@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2812 2007-07-15 15:25:59Z rgw_ch $
+ *  $Id: LabResult.java 2921 2007-07-26 20:43:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -38,38 +38,68 @@ public class LabResult extends PersistentObject {
 	public LabResult(final Patient p,final TimeTool date,final LabItem item,final String result,final String comment){
 		create(null);
 		String[] fields={"PatientID","Datum","ItemID","Resultat","Kommentar","Flags"};
-		int flags=0;
-		if(item.getTyp().equals(LabItem.typ.NUMERIC)){
-			String nr;
-			if(p.getGeschlecht().equalsIgnoreCase("m")){
-				nr=item.getRefM();
-			}else{
-				nr=item.getRefW();
-			}
-			String[] range=nr.split("\\s*-\\s*");
-			if(range.length==2){
-				try{
-					double lower=Double.parseDouble(range[0]);
-					double upper=Double.parseDouble(range[1]);
-					double val=Double.parseDouble(result);
-					if((val<lower) || (val>upper)){
-						flags=PATHOLOGIC;
-					}
-				}catch(NumberFormatException nre){
-					// we don't mind here
-				}
-			}
-		}else if(item.getTyp().equals(LabItem.typ.ABSOLUTE)){
-			if(result.toLowerCase().startsWith("pos")){
-				flags=PATHOLOGIC;
-			}
-		}
+		int flags=isPathologic(p,item,result) ? PATHOLOGIC : 0;
 		String[] vals=new String[]{
 			p.getId(),
 			date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date.toString(TimeTool.DATE_GER),
 			item.getId(),result,comment,Integer.toString(flags)};
 		set(fields,vals);
 		addToUnseen();
+	}
+	
+	private boolean isPathologic(final Patient p, final LabItem item, final String result){
+		if(item.getTyp().equals(LabItem.typ.ABSOLUTE)){
+			if(result.toLowerCase().startsWith("pos")){
+				return true;
+			}
+			if(result.trim().startsWith("+")){
+				return true;
+			}
+		}else /*if(item.getTyp().equals(LabItem.typ.NUMERIC))*/{
+			String nr;
+			if(p.getGeschlecht().equalsIgnoreCase("m")){
+				nr=item.getRefM();
+			}else{
+				nr=item.getRefW();
+			}
+			if(nr.trim().startsWith("<")){
+				try{
+					double ref=Double.parseDouble(nr.substring(1).trim());
+					double val=Double.parseDouble(result);
+					if(val>=ref){
+						return true;
+					}
+				}catch(NumberFormatException nfe){
+					// don't mind
+				}
+			}else if(nr.trim().startsWith(">")){
+				try{
+					double ref=Double.parseDouble(nr.substring(1).trim());
+					double val=Double.parseDouble(result);
+					if(val<=ref){
+						return true;
+					}
+				}catch(NumberFormatException nfe){
+					// again, don't mind
+				}
+			}else{
+				String[] range=nr.split("\\s*-\\s*");
+				if(range.length==2){
+					try{
+						double lower=Double.parseDouble(range[0]);
+						double upper=Double.parseDouble(range[1]);
+						double val=Double.parseDouble(result);
+						if((val<lower) || (val>upper)){
+							return true;
+						}
+					}catch(NumberFormatException nre){
+						// still, we don't mind
+					}
+				}
+			}
+		}
+		return false;
+		
 	}
 	public static LabResult load(final String id){
 		return new LabResult(id);
@@ -88,7 +118,8 @@ public class LabResult extends PersistentObject {
 		return checkNull(get("Resultat"));
 	}
 	public void setResult(final String res){
-		set("Resultat",checkNull(res));
+		int flags=isPathologic(getPatient(),getItem(),res) ? PATHOLOGIC : 0; 
+		set(new String[]{"Resultat","Flags"},new String[]{checkNull(res),Integer.toString(flags)});
 	}
 	public String getComment(){
 		return checkNull(get("Kommentar"));
@@ -121,7 +152,7 @@ public class LabResult extends PersistentObject {
 		return getResult();
 	}
 
-	public static LabResult getForDate(Patient pat,TimeTool date,LabItem item){
+	public static LabResult getForDate(final Patient pat,final TimeTool date,final LabItem item){
 		Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
 		qbe.add("ItemID", "=", item.getId());
 		qbe.add("PatientID", "=", pat.getId());

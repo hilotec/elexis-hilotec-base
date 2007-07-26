@@ -7,7 +7,7 @@
       <image path="/Elexis/rsc/elexis48.gif"/>
       <text>
          Elexis - die Praxis.
-(c) 2005-2006 by G. Weirich and Elexis
+(c) 2005-2007 by G. Weirich and Elexis
 http://www.elexis.ch
 
 Informationen und Referenzinstallation:
@@ -37,6 +37,7 @@ Rietstrasse 30
          <bmp/>
       </win>
    </launcher>
+
 
    <plugins>
       <plugin id="ch.elexis"/>
@@ -88,11 +89,11 @@ Rietstrasse 30
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
+      <plugin id="org.eclipse.swt.carbon.macosx"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.tomcat"/>
       <plugin id="org.eclipse.ui"/>
-      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
+      <plugin id="org.eclipse.ui.carbon"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.workbench"/>
