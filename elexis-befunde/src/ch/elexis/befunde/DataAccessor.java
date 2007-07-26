@@ -69,92 +69,83 @@ public class DataAccessor implements IDataAccess {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Result<Object> getObject(final String name, final PersistentObject ref,final String... params) {
+	public Result<Object> getObject(final String descriptor, final PersistentObject dependentObject, final String dates, final String[] params) {
 		Result<Object> ret=null;
-		if(!(ref instanceof Patient)){
-			ret=new Result<Object>(Log.ERRORS,IDataAccess.INVALID_PARAMETERS,"Ungültiger Parameter",ref,true);
+		if(!(dependentObject instanceof Patient)){
+			ret=new Result<Object>(Log.ERRORS,IDataAccess.INVALID_PARAMETERS,"Ungültiger Parameter",dependentObject,true);
 		}else{
-			if(params.length!=1){
-				ret=new Result<Object>(Log.ERRORS,IDataAccess.INVALID_PARAMETERS,"Falsche Parameterzahl",params,true);
+			Patient pat=(Patient)dependentObject;
+			String[] data=descriptor.split("\\.");
+			Query<Messwert> qbe=new Query<Messwert>(Messwert.class);
+			qbe.add("PatientID","=",pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			qbe.add("Name","=",data[0]); //$NON-NLS-1$ //$NON-NLS-2$
+			List<Messwert> list=qbe.execute();
+			String[][] values;
+			String[] cols=columns.get(data[0]);
+			if(params[0].equals("all")){
+				values=new String[list.size()+1][cols.length];
 			}else{
-				if(!(params[0] instanceof String)){
-					ret=new Result<Object>(Log.ERRORS,IDataAccess.INVALID_PARAMETERS,"Datum,'all' oder 'last' erwartet",params,true);
-					
+				values=new String[2][cols.length];
+			}
+			for(int i=0;i<cols.length;i++){
+				values[0][i]=cols[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
+			}
+			int i=1;
+			if(dates.equals("all")){
+				for(Messwert m:list){
+					String date=m.get("Datum");
+					values[i][0]=new TimeTool(date).toString(TimeTool.DATE_GER);
+					Hashtable befs=m.getHashtable("Befunde");
+					for(int j=1;j<cols.length;j++){
+						String vv=(String)befs.get(values[0][j]);
+						values[i][j]=vv;
+						if(values[i][j]==null){
+							values[i][j]="";
+						}
+					}
+					i++;
+				}
+				ret=new Result<Object>(values);
+			}else if(dates.equals("last")){
+				TimeTool today=new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				Messwert last=null;
+				for(Messwert m:list){
+					TimeTool vgl=new TimeTool(m.get("Datum"));
+					if(vgl.isAfter(today)){
+						today=vgl;
+						last=m;
+					}
+				}
+				if(last==null){
+					ret=new Result<Object>(Log.ERRORS,IDataAccess.OBJECT_NOT_FOUND,"Nicht gefunden",params,true);
 				}else{
-					Patient pat=(Patient)ref;
-					Query<Messwert> qbe=new Query<Messwert>(Messwert.class);
-					qbe.add("PatientID","=",pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-					qbe.add("Name","=",name); //$NON-NLS-1$ //$NON-NLS-2$
-					List<Messwert> list=qbe.execute();
-					String[][] values;
-					String[] cols=columns.get(name);
-					if(params[0].equals("all")){
-						values=new String[list.size()+1][cols.length];
-					}else{
-						values=new String[2][cols.length];
+					values[1][0]=today.toString(TimeTool.DATE_GER);
+					Hashtable befs=last.getHashtable("Befunde");
+					for(int j=0;j<parameters.size();j++){
+						values[1][j+1]=(String)befs.get(parameters.get(j));
 					}
-					for(int i=0;i<cols.length;i++){
-						values[0][i]=cols[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-					}
-					int i=1;
-					if(params[0].equals("all")){
-						for(Messwert m:list){
-							String date=m.get("Datum");
-							values[i][0]=new TimeTool(date).toString(TimeTool.DATE_GER);
+					ret=new Result<Object>(values);
+				}
+			}else{
+				TimeTool find=new TimeTool();
+				if(find.set(params[0])==false){
+					ret=new Result<Object>(Log.ERRORS,IDataAccess.INVALID_PARAMETERS,"Datum erwartet",params,true);
+				}else{
+					for(Messwert m:list){
+						TimeTool vgl=new TimeTool(m.get("Datum"));
+						if(vgl.isEqual(find)){
+							values[1][0]=vgl.toString(TimeTool.DATE_GER);
 							Hashtable befs=m.getHashtable("Befunde");
-							for(int j=1;j<cols.length;j++){
-								String vv=(String)befs.get(values[0][j]);
-								values[i][j]=vv;
-								if(values[i][j]==null){
-									values[i][j]="";
-								}
-							}
-							i++;
-						}
-						ret=new Result<Object>(values);
-					}else if(params[0].equals("last")){
-						TimeTool today=new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-						Messwert last=null;
-						for(Messwert m:list){
-							TimeTool vgl=new TimeTool(m.get("Datum"));
-							if(vgl.isAfter(today)){
-								today=vgl;
-								last=m;
-							}
-						}
-						if(last==null){
-							ret=new Result<Object>(Log.ERRORS,IDataAccess.OBJECT_NOT_FOUND,"Nicht gefunden",params,true);
-						}else{
-							values[1][0]=today.toString(TimeTool.DATE_GER);
-							Hashtable befs=last.getHashtable("Befunde");
 							for(int j=0;j<parameters.size();j++){
 								values[1][j+1]=(String)befs.get(parameters.get(j));
 							}
 							ret=new Result<Object>(values);
 						}
-					}else{
-						TimeTool find=new TimeTool();
-						if(find.set(params[0])==false){
-							ret=new Result<Object>(Log.ERRORS,IDataAccess.INVALID_PARAMETERS,"Datum erwartet",params,true);
-						}else{
-							for(Messwert m:list){
-								TimeTool vgl=new TimeTool(m.get("Datum"));
-								if(vgl.isEqual(find)){
-									values[1][0]=vgl.toString(TimeTool.DATE_GER);
-									Hashtable befs=m.getHashtable("Befunde");
-									for(int j=0;j<parameters.size();j++){
-										values[1][j+1]=(String)befs.get(parameters.get(j));
-									}
-									ret=new Result<Object>(values);
-								}
-							}
-						}
 					}
 				}
-				
 			}
-			
 		}
+			
 		return ret;
 	}
 
