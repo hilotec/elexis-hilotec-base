@@ -9,6 +9,26 @@
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
+\section{ICPC}
+Das Plugin ICPC bindet einerseits den \textit{International Code for Primary Care} Version 2 in Elexis ein, ermöglicht einerseits auch unabhängig davon die strukturierte problemorientierte KG-Führung.
+\index{problemorientierte KG}
+\index{Problem}
+\subsection{Problemliste}
+\subsection{Encounter}
+Um das ICPC-Plugin voll nutzen zu können, benötigen Sie den ICPC-Code selbst, den Sie leicht importieren können. Aus lizenzrechtlichen Gründen können wir ihn aber nicht direkt beifügen. Erkundigen Sie sich bitte ggf. bei der SGAM, ob und unter welchen Bedingungen Sie den Code beziehen können.
+\subsubsection{Idee}
+Der Gedanke hinter ICPC ist, dass die Arbeit des family doctors besser abgebildet werden soll, als es mit Codes wie ICD-10 oder Tarmed möglich ist. Es muss möglich sein, auch Alltagsdinge wie \textit{fühlt sich unwohl} oder \textit{hat Angst vor Krebs} zu codieren und Handlungen wie \textit{habe in untersucht, beraten und die Ängste ausgeräumt} zu deklarieren, und auch die Diagnise \textit{ist gesund} muss möglich sein. Wenn man solche Dinge in strukturierter Weise festhält, kann man die Arbeit des Allgemeinarztes viel besser erforschen, vergleichen und quantifizieren, als dies mit anderen Codesystemen möglich ist. Grundversorgerverbände verschiedener Länder haben daher ein erhebliches Interesse, ICPC zur Stärkung ihrer Datenbasis und damit Förderung einer besseren Grundversorger-orientierten Politik einzusetzen (Dass der Code dennoch nicht kostenlos zur Verfügung gestellt wird, ist wohl einer dieser Logik-Loopings, die beim Entwickeln von Realpolitik aus guten Ideen manchmal passieren...)
+
+\subsubsection{Einführung}
+Konkret geschieht die Codierung nach ICPC so, dass der Schnittpunkt einer Krankheits-Episode (eines Problems wie im vorherigen Abschnitt geschildert) mit einer Konsultation ein \textit{Encounter} entsteht. Wenn bei einer Konsultation also zwei Probleme behandelt werden, entsthehen genau zwei Encounters, auch wenn der Patient vielleicht 5 Probleme in der Problemliste stehen hat.
+
+Jeder Encounter ist gekennzeichnet durch
+\begin{itemize}
+\item Einen Grund (reason for encounter, rfe): Wieso kam der Patient? Beispiel: 'Kopfschmerzen'.
+\item Eine Beurteilung (Diagnose). Zum Beispiel 'Migräne'.
+\item Ein Procedere. Zum Beispiel 'Medikament, Lebensstilberatung'.
+\end{itemize}
+
 
 \section{Sgam-xChange}
 Sgam-xChange ist ein Plugin, das den Austausch von beliebigen Daten zwischen elKG-Systemen ermöglicht. Sie können beispielsweise ein Laborblatt oder eine ganze KG aus Ihrem Programm exportieren, verschlüsselt zu einem Kollegen transportieren, der es dann in seine elKG importieren kann - sofern diese ebenfalls xChange-fähig ist.Sgam-xChange ist ein Plugin, das den Austausch von beliebigen Daten zwischen elKG-Systemen ermöglicht. Sie können beispielsweise ein Laborblatt oder eine ganze KG aus Ihrem Programm exportieren, verschlüsselt zu einem Kollegen transportieren, der es dann in seine elKG importieren kann - sofern diese ebenfalls xChange-fähig ist.
