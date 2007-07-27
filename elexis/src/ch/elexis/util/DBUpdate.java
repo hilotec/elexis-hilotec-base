@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 2736 2007-07-07 14:07:40Z rgw_ch $
+ * $Id: DBUpdate.java 2923 2007-07-27 10:27:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -171,7 +171,7 @@ public class DBUpdate {
 						"OID		VARCHAR(80),"+
 						"datum		CHAR(8),"+
 						"typ		VARCHAR(20),"+				
-						"user		VARCHAR(25),"+
+						"userID		VARCHAR(25),"+
 						"station	VARCHAR(25),"+
 						"ExtInfo		BLOB);"
 	  };
