@@ -14,10 +14,32 @@ Das Plugin ICPC bindet einerseits den \textit{International Code for Primary Car
 \index{problemorientierte KG}
 \index{Problem}
 \subsection{Problemliste}
+\begin{wrapfigure}{r}{6cm}
+  \includegraphics{images/problemliste1}
+  \caption{Problemliste}\label{fig:problemliste}
+\end{wrapfigure}
+
+Die Problemliste (Abb. \ref{fig:problemliste}) erlaubt Ihnen, Probleme (auch bezeichnet als Krankheitsepisoden) als Freitext einzugeben und ihnen eine Nummer zuzuordnen. Bei der Darstellung werden sie automatisch anhand dieser Nummern sortiert. Wenn Sie also einem Problem eine tiefere Priorität zuordnen wollen, genügt es, ihm eine niedrigere Nummer zu geben. Wenn Sie ein Problem zum Unterproblem eines anderen Problems machen wollen, können Sie eine Nummer mit einem Punkt angeben: Problem 2.1 wird automatisch dem Problem 2 zugeordnet und zwischen 2 und 3 angezeigt.
+
+Um ein neues Problem einzugeben, klicken Sie auf das Stern-Symbol in der Titelzeile der View; um es zu löschen klicken Sie es mit der rechten Maustaste an und wählen \textit{löschen}. Um die Eigenschaften eines existierenden Problemeintrags zu bearbeiten, klicken Sie auf das Bearbeiten-Symbol.
+
+Ein Problem kann verschiedene Eigenschaften haben, beispielsweise ein Beginndatum, einen Status (aktiv oder inaktiv) und eine zugeordnete KK-Diagnose. Diese Eigenschaften werden angezeigt, wenn Sie das kleine plus-Zeichen links neben dem Titel anklicken. Um ein Problem als aktiv oder inaktiv zu markieren. klicken Sie es mit der rechten Maustaste an und wählen die entsprechende Einstellung im Kontextmenü.
+
+Um einem Problem eine KK-Diagnose zuzuordnen (das ist die Diagnose, die später auf der Rechnung erscheinen wird), können Sie eine solche Diagnose einfach aus einer Diagnoseliste, etwa aus dem Behandlungsfenster etc. auf das entsprechende Problem ziehen.
+
+\begin{figure}[ht]
+    \includegraphics{images/problemliste2}
+    \caption{Problem in Konsultationstext}
+    \label{fig:problemliste2}
+\end{figure}
+Um ein Problem in einer Konsultation explizit zu behandeln, ziehen Sie es mit der Maus aus der Problemliste in Ihr Konsultationsfenster (Abb. \ref{fig:problemliste2}).
+
+Wenn Sie konsequent mit der Problemliste arbeiten, erhalten Sie einen zusätzlichen Nutzen: Wenn Sie den Filtern-Knopf im Problemliste-Fenster einrasten (Abb. \ref{fig:problemliste}), dann werden in der Konsultationen-View (\ref{view:konsultationen}; s. \pageref{view:konsultationen} ff.) automatisch immer nur diejenigen Konsultationen angezeigt, die das gerade ausgewählte Problem behandeln. \index{konsultationen!filtern} \index{Filter}Klick auf ein anderes Problem filtert die Konsultationen-Liste jeweils neu. Erneuter Klick auf den Filtern-Knopf löst diesen wieder aus, so dass wieder alle Konsultationen angezeigt werden.
+
 \subsection{Encounter}
 Um das ICPC-Plugin voll nutzen zu können, benötigen Sie den ICPC-Code selbst, den Sie leicht importieren können. Aus lizenzrechtlichen Gründen können wir ihn aber nicht direkt beifügen. Erkundigen Sie sich bitte ggf. bei der SGAM, ob und unter welchen Bedingungen Sie den Code beziehen können.
 \subsubsection{Idee}
-Der Gedanke hinter ICPC ist, dass die Arbeit des family doctors besser abgebildet werden soll, als es mit Codes wie ICD-10 oder Tarmed möglich ist. Es muss möglich sein, auch Alltagsdinge wie \textit{fühlt sich unwohl} oder \textit{hat Angst vor Krebs} zu codieren und Handlungen wie \textit{habe in untersucht, beraten und die Ängste ausgeräumt} zu deklarieren, und auch die Diagnise \textit{ist gesund} muss möglich sein. Wenn man solche Dinge in strukturierter Weise festhält, kann man die Arbeit des Allgemeinarztes viel besser erforschen, vergleichen und quantifizieren, als dies mit anderen Codesystemen möglich ist. Grundversorgerverbände verschiedener Länder haben daher ein erhebliches Interesse, ICPC zur Stärkung ihrer Datenbasis und damit Förderung einer besseren Grundversorger-orientierten Politik einzusetzen (Dass der Code dennoch nicht kostenlos zur Verfügung gestellt wird, ist wohl einer dieser Logik-Loopings, die beim Entwickeln von Realpolitik aus guten Ideen manchmal passieren...)
+Der Gedanke hinter ICPC ist, dass die Arbeit des family doctors besser abgebildet werden soll, als es mit Codes wie ICD-10 oder Tarmed möglich ist. Es muss möglich sein, auch Alltagsdinge wie \glqq fühlt sich unwohl\grqq oder \glqq hat Angst vor Krebs\grqq zu codieren und Handlungen wie \glqq habe in untersucht, beraten und die Ängste ausgeräumt\grqq zu deklarieren, und auch die Diagnise \glqq ist gesund\grqq muss möglich sein. Wenn man solche Dinge in strukturierter Weise festhält, kann man die Arbeit des Allgemeinarztes viel besser erforschen, vergleichen und quantifizieren, als dies mit anderen Codesystemen möglich ist. Grundversorgerverbände verschiedener Länder haben daher ein erhebliches Interesse, ICPC zur Stärkung ihrer Datenbasis und damit Förderung einer besseren Grundversorger-orientierten Politik einzusetzen (Dass der Code dennoch nicht kostenlos zur Verfügung gestellt wird, ist wohl einer dieser Logik-Loopings, die beim Entwickeln von Realpolitik aus guten Ideen manchmal passieren...)
 
 \subsubsection{Einführung}
 Konkret geschieht die Codierung nach ICPC so, dass der Schnittpunkt einer Krankheits-Episode (eines Problems wie im vorherigen Abschnitt geschildert) mit einer Konsultation ein \textit{Encounter} entsteht. Wenn bei einer Konsultation also zwei Probleme behandelt werden, entsthehen genau zwei Encounters, auch wenn der Patient vielleicht 5 Probleme in der Problemliste stehen hat.

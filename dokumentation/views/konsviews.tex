@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 2645 2007-06-28 12:33:35Z rgw_ch $
+% *  $Id: konsviews.tex 2925 2007-07-28 05:21:25Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -18,13 +18,11 @@
 \subsection{Fälle}
 Diese View (Abb. \ref{fig:faelle2} listet alle für den aktuell selektierten
 Patienten existierenden Fälle. \index{Fall-Liste}
-\begin{figure}[htp]
-\begin{center}
+\begin{wrapfigure}{l}{8cm}
   \includegraphics{images/faelleview}
   \caption{Fälle - View}
   \label{fig:faelle2}
-\end{center}
-\end{figure}
+\end{wrapfigure}
 
 Das Symbol links von der Fallbezeichnung gibt an, ob alle für die Verrechnung
 des Falles notwendigen Daten vorhanden sind: Wenn es grün ist, sollte die
@@ -34,6 +32,8 @@ des Falles ab. So ist für Fälle, die nach dem KVG abgerechnet werden, die Anga
 eines Rechnungsempfängers, eines Versicherers und der Versichertennummer
 notwendig. Bei Fällen, die nach UVG abgerechnet werden, muss eine Fallnummer
 vorhanden sein.
+\index{konsultationen!filtern}
+Klick auf das Filtersymbol in der Titelzeile der View führt dazu, dass nu noch diejenigen Konsultationen in der Konsultationsliste (siehe \ref{view:konsultationen}) angezeigt werden, welche zum gerade ausgewählten Fall gehören. Wenn ein anderer Fall angeklickt wird, wird die Liste erneut gefiltert. Erneuter Klick auf das Filter-Symbol schaltet den Filter wieder aus.
 
 Rechtsklick auf einen Fall öffnet dessen Kontextmenü. Dieses enthält die
 folgenden Punkte:
@@ -53,34 +53,32 @@ folgenden Punkte:
   Konsultationen oder Leistungen.
 \end{itemize}
 \subsection{Fälle und Kons}
+ %\usepackage{graphics} is needed for \includegraphics
+\begin{wrapfigure}{l}{4cm}
+  \includegraphics[width=4cm]{images/fallkonsview}
+  \caption{Fälle und Kons}
+  \label{fig:fallkons}
+\end{wrapfigure}
 Diese View (Abb. \ref{fig:fallkons} listet synoptisch Fälle und dazugehörige
 Konsultationen (Nur Titel ohne Texte) auf. Wenn im oberen Bereich ein Fall
 angeklickt wird, werden im unteren Bereich die zu diesem Fall gehörenden
 Konsultationen angezeigt. Wenn eine Konsultation angeklickt wird, wird diese
-Konsultation in der Konsultation-View (S. s. \pageref{konsview}) angezeigt.
+Konsultation in der Konsultation-View (S. \ref{konsview} s. \pageref{konsview}) angezeigt.\\
 
- %\usepackage{graphics} is needed for \includegraphics
-\begin{figure}[htp]
-\begin{center}
-  \includegraphics{images/fallkonsview}
-  \caption{Fälle und Kons}
-  \label{fig:fallkons}
-\end{center}
-\end{figure}
+\bigskip
 
 \subsection{Konsultationen}
+\label{view:konsultationen}
 Dies ist eine Auflistung aller bisherigen Konsultationen des aktuell
 selektierten Patienten, unabhängig vom jeweiligen Fall.
 \index{Konsultationsliste} Zu jeder Konsultation
-wird der Text ohne Formatierungen angezeigt. (S. Abb. \ref{fig:konslisteview}).
+wird der Text ohne Formatierungen angezeigt. (S. Abb. \ref{fig:konslisteview}).\\
 %\usepackage{graphics} is needed for \includegraphics
-\begin{figure}[htp]
-\begin{center}
+\begin{wrapfigure}{r}{7.5cm}
   \includegraphics{images/konslisteview}
   \caption{Konsultationsliste}
   \label{fig:konslisteview}
-\end{center}
-\end{figure}
+\end{wrapfigure}
 Klick auf den (blauen) Titel einer Konsultation wählt diese Konsultation in der
 Konsultation-View (s. S. \pageref{konsview}) aus.
 
