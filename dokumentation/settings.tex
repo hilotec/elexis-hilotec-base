@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: settings.tex 2819 2007-07-16 13:38:22Z rgw_ch $
+% *  $Id: settings.tex 2927 2007-07-28 10:51:20Z rgw_ch $
 % *******************************************************************************
 %
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -17,7 +17,7 @@
 Die Einstellungen sind alle im selben Dialog zusammengefasst, welcher unter
 \textsc{Datei-Einstellungen} erreicht werden kann (Abb. \ref{fig:settingsmain}).
 %\usepackage{graphics} is needed for \includegraphics
-\begin{figure}[htp]
+\begin{figure}[h]
 \begin{center}
   \includegraphics[width=0.6\textwidth]{images/settingsmain}
   \caption{Einstellungs-Dialog}
@@ -33,6 +33,39 @@ diejenigen Seiten ein, die zur Grundausstattung von Elexis gehören. Grundsätzl
 sollten alle Einstellungen \glqq Ab Werk\grqq{}vernünftige Grundeinstellungen
 aufweisen, so dass es zunächst nicht nötig ist, hier etwas zu ändern. Sie
 brauchen daher dieses Kapitel auch nicht unbedingt weiterzulesen.
+
+\section{Abrechnungssysteme}
+\label{settings:abrechnungssystem}
+\index{Abrechnungssystem}
+\index{KVG}\index{UVG}\index{TarMed}
+Auf dieser Seite legen Sie fest, welche Arten von Abrechnungssystemen in Ihrer Praxis verwendet werden. 
+
+Da Elexis ein universelles Programm ist, welches nicht nur Ärzte, sondern auch Angehörige anderer Gesundheitsberufe unterstützen kann, ist das Abrechnungssystem sehr offen und gehalten. Das bedeutet, dass anfänglich eine entsprechende Konfiguration notwendig ist.
+
+Die Verrechnung von Leistungen hat drei grundsätzliche Elemente:
+\begin{enumerate}
+    \item Ein Codesystem, also vereinfacht gesagt ein Konzept, um einzelne Leistungen und deren Wert zu benennen. Beispiel: \glqq Tarmed\grqq{}, \glqq Akupunkturtarif\grqq{} usw.
+   \item Ein Garantenkonzept, also wer bekommt die Rechnung, wer bezahlt letztlich usw. Beispiele: Tiers Garant, Privatrechnung etc.
+   \item Ein Rechnungskonzept: Wie muss die Rechnung aussehen, auf welchem Weg wird sie versandt (elektronisch, Papier)
+\end{enumerate}
+
+Eine Kombination aus Codesystem,Garantenkonzept und Rechnungskonzept nennen wir hier \glqq Abrechnungssystem\grqq{}.
+
+Man kann in Elexis beliebig viele Abrechnungssysteme definieren, welche parallel existieren und je nach Bedarf verwendet werden können. 
+
+Jedes Abrechnungssystem hat bestimmte Eigenschaften:
+\begin{wrapfigure}{l}{5cm}
+    \includegraphics[width=4.7cm]{images/abrechnungssystem1}
+    \caption{Abrechnungssystem Detail}
+    \label{fig:abr1}
+\end{wrapfigure}
+
+Der Name ist frei wählbar, Leistungscode-System und Standard-Rechnungsausgabe können aus den installierten Plugins gewählt werden (Für nicht vorhandene Abrechnungssysteme müssten entsprechende Plugins erstellt werden).
+Der Multiplikator ist ein Faktor, der auf jede einzelne Position angewendet wird, wenn sie verrechnet wird. Man kann also verschiedene Abrechnungssysteme mit demselbem Leistungscode-System, aber verschiedenen Multiplikatoren (\glqq Taxpunkten\grqq{}) haben. Mit \textit{Hinzufügen} kann man einen Multiplikator definieren, welcher immer ab einem bestimmten Datum gilt.
+
+Und schliesslich sind je nach Abrechnungssystem bestimmte Angaben notwendig, um die Leistungen zu verrechnen, beispielsweise Rechnungsempfänger, Kostenträger, Nummern etc.
+Elexis macht hier keine Vorschriften, Sie können eingeben, was immer Sie wollen. Es sind die Datentypen Text, Kontakt und Datum möglich. (Bei UVG-Versicherungen beispielsweise auch \glqq Unfalldatum\grqq{}).\\
+
 
 \section{Allgemein}
 Auf dieser Seite werden allgemeine Einstellungen für den Programmablauf
