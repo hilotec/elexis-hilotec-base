@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: customize.tex 2928 2007-07-28 10:59:39Z rgw_ch $
+% *  $Id: customize.tex 2929 2007-07-28 15:46:31Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -113,8 +113,13 @@ Sie können nicht nur eine Perspektive erstellen, sondern beliebig viele. Ihre M
 andere Perspektive als Sie selber, z.B. wünscht sie sich die Agenda gross. Oder Sie selber verwenden unterschiedliche
 Perspektiven, z.B. eine für Konsultationen und eine andere für die Buchhaltung oder wenn
 Sie einen Bericht schreiben. Perspektiven lassen sich mit Elexis in wenigen Schritten zusammenstellen:\\
+
 \bigskip
+
 \textbf{Schritt 1: Benötigte Ansicht(en) öffnen}\\
+
+Wählen Sie im Menu \textsc{Fenster - Ansicht - Andere}. Es öffnet sich ein Dialog wie in Abb. \ref{fig:cust1}.\\
+
 \begin{figure}[htbp]
      \begin{minipage}{0.4\textwidth}
       \centering
@@ -123,22 +128,34 @@ Sie einen Bericht schreiben. Perspektiven lassen sich mit Elexis in wenigen Schr
        	\label{fig:cust1}
      \end{minipage}\hfill
      \begin{minipage}{0.5\textwidth}
-        Hier sehen Sie sämtliche Views, die in Ihrer Elexis-Installation vorhanden sind (Welche und wieviele das sind, hängt von den installierten Plugins ab). Wenn Sie in der obersten Zeile den Anfang der gesuchten View zu tippen beginnen, wird die Liste automatisch gefiltert.\\
-        \vfill
+        Diese Dialogbox zeigt Ihnen sämtliche Views, die in Ihrer Elexis-Installation vorhanden sind (Welche und wieviele das sind, hängt von den installierten Plugins ab). Wenn Sie in der obersten Zeile den Anfang der gesuchten View zu tippen beginnen, wird die Liste automatisch gefiltert.\\
+        
      \end{minipage}
+     
    \end{figure}
-Wählen Sie im Menu \textsc{Fenster - Ansicht - Andere}. Es öffnet sich ein Dialog wie in Abb. \ref{fig:cust1}.
-% \begin{wrapfigure}{l}{6cm}
-%    \includegraphics[width=5.5cm]{images/customize1}
-%    \caption{View suchen}
-%    \label{fig:cust1}
-% \end{wrapfigure}
-%    Hier sehen Sie sämtliche Views, die in Ihrer Elexis-Installation vorhanden sind (Welche und wieviele das sind, hängt %von den installierten Plugins ab). Wenn Sie in der obersten Zeile den Anfang der egsuchten View zu tippen beginnen, wird %die Liste automatisch gefiltert.\\
+
  \bigskip
 
 \textbf{Schritt 2: Die Ansichten an die gewünschte Stelle schieben und auf die gewünschte Grösse bringen}\\
 
+\begin{figure}[h]
+       \includegraphics[width=0.8\textwidth]{images/agendagewaehlt}
+       \caption{View an die passende Stelle schieben}
+       	\label{fig:moveview}
+     \includegraphics[width=0.8\textwidth]{images/agendaanpassen}
+       \caption{View auf gewünschte Grösse bringen}
+       	\label{fig:sizeview}
+     
+   \end{figure}
+
+
 \bigskip
 \textbf{Schritt 3:Perspektive speichern}\\
-
+Wenn Sie möchten, dass Ihre so erstellte Perspektive auch bei späteren Programmstarts oder auf anderen Computern zur Verfügung steht, haben Sie mehrere Möglichkeiten:
+\begin{itemize}
+\item Wählen Sie im Menu \textsc{Fenster - Perspektive - als Startperspektive speichern}. Damit legen Sie fest, dass die eben zusammengestellte Perspektive fortan beim Anmelden erscheint.
+\item \textsc{Fenster - Perspektive - speichern als...}. Damit können Sie die aktuelle Perspektive unter einem frei wählbaren Namen abspeichern. Sie können sie zu einem späteren Zeitpunkt jederzeit mit \textsc{Fenster - Perspektive - andere...} mit diesem Namen wieder zurückholen.
+\item \textsc{Fenster - Perspektive - speichern}. In diesem Fall wird die aktuelle Perspektive unter ihrem bestehenden namen gespeichert.
+\item Und, last but not least, Wenn Sie unter \textsc{Datei - Einstellungen - Anwender} die Perspektive unter einem bestimmten Namen speichern, dann können Sie sie auch von einer anderen Arbeitsstation aus unter diesem Namen einlesen\footnote{Dies geht allerdings natürlich nur, wenn auch auf der aufrufenden Arbeitsstation alle Views, die in dieser Perspektive definiert sind, auch vorhanden sind}. Diese Option eignet sich, um einheitliche Arbeitsumgebungen zuammenzustellen.
+\end{itemize}
 
