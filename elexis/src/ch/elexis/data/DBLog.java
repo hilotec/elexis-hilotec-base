@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBLog.java 2736 2007-07-07 14:07:40Z rgw_ch $
+ * $Id: DBLog.java 2926 2007-07-28 07:46:06Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,7 +21,7 @@ public class DBLog extends PersistentObject {
 	private static final String TABLENAME="LOGS";
 	public static enum TYP{DELETE,UNDELETE};
 	static{
-		addMapping(TABLENAME,"OID","Datum=S:D:datum","typ","userID=user","station","ExtInfo");
+		addMapping(TABLENAME,"OID","Datum=S:D:datum","typ","userID","station","ExtInfo");
 	}
 	
 	public DBLog(PersistentObject obj,TYP typ){
