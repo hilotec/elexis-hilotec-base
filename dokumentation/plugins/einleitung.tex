@@ -8,16 +8,20 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: einleitung.tex 2472 2007-06-03 09:48:14Z rgw_ch $
+% *  $Id: einleitung.tex 2933 2007-07-29 10:05:35Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
 \section{Warum Plugins?}
 \label{expl:plugins}
 Die Erfahrung mit älteren Programmen zeigte, dass diese immer schwieriger zu warten und zu erweitern waren, je mehr Funktionen eingebaut wurden. Eine bestimmte Funktion nachträglich zu ändern (z.B. ein neues Abrechnungssystem) bedingte einen enormen Aufwand und war fehlerträchtig. Ausserdem konnten Änderungen und Erweiterungen nur von der Herstellerfirma selbst programmiert werden, da der gesamte Programmcode ja \textit{an einem Stück} war. Wenn man nun eine Funktion brauchte, die selten benötigt wird, musste man sehr tief in die Tasche greifen (sofern die Firma überhaupt Interesse daran hatte, eine bestimmte Funktion nur für einen einzelnen Kunden zu implementieren).
+
 Hier kommt das Plugin-System ins Spiel. Entwickelt wurde es ursprünglich für Eclipse, wo es ähnliche Anforderungen gab,wie bei Elexis: Eine Vielzahl potentieller Erweiterungen, von denen aber längst nicht jeder Anwender alle braucht, und die zum Zeitpunkt der Herstellung noch gar nicht alle bekannt sein können. Das Plugin-Konzept hat sich mittlerweile etabliert und einen hohen Reifegrad erreicht.
+
 Grundsätzlich gilt: Möglichst viele Stellen im Programm werden von vornherein mit sogenannten \textit{Erweiterungspunkten} ausgestattet. Das sind wohldokumentierte \textit{Steckkontakte}, an denen sich Plugins \textit{einstöpseln} können. Der Hersteller des Plugins braucht dabei nicht mehr zu kennen, als die Dokumentation des Erweiterungspunktes. Er braucht das Hauptprogramm weder zu kennen noch sich in dessen Quellcode einzuarbeiten. Ein Plugin kann nur eine winzige einzelne Funktion implementieren, oder es kann ein eigenständiges Programm sein, das lediglich eine gewisse Zusammenarbeit mit dem Hauptptogramm braucht.
+
 Bei Elexis wurden beispielsweise die Abrechnungs- und Diagnosecodesysteme als Plugins realisiert, damit jederzeit neue Codesysteme ohne Änderung des Hauptprogramm eingebaut werden können. Auch die einzubindende Textverarbeitung und die Möglichkeiten, Daten aus Fremdprogramm, Labors und Apparaten zu importieren, sind als Plugin realisiert.
+
 \subsection{Ein Plugin installieren}
 Die Installation eines Plugins ist denkbar einfach: Man muss es nur ins \textit{plugins}-Verzeichnis von Elexis kopieren und Elexis neu starten.
 
