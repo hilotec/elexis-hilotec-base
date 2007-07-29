@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 2773 2007-07-10 15:58:33Z rgw_ch $
+% *  $Id: konzepte.tex 2932 2007-07-29 06:21:06Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -40,11 +40,9 @@ Es gibt folgende Typen von Kontakten:
 
 
 \section{Anwender und Mandanten}
-Jemand, der eine Rechnungsstelle (also eine eigene ZSR-Nummer) hat, ist ein \textit{Mandant}. Jeder Vorgang
-in Elexis (Konsultation, Labor, Rezept etc.) läuft immer unter Verantwortung und auf Rechnung genau eines
-Mandanten. \index{Mandant}
+Jemand, der eine Rechnungsstelle (in der Schweiz z.B. eine eigene ZSR-Nummer) hat, ist ein \textit{Mandant}. Jeder Vorgang in Elexis (Konsultation, Labor, Rezept etc.) läuft immer unter Verantwortung und auf Rechnung genau eines Mandanten. \index{Mandant}
 
-\bigskip
+\medskip
 
 Jemand, der das Programm bedienen darf, ist ein \textit{Anwender}. Ein Anwender arbeitet immer im Auftrag eines bestimmten Mandanten.
 
@@ -77,15 +75,17 @@ genauer erklärt.
 \index{Konsultation}\index{Fall}\index{Garant}\index{Krankenkasse}\index{Kostenträger}
 \index{Leistungserbringer}\index{Abrechnung}Jeder in Elexis festgehaltene Kontakt zwischen Praxispersonal und Patient ist eine \textit{Konsultation}. Wenn die Konsultation verrechnet wird, dann geht die Verrechnung zugunsten desjenigen Mandanten, für welchen der eingeloggte Anwender tätig war.
 
-Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier eher eine versicherungstechnische, als eine medizinische Einheit: Der Fall sammelt alle Konsultationen, welche unter demselben Titel verrechnet werden. Dies kann manchmal identisch mit dem medizinischen Fallbegriff sein (Ein Unfall, welcher über einen bestimmten Versicherer mit einer bestimmten Fallnummer abgerechnet wird), oder er kann auch keinen Zusammenhang mit einem medizinischen Fall haben (z.B. wird in der Schweiz im Allgemeinen ein allgemeiner Fall \glqq Krankheit\grqq{} erstellt werden, der alle KVG-Konsultationen sammelt.
+Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier eher eine versicherungstechnische, als eine medizinische Einheit: Der Fall sammelt alle Konsultationen, welche mit demselben Abrechnungssystem (s. \ref{settings:abrechnungssystem} auf S. \pageref{settings:abrechnungssystem}) abgerechnet werden. Dies kann manchmal identisch mit dem medizinischen Fallbegriff sein (Ein Unfall, welcher über einen bestimmten Versicherer mit einer bestimmten Fallnummer abgerechnet wird), oder er kann auch keinen Zusammenhang mit einem medizinischen Fall haben (z.B. wird in der Schweiz im Allgemeinen ein allgemeiner Fall \glqq Krankheit\grqq{} erstellt werden, der alle KVG-Konsultationen sammelt.
 
-Jeder Fall hat einen \textit{Garanten}, das ist die Person oder Organisation (=Kontakt), welche die Rechnung erhält und primärer Schuldner ist.
+%Jeder Fall hat einen \textit{Garanten}, das ist die Person oder Organisation (=Kontakt), welche die Rechnung erhält und primärer Schuldner ist.
 
-Ausserdem  hat ein Fall einen \textit{Kostenträger}, das ist die Person oder Organisation (=Kontakt), welche die Rechnung letztlich bezahlt.
+%Ausserdem  hat ein Fall einen \textit{Kostenträger}, das ist die Person oder Organisation (=Kontakt), welche die Rechnung letztlich bezahlt.
 
-Garant und Kostenträger können selbstverständlich identisch sein, beispielsweise bei Privatrechnung oder bei Behandlungen, die im Tiers Payant-System abgerechnet werden (in der Schweiz z.B. UVG und IV). Beim Tiers Garant System dagegen (KVG in den meisten Kantonen), ist der Patient selbst Garant, die Krankenkasse aber Kostenträger.
+%Garant und Kostenträger können selbstverständlich identisch sein, beispielsweise bei Privatrechnung oder bei Behandlungen, die im Tiers Payant-System abgerechnet werden (in der Schweiz z.B. UVG und IV). Beim Tiers Garant System dagegen (KVG in den meisten Kantonen), ist der Patient selbst Garant, die Krankenkasse aber Kostenträger.
 
-Ein Fall kann immer nur einen Garanten, einen Kostenträger und einen Patienten enthalten, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
+%Ein Fall kann immer nur einen Garanten, einen Kostenträger und einen Patienten enthalten, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
+
+Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
 
 \section{Artikel und Lager}
 \index{Artikel}\index{Medikament}\index{Lager}

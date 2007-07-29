@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 2925 2007-07-28 05:21:25Z rgw_ch $
+% *  $Id: konsviews.tex 2932 2007-07-29 06:21:06Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -18,7 +18,7 @@
 \subsection{Fälle}
 Diese View (Abb. \ref{fig:faelle2} listet alle für den aktuell selektierten
 Patienten existierenden Fälle. \index{Fall-Liste}
-\begin{wrapfigure}{l}{8cm}
+\begin{wrapfigure}{l}{6.5cm}
   \includegraphics{images/faelleview}
   \caption{Fälle - View}
   \label{fig:faelle2}
@@ -27,12 +27,17 @@ Patienten existierenden Fälle. \index{Fall-Liste}
 Das Symbol links von der Fallbezeichnung gibt an, ob alle für die Verrechnung
 des Falles notwendigen Daten vorhanden sind: Wenn es grün ist, sollte die
 Rechnungserstellung möglich sein, wenn es rot ist, fehlen noch eine oder mehrere
-Angaben. \textit{Welche} Angaben mindestens notwendig sind, hängt von der Art
-des Falles ab. So ist für Fälle, die nach dem KVG abgerechnet werden, die Angabe
+Angaben.
+
+\textit{Welche} Angaben mindestens notwendig sind, hängt vom Abrechnungssystem ab. So ist für Fälle, die nach dem KVG abgerechnet werden, die Angabe
 eines Rechnungsempfängers, eines Versicherers und der Versichertennummer
 notwendig. Bei Fällen, die nach UVG abgerechnet werden, muss eine Fallnummer
-vorhanden sein.
+vorhanden sein. Bei Privatrechnungen wird mindestens ein Rechnungsempfänger anzugeben sein.
+
+\medskip
+
 \index{konsultationen!filtern}
+\label{filter:fall}
 Klick auf das Filtersymbol in der Titelzeile der View führt dazu, dass nu noch diejenigen Konsultationen in der Konsultationsliste (siehe \ref{view:konsultationen}) angezeigt werden, welche zum gerade ausgewählten Fall gehören. Wenn ein anderer Fall angeklickt wird, wird die Liste erneut gefiltert. Erneuter Klick auf das Filter-Symbol schaltet den Filter wieder aus.
 
 Rechtsklick auf einen Fall öffnet dessen Kontextmenü. Dieses enthält die
@@ -52,10 +57,13 @@ folgenden Punkte:
   Rechnungserstellung und eignet sich vor allem für Sofortrechnungen einzelner
   Konsultationen oder Leistungen.
 \end{itemize}
+
+
+\clubpenalty=5000
 \subsection{Fälle und Kons}
  %\usepackage{graphics} is needed for \includegraphics
-\begin{wrapfigure}{l}{4cm}
-  \includegraphics[width=4cm]{images/fallkonsview}
+\begin{wrapfigure}{l}{7cm}
+  \includegraphics[width=7cm]{images/fallkonsview}
   \caption{Fälle und Kons}
   \label{fig:fallkons}
 \end{wrapfigure}
@@ -63,39 +71,38 @@ Diese View (Abb. \ref{fig:fallkons} listet synoptisch Fälle und dazugehörige
 Konsultationen (Nur Titel ohne Texte) auf. Wenn im oberen Bereich ein Fall
 angeklickt wird, werden im unteren Bereich die zu diesem Fall gehörenden
 Konsultationen angezeigt. Wenn eine Konsultation angeklickt wird, wird diese
-Konsultation in der Konsultation-View (S. \ref{konsview} s. \pageref{konsview}) angezeigt.\\
+Konsultation in der Konsultation-View (S. \ref{konsview} s. \pageref{konsview}) angezeigt.
 
-\bigskip
+Um einen neuen Fall zu erstellen, geben Sie einen Titel für diesen Fall ein und klicken dann auf \textit{neuer Fall}. Um eine neue Konsultation einzugeben, wählen Sie den dazugehörigen Fall aus und klicken auf \textit{Neue Konsultation}
+
+\medskip
+
+Anmerkung: Sie werden festgestellt haben, dass diese View und die vorher besprochene Fälle-View bis zu einem gewissen Punkt redundant sind. Das ist auch so. Sie können getrennte Views für Fälle und Konsultationen bevorzugen, oder eine View in der beides enthalten ist. In der Regel werden Sie nicht beide Konzepte anwenden, sondern dasjenige, welches Ihnen besser gefällt - Elexis lässt Ihnen die Wahl. 
+
+\clearpage
 
 \subsection{Konsultationen}
 \label{view:konsultationen}
-Dies ist eine Auflistung aller bisherigen Konsultationen des aktuell
-selektierten Patienten, unabhängig vom jeweiligen Fall.
-\index{Konsultationsliste} Zu jeder Konsultation
-wird der Text ohne Formatierungen angezeigt. (S. Abb. \ref{fig:konslisteview}).\\
-%\usepackage{graphics} is needed for \includegraphics
-\begin{wrapfigure}{r}{7.5cm}
+\begin{wrapfigure}{l}{7.5cm}
   \includegraphics{images/konslisteview}
   \caption{Konsultationsliste}
   \label{fig:konslisteview}
 \end{wrapfigure}
+
+Dies ist eine Auflistung aller bisherigen Konsultationen des aktuell
+selektierten Patienten, unabhängig vom jeweiligen Fall.
+\index{Konsultationsliste} Zu jeder Konsultation
+wird der Text ohne Formatierungen angezeigt. (S. Abb. \ref{fig:konslisteview}).\\
 Klick auf den (blauen) Titel einer Konsultation wählt diese Konsultation in der
 Konsultation-View (s. S. \pageref{konsview}) aus.
 
 Klick auf das Filter-Symbol rechts oben öffnet den Filter-Dialog (s. Abb. \ref{fig:konsfilter}).
-\begin{figure}[htp]
-\begin{center}
-  \includegraphics{images/filterdialog}
-  \caption{Filterdialog}
-  \label{fig:konsfilter}
-\end{center}
-\end{figure}
 \index{Konsultationsfilter} Hier können Sie bestimmte Kriterien eingeben, nach
 denen die angezeigten Konsultationen gefiltert werden sollen (d.h. es werden nur
 noch diejenigen Konsultationen angezeigt, die den Filterbedingungen
 entsprechen).
 
-Im Oberen Feld können Sie angeben, ob nur Konsultationen eines bestimmten Falls
+Im oberen Feld können Sie angeben, ob nur Konsultationen eines bestimmten Falls
 oder aller Fälle angezeigt werden sollen. Im unteren Feld können Sie
 Suchbegriffe eingeben, welche im Konsultationstext vorkommen müssen. Mehrere
 Suchbegriffe können mit AND, OR, NOT, AND NOT und OR NOT miteinander verknüpft werden.
@@ -110,6 +117,19 @@ Expression\grqq{}oder \glqq Pattern Matching\grqq{}. Diese Technik erlaubt es,
 den Suchbegriff mit verschiedensten Platzhaltern zu beschreiben. So würde z.B.
 \glqq M[ae][iy]e?r\grqq{} nach allen Meiers, Mayrs etc. in allen Schreibweisen
 suchen.
+
+\medskip
+
+Anmerkung:
+Das Filtern der Konsultationen mit diesem Verfahren kann, da der Text jeder Konsultstion komplett durchsucht wird, einige Sekunden dauern. Wenn man lediglich nach Fällen oder Problemen filtern möchte, ist der entsprechende Fallfilter (S. \pageref{filter:fall}) oder Problemliste-Filter (S. \pageref{filter:problemliste})im Allgemeinen effizienter.
+
+\begin{figure}[ht]
+\begin{center}
+  \includegraphics{images/filterdialog}
+  \caption{Filterdialog}
+  \label{fig:konsfilter}
+\end{center}
+\end{figure}
 
 
 \subsection{Konsultation}
