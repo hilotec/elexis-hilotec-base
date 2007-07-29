@@ -1,40 +1,51 @@
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 \section{Elexis-Befunde}
-Einbindung textorientierter datierter Befundserien (z.B. Gewicht, BZ, Quick etc.). Dieses Plugin ist Teil der Standard-Distribution.
-\subsection{Konfiguration}
+Einbindung textorientierter datierter Befundserien (z.B. Gewicht, BZ, Quick etc.). \subsection{Konfiguration}
 
-Wenn das Plugin installiert ist, finden Sie im Menu Datei-Einstellungen eine Rubrik \textit{Befunde}. Diese wird anfangs leer sein (Abb. \ref{fig:befundesettings}):
-\begin{figure}[htp]
-    \includegraphics[width=4in]{images/befunde1.png}
-    % befunde1.png: 538x515 pixel, 96dpi, 14.23x13.62 cm, bb=0 0 403 386
-    \caption{Befunde-Einstellungen}\label{fig:befundesettings}
+\begin{figure}[htbp]
+   \begin{minipage}{0.35\textwidth}
+       \centering
+       \includegraphics[width=0.9\textwidth]{images/befunde1}
+       \caption{Befund}
+       \label{fig:befundesettings}
+     \end{minipage}\hfill
+     \begin{minipage}{0.65\textwidth}
+     Wenn das Plugin installiert ist, finden Sie im Menu Datei-Einstellungen eine Rubrik \textit{Befunde}. Diese wird anfangs leer sein (Abb. \ref{fig:befundesettings}).\\
+     
+     Um einen neuen Befundparameter hinzuzufügen, klicken Sie auf  \textit{Hinzufügen}. Sie werden nach dem Namen dieses Parameters gefragt, wir wählen  Röntgen. Danach erscheint eine Karteikarte mit diesem Parameter, die wir jetzt noch mit den einzutragenden Datenspalten versehen müssen.
+
+    \end{minipage}
 \end{figure}
+\begin{figure}[htbp]
+   \begin{minipage}{0.35\textwidth}
+       \centering
+        % befunde2.png: 538x515 pixel, 96dpi, 14.23x13.62 cm, bb=0 0 403 386
+       \includegraphics[width=0.9\textwidth]{images/befunde2}
+       \caption{Parameter 2}
+       \label{fig:befundesettings}
+     \end{minipage}\hfill
+     \begin{minipage}{0.65\textwidth}
+        Klicken Sie nach jeder Zeile auf  \textit{Apply}  bzw.  \textit{Anwenden}:
+        Wenn ein Feld mehrzeilig sein soll, klicken Sie die entsprechende Checkbox an. Eine Variante mit mehr als zwei Spalten sehen Sie in Abb. \ref{fig:befunde4}.:
 
-
-Um einen neuen Befundparameter hinzuzufügen, klicken Sie auf  \textit{Hinzufügen}. Sie werden nach dem Namen dieses Parameters gefragt, wir wählen  Röntgen. Danach erscheint eine Karteikarte mit diesem Parameter, die wir jetzt noch mit den einzutragenden Datenspalten versehen müssen (Abb: \ref{fig:befunde2}).
-\begin{figure}[htp]
-\includegraphics[width=3in]{images/befunde2.png}
-% befunde2.png: 538x515 pixel, 96dpi, 14.23x13.62 cm, bb=0 0 403 386
-    \caption{Neuer Parameter}\label{fig:befunde2}
+    \end{minipage}
 \end{figure}
-Klicken Sie nach jeder Zeile auf  \textit{Apply}  bzw.  \textit{Anwenden}:
-\begin{figure}[htp]
-    \includegraphics[width=3in]{images/befunde3.png}
-    % befunde3.png: 580x581 pixel, 96dpi, 15.34x15.37 cm, bb=0 0 435 436
-        \caption{Neuer Parameter 2}\label{fig:befunde3}
-\end{figure}
-
-Wenn ein Feld mehrzeilig sein soll, klicken Sie die entsprechende Checkbox an. Eine Variante mit mehr als zwei Spalten sehen Sie in Abb. \ref{fig:befunde4}.:
-\begin{figure}[htp]
-    \includegraphics[width=4in]{images/befunde7.png}
+\begin{figure}[htbp]
+   \begin{minipage}{0.35\textwidth}
+       \centering
+    \includegraphics[width=0.9\textwidth]{images/befunde7.png}
     % befunde7.png: 580x520 pixel, 96dpi, 15.34x13.76 cm, bb=0 0 435 390
-    \caption{Mehrspaltiger Parameter}\label{fig:befunde4}
+    \caption{Mehrspaltig}\label{fig:befunde4}
+       \label{fig:befunde4}
+     \end{minipage}\hfill
+     \begin{minipage}{0.65\textwidth}
+Werte können auch errechnet statt direkt eingegeben werden. Geben Sie hierzu einfach einen Ausdruck der Form \textit{Resultat=Formel} ein, wobei Sie sich mit Fx auf andere Felder derselben Seite beziehen können. Im Beispiel links errechnen wir den BMI aus den eingegebenen Werten für Grösse und Gewicht. Das Resultat wird allerdings standardmässig auf 9 Stellen genau ausgegeben, deswegen runden wir es hier auf eine Stelle.
+    \end{minipage}
 \end{figure}
 
-Sie sehen hier auch eine weitere Besonderheit: Werte können auch errechnet statt direkt eingegeben werden. Geben Sie hierzu einfach einen Ausdruck der Form \textit{Resultat=Formel} ein, wobei Sie sich mit Fx auf andere Felder derselben Seite beziehen können. In obigem Beispiel errechnen wir den BMI aus den eingegebenen Werten für Grösse und Gewicht. Das Resultat wird allerdings standardmässig auf 9 Stellen genau ausgegeben, deswegen runden wir es hier auf eine Stelle.
+\clearpage
 
 \subsection{Anwendung}
-
 Öffnen Sie die  Befunde-View.
 \begin{flushleft}
 \includegraphics[width=3in]{images/befunde4.png}
@@ -56,4 +67,4 @@ Sie sehen jetzt Ihre bei der Konfiguration angegebenen Messzeilen, ein- oder meh
 Im Fall eines berechneten Wertes können Sie die Rechnung durch Klicken auf den blauen Titel auslösen:\
 \begin{center}
 \includegraphics{images/befunde8}
-\end{center}
+\end{center} 

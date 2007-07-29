@@ -34,17 +34,24 @@ Um einem Problem eine KK-Diagnose zuzuordnen (das ist die Diagnose, die später 
 \end{figure}
 Um ein Problem in einer Konsultation explizit zu behandeln, ziehen Sie es mit der Maus aus der Problemliste in Ihr Konsultationsfenster (Abb. \ref{fig:problemliste2}).
 
-Wenn Sie konsequent mit der Problemliste arbeiten, erhalten Sie einen zusätzlichen Nutzen: Wenn Sie den Filtern-Knopf im Problemliste-Fenster einrasten (Abb. \ref{fig:problemliste}), dann werden in der Konsultationen-View (\ref{view:konsultationen}; s. \pageref{view:konsultationen} ff.) automatisch immer nur diejenigen Konsultationen angezeigt, die das gerade ausgewählte Problem behandeln. 
+Wenn Sie konsequent mit der Problemliste arbeiten, erhalten Sie einen zusätzlichen Nutzen: Wenn Sie den Filtern-Knopf im Problemliste-Fenster einrasten (Abb. \ref{fig:problemliste}), dann werden in der Konsultationen-View (\ref{view:konsultationen}; s. \pageref{view:konsultationen} ff.) automatisch immer nur diejenigen Konsultationen angezeigt, die das gerade ausgewählte Problem behandeln.
 \label{filter:problemliste}
 \index{konsultationen!filtern} \index{Filter}Klick auf ein anderes Problem filtert die Konsultationen-Liste jeweils neu. Erneuter Klick auf den Filtern-Knopf löst diesen wieder aus, so dass wieder alle Konsultationen angezeigt werden.
 
 \subsection{Encounter}
-Um das ICPC-Plugin voll nutzen zu können, benötigen Sie den ICPC-Code selbst, den Sie leicht importieren können. Aus lizenzrechtlichen Gründen können wir ihn aber nicht direkt beifügen. Erkundigen Sie sich bitte ggf. bei der SGAM, ob und unter welchen Bedingungen Sie den Code beziehen können.
+Um das ICPC-Plugin voll nutzen zu können, benötigen Sie den ICPC-Code selbst, den Sie leicht importieren können. Aus lizenzrechtlichen Gründen können wir ihn aber nicht direkt beifügen. Erkundigen Sie sich bitte ggf. beim für Ihr Land zuständigen Lizenz-Inhaber (In der Schweiz: SGAM), ob und unter welchen Bedingungen Sie den Code beziehen können.
 \subsubsection{Idee}
-Der Gedanke hinter ICPC ist, dass die Arbeit des family doctors besser abgebildet werden soll, als es mit Codes wie ICD-10 oder Tarmed möglich ist. Es muss möglich sein, auch Alltagsdinge wie \glqq fühlt sich unwohl\grqq oder \glqq hat Angst vor Krebs\grqq zu codieren und Handlungen wie \glqq habe in untersucht, beraten und die Ängste ausgeräumt\grqq zu deklarieren, und auch die Diagnise \glqq ist gesund\grqq muss möglich sein. Wenn man solche Dinge in strukturierter Weise festhält, kann man die Arbeit des Allgemeinarztes viel besser erforschen, vergleichen und quantifizieren, als dies mit anderen Codesystemen möglich ist. Grundversorgerverbände verschiedener Länder haben daher ein erhebliches Interesse, ICPC zur Stärkung ihrer Datenbasis und damit Förderung einer besseren Grundversorger-orientierten Politik einzusetzen (Dass der Code dennoch nicht kostenlos zur Verfügung gestellt wird, ist wohl einer dieser Logik-Loopings, die beim Entwickeln von Realpolitik aus guten Ideen manchmal passieren...)
+Der Gedanke hinter ICPC ist, dass die Arbeit des family doctors besser abgebildet werden soll, als es mit Codes wie ICD-10 oder Tarmed möglich ist. Es muss möglich sein, auch Alltagsdinge wie \glqq fühlt sich unwohl\grqq oder \glqq hat Angst vor Krebs\grqq zu codieren und Handlungen wie \glqq habe in untersucht, beraten und die Ängste ausgeräumt\grqq zu deklarieren, und auch die Diagnise \glqq ist gesund\grqq muss möglich sein. Wenn man solche Dinge in strukturierter Weise festhält, kann man die Arbeit des Allgemeinarztes viel besser erforschen, vergleichen und quantifizieren, als dies mit anderen Codesystemen möglich ist. Grundversorgerverbände verschiedener Länder haben daher ein erhebliches Interesse, ICPC zur Stärkung ihrer Datenbasis und damit Förderung einer besseren Grundversorger-orientierten Politik einzusetzen (Dass der Code dennoch nicht frei zur Verfügung gestellt wird, ist wohl einer dieser Logik-Loopings, die beim Entwickeln von Realpolitik aus guten Ideen manchmal passieren...)
 
 \subsubsection{Einführung}
-Konkret geschieht die Codierung nach ICPC so, dass der Schnittpunkt einer Krankheits-Episode (eines Problems wie im vorherigen Abschnitt geschildert) mit einer Konsultation ein \textit{Encounter} entsteht. Wenn bei einer Konsultation also zwei Probleme behandelt werden, entsthehen genau zwei Encounters, auch wenn der Patient vielleicht 5 Probleme in der Problemliste stehen hat.
+
+Konkret geschieht die Codierung nach ICPC so, dass der Schnittpunkt einer Krankheits-Episode (eines Problems wie im vorherigen Abschnitt geschildert) mit einer Konsultation ein \textit{Encounter} entsteht (\ref{fig:encounter}).\\ 
+\begin{wrapfigure}{l}{7cm}
+\includegraphics{images/encounter}
+\caption{ICPC-Encounter}
+\label{fig:encounter}
+\end{wrapfigure}
+Wenn bei einer Konsultation also zwei Probleme behandelt werden, entsthehen genau zwei Encounters, auch wenn der Patient vielleicht 5 Probleme in der Problemliste stehen hat.
 
 Jeder Encounter ist gekennzeichnet durch
 \begin{itemize}
@@ -52,6 +59,14 @@ Jeder Encounter ist gekennzeichnet durch
 \item Eine Beurteilung (Diagnose). Zum Beispiel 'Migräne'.
 \item Ein Procedere. Zum Beispiel 'Medikament, Lebensstilberatung'.
 \end{itemize}
+
+\bigskip
+
+Im Elexis-ICPC-Plugin wird ein Encounter dadurch erstellt, dass ein Problem aus der Problemliste in ein Konsultationsfenster gezogen wird. Die genauere Definition des Encounters geschieht, indem man dann auf diesen Text doppelklickt. Das Encounter
+-Fenster zeigt dann die Details des Encounters an. Durch Klick auf 'RFE' kann man aus der dann öffnenden Diagnosen-View den entsprechenden Code z.B. aus der ICPC-Komponente 1 (Symptom and Complaint component) einsetzen. Entsprechend wählt man für Diagnose einen Code aus der Komponente 7 (Diagnosis component) und für Procedere aus z.B. Komponente 3 (Medication, treatment, procedure component).
+Genauere Informationen zur Anwendung der einzelnen ICPC-Komponenten finden Sie in der ICPC-Dokumentation. Weitere Informationen z.B. hier: 
+
+\href{http://www.primary-care.ch/pdf/2005/2005-10/2005-10-656.PDF}{http://www.primary-care.ch/pdf/2005/2005-10/2005-10-656.PDF}
 
 
 \section{Sgam-xChange}
