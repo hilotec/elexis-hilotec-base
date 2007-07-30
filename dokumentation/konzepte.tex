@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 2932 2007-07-29 06:21:06Z rgw_ch $
+% *  $Id: konzepte.tex 2935 2007-07-30 05:01:28Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -77,15 +77,35 @@ genauer erklärt.
 
 Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier eher eine versicherungstechnische, als eine medizinische Einheit: Der Fall sammelt alle Konsultationen, welche mit demselben Abrechnungssystem (s. \ref{settings:abrechnungssystem} auf S. \pageref{settings:abrechnungssystem}) abgerechnet werden. Dies kann manchmal identisch mit dem medizinischen Fallbegriff sein (Ein Unfall, welcher über einen bestimmten Versicherer mit einer bestimmten Fallnummer abgerechnet wird), oder er kann auch keinen Zusammenhang mit einem medizinischen Fall haben (z.B. wird in der Schweiz im Allgemeinen ein allgemeiner Fall \glqq Krankheit\grqq{} erstellt werden, der alle KVG-Konsultationen sammelt.
 
-%Jeder Fall hat einen \textit{Garanten}, das ist die Person oder Organisation (=Kontakt), welche die Rechnung erhält und primärer Schuldner ist.
-
-%Ausserdem  hat ein Fall einen \textit{Kostenträger}, das ist die Person oder Organisation (=Kontakt), welche die Rechnung letztlich bezahlt.
-
-%Garant und Kostenträger können selbstverständlich identisch sein, beispielsweise bei Privatrechnung oder bei Behandlungen, die im Tiers Payant-System abgerechnet werden (in der Schweiz z.B. UVG und IV). Beim Tiers Garant System dagegen (KVG in den meisten Kantonen), ist der Patient selbst Garant, die Krankenkasse aber Kostenträger.
-
-%Ein Fall kann immer nur einen Garanten, einen Kostenträger und einen Patienten enthalten, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
-
 Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
+
+\clearpage
+
+\section{Leistungsabrechnung}
+\index{Leistungscodes}\index{abrechnen}
+\begin{wrapfigure}{l}{7.5cm}
+    \includegraphics[width=7.5cm]{images/leistungen1}
+    \caption{Leistungen}
+    \label{fig:leistungen}
+\end{wrapfigure}
+Die Leistungscodes, die verrechnet werden können, werden einerseits von Plugins beigesteuert (z.B. Elexis-Arzttarife-Schweiz), andererseits durch von Ihnen selbst definierte Leistungsblöcke (s. weiter unten).
+
+Alle im System vorhandenen Leistungscodesysteme sind im Fenster \glqq Leistungen\grqq{} (Abb. \ref{fig:leistungen}) untergebracht: Am unteren Rand des Fensters sehen Sie für jedes installierte Leistungscodesystem einen Reiter.
+
+Dieses Fenster erscheint jeweils dann, wenn Sie vom Konsultationsfenster aus \glqq{}Verrechnung\grqq{} anklicken. Der Aufbau ist für jedes Leistungscodesystem gleich: 
+
+Im obersten Teilfenster stehen die von Ihnen am häufigsten angewendeten Codes dieses Leistungssystems, sind dadurch also im raschen Zugriff ohne suchen. Die Liste wird laufend aktualisiert, und je häufiger Sie einen bestimmten Code verwenden, desto weiter oben erscheint er beim nächsten Öffnen des Fensters.
+
+\medskip
+Im mittleren Teil erscheinen die bei diesem Patienten bisher am häufigsten verwendeten Codes, welche nach demselben Prinzip sortiert sind. Im untersten Teilfenster schliesslich steht das gesamte Leistngscodesystem in der vorgegebenen Systematik zur Verfügung.
+
+\bigskip
+
+Um einen Code zu verrechnen, können Sie ihn  aus irendeinem der drei Abschnitte ins Verrechnung-Fenster ziehen, oder auch per Doppelklick anwählen. Manche Plugins können auch einen \glqq Optifier\grqq (Optimizer/Verifier) beinhalten, welcher Fehler erkennt bzw. Korrekturen anbringen kann. So wird etwa das Tarmed-Plugin einerseits z.B. die doppelte Verrechnung des Codes \textit{00.0010 Konsultation erste 5 Minuten} mit einer Fehlermeldung verweigern (Verifier), und andererseits wird es, wenn Sie den Code \textit{00.0030 Konsultation letzte 5 Minuten} abrechnen, automatisch auch den Code 00. 0010 dazunehmen, da 00.0030 ja immer mit 00.0010 kombiniert wird (Optimizer). 
+Bei \textit{Artikeln}, welche bei Direktabgabe auch von diesem Fenster aus verrechnet werden können, wird bei Verrechnung jeweils automatisch auch der Lagerbestand entsprechend nachhgefürt.
+
+\subsection{Leistungsblöcke und Eigenleistungen}
+Als weitere Arbeitserleichterung erlaubt Elexis auch, mehrere Leistungscodes, auch aus ganz unterschiedlichen Codesystemen, zu Blöcken zusammenzufassen, die dann komplett oder teilweise verrechnet werden können. Solche Blöcke können nebst vorderfinierten Leistungscodes aller installierten Codesysteme auch selbstdefinierte Elemente enthalten.
 
 \section{Artikel und Lager}
 \index{Artikel}\index{Medikament}\index{Lager}

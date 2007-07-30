@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: vollversion.tex 2773 2007-07-10 15:58:33Z rgw_ch $
+% *  $Id: vollversion.tex 2935 2007-07-30 05:01:28Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -165,7 +165,7 @@ Sie können sich jetzt mit dem Namen \textit{Administrator} und dem Passwort \te
 
 \section{Mit OpenOffice verbinden}
 \label{config:ooo}
-Die Installationsdatei enthält bereits eine OpernOffice-Vollversion. Falls Sie mit dieser weiterarbeiten möchten. brauchen Sie nichts zu unternehmen. 
+Die Installationsdatei enthält bereits eine OpernOffice-Vollversion. Falls Sie mit dieser weiterarbeiten möchten. brauchen Sie nichts zu unternehmen.
 
 Wenn Sie allerdings bereits eine andere Version von OpenOffice auf Ihrem Computer installiert haben, dann könnte die von Elexis mitgebrachte Version zu Konflikten führen. Gehen Sie in diesem Fall so vor:
 \begin{itemize}
@@ -180,7 +180,12 @@ Wenn Sie allerdings bereits eine andere Version von OpenOffice auf Ihrem Compute
 Von www.tarmedsuisse.ch kann eine Microsoft-Access-Datenbank heruntergeladen werden. Binden Sie diese auf einem Windows-Computer als System-DSN ein. Gehen Sie in Elexis auf die Perspektive \textit{Codes}, wählen Sie dort den Reiter \textit{Tarmed} und rufen Sie das ViewMenu rechts auf. wählen Sie den Eintrag \textit{import} und geben Sie die eben konfigurierte Tarmed-DSN ein. Je nach Geschwindigkeit des PC wird der Import der gesamten Tarmed-Datenbank zwischen einer und 5 Minuten dauern.
 \subsection{ICD-10}
 \index{ICD-10}
-Von DIMDI können Sie den ICD-Katalog der WHO in computerlesbarer Form herunterladen. Sie benötigen die \textit{ICD-10-WHO-Systematik EDV-Fassung ASCII} und die \textit{ICD-10-WHO-2006 Systematik Metadaten ASCII}. Enpacken Sie beite Zip's ins selbe Verzeichnis. Die Warnung, dass eine Datei überschrieben wird, können Sie getrost ignorieren. Gehen Sie in Elexis auf die Codes-Perspektive und dort auf den Reiter \textit{ICD-10} und wählen Sie wieder \textit{import} aus dem View-Menu. Geben Sie in der folgenden Dialogbox das Verzeichnis an, in das Sie den ICD-Code entpackt haben.
+\label{config:icd10}
+Von DIMDI können Sie den ICD-Katalog der WHO in computerlesbarer Form herunterladen, s. z. hier:
+
+http://www.dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-who/version2006/systematik/
+
+Sie benötigen die \textit{ICD-10-WHO-Systematik EDV-Fassung ASCII} und die \textit{ICD-10-WHO-2006 Systematik Metadaten ASCII}. Enpacken Sie beite Zip's ins selbe Verzeichnis. Die Warnung, dass eine Datei überschrieben wird, können Sie getrost ignorieren. Gehen Sie in Elexis auf die Codes-Perspektive und dort auf den Reiter \textit{ICD-10} und wählen Sie wieder \textit{import} aus dem View-Menu. Geben Sie in der folgenden Dialogbox das Verzeichnis an, in das Sie den ICD-Code entpackt haben.
 \subsection{Medikamente und Medicals}
 \index{Medikamente}\index{Medicals}\index{SL}
 Diese beiden Gruppen werden aus derselben Datenbasis erstellt. Sie benötigen die Liste transfer.dat, die Sie z.B. vom www.e-mediat.ch im Abonnement beziehen können. Wählen Sie die Perspektive \textit{Codes}, dort den Reiter \textit{Medicals} bzw. \textit{Medikamente}, und dort wieder im View-Menu die Option Import und geben Sie dort die den Pfad zur Transfer.dat-Datei an.
