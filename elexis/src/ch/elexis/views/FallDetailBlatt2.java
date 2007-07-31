@@ -8,13 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2937 2007-07-31 04:58:16Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 2938 2007-07-31 05:02:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
