@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2897 2007-07-24 20:12:10Z rgw_ch $
+ *    $Id: Fall.java 2937 2007-07-31 04:58:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -81,6 +81,7 @@ public class Fall extends PersistentObject{
 			return false;
 		}
 		
+		// Check whether all user-defined requirements for this billing system are met
 		String reqs=getRequirements(getAbrechnungsSystem());
 		if(reqs!=null){
 			for(String req:reqs.split(";")){
@@ -97,10 +98,11 @@ public class Fall extends PersistentObject{
 				}
 			}
 		}
+		// check whether the outputter could output a bill
 		IRnOutputter outputter=getOutputter();
 		if(outputter!=null){
 			if(!outputter.canBill(this)){
-			return false;
+				return false;
 			}
 		}
 		return true;
@@ -503,10 +505,15 @@ public class Fall extends PersistentObject{
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/standardausgabe", "Tarmed-Drucker");
 
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/name", "privat");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/leistungscodes", "TarmedLeistung");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/standardausgabe", "Tarmed-Drucker");
+					
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='UVG' WHERE typ='ch.elexis.data.TarmedLeistungUVG'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='IV' WHERE typ='ch.elexis.data.TarmedLeistungIV'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='MV' WHERE typ='ch.elexis.data.TarmedLeistungMV'");
+					break;
 				}
 			}
 			ret= Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);

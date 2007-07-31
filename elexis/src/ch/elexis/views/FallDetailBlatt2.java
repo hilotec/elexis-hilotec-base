@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2876 2007-07-23 15:47:11Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 2937 2007-07-31 04:58:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -59,6 +60,7 @@ public class FallDetailBlatt2 extends Composite {
     	Fall.TYPE_ACCIDENT,Fall.TYPE_MATERNITY,Fall.TYPE_PREVENTION,Fall.TYPE_BIRTHDEFECT,Fall.TYPE_OTHER};
     public static final String[] dgsys=null;
 	Combo cAbrechnung,cReason;
+	DatePickerCombo dpVon, dpBis;
 	Text tBezeichnung;
     Button accept,reject;
     Hyperlink autoFill;
@@ -91,8 +93,7 @@ public class FallDetailBlatt2 extends Composite {
 
 				String gNew=f.getInfoString("Rechnungsempfänger");
 				String gOld=f.get("GarantID");
-				
-				
+
 				String vnNew=f.getInfoString("Versicherungsnummer");
 				String vnOld=f.getVersNummer();
 				
@@ -202,8 +203,32 @@ public class FallDetailBlatt2 extends Composite {
             }
 		});
         cReason.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+        tk.createLabel(top, "Startdatum");
+        dpVon=new DatePickerCombo(top,SWT.NONE);
+        dpVon.addSelectionListener(new SelectionAdapter(){
 
-		        tk.paintBordersFor(top);
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Fall fall=getFall();
+				fall.setBeginnDatum(new TimeTool(dpVon.getDate().getTime()).toString(TimeTool.DATE_GER));
+				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			}
+        	
+        });
+        tk.createLabel(top, "Enddatum");
+        dpBis=new DatePickerCombo(top,SWT.NONE);
+        dpBis.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Fall fall=getFall();
+				fall.setEndDatum(new TimeTool(dpBis.getDate().getTime()).toString(TimeTool.DATE_GER));
+				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			}
+        	
+        });
+        
+		tk.paintBordersFor(top);
 		setFall(getFall());
 
 	}
@@ -252,6 +277,18 @@ public class FallDetailBlatt2 extends Composite {
 		cReason.select(ix);
 		String abr=f.getAbrechnungsSystem();
 		cAbrechnung.setText(abr);
+		TimeTool tt=new TimeTool();
+		if(tt.set(f.getBeginnDatum())==true){
+			dpVon.setDate(tt.getTime());
+		}else{
+			dpVon.setDate(null);
+		}
+		if(tt.set(f.getEndDatum())==true){
+			dpBis.setDate(tt.getTime());
+		}else{
+			dpBis.setDate(null);
+		}
+		
 		String reqs=f.getRequirements();
 		if(reqs!=null){
 			for(String req:reqs.split(";")){
@@ -270,7 +307,6 @@ public class FallDetailBlatt2 extends Composite {
 					lReqs.add(tk.createLabel(form.getBody(), r[0]));
 					final DatePickerCombo dp=new DatePickerCombo(form.getBody(),SWT.NONE);
 					String dat=f.getInfoString(r[0]);
-					TimeTool tt=new TimeTool();
 					if(tt.set(dat)){
 						dp.setDate(tt.getTime());
 					}
