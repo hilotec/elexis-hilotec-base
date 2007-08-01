@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2941 2007-08-01 05:48:03Z rgw_ch $
+ *    $Id: Fall.java 2942 2007-08-01 07:38:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -176,22 +176,25 @@ public class Fall extends PersistentObject{
 	 * This is an update only for swiss installations that takes the old
 	 * tarmed cases to the new system
 	 */
-	private void update(){
+	private static void update(){
 		//String is=getInfoString("Kostenträger");
-		if(getInfoString("Kostenträger").equals("")){
-			setInfoString("Kostenträger",checkNull(get("Kostentraeger")));
-		}
-		if(getInfoString("Rechnungsempfänger").equals("")){
-			setInfoString("Rechnungsempfänger", checkNull(get("GarantID")));
-		}
-		if(getInfoString("Versicherungsnummer").equals("")){
-			setInfoString("Versicherungsnummer",checkNull(get("VersNummer")));
-		}
-		if(getInfoString("Fallnummer").equals("")){
-			setInfoString("Fallnummer",checkNull(get("FallNummer")));
-		}
-		if(getInfoString("Unfallnummer").equals("")){
-			setInfoString("Unfallnummer",checkNull(get("FallNummer")));
+		Query<Fall> qbe=new Query<Fall>(Fall.class);
+		for(Fall fall:qbe.execute()){
+			if(fall.getInfoString("Kostenträger").equals("")){
+				fall.setInfoString("Kostenträger",checkNull(fall.get("Kostentraeger")));
+			}
+			if(fall.getInfoString("Rechnungsempfänger").equals("")){
+				fall.setInfoString("Rechnungsempfänger", checkNull(fall.get("GarantID")));
+			}
+			if(fall.getInfoString("Versicherungsnummer").equals("")){
+				fall.setInfoString("Versicherungsnummer",checkNull(fall.get("VersNummer")));
+			}
+			if(fall.getInfoString("Fallnummer").equals("")){
+				fall.setInfoString("Fallnummer",checkNull(fall.get("FallNummer")));
+			}
+			if(fall.getInfoString("Unfallnummer").equals("")){
+				fall.setInfoString("Unfallnummer",checkNull(fall.get("FallNummer")));
+			}
 		}
 	}
 	/** Garant setzen 
@@ -515,7 +518,7 @@ public class Fall extends PersistentObject{
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='IV' WHERE typ='ch.elexis.data.TarmedLeistungIV'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='MV' WHERE typ='ch.elexis.data.TarmedLeistungMV'");
-					
+					update();
 					break;
 				}
 			}
