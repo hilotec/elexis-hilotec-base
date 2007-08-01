@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2843 2007-07-19 07:56:58Z rgw_ch $
+ * $Id: RnPrintView.java 2940 2007-08-01 05:47:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -67,7 +67,7 @@ public class RnPrintView extends ViewPart {
 	private static double cmFooter=4.5;			// Platz für Endabrechnung
 	private int existing; 
 	private final Log log=Log.get("RnPrint");
-	
+	private String paymentMode;
 	//TextContainer text;
 	TarmedACL ta=TarmedACL.getInstance();
 	CTabFolder ctab;
@@ -178,23 +178,24 @@ public class RnPrintView extends ViewPart {
 		}
 		Element invoice=xmlRn.getRootElement().getChild("invoice", XMLExporter.ns);
 		Element balance=invoice.getChild("balance", XMLExporter.ns);
+		paymentMode="TG"; //fall.getPaymentMode();
+		Element eTiers=invoice.getChild("tiers_garant", XMLExporter.ns);
+		if(eTiers==null){
+			eTiers=invoice.getChild("tiers_payant",XMLExporter.ns);
+			paymentMode="TP";
+		}
 		Mandant m=rn.getMandant();
 		Hub.setMandant(m);
 		Fall fall=rn.getFall();
 		GlobalEvents.getInstance().fireSelectionEvent(fall);
 		Patient pat=fall.getPatient();
 		Kontakt adressat;
-		String payment=fall.getPaymentMode();
-		if(payment.equals("TP")){ //$NON-NLS-1$
-			adressat=fall.getKostentraeger();
+		
+		
+		if(paymentMode.equals("TP")){ //$NON-NLS-1$
+			adressat=Kontakt.load(fall.getInfoString("Kostenträger"));
 		}else{
 			adressat=fall.getGarant();
-			/*
-			if(StringTool.isNothing(payment)){
-				fall.setPaymentMode("TG"); //$NON-NLS-1$
-			}
-			*/
-			payment="TG"; //$NON-NLS-1$
 		}
 		if((adressat==null) || (!adressat.exists())){
 			adressat=pat;
@@ -583,8 +584,8 @@ public class RnPrintView extends ViewPart {
 		
 		String titel;
 		String titelMahnung;
-		String payment = fall.getPaymentMode();
-		if(payment.equals("TP")){ //$NON-NLS-1$
+		
+		if(paymentMode.equals("TP")){ //$NON-NLS-1$
 			titel = Messages.RnPrintView_tbBill;
 			
 			switch(rn.getStatus()){

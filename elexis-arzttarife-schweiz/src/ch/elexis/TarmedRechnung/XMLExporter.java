@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2847 2007-07-20 13:29:47Z rgw_ch $
+ * $Id: XMLExporter.java 2940 2007-08-01 05:47:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -567,20 +567,28 @@ public class XMLExporter implements IRnOutputter {
 		//String tiers=actMandant.getInfoString(ta.TIERS);
 		String tiers="TG";
 		Patient pat=actFall.getPatient();
+		Kontakt kk=Kontakt.load(actFall.getInfoString("Kostenträger"));
 		Kontakt garant=actFall.getGarant();
-		if(!garant.isValid()){
-			garant=pat;
-		}
-		Kontakt kk=actFall.getKostentraeger();
-		if(!garant.isValid()){
-			tiers="TP";
-		}else{
-			if(kk.isValid()){
-				if(kk.equals(garant)){
+		if(kk.isValid()){
+			if(garant.isValid()){
+				if(garant.equals(kk)){
 					tiers="TP";
+				}else{
+					tiers="TG";
 				}
+			}else{
+				tiers="TP";
+			}
+		}else{
+			if(garant.isValid()){
+				tiers="TP";
+			}else{
+				garant=pat;
+				tiers="TP";
 			}
 		}
+		
+		
 		Element eTiers=null;
 		if(tiers.equals("TG")){								
 			eTiers=new Element("tiers_garant",ns);												//  11020
