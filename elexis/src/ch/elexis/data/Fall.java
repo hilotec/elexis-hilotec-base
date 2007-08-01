@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2937 2007-07-31 04:58:16Z rgw_ch $
+ *    $Id: Fall.java 2941 2007-08-01 05:48:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -449,6 +449,7 @@ public class Fall extends PersistentObject{
 		
 	}
 	*/
+	/*
 	public String getPaymentMode(){
 		String tiers="TG";
 		Kontakt garant=getGarant();
@@ -467,7 +468,8 @@ public class Fall extends PersistentObject{
 		}
 		return tiers;
 	}
-	 
+	 */
+	
 	public static String getDefaultCaseLabel(){
 		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASELABEL, "Allgemein");
 	}
@@ -513,6 +515,7 @@ public class Fall extends PersistentObject{
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='IV' WHERE typ='ch.elexis.data.TarmedLeistungIV'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='MV' WHERE typ='ch.elexis.data.TarmedLeistungMV'");
+					
 					break;
 				}
 			}
