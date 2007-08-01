@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2942 2007-08-01 07:38:53Z rgw_ch $
+ *    $Id: Fall.java 2943 2007-08-01 07:46:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -166,10 +166,7 @@ public class Fall extends PersistentObject{
 	
 	/** Garant holen (existiert ev. nicht) */
 	public Kontakt getGarant(){
-		// TODO compatibility
-		if(getInfoString("Rechnungsempfänger").equals("")){
-			update();
-		}
+
 		return Kontakt.load(getInfoString("Rechnungsempfänger"));
 	}
 	/**
@@ -229,11 +226,7 @@ public class Fall extends PersistentObject{
 	}
 	/** Kostenträger laden */
 	public Kontakt getKostentraeger(){
-		// TODO compatibility
-		if(getInfoString("Kostenträger").equals("")){
-			update();
-		}
-
+		
 		return Kontakt.load(getInfoString("Kostenträger"));
 	}
 	/** Kostenträger setzen 
@@ -245,10 +238,6 @@ public class Fall extends PersistentObject{
 	*/
 	/** Versichertennummer holen */
 	public String getVersNummer(){
-		// TODO compatibility
-		if(getInfoString("Versicherungsnummer").equals("")){
-			update();
-		}
 
 		return checkNull(getInfoString("Versicherungsnummer"));
 	}
