@@ -8,13 +8,14 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: stammdaten.tex 2645 2007-06-28 12:33:35Z rgw_ch $
+% *  $Id: stammdaten.tex 2944 2007-08-02 11:55:12Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
 \section{Stammdaten-Views}
 
 \subsection{Patienten}
+\index{Patientenliste}
 Die Patientenliste dient sowohl der Anzeige existierender Patienteneinträge, als
 auch dem Erfassen neuer Einträge. Die Liste zeigt all diejenigen Kontakte an,
 die als Patient markiert sind.
@@ -95,6 +96,7 @@ Maus\-taste klicken. Es enthält fol\-gende Ein\-träge:
 
 
 \subsection{Patient-Detail}
+\index{Patient!Detailangaben}
 Diese View (Abb. \ref{fig:patdetail} zeigt Details des momentan ausgewählten
 Patienten resp. der momentan ausgewählten Patientin an
  %\usepackage{graphics} is needed for \includegraphics
@@ -199,6 +201,7 @@ vorhandenen Adressangaben)
 \pagebreak[3]
 \subsection{Artikel}
 \label{view:artikel}
+\index{Artikel}
 Ein \glqq Artikel\grqq{}ist jedes Objekt, das auf Lager genommen und/oder
 abgegeben werden kann. Es gibt einerseits vordefinierte Artikel (z.B. die Liste
 aller zugelassenen Medikamente), andererseits auch Eigenartikel. Elexis kann den
@@ -224,7 +227,7 @@ In der Detailansicht sehen Sie Einzelheiten zum gerade ausgewählten Artikel. (I
 Perspektiven, wo die Liste allein dargestellt ist, können Sie mit der rechten
 Maustaste und \glqq Bearbeiten\grqq{} zur Detailansicht gelangen.)
 
-
+\index{Lager}
 Ein Artikel wird dadurch zum Lagerartikel, dass Sie ihm einen Mindestbestand
 grösser als Null zuweisen. Geben Sie ausserdem einen Höchstbestand höher als der
 Mindestbestand ein und weisen Sie dem Feld \glqq Istbestand\grqq{} den korrekten
@@ -247,6 +250,7 @@ unangebrochenen Packungen steht.
 
 
 \subsection{Lager und Bestellung}
+\index{Artikel!bestellen}
 Wie oben beschrieben, kann Elexis Ihr Warenlager halbautomatisch bewirtschaften.
 Wann immer Sie einem Patienten einen Artikel verrechnen, wird dieser Artikel
 automatisch aus dem Lagerbestand ausgebucht. Sobald der Bestand eines
