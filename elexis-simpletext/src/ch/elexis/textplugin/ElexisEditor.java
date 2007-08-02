@@ -1,7 +1,5 @@
 package ch.elexis.textplugin;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,12 +33,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import ch.elexis.Desk;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ITextPlugin.ICallback;
-import ch.rgw.tools.ExHandler;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * @author bogdan314
@@ -358,18 +350,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	}
 
 	public void print() {
-		Document pdfDoc=new Document();
-		try{
-			File outFile=File.createTempFile("stx", ".pdf");
-			PdfWriter writer = PdfWriter.getInstance(pdfDoc, new FileOutputStream(outFile));
-			pdfDoc.open();
-			PdfContentByte pdfContent=writer.getDirectContent();
-			//pdfContent.concatCTM(1f, 0f, 0f, -1f, 0f, PageSize.A4.height());
-			page.print(pdfDoc, pdfContent);
-			pdfDoc.close();
-		}catch(Exception ex){
-			ExHandler.handle(ex);
-		}
+		
 		/*
 		PrinterData data = Printer.getDefaultPrinterData();
 		if (data == null) {
