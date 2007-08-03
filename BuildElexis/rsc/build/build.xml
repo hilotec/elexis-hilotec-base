@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 2939 2007-07-31 15:39:52Z rgw_ch $
+<!-- $Id: build.xml 2946 2007-08-03 09:25:05Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -35,6 +35,7 @@
 	</description>
 	<property environment="env"/>
 	<property name="version" value="1.1.0"/>
+	<property name="dbversion" value="1.6.0"/>
 	<property file="rsc/build/local.properties"/>
 	<property name="dist"  value="${dest}/Elexis-${version}"/>
 	<property name="name" value="Elexis"/>
@@ -82,7 +83,7 @@
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
 		<mkdir dir="${dist}/demoDB"/>
 		<copy todir="${dist}/demoDB">
-			<fileset dir="${dest}/../demoDB"/>	
+			<fileset dir="${dest}/../demoDB_${dbversion}"/>	
 		</copy>
 	</target>
 
@@ -112,12 +113,12 @@
 		<ant antfile="../elexis-mail/build.xml"/>
 		<ant antfile="../Laborimport-Viollier/build.xml"/>
 		<ant antfile="../elexis-EMR-Printer/build.xml"/>
+		<ant antfile="../elexis-icpc/build.xml"/>
 	</target>
 
 	<!-- Optionale Plugins -->
 	<target name="options" depends="prepare">
 		<ant antfile="../elexis-externe-dokumente/build.xml"/>
-		<ant antfile="../elexis-icpc/build.xml"/>
 		<ant antfile="../elexis-iatrix/build.xml"/>
 		<ant antfile="../Sgam-Exchange/build.xml"/>
 		<ant antfile="../elexis-artikel-oesterreich/build.xml"/>
