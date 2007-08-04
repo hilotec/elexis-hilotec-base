@@ -35,7 +35,7 @@ Die folgenden Dateien sind integraler Bestandteil dieser Dokumentation und des S
 
 \subsection{Copyright}
 xChange 5.0x ist \copyright 2007 by Forum Datenaustausch, Schweiz. Die Verwendung des Standards zum Zweck des Medizinischen Datenaustauschs ist für jedermann frei.
-Jede Änderung oder Erweiterung des Standards bedarf der schriftlichen Einwilligung des Copyright-Inhabers. 
+Jede Änderung oder Erweiterung des Standards bedarf der schriftlichen Einwilligung des Copyright-Inhabers.
 
 \section{Designziele}
 xChange soll den Datenaustausch zwischen medizinischen Anwendungsprogrammen ermöglichen. Es soll hierbei möglich sein, mit ein- und demselben Container und Datenformat ganze Krankengeschichten (KG's), oder auch beliebige Subsets hiervon zu transportieren. Ebenso soll es möglich sein, nicht-patientenbezogene Daten zu transportieren. Wesentliche Punkte sind:
@@ -58,6 +58,17 @@ Eine xChange-Datei ist eine gepackte Datei im ZIP-Format\footnote{Referenz noch 
 \end{itemize}
 Die Binärdateien enthalten z.B. Bilder oder andere Dokumente in Binärformaten (z.B. PDF), welche sich nicht effizient in Textform abbilden lassen.
 
-subsection{Zentraldokument}
+\subsection{Verschlüsselung}
+Selbstverständlich kann und muss eine xChange-Dokument zum Transport verschlüsselt und signiert werden. Verschlüsselung und Signatur umfasst jeweils den gesamten Container.
 
-\end{document}
+\subsection{Zentraldokument}
+\subsubsection{Konzepte}
+\begin{description}
+\item[Identifier] Zur Identifikation und Referenzierung von Elementen werden ID's verwendet. Hierbei soll einerseits Redundanz vermieden werden, indem ein allenfalls schon existierendes Identifikationsmerkmal verwendet wird, andererseits aber auch die sicher eindeutige Identifikation sichergestellt werden. Ein Problem etwa bei der Identifikation von Personen liegt darin, dass es eine grosse Zahl von Identifikationssystemen mit ganz unterschiedlichen Qualitäten gibt. Beispielsweise ist die Kombination aus Name,Vorname und Geburtstag leicht les- und merkbar, häufig auch eindeutig, aber eben nicht immer (ganz abgesehen von problematischen Unterschieden der Schreibweisen). Auch die AHV-Nummer ist zwar eindeutig, aber nicht konstant, da sie sich im Lauf des Lebens ändern kann. In vielen Ländern gibt es dagegen eine eindeutige Sozialversicherungsnummer, welche in der Schweiz erst im Stadium der Planung ist. Auf der anderen Seite gibt es beispielsweise für Ärzte gleich eine ganze Reihe eindeutiger Identifikationssysteme (EAN, ZSR, NIF), welche teilweise identischen, teilweise überlappenden Informationsghalt haben.
+    
+    In xChange sprechen wir bei solchen externen Identifikationssystemen von XID. Im Gegensatz dazu können auch eindeutige ID's ad Hoc generiert werden. Hierfür existieren einfache Algorithmen, welche beliebig viele global eindeutige ID's generieren können. Eine solche \glqq Globally Unique ID\grqq{} nennen wir GUID.
+    
+    Ein Element, welches eine eindeutige Identifikation benötigt, wird mit einem Attribut des Typs identityType.
+\end{description}
+
+\end{document} 
