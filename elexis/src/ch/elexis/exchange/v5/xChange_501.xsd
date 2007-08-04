@@ -28,7 +28,7 @@
 	xmlns:xchange="http://www.forum-datenaustausch.ch/de" 
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
-<!-- $Id: xChange_501.xsd 2950 2007-08-04 09:40:22Z rgw_ch $ -->
+<!-- $Id: xChange_501.xsd 2951 2007-08-04 09:48:50Z rgw_ch $ -->
 
 <!-- =======================================================================
 	import fo encryption and signature schema definitions as local files
@@ -1009,4 +1009,20 @@
 	<complexType name="identityType">
 		<attribute name="domain" type="string"></attribute>
 	</complexType>
+
+	<simpleType name="GUIDType">
+		<annotation>
+			<documentation>
+				A GUID is a String 10 to 25 charactres long that must be
+				guaranteed (with a reasonable effort) to be globally
+				unique. An application is free to choose any algorithm
+				to create such GUIDs as long as they match the
+				restriction of this element.
+			</documentation>
+		</annotation>
+		<restriction base="string">
+
+			<pattern value="[\w:#+!=]{10,25}"></pattern>
+		</restriction>
+	</simpleType>
 </schema>
