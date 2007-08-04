@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 2809 2007-07-15 10:30:52Z rgw_ch $
+ *    $Id: FindingsView.java 2948 2007-08-04 06:12:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * This is a replacement for "MesswerteView" wich is more flexible in displayable elements.
@@ -64,7 +67,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
 		form=Desk.theToolkit.createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -89,7 +92,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		ctabs.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				CTabItem it=ctabs.getSelection();
 				if(it!=null){
 					FindingsPage page=(FindingsPage)it.getControl();
@@ -107,6 +110,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 
 	}
 	
+	@Override
 	public void dispose(){
 		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
 	}
@@ -117,11 +121,11 @@ public class FindingsView extends ViewPart implements ActivationListener,
 
 	}
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode){
 			GlobalEvents.getInstance().addSelectionListener(this);
 			setPatient(GlobalEvents.getSelectedPatient());
@@ -130,20 +134,20 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		}
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class template) {
 		if(template.equals(Patient.class)){
 			setPatient(null);
 		}
 	}
 
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
 			setPatient((Patient)obj);
 		}
 
 	}
 
-	private void setPatient(Patient p){
+	private void setPatient(final Patient p){
 		if(p==null){
 			form.setText("Kein Patient ausgewählt");
 
@@ -166,7 +170,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		String myparm;
 		String[] flds=null;
 		
-		FindingsPage(Composite parent,String param){
+		FindingsPage(final Composite parent,final String param){
 			super(parent,SWT.NONE);
 			parent.setLayout(new FillLayout());
 			myparm=param;
@@ -177,7 +181,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 			table.setLinesVisible(true);
 			String vals=(String)hash.get(param+"_FIELDS");
 			if(vals!=null){
-				flds=vals.split(Messwert.SETUP_SEPARATOR); //$NON-NLS-1$
+				flds=vals.split(Messwert.SETUP_SEPARATOR); 
 				tc=new TableColumn[flds.length+1];
 				tc[0]=new TableColumn(table,SWT.NONE);
 				tc[0].setText("Datum"); //$NON-NLS-1$
@@ -197,7 +201,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 			table.addMouseListener(new MouseAdapter(){
 
 				@Override
-				public void mouseDoubleClick(MouseEvent e) {
+				public void mouseDoubleClick(final MouseEvent e) {
 					TableItem[] it=table.getSelection();
 					if(it.length==1){
 						EditFindingDialog dlg=new EditFindingDialog(getSite().getShell(),(Messwert)it[0].getData(),myparm);
@@ -226,13 +230,20 @@ public class FindingsView extends ViewPart implements ActivationListener,
 			}
 			return new String[0][0];
 		}
-		void setPatient(Patient pat){
+		void setPatient(final Patient pat){
 			if(pat!=null){
 				Query<Messwert> qbe=new Query<Messwert>(Messwert.class);
 				qbe.add("PatientID","=",pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				qbe.add("Name","=",myparm); //$NON-NLS-1$ //$NON-NLS-2$
 				List<Messwert> list=qbe.execute();
 				table.removeAll();
+				Collections.sort(list,new Comparator<Messwert>(){
+
+					public int compare(final Messwert o1, final Messwert o2) {
+						TimeTool t1=new TimeTool(o1.get("Datum"));
+						TimeTool t2=new TimeTool(o2.get("Datum"));
+						return t1.compareTo(t2);
+					}});
 				for(Messwert m:list){
 					TableItem item=new TableItem(table,SWT.NONE);
 					item.setText(0,m.get("Datum")); //$NON-NLS-1$
