@@ -28,7 +28,7 @@
 	xmlns:xchange="http://www.forum-datenaustausch.ch/de" 
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
-<!-- $Id: xChange_501.xsd 2949 2007-08-04 09:26:45Z rgw_ch $ -->
+<!-- $Id: xChange_501.xsd 2950 2007-08-04 09:40:22Z rgw_ch $ -->
 
 <!-- =======================================================================
 	import fo encryption and signature schema definitions as local files
@@ -1004,31 +1004,9 @@
 		<attribute name="isPerson" type="boolean"></attribute>
 	</complexType>
 
+	
 
-	<simpleType name="identityType">
-		<annotation>
-			<documentation>
-				(gw) This abstract type is used to define a unique
-				identifier for an item in the xChange document. The
-				principle is to use an existing ("external") identifier,
-				if it exists e.g. EAN, Social insurance number etc) and
-				to provide a generated GUID only if necessary. The main
-				difference is that an external identifier (XID) can (and
-				must) remain unchanged among applications while a
-				generated GUID should be retained if possible, but may
-				be replaced by an application to meet its own needs
-				better.
-			</documentation>
-		</annotation>
-
-	</simpleType>
-
-
-
-
-	<complexType name="GUIDType">
-		<complexContent>
-			<extension base="xchange:identityType"></extension>
-		</complexContent>
+	<complexType name="identityType">
+		<attribute name="domain" type="string"></attribute>
 	</complexType>
 </schema>
