@@ -1,0 +1,12 @@
+3.8.2007 / G.Weirich
+
+- Identifikation: Redundanz vermeiden. -> neuer Identity-Type
+
+- Timestamp: Lieber ISO-Format (Menschenlesbar)
+- Kontaktdaten anders:
+  -> Top Level: Kontakt, typ Organisation oder Person.
+                Attribute: EAN, GUID
+                
+                Elemente: Adressen
+                		  Rollen
+                		  

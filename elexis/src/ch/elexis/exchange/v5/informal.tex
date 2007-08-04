@@ -1,0 +1,63 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is an informal description of the xChange 5.0x standard for sharing medical documents
+% The formal description can be found in xChange_501.xsd
+% a sample file using this schema is provides as sample.xml
+% $Id$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\title{xChange - Dokumentation}
+\maketitle
+\section{Einleitung}
+Dies ist ein vorläufiger Entwurf des xChange 5.0x Standards zum Austausch medizinischer Daten
+Dieser Entwurf richtet sich an:
+\begin{itemize}
+    \item Behörden und Institutionen, welche ein einheitliches Datenformat fördern und unterstützen möchten.
+    \item Entwickler von im Medizinbereich verwendeter Software, welche die Möglichkeit einsetzen möchten, Daten mit anderer Software auszutauschen.
+\end{itemize}
+
+\subsection{Umfang der Dokumentation}
+Die folgenden Dateien sind integraler Bestandteil dieser Dokumentation und des Standards:
+\begin{itemize}
+    \item xChange\_501.xsd: XML-Schema, das den Standard beschreibt
+    \item xChange.xml: Eine Beispieldatei, welche den Standard benutzt
+\end{itemize}
+
+\subsection{Copyright}
+xChange 5.0x ist \copyright 2007 by Forum Datenaustausch, Schweiz. Die Verwendung des Standards zum Zweck des Medizinischen Datenaustauschs ist für jedermann frei.
+Jede Änderung oder Erweiterung des Standards bedarf der schriftlichen Einwilligung des Copyright-Inhabers. 
+
+\section{Designziele}
+xChange soll den Datenaustausch zwischen medizinischen Anwendungsprogrammen ermöglichen. Es soll hierbei möglich sein, mit ein- und demselben Container und Datenformat ganze Krankengeschichten (KG's), oder auch beliebige Subsets hiervon zu transportieren. Ebenso soll es möglich sein, nicht-patientenbezogene Daten zu transportieren. Wesentliche Punkte sind:
+
+\begin{itemize}
+  \item Soweit möglich Übertragung der vollständigen Informationen
+  \item Einfach (und damit preiswert) implementierbar
+  \item Einfach an existierende elKG-Software anzupassen
+  \item Keine Abhängigkeiten von proprietärer Software oder nicht-freier Standards. Dies ist nicht immer völlig konsequent durchführbar, da häufig der Wunsch besteht, Dokumente im Originalformat zu transferieren (z.B. Microsoft\texttrademark Word\texttrademark Dateien).
+  \item Keine Belastung durch Lizenzgebühren oder Nutzungsbeschränkungen
+  \item Komplett oder partiell verschlüsselbar
+\end{itemize}
+
+\section{Aufbau}
+\subsection{Container}
+Eine xChange-Datei ist eine gepackte Datei im ZIP-Format\footnote{Referenz noch zu nennen}, welche folgende Elemente enthält:
+\begin{itemize}
+\item \textit{Genau eine} XML-Datei (das Zentraldokument), welche Metadaten und reine Text-Daten des Austauschs enthält
+\item Keine oder beliebig viele binäre Dateien, auf die im Zentraldokument verwiesen wird.
+\end{itemize}
+Die Binärdateien enthalten z.B. Bilder oder andere Dokumente in Binärformaten (z.B. PDF), welche sich nicht effizient in Textform abbilden lassen.
+
+subsection{Zentraldokument}
+
+\end{document}

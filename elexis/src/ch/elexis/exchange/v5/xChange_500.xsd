@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  ==========================================================================
+
+   This is the schema definition for a "xChange" process encoded
+   in XML. A xChange XML data file allows the export and import of structured
+   data from one physician software to an other. Hence it is the tool
+   to exchange structured data (addresses, treatments, reports,...) among
+   physicians. 
+
+   Permission to use, and distribute this schema and its accompanying
+   documentation for any purpose and without fee is hereby granted in perpetuity,
+   provided that the above copyright notice and this paragraph appear in all copies
+   and this schema file is not altered.
+   The copyright holders make no representation about the suitability of the schema
+   for any purpose.
+
+   It is provided "as is" without expressed or implied warranty.
+
+   Copyright (c) 2007 Forum Datenaustausch, http://www.forum-datenaustausch.ch
+                      SGAM
+   All Rights Reserved.
+   $$VERSION: 5.00.1
+   ==========================================================================  -->
+<schema targetNamespace="http://www.forum-datenaustausch.ch/de" 
+	xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	xmlns:xchange="http://www.forum-datenaustausch.ch/de" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+<!-- =======================================================================
+	import fo encryption and signature schema definitions as local files
+	in fact MSXML4.0 has a problem with network loaded schema definitions
+	and there is a significant time impact of always loading these schemas 
+	from W3C.
+	
+	W3C locations:
+		http://www.w3c.org/TR/xmlenc-core/xenc-schema.xsd
+		http://www.w3c.org/TR/xmldsig-core/xmldsig-core-schema.xsd
+ ======================================================================= -->
+   <import namespace="http://www.w3.org/2000/09/xmldsig#" 
+		   schemaLocation="xmldsig-core-schema.xsd"/>
+   <import namespace="http://www.w3.org/2001/04/xmlenc#" 
+		   schemaLocation="xenc-schema.xsd"/>
+
+<!-- =======================================================================
+	General data type definitions
+ ======================================================================= -->
+	<!--  string not null -->
+	<simpleType name="nonEmptyStringType">
+		<restriction base="string">
+			<minLength value="1"/>
+		</restriction>
+	</simpleType>
+
+	<!--  string type with length 1-3 characters  -->
+	<simpleType name="stringType1_3">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="3"/>
+		</restriction>
+	</simpleType>
+	
+	<!--  string type with length 1-9 characters  -->
+	<simpleType name="stringType1_9">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="9"/>
+		</restriction>
+	</simpleType>
+
+	<!--  string type with length 1-25 characters  -->
+	<simpleType name="stringType1_25">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="25"/>
+		</restriction>
+	</simpleType>
+
+	<!--  string type with length 1-35 characters  -->
+	<simpleType name="stringType1_35">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="35"/>
+		</restriction>
+	</simpleType>
+
+	<!--  string type with length 1-50 characters  -->
+	<simpleType name="stringType1_50">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="50"/>
+		</restriction>
+	</simpleType>
+
+	<!--  string type with length 1-70 characters  -->
+	<simpleType name="stringType1_70">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="70"/>
+		</restriction>
+	</simpleType>
+	
+	<!--  string type with length 1-80 characters  -->
+	<simpleType name="stringType1_80">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="80"/>
+		</restriction>
+	</simpleType>
+
+	<!--  string type with length 0-255 characters	-->
+	<simpleType name="stringType0_255">
+		<restriction base="string">
+			<minLength value="0"/>
+			<maxLength value="255"/>
+		</restriction>
+	</simpleType>
+	<!--  string type with length 1-255 characters	-->
+	<simpleType name="stringType1_255">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="255"/>
+		</restriction>
+	</simpleType>
+
+	<!--  EAN, ZSR, NIF and SSN numbers -->
+	<simpleType name="eanPartyType">
+		<restriction base="string">
+			<pattern value="([0-9]{13})"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="zsrPartyType">
+		<restriction base="string">
+			<pattern value="([A-Z][0-9]{6})"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="ssnPartyType">
+		<restriction base="string">
+			<pattern value="[1-9][0-9]{10}|756[0-9]{10}|undef"/>
+		</restriction>
+	</simpleType>
+	
+	<!--  hierarchy type -->
+	<simpleType name="hierarchyType">
+		<restriction base="string">
+			<pattern value="([0-9.])"/>
+		</restriction>
+	</simpleType>
+	
+	<!--  LOINC type -->
+	<simpleType name="loincType">
+		<restriction base="string">
+			<pattern value="([0-9]{1,5}-[0-9]|undef)"/>
+		</restriction>
+	</simpleType>
+	
+	<!--  SGAM type -->
+	<simpleType name="sgamType">
+		<restriction base="string">
+			<pattern value="(SGAM.[0-9]{4}.[0-9]{4}|other)"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="loinc_sgamUnionType">
+		<union memberTypes="xchange:loincType xchange:sgamType"/>
+	</simpleType>
+		
+<!-- =======================================================================
+	processing data type definitions
+ ======================================================================= -->
+	<!--  processing definitions -->
+	<complexType name="processingType">
+		<sequence>
+			<choice>
+				<element name="routed_transport" type="xchange:routedTransportType"/>
+				<element name="intermediate_transport" type="xchange:intermediateTransportType"/>
+			</choice>
+		</sequence>
+	</complexType>
+	
+	<!--  individual transport layer definitions -->
+	<complexType name="routedTransportType">
+		<attribute name="from" type="anyURI" use="required"/>
+		<attribute name="to" type="anyURI" use="required"/>
+	</complexType>
+	<complexType name="intermediateTransportType">
+		<sequence>
+			<element name="via" type="xchange:eanPartyType" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="from" type="xchange:eanPartyType" use="required"/>
+		<attribute name="to" type="xchange:eanPartyType" use="required"/>
+	</complexType>
+	
+<!-- =======================================================================
+	prolog: data type definitions for producing a chain of involved software
+ ======================================================================= -->
+	<!--  prolog section -->
+	<complexType name="prologType">
+		<sequence>
+			<element name="package" type="xchange:softwareType" minOccurs="0"/>
+			<element name="generator" type="xchange:softwareType"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="softwareType">
+		<sequence>
+			<element name="depends_on" type="xchange:dependsOnType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="name" type="xchange:stringType1_50" use="required"/>
+		<attribute name="copyright" type="xchange:stringType1_50"/>
+		<attribute name="description" type="xchange:stringType1_50"/>
+		<attribute name="version">
+			<simpleType>
+				<restriction base="integer">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="id" default="0">
+			<simpleType>
+				<restriction base="integer">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="dependsOnType">
+		<attribute name="name" type="xchange:stringType1_50" use="required"/>
+		<attribute name="copyright" type="xchange:stringType1_50"/>
+		<attribute name="description" type="xchange:stringType1_50"/>
+		<attribute name="version">
+			<simpleType>
+				<restriction base="integer">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="id" default="0">
+			<simpleType>
+				<restriction base="integer">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+<!-- =======================================================================
+	address data type definitions for companies and persons
+ ======================================================================= -->
+	<!--  person's name -->
+	<complexType name="personNameType">
+		<sequence>
+			<element name="familyname" type="xchange:stringType1_35"/>
+			<element name="givenname" type="xchange:stringType1_35"/>
+		</sequence>
+		<attribute name="salutation" type="xchange:stringType1_35"/>
+		<attribute name="title" type="xchange:stringType1_35"/>
+	</complexType>
+
+	<!--  person's address -->
+	<complexType name="personType">
+		<complexContent>
+			<extension base="xchange:personNameType">
+				<sequence>
+					<element name="postal" type="xchange:postalAddressType"/>
+					<element name="telecom" type="xchange:telecomAddressType" minOccurs="0"/>
+					<element name="online" type="xchange:onlineAddressType" minOccurs="0"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<!--  company's address -->
+	<complexType name="companyType">
+		<sequence>
+			<element name="companyname" type="xchange:stringType1_35"/>
+			<element name="department" type="xchange:stringType1_35" minOccurs="0"/>
+			<element name="postal" type="xchange:postalAddressType"/>
+			<element name="telecom" type="xchange:telecomAddressType" minOccurs="0"/>
+			<element name="online" type="xchange:onlineAddressType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	
+	<!--  address parts -->
+	<complexType name="zipType">
+		<simpleContent>
+			<extension base="xchange:stringType1_9">
+				<attribute name="statecode" type="xchange:stringType1_9"/>
+				<attribute name="countrycode" type="xchange:stringType1_3" default="CH"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<complexType name="postalAddressType">
+		<sequence>
+			<sequence>
+				<element name="pobox" type="xchange:stringType1_35" minOccurs="0"/>
+				<element name="street" type="xchange:stringType1_35" minOccurs="0"/>
+			</sequence>
+			<element name="zip" type="xchange:zipType"/>
+			<element name="city" type="xchange:stringType1_35"/>
+		</sequence>
+	</complexType>
+	<complexType name="telecomAddressType">
+		<sequence>
+			<element name="phone" type="xchange:stringType1_25" maxOccurs="3"/>
+			<element name="fax" type="xchange:stringType1_25" minOccurs="0" maxOccurs="3"/>
+		</sequence>
+	</complexType>
+	<complexType name="onlineAddressType">
+		<sequence>
+			<element name="email" maxOccurs="3">
+				<simpleType>
+					<restriction base="xchange:stringType1_70">
+						<pattern value=".+@.+"/>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="url" minOccurs="0" maxOccurs="3">
+				<simpleType>
+					<restriction base="anyURI">
+						<minLength value="1"/>
+						<maxLength value="100"/>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+	</complexType>
+	
+<!-- =======================================================================
+	the specific address role definitions
+	
+	Note that the "misc" attribute allows for the transport of data 
+	(e.g. religion, race,...) not (yet) covered by the scheme - it should
+	be formatted xml like (e.g. misc="religion=&quot;catholic&quot;")
+ ======================================================================= -->
+	<!--  author's address type -->
+	<complexType name="authorAddressType">
+		<choice>
+			<element name="company" type="xchange:companyType"/>
+			<element name="person" type="xchange:personType"/>
+		</choice>
+		<attribute name="ean_party" type="xchange:eanPartyType"/>
+		<attribute name="zsr" type="xchange:zsrPartyType"/>
+		<attribute name="specialty" type="xchange:stringType0_255"/>
+	</complexType>
+	
+	<!-- address type for all other roles -->
+	<complexType name="addressType">
+		<choice>
+			<element name="company" type="xchange:companyType"/>
+			<element name="person" type="xchange:personType"/>
+		</choice>
+		<attribute name="ean_party" type="xchange:eanPartyType"/>
+		<attribute name="zsr" type="xchange:zsrPartyType"/>
+		<attribute name="specialty" type="xchange:stringType0_255"/>
+		<attribute name="role" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="physician"/>
+					<enumeration value="hospital"/>
+					<enumeration value="pharmacist"/>
+					<enumeration value="labtechnician"/>
+					<enumeration value="orthopaedictechnician"/>
+					<enumeration value="dentist"/>
+					<enumeration value="dentaltechnician"/>
+					<enumeration value="dentalhygienist"/>
+					<enumeration value="physiotherapist"/>
+					<enumeration value="ergotherapist"/>
+					<enumeration value="logotherapist"/>
+					<enumeration value="chiropraktor"/>
+					<enumeration value="diet"/>
+					<enumeration value="diabetics"/>
+					<enumeration value="massage"/>
+					<enumeration value="midwife"/>
+					<enumeration value="wholesaler"/>
+					<enumeration value="shoemaker"/>
+					<enumeration value="nurse"/>
+					<enumeration value="ambulance"/>
+					<enumeration value="druggist"/>
+					<enumeration value="carrier"/>
+					<enumeration value="guarantor"/>
+					<enumeration value="insurance_kvg"/>
+					<enumeration value="insurance_uvg"/>
+					<enumeration value="insurance_ivg"/>
+					<enumeration value="insurance_mvg"/>
+					<enumeration value="government"/>
+					<enumeration value="employer"/>
+					<enumeration value="other"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="id" type="ID" use="required"/>
+		<attribute name="misc" type="string"/>
+	</complexType>
+
+	<!--  patient's address type -->
+	<complexType name="patientAddressType">
+		<sequence>
+			<element name="person" type="xchange:personType"/>
+			<element name="card" minOccurs="0">
+				<complexType>
+					<attribute name="personal_id" type="xchange:stringType1_35" use="required"/>
+					<attribute name="card_id" type="xchange:stringType1_35" use="required"/>
+					<attribute name="expiry_date" type="dateTime" use="required"/>
+					<attribute name="control_id" type="xchange:stringType1_80"/>
+				</complexType>
+			</element>
+		</sequence>
+		<attribute name="gender" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="male"/>
+					<enumeration value="female"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="birthdate" type="dateTime" use="required"/>
+		<attribute name="ssn" type="xchange:ssnPartyType"/>
+		<attribute name="misc" type="string"/>
+	</complexType>
+						
+<!-- =======================================================================
+	document data type definitions
+ ======================================================================= -->
+	<complexType name="documentType">
+		<choice>
+			<element name="base64" type="base64Binary"/>
+			<element name="url" type="anyURI"/>
+		</choice>
+		<attribute name="filename" type="xchange:stringType1_255" use="required"/>
+		<attribute name="mimeType" type="xchange:stringType1_255" use="required"/>
+		<attribute name="viewer" type="anyURI"/>
+		<attribute name="id" type="ID" use="required"/>
+	</complexType>
+
+<!-- =======================================================================
+	treatment data type definitions
+	
+	consists of an XML invoice document (and optionally a credit file) and 
+	the status of the treatment
+	Since SUMEX1 can load the data from an XML file one can indirectly
+	load, extract, and reconsitute all parameters via the XML invoice file
+ ======================================================================= -->
+	<complexType name="treatmentType">
+		<attribute name="invoice_ref" type="IDREF"/>
+		<attribute name="credit_ref" type="IDREF"/>
+		<attribute name="status" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="open"/>
+					<enumeration value="settled"/>
+					<enumeration value="paid"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+<!-- =======================================================================
+	diagosisType data type definitions
+	
+	defines a diagnosis - note that the hierarchy attribute allows for
+	hierarchic ordering of any depth by using a schema "1.2.3.6" meaning
+	the 6th diagnosis in the 3-fold hiereachy 1.2.3
+ ======================================================================= -->
+	<complexType name="diagnosisType">
+		<attribute name="name" type="xchange:stringType1_255" use="required"/>
+		<attribute name="code" type="xchange:stringType1_255" use="required"/>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="TI"/>
+					<enumeration value="ICPC2"/>
+					<enumeration value="ICD10"/>
+					<enumeration value="freetext"/>
+					<enumeration value="other"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="date" type="dateTime"/>
+		<attribute name="is_active" type="boolean" default="true"/>
+		<attribute name="is_chronic" type="boolean" default="false"/>
+		<attribute name="hierarchy" type="xchange:hierarchyType"/>
+		<attribute name="id" type="ID" use="required"/>
+	</complexType>
+	
+<!-- =======================================================================
+	medicationType data type definitions
+	
+	defines the used drug and optional posologies
+ ======================================================================= -->
+	<complexType name="medicationType">
+		<sequence>
+			<element name="posology" type="xchange:posologyType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+
+		<attribute name="name" type="xchange:stringType1_255" use="required"/>
+		<attribute name="code" type="xchange:stringType1_255" use="required"/>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="pharmaCode"/>
+					<enumeration value="swissmedicCode"/>
+					<enumeration value="ean13Code"/>
+					<enumeration value="other"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="date_begin" type="dateTime" use="required"/>
+		<attribute name="date_end" type="dateTime"/>
+		<attribute name="is_chronic" type="boolean" default="false"/>
+	</complexType>
+	
+	<complexType name="posologyType">
+		<attribute name="date_begin" type="dateTime"/>
+		<attribute name="date_end" type="dateTime"/>
+		<attribute name="quantity_morning" default="0">
+			<simpleType>
+				<restriction base="double">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="quantity_noon" default="0">
+			<simpleType>
+				<restriction base="double">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="quantity_evening" default="0">
+			<simpleType>
+				<restriction base="double">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="quantity_night" default="0">
+			<simpleType>
+				<restriction base="double">
+					<minInclusive value="0"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="recipe" type="xchange:stringType0_255"/>
+	</complexType>
+
+<!-- =======================================================================
+	allergyType data type definitions
+	
+	defines an allergy diagnosis
+ ======================================================================= -->
+	<complexType name="allergyType">
+		<attribute name="name" type="xchange:stringType1_255" use="required"/>
+		<attribute name="code" type="xchange:stringType1_255"/>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="drugID"/>
+					<enumeration value="substanceID"/>
+					<enumeration value="food"/>
+					<enumeration value="environmental"/>
+					<enumeration value="latex"/>
+					<enumeration value="other"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="severity" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="low"/>
+					<enumeration value="medium"/>
+					<enumeration value="strong"/>
+					<enumeration value="verystrong"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="date" type="dateTime"/>
+		<attribute name="confirmed" type="boolean" default="true"/>
+		<attribute name="providerEAN" type="xchange:eanPartyType"/>
+		<attribute name="responsibleEAN" type="xchange:eanPartyType"/>
+	</complexType>
+
+<!-- =======================================================================
+	labTextResultType | labNumericResultType data type definitions
+	
+	defines one lab result of type text or numeric
+ ======================================================================= -->
+	
+	<!-- =======================================================================
+		definition for a textual lab measurement (based on textResultType)
+				
+		Attributes:
+			lab_code		a lab specific abbreviation of the measurement (e.g. glu,...)
+			reference		optional reference for the measurement
+			abnormal_flag	the abnormal flag of the measurement as defined in HL7
+							OBX:Abnormal Flags
+			status			the status of result either final or preliminary
+			machine			the machine that produced the result
+			producer		the lab name for external labs | internal lab
+			remark			optional remark for the measurement
+	 ======================================================================= -->
+	<complexType name="labTextResultType">
+		<complexContent>
+			<extension base="xchange:resultType">
+				<attribute name="lab_code" type="xchange:stringType0_255"/>			
+				<attribute name="reference" type="xchange:stringType0_255"/>
+				<attribute name="abnormal_flag" type="xchange:stringType0_255"/>
+				<attribute name="status" default="final">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="preliminary"/>
+							<enumeration value="final"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="machine" type="xchange:stringType0_255"/>
+				<attribute name="producer" type="xchange:stringType0_255"/>
+				<attribute name="remark" type="xchange:stringType0_255"/>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<!-- =======================================================================
+		definition for a numeric lab measurement (based on numericResultType)
+
+				
+		Attributes:
+			lab_code		a lab specific abbreviation of the measurement (e.g. glu,...)
+			lower_reference optional lower reference bound of the measurement
+			upper_reference optional upper reference bound of the measurement
+							note the bound are included in the interval e.g.
+							x is element of [lower,upper]
+			abnormal_flag	the abnormal flag of the measurement as defined in HL7
+							OBX:Abnormal Flags
+			status			the status of result either final or preliminary
+			machine			the machine that produced the result
+			producer		the lab name for external labs | internal lab
+			remark			optional remark for the measurement
+	 ======================================================================= -->
+	<complexType name="labNumericResultType">
+		<complexContent>
+			<extension base="xchange:numericResultType">
+				<attribute name="lab_code" type="xchange:stringType0_255"/>			
+				<attribute name="lower_reference" type="double"/>
+				<attribute name="upper_reference" type="double"/>
+				<attribute name="abnormal_flag" type="xchange:stringType0_255"/>
+				<attribute name="status" default="final">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="preliminary"/>
+							<enumeration value="final"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="machine" type="xchange:stringType0_255"/>
+				<attribute name="producer" type="xchange:stringType0_255"/>
+				<attribute name="remark" type="xchange:stringType0_255"/>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+<!-- =======================================================================
+	textResultType | numericResultType data type definitions
+	
+	defines a texual or numeric result (apart from lab).
+	each result can reference documents
+ ======================================================================= -->
+	
+	<!-- =======================================================================
+		definition for a textual measurement (based on resultType)
+				
+		Attributes:
+			value			value of the measurement
+			type			qualification of the measurement either of type LOINC or SGAM
+			code			code (in the coding system of type) of the measurement
+	 ======================================================================= -->
+	<complexType name="textResultType">
+		<complexContent>
+			<extension base="xchange:resultType">
+				<attribute name="value" type="xchange:stringType1_255" use="required"/>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<!-- =======================================================================
+		definition for a numeric measurement (based on resultType)
+				
+		Attributes:
+			value			value (double) of the measurement
+			unit			the unit of the measurement. note that this attribute MUST be
+							coded in UCUM format (Unified Code for Units of Measure 
+							- http://aurora.regenstrief.org/UCUM) to allow for a common basis.
+							since the unit is required it must at least be unit="1" in case
+							of pure numbers!
+			operator		operator of the number
+	 ======================================================================= -->
+	<complexType name="numericResultType">
+		<complexContent>
+			<extension base="xchange:resultType">
+				<attribute name="value" type="double" use="required"/>
+				<attribute name="unit" type="xchange:stringType1_255" use="required"/>
+				<attribute name="operator" default="equal">
+					<simpleType>
+						<restriction base="NMTOKEN">
+							<enumeration value="less"/>
+							<enumeration value="less_than"/>
+							<enumeration value="equal"/>
+							<enumeration value="greater_than"/>
+							<enumeration value="greater"/>
+						</restriction>
+					</simpleType>
+				</attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<!-- =======================================================================
+		base result type definition
+				
+		Attributes:
+			name			name of the measurement
+			type			qualification of the measurement either of type LOINC or SGAM
+			code			code (in the coding system of type) of the measurement
+			date			date of the measurement
+			providerEAN		EAN of provider 
+			responsibleEAN	EAN of responsible
+			documents_ref	whitelist separated list of adjoining documents
+	 ======================================================================= -->
+	<complexType name="resultType">
+		<attribute name="name" type="xchange:stringType1_255" use="required"/>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="LOINC"/>
+					<enumeration value="SGAM"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="code" type="xchange:loinc_sgamUnionType" use="required"/>
+		<attribute name="date" type="dateTime" use="required"/>
+		<attribute name="providerEAN" type="xchange:eanPartyType"/>
+		<attribute name="responsibleEAN" type="xchange:eanPartyType"/>
+		<attribute name="documents_ref" type="IDREFS"/>
+	</complexType>
+
+<!-- =======================================================================
+	caseType data type definitions
+	
+	defines one case in terms of a number of {SOAP|text} entries (aka
+	case record) and an	optional diagnosis
+ ======================================================================= -->
+	<complexType name="caseType">
+		<sequence>
+			<element name="case_record" type="xchange:caseRecordType" maxOccurs="unbounded"/>
+		</sequence>
+
+		<attribute name="diagnosis_ref" type="IDREF"/>
+		<attribute name="title" type="xchange:stringType1_255"/>
+		<attribute name="is_active" type="boolean" default="true"/>
+	</complexType>
+	
+	<complexType name="caseRecordType">
+		<choice minOccurs="0">
+			<element name="text" type="xchange:stringType0_255"/>
+			<sequence>
+				<element name="S" type="xchange:stringType0_255"/>
+				<element name="O" type="xchange:stringType0_255"/>
+				<element name="A" type="xchange:stringType0_255"/>
+				<element name="P" type="xchange:stringType0_255"/>
+			</sequence>
+		</choice>
+
+		<attribute name="providerEAN" type="xchange:eanPartyType"/>
+		<attribute name="responsibleEAN" type="xchange:eanPartyType"/>
+		<attribute name="date" type="dateTime" use="required"/>
+		<attribute name="name" type="xchange:stringType1_255" use="required"/>
+		<attribute name="code" type="xchange:stringType0_255"/>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="ICPC2"/>
+					<enumeration value="ICD10"/>
+					<enumeration value="freetext"/>
+					<enumeration value="other"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="roe_icpc2" type="xchange:stringType0_255"/>
+		<attribute name="procedure_icpc2" type="xchange:stringType0_255"/>
+	</complexType>
+	
+<!-- =======================================================================
+	kg data type definitions
+	
+	consists of the following elements (all elements are optional)
+		 diagnosis  	list of diagnoses
+		 medication 	list of drugs and posologies
+		 allergies		list of allergies
+		 lab_results	list of lab data
+		 results		list of results (apart from lab)
+		 cases			list of cases
+ ======================================================================= -->
+	<complexType name="kgType">
+		<sequence>
+			<element name="diagnoses" minOccurs="0">
+				<complexType>
+					<sequence>
+						<element name="diagnosis" type="xchange:diagnosisType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="medications" minOccurs="0">
+				<complexType>
+					<sequence>
+						<element name="medication" type="xchange:medicationType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="allergies" minOccurs="0">
+				<complexType>
+					<choice>
+						<element name="noAllergy">
+							<complexType>
+								<attribute name="date" type="dateTime"/>
+								<attribute name="confirmed" type="boolean" default="true"/>
+								<attribute name="providerEAN" type="xchange:eanPartyType"/>
+								<attribute name="responsibleEAN" type="xchange:eanPartyType"/>
+							</complexType>
+						</element>
+						<sequence>
+							<element name="allergy" type="xchange:allergyType" maxOccurs="unbounded"/>
+						</sequence>
+					</choice>
+				</complexType>
+			</element>
+			<element name="lab_results" minOccurs="0">
+				<complexType>
+					<sequence maxOccurs="unbounded">
+						<choice>
+							<element name="lab_text_result" type="xchange:labTextResultType"/>
+							<element name="lab_numeric_result" type="xchange:labNumericResultType"/>
+						</choice>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="results" minOccurs="0">
+				<complexType>
+					<sequence maxOccurs="unbounded">
+						<choice>
+							<element name="text_result" type="xchange:textResultType"/>
+							<element name="numeric_result" type="xchange:numericResultType"/>
+						</choice>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="cases" minOccurs="0">
+				<complexType>
+					<sequence>
+						<element name="case" type="xchange:caseType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	
+<!-- =======================================================================
+	patient data type definitions
+	
+	consists of an - address 	required
+					 treatments optional 	administrative information
+					 kg			optional	medical information
+ ======================================================================= -->
+	<complexType name="patientType">
+		<sequence>
+			<element name="address" type="xchange:patientAddressType"/>
+			<element name="treatments" minOccurs="0">
+				<complexType>
+					<sequence>
+						<element name="treatment" type="xchange:treatmentType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="kg" type="xchange:kgType" minOccurs="0"/>
+		</sequence>
+		<attribute name="addresses_ref" type="IDREFS"/>
+	</complexType>
+				
+<!-- =======================================================================
+	body: body data type definitions - this element (and subelements 
+		  therein) can be encrypted.
+		  
+		  Now this is the definition of the real structured data
+ ======================================================================= -->
+	<complexType name="bodyType">
+		<sequence>
+			<!-- =======================================================================
+				defines the main physician software, the generator of the XML file
+				and possible dependencies
+			======================================================================= -->
+			<element name="prolog" type="xchange:prologType"/>
+			
+			<!-- =======================================================================
+				address of the physician/insitution that exported the data (aka the 
+				author)
+			======================================================================= -->
+			<element name="author" type="xchange:authorAddressType"/>
+			
+			<!-- =======================================================================
+				definition of various addresses - this is an optional part
+				
+				of course even if possible patient addresses should not be exported
+				as an address
+			======================================================================= -->
+			<element name="addresses" minOccurs="0">
+				<complexType>
+					<sequence>
+						<element name="address" type="xchange:addressType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<!-- =======================================================================
+				definition of documents - this is an optional part
+				
+				since the elements {addresses, documents, patients} are optional
+				one can e.g. exchange just a simple non-patient centric document
+			======================================================================= -->
+			<element name="documents" minOccurs="0">
+				<complexType>
+					<sequence>
+						<element name="document" type="xchange:documentType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			
+			<!-- =======================================================================
+				definition of 1 patient - this is an optional part
+				
+				the patient element then holds all the patient relevant structured data
+			======================================================================= -->
+			<element name="patient" type="xchange:patientType" minOccurs="0"/>
+
+		</sequence>
+				
+		<!-- =======================================================================
+			title 		should give a hint why this export happened
+			timestamp	auto-generated timestamp of generation
+		======================================================================= -->
+		<attribute name="title" type="xchange:stringType1_255" use="required"/>
+		<attribute name="timestamp" type="unsignedLong" use="required"/>
+	</complexType>
+	
+<!-- =======================================================================
+	payload: payload data type definitions - this element (and subelements 
+			 therein) can be signed
+ ======================================================================= -->
+	<complexType name="payloadType">
+		<choice>
+			<element name="body" type="xchange:bodyType"/>
+			<element ref="xchange:encrypted"/>
+		</choice>
+		<attribute name="id" type="ID" use="required" fixed="payloadSignatureID"/>
+	</complexType>
+		
+<!-- =======================================================================
+	 =======================================================================
+	Here starts the request with its root element
+	
+	A request can be optionally signed and/or encrypted
+ =======================================================================
+ ======================================================================= -->
+	<element name="signature" type="ds:SignatureType"/>
+	<element name="encrypted" type="xenc:EncryptedDataType"/>
+
+	<element name="xchange" type="xchange:xchangeType"/>
+	<complexType name="xchangeType">
+		<sequence>
+			<element name="processing" type="xchange:processingType"/>
+			<element name="payload" type="xchange:payloadType"/>
+			<element ref="xchange:signature" minOccurs="0"/>
+		</sequence>
+		<attribute name="modus" default="production">
+			<simpleType>
+				<restriction base="NMTOKEN">
+					<enumeration value="production"/>
+					<enumeration value="test"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="language" use="required">
+			<simpleType>
+				<restriction base="language">
+					<pattern value="(de|fr|it|en)"/>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+</schema>
