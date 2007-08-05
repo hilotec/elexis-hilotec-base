@@ -18,26 +18,28 @@
 \begin{document}
 \title{xChange - Dokumentation}
 \maketitle
-\section{Einleitung}
-Dies ist ein vorläufiger Entwurf des xChange 5.0x Standards zum Austausch medizinischer Daten
+\part{Einleitung}
+\section{Status und Bedeutung}
+Dies ist ein vorläufiger Entwurf des xChange 5.0x Standards zum Austausch medizinischer Daten. Das Konzept beinhaltet nebst formaler Datendefinitionen auch Handlungsanweisungen zum Ablauf von Transportvorgängen, um den dabei auftretenden Problemen auf standardisierte Weise zu begegnen. Die Handlungsanweisungen sind daher für jede Anwendung, welche sich xChange-Kompatibel nennen möchte, bindend.
+
 Dieser Entwurf richtet sich an:
 \begin{itemize}
     \item Behörden und Institutionen, welche ein einheitliches Datenformat fördern und unterstützen möchten.
     \item Entwickler von im Medizinbereich verwendeter Software, welche die Möglichkeit einsetzen möchten, Daten mit anderer Software auszutauschen.
 \end{itemize}
 
-\subsection{Umfang der Dokumentation}
+\section{Umfang der Dokumentation}
 Die folgenden Dateien sind integraler Bestandteil dieser Dokumentation und des Standards:
 \begin{itemize}
     \item xChange\_501.xsd: XML-Schema, das den Standard beschreibt
     \item xChange.xml: Eine Beispieldatei, welche den Standard benutzt
 \end{itemize}
 
-\subsection{Copyright}
+\section{Copyright}
 xChange 5.0x ist \copyright 2007 by Forum Datenaustausch, Schweiz. Die Verwendung des Standards zum Zweck des Medizinischen Datenaustauschs ist für jedermann frei.
 Jede Änderung oder Erweiterung des Standards bedarf der schriftlichen Einwilligung des Copyright-Inhabers.
 
-\section{Designziele}
+\part{Designziele}
 xChange soll den Datenaustausch zwischen medizinischen Anwendungsprogrammen ermöglichen. Es soll hierbei möglich sein, mit ein- und demselben Container und Datenformat ganze Krankengeschichten (KG's), oder auch beliebige Subsets hiervon zu transportieren. Ebenso soll es möglich sein, nicht-patientenbezogene Daten zu transportieren. Wesentliche Punkte sind:
 
 \begin{itemize}
@@ -49,26 +51,146 @@ xChange soll den Datenaustausch zwischen medizinischen Anwendungsprogrammen erm�
   \item Komplett oder partiell verschlüsselbar
 \end{itemize}
 
-\section{Aufbau}
-\subsection{Container}
+\part{Konzepte}
+\section{Identifikation}
+ Eines der schwierigsten Probleme beim Datenaustausch über Systemgrenzen hinweg ist die eindeutige Identifikation von Daten: Die Anwendung muss erkennen können, ob diejenigen Daten, die gerade importiert werden sollen, vielleicht lokal schon vorhanden sind. Leider gibt es hierfür kein einheitliches Verfahren. Übliche Identifikationstechniken sind pragmatisch, aber nicht sehr robust aufgebaut: Bei den Menschen in unserem nahen Umfeld genügt der Vorname zur eindeutigen Identifikation, bei den Patienten in einer Arztdatenbank ist im Allgemeinen die Kombination aus Name, Vorname und Geburtsdatum ausreichend. Es ist aber klar, dass dies nicht mehr genügt, wenn Daten zwischen den Datenbanken verschiedener Ärzte ausgetauscht werden sollen: Die Verwechslung von Patientendaten darf unter keinen Umständen vorkommen können. Mögliche eindeutige Identifikationssysteme wären:
+ \begin{itemize}
+ \item Die Nummer der Identitätskarte (Problem: Was tun, wenn jemand keine Identitätskarte hat?)
+ \item Die AHV-Nummer (Problem: Nicht jeder hat eine, und sie kann sich auch im Lauf des Lebens ändern (Heirat, Einbürgerung etc.))
+ \item Die geplante Sozialversicherungsnummer (Ist aus offensichtlichen Gründen noch nicht verwendbar, und es ist auch noch nicht klar, wie tauglich sie sein wird. Zusatzproblem: Was tun mit Ausländern, die keine Schweizer Sozialversicherungsnummer haben?)
+ \item Die Krankenkassennummer (Zusammen mit der Krankenkasse eindeutig)
+ \item etc.
+  \end{itemize}
+
+ Wie man sieht ist es nicht das Problem, dass es keine Identifikationssysteme gäbe, sondern es gibt zuviele davon, die zu unterschiedlichen Zwecken eingeführt wurden, und die für unterschiedliche Bereiche brauchbar sind. Es existiert aber kein Identifikationssystem, das universell anwendbar und allgemein anerkannt ist. xChange kann also für die Identifikation nicht auf einen einzelnen existierenden Standard zurückgreifen. Hinzu kommt, dass xChange ja nicht nur Patienten eindeutig identifizieren können muss, sondern Daten aller Art (Ärzte, Laborbefunde, Briefe) etc., denn all diese Datenarten sollen ja zwischen elKG's ausgetauscht werden können.
+
+ xChange verwendet deshalb eine mehrstufige und hierarchisch aufgebaute Technik:
+
+\subsection{XID}
+   Alle zu transportierenden werden mit einem XID (eXtended Identifier) gekennzeichnet. Ein XID ist eine Datenstruktur, die in der Lage ist, verschiedene Identifikationssysteme aufzunehmen. Sie besteht aus:
+ \begin{enumerate}
+      \item Einem Attribut \textit{GUID}. Eine GUID ist eine \textsc{globally unique ID}, das ist eine Zeichenfolge, welche garantiert nur einmal existiert. Eine solche GUID lässt sich jederzeit leicht herstellen. Diese GUID wird immer dann verwendet, wenn eine XID selbst referenziert werden soll.
+      \item Einem Atttibut \textit{parent}, welches ein Objekt referenziert, von dem dieses Objekt abhängig ist. Beispielsweise enthält die XID eines Laborwerts hier die Referenz auf die XID des Patienten, den dieser Wert betrifft.
+      \item Einer Folge von null bis beliebig vielen Unterelementen des Typs \textsc{identity}. Eine Identity besteht aus:
+          \begin{enumerate}
+            \item Einer \textit{domain}. Die Domain gibt an, welches Identifikationssystem verwendet wurde. (Beispiel: http://www.krankenkasse.ch/nummern)
+            \item dem \textit{value}. Die eigentliche Identifikation im verwendeten Identifikationssystem, also z.B. 1233455
+            \item einem \textit{quality} Attribut. Diese gibt an, wie \glqq gut\grqq diese Identifikation ist.
+          \end{enumerate}
+      \item Einer Angabe, ob diese XID als gültig betrachtet wird.
+   \end{enumerate}
+
+Anwendungen, welche an xChange Transfers teilnehmen wollen, müssen diese XIDs speichern und interpretieren können.
+
+\subsubsection{Beispiele für XIDs}
+
+\begin{itemize}
+\item Nur EAN bekannt (Die EAN ist global eindeutig)
+\begin{verbatim}
+    <xchange:XID GUID="abccbbf723451dwfa" valid="true">
+        <xchange:identity domain="http://www.xchange.ch/id/ean"
+         value="2001234565432" quality="globalQuality"/>
+    </xchange:XID>
+\end{verbatim}
+   
+\item Die für einen Arzt benötigten Identifikationen:
+\begin{verbatim}
+    <xchange:XID GUID="abccbbf723451dwfa" valid="true">
+        <xchange:identity domain="http://www.xchange.ch/id/ean"
+         value="2001234565432" quality="globalQuality"/>
+        <xchange:identity domain="http://www.xchange.ch/id/zsr"
+         value="Z021617" quality="regionalQuality"/>
+        <xchange:identity domain="http://www.xchange.ch/id/nif"
+         value="334565" quality="regionalQuality"/>
+    </xchange:XID>
+\end{verbatim}
+
+\item Ein Patient könnte etwa folgende haben:
+\begin{verbatim}
+    <xchange:XID GUID="cbccbbf723451dwfa" valid="true">
+        <xchange:identity domain="http://www.xchange.ch/id/kk/helvita"
+         value="123343" quality="regionalQuality"/>
+        <xchange:identity domain="http://www.xchange.ch/id/ahv"
+         value="123.45.123.345" quality="regionalQuality"/>
+    </xchange:XID>
+\end{verbatim}
+
+\item ein Laborresultat könnte so identifiziert werden:
+\begin{verbatim}
+    <xchange:XID GUID="zzccbbf723451dwfa" valid="true" parent="cbccbbf723451dwfa">
+        <xchange:identity domain="http://www.viollier.ch"
+         value="Na" quality="localQuality"/>
+    </xchange:XID>
+\end{verbatim}
+
+\end{itemize}
+
+Anmerkung: Selbstverständlich kann ein Arzt auch gleichzeitig Patient sein und umgekehrt: Die XIDs lassen sich beliebig zusammenfügen.
+
+\section{Use case: Datenimport}
+Gehen wir davon aus, dass von einem Patienten XY in zwei unterschiedlichen Arztpraxen A und B (welche beide eine xChange-fähige elKG verwenden) zu überlappenden Zeiträumen Daten bearbeitet wurden. Irgendwann beschliesst XY, seine Daten alle zum Arzt B zu transferieren. Die exportierende Anwendung kann einfach alle Daten in einen xChange-Container packen, die importierende Anwendung dagegen muss für jeden Datensatz feststellen, ob dieser schon lokal existiert (aus einem früheren Import, oder aus Befundkopien etc., die Dr. B. schon früher mal erhalten hat)
+
+wenn eine xChange-Anwendung einen Datensatz importiert, dann muss sie also zunächst prüfen, ob dieser schon in der lokalen Datenbank vorhanden ist.
+\begin{itemize}
+\item Wenn ja: Der existierende Datensatz wird mit den neuen Daten ergänzt, sofern keine Konflikte auftreten. Falls Konflikte auftreten, muss die Anwendung den Anwender fragen, wie sie vorgehen soll.
+\item Wenn nein: Es muss ein neuer Datensatz erstellt werden, der die zu importierenden Daten aufnimmt,
+\end{itemize}
+
+Wie kann die Software nun feststellen, ob ein bestimmter Datensatz schon lokal existiert?
+\begin{enumerate}
+\item Sie liest die XID des Imports und vergleicht diese mit den XID's aller existierenden Datensätze gleichen Typs.
+\item Wenn zwei XID's dieselbe GUID haben, darf sie davon ausgehen, dass diese beiden XID's identisch sind und damit denselben Datensatz bezeichnen (Diese Annahme ist sicher, da ja jede GUID definitionsgemäss nur einmal vorkommt). Dennoch könnte es sein, dass die XID's nicht denselben Inhalt haben: Dr. A könnte identity-Systeme einer anderen domain zugefügt haben, beispielsweise eine neue Krankenkassennummer, oder die Personalausweis-Nummer, die dem Dr. B nicht bekannt war. Damit sind beide XID's gültig, aber unterschiedlich umfangreich.
+    
+    Die \textbf{Anweisung} für xChange-kompatible Systeme lautet: Wenn zwei XIDs dieselbe GUID haben. aber unterschiedliche Inhalte, dann sollen beide XIDs kombiniert werden und das Resultat dieser Kombination soll als neue XID mit derselben GUID zukünftig verwendet werden.
+    
+    Falls diese Kombination aber zu einem Konflikt führt (Beispielsweise weil die beiden XIDs eine oder mehrere identities derselben domain aber mit unterschiedlichen values enthalten), dann muss diese XID als ungültig markiert werden, und der Anwender muss aufgefordert werden, bei nächster Gelegenheit die Daten zu überprüfen und zu korrigieren.
+    
+\item Wenn keine XIDs mit identischer GUID gefunden werden, heisst das aber noch nicht, dass nicht trotzdem derselbe Datensatz lokal schon vorhanden ist: Es kann ja gut sein, dass Dr. A und Dr. B unabhängig voneinander den Patienten neu aufgenommen haben, wodurch jede Software eine neue XID erstellen musste, die somit ja keinesfalls dieselbe GUID haben wird.
+    Daher muss die importierende Anwendung nun die identities jeder XID einzeln mit den identities des zu importierenden Datensatzes vergleichen und überprüfen, ob es sich vielleicht, wahrscheinlich oder sicher (je nach quality der identity) um denselben Datensatz handelt.
+    
+    Die \textbf{Anweisung} für xChange-kompatible Systeme lautet: Wenn zwei XIDs mit unterschiedlichen GUIDs möglicherweise denselben Datensatz bezeichnen, dann soll der Anwender gefragt werden. 
+    
+    Wenn -durch automatische analyse oder durch Anweisung des Anwenders- festgestellt wird, dass zwei XIDs trotz unterschiedlichen GUIDs identisch sind, dann sollen die beiden XIDs ebenfalls kombiniert werden, wie oben gezeigt. Wenn es dabei nicht zu Konflikten kommt, dann erhält die resultierende XID diejenige der beiden GUIDs, welche bei alphabetischer Sortierung zuerst kommt.
+    
+    (Im Lauf von mehreren Im- und Exportvorgängen wird es dadurch mit der Zeit auch ohne manuelle Anpassung zu einer Angleichung der GUIDs kommen.)
+    
+\end{enumerate}
+
+
+\part{Aufbau}
+\section{Container}
 Eine xChange-Datei ist eine gepackte Datei im ZIP-Format\footnote{Referenz noch zu nennen}, welche folgende Elemente enthält:
 \begin{itemize}
-\item \textit{Genau eine} XML-Datei (das Zentraldokument), welche Metadaten und reine Text-Daten des Austauschs enthält
+\item \textit{Genau eine} XML-Datei (das Zentraldokument), welche Metadaten und reine Text-Daten des Austauschs enthält. Die formale Spezifikation des Zentraldokuments ist in xchange\_501.xsd zu finden.
 \item Keine oder beliebig viele binäre Dateien, auf die im Zentraldokument verwiesen wird.
 \end{itemize}
 Die Binärdateien enthalten z.B. Bilder oder andere Dokumente in Binärformaten (z.B. PDF), welche sich nicht effizient in Textform abbilden lassen.
 
-\subsection{Verschlüsselung}
+\section{Zentraldokument}
+
+\section{Verschlüsselung}
 Selbstverständlich kann und muss eine xChange-Dokument zum Transport verschlüsselt und signiert werden. Verschlüsselung und Signatur umfasst jeweils den gesamten Container.
 
-\subsection{Zentraldokument}
-\subsubsection{Konzepte}
-\begin{description}
-\item[Identifier] Zur Identifikation und Referenzierung von Elementen werden ID's verwendet. Hierbei soll einerseits Redundanz vermieden werden, indem ein allenfalls schon existierendes Identifikationsmerkmal verwendet wird, andererseits aber auch die sicher eindeutige Identifikation sichergestellt werden. Ein Problem etwa bei der Identifikation von Personen liegt darin, dass es eine grosse Zahl von Identifikationssystemen mit ganz unterschiedlichen Qualitäten gibt. Beispielsweise ist die Kombination aus Name,Vorname und Geburtstag leicht les- und merkbar, häufig auch eindeutig, aber eben nicht immer (ganz abgesehen von problematischen Unterschieden der Schreibweisen). Auch die AHV-Nummer ist zwar eindeutig, aber nicht konstant, da sie sich im Lauf des Lebens ändern kann. In vielen Ländern gibt es dagegen eine eindeutige Sozialversicherungsnummer, welche in der Schweiz erst im Stadium der Planung ist. Auf der anderen Seite gibt es beispielsweise für Ärzte gleich eine ganze Reihe eindeutiger Identifikationssysteme (EAN, ZSR, NIF), welche teilweise identischen, teilweise überlappenden Informationsghalt haben.
-    
-    In xChange sprechen wir bei solchen externen Identifikationssystemen von XID. Im Gegensatz dazu können auch eindeutige ID's ad Hoc generiert werden. Hierfür existieren einfache Algorithmen, welche beliebig viele global eindeutige ID's generieren können. Eine solche \glqq Globally Unique ID\grqq{} nennen wir GUID.
-    
-    Ein Element, welches eine eindeutige Identifikation benötigt, wird mit einem Attribut des Typs identityType.
-\end{description}
+
+\appendix
+\part{Identity-Domains}
+Folgende identity-domains können bereits verwendet werden:
+
+\medskip
+
+\begin{tabular}[h]{|l|l|}
+\hline
+domain-URL & ID-Typ\\
+\hline
+www.xchange.ch/id/IDCardCH & Nummer einer Schweizer ID-Karte\\
+www.xchange.ch/id/KK/(kkname) & Versichertennummer bei der Kasse \textit{(kkname)}\\
+www.xchange.ch/id/ahv & AHV-Nummer\\
+www.xchange.ch/id/ssn/(land) & Soz.vers.nummer von Land \textit{(land)} (ISO-Code)\\
+www.xchange.ch/id/ean & Eine EAN-Nummer\\
+www.xchange.ch/id/zsr & Eine ZSR-Nummer\\
+www.xchange.ch/id/nif & Eine NIF-Nummer\\
+www.xchange.ch/id/suvanr & eine SUVA-Unfallnummer\\
+\hline
+\end{tabular}
 
 \end{document} 

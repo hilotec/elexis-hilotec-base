@@ -8,7 +8,7 @@
 	physicians. 
 	
 	Permission to use, and distribute this schema and its accompanying
-	documentation for any purpose and without fee is hereby granted in perpetuity,
+	documentation without fee is hereby granted in perpetuity,
 	provided that the above copyright notice and this paragraph appear in all copies
 	and this schema file is not altered.
 	The copyright holders make no representation about the suitability of the schema
@@ -20,7 +20,7 @@
 	SGAM
 	All Rights Reserved.
 	$$VERSION: 5.00.1
-	$Id: xChange_501.xsd 2953 2007-08-05 07:16:06Z rgw_ch $
+	$Id: xChange_501.xsd 2954 2007-08-05 11:50:11Z rgw_ch $
 	==========================================================================  -->
 <schema targetNamespace="http://www.forum-datenaustausch.ch/de"
 	xmlns="http://www.w3.org/2001/XMLSchema"
@@ -153,6 +153,7 @@
 			<enumeration value="government" />
 			<enumeration value="employer" />
 			<enumeration value="other" />
+			<enumeration value="patient"></enumeration>
 		</restriction>
 	</simpleType>
 
@@ -249,16 +250,15 @@
 		======================================================================= -->
 
 	<complexType name="personType">
-		<sequence>
-			<element name="ID" type="string"></element>
+		<sequence>
 			<element name="misc" type="anySimpleType"></element>
 		</sequence>
 		<attribute name="salutation" type="string" />
 		<attribute name="title" type="string" />
 		<attribute name="familyName" type="xchange:nonEmptyStringType"/>
 		<attribute name="givenName" type="string"></attribute>
-		<attribute name="birthDate" type="date"></attribute>
-		<attribute name="gender">
+		<attribute name="birthDate" type="date" use="optional"></attribute>
+		<attribute name="gender" use="optional">
 			<simpleType>
 				<restriction base="string">
 					<pattern value="[m|f]"></pattern>
@@ -274,8 +274,7 @@
 		<sequence>
 			<element name="companyname" type="xchange:nonEmptyStringType" />
 			<element name="department" type="string"
-				minOccurs="0" />
-			<element name="ID" type="string"></element>
+				minOccurs="0" />
 		</sequence>
 	</complexType>
 
@@ -298,7 +297,7 @@
 			</documentation>
 		</annotation>
 
-		<attribute name="pobox">
+		<attribute name="pobox" use="optional">
 			<simpleType>
 				<restriction base="string">
 					<minLength value="1"></minLength>
@@ -306,7 +305,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="street">
+		<attribute name="street" use="optional">
 			<simpleType>
 				<restriction base="string">
 					<minLength value="1"></minLength>
@@ -314,7 +313,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="state">
+		<attribute name="state" use="optional">
 			<simpleType>
 				<restriction base="string">
 					<minLength value="1"></minLength>
@@ -322,15 +321,18 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="country">
-			<simpleType>
+		<attribute name="country" use="optional">
+            <annotation>
+            	<documentation>ISO-Code if th country</documentation>
+            </annotation>
+            <simpleType>
 				<restriction base="string">
 					<minLength value="1"></minLength>
 					<maxLength value="3"></maxLength>
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="city">
+		<attribute name="city" use="optional">
 			<simpleType>
 				<restriction base="string">
 					<minLength value="1"></minLength>
@@ -358,7 +360,7 @@
 				</simpleType>
 			</element>
 		</sequence>
-		<attribute name="type" type="string">
+		<attribute name="type" type="string" default="default">
 			<annotation>
 				<documentation>
 					The connection gives a method to contact a person or
@@ -430,13 +432,14 @@
 		<choice>
 			<element name="base64" type="base64Binary" />
 			<element name="url" type="anyURI" />
+			<element name="XID" type="xchange:XIDType"></element>
 		</choice>
 		<attribute name="filename" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="mimeType" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="viewer" type="anyURI" />
-		<attribute name="id" type="ID" use="required" />
+		<attribute name="id" type="string" use="required" />
 	</complexType>
 
 	<!-- =======================================================================
@@ -469,6 +472,9 @@
 		the 6th diagnosis in the 3-fold hiereachy 1.2.3
 		======================================================================= -->
 	<complexType name="diagnosisType">
+		<sequence>
+			<element name="XID" type="xchange:XIDType"></element>
+		</sequence>
 		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="code" type="xchange:nonEmptyStringType"
@@ -488,7 +494,11 @@
 		<attribute name="is_active" type="boolean" default="true" />
 		<attribute name="is_chronic" type="boolean" default="false" />
 		<attribute name="hierarchy" type="xchange:hierarchyType" />
-		<attribute name="id" type="ID" use="required" />
+
+		<attribute name="ID" type="string">
+			<annotation>
+				<documentation>TBD: More design work</documentation>
+			</annotation></attribute>
 	</complexType>
 
 	<!-- =======================================================================
@@ -500,6 +510,7 @@
 		<sequence>
 			<element name="posology" type="xchange:posologyType"
 				minOccurs="0" maxOccurs="unbounded" />
+			<element name="XID" type="xchange:XIDType"></element>
 		</sequence>
 
 		<attribute name="name" type="xchange:nonEmptyStringType"
@@ -561,6 +572,9 @@
 		defines an allergy diagnosis
 		======================================================================= -->
 	<complexType name="allergyType">
+		<sequence>
+			<element name="XID" type="xchange:XIDType"></element>
+		</sequence>
 		<attribute name="name" use="required">
 			<simpleType>
 				<restriction base="string">
@@ -593,8 +607,9 @@
 			</simpleType>
 		</attribute>
 		<attribute name="date" type="dateTime" />
-		<attribute name="confirmed" type="boolean" default="true" />
-		<attribute name="responsible" type="xchange:eanPartyType" />
+		<attribute name="confirmed" type="boolean" default="true" />
+
+		<attribute name="responsible" type="xchange:xChangePartyRef" />
 	</complexType>
 
 	<!-- =======================================================================
@@ -777,6 +792,7 @@
 		<sequence>
 			<element name="case_record" type="xchange:caseRecordType"
 				maxOccurs="unbounded" />
+			<element name="XID" type="xchange:XIDType"></element>
 		</sequence>
 
 		<attribute name="diagnosis_ref" type="IDREF" />
@@ -785,6 +801,12 @@
 	</complexType>
 
 	<complexType name="caseRecordType">
+		<annotation>
+			<documentation>
+				TBD: Needs more design work (structure should be more
+				generic)
+			</documentation>
+		</annotation>
 		<choice minOccurs="0">
 			<element name="text" type="string" />
 			<sequence>
@@ -793,10 +815,11 @@
 				<element name="A" type="string" />
 				<element name="P" type="string" />
 			</sequence>
+			<element name="XID" type="xchange:XIDType"></element>
 		</choice>
 
-		<attribute name="providerEAN" type="xchange:eanPartyType" />
-		<attribute name="responsibleEAN" type="xchange:eanPartyType" />
+		<attribute name="author" type="xchange:xChangePartyRef" />
+		<attribute name="responsible" type="xchange:xChangePartyRef" />
 		<attribute name="date" type="dateTime" use="required" />
 		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
@@ -812,8 +835,13 @@
 			</simpleType>
 		</attribute>
 		<attribute name="roe_icpc2" type="string" />
-		<attribute name="procedure_icpc2"
-			type="string" />
+		<attribute name="procedure_icpc2" type="string" />
+		<attribute name="ID" type="string">
+			<annotation>
+				<documentation>
+					For convenience: GUID of the nested XID
+				</documentation>
+			</annotation></attribute>
 	</complexType>
 
 	<!-- =======================================================================
@@ -898,7 +926,9 @@
 					</sequence>
 				</complexType>
 			</element>
+			<element name="XID" type="xchange:XIDType"></element>
 		</sequence>
+		<attribute name="ID" type="string"></attribute>
 	</complexType>
 
 	<!-- =======================================================================
@@ -910,7 +940,7 @@
 		======================================================================= -->
 	<complexType name="patientType">
 		<complexContent>
-			<extension base="xchange:personType">
+			<extension base="xchange:xChangePartyType">
 				<sequence>
 
 					<element name="treatments" minOccurs="0">
@@ -952,28 +982,35 @@
 								</simpleType>
 							</attribute>
 						</complexType>
-					</element>
-					<element name="connection" type="xchange:connectionType"></element>
+					</element>
 				</sequence>
 
-				<attribute name="addresses_ref">
-					<simpleType>
-						<restriction base="IDREFS"></restriction>
-					</simpleType>
-				</attribute>
 
 			</extension>
 		</complexContent>
 	</complexType>
 
+	
 	<!-- =======================================================================
-		body: body data type definitions - this element (and subelements 
-		therein) can be encrypted.
-		
-		Now this is the definition of the real structured data
+		Here starts the request with its root element
 		======================================================================= -->
-	<complexType name="bodyType">
+
+	<element name="xchange" type="xchange:xChangeDocumentType" />
+	<complexType name="xChangeDocumentType">
+		<annotation>
+			<documentation>
+				The top level element of an xChange Document.
+			</documentation>
+		</annotation>
 		<sequence>
+			<element name="processing" type="xchange:processingType">
+				<annotation>
+					<documentation>
+						TBD: Don't know what is this for?
+					</documentation>
+				</annotation>
+			</element>
+
 			<!-- =======================================================================
 				defines the main physician software, the generator of the XML file
 				and possible dependencies
@@ -992,13 +1029,7 @@
 				of course even if possible patient addresses should not be exported
 				as an address
 				======================================================================= -->
-			<element name="parties" minOccurs="0">
-				<complexType>
-					<sequence>
-						<element name="address"
-							type="xchange:xChangePartyType" maxOccurs="unbounded" />
-					</sequence>
-				</complexType>
+			<element name="parties" minOccurs="0" type="xchange:xChangePartyType">
 			</element>
 
 			<!-- =======================================================================
@@ -1023,47 +1054,7 @@
 				======================================================================= -->
 			<element name="patient" type="xchange:patientType"
 				minOccurs="0" />
-
-		</sequence>
-
-		<!-- =======================================================================
-			title 		should give a hint why this export happened
-			timestamp	auto-generated timestamp of generation
-			======================================================================= -->
-		<attribute name="title" type="xchange:nonEmptyStringType"
-			use="required" />
-		<attribute name="timestamp" type="dateTime" use="required" />
-	</complexType>
-
-
-	<!-- =======================================================================
-		Here starts the request with its root element
-		======================================================================= -->
-
-	<element name="xchange" type="xchange:xchangeType" />
-	<complexType name="xchangeType">
-		<annotation>
-			<documentation>
-				The top level element of xChange.
-			</documentation>
-		</annotation>
-		<sequence>
-			<element name="processing" type="xchange:processingType">
-				<annotation>
-					<documentation>
-						TBD: Don't know what is this for?
-					</documentation>
-				</annotation>
-			</element>
-
-
-			<element name="ID" type="string">
-				<annotation>
-					<documentation>
-						Identification of this file.
-					</documentation>
-				</annotation>
-			</element>
+		
 		</sequence>
 		<attribute name="modus" default="production">
 			<annotation>
@@ -1101,11 +1092,6 @@
 			</annotation>
 		</attribute>
 	</complexType>
-
-
-
-
-
 
 	<complexType name="XIDType">
 		<annotation>
@@ -1181,11 +1167,23 @@
 			</element>
 		</sequence>
 
-		<attribute name="GUID" type="string"></attribute>
+		<attribute name="GUID">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="10"></minLength>
+					<maxLength value="25"></maxLength>
+				</restriction>
+			</simpleType>
+		</attribute>
 		<attribute name="valid" type="boolean"></attribute>
+		<attribute name="parent" type="string"></attribute>
 	</complexType>
 
 	<simpleType name="XSDSimpleType">
+		<restriction base="string"></restriction>
+	</simpleType>
+
+	<simpleType name="xChangePartyRef">
 		<restriction base="string"></restriction>
 	</simpleType>
 </schema>
