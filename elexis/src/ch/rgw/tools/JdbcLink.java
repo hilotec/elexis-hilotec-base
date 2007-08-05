@@ -1,4 +1,4 @@
-// $Id: JdbcLink.java 2754 2007-07-07 18:08:41Z rgw_ch $
+// $Id: JdbcLink.java 2953 2007-08-05 07:16:06Z rgw_ch $
 
 package ch.rgw.tools;
 import java.io.BufferedWriter;
@@ -348,7 +348,9 @@ public synchronized void releaseStatement(Stm s){
 		  stm.delete();
 	      stm=null;
 	  }
-      conn.close();
+	  if(conn!=null){
+		  conn.close();
+	  }
       statements=null;
       log.log("Disconnected",Log.INFOS);
     }

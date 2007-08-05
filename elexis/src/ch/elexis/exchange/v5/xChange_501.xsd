@@ -20,7 +20,7 @@
 	SGAM
 	All Rights Reserved.
 	$$VERSION: 5.00.1
-	$Id: xChange_501.xsd 2952 2007-08-04 14:56:20Z rgw_ch $
+	$Id: xChange_501.xsd 2953 2007-08-05 07:16:06Z rgw_ch $
 	==========================================================================  -->
 <schema targetNamespace="http://www.forum-datenaustausch.ch/de"
 	xmlns="http://www.w3.org/2001/XMLSchema"
@@ -72,61 +72,7 @@
 		</restriction>
 	</simpleType>
 
-	<!--  string type with length 1-25 characters  -->
-	<simpleType name="stringType1_25">
-		<restriction base="string">
-			<minLength value="1" />
-			<maxLength value="25" />
-		</restriction>
-	</simpleType>
-
-	<!--  string type with length 1-35 characters  -->
-	<simpleType name="stringType1_35">
-		<restriction base="string">
-			<minLength value="1" />
-			<maxLength value="35" />
-		</restriction>
-	</simpleType>
-
-	<!--  string type with length 1-50 characters  -->
-	<simpleType name="stringType1_50">
-		<restriction base="string">
-			<minLength value="1" />
-			<maxLength value="50" />
-		</restriction>
-	</simpleType>
-
-	<!--  string type with length 1-70 characters  -->
-	<simpleType name="stringType1_70">
-		<restriction base="string">
-			<minLength value="1" />
-			<maxLength value="70" />
-		</restriction>
-	</simpleType>
-
-	<!--  string type with length 1-80 characters  -->
-	<simpleType name="stringType1_80">
-		<restriction base="string">
-			<minLength value="1" />
-			<maxLength value="80" />
-		</restriction>
-	</simpleType>
-
-	<!--  string type with length 0-255 characters	-->
-	<simpleType name="stringType0_255">
-		<restriction base="string">
-			<minLength value="0" />
-			<maxLength value="255" />
-		</restriction>
-	</simpleType>
-	<!--  string type with length 1-255 characters	-->
-	<simpleType name="stringType1_255">
-		<restriction base="string">
-			<minLength value="1" />
-			<maxLength value="255" />
-		</restriction>
-	</simpleType>
-
+	
 	<!--  EAN, ZSR, NIF and SSN numbers -->
 	<simpleType name="eanPartyType">
 		<restriction base="string">
@@ -168,12 +114,47 @@
 	<simpleType name="loinc_sgamUnionType">
 		<union memberTypes="xchange:loincType xchange:sgamType" />
 	</simpleType>
+	
 	<simpleType name="emailType">
-		<restriction base="xchange:stringType1_70">
+		<restriction base="xchange:nonEmptyStringType">
 			<pattern value=".+@.+" />
 		</restriction>
 	</simpleType>
 
+	<simpleType name="roleType">
+		<restriction base="NMTOKEN">
+			<enumeration value="physician" />
+			<enumeration value="hospital" />
+			<enumeration value="pharmacist" />
+			<enumeration value="labtechnician" />
+			<enumeration value="orthopaedictechnician" />
+			<enumeration value="dentist" />
+			<enumeration value="dentaltechnician" />
+			<enumeration value="dentalhygienist" />
+			<enumeration value="physiotherapist" />
+			<enumeration value="ergotherapist" />
+			<enumeration value="logotherapist" />
+			<enumeration value="chiropraktor" />
+			<enumeration value="diet" />
+			<enumeration value="diabetics" />
+			<enumeration value="massage" />
+			<enumeration value="midwife" />
+			<enumeration value="wholesaler" />
+			<enumeration value="shoemaker" />
+			<enumeration value="nurse" />
+			<enumeration value="ambulance" />
+			<enumeration value="druggist" />
+			<enumeration value="carrier" />
+			<enumeration value="guarantor" />
+			<enumeration value="insurance_kvg" />
+			<enumeration value="insurance_uvg" />
+			<enumeration value="insurance_ivg" />
+			<enumeration value="insurance_mvg" />
+			<enumeration value="government" />
+			<enumeration value="employer" />
+			<enumeration value="other" />
+		</restriction>
+	</simpleType>
 
 	<!-- =======================================================================
 		processing data type definitions
@@ -222,10 +203,10 @@
 			<element name="depends_on" type="xchange:dependsOnType"
 				minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
-		<attribute name="name" type="xchange:stringType1_50"
-			use="required" />
-		<attribute name="copyright" type="xchange:stringType1_50" />
-		<attribute name="description" type="xchange:stringType1_50" />
+		<attribute name="name" type="xchange:nonEmptyStringType"
+			use="required" />	
+		<attribute name="copyright" type="string" />
+		<attribute name="description" type="string" />
 		<attribute name="version">
 			<simpleType>
 				<restriction base="integer">
@@ -243,10 +224,10 @@
 	</complexType>
 
 	<complexType name="dependsOnType">
-		<attribute name="name" type="xchange:stringType1_50"
+		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
-		<attribute name="copyright" type="xchange:stringType1_50" />
-		<attribute name="description" type="xchange:stringType1_50" />
+		<attribute name="copyright" type="string" />
+		<attribute name="description" type="string" />
 		<attribute name="version">
 			<simpleType>
 				<restriction base="integer">
@@ -269,15 +250,12 @@
 
 	<complexType name="personType">
 		<sequence>
-
-
-			<element name="ID" type="xchange:identityType"></element>
-
+			<element name="ID" type="string"></element>
 			<element name="misc" type="anySimpleType"></element>
 		</sequence>
-		<attribute name="salutation" type="xchange:stringType1_35" />
-		<attribute name="title" type="xchange:stringType1_35" />
-		<attribute name="familyName" type="string"></attribute>
+		<attribute name="salutation" type="string" />
+		<attribute name="title" type="string" />
+		<attribute name="familyName" type="xchange:nonEmptyStringType"/>
 		<attribute name="givenName" type="string"></attribute>
 		<attribute name="birthDate" type="date"></attribute>
 		<attribute name="gender">
@@ -294,10 +272,10 @@
 
 	<complexType name="companyType">
 		<sequence>
-			<element name="companyname" type="xchange:stringType1_35" />
-			<element name="department" type="xchange:stringType1_35"
+			<element name="companyname" type="xchange:nonEmptyStringType" />
+			<element name="department" type="string"
 				minOccurs="0" />
-			<element name="ID" type="xchange:identityType"></element>
+			<element name="ID" type="string"></element>
 		</sequence>
 	</complexType>
 
@@ -306,17 +284,16 @@
 		<annotation>
 			<documentation>
 				The contents of this element is a representation of this
-				address in a form who it should be printed on an
+				address in the format it should be printed on an
 				envelope. Note that this might be quite different from
 				anything that could be computed from the attributes. For
 				example, The label might containt things like "c/o",
-				"floor 3" etc. Of course, an application still might try
+				"Floor 3" etc. Of course, an application still might try
 				to generate a reasonable default address field from the
 				attributes, if no contents is found. The contents can
-				(and usually will) contain Newline characters (ASCII 10,
+				(and usually will) contain newline characters (ASCII 10,
 				\n) that must be honored by the interpreting
 				application.
-
 
 			</documentation>
 		</annotation>
@@ -395,86 +372,53 @@
 	</complexType>
 
 	<!-- =======================================================================
-		the specific address role definitions
+		xChangeParty (former addressType). Can be a person or an organization/company.
+		It has a unique ID and one ore more connections
 		
 		Note that the "misc" attribute allows for the transport of data 
 		(e.g. religion, race,...) not (yet) covered by the scheme - it should
 		be formatted xml like (e.g. misc="religion=&quot;catholic&quot;")
 		======================================================================= -->
-	<!--  author's address type -->
-	<complexType name="authorAddressType">
-		<choice>
-			<element name="company" type="xchange:companyType" />
-			<element name="person" type="string" />
-		</choice>
-		<attribute name="ean_party" type="xchange:eanPartyType" />
-		<attribute name="zsr" type="xchange:zsrPartyType" />
-		<attribute name="specialty" type="xchange:stringType0_255" />
-	</complexType>
 
-	<!-- address type for all other roles -->
-	<complexType name="addressType">
-        <annotation>
-        	<documentation>
-        		TBD: ean_party, zsr and specialty are redunancies. EAN
-        		points to a database entry that contains the same
-        		informations as ZSR and specialty give. The need of the
-        		ean attribute depends on the role. We might demand, that
-        		the ID must be the EAN if the role is one that requires
-        		an EAN. Interpreting applications can then look up ZSR,
-        		NIF, specialty, Tarmed-dignity etc.from that EAN as they
-        		need it.
+	<complexType name="xChangePartyType">
+		<annotation>
+			<documentation>
+				A party is any person or organization being (or able to
+				be) part of the xChange system. A party has a role
 
-        	</documentation>
-        </annotation>
-        <sequence>
+				TBD: ean_party, zsr and specialty are redunancies. EAN
+				points to a database entry that contains the same
+				informations as ZSR and specialty give. The need of the
+				ean attribute depends on the role. We might demand, that
+				the ID must be the EAN if the role is one that requires
+				an EAN. Interpreting applications can then look up ZSR,
+				NIF, specialty, Tarmed-dignity etc.from that EAN as they
+				need it.
+
+			</documentation>
+		</annotation>
+		<sequence>
 			<choice>
-				<element name="person" type="xchange:personNameType" />
+				<element name="person" type="xchange:personType" />
 				<element name="company" type="xchange:companyType" />
 			</choice>
-			<element name="connection" type="xchange:connectionType" maxOccurs="unbounded" minOccurs="1"/>
-			<element name="ID" type="xchange:identityType" maxOccurs="1" minOccurs="1"></element>
+			<element name="connection" type="xchange:connectionType"
+				maxOccurs="unbounded" minOccurs="1" />
+			<element name="XID" type="xchange:XIDType" maxOccurs="1"
+				minOccurs="1">
+			</element>
 		</sequence>
 		<attribute name="ean_party" type="xchange:eanPartyType" />
 		<attribute name="zsr" type="xchange:zsrPartyType" />
-		<attribute name="specialty" type="xchange:stringType0_255" />
-		<attribute name="role" use="required">
-			<simpleType>
-				<restriction base="NMTOKEN">
-					<enumeration value="physician" />
-					<enumeration value="hospital" />
-					<enumeration value="pharmacist" />
-					<enumeration value="labtechnician" />
-					<enumeration value="orthopaedictechnician" />
-					<enumeration value="dentist" />
-					<enumeration value="dentaltechnician" />
-					<enumeration value="dentalhygienist" />
-					<enumeration value="physiotherapist" />
-					<enumeration value="ergotherapist" />
-					<enumeration value="logotherapist" />
-					<enumeration value="chiropraktor" />
-					<enumeration value="diet" />
-					<enumeration value="diabetics" />
-					<enumeration value="massage" />
-					<enumeration value="midwife" />
-					<enumeration value="wholesaler" />
-					<enumeration value="shoemaker" />
-					<enumeration value="nurse" />
-					<enumeration value="ambulance" />
-					<enumeration value="druggist" />
-					<enumeration value="carrier" />
-					<enumeration value="guarantor" />
-					<enumeration value="insurance_kvg" />
-					<enumeration value="insurance_uvg" />
-					<enumeration value="insurance_ivg" />
-					<enumeration value="insurance_mvg" />
-					<enumeration value="government" />
-					<enumeration value="employer" />
-					<enumeration value="other" />
-				</restriction>
-			</simpleType>
-		</attribute>
+		<attribute name="specialty" type="string" />
+		<attribute name="role" use="required" type="xchange:roleType" />
 		<attribute name="misc" type="string" />
+		<attribute name="ID" type="string">
+			<annotation>
+				<documentation>
+					For convenience: The GUID of the nested XID Element.
+				</documentation>
+			</annotation></attribute>
 	</complexType>
 
 	<!--  patient's address type -->
@@ -487,9 +431,9 @@
 			<element name="base64" type="base64Binary" />
 			<element name="url" type="anyURI" />
 		</choice>
-		<attribute name="filename" type="xchange:stringType1_255"
+		<attribute name="filename" type="xchange:nonEmptyStringType"
 			use="required" />
-		<attribute name="mimeType" type="xchange:stringType1_255"
+		<attribute name="mimeType" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="viewer" type="anyURI" />
 		<attribute name="id" type="ID" use="required" />
@@ -525,9 +469,9 @@
 		the 6th diagnosis in the 3-fold hiereachy 1.2.3
 		======================================================================= -->
 	<complexType name="diagnosisType">
-		<attribute name="name" type="xchange:stringType1_255"
+		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
-		<attribute name="code" type="xchange:stringType1_255"
+		<attribute name="code" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="type" use="required">
 			<simpleType>
@@ -558,9 +502,9 @@
 				minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 
-		<attribute name="name" type="xchange:stringType1_255"
+		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
-		<attribute name="code" type="xchange:stringType1_255"
+		<attribute name="code" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="type" use="required">
 			<simpleType>
@@ -608,7 +552,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="recipe" type="xchange:stringType0_255" />
+		<attribute name="recipe" type="xchange:nonEmptyStringType" />
 	</complexType>
 
 	<!-- =======================================================================
@@ -617,9 +561,15 @@
 		defines an allergy diagnosis
 		======================================================================= -->
 	<complexType name="allergyType">
-		<attribute name="name" type="xchange:stringType1_255"
-			use="required" />
-		<attribute name="code" type="xchange:stringType1_255" />
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+					<maxLength value="255"></maxLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="code" type="nonNegativeInteger" />
 		<attribute name="type" use="required">
 			<simpleType>
 				<restriction base="NMTOKEN">
@@ -643,9 +593,8 @@
 			</simpleType>
 		</attribute>
 		<attribute name="date" type="dateTime" />
-		<attribute name="confirmed" type="boolean" default="true" />
-		<attribute name="providerEAN" type="xchange:eanPartyType" />
-		<attribute name="responsibleEAN" type="xchange:eanPartyType" />
+		<attribute name="confirmed" type="boolean" default="true" />
+		<attribute name="responsible" type="xchange:eanPartyType" />
 	</complexType>
 
 	<!-- =======================================================================
@@ -663,19 +612,16 @@
 		abnormal_flag	the abnormal flag of the measurement as defined in HL7
 		OBX:Abnormal Flags
 		status			the status of result either final or preliminary
-		machine			the machine that produced the result
+		machine			the machine that produced the result (sould we say "method"?)
 		producer		the lab name for external labs | internal lab
 		remark			optional remark for the measurement
 		======================================================================= -->
 	<complexType name="labTextResultType">
 		<complexContent>
 			<extension base="xchange:resultType">
-				<attribute name="lab_code"
-					type="xchange:stringType0_255" />
-				<attribute name="reference"
-					type="xchange:stringType0_255" />
-				<attribute name="abnormal_flag"
-					type="xchange:stringType0_255" />
+				<attribute name="lab_code"	type="xchange:nonEmptyStringType" use="required"/>
+				<attribute name="reference"	type="string" />
+				<attribute name="abnormal_flag"	type="string" />
 				<attribute name="status" default="final">
 					<simpleType>
 						<restriction base="NMTOKEN">
@@ -684,11 +630,9 @@
 						</restriction>
 					</simpleType>
 				</attribute>
-				<attribute name="machine"
-					type="xchange:stringType0_255" />
-				<attribute name="producer"
-					type="xchange:stringType0_255" />
-				<attribute name="remark" type="xchange:stringType0_255" />
+				<attribute name="machine"	type="string" />
+				<attribute name="producer"	type="xchange:nonEmptyStringType" use="required"/>
+				<attribute name="remark" type="string" />
 			</extension>
 		</complexContent>
 	</complexType>
@@ -714,11 +658,10 @@
 		<complexContent>
 			<extension base="xchange:numericResultType">
 				<attribute name="lab_code"
-					type="xchange:stringType0_255" />
+					type="xchange:nonEmptyStringType" use="required"/>
 				<attribute name="lower_reference" type="double" />
 				<attribute name="upper_reference" type="double" />
-				<attribute name="abnormal_flag"
-					type="xchange:stringType0_255" />
+				<attribute name="abnormal_flag"	type="string" />
 				<attribute name="status" default="final">
 					<simpleType>
 						<restriction base="NMTOKEN">
@@ -728,10 +671,10 @@
 					</simpleType>
 				</attribute>
 				<attribute name="machine"
-					type="xchange:stringType0_255" />
+					type="xchange:nonEmptyStringType" />
 				<attribute name="producer"
-					type="xchange:stringType0_255" />
-				<attribute name="remark" type="xchange:stringType0_255" />
+					type="xchange:nonEmptyStringType" use="required"/>
+				<attribute name="remark" type="string" />
 			</extension>
 		</complexContent>
 	</complexType>
@@ -754,7 +697,7 @@
 	<complexType name="textResultType">
 		<complexContent>
 			<extension base="xchange:resultType">
-				<attribute name="value" type="xchange:stringType1_255"
+				<attribute name="value" type="xchange:nonEmptyStringType"
 					use="required" />
 			</extension>
 		</complexContent>
@@ -776,7 +719,7 @@
 		<complexContent>
 			<extension base="xchange:resultType">
 				<attribute name="value" type="double" use="required" />
-				<attribute name="unit" type="xchange:stringType1_255"
+				<attribute name="unit" type="xchange:nonEmptyStringType"
 					use="required" />
 				<attribute name="operator" default="equal">
 					<simpleType>
@@ -806,7 +749,7 @@
 		documents_ref	whitelist separated list of adjoining documents
 		======================================================================= -->
 	<complexType name="resultType">
-		<attribute name="name" type="xchange:stringType1_255"
+		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="type" use="required">
 			<simpleType>
@@ -837,27 +780,27 @@
 		</sequence>
 
 		<attribute name="diagnosis_ref" type="IDREF" />
-		<attribute name="title" type="xchange:stringType1_255" />
+		<attribute name="title" type="xchange:nonEmptyStringType" use="required"/>
 		<attribute name="is_active" type="boolean" default="true" />
 	</complexType>
 
 	<complexType name="caseRecordType">
 		<choice minOccurs="0">
-			<element name="text" type="xchange:stringType0_255" />
+			<element name="text" type="string" />
 			<sequence>
-				<element name="S" type="xchange:stringType0_255" />
-				<element name="O" type="xchange:stringType0_255" />
-				<element name="A" type="xchange:stringType0_255" />
-				<element name="P" type="xchange:stringType0_255" />
+				<element name="S" type="string" />
+				<element name="O" type="string" />
+				<element name="A" type="string" />
+				<element name="P" type="string" />
 			</sequence>
 		</choice>
 
 		<attribute name="providerEAN" type="xchange:eanPartyType" />
 		<attribute name="responsibleEAN" type="xchange:eanPartyType" />
 		<attribute name="date" type="dateTime" use="required" />
-		<attribute name="name" type="xchange:stringType1_255"
+		<attribute name="name" type="xchange:nonEmptyStringType"
 			use="required" />
-		<attribute name="code" type="xchange:stringType0_255" />
+		<attribute name="code" type="string" />
 		<attribute name="type" use="required">
 			<simpleType>
 				<restriction base="NMTOKEN">
@@ -868,9 +811,9 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="roe_icpc2" type="xchange:stringType0_255" />
+		<attribute name="roe_icpc2" type="string" />
 		<attribute name="procedure_icpc2"
-			type="xchange:stringType0_255" />
+			type="string" />
 	</complexType>
 
 	<!-- =======================================================================
@@ -982,14 +925,32 @@
 						minOccurs="0" />
 					<element name="card" minOccurs="0">
 						<complexType>
-							<attribute name="personal_id"
-								type="xchange:stringType1_35" use="required" />
-							<attribute name="card_id"
-								type="xchange:stringType1_35" use="required" />
+							<attribute name="personal_id" use="required">
+								<simpleType>
+									<restriction base="string">
+										<minLength value="1"/>
+										<maxLength value="35"/>
+									</restriction>
+								</simpleType>
+							</attribute>
+							<attribute name="card_id" use="required" >
+								<simpleType>
+									<restriction base="string">
+										<minLength value="1"/>
+										<maxLength value="35"/>
+									</restriction>
+								</simpleType>
+							</attribute>
 							<attribute name="expiry_date"
 								type="dateTime" use="required" />
-							<attribute name="control_id"
-								type="xchange:stringType1_80" />
+							<attribute name="control_id">
+								<simpleType>
+									<restriction base="string">
+										<minLength value="1"/>
+										<maxLength value="80"/>
+									</restriction>
+								</simpleType>
+							</attribute>
 						</complexType>
 					</element>
 					<element name="connection" type="xchange:connectionType"></element>
@@ -1023,19 +984,19 @@
 				address of the physician/insitution that exported the data (aka the 
 				author)
 				======================================================================= -->
-			<element name="author" type="xchange:authorAddressType" />
+			<element name="author" type="xchange:xChangePartyType" />
 
 			<!-- =======================================================================
-				definition of various addresses - this is an optional part
+				definition of various involved parties - this is an optional part
 				
 				of course even if possible patient addresses should not be exported
 				as an address
 				======================================================================= -->
-			<element name="addresses" minOccurs="0">
+			<element name="parties" minOccurs="0">
 				<complexType>
 					<sequence>
 						<element name="address"
-							type="xchange:addressType" maxOccurs="unbounded" />
+							type="xchange:xChangePartyType" maxOccurs="unbounded" />
 					</sequence>
 				</complexType>
 			</element>
@@ -1069,7 +1030,7 @@
 			title 		should give a hint why this export happened
 			timestamp	auto-generated timestamp of generation
 			======================================================================= -->
-		<attribute name="title" type="xchange:stringType1_255"
+		<attribute name="title" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="timestamp" type="dateTime" use="required" />
 	</complexType>
@@ -1096,7 +1057,7 @@
 			</element>
 
 
-			<element name="ID" type="xchange:identityType">
+			<element name="ID" type="string">
 				<annotation>
 					<documentation>
 						Identification of this file.
@@ -1131,7 +1092,7 @@
 			</simpleType>
 		</attribute>
 		<attribute name="timestamp" type="dateTime"></attribute>
-		<attribute name="title" type="xchange:stringType1_255">
+		<attribute name="title" type="xchange:nonEmptyStringType">
 			<annotation>
 				<documentation>
 					A -problably somewhat meaningful- title to describe
@@ -1144,78 +1105,87 @@
 
 
 
-	<complexType name="identityType">
-		<choice>
-			<element name="guid" type="xchange:GUIDType"></element>
-			<element name="xid" type="xchange:XIDType"></element>
-		</choice>
-		<attribute name="method">
-			<simpleType>
-				<restriction base="string">
-					<pattern value="guid|xid"></pattern>
-				</restriction>
-			</simpleType>
-		</attribute>
-	</complexType>
 
-	<simpleType name="GUIDType">
-		<annotation>
-			<documentation>
-				A GUID is a String 10 to 25 characters long that must be
-				guaranteed (with a reasonable effort) to be globally
-				unique. An application is free to choose any algorithm
-				to create such GUIDs as long as they match the
-				restriction of this element. Unlike a XID, a GUID does
-				not necessarily have a strong bidirectional binding to
-				the entity it identifies: It is perfectly possible, that
-				the same entity happens to be marked with different
-				GUIDs from different applications (e.g. a patient sees
-				two doctors independently and is included in both
-				doctors EMR's). On the other hand, a GUID will never
-				identify more than one entity, becaus it is unique by
-				definition. Therefore, an application should act like
-				this: If it is about to import an entity, that is
-				identified by a GUID, it can first check, whether an
-				entity with the same GUID exists already in the
-				database. If so, it may safely assume, that the two
-				entities are identical. If it does not find suchan
-				entitiy, however, it must try to find a local duplicate
-				of the data to import by other means, e.g. by analyzing
-				the entity's content. If it does find an entity, that
-				seems to be identical, but has a different GUID, it
-				should ask the user whether the two entities are
-				identical. If so, it may (but needs not) change the
-				GUID.
-			</documentation>
-		</annotation>
-		<restriction base="string">
-
-			<pattern value="[\w:#+!=]{10,25}"></pattern>
-		</restriction>
-	</simpleType>
 
 	<complexType name="XIDType">
 		<annotation>
 			<documentation>
-				A XID is an identifier taken from an external identity
-				system, e.g. social insurance number, EAN etc. The
-				domainURI-attribute is the identification of the
-				identity system itself (and may, optionally, point to a
-				site describing this system). The url must be globally
-				unique. The contents of the element is the ID. An
-				application must only be prepared to tell if any such
-				XID's are identical or not to any other XID or GUID. If
-				an xChange entity is identified with a XID, the
-				apllication MUST preserve that XID for future transfers
-				of the same data. A XID must never be changed, replaced
-				or removed. If an application is about to import an
-				entity indentified with a XID, and it finds an element
-				with the same XID existing in its database, it may
-				safely assume, that these two entities are identical.
-				The xChange system does not guarantee any other test for
-				proving identity.
+				A XID (eXtended ID) is a collection of zero or more
+				identification systems. system, e.g. social insurance
+				number, EAN etc. Each entry consists of a domain URI
+				attribute that describes the identity system (and may,
+				optionally, point to a site describing this system), an
+				ID attribute that is the ID given by that system, and a
+				quality marker for this system. (if it a globally unique
+				ID, a regional unique ID or only locally attributed) The
+				XID Element itself has a globally unique ID as attribute
+				(GUID). This attribute is always present and can be the
+				only ID if no other ID domains are present.
+
+				If an xChange application imports data from foreign
+				sources, it must analyze the XIDS to tell whether an
+				entity to import resides already in the database. On
+				Import, the apllication MUST always preserve the XID. It
+				is an violation of the xChange contract to assign new
+				XIDS to existing entities.
+
+				An application using the xChange system must be able to
+				compare XIDs. It should use the following algorthm:
+
+				a) if two XID's have the same GUID attribute, they are
+				identical. In that case, the application should combine
+				the two XID's and use that combination for future
+				xChange processes. If the XID's cannot be combined (e.g.
+				because they contain identities from the same domain
+				with different values, the application should output an
+				error message and mark both XID's as invalid.
+
+				b) if two XID's have different GUID attributes, they
+				still might be identical. (They could have been created
+				by different doctors for the same patient based on the
+				same identity system (e.g. Health insurance card).
+				Therefore an application importing xChange entities must
+				compare all identities contained in th XID's to tell if
+				an entity that is to be imported resides already in the
+				database. If unsure, the application should always ask
+				the user. If two XIDs are found to be identical but
+				carrying different GUID's, then the two XIDs should be
+				combined as shown in a). The GUID of the resulting XID
+				should be one of the existing GUIDS. The appluication
+				should use the GUID that comes first when sorting the
+				two GUIDS alpabetically.
+
+
+				c) If an application is to import an entity whose XID is
+				marked invalid, it should tell the user, that the
+				identity must be verified.
 			</documentation>
 		</annotation>
-		<attribute name="domainURI" type="anyURI"></attribute>
+		<sequence>
+
+			<element name="identity" maxOccurs="unbounded"
+				minOccurs="1">
+				<complexType>
+					<attribute name="domain" type="anyURI"></attribute>
+					<attribute name="value" type="string"></attribute>
+					<attribute name="quality">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="globalQuality"></enumeration>
+								<enumeration value="localQuality"></enumeration>
+								<enumeration value="regionalQuality"></enumeration>
+							</restriction>
+						</simpleType>
+					</attribute>
+				</complexType>
+			</element>
+		</sequence>
+
+		<attribute name="GUID" type="string"></attribute>
+		<attribute name="valid" type="boolean"></attribute>
 	</complexType>
+
+	<simpleType name="XSDSimpleType">
+		<restriction base="string"></restriction>
+	</simpleType>
 </schema>

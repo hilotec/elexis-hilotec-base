@@ -1,6 +1,9 @@
 3.8.2007 / G.Weirich
 
+
 - Identifikation: Redundanz vermeiden. -> neuer Identity-Type
+
+- xChangeParty i.S. "Beteiligter" statt Kontakt und Objekt
 
 - Timestamp: Lieber ISO-Format (Menschenlesbar)
 - Kontaktdaten anders:
