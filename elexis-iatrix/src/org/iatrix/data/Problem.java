@@ -16,7 +16,6 @@ package org.iatrix.data;
 import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,12 +28,11 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
+import ch.elexis.icpc.Episode;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.JdbcLink.Stm;
 
 /** 
@@ -47,48 +45,52 @@ import ch.rgw.tools.JdbcLink.Stm;
  * gleicht dann die Konsulationen ab, denen dieses Problem zugeordnet ist.
  * Pro Problem koennen Dauermedikamente festgelegt werden. Diese Zuordnung
  * verwendet die bereits vorhandene Relation PATIENT_ARTIKEL_JOINT.
+ *
+ * Update:
+ * Das hier beschriebene "Problem" enspricht ziemlich genau dem Konzept
+ * einer "Episode" bei ICPC-2. Deshalb werden diese beiden Konzepte
+ * zusammengefuehrt. Somit kann ein Problem als eine Erweiterung einer
+ * Episode betrachtet werden.
  * 
  * @author Daniel Lutz <danlutz@watz.ch>
  *
  */
 
-public class Problem extends PersistentObject {
-    public static final int INACTIVE = 0;
-    public static final int ACTIVE = 1;
-
+public class Problem extends Episode {
     /**
      * Separator String for Lists returned as String
      */
     public static final String TEXT_SEPARATOR = "::";
     
-    private static final String INACTIVE_VALUE = "0";
-    private static final String ACTIVE_VALUE = "1";
+    // version key in globalCfg
+    private static final String IATRIX_VERSION_KEY = "org.iatrix/dbversion";
     
-    private static final String INACTIVE_TEXT = "Inaktiv";
-    private static final String ACTIVE_TEXT = "Aktiv";
+    private static final String FIELD_PROCEDERE = "Procedere";
     
     private static final String STANDARD_PROBLEM = "Standardproblem";
 
-    private static final String PROBLEM_TABLENAME = "IATRIX_PROBLEM";
     private static final String PROBLEM_BEHDL_TABLENAME = "IATRIX_PROBLEM_BEHDL_JOINT";
     private static final String PROBLEM_DG_TABLENAME = "IATRIX_PROBLEM_DG_JOINT";
     private static final String PROBLEM_DAUERMEDIKATION_TABLENAME = "IATRIX_PROBLEM_DAUERMEDIKATION_JOINT";
     
-    private static final String DB_VERSION = "0.2.0";
+    private static final String IATRIX_DB_VERSION = "0.2.0";
 
     private static final String CREATE =
+    /*
     "CREATE TABLE " + PROBLEM_TABLENAME + " ("+
     "ID          VARCHAR(25) primary key,"+
 	"deleted     CHAR(1) default '0',"+
     "PatientID   VARCHAR(25),"+
-    "Bezeichnung VARCHAR(50),"+
-    "Nummer      VARCHAR(10),"+
-    "Datum       VARCHAR(20),"+
+    "EpisodeID   VARCHAR(25),"+
+    "Bezeichnung VARCHAR(50),"+  // deprecated, see Episode.Title
+    "Nummer      VARCHAR(10),"+  // deprecated, see Episode.Number
+    "Datum       VARCHAR(20),"+  // deprecated, see Episode.StartDate
     "Procedere   VARCHAR(80),"+
-    "Status      CHAR(1) DEFAULT '1',"+
+    "Status      CHAR(1) DEFAULT '1',"+  // deprecated, see Episode.Status
     "ExtInfo     BLOB"+
     ");"+
     ""+
+    */
     "CREATE TABLE " + PROBLEM_BEHDL_TABLENAME + " ("+
     "ID            VARCHAR(25) primary key," +
     "ProblemID     VARCHAR(25),"+
@@ -110,13 +112,17 @@ public class Problem extends PersistentObject {
     "DauermedikationID VARCHAR(25)"+
     ");"+
     ""+
-    "CREATE INDEX problemdauermedikation1 on " + PROBLEM_DAUERMEDIKATION_TABLENAME + " (ProblemID);"+
+    "CREATE INDEX problemdauermedikation1 on " + PROBLEM_DAUERMEDIKATION_TABLENAME + " (ProblemID);";
+    /*
     ""+
     "INSERT INTO " + PROBLEM_TABLENAME + " (ID) VALUES ('__SETUP__');";
+    */
 
+    /*
     static{
         addMapping(PROBLEM_TABLENAME,
                 "PatientID",
+                "EpisodeID",
                 "Bezeichnung",
                 "Nummer",
                 "Datum",
@@ -139,7 +145,10 @@ public class Problem extends PersistentObject {
 	 "",
 	};
 	*/
-
+    
+    static {
+    	init();
+    }
     
     /**
      * Oeffentlicher Konstruktor zur Erstellung eines neuen Problems
@@ -147,77 +156,89 @@ public class Problem extends PersistentObject {
      * @param bezeichnung Bezeichnung des Problems
      */
     public Problem(Patient pat, String bezeichnung) {
-        create(null);
-        set("PatientID", pat.getId());
-        set("Bezeichnung", bezeichnung);
-        set("Datum",new TimeTool().toString(TimeTool.DATE_COMPACT));
-    }
-
-
-    @Override
-    public String getLabel(){
-        return get("Bezeichnung");
-    }
-
-    @Override
-    protected String getTableName() {
-        return PROBLEM_TABLENAME;
+    	super(pat, bezeichnung);
     }
 
     /**
      * Hier werden Konfigurationseinzelheiten eingelesen. Wenn das Lesen fehlschlägt,
      * nimmt die Methode an, dass die Tabelle noch nicht existiert und legt sie neu an.
+     * Bei Bedarf wird ein DB-Update vorgenommen.
      * @return
      */
-    public static Problem getSetup(){
-        Problem setup = new Problem("__SETUP__");
-        if(!setup.exists()){
-        	// create tables
-            try{
-                ByteArrayInputStream bais=new ByteArrayInputStream(CREATE.getBytes("UTF-8"));
-                if(j.execScript(bais,true,false)==false){
-                    MessageDialog.openError(null,"Fehler bei Problem","Konnte die Tabellen für Probleme nicht erstellen");
-                    return null;
-                }
-                Hashtable extInfo = setup.getHashtable("ExtInfo");
-                extInfo.put("Version", DB_VERSION);
-                setup.setHashtable("ExtInfo", extInfo);
-            }catch(Exception ex){
-                ExHandler.handle(ex);
-            }
-        }
-        
-        if (setup.exists()) {
-        	// update tables if required
-        	
-        	Hashtable extInfo = setup.getHashtable("ExtInfo");
-        	String version = (String) extInfo.get("Version");
-        	
-			VersionInfo vi = new VersionInfo(version);
-			if (vi.isOlder(DB_VERSION)) {
-				if(vi.isOlder("0.2.0")){
-				    String sql;
-				    
-				    // update column Datum
-				    sql =  "ALTER TABLE " + PROBLEM_TABLENAME + " MODIFY Datum VARCHAR(20);";
-					j.exec(j.translateFlavor(sql));
-					
-					// add column deleted
-				    sql = "ALTER TABLE " + PROBLEM_TABLENAME + " ADD deleted CHAR(1) default '0';";
-					j.exec(j.translateFlavor(sql));
+    private static void init() {
+    	String version = Hub.globalCfg.get(IATRIX_VERSION_KEY, null);
+    	if (version == null) {
+    		// tables don't yet exist or pre 0.2.0
+
+    		// get old-style version object
+    		OldProblem oldSetup = OldProblem.load("__SETUP__");
+    		if (!oldSetup.exists()) {
+    			// create tables
+    			try{
+    				ByteArrayInputStream bais = new ByteArrayInputStream(CREATE.getBytes("UTF-8"));
+    				if (j.execScript(bais, true, false) == false) {
+    					MessageDialog.openError(null, "Fehler bei Problem", "Konnte die Tabellen für Probleme nicht erstellen");
+    					return;
+    				}
+    				Hub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION);
+    			}catch(Exception ex){
+    				ExHandler.handle(ex);
+    			}
+    		} else {
+    			// convert old-style problems
+
+    			convertOldProblemsToEpisodes();
+				Hub.globalCfg.set(IATRIX_VERSION_KEY, IATRIX_DB_VERSION);
+    		}
+    	} else {
+    		// here, we can do table updates
+    		// no update required yet
+    	}
+    }
+
+    /**
+     * Convert old-style problems to problems based on episodes.
+     */
+    private static void convertOldProblemsToEpisodes() {
+    	// get all available problems (OldProblem)
+    	List<OldProblem> oldProblems = OldProblem.getOldProblems();
+    	for (OldProblem oldProblem : oldProblems) {
+    		Problem problem = new Problem(oldProblem.getId());
+    		if (problem.isAvailable()) {
+    			// new-style problem already exists
+    			continue;
+    		}
+    		
+    		Patient patient = Patient.load(oldProblem.get("PatientID"));
+    		if (patient.isAvailable()) {
+    			problem.create(null);
+    			problem.set("PatientID", patient.getId());
+
+    			String title = oldProblem.get("Bezeichnung");
+				String number = oldProblem.get("Nummer");
+				String startDate = oldProblem.get("Datum");
+				String procedere = oldProblem.get("Procedere");
+				String sStatus = oldProblem.get("Status");
+    			
+				int status;
+				if (sStatus != null && sStatus.equals(ACTIVE_VALUE)) {
+					status = ACTIVE;
+				} else {
+					status = INACTIVE;
 				}
-				
-				// update to the current version
-				extInfo.put("Version", DB_VERSION);
-                setup.setHashtable("ExtInfo", extInfo);
-			}
-        }
-        	
-        return setup;
+    			
+    			problem.setTitle(title);
+    			problem.setNumber(number);
+    			problem.setStartDate(startDate);
+    			problem.setProcedere(procedere);
+    			problem.setStatus(status);
+    		}
+    	}
     }
 
     public static Problem load(String id){
-        return new Problem(id);
+    	Problem problem = new Problem(id);
+    	return problem;
     }
     
     /** Der parameterlose Konstruktor wird nur von der Factory gebraucht und sollte nie
@@ -227,6 +248,10 @@ public class Problem extends PersistentObject {
         // empty
     }
 
+    /**
+     * Creates a new problem with the given id.
+     * @param id the id of this object
+     */
     protected Problem(String id){
         super(id);
     }
@@ -234,7 +259,7 @@ public class Problem extends PersistentObject {
 	/**
 	 * Ein Problem aus der Datenbank entfernen. Dabei werden auch alle verknüpften Daten
 	 * gelöscht (?)
-	 * @param force bei true wird das Problem auf jeden Faöll gelöscht, bei false nur, wenn keine
+	 * @param force bei true wird das Problem auf jeden Fall gelöscht, bei false nur, wenn keine
 	 * vernknüpften Daten (?) von ihm existieren.
 	 * @return false wenn das Problem nicht gelöscht werden konnte.
 	 */
@@ -249,83 +274,16 @@ public class Problem extends PersistentObject {
         return false;
     }
 
-    public int getStatus() {
-        String statusText = get("Status");
-        if (statusText.equals(ACTIVE_VALUE)) {
-            return ACTIVE;
-        } else {
-            return INACTIVE;
-        }
-    }
-    
-    public String getStatusText() {
-        int status = getStatus();
-        if (status == ACTIVE) {
-            return ACTIVE_TEXT;
-        } else {
-            return INACTIVE_TEXT;
-        }
-    }
-    
-    public void setStatus(int status) {
-    	switch (status) {
-    	case ACTIVE:
-    		set("Status", ACTIVE_VALUE);
-    		break;
-    	case INACTIVE:
-    		set("Status", INACTIVE_VALUE);
-    		break;
-    	default:
-    		set("Status", ACTIVE_VALUE);
-    		break;
-    	}
-    }
-    
-    public String getDatum() {
-        return get("Datum");
-    }
-    
-    public void setDatum(String datum) {
-    	set("Datum", datum);
-    }
-    
-    public String getBezeichnung() {
-        return get("Bezeichnung");
-    }
-    
-    public void setBezeichnung(String bezeichnung) {
-    	set("Bezeichnung", bezeichnung);
-    }
-    
-    public String getNummer() {
-    	return get("Nummer");
-    }
-    
-    public void setNummer(String nummer) {
-    	set("Nummer", nummer);
-    }
-    
     public String getProcedere() {
-    	return get("Procedere");
+    	return getExtField(FIELD_PROCEDERE);
     }
     
     public void setProcedere(String procedere) {
-    	set("Procedere", procedere);
+    	setExtField(FIELD_PROCEDERE, procedere);
     }
     
-    public String getGesetz() {
-        // TODO get Gesetz from Fall
-
-    	return "*?*";
-    }
-    
-	@Override
-	public boolean isDragOK() {
-		return true;
-	}
-	
 	public String toString() {
-		return getBezeichnung();
+		return getLabel();
 	}
 	
 	/**
@@ -334,6 +292,7 @@ public class Problem extends PersistentObject {
 	 * 
 	 * @param konsultation die Konsultation, zu der das Problem hinzugefuegt werden soll.
 	 */
+	// TODO do this with encounters
 	public void addToKonsultation(Konsultation konsultation) {
 		// check if Problem has already been added to the Konsultatioj
 		String problemKonsultationId = j.queryString(
@@ -380,6 +339,7 @@ public class Problem extends PersistentObject {
 	 * @param konsultation
 	 *            die Konsultation, von der das Problem entfernt werden soll.
 	 */
+	// TODO do this with encounters
 	public void removeFromKonsultation(Konsultation konsultation) {
 		// remove assignment in database
 		
@@ -656,12 +616,6 @@ public class Problem extends PersistentObject {
 		}
     }
 
-	public Patient getPatient() {
-		String id = get("PatientID");
-		Patient patient = Patient.load(id);
-		return patient;
-	}
-	
 	/**
 	 * Add a Prescription specific to this Problem
 	 * 
@@ -764,8 +718,6 @@ public class Problem extends PersistentObject {
 	 */
 	public static Problem createStandardProblem(Patient patient) {
         Problem problem = new Problem(patient, STANDARD_PROBLEM);
-        String currentDate = new TimeTool().toString(TimeTool.DATE_ISO);
-        problem.setDatum(currentDate);
         return problem;
 	}
 }

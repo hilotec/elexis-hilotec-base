@@ -84,6 +84,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
@@ -92,7 +93,6 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.iatrix.data.Problem;
-import org.iatrix.dialogs.ProblemErfassenDialog;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -105,10 +105,12 @@ import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
@@ -116,6 +118,8 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.dialogs.MediDetailDialog;
+import ch.elexis.icpc.Episode;
 import ch.elexis.text.EnhancedTextField;
 import ch.elexis.text.Samdas;
 import ch.elexis.util.Extensions;
@@ -127,6 +131,7 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.views.HistoryDisplay;
 import ch.elexis.views.PatientDetailView;
+import ch.elexis.views.artikel.ArtikelView;
 import ch.elexis.views.codesystems.DiagnosenView;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
 import ch.elexis.views.codesystems.LeistungenView;
@@ -163,8 +168,13 @@ import de.kupzog.ktable.renderers.FixedCellRenderer;
 public class JournalView extends ViewPart implements SelectionListener,
         ActivationListener, ISaveablePart2, ObjectListener, HeartListener {
 	
-	public static final String ID = "org.iatrix.views.JournalView";
-	
+	public static final String ID = "org.iatrix.views.JournalView"; //$NON-NLS-1$
+
+	private static final String VIEW_CONTEXT_ID = "org.iatrix.view.context"; //$NON-NLS-1$
+	private static final String NEWCONS_COMMAND = "org.iatrix.commands.newcons"; //$NON-NLS-1$
+	private static final String NEWPROBLEM_COMMAND = "org.iatrix.commands.newproblem"; //$NON-NLS-1$
+	private static final String EXPORT_CLIPBOARD_COMMAND = "org.iatrix.commands.export_clipboard"; //$NON-NLS-1$
+
 	private static final String UNKNOWN = "(unbekannt)";
 	
 	private static final DateComparator DATE_COMPARATOR = new DateComparator();
@@ -274,7 +284,7 @@ public class JournalView extends ViewPart implements SelectionListener,
     /* problemsTableViewer */
     private IAction addProblemAction;
     private IAction delProblemAction;
-    private IAction editProblemAction;
+    private IAction addFixmedikationAction;
 
     /* problemAssignmentViewer */
     private IAction unassignProblemAction;
@@ -285,12 +295,42 @@ public class JournalView extends ViewPart implements SelectionListener,
     private IAction changeVerrechnetZahlAction;
     
     private ICodeSelectorTarget problemDiagnosesCodeSelectorTarget;
+    private ICodeSelectorTarget problemFixmedikationCodeSelectorTarget;
     private ICodeSelectorTarget konsultationVerrechnungCodeSelectorTarget;
     private Color normalColor;
     private Color highlightColor;
     
+    /* Heartbeat activation management
+     * The heartbeat events are only processed if these variables are set to true.
+     * They may be set to false if heartbeat processing would distrub, e. g. in
+     * case of editing a problem or the consultation text. 
+     */
+    private boolean heartbeatProblemEnabled = true;
+    private boolean heartbeatKonsultationEnabled = true;
+    
+    private boolean heartbeatActive = false;
+    
+    /**
+     * Flag indicating if there are more than one mandants.
+     * This variable is initially set in createPartControl().
+     */
+    private boolean hasMultipleMandants = false;
+    
+    /**
+     * Initialize hasMultipleMandants variable
+     */
+    private void initHasMultipleMandants() {
+    	Query<Mandant> query = new Query<Mandant>(Mandant.class);
+    	List<Mandant> list = query.execute();
+    	if (list != null && list.size() > 1) {
+    		hasMultipleMandants = true;
+    	}
+    }
+    
     @Override
     public void createPartControl(Composite parent) {
+    	initHasMultipleMandants();
+    	
     	// ICodeSelectorTarget for diagnoses in problems list
     	problemDiagnosesCodeSelectorTarget = new ICodeSelectorTarget() {
     		public String getName() {
@@ -319,6 +359,49 @@ public class JournalView extends ViewPart implements SelectionListener,
     		
     		public void registered(boolean registered) {
     			highlightProblemsTable(registered);
+    		}
+    	};
+
+    	// ICodeSelectorTarget for fixmedikation in problems list
+    	problemFixmedikationCodeSelectorTarget = new ICodeSelectorTarget() {
+    		public String getName() {
+    			return JournalView.this.getPartName();
+    		}
+    		
+    		public void codeSelected(PersistentObject po) {
+    			Problem problem = getSelectedProblem();
+    			if (problem != null) {
+    				if (po instanceof Artikel) {
+    					Artikel artikel = (Artikel) po;
+
+    					Prescription prescription = new Prescription(artikel, problem.getPatient(), "", "");
+    					problem.addPrescription(prescription);
+
+    					// Let the user set the Prescription properties
+
+    					MediDetailDialog dlg = new MediDetailDialog(getViewSite().getShell(), prescription);
+    					dlg.open();
+
+    					// tell other viewers that something has changed
+    					GlobalEvents.getInstance().fireObjectEvent(problem, GlobalEvents.CHANGETYPE.update);
+
+    					// re-activate this view
+    					try {
+    						getViewSite().getPage().showView(JournalView.ID);
+    					} catch (Exception ex) {
+    						ExHandler.handle(ex);
+    						log.log("Fehler beim Öffnen von JournalView: " + ex.getMessage(), Log.ERRORS);
+    					}
+    				}
+    			}
+    		}
+    		
+    		public void registered(boolean registered) {
+    			if (registered) {
+    				highlightProblemsTable(true, true);
+    			} else {
+    				highlightProblemsTable(false);
+    			}
     		}
     	};
 
@@ -362,9 +445,6 @@ public class JournalView extends ViewPart implements SelectionListener,
     		}
     	};
     	
-        // create tables if required
-        Problem.getSetup();
-
         parent.setLayout(new FillLayout());
 
         tk = Desk.theToolkit;
@@ -461,14 +541,29 @@ public class JournalView extends ViewPart implements SelectionListener,
         makeActions();
         menus = new ViewMenus(getViewSite());
         if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
-        	menus.createMenu(versionFwdAction,versionBackAction,addKonsultationAction,GlobalActions.delKonsAction,GlobalActions.redateAction,purgeAction, addProblemAction, editProblemAction, delProblemAction, exportToClipboardAction);
+        	menus.createMenu(addKonsultationAction,
+        			GlobalActions.redateAction,
+        			addProblemAction,
+        			GlobalActions.delKonsAction,
+        			delProblemAction,
+        			exportToClipboardAction,
+        			versionFwdAction,
+        			versionBackAction,
+        			purgeAction);
         }else{
-        	menus.createMenu(versionFwdAction,versionBackAction,addKonsultationAction,GlobalActions.delKonsAction, GlobalActions.redateAction, addProblemAction, editProblemAction, delProblemAction, exportToClipboardAction);
+        	menus.createMenu(addKonsultationAction,
+        			GlobalActions.redateAction,
+        			addProblemAction,
+        			GlobalActions.delKonsAction,
+        			delProblemAction,
+        			exportToClipboardAction,
+        			versionFwdAction,
+        			versionBackAction);
         }
 
         menus.createToolbar(addKonsultationAction, addProblemAction);
-        menus.createControlContextMenu(problemsKTable, editProblemAction,
-                delProblemAction);
+        menus.createControlContextMenu(problemsKTable,
+        		addFixmedikationAction);
         menus.createViewerContextMenu(problemAssignmentViewer,
                 unassignProblemAction);
         menus.createViewerContextMenu(verrechnungViewer,
@@ -476,7 +571,21 @@ public class JournalView extends ViewPart implements SelectionListener,
 
         GlobalEvents.getInstance().addActivationListener(this, this);
         GlobalEvents.getInstance().addObjectListener(this);
+        
+        activateContext();
     }
+        
+    /**
+     * Activate a context that this view uses. It will be tied to this view
+     * activation events and will be removed when the view is disposed.
+     * Copied from org.eclipse.ui.examples.contributions.InfoView.java
+     */
+    private void activateContext() {
+    	IContextService contextService = (IContextService) getSite()
+    	.getService(IContextService.class);
+    	contextService.activateContext(VIEW_CONTEXT_ID);
+    }
+
 
     private void createProblemsTable(Composite parent) {
     	problemsKTable = new MyKTable(parent, SWTX.MARK_FOCUS_HEADERS
@@ -560,10 +669,10 @@ public class JournalView extends ViewPart implements SelectionListener,
                 				// change status when status field has been double clicked
 
                 				if (problem != null) {
-                					if (problem.getStatus() == Problem.ACTIVE) {
-                						problem.setStatus(Problem.INACTIVE);
+                					if (problem.getStatus() == Episode.ACTIVE) {
+                						problem.setStatus(Episode.INACTIVE);
                 					} else {
-                						problem.setStatus(Problem.ACTIVE);
+                						problem.setStatus(Episode.ACTIVE);
                 					}
 
                 					problemsKTable.refresh();
@@ -629,10 +738,10 @@ public class JournalView extends ViewPart implements SelectionListener,
             		// change status when status field has been double clicked
 
         			if (problem != null) {
-        				if (problem.getStatus() == Problem.ACTIVE) {
-        					problem.setStatus(Problem.INACTIVE);
+        				if (problem.getStatus() == Episode.ACTIVE) {
+        					problem.setStatus(Episode.INACTIVE);
         				} else {
-        					problem.setStatus(Problem.ACTIVE);
+        					problem.setStatus(Episode.ACTIVE);
         				}
 
         				problemsKTable.refresh();
@@ -969,7 +1078,7 @@ public class JournalView extends ViewPart implements SelectionListener,
                     		
                     		// add active problems
                     		for (Problem problem : patientProblems) {
-                    			if (problem.getStatus() == Problem.ACTIVE) {
+                    			if (problem.getStatus() == Episode.ACTIVE) {
                     				problems.add(problem);
                     			}
                     		}
@@ -1036,8 +1145,14 @@ public class JournalView extends ViewPart implements SelectionListener,
         text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
         
         text.getControl().addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		setHeartbeatKonsultationEnabled(false);
+        	}
+        	
         	public void focusLost(FocusEvent e) {
         		updateEintrag();
+
+        		setHeartbeatKonsultationEnabled(true);
         	}
         });
 
@@ -1241,7 +1356,11 @@ public class JournalView extends ViewPart implements SelectionListener,
     }
     
     private void highlightProblemsTable(boolean highlight) {
-    	problemsTableModel.setHighlightSelection(highlight);
+    	highlightProblemsTable(highlight, false);
+    }
+    
+    private void highlightProblemsTable(boolean highlight, boolean full) {
+    	problemsTableModel.setHighlightSelection(highlight, full);
     	problemsKTable.redraw();
     }
     
@@ -1446,7 +1565,8 @@ public class JournalView extends ViewPart implements SelectionListener,
             	GlobalActions.neueKonsAction.run();
             }
         };
-
+        addKonsultationAction.setActionDefinitionId(NEWCONS_COMMAND);
+		GlobalActions.registerActionHandler(this, addKonsultationAction);
     	
     	// Probleme
     	
@@ -1486,7 +1606,7 @@ public class JournalView extends ViewPart implements SelectionListener,
                 Problem problem = new Problem(
                         GlobalEvents.getSelectedPatient(), "");
                 String currentDate = new TimeTool().toString(TimeTool.DATE_ISO);
-                problem.setDatum(currentDate);
+                problem.setStartDate(currentDate);
                 GlobalEvents.getInstance().fireSelectionEvent(problem);
 
                 // neues Problem der aktuellen Konsulation hinzufuegen
@@ -1513,26 +1633,38 @@ public class JournalView extends ViewPart implements SelectionListener,
                 updateProblemAssignmentViewer();
             }
         };
-        editProblemAction = new Action("Problem ändern") {
-            {
-                // setImageDescriptor(Desk.theImageRegistry.getDescriptor("edit"));
-                setToolTipText("Bestehendes Problem ändern");
-            }
+        addProblemAction.setActionDefinitionId(NEWPROBLEM_COMMAND);
+		GlobalActions.registerActionHandler(this, addProblemAction);
 
-            public void run() {
-            	Problem problem = getSelectedProblem();
-                if (problem != null) {
-                    ProblemErfassenDialog ped = new ProblemErfassenDialog(
-                            getViewSite().getShell(), problem);
-                    if (ped.open() == Dialog.OK) {
-                    	problemsTableModel.reload();
-                    	problemsKTable.refresh();
-                    	
-                        updateProblemAssignmentViewer();
-                    }
-                }
-            }
-        };
+		addFixmedikationAction = new Action("Fixmedikation hinzufügen") {
+			{
+				setToolTipText("Fixmedikation hinzufügen");
+			}
+			
+			public void run() {
+        		Point[] selection = problemsKTable.getCellSelection();
+        		if (selection.length != 1) {
+        			// no problem selected
+        			return;
+        		}
+        		
+        		int row = selection[0].y;
+        		int rowIndex = row - problemsTableModel.getFixedHeaderRowCount();
+				Problem problem = problemsTableModel.getProblem(rowIndex);
+				if (problem != null) {
+					try {
+						getViewSite().getPage().showView(LeistungenView.ID);
+						// register as ICodeSelectorTarget
+						GlobalEvents.getInstance().setCodeSelectorTarget(problemFixmedikationCodeSelectorTarget);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+						log.log("Fehler beim Anzeigen der Artikel "
+								+ ex.getMessage(), Log.ERRORS);
+					}
+				}
+			}
+		};
+		
         unassignProblemAction = new Action("Problem entfernen") {
             {
                 setToolTipText("Problem von Konsulation entfernen");
@@ -1666,6 +1798,8 @@ public class JournalView extends ViewPart implements SelectionListener,
 				exportToClipboard();
 			}
 		};
+	    exportToClipboardAction.setActionDefinitionId(EXPORT_CLIPBOARD_COMMAND);
+		GlobalActions.registerActionHandler(this, exportToClipboardAction);
     }
     
     private void updateEintrag() {
@@ -1722,21 +1856,82 @@ public class JournalView extends ViewPart implements SelectionListener,
      * Refresh (reload) data
      */
     public void heartbeat() {
-    	heartbeatProblem();
+    	// don't run while another heartbeat is currently processed
+    	if (heartbeatActive) {
+    		return;
+    	}
     	
+    	heartbeatActive = true;
+    	
+    	heartbeatProblem();
     	heartbeatKonsultation();
+    	
+    	heartbeatActive = false;
     }
     
     private void heartbeatProblem() {
-    	if (!problemsKTable.isFocusControl()) {
+    	if (heartbeatProblemEnabled) {
+    		// backup selection
+    		
+    		boolean isRowSelectMode = problemsKTable.isRowSelectMode();
+    		
+    		Problem selectedProblem = null;
+    		int currentColumn = -1;
+    		
+    		if (isRowSelectMode) {
+    			// full row selection
+    			// not supported
+    		} else {
+    			// single cell selection
+    			
+    			Point[] cells = problemsKTable.getCellSelection();
+    			if (cells != null && cells.length > 0) {
+    				int row = cells[0].y;
+    				int rowIndex = row - problemsTableModel.getFixedHeaderRowCount();
+    				selectedProblem = problemsTableModel.getProblem(rowIndex);
+    				currentColumn = cells[0].x;
+    			}
+    		}
+    		
+    		// reload data
     		setPatient(actPatient);
+    		
+    		// restore selection
+
+    		if (selectedProblem != null) {
+    			if (isRowSelectMode) {
+    				// full row selection
+    				// not supported
+    			} else {
+    				// single cell selection
+    				int rowIndex = problemsTableModel.getIndexOf(selectedProblem);
+    				if (rowIndex >= 0) {
+    					// problem found, i. e. still in list
+    					
+    					int row = rowIndex + problemsTableModel.getFixedHeaderRowCount();
+    					if (currentColumn == -1) {
+    						currentColumn = problemsTableModel.getFixedHeaderColumnCount();
+    					}
+    					problemsKTable.setSelection(currentColumn, row, true);
+    				}
+    			}
+    		}
     	}
     }
     
     private void heartbeatKonsultation() {
-    	if (!text.getControl().isFocusControl()) {
+    	//if (!text.getControl().isFocusControl()) {
+    	if (heartbeatKonsultationEnabled) {
     		setKonsultation(actKons);
     	}
+    }
+    
+    private void setHeartbeatProblemEnabled(boolean value) {
+    	heartbeatProblemEnabled = value;
+    }
+    
+    private void setHeartbeatKonsultationEnabled(boolean value) {
+    	heartbeatKonsultationEnabled = value;
     }
 
     /*
@@ -1944,13 +2139,20 @@ public class JournalView extends ViewPart implements SelectionListener,
         	}
         	
             StringBuilder sb = new StringBuilder();
+            /*
             sb.append("Kons. vom ");
+            */
             sb.append(actKons.getDatum());
+            /*
             sb.append(" von ");
             sb.append(patient.getName()).append(" ").append(patient.getVorname());
-            sb.append(" (");
-            sb.append(actKons.getMandant().getLabel());
-            sb.append(")");
+            */
+            
+            if (hasMultipleMandants) {
+                sb.append(" (");
+                sb.append(actKons.getMandant().getLabel());
+                sb.append(")");
+            }
             
             lKonsultation.setText(sb.toString());
 
@@ -2132,7 +2334,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 
         	switch (columnIndex) {
         	case STATUS:
-                if (problem.getStatus() == Problem.ACTIVE) {
+                if (problem.getStatus() == Episode.ACTIVE) {
                 	return Desk.theImageRegistry.get(Desk.IMG_OK);
                 } else {
                 	return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
@@ -2154,11 +2356,11 @@ public class JournalView extends ViewPart implements SelectionListener,
             
             switch (columnIndex) {
             case BEZEICHNUNG:
-                return problem.getBezeichnung();
+                return problem.getTitle();
             case NUMMER:
-                return problem.getNummer();
+                return problem.getNumber();
             case DATUM:
-                return problem.getDatum();
+                return problem.getStartDate();
             case DIAGNOSEN:
             	String diagnosen = problem.getDiagnosenAsText();
             	lineSeparator = System.getProperty("line.separator");
@@ -2204,7 +2406,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             Problem problem = (Problem) element;
             
             Color color;
-            if (problem.getStatus() == Problem.ACTIVE) {
+            if (problem.getStatus() == Episode.ACTIVE) {
             	color = problemAssignmentViewer.getTable().getDisplay().getSystemColor(SWT.COLOR_WHITE);
             } else {
             	color = problemAssignmentViewer.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
@@ -2384,11 +2586,11 @@ public class JournalView extends ViewPart implements SelectionListener,
 					StringBuffer problemsLabel = new StringBuffer();
 					problemsLabel.append(" (");
 					// first problem in list
-					problemsLabel.append(konsProblems.get(0).getBezeichnung());
+					problemsLabel.append(konsProblems.get(0).getTitle());
 					for (int j = 1; j < konsProblems.size(); j++) {
 						// further problems in list
 						problemsLabel.append(", ");
-						problemsLabel.append(konsProblems.get(j).getBezeichnung());
+						problemsLabel.append(konsProblems.get(j).getTitle());
 					}
 					problemsLabel.append(")");
 
@@ -2419,8 +2621,8 @@ public class JournalView extends ViewPart implements SelectionListener,
 			problemsText.append(lineSeparator);
 			
 			for (Problem problem : problems) {
-				String date = problem.getDatum();
-				String text = problem.getBezeichnung();
+				String date = problem.getStartDate();
+				String text = problem.getTitle();
 				
 				List<String> therapy = new ArrayList<String>();
 				String procedure = problem.getProcedere();
@@ -2514,6 +2716,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    private Comparator comparator = DATE_COMPARATOR;
 	    
 		private boolean highlightSelection = false;
+		private boolean highlightRow = false;
 		
 	    public Problem getProblem(int index) {
 	    	Problem problem = null;
@@ -2541,7 +2744,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    			Object element = problems[i];
 	    			if (element instanceof Problem) {
 	    				Problem p = (Problem) element;
-	    				if (p.getId().equals(problem)) {
+	    				if (p.getId().equals(problem.getId())) {
 	    					return i;
 	    				}
 	    			}
@@ -2549,6 +2752,25 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    	}
 	    	
 	    	return -1;
+	    }
+	    
+	    /**
+	     * Returns the KTable index corresponding to our model index (mapping)
+	     * @param rowIndex the index of a problem
+	     * @return the problem's index as a KTable index
+	     */
+	    public int modelIndexToTableIndex(int rowIndex) {
+    		return rowIndex + problemsTableModel.getFixedHeaderRowCount();
+
+	    }
+	    
+	    /**
+	     * Returns the model index corresponding to the KTable index (mapping)
+	     * @param row the KTable index of a problem
+	     * @return the problem's index of the model
+	     */
+	    public int tableIndexToRowIndex(int row) {
+	    	return row - problemsTableModel.getFixedHeaderRowCount();
 	    }
 
 	    public Point belongsToCell(int col, int row) {
@@ -2641,14 +2863,14 @@ public class JournalView extends ViewPart implements SelectionListener,
 			return width.intValue();
 		}
 
-	    private int getInitialRowHeight(int row) {
+	    private int getHeaderRowHeight() {
 	    	// TODO 
-	    	return 30;
+	    	return 24;
 	    }
-	    
+
 	    public int getRowHeightMinimum() {
 	    	// TODO
-			return 24;
+			return 10;
 		}
 
 	    public int getRowHeight(int row) {
@@ -2663,9 +2885,11 @@ public class JournalView extends ViewPart implements SelectionListener,
 		}
 		
 	    private int getOptimalRowHeight(int row) {
-			int height = getInitialRowHeight(row);
-			
-			if (row >= getFixedHeaderRowCount()) {
+	    	if (row < getFixedHeaderRowCount()) {
+	    		return getHeaderRowHeight();
+	    	} else {
+	    		int height = 0;
+	    		
 				GC gc = new GC(problemsKTable);
 				for (int i = 0; i < COLUMN_TEXT.length; i++) {
 					int col = i + getFixedHeaderColumnCount();
@@ -2690,9 +2914,9 @@ public class JournalView extends ViewPart implements SelectionListener,
 					}
 				}
 				gc.dispose();
+				
+				return height;
 			}
-			
-			return height;
 	    }
 
 		public void setColumnWidth(int col, int width) {
@@ -2777,11 +3001,11 @@ public class JournalView extends ViewPart implements SelectionListener,
 
 	    			switch (colIndex) {
 	    			case BEZEICHNUNG:
-	    				return problem.getBezeichnung();
+	    				return problem.getTitle();
 	    			case NUMMER:
-	    				return problem.getNummer();
+	    				return problem.getNumber();
 	    			case DATUM:
-	    				return problem.getDatum();
+	    				return problem.getStartDate();
 	    			case DIAGNOSEN:
 	    				String diagnosen = problem.getDiagnosenAsText();
 	    				lineSeparator = System.getProperty("line.separator");
@@ -2808,7 +3032,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	                    return problem.getProcedere();
 	    				 */
 	    			case STATUS:
-	    				if (problem.getStatus() == Problem.ACTIVE) {
+	    				if (problem.getStatus() == Episode.ACTIVE) {
 	    					return Desk.theImageRegistry.get(Desk.IMG_OK);
 	    				} else {
 	    					return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
@@ -2875,7 +3099,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    			
 	    			problem = new Problem(actPatient, "");
 	                String currentDate = new TimeTool().toString(TimeTool.DATE_ISO);
-	                problem.setDatum(currentDate);
+	                problem.setStartDate(currentDate);
 	                GlobalEvents.getInstance().fireSelectionEvent(problem);
 
 	                problems[rowIndex] = problem;
@@ -2887,13 +3111,13 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    		
 	    		switch (colIndex) {
 	    		case BEZEICHNUNG:
-	    			problem.setBezeichnung(text);
+	    			problem.setTitle(text);
 	    			break;
 	    		case NUMMER:
-	    			problem.setNummer(text);
+	    			problem.setNumber(text);
 	    			break;
 	    		case DATUM:
-	    			problem.setDatum(text);
+	    			problem.setStartDate(text);
 	    			break;
 	    		case THERAPIE:
 	    			problem.setProcedere(text);
@@ -2926,12 +3150,16 @@ public class JournalView extends ViewPart implements SelectionListener,
 
 	    }
 	    
-	    public void setHighlightSelection(boolean highlight) {
+	    public void setHighlightSelection(boolean highlight, boolean row) {
 	    	this.highlightSelection = highlight;
+	    	this.highlightRow = row;
 	    }
 	    
 	    public boolean isHighlightSelection() {
 	    	return highlightSelection;
+	    }
+	    public boolean isHighlightRow() {
+	    	return highlightSelection && highlightRow;
 	    }
 	}
 	
@@ -2939,15 +3167,54 @@ public class JournalView extends ViewPart implements SelectionListener,
 		public Color getForegroundColor(int col, int row) {
 			int rowIndex = row - problemsTableModel.getFixedHeaderRowCount();
 			Problem problem = problemsTableModel.getProblem(rowIndex);
-			if (problem != null && problem.getStatus() == Problem.ACTIVE) {
+			if (problem != null && problem.getStatus() == Episode.ACTIVE) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 			} else {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 			}
 		}
 	}
+	
+	abstract class ProblemsTableCellRendererBase implements KTableCellRenderer {
+	    protected Problem getSelectedProblem() {
+	    	Point[] selection = problemsKTable.getCellSelection();
+	    	if (selection == null || selection.length == 0) {
+	    		return null;
+	    	} else {
+	    		int rowIndex = selection[0].y - problemsTableModel.getFixedHeaderRowCount();
+	    		Problem problem = problemsTableModel.getProblem(rowIndex); 
+	    		return problem;
+	    	}
 
-	class ProblemsTableTextCellRenderer implements KTableCellRenderer {
+	    }
+	    
+	    protected boolean isSelected(int row) {
+	    	if (problemsKTable.isRowSelectMode()) {
+		    	int[] selectedRows = problemsKTable.getRowSelection();
+		    	if (selectedRows != null) {
+		    		for (int r : selectedRows) {
+		    			if (r == row) {
+		    				return true;
+		    			}
+		    		}
+		    	}
+	    	} else {
+		    	Point[] selectedCells = problemsKTable.getCellSelection();
+		    	if (selectedCells != null) {
+		    		for (Point cell : selectedCells) {
+		    			if (cell.y == row) {
+		    				return true;
+		    			}
+		    		}
+		    	}
+	    	}
+	    	
+	    	return false;
+	    }
+
+	}
+
+	class ProblemsTableTextCellRenderer extends ProblemsTableCellRendererBase {
 		private Display display;
 		
 		public ProblemsTableTextCellRenderer() 
@@ -2955,7 +3222,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 			display = Display.getCurrent();
 		}
 		
-		public int getOptimalWidth(
+	    public int getOptimalWidth(
 			GC gc, 
 			int col, 
 			int row, 
@@ -2970,7 +3237,6 @@ public class JournalView extends ViewPart implements SelectionListener,
 				return 0;
 			}
 		}
-		
 		
 		public void drawCell(GC gc, 
 			Rectangle rect, 
@@ -2992,7 +3258,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 			} else {
 				text = "";
 			}
-
+			
 			if (focus) {
 				textColor = display.getSystemColor(SWT.COLOR_BLUE);
 			} 
@@ -3001,7 +3267,9 @@ public class JournalView extends ViewPart implements SelectionListener,
 				textColor = problemsTableColorProvider.getForegroundColor(col, row);
 			}
 			
-			if (focus && ((ProblemsTableModel) model).isHighlightSelection()) {
+			if (isSelected(row) && ((ProblemsTableModel) model).isHighlightRow()) {
+				backColor = highlightColor;
+			} else if (focus && ((ProblemsTableModel) model).isHighlightSelection()) {
 				backColor = highlightColor;
 			} else {
 				backColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -3029,7 +3297,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 		}
 	}
 
-	class ProblemsTableImageCellRenderer implements KTableCellRenderer {
+	class ProblemsTableImageCellRenderer extends ProblemsTableCellRendererBase {
 		private Display display;
 		
 		public ProblemsTableImageCellRenderer() 
@@ -3072,7 +3340,14 @@ public class JournalView extends ViewPart implements SelectionListener,
 				image = (Image) content;
 			}
 
-			backColor = (display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			if (isSelected(row) && ((ProblemsTableModel) model).isHighlightRow()) {
+				backColor = highlightColor;
+			} else if (focus && ((ProblemsTableModel) model).isHighlightSelection()) {
+				backColor = highlightColor;
+			} else {
+				backColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			}
+			
 			borderColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			
 			gc.setForeground(borderColor);
@@ -3097,8 +3372,15 @@ public class JournalView extends ViewPart implements SelectionListener,
 			}
 		}
 	}
-	
-	class ProblemsTableTherapyCellRenderer implements KTableCellRenderer {
+
+	/**
+	 * Renderer for Therapy cell.
+	 * Shows the procedere of the problem.
+	 * If there are prescriptions, they are shown above the procedere, separated by a line.
+	 * 
+	 * @author danlutz
+	 */
+	class ProblemsTableTherapyCellRenderer extends ProblemsTableCellRendererBase {
 		private static final int MARGIN = 8;
 		private static final int PADDING = 3;
 		
@@ -3108,19 +3390,18 @@ public class JournalView extends ViewPart implements SelectionListener,
 		{
 			display = Display.getCurrent();
 		}
-		
-		public int getOptimalHeight(GC gc, Problem problem) {
-			String prescriptions = problem.getPrescriptionsAsText();
-        	String lineSeparator = System.getProperty("line.separator");
-        	String prescriptionsText = prescriptions.replaceAll(Problem.TEXT_SEPARATOR, lineSeparator);
-        	
-        	String procedereText = PersistentObject.checkNull(problem.getProcedere());
-        	
-        	int height1 = gc.textExtent(prescriptionsText).y;
-        	int height2 = gc.textExtent(procedereText).y;
-        	
-        	return height1 + PADDING + height2;
 
+		private boolean hasPrescriptions(Problem problem) {
+			List<Prescription> prescriptions = problem.getPrescriptions();
+			return (prescriptions.size() > 0);
+		}
+		
+		private boolean hasProcedere(Problem problem) {
+			if (!StringTool.isNothing(PersistentObject.checkNull(problem.getProcedere()))) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		private String getPrescriptionsText(Problem problem) {
@@ -3133,6 +3414,37 @@ public class JournalView extends ViewPart implements SelectionListener,
 		
 		private String getProcedereText(Problem problem) {
 			return PersistentObject.checkNull(problem.getProcedere());
+		}
+		
+		public int getOptimalHeight(GC gc, Problem problem) {
+			int height = 0;
+			
+			int prescriptionsHeight = 0;
+    		if (hasPrescriptions(problem)) {
+    			String prescriptionsText = getPrescriptionsText(problem);
+    			prescriptionsHeight = gc.textExtent(prescriptionsText).y;
+    		}
+
+			int procedereHeight = 0;
+			if (hasProcedere(problem)) {
+				String procedereText = getProcedereText(problem);
+	    		procedereHeight = gc.textExtent(procedereText).y;
+			}
+			
+    		if (prescriptionsHeight > 0 && procedereHeight > 0) {
+    			height = prescriptionsHeight + PADDING + procedereHeight;
+    		} else if (prescriptionsHeight > 0) {
+    			height = prescriptionsHeight;
+    		} else if (procedereHeight > 0) {
+    			height = procedereHeight;
+    		}
+
+    		if (height == 0) {
+    			// default height
+    			height = gc.textExtent("").y;
+    		}
+    		
+    		return height;
 		}
 		
 		public int getOptimalWidth(
@@ -3159,7 +3471,6 @@ public class JournalView extends ViewPart implements SelectionListener,
 			}
 		}
 		
-		
 		public void drawCell(GC gc, 
 			Rectangle rect, 
 			int col, 
@@ -3176,15 +3487,18 @@ public class JournalView extends ViewPart implements SelectionListener,
 			
 			String prescriptionsText = "";
 			String procedereText = "";
+			boolean hasPrescriptions = false;
+			boolean hasProcedere = false;
 			
 			if (content instanceof Problem) {
 				Problem problem = (Problem) content;
 				
 				prescriptionsText = getPrescriptionsText(problem);
 				procedereText = getProcedereText(problem);
+				hasPrescriptions = hasPrescriptions(problem);
+				hasProcedere = hasProcedere(problem);
 			}
 			
-			int prescriptionsHeight = gc.textExtent(prescriptionsText).y;
 
 			if (focus) {
 				textColor = display.getSystemColor(SWT.COLOR_BLUE);
@@ -3193,7 +3507,15 @@ public class JournalView extends ViewPart implements SelectionListener,
 			{
 				textColor = problemsTableColorProvider.getForegroundColor(col, row);
 			}
-			backColor = (display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			
+			if (isSelected(row) && ((ProblemsTableModel) model).isHighlightRow()) {
+				backColor = highlightColor;
+			} else if (focus && ((ProblemsTableModel) model).isHighlightSelection()) {
+				backColor = highlightColor;
+			} else {
+				backColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			}
+
 			borderColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			
 			gc.setForeground(borderColor);
@@ -3210,16 +3532,37 @@ public class JournalView extends ViewPart implements SelectionListener,
 			Rectangle oldClipping = gc.getClipping();
 			gc.setClipping(rect);
 
-			gc.setForeground(borderColor);
-			gc.drawLine(rect.x, rect.y + prescriptionsHeight + 1,
-					rect.x + rect.width, rect.y + prescriptionsHeight + 1);
-		
+			if (hasPrescriptions && hasProcedere) {
+				// draw prescriptions and procedre, separated by a line
+				int prescriptionsHeight = gc.textExtent(prescriptionsText).y;
 
-			gc.setBackground(backColor);
-			gc.setForeground(textColor);
+				gc.setForeground(borderColor);
+				gc.drawLine(rect.x, rect.y + prescriptionsHeight + 1,
+						rect.x + rect.width, rect.y + prescriptionsHeight + 1);
 
-			gc.drawText(prescriptionsText, rect.x + 3, rect.y);
-			gc.drawText(procedereText, rect.x + 3, rect.y + prescriptionsHeight + PADDING);
+				gc.setBackground(backColor);
+				gc.setForeground(textColor);
+
+				gc.drawText(prescriptionsText, rect.x + 3, rect.y);
+				gc.drawText(procedereText, rect.x + 3, rect.y + prescriptionsHeight + PADDING);
+			} else {
+				String text;
+				if (hasPrescriptions) {
+					// prescriptions only
+					text = prescriptionsText;
+				} else if (hasProcedere) {
+					// procedere only
+					text = procedereText;
+				} else {
+					// nothing
+					text = "";
+				}
+				
+				gc.setBackground(backColor);
+				gc.setForeground(textColor);
+
+				gc.drawText(text, rect.x + 3, rect.y);
+			}
 			
 			gc.setClipping(oldClipping);
 			
@@ -3229,7 +3572,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 		}
 	}
 	
-	public class KTableTherapyCellEditor extends KTableCellEditor 
+	public class KTableTherapyCellEditor extends BaseCellEditor 
 	{
 		private Text m_Text;
 	    
@@ -3314,6 +3657,24 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    }
 
 	}
+
+	/**
+	 * Base class for our cell editors
+	 * Especially, we need to take care of heartbeat management
+	 */
+	abstract class BaseCellEditor extends KTableCellEditor {
+		public void open(KTable table, int col, int row, Rectangle rect) {
+			setHeartbeatProblemEnabled(false);
+			
+			super.open(table, col, row, rect);
+		}
+
+		public void close(boolean save) {
+			super.close(save);
+			
+			setHeartbeatProblemEnabled(true);
+		}
+	}
 	
 	/**
 	 * Replacement for KTableCellEditorText2
@@ -3321,7 +3682,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	 * @author danlutz
 	 *
 	 */
-	public class MyKTableCellEditorText2 extends KTableCellEditor 
+	public class MyKTableCellEditorText2 extends BaseCellEditor 
 	{
 		protected Text m_Text;
 	    
@@ -3401,7 +3762,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    }
 	}
 
-	public class KTableDiagnosisCellEditor extends KTableCellEditor 
+	public class KTableDiagnosisCellEditor extends BaseCellEditor 
 	{
 		private Combo combo;
 	    
@@ -3519,7 +3880,7 @@ public class JournalView extends ViewPart implements SelectionListener,
     			return -1;
     		}
     		
-    		return PersistentObject.checkNull(o1.getDatum()).compareTo(PersistentObject.checkNull(o2.getDatum()));
+    		return PersistentObject.checkNull(o1.getStartDate()).compareTo(PersistentObject.checkNull(o2.getStartDate()));
     	}
     	
     	public boolean equals(Object obj) {
@@ -3541,7 +3902,7 @@ public class JournalView extends ViewPart implements SelectionListener,
     			return -1;
     		}
     		
-    		return PersistentObject.checkNull(o1.getNummer()).compareTo(PersistentObject.checkNull(o2.getNummer()));
+    		return PersistentObject.checkNull(o1.getNumber()).compareTo(PersistentObject.checkNull(o2.getNumber()));
     	}
     	
     	public boolean equals(Object obj) {
@@ -3574,8 +3935,8 @@ public class JournalView extends ViewPart implements SelectionListener,
 
     		if (status1 == status2) {
     			// same status, compare date
-        		return PersistentObject.checkNull(o1.getDatum()).compareTo(PersistentObject.checkNull(o2.getDatum()));
-    		} else if (status1 == Problem.ACTIVE) {
+        		return PersistentObject.checkNull(o1.getStartDate()).compareTo(PersistentObject.checkNull(o2.getStartDate()));
+    		} else if (status1 == Episode.ACTIVE) {
     			return -1;
     		} else {
     			return 1;
