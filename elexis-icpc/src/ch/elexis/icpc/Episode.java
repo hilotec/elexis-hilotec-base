@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2914 2007-07-25 14:36:50Z rgw_ch $
+ *  $Id: Episode.java 2956 2007-08-06 08:59:43Z danlutz $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -29,11 +29,11 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     public static final int INACTIVE = 0;
     public static final int ACTIVE = 1;
 
-	private static final String VERSION="0.3.1";
-	private final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
+	protected static final String VERSION="0.3.1";
+	protected final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
 		
-    private static final String INACTIVE_VALUE = "0";
-    private static final String ACTIVE_VALUE = "1";
+    protected static final String INACTIVE_VALUE = "0";
+    protected static final String ACTIVE_VALUE = "1";
 
     private final static String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
@@ -232,6 +232,12 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     
     public void setNumber(final String number) {
     	set("Number", number);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public String getExtField(final String name) {
+    	Hashtable extInfo = getHashtable("ExtInfo");
+    	return (String) extInfo.get(name);
     }
 
 	@SuppressWarnings("unchecked")
