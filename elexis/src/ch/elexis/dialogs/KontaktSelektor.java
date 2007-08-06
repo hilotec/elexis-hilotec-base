@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 2530 2007-06-18 14:34:12Z danlutz $
+ *  $Id: KontaktSelektor.java 2960 2007-08-06 13:40:57Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -124,9 +124,8 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			
 			bezugsKontaktViewer.setContentProvider(new IStructuredContentProvider() {
 				public Object[] getElements(Object inputElement) {
-					Fall f = GlobalEvents.getSelectedFall();
-					if (f != null) {
-						Patient patient = f.getPatient();
+					Patient patient = GlobalEvents.getSelectedPatient();
+					if (patient != null) {
 						ArrayList<PersistentObject> elements = new ArrayList<PersistentObject>();
 						ArrayList<String> addedKontakte = new ArrayList<String>();
 						
@@ -142,31 +141,30 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 							}
 						}
 						
+						// required contacts of biling system
 						Fall[] faelle = patient.getFaelle();
 						for (Fall fall : faelle) {
-							Kontakt kontakt;
-							
-							kontakt = fall.getGarant();
-							if (kontakt != null && kontakt.exists()) {
-								if (!addedKontakte.contains(kontakt.getId())) {
-									elements.add(kontakt);
-									addedKontakte.add(kontakt.getId());
-								}
-							}
-							
-							kontakt = fall.getKostentraeger();
-							if (kontakt != null && kontakt.exists()) {
-								if (!addedKontakte.contains(kontakt.getId())) {
-									elements.add(kontakt);
-									addedKontakte.add(kontakt.getId());
-								}
-							}
-
-							kontakt = fall.getArbeitgeber();
-							if (kontakt != null && kontakt.exists()) {
-								if (!addedKontakte.contains(kontakt.getId())) {
-									elements.add(kontakt);
-									addedKontakte.add(kontakt.getId());
+							String reqs = fall.getRequirements();
+							if (reqs != null) {
+								for (String req : reqs.split(";")) {
+									final String[] r = req.split(":");
+									
+									// no valid entry
+									if (r.length < 2) {
+										continue;
+									}
+									
+									// only consider contacts
+									if (r[1].equals("K")) {
+										String kontaktID = fall.getInfoString(r[0]);
+										if (!kontaktID.startsWith("**ERROR")) {
+											Kontakt kontakt = Kontakt.load(kontaktID);
+											if (kontakt.isValid()) {
+												elements.add(kontakt);
+												addedKontakte.add(kontakt.getId());
+											}
+										}
+									}
 								}
 							}
 						}
