@@ -9,7 +9,7 @@
  *    Daniel Lutz - initial implementation
  *    Gerry Weirich - angepasst an neues Rezeptmodell
  *    
- *  $Id: ProblemView.java 2366 2007-05-14 09:13:06Z danlutz $
+ *  $Id: ProblemView.java 2957 2007-08-06 09:01:04Z danlutz $
  *******************************************************************************/
 
 package org.iatrix.views;
@@ -98,18 +98,6 @@ public class ProblemView extends ViewPart implements GlobalEvents.SelectionListe
     private FormToolkit tk;
     private ScrolledForm form;
     
-	private final static String[] lbSimple = {
-		"Problem/Diagnose",
-		"Nummer",
-		"Datum"
-	};
-	private final static String[] dfSimple = {
-		"Bezeichnung",
-		"Nummer",
-		"Datum"
-		};
-	private Text[] txSimple=new Text[lbSimple.length];
-	
 	private DynamicListDisplay dlDauerMedi;
 
     private TableViewer diagnosenViewer;
@@ -132,16 +120,6 @@ public class ProblemView extends ViewPart implements GlobalEvents.SelectionListe
         tk=Desk.theToolkit;
         form=tk.createScrolledForm(main);
 		form.getBody().setLayout(new GridLayout(1, true));
-
-		// Tableau
-		
-        LabeledInputField.Tableau tblProblem = new LabeledInputField.Tableau(form.getBody());
-        tblProblem.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-        int tl = txSimple.length;
-		for (int i = 0; i < tl; i++) {
-		    txSimple[i] = (Text)tblProblem.addComponent(lbSimple[i]).getControl();
-            txSimple[i].addFocusListener(new Focusreact(dfSimple[i]));
-        }
 
         SashForm mainSash = new SashForm(form.getBody(), SWT.VERTICAL);
         mainSash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -542,16 +520,8 @@ public class ProblemView extends ViewPart implements GlobalEvents.SelectionListe
 		
 		if (actProblem != null) {
 			form.setText("Problem " + problem.getLabel() + " von " + problem.getPatient().getLabel());
-
-			for(int i = 0; i<txSimple.length; i++) {
-				txSimple[i].setText(PersistentObject.checkNull(problem.get(dfSimple[i])));
-			}
-			form.reflow(true);
 		} else {
-	            form.setText("Kein Problem ausgewählt");
-	            for (int i = 0; i < txSimple.length; i++) {
-	                txSimple[i].setText("");
-	            }
+			form.setText("Kein Problem ausgewählt");
 		}
 
 		diagnosenViewer.refresh();
