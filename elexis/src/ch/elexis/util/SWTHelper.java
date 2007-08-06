@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2780 2007-07-11 15:59:24Z rgw_ch $
+ * $Id: SWTHelper.java 2955 2007-08-06 04:06:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -22,6 +22,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -314,5 +315,13 @@ public class SWTHelper {
 	}
 	public interface IControlProvider{
 		public Control getControl(Composite parent);
+	}
+	
+	public static java.awt.Font createAWTFontFromSWTFont(Font swtFont){
+		String name=swtFont.getFontData()[0].getName();
+		int style=swtFont.getFontData()[0].getStyle();
+		int height=swtFont.getFontData()[0].getHeight();
+		java.awt.Font awtFont=new java.awt.Font(name,style,height);
+		return awtFont;
 	}
 }
