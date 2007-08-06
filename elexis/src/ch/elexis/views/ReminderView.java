@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ * $Id: ReminderView.java 2963 2007-08-06 13:59:24Z danlutz $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -54,6 +54,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	public static final String ID="ch.elexis.reminderview";
 	private IAction newReminderAction, deleteReminderAction, onlyOpenReminderAction, ownReminderAction;
 	private RestrictedAction othersReminderAction;
+	private RestrictedAction selectPatientAction;
 	private boolean bVisible;
 	
 	CommonViewer cv;
@@ -111,7 +112,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 		makeActions();
 		ViewMenus menu=new ViewMenus(getViewSite());
 		menu.createToolbar(newReminderAction);
-		menu.createMenu(newReminderAction,deleteReminderAction,onlyOpenReminderAction,ownReminderAction,othersReminderAction);
+		menu.createMenu(newReminderAction,deleteReminderAction,onlyOpenReminderAction,ownReminderAction,othersReminderAction, selectPatientAction);
 		
 		if(Hub.acl.request(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS)){
 			othersReminderAction.setEnabled(true);
@@ -126,7 +127,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				cv.notify(CommonViewer.Message.update);
 			}
 		});
-		menu.createViewerContextMenu(cv.getViewerWidget(), deleteReminderAction);
+		menu.createViewerContextMenu(cv.getViewerWidget(), selectPatientAction, deleteReminderAction);
 		cv.getViewerWidget().addFilter(filter);
 		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
 		GlobalEvents.getInstance().addSelectionListener(this);
@@ -228,6 +229,23 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			public void doRun(){
 				Hub.userCfg.set(PreferenceConstants.USR_REMINDEROTHERS, othersReminderAction.isChecked());
 				cv.notify(CommonViewer.Message.update_keeplabels);
+			}
+		};
+		
+		selectPatientAction = new RestrictedAction(AccessControlDefaults.PATIENT_DISPLAY, "Patient aktivieren", Action.AS_UNSPECIFIED) {
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PERSON));
+				setToolTipText("Patient aktivieren, der zu dieser Pendenz gehört");
+			}
+			public void doRun(){
+				Object[] sel = cv.getSelection();
+				if (sel != null && sel.length > 0) {
+					Reminder reminder = (Reminder) sel[0];
+					Patient patient = reminder.getKontakt();
+					if (patient != null) {
+						GlobalEvents.getInstance().fireSelectionEvent(patient);
+					}
+				}
 			}
 		};
 		
