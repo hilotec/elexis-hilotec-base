@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 2910 2007-07-25 11:52:32Z danlutz $
+ *  $Id: Patient.java 2964 2007-08-06 14:03:27Z danlutz $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.elexis.Hub;
@@ -494,4 +495,30 @@ public class Patient extends Person{
 				
 	}
 
+	/**
+	 * Return all bills of this patient
+	 * @return a list of bills of this patient
+	 */
+	public List<Rechnung> getRechnungen() {
+		List<Rechnung> rechnungen = new ArrayList<Rechnung>(); 
+		
+		Fall[] faelle = getFaelle();
+		if ((faelle != null) && (faelle.length > 0)) {
+			Query<Rechnung> query = new Query<Rechnung>(Rechnung.class);
+			query.insertTrue();
+			query.startGroup();
+			for (Fall fall : faelle) {
+				query.add("FallID", "=", fall.getId());
+				query.or();
+			}
+			query.endGroup();
+			
+			List<Rechnung> rnList = query.execute();
+			if (rnList != null) {
+				rechnungen.addAll(rnList);
+			}
+		}
+		
+		return rechnungen;
+	}
 }
