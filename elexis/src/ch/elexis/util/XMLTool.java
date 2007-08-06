@@ -27,9 +27,18 @@ import org.jdom.Element;
 public class XMLTool {
 	public static String moneyToXmlDouble(Money money) {
 		int cents = money.getCents();
+		
 		// we force to use a literal "."
-		String xmlDouble = String.format("%d.%02d", cents / 100, Math.abs(cents % 100));
+		
+		// honor signum
+		int absCents = Math.abs(cents);
+		int signum = Integer.signum(cents);
+		int abs = absCents / 100;
+		int frac = absCents % 100;
+		
+		String xmlDouble = String.format("%d.%02d", signum * abs, frac);
 		return xmlDouble;
+		
 	}
 	
 	public static Money xmlDoubleToMoney(String xmlDouble) throws NumberFormatException {
