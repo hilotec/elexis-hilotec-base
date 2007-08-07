@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 2932 2007-07-29 06:21:06Z rgw_ch $
+% *  $Id: konsviews.tex 2967 2007-08-07 14:16:52Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -77,7 +77,7 @@ Um einen neuen Fall zu erstellen, geben Sie einen Titel für diesen Fall ein und
 
 \medskip
 
-Anmerkung: Sie werden festgestellt haben, dass diese View und die vorher besprochene Fälle-View bis zu einem gewissen Punkt redundant sind. Das ist auch so. Sie können getrennte Views für Fälle und Konsultationen bevorzugen, oder eine View in der beides enthalten ist. In der Regel werden Sie nicht beide Konzepte anwenden, sondern dasjenige, welches Ihnen besser gefällt - Elexis lässt Ihnen die Wahl. 
+Anmerkung: Sie werden festgestellt haben, dass diese View und die vorher besprochene Fälle-View bis zu einem gewissen Punkt redundant sind. Das ist auch so. Sie können getrennte Views für Fälle und Konsultationen bevorzugen, oder eine View in der beides enthalten ist. In der Regel werden Sie nicht beide Konzepte anwenden, sondern dasjenige, welches Ihnen besser gefällt - Elexis lässt Ihnen die Wahl.
 
 \clearpage
 
@@ -135,8 +135,6 @@ Das Filtern der Konsultationen mit diesem Verfahren kann, da der Text jeder Kons
 \subsection{Konsultation}
  \label{konsview}
 Detailansicht eines Konsultationseintrags (S. Abb. \ref{fig:konsdetail}).
-
-
 \begin{figure}[htp]
 \begin{center}
   \includegraphics{images/konsview}
@@ -144,6 +142,18 @@ Detailansicht eines Konsultationseintrags (S. Abb. \ref{fig:konsdetail}).
   \label{fig:konsdetail}
 \end{center}
 \end{figure}
+
+Sie haben im Textfeld folgende zusätzlichen Möglichkeiten:
+\begin{description}
+\item[Makros]
+Schreiben Sie einen beliebigen Text, markieren Sie diesen Text mit der linken Maustaste, klicken Sie dann mit der rechten Maustaste und wählen Sie "'als Makro..."'. eben Sie dem Makro einen beliebigen Namen. Wenn Sie nun zukünftig den Namen des Makros gefolgt von \# tippen, wird dieser Text durch den vorher definierten Inhalt des Makros ersetzt.
+
+\item[Abrechnen]
+Wenn Sie den Namen eines Abrechnungsblocks tippen, gefolgt von \#, dann wird dieser Block verrechnet, ebenso, wie wenn Sie ihn mit der Maus ins Verrechnungs-Feld gezogen hätten.
+
+\item[Textauszeichnungen]
+Es können auch einige einfache Textauszeichnungen gemacht werden: Ein Wort am Anfang einer Zeile, welches von einem Doppelpunkt gefolgt ist, wird fett gedruckt. Ebenso ein Wort zwischen zwei *. Ein Wort zwischen zwei / wird kursiv geschrieben.
+\end{description}
 
 \subsection{AUF}
 Diese View dient der Festlegung einer Arbeitsunfähigkeit. (Abb \ref{fig:auf})
