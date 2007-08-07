@@ -18,6 +18,7 @@
 \begin{document}
 \title{xChange - Dokumentation}
 \maketitle
+\tableofcontents
 \part{Einleitung}
 \section{Status und Bedeutung}
 Dies ist ein vorläufiger Entwurf des xChange 5.0x Standards zum Austausch medizinischer Daten. Das Konzept beinhaltet nebst formaler Datendefinitionen auch Handlungsanweisungen zum Ablauf von Transportvorgängen, um den dabei auftretenden Problemen auf standardisierte Weise zu begegnen. Die Handlungsanweisungen sind daher für jede Anwendung, welche sich xChange-Kompatibel nennen möchte, bindend.
@@ -59,10 +60,11 @@ xChange soll den Datenaustausch zwischen medizinischen Anwendungsprogrammen erm�
  \item Die AHV-Nummer (Problem: Nicht jeder hat eine, und sie kann sich auch im Lauf des Lebens ändern (Heirat, Einbürgerung etc.))
  \item Die geplante Sozialversicherungsnummer (Ist aus offensichtlichen Gründen noch nicht verwendbar, und es ist auch noch nicht klar, wie tauglich sie sein wird. Zusatzproblem: Was tun mit Ausländern, die keine Schweizer Sozialversicherungsnummer haben?)
  \item Die Krankenkassennummer (Zusammen mit der Krankenkasse eindeutig)
+ \item Die OID gemäss ISO-Standard. (Diese wäre garantiert eindeutig, aber wer hat schon eine OID?)
  \item etc.
   \end{itemize}
 
- Wie man sieht ist es nicht das Problem, dass es keine Identifikationssysteme gäbe, sondern es gibt zuviele davon, die zu unterschiedlichen Zwecken eingeführt wurden, und die für unterschiedliche Bereiche brauchbar sind. Es existiert aber kein Identifikationssystem, das universell anwendbar und allgemein anerkannt ist. xChange kann also für die Identifikation nicht auf einen einzelnen existierenden Standard zurückgreifen. Hinzu kommt, dass xChange ja nicht nur Patienten eindeutig identifizieren können muss, sondern Daten aller Art (Ärzte, Laborbefunde, Briefe) etc., denn all diese Datenarten sollen ja zwischen elKG's ausgetauscht werden können.
+ Wie man sieht ist es nicht das Problem, dass es keine Identifikationssysteme gäbe, sondern es gibt zuviele davon, die zu unterschiedlichen Zwecken eingeführt wurden, und die für unterschiedliche Bereiche brauchbar sind. Es existiert aber kein Identifikationssystem, das universell anwendbar und allgemein anerkannt ist. xChange kann also für die Identifikation nicht auf einen einzelnen existierenden Standard zurückgreifen. Hinzu kommt, dass xChange ja nicht nur Patienten eindeutig identifizieren können muss, sondern Daten aller Art (Ärzte, Laborbefunde, Briefe) etc., denn all diese Datenarten sollen ja zwischen el-KG's ausgetauscht werden können.
 
  xChange verwendet deshalb eine mehrstufige und hierarchisch aufgebaute Technik:
 
@@ -92,7 +94,7 @@ Anwendungen, welche an xChange Transfers teilnehmen wollen, müssen diese XIDs s
          value="2001234565432" quality="globalQuality"/>
     </xchange:XID>
 \end{verbatim}
-   
+
 \item Die für einen Arzt benötigten Identifikationen:
 \begin{verbatim}
     <xchange:XID GUID="abccbbf723451dwfa" valid="true">
@@ -127,6 +129,14 @@ Anwendungen, welche an xChange Transfers teilnehmen wollen, müssen diese XIDs s
 
 Anmerkung: Selbstverständlich kann ein Arzt auch gleichzeitig Patient sein und umgekehrt: Die XIDs lassen sich beliebig zusammenfügen.
 
+\subsubsection{Abgrenzung XID zu OID}
+Die ISO-Behörde hat schon seit einiger Zeit ein System zur Kennzeichnung (beliebiger) Datenobjekte entwickelt, den "'Object identifier"' oder OID. Auch wird eine Präfix verwendet, die das Codesystem deklariert und eine Identifikation innerhalb dieses Codesystems. Im Unterschied zur XID muss jede OID-Domain bei einer zentralen Stelle registriert werden, hat aber den Vorteil, einfach handhabbar zu sein.
+
+Eine XID kann ohne weiteres eine OID als identity aufnehmen, sofern eine solche für das gewünschte Objekt vorhanden ist. In einem solchen Fall sind -wegen der garantierten Eindeutigkeit der OID- alle weiteren identities der XID entbehrlich.
+
+\textbf{Anweisung} für xChange-Kompatible Systeme: Wenn ein Objekt mehrere OIDs hat, ist nur die "'preferred OID"' in die XID einzubinden. Wenn die XID schon andere identities enthält, sollen diese belassen werden.
+
+
 \section{Use case: Datenimport}
 Gehen wir davon aus, dass von einem Patienten XY in zwei unterschiedlichen Arztpraxen A und B (welche beide eine xChange-fähige elKG verwenden) zu überlappenden Zeiträumen Daten bearbeitet wurden. Irgendwann beschliesst XY, seine Daten alle zum Arzt B zu transferieren. Die exportierende Anwendung kann einfach alle Daten in einen xChange-Container packen, die importierende Anwendung dagegen muss für jeden Datensatz feststellen, ob dieser schon lokal existiert (aus einem früheren Import, oder aus Befundkopien etc., die Dr. B. schon früher mal erhalten hat)
 
@@ -140,22 +150,50 @@ Wie kann die Software nun feststellen, ob ein bestimmter Datensatz schon lokal e
 \begin{enumerate}
 \item Sie liest die XID des Imports und vergleicht diese mit den XID's aller existierenden Datensätze gleichen Typs.
 \item Wenn zwei XID's dieselbe GUID haben, darf sie davon ausgehen, dass diese beiden XID's identisch sind und damit denselben Datensatz bezeichnen (Diese Annahme ist sicher, da ja jede GUID definitionsgemäss nur einmal vorkommt). Dennoch könnte es sein, dass die XID's nicht denselben Inhalt haben: Dr. A könnte identity-Systeme einer anderen domain zugefügt haben, beispielsweise eine neue Krankenkassennummer, oder die Personalausweis-Nummer, die dem Dr. B nicht bekannt war. Damit sind beide XID's gültig, aber unterschiedlich umfangreich.
-    
+
     Die \textbf{Anweisung} für xChange-kompatible Systeme lautet: Wenn zwei XIDs dieselbe GUID haben. aber unterschiedliche Inhalte, dann sollen beide XIDs kombiniert werden und das Resultat dieser Kombination soll als neue XID mit derselben GUID zukünftig verwendet werden.
-    
+
     Falls diese Kombination aber zu einem Konflikt führt (Beispielsweise weil die beiden XIDs eine oder mehrere identities derselben domain aber mit unterschiedlichen values enthalten), dann muss diese XID als ungültig markiert werden, und der Anwender muss aufgefordert werden, bei nächster Gelegenheit die Daten zu überprüfen und zu korrigieren.
-    
+
 \item Wenn keine XIDs mit identischer GUID gefunden werden, heisst das aber noch nicht, dass nicht trotzdem derselbe Datensatz lokal schon vorhanden ist: Es kann ja gut sein, dass Dr. A und Dr. B unabhängig voneinander den Patienten neu aufgenommen haben, wodurch jede Software eine neue XID erstellen musste, die somit ja keinesfalls dieselbe GUID haben wird.
     Daher muss die importierende Anwendung nun die identities jeder XID einzeln mit den identities des zu importierenden Datensatzes vergleichen und überprüfen, ob es sich vielleicht, wahrscheinlich oder sicher (je nach quality der identity) um denselben Datensatz handelt.
-    
-    Die \textbf{Anweisung} für xChange-kompatible Systeme lautet: Wenn zwei XIDs mit unterschiedlichen GUIDs möglicherweise denselben Datensatz bezeichnen, dann soll der Anwender gefragt werden. 
-    
+
+    Die \textbf{Anweisung} für xChange-kompatible Systeme lautet: Wenn zwei XIDs mit unterschiedlichen GUIDs möglicherweise denselben Datensatz bezeichnen, dann soll der Anwender gefragt werden.
+
     Wenn -durch automatische analyse oder durch Anweisung des Anwenders- festgestellt wird, dass zwei XIDs trotz unterschiedlichen GUIDs identisch sind, dann sollen die beiden XIDs ebenfalls kombiniert werden, wie oben gezeigt. Wenn es dabei nicht zu Konflikten kommt, dann erhält die resultierende XID diejenige der beiden GUIDs, welche bei alphabetischer Sortierung zuerst kommt.
-    
+
     (Im Lauf von mehreren Im- und Exportvorgängen wird es dadurch mit der Zeit auch ohne manuelle Anpassung zu einer Angleichung der GUIDs kommen.)
-    
+
 \end{enumerate}
 
+\section{Dokumente}
+In aller Regel wird eine elKG nebst eigenen Einträgen auch Fremddokumente verschiedenster Art beinhalten. Dies können Berichte externer Stellen sein, Bilder, Zuweisungsschreiben etc. Derartige Dokumente kommen oft auf Papier und werden dann in die elKG eingescannt, wo sie dann in einem von der Scananwendung vorgegebenen Format vorliegen, oder sie kommen in einem proprietären Format wie Microsoft\texttrademark Word\texttrademark. In zunehmendem Mass werden Dokumente auch in Form von Adobe\texttrademark PDF versandt. Eine Variante dieses Formats ist als PDF/A (PDF for long time archiving purposes) von der ISO standardisiert (ISO 19005-1:2005).
+\subsection{Überlegungen für ein Transportformat}
+Idealerweise bleibt beim Transport von einer el-KG zur anderen sowohl der Informationsinhalt eines Dokuemnts, als auch dessen Format erhalten. Letzteres erscheint vielleicht auf den ersten Blick entbehrlich, allerdings kann das Format doch ebenfalls wieder inhaltliche Informationen transportieren, wie z.B. Gliederung, eingebettete Grafiken etc. Um solche Dokumente zu transportieren, gibt es drei grundsätzlich verschiedene Ansätze:
+\begin{enumerate}
+\item Es wird nur die reine Textinformation (bzw. bei Bildern die reine Bitmap) übrtragen. Dies ist mit Sicherheit die portabelste Methode, allerdings gehen sämtliche Formatinformationen verloren und das Resultat kann vor allem bei längeren Dokumenten deswegen schwer lesbar sein. Hingegen lässt sich ein so transferiertes Dokument leicht maschinell durchsuchen und indexieren, und es lässt sich platzsparend archivieren.
+    
+\item Es wird im Originalformat übertragen. Dies ist die Methode, welche die exakteste Übertragung ermöglicghst: Es kommt exakt dasselbe Dokument an, welches beim Sender vorlag. Allerdings kann der Empfänger das Dokument nur dann lesen, wenn er ein Programm besitzt, das dieses Format versteht. Dies bedeutet oft auch eine Begrenzung auf ein bestimmtes Betriebssystem.
+    Auch Indexieren und Durchsuchen geht nur dann, wenn man dafür auf Programme zurückgreifen kann, die das proprietäre Format verstehen.
+    Der Anwender muss ausserdem dafür besorgt sein, dass er alle benötigten Fremdanwendungen in deer benötigten Version ebensolange aufbewahrt, wie die Dokumente selbst, da es ja nicht gesagt ist, dass spätere Versionen der Programme die älteren Dokumente noch korrekt lesen können. Der Anwender muss daher auch dafür sorgen, dass er ein Exemplar eines Betriebssystems behält, auf dem die benötigten Versionen der benötigten Programme lauffähig sind.
+\item Es wird ein allgemein verwendetes und offenes Standardformat verwendet, das die Originaldokumente möglichst Originalgetreu abbilden kann, aber die Nachteile des Originalformats nicht hat. Dies ermöglicht einen Kompromiss bezüglich der Darstellung und ermöglicht doch Indexieren, Durchsuchen und Archivieren gleich wie das reine Textformat.
+\end{enumerate}
+
+Aus obigen geht hervor, dass proprietäre Formate eigentlich grundsätzlich \textbf{nicht} zum Abspeichern von Dokumenten in einer Arztpraxis-Software geeignet sind. Es besteht ja eine Aufbewahrungspflicht von 10 Jahren, welche auch die Pflicht beinhaltet, die Dokumente nach 10 Jahren noch darstellen zu können. Diese Verpflichtung ist vom durchschnittlichen Anwender nicht erfüllbar. Wer etwa vor 10 Jahren einen Text mit dem damals durchaus noch gebräuchlichen Programm WordStar\texttrademark schrieb und archivierte, wird heute diesen archivierten Text nicht mehr ohne weiteres lesen können. Es existiert kein WordStar\texttrademark mehr und auch kein Betriebssystem, unter dem WordStar\texttrademark laufen würde. Und wenn man das Betriebssystem und das Programm noch hätte, könnte man es auf einem modernen PC vermutlich gar nicht installieren.
+
+Für Archivierungszwecke eignen sich also nur offene Dateiformate, da nur dann gewährleistet ist, dass jederzeit ein Programm besorgt oder erstellt werden kann, das diese Dokumente lesen kann.
+Hierzu gibt es verschiedene Bemühungen, z.B. von HL7 und vHitG, einen neuen Standard für Arztbriefe auf XML-Basis einzuführen und durchzusetzen. Während dieser Ansatz einerseits bestechend ist, schliesslich ist XML das ideale Format zur Weiterbearbeitung und Archivierung der Daten, so liegen doch die Nachteile auf der Hand: Keines der gängigen Text- oder Bildbearbeitungsprogramme bietet bisher eine Option, seine Dokumente in ein solches Format zu exportieren. Es müssten also für jede Software, die damit umgehen können soll, eigene Konversionsprogramme erstellt werden, und dies jedesmal, wenn eines der beteiligten Endformate sich ändert.
+
+Wir empfehlen deshalb ausdrücklich das PDF/A Format zur Archivierung und Übertragung von Dokumenten. Es hat eine Reihe von Vorteilen gegenüber den anderen Methoden:
+\begin{itemize}
+\item Es ist ISO-Standardisiert und speziell zur Langzeitarchivierung designt
+\item Es ist offen und frei verfügbar
+\item Es existieren Konversionsprogramme für praktisch jede gängige Software. Etliche Programme können sogar direkt PDF schreiben.
+\item Es erlaubt eine weitgehend originalgetreue Reproduktion der Dokumente, ohne die Nachteile des Originalformats zu haben.
+\item Dokumente können indexiert und durchsucht werden.
+\end{itemize}
+
+Der xChange-Standard erzwingt jedoch kein bestimmtes Format. Stattdessen werden externe Dokumente grundsätzlich als binäre Dateien beigefügt und mit dem MIME-Standard markiert. Dokumente können innterhalb des Zentradokuments (in base64-codierter Form) oder als separates File im xChange-Zipfile transportiert werden (in letzterem Fall enthält das Zentraldokument einen Verweis auf die externe Datei).
 
 \part{Aufbau}
 \section{Container}
@@ -169,7 +207,7 @@ Die Binärdateien enthalten z.B. Bilder oder andere Dokumente in Binärformaten 
 \section{Zentraldokument}
 
 \section{Verschlüsselung}
-Selbstverständlich kann und muss eine xChange-Dokument zum Transport verschlüsselt und signiert werden. Verschlüsselung und Signatur umfasst jeweils den gesamten Container.
+Selbstverständlich kann und muss ein xChange-Dokument zum Transport verschlüsselt und signiert werden. Verschlüsselung und Signatur umfasst jeweils den gesamten Container.
 
 
 \appendix
