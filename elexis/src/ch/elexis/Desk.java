@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 2962 2007-08-06 13:55:26Z danlutz $
+ *    $Id: Desk.java 2971 2007-08-08 15:17:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -207,5 +208,19 @@ public class Desk implements IPlatformRunnable {
 		String srgb=sb.toString();
 		theColorRegistry.put(srgb, rgb);
 		return srgb;
+	}
+	
+	public static Shell getTopShell(){
+		Shell ret=null;
+		if(theDisplay!=null){
+			ret=theDisplay.getActiveShell();
+		}
+		if(ret==null){
+			ret=Hub.getActiveShell();
+		}	
+		if(ret==null){
+			ret=new Shell(theDisplay);
+		}
+		return ret;
 	}
 }

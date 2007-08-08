@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2966 2007-08-07 14:16:47Z rgw_ch $
+ *    $Id: Fall.java 2971 2007-08-08 15:17:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -164,7 +164,27 @@ public class Fall extends PersistentObject{
 		set("DatumBis",dat);
 	}
 	
-	/** Garant holen (existiert ev. nicht) */
+	/**
+	 * Retrieve a required Konktat from this Fall's Billing system's requirements
+	 * @param name the requested Kontakt's name
+	 * @return the Kontakt or Null if no such Kontakt was found
+	 */
+	public Kontakt getRequiredContact(final String name){
+		String kid=getInfoString(name);
+		if(kid.equals("")){
+			return null;
+		}
+		return Kontakt.load(kid);
+	}
+	
+	public String getRequiredString(final String name){
+		String kid=getInfoString(name);
+		return kid;
+	}
+	/** Garant holen (existiert ev. nicht) 
+	 * @deprecated use getRequiiredContact instead
+	 * */
+	@Deprecated
 	public Kontakt getGarant(){
 
 		return Kontakt.load(getInfoString("Rechnungsempfänger"));
@@ -208,6 +228,7 @@ public class Fall extends PersistentObject{
 	}
 
 */
+	@Deprecated
 	public Kontakt getArbeitgeber(){
 		String id=getInfoString("Arbeitgeber");
 		Kontakt ret=null;
@@ -217,14 +238,19 @@ public class Fall extends PersistentObject{
 		return ret;
 	}
 	
+	@Deprecated
 	public String getArbeitgeberName(){
 		return getArbeitgeber().getLabel();
 	}
 	
+	@Deprecated
 	public String getKostentraegerKuerzel(){
 		return getKostentraeger().getKuerzel();
 	}
-	/** Kostenträger laden */
+	/** Kostenträger laden 
+	 * @deprecated use getRequiredContact instead
+	 * */
+	@Deprecated
 	public Kontakt getKostentraeger(){
 		
 		return Kontakt.load(getInfoString("Kostenträger"));
@@ -236,7 +262,10 @@ public class Fall extends PersistentObject{
 		}
 	}
 	*/
-	/** Versichertennummer holen */
+	/** Versichertennummer holen 
+	 * @deprecated user getRequiredString instead
+	 * */
+	@Deprecated
 	public String getVersNummer(){
 
 		return checkNull(getInfoString("Versicherungsnummer"));
@@ -413,6 +442,11 @@ public class Fall extends PersistentObject{
 		}
 		return true;
 	}
+	/**
+	 * retrieve a string from ExtInfo. 
+	 * @param name the requested parameter
+	 * @return the value of that parameter (which might be empty but will never be null)
+	 */
     @SuppressWarnings("unchecked")
 	public String getInfoString(final String name){
     	Hashtable extinfo=getHashtable("ExtInfo");
