@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 2862 2007-07-21 19:32:41Z rgw_ch $
+ * $Id: RechnungsDrucker.java 2972 2007-08-08 15:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -22,9 +22,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
+import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
@@ -37,14 +41,14 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * We'll take all sorts of bills
 	 */
-	public boolean canBill(Fall fall) {
+	public boolean canBill(final Fall fall) {
 		return true;
 	}
 
 	/**
 	 * We never storno
 	 */
-	public boolean canStorno(Rechnung rn) {
+	public boolean canStorno(final Rechnung rn) {
 		return false;
 	}
 
@@ -53,7 +57,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	 * selecting the bill output target.
 	 * Here we simply chose a template to use for the bill
 	 */
-	public Control createSettingsControl(Composite parent) {
+	public Control createSettingsControl(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung");
@@ -67,12 +71,17 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * Print the bill(s)
 	 */
-	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn) {
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn) {
 		String template=tVorlage.getText();
 		Hub.globalCfg.set(settings, template);
 		Result<Rechnung> ret=new Result<Rechnung>(Log.ERRORS,99,"Not yet implemented",null,true);
+		String printer=Hub.localCfg.get("Drucker/A4ESR/Name",null);
 		for(Rechnung rn:rnn){
-			// TODO print
+			Fall fall=rn.getFall();
+			Kontakt adressat=fall.getRequiredContact("Rechnungsempfänger");
+			TextContainer tc=new TextContainer(Desk.getTopShell());
+			tc.createFromTemplateName(null, tVorlage.getText(), Brief.RECHNUNG, adressat,rn.getNr());
+			tc.getPlugin().print(printer, null, true);
 		}
 		if(!ret.isOK()){
 			ret.display("Fehler beim Rechnungsdruck");
@@ -84,4 +93,8 @@ public class RechnungsDrucker implements IRnOutputter {
 		return "Privatrechnung auf Drucker";
 	}
 
+	public boolean printESR(){
+		//ESR esr=new ESR();
+		return false;
+	}
 }
