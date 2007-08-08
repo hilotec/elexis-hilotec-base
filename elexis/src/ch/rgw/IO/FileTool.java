@@ -1,4 +1,4 @@
-// $Id: FileTool.java 2514 2007-06-12 05:11:38Z rgw_ch $
+// $Id: FileTool.java 2973 2007-08-08 19:13:40Z rgw_ch $
 /*
   */
 package ch.rgw.IO;
@@ -145,7 +145,7 @@ public class FileTool {
             bos.write(buffer,0,r);
         }
         //bis.close();
-        //bos.close();
+        bos.flush();
     }
     public static String readFile(File name){
     	try{
