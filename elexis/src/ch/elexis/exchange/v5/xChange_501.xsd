@@ -20,7 +20,7 @@
 	SGAM
 	All Rights Reserved.
 	$$VERSION: 5.00.1
-	$Id: xChange_501.xsd 2954 2007-08-05 11:50:11Z rgw_ch $
+	$Id: xChange_501.xsd 2975 2007-08-09 14:57:48Z rgw_ch $
 	==========================================================================  -->
 <schema targetNamespace="http://www.forum-datenaustausch.ch/de"
 	xmlns="http://www.w3.org/2001/XMLSchema"
@@ -152,8 +152,7 @@
 			<enumeration value="insurance_mvg" />
 			<enumeration value="government" />
 			<enumeration value="employer" />
-			<enumeration value="other" />
-			<enumeration value="patient"></enumeration>
+			<enumeration value="other" />
 		</restriction>
 	</simpleType>
 
@@ -165,18 +164,14 @@
 		<sequence>
 			<choice>
 				<element name="routed_transport"
-					type="xchange:routedTransportType" />
+					type="string" />
 				<element name="intermediate_transport"
 					type="xchange:intermediateTransportType" />
 			</choice>
 		</sequence>
 	</complexType>
 
-	<!--  individual transport layer definitions -->
-	<complexType name="routedTransportType">
-		<attribute name="from" type="anyURI" use="required" />
-		<attribute name="to" type="anyURI" use="required" />
-	</complexType>
+	<!--  individual transport layer definitions -->
 	<complexType name="intermediateTransportType">
 		<sequence>
 			<element name="via" type="xchange:eanPartyType"
@@ -414,14 +409,14 @@
 		<attribute name="zsr" type="xchange:zsrPartyType" />
 		<attribute name="specialty" type="string" />
 		<attribute name="role" use="required" type="xchange:roleType" />
-		<attribute name="misc" type="string" />
-		<attribute name="ID" type="string">
+		<attribute name="misc" type="string" />
+        <attribute name="ID" type="ID">
 			<annotation>
 				<documentation>
 					For convenience: The GUID of the nested XID Element.
 				</documentation>
 			</annotation></attribute>
-	</complexType>
+    </complexType>
 
 	<!--  patient's address type -->
 
@@ -437,8 +432,7 @@
 		<attribute name="filename" type="xchange:nonEmptyStringType"
 			use="required" />
 		<attribute name="mimeType" type="xchange:nonEmptyStringType"
-			use="required" />
-		<attribute name="viewer" type="anyURI" />
+			use="required" />
 		<attribute name="id" type="string" use="required" />
 	</complexType>
 
@@ -451,8 +445,19 @@
 		load, extract, and reconsitute all parameters via the XML invoice file
 		======================================================================= -->
 	<complexType name="treatmentType">
-		<attribute name="invoice_ref" type="IDREF" />
-		<attribute name="credit_ref" type="IDREF" />
+		<attribute name="invoice_ref" type="IDREF" >
+			<annotation>
+				<documentation>
+					Administrativer Teil der Behandlung -> Refernz auf
+					komplette XML-Rechnung
+				</documentation>
+			</annotation></attribute>
+		<attribute name="credit_ref" type="IDREF" >
+			<annotation>
+				<documentation>
+					Kostengutsprachen zu einer Hehandlung im XML Format
+				</documentation>
+			</annotation></attribute>
 		<attribute name="status" use="required">
 			<simpleType>
 				<restriction base="NMTOKEN">
@@ -482,7 +487,7 @@
 		<attribute name="type" use="required">
 			<simpleType>
 				<restriction base="NMTOKEN">
-					<enumeration value="TI" />
+					<enumeration value="CHOP" />
 					<enumeration value="ICPC2" />
 					<enumeration value="ICD10" />
 					<enumeration value="freetext" />
@@ -495,7 +500,7 @@
 		<attribute name="is_chronic" type="boolean" default="false" />
 		<attribute name="hierarchy" type="xchange:hierarchyType" />
 
-		<attribute name="ID" type="string">
+		<attribute name="ID" type="ID">
 			<annotation>
 				<documentation>TBD: More design work</documentation>
 			</annotation></attribute>
@@ -583,7 +588,12 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="code" type="nonNegativeInteger" />
+		<attribute name="code" type="string" >
+			<annotation>
+				<documentation>
+					z.B. Substanz-ID, generell Subklassifikation
+				</documentation>
+			</annotation></attribute>
 		<attribute name="type" use="required">
 			<simpleType>
 				<restriction base="NMTOKEN">
@@ -816,6 +826,7 @@
 				<element name="P" type="string" />
 			</sequence>
 			<element name="XID" type="xchange:XIDType"></element>
+			<element name="meta" type="xchange:metaType"></element>
 		</choice>
 
 		<attribute name="author" type="xchange:xChangePartyRef" />
@@ -952,37 +963,7 @@
 						</complexType>
 					</element>
 					<element name="kg" type="xchange:kgType"
-						minOccurs="0" />
-					<element name="card" minOccurs="0">
-						<complexType>
-							<attribute name="personal_id" use="required">
-								<simpleType>
-									<restriction base="string">
-										<minLength value="1"/>
-										<maxLength value="35"/>
-									</restriction>
-								</simpleType>
-							</attribute>
-							<attribute name="card_id" use="required" >
-								<simpleType>
-									<restriction base="string">
-										<minLength value="1"/>
-										<maxLength value="35"/>
-									</restriction>
-								</simpleType>
-							</attribute>
-							<attribute name="expiry_date"
-								type="dateTime" use="required" />
-							<attribute name="control_id">
-								<simpleType>
-									<restriction base="string">
-										<minLength value="1"/>
-										<maxLength value="80"/>
-									</restriction>
-								</simpleType>
-							</attribute>
-						</complexType>
-					</element>
+						minOccurs="0" />
 				</sequence>
 
 
@@ -1071,10 +1052,7 @@
 		</attribute>
 		<attribute name="language" use="required">
 			<annotation>
-				<documentation>
-					TBD: This should be valid for any ISO language code,
-					no?
-				</documentation>
+				<documentation></documentation>
 			</annotation>
 			<simpleType>
 				<restriction base="language">
@@ -1157,9 +1135,10 @@
 					<attribute name="quality">
 						<simpleType>
 							<restriction base="string">
+								<enumeration value="ultimateQuality"></enumeration>
 								<enumeration value="globalQuality"></enumeration>
-								<enumeration value="localQuality"></enumeration>
 								<enumeration value="regionalQuality"></enumeration>
+								<enumeration value="localQuality"></enumeration>
 							</restriction>
 						</simpleType>
 					</attribute>
@@ -1175,8 +1154,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="valid" type="boolean"></attribute>
-		<attribute name="parent" type="string"></attribute>
+		<attribute name="valid" type="boolean"></attribute>
 	</complexType>
 
 	<simpleType name="XSDSimpleType">
@@ -1186,4 +1164,12 @@
 	<simpleType name="xChangePartyRef">
 		<restriction base="string"></restriction>
 	</simpleType>
+
+	<complexType name="metaType">
+		<sequence>
+            <element name="presentation" type="xchange:presentationType" maxOccurs="unbounded" minOccurs="1"></element>
+        </sequence>
+	</complexType>
+
+    <complexType name="presentationType"></complexType>
 </schema>
