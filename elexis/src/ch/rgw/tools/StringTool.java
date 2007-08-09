@@ -1,4 +1,4 @@
-// $Id: StringTool.java 2762 2007-07-08 20:35:24Z rgw_ch $
+// $Id: StringTool.java 2974 2007-08-09 05:11:54Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -720,6 +720,18 @@ public static Hashtable foldStrings(String s)
     		log.log(key+": "+table.get(key).toString(), Log.INFOS);
     	}
     	log.log("End dump\n", Log.INFOS);
+    }
+    
+    /**
+     * Change first lettere to uppercase, other letters to lowercase
+     * @param orig the word to change (at least 2 characters)
+     * @return the normalized word. Tis will return orig if orig is less than 2 characters 
+     */
+    public static String normalizeCase(String orig){
+    	if((orig==null) || (orig.length()<2)){
+    		return orig;
+    	}
+    	return orig.substring(0,1).toUpperCase()+orig.substring(1).toLowerCase();
     }
     /** 
 	 * Eine beliebige Ziffernfolge mit der Modulo-10 Prüfsumme verpacken
