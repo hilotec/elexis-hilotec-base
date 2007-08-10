@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2971 2007-08-08 15:17:02Z rgw_ch $
+ *    $Id: Fall.java 2978 2007-08-10 14:50:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -313,14 +313,28 @@ public class Fall extends PersistentObject{
 	public String getCodeSystemName(){
 		return getCodeSystem(getAbrechnungsSystem());
 	}
-	
+
+	/**
+	 * Retrieve requirements of this Cases billing system
+	 * @return a ; separated String of fields name:type where type is one of K,T,D for Kontakt, Text, Date
+	 */
+
 	public String getRequirements(){
 		return getRequirements(getAbrechnungsSystem());
 	}
+	
+	/**
+	 * Retrieve the name of the outputter of this case's billing system
+	 * @return
+	 */
 	public String getOutputterName(){
 		return getDefaultPrintSystem(getAbrechnungsSystem());
 	}
 	
+	/**
+	 * Retrieve the ooutputter for this case's billing system
+	 * @return the IRnOutputter that will be used or null if none was found
+	 */
 	public IRnOutputter getOutputter(){
 		String outputterName=getOutputterName();
 		if(outputterName.length()>0){
@@ -574,6 +588,12 @@ public class Fall extends PersistentObject{
 		}
 		return ret;
 	}
+	
+	/**
+	 * Retrieve requirements of a given billingSystem
+	 * @param billingSystem
+	 * @return a ; separated String of fields name:type where type is one of K,T,D for Kontakt, Text, Date
+	 */
 	public static String getRequirements(final String billingSystem) {
 		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/bedingungen", null);
 		return ret;
