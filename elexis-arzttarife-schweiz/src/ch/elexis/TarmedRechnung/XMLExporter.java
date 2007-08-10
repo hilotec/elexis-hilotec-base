@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2940 2007-08-01 05:47:58Z rgw_ch $
+ * $Id: XMLExporter.java 2977 2007-08-10 14:50:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -566,29 +566,43 @@ public class XMLExporter implements IRnOutputter {
 		invoice.addContent(esr);
 		//String tiers=actMandant.getInfoString(ta.TIERS);
 		String tiers="TG";
+		String[] req=actFall.getRequirements().split(";");
 		Patient pat=actFall.getPatient();
+		Kontakt rnAdressat=actFall.getRequiredContact("Rechnungsempfänger");
 		Kontakt kk=Kontakt.load(actFall.getInfoString("Kostenträger"));
-		Kontakt garant=actFall.getGarant();
-		if(kk.isValid()){
-			if(garant.isValid()){
-				if(garant.equals(kk)){
-					tiers="TP";
+		// if no billing adress is required, it must be tiers payant
+		if(StringTool.getIndex(req, "Rechnungsempfänger")==-1){
+			tiers="TP";
+			rnAdressat=kk;
+		}else{
+			if(rnAdressat==null){
+				tiers="TP";
+				if(kk.isValid()){
+					rnAdressat=kk;
 				}else{
-					tiers="TG";
+					rnAdressat=pat;
 				}
 			}else{
-				tiers="TP";
-			}
-		}else{
-			if(garant.isValid()){
-				tiers="TP";
-			}else{
-				garant=pat;
-				tiers="TP";
+				if(kk.isValid()){
+					if(rnAdressat.isValid()){
+						if(rnAdressat.equals(kk)){
+							tiers="TP";
+						}else{
+							tiers="TG";
+						}
+					}else{
+						tiers="TP";
+					}
+				}else{
+					if(rnAdressat.isValid()){
+						tiers="TP";
+					}else{
+						rnAdressat=pat;
+						tiers="TP";
+					}
+				}
 			}
 		}
-		
-		
 		Element eTiers=null;
 		if(tiers.equals("TG")){								
 			eTiers=new Element("tiers_garant",ns);												//  11020
@@ -646,7 +660,7 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(patient);
 			
 		Element guarantor=new Element("guarantor",ns);											//	11110
-		guarantor.addContent(buildAdressElement(garant));
+		guarantor.addContent(buildAdressElement(rnAdressat));
 		eTiers.addContent(guarantor);
 
 		Element referrer=new Element("referrer",ns);											//	11120
