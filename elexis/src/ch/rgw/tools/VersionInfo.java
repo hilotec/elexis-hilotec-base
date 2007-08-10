@@ -1,4 +1,4 @@
-// $Id: VersionInfo.java 1068 2006-10-06 17:08:18Z rgw_ch $
+// $Id: VersionInfo.java 2976 2007-08-10 13:54:03Z rgw_ch $
 
 package ch.rgw.tools;
 
@@ -19,7 +19,7 @@ public class VersionInfo implements Comparable{
   public VersionInfo()
   { this(Version());
   }
-   public VersionInfo(String v)
+   public VersionInfo(final String v)
    { if(StringTool.isNothing(v))
        {    orig=null;
            spl=null;
@@ -30,26 +30,34 @@ public class VersionInfo implements Comparable{
        }
    }
    public String maior()
-   {   if((spl==null) || (spl.length<1)) return "0";
-       if(StringTool.isNothing(spl[0])) return "0";
+   {   if((spl==null) || (spl.length<1)) {
+	return "0";
+}
+       if(StringTool.isNothing(spl[0])) {
+		return "0";
+	}
        return spl[0];
    }
    public String minor()
-   { if((spl==null) ||( spl.length<2)) return "0";
+   { if((spl==null) ||( spl.length<2)) {
+	return "0";
+}
      return spl[1];
    }
    public String rev()
-   { if((spl==null) ||(spl.length<3)) return "0";
+   { if((spl==null) ||(spl.length<3)) {
+	return "0";
+}
      return spl[2];
    }
    public String version()
    { return orig;
    }
-   public boolean isNewer(String other)
+   public boolean isNewer(final String other)
    {   VersionInfo vo=new VersionInfo(other);
        return isNewer(vo);
    }
-   public boolean isOlder(String other)
+   public boolean isOlder(final String other)
    {    VersionInfo vn=new VersionInfo(other);
         return isOlder(vn);
    }
@@ -58,26 +66,44 @@ public class VersionInfo implements Comparable{
     * @param vo die andere
     * @return true:ja, false: nein
     */
-   public boolean isNewer(VersionInfo vo)
+   public boolean isNewer(final VersionInfo vo)
    {    return (compareTo(vo)>0);
    }
-   public boolean isOlder(VersionInfo vo)
+   public boolean isOlder(final VersionInfo vo)
    {    return (compareTo(vo)<0);  
    }
-   public boolean isEqual(VersionInfo vo)
+   public boolean isNewerMaior(final VersionInfo vo){
+	   return compareElem(this.maior(),vo.maior())>0;
+   }
+   
+   public boolean isNewerMinor(final VersionInfo vo){
+	   return isNewerMaior(vo) ? true : compareElem(this.minor(),vo.minor())>0;
+   }
+   
+   public boolean isNewerRev(final VersionInfo vo){
+	   return isNewerMaior(vo) ? true :
+		   isNewerMinor(vo) ? true :
+			   compareElem(this.rev(),vo.rev())>0;
+   }
+   
+   public boolean isEqual(final VersionInfo vo)
    {    return (compareTo(vo)==0);
    }
 
-    public int compareTo(Object arg0) {
+    public int compareTo(final Object arg0) {
     VersionInfo vo=(VersionInfo)arg0;
     int c=compareElem(this.maior(),vo.maior());
-    if(c!=0) return c;
+    if(c!=0) {
+		return c;
+	}
     c=compareElem(this.minor(),vo.minor());
-    if(c!=0) return c;
+    if(c!=0) {
+		return c;
+	}
     return compareElem(this.rev(),vo.rev());
   
     }
-    private int compareElem(String a,String b)
+    private int compareElem(final String a,final String b)
     {	int al=a.length();
     	int bl=b.length();
     	if(al==bl)

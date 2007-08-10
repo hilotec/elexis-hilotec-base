@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2909 2007-07-25 11:51:26Z danlutz $
+ *    $Id: PersistentObject.java 2976 2007-08-10 13:54:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -38,6 +38,7 @@ import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.elexis.util.DBUpdate;
 import ch.elexis.util.Log;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.Compress.CompEx;
 import ch.rgw.IO.Resource;
 import ch.rgw.IO.Settings;
@@ -112,7 +113,7 @@ public abstract class PersistentObject{
         
 		cacheCleaner=new Job("CacheCleaner"){
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			protected IStatus run(final IProgressMonitor monitor) {
 				cache.purge();
 				schedule(60000L);
 				return Status.OK_STATUS;
@@ -143,7 +144,7 @@ public abstract class PersistentObject{
      * Datenbank verbunden.
      * @return true für ok, false wenn keine Verbindung hergestellt werden konnte.
      */
-    public static boolean connect(Settings cfg){
+    public static boolean connect(final Settings cfg){
     	File base=new File(Hub.getBasePath());
     	File demo=new File(base.getParentFile().getParent()+"/demoDB");
     	log.log("Verzeichnis Demo-Datenbank: "+demo.getAbsolutePath(), Log.DEBUGMSG);
@@ -190,7 +191,7 @@ public abstract class PersistentObject{
         }
         return false;
 	}
-    public static boolean connect(JdbcLink jd){
+    public static boolean connect(final JdbcLink jd){
     	j=jd;
     	  Hub.globalCfg=new SqlSettings(j,"CONFIG");
           // Zugriffskontrolle initialisieren
@@ -247,6 +248,15 @@ public abstract class PersistentObject{
               log.log("ältere Version der Datenbank gefunden ",Log.WARNINGS);
               DBUpdate.doUpdate();
           }
+          vi=new VersionInfo(Hub.globalCfg.get("ElexisVersion", "0.0.0"));
+          log.log("Verlangte Elexis-Version: "+vi.version(),Log.INFOS);
+          log.log("Vorhandene Elexis-Version: "+Hub.Version, Log.INFOS);
+          VersionInfo v2=new VersionInfo(Hub.Version);
+          if(vi.isNewerMinor(v2)){
+        	  SWTHelper.showError("Verbindung nicht möglich: Version zu alt", "Die Datenbank ist für eine neuere Elexisversion. Bitte machen Sie ein Update.");
+        	  log.log("Datenbank zu neu", Log.FATALS);
+        	  System.exit(2);
+          }
           // Wenn trace global eingeschaltet ist, gilt es für alle
           setTrace(Hub.globalCfg.get(PreferenceConstants.ABL_TRACE,null));
           // wenn trace global nicht eingeschaltet ist, kann es immer noch für diese 
@@ -281,7 +291,7 @@ public abstract class PersistentObject{
         * <li>"Variable=EXT:tabelle"	- Das Feld ist in der genannten externen Tabelle  
         *</ul>
       */  
-    static protected void addMapping(String prefix, String... map){
+    static protected void addMapping(final String prefix, final String... map){
     	for(String s:map){
     		String[] def=s.trim().split("[ \t]*=[ \t]*");
     		if(def.length!=2){
@@ -319,7 +329,7 @@ public abstract class PersistentObject{
      * @param wait wenn True, warten bis die sperre frei oder abgelaufen ist
      * @return null, wenn die Sperre belegt war, sonst eine id für unlock
      */
-    public static synchronized String lock(String name, boolean wait){
+    public static synchronized String lock(final String name, final boolean wait){
     	Stm stm=j.getStatement();
     	String lockname="lock"+name;
     	String lockid=StringTool.unique("lock");
@@ -365,7 +375,7 @@ public abstract class PersistentObject{
      * @param id	bei "lock" erhaltene LockID
      * @return true bei Erfolg
      */
-    public static synchronized boolean unlock(String name, String id){
+    public static synchronized boolean unlock(final String name, final String id){
     	String lockname="lock"+name;
     	String lock=j.queryString("SELECT wert from CONFIG WHERE param="+JdbcLink.wrap(lockname));
     	if(StringTool.isNothing(lock)){
@@ -434,7 +444,7 @@ public abstract class PersistentObject{
 	}
 	/** Konstruktor mit vorgegebener ID (zum Deserialisieren) 
      *  Wird nur von xx::load gebraucht.                    */
-	protected PersistentObject(String id){
+	protected PersistentObject(final String id){
 		this.id=id;
 	}
 	/**
@@ -496,6 +506,52 @@ public abstract class PersistentObject{
     }
     
     /**
+     * Return a xid (domain_id) for a specified domain
+     * @param domain
+     * @return an identifier that may be empty but will never be null
+     */
+    public String getXID(final String domain){
+    	Query<Xid> qbe=new Query<Xid>(Xid.class);
+    	qbe.add("object", "=", getId());
+    	qbe.add("domain", "=", domain);
+    	List<Xid> res=qbe.execute();
+    	if(res.size()>0){
+    		return res.get(0).get("domain_id");
+    	}
+    	return "";
+    }
+    
+    /**
+     * return the "best" xid for a given object. This is the xid with the
+     * highest quality. If no xid is given for this object, a newly created xid
+     * of local quality will be returned
+     */
+    public Xid getXid(){
+    	Query<Xid> qbe=new Query<Xid>(Xid.class);
+    	qbe.add("object", "=", getId());
+    	List<Xid> res=qbe.execute();
+    	if(res.size()==0){
+    		return new Xid(this,"elexis",getId(),Xid.QUALITY_LOCAL);
+    	}
+    	int quality=0;
+    	Xid ret=null;
+    	for(Xid xid:res){
+    		if(xid.getQuality()>quality){
+    			quality=xid.getQuality();
+    			ret=xid;
+    		}
+    	}
+    	if(ret==null){
+    		return res.get(0);
+    	}
+    	return ret;
+    }
+    
+    public void addXid(final String domain, final String domain_id,final int quality){
+    	new Xid(this,domain,domain_id,quality);
+    }
+    
+    /**
      * Feststellen, ob ein PersistentObject als gelöscht markiert wurde 
      * @return true wenn es gelöscht ist
      */
@@ -515,7 +571,7 @@ public abstract class PersistentObject{
      * @param f Der Feldname
      * @return  Das Datenbankfeld oder **ERROR**, wenn kein mapping für das angegebene Feld existiert.
      */
-	 public String map(String f){
+	 public String map(final String f){
          if(f.equals("ID")){
              return f;
          }
@@ -528,7 +584,7 @@ public abstract class PersistentObject{
 		return res;
 	}
 	
-	 public FieldType getFieldType(String f){
+	 public FieldType getFieldType(final String f){
 		 String mapped=map(f);
 		 if(mapped.startsWith("LIST:")){
 			 return FieldType.LIST;
@@ -552,7 +608,7 @@ public abstract class PersistentObject{
 	 * wenn versucht werden sollte, ein nicht existierendes Feld auszulesen
 	 */
 	@SuppressWarnings("unchecked")
-	public String get(String field)
+	public String get(final String field)
 	{
         String key=getKey(field);
         Object ret=cache.get(key);
@@ -660,7 +716,7 @@ public abstract class PersistentObject{
 	}
 
 		
-    protected byte[] getBinary(String field){
+    protected byte[] getBinary(final String field){
         StringBuffer sql=new StringBuffer();
         String mapped=/*map*/(field);
         String table=getTableName();
@@ -681,7 +737,7 @@ public abstract class PersistentObject{
        return null;
     }
     
-    protected VersionedResource getVersionedResource(String field,boolean flushCache){
+    protected VersionedResource getVersionedResource(final String field,final boolean flushCache){
         String key=getKey(field);
         if(flushCache==false){
         	Object o=cache.get(key);
@@ -701,7 +757,7 @@ public abstract class PersistentObject{
      * @return eine Hashtable (ggf. leer)
      */
 	@SuppressWarnings("unchecked")
-	public Hashtable getHashtable(String field){
+	public Hashtable getHashtable(final String field){
         String key=getKey(field);
         Object o=cache.get(key);
         if(o instanceof Hashtable){
@@ -723,7 +779,7 @@ public abstract class PersistentObject{
      * @param field
      * @return einen Integer. 0 bei 0 oder unlesbar
      */
-	public int getInt(String field){
+	public int getInt(final String field){
 		return checkZero(get(field));
     }
 	
@@ -734,7 +790,7 @@ public abstract class PersistentObject{
 	 * @return eine Liste mit den IDs (String!) der verknüpften Datensätze.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getList(String field, boolean reverse)
+	public List<String> getList(final String field, final boolean reverse)
 	{
 		 StringBuffer sql=new StringBuffer();
 		 String mapped=map(field);
@@ -771,7 +827,7 @@ public abstract class PersistentObject{
      * @return eine Liste aus String-Arrays, welche jeweils die ID des gefundenen Objekts
      * und den Inhalt der Extra-Felder enthalten. Null bei Mapping-Fehler
      */
-	public List<String[]> getList(String field, String[] extra)
+	public List<String[]> getList(final String field, String[] extra)
 	{
 		if(extra==null){
 			extra=new String[0];
@@ -823,7 +879,7 @@ public abstract class PersistentObject{
 	 * @param value Einzusetzender Wert (der vorherige Wert wird überschrieben)
 	 * @return 0 bei Fehler
 	 */
-	public boolean set(String field, String value)
+	public boolean set(final String field, String value)
 	{
 		if(value==null){
 			value="";
@@ -868,7 +924,7 @@ public abstract class PersistentObject{
 	 * @return 0 bei Fehler
 	 */
     @SuppressWarnings("unchecked")
-	public int setHashtable(String field, Hashtable hash){
+	public int setHashtable(final String field, final Hashtable hash){
         if(hash==null){
             return 0;
         }
@@ -895,7 +951,7 @@ public abstract class PersistentObject{
      * Zugriff zu vermeiden, wird zunächst die aktuelle Version in der Datenbank
      * gelesen und mit der neuen Version überlagert.
      */
-    protected int setVersionedResource(String field, String entry){
+    protected int setVersionedResource(final String field, final String entry){
         String lockid=lock("VersionedResource",true);
         VersionedResource old=getVersionedResource(field,true);
         int ret=1;
@@ -906,7 +962,7 @@ public abstract class PersistentObject{
         unlock("VersionedResource",lockid);
         return ret;
     }
-	protected int setBinary(String field, byte[] value){
+	protected int setBinary(final String field, final byte[] value){
 		StringBuilder sql=new StringBuilder(1000);
         sql.append("UPDATE ").append(getTableName()).append(" SET ")
         .append(/*map*/(field)).append("=?")
@@ -934,7 +990,7 @@ public abstract class PersistentObject{
 	 * @param value the value to be set
 	 * @return true on success, false else
 	 */
-	public boolean setInt(String field, int value) {
+	public boolean setInt(final String field, final int value) {
 		String stringValue = new Integer(value).toString();
 		if (stringValue.length() <= MAX_INT_LENGTH) {
 			return set(field, stringValue);
@@ -943,7 +999,7 @@ public abstract class PersistentObject{
 		}
 	}
 	
-	private void doTrace(String sql)
+	private void doTrace(final String sql)
     {
         StringBuffer tracer=new StringBuffer();
         tracer.append("INSERT INTO ").append(tracetable);
@@ -962,7 +1018,7 @@ public abstract class PersistentObject{
 	 * @param extra Definition der zusätzlichen Felder der Joint-Tabelle. Jeder Eintrag in der Form Feldname=Wert
 	 * @return 0 bei Fehler
 	 */
-	public int addToList(String field, String oID, String... extra)
+	public int addToList(final String field, final String oID, final String... extra)
 	{
 		String mapped=map(field);
 		if(mapped.startsWith("JOINT:")){
@@ -1044,7 +1100,7 @@ public abstract class PersistentObject{
 	 * @param customID Wenn eine ID (muss eindeutig sein!) vorgegeben werden soll. Bei null wird eine generiert.
 	 * @return true bei Erfolg
 	 */
-	protected boolean create(String customID){
+	protected boolean create(final String customID){
 		//String pattern=this.getClass().getSimpleName();
 		if(customID!=null){
 			id=customID;
@@ -1112,7 +1168,7 @@ public abstract class PersistentObject{
 	 * @param values die Werte
 	 * @return false bei Fehler
 	 */
-	public boolean set(String[] fields, String... values){
+	public boolean set(final String[] fields, final String... values){
 		if((fields==null) || (values==null) || (fields.length!=values.length)){
 			log.log("Falsche Felddefinition für set",Log.ERRORS);
 			return false;
@@ -1159,7 +1215,7 @@ public abstract class PersistentObject{
 	 * @param values String Array für die gelesenen Werte
 	 * @return true ok, values wurden gesetzt
 	 */
-	public boolean get(String[] fields, String[] values)
+	public boolean get(final String[] fields, final String[] values)
 	{
 		if( (fields==null) || (values==null) || (fields.length!=values.length)){
 			log.log("Falscher Aufruf von get(String[],String[]",Log.ERRORS);
@@ -1215,7 +1271,7 @@ public abstract class PersistentObject{
 		}
 		
 	}
-    private String decode(String field, ResultSet rs){
+    private String decode(final String field, final ResultSet rs){
         
         try{
             String mapped=map(field);
@@ -1255,7 +1311,7 @@ public abstract class PersistentObject{
         return null;
     }
 
-    private String encode(int num, PreparedStatement pst, String field, String value) {
+    private String encode(final int num, final PreparedStatement pst, final String field, final String value) {
         String mapped=map(field);
          String ret=value;
         try{
@@ -1301,7 +1357,7 @@ public abstract class PersistentObject{
      * @return true wenn this und other vom selben typ sind und alle interessierenden
      * Felder genäss mode übereinstimmen.
      */
-    public boolean isMatching(PersistentObject other,int mode, String... fields){
+    public boolean isMatching(final PersistentObject other,final int mode, final String... fields){
         if(getClass().equals(other.getClass())){
             String[] others=new String[fields.length];
             other.get(fields,others);
@@ -1316,7 +1372,7 @@ public abstract class PersistentObject{
      * @param others die Vergleichswerte
      * @return true bei übereinsteimmung
      */
-    public boolean isMatching(String[] fields, int mode, String... others){
+    public boolean isMatching(final String[] fields, final int mode, final String... others){
         String[] mine=new String[fields.length];
         get(fields,mine);
 
@@ -1368,7 +1424,7 @@ public abstract class PersistentObject{
      * @param field the field to get a key for
      * @return a unique key
      */
-    private String getKey(String field){
+    private String getKey(final String field){
         StringBuffer key=new StringBuffer();
         
         key.append(getTableName());
@@ -1415,18 +1471,18 @@ public abstract class PersistentObject{
 	 */
 
 	@Override
-	public boolean equals(Object arg0) {
+	public boolean equals(final Object arg0) {
 		if(arg0 instanceof PersistentObject){
 			return getId().equals(((PersistentObject)arg0).getId());
 		}
 		return false;
 	}
 	
-	public static String checkNull(String in){
+	public static String checkNull(final String in){
 		return in==null ? "" : in;
 	}
 	 
-	public static int checkZero(String in){
+	public static int checkZero(final String in){
 		if(StringTool.isNothing(in)){
 			return 0;
 		}
@@ -1437,7 +1493,7 @@ public abstract class PersistentObject{
 			return 0;
 		}
 	}
-	public static double checkZeroDouble(String in){
+	public static double checkZeroDouble(final String in){
 		if(StringTool.isNothing(in)){
 			return 0.0;
 		}
@@ -1468,7 +1524,7 @@ public abstract class PersistentObject{
 	public static boolean isShowDeleted() {
 		return showDeleted;
 	}
-	public static void setShowDeleted(boolean showDeleted) {
+	public static void setShowDeleted(final boolean showDeleted) {
 		PersistentObject.showDeleted = showDeleted;
 	}
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ *  $Id: Rechnung.java 2976 2007-08-10 13:54:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -47,7 +47,7 @@ public class Rechnung extends PersistentObject {
 				"Betragx100=Betrag","ExtInfo","Zahlungen=LIST:RechnungsID:ZAHLUNGEN:Datum");
 	}
 	
-	public Rechnung(String nr, Mandant m,Fall f,String von, String bis, Money Betrag, int status){
+	public Rechnung(final String nr, final Mandant m,final Fall f,final String von, final String bis, final Money Betrag, final int status){
 		create(null);
 		String Datum=new TimeTool().toString(TimeTool.DATE_GER);
 		set(new String[]{"RnNummer","MandantID","FallID","RnDatumVon","RnDatumBis","Betragx100","RnStatus","RnDatum"},
@@ -60,7 +60,7 @@ public class Rechnung extends PersistentObject {
 	 * verwendet, die zum selben Mandanten und zum selben Fall gehören
 	 * @return Ein Result mit ggf. der erstellten Rechnung als Inhalt
 	 */
-    public static Result<Rechnung> build(List<Konsultation> behandlungen){
+    public static Result<Rechnung> build(final List<Konsultation> behandlungen){
     	Result<Rechnung> result=new Result<Rechnung>();
         if((behandlungen==null)|| (behandlungen.size()==0)){
             return result.add(Log.INFOS,1,"Die Rechnung enthält keine Behandlungen",null,true);
@@ -71,7 +71,6 @@ public class Rechnung extends PersistentObject {
         TimeTool endDate=new TimeTool("01.01.2000");
         TimeTool actDate=new TimeTool();
         Mandant m=null;
-        Kontakt garant=null;
         //Kontakt kostentraeger=null;
         List<IDiagnose> diagnosen=null;
         Fall f=null;
@@ -135,21 +134,24 @@ public class Rechnung extends PersistentObject {
         }
         if(f==null){
         	result=result.add(Log.ERRORS, 8, "Die Rechnung hat keinen gültigen Fall ("+getRnDesc(ret)+")", ret, true);
-        	garant=Hub.actMandant;
+        	//garant=Hub.actMandant;
         }else{
-        	garant=f.getGarant();
+        	if(!f.isValid()){
+        		result=result.add(Log.ERRORS,8,"Die Rechnung hat keinen gültigen Fall ("+getRnDesc(ret)+")", ret, true);
+        	}
+        	//garant=f.getGarant();
         	//kostentraeger=f.getKostentraeger();
         }
         
         // check if there are any Konsultationen
-        if (diagnosen == null || diagnosen.size() == 0) {
+        if ((diagnosen == null) || (diagnosen.size() == 0)) {
         	result=result.add(Log.ERRORS,6,"Die Rechnung enthält keine Diagnose ("+getRnDesc(ret)+")",ret,true);
         }
-
+        /*
         if(garant==null || !garant.isValid()){
         	result=result.add(Log.ERRORS,7,"Die Rechnung hat keinen Garanten ("+getRnDesc(ret)+")",ret,true);
         }
-        
+        */
         /* just take this out for now to allow me making bills
         if(kostentraeger==null || !kostentraeger.isValid()){
         	result=result.add(Log.ERRORS,8,"Die Rechnung hat keinen Kostenträger ("+getRnDesc(ret)+")",ret,true);
@@ -182,7 +184,7 @@ public class Rechnung extends PersistentObject {
         return result.add(0,0,"OK",ret,false);
     }
 
-    private static String getRnDesc(Rechnung rn){
+    private static String getRnDesc(final Rechnung rn){
     	StringBuilder sb=new StringBuilder();
     	if(rn==null){
     		sb.append("Keine Rechnungsnummer");
@@ -230,7 +232,7 @@ public class Rechnung extends PersistentObject {
 	 * @param reopen wenn True werden die in dieser Rechnung enthaltenen Behandlungen wieder freigegeben, andernfalls
 	 * bleiben sie abgeschlossen.
 	 */
-	public void storno(boolean reopen){
+	public void storno(final boolean reopen){
 		Money betrag=getBetrag();
 		new Zahlung(this,betrag,"Storno");
 		if(reopen==true){
@@ -270,7 +272,7 @@ public class Rechnung extends PersistentObject {
 	 * @param betrag new new sum
 	 * @return true on success
 	 */
-	public boolean setBetrag(Money betrag){
+	public boolean setBetrag(final Money betrag){
 		// use absolute value to fix earlier bug
 		
 		int oldVal=Math.abs(checkZero(get("Betragx100")));
@@ -290,7 +292,7 @@ public class Rechnung extends PersistentObject {
 			qa.add("RechnungsID", "=", getId());
 			qa.add("ZahlungsID"	, "", null);
 			List<AccountTransaction> as=qa.execute();
-			if(as!=null && as.size()==1){
+			if((as!=null) && (as.size()==1)){
 				AccountTransaction at=as.get(0); 
 				if(at.exists()){
 					Money negBetrag = new Money(betrag);
@@ -334,7 +336,7 @@ public class Rechnung extends PersistentObject {
 	public int getStatus(){
 		try {
 			int i= Integer.parseInt(checkNull(get("RnStatus")));
-			if(i<0 || (i>=RnStatus.Text.length)){
+			if((i<0) || (i>=RnStatus.Text.length)){
 				return RnStatus.UNBEKANNT;
 			}
 			return i;
@@ -344,14 +346,14 @@ public class Rechnung extends PersistentObject {
 	}
 	
 	/** Rechnungsstatus setzen */
-	public void setStatus(int stat){
+	public void setStatus(final int stat){
 		set("RnStatus",Integer.toString(stat));
 		set("StatusDatum",new TimeTool().toString(TimeTool.DATE_GER));
 		addTrace(STATUS_CHANGED,Integer.toString(stat));
 	}
 	
 	/** Eine Zahlung zufügen  */
-	public void addZahlung(Money betrag, String text){
+	public void addZahlung(final Money betrag, final String text){
 		if(betrag.isZero()){
 			return;
 		}
@@ -395,16 +397,16 @@ public class Rechnung extends PersistentObject {
 	public String getBemerkung(){
 		return getExtInfo("Bemerkung");
 	}
-	public void setBemerkung(String bem){
+	public void setBemerkung(final String bem){
 		setExtInfo("Bemerkung",bem);
 	}
 	
-	public String getExtInfo(String key){
+	public String getExtInfo(final String key){
 		Hashtable<String,String> ext=loadExtension();
 		String ret=ext.get(key);
 		return ret==null ? "" : ret;
 	}
-	public void setExtInfo(String key, String value){
+	public void setExtInfo(final String key, final String value){
 		Hashtable<String,String> ext=loadExtension();
 		ext.put(key,value);
 		flushExtension(ext);
@@ -416,7 +418,7 @@ public class Rechnung extends PersistentObject {
 	 * @param text Text zum Eintrag
 	 */
 	@SuppressWarnings("unchecked")
-	public void addTrace(String name,String text){
+	public void addTrace(final String name,final String text){
 		Hashtable hash=loadExtension();
 		byte[] raw=(byte[])hash.get(name);
 		List<String> trace=null;
@@ -436,7 +438,7 @@ public class Rechnung extends PersistentObject {
 	 * @return eine List<String>, welche leer sein kann
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getTrace(String name){
+	public List<String> getTrace(final String name){
 		Hashtable hash=loadExtension();
 		byte[] raw=(byte[])hash.get(name);
 		List<String> trace=null;
@@ -471,7 +473,7 @@ public class Rechnung extends PersistentObject {
 	/**
 	 * Mark bill as rejected
 	 */
-	public void reject(RnStatus.REJECTCODE reason, String text){
+	public void reject(final RnStatus.REJECTCODE reason, final String text){
 		setStatus(RnStatus.FEHLERHAFT);
 		addTrace(REJECTED,reason.toString()+", "+text);
 	}
@@ -481,10 +483,10 @@ public class Rechnung extends PersistentObject {
 		return getHashtable("ExtInfo");
 	}
 	@SuppressWarnings("unchecked")
-	public void flushExtension(Hashtable ext){
+	public void flushExtension(final Hashtable ext){
 		setHashtable("ExtInfo",ext);
 	}
-	public static Rechnung load(String id){
+	public static Rechnung load(final String id){
 		Rechnung ret=new Rechnung(id);
 		if(ret.exists()){
 			return ret;
@@ -523,7 +525,7 @@ public class Rechnung extends PersistentObject {
 	}
 	
 	protected Rechnung() { /* leer */}
-	protected Rechnung(String id) {
+	protected Rechnung(final String id) {
 		super(id);
 	}
 

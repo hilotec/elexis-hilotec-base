@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 2803 2007-07-14 08:51:05Z rgw_ch $
+ *    $Id: Hub.java 2976 2007-08-10 13:54:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -66,8 +66,8 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID="ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX=PLUGIN_ID+".commands."; //$NON-NLS-1$
 	static final String neededJRE="1.5.0"; //$NON-NLS-1$
-    public static final String Version="1.1.0"; //$NON-NLS-1$
-    public static final String DBVersion="1.6.0"; //$NON-NLS-1$
+    public static final String Version="1.1.1"; //$NON-NLS-1$
+    public static final String DBVersion="1.6.1"; //$NON-NLS-1$
     static final String[] mine={"ch.elexis","ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
     private static List<ShutdownJob> shutdownJobs=new LinkedList<ShutdownJob>();
             
@@ -162,7 +162,6 @@ public class Hub extends AbstractUIPlugin {
  		pin=new PreferenceInitializer();
  		pin.initializeDefaultPreferences();
         jobPool=JobPool.getJobPool();
-        //pinger=new PingerJob();
         jobPool.addJob(new ListLoader<Patient>("PatientenListe",new Query<Patient>(Patient.class),new String[]{"Name","Vorname"})); //$NON-NLS-1$
         //jobPool.addJob(new ListLoader<Plz>("Plz",new Query(Plz.class),new String[]{"Plz","Ort"}));
 
@@ -310,7 +309,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 2803 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 2976 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

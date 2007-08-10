@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Organisation.java 164 2006-04-12 16:07:07Z rgw_ch $
+ *  $Id: Organisation.java 2976 2007-08-10 13:54:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,26 +26,29 @@ public class Organisation extends Kontakt {
 				"Zusatz1=Bezeichnung2",
 				"Zusatz2=ExtInfo",
 				"Ansprechperson=Bezeichnung3","istOrganisation",
+				"Zusatz3=TITEL",
 				"Tel. direkt=NatelNr"
 				);
 	}
 	
+	@Override
 	public boolean isValid(){
 		return super.isValid();
 	}
+	@Override
 	protected String getTableName() {
 		return "KONTAKT";
 	}
 	Organisation(){/* leer */}
-	protected Organisation(String id){
+	protected Organisation(final String id){
 	    super(id);
     }
 	/** Eine Organisation bei gegebener ID aus der Datenbank einlesen */
-    public static Organisation load(String id){
+    public static Organisation load(final String id){
         return new Organisation(id);
     }
     /** Eine neue Organisation erstellen */
-    public Organisation(String Name, String Zusatz1){
+    public Organisation(final String Name, final String Zusatz1){
     	create(null);
     	set(new String[]{"Name","Zusatz1"},new String[]{Name,Zusatz1});
     }
