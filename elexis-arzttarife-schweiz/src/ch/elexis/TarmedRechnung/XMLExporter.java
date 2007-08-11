@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2977 2007-08-10 14:50:46Z rgw_ch $
+ * $Id: XMLExporter.java 2979 2007-08-11 17:45:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -67,6 +67,7 @@ import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.tarmedprefs.PreferenceConstants;
+import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
@@ -566,43 +567,20 @@ public class XMLExporter implements IRnOutputter {
 		invoice.addContent(esr);
 		//String tiers=actMandant.getInfoString(ta.TIERS);
 		String tiers="TG";
-		String[] req=actFall.getRequirements().split(";");
 		Patient pat=actFall.getPatient();
-		Kontakt rnAdressat=actFall.getRequiredContact("Rechnungsempfänger");
-		Kontakt kk=Kontakt.load(actFall.getInfoString("Kostenträger"));
-		// if no billing adress is required, it must be tiers payant
-		if(StringTool.getIndex(req, "Rechnungsempfänger")==-1){
-			tiers="TP";
-			rnAdressat=kk;
-		}else{
-			if(rnAdressat==null){
+		Kontakt rnAdressat=actFall.getGarant();
+		Kontakt vers=actFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		if((vers!=null) && (vers.isValid())){
+			if(rnAdressat.equals(vers)){
 				tiers="TP";
-				if(kk.isValid()){
-					rnAdressat=kk;
-				}else{
-					rnAdressat=pat;
-				}
 			}else{
-				if(kk.isValid()){
-					if(rnAdressat.isValid()){
-						if(rnAdressat.equals(kk)){
-							tiers="TP";
-						}else{
-							tiers="TG";
-						}
-					}else{
-						tiers="TP";
-					}
-				}else{
-					if(rnAdressat.isValid()){
-						tiers="TP";
-					}else{
-						rnAdressat=pat;
-						tiers="TP";
-					}
-				}
+				tiers="TG";
 			}
+		}else{
+			vers=rnAdressat;
+			tiers="TP";
 		}
+
 		Element eTiers=null;
 		if(tiers.equals("TG")){								
 			eTiers=new Element("tiers_garant",ns);												//  11020
@@ -630,14 +608,13 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(provider);
 			
 		Element insurance=new Element("insurance",ns);											//  11090
-		Kontakt vers=rn.getFall().getKostentraeger();	
 		insurance.setAttribute("ean_party",vers.getInfoString("EAN"));							
 		insurance.addContent(buildAdressElement(vers));
 		eTiers.addContent(insurance);
 			
 		Element patient=new Element("patient",ns);												// 	11100
 		
-		patient.setAttribute("unique_id",rn.getFall().getVersNummer());
+		patient.setAttribute("unique_id",rn.getFall().getId());
 		String gender="male";
 		if(pat==null){
 			MessageDialog.openError(null,"Fehler","Die Rechnung hat keinen zugeordneten Patienten");
@@ -704,7 +681,17 @@ public class XMLExporter implements IRnOutputter {
 		}
 		Element versicherung=new Element(gesetz.toLowerCase(),ns);									//	16700
 		versicherung.setAttribute("reason",match_type(actFall.getGrund()));
-		versicherung.setAttribute("patient_id",actFall.getVersNummer());							//	16720
+		String vnummer=actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
+		if(StringTool.isNothing(vnummer)){
+			vnummer=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+		}
+		if(StringTool.isNothing(vnummer)){
+			vnummer=actFall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
+		}
+		if(StringTool.isNothing(vnummer)){
+			vnummer=pat.getId();
+		}
+		versicherung.setAttribute("patient_id",vnummer);							//	16720
 		String casedate=actFall.getInfoString("Unfalldatum");										//	16740
 		if(StringTool.isNothing(casedate)){
 			casedate=rn.getDatumVon();

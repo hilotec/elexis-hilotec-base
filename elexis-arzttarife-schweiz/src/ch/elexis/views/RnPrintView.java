@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2977 2007-08-10 14:50:46Z rgw_ch $
+ * $Id: RnPrintView.java 2979 2007-08-11 17:45:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -43,6 +43,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Zahlung;
+import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ReplaceCallback;
 import ch.elexis.text.TextContainer;
@@ -193,9 +194,9 @@ public class RnPrintView extends ViewPart {
 		
 		
 		if(paymentMode.equals("TP")){ //$NON-NLS-1$
-			adressat=fall.getRequiredContact("Kostenträger");
+			adressat=fall.getRequiredContact(TarmedRequirements.INSURANCE);
 		}else{
-			adressat=fall.getRequiredContact("Rechnungsempfänger");
+			adressat=fall.getGarant();
 		}
 		if((adressat==null) || (!adressat.exists())){
 			adressat=pat;
