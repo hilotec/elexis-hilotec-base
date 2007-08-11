@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2980 2007-08-11 17:45:58Z rgw_ch $
+ *    $Id: Fall.java 2981 2007-08-11 19:18:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -196,11 +196,9 @@ public class Fall extends PersistentObject{
 	
 	public void setRequiredString(final String name, final String val){
 		String[] req=getRequirements().split(";");
-		int idx=StringTool.getIndex(req, name);
+		int idx=StringTool.getIndex(req, name+":T");
 		if(idx!=-1){
-			if(req[idx].endsWith(":T")){
-				setInfoString(name, val);
-			}
+			setInfoString(name, val);
 		}
 	}
 	
@@ -468,6 +466,10 @@ public class Fall extends PersistentObject{
 		qRn.add("FallID", "=", getId());
 		for(Rechnung rn:qRn.execute()){
 			rn.delete();
+		}
+		List<Xid> xids=new Query<Xid>(Xid.class,"object",getId()).execute();
+		for(Xid xid:xids){
+			xid.delete();
 		}
 		return true;
 	}
