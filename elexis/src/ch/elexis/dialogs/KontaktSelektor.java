@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 2960 2007-08-06 13:40:57Z danlutz $
+ *  $Id: KontaktSelektor.java 2980 2007-08-11 17:45:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
@@ -381,5 +383,33 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			}
 		}			
 	
+	}
+	
+	public static Kontakt showInSync(Class clazz, String title, String message){
+		InSync rn=new InSync(clazz,title,message);
+		Desk.theDisplay.syncExec(rn);
+		return rn.ret;
+
+	}
+	private static class InSync implements Runnable{
+		Kontakt ret;
+		String title, message;
+		Class clazz;
+		InSync(Class clazz,String title, String message){
+			this.title=title;
+			this.message=message;
+			this.clazz=clazz;
+		}
+		
+		public void run() {
+			Shell shell=Desk.theDisplay.getActiveShell();
+			KontaktSelektor ksl=new KontaktSelektor(shell,clazz,title,message);
+			if(ksl.open()==Dialog.OK){
+				ret=(Kontakt)ksl.getSelection();
+			}else{
+				ret=null;
+			}
+		}
+		
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2938 2007-07-31 05:02:12Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 2980 2007-08-11 17:45:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -60,7 +60,7 @@ public class FallDetailBlatt2 extends Composite {
     public static final String[] dgsys=null;
 	Combo cAbrechnung,cReason;
 	DatePickerCombo dpVon, dpBis;
-	Text tBezeichnung;
+	Text tBezeichnung, tGarant;
     Button accept,reject;
     Hyperlink autoFill;
     List<Control> lReqs=new ArrayList<Control>();
@@ -89,9 +89,6 @@ public class FallDetailBlatt2 extends Composite {
 
 				String ktNew=f.getInfoString("Kostenträger");
 				String ktOld=f.get("Kostentraeger");
-
-				String gNew=f.getInfoString("Rechnungsempfänger");
-				String gOld=f.get("GarantID");
 
 				String vnNew=f.getInfoString("Versicherungsnummer");
 				String vnOld=f.getVersNummer();
@@ -226,7 +223,26 @@ public class FallDetailBlatt2 extends Composite {
 			}
         	
         });
+        Hyperlink hlGarant=tk.createHyperlink(top, "Rechnungsempfänger", SWT.NONE);
+		hlGarant.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(final HyperlinkEvent e) {
+				KontaktSelektor ksl=new KontaktSelektor(getShell(),	Kontakt.class,"Garant auswählen",
+						"Bitte wählen Sie den Rechnungsempfänger aus", true);
+				if(ksl.open()==Dialog.OK){
+					Kontakt sel=(Kontakt)ksl.getSelection();
+			        Fall fall=getFall();
+			        if(fall!=null){
+			        	fall.setGarant(sel);
+			        	setFall(fall);
+	                	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			        }
+				}
+			}
+		});
         
+		tGarant=tk.createText(top, "");
+		tGarant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.paintBordersFor(top);
 		setFall(getFall());
 
@@ -287,7 +303,7 @@ public class FallDetailBlatt2 extends Composite {
 		}else{
 			dpBis.setDate(null);
 		}
-		
+		tGarant.setText(f.getGarant().getLabel());
 		String reqs=f.getRequirements();
 		if(reqs!=null){
 			for(String req:reqs.split(";")){

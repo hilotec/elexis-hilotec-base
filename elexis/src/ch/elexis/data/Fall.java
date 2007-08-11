@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2978 2007-08-10 14:50:50Z rgw_ch $
+ *    $Id: Fall.java 2980 2007-08-11 17:45:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,7 +35,7 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Ein Fall ist eine Serie von zusammengehörigen Behandlungen.
- * Ein Fall hat einen Garanten, ein Anfangsdatum, eine Diagnoseliste,
+ * Ein Fall hat einen Garanten, ein Anfangsdatum
  * ein Enddatum, eine Bezeichnung und allenfalls ein Enddatum 
  * @author Gerry
  *
@@ -49,14 +49,6 @@ public class Fall extends PersistentObject{
 	public static final String TYPE_BIRTHDEFECT="Geburtsgebrechen";
 	public static final String TYPE_OTHER="Anderes";
 	
-	/* das ist zu schweizlastig 
-	public static final String LAW_DISEASE="KVG";
-	public static final String LAW_ACCIDENT="UVG";
-	public static final String LAW_INVALIDITY="IV";
-	public static final String LAW_MILITARY="MV";
-	public static final String LAW_INSURANCE="VVG";
-	public static final String LAW_OTHER="privat";
-	*/
 	
 	@Override
 	protected String getTableName() {
@@ -164,6 +156,17 @@ public class Fall extends PersistentObject{
 		set("DatumBis",dat);
 	}
 	
+	public Kontakt getGarant(){
+		Kontakt ret= Kontakt.load("GarantID");
+		if((ret==null) || (!ret.isValid())){
+			ret= getPatient();
+		}
+		return ret;
+	}
+	
+	public void setGarant(Kontakt garant){
+		set("GarantID",garant.getId());
+	}
 	/**
 	 * Retrieve a required Konktat from this Fall's Billing system's requirements
 	 * @param name the requested Kontakt's name
@@ -177,18 +180,30 @@ public class Fall extends PersistentObject{
 		return Kontakt.load(kid);
 	}
 	
+	public void setRequiredContact(final String name, final Kontakt k){
+		String[] req=getRequirements().split(";");
+		int idx=StringTool.getIndex(req, name+":K");
+		if(idx!=-1){
+			if(req[idx].endsWith(":K")){
+				setInfoString(name, k.getId());
+			}
+		}
+	}
 	public String getRequiredString(final String name){
 		String kid=getInfoString(name);
 		return kid;
 	}
-	/** Garant holen (existiert ev. nicht) 
-	 * @deprecated use getRequiiredContact instead
-	 * */
-	@Deprecated
-	public Kontakt getGarant(){
-
-		return Kontakt.load(getInfoString("Rechnungsempfänger"));
+	
+	public void setRequiredString(final String name, final String val){
+		String[] req=getRequirements().split(";");
+		int idx=StringTool.getIndex(req, name);
+		if(idx!=-1){
+			if(req[idx].endsWith(":T")){
+				setInfoString(name, val);
+			}
+		}
 	}
+	
 	/**
 	 * This is an update only for swiss installations that takes the old
 	 * tarmed cases to the new system
@@ -479,36 +494,23 @@ public class Fall extends PersistentObject{
     	setHashtable("ExtInfo",extinfo);
 		
 	}
+    
+    @SuppressWarnings("unchecked")
+	public Object getInfoElement(final String name){
+    	Hashtable extinfo=getHashtable("ExtInfo");
+    	return extinfo.get(name);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void setInfoElement(String name, Object elem){
+    	Hashtable extinfo=getHashtable("ExtInfo");
+    	extinfo.put(name,elem);
+    	setHashtable("ExtInfo",extinfo);
+    }
 	@Override
 	public boolean isDragOK() {
 		return true;
 	}
-	/*
-	public void setPaymentMode(final String string) {
-		setInfoString("payment",string);
-		
-	}
-	*/
-	/*
-	public String getPaymentMode(){
-		String tiers="TG";
-		Kontakt garant=getGarant();
-		if(!garant.isValid()){
-			garant=getPatient();
-		}
-		Kontakt kk=getKostentraeger();
-		if(!garant.isValid()){
-			tiers="TP";
-		}else{
-			if(kk.isValid()){
-				if(kk.equals(garant)){
-					tiers="TP";
-				}
-			}
-		}
-		return tiers;
-	}
-	 */
 	
 	public static String getDefaultCaseLabel(){
 		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASELABEL, "Allgemein");
@@ -521,7 +523,7 @@ public class Fall extends PersistentObject{
 	}
 	
 	/**
-	 * Find all installed bolling systems. If we do not find any, we assume that this is an old installation and
+	 * Find all installed billing systems. If we do not find any, we assume that this is an old installation and
 	 * try to update. If we find a tarmed-Plugin installed, we create default-tarmed billings.
 	 * @return
 	 */
@@ -571,6 +573,15 @@ public class Fall extends PersistentObject{
 		}
 		return ret;
 	}
+	
+	public static void createAbrechnungssystem(String systemname,String codesystem, String ausgabe,String... requirements){
+		String key=Leistungscodes.CFG_KEY+"/"+systemname;
+		Hub.globalCfg.set(key+"/name", systemname);
+		Hub.globalCfg.set(key+"/leistungscodes", codesystem);
+		Hub.globalCfg.set(key+"/standardausgabe", ausgabe);
+		Hub.globalCfg.set(key+"/bedingungen", StringTool.join(requirements, ";"));
+	}
+	
 	public static String getCodeSystem(final String billingSystem){
 		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/leistungscodes", null);
 		if(ret==null){		// compatibility

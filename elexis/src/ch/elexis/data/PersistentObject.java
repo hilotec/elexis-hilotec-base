@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2976 2007-08-10 13:54:03Z rgw_ch $
+ *    $Id: PersistentObject.java 2980 2007-08-11 17:45:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -32,6 +32,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.data.Xid.XIDException;
 import ch.elexis.data.cache.SoftCache;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
@@ -531,7 +532,12 @@ public abstract class PersistentObject{
     	qbe.add("object", "=", getId());
     	List<Xid> res=qbe.execute();
     	if(res.size()==0){
-    		return new Xid(this,"elexis",getId(),Xid.QUALITY_LOCAL);
+    		try{
+    			return new Xid(this,"elexis",getId(),Xid.QUALITY_LOCAL);
+    		}catch(XIDException xex){	// Should never happen, uh?
+    			ExHandler.handle(xex);
+    			return null;
+    		}
     	}
     	int quality=0;
     	Xid ret=null;
@@ -547,8 +553,40 @@ public abstract class PersistentObject{
     	return ret;
     }
     
-    public void addXid(final String domain, final String domain_id,final int quality){
-    	new Xid(this,domain,domain_id,quality);
+    /**
+     * Assign a XID to this object.
+     * @param domain the domain whose ID will be assigned
+     * @param domain_id the id out of the given domain fot this object
+     * @param quality the Quality indicator (@see Xid)
+     * @param updateIfExists if true update values if Xid with same domain and domain_id exists. Otherwise the method will
+     * fail if a collision occurs.
+     * @return true on success, false on failure
+     */
+    public boolean addXid(final String domain, final String domain_id,final int quality, boolean updateIfExists){
+    	Xid oldXID=Xid.findXID(this, domain);
+    	if(oldXID!=null){
+    		if(updateIfExists){
+    			oldXID.set("domain_id", domain_id);
+    			oldXID.set("quality", Integer.toString(quality));
+    			return true;
+    		}
+    		return false;
+    	}
+    	
+    	try {
+			new Xid(this,domain,domain_id,quality);
+			return true;
+		} catch (XIDException e) {
+			if(updateIfExists){
+				Xid xid=Xid.findXID(domain, domain_id);
+				if(xid!=null){
+					xid.set("object",getId());
+					xid.set("quality", Integer.toString(quality));
+					return true;
+				}
+			}
+			return false;
+		}
     }
     
     /**

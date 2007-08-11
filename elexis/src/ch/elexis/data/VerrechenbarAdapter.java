@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 2860 2007-07-21 18:32:26Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 2980 2007-08-11 17:45:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -78,8 +78,11 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 	}
 
 
-	public void setVKMultiplikator(final TimeTool von, final TimeTool bis, final double factor, final String typ){
+	public void setVKMultiplikator(final TimeTool von, TimeTool bis, final double factor, final String typ){
 		StringBuilder sql=new StringBuilder();
+		if(bis==null){
+			bis=new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
+		}
 		sql.append("INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,MULTIPLIKATOR,TYP) VALUES (")
 			.append(JdbcLink.wrap(von.toString(TimeTool.DATE_COMPACT))).append(",")
 			.append(JdbcLink.wrap(bis.toString(TimeTool.DATE_COMPACT))).append(",")
@@ -89,16 +92,16 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 			
 	}
 	
-	public Double getVKMultiplikator(final TimeTool date, final String typ){
+	public double getVKMultiplikator(final TimeTool date, final String typ){
 		return getMultiplikator(date,"VK_PREISE",typ);
 	}
-	public Double getVKMultiplikator(final TimeTool date, final Fall fall){
+	public double getVKMultiplikator(final TimeTool date, final Fall fall){
 		return getMultiplikator(date,"VK_PREISE",fall.getAbrechnungsSystem());
 	}
-	public Double getEKMultiplikator(final TimeTool date, final Fall fall){
+	public double getEKMultiplikator(final TimeTool date, final Fall fall){
 		return getMultiplikator(date,"EK_PREISE",fall.getAbrechnungsSystem());
 	}
-	private Double getMultiplikator(final TimeTool date, final String table,final String typ){
+	private double getMultiplikator(final TimeTool date, final String table,final String typ){
 		String actdat=JdbcLink.wrap(date.toString(TimeTool.DATE_COMPACT));
 		StringBuilder sql=new StringBuilder();
 		sql.append("SELECT MULTIPLIKATOR FROM ").append(table).append(" WHERE TYP=")

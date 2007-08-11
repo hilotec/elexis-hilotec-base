@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 2964 2007-08-06 14:03:27Z danlutz $
+ *  $Id: Patient.java 2980 2007-08-11 17:45:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -362,23 +362,20 @@ public class Patient extends Person{
     		for (Rechnung rechnung : rechnungen) {
     			Fall fall=rechnung.getFall();
     			if(fall!=null){	// of course this should never happen
-					Kontakt rnGarant = fall.getGarant();
-					if ((rnGarant == null) || rnGarant.getId().equals(getId())) {
-						Query<AccountTransaction> atQuery = new Query<AccountTransaction>(AccountTransaction.class);
-						atQuery.add("PatientID", "=", getId());
-						atQuery.add("RechnungsID", "=", rechnung.getId());
-	
-						List<AccountTransaction> transactions = atQuery.execute();
-						if (transactions != null) {
-							Money sum = new Money();
-							for (AccountTransaction transaction : transactions) {
-								sum.addMoney(transaction.getAmount());
-							}
-							if (sum.getCents() > 0) {
-								prepayment.addMoney(sum);
-							}
+					Query<AccountTransaction> atQuery = new Query<AccountTransaction>(AccountTransaction.class);
+					atQuery.add("PatientID", "=", getId());
+					atQuery.add("RechnungsID", "=", rechnung.getId());
+
+					List<AccountTransaction> transactions = atQuery.execute();
+					if (transactions != null) {
+						Money sum = new Money();
+						for (AccountTransaction transaction : transactions) {
+							sum.addMoney(transaction.getAmount());
 						}
-	    			}
+						if (sum.getCents() > 0) {
+							prepayment.addMoney(sum);
+						}
+					}
     			}
     		}
     	}
