@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2981 2007-08-11 19:18:04Z rgw_ch $
+ *    $Id: Fall.java 2982 2007-08-12 15:57:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -157,7 +157,7 @@ public class Fall extends PersistentObject{
 	}
 	
 	public Kontakt getGarant(){
-		Kontakt ret= Kontakt.load("GarantID");
+		Kontakt ret= Kontakt.load(get("GarantID"));
 		if((ret==null) || (!ret.isValid())){
 			ret= getPatient();
 		}
@@ -227,20 +227,7 @@ public class Fall extends PersistentObject{
 			}
 		}
 	}
-	/** Garant setzen 
-	public void setGarant(final Kontakt garant){
-		set("GarantID",garant==null ? "" : garant.getId());
-	}
-	public void setArbeitgeber(final Kontakt arbeitgeber){
-		if(arbeitgeber==null){
-			clearInfoString("Arbeitgeber");
-		}else{
-			setInfoString("Arbeitgeber",arbeitgeber.getId());
-		}
 	
-	}
-
-*/
 	@Deprecated
 	public Kontakt getArbeitgeber(){
 		String id=getInfoString("Arbeitgeber");
@@ -538,7 +525,7 @@ public class Fall extends PersistentObject{
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/name", "KVG");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/standardausgabe", "Tarmed-Drucker");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/bedingungen", "Rechnungsempfänger:K;Kostenträger:K;Versicherungsnummer:T");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/bedingungen", "Kostenträger:K;Versicherungsnummer:T");
 
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/name", "UVG");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/leistungscodes", "TarmedLeistung");
@@ -558,7 +545,7 @@ public class Fall extends PersistentObject{
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/name", "privat");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/standardausgabe", "Tarmed-Drucker");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/bedingungen", "Rechnungsempfänger:K");
+					//Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/bedingungen", "Rechnungsempfänger:K");
 					
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='UVG' WHERE typ='ch.elexis.data.TarmedLeistungUVG'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");
