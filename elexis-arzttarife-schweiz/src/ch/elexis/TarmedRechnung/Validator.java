@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Validator.java 2838 2007-07-18 17:44:06Z rgw_ch $
+ * $Id: Validator.java 2985 2007-08-13 16:13:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -17,6 +17,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.rgw.tools.StringTool;
@@ -52,21 +53,13 @@ public class Validator {
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
 			res.add(Log.ERRORS,3,Messages.Validator_NoEAN,rn,true);
 		}
-		Kontakt kostentraeger=fall.getKostentraeger();
-		
-		/*	wird schon von Fall#isValid gesichert
-		Kontakt garant=fall.getGarant();
-		if((garant==null) || (!garant.isValid())){
-			rn.reject(RnStatus.REJECTCODE.NO_DEBITOR, "Kein korrekter Garant zugeordnet");
-			res.add(Log.ERRORS,5,"Kein korrekter Garant zugeordet",rn,true);
+		Kontakt kostentraeger=fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		if(kostentraeger==null){
+			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
+			res.add(Log.ERRORS,7,Messages.Validator_NoName,rn,true);
+			return res;
 		}
 		
-		
-		if((kostentraeger==null) || (!kostentraeger.isValid())){
-			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, "Kein korrekter Kostenträger zugeordnet");
-			res.add(Log.ERRORS,5,"Kein korrekter Kostenträger zugeordet",rn,true);
-		}
-		*/
 		ean=kostentraeger.getInfoString("EAN"); //$NON-NLS-1$
 		if(StringTool.isNothing(ean) || (!ean.matches("[0-9]{13}"))){ //$NON-NLS-1$
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);

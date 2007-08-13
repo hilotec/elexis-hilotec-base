@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2979 2007-08-11 17:45:44Z rgw_ch $
+ * $Id: XMLExporter.java 2985 2007-08-13 16:13:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -221,6 +221,8 @@ public class XMLExporter implements IRnOutputter {
 		actFall=rn.getFall();
 		actPatient=actFall.getPatient();
 		actMandant=rn.getMandant();
+		Kontakt kostentraeger=actFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		
 		Document xmlRn;													// Ziffern "Referenzhandbuch Arztrechnung XML 4.0"
 		Element root=new Element("request",ns);											// 10020/21
 		root.addNamespaceDeclaration(nsdef);						
@@ -241,7 +243,7 @@ public class XMLExporter implements IRnOutputter {
 			mEAN="2098765432101";
 		}
 		sender.setAttribute("ean_party",mEAN);
-		String kEAN=(String)actFall.getKostentraeger().getInfoElement("EAN");
+		String kEAN=(String)kostentraeger.getInfoElement("EAN");
 		if(StringTool.isNothing(kEAN)){
 			kEAN="2012345678901";
 		}
@@ -569,15 +571,15 @@ public class XMLExporter implements IRnOutputter {
 		String tiers="TG";
 		Patient pat=actFall.getPatient();
 		Kontakt rnAdressat=actFall.getGarant();
-		Kontakt vers=actFall.getRequiredContact(TarmedRequirements.INSURANCE);
-		if((vers!=null) && (vers.isValid())){
-			if(rnAdressat.equals(vers)){
+		
+		if((kostentraeger!=null) && (kostentraeger.isValid())){
+			if(rnAdressat.equals(kostentraeger)){
 				tiers="TP";
 			}else{
 				tiers="TG";
 			}
 		}else{
-			vers=rnAdressat;
+			kostentraeger=rnAdressat;
 			tiers="TP";
 		}
 
@@ -608,8 +610,8 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(provider);
 			
 		Element insurance=new Element("insurance",ns);											//  11090
-		insurance.setAttribute("ean_party",vers.getInfoString("EAN"));							
-		insurance.addContent(buildAdressElement(vers));
+		insurance.setAttribute("ean_party",kostentraeger.getInfoString("EAN"));							
+		insurance.addContent(buildAdressElement(kostentraeger));
 		eTiers.addContent(insurance);
 			
 		Element patient=new Element("patient",ns);												// 	11100
@@ -676,6 +678,10 @@ public class XMLExporter implements IRnOutputter {
 		detail.addContent(diagnosis);
 		
 		String gesetz=actFall.getAbrechnungsSystem();															// 16000
+		String g1=actFall.getRequiredString("Gesetz");
+		if(g1.length()>0){
+			gesetz=g1;
+		}
 		if(StringTool.isNothing(gesetz)){
 			gesetz="kvg";
 		}
