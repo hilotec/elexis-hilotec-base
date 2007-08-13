@@ -18,6 +18,11 @@
             class="org.iatrix.views.ProblemView"
             id="org.iatrix.views.ProblemView"
             name="Problem"/>
+      <view
+            class="org.iatrix.views.KonsListView"
+            id="org.iatrix.views.KonsListView"
+            name="Test KonsListView">
+      </view>
    </extension>
    <extension
          point="ch.elexis.PersistentReference">

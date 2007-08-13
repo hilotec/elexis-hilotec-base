@@ -131,7 +131,6 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.views.HistoryDisplay;
 import ch.elexis.views.PatientDetailView;
-import ch.elexis.views.artikel.ArtikelView;
 import ch.elexis.views.codesystems.DiagnosenView;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
 import ch.elexis.views.codesystems.LeistungenView;
@@ -2865,7 +2864,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 
 	    private int getHeaderRowHeight() {
 	    	// TODO 
-	    	return 24;
+	    	return 22;
 	    }
 
 	    public int getRowHeightMinimum() {
