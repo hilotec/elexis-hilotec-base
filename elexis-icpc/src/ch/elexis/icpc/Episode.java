@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2956 2007-08-06 08:59:43Z danlutz $
+ *  $Id: Episode.java 2987 2007-08-13 16:18:23Z danlutz $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -29,7 +29,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     public static final int INACTIVE = 0;
     public static final int ACTIVE = 1;
 
-	protected static final String VERSION="0.3.1";
+	protected static final String VERSION="0.3.2";
 	protected final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
 		
     protected static final String INACTIVE_VALUE = "0";
@@ -40,7 +40,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		"ID				VARCHAR(25),"+
 		"deleted 		CHAR(1) default '0',"+
 		"PatientID		VARCHAR(25),"+
-		"Title			VARCHAR(80),"+
+		"Title			VARCHAR(256),"+
 	    "StartDate      VARCHAR(20),"+  // date of first occurrence; may be simply a year or any text 
 	    "Number         VARCHAR(10),"+  // number for individual, possibly hierarchical, organization
 	    "Status         CHAR(1) DEFAULT '1',"+  // status, '1' == active, '0' == inactive
@@ -89,6 +89,12 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 				
 				if(vi.isOlder("0.3.1")){
 					String sql="ALTER TABLE "+TABLENAME+" ADD ExtInfo BLOB;";
+					j.exec(j.translateFlavor(sql));
+					version.set("Title", VERSION);
+				}
+				
+				if(vi.isOlder("0.3.2")){
+					String sql="ALTER TABLE "+TABLENAME+" MODIFY Title VARCHAR(256);";
 					j.exec(j.translateFlavor(sql));
 					version.set("Title", VERSION);
 				}
