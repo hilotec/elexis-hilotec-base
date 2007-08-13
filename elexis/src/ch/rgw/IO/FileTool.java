@@ -1,4 +1,4 @@
-// $Id: FileTool.java 2973 2007-08-08 19:13:40Z rgw_ch $
+// $Id: FileTool.java 2983 2007-08-13 05:18:30Z rgw_ch $
 /*
   */
 package ch.rgw.IO;
@@ -191,7 +191,11 @@ public class FileTool {
     	return res;
     }
     
-    public static void readWrite(Reader in, Writer out){
-    	
+    public static String getExtension(String name){
+    	int idx=name.lastIndexOf('.');
+    	if(idx==-1){
+    		return "";
+    	}
+    	return name.substring(idx+1);
     }
 }
