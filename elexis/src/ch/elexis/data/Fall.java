@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2982 2007-08-12 15:57:00Z rgw_ch $
+ *    $Id: Fall.java 2984 2007-08-13 16:13:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -164,7 +164,7 @@ public class Fall extends PersistentObject{
 		return ret;
 	}
 	
-	public void setGarant(Kontakt garant){
+	public void setGarant(final Kontakt garant){
 		set("GarantID",garant.getId());
 	}
 	/**
@@ -243,25 +243,7 @@ public class Fall extends PersistentObject{
 		return getArbeitgeber().getLabel();
 	}
 	
-	@Deprecated
-	public String getKostentraegerKuerzel(){
-		return getKostentraeger().getKuerzel();
-	}
-	/** Kostenträger laden 
-	 * @deprecated use getRequiredContact instead
-	 * */
-	@Deprecated
-	public Kontakt getKostentraeger(){
-		
-		return Kontakt.load(getInfoString("Kostenträger"));
-	}
-	/** Kostenträger setzen 
-	public void setKostentraeger(final Kontakt k){
-		if(k!=null){
-			set("Kostentraeger",k.getId());
-		}
-	}
-	*/
+	
 	/** Versichertennummer holen 
 	 * @deprecated user getRequiredString instead
 	 * */
@@ -394,14 +376,7 @@ public class Fall extends PersistentObject{
     public void setGrund(final String g){
         set("Grund",g);
     }
-    /*
-	public String getGesetz(){
-		return checkNull(get("Gesetz"));
-	}
-    public void setGesetz(final String g){
-        set("Gesetz",g);
-    }
-    */
+    
     @Override
 	public String getLabel(){
     	String[] f=new String[]{"Grund","Bezeichnung","DatumVon","DatumBis"};
@@ -491,7 +466,7 @@ public class Fall extends PersistentObject{
     }
     
     @SuppressWarnings("unchecked")
-	public void setInfoElement(String name, Object elem){
+	public void setInfoElement(final String name, final Object elem){
     	Hashtable extinfo=getHashtable("ExtInfo");
     	extinfo.put(name,elem);
     	setHashtable("ExtInfo",extinfo);
@@ -563,7 +538,7 @@ public class Fall extends PersistentObject{
 		return ret;
 	}
 	
-	public static void createAbrechnungssystem(String systemname,String codesystem, String ausgabe,String... requirements){
+	public static void createAbrechnungssystem(final String systemname,final String codesystem, final String ausgabe,final String... requirements){
 		String key=Leistungscodes.CFG_KEY+"/"+systemname;
 		Hub.globalCfg.set(key+"/name", systemname);
 		Hub.globalCfg.set(key+"/leistungscodes", codesystem);
