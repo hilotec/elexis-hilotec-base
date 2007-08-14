@@ -8,14 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2955 2007-08-06 04:06:21Z rgw_ch $
+ * $Id: SWTHelper.java 2989 2007-08-14 23:00:20Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -37,6 +36,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.rgw.tools.StringTool;
@@ -185,6 +186,44 @@ public class SWTHelper {
 		return gd;
 	}
 	
+	/**
+	 * Constructor wrapper for TableWrapLayout, so that parameters are identical to
+	 * GridLayout(numColumns, makeColumnsEqualWidth)
+	 */
+	public static TableWrapLayout createTableWrapLayout(int numColumns, boolean makeColumnsEqualWidth) {
+		TableWrapLayout layout = new TableWrapLayout();
+		
+		layout.numColumns = numColumns;
+		layout.makeColumnsEqualWidth = makeColumnsEqualWidth;
+		
+		return layout;
+	}
+	
+	/**
+	 * Ein TableWrapDAta-Objekt erzeugen, das den horizontalen und/oder
+	 * vertikalen Freiraum ausfüllt.
+	 * @param horizontal true, wenn horizontal gefüllt werden soll
+	 * @param vertical true, wenn vertikal gefüllt werden soll.
+	 * @return ein neu erzeugtes, direkt verwendbares GridData-Objekt
+	 */
+	public static TableWrapData getFillTableWrapData(int hSpan, boolean hFill, int vSpan, boolean vFill){
+		TableWrapData layoutData = new TableWrapData(TableWrapData.LEFT, TableWrapData.TOP);
+
+		if (hFill) {
+			layoutData.grabHorizontal = true;
+			layoutData.align = TableWrapData.FILL;
+		}
+		if (vFill) {
+			layoutData.grabVertical = true;
+			layoutData.valign = TableWrapData.FILL;
+		}
+		
+		layoutData.colspan = (hSpan < 1 ? 1 : hSpan);
+		layoutData.rowspan = (vSpan < 1 ? 1 : vSpan);
+		
+		return layoutData;
+	}
+
 	/**
 	 * Return a color that contrasts optimally to the given color
 	 * @param col an SWT Color
