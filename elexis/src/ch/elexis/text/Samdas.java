@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Samdas.java 2897 2007-07-24 20:12:10Z rgw_ch $
+ *  $Id: Samdas.java 2990 2007-08-14 23:19:37Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -193,7 +193,7 @@ public class Samdas {
 	 * A Range is a part of the text. It is defined by a position, a length and a type.
 	 * 
 	 */
-	static class Range{
+	public static class Range{
 		protected Element el;
 		Range(Element e){
 			el=e;
