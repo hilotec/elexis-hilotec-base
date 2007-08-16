@@ -15,7 +15,7 @@
 % Dies ist das Zentraldokument für die Elexis-Dokumentation. Einzelne
 % Kapitel und Unterkapitel können mit \include eingesetzt werden.
 
-\documentclass[paper=a4,BCOR8.25mm,twoside]{scrbook}
+\documentclass[paper=a4,BCOR8.25mm,twoside]{scrartcl}
 \usepackage{german}
 \usepackage[utf8]{inputenc}
 \usepackage{makeidx}
@@ -46,7 +46,7 @@
 \usepackage{floatflt}
 \usepackage[]{hyperref}
 \usepackage{color}
-\author{Gerry Weirich, Urs Berner, Daniel Lutz}
+\author{Gerry Weirich}
 
 \extratitle{
     \vfill
@@ -58,165 +58,128 @@
     \end{center}
     \vfill
 }
-\title{Das Elexis\textsuperscript{\textregistered}-Handbuch}
+\title{Die technische Dokumentation zu Elexis\textsuperscript{\textregistered}}
 \begin{document}
 
 \maketitle
-%
-%weiche Trennung wie? -> Trennvorschlag: "- Trennzwang: \-
-%Sonderzeichen, Befehlszeichen wie auskommentieren? -> \backslash schreibt \
-%hyperref mit weiteren Optionen?
-%farbige Schrift? -> \color{red}
-%Modell-pgn wie umwandeln?  -> png und eps (z.B. mit GIMP umwandeln)
+
 \tableofcontents
 \part{Einführung}
-\chapter{Vorbemerkungen}
-Elexis ist ein offenes Projekt, welches in laufender Weiterentwicklung begriffen ist. Dasselbe gilt für dieses Handbuch. Mit der vorliegenden Version 1.0 wurde ein stabiler Stand erreicht, der gewährleistet, dass künftige Versionen keine grundsätzlichen Abweichungen mehr haben werden und kompatibel bleiben, aber dies heisst keineswegs, dass nun überhaupt keine Änderungen mehr erfolgen würden.
 
-Die Entwicklung geht weiter, und es kann nicht garantiert werden, dass dieses Handbuch stets alle Programmeigenschaften vollständig beschreibt. Wenn Sie der Meinung sind, einen Fehler gefunden zu haben, melden Sie uns diesen bitte.
+Diese technische Dokumentation ist als Referenz für Dienstleister gedacht, welche Installation und Support für Elexis\textsuperscript{\textregistered} anbieten wollen. Diese Dokumentation ist \textsuperscript{\textcopyright} 2007 by G.Weirich. Nachdruck, auch auszugsweise ist nur mit schriftlicher Genehmigung erlaubt.
 
-Wenn Sie immer die neuesten Entwicklungen sehen möchten, empfehlen wir Ihnen,
-die Handbuch-Quellen wie auf Seite \pageref{dokumentation} beschrieben zu
-installieren.
 \bigskip
-\section{Wichtig: Haftungsauschluss}
-Ein Computerprogramm kann niemals garantiert fehlerfrei sein\footnote{Kurt Gödel hatte schon 1930 mit dem Unvollständigkeitssatz bewiesen, das es mathematisch unlösbare Probleme gibt. Die Erweiterung dieser Aussage auf den Beweis, dass die Fehlerfreiheit eines Computerprogamms niemals garantiert werden kann, lieferte dann 1936 Alan Turing nach. Trotz der bahnbrechenden computertheoretischen Erkenntnisse, die Turing mit seiner hypothetischen Turing-Maschine lieferte (echte Computer gab es ja noch gar nicht), war er übrigens, dies sei am Rande erwähnt, nicht der erste Programmierer. Diese Ehre gebührt Lady Ada Augusta Byron, Countess of Lovelace (1815-1852), welche das erste Computerprogramm überhaupt entwickelte (für die niemals gebaute analytical engine von Charles Babbage)}. Dies gilt für ClosedSource ebenso, wie für OpenSource Projekte. Elexis wurde in einer halbjährigen Betaphase in mehreren Arztpraxen eingesetzt und getestet. Soweit möglich wurden alle Fehler beseitigt. Es kann aber nicht garantiert werden, dass nicht eventuell noch weitere Fehler vorhanden sind. Wir müssen deswegen jede Verantwortung für direkte oder indirekte, materielle oder immaterielle Schäden, die aus der Verwendung oder der Nichtverwendbarkeit von Elexis entstehen, ablehnen. Wir garantieren auch nicht die Verwendbarkeit des Programms auf einem bestimmten Computer oder für einen bestimmten Zweck. Sie haben aber die Möglichkeit, alles kostenlos zu testen.
 
-Falls Sie mit obigen Bedingungen nicht einverstanden sind, dürfen Sie Elexis nicht verwenden.
+Die Kenntnis des Elexis-Benutzerhandbuchs wird in dieser Referenz vorausgesetzt. Ebenso werden Grundkenntnisse über die Konfiguration und Bedienung der Betriebssysteme Windows 2000/XP/Vista, Linux KDE/Gnome und MacOS-X 10.x vorausgesetzt. Programmierkennntisse sind hingegen nicht notwendig.
 
-\chapter{Kurzbeschreibung und Schnelleinstieg}
-Elexis -- die elektronische Praxis -- ist
+\bigskip
+
+Um eine gleichbleibend hohe Qualität aller Elexis-Installationen und eine maximale Kundenzufriedenheit zu gewährleisten, sind die in diesem Dokument festgelegten Richtlinien für die Zertifizierung als Elexis-Experte als bindend zu betrachten.
+
+\part{Die Installation beim Kunden}
+\section{Planung und Ablauf}
+Wir empfehlen für die Installation folgendes Vorgehen:
 \begin{itemize}
-	\item ein Projekt zur gemeinschaftlichen Entwicklung eines quelloffenen (OpenSource) Praxisprogramms,
-speziell angepasst an Schweizer Verhältnisse.
-	\item  ein universelles Praxisprogramm:  Das Programm ist für alle Medizinalberufe geeignet. Ob Arzt- oder
-Zahnarztpraxis, Physio- Ergo- Logopädie, Psychotherapie oder Homöopathie: Elexis lässt sich benutzerspezifisch
-flexibel anpassen und beliebig erweitern.
-	\item Aus der Praxis für die Praxis: Elexis wird von Fachleuten aus dem Medizinbereich entwickelt und unter realen Praxisbedingungen getestet.
-
-	\item lauffähig unter Windows, Linux und MacOS X\footnote{Bei MacOS X
-	allerdings mit der Einschränkung, dass die Textverarbeitung mit einem separaten
-	Programm erfolgen muss, da die Einbettung von OpenOffice hier noch nicht
-	möglich ist.}. Auch
-	in gemischten Umgebungen mit verschiedenen Computersystemen am selben Server.
-	\item Quelloffen: Elexis ist kein proprietäres Programm, Sie sind somit nicht
-	von einer Herstellerfirma abhängig. Interessenten haben jederzeit Zugriff auf
-	den Quellcode und können bei Bedarf die Funktionalität des Programmes erweitern.
-Jedermann mit genügend Computerkenntnissen kann das System verstehen und weiterentwickeln.
-Die Lizenz, unter der Elexis vertrieben wird, erlaubt eine solche Weiterentwicklung durch Dritte ausdrücklich
-und ohne spezielle Bedingungen oder Kosten.
-
-	\item Alles in einem: Krankengeschichte, Lagerbewirtschaftung,
-	Bestellwesen, Abrechnung, Debitorenkontrolle, Agenda und vieles mehr.
-  	\item kontaktfreudig: Kann Daten anderer Programme (sofern von deren
- 	Hersteller vorgesehen) importieren und kann eigene Daten in Standardformate
- 	exportieren.
- 	\item Unterstützt von der Arbeitsgruppe Informatik der Schweizerischen
-Gesellschaft für Allgemeinmedizin %\href{http://www.sgam.ch/infornatics}{Sgam.informatics}
+    \item Überprüfung der technischen Voraussetzungen (\ref{voraussetzungen}): Wenn die Hardware des Kunden diesen Anforderungen nicht genügt, kann ein Komplettpaket bestehend aus Hardware und Software kalkuliert und offeriert werden.
+    \item Besprechung der Kundenspezifischen fragen (\ref{besprechung})
+    \item Durchführung der Installation (\label{ablauf})
+    \item Grundkonfiguration (\label{config})
+    \item Erstinstruktion
+    \item Folgeinstruktion nach ein bis zwei Wochen
 \end{itemize}
-\pagebreak[3]
-\textbf{Unterstützung}
-Elexis enthält alle Komponenten um direkt starten zu können.
-Eine elektronische Krankengeschichte ist allerdings ein komplexes Gebilde, und nicht vom Stand weg zu
-beherrschen. Wir versuchen Ihnen mit unserer Dokumentation den Einstieg zu erleichtern. Wenn Sie sich lieber nicht mit Computerinterna beschäftigen, bieten wir Ihnen auch Unterstützung in Form von Installations- und Wartungsverträgen
-an. Gerne machen wir Ihnen auf Anfrage eine Offerte.
+
+Der Zeitaufwand für Installation und Konfiguration ist mit 3-4 Stunden zu kalkulieren (wird mit zunehmender Erfahrung weniger, letztlich ca. 2 Stunden). Basis-Instruktion und Folgeinstruktion sind mit je einer Stunde zu kalkulieren.
+
+Wir empfehlen dem Kunden stets, jeweils das ganze Paket inklusive Folgeinstruktion zu kaufen, da die Erfahrung zeigt, dass die Anwender oft nach den ersten paar Tagen noch wesentliche Fragen haben. Es können aber auch je nach Wünschen und Möglichkeiten des Dienstleisters und des Kunden andere Installations- und Instruktionsvereinbarungen abgeschlossen werden.
+
+\section{Richtlinien: Technische Voraussetzungen}
+\label{voraussetzungen}
+\subsection{Client}
+Elexis benötigt für die Client-Seite ein System, das mindestens folgende Voraussetzungen erfüllt:
+\begin{itemize}
+    \item Bildschirm und Graphikkarte, die mindestens SXGA (1280x1024 Pixel) Darstellen können
+    \item Prozessor mindestens der 1.5 GHz Klasse
+    \item Speicheranforderung je nach Betriebssystem:
+    \begin{itemize}
+        \item Windows 2000:     mindestens 512MB
+        \item Windows XP:       mindestens 768MB
+        \item Windows Vista:    mindestens 1 GB
+        \item Linux mit KDE oder Gnome: mindestens 512MB
+        \item Linux mit XFCE:   mindestens 384MB
+        \item MacOS-X 10.4:     mindestens 1GB
+    \end{itemize}
+    \item Festplattenplatz: mindestens 1GB frei
+\end{itemize}
+Die Installation auf einem System, welches diese Erfordernisse nicht erfüllt, sollte strikt abgelehnt werden. Andernfalls ist mit schwierig zu behandelnden Supportanfragen zu rechnen, manchmal kommt es bei \glqq zu klein\grqq ausgelegten Systemen auch je nach parallel eingesetzter Fremdsoftware zu sporadisch auftretenden Fehlern, welche nur schwer identifiziert werden können. 
 
 \bigskip
+Elexis benötigt ausserdem ein Java-Runtime Environment Version 5.0 und OpenOffice Version 2.03. Beides ist im Basis-Installationspaket enthalten. Wir empfehlen keine separate Installation dieser Komponenten, weil sonst die Gefahr besteht, dass der Kunde -willentlich oder unwillentlich- ein Update oder sonst eine Veränderung einer der Komponenten durchführt, welche zu Inkompatibilitäten führt. Wir empfehlen, Elexis und das gebundelte jre und ooo als untrennbare Einheit zu behandeln.
 
-\textbf{Zusatzplugins und -entwicklungen}
-\index{Erweiterungen}\index{Website}
-Neuerungen werden im Allgemeinen zunächst auf der Website (http://www.elexis.ch) beschrieben. Um auf dem Laufenden zu bleiben, welche neuen Plugins etc. existieren, schauen Sie am besten hin. und wieder dort vorbei.
+\subsection{Server}
+Die Anforderungen an den Server hängen naturgemäss von der Zahl der Clients und deren Aktivität ab. Als Faustregel wird für eine Praxis mit bis zu 10 Arbeitsplätzen ein Gerät genügen welches folgende Anforderungen erfüllt:
+\begin{itemize}
+    \item Prozessor mindestens der 1.5 GHz Klasse, idealerweise DualCore
+    \item Mindestens 1GB RAM
+    \item Mindestens 20GB Harddisk-Kapazität, SATA RAID 1 oder RAID 5
+    \item Betriebssystem Linux ohne grafische Oberfläche.
+\end{itemize}
 
-\bigskip
-\index{Auftragsentwicklung}\index{Zusatzplugins}\index{programmieren}
-\textbf{Eigenentwicklungen}
-Falls Sie selber eine bestimmte Funktion benötigen, die in der Grundversion nicht vorhanden ist, beraten wir Sie gerne über Möglichkeiten und Kosten einer entsprechenden Entwicklung.
+Für eine Praxis mit bis zu 50 Arbeitsplätzen ist mindestens ein Gerät erforderlich, welches folgende Anforderungen erfüllt:
+\begin{itemize}
+    \item Zwei DualCore oder QuadCore-Prozessoren
+    \item Mindestens 4GB RAM
+    \item Mindestens 80GB Harddisk-Kapazität, SATA organisiert als RAID 5
+    \item Betriebssystem Linux ohne grafische Oberfläche
+\end{itemize}
 
+Eine Installation mit mehr als 50 Arbeitsplätzen wird von uns offiziell nicht unterstützt, da keine Erfahrungen vorliegen. wie gut Elexis auf diese Grössenordnung skaliert.
 
-\include{installs/default}
+\subsubsection{Peer to Peer}
+Ein Peer2Peer Netz sollte nicht aktiv beworben und empfohlen werden. Es darf ausnahmsweise eingesetzt werden, wenn der Kunde ausdrücklich nach einer Lösung ohne separaten Server fragt, und wenn die Gesamtinstallation nicht mehr als drei Arbeitsplätze umfasst. Das Server-Programm darf dann auf dem am wenigsten belasteten Arbeitsplatz installiert werden. Dieser muss dann aber zwingend mindestens 1 GB RAM und einen mindestens Dual Core Prozessor haben.
 
+\subsubsection{Server-Programm}
+Die meisten Erfahrungen liegen mit MySQL als Server-Programm vor. Deshalb empfehlen wir dieses als erste Wahl. Allerdings ist zu beachten, dass die MySQL-Lizenz in kommerziellem Umfeld kostenpflichtig ist.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Geführte Tour}
-\chapter{Eine neue Patientin erfassen}
-\label{tour}
-	\include{tour/patneu}
-\chapter{Benutzeroberfläche einrichten}
-	\label{customize}
-	\include{tour/customize}
+Als zweite Wahl empfehlen wir PostgreSQL. Für kleinere Netze sind die beidem Empfehlungen als gleicghwerzig zu betrachten, bei grösseren Netzen (ab 5 Arbeitsplätzen) würden wir MySQL den Vorzug geben. Dies ist aber keine bindende Empfehlung. Verwenden Sie den Server, mit dem Sie selber die meiste Erfahrung haben.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Systematische Referenz}
-\chapter{Konzepte}
-	\include{konzepte}
-\chapter{Menü und Toolbar} 					
-	\include{menu}
-\chapter{Views des Kernsystems}
-	\include{views/einfuehrung}
-	\include{views/stammdaten}
-	\include{views/konsviews}
-	\include{views/laborview}
-	\include{views/abrechnung}
-	\include{views/rest}
-	
-\chapter{Standardplugins}
-	\include{plugins/einleitung}
-	\include{plugins/agenda}
-	\include{plugins/notizen}
-	\include{plugins/omnivore}
-	\include{plugins/icpc}
-	\include{plugins/iatrix}
-	\include{plugins/externe-dokumente}
-	\include{plugins/trustx}
-	\include{plugins/privatnotizen}
-	\include{plugins/tessinercode}
-	\include{plugins/bildanzeige}
-	\include{plugins/email}
-	\include{plugins/aerztekasseimporter}
-	\include{plugins/befunde}
-	\include{plugins/arzttarife}
-	\include{plugins/artikel}
+Andere Server-Programme werden von uns nicht unterstützt. 
+Insbesondere ist es strikt untersagt, den für die DemoDB verwendeten HSQL-Server in der produktiven Umgebung weiterzuverwenden (Bereits ein Stromausfall, Fehlbedienung oder Computerabsturz kann die hsql-Datenbank unrettbar zerstören).
 
-	
-\chapter{Das Textsystem}
-	\include{text/einleitung}
-	\include{text/vorlagen}
-	\include{text/datenfelder}
+\subsection{Drucker}
 
+\subsection{USV}
+Eine unterbrechungsfreie Stromversorgung sollte mindestens für den Server unbedingt empfohlen werden.
 
-\chapter{Mehrmandantenbetrieb}
-	\include{multiuser}
-	
-%%%%%%% Wir machen dafür lieber ein eigenes Handbuch %%%%%%%%%%%%%%%%%%%%%%%%%%
-%\part{Mitmachen}
-%\include{mitmachen}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Anhänge}
-\appendix
+\subsection{Backup}
+Ein funktionsfähig eingerichtetes Backup-System gehört zwingend zu jeder Elexis-Installation. Es ist Ihre Aufgabe, das Backup-System so einzurichten und vorzubereiten, dass der Kunde es einfach bedienen kann. Ob der Kunde es dann auch wirklich nutzt, ist hingegen natürlich nicht mehr Ihre Verantwortung. Auf das Backup gehen wir im Abschnitt \ref{backup} näher ein.
 
-\chapter{Systemvoraussetzungen}
-	\include{appendix/voraussetzungen}
-\chapter{Demo in Vollprogramm umwandeln}
-	\include{appendix/vollversion}
-\chapter{Einstellungen}
-	\include{settings}
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Absicherung}
+Falls das Netzwerk des Kunden am Internet angeschlossen ist, müssen Sie sich vergewissern, ob ein gutes Absicherungskonzept vorliegt, bzw. ggf. ein Solches für den Kunden einrichten. Die Vertraulichkeit der Daten, welche in der Elexis-Datenbank gespeichert sein werden, hat allerhöchste Priorität und Sie als Verantwortlicher für die Elexis-Installation und Konfiguration müssen darauf achten, dass das System des Kunden dieser Anforderung technisch genügt. (Ob und wie der Kunde die Sicherungsmassnahmen auch anwendet, liegt hingegen nicht mehr in Ihrer Verantwortung). Eine weitergehende Diskussion der Absicherungsmassnahmen ist im Abschnitt \ref{security}
 
-	%\include{installs/serverinst}
-	%\include{installs/windowsinst}
-	%\include{installs/linuxinst}
-	%\include{installs/macinst}
-	%\include{installs/dbanbindung}
-	%\label{installs/server}
-	%\include{installs/server}
+\section{Vorbereitung der Installation}
+\label{besprechung}
+Es empfiehlt sich, den Kunden darauf aufmerksam zu machen, dass Sie folgende Angaben benötigen, damit er diese ggf. vorgängig sammeln und bereithalten kann:
+\begin{itemize}
+    \item ZSR und EAN-Nummer
+    \item Bankverbindung inklusive ESR-Teilnehmernummer und ESR-Kundennummer
+    \item EIne konkrete Vorstellung, wie der Briefkopf 
 
+\end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\chapter{Zusatzplugins}
-%    \include{appendix/extplugins}
-\chapter{Überlegungen zur Datensicherheit}	
-	\include{appendix/sicherheit}
+\section{Durchführung der Installation}
+\label{ablauf}
 
-\chapter{Index}
-\printindex
+\section{Grundkonfiguration}
+\label{config}
+\section{Instruktion des Kunden und dessen Personal}
+
+\section{Zweitinstruktion}
+
+\part{Datensicherungskonzepte}
+\section{Backup}
+\label{backup}
+
+\section{Zugriffs-Sicherung}
+\label{security}
+
 \end{document}
