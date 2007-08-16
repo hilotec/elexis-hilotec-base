@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2989 2007-08-14 23:00:20Z danlutz $
+ * $Id: SWTHelper.java 2993 2007-08-16 14:10:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -362,5 +362,10 @@ public class SWTHelper {
 		int height=swtFont.getFontData()[0].getHeight();
 		java.awt.Font awtFont=new java.awt.Font(name,style,height);
 		return awtFont;
+	}
+	
+	public static int size(Rectangle r){
+		return (r.width-r.x)*(r.height-r.y);
+		
 	}
 }
