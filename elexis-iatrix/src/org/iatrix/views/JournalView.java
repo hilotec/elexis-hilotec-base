@@ -135,6 +135,7 @@ import ch.elexis.views.codesystems.DiagnosenView;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.elexis.views.rechnung.AccountView;
+import ch.elexis.views.rechnung.BillSummary;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -496,8 +497,15 @@ public class JournalView extends ViewPart implements SelectionListener,
         Composite kontoArea = tk.createComposite(formHeader);
         gd = new GridData(SWT.END, SWT.CENTER, true, false);
         kontoArea.setLayoutData(gd);
-        kontoArea.setLayout(new GridLayout(2, false));
-        Hyperlink kontoHyperlink = tk.createHyperlink(kontoArea, "Konto:", SWT.NONE);
+        GridLayout gridLayout = new GridLayout(2, false);
+        // save space
+        gridLayout.horizontalSpacing = 5;
+        gridLayout.verticalSpacing = 0;
+        gridLayout.marginWidth = 0;
+        gridLayout.marginHeight = 0;
+        kontoArea.setLayout(gridLayout);
+        
+        Hyperlink kontoHyperlink = tk.createHyperlink(kontoArea, "Kontostand:", SWT.NONE);
         kontoHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
         	public void linkActivated(HyperlinkEvent e) {
         		if (actPatient != null) {
@@ -510,8 +518,26 @@ public class JournalView extends ViewPart implements SelectionListener,
         		}
         	}
         });
-        kontoLabel = tk.createLabel(kontoArea, "", SWT.NONE);
+        kontoLabel = tk.createLabel(kontoArea, "", SWT.RIGHT);
+        gd = SWTHelper.getFillGridData(1, true, 1, false);
+        gd.verticalAlignment = GridData.END;
+        kontoLabel.setLayoutData(gd);
         kontoLabelColor = kontoLabel.getForeground();
+
+        Hyperlink openBillsHyperlink = tk.createHyperlink(kontoArea, "Rechnungsübersicht", SWT.NONE);
+        openBillsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+        	public void linkActivated(HyperlinkEvent e) {
+        		if (actPatient != null) {
+        			try {
+        				getViewSite().getPage().showView(BillSummary.ID);
+        			} catch (Exception ex) {
+        				ExHandler.handle(ex);
+        				log.log("Fehler beim Öffnen von AccountView: " + ex.getMessage(), Log.ERRORS);
+        			}
+        		}
+        	}
+        });
+        openBillsHyperlink.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
         
         SashForm mainSash = new SashForm(form.getBody(), SWT.VERTICAL);
         mainSash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -2246,6 +2272,9 @@ public class JournalView extends ViewPart implements SelectionListener,
 				}
 			}
 			query.endGroup();
+		} else {
+			// no cases found
+			return false;
 		}
 		
 		query.and();
@@ -2253,41 +2282,20 @@ public class JournalView extends ViewPart implements SelectionListener,
 		query.startGroup();
 		query.insertFalse();
 		query.or();
-		for (int s = RnStatus.OFFEN_UND_GEDRUCKT; s <= RnStatus.TOTALVERLUST; s++) {
+		for (int s = RnStatus.MAHNUNG_1; s <= RnStatus.TOTALVERLUST; s++) {
 			query.add("RnStatus", "=", new Integer(s).toString());
 		}
 		query.endGroup();
 		
 		List<Rechnung> rechnungen = query.execute();
 		
-		if (rechnungen == null) {
-			// db error
+		if (rechnungen != null && rechnungen.size() > 0) {
+			// there are tardy bills
+			return true;
+		} else {
+			// no tardy bills (or sql error)
 			return false;
 		}
-		for (Rechnung rechnung : rechnungen) {
-			int status = rechnung.getStatus();
-			if (status == RnStatus.OFFEN_UND_GEDRUCKT) {
-				// bill printed, not yet paid for 30 days
-				TimeTool rnDate = new TimeTool(rechnung.getDatumRn());
-				TimeTool now = new TimeTool();
-				
-				// 30 days after RnDate
-				rnDate.add(Calendar.DAY_OF_MONTH, 30);
-				if (rnDate.isBefore(now)) {
-					// tardy bill found
-					return true;
-				}
-				
-				
-			}
-			if (status >= RnStatus.MAHNUNG_1 && status <= RnStatus.TOTALVERLUST) {
-				// tardy bill found
-				return true;
-			}
-		}
-
-		// no tardy bill found
-		return false;
     }
 
 	/* ******
