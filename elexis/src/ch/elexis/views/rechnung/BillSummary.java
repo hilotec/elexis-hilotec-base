@@ -318,9 +318,12 @@ ActivationListener, ISaveablePart2 {
 			
 			List<Rechnung> rechnungen = actPatient.getRechnungen();
 			for (Rechnung rechnung : rechnungen) {
-				total.addMoney(rechnung.getBetrag());
-				for (Zahlung zahlung : rechnung.getZahlungen()) {
-					paid.addMoney(zahlung.getBetrag());
+				// don't consider canceled bills
+				if (rechnung.getStatus() != RnStatus.STORNIERT) {
+					total.addMoney(rechnung.getBetrag());
+					for (Zahlung zahlung : rechnung.getZahlungen()) {
+						paid.addMoney(zahlung.getBetrag());
+					}
 				}
 			}
     		
