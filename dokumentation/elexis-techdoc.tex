@@ -110,7 +110,8 @@ Elexis benötigt für die Client-Seite ein System, das mindestens folgende Vorau
     \end{itemize}
     \item Festplattenplatz: mindestens 1GB frei
 \end{itemize}
-Die Installation auf einem System, welches diese Erfordernisse nicht erfüllt, sollte strikt abgelehnt werden. Andernfalls ist mit schwierig zu behandelnden Supportanfragen zu rechnen, manchmal kommt es bei \glqq zu klein\grqq ausgelegten Systemen auch je nach parallel eingesetzter Fremdsoftware zu sporadisch auftretenden Fehlern, welche nur schwer identifiziert werden können. 
+Die Installation auf einem System, welches diese Erfordernisse nicht erfüllt, sollte strikt abgelehnt werden. Andernfalls ist mit schwierig zu behandelnden Supportanfragen zu rechnen, manchmal kommt es bei \glqq zu klein\grqq ausgelegten Systemen auch je nach parallel eingesetzter Fremdsoftware zu sporadisch auftretenden Fehlern, welche nur schwer identifiziert werden können.
+Ein PC, welcher Daten von Laborgeräten einlesen soll, sollte eine serielle Schnittstelle haben, da viele Laborgeräte ihre Werte so liefern.
 
 \bigskip
 Elexis benötigt ausserdem ein Java-Runtime Environment Version 5.0 und OpenOffice Version 2.03. Beides ist im Basis-Installationspaket enthalten. Wir empfehlen keine separate Installation dieser Komponenten, weil sonst die Gefahr besteht, dass der Kunde -willentlich oder unwillentlich- ein Update oder sonst eine Veränderung einer der Komponenten durchführt, welche zu Inkompatibilitäten führt. Wir empfehlen, Elexis und das gebundelte jre und ooo als untrennbare Einheit zu behandeln.
@@ -132,23 +133,30 @@ Für eine Praxis mit bis zu 50 Arbeitsplätzen ist mindestens ein Gerät erforde
     \item Betriebssystem Linux ohne grafische Oberfläche
 \end{itemize}
 
-Eine Installation mit mehr als 50 Arbeitsplätzen wird von uns offiziell nicht unterstützt, da keine Erfahrungen vorliegen. wie gut Elexis auf diese Grössenordnung skaliert.
+Eine Installation mit mehr als 50 Arbeitsplätzen wird von uns offiziell nicht unterstützt.
 
 \subsubsection{Peer to Peer}
-Ein Peer2Peer Netz sollte nicht aktiv beworben und empfohlen werden. Es darf ausnahmsweise eingesetzt werden, wenn der Kunde ausdrücklich nach einer Lösung ohne separaten Server fragt, und wenn die Gesamtinstallation nicht mehr als drei Arbeitsplätze umfasst. Das Server-Programm darf dann auf dem am wenigsten belasteten Arbeitsplatz installiert werden. Dieser muss dann aber zwingend mindestens 1 GB RAM und einen mindestens Dual Core Prozessor haben.
+Ein Peer2Peer Netz sollte nicht aktiv beworben und empfohlen werden. Es darf ausnahmsweise eingesetzt werden, wenn der Kunde ausdrücklich nach einer Lösung ohne separaten Server fragt, und wenn die Gesamtinstallation nicht mehr als drei Arbeitsplätze umfasst. Das Server-Programm darf dann auf dem am wenigsten belasteten Arbeitsplatz installiert werden. Dieser muss dann aber zwingend mindestens 1 GB RAM und mindestens einen Dual Core Prozessor haben.
 
 \subsubsection{Server-Programm}
 Die meisten Erfahrungen liegen mit MySQL als Server-Programm vor. Deshalb empfehlen wir dieses als erste Wahl. Allerdings ist zu beachten, dass die MySQL-Lizenz in kommerziellem Umfeld kostenpflichtig ist.
 
-Als zweite Wahl empfehlen wir PostgreSQL. Für kleinere Netze sind die beidem Empfehlungen als gleicghwerzig zu betrachten, bei grösseren Netzen (ab 5 Arbeitsplätzen) würden wir MySQL den Vorzug geben. Dies ist aber keine bindende Empfehlung. Verwenden Sie den Server, mit dem Sie selber die meiste Erfahrung haben.
+Als zweite Wahl empfehlen wir PostgreSQL. Für kleinere Netze sind die beidem Empfehlungen als gleichwertig zu betrachten, bei grösseren Netzen (ab 5 Arbeitsplätzen) würden wir MySQL den Vorzug geben. Dies ist aber keine bindende Empfehlung. Verwenden Sie den Server, mit dem Sie selber die meiste Erfahrung haben.
 
-Andere Server-Programme werden von uns nicht unterstützt. 
-Insbesondere ist es strikt untersagt, den für die DemoDB verwendeten HSQL-Server in der produktiven Umgebung weiterzuverwenden (Bereits ein Stromausfall, Fehlbedienung oder Computerabsturz kann die hsql-Datenbank unrettbar zerstören).
+Andere Server-Programme werden von uns nicht unterstützt.
+Insbesondere ist es strikt abzulehnen, den für die DemoDB verwendeten HSQL-Server in der produktiven Umgebung weiterzuverwenden (Bereits ein Stromausfall, Fehlbedienung oder Computerabsturz kann die hsql-Datenbank unrettbar zerstören).
 
 \subsection{Drucker}
+Wir empfehlen generell einen Drucker mit mindestens zwei Schächten. Der Drucker sollte PCL5 oder 6 und/oder PostScript beherrschen, und er sollte über die parallele Schnittstelle oder via LAN angeschlossen sein. GDI-Drucker sind strikt abzulehnen. Drucker, die via USB angeschlossen werden, können beim Rechnungsdruck Probleme verursachen.
+
+Im Alltagsbetrieb kann beispielsweise im einen Schacht A5-Papier für Rezepte und AUF-Zeugnisse etc. eingelegt werden, im anderen A4-Papier für sonstige Dokumente. Beim Rechnungsdruck kann im einen Schacht Papier mit ESR-Schein und im anderen Normalpapier eingelegt werden.
+
+\bigskip
+
+Zusätzlich wird mindestens ein Labeldrucker erforderlich sein, um Etiketten für Laboraufträge etc. zu drucken. Hier sind die Anforderungen nicht weiter streng und hängen eher vom verwendeten Betriebssystem als von Elexis ab. Es können also auf einem Windows-PC auch USB-Labeldrucker verwendet werden, auf einem Linux-PC aber nur, wenn Treiber dafür existieren.
 
 \subsection{USV}
-Eine unterbrechungsfreie Stromversorgung sollte mindestens für den Server unbedingt empfohlen werden.
+Eine unterbrechungsfreie Stromversorgung sollte mindestens für den Server unbedingt empfohlen werden. Dazu gehört ein Programm, welches den Server kontrolliert herunterfährt, bevor die Stromreserve der USV erschöpft ist.
 
 \subsection{Backup}
 Ein funktionsfähig eingerichtetes Backup-System gehört zwingend zu jeder Elexis-Installation. Es ist Ihre Aufgabe, das Backup-System so einzurichten und vorzubereiten, dass der Kunde es einfach bedienen kann. Ob der Kunde es dann auch wirklich nutzt, ist hingegen natürlich nicht mehr Ihre Verantwortung. Auf das Backup gehen wir im Abschnitt \ref{backup} näher ein.
@@ -160,17 +168,31 @@ Falls das Netzwerk des Kunden am Internet angeschlossen ist, müssen Sie sich ve
 \label{besprechung}
 Es empfiehlt sich, den Kunden darauf aufmerksam zu machen, dass Sie folgende Angaben benötigen, damit er diese ggf. vorgängig sammeln und bereithalten kann:
 \begin{itemize}
-    \item ZSR und EAN-Nummer
+    \item ZSR und EAN-Nummer für jeden Mandanten
     \item Bankverbindung inklusive ESR-Teilnehmernummer und ESR-Kundennummer
-    \item EIne konkrete Vorstellung, wie der Briefkopf 
+    \item Eine konkrete Vorstellung, wie der Briefkopf und die verschiedenen Vorlagen für Arztbriefe, Rezepte, Rechnungen und Zeugnisse aussehen sollen.
+    \item Eine Auflistung, wer alles am Programm arbeiten soll, mit Benutzernamen und Passwörtern.
+    \item Eine Auflistung der im Praxislabor durchgeführten Untersuchungen, eingeteilt in logische Gruppen
+    \item Auflistung der am Praxisstandort gültigen Taxpunktwerde für KVG, UVG, IV, MV.
+    \item Aufstellung der am häufigsten benötigten Abrechnungspositionen und allfälliger Eigenleistungen und Eigenartikel.
+\end{itemize}
+
+Im weiteres sollte folgendes vor der Installation besorgt werden:
+\begin{itemize}
+    \item Jeweils neueste Version der Artikelliste (Medikamente, Medicals), MiGeL,  Analysenliste, Tarmed, ICD-10
+    \item Liste der EAN aller Krankenkassen und UVG-Versicherer
+    \item Installationspaket für den Datenbankserver
+    \item Aktuellstes Installationspaket von Elexis
 
 \end{itemize}
 
 \section{Durchführung der Installation}
 \label{ablauf}
 
+
 \section{Grundkonfiguration}
 \label{config}
+
 \section{Instruktion des Kunden und dessen Personal}
 
 \section{Zweitinstruktion}
