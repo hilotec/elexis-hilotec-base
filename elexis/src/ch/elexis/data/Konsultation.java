@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2900 2007-07-25 05:10:15Z rgw_ch $
+ *  $Id: Konsultation.java 2999 2007-08-20 14:45:37Z danlutz $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -484,6 +484,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	public List<Verrechnet> getLeistungen(){
     	Query qbe=new Query(Verrechnet.class);
     	qbe.add("Konsultation","=",getId());
+    	qbe.orderBy(false, "Klasse", "Leistg_code");
     	List ret=qbe.execute();
     	return (List<Verrechnet>)ret;
     }
