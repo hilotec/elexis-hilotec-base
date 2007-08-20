@@ -16,7 +16,6 @@ package org.iatrix.views;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -93,6 +92,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.iatrix.data.Problem;
+import org.iatrix.widgets.KonsListDisplay;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -271,7 +271,8 @@ public class JournalView extends ViewPart implements SelectionListener,
 
     private CLabel lDiagnosis;
 
-    HistoryDisplay history;
+    //HistoryDisplay history;
+    KonsListDisplay konsListDisplay;
 
     private ViewMenus menus;
     
@@ -1437,7 +1438,8 @@ public class JournalView extends ViewPart implements SelectionListener,
     }
 
     private void createHistory(Composite parent) {
-        history = new HistoryDisplay(parent, getViewSite(), true);
+        //history = new HistoryDisplay(parent, getViewSite(), true);
+        konsListDisplay = new KonsListDisplay(parent);
     }
 
     @Override
@@ -1990,9 +1992,11 @@ public class JournalView extends ViewPart implements SelectionListener,
             	}
             }
 
-            history.stop();
-            history.load(actPatient);
-            history.start();
+            
+            //history.stop();
+            //history.load(actPatient);
+            //history.start();
+            
 
             log.log("Patient: " + actPatient.getId(), Log.DEBUGMSG);
         } else {
@@ -2013,6 +2017,8 @@ public class JournalView extends ViewPart implements SelectionListener,
 
             log.log("Patient: null", Log.DEBUGMSG);
         }
+        
+        konsListDisplay.setPatient(actPatient);
         
         setPatientTitel();
         setRemark();
