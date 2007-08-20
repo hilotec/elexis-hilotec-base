@@ -22,6 +22,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
+			<include name="*.jar"/>
+		</fileset>
 		<pathelement location="${dist}/plugins/ch.elexis.icpc_${version}"/>
 		<fileset dir="${plugindir}">
 			<include name="*.jar"/>
