@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 1558 2007-01-07 15:46:47Z rgw_ch $
+ * $Id: build.xml 3005 2007-08-21 21:37:43Z rgw_ch $
 -->
 <project name="elexis-arzttarife-schweiz" default="all">
 	<property name="sourcedir" value="${source}/elexis-arzttarife-schweiz/"/>
@@ -41,6 +41,7 @@
 		</ant>
 	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
+		<copy file="${sourcedir}/createDB.script" tofile="${plugindir}/createDB.script"/>
 		<tstamp/>
 		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.elexis.arzttarife_ch_${version}.${DSTAMP}.zip"/>
 	</target>

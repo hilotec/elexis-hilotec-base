@@ -8,14 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 2838 2007-07-18 17:44:06Z rgw_ch $
+ * $Id: TarmedLeistung.java 3005 2007-08-21 21:37:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Comparator;
@@ -53,7 +52,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
 				FileInputStream fis=new FileInputStream(filepath);
 				Stm stm=PersistentObject.j.getStatement();
 				stm.execScript(fis, true, true);
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				ExHandler.handle(e);
 				SWTHelper.showError("Kann Tarmed-Datenbank nicht erstellen", "create-Script nicht gefunden in "+filepath);
 			}
