@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 2980 2007-08-11 17:45:58Z rgw_ch $
+ * $Id: Xid.java 3004 2007-08-21 21:37:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,6 +45,8 @@ public class Xid extends PersistentObject {
 	public static final String DOMAIN_SWISS_PASSPORT="www.xid.ch/id/passport/ch";
 	public static final String DOMAIN_AUSTRIAN_PASSPORT="www.xid.ch/id/passport/at";
 	public static final String DOMAIN_GERMAN_PASSPORT="www.xid.ch/id/passport/de";
+	public final static String DOMAIN_EAN ="www.xid.ch/id/ean";
+	public final static String DOMAIN_OID ="www.xid.ch/id/oid";
 	
 	static{
 		addMapping(TABLENAME, "type", "object","domain","domain_id","quality");
@@ -120,7 +122,7 @@ public class Xid extends PersistentObject {
 	 * @param id the id out of domain to retrieve
 	 * @return the xid holding that id from that domain or null if no such xid was found
 	 */
-	public static Xid findXID(String domain, String id){
+	public static Xid findXID(final String domain, final String id){
 		Query<Xid> qbe=new Query<Xid>(Xid.class);
 		qbe.add("domain", "=", domain);
 		qbe.add("domain_id", "=", id);
@@ -137,7 +139,7 @@ public class Xid extends PersistentObject {
 	 * @param id the id out of domain to retrieve
 	 * @return the PersistentObject identified by that id from that domain or null if no such Object was found
 	 */
-	public static PersistentObject findObject(String domain, String id){
+	public static PersistentObject findObject(final String domain, final String id){
 		Xid xid=findXID(domain,id);
 		if(xid!=null){
 			return xid.getObject();
@@ -145,7 +147,7 @@ public class Xid extends PersistentObject {
 		return null;
 	}
 	
-	public static Xid findXID(PersistentObject o, String domain){
+	public static Xid findXID(final PersistentObject o, final String domain){
 		Query<Xid> qbe=new Query<Xid>(Xid.class);
 		qbe.add("domain", "=", domain);
 		qbe.add("object", "=", o.getId());
