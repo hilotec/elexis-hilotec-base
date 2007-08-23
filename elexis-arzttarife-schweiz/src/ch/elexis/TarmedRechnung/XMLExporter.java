@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 2985 2007-08-13 16:13:59Z rgw_ch $
+ * $Id: XMLExporter.java 3006 2007-08-23 11:18:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -222,7 +222,9 @@ public class XMLExporter implements IRnOutputter {
 		actPatient=actFall.getPatient();
 		actMandant=rn.getMandant();
 		Kontakt kostentraeger=actFall.getRequiredContact(TarmedRequirements.INSURANCE);
-		
+		if(kostentraeger==null){
+			kostentraeger=actPatient;
+		}
 		Document xmlRn;													// Ziffern "Referenzhandbuch Arztrechnung XML 4.0"
 		Element root=new Element("request",ns);											// 10020/21
 		root.addNamespaceDeclaration(nsdef);						
@@ -240,12 +242,12 @@ public class XMLExporter implements IRnOutputter {
 		Element sender=new Element("sender",ns);										// 10051
 		String mEAN=(String)actMandant.getInfoElement("EAN");
 		if(StringTool.isNothing(mEAN)){
-			mEAN="2098765432101";
+			mEAN="2000000000000";
 		}
 		sender.setAttribute("ean_party",mEAN);
 		String kEAN=(String)kostentraeger.getInfoElement("EAN");
 		if(StringTool.isNothing(kEAN)){
-			kEAN="2012345678901";
+			kEAN="2000000000000";
 		}
 		Element intermediate=new Element("intermediate",ns);							// 10052
 	
