@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 2988 2007-08-14 16:12:57Z rgw_ch $
+<!-- $Id: build.xml 3008 2007-08-23 11:18:20Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -138,6 +138,7 @@
 		<ant antfile="../Laborimport-Krech/build.xml"/>
 		<ant antfile="../Laborimport-Unilabs/build.xml"/>
 		<ant antfile="../elexis-importer-vitodata/build.xml"/>
+		<ant antfile="../elexis-importer-aeskulap/build.xml"/>
 		<ant antfile="../Laborimport-Risch/build.xml"/>
 		<ant antfile="../elexis-importer-praxisdesktop/build.xml"/>
 		<ant antfile="../elexis-covercard/build.xml"/>
