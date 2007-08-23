@@ -38,31 +38,26 @@ Rietstrasse 30
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
    <plugins>
       <plugin id="ch.elexis"/>
-      <plugin id="ch.elexis.EMRPrinter"/>
       <plugin id="ch.elexis.Textplugin"/>
       <plugin id="ch.elexis.agenda"/>
       <plugin id="ch.elexis.artikel_ch"/>
       <plugin id="ch.elexis.arzttarife_ch"/>
       <plugin id="ch.elexis.befunde"/>
       <plugin id="ch.elexis.bildanzeige"/>
-      <plugin id="ch.elexis.diagnosecodes_ch"/>
       <plugin id="ch.elexis.ebanking_ch"/>
-      <plugin id="ch.elexis.galexis"/>
+      <plugin id="ch.elexis.icpc"/>
       <plugin id="ch.elexis.importer.div"/>
       <plugin id="ch.elexis.jdomwrapper"/>
+      <plugin id="ch.elexis.kassenbuch"/>
       <plugin id="ch.elexis.laborimport_viollier"/>
       <plugin id="ch.elexis.mail"/>
       <plugin id="ch.elexis.noatext"/>
-      <plugin id="ch.elexis.notes"/>
-      <plugin id="ch.elexis.omnivore"/>
-      <plugin id="ch.elexis.privatnotizen"/>
-      <plugin id="ch.elexis.pro"/>
+      <plugin id="ch.elexis.scripting"/>
       <plugin id="ch.elexis.update_tool"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.servlet"/>
@@ -73,7 +68,6 @@ Rietstrasse 30
       <plugin id="org.apache.jasper"/>
       <plugin id="org.apache.lucene"/>
       <plugin id="org.apache.lucene.analysis"/>
-      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
@@ -81,9 +75,7 @@ Rietstrasse 30
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
-      <plugin id="org.eclipse.core.variables"/>
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.http.jetty"/>
