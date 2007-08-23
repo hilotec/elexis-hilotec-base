@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - DBBased Importer
  *    
- * $Id: ImporterPage.java 2851 2007-07-21 05:00:07Z rgw_ch $
+ * $Id: ImporterPage.java 3007 2007-08-23 11:18:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -51,12 +51,12 @@ public abstract class ImporterPage implements IExecutableExtension{
 	protected Log log=Log.get("Import");
 	
 	/** Nur intern gebraucht; kann bei Bedarf überschrieben oder erweitert werden */
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		
 	}
 	/** Importer starten 
 	 * @param waitUntilFinished true: Kehrt erst zurück, wenn Import beendet */
-	public void run(boolean waitUntilFinished){
+	public void run(final boolean waitUntilFinished){
 		ImporterJob job=new ImporterJob();
 		job.schedule();
 		if(waitUntilFinished){
@@ -96,7 +96,7 @@ public abstract class ImporterPage implements IExecutableExtension{
 		}
 
 		@Override
-		protected IStatus run(IProgressMonitor monitor) {
+		protected IStatus run(final IProgressMonitor monitor) {
 			
 			try {
 				return doImport(monitor);
@@ -133,7 +133,7 @@ public abstract class ImporterPage implements IExecutableExtension{
 			//bFile.setLayoutData(SWTHelper.getFillGridData(2,true,1,false));
 			bFile.addSelectionListener(new SelectionAdapter(){
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					FileDialog fdl=new FileDialog(parent.getShell(),SWT.OPEN);
 					fdl.setFilterExtensions(filterExts); 
 					fdl.setFilterNames(filterNames);
@@ -149,7 +149,7 @@ public abstract class ImporterPage implements IExecutableExtension{
 
 			
 		}
-		public void setFilter(String[] extensions, String[] names){
+		public void setFilter(final String[] extensions, final String[] names){
 			filterExts=extensions;
 			filterNames=names;
 		}
@@ -168,7 +168,7 @@ public abstract class ImporterPage implements IExecutableExtension{
 			setLayout(new GridLayout(1,false));
 			final Label lFile=new Label(this,SWT.NONE);
 			tFname=new Text(this,SWT.BORDER);
-			lFile.setText(Messages.getString("ImporterPage.file")); //$NON-NLS-1$
+			lFile.setText(Messages.getString("ImporterPage.dir")); //$NON-NLS-1$
 			lFile.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 			tFname.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 			tFname.setText(Hub.localCfg.get("ImporterPage/"+home.getTitle()+"/dirname","")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -179,7 +179,7 @@ public abstract class ImporterPage implements IExecutableExtension{
 			//bFile.setLayoutData(SWTHelper.getFillGridData(2,true,1,false));
 			bFile.addSelectionListener(new SelectionAdapter(){
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					DirectoryDialog fdl=new DirectoryDialog(parent.getShell(),SWT.OPEN);
 					String filename=fdl.open();
 					if(filename!=null){
@@ -219,7 +219,7 @@ public abstract class ImporterPage implements IExecutableExtension{
 			bSource.setText(Messages.getString("ImporterPage.enter")); //$NON-NLS-1$
 			bSource.addSelectionListener(new SelectionAdapter(){
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					InputDialog in=new InputDialog(parent.getShell(),Messages.getString("ImporterPage.odbcSource"), //$NON-NLS-1$
 							Messages.getString("ImporterPage.pleaseEnterODBC"),null,null); //$NON-NLS-1$
 					if(in.open()==Dialog.OK){
@@ -261,7 +261,7 @@ public abstract class ImporterPage implements IExecutableExtension{
             bSource.setText(Messages.getString("ImporterPage.selectDB")); //$NON-NLS-1$
             bSource.addSelectionListener(new SelectionAdapter(){
                 @Override
-                public void widgetSelected(SelectionEvent e) {
+                public void widgetSelected(final SelectionEvent e) {
                     DBImportWizard wizard = new DBImportWizard(preset);
                     WizardDialog wd=new WizardDialog(getShell(),wizard);
                     if (wd.open() == Dialog.OK) {
