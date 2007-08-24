@@ -21,9 +21,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -52,10 +55,12 @@ public class AeskulapImporter extends ImporterPage {
 	private final static String PATID=IMPORT_XID+"/PatID";
 	private final static String GARANTID=IMPORT_XID+"/garantID";
 	
-	Button bFile, bDir;
+	Button bFile, bDir, bOnlyF, bOnlyM, bGuess;
 	FileBasedImporter fbi;
 	DirectoryBasedImporter dbi;
 	String fname;
+	
+	int assumeGender;
 	
 	boolean bType;
 	
@@ -64,7 +69,7 @@ public class AeskulapImporter extends ImporterPage {
 	}
 
 	/**
-	 * We accept to possible sourced for data: a ; delimited file (*.csv) containing only basic
+	 * We accept to possible sources for data: a ';' delimited file (*.csv) containing only basic
 	 * personal patient data, or a more elaborate source consisting of five microsoft(tm) excel(tm)
 	 * files containing personal data and insurance data.
 	 * 
@@ -79,6 +84,17 @@ public class AeskulapImporter extends ImporterPage {
 		bFile.setText("Import aus einer CSV-Datei");
 		fbi=new FileBasedImporter(ret,this);
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		Group gSex=new Group(ret,SWT.BORDER);
+		gSex.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gSex.setLayout(new FillLayout());
+		gSex.setText("Auswahl der Patientendaten in dieser Datei");
+		bOnlyF=new Button(gSex,SWT.RADIO);
+		bOnlyF.setText("Alles Frauen");
+		bOnlyM=new Button(gSex,SWT.RADIO);
+		bOnlyM.setText("Alles Männer");
+		bGuess=new Button(gSex,SWT.RADIO);
+		bGuess.setText("Gemischt");
+		new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bDir=new Button(ret,SWT.RADIO);
 		bDir.setText("Import aus 5 Excel-Dateien in einem Verzeichnis");
 		dbi=new DirectoryBasedImporter(ret,this);
@@ -101,6 +117,13 @@ public class AeskulapImporter extends ImporterPage {
 			fname=fbi.tFname.getText();
 		}else{
 			fname=dbi.tFname.getText();
+		}
+		if(bOnlyF.getSelection()){
+			assumeGender=0;
+		}else if(bOnlyM.getSelection()){
+			assumeGender=1;
+		}else{
+			assumeGender=2;
 		}
 		super.collect();
 	}
@@ -129,8 +152,17 @@ public class AeskulapImporter extends ImporterPage {
 				if(line.length<6){
 					continue;
 				}
-				// unfortunately, we have to guess the patient's gender.
-				Patient pat=new Patient(line[1],line[2],line[6],StringTool.isFemale(line[2]) ? "w" : "m");
+				String s;
+				if(assumeGender==0){
+					s="w";
+				}else if(assumeGender==1){
+					s="m";
+				}else{
+					// the user didn't help us, so we'll have to guess the patient's gender.
+					s=StringTool.isFemale(line[2]) ? "w" : "m";
+				}
+				
+				Patient pat=new Patient(line[1],line[2],line[6],s);
 				monitor.subTask(line[1]);
 				Anschrift an=pat.getAnschrift();
 				an.setStrasse(line[3]);
