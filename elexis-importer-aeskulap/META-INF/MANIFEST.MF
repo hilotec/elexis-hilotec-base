@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stammdaten-Import von Aeskulap
+Bundle-SymbolicName: ch.elexis.importer.aeskulap;singleton:=true
+Bundle-Version: 0.1.0
+Bundle-Vendor: ekexis.ch
+Require-Bundle: ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ ch.elexis.importer.div,
+ ch.elexis.arzttarife_ch

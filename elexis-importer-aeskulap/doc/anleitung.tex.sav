@@ -1,0 +1,39 @@
+%/*******************************************************************************
+% * Copyright (c) 2007, G. Weirich
+% * All rights reserved. This program may not be distributed
+% * or modified without prior written consent
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id: anleitung.tex 226 2007-08-23 11:17:50Z gerry $
+% *******************************************************************************/
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+\usepackage{floatflt}
+\usepackage[]{hyperref}
+\usepackage{color}
+\title{Stammdatenimport Aeskulap}
+\author{Gerry Weirich}
+
+\begin{document}
+\maketitle
+\section{Einführung}
+
+Dieses Plugin ermöglicht Ihnen den Import von Stammdaten aus dem Arztpraxisprogramm 'Aeskulap'.
+Zur Installation kopieren Sie das Plugin einfach in Ihr Plugins-Verzeichnis.
+
+\section{Voraussetzungen}
+Die in Aeskulap enthaltenen Stammdaten können nur von Aeskulap selbst exportiert werden, da das Datenformat nicht öffentlich ist. Es gibt bisher unseres Wissens zwei Möglichkeiten:
+\begin{itemize}
+  \item Über das Menu von Aeskulap selbst: \textsc{Stammdaten- Krankengeschichte - KG-Filter}, dann Suchkriterien eingeben und exportieren. Sie erhalten ein CSV-File, das allerdings nur die Personalien enthält.
+  \item Sie bitten Ihren Aeskulap-Supporter, die Stammdaten für Sie als Excel 97-Dateien zu extrahieren. Sie erhalten fünf Dateien mit den Namen 'adressen.xls', 'firma.xls', 'garant.xls', 'pat.\_garanten.xls' und 'patienten.xls'
+\end{itemize}
+
+
+
+\end{document} 
