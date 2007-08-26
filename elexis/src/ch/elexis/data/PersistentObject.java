@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3015 2007-08-26 10:34:56Z rgw_ch $
+ *    $Id: PersistentObject.java 3018 2007-08-26 14:46:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -533,7 +533,7 @@ public abstract class PersistentObject{
     	List<Xid> res=qbe.execute();
     	if(res.size()==0){
     		try{
-    			return new Xid(this,"elexis",getId(),Xid.QUALITY_LOCAL);
+    			return new Xid(this,Xid.DOMAIN_ELEXIS,getId());
     		}catch(XIDException xex){	// Should never happen, uh?
     			ExHandler.handle(xex);
     			return null;
@@ -557,31 +557,28 @@ public abstract class PersistentObject{
      * Assign a XID to this object.
      * @param domain the domain whose ID will be assigned
      * @param domain_id the id out of the given domain fot this object
-     * @param quality the Quality indicator (@see Xid)
      * @param updateIfExists if true update values if Xid with same domain and domain_id exists. Otherwise the method will
      * fail if a collision occurs.
      * @return true on success, false on failure
      */
-    public boolean addXid(final String domain, final String domain_id,final int quality, boolean updateIfExists){
+    public boolean addXid(final String domain, final String domain_id, boolean updateIfExists){
     	Xid oldXID=Xid.findXID(this, domain);
     	if(oldXID!=null){
     		if(updateIfExists){
     			oldXID.set("domain_id", domain_id);
-    			oldXID.set("quality", Integer.toString(quality));
     			return true;
     		}
     		return false;
     	}
     	
     	try {
-			new Xid(this,domain,domain_id,quality);
+			new Xid(this,domain,domain_id);
 			return true;
 		} catch (XIDException e) {
 			if(updateIfExists){
 				Xid xid=Xid.findXID(domain, domain_id);
 				if(xid!=null){
 					xid.set("object",getId());
-					xid.set("quality", Integer.toString(quality));
 					return true;
 				}
 			}

@@ -8,63 +8,85 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3016 2007-08-26 13:26:12Z rgw_ch $
+ * $Id: Xid.java 3018 2007-08-26 14:46:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.Hub;
+import ch.elexis.util.Log;
 
 public class Xid extends PersistentObject {
 	private static final String TABLENAME="XID";
+	private static Log log=Log.get("XID");
 	/**
 	 * Quality value for an ID that is valid only in the context of the issuing program
 	 */
-	public static final int QUALITY_LOCAL=0;
+	public static final int ASSIGNMENT_LOCAL=1<<0;
 	/**
 	 * Quality value for an ID that is valid within a geographic or politic context (e.g. a nationally
 	 * assigned ID)
 	 */
-	public static final int QUALITY_REGIONAL=1;
+	public static final int ASSIGNEMENT_REGIONAL=1<<1;
 	/**
-	 * Quality value for an ID that is guaranteed to be globally unique
+	 * Quality value for an ID that can be used as global identifier
 	 */
-	public static final int QUALITY_GLOBAL=2;
+	public static final int ASSIGNMENT_GLOBAL=1<<2;
+	
 	/**
-	 * Quality value for an ID that is globally unique AND can be used to retrieve the identified identity
-	 * independently form the issuing program
+	 * Marker that the ID is a GUID (that is, guaranteed to exist only once)
 	 */
-	public static final int QUALITY_ULTIMATE=3;
-
+	public static final int QUALITY_GUID=1<<16;
+	
+	private static Hashtable<String,Integer> domains;
+	
 	public static final String DOMAIN_ELEXIS="www.elexis.ch/xid";
 	public static final String DOMAIN_AHV="www.ahv.ch/xid";
-	public static final String DOMAIN_COVERCARD="www.covercard.ch/xid";
-	public static final String DOMAIN_BSVNUM="www.xid.ch/id/kknum";
 	public static final String DOMAIN_SWISS_PASSPORT="www.xid.ch/id/passport/ch";
 	public static final String DOMAIN_AUSTRIAN_PASSPORT="www.xid.ch/id/passport/at";
 	public static final String DOMAIN_GERMAN_PASSPORT="www.xid.ch/id/passport/de";
 	public final static String DOMAIN_EAN ="www.xid.ch/id/ean";
 	public final static String DOMAIN_OID ="www.xid.ch/id/oid";
-	public static final String DOMAIN_KSK="www.xid.ch/id/ksk";
-	public static final String DOMAIN_NIF="www.xid.ch/id/nif";
 	
 	static{
 		addMapping(TABLENAME, "type", "object","domain","domain_id","quality");
+		domains=new Hashtable<String,Integer>();
+		String storedDomains=Hub.globalCfg.get("LocalXIDDomains", null);
+		if(storedDomains==null){
+			domains.put(DOMAIN_ELEXIS,ASSIGNMENT_LOCAL|QUALITY_GUID);
+			domains.put(DOMAIN_AHV,ASSIGNEMENT_REGIONAL|QUALITY_GUID);
+			domains.put(DOMAIN_OID,ASSIGNMENT_GLOBAL|QUALITY_GUID);
+			domains.put(DOMAIN_EAN,ASSIGNMENT_GLOBAL|QUALITY_GUID);
+			storeDomains();
+		}else{
+			for(String dom:storedDomains.split(";")){
+				String[] spl=dom.split("#");
+				if(spl.length!=2){
+					log.log("Fehler in XID-Domain "+dom, Log.ERRORS);
+				}
+				domains.put(spl[0],Integer.parseInt(spl[1]));
+			}
+		}
 	}
 	/**
 	 * create a new XID. Does nothing if identical XIX already exists.
 	 * @param o the object to identify with the new XID
-	 * @param domain the domain from wich the identifier is (e.g. DOMAIN_COVERCARD)
+	 * @param domain the domain from wich the identifier is (e.g. DOMAIN_COVERCARD). Must be a registered domain
 	 * @param domain_id the id from that domain that identifies the object
 	 * @param quality the quality of this identifier
 	 * @throws XIDException if a XID with same domain and domain_id but different object or quality already exists.
 	 */
-	public Xid(final PersistentObject o, final String domain, final String domain_id, final int quality) throws XIDException{
+	public Xid(final PersistentObject o, final String domain, final String domain_id) throws XIDException{
+		Integer val=domains.get(domain);
+		if(val==null){
+			throw new XIDException("XID Domain "+domain+" is not registered");
+		}
 		Xid xid=findXID(domain,domain_id);
 		if(xid!=null){
-			if((xid.get("object").equals(o.getId())) && (xid.getQuality()==quality)){
+			if(xid.get("object").equals(o.getId())){
 				return;
 			}
 			throw new XIDException("XID "+domain+":"+domain_id+" is not unique");
@@ -75,7 +97,7 @@ public class Xid extends PersistentObject {
 		}
 		create(null);
 		set(new String[]{"type", "object","domain","domain_id","quality"},
-				new String[]{o.getClass().getName(),o.getId(),domain,domain_id,Integer.toString(quality)});
+				new String[]{o.getClass().getName(),o.getId(),domain,domain_id,Integer.toString(val)});
 	}
 
 	/**
@@ -160,6 +182,38 @@ public class Xid extends PersistentObject {
 		return null;
 	}
 	
+	/**
+	 * Register a new domain for use with our XID System locally (this will not affect the
+	 * centra XID registry at www.xid.ch)
+	 * @param domain the domain to register
+	 * @param quality the quality an ID of that domain will have
+	 * @return true on success, false if that domain could not be registered
+	 */
+	public static boolean localRegisterXIDDomain(String domain, int quality){
+		if(domains.contains(domain)){
+			log.log("XID Domain "+domain+" bereits registriert", Log.ERRORS);
+		}else{
+			if(domain.matches(".*[;#].*")){
+				log.log("XID Domain "+domain+" ungültig", Log.ERRORS);
+			}else{
+				domains.put(domain,quality);
+				storeDomains();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean localRegisterXIDDomainIfNotExists(String domain, int quality){
+		if(domains.get(domain)!=null){
+			return true;
+		}
+		return localRegisterXIDDomain(domain, quality);
+	}
+	public static Integer getXIDDomainQuality(String xidDomain){
+		return domains.get(xidDomain);
+	}
+	
 	protected Xid(final String id){
 		super(id);
 	}
@@ -174,4 +228,13 @@ public class Xid extends PersistentObject {
 			super(reason);
 		}
 	}
+
+	private static void storeDomains(){
+		StringBuilder sb=new StringBuilder();
+		for(String k:domains.keySet()){
+			sb.append(k).append("#").append(domains.get(k)).append(";");
+		}
+		Hub.globalCfg.set("LocalXIDDomains", sb.toString());
+	}
+
 }
