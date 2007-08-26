@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 2979 2007-08-11 17:45:44Z rgw_ch $
+ * $Id: RnPrintView.java 3017 2007-08-26 13:26:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -187,6 +187,7 @@ public class RnPrintView extends ViewPart {
 		}
 		Mandant m=rn.getMandant();
 		Hub.setMandant(m);
+		GlobalEvents.getInstance().fireSelectionEvent(m.getRechnungssteller());
 		Fall fall=rn.getFall();
 		GlobalEvents.getInstance().fireSelectionEvent(fall);
 		Patient pat=fall.getPatient();
@@ -266,15 +267,11 @@ public class RnPrintView extends ViewPart {
 				//sb.append("Noch zu zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
 				sb.append(Messages.RnPrintView_topay).append(mEZDue.subtractMoney(mPaid).roundTo5().getAmountAsString()).append("\n"); 
 			}
+		
 			
 			text.getPlugin().setFont("Serif",SWT.NORMAL, 9); //$NON-NLS-1$
-			text.replace("\\[Leistungen\\]",new ReplaceCallback(){ //$NON-NLS-1$
-				public String replace(final String in) {
-					return sb.toString();
-				}
-				
-			});
-
+			text.replace("\\[Leistungen\\]",sb.toString());
+		
 			if(esr.printBESR(bank,adressat,m,mEZDue.roundTo5().getCentsAsString(),text)==false){
 				// avoid dead letters
 				clearItems();

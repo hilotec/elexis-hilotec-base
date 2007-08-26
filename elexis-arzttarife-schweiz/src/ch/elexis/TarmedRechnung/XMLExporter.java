@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3006 2007-08-23 11:18:11Z rgw_ch $
+ * $Id: XMLExporter.java 3017 2007-08-26 13:26:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -240,17 +240,12 @@ public class XMLExporter implements IRnOutputter {
 		Element header=new Element("header",ns);										// 10050
 		root.addContent(header);
 		Element sender=new Element("sender",ns);										// 10051
-		String mEAN=(String)actMandant.getInfoElement("EAN");
-		if(StringTool.isNothing(mEAN)){
-			mEAN="2000000000000";
-		}
+		String mEAN=TarmedRequirements.getEAN(actMandant); //(String)actMandant.getInfoElement("EAN");
+
 		sender.setAttribute("ean_party",mEAN);
-		String kEAN=(String)kostentraeger.getInfoElement("EAN");
-		if(StringTool.isNothing(kEAN)){
-			kEAN="2000000000000";
-		}
+		String kEAN=TarmedRequirements.getEAN(kostentraeger); //(String)kostentraeger.getInfoElement("EAN");
+		
 		Element intermediate=new Element("intermediate",ns);							// 10052
-	
 		intermediate.setAttribute("ean_party",kEAN);
 		
 		Element recipient=new Element("recipient",ns);									// 10053
@@ -382,15 +377,17 @@ public class XMLExporter implements IRnOutputter {
 					mTarmedAL.addCent(mAL.getCents()*zahl);
 					mTarmedTL.addCent(mTL.getCents()*zahl);
 					el=new Element("record_tarmed",ns);											//	22000
-				el.setAttribute("treatment","ambulatory");										//	22050
+					el.setAttribute("treatment","ambulatory");										//	22050
 					el.setAttribute("tariff_type","001");										//	22060  
 					Hashtable<String,String> ext=tl.loadExtension();
 					String bezug=ext.get("Bezug");												//	22360
 					if(!StringTool.isNothing(bezug)){
 						el.setAttribute("ref_code",bezug);
 					}
-					el.setAttribute("ean_provider",actMandant.getInfoString("EAN"));			//	22390
-					el.setAttribute("ean_responsible",actMandant.getInfoString("EAN"));			//	22400
+					el.setAttribute("ean_provider",TarmedRequirements.getEAN(actMandant.getRechnungssteller()));		//	22390
+					//el.setAttribute("ean_provider",actMandant.getInfoString("EAN"));			//	22390
+					//el.setAttribute("ean_responsible",actMandant.getInfoString("EAN"));		//	22400
+					el.setAttribute("ean_responsible",TarmedRequirements.getEAN(actMandant));	//	22400
 					el.setAttribute("billing_role","both");										//	22410
 					el.setAttribute("medical_role","self_employed");							//	22430
 					Hashtable detail=b.getDetailsFor(tl);
@@ -598,8 +595,9 @@ public class XMLExporter implements IRnOutputter {
 		}
 		
 		Element biller=new Element("biller",ns);												//	11070 -> 11400
-		biller.setAttribute("ean_party",actMandant.getInfoString("EAN"));						//	11402
-		biller.setAttribute("zsr",actMandant.getInfoString("KSK"));								//	11403
+		//biller.setAttribute("ean_party",actMandant.getInfoString("EAN"));						//	11402
+		biller.setAttribute("ean_party",TarmedRequirements.getEAN(actMandant.getRechnungssteller()));	//	11402
+		biller.setAttribute("zsr",TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString("KSK"));								//	11403
 		String spec=actMandant.getInfoString(ta.SPEC);							
 		if(!spec.equals("")){
 			biller.setAttribute("specialty",spec);												// 	11404
@@ -612,7 +610,7 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(provider);
 			
 		Element insurance=new Element("insurance",ns);											//  11090
-		insurance.setAttribute("ean_party",kostentraeger.getInfoString("EAN"));							
+		insurance.setAttribute("ean_party",TarmedRequirements.getEAN(kostentraeger)); //kostentraeger.getInfoString("EAN"));							
 		insurance.addContent(buildAdressElement(kostentraeger));
 		eTiers.addContent(insurance);
 			
@@ -646,8 +644,8 @@ public class XMLExporter implements IRnOutputter {
 
 		Element referrer=new Element("referrer",ns);											//	11120
 		Kontakt auftraggeber=actMandant;		// TODO
-		referrer.setAttribute("ean_party",auftraggeber.getInfoString("EAN"));
-		referrer.setAttribute("zsr",auftraggeber.getInfoString("KSK"));
+		referrer.setAttribute("ean_party",TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.getInfoString("EAN"));
+		referrer.setAttribute("zsr",TarmedRequirements.getKSK(auftraggeber)); //auftraggeber.getInfoString("KSK"));
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
 		invoice.addContent(eTiers);
