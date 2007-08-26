@@ -15,6 +15,18 @@ public class TarmedRequirements {
 	public static final String BILLINGSYSTEM_NAME="TarmedLeistung";
 	public static final String OUTPUTTER_NAME="Tarmed-Drucker";
 	
+	public static final String DOMAIN_KSK="www.xid.ch/id/ksk";
+	public static final String DOMAIN_NIF="www.xid.ch/id/nif";
+
+	static{
+		if(Xid.getXIDDomainQuality(DOMAIN_KSK)==null){
+			Xid.localRegisterXIDDomain(DOMAIN_KSK, Xid.ASSIGNEMENT_REGIONAL);
+		}
+		if(Xid.getXIDDomainQuality(DOMAIN_NIF)==null){
+			Xid.localRegisterXIDDomain(DOMAIN_NIF, Xid.ASSIGNEMENT_REGIONAL);
+		}
+	}
+	
 	public static String getEAN(Kontakt k){
 		String ret= k.getXID(Xid.DOMAIN_EAN);
 		// compatibility layer
@@ -32,7 +44,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getKSK(Kontakt k){
-		String ret= k.getXID(Xid.DOMAIN_KSK);
+		String ret= k.getXID(DOMAIN_KSK);
 		// compatibility layer
 		if(ret.length()==0){
 			ret=k.getInfoString("KSK");
@@ -45,7 +57,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getNIF(Kontakt k){
-		String ret= k.getXID(Xid.DOMAIN_NIF);
+		String ret= k.getXID(DOMAIN_NIF);
 		// compatibility layer
 		if(ret.length()==0){
 			ret=k.getInfoString("NIF");
@@ -61,15 +73,15 @@ public class TarmedRequirements {
 		if(!ean.matches("[0-9]{13,13}")){
 			return false;
 		}
-		k.addXid(Xid.DOMAIN_EAN, ean, Xid.QUALITY_GLOBAL, true);
+		k.addXid(Xid.DOMAIN_EAN, ean, true);
 		return true;
 	}
 	
 	public static void setKSK(Kontakt k, String ksk){
-		k.addXid(Xid.DOMAIN_KSK, ksk, Xid.QUALITY_REGIONAL, true);
+		k.addXid(DOMAIN_KSK, ksk,true);
 	}
 	
 	public static void setNIF(Kontakt k, String nif){
-		k.addXid(Xid.DOMAIN_NIF, nif, Xid.QUALITY_REGIONAL, true);
+		k.addXid(DOMAIN_NIF, nif, true);
 	}
 }
