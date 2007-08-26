@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Mandanten.java 3015 2007-08-26 10:34:56Z rgw_ch $
+ *  $Id: Mandanten.java 3016 2007-08-26 13:26:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -109,23 +109,18 @@ IWorkbenchPreferencePage {
 					public void displayContent(PersistentObject po,
 							InputData ltf) {
 						Mandant m=(Mandant)po;
-						String rsi=m.getInfoString("Rechnungssteller");
-						Kontakt r=Kontakt.load(rsi);
-						if(!r.isValid()){
-							r=m;
-						}
+						Kontakt r=m.getRechnungssteller();
 						ltf.setText(r.getLabel());
 					}
 
 					public void reloadContent(PersistentObject po, InputData ltf) {
 						Kontakt rsi=(Kontakt)po;
 						KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Rechnungssteller auswählen",
-								"Wählen Sie bitte den Rechnungssteller aus (Standarr: Mandant selber)");
+								"Wählen Sie bitte den Rechnungssteller aus (Standard: Mandant selber)");
 						if(ksl.open()==Dialog.OK){
 							rsi=(Kontakt)ksl.getSelection();
 						}
-						((Kontakt)po).setInfoElement("Rechnungssteller", rsi.getId());
-
+						((Mandant)po).setRechnungssteller(rsi);
 						ltf.setText(rsi.getLabel());
 					}})
 		};	

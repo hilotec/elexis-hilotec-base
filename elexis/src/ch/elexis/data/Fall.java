@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3015 2007-08-26 10:34:56Z rgw_ch $
+ *    $Id: Fall.java 3016 2007-08-26 13:26:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -59,7 +59,7 @@ public class Fall extends PersistentObject{
 				"PatientID","res=Diagnosen","DatumVon=S:D:DatumVon","DatumBis=S:D:DatumBis",
                 "GarantID","Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum",
 				"Bezeichnung","Grund","Gesetz","Kostentraeger=KostentrID",
-				"VersNummer","FallNummer","RechnungsstellerID=BetriebsNummer","ExtInfo");
+				"VersNummer","FallNummer","BetriebsNummer","ExtInfo");
 	}
 	
 	@Override
@@ -168,15 +168,15 @@ public class Fall extends PersistentObject{
 		set("GarantID",garant.getId());
 	}
 	
-	public Kontakt getRechnungssteller(){
-		Kontakt ret= Kontakt.load(get("RechnungsstellerID"));
+	public Rechnungssteller getRechnungssteller(){
+		Rechnungssteller ret= Rechnungssteller.load(getInfoString("RechnungsstellerID"));
 		if(!ret.isValid()){
 			ret=null;
 		}
 		return ret;
 	}
 	public void setRechnungssteller(Kontakt r){
-		set("RechnungsstellerID",r.getId());
+		setInfoString("RechnungsstellerID",r.getId());
 	}
 	/**
 	 * Retrieve a required Konktat from this Fall's Billing system's requirements
