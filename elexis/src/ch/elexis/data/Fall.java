@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 2984 2007-08-13 16:13:53Z rgw_ch $
+ *    $Id: Fall.java 3015 2007-08-26 10:34:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -59,7 +59,7 @@ public class Fall extends PersistentObject{
 				"PatientID","res=Diagnosen","DatumVon=S:D:DatumVon","DatumBis=S:D:DatumBis",
                 "GarantID","Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum",
 				"Bezeichnung","Grund","Gesetz","Kostentraeger=KostentrID",
-				"VersNummer","FallNummer","BetriebsNummer","ExtInfo");
+				"VersNummer","FallNummer","RechnungsstellerID=BetriebsNummer","ExtInfo");
 	}
 	
 	@Override
@@ -166,6 +166,17 @@ public class Fall extends PersistentObject{
 	
 	public void setGarant(final Kontakt garant){
 		set("GarantID",garant.getId());
+	}
+	
+	public Kontakt getRechnungssteller(){
+		Kontakt ret= Kontakt.load(get("RechnungsstellerID"));
+		if(!ret.isValid()){
+			ret=null;
+		}
+		return ret;
+	}
+	public void setRechnungssteller(Kontakt r){
+		set("RechnungsstellerID",r.getId());
 	}
 	/**
 	 * Retrieve a required Konktat from this Fall's Billing system's requirements
@@ -429,10 +440,7 @@ public class Fall extends PersistentObject{
 		for(Rechnung rn:qRn.execute()){
 			rn.delete();
 		}
-		List<Xid> xids=new Query<Xid>(Xid.class,"object",getId()).execute();
-		for(Xid xid:xids){
-			xid.delete();
-		}
+		
 		return true;
 	}
 	/**
@@ -498,6 +506,7 @@ public class Fall extends PersistentObject{
 			for(IConfigurationElement ic:list){
 				if(ic.getAttribute("name").startsWith("Tarmed")){
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/name", "KVG");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/gesetz","KVG");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/standardausgabe", "Tarmed-Drucker");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/KVG/bedingungen", "Kostenträger:K;Versicherungsnummer:T");
@@ -506,21 +515,31 @@ public class Fall extends PersistentObject{
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/standardausgabe", "Tarmed-Drucker");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/bedingungen", "Kostenträger:K;Unfallnummer:T");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/gesetz","UVG");
 					
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/name", "IV");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/standardausgabe", "Tarmed-Drucker");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/bedingungen", "IV-Stelle:K;AHV-nummer:T");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/gesetz","IVG");
 					
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/name", "MV");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/standardausgabe", "Tarmed-Drucker");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/bedingungen", "Kostenträger:K");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/gesetz","MVG");
 
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/name", "privat");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/standardausgabe", "Tarmed-Drucker");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/gesetz","VVG");
 					//Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/bedingungen", "Rechnungsempfänger:K");
+					
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/VVG/name", "VVG");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/VVG/leistungscodes", "TarmedLeistung");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/VVG/standardausgabe", "Tarmed-Drucker");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/VVG/bedingungen", "Kostenträger:K;Versicherungsnummer:T");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/VVG/gesetz","VVG");
 					
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='UVG' WHERE typ='ch.elexis.data.TarmedLeistungUVG'");
 					PersistentObject.getConnection().exec("UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");

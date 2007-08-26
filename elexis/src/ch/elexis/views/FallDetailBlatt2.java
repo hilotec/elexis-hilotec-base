@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 2980 2007-08-11 17:45:58Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 3015 2007-08-26 10:34:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -151,7 +151,7 @@ public class FallDetailBlatt2 extends Composite {
                 int i=cAbrechnung.getSelectionIndex();
                 Fall fall=getFall();
                 if(fall!=null){
-                	if(fall.getBehandlungen(false).length>0){
+                	if(false){// fall.getBehandlungen(false).length>0){
                 		SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Bei einem Fall, zu dem schon Konsultationen existieren, kann das Gestz nicht geändert werden.");
                 		String gesetz=fall.getAbrechnungsSystem();
                 		if(ch.rgw.tools.StringTool.isNothing(gesetz)){

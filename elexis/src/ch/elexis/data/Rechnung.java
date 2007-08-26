@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 2976 2007-08-10 13:54:03Z rgw_ch $
+ *  $Id: Rechnung.java 3015 2007-08-26 10:34:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -57,7 +57,8 @@ public class Rechnung extends PersistentObject {
 	}
 	/** 
 	 * Eine Rechnung aus einer Behandlungsserie erstellen. Es werde aus dieser Serie nur diejenigen Behandlungen
-	 * verwendet, die zum selben Mandanten und zum selben Fall gehören
+	 * verwendet, die zum selben Mandanten und zum selben Fall gehören. Falls der Fall einen Rechnungssteller
+	 * hat, werden alle Konsultationen ungeachtet des Mandanten
 	 * @return Ein Result mit ggf. der erstellten Rechnung als Inhalt
 	 */
     public static Result<Rechnung> build(final List<Konsultation> behandlungen){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Mandanten.java 1849 2007-02-19 07:52:43Z rgw_ch $
+ *  $Id: Mandanten.java 3015 2007-08-26 10:34:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -16,6 +16,7 @@ package ch.elexis.preferences;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,11 +34,15 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.inputs.PrefAccessDenied;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.LabeledInputField.IContentProvider;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
 
@@ -98,7 +103,31 @@ IWorkbenchPreferencePage {
 				// new InputData("KSK-Nr","ExtInfo",Typ.STRING,"KSK"),
 				// new InputData("NIF","ExtInfo",Typ.STRING,"NIF"),
 				// new InputData("EANr","ExtInfo",Typ.STRING,"EAN"),
-				new InputData("Gruppen","ExtInfo","Groups",grp.split(","))
+				new InputData("Gruppen","ExtInfo","Groups",grp.split(",")),
+				new InputData("Rechnungssteller","ExtInfo",new IContentProvider(){
+
+					public void displayContent(PersistentObject po,
+							InputData ltf) {
+						Mandant m=(Mandant)po;
+						String rsi=m.getInfoString("Rechnungssteller");
+						Kontakt r=Kontakt.load(rsi);
+						if(!r.isValid()){
+							r=m;
+						}
+						ltf.setText(r.getLabel());
+					}
+
+					public void reloadContent(PersistentObject po, InputData ltf) {
+						Kontakt rsi=(Kontakt)po;
+						KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Rechnungssteller auswählen",
+								"Wählen Sie bitte den Rechnungssteller aus (Standarr: Mandant selber)");
+						if(ksl.open()==Dialog.OK){
+							rsi=(Kontakt)ksl.getSelection();
+						}
+						((Kontakt)po).setInfoElement("Rechnungssteller", rsi.getId());
+
+						ltf.setText(rsi.getLabel());
+					}})
 		};	
 	}
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 2980 2007-08-11 17:45:58Z rgw_ch $
+ *    $Id: PersistentObject.java 3015 2007-08-26 10:34:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1153,12 +1153,16 @@ public abstract class PersistentObject{
 		return false;
 	}
 	/**
-	 * Ein Objekt aus der Datenbank löschen
+	 * Ein Objekt und ggf. dessen XID's aus der Datenbank löschen
 	 * @return true on success
 	 */
 	public boolean delete(){
 		// we change this to ratehr set the deleted-flag than really delete
 		if(set("deleted","1")){
+			List<Xid> xids=new Query<Xid>(Xid.class,"object",getId()).execute();
+			for(Xid xid:xids){
+				xid.delete();
+			}
 			new DBLog(this,DBLog.TYP.DELETE);
 			PersistentObject sel=GlobalEvents.getInstance().getSelectedObject(this.getClass());
 			if((sel!=null) && sel.equals(this)){
@@ -1168,23 +1172,22 @@ public abstract class PersistentObject{
 			return true;
 		}
 		return false;
-		/*
-		StringBuilder sql=new StringBuilder();
-		sql.append("DELETE FROM ").append(getTableName())
-			.append(" WHERE ID=").append(getWrappedId());
-		GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.delete);
-		GlobalEvents.getInstance().clearSelection(getClass());
-		cache.clear();
-		return (j.exec(sql.toString())!=0);
-		*/
 	}
 	
 	/**
 	 * We can undelete any object by simply clearing the deleted-flag
+	 * and reanimate dependend XID's
 	 * @return true on success
 	 */
 	public boolean undelete(){
 		if(set("deleted","0")){
+			boolean oldShowDeleted=showDeleted;
+			showDeleted=true;
+			List<Xid> xids=new Query<Xid>(Xid.class,"object",getId()).execute();
+			for(Xid xid:xids){
+				xid.undelete();
+			}
+			showDeleted=oldShowDeleted;
 			new DBLog(this,DBLog.TYP.UNDELETE);
 			GlobalEvents.getInstance().fireObjectEvent(this, GlobalEvents.CHANGETYPE.create);
 			return true;
