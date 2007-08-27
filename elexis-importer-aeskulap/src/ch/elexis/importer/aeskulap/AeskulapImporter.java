@@ -64,6 +64,10 @@ public class AeskulapImporter extends ImporterPage {
 	
 	boolean bType;
 	
+	static{
+		Xid.localRegisterXIDDomainIfNotExists(PATID, Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(GARANTID, Xid.ASSIGNMENT_LOCAL);
+	}
 	public AeskulapImporter() {
 		// TODO Auto-generated constructor stub
 	}
@@ -169,7 +173,7 @@ public class AeskulapImporter extends ImporterPage {
 				an.setPlz(line[4]);
 				an.setOrt(line[5]);
 				pat.setAnschrift(an);
-				pat.addXid(PATID, line[0], Xid.QUALITY_LOCAL, true);
+				pat.addXid(PATID, line[0], true);
 				monitor.worked(10);
 			}
 		}else{
@@ -252,11 +256,11 @@ public class AeskulapImporter extends ImporterPage {
 			// create a standard XID of national validity
 			String ahv=fields.get(22);
 			if(!StringTool.isNothing(ahv)){
-				p.addXid(Xid.DOMAIN_AHV, ahv, Xid.QUALITY_REGIONAL, true);
+				p.addXid(Xid.DOMAIN_AHV, ahv, true);
 			}
 			// We use also the original oatient number as a XID to solce later 
 			// references to this patient.
-			p.addXid(PATID, fields.get(0), Xid.QUALITY_LOCAL, true);
+			p.addXid(PATID, fields.get(0), true);
 			moni.worked(perLine);
 		}
 		return true;
@@ -302,8 +306,8 @@ public class AeskulapImporter extends ImporterPage {
 			o.set("E-Mail", fields.get(10));
 			o.set("Telefon1", fields.get(7));
 			o.set("Fax", fields.get(8));
-			o.addXid(Xid.DOMAIN_EAN, fields.get(12), Xid.QUALITY_GLOBAL, false);
-			o.addXid(GARANTID, fields.get(0), Xid.QUALITY_LOCAL, true);
+			o.addXid(Xid.DOMAIN_EAN, fields.get(12), false);
+			o.addXid(GARANTID, fields.get(0),  true);
 			moni.worked(perLine);
 		}
 		return true;
@@ -367,7 +371,7 @@ public class AeskulapImporter extends ImporterPage {
 			k.set("E_Mail", fields.get(18));
 			String ean=fields.get(19);
 			if(!StringTool.isNothing(ean)){
-				k.addXid(Xid.DOMAIN_EAN, ean, Xid.QUALITY_GLOBAL, false);
+				k.addXid(Xid.DOMAIN_EAN, ean, false);
 			}
 			moni.worked(perLine);
 		}
