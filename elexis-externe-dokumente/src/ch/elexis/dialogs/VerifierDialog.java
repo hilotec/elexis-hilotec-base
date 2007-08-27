@@ -150,9 +150,10 @@ public class VerifierDialog extends TitleAreaDialog {
 	    public IStatus execute(IProgressMonitor monitor) {
 	    	List<File> list = new ArrayList<File>();
 	    	
-	    	String[] paths = new String[2];
+	    	String[] paths = new String[3];
 	    	paths[0] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD, "");
 	    	paths[1] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD2, "");
+	    	paths[2] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD3, "");
 	    	
 	    	if (actPatient != null) {
 	    		for (String path : paths) {
