@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: ExterneDokumente.java 2662 2007-06-29 12:23:41Z danlutz $
+ *  $Id: ExterneDokumente.java 3028 2007-08-27 07:22:45Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -71,6 +71,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.FileEditDialog;
 import ch.elexis.dialogs.VerifierDialog;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -106,9 +107,8 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 	private Action openAction;
 	private Action editAction;
 	private Action renameAction;
-/*
+	private Action deleteAction;
 	private Action verifyAction;
-*/
 	
 	private Patient actPatient;
 	/*
@@ -121,6 +121,8 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 	
 	// letzte bekannte Anzahl Dokumente (fuer getSize())
 	int lastSize = DEFAULT_SIZE;
+	
+	private Log log = Log.get("Externe Dokumente");
 	
 	class DataLoader extends BackgroundJob {
 		public DataLoader(String jobName) {
@@ -500,15 +502,14 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		manager.add(openAction);
 		manager.add(renameAction);
 		manager.add(editAction);
-/*
 		manager.add(verifyAction);
-*/
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
 		manager.add(renameAction);
 		manager.add(editAction);
+		manager.add(deleteAction);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -558,6 +559,30 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		editAction.setActionDefinitionId(GlobalActions.PROPERTIES_COMMAND);
 		GlobalActions.registerActionHandler(this, editAction);
 		
+		deleteAction = new Action() {
+			public void run() {
+				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
+				if (selection != null) {
+					Object element = selection.getFirstElement();
+					if (element instanceof File) {
+						File file = (File) element;
+						
+						if (SWTHelper.askYesNo("Dokument löschen", "Soll das Dokument " + file.getName() + " wirklich gelöscht werden?"
+								+ " (Achtung: Diese Aktion kann nicht rückgängig gemacht werden!)")) {
+							
+							log.log("Datei Löschen: " + file.getAbsolutePath(), Log.INFOS);
+							file.delete();
+							refresh();
+						}
+					}
+				}
+			}
+		};
+		deleteAction.setText("Löschen");
+		deleteAction.setToolTipText("Datei löschen");
+		deleteAction.setActionDefinitionId(GlobalActions.DELETE_COMMAND);
+		GlobalActions.registerActionHandler(this, deleteAction);
+		
 		renameAction = new Action() {
 			public void run() {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
@@ -574,7 +599,6 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
 		GlobalActions.registerActionHandler(this, renameAction);
 
-/*
 		verifyAction = new Action() {
 			public void run() {
 				new VerifierDialog(getViewSite().getShell(), actPatient).open();
@@ -585,7 +609,6 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		};
 		verifyAction.setText("Dateien überprüfen");
 		verifyAction.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
-*/
 	}
 
 	private void hookDoubleClickAction() {
