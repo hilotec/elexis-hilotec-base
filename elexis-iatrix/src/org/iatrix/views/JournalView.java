@@ -46,6 +46,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -91,6 +92,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.iatrix.Iatrix;
 import org.iatrix.data.Problem;
 import org.iatrix.widgets.KonsListDisplay;
 
@@ -129,7 +131,6 @@ import ch.elexis.util.Money;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.views.HistoryDisplay;
 import ch.elexis.views.PatientDetailView;
 import ch.elexis.views.codesystems.DiagnosenView;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
@@ -194,7 +195,7 @@ public class JournalView extends ViewPart implements SelectionListener,
     private Label lKonsultation;
     private Label lVersion;
 	private Combo cbFall;
-
+	
     private FormToolkit tk;
     private Form form;
 
@@ -1181,6 +1182,17 @@ public class JournalView extends ViewPart implements SelectionListener,
         		setHeartbeatKonsultationEnabled(true);
         	}
         });
+        Control control = text.getControl();
+        if (control instanceof StyledText) {
+        	StyledText styledText = (StyledText) control;
+
+        	styledText.addKeyListener(new KeyAdapter() {
+        		public void keyReleased(KeyEvent e) {
+            		// create new consultation if required
+        			handleInitialKonsText();
+        		}
+        	});
+        }
 
         tk.adapt(text);
 
@@ -1471,9 +1483,96 @@ public class JournalView extends ViewPart implements SelectionListener,
     /**
      * used by selectionEvent(PersistentObject obj)
      */
-    private Konsultation getAktuellsteKonsultation(Fall fall) {
+    private Konsultation getTodaysLatestKons(Fall fall) {
+    	Konsultation result = null;
+    	TimeTool today = new TimeTool();
+    	
         Konsultation[] konsultationen = fall.getBehandlungen(true);
-        return konsultationen.length > 0 ? konsultationen[0] : null;
+        if (konsultationen != null) {
+    		// find the latest Konsultation according to the text entry's timestamp
+    		long timestamp = -1;
+        	for (Konsultation k : konsultationen) {
+        		if (new TimeTool(k.getDatum()).isSameDay(today)) {
+    				VersionedResource vr = k.getEintrag();
+    				if (vr != null) {
+    					ResourceItem ri = vr.getVersion(vr.getHeadVersion());
+    					if (ri != null) {
+    						if (ri.timestamp > timestamp) {
+    							timestamp = ri.timestamp;
+    							result = k;
+    						}
+    					}
+    				}
+        		}
+        	}
+        }
+        
+        return result;
+    }
+
+    /**
+     * Get the latest Konsultation of today
+     * @return today's latest Konsultation
+     * 
+     * Same implementation as Patient.getLetzteKons()
+     */
+    public Konsultation getTodaysLatestKons(Patient patient) {
+    	TimeTool today = new TimeTool();
+    	
+    	Fall[] faelle = patient.getFaelle();
+    	if ((faelle == null) || (faelle.length == 0)) {
+    		return null;
+    	}
+    	
+    	Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
+    	qbe.add("MandantID", "=", Hub.actMandant.getId());
+    	qbe.add("Datum", "=", today.toString(TimeTool.DATE_COMPACT));
+
+    	qbe.startGroup();
+    	boolean termInserted=false;
+    	for(Fall fall:faelle){
+    		if(fall.isOpen()){
+    			qbe.add("FallID", "=", fall.getId());
+    			qbe.or();
+    			termInserted=true;
+    		}
+    	}
+    	if(!termInserted){
+    		return null;
+    	}
+    	qbe.endGroup();
+
+    	qbe.orderBy(true, "Datum");
+    	List<Konsultation> list=qbe.execute();
+    	if((list==null) || list.isEmpty()){
+    		return null;
+    	}else{
+    		if (list.size() == 1) {
+    			return list.get(0);
+    		} else {
+    			// find the latest Konsultation according to the text entry's timestamp
+    			long timestamp = -1;
+    			Konsultation result = null;
+    			
+    			for (Konsultation k : list) {
+    				VersionedResource vr = k.getEintrag();
+    				if (vr != null) {
+    					ResourceItem ri = vr.getVersion(vr.getHeadVersion());
+    					if (ri != null) {
+    						if (ri.timestamp > timestamp) {
+    							timestamp = ri.timestamp;
+    							result = k;
+    						}
+    					}
+    				}
+    			}
+    			if (result == null) {
+    				result = list.get(0);
+    			}
+
+    			return result;
+    		}
+    	}
     }
 
     public void selectionEvent(PersistentObject obj) {
@@ -1505,7 +1604,7 @@ public class JournalView extends ViewPart implements SelectionListener,
                 patient = fall.getPatient();
                 if (patient.equals(selectedPatient)) {
                     // aktuellste Konsultation dieses Falls waehlen
-                    konsultation = getAktuellsteKonsultation(fall);
+                    konsultation = getTodaysLatestKons(fall);
 
                     setPatient(patient);
                     setKonsultation(konsultation);
@@ -1515,11 +1614,21 @@ public class JournalView extends ViewPart implements SelectionListener,
             }
 
             // weder aktuell ausgewaehlte Konsulation noch aktuell
-            // ausgewaehlter
-            // Fall
-            // gehoeren zu diesem Patienten, somit keine Konsulation setzen.
+            // ausgewaehlter Fall gehoeren zu diesem Patienten
             setPatient(selectedPatient);
-            setKonsultation(null);
+            
+            // lezte Kons setzen, falls heutiges Datum
+            Konsultation letzteKons = getTodaysLatestKons(selectedPatient);
+            if (letzteKons != null) {
+            	TimeTool letzteKonsDate = new TimeTool(letzteKons.getDatum());
+            	TimeTool today = new TimeTool();
+            	if (!letzteKonsDate.isSameDay(today)) {
+            		letzteKons = null;
+            	}
+            	setKonsultation(letzteKons);
+            } else {
+            	setKonsultation(null);
+            }
 
             return;
         } else if (obj instanceof Fall) {
@@ -1542,7 +1651,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             }
 
             // sonst die aktuellste Konsulation des Falls setzen
-            konsulation = getAktuellsteKonsultation(fall);
+            konsulation = getTodaysLatestKons(fall);
 
             setPatient(patient);
             setKonsultation(konsulation);
@@ -2047,11 +2156,20 @@ public class JournalView extends ViewPart implements SelectionListener,
 			displayedVersion = version;
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
+			
+			// set focus and put caret at end of text
+			text.putCaretToEnd();
 		} else {
 			lVersion.setText("");
 			text.setText("");
 			text.setKons(null);
-			text.setEnabled(false);
+			
+			if (actPatient == null) {
+				text.setEnabled(false);
+			} else {
+				text.setEnabled(true);
+			}
+			
 			displayedVersion = -1;
 			versionBackAction.setEnabled(false);
 			versionFwdAction.setEnabled(false);
@@ -2304,6 +2422,18 @@ public class JournalView extends ViewPart implements SelectionListener,
 		}
     }
 
+    /**
+     * Creates a new consultation if text has been entered, but no consultation
+     * is selected.
+     */
+    private void handleInitialKonsText() {
+    	if (actPatient != null && actKons == null) {
+    		String initialText = text.getDocumentAsText();
+    		
+    		GlobalActions.neueKons(initialText);
+    	}
+    }
+    
 	/* ******
 	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
 	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
@@ -2348,9 +2478,9 @@ public class JournalView extends ViewPart implements SelectionListener,
         	switch (columnIndex) {
         	case STATUS:
                 if (problem.getStatus() == Episode.ACTIVE) {
-                	return Desk.theImageRegistry.get(Desk.IMG_OK);
+                	return Desk.theImageRegistry.get(Iatrix.IMG_ACTIVE);
                 } else {
-                	return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+                	return Desk.theImageRegistry.get(Iatrix.IMG_INACTIVE);
                 }
         	default:
         		return null;
@@ -2447,7 +2577,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 	}
 
 	public void objectCreated(PersistentObject o) {
-		// TODO what should be done?
+		// TODO
 	}
 
 	public void objectDeleted(PersistentObject o) {
@@ -3046,9 +3176,9 @@ public class JournalView extends ViewPart implements SelectionListener,
 	    				 */
 	    			case STATUS:
 	    				if (problem.getStatus() == Episode.ACTIVE) {
-	    					return Desk.theImageRegistry.get(Desk.IMG_OK);
+	    					return Desk.theImageRegistry.get(Iatrix.IMG_ACTIVE);
 	    				} else {
-	    					return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+	    					return Desk.theImageRegistry.get(Iatrix.IMG_INACTIVE);
 	    				}
 	    			default:
 	    				return "";
@@ -3374,9 +3504,16 @@ public class JournalView extends ViewPart implements SelectionListener,
 			gc.fillRectangle(rect);
 			
 			if (image != null) {
+				// center image
+				Rectangle imageBounds = image.getBounds();
+				int imageWidth = imageBounds.width;
+				int imageHeight = imageBounds.height;
+				int xOffset = (rect.width - imageWidth) / 2;
+				int yOffset = (rect.height - imageHeight) / 2;
+				
 				Rectangle oldClipping = gc.getClipping();
 				gc.setClipping(rect);
-				gc.drawImage(image, rect.x, rect.y);
+				gc.drawImage(image, rect.x + xOffset, rect.y + yOffset);
 				gc.setClipping(oldClipping);
 			}
 

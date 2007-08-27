@@ -31,7 +31,10 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.ILayoutExtension;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
@@ -54,9 +57,11 @@ public class KonsListComposite {
 	private List<WidgetRow> widgetRows;
 	private Sash sash;
 	
+	private static final String CFG_SASH_X_PERCENT = "org.iatrix/widgets/konslistcomposite/sash_x_percent";
 	private static final int SASH_X_NOTSET = -1;
+	private static final int SASH_X_DEFAULT_PERCENT = 75;
 	// current horizontal sash position.
-	private int currentSashX = SASH_X_NOTSET;
+	private int currentSashXPercent = SASH_X_NOTSET;
 	
 	private List<KonsData> konsultationen;
 	private static LabelProvider verrechnetLabelProvider;
@@ -106,7 +111,9 @@ public class KonsListComposite {
 		
 		sash.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				currentSashX = event.x;
+				int sashX = event.x;
+				currentSashXPercent = absoluteToPercent(composite.getSize().x, sashX);
+				Hub.localCfg.set(CFG_SASH_X_PERCENT, currentSashXPercent);
 				composite.layout();
 			}
 		});
@@ -150,7 +157,15 @@ public class KonsListComposite {
 			sash.setVisible(false);
 		}
 	}
-
+	
+	private int percentToAbsolute(int base, int percent) {
+		return base * percent / 100;
+	}
+	
+	private int absoluteToPercent(int base, int absolute) {
+		return absolute * 100 / base;
+	}
+	
 	/**
 	 * This class encapsulates the required widgets for a row. It assumes that
 	 */
@@ -253,13 +268,89 @@ public class KonsListComposite {
 		}
 	}
 	
-	public class MyLayout extends Layout {
+	public class MyLayout extends Layout implements ILayoutExtension {
 		private static final int TITLE_SPACING = 2;
 		private static final int ROW_SPACING = 4;
 		
-		protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache) {
+		// ILayoutExtension
+		
+		/**
+		 * Computes the minimum width of the parent. All widgets capable of word
+		 * wrapping should return the width of the longest word that cannot be
+		 * broken any further.
+		 * 
+		 * @param parent the parent composite
+		 * @param changed <code>true</code> if the cached information should be
+		 * flushed, <code>false</code> otherwise.
+		 * @return the minimum width of the parent composite
+		 */
+		public int computeMinimumWidth(Composite parent, boolean changed) {
+			return computeMinimumMaximumWidth(parent, changed, false);
+		}
+		/**
+		 * Computes the maximum width of the parent. All widgets capable of word
+		 * wrapping should return the length of the entire text with wrapping
+		 * turned off.
+		 * 
+		 * @param parent the parent composite
+		 * @param changed <code>true</code> if the cached information
+		 * should be flushed, <code>false</code> otherwise.
+		 * @return the maximum width of the parent composite
+		 */
+		public int computeMaximumWidth(Composite parent, boolean changed) {
+			return computeMinimumMaximumWidth(parent, changed, true);
+		}
+		
+		private int computeMinimumMaximumWidth(Composite parent, boolean changed, boolean max) {
+			int sashWidth = sash.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+
+			int leftWidth = 0;
+			int rightWidth = 0;
+			int totalWidth = 0;
+			
+			for (WidgetRow row : widgetRows) {
+				if (row.konsData == null) {
+					// ignore
+					continue;
+				}
+				
+				int width;
+
+				// for hTitle and lFall, min/max are identical
+				width = row.hTitle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x
+					+ row.lFall.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
+				if (width > totalWidth) {
+					totalWidth = width;
+				}
+				
+				// left control (etf)
+				if (max) {
+					width = row.etf.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+				} else {
+					width = row.etf.computeSize(5, SWT.DEFAULT).x;
+				}
+				if (width > leftWidth) {
+					leftWidth = width;
+				}
+
+				// right control (verrechnung)
+				if (max) {
+					width = row.verrechnung.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+				} else {
+					width = row.verrechnung.computeSize(5, SWT.DEFAULT).x;
+				}
+				if (width > rightWidth) {
+					rightWidth = width;
+				}
+			}
+
+			int width = Math.max(totalWidth, leftWidth + rightWidth);
+			width += sashWidth;
+			return width;
+		}
+		
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Point size = layout(false, flushCache);
-			System.err.println("Size: " + size.x + ", " + size.y);
 			return size;
 		}
 		
@@ -296,10 +387,18 @@ public class KonsListComposite {
 			int sashWidth = sash.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			
 			int sashX;
-			if (currentSashX == SASH_X_NOTSET) {
-				sashX = (width - sashWidth) / 2;
+			if (currentSashXPercent != SASH_X_NOTSET) {
+				sashX = percentToAbsolute(width, currentSashXPercent);
 			} else {
-				sashX = currentSashX;
+				// not yet set
+				
+				int cfgSashXPercent = Hub.localCfg.get(CFG_SASH_X_PERCENT, SASH_X_NOTSET); 
+				if (cfgSashXPercent != SASH_X_NOTSET && cfgSashXPercent < 100) {
+					sashX = percentToAbsolute(width, cfgSashXPercent);
+				} else {
+					// default: 2/3 of width
+					sashX = percentToAbsolute(width, SASH_X_DEFAULT_PERCENT);
+				}
 			}
 			
 			int leftX = 0;
@@ -406,7 +505,7 @@ public class KonsListComposite {
 				verrechnungenText = "";
 			}
 		}
-		
+
 		private List<String> replaceBlocks(List<Verrechnet> leistungen) {
 			List<String> labels = new ArrayList<String>();
 
@@ -438,7 +537,7 @@ public class KonsListComposite {
 			for (Verrechnet leistung : leistungen) {
 				labels.add(verrechnetLabelProvider.getText(leistung));
 			}
-			
+
 			return labels;
 		}
 	}

@@ -13,8 +13,11 @@
 
 package org.iatrix;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import ch.elexis.Desk;
 
 
 public class IatrixActivator extends AbstractUIPlugin {
@@ -32,6 +35,9 @@ public class IatrixActivator extends AbstractUIPlugin {
 	 //  hide constructor
 	public IatrixActivator() {
 		instance = this;
+		
+		Desk.theImageRegistry.put(Iatrix.IMG_ACTIVE, getImageDescriptor("icons/active.png"));
+		Desk.theImageRegistry.put(Iatrix.IMG_INACTIVE, getImageDescriptor("icons/inactive.png"));
 	}
 
 	/*
@@ -59,5 +65,15 @@ public class IatrixActivator extends AbstractUIPlugin {
 	public static IatrixActivator getInstance() {
 		return instance;
 	}
-	
+
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path.
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 }

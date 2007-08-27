@@ -22,18 +22,22 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.actions.BackgroundJob;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
@@ -43,7 +47,7 @@ import ch.rgw.tools.TimeTool;
  * @author Daniel Lutz
  *
  */
-public class KonsListDisplay extends Composite implements BackgroundJobListener {
+public class KonsListDisplay extends Composite implements BackgroundJobListener, BackingStoreListener {
 	private Patient patient = null;
 	
 	private FormToolkit toolkit;
@@ -63,13 +67,15 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 		form = toolkit.createScrolledForm(this);
 		formBody = form.getBody();
 		
-		formBody.setLayout(new GridLayout(1, false));
+		formBody.setLayout(new TableWrapLayout());
 		
 		konsListComposite = new KonsListComposite(formBody, toolkit);
-		konsListComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		konsListComposite.setLayoutData(SWTHelper.getFillTableWrapData(1, true, 1, false));
 
 		dataLoader = new KonsLoader();
 		dataLoader.addListener(this);
+		
+		GlobalEvents.getInstance().addBackingStoreListener(this);
 	}
 	
 	/**
@@ -127,7 +133,19 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 	public void jobFinished(BackgroundJob j) {
 		reload(false);
 	}
-	
+
+	public void reloadContents(Class<? extends PersistentObject> clazz) {
+		if(clazz.equals(Konsultation.class)) {
+			if (patient != null) {
+				// TODO DEBUG
+				System.err.println("reloadContents");
+
+				dataLoader.invalidate();
+				dataLoader.schedule();
+			}
+		}
+	}
+
 	class KonsLoader extends BackgroundJob {
 		String name;
 		Patient patient = null;
@@ -150,11 +168,15 @@ public class KonsListDisplay extends Composite implements BackgroundJobListener 
 				List<Konsultation> konsList = new ArrayList<Konsultation>();
 
 				if (patient != null) {
+					IFilter globalFilter = GlobalEvents.getInstance().getObjectFilters().getFilterFor(Konsultation.class);
+					
 					Fall[] faelle = patient.getFaelle();
 					for (Fall fall : faelle) {
 						Konsultation[] kons = fall.getBehandlungen(false);
 						for (Konsultation k : kons) {
-							konsList.add(k);
+							if (globalFilter == null || globalFilter.select(k)) {
+								konsList.add(k);
+							}
 						}
 						
 						if (monitor.isCanceled()) {
