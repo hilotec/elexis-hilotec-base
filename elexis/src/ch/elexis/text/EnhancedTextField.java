@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 2130 2007-03-19 16:33:45Z rgw_ch $
+ *  $Id: EnhancedTextField.java 3022 2007-08-27 07:11:53Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -542,6 +542,11 @@ public class EnhancedTextField extends Composite {
 	public void setText(String ntext) {
         doFormat(ntext);
         setDirty(false);
+	}
+	
+	public void putCaretToEnd() {
+		text.setCaretOffset(text.getCharCount());
+		text.setFocus();
 	}
 	
 	/**
