@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ * $Id: GlobalActions.java 3021 2007-08-27 07:10:06Z danlutz $
  *******************************************************************************/
 
 
@@ -523,44 +523,7 @@ public class GlobalActions {
 				setToolTipText(Messages.getString("GlobalActions.NewKonsToolTip")); //$NON-NLS-1$
 			}
 			public void run(){
-				Fall actFall=GlobalEvents.getSelectedFall();
-				if(actFall==null){
-					Patient actPatient=GlobalEvents.getSelectedPatient();
-					if(actPatient==null){
-						SWTHelper.showError( Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectPatient")); //$NON-NLS-1$ //$NON-NLS-2$
-						return;
-					}
-					if(actFall==null){
-						Konsultation k=actPatient.getLetzteKons(false);
-						if(k!=null){
-							actFall=k.getFall();
-							if(actFall==null){
-								SWTHelper.showError( Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						}else{
-							Fall[] faelle=actPatient.getFaelle();
-							if((faelle==null) || (faelle.length==0)){
-								actFall=actPatient.neuerFall(
-										Fall.getDefaultCaseLabel(),
-										Fall.getDefaultCaseReason(),
-										Fall.getDefaultCaseLaw());
-							}else{
-								actFall=faelle[0];
-							}
-						}
-					}
-				}
-				Konsultation actLetzte=actFall.getLetzteBehandlung();
-				if((actLetzte!=null) && actLetzte.getDatum().equals(new TimeTool().toString(TimeTool.DATE_GER))){
-					if(MessageDialog.openQuestion(Desk.theDisplay.getActiveShell(), Messages.getString("GlobalActions.SecondForToday"),  //$NON-NLS-1$
-							Messages.getString("GlobalActions.SecondForTodayQuestion"))==false){ //$NON-NLS-1$
-						return;
-					}
-				}
-				Konsultation n=actFall.neueKonsultation();
-				n.setMandant(Hub.actMandant);
-				GlobalEvents.getInstance().fireSelectionEvent(actFall);
-				GlobalEvents.getInstance().fireSelectionEvent(n);
+				neueKons(null);
 			}
 		};
 		neuerFallAction=new Action(Messages.getString("GlobalActions.NewCase")){ //$NON-NLS-1$
@@ -579,6 +542,54 @@ public class GlobalActions {
 			}
 		};
 	}
+    
+    /**
+     * Creates a new Konsultation object, with an optional initial text.
+     * @param initialText the initial text to be set, or null if no initial text should be set.
+     */
+    public static void neueKons(String initialText) {
+		Fall actFall=GlobalEvents.getSelectedFall();
+		if(actFall==null){
+			Patient actPatient=GlobalEvents.getSelectedPatient();
+			if(actPatient==null){
+				SWTHelper.showError( Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectPatient")); //$NON-NLS-1$ //$NON-NLS-2$
+				return;
+			}
+			if(actFall==null){
+				Konsultation k=actPatient.getLetzteKons(false);
+				if(k!=null){
+					actFall=k.getFall();
+					if(actFall==null){
+						SWTHelper.showError( Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}else{
+					Fall[] faelle=actPatient.getFaelle();
+					if((faelle==null) || (faelle.length==0)){
+						actFall=actPatient.neuerFall(
+								Fall.getDefaultCaseLabel(),
+								Fall.getDefaultCaseReason(),
+								Fall.getDefaultCaseLaw());
+					}else{
+						actFall=faelle[0];
+					}
+				}
+			}
+		}
+		Konsultation actLetzte=actFall.getLetzteBehandlung();
+		if((actLetzte!=null) && actLetzte.getDatum().equals(new TimeTool().toString(TimeTool.DATE_GER))){
+			if(MessageDialog.openQuestion(Desk.theDisplay.getActiveShell(), Messages.getString("GlobalActions.SecondForToday"),  //$NON-NLS-1$
+					Messages.getString("GlobalActions.SecondForTodayQuestion"))==false){ //$NON-NLS-1$
+				return;
+			}
+		}
+		Konsultation n=actFall.neueKonsultation();
+		n.setMandant(Hub.actMandant);
+		if (initialText != null) {
+			n.updateEintrag(initialText, false);
+		}
+		GlobalEvents.getInstance().fireSelectionEvent(actFall);
+		GlobalEvents.getInstance().fireSelectionEvent(n);
+    }
     
     protected void printAdr(Kontakt k) {
 		PrinterData pd = getPrinterData("Etiketten");
