@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 1912 2007-02-23 10:35:52Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 3024 2007-08-27 07:17:37Z danlutz $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -96,10 +96,14 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		hlPatient=new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				KontaktSelektor ksl=new KontaktSelektor(parent.getShell(),Patient.class,"Patient auswählen","Bitte wählen Sie einen Patienteneintrag oder Abbrechen für 'Alle'");
+				KontaktSelektor ksl=new KontaktSelektor(parent.getShell(),Patient.class,"Patient auswählen","Bitte wählen Sie einen Patienteneintrag oder Abbrechen für 'Alle'", true);
 				if(ksl.open()==Dialog.OK){
 					actPatient=(Patient)ksl.getSelection();
-					lPatient.setText(actPatient.getLabel());
+					if (actPatient != null) {
+						lPatient.setText(actPatient.getLabel());
+					} else {
+						lPatient.setText(ALLE);
+					}
 				}else{
 					actPatient=null;
 					lPatient.setText(ALLE);
@@ -126,6 +130,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		GridData sgd=new GridData(GridData.GRAB_HORIZONTAL);
 		sgd.minimumWidth=100;
 		cbStat.setLayoutData(sgd);
+		cbStat.setVisibleItemCount(stats.length);
 		cbStat.setItems(stats);
 		//cbStat.add(Messages.getString("RnControlFieldProvider.all")); //$NON-NLS-1$
 		cbStat.addSelectionListener(csel);
