@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3017 2007-08-26 13:26:23Z rgw_ch $
+ * $Id: XMLExporter.java 3031 2007-08-28 15:24:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -483,7 +483,8 @@ public class XMLExporter implements IRnOutputter {
 				el.setAttribute("quantity",Integer.toString(zahl));									//	22350
 				el.setAttribute("date_begin",dateForTarmed);										//	22370
 				el.setText(v.getText());															//	22340
-				el.setAttribute("code",v.getCode());												//	22330
+				//el.setAttribute("code",v.getCode());												//	22330
+				setAttributeWithDefault(el,"code",v.getCode(),"0");									//	22330
 				services.addContent(el);
 			}
 		}
@@ -811,6 +812,17 @@ public class XMLExporter implements IRnOutputter {
 			return ret;
 		}
 		return null;
+	}
+	
+	private void setAttributeWithDefault(final Element element, final String name, String value, final String def){
+		if(element!=null){
+			if(!StringTool.isNothing(name)){
+				if(StringTool.isNothing(value)){
+					value=def;
+				}
+				element.setAttribute(name, value);
+			}
+		}
 	}
 	
 	private boolean setAttributeIfNotEmpty(final Element element,final String name, final String value){
