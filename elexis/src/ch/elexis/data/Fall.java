@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3016 2007-08-26 13:26:12Z rgw_ch $
+ *    $Id: Fall.java 3036 2007-08-29 14:01:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -175,7 +175,7 @@ public class Fall extends PersistentObject{
 		}
 		return ret;
 	}
-	public void setRechnungssteller(Kontakt r){
+	public void setRechnungssteller(final Kontakt r){
 		setInfoString("RechnungsstellerID",r.getId());
 	}
 	/**
@@ -192,11 +192,14 @@ public class Fall extends PersistentObject{
 	}
 	
 	public void setRequiredContact(final String name, final Kontakt k){
-		String[] req=getRequirements().split(";");
-		int idx=StringTool.getIndex(req, name+":K");
-		if(idx!=-1){
-			if(req[idx].endsWith(":K")){
-				setInfoString(name, k.getId());
+		String r=getRequirements();
+		if(!StringTool.isNothing(r)){
+			String[] req=r.split(";");
+			int idx=StringTool.getIndex(req, name+":K");
+			if(idx!=-1){
+				if(req[idx].endsWith(":K")){
+					setInfoString(name, k.getId());
+				}
 			}
 		}
 	}
