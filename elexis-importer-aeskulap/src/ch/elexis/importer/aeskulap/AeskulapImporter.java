@@ -59,6 +59,7 @@ public class AeskulapImporter extends ImporterPage {
 	FileBasedImporter fbi;
 	DirectoryBasedImporter dbi;
 	String fname;
+	String[] actLine;
 	
 	int assumeGender;
 	
@@ -208,45 +209,51 @@ public class AeskulapImporter extends ImporterPage {
 		return Status.OK_STATUS;
 	}
 
+	String getField(int i){
+		if(actLine.length>i){
+			return actLine[i];
+		}
+		return "";
+	}
 	private boolean importPatienten(final ExcelWrapper hofs, final IProgressMonitor moni){
 		float last=hofs.getLastRow();
 		float first=hofs.getFirstRow();
 		int perLine=Math.round(10000f/(last-first));
 		for(int line=Math.round(first+1);line<=last;line++){
-			List<String> fields=hofs.getRow(line);
-			if(Xid.findXID(PATID, fields.get(0))!=null){		// avoid duplicate import
+			actLine=hofs.getRow(line).toArray(new String[0]);
+			if(Xid.findXID(PATID, getField(0))!=null){		// avoid duplicate import
 				continue;
 			}
 
-			TimeTool tt=new TimeTool(fields.get(12));
-			String s=fields.get(13).equals("1") ? "m" : "w";
-			Patient p=new Patient(StringTool.normalizeCase(fields.get(2)),fields.get(3),tt.toString(TimeTool.DATE_GER),s);
+			TimeTool tt=new TimeTool(getField(12));
+			String s=getField(13).equals("1") ? "m" : "w";
+			Patient p=new Patient(StringTool.normalizeCase(getField(2)),getField(3),tt.toString(TimeTool.DATE_GER),s);
 			Anschrift an=p.getAnschrift();
-			an.setStrasse(fields.get(5));
-			an.setPlz(fields.get(6));
-			an.setOrt(fields.get(7));
+			an.setStrasse(getField(5));
+			an.setPlz(getField(6));
+			an.setOrt(getField(7));
 			p.setAnschrift(an);
-			p.set("Telefon1", fields.get(18));
-			p.set("Telefon2", fields.get(17));
-			p.set("NatelNr", fields.get(19));
-			p.set("E-Mail", fields.get(20));
+			p.set("Telefon1", getField(18));
+			p.set("Telefon2", getField(17));
+			p.set("NatelNr", getField(19));
+			p.set("E-Mail", getField(20));
 			StringBuilder sb=new StringBuilder();
-			String gestorben=fields.get(21);
+			String gestorben=getField(21);
 			if(!StringTool.isNothing(gestorben)){
 				sb.append("Verstorben: ").append(gestorben).append("\n");
 				
 			}
 			// In elexis, we have a multi purpose comment field "Bemerkung".
 			// We'll collect several fields there
-			String comment=fields.get(14);
+			String comment=getField(14);
 			if(!StringTool.isNothing(comment)){
 				sb.append("Kommentar: ").append(comment).append("\n");
 			}
-			String warning=fields.get(15);
+			String warning=getField(15);
 			if(!StringTool.isNothing(warning)){
 				sb.append("Warnung: ").append(warning).append("\n");
 			}
-			String beruf=fields.get(11);
+			String beruf=getField(11);
 			if(!StringTool.isNothing(beruf)){
 				sb.append("Beruf: ").append(beruf).append("\n");
 			}
@@ -254,13 +261,13 @@ public class AeskulapImporter extends ImporterPage {
 
 			// If the patient has the ahv field set, this is a good opportunity to
 			// create a standard XID of national validity
-			String ahv=fields.get(22);
+			String ahv=getField(22);
 			if(!StringTool.isNothing(ahv)){
 				p.addXid(Xid.DOMAIN_AHV, ahv, true);
 			}
 			// We use also the original oatient number as a XID to solce later 
 			// references to this patient.
-			p.addXid(PATID, fields.get(0), true);
+			p.addXid(PATID, getField(0), true);
 			moni.worked(perLine);
 		}
 		return true;
@@ -271,10 +278,10 @@ public class AeskulapImporter extends ImporterPage {
 		float first=hofs.getFirstRow();
 		int perLine=Math.round(10000f/(last-first));
 		for(int line=Math.round(first+1);line<=last;line++){
-			List<String> fields=hofs.getRow(line);
-			String patno=fields.get(0);
-			String garantBez=fields.get(1);
-			String kknr=fields.get(2);
+			actLine=hofs.getRow(line).toArray(new String[0]);
+			String patno=getField(0);
+			String garantBez=getField(1);
+			String kknr=getField(2);
 			// luckily, we created a XID for every patient and every garant imported earlier
 			Patient pat=(Patient)Xid.findObject(PATID, patno);
 			if(pat!=null){
@@ -295,19 +302,19 @@ public class AeskulapImporter extends ImporterPage {
 		float first=hofs.getFirstRow();
 		int perLine=Math.round(10000f/(last-first));
 		for(int line=Math.round(first+1);line<=last;line++){
-			List<String> fields=hofs.getRow(line);
-			Organisation o=new Organisation(fields.get(1),fields.get(2));
+			actLine=hofs.getRow(line).toArray(new String[0]);
+			Organisation o=new Organisation(getField(1),getField(2));
 			Anschrift an=o.getAnschrift();
-			an.setStrasse(fields.get(3));
-			an.setPlz(fields.get(4));
-			an.setOrt(fields.get(5));
-			an.setLand(fields.get(9));
+			an.setStrasse(getField(3));
+			an.setPlz(getField(4));
+			an.setOrt(getField(5));
+			an.setLand(getField(9));
 			o.setAnschrift(an);
-			o.set("E-Mail", fields.get(10));
-			o.set("Telefon1", fields.get(7));
-			o.set("Fax", fields.get(8));
-			o.addXid(Xid.DOMAIN_EAN, fields.get(12), false);
-			o.addXid(GARANTID, fields.get(0),  true);
+			o.set("E-Mail", getField(10));
+			o.set("Telefon1", getField(7));
+			o.set("Fax", getField(8));
+			o.addXid(Xid.DOMAIN_EAN, getField(12), false);
+			o.addXid(GARANTID, getField(0),  true);
 			moni.worked(perLine);
 		}
 		return true;
@@ -317,17 +324,17 @@ public class AeskulapImporter extends ImporterPage {
 		float first=hofs.getFirstRow();
 		int perLine=Math.round(10000f/(last-first));
 		for(int line=Math.round(first+1);line<=last;line++){
-			List<String> fields=hofs.getRow(line);
-			Organisation o=new Organisation(fields.get(1),fields.get(2));
+			actLine=hofs.getRow(line).toArray(new String[0]);
+			Organisation o=new Organisation(getField(1),getField(2));
 			Anschrift an=o.getAnschrift();
-			an.setLand(fields.get(6));
-			an.setOrt(fields.get(5));
-			an.setPlz(fields.get(4));
-			an.setStrasse(fields.get(3));
+			an.setLand(getField(6));
+			an.setOrt(getField(5));
+			an.setPlz(getField(4));
+			an.setStrasse(getField(3));
 			o.setAnschrift(an);
-			o.set("Telefon1", fields.get(7));
-			o.set("Fax", fields.get(8));
-			o.set("E-Mail", fields.get(9));
+			o.set("Telefon1", getField(7));
+			o.set("Fax", getField(8));
+			o.set("E-Mail", getField(9));
 			moni.worked(perLine);
 		}
 		return true;
@@ -339,11 +346,11 @@ public class AeskulapImporter extends ImporterPage {
 		
 		for(int line=Math.round(first+1);line<=last;line++){
 			Kontakt k;
-			List<String> fields=hofs.getRow(line);
-			String vorname=fields.get(1);
-			String name=fields.get(2);
-			String abteilung=fields.get(3);
-			String strasse1=fields.get(5);
+			actLine=hofs.getRow(line).toArray(new String[0]);
+			String vorname=getField(1);
+			String name=getField(2);
+			String abteilung=getField(3);
+			String strasse1=getField(5);
 			// Wir wissen nicht, wie der Aeskulap-Anwender die Felder name/vorname/abteilung belegt hat, und was Organisationen
 			// und was personen sind. Wir gehen pragmatisch so vor: Alles was vorname und name hat ist eine Person, alles
 			// andere ist eine Organisation.
@@ -358,18 +365,18 @@ public class AeskulapImporter extends ImporterPage {
 				k=new Person(name,vorname,"",StringTool.isFemale(vorname) ? "w" : "m");
 			}
 			Anschrift an=k.getAnschrift();
-			an.setStrasse(fields.get(4));
-			an.setPlz(fields.get(6));
-			an.setOrt(fields.get(7));
-			an.setLand(fields.get(8));
+			an.setStrasse(getField(4));
+			an.setPlz(getField(6));
+			an.setOrt(getField(7));
+			an.setLand(getField(8));
 			k.setAnschrift(an);
-			k.set("Kuerzel", fields.get(9));
-			k.set("Telefon1", fields.get(16));
-			k.set("Telefon2", fields.get(15));
-			k.set("NatelNr", fields.get(14));
-			k.set("fax", fields.get(17));
-			k.set("E_Mail", fields.get(18));
-			String ean=fields.get(19);
+			k.set("Kuerzel", getField(9));
+			k.set("Telefon1", getField(16));
+			k.set("Telefon2", getField(15));
+			k.set("NatelNr", getField(14));
+			k.set("fax", getField(17));
+			k.set("E_Mail", getField(18));
+			String ean=getField(19);
 			if(!StringTool.isNothing(ean)){
 				k.addXid(Xid.DOMAIN_EAN, ean, false);
 			}
@@ -377,6 +384,8 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return true;
 	}
+	
+	
 	ExcelWrapper checkImport(final String file){
 		ExcelWrapper hofs=new ExcelWrapper();
 		if(hofs.load(file, 0)){
