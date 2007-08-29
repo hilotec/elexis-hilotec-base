@@ -374,8 +374,8 @@ public class AeskulapImporter extends ImporterPage {
 			k.set("Telefon1", getField(16));
 			k.set("Telefon2", getField(15));
 			k.set("NatelNr", getField(14));
-			k.set("fax", getField(17));
-			k.set("E_Mail", getField(18));
+			k.set("Fax", getField(17));
+			k.set("E-Mail", getField(18));
 			String ean=getField(19);
 			if(!StringTool.isNothing(ean)){
 				k.addXid(Xid.DOMAIN_EAN, ean, false);
