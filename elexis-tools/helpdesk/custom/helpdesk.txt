@@ -1,0 +1,61 @@
+[TITLE]
+	Elexis Support
+
+[HOST]
+Internet support
+-connect 62.167.242.161:22700 -noregistry
+
+[TEXTTOP]
+Doppelklick zum Verbinden
+
+[TEXTMIDDLE]
+Bevor Sie versuchen zu verbinden
+
+[TEXTBOTTOM]
+Telefonieren Sie 052 624 40 77
+
+[TEXTRBOTTOM]
+
+
+[TEXTRMIDDLE]
+Elexis home
+
+[TEXTRTOP]
+Schaffhausen
+
+[TEXTBUTTON]
+Siehe auch
+
+[WEBPAGE]
+http://www.elexis.ch
+
+[TEXTCLOSEBUTTON]
+STOP test
+
+
+[BALLOON1TITLE]
+Stelle Verbindung her...
+
+[BALLOON1A]
+5 min versuchen
+
+[BALLOON1B]
+Die Sofwtare wird sich selbst entfernen
+
+[BALLOON1C]
+wenn keine Verbindung hergestellt werden kann.
+
+[BALLOON2TITLE]
+Verbindung aktiv
+
+[BALLOON2A]
+Achtung: Ihr Desktop ist jetzt für den Support sichtbar
+
+[BALLOON2B]
+Sie können die Verbindung jederzeit mit
+
+[BALLOON2C]
+dem Schliessen-Knopf unterbrechen
+
+[WEBPAGE]
+http://www.elexis.ch
