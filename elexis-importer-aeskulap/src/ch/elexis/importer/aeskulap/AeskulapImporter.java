@@ -15,7 +15,6 @@ package ch.elexis.importer.aeskulap;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,12 +28,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import au.com.bytecode.opencsv.CSVReader;
-
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
@@ -193,13 +192,15 @@ public class AeskulapImporter extends ImporterPage {
 			if(hofs!=null){
 				importGaranten(hofs,monitor);
 			}
+			PersistentObject.clearCache();
+			System.gc();
 			monitor.subTask("Importiere Patienten");
 			hofs=checkImport(dir+File.separator+"patienten.xls");
 			if(hofs!=null){
 				importPatienten(hofs,monitor);
 			}
 			monitor.subTask("Importiere Fälle");
-			hofs=checkImport(dir+File.separator+"pat._garanten.xls");
+			hofs=checkImport(dir+File.separator+"pat_garanten.xls");
 			if(hofs!=null){
 				importPatGaranten(hofs,monitor);
 			}
@@ -209,7 +210,7 @@ public class AeskulapImporter extends ImporterPage {
 		return Status.OK_STATUS;
 	}
 
-	String getField(int i){
+	String getField(final int i){
 		if(actLine.length>i){
 			return actLine[i];
 		}
@@ -228,6 +229,7 @@ public class AeskulapImporter extends ImporterPage {
 			TimeTool tt=new TimeTool(getField(12));
 			String s=getField(13).equals("1") ? "m" : "w";
 			Patient p=new Patient(StringTool.normalizeCase(getField(2)),getField(3),tt.toString(TimeTool.DATE_GER),s);
+			moni.subTask(p.getLabel());
 			Anschrift an=p.getAnschrift();
 			an.setStrasse(getField(5));
 			an.setPlz(getField(6));
