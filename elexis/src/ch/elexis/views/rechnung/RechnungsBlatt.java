@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 2314 2007-05-02 14:31:23Z danlutz $
+ * $Id: RechnungsBlatt.java 3038 2007-08-29 16:12:48Z danlutz $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -122,6 +122,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     	}
     	rnform.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
     	ExpandableComposite ecBuchungen=WidgetFactory.createExpandableComposite(tk, form, "Buchungen");
+    	ecBuchungen.setExpanded(true);
     	// tk.createLabel(body, "Buchungen");
     	buchungen=new ListViewer(ecBuchungen,SWT.V_SCROLL|SWT.BORDER);
     	//TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
@@ -169,6 +170,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     	});
     	//new Label(body,SWT.SEPARATOR|SWT.HORIZONTAL);
     	ExpandableComposite ecBemerkungen=WidgetFactory.createExpandableComposite(tk, form, "Bemerkungen");
+    	ecBemerkungen.setExpanded(true);
     	tBemerkungen=SWTHelper.createText(tk, ecBemerkungen, 5, SWT.BORDER);
     	tBemerkungen.addFocusListener(new FocusAdapter(){
 			@Override
@@ -180,16 +182,19 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     	ecBemerkungen.setClient(tBemerkungen);
     	//tk.createLabel(body, "Statusänderungen");
     	ExpandableComposite ecStatus=WidgetFactory.createExpandableComposite(tk, form, "Statusänderungen");
+    	ecStatus.setExpanded(true);
     	lbJournal=new org.eclipse.swt.widgets.List(ecStatus,SWT.V_SCROLL|SWT.BORDER);
     	SWTHelper.setGridDataHeight(lbJournal, 4, true);
     	tk.adapt(lbJournal,true,true);
     	ecStatus.setClient(lbJournal);
     	//tk.createLabel(body, "Fehlermeldungen");
     	ExpandableComposite ecFehler=WidgetFactory.createExpandableComposite(tk, form, "Fehlermeldungen");
+    	ecFehler.setExpanded(true);
     	tRejects=SWTHelper.createText(tk, ecFehler, 4, SWT.READ_ONLY|SWT.V_SCROLL);
     	ecFehler.setClient(tRejects);
     	//tk.createLabel(body, "Ausgaben");
     	ExpandableComposite ecAusgaben=WidgetFactory.createExpandableComposite(tk, form, "Ausgaben");
+    	ecAusgaben.setExpanded(true);
     	lbOutputs=new org.eclipse.swt.widgets.List(ecAusgaben,SWT.V_SCROLL|SWT.BORDER);
     	ecAusgaben.setClient(lbOutputs);
     	SWTHelper.setGridDataHeight(lbOutputs, 4, true);
@@ -197,6 +202,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 
     	//tk.createLabel(body, "Konsultationen");
     	ExpandableComposite ecKons=WidgetFactory.createExpandableComposite(tk, form, "Konsultationen");
+    	ecKons.setExpanded(true);
     	konsultationenViewer = new ListViewer(ecKons, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
     	ecKons.setClient(konsultationenViewer.getList());
 
