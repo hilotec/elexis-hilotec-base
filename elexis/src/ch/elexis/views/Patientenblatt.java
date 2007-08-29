@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ * $Id: Patientenblatt.java 3037 2007-08-29 15:58:53Z danlutz $
  *******************************************************************************/
 
 
@@ -137,6 +137,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
         ExpandableComposite ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
+        ecZA.setExpanded(true);
         
 		inpZusatzAdresse=new DynamicListDisplay(ecZA,SWT.NONE,new DLDListener(){
 			public boolean dropped(final PersistentObject dropped) {
@@ -163,6 +164,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         ecZA.setClient(inpZusatzAdresse);
 		for(int i=0;i<lbExpandable.length;i++){
             ec[i]=WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
+            ec[i].setExpanded(true);
 			txExpandable[i]=tk.createText(ec[i], "" , SWT.MULTI);
 			txExpandable[i].addFocusListener(new Focusreact(dfExpandable[i]));
             ec[i].setData("dbfield",dfExpandable[i]);
@@ -182,9 +184,11 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
             ec[i].setClient(txExpandable[i]);
 		}
 		ExpandableComposite ecdm=WidgetFactory.createExpandableComposite(tk, form, lbLists[0]);
+		ecdm.setExpanded(true);
 		dmd=new DauerMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
 		ExpandableComposite ecrm=WidgetFactory.createExpandableComposite(tk, form, lbLists[1]);
+		ecrm.setExpanded(true);
 		dlReminder=new DynamicListDisplay(ecrm,SWT.NONE,null);
 		ecrm.setClient(dlReminder);
 		makeActions();
@@ -268,7 +272,19 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 			}
 		}
 	}
-	void setPatient(final Patient p)
+	void setPatient(final Patient p) {
+		/*
+		 * work-around:
+		 * The ExpandableComposites for Zusatzadressen and DauerMedi are
+		 * expanded correctly only if the method setPatientInternal is called
+		 * twice. Just calling form.reflow() doesn't help, not even calling it
+		 * twice. Maybe the problem is that some ExpandableComposites contain
+		 * controls with a layout not implementing ILayoutExtension.  
+		 */
+		setPatientInternal(p);
+		setPatientInternal(p);
+	}
+	private void setPatientInternal(final Patient p)
 	{
 		actPatient=p;
 	
