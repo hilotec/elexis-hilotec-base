@@ -173,7 +173,7 @@ Es empfiehlt sich, den Kunden darauf aufmerksam zu machen, dass Sie folgende Ang
     \item Eine konkrete Vorstellung, wie der Briefkopf und die verschiedenen Vorlagen für Arztbriefe, Rezepte, Rechnungen und Zeugnisse aussehen sollen.
     \item Eine Auflistung, wer alles am Programm arbeiten soll, mit Benutzernamen und Passwörtern.
     \item Eine Auflistung der im Praxislabor durchgeführten Untersuchungen, eingeteilt in logische Gruppen
-    \item Auflistung der am Praxisstandort gültigen Taxpunktwerde für KVG, UVG, IV, MV.
+    \item Auflistung der am Praxisstandort gültigen Taxpunktwerte für KVG, UVG, IV, MV.
     \item Aufstellung der am häufigsten benötigten Abrechnungspositionen und allfälliger Eigenleistungen und Eigenartikel.
 \end{itemize}
 
@@ -188,7 +188,26 @@ Im weiteres sollte folgendes vor der Installation besorgt werden:
 
 \section{Durchführung der Installation}
 \label{ablauf}
-
+\begin{itemize}
+    \item Datenbankserevr installieren
+    \item Datenbank anlegen
+    \item Rechte für Datenbank erstellen
+    \item Client installieren
+    \item Verbindung mit Datenbank herstellen
+    \item Programm verlassen, ggf. demoDB löschen
+    \item Elexis starten, Adminstrator login
+    \item Ersten Mandanten erstellen, diesen zunächst in die Gruppen Admin und Anwender nehmen
+    \item Benutzerwechsel auf diesen Mandanten
+    \item Pseudopatienten zum Üben erstellen, Fall für diesen Patienten erstellen
+    \item Stammdaten importieren
+    \begin{itemize}
+        \item Tarmed
+        \item icd-10
+        \item Medikamente/Medicals
+        \item MiGel
+        \item Analysenliste
+    \end{itemize}
+\end{itemize}
 
 \section{Grundkonfiguration}
 \label{config}
