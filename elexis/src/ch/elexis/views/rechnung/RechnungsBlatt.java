@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 3038 2007-08-29 16:12:48Z danlutz $
+ * $Id: RechnungsBlatt.java 3048 2007-08-31 10:51:02Z danlutz $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -27,6 +27,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -37,6 +40,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.ObjectListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
@@ -44,6 +48,7 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.data.Zahlung;
+import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.Money;
@@ -68,6 +73,13 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	
 	ListViewer konsultationenViewer;
 		
+	private ExpandableComposite ecBuchungen;
+	private ExpandableComposite ecBemerkungen;
+	private ExpandableComposite ecStatus;
+	private ExpandableComposite ecFehler;
+	private ExpandableComposite ecAusgaben;
+	private ExpandableComposite ecKons;
+	
 	public static final InputData[] rndata={
     	new InputData("RnNummer"),
     	new InputData("RnDatum"),
@@ -121,8 +133,19 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     		li.setEditable(false);
     	}
     	rnform.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-    	ExpandableComposite ecBuchungen=WidgetFactory.createExpandableComposite(tk, form, "Buchungen");
-    	ecBuchungen.setExpanded(true);
+    	
+		IExpansionListener ecExpansionListener =  new ExpansionAdapter(){
+            @Override
+            public void expansionStateChanging(final ExpansionEvent e)
+            {
+            	ExpandableComposite src=(ExpandableComposite)e.getSource();
+                saveExpandedState("RechnungsBlatt/"+src.getText(), e.getState());
+            }
+            
+        };
+		
+    	ecBuchungen=WidgetFactory.createExpandableComposite(tk, form, "Buchungen");
+    	ecBuchungen.addExpansionListener(ecExpansionListener);
     	// tk.createLabel(body, "Buchungen");
     	buchungen=new ListViewer(ecBuchungen,SWT.V_SCROLL|SWT.BORDER);
     	//TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
@@ -169,8 +192,8 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     		}
     	});
     	//new Label(body,SWT.SEPARATOR|SWT.HORIZONTAL);
-    	ExpandableComposite ecBemerkungen=WidgetFactory.createExpandableComposite(tk, form, "Bemerkungen");
-    	ecBemerkungen.setExpanded(true);
+    	ecBemerkungen=WidgetFactory.createExpandableComposite(tk, form, "Bemerkungen");
+    	ecBemerkungen.addExpansionListener(ecExpansionListener);
     	tBemerkungen=SWTHelper.createText(tk, ecBemerkungen, 5, SWT.BORDER);
     	tBemerkungen.addFocusListener(new FocusAdapter(){
 			@Override
@@ -181,28 +204,28 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     	});
     	ecBemerkungen.setClient(tBemerkungen);
     	//tk.createLabel(body, "Statusänderungen");
-    	ExpandableComposite ecStatus=WidgetFactory.createExpandableComposite(tk, form, "Statusänderungen");
-    	ecStatus.setExpanded(true);
+    	ecStatus=WidgetFactory.createExpandableComposite(tk, form, "Statusänderungen");
+    	ecStatus.addExpansionListener(ecExpansionListener);
     	lbJournal=new org.eclipse.swt.widgets.List(ecStatus,SWT.V_SCROLL|SWT.BORDER);
     	SWTHelper.setGridDataHeight(lbJournal, 4, true);
     	tk.adapt(lbJournal,true,true);
     	ecStatus.setClient(lbJournal);
     	//tk.createLabel(body, "Fehlermeldungen");
-    	ExpandableComposite ecFehler=WidgetFactory.createExpandableComposite(tk, form, "Fehlermeldungen");
-    	ecFehler.setExpanded(true);
+    	ecFehler=WidgetFactory.createExpandableComposite(tk, form, "Fehlermeldungen");
+    	ecFehler.addExpansionListener(ecExpansionListener);
     	tRejects=SWTHelper.createText(tk, ecFehler, 4, SWT.READ_ONLY|SWT.V_SCROLL);
     	ecFehler.setClient(tRejects);
     	//tk.createLabel(body, "Ausgaben");
-    	ExpandableComposite ecAusgaben=WidgetFactory.createExpandableComposite(tk, form, "Ausgaben");
-    	ecAusgaben.setExpanded(true);
+    	ecAusgaben=WidgetFactory.createExpandableComposite(tk, form, "Ausgaben");
+    	ecAusgaben.addExpansionListener(ecExpansionListener);
     	lbOutputs=new org.eclipse.swt.widgets.List(ecAusgaben,SWT.V_SCROLL|SWT.BORDER);
     	ecAusgaben.setClient(lbOutputs);
     	SWTHelper.setGridDataHeight(lbOutputs, 4, true);
     	tk.adapt(lbOutputs,true,true);
 
     	//tk.createLabel(body, "Konsultationen");
-    	ExpandableComposite ecKons=WidgetFactory.createExpandableComposite(tk, form, "Konsultationen");
-    	ecKons.setExpanded(true);
+    	ecKons=WidgetFactory.createExpandableComposite(tk, form, "Konsultationen");
+    	ecKons.addExpansionListener(ecExpansionListener);
     	konsultationenViewer = new ListViewer(ecKons, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
     	ecKons.setClient(konsultationenViewer.getList());
 
@@ -279,6 +302,28 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 		GlobalEvents.getInstance().addObjectListener(this);
 	}
 	
+	private void saveExpandedState(String field, boolean state){
+		if(state){
+			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.OPEN);
+		}else{
+			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.CLOSED);
+		}
+	}
+	private void setExpandedState(ExpandableComposite ec,String field){
+		String mode=Hub.userCfg.get(UserSettings2.EXPANDABLE_COMPOSITES,UserSettings2.REMEMBER_STATE);
+		if(mode.equals(UserSettings2.OPEN)){
+			ec.setExpanded(true);
+		}else if(mode.equals(UserSettings2.CLOSED)){
+			ec.setExpanded(false);
+		}else{
+			String state=Hub.userCfg.get(UserSettings2.STATES+field,UserSettings2.CLOSED);
+			if(state.equals(UserSettings2.CLOSED)){
+				ec.setExpanded(false);
+			}else{
+				ec.setExpanded(true);
+			}
+		}
+	}
 	
 	@Override
 	public void dispose() {
@@ -315,6 +360,12 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 					display();
 				}
 			});
+		} else if (obj instanceof Anwender) {
+			Desk.theDisplay.syncExec(new Runnable() {
+				public void run() {
+					display();
+				}
+			});
 		}
 	}
 	public void display(){
@@ -346,7 +397,16 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	    	}
 	    	tBemerkungen.setText(actRn.getBemerkung());
     	}
+    	
     	konsultationenViewer.refresh();
+
+    	setExpandedState(ecBuchungen, "RechnungsBlatt/" + ecBuchungen.getText());
+    	setExpandedState(ecBemerkungen, "RechnungsBlatt/" + ecBemerkungen.getText());
+    	setExpandedState(ecStatus, "RechnungsBlatt/" + ecStatus.getText());
+    	setExpandedState(ecFehler, "RechnungsBlatt/" + ecFehler.getText());
+    	setExpandedState(ecAusgaben, "RechnungsBlatt/" + ecAusgaben.getText());
+    	setExpandedState(ecKons, "RechnungsBlatt/" + ecKons.getText());
+    	
     	form.reflow(true);
     }
 
