@@ -287,6 +287,8 @@ public class JournalView extends ViewPart implements SelectionListener,
     private IAction addProblemAction;
     private IAction delProblemAction;
     private IAction addFixmedikationAction;
+    private IAction editFixmedikationAction;
+    private IAction deleteFixmedikationAction;
 
     /* problemAssignmentViewer */
     private IAction unassignProblemAction;
@@ -590,7 +592,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 
         menus.createToolbar(addKonsultationAction, addProblemAction);
         menus.createControlContextMenu(problemsKTable,
-        		addFixmedikationAction);
+        		addFixmedikationAction, editFixmedikationAction, deleteFixmedikationAction);
         menus.createViewerContextMenu(problemAssignmentViewer,
                 unassignProblemAction);
         menus.createViewerContextMenu(verrechnungViewer,
@@ -1800,7 +1802,37 @@ public class JournalView extends ViewPart implements SelectionListener,
 				}
 			}
 		};
+
+		editFixmedikationAction = new Action("Fixmedikation ändern...") {
+			{
+				setToolTipText("Fixmedikation ändern...");
+			}
+			
+			public void run() {
+    			try {
+        			getViewSite().getPage().showView(ProblemView.ID);
+    			} catch (Exception ex) {
+    				ExHandler.handle(ex);
+    				log.log("Fehler beim Öffnen von ProblemView: " + ex.getMessage(), Log.ERRORS);
+    			}
+			}
+		};
 		
+		deleteFixmedikationAction = new Action("Fixmedikation entfernen...") {
+			{
+				setToolTipText("Fixmedikation entfernen...");
+			}
+			
+			public void run() {
+    			try {
+        			getViewSite().getPage().showView(ProblemView.ID);
+    			} catch (Exception ex) {
+    				ExHandler.handle(ex);
+    				log.log("Fehler beim Öffnen von ProblemView: " + ex.getMessage(), Log.ERRORS);
+    			}
+			}
+		};
+
         unassignProblemAction = new Action("Problem entfernen") {
             {
                 setToolTipText("Problem von Konsulation entfernen");
