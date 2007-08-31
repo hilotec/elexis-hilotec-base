@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalImporter.java 1742 2007-02-06 20:48:17Z rgw_ch $
+ *  $Id: MedicalImporter.java 3050 2007-08-31 15:55:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,7 +43,7 @@ public class MedicalImporter extends ImporterPage {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
 		File file=new File(results[0]);
 		long l=file.length();
 		InputStreamReader ir=new InputStreamReader(new FileInputStream(file),"iso-8859-1");
@@ -58,6 +61,7 @@ public class MedicalImporter extends ImporterPage {
 		monitor.beginTask("Medical Import"+mode,(int)(l/100));
 		
 		Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
+		int counter=0;
 		while((in=br.readLine())!=null){
 			/*String s1=in.substring(0,3);		*/	// ??
 			String pk=in.substring(3,10);			// Pharmacode
@@ -97,6 +101,11 @@ public class MedicalImporter extends ImporterPage {
 			if(monitor.isCanceled()){
 				monitor.done();
 				return Status.CANCEL_STATUS;
+			}
+			if(counter++>100){
+				PersistentObject.clearCache();
+				System.gc();
+				counter=0;
 			}
 		}
 		monitor.done();
