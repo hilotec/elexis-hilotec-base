@@ -13,39 +13,50 @@
 
 package ch.elexis.preferences;
 
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class UserSettings2 extends PreferencePage implements
+import ch.elexis.Hub;
+
+public class UserSettings2 extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
-
-	public UserSettings2() {
-		// TODO Auto-generated constructor stub
+	public static final String EXPANDABLE_COMPOSITES_BASE="view/expandableComposites";
+	public static final String EXPANDABLE_COMPOSITES=EXPANDABLE_COMPOSITES_BASE+"/setting";
+	public static final String STATES=EXPANDABLE_COMPOSITES_BASE+"/states/";
+	public static final String OPEN="1";
+	public static final String CLOSED="2";
+	public static final String REMEMBER_STATE="3";
+	
+	private SettingsPreferenceStore prefs=new SettingsPreferenceStore(Hub.userCfg);
+	public UserSettings2(){
+		super(GRID);
+		setPreferenceStore(prefs);
+		prefs.setDefault(EXPANDABLE_COMPOSITES, REMEMBER_STATE);
+		System.out.println(getPreferenceStore().getString(EXPANDABLE_COMPOSITES));
 	}
-
-	public UserSettings2(String title) {
-		super(title);
-		// TODO Auto-generated constructor stub
-	}
-
-	public UserSettings2(String title, ImageDescriptor image) {
-		super(title, image);
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
-	protected Control createContents(Composite parent) {
-		// TODO Auto-generated method stub
-		return null;
+	protected void createFieldEditors() {
+		addField(new RadioGroupFieldEditor(EXPANDABLE_COMPOSITES,
+				"Erweiterbare Felder",1,new String[][]{
+				{"Immer geöffnet",OPEN},
+				{"Immer geschlossen",CLOSED},
+				{"Letzten Zustand merken",REMEMBER_STATE}	
+				
+		},getFieldEditorParent()));
 	}
 
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-
+		
 	}
+	@Override
+	public boolean performOk() {
+		prefs.flush();
+		return super.performOk();
+	}
+	
 
+	
 }

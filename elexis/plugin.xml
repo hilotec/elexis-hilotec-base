@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 3042 2007-08-30 13:51:56Z rgw_ch $ 
+<!-- $Id: plugin.xml 3044 2007-08-31 05:15:34Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -482,6 +482,7 @@
             id="ch.elexis.preferences.LagerverwaltungPrefs"
             name="Lagerverwaltung"/>
       <page
+            category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.preferences.UserSettings2"
             id="ch.elexis.userSetting2"
             name="Ansicht">

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 3037 2007-08-29 15:58:53Z danlutz $
+ * $Id: Patientenblatt.java 3044 2007-08-31 05:15:34Z rgw_ch $
  *******************************************************************************/
 
 
@@ -45,9 +45,11 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -56,6 +58,7 @@ import ch.elexis.dialogs.AddBuchungDialog;
 import ch.elexis.dialogs.AnschriftEingabeDialog;
 import ch.elexis.dialogs.KontaktDetailDialog;
 import ch.elexis.dialogs.KontaktSelektor;
+import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.DynamicListDisplay;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
@@ -90,6 +93,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 	private final Hyperlinkreact hr=new Hyperlinkreact();
     private final ScrolledForm form;
     private final ViewMenus viewmenu;
+    private ExpandableComposite ecdm,ecZA;
     
 	Patientenblatt(final Composite parent, final IViewSite site)
 	{
@@ -136,8 +140,9 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		inpAdresse.setText("---\n",false,false);
 		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
-        ExpandableComposite ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
-        ecZA.setExpanded(true);
+        ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
+        setExpandedState(ecZA,"Patientenblatt/Zusatzadressen");
+        //ecZA.setExpanded(true);
         
 		inpZusatzAdresse=new DynamicListDisplay(ecZA,SWT.NONE,new DLDListener(){
 			public boolean dropped(final PersistentObject dropped) {
@@ -164,7 +169,8 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         ecZA.setClient(inpZusatzAdresse);
 		for(int i=0;i<lbExpandable.length;i++){
             ec[i]=WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
-            ec[i].setExpanded(true);
+            setExpandedState(ec[i], "Patientenblatt/"+lbExpandable[i]);
+            //ec[i].setExpanded(true);
 			txExpandable[i]=tk.createText(ec[i], "" , SWT.MULTI);
 			txExpandable[i].addFocusListener(new Focusreact(dfExpandable[i]));
             ec[i].setData("dbfield",dfExpandable[i]);
@@ -172,23 +178,25 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
                 @Override
                 public void expansionStateChanging(final ExpansionEvent e)
                 {
+                	ExpandableComposite src=(ExpandableComposite)e.getSource();
                     if(e.getState()==true){
-                        ExpandableComposite src=(ExpandableComposite)e.getSource();
                         Text tx=(Text)src.getClient();
                         tx.setText(StringTool.unNull(actPatient.get((String)src.getData("dbfield"))));
-                        
                     }
+                    saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
                 }
                 
             });
             ec[i].setClient(txExpandable[i]);
 		}
-		ExpandableComposite ecdm=WidgetFactory.createExpandableComposite(tk, form, lbLists[0]);
-		ecdm.setExpanded(true);
+		ecdm=WidgetFactory.createExpandableComposite(tk, form, lbLists[0]);
+		setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
+		//ecdm.setExpanded(true);
 		dmd=new DauerMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
 		ExpandableComposite ecrm=WidgetFactory.createExpandableComposite(tk, form, lbLists[1]);
-		ecrm.setExpanded(true);
+		setExpandedState(ecrm, "Patientenblatt/"+lbLists[1]);
+		//ecrm.setExpanded(true);
 		dlReminder=new DynamicListDisplay(ecrm,SWT.NONE,null);
 		ecrm.setClient(dlReminder);
 		makeActions();
@@ -198,6 +206,28 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         tk.paintBordersFor(form.getBody());
 	}
     
+	private void saveExpandedState(String field, boolean state){
+		if(state){
+			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.OPEN);
+		}else{
+			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.CLOSED);
+		}
+	}
+	private void setExpandedState(ExpandableComposite ec,String field){
+		String mode=Hub.userCfg.get(UserSettings2.EXPANDABLE_COMPOSITES,UserSettings2.REMEMBER_STATE);
+		if(mode.equals(UserSettings2.OPEN)){
+			ec.setExpanded(true);
+		}else if(mode.equals(UserSettings2.CLOSED)){
+			ec.setExpanded(false);
+		}else{
+			String state=Hub.userCfg.get(UserSettings2.STATES+field,UserSettings2.CLOSED);
+			if(state.equals(UserSettings2.CLOSED)){
+				ec.setExpanded(false);
+			}else{
+				ec.setExpanded(true);
+			}
+		}
+	}
 	@Override
 	public void dispose(){
 		GlobalEvents.getInstance().removeSelectionListener(this);
@@ -313,7 +343,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         }
         txSimple[10].setText(p.getKontostand().getAmountAsString());
         inpAdresse.setText(p.getPostAnschrift(false),false,false);
-        
+        setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
 		inpZusatzAdresse.clear();
 		for(BezugsKontakt za : p.getBezugsKontakte()){
 			inpZusatzAdresse.add(za);
@@ -321,11 +351,13 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		
         
 		for(int i=0;i<dfExpandable.length;i++){
+			setExpandedState(ec[i], "Patientenblatt/"+ec[i].getText());
             if(ec[i].isExpanded()==true){
                 txExpandable[i].setText(p.get(dfExpandable[i]));
             }
 		}
 		dmd.reload();
+		setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
 		form.reflow(true);
 	}
     public void refresh(){
@@ -335,8 +367,10 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 
     public void selectionEvent(final PersistentObject obj)
     {
-        if((obj instanceof Patient)){
+        if(obj instanceof Patient){
             setPatient((Patient)obj);
+        }else if(obj instanceof Anwender){
+        	setPatient(GlobalEvents.getSelectedPatient());
         }
     }
 	
