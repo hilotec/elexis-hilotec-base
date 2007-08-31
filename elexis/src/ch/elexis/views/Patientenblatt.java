@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 3044 2007-08-31 05:15:34Z rgw_ch $
+ * $Id: Patientenblatt.java 3047 2007-08-31 09:30:34Z danlutz $
  *******************************************************************************/
 
 
@@ -36,6 +36,7 @@ import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -140,9 +141,20 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		inpAdresse.setText("---\n",false,false);
 		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
+		IExpansionListener ecExpansionListener =  new ExpansionAdapter(){
+            @Override
+            public void expansionStateChanging(final ExpansionEvent e)
+            {
+            	ExpandableComposite src=(ExpandableComposite)e.getSource();
+                saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
+            }
+            
+        };
+		
         ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
         setExpandedState(ecZA,"Patientenblatt/Zusatzadressen");
         //ecZA.setExpanded(true);
+        ecZA.addExpansionListener(ecExpansionListener);
         
 		inpZusatzAdresse=new DynamicListDisplay(ecZA,SWT.NONE,new DLDListener(){
 			public boolean dropped(final PersistentObject dropped) {
@@ -181,7 +193,11 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
                 	ExpandableComposite src=(ExpandableComposite)e.getSource();
                     if(e.getState()==true){
                         Text tx=(Text)src.getClient();
-                        tx.setText(StringTool.unNull(actPatient.get((String)src.getData("dbfield"))));
+                        if (actPatient != null) {
+                        	tx.setText(StringTool.unNull(actPatient.get((String)src.getData("dbfield"))));
+                        } else {
+                        	tx.setText("");
+                        }
                     }
                     saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
                 }
@@ -192,11 +208,13 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		ecdm=WidgetFactory.createExpandableComposite(tk, form, lbLists[0]);
 		setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
 		//ecdm.setExpanded(true);
+		ecdm.addExpansionListener(ecExpansionListener);
 		dmd=new DauerMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
 		ExpandableComposite ecrm=WidgetFactory.createExpandableComposite(tk, form, lbLists[1]);
 		setExpandedState(ecrm, "Patientenblatt/"+lbLists[1]);
 		//ecrm.setExpanded(true);
+		ecrm.addExpansionListener(ecExpansionListener);
 		dlReminder=new DynamicListDisplay(ecrm,SWT.NONE,null);
 		ecrm.setClient(dlReminder);
 		makeActions();
