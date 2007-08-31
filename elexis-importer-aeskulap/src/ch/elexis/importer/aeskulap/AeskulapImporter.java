@@ -220,6 +220,7 @@ public class AeskulapImporter extends ImporterPage {
 		float last=hofs.getLastRow();
 		float first=hofs.getFirstRow();
 		int perLine=Math.round(10000f/(last-first));
+		int counter=0;
 		for(int line=Math.round(first+1);line<=last;line++){
 			actLine=hofs.getRow(line).toArray(new String[0]);
 			if(Xid.findXID(PATID, getField(0))!=null){		// avoid duplicate import
@@ -267,10 +268,15 @@ public class AeskulapImporter extends ImporterPage {
 			if(!StringTool.isNothing(ahv)){
 				p.addXid(Xid.DOMAIN_AHV, ahv, true);
 			}
-			// We use also the original oatient number as a XID to solce later 
+			// We use also the original patient number as a XID to solce later 
 			// references to this patient.
 			p.addXid(PATID, getField(0), true);
 			moni.worked(perLine);
+			if(counter++>1000){	// some doctors do have a lot of patients but not enough memory...
+				counter=0;
+				PersistentObject.clearCache();
+				System.gc();
+			}
 		}
 		return true;
 	}
