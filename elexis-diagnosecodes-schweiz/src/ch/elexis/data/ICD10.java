@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICD10.java 2771 2007-07-10 12:04:22Z rgw_ch $
+ *    $Id: ICD10.java 3049 2007-08-31 15:55:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -43,7 +43,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	
 	static{
 		addMapping("ICD10","parent","Code=ICDCode","Text=ICDTxt","encoded","ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		String check=PersistentObject.j.queryString("SELECT ID FROM "+TABLENAME+" WHERE ID LIKE 'A%'");
+		String check=PersistentObject.j.queryString("SELECT ID FROM "+TABLENAME+" WHERE icdcode LIKE 'A%'");
 		ICD10 version=load("1");
 		if(check==null) {
 			createTable();
@@ -83,11 +83,11 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 		}
 			
 	}
-	public static ICD10 load(String id){
+	public static ICD10 load(final String id){
 		return new ICD10(id);
 	}
 	
-	public ICD10(String parent, String code,String shortCode){
+	public ICD10(final String parent, final String code,final String shortCode){
 		create(null);
 		set("Code",code); //$NON-NLS-1$
 		set("encoded",shortCode); //$NON-NLS-1$
@@ -120,12 +120,12 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	public String getEncoded(){
 		return get("encoded"); //$NON-NLS-1$
 	}
-	public String getField(int f){
+	public String getField(final int f){
 		return getEncoded().split(";")[f]; //$NON-NLS-1$
 	}
 	public ICD10() {}
 
-	protected ICD10(String id) {
+	protected ICD10(final String id) {
 		super(id);
 	}
 
@@ -153,13 +153,13 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 			return "ICD-10"; //$NON-NLS-1$
 	}
 	
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public void setExt(String name,String value){
+	@SuppressWarnings("unchecked") 
+	public void setExt(final String name,final String value){
 		Hashtable<String,String> ext=getExtInfo();
 		ext.put(name,value);
 		writeExtInfo(ext);
 	}
-	public String getExt(String name){
+	public String getExt(final String name){
 		Hashtable ext=getExtInfo();
 		String ret=(String)ext.get(name);
 		return checkNull(ret);
@@ -168,7 +168,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	public Hashtable getExtInfo(){
 		return getHashtable("ExtInfo"); //$NON-NLS-1$
 	}
-	public void writeExtInfo(Hashtable ext){
+	public void writeExtInfo(final Hashtable ext){
 		setHashtable("ExtInfo",ext); //$NON-NLS-1$
 	}
 	@Override
