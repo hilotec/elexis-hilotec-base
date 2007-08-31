@@ -41,7 +41,7 @@
             id="ch.elexis.agenda.tageseinteilung"
             name="%Tageseinteilung"/>
       <page
-            category="ch.elexis.Agendaprefs"
+            category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.preferences.AgendaAnzeige"
             id="ch.elexis.agenda.anzeige"
             name="%Ansicht"/>
