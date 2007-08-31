@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3052 2007-08-31 15:55:22Z rgw_ch $
+# * $Id: createDB.script 3053 2007-08-31 16:07:03Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -36,14 +36,14 @@ CREATE TABLE KONTAKT(
 	Bezeichnung1	VARCHAR(80),				# name1
 	Bezeichnung2	VARCHAR(80),				# name2
 	Bezeichnung3	VARCHAR(80),				# name3
-	Strasse			VARCHAR(40),				# street
+	Strasse			VARCHAR(80),				# street
 	Plz				VARCHAR(6),					# zip-code
-	Ort				VARCHAR(40),				# place
+	Ort				VARCHAR(50),				# place (don't try Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch)
 	Telefon1		VARCHAR(30),				# phone1
 	Telefon2		VARCHAR(30),				# phone2
-	Fax				VARCHAR(30),
+	Fax				VARCHAR(30),				# you'll guess it
 	NatelNr			VARCHAR(30),				# mobile
-	EMail			VARCHAR(30),				
+	EMail			VARCHAR(30),				# guess 
 	Website			VARCHAR(40),
 	Gruppe			VARCHAR(10),				# mandator group
 	PatientNr		VARCHAR(10),				# external identifier
@@ -51,8 +51,8 @@ CREATE TABLE KONTAKT(
 	Bemerkung		TEXT,						# remarks
 	Diagnosen		BLOB,						# diagnoses	
 	PersAnamnese	BLOB,						# anamnesis
-	SysAnamnese		BLOB,
-	FamAnamnese	    BLOB,
+	SysAnamnese		BLOB,						# deprecated, do not use
+	FamAnamnese	    BLOB,						# deprecated, do not use
 	Risiken			TEXT,						# risk factors
 	Allergien		TEXT,						# allergies
 	ExtInfo			BLOB						# other informations (Hashtable)
@@ -77,21 +77,21 @@ CREATE INDEX aij1 on KONTAKT_ADRESS_JOINT (myId);
 # Patienten und demselben Garanten zugeordnet werden. (Aber nicht
 # notwendigerweise demselben Mandanten)
 CREATE TABLE FAELLE(
-	ID				VARCHAR(25) primary key,
-	deleted			CHAR(1) default '0',
-	PatientID		VARCHAR(25),
-	GarantID		VARCHAR(25),
-	KostentrID		VARCHAR(25),
-	VersNummer		VARCHAR(25),
-	FallNummer		VARCHAR(25),
-	BetriebsNummer	VARCHAR(25),
-	Diagnosen		VARCHAR(25),
-	DatumVon		CHAR(8),
-	DatumBis		CHAR(8),
-	Bezeichnung		VARCHAR(20),
-	Grund			VARCHAR(20),
-	Gesetz			VARCHAR(10),
-	Status			VARCHAR(80),
+	ID				VARCHAR(25) primary key,		# UUID
+	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
+	PatientID		VARCHAR(25),					# foreign key from 'KONTAKT' -> patient
+	GarantID		VARCHAR(25),					# foreign key from 'KONTAKT' -> bill receiver 
+	KostentrID		VARCHAR(25),					# foreign key from 'KONTAKT' -> insurance
+	VersNummer		VARCHAR(25),					# deprecated, do not use
+	FallNummer		VARCHAR(25),					# deprecated, do not use
+	BetriebsNummer	VARCHAR(25),					# deprecated, do not use
+	Diagnosen		VARCHAR(80),					# diagnoses related to this case
+	DatumVon		CHAR(8),						# date of beginning
+	DatumBis		CHAR(8),						# end date
+	Bezeichnung		VARCHAR(20),					# title of the case
+	Grund			VARCHAR(20),					# reason for treatment
+	Gesetz			VARCHAR(10),					# deprecated, do not use
+	Status			VARCHAR(80),					# deprecared, do not use
 	ExtInfo			BLOB
 );
 
@@ -99,23 +99,23 @@ CREATE INDEX i3 on FAELLE (PatientID);
 
 # Eine Behandlung ist ein einzelner Mandant/Patient - Kontakt
 CREATE TABLE BEHANDLUNGEN(
-	ID				VARCHAR(25) primary key,
-	deleted			CHAR(1) default '0',
-	FallID			VARCHAR(25),
-	MandantID		VARCHAR(25),
-	RechnungsID		VARCHAR(25),
-	Datum			CHAR(8),
-	Diagnosen		VARCHAR(25),
-	Leistungen		VARCHAR(25),
-	Eintrag			BLOB
+	ID				VARCHAR(25) primary key,		# UUID
+	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
+	FallID			VARCHAR(25),					# foreign key from FAELLE -> case we belong to
+	MandantID		VARCHAR(25),					# foreign key from KONTAKT -> mandator
+	RechnungsID		VARCHAR(25),					# foreign key from RECHNUGNEN -> bill
+	Datum			CHAR(8),						# date of treatment
+	Diagnosen		VARCHAR(25),					# diagnoses
+	Leistungen		VARCHAR(25),					# 
+	Eintrag			BLOB							# treatment text (as VersionedResource)
 );
 
 CREATE INDEX i4 on BEHANDLUNGEN (FallID);
 
 # 
 CREATE TABLE ARTIKEL(
-	ID				VARCHAR(25) primary key,
-	deleted			CHAR(1) default '0',
+	ID				VARCHAR(25) primary key,		# UUID
+	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
 	SubID			VARCHAR(20),
 	LieferantID		VARCHAR(25),
 	Klasse			VARCHAR(80),
