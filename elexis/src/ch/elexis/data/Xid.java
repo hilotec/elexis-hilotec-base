@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3018 2007-08-26 14:46:31Z rgw_ch $
+ * $Id: Xid.java 3052 2007-08-31 15:55:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -25,21 +25,21 @@ public class Xid extends PersistentObject {
 	/**
 	 * Quality value for an ID that is valid only in the context of the issuing program
 	 */
-	public static final int ASSIGNMENT_LOCAL=1<<0;
+	public static final int ASSIGNMENT_LOCAL=1;
 	/**
 	 * Quality value for an ID that is valid within a geographic or politic context (e.g. a nationally
 	 * assigned ID)
 	 */
-	public static final int ASSIGNEMENT_REGIONAL=1<<1;
+	public static final int ASSIGNEMENT_REGIONAL=2;
 	/**
 	 * Quality value for an ID that can be used as global identifier
 	 */
-	public static final int ASSIGNMENT_GLOBAL=1<<2;
+	public static final int ASSIGNMENT_GLOBAL=3;
 	
 	/**
 	 * Marker that the ID is a GUID (that is, guaranteed to exist only once)
 	 */
-	public static final int QUALITY_GUID=1<<16;
+	public static final int QUALITY_GUID=4;
 	
 	private static Hashtable<String,Integer> domains;
 	
@@ -189,7 +189,7 @@ public class Xid extends PersistentObject {
 	 * @param quality the quality an ID of that domain will have
 	 * @return true on success, false if that domain could not be registered
 	 */
-	public static boolean localRegisterXIDDomain(String domain, int quality){
+	public static boolean localRegisterXIDDomain(final String domain, final int quality){
 		if(domains.contains(domain)){
 			log.log("XID Domain "+domain+" bereits registriert", Log.ERRORS);
 		}else{
@@ -204,13 +204,13 @@ public class Xid extends PersistentObject {
 		return false;
 	}
 	
-	public static boolean localRegisterXIDDomainIfNotExists(String domain, int quality){
+	public static boolean localRegisterXIDDomainIfNotExists(final String domain, final int quality){
 		if(domains.get(domain)!=null){
 			return true;
 		}
 		return localRegisterXIDDomain(domain, quality);
 	}
-	public static Integer getXIDDomainQuality(String xidDomain){
+	public static Integer getXIDDomainQuality(final String xidDomain){
 		return domains.get(xidDomain);
 	}
 	

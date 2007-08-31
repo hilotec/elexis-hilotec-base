@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 2976 2007-08-10 13:54:03Z rgw_ch $
+# * $Id: createDB.script 3052 2007-08-31 15:55:22Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -39,10 +39,10 @@ CREATE TABLE KONTAKT(
 	Strasse			VARCHAR(40),				# street
 	Plz				VARCHAR(6),					# zip-code
 	Ort				VARCHAR(40),				# place
-	Telefon1		VARCHAR(20),				# phone1
-	Telefon2		VARCHAR(20),				# phone2
-	Fax				VARCHAR(20),
-	NatelNr			VARCHAR(20),				# mobile
+	Telefon1		VARCHAR(30),				# phone1
+	Telefon2		VARCHAR(30),				# phone2
+	Fax				VARCHAR(30),
+	NatelNr			VARCHAR(30),				# mobile
 	EMail			VARCHAR(30),				
 	Website			VARCHAR(40),
 	Gruppe			VARCHAR(10),				# mandator group
