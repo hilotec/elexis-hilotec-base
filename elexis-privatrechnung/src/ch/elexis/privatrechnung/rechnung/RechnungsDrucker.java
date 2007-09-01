@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 2972 2007-08-08 15:17:09Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3055 2007-09-01 16:36:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -16,6 +16,8 @@ package ch.elexis.privatrechnung.rechnung;
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,7 +38,7 @@ import ch.elexis.util.SWTHelper;
 
 public class RechnungsDrucker implements IRnOutputter {
 	private static final String settings="privatrechnung/vorlage";
-	Text tVorlage;
+	String template;
 	
 	/**
 	 * We'll take all sorts of bills
@@ -61,9 +63,15 @@ public class RechnungsDrucker implements IRnOutputter {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung");
-		tVorlage=new Text(ret,SWT.BORDER);
+		final Text tVorlage=new Text(ret,SWT.BORDER);
 		tVorlage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tVorlage.setText(Hub.globalCfg.get(settings, ""));
+		tVorlage.addModifyListener(new ModifyListener(){
+
+			public void modifyText(ModifyEvent e) {
+				template=tVorlage.getText();
+				
+			}});
 		return ret;
 
 	}
@@ -72,7 +80,6 @@ public class RechnungsDrucker implements IRnOutputter {
 	 * Print the bill(s)
 	 */
 	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn) {
-		String template=tVorlage.getText();
 		Hub.globalCfg.set(settings, template);
 		Result<Rechnung> ret=new Result<Rechnung>(Log.ERRORS,99,"Not yet implemented",null,true);
 		String printer=Hub.localCfg.get("Drucker/A4ESR/Name",null);
@@ -80,7 +87,7 @@ public class RechnungsDrucker implements IRnOutputter {
 			Fall fall=rn.getFall();
 			Kontakt adressat=fall.getRequiredContact("Rechnungsempfänger");
 			TextContainer tc=new TextContainer(Desk.getTopShell());
-			tc.createFromTemplateName(null, tVorlage.getText(), Brief.RECHNUNG, adressat,rn.getNr());
+			tc.createFromTemplateName(null, template, Brief.RECHNUNG, adressat,rn.getNr());
 			tc.getPlugin().print(printer, null, true);
 		}
 		if(!ret.isOK()){
