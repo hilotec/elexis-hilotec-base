@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 2396 2007-05-18 16:17:28Z rgw_ch $
+ * $Id: RnActions.java 3054 2007-09-01 16:36:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -201,6 +201,10 @@ public class RnActions {
 			}
 		};
 		reloadAction=new Action("Neu einlesen"){
+			{
+				setToolTipText("Liste neu einlesen");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REFRESH));
+			}
 			@Override
 			public void run() {
 				view.cfp.fireChangedEvent();

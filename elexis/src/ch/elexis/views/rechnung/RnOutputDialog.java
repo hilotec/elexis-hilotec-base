@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: RnOutputDialog.java 3054 2007-09-01 16:36:23Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.views.rechnung;
 
 import java.util.ArrayList;
@@ -21,8 +34,8 @@ import ch.elexis.Hub;
 import ch.elexis.data.Rechnung;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
-import ch.elexis.util.Result;
 import ch.elexis.util.IRnOutputter;
+import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 
 public class RnOutputDialog extends TitleAreaDialog {
@@ -37,6 +50,7 @@ public class RnOutputDialog extends TitleAreaDialog {
 		this.rnn=rnn;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		lo=Extensions.getClasses("ch.elexis.RechnungsManager", "outputter");
