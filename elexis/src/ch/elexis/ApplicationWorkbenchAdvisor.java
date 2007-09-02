@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 2845 2007-07-20 13:29:32Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 3059 2007-09-02 17:27:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
+
+import java.io.File;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,6 +29,7 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;
+import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 
 /**
@@ -66,6 +69,19 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			Hub.localCfg.flush();
             System.exit(-1);
         }
+        
+        // look whether we have do to some work before creating the workbench
+        try{
+    		Class<?> up=Class.forName("ch.elexis.PreStartUpdate");
+    		Hub.log.log("Found PreStartUpdate, executing", Log.SYNCMARK);
+    		up.newInstance();
+    		File file=new File(FileTool.getBasePath(up),"PreStartUpdate.class");
+    		file.delete();
+        }catch(ClassNotFoundException cnf){
+    		// nothing
+    	}catch(Exception ex){
+    		Hub.log.log("Error executing PreStartUpdate "+ex.getMessage(), Log.ERRORS);
+    	}
 
         Hub.jobPool.activate("PatientenListe",Job.LONG);
         Hub.jobPool.queue("Tarmed");

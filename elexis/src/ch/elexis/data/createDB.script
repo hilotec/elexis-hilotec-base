@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3053 2007-08-31 16:07:03Z rgw_ch $
+# * $Id: createDB.script 3059 2007-09-02 17:27:09Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -465,6 +465,7 @@ CREATE TABLE AUF(
 	FallID		VARCHAR(25),
 	BriefID		VARCHAR(25),
 	Prozent		CHAR(3),
+	DatumAUZ	CHAR(8),
 	DatumVon	CHAR(8),
 	DatumBis	CHAR(8),
 	Grund		VARCHAR(10),

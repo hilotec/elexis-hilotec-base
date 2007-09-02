@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 2976 2007-08-10 13:54:03Z rgw_ch $
+ * $Id: DBUpdate.java 3059 2007-09-02 17:27:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -34,7 +34,7 @@ public class DBUpdate {
 	  static final String[] versions={"1.3.0","1.3.1","1.3.2","1.3.3","1.3.4","1.3.5","1.3.6","1.3.7",
 		  							"1.3.8","1.3.9","1.3.10","1.3.11","1.3.12","1.3.13",
 		  							"1.4.0","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6",
-		  							"1.5.0","1.6.0","1.6.1"};
+		  							"1.5.0","1.6.0","1.6.1","1.6.2"};
 	  static final String[] cmds={"CREATE TABLE EIGENLEISTUNGEN("+
 			"ID			VARCHAR(25) primary key,"+
 			"Code		VARCHAR(20),"+
@@ -187,7 +187,10 @@ public class DBUpdate {
 			");"+
 			"CREATE INDEX XIDIDX1 on XID(domain);"+
 			"CREATE INDEX XIDIDX2 on XID(domain_id);"+
-			"CREATE INDEX XIDIDX3 on XID(object);"
+			"CREATE INDEX XIDIDX3 on XID(object);",
+			
+			// 1.6.2
+			"ALTER TABLE AUF ADD DatumAUZ CHAR(8);"
 			
 	  };
 	  static Log log=Log.get("DBUpdate");

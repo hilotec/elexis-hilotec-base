@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 2820 2007-07-16 14:32:17Z rgw_ch $
+ * $Id: AccessControlDefaults.java 3059 2007-09-02 17:27:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -124,8 +124,9 @@ public class AccessControlDefaults {
     
     public static final String KONS="Konsultation";
     public static final String KONS_CREATE= KONS+"/Erstellen";
-    public static final String KONS_EDIT= KONS+"/Barbeiten";
+    public static final String KONS_EDIT= KONS+"/Bearbeiten";
     public static final String KONS_DELETE= DELETE+"/Konsultation";
+    public static final String KONS_REASSIGN= KONS+"/zuordnen";
     
     // allows to change the text of an already billed consultation
     // TODO: maybe we should just use KONS_EDIT 

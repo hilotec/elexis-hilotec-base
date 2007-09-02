@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3058 2007-09-02 12:17:54Z rgw_ch $
+ *  $Id: KonsDetailView.java 3059 2007-09-02 17:27:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -271,6 +271,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 		            }
 	            }
 	            hlMandant.setText(sb.toString());
+            	hlMandant.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_REASSIGN));
 	            dd.setDiagnosen(b);
 	            vd.setLeistungen(b);
 	            text.setEnabled(true);
