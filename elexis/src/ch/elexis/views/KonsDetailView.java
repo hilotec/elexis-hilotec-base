@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 2916 2007-07-25 17:08:58Z rgw_ch $
+ *  $Id: KonsDetailView.java 3058 2007-09-02 12:17:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -18,21 +18,29 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
+
+import com.sun.org.apache.bcel.internal.generic.LMUL;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -48,6 +56,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Rechnungssteller;
+import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.text.EnhancedTextField;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.IKonsExtension;
@@ -73,6 +83,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	EnhancedTextField text;
 	//DecimalFormat df=new DecimalFormat("0.00");
 	Label lBeh,lVersion;
+	Hyperlink hlMandant;
 	Combo cbFall;
 	private Konsultation actKons;
     FormToolkit tk;
@@ -84,7 +95,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     Action versionFwdAction;
     int displayedVersion;
     Font emFont;
-    
+    Composite cDesc;
     
 	@Override
 	public void createPartControl(final Composite p) {
@@ -94,11 +105,28 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         form=tk.createForm(sash);
         form.getBody().setLayout(new GridLayout(1,true));
         form.setText("Keine Konsultation ausgewählt");
-        lBeh=tk.createLabel(form.getBody(),"Keine Konsultation ausgewählt");
+        cDesc=new Composite(form.getBody(),SWT.NONE);
+        cDesc.setLayout(new RowLayout(SWT.HORIZONTAL));
+        cDesc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+        lBeh=tk.createLabel(cDesc,"Keine Konsultation ausgewählt");
         emFont=new Font(Desk.theDisplay,"Helvetica",11,SWT.BOLD);
         lBeh.setFont(emFont);
-		GridData gdBeh=new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
-		lBeh.setLayoutData(gdBeh);
+        hlMandant=tk.createHyperlink(cDesc, "--", SWT.NONE);
+        hlMandant.addHyperlinkListener(new HyperlinkAdapter(){
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				KontaktSelektor ksl=new KontaktSelektor(getSite().getShell(),Mandant.class,"Mandant auswählen",
+						"Auf wen soll diese Kons verrechnet werden?");
+				if(ksl.open()==Dialog.OK){
+					actKons.setMandant((Mandant)ksl.getSelection());
+					setKons(actKons);
+				}
+			}
+        	
+        });
+		//GridData gdBeh=new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+		//lBeh.setLayoutData(gdBeh);
         //lFall=tk.createLabel(form.getBody(),"Kein Fall ausgewählt");
         cbFall=new Combo(form.getBody(),SWT.SINGLE);
         cbFall.addSelectionListener(new SelectionAdapter(){
@@ -229,11 +257,20 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	            		break;
 	            	}
 	            }
-	            StringBuilder sb=new StringBuilder();
 	            Mandant m=b.getMandant();
-	            sb.append("Kons. vom ").append(b.getDatum()).append(" (")
-	            	.append(m==null ? "nicht von Ihnen" : m.getLabel()).append(")");
-	            lBeh.setText(sb.toString());
+	            lBeh.setText("Kons. vom "+b.getDatum());
+	            StringBuilder sb=new StringBuilder();
+	            if(m==null){
+	            	sb.append("(nicht von Ihnen)");
+	            }else{
+		            Rechnungssteller rs=  m.getRechnungssteller();
+		            if(rs.getId().equals(m.getId())){
+		            	sb.append("(").append(m.getLabel()).append(")");
+		            }else{
+		            	sb.append("(").append(m.getLabel()).append("/").append(rs.getLabel()).append(")");
+		            }
+	            }
+	            hlMandant.setText(sb.toString());
 	            dd.setDiagnosen(b);
 	            vd.setLeistungen(b);
 	            text.setEnabled(true);
@@ -252,6 +289,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	        	text.setEnabled(false);
 	        }
 	        actKons=b;
+	        cDesc.layout();
 	        inChange=false;
 		}
     }

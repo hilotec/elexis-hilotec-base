@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Rechnungssteller.java 3016 2007-08-26 13:26:12Z rgw_ch $
+ *    $Id: Rechnungssteller.java 3058 2007-09-02 12:17:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
+
+import ch.rgw.tools.StringTool;
 
 /**
  * This class is only needed to denote a person or organization that can
@@ -28,5 +30,21 @@ public class Rechnungssteller extends Kontakt {
 	protected Rechnungssteller(String id){
 		super(id);
 	}
+	
+	
+	/**
+	 * usually but not mandatory, the biller will be a user
+	 */
+	@Override
+	public String getLabel() {
+		if(get("istAnwender").equals("1")){
+			String l= get("Label");
+			if(!StringTool.isNothing(l)){
+				return l;
+			}
+		}
+		return super.getLabel();
+	}
+
 	protected Rechnungssteller(){}
 }
