@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3031 2007-08-28 15:24:37Z rgw_ch $
+ * $Id: XMLExporter.java 3057 2007-09-02 07:56:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -610,7 +610,7 @@ public class XMLExporter implements IRnOutputter {
 		provider.setName("provider");
 		eTiers.addContent(provider);
 			
-		Element insurance=new Element("insurance",ns);											//  11090
+		Element insurance=new Element("insurance",ns);	//  11090
 		insurance.setAttribute("ean_party",TarmedRequirements.getEAN(kostentraeger)); //kostentraeger.getInfoString("EAN"));							
 		insurance.addContent(buildAdressElement(kostentraeger));
 		eTiers.addContent(insurance);

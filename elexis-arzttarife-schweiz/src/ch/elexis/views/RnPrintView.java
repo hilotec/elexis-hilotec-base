@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 3017 2007-08-26 13:26:23Z rgw_ch $
+ * $Id: RnPrintView.java 3057 2007-09-02 07:56:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -41,6 +41,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Zahlung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -185,9 +186,10 @@ public class RnPrintView extends ViewPart {
 			eTiers=invoice.getChild("tiers_payant",XMLExporter.ns);
 			paymentMode="TP";
 		}
-		Mandant m=rn.getMandant();
-		Hub.setMandant(m);
-		GlobalEvents.getInstance().fireSelectionEvent(m.getRechnungssteller());
+		Mandant mnd=rn.getMandant();
+		Hub.setMandant(mnd);
+		Rechnungssteller rs=mnd.getRechnungssteller();
+		GlobalEvents.getInstance().fireSelectionEvent(rs);
 		Fall fall=rn.getFall();
 		GlobalEvents.getInstance().fireSelectionEvent(fall);
 		Patient pat=fall.getPatient();
@@ -204,7 +206,7 @@ public class RnPrintView extends ViewPart {
 		}
 		adressat.getPostAnschrift(true); // damit sicher eine existiert
 		String userdata=rn.getRnId();
-		ESR esr=new ESR(m.getInfoString(ta.ESRNUMBER),m.getInfoString(ta.ESRSUB),userdata,ESR.ESR27);
+		ESR esr=new ESR(rs.getInfoString(ta.ESRNUMBER),rs.getInfoString(ta.ESRSUB),userdata,ESR.ESR27);
 		Money mDue=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_due"));
 		Money mPaid=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_prepaid"));
 		String offenRp=mDue.getCentsAsString();
@@ -229,7 +231,7 @@ public class RnPrintView extends ViewPart {
 			}
 			List<Zahlung> extra=rn.getZahlungen();
 			text=(TextContainer) ctEZ.getData("text"); //$NON-NLS-1$
-			Kontakt bank=Kontakt.load(m.getInfoString(ta.RNBANK));
+			Kontakt bank=Kontakt.load(rs.getInfoString(ta.RNBANK));
 			final StringBuilder sb=new StringBuilder();
 			String sTarmed=balance.getAttributeValue("amount_tarmed");
 			String sMedikament=balance.getAttributeValue("amount_drug");
@@ -272,7 +274,7 @@ public class RnPrintView extends ViewPart {
 			text.getPlugin().setFont("Serif",SWT.NORMAL, 9); //$NON-NLS-1$
 			text.replace("\\[Leistungen\\]",sb.toString());
 		
-			if(esr.printBESR(bank,adressat,m,mEZDue.roundTo5().getCentsAsString(),text)==false){
+			if(esr.printBESR(bank,adressat,rs,mEZDue.roundTo5().getCentsAsString(),text)==false){
 				// avoid dead letters
 				clearItems();
 				Hub.setMandant(mSave);
