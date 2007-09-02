@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 3054 2007-09-01 16:36:23Z rgw_ch $
+ *  $Id: DefaultOutputter.java 3056 2007-09-02 07:56:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -43,6 +43,9 @@ public class DefaultOutputter implements IRnOutputter {
 	}
 
 	public boolean canStorno(Rechnung rn) {
+		if(rn==null){
+			return false;
+		}
 		return rn.getFall().getOutputter().canStorno(rn);
 	}
 

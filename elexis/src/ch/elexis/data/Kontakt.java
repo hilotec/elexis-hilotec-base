@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 2869 2007-07-23 05:07:40Z rgw_ch $
+ *    $Id: Kontakt.java 3056 2007-09-02 07:56:00Z rgw_ch $
  *******************************************************************************/
 
 
@@ -245,14 +245,17 @@ public class Kontakt extends PersistentObject{
 	 *  Wenn die Rechte des aktuellen Anwenders zum Lesen
 	 *  dieses Elements nicht ausreichen, wird ebenfalls 
 	 *  Null zurückgeliefert.
+	 *  2.9.2007 We remove the checks. they are useless at this moment
+	 *  better check permissions on inout fields. gw
 	 */
     public Object getInfoElement(String elem){
-    	if(Hub.acl.request("Read"+elem)==true){
+    	
+    	//if(Hub.acl.request("Read"+elem)==true){
     		return getInfoStore().get(elem);
-    	}else{
-    		log.log("Unzureichende Rechte zum Lesen von "+elem,Log.WARNINGS);
-        	return null;
-    	}
+    	//}else{
+    	//	log.log("Unzureichende Rechte zum Lesen von "+elem,Log.WARNINGS);
+        //	return null;
+    	//}
     }
     
     /**
@@ -272,18 +275,19 @@ public class Kontakt extends PersistentObject{
      * Elements ausreichen, wird die Funktion still ignoriert.
      * @param elem Name des Elements
      * @param val Inhalt des Elements
+     * 2.9.2007 emoved the checks g. weirich
      */
     @SuppressWarnings("unchecked")
 	public void setInfoElement(String elem, Object val){
-    	if(Hub.acl.request("Write"+elem)==true){
+    	//if(Hub.acl.request("Write"+elem)==true){
 	        Hashtable extinfos=getHashtable("ExtInfo");
 	        if(extinfos!=null){
 	            extinfos.put(elem,val);
 	            setHashtable("ExtInfo",extinfos);
 	        }
-    	}else{
+    	/*}else{
     		log.log("Unzureichende Rechte zum Schreiben von "+elem,Log.WARNINGS);
-    	}
+    	}*/
     }
     /**
      * Den gesamten Infostore holen. Dies ist sinnvoll, wenn kurz nacheinander
