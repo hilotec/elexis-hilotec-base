@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis"
       label="elexis basic feature"
-      version="1.0.1"
+      version="1.1.1"
       provider-name="elexis.ch"
       plugin="ch.elexis">
 
@@ -35,188 +35,175 @@
       <import plugin="org.eclipse.help.webapp"/>
       <import plugin="org.eclipse.tomcat"/>
       <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.core.jobs"/>
       <import plugin="ch.elexis.jdomwrapper"/>
       <import plugin="ch.elexis.artikel_ch"/>
       <import plugin="ch.elexis"/>
       <import plugin="ch.elexis.ebanking_ch"/>
       <import plugin="ch.elexis.importer.div"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.core.jobs"/>
       <import plugin="ch.elexis.mail"/>
       <import plugin="ch.elexis.Textplugin"/>
+      <import plugin="ch.elexis.scripting"/>
    </requires>
 
    <plugin
          id="ch.elexis"
          download-size="0"
          install-size="0"
-         version="1.0.1"/>
+         version="1.1.1"/>
 
    <plugin
          id="ch.elexis.arzttarife_ch"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.artikel_ch"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.diagnosecodes_ch"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.rgw.OOWrapper"
          download-size="0"
          install-size="0"
-         version="1.0.1"/>
+         version="1.1.1"/>
 
    <plugin
          id="ch.elexis.befunde"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.jdomwrapper"
          download-size="0"
          install-size="0"
-         version="1.0.1"/>
+         version="1.1.1"/>
 
    <plugin
          id="ch.elexis.ebanking_ch"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.agenda"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.externe_dokumente"
          download-size="0"
          install-size="0"
-         version="1.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="org.iatrix"
-         download-size="0"
-         install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.bildanzeige"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.icpc"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.mail"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.privatnotizen"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.omnivore"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.sgam.xchange"
          download-size="0"
          install-size="0"
-         version="1.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="ch.elexis.buchhaltung.basis"
-         download-size="0"
-         install-size="0"
-         version="0.3.3"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.Textplugin"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.laborimport_viollier"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.notes"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.importer.div"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.noatext"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.update_tool"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.EMRPrinter"
          download-size="0"
          install-size="0"
-         version="1.0.1"
+         version="1.1.1"
          unpack="false"/>
 
 </feature>
