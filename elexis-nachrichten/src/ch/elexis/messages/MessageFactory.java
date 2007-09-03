@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: MessageFactory.java 3089 2007-09-03 15:56:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;

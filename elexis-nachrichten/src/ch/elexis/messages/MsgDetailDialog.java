@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: MsgDetailDialog.java 3089 2007-09-03 15:56:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -55,6 +55,8 @@ public class MsgDetailDialog extends TitleAreaDialog {
 		
 		new Label(ret,SWT.NONE).setText("An: ");
 		cbTo=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
+		text=SWTHelper.createText(ret, 4, SWT.BORDER);
+		text.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		if(msg==null){
 			users=Hub.getUserList().toArray(new Anwender[0]);
 			for(Anwender a:users){
@@ -64,8 +66,11 @@ public class MsgDetailDialog extends TitleAreaDialog {
 		}else{
 			lbFrom.setText(msg.getSender().getLabel());
 			cbTo.add(msg.getDest().getLabel());
+			cbTo.select(0);
+			cbTo.setEnabled(false);
+			text.setText(msg.get("Text"));
 		}
-		text=SWTHelper.createText(ret, 4, SWT.BORDER);
+		
 		return ret;
 	}
 

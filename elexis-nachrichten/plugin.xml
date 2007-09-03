@@ -8,5 +8,26 @@
             name="Messages">
       </Factory>
    </extension>
-
+	<extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="ch.elexis.messages.ActionSet"
+            label="Message sender"
+            visible="true">
+         <action
+               class="ch.elexis.messages.MessageDelegate"
+               icon="icons/sprechblase.gif"
+               id="ch.elexis.message.show"
+               label="Sende Nachricht"
+               style="push"
+               toolbarPath="MessageGroup"
+               tooltip="Nachricht senden"/>
+      </actionSet>
+   </extension>
+ <extension
+       point="org.eclipse.ui.startup">
+    <startup
+          class="ch.elexis.messages.Activator">
+    </startup>
+ </extension>
 </plugin>

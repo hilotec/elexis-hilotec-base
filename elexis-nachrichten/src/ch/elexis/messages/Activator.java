@@ -8,7 +8,7 @@ import ch.elexis.Hub;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class Activator extends AbstractUIPlugin implements org.eclipse.ui.IStartup{
 	MsgHeartListener heartListener;
 	
 	// The plug-in ID
@@ -21,7 +21,6 @@ public class Activator extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public Activator() {
-		
 	}
 
 	/*
@@ -31,6 +30,7 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
+		heartListener=new MsgHeartListener();
 		Hub.heart.addListener(heartListener);
 		plugin = this;
 	}
@@ -53,6 +53,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	public void earlyStartup() {
+	
 	}
 
 }
