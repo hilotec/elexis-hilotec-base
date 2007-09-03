@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditReminderDialog.java 2308 2007-05-01 05:18:16Z rgw_ch $
+ *  $Id: EditReminderDialog.java 3087 2007-09-03 12:44:32Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -130,7 +130,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 			
 			actPatient=GlobalEvents.getSelectedPatient();
 			text.setText("");
-			cbType.select(0);
+			cbType.select(1);
 			
 			// select current user as responsible
 			int index = 0;
