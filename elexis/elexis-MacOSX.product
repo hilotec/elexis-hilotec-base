@@ -38,10 +38,9 @@ Rietstrasse 30
       </win>
    </launcher>
 
-
    <plugins>
       <plugin id="ch.elexis"/>
-      <plugin id="ch.elexis.AerztekasseImport"/>
+      <plugin id="ch.elexis.EMRPrinter"/>
       <plugin id="ch.elexis.Textplugin"/>
       <plugin id="ch.elexis.agenda"/>
       <plugin id="ch.elexis.artikel_ch"/>
@@ -50,10 +49,7 @@ Rietstrasse 30
       <plugin id="ch.elexis.bildanzeige"/>
       <plugin id="ch.elexis.diagnosecodes_ch"/>
       <plugin id="ch.elexis.ebanking_ch"/>
-      <plugin id="ch.elexis.elexis_help"/>
-      <plugin id="ch.elexis.externe_dokumente"/>
       <plugin id="ch.elexis.icpc"/>
-      <plugin id="ch.elexis.import.vitodata"/>
       <plugin id="ch.elexis.importer.div"/>
       <plugin id="ch.elexis.jdomwrapper"/>
       <plugin id="ch.elexis.kassenbuch"/>
@@ -62,22 +58,38 @@ Rietstrasse 30
       <plugin id="ch.elexis.notes"/>
       <plugin id="ch.elexis.omnivore"/>
       <plugin id="ch.elexis.privatnotizen"/>
+      <plugin id="ch.elexis.scripting"/>
       <plugin id="ch.elexis.update_tool"/>
       <plugin id="ch.sgam.xchange"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.ibm.icu.source"/>
+      <plugin id="javax.servlet"/>
+      <plugin id="javax.servlet.jsp"/>
+      <plugin id="molemax"/>
       <plugin id="org.apache.ant"/>
+      <plugin id="org.apache.commons.el"/>
+      <plugin id="org.apache.commons.logging"/>
+      <plugin id="org.apache.jasper"/>
       <plugin id="org.apache.lucene"/>
+      <plugin id="org.apache.lucene.analysis"/>
       <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.net"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.core.variables"/>
+      <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.http.jetty"/>
+      <plugin id="org.eclipse.equinox.http.registry"/>
+      <plugin id="org.eclipse.equinox.http.servlet"/>
+      <plugin id="org.eclipse.equinox.jsp.jasper"/>
+      <plugin id="org.eclipse.equinox.jsp.jasper.registry"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.help"/>
@@ -86,20 +98,23 @@ Rietstrasse 30
       <plugin id="org.eclipse.help.ui"/>
       <plugin id="org.eclipse.help.webapp"/>
       <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.carbon.macosx"/>
+      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.tomcat"/>
       <plugin id="org.eclipse.ui"/>
-      <plugin id="org.eclipse.ui.carbon"/>
+      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.update.configurator"/>
       <plugin id="org.eclipse.update.core"/>
       <plugin id="org.iatrix"/>
+      <plugin id="org.mortbay.jetty"/>
    </plugins>
 
 </product>
