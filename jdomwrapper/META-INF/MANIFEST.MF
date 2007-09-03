@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JDOM Wrapper
 Bundle-SymbolicName: ch.elexis.jdomwrapper
-Bundle-Version: 1.0.1
+Bundle-Version: 1.1.1
 Bundle-ClassPath: jdom.jar
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
