@@ -5,7 +5,7 @@ Name Elexis
 
 # Defines
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.1.0
+!define VERSION 1.1.1
 
 !define REGKEY "SOFTWARE\${PRODUCTNAME}"
 
@@ -59,7 +59,7 @@ InstallDir $PROGRAMFILES\Elexis
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.3.3.0
+VIProductVersion 1.1.1.0
 VIAddVersionKey /LANG=${LANG_GERMAN} ProductName Elexis
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey /LANG=${LANG_GERMAN} CompanyName "${COMPANY}"
