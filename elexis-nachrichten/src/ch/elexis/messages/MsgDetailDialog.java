@@ -8,14 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgDetailDialog.java 3089 2007-09-03 15:56:23Z rgw_ch $
+ * $Id: MsgDetailDialog.java 3092 2007-09-04 05:06:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
 
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -28,13 +30,14 @@ import ch.elexis.data.Anwender;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-public class MsgDetailDialog extends TitleAreaDialog {
+public class MsgDetailDialog extends Dialog {
 
 	Label lbFrom;
 	Combo cbTo;
 	Text text;
 	Message msg;
 	Anwender[] users;
+	Button bOK, bRecall,bAsReminder,bAnswer, bCancel;
 	
 	MsgDetailDialog(final Shell shell, final Message msg){
 		super(shell);
@@ -77,10 +80,26 @@ public class MsgDetailDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		getShell().setText("Nachricht");
 		if(msg==null){
-			setTitle("Nachricht erstellen");
+			getShell().setText("Nachricht erstellen");
+		}else{
+			getShell().setText("Nachricht lesen");
 		}
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		String sOK;
+		if(msg==null){
+			sOK="Senden";
+		}else{
+			sOK="Löschen";
+		}
+		bOK=createButton(parent, IDialogConstants.OK_ID, sOK, false);
+		bRecall=createButton(parent, IDialogConstants.CLIENT_ID, "Merken",false);
+		bAnswer=createButton(parent, IDialogConstants.CLIENT_ID+1, "Anworten",false);
+		bAsReminder=createButton(parent, IDialogConstants.CLIENT_ID+2,"Als Reminder",false);
+		bCancel=createButton(parent, IDialogConstants.CANCEL_ID,"Abbruch", false);
 	}
 
 	@Override
