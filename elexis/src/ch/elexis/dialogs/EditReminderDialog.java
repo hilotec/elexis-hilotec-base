@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditReminderDialog.java 3087 2007-09-03 12:44:32Z danlutz $
+ *  $Id: EditReminderDialog.java 3093 2007-09-04 09:35:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -23,12 +23,21 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.data.*;
+import ch.elexis.data.Anwender;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Reminder;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -47,13 +56,13 @@ public class EditReminderDialog extends TitleAreaDialog {
 	Patient actPatient;
 	java.util.List<Anwender> users;
 	
-	public EditReminderDialog(Shell parentShell, Reminder rem) {
+	public EditReminderDialog(final Shell parentShell, final Reminder rem) {
 		super(parentShell);
 		mine=rem;
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2,false));
@@ -83,7 +92,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		cbType.addSelectionListener(new SelectionAdapter(){
 			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 //			 We check wether a letter reminder is selected and if so we let the user choose the template
 				if(cbType.getText().equals(Reminder.TypText[Reminder.Typ.brief.ordinal()])){
 					DocumentSelectDialog dsl=new DocumentSelectDialog(getShell(),Hub.actMandant,DocumentSelectDialog.TYPE_LOAD_TEMPLATE);
@@ -104,7 +113,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		dpDue=new DatePickerCombo(dates,SWT.NONE);
 		dpDue.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				setLabels();
 			}		
 		});
@@ -148,7 +157,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		} else {
 			// existing reminder
 			
-			actPatient=(Patient)mine.getKontakt();
+			actPatient=mine.getKontakt();
 			text.setText(mine.get("Message"));
 			cbType.select(mine.getTyp().ordinal());
 			
@@ -261,13 +270,15 @@ public class EditReminderDialog extends TitleAreaDialog {
 		if(resps.length>0){
 			if(resps[0]==0){	// "Alle"
 				for(Anwender a:users){
-					mine.addToList("Responsibles", a.getId(), (String[])null);
+					mine.addResponsible(a);
+					//mine.addToList("Responsibles", a.getId(), (String[])null);
 				}
 			}else{
 				for(int i=0;i<resps.length;i++){
 					int idx=resps[i];
 					Anwender a=users.get(idx-1);
-					mine.addToList("Responsibles", a.getId(), (String[])null);
+					//mine.addToList("Responsibles", a.getId(), (String[])null);
+					mine.addResponsible(a);
 				}
 			}
 		}

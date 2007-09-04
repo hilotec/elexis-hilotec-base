@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 2921 2007-07-26 20:43:47Z rgw_ch $
+ *  $Id: LabResult.java 3093 2007-09-04 09:35:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,6 +16,7 @@ package ch.elexis.data;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class LabResult extends PersistentObject {
@@ -163,10 +164,27 @@ public class LabResult extends PersistentObject {
 		}
 		return null;
 	}
+	
+	/**
+	 * add a LabResult to the list of unseen LabResults. We do not keep
+	 * LabResults older than 96hrs in this list.
+	 */
 	public void addToUnseen(){
+		List<LabResult> o=getUnseen();
+		LinkedList<String> n=new LinkedList<String>();
+		n.add(getId());
+		TimeTool limit=new TimeTool();
+		limit.addHours(-96);
+		TimeTool tr=new TimeTool();
+		for(LabResult lr:o){
+			if(tr.set(lr.getDate())){
+				if(tr.isAfter(limit)){
+					n.add(lr.getId());
+				}
+			}
+		}
 		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
-		String results=unseen.getString();
-		results+=","+getId();
+		String results=StringTool.join(n, ",");
 		unseen.putString(results);
 	}
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Reminder.java 2765 2007-07-09 10:47:39Z rgw_ch $
+ *  $Id: Reminder.java 3093 2007-09-04 09:35:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,8 +16,6 @@ package ch.elexis.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
-
-import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Hub;
 import ch.rgw.tools.StringTool;
@@ -53,11 +51,19 @@ public class Reminder extends PersistentObject implements Comparable{
 	public enum Status{geplant,faellig,ueberfaellig,erledigt,unerledigt}
 	
 	Reminder(){/* leer */}
-	private Reminder(String id){
+	private Reminder(final String id){
 		super(id);
 	}
-	/** Einen neuen Reminder erstellen */
-	public Reminder(Kontakt ident,String due, Typ typ, String params,String msg){
+	/** 
+	 * Create a new Reminder. Note: by default, the new reminder will have no responsible. @see addResponsible
+	 * @param ident The contact (i.e. Patient) the reminder belongs to. If ident is null, the reminder will be attributed to the corrent user
+	 * @param due A date string
+	 * @param typ type of the reminder (@see enum Typ)
+	 * @param params parameters depending on the type of the reminder
+	 * @param msg Text for the reminder
+	 *  
+	 */
+	public Reminder(Kontakt ident,final String due, final Typ typ, final String params,final String msg){
 		create(null);
 		if(ident==null){
 			ident=Hub.actUser;
@@ -68,10 +74,19 @@ public class Reminder extends PersistentObject implements Comparable{
 				params,msg});
 	}
 	
+	/**
+	 * Ad a new user to the list of responsibles for that reminder. The reminder will show up among the reminders, if one of
+	 * its responsibles is logged in.
+	 * @param a the user to add to the list of responsible users
+	 */
+	public void addResponsible(final Anwender a){
+			addToList("Responsibles", a.getId(), (String[])null);
+	}
 	/** Einen Reminder anhand seiner ID aus der Datenbank einlesen */
-	public static Reminder load(String id){
+	public static Reminder load(final String id){
 		return new Reminder(id);
 	}
+	@Override
 	public String getLabel(){
 		Kontakt k=Kontakt.load(get("IdentID"));
 		
@@ -112,7 +127,7 @@ public class Reminder extends PersistentObject implements Comparable{
 		return checkNull(get("Message"));
 	}
 	
-	public void setStatus(Status s){
+	public void setStatus(final Status s){
 		set("Status", Byte.toString((byte)s.ordinal()));
 	}
 	public TimeTool getDateDue(){
@@ -168,7 +183,7 @@ public class Reminder extends PersistentObject implements Comparable{
 	 * @param responsible der Verantwortliche oder null: Alle
 	 * @return eine Liste aller offenen Reminder dieses Patienten
 	 */
-	public static List<Reminder> findForPatient(Patient p, Kontakt responsible){
+	public static List<Reminder> findForPatient(final Patient p, final Kontakt responsible){
 		Query<Reminder> qbe=new Query<Reminder>(Reminder.class);
 		qbe.add("IdentID","=",p.getId());
 		qbe.add("Status","<>",Integer.toString(Status.erledigt.ordinal()));
@@ -187,7 +202,7 @@ public class Reminder extends PersistentObject implements Comparable{
 	 * Alle Reminder holen, die beim Progammstart gezeigt werden sollen
 	 * @return
 	 */
-	public static List<Reminder> findToShowOnStartup(Anwender a){
+	public static List<Reminder> findToShowOnStartup(final Anwender a){
 		Query<Reminder> qbe=new Query<Reminder>(Reminder.class);
 		qbe.add("Due","<=",new TimeTool().toString(TimeTool.DATE_COMPACT));
 		qbe.add("Status","<>",Integer.toString(Status.erledigt.ordinal()));
@@ -203,7 +218,7 @@ public class Reminder extends PersistentObject implements Comparable{
 	 * @param bOnlyPopup nur die zeigen, die den Typ "Bei Auswahl popup" haben.
 	 * @return eine Liste der fälligen Reminder dieses Patienten
 	 */
-	public static List<Reminder> findRemindersDueFor(Patient p, Anwender a, boolean bOnlyPopup){
+	public static List<Reminder> findRemindersDueFor(final Patient p, final Anwender a, final boolean bOnlyPopup){
 		final SortedSet<Reminder> r4a=a.getReminders(p);
 		List<Reminder> ret=new ArrayList<Reminder>(r4a.size());
 		TimeTool today=new TimeTool();
@@ -234,7 +249,7 @@ public class Reminder extends PersistentObject implements Comparable{
 	 * To allow multiple different reminders at the same day, we use the
 	 * id to differentiate reminders with identical dates.
 	 */
-	public int compareTo(Object o) {
+	public int compareTo(final Object o) {
 		if(o instanceof Reminder){
 			Reminder r=(Reminder)o;
 			int i=getDateDue().compareTo(r.getDateDue());
