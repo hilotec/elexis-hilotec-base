@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Message.java 3089 2007-09-03 15:56:23Z rgw_ch $
+ * $Id: Message.java 3095 2007-09-04 11:21:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -82,6 +82,9 @@ public class Message extends PersistentObject {
 		return sb.toString();
 	}
 
+	public String getText(){
+		return checkNull(get("Text"));
+	}
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
