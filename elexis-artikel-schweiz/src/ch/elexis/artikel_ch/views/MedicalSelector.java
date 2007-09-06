@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: MedicalSelector.java 3104 2007-09-06 18:58:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.views;
 
