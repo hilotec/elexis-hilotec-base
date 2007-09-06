@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: BAGMediDetailDisplay.java 3103 2007-09-06 18:56:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.views;
 

@@ -8,16 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediFactory.java 3103 2007-09-06 18:56:55Z rgw_ch $
+ *  $Id: BAGMedi.java 3103 2007-09-06 18:56:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
-import ch.elexis.data.PersistentObjectFactory;
+import ch.elexis.data.Artikel;
 
-public class BAGMediFactory extends PersistentObjectFactory {
-
-	public BAGMediFactory() {
-		// TODO Auto-generated constructor stub
-	}
-
+/**
+ * This Article is a medicament taken from the BAG (Swiss federal dep. of health)
+ * @author Gerry
+ *
+ */
+public class BAGMedi extends Artikel {
+	
 }

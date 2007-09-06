@@ -14,7 +14,7 @@
             CodeDetailDisplay="ch.elexis.medikamente.bag.views.BAGMediDetailDisplay"
             CodeSelectorFactory="ch.elexis.medikamente.bag.views.BAGMediSelector"
             ElementFactory="ch.elexis.medikamente.bag.data.BAGMediFactory"
-            ImporterClass="ch.elexis.medikamente.bag.BAGMediImporter"
+            ImporterClass="ch.elexis.medikamente.bag.data.BAGMediImporter"
             name="Medikamente BAG">
       </Artikel>
    </extension>

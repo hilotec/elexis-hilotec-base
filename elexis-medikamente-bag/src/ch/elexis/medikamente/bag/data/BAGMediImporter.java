@@ -8,9 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: BAGMediImporter.java 3103 2007-09-06 18:56:55Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.medikamente.bag;
+package ch.elexis.medikamente.bag.data;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,26 +26,24 @@ public class BAGMediImporter extends ImporterPage {
 
 	@Override
 	public Composite createPage(Composite parent) {
-		// TODO Auto-generated method stub
-		return null;
+		FileBasedImporter fbi=new FileBasedImporter(parent,this);
+		return fbi;
 	}
 
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Import Medikamentenliste BAG";
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Medi-BAG";
 	}
 
 }
