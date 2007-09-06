@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgDetailDialog.java 3095 2007-09-04 11:21:59Z rgw_ch $
+ * $Id: MsgDetailDialog.java 3100 2007-09-06 10:52:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -145,7 +145,7 @@ public class MsgDetailDialog extends Dialog {
 					int idx=cbTo.getSelectionIndex();
 					if(idx!=-1){
 						Reminder rem=new Reminder(users[idx],new TimeTool().toString(TimeTool.DATE_GER),
-								Reminder.Typ.anzeigeTodoAll,"",msg.getText());
+								Reminder.Typ.anzeigeTodoAll,"",text.getText());
 						rem.addResponsible(users[idx]);
 					}
 					okPressed();
