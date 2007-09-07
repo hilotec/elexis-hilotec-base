@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 3107 2007-09-07 11:03:26Z rgw_ch $
+ * $Id: ContentProvider.java 3109 2007-09-07 16:22:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -38,6 +38,8 @@ public class ContentProvider implements CommonContentProvider {
 
 	public Object[] getElements(final Object inputElement) {
 		qbe=new Query<BAGMedi>(BAGMedi.class);
+		qbe.add("Typ", "=", "Medikament");
+		qbe.orderBy(false,new String[]{"Name"});
 		return qbe.execute().toArray();
 	}
 

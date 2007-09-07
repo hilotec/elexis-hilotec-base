@@ -4,6 +4,8 @@ import java.util.List;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.VersionInfo;
 
 public class Substance extends PersistentObject {
 	static final String TABLENAME="CH_ELEXIS_MEDIKAMENTE_BAG_SUBSTANCE";
@@ -11,15 +13,24 @@ public class Substance extends PersistentObject {
 	static final String createDB="CREATE TABLE "+TABLENAME+"("
 		+"ID		VARCHAR(25) primary key,"
 		+"deleted	CHAR(1) default '0',"
-		+"group		VARCHAR(7),"				// therap. gruppe
+		+"gruppe	VARCHAR(7),"				// therap. gruppe
 		+"name		VARCHAR(80)"
 	+");"
-	+"CREATE INDEX CEMBS1 ON "+TABLENAME+" (group);"
+	+"CREATE INDEX CEMBS1 ON "+TABLENAME+" (gruppe);"
 	+"CREATE INDEX CEMBS2 ON "+TABLENAME+" (name);"
 	+"INSERT INTO "+TABLENAME+" (ID,name) VALUES ('VERSION','"+VERSION+"');";
 	
 	static{
-		addMapping(TABLENAME,"name","group");
+		addMapping(TABLENAME,"name","gruppe");
+		Substance v=load("VERSION");
+		if(v.state()<PersistentObject.DELETED){
+			createTable("Substance", createDB);
+		}else{
+			VersionInfo vi=new VersionInfo(v.get("name"));
+			if(vi.isOlder(VERSION)){
+				SWTHelper.showError("Datenbank Fehler", "Tabelle Substance ist zu alt");
+			}
+		}
 	}
 	@Override
 	public String getLabel() {
@@ -28,12 +39,12 @@ public class Substance extends PersistentObject {
 
 	public Substance(final String name, final String group){
 		create(null);
-		set(new String[]{"name","group"},name,group);
+		set(new String[]{"name","gruppe"},name,group);
 	}
 	
 		
 	public List<Substance> sameGroup(){
-		return allFromGroup(get("group"));
+		return allFromGroup(get("gruppe"));
 	}
 	
 	public static Substance find(final String name){
@@ -45,7 +56,7 @@ public class Substance extends PersistentObject {
 	}
 	
 	public static List<Substance> allFromGroup(final String group){
-		return new Query<Substance>(Substance.class,"group",group).execute();
+		return new Query<Substance>(Substance.class,"gruppe",group).execute();
 		
 	}
 	@Override

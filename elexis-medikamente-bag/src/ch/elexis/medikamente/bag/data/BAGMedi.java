@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3107 2007-09-07 11:03:26Z rgw_ch $
+ *  $Id: BAGMedi.java 3109 2007-09-07 16:22:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,10 +50,11 @@ public class BAGMedi extends Artikel {
 		+");";
 	*/
 	static final String jointDB="CREATE TABLE "+JOINTTABLE+"("
+		+"ID				VARCHAR(25) primary key,"
 		+"product			VARCHAR(25),"
 		+"substance         VARCHAR(25)"
 		+");"
-		+"INSERT INTO "+JOINTTABLE+" (product,substance) VALUES('VERSION','"+VERSION+"');";
+		+"INSERT INTO "+JOINTTABLE+" (ID,substance) VALUES('VERSION','"+VERSION+"');";
 	
 	public static final String CODESYSTEMNAME="Medikamente";
 	public static final String DOMAIN_PHARMACODE="www.xid.ch/id/pk";
@@ -60,7 +62,7 @@ public class BAGMedi extends Artikel {
 	static{
 		addMapping(Artikel.TABLENAME,"inhalt=JOINT:substance:product:"+JOINTTABLE);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
-		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE product='VERSION';");
+		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
 		if(v==null){
 			createTable("BAGMedi",jointDB);
 		}else{
@@ -69,7 +71,8 @@ public class BAGMedi extends Artikel {
 				SWTHelper.showError("Datenbank Fehler", "Die Versin von BAG-Medi ist zu alt");
 			}
 		}
-			
+		// make sure, the substances table is created
+		Substance.load("VERSION");
 	}
 	
 	/**
@@ -81,6 +84,14 @@ public class BAGMedi extends Artikel {
 		set("Klasse",getClass().getName());
 	}
 	
+	public List<Substance> getSubstances(){
+		List<String[]> cnt= getList("inhalt",new String[0]);
+		ArrayList<Substance> ret=new ArrayList<Substance>(cnt.size());
+		for(String[] s:cnt){
+			ret.add(Substance.load(s[0]));
+		}
+		return ret;
+	}
 	public void update(final String[] row){
 		Query<Organisation> qo=new Query<Organisation>(Organisation.class);
 		String id=qo.findSingle("Name","=", row[0]);
@@ -92,7 +103,7 @@ public class BAGMedi extends Artikel {
 		setExt("Generika",row[1]);
 		setExt("Pharmacode",row[2]);
 		setExt("BAG-Dossier",row[3]);
-		setExt("Swissmdic-Nr.",row[4]);
+		setExt("Swissmedic-Nr.",row[4]);
 		setExt("Swissmedic-Liste",row[5]);
 		try{
 			setEKPreis(new Money(row[8]));
@@ -107,7 +118,7 @@ public class BAGMedi extends Artikel {
 			setExt("Limitation", null);
 		}
 		if(!StringTool.isNothing(row[13])){
-			String[] substName=row[13].split("|");
+			String[] substName=row[13].split("\\|");
 			LinkedList<Substance> substances=new LinkedList<Substance>();
 			for(String n:substName){
 				Substance s=Substance.find(n);
@@ -116,12 +127,17 @@ public class BAGMedi extends Artikel {
 				}
 				substances.add(s);
 			}
-			List<String[]> list=getList("inhalt", new String[0]);
+			deleteList("inhalt");
+			for(Substance s:substances){
+				addToList("inhalt", s.getId(), new String[0]);
+			}
+			
 			
 		}
 		set("Codeclass",row[12]);
 		
 	}
+	
 	@Override
 	protected String getConstraint(){
 		return "Typ='Medikament'";

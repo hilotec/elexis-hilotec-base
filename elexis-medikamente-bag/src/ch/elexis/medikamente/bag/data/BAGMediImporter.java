@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3106 2007-09-07 05:14:37Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3109 2007-09-07 16:22:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -23,6 +23,7 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.Query;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
+import ch.elexis.util.SWTHelper;
 
 public class BAGMediImporter extends ImporterPage {
 
@@ -31,20 +32,22 @@ public class BAGMediImporter extends ImporterPage {
 	}
 
 	@Override
-	public Composite createPage(Composite parent) {
+	public Composite createPage(final Composite parent) {
 		FileBasedImporter fbi=new FileBasedImporter(parent,this);
+		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
 	}
 
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
 		ExcelWrapper ew=new ExcelWrapper();
-		if(ew.load(results[0], 1)){
-			int f=ew.getFirstRow();
+		if(ew.load(results[0], 0)){
+			int f=ew.getFirstRow()+1;
 			int l=ew.getLastRow();
 			monitor.beginTask("Import BAG-Medikamente", l-f);
 			for(int i=f;i<l;i++){
 				List<String> row=ew.getRow(i);
+				monitor.subTask(row.get(7));
 				importUpdate(row.toArray(new String[0]));
 				monitor.worked(1);
 			}
@@ -59,7 +62,7 @@ public class BAGMediImporter extends ImporterPage {
 	 * @param row
 	 * @return
 	 */
-	public static boolean importUpdate(String[] row){
+	public static boolean importUpdate(final String[] row){
 		String pharmacode=row[2];
 		Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
 		String id=qbe.findSingle("SubID", "=", pharmacode);
