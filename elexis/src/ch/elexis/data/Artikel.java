@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 2839 2007-07-18 17:44:17Z rgw_ch $
+ * $Id: Artikel.java 3108 2007-09-07 11:03:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -119,28 +119,37 @@ public class Artikel extends VerrechenbarAdapter{
 	 * Basis-Einkaufspreis in Rappen pro Einheit
 	 * @return
 	 */
-	public int getEKPreis(){
+	public Money getEKPreis(){
 		try{
-			return checkZero(get("EK_Preis"));
+			return new Money(checkZero(get("EK_Preis")));
 		}catch(Throwable ex){
 			Hub.log.log("Fehler beim Einlesen von EK für "+getLabel(),Log.ERRORS);
 		}
-		return 0;
+		return new Money();
 
 	}
 	/**
 	 * Basis-Verkaufspreis in Rappen pro Einheit
 	 * @return
 	 */
-	public int getVKPreis(){
+	public Money getVKPreis(){
 		try{
-			return checkZero(get("VK_Preis"));
+			return new Money(checkZero(get("VK_Preis")));
 		}catch(Throwable ex){
 			Hub.log.log("Fehler beim Einlesen von VK für "+getLabel(),Log.ERRORS);
 		}
-		return 0;
+		return new Money();
 
 	}
+	
+	public void setEKPreis(final Money preis){
+		set("EK_Preis",preis.getCentsAsString());
+	}
+	
+	public void setVKPreis(final Money preis){
+		set("VK_Preis",preis.getCentsAsString());
+	}
+	
 	public int getIstbestand(){
 		try{
 			return checkZero(get("Istbestand"));
@@ -281,10 +290,12 @@ public class Artikel extends VerrechenbarAdapter{
 	public void setLieferant(final Kontakt l){
 		set("LieferantID",l.getId());
 	}
+	@SuppressWarnings("unchecked")
 	public int getVerpackungsEinheit(){
 		Hashtable ext=getHashtable("ExtInfo");
 		return checkZero((String)ext.get("Verpackungseinheit"));
 	}
+	@SuppressWarnings("unchecked")
 	public int getVerkaufseinheit(){
 		Hashtable ext=getHashtable("ExtInfo");
 		return checkZero((String)ext.get("Verkaufseinheit"));
@@ -292,9 +303,14 @@ public class Artikel extends VerrechenbarAdapter{
 	@SuppressWarnings("unchecked")
 	public void setExt(final String name, final String value){
 		Hashtable h=getHashtable("ExtInfo");
-		h.put(name,value);
+		if(value==null){
+			h.remove(name);
+		}else{
+			h.put(name,value);
+		}
 		setHashtable("ExtInfo",h);
 	}
+	@SuppressWarnings("unchecked")
 	public String getExt(final String name){
 		Hashtable h=getHashtable("ExtInfo");
 		return checkNull((String)h.get(name));

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 2208 2007-04-13 09:05:39Z danlutz $
+ *  $Id: DefaultControlFieldProvider.java 3108 2007-09-07 11:03:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -48,16 +48,16 @@ import ch.rgw.tools.StringTool;
  * @author Gerry
  */
 public class DefaultControlFieldProvider implements ControlFieldProvider{
-	String[] dbFields,fields,lastFiltered;
-	private Text[] selectors;
-	private ModListener ml;
-	private SelListener sl;
-	boolean modified;
-	private List<ControlFieldListener> listeners;
-	private FormToolkit tk;
+	protected String[] dbFields,fields,lastFiltered;
+	protected Text[] selectors;
+	protected final ModListener ml;
+	protected final SelListener sl;
+	protected boolean modified;
+	protected final List<ControlFieldListener> listeners;
+	private final FormToolkit tk;
     CommonViewer myViewer;
 	
-	public DefaultControlFieldProvider(CommonViewer viewer, String[] flds){
+	public DefaultControlFieldProvider(final CommonViewer viewer, final String[] flds){
         fields=new String[flds.length];
 		dbFields=new String[fields.length];
 		myViewer=viewer;
@@ -78,7 +78,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
         listeners=new LinkedList<ControlFieldListener>();
         tk=Desk.theToolkit;
 	}
-	public Composite createControl(Composite parent) {
+	public Composite createControl(final Composite parent) {
             Form form=tk.createForm(parent);
             form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
             Composite ret=form.getBody();
@@ -88,7 +88,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	        hClr.addHyperlinkListener(new HyperlinkAdapter(){
 
                 @Override
-                public void linkActivated(HyperlinkEvent e)
+                public void linkActivated(final HyperlinkEvent e)
                 {	clearValues();
                 }
                 
@@ -104,7 +104,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
                 hl.addHyperlinkListener(new HyperlinkAdapter(){
 
                     @Override
-                    public void linkActivated(HyperlinkEvent e)
+                    public void linkActivated(final HyperlinkEvent e)
                     {
                         Hyperlink h=(Hyperlink)e.getSource();
                         fireSortEvent(h.getText());
@@ -138,7 +138,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	 * zwei Zeichen eingegeben wurden oder das Feld geleert wurde. 
 	 * */
     class ModListener implements ModifyListener{
-        public void modifyText(ModifyEvent e) {
+        public void modifyText(final ModifyEvent e) {
         	modified=true;
             Text t=(Text)e.getSource();
             String s=t.getText();
@@ -160,11 +160,11 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	 *  vorzunehmen.
 	 */
     class SelListener implements SelectionListener {
-    	public void widgetSelected(SelectionEvent e) {
+    	public void widgetSelected(final SelectionEvent e) {
     		fireSelectedEvent();
     	}
     	
-    	public void widgetDefaultSelected(SelectionEvent e) {
+    	public void widgetDefaultSelected(final SelectionEvent e) {
     		widgetSelected(e);
     	}
     }
@@ -178,7 +178,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 			}
     	});
     }
-    public void fireSortEvent(String text){
+    public void fireSortEvent(final String text){
         for(ControlFieldListener ls:listeners){
             ls.reorder(text);
         }
@@ -188,11 +188,11 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
     		ls.selected();
     	}
     }
-	public void addChangeListener(ControlFieldListener cl) {
+	public void addChangeListener(final ControlFieldListener cl) {
 		listeners.add(cl);
 	}
 
-	public void removeChangeListener(ControlFieldListener cl) {
+	public void removeChangeListener(final ControlFieldListener cl) {
 		listeners.remove(cl);
 	}
 
@@ -212,7 +212,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 		}
 	}
 
-	public void setQuery(Query q) {
+	public void setQuery(final Query q) {
         boolean ch=false;
 		for(int i=0;i<fields.length;i++){
 			if(!lastFiltered[i].equals(StringTool.leer)){ 
@@ -231,7 +231,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 		return new ViewerFilter(){
 		
 			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
+			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
 				PersistentObject po=null;
 				if(element instanceof Tree){
 					po=(PersistentObject) ((Tree)element).contents;
@@ -260,7 +260,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	public IFilter createIFilter(){
 		return new IFilter(){
 
-			public boolean select(Object element) {
+			public boolean select(final Object element) {
 				PersistentObject po=null;
 				if(element instanceof Tree){
 					po=(PersistentObject) ((Tree)element).contents;

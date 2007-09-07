@@ -12,8 +12,14 @@
  *******************************************************************************/
 package ch.elexis.views.artikel;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.Dialog;
+import java.util.ArrayList;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -27,25 +33,29 @@ public class ArtikelContextMenu {
 	private IAction deleteAction, createAction, editAction;
 	CommonViewer cv;
 	ArtikelDetailDisplay add;
+	ArtikelMenuListener menuListener=new ArtikelMenuListener();
+	MenuManager menu;
+	ArrayList<IAction> actions=new ArrayList<IAction>(); 
 	
-	
-	public ArtikelContextMenu(Artikel template, CommonViewer cv){
+	public ArtikelContextMenu(final Artikel template, final CommonViewer cv){
 		this.cv=cv;
 		makeActions(template);
-		final MenuManager menu=new MenuManager();
-		menu.addMenuListener(new IMenuListener(){
-			public void menuAboutToShow(IMenuManager manager) {
-				menu.removeAll();
-				menu.add(deleteAction);
-				menu.add(createAction);
-				menu.add(editAction);
-			}
-			
-		});
+		actions.add(deleteAction);
+		actions.add(createAction);
+		actions.add(editAction);
+		menu=new MenuManager();
+		menu.addMenuListener(menuListener);
 		cv.setContextMenu(menu);
 	}
 	
-	public ArtikelContextMenu(Artikel template, CommonViewer cv, ArtikelDetailDisplay add){
+	public void addAction(final IAction ac){
+		actions.add(ac);
+	}
+	public void removeAction(final IAction ac){
+		actions.remove(ac);
+	}
+	
+	public ArtikelContextMenu(final Artikel template, final CommonViewer cv, final ArtikelDetailDisplay add){
 		this(template,cv);
 		this.add=add;
 	}
@@ -108,5 +118,18 @@ public class ArtikelContextMenu {
 
 	public interface ArtikelDetailDisplay{
 		public boolean show(Artikel art);
+	}
+	
+	class ArtikelMenuListener implements IMenuListener{
+		public void menuAboutToShow(final IMenuManager manager) {
+			menu.removeAll();
+			for(IAction ac:actions){
+				if(ac==null){
+					menu.add(new Separator());
+				}else{
+					menu.add(ac);
+				}
+			}
+		}
 	}
 }
