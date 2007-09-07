@@ -8,21 +8,35 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediSelector.java 3103 2007-09-06 18:56:55Z rgw_ch $
+ *  $Id: BAGMediSelector.java 3107 2007-09-07 11:03:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.views;
 
+import org.eclipse.swt.SWT;
+
+import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.util.CommonViewer;
+import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class BAGMediSelector extends CodeSelectorFactory {
-
+	
+	CommonViewer cv;
+	
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		// TODO Auto-generated method stub
-		return null;
+	public ViewerConfigurer createViewerConfigurer(final CommonViewer cv) {
+		//new ArtikelContextMenu((Medikament)new ch.elexis.artikel_at.data.ArtikelFactory().createTemplate(Medikament.class),cv,this);
+		this.cv=cv;
+		return new ViewerConfigurer(
+				new ContentProvider(cv),
+				new BAGMediLabelProvider(),
+				new ControlFieldProvider(cv),
+				new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE,null)
+		);
 	}
+
 
 	@Override
 	public void dispose() {
@@ -32,14 +46,13 @@ public class BAGMediSelector extends CodeSelectorFactory {
 
 	@Override
 	public String getCodeSystemName() {
-		// TODO Auto-generated method stub
-		return null;
+		return BAGMedi.CODESYSTEMNAME;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Class getElementClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return BAGMedi.class;
 	}
 
 }

@@ -8,20 +8,22 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3106 2007-09-07 05:14:37Z rgw_ch $
+ *  $Id: BAGMedi.java 3107 2007-09-07 11:03:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-
-import org.eclipse.jface.dialogs.MessageDialog;
+import java.text.ParseException;
+import java.util.LinkedList;
+import java.util.List;
 
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
+import ch.elexis.util.Log;
+import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
 /**
@@ -50,13 +52,13 @@ public class BAGMedi extends Artikel {
 		+"product			VARCHAR(25),"
 		+"substance         VARCHAR(25)"
 		+");"
-		+"INSERT INTO "+JOINTTABLE+" (product,substance) VALUES('VESRION','"+VERSION+"');";
+		+"INSERT INTO "+JOINTTABLE+" (product,substance) VALUES('VERSION','"+VERSION+"');";
 	
 	public static final String CODESYSTEMNAME="Medikamente";
 	public static final String DOMAIN_PHARMACODE="www.xid.ch/id/pk";
 	
 	static{
-		addMapping(Artikel.TABLENAME,"");
+		addMapping(Artikel.TABLENAME,"inhalt=JOINT:substance:product:"+JOINTTABLE);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
 		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE product='VERSION';");
 		if(v==null){
@@ -74,11 +76,12 @@ public class BAGMedi extends Artikel {
 	 * Create a BAGMEdi from a line of the BAG file
 	 * @param row the line
 	 */
-	public BAGMedi(String name, String pharmacode){
+	public BAGMedi(final String name, final String pharmacode){
 		super(name,CODESYSTEMNAME,pharmacode);
+		set("Klasse",getClass().getName());
 	}
 	
-	public void update(String[] row){
+	public void update(final String[] row){
 		Query<Organisation> qo=new Query<Organisation>(Organisation.class);
 		String id=qo.findSingle("Name","=", row[0]);
 		if(id==null){
@@ -88,11 +91,40 @@ public class BAGMedi extends Artikel {
 		setExt("HerstellerID", id);
 		setExt("Generika",row[1]);
 		setExt("Pharmacode",row[2]);
+		setExt("BAG-Dossier",row[3]);
+		setExt("Swissmdic-Nr.",row[4]);
+		setExt("Swissmedic-Liste",row[5]);
+		try{
+			setEKPreis(new Money(row[8]));
+			setVKPreis(new Money(row[9]));
+		}catch(ParseException ex){
+			log.log("Parse error preis "+row[7], Log.ERRORS);
+		}
+		if(row[10].equals("Y")){
+			setExt("Limitatio","Y");
+			setExt("LimitatioPts",row[11]);
+		}else{
+			setExt("Limitation", null);
+		}
+		if(!StringTool.isNothing(row[13])){
+			String[] substName=row[13].split("|");
+			LinkedList<Substance> substances=new LinkedList<Substance>();
+			for(String n:substName){
+				Substance s=Substance.find(n);
+				if(s==null){
+					s=new Substance(n,row[12]);
+				}
+				substances.add(s);
+			}
+			List<String[]> list=getList("inhalt", new String[0]);
+			
+		}
+		set("Codeclass",row[12]);
 		
 	}
 	@Override
 	protected String getConstraint(){
-		return "Typ=Medikament";
+		return "Typ='Medikament'";
 	}
 	
 	@Override
@@ -107,10 +139,10 @@ public class BAGMedi extends Artikel {
 	
 	
 	
-	public static BAGMedi load(String id){
+	public static BAGMedi load(final String id){
 		return new BAGMedi(id);
 	}
-	protected BAGMedi(String id){
+	protected BAGMedi(final String id){
 		super(id);
 	}
 	protected BAGMedi(){

@@ -8,35 +8,36 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediDetailDisplay.java 3103 2007-09-06 18:56:55Z rgw_ch $
+ *  $Id: BAGMediDetailDisplay.java 3107 2007-09-07 11:03:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 
+import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.views.IDetailDisplay;
 
 public class BAGMediDetailDisplay implements IDetailDisplay {
-
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		// TODO Auto-generated method stub
-		return null;
+	BAGMediDetailBlatt blatt;
+	
+	public Composite createDisplay(final Composite parent, final IViewSite site) {
+		blatt=new BAGMediDetailBlatt(parent);
+		return blatt;
 	}
 
-	public void display(Object obj) {
-		// TODO Auto-generated method stub
+	public void display(final Object obj) {
+		blatt.display((BAGMedi) obj);
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public Class getElementClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return BAGMedi.class;
 	}
 
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return BAGMedi.CODESYSTEMNAME;
 	}
 
 }

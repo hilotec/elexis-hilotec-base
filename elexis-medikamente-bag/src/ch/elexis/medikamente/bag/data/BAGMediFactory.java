@@ -8,16 +8,47 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediFactory.java 3103 2007-09-06 18:56:55Z rgw_ch $
+ *  $Id: BAGMediFactory.java 3107 2007-09-07 11:03:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
+import java.lang.reflect.Method;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
 public class BAGMediFactory extends PersistentObjectFactory {
 
-	public BAGMediFactory() {
-		// TODO Auto-generated constructor stub
+	@Override
+	public PersistentObject createFromString(final String code) {
+	    try{
+	        String[] ci=code.split("::");
+	        Class clazz=Class.forName(ci[0]);
+	        Method load=clazz.getMethod("load",new Class[]{String.class});
+	        return  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
+	    }catch(Exception ex){
+	    	
+	    	//ExHandler.handle(ex);
+	    	return null;
+	    
+		}
 	}
 
+	@Override
+	protected PersistentObject doCreateTemplate(final Class typ) {
+		try {
+			return (PersistentObject)typ.newInstance();
+		} catch (Exception e) {
+			// ExHandler.handle(e);
+			return null;
+		}
+			
+	}
+
+	public static ImageDescriptor loadImageDescriptor(final String path){
+        return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.medikamente.bag", path); 
+	}
 }
