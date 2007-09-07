@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3059 2007-09-02 17:27:09Z rgw_ch $
+# * $Id: createDB.script 3110 2007-09-07 16:22:09Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -119,15 +119,15 @@ CREATE TABLE ARTIKEL(
 	SubID			VARCHAR(20),
 	LieferantID		VARCHAR(25),
 	Klasse			VARCHAR(80),
-	Name			VARCHAR(80),
-	Name_intern		VARCHAR(80),
+	Name			VARCHAR(90),
+	Name_intern		VARCHAR(90),
 	Maxbestand		CHAR(4),
 	Minbestand		CHAR(4),
 	Istbestand		CHAR(4),
-	EK_Preis		CHAR(6),
-	VK_Preis		CHAR(6),
+	EK_Preis		CHAR(8),
+	VK_Preis		CHAR(8),
 	Typ				VARCHAR(15),
-	Codeclass		CHAR(5),
+	Codeclass		CHAR(10),
 	ExtID			VARCHAR(25),
 	ExtInfo			BLOB
 );

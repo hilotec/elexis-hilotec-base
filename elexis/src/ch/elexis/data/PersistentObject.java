@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3105 2007-09-07 05:14:32Z rgw_ch $
+ *    $Id: PersistentObject.java 3110 2007-09-07 16:22:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -563,7 +563,7 @@ public abstract class PersistentObject{
      * fail if a collision occurs.
      * @return true on success, false on failure
      */
-    public boolean addXid(final String domain, final String domain_id, boolean updateIfExists){
+    public boolean addXid(final String domain, final String domain_id, final boolean updateIfExists){
     	Xid oldXID=Xid.findXID(this, domain);
     	if(oldXID!=null){
     		if(updateIfExists){
@@ -1174,6 +1174,21 @@ public abstract class PersistentObject{
 	}
 	
 	/**
+	 * Alle Bezüge aus einer n:m-Verknüpfung zu diesem Objekt löschen
+	 * @param field Feldname, der die Liste definiert
+	 * @return
+	 */
+	public boolean deleteList(final String field){
+		String mapped=map(field);
+		if(!mapped.startsWith("JOINT:")){
+			SWTHelper.alert("Interer Fehler", "Feld "+field+" ist keine n:m Verknüpfung");
+			return false;
+		}
+		String[] m=mapped.split(":");// m[1] FremdID, m[2] eigene ID, m[3] Name Joint
+		j.exec("DELETE FROM "+m[3]+" WHERE "+m[2]+"="+getWrappedId());
+		return true;
+	}
+	/**
 	 * We can undelete any object by simply clearing the deleted-flag
 	 * and reanimate dependend XID's
 	 * @return true on success
@@ -1568,7 +1583,7 @@ public abstract class PersistentObject{
 		PersistentObject.showDeleted = showDeleted;
 	}
 
-	protected static void createTable(String name, String jointDB){
+	protected static void createTable(final String name, final String jointDB){
 		ByteArrayInputStream bais;
 		try {
 			bais = new ByteArrayInputStream(jointDB.getBytes("UTF-8"));
