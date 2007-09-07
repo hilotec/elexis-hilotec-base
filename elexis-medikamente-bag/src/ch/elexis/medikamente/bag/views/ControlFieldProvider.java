@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3107 2007-09-07 11:03:26Z rgw_ch $
+ * $Id: ControlFieldProvider.java 3111 2007-09-07 19:45:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -37,7 +37,7 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
 	FormToolkit tk=Desk.theToolkit;
 	
 	public ControlFieldProvider(final CommonViewer viewer) {
-		super(viewer, new String[]{"Name","Substanz"});
+		super(viewer, new String[]{"Medikament","Substanz"});
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package ch.elexis.medikamente.bag.data;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -21,7 +24,7 @@ public class Substance extends PersistentObject {
 	+"INSERT INTO "+TABLENAME+" (ID,name) VALUES ('VERSION','"+VERSION+"');";
 	
 	static{
-		addMapping(TABLENAME,"name","gruppe");
+		addMapping(TABLENAME,"name","gruppe","medis=JOINT:product:substance:"+BAGMedi.JOINTTABLE);
 		Substance v=load("VERSION");
 		if(v.state()<PersistentObject.DELETED){
 			createTable("Substance", createDB);
@@ -42,7 +45,17 @@ public class Substance extends PersistentObject {
 		set(new String[]{"name","gruppe"},name,group);
 	}
 	
-		
+	public SortedSet<BAGMedi> findMedis(SortedSet<BAGMedi> list){
+		if(list==null){
+			list=new TreeSet<BAGMedi>();
+		}	
+		List<String[]> lMedis=getList("medis", new String[0]);
+		for(String[] r:lMedis){
+			BAGMedi bm=BAGMedi.load(r[0]);
+			list.add(bm);
+		}
+		return list;
+	}
 	public List<Substance> sameGroup(){
 		return allFromGroup(get("gruppe"));
 	}

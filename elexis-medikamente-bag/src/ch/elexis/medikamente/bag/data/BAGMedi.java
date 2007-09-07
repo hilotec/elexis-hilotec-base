@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3109 2007-09-07 16:22:03Z rgw_ch $
+ *  $Id: BAGMedi.java 3111 2007-09-07 19:45:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -32,7 +32,7 @@ import ch.rgw.tools.VersionInfo;
  * @author Gerry
  *
  */
-public class BAGMedi extends Artikel {
+public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	//static final String EXTTABLE="CH_ElEXIS_MEDIKAMENTE_BAG_EXT";
 	static final String JOINTTABLE="CH_ELEXIS_MEDIKAMENTE_BAG_JOINT";
 	static final String VERSION="0.1.0";
@@ -92,6 +92,8 @@ public class BAGMedi extends Artikel {
 		}
 		return ret;
 	}
+	
+	
 	public void update(final String[] row){
 		Query<Organisation> qo=new Query<Organisation>(Organisation.class);
 		String id=qo.findSingle("Name","=", row[0]);
@@ -162,5 +164,9 @@ public class BAGMedi extends Artikel {
 		super(id);
 	}
 	protected BAGMedi(){
+	}
+
+	public int compareTo(BAGMedi arg0) {
+		return(getLabel().compareTo(arg0.getLabel()));
 	}
 }
