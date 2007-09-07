@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3018 2007-08-26 14:46:31Z rgw_ch $
+ *    $Id: PersistentObject.java 3105 2007-09-07 05:14:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1564,6 +1566,19 @@ public abstract class PersistentObject{
 	}
 	public static void setShowDeleted(final boolean showDeleted) {
 		PersistentObject.showDeleted = showDeleted;
+	}
+
+	protected static void createTable(String name, String jointDB){
+		ByteArrayInputStream bais;
+		try {
+			bais = new ByteArrayInputStream(jointDB.getBytes("UTF-8"));
+			if(j.execScript(bais,true,false)==false){
+				SWTHelper.showError("Datenbank-Fehler","Konnte Tabelle "+name+" nicht erstellen");
+			}
+		} catch (UnsupportedEncodingException e) {
+			// should really never happen
+			e.printStackTrace();
+		}
 	}
 
 }
