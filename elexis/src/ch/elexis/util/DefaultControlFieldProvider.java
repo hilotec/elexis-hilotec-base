@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 3115 2007-09-08 20:07:20Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 3117 2007-09-08 23:45:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -56,6 +56,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	protected final List<ControlFieldListener> listeners;
 	private final FormToolkit tk;
     protected CommonViewer myViewer;
+    boolean bCeaseFire;
 	
 	public DefaultControlFieldProvider(final CommonViewer viewer, final String[] flds){
         fields=new String[flds.length];
@@ -170,22 +171,28 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
     }
 
     public void fireChangedEvent(){
-    	Desk.theDisplay.syncExec(new Runnable(){
-			public void run() {
-				for(ControlFieldListener lis:listeners){
-		    		lis.changed(fields,lastFiltered);
-		    	}					
-			}
-    	});
+    	if(!bCeaseFire){
+	    	Desk.theDisplay.syncExec(new Runnable(){
+				public void run() {
+					for(ControlFieldListener lis:listeners){
+			    		lis.changed(fields,lastFiltered);
+			    	}					
+				}
+	    	});
+    	}
     }
     public void fireSortEvent(final String text){
-        for(ControlFieldListener ls:listeners){
-            ls.reorder(text);
-        }
+    	if(!bCeaseFire){
+	        for(ControlFieldListener ls:listeners){
+	            ls.reorder(text);
+	        }
+    	}
     }
     public void fireSelectedEvent() {
-    	for (ControlFieldListener ls : listeners) {
-    		ls.selected();
+    	if(!bCeaseFire){
+	    	for (ControlFieldListener ls : listeners) {
+	    		ls.selected();
+	    	}
     	}
     }
 	public void addChangeListener(final ControlFieldListener cl) {
@@ -204,11 +211,14 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	 */
 	public void clearValues(){
 		if(!isEmpty()){
+			bCeaseFire=true;
 			for(int i=0;i<selectors.length;i++){
 				selectors[i].setText(StringTool.leer); 
 				lastFiltered[i]=StringTool.leer;
 			}
 			modified=false;
+			bCeaseFire=false;
+			fireChangedEvent();
 		}
 	}
 
@@ -284,4 +294,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 		return true;
 	}
 	
+	public void ceaseFire(final boolean bCeaseFire){
+		this.bCeaseFire=bCeaseFire;
+	}
 }
