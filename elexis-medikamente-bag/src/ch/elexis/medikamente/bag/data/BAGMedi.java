@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3111 2007-09-07 19:45:29Z rgw_ch $
+ *  $Id: BAGMedi.java 3112 2007-09-08 04:41:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.elexis.Desk;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
@@ -36,6 +37,9 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	//static final String EXTTABLE="CH_ElEXIS_MEDIKAMENTE_BAG_EXT";
 	static final String JOINTTABLE="CH_ELEXIS_MEDIKAMENTE_BAG_JOINT";
 	static final String VERSION="0.1.0";
+	public static final String IMG_GENERIKUM="ch.elexis.medikamente.bag.generikum";
+	public static final String IMG_HAS_GENERIKA="ch.elexis.medikamente.bag.has_generika";
+	public static final String IMG_ORIGINAL="ch.elexis.medikamente.bag.original";
 	/*
 	static final String extDB="CREATE TABLE "+EXTTABLE+" ("
 		+"ID				VARCHAR(25) primary key,"
@@ -63,6 +67,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		addMapping(Artikel.TABLENAME,"inhalt=JOINT:substance:product:"+JOINTTABLE);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
 		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
+		
 		if(v==null){
 			createTable("BAGMedi",jointDB);
 		}else{
@@ -73,6 +78,9 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		}
 		// make sure, the substances table is created
 		Substance.load("VERSION");
+		Desk.theImageRegistry.put(IMG_GENERIKUM, BAGMediFactory.loadImageDescriptor("icons/ggruen.ico"));
+		Desk.theImageRegistry.put(IMG_HAS_GENERIKA, BAGMediFactory.loadImageDescriptor("icons/orot.ico"));
+		Desk.theImageRegistry.put(IMG_ORIGINAL, BAGMediFactory.loadImageDescriptor("icons/oblau.ico"));
 	}
 	
 	/**
@@ -84,6 +92,12 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		set("Klasse",getClass().getName());
 	}
 	
+	public boolean isGenericum(){
+		return getExt("Generikum").equals("G");
+	}
+	public boolean hasGenerica(){
+		return getExt("Generikum").equals("O");
+	}
 	public List<Substance> getSubstances(){
 		List<String[]> cnt= getList("inhalt",new String[0]);
 		ArrayList<Substance> ret=new ArrayList<Substance>(cnt.size());
