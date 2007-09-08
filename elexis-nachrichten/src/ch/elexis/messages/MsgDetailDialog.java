@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgDetailDialog.java 3100 2007-09-06 10:52:10Z rgw_ch $
+ * $Id: MsgDetailDialog.java 3116 2007-09-08 20:08:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -76,7 +76,7 @@ public class MsgDetailDialog extends Dialog {
 			cbTo.add(a.getLabel());
 		}
 		if(msg==null){
-			lbFrom.setText(Hub.actMandant.getLabel());
+			lbFrom.setText(Hub.actUser.getLabel());
 		}else{
 			lbFrom.setText(msg.getSender().getLabel());
 			cbTo.setText(msg.getDest().getLabel());
