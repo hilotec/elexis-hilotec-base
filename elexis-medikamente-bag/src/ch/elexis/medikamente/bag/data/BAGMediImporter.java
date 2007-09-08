@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3109 2007-09-07 16:22:03Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3113 2007-09-08 12:32:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -71,9 +71,8 @@ public class BAGMediImporter extends ImporterPage {
 			imp=new BAGMedi(row[7],pharmacode);
 		}else{
 			imp=BAGMedi.load(id);
-			imp.update(row);
 		}
-			
+		imp.update(row);			
 		return true;
 	}
 

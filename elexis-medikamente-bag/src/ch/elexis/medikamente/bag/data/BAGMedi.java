@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3112 2007-09-08 04:41:00Z rgw_ch $
+ *  $Id: BAGMedi.java 3113 2007-09-08 12:32:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -60,7 +60,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		+");"
 		+"INSERT INTO "+JOINTTABLE+" (ID,substance) VALUES('VERSION','"+VERSION+"');";
 	
-	public static final String CODESYSTEMNAME="Medikamente";
+	public static final String CODESYSTEMNAME="Medikament";
 	public static final String DOMAIN_PHARMACODE="www.xid.ch/id/pk";
 	
 	static{
@@ -78,8 +78,8 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		}
 		// make sure, the substances table is created
 		Substance.load("VERSION");
-		Desk.theImageRegistry.put(IMG_GENERIKUM, BAGMediFactory.loadImageDescriptor("icons/ggruen.ico"));
-		Desk.theImageRegistry.put(IMG_HAS_GENERIKA, BAGMediFactory.loadImageDescriptor("icons/orot.ico"));
+		Desk.theImageRegistry.put(IMG_GENERIKUM, BAGMediFactory.loadImageDescriptor("icons/ggruen.png"));
+		Desk.theImageRegistry.put(IMG_HAS_GENERIKA, BAGMediFactory.loadImageDescriptor("icons/orot.png"));
 		Desk.theImageRegistry.put(IMG_ORIGINAL, BAGMediFactory.loadImageDescriptor("icons/oblau.ico"));
 	}
 	
@@ -180,7 +180,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	protected BAGMedi(){
 	}
 
-	public int compareTo(BAGMedi arg0) {
+	public int compareTo(final BAGMedi arg0) {
 		return(getLabel().compareTo(arg0.getLabel()));
 	}
 }

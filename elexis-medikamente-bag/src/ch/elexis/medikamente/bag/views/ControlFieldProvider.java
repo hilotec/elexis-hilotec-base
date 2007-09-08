@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3111 2007-09-07 19:45:29Z rgw_ch $
+ * $Id: ControlFieldProvider.java 3113 2007-09-08 12:32:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -56,7 +56,7 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
             
         });
         bGenerics=new Button(ret,SWT.TOGGLE);
-        bGenerics.setImage(BAGMediFactory.loadImageDescriptor("icons/ggruen.ico").createImage());
+        bGenerics.setImage(BAGMediFactory.loadImageDescriptor("icons/ggruen.png").createImage());
         Composite inner=new Composite(ret,SWT.NONE);
         GridLayout lRet=new GridLayout(fields.length,true);
         inner.setLayout(lRet);

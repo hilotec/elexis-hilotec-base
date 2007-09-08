@@ -1,6 +1,5 @@
 package ch.elexis.medikamente.bag.data;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -17,7 +16,7 @@ public class Substance extends PersistentObject {
 		+"ID		VARCHAR(25) primary key,"
 		+"deleted	CHAR(1) default '0',"
 		+"gruppe	VARCHAR(7),"				// therap. gruppe
-		+"name		VARCHAR(80)"
+		+"name		VARCHAR(127)"
 	+");"
 	+"CREATE INDEX CEMBS1 ON "+TABLENAME+" (gruppe);"
 	+"CREATE INDEX CEMBS2 ON "+TABLENAME+" (name);"

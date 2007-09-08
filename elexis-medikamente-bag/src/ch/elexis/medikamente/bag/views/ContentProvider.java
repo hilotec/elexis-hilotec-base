@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 3111 2007-09-07 19:45:29Z rgw_ch $
+ * $Id: ContentProvider.java 3113 2007-09-08 12:32:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -51,15 +51,15 @@ public class ContentProvider implements CommonContentProvider {
 		List<Substance> lSubst=null;
 		ControlFieldProvider cfp=(ControlFieldProvider)cv.getConfigurer().getControlFieldProvider();
 		String[] vals=cfp.getValues();
-		qbm.add("Typ", "=", "Medikament");
+		//qbm.add("Typ", "=", "Medikament");
 		SortedSet<BAGMedi> ret=new TreeSet<BAGMedi>();
 		if(vals[0].length()>1){
-			qbm.add("Name", "LIKE", vals[0]+"%");
+			qbm.add("Name", "LIKE", vals[0]+"%",true);
 			qbm.orderBy(false,new String[]{"Name"});
 			lMedi=qbm.execute();
 		}
 		if(vals[1].length()>1){
-			qbs.add("name", "LIKE", vals[1]+"%");
+			qbs.add("name", "LIKE", vals[1]+"%",true);
 			qbs.orderBy(false, new String[]{"name"});
 			lSubst=qbs.execute();
 			for(Substance subst:lSubst){
@@ -76,6 +76,7 @@ public class ContentProvider implements CommonContentProvider {
 			}
 		}else{
 			if(lMedi==null){
+				qbm.orderBy(false, new String[]{"Name"});
 				return qbm.execute().toArray();
 			}else{
 				return lMedi.toArray();
