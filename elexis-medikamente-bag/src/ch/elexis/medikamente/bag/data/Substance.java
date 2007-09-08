@@ -1,5 +1,6 @@
 package ch.elexis.medikamente.bag.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -22,11 +23,24 @@ public class Substance extends PersistentObject {
 	+"CREATE INDEX CEMBS2 ON "+TABLENAME+" (name);"
 	+"INSERT INTO "+TABLENAME+" (ID,name) VALUES ('VERSION','"+VERSION+"');";
 	
+	final static String INTERAKTTABLE="CH_ELEXIS_MEDIKAMENTE_BAG_INTERACTIONS";
+	static final String createInteract="CREATE TABLE "+INTERAKTTABLE+" ("
+		+"ID			VARCHAR(25)	primary key,"
+		+"Subst1		VARCHAR(25),"
+		+"Subst2		VARCHAR(25),"
+		+"Type			VARCHAR(20),"
+		+"Severity			CHAR(1),"
+		+"Description		TEXT);"
+		+"CREATE INDEX CEMBI1 ON "+INTERAKTTABLE+" (Subst1);"
+		+"CREATE INDEX CEMBI2 ON "+INTERAKTTABLE+" (Subst2);";
+	
 	static{
-		addMapping(TABLENAME,"name","gruppe","medis=JOINT:product:substance:"+BAGMedi.JOINTTABLE);
+		addMapping(TABLENAME,"name","gruppe","medis=JOINT:product:substance:"+BAGMedi.JOINTTABLE,
+				"interactions=JOINT:Subst1:Subst2:"+INTERAKTTABLE);
 		Substance v=load("VERSION");
 		if(v.state()<PersistentObject.DELETED){
 			createTable("Substance", createDB);
+			createTable("Interactions",createInteract);
 		}else{
 			VersionInfo vi=new VersionInfo(v.get("name"));
 			if(vi.isOlder(VERSION)){
@@ -71,6 +85,21 @@ public class Substance extends PersistentObject {
 		return new Query<Substance>(Substance.class,"gruppe",group).execute();
 		
 	}
+	
+	public List<Interaction> getInteractions(){
+		List<String[]> in=getList("interactions",new String[]{"Type","Severity","Description"});
+		List<Interaction> ret=new ArrayList<Interaction>(in.size());
+		for(String[] line:in){
+			Substance other=Substance.load(line[0]);
+			ret.add(new Interaction(other,line[3],line[1],Integer.parseInt(line[2])));
+		}
+		return ret;
+	}
+	
+	public void addInteraction(final Interaction iac){
+		addToList("interactions", iac.subst.getId(), "Type="+iac.type, "Severity="+Integer.toString(iac.severity),"Description="+iac.description);
+	}
+	
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
@@ -82,5 +111,18 @@ public class Substance extends PersistentObject {
 	protected Substance(){}
 	protected Substance(final String id){
 		super(id);
+	}
+	
+	public static class Interaction{
+		Substance subst;
+		String type;
+		String description;
+		int severity;
+		Interaction(final Substance s, final String desc, final String t, final int sev){
+			subst=s;
+			description=desc;
+			type=t;
+			severity=sev;
+		}
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 3113 2007-09-08 12:32:00Z rgw_ch $
+ * $Id: ContentProvider.java 3118 2007-09-08 23:45:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -30,7 +30,7 @@ public class ContentProvider implements CommonContentProvider {
 	CommonViewer cv;
 	Query<BAGMedi> qbm=new Query<BAGMedi>(BAGMedi.class);
 	Query<Substance> qbs=new Query<Substance>(Substance.class);
-	
+	String group;
 	
 	public ContentProvider(final CommonViewer mine){
 		cv=mine;
@@ -52,9 +52,19 @@ public class ContentProvider implements CommonContentProvider {
 		ControlFieldProvider cfp=(ControlFieldProvider)cv.getConfigurer().getControlFieldProvider();
 		String[] vals=cfp.getValues();
 		//qbm.add("Typ", "=", "Medikament");
+		if(group!=null){
+			qbm.add("Gruppe", "=",group);
+			group=null;
+		}
+		if(cfp.bGenericsOnly){
+			qbm.add("Generikum", "LIKE", "G%");
+		}
 		SortedSet<BAGMedi> ret=new TreeSet<BAGMedi>();
 		if(vals[0].length()>1){
 			qbm.add("Name", "LIKE", vals[0]+"%",true);
+			qbm.orderBy(false,new String[]{"Name"});
+			lMedi=qbm.execute();
+		}else if(cfp.bGenericsOnly){
 			qbm.orderBy(false,new String[]{"Name"});
 			lMedi=qbm.execute();
 		}

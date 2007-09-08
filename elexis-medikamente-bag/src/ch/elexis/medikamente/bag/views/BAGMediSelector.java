@@ -8,25 +8,34 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediSelector.java 3107 2007-09-07 11:03:26Z rgw_ch $
+ *  $Id: BAGMediSelector.java 3118 2007-09-08 23:45:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.views;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 
 import ch.elexis.medikamente.bag.data.BAGMedi;
+import ch.elexis.medikamente.bag.data.BAGMediFactory;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.views.artikel.ArtikelContextMenu;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class BAGMediSelector extends CodeSelectorFactory {
-	
+	private IAction sameOfGroupAction;
 	CommonViewer cv;
-	
+
+	public BAGMediSelector() {
+		makeActions();
+	}
 	@Override
 	public ViewerConfigurer createViewerConfigurer(final CommonViewer cv) {
-		//new ArtikelContextMenu((Medikament)new ch.elexis.artikel_at.data.ArtikelFactory().createTemplate(Medikament.class),cv,this);
+		ArtikelContextMenu menu=new ArtikelContextMenu((BAGMedi)new BAGMediFactory().createTemplate(BAGMedi.class),cv);
+		menu.addAction(sameOfGroupAction);
+		//
 		this.cv=cv;
 		return new ViewerConfigurer(
 				new ContentProvider(cv),
@@ -53,6 +62,29 @@ public class BAGMediSelector extends CodeSelectorFactory {
 	@Override
 	public Class getElementClass() {
 		return BAGMedi.class;
+	}
+	
+	private void makeActions(){
+		sameOfGroupAction=new Action("Selbe therap. Gruppe"){
+			{
+				setToolTipText("Zeige alle Medikamente derselben therapeutischen Gruppe");
+			}
+
+			@Override
+			public void run() {
+				ContentProvider cp=(ContentProvider) cv.getConfigurer().getContentProvider();
+				BAGMedi selected=(BAGMedi)cv.getSelection()[0];
+				cp.group=selected.get("Gruppe");
+				ControlFieldProvider cfp=(ControlFieldProvider)cv.getConfigurer().getControlFieldProvider();
+				if(cfp.isEmpty()){
+					cv.notify(CommonViewer.Message.update_keeplabels);	
+				}else{
+					cfp.clearValues();
+				}
+				
+			}
+			
+		};
 	}
 
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3114 2007-09-08 20:07:14Z rgw_ch $
+ *  $Id: BAGMedi.java 3118 2007-09-08 23:45:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -19,6 +19,7 @@ import java.util.List;
 
 import ch.elexis.Desk;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
@@ -58,13 +59,16 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		+"product			VARCHAR(25),"
 		+"substance         VARCHAR(25)"
 		+");"
+		+"CREATE INDEX CHEMBJ1 ON "+JOINTTABLE+" (product);"
+		+"CREATE INDEX CHEMBJ2 ON "+JOINTTABLE+" (substance);" 
 		+"INSERT INTO "+JOINTTABLE+" (ID,substance) VALUES('VERSION','"+VERSION+"');";
 	
 	public static final String CODESYSTEMNAME="Medikament";
 	public static final String DOMAIN_PHARMACODE="www.xid.ch/id/pk";
 	
 	static{
-		addMapping(Artikel.TABLENAME,"inhalt=JOINT:substance:product:"+JOINTTABLE);
+		addMapping(Artikel.TABLENAME,"Gruppe=ExtId","Generikum=Codeclass","inhalt=JOINT:substance:product:"+JOINTTABLE);
+		
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
 		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
 		
@@ -93,10 +97,10 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	}
 	
 	public boolean isGenericum(){
-		return getExt("Generikum").equals("G");
+		return get("Generikum").startsWith("G");
 	}
 	public boolean hasGenerica(){
-		return getExt("Generikum").equals("O");
+		return get("Generikum").startsWith("O");
 	}
 	public List<Substance> getSubstances(){
 		List<String[]> cnt= getList("inhalt",new String[0]);
@@ -107,6 +111,9 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		return ret;
 	}
 	
+	public Kontakt getHersteller(){
+		return Kontakt.load(getExt("HerstellerID"));
+	}
 	
 	public void update(final String[] row){
 		Query<Organisation> qo=new Query<Organisation>(Organisation.class);
@@ -116,7 +123,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 			id=o.getId();
 		}
 		setExt("HerstellerID", id);
-		setExt("Generika",row[1]);
+		set("Generikum",row[1]);
 		setExt("Pharmacode",row[2]);
 		setExt("BAG-Dossier",row[3]);
 		setExt("Swissmedic-Nr.",row[4]);
@@ -133,24 +140,28 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		}else{
 			setExt("Limitation", null);
 		}
-		if(!StringTool.isNothing(row[13])){
-			String[] substName=row[13].split("\\|");
-			LinkedList<Substance> substances=new LinkedList<Substance>();
-			for(String n:substName){
-				Substance s=Substance.find(n);
-				if(s==null){
-					s=new Substance(n,row[12]);
+		if(row.length>13){
+			if(!StringTool.isNothing(row[13])){
+				String[] substName=row[13].split("\\|");
+				LinkedList<Substance> substances=new LinkedList<Substance>();
+				for(String n:substName){
+					Substance s=Substance.find(n);
+					if(s==null){
+						s=new Substance(n,row[12]);
+					}
+					substances.add(s);
 				}
-				substances.add(s);
+				deleteList("inhalt");
+				for(Substance s:substances){
+					addToList("inhalt", s.getId(), new String[0]);
+				}
+				
+				
 			}
-			deleteList("inhalt");
-			for(Substance s:substances){
-				addToList("inhalt", s.getId(), new String[0]);
-			}
-			
-			
 		}
-		set("Codeclass",row[12]);
+		if(row.length>12){
+			set("Gruppe",row[12]);
+		}
 		
 	}
 	

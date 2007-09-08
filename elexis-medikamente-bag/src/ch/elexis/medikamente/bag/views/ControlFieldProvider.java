@@ -8,13 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3114 2007-09-08 20:07:14Z rgw_ch $
+ * $Id: ControlFieldProvider.java 3118 2007-09-08 23:45:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,7 +27,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
-import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
@@ -41,7 +38,6 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
 	Button bGenerics, bGroup;
 	FormToolkit tk=Desk.theToolkit;
 	boolean bGenericsOnly;
-	GenericsFilter genericsFilter=new GenericsFilter();
 	
 	public ControlFieldProvider(final CommonViewer viewer) {
 		super(viewer, new String[]{"Medikament","Substanz"});
@@ -59,7 +55,11 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
         bReload.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				clearValues();
+				if(isEmpty()){
+					fireChangedEvent();
+				}else{
+					clearValues();
+				}
 			}
         	
         });
@@ -106,30 +106,12 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				bGenericsOnly=bGenerics.getSelection();
-				//fireChangedEvent();
-				if(bGenerics.getSelection()){
-					myViewer.getViewerWidget().addFilter(genericsFilter);
-				}else{
-					myViewer.getViewerWidget().removeFilter(genericsFilter);
-				}
+				fireChangedEvent();
 			}
         	
         });
         return ret;
 	}
 
-	class GenericsFilter extends ViewerFilter{
-
-		@Override
-		public boolean select(final Viewer viewer, final Object parentElement,
-				final Object element) {
-			if(element instanceof BAGMedi){
-				BAGMedi medi=(BAGMedi)element;
-				return medi.isGenericum();
-			}
-			return false;
-		}
 		
-	}
-	
 }

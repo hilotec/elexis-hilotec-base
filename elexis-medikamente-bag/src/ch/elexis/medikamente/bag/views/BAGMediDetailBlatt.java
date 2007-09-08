@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3109 2007-09-07 16:22:03Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3118 2007-09-08 23:45:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -43,7 +43,24 @@ public class BAGMediDetailBlatt extends Composite {
 	private final ScrolledForm form;
 	
 	InputData[] fields=new InputData[]{
-			new InputData("Hersteller","ExtInfo",InputData.Typ.STRING,"HerstellerID"),
+			new InputData("Hersteller","ExtInfo",new LabeledInputField.IContentProvider(){
+				public void displayContent(PersistentObject po,InputData ltf) {
+					Kontakt hersteller=((BAGMedi)po).getHersteller();
+					if(hersteller.isValid()){
+						String lbl=hersteller.getLabel();
+						if(lbl.length()>15){
+							lbl=lbl.substring(0,12)+"...";
+						}
+						ltf.setText(lbl);
+					}else{
+						ltf.setText("?");
+					}
+				}
+				public void reloadContent(PersistentObject po, InputData ltf) {
+				}
+				
+			}),
+			new InputData("Therap. Gruppe","Gruppe",InputData.Typ.STRING,null),
 			new InputData("Generika","ExtInfo",InputData.Typ.STRING,"Generika"),
 			new InputData("Pharmacode","ExtInfo",InputData.Typ.STRING,"Pharmacode"),
 			new InputData("BAG-Dossier","ExtInfo",InputData.Typ.STRING,"BAG-Dossier"),

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediLabelProvider.java 3112 2007-09-08 04:41:00Z rgw_ch $
+ * $Id: BAGMediLabelProvider.java 3118 2007-09-08 23:45:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -26,13 +26,14 @@ import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Substance;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.DefaultLabelProvider;
+import ch.rgw.tools.StringTool;
 
 public class BAGMediLabelProvider extends DefaultLabelProvider implements
 		ITableColorProvider {
 
 	
 	@Override
-	public String getColumnText(Object element, int columnIndex) {
+	public String getColumnText(final Object element, final int columnIndex) {
 		if(element instanceof BAGMedi){
 			BAGMedi bm=(BAGMedi)element;
 			StringBuilder sb=new StringBuilder();
@@ -51,12 +52,12 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
 		return super.getColumnText(element, columnIndex);
 	}
 
-	public Color getBackground(Object element, int columnIndex) {
+	public Color getBackground(final Object element, final int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Color getForeground(Object element, int columnIndex) {
+	public Color getForeground(final Object element, final int columnIndex) {
     	if (element instanceof Artikel) {
     		Artikel art = (Artikel) element;
     		
@@ -90,13 +91,13 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
 	}
 
 	@Override
-	public Image getColumnImage(Object element, int columnIndex) {
+	public Image getColumnImage(final Object element, final int columnIndex) {
 		if(element instanceof BAGMedi){
 			BAGMedi bm=(BAGMedi) element;
-			String g=bm.getExt("Generika");
-			if(g.equals("G")){
+			String g=StringTool.unNull(bm.get("Generikum"));
+			if(g.startsWith("G")){
 				return Desk.theImageRegistry.get(BAGMedi.IMG_GENERIKUM);
-			}else if(g.equals("O")){
+			}else if(g.startsWith("O")){
 				return Desk.theImageRegistry.get(BAGMedi.IMG_HAS_GENERIKA);
 			}else{
 				return Desk.theImageRegistry.get(BAGMedi.IMG_ORIGINAL);
