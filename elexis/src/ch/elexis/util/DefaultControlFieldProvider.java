@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 3108 2007-09-07 11:03:34Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 3115 2007-09-08 20:07:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -55,7 +55,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	protected boolean modified;
 	protected final List<ControlFieldListener> listeners;
 	private final FormToolkit tk;
-    CommonViewer myViewer;
+    protected CommonViewer myViewer;
 	
 	public DefaultControlFieldProvider(final CommonViewer viewer, final String[] flds){
         fields=new String[flds.length];
