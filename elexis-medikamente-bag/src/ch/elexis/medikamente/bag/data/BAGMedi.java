@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3113 2007-09-08 12:32:00Z rgw_ch $
+ *  $Id: BAGMedi.java 3114 2007-09-08 20:07:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -183,4 +183,10 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	public int compareTo(final BAGMedi arg0) {
 		return(getLabel().compareTo(arg0.getLabel()));
 	}
+
+	@Override
+	public boolean isDragOK() {
+		return true;
+	}
+	
 }

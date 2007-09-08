@@ -8,12 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3113 2007-09-08 12:32:00Z rgw_ch $
+ * $Id: ControlFieldProvider.java 3114 2007-09-08 20:07:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
 
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -25,6 +29,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
+import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
@@ -35,6 +40,8 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
 	Text tMedi, tSubst;
 	Button bGenerics, bGroup;
 	FormToolkit tk=Desk.theToolkit;
+	boolean bGenericsOnly;
+	GenericsFilter genericsFilter=new GenericsFilter();
 	
 	public ControlFieldProvider(final CommonViewer viewer) {
 		super(viewer, new String[]{"Medikament","Substanz"});
@@ -46,8 +53,17 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
         form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
         Composite ret=form.getBody();
 	   //Composite ret=new Composite(parent,style);
-        ret.setLayout(new GridLayout(3,false));
-        Hyperlink hClr=tk.createHyperlink(ret,"x",SWT.NONE); //$NON-NLS-1$
+        ret.setLayout(new GridLayout(2,false));
+        Button bReload=new Button(ret,SWT.PUSH);
+        bReload.setImage(Desk.theImageRegistry.get(Desk.IMG_REFRESH));
+        bReload.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				clearValues();
+			}
+        	
+        });
+        /*Hyperlink hClr=tk.createHyperlink(ret,"x",SWT.NONE); //$NON-NLS-1$
         hClr.addHyperlinkListener(new HyperlinkAdapter(){
             @Override
             public void linkActivated(final HyperlinkEvent e)
@@ -55,12 +71,11 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
             }
             
         });
-        bGenerics=new Button(ret,SWT.TOGGLE);
-        bGenerics.setImage(BAGMediFactory.loadImageDescriptor("icons/ggruen.png").createImage());
+        */
         Composite inner=new Composite(ret,SWT.NONE);
         GridLayout lRet=new GridLayout(fields.length,true);
         inner.setLayout(lRet);
-        inner.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+        inner.setLayoutData(SWTHelper.getFillGridData(1,true,2,true));
         
         for(String l:fields){
             Hyperlink hl=tk.createHyperlink(inner,l,SWT.NONE);
@@ -84,10 +99,37 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
             selectors[i].setToolTipText(Messages.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
             selectors[i].setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
         }
+        bGenerics=new Button(ret,SWT.TOGGLE);
+        bGenerics.setImage(BAGMediFactory.loadImageDescriptor("icons/ggruen.png").createImage());
+        bGenerics.addSelectionListener(new SelectionAdapter(){
 
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				bGenericsOnly=bGenerics.getSelection();
+				//fireChangedEvent();
+				if(bGenerics.getSelection()){
+					myViewer.getViewerWidget().addFilter(genericsFilter);
+				}else{
+					myViewer.getViewerWidget().removeFilter(genericsFilter);
+				}
+			}
+        	
+        });
         return ret;
 	}
 
-	
+	class GenericsFilter extends ViewerFilter{
+
+		@Override
+		public boolean select(final Viewer viewer, final Object parentElement,
+				final Object element) {
+			if(element instanceof BAGMedi){
+				BAGMedi medi=(BAGMedi)element;
+				return medi.isGenericum();
+			}
+			return false;
+		}
+		
+	}
 	
 }
