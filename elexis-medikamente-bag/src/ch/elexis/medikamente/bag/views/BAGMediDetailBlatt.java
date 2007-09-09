@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3123 2007-09-09 09:40:35Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3125 2007-09-09 16:11:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -47,6 +47,7 @@ public class BAGMediDetailBlatt extends Composite {
 	private final Composite parent;
 	private final ScrolledForm form;
 	ListDisplay<BAGMedi> ldInteraktionen;
+	private BAGMedi actMedi;
 	
 	InputData[] fields=new InputData[]{
 			new InputData("Hersteller","ExtInfo",new LabeledInputField.IContentProvider(){
@@ -125,9 +126,9 @@ public class BAGMediDetailBlatt extends Composite {
 		tk.adapt(fld);
 		tSubstances=SWTHelper.createText(Desk.theToolkit, ret, 5, SWT.BORDER|SWT.READ_ONLY|SWT.WRAP|SWT.V_SCROLL);
 		tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tk.createSeparator(ret, SWT.HORIZONTAL);
-		tk.createLabel(ret, "Interaktionen");
-		ldInteraktionen=new ListDisplay<BAGMedi>(ret,SWT.V_SCROLL,new ListDisplay.LDListener(){
+		// tk.createSeparator(ret, SWT.HORIZONTAL);
+		tk.createLabel(ret, "Bisher eingetragene Interaktionen");
+		ldInteraktionen=new ListDisplay<BAGMedi>(ret,SWT.BORDER,new ListDisplay.LDListener(){
 
 			public String getLabel(Object o) {
 				if(o instanceof BAGMedi){
@@ -138,12 +139,16 @@ public class BAGMediDetailBlatt extends Composite {
 			}
 
 			public void hyperlinkActivated(String l) {
-				// TODO Auto-generated method stub
+				InteraktionsDialog idlg=new InteraktionsDialog(pr.getShell(),actMedi);
+				idlg.open();
 				
 			}});
 		ldInteraktionen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		ldInteraktionen.addHyperlinks("Hinzu...");
+		tk.adapt(ldInteraktionen);
 	}
 	public void display(final BAGMedi m){
+		actMedi=m;
 		form.setText(m.getLabel());
 		fld.reload(m);
 		List<Substance> list=m.getSubstances();
@@ -152,5 +157,9 @@ public class BAGMediDetailBlatt extends Composite {
 			sb.append(s.getLabel()).append("\n");
 		}
 		tSubstances.setText(sb.toString());
+		ldInteraktionen.clear();
+		for(BAGMedi medi:m.getInteraktionen()){
+			ldInteraktionen.add(medi);
+		}
 	}
 }

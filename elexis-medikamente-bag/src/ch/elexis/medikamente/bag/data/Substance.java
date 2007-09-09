@@ -48,6 +48,13 @@ public class Substance extends PersistentObject {
 			}
 		}
 	}
+	public static final int INTERAKTION_PLUS=0;
+	public static final int INTERAKTION_MINUS=1;
+	public static final int INTERAKTION_TOXIC=2;
+	public static final int INTERAKTION_HWZ=3;
+	public static final String[] INTERAKTIONSTYPEN={"Wirkungsverstärkung",
+		"Wirkungsabschwächung","Toxizität","Halbwertszeit"};
+	
 	@Override
 	public String getLabel() {
 		return get("name");
