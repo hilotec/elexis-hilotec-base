@@ -8,18 +8,22 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3118 2007-09-08 23:45:16Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3123 2007-09-09 09:40:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
 
 import java.util.List;
 
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
@@ -32,6 +36,7 @@ import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Substance;
 import ch.elexis.util.LabeledInputField;
+import ch.elexis.util.ListDisplay;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
@@ -41,6 +46,7 @@ public class BAGMediDetailBlatt extends Composite {
 	private final Text tSubstances;
 	private final Composite parent;
 	private final ScrolledForm form;
+	ListDisplay<BAGMedi> ldInteraktionen;
 	
 	InputData[] fields=new InputData[]{
 			new InputData("Hersteller","ExtInfo",new LabeledInputField.IContentProvider(){
@@ -105,6 +111,7 @@ public class BAGMediDetailBlatt extends Composite {
 	
 	public BAGMediDetailBlatt(final Composite pr){
 		super(pr,SWT.NONE);
+		FormToolkit tk=Desk.theToolkit;
 		parent=pr;
 		setLayout(new GridLayout());
 		setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -115,10 +122,26 @@ public class BAGMediDetailBlatt extends Composite {
 		fld=new LabeledInputField.AutoForm(ret,fields);
 		fld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		//fld.setEnabled(false);
-		Desk.theToolkit.adapt(fld);
-		tSubstances=SWTHelper.createText(Desk.theToolkit, ret, 3, SWT.BORDER|SWT.READ_ONLY|SWT.WRAP|SWT.V_SCROLL);
+		tk.adapt(fld);
+		tSubstances=SWTHelper.createText(Desk.theToolkit, ret, 5, SWT.BORDER|SWT.READ_ONLY|SWT.WRAP|SWT.V_SCROLL);
 		tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+		tk.createSeparator(ret, SWT.HORIZONTAL);
+		tk.createLabel(ret, "Interaktionen");
+		ldInteraktionen=new ListDisplay<BAGMedi>(ret,SWT.V_SCROLL,new ListDisplay.LDListener(){
+
+			public String getLabel(Object o) {
+				if(o instanceof BAGMedi){
+					BAGMedi medi=(BAGMedi)o;
+					return medi.getLabel();
+				}
+				return "?";
+			}
+
+			public void hyperlinkActivated(String l) {
+				// TODO Auto-generated method stub
+				
+			}});
+		ldInteraktionen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 	}
 	public void display(final BAGMedi m){
 		form.setText(m.getLabel());

@@ -124,5 +124,8 @@ public class Substance extends PersistentObject {
 			type=t;
 			severity=sev;
 		}
+		public Substance getSubstance(){
+			return subst;
+		}
 	}
 }
