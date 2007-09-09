@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3110 2007-09-07 16:22:09Z rgw_ch $
+ *    $Id: PersistentObject.java 3126 2007-09-09 16:11:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -978,7 +978,7 @@ public abstract class PersistentObject{
         	return setBinary(field,bin);
         }catch(Throwable ex){
         	log.log("Fehler beim Speichern von "+field+" von "+getLabel(),Log.ERRORS);
-        	MessageDialog.openError(null,"Interner Fehler","Konnte "+field+" von "+getLabel()+" nicht speichern!");
+        	MessageDialog.openError(Hub.getActiveShell(),"Interner Fehler","Konnte "+field+" von "+getLabel()+" nicht speichern!");
         	return 0;
         }
         
