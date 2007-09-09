@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ * $Id: Query.java 3119 2007-09-09 00:28:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,7 +17,10 @@ package ch.elexis.data;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;
 
@@ -47,13 +50,14 @@ public class Query<T>{
     private Method load;
     private String link=" WHERE ";
     private String lastQuery="";
-    private LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
+    private final LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
+    private String ordering;
   
 /**
  * Konstruktor 
  * @param cl Die Klasse, auf die die Abfrage angewendet werden soll (z.B. Patient.class)
  */
-    public Query(Class<? extends PersistentObject> cl){
+    public Query(final Class<? extends PersistentObject> cl){
 		try{
 			template=Hub.poFactory.createTemplate(cl);
            //template=cl.newInstance();
@@ -74,7 +78,7 @@ public class Query<T>{
      * @param field Feldname
      * @param value Gesuchter Wert von Feldname
      */
-    public Query(Class<? extends PersistentObject> cl,String field,String value){
+    public Query(final Class<? extends PersistentObject> cl,final String field,final String value){
 		try{
 			template=Hub.poFactory.createTemplate(cl);
            //template=cl.newInstance();
@@ -113,9 +117,10 @@ public class Query<T>{
 			}
 			link=" AND ";
 		}
+		ordering=null;
 	}
 	
-	private void append(String... s){
+	private void append(final String... s){
 		sql.append(link);
 		for(String a:s){
 			sql.append(" ").append(a);
@@ -171,7 +176,7 @@ public class Query<T>{
 +     * Kleinschreibung umgewandelt, so dass die Gross-/Kleinschreibung egal ist.
 	 * @return false bei Fehler in der Syntax oder nichtexistenten Feldern
 	 */
-	public boolean add(String feld,String operator, String wert,boolean toLower){
+	public boolean add(final String feld,final String operator, String wert,final boolean toLower){
 		String mapped;
 		mapped=template.map(feld);
 		// treat date parameter separately
@@ -224,11 +229,11 @@ public class Query<T>{
 		return true;
 	}
 	
-	public boolean add(String feld,String operator, String wert){
+	public boolean add(final String feld,final String operator, final String wert){
 		return add(feld,operator,wert, false);
 	}
 	/** Unverändertes Token in den SQL-String einfügen */
-	public void addToken(String token){
+	public void addToken(final String token){
 		append(token);
 	}
 	/**
@@ -239,7 +244,7 @@ public class Query<T>{
 	 * @param v Wert (@see Query#add() )
 	 * @return Die ID des gefundenen Objekts oder null, wenn nicht gefunden
 	 */
-	public String findSingle(String f,String op, String v){
+	public String findSingle(final String f,final String op, final String v){
 		clear();
 		sql.append(link).append(template.map(f)).append(op).append(JdbcLink.wrap(v));
 		String ret=PersistentObject.j.queryString(sql.toString());
@@ -257,7 +262,7 @@ public class Query<T>{
 	 * @param exact false, wenn die Abfrage mit LIKE erfolgen soll, sonst mit =
 	 * @return eine Liste mit den gefundenen Objekten
 	 */
-    public List<T> queryFields(String[] fields,String[] values, boolean exact){
+    public List<T> queryFields(final String[] fields,final String[] values, final boolean exact){
     	clear();
         String op="=";
         if(exact==false){
@@ -273,7 +278,7 @@ public class Query<T>{
         return execute();
     }
     
-    public PreparedStatement getPreparedStatement(PreparedStatement previous){
+    public PreparedStatement getPreparedStatement(final PreparedStatement previous){
     	try{
 	    	if(previous!=null){
 	    		previous.close();
@@ -287,7 +292,7 @@ public class Query<T>{
     	}
     }
     
-    public ArrayList<String> execute(PreparedStatement ps, String[] values){
+    public ArrayList<String> execute(final PreparedStatement ps, final String[] values){
     	
     	try{
 	    	for(int i=0;i<values.length;i++){
@@ -314,8 +319,9 @@ public class Query<T>{
      * @param n1 Beliebig viele Strings, die in absteigender Priorität die Felder angeben,
      * nach denen sortiert werden soll.
      */
-	public void orderBy(boolean reverse, String... n1){
-		sql.append(" ORDER BY ");
+	public void orderBy(final boolean reverse, final String... n1){
+		StringBuilder sb=new StringBuilder();
+		sb.append(" ORDER BY ");
 		for(String s:n1){
 			String mapped=template.map(s);
 			if(mapped.matches("[A-Z]{2,}:.+")){
@@ -325,13 +331,14 @@ public class Query<T>{
 			if(mapped.startsWith("S:D:")){
 				mapped=mapped.substring(4);
 			}
-			sql.append(mapped);
+			sb.append(mapped);
 			if(reverse==true){
-				sql.append(" DESC");
+				sb.append(" DESC");
 			}
-			sql.append(",");
+			sb.append(",");
 		}
-		sql.delete(sql.length()-1,10000);
+		sb.delete(sb.length()-1,10000);
+		ordering=sb.toString();
 	}
 	
 	/**
@@ -343,13 +350,19 @@ public class Query<T>{
 	 * @return eine Liste aus Objekten, die das Resultat der Abfrage sind.
 	 */
 	public List<T> execute(){
+		if(ordering!=null){
+			sql.append(ordering);
+		}
 		lastQuery=sql.toString();
 		//log.log("Executing query: "+lastQuery,Log.DEBUGMSG);
 		LinkedList<T> ret=new LinkedList<T>();
         return (List<T>)queryExpression(lastQuery,ret);
 	}
     
-	public Collection<T> execute(Collection<T> collection){
+	public Collection<T> execute(final Collection<T> collection){
+		if(ordering!=null){
+			sql.append(ordering);
+		}
 		lastQuery=sql.toString();
 		return queryExpression(lastQuery,collection);
 	}
@@ -364,7 +377,7 @@ public class Query<T>{
 	 * @return Eine Liste der Objekte, die als Antwort auf die Anfrage geliefert wurden.
 	 */
     @SuppressWarnings("unchecked")
-	public Collection<T> queryExpression(String expr, Collection<T> ret){
+	public Collection<T> queryExpression(final String expr, final Collection<T> ret){
         //LinkedList<T> ret=new LinkedList<T>();
         
         Stm stm=null;
@@ -444,10 +457,10 @@ public class Query<T>{
      * zu filtern. 
      * @param f ein Filter
      */
-    public void addPostQueryFilter(IFilter f){
+    public void addPostQueryFilter(final IFilter f){
     	postQueryFilters.add(f);
     }
-    public void removePostQueryFilter(IFilter f){
+    public void removePostQueryFilter(final IFilter f){
     	postQueryFilters.remove(f);
     }
 }
