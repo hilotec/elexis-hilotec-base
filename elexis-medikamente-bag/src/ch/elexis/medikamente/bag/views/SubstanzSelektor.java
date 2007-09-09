@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SubstanzSelektor.java 3127 2007-09-09 16:36:30Z rgw_ch $
+ * $Id: SubstanzSelektor.java 3128 2007-09-09 17:47:39Z rgw_ch $
  *****************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -29,7 +29,7 @@ import ch.elexis.util.ViewerConfigurer;
 
 public class SubstanzSelektor extends Dialog {
 	CommonViewer cv;
-	
+	Substance result;
 	public SubstanzSelektor(Shell shell){
 		super(shell);
 	}
@@ -52,6 +52,7 @@ public class SubstanzSelektor extends Dialog {
 	@Override
 	public boolean close() {
 		cv.getConfigurer().getContentProvider().stopListening();
+		result=(Substance)cv.getSelection()[0];
 		return super.close();
 	}
 

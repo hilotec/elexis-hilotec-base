@@ -48,11 +48,13 @@ public class Substance extends PersistentObject {
 			}
 		}
 	}
-	public static final int INTERAKTION_PLUS=0;
-	public static final int INTERAKTION_MINUS=1;
-	public static final int INTERAKTION_TOXIC=2;
-	public static final int INTERAKTION_HWZ=3;
-	public static final String[] INTERAKTIONSTYPEN={"Wirkungsverstärkung",
+	public static final int INTERAKTION_UNKNOWN=0;
+	public static final int INTERAKTION_PLUS=1;
+	public static final int INTERAKTION_MINUS=2;
+	public static final int INTERAKTION_TOXIC=3;
+	public static final int INTERAKTION_HWZ=4;
+	public static final String[] INTERAKTIONSTYPEN={
+		"unbekannt","Wirkungsverstärkung",
 		"Wirkungsabschwächung","Toxizität","Halbwertszeit"};
 	
 	@Override
@@ -98,7 +100,7 @@ public class Substance extends PersistentObject {
 		List<Interaction> ret=new ArrayList<Interaction>(in.size());
 		for(String[] line:in){
 			Substance other=Substance.load(line[0]);
-			ret.add(new Interaction(other,line[3],line[1],Integer.parseInt(line[2])));
+			ret.add(new Interaction(other,line[3],Integer.parseInt(line[1]),Integer.parseInt(line[2])));
 		}
 		return ret;
 	}
@@ -122,10 +124,10 @@ public class Substance extends PersistentObject {
 	
 	public static class Interaction{
 		Substance subst;
-		String type;
+		int type;
 		String description;
 		int severity;
-		Interaction(final Substance s, final String desc, final String t, final int sev){
+		public Interaction(final Substance s, final String desc, final int t, final int sev){
 			subst=s;
 			description=desc;
 			type=t;
@@ -133,6 +135,15 @@ public class Substance extends PersistentObject {
 		}
 		public Substance getSubstance(){
 			return subst;
+		}
+		public String getDescription(){
+			return description;
+		}
+		public int getType(){
+			return type;
+		}
+		public int getSeverity(){
+			return severity;
 		}
 	}
 }

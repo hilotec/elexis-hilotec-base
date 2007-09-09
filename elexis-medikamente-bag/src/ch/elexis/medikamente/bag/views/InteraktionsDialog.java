@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: InteraktionsDialog.java 3127 2007-09-09 16:36:30Z rgw_ch $
+ * $Id: InteraktionsDialog.java 3128 2007-09-09 17:47:39Z rgw_ch $
  *****************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -39,7 +39,7 @@ public class InteraktionsDialog extends TitleAreaDialog {
 	BAGMedi medi;
 	List<Substance> substances;
 	Substance actSubstance;
-	ListDisplay<Substance> ldInter;
+	ListDisplay<Interaction> ldInter;
 	List<Interaction> actInteractions;
 	Combo cbTyp;
 	Text text;
@@ -70,20 +70,20 @@ public class InteraktionsDialog extends TitleAreaDialog {
 					ldInter.clear();
 					actInteractions=actSubstance.getInteractions();
 					for(Interaction inter:actInteractions){
-						ldInter.add(inter.getSubstance());
+						ldInter.add(inter);
 					}
 				}
 			}
 			
 		});
 		new Label(ret,SWT.NONE).setText("Interaktion mit:");
-		ldInter=new ListDisplay<Substance>(ret,SWT.NONE,
+		ldInter=new ListDisplay<Interaction>(ret,SWT.NONE,
 				new ListDisplay.LDListener(){
 
 					public String getLabel(Object o) {
-						if(o instanceof Substance){
-							Substance subst = (Substance) o;
-							return subst.getLabel();
+						if(o instanceof Interaction){
+							Interaction subst = (Interaction) o;
+							return subst.getSubstance().getLabel();
 						}
 						return "?";
 					}
@@ -91,18 +91,20 @@ public class InteraktionsDialog extends TitleAreaDialog {
 					public void hyperlinkActivated(String l) {
 						SubstanzSelektor ssel=new SubstanzSelektor(getShell());
 						if(ssel.open()==Dialog.OK){
-							
+							Interaction iac=new Interaction(ssel.result,"",
+									Substance.INTERAKTION_UNKNOWN,0);
+							actSubstance.addInteraction(iac);
+							ldInter.add(iac);
 						}
 						
 					}});
 		ldInter.addHyperlinks("Substanz Hinzufügen...");
 		ldInter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ldInter.addListener(new SelectionAdapter(){
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
-				super.widgetSelected(e);
+				Interaction iac=ldInter.getSelection();
+				text.setText(iac.getDescription());
 			}
 			
 		});
