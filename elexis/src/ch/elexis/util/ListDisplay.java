@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 2864 2007-07-22 08:59:41Z rgw_ch $
+ * $Id: ListDisplay.java 3124 2007-09-09 09:40:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -31,6 +31,7 @@ import ch.elexis.Desk;
 
 /**
  * A List of objects with UI (definable hyperlinks)
+ * Replaces DynamicListDisplay
  */
 public class ListDisplay<T> extends Composite {
 	public interface LDListener {

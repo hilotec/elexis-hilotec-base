@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DynamicListDisplay.java 2499 2007-06-08 09:53:41Z danlutz $
+ * $Id: DynamicListDisplay.java 3124 2007-09-09 09:40:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -45,6 +45,7 @@ import ch.elexis.data.PersistentObject;
  * Anzeige einer Liste von PersistentObjects plus ein Hyperlink, der 
  * das Hinzufügen von Objekten (bzw. beliebige andere Aktionen) ermöglicht.
  * Optional kann ein LabelProvider gestzt werden.
+ * @deprecated use ListDisplay
  */
 public class DynamicListDisplay extends Composite {
 	public interface DLDListener {

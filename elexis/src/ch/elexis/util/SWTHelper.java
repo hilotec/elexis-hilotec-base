@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 2993 2007-08-16 14:10:15Z rgw_ch $
+ * $Id: SWTHelper.java 3124 2007-09-09 09:40:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -287,7 +287,7 @@ public class SWTHelper {
 			lNum=SWT.MULTI|SWT.WRAP;
 		}
 		Text ret=tk.createText(parent, "", lNum|flags|SWT.BORDER);
-		GridData gd=getFillGridData(1, true, 1, false);
+		GridData gd=getFillGridData(1, true, 1, true);
 		int h=Math.round(ret.getFont().getFontData()[0].height);
 		gd.minimumHeight=(lines+1)*(h+2);
 		gd.heightHint=gd.minimumHeight;
