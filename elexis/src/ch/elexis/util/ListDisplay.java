@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 3124 2007-09-09 09:40:44Z rgw_ch $
+ * $Id: ListDisplay.java 3130 2007-09-10 12:52:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -40,16 +40,16 @@ public class ListDisplay<T> extends Composite {
 	}
 	private IHyperlinkListener listen;
 	protected List list;
-    private ArrayList<T> objects;
+    private final ArrayList<T> objects;
     private LDListener dlisten;
-    private Composite cLinks;
-	private FormToolkit tk=Desk.theToolkit;
+    private final Composite cLinks;
+	private final FormToolkit tk=Desk.theToolkit;
 	
 	    
-	public void setDLDListener(LDListener dld){
+	public void setDLDListener(final LDListener dld){
 		dlisten=dld;
 	}
-	public ListDisplay(Composite parent, int flags,LDListener dld){
+	public ListDisplay(final Composite parent, final int flags,final LDListener dld){
 		super(parent,flags);
         objects=new ArrayList<T>();
         dlisten=dld;
@@ -61,10 +61,11 @@ public class ListDisplay<T> extends Composite {
 		list.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		tk.adapt(this);
 	}
-	public void addHyperlinks(String... titles){
+	public void addHyperlinks(final String... titles){
 		if(listen==null){
 			listen=new HyperlinkAdapter(){
-				public void linkActivated(HyperlinkEvent e) {
+				@Override
+				public void linkActivated(final HyperlinkEvent e) {
 					if(dlisten!=null){
 						dlisten.hyperlinkActivated(e.getLabel());
 					}
@@ -80,7 +81,7 @@ public class ListDisplay<T> extends Composite {
 	 * Ein Objekt der Liste hinzufügen
 	 * @param item das Objekt. Muss getLabel() implementieren
 	 */
-	public void add(T item){
+	public void add(final T item){
         objects.add(item);
 		list.add(dlisten.getLabel(item));
 	}
@@ -89,7 +90,7 @@ public class ListDisplay<T> extends Composite {
 	 * Ein Objekt aus der Liste entfernen
 	 * @param item das Objekt
 	 */
-	public void remove(T item){
+	public void remove(final T item){
         objects.remove(item);
 		list.remove(dlisten.getLabel(item));
 	}
@@ -99,7 +100,8 @@ public class ListDisplay<T> extends Composite {
 		objects.clear();
 	}
 	/** Ein Kontextmenu für die Liste sezen */
-    public void setMenu(Menu m){
+    @Override
+	public void setMenu(final Menu m){
         list.setMenu(m);
     }
     
@@ -108,7 +110,7 @@ public class ListDisplay<T> extends Composite {
      */
     public T getSelection(){
         String[] obj=list.getSelection();
-        if(obj==null || obj.length==0){
+        if((obj==null) || (obj.length==0)){
             return null;
         }
         for(T po:objects){
@@ -119,13 +121,29 @@ public class ListDisplay<T> extends Composite {
         return null;
         
     }
+    public void setSelection(final T object){
+    	if(object==null){
+    		list.deselectAll();
+    	}else{
+	    	for(T t:objects){
+	    		if(t.equals(object)){
+	    			list.setSelection(new String[]{dlisten.getLabel(t)});
+	    			break;
+	    		}
+	    	}
+    	}
+    }
+    
+    public void setSelection(final int index){
+    	list.setSelection(index);
+    }
     public java.util.List<T> getAll(){
     	return objects;
     }
-    public void addListener(SelectionListener l){
+    public void addListener(final SelectionListener l){
     	list.addSelectionListener(l);
     }
-    public void removeListener(SelectionListener l){
+    public void removeListener(final SelectionListener l){
     	list.removeSelectionListener(l);
     }
     
