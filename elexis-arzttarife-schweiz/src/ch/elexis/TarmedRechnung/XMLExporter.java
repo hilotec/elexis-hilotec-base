@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3057 2007-09-02 07:56:08Z rgw_ch $
+ * $Id: XMLExporter.java 3136 2007-09-10 19:47:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -682,9 +682,13 @@ public class XMLExporter implements IRnOutputter {
 		String g1=actFall.getRequiredString("Gesetz");
 		if(g1.length()>0){
 			gesetz=g1;
+		}else{
+			if(!gesetz.matches("KVG|UVG|MV|IV|VVG")){
+				gesetz=Fall.getBillingSystemAttribute(gesetz, "gesetz");
+			}
 		}
 		if(StringTool.isNothing(gesetz)){
-			gesetz="kvg";
+			gesetz="KVG";
 		}
 		Element versicherung=new Element(gesetz.toLowerCase(),ns);									//	16700
 		versicherung.setAttribute("reason",match_type(actFall.getGrund()));
