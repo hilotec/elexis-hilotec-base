@@ -8,6 +8,12 @@
             class="ch.elexis.banking.ESRView"
             id="elexis-ebanking-schweiz.ESRView"
             name="ESR"/>
+      <view
+            category="ch.elexis.abrechnungKategorie"
+            class="ch.elexis.banking.ESRView2"
+            id="ch.elexis.banking.ESRView2"
+            name="ESR Tabelle">
+      </view>
    </extension>
 
 </plugin>
