@@ -60,7 +60,6 @@ import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultContentProvider;
-import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
@@ -73,7 +72,7 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class PatHeuteView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2, BackgroundJobListener {
 	public static final String ID="ch.elexis.PatHeuteView"; //$NON-NLS-1$
-	private IAction printAction;
+	private IAction printAction, reloadAction;
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	FormToolkit tk=Desk.theToolkit;
@@ -132,17 +131,6 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				bOnlyOpen=bKonsType.getSelection();
 			}
 		});
-		final Button bReload=new Button(top,SWT.PUSH);
-		bReload.setImage(Desk.theImageRegistry.get(Desk.IMG_REFRESH));
-		bReload.addSelectionListener(new SelectionAdapter(){
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				kons=null;
-				kload.schedule();
-			}
-			
-		});
 		cv=new CommonViewer();
 		vc=new ViewerConfigurer(
 				new DefaultContentProvider(cv,Patient.class){
@@ -171,7 +159,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 					}
 					
 				},
-				new DefaultControlFieldProvider(cv,new String[]{"Name","Vorname"}),
+				null, //new ViewerConfigurer.EmptyControlfieldProvider(),// DefaultControlFieldProvider(cv,new String[]{"Name","Vorname"}),
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LIST,SWT.V_SCROLL,cv)
 		);
@@ -217,7 +205,8 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		tMoney2.setEditable(false);
 		ViewMenus menus=new ViewMenus(getViewSite());
 		makeActions();
-		menus.createMenu(printAction);
+		menus.createMenu(printAction,reloadAction);
+		menus.createToolbar(reloadAction);
 		
 		//setFocus();
 		cv.getConfigurer().getContentProvider().startListening();
@@ -378,6 +367,18 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			@Override
 			public void run(){
 				new TerminListeDialog(getViewSite().getShell()).open();
+			}
+		};
+	
+		reloadAction=new Action("Neu einlesen"){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REFRESH));
+				setToolTipText("Liste neu einlesen");
+			}
+			@Override
+			public void run(){
+				kons=null;
+				kload.schedule();
 			}
 		};
 		

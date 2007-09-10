@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3036 2007-08-29 14:01:16Z rgw_ch $
+ *    $Id: Fall.java 3135 2007-09-10 19:33:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -58,7 +58,7 @@ public class Fall extends PersistentObject{
 		addMapping("FAELLE",
 				"PatientID","res=Diagnosen","DatumVon=S:D:DatumVon","DatumBis=S:D:DatumBis",
                 "GarantID","Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum",
-				"Bezeichnung","Grund","Gesetz","Kostentraeger=KostentrID",
+				"Bezeichnung","Grund","xGesetz=Gesetz","Kostentraeger=KostentrID",
 				"VersNummer","FallNummer","BetriebsNummer","ExtInfo");
 	}
 	
@@ -294,7 +294,7 @@ public class Fall extends PersistentObject{
 		String ret=getInfoString("billing");
 		if(StringTool.isNothing(ret)){
 			String[] systeme=getAbrechnungsSysteme();
-			String altGesetz=get("Gesetz");
+			String altGesetz=get("xGesetz");
 			int idx=StringTool.getIndex(systeme, altGesetz);
 			if(idx==-1){
 				ret=systeme[0];

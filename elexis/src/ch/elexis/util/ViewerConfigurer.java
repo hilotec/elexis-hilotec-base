@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 2208 2007-04-13 09:05:39Z danlutz $
+ *    $Id: ViewerConfigurer.java 3135 2007-09-10 19:33:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -38,7 +38,8 @@ import ch.elexis.data.Query;
  */
 public class ViewerConfigurer{
 	
-    private CommonContentProvider contentProvider;
+
+	private CommonContentProvider contentProvider;
 	private LabelProvider labelProvider;
 	ControlFieldProvider controlFieldProvider;
 	private ButtonProvider buttonProvider;
@@ -289,5 +290,41 @@ public class ViewerConfigurer{
 		}
     }
    
+    /**
+     * Sometimes we'd like to use a CommonViewer without controlfield
+     * @author Gerry
+     *
+     */
+    public static class EmptyControlfieldProvider implements ControlFieldProvider {
+
+		public void addChangeListener(ControlFieldListener cl) {}
+		public void clearValues() {}
+		public Composite createControl(Composite parent) {
+			return new Composite(parent,SWT.NONE);
+		}
+
+		public ViewerFilter createFilter() {
+			return null;
+		}
+
+		public void fireChangedEvent() {}
+
+		public void fireSortEvent(String text) {}
+
+		public String[] getValues() {
+			return new String[0];
+		}
+
+		public boolean isEmpty() {
+			return true;
+		}
+
+		public void removeChangeListener(ControlFieldListener cl) {}
+
+		public void setFocus() {}
+
+		public void setQuery(Query q) {	}
+
+	}
     
 }
