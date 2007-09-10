@@ -18,13 +18,5 @@
             name="Medikamente BAG">
       </Artikel>
    </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            class="ch.elexis.medikamente.bag.views.PharmakaView"
-            id="ch.elexis.medikamente.bag.pharmaka"
-            name="Pharmaka">
-      </view>
-   </extension>
 
 </plugin>
