@@ -8,15 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3125 2007-09-09 16:11:30Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3129 2007-09-10 12:52:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
 
 import java.util.List;
-
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -34,6 +31,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.medikamente.bag.data.BAGMedi;
+import ch.elexis.medikamente.bag.data.Interaction;
 import ch.elexis.medikamente.bag.data.Substance;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.ListDisplay;
@@ -44,9 +42,10 @@ import ch.elexis.util.LabeledInputField.InputData.Typ;
 public class BAGMediDetailBlatt extends Composite {
 	private final LabeledInputField.AutoForm fld;
 	private final Text tSubstances;
+	private final Text tInfos;
 	private final Composite parent;
 	private final ScrolledForm form;
-	ListDisplay<BAGMedi> ldInteraktionen;
+	ListDisplay<Interaction> ldInteraktionen;
 	private BAGMedi actMedi;
 	
 	InputData[] fields=new InputData[]{
@@ -128,24 +127,27 @@ public class BAGMediDetailBlatt extends Composite {
 		tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		// tk.createSeparator(ret, SWT.HORIZONTAL);
 		tk.createLabel(ret, "Bisher eingetragene Interaktionen");
-		ldInteraktionen=new ListDisplay<BAGMedi>(ret,SWT.BORDER,new ListDisplay.LDListener(){
+		ldInteraktionen=new ListDisplay<Interaction>(ret,SWT.BORDER,new ListDisplay.LDListener(){
 
-			public String getLabel(Object o) {
-				if(o instanceof BAGMedi){
-					BAGMedi medi=(BAGMedi)o;
-					return medi.getLabel();
+			public String getLabel(final Object o) {
+				if(o instanceof Interaction){
+					Interaction inter=(Interaction)o;
+					return inter.getLabel();
 				}
 				return "?";
 			}
 
-			public void hyperlinkActivated(String l) {
+			public void hyperlinkActivated(final String l) {
 				InteraktionsDialog idlg=new InteraktionsDialog(pr.getShell(),actMedi);
 				idlg.open();
 				
 			}});
 		ldInteraktionen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ldInteraktionen.addHyperlinks("Hinzu...");
+		ldInteraktionen.addHyperlinks("Bearbeiten...");
 		tk.adapt(ldInteraktionen);
+		tk.createLabel(ret, "Informationen");
+		tInfos=SWTHelper.createText(ret, 15, SWT.NONE);
+		
 	}
 	public void display(final BAGMedi m){
 		actMedi=m;
@@ -158,8 +160,8 @@ public class BAGMediDetailBlatt extends Composite {
 		}
 		tSubstances.setText(sb.toString());
 		ldInteraktionen.clear();
-		for(BAGMedi medi:m.getInteraktionen()){
-			ldInteraktionen.add(medi);
+		for(Interaction inter:m.getInteraktionen()){
+			ldInteraktionen.add(inter);
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package ch.elexis.medikamente.bag.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -23,24 +22,14 @@ public class Substance extends PersistentObject {
 	+"CREATE INDEX CEMBS2 ON "+TABLENAME+" (name);"
 	+"INSERT INTO "+TABLENAME+" (ID,name) VALUES ('VERSION','"+VERSION+"');";
 	
-	final static String INTERAKTTABLE="CH_ELEXIS_MEDIKAMENTE_BAG_INTERACTIONS";
-	static final String createInteract="CREATE TABLE "+INTERAKTTABLE+" ("
-		+"ID			VARCHAR(25)	primary key,"
-		+"Subst1		VARCHAR(25),"
-		+"Subst2		VARCHAR(25),"
-		+"Type			VARCHAR(20),"
-		+"Severity			CHAR(1),"
-		+"Description		TEXT);"
-		+"CREATE INDEX CEMBI1 ON "+INTERAKTTABLE+" (Subst1);"
-		+"CREATE INDEX CEMBI2 ON "+INTERAKTTABLE+" (Subst2);";
+	
 	
 	static{
 		addMapping(TABLENAME,"name","gruppe","medis=JOINT:product:substance:"+BAGMedi.JOINTTABLE,
-				"interactions=JOINT:Subst1:Subst2:"+INTERAKTTABLE);
+				"interactions=JOINT:Subst1:Subst2:"+Interaction.TABLENAME);
 		Substance v=load("VERSION");
 		if(v.state()<PersistentObject.DELETED){
 			createTable("Substance", createDB);
-			createTable("Interactions",createInteract);
 		}else{
 			VersionInfo vi=new VersionInfo(v.get("name"));
 			if(vi.isOlder(VERSION)){
@@ -48,14 +37,7 @@ public class Substance extends PersistentObject {
 			}
 		}
 	}
-	public static final int INTERAKTION_UNKNOWN=0;
-	public static final int INTERAKTION_PLUS=1;
-	public static final int INTERAKTION_MINUS=2;
-	public static final int INTERAKTION_TOXIC=3;
-	public static final int INTERAKTION_HWZ=4;
-	public static final String[] INTERAKTIONSTYPEN={
-		"unbekannt","Wirkungsverstärkung",
-		"Wirkungsabschwächung","Toxizität","Halbwertszeit"};
+	
 	
 	@Override
 	public String getLabel() {
@@ -96,18 +78,9 @@ public class Substance extends PersistentObject {
 	}
 	
 	public List<Interaction> getInteractions(){
-		List<String[]> in=getList("interactions",new String[]{"Type","Severity","Description"});
-		List<Interaction> ret=new ArrayList<Interaction>(in.size());
-		for(String[] line:in){
-			Substance other=Substance.load(line[0]);
-			ret.add(new Interaction(other,line[3],Integer.parseInt(line[1]),Integer.parseInt(line[2])));
-		}
-		return ret;
+		return Interaction.getInteractionsFor(this);
 	}
 	
-	public void addInteraction(final Interaction iac){
-		addToList("interactions", iac.subst.getId(), "Type="+iac.type, "Severity="+Integer.toString(iac.severity),"Description="+iac.description);
-	}
 	
 	@Override
 	protected String getTableName() {
@@ -122,28 +95,13 @@ public class Substance extends PersistentObject {
 		super(id);
 	}
 	
+	/*
 	public static class Interaction{
 		Substance subst;
 		int type;
 		String description;
 		int severity;
-		public Interaction(final Substance s, final String desc, final int t, final int sev){
-			subst=s;
-			description=desc;
-			type=t;
-			severity=sev;
-		}
-		public Substance getSubstance(){
-			return subst;
-		}
-		public String getDescription(){
-			return description;
-		}
-		public int getType(){
-			return type;
-		}
-		public int getSeverity(){
-			return severity;
-		}
+	
 	}
+	*/
 }

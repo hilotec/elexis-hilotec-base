@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3123 2007-09-09 09:40:35Z rgw_ch $
+ *  $Id: BAGMedi.java 3129 2007-09-10 12:52:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -25,7 +25,6 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
-import ch.elexis.medikamente.bag.data.Substance.Interaction;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
@@ -114,17 +113,12 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		return ret;
 	}
 	
-	public SortedSet<BAGMedi> getInteraktionen(){
+	public SortedSet<Interaction> getInteraktionen(){
 		List<Substance> substances=getSubstances();
-		SortedSet<BAGMedi> ret=new TreeSet<BAGMedi>();
+		SortedSet<Interaction> ret=new TreeSet<Interaction>();
 		for(Substance s:substances){
 			List<Interaction> interactions=s.getInteractions();
-			for(Interaction in:interactions){
-				Substance sa=in.getSubstance();
-				ret=sa.findMedis(ret);
-				
-			}
-			
+			ret.addAll(interactions);
 		}
 		return ret;
 	}
