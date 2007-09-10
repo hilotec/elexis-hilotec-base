@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 3057 2007-09-02 07:56:08Z rgw_ch $
+ * $Id: RnPrintView.java 3134 2007-09-10 19:33:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -186,11 +186,13 @@ public class RnPrintView extends ViewPart {
 			eTiers=invoice.getChild("tiers_payant",XMLExporter.ns);
 			paymentMode="TP";
 		}
+		
 		Mandant mnd=rn.getMandant();
 		Hub.setMandant(mnd);
 		Rechnungssteller rs=mnd.getRechnungssteller();
 		GlobalEvents.getInstance().fireSelectionEvent(rs);
 		Fall fall=rn.getFall();
+		fall.setInfoString("payment", paymentMode);
 		GlobalEvents.getInstance().fireSelectionEvent(fall);
 		Patient pat=fall.getPatient();
 		Kontakt adressat;
