@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 3132 2007-09-10 17:23:25Z rgw_ch $
+ * $Id: build.xml 3141 2007-09-11 14:40:13Z rgw_ch $
 -->
 <project name="Elexis-Medikamente-BAG" default="all">
 	<!-- modify the following 2 lines -->
@@ -27,6 +27,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
+		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}"/>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
@@ -43,7 +44,7 @@
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
 		<tstamp/>
 		<!-- exec command="texify nachrichten.tex" dir="${sourcedir}/doc" / -->
-		<copy file="${sourcedir}/doc/nachrichten.pdf" todir="${plugindir}"></copy>
+		<!-- copy file="${sourcedir}/doc/nachrichten.pdf" todir="${plugindir}"/ -->
 		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
 	</target>
