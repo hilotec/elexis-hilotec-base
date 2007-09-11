@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 3134 2007-09-10 19:33:52Z rgw_ch $
+ * $Id: RnPrintView.java 3137 2007-09-11 04:46:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -192,7 +192,19 @@ public class RnPrintView extends ViewPart {
 		Rechnungssteller rs=mnd.getRechnungssteller();
 		GlobalEvents.getInstance().fireSelectionEvent(rs);
 		Fall fall=rn.getFall();
+		
+		// make sure the Textplugin can replace all fields
 		fall.setInfoString("payment", paymentMode);
+		mnd.setInfoElement("EAN", TarmedRequirements.getEAN(mnd));
+		rs.setInfoElement("EAN", TarmedRequirements.getEAN(rs));
+		mnd.setInfoElement("KSK", TarmedRequirements.getKSK(mnd));
+		mnd.setInfoElement("NIF", TarmedRequirements.getNIF(mnd));
+		if(!mnd.equals(rs)){
+			rs.setInfoElement("EAN", TarmedRequirements.getEAN(rs));
+			rs.setInfoElement("KSK", TarmedRequirements.getKSK(rs));
+			rs.setInfoElement("NIF", TarmedRequirements.getNIF(rs));
+		}
+		
 		GlobalEvents.getInstance().fireSelectionEvent(fall);
 		Patient pat=fall.getPatient();
 		Kontakt adressat;

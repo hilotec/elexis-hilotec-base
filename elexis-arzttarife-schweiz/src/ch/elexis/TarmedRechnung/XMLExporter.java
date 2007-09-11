@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3136 2007-09-10 19:47:11Z rgw_ch $
+ * $Id: XMLExporter.java 3137 2007-09-11 04:46:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -241,7 +241,7 @@ public class XMLExporter implements IRnOutputter {
 		root.addContent(header);
 		Element sender=new Element("sender",ns);										// 10051
 		String mEAN=TarmedRequirements.getEAN(actMandant); //(String)actMandant.getInfoElement("EAN");
-
+		
 		sender.setAttribute("ean_party",mEAN);
 		String kEAN=TarmedRequirements.getEAN(kostentraeger); //(String)kostentraeger.getInfoElement("EAN");
 		
