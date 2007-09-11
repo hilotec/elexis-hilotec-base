@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3135 2007-09-10 19:33:59Z rgw_ch $
+ *    $Id: Fall.java 3138 2007-09-11 04:46:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -500,7 +500,7 @@ public class Fall extends PersistentObject{
 	/**
 	 * Find all installed billing systems. If we do not find any, we assume that this is an old installation and
 	 * try to update. If we find a tarmed-Plugin installed, we create default-tarmed billings.
-	 * @return
+	 * @return an Array with the names of all configured billing systems
 	 */
 	public static String[] getAbrechnungsSysteme(){
 		String[] ret= Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);
@@ -517,7 +517,7 @@ public class Fall extends PersistentObject{
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/name", "UVG");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/standardausgabe", "Tarmed-Drucker");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/bedingungen", "Kostenträger:K;Unfallnummer:T");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/bedingungen", "Kostenträger:K;Unfallnummer:T;Unfalldatum:D");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/UVG/gesetz","UVG");
 					
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/name", "IV");
@@ -586,6 +586,10 @@ public class Fall extends PersistentObject{
 		return ret;
 	}
 	
+	public static String getBillingSystemAttribute(String billingSystem, String attr){
+		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/"+attr, null);
+		return ret;
+	}
 	/**
 	 * Retrieve requirements of a given billingSystem
 	 * @param billingSystem

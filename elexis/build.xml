@@ -68,6 +68,6 @@
 		<javac srcdir="${elexis_src}" destdir="${elexis_plugin}/bin"
 			classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="1.5"
 			encoding="UTF-8"/>
-		<zip basedir="${elexis_plugin}" destfile="${updatefiles}/ch.elexis_${version}.${DSTAMP}.zip"/>
+		<zip excludes="splash.bmp" basedir="${elexis_plugin}" destfile="${updatefiles}/ch.elexis_${version}.${DSTAMP}.zip"/>
 	</target>
 </project>
