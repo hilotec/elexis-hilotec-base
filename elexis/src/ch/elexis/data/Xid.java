@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3052 2007-08-31 15:55:22Z rgw_ch $
+ * $Id: Xid.java 3139 2007-09-11 06:53:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -83,6 +83,9 @@ public class Xid extends PersistentObject {
 		Integer val=domains.get(domain);
 		if(val==null){
 			throw new XIDException("XID Domain "+domain+" is not registered");
+		}
+		if(val>9){
+			val=(val&7)+4;
 		}
 		Xid xid=findXID(domain,domain_id);
 		if(xid!=null){
