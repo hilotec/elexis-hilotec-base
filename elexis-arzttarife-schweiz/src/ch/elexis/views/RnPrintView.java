@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 3137 2007-09-11 04:46:19Z rgw_ch $
+ * $Id: RnPrintView.java 3140 2007-09-11 06:54:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -195,6 +195,7 @@ public class RnPrintView extends ViewPart {
 		
 		// make sure the Textplugin can replace all fields
 		fall.setInfoString("payment", paymentMode);
+		fall.setInfoString("Gesetz", TarmedRequirements.getGesetz(fall));
 		mnd.setInfoElement("EAN", TarmedRequirements.getEAN(mnd));
 		rs.setInfoElement("EAN", TarmedRequirements.getEAN(rs));
 		mnd.setInfoElement("KSK", TarmedRequirements.getKSK(mnd));

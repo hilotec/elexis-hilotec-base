@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3137 2007-09-11 04:46:19Z rgw_ch $
+ * $Id: XMLExporter.java 3140 2007-09-11 06:54:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -678,18 +678,8 @@ public class XMLExporter implements IRnOutputter {
 		}
 		detail.addContent(diagnosis);
 		
-		String gesetz=actFall.getAbrechnungsSystem();															// 16000
-		String g1=actFall.getRequiredString("Gesetz");
-		if(g1.length()>0){
-			gesetz=g1;
-		}else{
-			if(!gesetz.matches("KVG|UVG|MV|IV|VVG")){
-				gesetz=Fall.getBillingSystemAttribute(gesetz, "gesetz");
-			}
-		}
-		if(StringTool.isNothing(gesetz)){
-			gesetz="KVG";
-		}
+		String gesetz = TarmedRequirements.getGesetz(actFall);
+		
 		Element versicherung=new Element(gesetz.toLowerCase(),ns);									//	16700
 		versicherung.setAttribute("reason",match_type(actFall.getGrund()));
 		String vnummer=actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
@@ -741,6 +731,7 @@ public class XMLExporter implements IRnOutputter {
 		return xmlRn;
 	}
 
+	
 	public String getDescription(){
 		return "Tarmed-XML 4.0-Datei für TrustCenter";
 	}

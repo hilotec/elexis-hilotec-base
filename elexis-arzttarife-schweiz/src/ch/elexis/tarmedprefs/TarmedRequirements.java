@@ -1,7 +1,9 @@
 package ch.elexis.tarmedprefs;
 
+import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Xid;
+import ch.rgw.tools.StringTool;
 
 public class TarmedRequirements {
 
@@ -27,7 +29,7 @@ public class TarmedRequirements {
 		}
 	}
 	
-	public static String getEAN(Kontakt k){
+	public static String getEAN(final Kontakt k){
 		String ret= k.getXID(Xid.DOMAIN_EAN);
 		// compatibility layer
 		if(ret.length()==0){
@@ -43,7 +45,7 @@ public class TarmedRequirements {
 		return ret;
 	}
 	
-	public static String getKSK(Kontakt k){
+	public static String getKSK(final Kontakt k){
 		String ret= k.getXID(DOMAIN_KSK);
 		// compatibility layer
 		if(ret.length()==0){
@@ -56,7 +58,7 @@ public class TarmedRequirements {
 		return ret;
 	}
 	
-	public static String getNIF(Kontakt k){
+	public static String getNIF(final Kontakt k){
 		String ret= k.getXID(DOMAIN_NIF);
 		// compatibility layer
 		if(ret.length()==0){
@@ -69,7 +71,7 @@ public class TarmedRequirements {
 		return ret;
 	}
 	
-	public static boolean setEAN(Kontakt k,String ean){
+	public static boolean setEAN(final Kontakt k,final String ean){
 		if(!ean.matches("[0-9]{13,13}")){
 			return false;
 		}
@@ -77,11 +79,28 @@ public class TarmedRequirements {
 		return true;
 	}
 	
-	public static void setKSK(Kontakt k, String ksk){
+	public static void setKSK(final Kontakt k, final String ksk){
 		k.addXid(DOMAIN_KSK, ksk,true);
 	}
 	
-	public static void setNIF(Kontakt k, String nif){
+	public static void setNIF(final Kontakt k, final String nif){
 		k.addXid(DOMAIN_NIF, nif, true);
 	}
+	
+	public static String getGesetz(final Fall fall) {
+		String gesetz=fall.getAbrechnungsSystem();															// 16000
+		String g1=fall.getRequiredString("Gesetz");
+		if(g1.length()>0){
+			gesetz=g1;
+		}else{
+			if(!gesetz.matches("KVG|UVG|MV|IV|VVG")){
+				gesetz=Fall.getBillingSystemAttribute(gesetz, "gesetz");
+			}
+		}
+		if(StringTool.isNothing(gesetz)){
+			gesetz="KVG";
+		}
+		return gesetz;
+	}
+
 }
