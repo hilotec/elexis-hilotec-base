@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientErfassenDialog.java 2156 2007-03-22 10:45:13Z rgw_ch $
+ *  $Id: PatientErfassenDialog.java 3146 2007-09-12 15:51:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -19,7 +19,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
@@ -42,12 +47,12 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		return result;
 	}
 	
-	public PatientErfassenDialog(Shell parent, String[] fields){
+	public PatientErfassenDialog(final Shell parent, final String[] fields){
 		super(parent);
 		fld=fields;
 	}
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		ret.setLayout(new GridLayout(2,false));
@@ -133,11 +138,26 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 					}
 				}
 			}
-			
 			Patient pat=new Patient(ret[0],ret[1],check,ret[2]);
 				pat.set(new String[]{"Strasse","Plz","Ort","Telefon1"},
 				new String[]{ret[4],ret[5],ret[6],ret[7]});
-			
+
+			if(check!=null){
+				check.add(TimeTool.YEAR, 18);
+				TimeTool today=new TimeTool();
+				/*
+				if(check.isAfter(today)){
+					InputDialog id=new InputDialog(getShell(),"Patient ist minderjährig","Bitte geben Sie Name und Vorname des gesetzlichen Vertretes an","",null);
+					if(id.open()==Dialog.OK){
+						String[] name=id.getValue().split(" ,");
+						Person elter=new Person(name[0],name[1],"","");
+						elter.set(new String[]{"Strasse","Plz","Ort","Telefon1"},
+								new String[]{ret[4],ret[5],ret[6],ret[7]});
+					}
+				}
+				*/
+			}
+
 			GlobalEvents.getInstance().fireSelectionEvent(pat);
 			result=pat;
 			super.okPressed();
