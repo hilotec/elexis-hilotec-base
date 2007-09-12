@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 3145 2007-09-12 15:51:09Z rgw_ch $
+ * $Id: Importer.java 3147 2007-09-12 21:13:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -99,51 +100,62 @@ public class Importer extends ImporterPage {
 		final int PORTION=Math.round((TOTALWORK/WORK_PORTIONS)/num);
 		ResultSet res=stm.query("SELECT * FROM Adressen_Versicherungen");
 		while((res!=null) && res.next()){
-			String name=res.getString("tx_Name");
 			String id=res.getString("ID_Versicherung");
+			String name=res.getString("tx_Name");
 			if(Xid.findObject(GARANTID, id)!=null){
 				continue;
 			}
 			Organisation o= new Organisation(name,"Versicherung");
-			o.set(new String[]{"Strasse","Plz","Ort","Telefon1","Fax","Ansprechperson"},
-					res.getString("tx_Strasse"),
-					res.getString("tx_PLZ"),
-					res.getString("tx_Ort"),
-					res.getString("tx_Telefon"),
-					res.getString("tx_Fax"),
-					res.getString("tx_ZuHanden")
+			o.set(new String[]{"Strasse","Plz","Ort","Telefon1","Fax"},
+					StringTool.unNull(res.getString("tx_Strasse")),
+					StringTool.unNull(res.getString("tx_PLZ")),
+					StringTool.unNull(res.getString("tx_Ort")),
+					StringTool.unNull(res.getString("tx_Telefon")),
+					StringTool.unNull(res.getString("tx_Fax"))
 			);
+			moni.subTask(name);
+			o.addXid(GARANTID, id, false);
 			String ean=res.getString("tx_EANNr");
-			o.setInfoElement("EAN", ean);
-			o.addXid(Xid.DOMAIN_EAN, ean, false);
+			if(!StringTool.isNothing(ean)){
+				o.setInfoElement("EAN", ean);
+				o.addXid(Xid.DOMAIN_EAN, ean, false);
+			}
+			o.set("Ansprechperson", StringTool.unNull(res.getString("tx_ZuHanden")));
 			moni.worked(PORTION);
 		}
 	}
 	private void importAerzte(final IProgressMonitor moni) throws Exception{
+		
 		moni.subTask("importiere Ärzte");
 		int num=stm.queryInt("SELECT COUNT(*) FROM Adressen_Ärzte");
 		final int PORTION=Math.round((TOTALWORK/WORK_PORTIONS)/num);
 		ResultSet res=stm.query("SELECT * FROM Adressen_Ärzte");
 		while((res!=null) && res.next()){
-			String name=res.getString("tx_Name");
-			String vorname=res.getString("tx_Vorname");
-			String geschlecht=res.getString("tx_Anrede").startsWith("Her") ? "m" : "w";
-			String id=res.getString("ID_Arztadresse");
+			// fetch all columns in given order to avoid funny error messages from 
+			// odbc driver
+			String[] row=new String[36];
+			for(int i=0;i<36;i++){
+				row[i]=StringTool.unNull(res.getString(i+1));
+			}
+			String anrede=row[3];
+			String name=row[4];
+			String vorname=row[5];
+			
+			String geschlecht=StringTool.isFemale(vorname) ? "w" : "m";
+			if(!StringTool.isNothing(anrede)){
+				geschlecht=anrede.startsWith("Her") ? "m" : "w";	
+			}
+			
+			String id=row[0];
 			if(Xid.findObject(ARZTID, id)!=null){
 				continue;
 			}
 			Person p=new Person(name,vorname,"",geschlecht);
 			moni.subTask(p.getLabel());
 			p.set(new String[]{"Zusatz","Titel","Strasse","Plz","Ort","Telefon1","Telefon2","Natel","Fax"},
-					res.getString("tx_Fachgebiet"),
-					res.getString("tx_Titel"),
-					res.getString("tx_Prax_Strasse"),
-					res.getString("tx_Prax_PLZ"),
-					StringTool.normalizeCase(res.getString("tx_Prax_Ort")),
-					res.getString("tx_Prax_Telefon1"),
-					res.getString("tx_Prax_Telefon2"),
-					res.getString("tx_Prax_Natel"),
-					res.getString("tx_Prax_Fax")
+					row[7],row[6],row[9],row[10],
+					StringTool.normalizeCase(row[11]),
+					row[12],row[13],row[15],row[16]
 					);
 			p.set("Anschrift", createAnschrift(p));
 			p.addXid(ARZTID, id, false);
@@ -180,32 +192,40 @@ public class Importer extends ImporterPage {
 		ResultSet res=stm.query("SELECT * FROM Patienten_Personalien");
 		int count=0;
 		while((res!=null) && res.next()){
-			String name=StringTool.normalizeCase(res.getString("tx_Name"));
-			String vorname=res.getString("tx_Vorname");
-			String gebdat=res.getString("tx_Geburtsdatum").split(" ")[0];
-			int is=res.getInt("Geschlecht_ID");
-			String id=res.getString("ID_Patient");
-			if(Xid.findObject(PATID, id)!=null){
+			HashMap<String,String> row=fetchRow(res, new String[]{"ID_Patient","tx_Name","tx_Vorname","tx_Geburtsdatum",
+					"tx_Anrede","tx_Strasse","tx_PLZ","tx_Ort","tx_TelefonP","tx_TelefonN","Geschlecht_ID",
+					"Zivilstand_ID","tx_Titel","tx_Arbeitgeber","tx_Beruf","tx_TelefonG","tx_ZuwArzt",
+					"tx_Hausarzt","mo_Bemerkung", "KK_Garant_ID","tx_KK_MitgliedNr","UVG_Garant_ID","tx_UVG_MitgliedNr",
+					"tx_AHV_Nr","tx_fakt_Anrede","tx_fakt_Name","tx_fakt_Vorname","tx_fakt_Strasse",
+					"tx_fakt_PLZ","tx_fakt_Ort"});
+
+			String name=StringTool.normalizeCase(row.get("tx_Name"));
+			String vorname=row.get("tx_Vorname");
+			String gebdat=row.get("tx_Geburtsdatum").split(" ")[0];
+			
+			
+
+			if(Xid.findObject(PATID, row.get("ID_Patient"))!=null){
 				continue; // avoid multiple imports
 			}
 			Patient pat=new Patient(name,vorname,new TimeTool(gebdat).toString(TimeTool.DATE_GER),
-					is==1 ? "m" : "w");
+					row.get("Geschlecht_ID").equals("1") ? "m" : "w");
 			moni.subTask(pat.getLabel());
 			pat.set(new String[]{"Strasse","Plz","Ort","Telefon1","Telefon2","Natel","Titel"},
-							res.getString("tx_Strasse"),
-							res.getString("tx_PLZ"),
-							res.getString("tx_Ort"),
-							res.getString("tx_TelefonP"),
-							res.getString("tx_TelefonG"),
-							res.getString("tx_TelefonN"),
-							res.getString("tx_Titel")
+							row.get("tx_Strasse"),
+							row.get("tx_PLZ"),
+							row.get("tx_Ort"),
+							row.get("tx_TelefonP"),
+							row.get("tx_TelefonG"),
+							row.get("tx_TelefonN"),
+							row.get("tx_Titel")
 					);
 			StringBuilder sb=new StringBuilder();
-			appendIfNotEmpty(sb, "Beruf: ", res.getString("tx_Beruf"));
-			appendIfNotEmpty(sb, "Bemerkung: ", res.getString("mo_Bemerkung"));
-			appendIfNotEmpty(sb, "Hausarzt: ", res.getString("tx_Hausarzt"));
-			appendIfNotEmpty(sb, "Arbeitgeber", res.getString("tx_Arbeitgeber"));
-			appendIfNotEmpty(sb, "Zuweisender Arzt: ", res.getString("tx_ZuwArzt"));
+			appendIfNotEmpty(sb, "Beruf: ", row.get("tx_Beruf"));
+			appendIfNotEmpty(sb, "Bemerkung: ", row.get("mo_Bemerkung"));
+			appendIfNotEmpty(sb, "Hausarzt: ", row.get("tx_Hausarzt"));
+			appendIfNotEmpty(sb, "Arbeitgeber", row.get("tx_Arbeitgeber"));
+			appendIfNotEmpty(sb, "Zuweisender Arzt: ", row.get("tx_ZuwArzt"));
 			if(sb.length()>0){
 				pat.setBemerkung(sb.toString());
 			}
@@ -214,7 +234,7 @@ public class Importer extends ImporterPage {
 				System.gc();
 				count=0;
 			}
-			pat.addXid(PATID, id, false);
+			pat.addXid(PATID, row.get("ID_Patient"), false);
 			moni.worked(PORTION);
 		}
 		
@@ -249,4 +269,18 @@ public class Importer extends ImporterPage {
         return false;
 	}
 	
+	/**
+	 * The ODBC driver sometimes fires funny exceptions if columns are not fetched in
+	 * the native order. We circumvent this by converting the row into a hashmap.
+	 * @param res A ResultSet pointing to the interesting row
+	 * @param columns the names of the columns
+	 * @return a hashmap of ol columne values with the column name as key
+	 */
+	public static HashMap<String, String> fetchRow(ResultSet res, String[] columns) throws Exception{
+		HashMap<String,String> ret=new HashMap<String, String>(); 
+		for(String col:columns){
+			ret.put(col, StringTool.unNull(res.getString(col)));
+		}
+		return ret;
+	}
 }
