@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: Importer.java 3145 2007-09-12 15:51:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
