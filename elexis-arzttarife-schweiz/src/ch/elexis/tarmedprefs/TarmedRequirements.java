@@ -21,12 +21,8 @@ public class TarmedRequirements {
 	public static final String DOMAIN_NIF="www.xid.ch/id/nif";
 
 	static{
-		if(Xid.getXIDDomainQuality(DOMAIN_KSK)==null){
-			Xid.localRegisterXIDDomain(DOMAIN_KSK, Xid.ASSIGNEMENT_REGIONAL);
-		}
-		if(Xid.getXIDDomainQuality(DOMAIN_NIF)==null){
-			Xid.localRegisterXIDDomain(DOMAIN_NIF, Xid.ASSIGNEMENT_REGIONAL);
-		}
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, Xid.ASSIGNEMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, Xid.ASSIGNEMENT_REGIONAL);
 	}
 	
 	public static String getEAN(final Kontakt k){
