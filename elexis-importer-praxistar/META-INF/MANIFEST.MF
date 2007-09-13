@@ -8,4 +8,6 @@ Require-Bundle: ch.elexis,
  ch.elexis.arzttarife_ch,
  ch.elexis.importer.div,
  org.eclipse.core.runtime,
- org.eclipse.ui
+ org.eclipse.ui,
+ ch.elexis.icpc,
+ ch.elexis.diagnosecodes_ch
