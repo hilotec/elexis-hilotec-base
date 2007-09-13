@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3115 2007-09-08 20:07:20Z rgw_ch $
+# * $Id: createDB.script 3150 2007-09-13 20:11:57Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -46,7 +46,7 @@ CREATE TABLE KONTAKT(
 	EMail			VARCHAR(30),				# guess 
 	Website			VARCHAR(40),
 	Gruppe			VARCHAR(10),				# mandator group
-	PatientNr		VARCHAR(10),				# external identifier
+	PatientNr		VARCHAR(40),				# external identifier
 	Anschrift		TEXT,						# postal (address sticker)
 	Bemerkung		TEXT,						# remarks
 	Diagnosen		BLOB,						# diagnoses	

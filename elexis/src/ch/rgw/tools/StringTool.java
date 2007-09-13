@@ -1,4 +1,4 @@
-// $Id: StringTool.java 2974 2007-08-09 05:11:54Z rgw_ch $
+// $Id: StringTool.java 3150 2007-09-13 20:11:57Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -732,6 +732,13 @@ public static Hashtable foldStrings(String s)
     		return orig;
     	}
     	return orig.substring(0,1).toUpperCase()+orig.substring(1).toLowerCase();
+    }
+    
+    public static String limitLength(String orig, int len){
+    	if(orig.length()>len){
+    		return orig.substring(0, len);
+    	}
+    	return orig;
     }
     /** 
 	 * Eine beliebige Ziffernfolge mit der Modulo-10 Prüfsumme verpacken

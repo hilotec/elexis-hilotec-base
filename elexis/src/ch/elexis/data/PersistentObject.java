@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3126 2007-09-09 16:11:35Z rgw_ch $
+ *    $Id: PersistentObject.java 3150 2007-09-13 20:11:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -577,6 +577,7 @@ public abstract class PersistentObject{
 			new Xid(this,domain,domain_id);
 			return true;
 		} catch (XIDException e) {
+			ExHandler.handle(e);
 			if(updateIfExists){
 				Xid xid=Xid.findXID(domain, domain_id);
 				if(xid!=null){
