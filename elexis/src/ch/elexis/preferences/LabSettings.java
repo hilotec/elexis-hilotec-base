@@ -2,7 +2,8 @@ package ch.elexis.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -21,16 +22,22 @@ public class LabSettings extends FieldEditorPreferencePage implements
 	}
 
 		@Override
-	protected void createFieldEditors() {
-		if(Hub.acl.request(AccessControlDefaults.LAB_SEEN)){
-			new StringFieldEditor(KEEP_UNSEEN_LAB_RESULTS,"Neue Laborwerte anzeigen (Tage)"
-					,getFieldEditorParent());
+	protected Control createContents(final Composite parent) {
+		if(Hub.acl.request(AccessControlDefaults.LAB_SEEN)){		
+			return super.createContents(parent);
 		}else{
-				new PrefAccessDenied(getFieldEditorParent());
+			return new PrefAccessDenied(parent);
 		}
 	}
 
-	public void init(IWorkbench workbench) {
+		@Override
+	protected void createFieldEditors() {
+		addField(new StringFieldEditor(KEEP_UNSEEN_LAB_RESULTS,"Neue Laborwerte anzeigen (Tage)"
+					,getFieldEditorParent()));
+		
+	}
+
+	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
 
 	}
