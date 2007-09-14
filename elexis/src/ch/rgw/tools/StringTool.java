@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3150 2007-09-13 20:11:57Z rgw_ch $
+// $Id: StringTool.java 3160 2007-09-14 18:12:42Z danlutz $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -52,7 +52,8 @@ public class StringTool
   public static final String space=" ";
   public static final String wordSeparators="[\\t ,\\.:\\?!\\n\\r]";
   public static final String lineSeparators="[\\n\\r\\.\\?!]";
-  public static final String wordChars="a-zA-ZäöüÄÖÜéèàâê\'";
+  //public static final String wordChars="a-zA-ZäöüÄÖÜéèàâê\'";
+  public static final String wordChars="\\p{L}\'";
   private static int ipHash;
   private static long sequence;
   
