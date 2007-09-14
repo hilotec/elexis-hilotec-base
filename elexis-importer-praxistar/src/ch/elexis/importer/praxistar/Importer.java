@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 3152 2007-09-14 12:09:52Z rgw_ch $
+ * $Id: Importer.java 3155 2007-09-14 17:01:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
@@ -34,7 +34,6 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -57,6 +56,7 @@ public class Importer extends ImporterPage {
 	private Stm stm;
 	
 	static{
+		Fall.getAbrechnungsSysteme(); //make sure billing systems are initialized
 		Xid.localRegisterXIDDomainIfNotExists(PATID, Xid.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(GARANTID, Xid.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(ARZTID, Xid.ASSIGNMENT_LOCAL);
@@ -106,7 +106,7 @@ public class Importer extends ImporterPage {
 		return "PraxiStar";
 	}
 	
-	private void importMandanten(IProgressMonitor moni) throws Exception{
+	private void importMandanten(final IProgressMonitor moni) throws Exception{
 		moni.subTask("importiere Mandanten");
 		int num=stm.queryInt("SELECT COUNT(*) FROM Adressen_Mandanten");
 		num+=stm.queryInt("SELECT COUNT(*) FROM ADRESSEN_PERSONAL");
@@ -279,8 +279,9 @@ public class Importer extends ImporterPage {
 			String gebdat=row.get("tx_Geburtsdatum").split(" ")[0];
 			Anwender an=(Anwender)Xid.findObject(USERID, row.get("Mandant_ID"));
 			String patid=row.get("ID_Patient");	
-
+			log.log(name, Log.DEBUGMSG);
 			if(Xid.findObject(PATID, patid)!=null){
+				log.log("Skipped", Log.DEBUGMSG);
 				continue; // avoid multiple imports
 			}
 			String[] land_plz=row.get("tx_PLZ").split("[ -]+");
@@ -347,7 +348,7 @@ public class Importer extends ImporterPage {
 		
 	}
 	
-	private void importDiagnosen(IProgressMonitor moni) throws Exception{
+	private void importDiagnosen(final IProgressMonitor moni) throws Exception{
 		moni.subTask("Importiere Stammdiagnosen");
 		int num=stm.queryInt("SELECT COUNT(*) FROM Patienten_Stammdiagnose");
 		final int PORTION=Math.round((TOTALWORK/WORK_PORTIONS)/num);
@@ -406,7 +407,7 @@ public class Importer extends ImporterPage {
 	 * @param columns the names of the columns
 	 * @return a hashmap of ol columne values with the column name as key
 	 */
-	public static HashMap<String, String> fetchRow(ResultSet res, String[] columns) throws Exception{
+	public static HashMap<String, String> fetchRow(final ResultSet res, final String[] columns) throws Exception{
 		HashMap<String,String> ret=new HashMap<String, String>(); 
 		for(String col:columns){
 			// System.out.println(col);
