@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 2504 2007-06-08 13:45:54Z danlutz $
+ *    $Id: PreferenceConstants.java 3151 2007-09-14 09:32:43Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -75,6 +75,10 @@ public class PreferenceConstants {
 	public static final String USR_REMINDEROWN= "reminder/originator";
 	public static final String USR_REMINDEROTHERS= "reminder/others";
 	public static final String USR_MFU_LIST_SIZE= "mfulist/size";
+	
+	// Menu item "lock perspectives" (GlobalActions.fixLayoutAction)
+	public static final String USR_FIX_LAYOUT = "perspectives/fix_layout";
+	public static final boolean USR_FIX_LAYOUT_DEFAULT = false;
 	
 	// Rechnungen
 	public static final String RNN_DEFAULTEXPORTMODE="rechnung/default_target";

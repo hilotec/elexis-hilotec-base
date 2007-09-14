@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 2845 2007-07-20 13:29:32Z rgw_ch $
+ *  $Id: Anwender.java 3151 2007-09-14 09:32:43Z danlutz $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -235,9 +235,10 @@ public class Anwender extends Person {
 					}
 				}
 			}
-			Hub.mainActions.adaptForUser();
-			
+
 			Hub.userCfg=new SqlSettings(j,"USERCONFIG","Param","Value","UserID="+a.getWrappedId());
+
+			Hub.mainActions.adaptForUser();
 		
 			//String perspektive=(String)km.get("StartPerspektive");
 			String perspektive=Hub.localCfg.get(Hub.actUser+GlobalActions.DEFAULTPERSPECTIVECFG, null);

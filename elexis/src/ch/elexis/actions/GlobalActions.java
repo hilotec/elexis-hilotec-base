@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 3021 2007-08-27 07:10:06Z danlutz $
+ * $Id: GlobalActions.java 3151 2007-09-14 09:32:43Z danlutz $
  *******************************************************************************/
 
 
@@ -48,6 +48,7 @@ import ch.elexis.data.*;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.NeuerFallDialog;
 import ch.elexis.dialogs.SelectFallDialog;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.*;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.wizards.DBConnectWizard;
@@ -406,6 +407,11 @@ public class GlobalActions {
 			{
 				setToolTipText(Messages.getString("GlobalActions.LockPerspectivesToolTip")); //$NON-NLS-1$
 			}
+			public void run() {
+				// store the current value in the user's configuration
+				Hub.userCfg.set(PreferenceConstants.USR_FIX_LAYOUT, fixLayoutAction.isChecked());
+				System.err.println("fixLayoutAction: " + fixLayoutAction.isChecked());
+			}
 		};
 		makeBillAction=new Action(Messages.getString("GlobalActions.MakeBill")){ //$NON-NLS-1$
 			@Override
@@ -643,7 +649,8 @@ public class GlobalActions {
     }
 
 	/**
-     *	Verfügbarkeit der einzelnen Menuepunkte an den angemeldeten Anwender anpassen  
+     *	Verfügbarkeit der einzelnen Menuepunkte an den angemeldeten Anwender anpassen 
+     *  Menueeinstellungen wiederherstellen
      */
     public void adaptForUser(){
     	setMenuForUser(AC_EXIT,exitAction); //$NON-NLS-1$
@@ -666,6 +673,16 @@ public class GlobalActions {
             viewList.setVisible(true);
         }else{
             viewList.setVisible(false);
+        }
+        
+        // restore menue settings
+        if (Hub.actUser != null) {
+        	boolean fixLayoutChecked = Hub.userCfg.get(PreferenceConstants.USR_FIX_LAYOUT, PreferenceConstants.USR_FIX_LAYOUT_DEFAULT);
+        	fixLayoutAction.setChecked(fixLayoutChecked);
+        	System.err.println("fixLayoutAction: set to " + fixLayoutChecked);
+        }  else {
+        	fixLayoutAction.setChecked(PreferenceConstants.USR_FIX_LAYOUT_DEFAULT);
+        	System.err.println("fixLayoutAction: reset to false");
         }
     }
     private void setMenuForUser(String name,IAction action){
