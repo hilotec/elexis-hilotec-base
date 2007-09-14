@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailDisplay.java 3104 2007-09-06 18:58:23Z rgw_ch $
+ *  $Id: MedikamentDetailDisplay.java 3156 2007-09-14 17:01:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -39,7 +39,7 @@ public class MedikamentDetailDisplay implements IDetailDisplay{
 	LabeledInputField ifName;
 	Text tName;
 	
-	public Composite createDisplay(Composite parent, IViewSite site) {
+	public Composite createDisplay(final Composite parent, final IViewSite site) {
 		parent.setLayout(new FillLayout());
 		form=tk.createScrolledForm(parent);
 		Composite ret=form.getBody();
@@ -51,7 +51,7 @@ public class MedikamentDetailDisplay implements IDetailDisplay{
 		tName.addFocusListener(new FocusAdapter(){
 
 			@Override
-			public void focusLost(FocusEvent e) {
+			public void focusLost(final FocusEvent e) {
 				if(act!=null){
 					act.setInternalName(tName.getText());
 				}
@@ -72,7 +72,7 @@ public class MedikamentDetailDisplay implements IDetailDisplay{
 		return Medikament.class;
 	}
 
-	public void display(Object obj) {
+	public void display(final Object obj) {
 		if(obj instanceof Medikament){
 			act=(Medikament)obj;
 			form.setText(act.getLabel());
@@ -83,7 +83,7 @@ public class MedikamentDetailDisplay implements IDetailDisplay{
 	}
 
 	public String getTitle() {
-		return "Medikament";
+		return " Medikament";
 	}
 
 
