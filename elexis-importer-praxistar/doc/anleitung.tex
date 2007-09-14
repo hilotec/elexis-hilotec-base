@@ -34,16 +34,18 @@ Dieses Plugin benötigt Elexis 1.1.1 oder höher.
 
 \medskip
 
-PraxiStar speichert die Daten in einer Microsoft\texttrademark SQL-Server - Datenbank. Um die Daten auszulesen, benötigen Sie ein Programm, das dieses Datenbankformat lesen kann. Dies kann entweder der (relativ kostspielige) Microsoft\texttrademark SQL-Server sein, oder der kostenlose, dafür relativ langsame und nur auf dem lokalen Computer funktionierenden SQLExpress. Die gewählte Datenbank-Engine muss nun als ODBC-Server bereitgestellt werden, damit Elexis die Daten lesen und konvertieren kann.
+PraxiStar speichert die Daten in einer Microsoft\texttrademark{} SQL-Server - Datenbank. Um die Daten auszulesen, benötigen Sie ein Programm, das dieses Datenbankformat lesen kann. Dies kann zum Beispiel entweder der (relativ kostspielige) Microsoft\texttrademark{} SQL-Server sein (den Sie möglicherweise als Teil von PraxiStar bereits besitzen), oder der kostenlose, dafür relativ langsame und nur auf dem lokalen Computer funktionierenden SQLExpress. Die gewählte Datenbank-Engine muss nun als ODBC-Dienst bereitgestellt werden, damit Elexis die Daten lesen und konvertieren kann.
 
-Es soll an dieser Stelle nicht verschwiegen werden, dass dieses Vorgehen nicht ganz trivial ist, und dass hierfür gewisse Kenntnisse der Microsoft Dstenquellen-Architektur und der ODBC-Einrichtung notwendig sind. Wir empfehlen Ihnen, ggf. einen externen Dienstleister zu beauftragen.
+Dieses Vorgehen ist nicht ganz trivial, und es sind hierfür gewisse Kenntnisse der Microsoft Datenquellen-Architektur (ODBC) notwendig. Wenn Sie diese Kenntnisse nicht haben, und nicht wirklich an Computerinterna interessiert sind, wird es sich kaum lohnen, diese doch sehr speziellen Dinge nur allein hierfür zu erarbeiten. Wir empfehlen Ihnen, ggf. einen externen Dienstleister zu beauftragen.
 
 \medskip
 
-\section{Verwendung}
-Wenn der Praxistar-Importer korrekt installiert ist, erscheint er automatisch im Menu \textsc{Datei-Datenimport}. Wählen Sie dort den Reiter 'PraxiStar' aus. 
+Wenn Ihnen Begriffe wie 'ODBC' und 'Datenquellen' aber nicht ganz fremd sind, dann spricht auch nichts dagegen, es einfach mal zu versuchen. (Start-Systemsteuerung-Verwaltung-Datenquellen). Schlimmstenfalls verlieren Sie ein paar Stunden; kaputtgehen kann nichts.
 
-Wählen Sie als Importquelle die ODBC-Datenquelle, die Sie von der PraxiStar Datenbank konfiguriert haben.
+\section{Verwendung}
+Wenn der Praxistar-Importer korrekt installiert ist, erscheint er automatisch im Menu \textsc{Datei-Datenimport}. Wählen Sie dort den Reiter 'PraxiStar' aus.
+
+Wählen Sie als Importquelle die ODBC-Datenquelle, die Sie von der PraxiStar Datenbank bereitgestellt haben.
 
 Klicken Sie dann auf ok. Je nach Umfang der Daten wird der Import einige Minuten bis wenige Stunden dauern.
 
@@ -56,6 +58,6 @@ Dieses Plugin importiert Mandanten, Anwender, Aerzte, Garanten, Patienten und Ha
 Wenn einem Patienten in PraxiStar ein oder mehrere Garanten zugeordnet sind, wird für jeden Garanten in Elexis ein Fall erstellt.
 
 \section{Zusammenlegen mehrerer Datenbanken}
-Sie können dieses Plugin selbstverständlich auch verwenden, um mehrere Datenbanken, beispielsweise bei der Zusammenlegung von Praxen, zusammenführen. Es wird beim Import keine Kollisionen und keine Datenverluste geben, aber es kann dann vorkommen, dass einige Patienten mehrfach in die Datenbank gelangen. 
+Sie können dieses Plugin selbstverständlich auch verwenden, um mehrere Datenbanken, beispielsweise bei der Zusammenlegung von Praxen, zusammenführen. Es wird beim Import keine Kollisionen und keine Datenverluste geben, aber es kann dann vorkommen, dass einige Patienten mehrfach in die Datenbank gelangen.
 
 \end{document} 
