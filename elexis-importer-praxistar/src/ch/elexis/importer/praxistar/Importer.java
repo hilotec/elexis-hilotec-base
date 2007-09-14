@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 3148 2007-09-13 20:11:42Z rgw_ch $
+ * $Id: Importer.java 3152 2007-09-14 12:09:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
@@ -360,7 +360,7 @@ public class Importer extends ImporterPage {
 			if(pat!=null){
 				Episode problem=new Episode(pat,row.get("tx_Diagnosentext"));
 				pat.set("Diagnosen", problem.getTitle());
-				problem.setStartDate(new TimeTool(row.get("dt_DiagnosenStartdatum")).toString(TimeTool.DATE_GER));
+				problem.setStartDate(new TimeTool(row.get("dt_DiagnosenStartdatum").split(" ")[0]).toString(TimeTool.DATE_GER));
 				String dgString="ch.elexis.data.TICode::"+row.get("tx_Rechnungstext");
 				problem.setExtField("Diagnosen", dgString);
 			}
