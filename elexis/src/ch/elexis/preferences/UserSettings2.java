@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import ch.elexis.Hub;
 
@@ -57,6 +58,36 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 		return super.performOk();
 	}
 	
-
-	
+	/**
+	 * save the state of an expandable composite
+	 * @param field name of the composite (any unique string, preferably derived from view name)
+	 * @param state the state to save
+	 */
+	public static void saveExpandedState(final String field, final boolean state){
+		if(state){
+			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.OPEN);
+		}else{
+			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.CLOSED);
+		}
+	}
+	/**
+	 * Set the state of an expandable Composite to the previously saved state.
+	 * @param ec the expandable Composite to expand or collapse
+	 * @param field the unique name
+	 */
+	public static void setExpandedState(final ExpandableComposite ec,final String field){
+		String mode=Hub.userCfg.get(UserSettings2.EXPANDABLE_COMPOSITES,UserSettings2.REMEMBER_STATE);
+		if(mode.equals(UserSettings2.OPEN)){
+			ec.setExpanded(true);
+		}else if(mode.equals(UserSettings2.CLOSED)){
+			ec.setExpanded(false);
+		}else{
+			String state=Hub.userCfg.get(UserSettings2.STATES+field,UserSettings2.CLOSED);
+			if(state.equals(UserSettings2.CLOSED)){
+				ec.setExpanded(false);
+			}else{
+				ec.setExpanded(true);
+			}
+		}
+	}
 }

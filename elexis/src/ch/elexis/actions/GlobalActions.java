@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 3151 2007-09-14 09:32:43Z danlutz $
+ * $Id: GlobalActions.java 3164 2007-09-16 10:45:07Z rgw_ch $
  *******************************************************************************/
 
 
@@ -410,7 +410,7 @@ public class GlobalActions {
 			public void run() {
 				// store the current value in the user's configuration
 				Hub.userCfg.set(PreferenceConstants.USR_FIX_LAYOUT, fixLayoutAction.isChecked());
-				System.err.println("fixLayoutAction: " + fixLayoutAction.isChecked());
+				//System.err.println("fixLayoutAction: " + fixLayoutAction.isChecked());
 			}
 		};
 		makeBillAction=new Action(Messages.getString("GlobalActions.MakeBill")){ //$NON-NLS-1$

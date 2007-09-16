@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 3052 2007-08-31 15:55:22Z rgw_ch $
+ * $Id: Patientenblatt.java 3164 2007-09-16 10:45:07Z rgw_ch $
  *******************************************************************************/
 
 
@@ -147,13 +147,13 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
             public void expansionStateChanging(final ExpansionEvent e)
             {
             	ExpandableComposite src=(ExpandableComposite)e.getSource();
-                saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
+                UserSettings2.saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
             }
             
         };
 		
         ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
-        setExpandedState(ecZA,"Patientenblatt/Zusatzadressen");
+        UserSettings2.setExpandedState(ecZA,"Patientenblatt/Zusatzadressen");
 
         ecZA.addExpansionListener(ecExpansionListener);
         
@@ -182,7 +182,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         ecZA.setClient(inpZusatzAdresse);
 		for(int i=0;i<lbExpandable.length;i++){
             ec[i]=WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
-            setExpandedState(ec[i], "Patientenblatt/"+lbExpandable[i]);
+            UserSettings2.setExpandedState(ec[i], "Patientenblatt/"+lbExpandable[i]);
 			txExpandable[i]=tk.createText(ec[i], "" , SWT.MULTI);
 			txExpandable[i].addFocusListener(new Focusreact(dfExpandable[i]));
             ec[i].setData("dbfield",dfExpandable[i]);
@@ -199,14 +199,14 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
                         	tx.setText("");
                         }
                     }
-                    saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
+                    UserSettings2.saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
                 }
                 
             });
             ec[i].setClient(txExpandable[i]);
 		}
 		ecdm=WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
-		setExpandedState(ecdm, "Patientenblatt/"+FIXMEDIKATION);
+		UserSettings2.setExpandedState(ecdm, "Patientenblatt/"+FIXMEDIKATION);
 		ecdm.addExpansionListener(ecExpansionListener);
 		dmd=new DauerMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
@@ -223,28 +223,8 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         tk.paintBordersFor(form.getBody());
 	}
     
-	private void saveExpandedState(final String field, final boolean state){
-		if(state){
-			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.OPEN);
-		}else{
-			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.CLOSED);
-		}
-	}
-	private void setExpandedState(final ExpandableComposite ec,final String field){
-		String mode=Hub.userCfg.get(UserSettings2.EXPANDABLE_COMPOSITES,UserSettings2.REMEMBER_STATE);
-		if(mode.equals(UserSettings2.OPEN)){
-			ec.setExpanded(true);
-		}else if(mode.equals(UserSettings2.CLOSED)){
-			ec.setExpanded(false);
-		}else{
-			String state=Hub.userCfg.get(UserSettings2.STATES+field,UserSettings2.CLOSED);
-			if(state.equals(UserSettings2.CLOSED)){
-				ec.setExpanded(false);
-			}else{
-				ec.setExpanded(true);
-			}
-		}
-	}
+	
+	
 	@Override
 	public void dispose(){
 		GlobalEvents.getInstance().removeSelectionListener(this);
@@ -360,7 +340,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
         }
         txSimple[10].setText(p.getKontostand().getAmountAsString());
         inpAdresse.setText(p.getPostAnschrift(false),false,false);
-        setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
+        UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
 		inpZusatzAdresse.clear();
 		for(BezugsKontakt za : p.getBezugsKontakte()){
 			inpZusatzAdresse.add(za);
@@ -368,7 +348,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		
         
 		for(int i=0;i<dfExpandable.length;i++){
-			setExpandedState(ec[i], "Patientenblatt/"+ec[i].getText());
+			UserSettings2.setExpandedState(ec[i], "Patientenblatt/"+ec[i].getText());
             if(ec[i].isExpanded()==true){
                 txExpandable[i].setText(p.get(dfExpandable[i]));
             }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3150 2007-09-13 20:11:57Z rgw_ch $
+ *    $Id: PersistentObject.java 3164 2007-09-16 10:45:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1584,6 +1584,12 @@ public abstract class PersistentObject{
 		PersistentObject.showDeleted = showDeleted;
 	}
 
+	/**
+	 * Utility function to create or modify a table consistently. Should be used by all
+	 * plugins that contributa data types derived from PersistentObject
+	 * @param name name of the table to create 
+	 * @param jointDB create string
+	 */
 	protected static void createTable(final String name, final String jointDB){
 		ByteArrayInputStream bais;
 		try {
@@ -1597,4 +1603,17 @@ public abstract class PersistentObject{
 		}
 	}
 
+	/**
+	 * Utility function to remove a table and all objects defined therein consistentliy
+	 * To kame sure dependen data are deleted as well, we call each object's delete
+	 * operator individually before dropping the table
+	 * @param name the name of the table
+	 */
+	protected static void removeTable(final String name, Class oclas){
+		Query qbe=new Query(oclas);
+		for(Object o:qbe.execute()){
+			((PersistentObject)o).delete();
+		}
+		j.exec("DROP TABLE "+name);
+	}
 }
