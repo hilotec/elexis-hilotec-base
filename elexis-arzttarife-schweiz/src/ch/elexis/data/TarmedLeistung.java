@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2006, G. Weirich and Elex
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 3005 2007-08-21 21:37:43Z rgw_ch $
+ * $Id: TarmedLeistung.java 3167 2007-09-16 16:10:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
