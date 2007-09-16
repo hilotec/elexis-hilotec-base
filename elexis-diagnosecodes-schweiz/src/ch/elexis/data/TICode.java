@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TICode.java 2350 2007-05-08 15:14:44Z rgw_ch $
+ *    $Id: TICode.java 3168 2007-09-16 16:10:58Z rgw_ch $
  *******************************************************************************/
 
 
@@ -125,142 +125,6 @@ public class TICode extends PersistentObject implements IDiagnose{
     	return null;
     }
     
-    //private static String[][] ticode;
-    
-    /*
-    private static final String[][] ticode_fr={
-    	{"A", "Système cardio-vasculaire",
-    		   "Vitiens cardiaques/ valvules cardiaques",
-    		   "Maladies coronariennes, y compris infarctus du myocarde",
-    		   "Troubles du rythme cardiaque",
-    		   "Hypertonie artèrielles",
-    		   "Artères",
-    		   "Veines (y compris varices)",
-    		   "Vaisseaux lymphatiques y compris oedème lymphatique",
-    		   "Autres maladies du système cardio-vasculaire"},
-       {"B", "Sang / moelle osseuse/ rate",
-    			   "Anémie",
-    			   "Coagulopathie",
-    			   "Maladies de la moelle osseuse et du sang",
-    			   "Rate / ganglion lymphatique / système immunitaire",
-    			   "Autres maladies de la moelle osseuse / du sang / de la rate"},
-    			   
-       {"C", "Poumon / appareil respiratoire",
-    				   "Asthme",
-    				   "Bronchite chronique",
-    				   "Embolie pulmonaire",
-    				   "Poumon / plèvre (tuberculose exclue)",
-    				   "Autres maladies de l'appareil respiratoire"},
-       {"D", "Squelette / appareil locomoteur",
-    					"Muscles / tendons",
-    					"Articulations / ligaments / bourse (D3 exclu.)",
-    					"Arthrite / M. Bechterew",
-    					"Arthrose",
-    					"Colonne vertébrale (D3 exclu.)",
-    					 "Autres maladies de l'appareil locomoteur"},
-       {"E", "Tube digestif",
-    	     "Oesophage / estomac / duodénum, ulcère compris)",
-    	     "Intestin (intestin grêle / colon)",
-    	     "Rectum / anus, hémorroïdes comprises)",
-    	     "Foie / voies biliaires / vésicule biliaire",
-    	     "Pancréas, diabète exclu)",
-    	     "Diaphragme",
-    	     "Hernies",
-    	     "Autres maladies du tube digestif"},
-    	{"F", "Métabolisme",
-    	    	 "Métabolisme glucidique",
-    	    	 "Maladies de la glande thyroïde",
-    	    	 "Autres maladies du métabolisme"},
-    	{"G", "Maladies infectieuses et parasitaires",
-    	    	"Infection banale",
-    	    	"Tuberculose",
-    	        "Hépatite virale",
-    	         "Autres maladies infectieuses ou parasitaires"},
-    	 {"H", "Rein et voies urinaires",
-    	       "Rein / insuffisance rénale (dialyse / transplantation)",
-    	        "Calcul rénal",
-    	        "Voies urinaires",
-    	        "Autres maladies des reins et des voies urinaires"},
-    	 {"I", "Organes génitaux",
-    	        "Organes génitaux masculins",
-    	        "Vulve, vagin, petit bassin",
-    	        "Utérus",
-    	        "Annexes",
-    	        "Troubles du cycle menstruel",
-    	        "Maladies de la glande mammaire",
-    	        "Stérilisation",
-    	        "Autres maladies des organes génitaux"},
-    	 {"K", "Grossesse / stérilité",
-    	        "Grossesse risque normal",
-    	        "Grossesse avec complications",
-    	        "Stérilité et insémination artificielle"},
-    	  {"L", "Système nerveux",
-    	        "Cerveau / moelle épinière",
-    	        "Nerfs périphériques",
-    	        "Paralysie / ataxie",
-    	        "Migraine et équivalents",
-    	        "Epilepsie",
-    	        "Autres maladies du système nerveux"},
-    	        
-    	   {"M", "Maladies psychiques",
-    	         "Troubles du sommeil",
-    	        "Maladies psychiques",
-    	        "Maladies psycho-organiques"},
-    	   {"N", "Peau",
-    	        "Maladies allergiques de la peau, eczéma exclu.",
-    	        "Maladies inflammatoires / infectieuses de la peau",
-    	        "Eczéma",
-    	        "Maladies vasculaires / dégénératives de la peau",
-    	        "Psoriasis / hyperkératoses",
-    	        "Cicatrices",
-    	        "Autres maladies de la peau"},
-    	    {"O", "Cou / nez / oreilles",
-    	        "Nez, N6 exclu.",
-    	        "sinus nasal",
-    	        "Cavité buccale, glandes salivaires",
-    	        	"Amygdales / adénoïdes",
-    	        	"Larynx / trachée",
-    	        	"Malformations du nez et des oreilles",
-    	        	"Oreille moyenne / trompe d'Eustache",
-    	        	"Oreille interne",
-    	        	"Autres maladies ORL"},
-    	     {"P", "Oeil",
-    	        	"Paupière / conjonctive",
-    	        	"Lentille / cornée / corps vitré",
-    	        	"Iris / glaucome",
-    	        	"Rétine / nerf optique / vaisseaux",
-    	        	"Muscle oculomoteur / strabisme",
-    	        	"Autres maladies des yeux"},
-    	     {"Q", "Dents / mâchoire",
-    	        	"Kyste",
-    	        	"Abcès dentaire",
-    	        	"Fibromes",
-    	        	"Autres maladies de la mâchoire ou dentaires"},
-    	     {"R", "Accident / conséquences de l'accident",
-    	        	"Tête / colonne vertébrale",
-    	        	"Thorax",
-    	        	"Abdomen",
-    	        	"Extrémités supérieures",
-    	            "Extrémités inférieures"},
-    	     {"S", "Prestations non prises en charge par l'assurance-maladie",
-    	            	"Prestations non prises en charge par l'assurance-maladie"},
-    	     {"T", "Mesures préventives",
-    	            "Examen préventif",
-    	            "Vaccins"},
-    	     {"U", "Orientation du médecin-conseil (au lieu du diagnostic)",
-    	            	"Orientation du médecin-conseil (au lieu du diagnostic)"},
-    	            	
-    	     {"0", "Codes supplémentaires",
-    	            "droite",
-    	        	 "gauche",
-    	            "aigu",
-    	            "chronique / récidive",
-    	            "infectueux",
-    	            "fonctionnel",
-    	            "néoplasie",
-    	            "raisons professionnelles"}
-    };
-    */
 	private static final String[][] ticode={
 			{"A",Messages.TICode_Heart, //$NON-NLS-1$
 			   Messages.TICode_valves,
@@ -420,7 +284,7 @@ public class TICode extends PersistentObject implements IDiagnose{
     @Override
     public boolean isDragOK()
     {
-        return true;
+        return !hasChildren();
     }
   
     TICode(){}
@@ -430,20 +294,6 @@ public class TICode extends PersistentObject implements IDiagnose{
 	public Iterable<IAction> getActions() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	static{
-		/*
-		 * war doch keine so gute Idee. Lieber externalisieren
-		String lang=Hub.localCfg.get(PreferenceConstants.ABL_LANGUAGE,"d");
-		if(lang.equals("d")){
-			ticode=ticode_de;
-		}else if(lang.equals("f")){
-			ticode=ticode_fr;
-		}else if(lang.equals("i")){
-			ticode=ticode_fr;
-		}
-		*/
 	}
 
    }
