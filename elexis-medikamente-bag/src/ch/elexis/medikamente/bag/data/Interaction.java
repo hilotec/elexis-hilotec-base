@@ -8,17 +8,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 3165 2007-09-16 10:45:15Z rgw_ch $
+ * $Id: Interaction.java 3169 2007-09-16 16:11:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;
 
 import java.util.List;
 
+import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 /**
@@ -61,7 +63,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 	
 	
 	static{
-		addMapping(TABLENAME,"Subst1","Subst2","Type","Relevance","Description");
+		addMapping(TABLENAME,"Subst1","Subst2","Type","Relevance","Description","Contributor","ContribDate");
 		Interaction v=load("VERSION");
 		if(v.state()<PersistentObject.DELETED){
 			createTable("Interactions", createDB);
@@ -81,8 +83,9 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 	}
 	public Interaction(final Substance s1, final Substance s2, final String desc, final int t, final int sev){
 		create(null);
-		set(new String[]{"Subst1","Subst2","Description","Type","Relevance"},
-				s1.getId(),s2.getId(),desc,Integer.toString(t),Integer.toString(sev));
+		set(new String[]{"Subst1","Subst2","Description","Type","Relevance","Contributor","ContribDate"},
+				s1.getId(),s2.getId(),desc,Integer.toString(t),Integer.toString(sev),Hub.actMandant.getId(),
+				new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
 	public static List<Interaction> getInteractionsFor(final Substance s){
@@ -154,4 +157,6 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 	public int compareTo(final Interaction o) {
 		return getLabel().compareTo(o.getLabel());
 	}
+	
+	 
 }
