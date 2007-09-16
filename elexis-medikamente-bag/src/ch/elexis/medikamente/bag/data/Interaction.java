@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 3129 2007-09-10 12:52:40Z rgw_ch $
+ * $Id: Interaction.java 3165 2007-09-16 10:45:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;
@@ -21,9 +21,14 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
+/**
+ * InterView - Community based Interaction  viewer - will be built on this class
+ * @author Gerry
+ *
+ */
 public class Interaction extends PersistentObject implements Comparable<Interaction>{
 	final static String TABLENAME="CH_ELEXIS_MEDIKAMENTE_BAG_INTERACTIONS";
-	final static String VERSION="0.1.0";
+	final static String VERSION="0.2.0";
 	static final String createDB="CREATE TABLE "+TABLENAME+" ("
 		+"ID			VARCHAR(25)	primary key,"
 		+"deleted		CHAR(1) default '0',"	
@@ -31,6 +36,8 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 		+"Subst2		VARCHAR(25),"
 		+"Type			VARCHAR(20),"
 		+"Relevance			CHAR(1),"
+		+"Contributor	VARCHAR(25),"		// UID of the contributor
+		+"ContribDate		CHAR(8),"
 		+"Description		TEXT);"
 		+"INSERT INTO "+TABLENAME+"(ID,Type) VALUES ('VERSION','"+VERSION+"');"
 		+"CREATE INDEX CEMBI1 ON "+TABLENAME+" (Subst1);"
@@ -61,7 +68,14 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 		}else{
 			VersionInfo vi=new VersionInfo(v.get("Type"));
 			if(vi.isOlder(VERSION)){
-				SWTHelper.showError("Datenbank Fehler", "Tabelle Interactions ist zu alt");
+				if(vi.isOlder("0.2.0")){
+					final String update="UPDATE "+TABLENAME+" ADD COLUMN Contributor VARCHAR(25); "
+						+"UPDATE "+TABLENAME+" ADD COLUMN ContribDate CHAR(8);";
+					createTable("Interaktion", update);
+					v.set("Type", VERSION);
+				}else{
+					SWTHelper.showError("Datenbank Fehler", "Tabelle Interactions ist zu alt");
+				}
 			}
 		}
 	}

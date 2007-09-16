@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3129 2007-09-10 12:52:40Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3165 2007-09-16 10:45:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -20,6 +20,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
@@ -33,6 +36,7 @@ import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Interaction;
 import ch.elexis.medikamente.bag.data.Substance;
+import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.SWTHelper;
@@ -40,6 +44,10 @@ import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
 
 public class BAGMediDetailBlatt extends Composite {
+	private static final String BAGMEDI_DETAIL_BLATT_INTERACTIONS = "BAGMediDetailBlatt/interactions";
+	private static final String BAGMEDI_DETAIL_BLATT_SUBSTANCES = "BAGMediDetailBlatt/substances";
+	private static final String FACHINFORMATIONEN = "Fachinformationen";
+	private static final String BAGMEDI_DETAIL_BLATT_PROFINFOS = "BAGMediDetailBlatt/profinfos";
 	private final LabeledInputField.AutoForm fld;
 	private final Text tSubstances;
 	private final Text tInfos;
@@ -47,6 +55,7 @@ public class BAGMediDetailBlatt extends Composite {
 	private final ScrolledForm form;
 	ListDisplay<Interaction> ldInteraktionen;
 	private BAGMedi actMedi;
+	ExpandableComposite ecSubst, ecInterakt, ecFachinfo;
 	
 	InputData[] fields=new InputData[]{
 			new InputData("Hersteller","ExtInfo",new LabeledInputField.IContentProvider(){
@@ -123,11 +132,25 @@ public class BAGMediDetailBlatt extends Composite {
 		fld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		//fld.setEnabled(false);
 		tk.adapt(fld);
-		tSubstances=SWTHelper.createText(Desk.theToolkit, ret, 5, SWT.BORDER|SWT.READ_ONLY|SWT.WRAP|SWT.V_SCROLL);
-		tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		ecSubst=tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
+		ecSubst.setText("Inhaltsstoffe");
+		tSubstances=SWTHelper.createText(Desk.theToolkit, ecSubst, 5, SWT.READ_ONLY|SWT.WRAP|SWT.V_SCROLL);
+		//tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		ecSubst.addExpansionListener(new ExpansionAdapter(){
+
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_SUBSTANCES, e.getState());
+				form.reflow(true);
+			}
+			
+		});
+		ecSubst.setClient(tSubstances);
 		// tk.createSeparator(ret, SWT.HORIZONTAL);
-		tk.createLabel(ret, "Bisher eingetragene Interaktionen");
-		ldInteraktionen=new ListDisplay<Interaction>(ret,SWT.BORDER,new ListDisplay.LDListener(){
+		ecInterakt=tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
+		ecInterakt.setText("Bisher eingetragene Interaktionen");
+
+		ldInteraktionen=new ListDisplay<Interaction>(ecInterakt,SWT.BORDER,new ListDisplay.LDListener(){
 
 			public String getLabel(final Object o) {
 				if(o instanceof Interaction){
@@ -142,11 +165,28 @@ public class BAGMediDetailBlatt extends Composite {
 				idlg.open();
 				
 			}});
-		ldInteraktionen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		ldInteraktionen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ldInteraktionen.addHyperlinks("Bearbeiten...");
-		tk.adapt(ldInteraktionen);
-		tk.createLabel(ret, "Informationen");
-		tInfos=SWTHelper.createText(ret, 15, SWT.NONE);
+		//tk.adapt(ldInteraktionen);
+		ecInterakt.setClient(ldInteraktionen);
+		ecInterakt.addExpansionListener(new ExpansionAdapter(){
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_INTERACTIONS, e.getState());
+				form.reflow(true);
+			}
+		});
+		ecFachinfo=tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
+		ecFachinfo.setText(FACHINFORMATIONEN);
+		tInfos=SWTHelper.createText(ecFachinfo, 15, SWT.NONE);
+		ecFachinfo.setClient(tInfos);
+		ecFachinfo.addExpansionListener(new ExpansionAdapter(){
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_PROFINFOS, e.getState());
+				form.reflow(true);
+			}
+		});
 		
 	}
 	public void display(final BAGMedi m){
@@ -163,5 +203,9 @@ public class BAGMediDetailBlatt extends Composite {
 		for(Interaction inter:m.getInteraktionen()){
 			ldInteraktionen.add(inter);
 		}
+		UserSettings2.setExpandedState(ecSubst, BAGMEDI_DETAIL_BLATT_SUBSTANCES);
+		UserSettings2.setExpandedState(ecInterakt, BAGMEDI_DETAIL_BLATT_INTERACTIONS);
+		UserSettings2.setExpandedState(ecFachinfo, BAGMEDI_DETAIL_BLATT_PROFINFOS);
+		form.reflow(true);
 	}
 }
