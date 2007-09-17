@@ -118,8 +118,10 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.icpc.Episode;
 import ch.elexis.text.EnhancedTextField;
@@ -193,8 +195,12 @@ public class JournalView extends ViewPart implements SelectionListener,
 
     private EnhancedTextField text;
     private Label lKonsultation;
+    private Hyperlink hlMandant;
     private Label lVersion;
 	private Combo cbFall;
+	
+	// container for lKonsultation, hlMandant, cbFall
+	private Composite konsFallArea;
 	
     private FormToolkit tk;
     private Form form;
@@ -1029,16 +1035,41 @@ public class JournalView extends ViewPart implements SelectionListener,
         Composite konsultationComposite = tk.createComposite(parent);
         konsultationComposite.setLayout(new GridLayout(1, true));
 
-        Composite konsFallArea = tk.createComposite(konsultationComposite);
+        konsFallArea = tk.createComposite(konsultationComposite);
         konsFallArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-        konsFallArea.setLayout(new GridLayout(2, false));
+        konsFallArea.setLayout(new GridLayout(3, false));
         
         lKonsultation = tk.createLabel(konsFallArea, "Keine Konsultation ausgewählt");
-        lKonsultation.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+        //lKonsultation.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
         lKonsultation.setFont(JFaceResources.getHeaderFont());
+
+        if (hasMultipleMandants) {
+        	hlMandant=tk.createHyperlink(konsFallArea, "", SWT.NONE);
+        	hlMandant.addHyperlinkListener(new HyperlinkAdapter(){
+        		@Override
+        		public void linkActivated(HyperlinkEvent e) {
+        			KontaktSelektor ksl=new KontaktSelektor(getSite().getShell(),Mandant.class,"Mandant auswählen",
+        			"Auf wen soll diese Kons verrechnet werden?");
+        			if(ksl.open()==Dialog.OK){
+        				actKons.setMandant((Mandant)ksl.getSelection());
+        				setKonsultation(actKons, false);
+        			}
+        		}
+
+        	});
+        } else {
+        	hlMandant = null;
+        	// placeholder
+        	tk.createLabel(konsFallArea, "");
+        }
         
         Composite fallArea = tk.createComposite(konsFallArea);
-        fallArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+        //GridData gd = SWTHelper.getFillGridData(1, false, 1, false);
+        //gd.horizontalAlignment = SWT.RIGHT;
+        GridData gd = new GridData(SWT.RIGHT, SWT.TOP, true, false);
+        fallArea.setLayoutData(gd);
+        
+        //
         fallArea.setLayout(new GridLayout(2, false));
         tk.createLabel(fallArea, "Fall:");
         cbFall=new Combo(fallArea,SWT.SINGLE | SWT.READ_ONLY);
@@ -1057,7 +1088,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 					if(msd.open()==0){
 						// TODO check compatibility of assigned problems
 						actKons.setFall(nFall);
-						setKonsultation(actKons);
+						setKonsultation(actKons, false);
 					}
 				}
 			}
@@ -1593,7 +1624,7 @@ public class JournalView extends ViewPart implements SelectionListener,
                 patient = fall.getPatient();
                 if (patient.equals(selectedPatient)) {
                     setPatient(patient);
-                    setKonsultation(konsultation);
+                    setKonsultation(konsultation, true);
 
                     return;
                 }
@@ -1609,7 +1640,7 @@ public class JournalView extends ViewPart implements SelectionListener,
                     konsultation = getTodaysLatestKons(fall);
 
                     setPatient(patient);
-                    setKonsultation(konsultation);
+                    setKonsultation(konsultation, true);
 
                     return;
                 }
@@ -1627,9 +1658,9 @@ public class JournalView extends ViewPart implements SelectionListener,
             	if (!letzteKonsDate.isSameDay(today)) {
             		letzteKons = null;
             	}
-            	setKonsultation(letzteKons);
+            	setKonsultation(letzteKons, true);
             } else {
-            	setKonsultation(null);
+            	setKonsultation(null, true);
             }
 
             return;
@@ -1646,7 +1677,7 @@ public class JournalView extends ViewPart implements SelectionListener,
                     // diese Konsulation gehoert zu diesem Patienten
 
                     setPatient(patient);
-                    setKonsultation(konsulation);
+                    setKonsultation(konsulation, true);
 
                     return;
                 }
@@ -1656,7 +1687,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             konsulation = getTodaysLatestKons(fall);
 
             setPatient(patient);
-            setKonsultation(konsulation);
+            setKonsultation(konsulation, true);
 
             return;
         } else if (obj instanceof Konsultation) {
@@ -1664,7 +1695,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             Patient patient = konsultation.getFall().getPatient();
 
             setPatient(patient);
-            setKonsultation(konsultation);
+            setKonsultation(konsultation, true);
 
             return;
         } else if (obj instanceof Anwender) {
@@ -1677,7 +1708,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             setPatient(null);
         }
         if (template.equals(Konsultation.class)) {
-        	setKonsultation(null);
+        	setKonsultation(null, true);
         }
     }
     
@@ -1868,7 +1899,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 								getViewSite().getShell(),
 								"Konsultationstext ersetzen",
 								"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
-					setKonsText(actKons, displayedVersion - 1);
+					setKonsText(actKons, displayedVersion - 1, false);
 					text.setDirty(true);
 				}
 			}
@@ -1880,7 +1911,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 								getViewSite().getShell(),
 								"Konsultationstext ersetzen",
 								"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
-					setKonsText(actKons, displayedVersion + 1);
+					setKonsText(actKons, displayedVersion + 1, false);
 					text.setDirty(true);
 				}
 			}
@@ -1950,7 +1981,16 @@ public class JournalView extends ViewPart implements SelectionListener,
             		String p=Integer.toString(verrechnet.getZahl());
             		InputDialog dlg=new InputDialog(getViewSite().getShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",p,null);
             		if(dlg.open()==Dialog.OK){
-            			verrechnet.setZahl(Integer.parseInt(dlg.getValue()));
+            			int vorher = verrechnet.getZahl();
+            			int neu = Integer.parseInt(dlg.getValue());
+            			verrechnet.setZahl(neu);
+            			IVerrechenbar verrechenbar = verrechnet.getVerrechenbar();
+            			if(verrechenbar instanceof Artikel){
+            				Artikel art = (Artikel) verrechenbar;
+            				art.einzelRuecknahme(vorher);
+            				art.einzelAbgabe(neu);
+            			}
+
             			verrechnungViewer.refresh();
             			updateVerrechnungSum();
             		}
@@ -2004,7 +2044,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             			kons = patient.getLetzteKons(false);
             		}
             	}
-            	setKonsultation(kons);
+            	setKonsultation(kons, false);
             }
 
             Hub.heart.addListener(this);
@@ -2090,7 +2130,7 @@ public class JournalView extends ViewPart implements SelectionListener,
     private void heartbeatKonsultation() {
     	//if (!text.getControl().isFocusControl()) {
     	if (heartbeatKonsultationEnabled) {
-    		setKonsultation(actKons);
+    		setKonsultation(actKons, false);
     	}
     }
     
@@ -2129,7 +2169,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             	if (!actKons.getFall().getPatient().getId().equals(actPatient.getId())) {
             		// aktuelle Konsultation gehoert nicht zum aktuellen Patienten
             		actKons = actPatient.getLetzteKons(false);
-            		setKonsultation(actKons);
+            		setKonsultation(actKons, false);
             	}
             }
 
@@ -2147,7 +2187,7 @@ public class JournalView extends ViewPart implements SelectionListener,
             problemsKTable.refresh();
             
             // Kein Patient ausgewaehlt, somit auch keine Konsultation anzeigen
-            setKonsultation(null);
+            setKonsultation(null, false);
 
             // TODO history widget may be disposed, how to recognize?
             /*
@@ -2166,7 +2206,7 @@ public class JournalView extends ViewPart implements SelectionListener,
         setKontoText();
     }
 
-    void setKonsText(Konsultation b, int version) {
+    void setKonsText(Konsultation b, int version, boolean putCaretToEnd) {
 		if (b != null) {
 			String ntext = "";
 			if ((version >= 0) && (version <= b.getHeadVersion())) {
@@ -2189,8 +2229,10 @@ public class JournalView extends ViewPart implements SelectionListener,
 			versionBackAction.setEnabled(version != 0);
 			versionFwdAction.setEnabled(version != b.getHeadVersion());
 			
-			// set focus and put caret at end of text
-			text.putCaretToEnd();
+			if (putCaretToEnd) {
+				// set focus and put caret at end of text
+				text.putCaretToEnd();
+			}
 		} else {
 			lVersion.setText("");
 			text.setText("");
@@ -2301,8 +2343,9 @@ public class JournalView extends ViewPart implements SelectionListener,
 	 * Wenn eine Konsultation gesetzt wird stellen wir sicher, dass der gesetzte
 	 * Patient zu dieser Konsultation gehoert. Falls nicht, wird ein neuer
 	 * Patient gesetzt.
+	 * @param putCaretToEnd if true, activate text field ant put caret to the end
 	 */
-    public void setKonsultation(Konsultation k) {
+    public void setKonsultation(Konsultation k, boolean putCaretToEnd) {
     	// save probably not yet saved changes
     	updateEintrag();
 
@@ -2320,27 +2363,32 @@ public class JournalView extends ViewPart implements SelectionListener,
         	}
         	
             StringBuilder sb = new StringBuilder();
-            /*
-            sb.append("Kons. vom ");
-            */
             sb.append(actKons.getDatum());
-            /*
-            sb.append(" von ");
-            sb.append(patient.getName()).append(" ").append(patient.getVorname());
-            */
-            
-            if (hasMultipleMandants) {
-                sb.append(" (");
-                sb.append(actKons.getMandant().getLabel());
-                sb.append(")");
-            }
-            
             lKonsultation.setText(sb.toString());
 
+            if (hasMultipleMandants) {
+            	// inv: hlMandant != null
+            	
+                Mandant m = actKons.getMandant();
+                sb = new StringBuilder();
+                if (m == null) {
+                	sb.append("(nicht von Ihnen)");
+                }else{
+    	            Rechnungssteller rs =  m.getRechnungssteller();
+    	            if(rs.getId().equals(m.getId())){
+    	            	sb.append("(").append(m.getLabel()).append(")");
+    	            }else{
+    	            	sb.append("(").append(m.getLabel()).append("/").append(rs.getLabel()).append(")");
+    	            }
+                }
+                hlMandant.setText(sb.toString());
+            	hlMandant.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_REASSIGN));
+            }
+            
             reloadFaelle(actKons);
             
             
-            setKonsText(actKons, actKons.getHeadVersion());
+            setKonsText(actKons, actKons.getHeadVersion(), putCaretToEnd);
             setDiagnosenText(actKons);
 
             log.log("Konsultation: " + k.getId(), Log.DEBUGMSG);
@@ -2349,14 +2397,20 @@ public class JournalView extends ViewPart implements SelectionListener,
         	hVerrechnung.setEnabled(false);
         	
             lKonsultation.setText("Keine Konsultation ausgewählt");
+            if (hlMandant != null) {
+            	hlMandant.setText("");
+            	hlMandant.setEnabled(false);
+            }
         	
             reloadFaelle(null);
 
-        	setKonsText(null, 0);
+        	setKonsText(null, 0, putCaretToEnd);
             setDiagnosenText(null);
 
             log.log("Konsultation: null", Log.DEBUGMSG);
         }
+        
+        konsFallArea.layout();
 
         updateProblemAssignmentViewer();
         verrechnungViewer.refresh();
@@ -2596,7 +2650,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 		if (o instanceof Konsultation) {
 			Konsultation k = (Konsultation) o;
 			if (k.getId().equals(actKons.getId())) {
-				setKonsultation(k);
+				setKonsultation(k, false);
 			}
 		} else if (o instanceof Problem) {
 			// problem change may affect current problems list and consultation
@@ -2604,7 +2658,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 			
 			// work-around: just update the current patient and consultation
 			setPatient(actPatient);
-			setKonsultation(actKons);
+			setKonsultation(actKons, false);
 		}
 	}
 
@@ -2616,7 +2670,7 @@ public class JournalView extends ViewPart implements SelectionListener,
 		if (o instanceof Konsultation) {
 			Konsultation k = (Konsultation) o;
 			if (k.getId().equals(actKons.getId())) {
-				setKonsultation(null);
+				setKonsultation(null, false);
 			}
 		}
 	}
