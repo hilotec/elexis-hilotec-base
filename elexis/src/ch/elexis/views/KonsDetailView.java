@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3059 2007-09-02 17:27:09Z rgw_ch $
+ *  $Id: KonsDetailView.java 3179 2007-09-17 13:19:11Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -282,6 +282,8 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	        }else{
 	        	form.setText("Keine Konsultation ausgewählt");
 	        	lBeh.setText("-");
+	        	hlMandant.setText("--");
+	        	hlMandant.setEnabled(false);
 	        	lVersion.setText("");
 	        	//cbFall.removeAll();
 	        	dd.clear();
