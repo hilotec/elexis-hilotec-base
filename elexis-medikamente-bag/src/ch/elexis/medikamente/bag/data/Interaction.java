@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 3169 2007-09-16 16:11:03Z rgw_ch $
+ * $Id: Interaction.java 3180 2007-09-17 17:03:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;
@@ -63,7 +63,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 	
 	
 	static{
-		addMapping(TABLENAME,"Subst1","Subst2","Type","Relevance","Description","Contributor","ContribDate");
+		addMapping(TABLENAME,"Subst1","Subst2","Type","Relevance","Description","Contributor","ContribDate=S:D:ContribDate");
 		Interaction v=load("VERSION");
 		if(v.state()<PersistentObject.DELETED){
 			createTable("Interactions", createDB);

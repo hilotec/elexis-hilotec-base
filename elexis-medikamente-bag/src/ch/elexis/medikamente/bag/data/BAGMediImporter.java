@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3113 2007-09-08 12:32:00Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3180 2007-09-17 17:03:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.Artikel;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
@@ -45,10 +46,17 @@ public class BAGMediImporter extends ImporterPage {
 			int f=ew.getFirstRow()+1;
 			int l=ew.getLastRow();
 			monitor.beginTask("Import BAG-Medikamente", l-f);
+			int counter=0;
 			for(int i=f;i<l;i++){
 				List<String> row=ew.getRow(i);
 				monitor.subTask(row.get(7));
 				importUpdate(row.toArray(new String[0]));
+				if(counter++>200){
+					PersistentObject.clearCache();
+					System.gc();
+					Thread.sleep(10);
+					counter=0;
+				}
 				monitor.worked(1);
 			}
 			monitor.done();
