@@ -23,6 +23,14 @@
             id="org.iatrix.views.KonsListView"
             name="Test KonsListView">
       </view>
+      <view
+            allowMultiple="true"
+            category="org.iatrix"
+            class="org.iatrix.views.WebBrowserView"
+            icon="icons/applications-internet.png"
+            id="org.iatrix.views.WebBrowserView"
+            name="%iatrix.WebBrowserView">
+      </view>
    </extension>
    <extension
          point="ch.elexis.PersistentReference">
