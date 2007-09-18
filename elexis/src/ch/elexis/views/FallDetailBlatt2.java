@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 3015 2007-08-26 10:34:56Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 3181 2007-09-18 11:28:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -42,6 +42,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
@@ -89,9 +90,19 @@ public class FallDetailBlatt2 extends Composite {
 
 				String ktNew=f.getInfoString("Kostenträger");
 				String ktOld=f.get("Kostentraeger");
-
+				
+				if(StringTool.isNothing(ktNew)){
+					Kontakt k=Kontakt.load(ktOld);
+					if(k.isValid()){
+						f.setRequiredContact("Kostenträger", k);
+					}
+				}
 				String vnNew=f.getInfoString("Versicherungsnummer");
-				String vnOld=f.getVersNummer();
+				//String vnOld=f.getVersNummer();
+				String vnOld=f.get("VersNummer");
+				if(StringTool.isNothing(vnNew)){
+					f.setRequiredString("Versicherungsnummer", vnOld);
+				}
 				
 				Fall[] faelle = f.getPatient().getFaelle();
 				for(Fall f0:faelle){
@@ -204,7 +215,7 @@ public class FallDetailBlatt2 extends Composite {
         dpVon.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				Fall fall=getFall();
 				fall.setBeginnDatum(new TimeTool(dpVon.getDate().getTime()).toString(TimeTool.DATE_GER));
 				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
@@ -216,7 +227,7 @@ public class FallDetailBlatt2 extends Composite {
         dpBis.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				Fall fall=getFall();
 				fall.setEndDatum(new TimeTool(dpBis.getDate().getTime()).toString(TimeTool.DATE_GER));
 				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
