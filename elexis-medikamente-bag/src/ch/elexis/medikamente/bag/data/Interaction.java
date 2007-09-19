@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 3180 2007-09-17 17:03:37Z rgw_ch $
+ * $Id: Interaction.java 3182 2007-09-19 05:18:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;
@@ -30,7 +30,7 @@ import ch.rgw.tools.VersionInfo;
  */
 public class Interaction extends PersistentObject implements Comparable<Interaction>{
 	final static String TABLENAME="CH_ELEXIS_MEDIKAMENTE_BAG_INTERACTIONS";
-	final static String VERSION="0.2.0";
+	final static String VERSION="0.2.1";
 	static final String createDB="CREATE TABLE "+TABLENAME+" ("
 		+"ID			VARCHAR(25)	primary key,"
 		+"deleted		CHAR(1) default '0',"	
@@ -70,9 +70,9 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 		}else{
 			VersionInfo vi=new VersionInfo(v.get("Type"));
 			if(vi.isOlder(VERSION)){
-				if(vi.isOlder("0.2.0")){
-					final String update="UPDATE "+TABLENAME+" ADD COLUMN Contributor VARCHAR(25); "
-						+"UPDATE "+TABLENAME+" ADD COLUMN ContribDate CHAR(8);";
+				if(vi.isOlder("0.2.1")){
+					final String update="ALTER TABLE "+TABLENAME+" ADD Contributor VARCHAR(25); "
+						+"ALTER TABLE "+TABLENAME+" ADD ContribDate CHAR(8);";
 					createTable("Interaktion", update);
 					v.set("Type", VERSION);
 				}else{

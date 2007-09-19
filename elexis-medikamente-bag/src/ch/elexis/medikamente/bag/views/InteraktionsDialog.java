@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: InteraktionsDialog.java 3129 2007-09-10 12:52:40Z rgw_ch $
+ * $Id: InteraktionsDialog.java 3182 2007-09-19 05:18:32Z rgw_ch $
  *****************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -149,7 +149,7 @@ public class InteraktionsDialog extends TitleAreaDialog {
 			
 		});
 		setSubst(null);
-		lSubst.select(0);
+		// lSubst.select(0);
 		return ret;
 	}
 

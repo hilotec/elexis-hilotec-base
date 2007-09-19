@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3129 2007-09-10 12:52:40Z rgw_ch $
+ *  $Id: BAGMedi.java 3182 2007-09-19 05:18:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -193,6 +193,11 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	
 	
 	
+	@Override
+	public String getCode() {
+		return getPharmaCode();
+	}
+
 	public static BAGMedi load(final String id){
 		return new BAGMedi(id);
 	}
