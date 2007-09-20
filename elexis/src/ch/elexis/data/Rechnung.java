@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3015 2007-08-26 10:34:56Z rgw_ch $
+ *  $Id: Rechnung.java 3183 2007-09-20 09:39:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
@@ -137,7 +138,7 @@ public class Rechnung extends PersistentObject {
         	result=result.add(Log.ERRORS, 8, "Die Rechnung hat keinen gültigen Fall ("+getRnDesc(ret)+")", ret, true);
         	//garant=Hub.actMandant;
         }else{
-        	if(!f.isValid()){
+        	if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && !f.isValid()){
         		result=result.add(Log.ERRORS,8,"Die Rechnung hat keinen gültigen Fall ("+getRnDesc(ret)+")", ret, true);
         	}
         	//garant=f.getGarant();

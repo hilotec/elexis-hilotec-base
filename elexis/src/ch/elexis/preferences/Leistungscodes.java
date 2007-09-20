@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 2866 2007-07-22 17:30:40Z rgw_ch $
+ * $Id: Leistungscodes.java 3183 2007-09-20 09:39:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -27,6 +27,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -57,12 +58,14 @@ import ch.rgw.tools.TimeTool;
 public class Leistungscodes extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	public final static String CFG_KEY="billing/systems";
+	public final static String BILLING_STRICT="billing/strict";
 	List<IConfigurationElement> lo=Extensions.getExtensions("ch.elexis.RechnungsManager");
 	List<IConfigurationElement> ll=Extensions.getExtensions("ch.elexis.Verrechnungscode");
 	String[] systeme=Hub.globalCfg.nodes(CFG_KEY);
 	Table table;
 	String[] tableCols={"Name","Leistungscode-System","Standard-Ausgabe","Multiplikator"};
 	int[] tableWidths={60,120,120,70};
+	Button bStrictCheck;
 	
 	@Override
 	protected Control createContents(final Composite parent) {
@@ -130,6 +133,16 @@ public class Leistungscodes extends PreferencePage implements
 			}
 		});
 		table.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
+		bStrictCheck=new Button(ret,SWT.CHECK);
+		bStrictCheck.setText("Strenge Gültigkeitsprüfung beim Rechnung erstellen");
+		bStrictCheck.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				Hub.userCfg.set(BILLING_STRICT, bStrictCheck.getSelection());
+			}
+			
+		});
+		bStrictCheck.setSelection(Hub.userCfg.get(BILLING_STRICT, true));
 		reload();
 		return ret;
 	}
@@ -228,7 +241,7 @@ public class Leistungscodes extends PreferencePage implements
 			mke.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ld=new ListDisplay<String>(ret, SWT.NONE, new ListDisplay.LDListener(){
 
-				public void hyperlinkActivated(String l) {
+				public void hyperlinkActivated(final String l) {
 					String msg="Bitte geben Sie den Namen für diese Vorbedingung ein";
 					InputDialog inp=new InputDialog(getShell(),l+" hinzufügen",msg,"",null);
 					if(inp.open()==Dialog.OK){
@@ -244,7 +257,7 @@ public class Leistungscodes extends PreferencePage implements
 					}
 				}
 
-				public String getLabel(Object o) {
+				public String getLabel(final Object o) {
 					String[] l=((String)o).split(":");
 					if(l.length>1){
 						String type="Datum: ";
@@ -273,7 +286,7 @@ public class Leistungscodes extends PreferencePage implements
 			del.setText("Löschen");
 			del.addSelectionListener(new SelectionAdapter(){
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					String sel=ld.getSelection();
 					ld.remove(sel);
 				}
