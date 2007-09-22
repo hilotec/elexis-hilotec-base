@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 3118 2007-09-08 23:45:16Z rgw_ch $
+ * $Id: ContentProvider.java 3185 2007-09-22 18:24:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -60,6 +60,9 @@ public class ContentProvider implements CommonContentProvider {
 			qbm.add("Generikum", "LIKE", "G%");
 		}
 		SortedSet<BAGMedi> ret=new TreeSet<BAGMedi>();
+		if(vals[2].length()>1){
+			qbm.add("keywords", "LIKE", vals[2]+"%");
+		}
 		if(vals[0].length()>1){
 			qbm.add("Name", "LIKE", vals[0]+"%",true);
 			qbm.orderBy(false,new String[]{"Name"});

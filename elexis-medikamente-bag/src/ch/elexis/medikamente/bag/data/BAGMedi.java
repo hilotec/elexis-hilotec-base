@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3182 2007-09-19 05:18:32Z rgw_ch $
+ *  $Id: BAGMedi.java 3185 2007-09-22 18:24:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -27,7 +27,6 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
@@ -37,25 +36,22 @@ import ch.rgw.tools.VersionInfo;
  *
  */
 public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
-	//static final String EXTTABLE="CH_ElEXIS_MEDIKAMENTE_BAG_EXT";
+	static final String EXTTABLE="CH_ElEXIS_MEDIKAMENTE_BAG_EXT";
 	static final String JOINTTABLE="CH_ELEXIS_MEDIKAMENTE_BAG_JOINT";
-	static final String VERSION="0.1.0";
+	static final String VERSION="0.1.1";
 	public static final String IMG_GENERIKUM="ch.elexis.medikamente.bag.generikum";
 	public static final String IMG_HAS_GENERIKA="ch.elexis.medikamente.bag.has_generika";
 	public static final String IMG_ORIGINAL="ch.elexis.medikamente.bag.original";
-	/*
+	
+	
 	static final String extDB="CREATE TABLE "+EXTTABLE+" ("
 		+"ID				VARCHAR(25) primary key,"
 		+"deleted			CHAR(1) default '0',"
-		+"generika			CHAR(1),"
-		+"swissmedicliste	CHAR(1),"
-		+"limitation		CHAR(1),"
-		+"hersteller		VARCHAR(25),"
-		+"bagdossier		VARCHAR(10),"
-		+"swissmedicnr		VARCHAR(10),"
-		+"limitationpts		VARCHAR(10)"
+		+"keywords			VARCHAR(80),"
+		+"prescription		TEXT,"
+		+"KompendiumText	TEXT"
 		+");";
-	*/
+
 	static final String jointDB="CREATE TABLE "+JOINTTABLE+"("
 		+"ID				VARCHAR(25) primary key,"
 		+"product			VARCHAR(25),"
@@ -69,7 +65,11 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	public static final String DOMAIN_PHARMACODE="www.xid.ch/id/pk";
 	
 	static{
-		addMapping(Artikel.TABLENAME,"Gruppe=ExtId","Generikum=Codeclass","inhalt=JOINT:substance:product:"+JOINTTABLE);
+		addMapping(Artikel.TABLENAME,"Gruppe=ExtId","Generikum=Codeclass",
+				"inhalt=JOINT:substance:product:"+JOINTTABLE,
+				"keywords=EXT:"+EXTTABLE,
+				"prescription=EXT:"+EXTTABLE,
+				"KompendiumText=EXT:"+EXTTABLE);
 		
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
 		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
@@ -79,7 +79,10 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		}else{
 			VersionInfo vi=new VersionInfo(v);
 			if(vi.isOlder(VERSION)){
-				SWTHelper.showError("Datenbank Fehler", "Die Versin von BAG-Medi ist zu alt");
+				if(vi.isOlder("0.1.1")){
+					createTable("Exttable", extDB);
+				}
+
 			}
 		}
 		// make sure, the substances table is created
@@ -214,6 +217,13 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	@Override
 	public boolean isDragOK() {
 		return true;
+	}
+
+	@Override
+	public boolean delete() {
+		String sql="UPDATE "+EXTTABLE+" SET deleted='1' WHERE ID="+getWrappedId();
+		j.exec(sql);
+		return super.delete();
 	}
 	
 }

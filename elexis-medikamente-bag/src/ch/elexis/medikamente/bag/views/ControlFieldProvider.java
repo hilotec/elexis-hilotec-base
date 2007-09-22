@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3118 2007-09-08 23:45:16Z rgw_ch $
+ * $Id: ControlFieldProvider.java 3185 2007-09-22 18:24:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -40,7 +40,7 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
 	boolean bGenericsOnly;
 	
 	public ControlFieldProvider(final CommonViewer viewer) {
-		super(viewer, new String[]{"Medikament","Substanz"});
+		super(viewer, new String[]{"Medikament","Substanz","Notiz"});
 	}
 
 	@Override
