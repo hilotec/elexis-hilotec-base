@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3185 2007-09-22 18:24:59Z rgw_ch $
+ *  $Id: BAGMedi.java 3187 2007-09-22 19:28:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -67,15 +67,16 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	static{
 		addMapping(Artikel.TABLENAME,"Gruppe=ExtId","Generikum=Codeclass",
 				"inhalt=JOINT:substance:product:"+JOINTTABLE,
-				"keywords=EXT:"+EXTTABLE,
-				"prescription=EXT:"+EXTTABLE,
-				"KompendiumText=EXT:"+EXTTABLE);
+				"keywords=EXT:"+EXTTABLE+":keywords",
+				"prescription=EXT:"+EXTTABLE+":prescription",
+				"KompendiumText=EXT:"+EXTTABLE+":KompendiumText");
 		
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
 		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
 		
 		if(v==null){
 			createTable("BAGMedi",jointDB);
+			createTable("BAGMedi",extDB);
 		}else{
 			VersionInfo vi=new VersionInfo(v);
 			if(vi.isOlder(VERSION)){
