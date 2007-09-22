@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3164 2007-09-16 10:45:07Z rgw_ch $
+ *    $Id: PersistentObject.java 3186 2007-09-22 19:28:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -291,7 +291,7 @@ public abstract class PersistentObject{
         *               x=C - Feld wird vor Abspeicherung komprimiert</li>
         * <li>"Variable=JOINT:FremdID:EigeneID:Tabelle[:type]" - n:m - Zuordnungen</li>
         * <li>"Variable=LIST:EigeneID:Tabelle:orderby[:type]"  - 1:n - Zuordnungen</li>
-        * <li>"Variable=EXT:tabelle"	- Das Feld ist in der genannten externen Tabelle  
+        * <li>"Variable=EXT:tabelle:feld"	- Das Feld ist in der genannten externen Tabelle  
         *</ul>
       */  
     static protected void addMapping(final String prefix, final String... map){

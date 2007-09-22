@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3119 2007-09-09 00:28:03Z rgw_ch $
+ * $Id: Query.java 3186 2007-09-22 19:28:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -48,10 +48,12 @@ public class Query<T>{
 	//private boolean restrictions;
 	private PersistentObject template;
     private Method load;
+    private final static String left="SELECT ID FROM ";
     private String link=" WHERE ";
     private String lastQuery="";
     private final LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
     private String ordering;
+    private ArrayList<String> exttables=new ArrayList<String>(2);
   
 /**
  * Konstruktor 
@@ -73,7 +75,7 @@ public class Query<T>{
 		
 	}
     /**
-     * Bequemöichkeits-Konstruktor, der gleich eine Bedingung einträgt
+     * Bequemlichkeits-Konstruktor, der gleich eine Bedingung einträgt
      * @param cl Klasse, auf die Abfrage angewendet wird
      * @param field Feldname
      * @param value Gesuchter Wert von Feldname
@@ -101,7 +103,7 @@ public class Query<T>{
 	{
 		sql=new StringBuffer(200);
 		String table=template.getTableName();
-		sql.append("SELECT ID FROM ").append(table);
+		sql.append(left).append(table);
 		String cns=template.getConstraint();
 		if(cns.equals("")){
 			if(PersistentObject.isShowDeleted()){
@@ -209,6 +211,23 @@ public class Query<T>{
 					wert=tm.toString(TimeTool.DATE_COMPACT);
 				}
 			}
+		}else if(mapped.startsWith("EXT:")) {
+			int ix=mapped.indexOf(':',5);
+			if(ix==-1) {
+				log.log("Ungültiges Feld "+feld, Log.ERRORS);
+				return false;
+			}
+			String table=mapped.substring(4,ix);
+			mapped=mapped.substring(ix+1);
+			if(!exttables.contains(table)){
+				exttables.add(table);
+				sql.insert(left.length(), table+",");
+			}
+			if(exttables.size()==1){
+				sql.insert(7, template.getTableName()+".");
+			}
+			append(table+".ID="+template.getTableName()+".ID");
+			append(table+"."+mapped,operator,wert);
 		}else if(mapped.matches(".*:.*")){
 			log.log("Ungültiges Feld "+feld,Log.ERRORS);
 			return false;
