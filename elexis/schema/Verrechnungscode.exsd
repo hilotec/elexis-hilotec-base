@@ -92,6 +92,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="OptifierClass" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":ch.elexis.util.IOptifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -119,7 +129,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="OptifyerClass" type="string">
+         <attribute name="OptifierClass" type="string">
             <annotation>
                <documentation>
                   &lt;p&gt;Eine Klasse, die Verrechnungen optimieren und verifizieren kann.&lt;/p&gt;

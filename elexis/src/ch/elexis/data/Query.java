@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3186 2007-09-22 19:28:19Z rgw_ch $
+ * $Id: Query.java 3189 2007-09-23 06:54:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -218,16 +218,23 @@ public class Query<T>{
 				return false;
 			}
 			String table=mapped.substring(4,ix);
-			mapped=mapped.substring(ix+1);
+			mapped=table+"."+mapped.substring(ix+1);
+			String firsttable=template.getTableName()+".";
 			if(!exttables.contains(table)){
 				exttables.add(table);
 				sql.insert(left.length(), table+",");
+				ix=sql.indexOf("deleted=");
+				if(ix!=-1){
+					sql.insert(ix, firsttable);
+				}
 			}
+
 			if(exttables.size()==1){
-				sql.insert(7, template.getTableName()+".");
+				sql.insert(7, firsttable);  // Select ID from firsttable,secondtable
 			}
-			append(table+".ID="+template.getTableName()+".ID");
-			append(table+"."+mapped,operator,wert);
+			append(table+".ID="+firsttable+"ID");
+			//append(mapped,operator,wert);
+
 		}else if(mapped.matches(".*:.*")){
 			log.log("Ungültiges Feld "+feld,Log.ERRORS);
 			return false;
@@ -409,7 +416,7 @@ public class Query<T>{
             }*/
             ResultSet res=stm.query(expr);
             while(res.next()==true){
-                String id=res.getString("ID");
+                String id=res.getString(1);
                 T o=(T)load.invoke(null,new Object[]{id});
                 boolean bAdd=true;
                 for(IFilter fi:postQueryFilters){
