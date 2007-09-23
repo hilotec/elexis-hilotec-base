@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,6 +35,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -50,6 +54,7 @@ import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
+import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -61,18 +66,20 @@ import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultContentProvider;
 import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.ListDisplay;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.WidgetFactory;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class PatHeuteView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2, BackgroundJobListener {
 	public static final String ID="ch.elexis.PatHeuteView"; //$NON-NLS-1$
-	private IAction printAction, reloadAction;
+	private IAction printAction, reloadAction, filterAction;
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	FormToolkit tk=Desk.theToolkit;
@@ -85,8 +92,10 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	private int numPat;
 	private double sumTime;
 	private double sumAll;
+	ListDisplay<IVerrechenbar> ldFilter;
 	//private double sumSelected;
 	private final Query<Konsultation> qbe;
+	Composite parent;
 	
 	public PatHeuteView() {
 		super();
@@ -101,6 +110,11 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	public void createPartControl(final Composite parent) {
 		setPartName(Messages.getString("PatHeuteView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
+		this.parent=parent;
+		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.NONE,null);
+		ldFilter.addHyperlinks("Hinzu");
+		ldFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		((GridData)ldFilter.getLayoutData()).heightHint=1;
 		Composite top=new Composite(parent,SWT.BORDER);
 		top.setLayout(new RowLayout());
 		final DatePickerCombo dpc=new DatePickerCombo(top,SWT.BORDER);
@@ -131,6 +145,21 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				bOnlyOpen=bKonsType.getSelection();
 			}
 		});
+		//ldFilter.setVisible(false);
+		/*
+		ExpandableComposite ecFilter=tk.createExpandableComposite(parent,ExpandableComposite.TWISTIE);
+		ecFilter.setText("Filter");
+
+		ecFilter.setClient(ldFilter);
+		ecFilter.addExpansionListener(new ExpansionAdapter(){
+
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				form.layout();
+			}
+			
+		});
+		*/
 		cv=new CommonViewer();
 		vc=new ViewerConfigurer(
 				new DefaultContentProvider(cv,Patient.class){
@@ -206,7 +235,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		ViewMenus menus=new ViewMenus(getViewSite());
 		makeActions();
 		menus.createMenu(printAction,reloadAction);
-		menus.createToolbar(reloadAction);
+		menus.createToolbar(reloadAction,filterAction);
 		
 		//setFocus();
 		cv.getConfigurer().getContentProvider().startListening();
@@ -380,6 +409,27 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				kons=null;
 				kload.schedule();
 			}
+		};
+		
+		filterAction=new Action("Filter",Action.AS_CHECK_BOX){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_FILTER));
+				setToolTipText("Verrechnungspositionen zum Zählen eingeben");
+			}
+			@Override
+			public void run(){
+				GridData gd=(GridData)ldFilter.getLayoutData();
+				if(filterAction.isChecked()){
+					gd.heightHint=20;
+					//gd.minimumHeight=15;
+				}else{
+					((GridData)ldFilter.getLayoutData()).heightHint=0;
+				}
+				//ldFilter.setSize(ldFilter.getSize().x, 15);
+				parent.layout(true);
+				//ldFilter.redraw();
+			}
+			
 		};
 		
 	}
