@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3187 2007-09-22 19:28:25Z rgw_ch $
+ *  $Id: BAGMedi.java 3188 2007-09-23 06:53:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -25,6 +27,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
+import ch.elexis.util.IOptifier;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.rgw.tools.StringTool;
@@ -42,7 +45,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	public static final String IMG_GENERIKUM="ch.elexis.medikamente.bag.generikum";
 	public static final String IMG_HAS_GENERIKA="ch.elexis.medikamente.bag.has_generika";
 	public static final String IMG_ORIGINAL="ch.elexis.medikamente.bag.original";
-	
+	static final IOptifier bagOptifier=new BAGOptifier();
 	
 	static final String extDB="CREATE TABLE "+EXTTABLE+" ("
 		+"ID				VARCHAR(25) primary key,"
@@ -83,7 +86,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 				if(vi.isOlder("0.1.1")){
 					createTable("Exttable", extDB);
 				}
-
+				j.exec("UPDATE "+JOINTTABLE+" SET substance='"+VERSION+"' WHERE ID='VERSION';");
 			}
 		}
 		// make sure, the substances table is created
@@ -123,6 +126,21 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		for(Substance s:substances){
 			List<Interaction> interactions=s.getInteractions();
 			ret.addAll(interactions);
+		}
+		return ret;
+	}
+	
+	public SortedSet<Interaction> getInteraktionenMit(BAGMedi other){
+		List<Substance> ls1=getSubstances();
+		List<Substance> ls2=other.getSubstances();
+		SortedSet<Interaction> ret=new TreeSet<Interaction>();
+		for(Substance s1:ls1){
+			if(ls2.contains(s1)){
+				continue;
+			}
+			for(Substance s2:ls2){
+				ret=(SortedSet<Interaction>)s1.getInteractionsWith(s2, ret);
+			}
 		}
 		return ret;
 	}
@@ -225,6 +243,11 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		String sql="UPDATE "+EXTTABLE+" SET deleted='1' WHERE ID="+getWrappedId();
 		j.exec(sql);
 		return super.delete();
+	}
+
+	@Override
+	public IOptifier getOptifier() {
+		return bagOptifier;
 	}
 	
 }

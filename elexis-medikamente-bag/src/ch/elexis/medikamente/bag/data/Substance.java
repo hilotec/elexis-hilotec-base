@@ -1,5 +1,6 @@
 package ch.elexis.medikamente.bag.data;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -81,6 +82,23 @@ public class Substance extends PersistentObject {
 		return Interaction.getInteractionsFor(this);
 	}
 	
+	public Collection<Interaction> getInteractionsWith(Substance other, SortedSet<Interaction> old){
+		if(old==null){
+			old=new TreeSet<Interaction>();
+		}
+		Query<Interaction> qbe=new Query<Interaction>(Interaction.class);
+		qbe.startGroup();
+		qbe.add("Subst1","=",getId());
+		qbe.add("Subst2", "=", other.getId());
+		qbe.endGroup();
+		qbe.or();
+		qbe.startGroup();
+		qbe.add("Subst1", "=", other.getId());
+		qbe.and();
+		qbe.add("Subst2", "=", getId());
+		qbe.endGroup();
+		return qbe.execute(old);
+	}
 	
 	@Override
 	protected String getTableName() {

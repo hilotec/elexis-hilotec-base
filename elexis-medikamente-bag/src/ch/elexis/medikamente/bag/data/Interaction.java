@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 3182 2007-09-19 05:18:32Z rgw_ch $
+ * $Id: Interaction.java 3188 2007-09-23 06:53:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.data;
@@ -96,6 +96,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 		return qbe.execute();
 	}
 	
+
 	public Substance[] getSubstances(){
 		Substance[] ret=new Substance[2];
 		ret[0]=Substance.load(get("Subst1"));
