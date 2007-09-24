@@ -7,14 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 2292 2007-04-23 15:17:41Z danlutz $
+ *  $Id: ExcelWrapper.java 3195 2007-09-24 14:57:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -44,7 +43,7 @@ public class ExcelWrapper {
 	 * @param page page to use
 	 * @return true on success
 	 */
-	public boolean load(String file,int page){
+	public boolean load(final String file,final int page){
 		try{
 			fs=new POIFSFileSystem(new FileInputStream(file));
 			HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -62,7 +61,7 @@ public class ExcelWrapper {
 	 * null if no such row exists.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getRow(int rowNr){
+	public List<String> getRow(final int rowNr){
 		HSSFRow row = sheet.getRow(rowNr);
 		if(row==null){
 			return null;
@@ -76,9 +75,9 @@ public class ExcelWrapper {
 				switch(cell.getCellType()){
 				case HSSFCell.CELL_TYPE_BLANK: ret.add(""); break;
 				case HSSFCell.CELL_TYPE_BOOLEAN: ret.add(Boolean.toString(cell.getBooleanCellValue())); break; 
-				case HSSFCell.CELL_TYPE_NUMERIC: 
+				case HSSFCell.CELL_TYPE_NUMERIC:
 				case HSSFCell.CELL_TYPE_FORMULA:
-					ret.add(Long.toString(Math.round(cell.getNumericCellValue()))); break;
+					ret.add(Double.toString(cell.getNumericCellValue())); break;
 				case HSSFCell.CELL_TYPE_STRING: ret.add(cell.getStringCellValue()); break;
 				default: ret.add("unknown cell type");
 				}
