@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3165 2007-09-16 10:45:15Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3193 2007-09-24 04:53:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -47,15 +47,17 @@ public class BAGMediDetailBlatt extends Composite {
 	private static final String BAGMEDI_DETAIL_BLATT_INTERACTIONS = "BAGMediDetailBlatt/interactions";
 	private static final String BAGMEDI_DETAIL_BLATT_SUBSTANCES = "BAGMediDetailBlatt/substances";
 	private static final String FACHINFORMATIONEN = "Fachinformationen";
+	private static final String KEYWORDS="Notizen, Schlüsselbegriffe";
+	private static final String BAGMEDI_DETAIL_BLATT_KEYWORDS= "BAGMediDetailBlatt/keywords";
 	private static final String BAGMEDI_DETAIL_BLATT_PROFINFOS = "BAGMediDetailBlatt/profinfos";
 	private final LabeledInputField.AutoForm fld;
 	private final Text tSubstances;
-	private final Text tInfos;
+	private final Text tInfos, tKeywords;
 	private final Composite parent;
 	private final ScrolledForm form;
 	ListDisplay<Interaction> ldInteraktionen;
 	private BAGMedi actMedi;
-	ExpandableComposite ecSubst, ecInterakt, ecFachinfo;
+	ExpandableComposite ecSubst, ecInterakt, ecFachinfo, ecKeywords;
 	
 	InputData[] fields=new InputData[]{
 			new InputData("Hersteller","ExtInfo",new LabeledInputField.IContentProvider(){
@@ -176,6 +178,18 @@ public class BAGMediDetailBlatt extends Composite {
 				form.reflow(true);
 			}
 		});
+		ecKeywords=tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
+		tKeywords=SWTHelper.createText(ecKeywords, 3, SWT.NONE);
+		ecKeywords.setClient(tKeywords);
+		ecKeywords.addExpansionListener(new ExpansionAdapter(){
+			@Override
+			public void expansionStateChanged(ExpansionEvent e) {
+				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_KEYWORDS, e.getState());
+				form.reflow(true);
+			}
+		});
+		ecKeywords.setText(KEYWORDS);
+		
 		ecFachinfo=tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
 		ecFachinfo.setText(FACHINFORMATIONEN);
 		tInfos=SWTHelper.createText(ecFachinfo, 15, SWT.NONE);
