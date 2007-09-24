@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 3195 2007-09-24 14:57:25Z rgw_ch $
+ *  $Id: ExcelWrapper.java 3198 2007-09-24 17:29:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -36,6 +36,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class ExcelWrapper {
 	POIFSFileSystem fs;
 	HSSFSheet sheet;
+	private Class[] types;
 	
 	/**
 	 * Load a specific page of the given Excel Spreadsheet
@@ -54,6 +55,9 @@ public class ExcelWrapper {
 		}
 	}
 	
+	public void setFieldTypes(Class[] types){
+		this.types=types;
+	}
 	/**
 	 * Return a row of data from the sheet.
 	 * @param rowNr zero based index of the desired row
@@ -73,14 +77,23 @@ public class ExcelWrapper {
 			HSSFCell cell=row.getCell(i);
 			if (cell != null) {
 				switch(cell.getCellType()){
-				case HSSFCell.CELL_TYPE_BLANK: ret.add(""); break;
-				case HSSFCell.CELL_TYPE_BOOLEAN: ret.add(Boolean.toString(cell.getBooleanCellValue())); break; 
-				case HSSFCell.CELL_TYPE_NUMERIC:
-				case HSSFCell.CELL_TYPE_FORMULA:
-					ret.add(Double.toString(cell.getNumericCellValue())); break;
-				case HSSFCell.CELL_TYPE_STRING: ret.add(cell.getStringCellValue()); break;
-				default: ret.add("unknown cell type");
+					case HSSFCell.CELL_TYPE_BLANK: ret.add(""); break;
+					case HSSFCell.CELL_TYPE_BOOLEAN: ret.add(Boolean.toString(cell.getBooleanCellValue())); break; 
+					case HSSFCell.CELL_TYPE_NUMERIC:
+						if(types!=null){
+							if(types[i].equals(Integer.class)){
+								ret.add(Long.toString(Math.round(cell.getNumericCellValue())));
+							}else /*if(types[i].equals(Double.class))*/{
+								ret.add(Double.toString(cell.getNumericCellValue())); break;
+							}
+							break;
+						} // else fall thru
+					case HSSFCell.CELL_TYPE_FORMULA:
+						ret.add(Double.toString(cell.getNumericCellValue())); break;
+					case HSSFCell.CELL_TYPE_STRING: ret.add(cell.getStringCellValue()); break;
+					default: ret.add("unknown cell type");
 				}
+				
 			} else {
 				// empty cell
 				ret.add("");
