@@ -13,7 +13,6 @@
 package ch.elexis.views;
 
 import java.text.DecimalFormat;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -119,11 +118,11 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		this.parent=parent;
 		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.V_SCROLL,new ListDisplay.LDListener(){
 
-			public String getLabel(Object o) {
+			public String getLabel(final Object o) {
 				return ((IVerrechenbar)o).getCode();
 			}
 
-			public void hyperlinkActivated(String l) {
+			public void hyperlinkActivated(final String l) {
 				if(l.equals(LEISTUNG_HINZU)){
 					try{
 						if(StringTool.isNothing(LeistungenView.ID)){
@@ -369,13 +368,16 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				qbe.add("RechnungsID", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			qbe.addPostQueryFilter(new IFilter(){
-				public boolean select(Object toTest) {
+				public boolean select(final Object toTest) {
 					if(filterAction.isChecked()){
 						Konsultation k=(Konsultation)toTest;
-						List<Verrechnet> lst=k.getLeistungen();
-						if(Collections.disjoint(lst, ldFilter.getAll())){
-							return false;
+						List<IVerrechenbar> lFilt=ldFilter.getAll();
+						for(Verrechnet v:k.getLeistungen()){
+							if(lFilt.contains(v.getVerrechenbar())){
+								return true;
+							}
 						}
+						return false;
 					}
 					return true;
 				}
@@ -476,6 +478,10 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	}
 	
 	class TerminListeDialog extends TitleAreaDialog implements ICallback{
+		IVerrechenbar[] lfiltered;
+		int[] numLeistung;
+		Money[]	perLeistung;
+		
 		public TerminListeDialog(final Shell shell) {
 			super(shell);
 		}
@@ -489,8 +495,18 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(false);
 			text.getPlugin().showToolbar(false);
+			int add=2;
+			if(filterAction.isChecked()){
+				lfiltered=ldFilter.getAll().toArray(new IVerrechenbar[0]);
+				numLeistung=new int[lfiltered.length];
+				add+=lfiltered.length;
+				perLeistung=new Money[lfiltered.length];
+				for(int i=0;i<lfiltered.length;i++){
+					perLeistung[i]=new Money();
+				}
+			}
 			text.createFromTemplateName(null, "Abrechnungsliste", Brief.UNKNOWN, Hub.actUser, "Abrechnung");
-			String[][] table=new String[kons.length+2][];
+			String[][] table=new String[kons.length+add][];
 			table[0]=new String[2];
 			table[0][0]="Konsultation";
 			table[0][1]="Verrechnung";
@@ -505,6 +521,14 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				for(Verrechnet v:lstg){
 					int num=v.getZahl();
 					Money preis=v.getEffPreis().multiply(num);
+					if(lfiltered!=null){
+						for(int j=0;j<lfiltered.length;j++){
+							if(lfiltered[j].equals(v.getVerrechenbar())){
+								numLeistung[j]+=num;
+								perLeistung[j].addMoney(preis);
+							}
+						}
+					}
 					subsum.addMoney(preis);
 					sb.append(num).append(" ").append(v.getLabel()).append(" ")
 						.append(preis.getAmountAsString())
@@ -517,6 +541,16 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			table[kons.length+1]=new String[2];
 			table[kons.length+1][0]="Summe:";
 			table[kons.length+1][1]=total.getAmountAsString();
+			if(lfiltered!=null){
+				for(int i=0;i<lfiltered.length;i++){
+					table[kons.length+2+i]=new String[2];
+					table[kons.length+2+i][0]=lfiltered[i].getCode();
+					StringBuilder sb=new StringBuilder();
+					sb.append("Verrechnet ").append(numLeistung[i])
+						.append(" mal, =").append(perLeistung[i].getAmountAsString());
+					table[kons.length+2+i][1]=sb.toString();
+				}
+			}
 			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
 			text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table, new int[]{30,70});
 			return ret;
@@ -550,13 +584,13 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		
 	}
 	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
-		public void dropped(PersistentObject o, DropTargetEvent ev) {
+		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 			if(o instanceof IVerrechenbar){
 				ldFilter.add((IVerrechenbar)o);
 			 }
 		}
 
-		public boolean accept(PersistentObject o) {
+		public boolean accept(final PersistentObject o) {
 			if(o instanceof IVerrechenbar){
 				return true;
 			}
