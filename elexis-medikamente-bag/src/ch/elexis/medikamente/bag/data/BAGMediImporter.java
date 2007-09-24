@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3199 2007-09-24 17:29:54Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3201 2007-09-24 19:46:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -80,8 +80,20 @@ public class BAGMediImporter extends ImporterPage {
 		BAGMedi imp;
 		if(id==null){
 			imp=new BAGMedi(row[7],pharmacode);
+			String sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
+				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+			PersistentObject.getConnection().exec(sql);
 		}else{
 			imp=BAGMedi.load(id);
+			String sql=new StringBuilder().append("SELECT ID FROM ")
+				.append(BAGMedi.EXTTABLE).append(" WHERE ID=")
+				.append(imp.getWrappedId()).toString();
+			String extid=PersistentObject.getConnection().queryString(sql);
+			if(extid==null){
+				sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
+				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+			PersistentObject.getConnection().exec(sql);
+			}
 		}
 		imp.update(row);			
 		return true;
