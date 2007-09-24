@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3186 2007-09-22 19:28:19Z rgw_ch $
+ *    $Id: PersistentObject.java 3200 2007-09-24 19:46:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -925,12 +925,25 @@ public abstract class PersistentObject{
 		String mapped=map(field);
 		cache.put(getKey(field),value,getCacheTime());
         StringBuffer sql=new StringBuffer();
+        String table=getTableName();
         
-        sql.append("UPDATE ").append(getTableName()).append(" SET ");
-        if(mapped.startsWith("S:")){
-            sql.append(mapped.substring(4));
+        
+        if(mapped.startsWith("EXT:")){
+        	int ix=mapped.indexOf(':',5);
+			if(ix==-1){
+				log.log("Fehlerhaftes Mapping bei "+field,Log.ERRORS);
+				return false;
+			}
+			table=mapped.substring(4,ix);
+			mapped=mapped.substring(ix+1);
+			sql.append("UPDATE ").append(table).append(" SET ").append(mapped);	
         }else{
-           sql.append(mapped);
+        	sql.append("UPDATE ").append(table).append(" SET ");
+	        if(mapped.startsWith("S:")){
+	            sql.append(mapped.substring(4));
+	        }else{
+	           sql.append(mapped);
+	        }
         }
         sql.append("=? WHERE ID=").append(getWrappedId());
         String cmd=sql.toString();

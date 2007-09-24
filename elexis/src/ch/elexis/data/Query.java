@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3189 2007-09-23 06:54:19Z rgw_ch $
+ * $Id: Query.java 3200 2007-09-24 19:46:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -120,6 +120,7 @@ public class Query<T>{
 			link=" AND ";
 		}
 		ordering=null;
+		exttables.clear();
 	}
 	
 	private void append(final String... s){
