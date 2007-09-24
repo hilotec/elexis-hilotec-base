@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediDetailBlatt.java 3193 2007-09-24 04:53:07Z rgw_ch $
+ * $Id: BAGMediDetailBlatt.java 3196 2007-09-24 14:57:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -17,6 +17,8 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -42,6 +44,7 @@ import ch.elexis.util.ListDisplay;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
+import ch.rgw.tools.StringTool;
 
 public class BAGMediDetailBlatt extends Composite {
 	private static final String BAGMEDI_DETAIL_BLATT_INTERACTIONS = "BAGMediDetailBlatt/interactions";
@@ -141,7 +144,7 @@ public class BAGMediDetailBlatt extends Composite {
 		ecSubst.addExpansionListener(new ExpansionAdapter(){
 
 			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
+			public void expansionStateChanged(final ExpansionEvent e) {
 				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_SUBSTANCES, e.getState());
 				form.reflow(true);
 			}
@@ -173,17 +176,25 @@ public class BAGMediDetailBlatt extends Composite {
 		ecInterakt.setClient(ldInteraktionen);
 		ecInterakt.addExpansionListener(new ExpansionAdapter(){
 			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
+			public void expansionStateChanged(final ExpansionEvent e) {
 				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_INTERACTIONS, e.getState());
 				form.reflow(true);
 			}
 		});
 		ecKeywords=tk.createExpandableComposite(ret, ExpandableComposite.TWISTIE);
 		tKeywords=SWTHelper.createText(ecKeywords, 3, SWT.NONE);
+		tKeywords.addFocusListener(new FocusAdapter(){
+
+			@Override
+			public void focusLost(final FocusEvent e) {
+				actMedi.set("keywords", tKeywords.getText());
+			}
+			
+		});
 		ecKeywords.setClient(tKeywords);
 		ecKeywords.addExpansionListener(new ExpansionAdapter(){
 			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
+			public void expansionStateChanged(final ExpansionEvent e) {
 				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_KEYWORDS, e.getState());
 				form.reflow(true);
 			}
@@ -196,10 +207,18 @@ public class BAGMediDetailBlatt extends Composite {
 		ecFachinfo.setClient(tInfos);
 		ecFachinfo.addExpansionListener(new ExpansionAdapter(){
 			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
+			public void expansionStateChanged(final ExpansionEvent e) {
 				UserSettings2.saveExpandedState(BAGMEDI_DETAIL_BLATT_PROFINFOS, e.getState());
 				form.reflow(true);
 			}
+		});
+		tInfos.addFocusListener(new FocusAdapter(){
+
+			@Override
+			public void focusLost(final FocusEvent e) {
+				actMedi.set("KompendiumText", tInfos.getText());
+			}
+			
 		});
 		
 	}
@@ -217,9 +236,12 @@ public class BAGMediDetailBlatt extends Composite {
 		for(Interaction inter:m.getInteraktionen()){
 			ldInteraktionen.add(inter);
 		}
+		tInfos.setText(StringTool.unNull(m.get("KompendiumText")));
+		tKeywords.setText(StringTool.unNull(m.get("keywords")));
 		UserSettings2.setExpandedState(ecSubst, BAGMEDI_DETAIL_BLATT_SUBSTANCES);
 		UserSettings2.setExpandedState(ecInterakt, BAGMEDI_DETAIL_BLATT_INTERACTIONS);
 		UserSettings2.setExpandedState(ecFachinfo, BAGMEDI_DETAIL_BLATT_PROFINFOS);
+		UserSettings2.setExpandedState(ecKeywords, BAGMEDI_DETAIL_BLATT_KEYWORDS);
 		form.reflow(true);
 	}
 }
