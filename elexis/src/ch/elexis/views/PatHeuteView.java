@@ -13,6 +13,7 @@
 package ch.elexis.views;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +23,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -35,9 +38,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -68,17 +68,22 @@ import ch.elexis.util.DefaultContentProvider;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.Money;
+import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.WidgetFactory;
+import ch.elexis.views.codesystems.LeistungenView;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class PatHeuteView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2, BackgroundJobListener {
 	public static final String ID="ch.elexis.PatHeuteView"; //$NON-NLS-1$
+	static final String LEISTUNG_HINZU="Hinzu";
+	static final String STAT_LEEREN="Leeren";
 	private IAction printAction, reloadAction, filterAction;
 	CommonViewer cv;
 	ViewerConfigurer vc;
@@ -92,6 +97,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	private int numPat;
 	private double sumTime;
 	private double sumAll;
+	PersistentObjectDropTarget dropTarget;
 	ListDisplay<IVerrechenbar> ldFilter;
 	//private double sumSelected;
 	private final Query<Konsultation> qbe;
@@ -111,10 +117,34 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		setPartName(Messages.getString("PatHeuteView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		this.parent=parent;
-		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.NONE,null);
-		ldFilter.addHyperlinks("Hinzu");
+		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.V_SCROLL,new ListDisplay.LDListener(){
+
+			public String getLabel(Object o) {
+				return ((IVerrechenbar)o).getCode();
+			}
+
+			public void hyperlinkActivated(String l) {
+				if(l.equals(LEISTUNG_HINZU)){
+					try{
+						if(StringTool.isNothing(LeistungenView.ID)){
+							SWTHelper.alert("Fehler", "LeistungenView.ID");
+						}
+						getViewSite().getPage().showView(LeistungenView.ID);
+						GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
+					}catch(Exception ex){
+						ExHandler.handle(ex);
+					}
+				}else if(l.equals(STAT_LEEREN)){
+					ldFilter.clear();
+				}
+				
+			}
+			
+		});
+		ldFilter.addHyperlinks(LEISTUNG_HINZU,STAT_LEEREN);
 		ldFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		((GridData)ldFilter.getLayoutData()).heightHint=1;
+		((GridData)ldFilter.getLayoutData()).heightHint=0;
+		dropTarget=new PersistentObjectDropTarget("Statfilter",ldFilter,new DropReceiver());
 		Composite top=new Composite(parent,SWT.BORDER);
 		top.setLayout(new RowLayout());
 		final DatePickerCombo dpc=new DatePickerCombo(top,SWT.BORDER);
@@ -338,6 +368,19 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			if(bOnlyOpen){
 				qbe.add("RechnungsID", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			qbe.addPostQueryFilter(new IFilter(){
+				public boolean select(Object toTest) {
+					if(filterAction.isChecked()){
+						Konsultation k=(Konsultation)toTest;
+						List<Verrechnet> lst=k.getLeistungen();
+						if(Collections.disjoint(lst, ldFilter.getAll())){
+							return false;
+						}
+					}
+					return true;
+				}
+				
+			});
 			@SuppressWarnings("unchecked") 
 		    List<Konsultation> list=qbe.execute();
 		    monitor.worked(100);
@@ -420,14 +463,12 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			public void run(){
 				GridData gd=(GridData)ldFilter.getLayoutData();
 				if(filterAction.isChecked()){
-					gd.heightHint=20;
+					gd.heightHint=50;
 					//gd.minimumHeight=15;
 				}else{
-					((GridData)ldFilter.getLayoutData()).heightHint=0;
+					gd.heightHint=0;
 				}
-				//ldFilter.setSize(ldFilter.getSize().x, 15);
 				parent.layout(true);
-				//ldFilter.redraw();
 			}
 			
 		};
@@ -507,5 +548,19 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		}
 		
 		
+	}
+	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
+		public void dropped(PersistentObject o, DropTargetEvent ev) {
+			if(o instanceof IVerrechenbar){
+				ldFilter.add((IVerrechenbar)o);
+			 }
+		}
+
+		public boolean accept(PersistentObject o) {
+			if(o instanceof IVerrechenbar){
+				return true;
+			}
+			return false;
+		}
 	}
 }
