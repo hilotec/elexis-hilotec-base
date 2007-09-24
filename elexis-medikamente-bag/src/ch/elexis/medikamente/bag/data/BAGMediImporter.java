@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3180 2007-09-17 17:03:37Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3199 2007-09-24 17:29:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -47,6 +47,9 @@ public class BAGMediImporter extends ImporterPage {
 			int l=ew.getLastRow();
 			monitor.beginTask("Import BAG-Medikamente", l-f);
 			int counter=0;
+			ew.setFieldTypes(new Class[]{String.class,Character.class,Integer.class,Integer.class,Integer.class,
+					Character.class,String.class,String.class,Double.class,Double.class,String.class,Integer.class,
+					Integer.class,String.class,Integer.class});
 			for(int i=f;i<l;i++){
 				List<String> row=ew.getRow(i);
 				monitor.subTask(row.get(7));
