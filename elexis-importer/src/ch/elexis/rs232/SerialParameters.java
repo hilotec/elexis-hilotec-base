@@ -31,7 +31,7 @@ package ch.elexis.rs232;
  * purposes.
  */
 
-import javax.comm.SerialPort;
+import gnu.io.SerialPort;
 
 /**
 A class that stores parameters for serial ports. 

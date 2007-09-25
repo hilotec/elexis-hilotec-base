@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: Connection.java 3206 2007-09-25 19:38:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -18,16 +18,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.TooManyListenersException;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.CommPortOwnershipListener;
-import javax.comm.NoSuchPortException;
-import javax.comm.PortInUseException;
-import javax.comm.SerialPort;
-import javax.comm.SerialPortEvent;
-import javax.comm.SerialPortEventListener;
-import javax.comm.UnsupportedCommOperationException;
+import gnu.io.CommPortIdentifier;
+import gnu.io.CommPortOwnershipListener;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
 
-public class Connection implements SerialPortEventListener, CommPortOwnershipListener {
+public class Connection implements SerialPortEventListener{
 	 private CommPortIdentifier portId;
 	 private SerialPort sPort;
 	 private boolean bOpen;
@@ -46,68 +46,66 @@ public class Connection implements SerialPortEventListener, CommPortOwnershipLis
 	   public void openConnection(final SerialParameters parameters) throws SerialConnectionException {
 
 		// Obtain a CommPortIdentifier object for the port you want to open.
-		try {
-		    portId = 
-			 CommPortIdentifier.getPortIdentifier(parameters.getPortName());
-		} catch (NoSuchPortException e) {
-		    throw new SerialConnectionException(e.getMessage());
-		}
-
-		// Open the port represented by the CommPortIdentifier object. Give
-		// the open call a relatively long timeout of 30 seconds to allow
-		// a different application to reliquish the port if the user 
-		// wants to.
-		try {
-		    sPort = (SerialPort)portId.open("SerialDemo", 30000);
-		} catch (PortInUseException e) {
-		    throw new SerialConnectionException(e.getMessage());
-		}
-
-		// Set the parameters of the connection. If they won't set, close the
-		// port before throwing an exception.
-		try {
-		    setConnectionParameters(parameters);
-		} catch (SerialConnectionException e) {	
-		    sPort.close();
-		    throw e;
-		}
-
-		// Open the input and output streams for the connection. If they won't
-		// open, close the port before throwing an exception.
-		try {
-		    os = sPort.getOutputStream();
-		    is = sPort.getInputStream();
-		} catch (IOException e) {
-		    sPort.close();
-		    throw new SerialConnectionException("Error opening i/o streams");
-		}
-
+			try {
+			    portId = 
+				 CommPortIdentifier.getPortIdentifier(parameters.getPortName());
+			} catch (NoSuchPortException e) {
+			    throw new SerialConnectionException(e.getMessage());
+			}
 	
-		// Add this object as an event listener for the serial port.
-		try {
-		    sPort.addEventListener(this);
-		} catch (TooManyListenersException e) {
-		    sPort.close();
-		    throw new SerialConnectionException("too many listeners added");
-		}
-
-		// Set notifyOnDataAvailable to true to allow event driven input.
-		sPort.notifyOnDataAvailable(true);
-
-		// Set notifyOnBreakInterrup to allow event driven break handling.
-		sPort.notifyOnBreakInterrupt(true);
-
-		// Set receive timeout to allow breaking out of polling loop during
-		// input handling.
-		try {
-		    sPort.enableReceiveTimeout(30);
-		} catch (UnsupportedCommOperationException e) {
-		}
-
-		// Add ownership listener to allow ownership event handling.
-		portId.addPortOwnershipListener(this);
-
-		bOpen = true;
+			// Open the port represented by the CommPortIdentifier object. Give
+			// the open call a relatively long timeout of 30 seconds to allow
+			// a different application to reliquish the port if the user 
+			// wants to.
+			try {
+			    sPort = (SerialPort)portId.open("SerialDemo", 30000);
+			} catch (PortInUseException e) {
+			    throw new SerialConnectionException(e.getMessage());
+			}
+	
+			// Set the parameters of the connection. If they won't set, close the
+			// port before throwing an exception.
+			try {
+			    setConnectionParameters(parameters);
+			} catch (SerialConnectionException e) {	
+			    sPort.close();
+			    throw e;
+			}
+	
+			// Open the input and output streams for the connection. If they won't
+			// open, close the port before throwing an exception.
+			try {
+			    os = sPort.getOutputStream();
+			    is = sPort.getInputStream();
+			} catch (IOException e) {
+			    sPort.close();
+			    throw new SerialConnectionException("Error opening i/o streams");
+			}
+	
+		
+			// Add this object as an event listener for the serial port.
+			try {
+			    sPort.addEventListener(this);
+			} catch (TooManyListenersException e) {
+			    sPort.close();
+			    throw new SerialConnectionException("too many listeners added");
+			}
+	
+			// Set notifyOnDataAvailable to true to allow event driven input.
+			sPort.notifyOnDataAvailable(true);
+	
+			// Set notifyOnBreakInterrup to allow event driven break handling.
+			sPort.notifyOnBreakInterrupt(true);
+	
+			// Set receive timeout to allow breaking out of polling loop during
+			// input handling.
+			try {
+			    sPort.enableReceiveTimeout(30);
+			} catch (UnsupportedCommOperationException e) {
+			}
+	
+			
+			bOpen = true;
 	    }
 	   /**
 	    Sets the connection parameters to the setting in the parameters object.
@@ -147,10 +145,6 @@ public class Connection implements SerialPortEventListener, CommPortOwnershipLis
 		}
 	    }
 	
-	public void ownershipChange(final int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 	  /**
     Handles SerialPortEvents. The two types of SerialPortEvents that this
     program is registered to listen for are DATA_AVAILABLE and BI. During 
