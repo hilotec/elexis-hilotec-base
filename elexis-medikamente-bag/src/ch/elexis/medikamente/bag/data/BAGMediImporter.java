@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3201 2007-09-24 19:46:24Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3203 2007-09-25 15:39:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -27,7 +27,8 @@ import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 
 public class BAGMediImporter extends ImporterPage {
-
+	static Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
+	
 	public BAGMediImporter() {
 		// TODO Auto-generated constructor stub
 	}
@@ -56,11 +57,13 @@ public class BAGMediImporter extends ImporterPage {
 				importUpdate(row.toArray(new String[0]));
 				if(counter++>200){
 					PersistentObject.clearCache();
-					System.gc();
-					Thread.sleep(10);
 					counter=0;
 				}
+				if(monitor.isCanceled()){
+					return Status.CANCEL_STATUS;
+				}
 				monitor.worked(1);
+				row=null;
 			}
 			monitor.done();
 			return Status.OK_STATUS;
@@ -75,27 +78,31 @@ public class BAGMediImporter extends ImporterPage {
 	 */
 	public static boolean importUpdate(final String[] row){
 		String pharmacode=row[2];
-		Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
+		qbe.clear();
 		String id=qbe.findSingle("SubID", "=", pharmacode);
 		BAGMedi imp;
 		if(id==null){
 			imp=new BAGMedi(row[7],pharmacode);
+			
 			String sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
 				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 			PersistentObject.getConnection().exec(sql);
+			
 		}else{
 			imp=BAGMedi.load(id);
+			
 			String sql=new StringBuilder().append("SELECT ID FROM ")
 				.append(BAGMedi.EXTTABLE).append(" WHERE ID=")
 				.append(imp.getWrappedId()).toString();
 			String extid=PersistentObject.getConnection().queryString(sql);
 			if(extid==null){
 				sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
-			PersistentObject.getConnection().exec(sql);
+					.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+				PersistentObject.getConnection().exec(sql);
 			}
+			
 		}
-		imp.update(row);			
+		imp.update(row);
 		return true;
 	}
 

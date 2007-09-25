@@ -8,14 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3188 2007-09-23 06:53:52Z rgw_ch $
+ *  $Id: BAGMedi.java 3203 2007-09-25 15:39:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -130,7 +128,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		return ret;
 	}
 	
-	public SortedSet<Interaction> getInteraktionenMit(BAGMedi other){
+	public SortedSet<Interaction> getInteraktionenMit(final BAGMedi other){
 		List<Substance> ls1=getSubstances();
 		List<Substance> ls2=other.getSubstances();
 		SortedSet<Interaction> ret=new TreeSet<Interaction>();
@@ -148,6 +146,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		return Kontakt.load(getExt("HerstellerID"));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void update(final String[] row){
 		Query<Organisation> qo=new Query<Organisation>(Organisation.class);
 		String id=qo.findSingle("Name","=", row[0]);
@@ -155,23 +154,24 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 			Organisation o=new Organisation(row[0],"Pharma");
 			id=o.getId();
 		}
-		setExt("HerstellerID", id);
+		Hashtable exi=getHashtable("ExtInfo");
+		exi.put("HerstellerID", id);
 		set("Generikum",row[1]);
-		setExt("Pharmacode",row[2]);
-		setExt("BAG-Dossier",row[3]);
-		setExt("Swissmedic-Nr.",row[4]);
-		setExt("Swissmedic-Liste",row[5]);
+		exi.put("Pharmacode",row[2]);
+		exi.put("BAG-Dossier",row[3]);
+		exi.put("Swissmedic-Nr.",row[4]);
+		exi.put("Swissmedic-Liste",row[5]);
 		try{
 			setEKPreis(new Money(row[8]));
 			setVKPreis(new Money(row[9]));
-		}catch(ParseException ex){
+		}catch(/*Parse*/Exception ex){
 			log.log("Parse error preis "+row[7], Log.ERRORS);
 		}
 		if(row[10].equals("Y")){
-			setExt("Limitatio","Y");
-			setExt("LimitatioPts",row[11]);
+			exi.put("Limitatio","Y");
+			exi.put("LimitatioPts",row[11]);
 		}else{
-			setExt("Limitation", null);
+			exi.remove("Limitation");
 		}
 		if(row.length>13){
 			if(!StringTool.isNothing(row[13])){
@@ -187,15 +187,17 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 				deleteList("inhalt");
 				for(Substance s:substances){
 					addToList("inhalt", s.getId(), new String[0]);
+					s=null;
 				}
-				
+				substances=null;
 				
 			}
+
 		}
 		if(row.length>12){
 			set("Gruppe",row[12]);
 		}
-		
+		setHashtable("ExtInfo", exi);
 	}
 	
 	@Override
