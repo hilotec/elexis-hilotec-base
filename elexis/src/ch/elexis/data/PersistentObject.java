@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3200 2007-09-24 19:46:18Z rgw_ch $
+ *    $Id: PersistentObject.java 3204 2007-09-25 15:40:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -755,7 +755,7 @@ public abstract class PersistentObject{
 
 		
     protected byte[] getBinary(final String field){
-        StringBuffer sql=new StringBuffer();
+        StringBuilder sql=new StringBuilder();
         String mapped=/*map*/(field);
         String table=getTableName();
         sql.append("SELECT ").append(mapped).append(" FROM ")
@@ -805,7 +805,7 @@ public abstract class PersistentObject{
         if(blob==null){
             return new Hashtable();
         }
-        Hashtable<Object,Object> ret=StringTool.fold(blob,StringTool.GUESS,null);
+        Hashtable<Object,Object> ret=StringTool.fold(blob);
         if(ret==null){
         	return new Hashtable();
         }
@@ -980,14 +980,16 @@ public abstract class PersistentObject{
             return 0;
         }
         try{
-        	byte[] bin=StringTool.flatten(hash,StringTool.ZIP,null);
-        	Hashtable res=StringTool.fold(bin,StringTool.GUESS,null);
+        	byte[] bin=StringTool.flatten(hash);
+        	/*
+        	Hashtable res=StringTool.fold(bin);
         	if(res==null){
         		String ls=StringTool.flattenStrings(hash);
         		//byte[] bin2=StringTool.flatten(hash,StringTool.ZIP,null);
         		log.log("Hashtable: "+ls,Log.ERRORS);
         		throw new Exception("Hashtable nicht wiederherstellbar");
         	}
+        	*/
         	cache.put(getKey(field),hash,getCacheTime());
         	return setBinary(field,bin);
         }catch(Throwable ex){
@@ -1016,9 +1018,8 @@ public abstract class PersistentObject{
 	protected int setBinary(final String field, final byte[] value){
 		StringBuilder sql=new StringBuilder(1000);
         sql.append("UPDATE ").append(getTableName()).append(" SET ")
-        .append(/*map*/(field)).append("=?")
-		//.append(JdbcLink.wrap(StringTool.enPrintable(StringTool.flatten(hash,StringTool.NONE,null))))
-       .append(" WHERE ID=").append(getWrappedId());
+        	.append(/*map*/(field)).append("=?")
+        	.append(" WHERE ID=").append(getWrappedId());
         String cmd=sql.toString();
         if(tracetable!=null){
         	doTrace(cmd);
@@ -1622,7 +1623,7 @@ public abstract class PersistentObject{
 	 * operator individually before dropping the table
 	 * @param name the name of the table
 	 */
-	protected static void removeTable(final String name, Class oclas){
+	protected static void removeTable(final String name, final Class oclas){
 		Query qbe=new Query(oclas);
 		for(Object o:qbe.execute()){
 			((PersistentObject)o).delete();

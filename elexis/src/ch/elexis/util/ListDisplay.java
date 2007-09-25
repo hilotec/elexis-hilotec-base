@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 3130 2007-09-10 12:52:47Z rgw_ch $
+ * $Id: ListDisplay.java 3204 2007-09-25 15:40:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -57,7 +57,7 @@ public class ListDisplay<T> extends Composite {
 		cLinks=new Composite(this,SWT.NONE);
 		cLinks.setLayout(new FillLayout());
 		
-		list=new List(this,SWT.SINGLE);
+		list=new List(this,SWT.SINGLE|SWT.V_SCROLL);
 		list.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		tk.adapt(this);
 	}

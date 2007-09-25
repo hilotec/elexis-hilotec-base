@@ -116,7 +116,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		setPartName(Messages.getString("PatHeuteView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		this.parent=parent;
-		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.V_SCROLL,new ListDisplay.LDListener(){
+		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.NONE,new ListDisplay.LDListener(){
 
 			public String getLabel(final Object o) {
 				return ((IVerrechenbar)o).getCode();

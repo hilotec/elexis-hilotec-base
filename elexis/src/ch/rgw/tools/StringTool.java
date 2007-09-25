@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3160 2007-09-14 18:12:42Z danlutz $
+// $Id: StringTool.java 3204 2007-09-25 15:40:05Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -60,7 +60,7 @@ public class StringTool
   /*public StringTool(String s)
   { mine=new String(s);
   }*/
-  public static Rectangle2D getStringBounds(String s, Graphics g)
+  public static Rectangle2D getStringBounds(final String s, final Graphics g)
   { if(isNothing(s)){
       return new Rectangle(0,0);
   	}
@@ -74,10 +74,13 @@ public class StringTool
    * Split a String into a String Arry
    * @deprecated obsoleted by java 1.4x 's {@link String#split(String) String.split} method.
    */
-  @SuppressWarnings("unchecked")
-public static String[] split(String m, String delim)
+  @Deprecated
+@SuppressWarnings("unchecked")
+public static String[] split(final String m, final String delim)
   {   Vector v=splitV(m,delim);
-      if(v ==null) return null;
+      if(v ==null) {
+		return null;
+	}
       String[] ret=(String[])v.toArray(new String[1]);
         return ret;
   }
@@ -87,10 +90,11 @@ public static String[] split(String m, String delim)
    */
   
   @SuppressWarnings("unchecked")
-public static Vector splitV(String m, String delim)
+public static Vector splitV(final String m, final String delim)
   {   String mi=m;
-      if(mi.equals(""))
-            return null;
+      if(mi.equals("")) {
+		return null;
+	}
       Vector v=new Vector(30,30);
     
       int i=0,j=0;
@@ -101,14 +105,16 @@ public static Vector splitV(String m, String delim)
           break;
         }
         String l=mi.substring(i,j).trim();
-        if(!l.equals(""))  v.add(l);
+        if(!l.equals("")) {
+			v.add(l);
+		}
             i=j+1;
           }
   
     return v;  
   }
   @SuppressWarnings("unchecked")
-public static List<String> splitAL(String m, String delim)
+public static List<String> splitAL(final String m, final String delim)
   { ArrayList al=new ArrayList();
     String mi=m;
     int i=0,j=0;
@@ -119,7 +125,9 @@ public static List<String> splitAL(String m, String delim)
           break;
         }
         String l=mi.substring(i,j).trim();
-        if(!l.equals(""))  al.add(l);
+        if(!l.equals("")) {
+			al.add(l);
+		}
         i=j+1;
      }
      return al;
@@ -129,12 +137,14 @@ public static List<String> splitAL(String m, String delim)
    */
   public static final String flattenSeparator="~#<";
   @SuppressWarnings("unchecked")
-public static String flattenStrings(Hashtable h)
+public static String flattenStrings(final Hashtable h)
   {
   	return flattenStrings(h,null);
   }
-  public static String flattenStrings(Hashtable<Object,Object> h, flattenFilter fil)
-  { if(h==null) return null;
+  public static String flattenStrings(final Hashtable<Object,Object> h, final flattenFilter fil)
+  { if(h==null) {
+	return null;
+}
   	Enumeration<Object> keys=h.keys();
     StringBuffer res=new StringBuffer(1000);
     res.append("FS1").append(flattenSeparator);
@@ -170,12 +180,12 @@ public static String flattenStrings(Hashtable h)
    * @param compressMode
    * @return
    */
-  public static byte[] flatten(Collection<String> strings){
+  public static byte[] flatten(final Collection<String> strings){
 	  String res=join(strings,"\n");
 	  return CompEx.Compress(res,CompEx.ZIP);
   }
   
-  public static List<String> unpack(byte[] pack){
+  public static List<String> unpack(final byte[] pack){
 	  try{
 		  String raw=new String(CompEx.expand(pack),default_charset);
 		  return splitAL(raw,"\n");
@@ -183,6 +193,22 @@ public static String flattenStrings(Hashtable h)
 		  return null; // Sollte sowieso nie vorkommen
 	  }
 	  
+  }
+  @SuppressWarnings("unchecked")
+public static byte[] flatten(final Hashtable hash){
+      try{
+    	  ByteArrayOutputStream baos=new ByteArrayOutputStream(hash.size()*30);
+          ZipOutputStream zos=new ZipOutputStream(baos);
+       	  zos.putNextEntry(new ZipEntry("hash"));
+       	  ObjectOutputStream oos=new ObjectOutputStream(zos);
+          oos.writeObject(hash);
+		  zos.close();
+		  baos.close();
+          return baos.toByteArray();
+      }catch(Exception ex){
+          ExHandler.handle(ex);
+          return null;
+      }
   }
   /**
    * Eine Hashtable in ein komprimiertes Byte-Array umwandeln
@@ -192,7 +218,8 @@ public static String flattenStrings(Hashtable h)
    * @return das byte-Array mit der komprimierten Hashtable
    */
   @SuppressWarnings("unchecked")
-public static byte[] flatten(Hashtable hash, int compressMode, Object ExtInfo)
+  @Deprecated
+public static byte[] flatten(final Hashtable hash, final int compressMode, final Object ExtInfo)
   {	  ByteArrayOutputStream baos=null;
       OutputStream os=null;
   	  ObjectOutputStream oos=null;
@@ -213,9 +240,28 @@ public static byte[] flatten(Hashtable hash, int compressMode, Object ExtInfo)
           
           oos=new ObjectOutputStream(os);
           oos.writeObject(hash);
-		  if(os!=null)  os.close();
+		  if(os!=null) {
+			os.close();
+		}
 		  baos.close();
           return baos.toByteArray();
+      }catch(Exception ex){
+          ExHandler.handle(ex);
+          return null;
+      }
+  }
+  
+  @SuppressWarnings("unchecked")
+public static Hashtable fold(final byte[] flat){
+      try{
+          ByteArrayInputStream bais=new ByteArrayInputStream(flat);
+        	ZipInputStream zis=new ZipInputStream(bais); 
+			zis.getNextEntry();
+			ObjectInputStream ois=new ObjectInputStream(zis);
+			Hashtable<Object,Object> res=(Hashtable<Object,Object>)ois.readObject();
+			ois.close();
+			bais.close();
+			return res;
       }catch(Exception ex){
           ExHandler.handle(ex);
           return null;
@@ -229,7 +275,8 @@ public static byte[] flatten(Hashtable hash, int compressMode, Object ExtInfo)
    * @return die Hastbale
    */
   @SuppressWarnings("unchecked")
-public static Hashtable fold(byte[] flat, int compressMode, Object ExtInfo)
+  @Deprecated
+public static Hashtable fold(final byte[] flat, final int compressMode, final Object ExtInfo)
   {	
       ObjectInputStream ois=null;
       try{
@@ -273,7 +320,7 @@ public static Hashtable fold(byte[] flat, int compressMode, Object ExtInfo)
       
   }
   
-  static String ObjectToString(Object o)
+  static String ObjectToString(final Object o)
   {	
       if(o instanceof String){
           return "A"+(String)o;
@@ -298,7 +345,7 @@ public static Hashtable fold(byte[] flat, int compressMode, Object ExtInfo)
       }
       return null;
   }
-  static Object StringToObject(String s)
+  static Object StringToObject(final String s)
   {
       String sx=s.substring(1);
       char pref=s.charAt(0);
@@ -323,9 +370,11 @@ public static Hashtable fold(byte[] flat, int compressMode, Object ExtInfo)
       return null;
   }
   @SuppressWarnings("unchecked")
-public static Hashtable foldStrings(String s)
+public static Hashtable foldStrings(final String s)
   { Hashtable h=new Hashtable();
-    if(StringTool.isNothing(s)) return h;
+    if(StringTool.isNothing(s)) {
+		return h;
+	}
     String[] elems=s.split(flattenSeparator);
     if(!elems[0].equals("FS1")){
         return null;
@@ -346,11 +395,15 @@ public static Hashtable foldStrings(String s)
     return h;  
   }
   /** gibt true zurück, wenn das Objekt kein String oder null oder "" ist */
-  static public boolean isNothing(Object n)
-  { if(n==null) return true;
+  static public boolean isNothing(final Object n)
+  { if(n==null) {
+	return true;
+}
     if(n instanceof String)
     {   //if(((String)n).equals("")) return true;
-        if(((String)n).trim().equals("")) return true;
+        if(((String)n).trim().equals("")) {
+			return true;
+		}
         return false;
     }
     return true;
@@ -359,7 +412,7 @@ public static Hashtable foldStrings(String s)
   /** Gibt true zurück, wenn das Feld null ist, leer ist, oder nur Leerstrings
    * enthält
    */
-  static public boolean isEmpty(String[] f){
+  static public boolean isEmpty(final String[] f){
       if(f==null){
           return true;
       }
@@ -371,11 +424,12 @@ public static Hashtable foldStrings(String s)
       return true;
   }
     /** Verleicht zwei byte-Arrays */
-   static public boolean compare(byte[] a, byte[] b)
+   static public boolean compare(final byte[] a, final byte[] b)
    { if(a.length==b.length)
      { for(int i=0;i<a.length;i++)
-       { if(a[i] != b[i])
-           return false;
+       { if(a[i] != b[i]) {
+		return false;
+	}
        }
        return true;
      }
@@ -386,10 +440,11 @@ public static Hashtable foldStrings(String s)
     * Die Suche erfolgt ohne Berücksichtigung von Gross/Kleinschreibung.
     * @return den index von val in arr oder -1 wenn nicht gefunden.
     */
-    static public int getIndex(String[] arr,String val)
+    static public int getIndex(final String[] arr,final String val)
     { for(int i=0;i<arr.length;i++)
-      { if(val.equalsIgnoreCase(arr[i]))
-          return i;
+      { if(val.equalsIgnoreCase(arr[i])) {
+		return i;
+	}
       }
       return -1;
     }
@@ -401,7 +456,7 @@ public static Hashtable foldStrings(String s)
      * @param size erwünschte Länge
      * @return	der neue String
      */
-    static public String pad(int where, char chr, String src, int size)
+    static public String pad(final int where, final char chr, final String src, final int size)
     { int diff=size-src.length();
       if(diff>0)
       { StringBuffer s=new StringBuffer(diff);
@@ -420,7 +475,7 @@ public static Hashtable foldStrings(String s)
      * @param str der zu multiplizierende string
      * @param num Zahl der Multiplikationen
      */
-	static public String filler(String str, int num)
+	static public String filler(final String str, int num)
 	{	StringBuffer s=new StringBuffer(num);
 		while(num-->0)
 		{	s.append(str);
@@ -435,11 +490,15 @@ public static Hashtable foldStrings(String s)
      * @param tren - Verbindingsstring
      * @return den verknüpften String
      */
-    static public String join(String[] arr,String tren)
-    { if( (arr==null) || (arr.length==0)) return "";
+    static public String join(final String[] arr,final String tren)
+    { if( (arr==null) || (arr.length==0)) {
+		return "";
+	}
       StringBuffer res=new StringBuffer(100);
       for(int i=0;i<arr.length;i++)
-      { if(arr[i]==null) continue;
+      { if(arr[i]==null) {
+		continue;
+	}
         res.append(arr[i]).append(tren);
       }
       String r2=res.toString();
@@ -456,7 +515,7 @@ public static Hashtable foldStrings(String s)
       String r2=res.toString();
       return r2.replaceFirst(tren+"$","");
     }*/
-    public static String join(Iterable<String> i, String tren){
+    public static String join(final Iterable<String> i, final String tren){
 		StringBuffer ret=new StringBuffer(100);
 		for(String s:i){
 			ret.append(s).append(tren);
@@ -482,7 +541,7 @@ public static Hashtable foldStrings(String s)
      * Wandelt ein Byte-Array in einen druckbaren String um. (Alle Bytes werden in
      * ihre Nibbles zerlegt, diese werden ähnlich wie mit base64 als Zeichen gespeichert
      */
-    static public String enPrintable(byte[] src)
+    static public String enPrintable(final byte[] src)
     { // if()
     	byte[] out=new byte[src.length*2];
       for(int i=0;i<src.length;i++)
@@ -500,7 +559,7 @@ public static Hashtable foldStrings(String s)
     /**
      * Wandelt einen mit enPrintable erhaltenen String in ein byte-Array zurück.
      */
-    static public byte[] dePrintable(String src)
+    static public byte[] dePrintable(final String src)
     { byte[] input=null;
       try{
         input=src.getBytes(default_charset);
@@ -519,11 +578,12 @@ public static Hashtable foldStrings(String s)
        *  Gibt eine zufällige und eindeutige Zeichenfolge zurück
        *  @param salt Ein beliebiger String oder null
        */
-      public static String unique(String salt)
+      public static String unique(final String salt)
       { if(ipHash==0)
         {   Iterator it=NetTool.IPs.iterator();
-            while(it.hasNext())
-                ipHash+=((String)it.next()).hashCode();
+            while(it.hasNext()) {
+				ipHash+=((String)it.next()).hashCode();
+			}
         }
        
       	long t=System.currentTimeMillis();
@@ -539,7 +599,7 @@ public static Hashtable foldStrings(String s)
         return Long.toHexString(t4)+Long.toHexString((long)(Math.random()*1000))+sequence;
       }
       
-     public static String unNull(String in){
+     public static String unNull(final String in){
     	 return (in==null)?"":in;
      }
     /**
@@ -565,10 +625,10 @@ public static Hashtable foldStrings(String s)
         public static final int CURLY_BRACKET_TOKENS=16;
         /** Zeilenende bricht token ab */
         public static final int CRLF_MATTERS=32;
-        private String delim;
-        private int mode;
+        private final String delim;
+        private final int mode;
         private int pos;
-        private String mine;
+        private final String mine;
         
         /**
          * Einziger Konstruktor
@@ -576,7 +636,7 @@ public static Hashtable foldStrings(String s)
          * @param delim Zeichen, die als Tokengrenze betrachtet werden
          * @param mode OR-Kombination der obigen Token-Konstanten
          */
-        public tokenizer(String m, String delim,int mode)
+        public tokenizer(final String m, final String delim,final int mode)
         {   mine=m;
             this.delim=delim;
             this.mode=mode;
@@ -641,7 +701,7 @@ public static Hashtable foldStrings(String s)
             ret.add(token.toString());
             return ret;
         }
-        private StringBuffer readToMatching(char open,char close) throws IOException
+        private StringBuffer readToMatching(final char open,final char close) throws IOException
         {   StringBuffer ret=new StringBuffer();
             int level=1;
             while(pos<mine.length())
@@ -672,7 +732,7 @@ public static Hashtable foldStrings(String s)
      * @param name der Name
      * @return true wenn der Name vielleicht weiblich ist
      */
-    public static boolean isFemale(String name){
+    public static boolean isFemale(final String name){
     	final String[] suffices={"a","is","e","id"};
     	for(String s:suffices){
     		if(name.endsWith(s)){
@@ -682,7 +742,7 @@ public static Hashtable foldStrings(String s)
     	return false;
     }
     
-    public static boolean isMailAddress(String in){
+    public static boolean isMailAddress(final String in){
     	return in.matches("\\w[\\w|\\.\\-]+@\\w[\\w\\.\\-]+\\.[a-zA-Z]{2,4}");
     	// oder \w[\w|\.\-]+@\w[\w\.\-]+\.[a-zA-Z]{2,4}
     }
@@ -690,7 +750,7 @@ public static Hashtable foldStrings(String s)
     /**
      * Return the first word of the given String
      */
-    public static String getFirstWord(String in){
+    public static String getFirstWord(final String in){
     	if(isNothing(in)){
     		return "";
     	}
@@ -701,7 +761,7 @@ public static Hashtable foldStrings(String s)
     /**
      * Return the first line if the given String but at most maxChars
      */
-    public static String getFirstLine(String in, int maxChars){
+    public static String getFirstLine(final String in, final int maxChars){
     	if(isNothing(in)){
     		return "";
     	}
@@ -714,7 +774,7 @@ public static Hashtable foldStrings(String s)
     }
 
     @SuppressWarnings("unchecked")
-	public static void dumpHashtable(Log log, Hashtable table){
+	public static void dumpHashtable(final Log log, final Hashtable table){
     	Set<String> keys=table.keySet();
     	log.log("Dump Hashtable\n", Log.INFOS);
     	for(String key:keys){
@@ -728,14 +788,14 @@ public static Hashtable foldStrings(String s)
      * @param orig the word to change (at least 2 characters)
      * @return the normalized word. Tis will return orig if orig is less than 2 characters 
      */
-    public static String normalizeCase(String orig){
+    public static String normalizeCase(final String orig){
     	if((orig==null) || (orig.length()<2)){
     		return orig;
     	}
     	return orig.substring(0,1).toUpperCase()+orig.substring(1).toLowerCase();
     }
     
-    public static String limitLength(String orig, int len){
+    public static String limitLength(final String orig, final int len){
     	if(orig.length()>len){
     		return orig.substring(0, len);
     	}
@@ -746,7 +806,7 @@ public static Hashtable foldStrings(String s)
 	 * @param number darf nur aus Ziffern bestehen
 	 * @return die Eingabefolge, ergänzt um ihre Prüfziffer
 	 */
-	public static String addModulo10(String number){
+	public static String addModulo10(final String number){
 		int row=0;
 		String nr=number.replaceAll("[^0-9]","");
 		for(int i=0;i<nr.length();i++){
@@ -761,7 +821,7 @@ public static Hashtable foldStrings(String s)
 	 * @param number eine um eine prüfziffer ergänzte Zahl
 	 * @return die Zahl ohne prüfziffer oder null, wenn die Prüfziffer falsch war.
 	 */
-	public static String checkModulo10(String number){
+	public static String checkModulo10(final String number){
 		String check=number.substring(0,number.length()-1);
 		String should=addModulo10(check);
 		if(should.equals(number)){
