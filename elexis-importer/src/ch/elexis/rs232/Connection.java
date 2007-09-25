@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3206 2007-09-25 19:38:54Z rgw_ch $
+ * $Id: Connection.java 3207 2007-09-25 19:54:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.TooManyListenersException;
+
+import ch.rgw.tools.ExHandler;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.CommPortOwnershipListener;
@@ -33,7 +35,16 @@ public class Connection implements SerialPortEventListener{
 	 private boolean bOpen;
 	 private OutputStream os;
 	 private InputStream is;
+	 private ComPortListener listener;
 	 
+	 public interface ComPortListener{
+		 public void gotChunk(String chunk);
+		 public void gotBreak();
+	 }
+	 
+	 public Connection(ComPortListener l){
+		 listener=l;
+	 }
 	 /**
 	   Attempts to open a serial connection and streams using the parameters
 	   in the SerialParameters object. If it is unsuccesfull at any step it
@@ -154,12 +165,12 @@ public class Connection implements SerialPortEventListener{
     */
 
     public void serialEvent(final SerialPortEvent e) {
- 	// Create a StringBuffer and int to receive input data.
-	StringBuffer inputBuffer = new StringBuffer();
-	int newData = 0;
+    	
+    	StringBuilder inputBuffer = new StringBuilder();
+    	int newData = 0;
 
-	// Determine type of event.
-	switch (e.getEventType()) {
+    	// Determine type of event.
+    	switch (e.getEventType()) {
 
 	    // Read data until -1 is returned. If \r is received substitute
 	    // \n for correct newline handling.
@@ -181,28 +192,42 @@ public class Connection implements SerialPortEventListener{
 		      	}
    		    }
 
-		// Append received data to messageAreaIn.
-		//messageAreaIn.append(new String(inputBuffer));
-		break;
+		    listener.gotChunk(inputBuffer.toString());
+		    break;
 
 	    // If break event append BREAK RECEIVED message.
 	    case SerialPortEvent.BI:
 		//messageAreaIn.append("\n--- BREAK RECEIVED ---\n");
-	}
+	    	listener.gotBreak();
+	    	
+		}
 
     }   
 
+    public void close(){
+    	sPort.close();
+    }
     /**
     Reports the open status of the port.
     @return true if port is open, false if port is closed.
     */
     public boolean isOpen() {
-	return bOpen;
+    	return bOpen;
     }
     /**
     Send a one second break signal.
     */
     public void sendBreak() {
-	sPort.sendBreak(1000);
+    	sPort.sendBreak(1000);
+    }
+    
+    public boolean send(String data){
+    	try{
+    		os.write(data.getBytes());
+    		return true;
+    	}catch(Exception ex){
+    		ExHandler.handle(ex);
+    		return false;
+    	}
     }
 }
