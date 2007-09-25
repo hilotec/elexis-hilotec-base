@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3059 2007-09-02 17:27:09Z rgw_ch $
+ * $Id: DBUpdate.java 3202 2007-09-25 05:08:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -190,7 +190,8 @@ public class DBUpdate {
 			"CREATE INDEX XIDIDX3 on XID(object);",
 			
 			// 1.6.2
-			"ALTER TABLE AUF ADD DatumAUZ CHAR(8);"
+			"ALTER TABLE AUF ADD DatumAUZ CHAR(8);",
+			"ALTER TABLE ARTIKEL ADD LastUpdate CHAR(8);"
 			
 	  };
 	  static Log log=Log.get("DBUpdate");
