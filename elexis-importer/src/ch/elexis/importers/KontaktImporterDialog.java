@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktImporterDialog.java 1917 2007-02-23 13:33:46Z rgw_ch $
+ *  $Id: KontaktImporterDialog.java 3211 2007-09-26 16:06:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.importers;
 
@@ -22,12 +22,12 @@ import ch.elexis.util.SWTHelper;
 
 public class KontaktImporterDialog extends TitleAreaDialog {
 	KontaktImporterBlatt kib;
-	public KontaktImporterDialog(Shell shell){
+	public KontaktImporterDialog(final Shell shell){
 		super(shell);
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		kib=new KontaktImporterBlatt(parent);
 		kib.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return kib;
@@ -44,10 +44,11 @@ public class KontaktImporterDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
+		/*
 		if(kib.doImport()){
 			super.okPressed();
 		}
-		
+		*/
 	}
 	
 }

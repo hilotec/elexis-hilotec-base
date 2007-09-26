@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktImporter.java 2158 2007-03-22 15:10:35Z rgw_ch $
+ *  $Id: KontaktImporter.java 3211 2007-09-26 16:06:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.importers;
 
@@ -32,15 +32,15 @@ public class KontaktImporter extends ImporterPage {
 	}
 
 	@Override
-	public Composite createPage(Composite parent) {
+	public Composite createPage(final Composite parent) {
 		importer = new KontaktImporterBlatt(parent);
 		importer.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return importer;
 	}
 
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
-		if(importer.doImport()){
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+		if(importer.doImport(monitor)){
 			return Status.OK_STATUS;
 		}
 		return new Status(Status.ERROR,"ch.elexis.import.div",1,"Fehler beim Import",null);
@@ -56,7 +56,7 @@ public class KontaktImporter extends ImporterPage {
 		return "Kontakte";
 	}
 
-	static Kontakt queryKontakt(String name,String vorname, String strasse, String plz, String ort, boolean createIfMissing){
+	static Kontakt queryKontakt(final String name,final String vorname, final String strasse, final String plz, final String ort, final boolean createIfMissing){
 		Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> res=qbe.queryFields(new String[]{"Bezeichnung1","Bezeichnung2","Strasse","Plz","Ort"}, 
 				new String[]{name,vorname,strasse,plz,ort}, false);

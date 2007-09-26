@@ -7,13 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 3198 2007-09-24 17:29:49Z rgw_ch $
+ *  $Id: ExcelWrapper.java 3211 2007-09-26 16:06:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -21,6 +22,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import ch.rgw.tools.TimeTool;
 
 /**
  * A Class that wraps a Microsoft(tm) Excel(tm) Spreadsheet using
@@ -55,7 +58,7 @@ public class ExcelWrapper {
 		}
 	}
 	
-	public void setFieldTypes(Class[] types){
+	public void setFieldTypes(final Class[] types){
 		this.types=types;
 	}
 	/**
@@ -83,6 +86,10 @@ public class ExcelWrapper {
 						if(types!=null){
 							if(types[i].equals(Integer.class)){
 								ret.add(Long.toString(Math.round(cell.getNumericCellValue())));
+							}else if(types[i].equals(TimeTool.class)){
+								Date date=cell.getDateCellValue();
+								TimeTool tt=new TimeTool(date.getTime());
+								ret.add(tt.toString(TimeTool.FULL_MYSQL));
 							}else /*if(types[i].equals(Double.class))*/{
 								ret.add(Double.toString(cell.getNumericCellValue())); break;
 							}

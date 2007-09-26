@@ -14,17 +14,17 @@ public class ImporterActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	}
 
-	public void init(IWorkbenchWindow window) {
+	public void init(final IWorkbenchWindow window) {
 		myWindow=window;
 	}
 
-	public void run(IAction action) {
-		KontaktImporterDialog kib=new KontaktImporterDialog(myWindow.getShell());
-		kib.open();
+	public void run(final IAction action) {
+		//KontaktImporterDialog kib=new KontaktImporterDialog(myWindow.getShell());
+		//kib.open();
 
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(final IAction action, final ISelection selection) {
 		// TODO Auto-generated method stub
 
 	}

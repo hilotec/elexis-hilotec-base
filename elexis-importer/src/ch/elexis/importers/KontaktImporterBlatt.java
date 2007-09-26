@@ -8,19 +8,25 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 2158 2007-03-22 15:10:35Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 3211 2007-09-26 16:06:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
 
 import java.io.FileInputStream;
+import java.security.MessageDigest;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
@@ -28,6 +34,8 @@ import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.BinConverter;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VCard;
 
@@ -44,6 +52,7 @@ import ch.rgw.tools.VCard;
  * <li>A Microsoft(tm) Excel(tm) Spreadsheet containing a page 0 with the above fields. Each field must be present but may
  * be empty.</li>
  * <li>A File in CSV format containing the above fields</li>
+ * <li>some preset files</li>
  * </ul>
  * @author Gerry
  *
@@ -53,10 +62,11 @@ public class KontaktImporterBlatt extends Composite{
 	Label lbFileName;
 	Combo cbMethods;
 	int method;
-	private Log log=Log.get("KontaktImporter");
+	private final Log log=Log.get("KontaktImporter");
 	static final String[] methods=new String[]{"XLS","XML","CSV","vCard","KK-Liste"};
+	private static final String PRESET_RUSSI="e3ad14dc49e27dbcc4771b41b34cdd902f9cfcc6";
 	
-	public KontaktImporterBlatt(Composite parent){
+	public KontaktImporterBlatt(final Composite parent){
 		super(parent,SWT.NONE);
 		setLayout(new GridLayout(2,false));
 		new Label(this,SWT.NONE).setText("Dateityp");
@@ -65,7 +75,7 @@ public class KontaktImporterBlatt extends Composite{
 		cbMethods.setItems(methods);
 		cbMethods.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(final SelectionEvent arg0) {
 				method=cbMethods.getSelectionIndex();
 			}
 		});
@@ -74,7 +84,7 @@ public class KontaktImporterBlatt extends Composite{
 		
 		bLoad.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e){
 				FileDialog fd=new FileDialog(getShell(),SWT.OPEN);
 				String file=fd.open();
 				lbFileName.setText(file==null ? "" : file);
@@ -88,10 +98,10 @@ public class KontaktImporterBlatt extends Composite{
 		lbFileName.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 	}
 
-	public boolean doImport(){
+	public boolean doImport(final IProgressMonitor moni){
 		if(filename.length()>0){
 			switch(method){
-			case 0: return importExcel(filename);
+			case 0: return importExcel(filename,moni);
 			case 1: return importXML(filename);
 			case 2: return importCSV(filename);
 			case 3: return importVCard(filename);
@@ -100,7 +110,7 @@ public class KontaktImporterBlatt extends Composite{
 		}
 		return false;
 	}
-	public boolean importKK(String file){
+	public boolean importKK(final String file){
 		ExcelWrapper exw=new ExcelWrapper();
 		exw.load(file, 0);
 		List<String> row;
@@ -145,7 +155,7 @@ public class KontaktImporterBlatt extends Composite{
 		}
 		return true;
 	}
-	private Organisation getKK(String typ,String name, String zweig, String mode, String adresse){
+	private Organisation getKK(final String typ,String name, final String zweig, final String mode, final String adresse){
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		if(StringTool.isNothing(name)){
 			name=StringTool.getFirstWord(zweig);
@@ -168,11 +178,25 @@ public class KontaktImporterBlatt extends Composite{
 		ret.set("Anschrift", adresse);
 		return ret;
 	}
-	public boolean importExcel(String file){
+	public boolean importExcel(final String file, final IProgressMonitor moni){
 		ExcelWrapper exw=new ExcelWrapper();
 		exw.load(file, 0);
-		List<String> row;
-		for(int i=exw.getFirstRow();i<=exw.getLastRow();i++){
+		List<String> row=exw.getRow(exw.getFirstRow());
+		try{
+			MessageDigest digest=MessageDigest.getInstance("SHA1");
+			for(String field:row){
+				digest.update(field.getBytes("iso-8859-1"));
+			}
+			byte[] dg=digest.digest();
+			String vgl=BinConverter.bytesToHexStr(dg);
+			
+			if(vgl.equals(PRESET_RUSSI)){
+				return Presets.importRussi(exw,moni);
+			}
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+		}
+		for(int i=exw.getFirstRow()+1;i<=exw.getLastRow();i++){
 			row=exw.getRow(i);
 			if(row==null){
 				continue;
@@ -198,13 +222,13 @@ public class KontaktImporterBlatt extends Composite{
 		return true;
 		
 	}
-	public boolean importXML(String file){
+	public boolean importXML(final String file){
 		return false;
 	}
-	public boolean importCSV(String file){
+	public boolean importCSV(final String file){
 		return false;
 	}
-	public boolean importVCard(String file){
+	public boolean importVCard(final String file){
 		try{
 			VCard vcard=new VCard(new FileInputStream(file));
 			String name,vorname,tel,email,title;
