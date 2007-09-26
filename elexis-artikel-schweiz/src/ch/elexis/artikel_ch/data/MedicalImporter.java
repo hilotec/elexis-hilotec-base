@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalImporter.java 3050 2007-08-31 15:55:11Z rgw_ch $
+ *  $Id: MedicalImporter.java 3210 2007-09-26 16:05:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -23,7 +23,6 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -53,7 +52,7 @@ public class MedicalImporter extends ImporterPage {
 		monitor.beginTask("Medical Import",(int)(l/100));
 		String mode=" (Modus: Daten ergänzen/update)";
 		if(bDelete==true){
-			if(MessageDialog.openConfirm(null,"Wirklich Daten löschen","Achtung: Wenn die alten Daten gelöscht werden, kann es\nsein, dass bestehende Bezüge ungültig werden.")==true){
+			if(SWTHelper.askYesNo("Wirklich Daten löschen", "Achtung: Wenn die alten Daten gelöscht werden, kann es\nsein, dass bestehende Bezüge ungültig werden.")){
 				PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Medical'");
 				mode=" (Modus: Alles neu erstellen)";
 			}
