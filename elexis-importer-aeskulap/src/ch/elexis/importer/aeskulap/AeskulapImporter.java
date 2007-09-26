@@ -73,7 +73,7 @@ public class AeskulapImporter extends ImporterPage {
 	}
 
 	/**
-	 * We accept to possible sources for data: a ';' delimited file (*.csv) containing only basic
+	 * We accept two possible sources for data: a ';' delimited file (*.csv) containing only basic
 	 * personal patient data, or a more elaborate source consisting of five microsoft(tm) excel(tm)
 	 * files containing personal data and insurance data.
 	 * 
