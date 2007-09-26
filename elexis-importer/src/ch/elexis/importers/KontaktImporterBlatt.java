@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 3211 2007-09-26 16:06:00Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 3214 2007-09-26 20:13:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Person;
-import ch.elexis.data.Query;
+import ch.elexis.matchers.KontaktMatcher;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.BinConverter;
@@ -112,49 +112,54 @@ public class KontaktImporterBlatt extends Composite{
 	}
 	public boolean importKK(final String file){
 		ExcelWrapper exw=new ExcelWrapper();
+		exw.setFieldTypes(new Class[]{Integer.class,String.class,String.class,String.class,
+				String.class,Integer.class,Integer.class});
 		exw.load(file, 0);
-		List<String> row;
+		
+		String[] row;
 		for(int i=exw.getFirstRow()+1;i<=exw.getLastRow();i++){
-			row=exw.getRow(i);
+			row=exw.getRow(i).toArray(new String[0]);
 			if(row==null){
 				continue;
 			}
-			if(row.size()!=7){
+			if(row.length!=7){
 				continue;
 			}
 			log.log("Importiere "+StringTool.join(row, " "), Log.INFOS);
-			String bagnr=row.get(0);
-			String name=row.get(1); 
-			String zweig=row.get(2);
-			String adresse=row.get(3);
-			String typ=row.get(4);
-			String EANInsurance=row.get(5);
-			String EANReceiver=row.get(6);
-			if(typ.equalsIgnoreCase("KVG")){
-				Organisation kk=getKK("KK",name,zweig,"TG",adresse);
-				if(kk==null){
-					return false;
-				}
-				kk.setInfoElement("EAN", EANInsurance);
-				kk.setInfoElement("BAGNr", bagnr);
-				kk=getKK("KK",name,zweig,"TP",adresse);
-				if(kk==null){
-					return false;
-				}
-				kk.setInfoElement("EAN", EANReceiver);
-				kk.setInfoElement("BAGNr", bagnr);
-			}else{
-				Organisation kk=getKK("UVG",name,zweig,"TP",adresse);
-				if(kk==null){
-					return false;
-				}
-				kk.setInfoElement("EAN", EANReceiver);
-				kk.setInfoElement("BAGNr", bagnr);
+			String bagnr=StringTool.getSafe(row,0);
+			String name=StringTool.getSafe(row,1); 
+			String zweig=StringTool.getSafe(row,2);
+			String adresse=StringTool.getSafe(row,3);
+			String typ=StringTool.getSafe(row,4);
+			String EANInsurance=StringTool.getSafe(row,5);
+			String EANReceiver=StringTool.getSafe(row,6);
+			String[] adr=splitAdress(adresse);
+			Organisation kk=KontaktMatcher.findOrganisation(name, adr[0], adr[1], adr[2], true);
+			if(kk==null){
+				return false;
 			}
-			
+			kk.setInfoElement("EAN", EANInsurance);
+			kk.setInfoElement("BAGNr", bagnr);
+			kk.set("Bezeichnung2", zweig);
+			kk.set("Kuerzel",StringTool.limitLength("KK"+StringTool.getFirstWord(name),39));
 		}
 		return true;
 	}
+	String[] splitAdress(final String adr){
+		String[] ret=new String[3];
+		String[] m1=adr.split("\\s*,\\s*");
+		String[] plzOrt=m1[m1.length-1].split(" ",2);
+		if(m1.length==1){
+			ret[0]="";
+		
+		}else{
+			ret[0]=m1[0];
+		}
+		ret[1]=plzOrt[0];
+		ret[2]=plzOrt.length>1 ? plzOrt[1] : "";
+		return ret;
+	}
+	/*
 	private Organisation getKK(final String typ,String name, final String zweig, final String mode, final String adresse){
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		if(StringTool.isNothing(name)){
@@ -178,6 +183,7 @@ public class KontaktImporterBlatt extends Composite{
 		ret.set("Anschrift", adresse);
 		return ret;
 	}
+	*/
 	public boolean importExcel(final String file, final IProgressMonitor moni){
 		ExcelWrapper exw=new ExcelWrapper();
 		exw.load(file, 0);

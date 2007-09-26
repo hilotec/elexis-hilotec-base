@@ -20,6 +20,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
+import ch.elexis.matchers.KontaktMatcher;
 import ch.elexis.util.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -70,13 +71,13 @@ public class Presets {
 			pat.set("Natel", StringTool.getSafe(row,7));
 			pat.set("Telefon2", StringTool.getSafe(row,8));
 			if(!StringTool.isNothing(StringTool.getSafe(row,10))){
-				Organisation org=new Organisation(row[10],"KK");
+				Organisation org=KontaktMatcher.findOrganisation(row[10], "", "", "", true);
 				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "KVG");
 				fall.setRequiredContact("Kostenträger", org);
 				fall.setGarant(pat);
 			}
 			if(!StringTool.isNothing(StringTool.getSafe(row,11))){
-				Organisation org=new Organisation(row[11],"UVG");
+				Organisation org=KontaktMatcher.findOrganisation(row[11], "", "", "", true);
 				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "UVG");
 				fall.setRequiredContact("Kostenträger", org);
 				fall.setGarant(org);
