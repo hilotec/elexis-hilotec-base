@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 2980 2007-08-11 17:45:58Z rgw_ch $
+ *  $Id: Patient.java 3209 2007-09-26 16:05:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -91,7 +91,7 @@ public class Patient extends Person{
      * @param Name
      * @param Vorname
      * @param Geburtsdatum Als String in Notation dd.mm.jj
-     * @param s	Geschlecht m oder f
+     * @param s	Geschlecht m oder w
      */
     public Patient(final String Name, final String Vorname, final String Geburtsdatum, final String s)
     {

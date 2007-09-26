@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3204 2007-09-25 15:40:05Z rgw_ch $
+// $Id: StringTool.java 3209 2007-09-26 16:05:47Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -800,6 +800,13 @@ public static Hashtable foldStrings(final String s)
     		return orig.substring(0, len);
     	}
     	return orig;
+    }
+    
+    public static String getSafe(final String[] array, final int index){
+    	if((index>-1) && (array.length>index)){
+    		return array[index];
+    	}
+    	return "";
     }
     /** 
 	 * Eine beliebige Ziffernfolge mit der Modulo-10 Prüfsumme verpacken

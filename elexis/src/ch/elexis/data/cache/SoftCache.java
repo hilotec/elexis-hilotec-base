@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SoftCache.java 3204 2007-09-25 15:40:05Z rgw_ch $
+ *    $Id: SoftCache.java 3209 2007-09-26 16:05:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data.cache;
@@ -28,7 +28,7 @@ import ch.elexis.util.Log;
  */
 @SuppressWarnings("unchecked")
 public class SoftCache<K> {
-	private static boolean enabled=false;
+	private static boolean enabled=true;
 	
 	protected HashMap<K,CacheEntry> cache;
 	protected long hits,misses,removed,inserts,expired;

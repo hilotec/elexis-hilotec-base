@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 3204 2007-09-25 15:40:05Z rgw_ch $
+ *    $Id: Hub.java 3209 2007-09-26 16:05:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -25,6 +25,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -63,7 +66,7 @@ import ch.rgw.tools.VersionInfo;
  */
 public class Hub extends AbstractUIPlugin {
 	// Globale Konstanten
-	public static final boolean DEBUGMODE=true;
+	public static final boolean DEBUGMODE=false;
 	public static final String PLUGIN_ID="ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX=PLUGIN_ID+".commands."; //$NON-NLS-1$
 	static final String neededJRE="1.5.0"; //$NON-NLS-1$
@@ -310,7 +313,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 3204 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 3209 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -358,7 +361,20 @@ public class Hub extends AbstractUIPlugin {
     	return qbe.execute();
     }
     public static Shell getActiveShell(){
-    	return plugin.getWorkbench().getActiveWorkbenchWindow().getShell();
+    	if(plugin!=null){
+    		IWorkbench wb=plugin.getWorkbench();
+    		if(wb!=null){
+    			IWorkbenchWindow win=wb.getActiveWorkbenchWindow();
+    			if(win!=null){
+    				return win.getShell();
+    			}
+    		}
+    	}
+    	Display dis=Desk.theDisplay;
+    	if(dis==null){
+    		dis=PlatformUI.createDisplay();
+    	}
+   		return new Shell(dis);
     }
     
     /**

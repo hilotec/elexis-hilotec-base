@@ -341,7 +341,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	}
 	
 	class KonsLoader extends AbstractDataLoaderJob{
-
+		IVerrechenbar[] lfiltered;
 		KonsLoader(final Query<Konsultation> qbe){
 			super("Lade Konsultationen",qbe,new String[]{"Datum"});
 			setPriority(Job.LONG);
@@ -393,17 +393,40 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		    	result=new Konsultation[0];
 		    }else{
 		    	Konsultation[] ret=new Konsultation[list.size()];
+		    	if(filterAction.isChecked()){
+		    		lfiltered=ldFilter.getAll().toArray(new IVerrechenbar[0]);
+		    		if(lfiltered.length==0){
+		    			lfiltered=null;
+		    		}
+		    	}else{
+		    		lfiltered=null;
+		    	}
 	        	int i=0;
 	        	for(PersistentObject o:list){
 	        		ret[i++]=(Konsultation)o;
-	        		sumAll+=((Konsultation)o).getUmsatz();
-	        		sumTime+=((Konsultation)o).getMinutes();
+	        		if(lfiltered!=null){
+	        			List<Verrechnet> lstg=((Konsultation)o).getLeistungen();
+	    				for(Verrechnet v:lstg){
+	    					int num=v.getZahl();
+	    					Money preis=v.getEffPreis().multiply(num);
+	    					for(int j=0;j<lfiltered.length;j++){
+	    						if(lfiltered[j].equals(v.getVerrechenbar())){
+	    							sumAll+=preis.getCents();
+	    							sumTime+=v.getVerrechenbar().getMinutes();
+	    						}
+	    					}
+	    				}
+					}else{
+		        		sumAll+=((Konsultation)o).getUmsatz();
+		        		sumTime+=((Konsultation)o).getMinutes();
+					}
 	        		monitor.worked(1);
 	        		if(monitor.isCanceled()){
 	        			monitor.done();
 	        			result=new Konsultation[0];
 	        			return Status.CANCEL_STATUS;
 	        		}
+					
 	        	 }
 	     		numPat=ret.length;
 	     		result=ret;
