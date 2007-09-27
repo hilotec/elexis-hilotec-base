@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3207 2007-09-25 19:54:49Z rgw_ch $
+ * $Id: Connection.java 3226 2007-09-27 18:39:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -69,7 +69,7 @@ public class Connection implements SerialPortEventListener{
 			// a different application to reliquish the port if the user 
 			// wants to.
 			try {
-			    sPort = (SerialPort)portId.open("SerialDemo", 30000);
+			    sPort = (SerialPort)portId.open("ElexisReflotron", 30000);
 			} catch (PortInUseException e) {
 			    throw new SerialConnectionException(e.getMessage());
 			}
@@ -114,9 +114,23 @@ public class Connection implements SerialPortEventListener{
 			    sPort.enableReceiveTimeout(30);
 			} catch (UnsupportedCommOperationException e) {
 			}
-	
-			
+			boolean cd=sPort.isCD();
+			boolean dsr=sPort.isDSR();
+			boolean dtr=sPort.isDTR();
+			boolean cts=sPort.isCTS();
+			boolean rts=sPort.isRTS();
+			sPort.setRTS(true);
+		
 			bOpen = true;
+			int s;
+			try {
+				s = is.read();
+				System.out.println(Integer.toString(s));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 	    }
 	   /**
 	    Sets the connection parameters to the setting in the parameters object.
