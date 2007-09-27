@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3226 2007-09-27 18:39:36Z rgw_ch $
+ * $Id: Connection.java 3227 2007-09-27 19:05:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -16,6 +16,8 @@ package ch.elexis.rs232;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
 import ch.rgw.tools.ExHandler;
@@ -243,5 +245,15 @@ public class Connection implements SerialPortEventListener{
     		ExHandler.handle(ex);
     		return false;
     	}
+    }
+    
+    public String[] getComPorts(){
+    	Enumeration<CommPortIdentifier> ports=portId.getPortIdentifiers();
+    	ArrayList<String> p=new ArrayList<String>();
+    	while(ports.hasMoreElements()){
+    		CommPortIdentifier port=ports.nextElement();
+    		p.add(port.getName());
+    	}
+    	return p.toArray(new String[0]);
     }
 }
