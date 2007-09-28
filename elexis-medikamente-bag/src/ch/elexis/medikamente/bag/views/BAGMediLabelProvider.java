@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediLabelProvider.java 3118 2007-09-08 23:45:16Z rgw_ch $
+ * $Id: BAGMediLabelProvider.java 3229 2007-09-28 16:41:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -37,12 +37,17 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
 		if(element instanceof BAGMedi){
 			BAGMedi bm=(BAGMedi)element;
 			StringBuilder sb=new StringBuilder();
-			sb.append(bm.getLabel()).append(" [");
+			sb.append(bm.getLabel())
+				.append(" <").append(bm.getVKPreis().getAmountAsString()).append(">");
+			
 			List<Substance> conts=bm.getSubstances();
-			for(Substance s:conts){
-				sb.append(s.getLabel()).append("; ");
+			if(conts.size()>0){
+				sb.append("[");
+				for(Substance s:conts){
+					sb.append(s.getLabel()).append("; ");
+				}
+				sb.append("]");
 			}
-			sb.append("]");
 			if(bm.isLagerartikel()){
 				sb.append(" (").append(bm.getTotalCount()).append(")");
 			}
