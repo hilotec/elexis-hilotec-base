@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 2891 2007-07-24 15:45:59Z rgw_ch $
+ *  $Id: TextContainer.java 3230 2007-09-29 17:06:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -347,8 +347,8 @@ public class TextContainer {
 	 * Name und zuzuordender Mandant werden per Dialog erfragt.
 	 *
 	 */
-	public void saveTemplate(){
-		SaveTemplateDialog std=new SaveTemplateDialog(shell);
+	public void saveTemplate(String name){
+		SaveTemplateDialog std=new SaveTemplateDialog(shell,name);
 		//InputDialog dlg=new InputDialog(getViewSite().getShell(),"Vorlage speichern","Geben Sie bitte einen Namen für die Vorlage ein","",null);
 		if(std.open()==Dialog.OK){
 			String title=std.title;
@@ -388,8 +388,10 @@ public class TextContainer {
 		boolean bSysTemplate;
 		List<Mandant> lMands;
 		Mandant selectedMand;
-		protected SaveTemplateDialog(final Shell parentShell) {
+		String tmplName;
+		protected SaveTemplateDialog(final Shell parentShell,String templateName) {
 			super(parentShell);
+			tmplName=templateName;
 		}
 
 		@Override
@@ -408,6 +410,9 @@ public class TextContainer {
 			new Label(ret,SWT.NONE).setText("Name der Vorlage");
 			name=new Text(ret,SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+			if(tmplName!=null){
+				name.setText(tmplName);
+			}
 			new Label(ret,SWT.NONE).setText("Mandant");
 			Composite line=new Composite(ret,SWT.NONE);
 			line.setLayout(new FillLayout());

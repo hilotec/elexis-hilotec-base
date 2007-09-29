@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 2300 2007-04-27 14:13:03Z rgw_ch $
+ *  $Id: TextView.java 3230 2007-09-29 17:06:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -154,7 +154,11 @@ public class TextView extends ViewPart implements ActivationListener{
 		saveTemplateAction=new Action("Als Vorlage speichern"){
 			@Override
 			public void run(){
-				txt.saveTemplate();
+				if(actBrief!=null){
+					txt.saveTemplate(actBrief.get("Betreff"));
+				}else{
+					txt.saveTemplate(null);
+				}
 			}
 		};
 		
