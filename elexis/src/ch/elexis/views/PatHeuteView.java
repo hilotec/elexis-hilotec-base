@@ -116,6 +116,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		setPartName(Messages.getString("PatHeuteView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		this.parent=parent;
+		makeActions();
 		ldFilter=new ListDisplay<IVerrechenbar>(parent,SWT.NONE,new ListDisplay.LDListener(){
 
 			public String getLabel(final Object o) {
@@ -262,7 +263,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		tTime2.setEditable(false);
 		tMoney2.setEditable(false);
 		ViewMenus menus=new ViewMenus(getViewSite());
-		makeActions();
+		
 		menus.createMenu(printAction,reloadAction);
 		menus.createToolbar(reloadAction,filterAction);
 		
