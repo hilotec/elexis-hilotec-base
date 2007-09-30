@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3088 2007-09-03 15:56:05Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3231 2007-09-30 14:10:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -36,12 +36,13 @@ import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.RnPrintView;
+import ch.elexis.views.RnPrintView2;
 import ch.rgw.tools.ExHandler;
 
 public class RechnungsDrucker implements IRnOutputter{
 	Mandant actMandant;
 	TarmedACL ta=TarmedACL.getInstance();
-	RnPrintView rnp;
+	RnPrintView2 rnp;
 	IWorkbenchPage rnPage;
 	IProgressMonitor monitor;
 	private Button bESR, bForms, bIgnoreFaults;
@@ -53,7 +54,7 @@ public class RechnungsDrucker implements IRnOutputter{
 		final Result<Rechnung> res=new Result<Rechnung>();
 		
 		try{
-			rnp=(RnPrintView)rnPage.showView(RnPrintView.ID);
+			rnp=(RnPrintView2)rnPage.showView(RnPrintView2.ID);
 			progressService.runInUI(
 			      PlatformUI.getWorkbench().getProgressService(),
 			      new IRunnableWithProgress() {
