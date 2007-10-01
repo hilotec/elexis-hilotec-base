@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3202 2007-09-25 05:08:40Z rgw_ch $
+# * $Id: createDB.script 3233 2007-10-01 06:42:36Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -523,6 +523,6 @@ CREATE INDEX XIDIDX1 on XID(domain);
 CREATE INDEX XIDIDX2 on XID(domain_id);
 CREATE INDEX XIDIDX3 on XID(object);
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.1');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.2');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.1.1');
 

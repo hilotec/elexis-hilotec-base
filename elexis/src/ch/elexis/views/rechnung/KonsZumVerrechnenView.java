@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 2667 2007-06-29 13:43:47Z danlutz $
+ *  $Id: KonsZumVerrechnenView.java 3233 2007-10-01 06:42:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -131,13 +131,14 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
     }
 
     @Override
-    public void createPartControl(Composite parent)
+    public void createPartControl(final Composite parent)
     {
         vc=new ViewerConfigurer(new BasicTreeContentProvider(),
                 new ViewerConfigurer.TreeLabelProvider() {
         			// extend the TreeLabelProvider by getImage()
         	
-            		public Image getImage(Object element) {
+            		@Override
+					public Image getImage(final Object element) {
             			if (element instanceof Tree) {
             				Tree tree = (Tree) element;
             				PersistentObject po = (PersistentObject) tree.contents;
@@ -164,7 +165,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
         cv.getViewerWidget().setSorter(new ViewerSorter(){
 
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
+			public int compare(final Viewer viewer, final Object e1, final Object e2) {
 				PersistentObject o1=(PersistentObject)((Tree)e1).contents;
 				PersistentObject o2=(PersistentObject)((Tree)e2).contents;
 				return o1.getLabel().compareTo(o2.getLabel());
@@ -181,7 +182,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
         tvSel.getControl().setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
         tvSel.setContentProvider(new BasicTreeContentProvider());
         tvSel.setLabelProvider(new LabelProvider(){
-            public String getText(Object element)
+            @Override
+			public String getText(final Object element)
             {
             	return ((PersistentObject)((Tree)element).contents).getLabel();
             }
@@ -190,12 +192,12 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
         tvSel.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY,new Transfer[]{TextTransfer.getInstance()},new DropTargetAdapter(){
 
 			@Override
-			public void dragEnter(DropTargetEvent event) {
+			public void dragEnter(final DropTargetEvent event) {
 					event.detail=DND.DROP_COPY;
 			}
 
 			@Override
-			public void drop(DropTargetEvent event) {
+			public void drop(final DropTargetEvent event) {
 				String drp=(String)event.data;
                 String[] dl=drp.split(","); //$NON-NLS-1$
                 for(String obj:dl){
@@ -223,7 +225,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
         selMenu.setRemoveAllWhenShown(true);
         selMenu.addMenuListener(new IMenuListener(){
 
-			public void menuAboutToShow(IMenuManager manager) {
+			public void menuAboutToShow(final IMenuManager manager) {
 				manager.add(removeAction);
 				manager.add(expandSelAction);
 				manager.add(expandSelAllAction);
@@ -245,7 +247,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
     }
     class RLazyTreeListener implements LazyTreeListener{
     	final LazyTreeListener self=this;
-		@SuppressWarnings("unchecked") //$NON-NLS-1$
+		@SuppressWarnings("unchecked") 
 		public void fetchChildren(final LazyTree l) {
 			PersistentObject cont=(PersistentObject)l.contents;
     		final Stm stm=PersistentObject.getConnection().getStatement();
@@ -255,11 +257,11 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 					progressService.runInUI(
 					      PlatformUI.getWorkbench().getProgressService(),
 						      new IRunnableWithProgress() {
-						         public void run(IProgressMonitor monitor) {
+						         public void run(final IProgressMonitor monitor) {
 						        	 monitor.beginTask(Messages.getString("KonsZumVerrechnenView.findCons"),100); //$NON-NLS-1$
 						        	 monitor.subTask(Messages.getString("KonsZumVerrechnenView.databaseRequest")); //$NON-NLS-1$
 						        	 String sql="SELECT distinct PATIENTID FROM FAELLE "+ //$NON-NLS-1$
-							        	"JOIN BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID WHERE BEHANDLUNGEN.RECHNUNGSID is null ";  //$NON-NLS-1$
+							        	"JOIN BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID WHERE BEHANDLUNGEN.deleted='0' AND BEHANDLUNGEN.RECHNUNGSID is null ";  //$NON-NLS-1$
 						        	 	if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
 						        	 		sql+="AND BEHANDLUNGEN.MANDANTID="+Hub.actMandant.getWrappedId();
 						        	 	}
@@ -267,10 +269,10 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 							    		monitor.worked(10);
 							    		monitor.subTask(Messages.getString("KonsZumVerrechnenView.readIn")); //$NON-NLS-1$
 										try {
-											while(rs!=null && rs.next()){
+											while((rs!=null) && rs.next()){
 												String s=rs.getString(1);
 												Patient p=Patient.load(s);
-												if(p.exists() && tSelection.find(p,false)==null){
+												if(p.exists() && (tSelection.find(p,false)==null)){
 													new LazyTree(l,p,self);
 												}
 												monitor.worked(1);
@@ -291,28 +293,28 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		    		try{
 						if(cont instanceof Patient){
 							sql="SELECT distinct FAELLE.ID FROM FAELLE join BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID "+ //$NON-NLS-1$
-							"WHERE BEHANDLUNGEN.RECHNUNGSID is null AND FAELLE.PATIENTID="+cont.getWrappedId(); //$NON-NLS-1$
+							"WHERE BEHANDLUNGEN.RECHNUNGSID is null AND BEHANDLUNGEN.DELETED='0' AND FAELLE.PATIENTID="+cont.getWrappedId(); //$NON-NLS-1$
 							if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
 								sql+=" AND BEHANDLUNGEN.MANDANTID="+Hub.actMandant.getWrappedId();
 							}
 				    		rs=stm.query(sql);
-							while(rs!=null && rs.next()){
+							while((rs!=null) && rs.next()){
 								String s=rs.getString(1);
 								Fall f=Fall.load(s);
-								if(f.exists() && tSelection.find(f,true)==null){
+								if(f.exists() && (tSelection.find(f,true)==null)){
 									new LazyTree(l,f,this);
 								}
 							}
 						}else if(cont instanceof Fall){
-							sql="SELECT ID FROM BEHANDLUNGEN WHERE RECHNUNGSID is null AND FALLID="+cont.getWrappedId(); //$NON-NLS-1$
+							sql="SELECT ID FROM BEHANDLUNGEN WHERE RECHNUNGSID is null AND deleted='0' AND FALLID="+cont.getWrappedId(); //$NON-NLS-1$
 							if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
 								sql+=" AND MANDANTID="+Hub.actMandant.getWrappedId();
 							}
 				    		rs=stm.query(sql);
-							while(rs!=null && rs.next()){
+							while((rs!=null) && rs.next()){
 								String s=rs.getString(1);
 								Konsultation b=Konsultation.load(s);
-								if(b.exists() && tSelection.find(b,true)==null){
+								if(b.exists() && (tSelection.find(b,true)==null)){
 									new LazyTree(l,b,this);
 								}
 							}
@@ -328,7 +330,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			}
 		}
 
-		public boolean hasChildren(LazyTree l) {
+		public boolean hasChildren(final LazyTree l) {
 			Object po=l.contents;
 			if(po instanceof Konsultation){
 				return false;
@@ -339,15 +341,15 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
     }
     
    
-    public void selectKonsultation(Konsultation k){
+    public void selectKonsultation(final Konsultation k){
     	selectBehandlung(k,tAll,tSelection);
     }
      /**
       * Patienten in von tAll nach tSelection verschieben bzw. falls
       * noch nicht vorhanden, neu anlegen.
       */
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private Tree selectPatient(Patient pat, Tree tSource, Tree tDest) {
+	@SuppressWarnings("unchecked") 
+	private Tree selectPatient(final Patient pat, final Tree tSource, final Tree tDest) {
 		Tree pSource=tSource.find(pat,false);
 		Tree pDest=tDest.find(pat,false);
 	    if(pDest==null){
@@ -368,8 +370,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 	    return pDest;
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private Tree selectFall(Fall f, Tree tSource, Tree tDest) {
+	@SuppressWarnings("unchecked") 
+	private Tree selectFall(final Fall f, final Tree tSource, final Tree tDest) {
 		Patient pat=f.getPatient();
 		Tree tPat=tDest.find(pat,false);
 		if(tPat==null){
@@ -389,8 +391,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		return tFall;
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private Tree selectBehandlung(Konsultation bh, Tree tSource, Tree tDest){
+	@SuppressWarnings("unchecked") 
+	private Tree selectBehandlung(final Konsultation bh, final Tree tSource, final Tree tDest){
 		Fall f=bh.getFall();
 		Patient pat=f.getPatient();
 		Tree tPat=tDest.find(pat,false);
@@ -434,7 +436,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 				setImageDescriptor(Hub.getImageDescriptor("rsc/rechnung.gif")); //$NON-NLS-1$
 				setToolTipText(Messages.getString("KonsZumVerrechnenView.createInvoices")); //$NON-NLS-1$
 			}
-			@SuppressWarnings("unchecked") //$NON-NLS-1$
+			@SuppressWarnings("unchecked") 
 			@Override
 			public void run(){
 				for(Tree tPat=tSelection.getFirstChild();tPat!=null;tPat=tPat.getNextSibling()){
@@ -585,7 +587,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 						progressService.runInUI(PlatformUI.getWorkbench()
 								.getProgressService(),
 								new IRunnableWithProgress() {
-									public void run(IProgressMonitor monitor) {
+									public void run(final IProgressMonitor monitor) {
 										doSelectByDate(monitor, fromDate, toDate);
 									}
 								}, null);
@@ -599,9 +601,10 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			
 		};
 		detailAction=new RestrictedAction(AccessControlDefaults.LSTG_VERRECHNEN,"Abrechnungsdetails"){
+			@Override
 			public void doRun(){
 				Object[] sel=cv.getSelection();
-				if(sel!=null && sel.length>0){
+				if((sel!=null) && (sel.length>0)){
 					new VerrDetailDialog(getViewSite().getShell(),(Tree)sel[0]).open();
 				}
 			}
@@ -615,8 +618,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 	 * Regel 2: Wer mehr als zwei Konsultationen hat, bekommt eine Rechnung über alle
 	 * Konsultationen des vergangenen Quartals
 	 */
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private void doSelect(IProgressMonitor monitor){
+	@SuppressWarnings("unchecked") 
+	private void doSelect(final IProgressMonitor monitor){
 		//Letzte Quartalsgrenze finden
 		TimeTool limitQuartal=new TimeTool();;
 		limitQuartal.set(TimeTool.DAY_OF_MONTH,1);
@@ -680,8 +683,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 	 * Auwahl der Konsultationen, die verrechnet werden sollen, nach Datum.
 	 * Es erscheint ein Dialog, wo man den gewünschten Bereich wählen kann.
 	 */
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private void doSelectByDate(IProgressMonitor monitor, TimeTool fromDate, TimeTool toDate){
+	@SuppressWarnings("unchecked") 
+	private void doSelectByDate(final IProgressMonitor monitor, final TimeTool fromDate, final TimeTool toDate){
 		TimeTool actDate = new TimeTool();
 
 		// set dates to midnight
@@ -722,7 +725,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;
@@ -747,7 +750,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		TimeTool fromDate = null;
 		TimeTool toDate = null;
 
-		public SelectDateDialog(Shell parentShell) {
+		public SelectDateDialog(final Shell parentShell) {
 			super(parentShell);
 		}
 
@@ -760,7 +763,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		}
 		
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(final Composite parent) {
 			Composite com=new Composite(parent,SWT.NONE);
 			com.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 			com.setLayout(new GridLayout(2,false));
