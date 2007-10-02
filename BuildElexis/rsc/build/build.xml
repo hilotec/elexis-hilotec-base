@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3159 2007-09-14 18:00:31Z rgw_ch $
+<!-- $Id: build.xml 3234 2007-10-02 12:21:56Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -135,8 +135,11 @@
 
 	<!-- These plugins are not part of the standard distribution -->
 	<target name="elexis-pro" depends="all">
+		<available file="../elexis-kassenbuch/build.xml" property="kassenbuch.ok"/>
+		<available file="../elexis-importer-praxistar/build.xml" property="praxistar.ok"/>
 		<ant antfile="../elexis-pro/build.xml"/>
-		<ant antfile="../elexis-kassenbuch/build.xml"/>
+		<antcall target="kassenbuch"/>	
+		<antcall target="praxistar"/>
 		<ant antfile="../elexis-galexis/build.xml"/>
 		<ant antfile="../Laborimport-Krech/build.xml"/>
 		<ant antfile="../Laborimport-Unilabs/build.xml"/>
@@ -145,12 +148,18 @@
 		<ant antfile="../Laborimport-Risch/build.xml"/>
 		<ant antfile="../elexis-importer-praxisdesktop/build.xml"/>
 		<ant antfile="../elexis-covercard/build.xml"/>
-		<ant antfile="../elexis-importer-praxistar/build.xml"/>
+		
 	</target>
 
 	<target name="all" depends="main,options,importers"/>
 
-
+	<target name="kassenbuch" if="kassenbuch.ok">
+		<ant antfile="../elexis-kassenbuch/build.xml"/>
+	</target>
+	<target name="praxistar" if="praxistar.ok">
+		<ant antfile="../elexis-importer-praxistar/build.xml"/>
+	</target>
+	
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
 	<target name="make_addition">
