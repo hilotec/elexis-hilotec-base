@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.jdom.Document;
@@ -65,7 +64,7 @@ public class RnPrintView2 extends ViewPart {
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		text=new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent, new ITextPlugin.ICallback(){
 
@@ -474,7 +473,7 @@ public class RnPrintView2 extends ViewPart {
 		Hub.setMandant(mSave);
 		return true;
 	}
-	private void insertPage(int page,Kontakt adressat, Rechnung rn){
+	private void insertPage(final int page,final Kontakt adressat, final Rechnung rn){
 		createBrief("Tarmedrechnung_S2", adressat);
 		replaceHeaderFields(text, rn);
 		text.replace("\\[Seite\\]",StringTool.pad(SWT.LEFT,'0',Integer.toString(page),2)); //$NON-NLS-1$
@@ -556,6 +555,7 @@ public class RnPrintView2 extends ViewPart {
 			text.replace("\\[NIF\\]",m.getKsk()); //$NON-NLS-1$
 			text.replace("\\[F60\\]",""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		text.replace("\\?\\?\\?[a-zA-Z0-9 \\.]+\\?\\?\\?", "");
 		
 	}
 
