@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3138 2007-09-11 04:46:27Z rgw_ch $
+ *    $Id: Fall.java 3235 2007-10-03 11:26:34Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -488,10 +488,10 @@ public class Fall extends PersistentObject{
 	}
 	
 	public static String getDefaultCaseLabel(){
-		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASELABEL, "Allgemein");
+		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASELABEL, PreferenceConstants.USR_DEFCASELABEL_DEFAULT);
 	}
 	public static String getDefaultCaseReason(){
-		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASEREASON, "Krankheit");
+		return Hub.userCfg.get(PreferenceConstants.USR_DEFCASEREASON, PreferenceConstants.USR_DEFCASEREASON_DEFAULT);
 	}
 	public static String getDefaultCaseLaw(){
 		return Hub.userCfg.get(PreferenceConstants.USR_DEFLAW, getAbrechnungsSysteme()[0]);

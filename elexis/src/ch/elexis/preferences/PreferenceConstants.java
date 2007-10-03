@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 3151 2007-09-14 09:32:43Z danlutz $
+ *    $Id: PreferenceConstants.java 3235 2007-10-03 11:26:34Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -68,7 +68,9 @@ public class PreferenceConstants {
 	
 	// Persönliche Präferenzen
 	public static final String USR_DEFCASELABEL= "fall/std_label";
+	public static final String USR_DEFCASELABEL_DEFAULT = "Allgemein";
 	public static final String USR_DEFCASEREASON= "fall/std_grund";
+	public static final String USR_DEFCASEREASON_DEFAULT = "Krankheit";
 	public static final String USR_DEFLAW=		  "fall/std_gesetz";
 	public static final String USR_REMINDERCOLORS="reminder/colors";
 	public static final String USR_REMINDERSOPEN = "reminder/onlyopen";
