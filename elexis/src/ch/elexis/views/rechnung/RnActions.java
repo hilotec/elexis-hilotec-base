@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3054 2007-09-01 16:36:23Z rgw_ch $
+ * $Id: RnActions.java 3237 2007-10-04 10:25:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -19,19 +19,31 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.data.Brief;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.text.TextContainer;
+import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.Tree;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.views.PatientDetailView;
 import ch.rgw.tools.ExHandler;
@@ -46,9 +58,22 @@ public class RnActions {
     Action rnExportAction, editCaseAction, delRnAction, reactivateRnAction, patDetailAction;
 	Action expandAllAction,collapseAllAction, reloadAction, mahnWizardAction;
 	Action addPaymentAction, addExpenseAction, changeStatusAction, stornoAction;
-	Action increaseLevelAction;
+	Action increaseLevelAction, printListeAction;
 	
     RnActions(final RechnungsListeView view){
+    	
+    	printListeAction=new Action("Liste drucken"){
+    		{
+    			setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT));
+    			setToolTipText("Die angezeigte Liste ausdrucken");
+    		}
+    		@Override
+			public void run(){
+    			Object[] sel=view.cv.getSelection();
+    			//Tree[] elems=(Tree[])view.cv.getConfigurer().getContentProvider().getElements(null);
+    			new RnListeDruckDialog(view.getViewSite().getShell(),sel).open();
+    		}
+    	};
     	mahnWizardAction=new Action("Mahnungen-Automatik"){
     		{
     			setToolTipText("Automatischer Mahnlauf gem. untenstehenden Angaben");
@@ -304,4 +329,79 @@ public class RnActions {
 		};
 	}
    
+    class RnListeDruckDialog extends TitleAreaDialog implements ICallback{
+		Object[] tree;		
+		
+		public RnListeDruckDialog(final Shell shell, final Object[] tree) {
+			super(shell);
+			this.tree=tree;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected Control createDialogArea(final Composite parent) {
+			Composite ret=new Composite(parent,SWT.NONE);
+			TextContainer text=new TextContainer(getShell());
+			ret.setLayout(new FillLayout());
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			text.getPlugin().createContainer(ret, this);
+			text.getPlugin().showMenu(false);
+			text.getPlugin().showToolbar(false);
+			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, "Rechnungen");
+			String[][] table=new String[tree.length][];
+			
+			for(int i=0;i<tree.length;i++){
+				table[i]=new String[2];
+				Tree tr=(Tree)tree[i];
+				if(tr.contents instanceof Rechnung){
+					tr=tr.getParent();
+				}
+				if(tr.contents instanceof Fall){
+					tr=tr.getParent();
+				}
+				Patient p=(Patient)tr.contents;
+				StringBuilder sb=new StringBuilder();
+				sb.append(p.getLabel());
+				for(Tree tFall:(Tree[])tr.getChildren().toArray(new Tree[0])){
+					Fall fall=(Fall)tFall.contents;
+					sb.append("\n -- Fall: ").append(fall.getLabel());
+					for(Tree tRn:(Tree[])tFall.getChildren().toArray(new Tree[0])){
+						Rechnung rn=(Rechnung)tRn.contents;
+						sb.append("\n -- -- Rechnung: ").append(rn.getLabel());
+					}
+				}
+				table[i][0]=sb.toString();
+			}
+			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
+			text.getPlugin().insertTable("[Liste]", 0, table, new int[]{90,10});
+			return ret;
+		}
+
+		@Override
+		public void create() {
+			super.create();
+			getShell().setText("Rechnungsliste");
+			setTitle("Liste drucken");
+			setMessage("Dies druckt alle aufgelisteten Patienten");
+			getShell().setSize(900,700);
+			SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(), getShell());
+		}
+
+		@Override
+		protected void okPressed() {
+			super.okPressed();
+		}
+
+		public void save() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public boolean saveAs() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		
+	}
 }

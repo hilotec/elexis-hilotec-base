@@ -8,10 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3108 2007-09-07 11:03:34Z rgw_ch $
+ * $Id: Artikel.java 3237 2007-10-04 10:25:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -221,7 +222,7 @@ public class Artikel extends VerrechenbarAdapter{
 		qbe.add("Maxbestand",">","0");
 		qbe.orderBy(false, new String[] {"Name"});
 		List<Artikel> l=qbe.execute();
-		return l;
+		return l==null ? new ArrayList<Artikel>(0) : l;
 	}
 	
 	@SuppressWarnings("unchecked")
