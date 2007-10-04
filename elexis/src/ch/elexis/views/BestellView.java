@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 2505 2007-06-08 13:51:41Z danlutz $
+ * $Id: BestellView.java 3238 2007-10-04 12:44:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -60,13 +60,13 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Bestellung.Item;
+import ch.elexis.exchange.IDataSender;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.exchange.IDataSender;
-import ch.elexis.util.*;
 import ch.rgw.tools.ExHandler;
 
 public class BestellView extends ViewPart implements ISaveablePart2{
@@ -78,10 +78,10 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 	Bestellung actBestellung;
 	ViewMenus viewmenus;
 	private IAction removeAction, wizardAction, countAction, loadAction,saveAction, printAction, sendAction;
-	private IAction exportClipboardAction;
+	private IAction exportClipboardAction, checkInAction;
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new FillLayout());
 		form=tk.createForm(parent);
 		Composite body=form.getBody();
@@ -101,7 +101,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 		table.setLinesVisible(true);
 		tv=new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider(){
-			public Object[] getElements(Object inputElement) {
+			public Object[] getElements(final Object inputElement) {
 				if(actBestellung!=null){
 					return actBestellung.asList().toArray();
 				}
@@ -109,13 +109,13 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 
 			public void dispose() {	}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {			}
+			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {			}
 			
 		});
 		tv.setLabelProvider(new BestellungLabelProvider());
 		tv.setSorter(new ViewerSorter(){
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
+			public int compare(final Viewer viewer, final Object e1, final Object e2) {
 				String s1=((Item) e1).art.getName();
 				String s2=((Item) e2).art.getName();
 				return s1.compareTo(s2);
@@ -126,12 +126,12 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 		tv.addDropSupport(DND.DROP_COPY,types,new DropTargetAdapter(){
 			
 			@Override
-			public void dragEnter(DropTargetEvent event) {
+			public void dragEnter(final DropTargetEvent event) {
 				 event.detail=DND.DROP_COPY;
 			}
 
 			@Override
-			public void drop(DropTargetEvent event) {
+			public void drop(final DropTargetEvent event) {
 			   String drp=(String)event.data;
                 String[] dl=drp.split(",");
                 if(actBestellung==null){
@@ -157,20 +157,25 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 		viewmenus.createToolbar(wizardAction,saveAction,loadAction,printAction,sendAction);
 		viewmenus.createMenu(wizardAction,saveAction,loadAction,printAction,sendAction, exportClipboardAction);
 		viewmenus.createViewerContextMenu(tv,new IAction[]{removeAction,countAction});
+		form.getToolBarManager().add(checkInAction);
+		form.updateToolBar();
+		setBestellung(null);
 		tv.setInput(getViewSite());
 	}
 
-	private void setBestellung(Bestellung b){
+	private void setBestellung(final Bestellung b){
 		actBestellung=b;
 		if(b!=null){
 			form.setText(b.getLabel());
 			tv.refresh();
 			saveAction.setEnabled(true);
-			
+			checkInAction.setEnabled(true);
 		}else{
 			saveAction.setEnabled(false);
+			checkInAction.setEnabled(false);
 		}
 	}
+	@Override
 	public void dispose(){
 		/*
 		GlobalEvents.getInstance().removeSelectionListener(this);
@@ -184,11 +189,11 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 	}
 	class BestellungLabelProvider extends LabelProvider implements ITableLabelProvider{
 
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Image getColumnImage(final Object element, final int columnIndex) {
 			return null;
 		}
 
-		public String getColumnText(Object element, int columnIndex) {
+		public String getColumnText(final Object element, final int columnIndex) {
 			if(element instanceof Bestellung.Item){
 				Item it=(Item)element;
 				switch (columnIndex) {
@@ -205,6 +210,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 	}
 	private void makeActions(){
 		removeAction=new Action("Artikel entfernen"){
+			@Override
 			public void run(){
 				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
 				if((sel!=null) && (!sel.isEmpty())){
@@ -219,6 +225,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			{	setToolTipText("Bestellung automatisch anhand des Lagebestandes erstellen");
 				setImageDescriptor(Hub.getImageDescriptor("rsc/wizard.ico"));
 			}
+			@Override
 			public void run(){
 				if(actBestellung==null){
 					setBestellung(new Bestellung("Automatisch",Hub.actUser));
@@ -260,6 +267,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 		};
 		countAction=new Action("Zahl ändern"){
+			@Override
 			public void run(){
 				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
 				if((sel!=null) && (!sel.isEmpty())){
@@ -274,6 +282,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 		};
 		saveAction=new Action("Liste speichern"){
+			@Override
 			public void run(){
 				if(actBestellung!=null){
 					actBestellung.save();
@@ -281,8 +290,10 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 		};
 		printAction=new Action("Bestellung drucken"){
+			@Override
 			public void run(){
 				if(actBestellung!=null){
+					actBestellung.save();
 					List<Item> list=actBestellung.asList();
 					ArrayList<Item> best=new ArrayList<Item>();
 					Kontakt adressat=null;
@@ -314,7 +325,9 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 		};
 		sendAction=new Action("Bestellung senden"){
+			@Override
 			public void run(){
+				actBestellung.save();
 				List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.Transporter");
 				for(IConfigurationElement ic:list){
 					String handler=ic.getAttribute("AcceptableTypes");
@@ -337,6 +350,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 		};
 		loadAction=new Action("Bestellung öffnen"){
+			@Override
 			public void run(){
 				
 				ListDialog dlg=new ListDialog(getViewSite().getShell());
@@ -366,6 +380,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 				setToolTipText("Bestellung in Zwischenablage exportieren für Galexis");
 			}
 			
+			@Override
 			public void run(){
 				if (actBestellung != null) {
 					List<Item> list = actBestellung.asList();
@@ -408,16 +423,27 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 				}
 			}
 		};
+		checkInAction=new Action("Einbuchen"){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_TICK));
+				setToolTipText("Artikel dieser Bestellung im Lager einbuchen");
+			}
+			@Override
+			public void run(){
+				
+			}
+			
+		};
 	}
 	class BestellContentProvider implements IStructuredContentProvider{
 
-		public Object[] getElements(Object inputElement) {
+		public Object[] getElements(final Object inputElement) {
 			Query<Bestellung> qbe=new Query<Bestellung>(Bestellung.class);
 			return qbe.execute().toArray();
 			
 		}
 		public void dispose() {		}
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {}
 		
 		
 	}
@@ -430,7 +456,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;
