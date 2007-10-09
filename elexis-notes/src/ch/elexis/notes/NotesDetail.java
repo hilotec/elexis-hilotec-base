@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesDetail.java 1751 2007-02-06 21:05:13Z rgw_ch $
+ *  $Id: NotesDetail.java 3242 2007-10-09 04:25:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -43,6 +43,7 @@ public class NotesDetail extends Composite {
 	NotesDetail(Composite parent){
 		super(parent,SWT.NONE);
 		etf=new ETFTextPlugin();
+		
 		setLayout(new GridLayout());
 		SashForm sash=new SashForm(this,SWT.VERTICAL);
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -50,21 +51,6 @@ public class NotesDetail extends Composite {
 		fNote.getBody().setLayout(new GridLayout());
 		etf.createContainer(fNote.getBody(),new SaveCallback()).setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
-		
-		/*
-		editor.getControl().addFocusListener(new FocusAdapter(){
-			@Override
-			public void focusLost(FocusEvent e) {
-				if(etf.isDirty()){
-					String tx=etf.getDocumentAsText();
-					Note act=(Note)GlobalEvents.getInstance().getSelectedObject(Note.class);
-					act.setText(tx);
-				}
-			}
-			
-		});
-		*/
-		//tk.adapt(, true, true);
 		fRefs=tk.createScrolledForm(sash);
 		fRefs.getBody().setLayout(new GridLayout());
 		lRefs=new List(fRefs.getBody(),SWT.SINGLE);
