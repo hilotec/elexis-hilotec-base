@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFTextPlugin.java 1649 2007-01-23 14:17:02Z rgw_ch $
+ *  $Id: ETFTextPlugin.java 3243 2007-10-09 04:25:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.Desk;
+import ch.elexis.util.IKonsExtension;
 import ch.rgw.Compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -35,6 +36,7 @@ public class ETFTextPlugin implements ITextPlugin {
 	EnhancedTextField etf;
 	ICallback handler;
 	boolean bSaveOnFocusLost=false;
+	IKonsExtension ike;
 	
 	public boolean clear() {
 		etf.setText("");
@@ -59,6 +61,8 @@ public class ETFTextPlugin implements ITextPlugin {
 			}
 			
 		});
+		ike=new ExternalLink();
+		ike.connect(etf);
 		etf.setText("");
 		return etf;
 	}

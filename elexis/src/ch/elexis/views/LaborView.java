@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 2814 2007-07-16 06:32:46Z rgw_ch $
+ *  $Id: LaborView.java 3243 2007-10-09 04:25:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -27,9 +27,12 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
@@ -77,6 +80,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.DisplayTextDialog;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.Importer;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
@@ -254,7 +258,19 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		makeActions();
 		menu=new ViewMenus(getViewSite());
 		menu.createMenu(newAction,backAction,fwdAction,printAction,importAction,xmlAction);
-		menu.createToolbar(newAction,backAction,fwdAction,printAction);
+		IToolBarManager tm=getViewSite().getActionBars().getToolBarManager();
+		List<IAction> importers=Extensions.getClasses("ch.elexis.LaborDatenImport", "ToolbarAction");
+		for(IAction ac:importers){
+			tm.add(ac);
+		}
+		if(importers.size()>0){
+			tm.add(new Separator());
+		}
+		tm.add(newAction);
+		tm.add(backAction);
+		tm.add(fwdAction);
+		tm.add(printAction);
+		//menu.createToolbar(newAction,backAction,fwdAction,printAction);
 		final MenuManager mgr=new MenuManager("path");
 		Menu menu=mgr.createContextMenu(cursor);
 		mgr.setRemoveAllWhenShown(true);
