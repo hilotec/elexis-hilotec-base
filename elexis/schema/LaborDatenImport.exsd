@@ -51,7 +51,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="Class" type="string" use="required">
+         <attribute name="Class" type="string">
             <annotation>
                <documentation>
                   

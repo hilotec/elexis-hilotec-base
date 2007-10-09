@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3233 2007-10-01 06:42:36Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 3244 2007-10-09 15:19:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -41,11 +41,9 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -65,12 +63,15 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.KonsZumVerrechnenWizardDialog;
+import ch.elexis.text.TextContainer;
+import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.BasicTreeContentProvider;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.LazyTree;
@@ -509,14 +510,13 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		};
 		printAction=new Action(Messages.getString("KonsZumVerrechnenView.printSelection")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor("print")); //$NON-NLS-1$
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT)); 
 				setToolTipText(Messages.getString("KonsZumVerrechnenView.printToolTip")); //$NON-NLS-1$
 			}
 			@Override
 			public void run(){
-				Printer printer=new Printer();
-				GC pgc=new GC(printer);
-				FontMetrics fm=pgc.getFontMetrics();
+				new SelectionPrintDialog(getViewSite().getShell()).open();
+				
 			}
 		};
 		removeAction=new Action(Messages.getString("KonsZumVerrechnenView.removeFromSelection")){ //$NON-NLS-1$
@@ -797,5 +797,78 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		}
 
 	}
+	class SelectionPrintDialog extends TitleAreaDialog implements ICallback{
+		
+		public SelectionPrintDialog(final Shell shell) {
+			super(shell);
+		}
 
+		@SuppressWarnings("unchecked")
+		@Override
+		protected Control createDialogArea(final Composite parent) {
+			Composite ret=new Composite(parent,SWT.NONE);
+			TextContainer text=new TextContainer(getShell());
+			ret.setLayout(new FillLayout());
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			text.getPlugin().createContainer(ret, this);
+			text.getPlugin().showMenu(false);
+			text.getPlugin().showToolbar(false);
+			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, "Rechnungen");
+			Tree[] all=(Tree[])tSelection.getChildren().toArray(new Tree[0]);
+			String[][] table=new String[all.length][];
+			
+			for(int i=0;i<all.length;i++){
+				table[i]=new String[2];
+				Tree tr=all[i];
+				if(tr.contents instanceof Konsultation){
+					tr=tr.getParent();
+				}
+				if(tr.contents instanceof Fall){
+					tr=tr.getParent();
+				}
+				Patient p=(Patient)tr.contents;
+				StringBuilder sb=new StringBuilder();
+				sb.append(p.getLabel());
+				for(Tree tFall:(Tree[])tr.getChildren().toArray(new Tree[0])){
+					Fall fall=(Fall)tFall.contents;
+					sb.append("\n -- Fall: ").append(fall.getLabel());
+					for(Tree tRn:(Tree[])tFall.getChildren().toArray(new Tree[0])){
+						Konsultation k=(Konsultation)tRn.contents;
+						sb.append("\n -- -- Kons: ").append(k.getLabel());
+					}
+				}
+				table[i][0]=sb.toString();
+			}
+			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
+			text.getPlugin().insertTable("[Liste]", 0, table, new int[]{90,10});
+			return ret;
+		}
+
+		@Override
+		public void create() {
+			super.create();
+			getShell().setText("Rechnungsliste");
+			setTitle("Liste drucken");
+			setMessage("Dies druckt alle aufgelisteten Patienten");
+			getShell().setSize(900,700);
+			SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(), getShell());
+		}
+
+		@Override
+		protected void okPressed() {
+			super.okPressed();
+		}
+
+		public void save() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public boolean saveAs() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		
+	}
 }
