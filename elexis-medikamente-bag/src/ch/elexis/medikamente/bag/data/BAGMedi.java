@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3203 2007-09-25 15:39:54Z rgw_ch $
+ *  $Id: BAGMedi.java 3249 2007-10-10 12:25:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -72,7 +72,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 				"prescription=EXT:"+EXTTABLE+":prescription",
 				"KompendiumText=EXT:"+EXTTABLE+":KompendiumText");
 		
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNEMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, Xid.ASSIGNMENT_REGIONAL);
 		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
 		
 		if(v==null){
