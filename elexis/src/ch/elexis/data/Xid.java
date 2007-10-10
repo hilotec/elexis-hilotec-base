@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3139 2007-09-11 06:53:57Z rgw_ch $
+ * $Id: Xid.java 3250 2007-10-10 12:25:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -30,7 +30,7 @@ public class Xid extends PersistentObject {
 	 * Quality value for an ID that is valid within a geographic or politic context (e.g. a nationally
 	 * assigned ID)
 	 */
-	public static final int ASSIGNEMENT_REGIONAL=2;
+	public static final int ASSIGNMENT_REGIONAL=2;
 	/**
 	 * Quality value for an ID that can be used as global identifier
 	 */
@@ -57,7 +57,7 @@ public class Xid extends PersistentObject {
 		String storedDomains=Hub.globalCfg.get("LocalXIDDomains", null);
 		if(storedDomains==null){
 			domains.put(DOMAIN_ELEXIS,ASSIGNMENT_LOCAL|QUALITY_GUID);
-			domains.put(DOMAIN_AHV,ASSIGNEMENT_REGIONAL|QUALITY_GUID);
+			domains.put(DOMAIN_AHV,ASSIGNMENT_REGIONAL|QUALITY_GUID);
 			domains.put(DOMAIN_OID,ASSIGNMENT_GLOBAL|QUALITY_GUID);
 			domains.put(DOMAIN_EAN,ASSIGNMENT_GLOBAL|QUALITY_GUID);
 			storeDomains();
