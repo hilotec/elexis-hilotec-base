@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 3155 2007-09-14 17:01:07Z rgw_ch $
+ * $Id: Importer.java 3253 2007-10-11 09:17:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
@@ -61,8 +61,8 @@ public class Importer extends ImporterPage {
 		Xid.localRegisterXIDDomainIfNotExists(GARANTID, Xid.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(ARZTID, Xid.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(USERID, Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_KSK, Xid.ASSIGNEMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_NIF, Xid.ASSIGNEMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_KSK, Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_NIF, Xid.ASSIGNMENT_REGIONAL);
 	}
 	public Importer() {
 		// TODO Auto-generated constructor stub
