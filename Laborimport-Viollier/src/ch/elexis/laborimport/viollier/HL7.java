@@ -1,7 +1,7 @@
 /**
  * (c) 2007 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 2491 2007-06-08 07:14:29Z rgw_ch $
+ * $Id: HL7.java 3256 2007-10-13 11:16:25Z rgw_ch $
  */
  
 
@@ -11,7 +11,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
-import ch.elexis.data.*;
+import ch.elexis.data.Anschrift;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Labor;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Query;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
@@ -40,7 +44,7 @@ public class HL7 {
 	 * @param labor String
 	 * @param kuerzel String
 	 */
-	public HL7(String labor, String kuerzel){
+	public HL7(final String labor, final String kuerzel){
 		labName=labor;
 		labID=kuerzel;
 	}
@@ -51,7 +55,7 @@ public class HL7 {
 	 * @param filename String
 	 * @return
 	 */
-	public Result<String> load(String filename){
+	public Result<String> load(final String filename){
 		File file=new File(filename);
 		if(!file.canRead()){
 			return new Result<String>(Log.WARNINGS,1,"Kann Datei nicht lesen",filename,true);
@@ -80,7 +84,7 @@ public class HL7 {
 	 * @return the first occurence of an element of type 'header' after 'start' lines or an empty
 	 *  Element if no such record was found
 	 */
-	private String[] getElement(String header, int start){
+	private String[] getElement(final String header, final int start){
 		for(int i=start;i<lines.length;i++){
 			if(lines[i].startsWith(header)){
 				return lines[i].split(separator);
@@ -95,7 +99,7 @@ public class HL7 {
 	 * @return the Patient or null id it was not found and createIfNotFound was false, or
 	 * an error indicating the problem if it could not be created
 	 */
-	public Result<Patient> getPatient(boolean createIfNotFound){
+	public Result<Patient> getPatient(final boolean createIfNotFound){
 		if(pat==null){
 			String[] elPid=getElement("PID",0);
 			String patid=elPid[2];
@@ -192,7 +196,7 @@ public class HL7 {
 			qbe.endGroup();
 			List<Labor> list=qbe.execute();
 			if(list.size()!=1){
-				labor=new Labor("labName","Labor "+labName);
+				labor=new Labor(labName,"Labor "+labName);
 			}else{
 				labor=list.get(0);
 			}
@@ -213,7 +217,7 @@ public class HL7 {
 	 * @param prev position to start searching
 	 * @return
 	 */
-	int findNext(String type,int prev){
+	int findNext(final String type,final int prev){
 		for(int i=prev;i<lines.length;i++){
 			if(lines[i].startsWith(type)){
 				return i;
@@ -224,14 +228,14 @@ public class HL7 {
 	class OBR{
 		int of;
 		String[] field;
-		OBR(int off){
+		OBR(final int off){
 			of=off;
 			field=lines[of].split(separator);
 		}
-		OBR nextOBR(OBR obr){
+		OBR nextOBR(final OBR obr){
 			return nextOBR(obr.of);
 		}
-		OBR nextOBR(int of){
+		OBR nextOBR(final int of){
 			int n=findNext("OBR",of+1);
 			if(n==-1){
 				return  null;
@@ -243,7 +247,7 @@ public class HL7 {
 		 * @param old the OBX from which to start searching
 		 * @return the next OBX or null if none was found
 		 */
-		OBX nextOBX(OBX old){
+		OBX nextOBX(final OBX old){
 			return nextOBX(old.of);
 		}
 		/**
@@ -266,7 +270,7 @@ public class HL7 {
 		 * @param old the position to start looking from
 		 * @return the first OBX after 'old' or null if none was found
 		 */
-		OBX nextOBX(int old){
+		OBX nextOBX(final int old){
 			int nf=old+1;
 			while(true){
 				if(nf>=lines.length){
@@ -309,7 +313,7 @@ public class HL7 {
 		String[] obxFields;
 		OBR myOBR;
 		
-		OBX(OBR obr, int off){
+		OBX(final OBR obr, final int off){
 			of=off;
 			obxFields=lines[of].split(separator);
 			myOBR=obr;
@@ -387,7 +391,7 @@ public class HL7 {
 			return ret.toString();
 		
 		}
-		private String getField(int f){
+		private String getField(final int f){
 			if(obxFields.length>f){
 				return obxFields[f];
 			}
@@ -395,7 +399,7 @@ public class HL7 {
 		}
 	}
 
-	public static TimeTool makeTime(String datestring){
+	public static TimeTool makeTime(final String datestring){
 		String date=datestring.substring(0,8);
 		TimeTool ret=new TimeTool();
 		if(ret.set(date)){
