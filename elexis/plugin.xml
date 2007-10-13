@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 3247 2007-10-10 10:49:46Z rgw_ch $ 
+<!-- $Id: plugin.xml 3255 2007-10-13 10:14:58Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -99,10 +99,10 @@
                value="Elexis - die Praxis.&#x0A;(c) 2005-2007 by G. Weirich and Elexis&#x0A;http://www.elexis.ch&#x0A;&#x0A;Informationen und Referenzinstallation:&#x0A;Gerry Weirich&#x0A;Rietstrasse 30&#x0A;8201 Schaffhausen"/>
          <property
                name="aboutImage"
-               value="/Elexis/rsc/elexis48.gif"/>
+               value="rsc/elexis48.gif"/>
          <property
                name="windowImages"
-               value="/Elexis/rsc/elexis2_16.gif,rsc/elexis32_2.gif,/Elexis/rsc/elexis48.gif"/>
+               value="rsc/elexis2_16.gif,rsc/elexis32_2.gif,rsc/elexis48.gif"/>
          <property
                name="preferenceCustomization"
                value="elexisprefs.ini"/>
