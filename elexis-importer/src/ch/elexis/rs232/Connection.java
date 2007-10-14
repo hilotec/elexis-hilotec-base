@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3259 2007-10-14 11:28:07Z rgw_ch $
+ * $Id: Connection.java 3260 2007-10-14 11:42:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -211,6 +211,7 @@ public class Connection implements SerialPortEventListener{
 		watchdogThread=new Thread(new Watchdog());
 		timeToWait=timeout;
 		checksumBytes=overhang;
+		watchdogThread.start();
 	}
 	  /**
     Handles SerialPortEvents. The two types of SerialPortEvents that this
