@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3260 2007-10-14 11:42:29Z rgw_ch $
+ * $Id: Connection.java 3261 2007-10-14 12:18:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -283,8 +283,19 @@ public class Connection implements SerialPortEventListener{
     	if((watchdogThread!=null) && watchdogThread.isAlive()){
     		watchdogThread.interrupt();
     	}
-    	sPort.close();
-    	bOpen=false;
+    	// avoid rxtx-deadlock when called from an EventListener
+    	new Thread(new Runnable(){
+
+			public void run() {
+				try{
+					Thread.sleep(5000);
+			    	sPort.close();
+			    	bOpen=false;
+
+				}catch(Exception ex){
+					
+				}
+			}}).start();
     }
     /**
     Reports the open status of the port.
