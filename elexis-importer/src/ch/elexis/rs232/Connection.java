@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3261 2007-10-14 12:18:07Z rgw_ch $
+ * $Id: Connection.java 3262 2007-10-14 18:21:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -21,6 +21,8 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,9 +30,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
+import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 
 public class Connection implements SerialPortEventListener{
+	private static final String simulate="c:/abx.txt";
+	
 	private CommPortIdentifier portId;
 	private SerialPort sPort;
 	private boolean bOpen;
@@ -76,7 +81,23 @@ public class Connection implements SerialPortEventListener{
 		sp.setParity(mySettings[2]);
 		sp.setStopbits(mySettings[3]);
 		try{
-			openConnection(sp);
+			if(simulate!=null){
+				final Connection mine=this;
+				new Thread(new Runnable(){
+
+					public void run() {
+						try{
+							Thread.sleep(1000);
+							final String in=FileTool.readFile(new File(simulate)).replaceAll("\\r\\n","\r");
+							listener.gotChunk(mine, in);
+						}catch(Exception ex){
+							
+						}
+						
+					}}).start();
+			}else{
+				openConnection(sp);
+			}
 			return true;
 		}catch(Exception ex){
 			ExHandler.handle(ex);
