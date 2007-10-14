@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3227 2007-09-27 19:05:05Z rgw_ch $
+ * $Id: Connection.java 3258 2007-10-14 08:11:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -121,18 +121,9 @@ public class Connection implements SerialPortEventListener{
 			boolean dtr=sPort.isDTR();
 			boolean cts=sPort.isCTS();
 			boolean rts=sPort.isRTS();
-			sPort.setRTS(true);
+			//sPort.setRTS(true);
 		
 			bOpen = true;
-			int s;
-			try {
-				s = is.read();
-				System.out.println(Integer.toString(s));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 	    }
 	   /**
 	    Sets the connection parameters to the setting in the parameters object.
@@ -222,6 +213,7 @@ public class Connection implements SerialPortEventListener{
 
     public void close(){
     	sPort.close();
+    	bOpen=false;
     }
     /**
     Reports the open status of the port.

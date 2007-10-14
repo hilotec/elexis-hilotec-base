@@ -49,6 +49,12 @@ public class Controller implements ComPortListener {
 		
 	}
 
+	public boolean isOpen(){
+		return conn.isOpen();
+	}
+	public void sendBreak(){
+		conn.sendBreak();
+	}
 	public boolean send(final String data){
 		return conn.send(data);
 	}
