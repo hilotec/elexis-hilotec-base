@@ -8,10 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3258 2007-10-14 08:11:07Z rgw_ch $
+ * $Id: Connection.java 3259 2007-10-14 11:28:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,31 +30,60 @@ import java.util.TooManyListenersException;
 
 import ch.rgw.tools.ExHandler;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.CommPortOwnershipListener;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-import gnu.io.UnsupportedCommOperationException;
-
 public class Connection implements SerialPortEventListener{
-	 private CommPortIdentifier portId;
-	 private SerialPort sPort;
-	 private boolean bOpen;
-	 private OutputStream os;
-	 private InputStream is;
-	 private ComPortListener listener;
+	private CommPortIdentifier portId;
+	private SerialPort sPort;
+	private boolean bOpen;
+	private OutputStream os;
+	private InputStream is;
+	private final ComPortListener listener;
+	private final String myPort;
+	private final String[] mySettings;
+	private final String name;
+	private int frameStart, frameEnd, overhang, checksumBytes;
+	private long endTime;
+	private int timeToWait;
+	private static final int PASS_THRU=0;
+	private static final int AWAIT_START=1;
+	private static final int AWAIT_END=2;
+	private static final int AWAIT_CHECKSUM=3;
+	private int state=PASS_THRU;
+	private final StringBuilder sbFrame=new StringBuilder();
+	private Watchdog watchdog;
+	private Thread watchdogThread;
+	public static final String XON="\013";
+	public final static String XOFF="\015";
+	public final static String STX="\002";
+	public final static String ETX="\003";
+		
+	public interface ComPortListener{
+		 public void gotChunk(Connection conn, String chunk);
+		 public void gotBreak(Connection conn);
+		 public void timeout();
+	}
 	 
-	 public interface ComPortListener{
-		 public void gotChunk(String chunk);
-		 public void gotBreak();
-	 }
-	 
-	 public Connection(ComPortListener l){
-		 listener=l;
-	 }
+	public Connection(final String portName, final String port, final String settings, final ComPortListener l){
+		listener=l;
+		myPort=port;
+		mySettings=settings.split(",");
+		name=portName;
+	}
+	public boolean connect(){
+		SerialParameters sp=new SerialParameters();
+		sp.setPortName(myPort);
+		sp.setBaudRate(mySettings[0]);
+		sp.setDatabits(mySettings[1]);
+		sp.setParity(mySettings[2]);
+		sp.setStopbits(mySettings[3]);
+		try{
+			openConnection(sp);
+			return true;
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return false;
+		}
+		
+	}
 	 /**
 	   Attempts to open a serial connection and streams using the parameters
 	   in the SerialParameters object. If it is unsuccesfull at any step it
@@ -71,7 +108,7 @@ public class Connection implements SerialPortEventListener{
 			// a different application to reliquish the port if the user 
 			// wants to.
 			try {
-			    sPort = (SerialPort)portId.open("ElexisReflotron", 30000);
+			    sPort = (SerialPort)portId.open(name, 30000);
 			} catch (PortInUseException e) {
 			    throw new SerialConnectionException(e.getMessage());
 			}
@@ -116,13 +153,6 @@ public class Connection implements SerialPortEventListener{
 			    sPort.enableReceiveTimeout(30);
 			} catch (UnsupportedCommOperationException e) {
 			}
-			boolean cd=sPort.isCD();
-			boolean dsr=sPort.isDSR();
-			boolean dtr=sPort.isDTR();
-			boolean cts=sPort.isCTS();
-			boolean rts=sPort.isRTS();
-			//sPort.setRTS(true);
-		
 			bOpen = true;
 	    }
 	   /**
@@ -163,6 +193,25 @@ public class Connection implements SerialPortEventListener{
 		}
 	    }
 	
+	    
+	/**
+	 * Wait for a frame of the device to be sent. Ignores all input until a start byte is found. collects all bytes from that point 
+	 * until an end byte was received or the timeout happened.
+	 * @param start character defining the start of a frame
+	 * @param end character singalling end of frame
+	 * @param following number of bytes after end to wait for (e.g. checksum)
+	 * @param timeout number of seconds to wait for a frame to complete before givng up
+	 */
+	public void awaitFrame(final int start, final int end, final int following, final int timeout){
+		state=AWAIT_START;
+		frameStart=start;
+		frameEnd=end;
+		overhang=following;
+		endTime=System.currentTimeMillis()+(timeout*1000);
+		watchdogThread=new Thread(new Watchdog());
+		timeToWait=timeout;
+		checksumBytes=overhang;
+	}
 	  /**
     Handles SerialPortEvents. The two types of SerialPortEvents that this
     program is registered to listen for are DATA_AVAILABLE and BI. During 
@@ -172,46 +221,67 @@ public class Connection implements SerialPortEventListener{
     */
 
     public void serialEvent(final SerialPortEvent e) {
-    	
-    	StringBuilder inputBuffer = new StringBuilder();
-    	int newData = 0;
-
-    	// Determine type of event.
-    	switch (e.getEventType()) {
-
-	    // Read data until -1 is returned. If \r is received substitute
-	    // \n for correct newline handling.
-	    case SerialPortEvent.DATA_AVAILABLE:
-		    while (newData != -1) {
-		    	try {
-		    	    newData = is.read();
-			    if (newData == -1) {
-				break;
-			    }
-			    if ('\r' == (char)newData) {
-			   	inputBuffer.append('\n');
-			    } else {
-			    	inputBuffer.append((char)newData);
-			    }
-		    	} catch (IOException ex) {
-		    	    System.err.println(ex);
-		    	    return;
-		      	}
-   		    }
-
-		    listener.gotChunk(inputBuffer.toString());
-		    break;
-
-	    // If break event append BREAK RECEIVED message.
-	    case SerialPortEvent.BI:
-		//messageAreaIn.append("\n--- BREAK RECEIVED ---\n");
-	    	listener.gotBreak();
-	    	
-		}
+    	int newData;
+    	if(e.getEventType()==SerialPortEvent.BI){
+    		state=PASS_THRU;
+    		watchdogThread.interrupt();
+    		listener.gotBreak(this);
+    	}else{
+    		try{
+    			switch (state) {
+				case PASS_THRU:
+					sbFrame.setLength(0);
+        			while ((newData=is.read()) != -1) {
+        				sbFrame.append((char)newData);
+        			}
+        			listener.gotChunk(this,sbFrame.toString());					
+					break;
+				case AWAIT_START:
+					while((newData=is.read()) != -1){
+    					if(newData==frameStart){
+    						state=AWAIT_END;
+    						sbFrame.append(frameStart);
+    						serialEvent(e);
+    					}
+    				}
+					break;
+				case AWAIT_END:
+					while((newData=is.read()) != -1){
+						sbFrame.append((char)newData);
+    					if(newData==frameEnd){
+    						state=AWAIT_CHECKSUM;
+    						serialEvent(e);
+    					}
+    				}
+					endTime=System.currentTimeMillis()+timeToWait;
+					break;
+    			case AWAIT_CHECKSUM:
+    				while((overhang>0) && ((newData=is.read()) != -1)){
+    					sbFrame.append((char)newData);
+    					overhang-=1;
+    				}
+    				if(overhang==0){
+    					listener.gotChunk(this, sbFrame.toString());
+						sbFrame.setLength(0);
+						watchdogThread.interrupt();
+						state=AWAIT_START;
+						overhang=checksumBytes;
+						serialEvent(e);
+    				}
+    			}
+    				
+    		}catch(Exception ex){
+    			ExHandler.handle(ex);
+    		}
+    	}
 
     }   
-
+    
+    
     public void close(){
+    	if((watchdogThread!=null) && watchdogThread.isAlive()){
+    		watchdogThread.interrupt();
+    	}
     	sPort.close();
     	bOpen=false;
     }
@@ -229,7 +299,7 @@ public class Connection implements SerialPortEventListener{
     	sPort.sendBreak(1000);
     }
     
-    public boolean send(String data){
+    public boolean send(final String data){
     	try{
     		os.write(data.getBytes());
     		return true;
@@ -239,13 +309,28 @@ public class Connection implements SerialPortEventListener{
     	}
     }
     
-    public String[] getComPorts(){
-    	Enumeration<CommPortIdentifier> ports=portId.getPortIdentifiers();
+    @SuppressWarnings("unchecked")
+	public static String[] getComPorts(){
+    	Enumeration<CommPortIdentifier> ports=CommPortIdentifier.getPortIdentifiers();
     	ArrayList<String> p=new ArrayList<String>();
     	while(ports.hasMoreElements()){
     		CommPortIdentifier port=ports.nextElement();
     		p.add(port.getName());
     	}
     	return p.toArray(new String[0]);
+    }
+    
+    class Watchdog implements Runnable{
+		public void run() {
+			while(System.currentTimeMillis()<endTime){
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException ex){
+					return;
+				}
+			}
+			listener.timeout();
+		}
+    	
     }
 }
