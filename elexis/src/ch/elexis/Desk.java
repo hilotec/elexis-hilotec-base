@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 3120 2007-09-09 00:28:39Z rgw_ch $
+ *    $Id: Desk.java 3265 2007-10-17 13:22:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -43,7 +43,7 @@ public class Desk implements IPlatformRunnable {
     public static ImageRegistry theImageRegistry;
     public static ColorRegistry theColorRegistry;
     public static final String COL_RED="rot";
-    public static final String COL_GREEN="grün";
+    public static final String COL_GREEN="gruen";
     public static final String COL_BLUE="blau";
     public static final String COL_SKYTBLUE="himmelblau";
     public static final String COL_LIGHTBLUE="hellblau";
