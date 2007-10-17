@@ -1,4 +1,4 @@
-; $Id: elexis-jre.nsi 2734 2007-07-06 13:59:47Z rgw_ch $
+; $Id: elexis-jre.nsi 3267 2007-10-17 15:52:39Z danlutz $
 
 ;******************************************************************************************
 ; Dieses NSIS-Script erstellt den Windows-Installer fÃ¼r Elexis
@@ -159,14 +159,6 @@ Section "Externe Dokumente" Section10
     File /r "${src}\plugins\ch.elexis.externe_dokumente_*.*"
 SectionEnd
 
-Section "Iatrix" Section11
-     SetOutPath "$INSTDIR\plugins"
-     SetOverwrite ifnewer
-
-    File /r "${src}\plugins\org.iatrix_*.*"
-SectionEnd
-
-
 Section "Privatnotizen" Section12
     SetOutPath "$INSTDIR\plugins"
     SetOverwrite ifnewer
@@ -225,7 +217,6 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${Section8} "Verwaltung von Terminen"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "Einfaches Messwert-Erfassungs Plugin"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section10} "Einbindung externer Dokumente aus dem Dateisystem"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section11} "Alternative Oberfläche, Problemorientierte KG"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section12} "Nicht-öffentliche Notizen in Konsultationstexte einbinden"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section13} "Bilder mit Konsultationstexten verknüpfen"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section14} "Mail Plugin (automatische Fehlerrückmeldungen)"
