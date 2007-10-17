@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 2233 2007-04-17 13:04:14Z rgw_ch $
+ *  $Id: TerminDialog.java 3264 2007-10-17 13:22:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -16,14 +16,32 @@ package ch.elexis.dialogs;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -34,9 +52,16 @@ import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
-import ch.elexis.data.*;
+import ch.elexis.data.IPlannable;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Query;
+import ch.elexis.data.Termin;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.*;
+import ch.elexis.util.Log;
+import ch.elexis.util.NumberInput;
+import ch.elexis.util.Plannables;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.TimeInput;
 import ch.elexis.util.TimeInput.TimeInputListener;
 import ch.elexis.views.BaseAgendaView;
 import ch.rgw.tools.StringTool;
@@ -84,7 +109,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Text tGrund;
 	boolean bModified;
 	
-	public TerminDialog(BaseAgendaView parent, IPlannable act){
+	public TerminDialog(final BaseAgendaView parent, IPlannable act){
 		super(parent.getViewSite().getShell());
 		//base=parent;
 		actDate=parent.getDate();
@@ -105,7 +130,7 @@ public class TerminDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -118,7 +143,7 @@ public class TerminDialog extends TitleAreaDialog {
 		actDate.setTime(dp.getDate());
 		dp.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				actDate.setTime(dp.getDate());
 				dayBar.redraw();
 				slider.set();
@@ -139,7 +164,7 @@ public class TerminDialog extends TitleAreaDialog {
 		niDauer=new NumberInput(topCenter,Messages.TerminDialog_duration); 
 		niDauer.getControl().addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				slider.set();
 			}});
 		tiBis=new TimeInput(topCenter,Messages.TerminDialog_endTime); 
@@ -158,7 +183,7 @@ public class TerminDialog extends TitleAreaDialog {
 		lTerminListe.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				int idx=lTerminListe.getSelectionIndex();
 				if((idx > -1) && (idx< lTermine.size())){
 					actPlannable=lTermine.get(idx);
@@ -186,7 +211,7 @@ public class TerminDialog extends TitleAreaDialog {
 		bLocked.setText(Messages.TerminDialog_locked); 
 		bLocked.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				if(actPlannable instanceof Termin){
 					((Termin)actPlannable).setLocked(bLocked.getSelection());
 				}
@@ -203,7 +228,7 @@ public class TerminDialog extends TitleAreaDialog {
 		bSave.setToolTipText(Messages.TerminDialog_createTermin); 
 		bSave.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				createTermin(true);
 			}
 		});
@@ -218,7 +243,7 @@ public class TerminDialog extends TitleAreaDialog {
 		bDelete.setToolTipText(Messages.TerminDialog_deleteTermin); 
 		bDelete.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				if(actPlannable instanceof Termin){
 					lTerminListe.remove(lTerminListe.getSelectionIndex());
 					lTermine.remove(actPlannable);
@@ -238,7 +263,7 @@ public class TerminDialog extends TitleAreaDialog {
 		bSearch.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				if(actPatient!=null){
 					Query<Termin> qbe=new Query<Termin>(Termin.class);
 					qbe.add("Wer", "=", actPatient.getId());
@@ -249,7 +274,7 @@ public class TerminDialog extends TitleAreaDialog {
 					java.util.List<Termin> list=qbe.execute();
 					lTermine.clear();
 					lTerminListe.removeAll();
-					if(list!=null && list.size()>0){
+					if((list!=null) && (list.size()>0)){
 						for(Termin t:list){
 							lTermine.add(t);
 							String label=t.getLabel();
@@ -267,7 +292,7 @@ public class TerminDialog extends TitleAreaDialog {
 		bPrint.setLayoutData(new GridData(s.x,s.y));
 		bPrint.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e){
 				new TermineDruckenDialog(getShell(),lTermine.toArray(new Termin[0])).open();
 			}
 			
@@ -293,7 +318,7 @@ public class TerminDialog extends TitleAreaDialog {
 		hl.setText(Messages.TerminDialog_enterPersonalia); 
 		hl.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(final HyperlinkEvent e) {
 				InputDialog inp=new InputDialog(getShell(),Messages.TerminDialog_enterText,Messages.TerminDialog_enterFreeText,"",null); 
 				if(inp.open()==Dialog.OK){
 					tName.setText(inp.getValue());
@@ -317,7 +342,7 @@ public class TerminDialog extends TitleAreaDialog {
 		cbMandant.setText(actBereich);
 		cbMandant.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				setAll();
 			}
 			
@@ -384,7 +409,7 @@ public class TerminDialog extends TitleAreaDialog {
 	 */
 	class StatusTypListener extends SelectionAdapter{
 		@Override
-		public void widgetSelected(SelectionEvent e) {
+		public void widgetSelected(final SelectionEvent e) {
 			if(e.getSource().equals(cbTyp)){
 				if(actPlannable instanceof Termin){
 					((Termin)actPlannable).setType(cbTyp.getItem(cbTyp.getSelectionIndex()));
@@ -462,7 +487,7 @@ public class TerminDialog extends TitleAreaDialog {
 		slider.set();	
 	}
 
-	private void enable(boolean mode){
+	private void enable(final boolean mode){
 		if(mode){
 			bChange.setEnabled(true);
 			bSave.setEnabled(true);
@@ -499,7 +524,7 @@ public class TerminDialog extends TitleAreaDialog {
 		
 	}
 	
-	private void setCombo(Combo combo, String value, int def){
+	private void setCombo(final Combo combo, final String value, final int def){
 		String[] elems=combo.getItems();
 		int idx=StringTool.getIndex(elems, value);
 		if(idx==-1){
@@ -518,12 +543,12 @@ public class TerminDialog extends TitleAreaDialog {
 	    int sep;
 		
 	    java.util.List<IPlannable> list;
-	    dayOverview(Composite parent){
+	    dayOverview(final Composite parent){
 	    	super(parent, SWT.NONE);
 	        addPaintListener(this);
 	        addMouseListener(new MouseAdapter(){
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(final MouseEvent e) {
 					if(e.y>sep+2){
 						rasterIndex=(rasterIndex>=rasterValues.length) ? 0 : rasterIndex+1;
 						Hub.userCfg.set("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
@@ -579,19 +604,19 @@ public class TerminDialog extends TitleAreaDialog {
 	    }
 	    
 		@Override
-		public Point computeSize(int wHint, int hHint, boolean changed) {
+		public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 			return new Point(getParent().getSize().x,30);
 		}
 		/**
 		 * Tagesbalken zeichnen
 		 */
-		public void paintControl(PaintEvent pe)
+		public void paintControl(final PaintEvent pe)
 		{   
 	        recalc();
 	        GC g=pe.gc;
 	        Color def=g.getBackground();
 	        // Balken zeichnen
-			g.setBackground(Desk.theColorRegistry.get("grün")); //$NON-NLS-1$
+			g.setBackground(Desk.theColorRegistry.get(Desk.COL_GREEN)); 
 			Rectangle r=new Rectangle(0,0,d.x,sep-2);
 			g.fillRectangle(r);
 			
@@ -613,8 +638,9 @@ public class TerminDialog extends TitleAreaDialog {
 			int chunksPerHour=60/rasterValues[rasterIndex];
 			int ch=chunksPerHour-1;
 			int hr=tagStart/60;
-            if(chunkwidth<0.1)
-                return;
+            if(chunkwidth<0.1) {
+				return;
+			}
 			for(double x=0;x<=d.x;x+=chunkwidth)
 			{	int lx=(int)Math.round(x);
 				if(++ch==chunksPerHour)
@@ -632,7 +658,7 @@ public class TerminDialog extends TitleAreaDialog {
 	}
 	private class Slider extends Composite implements MouseListener, MouseMoveListener{
 		boolean isDragging;
-		Slider(Composite parent){
+		Slider(final Composite parent){
 			super(parent,SWT.BORDER);
 			setBackground(Desk.theColorRegistry.get("rot")); //$NON-NLS-1$
 			addMouseListener(this);
@@ -649,17 +675,17 @@ public class TerminDialog extends TitleAreaDialog {
 			bModified=true;
 			setEnablement();
 		}
-		public void mouseDoubleClick(MouseEvent e) {}
-		public void mouseDown(MouseEvent e) {
+		public void mouseDoubleClick(final MouseEvent e) {}
+		public void mouseDown(final MouseEvent e) {
 			isDragging=true;
 		}
-		public void mouseUp(MouseEvent e) {
+		public void mouseUp(final MouseEvent e) {
 			if(isDragging){
 				isDragging=false;
 				updateTimes();
 			}
 		}
-		public void mouseMove(MouseEvent e) {
+		public void mouseMove(final MouseEvent e) {
 			if(isDragging){
 				Point loc=getLocation();
 				int x=loc.x+e.x;
@@ -687,7 +713,7 @@ public class TerminDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
-	private void createTermin(boolean bMulti){
+	private void createTermin(final boolean bMulti){
 		int von=tiVon.getTimeAsMinutes();
 		int bis=von+niDauer.getValue();
 		String typ=cbTyp.getItem(cbTyp.getSelectionIndex());
