@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3140 2007-09-11 06:54:04Z rgw_ch $
+ * $Id: XMLExporter.java 3263 2007-10-17 12:39:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -617,13 +617,13 @@ public class XMLExporter implements IRnOutputter {
 			
 		Element patient=new Element("patient",ns);												// 	11100
 		
-		patient.setAttribute("unique_id",rn.getFall().getId());
+		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is optional and should be ssn13 type. leave it out for now
 		String gender="male";
 		if(pat==null){
 			MessageDialog.openError(null,"Fehler","Die Rechnung hat keinen zugeordneten Patienten");
 			return null;
 		}
-		if(StringTool.isNothing(pat.getGeschlecht())){
+		if(StringTool.isNothing(pat.getGeschlecht())){		// we fall back to female. why not?
 			pat.set("Geschlecht","w");
 		}
 		if(pat.getGeschlecht().equals("w")){
