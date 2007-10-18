@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3262 2007-10-14 18:21:08Z rgw_ch $
+ * $Id: Connection.java 3268 2007-10-18 11:43:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -34,7 +34,7 @@ import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 
 public class Connection implements SerialPortEventListener{
-	private static final String simulate="c:/abx.txt";
+	private static final String simulate=null; //"c:/abx.txt";
 	
 	private CommPortIdentifier portId;
 	private SerialPort sPort;
