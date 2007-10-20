@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3271 2007-10-20 10:04:21Z rgw_ch $
+<!-- $Id: build.xml 3273 2007-10-20 10:16:19Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -126,26 +126,25 @@
 		<available file="../elexis-artikel-oesterreich/build.xml" property="artaustria.ok"/>
 		<available file="../Sgam-Exchange/build.xml" property="sgamxchange.ok"/>
 		<available file="../elexis-trustx-embed/build.xml" property="trustx.ok"/>
+		<available file="../elexis-importer-aerztekasse/build.xml" property="aekasse.ok"/>
 		<ant antfile="../elexis-externe-dokumente/build.xml"/>
 		<antcall target="sgamxchange"/>
 		<antcall target="artaustria"/>
 		<antcall target="trustx"/>
+		<antcall target="aekasse"/>
 	</target>
 
-	<!-- Importer-Plugins -->
-	<target name="importers" depends="prepare">
-		<ant antfile="../elexis-importer-aerztekasse/build.xml"/>
-	</target>
-
+	
 	<!-- These plugins are not part of the standard distribution -->
 	<target name="elexis-pro" depends="all">
+		<ant antfile="../elexis-pro/build.xml"/>
+		
 		<available file="../elexis-kassenbuch/build.xml" property="kassenbuch.ok"/>
 		<available file="../elexis-importer-praxistar/build.xml" property="praxistar.ok"/>
 		<available file="../elexis-connect-abxmicros/build.xml" property="abxmicros.ok"/>
 		<available file="../elexis-connect-urilux/build.xml" property="urilux.ok"/>
 		<available file="../molemax/build.xml" property="molemax.ok"/>
 		
-		<ant antfile="../elexis-pro/build.xml"/>
 		<antcall target="urilux"/>
 		<antcall target="abxmicros"/>
 		<antcall target="kassenbuch"/>	
@@ -163,7 +162,7 @@
 	
 	</target>
 
-	<target name="all" depends="main,options,importers"/>
+	<target name="all" depends="main,options"/>
 
 	<target name="kassenbuch" if="kassenbuch.ok">
 		<ant antfile="../elexis-kassenbuch/build.xml"/>
@@ -203,6 +202,10 @@
 
 	<target name="molemax" if="molemax.ok">
 		<ant antfile="../molemax/build.xml"/>
+	</target>
+		
+	<target name="aekasse" if="aekasse.ok">
+		<ant antfile="../elexis-importer-aerztekasse/build.xml"/>
 	</target>
 		
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
