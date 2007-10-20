@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3270 2007-10-20 10:00:07Z rgw_ch $
+<!-- $Id: build.xml 3271 2007-10-20 10:04:21Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -123,9 +123,9 @@
 
 	<!-- Optionale Plugins -->
 	<target name="options" depends="prepare">
-		<available file="../elexis-artikel-oesterreich/build.xml" propertie="artaustria.ok"/>
-		<available file="../Sgam-Exchange/build.xml" propertie="sgamxchange.ok"/>
-		<available file="../elexis-trustx-embed/build.xml" propertie="trustx.ok"/>
+		<available file="../elexis-artikel-oesterreich/build.xml" property="artaustria.ok"/>
+		<available file="../Sgam-Exchange/build.xml" property="sgamxchange.ok"/>
+		<available file="../elexis-trustx-embed/build.xml" property="trustx.ok"/>
 		<ant antfile="../elexis-externe-dokumente/build.xml"/>
 		<antcall target="sgamxchange"/>
 		<antcall target="artaustria"/>
