@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 3277 2007-10-21 09:27:45Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 3279 2007-10-21 15:12:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
 import ch.elexis.data.Query;
@@ -31,6 +32,10 @@ import ch.rgw.tools.ExHandler;
  *
  */
 public class ResponseAnalyzer {
+	final static Namespace ns=Namespace.getNamespace("invoice", "http://www.xmlData.ch/xmlInvoice/XSD");
+	final static Namespace xsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XMLSchema-instance");
+	final static Namespace nsSchema=Namespace.getNamespace("schemaLocation", "http://www.xmlData.ch/xmlInvoice/XSD");
+
 	Document responseDoc;
 	Element eRoot;
 	public Document load(InputStream xmlResponse){
@@ -50,19 +55,24 @@ public class ResponseAnalyzer {
 			return "";
 		}
 		StringBuilder ret=new StringBuilder();
-		Element eHeader=eRoot.getChild("header");
-		Element eSender=eHeader.getChild("sender");
-		Element eIntermediate=eHeader.getChild("intemediate");
-		Element eRecipient=eHeader.getChild("recipient");
+		Element eHeader=eRoot.getChild("header",ns);
+		Element eSender=eHeader.getChild("sender",ns);
+		Element eIntermediate=eHeader.getChild("intermediate",ns);
+		Element eRecipient=eHeader.getChild("recipient",ns);
 		ret.append("Sender: ").append(eSender.getAttributeValue("ean_party")).append("\n");
 		ret.append("Intermediär: ").append(eIntermediate.getAttributeValue("ean_party")).append("\n");
 		ret.append("Empfänger: ").append(eRecipient.getAttributeValue("ean_party")).append("\n");
 		ret.append("Status:\n______\n");
-		Element eInvoice=eRoot.getChild("invoice");
+		Element eInvoice=eRoot.getChild("invoice",ns);
 		String rnId=eInvoice.getAttributeValue("invoice_id");
 		int tr=rnId.lastIndexOf('0');
-		String patNr=Integer.toString(Integer.parseInt(rnId.substring(0, tr))); // eliminate leading zeroes
-		String rnNr=rnId.substring(tr)+1;
+		String rnNr;
+		if(tr==-1){
+			rnNr=rnId;
+		}else{
+			String patNr=Integer.toString(Integer.parseInt(rnId.substring(0, tr))); // eliminate leading zeroes
+			rnNr=rnId.substring(tr+1);
+		}
 		Rechnung rn=Rechnung.getFromNr(rnNr);
 		if(rn==null){
 			ret.append("Die in der Antwort genannte Rechnung ist nicht bekannt!");
@@ -71,14 +81,14 @@ public class ResponseAnalyzer {
 			ret.append("Patient: ").append(rn.getFall().getPatient().getLabel()).append("\n");
 			ret.append("Datum: ").append(rn.getDatumRn()).append("\n----------------------\n");
 		}
-		Element eStatus=eRoot.getChild("status");
+		Element eStatus=eRoot.getChild("status",ns);
 		List<Element> lStatus=eStatus.getChildren();
 		if(lStatus.size()!=1){
 			ret.append("Nicht standardgemäss deklariert.\n");
 		}else{
 			Element eStatusType=lStatus.get(0);
-			Element eError=eStatusType.getChild("error");
-			Element eExpl=eStatusType.getChild("explanation");
+			Element eError=eStatusType.getChild("error",ns);
+			Element eExpl=eStatusType.getChild("explanation",ns);
 			String explanation="Keine Erläuterung angegeben";
 			if(eExpl!=null){
 				explanation=eExpl.getText();
