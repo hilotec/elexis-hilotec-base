@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 3276 2007-10-21 07:23:06Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 3277 2007-10-21 09:27:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -20,6 +20,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
+import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
 import ch.rgw.tools.ExHandler;
 
 /**
@@ -57,29 +59,67 @@ public class ResponseAnalyzer {
 		ret.append("Empfänger: ").append(eRecipient.getAttributeValue("ean_party")).append("\n");
 		ret.append("Status:\n______\n");
 		Element eInvoice=eRoot.getChild("invoice");
-		
+		String rnId=eInvoice.getAttributeValue("invoice_id");
+		int tr=rnId.lastIndexOf('0');
+		String patNr=Integer.toString(Integer.parseInt(rnId.substring(0, tr))); // eliminate leading zeroes
+		String rnNr=rnId.substring(tr)+1;
+		Rechnung rn=Rechnung.getFromNr(rnNr);
+		if(rn==null){
+			ret.append("Die in der Antwort genannte Rechnung ist nicht bekannt!");
+		}else{
+			ret.append("Rechnungsnummer: ").append(rnNr).append("\n");
+			ret.append("Patient: ").append(rn.getFall().getPatient().getLabel()).append("\n");
+			ret.append("Datum: ").append(rn.getDatumRn()).append("\n----------------------\n");
+		}
 		Element eStatus=eRoot.getChild("status");
 		List<Element> lStatus=eStatus.getChildren();
 		if(lStatus.size()!=1){
 			ret.append("Nicht standardgemäss deklariert.\n");
 		}else{
 			Element eStatusType=lStatus.get(0);
+			Element eError=eStatusType.getChild("error");
+			Element eExpl=eStatusType.getChild("explanation");
+			String explanation="Keine Erläuterung angegeben";
+			if(eExpl!=null){
+				explanation=eExpl.getText();
+			}
 			String status=eStatusType.getName().toLowerCase();
 			if(status.equals("rejected")){
-				ret.append("Zurückgewiesen.\n");
+				ret.append("Zurückgewiesen.\n").append(explanation).append("\n");
+				if(eError!=null){
+					ret.append("Fehlercode: ");
+					ret.append(eError.getAttributeValue("major")).append(".");
+					ret.append(eError.getAttributeValue("minor")).append("->");
+					ret.append(eError.getAttributeValue("error")).append("\n");
+				}
+					
 				
 			}else if(status.equals("calledin")){
-				ret.append("Weitere Informationen angefordert.\n");
+				ret.append("Weitere Informationen angefordert.\n").append(explanation).append("\n");
+				if(eError!=null){
+					ret.append("Code: ").append(eError.getAttributeValue("major"));
+				}
 			}else if(status.equals("pending")){
-				ret.append("In Bearbeitung.\n");
+				ret.append("In Bearbeitung.\n").append(explanation).append("\n");
 			}else if(status.equals("resend")){
-				ret.append("Bitte nochmal senden.\n");
+				ret.append("Bitte nochmal senden.\n").append(explanation).append("\n");
 			}else if(status.equals("modified")){
-				ret.append("Korrigiert.\n");
+				ret.append("Korrigiert.\n").append(explanation).append("\n");
+				if(eError!=null){
+					ret.append("Korrekturcode: ");
+					ret.append(eError.getAttributeValue("major")).append(".")
+						.append(eError.getAttributeValue("minor")).append(" -> ")
+						.append(eError.getAttributeValue("error")).append("\n");
+				}
 			}else if(status.equals("anulment")){
-				ret.append("storniert.\n");
+				ret.append("Storno.\n").append(explanation).append("\n");
+				List<Element> reasons=eStatusType.getChildren();
+				Element eReason=reasons.get(0);
+				ret.append(eReason.getName()).append("\n");
 			}else if(status.equals("creditadvice")){
-				ret.append("Gutschrift.\n");
+				ret.append("Gutschrift.\n").append(explanation).append("\n");
+				Element eAnswer=(Element)eStatusType.getChildren().get(0);
+				ret.append(eAnswer.getName()).append("\n");
 			}else{
 				ret.append("Unbekannter Statustyp\n");
 			}
