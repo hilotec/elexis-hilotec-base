@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3183 2007-09-20 09:39:06Z rgw_ch $
+ *  $Id: Rechnung.java 3278 2007-10-21 09:27:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -494,6 +494,15 @@ public class Rechnung extends PersistentObject {
 			return ret;
 		}
 		return null;
+	}
+	public static Rechnung getFromNr(String Rnnr){
+		String id=new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", Rnnr);
+		Rechnung ret=load(id);
+		if(ret.isValid()){
+			return ret;
+		}else{
+			return null;
+		}
 	}
 	/** Die nächste Rechnungsnummer holen. */
 	public static String getNextRnNummer(){
