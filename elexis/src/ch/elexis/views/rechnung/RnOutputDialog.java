@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnOutputDialog.java 3054 2007-09-01 16:36:23Z rgw_ch $
+ *  $Id: RnOutputDialog.java 3280 2007-10-21 15:12:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -81,7 +81,12 @@ public class RnOutputDialog extends TitleAreaDialog {
 			}
 			
 		});
-		cbLo.select(Hub.localCfg.get(PreferenceConstants.RNN_DEFAULTEXPORTMODE, 0));
+		int lastSelected=Hub.localCfg.get(PreferenceConstants.RNN_DEFAULTEXPORTMODE, 0);
+		if((lastSelected<0) || (lastSelected>=cbLo.getItemCount())){
+			lastSelected=0;
+			Hub.localCfg.set(PreferenceConstants.RNN_DEFAULTEXPORTMODE, 0);
+		}
+		cbLo.select(lastSelected);
 		stack.topControl=ctls.get(cbLo.getSelectionIndex());
 		bottom.layout();
 		return ret;
