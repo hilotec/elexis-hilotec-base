@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientErfassenDialog.java 3146 2007-09-12 15:51:33Z rgw_ch $
+ *  $Id: PatientErfassenDialog.java 3283 2007-10-24 16:00:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -79,18 +79,22 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.street")); //$NON-NLS-1$
 		tStrasse=new Text(ret,SWT.BORDER);
+		tStrasse.setText(fld.length > 3? fld[3]: "");
 		tStrasse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.zip")); //$NON-NLS-1$
 		tPlz=new Text(ret,SWT.BORDER);
+		tPlz.setText(fld.length > 4? fld[4]: "");
 		tPlz.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.city")); //$NON-NLS-1$
 		tOrt=new Text(ret,SWT.BORDER);
+		tOrt.setText(fld.length > 5? fld[5]: "");
 		tOrt.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.phone")); //$NON-NLS-1$
 		tTel=new Text(ret,SWT.BORDER);
+		tTel.setText(fld.length > 6? fld[6]: "");
 		tTel.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		return ret;
 	}
