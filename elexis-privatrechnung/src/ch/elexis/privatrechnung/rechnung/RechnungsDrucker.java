@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3287 2007-10-26 04:39:23Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3293 2007-10-26 15:33:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -19,7 +19,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,13 +27,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.jdom.Document;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
-import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
@@ -42,7 +39,6 @@ import ch.elexis.data.Verrechnet;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
@@ -81,7 +77,7 @@ public class RechnungsDrucker implements IRnOutputter {
 		tVorlage.setText(Hub.globalCfg.get(settings, ""));
 		tVorlage.addModifyListener(new ModifyListener(){
 
-			public void modifyText(ModifyEvent e) {
+			public void modifyText(final ModifyEvent e) {
 				template=tVorlage.getText();
 				
 			}});
@@ -150,13 +146,13 @@ public class RechnungsDrucker implements IRnOutputter {
 	 * @param tc
 	 * @return
 	 */
-	public Result<Rechnung> doPrint(Rechnung rn, TextContainer tc){
+	public Result<Rechnung> doPrint(final Rechnung rn, final TextContainer tc){
 		Result<Rechnung> ret=new Result<Rechnung>();
 		List<Konsultation> kons=rn.getKonsultationen();
 		Collections.sort(kons, new Comparator<Konsultation>(){
 			TimeTool t0=new TimeTool();
 			TimeTool t1=new TimeTool();
-			public int compare(Konsultation arg0, Konsultation arg1) {
+			public int compare(final Konsultation arg0, final Konsultation arg1) {
 				t0.set(arg0.getDatum());
 				t1.set(arg1.getDatum());
 				return t0.compareTo(t1);
