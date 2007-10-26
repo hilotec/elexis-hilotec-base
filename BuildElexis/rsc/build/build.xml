@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3274 2007-10-20 18:02:26Z rgw_ch $
+<!-- $Id: build.xml 3289 2007-10-26 04:39:33Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -128,7 +128,6 @@
 			<antcall target="noatext"/>		
 		<available file="../OOwrapper/build.xml" property="oowrapper.ok"/>
 			<antcall target="oowrapper"/>
-				
 
 		<available file="../elexis-agenda/build.xml" property="agenda.ok"/>
 			<antcall target="agenda"/>
