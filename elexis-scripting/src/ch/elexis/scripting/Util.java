@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: Util.java 3288 2007-10-26 04:39:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.scripting;
