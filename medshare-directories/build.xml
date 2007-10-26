@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 3290 2007-10-26 04:48:51Z rgw_ch $
+ * $Id: build.xml 3294 2007-10-26 15:33:06Z rgw_ch $
 -->
 <project name="medshare-directories" default="all">
 	<!-- modify the following 2 lines -->
@@ -47,9 +47,7 @@
 	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
 		<tstamp/>
-		<exec command="texify molemax.tex" dir="${sourcedir}/doc" />
-		<copy file="${sourcedir}/doc/molemax.pdf" todir="${plugindir}"></copy>
-		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.elexis.molemax_${version}.${DSTAMP}.zip"/>
+		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
 	</target>
 </project>
