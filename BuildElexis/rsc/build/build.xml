@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3291 2007-10-26 04:48:58Z rgw_ch $
+<!-- $Id: build.xml 3292 2007-10-26 15:32:55Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -234,10 +234,10 @@
 	<target name="privatrechnung" if="privatrechnung.ok" depends="main">
 		<ant antfile="../elexis-privatrechnung/build.xml"/>
 	</target>
-	<target name="agenda" if="agenda.ok" depends="main">
+	<target name="agenda" if="agenda.ok">
 		<ant antfile="../elexis-agenda/build.xml"/>
 	</target>
-	<target name="icpc" if="icpc.ok" depends="main">
+	<target name="icpc" if="icpc.ok">
 		<ant antfile="../elexis-icpc/build.xml"/>
 	</target>
 	<target name="kassenbuch" if="kassenbuch.ok">
