@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3263 2007-10-17 12:39:26Z rgw_ch $
+ * $Id: XMLExporter.java 3300 2007-10-29 18:17:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -222,6 +222,23 @@ public class XMLExporter implements IRnOutputter {
 		actPatient=actFall.getPatient();
 		actMandant=rn.getMandant();
 		Kontakt kostentraeger=actFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		// We try to figure out whether we should use Tiers Payant or Tiers Garant.
+		// if unsure, we make it TG
+		String tiers="TG";
+		Patient pat=actFall.getPatient();
+		Kontakt rnAdressat=actFall.getGarant();
+		
+		if((kostentraeger!=null) && (kostentraeger.isValid())){
+			if(rnAdressat.equals(kostentraeger)){
+				tiers="TP";
+			}else{
+				tiers="TG";
+			}
+		}else{
+			kostentraeger=rnAdressat;
+			tiers="TG";
+		}
+
 		if(kostentraeger==null){
 			kostentraeger=actPatient;
 		}
@@ -567,22 +584,7 @@ public class XMLExporter implements IRnOutputter {
 			esr.addContent(eBank);
 		}
 		invoice.addContent(esr);
-		//String tiers=actMandant.getInfoString(ta.TIERS);
-		String tiers="TG";
-		Patient pat=actFall.getPatient();
-		Kontakt rnAdressat=actFall.getGarant();
 		
-		if((kostentraeger!=null) && (kostentraeger.isValid())){
-			if(rnAdressat.equals(kostentraeger)){
-				tiers="TP";
-			}else{
-				tiers="TG";
-			}
-		}else{
-			kostentraeger=rnAdressat;
-			tiers="TP";
-		}
-
 		Element eTiers=null;
 		if(tiers.equals("TG")){								
 			eTiers=new Element("tiers_garant",ns);												//  11020
