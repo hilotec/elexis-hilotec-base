@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchForm.java 3286 2007-10-26 04:37:22Z rgw_ch $
+ * $Id: WeisseSeitenSearchForm.java 3298 2007-10-29 14:52:40Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.dialogs.KontaktErfassenDialog;
 import ch.elexis.dialogs.PatientErfassenDialog;
 import ch.elexis.util.SWTHelper;
 import ch.medshare.elexis.directories.DirectoriesContentParser;
@@ -112,7 +113,8 @@ public class WeisseSeitenSearchForm extends Composite {
 		getShell().setCursor(waitCursor);
 
 		try {
-			String content = DirectoriesHelper.readContent(name + "*", geo + "*");
+			String content = DirectoriesHelper.readContent(name, geo
+					+ "*");
 			DirectoriesContentParser parser = new DirectoriesContentParser(
 					content);
 			kontakte = parser.extractKontakte();
@@ -141,26 +143,42 @@ public class WeisseSeitenSearchForm extends Composite {
 	}
 
 	/**
-	 * Liest Detailinformationen zu einem Patienten
+	 * Retourniert String array für Dialoge
+	 */
+	private String[] getFields(KontaktEntry entry) {
+		final String name = entry.getName() + " " //$NON-NLS-1$
+				+ entry.getVorname();
+		final String geo = entry.getPlz() + " " //$NON-NLS-1$
+				+ entry.getOrt();
+		if (!entry.isDetail()) { // Sind Detailinformationen vorhanden
+			readKontakte(name, geo); // Detail infos lesen
+			if (getKontakte().size() > 0) {
+				entry = getKontakte().get(0);
+			}
+		}
+		return new String[] { entry.getName(), entry.getVorname(),
+				"", entry.getAdresse(), entry.getPlz(), //$NON-NLS-1$
+				entry.getOrt(), entry.getTelefon() };
+	}
+
+	/**
+	 * Öffnet Dialog zum Erfassen eines Patienten
 	 */
 	public void openPatientenDialog(KontaktEntry entry) {
 		if (entry != null) {
-			final String name = entry.getName() + " " //$NON-NLS-1$
-					+ entry.getVorname();
-			final String geo = entry.getPlz() + " " //$NON-NLS-1$
-					+ entry.getOrt();
-			if (!entry.isDetail()) { // Sind Detailinformationen vorhanden
-				readKontakte(name, geo); // Detail infos lesen
-				if (getKontakte().size() > 0) {
-					entry = getKontakte().get(0); 
-				}
-			}
-			
-			final String fields[] = new String[] { entry.getName(),
-					entry.getVorname(), "", entry.getAdresse(), entry.getPlz(), //$NON-NLS-1$
-					entry.getOrt(), entry.getTelefon() };
 			final PatientErfassenDialog dialog = new PatientErfassenDialog(
-					getShell(), fields);
+					getShell(), getFields(entry));
+			dialog.open();
+		}
+	}
+	
+	/**
+	 * Öffnet Dialog zum Erfassen eines Kontaktes
+	 */
+	public void openKontaktDialog(KontaktEntry entry) {
+		if (entry != null) {
+			final KontaktErfassenDialog dialog = new KontaktErfassenDialog(
+					getShell(), getFields(entry));
 			dialog.open();
 		}
 	}

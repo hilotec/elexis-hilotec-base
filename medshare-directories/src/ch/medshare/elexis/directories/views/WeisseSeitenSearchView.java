@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchView.java 3286 2007-10-26 04:37:22Z rgw_ch $
+ * $Id: WeisseSeitenSearchView.java 3298 2007-10-29 14:52:40Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -42,9 +43,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+
+import ch.elexis.Hub;
 import ch.elexis.util.SWTHelper;
 import ch.medshare.elexis.directories.KontaktEntry;
 
@@ -57,6 +58,7 @@ public class WeisseSeitenSearchView extends ViewPart {
 	private TableViewer kontakteTableViewer;
 	private Text searchInfoText;
 	private Action newPatientAction;
+	private Action newKontaktAction;
 	WeisseSeitenSearchForm searchForm;
 
 	class WhitePageLabelProvider extends LabelProvider implements
@@ -211,14 +213,20 @@ public class WeisseSeitenSearchView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
+		manager.add(newKontaktAction);
+		manager.add(new Separator());
 		manager.add(newPatientAction);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
+		manager.add(newKontaktAction);
+		manager.add(new Separator());
 		manager.add(newPatientAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(newKontaktAction);
+		manager.add(new Separator());
 		manager.add(newPatientAction);
 	}
 
@@ -234,6 +242,19 @@ public class WeisseSeitenSearchView extends ViewPart {
 			}
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void openKontaktDialog() {
+		final StructuredSelection selection = (StructuredSelection) kontakteTableViewer
+				.getSelection();
+		if (!selection.isEmpty()) {
+			Iterator<KontaktEntry> iterator = selection.iterator();
+			while (iterator.hasNext()) {
+				final KontaktEntry selectedKontakt = iterator.next();
+				searchForm.openKontaktDialog(selectedKontakt);
+			}
+		}
+	}
 
 	private void makeActions() {
 		newPatientAction = new Action() {
@@ -245,15 +266,24 @@ public class WeisseSeitenSearchView extends ViewPart {
 				.getString("WeisseSeitenSearchView.popup.newPatient")); //$NON-NLS-1$
 		newPatientAction.setToolTipText(Messages
 				.getString("WeisseSeitenSearchView.tooltip.newPatient")); //$NON-NLS-1$
-		newPatientAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_NEW_WIZARD));
+		newPatientAction.setImageDescriptor(Hub.getImageDescriptor("rsc/patneu.ico"));
+		
+		newKontaktAction = new Action() {
+			public void run() {
+				openKontaktDialog();
+			}
+		};
+		newKontaktAction.setText(Messages
+				.getString("WeisseSeitenSearchView.popup.newKontakt")); //$NON-NLS-1$
+		newKontaktAction.setToolTipText(Messages
+				.getString("WeisseSeitenSearchView.tooltip.newKontakt")); //$NON-NLS-1$
+		newKontaktAction.setImageDescriptor(Hub.getImageDescriptor("rsc/new2.ico"));
 	}
 
 	private void hookDoubleClickAction() {
 		kontakteTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				newPatientAction.run();
+				newKontaktAction.run();
 			}
 		});
 	}
