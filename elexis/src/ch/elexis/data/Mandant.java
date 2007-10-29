@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Mandant.java 3016 2007-08-26 13:26:12Z rgw_ch $
+ *    $Id: Mandant.java 3296 2007-10-29 14:51:39Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -98,6 +98,12 @@ public class Mandant extends Anwender {
 	protected Mandant(String id){
 		super(id);
 	}
+	
+    public Mandant(final String Name, final String Vorname, final String Geburtsdatum, final String s)
+    {
+    	super(Name, Vorname,Geburtsdatum,s);
+    }
+    
     protected Mandant(){/* leer */}
     public static Mandant load(String id){
     	Mandant ret=new Mandant(id);
