@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3293 2007-10-26 15:33:01Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3301 2007-10-31 17:25:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -75,14 +75,15 @@ public class RechnungsDrucker implements IRnOutputter {
 		final Text tVorlage=new Text(ret,SWT.BORDER);
 		tVorlage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tVorlage.setText(Hub.globalCfg.get(settings, ""));
-		tVorlage.addModifyListener(new ModifyListener(){
-
-			public void modifyText(final ModifyEvent e) {
+		tVorlage.addFocusListener(new FocusAdapter(){
+			@Override
+			public void focusLost(final FocusEvent ev){
 				template=tVorlage.getText();
-				
-			}});
+				Hub.globalCfg.set(settings, template);
+			}
+		});
+		tVorlage.setText(Hub.globalCfg.get(settings, "privatrechnung"));
 		return ret;
-
 	}
 
 	/**
@@ -99,13 +100,11 @@ public class RechnungsDrucker implements IRnOutputter {
 				Control ret= tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback(){
 
 					public void save() {
-						// TODO Auto-generated method stub
-						
+						// we don't save
 					}
 
 					public boolean saveAs() {
-						// TODO Auto-generated method stub
-						return false;
+						return false;	// nope
 					}});
 
 				return ret;
