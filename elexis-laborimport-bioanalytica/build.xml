@@ -13,7 +13,7 @@
 -->
 <project name="laborimportBioanalytica" default="all">
 	<!-- modify the following 2 lines -->
-	<property name="pluginname" value="Laborimport-Bioanalytica"/>
+	<property name="pluginname" value="elexis-laborimport-bioanalytica"/>
 	<property name="targetdir" value="ch.elexis.laborimport_bioanalytica_${version}"/>
 
 	<!-- the remainder of the file can be copied without modifications for most plugins -->
