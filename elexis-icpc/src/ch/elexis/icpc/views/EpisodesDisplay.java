@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 2917 2007-07-25 17:09:08Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 3302 2007-11-01 11:05:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -49,6 +49,9 @@ public class EpisodesDisplay extends Composite {
 	ScrolledForm form;
 	Patient actPatient;
 	TreeViewer tvEpisodes;
+	final static String DEFAULT_DIAGNOSIS_NAME="Diagnosen";
+	final static String ICPC_DIAGNOSIS_NAME="ICPC-Code";
+	 
 	public EpisodesDisplay(final Composite parent){
 		super(parent,SWT.NONE);
 		setLayout(new GridLayout());
@@ -113,6 +116,20 @@ public class EpisodesDisplay extends Composite {
 					PersistentObject dg=Hub.poFactory.createFromString(diag);
 					if(dg!=null){
 						ret.add("KK-Diagnose: "+dg.getLabel());
+					}
+				}
+				String icpc=ep.get("ICPC-Code");
+				if(!icpc.startsWith("**")){
+					PersistentObject dg=Hub.poFactory.createFromString(icpc);
+					if(dg!=null){
+						ret.add("ICPC-Code: "+dg.getLabel());
+					}
+				}
+				String icd10=ep.get("ICD-Code");
+				if(!icd10.startsWith("**")){
+					PersistentObject dg=Hub.poFactory.createFromString(icd10);
+					if(dg!=null){
+						ret.add("ICD-Code: "+dg.getLabel());
 					}
 				}
 				return ret.toArray();
@@ -200,6 +217,10 @@ public class EpisodesDisplay extends Composite {
 			if(item!=null){
 				Episode hit=getEpisodeFromItem(item);
 				if(hit!=null){
+					if(o instanceof IDiagnose){
+						IDiagnose id=(IDiagnose)o;
+						String codesystem=id.getCodeSystemName();
+					}
 					hit.setExtField("Diagnosen", o.storeToString());
 					//new TreeItem(item,SWT.NONE).setText(o.getLabel());
 					tvEpisodes.refresh();
