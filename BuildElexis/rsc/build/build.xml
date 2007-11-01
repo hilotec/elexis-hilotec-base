@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3292 2007-10-26 15:32:55Z rgw_ch $
+<!-- $Id: build.xml 3306 2007-11-01 17:39:04Z danlutz $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -139,6 +139,8 @@
 			<antcall target="extdok"/>
 		<available file="../Laborimport-Viollier/build.xml" property="viollier.ok"/>
 			<antcall target="viollier"/>
+		<available file="../elexis-laborimport-bioanalytica" property="bioanalytica.ok"/>
+			<antcall target="bioanalytica"/>
 		<available file="../elexis-privatrechnung/build.xml" property="privatrechnung.ok"/>
 			<antcall target="privatrechnung"/>
 		<available file="../elexis-privatnotizen/build.xml" property="privatnotizen.ok"/>
@@ -254,6 +256,9 @@
 	</target>
 	<target name="viollier" if="viollier.ok">
 		<ant antfile="../Laborimport-Viollier/build.xml"/>
+	</target>
+	<target name="bioanalytica" if="bioanalytica.ok">
+		<ant antfile="../elexis-laborimport-bioanalytica/build.xml"/>
 	</target>
 	
 	<target name="abxmicros" if="abxmicros.ok">
