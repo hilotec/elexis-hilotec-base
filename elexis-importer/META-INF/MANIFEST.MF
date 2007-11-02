@@ -12,8 +12,8 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui.forms,
  org.eclipse.ui
 Bundle-ClassPath: .,
- poi-2.5.1-final-20040804.jar,
- RXTXcomm.jar
+ RXTXcomm.jar,
+ poi-3.0.1-FINAL-20070705.jar
 Export-Package: au.com.bytecode.opencsv,
  ch.elexis.importers;
   uses:="org.eclipse.jface.wizard,
