@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 3302 2007-11-01 11:05:28Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 3309 2007-11-04 18:21:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
@@ -49,8 +48,6 @@ public class EpisodesDisplay extends Composite {
 	ScrolledForm form;
 	Patient actPatient;
 	TreeViewer tvEpisodes;
-	final static String DEFAULT_DIAGNOSIS_NAME="Diagnosen";
-	final static String ICPC_DIAGNOSIS_NAME="ICPC-Code";
 	 
 	public EpisodesDisplay(final Composite parent){
 		super(parent,SWT.NONE);
@@ -111,31 +108,12 @@ public class EpisodesDisplay extends Composite {
 				ArrayList<String> ret=new ArrayList<String>();
 				ret.add("Seit: "+ep.get("StartDate"));
 				ret.add("Status: "+ep.getStatusText());
-				String diag=ep.get("Diagnosen");
-				if(!diag.startsWith("**")){
-					PersistentObject dg=Hub.poFactory.createFromString(diag);
-					if(dg!=null){
-						ret.add("KK-Diagnose: "+dg.getLabel());
-					}
-				}
-				String icpc=ep.get("ICPC-Code");
-				if(!icpc.startsWith("**")){
-					PersistentObject dg=Hub.poFactory.createFromString(icpc);
-					if(dg!=null){
-						ret.add("ICPC-Code: "+dg.getLabel());
-					}
-				}
-				String icd10=ep.get("ICD-Code");
-				if(!icd10.startsWith("**")){
-					PersistentObject dg=Hub.poFactory.createFromString(icd10);
-					if(dg!=null){
-						ret.add("ICD-Code: "+dg.getLabel());
-					}
+				List<IDiagnose> diags=ep.getDiagnoses();
+				for(IDiagnose dg:diags){
+					ret.add(dg.getCodeSystemName()+": "+dg.getLabel());
 				}
 				return ret.toArray();
 			}
-				
-			
 			return null;
 		}
 
@@ -219,10 +197,8 @@ public class EpisodesDisplay extends Composite {
 				if(hit!=null){
 					if(o instanceof IDiagnose){
 						IDiagnose id=(IDiagnose)o;
-						String codesystem=id.getCodeSystemName();
+						hit.addDiagnosis(id);
 					}
-					hit.setExtField("Diagnosen", o.storeToString());
-					//new TreeItem(item,SWT.NONE).setText(o.getLabel());
 					tvEpisodes.refresh();
 				}
 			}

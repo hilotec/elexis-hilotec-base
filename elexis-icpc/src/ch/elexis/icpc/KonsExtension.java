@@ -8,9 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 2917 2007-07-25 17:09:08Z rgw_ch $
+ *  $Id: KonsExtension.java 3309 2007-11-04 18:21:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
+
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -59,12 +61,9 @@ public class KonsExtension implements IKonsExtension {
 			Episode ep=(Episode)o;
 			final Konsultation k=GlobalEvents.getSelectedKons();
 			Encounter enc=new Encounter(k,ep);
-			String diag=ep.get("Diagnosen");
-			if(!diag.startsWith("**")){
-				PersistentObject dg=Hub.poFactory.createFromString(diag);
-				if(dg instanceof IDiagnose){
-					k.addDiagnose((IDiagnose)dg);
-				}
+			List<IDiagnose> diags=ep.getDiagnoses();
+			for(IDiagnose dg:diags){
+				k.addDiagnose(dg);
 			}
 			mine.insertXRef(pos, EPISODE_TITLE+ep.getLabel(), Activator.PLUGIN_ID, enc.getId());
 			k.updateEintrag(mine.getDocumentAsText(), false);

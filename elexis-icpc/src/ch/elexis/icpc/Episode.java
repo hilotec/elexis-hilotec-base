@@ -9,18 +9,19 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 2987 2007-08-13 16:18:23Z danlutz $
+ *  $Id: Episode.java 3309 2007-11-04 18:21:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
-import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import ch.elexis.Hub;
+import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
@@ -29,7 +30,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     public static final int INACTIVE = 0;
     public static final int ACTIVE = 1;
 
-	protected static final String VERSION="0.3.2";
+	protected static final String VERSION="0.4.0";
 	protected final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
 		
     protected static final String INACTIVE_VALUE = "0";
@@ -51,16 +52,22 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		
 		"INSERT INTO "+TABLENAME+" (ID,Title) VALUES ('1',"+JdbcLink.wrap(VERSION)+");";
 	
+    private static final String LINKNAME=TABLENAME+"_DIAGNOSES_LINK";
+    private final static String createLink=
+    	"CREATE TABLE "+LINKNAME+" ("+
+		"ID				VARCHAR(25),"+
+		"deleted		char(1) default '0',"+
+		"Episode		VARCHAR(25),"+
+		"Diagnosis		VARCHAR(80)"+
+		");";
+
+    
 	static{
-		addMapping(TABLENAME, "PatientID","Title", "StartDate", "Number", "Status","ExtInfo");
+		addMapping(TABLENAME, "PatientID","Title", "StartDate", "Number", "Status","ExtInfo","DiagLink=JOINT:Diagnosis:Episode:"+LINKNAME);
 		Episode version=load("1");
 		if(!version.exists()){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+			createTable(TABLENAME, createDB);
+			createTable(TABLENAME+"_DIAGNOSES_LINK",createLink);
 		}else{
 			VersionInfo vi=new VersionInfo(version.get("Title"));
 			if(vi.isOlder(VERSION)){
@@ -96,6 +103,10 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 				if(vi.isOlder("0.3.2")){
 					String sql="ALTER TABLE "+TABLENAME+" MODIFY Title VARCHAR(256);";
 					j.exec(j.translateFlavor(sql));
+					version.set("Title", VERSION);
+				}
+				if(vi.isOlder("0.4.0")){
+					createTable(TABLENAME+"_DIAGNOSES_LINK", createLink);
 					version.set("Title", VERSION);
 				}
 			}
@@ -137,6 +148,26 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		return sb.toString();
 	}
 
+	public List<IDiagnose> getDiagnoses(){
+		List<String[]> res=getList("DiagLink", null);
+		List<IDiagnose> ret=new ArrayList<IDiagnose>(res.size());
+		for(String[] diag:res){
+			IDiagnose id=(IDiagnose)Hub.poFactory.createFromString(diag[0]);
+			if(id!=null){
+				ret.add(id);
+			}
+		}
+		return ret;
+	}
+	public void addDiagnosis(IDiagnose id){
+		String clazz=id.getClass().getName();
+		addToList("DiagLink", clazz+"::"+id.getCode(), new String[0]);
+	}
+	
+	public void removeDiagnosis(IDiagnose id){
+		String clazz=id.getClass().getName();
+		removeFromList("DiagLink", clazz+"::"+id.getCode());
+	}
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
