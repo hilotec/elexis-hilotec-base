@@ -8,13 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 2737 2007-07-07 14:07:47Z rgw_ch $
+ *  $Id: ESRRecord.java 3312 2007-11-05 17:59:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
 import java.io.ByteArrayInputStream;
 
-import ch.elexis.data.*;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
 import ch.elexis.util.Money;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -117,7 +121,7 @@ public class ESRRecord extends PersistentObject{
 	/**
 		 * Der Konstruktor liest eine ESR-Zeile ein und konstruiert daraus den Datensatz.
 		 */
-	public ESRRecord(String file,String codeline){
+	public ESRRecord(final String file,final String codeline){
 		super.create(null);
 		Mandant m;
 		Rechnung rn=null;
@@ -185,8 +189,8 @@ public class ESRRecord extends PersistentObject{
 				 
 			}
 			String PatNr=esrline.substring(9,20);
-			int patnr=Integer.parseInt(PatNr);	// führende Nullen wegbringen
-			String PatID=new Query<Patient>(Patient.class).findSingle("PatientNr","=",Integer.toString(patnr));
+			long patnr=Long.parseLong(PatNr);	// führende Nullen wegbringen
+			String PatID=new Query<Patient>(Patient.class).findSingle("PatientNr","=",Long.toString(patnr));
 			if(PatID==null){
 				rejectCode=REJECT.PAT_NUMMER;
 				vals[7]="";
@@ -211,14 +215,14 @@ public class ESRRecord extends PersistentObject{
 	protected String getTableName() {
 		return "ESRRECORDS";
 	}
-	public static ESRRecord load(String id){
+	public static ESRRecord load(final String id){
 		ESRRecord ret=new ESRRecord(id);
 		if(ret.exists()){
 			return ret;
 		}
 		return null;
 	}
-	protected ESRRecord(String id){
+	protected ESRRecord(final String id){
 		super(id);
 	}
 	public ESRRecord(){
