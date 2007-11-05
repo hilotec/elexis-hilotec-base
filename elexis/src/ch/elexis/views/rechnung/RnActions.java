@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3237 2007-10-04 10:25:25Z rgw_ch $
+ * $Id: RnActions.java 3311 2007-11-05 17:58:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -58,7 +58,7 @@ public class RnActions {
     Action rnExportAction, editCaseAction, delRnAction, reactivateRnAction, patDetailAction;
 	Action expandAllAction,collapseAllAction, reloadAction, mahnWizardAction;
 	Action addPaymentAction, addExpenseAction, changeStatusAction, stornoAction;
-	Action increaseLevelAction, printListeAction;
+	Action increaseLevelAction, printListeAction, rnFilterAction;
 	
     RnActions(final RechnungsListeView view){
     	
@@ -326,6 +326,26 @@ public class RnActions {
 				}
 			
 			}	
+		};
+		rnFilterAction=new Action("Liste filtern",Action.AS_CHECK_BOX){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_FILTER));
+				setToolTipText("Bedingungen für die Anzeige eingeben");
+			}
+			@Override
+			public void run(){
+				if(isChecked()){
+					RnFilterDialog rfd=new RnFilterDialog(view.getViewSite().getShell());
+					if(rfd.open()==Dialog.OK){
+						view.cntp.setConstraints(rfd.ret);
+						view.cfp.fireChangedEvent();
+					}
+				}else{
+					view.cntp.setConstraints(null);
+					view.cfp.fireChangedEvent();
+				}
+
+			}
 		};
 	}
    

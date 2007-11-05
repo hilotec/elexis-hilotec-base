@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 3237 2007-10-04 10:25:25Z rgw_ch $
+ * $Id: RechnungsListeView.java 3311 2007-11-05 17:58:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -111,9 +111,9 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
 				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL1ST,niDaysTo1st.getValue());
 				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL2ND,niDaysTo2nd.getValue());
 				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL3RD,niDaysTo3rd.getValue());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT1ST, mi1st.getMoney().getAmountAsString());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT2ND, mi2nd.getMoney().getAmountAsString());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT3RD, mi3rd.getMoney().getAmountAsString());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT1ST, mi1st.getMoney(false).getAmountAsString());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT2ND, mi2nd.getMoney(false).getAmountAsString());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT3RD, mi3rd.getMoney(false).getAmountAsString());
 				// Hub.mandantCfg.dump(null);
 			}
  			
@@ -172,7 +172,7 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
     	cv.getViewerWidget().getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
     	ViewMenus menu=new ViewMenus(getViewSite());
     	actions=new RnActions(this);
-    	menu.createToolbar(actions.rnExportAction,actions.mahnWizardAction, actions.reloadAction);
+    	menu.createToolbar(actions.rnExportAction,actions.mahnWizardAction, actions.rnFilterAction,actions.reloadAction);
     	menu.createMenu(actions.expandAllAction,actions.collapseAllAction,actions.reloadAction,actions.addPaymentAction,actions.addExpenseAction,
     			actions.stornoAction,actions.changeStatusAction,null,actions.printListeAction);
     	MenuManager mgr=new MenuManager();

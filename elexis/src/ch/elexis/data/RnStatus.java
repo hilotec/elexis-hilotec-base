@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnStatus.java 2786 2007-07-12 11:44:58Z rgw_ch $
+ *  $Id: RnStatus.java 3311 2007-11-05 17:58:56Z rgw_ch $
  *******************************************************************************/
 
 
@@ -39,13 +39,15 @@ public class RnStatus {
 	public static final int NICHT_VON_IHNEN=	21;
 	public static final int FEHLERHAFT=			22;
 	public static final int ZU_DRUCKEN=			23;
+	public static final int AUSSTEHEND=			24;
 	
     public static final String[] Text={"Unbekannt","Verrechnet","Nicht verrechnen",
         "laufend","Rn. offen","Offen und gedruckt","Zahlungserinnerung",
         "Zahlungserinnerung gedruckt","2. Mahnung","2. Mahnung gedruckt",
         "3. Mahnung","3. Mahnung gedruckt","In Betreibung","Teilverlust",
         "Totalverlust","Teilw. bezahlt","Bezahlt","Zuviel bezahlt","Storniert",
-        "von heute","nicht von heute","nicht von Ihnen","fehlerhaft"};
+        "von heute","nicht von heute","nicht von Ihnen","fehlerhaft","zu Drucken",
+        "ausstehend"};
     
     public static enum REJECTCODE{
     	NO_DIAG,NO_MANDATOR,NO_CASE,NO_DEBITOR,NO_GUARANTOR,VALIDATION_ERROR,REJECTED_BY_PEER,SUM_MISMATCH,INTERNAL_ERROR;

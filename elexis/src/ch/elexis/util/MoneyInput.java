@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MoneyInput.java 2376 2007-05-15 16:35:09Z rgw_ch $
+ *  $Id: MoneyInput.java 3311 2007-11-05 17:58:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -18,10 +18,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -35,13 +41,13 @@ public class MoneyInput extends Composite {
 	Text text;
 	List<SelectionListener> listeners=new LinkedList<SelectionListener>();
 	
-	public MoneyInput(Composite parent){
+	public MoneyInput(final Composite parent){
 		super(parent,SWT.NONE);
 		setLayout(new FillLayout());
 		text=new Text(this,SWT.BORDER);
 		prepare();
 	}
-	public MoneyInput(Composite parent, String label){
+	public MoneyInput(final Composite parent, final String label){
 		super(parent,SWT.NONE);
 		setLayout(new GridLayout());
 		new Label(this,SWT.NONE).setText(label);
@@ -50,7 +56,7 @@ public class MoneyInput extends Composite {
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 	}
 	
-	public MoneyInput(Composite parent, String label, Money money){
+	public MoneyInput(final Composite parent, final String label, final Money money){
 		this(parent,label);
 		text.setText(money.getAmountAsString());
 	}
@@ -59,7 +65,7 @@ public class MoneyInput extends Composite {
 		text.addFocusListener(new FocusAdapter(){
 
 			@Override
-			public void focusLost(FocusEvent e) {
+			public void focusLost(final FocusEvent e) {
 				try{
 					String t=text.getText();
 					if(t.length()==0){
@@ -94,10 +100,18 @@ public class MoneyInput extends Composite {
 			*/
 		
 	}
-	public Money getMoney(){
+	/**
+	 * Return the entered value as Money.
+	 * @param bNullIfEmpty if nothing was entered return null (Otherwise: return 0.00)
+	 */
+	public Money getMoney(final boolean bNullIfEmpty){
 		String t=text.getText();
 		if(StringTool.isNothing(t)){
-			return new Money();
+			if(bNullIfEmpty){
+				return null;
+			}else{
+				return new Money();
+			}
 		}
 		try{
 			return new Money(t);
@@ -107,16 +121,17 @@ public class MoneyInput extends Composite {
 		}
 	}
 	
-	public void setMoney(String m){
+	
+	public void setMoney(final String m){
 		text.setText(m);
 	}
 	public Text getControl(){
 		return text;
 	}
-	public void addSelectionListener(SelectionListener lis){
+	public void addSelectionListener(final SelectionListener lis){
 		listeners.add(lis);
 	}
-	public void removeSelectionListener(SelectionListener lis){
+	public void removeSelectionListener(final SelectionListener lis){
 		listeners.remove(lis);
 	}
 }

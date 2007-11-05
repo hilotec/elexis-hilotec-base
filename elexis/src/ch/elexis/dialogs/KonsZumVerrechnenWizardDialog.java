@@ -16,14 +16,18 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import com.tiff.common.ui.datepicker.DatePickerCombo;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.util.Money;
 import ch.elexis.util.MoneyInput;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
+
+import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 	Button cbBefore, cbAmount, cbTime, cbQuartal;
@@ -34,13 +38,13 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 	public Money mAmount;
 	public boolean bQuartal;
 	
-	public KonsZumVerrechnenWizardDialog(Shell parentShell) {
+	public KonsZumVerrechnenWizardDialog(final Shell parentShell) {
 		super(parentShell);
 		
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2,false));
@@ -82,7 +86,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 			ttLastBefore=new TimeTool(dp2.getDate().getTime());
 		}
 		if(cbAmount.getSelection()){
-			mAmount=mi1.getMoney();
+			mAmount=mi1.getMoney(false);
 		}
 		bQuartal=cbQuartal.getSelection();
 		super.okPressed();

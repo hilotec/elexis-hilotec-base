@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 2800 2007-07-14 04:37:50Z rgw_ch $
+ * $Id: RnContentProvider.java 3311 2007-11-05 17:58:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -49,7 +49,7 @@ import ch.rgw.tools.TimeTool;
  */
 class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITreeContentProvider, ControlFieldListener{
 	private static final float PREVAL=50000f;
-	private Query<Rechnung> q1;
+	//private Query<Rechnung> q1;
 	CommonViewer cv;
 	Tree[] result;
 	int iPat, iRn;
@@ -57,10 +57,11 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 	TreeComparator treeComparator=new TreeComparator();
 	PatientComparator patientComparator=new PatientComparator();
 	RechnungsListeView rlv;
+	String[][] constraints;
 	
-	private Log log=Log.get("Rechnungenlader");
+	private final Log log=Log.get("Rechnungenlader");
 	
-	RnContentProvider(RechnungsListeView l, CommonViewer cv){
+	RnContentProvider(final RechnungsListeView l, final CommonViewer cv){
 		this.cv=cv;
 		rlv=l;
 	}
@@ -73,14 +74,14 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public Object[] getElements(Object inputElement) {
+	@SuppressWarnings("unchecked") 
+	public Object[] getElements(final Object inputElement) {
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
 			progressService.runInUI(
 		      PlatformUI.getWorkbench().getProgressService(),
 			      new IRunnableWithProgress() {
-			         public void run(IProgressMonitor monitor) {
+			         public void run(final IProgressMonitor monitor) {
 			        	 reload(monitor);
 			         }
 		      },null);
@@ -96,21 +97,21 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		
 	}
 
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		// TODO Automatisch erstellter Methoden-Stub
 		
 	}
 
 	// Vom ControlFieldListener
-	public void changed(String[] fields, String[] values) {
+	public void changed(final String[] fields, final String[] values) {
 		cv.notify(CommonViewer.Message.update);
 	}
 
-	public void reorder(String field) {
+	public void reorder(final String field) {
 		cv.getViewerWidget().setSorter(new ViewerSorter(){
 
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
+			public int compare(final Viewer viewer, final Object e1, final Object e2) {
 				TimeTool t1=getLatest((Tree)e1);
 				TimeTool t2=getLatest((Tree)e2);
 				return t1.compareTo(t2);
@@ -123,8 +124,8 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		// nothing to do
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private TimeTool getLatest(Tree t){
+	@SuppressWarnings("unchecked") 
+	private TimeTool getLatest(final Tree t){
 		if(t.contents instanceof Rechnung){
 			return new TimeTool(((Rechnung)t.contents).getDatumRn());
 		}else if(t.contents instanceof Fall){
@@ -143,8 +144,8 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		}
 		return null;
 	}
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	private TimeTool getLatestFromCase(Tree c){
+	@SuppressWarnings("unchecked") 
+	private TimeTool getLatestFromCase(final Tree c){
 		List<Tree> tRn=(List<Tree>)c.getChildren();
 		TimeTool tL=new TimeTool();
 		for(Tree t:tRn){
@@ -156,8 +157,8 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		}
 		return tL;
 	}
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public Object[] getChildren(Object parentElement) {
+	@SuppressWarnings("unchecked") 
+	public Object[] getChildren(final Object parentElement) {
 		if(parentElement instanceof Tree){
 			 Tree[] ret=(Tree[])((Tree)parentElement).getChildren().toArray(new Tree[0]);
 			 Arrays.sort(ret,treeComparator);
@@ -166,15 +167,15 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		return new Object[0];
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public Object getParent(Object element) {
+	@SuppressWarnings("unchecked") 
+	public Object getParent(final Object element) {
 		if(element instanceof Tree){
 			return ((Tree)element).getParent();
 		}
 		return null;
 	}
 
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(final Object element) {
 		if(element instanceof Tree){
 			if(((Tree)element).contents instanceof Rechnung){
 				return false;
@@ -183,19 +184,16 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		return true;
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public void reload(IProgressMonitor monitor){
-		monitor.beginTask(Messages.getString("RnContentProvider.collectInvoices"),Math.round(PREVAL)); //$NON-NLS-1$
-		monitor.subTask(Messages.getString("RnContentProvider.prepare")); //$NON-NLS-1$
-		Tree<Patient> root=new Tree<Patient>(null,null);
-		Hashtable<String,Tree<Patient>> hPats=new Hashtable<String,Tree<Patient>>(367,0.75f);
-		Hashtable<String,Tree<Fall>> hFaelle=new Hashtable<String,Tree<Fall>> (719,0.75f);
-		
+	public void setConstraints(final String[][] constraints){
+		this.constraints=constraints;
+	}
+	
+	public Query<Rechnung> prepareQuery(){
 		final String[] val=cv.getConfigurer().getControlFieldProvider().getValues();
-		q1=new Query<Rechnung>(Rechnung.class);
+		Query<Rechnung> q1=new Query<Rechnung>(Rechnung.class);
 		if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
 			if(Hub.actMandant==null){
-				return;
+				return null;
 			}
 			q1.add("MandantID", "=", Hub.actMandant.getId());
 		}
@@ -208,9 +206,19 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3));
 			q1.endGroup();
 			q1.and();
+		}else if(Integer.parseInt(val[0])==RnStatus.AUSSTEHEND){
+			q1.startGroup();
+			q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT));
+			q1.or();
+			q1.add("RnStatus","=", Integer.toString(RnStatus.MAHNUNG_1_GEDRUCKT));
+			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2_GEDRUCKT));
+			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3_GEDRUCKT));
+			q1.endGroup();
+			q1.and();
 		}else if(!val[0].equals("0")){
 			q1.add("RnStatus","=",val[0]);  //$NON-NLS-1$
 		}
+		/*
 		String datemode="RnDatum";
 		RnControlFieldProvider rcfp=(RnControlFieldProvider) cv.getConfigurer().getControlFieldProvider();
 		if(rcfp.getDateModeIsStatus()){
@@ -222,11 +230,12 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		if(val[2]!=null){
 			q1.add(datemode,"<=",val[2]); //$NON-NLS-1$
 		}
-		if(val[3]!=null){
-			q1.add("RnNummer","LIKE", "%"+val[3]+"%"); //$NON-NLS-1$ //$NON-NLS-2$
+		*/
+		if(val[2]!=null){
+			q1.add("RnNummer","=", val[2]); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if(val[4]!=null){
-			Patient act=Patient.load(val[4]);
+		if(val[1]!=null){
+			Patient act=Patient.load(val[1]);
 			if(act.exists()){
 				Fall[] faelle=act.getFaelle();
 				if((faelle!=null) && (faelle.length>0)){
@@ -242,6 +251,25 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 				}
 			}
 		}
+		if(constraints!=null){
+			for(String[] line:constraints){
+				q1.add(line[0], line[1], line[2]);
+			}
+		}
+		return q1;
+	}
+	@SuppressWarnings("unchecked") 
+	public void reload(final IProgressMonitor monitor){
+		monitor.beginTask(Messages.getString("RnContentProvider.collectInvoices"),Math.round(PREVAL)); //$NON-NLS-1$
+		monitor.subTask(Messages.getString("RnContentProvider.prepare")); //$NON-NLS-1$
+		Tree<Patient> root=new Tree<Patient>(null,null);
+		Hashtable<String,Tree<Patient>> hPats=new Hashtable<String,Tree<Patient>>(367,0.75f);
+		Hashtable<String,Tree<Fall>> hFaelle=new Hashtable<String,Tree<Fall>> (719,0.75f);
+		
+		Query<Rechnung> q1=prepareQuery();
+		if(q1==null){
+			return;
+		}
 		List<Rechnung> rechnungen=q1.execute();
 		if(rechnungen==null){
 			log.log("Fehler bei der Abfrage der Rechnungen", Log.ERRORS);
@@ -256,7 +284,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		mAmount=new Money();
 		mOpen=new Money();
 		for(Rechnung rn:rechnungen){
-			if(rn==null || (!rn.exists())){
+			if((rn==null) || (!rn.exists())){
 				log.log("Fehlerhafte Rechnung", Log.ERRORS);
 				continue;
 			}
@@ -295,7 +323,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		}
 		monitor.worked(1);
 		monitor.subTask(Messages.getString("RnContentProvider.prepareSort")); //$NON-NLS-1$
-		result=(Tree[])root.getChildren().toArray(new Tree[0]);
+		result=root.getChildren().toArray(new Tree[0]);
 		monitor.worked(100);
 		//monitor.subTask(Messages.getString("RnContentProvider.sort")); //$NON-NLS-1$
 		//Arrays.sort(result,treeComparator);
@@ -303,7 +331,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		
 	}
 	private final class PatientComparator implements Comparator{
-		public int compare(Object o1, Object o2){
+		public int compare(final Object o1, final Object o2){
 			Patient p1=(Patient) o1;
 			Patient p2=(Patient) o2;
 			return p1.getLabel().compareTo(p2.getLabel());
@@ -313,7 +341,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		TimeTool tt0=new TimeTool();
 		TimeTool tt1=new TimeTool();
 	
-		public int compare(Object arg0, Object arg1) {
+		public int compare(final Object arg0, final Object arg1) {
 			Tree t0=(Tree)arg0;
 			Tree t1=(Tree)arg1;
 			if(t0.contents instanceof Patient){
