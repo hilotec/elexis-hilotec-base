@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 3309 2007-11-04 18:21:55Z rgw_ch $
+ *  $Id: Episode.java 3310 2007-11-05 17:58:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -159,14 +159,14 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		}
 		return ret;
 	}
-	public void addDiagnosis(IDiagnose id){
+	public void addDiagnosis(final IDiagnose id){
 		String clazz=id.getClass().getName();
 		addToList("DiagLink", clazz+"::"+id.getCode(), new String[0]);
 	}
 	
-	public void removeDiagnosis(IDiagnose id){
+	public void removeDiagnosis(final IDiagnose id){
 		String clazz=id.getClass().getName();
-		removeFromList("DiagLink", clazz+"::"+id.getCode());
+		//removeFromList("DiagLink", clazz+"::"+id.getCode());
 	}
 	@Override
 	protected String getTableName() {
