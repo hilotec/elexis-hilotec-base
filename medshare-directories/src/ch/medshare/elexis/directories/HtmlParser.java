@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: HtmlParser.java 3286 2007-10-26 04:37:22Z rgw_ch $
+ * $Id: HtmlParser.java 3314 2007-11-06 07:30:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -43,6 +43,10 @@ public class HtmlParser {
 		}
 		return false;
 	}
+	
+	public String getTail() {
+		return htmlText.substring(currentPos, htmlText.length());
+	}
 
 	public String extractTo(String endKeyString) {
 		int newPos = getNextPos(endKeyString);
@@ -52,6 +56,7 @@ public class HtmlParser {
 			currentPos = newPos + endKeyString.length();
 			display(currentPos);
 		}
+		
 		return text;
 	}
 
