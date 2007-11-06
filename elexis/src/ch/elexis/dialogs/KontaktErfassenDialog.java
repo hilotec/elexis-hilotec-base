@@ -133,6 +133,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		lZusatz = new Label(ret, SWT.NONE);
 		lZusatz.setText(Messages.getString("KontaktErfassenDialog.zusatz")); //$NON-NLS-1$
 		tZusatz = new Text(ret, SWT.BORDER);
+		tZusatz.setText(fld.length > 7 ? fld[7] : ""); //$NON-NLS-1$
 		tZusatz.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		new Label(ret, SWT.NONE).setText(Messages
