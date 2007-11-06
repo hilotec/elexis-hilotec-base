@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3204 2007-09-25 15:40:05Z rgw_ch $
+ *    $Id: PersistentObject.java 3313 2007-11-06 05:39:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1100,13 +1100,32 @@ public abstract class PersistentObject{
                     return j.exec(sql);
                 }
 				return j.exec(head.toString());
-				//j.exec("INSERT INTO ADRESS_IDENT_JOINT (IdentID,AdressID) VALUES ("+getWrappedId()+","+adr.getWrappedId()+")");
 			}
 		}
 		log.log("Fehlerhaftes Mapping: "+mapped,Log.ERRORS);
 		return 0;
 	}
 
+	public void removeFromList(String field, String oID){
+		String mapped=map(field);
+		if(mapped.startsWith("JOINT:")){
+			String[] m=mapped.split(":");// m[1] FremdID, m[2] eigene ID, m[3] Name Joint
+			if(m.length>3){
+				StringBuilder sql=new StringBuilder(200);
+				sql.append("DELETE FROM ").append(m[3]).append(" WHERE ")
+					.append(m[2]).append("=").append(getWrappedId())
+					.append(" AND ").append(m[1]).append("=")
+					.append(JdbcLink.wrap(oID));
+                if(tracetable!=null){
+                    String sq=sql.toString();
+                    doTrace(sq);
+                }
+				j.exec(sql.toString());
+				return;
+			}
+		}
+		log.log("Fehlerhaftes Mapping: "+mapped,Log.ERRORS);
+	}
 	/*
 	 * 
 	public int addToList(String field, String oID, String... extra)
