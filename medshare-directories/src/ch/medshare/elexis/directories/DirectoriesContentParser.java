@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 3286 2007-10-26 04:37:22Z rgw_ch $
+ * $Id: DirectoriesContentParser.java 3316 2007-11-06 07:31:26Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -40,6 +40,16 @@ public class DirectoriesContentParser extends HtmlParser {
 
 	public DirectoriesContentParser(String htmlText) {
 		super(htmlText);
+	}
+	
+	private String[] getSpacedParts(final String text) {
+		List<String> parts = new Vector<String>();
+		HtmlParser spaceParser = new HtmlParser(text);
+		while (spaceParser.getNextPos(" ") > 0) {
+			parts.add(spaceParser.extractTo(" "));
+		}
+		parts.add(spaceParser.getTail());
+		return parts.toArray(new String[parts.size()]);
 	}
 
 	private String[] getPlzOrt(String text) {
@@ -103,10 +113,11 @@ public class DirectoriesContentParser extends HtmlParser {
 		int listIndex = getNextPos(ADR_LIST_TAG);
 		int detailIndex = getNextPos(ADR_DETAIL_TAG);
 		while (listIndex > 0 || detailIndex > 0) {
+			KontaktEntry entry = null;
 			if (detailIndex < 0 || (listIndex >= 0 && listIndex < detailIndex)) {
 				int listCatIndex = getNextPos(ADR_LIST_AVOID_TAG);
 				if (listCatIndex != listIndex) {
-					kontakte.add(extractListKontakt());
+					entry = extractListKontakt();
 				} else { // adrListLev0Cat darf nicht
 					moveTo(ADR_LIST_AVOID_TAG);
 				}
@@ -114,10 +125,13 @@ public class DirectoriesContentParser extends HtmlParser {
 					|| (detailIndex >= 0 && detailIndex < listIndex)) {
 				int detail2Index = getNextPos(ADR_DETAIL_AVOID_TAG);
 				if (detail2Index != detailIndex) {
-					kontakte.add(extractKontakt());
+					entry = extractKontakt();
 				} else { // adrNameDetLev2 darf nicht
 					moveTo(ADR_DETAIL_AVOID_TAG);
 				}
+			}
+			if (entry != null) {
+				kontakte.add(entry);
 			}
 			listIndex = getNextPos(ADR_LIST_TAG);
 			detailIndex = getNextPos(ADR_DETAIL_TAG);
@@ -140,7 +154,9 @@ public class DirectoriesContentParser extends HtmlParser {
 	private KontaktEntry extractListKontakt() throws IOException,
 			MalformedURLException {
 
-		moveTo(ADR_LIST_TAG);
+		if (!moveTo(ADR_LIST_TAG)) { // Kein neuer Eintrag
+			return null;
+		}
 
 		moveTo("href=\""); //$NON-NLS-1$
 
@@ -169,6 +185,35 @@ public class DirectoriesContentParser extends HtmlParser {
 		return new KontaktEntry(vornameNachname[0], vornameNachname[1], "", //$NON-NLS-1$
 				adresse, plzOrt[0], plzOrt[1], "", false); //$NON-NLS-1$
 	}
+	
+	private static String[] POSTFACH_TEXTE = { "Postfach", "Case postale", "Casella Postale" };
+	/**
+	 * Überprüft ob Postfach in Ort gespeichert ist.
+	 */
+	private String getPostfach(String text) {	
+		String postfachText = "";
+		for (String postfachStr: POSTFACH_TEXTE) {
+			if (text.trim().toUpperCase().startsWith(postfachStr.toUpperCase())) {
+				postfachText = postfachStr;
+			}
+		}
+		if (postfachText.length() > 0) {
+			// Hat es noch eine Nummer zu Postfach?
+			String restText = text.substring(postfachText.length(), text.length()).trim();
+			String[] parts = getSpacedParts(restText);
+			String postfachNr = "";
+			if (parts.length > 2) { // Könnte sein..
+				try {
+					postfachNr = " " + Integer.parseInt(parts[0]);
+				} catch(NumberFormatException e) {
+					// Wahrscheinlich ist das doch keine Postfach-Nr
+				}
+			}
+			postfachText += postfachNr;
+		}
+		
+		return postfachText;
+	}
 
 	/**
 	 * Extrahiert einen Kontakt aus einem Detaileintrag
@@ -183,10 +228,16 @@ public class DirectoriesContentParser extends HtmlParser {
 	 *	 </div>
 	 */
 	private KontaktEntry extractKontakt() {
-		moveTo(ADR_DETAIL_TAG);
+		if (!moveTo(ADR_DETAIL_TAG)) { // Kein neuer Eintrag
+			return null;
+		}
 
 		// Name
 		String name = extract(SPAN_BEGIN, SPAN_END);
+		if (name == null || name.length() == 0) { // Keine leeren Inhalte
+			return null;
+		}
+		
 		String[] vornameNachname = getVornameNachname(name);
 		String vorname = vornameNachname[0];
 		String nachname = vornameNachname[1];
@@ -213,8 +264,13 @@ public class DirectoriesContentParser extends HtmlParser {
 			max++;
 		}
 		max--;
+		
 		// Füllen
 		if (max >= 0) {
+			zusatz = getPostfach(adrArray[max]);
+			if (zusatz.length() > 0) {
+				max--;
+			}
 			String[] plzOrt = getPlzOrt(adrArray[max]);
 			plz = plzOrt[0];
 			ort = plzOrt[1];
@@ -260,6 +316,8 @@ public class DirectoriesContentParser extends HtmlParser {
 				String tel0 = tel.substring(0, len - 7);
 				tel = tel0 + " " + tel1 + " " + tel2 + " " + tel3; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
+		} else {
+			tel = "";
 		}
 		return tel;
 	}
