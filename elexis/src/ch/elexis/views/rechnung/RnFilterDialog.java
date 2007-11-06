@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnFilterDialog.java 3311 2007-11-05 17:58:56Z rgw_ch $
+ * $Id: RnFilterDialog.java 3319 2007-11-06 18:44:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -23,17 +23,19 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.util.DateInput;
 import ch.elexis.util.Money;
 import ch.elexis.util.MoneyInput;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class RnFilterDialog extends TitleAreaDialog {
 	static final String FROM="von";
 	static final String UNTIL="bis";
-	String[][] ret;
+	String[] ret;
 	MoneyInput miVon,miBis;
 	DateInput diRnVon,diRnBis,diStatVon,diStatBis;
 	public RnFilterDialog(final Shell parentShell){
@@ -67,36 +69,36 @@ public class RnFilterDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		ArrayList<String[]> al=new ArrayList<String[]>();
+		ArrayList<String> al=new ArrayList<String>();
 		Money mFrom=miVon.getMoney(true);
 		Money mUntil=miBis.getMoney(true);
 		
 		if(mFrom!=null){
-			String sFrom=StringTool.pad(SWT.LEFT, '0', mFrom.getCentsAsString(), 9);
-			al.add(new String[]{"Betragx100",">=",sFrom});
+			//String sFrom=StringTool.pad(SWT.LEFT, '0', mFrom.getCentsAsString(), 9);
+			al.add(PersistentObject.getConnection().translateFlavor("cast(Betrag as SIGNED) >="+mFrom.getCentsAsString()));
 		}
 		if(mUntil!=null){
-			String sUntil=StringTool.pad(SWT.LEFT, '0', mUntil.getCentsAsString(), 9);
-			al.add(new String[]{"Betragx100","<=",sUntil});
+			//String sUntil=StringTool.pad(SWT.LEFT, '0', mUntil.getCentsAsString(), 9);
+			al.add(PersistentObject.getConnection().translateFlavor("cast(Betrag as SIGNED) <="+mUntil.getCentsAsString()));
 		}
 		TimeTool tt=diRnVon.getDate();
 		if(tt!=null){
-			al.add(new String[]{"RnDatum",">=",tt.toString(TimeTool.DATE_COMPACT)});
+			al.add("RnDatum >="+tt.toString(TimeTool.DATE_COMPACT));
 		}
 		tt=diRnBis.getDate();
 		if(tt!=null){
-			al.add(new String[]{"RnDatum","<=",tt.toString(TimeTool.DATE_COMPACT)});
+			al.add("RnDatum <="+tt.toString(TimeTool.DATE_COMPACT));
 		}
 		tt=diStatVon.getDate();
 		if(tt!=null){
-			al.add(new String[]{"StatusDatum",">=",tt.toString(TimeTool.DATE_COMPACT)});
+			al.add("StatusDatum >="+tt.toString(TimeTool.DATE_COMPACT));
 		}
 		tt=diStatBis.getDate();
 		if(tt!=null){
-			al.add(new String[]{"StatusDatum","<=",tt.toString(TimeTool.DATE_COMPACT)});
+			al.add("StatusDatum <="+tt.toString(TimeTool.DATE_COMPACT));
 		}
 		if(al.size()>0){
-			ret=al.toArray(new String[0][]);
+			ret=al.toArray(new String[0]);
 		}else{
 			ret=null;
 		}

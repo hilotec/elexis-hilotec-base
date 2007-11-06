@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 3318 2007-11-06 16:37:42Z rgw_ch $
+ * $Id: RnContentProvider.java 3319 2007-11-06 18:44:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -57,7 +57,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 	TreeComparator treeComparator=new TreeComparator();
 	PatientComparator patientComparator=new PatientComparator();
 	RechnungsListeView rlv;
-	String[][] constraints;
+	String[] constraints;
 	
 	private final Log log=Log.get("Rechnungenlader");
 	
@@ -184,7 +184,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		return true;
 	}
 
-	public void setConstraints(final String[][] constraints){
+	public void setConstraints(final String[] constraints){
 		this.constraints=constraints;
 	}
 	
@@ -240,8 +240,8 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 				}
 			}
 			if(constraints!=null){
-				for(String[] line:constraints){
-					q1.add(line[0], line[1], line[2]);
+				for(String line:constraints){
+					q1.addToken(line);
 				}
 			}
 		}

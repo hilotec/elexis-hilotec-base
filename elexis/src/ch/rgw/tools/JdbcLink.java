@@ -1,4 +1,4 @@
-// $Id: JdbcLink.java 2953 2007-08-05 07:16:06Z rgw_ch $
+// $Id: JdbcLink.java 3319 2007-11-06 18:44:10Z rgw_ch $
 
 package ch.rgw.tools;
 import java.io.BufferedWriter;
@@ -738,6 +738,7 @@ public String translateFlavor(String sql) {
 	      sql=sql.replaceAll("BLOB","BYTEA");
 	      sql=sql.replaceAll("DROP INDEX (.+?) ON .+?;", "DROP INDEX $1;");
 	      sql=sql.replaceAll("MODIFY\\s+(\\w+)\\s+(.+)","ALTER COLUMN $1 TYPE $2");
+	      sql=sql.replaceAll("SIGNED", "INT");
 	  }else if(DBFlavor.startsWith("hsqldb")){
 	      sql=sql.replaceAll("TEXT","LONGVARCHAR");
 	      sql=sql.replaceAll("BLOB","LONGVARBINARY");
