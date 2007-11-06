@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 3311 2007-11-05 17:58:56Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 3318 2007-11-06 16:37:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -222,7 +222,6 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 			tNr.setText(ret[2]);
 			ret[0]="0";
 			ret[1]=null;
-			ret[2]=null;
 		}
 		
 		return ret;

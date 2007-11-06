@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 3311 2007-11-05 17:58:56Z rgw_ch $
+ * $Id: RnContentProvider.java 3318 2007-11-06 16:37:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -197,63 +197,52 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 			}
 			q1.add("MandantID", "=", Hub.actMandant.getId());
 		}
-		if(Integer.parseInt(val[0])==RnStatus.ZU_DRUCKEN){
-			q1.startGroup();
-			q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN));
-			q1.or();
-			q1.add("RnStatus","=", Integer.toString(RnStatus.MAHNUNG_1));
-			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2));
-			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3));
-			q1.endGroup();
-			q1.and();
-		}else if(Integer.parseInt(val[0])==RnStatus.AUSSTEHEND){
-			q1.startGroup();
-			q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT));
-			q1.or();
-			q1.add("RnStatus","=", Integer.toString(RnStatus.MAHNUNG_1_GEDRUCKT));
-			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2_GEDRUCKT));
-			q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3_GEDRUCKT));
-			q1.endGroup();
-			q1.and();
-		}else if(!val[0].equals("0")){
-			q1.add("RnStatus","=",val[0]);  //$NON-NLS-1$
-		}
-		/*
-		String datemode="RnDatum";
-		RnControlFieldProvider rcfp=(RnControlFieldProvider) cv.getConfigurer().getControlFieldProvider();
-		if(rcfp.getDateModeIsStatus()){
-			datemode="StatusDatum";
-		}
-		if(val[1]!=null){
-			q1.add(datemode,">=",val[1]); //$NON-NLS-1$
-		}
-		if(val[2]!=null){
-			q1.add(datemode,"<=",val[2]); //$NON-NLS-1$
-		}
-		*/
 		if(val[2]!=null){
 			q1.add("RnNummer","=", val[2]); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if(val[1]!=null){
-			Patient act=Patient.load(val[1]);
-			if(act.exists()){
-				Fall[] faelle=act.getFaelle();
-				if((faelle!=null) && (faelle.length>0)){
-					q1.startGroup();
-					q1.insertFalse();
-					q1.or();
-					for(Fall fall:faelle){
-						if(fall.isOpen()){
-							q1.add("FallID", "=", fall.getId());
+			
+		}else{
+			if(Integer.parseInt(val[0])==RnStatus.ZU_DRUCKEN){
+				q1.startGroup();
+				q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN));
+				q1.or();
+				q1.add("RnStatus","=", Integer.toString(RnStatus.MAHNUNG_1));
+				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2));
+				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3));
+				q1.endGroup();
+				q1.and();
+			}else if(Integer.parseInt(val[0])==RnStatus.AUSSTEHEND){
+				q1.startGroup();
+				q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT));
+				q1.or();
+				q1.add("RnStatus","=", Integer.toString(RnStatus.MAHNUNG_1_GEDRUCKT));
+				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2_GEDRUCKT));
+				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3_GEDRUCKT));
+				q1.endGroup();
+				q1.and();
+			}else if(!val[0].equals("0")){
+				q1.add("RnStatus","=",val[0]);  //$NON-NLS-1$
+			}
+			if(val[1]!=null){
+				Patient act=Patient.load(val[1]);
+				if(act.exists()){
+					Fall[] faelle=act.getFaelle();
+					if((faelle!=null) && (faelle.length>0)){
+						q1.startGroup();
+						q1.insertFalse();
+						q1.or();
+						for(Fall fall:faelle){
+							if(fall.isOpen()){
+								q1.add("FallID", "=", fall.getId());
+							}
 						}
+						q1.endGroup();
 					}
-					q1.endGroup();
 				}
 			}
-		}
-		if(constraints!=null){
-			for(String[] line:constraints){
-				q1.add(line[0], line[1], line[2]);
+			if(constraints!=null){
+				for(String[] line:constraints){
+					q1.add(line[0], line[1], line[2]);
+				}
 			}
 		}
 		return q1;
