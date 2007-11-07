@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 2525 2007-06-17 16:18:51Z rgw_ch $
+ *  $Id: Rezept.java 3326 2007-11-07 14:48:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -37,10 +37,10 @@ public class Rezept extends PersistentObject {
 		addMapping("REZEPTE","PatientID","MandantID","Datum=S:D:Datum","Text=RpTxt","BriefID",
 				"Zeilen=LIST:RezeptID:PATIENT_ARTIKEL_JOINT");
 	}
-	public static Rezept load(String id){
+	public static Rezept load(final String id){
 		return new Rezept(id);
 	}
-	public Rezept(Patient pat){
+	public Rezept(final Patient pat){
 		create(null);
 		set(new String[]{"PatientID","MandantID","Datum"},
 				pat.getId(),Hub.actMandant.getId(),
@@ -50,7 +50,8 @@ public class Rezept extends PersistentObject {
 		return Patient.load(get("PatientID"));
 	}
 	public Mandant getMandant(){
-		return Mandant.load(get("MandantID"));
+		Mandant mret=Mandant.load(get("MandantID"));
+		return mret;
 	}
 	public String getDate(){
 		return get("Datum");
@@ -61,7 +62,7 @@ public class Rezept extends PersistentObject {
 	
 	protected Rezept() {}
 
-	protected Rezept(String id) {
+	protected Rezept(final String id) {
 		super(id);
 	}
 
@@ -78,12 +79,16 @@ public class Rezept extends PersistentObject {
 		return null;
 	}
 	
-	public void setBrief(Brief brief){
+	public void setBrief(final Brief brief){
 		set("BriefID",brief.getId());
 	}
 	@Override
 	public String getLabel() {
-		return getDate()+" "+getMandant().getLabel();
+		Mandant m=getMandant();
+		if(m==null){
+			return getDate()+" (unbekannt)";
+		}
+		return getDate()+" "+m.getLabel();
 	}
 	
 	/** Alle Rezeotzeilen als Liste holen */ 
@@ -130,7 +135,7 @@ public class Rezept extends PersistentObject {
 	/** Eine Rezeptzeile entfernen 
 	 * @deprecated use removePrescripion*/
 	@Deprecated
-	public void removeLine(RpZeile z){
+	public void removeLine(final RpZeile z){
 		String raw=getText();
 		String zs=z.toString();
 		raw=raw.replaceFirst(zs, "");
@@ -138,14 +143,14 @@ public class Rezept extends PersistentObject {
 		set("Text",raw.replaceAll("\\r*\\n\\r*\\n", "\n"));
 	}
 	
-	public void removePrescription(Prescription p){
+	public void removePrescription(final Prescription p){
 		p.set("RezeptID", "");
 	}
 	/** Eine Rezeptzeile hinzufügen 
 	 * @deprecated use addPrescription
 	 * */
 	@Deprecated 
-	public void addLine(RpZeile z){
+	public void addLine(final RpZeile z){
 		String raw=getText();
 		if(StringTool.isNothing(raw)){
 			raw=z.toString();
@@ -156,7 +161,7 @@ public class Rezept extends PersistentObject {
 		set("Text",raw);
 	}
 	
-	public void addPrescription(Prescription p){
+	public void addPrescription(final Prescription p){
 		p.set("RezeptID", getId());
 	}
 	@Override
@@ -189,6 +194,7 @@ public class Rezept extends PersistentObject {
 		public static final String fieldSeparator="¦";
 		String num,name,pck,ds,bem;
 
+		@Override
 		public String toString(){
 			StringBuilder sb=new StringBuilder();
 			sb.append(num).append(fieldSeparator).append(name).append(fieldSeparator)
@@ -197,7 +203,7 @@ public class Rezept extends PersistentObject {
 			return sb.toString();
 		}
 		public RpZeile(){}
-		public RpZeile(String in){
+		public RpZeile(final String in){
 			String[] parts=in.split(fieldSeparator);
 
 			num=parts.length>0 ? parts[0]:"";
@@ -207,7 +213,7 @@ public class Rezept extends PersistentObject {
 			bem=parts.length>4 ? parts[4]:"" ;
 			
 		}
-		public RpZeile(String num, String name, String pck, String ds, String bem){
+		public RpZeile(final String num, final String name, final String pck, final String ds, final String bem){
 			this.num=num;
 			this.name=name;
 			this.pck=pck;
@@ -218,7 +224,7 @@ public class Rezept extends PersistentObject {
 			return bem;
 		}
 
-		public void setBem(String bem) {
+		public void setBem(final String bem) {
 			this.bem = bem;
 		}
 
@@ -226,7 +232,7 @@ public class Rezept extends PersistentObject {
 			return ds;
 		}
 
-		public void setDs(String ds) {
+		public void setDs(final String ds) {
 			this.ds = ds;
 		}
 
@@ -234,7 +240,7 @@ public class Rezept extends PersistentObject {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 
@@ -242,7 +248,7 @@ public class Rezept extends PersistentObject {
 			return num;
 		}
 
-		public void setNum(String num) {
+		public void setNum(final String num) {
 			this.num = num;
 		}
 
@@ -250,7 +256,7 @@ public class Rezept extends PersistentObject {
 			return pck;
 		}
 
-		public void setPck(String pck) {
+		public void setPck(final String pck) {
 			this.pck = pck;
 		} 
 		
