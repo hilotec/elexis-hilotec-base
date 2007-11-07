@@ -5,7 +5,7 @@
 % * which accompanies this distribution, and is available at
 % * http://www.eclipse.org/legal/epl-v10.html
 % *
-% *  $Id: abrechnung.tex 2932 2007-07-29 06:21:06Z rgw_ch $
+% *  $Id: abrechnung.tex 3324 2007-11-07 13:00:01Z rgw_ch $
 %
 %*******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -72,7 +72,7 @@ befindlichen Elemente erstellt. Dabei werden immer alle Konsultationen, die zu
 einem Fall gehören, zusammengefasst. Wenn von einem Patienten also mehrere Fälle
 in der Auswahl sind, werden auch mehrere Rechnungen erstellt.
 
-\clearpage 
+\clearpage
 
 \subsection{Rechnungen}
 \begin{figure}[ht]
@@ -96,25 +96,43 @@ In dieser View (Abb. \ref{fig:rechnungen}) sehen Sie die erstellten Rechnungen. 
     \item [In Betreibung] Genau das.
     \item [Storniert] Eine einmal erstellte Rechnung kann nicht mehr gelöscht werden. Das muss so sein, weil sonst die Situation möglich wäre, dass jemand eine nicht mehr existierende Rechnung reklamiert oder das Rückfragen zu einer inexistenten Rechnung kämen. Wenn eine Rechnung aus irgendeinem Grund ungültig ist (Fehler, Erlassen des Betrags etc.), dann muss sie stattdessen storniert werden. Stornieren hat in allen praktischen Belangen denselben Effekt wie löschen, ausser, dass die Rechnungsnummer vergeben bleibt und dass die Rechnung später wieder betrachtet werden kann.
     \item [fehlerhaft] Wenn ein Rechnungsausgabemodul feststellt, dass eine Rechnung fehlerhaft ist (beispielsweise könnte das TrustX-Modul monieren, dass nicht alle EAN-Nummern angegeben sind), dann erhält die betreffende Rechnung den Status fehlerhaft und kann so korrigiert werden.
-    \item [zu drucken] Diese Einstellung findet alle Rechnungen, die offen, aber noch nicht gedruckt sind (also auch undegdurckte Mahnungen etc.)
+    \item [zu drucken] Diese Einstellung findet alle Rechnungen, die offen, aber noch nicht gedruckt sind (also auch ungedruckte Mahnungen etc.)
 \end{description}
-Um die Rechnungen mit einem bestimmten Status anzuzeigen, wählen Sie diesen Status in der Combox links oben aus(S. Abb. \ref{fig:rechnungen}).
-Um nur die Rechnungen eines betsimmten Patienten anzuzeigen, klicken Sie auf die bleuae Schrift \glqq Patient\grqq{}. Es öffnet sich die bekannte Kontaktauswahl-Dialogbox. Wählen Sie dort einen Patienten aus und klicken Sie ok, oder klicken Sie auf Abbrechen, um wieder alle Patienten anzuzeigen. Die Felder \glqq Datum von\grqq{} und \glqq Datum bis\grqq{} dienen dazu, nur Rechnungen auszuwählen, welche zwischen diesen Daten erstellt wurden. Wenn Sie auf die blaue Schrift Datum von oder Datum bis klicken, wechselt diese auf \glqq Status von\grqq{} bzw. \glqq Status bis\grqq{}. In diesem Fall werden diejenigen Rechnungen ausgewählt, bei denen die letzte \textit{Statusänderung} zwischen den angegebenen Daten liegt.
-Das Feld \glqq Rn. Nummer\grqq{} ganz rechts dient schliessklich dazu, nur eine ganz bestimmte Rechnung mit dieser NUmmer herauszusuchen.
+Die Rechnungsliste kann nach bestimmten Kriterien selektiert werden. Um die Liste mit den geänderten Optionen neu einzulesen, klicken Sie jeweils auf den 'Liste neu einlesen'-Knopf.
+Um die Rechnungen mit einem bestimmten Status anzuzeigen, wählen Sie diesen Status in der Combox links oben aus(S. Abb. \ref{fig:rechnungen}). Um nur die Rechnungen eines bestimmten Patienten anzuzeigen, klicken Sie auf die blaue Schrift \glqq Patient\grqq{}. Es öffnet sich die bekannte Kontaktauswahl-Dialogbox. Wählen Sie dort einen Patienten aus und klicken Sie ok, oder klicken Sie auf Abbrechen, um wieder alle Patienten anzuzeigen.
 
-Wenn Sie die Felder wie gewünscht eingestellt haben, klicken Sie auf \glqq neu einlesen \grqq{}, dann wird die Liste anhand Ihrer Kriterien neu aufgebaut.
+Um nur eine bestimmte Rechnungsnummer auszuwählen, geben Sie diese Nummer im Feld Rn-Nummer ein und klicken 'neu einlesen'.
+\medskip
+Wenn Sie auf das 'Filter'-Symbol klicken, erhalten Sie weitere Darstellungsoptionen.
+
+\begin{wrapfigure}{l}{7cm}
+\includegraphics[width=7cm]{images/rechnungsfilter}
+\end{wrapfigure}
+Die Felder Betrag von/bis dienen dazu, Rechnungen mit einem bestimmten Betrag auszufiltern. Sie können auch nur eins der beiden Felder eingeben, damit wird das andere zur offenen Grenze.
+Die Felder \glqq Rechnungsdatum von\grqq{} und \glqq Rechnungsdatum bis\grqq{} dienen dazu, nur Rechnungen auszuwählen, welche zwischen diesen Daten erstellt wurden. Im Unterschied dazu dienen die Felder \glqq Statusdatum von/bis\grqq{} dazu, Rechnungen auszufiltern, deren letzte Statusänderung zwischen den genannten Daten lag. Auch hier können Sie jeweils nur eins der beiden Daten eingeben und das andere offenlassen.
+Wenn Sie den Dialog mit OK verlassen, wird die Liste anhand Ihrer Kriterien neu eingelesen.
+\medskip
+
+Solange der Filter-Knopf eingerastet ist, sind alle folgenden Einlese-Operationen mit dem Filter UND-Verknüpft. Wenn Sie also beispielsweise Statusdatum bis 30.10.2007 gefiltert haben, und dann das Statusfeld auf "2. Mahnung gedruckt" setzen und neu einlesen, dann werden Ihnen alle Rechnungen angezeigt, welche vor dem 30.10.2007 auf den Status '2. Mahnung gedruckt' gesetzt wurden.
+
 Unten sehen Sie jeweils die Zahl der mit diesen Kriterien vorhandenen Rechnungen, sowie die Summen.
+\subsubsection{Viewmenu der Rechnungsliste}
+Das Viewmenu (Dreieck rechts oben, s. Abb. \ref{fig:rechnungen}) hat folgende Optionen:
+\begin{description}
+\item [Alle expandieren und Alle einklappen] Öffnet bzw. schliesst alle angezeigten Einträge.
+\item [Liste drucken] Dies druckt eine Liste aller im Moment in der Anzeige markierten Patienten bzw. Rechnungen. Hierzu muss eine System-Druckvorlage namens 'Liste' vorhanden sein, die ein Feld [Liste] enthält.
+\end{description}
 \subsubsection{Rechnungen ändern}
 Wenn Sie eine Rechnung der Liste mit der rechten Maustaste anklicken, können Sie diese Rechnung ändern:
-\begin{itemize}
-\item Ausgeben: Die Rechnung einzeln ausgeben (s. unten)
-\item Buchung/Zahlung hinzufügen: Hier können Sie manuell Buchungen eingeben, z.B. wenn eine Barzahlung oder Anzahlung erfolgt ist. (Normalerweise erfolgen Buchungen via ESR automatisch).
-\item Gebühr zuschlagen: Manuell z.B. Mahngebühr zufügen
-\item Status ändern: Hier klann der Rechnungsstatus manuell geändert werden. Die meisten Statusänderungen erkennt Elexis automatisch. So werden z.B. beim Einlesen einer ESR-Datei von der Bank alle bezahlten Rechnungen automatisch auf \glqq bezahlt\grqq{} gesetzt etc. Manche Statusänderungen können aber nur manuell gemacht werden. Zum Beispiel kann Elexis den Unterschied zwischen \glqq Teilweise bezahlt\grqq{} und \glqq Teilverlust\grqq{} nicht automatisch erkennen, weil dies ja eine bewusste Entscheidung des Gläubigers ist. Dasselbe gilt für \glqq In Betreibung\grqq{} und \glqq Totalverlust\grqq{}.
+\begin{description}
+\item [Ausgeben] Die Rechnung einzeln ausgeben (s. unten)
+\item [Buchung/Zahlung hinzufügen] Hier können Sie manuell Buchungen eingeben, z.B. wenn eine Barzahlung oder Anzahlung erfolgt ist. (Normalerweise erfolgen Buchungen via ESR automatisch).
+\item [Gebühr zuschlagen] Manuell z.B. Mahngebühr zufügen
+\item [Status ändern] Hier klann der Rechnungsstatus manuell geändert werden. Die meisten Statusänderungen erkennt Elexis automatisch. So werden z.B. beim Einlesen einer ESR-Datei von der Bank alle bezahlten Rechnungen automatisch auf \glqq bezahlt\grqq{} gesetzt etc. Manche Statusänderungen können aber nur manuell gemacht werden. Zum Beispiel kann Elexis den Unterschied zwischen \glqq Teilweise bezahlt\grqq{} und \glqq Teilverlust\grqq{} nicht automatisch erkennen, weil dies ja eine bewusste Entscheidung des Gläubigers ist. Dasselbe gilt für \glqq In Betreibung\grqq{} und \glqq Totalverlust\grqq{}.
     Von diesen Fällen abgesehen, sollten Sie aber vorsichtig sein mit manuellen Statusänderungen, da hierbei beispielsweise keine Buchungskorrekturen erfolgen.
-\item Mahnstufe erhöhen: Hierdurch wird die Mahnstufe jeweils um eins erhöht bis max. Dritte Mahnung.
-\item Stornieren: Damit wird die markierte Rechnung storniert. Man hat dabei die Möglichkeit, Behandlungen wieder freizugeben (z.B. wenn die Rechnung fehlerhaft war und neu erstellt werden soll), oder blockiert zu lassen (Wenn diese Behandlungen definitiv nicht verrechnet werden sollen).
-\end{itemize}
+\item [Mahnstufe erhöhen] Hierdurch wird die Mahnstufe jeweils um eins erhöht bis max. Dritte Mahnung.
+\item [Stornieren] Damit wird die markierte Rechnung storniert. Man hat dabei die Möglichkeit, Behandlungen wieder freizugeben (z.B. wenn die Rechnung fehlerhaft war und neu erstellt werden soll), oder blockiert zu lassen (Wenn diese Behandlungen definitiv nicht verrechnet werden sollen).
+\end{description}
 
 \subsubsection{Rechnungen ausgeben}
 Mit dem Button \glqq Rechnungen ausgeben\grqq{} werden alle markierten Rechnungen ausgegeben. (Um eine Rechnung zu markieren, klicken Sie mit der linken Maustaste auf diese. Um mehrere Rechnungen zu markieren, klicken Sie mit gedrückter Ctrl (bzw. Mac-) Taste auf die gewünschten Rechnungen. Um eine ganze Reihe zu markieren, klicken Sie zuerst auf die erste, dann mit gedrückter Shift-Taste auf die letzte Rechnung aus der Reihe.) Es wird also \textit{nicht} die ganze Liste ausgegeben, sondern nur die markierten Rechnungen!
