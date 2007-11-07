@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 2518 2007-06-14 06:00:54Z rgw_ch $
+ *  $Id: Money.java 3321 2007-11-07 06:01:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -52,7 +52,7 @@ public class Money {
 	}
 	/** Create Money with a specified amount */
 	public Money(double amount){
-		cents=(int)(amount*100.0);
+		cents=(int)Math.round(amount*100.0);
 	}
 	/** Create Money with a specified amount as String
 	 * This might fail if the string doesn't conform to the current locale's
