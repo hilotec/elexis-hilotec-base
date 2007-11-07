@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 3264 2007-10-17 13:22:17Z rgw_ch $
+ *  $Id: TerminDialog.java 3323 2007-11-07 12:59:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -32,6 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -121,6 +122,10 @@ public class TerminDialog extends TitleAreaDialog {
 		}else{
 			actPatient=GlobalEvents.getSelectedPatient();
 		}
+		Color green=Desk.theColorRegistry.get(Desk.COL_GREEN);
+        if(green==null){
+        	Desk.theColorRegistry.put(Desk.COL_GREEN, new RGB(0,255,0));
+        }
 		actPlannable=act;
 		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
 		actBereich=parent.getBereich();
