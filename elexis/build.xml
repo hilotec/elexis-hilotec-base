@@ -30,6 +30,9 @@
 	</target>
 	
 	<target name="all">
+		<!-- README.txt kopieren -->
+	    <copy file="${elexis_src}/README.txt" todir="${dist}"/>
+	    	
 		<mkdir dir="${elexis_plugin}/bin"/>
 		<mkdir dir="${elexis_feature}"/>
 		<!-- Plugindateien, icons und Hilfeseiten kopieren -->
