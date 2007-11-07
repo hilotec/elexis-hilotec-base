@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plannables.java 1808 2007-02-15 12:47:26Z rgw_ch $
+ *  $Id: Plannables.java 3328 2007-11-07 16:09:42Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -227,7 +227,7 @@ public class Plannables {
 		    	Hashtable<String, String>map=getDayPrefFor(bereich);
 		    	int d=date.get(Calendar.DAY_OF_WEEK);
 		    	String ds =map.get(TimeTool.wdays[d-1]);
-		    	if(ds==null){
+		    	if(StringTool.isNothing(ds)){
 		    		ds="0000-0800\n1800-2359";
 		    	}
 		    	String[] flds=ds.split("\r*\n\r*");
