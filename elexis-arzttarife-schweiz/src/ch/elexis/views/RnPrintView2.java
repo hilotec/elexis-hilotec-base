@@ -102,7 +102,6 @@ public class RnPrintView2 extends ViewPart {
 		monitor.subTask(rn.getLabel());
 		GlobalEvents.getInstance().fireSelectionEvent(rn);
 		String printer=null;
-		//String tray=null;
 		XMLExporter xmlex=new XMLExporter();
 		DecimalFormat df=new DecimalFormat("0.00"); //$NON-NLS-1$
 		Document xmlRn=xmlex.doExport(rn,null, rnType, doVerify);
@@ -215,12 +214,16 @@ public class RnPrintView2 extends ViewPart {
 				return false;
 			}
 			printer=Hub.localCfg.get("Drucker/A4ESR/Name",null); //$NON-NLS-1$
-			//tray=Hub.localCfg.get("Drucker/A4ESR/Schacht",null); //$NON-NLS-1$
+			String esrTray = Hub.localCfg.get("Drucker/A4ESR/Schacht",null); //$NON-NLS-1$
+			if (StringTool.isNothing(esrTray)) {
+				esrTray = null;
+			}
 			// Das mit der Tray- Einstellung funktioniert sowieso nicht richtig.
 			// OOo nimmt den Tray aus der Druckformatvorlage. Besser wir setzen ihn hier auf
 			// null vorläufig.
-			if(text.getPlugin().print(printer,null, false)==false){
-			//if(text.getPlugin().print(printer,tray, false)==false){
+			// Alternative: Wir verwenden ihn, falls er eingestellt ist, sonst nicht.
+			// Dies scheint je nach Druckertreiber unterschiedlich zu funktionieren.
+			if(text.getPlugin().print(printer,esrTray, false)==false){
 				SWTHelper.showError("Fehler beim Drucken", "Konnte den Drucker nicht starten");
 				rn.addTrace(Rechnung.REJECTED, "Druckerfehler");
 				// avoid dead letters
@@ -238,7 +241,10 @@ public class RnPrintView2 extends ViewPart {
 			return true;
 		}
 		printer=Hub.localCfg.get("Drucker/A4/Name",null); //$NON-NLS-1$
-		//tray=Hub.localCfg.get("Drucker/A4/Schacht",null); //$NON-NLS-1$
+		String tarmedTray=Hub.localCfg.get("Drucker/A4/Schacht",null); //$NON-NLS-1$
+		if (StringTool.isNothing(tarmedTray)) {
+			tarmedTray = null;
+		}
 		createBrief("Tarmedrechnung_S1",adressat);
 		
 		StringBuilder sb=new StringBuilder();
@@ -388,7 +394,7 @@ public class RnPrintView2 extends ViewPart {
 				seitentotal=0.0;
 				esr.printESRCodeLine(text.getPlugin(),offenRp);
 				
-				if(text.getPlugin().print(printer,/*tray*/null, false)==false){
+				if(text.getPlugin().print(printer,tarmedTray, false)==false){
 					// avoid dead letters
 					actBrief.delete();
 					Hub.setMandant(mSave);
@@ -405,7 +411,7 @@ public class RnPrintView2 extends ViewPart {
 		cursor=tp.insertText(cursor,"\n",SWT.LEFT); //$NON-NLS-1$
 		if(cmAvail<cmFooter){
 			esr.printESRCodeLine(text.getPlugin(),offenRp);
-			if(text.getPlugin().print(printer,/*tray*/null, false)==false){
+			if(text.getPlugin().print(printer,tarmedTray, false)==false){
 				// avoid dead letters
 				actBrief.delete();
 				Hub.setMandant(mSave);
@@ -463,7 +469,7 @@ public class RnPrintView2 extends ViewPart {
 		tp.insertText(cursor,footer.toString(),SWT.LEFT);
 		esr.printESRCodeLine(text.getPlugin(),offenRp);
 		
-		if(text.getPlugin().print(printer,/*tray*/ null, false)==false){
+		if(text.getPlugin().print(printer,tarmedTray, false)==false){
 			// avoid dead letters
 			actBrief.delete();
 			Hub.setMandant(mSave);
