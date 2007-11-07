@@ -157,7 +157,9 @@ public class RnPrintView2 extends ViewPart {
 		Money mPaid=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_prepaid"));
 		String offenRp=mDue.getCentsAsString();
 		//Money mEZDue=new Money(xmlex.mTotal);
-		Money mEZDue=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
+		Money mEZDue=new Money(mDue); //XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
+		Money mEZBrutto=new Money(mDue);
+		mEZDue.addMoney(mPaid);
 		if(withESR==true){
 			String tmpl = "Tarmedrechnung_EZ"; //$NON-NLS-1$
 			if ((rn.getStatus() == RnStatus.MAHNUNG_1) || (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
