@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 3247 2007-10-10 10:49:46Z rgw_ch $
+% *  $Id: konzepte.tex 3329 2007-11-07 17:44:06Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -76,7 +76,7 @@ genauer erklärt.
 
 \section{Konsultationen, Fälle, Garanten und Kostenträger}
 \index{Konsultation!Definition}\index{Fall!Definition}\index{Abrechnung}Jeder in Elexis festgehaltene Kontakt zwischen Praxispersonal und Patient ist eine \textit{Konsultation}. Wenn die Konsultation verrechnet wird, dann geht die Verrechnung zugunsten desjenigen Mandanten, für welchen der eingeloggte Anwender tätig war.
-
+\label{definition:fall}
 Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier eher eine versicherungstechnische, als eine medizinische Einheit: Der Fall sammelt alle Konsultationen, welche mit demselben Abrechnungssystem (s. \ref{settings:abrechnungssystem} auf S. \pageref{settings:abrechnungssystem}) abgerechnet werden. Dies kann manchmal identisch mit dem medizinischen Fallbegriff sein (Ein Unfall, welcher über einen bestimmten Versicherer mit einer bestimmten Fallnummer abgerechnet wird), oder er kann auch keinen Zusammenhang mit einem medizinischen Fall haben (z.B. wird in der Schweiz im Allgemeinen ein allgemeiner Fall \glqq Krankheit\grqq{} erstellt werden, der alle KVG-Konsultationen sammelt.
 
 Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
@@ -84,6 +84,7 @@ Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann ab
 \clearpage
 
 \section{Leistungsabrechnung}
+\label{concept:leistung}
 \index{Leistungscodes}\index{abrechnen}
 \begin{wrapfigure}{l}{7.5cm}
     \includegraphics[width=7.5cm]{images/leistungen1}

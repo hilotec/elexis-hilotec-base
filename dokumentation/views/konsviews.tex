@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 2967 2007-08-07 14:16:52Z rgw_ch $
+% *  $Id: konsviews.tex 3329 2007-11-07 17:44:06Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -192,6 +192,37 @@ des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung u
 verrechnete Zeit jeder Konsultation einzeln und der Summe davon, Dies eignet
 sich beispielsweise, um abends die Abrechnungen des Tages nachzukontrollieren.
 
+\subsection{Falldetail}
+\label{falldetail}
+\index{Fall!Detailansicht}
+Diese View (Abb. \ref{fig:falldetail}) dient zum Einstellen der Details eines Falls (Eine Dialogbox mit derselben View wird geöffnet, wenn man einen neuen Fall (s. \ref{definition:fall} S. \pageref{definition:fall}) erstellt). 
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.8\textwidth]{images/falldetail}\\
+  \caption{Fall-Detail}\label{fig:falldetail}
+\end{figure}
+In der obersten Auswahlbox geben Sie an, welches Abrechnungssystem (S. auch \ref{settings:abrechnungssystem} auf Seite \pageref{settings:abrechnungssystem}) für diesen Fall angewendet werden soll. Darunter steht eine Bezeichnung für den fall, die Sie frei wählen können. Diese dient nur Ihrer eigenen Information, damit Sie verschiedene Fälle desselben Patienten einfacher auseinanderhalten können. Die nächste Zeile, 'Grund für die Versicherung' ist eine Angabe, die auf den zu diesem fall erstellten Rechnungen stehen wird (Falls die Rechnungsvorlage ein entsprechendes Feld enthält).
+
+Das \textbf{Startdatum} ist üblicherweise das Datum der ersten Konsultation, oder bei Unfällen, das Unfalldatum. Das \textbf{Enddatum} hingegen bezeichnet das Datum, wen der Fall abgeschlossen wird. Ein Fall, welcher ein Enddatum hat, wird in der Fall-Liste (Abb. \ref{fig:faelle2}) als 'GESCHLOSSEN' markiert. Zu einem solchen Fall können keine Konsultationen mehr erstellt werden.
+In der Regel sollte ein Fall nur abgeschlossen werden, wenn es ein Unfall ist, welcher abgeschlossen ist, oder wenn der Patient den Versicherer wechselt und die Abrechnungsdaten darum ändern.
+
+Die nächste Zeile, Rechnungsempfänger, ist zwingend, damit überhaupt eine Rechnung erstellt werden kann. Dies muss ein bereits existierender Kontakt (z.B. der Patient selbst) sein. 
+
+\medskip
+Alle weiteren Zeilen sind je nach gewähltem Abrechnungssystem unterschiedlich. Oft wird auch eine Zeile 'Kostenträger' vorhanden sein \footnote{Wichtige Anmerkung für das \textbf{Tarmed-System} (Schweiz): Wenn Rechnungsempfänger und Kostenträger identisch sind, wird eine Tiers Payant-Rechnung erstellt, andernfalls eine Tiers-Garant-Rechnung. Achten Sie also darauf, dass diese beiden Zeilen korrekt sind (Bei UVG-Fällen müssen also sowohl Rechnungsempfänger als auch Kostenträger der jeweilige Unfallversicherer sein, während bei KVG-Fällen in TG-Kantonen der Patient der Rechnungsempfänger und die Krankenkasse der Kostenträger ist)}.
+
 
 \subsection{Diagnosen}
+\label{view:diagnosen} \index{Diagnosen}
+\begin{wrapfigure}{l}{5.5cm}
+    \includegraphics[width=5.5cm]{images/diagnosenview}
+    \label{fig:diagnosen}
+\end{wrapfigure}
+Diese View dient dazu, Diagnosen auszuwählen und einer Konsultation zuzuordnen. Unten sehen Sie eine Reihe von Reitern, die den installierten Diagnosecode-Plugins entsprechen (standardmässig TI-Code, ICD-10, und ICPC-2). Um eine Diagnose auszuwählen, wählen Sie zunächst aus diesen Reitern das entsprechende Codesystem und dann den Code. Die Auswahl kann durch Drag\&Drop oder durch Doppelklick erfolgen.
+
+Für jedes Codesystem sehen Sie ein dreigeteiltes Fenster: Im obersten Bereich sind Ihre (d.h. des aktuell eingeloggten Anwenders) am häufigsten eingesetzten Diagnosen zu sehen; im mittleren Teil diejenigen Diagnosen, die beim aktuell ausgewählten Patienten bisher am häufigsten verwendet worden sind, und um unteren Teil die gesamte Systematik des gewählten Codesystems.
+
+\medskip
+
+Auf diese Weise haben Sie stets Zugriff auf die am häufigsten benötigten Codes und werden nur noch selten die ganze Systematik durchsuchen müssen.
 
