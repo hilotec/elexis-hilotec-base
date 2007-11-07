@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 3311 2007-11-05 17:58:56Z rgw_ch $
+ * $Id: RechnungsListeView.java 3322 2007-11-07 12:59:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -173,8 +173,7 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
     	ViewMenus menu=new ViewMenus(getViewSite());
     	actions=new RnActions(this);
     	menu.createToolbar(actions.rnExportAction,actions.mahnWizardAction, actions.rnFilterAction,actions.reloadAction);
-    	menu.createMenu(actions.expandAllAction,actions.collapseAllAction,actions.reloadAction,actions.addPaymentAction,actions.addExpenseAction,
-    			actions.stornoAction,actions.changeStatusAction,null,actions.printListeAction);
+    	menu.createMenu(actions.expandAllAction,actions.collapseAllAction,actions.printListeAction);
     	MenuManager mgr=new MenuManager();
     	mgr.setRemoveAllWhenShown(true);
     	mgr.addMenuListener(new RnMenuListener(this));
