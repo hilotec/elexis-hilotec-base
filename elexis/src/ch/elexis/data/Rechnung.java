@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3278 2007-10-21 09:27:50Z rgw_ch $
+ *  $Id: Rechnung.java 3330 2007-11-08 06:08:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -268,7 +268,7 @@ public class Rechnung extends PersistentObject {
 	 * bill that an outputter created might be different from the sum, the Rechnung#build
 	 * method calculated. So an outputter should always use setBetrag to correct the final
 	 * amount. If the difference between the internal calculated amount and the outputter's
-	 * result is more than 1 currency unit or mor than 1% of the sum, this method will return 
+	 * result is more than 5 currency units or more than 2% of the sum, this method will return 
 	 * false an will not set the new value.
 	 * Otherwise, the new value will be set, the account will be adjusted and the method returns true
 	 * @param betrag new new sum
@@ -282,13 +282,13 @@ public class Rechnung extends PersistentObject {
 			int newVal=betrag.getCents();
 			int diff=Math.abs(oldVal-newVal);
 			
-			if( (diff>100) || ((diff*100)>oldVal)){
+			if( (diff>500) || ((diff*50)>oldVal)){
 				Money old=new Money(oldVal);
+				String nr=checkNull(get("RnNummer"));
 				String message="Der errechnete Rechnungsbetrag ("+betrag.getAmountAsString()+") weicht vom Rechnungsbetrag ("+old.getAmountAsString()+") ab. Trotzdem weriterfahren?";
-				if(MessageDialog.openConfirm(Desk.theDisplay.getActiveShell(), "Differenz bei der Rechnung", message)){
-					return true;
+				if(!MessageDialog.openConfirm(Desk.theDisplay.getActiveShell(), "Differenz bei der Rechnung "+nr, message)){
+					return false;
 				}
-				return false;
 			}
 			Query<AccountTransaction> qa=new Query<AccountTransaction>(AccountTransaction.class);
 			qa.add("RechnungsID", "=", getId());
