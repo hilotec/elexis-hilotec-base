@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3301 2007-10-31 17:25:46Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3333 2007-11-11 16:12:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -30,12 +30,14 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.banking.ESR;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
@@ -45,8 +47,9 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public class RechnungsDrucker implements IRnOutputter {
-	private static final String settings="privatrechnung/vorlage";
-	String template;
+	//private static String pageESR="privatrechnung/vorlageESR";
+	//private static String  pageBill="privatrechnung/vorlageRn";
+	String templateESR,templateBill;
 	TextContainer tc;
 	
 	/**
@@ -66,23 +69,36 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * Create the Control that will be presented to the user before
 	 * selecting the bill output target.
-	 * Here we simply chose a template to use for the bill
+	 * Here we simply chose a template to use for the bill. In fact we need two
+	 * templates: a template for the page with summary and giro and a template for the other pages
 	 */
 	public Control createSettingsControl(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
-		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung");
-		final Text tVorlage=new Text(ret,SWT.BORDER);
-		tVorlage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tVorlage.setText(Hub.globalCfg.get(settings, ""));
-		tVorlage.addFocusListener(new FocusAdapter(){
+		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung (ESR-Seite)");
+		final Text tVorlageESR=new Text(ret,SWT.BORDER);
+		tVorlageESR.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, ""));
+		tVorlageESR.addFocusListener(new FocusAdapter(){
 			@Override
 			public void focusLost(final FocusEvent ev){
-				template=tVorlage.getText();
-				Hub.globalCfg.set(settings, template);
+				templateESR=tVorlageESR.getText();
+				Hub.globalCfg.set(PreferenceConstants.cfgTemplateESR, templateESR);
 			}
 		});
-		tVorlage.setText(Hub.globalCfg.get(settings, "privatrechnung"));
+		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung (Folgeseiten)");
+		final Text tVorlageRn=new Text(ret,SWT.BORDER);
+		tVorlageRn.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, ""));
+		tVorlageRn.addFocusListener(new FocusAdapter(){
+			@Override
+			public void focusLost(final FocusEvent ev){
+				templateBill=tVorlageRn.getText();
+				Hub.globalCfg.set(PreferenceConstants.cfgTemplateBill, templateBill);
+			}
+		});
+		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "privatrechnung_ESR"));
+		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "privatrechnung_S2"));
 		return ret;
 	}
 
@@ -90,7 +106,12 @@ public class RechnungsDrucker implements IRnOutputter {
 	 * Print the bill(s)
 	 */
 	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn) {
-		Hub.globalCfg.set(settings, template);
+		if(templateBill==null){
+			templateBill=Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "");
+		}
+		if(templateESR==null){
+			templateESR=Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "");
+		}
 		Result<Rechnung> ret=new Result<Rechnung>(); //=new Result<Rechnung>(Log.ERRORS,99,"Not yet implemented",null,true);
 		Dialog dlg=new Dialog(Desk.getTopShell()){
 
@@ -114,14 +135,9 @@ public class RechnungsDrucker implements IRnOutputter {
 		};
 		dlg.setBlockOnOpen(false);
 		dlg.open();
-		String printer=Hub.localCfg.get("Drucker/A4ESR/Name",null);
-		
+	
 		for(Rechnung rn:rnn){
-			Fall fall=rn.getFall();
-			Kontakt adressat=fall.getRequiredContact("Rechnungsempfänger");
-			tc.createFromTemplateName(null, template, Brief.RECHNUNG, adressat,rn.getNr());
-			ret.add(doPrint(rn,tc));
-			tc.getPlugin().print(printer, null, true);
+			ret.add(doPrint(rn));
 		}
 		dlg.close();
 		if(!ret.isOK()){
@@ -134,19 +150,16 @@ public class RechnungsDrucker implements IRnOutputter {
 		return "Privatrechnung auf Drucker";
 	}
 
-	public boolean printESR(){
-		//ESR esr=new ESR();
-		return false;
-	}
 	
 	/**
 	 * print a bill into a text container
-	 * @param rn
-	 * @param tc
-	 * @return
 	 */
-	public Result<Rechnung> doPrint(final Rechnung rn, final TextContainer tc){
+	public Result<Rechnung> doPrint(final Rechnung rn){
 		Result<Rechnung> ret=new Result<Rechnung>();
+		Fall fall=rn.getFall();
+		Kontakt adressat=fall.getRequiredContact("Rechnungsempfänger");
+		tc.createFromTemplateName(null, templateBill, Brief.RECHNUNG, adressat,rn.getNr());
+		
 		List<Konsultation> kons=rn.getKonsultationen();
 		Collections.sort(kons, new Comparator<Konsultation>(){
 			TimeTool t0=new TimeTool();
@@ -165,12 +178,27 @@ public class RechnungsDrucker implements IRnOutputter {
 			tc.getPlugin().insertText(pos, new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER)+"\n", SWT.LEFT);
 			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 10);
 			for(Verrechnet vv:k.getLeistungen()){
-				tc.getPlugin().insertText(pos, vv.getText()+"\n", SWT.LEFT);
-				sum.addMoney(vv.getEffPreis());
+				Money preis=vv.getEffPreis();
+				int zahl=vv.getZahl();
+				Money subtotal=preis;
+				subtotal.multiply(zahl);
+				StringBuilder sb=new StringBuilder();
+				sb.append(zahl).append("\t").append(vv.getText()).append("\t").append(preis.getAmountAsString())
+					.append("\t").append(subtotal.getAmountAsString()).append("\n");
+				tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
+				sum.addMoney(subtotal);
 			}
 		}
-		String toPrinter=Hub.localCfg.get("Drucker/A4ESR/Name",null);
+		String toPrinter=Hub.localCfg.get("Drucker/A4/Name",null);
 		tc.getPlugin().print(toPrinter, null, false);
+		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
+		ESR esr=new ESR(PreferenceConstants.esrIdentity,PreferenceConstants.esrUser,rn.getRnId(),27);
+		Kontakt bank=Kontakt.load(Hub.globalCfg.get(PreferenceConstants.cfgBank,""));
+		if(!bank.isValid()){
+			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
+		}
+		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
+		tc.getPlugin().print(Hub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
 		return ret;
 	}
 }
