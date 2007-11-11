@@ -34,5 +34,13 @@
             outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">
       </Rechnung>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="ch.elexis.privatrechnung.rechnung.RnPrintView"
+            id="ch.elexis.privatrechnung.view"
+            name="Privatrechnung">
+      </view>
+   </extension>
 
 </plugin>
