@@ -28,12 +28,13 @@
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
 		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}"/>
-				<fileset dir="${dist}/plugins/ch.elexis.importer.div_${version}">
-							<include name="*.jar"/>
-				</fileset>
+		<fileset dir="${dist}/plugins/ch.elexis.importer.div_${version}">
+				<include name="*.jar"/>
+		</fileset>
 		<fileset dir="${plugindir}">
 			<include name="*.jar"/>
 		</fileset>
+		<pathelement location="${dist}/plugins/ch.elexis.ebanking_ch_${version}"/>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
@@ -51,5 +52,6 @@
 		<exec command="texify anleitung.tex" dir="${sourcedir}/doc" />
 		<copy file="${sourcedir}/doc/anleitung.pdf" todir="${plugindir}"></copy>
 		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
 	</target>
 </project>
