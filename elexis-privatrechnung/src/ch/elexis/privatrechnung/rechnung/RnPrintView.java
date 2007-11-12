@@ -29,7 +29,7 @@ public class RnPrintView extends ViewPart {
 	String templateBill, templateESR;
 	TextContainer tc;
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		tc=new TextContainer(parent.getShell());
 		tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback(){
 
@@ -79,7 +79,7 @@ public class RnPrintView extends ViewPart {
 			}
 			
 		});
-		Object pos=tc.getPlugin().insertText("[Rechnung]", "Leistungen\n", SWT.LEFT);
+		Object pos=tc.getPlugin().insertText("[Leistungen]", "Leistungen\n", SWT.LEFT);
 		Money sum=new Money();
 		for(Konsultation k:kons){
 			tc.getPlugin().setFont("Helvetica", SWT.BOLD, 12);
@@ -88,14 +88,15 @@ public class RnPrintView extends ViewPart {
 			for(Verrechnet vv:k.getLeistungen()){
 				Money preis=vv.getEffPreis();
 				int zahl=vv.getZahl();
-				Money subtotal=preis;
+				Money subtotal=new Money(preis);
 				subtotal.multiply(zahl);
 				StringBuilder sb=new StringBuilder();
 				sb.append(zahl).append("\t").append(vv.getText()).append("\t").append(preis.getAmountAsString())
 					.append("\t").append(subtotal.getAmountAsString()).append("\n");
-				tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
+				pos=tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 				sum.addMoney(subtotal);
 			}
+			pos=tc.getPlugin().insertText(pos, "____________________________________________________________________\nTotal:\t\t\t"+sum.getAmountAsString(),SWT.LEFT);
 		}
 		String toPrinter=Hub.localCfg.get("Drucker/A4/Name",null);
 		tc.getPlugin().print(toPrinter, null, false);
@@ -107,6 +108,7 @@ public class RnPrintView extends ViewPart {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}
 		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
+		tc.replace("\\[Leistungen\\]", "Betrag total: "+sum.getAmountAsString());
 		tc.getPlugin().print(Hub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
 		return ret;
 	}

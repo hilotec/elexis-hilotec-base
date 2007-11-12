@@ -8,15 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3335 2007-11-11 18:06:12Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3336 2007-11-12 19:07:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -31,28 +28,19 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.Hub;
-import ch.elexis.banking.ESR;
-import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
-import ch.elexis.data.Verrechnet;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
-import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.TimeTool;
 
 public class RechnungsDrucker implements IRnOutputter {
 	String templateESR,templateBill;
@@ -131,6 +119,7 @@ public class RechnungsDrucker implements IRnOutputter {
 			        	 for(Rechnung rn:rnn){
 			        		try{
 			        			result.add(rnp.doPrint(rn));
+			        			monitor.worked(10);
 				 				if(!result.isOK()){
 				 					String errms="Rechnung "+rn.getNr()+"konnte nicht gedruckt werden";
 				 					res.add(Log.ERRORS, 1, errms, rn, true);
