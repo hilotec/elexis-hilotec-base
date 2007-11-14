@@ -2,36 +2,25 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="ch.elexis.Verrechnungscode">
-      <Leistung
-            CodeDetailDisplay="ch.elexis.privatrechnung.views.Leistungsdetail"
-            CodeSelectorFactory="ch.elexis.privatrechnung.views.Leistungsselektor"
-            ElementFactory="ch.elexis.privatrechnung.data.LeistungsFactory"
-            ImporterClass="ch.elexis.privatrechnung.data.Importer"
-            name="PrivatLeistung">
-      </Leistung>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="ch.elexis.Leistungscodes"
-            class="ch.elexis.privatrechnung.views.Preferences"
-            id="ch.elexis.privatrechnung.prefs"
-            name="Privatrechnung">
+            class="ch.elexis.privatrechnung2.prefs.Preferences"
+            id="ch.elexis.privatrechnung2.prefs"
+            name="Privatrechnung 2">
       </page>
    </extension>
    <extension
          point="ch.elexis.PersistentReference">
       <Factory
-            Class="ch.elexis.privatrechnung.data.LeistungsFactory"
-            name="Privatrechnung">
+            Class="ch.elexis.privatrechnung2.data.LeistungsFactory"
+            name="Privatrechnung 2">
       </Factory>
    </extension>
    <extension
          point="ch.elexis.RechnungsManager">
       <Rechnung
-            name="Privatrechnung"
-            outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">
+            name="Privatrechnung 2"
+            outputter="ch.elexis.privatrechnung2.rechnung.RechnungsDrucker">
       </Rechnung>
    </extension>
 
