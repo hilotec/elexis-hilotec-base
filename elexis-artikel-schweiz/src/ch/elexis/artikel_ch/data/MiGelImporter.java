@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MiGelImporter.java 2853 2007-07-21 06:54:03Z rgw_ch $
+ * $Id: MiGelImporter.java 3341 2007-11-14 13:35:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -174,6 +174,9 @@ public class MiGelImporter extends ImporterPage
 	    String [] line;
 		monitor.subTask("MiGel einlesen");
 	    while ((line = reader.readNext()) != null) {
+	    	if(line.length<3){
+	    		continue;
+	    	}
 	    	Money betrag;
 			try{
 				betrag=new Money(Double.parseDouble(line[3]));
