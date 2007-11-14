@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchForm.java 3315 2007-11-06 07:30:52Z michael_imhof $
+ * $Id: WeisseSeitenSearchForm.java 3340 2007-11-14 08:15:27Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -113,8 +113,7 @@ public class WeisseSeitenSearchForm extends Composite {
 		getShell().setCursor(waitCursor);
 
 		try {
-			String content = DirectoriesHelper.readContent(name, geo
-					+ "*");
+			String content = DirectoriesHelper.readContent(name, geo);
 			DirectoriesContentParser parser = new DirectoriesContentParser(
 					content);
 			kontakte = parser.extractKontakte();
