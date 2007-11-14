@@ -1,0 +1,20 @@
+"NIL","Hom","Homöopathie",0,0,0,01.01.2000,31. Dez 2038,1
+"Hom","K1","Erstanamnese",0,12000,60,01.01.2000,31. Dez 2038,1
+"Hom","Kx","Normalkonsultation",0,6000,30,01.01.2000,31. Dez 2038,1
+"Hom","Rep","Repertoration",0,3000,30,01.01.2000,31. Dez 2038,1
+"NIL","Aku","Akupunktur",0,0,0,01.01.2000,31. Dez 2038,1
+"Aku","A1","Erste Nadel",0,2000,5,01.01.2000,31. Dez 2038,1
+"Aku","Ax","Jede weitere Nadel",0,1000,5,01.01.2000,31. Dez 2038,1
+"NIL","Sch","Schreinerarbeiten",0,0,0,01.01.2000,31. Dez 2038,1
+"Sch","Tisch","Tisch bauen",2540,12580,60,01.01.2000,31. Dez 2038,1
+"Sch","Stuhl","Stuhl bauen",0,0,0,01.01.2000,31. Dez 2038,1
+"Sch","Regal","Regal bauen",7580,22310,80,01.01.2000,31. Dez 2038,1
+"Stuhl","Stuhl 1","Küchenstuhl",1870,7530,40,01.01.2000,31. Dez 2038,1
+"Stuhl","Sessel","Fernsehsessel",5080,21270,70,01.01.2000,31. Dez 2038,1
+"Stuhl","Schemel","Schemel",580,1270,15,01.01.2000,31. Dez 2038,1
+"Elexis","Reise","Reisespesen pro Km",60,90,1,01.01.2000,31. Dez 2038,1
+"Elexis","Lokal","Support vor Ort (Std)",0,13000,60,01.01.2000,31. Dez 2038,1
+"Elexis","Remote","Support Fernwartung (15')",1500,3000,15,01.01.2000,31. Dez 2038,1
+"Elexis","Prog","Programmierarbeiten (Std)",0,13000,60,01.01.2000,31. Dez 2038,1
+"NIL","Elexis","Elexis",0,0,0,01.01.2000,31. Dez 2038,1
+"Elexis","Bahn","Bahnkosten",0,0,0,01.01.2000,31. Dez 2038,1
