@@ -38,7 +38,6 @@ Rietstrasse 30
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -50,6 +49,7 @@ Rietstrasse 30
       <plugin id="ch.elexis.arzttarife_ch"/>
       <plugin id="ch.elexis.befunde"/>
       <plugin id="ch.elexis.bildanzeige"/>
+      <plugin id="ch.elexis.diagnosecodes_ch"/>
       <plugin id="ch.elexis.ebanking_ch"/>
       <plugin id="ch.elexis.icpc"/>
       <plugin id="ch.elexis.importer.div"/>
@@ -57,9 +57,13 @@ Rietstrasse 30
       <plugin id="ch.elexis.kassenbuch"/>
       <plugin id="ch.elexis.laborimport_viollier"/>
       <plugin id="ch.elexis.mail"/>
+      <plugin id="ch.elexis.medikamente.bag"/>
       <plugin id="ch.elexis.noatext"/>
+      <plugin id="ch.elexis.omnivore"/>
+      <plugin id="ch.elexis.privatnotizen"/>
       <plugin id="ch.elexis.scripting"/>
       <plugin id="ch.elexis.update_tool"/>
+      <plugin id="ch.medshare.elexis_directories"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.servlet.jsp"/>
