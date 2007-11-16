@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 3209 2007-09-26 16:05:47Z rgw_ch $
+ *  $Id: Patient.java 3350 2007-11-16 16:21:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -19,6 +19,7 @@ import java.util.List;
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.util.Money;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -159,6 +160,10 @@ public class Patient extends Person{
 	 */
 	
     public Konsultation getLetzteKons(final boolean create){
+    	if(Hub.actMandant==null){
+    		SWTHelper.showError("Kein Mandant angemeldet", "Es ist kein Mandant angemeldet.");
+    		return null;
+    	}
     	Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
     	qbe.add("MandantID", "=", Hub.actMandant.getId());
     	//qbe.add("Datum", "=", new TimeTool().toString(TimeTool.DATE_COMPACT));

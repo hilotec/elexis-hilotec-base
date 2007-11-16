@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3235 2007-10-03 11:26:34Z danlutz $
+ *    $Id: Fall.java 3350 2007-11-16 16:21:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -316,7 +316,8 @@ public class Fall extends PersistentObject{
 	 */
 
 	public String getRequirements(){
-		return getRequirements(getAbrechnungsSystem());
+		String req=getRequirements(getAbrechnungsSystem());
+		return req==null ? "" : req;
 	}
 	
 	/**
@@ -586,7 +587,7 @@ public class Fall extends PersistentObject{
 		return ret;
 	}
 	
-	public static String getBillingSystemAttribute(String billingSystem, String attr){
+	public static String getBillingSystemAttribute(final String billingSystem, final String attr){
 		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/"+attr, null);
 		return ret;
 	}
