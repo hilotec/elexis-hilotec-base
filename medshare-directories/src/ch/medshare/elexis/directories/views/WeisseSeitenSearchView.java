@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchView.java 3298 2007-10-29 14:52:40Z michael_imhof $
+ * $Id: WeisseSeitenSearchView.java 3349 2007-11-16 13:26:57Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -198,7 +198,7 @@ public class WeisseSeitenSearchView extends ViewPart {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				WeisseSeitenSearchView.this.fillContextMenu(manager);
+				fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(kontakteTableViewer.getControl());
