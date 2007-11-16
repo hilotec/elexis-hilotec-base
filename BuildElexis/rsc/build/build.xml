@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3342 2007-11-14 13:38:45Z rgw_ch $
+<!-- $Id: build.xml 3351 2007-11-16 16:21:44Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -83,10 +83,12 @@
 		</copy>
 		<exec command="texify elexis.tex" dir="${source}/dokumentation" />
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
+		<!-- new version without demo  
 		<mkdir dir="${dist}/demoDB"/>
 		<copy todir="${dist}/demoDB">
 			<fileset dir="${dest}/../demoDB_${dbversion}"/>	
 		</copy>
+		-->
 	</target>
 
 	<!-- Hier alle einzubindenden Plugins eintragen. Reihenfolge nicht ändern. -->
@@ -152,6 +154,8 @@
 			<antcall target="privatrechnung"/>
 		<available file="../elexis-notes/build.xml" property="notes.ok"/>
 			<antcall target="notes"/>
+		<available file="../medshare-importer-csv/build.xml" property="importer_csv.ok"/>
+			<antcall target="importer-csv"/>
 	</target>
 
 	
@@ -289,7 +293,10 @@
 	<target name="aekasse" if="aekasse.ok">
 		<ant antfile="../elexis-importer-aerztekasse/build.xml"/>
 	</target>
-		
+	
+	<target name="importer-csv" if="importer_csv.ok">
+		<ant antfile="../medshare-importer-csv/build.xml"/>
+	</target>
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
 	<target name="make_addition">
