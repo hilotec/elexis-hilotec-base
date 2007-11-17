@@ -558,7 +558,7 @@ public class RnPrintView2 extends ViewPart {
 		
 		if(fall.getAbrechnungsSystem().equals("IV")){ //$NON-NLS-1$
 			text.replace("\\[NIF\\]",m.getNif()); //$NON-NLS-1$
-			text.replace("\\[F60]\\",fall.getVersNummer()); //$NON-NLS-1$
+			text.replace("\\[F60\\]",fall.getVersNummer()); //$NON-NLS-1$
 		}else{
 			text.replace("\\[NIF\\]",m.getKsk()); //$NON-NLS-1$
 			text.replace("\\[F60\\]",""); //$NON-NLS-1$ //$NON-NLS-2$
