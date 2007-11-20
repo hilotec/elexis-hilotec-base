@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 3282 2007-10-24 04:28:59Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 3358 2007-11-20 13:50:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -21,7 +21,6 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
-import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
@@ -40,11 +39,18 @@ public class ResponseAnalyzer {
 
 	Document responseDoc;
 	Element eRoot;
-	public Document load(InputStream xmlResponse){
+	private String rnNr;
+	private String status;
+	private Result<String> resume;
+	
+	
+	Rechnung rn;
+	public Document load(final InputStream xmlResponse){
 		try{
 			SAXBuilder builder=new SAXBuilder();
 			responseDoc=builder.build(xmlResponse);
 			eRoot=responseDoc.getRootElement();
+			analyze();
 			return responseDoc;
 		}catch(Exception ex){
 			ExHandler.handle(ex);
@@ -52,10 +58,20 @@ public class ResponseAnalyzer {
 		return null;
 	}
 	
+	public String getStatus(){
+		return status;
+	}
+	public String getRnNr(){
+		return rnNr;
+	}
+
 	public Result<String> getResume(){
-		Result<String> result=new Result<String>();
+		return resume;
+	}
+	private boolean analyze(){
+		resume=new Result<String>();
 		if(eRoot==null){
-			return result;
+			return false;
 		}
 		StringBuilder ret=new StringBuilder();
 		Element eHeader=eRoot.getChild("header",ns);
@@ -68,14 +84,15 @@ public class ResponseAnalyzer {
 		Element eInvoice=eRoot.getChild("invoice",ns);
 		String rnId=eInvoice.getAttributeValue("invoice_id");
 		int tr=rnId.lastIndexOf('0');
-		String rnNr;
+		
+		
 		if(tr==-1){
 			rnNr=rnId;
 		}else{
 			String patNr=Integer.toString(Integer.parseInt(rnId.substring(0, tr))); // eliminate leading zeroes
 			rnNr=rnId.substring(tr+1);
 		}
-		Rechnung rn=Rechnung.getFromNr(rnNr);
+		rn=Rechnung.getFromNr(rnNr);
 		if(rn==null){
 			ret.append("Die in der Antwort genannte Rechnung ist nicht bekannt!");
 		}else{
@@ -96,7 +113,7 @@ public class ResponseAnalyzer {
 			if(eExpl!=null){
 				explanation=eExpl.getText();
 			}
-			String status=eStatusType.getName().toLowerCase();
+			status=eStatusType.getName().toLowerCase();
 			if(status.equals("rejected")){
 				ret.append("Zurückgewiesen.\n").append(explanation).append("\n");
 				if(eError!=null){
@@ -105,7 +122,7 @@ public class ResponseAnalyzer {
 					ret.append(eError.getAttributeValue("minor")).append("->");
 					ret.append(eError.getAttributeValue("error")).append("\n");
 				}
-				result.add(new Result<String>(Log.ERRORS,1,"Rejected",ret.toString(),true));	
+				resume.add(new Result<String>(Log.ERRORS,1,"Rejected",ret.toString(),true));	
 				
 			}else if(status.equals("calledin")){
 				ret.append("Weitere Informationen angefordert.\n").append(explanation).append("\n");
@@ -137,6 +154,7 @@ public class ResponseAnalyzer {
 				ret.append("Unbekannter Statustyp\n");
 			}
 		}
-		return new Result<String>(ret.toString());
+		resume=new Result<String>(ret.toString());
+		return true;
 	}
 }
