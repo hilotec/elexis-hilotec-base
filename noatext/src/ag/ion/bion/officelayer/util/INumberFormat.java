@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:24 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-30 16:49:07 +0200 (Mo, 30 Jul 2007) $
  */
 package ag.ion.bion.officelayer.util;
 
@@ -42,10 +42,43 @@ package ag.ion.bion.officelayer.util;
  * Number format. 
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @author Markus Krüger
+ * @version $Revision: 11533 $
  */
 public interface INumberFormat {
   
+  //----------------------------------------------------------------------------
+  /**
+   * Returns format key.
+   * 
+   * @return format key
+   * 
+   * @author Markus Krüger
+   * @date 25.07.2007
+   */
+  public int getFormatKey();
+  //----------------------------------------------------------------------------
+  /**
+   * Returns format type as constants of {@link com.sun.star.util.NumberFormat}.
+   * 
+   * @return format type as constants of {@link com.sun.star.util.NumberFormat}
+   * 
+   * @author Markus Krüger
+   * @date 25.07.2007
+   */
+  public short getFormatType();
+  //----------------------------------------------------------------------------
+  /**
+   * Returns an example string.
+   * 
+   * @return an example string
+   * 
+   * @throws UtilException if returning the example fails
+   * 
+   * @author Markus Krüger
+   * @date 25.07.2007
+   */
+  public String getExample() throws UtilException;
   //----------------------------------------------------------------------------
   /**
    * Returns format pattern.

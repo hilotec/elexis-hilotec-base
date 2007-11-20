@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:23 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.noa.db;
 
@@ -44,7 +44,7 @@ import ag.ion.bion.officelayer.document.IDocument;
  * OpenOffice.org database document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  * @date 16.03.2006
  */
 public interface IDatabaseDocument extends IDocument {

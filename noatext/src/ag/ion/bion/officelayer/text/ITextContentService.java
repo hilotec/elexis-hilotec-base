@@ -34,15 +34,17 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-09 18:22:59 +0200 (Mo, 09 Jul 2007) $
  */
 package ag.ion.bion.officelayer.text;
+
+import ag.ion.noa.graphic.GraphicInfo;
 
 /**
  * Content service of a text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11508 $
  */
 public interface ITextContentService {
   
@@ -57,6 +59,20 @@ public interface ITextContentService {
    * @author Andreas Bröker
    */
   public IParagraph constructNewParagraph() throws TextException;  
+  //----------------------------------------------------------------------------
+  /**
+   * Constructs new image.
+   * 
+   * @param graphicInfo the graphic information to construct image with
+   * 
+   * @return new image
+   * 
+   * @throws TextException if the image can not be constructed
+   * 
+   * @author Markus Krüger
+   * @date 09.07.2007
+   */
+  public ITextDocumentImage constructNewImage(GraphicInfo graphicInfo) throws TextException;  
   //----------------------------------------------------------------------------
   /**
    * Inserts content.

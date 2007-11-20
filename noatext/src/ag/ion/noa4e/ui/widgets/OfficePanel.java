@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/08/07 11:09:18 $
+ * Last changes made by $Author: markus $, $Date: 2007-03-19 11:50:22 +0100 (Mo, 19 Mrz 2007) $
  */
 package ag.ion.noa4e.ui.widgets;
 
@@ -88,7 +88,7 @@ import java.net.URL;
  * the OpenOffice.org User Interface into the SWT environment.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.2 $
+ * @version $Revision: 11473 $
  * @date 28.06.2006
  */ 
 public class OfficePanel extends Composite {
@@ -144,6 +144,20 @@ public class OfficePanel extends Composite {
 		return officeFrame;
 	}
   //----------------------------------------------------------------------------
+  /**
+   * Returns current document. Returns null
+   * if a document is not available.
+   * 
+   * @return current document. Returns null
+   * if a document is not available.
+   * 
+   * @author Markus Krüger
+   * @date 19.03.2007
+   */
+  public IDocument getDocument() {
+    return document;
+  }
+  //----------------------------------------------------------------------------
 	/**
 	 * Sets focus to the office panel.
 	 * 
@@ -155,8 +169,7 @@ public class OfficePanel extends Composite {
 			officeFrame.setFocus();
 			return true;
 		}
-		else
-			return super.setFocus();
+		return super.setFocus();
 	}
   //----------------------------------------------------------------------------
 	/**
@@ -346,8 +359,7 @@ public class OfficePanel extends Composite {
 	protected IProgressMonitor getProgressMonitor() {
 		if(progressMonitorPart != null)
 			return progressMonitorPart;
-		else
-			return new NullProgressMonitor();
+		return new NullProgressMonitor();
 	}
   //----------------------------------------------------------------------------
 	/**
@@ -572,9 +584,7 @@ public class OfficePanel extends Composite {
 			if(System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 	      return new URL("file://///" + documentPath); //$NON-NLS-1$
 	    }
-	    else {
-	      return new URL("file:////" + documentPath); //$NON-NLS-1$
-	    }
+	    return new URL("file:////" + documentPath); //$NON-NLS-1$
     }
     catch(Throwable throwable) {
     	throw new CoreException(new Status(IStatus.ERROR, NOAUIPlugin.PLUGIN_ID, 

@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:13:25 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -45,13 +45,12 @@ import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.TextException;
 
 import com.sun.star.text.XText;
-import com.sun.star.text.XTextCursor;
 
 /**
  * Text of a text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11550 $
  */
 public class Text implements IText {
 
@@ -114,12 +113,11 @@ public class Text implements IText {
    * 
    * @author Andreas Bröker
    * @author Sebastian Rösgen
+   * @author Markus Krüger
    */
   public ITextContentEnumeration getTextContentEnumeration() throws TextException {
-    XTextCursor xTextCursor = xText.createTextCursor();
-    xTextCursor.gotoEnd(true);
     try {
-      return new TextContentEnumeration(textDocument, xTextCursor);
+      return new TextContentEnumeration(textDocument, xText);
     }
     catch(Exception exception) {
       TextException textException = new TextException(exception.getMessage());

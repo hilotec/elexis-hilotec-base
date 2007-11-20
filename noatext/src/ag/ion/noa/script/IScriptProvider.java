@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:26 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-18 13:39:56 +0200 (Mi, 18 Jul 2007) $
  */
 package ag.ion.noa.script;
 
@@ -40,7 +40,7 @@ package ag.ion.noa.script;
  * Provider for scripts.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11525 $
  * @date 13.06.2006
  */ 
 public interface IScriptProvider {
@@ -76,6 +76,28 @@ public interface IScriptProvider {
 	 */
 	public IScript[] getScripts(String type, String library);
   //----------------------------------------------------------------------------
+  /**
+   * Returns the script with the submitted type, library, module, and name, or null
+   * if not found.
+   * 
+   * @see IScriptProvider#TYPE_BASIC
+   * @see IScriptProvider#TYPE_BEAN_SHELL
+   * @see IScriptProvider#TYPE_JAVA
+   * @see IScriptProvider#TYPE_JAVA_SCRIPT
+   * @see IScriptProvider#TYPE_PYTHON
+   * 
+   * @param type type of the scripts
+   * @param library name of the library
+   * @param module name of the module, or null if not TYPE_BASIC
+   * @param name name of the script
+   * 
+   * @return  the script with the submitted type, library, module, and name, or null
+   * 
+   * @author Andreas Bröker
+   * @date 13.06.2006
+   */
+  public IScript getScript(String type, String library, String module, String name);
+  //----------------------------------------------------------------------------
 	/**
 	 * Returns all scripts of the library with the submitted name.
 	 * 
@@ -87,6 +109,16 @@ public interface IScriptProvider {
 	 * @date 13.06.2006
 	 */
 	public IScript[] getScripts(String library);
+  //----------------------------------------------------------------------------
+  /**
+   * Returns all scripts.
+   * 
+   * @return all scripts
+   * 
+   * @author Markus Krüger
+   * @date 17.07.2007
+   */
+  public IScript[] getScripts();
   //----------------------------------------------------------------------------
 	
 }

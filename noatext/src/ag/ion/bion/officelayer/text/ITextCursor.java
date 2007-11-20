@@ -34,18 +34,21 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/23 15:27:31 $
+ * Last changes made by $Author: markus $, $Date: 2007-05-29 15:40:14 +0200 (Di, 29 Mai 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
+import ag.ion.bion.officelayer.filter.IFilter;
 import ag.ion.noa.NOAException;
+
+import java.io.InputStream;
 
 /**
  * Cursor of a text document.
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.4 $
+ * @version $Revision: 11482 $
  */
 public interface ITextCursor {
 	
@@ -191,6 +194,19 @@ public interface ITextCursor {
    * @date 27.10.2006
    */
   public void insertDocument(String url) throws NOAException;  
+  //----------------------------------------------------------------------------
+  /**
+   * Inserts a file stream at the current cursor location.
+   * 
+   * @param inputStream a file stream to be inserted
+   * @param filter the filter that the stream is baes on
+   * 
+   * @throws NOAException if the file stream can not be inserted
+   * 
+   * @author Markus Krüger
+   * @date 24.05.2007
+   */
+  public void insertDocument(InputStream inputStream,IFilter filter) throws NOAException;  
   //----------------------------------------------------------------------------
   /**
    * Returns if the current cursor supports word cursor operations.

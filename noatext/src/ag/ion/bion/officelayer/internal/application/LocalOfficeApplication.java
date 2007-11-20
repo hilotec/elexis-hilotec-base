@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:25 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.bion.officelayer.internal.application;
 
@@ -48,17 +48,13 @@ import ag.ion.bion.officelayer.internal.application.connection.LocalOfficeConnec
 import ag.ion.bion.officelayer.runtime.IOfficeProgressMonitor;
 
 import java.awt.Toolkit;
-import java.io.File;
 import java.util.Map;
-
-import ch.elexis.Hub;
-import ch.elexis.preferences.PreferenceConstants;
 
 /**
  * Local OpenOffice.org application.
  * 
- * @author Andreas Brï¿½ker
- * @version $Revision: 1.1 $
+ * @author Andreas Bröker
+ * @version $Revision: 10398 $
  */
 public class LocalOfficeApplication extends AbstractOfficeApplication implements IOfficeApplication {
 
@@ -84,7 +80,7 @@ public class LocalOfficeApplication extends AbstractOfficeApplication implements
    * 
    * @param map configuration map to be used (can be null)
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public LocalOfficeApplication(Map map) {
     if(map != null) {
@@ -104,7 +100,7 @@ public class LocalOfficeApplication extends AbstractOfficeApplication implements
    * 
    * @throws OfficeApplicationException if the submitted configuration is not valid
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    * 
    * @deprecated Use setConfiguration(Map configuration) instead.
    */
@@ -126,7 +122,7 @@ public class LocalOfficeApplication extends AbstractOfficeApplication implements
    * 
    * @throws OfficeApplicationException if the configuration is not complete
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void setConfiguration(Map configuration) throws OfficeApplicationException {
     initConfiguration(configuration);
@@ -150,7 +146,7 @@ public class LocalOfficeApplication extends AbstractOfficeApplication implements
    * 
    * @throws OfficeApplicationException if the connection can not be established
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   protected void openConnection(IOfficeProgressMonitor officeProgressMonitor) throws OfficeApplicationException {
     try {
@@ -175,7 +171,7 @@ public class LocalOfficeApplication extends AbstractOfficeApplication implements
    * 
    * @throws OfficeApplicationException if the configuration is not complete
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private void initConfiguration(Map configuration) throws OfficeApplicationException {
     if(configuration == null)
@@ -183,20 +179,6 @@ public class LocalOfficeApplication extends AbstractOfficeApplication implements
     Object home = configuration.get(IOfficeApplication.APPLICATION_HOME_KEY);
     if(home != null) {
       this.home = home.toString();      
-    }else{
-    	String homedir=Hub.localCfg.get(PreferenceConstants.P_OOBASEDIR,null);
-    	if(homedir==null){
-    		File base=new File(Hub.getBasePath());
-        	File fDef=new File(base.getParentFile().getParent()+"/ooo");
-        	if(fDef.exists()){
-        		homedir=fDef.getAbsolutePath();
-        		Hub.localCfg.set(PreferenceConstants.P_OOBASEDIR, homedir);
-        	}else{
-        		homedir=Hub.localCfg.get(PreferenceConstants.P_OOBASEDIR,".");
-        	}
-    		System.setProperty("openoffice.path.name",homedir);
-    	}
-    	configuration.put(IOfficeApplication.APPLICATION_HOME_KEY, homedir);
     }
     isConfigured = true;
     //else

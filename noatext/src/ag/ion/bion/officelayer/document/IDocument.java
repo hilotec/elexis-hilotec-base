@@ -34,17 +34,20 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/25 17:50:50 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-16 17:21:15 +0200 (Do, 16 Aug 2007) $
  */
 package ag.ion.bion.officelayer.document;
 
+import ag.ion.bion.officelayer.desktop.IFrame;
 import ag.ion.bion.officelayer.event.ICloseListener;
 import ag.ion.bion.officelayer.event.IDocumentListener;
 import ag.ion.bion.officelayer.event.IDocumentModifyListener;
 import ag.ion.bion.officelayer.form.IFormService;
 
 import ag.ion.noa.document.IFilterProvider;
+import ag.ion.noa.printing.IPrintService;
 import ag.ion.noa.script.IScriptingService;
+import ag.ion.noa.service.IServiceProvider;
 import ag.ion.noa.view.ISelectionProvider;
 
 import com.sun.star.lang.XComponent;
@@ -56,7 +59,7 @@ import java.net.URL;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 11568 $
  */
 public interface IDocument extends ISelectionProvider {
   
@@ -124,6 +127,16 @@ public interface IDocument extends ISelectionProvider {
    * @author Andreas Bröker
    */
   public XComponent getXComponent();  
+  //----------------------------------------------------------------------------
+  /**
+   * Returns Frame of the document.
+   * 
+   * @return Frame of the document
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public IFrame getFrame();  
   //----------------------------------------------------------------------------
   /**
    * Returns persistence service.
@@ -287,6 +300,16 @@ public interface IDocument extends ISelectionProvider {
   public void print() throws DocumentException;
   //----------------------------------------------------------------------------
   /**
+   * Returns the print service of the document.
+   * 
+   * @return the print service of the document
+   * 
+   * @author Markus Krüger
+   * @date 16.08.2007
+   */
+  public IPrintService getPrintService();
+  //----------------------------------------------------------------------------
+  /**
    * Adds new document modify listener.
    * 
    * @param documentModifyListener new document modify listener
@@ -332,6 +355,16 @@ public interface IDocument extends ISelectionProvider {
    * @date 04.09.2006
    */
   public void fireDocumentEvent(String documentEventName);
+  //----------------------------------------------------------------------------
+  /**
+   * Returns the applications service provider, or null if not available.
+   * 
+   * @return the applications service provider, or null
+   * 
+   * @author Markus Krüger
+   * @date 25.07.2007
+   */
+  public IServiceProvider getServiceProvider();
   //----------------------------------------------------------------------------
 
 }

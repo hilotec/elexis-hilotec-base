@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/23 14:06:10 $
+ * Last changes made by $Author: markus $, $Date: 2007-09-19 15:26:58 +0200 (Mi, 19 Sep 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -43,9 +43,22 @@ package ag.ion.bion.officelayer.text;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 11573 $
  */
 public interface ITextFieldService {
+
+  /** User field master id **/
+  public static final String USER_TEXTFIELD_MASTER_ID            = "com.sun.star.text.FieldMaster.User";
+  /** User textfield id **/
+  public static final String USER_TEXTFIELD_ID                   = "com.sun.star.text.TextField.User";  
+  /** Variables field master id **/
+  public static final String VARIABLES_TEXTFIELD_MASTER_ID       = "com.sun.star.text.FieldMaster.SetExpression";
+  /** Variables textfield id **/
+  public static final String VARIABLES_TEXTFIELD_ID              = "com.sun.star.text.TextField.SetExpression";
+  /** Annotation textfield id **/
+  public static final String ANNOTATION_TEXTFIELD_ID             = "com.sun.star.text.TextField.Annotation";
+  /** Placerholder textfield id **/
+  public static final String PLACEHOLDER_TEXTFIELD_ID            = "com.sun.star.text.TextField.JumpEdit";
   
   //----------------------------------------------------------------------------
   /**
@@ -126,6 +139,93 @@ public interface ITextFieldService {
    * @date 23.01.2007
    */
   public ITextField[] getPlaceholderFields() throws TextException;
-  //----------------------------------------------------------------------------  
+  //---------------------------------------------------------------------------- 
+  /**
+   * Creates a new placeholder textfield.
+   * 
+   * @param name name of the placeholder textfield
+   * @param hint the hint of the placeholder textfield, may be null
+   * @param placeholderType the type of the placeholder found in static 
+   * members of com.sun.star.text.PlaceholderType (i.e. PlaceholderType.TEXT)
+   * 
+   * @return new placeholder textfield
+   * 
+   * @throws TextException if any error occurs during placeholder textfield creation
+   * 
+   * @author Markus Krüger
+   * @date 30.05.2007
+   */
+  public ITextField createPlaceholderTextField(String name, String hint, short placeholderType) throws TextException;
+  //---------------------------------------------------------------------------- 
+  /**
+   * Returns master of the variables text fields with the submitted name, or null if not availbale.
+   * 
+   * @param masterName name of the master to return
+   * 
+   * @return master of the variables text fields with the submitted name, or null
+   * 
+   * @throws TextException if the master can not be returned
+   * 
+   * @author Markus Krüger
+   * @date 30.05.2007
+   */
+  public IVariableTextFieldMaster getVariableTextFieldMaster(String masterName) throws TextException;
+  //----------------------------------------------------------------------------
+  /**
+   * Returns all masters of the variables text fields with the submitted name prefix.
+   * 
+   * @param prefix name prefix to be used
+   * 
+   * @return all masters of the variables text fields
+   * 
+   * @throws TextException if the masters can not be returned
+   * 
+   * @author Markus Krüger
+   * @date 30.05.2007
+   */
+  public IVariableTextFieldMaster[] getVariableTextFieldMasters(String prefix) throws TextException;
+  //----------------------------------------------------------------------------
+  /**
+   * Creates a new variable textfield master and returns it, or returns the one that
+   * already exists, if it does.
+   * TODO maybe some more parameters are needed???
+   * 
+   * @param name name of the variable textfield master
+   * @param variableType the type of the variable master found in static 
+   * members of com.sun.star.text.SetVariableType (i.e. SetVariableType.STRING)
+   * 
+   * @return the variable textfield master with the given name
+   * 
+   * @throws TextException if any error occurs during variable textfield master creation
+   * 
+   * @author Markus Krüger
+   * @date 30.05.2007
+   */
+  public IVariableTextFieldMaster createVariableTextFieldMaster(String name, short variableType) throws TextException;
+  //----------------------------------------------------------------------------
+  /**
+   * Returns all available variable textfields with the submitted name prefix.
+   * 
+   * @param prefix name prefix to be used
+   * 
+   * @return all available variable textfields
+   * 
+   * @throws TextException if the variable textfields can not be constructed
+   * 
+   * @author Markus Krüger
+   * @date 29.05.2007
+   */
+  public ITextField[] getVariableFields(String prefix) throws TextException;
+  //----------------------------------------------------------------------------
+  /**
+   * Refreshes all textfields.
+   * 
+   * @throws TextException if refresh fails
+   * 
+   * @author Markus Krüger
+   * @date 29.05.2007
+   */
+  public void refresh() throws TextException;
+  //---------------------------------------------------------------------------- 
 
 }

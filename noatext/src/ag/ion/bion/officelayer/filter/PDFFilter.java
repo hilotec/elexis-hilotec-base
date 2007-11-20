@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-06-14 13:45:36 +0200 (Do, 14 Jun 2007) $
  */
 package ag.ion.bion.officelayer.filter;
 
@@ -46,7 +46,7 @@ import ag.ion.noa.filter.AbstractFilter;
  * Contains information in order to export an OpenOffice.org document to PDF.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11492 $
  */
 public class PDFFilter extends AbstractFilter implements IFilter {
   
@@ -85,9 +85,7 @@ public class PDFFilter extends AbstractFilter implements IFilter {
     if(document.getDocumentType().equals(IDocument.MATH)) {
       return "math_pdf_Export";
     }
-    else {
-      return null;
-    }
+    return null;
   }
 	//----------------------------------------------------------------------------
 	/**
@@ -104,42 +102,57 @@ public class PDFFilter extends AbstractFilter implements IFilter {
 		return true;
 	}
 	//----------------------------------------------------------------------------
-	/**
-	 * Returns file extension of the filter. Returns null
-	 * if the document is not supported by the filter.
-	 * 
-	 * @param document document to be used
-	 * 
-	 * @return file extension of the filter
-	 * 
-	 * @author Andreas Bröker
-	 * @date 08.07.2006
-	 */
-	public String getFileExtension(IDocument document) {
-		if(document.getDocumentType().equals(IDocument.WRITER)) {
+  /**
+   * Returns file extension of the filter. Returns null
+   * if the document type is not supported by the filter.
+   * 
+   * @param documentType document type to be used
+   * 
+   * @return file extension of the filter
+   * 
+   * @author Markus Krüger
+   * @date 03.04.2007
+   */
+  public String getFileExtension(String documentType) {
+    if(documentType == null)
+      return null;
+		if(documentType.equals(IDocument.WRITER)) {
       return FILE_EXTENSION;
     }
-    if(document.getDocumentType().equals(IDocument.GLOBAL)) {
+    if(documentType.equals(IDocument.GLOBAL)) {
     	return FILE_EXTENSION;
     }
-    if(document.getDocumentType().equals(IDocument.WEB)) {
+    if(documentType.equals(IDocument.WEB)) {
     	return FILE_EXTENSION;
     }
-    if(document.getDocumentType().equals(IDocument.CALC)) {
+    if(documentType.equals(IDocument.CALC)) {
     	return FILE_EXTENSION;
     }
-    if(document.getDocumentType().equals(IDocument.DRAW)) {
+    if(documentType.equals(IDocument.DRAW)) {
     	return FILE_EXTENSION;
     }
-    if(document.getDocumentType().equals(IDocument.IMPRESS)) {
+    if(documentType.equals(IDocument.IMPRESS)) {
     	return FILE_EXTENSION;
     }
-    if(document.getDocumentType().equals(IDocument.MATH)) {
+    if(documentType.equals(IDocument.MATH)) {
     	return FILE_EXTENSION;
     }
-    else {
-      return null;
-    }
+    return null;
 	}
+  //----------------------------------------------------------------------------
+  /**
+   * Returns name of the filter. Returns null
+   * if the submitted document is not supported by the filter.
+   * 
+   * @param document document to be used
+   * 
+   * @return name of the filter
+   * 
+   * @author Markus Krüger
+   * @date 14.06.2007
+   */
+  public String getName(IDocument document) {
+    return "Portable Document Format";
+  }
   //----------------------------------------------------------------------------
 }

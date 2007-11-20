@@ -34,13 +34,14 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-09-19 15:26:14 +0200 (Mi, 19 Sep 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
 import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextField;
 import ag.ion.bion.officelayer.text.ITextFieldMaster;
+import ag.ion.bion.officelayer.text.ITextFieldService;
 import ag.ion.bion.officelayer.text.TextException;
 import ag.ion.noa.NOAException;
 
@@ -57,7 +58,7 @@ import com.sun.star.uno.UnoRuntime;
  * Interface for a master of a textfield.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11572 $
  */
 public class TextFieldMaster implements ITextFieldMaster {
   
@@ -186,7 +187,7 @@ public class TextFieldMaster implements ITextFieldMaster {
   public ITextField constructNewTextField() throws NOAException {
   	try {
 	  	XMultiServiceFactory xMultiServiceFactory = (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, textDocument.getXTextDocument());
-	    Object textField = xMultiServiceFactory.createInstance("com.sun.star.text.TextField.User");
+	    Object textField = xMultiServiceFactory.createInstance(ITextFieldService.USER_TEXTFIELD_ID);
 	    XDependentTextField xDependentTextField = (XDependentTextField)UnoRuntime.queryInterface(XDependentTextField.class, textField);
 	    xDependentTextField.attachTextFieldMaster(xPropertySet);
 	    return new TextField(textDocument, xDependentTextField);

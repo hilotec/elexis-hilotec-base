@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.noa.text;
 
@@ -40,7 +40,7 @@ package ag.ion.noa.text;
  * Index of a document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  * @date 17.08.2006
  */ 
 public interface IDocumentIndex {

@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:06:10 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -42,6 +42,8 @@ import ag.ion.bion.officelayer.text.AbstractTextComponent;
 import ag.ion.bion.officelayer.text.ICharacterProperties;
 import ag.ion.bion.officelayer.text.ICharacterPropertyStore;
 import ag.ion.bion.officelayer.text.IPageStyle;
+import ag.ion.bion.officelayer.text.IParagraph;
+import ag.ion.bion.officelayer.text.IText;
 import ag.ion.bion.officelayer.text.ITextCursor;
 import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextRange;
@@ -77,7 +79,7 @@ import com.sun.star.uno.UnoRuntime;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11474 $
  */
 public class TextTableCell extends AbstractTextComponent implements ITextTableCell {
 
@@ -392,6 +394,60 @@ public class TextTableCell extends AbstractTextComponent implements ITextTableCe
    */
   public short getPageNumber() {
     return getTextService().getCursorService().getTextCursor().getStartPageNumber();
+  }  
+  //----------------------------------------------------------------------------
+  /**
+   * Sets style of the cell paragraph.
+   * NOTE: The style will be applied to all paragraphs found in the cell.
+   * 
+   * @param cellParagraphStyle style of the cell paragraph
+   * 
+   * @throws TextException if the property can not be modified
+   * 
+   * @author Markus Krüger
+   * @date 21.03.2007
+   */
+  public void setCellParagraphStyle(String cellParagraphStyle) throws TextException {
+    if(cellParagraphStyle == null)
+      return;
+    try {    
+      IText cellText = getTextService().getText();
+      IParagraph[] paragraphs = cellText.getTextContentEnumeration().getParagraphs();
+      int len = paragraphs.length;
+      if(len > 1)
+        len = len - 1;
+      for(int i = 0; i < len; i++) {
+        paragraphs[i].getParagraphProperties().setParaStyleName(cellParagraphStyle);
+      }
+    }
+    catch(Exception exception) {
+      TextException textException = new TextException(exception.getMessage());
+      textException.initCause(exception);
+      throw textException;
+    }
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Returns style of the cell paragraph, or null if not available.
+   * NOTE: The style of the first found paragraph in the cell will be returned.
+   * 
+   * @return style of the cell paragraph, or null
+   * 
+   * @throws TextException if the property is not available
+   */
+  public String getCellParagraphStyle() throws TextException {
+    try {    
+      IText cellText = getTextService().getText();
+      IParagraph[] paragraphs = cellText.getTextContentEnumeration().getParagraphs();
+      if(paragraphs.length > 0)
+        return paragraphs[0].getParagraphProperties().getParaStyleName();
+      return null;
+    }
+    catch(Exception exception) {
+      TextException textException = new TextException(exception.getMessage());
+      textException.initCause(exception);
+      throw textException;
+    }
   }  
   //----------------------------------------------------------------------------
   

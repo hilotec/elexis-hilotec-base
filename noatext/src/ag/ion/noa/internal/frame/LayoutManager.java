@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2006/12/08 14:05:57 $
+ * Last changes made by $Author: markus $, $Date: 2006-12-08 15:05:57 +0100 (Fr, 08 Dez 2006) $
  */
 package ag.ion.noa.internal.frame;
 
@@ -47,7 +47,7 @@ import com.sun.star.frame.XLayoutManager;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.3 $
+ * @version $Revision: 11164 $
  * @date 2006/02/05
  */ 
 public class LayoutManager implements ILayoutManager {

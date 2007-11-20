@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/25 11:09:04 $
+ * Last changes made by $Author: markus $, $Date: 2007-01-25 12:09:04 +0100 (Do, 25 Jan 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -47,7 +47,7 @@ import com.sun.star.text.XTextRange;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 11361 $
  */
 public interface ITextRange {
   

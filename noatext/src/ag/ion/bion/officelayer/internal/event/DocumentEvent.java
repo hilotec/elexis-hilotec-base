@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:25 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-30 16:46:21 +0200 (Mo, 30 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.event;
 
@@ -50,7 +50,7 @@ import com.sun.star.uno.UnoRuntime;
  * Document event.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11530 $
  */
 public class DocumentEvent extends Event implements IDocumentEvent {
 
@@ -78,7 +78,7 @@ public class DocumentEvent extends Event implements IDocumentEvent {
   public IDocument getDocument() {
     Object object = getSourceObject();
     XComponent xComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class,object);
-    return DocumentLoader.getDocument(xComponent);
+    return DocumentLoader.getDocument(xComponent,null);
   }
   //---------------------------------------------------------------------------- 
 }

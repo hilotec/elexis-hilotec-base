@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.noa.frame;
 
@@ -42,7 +42,7 @@ import ag.ion.bion.officelayer.desktop.IFrame;
  * Provider of a frame.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  * @date 15.07.2006
  */
 public interface IFrameProvider {

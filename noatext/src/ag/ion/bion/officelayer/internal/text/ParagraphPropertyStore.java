@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/11/02 07:14:24 $
+ * Last changes made by $Author: markus $, $Date: 2007-02-26 11:24:19 +0100 (Mo, 26 Feb 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -55,7 +55,7 @@ import ag.ion.noa.NOAException;
  * @author Sebastian Rösgen
  * @author Markus Krüger
  * @author Andreas Bröker
- * @version $Revision: 1.2 $
+ * @version $Revision: 11459 $
  */
 public class ParagraphPropertyStore extends AbstractPropertyStore implements IParagraphPropertyStore {
 
@@ -98,9 +98,9 @@ public class ParagraphPropertyStore extends AbstractPropertyStore implements IPa
    * @author Sebastian Rösgen
    */
   public void setBreakType(short breakType) throws TextException {
-  	if (breakType == IParagraphPropertyStore.BREAK_TYPE_PAGE_AFTER || 
-  			breakType == IParagraphPropertyStore.BREAK_TYPE_PAGE_BEFORE ||
-				breakType == IParagraphPropertyStore.BREAK_TYPE_PAGE_BOTH) {
+  	if (breakType == IParagraphProperties.BREAK_TYPE_PAGE_AFTER || 
+  			breakType == IParagraphProperties.BREAK_TYPE_PAGE_BEFORE ||
+				breakType == IParagraphProperties.BREAK_TYPE_PAGE_BOTH) {
   		this.breakType = breakType;
   	}
   	else {
@@ -154,10 +154,10 @@ public class ParagraphPropertyStore extends AbstractPropertyStore implements IPa
    * @author Sebastian Rösgen
    */
   public void setParaAdjust(short paraAdjust) throws TextException {
-  	if (paraAdjust == IParagraphPropertyStore.ALIGN_CENTER ||
-  			paraAdjust == IParagraphPropertyStore.ALIGN_LEFT ||
-				paraAdjust == IParagraphPropertyStore.ALIGN_RIGHT ||
-				paraAdjust == IParagraphPropertyStore.ALIGN_UNDEFINED
+  	if (paraAdjust == IParagraphProperties.ALIGN_CENTER ||
+  			paraAdjust == IParagraphProperties.ALIGN_LEFT ||
+				paraAdjust == IParagraphProperties.ALIGN_RIGHT ||
+				paraAdjust == IParagraphProperties.ALIGN_UNDEFINED
   			) {
   		this.paraAdjust = paraAdjust;	
   	}

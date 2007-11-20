@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:15:30 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -47,12 +47,13 @@ import ag.ion.bion.officelayer.text.ITextTableCellRange;
 import ag.ion.bion.officelayer.text.ITextTableColumn;
 import ag.ion.bion.officelayer.text.ITextTableProperties;
 import ag.ion.bion.officelayer.text.TextException;
+import ag.ion.bion.officelayer.text.table.TextTableCellNameHelper;
 
 /**
  * Column of a text table.
  * 
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11553 $
  */
 public class TextTableColumn implements ITextTableColumn {
   
@@ -71,7 +72,7 @@ public class TextTableColumn implements ITextTableColumn {
    * @param index index of a column
    * 
    * @throws IllegalArgumentException if one the OpenOffice.org interfaces is not valid
- * @throws TextException
+   * @throws TextException
    * 
    * @author Markus Krüger 
    */
@@ -82,7 +83,20 @@ public class TextTableColumn implements ITextTableColumn {
     
     if(index < 0)
       throw new IllegalArgumentException("Submitted index is not valid.");
-    this.textTableCellRange = textTable.getCellRange(index,0,index,textTable.getRowCount()-1);
+    
+    String[] cellNames = textTable.getXTextTable().getCellNames();
+    String oldCellName = null;
+    String cellRange = null;
+    for(int i = 0; i < cellNames.length; i++) {
+      if(TextTableCellNameHelper.getColumnIndex(cellNames[i]) == index) {
+        if(cellRange == null)
+          cellRange = cellNames[i];
+        oldCellName = cellNames[i];
+      }
+    }
+    if(!cellRange.equals(oldCellName))
+      cellRange = cellRange + ":" + oldCellName;
+    this.textTableCellRange = textTable.getCellRange(cellRange);
     this.index = index;
   }
   //----------------------------------------------------------------------------

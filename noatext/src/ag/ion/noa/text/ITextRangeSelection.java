@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:06:27 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.noa.text;
 
@@ -44,10 +44,11 @@ import ag.ion.noa.view.ISelection;
  * Selection of a text range.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @author Markus Krüger
+ * @version $Revision: 11545 $
  * @date 09.07.2006
  */ 
-public interface ITextRangeSelection extends ISelection {
+public interface ITextRangeSelection extends IXInterfaceObjectSelection, ISelection {
 
 	//----------------------------------------------------------------------------
 	/**

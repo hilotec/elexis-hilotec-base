@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:12:53 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -50,7 +50,7 @@ import com.sun.star.text.XTextRange;
  * Bookmark of a text document.
  * 
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11549 $
  */
 public class Bookmark extends TextRange implements IBookmark, ITextRange {
   
@@ -93,7 +93,7 @@ public class Bookmark extends TextRange implements IBookmark, ITextRange {
    */
   public void jumpTo() {
     IViewCursor viewCursor = textDocument.getViewCursorService().getViewCursor();
-    viewCursor.gotToRange(this);
+    viewCursor.goToRange(this,false);
   }
   //----------------------------------------------------------------------------
   

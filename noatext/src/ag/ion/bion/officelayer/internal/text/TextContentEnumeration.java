@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:13:49 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -65,7 +65,7 @@ import java.util.ArrayList;
  * Enumeration over all text content parts.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11551 $
  */
 public class TextContentEnumeration implements ITextContentEnumeration {
 
@@ -105,7 +105,7 @@ public class TextContentEnumeration implements ITextContentEnumeration {
    * @author Andreas Bröker
    */
   public ITextField[] getTextFields() {
-    ArrayList arrayList = new ArrayList();
+    ArrayList arrayList = new ArrayList();    
     XTextCursor textCursor = xTextRange.getText().createTextCursorByRange(xTextRange.getStart());
     XTextRangeCompare xTextRangeCompare = (XTextRangeCompare)UnoRuntime.queryInterface(XTextRangeCompare.class, xTextRange.getText());
     try {      

@@ -34,11 +34,12 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-30 17:34:35 +0200 (Mo, 30 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
 import ag.ion.bion.officelayer.document.AbstractDocument;
+import ag.ion.bion.officelayer.document.DocumentException;
 import ag.ion.bion.officelayer.document.IDocument;
 
 import ag.ion.bion.officelayer.internal.util.NumberFormatService;
@@ -56,6 +57,9 @@ import ag.ion.noa.internal.document.SearchService;
 import ag.ion.noa.internal.text.DocumentIndexService;
 import ag.ion.noa.text.IDocumentIndexService;
 
+import com.sun.star.beans.XPropertySet;
+import com.sun.star.frame.XController;
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XComponent;
 
@@ -65,12 +69,15 @@ import com.sun.star.uno.UnoRuntime;
 
 import com.sun.star.util.XNumberFormatsSupplier;
 import com.sun.star.util.XSearchable;
+import com.sun.star.view.DocumentZoomType;
+import com.sun.star.view.XSelectionSupplier;
+import com.sun.star.view.XViewSettingsSupplier;
 
 /**
  * OpenOffice.org text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11538 $
  */
 public class TextDocument extends AbstractDocument implements ITextDocument {
     
@@ -210,7 +217,16 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
   public INumberFormatService getNumberFormatService() {
     if(numberFormatService == null) {
       XNumberFormatsSupplier xNumberFormatsSupplier = (XNumberFormatsSupplier)UnoRuntime.queryInterface(XNumberFormatsSupplier.class, xTextDocument);
-      numberFormatService = new NumberFormatService(xNumberFormatsSupplier);
+      numberFormatService = new NumberFormatService(this,xNumberFormatsSupplier);      
+
+      //TODO workaround, otherwise the numberformat may not be recognized corretly
+      try {
+        Thread.sleep(500);
+      }
+      catch(InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
     return numberFormatService;
   }
@@ -247,6 +263,52 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    */
   public IDocumentIndexService getIndexService() {
     return new DocumentIndexService(xTextDocument);
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Sets the zoom of the document.
+   * 
+   * @param zoomType the type of the zoom as in class {@link DocumentZoomType}
+   * @param zoomValue the value of the zoom, does only take afect if zoom type is
+   * set to DocumentZoomType.BY_VALUE. Values between 20 and 600 are allowed.
+   * 
+   * @throws DocumentException if zoom fails
+   * 
+   * @author Markus Krüger
+   * @date 06.07.2007
+   */
+  public void zoom(short zoomType, short zoomValue) throws DocumentException {
+    try {
+      //zoomType valid?
+      if(zoomType != DocumentZoomType.BY_VALUE && 
+          zoomType != DocumentZoomType.ENTIRE_PAGE && 
+          zoomType != DocumentZoomType.OPTIMAL && 
+          zoomType != DocumentZoomType.PAGE_WIDTH && 
+          zoomType != DocumentZoomType.PAGE_WIDTH_EXACT)
+        throw new DocumentException("Invalid zoom type.");
+      //zoomType valid?
+      if(zoomType == DocumentZoomType.BY_VALUE && (zoomValue < 20 || zoomValue > 600))
+        throw new DocumentException("Invalid zoom value. Use values between 20 and 600.");
+      
+      
+      XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, getXComponent());
+      if(xModel != null) {
+        XController xController = xModel.getCurrentController();
+        XSelectionSupplier selectionSupplier = (XSelectionSupplier)UnoRuntime.queryInterface(XSelectionSupplier.class, xController);
+        if(selectionSupplier != null) {
+          XViewSettingsSupplier viewSettingsSupplier = (XViewSettingsSupplier)UnoRuntime.queryInterface(XViewSettingsSupplier.class, xController);
+          if(viewSettingsSupplier != null) {
+            XPropertySet propertySet = viewSettingsSupplier.getViewSettings();
+            propertySet.setPropertyValue("ZoomType",new Short(zoomType));
+            if(zoomType == DocumentZoomType.BY_VALUE)
+              propertySet.setPropertyValue("ZoomValue",new Short(zoomValue));
+          }
+        }
+      }
+    }
+    catch(Throwable throwable) {
+      throw new DocumentException(throwable);
+    }
   }
   //----------------------------------------------------------------------------
 }

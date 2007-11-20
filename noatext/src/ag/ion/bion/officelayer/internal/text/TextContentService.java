@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-09 18:46:56 +0200 (Mo, 09 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -42,10 +42,14 @@ import ag.ion.bion.officelayer.text.IParagraph;
 import ag.ion.bion.officelayer.text.ITextContent;
 import ag.ion.bion.officelayer.text.ITextContentService;
 import ag.ion.bion.officelayer.text.ITextDocument;
+import ag.ion.bion.officelayer.text.ITextDocumentImage;
 import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.text.ITextTable;
 import ag.ion.bion.officelayer.text.TextException;
+import ag.ion.noa.graphic.GraphicInfo;
 
+import com.sun.star.beans.XPropertySet;
+import com.sun.star.container.XNameContainer;
 import com.sun.star.lang.XMultiServiceFactory;
 
 import com.sun.star.text.XRelativeTextContentInsert;
@@ -54,13 +58,17 @@ import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextTable;
 
+import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.UnoRuntime;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Content service implementation of a text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11509 $
  */
 public class TextContentService implements ITextContentService {
 
@@ -68,6 +76,9 @@ public class TextContentService implements ITextContentService {
   
   private XText                 xText                = null;
   private XMultiServiceFactory  xMultiServiceFactory = null;
+  private XNameContainer        xBitmapContainer     = null; 
+  
+  private Map<ITextDocumentImage,String> imageToImageIds = null;
     
   //----------------------------------------------------------------------------
   /**
@@ -119,6 +130,58 @@ public class TextContentService implements ITextContentService {
   }
   //----------------------------------------------------------------------------
   /**
+   * Constructs new image.
+   * 
+   * @param graphicInfo the graphic information to construct image with
+   * 
+   * @return new image
+   * 
+   * @throws TextException if the image can not be constructed
+   * 
+   * @author Markus Krüger
+   * @date 09.07.2007
+   */
+  public ITextDocumentImage constructNewImage(GraphicInfo graphicInfo) throws TextException {
+    try {
+      if(xMultiServiceFactory == null)
+        throw new TextException("OpenOffice.org XMultiServiceFactory inteface not valid."); 
+
+      if(xBitmapContainer == null)
+        xBitmapContainer = (XNameContainer)UnoRuntime.queryInterface(XNameContainer.class, 
+            xMultiServiceFactory.createInstance("com.sun.star.drawing.BitmapTable")); 
+
+      XTextContent xImage = (XTextContent)UnoRuntime.queryInterface(XTextContent.class, 
+          xMultiServiceFactory.createInstance("com.sun.star.text.TextGraphicObject")); 
+      
+      XPropertySet xProps = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xImage); 
+
+      String tempId = "tempImageId"+System.currentTimeMillis();
+      xBitmapContainer.insertByName(tempId, graphicInfo.getUrl()); 
+      String internalURL = AnyConverter.toString(xBitmapContainer.getByName(tempId)); 
+
+      xProps.setPropertyValue("AnchorType", graphicInfo.getAnchor()); 
+      xProps.setPropertyValue("GraphicURL", internalURL); 
+      xProps.setPropertyValue("Width", Integer.valueOf(graphicInfo.getWidth())); 
+      xProps.setPropertyValue("Height", Integer.valueOf(graphicInfo.getHeight())); 
+      xProps.setPropertyValue("HoriOrient", Short.valueOf(graphicInfo.getHorizontalAlignment())); 
+      xProps.setPropertyValue("VertOrient", Short.valueOf(graphicInfo.getVerticalAlignment()));    
+      
+      ITextDocumentImage textDocumentImage = new TextDocumentImage(textDocument, xImage, graphicInfo);
+      
+      if(imageToImageIds == null)
+        imageToImageIds = new HashMap<ITextDocumentImage,String>();
+      imageToImageIds.put(textDocumentImage, tempId);
+      
+      return textDocumentImage;
+    }
+    catch(Exception exception) {
+      TextException textException = new TextException(exception.getMessage());
+      textException.initCause(exception);
+      throw textException;
+    }
+  }  
+  //----------------------------------------------------------------------------
+  /**
    * Inserts content.
    * 
    * @param textContent text content to be inserted
@@ -130,6 +193,14 @@ public class TextContentService implements ITextContentService {
   public void insertTextContent(ITextContent textContent) throws TextException {
     try {     
       xText.insertTextContent(xText.getStart(), textContent.getXTextContent(), true);
+      if(textContent instanceof ITextDocumentImage && imageToImageIds != null && xBitmapContainer != null) {
+        String id = imageToImageIds.get(textContent);
+        if(id != null) {
+          imageToImageIds.remove(textContent);          
+          xBitmapContainer.removeByName(id); 
+        }
+        ((ITextDocumentImage)textContent).getGraphicInfo().cleanUp();
+      }
     }
     catch(Exception exception) {
       TextException textException = new TextException(exception.getMessage());
@@ -185,6 +256,14 @@ public class TextContentService implements ITextContentService {
 	      XTextRange targetRange = textRange.getXTextRange();
 	      XTextContent xTextContent = textContent.getXTextContent();
 				xText.insertTextContent(targetRange, xTextContent , true);
+				if(textContent instanceof ITextDocumentImage && imageToImageIds != null && xBitmapContainer != null) {
+	        String id = imageToImageIds.get(textContent);
+	        if(id != null) {
+	          imageToImageIds.remove(textContent);          
+	          xBitmapContainer.removeByName(id); 
+	        }
+	        ((ITextDocumentImage)textContent).getGraphicInfo().cleanUp();
+	      }
     	}
     }
     catch(Exception exception) {
@@ -215,6 +294,14 @@ public class TextContentService implements ITextContentService {
       }
       else {
         xRelativeTextContentInsert.insertTextContentBefore(newTextContent.getXTextContent(), textContent.getXTextContent());
+        if(textContent instanceof ITextDocumentImage && imageToImageIds != null && xBitmapContainer != null) {
+          String id = imageToImageIds.get(textContent);
+          if(id != null) {
+            imageToImageIds.remove(textContent);          
+            xBitmapContainer.removeByName(id); 
+          }
+          ((ITextDocumentImage)textContent).getGraphicInfo().cleanUp();
+        }
       }
     }
     catch(Exception exception) {
@@ -265,6 +352,14 @@ public class TextContentService implements ITextContentService {
       	XTextContent successor = textContent.getXTextContent();
         xRelativeTextContentInsert.insertTextContentAfter(newContent, successor);
       	//xRelativeTextContentInsert.insertTextContentAfter(textContent.getXTextContent(), newTextContent.getXTextContent());
+        if(textContent instanceof ITextDocumentImage && imageToImageIds != null && xBitmapContainer != null) {
+          String id = imageToImageIds.get(textContent);
+          if(id != null) {
+            imageToImageIds.remove(textContent);          
+            xBitmapContainer.removeByName(id); 
+          }
+          ((ITextDocumentImage)textContent).getGraphicInfo().cleanUp();
+        }
       }
     }
     catch(Exception exception) {

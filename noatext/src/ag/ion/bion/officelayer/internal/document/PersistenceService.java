@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:24 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.bion.officelayer.internal.document;
 
@@ -65,13 +65,13 @@ import java.net.URL;
 /**
  * Persistence service for office documents.
  * 
- * @author Andreas Brï¿½ker
+ * @author Andreas Bröker
  * @author Alessandro Conte
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  */
 public class PersistenceService implements IPersistenceService {
 
-  private static final String ERROR_MESSAGE = "Allgemeiner Fehler beim Laden/Speichern"; //Messages.getString("PersistenceService.general_error_message"); //$NON-NLS-1$
+  private static final String ERROR_MESSAGE = Messages.getString("PersistenceService.general_error_message"); //$NON-NLS-1$
   
   private IDocument document  = null;
   private XStorable xStorable = null;
@@ -86,15 +86,15 @@ public class PersistenceService implements IPersistenceService {
    * @throws IllegalArgumentException if the submitted document or the OpenOffice.org XStorable interface 
    * is not valid
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public PersistenceService(IDocument document, XStorable xStorable) throws IllegalArgumentException {
     if(document == null)
-      throw new IllegalArgumentException("Null dokument" /*Messages.getString("PersistenceService.exception_document_invalid")*/); //$NON-NLS-1$
+      throw new IllegalArgumentException(Messages.getString("PersistenceService.exception_document_invalid")); //$NON-NLS-1$
     this.document = document;
     
     if(xStorable == null)
-      throw new IllegalArgumentException("Fehler beim Speichern" /*Messages.getString("PersistenceService.exception_xstorable_interface_invalid")*/); //$NON-NLS-1$
+      throw new IllegalArgumentException(Messages.getString("PersistenceService.exception_xstorable_interface_invalid")); //$NON-NLS-1$
     this.xStorable = xStorable;
   }
   //----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @return information whether the document has a location URL
    * 
-   * @author Andreas Brï¿½ekr
+   * @author Andreas Bröekr
    */
   public boolean hasLocation() {
     return xStorable.hasLocation();
@@ -115,7 +115,7 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @return location URL of the document
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public URL getLocation() {
     String documentURL = xStorable.getLocation();
@@ -137,7 +137,7 @@ public class PersistenceService implements IPersistenceService {
    * @return informations whether the doccument is in read only state 
    * or not
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public boolean isReadOnly() {
     return xStorable.isReadonly();
@@ -148,7 +148,7 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @throws DocumentException if the document can not be stored or no location URL is available
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void store() throws DocumentException {
     try {
@@ -174,11 +174,11 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @throws DocumentException if the document can not be stored
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void store(String url) throws DocumentException {
     if(url == null)
-      throw new DocumentException("Speicheradress ungÃ¼ltig" /*Messages.getString("PersistenceService.error_url_invalid_message")*/); //$NON-NLS-1$
+      throw new DocumentException(Messages.getString("PersistenceService.error_url_invalid_message")); //$NON-NLS-1$
      
     try {
     	url = URLAdapter.adaptURL(url);  	      
@@ -204,7 +204,7 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @throws DocumentException if the document can not be stored
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    * @author Alessandro Conte
    * @date 07.09.2006
    */
@@ -264,7 +264,7 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @throws DocumentException if the document can not be exported
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void export(String url, IFilter filter) throws DocumentException {
     if(url == null)
@@ -314,7 +314,7 @@ public class PersistenceService implements IPersistenceService {
    * 
    * @throws NOAException if the document can not be exported
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    * @date 25.08.2006
    */
   public void export(OutputStream outputStream, IFilter filter) throws NOAException {

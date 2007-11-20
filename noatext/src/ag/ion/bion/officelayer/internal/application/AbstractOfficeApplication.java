@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:25 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-30 16:45:17 +0200 (Mo, 30 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.application;
 
@@ -66,7 +66,7 @@ import com.sun.star.uno.UnoRuntime;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11528 $
  */
 public abstract class AbstractOfficeApplication implements IOfficeApplication {
   
@@ -189,7 +189,7 @@ public abstract class AbstractOfficeApplication implements IOfficeApplication {
     if(officeConnection == null)
       throw new OfficeApplicationException("Application is not active.");
     if(documentService == null)
-      documentService = new DocumentService(officeConnection);
+      documentService = new DocumentService(officeConnection,getServiceProvider());
     return documentService;
   }  
   //----------------------------------------------------------------------------

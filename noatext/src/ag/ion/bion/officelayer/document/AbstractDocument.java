@@ -34,10 +34,11 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/25 17:50:50 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-16 17:21:15 +0200 (Do, 16 Aug 2007) $
  */
 package ag.ion.bion.officelayer.document;
 
+import ag.ion.bion.officelayer.desktop.IFrame;
 import ag.ion.bion.officelayer.event.ICloseListener;
 import ag.ion.bion.officelayer.event.IDocumentEvent;
 import ag.ion.bion.officelayer.event.IDocumentListener;
@@ -45,6 +46,7 @@ import ag.ion.bion.officelayer.event.IDocumentModifyListener;
 import ag.ion.bion.officelayer.event.IEvent;
 import ag.ion.bion.officelayer.form.IFormService;
 
+import ag.ion.bion.officelayer.internal.desktop.Frame;
 import ag.ion.bion.officelayer.internal.document.PersistenceService;
 
 import ag.ion.bion.officelayer.internal.event.CloseListenerWrapper;
@@ -52,12 +54,17 @@ import ag.ion.bion.officelayer.internal.event.DocumentEvent;
 import ag.ion.bion.officelayer.internal.event.DocumentListenerWrapper;
 import ag.ion.bion.officelayer.internal.event.DocumentModifyListenerWrapper;
 import ag.ion.bion.officelayer.internal.form.FormService;
+
 import ag.ion.noa.NOAException;
 import ag.ion.noa.document.IFilterProvider;
 import ag.ion.noa.internal.document.DefaultFilterProvider;
+import ag.ion.noa.internal.printing.PrintService;
 import ag.ion.noa.internal.script.ScriptingService;
+import ag.ion.noa.printing.IPrintService;
 import ag.ion.noa.script.IScriptingService;
-import ag.ion.noa.text.ITextRangeSelection;
+import ag.ion.noa.service.IServiceProvider;
+
+import ag.ion.noa.text.IXInterfaceObjectSelection;
 import ag.ion.noa.view.ISelection;
 
 import com.sun.star.lang.XComponent;
@@ -68,14 +75,13 @@ import com.sun.star.util.XModifiable;
 import com.sun.star.util.XCloseable;
 import com.sun.star.util.XModifyBroadcaster;
 import com.sun.star.util.XModifyListener;
-import com.sun.star.view.XPrintable;
 import com.sun.star.view.XSelectionSupplier;
 
 import com.sun.star.frame.XController;
+import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.frame.XStorable;
 
-import com.sun.star.beans.PropertyValue;
 import com.sun.star.document.EventObject;
 import com.sun.star.document.XEventListener;
 import com.sun.star.document.XEventBroadcaster;
@@ -93,16 +99,18 @@ import java.util.List;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 11568 $
  */
 public abstract class AbstractDocument implements IDocument {
   
 	protected XComponent xComponent = null;
 	
+	private IServiceProvider          serviceProvider         = null;	
   private IPersistenceService       persistenceService      = null;
   private DocumentListenerWrapper   documentListenerWrapper = null;
   private IScriptingService					scriptingService				= null;
   private IFilterProvider						filterProvider					= null;
+  private IPrintService             printService            = null;
   
   private List 			documentListenerList 	= null;
   private Hashtable modifyListenerTable 	= null;
@@ -538,6 +546,35 @@ public abstract class AbstractDocument implements IDocument {
   }
   //----------------------------------------------------------------------------
   /**
+   * Returns OpenOffice.org XFrame interface.
+   * 
+   * @return OpenOffice.org XFrame interface
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public XFrame getXFrame() {
+    XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, getXComponent());
+    XController xController = xModel.getCurrentController();
+    return xController.getFrame();
+  }  
+  //----------------------------------------------------------------------------
+  /**
+   * Returns Frame of the document.
+   * 
+   * @return Frame of the document
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public IFrame getFrame() {
+    XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, getXComponent());
+    XController xController = xModel.getCurrentController();
+    XFrame xFrame = xController.getFrame();
+    return new Frame(xFrame,getServiceProvider());
+  }  
+  //----------------------------------------------------------------------------
+  /**
    * Returns persistence service.
    * 
    * @return persistence service
@@ -952,14 +989,21 @@ public abstract class AbstractDocument implements IDocument {
    * @author Markus Krüger
    */
   public void print() throws DocumentException {
-    try {
-      XPrintable xPrintable = (XPrintable)UnoRuntime.queryInterface(XPrintable.class, xComponent);
-      PropertyValue[] printOpts = new PropertyValue[0];
-      xPrintable.print(printOpts);
-    }
-    catch(Throwable throwable) {
-      throw new DocumentException(throwable);
-    }
+    getPrintService().print();
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Returns the print service of the document.
+   * 
+   * @return the print service of the document
+   * 
+   * @author Markus Krüger
+   * @date 16.08.2007
+   */
+  public IPrintService getPrintService() {
+    if(printService == null)
+      printService = new PrintService(this);
+    return printService;
   }
   //----------------------------------------------------------------------------
   /**
@@ -1005,9 +1049,9 @@ public abstract class AbstractDocument implements IDocument {
 	public void setSelection(ISelection selection) throws NOAException {
 		if(selection == null || selection.isEmpty())
 			return;
-		
-		if(selection instanceof ITextRangeSelection) {
-			setTextRangeSelection((ITextRangeSelection)selection);
+
+		if(selection instanceof IXInterfaceObjectSelection) {
+		  setXInterfaceObjectSelection((IXInterfaceObjectSelection)selection);
 		}
 	}
   //----------------------------------------------------------------------------
@@ -1092,24 +1136,49 @@ public abstract class AbstractDocument implements IDocument {
 
   }
   //----------------------------------------------------------------------------
+  /**
+   * Returns the applications service provider, or null if not available.
+   * 
+   * @return the applications service provider, or null
+   * 
+   * @author Markus Krüger
+   * @date 25.07.2007
+   */
+  public IServiceProvider getServiceProvider() {
+    return serviceProvider;
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Sets the service provider for the document.
+   * 
+   * @param serviceProvider the service provider to be set
+   * 
+   * @author Markus Krüger
+   * @date 25.07.2007
+   */
+  public void setServiceProvider(IServiceProvider serviceProvider) {
+    this.serviceProvider = serviceProvider;
+  }
+  //----------------------------------------------------------------------------
 	/**
-	 * Sets text range selection.
+	 * Sets selection on the XInterface object selection.
 	 * 
-	 * @param textRangeSelection text range selection to be set
+	 * @param interfaceObject XInterface object selection to be set
 	 * 
 	 * @throws NOAException if the selection type is not supported
 	 * 
 	 * @author Andreas Bröker
+	 * @author Markus Krüger
 	 * @date 09.07.2006
 	 */
-	protected void setTextRangeSelection(ITextRangeSelection textRangeSelection) throws NOAException {
+	protected void setXInterfaceObjectSelection(IXInterfaceObjectSelection interfaceObject) throws NOAException {
 		XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, xComponent);
 		if(xModel != null) {
 			XController xController = xModel.getCurrentController();
 			XSelectionSupplier selectionSupplier = (XSelectionSupplier)UnoRuntime.queryInterface(XSelectionSupplier.class, xController);
 			if(selectionSupplier != null) {
 				try {
-					selectionSupplier.select(textRangeSelection.getTextRange().getXTextRange());
+					selectionSupplier.select(interfaceObject.getXInterfaceObject());
 				}
 				catch(Throwable throwable) {
 					throw new NOAException(throwable);

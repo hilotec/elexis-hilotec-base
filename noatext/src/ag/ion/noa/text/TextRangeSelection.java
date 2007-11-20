@@ -32,21 +32,25 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:06:27 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.noa.text;
 
 import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.util.Assert;
+import ag.ion.noa.view.ISelection;
+
+import com.sun.star.uno.XInterface;
 
 /**
  * Selection of a text range.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @author Markus Krüger
+ * @version $Revision: 11545 $
  * @date 09.07.2006
  */ 
-public class TextRangeSelection implements ITextRangeSelection {
+public class TextRangeSelection implements ITextRangeSelection , IXInterfaceObjectSelection, ISelection {
 	
 	private ITextRange textRange = null;
 	
@@ -75,6 +79,18 @@ public class TextRangeSelection implements ITextRangeSelection {
 	public ITextRange getTextRange() {
 		return textRange;
 	}
+  //----------------------------------------------------------------------------
+  /**
+   * Returns object implementing XInterface of the selection.
+   * 
+   * @return object implementing XInterface of the selection
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public XInterface getXInterfaceObject() {
+    return textRange.getXTextRange();
+  }
   //----------------------------------------------------------------------------
 	/**
 	 * Returns information whether the selection is empty.

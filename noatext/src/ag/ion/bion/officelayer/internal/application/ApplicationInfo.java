@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:25 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.bion.officelayer.internal.application;
 
@@ -45,7 +45,7 @@ import ag.ion.bion.officelayer.application.IApplicationProperties;
  * Information provider of an office application.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  */
 public class ApplicationInfo implements IApplicationInfo {
   

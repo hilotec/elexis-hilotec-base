@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/27 06:20:15 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-27 08:20:15 +0200 (Fr, 27 Okt 2006) $
  */
 package ag.ion.bion.officelayer.internal.document;
 
@@ -54,7 +54,7 @@ import java.io.InputStream;
  * This class bases on the OpenOffice.org Java API class ByteArrayToXInputStreamAdapter.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.2 $
+ * @version $Revision: 10751 $
  */
 public class ByteArrayXInputStreamAdapter extends ComponentBase implements XInputStream, XSeekable {
    

@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:23 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-09 11:55:58 +0200 (Mo, 09 Jul 2007) $
  */
 package ag.ion.noa.internal.text;
 
@@ -46,7 +46,7 @@ import com.sun.star.text.XDocumentIndex;
  * Index of a document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11503 $
  * @date 17.08.2006
  */ 
 public class DocumentIndex implements IDocumentIndex {
@@ -67,7 +67,6 @@ public class DocumentIndex implements IDocumentIndex {
   public DocumentIndex(XDocumentIndex documentIndex) {
     Assert.isNotNull(documentIndex, XDocumentIndex.class, this);
     this.documentIndex = documentIndex;
-    System.out.println(documentIndex.getServiceName());
   }
   //----------------------------------------------------------------------------
   /**

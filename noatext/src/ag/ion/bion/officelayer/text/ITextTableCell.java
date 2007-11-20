@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:06:10 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -48,7 +48,7 @@ import ag.ion.bion.officelayer.text.table.ITextTableCellPropertyStore;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11474 $
  */
 public interface ITextTableCell extends ITextComponent, ICloneServiceProvider {
   
@@ -60,6 +60,11 @@ public interface ITextTableCell extends ITextComponent, ICloneServiceProvider {
   public static final int TYPE_TEXT     = 101;
   /** The cell contains a formula. */
   public static final int TYPE_FORMULA  = 102;  
+  
+  /** The paragraph style for the table header **/
+  public static final String STYLE_TABLE_HEADER   = "Table Heading";  //$NON-NLS-1$
+  /** The paragraph style for the table content **/
+  public static final String STYLE_TABLE_CONTENT  = "Table Contents"; //$NON-NLS-1$
   
   //----------------------------------------------------------------------------
   /**
@@ -200,6 +205,29 @@ public interface ITextTableCell extends ITextComponent, ICloneServiceProvider {
    * @author Markus Krüger
    */
   public short getPageNumber();  
+  //----------------------------------------------------------------------------
+  /**
+   * Sets style of the cell paragraph.
+   * NOTE: The style will be applied to all paragraphs found in the cell.
+   * 
+   * @param cellParagraphStyle style of the cell paragraph
+   * 
+   * @throws TextException if the property can not be modified
+   * 
+   * @author Markus Krüger
+   * @date 21.03.2007
+   */
+  public void setCellParagraphStyle(String cellParagraphStyle) throws TextException;
+  //----------------------------------------------------------------------------
+  /**
+   * Returns style of the cell paragraph, or null if not available.
+   * NOTE: The style of the first found paragraph in the cell will be returned.
+   * 
+   * @return style of the cell paragraph, or null
+   * 
+   * @throws TextException if the property is not available
+   */
+  public String getCellParagraphStyle() throws TextException;  
   //----------------------------------------------------------------------------
 
 }

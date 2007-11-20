@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:40:19 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.bion.officelayer.filter;
 
@@ -48,7 +48,7 @@ import ag.ion.noa.filter.AbstractFilter;
  * 
  * @author Markus Krüger
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11479 $
  * 
  * @deprecated Use StarOffice40Filter instead.
  */
@@ -87,44 +87,42 @@ public class SDW40Filter extends AbstractFilter implements IFilter {
     if(document.getDocumentType().equals(IDocument.MATH)) {
       return "StarMath 4.0";
     }
-    else {
-      return null;
-    }
+    return null;
   }
 	//----------------------------------------------------------------------------
-	/**
-	 * Returns file extension of the filter. Returns null
-	 * if the document is not supported by the filter.
-	 * 
-	 * @param document document to be used
-	 * 
-	 * @return file extension of the filter
-	 * 
-	 * @author Andreas Bröker
-	 * @date 08.07.2006
-	 */
-	public String getFileExtension(IDocument document) {
-  	if(document.getDocumentType().equals(IDocument.WRITER)) {
+  /**
+   * Returns file extension of the filter. Returns null
+   * if the document type is not supported by the filter.
+   * 
+   * @param documentType document type to be used
+   * 
+   * @return file extension of the filter
+   * 
+   * @author Markus Krüger
+   * @date 03.04.2007
+   */
+  public String getFileExtension(String documentType) {
+    if(documentType == null)
+      return null;
+  	if(documentType.equals(IDocument.WRITER)) {
       return "sdw";
     }
-    if(document.getDocumentType().equals(IDocument.GLOBAL)) {
+    if(documentType.equals(IDocument.GLOBAL)) {
       return "sgl";
     }
-    if(document.getDocumentType().equals(IDocument.WEB)) {
+    if(documentType.equals(IDocument.WEB)) {
       return "html";
     }
-    if(document.getDocumentType().equals(IDocument.CALC)) {
+    if(documentType.equals(IDocument.CALC)) {
       return "sdc";
     }
-    if(document.getDocumentType().equals(IDocument.IMPRESS)) {
+    if(documentType.equals(IDocument.IMPRESS)) {
       return "sdd";
     }
-    if(document.getDocumentType().equals(IDocument.MATH)) {
+    if(documentType.equals(IDocument.MATH)) {
       return "smf";
     }
-    else {
-      return null;
-    }
+    return null;
 	}
   //----------------------------------------------------------------------------
 	

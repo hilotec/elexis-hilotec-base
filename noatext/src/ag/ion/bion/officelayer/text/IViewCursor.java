@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:12:22 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -43,7 +43,7 @@ package ag.ion.bion.officelayer.text;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11548 $
  */
 public interface IViewCursor {
   
@@ -79,10 +79,11 @@ public interface IViewCursor {
    * Moves to the given text range.
    * 
    * @param textRange the text range to go to
+   * @param select if to extend the selection
    * 
    * @author Markus Krüger
    */
-  public void gotToRange(ITextRange textRange);
+  public void goToRange(ITextRange textRange, boolean select);
   //----------------------------------------------------------------------------
   /**
    * Returns the page cursor for the view cursor, can be null if no page cursor is available.

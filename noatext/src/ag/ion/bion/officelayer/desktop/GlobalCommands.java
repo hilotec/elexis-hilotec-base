@@ -32,7 +32,7 @@
  ****************************************************************************/
 
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/30 13:56:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:02:22 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.desktop;
 
@@ -41,13 +41,17 @@ package ag.ion.bion.officelayer.desktop;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 11541 $
  * @date 14.06.2006
  */
 public class GlobalCommands {
 
   /** Command URL in order to switch the print preview. */
   public static final String PRINT_PREVIEW          = ".uno:PrintPreview";
+  /** Command URL in order to set the print preview pages layout. */
+  public static final String PRINT_PREVIEW_SHOW_MULTIPLE_PAGES  = ".uno:ShowMultiplePages";
+  /** Command URL in order to close the print preview. */
+  public static final String CLOSE_PRINT_PREVIEW    = ".uno:ClosePreview";
   /** Command URL in order to save the document as new document. */
   public static final String SAVE                   = ".uno:Save";
   /** Command URL in order to save the document as new document. */
@@ -87,7 +91,35 @@ public class GlobalCommands {
   /** Command URL in order to open the style sheet. */
   public static final String OPEN_STYLE_SHEET       = ".uno:DesignerDialog";
   /** Command URL in order to open the help. */
-  public static final String OPEN_HELP              = ".uno:HelpIndex";
+  public static final String OPEN_HELP              = ".uno:HelpIndex";  
+  /** Command URL in order to show recent file list. */
+  public static final String SHOW_RECENT_FILE_LIST  = ".uno:RecentFileList";
+  /** Command URL in order to open the assists. */
+  public static final String OPEN_ASSISTS           = ".uno:AutoPilotMenu";
+  /** Command URL in order to open the version dialog. */
+  public static final String OPEN_VERSION_DIALOG    = ".uno:VersionDialog";
+  /** Command URL in order to open the export to menu. */
+  public static final String OPEN_EXPORT_TO         = ".uno:ExportTo";
+  /** Command URL in order to export a document to pdf. */
+  public static final String EXPORT_TO_PDF          = ".uno:ExportToPDF";
+  /** Command URL in order to open the database dialog. */
+  public static final String OPEN_DATABASE_DIALOG   = ".uno:ChangeDatabaseField";
+  /** Command URL in order to set plugin active. */
+  public static final String PLUGINS_ACTIVE         = ".uno:PlugInsActive";
+  /** Command URL in order to open the "other fields" dialog. */
+  public static final String OPEN_OTHER_FIELDS_DIALOG = ".uno:InsertField";
+  /** Command URL in order to open the insert script dialog. */
+  public static final String OPEN_INSERT_SCRIPT_DIALOG  = ".uno:InsertScript";
+  /** Command URL in order to use the format paintbrush. */
+  public static final String FORMAT_PAINTBRUSH       = ".uno:FormatPaintbrush";
+  /** Command URL in order to open the font dialog. */
+  public static final String OPEN_FONT_DIALOG        = ".uno:FontDialog";
+  /** Command URL in order to do a copy. */
+  public static final String COPY                    = ".uno:Copy";
+  /** Command URL in order to do a paste. */
+  public static final String PASTE                   = ".uno:Paste";
+  /** Command URL in order to insert rows. */
+  public static final String INSTER_ROWS             = ".uno:InsertRows";
 
   //----------------------------------------------------------------------------
   /**

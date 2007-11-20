@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-07 14:40:35 +0200 (Di, 07 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -47,6 +47,7 @@ import ag.ion.bion.officelayer.internal.text.table.TextTablePropertyStore;
 
 import ag.ion.bion.officelayer.text.AbstractTextComponent;
 import ag.ion.bion.officelayer.text.ITextDocument;
+import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.text.ITextTable;
 import ag.ion.bion.officelayer.text.ITextTableCell;
 import ag.ion.bion.officelayer.text.ITextTableCellRange;
@@ -60,16 +61,21 @@ import ag.ion.bion.officelayer.text.table.IFormulaService;
 import ag.ion.bion.officelayer.text.table.ITextTablePropertyStore;
 import ag.ion.bion.officelayer.text.table.TextTableCellNameHelper;
 
+import ag.ion.noa.text.XInterfaceObjectSelection;
+
 import com.sun.star.beans.XPropertySet;
 
 import com.sun.star.container.XNamed;
 
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.table.XCell;
 import com.sun.star.table.XCellRange;
 
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
+import com.sun.star.text.XTextSection;
 import com.sun.star.text.XTextTable;
+import com.sun.star.text.XTextViewCursorSupplier;
 
 import com.sun.star.uno.UnoRuntime;
 
@@ -81,7 +87,7 @@ import java.util.List;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11561 $
  */
 public class TextTable extends AbstractTextComponent implements ITextTable {
   
@@ -129,6 +135,24 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	public XTextTable getXTextTable() {
 		return xTextTable;
 	}	
+  //----------------------------------------------------------------------------
+  /**
+   * Returns text range of the text table.
+   * 
+   * @return text range of the text table
+   * 
+   * @author Markus Krüger
+   * @date 31.07.2007
+   */
+  public ITextRange getTextRange() throws Exception {
+    XTextContent textContent = getXTextContent();   
+    textDocument.setSelection(new XInterfaceObjectSelection(textContent));
+    XTextViewCursorSupplier xTextViewCursorSupplier = 
+      (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, 
+          textDocument.getXTextDocument().getCurrentController());
+    xTextViewCursorSupplier.getViewCursor().goLeft((short)1,false);
+    return textDocument.getViewCursorService().getViewCursor().getTextCursorFromEnd().getEnd();
+  }
   //----------------------------------------------------------------------------
   /**
    * Returns properties of the text table.
@@ -260,7 +284,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    */
   public void addRow(int count) throws TextException {
     if(count > 0)
-      xTextTable.getRows().insertByIndex(xTextTable.getRows().getCount(), count);
+      xTextTable.getRows().insertByIndex(getRowCount(), count);
   }
   //----------------------------------------------------------------------------
   /**
@@ -284,9 +308,18 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @return number of available rows.
    * 
    * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public int getRowCount() {
-    return xTextTable.getRows().getCount();
+    String[] cellNames = xTextTable.getCellNames();
+    int rows = 0;
+    for(int i = 0; i < cellNames.length; i++) {
+      int row = TextTableCellNameHelper.getRowIndex(cellNames[i]);
+      row = row + 1;
+      if(row > rows)
+        rows = row;
+    }
+    return rows;
   }
   //----------------------------------------------------------------------------
   /**
@@ -300,7 +333,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    */
   public void addColumn(int count) throws TextException {
     if(count > 0)
-      xTextTable.getColumns().insertByIndex(xTextTable.getColumns().getCount(), count);
+      xTextTable.getColumns().insertByIndex(getColumnCount(), count);
   }
   //----------------------------------------------------------------------------
   /**
@@ -378,9 +411,18 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @return number of available columns
    * 
    * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public int getColumnCount() {
-    return xTextTable.getColumns().getCount();
+    String[] cellNames = xTextTable.getCellNames();
+    int cols = 0;
+    for(int i = 0; i < cellNames.length; i++) {
+      int col = TextTableCellNameHelper.getColumnIndex(cellNames[i]);
+      col = col + 1;
+      if(col > cols)
+        cols = col;
+    }
+    return cols;
   }  
   //----------------------------------------------------------------------------
   /**
@@ -534,8 +576,22 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @throws TextException if the cell range is not available
    * 
    * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public ITextTableCellRange getCellRange(String cellRangeName) throws TextException {
+    /*try {
+      if(xCellRange == null)
+        xCellRange = (XCellRange)UnoRuntime.queryInterface(XCellRange.class, xTextTable);
+      XCellRange newXCellRange = xCellRange.getCellRangeByName(cellRangeName);
+      TextTableCellRangeName textTableCellRangeName = new TextTableCellRangeName(cellRangeName);
+      TextTableCellRange textTableCellRange = new TextTableCellRange(textDocument,newXCellRange, textTableCellRangeName);
+      return textTableCellRange;
+    }
+    catch(Exception exception) {
+      TextException textException = new TextException(exception.getMessage());
+      textException.initCause(exception);
+      throw textException;
+    } */
    return getCellRange(TextTableCellNameHelper.getCellRangeStartColumnIndex(cellRangeName), 
    		TextTableCellNameHelper.getCellRangeStartRowIndex(cellRangeName),
 			TextTableCellNameHelper.getCellRangeEndColumnIndex(cellRangeName),
@@ -551,29 +607,30 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @author Markus Krüger
    */
   public ITextTableRow[] getRows() {
-    int cols = getColumnCount();
-    int rows = getRowCount();
+    ITextTableRow[] textTableRow = new ITextTableRow[getRowCount()];    
+    String[] cellNames = xTextTable.getCellNames();
+    int lastRowIndex = 0;
+    String rangeName = "A1";
+    String oldCellName = rangeName;
     if(xCellRange == null)
       xCellRange = (XCellRange)UnoRuntime.queryInterface(XCellRange.class, xTextTable);
-    ITextTableRow[] textTableRow = new ITextTableRow[rows];    
-    
-    try {
-			/*for(int i=0; i<rows; i++) {
-        String rangeName = "A" + (i+1) + ":" + TextTableCellNameHelper.getColumnCharacter(cols-1) + (i+1);
+    for(int i = 0; i < cellNames.length; i++) {
+      int thisRowIndex = TextTableCellNameHelper.getRowIndex(cellNames[i]);
+      if(thisRowIndex != lastRowIndex) {
+        rangeName = rangeName + ":" + oldCellName;
         TextTableCellRangeName textTableCellRangeName = new TextTableCellRangeName(rangeName);
         TextTableCellRange textTableCellRange = new TextTableCellRange(textDocument, xCellRange.getCellRangeByName(rangeName),textTableCellRangeName);
-        textTableRow[i] = new TextTableRow(textTableCellRange);
-      }   */ 
-      for(int i=0; i<rows; i++) {
-        String rangeName = "A" + (i+1) + ":" + TextTableCellNameHelper.getColumnCharacter(cols-1) + (i+1);
-        TextTableCellRangeName textTableCellRangeName = new TextTableCellRangeName(rangeName);
-        TextTableCellRange textTableCellRange = new TextTableCellRange(textDocument, xCellRange.getCellRangeByPosition(0,i,cols-1,i),textTableCellRangeName);
-        textTableRow[i] = new TextTableRow(textTableCellRange);
-      }
+        textTableRow[lastRowIndex] = new TextTableRow(textTableCellRange);  
+        rangeName = cellNames[i];
+        lastRowIndex = thisRowIndex;
+      }      
+      oldCellName = cellNames[i];
     }
-    catch(Exception exception) {
-      //do nothing      
-    }
+    rangeName = rangeName + ":" + oldCellName;
+    TextTableCellRangeName textTableCellRangeName = new TextTableCellRangeName(rangeName);
+    TextTableCellRange textTableCellRange = new TextTableCellRange(textDocument, xCellRange.getCellRangeByName(rangeName),textTableCellRangeName);
+    textTableRow[lastRowIndex] = new TextTableRow(textTableCellRange);  
+    
     return textTableRow;
   }
   //----------------------------------------------------------------------------
@@ -599,13 +656,21 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    *  
    * @author Miriam Sutter
    * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public ITextTableRow getRow(int index) {
     if(xCellRange == null)
       xCellRange = (XCellRange)UnoRuntime.queryInterface(XCellRange.class, xTextTable);
     ITextTableRow textTableRow = null;
     try {
-	    String rangeName = "A" + (index+1) + ":" + TextTableCellNameHelper.getColumnCharacter(getColumnCount()-1) + (index+1);
+      String[] cellNames = xTextTable.getCellNames();
+      String endCellName = "A" + (index+1);
+      for(int i = 0; i < cellNames.length; i++) {
+        if(TextTableCellNameHelper.getRowIndex(cellNames[i]) == index) {
+          endCellName = cellNames[i];
+        }
+      }
+	    String rangeName = "A" + (index+1) + ":" + endCellName;
 	    TextTableCellRangeName textTableCellRangeName = new TextTableCellRangeName(rangeName);
       TextTableCellRange textTableCellRange = new TextTableCellRange(textDocument, xCellRange.getCellRangeByName(rangeName),textTableCellRangeName);
       textTableRow = new TextTableRow(textTableCellRange);
@@ -696,15 +761,39 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @author Markus Krüger
    */
   public short getTableStartPageNumber() {
-    int lastCell = getColumnCount();
-    int lastRow = getRowCount();
-    if(lastCell < 1 || lastRow < 1)
+    String[] cellNames = xTextTable.getCellNames();
+    if(cellNames.length < 1)
       return -1;
     try {
-      return getCell(0,0).getPageNumber();
+      return getCell(cellNames[0]).getPageNumber();
     }
     catch (TextException exception) {
       return -1;
+    }
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Sets the number of header rows to apply header style for.
+   * NOTE: Table must already be inserted before calling this method.
+   * 
+   * @param headerRows number of header rows
+   * 
+   * @throws TextException if the header rows could not be set
+   * 
+   * @author Markus Krüger
+   * @date 21.03.2007
+   */
+  public void setHeaderRows(int headerRows) throws TextException {
+    if(headerRows > 0) {
+      int rows = getRowCount();
+      if(headerRows > rows)
+        headerRows = rows;
+      String[] cellNames = xTextTable.getCellNames();
+      for(int i = 0; i < cellNames.length; i++) {
+        int row = TextTableCellNameHelper.getRowIndex(cellNames[i]);
+        if(row < headerRows)
+          getCell(cellNames[i]).setCellParagraphStyle(ITextTableCell.STYLE_TABLE_HEADER);
+      }
     }
   }
   //----------------------------------------------------------------------------
@@ -718,15 +807,56 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @author Markus Krüger
    */
   public short getTableEndPageNumber() {
-    int lastCell = getColumnCount();
-    int lastRow = getRowCount();
-    if(lastCell < 1 || lastRow < 1)
+    String[] cellNames = xTextTable.getCellNames();
+    if(cellNames.length < 1)
       return -1;
     try {
-      return getCell(lastCell - 1, lastRow - 1).getPageNumber();
+      return getCell(cellNames[cellNames.length -1]).getPageNumber();
     }
     catch (TextException exception) {
       return -1;
+    }
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Marks the table.
+   * 
+   * @author Markus Krüger
+   * @date 06.08.2007
+   */
+  public void markTable() {
+    try {
+      String firstCell = "A1";
+      String range = firstCell+":";
+      ITextTableRow[] rows = getRows();
+      if(rows.length > 0) {
+        ITextTableCell[] cells = rows[rows.length - 1].getCells();
+        String lastCellName = cells[cells.length - 1].getName().getName();        
+        range = range + TextTableCellNameHelper.getColumnCharacter(lastCellName) + TextTableCellNameHelper.getRowCounterValue(lastCellName);
+        ITextTableCellRange cellRange = getCellRange(range);
+        ITextDocument textDocument = getTextDocument();
+        if(textDocument.isOpen()) {
+          XCell cell = getXTextTable().getCellByName(firstCell);
+          XPropertySet xPropertySet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, cell);
+          if(xPropertySet != null) {
+            Object value = xPropertySet.getPropertyValue("TextSection");
+            boolean select = true;
+            XTextSection xTextSection = (XTextSection)UnoRuntime.queryInterface(XTextSection.class, value);
+            if(xTextSection != null) {
+              XPropertySet xTextSectionPropertySet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xTextSection);
+              if(xTextSectionPropertySet != null) {
+                Boolean visible = (Boolean)xTextSectionPropertySet.getPropertyValue("IsVisible");
+                select = visible.booleanValue();
+              }
+            }
+            if(select)
+              textDocument.setSelection(new XInterfaceObjectSelection(cellRange.getXCellRange()));
+          } 
+        }
+      }
+    }
+    catch(Throwable throwable) {
+      //no marking possible
     }
   }
   //----------------------------------------------------------------------------

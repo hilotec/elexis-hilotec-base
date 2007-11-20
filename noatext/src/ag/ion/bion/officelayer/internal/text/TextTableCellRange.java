@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:10:03 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -66,7 +66,7 @@ import com.sun.star.uno.UnoRuntime;
  * Cell range of a text table. 
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11547 $
  */
 public class TextTableCellRange implements ITextTableCellRange {
   
@@ -101,6 +101,18 @@ public class TextTableCellRange implements ITextTableCellRange {
     this.textDocument = textDocument;
     this.xCellRange = xCellRange;
     this.textTableCellRangeName = textTableCellRangeName;
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Returns the OpenOffice.org XCellRange interface.
+   * 
+   * @return the OpenOffice.org XCellRange interface
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public XCellRange getXCellRange() {
+    return xCellRange;
   }
   //----------------------------------------------------------------------------
   /**
@@ -195,7 +207,7 @@ public class TextTableCellRange implements ITextTableCellRange {
    */
   public ITextTableCell getCell(String name) throws TextException {
   	int columnIndex = TextTableCellNameHelper.getColumnIndex(name);
-  	int rowIndex = TextTableCellNameHelper.getRowIndex(name);;
+  	int rowIndex = TextTableCellNameHelper.getRowIndex(name);
   	try {
 			return new TextTableCell(textDocument,xCellRange.getCellByPosition(columnIndex,rowIndex));
 		}catch(IllegalArgumentException illegalArgumentException) {

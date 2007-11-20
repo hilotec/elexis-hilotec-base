@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:27 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-09 12:36:22 +0200 (Mo, 09 Jul 2007) $
  */
 package ag.ion.bion.officelayer.desktop;
 
@@ -51,7 +51,7 @@ import com.sun.star.frame.XFrame;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11506 $
  */
 public interface IFrame {
   
@@ -155,6 +155,30 @@ public interface IFrame {
    * @date 24.08.2006
    */
   public void updateDispatches();
+  //----------------------------------------------------------------------------
+  /**
+   * Aktivates the print preview for the frame.
+   * Default columns and rows is set to one.
+   * 
+   * @throws NOAException if there is an error showing the preview
+   * 
+   * @author Markus Krüger
+   * @date 09.07.2007
+   */
+  public void showPreview() throws NOAException;
+  //---------------------------------------------------------------------------- 
+  /**
+   * Aktivates the print preview for the frame with the given columns and rows.
+   * 
+   * @param columns the number of columns to display
+   * @param rows the number of rows to display
+   * 
+   * @throws NOAException if there is an error showing the preview
+   * 
+   * @author Markus Krüger
+   * @date 09.07.2007
+   */
+  public void showPreview(int columns, int rows) throws NOAException;
   //---------------------------------------------------------------------------- 
   
 }

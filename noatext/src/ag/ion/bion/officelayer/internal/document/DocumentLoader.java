@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:24 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-30 16:45:58 +0200 (Mo, 30 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.document;
 
@@ -53,8 +53,8 @@ import ag.ion.bion.officelayer.internal.text.TextDocument;
 
 import ag.ion.bion.officelayer.internal.web.WebDocument;
 import ag.ion.noa.internal.db.DatabaseDocument;
+import ag.ion.noa.service.IServiceProvider;
 
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XServiceInfo;
 
@@ -65,7 +65,6 @@ import com.sun.star.sheet.XSpreadsheetDocument;
 
 import com.sun.star.text.XTextDocument;
 
-import com.sun.star.uno.XComponentContext;
 import com.sun.star.uno.UnoRuntime;
 
 import com.sun.star.drawing.XDrawPagesSupplier;
@@ -84,7 +83,7 @@ import java.io.IOException;
  * Document loading helper class. 
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11529 $
  */
 public class DocumentLoader {
   
@@ -92,8 +91,7 @@ public class DocumentLoader {
   /**
    * Loads document from submitted URL.
    * 
-   * @param xMultiComponentFactory OpenOffice.org component factory
-   * @param xComponentContext context of OpenOffice.org instance
+   * @param serviceProvider the service provider to be used
    * @param URL URL of the document
    * 
    * @return loaded document
@@ -101,16 +99,15 @@ public class DocumentLoader {
    * @throws Exception if an OpenOffice.org communication error occurs
    * @throws IOException if document can not be found
    */
-  public static IDocument loadDocument(XMultiComponentFactory xMultiComponentFactory, XComponentContext xComponentContext, String URL) 
+  public static IDocument loadDocument(IServiceProvider serviceProvider, String URL) 
   throws Exception, IOException {
-    return loadDocument(xMultiComponentFactory, xComponentContext, URL, null);
+    return loadDocument(serviceProvider, URL, null);
   }  
   //----------------------------------------------------------------------------
   /**
    * Loads document from submitted URL.
    * 
-   * @param xMultiComponentFactory OpenOffice.org component factory
-   * @param xComponentContext context of OpenOffice.org instance
+   * @param serviceProvider the service provider to be used
    * @param URL URL of the document
    * @param properties properties for OpenOffice.org
    * 
@@ -119,21 +116,20 @@ public class DocumentLoader {
    * @throws Exception if an OpenOffice.org communication error occurs
    * @throws IOException if document can not be found
    */
-  public static IDocument loadDocument(XMultiComponentFactory xMultiComponentFactory, XComponentContext xComponentContext, String URL, PropertyValue[] properties) 
+  public static IDocument loadDocument(IServiceProvider serviceProvider, String URL, PropertyValue[] properties) 
   throws Exception, IOException {
     if(properties == null) {
       properties = new PropertyValue[0];
-    }
-    Object oDesktop = xMultiComponentFactory.createInstanceWithContext("com.sun.star.frame.Desktop", xComponentContext);
+    }    
+    Object oDesktop = serviceProvider.createServiceWithContext("com.sun.star.frame.Desktop");
     XComponentLoader xComponentLoader = (XComponentLoader)UnoRuntime.queryInterface(XComponentLoader.class, oDesktop);
-    return loadDocument(xComponentLoader, URL, "_blank", 0, properties);    
+    return loadDocument(serviceProvider, xComponentLoader, URL, "_blank", 0, properties);    
   }
   //----------------------------------------------------------------------------
   /**
    * Loads document on the basis of the submitted XInputStream implementation.
    * 
-   * @param xMultiComponentFactory OpenOffice.org component factory
-   * @param xComponentContext context of OpenOffice.org instance
+   * @param serviceProvider the service provider to be used
    * @param xInputStream OpenOffice.org XInputStream inplementation
    * 
    * @return loaded Document
@@ -141,16 +137,15 @@ public class DocumentLoader {
    * @throws Exception if an OpenOffice.org communication error occurs
    * @throws IOException if document can not be found
    */
-  public static IDocument loadDocument(XMultiComponentFactory xMultiComponentFactory, XComponentContext xComponentContext, XInputStream xInputStream) 
+  public static IDocument loadDocument(IServiceProvider serviceProvider, XInputStream xInputStream) 
   throws Exception, IOException {
-    return loadDocument(xMultiComponentFactory, xComponentContext, xInputStream, null);
+    return loadDocument(serviceProvider, xInputStream, null);
   }
   //----------------------------------------------------------------------------
   /**
    * Loads document on the basis of the submitted XInputStream implementation.
    * 
-   * @param xMultiComponentFactory OpenOffice.org component factory
-   * @param xComponentContext context of OpenOffice.org instance
+   * @param serviceProvider the service provider to be used
    * @param xInputStream OpenOffice.org XInputStream inplementation
    * @param properties properties for OpenOffice.org
    * 
@@ -159,7 +154,7 @@ public class DocumentLoader {
    * @throws Exception if an OpenOffice.org communication error occurs
    * @throws IOException if document can not be found
    */
-  public static IDocument loadDocument(XMultiComponentFactory xMultiComponentFactory, XComponentContext xComponentContext, XInputStream xInputStream, PropertyValue[] properties) 
+  public static IDocument loadDocument(IServiceProvider serviceProvider, XInputStream xInputStream, PropertyValue[] properties) 
   throws Exception, IOException {
     if(properties == null) {
       properties = new PropertyValue[0];
@@ -172,14 +167,15 @@ public class DocumentLoader {
     newProperties[properties.length].Name = "InputStream"; 
     newProperties[properties.length].Value = xInputStream;
     
-    Object oDesktop = xMultiComponentFactory.createInstanceWithContext("com.sun.star.frame.Desktop", xComponentContext);
+    Object oDesktop = serviceProvider.createServiceWithContext("com.sun.star.frame.Desktop");
     XComponentLoader xComponentLoader = (XComponentLoader)UnoRuntime.queryInterface(XComponentLoader.class, oDesktop);
-    return loadDocument(xComponentLoader, "private:stream", "_blank", 0, newProperties);    
+    return loadDocument(serviceProvider, xComponentLoader, "private:stream", "_blank", 0, newProperties);    
   }
   //----------------------------------------------------------------------------
   /**
    * Loads document from the submitted URL into the OpenOffice.org frame.
    * 
+   * @param serviceProvider the service provider to be used
    * @param xFrame frame to used for document
    * @param URL URL of the document
    * @param searchFlags search flags for the target frame
@@ -190,14 +186,14 @@ public class DocumentLoader {
    * @throws Exception if an OpenOffice.org communication error occurs
    * @throws IOException if document can not be found
    */
-  public static IDocument loadDocument(XFrame xFrame, String URL, int searchFlags, PropertyValue[] properties) 
+  public static IDocument loadDocument(IServiceProvider serviceProvider, XFrame xFrame, String URL, int searchFlags, PropertyValue[] properties) 
     throws Exception, IOException {
     if(xFrame != null) {
       if(properties == null) {
         properties = new PropertyValue[0];
       }
       XComponentLoader xComponentLoader = (XComponentLoader)UnoRuntime.queryInterface(XComponentLoader.class, xFrame);
-      return loadDocument(xComponentLoader, URL, xFrame.getName(), searchFlags, properties);
+      return loadDocument(serviceProvider, xComponentLoader, URL, xFrame.getName(), searchFlags, properties);
     }
     return null;
   }  
@@ -205,6 +201,7 @@ public class DocumentLoader {
   /**
    * Loads document into OpenOffice.org
    * 
+   * @param serviceProvider the service provider to be used
    * @param xComponentLoader OpenOffice.org component loader
    * @param URL URL of the document
    * @param targetFrameName name of the OpenOffice.org target frame
@@ -216,15 +213,13 @@ public class DocumentLoader {
    * @throws Exception if an OpenOffice.org communication error occurs
    * @throws IOException if document can not be found
    */
-  private static IDocument loadDocument(XComponentLoader xComponentLoader, String URL, String targetFrameName, int searchFlags, PropertyValue[] properties) 
+  private static IDocument loadDocument(IServiceProvider serviceProvider, XComponentLoader xComponentLoader, String URL, String targetFrameName, int searchFlags, PropertyValue[] properties) 
     throws Exception, IOException {    
     XComponent xComponent = xComponentLoader.loadComponentFromURL(URL, targetFrameName, searchFlags, properties);
     if(xComponent != null) {      
-      return getDocument(xComponent);      
+      return getDocument(xComponent,serviceProvider);      
     }
-    else {
-      throw new IOException("Document not found.");
-    }    
+    throw new IOException("Document not found.");
   }  
   //----------------------------------------------------------------------------
   /**
@@ -233,65 +228,83 @@ public class DocumentLoader {
    * 
    * @param xComponent OpenOffice.org XComponent or null if the document can not be 
    * builded
+   * @param serviceProvider the service provider to be used for the documents
    * 
    * @return constructed document or null
    */
-  public static IDocument getDocument(XComponent xComponent) {
+  public static IDocument getDocument(XComponent xComponent, IServiceProvider serviceProvider) {
     XServiceInfo xServiceInfo = (XServiceInfo)UnoRuntime.queryInterface(XServiceInfo.class, xComponent);
     if(xServiceInfo.supportsService("com.sun.star.text.TextDocument")) {
       XTextDocument xTextDocument = (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, xComponent);
-      if(xTextDocument != null) 
-        return new TextDocument(xTextDocument); 
+      if(xTextDocument != null) {
+        TextDocument document = new TextDocument(xTextDocument); 
+        document.setServiceProvider(serviceProvider);
+        return document;
+      }
       return null;
     }
     else if(xServiceInfo.supportsService("com.sun.star.sheet.SpreadsheetDocument")) {
       XSpreadsheetDocument xSpreadsheetDocument = (XSpreadsheetDocument)UnoRuntime.queryInterface(XSpreadsheetDocument.class, xComponent);
-      if(xSpreadsheetDocument != null)
-        return new SpreadsheetDocument(xSpreadsheetDocument);
-      else
-        return null;
+      if(xSpreadsheetDocument != null) {
+        SpreadsheetDocument document = new SpreadsheetDocument(xSpreadsheetDocument);
+        document.setServiceProvider(serviceProvider);
+        return document;
+      }
+      return null;
     }
     else if(xServiceInfo.supportsService("com.sun.star.presentation.PresentationDocument")) {
       XPresentationSupplier presentationSupplier = (XPresentationSupplier)UnoRuntime.queryInterface(XPresentationSupplier.class, xComponent);
-      if(presentationSupplier != null)
-        return new PresentationDocument(presentationSupplier);
-      else
-        return null;
+      if(presentationSupplier != null) {
+        PresentationDocument document = new PresentationDocument(presentationSupplier);
+        document.setServiceProvider(serviceProvider);
+        return document;
+      }
+      return null;
     }
     else if(xServiceInfo.supportsService("com.sun.star.drawing.DrawingDocument")) {
       XDrawPagesSupplier xDrawPagesSupplier = (XDrawPagesSupplier)UnoRuntime.queryInterface(XDrawPagesSupplier.class, xComponent);
-      if(xDrawPagesSupplier != null)
-        return new DrawingDocument(xDrawPagesSupplier);
-      else
-        return null;
+      if(xDrawPagesSupplier != null) {
+        DrawingDocument document = new DrawingDocument(xDrawPagesSupplier);
+        document.setServiceProvider(serviceProvider);
+        return document;
+      }
+      return null;
     }    
     else if(xServiceInfo.supportsService("com.sun.star.formula.FormulaProperties")) {
         XPropertySet xPropertySet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xComponent);
-        if(xPropertySet != null)
-          return new FormulaDocument(xPropertySet);
-        else
-          return null;
+        if(xPropertySet != null) {
+          FormulaDocument document = new FormulaDocument(xPropertySet);
+          document.setServiceProvider(serviceProvider);
+          return document;
+        }
+        return null;
     }
     else if(xServiceInfo.supportsService("com.sun.star.text.WebDocument")) {
     	XTextDocument xTextDocument = (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, xComponent);
-    	if(xTextDocument != null)
-        return new WebDocument(xTextDocument);
-      else
-        return null;
+    	if(xTextDocument != null) {
+    	  WebDocument document = new WebDocument(xTextDocument);
+        document.setServiceProvider(serviceProvider);
+        return document;
+    	}
+      return null;
     }
     else if(xServiceInfo.supportsService("com.sun.star.text.GlobalDocument")) {
     	XTextDocument xTextDocument = (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, xComponent);
-    	if(xTextDocument != null)
-        return new GlobalTextDocument(xTextDocument);
-      else
-        return null;
+    	if(xTextDocument != null) {
+    	  GlobalTextDocument document = new GlobalTextDocument(xTextDocument);
+        document.setServiceProvider(serviceProvider);
+        return document;
+    	}
+      return null;
     }
     else if(xServiceInfo.supportsService("com.sun.star.sdb.OfficeDatabaseDocument")) {
     	XOfficeDatabaseDocument xOfficeDatabaseDocument = (XOfficeDatabaseDocument)UnoRuntime.queryInterface(XOfficeDatabaseDocument.class, xComponent);
-    	if(xOfficeDatabaseDocument != null)
-        return new DatabaseDocument(xOfficeDatabaseDocument);
-      else
-        return null;
+    	if(xOfficeDatabaseDocument != null) {
+    	  DatabaseDocument document = new DatabaseDocument(xOfficeDatabaseDocument);
+        document.setServiceProvider(serviceProvider);
+        return document;
+    	}
+      return null;
     }
     else {
       return null;

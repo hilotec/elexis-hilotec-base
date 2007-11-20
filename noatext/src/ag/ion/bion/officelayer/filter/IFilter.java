@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:40:19 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.bion.officelayer.filter;
 
@@ -61,12 +61,13 @@ import ag.ion.noa.filter.StarOffice40TemplateFilter;
 import ag.ion.noa.filter.StarOffice50Filter;
 import ag.ion.noa.filter.StarOffice50TemplateFilter;
 import ag.ion.noa.filter.SylkFilter;
+import ag.ion.noa.filter.XHTMLFilter;
 
 /**
  * Filter for the export of documents.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11479 $
  */
 public interface IFilter {
 	
@@ -98,6 +99,7 @@ public interface IFilter {
 																												TextFilter.FILTER,
 																												TextEncFilter.FILTER,
 																												HTMLFilter.FILTER,
+                                                        XHTMLFilter.FILTER,
 																												PDBFilter.FILTER,
 																												XMLDocBookFilter.FILTER,
 																												MSOffice2003XMLFilter.FILTER,
@@ -154,6 +156,19 @@ public interface IFilter {
 	 */
 	public String getFileExtension(IDocument document);	
 	//----------------------------------------------------------------------------
+  /**
+   * Returns file extension of the filter. Returns null
+   * if the document type is not supported by the filter.
+   * 
+   * @param documentType document type to be used
+   * 
+   * @return file extension of the filter
+   * 
+   * @author Markus Krüger
+   * @date 03.04.2007
+   */
+  public String getFileExtension(String documentType); 
+  //----------------------------------------------------------------------------
 	/**
 	 * Returns name of the filter. Returns null
 	 * if the submitted document is not supported by the filter.

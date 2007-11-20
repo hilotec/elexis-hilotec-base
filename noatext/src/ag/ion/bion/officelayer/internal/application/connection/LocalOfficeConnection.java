@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2006/12/08 12:07:55 $
+ * Last changes made by $Author: markus $, $Date: 2006-12-08 13:07:55 +0100 (Fr, 08 Dez 2006) $
  */
 package ag.ion.bion.officelayer.internal.application.connection;
 
@@ -67,9 +67,9 @@ import java.util.logging.Logger;
  * Connection in order to communicate with local OpenOffice.org 
  * application.
  * 
- * @author Andreas Brï¿½ker
- * @author Markus Krï¿½ger
- * @version $Revision: 1.2 $
+ * @author Andreas Bröker
+ * @author Markus Krüger
+ * @version $Revision: 11159 $
  */
 public class LocalOfficeConnection extends AbstractOfficeConnection {
 	
@@ -90,7 +90,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @param officePath path to OpenOffice.org installation
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void setOfficePath(String officePath) {
   	this.officePath = officePath;
@@ -101,7 +101,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @param host host where Office instance is listening 
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */  
   public void setHost(String host) {
   	this.host = host;  	
@@ -112,7 +112,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @param port port where Office instance is listening
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */  
   public void setPort(String port) {
   	this.port = port;  	
@@ -123,7 +123,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @param useBridge information whether the connection uses a bridge
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void setUseBridge(boolean useBridge) {
   	this.useBridge = useBridge;
@@ -134,7 +134,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return information whether the connection uses a bridge
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public boolean usesBridge() {
   	return useBridge;
@@ -161,7 +161,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
      */
     try {
       if(officeProgressMonitor != null) {
-        officeProgressMonitor.beginTask("Suche office..." /*Messages.getString("LocalOfficeConnection_monitor_office_application_message")*/, 5); //$NON-NLS-1$
+        officeProgressMonitor.beginTask(Messages.getString("LocalOfficeConnection_monitor_office_application_message"), 5); //$NON-NLS-1$
         officeProgressMonitor.worked(1);
       }      
       
@@ -174,7 +174,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
       if(officePath != null)
         System.setProperty("office.home", officePath); //$NON-NLS-1$
       if(officeProgressMonitor != null)
-        officeProgressMonitor.beginSubTask("Lade libraries..." /*Messages.getString( "LocalOfficeConnection_monitor_loading_libraries_message") */); //$NON-NLS-1$
+        officeProgressMonitor.beginSubTask(Messages.getString("LocalOfficeConnection_monitor_loading_libraries_message")); //$NON-NLS-1$
       officeConnection = new LocalOfficeConnectionGhost(officeProgressMonitor);
       if(officeProgressMonitor != null)
         officeProgressMonitor.worked(1);
@@ -202,7 +202,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @throws Exception if any error occurs
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public boolean openConnection() throws Exception {	
     return openConnection(null);
@@ -213,8 +213,8 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return information whether the connection is active
    * 
-   * @author Andreas Brï¿½ker
-   * @author Markus Krï¿½ger
+   * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public boolean isConnected() {
   	if(officeConnection.getCurrentComponentContext() == null) {
@@ -232,7 +232,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
 	/**
    * Closes connection to OpenOffice.org.
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void closeConnection() {
     try {      
@@ -248,7 +248,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return XComponentContext
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public XComponentContext getXComponentContext() {
     return officeConnection.getComponentContext();
@@ -261,8 +261,8 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @throws Exception if anything fails
    * 
-   * @author Andreas Brï¿½ker
-   * @author Markus Krï¿½ger
+   * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public XMultiServiceFactory getXMultiServiceFactory() throws Exception {
     return (XMultiServiceFactory)UnoRuntime.queryInterface(XMultiServiceFactory.class, getXMultiComponentFactory());
@@ -275,8 +275,8 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @throws Exception if the closed connection could not be opened
    * 
-   * @author Andreas Brï¿½ker
-   * @author Markus Krï¿½ger
+   * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public XMultiComponentFactory getXMultiComponentFactory() throws Exception {
     if(!isConnected())
@@ -289,7 +289,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return host of the connection
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public String getHost() {
   	if(host == null)
@@ -303,7 +303,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return port of the connection.
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public String getPort() {
   	if(port == null)
@@ -319,7 +319,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return new new local window for OpenOffice.org
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public OfficeWindow createLocalOfficeWindow(Container container) {
     return officeConnection.createOfficeWindow(container);
@@ -332,7 +332,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return OpenOffice.org frame integrated into the submitted Java AWT container
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public XFrame getOfficeFrame(Container container) {
     if(officeConnection != null) {      
@@ -384,7 +384,7 @@ public class LocalOfficeConnection extends AbstractOfficeConnection {
    * 
    * @return OpenOffice.org frame integrated into the submitted Java AWT container
    * 
-   * @author Markus Krï¿½ger
+   * @author Markus Krüger
    * @date 08.12.2006
    */
   public XFrame getOfficeFrame(NativeView nativeView) {

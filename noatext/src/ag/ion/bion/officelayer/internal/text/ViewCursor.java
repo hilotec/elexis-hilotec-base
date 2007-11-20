@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:12:22 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -55,7 +55,7 @@ import com.sun.star.uno.UnoRuntime;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11548 $
  */
 public class ViewCursor implements IViewCursor {
   
@@ -126,12 +126,13 @@ public class ViewCursor implements IViewCursor {
    * Moves to the given text range.
    * 
    * @param textRange the text range to go to
+   * @param select if to extend the selection
    * 
    * @author Markus Krüger
    */
-  public void gotToRange(ITextRange textRange) {
+  public void goToRange(ITextRange textRange, boolean select) {
     XTextRange xTextRange = textRange.getXTextRange();   
-    xTextViewCursor.gotoRange(xTextRange,false);
+    xTextViewCursor.gotoRange(xTextRange,select);
   }
   //----------------------------------------------------------------------------
   /**

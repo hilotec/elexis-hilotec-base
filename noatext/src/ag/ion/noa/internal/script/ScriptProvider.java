@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-18 13:39:56 +0200 (Mi, 18 Jul 2007) $
  */
 package ag.ion.noa.internal.script;
 
@@ -58,7 +58,7 @@ import java.util.List;
  * Provider for scripts.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11525 $
  * @date 13.06.2006
  */ 
 public class ScriptProvider implements IScriptProvider {
@@ -78,6 +78,48 @@ public class ScriptProvider implements IScriptProvider {
 		Assert.isNotNull(xScriptProvider, XScriptProvider.class, this);
 		this.scriptProvider = xScriptProvider;
 	}	
+  //----------------------------------------------------------------------------
+	/**
+   * Returns the script with the submitted type, library, module, and name, or null
+   * if not found.
+   * 
+   * @see IScriptProvider#TYPE_BASIC
+   * @see IScriptProvider#TYPE_BEAN_SHELL
+   * @see IScriptProvider#TYPE_JAVA
+   * @see IScriptProvider#TYPE_JAVA_SCRIPT
+   * @see IScriptProvider#TYPE_PYTHON
+   * 
+   * @param type type of the scripts
+   * @param library name of the library
+   * @param module name of the module, or null if not TYPE_BASIC
+   * @param name name of the script
+   * 
+   * @return  the script with the submitted type, library, module, and name, or null
+   * 
+   * @author Andreas Bröker
+   * @date 13.06.2006
+   */
+  public IScript getScript(String type, String library, String module, String name) {
+    if(type == null || library == null || name == null)
+      return null;
+    boolean needsModule = type.equals(IScriptProvider.TYPE_BASIC);
+    if(needsModule && module == null)
+      return null;
+    IScript[] allScripts = getScripts(type,library);
+    for(int i = 0; i < allScripts.length; i++) {
+      IScript script = allScripts[i];
+      String moduleName = script.getModuleName();
+      if(script.getName().equals(name)) {
+        if(needsModule) {
+          if(moduleName != null && moduleName.equals(module))
+            return script;
+        }
+        else
+          return script;
+      }
+    }
+    return null;
+  }
   //----------------------------------------------------------------------------
 	/**
 	 * Returns all scripts of the submitted type and library with the submitted name.
@@ -118,6 +160,29 @@ public class ScriptProvider implements IScriptProvider {
 		return getScriptsInternal(null, library);
 	}
   //----------------------------------------------------------------------------
+  /**
+   * Returns all scripts.
+   * 
+   * @return all scripts
+   * 
+   * @author Markus Krüger
+   * @date 17.07.2007
+   */
+  public IScript[] getScripts() {
+    XBrowseNode rootNode = (XBrowseNode)UnoRuntime.queryInterface(XBrowseNode.class, scriptProvider);
+    XBrowseNode[] typeNodes = rootNode.getChildNodes();
+    List list = new ArrayList();
+    for(int i=0, n=typeNodes.length; i<n; i++) {
+      XBrowseNode typeNode = typeNodes[i];       
+      XBrowseNode[] libraryNodes = typeNode.getChildNodes();
+      for(int j=0, m=libraryNodes.length; j<m; j++) {
+        XBrowseNode libraryNode = libraryNodes[j];
+        buildScripts(list, libraryNode);
+      }   
+    }
+    return (IScript[])list.toArray(new IScript[list.size()]);
+  }
+  //----------------------------------------------------------------------------
 	/**
 	 * Collects scripts of the submitted type and library.
 	 * 
@@ -135,7 +200,7 @@ public class ScriptProvider implements IScriptProvider {
 		List list = new ArrayList();
 		for(int i=0, n=typeNodes.length; i<n; i++) {
 			XBrowseNode typeNode = typeNodes[i];	
-			if(type == null || typeNode.equals(type)) {
+			if(type == null || typeNode.getName().equals(type)) {
 				XBrowseNode libraryNode = getLibraryNode(typeNode, library);
 				if(libraryNode != null) {
 					buildScripts(list, libraryNode);
@@ -168,8 +233,9 @@ public class ScriptProvider implements IScriptProvider {
 				if(propertySet != null) {
 					try {
 						Object object = propertySet.getPropertyValue("URI");
-						XScript xScript = scriptProvider.getScript(object.toString());
-						list.add(new Script(xScript));
+						String uri = object.toString();
+						XScript xScript = scriptProvider.getScript(uri);
+						list.add(new Script(uri,xScript));
 					}
 					catch(Throwable throwable) {
 						//do not consume

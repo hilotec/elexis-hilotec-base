@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-09-19 15:26:14 +0200 (Mi, 19 Sep 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -42,6 +42,7 @@ import ag.ion.bion.officelayer.text.IAnnotation;
 import ag.ion.bion.officelayer.text.IAnnotationService;
 import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextField;
+import ag.ion.bion.officelayer.text.ITextFieldService;
 
 import com.sun.star.lang.XServiceInfo;
 
@@ -54,7 +55,7 @@ import java.util.List;
  * Annotation service of a text document.
  * 
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11572 $
  */
 public class AnnotationService implements IAnnotationService {
   
@@ -91,7 +92,7 @@ public class AnnotationService implements IAnnotationService {
       List annotations = new ArrayList();
       for(int i = 0; i < fields.length; i++) {
         XServiceInfo info = (XServiceInfo) UnoRuntime.queryInterface(XServiceInfo.class, fields[i].getXTextContent());
-        if(info.supportsService("com.sun.star.text.TextField.Annotation")) {
+        if(info.supportsService(ITextFieldService.ANNOTATION_TEXTFIELD_ID)) {
           annotations.add(new Annotation(textDocument,fields[i]));
         }
       } 

@@ -34,10 +34,12 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/23 15:27:31 $
+ * Last changes made by $Author: markus $, $Date: 2007-09-19 15:46:56 +0200 (Mi, 19 Sep 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
+import ag.ion.bion.officelayer.filter.IFilter;
+import ag.ion.bion.officelayer.internal.document.ByteArrayXInputStreamAdapter;
 import ag.ion.bion.officelayer.text.ICharacterProperties;
 import ag.ion.bion.officelayer.text.IPageCursor;
 import ag.ion.bion.officelayer.text.ITextCursor;
@@ -65,13 +67,18 @@ import com.sun.star.text.XWordCursor;
 
 import com.sun.star.uno.UnoRuntime;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Cursor of a text document.
  * 
  * @author Miriam Sutter
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.4 $
+ * @version $Revision: 11574 $
  */
 public class TextCursor implements ITextCursor {
   
@@ -236,7 +243,7 @@ public class TextCursor implements ITextCursor {
     IViewCursor viewCursor = textDocument.getViewCursorService().getViewCursor();
     IPageCursor pageCursor = viewCursor.getPageCursor();
     if(pageCursor != null) {
-      viewCursor.gotToRange(getStart());
+      viewCursor.goToRange(getStart(),false);
       return pageCursor.getPage();
     }
     return -1;
@@ -255,7 +262,7 @@ public class TextCursor implements ITextCursor {
     IViewCursor viewCursor = textDocument.getViewCursorService().getViewCursor();
     IPageCursor pageCursor = viewCursor.getPageCursor();
     if(pageCursor != null) {
-      viewCursor.gotToRange(getEnd());
+      viewCursor.goToRange(getEnd(),false);
       return pageCursor.getPage();
     }
     return -1;
@@ -305,6 +312,75 @@ public class TextCursor implements ITextCursor {
       throw new NOAException(throwable);
     }
   }
+  //----------------------------------------------------------------------------
+  /**
+   * Inserts a file stream at the current cursor location.
+   * 
+   * @param inputStream a file stream to be inserted
+   * @param filter the filter that the stream is baes on
+   * 
+   * @throws NOAException if the file stream can not be inserted
+   * 
+   * @author Markus Krüger
+   * @date 24.05.2007
+   */
+  public void insertDocument(InputStream inputStream,IFilter filter) throws NOAException {
+    if(inputStream == null || filter == null)
+      return;
+    FileOutputStream outputStream = null;
+    File tempFile = null;
+    try {
+      XDocumentInsertable xDocumentInsertable = (XDocumentInsertable)UnoRuntime.queryInterface(XDocumentInsertable.class, xTextCursor);
+      if(xDocumentInsertable != null) {
+        boolean useOld = true;
+        if(useOld) {
+          byte buffer[]= new byte[0xffff];
+          int bytes = -1;
+          tempFile = File.createTempFile("noatemp"+System.currentTimeMillis(),"tmp");
+          tempFile.deleteOnExit();
+          outputStream = new FileOutputStream(tempFile);
+          while((bytes = inputStream.read(buffer)) != -1)
+            outputStream.write(buffer, 0, bytes);   
+          insertDocument(tempFile.getAbsolutePath());
+        }
+        else {
+          PropertyValue[] loadProps = new PropertyValue[2]; 
+          loadProps[0] = new PropertyValue();
+          loadProps[0].Name = "InputStream";  //$NON-NLS-1$
+          loadProps[0].Value = new ByteArrayXInputStreamAdapter(inputStream,null);
+  
+          loadProps[1] = new PropertyValue(); 
+          loadProps[1].Name = "FilterName";  //$NON-NLS-1$
+          loadProps[1].Value = filter.getFilterDefinition(textDocument);
+  
+          xDocumentInsertable.insertDocumentFromURL("private:stream", loadProps);  
+        }
+      }
+    }
+    catch(Throwable throwable) {
+      throw new NOAException(throwable);
+    }
+    finally {
+      if(inputStream != null) {
+        try {
+          inputStream.close();
+        } 
+        catch (IOException ioException) {
+          //do nothing
+        }
+      }
+      if(outputStream != null) {
+        try {
+          outputStream.close();
+        } 
+        catch (IOException ioException) {
+          //do nothing
+        }
+      }
+      if(tempFile != null)
+        tempFile.delete();
+    }
+  }  
   //----------------------------------------------------------------------------
   /**
    * Returns if the current cursor supports word cursor operations.

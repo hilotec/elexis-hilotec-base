@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:40:19 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.noa.filter;
 
@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.filter.IFilter;
  * Abstract base filter.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11479 $
  * @date 09.07.2006
  */ 
 public abstract class AbstractFilter implements IFilter {
@@ -82,6 +82,23 @@ public abstract class AbstractFilter implements IFilter {
 		return false;
 	}
 	//----------------------------------------------------------------------------
+  /**
+   * Returns file extension of the filter. Returns null
+   * if the document is not supported by the filter.
+   * 
+   * @param document document to be used
+   * 
+   * @return file extension of the filter
+   * 
+   * @author Markus Krüger
+   * @date 03.04.2007
+   */
+  public String getFileExtension(IDocument document) {
+    if(document == null)
+      return null;
+    return getFileExtension(document.getDocumentType());
+  }
+  //----------------------------------------------------------------------------
 	/**
 	 * Returns name of the filter. Returns null
 	 * if the submitted document is not supported by the filter.

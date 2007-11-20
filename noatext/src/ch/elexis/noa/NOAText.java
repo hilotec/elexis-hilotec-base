@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 2895 2007-07-24 16:29:52Z rgw_ch $
+ *  $Id: NOAText.java 3356 2007-11-20 10:17:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -43,6 +43,7 @@ import ag.ion.bion.officelayer.text.table.ITextTablePropertyStore;
 import ag.ion.bion.workbench.office.editor.core.EditorCorePlugin;
 import ag.ion.noa.search.ISearchResult;
 import ag.ion.noa.search.SearchDescriptor;
+import ag.ion.noa4e.ui.widgets.OfficePanel;
 import ch.elexis.Hub;
 import ch.elexis.noa.OOPrinter.MyXPrintJobListener;
 import ch.elexis.preferences.PreferenceConstants;

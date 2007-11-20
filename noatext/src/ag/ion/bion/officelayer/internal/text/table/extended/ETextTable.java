@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:24 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.bion.officelayer.internal.text.table.extended;
 
@@ -71,7 +71,7 @@ import java.util.ArrayList;
  * Implementation for extended tables.
  * 
  * @author Miriam Sutter
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  */
 public class ETextTable implements IETextTable {
 

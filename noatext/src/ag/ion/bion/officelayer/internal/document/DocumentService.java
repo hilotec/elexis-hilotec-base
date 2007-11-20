@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/27 06:20:57 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-30 16:45:58 +0200 (Mo, 30 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.document;
 
@@ -57,6 +57,7 @@ import ag.ion.noa.db.IDatabaseDocument;
 import ag.ion.noa.document.URLAdapter;
 
 import ag.ion.noa.internal.db.DatabaseDocument;
+import ag.ion.noa.service.IServiceProvider;
 
 import com.sun.star.beans.PropertyState;
 import com.sun.star.beans.PropertyValue;
@@ -84,7 +85,7 @@ import java.util.ArrayList;
  * Service for documents.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.2 $
+ * @version $Revision: 11529 $
  */
 public class DocumentService implements IDocumentService {
 
@@ -97,6 +98,7 @@ public class DocumentService implements IDocumentService {
   private static final String GLOBAL_FACTORY_URL		= "private:factory/swriter/GlobalDocument"; //$NON-NLS-1$
     
   private IOfficeConnection officeConnection = null;
+  private IServiceProvider  serviceProvider  = null;
   private XComponentLoader  xComponentLoader = null;  
   
   //----------------------------------------------------------------------------
@@ -104,15 +106,17 @@ public class DocumentService implements IDocumentService {
    * Constructs new DocumentService.
    * 
    * @param officeConnection office connection to be used
+   * @param serviceProvider the service provider to be used
    * 
    * @throws IllegalArgumentException if the submitted office connection is not valid
    * 
    * @author Andreas Bröker
    */
-  public DocumentService(IOfficeConnection officeConnection) throws IllegalArgumentException {
+  public DocumentService(IOfficeConnection officeConnection, IServiceProvider serviceProvider) throws IllegalArgumentException {
     if(officeConnection == null)
       throw new IllegalArgumentException("The submitted office connection is not valid."); //$NON-NLS-1$
     this.officeConnection = officeConnection;
+    this.serviceProvider = serviceProvider;
   }
   //----------------------------------------------------------------------------
   /**
@@ -188,7 +192,7 @@ public class DocumentService implements IDocumentService {
       	xComponent = xComponentLoader.loadComponentFromURL(factoryURL, "_blank", 0, 
         		DocumentDescriptorTransformer.documentDescriptor2PropertyValues(documentDescriptor)); //$NON-NLS-1$ //$NON-NLS-2$
       }
-      IDocument document = DocumentLoader.getDocument(xComponent);
+      IDocument document = DocumentLoader.getDocument(xComponent,serviceProvider);
       if(document == null)
         throw new DocumentException("The new document can not be constructed.");  //$NON-NLS-1$
       else
@@ -241,7 +245,7 @@ public class DocumentService implements IDocumentService {
   public IDocument loadDocument(String url) throws DocumentException {
     try {    	
     	url = URLAdapter.adaptURL(url);     	
-      IDocument document = DocumentLoader.loadDocument(officeConnection.getXMultiComponentFactory(), officeConnection.getXComponentContext(), url);
+      IDocument document = DocumentLoader.loadDocument(serviceProvider, url);
       if(document != null)
         return document;
       else
@@ -272,7 +276,7 @@ public class DocumentService implements IDocumentService {
   	try { 		
   		PropertyValue[] propertyValues = DocumentDescriptorTransformer.documentDescriptor2PropertyValues(documentDescriptor);
   		url = URLAdapter.adaptURL(url);     	
-      IDocument document = DocumentLoader.loadDocument(officeConnection.getXMultiComponentFactory(), officeConnection.getXComponentContext(), url, propertyValues);
+      IDocument document = DocumentLoader.loadDocument(serviceProvider, url, propertyValues);
   		if(document != null)
         return document;
       else
@@ -364,8 +368,9 @@ public class DocumentService implements IDocumentService {
       if(inputStream == null)
         throw new DocumentException("The submitted input stream is not valid.");  //$NON-NLS-1$
       
-      if(officeProgressMonitor != null)
-        officeProgressMonitor.beginTask(Messages.getString("DocumentService_monitor_message_preparing_loading"), IOfficeProgressMonitor.WORK_UNKNOWN); //$NON-NLS-1$
+      //begin task is done in class ByteArrayXInputStreamAdapter
+      //if(officeProgressMonitor != null)
+      //  officeProgressMonitor.beginTask(Messages.getString("DocumentService_monitor_message_preparing_loading"), IOfficeProgressMonitor.WORK_UNKNOWN); //$NON-NLS-1$
       
       ByteArrayXInputStreamAdapter byteArrayToXInputStreamAdapter = new ByteArrayXInputStreamAdapter(inputStream, officeProgressMonitor);
       PropertyValue[] propertyValues = new PropertyValue[1];
@@ -388,10 +393,12 @@ public class DocumentService implements IDocumentService {
       
     if(officeProgressMonitor != null)
       officeProgressMonitor.beginSubTask(Messages.getString("DocumentService_monitor_investigating")); //$NON-NLS-1$
-    IDocument document = DocumentLoader.getDocument(xComponent);
+    IDocument document = DocumentLoader.getDocument(xComponent,serviceProvider);
     if(document != null) {
-      if(officeProgressMonitor != null)
+      if(officeProgressMonitor != null) {
         officeProgressMonitor.beginSubTask(Messages.getString("DocumentService_monitor_loading_completed")); //$NON-NLS-1$
+        officeProgressMonitor.done();
+      }
       return document;
     }
     else
@@ -438,7 +445,7 @@ public class DocumentService implements IDocumentService {
        
     try {
     	url = URLAdapter.adaptURL(url); 
-      IDocument document = DocumentLoader.loadDocument(frame.getXFrame(), url,FrameSearchFlag.ALL, DocumentDescriptorTransformer.documentDescriptor2PropertyValues(documentDescriptor));
+      IDocument document = DocumentLoader.loadDocument(serviceProvider,frame.getXFrame(), url,FrameSearchFlag.ALL, DocumentDescriptorTransformer.documentDescriptor2PropertyValues(documentDescriptor));
       if(document != null)
         return document;
       else
@@ -469,7 +476,7 @@ public class DocumentService implements IDocumentService {
       while(aktComponents.hasMoreElements())
       {
         Any a = (Any) aktComponents.nextElement();
-        arrayList.add(DocumentLoader.getDocument((XComponent) a.getObject()));
+        arrayList.add(DocumentLoader.getDocument((XComponent) a.getObject(),serviceProvider));
       } 
       IDocument[] documents = new IDocument[arrayList.size()];
       documents = (IDocument[])arrayList.toArray(documents);

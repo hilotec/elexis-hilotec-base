@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:25 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.noa;
 
@@ -40,7 +40,7 @@ package ag.ion.noa;
  * Translator for error code messages.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  * @date 2006/02/05
  */ 
 public class ErrorCodeTranslator {

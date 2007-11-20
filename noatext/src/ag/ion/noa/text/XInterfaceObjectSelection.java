@@ -1,17 +1,14 @@
 /****************************************************************************
- * ubion.ORS - The Open Report Suite                                        *
  *                                                                          *
+ * NOA (Nice Office Access)                                     						*
  * ------------------------------------------------------------------------ *
- *                                                                          *
- * Subproject: NOA (Nice Office Access)                                     *
- *                                                                          *
  *                                                                          *
  * The Contents of this file are made available subject to                  *
  * the terms of GNU Lesser General Public License Version 2.1.              *
  *                                                                          * 
  * GNU Lesser General Public License Version 2.1                            *
  * ======================================================================== *
- * Copyright 2003-2005 by IOn AG                                            *
+ * Copyright 2003-2006 by IOn AG                                            *
  *                                                                          *
  * This library is free software; you can redistribute it and/or            *
  * modify it under the terms of the GNU Lesser General Public               *
@@ -28,7 +25,8 @@
  * MA  02111-1307  USA                                                      *
  *                                                                          *
  * Contact us:                                                              *
- *  http://www.ion.ag                                                       *
+ *  http://www.ion.ag																												*
+ *  http://ubion.ion.ag                                                     *
  *  info@ion.ag                                                             *
  *                                                                          *
  ****************************************************************************/
@@ -36,81 +34,60 @@
 /*
  * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
-package ag.ion.bion.officelayer.internal.text;
+package ag.ion.noa.text;
 
-import com.sun.star.text.TableColumnSeparator;
+import ag.ion.bion.officelayer.util.Assert;
+import ag.ion.noa.view.ISelection;
 
-import ag.ion.bion.officelayer.text.ITextTableColumnSeparator;
+import com.sun.star.uno.XInterface;
 
 /**
- * Seperator of a text table column.
+ * Selection of a open office object implementing XInterface.
  * 
  * @author Markus Krüger
  * @version $Revision: 10398 $
- */
-public class TextTableColumnsSeparator implements ITextTableColumnSeparator {
-  
-  private TableColumnSeparator tableColumnSeparator = null;
-  
+ */ 
+public class XInterfaceObjectSelection implements IXInterfaceObjectSelection, ISelection {
+	
+	private XInterface interfaceObject = null;
+	
+  //----------------------------------------------------------------------------
+	/**
+	 * Constructs new XInterfaceObjectSelection.
+	 * 
+	 * @param interfaceObject object implementing XInterface to be used
+	 * 
+	 * @author Markus Krüger
+	 * @date 01.08.2007
+	 */
+	public XInterfaceObjectSelection(XInterface interfaceObject) {
+		Assert.isNotNull(interfaceObject, XInterface.class, this);
+		this.interfaceObject = interfaceObject;
+	}	
   //----------------------------------------------------------------------------
   /**
-   * Constructs new TextTableColumnsSeparator.
+   * Returns object implementing XInterface of the selection.
    * 
-   * @param tableColumnSeparator OpenOffice.org TableColumnSeparator
-   * 
-   * @throws IllegalArgumentException if the OpenOffice.org TableColumnSeparator struct is not valid
+   * @return object implementing XInterface of the selection
    * 
    * @author Markus Krüger
+   * @date 01.08.2007
    */
-  public TextTableColumnsSeparator(TableColumnSeparator tableColumnSeparator) throws IllegalArgumentException {
-    if(tableColumnSeparator == null)
-      throw new IllegalArgumentException("The submitted table column separator is not vaild.");
-    
-    this.tableColumnSeparator = tableColumnSeparator;
+  public XInterface getXInterfaceObject() {
+    return interfaceObject;
   }
   //----------------------------------------------------------------------------
-  /**
-   * Sets the position of a column separator
-   * 
-   * @param position of the column separator
-   * 
-   * @author Markus Krüger
-   */
-  public void setPosition(short position){
-    tableColumnSeparator.Position = position;
-  }
+	/**
+	 * Returns information whether the selection is empty.
+	 * 
+	 * @return information whether the selection is empty
+	 * 
+	 * @author Markus Krüger
+   * @date 01.08.2007
+	 */
+	public boolean isEmpty() {
+		return false;
+	}
   //----------------------------------------------------------------------------
-  /**
-   * Returns the position of a column separator
-   * 
-   * @return position of the column separator
-   * 
-   * @author Markus Krüger
-   */
-  public short getPosition() {
-    return tableColumnSeparator.Position;
-  }	
-  //----------------------------------------------------------------------------  
-  /**
-   * Sets the visibility of a column separator
-   * 
-   * @param visibility of the column separator
-   * 
-   * @author Markus Krüger
-   */
-  public void setIsVisible(boolean visibility){
-    tableColumnSeparator.IsVisible = visibility;
-  }
-  //----------------------------------------------------------------------------
-  /**
-   * Returns the visibility of a column separator
-   * 
-   * @return visibility of the column separator
-   * 
-   * @author Markus Krüger
-   */
-  public boolean getIsVisible() {
-    return tableColumnSeparator.IsVisible;
-  }	
-  //----------------------------------------------------------------------------  
+	
 }

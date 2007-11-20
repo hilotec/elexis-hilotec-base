@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:10:03 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -42,14 +42,26 @@ import ag.ion.bion.officelayer.clone.ICloneServiceProvider;
 
 import ag.ion.bion.officelayer.text.table.ITextTableCellRangeName;
 
+import com.sun.star.table.XCellRange;
+
 /**
  * Cell range of a text table. 
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11547 $
  */
 public interface ITextTableCellRange extends ICloneServiceProvider {
   
+  //----------------------------------------------------------------------------
+  /**
+   * Returns the OpenOffice.org XCellRange interface.
+   * 
+   * @return the OpenOffice.org XCellRange interface
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public XCellRange getXCellRange();
   //----------------------------------------------------------------------------
   /**
    * Returns text document.

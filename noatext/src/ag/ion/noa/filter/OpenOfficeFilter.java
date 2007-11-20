@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:40:19 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.noa.filter;
 
@@ -44,7 +44,7 @@ import ag.ion.bion.officelayer.filter.IFilter;
  * Filter for the OpenOffice.org 1.0 format.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11479 $
  * @date 09.07.2006
  */ 
 public class OpenOfficeFilter extends AbstractFilter implements IFilter {
@@ -84,44 +84,42 @@ public class OpenOfficeFilter extends AbstractFilter implements IFilter {
 		else if(document.getDocumentType().equals(IDocument.MATH)) {
       return "StarOffice XML (Math)";
     }
-    else {
-      return null;
-    }
+    return null;
 	}
 	//----------------------------------------------------------------------------
-	/**
-	 * Returns file extension of the filter. Returns null
-	 * if the document is not supported by the filter.
-	 * 
-	 * @param document document to be used
-	 * 
-	 * @return file extension of the filter
-	 * 
-	 * @author Andreas Bröker
-	 * @date 08.07.2006
-	 */
-	public String getFileExtension(IDocument document) {
-		if(document.getDocumentType().equals(IDocument.WRITER)) {
+  /**
+   * Returns file extension of the filter. Returns null
+   * if the document type is not supported by the filter.
+   * 
+   * @param documentType document type to be used
+   * 
+   * @return file extension of the filter
+   * 
+   * @author Markus Krüger
+   * @date 03.04.2007
+   */
+  public String getFileExtension(String documentType) {
+    if(documentType == null)
+      return null;
+		if(documentType.equals(IDocument.WRITER)) {
       return "sxw";
     }
-		else if(document.getDocumentType().equals(IDocument.GLOBAL)) {
+		else if(documentType.equals(IDocument.GLOBAL)) {
       return "sxg";
     }
-		else if(document.getDocumentType().equals(IDocument.CALC)) {
+		else if(documentType.equals(IDocument.CALC)) {
       return "sxc";
     }
-		else if(document.getDocumentType().equals(IDocument.DRAW)) {
+		else if(documentType.equals(IDocument.DRAW)) {
       return "sxd";
     }
-		else if(document.getDocumentType().equals(IDocument.IMPRESS)) {
+		else if(documentType.equals(IDocument.IMPRESS)) {
       return "sxi";
     }
-		else if(document.getDocumentType().equals(IDocument.MATH)) {
+		else if(documentType.equals(IDocument.MATH)) {
       return "sxm";
     }
-    else {
-      return null;
-    }
+    return null;
 	}
 	//----------------------------------------------------------------------------
 	/**
@@ -154,9 +152,7 @@ public class OpenOfficeFilter extends AbstractFilter implements IFilter {
 		else if(document.getDocumentType().equals(IDocument.MATH)) {
       return "OpenOffice.org 1.0 Formula";
     }
-    else {
-      return null;
-    }
+    return null;
 	}
 	//----------------------------------------------------------------------------
 	

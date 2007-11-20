@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.noa.internal.script;
 
@@ -53,7 +53,7 @@ import com.sun.star.uno.UnoRuntime;
  * Service of the office scripting framework.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  * @date 13.06.2006
  */ 
 public class ScriptingService implements IScriptingService {

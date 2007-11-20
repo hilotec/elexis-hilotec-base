@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-07 14:36:58 +0200 (Di, 07 Aug 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -44,7 +44,7 @@ import ag.ion.bion.officelayer.clone.ICloneServiceProvider;
  * Paragraph of a text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11559 $
  */
 public interface IParagraph extends ITextContent, ICloneServiceProvider {
 
@@ -57,6 +57,16 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * @author Andreas Bröker
    */
   public IParagraphProperties getParagraphProperties();
+  //----------------------------------------------------------------------------
+  /**
+   * Returns text range of the text table.
+   * 
+   * @return text range of the text table
+   * 
+   * @author Markus Krüger
+   * @date 06.08.2007
+   */
+  public ITextRange getTextRange();
   //----------------------------------------------------------------------------
   /**
    * Returns character properties belonging to the paragraph

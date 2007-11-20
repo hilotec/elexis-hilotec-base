@@ -34,11 +34,12 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-06-19 15:50:33 +0200 (Di, 19 Jun 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
 import ag.ion.bion.officelayer.text.IPage;
+import ag.ion.bion.officelayer.text.IPageCursor;
 import ag.ion.bion.officelayer.text.IPageService;
 import ag.ion.bion.officelayer.text.ITextDocument;
 
@@ -57,7 +58,7 @@ import com.sun.star.uno.UnoRuntime;
  * Page service of a text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11494 $
  */
 public class PageService implements IPageService {
 
@@ -85,10 +86,15 @@ public class PageService implements IPageService {
    * @return number of available pages
    * 
    * @author Andreas Bröker
+   * @author Markus Krüger
    */
   public int getPageCount() {
-    //TODO: add implementation
-    return -1;
+    IPageCursor pageCursor = textDocument.getViewCursorService().getViewCursor().getPageCursor();
+    short currentPage = pageCursor.getPage();
+    pageCursor.jumpToLastPage();
+    short lastPage = pageCursor.getPage();
+    pageCursor.jumpToPage(currentPage);  
+    return lastPage;
   }
   //----------------------------------------------------------------------------
   /**

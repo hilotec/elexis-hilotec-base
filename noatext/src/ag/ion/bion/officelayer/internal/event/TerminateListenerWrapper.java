@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:25 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.bion.officelayer.internal.event;
 
@@ -49,7 +49,7 @@ import com.sun.star.lang.EventObject;
  * Wrapper in order to register a terminate listener.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  */
 public class TerminateListenerWrapper extends EventListenerWrapper implements XTerminateListener {
 

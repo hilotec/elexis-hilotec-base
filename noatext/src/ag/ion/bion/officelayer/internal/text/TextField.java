@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-06-21 14:11:47 +0200 (Do, 21 Jun 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -46,6 +46,7 @@ import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextField;
 import ag.ion.bion.officelayer.text.ITextFieldMaster;
 import ag.ion.bion.officelayer.text.ITextRange;
+import ag.ion.noa.text.TextRangeSelection;
 
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.frame.XController;
@@ -67,7 +68,7 @@ import com.sun.star.uno.UnoRuntime;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11496 $
  */
 public class TextField extends AbstractTextComponent implements ITextField {
   
@@ -223,7 +224,11 @@ public class TextField extends AbstractTextComponent implements ITextField {
    */
   public void markTextField() {    
     try {
-      XTextDocument xTextDocument= getTextDocument().getXTextDocument();
+      ITextDocument textDocument = getTextDocument();
+      textDocument.setSelection(new TextRangeSelection(getTextRange()));
+      
+      
+      /*XTextDocument xTextDocument= getTextDocument().getXTextDocument();
       Object master1 = xDependentTextField.getTextFieldMaster();
       XText anchorText = xDependentTextField.getAnchor().getText();
 
@@ -259,7 +264,7 @@ public class TextField extends AbstractTextComponent implements ITextField {
       XController viewController = xTextDocument.getCurrentController();
       XTextViewCursorSupplier xTextViewCursorSupplier = (XTextViewCursorSupplier)UnoRuntime.queryInterface(XTextViewCursorSupplier.class, viewController);
       XTextViewCursor xTextViewCursor = xTextViewCursorSupplier.getViewCursor();
-      xTextViewCursor.gotoRange( xTextCursor, false );  
+      xTextViewCursor.gotoRange( xTextCursor, false );  */
     }
     catch (Exception exception) {
       //TODO exception handling if needed, do nothing for now

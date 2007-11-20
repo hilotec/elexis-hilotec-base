@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/11/02 07:14:24 $
+ * Last changes made by $Author: andreas $, $Date: 2006-11-02 08:14:25 +0100 (Do, 02 Nov 2006) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -56,7 +56,7 @@ import com.sun.star.style.ParagraphAdjust;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 10782 $
  */
 public class ParagraphProperties extends AbstractProperties implements IParagraphProperties {
   

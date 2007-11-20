@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:27 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-03 14:05:17 +0200 (Fr, 03 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.desktop;
 
@@ -52,7 +52,9 @@ import ag.ion.noa.frame.ILayoutManager;
 import ag.ion.noa.internal.frame.Dispatch;
 import ag.ion.noa.internal.frame.DispatchWrapper;
 import ag.ion.noa.internal.frame.LayoutManager;
+import ag.ion.noa.service.IServiceProvider;
 
+import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 
 import com.sun.star.frame.DispatchDescriptor;
@@ -81,12 +83,13 @@ import java.util.TreeSet;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11543 $
  */
 public class Frame implements IFrame {
 
   private XFrame 						xFrame 						= null;
   private IOfficeConnection officeConnection 	= null;
+  private IServiceProvider  serviceProvider   = null;
   private DispatchProviderInterceptor dispatchProviderInterceptor = null; 
   
   private Map delegatesMap = null;
@@ -98,7 +101,7 @@ public class Frame implements IFrame {
    * Internal dispatch provider interceptor.
    * 
    * @author Andreas Bröker
-   * @version $Revision: 1.1 $
+   * @version $Revision: 11543 $
    * @date 15.08.2006
    */
   private class DispatchProviderInterceptor implements XDispatchProviderInterceptor, XInterceptorInfo {
@@ -257,6 +260,23 @@ public class Frame implements IFrame {
   }
   //----------------------------------------------------------------------------
   /**
+   * Constructs new Frame.
+   * 
+   * @param xFrame OpenOffice.org XFrame interface to be used
+   * @param serviceProvider service provider to be used
+   * 
+   * @author Markus Krüger
+   * @date 01.08.2007
+   */
+  public Frame(XFrame xFrame, IServiceProvider serviceProvider) {
+    Assert.isNotNull(xFrame, XFrame.class, this);
+    Assert.isNotNull(serviceProvider, IServiceProvider.class, this);
+    
+    this.xFrame = xFrame;
+    this.serviceProvider = serviceProvider;
+  }
+  //----------------------------------------------------------------------------
+  /**
    * Returns OpenOffice.org XFrame interface. This method 
    * is not part of the public API.
    * 
@@ -373,7 +393,12 @@ public class Frame implements IFrame {
 	  	URL[] urls = new URL[1];
 	  	urls[0] = new URL();
 	  	urls[0].Complete = commandURL;
-	  	XURLTransformer xURLTranformer = (XURLTransformer)UnoRuntime.queryInterface(XURLTransformer.class, officeConnection.createService("com.sun.star.util.URLTransformer"));
+	  	Object service = null;
+	  	if(officeConnection != null)
+	  	  service = officeConnection.createService("com.sun.star.util.URLTransformer");
+	  	else
+	  	  service = serviceProvider.createService("com.sun.star.util.URLTransformer");
+	  	XURLTransformer xURLTranformer = (XURLTransformer)UnoRuntime.queryInterface(XURLTransformer.class, service);
 	  	xURLTranformer.parseStrict(urls);
 	  	XDispatch xDispatch = xDispatchProvider.queryDispatch(urls[0], "", FrameSearchFlag.GLOBAL);	  	
 	  	if(xDispatch == null)
@@ -429,6 +454,48 @@ public class Frame implements IFrame {
     }    
   }  
   //----------------------------------------------------------------------------  
+  /**
+   * Aktivates the print preview for the frame.
+   * Default columns and rows is set to one.
+   * 
+   * @throws NOAException if there is an error showing the preview
+   * 
+   * @author Markus Krüger
+   * @date 09.07.2007
+   */
+  public void showPreview() throws NOAException {
+    showPreview(1,1);
+  }
+  //---------------------------------------------------------------------------- 
+  /**
+   * Aktivates the print preview for the frame with the given columns and rows.
+   * 
+   * @param columns the number of columns to display
+   * @param rows the number of rows to display
+   * 
+   * @throws NOAException if there is an error showing the preview
+   * 
+   * @author Markus Krüger
+   * @date 09.07.2007
+   */
+  public void showPreview(int columns, int rows) throws NOAException {
+    IDispatch dispatch = getDispatch(GlobalCommands.PRINT_PREVIEW);
+    dispatch.dispatch();
+    if(columns < 1)
+      columns = 1;
+    if(rows < 1)
+      rows = 1;
+    dispatch = getDispatch(GlobalCommands.PRINT_PREVIEW_SHOW_MULTIPLE_PAGES);
+    PropertyValue[] properties = new PropertyValue[2];                        
+    properties[0] = new PropertyValue(); 
+    properties[0].Name = "Columns"; 
+    properties[0].Value = new Integer(columns);                 
+    properties[1] = new PropertyValue(); 
+    properties[1].Name = "Rows"; 
+    properties[1].Value = new Integer(rows);
+    dispatch.dispatch(properties);
+  }
+  //---------------------------------------------------------------------------- 
   /**
    * Returns information whether the submitted command URL is disabled.
    * 

@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2006/12/08 12:07:44 $
+ * Last changes made by $Author: markus $, $Date: 2006-12-08 13:07:44 +0100 (Fr, 08 Dez 2006) $
  */
 package ag.ion.bion.officelayer.internal.desktop;
 
@@ -68,7 +68,7 @@ import java.util.Hashtable;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.2 $
+ * @version $Revision: 11158 $
  */
 public class DesktopService implements IDesktopService {
 

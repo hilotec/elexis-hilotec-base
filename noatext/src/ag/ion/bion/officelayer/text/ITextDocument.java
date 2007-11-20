@@ -34,12 +34,14 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-06 14:35:33 +0200 (Fr, 06 Jul 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
 import com.sun.star.text.XTextDocument;
+import com.sun.star.view.DocumentZoomType;
 
+import ag.ion.bion.officelayer.document.DocumentException;
 import ag.ion.bion.officelayer.document.IDocument;
 
 import ag.ion.bion.officelayer.util.INumberFormatService;
@@ -51,7 +53,7 @@ import ag.ion.noa.text.IDocumentIndexService;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11500 $
  */
 public interface ITextDocument extends IDocument, ISearchableDocument {
   
@@ -129,6 +131,20 @@ public interface ITextDocument extends IDocument, ISearchableDocument {
    * @date 17.08.2006
    */
   public IDocumentIndexService getIndexService();
+  //----------------------------------------------------------------------------
+  /**
+   * Sets the zoom of the document.
+   * 
+   * @param zoomType the type of the zoom as in class {@link DocumentZoomType}
+   * @param zoomValue the value of the zoom, does only take afect if zoom type is
+   * set to DocumentZoomType.BY_VALUE
+   * 
+   * @throws DocumentException if zoom fails
+   * 
+   * @author Markus Krüger
+   * @date 06.07.2007
+   */
+  public void zoom(short zoomType, short zoomValue) throws DocumentException;
   //----------------------------------------------------------------------------
   
 }

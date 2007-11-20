@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:27 $
+ * Last changes made by $Author: andreas $, $Date: 2006-10-04 14:14:28 +0200 (Mi, 04 Okt 2006) $
  */
 package ag.ion.noa.internal.frame;
 
@@ -51,7 +51,7 @@ import com.sun.star.util.URL;
  * Wrapper for a dispatch delegate.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 10398 $
  * @date 09.07.2006
  */ 
 public class DispatchWrapper implements XDispatch {

@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:22 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-07 14:39:25 +0200 (Di, 07 Aug 2007) $
  */
 package ag.ion.bion.officelayer.text;
 
@@ -42,12 +42,15 @@ import ag.ion.bion.officelayer.clone.ICloneServiceProvider;
 
 import ag.ion.bion.officelayer.text.table.ITextTablePropertyStore;
 
+import com.sun.star.text.XTextContent;
+import com.sun.star.text.XTextTable;
+
 /**
  * Table in a text document.
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.1 $
+ * @version $Revision: 11560 $
  */
 public interface ITextTable extends ITextContent, ICloneServiceProvider {  
   
@@ -62,6 +65,36 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
   public final static int MAX_COLUMNS_IN_TABLE = 52;
   
 //----------------------------------------------------------------------------
+  /**
+   * Returns OpenOffice.org XTextContent interface.
+   * 
+   * @return OpenOffice.org XTextContent interface
+   * 
+   * @author Markus Krüger
+   * @date 31.07.2007
+   */
+  public XTextContent getXTextContent();
+  //----------------------------------------------------------------------------
+  /**
+   * Returns OpenOffice.org XTextTable interface.
+   * 
+   * @return OpenOffice.org XTextTable interface
+   * 
+   * @author Markus Krüger
+   * @date 31.07.2007
+   */
+  public XTextTable getXTextTable();
+  //----------------------------------------------------------------------------
+  /**
+   * Returns text range of the text table.
+   * 
+   * @return text range of the text table
+   * 
+   * @author Markus Krüger
+   * @date 31.07.2007
+   */
+  public ITextRange getTextRange() throws Exception;
+  //----------------------------------------------------------------------------
   /**
    * Returns properties of the text table.
    * 
@@ -347,6 +380,27 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * @author Markus Krüger
    */
   public short getTableEndPageNumber();
+  //----------------------------------------------------------------------------
+  /**
+   * Sets the number of header rows to apply header style for.
+   * NOTE: Table must already be inserted before calling this method.
+   * 
+   * @param headerRows number of header rows
+   * 
+   * @throws TextException if the header rows could not be set
+   * 
+   * @author Markus Krüger
+   * @date 21.03.2007
+   */
+  public void setHeaderRows(int headerRows) throws TextException;
+  //----------------------------------------------------------------------------
+  /**
+   * Marks the table.
+   * 
+   * @author Markus Krüger
+   * @date 06.08.2007
+   */
+  public void markTable();
   //----------------------------------------------------------------------------
   
 }

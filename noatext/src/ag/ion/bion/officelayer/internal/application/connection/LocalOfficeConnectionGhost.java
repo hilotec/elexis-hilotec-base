@@ -32,9 +32,9 @@
  *  info@ion.ag                                                             *
  *                                                                          *
  ****************************************************************************/
- 
+
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:24 $
+ * Last changes made by $Author: markus $, $Date: 2007-07-11 13:39:54 +0200 (Mi, 11 Jul 2007) $
  */
 package ag.ion.bion.officelayer.internal.application.connection;
 
@@ -79,49 +79,49 @@ import java.util.Vector;
  * Office connection implementation. This class bases on the implementation
  * of the OpenOffice.org API Bean package.
  * 
- * @author Andreas Brï¿½ker
- * @author Markus Krï¿½ger
- * @version $Revision: 1.1 $
+ * @author Andreas Bröker
+ * @author Markus Krüger
+ * @version $Revision: 11514 $
  */
 public class LocalOfficeConnectionGhost implements OfficeConnection {
 
   //TODO: adapt to modifications of OpenOffice.org !
-  
-  private static final String OFFICE_APP_NAME   = "soffice"; //$NON-NLS-1$
-  private static final String OFFICE_LIB_NAME   = "officebean"; //$NON-NLS-1$
-  private static final String OFFICE_ID_SUFFIX  = "_Office"; //$NON-NLS-1$
-  
-  private static boolean msvcrLoaded 			= false;
-  private static boolean uwinapiLoaded 		= false;
-  private static boolean jawtLoaded 			= false;
-  private static boolean officebeanLoaded = false;
 
-  private static long m_nBridgeCounter = 0;
+  private static final String     OFFICE_APP_NAME         = "soffice";   //$NON-NLS-1$
+  private static final String     OFFICE_LIB_NAME         = "officebean"; //$NON-NLS-1$
+  private static final String     OFFICE_ID_SUFFIX        = "_Office";   //$NON-NLS-1$
 
-  private static String mProgramPath = null;
+  private static boolean          msvcrLoaded             = false;
+  private static boolean          uwinapiLoaded           = false;
+  private static boolean          jawtLoaded              = false;
+  private static boolean          officebeanLoaded        = false;
 
-  private Process           process           = null;
-  private ContainerFactory  containerFactory  = null;
-  private XComponentContext context           = null;
-  private XBridge           bridge            = null;
-  
-  private String url           = null;
-  private String connType      = null;
-  private String pipe          = null;
-  private String port          = null;
-  private String protocol      = null;
-  private String initialObject = null;
+  private static long             m_nBridgeCounter        = 0;
 
-  private List components = new Vector();
+  private static String           mProgramPath            = null;
 
-  private OfficeConnectionWrapper   officeConnectionWrapper   = null;
-  private IOfficeProgressMonitor    officeProgressMonitor     = null;
+  private Process                 process                 = null;
+  private ContainerFactory        containerFactory        = null;
+  private XComponentContext       context                 = null;
+  private XBridge                 bridge                  = null;
+
+  private String                  url                     = null;
+  private String                  connType                = null;
+  private String                  pipe                    = null;
+  private String                  port                    = null;
+  private String                  protocol                = null;
+  private String                  initialObject           = null;
+
+  private List                    components              = new Vector();
+
+  private OfficeConnectionWrapper officeConnectionWrapper = null;
+  private IOfficeProgressMonitor  officeProgressMonitor   = null;
 
   //----------------------------------------------------------------------------
   /**
    * Internal office connection wrapper.
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private class OfficeConnectionWrapper implements OfficeConnection {
 
@@ -146,7 +146,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @throws MalformedURLException
      *           if the URL is not valid
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public void setUnoUrl(String url) throws MalformedURLException {
       LocalOfficeConnectionGhost.this.setUnoUrl(url);
@@ -158,7 +158,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @param containerFactory
      *          this is a application provided AWT container factory
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public void setContainerFactory(ContainerFactory containerFactory) {
       LocalOfficeConnectionGhost.this.setContainerFactory(containerFactory);
@@ -173,7 +173,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @return the office UNO component context
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public XComponentContext getComponentContext() {
       return LocalOfficeConnectionGhost.this.getComponentContext();
@@ -190,7 +190,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @return the office window instance
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public OfficeWindow createOfficeWindow(Container container) {
       return LocalOfficeConnectionGhost.this.createOfficeWindow(container);
@@ -199,7 +199,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
     /**
      * Closes the connection.
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public void dispose() {
       LocalOfficeConnectionGhost.this.dispose();
@@ -211,7 +211,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @param eventListener
      *          is a listener object
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public void addEventListener(XEventListener eventListener) {
       LocalOfficeConnectionGhost.this.addEventListener(eventListener);
@@ -223,21 +223,22 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @param eventListener
      *          is a listener object
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public void removeEventListener(XEventListener eventListener) {
       LocalOfficeConnectionGhost.this.removeEventListener(eventListener);
     }
     //----------------------------------------------------------------------------
-    
+
   }
+
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   /**
    * Internal local office window wrapper.
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private class LocalOfficeWindowWrapper extends LocalOfficeWindow {
 
@@ -247,21 +248,22 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @param officeConnection office connection to be used
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     protected LocalOfficeWindowWrapper(OfficeConnection officeConnection) {
       super(officeConnection);
     }
     //----------------------------------------------------------------------------
-    
+
   }
+
   //----------------------------------------------------------------------------
-  
+
 //  //----------------------------------------------------------------------------
 //  /**
 //   * Internal stream processor.
 //   * 
-//   * @author Andreas Brï¿½ker
+//   * @author Andreas Bröker
 //   */
 //  private class StreamProcessor extends Thread {
 //    
@@ -275,7 +277,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 //     * @param inputStream input stream to be used
 //     * @param printStream print stream to be used
 //     * 
-//     * @author Andreas Brï¿½ker
+//     * @author Andreas Bröker
 //     */ 
 //    public StreamProcessor(final java.io.InputStream inputStream, final java.io.PrintStream printStream) {
 //      this.inputStream = inputStream;
@@ -286,7 +288,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 //    /**
 //     * Processes streams.
 //     * 
-//     * @author Andreas Brï¿½ker
+//     * @author Andreas Bröker
 //     */
 //    public void run() {
 //      java.io.BufferedReader bufferedReader = new java.io.BufferedReader(new java.io.InputStreamReader(inputStream));
@@ -307,15 +309,15 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 //    
 //  }
 //  //----------------------------------------------------------------------------
-  
+
   //----------------------------------------------------------------------------
   /**
    * Internal service in order to start the native office application.
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private class OfficeService {
-    
+
     //----------------------------------------------------------------------------
     /**
      * Retrive the office service identifier.
@@ -323,7 +325,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @return The identifier of the office service.
      */
     public String getIdentifier() {
-      if (pipe == null)
+      if(pipe == null)
         return getPipeName();
       else
         return pipe;
@@ -334,7 +336,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @throws java.io.IOException if the service can not be started
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public void startupService() throws java.io.IOException {
       int nSizeCmdArray = 5;
@@ -347,10 +349,10 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
       // passed on to the Runtime.exec call.
       try {
         sOption = System.getProperty("com.sun.star.officebean.Options"); //$NON-NLS-1$
-        if (sOption != null)
+        if(sOption != null)
           nSizeCmdArray++;
       }
-      catch (java.lang.SecurityException securityException) {
+      catch(java.lang.SecurityException securityException) {
         securityException.printStackTrace();
       }
       // create call with arguments
@@ -359,20 +361,20 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
       cmdArray[1] = "-nologo"; //$NON-NLS-1$
       cmdArray[2] = "-nodefault"; //$NON-NLS-1$
       cmdArray[3] = "-norestore"; //$NON-NLS-1$
-      if (connType.equals("pipe")) //$NON-NLS-1$
+      if(connType.equals("pipe")) //$NON-NLS-1$
         cmdArray[4] = "-accept=pipe,name=" + getIdentifier() + ";" + protocol //$NON-NLS-1$ //$NON-NLS-2$
             + ";" + initialObject; //$NON-NLS-1$
-      else if (connType.equals("socket")) //$NON-NLS-1$
+      else if(connType.equals("socket")) //$NON-NLS-1$
         cmdArray[4] = "-accept=socket,port=" + port + ";urp"; //$NON-NLS-1$ //$NON-NLS-2$
       else
         throw new java.io.IOException("No connection specified"); //$NON-NLS-1$
 
-      if (sOption != null)
+      if(sOption != null)
         cmdArray[5] = sOption;
 
       // start process
       process = Runtime.getRuntime().exec(cmdArray);
-      if (process == null)
+      if(process == null)
         throw new RuntimeException("Cannot start soffice: " + cmdArray); //$NON-NLS-1$
       //new StreamProcessor(process.getInputStream(), System.out);
       //new StreamProcessor(process.getErrorStream(), System.err);
@@ -383,16 +385,16 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @return the ammount of time to wait in seconds(?)
      * 
-     * @author Andreas Brï¿½ker
+     * @author Andreas Bröker
      */
     public int getStartupTime() {
       return 60;
     }
     //----------------------------------------------------------------------------
-    
+
   }
   //----------------------------------------------------------------------------
-  
+
   //----------------------------------------------------------------------------
   /**
    * Constructs new LocalOfficeConnectionGhost.
@@ -405,16 +407,16 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param officeProgressMonitor
    *          office progress monitor to be used (can be null)
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public LocalOfficeConnectionGhost(IOfficeProgressMonitor officeProgressMonitor) {
-  	loadNativeLibraries();
+    loadNativeLibraries();
     this.officeProgressMonitor = officeProgressMonitor;
     try {
       setUnoUrl("uno:pipe,name=" + getPipeName() //$NON-NLS-1$
           + ";urp;StarOffice.ServiceManager"); //$NON-NLS-1$
     }
-    catch (java.net.MalformedURLException malformedURLException) {
+    catch(java.net.MalformedURLException malformedURLException) {
       // do not consume
     }
   }
@@ -439,13 +441,13 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @throws MalformedURLException
    *           if the URL is not valid
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void setUnoUrl(String url) throws java.net.MalformedURLException {
     this.url = null;
 
     String prefix = "uno:localoffice"; //$NON-NLS-1$
-    if (url.startsWith(prefix))
+    if(url.startsWith(prefix))
       parseUnoUrlWithOfficePath(url, prefix);
     else {
       try {
@@ -457,7 +459,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
         protocol = aURL.getProtocol();
         initialObject = aURL.getRootOid();
       }
-      catch (com.sun.star.lang.IllegalArgumentException illegalArgumentException) {
+      catch(com.sun.star.lang.IllegalArgumentException illegalArgumentException) {
         throw new java.net.MalformedURLException("Invalid UNO connection URL."); //$NON-NLS-1$
       }
     }
@@ -470,7 +472,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param containerFactory
    *          this is a application provided AWT container factory
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void setContainerFactory(ContainerFactory containerFactory) {
     this.containerFactory = containerFactory;
@@ -485,14 +487,14 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the office UNO component context
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   synchronized public XComponentContext getComponentContext() {
     if(officeProgressMonitor != null)
       if(officeProgressMonitor.isCanceled())
         return null;
-    
-    if (context == null)
+
+    if(context == null)
       context = connect();
     return context;
   }
@@ -503,7 +505,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the office UNO component context
    * 
-   * @author Markus Krï¿½ger
+   * @author Markus Krüger
    */
   synchronized public XComponentContext getCurrentComponentContext() {
     if(officeProgressMonitor != null)
@@ -523,10 +525,10 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the office window instance
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public OfficeWindow createOfficeWindow(Container container) {
-    if (officeConnectionWrapper == null)
+    if(officeConnectionWrapper == null)
       officeConnectionWrapper = new OfficeConnectionWrapper();
     return new LocalOfficeWindowWrapper(officeConnectionWrapper);
   }
@@ -534,15 +536,15 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
   /**
    * Closes the connection.
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void dispose() {
     Iterator iterator = components.iterator();
-    while (iterator.hasNext() == true) {
+    while(iterator.hasNext() == true) {
       try {
         ((XEventListener) iterator.next()).disposing(null);
       }
-      catch (RuntimeException runtimeException) {
+      catch(RuntimeException runtimeException) {
         // do not consume
       }
     }
@@ -556,10 +558,10 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
     // do not work properly anymore. Therefore when Applet.stop is called the
     // connection
     // to the office including the bridge needs to be terminated.
-    if (bridge != null) {
+    if(bridge != null) {
       XComponent xComponent = (XComponent) UnoRuntime.queryInterface(
           XComponent.class, bridge);
-      if (xComponent != null)
+      if(xComponent != null)
         xComponent.dispose();
       else
         System.err.println("LocalOfficeConnection: could not dispose bridge!"); //$NON-NLS-1$
@@ -576,7 +578,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param eventListener
    *          is a listener object
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void addEventListener(XEventListener eventListener) {
     if(eventListener == null)
@@ -590,7 +592,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param eventListener
    *          is a listener object
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   public void removeEventListener(XEventListener eventListener) {
     if(eventListener == null)
@@ -603,30 +605,36 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return constructed component context
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private XComponentContext connect() {
     try {
-      if (officeProgressMonitor != null)
-        officeProgressMonitor.beginSubTask("Konstruiere Kontext..." /*Messages.getString("LocalOfficeConnectionGhost_monitor_constructing_initial_context_message")*/); //$NON-NLS-1$
+      if(officeProgressMonitor != null)
+        officeProgressMonitor
+            .beginSubTask(Messages
+                .getString("LocalOfficeConnectionGhost_monitor_constructing_initial_context_message")); //$NON-NLS-1$
       XComponentContext xLocalContext = com.sun.star.comp.helper.Bootstrap
           .createInitialComponentContext(null);
 
-      if (officeProgressMonitor != null)
+      if(officeProgressMonitor != null)
         officeProgressMonitor.worked(1);
 
       Object initialObject = null;
+      boolean interrupted = false;
       try {
         initialObject = resolve(xLocalContext, url);
       }
-      catch (com.sun.star.connection.NoConnectException noConnectException) {
-        if (officeProgressMonitor != null)
-          officeProgressMonitor.beginSubTask("Starte OpenOffice" /*Messages.getString("LocalOfficeConnectionGhost_monitor_starting_native_service_message")*/); //$NON-NLS-1$
+      catch(com.sun.star.connection.NoConnectException noConnectException) {
+        if(officeProgressMonitor != null)
+          officeProgressMonitor
+              .beginSubTask(Messages
+                  .getString("LocalOfficeConnectionGhost_monitor_starting_native_service_message")); //$NON-NLS-1$
         OfficeService officeService = new OfficeService();
         officeService.startupService();
 
-        long nMaxMillis = System.currentTimeMillis() + 1000 * officeService.getStartupTime();
-        while (initialObject == null) {
+        long nMaxMillis = System.currentTimeMillis() + 1000
+            * officeService.getStartupTime();
+        while(initialObject == null) {
           try {
             Thread.sleep(500);
             initialObject = resolve(xLocalContext, url);
@@ -635,55 +643,63 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
                 return null;
             }
           }
-          catch (com.sun.star.connection.NoConnectException innerNoConnectException) {
-            if (System.currentTimeMillis() > nMaxMillis)
+          catch(com.sun.star.connection.NoConnectException innerNoConnectException) {
+            if(System.currentTimeMillis() > nMaxMillis)
               throw innerNoConnectException;
+          }
+          catch(InterruptedException interruptedException) {
+            interrupted = true;
           }
         }
       }
       finally {
       }
 
-      if (officeProgressMonitor != null) {
-        officeProgressMonitor.worked(1);      
+      if(interrupted)
+        Thread.currentThread().interrupt();
+
+      if(officeProgressMonitor != null) {
+        officeProgressMonitor.worked(1);
         if(officeProgressMonitor.isCanceled())
           return null;
       }
 
-      if (null != initialObject) {
-        if (officeProgressMonitor != null)
-          officeProgressMonitor.beginSubTask("Konstruiere Kontext" /*Messages.getString("LocalOfficeConnectionGhost_monitor_constructing_context_message")*/); //$NON-NLS-1$
+      if(null != initialObject) {
+        if(officeProgressMonitor != null)
+          officeProgressMonitor
+              .beginSubTask(Messages
+                  .getString("LocalOfficeConnectionGhost_monitor_constructing_context_message")); //$NON-NLS-1$
         XPropertySet xPropertySet = (XPropertySet) UnoRuntime.queryInterface(
             XPropertySet.class, initialObject);
         Object xContext = xPropertySet.getPropertyValue("DefaultContext"); //$NON-NLS-1$
         XComponentContext xComponentContext = (XComponentContext) UnoRuntime
             .queryInterface(XComponentContext.class, xContext);
-        if (officeProgressMonitor != null)
+        if(officeProgressMonitor != null)
           officeProgressMonitor.worked(1);
         return xComponentContext;
       }
     }
-    catch (com.sun.star.connection.NoConnectException exception) {
+    catch(com.sun.star.connection.NoConnectException exception) {
       System.out.println("Couldn't connect to remote server"); //$NON-NLS-1$
       System.out.println(exception.getMessage());
     }
-    catch (com.sun.star.connection.ConnectionSetupException exception) {
+    catch(com.sun.star.connection.ConnectionSetupException exception) {
       System.out
           .println("Couldn't access necessary local resource to establish the interprocess connection"); //$NON-NLS-1$
       System.out.println(exception.getMessage());
     }
-    catch (com.sun.star.lang.IllegalArgumentException exception) {
+    catch(com.sun.star.lang.IllegalArgumentException exception) {
       System.out.println("uno-url is syntactical illegal ( " + url + " )"); //$NON-NLS-1$ //$NON-NLS-2$
       System.out.println(exception.getMessage());
     }
-    catch (com.sun.star.uno.RuntimeException exception) {
+    catch(com.sun.star.uno.RuntimeException exception) {
       System.out.println("--- RuntimeException:"); //$NON-NLS-1$
       System.out.println(exception.getMessage());
       exception.printStackTrace();
       System.out.println("--- end."); //$NON-NLS-1$
       throw exception;
     }
-    catch (java.lang.Exception exception) {
+    catch(java.lang.Exception exception) {
       System.out.println("java.lang.Exception: "); //$NON-NLS-1$
       System.out.println(exception);
       exception.printStackTrace();
@@ -706,23 +722,23 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @throws com.sun.star.connection.ConnectionSetupException if the connection can not be initialized
    * @throws com.sun.star.lang.IllegalArgumentException if the submitted arguments are not valid
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private Object resolve(XComponentContext xComponentContext, String url)
       throws com.sun.star.connection.NoConnectException,
       com.sun.star.connection.ConnectionSetupException,
       com.sun.star.lang.IllegalArgumentException {
-    
+
     // The function is copied and adapted from the UrlResolver.resolve.
     // We cannot use the URLResolver because we need access to the bridge which
     // has
     // to be disposed when Applet.stop is called.
-    
+
     String conDcp = null;
     String protDcp = null;
     String rootOid = null;
 
-    if (url.indexOf(';') == -1) {// use old style
+    if(url.indexOf(';') == -1) {// use old style
       conDcp = url;
       protDcp = "iiop"; //$NON-NLS-1$
       rootOid = "classic_uno"; //$NON-NLS-1$
@@ -752,17 +768,17 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
           XBridgeFactory.class, xLocalServiceManager.createInstanceWithContext(
               "com.sun.star.bridge.BridgeFactory", xComponentContext)); //$NON-NLS-1$
     }
-    catch (com.sun.star.uno.Exception exception) {
+    catch(com.sun.star.uno.Exception exception) {
       throw new com.sun.star.uno.RuntimeException(exception.getMessage());
     }
-    synchronized (this) {
-      if (bridge == null) {
+    synchronized(this) {
+      if(bridge == null) {
         Object connector = null;
         try {
           connector = xLocalServiceManager.createInstanceWithContext(
               "com.sun.star.connection.Connector", xComponentContext); //$NON-NLS-1$
         }
-        catch (com.sun.star.uno.Exception exception) {
+        catch(com.sun.star.uno.Exception exception) {
           throw new com.sun.star.uno.RuntimeException(exception.getMessage());
         }
         XConnector connector_xConnector = (XConnector) UnoRuntime
@@ -779,16 +795,18 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
         try {
           bridge = xBridgeFactory.createBridge(sBridgeName, protDcp,
               xConnection, null);
-          XComponent xComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, bridge);
+          XComponent xComponent = (XComponent) UnoRuntime.queryInterface(
+              XComponent.class, bridge);
           xComponent.addEventListener(new XEventListener() {
-						public void disposing(EventObject eventObject) {
-							containerFactory = null;
-					    context = null;
-					    bridge = null;
-						}          	
+
+            public void disposing(EventObject eventObject) {
+              containerFactory = null;
+              context = null;
+              bridge = null;
+            }
           });
         }
-        catch (com.sun.star.bridge.BridgeExistsException bridgeExistsException) {
+        catch(com.sun.star.bridge.BridgeExistsException bridgeExistsException) {
           throw new com.sun.star.uno.RuntimeException(bridgeExistsException
               .getMessage());
         }
@@ -803,19 +821,19 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the path to the office program folder
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    */
   private String getProgramPath() {
-    if (mProgramPath == null) {
+    if(mProgramPath == null) {
       String officeHomePath = System.getProperty("office.home"); //$NON-NLS-1$
-      if (officeHomePath != null)
+      if(officeHomePath != null)
         return officeHomePath + File.separator + "program"; //$NON-NLS-1$
       // determine name of executable soffice
       String exec = OFFICE_APP_NAME; // default for UNIX
       String os = System.getProperty("os.name"); //$NON-NLS-1$
 
       // running on Windows?
-      if (os.startsWith("Windows")) //$NON-NLS-1$
+      if(os.startsWith("Windows")) //$NON-NLS-1$
         exec = OFFICE_APP_NAME + ".exe"; //$NON-NLS-1$
 
       // add other non-UNIX operating systems here
@@ -823,10 +841,10 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 
       File path = NativeLibraryLoader.getResource(LocalOfficeConnection.class
           .getClassLoader(), exec);
-      if (path != null)
+      if(path != null)
         mProgramPath = path.getParent();
 
-      if (mProgramPath == null)
+      if(mProgramPath == null)
         mProgramPath = ""; //$NON-NLS-1$
     }
     return mProgramPath;
@@ -865,7 +883,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
       throws java.net.MalformedURLException {
     // Extruct parameters.
     int index = url.indexOf(";urp;StarOffice.NamingService"); //$NON-NLS-1$
-    if (index < 0)
+    if(index < 0)
       throw new java.net.MalformedURLException("Invalid UNO connection URL."); //$NON-NLS-1$
     String params = url.substring(prefix.length(), index + 1);
 
@@ -876,148 +894,149 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
     char ch;
     int state = 0;
     StringBuffer buffer = new StringBuffer();
-    for (index = 0; index < params.length(); index += 1) {
+    for(index = 0; index < params.length(); index += 1) {
       ch = params.charAt(index);
-      switch (state) {
-      case 0: // initial state
-        switch (ch) {
-        case ',':
-          buffer.delete(0, buffer.length());
-          state = 1;
-          break;
+      switch(state) {
+        case 0: // initial state
+          switch(ch) {
+            case ',':
+              buffer.delete(0, buffer.length());
+              state = 1;
+              break;
 
-        case ';':
-          state = 7;
-          break;
+            case ';':
+              state = 7;
+              break;
 
-        default:
-          buffer.delete(0, buffer.length());
-          buffer.append(ch);
-          state = 1;
-          break;
-        }
-        break;
-
-      case 1: // parameter name
-        switch (ch) {
-        case ' ':
-        case '=':
-          name = buffer.toString();
-          state = (ch == ' ') ? 2 : 3;
-          break;
-
-        case ',':
-        case ';':
-          state = -6; // error: invalid name
-          break;
-
-        default:
-          buffer.append(ch);
-          break;
-        }
-        break;
-
-      case 2: // equal between the name and the value
-        switch (ch) {
-        case '=':
-          state = 3;
-          break;
-
-        case ' ':
-          break;
-
-        default:
-          state = -1; // error: missing '='
-          break;
-        }
-        break;
-
-      case 3: // value leading spaces
-        switch (ch) {
-        case ' ':
-          break;
-
-        default:
-          buffer.delete(0, buffer.length());
-          buffer.append(ch);
-          state = 4;
-          break;
-        }
-        break;
-
-      case 4: // value
-        switch (ch) {
-        case ' ':
-        case ',':
-        case ';':
-          index -= 1; // put back the last read character
-          state = 5;
-          if (name.equals("path")) { //$NON-NLS-1$
-            if (path == null)
-              path = buffer.toString();
-            else
-              state = -3; // error: more then one 'path'
+            default:
+              buffer.delete(0, buffer.length());
+              buffer.append(ch);
+              state = 1;
+              break;
           }
-          else if (name.equals("pipe")) { //$NON-NLS-1$
-            if (pipe == null)
-              pipe = buffer.toString();
-            else
-              state = -4; // error: more then one 'pipe'
+          break;
+
+        case 1: // parameter name
+          switch(ch) {
+            case ' ':
+            case '=':
+              name = buffer.toString();
+              state = (ch == ' ') ? 2 : 3;
+              break;
+
+            case ',':
+            case ';':
+              state = -6; // error: invalid name
+              break;
+
+            default:
+              buffer.append(ch);
+              break;
           }
-          else
-            state = -2; // error: unknown parameter
-          buffer.delete(0, buffer.length());
+          break;
+
+        case 2: // equal between the name and the value
+          switch(ch) {
+            case '=':
+              state = 3;
+              break;
+
+            case ' ':
+              break;
+
+            default:
+              state = -1; // error: missing '='
+              break;
+          }
+          break;
+
+        case 3: // value leading spaces
+          switch(ch) {
+            case ' ':
+              break;
+
+            default:
+              buffer.delete(0, buffer.length());
+              buffer.append(ch);
+              state = 4;
+              break;
+          }
+          break;
+
+        case 4: // value
+          switch(ch) {
+            case ' ':
+            case ',':
+            case ';':
+              index -= 1; // put back the last read character
+              state = 5;
+              if(name.equals("path")) { //$NON-NLS-1$
+                if(path == null)
+                  path = buffer.toString();
+                else
+                  state = -3; // error: more then one 'path'
+              }
+              else if(name.equals("pipe")) { //$NON-NLS-1$
+                if(pipe == null)
+                  pipe = buffer.toString();
+                else
+                  state = -4; // error: more then one 'pipe'
+              }
+              else
+                state = -2; // error: unknown parameter
+              buffer.delete(0, buffer.length());
+              break;
+
+            default:
+              buffer.append(ch);
+              break;
+          }
+          break;
+
+        case 5: // a delimeter after the value
+          switch(ch) {
+            case ' ':
+              break;
+
+            case ',':
+              state = 6;
+              break;
+
+            case ';':
+              state = 7;
+              break;
+
+            default:
+              state = -5; // error: ' ' inside the value
+              break;
+          }
+          break;
+
+        case 6: // leading spaces before next parameter name
+          switch(ch) {
+            case ' ':
+              break;
+
+            default:
+              buffer.delete(0, buffer.length());
+              buffer.append(ch);
+              state = 1;
+              break;
+          }
           break;
 
         default:
-          buffer.append(ch);
-          break;
-        }
-        break;
-
-      case 5: // a delimeter after the value
-        switch (ch) {
-        case ' ':
-          break;
-
-        case ',':
-          state = 6;
-          break;
-
-        case ';':
-          state = 7;
-          break;
-
-        default:
-          state = -5; // error: ' ' inside the value
-          break;
-        }
-        break;
-
-      case 6: // leading spaces before next parameter name
-        switch (ch) {
-        case ' ':
-          break;
-
-        default:
-          buffer.delete(0, buffer.length());
-          buffer.append(ch);
-          state = 1;
-          break;
-        }
-        break;
-
-      default:
-        throw new java.net.MalformedURLException("Invalid UNO connection URL."); //$NON-NLS-1$
+          throw new java.net.MalformedURLException(
+              "Invalid UNO connection URL."); //$NON-NLS-1$
       }
     }
-    if (state != 7)
+    if(state != 7)
       throw new java.net.MalformedURLException("Invalid UNO connection URL."); //$NON-NLS-1$
 
     // Set up the connection parameters.
-    if (path != null)
+    if(path != null)
       mProgramPath = path;
-    if (pipe != null)
+    if(pipe != null)
       this.pipe = pipe;
   }
   //----------------------------------------------------------------------------
@@ -1040,7 +1059,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
     int nPos = aString.length();
     int nOfs = aSearch.length();
 
-    while ((nPos = aString.lastIndexOf(aSearch, nPos - 1)) > -1)
+    while((nPos = aString.lastIndexOf(aSearch, nPos - 1)) > -1)
       aBuffer.replace(nPos, nPos + nOfs, aReplace);
 
     return aBuffer.toString();
@@ -1058,94 +1077,96 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
     // work)
     String aPipeName = System.getProperty("user.name") + OFFICE_ID_SUFFIX; //$NON-NLS-1$
     aPipeName = replaceAll(aPipeName, "_", "%B7"); //$NON-NLS-1$ //$NON-NLS-2$
-    return replaceAll(replaceAll(java.net.URLEncoder.encode(aPipeName), "\\+", "%20"), "%", "_"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    return replaceAll(replaceAll(java.net.URLEncoder.encode(aPipeName),
+        "\\+", "%20"), "%", "_"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   }
   //----------------------------------------------------------------------------
   /**
    * Loads the necessary native libraries. 
    * 
-   * @author Andreas Brï¿½ker
+   * @author Andreas Bröker
    * @date 20.03.2006
    */
   private void loadNativeLibraries() {
     String officeHomePath = System.getProperty("office.home"); //$NON-NLS-1$
-    if (System.getProperty("os.name").startsWith("Windows")) { //$NON-NLS-1$ //$NON-NLS-2$
+    if(System.getProperty("os.name").startsWith("Windows")) { //$NON-NLS-1$ //$NON-NLS-2$
       try {
-      	if(!msvcrLoaded) {
-	        if (officeHomePath == null)
-	          NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
-	              .getClassLoader(), "msvcr70"); //$NON-NLS-1$
-	        else
-	          System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
-	              + File.separator + System.mapLibraryName("msvcr70")); //$NON-NLS-1$
-	        msvcrLoaded = true;
-      	}
+        if(!msvcrLoaded) {
+          if(officeHomePath == null)
+            NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
+                .getClassLoader(), "msvcr70"); //$NON-NLS-1$
+          else
+            System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
+                + File.separator + System.mapLibraryName("msvcr70")); //$NON-NLS-1$
+          msvcrLoaded = true;
+        }
       }
-      catch (Throwable throwable) {
+      catch(Throwable throwable) {
         //System.err.println("cannot find msvcr70"); //$NON-NLS-1$
       }
 
       try {
-      	if(!msvcrLoaded) {
-	        if (officeHomePath == null)
-	          NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
-	              .getClassLoader(), "msvcr71"); //$NON-NLS-1$
-	        else
-	          System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
-	              + File.separator + System.mapLibraryName("msvcr71")); //$NON-NLS-1$
-	        msvcrLoaded = true;
-      	}
+        if(!msvcrLoaded) {
+          if(officeHomePath == null)
+            NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
+                .getClassLoader(), "msvcr71"); //$NON-NLS-1$
+          else
+            System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
+                + File.separator + System.mapLibraryName("msvcr71")); //$NON-NLS-1$
+          msvcrLoaded = true;
+        }
       }
-      catch (Throwable throwable) {
+      catch(Throwable throwable) {
         //System.err.println("cannot find msvcr71"); //$NON-NLS-1$
       }
 
       try {
-      	if(!uwinapiLoaded) {
-	        if (officeHomePath == null)
-	          NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
-	              .getClassLoader(), "uwinapi"); //$NON-NLS-1$
-	        else
-	          System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
-	              + File.separator + System.mapLibraryName("uwinapi")); //$NON-NLS-1$
-	        uwinapiLoaded = true;
-      	}
+        if(!uwinapiLoaded) {
+          if(officeHomePath == null)
+            NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
+                .getClassLoader(), "uwinapi"); //$NON-NLS-1$
+          else
+            System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
+                + File.separator + System.mapLibraryName("uwinapi")); //$NON-NLS-1$
+          uwinapiLoaded = true;
+        }
       }
-      catch (Throwable throwable) {
+      catch(Throwable throwable) {
         //System.err.println("cannot find uwinapi"); //$NON-NLS-1$
       }
 
       try {
-      	if(!jawtLoaded) {
-	        if (officeHomePath == null)
-	          NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
-	              .getClassLoader(), "jawt"); //$NON-NLS-1$
-	        else
-	          System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
-	              + File.separator + System.mapLibraryName("jawt")); //$NON-NLS-1$
-	        jawtLoaded = true;
-      	}
+        if(!jawtLoaded) {
+          if(officeHomePath == null)
+            NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
+                .getClassLoader(), "jawt"); //$NON-NLS-1$
+          else
+            System.load(officeHomePath + File.separator + "program" //$NON-NLS-1$
+                + File.separator + System.mapLibraryName("jawt")); //$NON-NLS-1$
+          jawtLoaded = true;
+        }
       }
-      catch (Throwable throwable) {
+      catch(Throwable throwable) {
         //System.err.println("cannot find jawt"); //$NON-NLS-1$
       }
     }
 
     try {
-    	if(!officebeanLoaded) {
-		    if (officeHomePath == null)
-		      NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
-		          .getClassLoader(), OFFICE_LIB_NAME);
-		    else
-		      System.load(officeHomePath + File.separator + "program" + File.separator //$NON-NLS-1$
-		          + System.mapLibraryName(OFFICE_LIB_NAME));
-		    officebeanLoaded = true;
-    	}
+      if(!officebeanLoaded) {
+        if(officeHomePath == null)
+          NativeLibraryLoader.loadLibrary(LocalOfficeConnection.class
+              .getClassLoader(), OFFICE_LIB_NAME);
+        else
+          System.load(officeHomePath + File.separator
+              + "program" + File.separator //$NON-NLS-1$
+              + System.mapLibraryName(OFFICE_LIB_NAME));
+        officebeanLoaded = true;
+      }
     }
     catch(Throwable throwable) {
-    	//do not consume
+      //do not consume
     }
-  }  
+  }
   //----------------------------------------------------------------------------
 
 }

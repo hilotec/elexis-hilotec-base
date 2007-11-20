@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:21 $
+ * Last changes made by $Author: markus $, $Date: 2007-04-03 12:40:19 +0200 (Di, 03 Apr 2007) $
  */
 package ag.ion.bion.officelayer.filter;
 
@@ -47,7 +47,7 @@ import ag.ion.noa.filter.AbstractFilter;
  * to plain text.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11479 $
  */
 public class TextFilter extends AbstractFilter implements IFilter {
 	
@@ -69,40 +69,38 @@ public class TextFilter extends AbstractFilter implements IFilter {
       return "Text";
     }
     else if(document.getDocumentType().equals(IDocument.CALC)) {
-      return "Text - txt - csv";
+      return "Text - txt - csv (StarCalc)";
     }
     else if(document.getDocumentType().equals(IDocument.WEB)) {
       return "Text (StarWriter/Web)";
     }
-    else {
-      return null;
-    }
+    return null;
   }
 	//----------------------------------------------------------------------------
-	/**
-	 * Returns file extension of the filter. Returns null
-	 * if the document is not supported by the filter.
-	 * 
-	 * @param document document to be used
-	 * 
-	 * @return file extension of the filter
-	 * 
-	 * @author Andreas Bröker
-	 * @date 08.07.2006
-	 */
-	public String getFileExtension(IDocument document) {
-		if(document.getDocumentType().equals(IDocument.WRITER)) {
+  /**
+   * Returns file extension of the filter. Returns null
+   * if the document type is not supported by the filter.
+   * 
+   * @param documentType document type to be used
+   * 
+   * @return file extension of the filter
+   * 
+   * @author Markus Krüger
+   * @date 03.04.2007
+   */
+  public String getFileExtension(String documentType) {
+    if(documentType == null)
+      return null;
+		if(documentType.equals(IDocument.WRITER)) {
       return FILE_EXTENSION;
     }
-		else if(document.getDocumentType().equals(IDocument.CALC)) {
+		else if(documentType.equals(IDocument.CALC)) {
       return "csv";
     }
-    else if(document.getDocumentType().equals(IDocument.WEB)) {
+    else if(documentType.equals(IDocument.WEB)) {
       return FILE_EXTENSION;
     }
-    else {
-      return null;
-    }
+    return null;
 	}
 	//----------------------------------------------------------------------------
 	/**
@@ -120,8 +118,7 @@ public class TextFilter extends AbstractFilter implements IFilter {
 		if(document.getDocumentType().equals(IDocument.CALC)) {
       return "Text CVS";
     }
-		else
-			return super.getName(document);
+		return super.getName(document);
 	}
   //----------------------------------------------------------------------------
 	

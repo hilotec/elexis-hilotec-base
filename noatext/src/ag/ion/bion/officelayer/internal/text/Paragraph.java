@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/10/04 12:14:20 $
+ * Last changes made by $Author: markus $, $Date: 2007-08-07 14:36:58 +0200 (Di, 07 Aug 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -47,6 +47,7 @@ import ag.ion.bion.officelayer.text.IParagraph;
 import ag.ion.bion.officelayer.text.IParagraphProperties;
 import ag.ion.bion.officelayer.text.IParagraphPropertyStore;
 import ag.ion.bion.officelayer.text.ITextDocument;
+import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.text.TextException;
 
 import com.sun.star.beans.XPropertySet;
@@ -65,7 +66,7 @@ import com.sun.star.uno.UnoRuntime;
  * Paragraph of a text document.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.1 $
+ * @version $Revision: 11559 $
  */
 public class Paragraph extends AbstractTextComponent implements IParagraph {
   
@@ -99,6 +100,18 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    */
   public XTextContent getXTextContent() {
     return xTextContent;
+  }
+  //----------------------------------------------------------------------------
+  /**
+   * Returns text range of the text table.
+   * 
+   * @return text range of the text table
+   * 
+   * @author Markus Krüger
+   * @date 06.08.2007
+   */
+  public ITextRange getTextRange() {
+    return new TextRange(textDocument, xTextContent.getAnchor());
   }
   //----------------------------------------------------------------------------
   /**

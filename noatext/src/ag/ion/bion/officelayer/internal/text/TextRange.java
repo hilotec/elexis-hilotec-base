@@ -34,7 +34,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: markus $, $Date: 2007/01/25 17:50:33 $
+ * Last changes made by $Author: markus $, $Date: 2007-01-25 18:50:33 +0100 (Do, 25 Jan 2007) $
  */
 package ag.ion.bion.officelayer.internal.text;
 
@@ -72,7 +72,7 @@ import com.sun.star.view.XSelectionSupplier;
  * 
  * @author Andreas Bröker
  * @author Markus Krüger
- * @version $Revision: 1.4 $
+ * @version $Revision: 11363 $
  */
 public class TextRange implements ITextRange {
   

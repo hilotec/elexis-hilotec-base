@@ -32,7 +32,7 @@
  ****************************************************************************/
  
 /*
- * Last changes made by $Author: andreas $, $Date: 2006/11/06 06:24:56 $
+ * Last changes made by $Author: andreas $, $Date: 2006-11-06 07:24:57 +0100 (Mo, 06 Nov 2006) $
  */
 package ag.ion.noa.internal.frame;
 
@@ -52,7 +52,7 @@ import com.sun.star.util.URL;
  * A dispatch can be used in order execute UI commands.
  * 
  * @author Andreas Bröker
- * @version $Revision: 1.2 $
+ * @version $Revision: 10836 $
  * @date 14.06.2006
  */ 
 public class Dispatch implements IDispatch {
