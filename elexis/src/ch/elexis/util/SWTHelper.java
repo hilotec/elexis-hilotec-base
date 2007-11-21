@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 3124 2007-09-09 09:40:44Z rgw_ch $
+ * $Id: SWTHelper.java 3363 2007-11-21 17:44:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -50,9 +50,10 @@ public class SWTHelper {
 	 * Siehe setSelectOnFocus(). 
 	 */
 	private static FocusListener selectOnFocusListener = null;
+	private static Log log=Log.get("Global: ");
 
 	/** Ein Objekt innerhalb des parents zentrieren */
-	public static void center(Shell parent, Composite child){
+	public static void center(final Shell parent, final Composite child){
 		Rectangle par=parent.getBounds();
 		Rectangle ch=child.getBounds();
 		int xOff=(par.width-ch.width)/2;
@@ -60,7 +61,7 @@ public class SWTHelper {
 		child.setBounds(par.x+xOff,par.y+yOff,ch.width,ch.height);
 	}
 	/** Ein Objekt innerhalb des parents zentrieren */
-	public static void center(Shell parent, Shell child){
+	public static void center(final Shell parent, final Shell child){
 		Rectangle par=parent.getBounds();
 		Rectangle ch=child.getBounds();
 		int xOff=(par.width-ch.width)/2;
@@ -68,7 +69,7 @@ public class SWTHelper {
 		child.setBounds(par.x+xOff,par.y+yOff,ch.width,ch.height);
 	}
 	/** Einen Text zentriert in ein Rechteck schreiben */
-	public static void writeCentered(GC gc, String text, Rectangle bounds){
+	public static void writeCentered(final GC gc, final String text, final Rectangle bounds){
 		int w=gc.getFontMetrics().getAverageCharWidth();
 		int h=gc.getFontMetrics().getHeight();
 		int woff=(bounds.width-text.length()*w)>>1;
@@ -77,7 +78,7 @@ public class SWTHelper {
 	}
 
 	/** Eine Alertbox anzeigen (synchron) */
-	public static void alert(String title, String message){
+	public static void alert(final String title, final String message){
 		if(Desk.theDisplay==null){
 			Desk.theDisplay = PlatformUI.createDisplay();
 		}
@@ -99,6 +100,20 @@ public class SWTHelper {
 	public static void showError(final String title, final String message){
 		Desk.theDisplay.syncExec(new Runnable(){
 
+			public void run() {
+				Shell shell=Desk.theDisplay.getActiveShell();
+				MessageDialog.openError(shell, title, message);
+			}});
+	}
+	
+	/**
+	 * Eine Standard-Fehlermeldung asynchron zeigen und loggen
+	 * @param title Titel
+	 * @param message Nachricht
+	 */
+	public static void showError(final String logHeader, final String title, final String message){
+		log.log(logHeader+": "+title+"->"+message, Log.ERRORS);
+		Desk.theDisplay.syncExec(new Runnable(){
 			public void run() {
 				Shell shell=Desk.theDisplay.getActiveShell();
 				MessageDialog.openError(shell, title, message);
@@ -133,7 +148,7 @@ public class SWTHelper {
 	private static class InSync implements Runnable{
 		boolean ret;
 		String title, message;
-		InSync(String title, String message){
+		InSync(final String title, final String message){
 			this.title=title;
 			this.message=message;
 		}
@@ -151,7 +166,7 @@ public class SWTHelper {
 	 * @param vertical true, wenn vertikal gefüllt werden soll.
 	 * @return ein neu erzeugtes, direkt verwendbares GridData-Objekt
 	 */
-	public static GridData getFillGridData(int hSpan, boolean hFill, int vSpan, boolean vFill){
+	public static GridData getFillGridData(final int hSpan, final boolean hFill, final int vSpan, final boolean vFill){
 		int ld=0;
 		if(hFill){
 			ld=GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL;
@@ -165,7 +180,7 @@ public class SWTHelper {
 		return ret;
 	}
 
-	public static GridData fillGrid(Composite parent, int cols){
+	public static GridData fillGrid(final Composite parent, final int cols){
 		parent.setLayout(new GridLayout(cols,false));
 		return getFillGridData(1,true,1,true);
 	}
@@ -178,7 +193,7 @@ public class SWTHelper {
 	 * @param fillHorizontal true if the control should require all horizontal space
 	 * @return the GridData (that is already set to the control)
 	 */
-	public static GridData setGridDataHeight(Control control, int lines, boolean fillHorizontal){
+	public static GridData setGridDataHeight(final Control control, final int lines, final boolean fillHorizontal){
 		int h=Math.round(control.getFont().getFontData()[0].height);
 		GridData gd=getFillGridData(1, fillHorizontal, 1, false);
 		gd.heightHint=lines*(h+2);
@@ -190,7 +205,7 @@ public class SWTHelper {
 	 * Constructor wrapper for TableWrapLayout, so that parameters are identical to
 	 * GridLayout(numColumns, makeColumnsEqualWidth)
 	 */
-	public static TableWrapLayout createTableWrapLayout(int numColumns, boolean makeColumnsEqualWidth) {
+	public static TableWrapLayout createTableWrapLayout(final int numColumns, final boolean makeColumnsEqualWidth) {
 		TableWrapLayout layout = new TableWrapLayout();
 		
 		layout.numColumns = numColumns;
@@ -206,7 +221,7 @@ public class SWTHelper {
 	 * @param vertical true, wenn vertikal gefüllt werden soll.
 	 * @return ein neu erzeugtes, direkt verwendbares GridData-Objekt
 	 */
-	public static TableWrapData getFillTableWrapData(int hSpan, boolean hFill, int vSpan, boolean vFill){
+	public static TableWrapData getFillTableWrapData(final int hSpan, final boolean hFill, final int vSpan, final boolean vFill){
 		TableWrapData layoutData = new TableWrapData(TableWrapData.LEFT, TableWrapData.TOP);
 
 		if (hFill) {
@@ -229,7 +244,7 @@ public class SWTHelper {
 	 * @param col an SWT Color
 	 * @return black if col was rather bright, white if col was rather dark.
 	 */
-	public static Color getContrast(Color col){
+	public static Color getContrast(final Color col){
 		 double val=col.getRed()*0.56+col.getGreen()*0.33+col.getBlue()*0.11;
 		    if(val<=110){
 		        return Desk.theDisplay.getSystemColor(SWT.COLOR_WHITE);
@@ -250,7 +265,7 @@ public class SWTHelper {
 		ret.setForeground(Desk.theColorRegistry.get(Messages.getString("SWTHelper.blue"))); //$NON-NLS-1$
 		ret.addMouseListener(new MouseAdapter(){
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void mouseDown(final MouseEvent e) {
 				if(lis!=null){
 					lis.linkActivated(new HyperlinkEvent(ret,ret,text,e.stateMask));
 				}
@@ -268,7 +283,7 @@ public class SWTHelper {
 	 * @param flags creation flags (SWT.MULTI and SWT.WRAP are added automatocally)
 	 * @return a Text control
 	 */
-	public static Text createText(Composite parent, int lines, int flags){
+	public static Text createText(final Composite parent, final int lines, final int flags){
 		int lNum=SWT.SINGLE;
 		if(lines>1){
 			lNum=SWT.MULTI|SWT.WRAP;
@@ -281,7 +296,7 @@ public class SWTHelper {
 		ret.setLayoutData(gd);
 		return ret;
 	}
-	public static Text createText(FormToolkit tk, Composite parent, int lines, int flags){
+	public static Text createText(final FormToolkit tk, final Composite parent, final int lines, final int flags){
 		int lNum=SWT.SINGLE;
 		if(lines>1){
 			lNum=SWT.MULTI|SWT.WRAP;
@@ -295,7 +310,7 @@ public class SWTHelper {
 		return ret;
 	}
 	
-	public static LabeledInputField createLabeledField(Composite parent, String label, LabeledInputField.Typ typ){
+	public static LabeledInputField createLabeledField(final Composite parent, final String label, final LabeledInputField.Typ typ){
 		LabeledInputField ret=new LabeledInputField(parent,label,typ);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return ret;
@@ -307,7 +322,7 @@ public class SWTHelper {
 	 * @param name the name for the String
 	 * @return false if it was empty
 	 */
-	public static boolean blameEmptyString(String test, String name){
+	public static boolean blameEmptyString(final String test, final String name){
 		if(StringTool.isNothing(test)){
 			showError("Falscher Parameter", name+" hat keinen gültigen Inhalt");
 			return false;
@@ -320,15 +335,15 @@ public class SWTHelper {
 	 * the control gets the focus. The selection is cleared when the focus is lost.
 	 * @param text the Text control to add a focus listener to
 	 */
-	public static void setSelectOnFocus(Text text) {
+	public static void setSelectOnFocus(final Text text) {
 		if (selectOnFocusListener == null) {
 			selectOnFocusListener = new FocusListener() {
-				public void focusGained(FocusEvent e) {
+				public void focusGained(final FocusEvent e) {
 					Text t = (Text) e.widget;
 					t.selectAll();
 				}
 
-				public void focusLost(FocusEvent e) {
+				public void focusLost(final FocusEvent e) {
 					Text t = (Text) e.widget;
 					if (t.getSelectionCount() > 0) {
 						t.clearSelection();
@@ -342,12 +357,12 @@ public class SWTHelper {
 	
 	public static class SimpleDialog extends Dialog{
 		IControlProvider dialogAreaProvider;
-		public SimpleDialog(IControlProvider control){
+		public SimpleDialog(final IControlProvider control){
 			super(Desk.theDisplay.getActiveShell());
 			dialogAreaProvider=control;
 		}
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(final Composite parent) {
 			return dialogAreaProvider.getControl(parent);
 		}
 		
@@ -356,7 +371,7 @@ public class SWTHelper {
 		public Control getControl(Composite parent);
 	}
 	
-	public static java.awt.Font createAWTFontFromSWTFont(Font swtFont){
+	public static java.awt.Font createAWTFontFromSWTFont(final Font swtFont){
 		String name=swtFont.getFontData()[0].getName();
 		int style=swtFont.getFontData()[0].getStyle();
 		int height=swtFont.getFontData()[0].getHeight();
@@ -364,7 +379,7 @@ public class SWTHelper {
 		return awtFont;
 	}
 	
-	public static int size(Rectangle r){
+	public static int size(final Rectangle r){
 		return (r.width-r.x)*(r.height-r.y);
 		
 	}
