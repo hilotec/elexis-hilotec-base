@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3268 2007-10-18 11:43:30Z rgw_ch $
+ * $Id: Connection.java 3359 2007-11-21 15:36:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -22,7 +22,6 @@ import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -314,7 +313,7 @@ public class Connection implements SerialPortEventListener{
 			    	bOpen=false;
 
 				}catch(Exception ex){
-					
+
 				}
 			}}).start();
     }
