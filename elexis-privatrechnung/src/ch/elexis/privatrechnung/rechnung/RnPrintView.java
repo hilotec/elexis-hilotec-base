@@ -83,7 +83,7 @@ public class RnPrintView extends ViewPart {
 		Money sum=new Money();
 		for(Konsultation k:kons){
 			tc.getPlugin().setFont("Helvetica", SWT.BOLD, 12);
-			tc.getPlugin().insertText(pos, new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER)+"\n", SWT.LEFT);
+			pos=tc.getPlugin().insertText(pos, new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER)+"\n", SWT.LEFT);
 			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 10);
 			for(Verrechnet vv:k.getLeistungen()){
 				Money preis=vv.getEffPreis();
@@ -96,8 +96,8 @@ public class RnPrintView extends ViewPart {
 				pos=tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 				sum.addMoney(subtotal);
 			}
-			pos=tc.getPlugin().insertText(pos, "____________________________________________________________________\nTotal:\t\t\t"+sum.getAmountAsString(),SWT.LEFT);
 		}
+		pos=tc.getPlugin().insertText(pos, "____________________________________________________________________\nTotal:\t\t\t"+sum.getAmountAsString(),SWT.LEFT);
 		String toPrinter=Hub.localCfg.get("Drucker/A4/Name",null);
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
