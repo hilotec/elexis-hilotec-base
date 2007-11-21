@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3300 2007-10-29 18:17:01Z rgw_ch $
+ * $Id: XMLExporter.java 3360 2007-11-21 15:36:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -614,7 +614,17 @@ public class XMLExporter implements IRnOutputter {
 			
 		Element insurance=new Element("insurance",ns);	//  11090
 		insurance.setAttribute("ean_party",TarmedRequirements.getEAN(kostentraeger)); //kostentraeger.getInfoString("EAN"));							
-		insurance.addContent(buildAdressElement(kostentraeger));
+		//insurance.addContent(buildAdressElement(kostentraeger));	// must be an organization, so we fake one
+		Element company=new Element("company",ns);
+		Element companyname=new Element("companyname",ns);
+		companyname.setText(kostentraeger.get("Bezeichnung1"));
+		company.addContent(companyname);
+		company.addContent(buildPostalElement(kostentraeger));
+		company.addContent(buildTelekomElement(kostentraeger));
+		company.addContent(buildOnlineElement(kostentraeger));
+		insurance.addContent(company);
+		// note this may lead to a person mistreated as organization. So these faults should be caught when generating bills
+		
 		eTiers.addContent(insurance);
 			
 		Element patient=new Element("patient",ns);												// 	11100
@@ -917,6 +927,17 @@ public class XMLExporter implements IRnOutputter {
 	}
 
 	public boolean canBill(final Fall fall) {
-		return true;
+		Kontakt garant=fall.getGarant();
+		Kontakt kostentraeger=fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		if((garant!=null) && (kostentraeger!=null)){
+			if(garant.isValid()){
+				if(kostentraeger.isValid()){
+					if(kostentraeger.istOrganisation()){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }
