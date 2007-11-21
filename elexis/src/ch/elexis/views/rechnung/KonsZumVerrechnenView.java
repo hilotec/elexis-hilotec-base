@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3244 2007-10-09 15:19:27Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 3361 2007-11-21 15:36:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -70,6 +70,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.KonsZumVerrechnenWizardDialog;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.BasicTreeContentProvider;
@@ -143,13 +144,14 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
             			if (element instanceof Tree) {
             				Tree tree = (Tree) element;
             				PersistentObject po = (PersistentObject) tree.contents;
-            				if(po.isValid()){
-            					return Desk.theImageRegistry.get(Desk.IMG_OK);
-            				}else{
-            					return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+            				if(po instanceof Fall){
+            					if(po.isValid()){
+            						return Desk.theImageRegistry.get(Desk.IMG_OK);
+            					}else{
+            						return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+            					}
             				}
             			}
-            			
             			return null;
             		}
         		},
@@ -440,8 +442,16 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			@SuppressWarnings("unchecked") 
 			@Override
 			public void run(){
+				int rejected=0;
 				for(Tree tPat=tSelection.getFirstChild();tPat!=null;tPat=tPat.getNextSibling()){
 					for(Tree tFall=tPat.getFirstChild();tFall!=null;tFall=tFall.getNextSibling()){
+						Fall fall=(Fall)tFall.contents;
+						if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)){
+							if(!fall.isValid()){
+								rejected++;
+								continue;
+							}
+						}
 						Collection<Tree> lt=tFall.getChildren();
 						ArrayList<Konsultation> lb=new ArrayList<Konsultation>(lt.size()+1);
 						for(Tree t:lt){
@@ -449,14 +459,19 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 						}
 						Result<Rechnung> res=Rechnung.build(lb);
 						if(!res.isOK()){
-							Fall fall=(Fall)tFall.contents;
 							ErrorDialog.openError(getViewSite().getShell(),Messages.getString("KonsZumVerrechnenView.errorInInvoice"), //$NON-NLS-1$
 									Messages.getString("KonsZumVerrechnenView.invoiceForCase", new Object[] {fall.getLabel()}),res.asStatus()); //$NON-NLS-1$
 						}else{
 							tPat.remove(tFall);
 						}
 					}
-					tSelection.remove(tPat);
+					if(rejected!=0){
+						SWTHelper.showError("Fehlerhafte Falldefinitionen", Integer.toString(rejected)+
+								" Rechnungen wurden nicht erstellt, weil die Fälle nicht alle notwendigen Angaben enthalten. " +
+								"Bitte kontrollieren Sie die Fall-Details");
+					}else{
+						tSelection.remove(tPat);
+					}
 				}
 				tvSel.refresh();
 			}

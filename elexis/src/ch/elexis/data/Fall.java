@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3352 2007-11-17 06:10:24Z rgw_ch $
+ *    $Id: Fall.java 3361 2007-11-21 15:36:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -92,7 +92,9 @@ public class Fall extends PersistentObject{
 		}
 		// check whether the outputter could output a bill
 		IRnOutputter outputter=getOutputter();
-		if(outputter!=null){
+		if(outputter==null){
+			return false;
+		}else{
 			if(!outputter.canBill(this)){
 				return false;
 			}
