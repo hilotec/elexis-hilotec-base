@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3351 2007-11-16 16:21:44Z rgw_ch $
+<!-- $Id: build.xml 3364 2007-11-22 21:20:23Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -160,7 +160,10 @@
 
 	
 	<!-- These plugins are not part of the standard distribution -->
-	<target name="elexis-pro" depends="all">
+	<target name="elexis-pro">
+		<available file="../elexis-h-net/build.xml" property="hnet.ok"/>
+			<antcall target="hnet"/>
+
 		<ant antfile="../elexis-pro/build.xml"/>
 		<available file="../elexis-kassenbuch/build.xml" property="kassenbuch.ok"/>
 			<antcall target="kassenbuch"/>
@@ -189,10 +192,14 @@
 			<antcall target="praxisdesktop"/>
 		<available file="../elexis-covercard/build.xml" property="covercard.ok"/>
 			<antcall target="covercard"/>
+
 	</target>
 
 	<target name="all" depends="main,options"/>
-	
+
+	<target name="hnet" if="hnet.ok">
+		<ant antfile="../elexis-h-net/build.xml"/>
+	</target>
 	<target name="directories" if="directories.ok">
 		<ant antfile="../medshare-directories/build.xml"/>
 	</target>
