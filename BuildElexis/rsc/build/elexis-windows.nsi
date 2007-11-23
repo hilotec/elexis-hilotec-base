@@ -5,13 +5,14 @@ Name Elexis
 
 # Defines
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.1.2
+!define VERSION 1.2.0
 
 !define REGKEY "SOFTWARE\${PRODUCTNAME}"
 
 !define COMPANY "G. Weirich"
 !define URL http://www.elexis.ch
 !define src "$%SOFTWARE%\elexis\deploy\${PRODUCTNAME}-${VERSION}"
+!define demodb "$%SOFTWARE%\elexis\demoDB_1.6.0"
 
 # MUI defines
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
@@ -59,7 +60,7 @@ InstallDir $PROGRAMFILES\Elexis
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 1.1.1.0
+VIProductVersion 1.2.0.0
 VIAddVersionKey /LANG=${LANG_GERMAN} ProductName Elexis
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey /LANG=${LANG_GERMAN} CompanyName "${COMPANY}"
@@ -77,6 +78,12 @@ Section -Main SEC0000
     File /r "${src}\*.*"
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
 
+SectionEnd
+
+Section "Demo-Daten" demo 
+    SetOutPath $INSTDIR\demoDB
+    SetOverwrite on
+    File /r "${demodb}\*.*"
 SectionEnd
 
 Section -post SEC0001

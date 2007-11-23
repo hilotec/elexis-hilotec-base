@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3364 2007-11-22 21:20:23Z rgw_ch $
+<!-- $Id: build.xml 3366 2007-11-23 16:30:11Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -160,7 +160,7 @@
 
 	
 	<!-- These plugins are not part of the standard distribution -->
-	<target name="elexis-pro">
+	<target name="elexis-pro" depends="all">
 		<available file="../elexis-h-net/build.xml" property="hnet.ok"/>
 			<antcall target="hnet"/>
 
