@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3330 2007-11-08 06:08:32Z rgw_ch $
+ *  $Id: Rechnung.java 3367 2007-11-23 16:30:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -146,8 +146,10 @@ public class Rechnung extends PersistentObject {
         }
         
         // check if there are any Konsultationen
-        if ((diagnosen == null) || (diagnosen.size() == 0)) {
-        	result=result.add(Log.ERRORS,6,"Die Rechnung enthält keine Diagnose ("+getRnDesc(ret)+")",ret,true);
+        if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)){
+        	if ((diagnosen == null) || (diagnosen.size() == 0)) {
+        		result=result.add(Log.ERRORS,6,"Die Rechnung enthält keine Diagnose ("+getRnDesc(ret)+")",ret,true);
+        	}
         }
         /*
         if(garant==null || !garant.isValid()){
@@ -495,7 +497,7 @@ public class Rechnung extends PersistentObject {
 		}
 		return null;
 	}
-	public static Rechnung getFromNr(String Rnnr){
+	public static Rechnung getFromNr(final String Rnnr){
 		String id=new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", Rnnr);
 		Rechnung ret=load(id);
 		if(ret.isValid()){
