@@ -29,6 +29,7 @@ import ch.rgw.tools.TimeTool;
 /**
  * Access data stored in Befunde
  * Access syntax is: Befunde:BD
+ * @see ch.elexis.util.IDataAccess
  * @author gerry
  *
  */
