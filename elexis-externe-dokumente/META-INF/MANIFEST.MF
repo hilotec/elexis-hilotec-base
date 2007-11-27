@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Externe Dokumente
 Bundle-SymbolicName: ch.elexis.externe_dokumente;singleton:=true
-Bundle-Version: 1.1.1
+Bundle-Version: 1.2.0
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
