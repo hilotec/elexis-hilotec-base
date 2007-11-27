@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.banking.ESR;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -28,6 +29,7 @@ public class RnPrintView extends ViewPart {
 	final static String ID="ch.elexis.privatrechnung.view";
 	String templateBill, templateESR;
 	TextContainer tc;
+	Fall fall;
 	@Override
 	public void createPartControl(final Composite parent) {
 		tc=new TextContainer(parent.getShell());
@@ -61,13 +63,14 @@ public class RnPrintView extends ViewPart {
 		}
 
 		Result<Rechnung> ret=new Result<Rechnung>();
-		Fall fall=rn.getFall();
+		fall=rn.getFall();
+		GlobalEvents.getInstance().fireSelectionEvent(fall);
 		Kontakt adressat=fall.getGarant();//.getRequiredContact("Rechnungsempfänger");
 		if(!adressat.isValid()){
 			adressat=fall.getPatient();
 		}
 		tc.createFromTemplateName(null, templateBill, Brief.RECHNUNG, adressat,rn.getNr());
-		
+		fillFields();
 		List<Konsultation> kons=rn.getKonsultationen();
 		Collections.sort(kons, new Comparator<Konsultation>(){
 			TimeTool t0=new TimeTool();
@@ -101,6 +104,7 @@ public class RnPrintView extends ViewPart {
 		String toPrinter=Hub.localCfg.get("Drucker/A4/Name",null);
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
+		fillFields();
 		ESR esr=new ESR(Hub.globalCfg.get(PreferenceConstants.esrIdentity,""),
 				Hub.globalCfg.get(PreferenceConstants.esrUser,""),rn.getRnId(),27);
 		Kontakt bank=Kontakt.load(Hub.globalCfg.get(PreferenceConstants.cfgBank,""));
@@ -108,10 +112,18 @@ public class RnPrintView extends ViewPart {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}
 		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
-		tc.replace("\\[Leistungen\\]", "Betrag total: "+sum.getAmountAsString());
+		tc.replace("\\[Leistungen\\]", sum.getAmountAsString());
 		tc.getPlugin().print(Hub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
 		return ret;
 	}
 
+	private void fillFields(){
+		Kontakt versicherung=Kontakt.load(fall.getInfoString("Versicherung"));
+		if(versicherung.isValid()){
+			tc.replace("\\?\\?Versicherung\\.Name\\?\\?]", versicherung.getLabel());
+			tc.replace("\\?\\?Versicherung\\.Anschrift\\?\\?", versicherung.getPostAnschrift(true));
+		}
+
+	}
 
 }
