@@ -7,26 +7,28 @@ Rechnungserstellung nicht im Kernsystem enthalten, sondern in Plugins ausgelager
 Da Elexis aber ein Schweizer Programm ist, ist dieses Plugin natürlich Teil der
 Standarddistribution.
 \subsection{Einstellungen}
-Sobald das Tarmed-Plugin installiert ist (was standardmässig immer der Fall ist), erscheint unter
-Datei-Einstellungen-Leistungscodes ein Punkt  Tarmed . Wenn Sie ihn anklicken, sehen Sie als erstes ein Feld,
-wo Sie die für Sie gültigen Taxpunktwerte eingeben können, und zwar getrennt für die Gesetze KVG, UVG, IV und MV.
-Wichtig: Achten Sie bitte darauf, hier die korrekten, für Ihren Kanton gültigen Taxpunktwerte einzutragen,
-bevor Sie die ersten Leistungen verrechnen. Denken Sie bei einer Änderung des Taxpunktwerts bitte auch daran,
-dies hier nachzutragen, bevor Sie Leistungen verrechnen, für die der neue Taxpunktwert gilt. Nachträgliche
-Änderungen schon gedruckter Rechnungen sind sehr mühsam.
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \center
+  \includegraphics[width=0.9\textwidth]{images/arztrechnung1}\\
+  \caption{Abrechnungssysteme}\label{fig:tarmed1}
+\end{figure}
 
-\includegraphics[width=3in]{images/tarmed1.png}
-% tarmed1.png: 486x526 pixel, 96dpi, 12.86x13.92 cm, bb=0 0 364 394
+Sobald das Tarmed-Plugin installiert ist (was standardmässig immer der Fall ist), können bei den Abrechnungssystemen (s. Abb. \ref{fig:tarmed1}) Tarmedleistungen und Tarmeddrucker ausgewählt werden. Standardmässig werden beim ersten Erstellen eines Falls die Abrechnungssysteme KVG, UVG, IV, VVG und MV eingerichtet; weitere können Sie manuell hinzufügen bzw. werden von Plugins erstellt (z.B. Covercard). Weitere Hinweise zu den Abrechnungssystemen finden Sie im Anhang unter \ref{settings:abrechnungssystem} auf S. \pageref{settings:abrechnungssystem}. \textbf{Wichtig:} Achten Sie darauf, die für Ihren Kanton gültigen Taxpunktwerte einzutragen bevor Sie die ersten Leistungen verrechnen. Denken Sie bei einer Änderung des Taxpunktwerts bitte auch daran, dies hier nachzutragen, bevor Sie Leistungen verrechnen, für die der neue Taxpunktwert gilt. Nachträgliche Änderungen schon gedruckter Rechnungen sind sehr mühsam. Vergessen Sie auch nicht, unter 'Labortarif' den aktuell gültigen TP-Wert einzusetzen.
 
 Ein Taxpunktwert gilt immer ab einem bestimmten Datum und für so lange, bis ein neuer Taxpunktwert eingegeben
 wird. Ein einmal eingesetzter Wert kann nicht mehr geändert oder gelöscht werden (da sonst früher damit berechnete
 Leistungen ungültig würden). Man kann aber jederzeit einen neuen Taxpunktwert ab einem bestimmten Datum hinzufügen,
  indem man den entsprechenden Knopf klickt.
-Wenn Sie den Abschnitt Tarmed öffnen, erscheint der Punkt  Rechnungseinstellungen . Dort können Sie für jeden
-Mandanten einzeln einstellen, wie die Rechnungsdetails aussehen sollen.
+Wenn Sie den Abschnitt Tarmed öffnen, erscheint der Punkt  Rechnungseinstellungen (Abb. \ref{fig:tarmed2}). Dort können Sie für jeden Mandanten einzeln einstellen, wie die Rechnungsdetails aussehen sollen.
 
-\includegraphics[width=0.9\textwidth]{images/tarmed2}
-% tarmed2.png: 652x711 pixel, 96dpi, 17.25x18.81 cm, bb=0 0 489 533
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \center
+  \includegraphics[width=0.9\textwidth]{images/arztrechnung2}\\
+  \caption{Tarmed-Einstellungen}\label{fig:tarmed2}
+\end{figure}
+
 
 Wählen Sie in der oberen Combobox einen Mandanten aus. Klicken Sie dann auf das Wort Leistungserbringer.
 Es erscheint eine Liste mit allem, was Tarmed von Ihnen wissen will:
@@ -100,5 +102,5 @@ Dieses Plugin arbeitet mit der existierenden Rechnungen-View des Kernsystems zus
   \caption{View zum einlesen von ESR Dateien}\label{fig:esr}
 \end{figure}
 
-In Abb. \ref{fig:esr} sehen Sie die View zum Einlesen von ESR-Dateien. Ihre Bank wird Ihnen, wenn Sie due entsprechende Vereinbarung unterzeichnet haben, ESR-Dateien zum Abholen per Internet bereitstellen. Diese ESR-Dateien enthalten die Zahlungseingänge zu Ihren Rechnungen. Elexis kann die ESR-Dateien einlesen und die bezahlten Beträge automatisch den entsprechenden Rechnungen gutschreiben.
+In Abb. \ref{fig:esr} sehen Sie die View zum Einlesen von ESR-Dateien. Ihre Bank wird Ihnen, wenn Sie die entsprechende Vereinbarung unterzeichnet haben, ESR-Dateien zum Abholen per Internet bereitstellen. Diese ESR-Dateien enthalten die Zahlungseingänge zu Ihren Rechnungen. Elexis kann die ESR-Dateien einlesen und die bezahlten Beträge automatisch den entsprechenden Rechnungen gutschreiben.
 
