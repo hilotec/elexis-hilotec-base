@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: KonsExtension.java 2129 2007-03-19 16:33:31Z rgw_ch $
+ *    $Id: KonsExtension.java 3397 2007-11-27 21:21:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -37,7 +37,7 @@ public class KonsExtension implements IKonsExtension {
 	}
 
 	public boolean doLayout(StyleRange n, String provider, String id) {
-		n.background=Desk.theColorRegistry.get("grün");
+		n.background=Desk.theColorRegistry.get(Desk.COL_GREEN);
 		return true;
 	}
 
