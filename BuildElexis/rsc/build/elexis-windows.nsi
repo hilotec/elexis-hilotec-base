@@ -13,7 +13,7 @@ Name Elexis
 !define URL http://www.elexis.ch
 !define src "$%SOFTWARE%\elexis\deploy\${PRODUCTNAME}-${VERSION}"
 !define demodb "$%SOFTWARE%\elexis\demoDB_1.6.0"
-!define ooo "$%SOFTWARE%\elexis\ooo"
+!define ooodir "$%SOFTWARE%\elexis\ooo"
 
 # MUI defines
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
@@ -91,7 +91,7 @@ SectionEnd
 Section "OpenOffice" ooo
 SetOutPath $INSTDIR\ooo
     SetOverwrite on
-    File /r "${ooo}\*.*"
+    File /r "${ooodir}\*.*"
 SectionEnd
 
 Section -post SEC0001
