@@ -171,22 +171,8 @@ FunctionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC0000} "Das eigentliche Programm."
-    !insertmacro MUI_DESCRIPTION_TEXT ${demo} "Die Demo-Daten"
-    !insertmacro MUI_DESCRIPTION_TEXT ${ooo} "OpenOffice"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section2b} "Plugin zur Verbindung mit OpenOffice 2.1ff"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section3} "Tarmed, Labortarif, Artikel, ESR-Management"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section4} "ICD-10, Tessiner Diagnosecode"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section6} "Import von Patientendaten aus dem Programm PraxisDesktop"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section7} "Import von Patientendaten aus dem Aerztekasse-Programm"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section8} "Verwaltung von Terminen"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "Einfaches Messwert-Erfassungs Plugin"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section10} "Einbindung externer Dokumente aus dem Dateisystem"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section12} "Nicht-öffentliche Notizen in Konsultationstexte einbinden"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section13} "Bilder mit Konsultationstexten verknüpfen"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section14} "Mail Plugin (automatische Fehlerrückmeldungen)"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section17} "Plugin für Import und Zuordnung beliebiger files"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section19} "Einfaches Textplugin (statt OpenOffice)"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section20} "Patientenunabhängige Dokumente erstellen und einbinden"
+    !insertmacro MUI_DESCRIPTION_TEXT ${demo} "Die Demo-Daten. Empfohlen, um einen Überblick übers Programm zu gewinnen."
+    !insertmacro MUI_DESCRIPTION_TEXT ${ooo} "OpenOffice - Das Textsystem. Im Zweifelsfall mit installieren."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 # Installer Language Strings
 # TODO Update the Language Strings with the appropriate translations.
