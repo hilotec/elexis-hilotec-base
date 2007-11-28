@@ -34,7 +34,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		super(GRID);
 		//SettingsPreferenceStore cfg=new SettingsPreferenceStore(Hub.localCfg);
 		if(Hub.localCfg.get(UPDATE_SITE, null)==null){
-			Hub.localCfg.set(UPDATE_SITE, "http://www.rgw.ch/update.php");
+			Hub.localCfg.set(UPDATE_SITE, "http://www.rgw.ch/update12.php");
 		}
 		if(Hub.localCfg.get(AUTO_UPDATE_INTERVAL, null)==null){
 			Hub.localCfg.set(AUTO_UPDATE_INTERVAL, "0");
@@ -61,7 +61,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 				getFieldEditorParent()));
 		
 	}
-	public void init(IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 2805 2007-07-14 08:51:15Z rgw_ch $
+ * $Id: AutoUpdate.java 3404 2007-11-28 07:45:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -32,6 +32,7 @@ public class AutoUpdate {
 	File basedir;
 	int filecounter=0;
 	LinkedList<ReplaceInfo> downloads=new LinkedList<ReplaceInfo>();
+	private static final String updateURL="http://www.rgw.ch/update12.php";
 	
 	public boolean doUpdate(){
 		try {
@@ -70,19 +71,19 @@ public class AutoUpdate {
 			monitor.beginTask("Update", dirs.length*2);
 			String tempdir=Hub.localCfg.get(Preferences.TEMPDIR, System.getenv("TEMP"));
 			//String url=Hub.globalCfg.get(Preferences.UPDATE_SITE, "http://www.rgw.ch/update.php");
-			String url="http://www.rgw.ch/update110.php";
+			
 			for(String sub:dirs){
 				String f=sub+".zip";
 				monitor.subTask(f);
 				
 				try{
 					log.log("check: "+f, Log.INFOS);
-					int newer=ucl.checkUpdate(f, url);
+					int newer=ucl.checkUpdate(f, updateURL);
 					log.log("Result: "+Integer.toString(newer), Log.INFOS);
 					monitor.worked(1);
 					if(newer>UpdateClient.FILE_SAME){
 						monitor.subTask(sub);
-						File rFile=ucl.download(f, tempdir, url);
+						File rFile=ucl.download(f, tempdir, updateURL);
 						if(rFile!=null){
 							downloads.add(new ReplaceInfo(rFile,sub,newer));
 							log.log(f+" ok.", Log.INFOS);
