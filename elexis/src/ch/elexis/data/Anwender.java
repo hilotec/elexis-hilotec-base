@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 3296 2007-10-29 14:51:39Z michael_imhof $
+ *  $Id: Anwender.java 3406 2007-11-28 15:42:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -122,15 +122,17 @@ public class Anwender extends Person {
     public SortedSet<Reminder> getReminders(final Kontakt k){
     	TreeSet<Reminder> ret=new TreeSet<Reminder>();
     	List<String[]> rem=getList("Reminders", (String[])null);
-    	String kid=k==null ? null : k.getId();
-    	for(String[] l:rem){
-    		Reminder r=Reminder.load(l[0]);
-    		if(kid!=null){
-    			if(!r.get("IdentID").equals(kid)){
-    				continue;
-    			}
-    		}
-    		ret.add(r);
+    	if(rem!=null){
+	    	String kid=k==null ? null : k.getId();
+	    	for(String[] l:rem){
+	    		Reminder r=Reminder.load(l[0]);
+	    		if(kid!=null){
+	    			if(!r.get("IdentID").equals(kid)){
+	    				continue;
+	    			}
+	    		}
+	    		ret.add(r);
+	    	}
     	}
     	return ret;
     }
