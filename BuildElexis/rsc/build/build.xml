@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3378 2007-11-27 13:31:47Z rgw_ch $
+<!-- $Id: build.xml 3402 2007-11-28 06:57:34Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -347,10 +347,10 @@
 		 <copy todir="${dist}/jre">
 			 <fileset dir="${jre}"/>
 		 </copy>
-		<mkdir dir="${dist}/ooo"/>
+		<!-- mkdir dir="${dist}/ooo"/>	we leave this to nsis
 		<copy todir="${dist}/ooo">
 			<fileset dir="${ooo}"/>
-		</copy>
+		</copy -->
 		<exec dir="rsc/build" executable="${nsis}">
 			<arg line="elexis-windows.nsi"/>
 		</exec>
