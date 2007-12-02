@@ -51,11 +51,12 @@ public class RnDialogs {
 			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
 			//nf=NumberFormat.getCurrencyInstance();
 			amount=new Text(ret,SWT.BORDER);
-			amount.setText(rn.getOffenerBetrag().getAmountAsString());
+			//amount.setText(rn.getOffenerBetrag().getAmountAsString());
 			amount.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
 			bemerkung=new Text(ret,SWT.MULTI|SWT.BORDER);
 			bemerkung.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+			amount.setFocus();
 			return ret;
 		}
 		@Override
@@ -99,12 +100,12 @@ public class RnDialogs {
 			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
 			//nf=NumberFormat.getCurrencyInstance();
 			amount=new Text(ret,SWT.BORDER);
-			amount.setText(rn.getOffenerBetrag().getAmountAsString());
+			//amount.setText(rn.getOffenerBetrag().getAmountAsString());
 			amount.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
 			bemerkung=new Text(ret,SWT.MULTI|SWT.BORDER);
 			bemerkung.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-			bemerkung.setFocus();
+			amount.setFocus();
 			return ret;
 		}
 		@Override
