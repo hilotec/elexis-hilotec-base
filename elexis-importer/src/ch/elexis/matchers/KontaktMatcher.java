@@ -20,6 +20,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -130,11 +131,11 @@ public class KontaktMatcher {
 		return found;
 	}
 	
-	public static String normalizePhone(final String nr){
+	static String normalizePhone(final String nr){
 		return nr.replaceAll("[\\s-:\\.]", "");
 	}
 	
-	public static boolean sameStreet(final String s1, final String s2){
+	static boolean sameStreet(final String s1, final String s2){
 		String[] ns1=normalizeStrasse(s1);
 		String[] ns2=normalizeStrasse(s2);
 		if(!(ns1[0].matches(ns2[0]))){
@@ -145,7 +146,7 @@ public class KontaktMatcher {
 		}
 		return true;
 	}
-	public static String[] normalizeStrasse(final String strasse){
+	static String[] normalizeStrasse(final String strasse){
 		String[] m1=StringTool.normalizeCase(strasse).split("\\s");
 		int m1l=m1.length;
 		StringBuilder m2=new StringBuilder();
@@ -166,7 +167,7 @@ public class KontaktMatcher {
 		
 	}
 	
-	public static void addAddress(final Kontakt k, final String str, final String plz, final String ort){
+	static void addAddress(final Kontakt k, final String str, final String plz, final String ort){
 		Anschrift an=k.getAnschrift();
 		if(!StringTool.isNothing(str)){
 			an.setStrasse(str);
@@ -178,5 +179,44 @@ public class KontaktMatcher {
 			an.setOrt(ort);
 		}
 		k.setAnschrift(an);
+	}
+
+	/**
+	 * Decide whether a person is identical tio given personal data. Normalize all names:
+	 * Ulmlaute will be converted, ccents will be eliminatet and double names will be reduced
+	 * to their first part. 
+	 * @return true if the given person seems to be the same tha the given personalia
+	 */
+	public static boolean isSame(Person a, String nameB, String firstnameB, String gebDatB){
+		try{
+			String name1=simpleName(StringTool.unambiguify(a.getName()));
+			String name2=simpleName(StringTool.unambiguify(nameB));
+			if(name1.equals(name2)){
+				String vorname1=simpleName(StringTool.unambiguify(a.getVorname()));
+				String vorname2=simpleName(StringTool.unambiguify(firstnameB));
+				if(vorname1.equals(vorname2)){
+					String gd1=a.getGeburtsdatum();
+					if(StringTool.isNothing(gd1)){
+						return true;
+					}
+					if(StringTool.isNothing(gebDatB)){
+						return true;
+					}
+					String gd2=new TimeTool(gebDatB).toString(TimeTool.DATE_GER);
+					if(gd1.equals(gd2)){
+						return true;
+					}
+				}
+			}
+			
+		}catch(Throwable t){
+			ExHandler.handle(t);
+
+		}
+		return false;
+	}
+	static String simpleName(String name){
+		String[] ret=name.split("\\s*[- ]\\s*");
+		return ret[0];
 	}
 }
