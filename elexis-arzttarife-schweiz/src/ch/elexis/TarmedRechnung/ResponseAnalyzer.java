@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 3358 2007-11-20 13:50:09Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 3409 2007-12-02 10:35:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -82,16 +82,20 @@ public class ResponseAnalyzer {
 		ret.append("Intermediär: ").append(eIntermediate.getAttributeValue("ean_party")).append("\n");
 		ret.append("Empfänger: ").append(eRecipient.getAttributeValue("ean_party")).append("\n");
 		Element eInvoice=eRoot.getChild("invoice",ns);
-		String rnId=eInvoice.getAttributeValue("invoice_id");
-		int tr=rnId.lastIndexOf('0');
-		
-		
-		if(tr==-1){
-			rnNr=rnId;
+		int tr=-1;
+		if(eInvoice!=null){
+			String rnId=eInvoice.getAttributeValue("invoice_id");
+			tr=rnId.lastIndexOf('0');
+			if(tr==-1){
+				rnNr=rnId;
+			}else{
+				String patNr=Integer.toString(Integer.parseInt(rnId.substring(0, tr))); // eliminate leading zeroes
+				rnNr=rnId.substring(tr+1);
+			}
 		}else{
-			String patNr=Integer.toString(Integer.parseInt(rnId.substring(0, tr))); // eliminate leading zeroes
-			rnNr=rnId.substring(tr+1);
+			rnNr="0";
 		}
+		
 		rn=Rechnung.getFromNr(rnNr);
 		if(rn==null){
 			ret.append("Die in der Antwort genannte Rechnung ist nicht bekannt!");
