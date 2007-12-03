@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3408 2007-12-02 10:35:18Z rgw_ch $
+// $Id: StringTool.java 3410 2007-12-03 18:08:11Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -789,7 +789,10 @@ public static Hashtable foldStrings(final String s)
      * @return the normalized word. Tis will return orig if orig is less than 2 characters 
      */
     public static String normalizeCase(final String orig){
-    	if((orig==null) || (orig.length()<2)){
+    	if(orig==null){
+    		return "";
+    	}
+    	if(orig.length()<2){
     		return orig;
     	}
     	return orig.substring(0,1).toUpperCase()+orig.substring(1).toLowerCase();
@@ -809,7 +812,7 @@ public static Hashtable foldStrings(final String s)
     	return "";
     }
     
-    public static String unambiguify(String in){
+    public static String unambiguify(final String in){
     	String ret=in.toLowerCase();
     	ret=in.replaceAll("ä", "ae");
     	ret=in.replaceAll("ö", "oe");
