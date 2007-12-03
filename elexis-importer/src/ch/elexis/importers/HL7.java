@@ -1,7 +1,7 @@
 /**
  * (c) 2007 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3407 2007-12-02 10:35:11Z rgw_ch $
+ * $Id: HL7.java 3411 2007-12-03 18:08:22Z rgw_ch $
  */
  
 
@@ -450,6 +450,68 @@ public class HL7 {
 			return "";
 		}
 	}
+	
+	/**
+	 * Extract all comments (NTE), global and OBX comments
+	 * @return a string containing all comments, separated by newlines
+	 */
+	public String getComments() {
+		StringBuffer comments = new StringBuffer();
+
+		for (int i = 0; i < lines.length; i++) {
+			if (lines[i].startsWith("NTE")) {
+				String[] nte = lines[i].split(separator);
+				if (nte.length > 3) {
+					String rawComment;
+					String source = nte[1];
+					if (source.matches("^0*$")) {
+						// independent comment
+						rawComment = nte[3];
+					} else {
+						// OBX comment
+						String obxName = getItemNameForNTE(source);
+						rawComment = obxName + ": " + nte[3];
+					}
+					comments.append(rawComment);
+					comments.append("\n");
+				}
+			}
+		}
+		
+		return comments.toString();
+	}
+	
+	/**
+	 * Get Item Name in OBX corresponding to NTE
+	 * Helper method for getComments()
+	 * @param source
+	 * @return the item's name, or "" if not found
+	 */
+	private String getItemNameForNTE(final String source) {
+		String[] obx;
+		int i = findNext("OBX", 0);
+		while (i != -1) {
+			obx = lines[i].split(separator);
+			if (obx[1].equals(source)) {
+				String raw = obx[3];
+				String[] split = raw.split("\\^");
+				String obxName;
+				if (split.length > 1) {
+					obxName =  split[1];
+				} else {
+					obxName = split[0];
+				}
+				
+				return obxName;
+			}
+			
+			i = findNext("OBX", i + 1);
+		}
+		
+		// not found
+		return "";
+	}
+	
 
 	public static TimeTool makeTime(final String datestring){
 		String date=datestring.substring(0,8);

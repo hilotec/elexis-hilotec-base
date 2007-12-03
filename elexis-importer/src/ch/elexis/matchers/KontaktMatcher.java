@@ -24,8 +24,23 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
+/**
+ * Class to match personal data to contacts
+ * @author gerry
+ *
+ */
 public class KontaktMatcher {
 
+	/**
+	 * Find the organization mathcing the given parameters
+	 * @param name 
+	 * @param strasse
+	 * @param plz
+	 * @param ort
+	 * @param createIfNotExists
+	 * @return the organization that matches best the given parameters or null if no
+	 * such organization was found
+	 */
 	public static Organisation findOrganisation(final String name, final String strasse, final String plz, final String ort, final boolean createIfNotExists){
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		qbe.add("Name", "=", name);
@@ -43,6 +58,19 @@ public class KontaktMatcher {
 		return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
 	}
 	
+	/**
+	 * find the Person matching the given parameters
+	 * @param name
+	 * @param vorname
+	 * @param gebdat
+	 * @param gender
+	 * @param strasse
+	 * @param plz
+	 * @param ort
+	 * @param natel
+	 * @param createIfNotExists
+	 * @return the found person or null if no matching person wasd found
+	 */
 	public static Person findPerson(final String name, final String vorname, final String gebdat,
 				final String gender, final String strasse, final String plz, final String ort,
 				final String natel, final boolean createIfNotExists){
@@ -52,10 +80,27 @@ public class KontaktMatcher {
 		String birthdate="";
 		
 		if(!StringTool.isNothing(name)){
-			qbe.add("Name", "=", StringTool.normalizeCase(name));
+			qbe.startGroup();
+			qbe.add("Name", "LIKE", name+"%",true);
+			String un=StringTool.unambiguify(name);
+			if(!un.equalsIgnoreCase(name)){
+				qbe.or();
+				qbe.add("Name", "LIKE", un+"%",true);
+			}
+			qbe.endGroup();
+			qbe.and();
 		}
+		
 		if(!StringTool.isNothing(vorname)){
-			qbe.add("Vorname", "LIKE", StringTool.normalizeCase(vorname)+"%");
+			qbe.startGroup();
+			qbe.add("Vorname", "LIKE", vorname+"%",true);
+			String un=StringTool.unambiguify(vorname);
+			if(!un.equalsIgnoreCase(vorname)){
+				qbe.or();
+				qbe.add("Vorname", "LIKE", un+"%",true);
+			}
+			qbe.endGroup();
+			qbe.and();
 		}
 		if(!StringTool.isNothing(gebdat)){
 			TimeTool tt=new TimeTool();
@@ -66,7 +111,7 @@ public class KontaktMatcher {
 		}
 		if(!StringTool.isNothing(gender)){
 			String gl=gender.toLowerCase();
-			if(gender.startsWith("f") || gender.startsWith("w")){
+			if(gl.startsWith("f") || gl.startsWith("w")){
 				sex="w";
 			}else if(gender.startsWith("m")){
 				sex="m";
@@ -89,7 +134,16 @@ public class KontaktMatcher {
 		}
 		return (Person)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort,natel);
 	}
-	
+
+	/**
+	 * Given an array of Kontakt, find the one that matches the given address best
+	 * @param kk
+	 * @param strasse
+	 * @param plz
+	 * @param ort
+	 * @param natel
+	 * @return
+	 */
 	public static Kontakt matchAddress(final Kontakt[] kk, final String strasse, final String plz, final String ort,
 			final String natel){
 		
@@ -182,12 +236,12 @@ public class KontaktMatcher {
 	}
 
 	/**
-	 * Decide whether a person is identical tio given personal data. Normalize all names:
+	 * Decide whether a person is identical to given personal data. Normalize all names:
 	 * Ulmlaute will be converted, ccents will be eliminatet and double names will be reduced
 	 * to their first part. 
 	 * @return true if the given person seems to be the same tha the given personalia
 	 */
-	public static boolean isSame(Person a, String nameB, String firstnameB, String gebDatB){
+	public static boolean isSame(final Person a, final String nameB, final String firstnameB, final String gebDatB){
 		try{
 			String name1=simpleName(StringTool.unambiguify(a.getName()));
 			String name2=simpleName(StringTool.unambiguify(nameB));
@@ -215,7 +269,7 @@ public class KontaktMatcher {
 		}
 		return false;
 	}
-	static String simpleName(String name){
+	static String simpleName(final String name){
 		String[] ret=name.split("\\s*[- ]\\s*");
 		return ret[0];
 	}
