@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3410 2007-12-03 18:08:11Z rgw_ch $
+// $Id: StringTool.java 3413 2007-12-04 14:59:03Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -814,14 +814,14 @@ public static Hashtable foldStrings(final String s)
     
     public static String unambiguify(final String in){
     	String ret=in.toLowerCase();
-    	ret=in.replaceAll("ä", "ae");
-    	ret=in.replaceAll("ö", "oe");
-    	ret=in.replaceAll("ü", "ue");
-    	ret=in.replaceAll("é", "e");
-    	ret=in.replaceAll("è", "e");
-    	ret=in.replaceAll("à", "a");
-    	ret=in.replaceAll("â", "a");
-    	ret=in.replaceAll("ê", "e");
+    	ret=ret.replaceAll("ä", "ae");
+    	ret=ret.replaceAll("ö", "oe");
+    	ret=ret.replaceAll("ü", "ue");
+    	ret=ret.replaceAll("é", "e");
+    	ret=ret.replaceAll("è", "e");
+    	ret=ret.replaceAll("à", "a");
+    	ret=ret.replaceAll("â", "a");
+    	ret=ret.replaceAll("ê", "e");
     	return ret;
     }
     /** 
