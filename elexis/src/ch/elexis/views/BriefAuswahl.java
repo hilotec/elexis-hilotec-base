@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 2570 2007-06-23 11:09:32Z rgw_ch $
+ *    $Id: BriefAuswahl.java 3412 2007-12-04 13:33:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -39,17 +39,27 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
-import ch.elexis.data.*;
+import ch.elexis.data.Brief;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.dialogs.DocumentSelectDialog;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.*;
+import ch.elexis.util.CommonViewer;
+import ch.elexis.util.DefaultContentProvider;
+import ch.elexis.util.DefaultControlFieldProvider;
+import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SimpleWidgetProvider;
+import ch.elexis.util.ViewMenus;
+import ch.elexis.util.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
 
 public class BriefAuswahl extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2{
 	public final static String ID="ch.elexis.BriefAuswahlView";
-	private FormToolkit tk;
+	private final FormToolkit tk;
 	private Form form;
-	private Action briefNeuAction,briefLadenAction, importAction, editNameAction;
+	private Action briefNeuAction,briefLadenAction, editNameAction;
 	private Action deleteAction;
 	private ViewMenus menus;
 	CTabFolder ctab;
@@ -60,7 +70,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 	}
 
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(final Composite parent){
 		StringBuilder sb=new StringBuilder();
 		sb.append("Alle,").append(Brief.UNKNOWN).append(",").append(Brief.AUZ).append(",")
 			.append(Brief.RP).append(",").append(Brief.LABOR);
@@ -87,13 +97,13 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 		ctab.addSelectionListener(new SelectionAdapter(){
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				relabel();
 			}
 			
 		});
 		GlobalEvents.getInstance().addActivationListener(this,this);
-		menus.createMenu(briefNeuAction,briefLadenAction,importAction,editNameAction,deleteAction);
+		menus.createMenu(briefNeuAction,briefLadenAction,editNameAction,deleteAction);
 		menus.createToolbar(briefNeuAction,briefLadenAction,deleteAction);
 		ctab.setSelection(0);
 		relabel();
@@ -126,7 +136,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 		}
 		
 	}
-	public void selectionEvent(PersistentObject obj) {
+	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
 			relabel();
 		}
@@ -135,17 +145,18 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 	
 	
 	class sPage extends Composite{
-		private CommonViewer cv;
-		private ViewerConfigurer vc;
+		private final CommonViewer cv;
+		private final ViewerConfigurer vc;
 		
-		sPage(Composite parent,final String cat){
+		sPage(final Composite parent,final String cat){
 			super(parent,SWT.NONE);
 			setLayout(new GridLayout());
 			cv=new CommonViewer();
 			vc=new ViewerConfigurer(
 				new DefaultContentProvider(cv,Brief.class){
 
-					public Object[] getElements(Object inputElement) {
+					@Override
+					public Object[] getElements(final Object inputElement) {
 						Patient actPat=GlobalEvents.getSelectedPatient();
 						if(actPat!=null){
 							Query<Brief> qbe=new Query<Brief>(Brief.class);
@@ -174,11 +185,11 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 			Button bLoad=tk.createButton(this,"Laden",SWT.PUSH);
 			bLoad.addSelectionListener(new SelectionAdapter(){
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e) {
 					try{
 						TextView tv=(TextView)getViewSite().getPage().showView(TextView.ID);
 						Object[] o=cv.getSelection();
-						if(o!=null && o.length>0){
+						if((o!=null) && (o.length>0)){
 							Brief brief=(Brief)o[0];
 							if(tv.openDocument(brief)==false){
 								SWTHelper.alert("Fehler","Konnte Text nicht laden");
@@ -198,6 +209,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 	}
 	private void makeActions(){
 		briefNeuAction=new Action("Neu..."){
+			@Override
 			public void run(){
 				TextView tv=null;
 				try{
@@ -219,6 +231,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 			}
 		};
 		briefLadenAction=new Action("Öffnen"){
+			@Override
 			public void run(){
 				try {
 					TextView tv=(TextView)getViewSite().getPage().showView(TextView.ID);
@@ -226,7 +239,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 					if(sel!=null){
 						CommonViewer cv=(CommonViewer)sel.getData();
 						Object[] o=cv.getSelection();
-						if(o!=null && o.length>0){
+						if((o!=null) && (o.length>0)){
 							Brief brief=(Brief)o[0];
 							if(tv.openDocument(brief)==false){
 								SWTHelper.alert("Fehler","Konnte Text nicht laden");
@@ -243,12 +256,13 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 			}
 		};
 		deleteAction=new Action("Löschen"){
+			@Override
 			public void run(){
 				CTabItem sel=ctab.getSelection();
 				if(sel!=null){
 					CommonViewer cv=(CommonViewer)sel.getData();
 					Object[] o=cv.getSelection();
-					if(o!=null && o.length>0){
+					if((o!=null) && (o.length>0)){
 						Brief brief=(Brief)o[0];
 						brief.delete();
 					}
@@ -258,12 +272,13 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 			}
 		};
 		editNameAction=new Action("Umbenennen..."){
+			@Override
 			public void run(){
 				CTabItem sel=ctab.getSelection();
 				if(sel!=null){
 					CommonViewer cv=(CommonViewer)sel.getData();
 					Object[] o=cv.getSelection();
-					if(o!=null && o.length>0){
+					if((o!=null) && (o.length>0)){
 						Brief brief=(Brief)o[0];
 						InputDialog id=new InputDialog(getViewSite().getShell(),"Neuer Betreff","Geben Sie bitte den neuen Betreff für das Dokument ein",brief.getBetreff(),null);
 						if(id.open()==Dialog.OK){
@@ -274,11 +289,13 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 				}
 			}
 		};
+		/*
 		importAction=new Action("Importieren..."){
 			public void run(){
 				
 			}
 		};
+		*/
         briefLadenAction.setImageDescriptor(Hub.getImageDescriptor("rsc/file.gif"));
         briefLadenAction.setToolTipText("Dokument zum Bearbeiten öffnen");
         briefNeuAction.setImageDescriptor(Hub.getImageDescriptor("rsc/fileneu.gif"));
@@ -289,12 +306,12 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
         deleteAction.setToolTipText("Dokument löschen");
 	}
 
-	public void activation(boolean mode) {
+	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void visible(boolean mode) {
+	public void visible(final boolean mode) {
 		if(mode==true){
 			selectionEvent(GlobalEvents.getInstance().getSelectedObject(Patient.class));
 			GlobalEvents.getInstance().addSelectionListener(this);
@@ -304,7 +321,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 		
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(final Class template) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -317,7 +334,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
+	public void doSave(final IProgressMonitor monitor) { /* leer */ }
 	public void doSaveAs() { /* leer */}
 	public boolean isDirty() {
 		return true;
