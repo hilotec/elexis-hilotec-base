@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnFilterDialog.java 3319 2007-11-06 18:44:10Z rgw_ch $
+ * $Id: RnFilterDialog.java 3415 2007-12-05 08:23:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -28,8 +28,6 @@ import ch.elexis.util.DateInput;
 import ch.elexis.util.Money;
 import ch.elexis.util.MoneyInput;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class RnFilterDialog extends TitleAreaDialog {
@@ -53,7 +51,7 @@ public class RnFilterDialog extends TitleAreaDialog {
 		new Label(ret,SWT.NONE).setText("Rechnungsdatum");
 		diRnVon=new DateInput(ret,FROM);
 		diRnBis=new DateInput(ret,UNTIL);
-		new Label(ret,SWT.NONE).setText("Satusdatum");
+		new Label(ret,SWT.NONE).setText("Statusdatum");
 		diStatVon=new DateInput(ret,FROM);
 		diStatBis=new DateInput(ret,UNTIL);
 		return ret;
