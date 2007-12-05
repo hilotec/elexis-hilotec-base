@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 3409 2007-12-02 10:35:25Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 3414 2007-12-05 05:57:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -22,6 +22,7 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
@@ -126,7 +127,8 @@ public class ResponseAnalyzer {
 					ret.append(eError.getAttributeValue("minor")).append("->");
 					ret.append(eError.getAttributeValue("error")).append("\n");
 				}
-				resume.add(new Result<String>(Log.ERRORS,1,"Rejected",ret.toString(),true));	
+				resume.add(new Result<String>(Log.ERRORS,1,"Rejected",ret.toString(),true));
+				rn.reject(REJECTCODE.REJECTED_BY_PEER, explanation);
 				
 			}else if(status.equals("calledin")){
 				ret.append("Weitere Informationen angefordert.\n").append(explanation).append("\n");
