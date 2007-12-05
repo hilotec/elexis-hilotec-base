@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DynamicListDisplay.java 3124 2007-09-09 09:40:44Z rgw_ch $
+ * $Id: DynamicListDisplay.java 3416 2007-12-05 16:21:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -47,6 +47,7 @@ import ch.elexis.data.PersistentObject;
  * Optional kann ein LabelProvider gestzt werden.
  * @deprecated use ListDisplay
  */
+@Deprecated
 public class DynamicListDisplay extends Composite {
 	public interface DLDListener {
 		public boolean dropped(PersistentObject dropped);
@@ -56,18 +57,18 @@ public class DynamicListDisplay extends Composite {
 	//private Hyperlink hl, hPrint;
 	private IHyperlinkListener listen;
 	protected List list;
-    private ArrayList<PersistentObject> objects;
+    private final ArrayList<PersistentObject> objects;
     private DLDListener dlisten;
-    private Composite cLinks;
-	private FormToolkit tk=Desk.theToolkit;
-	private DragSource ds;
+    private final Composite cLinks;
+	private final FormToolkit tk=Desk.theToolkit;
+	private final DragSource ds;
 	
 	private LabelProvider labelProvider = null;
     
-	public void setDLDListener(DLDListener dld){
+	public void setDLDListener(final DLDListener dld){
 		dlisten=dld;
 	}
-	public DynamicListDisplay(Composite parent, int flags,DLDListener dld){
+	public DynamicListDisplay(final Composite parent, final int flags,final DLDListener dld){
 		super(parent,flags);
         objects=new ArrayList<PersistentObject>();
         dlisten=dld;
@@ -83,15 +84,19 @@ public class DynamicListDisplay extends Composite {
 		ds.setTransfer(types);
 		ds.addDragListener(new DragSourceAdapter(){
 			@Override
-			public void dragSetData(DragSourceEvent event) {
+			public void dragSetData(final DragSourceEvent event) {
 				PersistentObject po=getSelection();
 				event.data=po.storeToString();
 			}
 
 			@Override
-			public void dragStart(DragSourceEvent event) {
+			public void dragStart(final DragSourceEvent event) {
 				PersistentObject po=getSelection();
-				event.doit=po.isDragOK();
+				if(po==null){
+					event.doit=false;
+				}else{
+					event.doit=po.isDragOK();
+				}
 			}
 			
 		});
@@ -99,7 +104,8 @@ public class DynamicListDisplay extends Composite {
 		DropTarget dt=new DropTarget(this,DND.DROP_COPY);
         dt.setTransfer(types);
 		dt.addDropListener(new DropTargetAdapter(){
-			public void dragEnter(DropTargetEvent event) {
+			@Override
+			public void dragEnter(final DropTargetEvent event) {
 				if(dlisten==null){
 					event.detail=DND.DROP_NONE;
 				}else{
@@ -107,7 +113,7 @@ public class DynamicListDisplay extends Composite {
 				}
 			}
 			@Override
-			public void drop(DropTargetEvent event) {
+			public void drop(final DropTargetEvent event) {
 				if(dlisten!=null){
 					String drp=(String)event.data;
 					System.out.println(drp);
@@ -121,10 +127,11 @@ public class DynamicListDisplay extends Composite {
 			
 		});
 	}
-	public void addHyperlinks(String... titles){
+	public void addHyperlinks(final String... titles){
 		if(listen==null){
 			listen=new HyperlinkAdapter(){
-				public void linkActivated(HyperlinkEvent e) {
+				@Override
+				public void linkActivated(final HyperlinkEvent e) {
 					if(dlisten!=null){
 						dlisten.hyperlinkActivated(e.getLabel());
 					}
@@ -140,7 +147,7 @@ public class DynamicListDisplay extends Composite {
 	 * Ein Objekt der Liste hinzufügen
 	 * @param item das Objekt. Muss getLabel() implementieren
 	 */
-	public void add(PersistentObject item){
+	public void add(final PersistentObject item){
         objects.add(item);
 		list.add(getLabel(item));
 	}
@@ -149,7 +156,7 @@ public class DynamicListDisplay extends Composite {
 	 * Ein Objekt aus der Liste entfernen
 	 * @param item das Objekt
 	 */
-	public void remove(PersistentObject item){
+	public void remove(final PersistentObject item){
         objects.remove(item);
 		list.remove(getLabel(item));
 	}
@@ -159,7 +166,8 @@ public class DynamicListDisplay extends Composite {
 		objects.clear();
 	}
 	/** Ein Kontextmenu für die Liste sezen */
-    public void setMenu(Menu m){
+    @Override
+	public void setMenu(final Menu m){
         list.setMenu(m);
     }
     
@@ -168,7 +176,7 @@ public class DynamicListDisplay extends Composite {
      */
     public PersistentObject getSelection(){
         String[] obj=list.getSelection();
-        if(obj==null || obj.length==0){
+        if((obj==null) || (obj.length==0)){
             return null;
         }
         for(PersistentObject po:objects){
@@ -182,18 +190,18 @@ public class DynamicListDisplay extends Composite {
     public java.util.List<PersistentObject> getAll(){
     	return objects;
     }
-    public void addListener(SelectionListener l){
+    public void addListener(final SelectionListener l){
     	list.addSelectionListener(l);
     }
-    public void removeListener(SelectionListener l){
+    public void removeListener(final SelectionListener l){
     	list.removeSelectionListener(l);
     }
     
-    public void setLabelProvider(LabelProvider labelProvider) {
+    public void setLabelProvider(final LabelProvider labelProvider) {
     	this.labelProvider = labelProvider;
     }
     
-    private String getLabel(PersistentObject po) {
+    private String getLabel(final PersistentObject po) {
     	if (labelProvider != null) {
     		return labelProvider.getText(po);
     	} else {
