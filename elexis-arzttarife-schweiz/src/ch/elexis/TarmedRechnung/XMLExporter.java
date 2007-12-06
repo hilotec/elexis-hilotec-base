@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3417 2007-12-06 06:13:46Z rgw_ch $
+ * $Id: XMLExporter.java 3418 2007-12-06 08:58:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -612,7 +612,11 @@ public class XMLExporter implements IRnOutputter {
 		Element eTiers=null;
 		if(tiers.equals("TG")){								
 			eTiers=new Element("tiers_garant",ns);												//  11020
-			eTiers.setAttribute("payment_periode","P"+actMandant.getInfoString(ta.RNFRIST)+"D");		//  11021
+			String paymentPeriode=actMandant.getInfoString(ta.RNFRIST);
+			if(StringTool.isNothing(paymentPeriode)){
+				paymentPeriode="30";
+			}
+			eTiers.setAttribute("payment_periode","P"+paymentPeriode+"D");		//  11021
 		}else{
 			eTiers=new Element("tiers_payant",ns);												// 11260
 			// to simplify things for now we do no accept modifications
