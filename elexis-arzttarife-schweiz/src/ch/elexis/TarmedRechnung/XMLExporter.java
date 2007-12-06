@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3360 2007-11-21 15:36:04Z rgw_ch $
+ * $Id: XMLExporter.java 3417 2007-12-06 06:13:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -96,24 +96,49 @@ public class XMLExporter implements IRnOutputter {
 	String diagnosen, dgsys;
 	Rechnung rn;
 	
-	private final Money mTarmed=new Money();
-	private final Money mTarmedTL=new Money();
-	private final Money mTarmedAL=new Money();
-	private final Money mKant=new Money();
-	private final Money mUebrige=new Money();
-	private final Money mAnalysen=new Money();
-	private final Money mMigel=new Money();
-	private final Money mPhysio=new Money();
-	private final Money mMedikament=new Money();
-	private final Money mTotal=new Money();
-	private Money mPaid=new Money();
-	private Money mDue=new Money();
+	private Money mTarmed;
+	private Money mTarmedTL;
+	private Money mTarmedAL;
+	private Money mKant;
+	private Money mUebrige;
+	private Money mAnalysen;
+	private Money mMigel;
+	private Money mPhysio;
+	private Money mMedikament;
+	private Money mTotal;
+	private Money mPaid;
+	private Money mDue;
 	static TarmedACL ta;
 	private String outputDir;
 	private static final String PREFIX="TarmedRn:";
 	
+	public void clear(){
+		actFall=null;
+		actPatient=null;
+		actMandant=null;
+		tpTarmedTL=0;
+		tpTarmedAL=0;
+		diagnosen="";
+		dgsys="";
+		rn=null;
+		
+		mTarmed=new Money();
+		mTarmedTL=new Money();
+		mTarmedAL=new Money();
+		mKant=new Money();
+		mUebrige=new Money();
+		mAnalysen=new Money();
+		mMigel=new Money();
+		mPhysio=new Money();
+		mMedikament=new Money();
+		mTotal=new Money();
+		mPaid=new Money();
+		mDue=new Money();
+	}
+	
 	public XMLExporter() {
-		ta=TarmedACL.getInstance();	
+		ta=TarmedACL.getInstance();
+		clear();
 	}
 
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn) {
@@ -158,8 +183,7 @@ public class XMLExporter implements IRnOutputter {
 	 */
 	@SuppressWarnings("unchecked")
 	public Document doExport(final Rechnung rechnung, final String dest, final IRnOutputter.TYPE type, final boolean doVerify) {
-		
-		
+		clear();
 		Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XMLSchema-instance");
 		// Namespace nsschema=Namespace.getNamespace("schemaLocation","http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd");
 		Namespace nsdef=Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD");
