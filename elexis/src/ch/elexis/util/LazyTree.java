@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTree.java 1300 2006-11-20 17:21:03Z rgw_ch $
+ * $Id: LazyTree.java 3419 2007-12-06 20:36:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -68,6 +68,11 @@ public class LazyTree<T> extends Tree {
 		if((first==null) && (listen!=null)){
 			listen.fetchChildren(this);
 		}
+	}
+
+	public Tree<T> getFirstChild() {
+		loadChildren();
+		return first;
 	}
 
 	public interface LazyTreeListener{

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTreeLoader.java 2871 2007-07-23 08:43:55Z rgw_ch $
+ * $Id: LazyTreeLoader.java 3419 2007-12-06 20:36:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -71,6 +71,9 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 	        if(monitor!=null){
 	        	monitor.worked(1);
 	        }
+	    }
+	    if(filter!=null){
+	    	((Tree)result).setFilter(filter);
 	    }
         return Status.OK_STATUS;
 	}
