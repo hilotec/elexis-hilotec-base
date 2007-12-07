@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3237 2007-10-04 10:25:25Z rgw_ch $
+ * $Id: Artikel.java 3421 2007-12-07 07:35:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -35,7 +35,7 @@ public class Artikel extends VerrechenbarAdapter{
 	}
 	static{
 		addMapping(TABLENAME,"LieferantID","Name","Maxbestand","Minbestand",
-				"Istbestand","EK_Preis","VK_Preis","Typ","ExtInfo",
+				"Istbestand","EK_Preis","VK_Preis","Typ","ExtInfo","EAN",
 				"SubID","Eigenname=Name_intern","Codeclass","Klasse");
 	}
     /**

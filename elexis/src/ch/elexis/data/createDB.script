@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3233 2007-10-01 06:42:36Z rgw_ch $
+# * $Id: createDB.script 3421 2007-12-07 07:35:22Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -116,6 +116,7 @@ CREATE INDEX i4 on BEHANDLUNGEN (FallID);
 CREATE TABLE ARTIKEL(
 	ID				VARCHAR(25) primary key,		# UUID
 	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
+	EAN				VARCHAR(15),
 	SubID			VARCHAR(20),
 	LieferantID		VARCHAR(25),
 	Klasse			VARCHAR(80),
@@ -523,6 +524,6 @@ CREATE INDEX XIDIDX1 on XID(domain);
 CREATE INDEX XIDIDX2 on XID(domain_id);
 CREATE INDEX XIDIDX3 on XID(object);
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.2');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.3');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.1.1');
 
