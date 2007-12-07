@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3311 2007-11-05 17:58:56Z rgw_ch $
+ * $Id: RnActions.java 3424 2007-12-07 16:24:25Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -104,7 +104,7 @@ public class RnActions {
 				for(Rechnung rn:list){
 					rn.setStatus(RnStatus.MAHNUNG_1);
 					if(!betrag.isZero()){
-						rn.addZahlung(betrag.multiply(-1.0), "Mahngebühr 1. Mahnung");
+						rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 1. Mahnung");
 					}
 				}
 				// 1. Mahnung zu 2. Mahnung
@@ -125,7 +125,7 @@ public class RnActions {
 				for(Rechnung rn:list){
 					rn.setStatus(RnStatus.MAHNUNG_2);
 					if(!betrag.isZero()){
-						rn.addZahlung(betrag.multiply(-1.0), "Mahngebühr 2. Mahnung");
+						rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 2. Mahnung");
 					}
 				}
 				// 2. Mahnung zu 3. Mahnung
@@ -146,7 +146,7 @@ public class RnActions {
 				for(Rechnung rn:list){
 					rn.setStatus(RnStatus.MAHNUNG_3);
 					if(!betrag.isZero()){
-						rn.addZahlung(betrag.multiply(-1.0), "Mahngebühr 2. Mahnung");
+						rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 2. Mahnung");
 					}
 				}
 				view.cfp.clearValues();
