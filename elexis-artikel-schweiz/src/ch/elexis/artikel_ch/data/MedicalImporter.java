@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalImporter.java 3210 2007-09-26 16:05:52Z rgw_ch $
+ *  $Id: MedicalImporter.java 3422 2007-12-07 07:35:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -87,6 +87,7 @@ public class MedicalImporter extends ImporterPage {
 					a.set("SubID", pk);
 				}
 			}
+			a.set("EAN", ean);
 			Hashtable ext=a.getHashtable("ExtInfo");
 			String[] fields={"EK_Preis","VK_Preis"};
 			a.set(fields,ek,vk);

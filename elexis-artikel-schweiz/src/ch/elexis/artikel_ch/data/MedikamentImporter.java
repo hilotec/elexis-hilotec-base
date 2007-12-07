@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentImporter.java 3050 2007-08-31 15:55:11Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3422 2007-12-07 07:35:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -83,6 +83,7 @@ public class MedikamentImporter extends ImporterPage {
 					a.set("SubID", pk);
 				}
 			}
+			a.set("EAN",ean);
 			Hashtable ext=a.getHashtable("ExtInfo");
 			String[] fields={"EK_Preis","VK_Preis"};
 			a.set(fields,ek,vk);
