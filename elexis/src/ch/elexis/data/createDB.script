@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3421 2007-12-07 07:35:22Z rgw_ch $
+# * $Id: createDB.script 3425 2007-12-08 18:47:15Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -88,9 +88,9 @@ CREATE TABLE FAELLE(
 	Diagnosen		VARCHAR(80),					# diagnoses related to this case
 	DatumVon		CHAR(8),						# date of beginning
 	DatumBis		CHAR(8),						# end date
-	Bezeichnung		VARCHAR(20),					# title of the case
-	Grund			VARCHAR(20),					# reason for treatment
-	Gesetz			VARCHAR(10),					# deprecated, do not use
+	Bezeichnung		VARCHAR(50),					# title of the case
+	Grund			VARCHAR(50),					# reason for treatment
+	Gesetz			VARCHAR(20),					# deprecated, do not use
 	Status			VARCHAR(80),					# deprecared, do not use
 	ExtInfo			BLOB
 );
@@ -525,5 +525,5 @@ CREATE INDEX XIDIDX2 on XID(domain_id);
 CREATE INDEX XIDIDX3 on XID(object);
 
 INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.3');
-INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.1.1');
+INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.2.0');
 
