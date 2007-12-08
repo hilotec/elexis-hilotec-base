@@ -464,7 +464,8 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			}
 			@Override
 			public void run(){
-				new TerminListeDialog(getViewSite().getShell()).open();
+				TerminListeDialog tld=new TerminListeDialog(getViewSite().getShell());
+				tld.open();
 			}
 		};
 	

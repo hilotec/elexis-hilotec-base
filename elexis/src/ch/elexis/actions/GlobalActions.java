@@ -8,23 +8,38 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 3164 2007-09-16 10:45:07Z rgw_ch $
+ * $Id: GlobalActions.java 3427 2007-12-08 23:30:10Z rgw_ch $
  *******************************************************************************/
 
 
 package ch.elexis.actions;
 
-import static ch.elexis.admin.AccessControlDefaults.*;
+import static ch.elexis.admin.AccessControlDefaults.AC_ABOUT;
+import static ch.elexis.admin.AccessControlDefaults.AC_CHANGEMANDANT;
+import static ch.elexis.admin.AccessControlDefaults.AC_CONNECT;
+import static ch.elexis.admin.AccessControlDefaults.AC_EXIT;
+import static ch.elexis.admin.AccessControlDefaults.AC_HELP;
+import static ch.elexis.admin.AccessControlDefaults.AC_IMORT;
+import static ch.elexis.admin.AccessControlDefaults.AC_LOGIN;
+import static ch.elexis.admin.AccessControlDefaults.AC_NEWWINDOW;
+import static ch.elexis.admin.AccessControlDefaults.AC_PREFS;
+import static ch.elexis.admin.AccessControlDefaults.AC_SHOWPERSPECTIVE;
+import static ch.elexis.admin.AccessControlDefaults.AC_SHOWVIEW;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -33,7 +48,10 @@ import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -43,13 +61,26 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.*;
-import ch.elexis.data.*;
+import ch.elexis.Desk;
+import ch.elexis.Hub;
+import ch.elexis.LoginDialog;
+import ch.elexis.PatientPerspektive;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.NeuerFallDialog;
 import ch.elexis.dialogs.SelectFallDialog;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.*;
+import ch.elexis.util.Importer;
+import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.TemplateDrucker;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.wizards.DBConnectWizard;
 import ch.rgw.tools.ExHandler;
@@ -83,7 +114,7 @@ public class GlobalActions {
 	public static Action printKontaktEtikette;
 	private static IWorkbenchHelpSystem help;
 	   
-    public GlobalActions(IWorkbenchWindow window){
+    public GlobalActions(final IWorkbenchWindow window){
     	if(Hub.mainActions!=null){
     		return;
     	}
@@ -111,7 +142,8 @@ public class GlobalActions {
         		setToolTipText(Messages.getString("GlobalActions.SavePerspectiveToolTip")); //$NON-NLS-1$
         		setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif")); //$NON-NLS-1$
         	}
-        	public void run(){
+        	@Override
+			public void run(){
         		mainWindow.getActivePage().savePerspective();
         	}
         };
@@ -122,7 +154,8 @@ public class GlobalActions {
         		setToolTipText("Handbuch öffnen");
         		
         	}
-        	public void run(){
+        	@Override
+			public void run(){
         		File base=new File(Hub.getBasePath()).getParentFile().getParentFile();
         		String book=base.getAbsolutePath()+File.separator+"elexis.pdf";
         		Program proggie=Program.findProgram(".pdf");
@@ -149,11 +182,12 @@ public class GlobalActions {
         homeAction=new Action(Messages.getString("GlobalActions.Home")){ //$NON-NLS-1$
         	{	setId("home"); //$NON-NLS-1$
         	 	setActionDefinitionId(Hub.COMMAND_PREFIX + "home"); 	 //$NON-NLS-1$
-        	 	setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_HOME)); //$NON-NLS-1$
+        	 	setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_HOME)); 
         	 	setToolTipText(Messages.getString("GlobalActions.HomeToolTip")); //$NON-NLS-1$
         	 	help.setHelp(this, "ch.elexis.globalactions.homeAction"); //$NON-NLS-1$
         	 }
-        	public void run(){
+        	@Override
+			public void run(){
         		//String perspektive=Hub.actUser.getInfoString("StartPerspektive");
         		String perspektive=Hub.localCfg.get(Hub.actUser+DEFAULTPERSPECTIVECFG, null);
     			if(StringTool.isNothing(perspektive)){
@@ -187,7 +221,8 @@ public class GlobalActions {
         		setId("start");
         		//setActionDefinitionId(Hub.COMMAND_PREFIX+"startPerspective");
         	}
-        	public void run(){
+        	@Override
+			public void run(){
         		IPerspectiveDescriptor p=mainWindow.getActivePage().getPerspective();
         		Hub.localCfg.set(Hub.actUser+DEFAULTPERSPECTIVECFG, p.getId());
         		//Hub.actUser.setInfoElement("StartPerspektive",p.getId());
@@ -197,7 +232,8 @@ public class GlobalActions {
         loginAction=new Action(Messages.getString("GlobalActions.Login")){ //$NON-NLS-1$
         	{setId("login"); //$NON-NLS-1$
         	 setActionDefinitionId(Hub.COMMAND_PREFIX + "login"); 	} //$NON-NLS-1$
-        	public void run(){
+        	@Override
+			public void run(){
         		try{
     				IWorkbenchWindow win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     				IWorkbenchWindow[] wins=PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -224,7 +260,8 @@ public class GlobalActions {
         importAction=new Action(Messages.getString("GlobalActions.Import")){ //$NON-NLS-1$
         	{	setId("import"); //$NON-NLS-1$
         		setActionDefinitionId(Hub.COMMAND_PREFIX+"import"); 	} //$NON-NLS-1$
-        	public void run(){
+        	@Override
+			public void run(){
         		//cnv.open();
         		Importer imp=new Importer(mainWindow.getShell(),"ch.elexis.FremdDatenImport"); //$NON-NLS-1$
         		imp.create();
@@ -251,7 +288,8 @@ public class GlobalActions {
         	{	setId("connectWizard"); //$NON-NLS-1$
         		setActionDefinitionId(Hub.COMMAND_PREFIX+"connectWizard"); //$NON-NLS-1$
         	}
-        	public void run(){
+        	@Override
+			public void run(){
     			WizardDialog wd=new WizardDialog(mainWindow.getShell(),new DBConnectWizard());
     			wd.open();
         	}
@@ -262,7 +300,8 @@ public class GlobalActions {
         	{	setId("changeMandant"); //$NON-NLS-1$
         		//setActionDefinitionId(Hub.COMMAND_PREFIX+"changeMandant"); //$NON-NLS-1$
         	}
-        	public void run(){
+        	@Override
+			public void run(){
         		ChangeMandantDialog cmd=new ChangeMandantDialog();
         		if(cmd.open()==org.eclipse.jface.dialogs.Dialog.OK){
         			Mandant n=cmd.result;
@@ -300,6 +339,7 @@ public class GlobalActions {
 				setToolTipText(Messages.getString("GlobalActions.PrintVersionedLabelToolTip"));
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_VERSIONEDETIKETTE));
 			}
+			@Override
 			public void run(){
 				PrinterData pd = getPrinterData("Etiketten");
 				if(pd!=null){
@@ -337,7 +377,7 @@ public class GlobalActions {
 		
 		printEtikette=new Action(Messages.getString("GlobalActions.PrintLabel")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PATIENTETIKETTE)); //$NON-NLS-1$
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PATIENTETIKETTE)); 
 				setToolTipText(Messages.getString("GlobalActions.PrintLabelToolTip")); //$NON-NLS-1$
 			}
 			@Override
@@ -407,6 +447,7 @@ public class GlobalActions {
 			{
 				setToolTipText(Messages.getString("GlobalActions.LockPerspectivesToolTip")); //$NON-NLS-1$
 			}
+			@Override
 			public void run() {
 				// store the current value in the user's configuration
 				Hub.userCfg.set(PreferenceConstants.USR_FIX_LAYOUT, fixLayoutAction.isChecked());
@@ -528,6 +569,7 @@ public class GlobalActions {
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
 				setToolTipText(Messages.getString("GlobalActions.NewKonsToolTip")); //$NON-NLS-1$
 			}
+			@Override
 			public void run(){
 				neueKons(null);
 			}
@@ -537,6 +579,7 @@ public class GlobalActions {
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor("new")); //$NON-NLS-1$
 				setToolTipText(Messages.getString("GlobalActions.NewCaseToolTip")); //$NON-NLS-1$
 			}
+			@Override
 			public void run(){
 				Patient pat=GlobalEvents.getSelectedPatient();
 				if(pat!=null){
@@ -553,7 +596,7 @@ public class GlobalActions {
      * Creates a new Konsultation object, with an optional initial text.
      * @param initialText the initial text to be set, or null if no initial text should be set.
      */
-    public static void neueKons(String initialText) {
+    public static void neueKons(final String initialText) {
 		Fall actFall=GlobalEvents.getSelectedFall();
 		if(actFall==null){
 			Patient actPatient=GlobalEvents.getSelectedPatient();
@@ -597,7 +640,7 @@ public class GlobalActions {
 		GlobalEvents.getInstance().fireSelectionEvent(n);
     }
     
-    protected void printAdr(Kontakt k) {
+    protected void printAdr(final Kontakt k) {
 		PrinterData pd = getPrinterData("Etiketten");
 		if(pd!=null){
 			Printer prn=new Printer(pd);
@@ -630,7 +673,7 @@ public class GlobalActions {
      * @param type the printer type according to the printer settings
      * @return a PrinterData object describing the selected printer
      */
-    private PrinterData getPrinterData(String type) {
+    private PrinterData getPrinterData(final String type) {
     	String cfgPrefix = "Drucker/" + type + "/"; //$NON-NLS-1$ $NON-NLS-2$
     	
     	PrinterData pd = null;
@@ -653,17 +696,17 @@ public class GlobalActions {
      *  Menueeinstellungen wiederherstellen
      */
     public void adaptForUser(){
-    	setMenuForUser(AC_EXIT,exitAction); //$NON-NLS-1$
+    	setMenuForUser(AC_EXIT,exitAction); 
     	//setMenuForUser(AC_UPDATE,updateAction); //$NON-NLS-1$
-    	setMenuForUser(AC_NEWWINDOW,newWindowAction); //$NON-NLS-1$
-    	setMenuForUser(AC_LOGIN,loginAction); //$NON-NLS-1$
-    	setMenuForUser(AC_IMORT,importAction); //$NON-NLS-1$
-    	setMenuForUser(AC_ABOUT,aboutAction); //$NON-NLS-1$
-    	setMenuForUser(AC_HELP,helpAction); //$NON-NLS-1$
-    	setMenuForUser(AC_PREFS,prefsAction); //$NON-NLS-1$
-    	setMenuForUser(AC_CHANGEMANDANT,changeMandantAction); //$NON-NLS-1$
+    	setMenuForUser(AC_NEWWINDOW,newWindowAction); 
+    	setMenuForUser(AC_LOGIN,loginAction); 
+    	setMenuForUser(AC_IMORT,importAction); 
+    	setMenuForUser(AC_ABOUT,aboutAction); 
+    	setMenuForUser(AC_HELP,helpAction); 
+    	setMenuForUser(AC_PREFS,prefsAction); 
+    	setMenuForUser(AC_CHANGEMANDANT,changeMandantAction); 
         //setMenuForUser("importTarmedAction",importTarmedAction);
-        setMenuForUser(AC_CONNECT,connectWizardAction); //$NON-NLS-1$
+        setMenuForUser(AC_CONNECT,connectWizardAction); 
         if(Hub.acl.request(AC_SHOWPERSPECTIVE)==true){
             perspectiveList.setVisible(true);
         }else{
@@ -679,13 +722,13 @@ public class GlobalActions {
         if (Hub.actUser != null) {
         	boolean fixLayoutChecked = Hub.userCfg.get(PreferenceConstants.USR_FIX_LAYOUT, PreferenceConstants.USR_FIX_LAYOUT_DEFAULT);
         	fixLayoutAction.setChecked(fixLayoutChecked);
-        	System.err.println("fixLayoutAction: set to " + fixLayoutChecked);
+        	//System.err.println("fixLayoutAction: set to " + fixLayoutChecked);
         }  else {
         	fixLayoutAction.setChecked(PreferenceConstants.USR_FIX_LAYOUT_DEFAULT);
-        	System.err.println("fixLayoutAction: reset to false");
+        	//System.err.println("fixLayoutAction: reset to false");
         }
     }
-    private void setMenuForUser(String name,IAction action){
+    private void setMenuForUser(final String name,final IAction action){
     	if(Hub.acl.request(name)==true){
     		action.setEnabled(true);
     	}else{
@@ -704,7 +747,7 @@ public class GlobalActions {
      *        (using <code>setActionDefinitionId()</code>)
      * @param part the view this action should be registered for
      */
-    public static void registerActionHandler(ViewPart part, IAction action) {
+    public static void registerActionHandler(final ViewPart part, final IAction action) {
     	String commandId = action.getActionDefinitionId();
     	if (!StringTool.isNothing(commandId)) {
     		IHandlerService handlerService = (IHandlerService) part.getSite().getService(IHandlerService.class);
@@ -722,7 +765,7 @@ public class GlobalActions {
     		super(mainWindow.getShell());
     	}
     	@Override
-    	public Control createDialogArea(Composite parent){
+    	public Control createDialogArea(final Composite parent){
     		lbMandant=new org.eclipse.swt.widgets.List(parent,SWT.BORDER|SWT.SINGLE);
     		lbMandant.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
     		Query<Mandant> qbe=new Query<Mandant>(Mandant.class);
@@ -736,11 +779,12 @@ public class GlobalActions {
 		protected void okPressed() {
 			int idx=lbMandant.getSelectionIndex();
 			if(idx>-1){
-				result=(Mandant)lMandant.get(idx);
+				result=lMandant.get(idx);
 			}
 			super.okPressed();
 		}
     	
+		@Override
 		public void create(){
 			super.create();
 			setTitle(Messages.getString("GlobalActions.ChangeMandator")); //$NON-NLS-1$
