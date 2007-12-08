@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,10 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  *    
- * $Id: TarmedImporter.java 1632 2007-01-21 14:51:12Z rgw_ch $
+ * $Id: TarmedImporter.java 3426 2007-12-08 18:47:22Z rgw_ch $
  *******************************************************************************/
+
+// 8.12.07 G.Weirich avoid duplicate imports
 
 package ch.elexis.data;
 
@@ -26,10 +28,9 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ImporterPage;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -89,9 +90,9 @@ public class TarmedImporter extends ImporterPage{
 
 
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		if(connect()==false){
-        	return new Status(Status.ERROR,"tarmed",1,Messages.TarmedImporter_couldntConnect,null); //$NON-NLS-1$ //$NON-NLS-2$
+        	return new Status(Status.ERROR,"tarmed",1,Messages.TarmedImporter_couldntConnect,null); //$NON-NLS-1$ 
         }
 
 		pj=PersistentObject.getConnection();
@@ -100,46 +101,56 @@ public class TarmedImporter extends ImporterPage{
         //pj.exec("DROP TABLE TARMED");
         int count=j.queryInt("SELECT COUNT(*) FROM LEISTUNG"); //$NON-NLS-1$
         count+=j.queryInt("SELECT COUNT(*) FROM KAPITEL_TEXT")+13; //$NON-NLS-1$
-        monitor.beginTask(Messages.TarmedImporter_importLstg,count); //$NON-NLS-1$
-        monitor.subTask(Messages.TarmedImporter_connecting); //$NON-NLS-1$
+        monitor.beginTask(Messages.TarmedImporter_importLstg,count); 
+        monitor.subTask(Messages.TarmedImporter_connecting); 
                 
         try {
             source=j.getStatement();
             dest=pj.getStatement();
-            monitor.subTask(Messages.TarmedImporter_deleteOldData); //$NON-NLS-1$
+            monitor.subTask(Messages.TarmedImporter_deleteOldData); 
             pj.exec("DELETE FROM TARMED"); //$NON-NLS-1$
             pj.exec("DELETE FROM TARMED_DEFINITIONEN"); //$NON-NLS-1$
             pj.exec("DELETE FROM TARMED_EXTENSION"); //$NON-NLS-1$
-            monitor.subTask(Messages.TarmedImporter_definitions); //$NON-NLS-1$
+            monitor.subTask(Messages.TarmedImporter_definitions); 
             importDefinition("ANAESTHESIE","DIGNI_QUALI","DIGNI_QUANTI","LEISTUNG_BLOECKE", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                         "LEISTUNG_GRUPPEN","LEISTUNG_TYP","PFLICHT","REGEL_EL_ABR", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                         "SEITE","SEX","SPARTE","ZR_EINHEIT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             monitor.worked(13);
-            monitor.subTask(Messages.TarmedImporter_chapter); //$NON-NLS-1$
+            monitor.subTask(Messages.TarmedImporter_chapter); 
             ResultSet res=source.query("SELECT * FROM KAPITEL_TEXT WHERE SPRACHE="+lang); //$NON-NLS-1$
             while(res.next()){
                 String code=res.getString("KNR"); //$NON-NLS-1$
                 if(code.trim().equals("I")){ //$NON-NLS-1$
                     continue;
                 }
+                TarmedLeistung tl=TarmedLeistung.load(code);
                 String txt=res.getString("BEZ_255"); //$NON-NLS-1$
                 int subcap=code.lastIndexOf('.');
                 String parent="NIL"; //$NON-NLS-1$
                 if(subcap!=-1){
                     parent=code.substring(0,subcap);
                 }
-                TarmedLeistung tl=new TarmedLeistung(code,parent,"","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                if((!tl.exists()) || (!parent.equals(tl.get("Parent")))){
+                	tl=new TarmedLeistung(code,parent,"","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                }
                 tl.setText(txt);
                 monitor.worked(1);
             }
             res.close();
-            monitor.subTask(Messages.TarmedImporter_singleLst); //$NON-NLS-1$
+            monitor.subTask(Messages.TarmedImporter_singleLst); 
             res=source.query("SELECT * FROM LEISTUNG"); //$NON-NLS-1$
             PreparedStatement preps_extension=pj.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
             count=0;
             while(res.next()==true){
-                TarmedLeistung tl=new TarmedLeistung(res.getString("LNR"),res.getString("KNR"), //$NON-NLS-1$ //$NON-NLS-2$
+            	String cc=res.getString("LNR");
+            	TarmedLeistung tl=TarmedLeistung.load(cc);
+            	if(tl.exists()){
+            		tl.set("DigniQuanti",res.getString("QT_DIGNITAET"));
+            		tl.set("Sparte", res.getString("Sparte"));
+            	}else{
+            		tl=new TarmedLeistung(cc,res.getString("KNR"), //$NON-NLS-1$ 
                         "0000",res.getString("QT_DIGNITAET"),res.getString("Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            	}
                 tl.set(new String[]{"GueltigVon","GueltigBis"}, res.getString("GUELTIG_VON"),res.getString("GUELTIG_BIS"));
                 Stm sub=j.getStatement();
                 String dqua=sub.queryString("SELECT QL_DIGNITAET FROM LEISTUNG_DIGNIQUALI WHERE LNR="+tl.getWrappedId()); //$NON-NLS-1$
@@ -260,7 +271,7 @@ public class TarmedImporter extends ImporterPage{
         return Status.CANCEL_STATUS;
 	}
     
-    private void put(Hashtable<String, String> h, ResultSet r, String... vv) throws Exception{
+    private void put(final Hashtable<String, String> h, final ResultSet r, final String... vv) throws Exception{
         for(String v:vv){
             String val=r.getString(v);
             if(val!=null){
@@ -268,7 +279,7 @@ public class TarmedImporter extends ImporterPage{
             }
         }
     }
-    private void importDefinition(String...strings){
+    private void importDefinition(final String...strings){
         Stm stm=j.getStatement();
         PreparedStatement ps=pj.prepareStatement("INSERT INTO TARMED_DEFINITIONEN (Spalte,Kuerzel,Titel) VALUES (?,?,?)"); //$NON-NLS-1$
         try{
@@ -292,13 +303,13 @@ public class TarmedImporter extends ImporterPage{
 
 	@Override
 	public String getDescription() {
-		return Messages.TarmedImporter_enterSource + //$NON-NLS-1$
-				Messages.TarmedImporter_setupSource + //$NON-NLS-1$
-				Messages.TarmedImporter_setupSource2;  //$NON-NLS-1$
+		return Messages.TarmedImporter_enterSource + 
+				Messages.TarmedImporter_setupSource + 
+				Messages.TarmedImporter_setupSource2;  
 	}
 
 	@Override
-	public Composite createPage(Composite parent) {
+	public Composite createPage(final Composite parent) {
 		DBBasedImporter obi=new ImporterPage.DBBasedImporter(parent,this);
 		obi.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		return obi;
