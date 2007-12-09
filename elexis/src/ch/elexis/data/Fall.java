@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3361 2007-11-21 15:36:11Z rgw_ch $
+ *    $Id: Fall.java 3428 2007-12-09 00:48:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -526,7 +526,7 @@ public class Fall extends PersistentObject{
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/name", "IV");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/leistungscodes", "TarmedLeistung");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/standardausgabe", "Tarmed-Drucker");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/bedingungen", "Kostenträger:K;AHV-Nummer:T");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/bedingungen", "Kostenträger:K;AHV-Nummer:T;Fallnummer:T");
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/IV/gesetz","IVG");
 					
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/MV/name", "MV");
