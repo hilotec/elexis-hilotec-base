@@ -2,6 +2,7 @@ package ch.elexis.tarmedprefs;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Person;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 
@@ -11,6 +12,7 @@ public class TarmedRequirements {
 	public static final String INSURANCE_NUMBER="Versicherungsnummer";
 	public static final String CASE_NUMBER="Fallnummer";
 	public static final String ACCIDENT_NUMBER="Unfallnummer";
+	public final static String SSN ="AHV-Nummer";
 	
 	public static final String ACCIDENT_DATE="Unfalldatum";
 	
@@ -83,13 +85,31 @@ public class TarmedRequirements {
 		k.addXid(DOMAIN_NIF, nif, true);
 	}
 	
+	public static String getAHV(final Person p){
+		String ahv=p.getXID(Xid.DOMAIN_AHV);
+		if(ahv.length()==0){
+			ahv=p.getInfoString(SSN);
+			if(ahv.length()==0){
+				ahv=p.getInfoString(INSURANCE_NUMBER);
+			}
+			if(ahv.length()>0){
+				setAHV(p,ahv);
+			}
+		}
+		return ahv;
+	}
+	
+	public static void setAHV(final Person p, final String ahv){
+		p.addXid(Xid.DOMAIN_AHV, ahv, true);
+	}
+	
 	public static String getGesetz(final Fall fall) {
 		String gesetz=fall.getAbrechnungsSystem();															// 16000
 		String g1=fall.getRequiredString("Gesetz");
 		if(g1.length()>0){
 			gesetz=g1;
 		}else{
-			if(!gesetz.matches("KVG|UVG|MV|IV|VVG")){
+			if(!gesetz.matches("KVG|UVG|MV|VVG")){
 				gesetz=Fall.getBillingSystemAttribute(gesetz, "gesetz");
 			}
 		}

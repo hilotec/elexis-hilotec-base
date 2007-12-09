@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3418 2007-12-06 08:58:57Z rgw_ch $
+ * $Id: XMLExporter.java 3429 2007-12-09 00:48:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -65,6 +65,8 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.data.RnStatus.REJECTCODE;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -722,17 +724,48 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element versicherung=new Element(gesetz.toLowerCase(),ns);									//	16700
 		versicherung.setAttribute("reason",match_type(actFall.getGrund()));
-		String vnummer=actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
-		if(StringTool.isNothing(vnummer)){
-			vnummer=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+		if(gesetz.equalsIgnoreCase("ivg")){
+			String caseNumber=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+			if( (!caseNumber.matches("[0-9]{14}")) &&	// seit 1.1.2000 gültige NUmmer
+				(!caseNumber.matches("[0-9]{10}")) &&	// bis 31.12.1999 gültige Nummer
+				(!caseNumber.matches("[0-9]{9}"))	&&	// auch bis 31.12.1999 gültige Nummer
+				(!caseNumber.matches("[0-9]{6}"))){  	// Nummer für Abklärungsmassnahmen
+				/* die spinnen, die Bürokraten */
+				if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)){
+					rn.reject(REJECTCODE.VALIDATION_ERROR, "IV-Fallnummer ungültig");
+				}else{
+					caseNumber="123456";	// sometimes it's better to cheat than to fight bureaucrazy
+				}
+			}
+			versicherung.setAttribute("case_id",caseNumber);
+			String ahv=TarmedRequirements.getAHV(pat).replaceAll("[^0-9]", "");
+			if(ahv.length()==0){
+				ahv=actFall.getRequiredString(TarmedRequirements.SSN).replaceAll("[^0-9]", "");
+			}
+			if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (!ahv.matches("[0-9]{11}"))){
+				rn.reject(REJECTCODE.VALIDATION_ERROR, "AHV-Nummer ungültig");
+			}else{
+				versicherung.setAttribute("ssn",ahv);
+			}
+			String nif=TarmedRequirements.getNIF(actMandant.getRechnungssteller());
+			if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (!nif.matches("[0-9]{1,7}"))){
+				rn.reject(REJECTCODE.VALIDATION_ERROR, "NIF-Nummer ungültig");
+			}else{
+				versicherung.setAttribute("nif",nif);
+			}
+		}else{
+			String vnummer=actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
+			if(StringTool.isNothing(vnummer)){
+				vnummer=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+			}
+			if(StringTool.isNothing(vnummer)){
+				vnummer=actFall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
+			}
+			if(StringTool.isNothing(vnummer)){
+				vnummer=pat.getId();
+			}
+			versicherung.setAttribute("patient_id",vnummer);							//	16720
 		}
-		if(StringTool.isNothing(vnummer)){
-			vnummer=actFall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
-		}
-		if(StringTool.isNothing(vnummer)){
-			vnummer=pat.getId();
-		}
-		versicherung.setAttribute("patient_id",vnummer);							//	16720
 		String casedate=actFall.getInfoString("Unfalldatum");										//	16740
 		if(StringTool.isNothing(casedate)){
 			casedate=rn.getDatumVon();
