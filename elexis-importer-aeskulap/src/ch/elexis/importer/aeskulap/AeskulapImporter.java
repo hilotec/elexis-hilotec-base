@@ -65,8 +65,8 @@ public class AeskulapImporter extends ImporterPage {
 	boolean bType;
 	
 	static{
-		Xid.localRegisterXIDDomainIfNotExists(PATID, Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(GARANTID, Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte KG-ID", Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(GARANTID, "Alte Garant-ID", Xid.ASSIGNMENT_LOCAL);
 	}
 	public AeskulapImporter() {
 		// TODO Auto-generated constructor stub
