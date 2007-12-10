@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 3235 2007-10-03 11:26:34Z danlutz $
+ *    $Id: PreferenceConstants.java 3433 2007-12-10 16:52:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -97,4 +97,7 @@ public class PreferenceConstants {
 	public static final int INVENTORY_ORDER_TRIGGER_EQUAL = 1;
 	public static final String INVENTORY_ORDER_TRIGGER_EQUAL_VALUE = "1";
 	public static final int INVENTORY_ORDER_TRIGGER_DEFAULT = INVENTORY_ORDER_TRIGGER_BELOW;
+	
+	// Labor
+	public static final String DAYS_TO_KEEP_UNSEEN_LAB_RESULTS = "14";
 }

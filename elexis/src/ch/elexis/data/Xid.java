@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3250 2007-10-10 12:25:27Z rgw_ch $
+ * $Id: Xid.java 3433 2007-12-10 16:52:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
@@ -41,7 +42,7 @@ public class Xid extends PersistentObject {
 	 */
 	public static final int QUALITY_GUID=4;
 	
-	private static Hashtable<String,Integer> domains;
+	private static Hashtable<String,XIDDomain> domains;
 	
 	public static final String DOMAIN_ELEXIS="www.elexis.ch/xid";
 	public static final String DOMAIN_AHV="www.ahv.ch/xid";
@@ -53,21 +54,25 @@ public class Xid extends PersistentObject {
 	
 	static{
 		addMapping(TABLENAME, "type", "object","domain","domain_id","quality");
-		domains=new Hashtable<String,Integer>();
+		domains=new Hashtable<String,XIDDomain>();
 		String storedDomains=Hub.globalCfg.get("LocalXIDDomains", null);
 		if(storedDomains==null){
-			domains.put(DOMAIN_ELEXIS,ASSIGNMENT_LOCAL|QUALITY_GUID);
-			domains.put(DOMAIN_AHV,ASSIGNMENT_REGIONAL|QUALITY_GUID);
-			domains.put(DOMAIN_OID,ASSIGNMENT_GLOBAL|QUALITY_GUID);
-			domains.put(DOMAIN_EAN,ASSIGNMENT_GLOBAL|QUALITY_GUID);
+			domains.put(DOMAIN_ELEXIS,new XIDDomain(DOMAIN_ELEXIS,"XID",ASSIGNMENT_LOCAL|QUALITY_GUID));
+			domains.put(DOMAIN_AHV,new XIDDomain(DOMAIN_AHV,"AHV",ASSIGNMENT_REGIONAL|QUALITY_GUID));
+			domains.put(DOMAIN_OID,new XIDDomain(DOMAIN_OID,"OID",ASSIGNMENT_GLOBAL|QUALITY_GUID));
+			domains.put(DOMAIN_EAN,new XIDDomain(DOMAIN_EAN,"EAN",ASSIGNMENT_GLOBAL));
 			storeDomains();
 		}else{
 			for(String dom:storedDomains.split(";")){
 				String[] spl=dom.split("#");
-				if(spl.length!=2){
+				if(spl.length<2){
 					log.log("Fehler in XID-Domain "+dom, Log.ERRORS);
 				}
-				domains.put(spl[0],Integer.parseInt(spl[1]));
+				String simpleName="";
+				if(spl.length==3){
+					simpleName=spl[2];
+				}
+				domains.put(spl[0],new XIDDomain(spl[0],simpleName,Integer.parseInt(spl[1])));
 			}
 		}
 	}
@@ -80,7 +85,7 @@ public class Xid extends PersistentObject {
 	 * @throws XIDException if a XID with same domain and domain_id but different object or quality already exists.
 	 */
 	public Xid(final PersistentObject o, final String domain, final String domain_id) throws XIDException{
-		Integer val=domains.get(domain);
+		Integer val=domains.get(domain).quality;
 		if(val==null){
 			throw new XIDException("XID Domain "+domain+" is not registered");
 		}
@@ -187,19 +192,19 @@ public class Xid extends PersistentObject {
 	
 	/**
 	 * Register a new domain for use with our XID System locally (this will not affect the
-	 * centra XID registry at www.xid.ch)
+	 * central XID registry at www.xid.ch)
 	 * @param domain the domain to register
 	 * @param quality the quality an ID of that domain will have
 	 * @return true on success, false if that domain could not be registered
 	 */
-	public static boolean localRegisterXIDDomain(final String domain, final int quality){
+	public static boolean localRegisterXIDDomain(final String domain, String simpleName, final int quality){
 		if(domains.contains(domain)){
 			log.log("XID Domain "+domain+" bereits registriert", Log.ERRORS);
 		}else{
 			if(domain.matches(".*[;#].*")){
 				log.log("XID Domain "+domain+" ungültig", Log.ERRORS);
 			}else{
-				domains.put(domain,quality);
+				domains.put(domain,new XIDDomain(domain,simpleName==null ? "" : simpleName,quality));
 				storeDomains();
 				return true;
 			}
@@ -207,14 +212,14 @@ public class Xid extends PersistentObject {
 		return false;
 	}
 	
-	public static boolean localRegisterXIDDomainIfNotExists(final String domain, final int quality){
+	public static boolean localRegisterXIDDomainIfNotExists(final String domain, String simpleName, final int quality){
 		if(domains.get(domain)!=null){
 			return true;
 		}
-		return localRegisterXIDDomain(domain, quality);
+		return localRegisterXIDDomain(domain, simpleName, quality);
 	}
 	public static Integer getXIDDomainQuality(final String xidDomain){
-		return domains.get(xidDomain);
+		return domains.get(xidDomain).getQuality();
 	}
 	
 	protected Xid(final String id){
@@ -235,9 +240,39 @@ public class Xid extends PersistentObject {
 	private static void storeDomains(){
 		StringBuilder sb=new StringBuilder();
 		for(String k:domains.keySet()){
-			sb.append(k).append("#").append(domains.get(k)).append(";");
+			XIDDomain xd=domains.get(k);
+			sb.append(k).append("#").append(xd.getQuality()).append("#").append(xd.getSimpleName()).append(";");
 		}
 		Hub.globalCfg.set("LocalXIDDomains", sb.toString());
 	}
+	/**
+	 * return a list of all known domains
+	 * @return
+	 */
+	public static Set<String> getXIDDomains(){
+		return domains.keySet();
+	}
 
+	public static class XIDDomain{
+		String domain_name;
+		String simple_name;
+		int quality;
+		public XIDDomain(String dname, String simplename,int quality){
+			domain_name=dname;
+			simple_name=simplename;
+			this.quality=quality;
+		}
+		public String getSimpleName() {
+			return simple_name;
+		}
+		public void setSimpleName(String simple_name) {
+			this.simple_name = simple_name;
+		}
+		public String getDomainName() {
+			return domain_name;
+		}
+		public int getQuality() {
+			return quality;
+		}
+	}
 }

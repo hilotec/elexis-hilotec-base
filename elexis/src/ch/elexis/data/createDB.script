@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3425 2007-12-08 18:47:15Z rgw_ch $
+# * $Id: createDB.script 3433 2007-12-10 16:52:26Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -514,11 +514,11 @@ CREATE INDEX UCFG2 ON USERCONFIG(UserID);
 CREATE TABLE XID(
 	ID			VARCHAR(25) primary key,
 	deleted		CHAR(1) default '0',
-	type		VARCHAR(80),
-	object		VARCHAR(25),
-	domain		VARCHAR(255),
-	domain_id	VARCHAR(255),
-	quality		CHAR(1) default '0'	
+	type		VARCHAR(80),				# class of the object
+	object		VARCHAR(25),				# ID of the object
+	domain		VARCHAR(255),				#  Domain of the XIS used
+	domain_id	VARCHAR(255),				# ID of the object within that domain
+	quality		CHAR(1) default '0'			# Assignment tag of the XID
 );
 CREATE INDEX XIDIDX1 on XID(domain);
 CREATE INDEX XIDIDX2 on XID(domain_id);
