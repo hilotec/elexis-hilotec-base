@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: TarmedRequirements.java 3430 2007-12-10 16:44:09Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
 import ch.elexis.data.Fall;
@@ -23,8 +35,8 @@ public class TarmedRequirements {
 	public static final String DOMAIN_NIF="www.xid.ch/id/nif";
 
 	static{
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, "NIF", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
 	public static String getEAN(final Kontakt k){
@@ -53,7 +65,7 @@ public class TarmedRequirements {
 			}
 		}
 		// end
-		return ret;
+		return ret.replaceAll("[\\s\\.\\-]", "");
 	}
 	
 	public static String getNIF(final Kontakt k){
