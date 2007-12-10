@@ -37,7 +37,7 @@ public class Presets {
 	private static Log log=Log.get("Preset import");
 	
 	static{
-		Xid.localRegisterXIDDomainIfNotExists(PATID, Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(PATID, "Frühere KG-Nummer",Xid.ASSIGNMENT_LOCAL);
 	}
 	public static boolean importRussi(final ExcelWrapper exw, final IProgressMonitor moni){
 		exw.setFieldTypes(new Class[]{
