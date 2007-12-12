@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 2401 2007-05-19 15:55:37Z rgw_ch $
+ * $Id: RechnungsPrefs.java 3436 2007-12-12 16:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -75,7 +75,10 @@ public class RechnungsPrefs extends PreferencePage implements
 	
 	static TarmedACL ta=TarmedACL.getInstance();
 	
-	static final String[] ExtFlds={"Anrede","Kanton","EAN","NIF","KSK",ta.ESR5OR9,ta.ESRPLUS, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	static final String[] ExtFlds={"Anrede","Kanton","EAN="+Xid.DOMAIN_EAN,
+							"NIF="+TarmedRequirements.DOMAIN_NIF,
+							"KSK="+TarmedRequirements.DOMAIN_KSK,
+							ta.ESR5OR9,ta.ESRPLUS, 
 							ta.TIERS,ta.SPEC,ta.KANTON,ta.LOCAL,ta.DIAGSYS};
 		
 	public RechnungsPrefs() {
