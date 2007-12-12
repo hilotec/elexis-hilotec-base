@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktExtDialog.java 1153 2006-10-22 19:10:08Z rgw_ch $
+ * $Id: KontaktExtDialog.java 3437 2007-12-12 16:48:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
+
+import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -24,9 +26,11 @@ import org.eclipse.swt.widgets.*;
 import ch.elexis.data.Kontakt;
 import ch.elexis.util.SWTHelper;
 
+
 public class KontaktExtDialog extends TitleAreaDialog {
 	private Kontakt k;
 	private String[] f;
+	
 	public KontaktExtDialog(Shell shell, Kontakt k, String[] defvalues){
 		super(shell);
 		this.k=k;
@@ -50,18 +54,34 @@ public class KontaktExtDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 	
+	
 	public static class ExtInfoTable extends Composite{
 		Kontakt actKontakt;
 		TableCursor cursor;
 		ControlEditor editor;
 		String[] fields;
 		Table table;
-		
+		private HashMap<String,String> xids;
+	
+		/**
+		 * fields can be of the form {name1,name2...} or {name1=xiddomain1,name2,name3=Xiddomain3}
+		 * @param parent
+		 * @param f
+		 */
 		public ExtInfoTable(Composite parent, String[] f){
 			super(parent,SWT.NONE);
+			xids=new HashMap<String, String>();
 			setLayout(new FillLayout());
 			//kontakt=k;
-			fields=f;
+			fields=new String[f.length];
+			
+			for(int i=0;i<f.length;i++){
+				String[] val=f[i].split("=");
+				fields[i]=val[0];
+				if(val.length==2){
+					xids.put(val[0], val[1]);
+				}
+			}
 			table=new Table(this,SWT.V_SCROLL|SWT.FULL_SELECTION|SWT.SINGLE|SWT.H_SCROLL);
 			cursor=new TableCursor(table,SWT.NONE);
 			editor=new ControlEditor(cursor);
@@ -107,7 +127,14 @@ public class KontaktExtDialog extends TitleAreaDialog {
 			for(int i=0;i<fields.length;i++){
 				TableItem it=table.getItem(i);
 				it.setText(0,fields[i]);
-				String val=(String)k.getInfoElement(fields[i]);
+				String val="";
+				String xid=xids.get(fields[i]);
+				if(xid!=null){
+					val=k.getXID(xid);
+				}
+				if(val.length()==0){
+					val=(String)k.getInfoElement(fields[i]);
+				}
 				it.setText(1,val==null ? "" : val);
 			}
 			actKontakt=k;
@@ -124,6 +151,10 @@ public class KontaktExtDialog extends TitleAreaDialog {
 						//String ntext=text.getText();
 						it.setText(idx,text.getText());
 						actKontakt.setInfoElement(it.getText(0),it.getText(1));
+						String xid=xids.get(it.getText(0));
+						if(xid!=null){
+							actKontakt.addXid(xid, it.getText(1), true);
+						}
 						text.dispose();
 						//cursorDown();
 					}

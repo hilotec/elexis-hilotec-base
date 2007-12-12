@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: UserPreferences.java 2425 2007-05-21 12:12:32Z rgw_ch $
+ *  $Id: UserPreferences.java 3437 2007-12-12 16:48:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -94,6 +94,8 @@ public class UserPreferences extends PreferencePage implements
 					InMemorySettings ims=new InMemorySettings();
 					ims.overlay(Hub.userCfg, Settings.OVL_REPLACE);
 					blob.put(ims.getNode());
+					SWTHelper.showInfo("Konfiguration gespeochert", "Die aktuelle Konfiguratiion wurde unter dem Namen "+name+" gespeichert");
+					tSave.setText("");
 				}
 			}
 		});
