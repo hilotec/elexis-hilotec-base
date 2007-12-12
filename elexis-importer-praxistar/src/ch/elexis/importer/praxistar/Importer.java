@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 3253 2007-10-11 09:17:11Z rgw_ch $
+ * $Id: Importer.java 3435 2007-12-12 13:39:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
@@ -57,12 +57,12 @@ public class Importer extends ImporterPage {
 	
 	static{
 		Fall.getAbrechnungsSysteme(); //make sure billing systems are initialized
-		Xid.localRegisterXIDDomainIfNotExists(PATID, Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(GARANTID, Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(ARZTID, Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(USERID, Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_KSK, Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_NIF, Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte Patientennummer",Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(GARANTID, "Alte Garant-ID",Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(ARZTID, "Alte Arzt-ID",Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(USERID, "Alte Anwender-ID",Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_KSK, "KSK", Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_NIF, "NIF", Xid.ASSIGNMENT_REGIONAL);
 	}
 	public Importer() {
 		// TODO Auto-generated constructor stub
