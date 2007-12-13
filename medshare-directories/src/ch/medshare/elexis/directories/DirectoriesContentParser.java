@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 3316 2007-11-06 07:31:26Z michael_imhof $
+ * $Id: DirectoriesContentParser.java 3438 2007-12-13 14:12:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -55,17 +55,19 @@ public class DirectoriesContentParser extends HtmlParser {
 	private String[] getPlzOrt(String text) {
 		String plz = ""; //$NON-NLS-1$
 		String ort = text;
-		HtmlParser ortParser = new HtmlParser(text);
-		if (ortParser.getNextPos(B_SEARCH_WORDS_BEGIN) >= 0) {
-			plz = ortParser.extract(B_SEARCH_WORDS_BEGIN, B_END);
-			ort = ortParser.extract(B_SEARCH_WORDS_BEGIN, B_END);
-		} else {
-			int plzEndIndex = text.trim().indexOf(" "); //$NON-NLS-1$
-			if (plzEndIndex < 0) {
-				plzEndIndex = 5;
+		if (text != null && text.trim().length() > 0) {
+			HtmlParser ortParser = new HtmlParser(text);
+			if (ortParser.getNextPos(B_SEARCH_WORDS_BEGIN) >= 0) {
+				plz = ortParser.extract(B_SEARCH_WORDS_BEGIN, B_END);
+				ort = ortParser.extract(B_SEARCH_WORDS_BEGIN, B_END);
+			} else {
+				int plzEndIndex = text.trim().indexOf(" "); //$NON-NLS-1$
+				if (plzEndIndex < 0) {
+					plzEndIndex = 5;
+				}
+				plz = text.trim().substring(0, plzEndIndex).trim();
+				ort = text.trim().substring(plzEndIndex).trim();
 			}
-			plz = text.trim().substring(0, plzEndIndex).trim();
-			ort = text.trim().substring(plzEndIndex).trim();
 		}
 		return new String[] { plz, ort };
 	}
@@ -183,7 +185,7 @@ public class DirectoriesContentParser extends HtmlParser {
 		String[] vornameNachname = getVornameNachname(name);
 
 		return new KontaktEntry(vornameNachname[0], vornameNachname[1], "", //$NON-NLS-1$
-				adresse, plzOrt[0], plzOrt[1], "", false); //$NON-NLS-1$
+				adresse, plzOrt[0], plzOrt[1], "", "", "", false); //$NON-NLS-1$
 	}
 	
 	private static String[] POSTFACH_TEXTE = { "Postfach", "Case postale", "Casella Postale" };
@@ -285,15 +287,25 @@ public class DirectoriesContentParser extends HtmlParser {
 			max--;
 		}
 
-		// Tel
-		String tel = extractTelefonNr();
+		// Tel/Fax & Email
+		int adrIndex = getNextPos(ADR_DETAIL_TAG);
+		int listIndex = getNextPos(ADR_LIST_TAG);
+		int endIndex = adrIndex;
+		if ((listIndex >= 0 && listIndex < endIndex) || endIndex < 0) {
+			endIndex = listIndex;
+		}
+		
+		String[] adrStrings = extractAdressDetails(endIndex);
+ 		String tel = extractTelefonNr(adrStrings);
+		String fax = extractFax(adrStrings);
+		String email = extractEmailAdr(adrStrings);
 
 		return new KontaktEntry(vorname, nachname, zusatz, adresse, plz, ort,
-				tel, true);
+				tel, fax, email, true);
 	}
 	
 	/**
-	 * Extrahiert Telefonnummer aus einem Detaileintrag. 
+	 * Extrahiert Adressdetails (Tel, Fax & Email) aus einem Detaileintrag. 
 	 * Information ist nach den Kontaktinformationen gespeichert.
 	 * Bsp: 
      *   <div class="adrNumDet" style="">
@@ -303,22 +315,98 @@ public class DirectoriesContentParser extends HtmlParser {
 	 *		  033 341 23 45
 	 *		</a>
 	 *	 </div>
+	 *   <div class="adrInfo" id="" style="">
+	 *     Fax
+	 *   </div>
+	 *   <div class="adrNumDet" style="">
+	 *     <span class="noAdvert">* </span>
+	 *     033 341 23 46
+	 *   </div>  
+	 *   <div class="adrInfo" id="" style="">
+	 *     E-Mail
+	 *   </div>
+	 *   <div class="adrNumDet" style="">
+	 *     <span class="noAdvert">* </span>
+	 *     <a href="mailto:info@medshare.net" target="_blank">
+	 *       info@medshare.net
+	 *     </a>
+	 *   </div>
 	 */
-	private String extractTelefonNr() {
-		String tel = extract("callto:", "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (tel != null) {
-			tel = tel.replace("+41", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (tel.length() > 8) {
-				int len = tel.length();
-				String tel3 = tel.substring(len - 2);
-				String tel2 = tel.substring(len - 4, len - 2);
-				String tel1 = tel.substring(len - 7, len - 4);
-				String tel0 = tel.substring(0, len - 7);
-				tel = tel0 + " " + tel1 + " " + tel2 + " " + tel3; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private String[] extractAdressDetails(int endIndex) {
+		String[] strings = new String[] { "", "", "" };
+		
+		// Tel Nr
+		int nextPos = getNextPos("callto:");
+		if (nextPos > 0 && (nextPos < endIndex || endIndex < 0)) { // Tel Nr:
+			String tel = extract("callto:", "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (tel != null) {
+				tel = tel.replace("+41", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (tel.length() > 8) {
+					int len = tel.length();
+					String tel3 = tel.substring(len - 2);
+					String tel2 = tel.substring(len - 4, len - 2);
+					String tel1 = tel.substring(len - 7, len - 4);
+					String tel0 = tel.substring(0, len - 7);
+					tel = tel0 + " " + tel1 + " " + tel2 + " " + tel3; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				strings[0] = tel;
 			}
-		} else {
-			tel = "";
 		}
-		return tel;
+		
+		String email = null;
+		String fax = null;
+		
+		// Fax
+		nextPos = getNextPos("adrNumDet");
+		if (nextPos > 0 && (nextPos < endIndex || endIndex < 0)) {
+			moveTo("adrNumDet");
+			fax = extract("</span>", "</div>"); //$NON-NLS-1$ //$NON-NLS-2$$
+			if (fax.contains("mailto:")) {
+				email = new HtmlParser(fax).extract("mailto:", "\"");
+				fax = null;
+			}
+			if (fax.contains("http://")) { // Internet Adresse
+				fax = null;
+			}
+			
+		}
+		
+		// Email
+		if (email == null) {
+			nextPos = getNextPos("mailto:");
+			if (nextPos > 0 && (nextPos < endIndex || endIndex < 0)) {
+				email = extract("mailto:", "\"");
+			}
+		}
+		
+		if (fax != null) {
+			strings[1] = fax;
+		}
+		if (email != null) {
+			strings[2] = email;
+		}
+		
+		return strings;
+	}
+	
+	private String extractTelefonNr(String[] strings) {
+		if (strings.length > 0) {
+			return strings[0];
+		}
+		return "";
+	}
+	
+	private String extractFax(String[] strings) {
+		if (strings.length > 1) {
+			return strings[1];
+		}
+		return "";
+	}
+	
+	private String extractEmailAdr(String[] strings) {
+		if (strings.length > 2) {
+			return strings[2];
+		}
+		return "";
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: KontaktEntry.java 3286 2007-10-26 04:37:22Z rgw_ch $
+ * $Id: KontaktEntry.java 3438 2007-12-13 14:12:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -21,10 +21,12 @@ public class KontaktEntry {
 	private final String plz;
 	private final String ort;
 	private final String tel;
+	private final String fax;
+	private final String email;
 	private final boolean isDetail; // List Kontakt oder Detail Kontakt
 
 	public KontaktEntry(final String vorname, final String name, final String zusatz, final String adresse,
-			final String plz, final String ort, final String tel, boolean isDetail) {
+			final String plz, final String ort, final String tel, String fax, String email, boolean isDetail) {
 		super();
 		this.vorname = vorname;
 		this.name = name;
@@ -33,6 +35,8 @@ public class KontaktEntry {
 		this.plz = plz;
 		this.ort = ort;
 		this.tel = tel;
+		this.fax = fax;
+		this.email = email;
 		this.isDetail = isDetail;
 	}
 
@@ -63,7 +67,15 @@ public class KontaktEntry {
 	public String getTelefon() {
 		return this.tel;
 	}
-	
+
+	public String getFax() {
+		return fax;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
 	public boolean isDetail() {
 		return this.isDetail;
 	}
