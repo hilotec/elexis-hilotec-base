@@ -50,7 +50,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 			bMandant;
 
 	String[] fld;
-	Text tName, tVorname, tZusatz, tGebDat, tStrasse, tPlz, tOrt, tTel;
+	Text tName, tVorname, tZusatz, tGebDat, tStrasse, tPlz, tOrt, tTel, tFax, tEmail;
 	Combo cbSex;
 	Label lName, lVorname, lZusatz;
 
@@ -177,7 +177,19 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		tTel = new Text(ret, SWT.BORDER);
 		tTel.setText(fld.length > 6 ? fld[6] : ""); //$NON-NLS-1$
 		tTel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		new Label(ret, SWT.NONE).setText(Messages
+				.getString("KontaktErfassenDialog.fax")); //$NON-NLS-1$
+		tFax = new Text(ret, SWT.BORDER);
+		tFax.setText(fld.length > 8 ? fld[8] : ""); //$NON-NLS-1$
+		tFax.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
+		new Label(ret, SWT.NONE).setText(Messages
+				.getString("KontaktErfassenDialog.email")); //$NON-NLS-1$
+		tEmail = new Text(ret, SWT.BORDER);
+		tEmail.setText(fld.length > 9 ? fld[9] : ""); //$NON-NLS-1$
+		tEmail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
 		return ret;
 	}
 
@@ -366,8 +378,8 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 			}
 
 			newKontakt.set(
-					new String[] { "Strasse", "Plz", "Ort", "Telefon1" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					new String[] { ret[4], ret[5], ret[6], ret[7] });
+					new String[] { "Strasse", "Plz", "Ort", "Telefon1", "Fax", "E-Mail" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					new String[] { ret[4], ret[5], ret[6], ret[7], tFax.getText(), tEmail.getText() });
 
 			GlobalEvents.getInstance().fireSelectionEvent(newKontakt);
 			super.okPressed();
