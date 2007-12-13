@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchForm.java 3340 2007-11-14 08:15:27Z michael_imhof $
+ * $Id: WeisseSeitenSearchForm.java 3439 2007-12-13 14:12:26Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -157,7 +157,8 @@ public class WeisseSeitenSearchForm extends Composite {
 		}
 		return new String[] { entry.getName(), entry.getVorname(),
 				"", entry.getAdresse(), entry.getPlz(), //$NON-NLS-1$
-				entry.getOrt(), entry.getTelefon(), entry.getZusatz()  };
+				entry.getOrt(), entry.getTelefon(), entry.getZusatz(),
+				entry.getFax(), entry.getEmail() };
 	}
 
 	/**
@@ -170,7 +171,7 @@ public class WeisseSeitenSearchForm extends Composite {
 			dialog.open();
 		}
 	}
-	
+
 	/**
 	 * Öffnet Dialog zum Erfassen eines Kontaktes
 	 */
