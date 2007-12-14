@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3185 2007-09-22 18:24:59Z rgw_ch $
+ * $Id: ControlFieldProvider.java 3453 2007-12-14 16:17:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -28,6 +28,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
+import ch.elexis.text.ElexisText;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.Messages;
@@ -91,9 +92,9 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
             });
         }
         
-        selectors=new Text[fields.length];
+        selectors=new ElexisText[fields.length];
         for(int i=0;i<selectors.length;i++){
-            selectors[i]=tk.createText(inner,"",SWT.BORDER); //$NON-NLS-1$
+            selectors[i]=new ElexisText(inner, SWT.BORDER);
             selectors[i].addModifyListener(ml);
             selectors[i].addSelectionListener(sl);
             selectors[i].setToolTipText(Messages.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
