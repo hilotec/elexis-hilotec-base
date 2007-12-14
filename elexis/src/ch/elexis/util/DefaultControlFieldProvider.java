@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 3117 2007-09-08 23:45:08Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 3447 2007-12-14 08:22:43Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -36,8 +36,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.text.ElexisText;
 import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.ViewerConfigurer.ControlFieldProvider;
+import ch.elexis.views.View;
 import ch.rgw.tools.StringTool;
 
 /** 
@@ -49,7 +51,7 @@ import ch.rgw.tools.StringTool;
  */
 public class DefaultControlFieldProvider implements ControlFieldProvider{
 	protected String[] dbFields,fields,lastFiltered;
-	protected Text[] selectors;
+	protected ElexisText[] selectors;
 	protected final ModListener ml;
 	protected final SelListener sl;
 	protected boolean modified;
@@ -115,15 +117,19 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	        }
 	        
 	        
-	        selectors=new Text[fields.length];
+	        createSelectors(fields.length);
 	        for(int i=0;i<selectors.length;i++){
-	            selectors[i]=tk.createText(inner,"",SWT.BORDER); //$NON-NLS-1$
+	            selectors[i]=new ElexisText(tk.createText(inner,"",SWT.BORDER)); //$NON-NLS-1$
 	            selectors[i].addModifyListener(ml);
 	            selectors[i].addSelectionListener(sl);
 	            selectors[i].setToolTipText(Messages.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
 	            selectors[i].setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 	        }
 	        return ret;
+	}
+	
+	protected void createSelectors(int length) {
+		selectors=new ElexisText[fields.length];
 	}
     
 	public void setFocus(){
@@ -296,5 +302,9 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	
 	public void ceaseFire(final boolean bCeaseFire){
 		this.bCeaseFire=bCeaseFire;
+	}
+	
+	public CommonViewer getCommonViewer() {
+		return this.myViewer;
 	}
 }
