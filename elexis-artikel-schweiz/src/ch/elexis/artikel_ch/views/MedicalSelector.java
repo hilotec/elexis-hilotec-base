@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalSelector.java 3104 2007-09-06 18:58:23Z rgw_ch $
+ *  $Id: MedicalSelector.java 3452 2007-12-14 08:27:03Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.artikel_ch.views;
 
@@ -48,7 +48,7 @@ public class MedicalSelector extends CodeSelectorFactory {
 		ViewerConfigurer vc= new ViewerConfigurer(
 				new LazyContentProvider(cv,dataloader,null),
 				new ArtikelLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Name"}),
+				new MedicalControlFieldProvider(cv, new String[]{"Name"}),
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE,null)
 		);

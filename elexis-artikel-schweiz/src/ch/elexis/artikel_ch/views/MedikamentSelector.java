@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentSelector.java 3104 2007-09-06 18:58:23Z rgw_ch $
+ *  $Id: MedikamentSelector.java 3452 2007-12-14 08:27:03Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -49,7 +49,7 @@ public class MedikamentSelector extends CodeSelectorFactory {
 		return new ViewerConfigurer(
 				new LazyContentProvider(cv,dataloader,null),
 				new ArtikelLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Name"}),
+				new MedikamentControlFieldProvider(cv, new String[]{"Name"}),
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE,null)
 		);
