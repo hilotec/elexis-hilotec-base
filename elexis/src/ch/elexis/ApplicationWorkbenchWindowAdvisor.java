@@ -8,18 +8,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationWorkbenchWindowAdvisor.java 745 2006-08-17 18:25:55Z rgw_ch $
+ * $Id: ApplicationWorkbenchWindowAdvisor.java 3446 2007-12-14 08:21:50Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
+import ch.elexis.actions.ScannerEvents;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
-
 /**
  * Hier können Funktionen aufgerufen werden, die unmittelbar vor dem �ffnen des Hauptfensters erfolgen sollen.
  * Im Wesentlichen werden hier die Menue und Toolbars gesetzt 
@@ -63,6 +64,10 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		return true;
 	}
 
-	
+	@Override
+	public void createWindowContents(Shell shell) {
+		super.createWindowContents(shell);
+		ScannerEvents.addListenerToDisplay(shell.getDisplay());
+	}
 	
 }
