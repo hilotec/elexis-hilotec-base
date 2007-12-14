@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 2869 2007-07-23 05:07:40Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3450 2007-12-14 08:25:20Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -89,28 +89,52 @@ public class VerrechnungsDisplay extends Composite {
 	public void clear(){
 		tVerr.removeAll();
 	}
+	
+	public void addPersistentObject(PersistentObject o) {
+		Konsultation actKons = GlobalEvents.getSelectedKons();
+		if (actKons != null) {
+			if (o instanceof IVerrechenbar) {
+				if (Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
+					SWTHelper
+							.alert("Fehlende Rechte",
+									"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
+				} else {
+					boolean exists = false;
+					// TODO Immi
+					Verrechnet foundVerrechnet = null;
+					for (Verrechnet verrechnet: actKons.getLeistungen()) {
+						if (verrechnet.getVerrechenbar().getId().equals(o.getId())) {
+							foundVerrechnet = verrechnet;
+						}
+					}
+					
+					if (foundVerrechnet != null) {
+						changeAnzahl(foundVerrechnet, foundVerrechnet.getZahl() + 1);
+					} else {
+						Result<IVerrechenbar> result = actKons
+						.addLeistung((IVerrechenbar) o);
+
+						if (!result.isOK()) {
+							SWTHelper.alert("Diese Verrechnung ist ungültig",
+									result.toString());
+						}
+						setLeistungen(actKons);
+					}
+				}
+			}
+		}
+	}
+	
 	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
 		public void dropped(PersistentObject o, DropTargetEvent ev) {
-			 Konsultation actKons=GlobalEvents.getSelectedKons();
-			 if(actKons!=null){
-				 if(o instanceof IVerrechenbar){
-			        	if(Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN)==false){
-			        		SWTHelper.alert("Fehlende Rechte","Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
-			        	}else{
-			        		Result result=actKons.addLeistung((IVerrechenbar)o);
-			        		
-			        		if(!result.isOK()){
-			        			SWTHelper.alert("Diese Verrechnung ist ungültig",result.toString());
-			        		}
-			                setLeistungen(actKons);
-			        	}
-			        }
-			 }
+			addPersistentObject(o);
 		}
 
 		public boolean accept(PersistentObject o) {
-			if(o instanceof IVerrechenbar){
-				return true;
+			if (GlobalEvents.getSelectedPatient() != null) {
+				if(o instanceof IVerrechenbar){
+					return true;
+				}
 			}
 			return false;
 		}
@@ -156,6 +180,19 @@ public class VerrechnungsDisplay extends Composite {
             setLeistungen(GlobalEvents.getSelectedKons());
         }
     }
+	
+	private void changeAnzahl(Verrechnet v, int neuAnzahl) {
+		int vorher=v.getZahl();
+		v.setZahl(neuAnzahl);
+		IVerrechenbar vv=v.getVerrechenbar();
+		if(vv instanceof Artikel){
+			Artikel art=(Artikel)vv;
+			art.einzelRuecknahme(vorher);
+			art.einzelAbgabe(neuAnzahl);
+		}
+		setLeistungen(GlobalEvents.getSelectedKons());
+	}
+	
     private Menu createVerrMenu(){
         Menu ret=new Menu(tVerr);
         MenuItem delVerr=new MenuItem(ret,SWT.NONE);
@@ -196,16 +233,9 @@ public class VerrechnungsDisplay extends Composite {
         		String p=Integer.toString(v.getZahl());
         		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",p,null);
         		if(dlg.open()==Dialog.OK){
-        			int vorher=v.getZahl();
         			int neu=Integer.parseInt(dlg.getValue());
-        			v.setZahl(neu);
-        			IVerrechenbar vv=v.getVerrechenbar();
-        			if(vv instanceof Artikel){
-        				Artikel art=(Artikel)vv;
-        				art.einzelRuecknahme(vorher);
-        				art.einzelAbgabe(neu);
-        			}
-        			setLeistungen(GlobalEvents.getSelectedKons());
+        			changeAnzahl(v, neu);
+        			int vorher=v.getZahl();
         		}
         	}
         });
