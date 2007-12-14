@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: KontaktEntry.java 3438 2007-12-13 14:12:14Z michael_imhof $
+ * $Id: KontaktEntry.java 3442 2007-12-14 07:39:59Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -25,8 +25,10 @@ public class KontaktEntry {
 	private final String email;
 	private final boolean isDetail; // List Kontakt oder Detail Kontakt
 
-	public KontaktEntry(final String vorname, final String name, final String zusatz, final String adresse,
-			final String plz, final String ort, final String tel, String fax, String email, boolean isDetail) {
+	public KontaktEntry(final String vorname, final String name,
+			final String zusatz, final String adresse, final String plz,
+			final String ort, final String tel, String fax, String email,
+			boolean isDetail) {
 		super();
 		this.vorname = vorname;
 		this.name = name;
@@ -43,7 +45,7 @@ public class KontaktEntry {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public String getVorname() {
 		return this.vorname;
 	}
@@ -78,6 +80,21 @@ public class KontaktEntry {
 
 	public boolean isDetail() {
 		return this.isDetail;
+	}
+
+	private int countValue(String value) {
+		if (value != null && value.length() > 0) {
+			return 1;
+		}
+		return 0;
+	}
+
+	public int countNotEmptyFields() {
+		return countValue(getVorname()) + countValue(getName())
+				+ countValue(getZusatz()) + countValue(getAdresse())
+				+ countValue(getPlz()) + countValue(getOrt())
+				+ countValue(getTelefon()) + countValue(getFax())
+				+ countValue(getEmail());
 	}
 
 	public String toString() {

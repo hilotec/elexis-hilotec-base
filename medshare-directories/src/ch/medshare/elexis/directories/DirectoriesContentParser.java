@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 3441 2007-12-13 14:19:10Z michael_imhof $
+ * $Id: DirectoriesContentParser.java 3442 2007-12-14 07:39:59Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -365,8 +365,7 @@ public class DirectoriesContentParser extends HtmlParser {
 				if (fax.contains("mailto:")) {
 					email = new HtmlParser(fax).extract("mailto:", "\"");
 					fax = null;
-				}
-				if (fax.contains("http://")) { // Internet Adresse
+				} else if (fax.contains("http://")) { // Internet Adresse
 					fax = null;
 				}
 			}

@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: HtmlParser.java 3314 2007-11-06 07:30:14Z michael_imhof $
+ * $Id: HtmlParser.java 3442 2007-12-14 07:39:59Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -65,7 +65,7 @@ public class HtmlParser {
 		if (theEnd >= htmlText.length()) {
 			theEnd = htmlText.length() - 1;
 		}
-		//System.out.println("Current: " + htmlText.substring(pos, theEnd));
+		System.out.println("Current: " + htmlText.substring(pos, theEnd));
 	}
 
 	public String extract(String startKeyString, String endKeyString) {
