@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 3433 2007-12-10 16:52:26Z rgw_ch $
+ *    $Id: PreferenceConstants.java 3443 2007-12-14 08:19:58Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -100,4 +100,9 @@ public class PreferenceConstants {
 	
 	// Labor
 	public static final String DAYS_TO_KEEP_UNSEEN_LAB_RESULTS = "14";
+	
+	// Scanner
+	public static final String SCANNER_PREFIX_CODE = "scanner/prefixcode";
+	public static final String SCANNER_POSTFIX_CODE = "scanner/postfixcode";
+	public static final String BARCODE_LENGTH = "scanner/barcodelength";
 }
