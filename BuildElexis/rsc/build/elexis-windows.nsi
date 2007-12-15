@@ -101,8 +101,8 @@ Section -post SEC0001
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     SetOutPath $SMPROGRAMS\$StartMenuGroup
     ReadEnvStr $0 USERPROFILE
-    CreateShortCut "$DESKTOP\Elexis.lnk" "$INSTDIR\Elexis.exe" '-data "$0\elexis"' "$INSTDIR\elexis.ico"
-    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Elexis.lnk" "$INSTDIR\Elexis.exe" '-data "$0\elexis"' "$INSTDIR\elexis.ico"
+    CreateShortCut "$DESKTOP\Elexis.lnk" "$INSTDIR\Elexis.exe" '-data "%USERPROFILE%\elexis"' "$INSTDIR\elexis.ico"
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Elexis.lnk" "$INSTDIR\Elexis.exe" '-data "%USERPROFILE%\elexis"' "$INSTDIR\elexis.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Elexis Handbuch.lnk" "$INSTDIR\elexis.pdf"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_END
