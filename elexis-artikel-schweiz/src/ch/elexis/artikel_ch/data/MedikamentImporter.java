@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentImporter.java 3422 2007-12-07 07:35:27Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3455 2007-12-15 11:33:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -49,7 +49,8 @@ public class MedikamentImporter extends ImporterPage {
 		String in;
 		String mode=" (Modus: Daten ergänzen/update)";
 		if(bDelete==true){
-			if(MessageDialog.openConfirm(null,"Wirklich Daten löschen","Achtung: Wenn die alten Daten gelöscht werden, kann es\nsein, dass bestehende Bezüge ungültig werden.")==true){
+			if(SWTHelper.askYesNo("Wirklich Daten löschen", 
+					"Achtung: Wenn die alten Daten gelöscht werden, kann es\nsein, dass bestehende Bezüge ungültig werden.")){
 				PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Medikament'");
 				mode=" (Modus: Alles neu erstellen)";
 			}
