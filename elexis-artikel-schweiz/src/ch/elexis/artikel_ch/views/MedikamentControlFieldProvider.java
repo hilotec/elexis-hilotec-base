@@ -10,6 +10,7 @@ import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
@@ -61,11 +62,19 @@ public class MedikamentControlFieldProvider extends DefaultControlFieldProvider 
 				if (text != null) {
 					text.setText(artikel.getName());
 				}
+				Konsultation kons=GlobalEvents.getSelectedKons();
+				if(kons!=null){
+					kons.addLeistung(artikel);
+				}else{
+					beep();
+				}
+				/*
 				if (GlobalEvents.getSelectedPatient() != null && detailView != null && detailView.checkFallOffen()) {
 					detailView.addToVerechnung(artikel);
 				} else {
 					beep();
 				}
+				*/
 			}
 			text.selectAll();
 		} else {
