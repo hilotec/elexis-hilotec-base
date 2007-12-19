@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3405 2007-11-28 11:16:14Z rgw_ch $
+<!-- $Id: build.xml 3466 2007-12-19 17:27:55Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -190,7 +190,10 @@
 			<antcall target="praxisdesktop"/>
 		<available file="../elexis-covercard/build.xml" property="covercard.ok"/>
 			<antcall target="covercard"/>
-
+		
+		<available file="../elexis-importer-argolead/build.xml" property="argolead.ok"/>
+			<antcall target="argolead"/>
+		
 	</target>
 
 	<target name="all" depends="main,options"/>
@@ -302,6 +305,11 @@
 	<target name="importer-csv" if="importer_csv.ok">
 		<ant antfile="../medshare-importer-csv/build.xml"/>
 	</target>
+	
+	<target name="argolead" if="argolead.ok">
+		<ant antfile="../elexis-importer-argolead/build.xml"/>
+	</target>
+		
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
 	<target name="make_addition">
