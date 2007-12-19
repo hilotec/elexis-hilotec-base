@@ -221,18 +221,40 @@ public class KontaktMatcher {
 		
 	}
 	
-	static void addAddress(final Kontakt k, final String str, final String plz, final String ort){
+	public static void addAddress(final Kontakt k, String str, String plzort){
+		String[] ort=plzort.split("[\\s+]");
+		if(ort.length==2){
+			addAddress(k,str,ort[0],ort[1]);
+		}else if(ort.length>2){
+			StringBuilder plz=new StringBuilder();
+			for(int i=1;i<ort.length;i++){
+				plz.append(ort[i]).append(" ");
+			}
+			addAddress(k,str,ort[0],plz.toString());
+		}else{
+			addAddress(k,str,ort[0],"");
+		}
+	}
+	public static void addAddress(final Kontakt k, final String str, String plz, final String ort){
 		Anschrift an=k.getAnschrift();
 		if(!StringTool.isNothing(str)){
 			an.setStrasse(str);
 		}
 		if(!StringTool.isNothing(plz)){
+			if(plz.matches("[A-Z]{1,3}[\\s\\-]+[A-Za-z0-9]+")){
+				String[] plzx=plz.split("[\\s\\-]+", 1);
+				if(plzx.length>1){
+					plz=plzx[1];
+					an.setLand(plzx[0]);
+				}
+			}
 			an.setPlz(plz);
 		}
 		if(!StringTool.isNothing(ort)){
 			an.setOrt(ort);
 		}
 		k.setAnschrift(an);
+		k.createStdAnschrift();
 	}
 
 	/**

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 3211 2007-09-26 16:06:00Z rgw_ch $
+ *  $Id: ExcelWrapper.java 3459 2007-12-19 13:57:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -122,5 +122,12 @@ public class ExcelWrapper {
 	 */
 	public int getLastRow(){
 		return sheet.getLastRowNum();
+	}
+	
+	public static String getSafe(List<String> row, int col){
+		if(row.size()>col){
+			return row.get(col);
+		}
+		return "";
 	}
 }
