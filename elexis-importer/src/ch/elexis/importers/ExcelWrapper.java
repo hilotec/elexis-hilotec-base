@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 3459 2007-12-19 13:57:52Z rgw_ch $
+ *  $Id: ExcelWrapper.java 3465 2007-12-19 17:27:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -88,8 +88,12 @@ public class ExcelWrapper {
 								ret.add(Long.toString(Math.round(cell.getNumericCellValue())));
 							}else if(types[i].equals(TimeTool.class)){
 								Date date=cell.getDateCellValue();
-								TimeTool tt=new TimeTool(date.getTime());
-								ret.add(tt.toString(TimeTool.FULL_MYSQL));
+								if(date!=null){
+									TimeTool tt=new TimeTool(date.getTime());
+									ret.add(tt.toString(TimeTool.FULL_MYSQL));
+								}else{
+									ret.add("");
+								}
 							}else /*if(types[i].equals(Double.class))*/{
 								ret.add(Double.toString(cell.getNumericCellValue())); break;
 							}
