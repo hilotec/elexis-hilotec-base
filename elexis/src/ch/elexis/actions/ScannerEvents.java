@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Hub;
 import ch.elexis.preferences.PreferenceConstants;
@@ -46,7 +47,8 @@ public class ScannerEvents implements Listener {
 				0);
 		postfixCode = Hub.globalCfg.get(
 				PreferenceConstants.SCANNER_POSTFIX_CODE, 0);
-		barcodeLength = Hub.globalCfg.get(PreferenceConstants.BARCODE_LENGTH, 13);
+		barcodeLength = Hub.globalCfg.get(PreferenceConstants.BARCODE_LENGTH,
+				13);
 	}
 
 	public static void addListenerToDisplay(Display display) {
@@ -65,7 +67,7 @@ public class ScannerEvents implements Listener {
 		String barcode = strBuf.toString();
 		barcode = barcode.replaceAll(new Character(SWT.CR).toString(), "");
 		barcode = barcode.replaceAll(new Character(SWT.LF).toString(), "");
-		barcode = barcode.replaceAll(new Character((char)0).toString(), "");
+		barcode = barcode.replaceAll(new Character((char) 0).toString(), "");
 		if (barcode.length() > barcodeLength) {
 			return barcode.substring(barcode.length() - barcodeLength);
 		}
@@ -91,7 +93,8 @@ public class ScannerEvents implements Listener {
 				inputBuffer = new StringBuffer();
 			}
 			if (inputBuffer.length() > BUF_LIMIT) {
-				inputBuffer = inputBuffer.delete(0, inputBuffer.length() - BUF_MINIMUM);
+				inputBuffer = inputBuffer.delete(0, inputBuffer.length()
+						- BUF_MINIMUM);
 			}
 			inputBuffer.append(event.character);
 		}
@@ -112,5 +115,10 @@ public class ScannerEvents implements Listener {
 		for (IScannerListener listener : listenerList) {
 			listener.scannerInput(e);
 		}
+	}
+
+	public static void beep() {
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
+				.getDisplay().beep();
 	}
 }
