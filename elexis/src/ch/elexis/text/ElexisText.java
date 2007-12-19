@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyListener;
@@ -13,6 +14,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 import ch.elexis.actions.ScannerEvents;
 import ch.elexis.util.IScannerListener;
@@ -27,12 +29,20 @@ public class ElexisText implements IScannerListener, DisposeListener {
 		this.text.addDisposeListener(this);
 	}
 	
+	public Widget getWidget() {
+		return this.text;
+	}
+	
 	public void widgetDisposed(DisposeEvent e) {
 		ScannerEvents.getInstance().removeScannerListener(this);
 	}
 
 	public ElexisText(Composite parent, int style) {
 		this(new Text(parent, style));
+	}
+	
+	public void addKeyListener(KeyListener listener) {
+		text.addKeyListener(listener);
 	}
 
 	public void addModifyListener(ModifyListener listener) {
@@ -202,6 +212,10 @@ public class ElexisText implements IScannerListener, DisposeListener {
 		text.removeVerifyListener(listener);
 	}
 
+	public void removeKeyListener(KeyListener listener) {
+		text.removeKeyListener(listener);
+	}
+	
 	public void selectAll() {
 		text.selectAll();
 	}
