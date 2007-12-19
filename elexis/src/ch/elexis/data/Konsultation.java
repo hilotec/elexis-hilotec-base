@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 2999 2007-08-20 14:45:37Z danlutz $
+ *  $Id: Konsultation.java 3467 2007-12-19 17:41:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -565,7 +565,10 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
     	int sum=0;
     	List<Verrechnet> l=getLeistungen();
     	for(Verrechnet v:l){
-    		sum+=(v.getZahl()*v.getVerrechenbar().getMinutes());
+    		IVerrechenbar iv=v.getVerrechenbar();
+    		if(iv!=null){
+    			sum+=(v.getZahl()*iv.getMinutes());
+    		}
     	}
     	return sum;
     
