@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3449 2007-12-14 08:23:53Z michael_imhof $
+ *  $Id: KonsDetailView.java 3462 2007-12-19 15:52:33Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -464,11 +464,6 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 			setKons(null);
 		}
 		
-	}
-	
-	// Folgende Methoden werden für Scanner input verwendet
-	public boolean checkFallOffen() {
-		return true;
 	}
 	
 	public void addToVerechnung(Artikel artikel) {
