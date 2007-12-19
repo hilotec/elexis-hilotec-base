@@ -33,7 +33,7 @@ Rietstrasse 30
       <macosx icon="/Elexis/elexis-mac.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/Elexis/rsc/elexis.ico"/>
+         <ico path="/elexis/rsc/elexis.ico"/>
          <bmp/>
       </win>
    </launcher>
