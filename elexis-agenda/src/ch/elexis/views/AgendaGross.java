@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 2630 2007-06-25 14:18:52Z danlutz $
+ *  $Id: AgendaGross.java 3470 2007-12-20 20:56:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -74,9 +74,12 @@ public class AgendaGross extends BaseAgendaView {
 		String[] bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
 		ChangeBereichAdapter chb=new ChangeBereichAdapter();
 		for(String bereich:bereiche){
-			Button bChange=new Button(cButtons,SWT.PUSH);
+			Button bChange=new Button(cButtons,SWT.RADIO);
 			bChange.setText(bereich);
 			bChange.addSelectionListener(chb);
+			if(bereich.equals(actBereich)){
+				bChange.setSelection(true);
+			}
 		}
 		tv=new TableViewer(ret,SWT.FULL_SELECTION|SWT.SINGLE);
 		FormData fdTV=new FormData();
