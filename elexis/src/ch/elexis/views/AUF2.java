@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ *  $Id: AUF2.java 3472 2007-12-20 20:57:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -31,6 +31,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.AUF;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -41,7 +42,7 @@ import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
 
 /**
- * Ein Versuch, die nicht optimal gelöste Einagbe einer AUF neu zu gestalten (soll die View AUF ersetzen)
+ * Arbeitsunfähigkeitszeugnisse erstellen und verwalten.
  * @author gerry
  *
  */
@@ -89,8 +90,12 @@ public class AUF2 extends ViewPart implements ActivationListener, SelectionListe
 			@Override
 			public void run() {
 				if(GlobalEvents.getSelectedFall()==null){
-					SWTHelper.showError(Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
-					return;
+					Konsultation kons=GlobalEvents.getSelectedKons();
+					if(kons==null){
+						SWTHelper.showError(Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+					GlobalEvents.getInstance().fireSelectionEvent(kons.getFall());
 				}
 				new EditAUFDialog(getViewSite().getShell(),null).open();
 				tv.refresh(false);

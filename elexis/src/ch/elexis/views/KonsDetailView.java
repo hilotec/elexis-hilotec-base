@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3462 2007-12-19 15:52:33Z michael_imhof $
+ *  $Id: KonsDetailView.java 3472 2007-12-20 20:57:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -139,12 +139,16 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 				Fall nFall=faelle[i];
 				Fall actFall=actKons.getFall();
 				if(!nFall.getId().equals(actFall.getId())){
-					MessageDialog msd=new MessageDialog(getViewSite().getShell(),"Fallzuordnung ändern",Desk.theImageRegistry.get(Desk.IMG_LOGO48),
-							"Möchten Sie diese Behandlung vom Fall:\n'"+actFall.getLabel()+"' zum Fall:\n'"+nFall.getLabel()+"' transferieren?",
-							MessageDialog.QUESTION,new String[]{"Ja","Nein"},0);
-					if(msd.open()==0){
-						actKons.setFall(nFall);
-						setKons(actKons);
+					if(!nFall.isOpen()){
+						SWTHelper.alert("Fall geschlossen", "Die Konsultation kann nicht einem geschlossenen Fall zugeordnet werden");
+					}else{
+						MessageDialog msd=new MessageDialog(getViewSite().getShell(),"Fallzuordnung ändern",Desk.theImageRegistry.get(Desk.IMG_LOGO48),
+								"Möchten Sie diese Behandlung vom Fall:\n'"+actFall.getLabel()+"' zum Fall:\n'"+nFall.getLabel()+"' transferieren?",
+								MessageDialog.QUESTION,new String[]{"Ja","Nein"},0);
+						if(msd.open()==0){
+							actKons.setFall(nFall);
+							setKons(actKons);
+						}
 					}
 				}
 			}
@@ -258,6 +262,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	            		break;
 	            	}
 	            }
+	            cbFall.setEnabled(act.isOpen());
 	            Mandant m=b.getMandant();
 	            lBeh.setText("Kons. vom "+b.getDatum());
 	            StringBuilder sb=new StringBuilder();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF.java 766 2006-08-21 10:29:17Z rgw_ch $
+ *  $Id: AUF.java 3472 2007-12-20 20:57:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class AUF extends PersistentObject {
@@ -22,15 +23,15 @@ public class AUF extends PersistentObject {
 				"von=S:D:DatumVon",
 				"bis=S:D:DatumBis",
 				"Grund",
-				"Prozent","Zusatz=AUFZusatz");
+				"Prozent","Zusatz=AUFZusatz","Erstellt=S:D:DatumAUZ");
 	}
 	public AUF(Fall f,String von, String bis, String proz,String grund){
 		if(f!=null){
 			Patient p=f.getPatient();
 			if(p!=null){
 				create(null);
-				set(new String[]{"PatientID","FallID","von","bis","Prozent","Grund"},
-						p.getId(),f.getId(),von,bis,proz,grund);
+				set(new String[]{"PatientID","FallID","von","bis","Prozent","Grund","Erstellt"},
+						p.getId(),f.getId(),von,bis,proz,grund,new TimeTool().toString(TimeTool.DATE_GER));
 			}
 		}
 		
@@ -38,10 +39,13 @@ public class AUF extends PersistentObject {
 	}
 	@Override
 	public String getLabel() {
-		String[] f={"von","bis","Prozent","Grund"};
+		String[] f={"von","bis","Prozent","Grund","Erstellt"};
 		String[] v=new String[f.length];
 		get(f,v);
 		StringBuilder sb=new StringBuilder();
+		if(!StringTool.isNothing(v[4])){
+			sb.append("[").append(v[4]).append("]: ");
+		}
 		sb.append(v[0]).append("-").append(v[1]).append(": ")
 			.append(v[2]).append("% (").append(v[3]).append(")");
 		return sb.toString();

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 3467 2007-12-19 17:41:09Z rgw_ch $
+ *  $Id: Konsultation.java 3472 2007-12-20 20:57:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -350,6 +350,14 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	 * @return true if the Konsultation can be altered, else otherwise.
 	 */
 	public boolean isEditable(boolean showError) {
+		Fall fall=getFall();
+		if(fall!=null){
+			if(!fall.isOpen()){
+				SWTHelper.showError("Fall geschlossen", "Diese Konsultation gehört zu einem abgeschlossenen Fall");
+				return false;
+			}
+		}
+
 		// check mandant and bill
 		return isEditable(true, true, showError);
 	}

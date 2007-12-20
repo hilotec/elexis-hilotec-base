@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 3427 2007-12-08 23:30:10Z rgw_ch $
+ * $Id: GlobalActions.java 3472 2007-12-20 20:57:14Z rgw_ch $
  *******************************************************************************/
 
 
@@ -623,6 +623,10 @@ public class GlobalActions {
 					}
 				}
 			}
+		}
+		if(!actFall.isOpen()){
+			SWTHelper.showError("Fall geschlossen", "Zu einem geschlossenen Fall können keine neuen Konsultationen erstellt werden");
+			return;
 		}
 		Konsultation actLetzte=actFall.getLetzteBehandlung();
 		if((actLetzte!=null) && actLetzte.getDatum().equals(new TimeTool().toString(TimeTool.DATE_GER))){
