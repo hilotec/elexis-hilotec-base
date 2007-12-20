@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 3359 2007-11-21 15:36:00Z rgw_ch $
+ * $Id: Connection.java 3471 2007-12-20 20:57:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -34,6 +34,7 @@ import ch.rgw.tools.ExHandler;
 
 public class Connection implements SerialPortEventListener{
 	private static final String simulate=null; //"c:/abx.txt";
+
 	
 	private CommPortIdentifier portId;
 	private SerialPort sPort;
@@ -51,14 +52,20 @@ public class Connection implements SerialPortEventListener{
 	private static final int AWAIT_START=1;
 	private static final int AWAIT_END=2;
 	private static final int AWAIT_CHECKSUM=3;
+	private static final int AWAIT_LINE=4;
+	private static byte lineSeparator;;
 	private int state=PASS_THRU;
 	private final StringBuilder sbFrame=new StringBuilder();
+	private final StringBuilder sbLine=new StringBuilder();
 	private Watchdog watchdog;
 	private Thread watchdogThread;
 	public static final String XON="\013";
 	public final static String XOFF="\015";
 	public final static String STX="\002";
 	public final static String ETX="\003";
+	public static final String NAK="\025";
+	public static final String CR="\015";
+	public static final String LF="\012";
 		
 	public interface ComPortListener{
 		 public void gotChunk(Connection conn, String chunk);
@@ -95,6 +102,7 @@ public class Connection implements SerialPortEventListener{
 						
 					}}).start();
 			}else{
+				sbLine.setLength(0);
 				openConnection(sp);
 			}
 			return true;
@@ -233,6 +241,22 @@ public class Connection implements SerialPortEventListener{
 		checksumBytes=overhang;
 		watchdogThread.start();
 	}
+	
+	/**
+	 * Read a line of input from the serial port. A line is defined as a series of bytes
+	 * delimited by the given delimiter (e.g. \n).
+	 * @param delimiter The delimiter to recognize the end of line
+	 * @param timeout number of seconds to wait at most before giving up
+	 */
+	public void readLine(byte delimiter, int timeout){
+		lineSeparator=delimiter;
+		//sbLine.setLength(0);
+		state=AWAIT_LINE;
+		endTime=System.currentTimeMillis()+(timeout*1000);
+		watchdogThread=new Thread(new Watchdog());
+		timeToWait=timeout;
+		watchdogThread.start();
+	}
 	  /**
     Handles SerialPortEvents. The two types of SerialPortEvents that this
     program is registered to listen for are DATA_AVAILABLE and BI. During 
@@ -289,7 +313,21 @@ public class Connection implements SerialPortEventListener{
 						overhang=checksumBytes;
 						serialEvent(e);
     				}
+    				break;
+    			case AWAIT_LINE:
+    				while((newData=is.read()) != -1){
+    					//System.out.println(new StringBuilder().append((char)newData).toString());
+    					if(newData==lineSeparator){
+    						String res=sbLine.toString();
+    						sbLine.setLength(0);
+    						listener.gotChunk(this,res);
+    					}else{
+    						sbLine.append((char)newData);
+    					}
+    				}
     			}
+
+    				
     				
     		}catch(Exception ex){
     			ExHandler.handle(ex);
