@@ -13,6 +13,7 @@ import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.ScannerEvents;
+import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
@@ -67,17 +68,16 @@ public class MedikamentControlFieldProvider extends DefaultControlFieldProvider 
 			text = (Text)e.widget;
 		}
 		if (text != null) {
-			Query<Artikel> query = new Query<Artikel>(Artikel.class);
+			Query<Medikament> query = new Query<Medikament>(Medikament.class);
 			query.add("EAN", "=", e.text);
-			query.add("Typ", "=", "Medikament");
-			List<Artikel> artikelList = query.execute();
-			if (artikelList.size() == 0) {
+			List<Medikament> medikamentList = query.execute();
+			if (medikamentList.size() == 0) {
 				ScannerEvents.beep();
 			}
-			for (Artikel artikel: artikelList) {
+			for (Medikament medikament: medikamentList) {
 				Konsultation kons=GlobalEvents.getSelectedKons();
 				if(kons!=null){
-					detailView.addToVerechnung(artikel);
+					detailView.addToVerechnung(medikament);
 				} else {
 					ScannerEvents.beep();
 				}
