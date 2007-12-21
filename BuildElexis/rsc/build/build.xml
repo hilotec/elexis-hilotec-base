@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3469 2007-12-20 20:56:51Z rgw_ch $
+<!-- $Id: build.xml 3473 2007-12-21 11:01:54Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -190,9 +190,10 @@
 			<antcall target="praxisdesktop"/>
 		<available file="../elexis-covercard/build.xml" property="covercard.ok"/>
 			<antcall target="covercard"/>
-		
 		<available file="../elexis-importer-argolead/build.xml" property="argolead.ok"/>
 			<antcall target="argolead"/>
+		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok"/>
+			<antcall target="mythic"/>
 		
 	</target>
 
@@ -309,7 +310,9 @@
 	<target name="argolead" if="argolead.ok">
 		<ant antfile="../elexis-importer-argolead/build.xml"/>
 	</target>
-		
+	<target name="mythic" if="mythic.ok">
+		<ant antfile="../elexis-connect-mythic/build.xml"/>
+	</target>
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
 	<target name="make_addition">
