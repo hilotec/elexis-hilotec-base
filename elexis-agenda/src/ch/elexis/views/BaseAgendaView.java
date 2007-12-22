@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 2233 2007-04-17 13:04:14Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3476 2007-12-22 05:28:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -52,17 +52,20 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	protected IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
 	protected IAction dayLimitsAction, newViewAction, printAction;
 	MenuManager menu=new MenuManager();
+	String[] bereiche;
 	
+	protected BaseAgendaView(){
+		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); 
+		actBereich=bereiche[0];
+	}
 	abstract public void create(Composite parent);
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		self=this;
+		setBereich(actBereich);
 		create(parent);
 		makeActions();
-		String[] bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); 
-		actBereich=bereiche[0];
-		setBereich(actBereich);
 		tv.setContentProvider(new AgendaContentProvider());
 		tv.setUseHashlookup(true);
 		tv.addDoubleClickListener(new IDoubleClickListener(){

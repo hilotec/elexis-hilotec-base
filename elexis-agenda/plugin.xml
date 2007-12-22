@@ -13,6 +13,11 @@
             class="ch.elexis.views.AgendaGross"
             id="ch.elexis.agenda.largeview"
             name="Agenda gross"/>
+      <view
+            class="ch.elexis.views.AgendaWeek"
+            id="ch.elexis.agenda.week"
+            name="Wochenanzeige">
+      </view>
    </extension>
       <extension
          point="org.eclipse.ui.preferencePages">
