@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  *    
- * $Id: TarmedImporter.java 3426 2007-12-08 18:47:22Z rgw_ch $
+ * $Id: TarmedImporter.java 3478 2007-12-24 14:39:30Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -143,6 +143,9 @@ public class TarmedImporter extends ImporterPage{
             count=0;
             while(res.next()==true){
             	String cc=res.getString("LNR");
+            	if(cc.equals("03.0020")){
+            		System.out.println(cc);
+            	}
             	TarmedLeistung tl=TarmedLeistung.load(cc);
             	if(tl.exists()){
             		tl.set("DigniQuanti",res.getString("QT_DIGNITAET"));

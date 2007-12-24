@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3429 2007-12-09 00:48:39Z rgw_ch $
+ * $Id: XMLExporter.java 3478 2007-12-24 14:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -641,21 +641,41 @@ public class XMLExporter implements IRnOutputter {
 		Element provider=(Element)biller.clone();												//  11080
 		provider.setName("provider");
 		eTiers.addContent(provider);
-			
-		Element insurance=new Element("insurance",ns);	//  11090
-		insurance.setAttribute("ean_party",TarmedRequirements.getEAN(kostentraeger)); //kostentraeger.getInfoString("EAN"));							
-		//insurance.addContent(buildAdressElement(kostentraeger));	// must be an organization, so we fake one
-		Element company=new Element("company",ns);
-		Element companyname=new Element("companyname",ns);
-		companyname.setText(kostentraeger.get("Bezeichnung1"));
-		company.addContent(companyname);
-		company.addContent(buildPostalElement(kostentraeger));
-		company.addContent(buildTelekomElement(kostentraeger));
-		company.addContent(buildOnlineElement(kostentraeger));
-		insurance.addContent(company);
-		// note this may lead to a person mistreated as organization. So these faults should be caught when generating bills
 		
-		eTiers.addContent(insurance);
+		Element insurance=new Element("insurance",ns);	//  11090
+		// The 'insurance' element is optional in Tiers Garant so in TG we only insert this Element, if we have all
+		// data absolutely correct
+		// In Tiers Payant, the insurance element is mandatory, and, furthermore, MUST be an Organization. So in TP, we
+		// insert an insurance element in any case, and, if the guarantor is a person, we "covert" it to an organization
+		if(tiers.equals("TG")){
+			if(kostentraeger instanceof Organisation){
+				if(kEAN.matches("[0-9]{13,13}")){
+					insurance.setAttribute("ean_party",kEAN);
+					insurance.addContent(buildAdressElement(kostentraeger));
+					eTiers.addContent(insurance);
+				}
+			}
+		}else{
+			//insurance.addContent(buildAdressElement(kostentraeger));	// must be an organization, so we fake one
+			/*
+			if(!kEAN.matches("[0-9]{13,13}")){
+				kEAN="2000000000000";		
+			}
+			*/
+			insurance.setAttribute("ean_party",kEAN);
+			Element company=new Element("company",ns);
+			Element companyname=new Element("companyname",ns);
+			companyname.setText(kostentraeger.get("Bezeichnung1"));
+			company.addContent(companyname);
+			company.addContent(buildPostalElement(kostentraeger));
+			company.addContent(buildTelekomElement(kostentraeger));
+			company.addContent(buildOnlineElement(kostentraeger));
+			insurance.addContent(company);
+			eTiers.addContent(insurance);
+			// note this may lead to a person mistreated as organization. So these faults should be caught when generating bills
+			
+		}
+		
 			
 		Element patient=new Element("patient",ns);												// 	11100
 		
