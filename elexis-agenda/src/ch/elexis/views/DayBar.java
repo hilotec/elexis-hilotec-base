@@ -21,14 +21,13 @@ import ch.rgw.tools.TimeTool;
 
 public class DayBar extends Composite {
 	int height, width;
-	double pixelPerMinute;
 	double pixelPerDay;
 	DayBar self=this;
-	int tagStart;
-	int tagEnde;
-		
-	public DayBar(Composite parent){
-		super(parent,SWT.BORDER);
+	AgendaWeek container;	
+	
+	public DayBar(AgendaWeek parent){
+		super(parent.cWeekDisplay,SWT.BORDER);
+		container=parent;
 		this.addControlListener(new ControlListener(){
 
 			public void controlMoved(ControlEvent e) {
@@ -47,12 +46,7 @@ public class DayBar extends Composite {
 	
 
 	void recalc(){
-		int ts=Hub.userCfg.get("agenda/dayView/Start",7); //$NON-NLS-1$
-		int te=Hub.userCfg.get("agenda/dayView/End",19); //$NON-NLS-1$
-		tagStart=ts*60; // 7 Uhr
-		tagEnde=te*60;
-		int dayLen=tagEnde-tagStart;
-		pixelPerMinute=(double)height/(double)dayLen;
+		container.recalc();
 		pixelPerDay=Math.max(width-10,5);
 		for(Control ctrl:getChildren()){
 			if(ctrl instanceof TerminFeld){
@@ -89,15 +83,15 @@ public class DayBar extends Composite {
 			int terminStart=t.getStartMinute();
 			int terminDauer=t.getDurationInMinutes();
 			int terminEnde=terminStart+terminDauer;
-			if(terminStart<tagStart){
-				terminStart=tagStart;
+			if(terminStart<container.tagStart){
+				terminStart=container.tagStart;
 			}
-			if(terminEnde>tagEnde){
-				terminEnde=tagEnde;
+			if(terminEnde>container.tagEnde){
+				terminEnde=container.tagEnde;
 			}
 			anzeigeDauer=Math.max(0,terminEnde-terminStart);
-			int h=(int)Math.round(anzeigeDauer*pixelPerMinute);
-			int beg=(int)Math.round((terminStart-tagStart)*pixelPerMinute);
+			int h=(int)Math.round(anzeigeDauer*container.pixelPerMinute);
+			int beg=(int)Math.round((terminStart-container.tagStart)*container.pixelPerMinute);
 			setBounds(0, beg, (int)Math.round(pixelPerDay), h);
 			layout();
 		}
