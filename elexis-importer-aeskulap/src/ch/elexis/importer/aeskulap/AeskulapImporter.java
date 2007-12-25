@@ -230,6 +230,7 @@ public class AeskulapImporter extends ImporterPage {
 			TimeTool tt=new TimeTool(getField(12));
 			String s=getField(13).equals("1") ? "m" : "w";
 			Patient p=new Patient(StringTool.normalizeCase(getField(2)),getField(3),tt.toString(TimeTool.DATE_GER),s);
+			p.set("PatientNr", getField(0));
 			moni.subTask(new StringBuilder().append(p.getLabel()).append(" ").append(p.getPatCode()).toString());
 			Anschrift an=p.getAnschrift();
 			an.setStrasse(getField(5));
