@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2007, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: DayBar.java 3480 2007-12-25 10:28:13Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.views;
 
 import java.util.List;
@@ -11,10 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.data.IPlannable;
-import ch.elexis.data.Termin;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
