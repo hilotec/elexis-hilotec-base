@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 3059 2007-09-02 17:27:09Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 3481 2007-12-26 08:18:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -25,6 +25,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
+import ch.elexis.Hub.ShutdownJob;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
@@ -72,11 +73,20 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         
         // look whether we have do to some work before creating the workbench
         try{
-    		Class<?> up=Class.forName("ch.elexis.PreStartUpdate");
+    		final Class<?> up=Class.forName("ch.elexis.PreStartUpdate");
     		Hub.log.log("Found PreStartUpdate, executing", Log.SYNCMARK);
-    		up.newInstance();
-    		File file=new File(FileTool.getBasePath(up),"PreStartUpdate.class");
-    		file.delete();
+    		Object psu=up.newInstance();
+    		psu=null;
+    		Hub.addShutdownJob(new ShutdownJob(){
+
+				public void doit() throws Exception {
+		    		File file=new File(FileTool.getBasePath(up),"PreStartUpdate.class");
+		    		if(file.delete()){
+		    			Hub.log.log("Deleted PreStartUpdate successfully", Log.SYNCMARK);
+		    		}else{
+		    			Hub.log.log("Could not delete PreStartUpdate",Log.ERRORS);
+		    		}
+				}});
         }catch(ClassNotFoundException cnf){
     		// nothing
     	}catch(Exception ex){
