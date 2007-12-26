@@ -1,4 +1,4 @@
-// $Id: TimeTool.java 2865 2007-07-22 15:26:06Z rgw_ch $
+// $Id: TimeTool.java 3482 2007-12-26 08:19:21Z rgw_ch $
 
 package ch.rgw.tools;
 
@@ -16,7 +16,7 @@ public class TimeTool extends GregorianCalendar{
 	 * 
 	 */
 	private static final long serialVersionUID = 0xc3efadd1L;
-	public static String Version(){return "3.0.6";}
+	public static String Version(){return "3.1.0";}
 	public static final String BEGINNING_OF_UNIX_EPOCH="19700101";	// Erster Tag, der mit dieser Version verwendet werden kann
 	public static final String END_OF_UNIX_EPOCH="20380118";		// Letzter Tag, der mit dieser Version verwendet werden kann
 	
@@ -119,7 +119,7 @@ public class TimeTool extends GregorianCalendar{
  /**
    * Parsed einen String im Format "datum zeit" oder "datum, zeit" oder "datum" oder "zeit".
    * Für datum sind folgende Formate gültig:
-   * yyyy-MM-dd, yy-MM-dd, yyyy.MM.dd, yy.MM.dd, yyyyMMdd
+   * yyyy-MM-dd, yy-MM-dd, dd.MM.yyyy, dd.MM.YY, yyyyMMdd
    * für zeit sind folgende Formate gültig:
    * hh:mm:ss, hh:mm, hhmm, hmm
    * ausserdem das timestamp-format yyyyMMddhhmmss
@@ -195,7 +195,7 @@ public class TimeTool extends GregorianCalendar{
 		 return false;
 	 }
   }
-  // nur Datum setzen, Zeit unver�ndert lassen
+  // nur Datum setzen, Zeit unverändert lassen
   public boolean setDate(final String dat)
   { 
 	  try{
@@ -235,7 +235,8 @@ public class TimeTool extends GregorianCalendar{
   * Wenn keines über 31 ist, dann wird bei Trennzeichen -
   * angenommen, dass zuerst das Jahr steht (MySQL-Stil), wenn .
   * das Trennzeichen ist, wird angenommen, dass das Jahr hinten
-  * steht.
+  * steht. Wenn eine so ermittelte zweistellige Jahreszahl grösser ist, als das aktuelle
+  * Jahr, werden 100 Jahre abgezogen.
   * In der internen Repräsentation steht immer der Tag an erster Stelle
   */
   public static int[] parseDate(final String tx)
@@ -290,6 +291,10 @@ public class TimeTool extends GregorianCalendar{
     }
     if(ret[2]<1900){
     	ret[2]+=2000;
+    	int act=new TimeTool().get(TimeTool.YEAR);
+    	if(act<(ret[2]-5)){
+    		ret[2]-=100;
+    	}
     }
     return ret;
   }
