@@ -7,4 +7,6 @@ public class PreferenceConstants {
 	public static final String TCWITHIMAGE="TarmedTCWithImage";  //$NON-NLS-1$
 
 	public static final String RNN_EXPORTDIR="TarmedExport_Directory"; //$NON-NLS-1$
+	public static final String RNN_RELAXED="TarmedRnn_relaxed"; //$NON-NLS-1$
+	public static final String RNN_SAVECOPY="TarmedRnn_Savecopy"; //$NON-NLS-1$
 }

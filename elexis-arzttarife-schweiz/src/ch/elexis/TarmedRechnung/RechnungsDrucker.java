@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3484 2007-12-29 12:01:18Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3485 2007-12-29 13:34:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -127,11 +128,29 @@ public class RechnungsDrucker implements IRnOutputter{
 		bForms.setSelection(true);
 		bIgnoreFaults=new Button(ret,SWT.CHECK);
 		bIgnoreFaults.setText(Messages.RechnungsDrucker_IgnoreFaults);
-		Composite cSaveCopy=new Composite(ret,SWT.NONE);
+		bIgnoreFaults.setSelection(Hub.localCfg.get(PreferenceConstants.RNN_RELAXED, true));
+		bIgnoreFaults.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Hub.localCfg.set(PreferenceConstants.RNN_RELAXED, bIgnoreFaults.getSelection());
+			}
+			
+		});
+		Group cSaveCopy=new Group(ret,SWT.NONE);
+		cSaveCopy.setText("Datei für TrustCenter");
 		cSaveCopy.setLayout(new GridLayout(2,false));
 		bSaveFileAs=new Button(cSaveCopy,SWT.CHECK);
 		bSaveFileAs.setText("auch als XML für TrustCenter speichern");
 		bSaveFileAs.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		bSaveFileAs.setSelection(Hub.localCfg.get(PreferenceConstants.RNN_SAVECOPY, false));
+		bSaveFileAs.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Hub.localCfg.set(PreferenceConstants.RNN_SAVECOPY, bSaveFileAs.getSelection());
+			}
+			
+		});
+
 		Button bSelectFile=new Button(cSaveCopy,SWT.PUSH);
 		bSelectFile.setText("Verzeichnis:");
 		bSelectFile.addSelectionListener(new SelectionAdapter(){
