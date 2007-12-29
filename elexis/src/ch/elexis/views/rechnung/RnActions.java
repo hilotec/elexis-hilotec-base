@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3424 2007-12-07 16:24:25Z danlutz $
+ * $Id: RnActions.java 3486 2007-12-29 20:15:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -368,6 +368,7 @@ public class RnActions {
 			text.getPlugin().showMenu(false);
 			text.getPlugin().showToolbar(false);
 			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, "Rechnungen");
+			text.getPlugin().insertText("[Titel]", "Rechnungsliste gedruckt am "+new TimeTool().toString(TimeTool.DATE_GER)+"\n",SWT.CENTER);
 			String[][] table=new String[tree.length][];
 			
 			for(int i=0;i<tree.length;i++){
@@ -381,13 +382,13 @@ public class RnActions {
 				}
 				Patient p=(Patient)tr.contents;
 				StringBuilder sb=new StringBuilder();
-				sb.append(p.getLabel());
+				//sb.append(p.getLabel());
 				for(Tree tFall:(Tree[])tr.getChildren().toArray(new Tree[0])){
 					Fall fall=(Fall)tFall.contents;
-					sb.append("\n -- Fall: ").append(fall.getLabel());
+					// sb.append("\n -- Fall: ").append(fall.getLabel());
 					for(Tree tRn:(Tree[])tFall.getChildren().toArray(new Tree[0])){
 						Rechnung rn=(Rechnung)tRn.contents;
-						sb.append("\n -- -- Rechnung: ").append(rn.getLabel());
+						sb.append("Rn Nr: ").append(rn.getLabel());
 					}
 				}
 				table[i][0]=sb.toString();
