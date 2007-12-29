@@ -8,34 +8,40 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3231 2007-09-30 14:10:54Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3484 2007-12-29 12:01:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
 
+import java.io.File;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ch.elexis.Hub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.views.RnPrintView;
 import ch.elexis.views.RnPrintView2;
 import ch.rgw.tools.ExHandler;
 
@@ -45,7 +51,9 @@ public class RechnungsDrucker implements IRnOutputter{
 	RnPrintView2 rnp;
 	IWorkbenchPage rnPage;
 	IProgressMonitor monitor;
-	private Button bESR, bForms, bIgnoreFaults;
+	private Button bESR, bForms, bIgnoreFaults, bSaveFileAs;
+	String dirname=Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, null);
+	Text tName;
 	
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rechnungen) {
 		
@@ -63,7 +71,8 @@ public class RechnungsDrucker implements IRnOutputter{
 			        	 int errors=0;
 			        	 for(Rechnung rn:rechnungen){
 			        		try{
-				 				if(rnp.doPrint(rn,type,bESR.getSelection(),bForms.getSelection(), !bIgnoreFaults.getSelection(),monitor)==false){
+				 				if(rnp.doPrint(rn,type, bSaveFileAs.getSelection() ? dirname+File.separator+rn.getNr()+".xml"
+				 						: null, bESR.getSelection(),bForms.getSelection(), !bIgnoreFaults.getSelection(),monitor)==false){
 				 					String errms=Messages.RechnungsDrucker_TheBill+rn.getNr()+Messages.RechnungsDrucker_Couldntbeprintef;
 				 					res.add(Log.ERRORS, 1, errms, rn, true);
 				 					errors++;
@@ -118,6 +127,24 @@ public class RechnungsDrucker implements IRnOutputter{
 		bForms.setSelection(true);
 		bIgnoreFaults=new Button(ret,SWT.CHECK);
 		bIgnoreFaults.setText(Messages.RechnungsDrucker_IgnoreFaults);
+		Composite cSaveCopy=new Composite(ret,SWT.NONE);
+		cSaveCopy.setLayout(new GridLayout(2,false));
+		bSaveFileAs=new Button(cSaveCopy,SWT.CHECK);
+		bSaveFileAs.setText("auch als XML für TrustCenter speichern");
+		bSaveFileAs.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		Button bSelectFile=new Button(cSaveCopy,SWT.PUSH);
+		bSelectFile.setText("Verzeichnis:");
+		bSelectFile.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog ddlg=new DirectoryDialog(parent.getShell());
+				dirname=ddlg.open();
+				Hub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, dirname);
+				tName.setText(dirname);
+			}
+		});
+	    tName=new Text(cSaveCopy,SWT.BORDER|SWT.READ_ONLY);
+		tName.setText(Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, ""));
 		return ret;
 	}
 

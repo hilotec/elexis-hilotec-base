@@ -92,19 +92,20 @@ public class RnPrintView2 extends ViewPart {
 	 * von 170 mm leer ist. (Papier mit EZ-Schein wird erwartet)
 	 * Zweite und Folgeseiten müssen gem Tarmedrechnung formatiert sein.
 	 * @param rn die Rechnung
+	 * @param saveFile Filename für eine XML-Kopie der Rechnung oder null: Keine Kopie
 	 * @param withForms 
 	 * @param monitor 
 	 * @return
 	 */ 
 	@SuppressWarnings("unchecked") 
-	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType, final boolean withESR, final boolean withForms, final boolean doVerify, final IProgressMonitor monitor){
+	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType, final String saveFile, final boolean withESR, final boolean withForms, final boolean doVerify, final IProgressMonitor monitor){
 		Mandant mSave=Hub.actMandant;
 		monitor.subTask(rn.getLabel());
 		GlobalEvents.getInstance().fireSelectionEvent(rn);
 		String printer=null;
 		XMLExporter xmlex=new XMLExporter();
 		DecimalFormat df=new DecimalFormat("0.00"); //$NON-NLS-1$
-		Document xmlRn=xmlex.doExport(rn,null, rnType, doVerify);
+		Document xmlRn=xmlex.doExport(rn, saveFile, rnType, doVerify);
 		if(rn.getStatus()==RnStatus.FEHLERHAFT){
 			return false;
 		}
