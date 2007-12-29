@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 2833 2007-07-18 16:55:15Z rgw_ch $
+ *  $Id: TrustXTransmit.java 3483 2007-12-29 12:01:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -214,34 +214,39 @@ public class TrustXTransmit implements IRnOutputter{
 		trustxver.setText("TrustX nicht gefunden oder falsch konfiguriert");
 		asasver.setText("ASAS nicht vorhanden oder nicht gestartet");
 		cbASAS=new Combo(ret,SWT.READ_ONLY);
-		if(initTrustX()){
-			String tv=trustx.trustxVersion();
-			trustxver.setText("TrustX Version "+tv);
-			asasver.setText(trustx.asasVersion());
-			IAsasCollection asasLogins=trustx.asasLogins();
-			int iLogins=asasLogins.count();
-			for(int i=0;i<iLogins;i++){
-				Object o=asasLogins.item(i+1);
-				cbASAS.add(o.toString());
-			}
-			String def="";
-			if(iLogins>0){
-				def=cbASAS.getItem(0);
-			}
-			cbASAS.setText(Hub.mandantCfg.get(PreferenceCostants.TRUSTX_ASASLOGIN,def));
-			cbTC=new Combo(ret,SWT.READ_ONLY);
-			cbTC.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			for(String s:TrustCenters.getTCList()){
-				cbTC.add(s);
-			}
-			cbTC.setText(Hub.localCfg.get(PreferenceConstants.TARMEDTC,"TC test"));
-			cbTC.addSelectionListener(new SelectionAdapter(){
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					Hub.localCfg.set(PreferenceConstants.TARMEDTC, cbTC.getText());
+		try{
+			if(initTrustX()){
+				String tv=trustx.trustxVersion();
+				trustxver.setText("TrustX Version "+tv);
+				asasver.setText(trustx.asasVersion());
+				IAsasCollection asasLogins=trustx.asasLogins();
+				int iLogins=asasLogins.count();
+				for(int i=0;i<iLogins;i++){
+					Object o=asasLogins.item(i+1);
+					cbASAS.add(o.toString());
 				}
-				
-			});
+				String def="";
+				if(iLogins>0){
+					def=cbASAS.getItem(0);
+				}
+				cbASAS.setText(Hub.mandantCfg.get(PreferenceCostants.TRUSTX_ASASLOGIN,def));
+				cbTC=new Combo(ret,SWT.READ_ONLY);
+				cbTC.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+				for(String s:TrustCenters.getTCList()){
+					cbTC.add(s);
+				}
+				cbTC.setText(Hub.localCfg.get(PreferenceConstants.TARMEDTC,"TC test"));
+				cbTC.addSelectionListener(new SelectionAdapter(){
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						Hub.localCfg.set(PreferenceConstants.TARMEDTC, cbTC.getText());
+					}
+					
+				});
+			}
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			trustxver.setText("Fehler beim Initialisieren von TrustX");
 		}
 		return ret;
 	}
