@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3486 2007-12-29 20:15:59Z rgw_ch $
+ * $Id: RnActions.java 3487 2007-12-30 07:19:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -350,11 +351,32 @@ public class RnActions {
 	}
    
     class RnListeDruckDialog extends TitleAreaDialog implements ICallback{
-		Object[] tree;		
+		ArrayList<Rechnung> rnn;		
 		
 		public RnListeDruckDialog(final Shell shell, final Object[] tree) {
 			super(shell);
-			this.tree=tree;
+			rnn=new ArrayList<Rechnung>(tree.length);
+			for(Object o:tree){
+				if(o instanceof Tree){
+					Tree tr=(Tree)o;
+					if(tr.contents instanceof Rechnung){
+						tr=tr.getParent();
+					}
+					if(tr.contents instanceof Fall){
+						tr=tr.getParent();
+					}
+					if(tr.contents instanceof Patient){
+						for(Tree tFall:(Tree[])tr.getChildren().toArray(new Tree[0])){
+							Fall fall=(Fall)tFall.contents;
+							for(Tree tRn:(Tree[])tFall.getChildren().toArray(new Tree[0])){
+								Rechnung rn=(Rechnung)tRn.contents;
+								rnn.add(rn);
+							}
+						}
+					}
+				}
+			}
+
 		}
 
 		@SuppressWarnings("unchecked")
@@ -369,32 +391,28 @@ public class RnActions {
 			text.getPlugin().showToolbar(false);
 			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, "Rechnungen");
 			text.getPlugin().insertText("[Titel]", "Rechnungsliste gedruckt am "+new TimeTool().toString(TimeTool.DATE_GER)+"\n",SWT.CENTER);
-			String[][] table=new String[tree.length][];
-			
-			for(int i=0;i<tree.length;i++){
-				table[i]=new String[2];
-				Tree tr=(Tree)tree[i];
-				if(tr.contents instanceof Rechnung){
-					tr=tr.getParent();
-				}
-				if(tr.contents instanceof Fall){
-					tr=tr.getParent();
-				}
-				Patient p=(Patient)tr.contents;
+			String[][] table=new String[rnn.size()+1][];
+			Money sum=new Money();
+			int i;
+			for(i=0;i<rnn.size();i++){
+				Rechnung rn=rnn.get(i);
+				table[i]=new String[3];
 				StringBuilder sb=new StringBuilder();
-				//sb.append(p.getLabel());
-				for(Tree tFall:(Tree[])tr.getChildren().toArray(new Tree[0])){
-					Fall fall=(Fall)tFall.contents;
-					// sb.append("\n -- Fall: ").append(fall.getLabel());
-					for(Tree tRn:(Tree[])tFall.getChildren().toArray(new Tree[0])){
-						Rechnung rn=(Rechnung)tRn.contents;
-						sb.append("Rn Nr: ").append(rn.getLabel());
-					}
-				}
-				table[i][0]=sb.toString();
+				Fall fall=rn.getFall();
+				Patient p=fall.getPatient();
+				table[i][0]=rn.getNr();
+				sb.append(p.getLabel()).append(" - ").append(fall.getLabel());
+				table[i][1]=sb.toString();
+				Money betrag=rn.getBetrag();
+				sum.addMoney(betrag);
+				table[i][2]=betrag.getAmountAsString();
 			}
+			table[i]=new String[3];
+			table[i][0]="";
+			table[i][1]="Summe";
+			table[i][2]=sum.getAmountAsString();
 			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-			text.getPlugin().insertTable("[Liste]", 0, table, new int[]{90,10});
+			text.getPlugin().insertTable("[Liste]", 0, table, new int[]{10,80,10});
 			return ret;
 		}
 
