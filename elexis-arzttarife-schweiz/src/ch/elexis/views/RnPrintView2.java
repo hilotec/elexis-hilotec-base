@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: RnPrintView2.java 3489 2007-12-30 13:28:16Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.views;
 
 import java.text.DecimalFormat;
@@ -42,13 +54,16 @@ import ch.rgw.tools.TimeTool;
  * This is a pop-in replacement for RnPrintView. To avoid several problems around OpenOffice based
  * bills we keep things easier here. Thus this approach does not optimize printer access but rather
  * waits for each page to be printed before starting the next.
+ * 
+ * We also corrected several prblems around the TrustCenter-system. Tokens are printed only on TG bills and
+ * only if the mandator has a TC contract. Tokens are computed correctly now with the TC number as identifier.
  * @author Gerry
  *
  */
 public class RnPrintView2 extends ViewPart {
 	public static final String ID="ch.elexis.arzttarife_ch.printview2";
 
-	private double cmAvail=21.4;
+	private double cmAvail=21.4;				// Verfügbare Druckhöhe in cm
 	private static double cmPerLine=0.65;		// Höhe pro Zeile
 	private static double cmFirstPage=13.0;		// Platz auf der ersten Seite
 	private static double cmMiddlePage=21.0;	// Platz auf Folgeseiten
@@ -121,6 +136,10 @@ public class RnPrintView2 extends ViewPart {
 		Mandant mnd=rn.getMandant();
 		Hub.setMandant(mnd);
 		Rechnungssteller rs=mnd.getRechnungssteller();
+		String tcCode=null;
+		if(TarmedRequirements.hasTCContract(rs) && paymentMode.equals("TG")){
+			 tcCode=TarmedRequirements.getTCCode(rs);
+		}
 		GlobalEvents.getInstance().fireSelectionEvent(rs);
 		Fall fall=rn.getFall();
 		
@@ -393,7 +412,7 @@ public class RnPrintView2 extends ViewPart {
 				tp.setFont("Helvetica",SWT.BOLD, 7); //$NON-NLS-1$
 				cursor=tp.insertText(cursor,footer.toString(),SWT.LEFT);
 				seitentotal=0.0;
-				esr.printESRCodeLine(text.getPlugin(),offenRp);
+				esr.printESRCodeLine(text.getPlugin(),offenRp,tcCode);
 				
 				if(text.getPlugin().print(printer,tarmedTray, false)==false){
 					// avoid dead letters
@@ -411,7 +430,7 @@ public class RnPrintView2 extends ViewPart {
 		}
 		cursor=tp.insertText(cursor,"\n",SWT.LEFT); //$NON-NLS-1$
 		if(cmAvail<cmFooter){
-			esr.printESRCodeLine(text.getPlugin(),offenRp);
+			esr.printESRCodeLine(text.getPlugin(),offenRp,tcCode);
 			if(text.getPlugin().print(printer,tarmedTray, false)==false){
 				// avoid dead letters
 				actBrief.delete();
@@ -468,7 +487,7 @@ public class RnPrintView2 extends ViewPart {
 		footer.append(mDue.getAmountAsString()).append("\t").append(df.format(sumMwst)); //$NON-NLS-1$
 		tp.setFont("Helvetica",SWT.BOLD,9); //$NON-NLS-1$
 		tp.insertText(cursor,footer.toString(),SWT.LEFT);
-		esr.printESRCodeLine(text.getPlugin(),offenRp);
+		esr.printESRCodeLine(text.getPlugin(),offenRp,tcCode);
 		
 		if(text.getPlugin().print(printer,tarmedTray, false)==false){
 			// avoid dead letters

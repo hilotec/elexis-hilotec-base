@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3430 2007-12-10 16:44:09Z rgw_ch $
+ * $Id: TarmedRequirements.java 3489 2007-12-30 13:28:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
+import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
 import ch.rgw.tools.StringTool;
 
@@ -131,4 +133,26 @@ public class TarmedRequirements {
 		return gesetz;
 	}
 
+	public static String getTCName(Kontakt mandant){
+		String tc=mandant.getInfoString(PreferenceConstants.TARMEDTC);
+		return tc;
+	}
+	
+	public static String getTCCode(Kontakt mandant){
+		String tcname=getTCName(mandant);
+		Integer nr=TrustCenters.tc.get(tcname);
+		if(nr==null){
+			return "00";
+		}
+		return Integer.toString(nr);
+	}
+	
+	public static void setTC(Kontakt mandant, String tc){
+		mandant.setInfoElement(PreferenceConstants.TARMEDTC, tc);
+	}
+	
+	public static boolean hasTCContract(Kontakt mandant){
+		String hc=(String)mandant.getInfoElement(PreferenceConstants.USETC);
+		return "1".equals(hc);
+	}
 }

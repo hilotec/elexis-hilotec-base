@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 3140 2007-09-11 06:54:04Z rgw_ch $
+ * $Id: RnPrintView.java 3489 2007-12-30 13:28:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -473,7 +473,7 @@ public class RnPrintView extends ViewPart {
 				tp.setFont("Helvetica",SWT.BOLD, 7); //$NON-NLS-1$
 				cursor=tp.insertText(cursor,footer.toString(),SWT.LEFT);
 				seitentotal=0.0;
-				esr.printESRCodeLine(text.getPlugin(),offenRp);
+				esr.printESRCodeLine(text.getPlugin(),offenRp,null);
 				
 				if(text.getPlugin().print(printer,/*tray*/null, false)==false){
 					// avoid dead letters
@@ -491,7 +491,7 @@ public class RnPrintView extends ViewPart {
 		}
 		cursor=tp.insertText(cursor,"\n",SWT.LEFT); //$NON-NLS-1$
 		if(cmAvail<cmFooter){
-			esr.printESRCodeLine(text.getPlugin(),offenRp);
+			esr.printESRCodeLine(text.getPlugin(),offenRp,null);
 			if(text.getPlugin().print(printer,/*tray*/null, false)==false){
 				// avoid dead letters
 				clearItems();
@@ -548,7 +548,7 @@ public class RnPrintView extends ViewPart {
 		footer.append(mDue.getAmountAsString()).append("\t").append(df.format(sumMwst)); //$NON-NLS-1$
 		tp.setFont("Helvetica",SWT.BOLD,9); //$NON-NLS-1$
 		tp.insertText(cursor,footer.toString(),SWT.LEFT);
-		esr.printESRCodeLine(text.getPlugin(),offenRp);
+		esr.printESRCodeLine(text.getPlugin(),offenRp,null);
 		
 		if(text.getPlugin().print(printer,/*tray*/ null, false)==false){
 			// avoid dead letters

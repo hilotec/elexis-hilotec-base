@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 3436 2007-12-12 16:47:59Z rgw_ch $
+ * $Id: RechnungsPrefs.java 3489 2007-12-30 13:28:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -63,6 +63,7 @@ public class RechnungsPrefs extends PreferencePage implements
 	Text tESRPrinterCorrectionX;
 	Text tESRPrinterCorrectionY;
 	Text tESRPrintCorrectionBaseX;
+	Text tESRPrintCorrectionBaseY;
 	Combo cbESROCRFontWeight;
 	Button bPost;
 	Button bBank;
@@ -253,7 +254,8 @@ public class RechnungsPrefs extends PreferencePage implements
 		cbTC.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				actMandant.setInfoElement(PreferenceConstants.TARMEDTC, cbTC.getText());
+				TarmedRequirements.setTC(actMandant, cbTC.getText());
+				//actMandant.setInfoElement(PreferenceConstants.TARMEDTC, cbTC.getText());
 			}
 			
 		});
@@ -344,7 +346,11 @@ public class RechnungsPrefs extends PreferencePage implements
 		tESRPrintCorrectionBaseX = new Text(fonts,SWT.BORDER|SWT.SINGLE);
 		tESRPrintCorrectionBaseX.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		tESRPrintCorrectionBaseX.addFocusListener(fontsTextListener);
-
+		
+		new Label(fonts,SWT.NONE).setText(Messages.getString("RechnungenPrefs.vertBaseOffset"));
+		tESRPrintCorrectionBaseY = new Text(fonts, SWT.BORDER|SWT.SINGLE);
+		tESRPrintCorrectionBaseY.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+		tESRPrintCorrectionBaseY.addFocusListener(fontsTextListener);
 		
 		// set the initial font values
 		setFontsTextValues();
@@ -492,7 +498,7 @@ public class RechnungsPrefs extends PreferencePage implements
 		bUseTC.setSelection(actMandant.getInfoString(PreferenceConstants.USETC).equals("1")); //$NON-NLS-1$
 		bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
 		bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
-		cbTC.setText(actMandant.getInfoString(PreferenceConstants.TARMEDTC));
+		cbTC.setText(TarmedRequirements.getTCName(actMandant)); //actMandant.getInfoString(PreferenceConstants.TARMEDTC));
 	}
 	
 	/**
@@ -548,6 +554,7 @@ public class RechnungsPrefs extends PreferencePage implements
 		int printerCorrectionX;
 		int printerCorrectionY;
 		int printerBaseCorrectionX;
+		int printerBaseCorrectionY;
 		
 		normalFontName = tESRNormalFontName.getText().trim();
 		if (StringTool.isNothing(normalFontName)) {
@@ -603,7 +610,11 @@ public class RechnungsPrefs extends PreferencePage implements
 		} catch (NumberFormatException ex) {
 			printerBaseCorrectionX = ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT;
 		}
-		
+		try {
+			printerBaseCorrectionY = Integer.parseInt(tESRPrintCorrectionBaseY.getText().trim());
+		} catch (NumberFormatException ex) {
+			printerBaseCorrectionY = ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT;
+		}
 		Hub.localCfg.set(ESR.ESR_NORMAL_FONT_NAME, normalFontName);
 		Hub.localCfg.set(ESR.ESR_NORMAL_FONT_SIZE, normalFontSize);
 		Hub.localCfg.set(ESR.ESR_OCR_FONT_NAME, ocrFontName);
@@ -612,6 +623,7 @@ public class RechnungsPrefs extends PreferencePage implements
 		Hub.localCfg.set(ESR.ESR_PRINTER_CORRECTION_X, printerCorrectionX);
 		Hub.localCfg.set(ESR.ESR_PRINTER_CORRECTION_Y, printerCorrectionY);
 		Hub.localCfg.set(ESR.ESR_PRINTER_BASE_OFFSET_X, printerBaseCorrectionX);
+		Hub.localCfg.set(ESR.ESR_PRINTER_BASE_OFFSET_Y, printerBaseCorrectionY);
 	}
 
 	/*

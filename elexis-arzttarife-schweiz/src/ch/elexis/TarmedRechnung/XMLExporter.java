@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3478 2007-12-24 14:39:30Z rgw_ch $
+ * $Id: XMLExporter.java 3489 2007-12-30 13:28:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -264,7 +264,8 @@ public class XMLExporter implements IRnOutputter {
 			kostentraeger=rnAdressat;
 			tiers="TG";
 		}
-
+		String tcCode=TarmedRequirements.getTCCode(actMandant);
+		
 		if(kostentraeger==null){
 			kostentraeger=actPatient;
 		}
@@ -594,7 +595,7 @@ public class XMLExporter implements IRnOutputter {
 			//esr.setAttribute("type",m.getInfoString(ta.ESRPLUS));	// 16or27 oder 16or27plus
 			esr.setAttribute("type","16or27"); // Nur dieses Format unterstützt							10461
 			String refnr=besr.makeRefNr(true);	
-			String codingline=besr.createCodeline(mDue.getCentsAsString());
+			String codingline=besr.createCodeline(mDue.getCentsAsString(),null);
 			esr.setAttribute("reference_number",refnr);			// 16 oder 27 stellige ref nr			10470
 			esr.setAttribute("coding_line",codingline);			// codierzeile							10479
 		}else{
@@ -711,6 +712,15 @@ public class XMLExporter implements IRnOutputter {
 		referrer.setAttribute("zsr",TarmedRequirements.getKSK(auftraggeber)); //auftraggeber.getInfoString("KSK"));
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
+		
+		if(tiers.equals("TG")){
+			Element demand=new Element("demand",ns);
+			demand.setAttribute("tc_demand_id","0");
+			demand.setAttribute("tc_token",besr.createCodeline(rn.getBetrag().getCentsAsString(), tcCode));
+			demand.setAttribute("insurance_demand_date",makeTarmedDatum(rn.getDatumRn()));
+		}
+									
+		
 		invoice.addContent(eTiers);
 	
 		
