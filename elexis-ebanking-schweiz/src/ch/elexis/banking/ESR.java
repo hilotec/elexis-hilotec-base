@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 2200 2007-04-06 16:24:14Z rgw_ch $
+ *  $Id: ESR.java 3488 2007-12-30 13:28:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -44,10 +44,12 @@ public class ESR {
 	public static final String ESR_PRINTER_CORRECTION_X = "esr/printer_correction_x";
 	public static final String ESR_PRINTER_CORRECTION_Y = "esr/printer_correction_y";
 	public static final String ESR_PRINTER_BASE_OFFSET_X= "esr/printer_base_x";
+	public static final String ESR_PRINTER_BASE_OFFSET_Y= "esr/printer_base_y";
 	public static final int ESR_PRINTER_CORRECTION_X_DEFAULT = 0;
 	public static final int ESR_PRINTER_CORRECTION_Y_DEFAULT = 0;
-	// base offset depends on the printable left margin of a specific printer
+	// base offset depends on the printable left/top margin of a specific printer
 	public static final int ESR_PRINTER_BASE_OFFSET_X_DEFAULT=0;
+	public static final int ESR_PRINTER_BASE_OFFSET_Y_DEFAULT=0;
 	
 	public static final int ESR16=16;
 	public static final int ESR27=27;
@@ -73,16 +75,18 @@ public class ESR {
 	/**
 	 * Codierzeile aufbauen
 	 * @param amount Betrag in Rappen
-	 * 
+	 * @param tcCode Code des TrustCenters oder null: normale ESR-Zeile
 	 * @return eine druckfertige Codierzeile
 	 */
-	public String createCodeline(String amount){
+	public String createCodeline(String amount, String tcCode){
 		if(Integer.parseInt(amount)<0) {
 			amount="0";
 		}
 		StringBuilder cl=new StringBuilder();
-		//cl.append("01");												// ESR in CHF
-		String betrag=wrap("01"+StringTool.pad(SWT.LEFT,'0',amount,10));		// Betrag auf 10 Stellen erweitert
+		if(tcCode==null){
+			tcCode="01";												// ESR in CHF
+		}
+		String betrag=wrap(tcCode+StringTool.pad(SWT.LEFT,'0',amount,10));		// Betrag auf 10 Stellen erweitert
 		cl.append(betrag);
 		cl.append(">");													// Trennzeichen
 		cl.append(makeRefNr(false));									// Referenznummer
@@ -201,6 +205,7 @@ public class ESR {
 		int yGarant1=60;	// y-Offset des Absender-Adressblocks auf dem Empfangsschein
 		int yGarant2=50;	// y-Offset des Absender-Adressblocks auf dem Girozettel
 		int baseX=Hub.localCfg.get(ESR_PRINTER_BASE_OFFSET_X, ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
+		yOff+=Hub.localCfg.get(ESR_PRINTER_BASE_OFFSET_Y, ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
 		
 		ITextPlugin p=text.getPlugin();
 		String fontName = Hub.localCfg.get(ESR_NORMAL_FONT_NAME, ESR_NORMAL_FONT_NAME_DEFAULT);
@@ -250,14 +255,17 @@ public class ESR {
 		String abs1=refNr+"\n"+schuldner.getPostAnschrift(true);
 		p.insertTextAt(baseX,yOff+yGarant1,xGiro,25,abs1,SWT.LEFT);
 		p.insertTextAt(xRef+baseX,yGarant2+yOff,wRef,25,schuldner.getPostAnschrift(true),SWT.LEFT);
-		printESRCodeLine(p,betragInRappen);
+		printESRCodeLine(p,betragInRappen,null);
 	
 		return true;
 	}
 	
-	/** ESR-Codierzeile auf das im TextContainer befindliche Blatt drucken */
-	public void printESRCodeLine(ITextPlugin p, String betragInRappen){
-		String besr=createCodeline(betragInRappen);
+	/** ESR-Codierzeile auf das im TextContainer befindliche Blatt drucken 
+	 * @param tcCode Code des TrustCenters oder null. Bei null wird eine Post-ESR erstellt,
+	 * sonst eine TC-ESR
+	 * */
+	public void printESRCodeLine(ITextPlugin p, String betragInRappen, String tcCode){
+		String besr=createCodeline(betragInRappen, tcCode);
 		
 		String fontname=Hub.localCfg.get(ESR_OCR_FONT_NAME, ESR_OCR_FONT_NAME_DEFAULT);
 		int fontscale=Hub.localCfg.get(ESR_OCR_FONT_SIZE, ESR_OCR_FONT_SIZE_DEFAULT);
