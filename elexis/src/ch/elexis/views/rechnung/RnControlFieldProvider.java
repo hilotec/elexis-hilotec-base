@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 3318 2007-11-06 16:37:42Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 3490 2008-01-01 07:24:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -80,68 +80,37 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		listeners=new ArrayList<ControlFieldListener>();
 		ret.setLayout(new GridLayout(3,true));
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-		//new Label(ret,SWT.NONE).setText(" ");
-		//Label expl=new Label(ret,SWT.WRAP);
-		/*
-		hlStatus=new HyperlinkAdapter(){
-			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				if(bDateAsStatus){
-					bDateAsStatus=false;
-					hDateFrom.setText(Messages.getString("RnControlFieldProvider.dateFrom"));
-					hDateUntil.setText(Messages.getString("RnControlFieldProvider.dateUntil"));
-				}else{
-					bDateAsStatus=true;
-					hDateFrom.setText("Statusdatum von");
-					hDateUntil.setText("Statusdatum bis");
-				}
-			}
-			
-		};
-		*/
 		hlPatient=new HyperlinkAdapter(){
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
+				Patient oldPatient=actPatient;
 				KontaktSelektor ksl=new KontaktSelektor(parent.getShell(),Patient.class,"Patient auswählen","Bitte wählen Sie einen Patienteneintrag oder Abbrechen für 'Alle'", true);
 				if(ksl.open()==Dialog.OK){
 					actPatient=(Patient)ksl.getSelection();
 					if (actPatient != null) {
 						lPatient.setText(actPatient.getLabel());
+						cbStat.setText(stats[0]);
 					} else {
 						lPatient.setText(ALLE);
+						cbStat.setText(stats[1]);
 					}
 				}else{
 					actPatient=null;
 					lPatient.setText(ALLE);
+					cbStat.setText(stats[1]);
+				}
+				if(((actPatient==null) && (oldPatient!=null)) ||
+				   (!actPatient.equals(oldPatient))){
+						fireChangedEvent();
 				}
 			}
 		};
-		//expl.setText("Bitte stellen Sie alle Filterbedingungen ein und klicken Sie dann auf den 'reload' Button rechts");
-		//expl.setLayoutData(SWTHelper.getFillGridData(4, false, 1, false));
-		//new Label(ret,SWT.NONE).setText(" ");
 		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.state")); //$NON-NLS-1$
 		SWTHelper.createHyperlink(ret, "   Patient   ", hlPatient);
-		//hDateFrom=SWTHelper.createHyperlink(ret,Messages.getString("RnControlFieldProvider.dateFrom"), hlStatus);//$NON-NLS-1$
-			
-		//hDateUntil=SWTHelper.createHyperlink(ret ,Messages.getString("RnControlFieldProvider.dateUntil"),hlStatus); //$NON-NLS-1$
 		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.invoideNr")); //$NON-NLS-1$
-		//new Label(ret,SWT.NONE).setText(" "); //$NON-NLS-1$
-		/*
-		SWTHelper.createHyperlink(ret, "x", new HyperlinkAdapter(){
-			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				clearValues();
-			}
-		});
-		*/
 		cbStat=new Combo(ret,SWT.READ_ONLY);
-		//GridData sgd=new GridData(GridData.GRAB_HORIZONTAL);
-		//sgd.minimumWidth=100;
-		//cbStat.setLayoutData(sgd);
 		cbStat.setVisibleItemCount(stats.length);
-		//cbStat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbStat.setItems(stats);
-		//cbStat.add(Messages.getString("RnControlFieldProvider.all")); //$NON-NLS-1$
 		cbStat.addSelectionListener(csel);
 		cbStat.select(STAT_DEFAULT_INDEX);
 		lPatient=new Label(ret,SWT.NONE);
@@ -149,34 +118,20 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		GridData gdlp=new GridData();
 		gdlp.widthHint=150;
 		gdlp.minimumWidth=150;
-		// lPatient.setLayoutData(gdlp);
-		/*
-		dpVon=new DatePickerCombo(ret,SWT.NONE);
-		dpVon.addSelectionListener(csel);
-		dpVon.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		dpBis=new DatePickerCombo(ret,SWT.NONE);
-		dpBis.addSelectionListener(csel);
-		dpBis.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		*/
 		tNr=new Text(ret,SWT.BORDER);
-		GridData sgd=new GridData();
-		sgd.minimumWidth=100;
-		sgd.widthHint=100;
-		//tNr.setLayoutData(sgd);
-
-		//tNr.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		/*
-		Button bRefresh=new Button(ret,SWT.PUSH);
-		bRefresh.setImage(Desk.theImageRegistry.get(Desk.IMG_REFRESH));
-		bRefresh.addSelectionListener(new SelectionAdapter(){
+		tNr.addSelectionListener(new SelectionAdapter(){
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if(tNr.getText().length()==0){
+					cbStat.select(STAT_DEFAULT_INDEX);
+				}
 				fireChangedEvent();
 			}
 			
 		});
-		*/
-		//cbStat.setText(RnStatus.Text[RnStatus.OFFEN]);
+		GridData sgd=new GridData();
+		sgd.minimumWidth=100;
+		sgd.widthHint=100;
 		return ret;
 	}
 
