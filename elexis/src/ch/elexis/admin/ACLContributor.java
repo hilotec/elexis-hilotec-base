@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 3059 2007-09-02 17:27:09Z rgw_ch $
+ *  $Id: ACLContributor.java 3492 2008-01-01 08:41:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 import static ch.elexis.admin.AccessControlDefaults.*; 
@@ -30,7 +30,8 @@ public class ACLContributor implements IACLContributor {
 			 AC_SHOWPERSPECTIVE,AC_SHOWVIEW,
 			 DOCUMENT,DOCUMENT_CREATE,DOCUMENT_SYSTEMPLATE,DOCUMENT_TEMPLATE,
 			 ADMIN_KONS_EDIT_IF_BILLED,ADMIN_VIEW_ALL_REMINDERS,
-			 MEDICATION_MODIFY, DELETE_MEDICATION, DELETE_LABITEMS
+			 MEDICATION_MODIFY, DELETE_MEDICATION, DELETE_LABITEMS,
+			 CASE_MODIFY
 	 };
 	public String[] getACL() {
 		return acls;

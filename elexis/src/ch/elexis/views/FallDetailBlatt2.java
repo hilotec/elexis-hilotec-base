@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 3181 2007-09-18 11:28:11Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 3492 2008-01-01 08:41:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -37,7 +37,9 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.dialogs.KontaktSelektor;
@@ -162,8 +164,18 @@ public class FallDetailBlatt2 extends Composite {
                 int i=cAbrechnung.getSelectionIndex();
                 Fall fall=getFall();
                 if(fall!=null){
-                	if(false){// fall.getBehandlungen(false).length>0){
-                		SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Bei einem Fall, zu dem schon Konsultationen existieren, kann das Gestz nicht geändert werden.");
+                	if(fall.getBehandlungen(false).length>0){
+                		if(Hub.acl.request(AccessControlDefaults.CASE_MODIFY)){
+	                		if(SWTHelper.askYesNo("Abrechnungssystem sollte nicht geändert werden", 
+	                				"Wenn Sie das Abrechnungssystem ändern, werden eventuell die bereits abgerechneten Konsultationen dieses Falles fehlerhaft sein. Wirklich fortfahren?")){
+		                		fall.setAbrechnungsSystem(cAbrechnung.getItem(i));
+		                		setFall(fall);
+		                		GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+		                		return;
+	                		}
+                		}else{
+                			SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Sie haben keine ausreichenden Rechte, um das Abrechnungssystem dieses Falles zu ändern.");
+                		}
                 		String gesetz=fall.getAbrechnungsSystem();
                 		if(ch.rgw.tools.StringTool.isNothing(gesetz)){
                 			gesetz="frei";
@@ -176,6 +188,7 @@ public class FallDetailBlatt2 extends Composite {
                 		GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
                 	// Falls noch kein Garant gesetzt ist: Garanten des letzten Falles zum selben Gesetz nehmen
                 	}
+                	
                 }
             }
             
