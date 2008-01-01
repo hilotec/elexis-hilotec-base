@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 3489 2007-12-30 13:28:16Z rgw_ch $
+ * $Id: RnPrintView2.java 3491 2008-01-01 07:24:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -583,7 +583,7 @@ public class RnPrintView2 extends ViewPart {
 			text.replace("\\[NIF\\]",m.getKsk()); //$NON-NLS-1$
 			text.replace("\\[F60\\]",""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		text.replace("\\?\\?\\?[a-zA-Z0-9 \\.]+\\?\\?\\?", "");
+		text.replace("\\?\\?\\??[a-zA-Z0-9 \\.]+\\?\\?\\??", "");
 		
 	}
 
