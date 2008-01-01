@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 3489 2007-12-30 13:28:16Z rgw_ch $
+ * $Id: RechnungsPrefs.java 3493 2008-01-01 15:57:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -71,8 +71,8 @@ public class RechnungsPrefs extends PreferencePage implements
 	Kontakt actBank;
 	Button bUseTC;
 	Combo cbTC;
-	Button bUseEDA;
-	Button bWithImage;
+	//Button bUseEDA;
+	//Button bWithImage;
 	
 	static TarmedACL ta=TarmedACL.getInstance();
 	
@@ -259,6 +259,7 @@ public class RechnungsPrefs extends PreferencePage implements
 			}
 			
 		});
+		/*
 		bUseEDA=new Button(gTC,SWT.CHECK);
 		bUseEDA.setText(Messages.getString("RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$
 		bUseEDA.addSelectionListener(new SelectionAdapter(){
@@ -278,7 +279,7 @@ public class RechnungsPrefs extends PreferencePage implements
 			
 		});
 		
-		
+		*/
 		
 		
 		// OCR font
@@ -496,8 +497,8 @@ public class RechnungsPrefs extends PreferencePage implements
 		bBank.setSelection(actBank != null);
 
 		bUseTC.setSelection(actMandant.getInfoString(PreferenceConstants.USETC).equals("1")); //$NON-NLS-1$
-		bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
-		bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
+		//bUseEDA.setSelection(actMandant.getInfoString(PreferenceConstants.USEEDA).equals("1")); //$NON-NLS-1$
+		//bWithImage.setSelection(actMandant.getInfoString(PreferenceConstants.TCWITHIMAGE).equals("1")); //$NON-NLS-1$
 		cbTC.setText(TarmedRequirements.getTCName(actMandant)); //actMandant.getInfoString(PreferenceConstants.TARMEDTC));
 	}
 	
@@ -535,11 +536,13 @@ public class RechnungsPrefs extends PreferencePage implements
 		int printerCorrectionX = Hub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_X, ESR.ESR_PRINTER_CORRECTION_X_DEFAULT);
 		int printerCorrectionY = Hub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_Y, ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT);
 		int printerBaseCorrectionX = Hub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_X, ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
+		int printerBaseCorrectionY= Hub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_Y, ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
 		
 		tESRPrinterCorrectionX.setText(new Integer(printerCorrectionX).toString());
 		tESRPrinterCorrectionY.setText(new Integer(printerCorrectionY).toString());
 		tESRPrintCorrectionBaseX.setText(Integer.toString(printerBaseCorrectionX));
-}
+		tESRPrintCorrectionBaseY.setText(new Integer(printerBaseCorrectionY).toString());
+}	
 	
 	/**
 	 * store fonts text values to configuration
