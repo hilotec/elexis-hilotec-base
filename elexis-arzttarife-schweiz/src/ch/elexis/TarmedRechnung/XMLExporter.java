@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3489 2007-12-30 13:28:16Z rgw_ch $
+ * $Id: XMLExporter.java 3494 2008-01-02 14:28:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -113,6 +113,7 @@ public class XMLExporter implements IRnOutputter {
 	static TarmedACL ta;
 	private String outputDir;
 	private static final String PREFIX="TarmedRn:";
+	private static final Log log=Log.get("XMLExporter");
 	
 	public void clear(){
 		actFall=null;
@@ -395,6 +396,10 @@ public class XMLExporter implements IRnOutputter {
 				Element el;
 				int zahl=vv.getZahl();
 				IVerrechenbar v=vv.getVerrechenbar();
+				if(v==null){
+					log.log("Fehlerhafte Rechnung "+rn.getNr()+" Null-Verrechenbar bei Kons "+b.getLabel(), Log.ERRORS);
+					continue;
+				}
 				if(v instanceof TarmedLeistung){
 					TarmedLeistung tl=(TarmedLeistung)v;
 					String arzl=vv.getExtInfo("AL");			// If we have the new system, we use the values stored in Verrechnet
