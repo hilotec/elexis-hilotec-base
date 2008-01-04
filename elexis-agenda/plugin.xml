@@ -5,19 +5,26 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
+            category="ch.elexis.agenda.Views"
             class="ch.elexis.views.TagesView"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.tagesview"
             name="Agenda"/>
       <view
+            category="ch.elexis.agenda.Views"
             class="ch.elexis.views.AgendaGross"
             id="ch.elexis.agenda.largeview"
             name="Agenda gross"/>
       <view
+            category="ch.elexis.agenda.Views"
             class="ch.elexis.views.AgendaWeek"
             id="ch.elexis.agenda.week"
             name="Wochenanzeige">
       </view>
+      <category
+            id="ch.elexis.agenda.Views"
+            name="Agenda">
+      </category>
    </extension>
       <extension
          point="org.eclipse.ui.preferencePages">

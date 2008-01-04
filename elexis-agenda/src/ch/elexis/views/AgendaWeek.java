@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 3480 2007-12-25 10:28:13Z rgw_ch $
+ *  $Id: AgendaWeek.java 3497 2008-01-04 17:07:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -45,6 +45,7 @@ public class AgendaWeek extends BaseAgendaView{
 	int ts,te, tagStart, tagEnde; 
 	double pixelPerMinute;
 	Composite cWeekDisplay;
+	Label[] dayLabels=new Label[7];
 	TimeTool actWeek=new TimeTool();
 	
 	@Override
@@ -61,22 +62,28 @@ public class AgendaWeek extends BaseAgendaView{
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				actWeek.add(TimeTool.HOUR, -(7*24));
-				setWeek(actWeek);
-				cWeekDisplay.redraw();
+				TimeTool lastWeek=new TimeTool(actWeek);
+				System.out.println(actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));
+				lastWeek.add(TimeTool.WEEK_OF_YEAR, -1);
+				System.out.println(actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));
+				setWeek(lastWeek);
+				//cWeekDisplay.redraw();
+				System.out.println(actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));
 			}
 			
 		});
-		bCal=tk.createButton(cBounding,"",SWT.PUSH);
+		bCal=tk.createButton(cBounding,"",SWT.PUSH|SWT.CENTER);
 		Button bFwd=tk.createButton(cBounding,">",SWT.PUSH);
 		bFwd.addSelectionListener(new SelectionAdapter(){
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				actWeek.add(TimeTool.HOUR, 7*24);
-				setWeek(actWeek);
-				cWeekDisplay.redraw();
-				
+				TimeTool nextWeek=new TimeTool(actWeek);
+				nextWeek.add(TimeTool.WEEK_OF_YEAR,1);
+				System.out.println(actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));
+				setWeek(nextWeek);
+				//cWeekDisplay.redraw();
+				System.out.println(actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));				
 			}
 			
 		});
@@ -94,7 +101,7 @@ public class AgendaWeek extends BaseAgendaView{
 		ttWeek.set(TimeTool.DAY_OF_WEEK,TimeTool.MONDAY);
 		bCal.setText(Integer.toString(ttWeek.get(TimeTool.WEEK_OF_YEAR))+". Woche");
 		for(int d=0;d<days.length;d++){
-			new Label(cWeekDisplay,SWT.NONE).setText(ttWeek.toString(TimeTool.WEEKDAY)+", "+ttWeek.toString(TimeTool.DATE_GER));
+			dayLabels[d]=new Label(cWeekDisplay,SWT.NONE);
 			ttWeek.addHours(24);
 		}
 		
@@ -109,9 +116,11 @@ public class AgendaWeek extends BaseAgendaView{
 	public void setWeek(TimeTool ttContained){
 		ttContained.set(TimeTool.DAY_OF_WEEK,TimeTool.MONDAY);
 		actWeek.set(ttContained);
-		bCal.setText(Integer.toString(ttContained.get(TimeTool.WEEK_OF_YEAR))+". Woche");
+		System.out.println("setWeek: "+actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));
+		bCal.setText(Integer.toString(actWeek.get(TimeTool.WEEK_OF_YEAR))+". Woche");
 		for(int i=0;i<days.length;i++){
 			days[i].set(ttContained, actBereich);
+			dayLabels[i].setText(ttContained.toString(TimeTool.WEEKDAY)+", "+ttContained.toString(TimeTool.DATE_GER));
 			ttContained.addHours(24);
 		}
 		

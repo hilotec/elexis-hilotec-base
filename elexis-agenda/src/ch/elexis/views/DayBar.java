@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 3480 2007-12-25 10:28:13Z rgw_ch $
+ *  $Id: DayBar.java 3497 2008-01-04 17:07:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -67,9 +67,13 @@ public class DayBar extends Composite {
 	}
 	public void set(TimeTool day, String bereich){
 		List<IPlannable> dayList=Plannables.loadTermine(bereich, day);
+		for(Control c:getChildren()){
+			c.dispose();
+		}
 		for(IPlannable ip:dayList){
 			TerminFeld f=new TerminFeld(this,ip);
 		}
+		recalc();
 	}
 	
 	class TerminFeld extends Composite{
