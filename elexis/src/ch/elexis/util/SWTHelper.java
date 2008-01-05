@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 3363 2007-11-21 17:44:55Z rgw_ch $
+ * $Id: SWTHelper.java 3498 2008-01-05 16:20:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -22,7 +22,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -381,6 +383,10 @@ public class SWTHelper {
 	
 	public static int size(final Rectangle r){
 		return (r.width-r.x)*(r.height-r.y);
-		
+	}	
+	
+	public static Point getStringBounds(Composite c, String s){
+		GC gc=new GC(c);
+		return gc.textExtent(s);
 	}
 }
