@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 3499 2008-01-05 16:20:22Z rgw_ch $
+ *  $Id: AgendaWeek.java 3501 2008-01-05 17:16:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -58,6 +58,7 @@ public class AgendaWeek extends BaseAgendaView{
 	Composite cWeekDisplay;
 	Label[] dayLabels=new Label[7];
 	TimeTool actWeek=new TimeTool();
+	AgendaWeekListener awl;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -129,10 +130,10 @@ public class AgendaWeek extends BaseAgendaView{
 		for(int d=0;d<days.length;d++){
 			days[d]=new DayBar(this);
 		}
-		makeActions();
-		
+		makePrivateActions();
 		actDate=new TimeTool(actWeek);
 		setWeek(actWeek);
+		awl=new AgendaWeekListener(this);
 	}
 
 	public void setWeek(TimeTool ttContained){
@@ -159,9 +160,8 @@ public class AgendaWeek extends BaseAgendaView{
 
 	}
 
-	public void reloadContents(Class clazz) {
-		
-
+	public void reload() {
+		setWeek(new TimeTool(actWeek));
 	}
 
 	public void recalc(){
@@ -212,6 +212,7 @@ public class AgendaWeek extends BaseAgendaView{
 				}
 			}
 		};
+		makeActions();
 	}
 	 
 }

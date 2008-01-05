@@ -8,15 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 3499 2008-01-05 16:20:22Z rgw_ch $
+ *  $Id: DayBar.java 3501 2008-01-05 17:16:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.List;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -29,8 +27,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.GlobalEvents;
@@ -45,7 +41,8 @@ public class DayBar extends Composite {
 	int height, width;
 	double pixelPerDay;
 	DayBar self=this;
-	AgendaWeek container;	
+	AgendaWeek container;
+	private Termin actTermin;
 	
 	public DayBar(AgendaWeek parent){
 		super(parent.cWeekDisplay,SWT.BORDER);
@@ -83,16 +80,16 @@ public class DayBar extends Composite {
 			c.dispose();
 		}
 		for(IPlannable ip:dayList){
-			TerminFeld f=new TerminFeld(this,ip);
+			/*TerminFeld f=*/ new TerminFeld(this,(Termin)ip);
 		}
 		recalc();
 	}
 	
 	class TerminFeld extends Composite{
-		IPlannable t;
+		Termin t;
 		DayBar mine;
 		Label myLabel;
-		TerminFeld(DayBar parent, IPlannable termin){
+		TerminFeld(final DayBar parent, final Termin termin){
 			super(parent,SWT.BORDER);
 			setLayout(new FillLayout());
 			t=termin;
@@ -101,20 +98,25 @@ public class DayBar extends Composite {
 			myLabel.setForeground(Plannables.getStatusColor(t));
 			myLabel.setText(t.getTitle());
 			StringBuilder sb=new StringBuilder();
-			if(termin instanceof Termin.Free){
-				sb.append("Freier Zeitraum\n").append(termin.getDurationInMinutes())
-					.append(" min.");
-			}else{
-				Termin trm=(Termin)termin;
-				sb.append(trm.getLabel()).append("\n")
-					.append(trm.getGrund());
-			}
+			sb.append(termin.getLabel()).append("\n")
+				.append(termin.getGrund());
 			myLabel.addMouseListener(new MouseAdapter(){
 				@Override
 				public void mouseDoubleClick(MouseEvent e) {
 					container.actDate.set(t.getDay());
 					new TerminDialog(container,t).open();
+					parent.recalc();
 				}
+			});
+			myLabel.addMouseMoveListener(new MouseMoveListener(){
+
+				public void mouseMove(MouseEvent e) {
+					if(!termin.equals(actTermin)){
+						actTermin=termin;
+						GlobalEvents.getInstance().fireSelectionEvent(termin);
+					}
+				}
+				
 			});
 			myLabel.setToolTipText(sb.toString());
 			mine=parent;
@@ -124,7 +126,7 @@ public class DayBar extends Composite {
 			manager.add(container.terminVerlaengernAction);
 			manager.add(container.terminAendernAction);
 			manager.add(AgendaActions.delTerminAction);
-			setMenu(manager.createContextMenu(parent));
+			myLabel.setMenu(manager.createContextMenu(parent));
 			//setBounds(0, 0, 20, 20);
 		}
 

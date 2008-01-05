@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plannables.java 3328 2007-11-07 16:09:42Z danlutz $
+ *  $Id: Plannables.java 3501 2008-01-05 17:16:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -220,7 +220,7 @@ public class Plannables {
 		    }
 		    List list=qbe.execute();
 		    if(list==null){
-		    	Activator.log.log("Dastenbankstrukturfehler, kann nicht laden (211)",Log.ERRORS);
+		    	Activator.log.log("Datenbankstrukturfehler, kann nicht laden (211)",Log.ERRORS);
 		    	return new ArrayList<IPlannable>();
 		    }
 		    if(list.isEmpty()){
