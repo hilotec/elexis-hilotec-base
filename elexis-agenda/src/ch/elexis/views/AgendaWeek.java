@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 3501 2008-01-05 17:16:39Z rgw_ch $
+ *  $Id: AgendaWeek.java 3502 2008-01-05 20:07:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -48,7 +49,7 @@ import ch.rgw.tools.TimeTool;
 public class AgendaWeek extends BaseAgendaView{
 	public static final String ID="ch.elexis.agenda.week";
 	DayBar[] days;
-	Composite cLeft, cRight;
+	Composite cLeft, cRight, cBounding;
 	Button bCal;
 	ScrolledForm form;
 	FormToolkit tk=Desk.theToolkit;
@@ -65,7 +66,7 @@ public class AgendaWeek extends BaseAgendaView{
 		
 		days=new DayBar[TimeTool.Wochentage.length];
 		form=tk.createScrolledForm(parent);
-		Composite cBounding=form.getBody();
+		cBounding=form.getBody();
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		cBounding.setLayout(new GridLayout(3,false));
 		cBounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -177,10 +178,10 @@ public class AgendaWeek extends BaseAgendaView{
 
 		public void paintControl(PaintEvent e) {
 			GC gc=e.gc;
-			Font font=gc.getFont();
-			//FontData fd=font.getFontData()[0];
-			//int h=2; //fd.getHeight()-2;
-			int y=bCal.getBounds().height;
+		
+			Point abs=cWeekDisplay.toDisplay(days[0].getLocation());
+			Point rel=cLeft.toControl(abs);
+			int y=rel.y;
 			TimeTool runner=new TimeTool();
 			runner.set("07:00");
 			TimeTool limit=new TimeTool(runner);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 3501 2008-01-05 17:16:39Z rgw_ch $
+ *  $Id: DayBar.java 3502 2008-01-05 20:07:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -43,10 +43,12 @@ public class DayBar extends Composite {
 	DayBar self=this;
 	AgendaWeek container;
 	private Termin actTermin;
+	private TimeTool myDay;
 	
 	public DayBar(AgendaWeek parent){
 		super(parent.cWeekDisplay,SWT.BORDER);
 		container=parent;
+		myDay=new TimeTool();
 		this.addControlListener(new ControlListener(){
 
 			public void controlMoved(ControlEvent e) {
@@ -61,6 +63,13 @@ public class DayBar extends Composite {
 			}});
 		setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		//setBackground(Desk.theColorRegistry.get(Desk.COL_GREEN));
+		addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				container.actDate.set(myDay);
+				new TerminDialog(container,null).open();
+				recalc();
+			}});
 	}
 	
 
@@ -82,6 +91,7 @@ public class DayBar extends Composite {
 		for(IPlannable ip:dayList){
 			/*TerminFeld f=*/ new TerminFeld(this,(Termin)ip);
 		}
+		myDay.set(day);
 		recalc();
 	}
 	
@@ -109,12 +119,10 @@ public class DayBar extends Composite {
 				}
 			});
 			myLabel.addMouseMoveListener(new MouseMoveListener(){
-
 				public void mouseMove(MouseEvent e) {
-					if(!termin.equals(actTermin)){
-						actTermin=termin;
-						GlobalEvents.getInstance().fireSelectionEvent(termin);
-					}
+					actTermin=t;
+					GlobalEvents.getInstance().fireSelectionEvent(actTermin);
+					System.out.println(actTermin.dump());	
 				}
 				
 			});

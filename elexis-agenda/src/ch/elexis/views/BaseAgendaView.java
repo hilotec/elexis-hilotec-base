@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3499 2008-01-05 16:20:22Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3502 2008-01-05 20:07:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -55,6 +55,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	String[] bereiche;
 	
 	protected BaseAgendaView(){
+		self=this;
 		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); 
 		actBereich=bereiche[0];
 	}
@@ -62,7 +63,6 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		self=this;
 		setBereich(actBereich);
 		create(parent);
 		makeActions();
@@ -245,7 +245,9 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				TerminDialog dlg=new TerminDialog(self,
 						(Termin)GlobalEvents.getInstance().getSelectedObject(Termin.class));
 				dlg.open();
-				tv.refresh(true);
+				if(tv!=null){
+					tv.refresh(true);
+				}
 			}
 		};
 		terminKuerzenAction=new Action(Messages.TagesView_shortenTermin){ 
@@ -263,6 +265,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 			public void run(){
 				Termin t=(Termin) GlobalEvents.getInstance().getSelectedObject(Termin.class);
 				if(t!=null) {
+					actDate.set(t.getDay());
 					Termin n=Plannables.getFollowingTermin(actBereich, actDate, t);
 					if(n!=null){
 						t.setEndTime(n.getStartTime());
@@ -281,7 +284,9 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 			public void run(){
 				TerminDialog dlg=new TerminDialog(self,null);
 				dlg.open();
-				tv.refresh(true);
+				if(tv!=null){
+					tv.refresh(true);
+				}
 			}
 		};
 		printAction=new Action("Tagesliste drucken"){
@@ -294,7 +299,9 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				IPlannable[] liste=Plannables.loadDay(actBereich, actDate);
 				TerminListeDruckenDialog dlg=new TerminListeDruckenDialog(getViewSite().getShell(),liste);
 				dlg.open();
-				tv.refresh(true);
+				if(tv!=null){
+					tv.refresh(true);
+				}
 			}
 		};
 		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
