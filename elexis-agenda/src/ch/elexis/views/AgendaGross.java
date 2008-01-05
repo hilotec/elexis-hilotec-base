@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,28 +8,55 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 3470 2007-12-20 20:56:56Z rgw_ch $
+ *  $Id: AgendaGross.java 3499 2008-01-05 16:20:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
-import ch.elexis.data.*;
+import ch.elexis.data.Fall;
+import ch.elexis.data.IPlannable;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
+import ch.elexis.data.TagesNachricht;
+import ch.elexis.data.Termin;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeSpan;
+import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePicker;
 
@@ -166,7 +193,7 @@ public class AgendaGross extends BaseAgendaView {
 			tc.setWidth(columnWidths[i]);
 		}
 		table.setHeaderVisible(true);
-		makeActions();
+		makePrivateActions();
 		cal.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -316,7 +343,8 @@ public class AgendaGross extends BaseAgendaView {
 		}		
 		
 	}
-	private void makeActions(){
+	
+	private void makePrivateActions(){
 		newViewAction=new Action("Neues Fenster"){
 			@Override
 			public void run(){
@@ -328,5 +356,5 @@ public class AgendaGross extends BaseAgendaView {
 			}
 		};
 	}
-
+	 
 }

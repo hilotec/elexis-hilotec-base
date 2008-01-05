@@ -141,7 +141,7 @@ public class TagesView extends BaseAgendaView{
 		lCreator.setText(" - ");
 		
 		sash.setWeights(new int[]{80,20});
-		makeActions();		
+		makePrivateActions();		
 	}
 
 	
@@ -260,7 +260,7 @@ public class TagesView extends BaseAgendaView{
 
 		
 	}
-	private void makeActions(){
+	private void makePrivateActions(){
 		newViewAction=new Action("Neues Fenster"){
 			@Override
 			public void run(){

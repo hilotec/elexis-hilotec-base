@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3476 2007-12-22 05:28:44Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3499 2008-01-05 16:20:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -209,7 +209,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		AgendaActions.updateActions();
 		tv.refresh();
 	}
-	private void makeActions(){
+	protected void makeActions(){
 		dayLimitsAction=new Action("Tagesgrenzen"){
 			@Override
 			public void run(){

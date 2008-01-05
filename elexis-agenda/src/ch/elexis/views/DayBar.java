@@ -8,23 +8,35 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 3497 2008-01-04 17:07:45Z rgw_ch $
+ *  $Id: DayBar.java 3499 2008-01-05 16:20:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.List;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
+import ch.elexis.actions.AgendaActions;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.IPlannable;
+import ch.elexis.data.Termin;
+import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -88,7 +100,31 @@ public class DayBar extends Composite {
 			myLabel.setBackground(Plannables.getTypColor(t));
 			myLabel.setForeground(Plannables.getStatusColor(t));
 			myLabel.setText(t.getTitle());
+			StringBuilder sb=new StringBuilder();
+			if(termin instanceof Termin.Free){
+				sb.append("Freier Zeitraum\n").append(termin.getDurationInMinutes())
+					.append(" min.");
+			}else{
+				Termin trm=(Termin)termin;
+				sb.append(trm.getLabel()).append("\n")
+					.append(trm.getGrund());
+			}
+			myLabel.addMouseListener(new MouseAdapter(){
+				@Override
+				public void mouseDoubleClick(MouseEvent e) {
+					container.actDate.set(t.getDay());
+					new TerminDialog(container,t).open();
+				}
+			});
+			myLabel.setToolTipText(sb.toString());
 			mine=parent;
+			MenuManager manager=new MenuManager();
+			manager.add(AgendaActions.terminStatusAction);
+			manager.add(container.terminKuerzenAction);
+			manager.add(container.terminVerlaengernAction);
+			manager.add(container.terminAendernAction);
+			manager.add(AgendaActions.delTerminAction);
+			setMenu(manager.createContextMenu(parent));
 			//setBounds(0, 0, 20, 20);
 		}
 

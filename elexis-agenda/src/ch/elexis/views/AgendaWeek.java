@@ -8,34 +8,45 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 3497 2008-01-04 17:07:45Z rgw_ch $
+ *  $Id: AgendaWeek.java 3499 2008-01-05 16:20:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.AgendaActions;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Termin;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class AgendaWeek extends BaseAgendaView{
+	public static final String ID="ch.elexis.agenda.week";
 	DayBar[] days;
 	Composite cLeft, cRight;
 	Button bCal;
@@ -50,7 +61,7 @@ public class AgendaWeek extends BaseAgendaView{
 	
 	@Override
 	public void createPartControl(Composite parent) {
-	
+		
 		days=new DayBar[TimeTool.Wochentage.length];
 		form=tk.createScrolledForm(parent);
 		Composite cBounding=form.getBody();
@@ -73,6 +84,7 @@ public class AgendaWeek extends BaseAgendaView{
 			
 		});
 		bCal=tk.createButton(cBounding,"",SWT.PUSH|SWT.CENTER);
+		bCal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Button bFwd=tk.createButton(cBounding,">",SWT.PUSH);
 		bFwd.addSelectionListener(new SelectionAdapter(){
 
@@ -89,17 +101,25 @@ public class AgendaWeek extends BaseAgendaView{
 		});
 
 		cLeft=tk.createComposite(cBounding);
-		cLeft.setLayoutData(SWTHelper.getFillGridData(1, false, 1, true));
+		//cLeft.setLayoutData(SWTHelper.getFillGridData(1, false, 1, true));
+		Point size=SWTHelper.getStringBounds(cLeft, "00:00");
+		GridData gd=new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint=size.x+2;
+		cLeft.setLayoutData(gd);
 		cLeft.addPaintListener(tp);
 		cWeekDisplay=new Composite(cBounding,SWT.BORDER);
 		cRight=tk.createComposite(cBounding);
-		cRight.setLayoutData(SWTHelper.getFillGridData(1, false, 1, true));
+		//cRight.setLayoutData(SWTHelper.getFillGridData(1, false, 1, true));
 		cRight.addPaintListener(tp);
+		size=SWTHelper.getStringBounds(cRight, "00:00");
+		gd=new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint=size.x+2;
+		cRight.setLayoutData(gd);
 		cWeekDisplay.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		cWeekDisplay.setLayout(new GridLayout(days.length,true));
 		TimeTool ttWeek=new TimeTool();
 		ttWeek.set(TimeTool.DAY_OF_WEEK,TimeTool.MONDAY);
-		bCal.setText(Integer.toString(ttWeek.get(TimeTool.WEEK_OF_YEAR))+". Woche");
+		//bCal.setText(Integer.toString(ttWeek.get(TimeTool.WEEK_OF_YEAR))+". Woche");
 		for(int d=0;d<days.length;d++){
 			dayLabels[d]=new Label(cWeekDisplay,SWT.NONE);
 			ttWeek.addHours(24);
@@ -109,7 +129,9 @@ public class AgendaWeek extends BaseAgendaView{
 		for(int d=0;d<days.length;d++){
 			days[d]=new DayBar(this);
 		}
-
+		makeActions();
+		
+		actDate=new TimeTool(actWeek);
 		setWeek(actWeek);
 	}
 
@@ -123,7 +145,7 @@ public class AgendaWeek extends BaseAgendaView{
 			dayLabels[i].setText(ttContained.toString(TimeTool.WEEKDAY)+", "+ttContained.toString(TimeTool.DATE_GER));
 			ttContained.addHours(24);
 		}
-		
+		actDate.set(actWeek);
 	}
 	@Override
 	public void create(Composite parent) {
@@ -156,19 +178,40 @@ public class AgendaWeek extends BaseAgendaView{
 		public void paintControl(PaintEvent e) {
 			GC gc=e.gc;
 			Font font=gc.getFont();
-			FontData fd=font.getFontData()[0];
-			int h=fd.getHeight();
-			int y=h+bCal.getBounds().height;
+			//FontData fd=font.getFontData()[0];
+			//int h=2; //fd.getHeight()-2;
+			int y=bCal.getBounds().height;
 			TimeTool runner=new TimeTool();
 			runner.set("07:00");
 			TimeTool limit=new TimeTool(runner);
 			limit.addHours(tagEnde-tagStart);
+			int quarter=(int)Math.round(15.0*pixelPerMinute);
 			while(runner.isBefore(limit)){
-				gc.drawText(runner.toString(TimeTool.TIME_SMALL), 0, y);
-				y+=Math.round(60.0*pixelPerMinute);
+				gc.drawLine(0, y, e.width, y);
+				gc.drawText(runner.toString(TimeTool.TIME_SMALL), 0, y+1);
+				y+=quarter;
+				gc.drawLine(e.width-3, y, e.width, y);
+				y+=quarter;
+				gc.drawLine(e.width-6, y, e.width, y);
+				y+=quarter;
+				gc.drawLine(e.width-3, y, e.width, y);
+				y+=quarter;
 				runner.addHours(1);
 			}
 		}
 		
 	}
+	private void makePrivateActions(){
+		newViewAction=new Action("Neues Fenster"){
+			@Override
+			public void run(){
+				try {
+					getViewSite().getPage().showView(ID, StringTool.unique("AgendaWeek"), IWorkbenchPage.VIEW_VISIBLE);
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				}
+			}
+		};
+	}
+	 
 }
