@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 3435 2007-12-12 13:39:08Z rgw_ch $
+ * $Id: Importer.java 3500 2008-01-05 16:20:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importer.praxistar;
@@ -294,6 +294,7 @@ public class Importer extends ImporterPage {
 			
 			Patient pat=new Patient(name,vorname,new TimeTool(gebdat).toString(TimeTool.DATE_GER),
 					row.get("Geschlecht_ID").equals("1") ? "m" : "w");
+			pat.set("PatientNr", patid);
 			moni.subTask(new StringBuilder().append("Patient: ").append(pat.getLabel()).append(" ").append(pat.getPatCode()).toString());
 			pat.set(new String[]{"Strasse","Land","Plz","Ort","Telefon1","Telefon2","Natel","Titel"},
 							row.get("tx_Strasse"),
