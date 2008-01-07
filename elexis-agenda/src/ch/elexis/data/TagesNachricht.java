@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TagesNachricht.java 1816 2007-02-16 17:50:11Z rgw_ch $
+ *  $Id: TagesNachricht.java 3504 2008-01-07 15:26:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -16,17 +16,22 @@ import java.io.ByteArrayInputStream;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 
 public class TagesNachricht extends PersistentObject {
 	private static final String TABLENAME="CH_ELEXIS_AGENDA_DAYMSG";
-	private static final String VERSION="0.1.0";
+	private static final String VERSION="0.2.0";
 	private static final String createDB= "CREATE TABLE "+TABLENAME+"("+
 	"ID		CHAR(8) primary key,"+
+	"deleted	CHAR(1) default '0',"+
 	"Kurz		VARCHAR(80),"+
 	"Msg		TEXT"+
 	");"+
 	"INSERT INTO "+TABLENAME+"(ID,Kurz) VALUES (1,'"+VERSION+"')";
 	
+	private static final String update020="ALTER TABLE "+TABLENAME+
+		" ADD deleted CHAR(1) default '0';"+
+		"UPDATE "+TABLENAME+" SET KURZ='0.2.0' WHERE ID='1';";
 	static{
 		addMapping(TABLENAME,"Zeile=Kurz","Text=Msg");
 		TagesNachricht start=load("1");
@@ -37,6 +42,14 @@ public class TagesNachricht extends PersistentObject {
 			}catch(Exception ex){
 				ExHandler.handle(ex);
 			}
+		}else{
+			VersionInfo vi=new VersionInfo(TagesNachricht.load("1").get("Zeile"));
+			if(vi.isOlder(VERSION)){
+				if(vi.isOlder("0.2.0")){
+					createTable(TABLENAME, update020);
+				}
+			}
+			
 		}
 		
 	}
