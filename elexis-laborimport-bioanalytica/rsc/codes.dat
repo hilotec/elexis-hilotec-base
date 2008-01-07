@@ -1,0 +1,3182 @@
+# Codes used by lab Bioanalytica
+#
+# Format:
+# <Code>;<Group Key>[;<Name>]
+#
+# Empty and comment (#) lines are ignored
+# White space only matters for indentation of the Name.
+
+aboyä;A2;  - A. boydii
+afuä;A2;  - A. fumigatus
+apulä;A2;  - A. pullulans
+claä;A2;  - Cladosporium 
+ecp;A2;ECP (e)
+ecp1;A2;ECP
+fusä;A2;  - Fusarium
+humiä;A2;  - Befeuchter
+i1g2;A2;IgG  Bienengift
+i1g3;A2;IgG  Bienengift (e)
+i3g2;A2;IgG  Wespengift
+i3g3;A2;IgG  Wespengift (e)
+ige;A2;IgE (Immunglobulin E)
+mfaä;A2;  - M. faeni
+papaä;A2;  - Papagei
+pcaä;A2;  - P. casei
+ras1n;A2;Allergiescreen
+ras1p;A2;Allergiescreen
+ras1q;A2;ras1 Allergiescreen
+rcal1;A2;  Hausstaubmilbe (D. pteron.)
+rcal10;A2;  Birkenpollen
+rcal11;A2;  Haselnuss
+rcal12;A2;  Eiklar
+rcal13;A2;  Milch
+rcal14;A2;  Kabeljau (Dorsch)
+rcal15;A2;  Weizenmehl
+rcal16;A2;  Sojabohne
+rcal17;A2;  Erdnuss
+rcal18;A2;  Apfel
+rcal19;A2;  Karotte
+rcal2;A2;  Hausstaubmilbe (D. farinae)
+rcal20;A2;  Latex
+rcal3;A2;  Aspergillus spp.
+rcal4;A2;  Cladosporium herbarum
+rcal5;A2;  Pferdeepithelien
+rcal6;A2;  Hundeepithelien
+rcal7;A2;  Katzenepithelien
+rcal8;A2;  Lieschgras
+rcal9;A2;  Beifusspollen
+rcla1;A2;  Hausstaubmilbe (D. pteron.)
+rcla10;A2;  Birkenpollen
+rcla11;A2;  Eiklar
+rcla12;A2;  Milch
+rcla13;A2;  Kabeljau (Dorsch)
+rcla14;A2;  Weizenmehl
+rcla15;A2;  Reis
+rcla16;A2;  Sojabohne
+rcla17;A2;  Erdnuss
+rcla18;A2;  Kartoffel
+rcla19;A2;  Apfel
+rcla2;A2;  Hausstaubmilbe (D. farinae)
+rcla20;A2;  Karotte
+rcla3;A2;  Aspergillus spp.
+rcla4;A2;  Cladosporium herbarum
+rcla5;A2;  Pferdeepithelien
+rcla6;A2;  Hundeepithelien
+rcla7;A2;  Katzenepithelien
+rcla8;A2;  Lieschgras
+rcla9;A2;  Beifusspollen
+rcli1;A2;  Hausstaubmilbe (D. pteron.)
+rcli10;A2;  Kaninchenepithelien
+rcli11;A2;  Meerschweinchenepithelien
+rcli12;A2;  Hamsterepithelien
+rcli13;A2;  Federnmischung
+rcli14;A2;  Wegerichpollen
+rcli15;A2;  Roggenpollen
+rcli16;A2;  Lieschgras
+rcli17;A2;  Beifusspollen
+rcli18;A2;  Birkenpollen
+rcli19;A2;  Haselpollen
+rcli2;A2;  Hausstaubmilbe (D. farinae)
+rcli20;A2;  Erlenpollen
+rcli3;A2;  Aspergillus spp.
+rcli4;A2;  Cladosporium herbarum
+rcli5;A2;  Alternaria tenuis
+rcli6;A2;  Penicillium notatum
+rcli7;A2;  Pferdeepithelien
+rcli8;A2;  Hundeepithelien
+rcli9;A2;  Katzenepithelien
+rcln1;A2;  Eigelb
+rcln10;A2;  Haselnuss
+rcln11;A2;  Erdnuss
+rcln12;A2;  Walnuss
+rcln13;A2;  Pfirsich
+rcln14;A2;  Sellerie
+rcln15;A2;  Tomate
+rcln16;A2;  Kartoffel
+rcln17;A2;  Apfel
+rcln18;A2;  Karotte
+rcln19;A2;  Kabeljau (Dorsch)
+rcln2;A2;  Eiklar
+rcln20;A2;  Krabbe
+rcln3;A2;  Milch
+rcln4;A2;  Kasein
+rcln5;A2;  Sesam
+rcln6;A2;  Weizenmehl
+rcln7;A2;  Roggenmehl
+rcln8;A2;  Soja
+rcln9;A2;  Mandel
+rcsi1;A2;  Hausstaubmilbe (D. pteron.)
+rcsi10;A2;  Meerschweinchenepithelien
+rcsi11;A2;  Hamsterepithelien
+rcsi12;A2;  Roggenpollen
+rcsi13;A2;  Lieschgras
+rcsi14;A2;  Wegerichpollen
+rcsi15;A2;  Glaskraut
+rcsi16;A2;  Beifusspollen
+rcsi17;A2;  Esche
+rcsi18;A2;  Birkenpollen
+rcsi19;A2;  Haselpollen
+rcsi2;A2;  Hausstaubmilbe (D. farinae)
+rcsi20;A2;  Latex
+rcsi3;A2;  Aspergillus spp.
+rcsi4;A2;  Cladosporium herbarum
+rcsi5;A2;  Alternaria tenuis
+rcsi6;A2;  Penicillium notatum
+rcsi7;A2;  Pferdeepithelien
+rcsi8;A2;  Hundeepithelien
+rcsi9;A2;  Katzenepithelien
+tauä;A2;  - Taube
+tviä;A2;  - T. viridis
+tvuä;A2;  - T. vulgari
+i1g;AL;IgG  Bienengift (e)
+i1g1;AL;IgG  Bienengift (e)
+i2g;AL;IgG  Hornissengift (e)
+i2g1;AL;IgG  Hornissengift (e)
+i3g;AL;IgG  Wespengift (e)
+i3g1;AL;IgG  Wespengift (e)
+ltt;AL;Lymph.-transformationstest (e)
+rc1;AL;Penicillin G c1
+rc2;AL;Penicillin V c2
+rc204;AL;IgE Gold c204 (e)
+rc206;AL;ACTH
+rc207e;AL;IgE Acet.salicylsäure c207 (e)
+rc207g;AL;IgG Acetylsalicylsäure (e)
+rc209e;AL;IgE Paracetamol c209 (e)
+rc209g;AL;IgG Paracetamol (e)
+rc231;AL;IgE Articain (e)
+rc231g;AL;IgG Articain (e)
+rc232;AL;IgE Lidocain (e)
+rc232g;AL;IgG Lidocain (e)
+rc272;AL;Weinsäure E334 (e)
+rc299e;AL;IgE Heparin c299 (e)
+rc299g;AL;IgG Heparin (e)
+rc2g;AL;IgG Penicillin V c2 (e)
+rc312;AL;IgE Lactose c312 (e)
+rc332;AL;IgE Brom c332 (e)
+rc470;AL;Lecithin E322 (e)
+rc5;AL;Ampicillin c5 (e)
+rc6;AL;Amoxycillin c6 (e)
+rc602;AL;IgE Aluminium  c602 (e)
+rc604;AL;Ammoniumpersulfat c 604 (e)
+rc605;AL;Blei c605 (e)
+rc616e;AL;IgE Jod c616 (e)
+rc616g;AL;IgG Jod (e)
+rc628;AL;IgE Nickel c628 (e)
+rc633;AL;Epoxyharze c633 (e)
+rc635;AL;Quecksilber c635 (e)
+rc7;AL;Cefaclor c7 (e)
+rc70;AL;Insulin (Schwein)
+rc71;AL;Insulin (Rind)
+rc717;AL;IgE Glutamat (E621-625, e)
+rc73;AL;Insulin (human)
+rc74;AL;Gelatine c 74 (e)
+rcann;AL;IgE  Cannabis sativa (e)
+rd1;AL;Dermatoph. pteron. d1
+rd2;AL;Dermatoph. farinae d2
+rd201;AL;Blomia tropicalis
+rd3;AL;microceras
+rd70;AL;Acarus siro d70 (e)
+rd71;AL;Lepidoglyphus destructor d71 (e)
+rd72;AL;Tyrophagus putrescentiae d72 (e)
+rd73;AL;G. domesticus d73 (e)
+rd74;AL;Euroglyphus maynei d74 (e)
+re1;AL;Katzenschuppen e1
+re2;AL;Hundeepithel e2 (e)
+re201;AL;Kanarienvogelfedern e201 (e)
+re202;AL;Rentierepithelien
+re203;AL;Nerzepithelien
+re204;AL;Rinderserumalbumin (BSA)
+re205;AL;Pferdeserum
+re206;AL;Kaninchenserum
+re208;AL;Chinchilla  e208 (e)
+re209;AL;Wuestenspringmaus
+re210;AL;Fuchs
+re211;AL;Kaninchenurinprotein
+re212;AL;Schweine-Urinprotein e212 (e)
+re213;AL;Papageienfedern e213 (e)
+re214;AL;Finkenfedern e214 (e)
+re215;AL;Taubenfedern  e215 (e)
+re216;AL;Hirschepithelien
+re217;AL;Frettchen
+re218;AL;Hühner-Kot e218 (e)
+re219;AL;Hühner-Serumprotein e219 (e)
+re3;AL;Pferdeschuppen e3
+re4;AL;Rinderepithelien e4
+re5;AL;Hundeschuppen e5
+re6;AL;Meerschweinchenepithel e6
+re7;AL;Taubenkot e7 (e)
+re70;AL;Gänsefedern e70 (e)
+re71;AL;Maeuseepithel e71 (e)
+re72;AL;Mäuseurinprotein e72 (e)
+re73;AL;Rattenepithelien e73 (e)
+re74;AL;Rattenurinprotein
+re75;AL;Rattenserumprotein
+re76;AL;Mäuseserumprotein e76 (e)
+re77;AL;Wellensittichkot e77 (e)
+re78;AL;Wellensittichfedern e78 (e)
+re79;AL;Wellensittich-Protein e79 (e)
+re80;AL;Ziegenepithelien e80 (e)
+re81;AL;Schafepithelien e81 (e)
+re82;AL;Kaninchenepithelien e82 (e)
+re83;AL;Schweineepithelien e83 (e)
+re84;AL;Hamsterepithelien e84 (e)
+re85;AL;Hühnerfedern e85 (e)
+re86;AL;Entenfedern e86 (e)
+re87;AL;Ratte e87 (e)
+re88;AL;Maus e88 (e)
+re89;AL;Truthahnfedern
+rex1;AL;Tierepithelien ex1
+rex2;AL;e1,e5,e6,e87,e88
+rex70;AL;Nagetiere ex70
+rex71;AL;Geflügelfedern ex71 (e)
+rex72;AL;Käfigvögel ex72 (e).
+rex73;AL;Federnmischung ex73 (e)
+rf1;AL;Eiklar f1
+rf10;AL;Sesamschrot f10
+rf11;AL;Buchweizenmehl f11
+rf12;AL;Erbse f12 (e)
+rf13;AL;Erdnuß f13
+rf14;AL;Sojabohne f14
+rf15;AL;Weiße Bohne (e)
+rf17;AL;Haselnuss f17
+rf18;AL;Paranuß f18 (e)
+rf2;AL;Milcheiweiss f2
+rf20;AL;Mandel f20 (e)
+rf201;AL;Pekan-Nuß
+rf202;AL;Cashew-Nuß f202 (e)
+rf203;AL;Pistazie f203 (e)
+rf204;AL;Forelle f204 (e)
+rf205;AL;Hering
+rf206;AL;Makrele
+rf207;AL;Venusmuschel f207 (e)
+rf208;AL;Zitrone f208 (e)
+rf209;AL;Grapefruit f209 (e)
+rf210;AL;Ananas f210 (e)
+rf211;AL;Brombeere
+rf212;AL;Champignon f212 (e)
+rf213;AL;Kaninchenfleisch
+rf214;AL;Spinat f 214 (e)
+rf215;AL;Kopfsalat f215 (e)
+rf216;AL;Kohl f216 (e)
+rf217;AL;Rosenkohl
+rf218;AL;Paprika f218
+rf219;AL;Fenchelsamen
+rf220;AL;Zimt f220 (e)
+rf221;AL;Kaffee f221 (e)
+rf222;AL;Tee f222 (e)
+rf223;AL;Hirsesamen
+rf224;AL;Mohnsamen
+rf225;AL;Kürbis f225 (e)
+rf226;AL;Kuerbissamen
+rf227;AL;Zuckerruebensamen
+rf228;AL;Milchpulver
+rf23;AL;Krabbe f23 (e)
+rf231;AL;Milch,gekocht f231 (e)
+rf232;AL;Ovalbumin
+rf233;AL;Ovomucoid
+rf234;AL;Vanille f234 (e)
+rf235;AL;Linsen  f235 (e)
+rf236;AL;Molke f236 (e)
+rf237;AL;Aprikose f237 (e)
+rf238;AL;Seezunge f238 (e)
+rf24;AL;Garnele f24 (e)
+rf242;AL;Kirsche f242 (e)
+rf243;AL;f26,f27,f83
+rf244;AL;Gurke
+rf245;AL;Eimischung f1, f75 (e)
+rf246;AL;Guar
+rf247;AL;Honig f247 (e)
+rf25;AL;Tomate f25
+rf251;AL;Fischmischung f251 (e)
+rf253;AL;Pinienkerne f253 (e)
+rf254;AL;Scholle f254 (e)
+rf255;AL;Pflaume f255 (e)
+rf256;AL;Walnuss f256 (e)
+rf258;AL;IgE Tintenfisch f 258 (e)
+rf259;AL;Weintraube f259 (e)
+rf26;AL;Schweinefleisch f26 (e)
+rf260;AL;Broccoli
+rf261;AL;Spargel f 261 (e)
+rf262;AL;Aubergine (e)
+rf263;AL;Pfeffer grün f263 (e)
+rf264;AL;Aal
+rf265;AL;Kuemmel
+rf266;AL;Muskatbluete
+rf267;AL;Kardamon
+rf268;AL;Gewuerznelke f268 (e)
+rf269;AL;Basilikum f269 (e)
+rf27;AL;Rindfleisch f27
+rf270;AL;Ingwer f270 (e)
+rf271;AL;Anis f271 (e)
+rf272;AL;Estragon
+rf273;AL;Thymian
+rf274;AL;Majoran
+rf275;AL;Liebstoeckel f275 (e)
+rf276;AL;Fenchel, frisch
+rf277;AL;Dill f277 (e)
+rf278;AL;Lorbeerblatt
+rf279;AL;Chillipfeffer f279 (e)
+rf280;AL;IgE Pfeffer schwarz f280 (e)
+rf281;AL;Curry f281 (e)
+rf282;AL;Muskatnuss f282
+rf283;AL;Oregano f283 (e)
+rf284;AL;Truthahnfleisch f284 (e)
+rf285;AL;Elchfleisch
+rf286;AL;Stutenmilch
+rf287;AL;Rote Bohnen
+rf288;AL;Milchpulver
+rf289;AL;Dattel f289 (e)
+rf290;AL;Auster f290 (e)
+rf291;AL;Blumenkohl f291 (e)
+rf292;AL;Guave
+rf293;AL;Papaya
+rf294;AL;IgE Passionsfrucht f294 (e)
+rf295;AL;Sternfrucht
+rf296;AL;Johannisbrot
+rf297;AL;Gummi arabicum f297 (e)
+rf298;AL;Dragant f298 (e)
+rf299;AL;Esskastanie f299 (e)
+rf3;AL;Fisch (Dorsch) f3
+rf300;AL;Ziegenmilch f300 (e)
+rf301;AL;Kakifrucht
+rf302;AL;Mandarine f302 (e)
+rf303;AL;Heilbutt f303 (e)
+rf304;AL;Languste f304 (e)
+rf306;AL;Limone
+rf307;AL;Seehecht f307 (e)
+rf308;AL;Sardine f308 (e)
+rf309;AL;Kichererbse f309 (e)
+rf31;AL;Karotte f31
+rf310;AL;Lathyrus sativus
+rf315;AL;Grüne Bohne f315 (e)
+rf317;AL;Koriander f317 (e)
+rf324;AL;Hopfen f324 (e)
+rf325;AL;Schafsmilch f325 (e)
+rf328;AL;Feige f328 (e)
+rf329;AL;Wassermelone f329 (e)
+rf33;AL;Orange f33 (e)
+rf331;AL;Safran f331 (e)
+rf335;AL;Lupinensamen f335 (e)
+rf343;AL;Himbeere f343 (e)
+rf348;AL;Lychee f348 (e)
+rf35;AL;Kartoffel f35 (e)
+rf36;AL;Kokosnuss f36 (e)
+rf37;AL;Miesmuschel f37 (e)
+rf4;AL;Weizenmehl f4
+rf40;AL;Thunfisch f40 (e)
+rf41;AL;Lachs f41 (e)
+rf416;AL;Omega-5-Gliadin f416 (e)
+rf44;AL;Erdbeere f44
+rf45;AL;Hefe (S. cerevisiae) f45 (e)
+rf47;AL;Knoblauch f47 (e)
+rf48;AL;Zwiebel f48 (e)
+rf49;AL;Grüner Apfel f49 (e)
+rf5;AL;Roggenmehl f5
+rf50;AL;Span. Makrele
+rf501;AL;Dinkel f501 (e)
+rf51;AL;Bambussprosse
+rf52;AL;Schokolade f52 (e)
+rf54;AL;Suesskartoffel
+rf55;AL;Rispenhirse f55 (e)
+rf56;AL;Kolbenhirse f56 (e)
+rf57;AL;Japanische Hirse f57 (e)
+rf58;AL;Tintenfisch (Pazifik) f58 (e)
+rf59;AL;Oktopus f59 (e)
+rf6;AL;Gerstenmehl f6
+rf60;AL;Bastardmakrele
+rf61;AL;Sardine (Pazifik)
+rf7;AL;Hafermehl f7
+rf75;AL;Eigelb f75 (e)
+rf76;AL;a-Lactalbumin f76
+rf76g;AL;IgG a-Lactalbumin (e)
+rf77;AL;b-Lactoglobulin f77
+rf77g;AL;IgG Lactoglobulin (e)
+rf78;AL;Casein f78
+rf78g;AL;IgG Casein (e)
+rf79;AL;Gluten f79
+rf8;AL;Maismehl f8
+rf80;AL;Hummer f80 (e)
+rf81;AL;Hartkäse r81 (e)
+rf82;AL;Schimmelkaese f82 (e)
+rf83;AL;Hühnerfleisch f83 (e)
+rf84;AL;Kiwi f84 (e)
+rf85;AL;Sellerie f85
+rf86;AL;Petersilie f86 (e)
+rf87;AL;Melone f87 (e)
+rf88;AL;Hammelfleisch f88 (e)
+rf89;AL;IgE Senf f89 (e)
+rf9;AL;Reis f9 (e)
+rf90;AL;Malz f90 (e)
+rf91;AL;Mango f91 (e)
+rf92;AL;Banane f92 (e)
+rf93;AL;Kakao f93 (e)
+rf94;AL;Birne f94 (e)
+rf95;AL;Pfirsich f95 (e)
+rf96;AL;Avocado f96 (e)
+rf999;AL;IgE Rhabarber (e)
+rfx1;AL;Nussmischung fx1
+rfx10;AL;f26,f27,f75,f83,f284
+rfx11;AL;f8,f12,f15,f31,f260
+rfx12;AL;f5,f9,f35,f212,f225
+rfx13;AL;Gemüsemischung fx13 (e)
+rfx14;AL;Gemüsemischung fx14 (e)
+rfx15;AL;f33,f49,f92,f95
+rfx16;AL;f44,f94,f208,f210
+rfx17;AL;Obstmischung fx17 (e)
+rfx18;AL;f12,f13,f14
+rfx19;AL;Nahrungsmittel fx19 (e)
+rfx2;AL;Meeresfrüchte fx2
+rfx20;AL;Nahrungsmittelmischung fx20 (e)
+rfx21;AL;Obstmischung 5 fx21 (e)
+rfx22;AL;Nussmischung fx22 (e)
+rfx23;AL;Fleischmischung fx23
+rfx29;AL;Zitrusfrüchte fx29 (e)
+rfx3;AL;Getreide fx3
+rfx5;AL;Kindernahrung fx5
+rfx7;AL;Nahrungsmittelmischung fx7
+rfx70;AL;Gewürzmischung fx70 (e)
+rfx71;AL;f265,f266,f267,f268
+rfx72;AL;Gewürzmischung fx72 (e)
+rfx74;AL;Fischmischung fx74 (e)
+rfx8;AL;Nahrungsmittel 2 fx8 (e)
+rfx9;AL;Nahrungsmittel 3 fx9 (e)
+rg1;AL;Ruchgras g1
+rg10;AL;Sorgho
+rg11;AL;Trespe
+rg12;AL;Roggen g12
+rg13;AL;Wolliges Honiggras g13
+rg14;AL;Hafer
+rg15;AL;Weizen g15 (e)
+rg16;AL;Wiesenfuchsschwanz
+rg17;AL;Bahiagras
+rg2;AL;Hundszahngras g2 (e)
+rg201;AL;Gerste
+rg202;AL;Mais g202 (e)
+rg203;AL;Distichlis spicata
+rg204;AL;Glatthafer
+rg213;AL;rPhl p1/p5  g213 (e)
+rg2131;AL;rPhl p1     g213 (e)
+rg2135;AL;rPhl p5     g213 (e)
+rg214;AL;rPhl p12    g214 (e)
+rg2147;AL;rPhl p7     g214 (e)
+rg214b;AL;rPhl p7/p12 g214(e)
+rg3;AL;Knaeuelgras g3
+rg4;AL;Wiesenschwingel g4
+rg5;AL;Lolch (Weidelgras) g5
+rg6;AL;Lieschgras g6
+rg7;AL;Schilf (Reet) g7
+rg70;AL;Haargerste
+rg71;AL;Canary-Grass
+rg8;AL;Wiesenrispengras g8
+rg9;AL;Wei~es Strau~gras
+rgx1;AL;Gräser früh gx1
+rgx2;AL;g2,g5,g6,g8,g10,g17
+rgx3;AL;g1,g5,g6,g12,g13
+rgx4;AL;Gräser spät gx4
+rh1;AL;Greer Labs. Inc.
+rh2;AL;Hollister-Stier Labs
+rh3;AL;Bencard
+rh4;AL;Allergopharma
+rhx2;AL;h2,d1,d2,i6
+ri1;AL;IgE  Bienengift i1
+ri2;AL;D. maculata i2 (e)
+ri201;AL;Pferdebremse i201 (e)
+ri202;AL;Ruesselkaefer
+ri203;AL;Mehlmotte
+ri204;AL;Rinderbremse i204 (e)
+ri205;AL;IgE  Hummelgift i205 (e)
+ri3;AL;IgE  Wespengift i3
+ri4;AL;Papierwespe i4 (e)
+ri5;AL;Gelbwespe i5 (e)
+ri6;AL;Kuechenschabe
+ri7;AL;IgE  Hummelgift i7 (e)
+ri70;AL;Feuerameise i70 (e)
+ri71;AL;Stechmücke i71 (e)
+ri72;AL;Sudanfliege
+ri73;AL;Rote Mueckenlarve i73 (e)
+ri75;AL;Hornissengift, europ. i75 (e)
+ri76;AL;Trogoderma angustum
+ri8;AL;Motte
+rk020;AL;Schafwolle bearbeitet k020 (e)
+rk021;AL;Schafwolle unbearbeitet k021 (e)
+rk035;AL;Fichte k035 (e)
+rk036;AL;Kiefer k036 (e)
+rk044;AL;Tanne k044 (e)
+rk07;AL;Heustaub k07 (e)
+rk201;AL;Papain
+rk202;AL;Bromelin k202 (e)
+rk203;AL;Phospholipase k203 (e)
+rk204;AL;IgE Maxatase k204 (e)
+rk205;AL;IgE Alkalase k205 (e)
+rk206;AL;IgE Savinase k206 (e)
+rk208;AL;Lysozym k208 (e)
+rk209;AL;Hexahydrophthalsaeureanhydrid
+rk210;AL;Malaiensaeureanhydrid k210 (e)
+rk211;AL;M-tetrahydrophthalsäureanhydrid
+rk212;AL;Abachi-Holzstaub k212 (e)
+rk70;AL;Gruene Kaffeebohne
+rk71;AL;Rizinusbohne
+rk72;AL;Isphagula
+rk73;AL;Wildseide k73 (e)
+rk74;AL;Naturseide k74 (e)
+rk75;AL;Isocyanat TDI k75
+rk76;AL;Isocyanat MDI k76
+rk77;AL;Isocyanat HDI k77
+rk78;AL;Aethylenoxid k78 (e)
+rk79;AL;Phthalsäureanhydrid rk79 (e)
+rk80;AL;Formalin k80
+rk81;AL;Ficus spp. k81
+rk82;AL;Latex k82
+rk83;AL;Baumwollsamen k83 (e)
+rk84;AL;Sonnenblumensamen
+rk85;AL;Chloramin T
+rk86;AL;Trimelitsäure-Anhydrid k86 (e)
+rk87;AL;a-Amylase k87
+rkx04;AL;Weichhölzer kx04 (e)
+rkx05;AL;Harthölzer  kx05 (e)
+rl030;AL;Hanf l030 (e)
+rl043e;AL;IgE Alcacyl l043 (e)
+rl043g;AL;IgG Alcacyl (e)
+rl079e;AL;IgE Coffein l079 (e)
+rl079g;AL;IgG Koffein (e)
+rl090e;AL;IgE Dextromethorphan l090 (e)
+rl090g;AL;IgG Dextromethorphan (e)
+rl295;AL;Carotinoide l295 (e)
+rl457;AL;Betanin E162 (e)
+rl461;AL;Zitronensäure E330 (e)
+rl645;AL;IgE Thiopental (e)
+rl645g;AL;IgG Thiopental (e)
+rl805;AL;Xanthophylle E161 (e)
+rl818;AL;IgE Acetazolamid (e)
+rl818g;AL;IgG Acetazolamid (e)
+rm1;AL;Penicillium notatum m1
+rm14;AL;purpurascens
+rm15;AL;Trichodema viride
+rm16;AL;Curvalaria lunata
+rm2;AL;Cladosporium herbarum m2
+rm201;AL;Ustilago nuda
+rm202;AL;acremonium
+rm203;AL;Trichosporon pullans
+rm204;AL;Ulocladium chartarum
+rm205;AL;Trichophytum rubrum
+rm207;AL;Aspergillus niger m207 (e)
+rm211;AL;Tr.mentagr.interdig.m211 (e)
+rm3;AL;Aspergillus fumigatus m3 (e)
+rm3g;AL;IgG Aspergillus fumigatus
+rm4;AL;Mucor racemosus
+rm44;AL;Bäckerhefe m44 (e)
+rm5;AL;Candida albicans
+rm6;AL;Alternaria alternata m6
+rm7;AL;Botrytis cinerea
+rm70;AL;Pityrosporum orbiculare m70 (e)
+rm8;AL;halodes
+rm9;AL;Fusarium moniliforme m9 (e)
+rmx1;AL;Schimmelpilze mx1
+rmx2;AL;Schimmelpilzmischung mx2 (e)
+ro1;AL;Baumwolle o1 (e)
+ro201;AL;Tabakblätter o201 (e)
+ro202;AL;Fischfutter, A.salina o202 (e)
+ro203;AL;Fischfutter, Tetramin o203 (e)
+ro207;AL;Fischfutter, Daphnia o207 (e)
+ro211;AL;Mehlwurm o211 (e)
+ro70;AL;Spermaflüssigkeit o70 (e)
+rp1;AL;Ascaris
+rp2;AL;Echinococcus
+rp4;AL;Anisakis p4 (e)
+rpax1;AL;Tierschuppen/ Federn pax1 (e)
+rpax2;AL;Milben / Insekten pax2 (e)
+rpax3;AL;Pollen/ Schimmelpilze pax3 (e)
+rpax4;AL;f4,f14,k87,Reiskäfer
+rpax5;AL;Chemikalien pax5 (e)
+rpax6;AL;Desinfektionsmittel pax6 (e)
+rrx1;AL;Inhalationsscreen saisonal
+rrx2;AL;Inhalationsscreen perenneal
+rsx1;AL;Allergie-Screen (Inhalation)
+rt1;AL;Ahorn t1
+rt10;AL;Walnuss t10
+rt11;AL;Platane
+rt12;AL;Salweide t12
+rt14;AL;Pappel t14
+rt15;AL;Esche t15 (e)
+rt16;AL;Weymouthkiefer rt16 (e)
+rt17;AL;Japan. Zeder
+rt18;AL;Eukalyptus
+rt19;AL;Mimose
+rt2;AL;Grau-Erle t2
+rt20;AL;Mesquite
+rt201;AL;Fichte t201 (e)
+rt203;AL;Rosskastanie t 203 (e)
+rt205;AL;Holunder
+rt206;AL;Esskastanie t206 (e)
+rt207;AL;Douglasie
+rt208;AL;Linde t208 (e)
+rt209;AL;Hainbuche
+rt21;AL;Melaleuca Baum
+rt210;AL;Liguster
+rt211;AL;Liquidambar styraciflua
+rt212;AL;Zeder t212 (e)
+rt2151;AL;rBet v1    Rt215 (e)
+rt22;AL;Hickory - Baum
+rt221;AL;rBet v2/4 t221 (e)
+rt2212;AL;rBet v2    t221 (e)
+rt2214;AL;rBet v4    t221 (e)
+rt23;AL;Zypresse t23 (e)
+rt3;AL;Birke t3
+rt4;AL;Hasel t4
+rt5;AL;Buche t5
+rt6;AL;Sadebaum (Juni.sab.)
+rt7;AL;Eiche t7
+rt70;AL;Maulbeerbaum
+rt72;AL;Palme
+rt73;AL;Pinie t73 (e)
+rt8;AL;Ulme t8
+rt9;AL;Olive t9 (e)
+rtx1;AL;Bäume früh (tx1)
+rtx2;AL;Bäume spät (tx2)
+rtx3;AL;t6,t7,t8,t14,t20
+rtx4;AL;t7,t8,t11,t12,t14
+rtx5;AL;Bäume früh tx5
+rtx6;AL;Bäume spät tx6
+rtx7;AL;t12,t16,t18,t19,t21
+rtx8;AL;t1,t3,t4,t7,t11
+rtx9;AL;t2,t3,t4,t7,t12
+rw1;AL;Beifussblättrige Ambrosie w1
+rw10;AL;Weisser Gänsefuss w10
+rw11;AL;Salzkraut w11
+rw12;AL;Goldrute w12 (e)
+rw13;AL;Spitzklette
+rw14;AL;Fuchsschwanz
+rw15;AL;Melde
+rw16;AL;Iva cillata
+rw17;AL;Feuerbusch
+rw18;AL;Sauerampfer
+rw19;AL;Glaskraut, aufrechtes w19 (e)
+rw2;AL;Ausdauernde Ambrosie w2 (e)
+rw20;AL;Brennessel
+rw203;AL;Rapspollen
+rw204;AL;Sonnenblume w204
+rw206;AL;Kamille
+rw207;AL;Lupine  w207 (e)
+rw208;AL;Lucopodium
+rw21;AL;Glaskraut, P. jud. w21
+rw210;AL;Zuckerruebe
+rw22;AL;Chrysantheme w22 (e)
+rw3;AL;Dreilappige Ambrosie w3 (e)
+rw30;AL;Tulpe w30 (e)
+rw4;AL;(falsche Ambrosie)
+rw5;AL;Wermut
+rw6;AL;Beifuss w6
+rw7;AL;Margerite w7 (e)
+rw8;AL;Löwenzahn w8 (e)
+rw9;AL;Spitzwegerich w9
+rwx1;AL;Kräuter wx1
+rwx2;AL;w2,w6,w9,w10,w15
+rwx209;AL;Ambrosien wx209 (e)
+rwx3;AL;w6,w9,w10,w12,w20
+rwx5;AL;w1,w6,w7,w8,w12
+rwx6;AL;w9,w10,w11,w18
+rwx7;AL;w7,w8,w9,w10,w12
+ry276;AL;Johannisbeere y276 (e)
+ry277;AL;Preiselbeere y277 (e)
+rz11g;AL;IgG Taubenkot (e)
+rz49g;AL;IgG Taubenfedern (e)
+sperv;E2;Spermien nach Vasektomie
+aglu;EJ;Alpha-Glucosidase (Seminalplasma)(e)
+ausseh;EJ;Aussehen
+baktsp;EJ;Bakterien
+beweg;EJ;Progressiv bewegl. Spermien
+beweg2;EJ;Progressiv bewegl. Spermien nach 2 h
+ecsper;EJ;Erythrozyten
+entnah;EJ;Ejakulation am
+epispe;EJ;Epithelzellen
+fruc;EJ;Fructose (Seminalplasma) (e)
+immot;EJ;  Immotil
+konzej;EJ;Spermien pro Ejakulat
+konzml;EJ;Spermienkonzentration
+kopf;EJ;  Kopf
+lcsper;EJ;Leukozyten
+makzei;EJ;Makroskop. Beurteilung nach
+mikzei;EJ;Mikroskop. Beurteilung nach
+mittel;EJ;  Mittelstück
+motabn;EJ;Progressive-Motilitätsabnahme
+norma1;EJ;Normale Formen
+normal;EJ;Normale Formen
+nprogb;EJ;  Nichtprogressiv
+patho1;EJ;Pathologische Formen
+pathol;EJ;Pathologische Formen
+phsper;EJ;pH im Seminalplasma
+progb;EJ;  Progressiv
+schwan;EJ;  Flagelle
+spbeur;EJ;Beurteilung
+spmar;EJ;Anti-Sperma-AK MAR
+spmar1;EJ;Anti-Sperma-AK MAR
+taper;EJ;  Tapering-Formen
+tote;EJ;Tote Spermien (Eosintest)
+unbewe;EJ;Unbewegliche Spermien
+viskos;EJ;Viskosität
+volspe;EJ;Ejakulat-Volumen
+zellen;EJ;Spermatogenesezellen
+zisp;EJ;Zink (e)
+a2ap;GE;alpha2-Antiplasmin (e)
+acardg;GE;Anti-Cardiolipin IgG (e)
+acardm;GE;Anti-Cardiolipin IgM (e)
+acla;GE;Anti-Cardiolipin IgA (e)
+acla1;GE;  Anti-Cardiolipin IgA
+aclg;GE;Anti-Cardiolipin IgG (e)
+aclg1;GE;  Anti-Cardiolipin IgG
+aclm;GE;Anti-Cardiolipin IgM (e)
+aclm1;GE;  Anti-Cardiolipin IgM
+af8;GE;anti-Faktor VIII Ak (e)
+apc1;GE;  APC 1
+apc2;GE;  APC 2
+apcr;GE;APC-Resistenz (e)
+at3a;GE;Antithrombin III funkt.
+at3a1;GE;Antithrombin III funkt. (e)
+at3a2;GE;Antithrombin III funkt. (e)
+b2gp1;GE;beta2-GP I Ak (e)
+b2gp1a;GE;  beta2-GP I IgA
+b2gp1g;GE;  beta2-GP I IgG
+b2gp1m;GE;  beta2-GP I IgM
+blutz;GE;Blutungszeit
+ddim;GE;D-Dimer
+ddim1;GE;D-Dimer
+ddim2;GE;D-Dimer
+f10;GE;Faktor X (e)
+f11;GE;Faktor XI-Aktivität (e)
+f111;GE;Faktor XI-Aktivität (e)
+f12;GE;Faktor XII-Aktivität (e)
+f13;GE;Faktor XIII (e)
+f131;GE;Faktor XIII (e)
+f2;GE;Faktor II (e)
+f5;GE;Faktor V (e)
+f51;GE;Faktor V (e)
+f7;GE;Faktor VII (e)
+f8;GE;Faktor VIII-Aktivität (e)
+f81;GE;Faktor VIII-Aktivität (e)
+f82;GE;Faktor VIII-Aktivität (e)
+f9;GE;Faktor IX-Aktivität (e)
+f91;GE;Faktor IX-Aktivität (e)
+fib;GE;Fibrinogen
+fibksl;GE;QC Fibrinogen KSL
+fibs;GE;Fibrinogen (nach Schulz) (e)
+fvw2n;GE;vWF Typ 2 Normandy (e)
+fvwa;GE;v.Willebrand rel.Ag (e)
+fvwa1;GE;v.Willebrand rel.Ag (e)
+fvwbi;GE;vWF Kollagenbind.aktivität(e)
+fvwmm;GE;vWF Multimere (e)
+fvwr;GE;v.Willebrand Rist.-CoF (e)
+fvwr1;GE;v.Willebrand Rist.-CoF (e)
+gerz;GE;Gerinnungszeit
+hcyst;GE;Homocystein
+hemm;GE;Hemmkörper intrin.Syst. (e)
+hepca;GE;Heparin Cof. II Akt. (e)
+hepxa;GE;Heparin, Anti Xa-Aktiv. (e)
+inr;GE;INR
+luako;GE;Lupus Anticoagulans (e)
+pai;GE;Plasminogen Akt. Inhib. (e)
+paim;GE;PAI Mutation (e)
+pfaa;GE;PFA - ADP
+pfae;GE;PFA - Epinephrin
+plasm;GE;Plasminogen (e)
+proca;GE;Protein C funkt.
+proca1;GE;Protein C funkt. (e)
+prsf;GE;Protein S frei (e)
+prsf1;GE;Protein S frei (e)
+prsfa;GE;Protein S frei funkt. (e)
+prsg;GE;Protein S gesamt (e)
+prsg1;GE;Protein S gesamt (e)
+ptt;GE;PTT (Part. Thrombopl.zeit)
+q;GE;Quick (Prothrombinzeit)
+tat;GE;TAT Thrombin-AT III Komplex (e)
+tz1;GE;Thrombinzeit I
+tz2;GE;Thrombinzeit II
+a149p;GN;  Aldolase B (A149P4)
+a174d;GN;  Aldolase B (A174D)
+alleII;GN;  Allel
+allel;GN;  Allel
+bbup;GN;B. burgdorferi DNA (PCR)
+bhep;GN;Bartonella henselae DNA
+c282y;GN;C282Y-Allel
+cfp;GN;Cystische Fibrose Genotyp (e)
+chorh;GN;Chorea Huntington (e)
+cy2c19;GN;Cytochrom P450 2C19 Genotyp (e)
+cyp2d6;GN;Cytochrom P450 2D6 Genotyp (e)
+del4e4;GN;  Aldolase B (del4E4)
+drplap;GN;DRPLA (e)
+f2m;GN;Faktor II Mutation (G20210A)
+f5l;GN;Faktor V Leiden Mutation
+fap;GN;Friedreich-Ataxie (e)
+fmfp;GN;Fam. Mittelmeerfieber(e)
+fshdp;GN;Fazioscapulohum.Muskeldystr. (e)
+fxp;GN;Fragiles X - Syndrom (e)
+h63d;GN;H63D-Allel
+hbpatp;GN;(Hämo)Globingen-Analyse (e)
+hächro;GN;Mutationsnachweis (e)
+jak2;GN;JAK2-Mutation (e)
+meup;GN;M. Gilbert-Meulengracht (e)
+mthfr;GN;MTHFR Homocystein (C677T) (e)
+n334k;GN;  Aldolase B (N334K)
+plial;GN;  Allel
+plip;GN;Primäre Laktoseintoleranz
+prawp;GN;Prader-Willi-Syndrom (e)
+spsp;GN;Spastische Spinalparalyse (e)
+tpmt2;GN;  TPMT*2
+tpmt3a;GN;  TPMT*3A
+tpmt3b;GN;  TPMT*3B
+tpmt3c;GN;  TPMT*3C
+tpmta;GN;  TPMT-Aktivität
+twhp;GN;Tropheryma whipplei DNA
+urosp;GN;Urosynthase-Mutationsnachweis (e)
+zölp;GN;Zöliakie (Genetische Veranlagung) (e
+abaso;HA;  Basophile
+abasoa;HA;  Basophile abs.
+abeurt;HA;Beurteilung
+aeos;HA;  Eosinophile
+aeosa;HA;  Eosinophile abs.
+akanto;HA;Akanthozyten
+aksp;HA;AK-Spezifität 1 (e)
+aksp1;HA;AK-Spezifität 2 (e)
+aksp2;HA;AK-Spezifität 3 (e)
+aksp3;HA;AK-Spezifität 4 (e)
+aksp4;HA;AK-Spezifität 5 (e)
+alcp;HA;Alkal. Leukozyten-Phosph.
+alympa;HA;  Lymphozyten abs.
+alymph;HA;  Lymphozyten
+amono;HA;  Monozyten
+amonoa;HA;  Monozyten abs.
+aneut;HA;  Neutrophile
+aneuta;HA;  Neutrophile abs.
+aniso;HA;Anisozytose
+anistc;HA;Anisozytose
+anulo;HA;Anulozyten
+atc;HA;Anti-Thrombozyten Ak (e)
+atcab;HA;Beurteilung Tc-Ak
+atcag;HA;anti-Tc-Ak  gebunden
+atcaz;HA;anti-Tc Ak  zirkulierend
+atypz;HA;  "Atypische Zellen"
+basecb;HA;  Basophile Erythroblasten
+baso;HA;  Basophile
+basop;HA;  Basophile
+baspu;HA;Basophile Punktierung
+bcr;HA;BCR-ABL (p210) (e)
+beuror;HA;  Beurteilung
+blast;HA;  "Blasten"
+blaste;HA;  "Blasten"
+blgr;HA;Blutgruppe
+blgrs;HA;Blutgruppe
+c1656a;HA;NK-Lymphozyten (CD16+,CD56+)
+c1656r;HA;NK-Lymphozyten (CD16+,CD56+)
+cd19a;HA;B-Lymphozyten (CD19+)
+cd19r;HA;B-Lymphozyten (CD19+)
+cd38;HA;CD38 (e)
+cd3a;HA;Lymphozyten (CD3+)
+cd3r;HA;Lymphozyten (CD3+)
+cd4;HA;Lymphozytensubtypisierung(e)
+cd43a;HA;Lymphozyten (CD3+, CD4+)
+cd43r;HA;Lymphozyten (CD3+, CD4+)
+cd45a;HA;Lymphozyten (CD45+)
+cd45r;HA;Lymphozyten (CD45+)
+cd48q;HA;Ratio CD4 / CD8
+cd83a;HA;Lymphozyten (CD3+, CD8+)
+cd83r;HA;Lymphozyten (CD3+, CD8+)
+cohb;HA;  CO-Hämoglobin
+cood;HA;DAT (Coombs dir.) polyspez.
+cood1;HA;DAT (Coombs dir.) polyspez.
+cood1k;HA;DAT (Coombs direkt) (Kreuze)
+coodk;HA;DAT (Coombs direkt) (Kreuze)
+coodm;HA;DAT (Coombs dir.) monospez.
+coodma;HA;  IgA
+coodmc;HA;  C3c
+coodmd;HA;  C3d
+coodmg;HA;  IgG
+coodmm;HA;  IgM
+coodpm;HA;Coombs direkt poly/mono (e)
+coods;HA;DAT (Coombs dir.) polyspez.
+coodsk;HA;DAT (Coombs direkt) (Kreuze)
+cooi;HA;AK-Suchtest (Coombs ind.)
+cooie;HA;Coombs ind. mit Enzym
+cooisr;HA
+cooit2;HA;Titer AK 2
+cooit3;HA;Titer AK 3
+cooiti;HA;Titer AK 1
+dola;HA;Donath-Landsteiner Ak (e)
+ec;HA;Erythrozyten
+ec1;HA;Erythrozyten-Konzentrat
+ec2;HA;Erythrozyten-Konzentrat
+ec3;HA;Erythrozyten-Konzentrat
+ec4;HA;Erythrozyten-Konzentrat
+ec5;HA;Erythrozyten-Konzentrat
+ec6;HA;Erythrozyten-Konzentrat
+ec7;HA;Erythrozyten-Konzentrat
+ec8;HA;Erythrozyten-Konzentrat
+ecag;HA;Ec-Antigenbestimmung
+ecal;HA;Ec-Allo-Antikörper (Verrechnung)
+ecblas;HA;  Erythroblasten
+ece1;HA;Erythrozyten-Konzentrat
+ece2;HA;Erythrozyten-Konzentrat
+ece3;HA;Erythrozyten-Konzentrat
+ece4;HA;Erythrozyten-Konzentrat
+ecel;HA;Erythrocyten-Ak Elution (e)
+ecere1;HA;Erythrozyten-Konzentrat
+ecere2;HA;Erythrozyten-Konzentrat
+ecere3;HA;Erythrozyten-Konzentrat
+ecere4;HA;Erythrozyten-Konzentrat
+ecret1;HA;Erythrozyten-Konzentrat
+ecret2;HA;Erythrozyten-Konzentrat
+ecret3;HA;Erythrozyten-Konzentrat
+ecret4;HA;Erythrozyten-Konzentrat
+ecret5;HA;Erythrozyten-Konzentrat
+ecret6;HA;Erythrozyten-Konzentrat
+ecret7;HA;Erythrozyten-Konzentrat
+ecret8;HA;Erythrozyten-Konzentrat
+eier;HA;Eierschalenformen
+eos;HA;  Eosinophile
+eosp;HA;  Eosinophile
+erypoe;HA
+exbeur;HA
+exon2;HA;Exon 2 (Verrechnung)
+exon35;HA;Exon 3,5 (Verrechnung)
+fettge;HA;Fettgehalt
+fgp1;HA;Frisch gefrorenes Plasma
+fgp2;HA;Frisch gefrorenes Plasma
+fgp3;HA;Frisch gefrorenes Plasma
+fgp4;HA;Frisch gefrorenes Plasma
+fgp5;HA;Frisch gefrorenes Plasma
+fgp6;HA;Frisch gefrorenes Plasma
+fgp7;HA;Frisch gefrorenes Plasma
+fgp8;HA;Frisch gefrorenes Plasma
+fgpe1;HA;Frisch gefrorenes Plasma
+fgpe2;HA;Frisch gefrorenes Plasma
+fgpe3;HA;Frisch gefrorenes Plasma
+fgpe4;HA;Frisch gefrorenes Plasma
+fgper1;HA;Frisch gefrorenes Plasma
+fgper2;HA;Frisch gefrorenes Plasma
+fgper3;HA;Frisch gefrorenes Plasma
+fgper4;HA;Frisch gefrorenes Plasma
+fgpre1;HA;Frisch gefrorenes Plasma
+fgpre2;HA;Frisch gefrorenes Plasma
+fgpre3;HA;Frisch gefrorenes Plasma
+fgpre4;HA;Frisch gefrorenes Plasma
+fgpre5;HA;Frisch gefrorenes Plasma
+fgpre6;HA;Frisch gefrorenes Plasma
+fgpre7;HA;Frisch gefrorenes Plasma
+fgpre8;HA;Frisch gefrorenes Plasma
+flt3;HA;FLT3-ITD (e)
+fragme;HA;Fragmentozyten
+frhb;HA;Freies Hämoglobin, Plasma (e)
+g6pdh;HA;Glucose-6-Ph-Dehydrogenase (e)
+g6pdl;HA;Glucose-6-PDH qual. (e)
+gbb;HA
+gewmz;HA;  Gewebsmastzellen
+grfein;HA;Granula fein
+grgrob;HA;Granula grob
+grmitt;HA;Granula mittelgrob
+gump;HA;  Gumprechtsche Schollen
+hb;HA;Hämoglobin
+hbea2;HA;  Hämoglobin A2
+hbeah;HA;  Abnormes Hämoglobin
+hbeah%;HA;  Anteil abnormes Hämoglobin
+hbebe;HA;Beurteilung
+hbeec;HA;  Erythrozyten
+hbef;HA;  Hämoglobin F
+hbeh;HA;  Hämoglobin H
+hbehb;HA;  Hämoglobin
+hbela2;HA;  Hämoglobin A2
+hbelan;HA;  Anormales Hämoglobin
+hbelf;HA;  Hämoglobin F
+hbelg6;HA;  Glucose-6-PDH qualitativ
+hbelpy;HA;  Pyruvat-kinase
+hbemcv;HA;  MCV
+hbesi;HA;  Sichelzelltest
+hbf;HA;Hämoglobin-F quantitativ (e)
+hbh;HA;  HbH - Innenkörper
+hbret;HA;Hb-Gehalt im Retikulozyt
+hein;HA;Heinz' Innenkörper (e)
+hema;HA;HemaVisions-Test (e)
+hit;HA;HIT-Abklärung
+hit1;HA;HIT-Abklärung (e)
+hk;HA;Hämatokrit
+hla;HA;HLA - B 27 (e)
+hlaag1;HA;HLA-Ag, einzeln, 1.
+hlaag2;HA;HLA-Ag, 2.
+hlab51;HA;HLA - B 51 (e)
+hlaty;HA;HLA-Typisierung (e)
+hlatyn;HA;HLA-Typ II DQ (e)
+hlatyt;HA;HLA-Typisierung (A, B, DR) (e)
+howell;HA;Howell Jolly
+hypo;HA;Hypochrom
+inteis;HA;  Interstitielles Eisen
+ipkm;HA;Immunphänotypisierung (Knochenmark)
+kellag;HA;Kell-Antigen
+kmbeur;HA;Knochenmarkbeurteilung
+kno;HA
+kpykno;HA;Kerne pyknotisch
+kx;HA;KX ( für H*3 QC)
+ky;HA;KY ( für H*3 QC)
+kälte;HA;Kälteagglutinin-Nachweis(e)
+kälte1;HA;Kälteagglutinine (e)
+lc;HA;Leukozyten
+lc1;HA;Leukozyten
+lckor;HA;Leukozyten korrigiert
+lckor1;HA;Leukozyten korrigiert
+leuty;HA;Leukozytentypisierung (e)
+lyip;HA;Lymph.-Immunphänotyp (e)
+lymph;HA;  Lymphozyten
+lymphz;HA;  Lymph./lymphoide Z.
+lympoe;HA
+lädier;HA;Lädierte Zellen
+ma;HA;Malaria-Plasmodien
+makrop;HA;  Makrophagen, Histiozyten
+makroz;HA;Makrozytose
+malp;HA;Malaria (Genomnachweis) (e)
+mch;HA;  MCH
+mchc;HA;  MCHC
+mcv;HA;  MCV
+mcvret;HA;MCV Retikulozyten
+megakz;HA;  Megakaryozyten
+megalo;HA;Megalozyten
+meta;HA;  Metamyelozyten
+metamz;HA;  Metamyelozyten
+methb;HA;Met-Hämoglobin (e)
+methb1;HA;  Met-Hämoglobin
+mikro;HA;Mikrozytose
+mono;HA;  Monozyten
+monoz;HA;  Monozyten
+myebla;HA;  Myeloblasten
+myeery;HA;Myelopoese:Erythropoese
+myelo;HA;  Myelozyten
+myelob;HA;  Myeloblasten
+myeloz;HA;  Myelozyten
+myepoe;HA
+ogbb;HA;Ohne GBB
+omdiff;HA;Mdiff ohne Verrechnung
+osmre;HA
+ovalo;HA;Ovalozyten
+oxyecb;HA;  Oxyphile Erythroblasten
+plasma;HA;  Plasmazellen
+plasmz;HA;  Plasmazellen
+pnh;HA;GPI-verankerte Proteine (PNH) (e)
+poik;HA;Poikilozytose
+polecb;HA;  Polychrom. Erythroblasten
+poly;HA;Polychromasie
+proecb;HA;  Proerythroblasten
+promye;HA;  Promyelozyten
+promyz;HA;  Promyelozyten
+qual;HA;MATERIALQUALITÄT
+reakt;HA;  Reaktive Lymphozyten
+res;HA
+rethe;HA;  Hb-Gehalt im Reti
+reti;HA;Retikulozyten
+retiab;HA;  Retikulozyten absolut
+retiko;HA;  Retikulozyten korrigiert
+rety;HA;  ret-y (-> Hb-Gehalt im Reti)
+rhes;HA;Rhesus
+rhess;HA;Rhesus
+rhph;HA;Rhesus Phänotyp
+rhphr;HA;Rhesus Phänotyp Rechnungsanalyse
+riesen;HA;Riesenplättchen
+ringsi;HA;  Ringsideroblasten
+rot;HA
+sclier;HA;Basophile Schlieren
+seg;HA;  Neutr. segmentkernig
+segk;HA;  Segmentkernige Neutroph.
+sichz;HA;Sichelzelltest
+sidero;HA;  Sideroblasten
+sr;HA;Senkung nach 1 Std.
+stab;HA;  Neutr. stabkernig
+stabhb;HA;  Stabilität des Hb
+stabk;HA;  Stabkernige Neutrophile
+stam;HA;Stammzellkulturen (e)
+stomat;HA;Stomatozyten
+target;HA;Targetzellen
+tc;HA;Thrombozyten
+tc1;HA;Thrombozyten-Konzentrat
+tcmorp;HA
+tcret1;HA;Thrombozyten-Konzentrat
+tear;HA;Tear Drops
+thrpoe;HA
+totecp;HA;Total Erythropoese
+totmyp;HA;Total Myelopoese
+vakuol;HA;Vakuolen
+vt1;HA;Verträglichkeitsprüfung
+vt2;HA;Verträglichkeitsprüfung
+vt3;HA;Verträglichkeitsprüfung
+vt4;HA;Verträglichkeitsprüfung
+vt5;HA;Verträglichkeitsprüfung
+vt6;HA;Verträglichkeitsprüfung
+vt7;HA;Verträglichkeitsprüfung
+vt8;HA;Verträglichkeitsprüfung
+weiss;HA
+zellge;HA;ZELLGEHALT
+überse;HA;Kerne übersegmentiert
+arseh;HR;Arsen (e)
+becgh;HR;Benzoylecgonin (e)
+bleih;HR;Blei (e)
+cocah;HR;Cocain (e)
+thalh;HR;Thallium (e)
+11dcop;KC;11-Desoxycort. (Comp. S) supp. (e)
+11dcor;KC;11-Desoxycortisol(e)
+11dcos;KC;11-Desoxycortisol stim.(e)
+125oh;KC;1,25-OH Cholecalciferol(e)
+125oh1;KC;1,25-OH Cholecalciferol(e)
+17pro;KC;17-OH-Progesteron(e)
+17pro1;KC;17-OH-Progesteron (e)
+17pro2;KC;17-OH-Progesteron (e)
+17prs;KC;17-OH-Prog. stim.(e)
+17prs2;KC;17-OH-Prog. stim. 2.Probe (e)
+17prsu;KC;17-OH-Progesteron supp.(e)
+25oh;KC;25-OH-Cholecalciferol(e)
+25oh1;KC;25-OH-Cholecalciferol (e)
+25oh2;KC;25-OH-Cholecalciferol (e)
+25oh3;KC;25-OH-Cholecalciferol (e)
+25oh4;KC;25-OH-Cholecalciferol (e)
+25oh5;KC;25-OH-Cholecalciferol
+5nukl;KC;5-Nukleotidase (e)
+9ohris;KC;9-OH-Risperidon (e)
+a1a;KC;Alpha-1-Antitrypsin
+a1aph;KC;alpha-1-AT Phänotyp(e)
+a21oh;KC;AK gegen 21-Hydroxylase (e)
+a68kd;KC;Anti-68 kD Ag (hsp70)
+aacr;KC;AK gegen Acetylch.-Rez.(e)
+aakt;KC;Ak gegen Aktin (e)
+aampy;KC;  Anti-Amphiphysin
+abas;KC;AK gegen Basalmembran (e)
+abas1;KC;AK gegen glom. Basalmembran (e)
+abpia;KC;anti-BPI IgA (e)
+abpig;KC;Anti-BPI IgG (e)
+accp;KC;anti-CCP IgG (e)
+accp1;KC;anti-CCP IgG
+accp2;KC;anti-CCP IgG
+ace;KC;Angiotensin-Conv.-Enzym (e)
+ace2;KC;Angiotensin-Conv.-Enz.(e)
+acen;KC;ENA Centromer
+acen1;KC;  Centromer
+acet;KC;Paracetamol (Acetaminophen)(e)
+achro;KC;Ak gegen Chromatin (e)
+acth;KC;ACTH(e)
+acth1;KC;ACTH(e)
+acthp;KC;ACTH supprimiert(e)
+acths;KC;ACTH stimuliert(e)
+acths2;KC;ACTH stimuliert 2. Probe(e)
+acv2;KC;  Anti-CV2
+adbl11;KC;Adrenalin
+adbll2;KC;Adrenalin
+adh;KC;ADH (antidiur. Hormon) (e)
+adh1;KC;ADH (antidiur. Hormon) (e)
+adns;KC;Anti-DNS (nativ)
+adns1;KC;  Anti-dsDNS (nativ)
+adnsn;KC;Anti-DNS (nativ, quant.) (e)
+adrbl;KC;Adrenalin
+adrbl1;KC;Adrenalin, liegend
+adrbl2;KC;Adrenalin, 2.Probe
+adrbl3;KC;Adrenalin, 3.Probe
+adrbl4;KC;Adrenalin, 4.Probe
+adrbs;KC;Adrenalin
+aelas;KC;anti-Elastase (e)
+aend;KC;Endomysium IgA-AK (e)
+aepi;KC;AK gegen Epidermis(e)
+aepo;KC;Anti-Erythropoietin Ak (e)
+afil;KC;Anti-Filaggrin Ak (e)
+afp;KC;Alpha-1-Fetoprotein
+afpa;KC;Alpha-1-Fetoprotein
+agad;KC;Anti-GAD Ak(e)
+agad1;KC;Anti-GAD Ak (Diabetes) (e)
+agadn;KC;Anti-GAD Ak (Stiff man) (e)
+agd1a;KC;Ig  Anti-Gangliosid GD1a (e)
+aglia;KC;Gliadin IgA-AK (e)
+aglia1;KC;Gliadin IgA-AK
+aglia2;KC;Gliadin IgA-AK
+aglig;KC;Gliadin IgG-AK (e)
+aglig1;KC;Gliadin IgG-AK
+aglig2;KC;Gliadin IgG-AK
+aglm;KC;AK gegen glatte Muskul. (e)
+aglm1;KC;AK gegen glatte Muskul. (e)
+aglus;KC;Alpha-Galactosidase (e)
+agm1;KC;IgG  Anti-Gangliosid GM1 (e)
+agm12;KC;Ig  Anti-Gangliosid GM1 (e)
+agm1m;KC;IgM  Anti-Gangliosid GM1 (e)
+agm2;KC;Ig  Anti-Gangliosid GM2 (e)
+agq1b;KC;IgG  Gangliosid GQ1b (e)
+agq1b2;KC;Ig  Gangliosid GQ1b (e)
+ahaut;KC;anti-Haut Ak (e)
+ahem;KC;AK gegen Herzmuskulatur(e)
+ahist;KC;Ak gegen Histone(e)
+ahu;KC;Anti-Hu Ak(e)
+ahu1;KC;  Anti-Hu Ak (ANNA-1)
+aia2;KC;Anti-IA2 Ak (e)
+aiga;KC;Anti-IgA Antikörper (e)
+ainf;KC;Ak gegen Intrinsic Factor(e)
+ainfq;KC;Ak gegen IF, quant. (e)
+ainfq1;KC;Ak gegen IF, quant. (e)
+ains;KC;AK gegen Insulin IgG (e)
+ains1;KC;AK gegen Insulin IgG (e)
+ajo1q;KC;Anti-JO 1 (e)
+akath;KC;anti-Kathepsin (e)
+aker;KC;Anti-Keratin-AK (e)
+akg;KC;AK gegen ....
+aknor;KC;Anti-Knorpelsubstanz Ak (e)
+alakf;KC;anti-Laktoferrin (e)
+alb;KC;  Albumin
+alb1;KC;  Albumin
+alben;KC;Albendazol (e)
+albi;KC;    Alter + Biochemie
+albint;KC;    Alter + Biochemie + NT
+albu;KC;Albumin
+ald;KC;Aldosteron(e)
+ald1;KC;Aldosteron (e)
+ald2;KC;Aldosteron (e)
+ald3;KC;Aldosteron (e)
+ald4;KC;Aldosteron (e)
+ald5;KC;Aldosteron (e)
+aldo;KC;Aldolase(e)
+aldo1;KC;Aldolase (e)
+alds;KC;Aldosteron stimulier(e)
+alds1;KC;Aldosteron stimulier(e)
+alkm;KC;Ak gegen LKM (e)
+alko;KC;Aethylalkohol(e)
+alp;KC;Alkalische Phosphatase
+alph11;KC;  Alpha-1-Globulin
+alph21;KC;  Alpha-2-Globulin
+alpha1;KC;  Alpha-1-Globulin
+alpha2;KC;  Alpha-2-Globulin
+alphli;KC;  alpha-Lipoproteine
+alpk;KC;knochenspez. AP, Masse (e)
+alpka;KC;knochenspez. AP, Akt. (e)
+alpr;KC;Alprazolam (e)
+alreq;KC;Aldosteron/Renin-Ratio
+alt;KC;    Alter allein
+alter;KC;  Alter
+altmut;KC;    Alter der Mutter am Termin
+alu;KC;Aluminium (e)
+am;KC;Amylase
+am1;KC;Amylase gesamt (e)
+ama;KC;  Anti-Ma
+amag;KC;AK gegen Magenbelegzellen (e)
+amagq;KC;Ak gegen Magenbelegz.,quant (e)
+amagz;KC;Anti-MAG Ak (e)
+amagz1;KC;Anti-MAG Ak (e)
+amelp;KC;Amylase-Elektrophorese (e)
+ami;KC;Amikacin (e)
+amikp;KC;Amikacin, Peakspiegel (e)
+amikr;KC;Ak gegen Mikrosomen
+amikr1;KC;Ak gegen Mikrosomen
+amikr2;KC;Ak gegen TPO (Mikrosomen)
+amikt;KC;Amikacin, Talspiegel (e)
+amim2;KC;Ak gegen Mitochondr. M2 (e)
+amim4;KC;Ak gegen Mitochondr. M4(e)
+amim9;KC;Ak gegen Mitochondr. M9(e)
+amino;KC;Aminosäurenchromatogramm (e)
+amio;KC;Amiodaron (e)
+amio1;KC;Amiodaron (e)
+amiodq;KC;Amiodaron/Desethylamio.-Quot.
+amioq;KC;Amio-/Desamiodaron-Quot.
+amis1;KC;Amisulprid (Solian) (e)
+amisul;KC;Amisulprid (Solian) (e)
+amit;KC;AK gegen Mitochondrien (e)
+amitr;KC;Amitriptylin (e)
+amitr1;KC;Amitriptylin (e)
+amno;KC;  Ami-/+ Nortriptylin (e)
+amo;KC;Ammoniak
+amo1;KC;Ammoniak (e)
+amusk;KC;anti-MuSK (e)
+amye;KC;  Ak gegen Myelin
+ana;KC;Antinukleäre AK
+ana1;KC;Antinukleäre AK
+anai;KC;Antinukleäre Ak (IF) (e)
+anai1;KC;Antinukleäre Ak (IF) (e)
+anai2;KC;Antinukleäre Ak (IF)
+anca;KC;ANCA (Anti-Neutro.Cytopl.Ak)(e)
+ancac;KC;C-ANCA (PR3)
+ancac1;KC;C-ANCA (PR3)
+ancap;KC;P-ANCA (Myeloperox.)
+ancap1;KC;P-ANCA (Myeloperox.)
+and;KC;Androstendion (e)
+and1;KC;Androstendion (e)
+aneb;KC;AK gegen Nebennierenrinde(e)
+aneb1;KC;AK gegen Nebennierenrinde(e)
+angap;KC;Anionen-Lücke
+aovar;KC;Ak gegen Ovar (e)
+apan;KC;AK gegen Pankreasinselzellen(e)
+apane;KC;AK gegen exokrines Pankreas (e)
+apar;KC;AK gegen Parotis(e)
+apoa;KC;Apo-Lipoprotein-A1
+apoa1;KC;Apo-Lipoprotein-A1 (e)
+apob;KC;Apo-Lipoprotein-B
+apob1;KC;Apo-Lipoprotein-B (e)
+apoe;KC;Apolipoprotein E Genotyp (e)
+aqum;KC;AK gegen quergestr. Muskulatur(e)
+aqum1;KC;AK gegen quergestr. Muskulatur(e)
+archiv;KC;Sero Archivierung
+ari;KC;  Anti-Ri (ANNA-2)
+arib;KC;Anti-ribosom. P-prot. (e)
+arip;KC;Aripiprazol (e)
+arpp;KC;Ak gegen ribosom.P-Protein (e)
+arsen;KC;Arsen (e)
+asca;KC;IgA S. cerevisiae (e)
+ascg;KC;IgG S. cerevisiae (e)
+asdna;KC;Anti-Streptok. DNAse B (e)
+asla;KC;Ak gegen SLA (e)
+asla1;KC;Ak gegen SLA (e)
+aspa;KC;Anti-Sperma-AK (e)
+aspa1;KC;Anti-Sperma-AK (e)
+aspa2;KC;Anti-Sperma-AK (e)
+aspa3;KC;Anti-Sperma-AK (e)
+ast;KC;Antistreptolysin-O (AST)
+ast1;KC;Antistreptolysin-O (AST)
+asta;KC;Antistaphylolysin (e)
+asta1;KC;Antistaphylolysin (e)
+asti;KC;Antistreptolysin-O (AST)
+athyg;KC;Ak gegen Thyreoglobulin
+athyg1;KC;Ak gegen Thyreoglobulin
+athyg2;KC;Ak gegen Thyreoglobulin
+atiti;KC;AK gegen Titin(e)
+atr;KC;  Anti-Tr
+atshr;KC;AK gegen TSH-Rezeptor (TSI)(e)
+atshr1;KC;AK gegen TSH-Rezeptor (TSI)(e)
+atshr2;KC;AK gegen TSH-Rezeptor (TSI)(e)
+attg;KC;Ak gegen t-Transglutaminase (e)
+attg1;KC;t-Transglutaminase IgA-Ak
+attg2;KC;t-Transglutaminase IgA-Ak
+attgg;KC;t-Transglutaminase IgG Ak
+avgcc;KC;Anti-VGCC (Ca-Kanal) (e)
+ayo;KC;  Anti-Yo (PCA-1)
+azns;KC;Anti-ZNS Ak (e)
+b12;KC;Vitamin B12
+b2m;KC;Beta-2-Mikroglobulin
+b2m1;KC;Beta-2-Mikroglobulin
+b2tra;KC;Beta-2-Transferrin (e)
+basx;KC;  Basenexzess
+bcaro;KC;beta-Carotin (e)
+bcaro1;KC;beta-Carotin(e)
+bdi;KC;Bilirubin, konjugiert
+beh;KC;  Behensäure
+benzs;KC;Benzodiazepine (e)
+beso;KC;Besondere Analyse
+beta;KC;  Beta-Globulin
+beta1;KC;  Beta-Globulin
+betli;KC;  beta-Lipoproteine
+bg;KC;Bilirubin, gesamt
+bi;KC;Bilirubin, unkonjugiert
+bik;KC;  Bikarbonat
+biks;KC;Bikarbonat
+biot;KC;Biotin (e)
+blei;KC;Blei (e)
+bnp;KC;BNP (Brain Natriur. Pept.)(e)
+bnpmat;KC;EP:10, S:1000
+bp3;KC;IGF-BP 3 (e)
+broma;KC;Bromazepam (Lexotanil)(e)
+btest;KC;Testosteron bioverfüg.
+btest1;KC;Testosteron bioverfüg.
+c125;KC;CA 125
+c153;KC;CA 15-3
+c1531;KC;CA 15-3
+c199;KC;CA 19-9
+c1991;KC;CA 19-9
+c1ei;KC;C1-Esterase Inhibitor Konz.(e)
+c1eif;KC;C1-Esterase Inhibitor funkt.(e)
+c1q;KC;C1q (e)
+c2;KC;Komplement C2 (e)
+c24cq;KC;  Verhältnis C24/C22
+c26cq;KC;  Verhältnis C26/C22
+c3;KC;Komplement C3
+c4;KC;Komplement C4
+c41;KC;Komplement C4
+c50;KC;CA 50 (e)
+c501;KC;CA 50 (e)
+c724;KC;CA 72-4 (e)
+c7241;KC;CA 72-4 (e)
+c7242;KC;CA 72-4 (e)
+ca;KC;Calcium
+cad;KC;Cadmium (e)
+cada;KC;CADASIL - Mutationsanalyse (e)
+cai;KC;Calcium, ionisiert(e)
+cakor;KC;Calcium, korrigiert
+calc;KC;Calcitonin basal (e)
+calc1;KC;Calcitonin basal (e)
+calc2;KC;Calcitonin basal (e)
+calc3;KC;Calcitonin basal (e)
+calcs;KC;Calcitonin stimuliert (e)
+calcs2;KC;Calcitonin stimuliert 2 (e)
+canns;KC;Cannabis, Serum (e)
+carba;KC;Carbamazepin
+caw;KC;Gesamtkomplement,altern.Weg (e)
+cdt;KC;CDT (HPLC)
+cdtant;KC;  CDT-Anteil
+cdtec;KC;CDT (Carboh.-def.Transf.)
+cdtec1;KC;CDT (Carboh.-def.Transf.)
+cdtges;KC;  Transferrin Gesamt
+cdthp;KC;CDT (HPLC) (e)
+cea;KC;CEA
+cg;KC;Chemogramm gezielt
+ch1;KC;Cholinesterase (e)
+che;KC;Cholinesterase (e)
+che1;KC;Cholinesterase (e)
+che2;KC;Cholinesterase (e)
+che3;KC;Cholinesterase
+chem10;KC;Chemogramm 10 HMO
+chlor;KC;Chlorprothixen (e)
+cho;KC;Cholesterin
+chohq;KC;Cholesterin/HDL-Quot.
+chroga;KC;Chromogranin A (e)
+chrom;KC;Chrom (e)
+chrom1;KC;Chrom (e)
+chroma;KC;Chromogranin A (e)
+chylo;KC;  Chylomikronen(e)
+ciclo;KC;Ciclosporin A (monokl.)(e)
+cita;KC;Citalopram (e)
+ck;KC;CK (Creatin-Kinase)
+ck1e;KC;  CK (gesamt)
+ckbb;KC;  CK-BB (Hirn)(e)
+ckbb1;KC;  CK-BB (Hirn)
+ckelb;KC;  Beurteilung
+ckmb;KC;  CK-MB (Herzmuskel)(e)
+ckmb%;KC;Prozent von CK
+ckmb1;KC;  CK-MB (Herzmuskel)
+ckmb1e;KC;  CK-MB (Aktivität)
+ckmb2;KC;CK-MB
+ckmbm;KC;CK-MB (Masse)
+ckmbme;KC;  CK-MB (Masse)
+ckmm;KC;  CK-MM (Skelettmuskel)(e)
+ckmm1;KC;  CK-MM (Skelettmuskel)
+ckw;KC;Gesamtkomplement (klass. Weg)(e)
+ckw1;KC;Gesamtkomplement,klass.Weg (e)
+cl;KC;Chlorid
+cl+dcl;KC;Clomipramin+Des. Clomip. (e)
+clac3;KC;Calcitonin basal (e)
+clob;KC;Clobazam(e)
+clomi;KC;Clomipramin (e)
+clon;KC;Clonazepam (e)
+cloz;KC;Clozapin (e)
+cloz1;KC;Clozapin (e)
+cloz2;KC;Clozapin (e)
+cloz3;KC;Clozapin (e)
+cmtp;KC;Charcot-Marie-Tooth HSMN (e)
+co57;KC;Co-57 Ausscheidung
+co578q;KC;Co-57/Co-58 Quotient
+co58;KC; o-58 Auscheidung
+cocas;KC;Cocain (e)
+coen10;KC;Coenzym Q10 (Ubichinon 50) (e)
+coeru;KC;Coeruloplasmin (e)
+coeru1;KC;Coeruloplasmin (e)
+colsp1;KC;Cortisol stim. (1 ug), Speichel
+copb1;KC;Coproporphyrine I
+copb3;KC;Coproporphyrine III
+cora;KC;Cortisol 16 - 20 Uhr
+corlds;KC;Cortisol stim. (1 ug low dose)
+corlsp;KC;Cortisol stim. (1 ug), Speichel
+corm;KC;Cortisol 7 - 9 Uhr
+corp;KC;Cortisol supprimiert
+corp2;KC;Cortisol supprimiert
+cors;KC;Cortisol stimuliert
+cors2;KC;Cortisol stimuliert 2. Probe
+cors3;KC;Cortisol stimuliert 3. Probe
+corsm;KC;Cortisol morgends (Speichel)
+corsp;KC;Cortisol, 23.00 Uhr (Speichel)
+corsp1;KC;Cortisol (Speichel), 1.Probe
+corsp2;KC;Cortisol (Speichel), 2.Probe
+corsp3;KC;Cortisol (Speichel), 3.Probe
+corsp4;KC;Cortisol (Speichel), 4.Probe
+corsp5;KC;Cortisol (Speichel), 5.Probe
+corsp6;KC;Cortisol (Speichel), 6.Probe
+corsp7;KC;Cortisol (Speichel), 7.Probe
+corsp8;KC;Cortisol (Speichel), 8.Probe
+cotis;KC;Cotinin (e)
+cpep;KC;C-Peptid
+cpepa;KC;C-Peptid
+cpepp;KC;C-Peptid supprimiert
+cpepq;KC;C-Peptid/Glukose-Quotient
+cpepqa;KC;C-Peptid/Glukose-Quotient (ACHEF)
+cpeps;KC;C-Peptid stimuliert
+crp;KC;C-reaktives Protein
+crps;KC;hs-CRP (hochsensitiv)
+ctx;KC;CTX (e)
+cu;KC;Kupfer(e)
+cu1;KC;Kupfer (e)
+cu2;KC;Kupfer (e)
+cu3;KC;Kupfer (e)
+cyfra;KC;CYFRA 21-1 (e)
+cystc;KC;Cystatin C (e)
+da2;KC;Diaminooxidase (e)
+damio;KC;Desethyl-Amiodaron (e)
+dao;KC;Diaminooxidase (e)
+dao1;KC;Diaminooxidase (e)
+dao2;KC;Diaminooxidase (e)
+dao3;KC;Diaminooxidase (e)
+dclomi;KC;Desmethyl-Clomipramin (e)
+dflura;KC;Desalkyl-Flurazepam(e)
+dhea;KC;Dehydroepiandrosteron (e)
+dhea1;KC;Dehydroepiandrosteron (e)
+dhea2;KC;Dehydroepiandrosteron (e)
+dheast;KC;Dehydroepiandrosteron stim.(e)
+dheasu;KC;DHEA supprimiert (e)
+dheau1;KC;DHEA supprimiert (e)
+dhess1;KC;DHEA-Sulfat stimuliert
+dhest1;KC;Dehydroepiandrosteron stim.(e)
+dhesu;KC;Dehydroepiandrosteron-Sulfat(e)
+dhesu1;KC;Dehydroepiandrosteron-Sulfat
+dhesu2;KC;DHEA-Sulfat
+dhesus;KC;DHEA-Sulfat stimuliert (e)
+dht;KC;Dihydrotestosteron (e)
+diaz;KC;Diazepam (e)
+diaz1;KC;Diazepam (e)
+diben;KC;Dibenzepin (e)
+dibu;KC;Dibucainzahl (e)
+dig;KC;Digoxin
+digi;KC;Digitoxin (e)
+diät;KC;Diät seit
+dmclo1;KC;Desmethyl-Clozapin (e)
+dmclo2;KC;Desmethyl-Clozapin (e)
+dmclob;KC;N-Desmethylclobazam
+dmcloz;KC;Desmethyl-Clozapin (e)
+dmirta;KC;Desmethylmirtazapin (e)
+dmsert;KC;Desmethylsertralin
+dopbl;KC;Dopamin(e)
+dopbs;KC;Dopamin(e)
+dulox;KC;Duloxetin  (e)
+edat;KC;  Entnahmedatum
+elpbe;KC;  Kurvenverlauf
+ena;KC;ENA-Autoantikörper
+entn;KC;  Entnahme
+epo;KC;Erythropoietin (e)
+epo1;KC;Erythropoietin (e)
+escita;KC;Escitalopram (e)
+etho;KC;Ethosuximid (e)
+ewc;KC;Extrawasch-Integra
+ezeit;KC;  Entnahmezeit
+fe;KC;Eisen
+fe2;KC;Eisen 2. Probe
+fe3;KC;Eisen 3. Probe
+feb;KC;Transferrin-Sättigung
+febio;KC;Eisen (Lebergewebe) (e)
+febiop;KC;Eisen (Lebergewebe) (e)
+fer;KC;Ferritin
+ffa;KC;Frei Fettsäuren (e)
+fleca;KC;Flecainid (e)
+fluni;KC;Flunitrazepam (Rohypnol) (e)
+flunor;KC;Fluoxetin+Norfluoxetin (e)
+fluo;KC;Fluor (e)
+fluox;KC;Fluoxetin (e)
+fluox1;KC;Fluoxetin (e)
+flup;KC;Flupentixol (e)
+flura;KC;Flurazepam (Dalmadorm) (e)
+fluvo;KC;Fluvoxamin (e)
+fluvo1;KC;Fluvoxamin (e)
+flüed;KC;Dr. Flüeler
+fol;KC;Folsäure
+fol1;KC;Folsäure
+fole;KC;Folsäure in Erythrozyten
+fole1;KC;Folsäure in Erythrozyten
+folec;KC;Gemessener Wert Centaur
+frat;KC;Friedreich-Ataxie, GAA Repeat (e)
+frtri;KC;    Frühere Trisomie
+fruam;KC;Fructosamin (e)
+fruam1;KC;Fructosamin (e)
+fruam2;KC;Fructosamin (e)
+fsh;KC;FSH (Follitropin)
+fshs;KC;FSH (stimuliert)
+fshs2;KC;FSH (stim.) 2.Probe
+ft3;KC;Freies T3 (FT3) (e)
+ft31;KC;Freies T3 (FT3)
+ft4;KC;Freies Thyroxin (FT4)
+galls;KC;Gallensäuren (e)
+galls1;KC;Gallensäuren (e)
+gamma;KC;  Gamma-Globulin
+gamma1;KC;  Gamma-Globulin
+gape;KC;Gabapentin (Neurontin) (e)
+gast;KC;Gastrin (e)
+gast1;KC;Gastrin (e)
+gast2;KC;Gastrin (e)
+gast2s;KC;Gastrin, stimuliert (e)
+gastr;KC;Gastrin (Serum) (e)
+genta;KC;Gentamycin (e)
+gentam;KC;Gentamycin (e)
+gentp;KC;Gentamycin (Peakspiegel) (e)
+gentp1;KC;Gentamycin (Peakspiegel) (e)
+gentt;KC;Gentamycin (Talspiegel) (e)
+gentt1;KC;Gentamycin (Talspiegel) (e)
+getp1m;KC;Gentamycin (Peakspiegel) (e)
+gett1m;KC;Gentamycin (Talspiegel) (e)
+gewi;KC;    Gewicht
+gewic;KC;  Gewicht
+gfr;KC;GFR, berechnet (Cockroft-Gault)
+gfrw;KC;GFR berechnet (Cockroft-Gault)
+gfrx;KC;GFR Triageanalyse Mann / Frau
+ggt;KC;Gamma-GT
+ggt1;KC;Gamma-GT
+ghb;KC;GHB (Gammahydroxybuttersäure) (e)
+gl;KC;Glukose
+gl0;KC;  Glukose nüchtern
+gl01;KC;  Glukose nüchtern
+gl0n;KC;  Glukose nüchtern
+gl11;KC;  Glukose 11.00 Uhr
+gl120;KC;  Glukose nach 120 Min.
+gl1201;KC;  Glukose nach 120 Min.
+gl120n;KC;  Glukose nach 120 Min.
+gl16;KC;  Glukose 16.30 Uhr
+gl180n;KC;  Glukose nach 180 Min.
+gl60;KC;  Glukose nach 60 Min.
+gl601;KC;  Glukose nach 60 Min.
+gl60n;KC;  Glukose nach 60 Min.
+gl60os;KC;  Glukose 60 Min.
+gl7;KC;  Glukose nüchtern
+glbeb;KC;Beurteilung:
+glbeos;KC;  Glukose nüchtern
+glcpe;KC;  Glukose
+glcpep;KC;  Glukose
+glcpes;KC;  Glukose
+gldh;KC;GLDH (e)
+gll120;KC;  Glukose nach 120 min.
+gllb0;KC;  Glukose nüchtern
+gllb30;KC;  Glukose nach 30 min.
+gllb60;KC;  Glukose nach 60 min.
+gllb90;KC;  Glukose nach 90 min.
+gllbbe;KC;Beurteilung:
+gllsy;KC;Klin. Symptome
+glpo;KC;Glukose postprandial
+glspep;KC;  Glukose
+gluka;KC;Glukagon (e)
+gluka1;KC;Glukagon (e)
+glur0;KC;  Glukose nüchtern (Urin)
+glur2;KC;  Glukose nach 2h
+got;KC;GOT (ASAT)
+gpt;KC;GPT (ALAT)
+grafk;KC;Regelanalyse GRAFK ssi1
+hal;KC;Haloperidol (e)
+halr;KC;reduziertes Haloperidol (e)
+hapto;KC;Haptoglobin
+hast;KC;Harnstoff
+hastd;KC;Harnstoff
+hba1c;KC;HbA1c
+hba1c1;KC;HbA1c (IFCC)
+hba1c2;KC;HbA1c (DCCT)
+hbdh;KC;HBDH (e)
+hcbpo;KC;Heptacarboxyporphyrin
+hcg;KC;ß-HCG
+hcga;KC;  ß-HCG
+hdl;KC;HDL-Cholesterin
+hem1;KC;Hem 1
+hem2;KC;Hem 2
+her2;KC;HER2/neu (erbB2)(e)
+heros;KC;Heroin (6-Acetylmorphin) (e)
+hex;KC;  Hexacosansäure
+hormab;KC;Hormonstatus
+hpl;KC;HPL (e)
+hss;KC;Harnsäure
+htg;KC;Thyreoglobulin (e)
+htg1;KC;Thyreoglobulin (e)
+htg2;KC;Thyreoglobulin
+hxcpo;KC;Hexacarboxyporphyrin
+hya;KC;Hyaluronat (e)
+hydr;KC;9-OH-Risperidon (e)
+iabdm;KC;    insulinabh. DM
+ifix;KC;Beurteilung
+iga;KC;IgA (Immunglobulin A)
+igaki;KC;  IgA
+igas;KC;IgA im Speichel
+igbp3;KC;IGF-BP 3 (e)
+igd;KC;IgD (e)
+igd1;KC;IgD (e)
+igei;KC;IgE (Immunglobulin E)
+igf1;KC;IGF-1 (Somatomedin C) (e)
+igf11;KC;IGF-1 (Somatomedin C) (e)
+igf12;KC;IGF-1 (Somatomedin C) (e)
+igf1p2;KC;IGF-1 supprimiert 2 (e)
+igf1sp;KC;IGF-1 supprimiert (e)
+igg;KC;IgG (Immunglobulin G)
+igg1;KC;  IgG1
+igg2;KC;  IgG2
+igg2pb;KC;IgG2-Bindung Polysaccharid-Ag (e)
+igg3;KC;  IgG3
+igg4;KC;  IgG4
+iggi;KC;IgG (Immunglobulin G)
+iggki;KC;  IgG
+iggsk;KC;Spez. IgG-Subklassen (e)
+iggsv;KC;IgG Serum Liquorproteinprofil
+igm;KC;IgM (Immunglobulin M)
+igmki;KC;  IgM
+il6;KC;Interleukin 6 (e)
+inhi;KC;Inhibin A (e)
+inhib;KC;Inhibin B (e)
+ins;KC;Insulin (e)
+ins1;KC;Insulin (e)
+ins2;KC;Insulin (e)
+ins3;KC;Insulin (e)
+intap;KC;  Intest-AP
+inte;KC;    Interpretation
+intev;KC;  Intest. Variante
+intoxs;KC;Intoxikation unbek. Substanz (e)
+itra;KC;Itraconazol (e)
+jo1;KC;ENA Jo-1
+jo11;KC;  Jo-1
+k;KC;Kalium
+kalar;KC;  kappa/lambda Ratio
+kapps;KC;  Leichtketten Typ kappa
+kapps2;KC;  Leichtketten Typ kappa
+karnif;KC;L-Karnitin, frei (e)
+karnig;KC;L-Karnitin, gesamt (e)
+karyo;KC;Karyotyp
+kep;KC;Levetiracetam (Keppra) (e)
+kepp;KC;Keppra (Levetiracetam)(e)
+keta;KC;Nordazepam (e)
+knoap;KC;  Knochen-AP
+kre;KC;Kreatinin
+kreae;KC;Kreatin im Ec (e)
+kreat;KC;Kreatin (e)
+kryo;KC;Kryoglobuline gesamt (e)
+kryoa;KC;  Klasse IgA
+kryog;KC;  Klasse IgG
+kryol;KC;Kryoglobuline, qual. (e)
+kryom;KC;  Klasse IgM
+kryot;KC;Kryoglobulin Typ
+lak;KC;Laktat
+lambs;KC;  Leichtketten Typ lambda
+lambs2;KC;  Leichtketten Typ lambda
+lami;KC;Lamictal (e)
+lami1;KC;Lamictal (e)
+lami2;KC;Lamictal (e)
+lap;KC;LAP (Leucin Aryl Amidase)(e)
+lap1;KC;LAP(Leucin Aryl Amidase)(e)
+lap2;KC;LAP (Leucin Aryl Amidase)(e)
+ldh;KC;LDH (Lactat-Dehydrogenase)
+ldh1;KC;LDH (Lactat-Dehydrogenase)
+ldhel;KC;LDH-Isoenzyme (e)
+ldl;KC;LDL-Cholesterin
+ldl1;KC;LDL-Cholesterin
+lebap;KC;  Leber-AP
+lepti2;KC;Leptin (e)
+leptin;KC;Leptin (e)
+levo;KC;Levomepromazin (Nozinan) (e)
+levo1;KC;Levomepromazin (Nozinan) (e)
+lh;KC;LH (Lutropin)
+lhfsq;KC;LH/FSH - Quotient
+lhon;KC;Leber'sche Optikusatrophie (e)
+lhs;KC;LH (stimuliert)
+lhs2;KC;LH (stim.) 2.Probe
+li;KC;Lithium
+lip;KC;Lipase
+lip1;KC;Lipase
+lipel1;KC;Lipidelektrophorese (e)
+lipelb;KC;  Beurteilung
+lora;KC;Lorazepam (e)
+lpa;KC;Lp(a) (e)
+lysen;KC;Lysosomale Enzyme (e)
+lyso;KC;Lysozym (e)
+lyso1;KC;Lysozym (e)
+makap;KC;  Makro-AP
+mapro;KC;Maprotilin (e)
+mapro1;KC;Maprotilin (e)
+mca;KC;MCA (e)
+mca2;KC;MCA (e)
+mcpp;KC;  m-CPP (Hauptmetabolit)
+mdsp;KC;Myotone Dystrophie Steinert (e)
+mebe;KC;Mebendazol (Vermox) (e)
+meph;KC;Mephenaminsäure (e)
+mesu;KC;Mesuximid (Petinutin) (e)
+metaf1;KC;  freie Metanephrine
+metan3;KC;  Metanephrine gesamt
+methp;KC;Methylphenidat (e)
+methpu;KC;Methylphenidat (e)
+metma;KC;Methylmalonsäure (e)
+metma1;KC;Methylmalonsäure (e)
+metma2;KC;Methylmalonsäure (e)
+metmau;KC;Methylmalonsäure im Urin  (e)
+metx;KC;Methotrexat (e)
+mety1;KC;  Methoxytyramine gesamt
+metyf1;KC;  freie Methoxytyramine
+mg;KC;Magnesium
+mgec;KC;Magnesium in Erythrozyten (e)
+mgec1;KC;Magnesium in Erythrozyten (e)
+mian;KC;Mianserin (Tolvon) (e)
+mirta;KC;Mirtazapin (e)
+mirta1;KC;Mirtazapin (e)
+mmpn;KC;Methylmercaptopurinnukleotide (e)
+mn;KC;Mangan (e)
+mn1;KC;Mangan (e)
+moclo;KC;Moclobemid (Aurorix) (e)
+moclo1;KC;Moclobemid (Aurorix) (e)
+mor3gl;KC;Morphin-3-Glucuronid (e)
+mor6gl;KC;Morphin-6-Glucuronid (e)
+mors;KC;Morphin (e)
+mplgl;KC;  = mittlere Plasma-Glukose
+mpnu;KC;Mercaptopurinnukleotide (e)
+myc;KC;Mycophenolat (e)
+mych;KC;Y-chromos.Mikrodeletionen (e)
+mydys;KC;Myotone Dystrophie Steinert (e)
+myog;KC;Myoglobin (e)
+myog1;KC;Myoglobin
+myos;KC;Myoglobin
+myos1;KC;Myoglobin
+na;KC;Natrium
+nackt;KC;    Nackentransparenz
+nefa;KC;Nefazodon (e)
+netilp;KC;Netilmycin, Peak (e)
+netilt;KC;Netilmycin, Tal (e)
+niac;KC;Niacin (e)
+nis;KC;Nickel (e)
+nmeta3;KC;  Normetanephrin gesamt
+nmetf1;KC;  freie Normetanephrine
+nobl11;KC;Noradrenalin
+nobll2;KC;Noradrenalin
+noflu1;KC;Norfluoxetin (e)
+nofluo;KC;Norfluoxetin (e)
+norbl;KC;Noradrenalin
+norbl1;KC;Noradrenalin, liegend
+norbl2;KC;Noradrenalin, 2.Probe
+norbl3;KC;Noradrenalin, 3.Probe
+norbl4;KC;Noradrenalin, 4.Probe
+norbs;KC;Noradrenalin (e)
+norcl;KC;  Norclozapin (e)
+nord;KC;Nordazepam (e)
+nort;KC;  Nortriptylin (e)
+nse;KC;Neuronen spez. Enolase (e)
+nse1;KC;Neuronen spez. Enolase (e)
+o2s1;KC;O2-Sättigung 1. Probe
+o2s10;KC;O2-Sättigung 10.Probe
+o2s11;KC;O2-Sättigung 11.Probe
+o2s12;KC;O2-Sättigung 12.Probe
+o2s13;KC;O2-Sättigung 13.Probe
+o2s2;KC;O2-Sättigung 2. Probe
+o2s3;KC;O2-Sättigung 3. Probe
+o2s4;KC;O2-Sättigung 4. Probe
+o2s5;KC;O2-Sättigung 5. Probe
+o2s6;KC;O2-Sättigung 6. Probe
+o2s7;KC;O2-Sättigung 7. Probe
+o2s8;KC;O2-Sättigung 8. Probe
+o2s9;KC;O2-Sättigung 9. Probe
+o2sät;KC;  O2-Sättigung
+odesm;KC;O-Desmethylvenlafaxin (e)
+oed;KC;Oestradiol (17-Beta)
+oeds;KC;Oestradiol stimuliert
+oest;KC;Oestron(E1) (e)
+oet;KC;Oestriol (e)
+oet1;KC;Oestriol (e)
+ogtt;KC;Oraler Glukosetoleranztest
+olan;KC;Olanzapin (e)
+olan1;KC;Olanzapin (e)
+opi;KC;Opiate (e)
+oro;KC;Alpha-1-saures-Glykoprotein (e)
+osmo;KC;Osmolalität (berechn.)
+osmog;KC;Osmolalität gemessen (e)
+osteo;KC;Osteocalcin (e)
+osteo1;KC;Osteocalcin (e)
+oxaz;KC;Oxazepam (e)
+oxca;KC;Oxcarbazepin (e)
+oxcar;KC;Monohydr.-Oxcarbazepin (e)
+oxyp;KC;Oxypurinol (HPLC) (e)
+p1np;KC;Prokollagen 1-N-Propeptid (e)
+p3np;KC;Prokollagen III (PIIINP) (e)
+pam;KC;Pankreas-Amylase
+pam1;KC;Pankreas-Amylase
+pant;KC;Pantothensäure (Vit. B5) (e)
+pappa;KC;  PAPP-A
+para;KC;Parathormon
+parox;KC;Paroxetin (e)
+parox1;KC;Paroxetin (e)
+pbnp;KC;Pro-BNP (Serum)
+pbnpe;KC;Pro-BNP (EDTA-Plasma)
+pcbpo;KC;Pentacarboxyporphyrin
+pco2;KC;  pCO2
+penfl;KC;Penfluridol (e)
+ph;KC;Phosphat
+phb;KC;  pH-Wert
+pheal;KC;Phenylalanin (e)
+pheno;KC;Phenobarbital
+pheny;KC;Phenytoin
+phenyi;KC;Phenytoin
+phy;KC;  Phytansäure
+pmp22;KC;PMP22-Deletion (HNPP) (e)
+po2;KC;  pO2
+porfm;KC;Ferrochelatase-Mutation (e)
+pp;KC;Pankreatisches Polypeptid (e)
+prega;KC;Pregabalin (e)
+primi;KC;Primidon
+primi1;KC;Primidon
+primi2;KC;Primidon (e)
+pro;KC;Prolaktin
+pro1;KC;Prolaktin
+pro2;KC;Prolaktin 2. Probe
+pro21;KC;Prolaktin 2. Probe
+procal;KC;Procalcitonin (e)
+prog;KC;Progesteron
+prop2q;KC;Quotient Prolaktin vor/nach PEG
+propa;KC;Propafenon (e)
+prope2;KC;Prolaktin 2. (nach Fällung)
+propeg;KC;Prolaktin (nach Fällung)
+propeq;KC;Quotient Prolaktin vor/nach PEG
+propes;KC;Prolaktin st.(nach Fällung)
+propsq;KC;Quotient Prolaktin vor/nach PEG
+pros;KC;Prolaktin stimuliert
+prot;KC;Protein total
+prpof;KC;Protoporphyrin frei
+prpozi;KC;Zink Protoporphyrin
+präal;KC;Präalbumin (e)
+präal1;KC;Präalbumin (e)
+präbe;KC;  Präbeta-Lipoproteine
+psa;KC;PSA (Prostata-spez. Ag)
+psac;KC;PSA komplexiert
+psaf;KC;PSA frei
+psaq;KC;PSA-Quotient
+pyru;KC;Pyruvat (e)
+quec;KC;Quecksilber Scananalyse
+queck;KC;Quecksilber (e)
+queck1;KC;Quecksilber (e)
+quet;KC;Quetiapin (e)
+rebox;KC;Reboxetin (Edronax) (e)
+rebox1;KC;Reboxetin (Edronax) (e)
+redsu;KC;Reduzierte Substanzen (e)
+ren;KC;Renin (e)
+ren1;KC;Renin (e)
+ren2;KC;Renin, aktiv (e)
+rens;KC;Renin stimuliert (e)
+rf;KC;Rheumafaktor
+risp;KC;Risperidon + 9-OH-Risperidon
+risp1;KC;Risperidon (e)
+risp2;KC;Risperidon + 9-OH-Risperidon
+rnp;KC;ENA U1-snRNP
+rnp1;KC;  U1-snRNP
+s100;KC;S-100 (e)
+salic;KC;Salicylate
+sama;KC;Serum-Amyloid A (e)
+sap;KC;Saure Phosphatase (total)
+sap1;KC;Saure Phosphatase (total)
+scca;KC;SCCA (e)
+scca1;KC;SCCA (e)
+scl70;KC;ENA Scl-70
+scl701;KC;  Scl-70
+scwe;KC;Schwefel (e)
+sel;KC;Selen (e)
+sel1;KC;Selen (e)
+sel2;KC;Selen (e)
+sel3;KC;Selen (e)
+sele;KC;Selen im Erythrozyt (e)
+serdms;KC;Sertralin/Desmethylsertralin
+sero;KC;Serotonin (e)
+sero1;KC;Serotonin (e)
+sero2;KC;Serotonin (e)
+sero3;KC;Serotonin (Serum, e)
+sero4;KC;Serotonin (EDTA-Plasma, e)
+sero5;KC;Serotonin (Serum, e)
+sert;KC;Sertralin (e)
+sert1;KC;Sertralin (e)
+serumv;KC;Serumverdünnungsfaktor
+shbg;KC;SHBG
+shbg1;KC;SHBG
+shmif;KC;  mit Intrinsic Factor
+shoif;KC;  ohne Intrinsic Factor
+shy;KC;Saure Hydrolasen, Serum + Lc (e)
+sil;KC;Silizium (e)
+sil2r;KC;sIL-2 Rezeptor
+silde;KC;Sildenafil (Viagra) (e)
+silh;KC;Silizium (Haare, e)
+siro;KC;Sirolimus (e)
+sirol;KC;Sirolimus  (e)
+skp;KC;Saure Knochen-Phosphatase
+skp1;KC;Saure Knochen-Phosphatase
+sm;KC;ENA Sm
+sm1;KC;  Sm
+spp;KC;Saure Prostata-Phosphatase
+spp1;KC;Saure Prostata-Phosphatase
+spth;KC;Tartrat-hemmbare Fraktion
+spuha;KC;Spurenelemente (Haare) (e)
+ssa;KC;ENA SS-A/Ro
+ssa1;KC;  SS-A/Ro
+ssb;KC;ENA SS-B/La
+ssb1;KC;  SS-B/La
+ssw;KC;    Schwangerschaftswoche
+stfr;KC;löslicher Transferrinrezeptor
+sucht;KC;Suchtstoffe HPLC (e)
+sulh;KC;Sulfonylharnstoffe (e)
+sult;KC;Sultiam (Ospolot) (e)
+synac;KC;Synacthen-Stimulation
+t3;KC;Trijodthyronin (T3)
+t31;KC;Trijodthyronin (T3) (e)
+t4;KC;Thyroxin T4 (e)
+t41;KC;Thyroxin T4 (e)
+t42;KC;Thyroxin T4 (e)
+tacro;KC;Tacrolimus (e)
+taup;KC;Tau-Protein (e)
+tbg;KC;Thyroxin bindendes Globulin
+teico;KC;Teicoplanin  (e)
+tema;KC;Temazepam (e)
+test;KC;Testosteron total (morgens)
+testc;KC;Testo Centaur
+testf;KC;Testosteron frei (e)
+testf1;KC;Testosteron frei (e)
+testf2;KC;Testosteron frei (e)
+testf3;KC;Testosteron frei (e)
+testf4;KC;Testosteron frei (e)
+testfb;KC;Testosteron frei (berechnet)
+testfs;KC;Testosteron frei (stimuliert) (e)
+testp;KC;Testosteron total supp.
+tests;KC;Testosteron total stim.
+tet;KC;  Tetracosansäure
+thal;KC;Thallium (e)
+theo;KC;Theophyllin (e)
+thiog;KC;Thioguaninnukleotid (e)
+tia;KC;Tiagabin (e)
+tnfa;KC;TNF-alpha (e)
+tobr;KC;Tobramycin (e)
+tobrp;KC;Tobramycin (Peakspiegel)
+tobrt;KC;Tobramycin (Talspiegel)
+topir;KC;Topiramat (e)
+tps;KC;TPS (Tiss.polyp.spec.Ag) (e)
+tr;KC;Trypsin (e)
+tr1;KC;Trypsin (e)
+tra;KC;Transferrin
+trama;KC;Tramadol (e)
+trazo;KC;Trazodon (e)
+trazo1;KC;Trazodon (e)
+trco13;KC;Transcobalamin I, III (e)
+trco2;KC;Transcobalamin II (e)
+tri;KC;Triglyceride
+trian;KC;Tricyclische Antidepressiva (e)
+trica;KC;Trichloräthanol (e)
+trimi;KC;Trimipramin (Surmontil) (e)
+trimi1;KC;Trimipramin (Surmontil) (e)
+tripl;KC;Triple-Screen (e)
+trop;KC;Troponin T (e)
+trop1;KC;Troponin T
+tropi;KC;Troponin I
+tryp;KC;Tryptase
+tsh;KC;TSH basal
+tshs;KC;TSH nach TRF
+tstfs1;KC;Testosteron frei (stimuliert) (e)
+turn;KC;Karyotyp Turner Syndrom X0 (e)
+tyro;KC;Tyrosin (e)
+unbs;KC;Unbekannte Substanz (e)
+urdyt;KC;Gal-1-Ph-Uridyltransferase (e)
+urob;KC;Uroporphyrin
+urosb;KC;Urosynthase (e)
+val;KC;Valproat
+val1;KC;Valproat
+vancp;KC;Vancomycin (Peak) (e)
+vancpm;KC;Vancomycin (Peak) (e)
+vanct;KC;Vancomycin (Tal) (e)
+vanctm;KC;Vancomycin (Tal) (e)
+vb1ec;KC;Vit. B1 (Transketolase-Akt.) (e)
+venla;KC;Venlafaxin (e)
+venla1;KC;Venlafaxin (e)
+venod;KC;Venlafaxin+O-Desmethylvenlaf.(e)
+vfmed;KC;  Vielfaches des Median
+vfmedp;KC;  Vielfaches des Median
+viga;KC;Vigabatrin (Sabril) (e)
+vip;KC;VIP Vasoakt.intest.Pep. (e)
+viskse;KC;Serumviskosität (e)
+vita;KC;Vitamin A (e)
+vita1;KC;Vitamin A (e)
+vita2;KC;Vitamin A (e)
+vitb1;KC;Vitamin B1 (Thiamin) (e)
+vitb11;KC;Vitamin B1 (Thiamin) (e)
+vitb2;KC;Vitamin B2 (Riboflavin) (e)
+vitb21;KC;Vitamin B2 (Riboflavin) (e)
+vitb6;KC;Vitamin B6 (e)
+vitb61;KC;Vitamin B6 (e)
+vitc;KC;Vitamin C (e)
+vitc1;KC;Vitamin C (e)
+vitc2;KC;Vitamin C (e)
+vitc3;KC;Vitamin C (e)
+vite;KC;Vitamin E (e)
+vite1;KC;Vitamin E (e)
+vitk;KC;Vitamin K (e)
+vori;KC;Voriconazol (e)
+wh;KC;Somatotropin basal (e)
+wh1;KC;Somatotropin basal (e)
+wh2;KC;Somatotropin basal (e)
+wh3;KC;Somatotropin basal (e)
+whp;KC;Somatotropin supprimiert (e)
+whp2;KC;Somatotropin supprimiert 2.Wert (e)
+whp3;KC;Somatotropin supprimiert 3.Wert (e)
+whp4;KC;Somatotropin supprimiert 4.Wert (e)
+whs;KC;Somatotropin stimuliert (e)
+whs2;KC;Somatotropin stimuliert 2.Wert (e)
+whs3;KC;Somatotropin stimuliert 3.Wert (e)
+whs4;KC;Somatotropin stimuliert 4.Wert (e)
+wr;KC;Waaler-Rose (Rh-F)
+xyl25;KC;  Belastung mit
+xyls;KC;  Xylose (Serum) (e)
+xylu;KC;  Xylose (Urin) (e)
+zi;KC;Zink
+zi1;KC;Zink (e)
+zie;KC;Zink im Erythrozyt (e)
+zikg;KC;Immunkomplexe IgG (e)
+ziko;KC;C1q-Immunkomplexe (e)
+zipr;KC;Ziprasidon, Zeldox(R) (e)
+zolp;KC;Zolpidem (e)
+zuclo;KC;Zuclopenthixol (e)
+zuclo1;KC;Zuclopenthixol (e)
+üblf;KC;Überlangkettige Fettsäuren (e)
+kons1;KO;Aerztliche Konsultation, erste 5 Min
+aampyl;PU;  Anti-Amphiphysin
+abaspc;PU;  Basophile
+accpp1;PU;anti-CCP IgG
+accpp2;PU;anti-CCP IgG
+accppu;PU;anti-CCP IgG (e)
+acel;PU;Angiotensin-Conv.-Enzym (e)
+advtl;PU;KBR  Adenoviren
+aeospc;PU;  Eosinophile
+ahempc;PU;AK gegen Herzmuskulatur(e)
+ahu1l;PU;  Anti-Hu Ak (ANNA-1)
+albpu;PU;Albumin
+alppu;PU;Alkalische Phosphatase
+alympc;PU;  Lymphozyten
+amonpc;PU;  Monozyten
+ampu;PU;Amylase
+amyel;PU;  Ak gegen Myelin
+anapc;PU;Antinukleäre AK
+anapu;PU;ANA (Punktat)
+andpu;PU;Andere Analyse Punktat
+aneupc;PU;  Neutrophile
+apatkp;PU;Apatit-Kristalle
+aril;PU;  Anti-Ri (ANNA-2)
+art;PU;Punktatort
+artg;PU;Gelenkspunktat
+astpc;PU;Antistreptolysin-O (AST)
+astpu;PU;Antistreptolysin-O (AST)
+ayol;PU;  Anti-Yo (PCA-1)
+aznsl;PU;Anti-ZNS Ak (e)
+bbug;PU;IgG B. burgd.(intrathek.,e)
+bbug1l;PU;IgG B. burgdorferi
+bbum;PU;IgM B. burgd.(intrathek.,e)
+bbum1l;PU;IgM B. burgdorferi
+bgpu;PU;Bilirubin, gesamt
+c3pu;PU;Komplement C3
+c4pu;PU;Komplement C4
+capkrp;PU;Ca-Pyrophosphat-Kristalle
+chopc;PU;Cholesterin
+chopu;PU;Cholesterin
+ckmmpc;PU;CK-MB (Masse)
+ckpc;PU;CK (Creatin-Kinase)
+crppc;PU;C-reaktives Protein
+ebvpli;PU;Epstein-B. Virus DNA (PCR)(e)
+ecpc;PU;Erythrozyten
+ecpu;PU;Erythrozyten
+ecpu/g;PU;Erythrozyten
+entpli;PU;Enterovirus DNA (PCR) (e)
+enttl;PU;KBR  Enteroviren (Echo/Cox)
+farbel;PU;Aussehen (Farbe)
+fsmgl;PU;IgG  FSME (e)
+fsmglq;PU;     Li/Se-Quot.
+glpu;PU;Glukose
+gotpc;PU;GOT (ASAT)
+gptpc;PU;GPT (ALAT)
+hastpu;PU;Harnstoff
+hbpc;PU;Hämoglobin
+hbpu;PU;Hämoglobin
+hivpnl;PU;HIV 1 RNA quant.(Liquor, e)
+hkpc;PU;Hämatokrit
+hkpu;PU;Hämatokrit
+hsskrp;PU;Harnsäure-Kristalle
+hsspc;PU;Harnsäure
+hsspu;PU;Harnsäure
+hsvegl;PU;IgG Herpes simplex 1/2 (e)
+hsvglq;PU;     Li/Se-Quot.
+hsvp;PU;Herpes simplex Virus PCR
+hsvtl;PU;KBR  Herpes simplex (HSV)
+iggl;PU;IgG (Immunglobulin G) (e)
+krepu;PU;Kreatinin
+krist;PU;Kristalle
+lakl;PU;Laktat (Liquor)
+lakpc;PU;Laktat
+lakpu;PU;Laktat
+lcmono;PU;  Mononukleäre Leukozyten
+lcpc;PU;Leukozyten
+lcpoly;PU;  Polynukleäre Leukozyten
+lcpu;PU;Leukozyten
+lcpu/g;PU;Leukozyten
+ldhpc;PU;LDH (Lactat-Dehydrogenase)
+ldhpu;PU;LDH
+lialbq;PU;Albumin-Quotient
+lialbu;PU;Albumin
+liec;PU;Erythrozyten
+ligluc;PU;Glukose
+lilak;PU;Laktat (Liquor)
+lilc;PU;Leukozyten
+limono;PU;  Mononukleäre Zellen
+lipoly;PU;  Polynukleäre Zellen
+lippu;PU;Lipase
+lipro1;PU;Protein
+liprot;PU;Protein (gemessen)
+lmopli;PU;Listeria monocyt. DNA (e)
+makro;PU;Aussehen
+masg1l;PU;IgG  Masern
+masg2l;PU;IgG  Masern (e)
+masglq;PU;     Li/Se-Quot.
+mastl;PU;KBR  Masern
+mumg1l;PU;IgG  Mumps
+mumg2l;PU;IgG  Mumps (e)
+mumglq;PU;     Li/Se-Quot.
+mumtl;PU;KBR  Mumps
+napu;PU;Natrium
+naurkr;PU;Na-Urat-Kristalle
+p1433;PU;Protein 14-3-3 (e)
+pampu;PU;Pankreas-Amylase
+phbpc;PU;pH-Wert
+phpu;PU;pH
+polyv;PU;Polyoma-Virus sp. (e)
+propl;PU;Protein Profil Liquor (e)
+protpc;PU;Protein total
+prtpu;PU;Protein
+quecsn;PU;Quecksilber nach Kauen (e)
+quecsv;PU;Quecksilber vor Kauen (e)
+rfpc;PU;Rheumafaktor
+rfpu;PU;Rheumafaktoren
+rubgl;PU;IgG  Rubella
+spezpu;PU;Spezifisches Gewicht
+tcpc;PU;Thrombozyten
+tgogl;PU;IgG  Toxoplasmose
+transp;PU;Transparenz
+tripu;PU;Triglyceride
+viskpu;PU;Viskosität
+vzvgl;PU;IgG  Varizella-Zoster Virus
+vzvgl1;PU;IgG  Varizella-Zoster Virus (e)
+vzvglq;PU;     Li/Se-Quot.
+vzvm4l;PU;IgM  Varizella-Zoster Virus (e)
+vzvp;PU;VZV PCR (e)
+wrpc;PU;Waaler-Rose (Rh-F)
+wrpu;PU;Waaler-Rose
+bior;RE;Bioresonanz WÜSTM
+bt;RE;Bearbeitungstaxe
+abst;SE;Abstrich von
+advg;SE;IgG Adenoviren (e)
+advm;SE;IgM Adenoviren (e)
+advt;SE;KBR  Adenoviren
+afl;SE;Aspergillus flavus
+afu;SE;Aspergillus fumigatus
+ang;SE;Angiostrongylus Ak (e)
+ani;SE;Aspergillus nidulans
+anig;SE;Aspergillus niger
+arbg;SE;IgG  Arboviren (e)
+arbm;SE;IgM  Arboviren (e)
+aspag;SE;Aspergillus Ag (Galactomannan) (e)
+aspt;SE;Aspergillus Ak (e)
+ate;SE;Aspergillus terreus
+babd;SE;IF   Babebiose diverg. (e)
+babm;SE;IF  Babebiose microti (e)
+bbubg;SE;IgG  B. burgdorferi WB
+bbubm;SE;IgM  B. burgdorferi WB
+bbuet;SE;EIA  B. burgdorferi (IgG/M)
+bbug1;SE;IgG B. burgdorferi
+bbuim;SE;IF  B. burgdorferi IgM
+bbukt;SE;KBR  B. burgdorferi
+bbum1;SE;IgM B. burgdorferi
+bdet;SE;Blastomyces dermatitis (e)
+bdit;SE;IF  Babesia divergens (e)
+bheg;SE;IgG Bartonella henselae (e)
+bheg1;SE;IgG Barton. henselae (e)
+bhem;SE;IgM Barton. henselae (e)
+blasd;SE;Blastomyces dermatitis (e)
+bmit;SE;IF  Babesia microti (e)
+bpea;SE;IgA  B. pertussis
+bpea1;SE;IgA  B. pertussis (e)
+bpea2;SE;IgA  B. pertussis (e)
+bpea3;SE;IgA  B. pertussis (e)
+bpeg;SE;IgG  B. pertussis
+bpeg1;SE;IgG  B. pertussis (e)
+bpeg2;SE;IgG  B. pertussis (e)
+bpeg3;SE;IgG  B. pertussis (e)
+bpem;SE;IgM  B. pertussis
+bpem1;SE;IgM  B. pertussis (e)
+bpem2;SE;IgM  B. pertussis (e)
+bpem3;SE;IgM  B. pertussis (e)
+bpet;SE;KBR  B. pertussis
+bquan;SE;  Quantitative Angabe
+bquan1;SE;  Quantitative Angabe
+bqug;SE;IgG Bartonella quintana (e)
+bqum;SE;IgM Bartonella quintana (e)
+brukt;SE;KBR  Brucella species (e)
+bruut;SE;Agg  Brucella species
+calag1;SE;IEP  C. alb. Polysacch. Ag(e)
+calag2;SE;IEP  C. albicans Protein Ag(e)
+calt;SE;IHA Candida albicans (e)
+canaha;SE;IHA Candida albicans (e)
+cbu1g;SE;IgG C. burnetii Phase 1 (e)
+cbu2g;SE;C. burnetii Ak Phase 2 (e)
+cbua;SE;IgA  C. burnetii (Q-Fieber)
+cbum;SE;IgM  C. burnetii (Q-Fieber)
+cbut;SE;KBR  C. burnetii (Q-Fieber)
+cdig;SE;anti C. diphtheriae IgG (e)
+cdit;SE;C. diphtheriae Ak (e)
+cfet;SE;KBR  Campylobacter fetus
+cfet1;SE;KBR  Campylobacter fetus (e)
+chiut;SE;Chikungunya-Virus Ak (e)
+cimt;SE;Coccidioides immitis (e)
+cjet;SE;KBR  Campylobacter jejuni
+cjet1;SE;KBR  Campylobacter jejuni
+cmvav;SE;IgG  CMV Avidität (e)
+cmvg;SE;IgG  Zytomegalievirus
+cmvg1;SE;IgG  Zytomegalievirus
+cmvm;SE;IgM  Zytomegalievirus
+cmvm1;SE;IgM  Zytomegalievirus
+cmvmc;SE;IgM  CMV Bestätigung (e)
+cmvp;SE;Zytomegalievirus DNA (PCR) (e)
+cmvpn;SE;CMV DNA, quant. (PCR) (e)
+cneag;SE;C. neoformans Antigen
+cneagp;SE;C. neoformans Antigen
+cobaa;SE;IgA Coxsackie A und B (e)
+cocci;SE;Coccidioides immitis (e)
+cox6t;SE;KBR  Coxsackie B 1-6
+cox9t;SE;KBR  Coxsackie-Virus A9
+coxb1;SE;Coxsackie B 1
+coxb2;SE;Coxsackie B 2
+coxb3;SE;Coxsackie B 3
+coxb4;SE;Coxsackie B 4
+coxb5;SE;Coxsackie B 5
+coxb6;SE;Coxsackie B 6
+cpna;SE;IgA  Chlamydia pneumoniae
+cpna1;SE;IgA  Chlamydia pneumoniae
+cpnaq;SE;  Quantitative Angabe
+cpng;SE;IgG  Chlamydia pneumoniae
+cpng1;SE;IgG  Chlamydia pneumoniae
+cpngq;SE;  Quantitative Angabe
+cpnm;SE;IgM  Chlamydia pneumoniae
+cpnmq;SE;  Quantitative Angabe
+cpsa;SE;IgA  Chlamydia psittaci
+cpsa1;SE;IgA  Chlamydia psittaci
+cpsaq;SE;  Quantitative Angabe
+cpsg;SE;IgG  Chlamydia psittaci
+cpsg1;SE;IgG  Chlamydia psittaci
+cpsgq;SE;  Quantitative Angabe
+cpsm;SE;IgM  Chlamydia psittaci
+cpsmq;SE;  Quantitative Angabe
+cquan;SE;  Quantitative Angabe
+cquas;SE;  Quantitative Angabe
+cquas1;SE;  Quantitative Angabe
+cquas2;SE;  Quantitative Angabe
+cteg;SE;IgG  C. tetani(e)
+cteg1;SE;IgG  C. tetani(e)
+ctra;SE;IgA  Chlamydia trachomatis
+ctra1;SE;IgA  Chlamydia trachomatis
+ctrag2;SE;IEP  C. tropicalis Protein Ag(e)
+ctraq;SE;  Quantitative Angabe
+ctrg;SE;IgG  Chlamydia trachomatis
+ctrg1;SE;IgG  Chlamydia trachomatis
+ctrgq;SE;  Quantitative Angabe
+ctrl;SE;Chla. trachomatis DNA (LCR)
+ctrl1;SE;Chla. trachomatis DNA (e)
+ctrm;SE;IgM  Chlamydia trachomatis
+ctrmq;SE;  Quantitative Angabe
+ctrp;SE;Chla. trachomatis DNA (PCR)(e)
+deng;SE;IgG  Dengue-Virus (e)
+deng1;SE;IgG  Dengue-Virus (e)
+denm;SE;IgM  Dengue-Virus (e)
+denm1;SE;IgM  Dengue-Virus (e)
+dent;SE;Dengue-Virus Ak (gesamt)(e)
+eb138a;SE;       p138 (Early Ag) IgA
+eb138g;SE;       p138 (Early Ag) IgG
+eb138m;SE;       p138 (Early Ag) IgM
+ebv18a;SE;       p18 (VCA) IgA
+ebv18g;SE;       p18 (VCA) IgG
+ebv18m;SE;       p18 (VCA) IgM
+ebv23a;SE;       p23 (VCA) IgA
+ebv23g;SE;       p23 (VCA) IgG
+ebv23m;SE;       p23 (VCA) IgM
+ebv54a;SE;       p54 (Early Ag) IgA
+ebv54g;SE;       p54 (Early Ag) IgG
+ebv54m;SE;       p54 (Early Ag) IgM
+ebvba;SE;IgA  EBV Western Blot
+ebvbg;SE;IgG  EBV Western Blot
+ebvbm;SE;IgM  EBV Western Blot
+ebveb;SE;       EBNA 1 IgG
+ebveba;SE;       EBNA 1 IgA
+ebvebm;SE;       EBNA 1 IgM
+ebveg;SE;IgG  EBV (EBNA 1)
+ebveg1;SE;IgG  EBV (EBNA 1)
+ebvp;SE;Epstein-B. Virus DNA (PCR)(e)
+ebvrg;SE;IgG  EBV (Early Antigen)(e)
+ebvrm;SE;IgM  EBV (Early Antigen)(e)
+ebvut;SE;Heteroph. Ak (Mononukleose)
+ebvva;SE;IgA  Epstein-B. Virus (VCA)
+ebvvg;SE;IgG  Epstein-B. Virus (VCA)
+ebvvg1;SE;IgG  Epstein-B. Virus (VCA)
+ebvvm;SE;IgM  Epstein-B. Virus (VCA)
+ebvvm1;SE;IgM  Epstein-B. Virus (VCA)
+echot;SE;KBR  Echovirus-Pool
+egret;SE;EIA  E. granulosus (e)
+egrit;SE;IF  E. granulosus (e)
+egrut;SE;IHA  E. granulosus (e)
+ehiet;SE;EIA  Amöbiasis (e)
+ehiet2;SE;EIA  Amöbiasis (e)
+ehiit;SE;IF Amöbiasis (gesamt)(e)
+ehiit1;SE;IF Amöbiasis (gesamt)(e)
+ehikt;SE;KBR  Amöbiasis(e)
+ehrgg;SE;IgG  Ehrlichiose gran. (e)
+ehrgm;SE;IgM  Ehrlichiose gran. (e)
+ehrgt;SE;Ehrlichiose, granulozytär (e)
+ehrmt;SE;Ehrlichiose, monozytär (e)
+emut;SE;EIA  E. multilocularis (e)
+emutx;SE;EIA  E. multilocularis, Best. (e)
+entg;SE;IgG  Enteroviren (e)
+entm;SE;IgM  Enteroviren (e)
+entt;SE;KBR  Enteroviren (Echo/Cox)
+fheet;SE;EIA  Fasciolose (e)
+fheit;SE;IF   Fasciolose (e)
+filet;SE;EIA  Filariose (e)
+filit;SE;IF  Filariose (e)
+flaem;SE;IgM Flavi-Virus (e)
+fsmg;SE;IgG  FSME
+fsmg1;SE;IgG  FSME
+fsmg2;SE;IgG  FSME
+fsmg3;SE;IgG  FSME (e)
+fsmgv;SE;IgG  FSME (verd. Serum)
+fsmm;SE;IgM  FSME
+fsmm1;SE;IgM  FSME
+fsmm2;SE;IgM  FSME
+fsmm3;SE;IgM  FSME (e)
+fsmt;SE;KBR  FSME
+ftut;SE;AGG  F. tularensis (e)
+gelt;SE;Gelbfieber Ak (gesamt) (e)
+gna;SE;Gnathostoma Ak (e)
+hang;SE;IgG  Hantaviren (e)
+hanm;SE;IgM  Hantaviren (e)
+havm;SE;IgM  Hepatitis A
+havm1;SE;IgM  Hepatitis A
+havp;SE;Hepatitis A RNA (PCR) (e)
+havt;SE;Hepatitis A Ak (gesamt)
+havt1;SE;Hepatitis A Ak (gesamt)
+hbcm;SE;Hepatitis B-c IgM
+hbcm1;SE;Hepatitis B-c IgM
+hbct;SE;Hepatitis B-c Ak (gesamt)
+hbctq;SE;Hepatitis B-c Ak
+hbctqn;SE;Hepatitis B-c Ak (gesamt)
+hbctqp;SE;Hepatitis B-c Ak (gesamt)
+hbeag;SE;Hepatitis B-e Ag
+hbeag1;SE;Hepatitis B-e Ag
+hbeg;SE;Hepatitis B-e Ak
+hbegn;SE;Hepatitis B-e Ak
+hbegp;SE;Hepatitis B-e Ak
+hbegq;SE;Hepatitis B-e Ak
+hbsag;SE;Hepatitis B-s Antigen
+hbsagn;SE;HBs Ag nach Neutralisation
+hbsagp;SE;Hepatitis B-s Antigen
+hbsagq;SE;  Quantitative Angabe
+hbsaq1;SE;  Quantitative Angabe
+hbst;SE;Hepatitis B-s Ak
+hbst1;SE;Hepatitis B-s Ak
+hbst2;SE;Hepatitis B-s Ak
+hbsti;SE;Hepatitis B-s Ak (Imm.)
+hbvh;SE;Hepatitis B Hybridisierung (e)
+hbvpl;SE;Hepatitis B PCR qual. (e)
+hbvpn;SE;Hepatitis B PCR quant. (e)
+hcat;SE;ID  Histopl. capsulatum
+hcv100;SE;  Anti-HCV C100
+hcv22;SE;  Anti-HCV C22
+hcv33;SE;  Anti-HCV C33
+hcvb;SE;HCV Ak (Bestätigung) (e)
+hcvc1;SE;  Anti-HCV C1
+hcvc2;SE;  Anti-HCV C2
+hcvce;SE;HCV Centaur in Evaluation
+hcve2;SE;  Anti-HCV E2
+hcvgq;SE;HCV Ak (quant.) (e)
+hcvns3;SE;  Anti-HCV NS3
+hcvns4;SE;  Anti-HCV NS4
+hcvns5;SE;  Anti-HCV NS5
+hcvpg;SE;Hepatitis C Genotyp (e)
+hcvpl;SE;HCV RNA, qual. (PCR) (e)
+hcvpn;SE;HCV RNA, quant. (PCR) (e)
+hcvsod;SE;  Anti-HCV SOD
+hcvstr;SE;  Streptavidinbande
+hcvt;SE;Hepatitis C Ak (3.Gen.)
+hcvt1;SE;Hepatitis C Ak
+hdvg;SE;Hepatitis D Ak (gesamt) (e)
+hevg;SE;IgG  Hepatitis E (e)
+hevt;SE;Hepatitis E Ak (e)
+hgvp;SE;Hepatitis G PCR (e)
+hhv6g;SE;IgG  Hum. Herpes Virus 6 (e)
+hhv6m;SE;IgM  Hum. Herpes Virus 6 (e)
+hhv6p;SE;Humanes Herpes Vir. 6 (PCR)(e)
+hing;SE;IgG  H. influenzae Typ B (e)
+hiv105;SE;  Anti-sgp105 (env2)
+hiv120;SE;  Anti-sgp120 (env)
+hiv2pn;SE;HIV-2-PCR quant. (e)
+hiv36;SE;  Anti-gp36 (env2)
+hiv41;SE;  Anti-gp41 (env)
+hivag;SE;HIV p24 Antigen (e)
+hivag1;SE;HIV p24 Antigen, quant.
+hivag2;SE;HIV p24 Antigen
+hivag3;SE;HIV p24 Antigen
+hivagn;SE;HIV p24 Antigen, quant. (e)
+hivb;SE;HIV 1,2 Western Blot (e)
+hivce;SE;HIV Centaur in Evaluation
+hivcee;SE;HIV Combi Test Elecsys Evaluation
+hivd;SE;HIV Screening (Ak + p24 Ag)
+hivd1;SE;HIV Screening (Ak), quant.
+hivd2;SE;HIV Screening (Ak)
+hivd3;SE;HIV Screening (Ak)
+hivd4;SE;HIV Screening (Ak + p24 Ag)
+hivd5;SE;HIV Screening (Ak + p24 Ag)
+hivde;SE;HIV Screening (Ak+Ag) (e)
+hivp17;SE;  Anti-p17 (gag)
+hivp24;SE;  Anti-p24 (gag)
+hivp31;SE;  Anti-p31 (pol)
+hivpl;SE;HIV 1 RNA (PCR), qual. (e)
+hivpn;SE;HIV 1 RNA (PCR), quant.(e)
+hivrp;SE;HIV-Resistenztestung Phänot. (e)
+hivt;SE;HIV Antikörper (Screening)
+hivts;SE;HIV-Screening (Antikörper)
+hivyd;SE;HIV Screening (Ak + p24 Ag)
+hpya;SE;IgA  H. pylori
+hpyeg;SE;IgG  H.pylori (e)
+hpyg;SE;IgG  H.pylori
+hpyg1;SE;IgG  H.pylori
+hpyt;SE;Helicob. pylori (Gesamt-Ak)
+hsv1g;SE;IgG Herpes simplex Typ 1 (e)
+hsv2g;SE;IgG Herpes simplex Typ 2 (e)
+hsva;SE;IgA Herpes simplex (HSV)
+hsveg;SE;IgG Herpes simplex 1/2 (e)
+hsveg1;SE;IgG Herpes simplex 1/2 (e)
+hsvem;SE;IgM Herpes simplex 1/2 (e)
+hsvem1;SE;IgM Herpes simplex 1/2 (e)
+hsvm;SE;IgM  Herpes simplex (HSV)
+hsvt;SE;KBR  Herpes simplex (HSV)
+htlv1;SE;HTLV I Antikörper (e)
+htlv1g;SE;IgG  HTLV-1 (e)
+htlv2;SE;HTLV II Antikörper (e)
+i2nagr;SE;  Nachweisgrenze
+i2quan;SE;  Quantitative Angabe
+igesq;SE;IgE  semiquantitativ
+inat;SE;KBR  Influenza A
+inbt;SE;KBR  Influenza B
+infaa;SE;IgA Influenza A
+infag;SE;IgG Influenza A
+infba;SE;IgA Influenza B
+infbg;SE;IgG Influenza B
+iquan;SE;  Quantitative Angabe
+leerz;SE
+leit;SE;Leishmaniasis Ak (gesamt) (e)
+leput;SE;Agg  Leptospira species (e)
+lgrt;SE;KBR  Lepto. grippo. (e)
+lict;SE;KBR  Lept. ictero. (e)
+lm1h;SE;  Typ 1 H
+lm1o;SE;  Typ 1 O
+lm4bh;SE;  Typ 4b H
+lm4bo;SE;  Typ 4b O
+lmo1h;SE;  L.monocyt. 1H
+lmo1o;SE;  L.monocyt. 1O
+lmo4bh;SE;  L.monocyt. 4b H
+lmo4bo;SE;  L.monocyt. 4b O
+lmoat;SE;L. monocytogenes (e)
+lmokt;SE;  L. monocytogenes KBR
+lnpng;SE;IgG  Legionella non pneumophila (e)
+lnpt;SE;L. non-pneumo. Ak (gesamt) (e)
+lpng;SE;IgG  Legionella pneumophila (e)
+lpng1;SE;IgG  Legionella pneumophila (e)
+lpnp;SE;Legionel. pneumophila (PCR) (e)
+malet;SE;EIA  Malaria Ak (gesamt) (e)
+malit;SE;IF   Malaria Ak (gesamt) (e)
+masg;SE;IgG  Masern (e)
+masg1;SE;IgG  Masern
+masg2;SE;IgG  Masern (e)
+masg3;SE;IgG  Masern (e)
+masgv;SE;IgG  Masern (verd. Serum)
+masm;SE;IgM  Masern
+masm1;SE;IgM  Masern (e)
+mast;SE;KBR  Masern
+mater;SE;Probenmaterial
+mo;SE;mo
+mpneg;SE;IgG Mycoplasma pneumoniae (e)
+mpnem;SE;IgM Mycoplasma pneumoniae (e)
+mpnp;SE;M. pneumoniae DNA (PCR) (e)
+mpnt;SE;KBR  Mykoplasma pneumoniae
+mumg;SE;IgG  Mumps (e)
+mumg1;SE;IgG  Mumps
+mumg2;SE;IgG  Mumps (e)
+mumg3;SE;IgG  Mumps (e)
+mumgv;SE;IgG  Mumps (verd. Serum)
+mumm;SE;IgM  Mumps
+mumm1;SE;IgM  Mumps (e)
+mumt;SE;KBR  Mumps
+nagr;SE;  Nachweisgrenze
+nagr1;SE;  Nachweisgrenze
+nagr2;SE;  Nachweisgrenze
+nagr3;SE;  Nachweisgrenze
+ngol;SE;Neis. gonorrhoeae DNA (LCR)
+ngol1;SE;Neis. gonorrhoeae DNA (e)
+ngop;SE;Neis. gonorrhoeae DNA (PCR) (e)
+ngot;SE;KBR  Gonokokken (e)
+ngot1;SE;KBR  Gonokokken (e)
+ocg1g;SE;  OspC B.garinii 1 IgG
+ocg1m;SE;  OspC B.garinii 1 IgM
+ocg2g;SE;  OspC B.garinii 2 IgG
+ocg2m;SE;  OspC B.garinii 2 IgM
+ocsag;SE;  OspC B.ss /afzelii IgG
+ocsam;SE;  OspC B.ss /afzelii IgM
+ospag;SE;  OspA IgG
+ospam;SE;  OspA IgM
+ospcg;SE;  OspC IgG
+ospcm;SE;  OspC IgM
+ovot;SE;Onchocerca volvulus Ak (e)
+p100g;SE;  p100 IgG
+p100m;SE;  p100 IgM
+p18g;SE;  p18 IgG
+p18m;SE;  p18 IgM
+p39g;SE;  p39 IgG
+p39m;SE;  p39 IgM
+p41g;SE;  p41 IgG (Flagellin)
+p41iag;SE;  p41 int.(B.afzelii) IgG
+p41iam;SE;  p41 int.(B.afzelii) IgM
+p41igg;SE;  p41 int.(B.garinii) IgG
+p41igm;SE;  p41 int.(B.garinii) IgM
+p41m;SE;  p41 IgM (Flagellin)
+par1t;SE;KBR  Parainfluenza 1
+par1t1;SE;KBR  Parainfluenza 1 (e)
+par2t;SE;KBR  Parainfluenza 2
+par2t1;SE;KBR  Parainfluenza 2 (e)
+par3t;SE;KBR  Parainfluenza 3
+par3t1;SE;KBR  Parainfluenza 3 (e)
+pb19eg;SE;IgG  Parvovirus B19 (e)
+pb19em;SE;IgM  Parvovirus B19 (e)
+pb19g;SE;IgG  Parvovirus B19
+pb19m;SE;IgM  Parvovirus B19
+pb19p;SE;Parvovirus B19 DNA (PCR) (e)
+pneg;SE;IgG  Pneumokokken (e)
+pol1;SE;Poliovirus 1 Ak (e)
+pol2;SE;Poliovirus 2 Ak (e)
+pol3;SE;Poliovirus 3 Ak (e)
+qf1g;SE;C. burnetii Ak Phase 1 (e)
+qf2g;SE;IgG  C. burnetii Phase 2 (e)
+rcog;SE;IgG  Rick. conorii (e)
+rcog1;SE;IgG  Rick. conorii (e)
+rcom;SE;IgM  Rick. conorii (e)
+rcom1;SE;IgM  Rick. conorii (e)
+rifit;SE;Rift-Valley-Virus Ak (e)
+rmog;SE;IgG Rick. mooseri (e)
+rmom;SE;IgM Rick. mooseri (e)
+rott;SE;KBR  Rotavirus
+rsvg;SE;IgG Resp. Syncytial Virus (e)
+rsvm;SE;IgM Resp. Syncytial Virus (e)
+rsvt;SE;KBR  Resp. Syncytial Virus
+rubav;SE;IgG  Rubella Avidität (e)
+rubg;SE;IgG  Rubella
+rubg1;SE;IgG  Rubella
+rubm;SE;IgM  Rubella
+rubm1;SE;IgM  Rubella
+rubms;SE;IgM  Rubella (e)
+sciee;SE;EIA  Schistosoma Ei-Ag (e)
+sciet;SE;EIA  Schistosomiasis (e)
+sciet1;SE;EIA  Schistosoma Adult Ag (e)
+sciit;SE;IF  Schistosomiasis (e)
+senu;SE;Salm. enteritidis H Ak
+sflt;SE;KBR  Shigellen (S.flexneri) (e)
+spaau;SE;Salm. paratyphi A, O Ak
+spabu;SE;Salm. paratyphi B, O Ak
+spacu;SE;Salm. paratyphi C, O Ak
+spahu;SE;Salm. paratyphi H Ak
+spaou;SE;Salm. paratyphi O Ak
+sstt;SE;EIA  Strongyloidose (e)
+styhu;SE;Salm. typhi H Ak
+stymu;SE;Salm. typhimurium H Ak
+styou;SE;Salm. typhi O Ak
+styou1;SE;Salm. typhi O Ak
+tbrt;SE;Afr. Trypanosomiasis (ges.) (e)
+tcrt;SE;Ame. Trypanosomiasis (ges.) (e)
+tgoa;SE;IgA  Toxoplasmose
+tgoav;SE;IgG  Toxopl. Avidität (e)
+tgoav1;SE;IgG  Toxopl. Avidität
+tgog;SE;IgG  Toxoplasmose
+tgog1;SE;IgG  Toxoplasmose
+tgog2;SE;IgG  Toxoplasmose (Bestät.)
+tgog3;SE;IgG  Toxoplasmose (e)
+tgog4;SE;IgG  Toxoplasmose
+tgog5;SE;IgG  Toxoplasmose
+tgog6;SE;IgG  Toxoplasmose (e)
+tgogel;SE;TOXO IgG Elecsys Evaluation
+tgogp;SE;IgG  Toxoplasmose, Vorserum
+tgogp1;SE;IgG  Toxoplasmose, Vorserum
+tgogp2;SE;IgG  Toxoplasmose, Vorserum
+tgoia;SE;IgA  Toxoplasmose (Bestät.)
+tgoim;SE;IgM  Toxoplasmose
+tgoim1;SE;IgM  Toxoplasmose
+tgokv;SE;Kongenit. Toxopl. Verlauf (e)
+tgom;SE;IgM  Toxoplasmose
+tgom1;SE;IgM  Toxoplasmose
+tgom2;SE;IgM  Toxoplasmose
+tgomel;SE;TOXO IgM Elecsys Evaluation
+tgomp;SE;IgM  Toxoplasmose, Vorserum
+tgomp1;SE;IgM  Toxoplasmose, Vorserum
+tgomp2;SE;IgM  Toxoplasmose, Vorserum
+tgop;SE;Toxoplasma gondii DNA (PCR) (e)
+tgopr;SE;Kongenitale Toxopl. Kind (e)
+tgoprm;SE;Kongenitale Toxopl. Mutter (e)
+tgoxm;SE;IgM  Toxoplasmose Best. (e)
+tmpam;SE;  TmpA
+tol;SE;Tollwut (Immunität) (e)
+toxe;SE;IgE  Toxocarose (e)
+toxt;SE;EIA  Toxocarose (e)
+tp15m;SE;  Tp 15
+tp47m;SE;  TP 47
+tpabm;SE;Treponema pall. IgM (WB) (e)
+tpag;SE;IgG  Lues (Syphilis) (e)
+tpait;SE;FTA-Abs Ig Lues (Syphilis) (e)
+tpam;SE;IgM  Lues (Syphilis)
+tpam1;SE;IgM  Lues (Syphilis) (e)
+tpat;SE;Lues-Screening (IgG/M)
+tpha;SE;TPHA  Lues (Screening) (e)
+tsot;SE;EIA  Zystizerkose (T. sol.)
+tspit;SE;IF  Trichinellose (e)
+tspt;SE;EIA  Trichinellose (e)
+urinar;SE;Probenmaterial
+vdrl;SE;VDRL  Lues (Cardiolipin)
+vdrln;SE;VDRL  Lues quant.
+vlseg;SE;  VlsE IgG
+vlsem;SE;  VlsE IgM
+vzva;SE;IgA  Varizella-Zoster Virus
+vzva1;SE;IgA  Varizella-Zoster Virus
+vzva2;SE;IgA  Varizella-Zoster Virus (e)
+vzvg;SE;IgG  Varizella-Zoster Virus
+vzvg1;SE;IgG  Varizella-Zoster Virus
+vzvg2;SE;IgG  Varizella-Zoster Virus (e)
+vzvgv;SE;IgG  VZV (verdünntes Serum)
+vzvm;SE;IgM  Varizella-Zoster Virus
+vzvm1;SE;IgM  Varizella-Zoster Virus
+vzvm2;SE;IgM  Varizella-Zoster Virus
+vzvm3;SE;IgM  Varizella-Zoster Virus
+vzvm4;SE;IgM  Varizella-Zoster Virus (e)
+vzvmc;SE;IgM  VZV Konfirmation (e)
+vzvt;SE;KBR  Varizella-Zoster Virus
+wbaag;SE;Wuchereria bancrofti Antigen (e)
+wenip;SE;West Nile Virus RNA (e)
+wnig;SE;IgG West Nile Virus (e)
+wnim;SE;IgM West Nile Virus (e)
+yeno3;SE;AGG  Yers. enterocolitica O3 (e)
+yeno9;SE;AGG  Yers. enterocolitica O9 (e)
+yent;SE;KBR  Yers. enterocolitica
+ypst;SE;KBR  Yers. pseudotubercul.
+ypst1;SE;AGG  Yers. pseudotubercul. (e)
+a1akon;ST; Konzentration
+a1atro;ST; Trockenanteil
+calpr;ST;Calprotectin (e)
+chymo;ST;Chymotrypsin (e)
+chymo1;ST;Chymotrypsin(e)
+cop3s;ST;Koproporphyrin III (e)
+fett;ST;  Neutralfett
+fettg;ST;  Fettgehalt
+fettgg;ST;  Fettgehalt absolut
+fetts;ST;  Ausscheidung pro Tag
+klinik;ST;Klinische Angaben
+ks;ST;Kalium im Stuhl (e)
+muange;ST;  Muskelfasern angedaut
+muguve;ST;  Muskelfasern gut verdaut
+muunve;ST;  Muskelfasern unverdaut
+nadeln;ST;  Fettsäurenadeln
+nas;ST;Natrium im Stuhl (e)
+okbl;ST;Okkultes Blut
+okbl2;ST;Okkultes Blut 2
+okbl3;ST;Okkultes Blut 3
+pelas;ST;Pankreatische Elastase (e)
+phst1;ST;pH (1. Probe)
+phst2;ST;pH (2. Probe)
+porst;ST;Koproporphyrin 1 (e)
+props;ST;Protoporphyrin (e)
+quecs;ST;Quecksilber im Stuhl (e)
+smenge;ST;  Nativstuhlmenge
+ssamm;ST;  Sammeldauer
+stärke;ST;  Stärke
+17k241;UR;17-Ketosteroide (/Tag)
+17k242;UR;17-Ketosteroide (/Tag)
+17ke24;UR;17-Ketosteroide(/Tag)
+17ket;UR;17-Ketosteroide(e)
+17oh24;UR;17-OH-Corticosteroide (/Tag)
+17ohc;UR;17-OH-Corticosteroide(e)
+5oh241;UR;5-OH-Indolessigsäure (/Tag)
+5ohi24;UR;5-OH-Indolessigsäure (/Tag)
+5ohin;UR;5-OH-Indolessigsäure(e)
+5ohiqu;UR;5-OH-IES/Kreatinin-Quotient
+5ohqu1;UR;5-OH-IES/Kreatinin-Quotient
+adr;UR;Adrenalin(e)
+adr24;UR;Adrenalin (/Tag)
+adr241;UR;Adrenalin (/Tag)
+adrqu;UR;Adrenalin/Kreat.-Quotient
+adrqu1;UR;Adrenalin/Kreat.-Quotient
+albq;UR;Albumin-/Kreatinin-Quot.
+albuu;UR;  Albumin
+ald24;UR;Aldosteron (/Tag)
+ald241;UR;Aldosteron (/Tag)
+ald242;UR;Aldosteron (/Tag)
+aldu;UR;Aldosteron(e)
+alph1u;UR;  Alpha-1-Globulin
+alph2u;UR;  Alpha-2-Globulin
+aluu;UR;Aluminium (e)
+am24;UR;Amylase (/Tag)
+amph;UR;Amphetamine
+amphc;UR;  Amphetamin
+amphos;UR;Amorphe Phosphate
+amphqu;UR;Amphetamine/Kreat.-Quotient
+amu;UR;Amylase (e)
+amuq;UR;Amylase/Krea-Quotient
+amurat;UR;Amorphe Urate
+anzahl;UR;Anzahl
+argu;UR;  Arginin
+asu;UR;Aminosäuren, qual. (e)
+b2mu;UR;Beta-2-Mikroglobulin
+b2mu2;UR;Beta-2-Mikroglobulin
+bakt;UR;Bakterien
+barb;UR;Barbiturate (e)
+barb1;UR;Barbiturate(e)
+barb2;UR;Barbiturate
+benz;UR;Benzodiazepine (e)
+benz1;UR;Benzodiazepine
+benzqu;UR;Benzodiazepine/Kreat.-Quotient
+betau;UR;  Beta-Globulin
+bleiu;UR;Blei (e)
+ca24;UR;Calcium (/Tag)
+cadu;UR;Cadmium (e)
+cann;UR;Cannabis
+cannb;UR;Cannabis (chrom. Bestätigung) (e)
+cannqu;UR;Cannabis/Kreat.-Quotient
+caoxal;UR;Calcium-Oxalate
+caoxdi;UR;Weddellit-Stein (e)
+caoxmo;UR;Whewellit-Stein (e)
+carapa;UR;Carbonat Apatit Stein (e)
+cau;UR;Calcium
+cauq;UR;Calcium / Krea-Quotient
+chro24;UR;Chrom (e)
+chromu;UR;Chrom (e)
+cit241;UR;Citrat (/Tag)
+citr24;UR;Citrat (/Tag)
+citru;UR;Citrat (e)
+citru1;UR;Citrat (e)
+citruq;UR;Citrat/Krea-Quotient (e)
+cl24;UR;Chlorid (/Tag)
+clu;UR;Chlorid
+coca;UR;Cocain
+cocaqu;UR;Cocain/Kreat.-Quotient
+code;UR;Codeine (e)
+cop1qu;UR;Copro. I/Kreat.-Quotient
+cop241;UR;Coproporphyrine I (/Tag)
+cop243;UR;Coproporphyrine III (/Tag)
+cop3qu;UR;Copro. III/Kreat.-Quotient
+copro1;UR;Coproporphyrine I(e)
+copro3;UR;Coproporphyrine III(e)
+cor241;UR;Cortisol frei (/Tag)
+cor242;UR;Cortisol frei (/Tag)
+corf24;UR;Cortisol frei (/Tag)
+corfu;UR;Cortisol frei (e)
+coti;UR;Cotinine (e)
+coti2;UR;Cotinine (e)
+cotiq;UR;Cotinin/Krea-Quotient
+ctxqu;UR;CTX/Kreat.Quotient (e)
+cu24;UR;Kupfer (/Tag)
+cu241;UR;Kupfer (/Tag)
+cu242;UR;Kupfer (/Tag)
+cuu;UR;Kupfer(e)
+cuu1;UR;Kupfer (e)
+cuu2;UR;Kupfer (e)
+cuu3;UR;Kupfer (e)
+cuu4;UR;Kupfer (e)
+cystu;UR;  Cystin
+dals;UR;Delta-Aminolävulinsäure (e)
+dals24;UR;Delta-Aminolävulinsäure (/Tag)
+dalsqu;UR;Delta-ALS/Kreat.-Quotient
+diur;UR;Diuretika - Screening
+dop;UR;Dopamin (e)
+dop24;UR;Dopamin (/Tag)
+dop241;UR;Dopamin (/Tag)
+dopqu;UR;Dopamin/Kreat.-Quotient
+dopqu1;UR;Dopamin/Kreat.-Quotient
+dpyri;UR;Desoxypyridinolin/Kreat.
+dpyri1;UR;Desoxypyridinolin/Kreat.
+elpbeu;UR;  Beurteilung
+feu;UR;Eisen
+form;UR;Form
+gammau;UR;  Gamma-Globulin
+gewich;UR;Gewicht
+glu;UR;Glukose
+glu24;UR;Glukose (/Tag)
+glusu;UR;  Glutarsäure
+granz;UR;Granulierte Zylinder
+hastu;UR;Harnstoff
+hepp24;UR;Heptacarboxyporphyrin(/Tag)
+heppor;UR;Heptacarboxyporphyrin (e)
+heppqu;UR;Heptacarb./Kreat.-Quotient
+hero;UR;Heroin (6-Acetylmorphin) (e)
+hexp24;UR;Hexacarboxyporphyrin (/Tag)
+hexpor;UR;Hexacarboxyporphyrin (e)
+hexpqu;UR;Hexacarb./Kreat.-Quotient
+hipsu;UR;  Hippursäure
+histu;UR;Histamin (e)
+hom241;UR;Homovanillinsäure (/Tag)
+homo;UR;Homovanillinsäure (e)
+homo24;UR;Homovanillinsäure (/Tag)
+homoqu;UR;Homovan./Kreatinin-Quotient
+homqu1;UR;Homovan./Kreatinin-Quotient
+hs24;UR;Harnstoff (/Tag)
+hsidu;UR;Hämosiderin
+hss24;UR;Harnsäure (/Tag)
+hsskri;UR;Harnsäurekristalle
+hssu;UR;Harnsäure
+hsu;UR;Harnstoff
+hyaliz;UR;Hyaline Zylinder
+ifixu;UR;Beurteilung
+inhu;UR;Isoniazid (e)
+intoxu;UR;Intoxikation unbek. Substanz (e)
+jodu;UR;Jod (e)
+jodu24;UR;Jod (/Tag)
+joduq;UR;Jod-/Kreatinin-Quotient
+k24;UR;Kalium (/Tag)
+kappu;UR;Kappa-Leichtketten (e)
+kappu1;UR;Kappa-Leichtketten (e)
+kre24;UR;Kreatinin (/Tag)
+krecl;UR;Kreatinin-Clearance
+kreu;UR;Kreatinin
+kreuex;UR;Kreatinin
+kreuq1;UR;  Kreatinin
+kreuq2;UR;  Kreatinin
+ku;UR;Kalium
+lambu;UR;Lambda-Leichtketten (e)
+lambu1;UR;Lambda-Leichtketten (e)
+lax;UR;Laxantien (e)
+lpnag;UR;Legionella AG
+lsd;UR;LSD (e)
+lysu;UR;  Lysin
+mdmac;UR;  Ecstasy (MDMA)
+melau;UR;Melanin (e)
+menge;UR;Urinmenge
+menge2;UR;Menge
+met241;UR;Metanephrine (/Tag)
+met242;UR;Metanephrine (/Tag)
+meta24;UR;Metanephrine (/Tag)
+metamc;UR;  Metamphetamin
+metan;UR;Metanephrine (e)
+metan1;UR;Metanephrine (e)
+metan2;UR;Metanephrine (e)
+metaqu;UR;Metanephrin/Kreat-Quot.
+meth;UR;Methadon
+methh;UR;Methadon (HPLC) (e)
+methm;UR;EDPP (Methadon-Metabolit) (e)
+methqu;UR;Methadon/Kreat.-Quotient
+metqu1;UR;Metanephrin/Kreat-Quot.
+metqu2;UR;Metanephrin/Kreat-Quot.
+mg24;UR;Magnesium (/Tag)
+mgu;UR;Magnesium
+mic24;UR;Albumin (/Tag)
+micro;UR;Albumin
+microi;UR;Albumin
+micsam;UR;Albumin (/Sammelzeit)
+morp;UR;Morphin
+morphb;UR;Morphin  (chrom. Bestätigung) (e)
+morpqu;UR;Morphine/Kreat.-Quotient
+myou;UR;Myoglobin (e)
+myou1;UR;Myoglobin (e)
+na24;UR;Natrium (/Tag)
+nau;UR;Natrium
+niu;UR;Nickel (e)
+nme241;UR;Normetanephrin (/Tag)
+nme242;UR;Normetanephrin (/Tag)
+nmequ1;UR;Normetanephrin/Kreat-Quot.
+nmequ2;UR;Normetanephrin/Kreat-Quot.
+nmet24;UR;Normetanephrin (/Tag)
+nmeta;UR;Normetanephrin (e)
+nmeta1;UR;Normetanephrin (e)
+nmeta2;UR;Normetanephrin (e)
+nmetqu;UR;Normetanephrin/Kreat-Quot.
+nor;UR;Noradrenalin (e)
+nor24;UR;Noradrenalin (/Tag)
+nor241;UR;Noradrenalin (/Tag)
+norqu;UR;Noradr./Kreat.-Quotient
+norqu1;UR;Noradr./Kreat.-Quotient
+ntx;UR;N-Telopeptide (NTx) (e)
+ntx1;UR;N-Telopeptide (NTx) (e)
+oberfl;UR;Oberfläche
+orgu;UR;Organische Säuren
+orniu;UR;  Ornithin
+osmoo;UR;Osmolalität (osmometrisch,e)
+osmu;UR;Osmolalität (berechnet)
+osmug;UR;Osmolalität gemessen (e)
+ox24;UR;Oxalat (/Tag)
+ox241;UR;Oxalat (/Tag)
+oxq;UR;Oxalat/Kreatinin-Quot
+oxu;UR;Oxalat (e)
+oxu1;UR;Oxalat (e)
+pamu;UR;Pankreas-Amylase
+pamuq;UR;Pankreas-Amyl./Krea-Quot.
+pent24;UR;Pentacarboxyporphyrin(/Tag)
+pentpo;UR;Pentacarboxyporphyrin (e)
+pentqu;UR;Pentacarb./Kreat.-Quotient
+ph24;UR;Phosphat (/Tag)
+phu;UR;Phosphat
+platep;UR;Plattenepithelzellen
+porb;UR;Porphobilinogen (e)
+porb24;UR;Porphobilinogen (/Tag)
+porbqu;UR;PBG/Kreatinin-Quotient
+propu;UR;Protein Profil (e)
+prot24;UR;Protein (/Tag)
+protq;UR;Protein-/Kreatinin-Quot.
+protu;UR;Protein
+pyri;UR;Pyridinolin/Kreat.
+pyri1;UR;Pyridinolin/Kreat.
+quecu;UR;Quecksilber (e)
+quecu1;UR;  Quecksilber vor DMPS
+quecu2;UR;  Quecksilber nach DMPS
+quequ;UR;  Quecksilber/Kreat.-Quotient
+quequ1;UR;  Quecksilber/Kreat.-Quotient
+quequ2;UR;  Quecksilber/Kreat.-Quotient
+queu11;UR;  Quecksilber vor DMPS
+rifa;UR;Rifampicin
+rundep;UR;Rundepithelzellen
+samm;UR;Sammelzeit
+schlei;UR;Schleim
+sildeu;UR;Sildenafil (Viagra) (e)
+spont;UR;Art
+sst;UR;Schwangerschaftstest
+triau;UR;Tricycl. Antidepressiva (e)
+tripph;UR;Tripelphosphate
+urop;UR;Uroporphyrine (e)
+urop24;UR;Uroporphyrin (/Tag)
+uropqu;UR;Urop./Kreat.-Quotient
+usbili;UR;Bilirubin
+usblut;UR;Blut
+usec;UR;Erythrozyten
+usecgl;UR;Glomeruläre Erythrozyten
+usgluc;UR;Glucose
+usketo;UR;Ketonkörper
+uslc;UR;Leukozyten
+uslcq;UR;Leukozyten
+usnitr;UR;Nitrite
+usph;UR;pH
+usprot;UR;Eiweiss
+usspez;UR;Spezifisches Gewicht
+usurob;UR;Urobilinogen
+vms;UR;Vanillinmandelsäure (e)
+vms24;UR;Vanillinmandelsäure (/Tag)
+vmsqu;UR;VMS/Kreatinin-Quotient
+vmsqu1;UR;VMS/Kreatinin-Quotient
+wiliau;UR;Albumin
+zitsu;UR;  Zitronensäure
+zusamm;UR;Konkrement-Typisierung
+zusatz;UR;Zusatz
+abst2;ZY;Abstrich 2
+abstr2;ZY;Abstrich von
+abstri;ZY;Abstrich von
+altec;ZY;Erythrozyten alt
+altec2;ZY;Erythrozyten alt
+ande2;ZY;Andere Zellen
+ander;ZY;Andere Zellen
+ander2;ZY;Andere Zellen
+andere;ZY;Andere Zellen
+anzot;ZY;Anzahl Objektträger
+arzbe;ZY;Befundung, ärztlicher Bericht Zyto
+atyp2;ZY
+atypi2;ZY;Atypische Zellen
+atypis;ZY
+atypiz;ZY
+baktz;ZY;Bakterien
+baktz2;ZY;Bakterien
+basal;ZY;Basalzellen
+basal2;ZY;Basalzellen
+beschr;ZY;Beschreibung zytolog. Bild
+beso2;ZY
+beson;ZY
+beson2;ZY;Besondere Befunde
+besond;ZY
+beurtz;ZY;Beurteilung
+binde;ZY;Bindegewebszellen
+binde2;ZY;Bindegewebszellen
+calbi2;ZY;Candida albicans
+calbic;ZY;Hefen
+canal2;ZY;Candida albicans
+canalb;ZY;Hefen
+cin;ZY
+cin1;ZY;CIN-Klassifikation
+cin2;ZY
+detri2;ZY;Detrius
+detriu;ZY;Detritus
+doede2;ZY;Döderlein
+doeder;ZY;Döderlein
+dünn;ZY;Dünnschichtpräparat
+ecalt;ZY;Erythrozyten alt
+ecalt2;ZY;Erythrozyten alt
+ecfri2;ZY;Erythrozyten frisch
+ecfris;ZY;Erythrozyten frisch
+egzbe;ZY
+egzbe2;ZY
+endom2;ZY;Endometriumzellen
+endome;ZY;Endometriumzellen
+eosin2;ZY;Eosinophile Granulozyten
+eosino;ZY;Eosinophile Granulozyten
+fettz;ZY;Fettzellen
+fettz2;ZY;Fettzellen
+flimm;ZY;Flimmerepithelien
+flimm2;ZY;Flimmerepithelien
+friec2;ZY;Erythrozyten frisch
+frisec;ZY;Erythrozyten frisch
+granu2;ZY;Neutrophile Granulozyten
+granul;ZY;Neutrophile Granulozyten
+gynzb2;ZY
+gynzbe;ZY
+histi2;ZY;Histiozyten/Makrophagen
+histio;ZY;Histiozyten/Makrophagen
+hpv16;ZY;  HPV high risk
+hpv6;ZY;  HPV low risk
+hpvpg;ZY;HPV Genotyp (e)
+hsvz;ZY;Herpes simplex 1/2 Viren
+inter2;ZY;Intermediärzellen
+interm;ZY;Intermediärzellen
+klpla2;ZY;Kernlose Plattenepithelien
+klplat;ZY;Kernlose Plattenepithelien
+kollo2;ZY;Kolloid
+kolloi;ZY;Kolloid
+kubisz;ZY;Kubische Zellen
+kubiz2;ZY;Kubische Zellen
+lymph2;ZY;Lymphozyten
+lympho;ZY;Lymphozyten
+mat;ZY;Material
+mat2;ZY;Material
+mate;ZY;Material
+meso;ZY;Mesothelien
+meso2;ZY;Mesothelien
+nekro2;ZY;Nekrose
+nekros;ZY;Nekrose
+neutr2;ZY;Neutrophile Granulozyten
+neutro;ZY;Neutrophile Granulozyten
+pap;ZY
+pap1;ZY;PAP-Klassifikation
+pap2;ZY
+parab2;ZY;Parabasalzellen
+paraba;ZY;Parabasalzellen
+plasz;ZY;Plasmazellen
+plasz2;ZY;Plasmazellen
+plat;ZY;Plattenepithelien
+plat2;ZY;Plattenepithelien
+platk2;ZY;Kernlose Plattenepithelzellen
+platok;ZY;Kernlose Plattenepithelzellen
+qualz;ZY;Ausstrichqualität
+scaum2;ZY;Schaumzellen
+schaum;ZY;Schaumzellen
+scle2;ZY;Schleim
+sclei;ZY;Schleim
+sclei2;ZY;Schleim
+scleim;ZY;Schleim
+sclezy;ZY;Schleimbildende Zylinderzellen
+sclzy2;ZY;Schleimbildende Zylinderzellen
+sfär;ZY;Schnellfärbung Zytologie
+someg2;ZY
+somme2;ZY
+sommeg;ZY
+sommer;ZY
+supfi2;ZY;Superfizialzellen
+supfiz;ZY;Superfizialzellen
+trich;ZY;Trichomonaden
+trich2;ZY;Trichomonaden
+umwan2;ZY;Zellen Umwandlungszone
+umwand;ZY;Zellen Umwandlungszone
+uroth2;ZY;Urothelien
+urothe;ZY;Urothelien
+zbakt;ZY;Bakterien
+zbakt2;ZY;Bakterien
+zeos;ZY;Eosinophile Granulozyten
+zeos2;ZY;Eosinophile Granulozyten
+zhist;ZY;Histiozyten
+zhist2;ZY;Histiozyten
+zlymp2;ZY;Lymphozyten
+zlymph;ZY;Lymphozyten
+zmakr2;ZY;Makrophagen
+zmakro;ZY;Makrophagen
+zplas2;ZY;Plasmazellen
+zplasm;ZY;Plasmazellen
+zusäp;ZY;Zusätzliches Präparat, pro 2
+zyli2;ZY;Zylinderzellen
+zylin;ZY;Zylinderzellen
+zylin2;ZY;Zylinderzellen
+zylind;ZY;Zylinderzellen
+zytol2;ZY;Zytolyse
+zytoly;ZY;Zytolyse

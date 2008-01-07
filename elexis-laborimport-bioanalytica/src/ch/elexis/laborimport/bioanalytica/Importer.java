@@ -166,9 +166,13 @@ public class Importer extends ImporterPage {
 					if(obx.isFormattedText()){
 						typ=LabItem.typ.TEXT;
 					}
-					li=new LabItem(obx.getItemCode(),itemname,labor,
+					
+					String code = obx.getItemCode();
+					String name = Groups.getCodeName(code);
+					String group = Groups.getGroupNameOfCode(code);
+					li=new LabItem(code,name,labor,
 							obx.getRefRange(),obx.getRefRange(),obx.getUnits(),typ,
-							"Z Automatisch_"+dat,Integer.toString(nummer++));
+							group,"000");
 				}else{
 					li=list.get(0);
 				}
@@ -210,7 +214,8 @@ public class Importer extends ImporterPage {
 				// find LabItem
 				Query<LabItem> qbe=new Query<LabItem>(LabItem.class);
 				qbe.add("LaborID", "=", labor.getId());
-				qbe.add("titel", "=", COMMENT_NAME);
+				// disabled, this would avoid renaming the title
+				//qbe.add("titel", "=", COMMENT_NAME);
 				qbe.add("kuerzel", "=", COMMENT_CODE);
 				List<LabItem> list=qbe.execute();
 				LabItem li=null;
