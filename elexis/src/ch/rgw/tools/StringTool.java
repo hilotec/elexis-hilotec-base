@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3413 2007-12-04 14:59:03Z rgw_ch $
+// $Id: StringTool.java 3505 2008-01-07 15:26:12Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -516,6 +516,15 @@ public static Hashtable foldStrings(final String s)
       return r2.replaceFirst(tren+"$","");
     }*/
     public static String join(final Iterable<String> i, final String tren){
+    	StringBuilder ret=new StringBuilder();
+    	Iterator<String> it=i.iterator();
+    	while(it.hasNext()){
+    		ret.append(it.next());
+    		if(it.hasNext()){
+    			ret.append(tren);
+    		}
+    	}
+    	/*
 		StringBuffer ret=new StringBuffer(100);
 		for(String s:i){
 			ret.append(s).append(tren);
@@ -523,6 +532,7 @@ public static Hashtable foldStrings(final String s)
 		if(ret.length()>(tren.length()+1)){
 			ret.delete(ret.length()-tren.length(),20000);
 		}
+		*/
 		return ret.toString();
 	}
 /*
