@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SoftCache.java 3209 2007-09-26 16:05:47Z rgw_ch $
+ *    $Id: SoftCache.java 3507 2008-01-08 16:56:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data.cache;
@@ -29,7 +29,8 @@ import ch.elexis.util.Log;
 @SuppressWarnings("unchecked")
 public class SoftCache<K> {
 	private static boolean enabled=true;
-	
+	private int num=2000;
+	private float load=0.7f;
 	protected HashMap<K,CacheEntry> cache;
 	protected long hits,misses,removed,inserts,expired;
 	protected Log log=Log.get("SoftCache");
@@ -39,9 +40,12 @@ public class SoftCache<K> {
 	}
 	public SoftCache(final int num,final float load){
 		cache=new HashMap<K,CacheEntry>(num,load);
+		this.num=num;
+		this.load=load;
 	}
 	public SoftCache(final int num){
 		cache=new HashMap<K,CacheEntry>(num);
+		this.num=num;
 	}
 	
 	
@@ -136,6 +140,14 @@ public class SoftCache<K> {
 			Hub.log.log(sb.toString(), Log.INFOS);
 		}
 	}
+	/**
+	 * completely delete cache
+	 */
+	public synchronized void reset(){
+		purge();
+		cache=new HashMap<K,CacheEntry>(num,load);
+	}
+	
 	public class CacheEntry extends SoftReference{
 		long expires;
 		public CacheEntry(final Object obj, final int timeInSeconds){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3313 2007-11-06 05:39:41Z rgw_ch $
+ *    $Id: PersistentObject.java 3507 2008-01-08 16:56:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -391,6 +391,8 @@ public abstract class PersistentObject{
     	}
     	return false;
     }
+    
+    
     /**
      * Einschränkende Bedingungen für Suche nach diesem Objekt definieren
      * @return ein Constraint für eine Select-Abfrage
@@ -1603,6 +1605,11 @@ public abstract class PersistentObject{
 		}
 		System.gc();
 	}
+	public static void resetCache(){
+		synchronized(cache){
+			cache.reset();
+		}
+	}
 	/**
 	 * Return time-to-live in cache for this object
 	 * @return the time in seconds
@@ -1610,6 +1617,12 @@ public abstract class PersistentObject{
 	public int getCacheTime(){
 		return default_lifetime;
 	}
+	public static void setDefaultCacheLifetime(int seconds){
+    	default_lifetime=seconds;
+    }
+    public static int getDefaultCacheLifetime(){
+    	return default_lifetime;
+    }
 	public static boolean isShowDeleted() {
 		return showDeleted;
 	}
