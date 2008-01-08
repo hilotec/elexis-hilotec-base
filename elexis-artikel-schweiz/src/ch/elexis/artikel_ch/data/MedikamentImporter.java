@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 3455 2007-12-15 11:33:11Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3508 2008-01-08 16:56:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -22,7 +23,6 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -34,10 +34,23 @@ import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 
 public class MedikamentImporter extends ImporterPage {
+	static final String EQUALS = "=";
+	private static final String MWST_TYP = "MWSt-Typ";
+	private static final String EAN = "EAN";
+	private static final String HERSTELLER = "Hersteller";
+	private static final String LAGERART = "Lagerart";
+	private static final String KASSENTYP = "Kassentyp";
+	private static final String VK_PREIS = "VK_Preis";
 	Button bClear;
 	boolean bDelete;
 	public MedikamentImporter() {}
 
+	final static String SUBID="SubID";
+	final static String NAME="Name";
+	final static String MEDIKAMENT="Medikament";
+	final static String MEDICAL="Medical";
+	final static String EK_PREIS="EK_Preis";
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
@@ -45,7 +58,8 @@ public class MedikamentImporter extends ImporterPage {
 		long l=file.length();
 		InputStreamReader ir=new InputStreamReader(new FileInputStream(file),"iso-8859-1");
 		BufferedReader br=new BufferedReader(ir);
-		
+		int cachetime=PersistentObject.getDefaultCacheLifetime();
+		PersistentObject.setDefaultCacheLifetime(2);
 		String in;
 		String mode=" (Modus: Daten ergänzen/update)";
 		if(bDelete==true){
@@ -58,54 +72,84 @@ public class MedikamentImporter extends ImporterPage {
 		monitor.beginTask("Medikamenten Import"+mode,(int)(l/100));
 		Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
 		int counter=0;
+		String titel,ek,vk,kasse,mwst;
 		while((in=br.readLine())!=null){
-			/*String s1=in.substring(0,3);	*/		// ??
-			String pk=in.substring(3,10);			// Pharmacode
-			String titel=in.substring(10,60).trim();// Text
-			String ek=in.substring(60,66).trim();	// EK-Preis
-			String vk=in.substring(66,72).trim();	// VK-Preis
-			String kasse=in.substring(72,75);		// Kassentyp
-			String rp=in.substring(75,76);			// Rezeptpflicht
-			String hix=in.substring(76,83);			// Hersteller-Index
-			String ean=in.substring(83,96);			// EAN
-			String mwst=in.substring(96,97);		// MWSt-Typ
-			monitor.worked(1);
-			if(!mwst.equals("2")){
-				continue;
-			}
-			String id=qbe.findSingle("SubID", "=", pk);
+			String reca=new String(in.substring(0,2));			// recordart
+			String cmut=new String(in.substring(2,3));			// mutationscode
+			String pk=new String(in.substring(3,10));			// Pharmacode
+			String id=qbe.findSingle(SUBID, EQUALS, pk);
 			Artikel a=Artikel.load(id);
 			if(a==null){
-				id=qbe.findSingle("Name","=",titel);
-				a=Artikel.load(id);
-				if(a==null){
-					a=new Artikel(titel,"Medikament",pk);
-				}else{
-					a.set("SubID", pk);
+				if(cmut.equals("3") || (!reca.equals("11"))){	// ausser handel oder kein Stammsatz
+					continue;
+				}
+			}else{
+				if(cmut.equals("3")){
+					a.delete();
+					continue;
 				}
 			}
-			a.set("EAN",ean);
-			Hashtable ext=a.getHashtable("ExtInfo");
-			String[] fields={"EK_Preis","VK_Preis"};
-			a.set(fields,ek,vk);
-			ext.put("Pharmacode",pk);
-			ext.put("Kassentyp",kasse);
-			ext.put("Rezeptpflicht",rp);
-			ext.put("Hersteller",hix);
-			ext.put("EAN",ean);
-			ext.put("MWSt-Typ",mwst);
-			a.setHashtable("ExtInfo",ext);
+
+			if(reca.equals("11")){
+				titel=new String(in.substring(10,60)).trim();	// Text
+				ek=new String(in.substring(60,66)).trim();		// EK-Preis
+				vk=new String(in.substring(66,72)).trim();		// VK-Preis
+				kasse=new String(in.substring(72,73));			// Kassentyp
+				String lager=new String(in.substring(73,75));   // Lagerart
+				String hix=new String(in.substring(75,76));		// iks-listencode 
+				String ithe=new String(in.substring(76,83));	// index therapeuticus
+				String ean=new String(in.substring(83,96));		// EAN
+				mwst=new String(in.substring(96,97));			// MWSt-Typ
+
+				if(a==null){
+					if(mwst.equals("1")){
+						a=new Artikel(titel,MEDICAL,pk);
+					}else{
+						a=new Artikel(titel,MEDIKAMENT,pk);
+					}
+				}
+				String[] fields={EK_PREIS,VK_PREIS,EAN};
+				a.set(fields,ek,vk,ean);
+				Hashtable ext=a.getHashtable(Artikel.EXT_INFO);
+				ext.put(Artikel.PHARMACODE,pk);
+				ext.put(KASSENTYP,kasse);
+				ext.put(LAGERART,lager);
+				ext.put(HERSTELLER,hix);
+				ext.put(EAN,ean);
+				ext.put(MWST_TYP,mwst);
+				a.setHashtable(Artikel.EXT_INFO,ext);
+			}else if(reca.equals("10")){
+				ek=new String(in.substring(10, 16));
+				vk=new String(in.substring(16,22));
+				kasse=new String(in.substring(22,23));
+				mwst=new String(in.substring(23,24));
+				String[] fields={EK_PREIS,VK_PREIS};
+				a.set(fields,ek,vk);
+					
+			}else{
+				SWTHelper.showError("Falsches Dateiformat", "Es können nur IGM-10 und IGM-11 Dateien importiert werden");
+				return Status.CANCEL_STATUS;
+			}
+
+	
+			monitor.worked(1);
 			if(monitor.isCanceled()){
 				monitor.done();
 				return Status.CANCEL_STATUS;
 			}
-			if(counter++>100){
+			monitor.subTask(a.getLabel());
+			a=null;
+			in=null;
+			if(counter++>1000){
 				PersistentObject.clearCache();
 				System.gc();
+				Thread.sleep(100);
 				counter=0;
 			}
+			
 		}
 		monitor.done();
+		PersistentObject.setDefaultCacheLifetime(cachetime);
 		return Status.OK_STATUS;
 	}
 
