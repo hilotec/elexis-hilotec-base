@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3505 2008-01-07 15:26:12Z rgw_ch $
+// $Id: StringTool.java 3509 2008-01-09 15:00:37Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -743,6 +743,9 @@ public static Hashtable foldStrings(final String s)
      * @return true wenn der Name vielleicht weiblich ist
      */
     public static boolean isFemale(final String name){
+    	if(isNothing(name)){
+    		return false;
+    	}
     	final String[] suffices={"a","is","e","id"};
     	for(String s:suffices){
     		if(name.endsWith(s)){

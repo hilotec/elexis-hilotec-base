@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 3056 2007-09-02 07:56:00Z rgw_ch $
+ *    $Id: Kontakt.java 3509 2008-01-09 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 
@@ -169,8 +169,9 @@ public class Kontakt extends PersistentObject{
 			ret=sb.toString();
 		} else if (this instanceof Organisation) {
 			Organisation o = Organisation.load(getId());
-			sb.append(o.getLabel(true));
-			sb.append("\n");
+			String[] rx=new String[2];
+			o.get(new String[]{"Bezeichnung1","Bezeichnung2"},rx);
+			sb.append(rx[0]).append(" ").append(checkNull(rx[1])).append("\n");
 			sb.append(an.getEtikette(false, true));
 			ret = sb.toString();
 		}else{
