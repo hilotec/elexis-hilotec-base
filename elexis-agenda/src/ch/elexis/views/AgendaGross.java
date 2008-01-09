@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 3499 2008-01-05 16:20:22Z rgw_ch $
+ *  $Id: AgendaGross.java 3511 2008-01-09 15:00:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -278,9 +278,11 @@ public class AgendaGross extends BaseAgendaView {
 						String grund = termin.getGrund();
 						if (grund != null) {
 							String[] tokens = grund.split("[\r\n]+");
-							grund = tokens[0];
+							if(tokens.length>0){
+								grund = tokens[0];
+							}
 						}
-						return grund;
+						return grund==null ? "" : grund;
 					} else {
 						return "";
 					}
