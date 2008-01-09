@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 3214 2007-09-26 20:13:35Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 3510 2008-01-09 15:00:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -43,14 +43,12 @@ import ch.rgw.tools.VCard;
  * A class to import data from different sources  into the contacts
  * To simplify things we request specific formats
  * <ul>
- * <li>A vCard</li>
- * <li><An XML-File with the root element containing fields "IstPerson", "Bezeichnung1",
- * "Bezeichnung2","Geburtsdatum","Geschlecht","E-Mail","Website","Telefon 1","Telefon 2","Strasse","Plz","Ort","Postadresse".
- * All fields are strings. The first one is interpreted boolean where empty or "0" maps to false, all other
+ * <li>A Microsoft(tm) Excel(tm) 97(tm) Spreadsheet(tm) containing a page 0 with the following fields:<br/> 
+ *  "ID","IstPerson", "Bezeichnung1",
+ * "Bezeichnung2","Geburtsdatum","Geschlecht","E-Mail","Website","Telefon 1","Telefon 2","Strasse","Plz","Ort","Postadresse","EAN".
+ * All fields are strings. The field istPerson one is interpreted boolean where empty or "0" maps to false, all other
  * values map to true. 
- * </li>
- * <li>A Microsoft(tm) Excel(tm) Spreadsheet containing a page 0 with the above fields. Each field must be present but may
- * be empty.</li>
+ * Each field must be present but may be empty.</li>
  * <li>A File in CSV format containing the above fields</li>
  * <li>some preset files</li>
  * </ul>
@@ -63,8 +61,9 @@ public class KontaktImporterBlatt extends Composite{
 	Combo cbMethods;
 	int method;
 	private final Log log=Log.get("KontaktImporter");
-	static final String[] methods=new String[]{"XLS","XML","CSV","vCard","KK-Liste"};
+	static final String[] methods=new String[]{"XLS","CSV","KK-Liste"};
 	private static final String PRESET_RUSSI="e3ad14dc49e27dbcc4771b41b34cdd902f9cfcc6";
+	private static final String PRESET_UNIVERSAL="be99f1d4a3feae5e5eb84fae8ccddeee9582df8d";
 	
 	public KontaktImporterBlatt(final Composite parent){
 		super(parent,SWT.NONE);
@@ -159,35 +158,11 @@ public class KontaktImporterBlatt extends Composite{
 		ret[2]=plzOrt.length>1 ? plzOrt[1] : "";
 		return ret;
 	}
-	/*
-	private Organisation getKK(final String typ,String name, final String zweig, final String mode, final String adresse){
-		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
-		if(StringTool.isNothing(name)){
-			name=StringTool.getFirstWord(zweig);
-			if(StringTool.isNothing(name)){
-				return null;
-			}
-		}
-		qbe.add("Name", "=", name);
-		qbe.add("Zusatz1", "=", zweig);
-		String krz=typ+name.substring(0,3)+mode;
-		qbe.add("Kuerzel", "=", krz);
-		List<Organisation> list=qbe.execute();
-		Organisation ret=null;
-		if(list.size()==1){
-			ret= list.get(0);
-		}else{
-			ret= new Organisation(name,zweig);
-			ret.set("Kuerzel", krz);
-		}
-		ret.set("Anschrift", adresse);
-		return ret;
-	}
-	*/
+	
 	public boolean importExcel(final String file, final IProgressMonitor moni){
 		ExcelWrapper exw=new ExcelWrapper();
 		exw.load(file, 0);
-		List<String> row=exw.getRow(exw.getFirstRow());
+		List<String> row=exw.getRow(exw.getFirstRow());		// we load the first row to figure out whether we know the format
 		try{
 			MessageDigest digest=MessageDigest.getInstance("SHA1");
 			for(String field:row){
@@ -198,34 +173,16 @@ public class KontaktImporterBlatt extends Composite{
 			
 			if(vgl.equals(PRESET_RUSSI)){
 				return Presets.importRussi(exw,moni);
+			}else if(vgl.equals(PRESET_UNIVERSAL)){
+				return Presets.importUniversal(exw, moni);
+			}else{
+				SWTHelper.showError("Datatype error", "Unbekannter Datentyp", "Die Feldnamen dieses Files sind nicht bekannt");
 			}
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 		}
-		for(int i=exw.getFirstRow()+1;i<=exw.getLastRow();i++){
-			row=exw.getRow(i);
-			if(row==null){
-				continue;
-			}
-			String typ=row.get(0);
-			String bez1=row.get(1);
-			String bez2=row.get(2);
-			Kontakt k=null;
-			if(StringTool.isNothing(typ)|| typ.equals("0")){
-				k=new Organisation(bez1,bez2);
-			}else{
-				k=new Person(bez1,bez2,row.get(3),row.get(4));
-			}
-			k.set("E-Mail", row.get(5));
-			k.set("Website", row.get(6));
-			k.set("Telefon1", row.get(7));
-			k.set("Telefon2", row.get(8));
-			k.set("Strasse", row.get(9));
-			k.set("Plz", row.get(10));
-			k.set("Ort", row.get(11));
-			k.set("Anschrift", row.get(12));
-		}
-		return true;
+		
+		return false;
 		
 	}
 	public boolean importXML(final String file){

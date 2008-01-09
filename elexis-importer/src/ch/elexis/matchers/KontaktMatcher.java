@@ -112,11 +112,15 @@ public class KontaktMatcher {
 		if(!StringTool.isNothing(gender)){
 			String gl=gender.toLowerCase();
 			if(gl.startsWith("f") || gl.startsWith("w")){
-				sex="w";
-			}else if(gender.startsWith("m")){
-				sex="m";
+				sex=Person.FEMALE;
+			}else if(gl.startsWith("m")){
+				sex=Person.MALE;
 			}else{
-				sex="?";
+				if(StringTool.isNothing(vorname)){
+					sex="?";
+				}else{
+					sex=StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
+				}
 			}
 			qbe.add("Geschlecht", "=", sex);
 		}
