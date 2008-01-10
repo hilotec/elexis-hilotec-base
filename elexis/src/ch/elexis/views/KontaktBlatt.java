@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktBlatt.java 2082 2007-03-14 20:35:59Z rgw_ch $
+ * $Id: KontaktBlatt.java 3512 2008-01-10 22:36:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -38,7 +38,11 @@ import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Xid;
+import ch.elexis.data.Xid.XIDDomain;
 import ch.elexis.dialogs.AnschriftEingabeDialog;
+import ch.elexis.dialogs.KontaktExtDialog;
+import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.AutoForm;
 import ch.elexis.util.LabeledInputField.InputData;
@@ -53,7 +57,11 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 	private ScrolledForm form;
 	private FormToolkit tk;
 	AutoForm afDetails;
-	
+	static final String[] ExtFlds={"EAN="+Xid.DOMAIN_EAN,
+		"AHV="+Xid.DOMAIN_AHV,
+		"OID="+Xid.DOMAIN_OID,
+		"XID="+Xid.DOMAIN_ELEXIS
+		};
 	static final InputData[] def=new InputData[]{
 		new InputData("Bezeichnung1"),
 		new InputData("Bezeichnung2"),
@@ -71,8 +79,27 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 		new InputData("Website"),
 		new InputData("Kürzel/ID","Kuerzel",Typ.STRING,null),
 		new InputData("Bemerkung"),
-		new InputData("EAN","ExtInfo",Typ.STRING,"EAN"),
-		new InputData("Titel")
+		//new InputData("EAN","ExtInfo",Typ.STRING,"EAN"),
+		new InputData("Titel"),
+		new InputData("Externe IDs","XID",new LabeledInputField.IContentProvider(){
+
+			public void displayContent(PersistentObject po, InputData ltf) {
+				StringBuilder sb=new StringBuilder();
+				Xid xid=po.getXid();
+				String dom=Xid.getSimpleNameForXIDDomain(xid.getDomain());
+				sb.append(dom).append(": ").append(xid.getDomainId());
+				ltf.setText(sb.toString());
+			}
+
+			public void reloadContent(PersistentObject po, InputData ltf) {
+				KontaktExtDialog dlg=new KontaktExtDialog(Desk.getTopShell(),(Kontakt) po,ExtFlds);
+				dlg.create();
+				dlg.setTitle(Messages.getString("RechnungsPrefs.MandatorDetails")); //$NON-NLS-1$
+				dlg.open();
+				
+			}
+			
+		}),
 	};
 	private Kontakt actKontakt;
 	private Label lbAnschrift;

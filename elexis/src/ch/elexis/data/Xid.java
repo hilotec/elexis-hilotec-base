@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3433 2007-12-10 16:52:26Z rgw_ch $
+ * $Id: Xid.java 3512 2008-01-10 22:36:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -222,6 +222,13 @@ public class Xid extends PersistentObject {
 		return domains.get(xidDomain).getQuality();
 	}
 	
+	public static String getSimpleNameForXIDDomain(final String domain){
+		XIDDomain xd=domains.get(domain);
+		if(xd==null){
+			return domain;
+		}
+		return xd.simple_name;
+	}
 	protected Xid(final String id){
 		super(id);
 	}

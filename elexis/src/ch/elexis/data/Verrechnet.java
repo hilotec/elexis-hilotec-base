@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 2839 2007-07-18 17:44:17Z rgw_ch $
+ * $Id: Verrechnet.java 3512 2008-01-10 22:36:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -52,6 +52,10 @@ public class Verrechnet extends PersistentObject {
 	}
 	public String getText(){
 		return checkNull(get("Leistg_txt"));
+	}
+	
+	public void setText(String text){
+		set("Leistg_txt",text);
 	}
 	/** Den effektiven Preis setzen (braucht nicht TP*Scale zu sein */
 	/*
