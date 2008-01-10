@@ -56,6 +56,9 @@ public class Presets {
 			if(row==null){
 				continue;
 			}
+			if(row.length!=17){
+				continue;
+			}
 			
 			String ID=StringTool.getSafe(row,0);
 			String EAN=StringTool.getSafe(row, 17);
@@ -64,6 +67,7 @@ public class Presets {
 			}
 			if(StringTool.isNothing(ID)){
 				SWTHelper.showError("Bad line format","ungültiger Eintrag", "ID oder EAN muss angegeben sein");
+				continue;
 			}
 			if(Xid.findObject(KONTAKTID, ID)!=null){	// avoid duplicate import
 				continue;
