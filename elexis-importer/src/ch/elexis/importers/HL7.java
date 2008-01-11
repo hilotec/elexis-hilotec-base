@@ -1,7 +1,7 @@
 /**
  * (c) 2007 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3411 2007-12-03 18:08:22Z rgw_ch $
+ * $Id: HL7.java 3517 2008-01-11 13:28:11Z michael_imhof $
  */
  
 
@@ -152,12 +152,20 @@ public class HL7 {
 				sex=elPid[8].equalsIgnoreCase("M") ? "m" : "w";
 			}
 			
+			String nachname = "";
+			if (name.length > 0) {
+				nachname = name[0];
+			}
+			String vorname = "";
+			if (name.length > 1) {
+				vorname = name[1];
+			}
 			
 			if(list.size()==0){
 				// We did not find the patient using the PatID, so we try the name and birthdate
 				qbe.clear();
-				qbe.add("Name", "=", StringTool.normalizeCase(name[0]));
-				qbe.add("Vorname", "=", StringTool.normalizeCase(name[1]));
+				qbe.add("Name", "=", StringTool.normalizeCase(nachname));
+				qbe.add("Vorname", "=", StringTool.normalizeCase(vorname));
 				qbe.add("Geburtsdatum", "=", new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
 				list=qbe.execute();
 				if(list.size()==1){
@@ -172,7 +180,7 @@ public class HL7 {
 								phone=elPid[13];
 							}
 						}
-						pat=new Patient(name[0],name[1],gebdat,sex==null ? StringTool.isFemale(name[1]) ? "w" : "m" : sex);
+						pat=new Patient(nachname,vorname,gebdat,sex==null ? StringTool.isFemale(vorname) ? "w" : "m" : sex);
 						pat.set("PatientNr",pid);
 						String[] adr=address.split("\\^+");
 						Anschrift an=pat.getAnschrift();
@@ -192,9 +200,9 @@ public class HL7 {
 						pat.setAnschrift(an);
 						pat.set("Telefon1", phone);
 					}else{
-						pat=(Patient) KontaktSelektor.showInSync(Patient.class, "Patient auswählen", "Wer ist "+name[0]+" "+name[1]+"?");
+						pat=(Patient) KontaktSelektor.showInSync(Patient.class, "Patient auswählen", "Wer ist "+nachname+" "+vorname+"?");
 						if(pat==null){
-						//KontaktSelektor ksl=new KontaktSelektor(Hub.getActiveShell(),Patient.class,"Patient auswählen","Wer ist "+name[0]+" "+name[1]+"?");
+						//KontaktSelektor ksl=new KontaktSelektor(Hub.getActiveShell(),Patient.class,"Patient auswählen","Wer ist "+nachname+" "+vorname+"?");
 						//if(ksl.open()==Dialog.OK){
 						//	pat=(Patient)ksl.getSelection();
 						//}else{
@@ -205,7 +213,7 @@ public class HL7 {
 			}else{
 				// if the patient with the given ID was found, we verify, if it is the correct name and sex
 				pat= list.get(0);
-				if(!KontaktMatcher.isSame(pat, name[0], name[1], gebdat)){
+				if(!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)){
 					pat=null;
 					return new Result<Patient>(Log.WARNINGS,4,"Patient mit dieser ID schon mit anderem Namen vorhanden",null,true);
 				}
