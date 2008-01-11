@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3367 2007-11-23 16:30:20Z rgw_ch $
+ *  $Id: Rechnung.java 3518 2008-01-11 14:18:29Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,6 +16,8 @@ package ch.elexis.data;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -40,6 +42,7 @@ public class Rechnung extends PersistentObject {
     public static final String CORRECTION="Korrektur";
     public static final String REJECTED="Zurückgewiesen";
     public static final String OUTPUT="Ausgegeben";
+    public static final String REMARKS="Bemerkungen";
        
 	static{
 		addMapping("RECHNUNGEN","RnNummer","FallID","MandantID",
@@ -361,14 +364,15 @@ public class Rechnung extends PersistentObject {
 		if(betrag.isZero()){
 			return;
 		}
-		Money offen=getOffenerBetrag();
-		int cents=offen.getCents();
-		offen.subtractMoney(betrag);
-		if(offen.isNeglectable()){
+		Money oldOffen=getOffenerBetrag();
+		int oldOffenCents=oldOffen.getCents();
+		Money newOffen = new Money(oldOffen);
+		newOffen.subtractMoney(betrag);
+		if(newOffen.isNeglectable()){
 			setStatus(RnStatus.BEZAHLT);
-		}else if(offen.isNegative()){
+		}else if(newOffen.isNegative()){
 			setStatus(RnStatus.ZUVIEL_BEZAHLT);
-		}else if(offen.equals(getBetrag())){
+		}else if(newOffen.equals(getBetrag())){
 			// if the remainder is equal to the total, it was probably a negative payment -> storno
 			// So what might be the state of the bill after this payment?
 			// It cannot simply be "OFFEN", because the bill was (almost sure) printed already
@@ -379,10 +383,19 @@ public class Rechnung extends PersistentObject {
 			if(zahlungen.size()<2){
 				setStatus(RnStatus.OFFEN_UND_GEDRUCKT);
 			}else{
-				setStatus(Integer.parseInt(zahlungen.get(zahlungen.size()-2)));
+				// status description is of the form "11.01.2008, 09:16:42: 15"
+				String statusDescription = zahlungen.get(zahlungen.size()-2);
+				Matcher matcher = Pattern.compile(".*:\\s*(\\d+)").matcher(statusDescription);
+				if (matcher.matches()) {
+					String prevStatus = matcher.group(1);
+					int newStatus = Integer.parseInt(prevStatus);
+					setStatus(newStatus);
+				} else {
+					// we couldn't find the previous status, do nothing
+				}
 			}
 		}
-		else if(offen.getCents()<cents){
+		else if(newOffen.getCents()<oldOffenCents){
 				setStatus(RnStatus.TEILZAHLUNG);
 		}
 		new Zahlung(this,betrag,text);
