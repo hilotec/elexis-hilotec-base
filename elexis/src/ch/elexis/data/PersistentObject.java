@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3512 2008-01-10 22:36:40Z rgw_ch $
+ *    $Id: PersistentObject.java 3519 2008-01-12 06:32:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -516,6 +516,9 @@ public abstract class PersistentObject{
      * @return an identifier that may be empty but will never be null
      */
     public String getXID(final String domain){
+    	if(domain.equals(Xid.DOMAIN_ELEXIS)){
+    		return getId();
+    	}
     	Query<Xid> qbe=new Query<Xid>(Xid.class);
     	qbe.add("object", "=", getId());
     	qbe.add("domain", "=", domain);

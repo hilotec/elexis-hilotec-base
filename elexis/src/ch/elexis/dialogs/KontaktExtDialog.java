@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktExtDialog.java 3437 2007-12-12 16:48:05Z rgw_ch $
+ * $Id: KontaktExtDialog.java 3519 2008-01-12 06:32:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -27,6 +27,11 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.util.SWTHelper;
 
 
+/**
+ * Dialog to view/modify identifiers such as EAN, AHV, SSN, OID on objects
+ * @author Gerry
+ *
+ */
 public class KontaktExtDialog extends TitleAreaDialog {
 	private Kontakt k;
 	private String[] f;
