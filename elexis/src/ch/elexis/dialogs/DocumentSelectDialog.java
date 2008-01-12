@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentSelectDialog.java 2305 2007-04-28 07:56:08Z rgw_ch $
+ *  $Id: DocumentSelectDialog.java 3520 2008-01-12 11:26:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -89,7 +89,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			break;
 		case TYPE_CREATE_DOC_WITH_TEMPLATE:
 			setTitle("Brief mit Vorlage erstellen");
-			setMessage("Geben Sie einen Betreff ein, wählen Sie eine Vorlage aus und klicken Sie auf OK");
+			setMessage("Wählen Sie eine Vorlage aus und klicken Sie auf OK");
 			getShell().setText("Vorlage für den Brief wählen");
 			break;
 		case TYPE_LOAD_TEMPLATE:
