@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3450 2007-12-14 08:25:20Z michael_imhof $
+ *  $Id: VerrechnungsDisplay.java 3526 2008-01-13 18:02:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -236,6 +236,22 @@ public class VerrechnungsDisplay extends Composite {
         			int neu=Integer.parseInt(dlg.getValue());
         			changeAnzahl(v, neu);
         			int vorher=v.getZahl();
+        		}
+        	}
+        });
+        MenuItem chgText=new MenuItem(ret,SWT.NONE);
+        chgText.setText("Text ändern");
+        chgText.addSelectionListener(new SelectionAdapter(){
+        	@Override
+        	public void widgetSelected(SelectionEvent e){
+        		int sel=tVerr.getSelectionIndex();
+        		TableItem ti=tVerr.getItem(sel);
+        		Verrechnet v=(Verrechnet)ti.getData();
+        		String oldText=v.getText();
+        		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Text der Leistung ändern","Geben Sie bitte die neue Beschreibung für die Leistung bzw. den Artikel ein",oldText,null);
+        		if(dlg.open()==Dialog.OK){
+        			v.setText(dlg.getValue());
+        			setLeistungen(GlobalEvents.getSelectedKons());
         		}
         	}
         });
