@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 2358 2007-05-09 04:41:13Z rgw_ch $
+ * $Id: build.xml 3525 2008-01-13 17:40:20Z rgw_ch $
 -->
 <project name="laborimportViollier" default="all">
 	<!-- modify the following 2 lines -->
@@ -27,6 +27,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
+		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}"/>
 		<fileset dir="${plugindir}">
 			<include name="*.jar"/>
 		</fileset>
