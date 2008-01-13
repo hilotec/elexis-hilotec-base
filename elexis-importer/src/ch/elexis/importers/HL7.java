@@ -1,7 +1,7 @@
 /**
- * (c) 2007 by G. Weirich
+ * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3517 2008-01-11 13:28:11Z michael_imhof $
+ * $Id: HL7.java 3522 2008-01-13 11:08:56Z rgw_ch $
  */
  
 
@@ -15,6 +15,7 @@ import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.matchers.KontaktMatcher;
@@ -97,20 +98,28 @@ public class HL7 {
 	}
 	
 	/**
-	 * This method tries to find the patient denoted by this HL7-record. We try the PID-field PatientID, that is documented
-	 * as "PlacerID". But unfortunately not all labs use this field. Thus we try secondly the ORC-field
-	 * "Placer Order Number". Id the fields are different, we use the ORC field. The Order number then is
-	 * interpreted as a checksummed order number (Patient-Number+modulo10+ -HHmm).
+	 * This method tries to find the patient denoted by this HL7-record. We try the PID-field PatientID, that 
+	 * is documented as "PlacerID". But unfortunately not all labs use this field.
+	 * Thus we try secondly the ORC-field  "Placer Order Number". If the fields are different,
+	 * we use the ORC field. The Order number then is interpreted as a checksummed order number
+	 * (Patient-Number+modulo10+ -HHmm).
 	 * If we cannot find the Patient using this method, we try to find him/her with the name and birthdate.
 	 * If we still cannot make an unambiguous identification, we ask the user to tell us, who this lab result
 	 * belongs to. If the user can't decide we refuse the import.
 	 * 
 	 * This mess happens, because the labs interpret the hl7 'standard' differently and inconsistently.
 	 * @param createIfNotFound create the patient record in the database if neccessary
-	 * @return the Patient or null id it was not found and createIfNotFound was false, or
+	 * @return the Patient or null if it was not found and createIfNotFound was false, or
 	 * an error indicating the problem if it could not be created
 	 */
 	public Result<Patient> getPatient(final boolean createIfNotFound){
+		Query<Patient> qbe=new Query<Patient>(Patient.class);
+		List<Patient> list=null;
+		String nachname="";
+		String vorname="";
+		String gebdat="";
+		String sex=Person.FEMALE;
+
 		if(pat==null){
 			String[] elPid=getElement("PID",0);
 			String patid=elPid[2];
@@ -141,27 +150,25 @@ public class HL7 {
 			if(pid.indexOf('-')!=-1){
 				pid=StringTool.checkModulo10(pid.split("-")[0]);
 			}
-			// Find a patient with the given ID
-			Query<Patient> qbe=new Query<Patient>(Patient.class);
-			qbe.add("PatientNr", "=", pid);
-			List<Patient> list=qbe.execute();
-			String[] name=elPid[5].split("\\^");
-			String gebdat=elPid[7];
-			String sex=null;
-			if(elPid.length>8){
-				sex=elPid[8].equalsIgnoreCase("M") ? "m" : "w";
+			if(pid!=null){
+				// Find a patient with the given ID
+				qbe.add("PatientNr", "=", pid);
+				list=qbe.execute();
 			}
-			
-			String nachname = "";
+			String[] name=elPid[5].split("\\^");
 			if (name.length > 0) {
 				nachname = name[0];
 			}
-			String vorname = "";
 			if (name.length > 1) {
 				vorname = name[1];
 			}
-			
-			if(list.size()==0){
+			gebdat=elPid[7];
+			if(elPid.length>8){
+				sex=elPid[8].equalsIgnoreCase("M") ? Person.MALE : Person.FEMALE;
+			}else{
+				sex=StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
+			}
+			if(( pid==null ) || (list.size()!=1)){
 				// We did not find the patient using the PatID, so we try the name and birthdate
 				qbe.clear();
 				qbe.add("Name", "=", StringTool.normalizeCase(nachname));
@@ -180,7 +187,7 @@ public class HL7 {
 								phone=elPid[13];
 							}
 						}
-						pat=new Patient(nachname,vorname,gebdat,sex==null ? StringTool.isFemale(vorname) ? "w" : "m" : sex);
+						pat=new Patient(nachname,vorname,gebdat,sex);
 						pat.set("PatientNr",pid);
 						String[] adr=address.split("\\^+");
 						Anschrift an=pat.getAnschrift();
@@ -202,16 +209,12 @@ public class HL7 {
 					}else{
 						pat=(Patient) KontaktSelektor.showInSync(Patient.class, "Patient auswählen", "Wer ist "+nachname+" "+vorname+"?");
 						if(pat==null){
-						//KontaktSelektor ksl=new KontaktSelektor(Hub.getActiveShell(),Patient.class,"Patient auswählen","Wer ist "+nachname+" "+vorname+"?");
-						//if(ksl.open()==Dialog.OK){
-						//	pat=(Patient)ksl.getSelection();
-						//}else{
 							return new Result<Patient>(Log.WARNINGS,1,"Patient nicht in Datenbank",null,true);
 						}
 					}
 				}
 			}else{
-				// if the patient with the given ID was found, we verify, if it is the correct name and sex
+				// if the patient with the given ID was found, we verify, if it is the correct name
 				pat= list.get(0);
 				if(!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)){
 					pat=null;
@@ -230,7 +233,7 @@ public class HL7 {
 		return new Result<String>(Log.ERRORS,1,"Invalid MSH","Error",true);
 	}
 	/**
-	 * Find the lab issuing this file. If we provided a lab name in ze constructor, ths will return that lab.
+	 * Find the lab issuing this file. If we provided a lab name in the constructor, ths will return that lab.
 	 * @return the lab or null if it could not be found
 	 */
 	public Result<Kontakt> getLabor(){
