@@ -42,10 +42,14 @@ public class Presets {
 	static{
 		Xid.localRegisterXIDDomainIfNotExists(KONTAKTID, "Frühere ID",Xid.ASSIGNMENT_LOCAL);
 	}
-	public static final boolean importUniversal(final ExcelWrapper exw, final IProgressMonitor moni){
-		exw.setFieldTypes(new Class[]{Integer.class,Integer.class,String.class,String.class,String.class,String.class,
-				TimeTool.class,String.class,String.class,String.class,String.class,String.class,String.class,String.class,
-				String.class,String.class,Integer.class});
+	public static final boolean importUniversal(final ExcelWrapper exw, final boolean bKeepID, final IProgressMonitor moni){
+		exw.setFieldTypes(new Class[]{
+				Integer.class,Integer.class,String.class,	// ID, IstPerson, Titel
+				String.class,String.class,String.class,		// Bezeichnung1, Bezeichnung2, Zusatz
+				TimeTool.class,String.class,String.class,   // Geburtsdatum, Geschlecht, E-Mail
+				String.class,String.class,String.class,		// Website, Telefon 1, Telefon 2
+				String.class,String.class,String.class,		// Mobil, Strasse, Plz			
+				String.class,String.class,Integer.class});  // Ort, Postanschrift, EAN
 		int first=exw.getFirstRow();
 		int last=exw.getLastRow();
 		moni.beginTask("Import Kontaktdaten (Universalimporter)", last-first);
@@ -55,22 +59,17 @@ public class Presets {
 			if(row==null){
 				continue;
 			}
-			if(row.length!=17){
+			
+			if(row.length!=18){
 				continue;
 			}
 			
 			String ID=StringTool.getSafe(row,0);
 			String EAN=StringTool.getSafe(row, 17);
 			if(StringTool.isNothing(ID)){
-				ID=EAN; 		//EAN
+				ID=EAN; 	
 			}
-			if(StringTool.isNothing(ID)){
-				SWTHelper.showError("Bad line format","ungültiger Eintrag", "ID oder EAN muss angegeben sein");
-				continue;
-			}
-			if(Xid.findObject(KONTAKTID, ID)!=null){	// avoid duplicate import
-				continue;
-			}
+			
 			String typ=StringTool.getSafe(row,1);
 			String titel=StringTool.getSafe(row, 2);
 			String bez1=StringTool.getSafe(row,3);
@@ -83,12 +82,18 @@ public class Presets {
 			Kontakt k=null;
 			if(StringTool.isNothing(typ)|| typ.equals("0")){
 				k=KontaktMatcher.findOrganisation(bez1, strasse, plz, ort, true);
+				if(k==null){
+					continue;
+				}
 				k.set("Zusatz1", bez2);
 				k.set("Bezeichnung3", zusatz);
 			}else{
 				String sex=StringTool.getSafe(row, 7);
 				String gebdat=StringTool.getSafe(row, 6);
 				k=KontaktMatcher.findPerson(bez1, bez2, gebdat, sex, strasse, plz, ort, natel, true);
+				if(k==null){
+					continue;
+				}
 				k.set("Titel", titel);
 				k.set("Zusatz", zusatz);
 			}
@@ -103,8 +108,9 @@ public class Presets {
 					plz,
 					ort,
 					StringTool.getSafe(row, 16));
-			k.addXid(Xid.DOMAIN_EAN, EAN, true);
-			k.addXid(KONTAKTID, ID, false);
+			if(EAN.matches("[0-9]{13,13}")){
+				k.addXid(Xid.DOMAIN_EAN, EAN, true);
+			}
 			moni.worked(1);
 			if(moni.isCanceled()){
 				return false;
@@ -123,7 +129,7 @@ public class Presets {
 		moni.done();
 		return true;
 	}
-	public static boolean importRussi(final ExcelWrapper exw, final IProgressMonitor moni){
+	public static boolean importRussi(final ExcelWrapper exw, final boolean bKeepID, final IProgressMonitor moni){
 		exw.setFieldTypes(new Class[]{
 				Integer.class,String.class,TimeTool.class,String.class,
 				Integer.class,String.class,String.class,String.class,

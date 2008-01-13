@@ -31,6 +31,15 @@ import ch.rgw.tools.TimeTool;
  */
 public class KontaktMatcher {
 
+	public static Kontakt findKontakt(final String name, final String strasse, final String plz, final String ort){
+		Organisation o=findOrganisation(name, strasse, plz, ort, false);
+		if(o==null){
+			Person p=findPerson(name, "", "", "", strasse, plz, ort, "", false);
+			return p;
+		}else{
+			return o;
+		}
+	}
 	/**
 	 * Find the organization mathcing the given parameters
 	 * @param name 

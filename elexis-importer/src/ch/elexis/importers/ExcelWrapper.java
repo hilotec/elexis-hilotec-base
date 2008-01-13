@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 3465 2007-12-19 17:27:49Z rgw_ch $
+ *  $Id: ExcelWrapper.java 3524 2008-01-13 17:03:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -74,8 +74,14 @@ public class ExcelWrapper {
 			return null;
 		}
 		ArrayList<String> ret=new ArrayList<String>();
-		short first=row.getFirstCellNum();
-		short last=row.getLastCellNum();
+		short first=0;
+		short last=100;
+		if(types!=null){
+			last=(short)(types.length);
+		}else{
+			first=row.getFirstCellNum();
+			last=row.getLastCellNum();
+		}
 		for(short i=first;i<last;i++){
 			HSSFCell cell=row.getCell(i);
 			if (cell != null) {

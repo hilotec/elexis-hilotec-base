@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 3510 2008-01-09 15:00:44Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 3524 2008-01-13 17:03:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -44,8 +44,9 @@ import ch.rgw.tools.VCard;
  * To simplify things we request specific formats
  * <ul>
  * <li>A Microsoft(tm) Excel(tm) 97(tm) Spreadsheet(tm) containing a page 0 with the following fields:<br/> 
- *  "ID","IstPerson", "Bezeichnung1",
- * "Bezeichnung2","Geburtsdatum","Geschlecht","E-Mail","Website","Telefon 1","Telefon 2","Strasse","Plz","Ort","Postadresse","EAN".
+ *  "ID","IstPerson", "Titel", "Bezeichnung1",
+ * "Bezeichnung2","Zusatz", "Geburtsdatum","Geschlecht","E-Mail","Website","Telefon 1","Telefon 2",
+ * "Mobil","Strasse","Plz","Ort","Postadresse","EAN".
  * All fields are strings. The field istPerson one is interpreted boolean where empty or "0" maps to false, all other
  * values map to true. 
  * Each field must be present but may be empty.</li>
@@ -59,6 +60,7 @@ public class KontaktImporterBlatt extends Composite{
 	String filename;
 	Label lbFileName;
 	Combo cbMethods;
+	boolean bKeepID;
 	int method;
 	private final Log log=Log.get("KontaktImporter");
 	static final String[] methods=new String[]{"XLS","CSV","KK-Liste"};
@@ -95,16 +97,25 @@ public class KontaktImporterBlatt extends Composite{
 		bLoad.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lbFileName.setText("Bitte Dateityp und Datei wählen");
 		lbFileName.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
+		final Button bKeep=new Button(this,SWT.CHECK);
+		bKeep.setText("ID beibehalten (Achtung: Bitte Handbuch beachten)");
+		bKeep.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
+		bKeep.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				bKeepID=bKeep.getSelection();
+			}
+			
+		});
 	}
 
 	public boolean doImport(final IProgressMonitor moni){
 		if(filename.length()>0){
 			switch(method){
 			case 0: return importExcel(filename,moni);
-			case 1: return importXML(filename);
-			case 2: return importCSV(filename);
-			case 3: return importVCard(filename);
-			case 4: return importKK(filename);
+			case 1: return importCSV(filename);
+			case 2: return importKK(filename);
 			}
 		}
 		return false;
@@ -172,9 +183,9 @@ public class KontaktImporterBlatt extends Composite{
 			String vgl=BinConverter.bytesToHexStr(dg);
 			
 			if(vgl.equals(PRESET_RUSSI)){
-				return Presets.importRussi(exw,moni);
+				return Presets.importRussi(exw,bKeepID,moni);
 			}else if(vgl.equals(PRESET_UNIVERSAL)){
-				return Presets.importUniversal(exw, moni);
+				return Presets.importUniversal(exw, bKeepID,moni);
 			}else{
 				SWTHelper.showError("Datatype error", "Unbekannter Datentyp", "Die Feldnamen dieses Files sind nicht bekannt");
 			}
