@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 3329 2007-11-07 17:44:06Z rgw_ch $
+% *  $Id: konzepte.tex 3521 2008-01-13 11:08:32Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -136,6 +136,51 @@ Sie können entweder vordefinierte Leistungen aus einem der installierten Codesy
 
  Ein Lagerartikel ist ein Artikel, dessen Bestand monitorisiert wird, und der bei Bedarf auch halbautomatisch nachbestellt werden kann.
  Weitere Informationen zu Artikeln und Lager finden Sie bei der Beschreibung der entsprechenden View (S. \pageref{view:artikel} ff.)
+
+\section{Import von externen Daten }
+\index{Import}
+Elexis ist grundsätzlich in der Lage, Daten aus beliebigen Quellen zu importieren. Allerdings muss natürlich das Format dieser Daten bekannt oder in bestimmter Weise standardisiert sein. Datenimport wird deswegen meist von Importer-Plugins bewerkstelligt. Es gibt Importer für Telefunbuch-Daten, für Stammdaten anderer Praxisprogramme, für externe Labors, für Laborgeräte und für andere medizinische Geräte, die ihre Daten zu einem Computer transferieren können, für MiGeL, Medikamente, Tarmed und andere Datenbanken usw. Eine Aufstellung erhältlicher Plugins finden Sie im Menu 'Plugins' auf http://www.elexis.ch. Zusätzliche Importer können meist relativ einfach programmiert werden, verlangen Sie ggf. einen Kostenvoranschlag.
+
+\medskip
+
+Importer befinden sich meist im lokalen Menü der View, die die entsprechenden Daten anzeigt (z.B. Tarmed-Importer oder Labor-Importer). Eine Klasse von Importern, die keiner bestimmten View zugeordnet sind, hängen sich auch im Datei-Datenimport-Menü ein. Hier öffnet sich ein Dialog wie in Abb. \ref{fig:importdlg}.
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{images/importdlg}\\
+  \caption{Import-Dialog}\label{fig:importdlg}
+\end{figure}
+\index{Import!Kontakte}
+In den Reitern unten finden Sie alle installierten allgemeinen Importer. Welche das sind, hängt von den vorhandenen Plugins ab. Lediglich der in der Abbildung in den Vordergrund gebrachte 'Kontakt-Importer' ist immer vorhanden. Dieser Importer kann Kontakte aus externen Dateien importieren, sofern diese auf eine standardisierte Weise als Tabellen aufbereitet sind. Wählen Sie unter 'Dateityp', ob es sich um eine Microsoft\texttrademark Excel\texttrademark Tabelle (xls), um eine Character Separated Values-Tabelle (csv)oder um die Santésuisse-Tabelle der Versicherer und ihrer EAN-Codes handelt.
+Im Fall von xls muss die Datei eine Tabelle 0 mit folgenden Spalten enthalten:
+\begin{tabular}[h]{|l|l|}
+\hline Spaltentitel & Erklärung\\
+\hline
+\hline  ID & eine (im Prinzip beliebige, innerhalb der Datei aber eindeutige) Identifikation\\
+\hline IstPerson & 1 wenn der Eintrag eine Person bezeichnet, 0 andernfalls (Organisation etc.)\\
+\hline Bezeichnung1 & Bei Personen der Name\\
+\hline Bezeichnung2 & Bei Personen der Vorname\\
+\hline Geburtsdatum & Im Format dd.mm.yyyy oder yyyy-mm-dd\\
+\hline Geschlecht & m oder f oder w oder ein Wort, das mit m oder f oder w anfängt.\\
+\hline E-Mail & die E-Mal-Adresse\\
+\hline Website & Eine WWW-Adresse\\
+\hline Telefon 1 & Primäres Telefon\\
+\hline Telefon 2 & weitere Nummer\\
+\hline Strasse & Strasse und Hausnr.\\
+\hline Plz & PLZ entweder als 1224 oder CH-12344 geschrieben\\
+\hline Ort & \\
+\hline Postadresse & Adresse, wie sie auf Adressetiketten erscheinen soll. Zeilensprünge als $\backslash$n\\
+\hline EAN & Die EAN als EAN13\\
+\hline
+\end{tabular}
+
+\medskip 
+
+Die erste Zeile der Tabelle muss die Spaltentitel genau in obiger Schreibweise enthalten, damit das Format erkannt werden kann.
+Jede der genannten Spalten muss vorhanden sein, darf aber leer sein. Die Datei muss als iso-8859-1 codiert sein (Das ist Standard unter Windows; bei der MAc-Version von Excel müsste die Exportcodierung ev. entsprechend angepasst werden).
+
+\medskip
+
+Wenn Sie den Dateityp festgelegt haben, Klicken Sie auf den Button 'Datei wählen' und suchen die entsprechende Importdatei auf. Klicken Sie dann OK, um den Import zu starten.
 
  \section{Mehrere Instanzen gleichzeitig}
  \index{gleichzeitig}
