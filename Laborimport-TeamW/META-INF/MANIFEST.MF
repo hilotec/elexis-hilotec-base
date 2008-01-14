@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Plugin für Import Laborwerte TeamW
+Bundle-SymbolicName: ch.elexis.laborimport_teamw;singleton:=true
+Bundle-Version: 1.2.0
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ ch.elexis.importer.div
+Bundle-ClassPath: lib/commons-net-1.4.1.jar,
+ .
