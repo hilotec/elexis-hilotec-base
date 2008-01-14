@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 3326 2007-11-07 14:48:10Z rgw_ch $
+ *  $Id: Rezept.java 3529 2008-01-14 14:56:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -19,6 +19,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 import ch.elexis.Hub;
+import ch.elexis.util.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -80,7 +81,11 @@ public class Rezept extends PersistentObject {
 	}
 	
 	public void setBrief(final Brief brief){
-		set("BriefID",brief.getId());
+		if(brief==null){
+			log.log("Null Brief gesetzt bei setBrief", Log.ERRORS);
+		}else{
+			set("BriefID",brief.getId());
+		}
 	}
 	@Override
 	public String getLabel() {
