@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 3521 2008-01-13 11:08:32Z rgw_ch $
+% *  $Id: konzepte.tex 3530 2008-01-14 19:57:04Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -157,30 +157,39 @@ Im Fall von xls muss die Datei eine Tabelle 0 mit folgenden Spalten enthalten:
 \hline
 \hline  ID & eine (im Prinzip beliebige, innerhalb der Datei aber eindeutige) Identifikation\\
 \hline IstPerson & 1 wenn der Eintrag eine Person bezeichnet, 0 andernfalls (Organisation etc.)\\
+\hline Titel & Ein Titel, Anredem Bezugsperson etc.\\
 \hline Bezeichnung1 & Bei Personen der Name\\
 \hline Bezeichnung2 & Bei Personen der Vorname\\
+\hline Zusatz & \\
 \hline Geburtsdatum & Im Format dd.mm.yyyy oder yyyy-mm-dd\\
 \hline Geschlecht & m oder f oder w oder ein Wort, das mit m oder f oder w anfängt.\\
-\hline E-Mail & die E-Mal-Adresse\\
+\hline E-Mail & die E-Mail-Adresse\\
 \hline Website & Eine WWW-Adresse\\
 \hline Telefon 1 & Primäres Telefon\\
 \hline Telefon 2 & weitere Nummer\\
+\hline Mobil & Mobiltelefon\\
 \hline Strasse & Strasse und Hausnr.\\
-\hline Plz & PLZ entweder als 1224 oder CH-12344 geschrieben\\
+\hline Plz & PLZ entweder als 1224 oder CH-1224 geschrieben\\
 \hline Ort & \\
 \hline Postadresse & Adresse, wie sie auf Adressetiketten erscheinen soll. Zeilensprünge als $\backslash$n\\
 \hline EAN & Die EAN als EAN13\\
 \hline
 \end{tabular}
 
-\medskip 
+\medskip
 
 Die erste Zeile der Tabelle muss die Spaltentitel genau in obiger Schreibweise enthalten, damit das Format erkannt werden kann.
 Jede der genannten Spalten muss vorhanden sein, darf aber leer sein. Die Datei muss als iso-8859-1 codiert sein (Das ist Standard unter Windows; bei der MAc-Version von Excel müsste die Exportcodierung ev. entsprechend angepasst werden).
 
 \medskip
 
-Wenn Sie den Dateityp festgelegt haben, Klicken Sie auf den Button 'Datei wählen' und suchen die entsprechende Importdatei auf. Klicken Sie dann OK, um den Import zu starten.
+Wenn Sie den Dateityp festgelegt haben, Klicken Sie auf den Button 'Datei wählen' und suchen die entsprechende Importdatei auf. Setzen Sie ein Häkchen bei 'ID beibehalten' \textbf{nur dann}, wenn \begin{itemize}
+\item Jeder Datensatz im Feld ID eine ID hat
+\item Diese ID garantiert eindeutig ist, also mit keinem anderen Kontakt in Elexis kollidieren kann
+\item Sie diese ID unbedingt beibehalten wollen
+\end{itemize}
+Wenn Sie das Häkchen nicht setzen, was in den meisten Fällen empfohlen ist, dann wird Elexis beim Import für jeden Kontakt eine eigene eindeutige ID erstellen (genauso, als würde man den Kontakt manuell neu anlegen).\\
+Klicken Sie dann OK, um den Import zu starten.
 
  \section{Mehrere Instanzen gleichzeitig}
  \index{gleichzeitig}
