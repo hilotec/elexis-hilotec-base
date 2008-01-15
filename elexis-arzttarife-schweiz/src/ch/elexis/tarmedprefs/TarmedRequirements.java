@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3489 2007-12-30 13:28:16Z rgw_ch $
+ * $Id: TarmedRequirements.java 3533 2008-01-15 16:34:33Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -126,6 +126,9 @@ public class TarmedRequirements {
 			if(!gesetz.matches("KVG|UVG|MV|VVG")){
 				gesetz=Fall.getBillingSystemAttribute(gesetz, "gesetz");
 			}
+		}
+		if(gesetz.equalsIgnoreCase("iv")){
+			gesetz="ivg";
 		}
 		if(StringTool.isNothing(gesetz)){
 			gesetz="KVG";

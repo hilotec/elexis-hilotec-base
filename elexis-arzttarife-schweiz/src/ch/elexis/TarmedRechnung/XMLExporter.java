@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3494 2008-01-02 14:28:42Z rgw_ch $
+ * $Id: XMLExporter.java 3533 2008-01-15 16:34:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -227,7 +227,11 @@ public class XMLExporter implements IRnOutputter {
 				}
 				
 				if(dest!=null){
-					writeFile(ret,dest);
+					if(type.equals(TYPE.STORNO)){
+						writeFile(ret,dest.toLowerCase().replaceFirst("\\.xml$", "_storno.xml"));
+					}else{
+						writeFile(ret,dest);
+					}
 				}
 				StringWriter stringWriter=new StringWriter();
 				XMLOutputter xout=new XMLOutputter(Format.getCompactFormat());
@@ -652,7 +656,7 @@ public class XMLExporter implements IRnOutputter {
 		// The 'insurance' element is optional in Tiers Garant so in TG we only insert this Element, if we have all
 		// data absolutely correct
 		// In Tiers Payant, the insurance element is mandatory, and, furthermore, MUST be an Organization. So in TP, we
-		// insert an insurance element in any case, and, if the guarantor is a person, we "covert" it to an organization
+		// insert an insurance element in any case, and, if the guarantor is a person, we "convert" it to an organization
 		if(tiers.equals("TG")){
 			if(kostentraeger instanceof Organisation){
 				if(kEAN.matches("[0-9]{13,13}")){
@@ -788,13 +792,22 @@ public class XMLExporter implements IRnOutputter {
 			}else{
 				versicherung.setAttribute("nif",nif);
 			}
+		}else if(gesetz.equalsIgnoreCase("uvg")){
+			String casenumber=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+			if(StringTool.isNothing(casenumber)){
+				casenumber=actFall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
+			}
+			if(!StringTool.isNothing(casenumber)){
+				versicherung.setAttribute("case_id", casenumber);
+			}
+			String vnummer=actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
+			if(!StringTool.isNothing(vnummer)){
+				versicherung.setAttribute("patient_id",vnummer);
+			}
 		}else{
 			String vnummer=actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
 			if(StringTool.isNothing(vnummer)){
 				vnummer=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
-			}
-			if(StringTool.isNothing(vnummer)){
-				vnummer=actFall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
 			}
 			if(StringTool.isNothing(vnummer)){
 				vnummer=pat.getId();
