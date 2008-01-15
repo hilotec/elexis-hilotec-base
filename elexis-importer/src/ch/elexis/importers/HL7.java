@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3522 2008-01-13 11:08:56Z rgw_ch $
+ * $Id: HL7.java 3531 2008-01-15 08:49:43Z michael_imhof $
  */
  
 
@@ -32,7 +32,7 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class HL7 {
-	private  String separator; 
+	String separator; 
 	String labName;
 	String labID;
 	
@@ -51,6 +51,11 @@ public class HL7 {
 		labName=labor;
 		labID=kuerzel;
 	}
+	
+	protected String getSeparator() {
+		return this.separator;
+	}
+	
 	/**
 	 * Load file into memory and break it up to separate lines. All other methods should only
 	 * be called after load was successful. To comply with some of the many standards around, we 
@@ -395,12 +400,20 @@ public class HL7 {
 			}
 			return split[0];
 		}
+		
 		public String getResultValue(){
 			return getField(5);
 		}
+		
 		public String getUnits(){
-			return getField(6);
+			String raw=getField(6);
+			String[] split=raw.split("\\^");
+			if (split.length > 0) {
+				return split[0];
+			}
+			return "-";
 		}
+		
 		public String getRefRange(){
 			return getField(7);
 		}
@@ -438,28 +451,39 @@ public class HL7 {
 		 * @return The comment (that can be an empty String or might contain several NTE records)
 		 */
 		public String getComment(){
-			StringBuilder ret=new StringBuilder();
-			for(int i=0;i<lines.length;i++){
-				if(lines[i].startsWith("NTE")){
-					String[] nte=lines[i].split(separator);
-					if(nte.length>1){
-						if(nte[1].equals(getObxNr())){
-							if(nte.length>3){
-								ret.append(nte[3]).append("\n");
-							}		
-						}
-					}
-				}
-			}
-			return ret.toString();
-		
+			return getOBXComments(lines, obxFields);
 		}
+		
 		private String getField(final int f){
 			if(obxFields.length>f){
 				return obxFields[f];
 			}
 			return "";
 		}
+	}
+	
+	/** 
+	 * Findet Kommentare zu einem OBX. Standartmässig werden die NTE Kommentare
+	 * anhand der obxNr gesucht.
+	 * @param hl7Rows
+	 * @return String
+	 */
+	public String getOBXComments(String[] hl7Rows, String[] obxFields) {
+		String obxNr = obxFields[1];
+		StringBuilder ret=new StringBuilder();
+		for(int i=0;i<hl7Rows.length;i++){
+			if(hl7Rows[i].startsWith("NTE")){
+				String[] nte=hl7Rows[i].split(separator);
+				if(nte.length>1){
+					if(nte[1].equals(obxNr)){
+						if(nte.length>3){
+							ret.append(nte[3]).append("\n");
+						}		
+					}
+				}
+			}
+		}
+		return ret.toString();
 	}
 	
 	/**
