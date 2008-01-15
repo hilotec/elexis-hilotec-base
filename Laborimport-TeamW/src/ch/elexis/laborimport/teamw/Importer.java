@@ -48,7 +48,6 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.importers.HL7;
 import ch.elexis.util.FtpServer;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
