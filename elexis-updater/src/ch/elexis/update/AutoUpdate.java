@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 3404 2007-11-28 07:45:32Z rgw_ch $
+ * $Id: AutoUpdate.java 3536 2008-01-16 12:06:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -38,6 +38,7 @@ public class AutoUpdate {
 		try {
 			UpdateJob job=null;
 			String base=Hub.getBasePath();
+			//String base="d:/apps/elexis-1.2.0/plugins/ch.elexis_1.2.1";
 			basedir=new File(base).getParentFile();
 			log.log("Dir: "+basedir.getAbsolutePath(),Log.INFOS);  // =plugins
 			if(basedir.isDirectory()){
@@ -102,16 +103,7 @@ public class AutoUpdate {
 				}
 			} // for
 			monitor.done();
-			if(Display.getDefault()!=null){
-				Display.getDefault().asyncExec(new Runnable(){
-
-					public void run() {
-						if(Display.getDefault().getActiveShell()!=null){
-							MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Update abgeschlossen", "Es wurden "+filecounter+" plugins heruntergeladen. Bitte neu starten.");
-						}
-					}
-				});
-			}
+			SWTHelper.showInfo("Update abgeschlossen", "Es wurden "+filecounter+" plugins heruntergeladen. Bitte neu starten.");
 			return Status.OK_STATUS;
 		}
 		
@@ -120,8 +112,8 @@ public class AutoUpdate {
 		ReplaceInfo(final File f, final String s, final int m){
 			file=f; sub=s; mode=m;
 		}
-		public File file;
-		public String sub;
-		public int mode;
+		public File file;		// New Zip-File to insert
+		public String sub;		// Subdirectory to replace with zip-content
+		public int mode;		// One of the constants in UpdateClient
 	}
 }
