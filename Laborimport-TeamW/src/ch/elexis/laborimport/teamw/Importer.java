@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
@@ -67,10 +69,23 @@ public class Importer extends ImporterPage {
 	private static final String COMMENT_NAME = "Kommentar"; //$NON-NLS-1$
 	private static final String COMMENT_CODE = "kommentar"; //$NON-NLS-1$
 	private static final String COMMENT_GROUP = "00 Kommentar"; //$NON-NLS-1$
+	
+	private static final String PRAXIS_SEMAPHORE = "praxis.sem"; //$NON-NLS-1$
+	private static final String TEAMW_SEMAPHORE = "teamw.sem"; //$NON-NLS-1$
 
 	// importer type
 	private static final int FILE = 1;
 	private static final int DIRECT = 2;
+
+	private class SemaphoreException extends Exception {
+		public SemaphoreException(String arg0) {
+			super(arg0, null);
+		}
+
+		public SemaphoreException(Throwable cause) {
+			super(cause);
+		}
+	}
 
 	public Importer() {
 	}
@@ -240,7 +255,8 @@ public class Importer extends ImporterPage {
 									if (!file.renameTo(newFile)) {
 										String msg = MessageFormat
 												.format(
-														ch.elexis.laborimport.teamw.Messages.getString("Importer.error.moveToArchive"), //$NON-NLS-1$
+														ch.elexis.laborimport.teamw.Messages
+																.getString("Importer.error.moveToArchive"), //$NON-NLS-1$
 														new Object[] { file
 																.getAbsolutePath() });
 										SWTHelper
@@ -283,7 +299,7 @@ public class Importer extends ImporterPage {
 				throw new IOException(ftp.getReplyStrings()[0]);
 			}
 		}
-		
+
 		ftp.enterLocalPassiveMode();
 
 		return ftp;
@@ -294,6 +310,29 @@ public class Importer extends ImporterPage {
 			ftp.disconnect();
 			ftp = null;
 		}
+	}
+
+	protected void addSemaphore(FtpServer ftp, String downloadDir)
+			throws SemaphoreException {
+		try {
+			String[] filenameList = ftp.listNames();
+			for (String filename : filenameList) {
+				if (filename.toLowerCase().equals(TEAMW_SEMAPHORE)) {
+					throw new SemaphoreException(
+							"Download von Team-W Server im Moment nicht möglich.\nVersuchen Sie es später nochmals.");
+				}
+			}
+			File file = new File(System.getProperty("user.home", "")
+					+ System.getProperty("file.separator") + PRAXIS_SEMAPHORE);
+			file.createNewFile();
+			ftp.uploadFile(file.getName(), file.getPath());
+		} catch (IOException e) {
+			throw new SemaphoreException(e);
+		}
+	}
+
+	protected void removeSemaphore(FtpServer ftp) throws IOException {
+		ftp.deleteFile(PRAXIS_SEMAPHORE);
 	}
 
 	private Result<?> importDirect() {
@@ -314,11 +353,12 @@ public class Importer extends ImporterPage {
 			List<String> hl7FileList = new Vector<String>();
 			try {
 				ftp = openConnection(ftpHost, user, pwd);
+				addSemaphore(ftp, downloadDir);
+
 				String[] filenameList = ftp.listNames();
-				log
-						.log("Verbindung mit Labor " + MY_LAB //$NON-NLS-1$
-								+ " erfolgreich. " + filenameList.length //$NON-NLS-1$
-								+ " Dateien gefunden.", Log.INFOS); //$NON-NLS-1$
+				log.log("Verbindung mit Labor " + MY_LAB //$NON-NLS-1$
+						+ " erfolgreich. " + filenameList.length //$NON-NLS-1$
+						+ " Dateien gefunden.", Log.INFOS); //$NON-NLS-1$
 				for (String filename : filenameList) {
 					if (filename.toUpperCase().endsWith("HL7")) { //$NON-NLS-1$
 						ftp.downloadFile(filename, downloadDir + filename);
@@ -328,16 +368,18 @@ public class Importer extends ImporterPage {
 					}
 				}
 			} finally {
+				removeSemaphore(ftp);
 				closeConnection(ftp);
 			}
 
-			String header = MessageFormat
-					.format(ch.elexis.laborimport.teamw.Messages.getString("Importer.import.header"), //$NON-NLS-1$
-							new Object[] { MY_LAB });
-			String question = MessageFormat
-					.format(
-							ch.elexis.laborimport.teamw.Messages.getString("Importer.import.message"), //$NON-NLS-1$
-							new Object[] { hl7FileList.size(), downloadDir });
+			String header = MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.import.header"), //$NON-NLS-1$
+					new Object[] { MY_LAB });
+			String question = MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.import.message"), //$NON-NLS-1$
+					new Object[] { hl7FileList.size(), downloadDir });
 			if (SWTHelper.askYesNo(header, question)) {
 				for (String filename : hl7FileList) {
 					importFile(downloadDir + filename);
@@ -347,6 +389,11 @@ public class Importer extends ImporterPage {
 		} catch (IOException e) {
 			result = new Result<String>(Log.ERRORS, 1, e.getMessage(), MY_LAB,
 					true);
+			result.display(ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.error.import")); //$NON-NLS-1$
+		} catch (SemaphoreException e) {
+			result = new Result<String>(Log.WARNINGS, 1, e.getMessage(),
+					MY_LAB, true);
 			result.display(ch.elexis.laborimport.teamw.Messages
 					.getString("Importer.error.import")); //$NON-NLS-1$
 		}

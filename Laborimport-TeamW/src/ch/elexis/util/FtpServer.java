@@ -30,7 +30,7 @@ public class FtpServer extends FTPClient {
 	 * Download a file from the server, 
 	 * and save it to the specified local file 
 	 */
-	public boolean downloadFile(String remoteFilenamePath,
+	public void downloadFile(String remoteFilenamePath,
 			String localFilenamePath) throws IOException {
 		setWorkingDirectory(remoteFilenamePath);
 		String remoteFile = UtilFile.getFilename(remoteFilenamePath);
@@ -48,8 +48,6 @@ public class FtpServer extends FTPClient {
 				localFile.close();
 			}
 		}
-
-		return true;
 	}
 
 	/** 
