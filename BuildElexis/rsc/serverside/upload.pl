@@ -19,7 +19,7 @@
 
 
 ############################################################
-# $Id: upload.pl 2540 2007-06-21 07:03:00Z rgw_ch $
+# $Id: upload.pl 3537 2008-01-16 12:07:26Z rgw_ch $
 ############################################################
 
 use strict;
@@ -72,6 +72,7 @@ MAIN:
         or die "Cannot changing working directory($ftp_dir): $ftp->message";
 
     # wir brauchen das Listing auf dem Server wg. spezieller Behandlung des Dateinamens
+    print "Reading directory from ftp server\n";
     my @serverfiles=$ftp->ls;
     my %remote={};
     foreach my $serverfile(@serverfiles){
@@ -79,7 +80,7 @@ MAIN:
         (my $prefix, my $version)=split /_[0-9]/, $serverfile;
         $remote{$prefix}=$serverfile;
     }
-    
+    print "processing files\n";
     #upload file one by one
     my ($file_name, $file_mode, $file_size, $file_mdtm, $remote_file_size, $remote_file_mdtm);
     my $file_processed = 0;
