@@ -283,6 +283,8 @@ public class Importer extends ImporterPage {
 				throw new IOException(ftp.getReplyStrings()[0]);
 			}
 		}
+		
+		ftp.enterLocalPassiveMode();
 
 		return ftp;
 	}
