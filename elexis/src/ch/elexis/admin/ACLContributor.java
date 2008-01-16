@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 3492 2008-01-01 08:41:04Z rgw_ch $
+ *  $Id: ACLContributor.java 3541 2008-01-16 17:43:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 import static ch.elexis.admin.AccessControlDefaults.*; 
@@ -22,7 +22,7 @@ public class ACLContributor implements IACLContributor {
 			 ACCOUNTING_GLOBAL, ACCOUNTING_BILLCREATE, ACCOUNTING_BILLMODIFY,
 			 ACCOUNTING_READ,
 			 ACL_USERS, DATA, KONTAKT_DELETE, DELETE,DELETE_FORCED,
-			 KONTAKT_DISPLAY,KONTAKT_INSERT,KONTAKT_MODIFY,
+			 KONTAKT_DISPLAY,KONTAKT_INSERT,KONTAKT_MODIFY,KONTAKT_EXPORT,
 			 PATIENT_DISPLAY,PATIENT_INSERT,PATIENT_MODIFY,LAB_SEEN,
 			 LSTG_VERRECHNEN,KONS_CREATE,KONS_DELETE,KONS_EDIT,KONS_REASSIGN,
 			 AC_ABOUT,AC_CHANGEMANDANT,AC_CONNECT,AC_EXIT,

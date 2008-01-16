@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3472 2007-12-20 20:57:14Z rgw_ch $
+ *  $Id: KonsDetailView.java 3541 2008-01-16 17:43:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -25,7 +25,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -39,8 +38,6 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
-
-import com.sun.org.apache.bcel.internal.generic.LMUL;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -92,7 +89,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     //private Hyperlink hDg,hVer;
     private DiagnosenDisplay dd;
     private VerrechnungsDisplay vd;
-    private Action versionBackAction, purgeAction;
+    private Action versionBackAction, purgeAction, saveAction;
     Action versionFwdAction;
     int displayedVersion;
     Font emFont;
@@ -193,7 +190,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         }else{
         	menu.createMenu(versionFwdAction,versionBackAction,GlobalActions.neueKonsAction,GlobalActions.delKonsAction, GlobalActions.redateAction);
         }
-        menu.createToolbar(GlobalActions.neueKonsAction);
+        menu.createToolbar(GlobalActions.neueKonsAction,saveAction);
         GlobalEvents.getInstance().addActivationListener(this,this);
         GlobalEvents.getInstance().addObjectListener(this);
         text.connectGlobalActions(getViewSite());
@@ -377,6 +374,17 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
             		setKonsText(actKons,displayedVersion+1);
             		text.setDirty(true);
             	}
+            }
+        };
+        saveAction=new Action("Eintrag sichern"){
+        	{
+        		setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DISK));
+        		setToolTipText("Text explizit speichern");
+        	}
+        	@Override
+			public void run()
+            {
+        		save();
             }
         };
     }
