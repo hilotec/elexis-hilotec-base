@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 3508 2008-01-08 16:56:38Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3540 2008-01-16 14:38:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -160,7 +160,7 @@ public class MedikamentImporter extends ImporterPage {
 	
 	@Override
 	public String getDescription(){
-		return "Bitte wählen Sie die Datei (RA-11-Format) aus, aus der die Artikel importiert werden sollen";
+		return "Bitte wählen Sie die Datei (IGM10 oder IGM11 -Format) aus, aus der die Artikel importiert werden sollen";
 	}
 	
 	@Override
