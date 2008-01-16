@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3518 2008-01-11 14:18:29Z danlutz $
+ *  $Id: Rechnung.java 3543 2008-01-16 17:58:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -82,6 +82,11 @@ public class Rechnung extends PersistentObject {
         //int summe=0;
         Money summe=new Money();
         for(Konsultation b:behandlungen){
+        	Rechnung shouldntExist=b.getRechnung();
+        	if((shouldntExist!=null) && (shouldntExist.getStatus()!=RnStatus.STORNIERT)){
+        		log.log("Tried to create bill for already billed kons "+b.getLabel(), Log.WARNINGS);
+        		continue;
+        	}
             Mandant bm=b.getMandant();
             if( (bm==null) || (!bm.isValid())){
             	result=result.add(Log.ERRORS,1,"Ungültiger Mandant bei Konsultation "+b.getLabel(),ret,true);
