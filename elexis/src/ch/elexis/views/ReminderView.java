@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 2963 2007-08-06 13:59:24Z danlutz $
+ * $Id: ReminderView.java 3539 2008-01-16 14:38:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 

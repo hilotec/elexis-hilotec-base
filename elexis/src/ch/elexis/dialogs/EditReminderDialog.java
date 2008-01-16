@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditReminderDialog.java 3093 2007-09-04 09:35:55Z rgw_ch $
+ *  $Id: EditReminderDialog.java 3539 2008-01-16 14:38:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.widgets.ColumnLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -50,7 +52,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 	Text text;
 	Label pat;
 	DatePickerCombo dpDue;
-	Button bDue, bDone, bRejected;
+	Button bDue, bDone, bRejected, bNoPatient;
 	Combo cbType;
 	List lUser;
 	Patient actPatient;
@@ -68,10 +70,12 @@ public class EditReminderDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout(2,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("EditReminderDialog.assigTo")); //$NON-NLS-1$
 		Composite cTopright=new Composite(ret,SWT.NONE);
-		cTopright.setLayout(new FillLayout());
+		cTopright.setLayout(new RowLayout(SWT.HORIZONTAL));
 		new Label(cTopright,SWT.NONE).setText(Messages.getString("EditReminderDialog.betrifft")); //$NON-NLS-1$
-		pat=SWTHelper.createHyperlink(cTopright, Messages.getString("EditReminderDialog.noPatient"), null); //$NON-NLS-1$
-	
+		pat=new Label(cTopright,SWT.NONE);
+		pat.setText(Messages.getString("EditReminderDialog.noPatient")); //$NON-NLS-1$
+		bNoPatient=new Button(cTopright,SWT.CHECK);
+		bNoPatient.setText(Messages.getString("EditReminderDialog.noPatient"));
 		users=Hub.getUserList();
 		lUser=new List(ret,SWT.MULTI|SWT.V_SCROLL);
 		lUser.add(TX_ALL);
@@ -199,7 +203,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		if(actPatient==null){
 			pat.setText(Messages.getString("EditReminderDialog.noPatientSelected")); //$NON-NLS-1$
 		}else{
-			pat.setText(actPatient.getLabel());
+			pat.setText("  "+actPatient.getLabel()+"  ");
 		}
 	}
 	
@@ -247,6 +251,9 @@ public class EditReminderDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
+		if(bNoPatient.getSelection()){
+			actPatient=null;
+		}
 		String due=new TimeTool(dpDue.getDate().getTime()).toString(TimeTool.DATE_GER);
 		int typidx=cbType.getSelectionIndex();
 		if(typidx==-1){
@@ -282,15 +289,6 @@ public class EditReminderDialog extends TitleAreaDialog {
 				}
 			}
 		}
-		//String user=cbUser.getItem(cbUser.getSelectionIndex());
-		/*
-		if(!user.equals(TX_ALL)){
-			String uid=new Query<Anwender>(Anwender.class).findSingle("Label", "=", user);
-			mine.set("Responsible", uid);
-		} else {
-			mine.set("Responsible", null);
-		}
-		*/
 		super.okPressed();
 	}
 
