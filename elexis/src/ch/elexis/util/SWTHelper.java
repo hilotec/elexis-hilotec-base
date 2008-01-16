@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 3498 2008-01-05 16:20:14Z rgw_ch $
+ * $Id: SWTHelper.java 3535 2008-01-16 12:06:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -131,7 +131,7 @@ public class SWTHelper {
 		Desk.theDisplay.syncExec(new Runnable(){
 
 			public void run() {
-				Shell shell=Desk.theDisplay.getActiveShell();
+				Shell shell=Desk.getTopShell();
 				MessageDialog.openInformation(shell, title, message);
 			}});
 	}

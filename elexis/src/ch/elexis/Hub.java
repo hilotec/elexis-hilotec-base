@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 3472 2007-12-20 20:57:14Z rgw_ch $
+ *    $Id: Hub.java 3535 2008-01-16 12:06:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -48,6 +48,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
+import ch.elexis.util.PluginCleaner;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.IO.FileTool;
 import ch.rgw.IO.Settings;
@@ -120,7 +121,7 @@ public class Hub extends AbstractUIPlugin {
     
     public Hub() {
 		plugin = this;
-
+		PluginCleaner.clean(new File(getBasePath()).getParent());
 		// Log und Exception-Handler initialisieren
 		log=Log.get("Elexis startup"); //$NON-NLS-1$
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
@@ -314,7 +315,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 3472 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 3535 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
