@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchForm.java 3442 2007-12-14 07:39:59Z michael_imhof $
+ * $Id: WeisseSeitenSearchForm.java 3544 2008-01-17 07:50:18Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -152,8 +152,15 @@ public class WeisseSeitenSearchForm extends Composite {
 		if (!entry.isDetail()) { // Sind Detailinformationen vorhanden
 			readKontakte(name, geo); // Detail infos lesen
 			KontaktEntry detailEntry = null;
-			if (getKontakte().size() > 0) {
+			if (getKontakte().size() == 1) {
 				detailEntry = getKontakte().get(0);
+			} else if (getKontakte().size() > 1) {
+				String strasse = entry.getAdresse().trim();
+				for (KontaktEntry tempEntry: getKontakte()) {
+					if (strasse.contains(tempEntry.getAdresse())) {
+						detailEntry = tempEntry;
+					}
+				}
 			}
 			if (detailEntry != null) {
 				// Falls bei Detailsuche Fehler passiert, dann sind weniger Infos vorhanden
