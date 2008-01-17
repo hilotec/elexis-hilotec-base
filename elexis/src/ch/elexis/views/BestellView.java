@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 3238 2007-10-04 12:44:31Z rgw_ch $
+ * $Id: BestellView.java 3546 2008-01-17 08:35:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -240,7 +240,10 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 
 				List<Artikel> l = Artikel.getLagerartikel();
 				for(Artikel a:l){
-					//String name=a.getLabel();
+					if((a==null) || (!a.exists())){
+						continue;
+					}
+				String name=a.getLabel();
 					int ist=a.getIstbestand();
 					int min=a.getMinbestand();
 					int max=a.getMaxbestand();

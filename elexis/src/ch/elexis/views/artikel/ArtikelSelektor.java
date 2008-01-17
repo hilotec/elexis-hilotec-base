@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ArtikelSelektor.java 3257 2007-10-13 16:24:10Z rgw_ch $
+ *    $Id: ArtikelSelektor.java 3546 2008-01-17 08:35:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -160,7 +160,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2{
 			}
 			
 		});
-		tv.setInput(getViewSite());
+		tv.setInput(this);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3200 2007-09-24 19:46:18Z rgw_ch $
+ * $Id: Query.java 3546 2008-01-17 08:35:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -419,6 +419,9 @@ public class Query<T>{
             while(res.next()==true){
                 String id=res.getString(1);
                 T o=(T)load.invoke(null,new Object[]{id});
+                if(o==null){
+                	continue;
+                }
                 boolean bAdd=true;
                 for(IFilter fi:postQueryFilters){
                 	if(fi.select(o)==false){
