@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelFactory.java 1759 2007-02-07 08:07:59Z rgw_ch $
+ *  $Id: ArtikelFactory.java 3551 2008-01-17 12:51:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -22,6 +22,7 @@ public class ArtikelFactory extends PersistentObjectFactory {
 
 	public ArtikelFactory() {}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public PersistentObject createFromString(String code) {
 	    try{
@@ -43,7 +44,7 @@ public class ArtikelFactory extends PersistentObjectFactory {
 	}
 
 	@Override
-	protected PersistentObject doCreateTemplate(Class typ) {
+	protected PersistentObject doCreateTemplate(Class<? extends PersistentObject> typ) {
 		try {
 			return (PersistentObject)typ.newInstance();
 		} catch (Exception e) {
