@@ -8,15 +8,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 3164 2007-09-16 10:45:07Z rgw_ch $
+ * $Id: Patientenblatt.java 3558 2008-01-17 14:35:23Z danlutz $
  *******************************************************************************/
 
 
 package ch.elexis.views;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -179,6 +183,54 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 			}});
 		inpZusatzAdresse.addHyperlinks("Hinzu...");
 		inpZusatzAdresse.setMenu(createZusatzAdressMenu());
+		inpZusatzAdresse.setLabelProvider(new LabelProvider() {
+			public String getText(Object element) {
+			    // TODO: make this behaviour configurable in preferences
+			
+				if (element instanceof BezugsKontakt) {
+					BezugsKontakt bezugsKontakt = (BezugsKontakt) element;
+
+					StringBuffer sb = new StringBuffer();
+					sb.append(bezugsKontakt.getLabel());
+					
+					Kontakt other = Kontakt.load(bezugsKontakt.get("otherID"));
+					if (other.exists()) {
+						List<String> tokens = new ArrayList<String>();
+						
+						String telefon1 = other.get("Telefon1");
+						String telefon2 = other.get("Telefon2");
+						String mobile = other.get("NatelNr");
+						String eMail = other.get("E-Mail");
+						String fax = other.get("Fax");
+						
+						if (!StringTool.isNothing(telefon1)) {
+							tokens.add("T1: " + telefon1);
+						}
+						if (!StringTool.isNothing(telefon2)) {
+							tokens.add("T2: " + telefon2);
+						}
+						if (!StringTool.isNothing(mobile)) {
+							tokens.add("M: " + mobile);
+						}
+						if (!StringTool.isNothing(fax)) {
+							tokens.add("F: " + fax);
+						}
+						if (!StringTool.isNothing(eMail)) {
+							tokens.add(eMail);
+						}
+						for (String token : tokens) {
+							sb.append(", ");
+							sb.append(token);
+						}
+					}
+					
+					return sb.toString();
+				} else {
+					return element.toString();
+				}
+			}
+		});
+		
         ecZA.setClient(inpZusatzAdresse);
 		for(int i=0;i<lbExpandable.length;i++){
             ec[i]=WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
