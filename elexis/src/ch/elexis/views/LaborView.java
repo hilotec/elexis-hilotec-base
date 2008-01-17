@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 3243 2007-10-09 04:25:36Z rgw_ch $
+ *  $Id: LaborView.java 3557 2008-01-17 14:32:27Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -566,10 +566,13 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			}
 			TableItem ti=new TableItem(table,SWT.NONE);
 			ti.setForeground(Desk.theDisplay.getSystemColor(SWT.COLOR_DARK_BLUE));
-			String[] gn=g.split(" +");
-			if(gn.length>1){
-				ti.setText(0,gn[1]);
-				ti.setData("Text",gn[1]);
+			
+			// split group order token and group name
+			Matcher m = Pattern.compile("(\\S+)\\s+(.+)").matcher(g);
+			if (m.matches()) {
+				String name = m.group(2);
+				ti.setText(0, name);
+				ti.setData("Text", name);
 			}else{
 				ti.setText("? "+g+" ?");
 				ti.setData("Text","? "+g+" ?");
