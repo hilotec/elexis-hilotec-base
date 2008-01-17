@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3361 2007-11-21 15:36:11Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 3547 2008-01-17 12:04:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -104,8 +105,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
     FormToolkit tk=Desk.theToolkit;
     Form left,right;
     FormText expl;
-    LazyTree tAll;
-    Tree tSelection;
+    @SuppressWarnings("unchecked")	LazyTree tAll;
+    @SuppressWarnings("unchecked")	Tree tSelection;
     TreeViewer tvSel;
     Hyperlink hAction, hSelection;
     LazyTreeListener ltl;
@@ -139,7 +140,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
                 new ViewerConfigurer.TreeLabelProvider() {
         			// extend the TreeLabelProvider by getImage()
         	
-            		@Override
+            		@SuppressWarnings("unchecked")
+					@Override
 					public Image getImage(final Object element) {
             			if (element instanceof Tree) {
             				Tree tree = (Tree) element;
@@ -167,6 +169,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
         cv.create(vc,cLeft,SWT.NONE,tAll);
         cv.getViewerWidget().setSorter(new ViewerSorter(){
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public int compare(final Viewer viewer, final Object e1, final Object e2) {
 				PersistentObject o1=(PersistentObject)((Tree)e1).contents;
@@ -185,7 +188,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
         tvSel.getControl().setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
         tvSel.setContentProvider(new BasicTreeContentProvider());
         tvSel.setLabelProvider(new LabelProvider(){
-            @Override
+            @SuppressWarnings("unchecked")
+			@Override
 			public String getText(final Object element)
             {
             	return ((PersistentObject)((Tree)element).contents).getLabel();
@@ -333,6 +337,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		public boolean hasChildren(final LazyTree l) {
 			Object po=l.contents;
 			if(po instanceof Konsultation){
@@ -535,6 +540,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			}
 		};
 		removeAction=new Action(Messages.getString("KonsZumVerrechnenView.removeFromSelection")){ //$NON-NLS-1$
+			@SuppressWarnings("unchecked")
 			@Override
 			public void run(){
 				IStructuredSelection sel=(IStructuredSelection)tvSel.getSelection();
@@ -559,6 +565,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		
 		// expand action for tvSel
 		expandSelAction = new Action(Messages.getString("KonsZumVerrechnenView.expand")){ //$NON-NLS-1$
+			@SuppressWarnings("unchecked")
 			@Override
 			public void run(){
 				IStructuredSelection sel=(IStructuredSelection)tvSel.getSelection();
@@ -616,6 +623,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			
 		};
 		detailAction=new RestrictedAction(AccessControlDefaults.LSTG_VERRECHNEN,"Abrechnungsdetails"){
+			@SuppressWarnings("unchecked")
 			@Override
 			public void doRun(){
 				Object[] sel=cv.getSelection();
@@ -632,7 +640,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 	 * die letzte Konsultation mehr als einen Monat her ist
 	 * Regel 2: Wer mehr als zwei Konsultationen hat, bekommt eine Rechnung über alle
 	 * Konsultationen des vergangenen Quartals
-	 */
+	 
 	@SuppressWarnings("unchecked") 
 	private void doSelect(final IProgressMonitor monitor){
 		//Letzte Quartalsgrenze finden
@@ -693,7 +701,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		}
 		monitor.done();
 	}
-	
+	*/
 	/**
 	 * Auwahl der Konsultationen, die verrechnet werden sollen, nach Datum.
 	 * Es erscheint ein Dialog, wo man den gewünschten Bereich wählen kann.
@@ -797,9 +805,18 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		 */
 		@Override
 		protected void okPressed() {
-			fromDate = new TimeTool(dpFromDate.getDate().getTime());
-			toDate = new TimeTool(dpToDate.getDate().getTime());
-
+			Date date=dpFromDate.getDate();
+			if(date==null){
+				fromDate=new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+			}else{
+				fromDate = new TimeTool(date.getTime());
+			}
+			date=dpToDate.getDate();
+			if(date==null){
+				toDate=new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
+			}else{
+				toDate = new TimeTool(date.getTime());
+			}
 			super.okPressed();
 		}
 		
