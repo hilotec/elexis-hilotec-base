@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3507 2008-01-08 16:56:29Z rgw_ch $
+ * $Id: Artikel.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -294,9 +294,14 @@ public class Artikel extends VerrechenbarAdapter{
 		}
 	}
 	public String getEAN(){
-		Hashtable ext=getHashtable(EXT_INFO);
-		return (String)ext.get("EAN");
+		String ean=get("EAN");
+		return ean;
 	}
+	public void setEAN(String ean){
+		set("EAN",ean);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public String getPharmaCode(){
 		Hashtable ext=getHashtable(EXT_INFO);
 		return checkNull((String)ext.get(PHARMACODE));
@@ -348,6 +353,7 @@ public class Artikel extends VerrechenbarAdapter{
 	@Override
 	public String getCodeSystemName() { return ARTIKEL;}
 	
+	@SuppressWarnings("unchecked")
 	public int getPreis(final TimeTool dat, final Fall fall) {
 		double vkt= checkZeroDouble(get(VK_PREIS));
 		Hashtable ext=getHashtable(EXT_INFO);
@@ -359,6 +365,7 @@ public class Artikel extends VerrechenbarAdapter{
 			return (int)Math.round(vkt);
 		}
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public Money getKosten(final TimeTool dat){
 		double vkt= checkZeroDouble(get(EK_PREIS));

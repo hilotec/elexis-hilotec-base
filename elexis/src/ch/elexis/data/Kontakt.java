@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 3523 2008-01-13 17:03:31Z rgw_ch $
+ *    $Id: Kontakt.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 
 
@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-import ch.elexis.Hub;
-import ch.elexis.util.Log;
 import ch.elexis.util.MFUList;
 import ch.rgw.tools.StringTool;
 
@@ -299,7 +297,8 @@ public class Kontakt extends PersistentObject{
      * store hält, werden verlorengehen.
      * @return eine Hashtable, die die parameter-wert-paare enthält.
      */
-    public Hashtable getInfoStore(){
+    @SuppressWarnings("unchecked")
+	public Hashtable getInfoStore(){
     	return getHashtable("ExtInfo");
     	/*
     	if(Hub.acl.request("LoadInfoStore")==true){
@@ -316,7 +315,8 @@ public class Kontakt extends PersistentObject{
      * geschehen, wenn nach getInfoStore() schreiboperationen durchgeführt wurden.
      * @param store die zuvor mit getInfoStore() erhaltene Hashtable.
      */
-    public void flushInfoStore(Hashtable store){
+    @SuppressWarnings("unchecked")
+	public void flushInfoStore(Hashtable store){
     	setHashtable("ExtInfo",store);
     	/*
     	if(Hub.acl.request("WriteInfoStore")==true){
@@ -407,7 +407,7 @@ public class Kontakt extends PersistentObject{
 		exi.put(typ,l);
 		setHashtable("ExtInfo",exi);
 	}
-	public static class statL implements Comparable, Serializable{
+	public static class statL implements Comparable<statL>, Serializable{
 		private static final long serialVersionUID = 10455663346456L;
 		String v;
 		int c;
@@ -416,12 +416,8 @@ public class Kontakt extends PersistentObject{
 			v=vv;
 			c=1;
 		}
-		public int compareTo(Object o) {
-			if(o instanceof statL){
-				statL ot=(statL)o;
-				return ot.c-c;
-			}
-			return -1;
+		public int compareTo(statL ot) {
+			return ot.c-c;
 		}
 	}
 	

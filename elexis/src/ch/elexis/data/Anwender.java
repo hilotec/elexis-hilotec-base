@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 3406 2007-11-28 15:42:19Z rgw_ch $
+ *  $Id: Anwender.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -195,6 +195,7 @@ public class Anwender extends Person {
      * @param text2 Passwort
      * @return true - erfolgreich angemeldet, Hub.actUser gesetzt. 
      */
+	@SuppressWarnings("unchecked")
 	public static boolean login(final String text, final String text2) {
 		logoff();
 		Hub.actUser=null;

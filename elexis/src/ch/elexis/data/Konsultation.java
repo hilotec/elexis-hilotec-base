@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 3472 2007-12-20 20:57:14Z rgw_ch $
+ *  $Id: Konsultation.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -276,14 +276,18 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	}
     /** Die Konsultation einem Mandanten zuordnen */
 	public void setMandant(Mandant m){
+		if(m!=null){
 			set("MandantID",m.getId());
+		}
 	}
 	
 	/** Das Behandlungsdatum setzen 
-	 * @param force TODO*/
+	 * @param force auch setzen, wenn Kons nicht änderbar*/
 	public void setDatum(String dat, boolean force){
-		if(force || isEditable(true)){
-			set("Datum",dat);
+		if(dat!=null){
+			if(force || isEditable(true)){
+				set("Datum",dat);
+			}
 		}
 	}
 	
@@ -295,7 +299,9 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		return Rechnung.load(get("RechnungsID"));
 	}
 	public void setRechnung(Rechnung r){
-		set("RechnungsID",r.getId());
+		if(r!=null){
+			set("RechnungsID",r.getId());
+		}
 	}
 
 	/**
@@ -689,8 +695,8 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
     	if(!isEditable(true)){
     		return;
     	}
-    	byte[] bin=StringTool.flatten(hash,StringTool.ZIP,null);
-    	Hashtable res=StringTool.fold(bin,StringTool.GUESS,null);
+    	byte[] bin=StringTool.flatten(hash);
+    	Hashtable res=StringTool.fold(bin);
     	if(res==null){
     		MessageDialog.openError(null,"Interner Fehler","Hashtable nicht wiederherstellbar.\nBitte melden Sie diesen Fehler, und wie\ner genau entstand");
     		return;

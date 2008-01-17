@@ -43,7 +43,7 @@ public class PersistentObjectFactory  implements IExecutableExtension{
 	}
 
 
-	protected PersistentObject doCreateTemplate(Class typ){
+	protected PersistentObject doCreateTemplate(Class<? extends PersistentObject> typ){
 		try {
 			return  (PersistentObject)typ.newInstance();
 		} catch (Exception ex) {
@@ -59,7 +59,7 @@ public class PersistentObjectFactory  implements IExecutableExtension{
 	 * @param values Die Werte für die Felder
 	 * @return Das Objekt bei Erfolg, sonst null
 	 */
-	public PersistentObject create(Class typ,String[] fields, String[] values){
+	public PersistentObject create(Class<? extends PersistentObject> typ,String[] fields, String[] values){
 		PersistentObject template=createTemplate(typ);
 		template.create(null);
 		if((template!=null) && ( template.set(fields,values)==true)){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 2910 2007-07-25 11:52:32Z danlutz $
+ *  $Id: Person.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,7 +16,6 @@ package ch.elexis.data;
 
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.TimeTool.TimeFormatException;
 
 /**
  * Eine Person ist ein Kontakt mit zusätzlich Namen, Geburtsdatum und Geschlecht.
@@ -173,6 +172,7 @@ public class Person extends Kontakt {
 		statForItem((PersistentObject)ice);	
 	}
 	
+	@SuppressWarnings("serial")
 	public static class PersonDataException extends Exception{
 		enum CAUSE{LASTNAME,FIRSTNAME,BIRTHDATE,SEX}
 		static final String[] causes=new String[]{"Name","Vorname","Geburtsdatum","Geschlecht (m oder w)"};

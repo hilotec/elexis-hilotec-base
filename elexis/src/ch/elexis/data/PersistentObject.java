@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3519 2008-01-12 06:32:35Z rgw_ch $
+ *    $Id: PersistentObject.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -515,7 +515,7 @@ public abstract class PersistentObject{
      * @param domain
      * @return an identifier that may be empty but will never be null
      */
-    public String getXID(final String domain){
+    public String getXid(final String domain){
     	if(domain.equals(Xid.DOMAIN_ELEXIS)){
     		return getId();
     	}
@@ -1658,6 +1658,7 @@ public abstract class PersistentObject{
 	 * operator individually before dropping the table
 	 * @param name the name of the table
 	 */
+	@SuppressWarnings("unchecked")
 	protected static void removeTable(final String name, final Class oclas){
 		Query qbe=new Query(oclas);
 		for(Object o:qbe.execute()){

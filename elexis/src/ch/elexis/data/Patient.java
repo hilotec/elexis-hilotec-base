@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 3350 2007-11-16 16:21:39Z rgw_ch $
+ *  $Id: Patient.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -294,7 +294,7 @@ public class Patient extends Person{
 				rc=code.toString();
 				Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
 				qbe.add("PatientNr","LIKE",rc+"%");
-				List list=qbe.execute();
+				List<Kontakt> list=qbe.execute();
 				if(!list.isEmpty()){
 					int l=list.size()+1;
 					code.append("-").append(l);

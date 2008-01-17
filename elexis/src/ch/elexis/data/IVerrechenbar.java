@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 2839 2007-07-18 17:44:17Z rgw_ch $
+ * $Id: IVerrechenbar.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -31,12 +31,12 @@ import ch.rgw.tools.TimeTool;
  */
 public interface IVerrechenbar extends ICodeElement{
 	public static IOptifier optifier=new DefaultOptifier();
-	public static Comparator comparator=new IVerrechenbar.DefaultComparator();
+	public static Comparator<IVerrechenbar> comparator=new IVerrechenbar.DefaultComparator();
 	public static IFilter ifilter=new IVerrechenbar.DefaultFilter();
     
     public IOptifier getOptifier();
     /** Einen Comparator zum Sortieren von Leistungen dieses Typs liefern */
-    public Comparator getComparator();
+    public Comparator<IVerrechenbar> getComparator();
     /** Einen Filter liefern, um Elemente dieses Typs nach Mandant zu filtern */
     public IFilter getFilter(Mandant m);
     /** Betrag dieser Verrechenbar (in TP*100) an einem bestimmten Datum liefern 
@@ -52,10 +52,8 @@ public interface IVerrechenbar extends ICodeElement{
     //public AbstractDataLoaderJob getDataloader();
     public String [] getDisplayedFields();
     
-    public static class DefaultComparator implements Comparator{
-		public int compare(final Object o1, final Object o2) {
-			IVerrechenbar v1=(IVerrechenbar)o1;
-			IVerrechenbar v2=(IVerrechenbar)o2;
+    public static class DefaultComparator implements Comparator<IVerrechenbar>{
+		public int compare(final IVerrechenbar v1, final IVerrechenbar v2) {
 			int i=v1.getCodeSystemName().compareTo(v2.getCodeSystemName());
 			if(i==0){
 				i=v1.getCode().compareTo(v2.getCode());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FilterFactory.java 536 2006-07-08 04:58:10Z rgw_ch $
+ *  $Id: FilterFactory.java 3553 2008-01-17 12:51:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -37,7 +37,7 @@ public class FilterFactory {
 	public static final String[] OperatorNames={"ist","enthält","beginnt mit","endet mit","ist nicht","enthält nicht","Regexp"};
 	public static final String[] LinkNames={"UND","ODER"};
 	
-	public static Filter createFilter(Class clazz, String...strings){
+	public static Filter createFilter(Class<? extends PersistentObject> clazz, String...strings){
 		return new Filter(clazz,strings);
 	}
 	public static TitleAreaDialog createFilterDialog(Filter filter, Shell parent){
@@ -49,12 +49,12 @@ public class FilterFactory {
 		return dlg;
 	}
 	public static class Filter extends ViewerFilter implements IFilter{
-		private Class mine;
+		private Class<? extends PersistentObject> mine;
 		private String[] fields;
 		private ArrayList<term> terms;
 		
 		
-		private Filter(Class clazz, String...strings ){
+		private Filter(Class<? extends PersistentObject> clazz, String...strings ){
 			mine=clazz;
 			fields=strings;
 			terms=new ArrayList<term>();
@@ -78,6 +78,7 @@ public class FilterFactory {
 			return select(element);
 		}
 
+		@SuppressWarnings("unchecked")
 		public boolean select(Object toTest) {
 			if(toTest instanceof Tree){
 				toTest=((Tree)toTest).contents;

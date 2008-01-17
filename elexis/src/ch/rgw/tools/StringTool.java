@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3509 2008-01-09 15:00:37Z rgw_ch $
+// $Id: StringTool.java 3553 2008-01-17 12:51:54Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -590,7 +590,7 @@ public static Hashtable foldStrings(final String s)
        */
       public static String unique(final String salt)
       { if(ipHash==0)
-        {   Iterator it=NetTool.IPs.iterator();
+        {   Iterator<String> it=NetTool.IPs.iterator();
             while(it.hasNext()) {
 				ipHash+=((String)it.next()).hashCode();
 			}
