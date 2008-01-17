@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 3442 2007-12-14 07:39:59Z michael_imhof $
+ * $Id: DirectoriesContentParser.java 3545 2008-01-17 07:50:26Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -279,11 +279,11 @@ public class DirectoriesContentParser extends HtmlParser {
 			max--;
 		}
 		if (max >= 0) {
-			adresse = adrArray[max];
+			adresse = adrArray[max].trim();
 			max--;
 		}
 		if (max >= 0) {
-			zusatz = adrArray[max];
+			zusatz = adrArray[max].trim();
 			max--;
 		}
 
