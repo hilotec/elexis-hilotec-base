@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3533 2008-01-15 16:34:33Z rgw_ch $
+ * $Id: TarmedRequirements.java 3552 2008-01-17 12:51:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -42,7 +42,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getEAN(final Kontakt k){
-		String ret= k.getXID(Xid.DOMAIN_EAN);
+		String ret= k.getXid(Xid.DOMAIN_EAN);
 		// compatibility layer
 		if(ret.length()==0){
 			ret=k.getInfoString("EAN");
@@ -58,7 +58,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getKSK(final Kontakt k){
-		String ret= k.getXID(DOMAIN_KSK);
+		String ret= k.getXid(DOMAIN_KSK);
 		// compatibility layer
 		if(ret.length()==0){
 			ret=k.getInfoString("KSK");
@@ -71,7 +71,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getNIF(final Kontakt k){
-		String ret= k.getXID(DOMAIN_NIF);
+		String ret= k.getXid(DOMAIN_NIF);
 		// compatibility layer
 		if(ret.length()==0){
 			ret=k.getInfoString("NIF");
@@ -100,7 +100,7 @@ public class TarmedRequirements {
 	}
 	
 	public static String getAHV(final Person p){
-		String ahv=p.getXID(Xid.DOMAIN_AHV);
+		String ahv=p.getXid(Xid.DOMAIN_AHV);
 		if(ahv.length()==0){
 			ahv=p.getInfoString(SSN);
 			if(ahv.length()==0){
