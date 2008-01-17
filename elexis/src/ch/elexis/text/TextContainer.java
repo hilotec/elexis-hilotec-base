@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3230 2007-09-29 17:06:51Z rgw_ch $
+ *  $Id: TextContainer.java 3556 2008-01-17 14:20:26Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -164,13 +164,15 @@ public class TextContainer {
 		}
 		// Konsultation kons=getBehandlung();
 		if(template==null){
-			plugin.createEmptyDocument();
-			Brief brief=new Brief(subject==null ? "leeres Dokument" : subject,null,Hub.actUser,adressat,kons,typ);
-			addBriefToKons(brief, kons);
-			return brief; 
+			if (plugin.createEmptyDocument()) {
+				Brief brief=new Brief(subject==null ? "leeres Dokument" : subject,null,Hub.actUser,adressat,kons,typ);
+				addBriefToKons(brief, kons);
+				return brief;
+			}
 		}else{
-			final Brief ret=new Brief(subject==null ? template.getBetreff():subject,null,Hub.actUser,adressat,kons,typ);
 			if(plugin.loadFromByteArray(template.loadBinary(), true)==true){
+				final Brief ret=new Brief(subject==null ? template.getBetreff():subject,null,Hub.actUser,adressat,kons,typ);
+
 				plugin.findOrReplace("\\[[-a-zA-Z]+\\.[-a-zA-Z0-9]+\\]",new ReplaceCallback(){
 					public Object replace(final String in) {
 						return replaceFields(ret,in.replaceAll("[\\[\\]]",""));
