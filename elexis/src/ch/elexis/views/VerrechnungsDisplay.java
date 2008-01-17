@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3526 2008-01-13 18:02:31Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3550 2008-01-17 12:13:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -233,9 +233,13 @@ public class VerrechnungsDisplay extends Composite {
         		String p=Integer.toString(v.getZahl());
         		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",p,null);
         		if(dlg.open()==Dialog.OK){
-        			int neu=Integer.parseInt(dlg.getValue());
-        			changeAnzahl(v, neu);
-        			int vorher=v.getZahl();
+        			try{
+        				int neu=Integer.parseInt(dlg.getValue());
+        				changeAnzahl(v, neu);
+        				//int vorher=v.getZahl();
+        			}catch(NumberFormatException ne){
+        				SWTHelper.showError("Ungültige Eingabe", "Bitte geben Sie eine ganze Zahl ein");
+        			}
         		}
         	}
         });
