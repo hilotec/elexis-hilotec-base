@@ -70,6 +70,11 @@ public class LabGroupPrefs extends PreferencePage implements
 		topArea.setLayout(new GridLayout(3, false));
 		
 		label = new Label(topArea, SWT.NONE);
+		label.setText("Für die Laborverordnung können hier zusätzlich zu den normalen Laborgruppen "
+				+ "weitere Gruppen definiert werden, z. B. \"Diabeteskontrolle\".");
+		label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		
+		label = new Label(topArea, SWT.NONE);
 		label.setText("Gruppe:");
 		
 		groupsViewer = new ComboViewer(topArea, SWT.READ_ONLY);
