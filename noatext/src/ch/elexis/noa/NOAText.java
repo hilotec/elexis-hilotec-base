@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 3356 2007-11-20 10:17:56Z rgw_ch $
+ *  $Id: NOAText.java 3549 2008-01-17 12:13:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -274,9 +274,13 @@ public class NOAText implements ITextPlugin {
 	 * Destroy the Panel with the OOo frame
 	 */
 	public void dispose() {
-		doc.close();
-		doc=null;
-		panel.dispose();
+		if(doc!=null){
+			doc.close();
+			doc=null;
+		}
+		if(panel!=null){
+			panel.dispose();
+		}
 
 	}
 
