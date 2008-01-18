@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3473 2007-12-21 11:01:54Z rgw_ch $
+<!-- $Id: build.xml 3566 2008-01-18 16:25:04Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -194,6 +194,8 @@
 			<antcall target="argolead"/>
 		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok"/>
 			<antcall target="mythic"/>
+		<available file="../noatext/build.xml" property="noatext.ok"/>
+		  <antcall target="noatext"/>
 		
 	</target>
 
@@ -369,6 +371,9 @@
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
 		<exec executable="cp">
 			<arg line="-r ${jre} ${dist}/jre"/>
+		</exec>
+		<exec executable="cp">
+			<arg line="-r ${dest}/demoDB_${dbversion} ${dist}/demoDB"/>
 		</exec>
 		 <!-- exec executable="${makeself}">
 			 <arg value="- -notemp"/>

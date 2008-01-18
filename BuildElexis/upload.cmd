@@ -1,1 +1,7 @@
-perl rsc\serverside\upload.pl e:\software\elexis\deploy\output\updater ftp.rgw.ch/rgw.ch/elexis/update:%1:%2 size
+set perl=d:\dev\xampp\perl\bin\perl
+set upload=d:\source\elexis_trunk\BuildElexis\rsc\serverside\upload.pl
+set source=d:\software\elexis\deploy\output\updater
+set dest=ftp.rgw.ch/web/elexis/v1.2/update:rgw.ch:%1
+
+%PERL% %UPLOAD% %source% %dest% size
+
