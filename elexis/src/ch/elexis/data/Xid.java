@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3519 2008-01-12 06:32:35Z rgw_ch $
+ * $Id: Xid.java 3567 2008-01-18 16:25:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -211,15 +211,30 @@ public class Xid extends PersistentObject {
 		}
 		return false;
 	}
-	
+	/**
+	 * Register a local xid domain if it does not exist. Does nothing if a domain with the given domain name exists already
+	 * @param domain name of the domain
+	 * @param simpleName short name for the domain
+	 * @param quality the wuality of an ID of that domain will have
+	 * @return true on success
+	 */
 	public static boolean localRegisterXIDDomainIfNotExists(final String domain, String simpleName, final int quality){
 		if(domains.get(domain)!=null){
 			return true;
 		}
 		return localRegisterXIDDomain(domain, simpleName, quality);
 	}
+	/**
+	 * Get the ID quality of an Object of a given domain
+	 * @param xidDomain the domain to query
+	 * @return obne of the Quality-ID constants or null if no such domain ist registered
+	 */
 	public static Integer getXIDDomainQuality(final String xidDomain){
-		return domains.get(xidDomain).getQuality();
+		XIDDomain xd=domains.get(xidDomain);
+		if(xd==null){
+			return null;
+		}
+		return xd.getQuality();
 	}
 	
 	public static String getSimpleNameForXIDDomain(final String domain){
