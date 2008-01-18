@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3503 2008-01-06 08:18:25Z rgw_ch $
+# * $Id: createDB.script 3562 2008-01-18 11:52:25Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -116,9 +116,9 @@ CREATE INDEX i4 on BEHANDLUNGEN (FallID);
 CREATE TABLE ARTIKEL(
 	ID				VARCHAR(25) primary key,		# UUID
 	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
-	EAN				VARCHAR(15),
-	SubID			VARCHAR(20),
-	LieferantID		VARCHAR(25),
+	EAN				VARCHAR(15),                    # the european article number
+	SubID			VARCHAR(20),                    # an ID depending of the type (e.g. Pharmacode)
+	LieferantID		VARCHAR(25),                    # foreign key from KONTAKT -> dealer
 	Klasse			VARCHAR(80),					# class of the objects representing this article
 	Name			VARCHAR(127),					# official name
 	Name_intern		VARCHAR(127),					# internal name
@@ -264,9 +264,9 @@ CREATE TABLE CONFIG(
 	wert			TEXT
 );
 
-# Briefe werden nicht in der Datenbank selbst gespeichert.
+# Briefe werden nicht in dieser Tabelle gespeichert.
 # Hier befinden sich nur Verweise und Metainformationen zu
-# den eigentlichen Briefen.
+# den eigentlichen Briefen (welche in HEAP oder im Dateisystem sein können).
 CREATE TABLE BRIEFE(
 	ID				VARCHAR(25) primary key,
 	deleted			CHAR(1) default '0',
@@ -286,19 +286,20 @@ CREATE TABLE BRIEFE(
 
 CREATE INDEX i8 on BRIEFE (BehandlungsID);
 
+# Bills
 CREATE TABLE RECHNUNGEN(
-	ID				VARCHAR(25) primary key,
-	deleted			CHAR(1) default '0',
-	RnNummer		VARCHAR(8),
-	FallID			VARCHAR(25),
-	MandantID		VARCHAR(25),
-	RnDatum			CHAR(8),
-	RnStatus		VARCHAR(20),
-	RnDatumVon	    CHAR(8),
-	RnDatumBis		CHAR(8),
-	Betrag			CHAR(8),
-	StatusDatum		CHAR(8),
-	ExtInfo			BLOB
+	ID				VARCHAR(25) primary key,     # UUID
+	deleted			CHAR(1) default '0',         # indicates that this object is marked deleted
+	RnNummer		VARCHAR(8),                  # Number of the bill (unique within this database)
+	FallID			VARCHAR(25),                 # foreign key from FAELLE (case this bill belongs to)
+	MandantID		VARCHAR(25),                 # foreign key from KONTAKT (mandator this bill beongs to)
+	RnDatum			CHAR(8),                     # date of creating this bill
+	RnStatus		VARCHAR(20),                 # state of this bill (e.g. open, payed)
+	RnDatumVon	    CHAR(8),                     # date of first treatment billed
+	RnDatumBis		CHAR(8),                     # date of last treatment billed
+	Betrag			CHAR(8),                     # amount in Rp / cents
+	StatusDatum		CHAR(8),                     # date of last state change
+	ExtInfo			BLOB                         # hastable for trace infos etc.
 );
 
 CREATE INDEX Rn1 on RECHNUNGEN (FallID);
@@ -307,13 +308,14 @@ CREATE INDEX Rn3 ON RECHNUNGEN (RnStatus);
 CREATE INDEX Rn4 ON RECHNUNGEN (RnDatumVon);
 CREATE INDEX Rn5 ON RECHNUNGEN (RnDatumBis);
 
+# payments
 CREATE TABLE ZAHLUNGEN(
-	ID				VARCHAR(25) primary key,
-	deleted			CHAR(1) default '0',
-	RechnungsID		VARCHAR(25),
-	Betrag			CHAR(8),
-	Datum			CHAR(8),
-	Bemerkung		VARCHAR(80)
+	ID				VARCHAR(25) primary key,     # UUID
+	deleted			CHAR(1) default '0',         # indicates that this object is marked deleted
+	RechnungsID		VARCHAR(25),                 # bill this payment belongs to (can be null)
+	Betrag			CHAR(8),                     # amount of this payment in Rp/cents
+	Datum			CHAR(8),                     # date of this payment
+	Bemerkung		VARCHAR(80)                  # remark
 );
 
 CREATE INDEX zahl1 on ZAHLUNGEN(RechnungsID);
