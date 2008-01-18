@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Extensions.java 1183 2006-10-29 15:11:21Z rgw_ch $
+ * $Id: Extensions.java 3568 2008-01-18 18:02:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -58,9 +58,23 @@ public class Extensions {
 	 * @param list eine Liste, wie von getExtension geliefert
 	 * @param points Name der Klasse
 	 * @return eine Liste der konstruierten Klassen
+	 * @deprecated Use {@link #getClasses(List<IConfigurationElement>,String,boolean)} instead
 	 */
 	@SuppressWarnings("unchecked") //$NON-NLS-1$
 	public static List getClasses(List<IConfigurationElement> list,String points){
+		return getClasses(list, points, true);
+	}
+
+	/** 
+	 * Eine Liste von bereits initialisierten Klassen liefern, die an einem bestimmten parameter eines bestimmten 
+	 * Extensionpoints hängen
+	 * @param list eine Liste, wie von getExtension geliefert
+	 * @param points Name der Klasse
+	 * @param bMandatory false: do not handle exceptions
+	 * @return eine Liste der konstruierten Klassen
+	 */
+	@SuppressWarnings("unchecked") //$NON-NLS-1$
+	public static List getClasses(List<IConfigurationElement> list,String points, boolean bMandatory){
 		List ret=new LinkedList();
 		for(IConfigurationElement el:list){
 			try {
@@ -69,7 +83,9 @@ public class Extensions {
 					  ret.add(o);
 				  }
 			} catch (CoreException e) {
-				ExHandler.handle(e);
+				if(bMandatory){
+					ExHandler.handle(e);
+				}
 			}
 		}
 		return ret;
@@ -79,7 +95,7 @@ public class Extensions {
 	 * Shortcut für getClasses(getExtensions(extension),points);
 	 */
 	public static List getClasses(String extension, String points){
-			return getClasses(getExtensions(extension),points);
+			return getClasses(getExtensions(extension),points, true);
 	}
 
 	/**

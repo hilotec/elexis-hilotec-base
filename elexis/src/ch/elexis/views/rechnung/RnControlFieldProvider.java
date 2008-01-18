@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 3490 2008-01-01 07:24:49Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 3568 2008-01-18 18:02:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -72,13 +72,14 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 	private boolean bDateAsStatus;
 	private HyperlinkAdapter /*hlStatus,*/ hlPatient;
 	private Label /*hDateFrom, hDateUntil,*/ lPatient;
-	Text tNr;
+	Text tNr, tBetrag;
+	
 	Patient actPatient;
 	
 	public Composite createControl(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		listeners=new ArrayList<ControlFieldListener>();
-		ret.setLayout(new GridLayout(3,true));
+		ret.setLayout(new GridLayout(4,true));
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		hlPatient=new HyperlinkAdapter(){
 			@Override
@@ -108,6 +109,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.state")); //$NON-NLS-1$
 		SWTHelper.createHyperlink(ret, "   Patient   ", hlPatient);
 		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.invoideNr")); //$NON-NLS-1$
+		new Label(ret,SWT.NONE).setText("Betrag");
 		cbStat=new Combo(ret,SWT.READ_ONLY);
 		cbStat.setVisibleItemCount(stats.length);
 		cbStat.setItems(stats);
@@ -120,6 +122,17 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		gdlp.minimumWidth=150;
 		tNr=new Text(ret,SWT.BORDER);
 		tNr.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if(tNr.getText().length()==0){
+					cbStat.select(STAT_DEFAULT_INDEX);
+				}
+				fireChangedEvent();
+			}
+			
+		});
+		tBetrag=new Text(ret,SWT.BORDER);
+		tBetrag.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if(tNr.getText().length()==0){
@@ -146,7 +159,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		return bDateAsStatus;
 	}
 	public String[] getValues() {
-		String[] ret=new String[3];
+		String[] ret=new String[4];
 		int selIdx=cbStat.getSelectionIndex();
 		if(selIdx!=-1){
 			ret[0]=Integer.toString(statInts[selIdx]);
@@ -154,22 +167,11 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		else{
 			ret[0]="1"; //$NON-NLS-1$
 		}
-		/*
-		if(dpVon.getDate()==null){
-			ret[1]=null;
-		}else{
-			ret[1]=new TimeTool(dpVon.getDate().getTime()).toString(TimeTool.DATE_COMPACT);
-		}
-		if(dpBis.getDate()==null){
-			ret[2]=null;
-		}else{
-			ret[2]=new TimeTool(dpBis.getDate().getTime()).toString(TimeTool.DATE_COMPACT);
-		}
-		*/
 		if(actPatient!=null){
 			ret[1]=actPatient.getId();
 		}
 		ret[2]=tNr.getText();
+		ret[3]=tBetrag.getText().replaceAll("\\.", "");
 		if(StringTool.isNothing(ret[2])){
 			ret[2]=null;
 		}else{	// Wenn RnNummer gegeben ist, alles andere auf Standard.
@@ -177,8 +179,17 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 			tNr.setText(ret[2]);
 			ret[0]="0";
 			ret[1]=null;
+			ret[3]=null;
 		}
-		
+		if(StringTool.isNothing(ret[3])){
+			ret[3]=null;
+		}else{
+			clearValues();
+			tBetrag.setText(ret[3]);
+			ret[0]="0";
+			ret[1]=null;
+			ret[2]=null;
+		}
 		return ret;
 	}
 
@@ -195,6 +206,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		return false;
 	}
 
+	
 	public void setQuery(final Query q) {
 		String[] val=getValues();
 		q.add("RnStatus","=",val[0]); //$NON-NLS-1$ //$NON-NLS-2$

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 3557 2008-01-17 14:32:27Z danlutz $
+ *  $Id: LaborView.java 3568 2008-01-18 18:02:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -259,7 +259,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		menu=new ViewMenus(getViewSite());
 		menu.createMenu(newAction,backAction,fwdAction,printAction,importAction,xmlAction);
 		IToolBarManager tm=getViewSite().getActionBars().getToolBarManager();
-		List<IAction> importers=Extensions.getClasses("ch.elexis.LaborDatenImport", "ToolbarAction");
+		List<IAction> importers=Extensions.getClasses(Extensions.getExtensions("ch.elexis.LaborDatenImport"), "ToolbarAction",false);
 		for(IAction ac:importers){
 			tm.add(ac);
 		}

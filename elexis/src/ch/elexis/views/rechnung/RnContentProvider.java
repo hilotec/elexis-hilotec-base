@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 3319 2007-11-06 18:44:10Z rgw_ch $
+ * $Id: RnContentProvider.java 3568 2008-01-18 18:02:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -200,6 +200,8 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		if(val[2]!=null){
 			q1.add("RnNummer","=", val[2]); //$NON-NLS-1$ //$NON-NLS-2$
 			
+		}else if(val[3]!=null){
+			q1.add("Betragx100", "=", val[3]); //$NON-NLS-1$ //$NON-NLS-2$
 		}else{
 			if(Integer.parseInt(val[0])==RnStatus.ZU_DRUCKEN){
 				q1.startGroup();
