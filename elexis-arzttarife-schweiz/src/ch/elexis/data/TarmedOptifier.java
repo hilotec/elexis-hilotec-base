@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 2379 2007-05-17 18:18:38Z rgw_ch $
+ * $Id: TarmedOptifier.java 3564 2008-01-18 12:16:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -123,6 +123,7 @@ public class TarmedOptifier implements IOptifier {
 				check.setExtInfo("TL", Integer.toString(tc.getTL()));
 				lst.add(check);
 			}
+			/* Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> virerst raus
 			// "Zusammen mit" - Bedingung nicht erfüllt -> Hauptziffer einfügen.
 			if(checkBezug){
 				if(bezugOK==false){
@@ -134,7 +135,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 				}
 			}
-			
+			*/
 			// Prüfen, ob zu oft verrechnet
 			String lim=(String)ext.get("limits"); //$NON-NLS-1$
 			if(lim!=null){

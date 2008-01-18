@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  *    
- * $Id: TarmedImporter.java 3478 2007-12-24 14:39:30Z rgw_ch $
+ * $Id: TarmedImporter.java 3564 2008-01-18 12:16:06Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -56,7 +56,7 @@ public class TarmedImporter extends ImporterPage{
 	public TarmedImporter(){}
 	
 	/**
-	 * Verbindugnsversuch
+	 * Verbindungsversuch
 	 * @return true bei Erfolg
 	 */
 	public boolean connect(){
@@ -175,6 +175,7 @@ public class TarmedImporter extends ImporterPage{
                          "BEHANDLUNGSART","TP_AL","TP_ASSI","TP_TL","ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                          "LSTGIMES_MIN","VBNB_MIN","BEFUND_MIN","RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                          "WECHSEL_MIN","F_AL","F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                
                 
                 rsub=sub.query("SELECT LNR_MASTER FROM LEISTUNG_HIERARCHIE WHERE LNR_SLAVE="+tl.getWrappedId()); //$NON-NLS-1$
                 if(rsub.next()){
