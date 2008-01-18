@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3533 2008-01-15 16:34:33Z rgw_ch $
+ * $Id: XMLExporter.java 3561 2008-01-18 11:41:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -704,7 +704,7 @@ public class XMLExporter implements IRnOutputter {
 		patient.setAttribute("gender",gender);
 		String gebDat=pat.getGeburtsdatum();
 		if(StringTool.isNothing(gebDat)){
-			patient.setAttribute("birthdate","0000-00-00T00:00:00");
+			patient.setAttribute("birthdate","0001-00-00T00:00:00");
 		}else{
 			patient.setAttribute("birthdate",new TimeTool(pat.getGeburtsdatum()).toString(TimeTool.DATE_MYSQL)+"T00:00:00");
 		}
