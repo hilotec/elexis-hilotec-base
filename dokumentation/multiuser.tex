@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: multiuser.tex 2572 2007-06-23 11:09:43Z rgw_ch $
+% *  $Id: multiuser.tex 3569 2008-01-21 17:55:22Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -23,6 +23,7 @@ Mehrmandantenbetrieb nützlich sein können.
 
 \section{Gruppen und Rechte}
 \label{sec:gruppen}
+\index{Gruppen}
 Sobald mehr als ein Anwender auf den gemeinsamen Datenbestand zugreift, stellt
 sich die Frage, welche Daten jeder Anwender lesen, schreiben oder löschen können
 soll. Im Allgemeinen gilt das Prinzip, dass jeder das kann, was er
@@ -37,6 +38,7 @@ Arztpraxis könnte es beispielsweise die Gruppen 'MPA', 'Labor', 'Arzt' und
 'Buchhaltung' geben, in einer Einzelpraxis vielleicht nur die Gruppen 'MPA' und
 'Arzt'. Elexis bringt als Standardausstattung die Gruppen 'Anwender' und 'Admin'
 mit.
+\index{Rechte}\index{Anwender!Rechte}\index{Zugriffsrechte}
 
 Sobald Anwender und Gruppen definiert sind, können die Rechte verteilt werden.
 Dieser Schritt ist unter Standardbedingungen nicht unbedingt notwendig, da die
@@ -57,7 +59,7 @@ Einstellungen - Gruppen und Rechte - Zugriffsteuerung} (S. \ref{fig:zugriff}).
 Wie Sie erkennen können, sind die Rechte benannt und hierarchisch angeordnet -
 Das Recht \glqq Vorlagen ändern\grqq{} ist offensichtlich dem Recht \glqq
 Dokumente\grqq{} untergeordnet. Im unteren Abschnitt des Fensters sehen Sie alle
-im System vorhandenen Gruppen und Anwender. 
+im System vorhandenen Gruppen und Anwender.
 Die Regel ist nun so:
 \begin{itemize}
   \item Wer ein Recht hat, hat implizit auch alle diesem Recht untergeordneten
@@ -109,7 +111,7 @@ In den Unterseiten von \textsc{Datei - Einstellungen - Anwender} können Sie
 Farbdesigns, Tastenkürzel und Art der Schnellstartleiste definieren. Sie können
 diese Einstellungen unter einem frei definierbaren Namen speichern. Geben Sie
 dazu einen Namen ein und klicken Sie auf \glqq Einstellungen speichern
-nach\grqq{}. 
+nach\grqq{}.
 
 Von einer anderen Arbeitsstation oder einem anderen Benutzeraccount aus können
 Sie dieselben Einstellungen unter diesem Lamen wieder laden. Geben Sie dazu den
