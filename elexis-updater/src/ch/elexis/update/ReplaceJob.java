@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ReplaceJob.java 3536 2008-01-16 12:06:30Z rgw_ch $
+ *  $Id: ReplaceJob.java 3570 2008-01-22 05:12:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.update;
 
@@ -24,7 +24,6 @@ import ch.elexis.Hub;
 import ch.elexis.Hub.ShutdownJob;
 import ch.elexis.update.AutoUpdate.ReplaceInfo;
 import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 
@@ -108,8 +107,10 @@ public class ReplaceJob implements ShutdownJob {
 						AutoUpdate.log.log("Could not delete "+ri.sub, Log.ERRORS);
 					}
 				}
-				if(!ri.file.delete()){
-					AutoUpdate.log.log("Could not delete "+ri.file.getName(), Log.ERRORS);
+				if(Hub.localCfg.get(Preferences.DELETE_FILES_ON_FINISH, true)){
+					if(!ri.file.delete()){
+						AutoUpdate.log.log("Could not delete "+ri.file.getName(), Log.ERRORS);
+					}
 				}
 			}catch(Throwable t){
 				ExHandler.handle(t);

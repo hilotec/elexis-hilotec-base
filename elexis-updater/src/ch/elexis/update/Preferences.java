@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package ch.elexis.update;
 
 import java.io.File;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -29,6 +30,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String AUTO_UPDATE_INTERVAL="updater/auto";
 	public static final String TEMPDIR="updater/tempdir";
 	public static final String DAYS_UNTIL_NEXT_UPDATE="updater/daysleft";
+	public static final String DELETE_FILES_ON_FINISH="updater/deletefiles";
 	
 	public Preferences(){
 		super(GRID);
@@ -44,7 +46,10 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			String temp=System.getProperty("java.io.tmpdir");
 			Hub.localCfg.set(TEMPDIR, temp);
 		}
-		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
+		SettingsPreferenceStore spr=new SettingsPreferenceStore(Hub.localCfg);
+		spr.setDefault(DELETE_FILES_ON_FINISH, true);
+		setPreferenceStore(spr);
+		
 		setDescription("Einstellungen für den Auto-Updater");
 		
 	}
@@ -58,6 +63,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		
 		addField(new DirectoryFieldEditor(TEMPDIR,
 				"Verzeichnis für Zwischenspeicherung",
+				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(DELETE_FILES_ON_FINISH,"Heruntergeladene Dateien nach Update löschen",
 				getFieldEditorParent()));
 		
 	}
