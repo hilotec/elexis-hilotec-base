@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
@@ -69,7 +67,7 @@ public class Importer extends ImporterPage {
 	private static final String COMMENT_NAME = "Kommentar"; //$NON-NLS-1$
 	private static final String COMMENT_CODE = "kommentar"; //$NON-NLS-1$
 	private static final String COMMENT_GROUP = "00 Kommentar"; //$NON-NLS-1$
-	
+
 	private static final String PRAXIS_SEMAPHORE = "praxis.sem"; //$NON-NLS-1$
 	private static final String TEAMW_SEMAPHORE = "teamw.sem"; //$NON-NLS-1$
 
@@ -78,6 +76,8 @@ public class Importer extends ImporterPage {
 	private static final int DIRECT = 2;
 
 	private class SemaphoreException extends Exception {
+		private static final long serialVersionUID = -2150109019599639291L;
+
 		public SemaphoreException(String arg0) {
 			super(arg0, null);
 		}
@@ -219,7 +219,15 @@ public class Importer extends ImporterPage {
 	 * @return
 	 */
 	private Result<?> importFile(final String filepath) {
-		return importFile(new File(filepath), null);
+		File file = new File(filepath);
+		Result<?> result = importFile(file, null);
+		if (result.isOK()) {
+			if (!file.delete()) {
+				log.log("Datei " + file.getPath() //$NON-NLS-1$
+						+ " konnte nicht gelöscht werden.", Log.WARNINGS); //$NON-NLS-1$
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -315,27 +323,48 @@ public class Importer extends ImporterPage {
 	protected void addSemaphore(FtpServer ftp, String downloadDir)
 			throws SemaphoreException {
 		try {
+			uploadSemaphore(ftp);
+			// Teamw.sem checken
 			String[] filenameList = ftp.listNames();
 			for (String filename : filenameList) {
 				if (filename.toLowerCase().equals(TEAMW_SEMAPHORE)) {
 					throw new SemaphoreException(
-							"Download von Team-W Server im Moment nicht möglich.\nVersuchen Sie es später nochmals.");
+							ch.elexis.laborimport.teamw.Messages.getString("Importer.semaphore.error")); //$NON-NLS-1$
 				}
 			}
-			File file = new File(System.getProperty("user.home", "")
-					+ System.getProperty("file.separator") + PRAXIS_SEMAPHORE);
-			file.createNewFile();
-			ftp.uploadFile(file.getName(), file.getPath());
 		} catch (IOException e) {
 			throw new SemaphoreException(e);
 		}
 	}
 
+	/**
+	 * praxis.sem auf FTP Server kopieren
+	 */
+	protected void uploadSemaphore(FtpServer ftp) throws IOException {
+		File file = new File(System.getProperty("user.home", "") //$NON-NLS-1$ //$NON-NLS-2$
+				+ System.getProperty("file.separator") + PRAXIS_SEMAPHORE); //$NON-NLS-1$
+		file.createNewFile();
+		ftp.uploadFile(file.getName(), file.getPath());
+	}
+	
+	/**
+	 * praxis.sem auf FTP Server löschen
+	 */
 	protected void removeSemaphore(FtpServer ftp) throws IOException {
 		ftp.deleteFile(PRAXIS_SEMAPHORE);
 	}
 
 	private Result<?> importDirect() {
+		String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP,
+				PreferencePage.FTP);
+		if (PreferencePage.BATCH.equals(batchOrFtp)) {
+			return importDirectBatch();
+		}
+		
+		return importDirectFtp();
+	}
+
+	private Result<?> importDirectFtp() {
 		Result<String> result = new Result<String>(
 				ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
 
@@ -400,6 +429,75 @@ public class Importer extends ImporterPage {
 					.getString("Importer.error.import")); //$NON-NLS-1$
 		}
 
+		return result;
+	}
+
+	private Result<?> importDirectBatch() {
+		Result<String> result = new Result<String>(
+				ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
+
+		String batchFile = UtilFile.getCorrectPath(Hub.globalCfg.get(
+				PreferencePage.BATCH_DATEI, "")); //$NON-NLS-1$
+		String downloadDir = UtilFile.getCorrectPath(Hub.globalCfg.get(
+				PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
+
+		if (batchFile == null || batchFile.length() == 0) {
+			return new Result<String>(
+					Log.ERRORS,
+					1,
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.leereBatchdatei.error"), //$NON-NLS-1$
+					MY_LAB, true);
+		}
+
+		try {
+			Process process = Runtime.getRuntime().exec(batchFile);
+			int exitValue = -1;
+			try {
+				exitValue = process.waitFor();
+			} catch(InterruptedException e) {
+				log.log(e.getMessage(), Log.INFOS);
+			}
+			if (exitValue != 0) {
+				return new Result<String>(
+						Log.ERRORS,
+						1,
+						ch.elexis.laborimport.teamw.Messages.getString("Importer.batchFehler.error") + process.exitValue(), //$NON-NLS-1$
+						MY_LAB, true);
+			}
+			
+			List<String> hl7FileList = new Vector<String>();
+			File ddDir = new File(downloadDir);
+				
+			String[] filenameList = ddDir.list();
+			for (String filename : filenameList) {
+				if (filename.toUpperCase().endsWith("HL7")) { //$NON-NLS-1$
+					log.log("Datei <" + filename + "> downloaded.", //$NON-NLS-1$ //$NON-NLS-2$
+							Log.INFOS);
+					hl7FileList.add(filename);
+				}
+			}
+			
+			String header = MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.import.header"), //$NON-NLS-1$
+					new Object[] { MY_LAB });
+			String question = MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.import.message"), //$NON-NLS-1$
+					new Object[] { hl7FileList.size(), downloadDir });
+			if (SWTHelper.askYesNo(header, question)) {
+				for (String filename : hl7FileList) {
+					importFile(downloadDir + filename);
+					log.log("Datei <" + filename + "> verarbeitet.", Log.INFOS); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+		} catch (IOException e) {
+			result = new Result<String>(Log.ERRORS, 1, e.getMessage(), MY_LAB,
+					true);
+			result.display(ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.error.import")); //$NON-NLS-1$
+		}
+		
 		return result;
 	}
 
@@ -485,9 +583,16 @@ public class Importer extends ImporterPage {
 			Button bBrowse = new Button(this, SWT.PUSH);
 			bBrowse.setText(Messages.getString("ImporterPage.browse")); //$NON-NLS-1$
 
+			String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP,
+					PreferencePage.FTP);
+			String direktHerkunft = ch.elexis.laborimport.teamw.Messages.getString("Importer.ftp.label"); //$NON-NLS-1$
+			if (PreferencePage.BATCH.equals(batchOrFtp)) {
+				direktHerkunft = ch.elexis.laborimport.teamw.Messages.getString("Importer.batch.label"); //$NON-NLS-1$
+			}
 			bDirect = new Button(this, SWT.RADIO);
-			bDirect.setText(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.label.importDirect")); //$NON-NLS-1$
+			bDirect
+					.setText(ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.label.importDirect") + " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			bDirect.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
 			int type = Hub.localCfg.get(

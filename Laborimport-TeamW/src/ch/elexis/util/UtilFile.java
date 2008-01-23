@@ -14,8 +14,8 @@ public class UtilFile {
     
     private static String removeMultipleSeparators(String pathOrFilename) {
         String doubleSeparator = DIRECTORY_SEPARATOR + DIRECTORY_SEPARATOR;
-        while (pathOrFilename.indexOf(doubleSeparator) >= 0) {
-            pathOrFilename = pathOrFilename.replaceAll(doubleSeparator, DIRECTORY_SEPARATOR);
+        if (pathOrFilename.indexOf(doubleSeparator) >= 0) {
+            pathOrFilename = pathOrFilename.replace(doubleSeparator, DIRECTORY_SEPARATOR);
         }
         return pathOrFilename;
     }
