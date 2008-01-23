@@ -18,7 +18,7 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.teamw.PreferencePage"
             id="ch.elexis.laborimport_teamw.prefs"
-            name="%PreferencePageName"/>
+            name="Team-W Import"/>
    </extension>
 
 </plugin>
