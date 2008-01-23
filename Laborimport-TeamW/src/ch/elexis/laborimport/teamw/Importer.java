@@ -365,6 +365,8 @@ public class Importer extends ImporterPage {
 						log.log("Datei <" + filename + "> downloaded.", //$NON-NLS-1$ //$NON-NLS-2$
 								Log.INFOS);
 						hl7FileList.add(filename);
+						// TODO Tony: Zeile um Files auf FTP zu löschen. 
+						//ftp.deleteFile(filename);
 					}
 				}
 			} finally {
