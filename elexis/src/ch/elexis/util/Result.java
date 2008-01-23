@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 
 import ch.elexis.Hub;
 
@@ -71,6 +72,29 @@ public class Result<T>{
 		}
 		return result.result;
 	}
+	
+	/**
+	 * Mapping zwischen logSeverity (Log.ERRORS, Log.INFOS, usw) und
+	 * RCP Status Severity (Status.OK, Stauts.INFO, usw)
+	 */
+	public int getStatusSeverity(final int logSeverity) {
+		switch (logSeverity) {
+		case Log.NOTHING:
+			return Status.OK;
+		case Log.FATALS:
+			return Status.ERROR;
+		case Log.ERRORS:
+			return Status.ERROR;
+		case Log.INFOS:
+			return Status.INFO;
+		case Log.DEBUGMSG:
+			return Status.INFO;
+		case Log.TRACE:
+			return Status.INFO;
+		}
+		return Status.ERROR;
+	}
+	
 	/**
 	 * Den Status als Eclipse IStatus bzw. MultiStatus abholen
 	 * @return
@@ -80,12 +104,12 @@ public class Result<T>{
 			return org.eclipse.core.runtime.Status.OK_STATUS;
 		}else if(list.size()==1){
 			msg r=list.get(0);
-			return new org.eclipse.core.runtime.Status(r.severity,"ch.elexis",r.code,r.text==null ? "?" : r.text, null); //$NON-NLS-1$
+			return new org.eclipse.core.runtime.Status(getStatusSeverity(r.severity),"ch.elexis",r.code,r.text==null ? "?" : r.text, null); //$NON-NLS-1$
 		}else{
 			ArrayList<IStatus> as=new ArrayList<IStatus>();
 			msg r=list.get(0);
 			for(msg m:list){
-				as.add(new org.eclipse.core.runtime.Status(m.severity,"ch.elexis",m.code,m.text,null)); //$NON-NLS-1$
+				as.add(new org.eclipse.core.runtime.Status(getStatusSeverity(m.severity),"ch.elexis",m.code,m.text,null)); //$NON-NLS-1$
 				if(m.severity>r.severity){
 					r=m;
 				}
