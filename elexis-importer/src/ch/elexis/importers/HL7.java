@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3531 2008-01-15 08:49:43Z michael_imhof $
+ * $Id: HL7.java 3577 2008-01-24 11:54:02Z michael_imhof $
  */
  
 
@@ -468,7 +468,7 @@ public class HL7 {
 	 * @param hl7Rows
 	 * @return String
 	 */
-	public String getOBXComments(String[] hl7Rows, String[] obxFields) {
+	protected String getOBXComments(String[] hl7Rows, String[] obxFields) {
 		String obxNr = obxFields[1];
 		StringBuilder ret=new StringBuilder();
 		for(int i=0;i<hl7Rows.length;i++){
@@ -486,11 +486,13 @@ public class HL7 {
 		return ret.toString();
 	}
 	
-	/**
-	 * Extract all comments (NTE), global and OBX comments
-	 * @return a string containing all comments, separated by newlines
+	/** 
+	 * Findet alle Kommentare. Standartmässig werden die NTE Kommentare
+	 * anhand der obxNr angehängt.
+	 * @param hl7Rows
+	 * @return String
 	 */
-	public String getComments() {
+	protected String getComments(String[] hl7Rows) {
 		StringBuffer comments = new StringBuffer();
 
 		for (int i = 0; i < lines.length; i++) {
@@ -514,6 +516,14 @@ public class HL7 {
 		}
 		
 		return comments.toString();
+	}
+	
+	/**
+	 * Extract all comments (NTE), global and OBX comments
+	 * @return a string containing all comments, separated by newlines
+	 */
+	public String getComments() {
+		return getComments(lines);
 	}
 	
 	/**
