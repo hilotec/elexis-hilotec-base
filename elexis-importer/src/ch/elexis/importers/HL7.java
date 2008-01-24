@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3577 2008-01-24 11:54:02Z michael_imhof $
+ * $Id: HL7.java 3578 2008-01-24 11:54:28Z michael_imhof $
  */
  
 
@@ -495,9 +495,9 @@ public class HL7 {
 	protected String getComments(String[] hl7Rows) {
 		StringBuffer comments = new StringBuffer();
 
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("NTE")) {
-				String[] nte = lines[i].split(separator);
+		for (int i = 0; i < hl7Rows.length; i++) {
+			if (hl7Rows[i].startsWith("NTE")) {
+				String[] nte = hl7Rows[i].split(separator);
 				if (nte.length > 3) {
 					String rawComment;
 					String source = nte[1];
