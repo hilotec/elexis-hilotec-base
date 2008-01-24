@@ -6,6 +6,44 @@ public class HL7 extends ch.elexis.importers.HL7 {
 	public HL7(String labor, String kuerzel) {
 		super(labor, kuerzel);
 	}
+	
+	/**
+	 * Extract all comments (NTE), global and OBX comments
+	 * @return a string containing all comments, separated by newlines
+	 */
+	protected String getComments(String[] hl7Rows) {
+		StringBuffer comments = new StringBuffer();
+		
+		String lastObxName = "";
+
+		for (int i = 0; i < hl7Rows.length; i++) {
+			if (hl7Rows[i].startsWith("NTE")) {
+				String[] nte = hl7Rows[i].split(getSeparator());
+				if (nte.length > 3) {
+					if (lastObxName.length() > 0) {
+						comments.append(lastObxName);
+						comments.append(": ");
+					}           
+					comments.append(nte[3]);
+					comments.append("\n");
+				}
+			} else if (hl7Rows[i].startsWith("OBX")) {
+				String[] obx = hl7Rows[i].split(getSeparator());
+				String raw = obx[3];
+				String[] split = raw.split("\\^");
+				String obxName;
+				if (split.length > 1) {
+					obxName =  split[1];
+				} else {
+					obxName = split[0];
+				}
+				lastObxName = obxName;
+			}
+		}
+		
+		return comments.toString();
+	}
+	
 
 	/** 
 	 * Findet Kommentare zu einem OBX. 
@@ -13,7 +51,7 @@ public class HL7 extends ch.elexis.importers.HL7 {
 	 * @param hl7Rows
 	 * @return String
 	 */
-	public String getOBXComments(String[] hl7Rows, String[] obxFields) {
+    protected String getOBXComments(String[] hl7Rows, String[] obxFields) {
 		StringBuilder ret=new StringBuilder();
 		
 		int i=0;
