@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3550 2008-01-17 12:13:19Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3576 2008-01-24 10:18:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -99,6 +99,7 @@ public class VerrechnungsDisplay extends Composite {
 							.alert("Fehlende Rechte",
 									"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 				} else {
+					/* this leaves the optifier out, redesign necessary
 					boolean exists = false;
 					// TODO Immi
 					Verrechnet foundVerrechnet = null;
@@ -111,6 +112,7 @@ public class VerrechnungsDisplay extends Composite {
 					if (foundVerrechnet != null) {
 						changeAnzahl(foundVerrechnet, foundVerrechnet.getZahl() + 1);
 					} else {
+					*/
 						Result<IVerrechenbar> result = actKons
 						.addLeistung((IVerrechenbar) o);
 
@@ -119,7 +121,7 @@ public class VerrechnungsDisplay extends Composite {
 									result.toString());
 						}
 						setLeistungen(actKons);
-					}
+					//}
 				}
 			}
 		}
@@ -243,6 +245,7 @@ public class VerrechnungsDisplay extends Composite {
         		}
         	}
         });
+        MenuItem sep=new MenuItem(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
         MenuItem chgText=new MenuItem(ret,SWT.NONE);
         chgText.setText("Text ändern");
         chgText.addSelectionListener(new SelectionAdapter(){
@@ -254,7 +257,13 @@ public class VerrechnungsDisplay extends Composite {
         		String oldText=v.getText();
         		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Text der Leistung ändern","Geben Sie bitte die neue Beschreibung für die Leistung bzw. den Artikel ein",oldText,null);
         		if(dlg.open()==Dialog.OK){
-        			v.setText(dlg.getValue());
+        			String input=dlg.getValue();
+        			if(input.matches("[0-9\\.,]+")){
+        				if(!SWTHelper.askYesNo("Wirklich Text ändern?", "Sie haben eine Zahl eingegeben. Soll dies wirklich der neue Name für die Leistung sein?")){
+        					return;
+        				}
+        			}
+        			v.setText(input);
         			setLeistungen(GlobalEvents.getSelectedKons());
         		}
         	}
