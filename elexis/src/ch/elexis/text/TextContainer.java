@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3556 2008-01-17 14:20:26Z danlutz $
+ *  $Id: TextContainer.java 3582 2008-01-24 21:47:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -49,6 +49,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
@@ -65,6 +66,7 @@ public class TextContainer {
 	private ITextPlugin plugin;
 	private static Log log=Log.get("TextContainer");
 	private Shell shell;
+	private static final String TEMPLATESTRING="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè:]+\\]";
 	
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin findet, wählt er
@@ -173,7 +175,7 @@ public class TextContainer {
 			if(plugin.loadFromByteArray(template.loadBinary(), true)==true){
 				final Brief ret=new Brief(subject==null ? template.getBetreff():subject,null,Hub.actUser,adressat,kons,typ);
 
-				plugin.findOrReplace("\\[[-a-zA-Z]+\\.[-a-zA-Z0-9]+\\]",new ReplaceCallback(){
+				plugin.findOrReplace(TEMPLATESTRING,new ReplaceCallback(){
 					public Object replace(final String in) {
 						return replaceFields(ret,in.replaceAll("[\\[\\]]",""));
 					}
@@ -204,13 +206,24 @@ public class TextContainer {
 		}
 		if(q[0].equals("Datum")){
 			return new TimeTool().toString(TimeTool.DATE_GER);
-		}if(q[0].indexOf(":")!=-1){
+		}
+		if(q[0].indexOf(":")!=-1){
 			String[][] ref=ScriptUtil.loadDataFromPlugin(b);
 			return ref;
 		}
 		PersistentObject o=resolveObject(brief,q[0]);
 		if(o==null){
 			return "??"+b+"??";
+		}
+		int pdp=q[1].indexOf(':');
+		if(pdp!=-1){
+			String pid=o.get(q[1].substring(0,pdp));
+			if(!StringTool.isNothing(pid)){
+				
+			}
+			String plf=q[1].substring(pdp+1);
+			
+			PersistentObject po=resolveObject(brief,q[1].substring(0,pdp));
 		}
 		String ret=o.get(q[1]);
 		if((ret==null) || (ret.startsWith("**"))){

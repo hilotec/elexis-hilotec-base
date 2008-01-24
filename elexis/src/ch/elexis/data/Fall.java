@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3428 2007-12-09 00:48:34Z rgw_ch $
+ *    $Id: Fall.java 3582 2008-01-24 21:47:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -180,6 +180,8 @@ public class Fall extends PersistentObject{
 	public void setRechnungssteller(final Kontakt r){
 		setInfoString("RechnungsstellerID",r.getId());
 	}
+	
+	
 	/**
 	 * Retrieve a required Konktat from this Fall's Billing system's requirements
 	 * @param name the requested Kontakt's name
