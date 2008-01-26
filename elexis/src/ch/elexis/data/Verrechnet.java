@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 3512 2008-01-10 22:36:40Z rgw_ch $
+ * $Id: Verrechnet.java 3583 2008-01-26 06:07:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,6 +16,7 @@ package ch.elexis.data;
 import java.util.Hashtable;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.rgw.tools.TimeTool;
@@ -48,7 +49,9 @@ public class Verrechnet extends PersistentObject {
 				new String[]{kons.getId(),iv.getText(),iv.getId(),iv.getClass().getName(),Integer.toString(zahl),
 				iv.getKosten(dat).getCentsAsString(),Integer.toString(tp),Double.toString(factor),
 				Long.toString(preis),"100"});
-		
+		if(iv instanceof Artikel){
+			((Artikel)iv).einzelAbgabe(1);
+		}
 	}
 	public String getText(){
 		return checkNull(get("Leistg_txt"));
@@ -135,6 +138,18 @@ public class Verrechnet extends PersistentObject {
 		Hashtable ext=getHashtable("Detail");
 		return (String)ext.get(key);
 	}
+	
+	public void changeAnzahl(int neuAnzahl) {
+		int vorher=getZahl();
+		setZahl(neuAnzahl);
+		IVerrechenbar vv=getVerrechenbar();
+		if(vv instanceof Artikel){
+			Artikel art=(Artikel)vv;
+			art.einzelRuecknahme(vorher);
+			art.einzelAbgabe(neuAnzahl);
+		}
+	}
+	
 	/** Frage, ob dieses Verrechnet aus dem IVerrechenbar tmpl entstanden ist */
 	public boolean isInstance(final IVerrechenbar tmpl){
 		String[] res=new String[2];

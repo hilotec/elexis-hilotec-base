@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *  $Id: Konsultation.java 3583 2008-01-26 06:07:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -539,7 +539,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	        	Hub.actUser.statForString("LeistungenMFU", l.getCodeSystemName());
 	        	if(l instanceof Artikel){
 	        		Artikel art=(Artikel)l;
-	        		art.einzelAbgabe(1);
+	        		// art.einzelAbgabe(1);  -> this is done by the optifier now
 	        		Prescription p=new Prescription(art,getFall().getPatient(),"","");
 	        		p.set("RezeptID","Direktabgabe");
 	        	}

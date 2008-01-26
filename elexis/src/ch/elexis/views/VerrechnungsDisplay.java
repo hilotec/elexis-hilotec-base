@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3576 2008-01-24 10:18:35Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3583 2008-01-26 06:07:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -99,29 +99,14 @@ public class VerrechnungsDisplay extends Composite {
 							.alert("Fehlende Rechte",
 									"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 				} else {
-					/* this leaves the optifier out, redesign necessary
-					boolean exists = false;
-					// TODO Immi
-					Verrechnet foundVerrechnet = null;
-					for (Verrechnet verrechnet: actKons.getLeistungen()) {
-						if (verrechnet.getVerrechenbar().getId().equals(o.getId())) {
-							foundVerrechnet = verrechnet;
-						}
-					}
-					
-					if (foundVerrechnet != null) {
-						changeAnzahl(foundVerrechnet, foundVerrechnet.getZahl() + 1);
-					} else {
-					*/
-						Result<IVerrechenbar> result = actKons
-						.addLeistung((IVerrechenbar) o);
+					Result<IVerrechenbar> result = actKons
+					.addLeistung((IVerrechenbar) o);
 
-						if (!result.isOK()) {
-							SWTHelper.alert("Diese Verrechnung ist ungültig",
-									result.toString());
-						}
-						setLeistungen(actKons);
-					//}
+					if (!result.isOK()) {
+						SWTHelper.alert("Diese Verrechnung ist ungültig",
+								result.toString());
+					}
+					setLeistungen(actKons);
 				}
 			}
 		}
@@ -183,17 +168,6 @@ public class VerrechnungsDisplay extends Composite {
         }
     }
 	
-	private void changeAnzahl(Verrechnet v, int neuAnzahl) {
-		int vorher=v.getZahl();
-		v.setZahl(neuAnzahl);
-		IVerrechenbar vv=v.getVerrechenbar();
-		if(vv instanceof Artikel){
-			Artikel art=(Artikel)vv;
-			art.einzelRuecknahme(vorher);
-			art.einzelAbgabe(neuAnzahl);
-		}
-		setLeistungen(GlobalEvents.getSelectedKons());
-	}
 	
     private Menu createVerrMenu(){
         Menu ret=new Menu(tVerr);
@@ -237,8 +211,8 @@ public class VerrechnungsDisplay extends Composite {
         		if(dlg.open()==Dialog.OK){
         			try{
         				int neu=Integer.parseInt(dlg.getValue());
-        				changeAnzahl(v, neu);
-        				//int vorher=v.getZahl();
+        				v.changeAnzahl(neu);
+        				setLeistungen(GlobalEvents.getSelectedKons());
         			}catch(NumberFormatException ne){
         				SWTHelper.showError("Ungültige Eingabe", "Bitte geben Sie eine ganze Zahl ein");
         			}
