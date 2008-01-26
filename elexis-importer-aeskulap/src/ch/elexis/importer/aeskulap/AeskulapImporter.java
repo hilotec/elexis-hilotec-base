@@ -167,6 +167,7 @@ public class AeskulapImporter extends ImporterPage {
 				}
 				
 				Patient pat=new Patient(line[1],line[2],line[6],s);
+				pat.set("PatientNr", line[0]);
 				monitor.subTask(line[1]);
 				Anschrift an=pat.getAnschrift();
 				an.setStrasse(line[3]);
@@ -217,6 +218,13 @@ public class AeskulapImporter extends ImporterPage {
 		return "";
 	}
 	private boolean importPatienten(final ExcelWrapper hofs, final IProgressMonitor moni){
+		hofs.setFieldTypes(new Class[]{Integer.class,String.class,String.class,String.class,	// pat_no, anrede, name, vorname
+				String.class,String.class,String.class,String.class,							// ledig_name, strasse, plz, ort
+				Integer.class,Integer.class,TimeTool.class,String.class,						// arzt-no, sprach_no, auf_dat, beruf
+				TimeTool.class,Integer.class,String.class,String.class,							// gebdat, geschlecht, kommentar, warnung
+				Integer.class,String.class,String.class,String.class,							// roent_no, tel_gesch, tel_priv, natel
+				String.class,TimeTool.class,String.class,String.class,							// email, todesdat, ahv, archiv
+				Integer.class});																// firma_no
 		float last=hofs.getLastRow();
 		float first=hofs.getFirstRow();
 		int perLine=Math.round(10000f/(last-first));
