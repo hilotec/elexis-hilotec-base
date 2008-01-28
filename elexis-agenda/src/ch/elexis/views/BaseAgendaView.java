@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3502 2008-01-05 20:07:36Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3586 2008-01-28 10:34:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -32,6 +32,7 @@ import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.ICalTransfer;
 import ch.elexis.data.IPlannable;
 import ch.elexis.data.Termin;
 import ch.elexis.dialogs.TagesgrenzenDialog;
@@ -50,7 +51,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	TableViewer tv;
 	BaseAgendaView self;
 	protected IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
-	protected IAction dayLimitsAction, newViewAction, printAction;
+	protected IAction dayLimitsAction, newViewAction, printAction, exportAction;
 	MenuManager menu=new MenuManager();
 	String[] bereiche;
 	
@@ -304,6 +305,17 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				}
 			}
 		};
+		exportAction=new Action("Agenda exportieren"){
+			{
+				setToolTipText("Termine eines Bereichs exportieren");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EXPORT));
+			}
+			@Override
+			public void run(){
+				ICalTransfer ict=new ICalTransfer();
+				ict.doExport(actDate, actDate, actBereich);
+			}
+		};
 		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
 			Menu mine;
 			{
@@ -350,6 +362,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		mgr.add(bereichMenu);
 		mgr.add(dayLimitsAction);
 		mgr.add(newViewAction);
+		mgr.add(exportAction);
 	}
 
 
