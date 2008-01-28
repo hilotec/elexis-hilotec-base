@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 1569 2007-01-07 15:48:26Z rgw_ch $
+ * $Id: build.xml 3589 2008-01-28 11:06:45Z rgw_ch $
 -->
 <project name="elexis-agenda" default="all">
 	<property name="sourcedir" value="${source}/elexis-agenda/"/>
@@ -22,6 +22,12 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
+		<fileset dir="${elexis_plugin}/lib">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${plugindir}/lib">
+			<include name="*.jar"/>
+		</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
