@@ -26,7 +26,8 @@ Bundle-ClassPath: bin/,
  postgresql.jar,
  mysql-connector.jar,
  .
-Export-Package: ch.elexis,
+Export-Package: .,
+ ch.elexis,
  ch.elexis.actions,
  ch.elexis.admin,
  ch.elexis.data,
@@ -45,4 +46,5 @@ Export-Package: ch.elexis,
  ch.rgw.IO,
  ch.rgw.net,
  ch.rgw.tools,
- com.tiff.common.ui.datepicker
+ com.tiff.common.ui.datepicker,
+ org.apache.commons.logging

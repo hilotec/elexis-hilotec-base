@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 3541 2008-01-16 17:43:13Z rgw_ch $
+ *    $Id: Desk.java 3585 2008-01-28 10:34:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -69,6 +69,7 @@ public class Desk implements IPlatformRunnable {
     public static final String IMG_FILTER="filter"; //$NON-NLS-1$
     public static final String IMG_NEW="new"; //$NON-NLS-1$
     public static final String IMG_IMPORT="import"; //$NON-NLS-1$
+    public static final String IMG_EXPORT="export"; //$NON-NLS-1$
     public static final String IMG_LOGO48="elexislogo48"; //$NON-NLS-1$
     public static final String IMG_EDIT="edit"; //$NON-NLS-1$
     public static final String IMG_ACHTUNG="achtung"; //$NON-NLS-1$
@@ -79,7 +80,6 @@ public class Desk implements IPlatformRunnable {
 	public static final String IMG_WIZARD="wizard"; //$NON-NLS-1$
 	public static final String IMG_ADDITEM="addItem"; //$NON_NLS-1$
 	public static final String IMG_REMOVEITEM="minus";	//$NON_NLS-1$
-	public static final String IMG_EXPORT="export";	//$NON_NLS-1$
 	public static final String IMG_AUSRUFEZ_ROT="ausrufezeichen_rot"; //$NON_NLS-1$
 	public static final String IMG_AUSRUFEZ="ausrufezeichen"; //$NON_NLS-1$
 	public static final String IMG_NETWORK="netzwerk"; //$NON_NLS-1$
