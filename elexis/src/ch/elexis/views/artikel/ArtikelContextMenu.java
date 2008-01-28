@@ -72,6 +72,7 @@ public class ArtikelContextMenu {
 				if(MessageDialog.openConfirm(cv.getViewerWidget().getControl().getShell(), "Löschen bestätigen", 
 						"Wollen Sie wirklich "+act.getName()+" löschen?")){
 					act.delete();
+					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
 					cv.notify(CommonViewer.Message.update);
 				}
 

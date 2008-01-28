@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: FieldDisplayView.java 3591 2008-01-28 15:09:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -48,7 +48,7 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 	public static final String ID= "ch.elexis.dbfielddisplay";
 	private IAction newViewAction,editDataAction;
 	 Text text;
-	 Class myClass;
+	 Class<? extends PersistentObject> myClass;
 	 String myField;
 	 boolean bCanEdit;
 	 ScrolledForm form;
@@ -157,6 +157,7 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	public void clearEvent(Class template) {
 		if(template.equals(myClass)){
 			text.setText("");
@@ -172,6 +173,10 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 			}else{
 				text.setText(obj.get(myField));
 			}
+		}else if(obj instanceof Anwender){
+			String nx=Hub.userCfg.get("FieldDisplayViewData/"+subid,null);
+			Integer canEdit=Hub.userCfg.get("FieldDisplayViewCanEdit/"+subid,0);
+			setField(nx==null ? "Patient.Diagnosen" : nx, canEdit==null ? false : (canEdit!=0));
 		}
 	}
 	public void heartbeat() {
