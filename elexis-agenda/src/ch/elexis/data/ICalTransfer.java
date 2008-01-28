@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 3586 2008-01-28 10:34:31Z rgw_ch $
+ * $Id: ICalTransfer.java 3587 2008-01-28 10:52:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,6 +26,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
@@ -139,6 +140,8 @@ public class ICalTransfer {
 		}
 		@Override
 		protected void okPressed() {
+			von.setTimeInMillis(dpVon.getDate().getTime());
+			bis.setTimeInMillis(dpBis.getDate().getTime());
 			Query<Termin> qbe=new Query<Termin>(Termin.class);
 			qbe.add("Tag", ">=", von.toString(TimeTool.DATE_COMPACT));
 			qbe.add("Tag", "<=", bis.toString(TimeTool.DATE_COMPACT));
@@ -152,12 +155,19 @@ public class ICalTransfer {
 			calendar.getProperties().add(Version.VERSION_2_0);
 			calendar.getProperties().add(CalScale.GREGORIAN);
 			for(Termin t:termine){
+				if((t.getStartMinute()==0) && (t.getType().equals(Termin.typReserviert()))){
+					continue;
+				}
+				if((t.getStartMinute()+t.getDurationInMinutes()==(23*60)+59) && (t.getType().equals(Termin.typReserviert()))){
+					continue;
+				}
 				TimeTool tt=new TimeTool(t.getStartTime());
 				DateTime start=new DateTime(tt.getTime());
 				tt.addMinutes(t.getDurationInMinutes());
 				DateTime end=new DateTime(tt.getTime());
 				VEvent vTermin=new VEvent(start,end,t.getPersonalia());
 				vTermin.getProperties().add(tz.getTimeZoneId());
+				vTermin.getProperties().add(new Description(t.getText()));
 				Uid uid=new Uid(t.getId());
 				vTermin.getProperties().add(uid);
 				calendar.getComponents().add(vTermin);
