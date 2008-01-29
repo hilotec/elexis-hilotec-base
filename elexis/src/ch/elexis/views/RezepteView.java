@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ *  $Id: RezepteView.java 3593 2008-01-29 10:16:30Z rgw_ch $
  *******************************************************************************/
 
 
@@ -18,6 +18,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -52,6 +55,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rezept;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
@@ -121,9 +125,20 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		lvRpLines=new ListViewer(sash);
 		makeActions();
 		menus=new ViewMenus(getViewSite());
-		menus.createToolbar(newRpAction, addLineAction, printAction );
+		//menus.createToolbar(newRpAction, addLineAction, printAction );
 		menus.createMenu(newRpAction,addLineAction,printAction, deleteRpAction);
 		menus.createViewerContextMenu(lvRpLines, removeLineAction);
+		IToolBarManager tm=getViewSite().getActionBars().getToolBarManager();
+		List<IAction> importers=Extensions.getClasses(Extensions.getExtensions("ch.elexis.RezeptHook"), "RpToolbarAction",false);
+		for(IAction ac:importers){
+			tm.add(ac);
+		}
+		if(importers.size()>0){
+			tm.add(new Separator());
+		}
+		tm.add(newRpAction);
+		tm.add(addLineAction);
+		tm.add(printAction);
 		lv.setInput(getViewSite());
 
 		/* Implementation Drag&Drop */
