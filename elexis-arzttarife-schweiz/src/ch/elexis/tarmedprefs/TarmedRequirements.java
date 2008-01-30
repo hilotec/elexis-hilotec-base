@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3552 2008-01-17 12:51:41Z rgw_ch $
+ * $Id: TarmedRequirements.java 3596 2008-01-30 15:50:33Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
@@ -55,6 +54,26 @@ public class TarmedRequirements {
 			ret="2000000000000";
 		}
 		return ret;
+	}
+	
+	/**
+	 * wandelt KSK's von der G123456-Schreibweise in die G 1234.56 Schreibweise um
+	 * und umgekehrt
+	 * @param KSK die KSK, welche aus exakt einem Buchstaben, exakt 6 Ziffern und optional
+	 * exakt einem Leerzeichen nach dem Buchstaben und einem Punkt vor den letzten beiden Ziffern 
+	 * besteht.
+	 * @return bei bCompact true eine KSK wie G123456, sonst eine wie G 1234.56 
+	 */
+	public static String normalizeKSK(String KSK, boolean bCompact){
+		if(!KSK.matches("[a-zA-Z] ?[0-9]{4,4}\\.?[0-9]{2,2}")){
+			return "invalid";
+		}
+		KSK=KSK.replaceAll("[^a-zA-Z0-9]", "");
+		if(bCompact){
+			return KSK;
+		}
+		KSK=KSK.substring(0,1)+" "+KSK.substring(2, 5)+"."+KSK.substring(6);
+		return KSK;
 	}
 	
 	public static String getKSK(final Kontakt k){
