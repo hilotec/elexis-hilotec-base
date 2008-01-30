@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,6 @@
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
 		<tstamp/>
 		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.elexis.externe_dokumente_${version}.${DSTAMP}.zip"/>
-
+	    <ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
 	</target>
 </project>
