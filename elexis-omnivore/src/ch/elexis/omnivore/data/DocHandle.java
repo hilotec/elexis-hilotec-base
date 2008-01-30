@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 2741 2007-07-07 15:48:49Z rgw_ch $
+ *  $Id: DocHandle.java 3595 2008-01-30 12:01:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -70,6 +75,10 @@ public class DocHandle extends PersistentObject {
 	}
 	
 	public DocHandle(byte[] doc, Patient pat, String title, String mime, String keyw){
+		if((doc==null) || (doc.length==0)){
+			SWTHelper.showError("Fehler mit Dokument", "Das Dokument konnte nicht korrekt gelesen werden");
+			return;
+		}
 		create(null);
 		setBinary("Doc", doc);
 		set(new String[]{"PatID","Datum","Titel","Keywords","Mimetype"},
@@ -106,7 +115,7 @@ public class DocHandle extends PersistentObject {
 		return super.delete();
 	}
 	
-	public String execute(){
+	public void execute(){
 		try{
 			String ext="";
 			String typname=get("Mimetype");
@@ -121,6 +130,10 @@ public class DocHandle extends PersistentObject {
 			}
 			File temp=File.createTempFile("omni_", "_vore."+ext);
 			byte[] b=getBinary("Doc");
+			if(b==null){
+				SWTHelper.showError("Fehler beim lesen", "Konnte das Dokument nicht aus der Datenbank laden");
+				return;
+			}
 			FileOutputStream fos=new FileOutputStream(temp);
 			fos.write(b);
 			fos.close();
@@ -138,7 +151,6 @@ public class DocHandle extends PersistentObject {
 			ExHandler.handle(ex);
 			SWTHelper.showError("Konnte Datei nicht starten", ex.getMessage());
 		}
-			return "";
 	}
 	@Override
 	protected String getTableName() {
@@ -164,15 +176,18 @@ public class DocHandle extends PersistentObject {
 		FileImportDialog fid=new FileImportDialog(file.getName());
 		if(fid.open()==Dialog.OK){
 			try{
-				FileInputStream fis=new FileInputStream(file);
+				BufferedInputStream bis=new BufferedInputStream(new FileInputStream(file));
 				ByteArrayOutputStream baos=new ByteArrayOutputStream();
 				int in;
-				while((in=fis.read())!=-1){
+				while((in=bis.read())!=-1){
 					baos.write(in);
 				}
+				bis.close();
+				baos.close();
 				new DocHandle(baos.toByteArray(),act,fid.title,file.getName(),fid.keywords);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
+				SWTHelper.showError("Fehler beim Einlesen", "Es ist ein Fehler beim Einlesen passiert. Bitte log prüfen");
 			}
 		}
 		
