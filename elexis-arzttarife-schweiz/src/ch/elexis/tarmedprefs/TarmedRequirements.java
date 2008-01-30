@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3596 2008-01-30 15:50:33Z rgw_ch $
+ * $Id: TarmedRequirements.java 3598 2008-01-30 22:01:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -72,7 +72,7 @@ public class TarmedRequirements {
 		if(bCompact){
 			return KSK;
 		}
-		KSK=KSK.substring(0,1)+" "+KSK.substring(2, 5)+"."+KSK.substring(6);
+		KSK=KSK.substring(0,1)+" "+KSK.substring(1, 5)+"."+KSK.substring(5);
 		return KSK;
 	}
 	
