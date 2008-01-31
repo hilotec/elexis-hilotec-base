@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3590 2008-01-28 11:06:51Z rgw_ch $
+<!-- $Id: build.xml 3600 2008-01-31 09:55:48Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -136,6 +136,8 @@
 
 	<!-- Optionale Plugins, für die Programmfunktion nicht unbedingt erforderlich -->
 	<target name="options" depends="prepare">
+		<available file="../elexis-rosenstudio/build.xml" property="rosenstudio.ok"/>
+		   <antcall target="rosenstudio"/>
 		<available file="../elexis-artikel-oesterreich/build.xml" property="artaustria.ok"/>
 			<antcall target="artaustria"/>
 
@@ -204,9 +206,12 @@
 
 	<target name="all" depends="main,options"/>
 
-	<target name="hnet" if="hnet.ok">
-		<ant antfile="../elexis-h-net/build.xml"/>
+	<target name="rosenstudio" if="rosenstudio.ok">
+	        <ant antfile="../elexis-rosenstudio/build.xml"/>
 	</target>
+	<target name="hnet" if="hnet.ok">
+	        <ant antfile="../elexis-h-net/build.xml"/>
+	    </target>
 	<target name="directories" if="directories.ok">
 		<ant antfile="../medshare-directories/build.xml"/>
 	</target>
