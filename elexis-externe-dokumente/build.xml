@@ -16,6 +16,8 @@
 	<property name="plugindir" value="${dist}/plugins/ch.elexis.externe_dokumente_${version}"/>
 	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
 	
+	<property name="pluginname" value="elexis-externe-dokumente"/>
+    <property name="targetdir" value="ch.elexis.externe_dokumente_${version}"/>
 	<!-- Pfade für -classpath des Java-compilers festlegen -->
 	<path id="eclipseclasses">
 		<fileset dir="${dist}/plugins">
