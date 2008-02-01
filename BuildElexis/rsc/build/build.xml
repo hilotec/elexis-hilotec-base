@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3600 2008-01-31 09:55:48Z rgw_ch $
+<!-- $Id: build.xml 3601 2008-02-01 13:12:40Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -164,6 +164,7 @@
 	
 	<!-- These plugins are not part of the standard distribution -->
 	<target name="elexis-pro" depends="all">
+		
 		<available file="../elexis-h-net/build.xml" property="hnet.ok"/>
 			<antcall target="hnet"/>
 
@@ -181,6 +182,8 @@
 		
 		<available file="../elexis-galexis/build.xml" property="galexis.ok"/>
 		<antcall target="galexis"/>
+		<available file="../Laborimport-TeamW/build.xml" property="teamw.ok"/>
+		    <antcall target="teamw"/>
 		<available file="../Laborimport-Krech/build.xml" property="krech.ok"/>
 			<antcall target="krech"/>
 		<available file="../Laborimport-Unilabs/build.xml" property="unilabs.ok"/>
@@ -206,8 +209,12 @@
 
 	<target name="all" depends="main,options"/>
 
+	<target name="teamw" if="teamw.ok">
+	      <ant antfile="../Laborimport-TeamW/build.xml"/>
+	</target>
+		
 	<target name="rosenstudio" if="rosenstudio.ok">
-	        <ant antfile="../elexis-rosenstudio/build.xml"/>
+	       <ant antfile="../elexis-rosenstudio/build.xml"/>
 	</target>
 	<target name="hnet" if="hnet.ok">
 	        <ant antfile="../elexis-h-net/build.xml"/>
