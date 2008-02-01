@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 3595 2008-01-30 12:01:00Z rgw_ch $
+ *  $Id: DocHandle.java 3606 2008-02-01 13:14:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -29,6 +29,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.views.FileImportDialog;
+import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
@@ -80,9 +81,12 @@ public class DocHandle extends PersistentObject {
 			return;
 		}
 		create(null);
-		setBinary("Doc", doc);
-		set(new String[]{"PatID","Datum","Titel","Keywords","Mimetype"},
+		if(setBinary("Doc", doc)==1){
+			set(new String[]{"PatID","Datum","Titel","Keywords","Mimetype"},
 				pat.getId(),new TimeTool().toString(TimeTool.DATE_GER),title,keyw,mime);
+		}else{
+			log.log("Der Datensatz wurde nicht geschrieben",Log.ERRORS);
+		}
 	}
 	/**
 	   * Tabelle neu erstellen
