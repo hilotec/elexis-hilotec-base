@@ -1,6 +1,21 @@
+% *******************************************************************************
+% * Copyright (c) 2007-2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich - initial implementation
+% *
+% *  $Id: konsviews.tex 3329 2007-11-07 17:44:06Z rgw_ch $
+% *******************************************************************************
+
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 \section{Elexis-Befunde}
-Einbindung textorientierter datierter Befundserien (z.B. Gewicht, BZ, Quick etc.). \subsection{Konfiguration}
+\label{befunde}
+\index{Befunde}\index{Quick-Reihen}
+Einbindung textorientierter datierter Befundserien (z.B. Gewicht, BZ, Quick, Röntgenbefunde etc.). \subsection{Konfiguration}
 
 \begin{figure}[htbp]
    \begin{minipage}{0.35\textwidth}
@@ -11,7 +26,7 @@ Einbindung textorientierter datierter Befundserien (z.B. Gewicht, BZ, Quick etc.
      \end{minipage}\hfill
      \begin{minipage}{0.65\textwidth}
      Wenn das Plugin installiert ist, finden Sie im Menu Datei-Einstellungen eine Rubrik \textit{Befunde}. Diese wird anfangs leer sein (Abb. \ref{fig:befundesettings}).\\
-     
+
      Um einen neuen Befundparameter hinzuzufügen, klicken Sie auf  \textit{Hinzufügen}. Sie werden nach dem Namen dieses Parameters gefragt, wir wählen  Röntgen. Danach erscheint eine Karteikarte mit diesem Parameter, die wir jetzt noch mit den einzutragenden Datenspalten versehen müssen.
 
     \end{minipage}
@@ -68,3 +83,14 @@ Im Fall eines berechneten Wertes können Sie die Rechnung durch Klicken auf den 
 \begin{center}
 \includegraphics{images/befunde8}
 \end{center} 
+
+\subsection{Text-Platzhalter}
+\index{Platzhalter} \index{Textfelder}
+Befunde können auch in Platzhalter von Textdokumenten eingefügt werden. Sie müssen hierzu die Syntax wie unter 'Daten aus externen Plugins' beschrieben (\ref{datenfelder_extern}, S. \pageref{datenfelder_extern}) anwenden. Der Schlüsselname des Befunde-Plugins ist \textsc{Befunde-Data}.
+
+Um beispielsweise eine Tabelle mit dem Gewichtsverlauf des aktuellen Patienten im aktuellen Dokument einzufügen, setzen Sie folgenden Platzhalter ein:
+\begin{verbatim}
+    [Befunde-Data:Patient:all:Gewicht]  (um eine Tabelle mit allen Messungen auszugeben)
+    [Befunde-Data:Patient:last:Gewicht] (Um nur die letzte Messung auszugeben)
+\end{verbatim}
+ 
