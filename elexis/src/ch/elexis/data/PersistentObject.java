@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *    $Id: PersistentObject.java 3604 2008-02-01 13:13:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import com.mysql.jdbc.PacketTooBigException;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -1034,9 +1036,12 @@ public abstract class PersistentObject{
             stm.setBytes(1,value);
             stm.executeUpdate();
             return 1;
+        }catch(PacketTooBigException pigex){
+            ExHandler.handle(pigex);
+            SWTHelper.showError("setBytes", "Schreibfehler", "Der Datensatz war zu gross zum Schreiben");
         }catch(Exception ex){
-            ExHandler.handle(ex);
             log.log("Fehler beim Ausführen der Abfrage "+cmd,Log.ERRORS);
+            SWTHelper.showError("setBytes", "Schreibfehler", "Es trat ein Fehler beim Schreiben auf.");
         }
         return 0;
 	}

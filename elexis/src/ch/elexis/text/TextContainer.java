@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3582 2008-01-24 21:47:19Z rgw_ch $
+ *  $Id: TextContainer.java 3604 2008-02-01 13:13:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -66,7 +66,9 @@ public class TextContainer {
 	private ITextPlugin plugin;
 	private static Log log=Log.get("TextContainer");
 	private Shell shell;
-	private static final String TEMPLATESTRING="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè:]+\\]";
+	private static final String TEMPLATE_REGEXP="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]";
+	private static final String GENDERIZE_REGEXP="\\[[a-zA-Z]+:mwn?:[^\\[]+\\]";
+	private static final String IDATACCESS_REGEXP="\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; 
 	
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin findet, wählt er
@@ -175,17 +177,17 @@ public class TextContainer {
 			if(plugin.loadFromByteArray(template.loadBinary(), true)==true){
 				final Brief ret=new Brief(subject==null ? template.getBetreff():subject,null,Hub.actUser,adressat,kons,typ);
 
-				plugin.findOrReplace(TEMPLATESTRING,new ReplaceCallback(){
+				plugin.findOrReplace(TEMPLATE_REGEXP,new ReplaceCallback(){
 					public Object replace(final String in) {
 						return replaceFields(ret,in.replaceAll("[\\[\\]]",""));
 					}
 				});
-				plugin.findOrReplace("\\[[a-zA-Z]+:mwn?:[^\\[]+\\]",new ReplaceCallback(){
+				plugin.findOrReplace(GENDERIZE_REGEXP,new ReplaceCallback(){
 					public String replace(final String in) {
 						return genderize(ret,in.replaceAll("[\\[\\]]",""));
 					}
 				});
-				plugin.findOrReplace("\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+\\]",new ReplaceCallback(){
+				plugin.findOrReplace(IDATACCESS_REGEXP,new ReplaceCallback(){
 					public Object replace(final String in) {
 						String[][] ref=ScriptUtil.loadDataFromPlugin(in.replaceAll("[\\[\\]]",""));
 						return ref;
