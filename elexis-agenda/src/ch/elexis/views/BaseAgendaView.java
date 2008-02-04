@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3586 2008-01-28 10:34:31Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3611 2008-02-04 18:09:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -51,7 +51,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	TableViewer tv;
 	BaseAgendaView self;
 	protected IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
-	protected IAction dayLimitsAction, newViewAction, printAction, exportAction;
+	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
 	MenuManager menu=new MenuManager();
 	String[] bereiche;
 	
@@ -316,6 +316,18 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				ict.doExport(actDate, actDate, actBereich);
 			}
 		};
+		
+		importAction=new Action("Termine importieren"){
+			{
+				setToolTipText("Termine aus einer iCal-Datei importieren");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT));
+			}
+			@Override
+			public void run(){
+				ICalTransfer ict=new ICalTransfer();
+				ict.doImport(actBereich);
+			}
+		};
 		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
 			Menu mine;
 			{
@@ -363,6 +375,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		mgr.add(dayLimitsAction);
 		mgr.add(newViewAction);
 		mgr.add(exportAction);
+		mgr.add(importAction);
 	}
 
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3502 2008-01-05 20:07:36Z rgw_ch $
+ *    $Id: Termin.java 3611 2008-02-04 18:09:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -607,7 +607,7 @@ public Object clone()
   }
   static int TimeInMinutes(final TimeTool t)
   {
-      return t.get(TimeTool.HOUR_OF_DAY*60)+t.get(TimeTool.MINUTE);
+      return (t.get(TimeTool.HOUR_OF_DAY)*60)+t.get(TimeTool.MINUTE);
   }
   
   
