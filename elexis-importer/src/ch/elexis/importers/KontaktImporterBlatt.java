@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 3524 2008-01-13 17:03:39Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 3608 2008-02-04 14:45:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -111,7 +111,7 @@ public class KontaktImporterBlatt extends Composite{
 	}
 
 	public boolean doImport(final IProgressMonitor moni){
-		if(filename.length()>0){
+		if(filename!=null && filename.length()>0){
 			switch(method){
 			case 0: return importExcel(filename,moni);
 			case 1: return importCSV(filename);
