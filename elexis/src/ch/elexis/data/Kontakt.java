@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *    $Id: Kontakt.java 3609 2008-02-04 16:20:39Z rgw_ch $
  *******************************************************************************/
 
 
@@ -89,13 +89,20 @@ public class Kontakt extends PersistentObject{
 		
 		if (shortLabel) {
 			bld.append(get("Bezeichnung1"));
+			String bez3=get("Bezeichnung3");
+			if(!StringTool.isNothing(bez3)){
+				bld.append("(").append(bez3).append(")");
+			}
 		} else {
-			String[] ret=new String[5];
-			get(new String[]{"Bezeichnung1","Bezeichnung2","Strasse","Plz","Ort"},ret);
-			bld.append(ret[0]).append(" ").append(checkNull(ret[1]))
-				.append(", ").append(checkNull(ret[2])).append(", ")
-				.append(checkNull(ret[3]))
-				.append(" ").append(checkNull(ret[4]));
+			String[] ret=new String[6];
+			get(new String[]{"Bezeichnung1","Bezeichnung2","Bezeichnung3","Strasse","Plz","Ort"},ret);
+			bld.append(ret[0]).append(" ").append(checkNull(ret[1]));
+			if(!StringTool.isNothing(ret[2])){
+				bld.append("(").append(ret[2]).append(")");
+			}
+			bld.append(", ").append(checkNull(ret[3])).append(", ")
+				.append(checkNull(ret[4]))
+				.append(" ").append(checkNull(ret[5]));
 		}
 
 		return bld.toString();
