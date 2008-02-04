@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 3587 2008-01-28 10:52:31Z rgw_ch $
+ * $Id: ICalTransfer.java 3607 2008-02-04 14:45:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -73,6 +73,21 @@ public class ICalTransfer {
 			bereich=bereiche[0];
 		}
 		new ICalExportDlg(von,bis,bereich).open();
+	}
+	
+	public void doImport(String bereich){
+		if(bereich==null){
+			bereich=bereiche[0];
+		}
+		new ICalImportDlg(bereich).open();
+	}
+	class ICalImportDlg extends TitleAreaDialog{
+		String m;
+		public ICalImportDlg(String bereich){
+			super(Desk.getTopShell());
+			m=bereich;
+		}
+		
 	}
 	class ICalExportDlg extends TitleAreaDialog{
 		final String NOFILESELECTED=" - keine Datei ausgewählt -"; 

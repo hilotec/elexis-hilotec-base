@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 3502 2008-01-05 20:07:36Z rgw_ch $
+ *  $Id: DayBar.java 3607 2008-02-04 14:45:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -135,6 +135,7 @@ public class DayBar extends Composite {
 			manager.add(container.terminAendernAction);
 			manager.add(AgendaActions.delTerminAction);
 			myLabel.setMenu(manager.createContextMenu(parent));
+			
 			//setBounds(0, 0, 20, 20);
 		}
 
