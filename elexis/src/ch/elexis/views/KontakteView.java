@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 2758 2007-07-08 11:22:28Z rgw_ch $
+ * $Id: KontakteView.java 3610 2008-02-04 16:23:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -71,7 +71,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
         		if(o!=null){
         			Kontakt k=(Kontakt)o[0];
         			k.delete();
-        			cv.notify(CommonViewer.Message.update);
+        			cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
         		}
         	}
          };
@@ -90,7 +90,8 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
          				dup=new Organisation(org.get("Name"),org.get("Zusatz1"));
          			}
          			dup.setAnschrift(k.getAnschrift());
-         			cv.notify(CommonViewer.Message.update);
+         			cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
+         			//cv.getViewerWidget().refresh();
          		}
          	}
          };
