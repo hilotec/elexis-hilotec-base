@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 3611 2008-02-04 18:09:39Z rgw_ch $
+ * $Id: ICalTransfer.java 3612 2008-02-05 12:12:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
@@ -27,8 +24,6 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
@@ -39,8 +34,8 @@ import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.model.property.Duration;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 
@@ -49,7 +44,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -63,8 +57,8 @@ import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ImporterPage.DBBasedImporter;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
@@ -146,6 +140,7 @@ public class ICalTransfer {
 		protected void okPressed() {
 			if(!bFile.getText().equals(NOFILESELECTED)){
 				CalendarBuilder cb=new CalendarBuilder();
+
 				try {
 					Calendar cal=cb.build(new FileInputStream(bFile.getText()));
 					TimeTool ttFrom=new TimeTool();
@@ -160,11 +155,29 @@ public class ICalTransfer {
 						ttFrom.setTimeInMillis(dt.getTime());
 						dt=end.getDate();
 						ttUntil.setTimeInMillis(dt.getTime());
-						Termin termin=new Termin(m,ttFrom.toString(TimeTool.DATE_COMPACT),Termin.TimeInMinutes(ttFrom),
+						Termin termin=null;
+						Uid uid=event.getUid();
+						String uuid=StringTool.unique("agendaimport");
+						if(uid!=null){
+							uuid=uid.getValue();
+							termin=Termin.load(uuid);
+						}
+						if(termin==null || (!termin.exists())){
+							termin=new Termin(uuid,m,ttFrom.toString(TimeTool.DATE_COMPACT),Termin.TimeInMinutes(ttFrom),
 								Termin.TimeInMinutes(ttUntil),typ,status);
-						String name=event.getName();
-						if(name!=null){
-							termin.setText(name);
+						}else{
+							termin.set(new String[]{"BeiWem","Tag","Beginn","Dauer","Typ","Status"},new String[]{ 
+									m,
+									ttFrom.toString(TimeTool.DATE_COMPACT),
+									Integer.toString(Termin.TimeInMinutes(ttFrom)),
+									Integer.toString(ttFrom.secondsTo(ttUntil)/60),
+									typ,status}
+									);
+							
+						}
+						Summary summary=event.getSummary();
+						if(summary!=null){
+							termin.setText(summary.getValue());
 						}
 						Description desc=event.getDescription();
 						if(desc!=null){
