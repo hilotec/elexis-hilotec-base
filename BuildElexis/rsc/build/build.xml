@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3601 2008-02-01 13:12:40Z rgw_ch $
+<!-- $Id: build.xml 3636 2008-02-05 16:30:22Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -26,7 +26,7 @@
 	  - jre					            # Pfad zum einzubindenden jre
 	  - dest				            # Pfad zum Ausgabe-Verzeichnis
 	  - ooo								# Pfad zum OpenOffice Verzeichnis
-	(c) 2005-2007 G. Weirich
+	(c) 2005-2008 G. Weirich
 -->
 
 <project name="elexis" default="all" basedir="../../">
@@ -34,7 +34,7 @@
 	    	Elexis - die Praxis
 	</description>
 	<property environment="env"/>
-	<property name="version" value="1.2.1"/>
+	<property name="version" value="1.2.2"/>
 	<property name="dbversion" value="1.6.0"/>
 	<property file="rsc/build/local.properties"/>
 	<property name="dist"  value="${dest}/Elexis-${version}"/>

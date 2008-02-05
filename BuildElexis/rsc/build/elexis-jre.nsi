@@ -1,5 +1,5 @@
-; $Id: elexis-jre.nsi 3267 2007-10-17 15:52:39Z danlutz $
-
+; $Id: elexis-jre.nsi 3636 2008-02-05 16:30:22Z rgw_ch $
+; @deprecated. use elexis-windows.nsi
 ;******************************************************************************************
 ; Dieses NSIS-Script erstellt den Windows-Installer für Elexis
 ; Wird normalerweise nicht direkt aufgerufen, sondern von Ant intern verwendet

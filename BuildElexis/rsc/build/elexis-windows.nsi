@@ -5,7 +5,7 @@ Name Elexis
 
 # Defines
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.2.1
+!define VERSION 1.2.2
 
 !define REGKEY "SOFTWARE\${PRODUCTNAME}"
 
