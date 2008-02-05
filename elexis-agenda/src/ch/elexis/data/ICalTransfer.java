@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 3612 2008-02-05 12:12:05Z rgw_ch $
+ * $Id: ICalTransfer.java 3613 2008-02-05 15:13:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -69,6 +69,9 @@ public class ICalTransfer {
 	String typ=Termin.typStandard();
 	String status=Termin.statusStandard();
 	Button bFile;
+	Combo cbTypes, cbStates;
+	Button bAll;
+	Label lFilename;
 	
 	public ICalTransfer(){
 		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");	
@@ -104,10 +107,13 @@ public class ICalTransfer {
 		protected Control createDialogArea(Composite parent) {
 			Composite ret=new Composite(parent,SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			ret.setLayout(new GridLayout());
+			ret.setLayout(new GridLayout(2,false));
 			bFile=new Button(ret,SWT.PUSH);
+			lFilename=new Label(ret,SWT.NONE);
+			lFilename.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			lFilename.setText(NOFILESELECTED);
 			bFile.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			bFile.setText(NOFILESELECTED);
+			bFile.setText("Datei für Import...");
 			bFile.addSelectionListener(new SelectionAdapter(){
 
 				@Override
@@ -117,15 +123,28 @@ public class ICalTransfer {
 					fileDialog.setFilterNames(new String[]{"iCal Dateien"});
 					String file=fileDialog.open();
 					if(file==null){
-						bFile.setText(NOFILESELECTED);
+						lFilename.setText(NOFILESELECTED);
 						getButton(IDialogConstants.OK_ID).setEnabled(false);
 					}else{
-						bFile.setText(file);
+						lFilename.setText(file);
 						getButton(IDialogConstants.OK_ID).setEnabled(true);
 					}
 				}
 				
 			});
+			new Label(ret,SWT.NONE).setText("Termintyp vorgeben");
+			cbTypes=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
+			new Label(ret,SWT.NONE).setText("Terminstatus vorgeben");
+			cbStates=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
+			bAll=new Button(ret,SWT.CHECK);
+			bAll.setText("Neue Termine für alle Bereiche eintragen");
+			bAll.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+			cbTypes.setItems(Termin.TerminTypes);
+			cbStates.setItems(Termin.TerminStatus);
+			cbTypes.setText(Termin.typStandard());
+			cbStates.setText(Termin.statusStandard());
+			cbTypes.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			return ret;
 		}
 		@Override
@@ -138,23 +157,37 @@ public class ICalTransfer {
 		}
 		@Override
 		protected void okPressed() {
-			if(!bFile.getText().equals(NOFILESELECTED)){
+			if(!lFilename.getText().equals(NOFILESELECTED)){
 				CalendarBuilder cb=new CalendarBuilder();
-
+				String[] b=new String[1];
+				b[0]=m;
+				if(bAll.getSelection()){
+					b=bereiche;
+				}
+				
 				try {
-					Calendar cal=cb.build(new FileInputStream(bFile.getText()));
+					Calendar cal=cb.build(new FileInputStream(lFilename.getText()));
 					TimeTool ttFrom=new TimeTool();
 					TimeTool ttUntil=new TimeTool();
+					Date dt=null;
 					List<Component> comps=cal.getComponents();
 					for(Component comp:comps){
 						VEvent event=(VEvent)comp;
 						PropertyList props=event.getProperties();
 						DtStart start=event.getStartDate();
 						DtEnd end=event.getEndDate();
-						Date dt=start.getDate();
-						ttFrom.setTimeInMillis(dt.getTime());
-						dt=end.getDate();
-						ttUntil.setTimeInMillis(dt.getTime());
+						if(start!=null){
+							dt=start.getDate();
+							ttFrom.setTimeInMillis(dt.getTime());
+						}else{
+							ttFrom.set(new TimeTool());
+						}
+						if(end!=null){
+							dt=end.getDate();
+							ttUntil.setTimeInMillis(dt.getTime());
+						}else{
+							ttUntil.set(ttFrom);
+						}
 						Termin termin=null;
 						Uid uid=event.getUid();
 						String uuid=StringTool.unique("agendaimport");
@@ -163,8 +196,11 @@ public class ICalTransfer {
 							termin=Termin.load(uuid);
 						}
 						if(termin==null || (!termin.exists())){
-							termin=new Termin(uuid,m,ttFrom.toString(TimeTool.DATE_COMPACT),Termin.TimeInMinutes(ttFrom),
-								Termin.TimeInMinutes(ttUntil),typ,status);
+							for(String ber:b){
+								termin=new Termin(uuid,ber,ttFrom.toString(TimeTool.DATE_COMPACT),Termin.TimeInMinutes(ttFrom),
+										Termin.TimeInMinutes(ttUntil),typ,status);
+								uuid=StringTool.unique("agendaimport");
+							}
 						}else{
 							termin.set(new String[]{"BeiWem","Tag","Beginn","Dauer","Typ","Status"},new String[]{ 
 									m,
@@ -289,9 +325,10 @@ public class ICalTransfer {
 				DateTime end=new DateTime(tt.getTime());
 				VEvent vTermin=new VEvent(start,end,t.getPersonalia());
 				vTermin.getProperties().add(tz.getTimeZoneId());
-				vTermin.getProperties().add(new Description(t.getText()));
 				Uid uid=new Uid(t.getId());
 				vTermin.getProperties().add(uid);
+				Description desc=new Description(t.getGrund());
+				vTermin.getProperties().add(desc);
 				calendar.getComponents().add(vTermin);
 			}
 			try{

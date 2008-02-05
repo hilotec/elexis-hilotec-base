@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3611 2008-02-04 18:09:39Z rgw_ch $
+ *    $Id: Termin.java 3613 2008-02-05 15:13:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,14 +35,14 @@ import ch.rgw.tools.VersionInfo;
  */
 
 public class Termin extends PersistentObject implements Cloneable, Comparable, IPlannable{
-	public static final String VERSION="1.1.0";
+	public static final String VERSION="1.2.0";
     public static String[] TerminTypes;
     public static String[] TerminStatus;
     //static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
     //static final String DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";    
     public static final String createDB=
     	    "CREATE TABLE AGNTERMINE("+
-    		"ID              VARCHAR(25) primary key,"+
+    		"ID              VARCHAR(50) primary key,"+
     		"PatID			VARCHAR(80),"+
     		"Bereich		VARCHAR(25),"+
     	    "Tag             CHAR(8),"+
@@ -91,14 +91,22 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	  }else{
 		  VersionInfo vi=new VersionInfo(Version.get("Wer"));
 		  if(vi.isOlder(VERSION)){
-			  if(j.DBFlavor.equalsIgnoreCase("postgresql")){
-				  j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);");
-				  j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);");
-				  j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);");
-			  }else if(j.DBFlavor.equalsIgnoreCase("mysql")){
-				  j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);");
-				  j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);");
-				  j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);");
+			  if(vi.isOlder("1.1.0")){
+				  if(j.DBFlavor.equalsIgnoreCase("postgresql")){
+					  j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);");
+					  j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);");
+					  j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);");
+				  }else if(j.DBFlavor.equalsIgnoreCase("mysql")){
+					  j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);");
+					  j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);");
+					  j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);");
+				  }
+			  }else if (vi.isOlder("1.2.0")){
+				  if(j.DBFlavor.equalsIgnoreCase("postgresql")){
+					  j.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(50);");
+				  }else if(j.DBFlavor.equalsIgnoreCase("mysql")){
+					  j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(50);");
+				  }
 			  }
 			  Version.set("Wer", VERSION);
 		  }
