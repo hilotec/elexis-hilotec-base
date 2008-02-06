@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 2882 2007-07-23 19:10:50Z rgw_ch $
+ * $Id: Importer.java 3650 2008-02-06 20:44:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -124,6 +124,9 @@ public class Importer extends ImporterPage {
 		if(!xl.load(file, 0)){
 			return new Result<String>(Status.ERROR,1,"Bad file format",file,true);				
 		}
+		xl.setFieldTypes(new Class[]{String.class,String.class,String.class,
+									 Integer.class,Integer.class,Integer.class,
+									 TimeTool.class,TimeTool.class,Double.class});
 		for(int i=xl.getFirstRow();i<=xl.getLastRow();i++){
 			List<String> row=xl.getRow(i);
 			importLine(row.toArray(new String[0]));
