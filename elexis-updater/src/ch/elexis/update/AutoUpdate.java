@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 3536 2008-01-16 12:06:30Z rgw_ch $
+ * $Id: AutoUpdate.java 3637 2008-02-06 04:59:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
@@ -39,6 +37,7 @@ public class AutoUpdate {
 			UpdateJob job=null;
 			String base=Hub.getBasePath();
 			//String base="d:/apps/elexis-1.2.0/plugins/ch.elexis_1.2.1";
+			//String base="c:/programme/elexis-1.2.1/plugins/ch.elexis_1.2.1_20080124";
 			basedir=new File(base).getParentFile();
 			log.log("Dir: "+basedir.getAbsolutePath(),Log.INFOS);  // =plugins
 			if(basedir.isDirectory()){
