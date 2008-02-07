@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 2872 2007-07-23 08:44:07Z rgw_ch $
+ * $Id: Leistung.java 3663 2008-02-07 21:11:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -223,5 +223,9 @@ public class Leistung extends VerrechenbarAdapter {
 	protected Leistung(final String id){
 		super(id);
 	}
-
+	@Override
+	public boolean isDragOK() {
+		return true;
+	}
+	
 }
