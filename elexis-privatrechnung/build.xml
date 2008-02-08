@@ -49,8 +49,7 @@
 	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
 		<tstamp/>
-		<exec command="texify anleitung.tex" dir="${sourcedir}/doc" />
-		<copy file="${sourcedir}/doc/anleitung.pdf" todir="${plugindir}"></copy>
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="texify"/>
 		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
 	</target>
