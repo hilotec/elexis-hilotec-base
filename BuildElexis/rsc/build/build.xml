@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3636 2008-02-05 16:30:22Z rgw_ch $
+<!-- $Id: build.xml 3665 2008-02-08 15:09:26Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -39,7 +39,8 @@
 	<property file="rsc/build/local.properties"/>
 	<property name="dist"  value="${dest}/Elexis-${version}"/>
 	<property name="name" value="Elexis"/>
-	<property name="doc"   value="${dist}/doc"/>
+	<property name="doc"   value="${dest}/doc"/>
+	<property name="docsource" value="${dest}/output/docsource"/>
 	<property name="output" value="${dest}/output"/>
 	<property name="updatefiles" value="${output}/updater"/>
 	<property name="additions" value="${output}/additional"/>
@@ -81,6 +82,8 @@
 		<mkdir dir="${updatefiles}"/>
 		<mkdir dir="${additions}"/>
 		<mkdir dir="${plugins}"/>
+		<mkdir dir="${docsource}"/>
+		<mkdir dir="${doc}"/>
 		<copy todir="${dist}">
 			<fileset dir="${eclipse}"/>
 		</copy>
@@ -204,7 +207,8 @@
 			<antcall target="mythic"/>
 		<available file="../noatext/build.xml" property="noatext.ok"/>
 		  <antcall target="noatext"/>
-		
+		<available file="../elexis-connect-abxmicros/build.xml" property="abxmicros.ok"/>
+		  <antcall target="abxmicros"/>
 	</target>
 
 	<target name="all" depends="main,options"/>
@@ -366,6 +370,12 @@
 		</copy>
 	</target>
 
+	<target name="texify">
+		<echo message="texify ${sourcedir}/doc/${pluginname}.tex dir=${docsource}" />
+	    <exec command="texify ${sourcedir}/doc/${pluginname}.tex" dir="${docsource}" />
+		<copy file="${docsource}/${pluginname}.pdf" todir="${doc}"/>
+	</target>
+	
 	<!-- Windows - Version der Distribution -->
 	<target name="windows" depends="main">
 		<antcall target="noatext"/>		
