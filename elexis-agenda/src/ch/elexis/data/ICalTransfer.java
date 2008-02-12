@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 3613 2008-02-05 15:13:14Z rgw_ch $
+ * $Id: ICalTransfer.java 3670 2008-02-12 17:33:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -172,52 +172,54 @@ public class ICalTransfer {
 					Date dt=null;
 					List<Component> comps=cal.getComponents();
 					for(Component comp:comps){
-						VEvent event=(VEvent)comp;
-						PropertyList props=event.getProperties();
-						DtStart start=event.getStartDate();
-						DtEnd end=event.getEndDate();
-						if(start!=null){
-							dt=start.getDate();
-							ttFrom.setTimeInMillis(dt.getTime());
-						}else{
-							ttFrom.set(new TimeTool());
-						}
-						if(end!=null){
-							dt=end.getDate();
-							ttUntil.setTimeInMillis(dt.getTime());
-						}else{
-							ttUntil.set(ttFrom);
-						}
-						Termin termin=null;
-						Uid uid=event.getUid();
-						String uuid=StringTool.unique("agendaimport");
-						if(uid!=null){
-							uuid=uid.getValue();
-							termin=Termin.load(uuid);
-						}
-						if(termin==null || (!termin.exists())){
-							for(String ber:b){
-								termin=new Termin(uuid,ber,ttFrom.toString(TimeTool.DATE_COMPACT),Termin.TimeInMinutes(ttFrom),
-										Termin.TimeInMinutes(ttUntil),typ,status);
-								uuid=StringTool.unique("agendaimport");
+						if(comp instanceof VEvent){ // TimeZone not supported
+							VEvent event=(VEvent)comp;
+							PropertyList props=event.getProperties();
+							DtStart start=event.getStartDate();
+							DtEnd end=event.getEndDate();
+							if(start!=null){
+								dt=start.getDate();
+								ttFrom.setTimeInMillis(dt.getTime());
+							}else{
+								ttFrom.set(new TimeTool());
 							}
-						}else{
-							termin.set(new String[]{"BeiWem","Tag","Beginn","Dauer","Typ","Status"},new String[]{ 
-									m,
-									ttFrom.toString(TimeTool.DATE_COMPACT),
-									Integer.toString(Termin.TimeInMinutes(ttFrom)),
-									Integer.toString(ttFrom.secondsTo(ttUntil)/60),
-									typ,status}
-									);
-							
-						}
-						Summary summary=event.getSummary();
-						if(summary!=null){
-							termin.setText(summary.getValue());
-						}
-						Description desc=event.getDescription();
-						if(desc!=null){
-							termin.setGrund(desc.getValue());
+							if(end!=null){
+								dt=end.getDate();
+								ttUntil.setTimeInMillis(dt.getTime());
+							}else{
+								ttUntil.set(ttFrom);
+							}
+							Termin termin=null;
+							Uid uid=event.getUid();
+							String uuid=StringTool.unique("agendaimport");
+							if(uid!=null){
+								uuid=uid.getValue();
+								termin=Termin.load(uuid);
+							}
+							if(termin==null || (!termin.exists())){
+								for(String ber:b){
+									termin=new Termin(uuid,ber,ttFrom.toString(TimeTool.DATE_COMPACT),Termin.TimeInMinutes(ttFrom),
+											Termin.TimeInMinutes(ttUntil),typ,status);
+									uuid=StringTool.unique("agendaimport");
+								}
+							}else{
+								termin.set(new String[]{"BeiWem","Tag","Beginn","Dauer","Typ","Status"},new String[]{ 
+										m,
+										ttFrom.toString(TimeTool.DATE_COMPACT),
+										Integer.toString(Termin.TimeInMinutes(ttFrom)),
+										Integer.toString(ttFrom.secondsTo(ttUntil)/60),
+										typ,status}
+										);
+								
+							}
+							Summary summary=event.getSummary();
+							if(summary!=null){
+								termin.setText(summary.getValue());
+							}
+							Description desc=event.getDescription();
+							if(desc!=null){
+								termin.setGrund(desc.getValue());
+							}
 						}
 					}
 				} catch (ParserException e) {
