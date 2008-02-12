@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 2735 2007-07-07 14:07:31Z rgw_ch $
+ *    $Id: Messwert.java 3669 2008-02-12 17:33:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -41,7 +41,7 @@ import ch.rgw.tools.ExHandler;
  *
  */
 public class Messwert extends PersistentObject {
-	public static final int VERSION=2;
+	public static final int VERSION=3;
 	static final String SETUP_SEPARATOR=";;";
 	static final String SETUP_CHECKSEPARATOR=":/:";
 	/**
@@ -159,7 +159,14 @@ public class Messwert extends PersistentObject {
 			Hashtable names=setup.getHashtable("Befunde");
 			String v=(String)names.get("VERSION");
 			if(v==null || Integer.parseInt(v)<VERSION){
-				if(Integer.parseInt(v)==1){ // version 1 auf 2
+				if(Integer.parseInt(v)<3){
+					  if(j.DBFlavor.equalsIgnoreCase("postgresql")){
+						  j.exec("ALTER TABLE "+TABLENAME+" ALTER Name TYPE VARCHAR(80);");
+					  }else if(j.DBFlavor.equalsIgnoreCase("mysql")){
+						  j.exec("ALTER TABLE "+TABLENAME+" MODIFY Name VARCHAR(80);");
+					  }
+				}
+				if(Integer.parseInt(v)<2){ // version 1 auf 2
 					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 				}else{ // version 0 auf 1
 					StringBuilder titles=new StringBuilder();
@@ -253,7 +260,7 @@ public class Messwert extends PersistentObject {
 	"ID			VARCHAR(25) primary key,"+ 	//$NON-NLS-1$
 	"deleted	CHAR(1) default '0',"+		//$NON-NLS-1$
 	"PatientID	VARCHAR(25),"+ 				//$NON-NLS-1$
-	"Name		VARCHAR(20),"+ 				//$NON-NLS-1$
+	"Name		VARCHAR(80),"+ 				//$NON-NLS-1$
 	"Datum		CHAR(8),"+ 					//$NON-NLS-1$
 	"Befunde 	BLOB"+ 						//$NON-NLS-1$
 	");"+ 									//$NON-NLS-1$
