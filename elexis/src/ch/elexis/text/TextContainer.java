@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3604 2008-02-01 13:13:49Z rgw_ch $
+ *  $Id: TextContainer.java 3673 2008-02-13 21:18:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -49,7 +49,6 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
