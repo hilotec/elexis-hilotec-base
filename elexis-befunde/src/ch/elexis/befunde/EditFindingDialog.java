@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EditFindingDialog.java 3548 2008-01-17 12:04:56Z rgw_ch $
+ *    $Id: EditFindingDialog.java 3671 2008-02-13 17:30:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -62,7 +62,11 @@ public class EditFindingDialog extends TitleAreaDialog {
 		for(int i=0;i<flds.length;i++){
 			String[] line=flds[i].split(Messwert.SETUP_CHECKSEPARATOR);
 			flds[i]=line[0];
-			multiline[i]=line[1].equals("m") ? true : false;
+			if(line.length<2){
+				multiline[i]=false;
+			}else{
+				multiline[i]=line[1].equals("m") ? true : false;
+			}
 		}
 	}
 
