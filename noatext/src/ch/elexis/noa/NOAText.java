@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 3672 2008-02-13 21:18:05Z rgw_ch $
+ *  $Id: NOAText.java 3674 2008-02-14 09:30:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -298,7 +298,10 @@ public class NOAText implements ITextPlugin {
 					if(replace==null){
 						r.setText("??Auswahl??");
 					}else if(replace instanceof String){
-						r.setText(((String)replace).replaceAll("\\r\\n[\\r\\n]*", "\n"));
+						//String repl=((String)replace).replaceAll("\\r\\n[\\r\\n]*", "\n")
+						String repl=((String)replace).replaceAll("\\r", "\n");
+						repl=repl.replaceAll("\\n\\n+", "\n");
+						r.setText(repl);
 					}else if(replace instanceof String[][]){
 						String[][]contents=(String[][])replace;
 						try{
