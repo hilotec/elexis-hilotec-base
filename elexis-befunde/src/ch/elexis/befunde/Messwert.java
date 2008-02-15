@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 3669 2008-02-12 17:33:17Z rgw_ch $
+ *    $Id: Messwert.java 3677 2008-02-15 16:44:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 2948 2007-08-04 06:12:49Z rgw_ch $
+ *    $Id: FindingsView.java 3677 2008-02-15 16:44:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -189,7 +189,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 				for(int i=1;i<=flds.length;i++){
 					tc[i]=new TableColumn(table,SWT.NONE);
 					flds[i-1]=flds[i-1].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-					String[] header=flds[i-1].split("=");
+					String[] header=flds[i-1].split("=",2);
 					tc[i].setText(header[0]);
 					if(header.length>1){
 						tc[i].setData("script", header[1]);
