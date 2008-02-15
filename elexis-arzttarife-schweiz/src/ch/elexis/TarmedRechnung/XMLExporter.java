@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3662 2008-02-07 17:49:49Z danlutz $
+ * $Id: XMLExporter.java 3679 2008-02-15 17:27:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -786,8 +786,8 @@ public class XMLExporter implements IRnOutputter {
 			}else{
 				versicherung.setAttribute("ssn",ahv);
 			}
-			String nif=TarmedRequirements.getNIF(actMandant.getRechnungssteller());
-			if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (!nif.matches("[0-9.]{1,7}"))){
+			String nif=TarmedRequirements.getNIF(actMandant.getRechnungssteller()).replaceAll("[^0-9]", "");
+			if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (!nif.matches("[0-9]{1,7}"))){
 				rn.reject(REJECTCODE.VALIDATION_ERROR, "NIF-Nummer ungültig");
 			}else{
 				versicherung.setAttribute("nif",nif);
