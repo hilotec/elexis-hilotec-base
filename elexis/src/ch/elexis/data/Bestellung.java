@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bestellung.java 284 2006-05-08 05:58:10Z rgw_ch $
+ *    $Id: Bestellung.java 3680 2008-02-15 17:27:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -102,7 +102,9 @@ public class Bestellung extends PersistentObject {
 			String[] fld=i.split(",");
 			if(fld.length==2){
 				Artikel art=Artikel.load(fld[0]);
-				alItems.add(new Item(art,Integer.parseInt(fld[1])));
+				if(art.exists()){
+					alItems.add(new Item(art,Integer.parseInt(fld[1])));
+				}
 			}
 		}
 	}

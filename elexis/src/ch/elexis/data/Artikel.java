@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ * $Id: Artikel.java 3680 2008-02-15 17:27:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -64,7 +64,7 @@ public class Artikel extends VerrechenbarAdapter{
 		}
 	   	Artikel ret=new Artikel(id);
 	   	if(!ret.exists()){
-	   		return null;
+	   		return ret;
 	   	}
 	   	String clazz=ret.get("Klasse");
 	   	if(!StringTool.isNothing(clazz)){
@@ -91,6 +91,9 @@ public class Artikel extends VerrechenbarAdapter{
 	}
 	@Override
 	public String getLabel(){
+		if(!exists()){
+			return "("+getName()+")";
+		}
 		return getInternalName();
 	}
 	public String[] getDisplayedFields(){

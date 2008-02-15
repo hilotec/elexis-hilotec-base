@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Prescription.java 2786 2007-07-12 11:44:58Z rgw_ch $
+ * $Id: Prescription.java 3680 2008-02-15 17:27:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
