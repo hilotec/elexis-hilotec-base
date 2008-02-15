@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ODDBView.java 2413 2007-05-20 17:14:05Z rgw_ch $
+ *  $Id: ODDBView.java 3681 2008-02-15 17:47:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -50,7 +50,7 @@ public class ODDBView extends ViewPart implements ISaveablePart2{
 			
 		});
 		//browser.setUrl("http://ch.oddb.org");
-		browser.setUrl("http://www.just-medical.ch");
+		browser.setUrl("http://santesuisse.oddb.org/");
 		
 	}
 
