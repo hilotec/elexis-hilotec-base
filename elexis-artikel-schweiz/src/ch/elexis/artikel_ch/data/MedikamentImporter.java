@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 3540 2008-01-16 14:38:41Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3678 2008-02-15 17:27:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -79,7 +79,7 @@ public class MedikamentImporter extends ImporterPage {
 			String pk=new String(in.substring(3,10));			// Pharmacode
 			String id=qbe.findSingle(SUBID, EQUALS, pk);
 			Artikel a=Artikel.load(id);
-			if(a==null){
+			if((a==null) || (!a.exists())){
 				if(cmut.equals("3") || (!reca.equals("11"))){	// ausser handel oder kein Stammsatz
 					continue;
 				}
