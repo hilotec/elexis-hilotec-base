@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 3412 2007-12-04 13:33:29Z rgw_ch $
+ *    $Id: BriefAuswahl.java 3683 2008-02-16 11:46:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -115,7 +115,9 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 		GlobalEvents.getInstance().removeActivationListener(this,this);
 		for(CTabItem it:ctab.getItems()){
 			CommonViewer cv=(CommonViewer)it.getData();
-			cv.getConfigurer().getContentProvider().stopListening();
+			if(!cv.getViewerWidget().getControl().isDisposed()){
+				cv.getConfigurer().getContentProvider().stopListening();
+			}
 		}
 	}
 	@Override

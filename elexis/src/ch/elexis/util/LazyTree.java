@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTree.java 3419 2007-12-06 20:36:00Z rgw_ch $
+ * $Id: LazyTree.java 3683 2008-02-16 11:46:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -64,6 +64,7 @@ public class LazyTree<T> extends Tree {
 		return ret;
 	}
 	
+	// Stack Overflow?? //TODO
 	private void loadChildren(){
 		if((first==null) && (listen!=null)){
 			listen.fetchChildren(this);

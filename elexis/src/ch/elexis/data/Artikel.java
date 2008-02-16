@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3680 2008-02-15 17:27:17Z rgw_ch $
+ * $Id: Artikel.java 3683 2008-02-16 11:46:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -19,6 +19,8 @@ import java.util.List;
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -214,18 +216,37 @@ public class Artikel extends VerrechenbarAdapter{
 		return 0;
 	}
 	public void setMaxbestand(final int s){
-		set(MAXBESTAND,Integer.toString(s));
+		String sl=checkLimit(s);
+		if(sl!=null){
+			set(MAXBESTAND,sl);
+		}
 	}
 	public void setMinbestand(final int s){
-		set(MINBESTAND,Integer.toString(s));
+		String sl=checkLimit(s);
+		if(sl!=null){
+			set(MINBESTAND,sl);
+		}
 	}
 	public void setIstbestand(final int s){
-		set(ISTBESTAND,Integer.toString(s));
+		String sl=checkLimit(s);
+		if(sl!=null){
+			set(ISTBESTAND,sl);
+		}
 	}
 	public int getBruchteile(){
 		return checkZero(getExt(ANBRUCH));
 	}
 	
+	private String checkLimit(final int s){
+		String str=Integer.toString(s);
+		if(s>0 && s<1000){
+			return str;
+		}
+		if(isLagerartikel()){
+			SWTHelper.showError("Ungültiger Lagerbestand", "Geben Sie eine ganze Zahl zwischen 0 und 1000 ein");
+		}
+		return null;
+	}
 	public boolean isLagerartikel() {
 		if ((getMinbestand() > 0) || (getMaxbestand() > 0)) {
 			return true;
