@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 2233 2007-04-17 13:04:14Z rgw_ch $
+ *  $Id: ACLContributor.java 3682 2008-02-16 11:46:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.acl;
 
@@ -43,5 +43,6 @@ public class ACLContributor implements IACLContributor {
 	public static void initialize(){
 		Hub.acl.grant(AccessControl.USER_GROUP, USE_AGENDA);
 		Hub.acl.grant(AccessControl.ADMIN_GROUP, ADMIN_AGENDA);
+		Hub.acl.flush();
 	}
 }
