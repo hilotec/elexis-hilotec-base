@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 3535 2008-01-16 12:06:04Z rgw_ch $
+ * $Id: SWTHelper.java 3685 2008-02-18 17:15:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -42,6 +42,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.rgw.tools.StringTool;
 
 /** statische Hilfsfunktionen für SWT-Objekte */
@@ -103,7 +104,7 @@ public class SWTHelper {
 		Desk.theDisplay.syncExec(new Runnable(){
 
 			public void run() {
-				Shell shell=Desk.theDisplay.getActiveShell();
+				Shell shell=Desk.getTopShell();
 				MessageDialog.openError(shell, title, message);
 			}});
 	}
