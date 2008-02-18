@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 3488 2007-12-30 13:28:01Z rgw_ch $
+ *  $Id: ESR.java 3686 2008-02-18 17:15:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -19,6 +19,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.Log;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -105,7 +106,14 @@ public class ESR {
 		int il=id.length();
 		int ul=userdata.length();
 		int space=reflen-ul-il;
-		ret.append(id).append(StringTool.filler("0",space)).append(userdata);
+		if(space<0){
+			userdata=userdata.substring(space*-1);
+			SWTHelper.showError("ESR-Nummer ungültig", "Warnung: Die ESR-Nummer kann nicht korrekt verwendet werden");
+			ret.append(id).append(userdata);
+		}else{
+			ret.append(id).append(StringTool.filler("0",space)).append(userdata);	
+		}
+		
 		String refnr=wrap(ret.toString());
 		if(withSpaces==false){
 			return refnr;
