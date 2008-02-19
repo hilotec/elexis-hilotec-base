@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 3048 2007-08-31 10:51:02Z danlutz $
+ * $Id: RechnungsBlatt.java 3698 2008-02-19 21:13:34Z danlutz $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -340,6 +340,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	public void visible(boolean mode) {
 		if(mode){
 			GlobalEvents.getInstance().addSelectionListener(this);
+			selectionEvent(GlobalEvents.getInstance().getSelectedObject(Rechnung.class));
 		}else{
 			GlobalEvents.getInstance().removeSelectionListener(this);
 		}
