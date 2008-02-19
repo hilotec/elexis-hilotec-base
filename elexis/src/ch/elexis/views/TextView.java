@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 3230 2007-09-29 17:06:51Z rgw_ch $
+ *  $Id: TextView.java 3699 2008-02-19 21:33:30Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -95,8 +95,11 @@ public class TextView extends ViewPart implements ActivationListener{
 			actBrief=doc;
 			setName();
 			return true;
+		} else {
+			actBrief = null;
+			setName();
+			return false;
 		}
-		return false;
 	}
 	/**
 	 * Ein Document von Vorlage erstellen. 
@@ -110,10 +113,10 @@ public class TextView extends ViewPart implements ActivationListener{
 			return false;
 		}
 		actBrief=txt.createFromTemplate(Konsultation.getAktuelleKons(),template,Brief.UNKNOWN,null, subject);
+		setName();
 		if(actBrief==null){
 			return false;
 		}
-		setName();
 		return true;
 	}
 	private void makeActions(){
@@ -134,9 +137,7 @@ public class TextView extends ViewPart implements ActivationListener{
 			public void run(){
 				DocumentSelectDialog bs=new DocumentSelectDialog(getViewSite().getShell(),Hub.actMandant,DocumentSelectDialog.TYPE_LOAD_SYSTEMPLATE);
 				if(bs.open()==Dialog.OK){
-					actBrief=bs.getSelectedDocument();
-					txt.open(actBrief);
-					setName();
+					openDocument(bs.getSelectedDocument());
 				}
 			}
 		};
@@ -145,9 +146,7 @@ public class TextView extends ViewPart implements ActivationListener{
 			public void run(){
 				DocumentSelectDialog bs=new DocumentSelectDialog(getViewSite().getShell(),Hub.actMandant,DocumentSelectDialog.TYPE_LOAD_TEMPLATE);
 				if(bs.open()==Dialog.OK){
-					actBrief=bs.getSelectedDocument();
-					txt.open(actBrief);
-					setName();
+					openDocument(bs.getSelectedDocument());
 				}
 			}
 		};
@@ -181,9 +180,10 @@ public class TextView extends ViewPart implements ActivationListener{
 					if(filename!=null){
 						File file=new File(filename);
 						if(file.exists()){
+							actBrief = null;
+							setPartName(filename);
 							FileInputStream fis=new FileInputStream(file);
 							txt.getPlugin().loadFromStream(fis, false);
-							setPartName(filename);
 						}
 						 
 					}
@@ -194,11 +194,13 @@ public class TextView extends ViewPart implements ActivationListener{
 			}
 		};
 		
-		newDocAction=new Action("Neues Dokukment"){
+		newDocAction=new Action("Neues Dokument"){
 			{
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
 			}
 			public void run(){
+				actBrief = null;
+				setName();
 				txt.getPlugin().createEmptyDocument();
 			}
 			
