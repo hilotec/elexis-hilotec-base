@@ -190,6 +190,9 @@ public class TagesView extends BaseAgendaView{
 				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
 					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
 				
+				// update configuration
+				updateConfig();
+				
 				// show reason if its configured
 				if (Hub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
 					if (p instanceof Termin) {
@@ -210,7 +213,22 @@ public class TagesView extends BaseAgendaView{
 		
 	}
 
-
+	/**
+	 * Move AG_SHOW_REASON config from globalCfg to userCfg
+	 * This method should be eliminated after some time, e. g. August 2008
+	 */
+	@Deprecated
+	private void updateConfig() {
+		// test whether global configuration is set, but user configuration not yet
+		String userCfgValue = Hub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, null);
+		if (userCfgValue == null) {
+			String globalCfgValue = Hub.globalCfg.get(PreferenceConstants.AG_SHOW_REASON, null);
+			if (globalCfgValue != null) {
+				// global configuration is set; deprecated configuration. update user configuration
+				Hub.userCfg.set(PreferenceConstants.AG_SHOW_REASON, globalCfgValue);
+			}
+		}
+	}
 		
 	public void updateDate(){
 		pinger.doSync();
