@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 3547 2008-01-17 12:04:52Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 3693 2008-02-19 19:58:22Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -374,14 +374,16 @@ public class FallDetailBlatt2 extends Composite {
 									"Bitte wählen Sie den Kontakt für "+r[0]+" aus", true);
 							if(ksl.open()==Dialog.OK){
 								Kontakt sel=(Kontakt)ksl.getSelection();
-								if(sel!=null){
-							        Fall fall=getFall();
-							        if(fall!=null){
-							        	fall.setInfoString(r[0], sel.getId());
-							        	setFall(fall);
-					                	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-							        }
-								}
+						        Fall fall=getFall();
+						        if(fall!=null){
+						        	if (sel != null) {
+						        		fall.setInfoString(r[0], sel.getId());
+						        	} else {
+						        		fall.setInfoString(r[0], "");
+						        	}
+						        	setFall(fall);
+				                	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+						        }
 							}
 						}
 					});
