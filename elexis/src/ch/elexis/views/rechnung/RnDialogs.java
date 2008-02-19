@@ -86,7 +86,7 @@ public class RnDialogs {
 		Rechnung rn;
 		DatePickerCombo dp;
 		Text	amount,bemerkung;
-		BuchungHinzuDialog(Shell shell, Rechnung r){
+		public BuchungHinzuDialog(Shell shell, Rechnung r){
 			super(shell);
 			rn=r;
 		}
@@ -137,7 +137,7 @@ public class RnDialogs {
 
 		//RnStatus[] states=RnStatus.Text;
 		
-		StatusAendernDialog(Shell shell, Rechnung r){
+		public StatusAendernDialog(Shell shell, Rechnung r){
 			super(shell);
 			rn=r;
 		}
@@ -175,7 +175,7 @@ public class RnDialogs {
 		Button bReactivate;
 		List<Button> exporters=new ArrayList<Button>();
 		private List<IRnOutputter> lo;
-		StornoDialog(Shell shell, Rechnung r){
+		public StornoDialog(Shell shell, Rechnung r){
 			super(shell);
 			rn=r;
 		}
