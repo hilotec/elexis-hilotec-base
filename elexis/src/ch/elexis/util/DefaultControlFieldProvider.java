@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 3447 2007-12-14 08:22:43Z michael_imhof $
+ *  $Id: DefaultControlFieldProvider.java 3692 2008-02-19 19:54:29Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -124,6 +124,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 	            selectors[i].addSelectionListener(sl);
 	            selectors[i].setToolTipText(Messages.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
 	            selectors[i].setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+	            SWTHelper.setSelectOnFocus((Text) selectors[i].getWidget());
 	        }
 	        return ret;
 	}
