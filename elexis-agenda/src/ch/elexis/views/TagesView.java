@@ -191,10 +191,10 @@ public class TagesView extends BaseAgendaView{
 					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
 				
 				// show reason if its configured
-				if (Hub.globalCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
+				if (Hub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
 					if (p instanceof Termin) {
 						String grund = ((Termin) p).getGrund();
-						if (grund != null) {
+						if (!StringTool.isNothing(grund)) {
 							String[] tokens = grund.split("[\n\r]+");
 							if (tokens.length > 0) {
 								sb.append(", " + tokens[0]);

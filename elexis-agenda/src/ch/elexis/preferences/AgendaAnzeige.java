@@ -26,7 +26,7 @@ import ch.rgw.tools.StringTool;
 public class AgendaAnzeige extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 	
-	SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.globalCfg);
+	SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.userCfg);
 	 
     public AgendaAnzeige() {
         super(GRID);
