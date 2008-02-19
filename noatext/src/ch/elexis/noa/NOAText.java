@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 3674 2008-02-14 09:30:02Z rgw_ch $
+ *  $Id: NOAText.java 3689 2008-02-19 19:43:34Z danlutz $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -515,21 +515,24 @@ public class NOAText implements ITextPlugin {
 	public boolean print(final String toPrinter, final String toTray,
 			final boolean waitUntilFinished) {
 		try{
-			PropertyValue[] pprops;
-			if(StringTool.isNothing(toPrinter)){
-				pprops=new PropertyValue[1];
-				pprops[0]=new PropertyValue();
-				pprops[0].Name="Pages";
-				pprops[0].Value="1-";
-			}else{
-				pprops=new PropertyValue[2];
-				pprops[0]=new PropertyValue();
-				pprops[0].Name="Pages";
-				pprops[0].Value="1-";
-				pprops[1]=new PropertyValue();
-				pprops[1].Name="Name";
-				pprops[1].Value=toPrinter;
+			XPrintable xPrintable = (XPrintable) UnoRuntime.queryInterface(com.sun.star.view.XPrintable.class, 
+					doc.getXTextDocument());
+
+			if(!StringTool.isNothing(toPrinter)){
+				// set printer
+				PropertyValue[] printerDesc = new PropertyValue[1];
+				printerDesc[0] = new PropertyValue();
+				printerDesc[0].Name = "Name";
+				printerDesc[0].Value = toPrinter;
+				xPrintable.setPrinter(printerDesc);
 			}
+			
+			// set pages to be printed
+			PropertyValue[] printOpts = new PropertyValue[1];
+			printOpts[0] = new PropertyValue();
+			printOpts[0].Name = "Pages";
+			printOpts[0].Value = "1-";
+
 			if(!StringTool.isNothing(toTray)){
 				XTextDocument myDoc=doc.getXTextDocument();
 				//XTextDocument myDoc=(XTextDocument) UnoRuntime.queryInterface(com.sun.star.text.XTextDocument.class,
@@ -538,10 +541,7 @@ public class NOAText implements ITextPlugin {
 					return false;
 				}
 			}
-			XPrintable xPrintable = (XPrintable) UnoRuntime.queryInterface(com.sun.star.view.XPrintable.class, 
-					doc.getXTextDocument());
-			
-			
+
 			com.sun.star.view.XPrintJobBroadcaster selection = (com.sun.star.view.XPrintJobBroadcaster) UnoRuntime.queryInterface(com.sun.star.view.XPrintJobBroadcaster.class,
 					xPrintable);
 			
@@ -549,7 +549,7 @@ public class NOAText implements ITextPlugin {
 			selection.addPrintJobListener(myXPrintJobListener);
 			
 			//bean.getDocument().print(pprops);
-			xPrintable.print(pprops);
+			xPrintable.print(printOpts);
 			long timeout=System.currentTimeMillis();
 			while ((myXPrintJobListener.getStatus() == null) || (myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED)) {
 				Thread.sleep(100);
