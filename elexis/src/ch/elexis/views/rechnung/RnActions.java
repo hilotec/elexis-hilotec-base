@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3487 2007-12-30 07:19:06Z rgw_ch $
+ * $Id: RnActions.java 3696 2008-02-19 21:08:45Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -33,6 +33,7 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
@@ -60,6 +61,7 @@ public class RnActions {
 	Action expandAllAction,collapseAllAction, reloadAction, mahnWizardAction;
 	Action addPaymentAction, addExpenseAction, changeStatusAction, stornoAction;
 	Action increaseLevelAction, printListeAction, rnFilterAction;
+	Action addAccountExcessAction;
 	
     RnActions(final RechnungsListeView view){
     	
@@ -326,6 +328,43 @@ public class RnActions {
 					}
 				}
 			
+			}	
+		};
+		addAccountExcessAction=new Action("Positives Kontoguthaben zuweisen"){
+			{
+				setToolTipText("Dieser Rechnung ein positives Kontoguthaben zuweisen");
+			}
+			@Override
+			public void run(){
+				List<Rechnung> list=view.createList();
+				if(list.size()>0){
+					Rechnung actRn = list.get(0);
+
+					// Allfaelliges Guthaben des Patienten der Rechnung als Anzahlung hinzufuegen
+					Fall fall = actRn.getFall();
+					Patient patient = fall.getPatient();
+					Money prepayment = patient.getAccountExcess();
+					if (prepayment.getCents() > 0) {
+						// make sure prepayment is not bigger than amount of bill
+						Money amount;
+						if (prepayment.getCents() > actRn.getBetrag().getCents()) {
+							amount = new Money(actRn.getBetrag());
+						} else {
+							amount = new Money(prepayment);
+						}
+
+						if (SWTHelper.askYesNo("Positives Kontoguthaben", "Das Konto von Patient \"" + patient.getLabel()
+								+ "\" weist ein positives Kontoguthaben auf. Wollen Sie den Betrag von "
+								+ amount.toString() + " dieser Rechnung \"" + actRn.getNr() + ": " + fall.getLabel() + "\" zuweisen?")) {
+
+							// remove amount from account and transfer it to the bill
+							Money accountAmount = new Money(amount);
+							accountAmount.negate();
+							new AccountTransaction(patient, null, accountAmount, null, "Anzahlung von Kontoguthaben auf Rechnung " + actRn.getNr());
+							actRn.addZahlung(amount, "Anzahlung von Kontoguthaben");
+						}
+					}
+				}				
 			}	
 		};
 		rnFilterAction=new Action("Liste filtern",Action.AS_CHECK_BOX){
