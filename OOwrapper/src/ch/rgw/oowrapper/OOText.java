@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOText.java 2892 2007-07-24 15:46:03Z rgw_ch $
+ *  $Id: OOText.java 3690 2008-02-19 19:43:45Z danlutz $
  *******************************************************************************/
 
 package ch.rgw.oowrapper;
@@ -536,42 +536,38 @@ public class OOText implements ITextPlugin{
 			}
 		}
 		try{
-			PropertyValue[] pprops=bean.getDocument().getPrinter();
+			XPrintable xPrintable = (XPrintable) UnoRuntime.queryInterface(com.sun.star.view.XPrintable.class, 
+					bean.getDocument());
+			
 			if(!StringTool.isNothing(printer)){
-				for(PropertyValue prop:pprops){
-					if(prop.Name.equals("Name")){
-						prop.Value=printer;
-						//break;
-					}
-					if(prop.Name.equals("Pages")){
-						prop.Value="1";
-					}
-					System.out.println(prop.Value.toString());
-				}
-			}else{
-				pprops=new PropertyValue[1];
-				pprops[0]=new PropertyValue();
-				pprops[0].Name="Pages";
-				pprops[0].Value="1-";
+				// set printer
+				PropertyValue[] printerDesc = new PropertyValue[1];
+				printerDesc[0] = new PropertyValue();
+				printerDesc[0].Name = "Name";
+				printerDesc[0].Value = printer;
+				xPrintable.setPrinter(printerDesc);
 			}
+			
+			// set pages to be printed
+			PropertyValue[] printOpts = new PropertyValue[1];
+			printOpts[0] = new PropertyValue();
+			printOpts[0].Name = "Pages";
+			printOpts[0].Value = "1-";
+
 			if(!StringTool.isNothing(tray)){
 				XTextDocument myDoc=(XTextDocument) UnoRuntime.queryInterface(com.sun.star.text.XTextDocument.class,bean.getDocument());
 				if(!OOPrinter.setPrinterTray(myDoc,tray)){
 					return false;
 				}
 			}
-			XPrintable xPrintable = (XPrintable) UnoRuntime.queryInterface(com.sun.star.view.XPrintable.class, 
-					bean.getDocument());
-			
-			
+
 			com.sun.star.view.XPrintJobBroadcaster selection = (com.sun.star.view.XPrintJobBroadcaster) UnoRuntime.queryInterface(com.sun.star.view.XPrintJobBroadcaster.class,
 					xPrintable);
-			
 			MyXPrintJobListener myXPrintJobListener = new MyXPrintJobListener();
 			selection.addPrintJobListener(myXPrintJobListener);
 			
-			//bean.getDocument().print(pprops);
-			xPrintable.print(pprops);
+			xPrintable.print(printOpts);
+			
 			long timeout=System.currentTimeMillis();
 			while ((myXPrintJobListener.getStatus() == null) || (myXPrintJobListener.getStatus() == PrintableState.JOB_STARTED)) {
 				Thread.sleep(100);
