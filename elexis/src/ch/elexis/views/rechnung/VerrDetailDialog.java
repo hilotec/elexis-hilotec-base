@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrDetailDialog.java 2400 2007-05-19 15:55:26Z rgw_ch $
+ *  $Id: VerrDetailDialog.java 3695 2008-02-19 21:07:35Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -45,22 +45,22 @@ public class VerrDetailDialog extends TitleAreaDialog {
 	Hashtable<Fall, List<Konsultation>> faelle;
 	
 	@SuppressWarnings("unchecked")
-	public VerrDetailDialog(Shell shell, Tree t){
+	public VerrDetailDialog(Shell shell, Tree subTree){
 		super(shell);
-		Object o=t.contents;
-		this.tree=t;
+		Object o=subTree.contents;
+		this.tree=subTree;
 		if(o instanceof Patient){
 			pat=(Patient)o;
 		}else if(o instanceof Fall){
 			pat=((Fall)o).getPatient();
-			this.tree=t.getParent();
+			this.tree=subTree.getParent();
 		}else if(o instanceof Konsultation){
 			Fall fall=((Konsultation)o).getFall();
 			pat=fall.getPatient();
-			this.tree=t.getParent().getParent();
+			this.tree=subTree.getParent().getParent();
 		}
 		faelle=new Hashtable<Fall,List<Konsultation>>();
-		for(Object of:tree.getChildren()){
+		for(Object of:this.tree.getChildren()){
 			Tree tFall=(Tree)of;
 			Fall fall=(Fall)tFall.contents;
 			Collection<Tree> c=tFall.getChildren();
@@ -119,10 +119,12 @@ public class VerrDetailDialog extends TitleAreaDialog {
 				Object o=((Tree)element).contents;
 				if(o instanceof Fall){
 					Fall f=(Fall)o;
-					List<Konsultation> list=faelle.get(f);
 					Money sum=new Money();
-					for(Konsultation k:list){
-						sum.addMoney(calcKons(k));
+					List<Konsultation> list=faelle.get(f);
+					if (list != null) {
+						for(Konsultation k:list){
+							sum.addMoney(calcKons(k));
+						}
 					}
 					return f.getLabel()+" - "+sum.getAmountAsString();
 				}else if (o instanceof Konsultation){
