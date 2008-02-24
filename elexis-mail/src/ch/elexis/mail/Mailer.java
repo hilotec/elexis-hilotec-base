@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    R. Zweifel - SMTP-Authentifizierung
  *    
- *  $Id: Mailer.java 1625 2007-01-19 20:01:59Z rgw_ch $
+ *  $Id: Mailer.java 3704 2008-02-24 20:41:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;
@@ -31,6 +32,8 @@ public class Mailer {
 	static{
 		props = new Properties();
 	    props.put( "mail.smtp.host", Hub.localCfg.get(PreferenceConstants.MAIL_SMTP,Messages.Mailer_1) ); //$NON-NLS-1$
+	    props.put("mail.smtp.auth", Hub.localCfg.get(PreferenceConstants.MAIL_AUTH,Messages.Mailer_1));
+	    props.put("mail.smtp.port", Hub.localCfg.get(PreferenceConstants.MAIL_SMTPPORT,Messages.Mailer_1));
 	}
 	/**
 	 * Convenience-Methode um einfach schnell eine simple Text-Mail zu versenden
@@ -42,14 +45,20 @@ public class Mailer {
 	 */
 	public static Result<String> postMail( String recipient, String subject, String message, String from ) {
 		try{
-		    Session session = Session.getDefaultInstance( props );
-		    Message msg = new MimeMessage( session );
+			Session session = null;
+			Authenticator auth = new SMTPAuthenticator();
+		    if(props.getProperty("mail.smtp.auth").equals("true")){
+		    	session = Session.getDefaultInstance( props, auth );
+		    }else{
+		    	session = Session.getDefaultInstance( props);
+		    }
+			Message msg = new MimeMessage( session );
 		    InternetAddress addressFrom = new InternetAddress( from );
 		    msg.setFrom( addressFrom );
 		    InternetAddress addressTo = new InternetAddress( recipient );
 		    msg.setRecipient( Message.RecipientType.TO, addressTo );
 		    msg.setSubject( subject );
-		    msg.setContent( message, "text/plain" ); //$NON-NLS-1$
+		    msg.setContent( message, "text/plain" ); //$NON-NLS-1$		    
 		    Transport.send( msg );
 		    return new Result<String>("Ok"); //$NON-NLS-1$
 		}catch(Exception ex){
@@ -68,11 +77,16 @@ public class Mailer {
 	 */
 	public Message createMultipartMessage(String subject, String from){
 		try{
-			Session session=Session.getDefaultInstance(props);
+			Session session = null;
+			Authenticator auth = new SMTPAuthenticator();
+		    if(props.getProperty("mail.smtp.auth").equals("true")){
+		    	session = Session.getDefaultInstance( props, auth );
+		    }else{
+		    	session = Session.getDefaultInstance( props);
+		    }
 			Message msg=new MimeMessage(session);
 			InternetAddress addressFrom = new InternetAddress( from );
 		    msg.setFrom( addressFrom );
-		    
 		    msg.setSubject( subject );
 		    msg.setContent(new MimeMultipart());
 		    return msg;
@@ -157,6 +171,4 @@ public class Mailer {
 		
 		}
 	}
-
-		
 }

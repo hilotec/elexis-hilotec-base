@@ -24,7 +24,15 @@ public class Messages extends NLS {
 	public static String Preferences_SendErrorMsg;
 
 	public static String Preferences_SMTPServer;
-
+	
+	public static String Preferences_SMTPServerAuth;
+	
+	public static String Preferences_SMTPServerPort;
+	
+	public static String Preferences_SenderEMailUser;
+	
+	public static String Preferences_SenderEMailPass;
+	
 	public static String QFADialog_ErrorMessage;
 
 	public static String QFADialog_ExplanationErrorMail;

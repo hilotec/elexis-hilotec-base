@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    R. Zweifel - SMTP-Authentifizierung
  *    
- *  $Id: Preferences.java 1625 2007-01-19 20:01:59Z rgw_ch $
+ *  $Id: Preferences.java 3704 2008-02-24 20:41:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;
@@ -40,10 +41,26 @@ public class Preferences extends FieldEditorPreferencePage implements
 		addField(
 				new StringFieldEditor(PreferenceConstants.MAIL_SMTP, 
 						Messages.Preferences_SMTPServer, getFieldEditorParent()));
+
+		addField(
+				new StringFieldEditor(PreferenceConstants.MAIL_SMTPPORT, 
+						Messages.Preferences_SMTPServerPort, getFieldEditorParent()));
 		
 		addField(
 				new StringFieldEditor(PreferenceConstants.MAIL_SENDER, 
 						Messages.Preferences_SenderEMail, getFieldEditorParent()));
+		
+		addField(
+				new BooleanFieldEditor(PreferenceConstants.MAIL_AUTH, 
+						Messages.Preferences_SMTPServerAuth, getFieldEditorParent()));
+		
+		addField(
+				new StringFieldEditor(PreferenceConstants.MAIL_USER, 
+						Messages.Preferences_SenderEMailUser, getFieldEditorParent()));
+		
+		addField(
+				new StringFieldEditor(PreferenceConstants.MAIL_PASS, 
+						Messages.Preferences_SenderEMailPass, getFieldEditorParent()));
 		
 		addField(new BooleanFieldEditor(PreferenceConstants.MAIL_SEND_QFA,
 				  Messages.Preferences_SendErrorMsg, getFieldEditorParent()));
