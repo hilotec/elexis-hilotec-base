@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *  $Id: Person.java 3706 2008-02-24 21:12:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -90,6 +90,8 @@ public class Person extends Kontakt {
      * @throws PersonDataException
      */
     public Person(String name, String vorname, TimeTool gebDat, String s) throws PersonDataException{
+    	name=name.trim();
+    	vorname=vorname.trim();
     	if((StringTool.isNothing(name)) || (!name.matches("["+StringTool.wordChars+"\\s-]+"))){
     		throw new PersonDataException(PersonDataException.CAUSE.LASTNAME);
     	}
