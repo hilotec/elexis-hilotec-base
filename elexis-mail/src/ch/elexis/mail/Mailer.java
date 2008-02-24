@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    R. Zweifel - SMTP-Authentifizierung
  *    
- *  $Id: Mailer.java 3704 2008-02-24 20:41:07Z rgw_ch $
+ *  $Id: Mailer.java 3705 2008-02-24 20:42:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;
