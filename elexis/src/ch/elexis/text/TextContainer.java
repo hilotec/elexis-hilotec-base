@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3673 2008-02-13 21:18:12Z rgw_ch $
+ *  $Id: TextContainer.java 3707 2008-02-26 09:22:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -216,6 +216,7 @@ public class TextContainer {
 		if(o==null){
 			return "??"+b+"??";
 		}
+		/*
 		int pdp=q[1].indexOf(':');
 		if(pdp!=-1){
 			String pid=o.get(q[1].substring(0,pdp));
@@ -225,7 +226,7 @@ public class TextContainer {
 			String plf=q[1].substring(pdp+1);
 			
 			PersistentObject po=resolveObject(brief,q[1].substring(0,pdp));
-		}
+		}*/
 		String ret=o.get(q[1]);
 		if((ret==null) || (ret.startsWith("**"))){
 			/*if(o instanceof Kontakt){
@@ -308,7 +309,7 @@ public class TextContainer {
 			try{
 				String fqname="ch.elexis.data."+k;
 				ret=GlobalEvents.getInstance().getSelectedObject(Class.forName(fqname));
-			}catch(java.lang.Exception ex){
+			}catch(Throwable ex){
 				log.log("Nicht erkannter Feldtyp in "+k,Log.WARNINGS);
 				ret= null;
 			}
