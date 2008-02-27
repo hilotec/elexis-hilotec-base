@@ -1,4 +1,15 @@
-// $Id: Log.java 2666 2007-06-29 13:39:32Z danlutz $ 
+/*******************************************************************************
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: Log.java 3710 2008-02-27 17:51:32Z rgw_ch $
+ *******************************************************************************/ 
 package ch.elexis.util;
 
 import java.io.File;
@@ -8,12 +19,9 @@ import java.io.PrintStream;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -143,20 +151,15 @@ public class Log {
 	          if(level<=alertLevel) {
                   if(level!=SYNCMARK){
     	        	  if(doAlert==null){
-    	        		  IWorkbench wb=Hub.plugin.getWorkbench();
-    	        		  if(wb!=null){
-    	        			  IWorkbenchWindow wi=wb.getActiveWorkbenchWindow();
-    	        			  if(wi!=null){
-    	        				  doAlert=wi.getShell();
-    	        			  }
-    	        		  }
+    	        		  doAlert=Desk.getTopShell();
     	        	  }
     	        	  if(doAlert==null){
     	        		  if(Desk.theDisplay==null){
     	        			  Desk.theDisplay=PlatformUI.createDisplay();
-    	        			  doAlert=new Shell(Desk.theDisplay);
     	        		  }
-    	        	  }else{
+    	        		  doAlert=new Shell(Desk.theDisplay);
+    	        	  }
+    	        	  if(doAlert!=null){
     	            	  Desk.theDisplay.asyncExec(new Runnable(){
 							public void run() {
 								 MessageBox msg=new MessageBox(doAlert,SWT.ICON_ERROR|SWT.OK);
