@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientErfassenDialog.java 3283 2007-10-24 16:00:18Z rgw_ch $
+ *  $Id: PatientErfassenDialog.java 3712 2008-02-28 18:02:25Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -128,16 +128,16 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 			ret[6]=tOrt.getText();
 			ret[7]=tTel.getText();
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-			qbe.add("Bezeichnung1","=",ret[0]);
-			qbe.add("Bezeichnung2","=",ret[1]);
+			qbe.add("Bezeichnung1","=",ret[0], true);
+			qbe.add("Bezeichnung2","=",ret[1], true);
 			List<Kontakt> list=qbe.execute();
 			if( (list!=null) && (!list.isEmpty())){
 				Kontakt k=list.get(0);
 				if(k.istPerson()){
 					k.set("istPatient","1");
 					if(MessageDialog.openConfirm(getShell(),Messages.getString("PatientErfassenDialog.personExists"),Messages.getString("PatientErfassenDialog.personWithThisNameExists"))==false){ //$NON-NLS-1$ //$NON-NLS-2$
-						
-						super.okPressed();
+						// abort dialog
+						super.cancelPressed();
 						return;
 					}
 				}
