@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 3568 2008-01-18 18:02:03Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 3718 2008-03-13 14:38:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -64,8 +64,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 	
 	final static int STAT_DEFAULT_INDEX = 1;
 	private final static String ALLE="[ --- Alle Patienten --- ]";
+	private final static String ALL="Alle";
 	
 	Combo cbStat;
+	Combo cbZType;
 	/* DatePickerCombo dpVon, dpBis; */
 	private List<ControlFieldListener> listeners;
 	private final SelectionAdapter csel=new CtlSelectionListener();
@@ -79,7 +81,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 	public Composite createControl(final Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
 		listeners=new ArrayList<ControlFieldListener>();
-		ret.setLayout(new GridLayout(4,true));
+		ret.setLayout(new GridLayout(5,true));
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		hlPatient=new HyperlinkAdapter(){
 			@Override
@@ -108,8 +110,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		};
 		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.state")); //$NON-NLS-1$
 		SWTHelper.createHyperlink(ret, "   Patient   ", hlPatient);
+		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.PaymentSystem")); //$NON-NLS-1$
 		new Label(ret,SWT.NONE).setText(Messages.getString("RnControlFieldProvider.invoideNr")); //$NON-NLS-1$
 		new Label(ret,SWT.NONE).setText("Betrag");
+		/// ^ labels / values
 		cbStat=new Combo(ret,SWT.READ_ONLY);
 		cbStat.setVisibleItemCount(stats.length);
 		cbStat.setItems(stats);
@@ -117,9 +121,12 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		cbStat.select(STAT_DEFAULT_INDEX);
 		lPatient=new Label(ret,SWT.NONE);
 		lPatient.setText(ALLE);
-		GridData gdlp=new GridData();
+		cbZType=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
+		cbZType.setItems(Fall.getAbrechnungsSysteme());
+		cbZType.add(ALL);
+		/*GridData gdlp=new GridData();
 		gdlp.widthHint=150;
-		gdlp.minimumWidth=150;
+		gdlp.minimumWidth=150;*/
 		tNr=new Text(ret,SWT.BORDER);
 		tNr.addSelectionListener(new SelectionAdapter(){
 			@Override
@@ -159,7 +166,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		return bDateAsStatus;
 	}
 	public String[] getValues() {
-		String[] ret=new String[4];
+		String[] ret=new String[5];
 		int selIdx=cbStat.getSelectionIndex();
 		if(selIdx!=-1){
 			ret[0]=Integer.toString(statInts[selIdx]);
@@ -190,6 +197,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 			ret[1]=null;
 			ret[2]=null;
 		}
+		ret[4]=cbZType.getText();
+		if(StringTool.isNothing(ret[4]) || ret[4].equals(ALL)){
+			ret[4]=null;
+		}
 		return ret;
 	}
 
@@ -206,7 +217,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		return false;
 	}
 
-	
+	public void setQuery( final Query q){
+		
+	}
+	/*
 	public void setQuery(final Query q) {
 		String[] val=getValues();
 		q.add("RnStatus","=",val[0]); //$NON-NLS-1$ //$NON-NLS-2$
@@ -234,7 +248,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 			}
 		}
 	}
-	
+	*/
 
 	public ViewerFilter createFilter() {
 		return new ViewerFilter(){

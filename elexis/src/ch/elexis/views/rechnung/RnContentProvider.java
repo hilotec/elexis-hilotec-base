@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 3568 2008-01-18 18:02:03Z rgw_ch $
+ * $Id: RnContentProvider.java 3718 2008-03-13 14:38:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -246,6 +247,21 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 					q1.addToken(line);
 				}
 			}
+		}
+		if(val[4]!=null){
+			q1.addPostQueryFilter(new IFilter(){
+
+				public boolean select(Object toTest) {
+					Rechnung rn=(Rechnung) toTest;
+					Fall fall=rn.getFall();
+					String abr=fall.getAbrechnungsSystem();
+					if(abr.equals(val[4])){
+						return true;
+					}
+					return false;
+				}
+				
+			});
 		}
 		return q1;
 	}
