@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 2203 2007-04-12 12:47:00Z rgw_ch $
+ *  $Id: TermineDruckenDialog.java 3716 2008-03-13 11:12:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Termin;
-import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.Plannables;
@@ -45,6 +44,7 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, "Terminkarte", Brief.UNKNOWN, Hub.actUser, "Agenda");
+		/*
 		String[][] termine=new String[liste.length+1][3];
 		termine[0]=new String[]{"Datum", "Zeit","Bei"};
 		for(int i=0;i<liste.length;i++){
@@ -55,6 +55,14 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 		}
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
 		text.getPlugin().insertTable("[Termine]", ITextPlugin.FIRST_ROW_IS_HEADER, termine, new int[]{20,20,60});
+		 */
+		StringBuilder sb=new StringBuilder();
+		for(Termin t:liste){
+			TimeTool day=new TimeTool(t.getDay());
+			sb.append(day.toString(TimeTool.DATE_GER)).append(":  ")
+				.append(Plannables.getStartTimeAsString(t)).append("\n");
+		}
+		text.replace("\\[Termine\\]", sb.toString());
 		return ret;
 	}
 
