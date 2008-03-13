@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 2903 2007-07-25 10:34:21Z danlutz $
+ * $Id: Heartbeat.java 3720 2008-03-13 18:54:45Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -33,21 +33,42 @@ import ch.elexis.preferences.PreferenceConstants;
  * Dieses Konzept hat gegenüber individuellen update-Threads den Vorteil, dass die Netzwerk- und
  * Datenbankbelastung, sowie die Zahl der gleichzeitig laufenden Threads limitiert wird.
  * Der Heartbeat sorgt dafür, dass die listener der Reihe nach (aber ncht in einer definierten Reihenfolge)
- * aufgerufen werden.  
+ * aufgerufen werden.
+ * 
+ * The client registering a listener can define the frequency, whether the listener
+ * should be called at every single heart beat or at a lower frequency.
+ *  
  * @author gerry
  *
  */
 public class Heartbeat {
+	/**
+	 * Registering a listener using FREQUENCY_HIGH, it is called at every single heartbeat.
+	 */
+	public static final int FREQUENCY_HIGH = 1;
+	/**
+	 * Registering a listener using FREQUENCY_MEDIUM, it is called at every 4th heartbeat.
+	 */
+	public static final int FREQUENCY_MEDIUM = 2;
+	/**
+	 * Registering a listener using FREQUENCY_LOW, it is called at every 16th heartbeat.
+	 */
+	public static final int FREQUENCY_LOW = 3;
+	
 	private beat theBeat;
 	private Timer pacer;
 	private boolean isSuspended;
 	private static Heartbeat theHeartbeat;
-	private LinkedList<HeartListener> listeners;
+	private LinkedList<HeartListener> highFrequencyListeners;
+	private LinkedList<HeartListener> mediumFrequencyListeners;
+	private LinkedList<HeartListener> lowFrequencyListeners;
 	
 	
 	private Heartbeat(){
 		theBeat=new beat();
-		listeners=new LinkedList<HeartListener>();
+		highFrequencyListeners=new LinkedList<HeartListener>();
+		mediumFrequencyListeners=new LinkedList<HeartListener>();
+		lowFrequencyListeners=new LinkedList<HeartListener>();
 		pacer=new Timer(true);
 		int interval=Hub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30); //$NON-NLS-1$
 		isSuspended=true;
@@ -91,11 +112,37 @@ public class Heartbeat {
 	}
 	/**
 	 * Einen Listener registrieren. Achtung: Muss unbedingt mit removeListener deregistriert
-	 * werden 
+	 * werden
+	 * Calls addListener(listen, FREQUENCY_HIGH)
 	 * @param listen der Listener
 	 */
 	public void addListener(HeartListener listen){
-		listeners.add(listen);
+		addListener(listen, FREQUENCY_HIGH);
+	}
+	
+	/**
+	 * Add listener using the specified frequency.
+	 * Must be de-regsitered again using removeListener
+	 * @param listener
+	 * @param frequency the frequency to call this listener. One of FREQUENCY_HIGH, FREQUENCY_MEDIUM, FREQUENCY_LOW
+	 */
+	public void addListener(HeartListener listen, int frequency) {
+		if (!highFrequencyListeners.contains(listen)
+				&& !mediumFrequencyListeners.contains(listen)
+				&& !lowFrequencyListeners.contains(listen)) {
+			
+			switch (frequency) {
+			case FREQUENCY_HIGH:
+				highFrequencyListeners.add(listen);
+				break;
+			case FREQUENCY_MEDIUM:
+				mediumFrequencyListeners.add(listen);
+				break;
+			case FREQUENCY_LOW:
+				lowFrequencyListeners.add(listen);
+				break;
+			}
+		}
 	}
 	
 	/**
@@ -103,7 +150,11 @@ public class Heartbeat {
 	 * @param listen
 	 */
 	public void removeListener(HeartListener listen){
-		listeners.remove(listen);
+		// remove the listener from the three lists
+		// actually, it's contained in only one of them, but we don't know which one
+		highFrequencyListeners.remove(listen);
+		mediumFrequencyListeners.remove(listen);
+		lowFrequencyListeners.remove(listen);
 	}
 	/** 
 	 * we beat asynchronously, because most listeners will update their
@@ -112,17 +163,45 @@ public class Heartbeat {
 	 *
 	 */
 	private class beat extends TimerTask{
+		private static final int FREQUENCY_HIGH_MULTIPLIER = 1;
+		private static final int FREQUENCY_MEDIUM_MULTIPLIER = 4;
+		private static final int FREQUENCY_LOW_MULTIPLIER = 16;
+		
+		// multiplier for resetting counter after each round
+		private static final int RESET_MULTIPLIER = FREQUENCY_LOW_MULTIPLIER;
+		
+		private int counter = 0;
+		
 		@Override
 		public void run() {
 			if(!isSuspended){
 				Desk.theDisplay.asyncExec(new Runnable(){
 					public void run(){
-						for(HeartListener l:listeners){
-							l.heartbeat();
-						}		
+						// high frequency
+						if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
+							for (HeartListener l : highFrequencyListeners) {
+								l.heartbeat();
+							}		
+						}
+
+						// medium frequency
+						if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
+							for (HeartListener l : mediumFrequencyListeners) {
+								l.heartbeat();
+							}		
+						}
+
+						// high frequency
+						if (counter % FREQUENCY_LOW_MULTIPLIER == 0) {
+							for (HeartListener l : lowFrequencyListeners) {
+								l.heartbeat();
+							}		
+						}
 					}
 				});
 			}
+			counter++;
+			counter %= RESET_MULTIPLIER; 
 		}
 		
 	}
