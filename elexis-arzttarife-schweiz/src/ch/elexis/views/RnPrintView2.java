@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 3493 2008-01-01 15:57:21Z rgw_ch $
+ * $Id: RnPrintView2.java 3717 2008-03-13 14:37:53Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -56,7 +56,8 @@ import ch.rgw.tools.TimeTool;
  * waits for each page to be printed before starting the next.
  * 
  * We also corrected several prblems around the TrustCenter-system. Tokens are printed only on TG bills and
- * only if the mandator has a TC contract. Tokens are computed correctly now with the TC number as identifier.
+ * only if the mandator has a TC contract. 
+ * Tokens are computed correctly now with the TC number as identifier in TG bills and left as ESR in TP bills.
  * @author Gerry
  *
  */
@@ -139,6 +140,8 @@ public class RnPrintView2 extends ViewPart {
 		String tcCode=null;
 		if(TarmedRequirements.hasTCContract(rs) && paymentMode.equals("TG")){
 			 tcCode=TarmedRequirements.getTCCode(rs);
+		}else if(paymentMode.equals("TP")){
+			tcCode="20";
 		}
 		GlobalEvents.getInstance().fireSelectionEvent(rs);
 		Fall fall=rn.getFall();
