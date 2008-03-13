@@ -39,6 +39,7 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.Heartbeat;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
@@ -191,7 +192,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	public void visible(final boolean mode) {
 		if(mode){
 			tv.refresh();
-			Hub.heart.addListener(this);
+			Hub.heart.addListener(this, Heartbeat.FREQUENCY_LOW);
 		}else{
 			Hub.heart.removeListener(this);
 		}
