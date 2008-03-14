@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 3610 2008-02-04 16:23:32Z rgw_ch $
+ * $Id: KontakteView.java 3724 2008-03-14 16:13:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Hub;
@@ -36,6 +37,7 @@ import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
+import ch.rgw.tools.ExHandler;
 
 public class KontakteView extends ViewPart implements ControlFieldListener, ISaveablePart2{
 	public static final String ID="ch.elexis.Kontakte";
@@ -101,6 +103,17 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
          //cv.getViewerWidget().addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
          ((LazyContentProvider)vc.getContentProvider()).startListening();
          vc.getControlFieldProvider().addChangeListener(this);
+         cv.addDoubleClickListener(new CommonViewer.DoubleClickListener(){
+			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
+				try {
+					KontaktDetailView kdv=(KontaktDetailView)getSite().getPage().showView(KontaktDetailView.ID);
+					kdv.kb.selectionEvent(obj);
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				}
+				
+			}
+         });
 	}
 	public void dispose(){
 		((LazyContentProvider)vc.getContentProvider()).stopListening();
