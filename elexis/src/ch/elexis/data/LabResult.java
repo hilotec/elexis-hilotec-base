@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 3433 2007-12-10 16:52:26Z rgw_ch $
+ *  $Id: LabResult.java 3723 2008-03-14 12:42:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,6 +19,7 @@ import java.util.List;
 import ch.elexis.Hub;
 import ch.elexis.preferences.LabSettings;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -178,8 +179,10 @@ public class LabResult extends PersistentObject {
 		n.add(getId());
 		TimeTool limit=new TimeTool();
 		limit.addHours(-24*Integer.parseInt(Hub.globalCfg.get(LabSettings.KEEP_UNSEEN_LAB_RESULTS,PreferenceConstants.DAYS_TO_KEEP_UNSEEN_LAB_RESULTS)));
+		log.log(limit.dump(),Log.INFOS);
 		TimeTool tr=new TimeTool();
 		for(LabResult lr:o){
+			log.log(lr.getDate(),Log.INFOS);
 			if(tr.set(lr.getDate())){
 				if(tr.isAfter(limit)){
 					n.add(lr.getId());
@@ -189,6 +192,7 @@ public class LabResult extends PersistentObject {
 		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
 		String results=StringTool.join(n, ",");
 		unseen.putString(results);
+		unseen.set("lastupdate", new TimeTool().toString(TimeTool.TIMESTAMP));
 	}
 	
 	public void removeFromUnseen(){
@@ -196,6 +200,7 @@ public class LabResult extends PersistentObject {
 		String results=unseen.getString();
 		results=results.replaceAll(getId(), "");
 		unseen.putString(results.replaceAll(",,", ","));
+		unseen.set("lastupdate", new TimeTool().toString(TimeTool.TIMESTAMP));
 	}
 	public static List<LabResult> getUnseen(){
 		LinkedList<LabResult> ret=new LinkedList<LabResult>();
@@ -212,4 +217,8 @@ public class LabResult extends PersistentObject {
 		return ret;
 	}
 	
+	public static String getLastUpdateUnseen(){
+		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
+		return unseen.get("lastupdate");
+	}
 }

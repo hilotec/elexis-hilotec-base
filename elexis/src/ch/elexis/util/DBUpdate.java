@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3421 2007-12-07 07:35:22Z rgw_ch $
+ * $Id: DBUpdate.java 3723 2008-03-14 12:42:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -34,7 +34,7 @@ public class DBUpdate {
 	  static final String[] versions={"1.3.0","1.3.1","1.3.2","1.3.3","1.3.4","1.3.5","1.3.6","1.3.7",
 		  							"1.3.8","1.3.9","1.3.10","1.3.11","1.3.12","1.3.13",
 		  							"1.4.0","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6",
-		  							"1.5.0","1.6.0","1.6.1","1.6.2","1.6.3"};
+		  							"1.5.0","1.6.0","1.6.1","1.6.2","1.6.3","1.6.4"};
 	  static final String[] cmds={"CREATE TABLE EIGENLEISTUNGEN("+
 			"ID			VARCHAR(25) primary key,"+
 			"Code		VARCHAR(20),"+
@@ -194,7 +194,11 @@ public class DBUpdate {
 			"ALTER TABLE ARTIKEL ADD LastUpdate CHAR(8);",
 			
 			// 1.6.3.
-			"ALTER TABLE ARTIKEL ADD EAN VARCHAR(15);"
+			"ALTER TABLE ARTIKEL ADD EAN VARCHAR(15);",
+			
+			// 1.6.4
+			"ALTER TABLE HEAP ADD lastupdate CHAR(14);"+
+			"ALTER TABLE HEAP2 ADD lastupdate CHAR(14)"
 			
 	  };
 	  static Log log=Log.get("DBUpdate");

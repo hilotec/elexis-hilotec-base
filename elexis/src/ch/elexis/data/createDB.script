@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3562 2008-01-18 11:52:25Z rgw_ch $
+# * $Id: createDB.script 3723 2008-03-14 12:42:08Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -462,7 +462,8 @@ CREATE TABLE HEAP(
 	ID			VARCHAR(80) primary key,
 	deleted		CHAR(1) default '0',
 	inhalt		BLOB,
-	datum		CHAR(8)
+	datum		CHAR(8),
+	lastupdate   CHAR(14)
 );
 
 CREATE TABLE AUF(
@@ -495,6 +496,7 @@ CREATE TABLE HEAP2(
 	ID		    VARCHAR(80) primary key,
 	deleted		CHAR(1) default '0',
 	datum		CHAR(8),
+	lastupdate   CHAR(14),
 	Contents	BLOB
 );
 
@@ -529,6 +531,6 @@ CREATE INDEX XIDIDX1 on XID(domain);
 CREATE INDEX XIDIDX2 on XID(domain_id);
 CREATE INDEX XIDIDX3 on XID(object);
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.3');
-INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.2.0');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.4');
+INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.2.2');
 

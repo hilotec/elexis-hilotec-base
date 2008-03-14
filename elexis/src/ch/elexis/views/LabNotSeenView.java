@@ -58,9 +58,13 @@ import ch.elexis.util.ViewMenus;
 public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener{
 	public final static String ID="ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
+	LabResult[] unseen=null;
+	private String lastUpdate=null;
+	
 	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
 	private static final int[] colWidths=new int[]{250,100,60,70,50};
 	private IAction markAllAction;
+	
 	
 	public LabNotSeenView() {
 	}
@@ -139,6 +143,9 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		}
 
 		public String getColumnText(final Object element, final int columnIndex) {
+			if(element instanceof String){
+				return columnIndex==0 ? (String)element : "";
+			}
 			LabResult lr=(LabResult)element;
 			switch(columnIndex){
 			case 0: return lr.getPatient().getLabel();
@@ -162,7 +169,11 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		}
 
 		public Color getForeground(final Object element) {
+			if(element instanceof String){
+				return Desk.theColorRegistry.get(Desk.COL_GREY);
+			}
 			LabResult lr=(LabResult)element;
+			
 			if(lr.isFlag(LabResult.PATHOLOGIC)){
 				return Desk.theColorRegistry.get(Desk.COL_RED);
 			}else{
@@ -175,8 +186,10 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	class LabNotSeenContentProvider implements IStructuredContentProvider{
 
 		public Object[] getElements(final Object inputElement) {
-			List<LabResult> unseen=LabResult.getUnseen();
-			return unseen.toArray();
+			if(unseen==null){
+				return new Object[]{"..lade.."};
+			}
+			return unseen;
 		}
 
 		public void dispose() { /* don't mind */}
@@ -192,7 +205,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 
 	public void visible(final boolean mode) {
 		if(mode){
-			tv.refresh();
+			heartbeat();
 			Hub.heart.addListener(this, Hub.localCfg.get(LabSettings.LABNEW_HEARTRATE,Heartbeat.FREQUENCY_HIGH));
 		}else{
 			Hub.heart.removeListener(this);
@@ -201,6 +214,14 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	}
 
 	public void heartbeat() {
+		String last=LabResult.getLastUpdateUnseen();
+		if(lastUpdate!=null){
+			if(lastUpdate.compareTo(last)>=0){
+				return;
+			}
+		}
+		lastUpdate=last;
+		unseen=LabResult.getUnseen().toArray(new LabResult[0]);
 		Desk.theDisplay.asyncExec(new Runnable(){
 			public void run() {
 				tv.refresh();

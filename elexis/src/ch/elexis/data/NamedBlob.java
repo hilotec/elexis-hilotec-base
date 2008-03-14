@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 2792 2007-07-13 14:31:05Z rgw_ch $
+ *  $Id: NamedBlob.java 3723 2008-03-14 12:42:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -83,7 +83,7 @@ public class NamedBlob extends PersistentObject {
 	}
 	
 	static{
-		addMapping("HEAP","inhalt","Datum=S:D:datum");
+		addMapping("HEAP","inhalt","Datum=S:D:datum","lastupdate");
 	}
 	/**
 	 * Ask if this NamedBlob exists 
