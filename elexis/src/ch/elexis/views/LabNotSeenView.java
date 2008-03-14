@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
+import ch.elexis.preferences.LabSettings;
 import ch.elexis.util.ViewMenus;
 
 /**
@@ -192,7 +193,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	public void visible(final boolean mode) {
 		if(mode){
 			tv.refresh();
-			Hub.heart.addListener(this, Heartbeat.FREQUENCY_LOW);
+			Hub.heart.addListener(this, Hub.localCfg.get(LabSettings.LABNEW_HEARTRATE,Heartbeat.FREQUENCY_HIGH));
 		}else{
 			Hub.heart.removeListener(this);
 		}
@@ -200,7 +201,12 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	}
 
 	public void heartbeat() {
-		tv.refresh();
+		Desk.theDisplay.asyncExec(new Runnable(){
+			public void run() {
+				tv.refresh();
+			}
+		});
+
 	}
 
 	private void makeActions(){

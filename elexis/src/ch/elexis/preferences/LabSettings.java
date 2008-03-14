@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabSettings.java 3433 2007-12-10 16:52:26Z rgw_ch $
+ *  $Id: LabSettings.java 3722 2008-03-14 06:15:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,7 +28,7 @@ import ch.elexis.preferences.inputs.PrefAccessDenied;
 public class LabSettings extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 	public static final String KEEP_UNSEEN_LAB_RESULTS="lab/keepUnseen";
-	
+	public static final String LABNEW_HEARTRATE="lab/heartrate_unseen";
 	
 	public LabSettings() {
 		super(GRID);
@@ -47,9 +48,14 @@ public class LabSettings extends FieldEditorPreferencePage implements
 	protected void createFieldEditors() {
 		addField(new StringFieldEditor(KEEP_UNSEEN_LAB_RESULTS,"Neue Laborwerte anzeigen (Tage)"
 					,getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor(LABNEW_HEARTRATE,"Refresh-Frequenz neue Laborwerte",3,
+				new String[][]{{"Normal","1"},{"Mittel","2"},{"Langsam","3"}},
+				getFieldEditorParent()
+		));
 		
 	}
 
+	
 	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
 

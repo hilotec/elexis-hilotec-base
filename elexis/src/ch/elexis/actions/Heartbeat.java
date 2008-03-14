@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 3720 2008-03-13 18:54:45Z danlutz $
+ * $Id: Heartbeat.java 3722 2008-03-14 06:15:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -177,26 +177,29 @@ public class Heartbeat {
 			if(!isSuspended){
 				Desk.theDisplay.asyncExec(new Runnable(){
 					public void run(){
-						// high frequency
-						if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
-							for (HeartListener l : highFrequencyListeners) {
-								l.heartbeat();
-							}		
-						}
-
-						// medium frequency
-						if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
-							for (HeartListener l : mediumFrequencyListeners) {
-								l.heartbeat();
-							}		
-						}
-
-						// high frequency
+						// low frequency
 						if (counter % FREQUENCY_LOW_MULTIPLIER == 0) {
 							for (HeartListener l : lowFrequencyListeners) {
 								l.heartbeat();
-							}		
+							}
+							
+						}else{
+							// medium frequency
+							if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
+								for (HeartListener l : mediumFrequencyListeners) {
+									l.heartbeat();
+								}		
+							}else{
+								// high frequency
+								if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
+									for (HeartListener l : highFrequencyListeners) {
+										l.heartbeat();
+									}		
+								}
+		
+							}
 						}
+						
 					}
 				});
 			}

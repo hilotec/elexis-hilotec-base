@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 3443 2007-12-14 08:19:58Z michael_imhof $
+ *    $Id: PreferenceConstants.java 3722 2008-03-14 06:15:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -99,7 +99,7 @@ public class PreferenceConstants {
 	public static final int INVENTORY_ORDER_TRIGGER_DEFAULT = INVENTORY_ORDER_TRIGGER_BELOW;
 	
 	// Labor
-	public static final String DAYS_TO_KEEP_UNSEEN_LAB_RESULTS = "14";
+	public static final String DAYS_TO_KEEP_UNSEEN_LAB_RESULTS = "7";
 	
 	// Scanner
 	public static final String SCANNER_PREFIX_CODE = "scanner/prefixcode";
