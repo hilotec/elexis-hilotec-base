@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Zeitvorgaben.java 1251 2006-11-07 22:07:11Z rgw_ch $
+ * $Id: Zeitvorgaben.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -25,10 +25,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
-import ch.elexis.data.Termin;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.Termin;
 
 /**
  * Einstellen von Zeitvorgaben für jeden Termintyp und jeden Mandanten

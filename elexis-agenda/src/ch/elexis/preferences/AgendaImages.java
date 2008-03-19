@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaImages.java 1287 2006-11-17 10:41:01Z rgw_ch $
+ * $Id: AgendaImages.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -29,12 +29,12 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
-import ch.elexis.data.Termin;
 import ch.elexis.util.Plannables;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.Termin;
 
 public class AgendaImages extends PreferencePage implements
 		IWorkbenchPreferencePage {

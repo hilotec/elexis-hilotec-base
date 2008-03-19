@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3670 2008-02-12 17:33:23Z rgw_ch $
+ *    $Id: Termin.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.data;
+package ch.elexis.agenda.data;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -23,6 +23,9 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -35,9 +38,11 @@ import ch.rgw.tools.VersionInfo;
  */
 
 public class Termin extends PersistentObject implements Cloneable, Comparable, IPlannable{
-	public static final String VERSION="1.2.1";
+	public static final String VERSION="1.2.2";
     public static String[] TerminTypes;
     public static String[] TerminStatus;
+    public static String[] TerminBereiche;
+    
     //static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
     //static final String DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";    
     public static final String createDB=
@@ -79,6 +84,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
       TimeTool.setDefaultResolution(60000);
       TerminTypes=Hub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
       TerminStatus=Hub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
+      TerminBereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
       if( (TerminTypes==null) || (TerminTypes.length<3)){
     	  TerminTypes=new String[]{"frei","gesperrt","normal"};
       }
@@ -153,6 +159,18 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 			ExHandler.handle(ex);
 		}
 
+  }
+  
+  public static void addBereich(String bereich){
+	  String nber=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14);
+	  nber+=","+bereich;
+	  Hub.globalCfg.set(PreferenceConstants.AG_BEREICHE, nber);
+	  TerminBereiche=nber.split(",");
+  }
+  public static void addType(String typ){
+	  String tt=StringTool.join(TerminTypes, ",")+","+typ;
+	  Hub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN, tt);
+	  TerminTypes=tt.split(",");
   }
   public Termin(){/* leer */}
   public Termin(final String id){

@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TagesNachricht.java 3504 2008-01-07 15:26:07Z rgw_ch $
+ *  $Id: TagesNachricht.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.data;
+package ch.elexis.agenda.data;
 
 import java.io.ByteArrayInputStream;
 
+import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;

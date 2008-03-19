@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plannables.java 3501 2008-01-05 17:16:39Z rgw_ch $
+ *  $Id: Plannables.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -21,9 +21,9 @@ import org.eclipse.swt.graphics.*;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
-import ch.elexis.data.IPlannable;
+import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Query;
-import ch.elexis.data.Termin;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;

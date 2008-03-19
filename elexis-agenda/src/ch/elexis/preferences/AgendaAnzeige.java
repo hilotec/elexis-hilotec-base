@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
-import ch.elexis.data.Termin;
+import ch.elexis.agenda.data.Termin;
 import ch.rgw.tools.StringTool;
 
 public class AgendaAnzeige extends FieldEditorPreferencePage implements

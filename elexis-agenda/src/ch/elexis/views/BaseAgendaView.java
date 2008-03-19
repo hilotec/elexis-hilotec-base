@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3611 2008-02-04 18:09:39Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -31,10 +31,10 @@ import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
+import ch.elexis.agenda.data.ICalTransfer;
+import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Anwender;
-import ch.elexis.data.ICalTransfer;
-import ch.elexis.data.IPlannable;
-import ch.elexis.data.Termin;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;

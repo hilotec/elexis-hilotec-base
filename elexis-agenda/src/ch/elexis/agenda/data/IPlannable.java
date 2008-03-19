@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IPlannable.java 726 2006-08-13 17:01:05Z rgw_ch $
+ *  $Id: IPlannable.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.data;
+package ch.elexis.agenda.data;
 
 /**
  * Ein Plannable ist ein planbarer Zeitraum. Also entweder ein Termin oder eine

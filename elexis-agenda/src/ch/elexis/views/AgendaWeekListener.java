@@ -7,9 +7,9 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.actions.GlobalEvents.ObjectListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Termin;
 
 public class AgendaWeekListener implements BackingStoreListener, HeartListener,
 		ActivationListener, ObjectListener {

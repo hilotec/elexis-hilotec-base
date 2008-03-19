@@ -8,9 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Import_Agenda.java 1545 2007-01-06 14:20:57Z rgw_ch $
+ * $Id: Import_Agenda.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.data;
+package ch.elexis.agenda.data;
 
 import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
@@ -28,6 +28,9 @@ import org.eclipse.swt.widgets.*;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.Synchronizer;
+import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Result;

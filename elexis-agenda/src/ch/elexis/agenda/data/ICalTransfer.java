@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 3670 2008-02-12 17:33:23Z rgw_ch $
+ * $Id: ICalTransfer.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.data;
+package ch.elexis.agenda.data;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Label;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
+import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;

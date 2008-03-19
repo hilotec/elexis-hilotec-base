@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 3511 2008-01-09 15:00:49Z rgw_ch $
+ *  $Id: AgendaGross.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -44,12 +44,12 @@ import org.eclipse.ui.PartInitException;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.data.TagesNachricht;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Fall;
-import ch.elexis.data.IPlannable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
-import ch.elexis.data.TagesNachricht;
-import ch.elexis.data.Termin;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;

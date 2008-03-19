@@ -61,7 +61,7 @@
       <extension
          point="ch.elexis.FremdDatenImport">
       <importer
-            Class="ch.elexis.data.Import_Agenda"
+            Class="ch.elexis.agenda.data.Import_Agenda"
             name="JavaAgenda - Importer"/>
    	</extension>
       <extension

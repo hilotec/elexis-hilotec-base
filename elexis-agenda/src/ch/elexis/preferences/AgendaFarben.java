@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaFarben.java 2134 2007-03-20 05:59:38Z rgw_ch $
+ * $Id: AgendaFarben.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -31,9 +31,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.data.Termin;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.Termin;
 
 public class AgendaFarben extends PreferencePage implements
         IWorkbenchPreferencePage {

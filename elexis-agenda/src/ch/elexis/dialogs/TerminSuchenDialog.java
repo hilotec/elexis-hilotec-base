@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TerminSuchenDialog.java 2203 2007-04-12 12:47:00Z rgw_ch $
+ *    $Id: TerminSuchenDialog.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.IPlannable;
 
 import ch.elexis.Desk;
-import ch.elexis.data.IPlannable;
 
 public class TerminSuchenDialog extends TitleAreaDialog {
 	IPlannable actPlannable;

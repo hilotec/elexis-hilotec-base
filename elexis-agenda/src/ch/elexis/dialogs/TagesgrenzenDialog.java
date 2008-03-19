@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Query;
-import ch.elexis.data.Termin;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 

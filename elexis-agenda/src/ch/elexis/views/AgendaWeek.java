@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 3502 2008-01-05 20:07:36Z rgw_ch $
+ *  $Id: AgendaWeek.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -40,7 +40,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.data.Termin;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;

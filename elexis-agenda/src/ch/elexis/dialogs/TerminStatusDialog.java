@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminStatusDialog.java 1251 2006-11-07 22:07:11Z rgw_ch $
+ *  $Id: TerminStatusDialog.java 3731 2008-03-19 21:41:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.data.Termin;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.Termin;
 
 public class TerminStatusDialog extends TitleAreaDialog {
 	Button[] bStatus;
