@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3725 2008-03-17 13:57:41Z rgw_ch $
+<!-- $Id: build.xml 3727 2008-03-19 10:12:15Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -145,6 +145,8 @@
 		   <antcall target="rosenstudio"/>
 		<available file="../elexis-artikel-oesterreich/build.xml" property="artaustria.ok"/>
 			<antcall target="artaustria"/>
+        <available file="../elexis-eigendiagnosen/build-xml" property="eigendiagnosen.ok"/>
+          <antcall target="eigendiagnosen"/>
 
 		<available file="../Sgam-Exchange/build.xml" property="sgamxchange.ok"/>
 			<antcall target="sgamxchange"/>
@@ -174,6 +176,9 @@
 			<antcall target="hnet"/>
 
 		<ant antfile="../elexis-pro/build.xml"/>
+	      <available file="../Laborimport-aerztelabor-badena/build.xml" property="badena.ok"/>
+	          <antcall target="badena"/>
+
 		<available file="../Laborimport-Medica/build.xml" property="medica.ok"/>
 		  <antcall target="medica"/>
 		<available file="../elexis-kassenbuch/build.xml" property="kassenbuch.ok"/>
@@ -278,6 +283,10 @@
 	<target name="privatrechnung" if="privatrechnung.ok" depends="main">
 		<ant antfile="../elexis-privatrechnung/build.xml"/>
 	</target>
+   <target name="eigendiagnosen" if="eigendiagnosen.ok">
+        <ant antfile="../elexis-eigendiagnosen/build.xml"/>
+    </target>
+
 	<target name="agenda" if="agenda.ok">
 		<ant antfile="../elexis-agenda/build.xml"/>
 	</target>
@@ -338,6 +347,9 @@
 	<target name="medica" if="medica.ok">
 	   <ant antfile="../Laborimport-Medica/build.xml"/>
 	</target>
+	<target name="badena" if="badena.ok">
+	       <ant antfile="../Laborimport-aerztelabor-badena/build.xml"/>
+	 </target>
 	
 	<target name="argolead" if="argolead.ok">
 		<ant antfile="../elexis-importer-argolead/build.xml"/>
