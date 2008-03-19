@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 3722 2008-03-14 06:15:11Z rgw_ch $
+ * $Id: Heartbeat.java 3729 2008-03-19 16:58:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -183,23 +183,20 @@ public class Heartbeat {
 								l.heartbeat();
 							}
 							
-						}else{
-							// medium frequency
-							if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
-								for (HeartListener l : mediumFrequencyListeners) {
-									l.heartbeat();
-								}		
-							}else{
-								// high frequency
-								if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
-									for (HeartListener l : highFrequencyListeners) {
-										l.heartbeat();
-									}		
-								}
-		
-							}
 						}
-						
+							// medium frequency
+						if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
+							for (HeartListener l : mediumFrequencyListeners) {
+								l.heartbeat();
+							}		
+						}
+								// high frequency
+						if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
+							for (HeartListener l : highFrequencyListeners) {
+								l.heartbeat();
+							}		
+						}
+
 					}
 				});
 			}
