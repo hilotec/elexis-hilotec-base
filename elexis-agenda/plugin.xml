@@ -44,6 +44,12 @@
             name="Agenda-Icons"/>
       <page
             category="ch.elexis.Agendaprefs"
+            class="ch.elexis.preferences.AgendaDruck"
+            id="ch.elexis.preferences.AgendaDruck"
+            name="Druck">
+      </page>
+      <page
+            category="ch.elexis.Agendaprefs"
             class="ch.elexis.preferences.Zeitvorgaben"
             id="ch.agendaprefs.zeiten"
             name="%Zeitvorgaben"/>

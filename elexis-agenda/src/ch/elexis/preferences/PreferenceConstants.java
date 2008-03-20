@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 2630 2007-06-25 14:18:52Z danlutz $
+ *  $Id: PreferenceConstants.java 3733 2008-03-20 10:30:30Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -33,4 +33,9 @@ public class PreferenceConstants {
 	public static final String AG_SYNC_DBPWD		= "agenda/sync/db_pwd";
 	public static final String AG_SYNC_MAPPING		= "agenda/sync/mapping";
 	public static final String AG_SYNC_ENABLED		= "agenda/sync/enabled";
+	
+	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE
+			= "agenda/print/appointmentcard_template";
+	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT
+			= "Terminkarte";
 }

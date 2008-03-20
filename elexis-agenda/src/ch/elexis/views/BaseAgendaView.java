@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3733 2008-03-20 10:30:30Z danlutz $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -35,9 +35,12 @@ import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Query;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
+import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.rgw.tools.TimeTool;
@@ -52,6 +55,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	BaseAgendaView self;
 	protected IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
 	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
+	protected IAction printPatientAction;
 	MenuManager menu=new MenuManager();
 	String[] bereiche;
 	
@@ -305,6 +309,28 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				}
 			}
 		};
+		printPatientAction=new Action("Patienten-Termine drucken"){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
+				setToolTipText("Zukünftige Termine des ausgewählten Patienten drucken");
+			}
+			@Override
+			public void run(){
+				Patient patient = GlobalEvents.getSelectedPatient();
+				if (patient != null) {
+					Query<Termin> qbe = new Query<Termin>(Termin.class);
+					qbe.add("Wer", "=", patient.getId());
+					qbe.add("deleted", "<>", "1");
+					qbe.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
+					qbe.orderBy(false, "Tag", "Beginn");
+					java.util.List<Termin> list=qbe.execute();
+					if (list != null) {
+						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list.toArray(new Termin[0]));
+						dlg.open();
+					}
+				}
+			}
+		};
 		exportAction=new Action("Agenda exportieren"){
 			{
 				setToolTipText("Termine eines Bereichs exportieren");
@@ -376,6 +402,8 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		mgr.add(newViewAction);
 		mgr.add(exportAction);
 		mgr.add(importAction);
+		mgr.add(printAction);
+		mgr.add(printPatientAction);
 	}
 
 

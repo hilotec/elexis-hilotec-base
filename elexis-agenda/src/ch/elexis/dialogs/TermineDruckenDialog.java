@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: TermineDruckenDialog.java 3733 2008-03-20 10:30:30Z danlutz $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.Hub;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Brief;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.Plannables;
@@ -39,11 +40,15 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		
+		String template = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
+				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);
+		
 		TextContainer text=new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, "Terminkarte", Brief.UNKNOWN, Hub.actUser, "Agenda");
+		text.createFromTemplateName(null, template, Brief.UNKNOWN, Hub.actUser, "Agenda");
 		/*
 		String[][] termine=new String[liste.length+1][3];
 		termine[0]=new String[]{"Datum", "Zeit","Bei"};
