@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 3733 2008-03-20 10:30:30Z danlutz $
+ *  $Id: TermineDruckenDialog.java 3735 2008-03-21 18:18:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -64,7 +64,9 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 		StringBuilder sb=new StringBuilder();
 		for(Termin t:liste){
 			TimeTool day=new TimeTool(t.getDay());
-			sb.append(day.toString(TimeTool.DATE_GER)).append(":  ")
+			sb.append(day.toString(TimeTool.WEEKDAY))
+				.append(", ")
+			 	.append(day.toString(TimeTool.DATE_GER)).append(" - ")
 				.append(Plannables.getStartTimeAsString(t)).append("\n");
 		}
 		text.replace("\\[Termine\\]", sb.toString());
