@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenView.java 2374 2007-05-15 11:30:12Z rgw_ch $
+ *  $Id: KassenView.java 3736 2008-03-21 18:18:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -279,7 +279,8 @@ public class KassenView extends ViewPart implements ActivationListener, HeartLis
 				setTitleToolTip("Angezeigte Buchungen ausdrucken");
 			}
 			public void doRun(){
-				
+				KassenbuchDruckDialog kbd=new KassenbuchDruckDialog(getSite().getShell(),ttVon,ttBis);
+				kbd.open();
 			}
 		};
 	}
