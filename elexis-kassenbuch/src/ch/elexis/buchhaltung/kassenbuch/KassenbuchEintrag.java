@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenbuchEintrag.java 2738 2007-07-07 14:07:51Z rgw_ch $
+ *  $Id: KassenbuchEintrag.java 3738 2008-03-22 07:51:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.Money;
@@ -29,24 +30,27 @@ import ch.rgw.tools.VersionInfo;
  * @author Gerry
  *
  */
-public class KassenbuchEintrag extends PersistentObject implements Comparable{
+public class KassenbuchEintrag extends PersistentObject implements Comparable<KassenbuchEintrag>{
 	private static final String TABLENAME="CH_ELEXIS_KASSENBUCH";
-	public static final String VERSION="1.0.0";
+	public static final String VERSION="1.1.0";
+	public static final String CATEGORIES="ChElexisKassenbuchKategorien";
+	public static final String CATEGORY_SEPARATOR="##";
 	private static final String createDB="CREATE TABLE "+TABLENAME+"("+
-		"ID		VARCHAR(25) primary key,"+
-		"deleted CHAR(1) default '0',"+
-		"Nr	    VARCHAR(25),"+
-		"Date   CHAR(8),"+
-		"Amount CHAR(8),"+
-		"Total  CHAR(8),"+
-		"Entry  VARCHAR(80)"+
+		"ID			VARCHAR(25) primary key,"+
+		"deleted 	CHAR(1) default '0',"+
+		"Nr	    	VARCHAR(25),"+
+		"Category	VARCHAR(80),"+
+		"Date   	CHAR(8),"+
+		"Amount 	CHAR(8),"+
+		"Total  	CHAR(8),"+
+		"Entry  	VARCHAR(80)"+
 		");"+
 		"INSERT INTO "+TABLENAME+" (ID,Nr,Date,Entry) VALUES ('1','-','"+
 			new TimeTool().toString(TimeTool.DATE_COMPACT)+"','"+VERSION+
 			"');";;
 	
 	static{
-		addMapping(TABLENAME, "Betrag=Amount", "Text=Entry", "Datum=S:D:Date","Saldo=Total","BelegNr=Nr");
+		addMapping(TABLENAME, "Betrag=Amount", "Text=Entry", "Datum=S:D:Date","Saldo=Total","BelegNr=Nr","Kategorie=Category");
 		KassenbuchEintrag version=KassenbuchEintrag.load("1");
 		if(!version.exists()){
 			try{
@@ -60,8 +64,11 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable{
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("1.0.0")){
 					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
-					version.set("Text", VERSION);
 				}
+				if(vi.isOlder("1.1.0")){
+					createTable(TABLENAME, "ALTER TABLE "+TABLENAME+" ADD Category VARCHAR(80);");
+				}
+				version.set("Text", VERSION);
 			}
 		}
 	}
@@ -187,6 +194,14 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable{
 		return getAmount().getAmountAsString()+" "+getText();
 	}
 
+	public String getKategorie(){
+		return get("Kategorie");
+	}
+	
+	public void setKategorie(String cat){
+		addKategorie(cat);
+		set("Kategorie",cat);
+	}
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
@@ -202,14 +217,28 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable{
 		super(id);
 		
 	}
+	
+	public static String[] getCategories(){
+	
+		String cats=Hub.globalCfg.get(CATEGORIES,"");
+		return cats.split(CATEGORY_SEPARATOR);
+	}
 
+	public static void addKategorie(String cat){
+		String oldcats=Hub.globalCfg.get(CATEGORIES, "");
+		String[] cats=oldcats.split(CATEGORY_SEPARATOR);
+		if(StringTool.getIndex(cats, cat)==-1){
+			String ncats=oldcats+CATEGORY_SEPARATOR+cat;
+			Hub.globalCfg.set(CATEGORIES,ncats);
+		}
+	}
 	/**
 	 * The comparator is used to create a sorted set of the bookings. It scans the identifier (BelegNr) for
 	 * a numerical part and compares these numbers. If the numbers are identical or not found, a textual
 	 * comparison is used.
 	 */
-	public int compareTo(Object o) {
-		KassenbuchEintrag k2=(KassenbuchEintrag)o;
+	public int compareTo(KassenbuchEintrag k2) {
+		//KassenbuchEintrag k2=(KassenbuchEintrag)o;
 		String [] s1=getBelegNr().split("[^0-9]",2);
 		String [] s2=k2.getBelegNr().split("[^0-9]",2);
 		int res=0;

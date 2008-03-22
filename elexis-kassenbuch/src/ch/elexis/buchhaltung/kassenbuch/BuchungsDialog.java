@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BuchungsDialog.java 2333 2007-05-05 08:02:46Z rgw_ch $
+ *  $Id: BuchungsDialog.java 3738 2008-03-22 07:51:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -16,6 +16,8 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -34,7 +36,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 	LabeledInputField liBeleg, liDate, liBetrag;
 	Text text;
 	KassenbuchEintrag last,act;
-	
+	Combo cbCats;
 	
 	BuchungsDialog(Shell shell, boolean mode){
 		super(shell);
@@ -57,6 +59,13 @@ public class BuchungsDialog extends TitleAreaDialog {
 		liBeleg=new LabeledInputField(top,"Beleg");
 		liDate=new LabeledInputField(top,"Datum",LabeledInputField.Typ.DATE);
 		liBetrag=new LabeledInputField(top,"Betrag",LabeledInputField.Typ.MONEY);
+		Composite cCats=new Composite(ret,SWT.NONE);
+		cCats.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cCats.setLayout(new GridLayout(2,false));
+		new Label(cCats,SWT.NONE).setText("Kategorie");
+		cbCats=new Combo(cCats,SWT.SINGLE);
+		cbCats.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cbCats.setItems(KassenbuchEintrag.getCategories());
 		new Label(ret,SWT.NONE).setText("Buchungstext");
 		text=new Text(ret,SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -67,6 +76,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 			liBeleg.setText(act.getBelegNr());
 			liDate.setText(act.getDate());
 			liBetrag.setText(act.getAmount().getAmountAsString());
+			cbCats.setText(act.getKategorie());
 			text.setText(act.getText());
 		}
 		return ret;
@@ -104,13 +114,14 @@ public class BuchungsDialog extends TitleAreaDialog {
 			if(!bType){
 				money=money.negate();
 			}
-			new KassenbuchEintrag(liBeleg.getText(),tt.toString(TimeTool.DATE_GER),money,bt,last);
+			act=new KassenbuchEintrag(liBeleg.getText(),tt.toString(TimeTool.DATE_GER),money,bt,last);
 		}else{
 			act.set(new String[]{"BelegNr","Datum","Betrag","Text"},
 				liBeleg.getText(),tt.toString(TimeTool.DATE_GER),money.getCentsAsString(),
 				text.getText());
 			KassenbuchEintrag.recalc();
 		}
+		act.setKategorie(cbCats.getText());
 		super.okPressed();
 	}
 	

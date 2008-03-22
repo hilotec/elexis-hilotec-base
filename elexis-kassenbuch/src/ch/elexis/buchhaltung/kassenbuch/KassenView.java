@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenView.java 3736 2008-03-21 18:18:48Z rgw_ch $
+ *  $Id: KassenView.java 3738 2008-03-22 07:51:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -18,7 +18,15 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -50,9 +58,9 @@ public class KassenView extends ViewPart implements ActivationListener, HeartLis
 	TableViewer tv;
 	TableColumn[] tc;
 	TimeTool ttVon,ttBis;
-	String[] tableHeaders=new String[]{"Beleg","Datum","Soll","Haben","Saldo","Text"};
-	int[] tableCols=new int[]{50,80,60,60,60,400};
-	private IAction addAction, subtractAction, stornoAction,saldoAction, dateAction, printAction; 
+	String[] tableHeaders=new String[]{"Beleg","Datum","Soll","Haben","Saldo","Kategorie","Text"};
+	int[] tableCols=new int[]{50,80,60,60,60,100,400};
+	private IAction addAction, subtractAction, stornoAction,saldoAction, dateAction, printAction, editCatAction; 
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -93,7 +101,7 @@ public class KassenView extends ViewPart implements ActivationListener, HeartLis
 		ViewMenus menu=new ViewMenus(getViewSite());
 		menu.createToolbar(addAction,subtractAction,saldoAction);
 		menu.createViewerContextMenu(tv, stornoAction);
-		menu.createMenu(dateAction,printAction);
+		menu.createMenu(dateAction,printAction,null,editCatAction);
 		tv.addDoubleClickListener(new IDoubleClickListener(){
 
 			public void doubleClick(DoubleClickEvent event) {
@@ -147,7 +155,8 @@ public class KassenView extends ViewPart implements ActivationListener, HeartLis
 			case 2: return betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
 			case 3: return betrag.isNegative() ? "" : betrag.getAmountAsString();
 			case 4: return kb.getSaldo().getAmountAsString();
-			case 5: return kb.getText();
+			case 5: return kb.getKategorie();
+			case 6: return kb.getText();
 			}
 			return "?";
 		}
@@ -281,6 +290,15 @@ public class KassenView extends ViewPart implements ActivationListener, HeartLis
 			public void doRun(){
 				KassenbuchDruckDialog kbd=new KassenbuchDruckDialog(getSite().getShell(),ttVon,ttBis);
 				kbd.open();
+			}
+		};
+		editCatAction=new RestrictedAction(ACLContributor.BOOKING,"Kategorien..."){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
+				setTitleToolTip("Kategorien editieren");
+			}
+			public void doRun(){
+				new EditCatsDialog(getSite().getShell()).open();
 			}
 		};
 	}

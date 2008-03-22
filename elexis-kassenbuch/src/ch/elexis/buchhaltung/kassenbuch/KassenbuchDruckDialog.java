@@ -1,5 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: KassenbuchDruckDialog.java 3738 2008-03-22 07:51:31Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.SortedSet;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -11,16 +25,17 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class KassenbuchDruckDialog extends Dialog implements ICallback {
 	TimeTool ttVon, ttBis;
+	Hashtable<String, Money> mCategories=new Hashtable<String,Money>();
 	
 	public KassenbuchDruckDialog(Shell shell, TimeTool von, TimeTool bis){
 		super(shell);
@@ -49,7 +64,17 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		for(int i=1;i<=lines.length;i++){
 			table[i]=new String[6];
 			KassenbuchEintrag kb=lines[i-1];
+			String kategorie=kb.getKategorie();
+			if(StringTool.isNothing(kategorie)){
+				kategorie="Sonstiges";
+			}
+			Money mKat=mCategories.get(kategorie);
+			if(mKat==null){
+				mKat=new Money();
+				mCategories.put(kategorie, mKat);
+			}
 			Money betrag= kb.getAmount();
+			mKat.addMoney(betrag);
 			table[i][0]=kb.get("BelegNr");
 			table[i][1]=kb.getDate();
 			table[i][2]=betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
@@ -59,6 +84,15 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		}
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
 		text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table, new int[]{5,15,15,15,20,30});
+		Enumeration<String> keys=mCategories.keys();
+		Object cursor=text.getPlugin().insertText("##end##", "", SWT.LEFT);
+		while(keys.hasMoreElements()){
+			String cat=keys.nextElement();
+			Money betrag=mCategories.get(cat);
+			StringBuilder sb=new StringBuilder();
+			sb.append("\n").append(cat).append("\t\t\t").append(betrag.getAmountAsString());
+			cursor=text.getPlugin().insertText(cursor, sb.toString(), SWT.LEFT);
+		}
 		return ret;
 	}
 
