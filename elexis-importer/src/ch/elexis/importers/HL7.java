@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3578 2008-01-24 11:54:28Z michael_imhof $
+ * $Id: HL7.java 3742 2008-03-24 08:14:01Z rgw_ch $
  */
  
 
@@ -323,14 +323,17 @@ public class HL7 {
 		 * @return an OBX or null if none found
 		 */
 		public OBX firstOBX(){
+			int oldof=of;
 			while(++of<lines.length){
 				if(lines[of].startsWith("OBX")){
 					return new OBX(this,of);
 				}
 				if(lines[of].startsWith("OBR")){
+					of-=1;
 					return null;
 				}
 			}
+			of=oldof;
 			return null;
 		}
 		/**
