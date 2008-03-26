@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 3733 2008-03-20 10:30:30Z danlutz $
+ *  $Id: PreferenceConstants.java 3743 2008-03-26 15:28:02Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -38,4 +38,11 @@ public class PreferenceConstants {
 			= "agenda/print/appointmentcard_template";
 	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT
 			= "Terminkarte";
+	public static final String AG_PRINT_APPOINTMENTCARD_PRINTER_NAME
+			= "agenda/print/appointmentcard_printer_name";
+	public static final String AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY
+			= "agenda/print/appointmentcard_printer_tray";
+	public static final String AG_PRINT_APPOINTMENTCARD_DIRECTPRINT
+			= "agenda/print/appointmentcard_directprint";
+	public static final boolean AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT = false;
 }

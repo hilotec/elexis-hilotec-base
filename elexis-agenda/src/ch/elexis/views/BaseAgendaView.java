@@ -8,16 +8,32 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3733 2008-03-20 10:30:30Z danlutz $
+ *  $Id: BaseAgendaView.java 3743 2008-03-26 15:28:02Z danlutz $
  *******************************************************************************/
 package ch.elexis.views;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -43,6 +59,7 @@ import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public abstract class BaseAgendaView extends ViewPart implements BackingStoreListener,  HeartListener, ActivationListener {
@@ -325,8 +342,23 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 					qbe.orderBy(false, "Tag", "Beginn");
 					java.util.List<Termin> list=qbe.execute();
 					if (list != null) {
+						boolean directPrint = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
+								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
+
 						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list.toArray(new Termin[0]));
-						dlg.open();
+						if (directPrint) {
+							dlg.setBlockOnOpen(false);
+							dlg.open();
+							if (dlg.doPrint()) {
+								dlg.close();
+							} else {
+								SWTHelper.alert("Fehler beim Drucken",
+										"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+							}
+						} else {
+							dlg.setBlockOnOpen(true);
+							dlg.open();
+						}
 					}
 				}
 			}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 3735 2008-03-21 18:18:27Z rgw_ch $
+ *  $Id: TermineDruckenDialog.java 3743 2008-03-26 15:28:02Z danlutz $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -29,8 +29,12 @@ import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
+public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
+	
 	Termin[] liste;
+	
+	private TextContainer text = null;
+	
 	public TermineDruckenDialog(Shell shell, Termin[] liste){
 		super(shell);
 		this.liste=liste;
@@ -44,7 +48,7 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 		String template = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
 				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);
 		
-		TextContainer text=new TextContainer(getShell());
+		text=new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
@@ -70,6 +74,7 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 				.append(Plannables.getStartTimeAsString(t)).append("\n");
 		}
 		text.replace("\\[Termine\\]", sb.toString());
+		
 		return ret;
 	}
 
@@ -94,5 +99,16 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback{
 	public boolean saveAs() {
 		return false;
 	}
-	
+
+	public boolean doPrint() {
+		if (text == null) {
+			// text container is not initialized
+			return false;
+		}
+		
+		String printer = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "");
+		String tray = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, null);
+		
+		return text.getPlugin().print(printer, tray, false);
+	}
 }
