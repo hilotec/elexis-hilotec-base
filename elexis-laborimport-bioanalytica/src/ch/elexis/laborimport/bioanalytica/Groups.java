@@ -17,8 +17,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +28,12 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
+/**
+ * This class provides the groups and codes used by the lab Bioanalytica.
+ * 
+ * Important: Each public method must run init() to make sure data is loaded.
+ * @author Daniel Lutz
+ */
 public class Groups {
 	public static void main(String[] args) {
 		System.out.println("Groups");
@@ -39,12 +45,18 @@ public class Groups {
 	private static final String GROUPS_FILE = "/rsc/groups.dat";
 	private static final String CODES_FILE = "/rsc/codes.dat";
 	private static final String UNKNOWN_PREFIX = "00 Automatisch";
+	private static final String DEFAULT_ORDER = "00000";
 	
-	private static HashMap<String, Group> groups;
-	private static HashMap<String, Code> codes;
+	private static final String CHARSET_UTF_8 = "UTF-8";
+	private static final String CHARSET = CHARSET_UTF_8;
+	
+	private static HashMap<String, Group> groups = null;
+	private static HashMap<String, Code> codes = null;
+	
+	
 	
 	static {
-		loadData();
+		init();
 	}
 	
 	private static final InputStreamReader getFileAsSreamReader(String path) {
@@ -52,8 +64,11 @@ public class Groups {
 		File file = new File(basePath + path);
 		if (file.exists() && file.isFile()) {
 			try {
-			return new InputStreamReader(new FileInputStream(file));
+				return new InputStreamReader(new FileInputStream(file), CHARSET);
 			} catch (FileNotFoundException ex) {
+				ExHandler.handle(ex);
+				return null;
+			} catch (UnsupportedEncodingException ex) {
 				ExHandler.handle(ex);
 				return null;
 			}
@@ -63,32 +78,46 @@ public class Groups {
 	}
 	
 	/**
+	 * Initialize data
+	 */
+	private static void init() {
+		if (groups == null || codes == null) {
+			loadData();
+		}
+	}
+	
+	/**
 	 * Load data from GROUPS_FILE and CODES_FILE
 	 */
 	private static void loadData() {
 		groups = new HashMap<String, Group>();
 		codes = new HashMap<String, Code>();
-		
+
+		InputStreamReader isr;
 		BufferedReader in;
 		String line;
 		
 		try {
-			in = new BufferedReader(getFileAsSreamReader(GROUPS_FILE));
-			while ((line = in.readLine()) != null) {
-				parseGroup(line);
+			isr = getFileAsSreamReader(GROUPS_FILE);
+			if (isr != null) {
+				in = new BufferedReader(isr);
+				while ((line = in.readLine()) != null) {
+					parseGroup(line);
+				}
+				in.close();
 			}
-			in.close();
 			
-			in = new BufferedReader(getFileAsSreamReader(CODES_FILE));
-			while ((line = in.readLine()) != null) {
-				parseCode(line);
+			isr = getFileAsSreamReader(CODES_FILE);
+			if (isr != null) {
+				in = new BufferedReader(isr);
+				while ((line = in.readLine()) != null) {
+					parseCode(line);
+				}
+				in.close();
 			}
-			in.close();
-		} catch (IOException ex) {
-			// read error, stop reading
-			ex.printStackTrace(System.err);
 		} catch (Throwable ex) {
-			ex.printStackTrace(System.err);
+			groups = null;
+			codes = null;
 		}
 	}
 	
@@ -108,19 +137,20 @@ public class Groups {
 	
 	private static void parseCode(String line) {
 		if (!isCommentLine(line)) {
-			// pattern: <Code>;<Group Key>[;<Name>]
-			Pattern p = Pattern.compile("^([^;]+);([^;]+)(;([^;]*))?");
+			// pattern: <Order>;<Code>;<Group Key>[;<Name>]
+			Pattern p = Pattern.compile("^([0-9]+);([^;]+);([^;]+)(;([^;]*))?");
 			Matcher m = p.matcher(line);
 			if (m.matches()) {
-				String key = m.group(1).trim();
-				String groupKey = m.group(2).trim();
+				String order = m.group(1).trim();
+				String key = m.group(2).trim();
+				String groupKey = m.group(3).trim();
 				String name = "";
-				if (m.group(4) != null) {
-					name = m.group(4);
+				if (m.group(5) != null) {
+					name = m.group(5);
 				}
 				Group group = groups.get(groupKey);
 				if (group != null) {
-					Code code = new Code(group, key, name); 
+					Code code = new Code(group, key, name, order); 
 					codes.put(key, code);
 				}
 			}
@@ -143,6 +173,8 @@ public class Groups {
 	public static String getGroupNameOfCode(String key) {
 		String name;
 		
+		init();
+		
 		Code code = codes.get(key);
 		if (code != null) {
 			Group group = groups.get(code.group.key);
@@ -161,6 +193,8 @@ public class Groups {
 	 * @return the name of the code
 	 */
 	public static String getCodeName(String key) {
+		init();
+		
 		Code code = codes.get(key);
 		if (code != null) {
 			if (!StringTool.isNothing(code.name)) {
@@ -173,7 +207,28 @@ public class Groups {
 		}
 		
 	}
-	
+
+	/**
+	 * Get the code's order number
+	 * @param key the code
+	 * @return the order of the code
+	 */
+	public static String getCodeOrder(String key) {
+		init();
+		
+		Code code = codes.get(key);
+		if (code != null) {
+			if (!StringTool.isNothing(code.order)) {
+				return code.order;
+			} else {
+				return DEFAULT_ORDER;
+			}
+		} else {
+			return DEFAULT_ORDER;
+		}
+		
+	}
+
 	static class Group {
 		String key;
 		String name;
@@ -184,15 +239,24 @@ public class Groups {
 		}
 	}
 	
+	/**
+	 * Representation of a Bioanlaytica code
+	 * @author danlutz
+	 */
 	static class Code {
 		Group group;
 		String key;
 		String name;
+		/**
+		 * The ordering string for this code
+		 */
+		String order;
 		
-		Code(Group group, String key, String name) {
+		Code(Group group, String key, String name, String order) {
 			this.group = group;
 			this.key = key;
 			this.name = name;
+			this.order = order;
 		}
 	}
 }
