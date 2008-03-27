@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 3312 2007-11-05 17:59:02Z rgw_ch $
+ *  $Id: ESRRecord.java 3749 2008-03-27 13:47:01Z danlutz $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -168,9 +168,9 @@ public class ESRRecord extends PersistentObject{
 		
 		if(mode.equals(MODE.Summenrecord)){
 			// Betrag (führende Nullen entfernen)
-			vals[4]=Integer.toString(Integer.parseInt(codeline.substring(39,51))); // Totalbetrag 12-stellig
+			vals[4]=Integer.toString(Integer.parseInt(codeline.substring(39,51).trim())); // Totalbetrag 12-stellig
 		}else{
-			vals[4]=Integer.toString(Integer.parseInt(codeline.substring(39,49))); // Zeilenbetrag 10-stellig
+			vals[4]=Integer.toString(Integer.parseInt(codeline.substring(39,49).trim())); // Zeilenbetrag 10-stellig
 			String esrline=codeline.substring(12,39);
 			
 			// Von der RechnungsNummer führende Nullen wegbringen
