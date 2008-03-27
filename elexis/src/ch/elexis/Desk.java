@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 3585 2008-01-28 10:34:04Z rgw_ch $
+ *    $Id: Desk.java 3748 2008-03-27 11:33:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -85,6 +85,7 @@ public class Desk implements IPlatformRunnable {
 	public static final String IMG_NETWORK="netzwerk"; //$NON_NLS-1$
 	public static final String IMG_BOOK= "buch";
 	public static final String IMG_PERSON = "person"; //$NON_NLS-1$
+	public static final String IMG_PERSON_OK="personOK";  //$NON_NLS-1$
 	public static final String IMG_DISK= "diskette";  //$NON_NLS-1$
 	
 	public static final String FONT_SMALL="small";
@@ -148,6 +149,7 @@ public class Desk implements IPlatformRunnable {
 	        theImageRegistry.put(IMG_NETWORK, Hub.getImageDescriptor("rsc/netzwerk.ico")); //$NON_NLS-1$
 	        theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor("rsc/book.png"));  //$NON_NLS-1$
 	        theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor("rsc/person.ico"));  //$NON_NLS-1$
+	        theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor("rsc/personok.ico"));  //$NON_NLS-1$
 	        theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor("rsc/floppy.png"));  //$NON_NLS-1$
 		}
 		try {

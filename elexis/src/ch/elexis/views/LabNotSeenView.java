@@ -13,8 +13,6 @@
 
 package ch.elexis.views;
 
-import java.util.List;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -63,7 +61,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	
 	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
 	private static final int[] colWidths=new int[]{250,100,60,70,50};
-	private IAction markAllAction;
+	private IAction markAllAction, markPersonAction;
 	
 	
 	public LabNotSeenView() {
@@ -119,7 +117,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		});
 		makeActions();
 		ViewMenus menu=new ViewMenus(getViewSite());
-		menu.createToolbar(markAllAction);
+		menu.createToolbar(markPersonAction,markAllAction);
 		tv.setInput(this);
 	}
 
@@ -244,6 +242,22 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 				}
 			}
 			
+		};
+		markPersonAction=new RestrictedAction(AccessControlDefaults.LAB_SEEN,"Alle des gewählten Patienten markieren"){
+			{
+				setToolTipText("Alle Einträge des gewählten patienten als gelesen markieren");
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PERSON_OK));
+			}
+			@Override
+			public void doRun() {
+				Patient act=GlobalEvents.getSelectedPatient();
+				for(LabResult lr:unseen){
+					if(lr.getPatient().equals(act)){
+						lr.removeFromUnseen();
+						tv.setChecked(lr, true);
+					}
+				}
+			}
 		};
 	}
 
