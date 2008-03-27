@@ -9,7 +9,9 @@
 package ch.elexis.laborimport.bioanalytica;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -42,6 +44,9 @@ public class HL7 {
 	//private Kontakt labor;
 	//Patient pat = null;
 	
+	private static final String CHARSET_ISO_8859_1 = "ISO-8859-1";
+	private static final String DEFAULT_CHARSET = CHARSET_ISO_8859_1;
+	
 	/**
 	 * We can force this hl7 to be attributed to a specific lab (if we know, who the sender should be)
 	 * by providing a name and a short name. If we pass null, the lab will be taken out of the file 
@@ -62,13 +67,16 @@ public class HL7 {
 	 */
 	public Result<String> load(File file){
 		if(!file.canRead()){
-			return new Result<String>(Log.WARNINGS,1,"Kann Datei nicht lesen",file.getAbsolutePath(),true);
+			return new Result<String>(Log.ERRORS,1,"Kann Datei nicht lesen",file.getAbsolutePath(),true);
 		}
 		try{
-			FileReader fr=new FileReader(file);
+			//FileReader fr=new FileReader(file);
+			// simulate FileReader and explicitly set charset
+			System.err.println(Charset.defaultCharset());
+			InputStreamReader fr = new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET);
 			char[] in=new char[(int)file.length()];
 			if(fr.read(in)!=in.length){
-				return new Result<String>(Log.WARNINGS,3,"EOF",file.getAbsolutePath(),true);
+				return new Result<String>(Log.ERRORS,3,"EOF",file.getAbsolutePath(),true);
 			}
 			String hl7raw=new String(in);
 			lines=hl7raw.split("[\\r\\n]+");
