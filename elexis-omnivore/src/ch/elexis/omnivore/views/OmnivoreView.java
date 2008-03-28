@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OmnivoreView.java 1835 2007-02-18 09:12:57Z rgw_ch $
+ *  $Id: OmnivoreView.java 3754 2008-03-28 12:59:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.views;
@@ -36,6 +36,8 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
@@ -48,14 +50,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.TimeTool;
 
 
 /**
@@ -70,11 +75,14 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 	private Action doubleClickAction;
 	private String[] colLabels={"Datum","Titel","Stichwörter"};
 	private int[] colWidth={80,150,500};
+	private int sortMode=SORTMODE_DATE;
+	private boolean bReverse=false;
+	static final int SORTMODE_DATE=0;
+	static final int SORTMODE_TITLE=1;
+	
 
-	/*
-	 * 
-	 */
-	 
+	private static final String SORTMODE_DEF="omnivore/sortmode";
+	
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -108,9 +116,56 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
-	class NameSorter extends ViewerSorter {
+	class Sorter extends ViewerSorter {
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if((e1 instanceof DocHandle) && (e2 instanceof DocHandle)){
+				DocHandle d1=(DocHandle)e1;
+				DocHandle d2=(DocHandle)e2;
+				String c1,c2;
+				if(sortMode==SORTMODE_DATE){
+					c1=new TimeTool(d1.get("Datum")).toString(TimeTool.DATE_COMPACT);
+					c2=new TimeTool(d2.get("Datum")).toString(TimeTool.DATE_COMPACT);
+				}else if(sortMode==SORTMODE_TITLE){
+					c1=d1.get("Titel");
+					c2=d2.get("Titel");
+				}else{
+					c1="";
+					c2="";
+				}
+				if(bReverse){
+					return c1.compareTo(c2);
+				}else{
+					return c2.compareTo(c1);
+				}
+			}
+			return 0;
+		}
+		
 	}
 
+	class SortListener extends SelectionAdapter{
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			TableColumn col=(TableColumn)e.getSource();
+			if(col.getData().equals(0)){
+				if(sortMode==SORTMODE_DATE){
+					bReverse=!bReverse;
+				}
+				sortMode=SORTMODE_DATE;
+			}else{
+				if(sortMode==SORTMODE_TITLE){
+					bReverse=!bReverse;
+				}
+				sortMode=SORTMODE_TITLE;
+			}
+			Hub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode)+","+(bReverse ? "1" : "0"));
+			viewer.refresh();
+		}
+		
+	}
 	/**
 	 * The constructor.
 	 */
@@ -123,19 +178,24 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+		
+		
 		table=new Table(parent,SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		SortListener sortListener=new SortListener();
 		TableColumn[] cols=new TableColumn[colLabels.length];
 		for(int i=0;i<colLabels.length;i++){
 			cols[i]=new TableColumn(table,SWT.NONE);
 			cols[i].setWidth(colWidth[i]);
 			cols[i].setText(colLabels[i]);
+			cols[i].setData(new Integer(i));
+			cols[i].addSelectionListener(sortListener);
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		viewer = new TableViewer(table);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new NameSorter());
+		viewer.setSorter(new Sorter());
 		viewer.setUseHashlookup(true);
 		makeActions();
 		hookContextMenu();
@@ -162,6 +222,7 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 			
 		});
 		GlobalEvents.getInstance().addActivationListener(this, this);
+		selectionEvent(Hub.actUser);
 		viewer.setInput(getViewSite());
 
 	}
@@ -304,6 +365,17 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 	}
 
 	public void selectionEvent(PersistentObject obj) {
-		viewer.refresh();
+		if(obj instanceof Patient){
+			viewer.refresh();
+		}else if(obj instanceof Anwender){
+			String[] defsort=Hub.userCfg.get(SORTMODE_DEF, "0,1").split(",");
+			try {
+				sortMode=Integer.parseInt(defsort[0]);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+			bReverse=defsort.length>1 ? defsort[1].equals("1") : false;
+			viewer.refresh();
+		}
 	}
 }
