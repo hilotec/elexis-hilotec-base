@@ -8,9 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IOptifier.java 1050 2006-10-05 21:05:45Z rgw_ch $
+ * $Id: IOptifier.java 3756 2008-03-28 17:33:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
+
+import java.util.List;
 
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
@@ -40,4 +42,6 @@ public interface IOptifier {
 	 * @return Result mit der möglicherweise veränderten Liste
 	 */
 	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons);
+
+
 }

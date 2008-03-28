@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - adapted for importing data from other databases
  *    
- *  $Id: DBImportFirstPage.java 1183 2006-10-29 15:11:21Z rgw_ch $
+ *  $Id: DBImportFirstPage.java 3756 2008-03-28 17:33:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.wizards;
 
@@ -108,9 +108,11 @@ public class DBImportFirstPage extends WizardPage {
 		dbName=tk.createText(body,"",SWT.BORDER);
 		TableWrapData twr2=new TableWrapData(TableWrapData.FILL_GRAB);
 		dbName.setLayoutData(twr2);
-		if(wiz.preset!=null){
+		if(wiz.preset!=null && wiz.preset.length>1){
 			int idx=StringTool.getIndex(supportedDB, wiz.preset[0]);
-			dbTypes.select(idx);
+			if(idx<dbTypes.getItemCount()){
+				dbTypes.select(idx);
+			}
 			server.setText(wiz.preset[1]);
 			dbName.setText(wiz.preset[2]);
 		}
