@@ -8,12 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 3717 2008-03-13 14:37:53Z rgw_ch $
+ * $Id: RnPrintView2.java 3757 2008-03-28 17:33:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -308,7 +311,8 @@ public class RnPrintView2 extends ViewPart {
 
 
 		Element services=detail.getChild("services",ns); //$NON-NLS-1$
-		List<Element> ls=services.getChildren();
+		//List<Element> ls=services.getChildren();
+		TreeSet<Element> ls=sortFields(services.getChildren());
 		Element remark=invoice.getChild("remark"); //$NON-NLS-1$
 		if(remark!=null){
 			final String rem=remark.getText();
@@ -594,6 +598,45 @@ public class RnPrintView2 extends ViewPart {
 		}
 		text.replace("\\?\\?\\??[a-zA-Z0-9 \\.]+\\?\\?\\??", "");
 		
+	}
+	
+	private TreeSet<Element> sortFields(List<Element> list){
+		final TimeTool tt0=new TimeTool();
+		final TimeTool tt1=new TimeTool();
+		TreeSet<Element> ret=new TreeSet<Element>(new Comparator<Element>(){
+
+			public int compare(Element e0, Element e1) {
+				if(!tt0.set(e0.getAttributeValue("date_begin"))){
+					return 1;
+				}
+				if(!tt1.set(e1.getAttributeValue("date_begin"))) {
+					return -1;
+				}
+				int dat=tt0.compareTo(tt1);
+				if(dat!=0){
+					return dat;
+				}
+				String t0=e0.getAttributeValue("tariff_type");
+				String t1=e1.getAttributeValue("tariff_type");
+				if(t0.equals("001")){		// tarmed-tarmed: nach code sortieren
+					if(t1.equals("001")){
+						String c0=e0.getAttributeValue("code");
+						String c1=e0.getAttributeValue("code");
+						return c0.compareTo(c1);
+					}else{
+						return -1;			// tarmed immer oberhab nicht-tarmed
+					}
+				}else if(t1.equals("001")){
+					return 1;				// nicht-tarmed immer unterhalb tarmed
+				}else{				// nicht-tarmed - nicht-tarmed: alphabetisch
+					return e0.getText().compareToIgnoreCase(e1.getText());
+				}
+			}});
+		
+		for(Element el:list){
+			ret.add(el);
+		}
+		return ret;
 	}
 
 }
