@@ -19,7 +19,7 @@
 
 
 ############################################################
-# $Id: upload.pl 3537 2008-01-16 12:07:26Z rgw_ch $
+# $Id: upload.pl 3752 2008-03-28 11:44:31Z rgw_ch $
 ############################################################
 
 use strict;
@@ -88,7 +88,7 @@ MAIN:
         ($file_name,$file_mode,$file_size,$file_mdtm) = @$tmpfile;
         (my $local_shortname, my $unused)=split /_[0-9]/, $file_name;
         my $remote_fullname=$remote{$local_shortname};
-        print "processing file: $local_shortname: $file_name -> $remote_fullname (", $file_mode ? "binary" : "ascii", ")\n";
+        #print "processing file: $local_shortname: $file_name -> $remote_fullname (", $file_mode ? "binary" : "ascii", ")\n";
 
         # don't upload zero-size files
         if ($file_size == 0)  { next; }
