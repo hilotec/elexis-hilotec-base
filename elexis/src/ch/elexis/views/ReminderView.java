@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 3539 2008-01-16 14:38:21Z rgw_ch $
+ * $Id: ReminderView.java 3753 2008-03-28 12:23:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -66,6 +66,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	Query<Reminder> qbe;
 	Settings cfg;
 	ReminderFilter filter;
+	private Patient actPatient;
 	
 	public ReminderView() {
 		qbe=new Query<Reminder>(Reminder.class);
@@ -286,6 +287,10 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 
 	public void selectionEvent(final PersistentObject obj) {
 		if(obj instanceof Patient){
+			if(((Patient)obj).equals(actPatient)){
+				return;
+			}
+			actPatient=(Patient)obj;
 			if(bVisible){
 				cv.notify(CommonViewer.Message.update);
 			}
