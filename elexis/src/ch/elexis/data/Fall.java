@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3582 2008-01-24 21:47:19Z rgw_ch $
+ *    $Id: Fall.java 3755 2008-03-28 14:58:45Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -603,5 +603,44 @@ public class Fall extends PersistentObject{
 	public static String getRequirements(final String billingSystem) {
 		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/bedingungen", null);
 		return ret;
+	}
+	
+	/**
+	 * Return the referenced field as a PersistentObject.
+	 * For fields not representing PersistentObjects, this method returns null.
+	 * 
+	 * This method is mainly used to replace indirect fields in text templates
+	 * (e. g. [Fall.Kostenträger.Bezeichnung1])
+	 * 
+	 * Actually, this method should be defined by the class PersistentObject
+	 * and implemented by all subclasses. A subclass should de-reference all
+	 * its field it defines. If the sublcass extends another sublcass, it should
+	 * also call the superclass' method. All of this is not yet implemented.
+	 * 
+	 * TODO: implement further fields of Fall, e. g. PatientID and GarantID
+	 * @param field the field to resolve. This must represent a Persistent Object,
+	 *        else null is returned.
+	 * @return the referenced object, or null if it could not be found
+	 */
+	public PersistentObject getReferencedObject(String field) {
+		// first consider the billing system requirements
+		Kontakt kontakt = getRequiredContact(field);
+		if (kontakt != null) {
+			if (kontakt.exists()) {
+				if (kontakt.istPerson()) {
+					kontakt = Person.load(kontakt.getId());
+				} else if (kontakt.istOrganisation()) {
+					kontakt = Organisation.load(kontakt.getId());
+				}
+				return kontakt;
+			} else {
+				return null;
+			}
+		}
+		
+		// then try our own fields
+		// TODO
+		
+		return null;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3707 2008-02-26 09:22:50Z rgw_ch $
+ *  $Id: TextContainer.java 3755 2008-03-28 14:58:45Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -45,6 +45,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Brief;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
@@ -66,6 +67,7 @@ public class TextContainer {
 	private static Log log=Log.get("TextContainer");
 	private Shell shell;
 	private static final String TEMPLATE_REGEXP="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]";
+	private static final String TEMPLATE_INDIRECT_REGEXP = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]";
 	private static final String GENDERIZE_REGEXP="\\[[a-zA-Z]+:mwn?:[^\\[]+\\]";
 	private static final String IDATACCESS_REGEXP="\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; 
 	
@@ -181,6 +183,11 @@ public class TextContainer {
 						return replaceFields(ret,in.replaceAll("[\\[\\]]",""));
 					}
 				});
+				plugin.findOrReplace(TEMPLATE_INDIRECT_REGEXP,new ReplaceCallback(){
+					public Object replace(final String in) {
+						return replaceIndirectFields(ret,in.replaceAll("[\\[\\]]",""));
+					}
+				});
 				plugin.findOrReplace(GENDERIZE_REGEXP,new ReplaceCallback(){
 					public String replace(final String in) {
 						return genderize(ret,in.replaceAll("[\\[\\]]",""));
@@ -252,6 +259,66 @@ public class TextContainer {
 		}
 		return ret; 
 	}
+
+	/**
+	 * Resolve an indirect field, e. g. Fall.Kostentrager.Bezeichnung1
+	 * @param brief the curren Brief
+	 * @param field the filed to resolv
+	 * @return the resolved value
+	 */
+	private Object replaceIndirectFields(final Brief brief, final String field) {
+		String[] tokens = field.split("\\.");
+		if (tokens.length <= 2) {
+			return "??" + field + "??";
+		}
+		
+		String firstToken = tokens[0];
+		String valueToken = tokens[tokens.length - 1];
+		
+		// resolve the first field
+		PersistentObject first = resolveObject(brief, firstToken);
+		if(first == null) {
+			return "??" + field + "??";
+		}
+		
+		// resolve intermediate objects
+		PersistentObject current = first;
+		for (int i = 1; i < tokens.length - 1; i++) {
+			PersistentObject next = resolveIndirectObject(current, tokens[i]);
+			if (next == null) {
+				return "??" + field + "??";
+			}
+			current = next;
+		}
+		
+		// resolve value
+		
+		PersistentObject o = current;
+		
+		String value = o.get(valueToken);
+		if ((value == null) || (value.startsWith("**"))) {
+			log.log("Nicht erkanntes Feld in " + field, Log.WARNINGS);
+			return "???" + field + "???";
+		}
+		
+		if (value.startsWith("<?xml")) {
+			Samdas samdas = new Samdas(value);
+			value = samdas.getRecordText();
+		}
+		return value; 
+	}
+	
+	private PersistentObject resolveIndirectObject(PersistentObject parent, String field) {
+		if (parent instanceof Fall) {
+			Fall fall = (Fall) parent;
+			
+			return fall.getReferencedObject(field);
+		} else {
+			// not yet supported
+			return null;
+		}
+	}
+	
 	/**
 	 * Format für Genderize:
 	 * [Feld:mw:formulierung Mann/formulierung Frau] oder
