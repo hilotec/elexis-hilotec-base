@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 3637 2008-02-06 04:59:34Z rgw_ch $
+ * $Id: AutoUpdate.java 3751 2008-03-28 11:44:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -102,7 +102,9 @@ public class AutoUpdate {
 				}
 			} // for
 			monitor.done();
-			SWTHelper.showInfo("Update abgeschlossen", "Es wurden "+filecounter+" plugins heruntergeladen. Bitte neu starten.");
+			if(filecounter!=0){
+				SWTHelper.showInfo("Update abgeschlossen", "Es wurden "+filecounter+" plugins heruntergeladen. Bitte neu starten.");
+			}
 			return Status.OK_STATUS;
 		}
 		
