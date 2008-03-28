@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3723 2008-03-14 12:42:08Z rgw_ch $
+# * $Id: createDB.script 3759 2008-03-28 18:16:57Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -365,7 +365,7 @@ CREATE INDEX rem3 ON REMINDERS (Responsible);
 # korrigiert werden.
 CREATE TABLE TRACES(
 	logtime			BIGINT,
-	Workstation		VARCHAR(30),
+	Workstation		VARCHAR(40),
 	Username		VARCHAR(30),
 	action			TEXT
 );
@@ -506,7 +506,7 @@ CREATE TABLE LOGS(
 	datum		CHAR(8),					# date of modification
 	typ			VARCHAR(20),				
 	userID		VARCHAR(25),				# foreign key on modifying user
-	station		VARCHAR(25),				# modifying workstation name
+	station		VARCHAR(40),				# modifying workstation name
 	ExtInfo		BLOB
 );
 
