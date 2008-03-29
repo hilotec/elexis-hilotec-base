@@ -23,3 +23,13 @@ TODO: Alle relevanten Änderungen angeben, insbesondere Verhaltensänderungen.
    Standard-Schacht, nicht aber der in der Vorlage eingestellte Schacht
    verwendet wurde.
    Betroffene Drucker: "Drucker mit A4-Papier mit ESR", "Drucker mit weissem A4-Papier"
+
+29.3.2008, gweirich
+ *  Tarmed-Rechnung: Positionen werden sortiert, Hierarchie:
+     1 - Datum
+     2 - Tarmedlkeistungen nach Ziffer
+     3 - andere Leistungen alphabetisch 
+     
+ * Omnivore: Spalten können sortiert werden durch Klick auf Spaltenkopf
+ 
+   
