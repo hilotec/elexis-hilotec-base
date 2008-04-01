@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 3729 2008-03-19 16:58:40Z rgw_ch $
+ * $Id: Heartbeat.java 3761 2008-04-01 10:38:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Log;
 
 /**
  * Heartbeat is an event source, that fires events at user-definable intervals to all HeartListeners.
@@ -62,7 +63,7 @@ public class Heartbeat {
 	private LinkedList<HeartListener> highFrequencyListeners;
 	private LinkedList<HeartListener> mediumFrequencyListeners;
 	private LinkedList<HeartListener> lowFrequencyListeners;
-	
+	private static Log log=Log.get("Heartbeat");
 	
 	private Heartbeat(){
 		theBeat=new beat();
@@ -93,6 +94,7 @@ public class Heartbeat {
 	 */
 	public void resume(boolean immediately){
 		isSuspended=false;
+		log.log("resume", Log.DEBUGMSG);
 		if(immediately){
 			theBeat.run();
 		}
@@ -101,6 +103,7 @@ public class Heartbeat {
 	 * Heartbeat aussetzen (geht im Hintergrund weiter, wird aber nicht mehr weitergeleitet)
 	 */
 	public void suspend(){
+		log.log("suspending", Log.DEBUGMSG);
 		isSuspended=true;
 	}
 	
@@ -108,6 +111,7 @@ public class Heartbeat {
 	 * Heartbeat stoppen (kann dann nicht mehr gestartet werden)
 	 */
 	public void stop(){
+		log.log("stopping", Log.DEBUGMSG);
 		pacer.cancel();
 	}
 	/**
@@ -179,6 +183,7 @@ public class Heartbeat {
 					public void run(){
 						// low frequency
 						if (counter % FREQUENCY_LOW_MULTIPLIER == 0) {
+							log.log("Heartbeat low", Log.DEBUGMSG);
 							for (HeartListener l : lowFrequencyListeners) {
 								l.heartbeat();
 							}
@@ -186,12 +191,14 @@ public class Heartbeat {
 						}
 							// medium frequency
 						if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
+							log.log("Heartbeat medium", Log.DEBUGMSG);
 							for (HeartListener l : mediumFrequencyListeners) {
 								l.heartbeat();
 							}		
 						}
 								// high frequency
 						if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
+							log.log("Heartbeat high", Log.DEBUGMSG);
 							for (HeartListener l : highFrequencyListeners) {
 								l.heartbeat();
 							}		
