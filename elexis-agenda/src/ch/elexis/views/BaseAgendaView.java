@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3743 2008-03-26 15:28:02Z danlutz $
+ *  $Id: BaseAgendaView.java 3762 2008-04-01 10:38:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -58,6 +58,7 @@ import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Log;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -75,6 +76,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	protected IAction printPatientAction;
 	MenuManager menu=new MenuManager();
 	String[] bereiche;
+	protected Log log=Log.get("Agenda");
 	
 	protected BaseAgendaView(){
 		self=this;
@@ -139,6 +141,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 
 
 	public void heartbeat() {
+		log.log("Heartbeat", Log.DEBUGMSG);
 		pinger.doSync();
 	}
 
