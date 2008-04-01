@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3742 2008-03-24 08:14:01Z rgw_ch $
+ * $Id: HL7.java 3763 2008-04-01 17:43:50Z rgw_ch $
  */
  
 
@@ -180,7 +180,7 @@ public class HL7 {
 				qbe.add("Vorname", "=", StringTool.normalizeCase(vorname));
 				qbe.add("Geburtsdatum", "=", new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
 				list=qbe.execute();
-				if(list.size()==1){
+				if((list!=null) && (list.size()==1)){
 					pat=list.get(0);	
 				}else{
 					if(createIfNotFound){
@@ -212,7 +212,7 @@ public class HL7 {
 						pat.setAnschrift(an);
 						pat.set("Telefon1", phone);
 					}else{
-						pat=(Patient) KontaktSelektor.showInSync(Patient.class, "Patient auswählen", "Wer ist "+nachname+" "+vorname+"?");
+						pat=(Patient) KontaktSelektor.showInSync(Patient.class, "Patient auswählen", "Wer ist "+nachname+" "+vorname+" ,"+gebdat+"?");
 						if(pat==null){
 							return new Result<Patient>(Log.WARNINGS,1,"Patient nicht in Datenbank",null,true);
 						}
