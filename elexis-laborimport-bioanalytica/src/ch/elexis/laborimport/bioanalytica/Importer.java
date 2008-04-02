@@ -40,10 +40,8 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.data.Reminder;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.Messages;
@@ -61,6 +59,8 @@ public class Importer extends ImporterPage {
 	private static final String COMMENT_NAME = "Kommentar";
 	private static final String COMMENT_CODE = "kommentar";
 	private static final String COMMENT_GROUP = "00 Kommentar";
+	
+	private static final String FOLGT_TEXT = "folgt";
 	
 	// importer type
 	private static final int FILE = 1;
@@ -123,6 +123,7 @@ public class Importer extends ImporterPage {
 	 * To be replaced by a separate view.
 	 * @param lr the added LabResult
 	 */
+	/*
 	private void notifyMandant(LabResult lr) {
 		Query<Reminder> query = new Query<Reminder>(Reminder.class);
 		query.add("IdentID", "=", lr.getPatient().getId());
@@ -145,11 +146,12 @@ public class Importer extends ImporterPage {
 			}
 		}
 	}
+	*/
 
 	private Result<String> parse(HL7 hl7, Kontakt labor, Patient pat){
 		HL7.OBR obr=hl7.firstOBR();
-		int nummer=0;
-		String dat=new TimeTool().toString(TimeTool.DATE_GER);
+		int number = 1;
+		String timestamp = new TimeTool().toString(TimeTool.TIMESTAMP);
 		while(obr!=null){
 			HL7.OBX obx=obr.firstOBX();
 			while(obx!=null){
@@ -170,9 +172,11 @@ public class Importer extends ImporterPage {
 					String code = obx.getItemCode();
 					String name = Groups.getCodeName(code);
 					String group = Groups.getGroupNameOfCode(code);
+					String order = Groups.getCodeOrderByGroupName(group, labor);
+					//String order = timestamp + String.format("%04d", number++);
 					li=new LabItem(code,name,labor,
 							obx.getRefRange(),obx.getRefRange(),obx.getUnits(),typ,
-							group,"000");
+							group,order);
 				}else{
 					li=list.get(0);
 				}
@@ -181,18 +185,36 @@ public class Importer extends ImporterPage {
 				qr.add("PatientID", "=", pat.getId());
 				qr.add("Datum", "=", obx.getDate().toString(TimeTool.DATE_GER));
 				qr.add("ItemID", "=", li.getId());
-				if(qr.execute().size()!=0){
+				List<LabResult> existing = qr.execute();
+				if(existing.size()!=0){
+					/*
 					if(SWTHelper.askYesNo("Dieser Laborwert wurde schon importiert", "Weitermachen?")){
 						obx=obr.nextOBX(obx);
 						continue;
 					}else{
 						return new Result<String>("Cancelled");
 					}
-				}
-				if(obx.isFormattedText()){
-					lr=new LabResult(pat,obx.getDate(),li,"text",obx.getResultValue());
-				}else{
-					lr=new LabResult(pat,obx.getDate(),li,obx.getResultValue(),obx.getComment());
+					 */
+					
+					// just re-import. especially required for "folgt" values
+					// we just overwrite the values; for recognizing succeeding results,
+					// we would need a concept of a "lab order".
+					// it's not enough only to consider "folgt" values, since there may
+					// be succeeding values 
+					lr = existing.get(0);
+					if (obx.isFormattedText()) {
+						lr.setResult("text");
+						lr.set("Kommentar", obx.getResultValue());
+					} else {
+						lr.setResult(obx.getResultValue());
+						lr.set("Kommentar", obx.getComment());
+					}
+				} else {
+					if(obx.isFormattedText()){
+						lr=new LabResult(pat,obx.getDate(),li,"text",obx.getResultValue());
+					}else{
+						lr=new LabResult(pat,obx.getDate(),li,obx.getResultValue(),obx.getComment());
+					}
 				}
 				//notifyMandant(lr);
 				if(obx.isPathologic()){
@@ -222,9 +244,10 @@ public class Importer extends ImporterPage {
 				if(list.size()<1){
 					// LabItem doesn't yet exist
 					LabItem.typ typ=LabItem.typ.TEXT;
+					String order = Groups.getCodeOrderByGroupName(COMMENT_GROUP, labor);
 					li=new LabItem(COMMENT_CODE,COMMENT_NAME,labor,
 							"", "","",typ,
-							COMMENT_GROUP,Integer.toString(nummer++));
+							COMMENT_GROUP,order);
 				}else{
 					li=list.get(0);
 				}

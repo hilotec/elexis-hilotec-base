@@ -20,9 +20,13 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.LabItem;
+import ch.elexis.data.Query;
 import ch.elexis.util.PlatformHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -45,7 +49,7 @@ public class Groups {
 	private static final String GROUPS_FILE = "/rsc/groups.dat";
 	private static final String CODES_FILE = "/rsc/codes.dat";
 	private static final String UNKNOWN_PREFIX = "00 Automatisch";
-	private static final String DEFAULT_ORDER = "00000";
+	private static final String DEFAULT_ORDER = "000";
 	
 	private static final String CHARSET_UTF_8 = "UTF-8";
 	private static final String CHARSET = CHARSET_UTF_8;
@@ -213,6 +217,7 @@ public class Groups {
 	 * @param key the code
 	 * @return the order of the code
 	 */
+	/*
 	public static String getCodeOrder(String key) {
 		init();
 		
@@ -226,7 +231,47 @@ public class Groups {
 		} else {
 			return DEFAULT_ORDER;
 		}
+	}
+	*/
+
+	/**
+	 * Determine a priority by consulting the existing prios of the group.
+	 * We don't consider prios with string length < 3 (to make things easier).
+	 * We start at prio 001. 
+	 * @param groupName the gorup's name this labitem is part of
+	 * @param labor the labor this labitem is part of
+	 * @return the next free priority
+	 */
+	public static String getCodeOrderByGroupName(String groupName, Kontakt labor) {
+		String order;
 		
+		Query<LabItem> query = new Query<LabItem>(LabItem.class);
+		query.add("Gruppe", "=", groupName);
+		query.add("LaborID", "=", labor.getId());
+		List<LabItem> labItems = query.execute();
+		if (labItems != null) {
+			int lastPrioValue = 0; 
+			
+			for (LabItem labItem : labItems) {
+				String currentPrio = labItem.getPrio().trim();
+				// only consider prios with length 3
+				if (currentPrio.length() == 3) {
+					try {
+						int currentPrioValue = Integer.parseInt(currentPrio);
+						if (currentPrioValue > lastPrioValue) {
+							lastPrioValue = currentPrioValue;
+						}
+					} catch (NumberFormatException ex) {
+						// not a number, ignore this prio
+					}
+				}
+			}
+			order = String.format("%03d", lastPrioValue + 1);
+		} else {
+			order = DEFAULT_ORDER;
+		}
+		
+		return order;
 	}
 
 	static class Group {
