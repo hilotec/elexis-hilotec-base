@@ -8,15 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 3723 2008-03-14 12:42:08Z rgw_ch $
+ *  $Id: NamedBlob.java 3765 2008-04-03 05:54:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
+import java.io.File;
 import java.util.Hashtable;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.rgw.Compress.CompEx;
+import ch.rgw.IO.FileTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -91,6 +93,15 @@ public class NamedBlob extends PersistentObject {
 	 * @return true if a NamedBlob with this name exists
 	 */
 	public static boolean exists(final String id){
+		StringBuilder path=new StringBuilder();
+		path.append(System.getenv("TEMP"));
+		path.append(File.separator);
+		String idr=id.replaceAll("\\:", "\\\\");
+		path.append(idr);
+		File file=new File(path.toString());
+		if(file.exists()){
+			return true;
+		}
 		NamedBlob ni=new NamedBlob(id);
 		return ni.exists();
 	}
@@ -104,8 +115,13 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public static NamedBlob load(final String id){
 		NamedBlob ni=new NamedBlob(id);
-		if(ni.state()<DELETED){
-			ni.create(id);			
+		if(true ){ //i.state()<DELETED){
+			ni.create(id);
+			File file=new File("c:\\temp"+File.separator+id.replaceAll(":", "\\\\"));
+			if(file.exists()){
+				String fi=FileTool.readFile(file);
+				ni.putString(fi);
+			}
 		}
 		return ni;
 	}
