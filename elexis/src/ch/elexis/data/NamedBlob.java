@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 3765 2008-04-03 05:54:45Z rgw_ch $
+ *  $Id: NamedBlob.java 3767 2008-04-09 17:19:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -115,7 +115,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public static NamedBlob load(final String id){
 		NamedBlob ni=new NamedBlob(id);
-		if(true ){ //i.state()<DELETED){
+		if(ni.state()<DELETED){
 			ni.create(id);
 			File file=new File("c:\\temp"+File.separator+id.replaceAll(":", "\\\\"));
 			if(file.exists()){
