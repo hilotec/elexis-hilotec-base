@@ -3,6 +3,7 @@
 	<eps:offer name="elexis-agenda" type="Praxisverwaltung" description="Eine Mehrbenutzerfähige Praxis-Agenda" class="plugin"
 		provider="gweirich">
 		<eps:doc name="" />
-		<eps:conditions payable="once" />
+		<eps:conditions payable="once" price="0"/>
+
 	</eps:offer>
 </eps:eps>
