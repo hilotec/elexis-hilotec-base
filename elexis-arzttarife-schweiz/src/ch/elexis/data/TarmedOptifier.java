@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 3564 2008-01-18 12:16:06Z rgw_ch $
+ * $Id: TarmedOptifier.java 3774 2008-04-16 19:00:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -199,7 +199,8 @@ public class TarmedOptifier implements IOptifier {
 								continue;
 							}
 							//sum+=(tl.getAL()/2.0);
-							sum.addCent(tl.getAL()>>1);
+							int summand=tl.getAL()>>1;
+							sum.addCent(summand*v.getZahl());
 						}
 					}
 					//check.setPreisInRappen((int)Math.round(sum));
