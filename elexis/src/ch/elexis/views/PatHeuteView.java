@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: PatHeuteView.java 3773 2008-04-16 11:55:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
+import java.io.FileWriter;
 import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +38,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
@@ -83,7 +88,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	public static final String ID="ch.elexis.PatHeuteView"; //$NON-NLS-1$
 	static final String LEISTUNG_HINZU="Hinzu";
 	static final String STAT_LEEREN="Leeren";
-	private IAction printAction, reloadAction, filterAction;
+	private IAction printAction, reloadAction, filterAction, statAction;
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	FormToolkit tk=Desk.theToolkit;
@@ -264,7 +269,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		tMoney2.setEditable(false);
 		ViewMenus menus=new ViewMenus(getViewSite());
 		
-		menus.createMenu(printAction,reloadAction);
+		menus.createMenu(printAction,reloadAction, statAction);
 		menus.createToolbar(reloadAction,filterAction);
 		
 		//setFocus();
@@ -341,6 +346,70 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		return true;
 	}
 	
+	class StatLoader extends Job{
+
+		StatLoader(){
+			super("Berechne Statistik");
+			setPriority(Job.LONG);
+			setUser(true);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			HashMap<IVerrechenbar, StatCounter> counter=new HashMap<IVerrechenbar, StatCounter>();
+			monitor.beginTask("Berechne Statistik", kons.length+20);
+			for(Konsultation k:kons){
+				List<Verrechnet> list=k.getLeistungen();
+				for(Verrechnet v:list){
+					StatCounter sc=counter.get(v.getVerrechenbar());
+					if(sc==null){
+						sc=new StatCounter(v.getVerrechenbar());
+						counter.put(v.getVerrechenbar(), sc);
+					}
+					sc.add(v.getZahl(),v.getEffPreis());
+				}
+				monitor.worked(1);
+				if(monitor.isCanceled()){
+					return Status.CANCEL_STATUS;
+				}
+			}
+			final List<StatCounter> sums=new LinkedList<StatCounter>(counter.values());
+			Collections.sort(sums);
+			monitor.worked(20);
+			monitor.done();
+			Desk.theDisplay.asyncExec(new Runnable(){
+				public void run() {
+					FileDialog fd=new FileDialog(getSite().getShell(),SWT.SAVE);
+					fd.setFilterExtensions(new String[]{"*.csv","*.*"});
+					fd.setFilterNames(new String[]{"CSV","Alle Dateien"});
+					fd.setFileName("elexis-stat.csv");
+					String fname=fd.open();
+					if(fd!=null){
+						try{
+							FileWriter fw=new FileWriter(fname);
+							fw.write("Position;Text;Anzahl;Betrag\r\n");
+							for(StatCounter st:sums){
+								StringBuilder sb=new StringBuilder();
+								sb.append(st.v.getCodeSystemName())
+									.append(": ").append(st.v.getCode()).append(";")
+									.append(st.v.getText()).append(";")
+									.append(st.num).append(";").append(st.sum.getAmountAsString())
+									.append("\r\n");
+								fw.write(sb.toString());
+							}
+							fw.close();
+						}catch(Exception ex){
+							ExHandler.handle(ex);
+							SWTHelper.showError("Fehler beim Schreiben", ex.getMessage());
+						}
+					}
+					
+				}
+			});
+			return Status.OK_STATUS;
+		}
+		
+	}
 	class KonsLoader extends AbstractDataLoaderJob{
 		IVerrechenbar[] lfiltered;
 		KonsLoader(final Query<Konsultation> qbe){
@@ -456,7 +525,44 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		
 	};
 	
+	private static class StatCounter implements Comparable<StatCounter>{
+		IVerrechenbar v;
+		Money sum;
+		int num;
+		StatCounter(IVerrechenbar vv){
+			v=vv;
+			sum=new Money();
+			num=0;
+		}
+		void add(int num, Money price){
+			
+			Money total=price.multiply(num);
+			this.num+=num;
+			sum.addMoney(total);
+		}
+		public int compareTo(StatCounter o) {
+			int vgroup=v.getCodeSystemName().compareTo(o.v.getCodeSystemName());
+			if(vgroup!=0){
+				return vgroup;
+			}
+			int vCode=v.getCode().compareTo(o.v.getCode());
+			if(vCode!=0){
+				return vCode;
+			}
+			return sum.getCents()-o.sum.getCents();
+		}
+	}
 	private void makeActions() {
+		statAction=new Action("Statistik"){
+			{
+				setToolTipText("Einfache Statistik erstellen und exportieren");
+			}
+			@Override
+			public void run(){
+				StatLoader loader=new StatLoader();
+				loader.schedule();
+			}
+		};
 		printAction=new Action("Liste drucken"){
 			{
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT));
