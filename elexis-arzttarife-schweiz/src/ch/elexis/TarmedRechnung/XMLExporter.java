@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3776 2008-04-17 10:02:32Z rgw_ch $
+ * $Id: XMLExporter.java 3777 2008-04-17 18:19:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -76,6 +76,7 @@ import ch.elexis.util.Money;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.XMLTool;
+import ch.elexis.views.TarmedDetailDisplay;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -279,8 +280,7 @@ public class XMLExporter implements IRnOutputter {
 		root.addNamespaceDeclaration(nsdef);						
 		root.addNamespaceDeclaration(nsxsi);											// 10022
 		root.setAttribute("schemaLocation", "http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd",nsxsi);
-		//root.addNamespaceDeclaration(nsschema);											// 10023
-		//root.setAttribute("xsi:schemaLocation", "http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd");
+
 		// Rolle
 		root.setAttribute("role","production");												// 10030/32
 		xmlRn=new Document(root);
@@ -308,11 +308,11 @@ public class XMLExporter implements IRnOutputter {
 		Element prolog=new Element("prolog",ns);										// 10060
 		root.addContent(prolog);
 		VersionInfo vi=new VersionInfo(Hub.Version);
-		// Versionen unter 100 werden nicht akzeptiert -ballaballa. Naja, Addieren wir halt 100.
-		int tmi=Integer.parseInt(vi.maior())*100+Integer.parseInt(vi.minor())+100;
+		// Versionen unter 100 werden nicht akzeptiert
+		//int tmi=Integer.parseInt(vi.maior())*100+Integer.parseInt(vi.minor())*10+Integer.parseInt(vi.rev());
 		Element spackage=new Element("package",ns);										// 10070
 		spackage.setText("Elexis");
-		spackage.setAttribute("version",Integer.toString(tmi));							// 10071
+		spackage.setAttribute("version",vi.maior()+vi.minor()+vi.rev());				// 10071
 		spackage.setAttribute("id","0");												// 10072
 		prolog.addContent(spackage);
 		
@@ -327,8 +327,8 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element validator=new Element("validator",ns);									// 10100
 		validator.setAttribute("focus","tarmed");										// 10111
-		validator.setAttribute("version_software",Integer.toString(tmi));				// 10130
-		validator.setAttribute("version_db","301");										// 10131
+		validator.setAttribute("version_software",vi.maior()+vi.minor()+vi.rev());		// 10130
+		validator.setAttribute("version_db","401");										// 10131
 		validator.setAttribute("id","0");												// 10132
 		validator.setText("Elexis TarmedVerifier");
 		prolog.addContent(validator);
@@ -376,6 +376,8 @@ public class XMLExporter implements IRnOutputter {
 		String lastDate="";
 		int sessionNumber=1;
 		
+		TimeTool ttFirst=new TimeTool("2100-12-12");
+		TimeTool ttLast=new TimeTool("2000-01-01");
 		for(Konsultation b:lb){
 			List<IDiagnose> ld=b.getDiagnosen();
 			for(IDiagnose dg:ld){
@@ -387,6 +389,12 @@ public class XMLExporter implements IRnOutputter {
 			}
 			List<Verrechnet> lv=b.getLeistungen();
 			TimeTool tt=new TimeTool(b.getDatum());
+			if(tt.isBefore(ttFirst)){
+				ttFirst.set(tt);
+			}
+			if(tt.isAfter(ttLast)){
+				ttLast.set(tt);
+			}
 			String dateShort=tt.toString(TimeTool.DATE_COMPACT);
 			String dateForTarmed=makeTarmedDatum(b.getDatum());
 			if(dateShort.equals(lastDate)){
@@ -409,10 +417,10 @@ public class XMLExporter implements IRnOutputter {
 				}
 				if(v instanceof TarmedLeistung){
 					TarmedLeistung tl=(TarmedLeistung)v;
-					String arzl=vv.getExtInfo("AL");			// If we have the new system, we use the values stored in Verrechnet
+					String arzl=vv.getExtInfo("AL");
 					String tecl=vv.getExtInfo("TL");
 					double tlTl, tlAL,mult;
-					// if(arzl!=null){							// old system no more supported
+					// if(arzl!=null){							// earlier system no more supported
 						tlTl=Double.parseDouble(tecl);
 						mult=PersistentObject.checkZeroDouble(vv.get("VK_Scale"));
 						tlAL=Double.parseDouble(arzl);
@@ -751,8 +759,9 @@ public class XMLExporter implements IRnOutputter {
 	
 		
 		Element detail=new Element("detail",ns);													//	15000
-		detail.setAttribute("date_begin",new TimeTool(rn.getDatumVon()).toString(TimeTool.DATE_MYSQL)+"T00:00:00");	// 15002
-		detail.setAttribute("date_end",new TimeTool(rn.getDatumBis()).toString(TimeTool.DATE_MYSQL)+"T00:00:00");	//	15003
+		
+		detail.setAttribute("date_begin",makeTarmedDatum(rn.getDatumVon()));							// 15002
+		detail.setAttribute("date_end",makeTarmedDatum(rn.getDatumBis()));					//	15003
 		detail.setAttribute("canton",actMandant.getInfoString(ta.KANTON));							//	15004
 		detail.setAttribute("service_locality","practice");											//	15021
 		
@@ -782,7 +791,7 @@ public class XMLExporter implements IRnOutputter {
 		versicherung.setAttribute("reason",match_type(actFall.getGrund()));
 		if(gesetz.equalsIgnoreCase("ivg")){
 			String caseNumber=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
-			if( (!caseNumber.matches("[0-9]{14}")) &&	// seit 1.1.2000 gültige NUmmer
+			if( (!caseNumber.matches("[0-9]{14}")) &&	// seit 1.1.2000 gültige Nummer
 				(!caseNumber.matches("[0-9]{10}")) &&	// bis 31.12.1999 gültige Nummer
 				(!caseNumber.matches("[0-9]{9}"))	&&	// auch bis 31.12.1999 gültige Nummer
 				(!caseNumber.matches("[0-9]{6}"))){  	// Nummer für Abklärungsmassnahmen
@@ -924,12 +933,7 @@ public class XMLExporter implements IRnOutputter {
 	public static String makeTarmedDatum(final String datum){
 		return new TimeTool(datum).toString(TimeTool.DATE_MYSQL)+"T00:00:00";
 	}
-	/*
-	private void setAttributeIfExists(Element e,String attr, String val){
-		if(!StringTool.isNothing(val)){
-			e.setAttribute(attr,val);
-		}
-	}*/
+
 	private Element addElementIfExists(final Element parent, final String name, final String attr, String val, final String defValue){
 		if(StringTool.isNothing(val)){
 			val=defValue;
