@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3679 2008-02-15 17:27:11Z rgw_ch $
+ * $Id: XMLExporter.java 3776 2008-04-17 10:02:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -396,6 +396,9 @@ public class XMLExporter implements IRnOutputter {
 			}
 			int recordNumber=1;
 			lastDate=dateShort;
+			//unit.mt x unit_factor.mt x scale_factor.mt x external_factor.mt x quantity = amount.mt
+			// unit.tt x unit_factor.tt x scale_factor.tt x external_factor.tt x quantity = amount.tt
+			//                                                                             	amount
 			for(Verrechnet vv:lv){
 				Element el;
 				int zahl=vv.getZahl();
@@ -409,26 +412,39 @@ public class XMLExporter implements IRnOutputter {
 					String arzl=vv.getExtInfo("AL");			// If we have the new system, we use the values stored in Verrechnet
 					String tecl=vv.getExtInfo("TL");
 					double tlTl, tlAL,mult;
-					if(arzl!=null){
+					// if(arzl!=null){							// old system no more supported
 						tlTl=Double.parseDouble(tecl);
 						mult=PersistentObject.checkZeroDouble(vv.get("VK_Scale"));
 						tlAL=Double.parseDouble(arzl);
+					/*
 					}else{
 						tlTl=tl.getTL();
 						tlAL=tl.getAL();
 						mult=tl.getVKMultiplikator(tt, actFall);
 					}
+					*/
 					if(tl.getText().indexOf('%')!=-1){		// %-Zuschlag
 						if(tlTl==0.0){
 							tlAL=vv.getEffPreis().getCents();
+							mult=1.0;
 						}
 					}
 					tpTarmedTL+=tlTl*zahl;
 					tpTarmedAL+=tlAL*zahl;
+					/*
 					Money mAL=new Money((int)Math.round(tlAL*mult));
 					Money mTL=new Money((int)Math.round(tlTl*mult));
+					
 					mTarmedAL.addCent(mAL.getCents()*zahl);
 					mTarmedTL.addCent(mTL.getCents()*zahl);
+					*/
+					//Änderung 17.4. 08
+					Money mAL=new Money((int)Math.round(tlAL*mult*zahl));
+					Money mTL=new Money((int)Math.round(tlTl*mult*zahl));
+					
+					mTarmedAL.addCent(mAL.getCents());
+					mTarmedTL.addCent(mTL.getCents());
+					
 					el=new Element("record_tarmed",ns);											//	22000
 					el.setAttribute("treatment","ambulatory");										//	22050
 					el.setAttribute("tariff_type","001");										//	22060  
@@ -457,6 +473,7 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("external_factor.mt","1.00");								//	22500
 					el.setAttribute("amount.mt",XMLTool.moneyToXmlDouble(mAL));					//	22510
 					
+					
 					el.setAttribute("unit.tt",XMLTool.doubleToXmlDouble(tlTl/100.0, 2));		//	22520
 					el.setAttribute("unit_factor.tt",df.format(mult));							//	22530
 					el.setAttribute("scale_factor.tt","1.00");									//	22540
@@ -464,7 +481,7 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("amount.tt",XMLTool.moneyToXmlDouble(mTL));					//	22560
 					Money mAmountLocal=new Money(mAL);
 					mAmountLocal.addMoney(mTL);
-					mAmountLocal.multiply(zahl);
+					// mAmountLocal.multiply(zahl); * 17.4.08
 					el.setAttribute("amount",XMLTool.moneyToXmlDouble(mAmountLocal));			//	22570
 					//el.setAttribute("amount",df.format(vv.getEffPreisInRappen()/100.0));
 					el.setAttribute("vat_rate","0");											//	22590
