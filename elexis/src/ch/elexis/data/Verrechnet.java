@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 3583 2008-01-26 06:07:58Z rgw_ch $
+ * $Id: Verrechnet.java 3783 2008-04-18 14:22:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -61,31 +61,23 @@ public class Verrechnet extends PersistentObject {
 		set("Leistg_txt",text);
 	}
 	/** Den effektiven Preis setzen (braucht nicht TP*Scale zu sein */
-	/*
-	public void setPreisInRappen(int p){
-		set("VK_Preis",Integer.toString(p));
-	}
-	*/
 	public void setPreis(final Money m){
 		set("VK_Preis",m.getCentsAsString());
 	}
-	/** Den effektiv verrechneten Preis holen (braucht nicht TP*Scale zu sein */
-	/*
-	public int getEffPreisInRappen(){
-		return checkZero(get("VK_Preis"));
+	
+	/**
+	 * Einkaufskosten
+	 */
+	public Money getKosten(){
+		System.out.println(getText());
+		return new Money(checkZero(get("EK_Kosten")));
 	}
-	*/
+	/** Den effektiv verrechneten Preis holen (braucht nicht TP*Scale zu sein */
 	public Money getEffPreis(){
 		return new Money(checkZero(get("VK_Preis")));
 	}
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
-	/*
-	public int getStandardPreisInRappen(){
-		double d=checkZeroDouble(get("VK_Scale"));
-		int t=checkZero(get("VK_TP"));
-		return (int)Math.round(d*t);
-	}
-	*/
+
 	public Money getStandardPreis(){
 		IVerrechenbar v=getVerrechenbar();
 		Konsultation k=getKons();

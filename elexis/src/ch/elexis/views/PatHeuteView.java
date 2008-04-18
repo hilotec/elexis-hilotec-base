@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3781 2008-04-18 07:32:42Z rgw_ch $
+ * $Id: PatHeuteView.java 3783 2008-04-18 14:22:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -366,7 +366,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 						sc=new StatCounter(v.getVerrechenbar());
 						counter.put(v.getVerrechenbar(), sc);
 					}
-					sc.add(v.getZahl(),v.getEffPreis());
+					sc.add(v.getZahl(),v.getEffPreis(),v.getKosten());
 				}
 				monitor.worked(1);
 				if(monitor.isCanceled()){
@@ -387,7 +387,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 					if(fname!=null){
 						try{
 							FileWriter fw=new FileWriter(fname);
-							fw.write("Codesystem;Position;Text;Anzahl;Betrag\r\n");
+							fw.write("Codesystem;Position;Text;Anzahl;Kosten;Umsatz;Gewinn\r\n");
 							for(StatCounter st:sums){
 								StringBuilder sb=new StringBuilder();
 								String code=st.v.getCode();
@@ -400,7 +400,10 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 								sb.append(st.v.getCodeSystemName())
 									.append("; ").append(code==null ? "" : code).append("; ")
 									.append(text).append(";")
-									.append(st.num).append(";").append(st.sum.getAmountAsString())
+									.append(st.num).append(";")
+									.append(st.cost.getAmountAsString()).append(";")
+									.append(st.sum.getAmountAsString()).append(";")
+									.append(st.getGewinn().getAmountAsString())
 									.append("\r\n");
 								fw.write(sb.toString());
 							}
@@ -535,17 +538,22 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	private static class StatCounter implements Comparable<StatCounter>{
 		IVerrechenbar v;
 		Money sum;
+		Money cost;
 		int num;
 		StatCounter(IVerrechenbar vv){
 			v=vv;
 			sum=new Money();
+			cost=new Money();
 			num=0;
 		}
-		void add(int num, Money price){
+		void add(int num, Money price, Money cost){
 			
-			Money total=price.multiply(num);
+			Money totalPrice=price.multiply(num);
+			Money totalCost=cost.multiply(num);
 			this.num+=num;
-			sum.addMoney(total);
+			sum.addMoney(totalPrice);
+			this.cost.addMoney(totalCost);
+			
 		}
 		public int compareTo(StatCounter o) {
 			int vgroup=v.getCodeSystemName().compareTo(o.v.getCodeSystemName());
@@ -557,6 +565,11 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				return vCode;
 			}
 			return sum.getCents()-o.sum.getCents();
+		}
+		public Money getGewinn(){
+			Money ret=new Money(sum);
+			ret.subtractMoney(cost);
+			return ret;
 		}
 	}
 	private void makeActions() {
