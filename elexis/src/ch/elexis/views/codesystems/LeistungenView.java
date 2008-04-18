@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LeistungenView.java 2877 2007-07-23 18:38:09Z rgw_ch $
+ *  $Id: LeistungenView.java 3784 2008-04-18 15:15:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
-
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -34,7 +32,6 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.data.Eigenartikel;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Leistungsblock;
-import ch.elexis.util.MFUList;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.artikel.EigenartikelSelektor;
 import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
