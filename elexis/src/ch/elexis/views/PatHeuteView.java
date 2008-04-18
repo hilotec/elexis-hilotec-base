@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3778 2008-04-17 18:39:31Z rgw_ch $
+ * $Id: PatHeuteView.java 3779 2008-04-18 04:35:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -384,14 +384,14 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 					fd.setFilterNames(new String[]{"CSV","Alle Dateien"});
 					fd.setFileName("elexis-stat.csv");
 					String fname=fd.open();
-					if(fd!=null){
+					if(fname!=null){
 						try{
 							FileWriter fw=new FileWriter(fname);
 							fw.write("Codesystem;Position;Text;Anzahl;Betrag\r\n");
 							for(StatCounter st:sums){
 								StringBuilder sb=new StringBuilder();
 								sb.append(st.v.getCodeSystemName())
-									.append("; ").append(st.v.getCode()).append(";")
+									.append("; ").append(st.v.getCode()).append("; ")
 									.append(st.v.getText().replaceAll(";", ",")).append(";")
 									.append(st.num).append(";").append(st.sum.getAmountAsString())
 									.append("\r\n");
