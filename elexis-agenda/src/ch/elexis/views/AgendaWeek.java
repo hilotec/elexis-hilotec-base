@@ -8,28 +8,24 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: AgendaWeek.java 3782 2008-04-18 08:50:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -38,8 +34,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.AgendaActions;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -140,14 +134,15 @@ public class AgendaWeek extends BaseAgendaView{
 	public void setWeek(TimeTool ttContained){
 		ttContained.set(TimeTool.DAY_OF_WEEK,TimeTool.MONDAY);
 		actWeek.set(ttContained);
-		System.out.println("setWeek: "+actWeek.get(TimeTool.WEEK_OF_YEAR)+","+actWeek.get(TimeTool.DAY_OF_WEEK));
-		bCal.setText(Integer.toString(actWeek.get(TimeTool.WEEK_OF_YEAR))+". Woche");
-		for(int i=0;i<days.length;i++){
-			days[i].set(ttContained, actBereich);
-			dayLabels[i].setText(ttContained.toString(TimeTool.WEEKDAY)+", "+ttContained.toString(TimeTool.DATE_GER));
-			ttContained.addHours(24);
+		if(bCal!=null && (!bCal.isDisposed())){
+			bCal.setText(Integer.toString(actWeek.get(TimeTool.WEEK_OF_YEAR))+". Woche");
+			for(int i=0;i<days.length;i++){
+				days[i].set(ttContained, actBereich);
+				dayLabels[i].setText(ttContained.toString(TimeTool.WEEKDAY)+", "+ttContained.toString(TimeTool.DATE_GER));
+				ttContained.addHours(24);
+			}
+			actDate.set(actWeek);
 		}
-		actDate.set(actWeek);
 	}
 	@Override
 	public void create(Composite parent) {
