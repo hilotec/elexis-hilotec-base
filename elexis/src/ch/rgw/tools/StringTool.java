@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3594 2008-01-30 12:00:55Z rgw_ch $
+// $Id: StringTool.java 3781 2008-04-18 07:32:42Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -46,7 +46,7 @@ import ch.rgw.net.NetTool;
 public class StringTool
 {
   
-  public static String Version(){return "1.15.2";}
+  public static String Version(){return "1.16.0";}
   public static String default_charset="utf-8";
   public static final String leer="";
   public static final String space=" ";
@@ -812,6 +812,33 @@ public static Hashtable foldStrings(final String s)
     	return orig.substring(0,1).toUpperCase()+orig.substring(1).toLowerCase();
     }
     
+    /**
+     * Zwei Strings verleichen. Berücksichtigen, dass einer oder beide auch
+     * Null sein könnten.
+     * @param a erster String
+     * @param b zweiter String
+     * @return -1,0 oder 1
+     */
+    public static int compareWithNull(String a, String b){
+    	if(a==null){
+    		if(b==null){
+    			return 0;
+    		}else{
+    			return -1;
+    		}
+    	}else if(b==null){
+    		return 1;
+    	}else{
+    		return a.compareTo(b);
+    	}
+    }
+    
+    /**
+     * Stering wenn nötig kürzen
+     * @param orig Originalstring
+     * @param len maximal zulöässige Lenge
+     * @return den String, der maximal len Zeichen lang ist
+     */
     public static String limitLength(final String orig, final int len){
     	if(orig.length()>len){
     		return orig.substring(0, len);
@@ -819,6 +846,12 @@ public static Hashtable foldStrings(final String s)
     	return orig;
     }
     
+    /**
+     * String aus einem Array holen. Leerstring, wenn der angeforderte Index ausserhalb des Arrays liegt
+     * @param array
+     * @param index
+     * @return
+     */
     public static String getSafe(final String[] array, final int index){
     	if((index>-1) && (array.length>index)){
     		return array[index];
@@ -826,6 +859,11 @@ public static Hashtable foldStrings(final String s)
     	return "";
     }
     
+    /**
+     * String mit unterschiedlicher möglicher Schreibweise in einheitliche Schreibweise bringen
+     * @param in
+     * @return
+     */
     public static String unambiguify(final String in){
     	String ret=in.toLowerCase();
     	ret=ret.replaceAll("ä", "ae");

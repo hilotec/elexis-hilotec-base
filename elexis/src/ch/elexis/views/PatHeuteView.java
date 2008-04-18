@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3779 2008-04-18 04:35:49Z rgw_ch $
+ * $Id: PatHeuteView.java 3781 2008-04-18 07:32:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -390,9 +390,16 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 							fw.write("Codesystem;Position;Text;Anzahl;Betrag\r\n");
 							for(StatCounter st:sums){
 								StringBuilder sb=new StringBuilder();
+								String code=st.v.getCode();
+								String text=st.v.getText();
+								if(text==null){
+									text="";
+								}else{
+									text=text.replaceAll(";", ",");
+								}
 								sb.append(st.v.getCodeSystemName())
-									.append("; ").append(st.v.getCode()).append("; ")
-									.append(st.v.getText().replaceAll(";", ",")).append(";")
+									.append("; ").append(code==null ? "" : code).append("; ")
+									.append(text).append(";")
 									.append(st.num).append(";").append(st.sum.getAmountAsString())
 									.append("\r\n");
 								fw.write(sb.toString());
@@ -545,7 +552,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			if(vgroup!=0){
 				return vgroup;
 			}
-			int vCode=v.getCode().compareTo(o.v.getCode());
+			int vCode=StringTool.compareWithNull(v.getCode(), o.v.getCode());
 			if(vCode!=0){
 				return vCode;
 			}
