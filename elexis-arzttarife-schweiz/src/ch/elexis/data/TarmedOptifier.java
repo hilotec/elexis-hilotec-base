@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 3775 2008-04-17 05:04:29Z rgw_ch $
+ * $Id: TarmedOptifier.java 3780 2008-04-18 04:53:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,7 +21,8 @@ import ch.elexis.util.*;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 /**
- * Ersetzt den TarmedVerifier durch das bessere Optifier-konzept
+ * Dies ist eine Beispielimplementation des IOptifier Interfaces, welches einige einfache
+ * Checks von Tarmed-Verrechnungen durchführt
  * @author gerry
  *
  */
@@ -37,11 +38,20 @@ public class TarmedOptifier implements IOptifier {
 	public static final int NOMOREVALID=8;
 	
 	
+	/**
+	 * Hier könnte eine Konsultation als Ganzes nochmal überprüft werden
+	 */
 	public Result<Konsultation> optify(Konsultation kons) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * Eine Verrechnungsposition zufügen. Der Optifier muss prüfen, ob die Verrechnungsposition
+	 * im Kontext der übergebenen Konsultation verwendet werden kann und kann sie ggf. zurückweisen
+	 * oder modifizieren.
+	 */
+	
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons) {
 		if(code instanceof TarmedLeistung){
 			TarmedLeistung tc=(TarmedLeistung)code;
@@ -53,13 +63,14 @@ public class TarmedOptifier implements IOptifier {
 			 * vereinbar ist */
 
 			Hashtable ext=((TarmedLeistung)code).loadExtension();
-//			 Bezug
+			
+//	Bezug prüfen
 			String bezug=(String)ext.get("Bezug"); //$NON-NLS-1$
 			if(!StringTool.isNothing(bezug)){
 				checkBezug=true;
 				bezugOK=false;
 			}
-// Datum
+// Gültigkeit gemäss Datum prüfen
 			TimeTool date=new TimeTool(kons.getDatum());
 			String dVon=((TarmedLeistung)code).get("GueltigVon");
 			if(!StringTool.isNothing(dVon)){
@@ -76,7 +87,7 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			Verrechnet check=null;
-			// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann nur Zahl erhöhen.
+// Ist der Hinzuzufügende Code vielleicht schon in der Liste? Dann nur Zahl erhöhen.
 			for(Verrechnet v:lst){
 				if(v.isInstance(code)){
 					check=v;
@@ -85,7 +96,7 @@ public class TarmedOptifier implements IOptifier {
 						break;
 					}
 				}
-				// "Nur zusammen mit" - Bedingung erfüllt.
+// "Nur zusammen mit" - Bedingung erfüllt ?
 				if(checkBezug){
 					if(v.getCode().equals(bezug)){
 						bezugOK=true;
@@ -95,7 +106,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 				}
 			}
-			// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
+// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
 			if(check==null){
 				check=new Verrechnet(code,kons,1);
 				// Exclusionen
@@ -123,7 +134,7 @@ public class TarmedOptifier implements IOptifier {
 				check.setExtInfo("TL", Integer.toString(tc.getTL()));
 				lst.add(check);
 			}
-			/* Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> virerst raus
+			/* Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> vorerst raus
 			// "Zusammen mit" - Bedingung nicht erfüllt -> Hauptziffer einfügen.
 			if(checkBezug){
 				if(bezugOK==false){
@@ -136,7 +147,8 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			*/
-			// Prüfen, ob zu oft verrechnet
+			
+// Prüfen, ob zu oft verrechnet - diese Version prüft nur "pro Sitzung".
 			String lim=(String)ext.get("limits"); //$NON-NLS-1$
 			if(lim!=null){
 				String[] lin=lim.split("#"); //$NON-NLS-1$
@@ -161,9 +173,9 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			
-			//Notfall-Zuschlag
+//Notfall-Zuschläge
 			String tcid=code.getCode();
-			//double sum=0;
+
 			Money sum=new Money(0);
 			if(tcid.startsWith("00.25")){ //$NON-NLS-1$
 				int subcode=Integer.parseInt(tcid.substring(5));
@@ -181,12 +193,10 @@ public class TarmedOptifier implements IOptifier {
 							if(tl.getCode().startsWith("00.25")){ //$NON-NLS-1$
 								continue;
 							}
-							int summand=tl.getAL()>>2;
+							int summand=tl.getAL()>>2;  	// TODO ev. float? -> Rundung?
 							sum.addCent(summand*v.getZahl());
-							//sum+=(tl.getAL()/4.0);
 						}
 					}
-					//check.setPreisInRappen((int)Math.round(sum));
 					check.setPreis(sum.multiply(factor));
 					break;
 				case 40:	// 22-7: 180 TP
@@ -199,12 +209,10 @@ public class TarmedOptifier implements IOptifier {
 							if(tl.getCode().startsWith("00.25")){ //$NON-NLS-1$
 								continue;
 							}
-							//sum+=(tl.getAL()/2.0);
 							int summand=tl.getAL()>>1;
 							sum.addCent(summand*v.getZahl());
 						}
 					}
-					//check.setPreisInRappen((int)Math.round(sum));
 					check.setPreis(sum.multiply(factor));
 					break;
 
@@ -222,6 +230,11 @@ public class TarmedOptifier implements IOptifier {
 	}
 
 
+	/**
+	 * Eine Verrechnungsposition entfernen. Der Optifier sollte prüfen, ob die Konsultation nach Entfernung
+	 * dieses Codes noch konsistent verrechnet wäre und ggf. anpassen oder das Entfernen verweigern.
+	 * Diese Version macht keine Prüfungen, sondern erfüllt nur die Anfrage..
+	 */
 	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons) {
 		List<Verrechnet> l=kons.getLeistungen();
 		l.remove(code);
