@@ -1,4 +1,4 @@
-; $Id: Elexis.nsi 3636 2008-02-05 16:30:22Z rgw_ch $
+; $Id: Elexis.nsi 3789 2008-04-19 17:14:37Z rgw_ch $
 ; @deprecated. use elexis-windows.nsi
 
 ;******************************************************************************************
@@ -16,7 +16,7 @@
 ;******************************************************************************************
 
 !define APPNAME "Elexis"
-!define VERSION "1.2.2"
+!define VERSION "1.3.0"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Haupteinstellungen
