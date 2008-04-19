@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: TerminDialog.java 3785 2008-04-19 04:55:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -433,6 +433,7 @@ public class TerminDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
+
 		setMessage(Messages.TerminDialog_editTermins); 
 		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
 		getShell().setText(Messages.TerminDialog_termin); 
