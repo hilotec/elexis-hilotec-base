@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3604 2008-02-01 13:13:49Z rgw_ch $
+ *    $Id: PersistentObject.java 3790 2008-04-19 17:14:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -594,6 +595,38 @@ public abstract class PersistentObject{
 			}
 			return false;
 		}
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Etikette> getEtiketten(){
+    	String ID=new StringBuilder().append("ETK").append(getId()).toString();
+    	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
+    	if(ret!=null){
+    		return ret;
+    	}
+    	ret=new ArrayList<Etikette>();
+    	StringBuilder sb=new StringBuilder();
+    	Stm stm=j.getStatement();
+		
+    	sb.append("SELECT etikette FROM ")
+    		.append(Etikette.LINKTABLE).append(" WHERE ")
+    		.append("obj = '").append(getId()).append("'");
+    	try{
+    		ResultSet res=stm.query(sb.toString());
+
+    		while(res!=null && res.next()){
+    			ret.add(Etikette.load(res.getString(1)));
+    		}
+    		res.close();
+    	}catch(Exception ex){
+    		ExHandler.handle(ex);
+    		return null;
+    	}
+    	finally{
+    		j.releaseStatement(stm);
+    	}
+    	cache.put(ID, ret, getCacheTime());
+    	return ret;
     }
     
     /**

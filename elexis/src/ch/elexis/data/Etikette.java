@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3786 2008-04-19 09:57:12Z rgw_ch $
+ *    $Id: Etikette.java 3790 2008-04-19 17:14:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -26,11 +26,13 @@ import ch.elexis.Desk;
  *
  */
 public class Etikette extends PersistentObject{
-	private static final String TABLENAME="ETIKETTEN";
+	static final String TABLENAME="ETIKETTEN";
+	static final String LINKTABLE="ETIKETTEN_OBJECT_LINK";
 		
 	static{
 		addMapping(
 			TABLENAME, "Datum=S:D:Datum","BildID=Image","vg=foreground","bg=background","Name"
+			
 		);
 	}
 	

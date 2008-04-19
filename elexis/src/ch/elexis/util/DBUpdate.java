@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3786 2008-04-19 09:57:12Z rgw_ch $
+ * $Id: DBUpdate.java 3790 2008-04-19 17:14:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -212,12 +212,19 @@ public class DBUpdate {
 			");"+
 			"CREATE INDEX ETIKETTE1 on ETIKETTEN(Name);"+
 
+			"CREATE TABLE ETIKETTEN_OBJECT_LINK("+
+				"	obj			VARCHAR(25),"+
+				"	etikette	VARCHAR(25)"+
+				");"+
+				"CREATE INDEX ETIKETTE2 on ETIKETTEN_OBJECT_LINK(obj);"+
+				"CREATE INDEX ETIKETTE3 on ETIKETTEN_OBJECT_LINK(etikette);"+
+
 			"CREATE TABLE DBIMAGE ("+
 			"ID				VARCHAR(25) primary key,"+
 			"deleted		CHAR(1) default '0',"+
 			"Datum			CHAR(8),"+
 			"Title 			VARCHAR(80),"+	
-			"Bild			BLOB)"+
+			"Bild			BLOB"+
 			");"+
 			"CREATE INDEX DBIMAGE1 on DBIMAGE(Title);"	
 			
