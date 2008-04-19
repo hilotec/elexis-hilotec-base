@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3759 2008-03-28 18:16:57Z rgw_ch $
+# * $Id: createDB.script 3786 2008-04-19 09:57:12Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -501,7 +501,7 @@ CREATE TABLE HEAP2(
 );
 
 CREATE TABLE LOGS(
-	ID			VARCHAR(25) primary key,		# log entry's id
+	ID			VARCHAR(25) primary key,	# log entry's id
 	OID			VARCHAR(80),				# foreign key on modified object
 	datum		CHAR(8),					# date of modification
 	typ			VARCHAR(20),				
@@ -523,7 +523,7 @@ CREATE TABLE XID(
 	deleted		CHAR(1) default '0',
 	type		VARCHAR(80),				# class of the object
 	object		VARCHAR(25),				# ID of the object
-	domain		VARCHAR(255),				#  Domain of the XIS used
+	domain		VARCHAR(255),				# Domain of the XID used
 	domain_id	VARCHAR(255),				# ID of the object within that domain
 	quality		CHAR(1) default '0'			# Assignment tag of the XID
 );
@@ -531,6 +531,26 @@ CREATE INDEX XIDIDX1 on XID(domain);
 CREATE INDEX XIDIDX2 on XID(domain_id);
 CREATE INDEX XIDIDX3 on XID(object);
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.6.4');
+CREATE TABLE ETIKETTEN(  
+    ID          VARCHAR(25) primary key,
+    Image       VARCHAR(25),
+    deleted     CHAR(1) default '0',
+    Name        VARCHAR(40),
+    foreground  CHAR(6),
+    background  CHAR(6)
+);
+CREATE INDEX ETIKETTE1 on ETIKETTEN(Name);
+
+CREATE TABLE DBIMAGE (
+    ID             VARCHAR(25) primary key,
+    deleted        CHAR(1) default '0',
+    Datum          CHAR(8),
+    Title          VARCHAR(80),  
+    Bild           BLOB)
+);
+CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
+            
+
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.7.0');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.2.2');
 

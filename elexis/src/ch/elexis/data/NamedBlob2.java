@@ -8,28 +8,48 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 3786 2008-04-19 09:57:12Z rgw_ch $
+ *  $Id: NamedBlob2.java 3786 2008-04-19 09:57:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
-import java.io.File;
 import java.util.Hashtable;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.rgw.Compress.CompEx;
-import ch.rgw.IO.FileTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * A named Blob is just that: An arbitrarly named piece of arbitrary data. The name must be unique (among
- * NamedBlobs). We provide methods to store and retrieve data as Hashtables and Strings (Both will be stored
- * in zip-compressed form)
+ * Well, just a clone of NamedBlob, but using table HEAP2 - sort of a cheap load balancing
  * @author Gerry
  *
  */
-public class NamedBlob extends PersistentObject {
-
+public class NamedBlob2 extends PersistentObject {
+	private static final String TABLENAME="HEAP2";
+	
+	/**
+	 * return the contents as array of bytes
+	 * @return the contents
+	 */
+	public byte[] getBytes(){
+		byte[] comp=getBinary("inhalt");
+		if((comp==null) || (comp.length==0)){
+			return null;
+		}
+		return CompEx.expand(comp);
+	}
+	
+	/**
+	 * put the contents as array of bytes. the array will be stored in compressed form
+	 * @param the contents that will override previous contents
+	 * 
+	 */
+	public void putBytes(byte[] in){
+		byte[] comp=CompEx.Compress(in, CompEx.ZIP);
+		setBinary("inhalt", comp);
+		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
+	}
+	
 	/**
 	 * return the contents as Hashtable (will probably fail if the data was not stored using put(Hashtable)
 	 * @return the previously stored Hashtable
@@ -81,52 +101,44 @@ public class NamedBlob extends PersistentObject {
 
 	@Override
 	protected String getTableName() {
-		return "HEAP";
+		return "HEAP2";
 	}
 	
 	static{
-		addMapping("HEAP","inhalt","Datum=S:D:datum","lastupdate");
+		addMapping(TABLENAME,"inhalt=Contents","Datum=S:D:datum","lastupdate");
 	}
-	/**
-	 * Ask if this NamedBlob exists 
-	 * @param id the unique name of the NamedBlob to query
-	 * @return true if a NamedBlob with this name exists
+
+	/** 
+	 * creates or loads a NamedBlob2
+	 * @param name the NamedBlob2 to get
+	 * @param bFailIfExists true - create if not exists, otherwise return null. false: if exists:_ return existing
+
 	 */
-	public static boolean exists(final String id){
-		StringBuilder path=new StringBuilder();
-		path.append(System.getenv("TEMP"));
-		path.append(File.separator);
-		String idr=id.replaceAll("\\:", "\\\\");
-		path.append(idr);
-		File file=new File(path.toString());
-		if(file.exists()){
-			return true;
-		}
-		NamedBlob ni=new NamedBlob(id);
-		return ni.exists();
-	}
-	
-	/**
-	 * Load or create a NamedBlob with a given Name. Caution: This will never return an inexistent
-	 * NamedBlob, because it will be created if necessary. Use exists() to check, whether a NamedBlob
-	 * exists.
-	 * @param id the unique name
-	 * @return the NamedBlob with that Name (which may be just newly created)
-	 */
-	public static NamedBlob load(final String id){
-		NamedBlob ni=new NamedBlob(id);
-		if(ni.state()<DELETED){
-			ni.create(id);
-			File file=new File("c:\\temp"+File.separator+id.replaceAll(":", "\\\\"));
-			if(file.exists()){
-				String fi=FileTool.readFile(file);
-				ni.putString(fi);
+	public static NamedBlob2 create(String name, boolean bFailIfExists){
+		NamedBlob2 nb=load(name);
+		if(nb==null){
+			nb=new NamedBlob2();
+			nb.create(name);
+		}else{
+			if(bFailIfExists){
+				return null;
 			}
+		}
+		return nb;
+	}
+	/**
+	 * Load or create a NamedBlob with a given Name.
+	 * @return the NamedBlob with that Name or null if no such NamedBlob exists
+	 */
+	public static NamedBlob2 load(final String id){
+		NamedBlob2 ni=new NamedBlob2(id);
+		if(!ni.exists()){
+			return null;
 		}
 		return ni;
 	}
-	private NamedBlob(){};
-	private NamedBlob(final String id){
+	private NamedBlob2(){};
+	private NamedBlob2(final String id){
 		super(id);
 	}
 
@@ -138,9 +150,9 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public static void cleanup(final String prefix,final TimeTool older){
 		if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
-			Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
+			Query<NamedBlob2> qbe=new Query<NamedBlob2>(NamedBlob2.class);
 			qbe.add("Datum", "<", older.toString(TimeTool.DATE_COMPACT));
-			for(NamedBlob nb:qbe.execute()){
+			for(NamedBlob2 nb:qbe.execute()){
 				if(nb.getId().startsWith(prefix)){
 					nb.delete();
 				}

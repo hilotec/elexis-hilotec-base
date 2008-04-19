@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3723 2008-03-14 12:42:08Z rgw_ch $
+ * $Id: DBUpdate.java 3786 2008-04-19 09:57:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -34,7 +34,8 @@ public class DBUpdate {
 	  static final String[] versions={"1.3.0","1.3.1","1.3.2","1.3.3","1.3.4","1.3.5","1.3.6","1.3.7",
 		  							"1.3.8","1.3.9","1.3.10","1.3.11","1.3.12","1.3.13",
 		  							"1.4.0","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6",
-		  							"1.5.0","1.6.0","1.6.1","1.6.2","1.6.3","1.6.4"};
+		  							"1.5.0","1.6.0","1.6.1","1.6.2","1.6.3","1.6.4",
+		  							"1.7.0"};
 	  static final String[] cmds={"CREATE TABLE EIGENLEISTUNGEN("+
 			"ID			VARCHAR(25) primary key,"+
 			"Code		VARCHAR(20),"+
@@ -198,7 +199,27 @@ public class DBUpdate {
 			
 			// 1.6.4
 			"ALTER TABLE HEAP ADD lastupdate CHAR(14);"+
-			"ALTER TABLE HEAP2 ADD lastupdate CHAR(14)"
+			"ALTER TABLE HEAP2 ADD lastupdate CHAR(14)",
+			
+			// 1.7.0
+			"CREATE TABLE ETIKETTEN("+  
+			"ID          VARCHAR(25) primary key,"+
+			"Image       VARCHAR(25),"+
+			"deleted     CHAR(1) default '0',"+
+			"Name        VARCHAR(40),"+
+			"foreground  CHAR(6),"+
+			"background  CHAR(6)"+
+			");"+
+			"CREATE INDEX ETIKETTE1 on ETIKETTEN(Name);"+
+
+			"CREATE TABLE DBIMAGE ("+
+			"ID				VARCHAR(25) primary key,"+
+			"deleted		CHAR(1) default '0',"+
+			"Datum			CHAR(8),"+
+			"Title 			VARCHAR(80),"+	
+			"Bild			BLOB)"+
+			");"+
+			"CREATE INDEX DBIMAGE1 on DBIMAGE(Title);"	
 			
 	  };
 	  static Log log=Log.get("DBUpdate");
