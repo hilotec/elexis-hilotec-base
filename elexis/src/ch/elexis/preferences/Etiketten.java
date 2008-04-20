@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 3821 2008-04-20 13:48:00Z rgw_ch $
+ *    $Id: Etiketten.java 3823 2008-04-20 16:43:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -68,9 +68,11 @@ public class  Etiketten extends PreferencePage implements
 			cImage.setBackground(Desk.theColorRegistry.get(Desk.COL_WHITE));
 			cFore.setBackground(Desk.theColorRegistry.get(Desk.COL_BLACK));
 			cBack.setBackground(Desk.theColorRegistry.get(Desk.COL_LIGHTGREY));
+			spWert.setSelection(0);
 		}else{
 			cFore.setBackground(et.getForeground());
 			cBack.setBackground(et.getBackground());
+			spWert.setSelection(act.getWert());
 		}
 		cImage.redraw();
 		cFore.redraw();
@@ -224,6 +226,14 @@ public class  Etiketten extends PreferencePage implements
 			
 		});
 		spWert=new Spinner(bottom,SWT.NONE);
+		spWert.addModifyListener(new ModifyListener(){
+
+			public void modifyText(ModifyEvent e) {
+				if(act!=null){
+					act.setWert(spWert.getSelection());
+				}
+				
+			}});
 		new Label(bottom,SWT.NONE).setText("'Wert' des Etiketts");
 		bNew.setEnabled(false);
 		bRemove.setEnabled(false);

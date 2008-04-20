@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3541 2008-01-16 17:43:13Z rgw_ch $
+ *  $Id: KonsDetailView.java 3823 2008-04-20 16:43:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -25,11 +25,13 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -49,6 +51,7 @@ import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Etikette;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -94,6 +97,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     int displayedVersion;
     Font emFont;
     Composite cDesc;
+    Composite cEtiketten;
     
 	@Override
 	public void createPartControl(final Composite p) {
@@ -195,6 +199,8 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         GlobalEvents.getInstance().addObjectListener(this);
         text.connectGlobalActions(getViewSite());
         adaptMenus();
+        cEtiketten=new Composite(form.getHead(),SWT.NONE);
+        form.setHeadClient(cEtiketten);
         setKons(GlobalEvents.getSelectedKons());
 	}
 	
@@ -221,6 +227,18 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     	}
 		if(pat!=null){
 			form.setText(pat.getPersonalia());
+			List<Etikette> etis=pat.getEtiketten();
+			if(etis!=null && etis.size()>0){
+				Composite client=new Composite(form.getHead(),SWT.NONE);
+				form.setHeadClient(client);
+				client.setLayout(new FillLayout());
+				for(Etikette et:etis){
+					et.createForm(client);
+				}
+			}else{
+				form.setHeadClient(null);
+			}
+			
 			Fall[] faelle=pat.getFaelle();
 			cbFall.removeAll();
 			cbFall.setData(faelle);

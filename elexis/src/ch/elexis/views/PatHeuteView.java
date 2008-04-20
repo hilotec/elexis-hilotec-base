@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3783 2008-04-18 14:22:27Z rgw_ch $
+ * $Id: PatHeuteView.java 3823 2008-04-20 16:43:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -556,7 +556,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			
 		}
 		public int compareTo(StatCounter o) {
-			int vgroup=v.getCodeSystemName().compareTo(o.v.getCodeSystemName());
+			int vgroup=StringTool.compareWithNull(v.getCodeSystemName(),o.v.getCodeSystemName());
 			if(vgroup!=0){
 				return vgroup;
 			}

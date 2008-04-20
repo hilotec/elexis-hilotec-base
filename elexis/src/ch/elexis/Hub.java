@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 3790 2008-04-19 17:14:49Z rgw_ch $
+ *    $Id: Hub.java 3823 2008-04-20 16:43:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -224,7 +224,7 @@ public class Hub extends AbstractUIPlugin {
 		if((shutdownJobs!=null) && (shutdownJobs.size()>0)){
 			Shell shell=new Shell(Display.getDefault());
 			MessageDialog dlg=new MessageDialog(shell,"Elexis: Konfiguration",Dialog.getDefaultImage(),"Bitte schalten Sie den PC nicht aus und warten Sie mit Elexis-Neustart, bis diese Nachricht verschwindet",
-				 SWT.ICON_INFORMATION,new String[]{"Abbruch"},0);
+				 SWT.ICON_INFORMATION,new String[]{},0);
 			dlg.setBlockOnOpen(false);
 			dlg.open();
 			for(ShutdownJob job:shutdownJobs){
@@ -315,7 +315,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 3790 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 3823 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
