@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3800 2008-04-20 12:44:30Z rgw_ch $
+ *    $Id: PersistentObject.java 3821 2008-04-20 13:48:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -597,6 +598,14 @@ public abstract class PersistentObject{
 		}
     }
     
+    /**
+     * hilt die "höchstwertige" Etikette, falls mehrere existieren
+     * @return
+     */
+    public Etikette getEtikette(){
+    	List<Etikette> list=getEtiketten();
+    	return list.size()>0 ? list.get(0) : null;
+    }
     @SuppressWarnings("unchecked")
 	public List<Etikette> getEtiketten(){
     	String ID=new StringBuilder().append("ETK").append(getId()).toString();
@@ -625,6 +634,7 @@ public abstract class PersistentObject{
     	finally{
     		j.releaseStatement(stm);
     	}
+    	Collections.sort(ret);
     	cache.put(ID, ret, getCacheTime());
     	return ret;
     }
@@ -647,6 +657,7 @@ public abstract class PersistentObject{
     	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
     	if(ret!=null){
     		ret.add(et);
+    		Collections.sort(ret);
     	}
     	StringBuilder sb=new StringBuilder();
     	sb.append("INSERT INTO ").append(Etikette.LINKTABLE)

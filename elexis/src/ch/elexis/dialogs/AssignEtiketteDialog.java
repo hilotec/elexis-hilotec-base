@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AssignEtiketteDialog.java 3800 2008-04-20 12:44:30Z rgw_ch $
+ * $Id: AssignEtiketteDialog.java 3821 2008-04-20 13:48:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -48,8 +48,7 @@ public class AssignEtiketteDialog extends TitleAreaDialog {
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		Label lbl=new Label(ret,SWT.WRAP);
-		lbl.setText("Bitte bestätigen Sie alle benötigten Etiketten mit Häkchen und "+
-				"markieren Sie die Haupt-Etikette ");
+		lbl.setText("Bitte bestätigen Sie alle benötigten Etiketten mit Häkchen");
 		table=new Table(ret,SWT.CHECK|SWT.SINGLE);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Query<Etikette> qbe=new Query<Etikette>(Etikette.class);
@@ -59,7 +58,7 @@ public class AssignEtiketteDialog extends TitleAreaDialog {
 			if(mineEtiketten.contains(et)){
 				it.setChecked(true);
 			}
-			it.setText(et.getLabel());
+			it.setText(et.getLabel()+ "("+et.getWert()+")");
 			it.setImage(et.getImage());
 			it.setForeground(et.getForeground());
 			it.setBackground(et.getBackground());

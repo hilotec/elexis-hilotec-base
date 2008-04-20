@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3790 2008-04-19 17:14:49Z rgw_ch $
+ * $Id: DBUpdate.java 3821 2008-04-20 13:48:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -206,6 +206,7 @@ public class DBUpdate {
 			"ID          VARCHAR(25) primary key,"+
 			"Image       VARCHAR(25),"+
 			"deleted     CHAR(1) default '0',"+
+			"importance	 integer,"+
 			"Name        VARCHAR(40),"+
 			"foreground  CHAR(6),"+
 			"background  CHAR(6)"+

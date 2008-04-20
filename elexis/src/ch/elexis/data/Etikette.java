@@ -8,9 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3800 2008-04-20 12:44:30Z rgw_ch $
+ *    $Id: Etikette.java 3821 2008-04-20 13:48:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
+
+import java.io.Serializable;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -25,13 +27,14 @@ import ch.elexis.Desk;
  * @author gerry
  *
  */
-public class Etikette extends PersistentObject{
+public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	static final String TABLENAME="ETIKETTEN";
 	static final String LINKTABLE="ETIKETTEN_OBJECT_LINK";
 		
 	static{
 		addMapping(
-			TABLENAME, "Datum=S:D:Datum","BildID=Image","vg=foreground","bg=background","Name"
+			TABLENAME, "Datum=S:D:Datum","BildID=Image","vg=foreground","bg=background","Name",
+				"wert=importance"
 			
 		);
 	}
@@ -102,6 +105,13 @@ public class Etikette extends PersistentObject{
 		return get("Name");
 	}
 
+	public int getWert(){
+		return checkZero(get("wert"));
+	}
+	public void setWert(int w){
+		set("wert",Integer.toString(w));
+	}
+	
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
@@ -118,4 +128,7 @@ public class Etikette extends PersistentObject{
 		super(id);
 	}
 	protected Etikette(){}
+	public int compareTo(Etikette o) {
+		return getWert()-o.getWert();
+	}
 }

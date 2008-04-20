@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 3800 2008-04-20 12:44:30Z rgw_ch $
+ * $Id: PatientenListeView.java 3821 2008-04-20 13:48:00Z rgw_ch $
  *******************************************************************************/
 
 
@@ -35,6 +35,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.data.Etikette;
 import ch.elexis.data.FilterFactory;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -123,15 +124,16 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				if(Reminder.findRemindersDueFor(pat, Hub.actUser,false).size()>0){
 					return Desk.theImageRegistry.get(Desk.IMG_AUSRUFEZ);
 				}
-				/*
-				if(pat.getBemerkung().contains(":VIP:")){
-					return Desk.theImageRegistry.get(Desk.IMG_VIP);
-				}
-				*/
-				if(pat.getGeschlecht().equals("m")){
-					return Desk.theImageRegistry.get(Desk.IMG_MANN);
+				Etikette et=pat.getEtikette();
+				Image im=null;
+				if(et!=null && (im=et.getImage())!=null){
+					return im;
 				}else{
-					return Desk.theImageRegistry.get(Desk.IMG_FRAU);
+					if(pat.getGeschlecht().equals("m")){
+						return Desk.theImageRegistry.get(Desk.IMG_MANN);
+					}else{
+						return Desk.theImageRegistry.get(Desk.IMG_FRAU);
+					}
 				}
 			}else{
 				return super.getColumnImage(element, columnIndex);
@@ -139,15 +141,28 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		}
 
 		public Color getBackground(final Object element, final int columnIndex) {
-			// TODO Auto-generated method stub
+			if(element instanceof Patient){
+				Patient pat=(Patient)element;
+				Etikette et=pat.getEtikette();
+				if(et!=null){
+					return et.getBackground();
+				}
+			}
 			return null;
 		}
 
 		public Color getForeground(final Object element, final int columnIndex) {
 			if(element instanceof Patient){
-				if(((Patient)element).getBemerkung().contains(":VIP:")){
-					return Desk.theColorRegistry.get(Desk.COL_RED);
+				Patient pat=(Patient)element;
+				Etikette et=pat.getEtikette();
+				if(et!=null){
+					return et.getForeground();
 				}
+				/*
+					if(((Patient)element).getBemerkung().contains(":VIP:")){
+						return Desk.theColorRegistry.get(Desk.COL_RED);
+					}
+				*/
 			}
 		
 			return null;
