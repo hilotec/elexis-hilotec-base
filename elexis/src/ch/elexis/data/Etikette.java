@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3790 2008-04-19 17:14:49Z rgw_ch $
+ *    $Id: Etikette.java 3800 2008-04-20 12:44:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -36,24 +36,59 @@ public class Etikette extends PersistentObject{
 		);
 	}
 	
+	public Etikette(String name, Color fg, Color bg){
+		create(null);
+		if(fg==null){
+			fg=Desk.theColorRegistry.get(Desk.COL_BLACK);
+		}
+		if(bg==null){
+			bg=Desk.theColorRegistry.get(Desk.COL_GREY20);
+		}
+		set(new String[]{"Name","vg", "bg"}, new String[]{
+				name,
+				Desk.createColor(fg.getRGB()),
+				Desk.createColor(bg.getRGB())
+		});
+	}
 	public Image getImage(){
-		DBImage image=DBImage.load("BildID");
+		DBImage image=DBImage.load(get("BildID"));
 		if(image!=null){
 			Image ret=Desk.theImageRegistry.get(image.getName());
 			if(ret==null){
-				Desk.theImageRegistry.put(image.getName(), image.getImage());
+				ret=image.getImage();
+				Desk.theImageRegistry.put(image.getName(), ret);
 			}
 			return ret;
 		}
 		return null;
 	}
 	
+	public void setImage(DBImage image){
+		set("BildID",image.getId());
+	}
+	
+	public void setForeground( String fg){
+		set("vg",fg);
+	}
+	public void setForeground(Color fg){
+		if(fg!=null){
+			set("vg",Desk.createColor(fg.getRGB()));
+		}
+	}
 	public Color getForeground(){
 		String vg=get("vg");
 		return Desk.getColorFromRGB(vg);
 
 	}
 	
+	public void setBackground(String bg){
+		set("bg",bg);
+	}
+	public void setBackground(Color bg){
+		if(bg!=null){
+			set("bg",Desk.createColor(bg.getRGB()));
+		}
+	}
 	public void register(){
 		Desk.theImageRegistry.put(get("Name"), new DBImageDescriptor(get("Name")));
 	}
@@ -82,4 +117,5 @@ public class Etikette extends PersistentObject{
 	protected Etikette(String id){
 		super(id);
 	}
+	protected Etikette(){}
 }

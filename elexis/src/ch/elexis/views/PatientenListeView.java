@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ * $Id: PatientenListeView.java 3800 2008-04-20 12:44:30Z rgw_ch $
  *******************************************************************************/
 
 
@@ -100,9 +100,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         cv.getConfigurer().getControlFieldProvider().addChangeListener(new ControlFieldSelectionListener());
         makeActions();
         menus=new ViewMenus(getViewSite());
-        //menus.createMenu(delPatAction,filterAction);
         menus.createToolbar(newPatAction,filterAction);
-        //menus.createViewerContextMenu(cv.getViewerWidget(),delPatAction,exportKGAction);
         menus.createControlContextMenu(cv.getViewerWidget().getControl(), new PatientMenuPopulator(this));
         ((LazyContentProvider)vc.getContentProvider()).startListening();
         patFilter=FilterFactory.createFilter(Patient.class,"Diagnosen","PersAnamnese","SystemAnamnese","Dauermedikation",

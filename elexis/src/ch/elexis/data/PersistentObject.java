@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3790 2008-04-19 17:14:49Z rgw_ch $
+ *    $Id: PersistentObject.java 3800 2008-04-20 12:44:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -629,6 +629,32 @@ public abstract class PersistentObject{
     	return ret;
     }
     
+    public void removeEtikette(Etikette et){
+    	String ID=new StringBuilder().append("ETK").append(getId()).toString();
+    	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
+    	if(ret!=null){
+    		ret.remove(et);
+    	}
+    	StringBuilder sb=new StringBuilder();
+    	sb.append("DELETE FROM ").append(Etikette.LINKTABLE)
+    		.append(" WHERE obj=").append(getWrappedId())
+    		.append(" AND etikette=").append(et.getWrappedId());
+    	j.exec(sb.toString());
+    }
+    
+    public void addEtikette(Etikette et){
+    	String ID=new StringBuilder().append("ETK").append(getId()).toString();
+    	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
+    	if(ret!=null){
+    		ret.add(et);
+    	}
+    	StringBuilder sb=new StringBuilder();
+    	sb.append("INSERT INTO ").append(Etikette.LINKTABLE)
+    		.append("(obj,etikette) VALUES (")
+    		.append(getWrappedId()).append(",")
+    		.append(et.getWrappedId()).append(");");
+    	j.exec(sb.toString());
+    }
     /**
      * Feststellen, ob ein PersistentObject als gelöscht markiert wurde 
      * @return true wenn es gelöscht ist

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientMenuPopulator.java 3541 2008-01-16 17:43:13Z rgw_ch $
+ *  $Id: PatientMenuPopulator.java 3800 2008-04-20 12:44:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -29,8 +29,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Patient;
+import ch.elexis.dialogs.AssignEtiketteDialog;
 import ch.elexis.exchange.IDataSender;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
@@ -38,11 +40,12 @@ import ch.elexis.util.ViewMenus.IMenuPopulator;
 import ch.rgw.tools.ExHandler;
 
 public class PatientMenuPopulator implements IMenuPopulator {
-	IAction exportKGAction, delPatAction;
+	IAction exportKGAction, delPatAction,etiketteAction;
 	PatientenListeView mine;
 	
 	public IAction[] fillMenu() {
 		LinkedList<IAction> ret=new LinkedList<IAction>();
+		ret.add(etiketteAction);
 		if(Hub.acl.request(AccessControlDefaults.KONTAKT_DELETE)){
 			ret.add(delPatAction);
 		}
@@ -56,6 +59,18 @@ public class PatientMenuPopulator implements IMenuPopulator {
 	
 	PatientMenuPopulator(PatientenListeView plv){
 		mine=plv;
+		etiketteAction=new RestrictedAction(AccessControlDefaults.KONTAKT_ETIKETTE, "Etiketten..."){
+			{
+				setToolTipText("Etiketten anheften oder entfernen");
+			}
+			@Override
+			public void doRun() {
+				Patient p=mine.getSelectedPatient();
+				AssignEtiketteDialog aed=new AssignEtiketteDialog(Hub.getActiveShell(),p);
+				aed.open();
+			}
+			
+		};
 		delPatAction=new Action("Patient löschen"){
             @Override
             public void run()

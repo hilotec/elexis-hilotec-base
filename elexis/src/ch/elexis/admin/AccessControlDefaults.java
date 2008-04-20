@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 3492 2008-01-01 08:41:04Z rgw_ch $
+ * $Id: AccessControlDefaults.java 3800 2008-04-20 12:44:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -105,6 +105,7 @@ public class AccessControlDefaults {
     public static final String KONTAKT_INSERT=KONTAKT+"/Erstellen";
     public static final String KONTAKT_MODIFY=KONTAKT+ "/Ändern";
     public static final String KONTAKT_DELETE= DELETE+"/Kontakt";
+    public static final String KONTAKT_ETIKETTE=KONTAKT+"/etikettieren";
     
     public static final String PATIENT=DATA+"/Patient";
     public static final String PATIENT_DISPLAY=PATIENT+"/Anzeigen";
