@@ -15,10 +15,10 @@
 		<fileset dir="${elexis_plugin}">
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-			<include name="*.jar"/>
+		<fileset dir="${elexis_plugin}/lib">
+		    <include name="*.jar"/>
 		</fileset>
-		<fileset dir="${dist}/plugins/ch.elexis.scripting_${version}">
+		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
 			<include name="*.jar"/>
 		</fileset>
 	</path>

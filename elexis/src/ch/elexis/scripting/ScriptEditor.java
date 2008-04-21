@@ -27,7 +27,7 @@ public class ScriptEditor extends TitleAreaDialog {
 		ret.setLayoutData(full);
 		ret.setLayout(new FillLayout());
 		text=new Text(ret,SWT.MULTI|SWT.BORDER);
-		text.setText(script);
+		text.setText(script==null ? "" : script);
 		return ret;
 	}
 
