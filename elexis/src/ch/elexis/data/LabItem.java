@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 2812 2007-07-15 15:25:59Z rgw_ch $
+ *  $Id: LabItem.java 3824 2008-04-21 07:52:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import bsh.EvalError;
 import bsh.Interpreter;
 
+import ch.elexis.text.TextContainer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -32,6 +35,7 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class LabItem extends PersistentObject implements Comparable<LabItem>{
+	private static final Pattern varPattern=Pattern.compile(TextContainer.TEMPLATE_REGEXP);
 	@Override
 	protected String getTableName() {
 		return "LABORITEMS";
@@ -109,9 +113,9 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	 * Evaluate a formula-based LabItem for a given Patient at a given date.
 	 * It will try to retrieve all LabValues it depends on of that Patient and date 
 	 * and then calculate the result. If there are not all necessare values given,
-	 * it will return null. 
+	 * it will return "?formula?". 
 	 * @param date The date to consider for calculating
-	 * @return the result or null if no result could be calculated.
+	 * @return the result or "?formel?" if no result could be calculated.
 	 */
 	public String evaluate(Patient pat,TimeTool date){
 		if(!getTyp().equals(typ.FORMULA)){
@@ -127,6 +131,17 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			String var=result.getItem().makeVarName();
 			if(formel.indexOf(var)!=-1){
 				formel=formel.replaceAll(var, result.getResult());
+				bMatched=true;
+			}
+		}
+		Matcher matcher=varPattern.matcher(formel);
+		// Suche Variablen der Form [Patient.Alter]
+		while(matcher.find()){
+			String var=matcher.group();
+			String[] fields=var.split("\\.");
+			if(fields.length>1){
+				String repl=pat.get(fields[1]);
+				matcher.replaceFirst(repl);
 				bMatched=true;
 			}
 		}

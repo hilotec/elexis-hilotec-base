@@ -18,15 +18,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.help.webapp,
  org.eclipse.tomcat,
  org.eclipse.update.core,
- ch.elexis.jdomwrapper,
- ch.elexis.scripting
+ ch.elexis.jdomwrapper
 Eclipse-LazyStart: true
 Bundle-ClassPath: bin/,
  hsqldb.jar,
  postgresql.jar,
  mysql-connector.jar,
+ lib/bsh-core-2.0b4.jar,
  .
 Export-Package: .,
+ bsh,
  ch.elexis,
  ch.elexis.actions,
  ch.elexis.admin,

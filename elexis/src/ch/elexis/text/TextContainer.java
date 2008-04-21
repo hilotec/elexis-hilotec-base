@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3755 2008-03-28 14:58:45Z danlutz $
+ *  $Id: TextContainer.java 3824 2008-04-21 07:52:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -66,10 +66,10 @@ public class TextContainer {
 	private ITextPlugin plugin;
 	private static Log log=Log.get("TextContainer");
 	private Shell shell;
-	private static final String TEMPLATE_REGEXP="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]";
-	private static final String TEMPLATE_INDIRECT_REGEXP = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]";
-	private static final String GENDERIZE_REGEXP="\\[[a-zA-Z]+:mwn?:[^\\[]+\\]";
-	private static final String IDATACCESS_REGEXP="\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; 
+	public static final String TEMPLATE_REGEXP="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]";
+	public static final String TEMPLATE_INDIRECT_REGEXP = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]";
+	public static final String GENDERIZE_REGEXP="\\[[a-zA-Z]+:mwn?:[^\\[]+\\]";
+	public static final String IDATACCESS_REGEXP="\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; 
 	
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin findet, wählt er

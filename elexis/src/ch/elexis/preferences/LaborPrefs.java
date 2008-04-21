@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,28 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborPrefs.java 2812 2007-07-15 15:25:59Z rgw_ch $
+ *  $Id: LaborPrefs.java 3824 2008-04-21 07:52:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,13 +37,25 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.*;
+import ch.elexis.data.LabItem;
+import ch.elexis.data.LabResult;
+import ch.elexis.data.Labor;
+import ch.elexis.data.Query;
+import ch.elexis.scripting.ScriptEditor;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.WidgetFactory;
 import ch.rgw.tools.StringTool;
@@ -357,10 +378,16 @@ public class LaborPrefs extends PreferencePage implements
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if(formula.getSelection()){
+						/*
 						InputDialog inp=new InputDialog(getShell(),"Formel für Laborwert eingeben",
 								"Geben Sie bitte an, wie dieser Parameter errechnet werden soll",formel,null);
 						if(inp.open()==Dialog.OK){
 							formel=inp.getValue();
+						}
+						*/
+						ScriptEditor se=new ScriptEditor(getShell(),formel,"Geben Sie bitte an, wie dieser Parameter errechnet werden soll");
+						if(se.open()==Dialog.OK){
+							formel=se.getScript();
 						}
 					}
 				}

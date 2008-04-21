@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *  $Id: Patient.java 3824 2008-04-21 07:52:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -497,6 +497,16 @@ public class Patient extends Person{
 				
 	}
 
+	public String getAlter(){
+		TimeTool now=new TimeTool();
+		TimeTool bd=new TimeTool(getGeburtsdatum());
+		int jahre=now.get(TimeTool.YEAR)-bd.get(TimeTool.YEAR);
+		bd.set(TimeTool.YEAR,now.get(TimeTool.YEAR));
+		if(bd.isAfter(now)){
+			jahre-=1;
+		}
+		return Integer.toString(jahre);
+	}
 	/**
 	 * Return all bills of this patient
 	 * @return a list of bills of this patient
