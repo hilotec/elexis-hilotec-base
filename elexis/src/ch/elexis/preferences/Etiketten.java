@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 3823 2008-04-20 16:43:50Z rgw_ch $
+ *    $Id: Etiketten.java 3831 2008-04-21 16:24:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -134,7 +134,7 @@ public class  Etiketten extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				int idx=combo.getSelectionIndex();
 				if(idx>-1){
-					String n=combo.getItem(idx);
+					//String n=combo.getItem(idx);
 					combo.remove(idx);
 					Etikette eti=lEtiketten.get(idx);
 					lEtiketten.remove(idx);

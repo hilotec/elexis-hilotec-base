@@ -8,17 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3823 2008-04-20 16:43:50Z rgw_ch $
+ *    $Id: Etikette.java 3831 2008-04-21 16:24:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
-
-import java.io.Serializable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -51,7 +47,7 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 			fg=Desk.theColorRegistry.get(Desk.COL_BLACK);
 		}
 		if(bg==null){
-			bg=Desk.theColorRegistry.get(Desk.COL_GREY20);
+			bg=Desk.theColorRegistry.get(Desk.COL_WHITE);
 		}
 		set(new String[]{"Name","vg", "bg"}, new String[]{
 				name,
@@ -68,7 +64,7 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 		GridData gd1=new GridData(img.getBounds().width,img.getBounds().height);
 		cImg.setLayoutData(gd1);
 		Label lbl=new Label(ret,SWT.NONE);
-		GridData gd2=new GridData(Integer.MAX_VALUE,img.getBounds().height);
+		GridData gd2=new GridData(SWT.DEFAULT,img.getBounds().height);
 		lbl.setLayoutData(gd2);
 		lbl.setText(getLabel());
 		lbl.setForeground(getForeground());

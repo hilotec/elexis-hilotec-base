@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3823 2008-04-20 16:43:50Z rgw_ch $
+ *  $Id: KonsDetailView.java 3831 2008-04-21 16:24:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -25,7 +25,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -97,7 +97,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     int displayedVersion;
     Font emFont;
     Composite cDesc;
-    Composite cEtiketten;
+    Composite cEtiketten;    
     
 	@Override
 	public void createPartControl(final Composite p) {
@@ -107,6 +107,9 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         form=tk.createForm(sash);
         form.getBody().setLayout(new GridLayout(1,true));
         form.setText("Keine Konsultation ausgewählt");
+        cEtiketten=new Composite(form.getBody(),SWT.NONE);
+        cEtiketten.setLayout(new RowLayout(SWT.HORIZONTAL));
+        cEtiketten.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
         cDesc=new Composite(form.getBody(),SWT.NONE);
         cDesc.setLayout(new RowLayout(SWT.HORIZONTAL));
         cDesc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -199,8 +202,6 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         GlobalEvents.getInstance().addObjectListener(this);
         text.connectGlobalActions(getViewSite());
         adaptMenus();
-        cEtiketten=new Composite(form.getHead(),SWT.NONE);
-        form.setHeadClient(cEtiketten);
         setKons(GlobalEvents.getSelectedKons());
 	}
 	
@@ -222,6 +223,9 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     
     /** Aktuellen patient setzen */
     private void setPatient(Patient pat){
+    	for(Control cc:cEtiketten.getChildren()){
+    		cc.dispose();
+    	}
     	if(pat==null){
     		pat=GlobalEvents.getSelectedPatient();
     	}
@@ -229,16 +233,19 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 			form.setText(pat.getPersonalia());
 			List<Etikette> etis=pat.getEtiketten();
 			if(etis!=null && etis.size()>0){
-				Composite client=new Composite(form.getHead(),SWT.NONE);
-				form.setHeadClient(client);
-				client.setLayout(new FillLayout());
+				Point size=form.getHead().getSize();
+				//RowLayout rl=new RowLayout(SWT.HORIZONTAL);
+				//rl.fill=true;
+				//rl.justify=true;
+				//rl.pack=true;
+				//rl.wrap=true;
+				//cEtiketten.setLayout(rl);
 				for(Etikette et:etis){
-					et.createForm(client);
+					et.createForm(cEtiketten);
+					//new Label(cEtiketten,SWT.NONE).setText(et.getLabel());
 				}
-			}else{
-				form.setHeadClient(null);
+				//form.getBody().layout(true,true);
 			}
-			
 			Fall[] faelle=pat.getFaelle();
 			cbFall.removeAll();
 			cbFall.setData(faelle);
@@ -246,6 +253,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 				cbFall.add(f.getLabel());
 			}
 		}
+		form.layout();
 		//lFall.setText("");
 		//lBeh.setText("");
 	}
