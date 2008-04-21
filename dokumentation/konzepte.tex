@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 3530 2008-01-14 19:57:04Z rgw_ch $
+% *  $Id: konzepte.tex 3830 2008-04-21 12:43:19Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -80,6 +80,39 @@ genauer erklärt.
 Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier eher eine versicherungstechnische, als eine medizinische Einheit: Der Fall sammelt alle Konsultationen, welche mit demselben Abrechnungssystem (s. \ref{settings:abrechnungssystem} auf S. \pageref{settings:abrechnungssystem}) abgerechnet werden. Dies kann manchmal identisch mit dem medizinischen Fallbegriff sein (Ein Unfall, welcher über einen bestimmten Versicherer mit einer bestimmten Fallnummer abgerechnet wird), oder er kann auch keinen Zusammenhang mit einem medizinischen Fall haben (z.B. wird in der Schweiz im Allgemeinen ein allgemeiner Fall \glqq Krankheit\grqq{} erstellt werden, der alle KVG-Konsultationen sammelt.
 
 Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
+
+\section{Etiketten}
+\index{Etiketten}\index{Markierungen}
+\label{Etiketten}
+Patienten und andere Datenbankinhalte können mit \index{Etiketten} markiert werden. Eine Etikette ist ein im Prinzip beliebiges Merkmal, das mit dem entsprechenden Datenbankobjekt verknüpft wird. Beispielsweise könnte ein Patienten mit den Etiketten 'Hausarztmodell', 'MRSA' oder anderen markiert werden. Eine solche Etikette wird beim Aufruf des entsprechenden Obekts mit angezeigt.
+
+\textbf{Beispiele}
+Etiketten werden unter \textsc{Datei-Einstellungen-Etiketten} definiert (S. Abb. \ref{fig:etiketten1}). Es können beliebig viele Etiketten definiert werden. Um eine neue Etikette anzulegen, schrieben Sie den Text für die Etikette ins obere Feld und klicken dann auf 'Neue Etikette'. Die eben angelegte Etikette erscheint dann mit Standardwerten in der Liste. Markieren Sie die Etikette und geben Sie je nach Wunsch ein Bild (Format 16x16 bis höchstens 32x32 Pixel), eine Textfarbe und eine Hintergrundfarbe ein. Die Bedeutung des 'Werts' sehen Sie weiter unten.
+
+\begin{figure}
+    \includegraphics{images/etikette1}
+    \caption{Etiketten erstellen}
+    \label{fig:etiketten1}
+\end{figure}
+
+So erstellte Etiketten können einem Patienten durch Rechtsklick in der Patientenliste und Auswahl von 'Etikette...' zugeordnet werden. Jeder Patient kann null bis beliebig viele Etiketten erhalten. In der Patientenliste wird nun der entsprechende EIntrag mit dem der Etikette zugeordenen Bild, Vordergrund- und Hintergrundfarbe angezeigt (Abb. \ref{fig:etiketten2}).
+\begin{figure}
+    \includegraphics{images/etikette3}
+    \caption{Anzeige der Etikette}
+    \label{fig:etiketten2}
+\end{figure}
+
+Hier sieht man nun auch denn Sinn des 'Wert'-Attributs einer Etikette: Wenn ein Patient mehrere Etiketten zugeordnet hat, dann wird in der Patientenliste immer diejenige mit dem höchsten 'Wert' angezeigt. Was für Zahlen Sie da konkret einsetzen, ist egal. Die abolute Grösse spielt keine Rolle, nur das Verhältnis zueinander.
+
+\medskip
+
+Wenn Sie einen Konsulaltionseintrag öffnen, sehen Sie alle zugeordneten Etiketten.
+\begin{figure}
+    \includegraphics{images/etikette2}
+    \caption{Konsultation mit Etiketten}
+    \label{fig:etiketten3}
+\end{figure}
+
 
 \clearpage
 
