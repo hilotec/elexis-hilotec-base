@@ -8,5 +8,4 @@ Bundle-Localization: plugin
 Require-Bundle: ch.elexis,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.forms,
- ch.elexis.scripting
+ org.eclipse.ui.forms
