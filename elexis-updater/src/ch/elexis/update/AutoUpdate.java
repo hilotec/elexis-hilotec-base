@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 3751 2008-03-28 11:44:24Z rgw_ch $
+ * $Id: AutoUpdate.java 3832 2008-04-22 04:55:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -30,7 +30,7 @@ public class AutoUpdate {
 	File basedir;
 	int filecounter=0;
 	LinkedList<ReplaceInfo> downloads=new LinkedList<ReplaceInfo>();
-	private static final String updateURL="http://www.rgw.ch/update12.php";
+	private static final String updateURL="http://www.rgw.ch/update13.php";
 	
 	public boolean doUpdate(){
 		try {
