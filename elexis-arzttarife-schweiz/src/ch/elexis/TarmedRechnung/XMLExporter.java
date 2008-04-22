@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3777 2008-04-17 18:19:30Z rgw_ch $
+ * $Id: XMLExporter.java 3836 2008-04-22 19:00:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -76,7 +76,6 @@ import ch.elexis.util.Money;
 import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.XMLTool;
-import ch.elexis.views.TarmedDetailDisplay;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -560,7 +559,7 @@ public class XMLExporter implements IRnOutputter {
 				el.setAttribute("number",Integer.toString(sessionNumber));							//	22030
 				el.setAttribute("quantity",Integer.toString(zahl));									//	22350
 				el.setAttribute("date_begin",dateForTarmed);										//	22370
-				el.setText(v.getText());															//	22340
+				el.setText(vv.getText());															//	22340
 				//el.setAttribute("code",v.getCode());												//	22330
 				setAttributeWithDefault(el,"code",v.getCode(),"0");									//	22330
 				services.addContent(el);
