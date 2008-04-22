@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 3608 2008-02-04 14:45:24Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 3834 2008-04-22 15:43:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -66,6 +66,8 @@ public class KontaktImporterBlatt extends Composite{
 	static final String[] methods=new String[]{"XLS","CSV","KK-Liste"};
 	private static final String PRESET_RUSSI="e3ad14dc49e27dbcc4771b41b34cdd902f9cfcc6";
 	private static final String PRESET_UNIVERSAL="be99f1d4a3feae5e5eb84fae8ccddeee9582df8d";
+	private static final String PRESET_HERTEL="a4a9f3bd410443399ee05d5e033d94513a64239b";
+	
 	
 	public KontaktImporterBlatt(final Composite parent){
 		super(parent,SWT.NONE);
@@ -186,6 +188,8 @@ public class KontaktImporterBlatt extends Composite{
 				return Presets.importRussi(exw,bKeepID,moni);
 			}else if(vgl.equals(PRESET_UNIVERSAL)){
 				return Presets.importUniversal(exw, bKeepID,moni);
+			}else if(vgl.equals(PRESET_HERTEL)){
+				return Presets.importHertel(exw, bKeepID,moni);
 			}else{
 				SWTHelper.showError("Datatype error", "Unbekannter Datentyp", "Die Feldnamen dieses Files sind nicht bekannt");
 			}
