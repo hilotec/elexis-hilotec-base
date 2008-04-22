@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3683 2008-02-16 11:46:37Z rgw_ch $
+ * $Id: Artikel.java 3833 2008-04-22 15:43:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -20,7 +20,6 @@ import ch.elexis.Hub;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -239,11 +238,11 @@ public class Artikel extends VerrechenbarAdapter{
 	
 	private String checkLimit(final int s){
 		String str=Integer.toString(s);
-		if(s>0 && s<1000){
+		if(s>-1 && s<1000){
 			return str;
 		}
 		if(isLagerartikel()){
-			SWTHelper.showError("Ungültiger Lagerbestand", "Geben Sie eine ganze Zahl zwischen 0 und 1000 ein");
+			SWTHelper.showError("Ungültiger Lagerbestand", "Der Lagerbestand ist auf "+str);
 		}
 		return null;
 	}

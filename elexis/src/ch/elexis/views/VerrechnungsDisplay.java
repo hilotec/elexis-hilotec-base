@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3583 2008-01-26 06:07:58Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3833 2008-04-22 15:43:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -207,14 +207,25 @@ public class VerrechnungsDisplay extends Composite {
         		TableItem ti=tVerr.getItem(sel);
         		Verrechnet v=(Verrechnet)ti.getData();
         		String p=Integer.toString(v.getZahl());
-        		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl für die Leistung bzw. den Artikel ein",p,null);
+        		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl (oder Bruchzahl wie 1/3) für die Leistung bzw. den Artikel ein",p,null);
         		if(dlg.open()==Dialog.OK){
         			try{
-        				int neu=Integer.parseInt(dlg.getValue());
-        				v.changeAnzahl(neu);
+        				String val=dlg.getValue();
+        				if(!StringTool.isNothing(val)){
+        					String[] frac=val.split("/");
+        					if(frac.length>1){
+        						Money price=v.getEffPreis();
+        						price.multiply(Double.parseDouble(frac[0])/Double.parseDouble(frac[1]));
+        						v.setPreis(price);
+        						v.setText(v.getText()+" ("+val+" OP)");
+        					}else{
+        						int neu=Integer.parseInt(dlg.getValue());
+                				v.changeAnzahl(neu);		
+        					}
+        				}
         				setLeistungen(GlobalEvents.getSelectedKons());
         			}catch(NumberFormatException ne){
-        				SWTHelper.showError("Ungültige Eingabe", "Bitte geben Sie eine ganze Zahl ein");
+        				SWTHelper.showError("Ungültige Eingabe", "Bitte geben Sie eine ganze Zahl oder einen Bruch der Form x/y ein");
         			}
         		}
         	}
