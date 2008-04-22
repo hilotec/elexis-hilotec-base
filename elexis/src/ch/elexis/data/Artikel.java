@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3833 2008-04-22 15:43:01Z rgw_ch $
+ * $Id: Artikel.java 3835 2008-04-22 19:00:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -127,7 +127,7 @@ public class Artikel extends VerrechenbarAdapter{
 		return checkNull(get(NAME));
 	}
 	/**
-	 * Den "echten" Namen setzen. DIes ist der offizielle Name des Artikels, wie
+	 * Den "echten" Namen setzen. Dies ist der offizielle Name des Artikels, wie
 	 * er beispielsweise in Katalogen aufgeführt ist. Dieser sollte normalerweise 
 	 * nicht geändert werden.
 	 * @param name der neue "echte" Name
