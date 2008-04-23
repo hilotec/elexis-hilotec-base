@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3835 2008-04-22 19:00:26Z rgw_ch $
+ * $Id: Artikel.java 3837 2008-04-23 04:39:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -372,7 +372,7 @@ public class Artikel extends VerrechenbarAdapter{
 	@Override
 	public String getCode() { return getId();}
 	@Override
-	public String getText() { return get(NAME);}
+	public String getText() { return getInternalName();}
 	@Override
 	public String getCodeSystemName() { return ARTIKEL;}
 	

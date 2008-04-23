@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3833 2008-04-22 15:43:01Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3837 2008-04-23 04:39:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -38,7 +38,6 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.Artikel;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
@@ -67,7 +66,6 @@ public class VerrechnungsDisplay extends Composite {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try{
-					// TODO
 					if(StringTool.isNothing(LeistungenView.ID)){
 						SWTHelper.alert("Fehler", "LeistungenView.ID");
 					}
