@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 3723 2008-03-14 12:42:08Z rgw_ch $
+ *  $Id: LabResult.java 3838 2008-04-23 17:19:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -179,7 +179,7 @@ public class LabResult extends PersistentObject {
 		n.add(getId());
 		TimeTool limit=new TimeTool();
 		limit.addHours(-24*Integer.parseInt(Hub.globalCfg.get(LabSettings.KEEP_UNSEEN_LAB_RESULTS,PreferenceConstants.DAYS_TO_KEEP_UNSEEN_LAB_RESULTS)));
-		log.log(limit.dump(),Log.INFOS);
+		//log.log(limit.dump(),Log.INFOS);
 		TimeTool tr=new TimeTool();
 		for(LabResult lr:o){
 			log.log(lr.getDate(),Log.INFOS);
