@@ -8,8 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3836 2008-04-22 19:00:32Z rgw_ch $
+ * $Id: XMLExporter.java 3840 2008-04-23 17:20:55Z rgw_ch $
  *******************************************************************************/
+
+
+/*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
 
 package ch.elexis.TarmedRechnung;
 
