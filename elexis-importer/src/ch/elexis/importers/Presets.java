@@ -154,9 +154,7 @@ public class Presets {
 		moni.beginTask("Import Patientendaten Hertel", last-first);
 		for(int i=first+1;i<last;i++){
 			String[] row=exw.getRow(i).toArray(new String[0]);
-			if(Xid.findObject(KONTAKTID, row[0])!=null){	// avoid duplicate import
-				continue;
-			}
+	
 			String name=StringTool.getSafe(row, 1);
 			String vorname=StringTool.getSafe(row, 2);
 			String sex=StringTool.getSafe(row, 3);
@@ -203,10 +201,12 @@ public class Presets {
 			 
 			 String kk=StringTool.getSafe(row, 36);
 			 String iv=StringTool.getSafe(row, 37);
-			 
-			 Patient pat=new Patient(name,vorname,gebdat,sex.toLowerCase().startsWith("m") ? Person.MALE : Person.FEMALE);
-			 pat.set("PatientNr",row[0]);
-			 pat.addXid(KONTAKTID, row[0], false);
+			 Patient pat=(Patient)Xid.findObject(KONTAKTID, row[0]); // avoid duplicate import
+			if(pat==null){	
+				pat=new Patient(name,vorname,gebdat,sex.toLowerCase().startsWith("m") ? Person.MALE : Person.FEMALE);
+				pat.set("PatientNr",row[0]);
+				pat.addXid(KONTAKTID, row[0], false);
+			}
 			 moni.subTask(pat.getLabel());
 			 pat.set(new String[]{"Strasse","Plz","Ort","Land","Telefon1","Telefon2",
 					 	"Natel","E-Mail","Titel","Gruppe","Zusatz"}, 
@@ -226,6 +226,7 @@ public class Presets {
 					k=res.get(0);
 				}else{
 					k=new Organisation(kk,"KK");
+					k.set("Kuerzel","KK");
 				}
 				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "KVG");
 				fall.setGarant(pat);
@@ -240,7 +241,8 @@ public class Presets {
 				if(res.size()>0){
 					k=res.get(0);
 				}else{
-					k=new Organisation(kk,"UVG");
+					k=new Organisation(unfallvers,"UVG");
+					k.set("Kuerzel", "UVG");
 				}
 				Fall fall=pat.neuerFall("Unfall", "Unfall", "UVG");
 				fall.setGarant(k);
