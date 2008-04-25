@@ -15,8 +15,7 @@ package ch.elexis.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
@@ -24,12 +23,9 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TableViewerEditor;
@@ -37,13 +33,19 @@ import org.eclipse.jface.viewers.TableViewerFocusCellManager;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -51,8 +53,10 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.actions.ScannerEvents;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Bestellung;
+import ch.elexis.text.ElexisText;
 import ch.elexis.util.SWTHelper;
  
 /*
@@ -60,15 +64,21 @@ import ch.elexis.util.SWTHelper;
  *
  */
 public class OrderImportDialog extends TitleAreaDialog {
+	private static final int DIFF_SPINNER_MIN = 1;
+	private static final int DIFF_SPINNER_DEFAULT = 1;
+	
 	/**
 	 * Order to act on
 	 */
 	private List<OrderElement> orderElements;
 	
 	private Spinner diffSpinner;
-	private Text eanText;
+	private ElexisText eanText;
 	
 	private TableViewer viewer;
+	
+	private Color verifiedColor;
+	private Font boldFont;
 	
 	public OrderImportDialog(Shell parentShell, Bestellung bestellung) {
 		super(parentShell);
@@ -87,7 +97,6 @@ public class OrderImportDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite mainArea = new Composite(parent, SWT.NONE);
 		mainArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		/*DEBUG*/mainArea.setBackground(mainArea.getDisplay().getSystemColor(SWT.COLOR_RED));
 		mainArea.setLayout(new GridLayout());
 		
 		Composite scannerArea = new Composite(mainArea, SWT.NONE);
@@ -100,13 +109,23 @@ public class OrderImportDialog extends TitleAreaDialog {
 		scannerGroup.setText("Einlesen mit Barcode-Scanner");
 		
 		diffSpinner = new Spinner(scannerGroup, SWT.NONE);
-		diffSpinner.setMinimum(1);
-		diffSpinner.setSelection(1);
+		diffSpinner.setMinimum(DIFF_SPINNER_MIN);
+		diffSpinner.setSelection(DIFF_SPINNER_DEFAULT);
 		
 		Label eanLabel = new Label(scannerGroup, SWT.NONE);
 		eanLabel.setText("EAN:");
-		eanText = new Text(scannerGroup, SWT.NONE);
+		eanText = new ElexisText(scannerGroup, SWT.NONE);
 		eanText.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		eanText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.character == SWT.CR) {
+					applyScanner();
+				}
+			}
+        });
+		
 		Button button = new Button(scannerGroup, SWT.PUSH);
 		button.setText("Übernehmen");
 		button.addSelectionListener(new SelectionListener() {
@@ -128,6 +147,9 @@ public class OrderImportDialog extends TitleAreaDialog {
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+		
+		verifiedColor = table.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN);
+		boldFont = createBoldFont(table.getFont());
 		
 		final TableViewerFocusCellManager mgr = new TableViewerFocusCellManager(viewer,new FocusCellOwnerDrawHighlighter(viewer));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(viewer) {
@@ -158,6 +180,12 @@ public class OrderImportDialog extends TitleAreaDialog {
 		});
 		
 		return mainArea;
+	}
+	
+	private Font createBoldFont(Font baseFont) {
+		FontData fd = baseFont.getFontData()[0];
+		Font font = new Font(baseFont.getDevice(), fd.getName(), fd.getHeight(), fd.getStyle() | SWT.BOLD);
+		return font;
 	}
 	
 	private void createViewerColumns() {
@@ -203,8 +231,8 @@ public class OrderImportDialog extends TitleAreaDialog {
 
 		/* Amount */
 		column = new TableViewerColumn(viewer, SWT.LEFT);
-		column.getColumn().setText("Menge");
-		column.getColumn().setWidth(50);
+		column.getColumn().setText("Geliefert");
+		column.getColumn().setWidth(60);
 		column.setLabelProvider(new AmountLabelProvider());
 		column.setEditingSupport(new EditingSupport(viewer) {
 			public boolean canEdit(Object element) {
@@ -245,7 +273,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		/* Amount */
 		column = new TableViewerColumn(viewer, SWT.LEFT);
 		column.getColumn().setText("Lager");
-		column.getColumn().setWidth(50);
+		column.getColumn().setWidth(60);
 		column.setLabelProvider(new StockLabelProvider());
 
 		/* Pharamcode */
@@ -257,7 +285,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		/* EAN */
 		column = new TableViewerColumn(viewer, SWT.LEFT);
 		column.getColumn().setText("EAN");
-		column.getColumn().setWidth(100);
+		column.getColumn().setWidth(110);
 		column.setLabelProvider(new EANLabelProvider());
 
 		/* Description */
@@ -271,13 +299,19 @@ public class OrderImportDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Bestellung einlesen");
+		setTitle("Bestellung im Lager einbuchen");
 		setMessage("Bitte überprüfen Sie alle bestellten Artikel."
 				+ " Überprüfte Artikel werden grün angezeigt."
-				+ " Bei der Anpassung der Bestände werden nur jene Artikel"
+				+ " Bei der Anpassung der Lagerbestände werden nur jene Artikel"
 				+ " berücksichtigt, bei denen unter \"OK\" ein Haken gesetzt ist.");
 		//setTitleImage(...));
-		getShell().setText("Bestellung einlesen");
+		getShell().setText("Bestellung im Lager einbuchen");
+	}
+	
+	// Replace OK/Cancel buttons by a close button
+	protected void createButtonsForButtonBar(Composite parent) {
+		// Create Close button
+		createButton(parent, IDialogConstants.OK_ID, "Schliessen", false);
 	}
 
 	@Override
@@ -288,17 +322,24 @@ public class OrderImportDialog extends TitleAreaDialog {
 	// update the table according to the input from the scanner
 	private void applyScanner() {
 		int diff = diffSpinner.getSelection();
+
 		String ean = eanText.getText().trim();
+		// remove silly characters from scanner
+		ean = ean.replaceAll(new Character(SWT.CR).toString(), "");
+		ean = ean.replaceAll(new Character(SWT.LF).toString(), "");
+		ean = ean.replaceAll(new Character((char)0).toString(), "");
+	
 		eanText.setText("");
+		diffSpinner.setSelection(DIFF_SPINNER_DEFAULT);
 
 		OrderElement orderElement = findOrderElementByEAN(ean);
-		if (orderElement == null) {
+		if (orderElement != null) {
+			int newAmount = orderElement.getAmount() + diff;
+			updateOrderElement(orderElement, newAmount);
+		} else {
+			ScannerEvents.beep();
 			SWTHelper.alert("Artikel nicht bestellt", "Diser Artikel wurde nicht bestellt. Der Bestand kann nicht automatisch angepasst werden.");
 		}
-		
-		int newAmount = orderElement.getAmount() + diff;
-		
-		updateOrderElement(orderElement, newAmount);
 	}
 
 	private OrderElement findOrderElementByEAN(String ean) {
@@ -358,8 +399,36 @@ public class OrderImportDialog extends TitleAreaDialog {
 			// do nothing
 		}
 	}
+	
+	class BaseLabelProvider extends ColumnLabelProvider {
+		public Color getForeground(Object element) {
+			Color color = null;
+			
+			if (element instanceof OrderElement) {
+				OrderElement orderElement = (OrderElement) element;
+				if (orderElement.isVerified()) {
+					color = OrderImportDialog.this.verifiedColor;
+				}
+			}
+			
+			return color;
+		}
+		
+		public Font getFont(Object element) { 
+			Font font = null;
+			
+			if (element instanceof OrderElement) {
+				OrderElement orderElement = (OrderElement) element;
+				if (orderElement.isVerified() && orderElement.getAmount() > 0) {
+					font = OrderImportDialog.this.boldFont;
+				}
+			}
+			
+			return font;
+		}
+	}
 
-	class CheckboxLabelProvider extends ColumnLabelProvider {
+	class CheckboxLabelProvider extends BaseLabelProvider {
 		public String getText(Object element) {
 			String text = "";
 			
@@ -374,7 +443,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		}
 	}
 
-	class AmountLabelProvider extends ColumnLabelProvider {
+	class AmountLabelProvider extends BaseLabelProvider {
 		public String getText(Object element) {
 			String text = "";
 			
@@ -387,7 +456,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		}
 	}
 
-	class StockLabelProvider extends ColumnLabelProvider {
+	class StockLabelProvider extends BaseLabelProvider {
 		public String getText(Object element) {
 			String text = "";
 			
@@ -400,7 +469,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		}
 	}
 
-	class PharamcodeLabelProvider extends ColumnLabelProvider {
+	class PharamcodeLabelProvider extends BaseLabelProvider {
 		public String getText(Object element) {
 			String text = "";
 			
@@ -413,7 +482,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		}
 	}
 
-	class EANLabelProvider extends ColumnLabelProvider {
+	class EANLabelProvider extends BaseLabelProvider {
 		public String getText(Object element) {
 			String text = "";
 			
@@ -426,7 +495,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 		}
 	}
 
-	class DescriptionLabelProvider extends ColumnLabelProvider {
+	class DescriptionLabelProvider extends BaseLabelProvider {
 		public String getText(Object element) {
 			String text = "";
 			
