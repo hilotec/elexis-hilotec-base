@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 3546 2008-01-17 08:35:37Z rgw_ch $
+ * $Id: BestellView.java 3841 2008-04-25 12:02:43Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -60,6 +60,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Bestellung.Item;
+import ch.elexis.dialogs.OrderImportDialog;
 import ch.elexis.exchange.IDataSender;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.DefaultLabelProvider;
@@ -157,7 +158,9 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 		viewmenus.createToolbar(wizardAction,saveAction,loadAction,printAction,sendAction);
 		viewmenus.createMenu(wizardAction,saveAction,loadAction,printAction,sendAction, exportClipboardAction);
 		viewmenus.createViewerContextMenu(tv,new IAction[]{removeAction,countAction});
+		/* Disabled, not yet finished
 		form.getToolBarManager().add(checkInAction);
+		*/
 		form.updateToolBar();
 		setBestellung(null);
 		tv.setInput(getViewSite());
@@ -433,7 +436,12 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 			}
 			@Override
 			public void run(){
-				
+				if (actBestellung != null && actBestellung.exists()) {
+					OrderImportDialog dialog = new OrderImportDialog(getSite().getShell(), actBestellung);
+					dialog.open();
+				} else {
+					SWTHelper.alert("Keine Bestellung", "Es ist keine Bestellung geladen.");
+				}
 			}
 			
 		};
