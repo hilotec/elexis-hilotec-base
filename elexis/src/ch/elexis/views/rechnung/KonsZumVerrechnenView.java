@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3547 2008-01-17 12:04:52Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 3844 2008-04-25 20:48:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -448,6 +449,11 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			@Override
 			public void run(){
 				int rejected=0;
+				if(((StructuredSelection)tvSel.getSelection()).size()>0){
+					if(!SWTHelper.askYesNo("Dies erstellt alle Rechnungen in der Auswahl", "Wollen Sie wirklich aus allen Konsultationen im rechten Feld Rechnungen erstellen?")){
+						return;
+					}
+				}
 				for(Tree tPat=tSelection.getFirstChild();tPat!=null;tPat=tPat.getNextSibling()){
 					for(Tree tFall=tPat.getFirstChild();tFall!=null;tFall=tFall.getNextSibling()){
 						Fall fall=(Fall)tFall.contents;

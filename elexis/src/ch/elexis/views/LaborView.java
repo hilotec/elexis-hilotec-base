@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 3568 2008-01-18 18:02:03Z rgw_ch $
+ *  $Id: LaborView.java 3844 2008-04-25 20:48:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -225,6 +225,9 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 		cursor.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(final KeyEvent e) {
+				if(e.character==SWT.DEL){
+					return;
+				}
 				TableItem row = cursor.getRow();
 				e.doit=false;
 				if(row.getData("Item")==null){
@@ -380,8 +383,9 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 					cursorDown();
 					table.setFocus();
 				}
-				// close the text editor when the user hits "ESC"
-				if (e.character == SWT.ESC) {
+				if(e.character == SWT.DEL){
+					text.setText("");
+				}else if (e.character == SWT.ESC) {
 					text.dispose();
 					table.setFocus();
 				}

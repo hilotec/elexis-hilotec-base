@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 3824 2008-04-21 07:52:20Z rgw_ch $
+ *  $Id: LabItem.java 3844 2008-04-25 20:48:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -136,22 +136,26 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		}
 		Matcher matcher=varPattern.matcher(formel);
 		// Suche Variablen der Form [Patient.Alter]
+		StringBuffer sb = new StringBuffer();
+
 		while(matcher.find()){
 			String var=matcher.group();
 			String[] fields=var.split("\\.");
 			if(fields.length>1){
-				String repl=pat.get(fields[1]);
-				matcher.replaceFirst(repl);
+				String repl="\""+pat.get(fields[1].replaceFirst("\\]", ""))+"\"";
+				//formel=matcher.replaceFirst(repl);
+				matcher.appendReplacement(sb, repl);
 				bMatched=true;
 			}
 		}
+		matcher.appendTail(sb);
 		if(!bMatched){
 			return null;
 		}
 		Interpreter scripter=new Interpreter();
 		
 		try {
-			return scripter.eval(formel).toString();
+			return scripter.eval(sb.toString()).toString();
 		} catch (EvalError e) {
 			return "?formel?";
 		}
