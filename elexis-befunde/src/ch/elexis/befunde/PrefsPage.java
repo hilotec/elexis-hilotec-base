@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,26 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PrefsPage.java 2825 2007-07-17 13:51:34Z rgw_ch $
+ *    $Id: PrefsPage.java 3845 2008-04-26 10:43:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
 import java.util.Hashtable;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Query;
+import ch.elexis.scripting.ScriptEditor;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
@@ -76,6 +81,8 @@ public class PrefsPage extends Composite {
 			for(int i=0;i<texts.length;i++){
 				labels[i]=new Label(this,SWT.NONE);
 				labels[i].setText("F"+Integer.toString(i+1));
+				labels[i].setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+				labels[i].addMouseListener(new ScriptListener(i));
 				texts[i]=SWTHelper.createText(this, 1, SWT.NONE);
 				checkboxes[i]=new Button(this,SWT.CHECK);
 				checkboxes[i].setText("mehrzeilig");
@@ -92,6 +99,7 @@ public class PrefsPage extends Composite {
 		//Button bAddLine=new Button(this,SWT.PUSH);
 		//bAddLine.setText("neue Zeile");
 	}
+	
 	void flush(){
 		StringBuilder sb=new StringBuilder();
 		for(int i=0;i<texts.length;i++){
@@ -123,5 +131,21 @@ public class PrefsPage extends Composite {
 			return true;
 		}
 		return false;
+	}
+	private  class ScriptListener extends MouseAdapter{
+		private int i;
+		ScriptListener(int x){
+			i=x;
+		}
+		@Override
+		public void mouseUp(MouseEvent e) {
+			ScriptEditor se=new ScriptEditor(getShell(),texts[i].getText(),"Geben Sie bitte an, wie dieser Parameter errechnet werden soll");
+			if(se.open()==Dialog.OK){
+				texts[i].setText(se.getScript());
+			}
+
+			super.mouseUp(e);
+		}
+		
 	}
 }
