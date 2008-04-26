@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborPrefs.java 3824 2008-04-21 07:52:20Z rgw_ch $
+ *  $Id: LaborPrefs.java 3846 2008-04-26 10:43:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -378,13 +378,7 @@ public class LaborPrefs extends PreferencePage implements
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if(formula.getSelection()){
-						/*
-						InputDialog inp=new InputDialog(getShell(),"Formel für Laborwert eingeben",
-								"Geben Sie bitte an, wie dieser Parameter errechnet werden soll",formel,null);
-						if(inp.open()==Dialog.OK){
-							formel=inp.getValue();
-						}
-						*/
+						
 						ScriptEditor se=new ScriptEditor(getShell(),formel,"Geben Sie bitte an, wie dieser Parameter errechnet werden soll");
 						if(se.open()==Dialog.OK){
 							formel=se.getScript();
