@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3696 2008-02-19 21:08:45Z danlutz $
+ * $Id: RnActions.java 3848 2008-04-27 17:29:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -102,7 +102,7 @@ public class RnActions {
 					
 				}
 				tt.addHours(days*24*-1);
-				qbe.add("RnDatum", "<", tt.toString(TimeTool.DATE_COMPACT));
+				qbe.add("StatusDatum", "<", tt.toString(TimeTool.DATE_COMPACT));
 				List<Rechnung> list=qbe.execute();
 				for(Rechnung rn:list){
 					rn.setStatus(RnStatus.MAHNUNG_1);
@@ -149,11 +149,11 @@ public class RnActions {
 				for(Rechnung rn:list){
 					rn.setStatus(RnStatus.MAHNUNG_3);
 					if(!betrag.isZero()){
-						rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 2. Mahnung");
+						rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 3. Mahnung");
 					}
 				}
 				view.cfp.clearValues();
-				view.cfp.cbStat.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length-1]);
+				view.cfp.cbStat.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length-2]);
 				view.cfp.fireChangedEvent();
 			}
     	};
