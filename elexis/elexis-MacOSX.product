@@ -59,7 +59,6 @@ Rietstrasse 30
       <plugin id="ch.elexis.notes"/>
       <plugin id="ch.elexis.omnivore"/>
       <plugin id="ch.elexis.privatnotizen"/>
-      <plugin id="ch.elexis.scripting"/>
       <plugin id="ch.elexis.update_tool"/>
       <plugin id="ch.sgam.xchange"/>
       <plugin id="com.ibm.icu"/>
