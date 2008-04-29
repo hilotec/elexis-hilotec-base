@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 3321 2007-11-07 06:01:47Z rgw_ch $
+ *  $Id: Money.java 3849 2008-04-29 12:03:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -30,7 +30,7 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  *
  */
-public class Money {
+public class Money implements Comparable<Money> {
 	private static NumberFormat nf=NumberFormat.getInstance(Locale.getDefault());
 	private int cents;		//  The value of this money
 	private double frac;		// What rests after rounding
@@ -243,4 +243,7 @@ public class Money {
 		return cents==other.cents;
 	}
 	
+	public int compareTo(Money other){
+		   return this.cents - other.getCents();
+	} 
 }

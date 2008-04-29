@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 3838 2008-04-23 17:19:46Z rgw_ch $
+ *  $Id: LabResult.java 3849 2008-04-29 12:03:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,6 +20,7 @@ import ch.elexis.Hub;
 import ch.elexis.preferences.LabSettings;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -178,7 +179,12 @@ public class LabResult extends PersistentObject {
 		LinkedList<String> n=new LinkedList<String>();
 		n.add(getId());
 		TimeTool limit=new TimeTool();
-		limit.addHours(-24*Integer.parseInt(Hub.globalCfg.get(LabSettings.KEEP_UNSEEN_LAB_RESULTS,PreferenceConstants.DAYS_TO_KEEP_UNSEEN_LAB_RESULTS)));
+		try{		// We need to catch wrong formatted numbers in KEEP_UNSEEN
+			limit.addHours(-24*Integer.parseInt(Hub.globalCfg.get(LabSettings.KEEP_UNSEEN_LAB_RESULTS,PreferenceConstants.DAYS_TO_KEEP_UNSEEN_LAB_RESULTS)));
+		}catch(NumberFormatException nex){
+			ExHandler.handle(nex);
+			limit.addHours(-24*7);
+		}
 		//log.log(limit.dump(),Log.INFOS);
 		TimeTool tr=new TimeTool();
 		for(LabResult lr:o){
