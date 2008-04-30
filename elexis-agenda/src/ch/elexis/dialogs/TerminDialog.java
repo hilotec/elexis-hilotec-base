@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 3785 2008-04-19 04:55:54Z rgw_ch $
+ *  $Id: TerminDialog.java 3853 2008-04-30 17:28:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -136,7 +137,9 @@ public class TerminDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
+		ScrolledComposite sc=new ScrolledComposite(parent,SWT.H_SCROLL|SWT.V_SCROLL);
 		Composite ret=new Composite(parent,SWT.NONE);
+		sc.setContent(ret);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		Composite topRow=new Composite(ret,SWT.BORDER);
@@ -389,7 +392,7 @@ public class TerminDialog extends TitleAreaDialog {
 		//bSearch.setEnabled(false);
 		//bNext.setEnabled(false);
 		//bPrev.setEnabled(false);
-		return ret;
+		return sc;
 	}
 
 	/**
@@ -432,6 +435,7 @@ public class TerminDialog extends TitleAreaDialog {
 	}
 	@Override
 	public void create() {
+		setShellStyle(getShellStyle()|SWT.RESIZE);
 		super.create();
 
 		setMessage(Messages.TerminDialog_editTermins); 
