@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3821 2008-04-20 13:48:00Z rgw_ch $
+ * $Id: DBUpdate.java 3852 2008-04-30 15:04:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -35,7 +35,7 @@ public class DBUpdate {
 		  							"1.3.8","1.3.9","1.3.10","1.3.11","1.3.12","1.3.13",
 		  							"1.4.0","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6",
 		  							"1.5.0","1.6.0","1.6.1","1.6.2","1.6.3","1.6.4",
-		  							"1.7.0"};
+		  							"1.7.0","1.7.1"};
 	  static final String[] cmds={"CREATE TABLE EIGENLEISTUNGEN("+
 			"ID			VARCHAR(25) primary key,"+
 			"Code		VARCHAR(20),"+
@@ -227,7 +227,10 @@ public class DBUpdate {
 			"Title 			VARCHAR(80),"+	
 			"Bild			BLOB"+
 			");"+
-			"CREATE INDEX DBIMAGE1 on DBIMAGE(Title);"	
+			"CREATE INDEX DBIMAGE1 on DBIMAGE(Title);",
+			
+			// 1.7.1
+			"ALTER TABLE LABORITEMS MODIFY Einheit VARCHAR(20);"
 			
 	  };
 	  static Log log=Log.get("DBUpdate");

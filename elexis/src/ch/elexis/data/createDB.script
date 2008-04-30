@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3821 2008-04-20 13:48:00Z rgw_ch $
+# * $Id: createDB.script 3852 2008-04-30 15:04:47Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -403,7 +403,7 @@ CREATE TABLE LABORITEMS(
 	laborID		VARCHAR(25),
 	RefMann		VARCHAR(80),
 	RefFrauOrTx TEXT,
-	Einheit		VARCHAR(10),
+	Einheit		VARCHAR(20),
 	typ			CHAR(1),
 	Gruppe		VARCHAR(25),
 	prio		CHAR(3)
