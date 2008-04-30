@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3831 2008-04-21 16:24:26Z rgw_ch $
+ *    $Id: Etikette.java 3854 2008-04-30 18:31:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Desk;
+import ch.rgw.tools.JdbcLink.Stm;
 
 
 /**
@@ -134,7 +135,19 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	protected String getTableName() {
 		return TABLENAME;
 	}
-	 
+	
+	@Override
+	public boolean delete() {
+		StringBuilder sb=new StringBuilder();
+    	Stm stm=j.getStatement();
+		
+    	sb.append("DELETE FROM ")
+    		.append(Etikette.LINKTABLE).append(" WHERE ")
+    		.append("etikette = '").append(getId()).append("'");
+    	stm.exec(sb.toString());
+    	j.releaseStatement(stm);
+		return super.delete();
+	}
 	public static Etikette load(String id){
 		Etikette ret=new Etikette(id);
 		if(!ret.exists()){
@@ -147,6 +160,9 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	}
 	protected Etikette(){}
 	public int compareTo(Etikette o) {
-		return o.getWert()-getWert();
+		if(o != null){
+			return o.getWert()-getWert();
+		}
+		return 1;
 	}
 }

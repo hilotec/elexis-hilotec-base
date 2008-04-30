@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3821 2008-04-20 13:48:00Z rgw_ch $
+ *    $Id: PersistentObject.java 3854 2008-04-30 18:31:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -624,7 +624,10 @@ public abstract class PersistentObject{
     		ResultSet res=stm.query(sb.toString());
 
     		while(res!=null && res.next()){
-    			ret.add(Etikette.load(res.getString(1)));
+    			Etikette et=Etikette.load(res.getString(1));
+    			if(et!=null && et.exists()){
+    				ret.add(Etikette.load(res.getString(1)));
+    			}
     		}
     		res.close();
     	}catch(Exception ex){

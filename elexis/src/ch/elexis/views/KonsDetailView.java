@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3831 2008-04-21 16:24:26Z rgw_ch $
+ *  $Id: KonsDetailView.java 3854 2008-04-30 18:31:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -241,7 +241,9 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 				//rl.wrap=true;
 				//cEtiketten.setLayout(rl);
 				for(Etikette et:etis){
-					et.createForm(cEtiketten);
+					if(et!=null){
+						et.createForm(cEtiketten);
+					}
 					//new Label(cEtiketten,SWT.NONE).setText(et.getLabel());
 				}
 				//form.getBody().layout(true,true);
