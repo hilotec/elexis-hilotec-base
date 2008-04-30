@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 3722 2008-03-14 06:15:11Z rgw_ch $
+ *    $Id: PreferenceConstants.java 3851 2008-04-30 13:40:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -91,12 +91,15 @@ public class PreferenceConstants {
 	public static final String RNN_AMOUNT2ND="rechnung/amount_2nd";
 	public static final String RNN_AMOUNT3RD="rechnung/amount_3rd";
 	
+	// Lager
 	public static final String INVENTORY_ORDER_TRIGGER = "inventory/order_trigger";
 	public static final int INVENTORY_ORDER_TRIGGER_BELOW = 0;
 	public static final String INVENTORY_ORDER_TRIGGER_BELOW_VALUE = "0";
 	public static final int INVENTORY_ORDER_TRIGGER_EQUAL = 1;
 	public static final String INVENTORY_ORDER_TRIGGER_EQUAL_VALUE = "1";
 	public static final int INVENTORY_ORDER_TRIGGER_DEFAULT = INVENTORY_ORDER_TRIGGER_BELOW;
+	public static final String INVENTORY_CHECK_ILLEGAL_VALUES = "inventory/check_values";
+	public static final boolean INVENTORY_CHECK_ILLEGAL_VALUES_DEFAULT = true;
 	
 	// Labor
 	public static final String DAYS_TO_KEEP_UNSEEN_LAB_RESULTS = "7";

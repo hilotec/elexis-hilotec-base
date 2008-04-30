@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3837 2008-04-23 04:39:11Z rgw_ch $
+ * $Id: Artikel.java 3851 2008-04-30 13:40:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.Hub;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
@@ -227,8 +228,13 @@ public class Artikel extends VerrechenbarAdapter{
 		}
 	}
 	public void setIstbestand(final int s){
-		String sl=checkLimit(s);
-		if(sl!=null){
+		String sl=null;
+		if(Hub.globalCfg.get(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES, true)){
+			sl=checkLimit(s);
+		}else{
+			sl=Integer.toString(s);
+		}
+		if( sl!=null){
 			set(ISTBESTAND,sl);
 		}
 	}
@@ -238,11 +244,11 @@ public class Artikel extends VerrechenbarAdapter{
 	
 	private String checkLimit(final int s){
 		String str=Integer.toString(s);
-		if(s>-1 && s<1000){
+		if(s>-1 && s<1001){
 			return str;
 		}
 		if(isLagerartikel()){
-			SWTHelper.showError("Ungültiger Lagerbestand", "Der Lagerbestand ist auf "+str);
+			SWTHelper.showError("Ungültiger Lagerbestand", "Der Lagerbestand ist auf "+str+". Bitte einen Wert zwischen 0 und 1000 eingeben.");
 		}
 		return null;
 	}
