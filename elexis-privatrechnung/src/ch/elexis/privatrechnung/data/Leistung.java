@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 3855 2008-05-02 11:58:07Z rgw_ch $
+ * $Id: Leistung.java 3857 2008-05-02 15:42:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -47,7 +47,7 @@ public class Leistung extends VerrechenbarAdapter {
 		"ID				VARCHAR(25) primary key,"+	// This field must always be present
 		"deleted		CHAR(1) default '0',"+		// This field must always be present
 		"parent			VARCHAR(80),"+
-		"name			VARCHAR(512),"+
+		"name			VARCHAR(499),"+
 		"short			VARCHAR(80),"+
 		"cost			CHAR(8),"+				// use always fixed char fields for amounts
 		"price			CHAR(8),"+				// amounts are always in cents/rp
@@ -61,7 +61,7 @@ public class Leistung extends VerrechenbarAdapter {
 		"CREATE INDEX chelpr_idx2 on "+TABLENAME+"(valid_from);";
 	
 	
-	private static final String UPDATE_030="ALTER TABLE "+TABLENAME+" MODIFY name VARCHAR(512);"+
+	private static final String UPDATE_030="ALTER TABLE "+TABLENAME+" MODIFY name VARCHAR(499);"+
 		"ALTER TABLE "+TABLENAME+" MODIFY short VARCHAR(80);"+
 		"ALTER TABLE "+TABLENAME+" MODIFY cost CHAR(8);"+
 		"ALTER TABLE "+TABLENAME+" MODIFY price CHAR(8);"+
@@ -83,6 +83,7 @@ public class Leistung extends VerrechenbarAdapter {
 			if(v.isOlder(VERSION)){
 				if(v.isOlder("0.3.0")){
 					createTable(TABLENAME,UPDATE_030);
+					check.set("Name","0.3.0");
 				}else{
 					SWTHelper.showError("Privatrechnung: Falsche Version", "Die Datenbank hat eine zu alte Version dieser Tabelle");
 				}
