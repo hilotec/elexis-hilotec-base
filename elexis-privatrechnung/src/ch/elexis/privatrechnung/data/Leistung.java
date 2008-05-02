@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 3663 2008-02-07 21:11:32Z rgw_ch $
+ * $Id: Leistung.java 3855 2008-05-02 11:58:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
-
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
@@ -41,7 +36,7 @@ public class Leistung extends VerrechenbarAdapter {
 	static final String TABLENAME="CH_ELEXIS_PRIVATRECHNUNG";
 	public static final String CODESYSTEM_NAME="Privat";
 	public static final String CODESYSTEM_CODE="999";
-	static final String VERSION="0.2.0";
+	static final String VERSION="0.3.0";
 	
 	/**
 	 * If the table does not exist when this plugin is loaded, it must create it on the fly.
@@ -51,11 +46,11 @@ public class Leistung extends VerrechenbarAdapter {
 	private static final String createDB="CREATE TABLE "+TABLENAME+"("+
 		"ID				VARCHAR(25) primary key,"+	// This field must always be present
 		"deleted		CHAR(1) default '0',"+		// This field must always be present
-		"parent			VARCHAR(25),"+
-		"name			VARCHAR(80),"+
-		"short			VARCHAR(20),"+
-		"cost			CHAR(6),"+				// use always fixed char fields for amounts
-		"price			CHAR(6),"+				// amounts are always in cents/rp
+		"parent			VARCHAR(80),"+
+		"name			VARCHAR(512),"+
+		"short			VARCHAR(80),"+
+		"cost			CHAR(8),"+				// use always fixed char fields for amounts
+		"price			CHAR(8),"+				// amounts are always in cents/rp
 		"time			CHAR(4),"+	
 		"subsystem		VARCHAR(25),"+
 		"valid_from		CHAR(8),"+				// use always char(8) for dates
@@ -65,6 +60,12 @@ public class Leistung extends VerrechenbarAdapter {
 		"CREATE INDEX chelpr_idx1 on "+TABLENAME+"(parent,name);"+
 		"CREATE INDEX chelpr_idx2 on "+TABLENAME+"(valid_from);";
 	
+	
+	private static final String UPDATE_030="ALTER TABLE "+TABLENAME+" MODIFY name VARCHAR(512);"+
+		"ALTER TABLE "+TABLENAME+" MODIFY short VARCHAR(80);"+
+		"ALTER TABLE "+TABLENAME+" MODIFY cost CHAR(8);"+
+		"ALTER TABLE "+TABLENAME+" MODIFY price CHAR(8);"+
+		"ALTER TABLE "+TABLENAME+" MODIFY parent VARCHAR(80);";
 	
 	/** 
 	 * Here we define the mapping between internal fieldnames and database fieldnames. (@see PersistentObject)
@@ -76,29 +77,25 @@ public class Leistung extends VerrechenbarAdapter {
 				"Zeit=time","DatumVon=S:D:valid_from","DatumBis=S:D:valid_until","ExtInfo");
 		Leistung check=load("VERSION");
 		if(check.state()<PersistentObject.DELETED){		// Object never existed, so we have to create the database
-			createTable();
+			createTable(TABLENAME,createDB);
 		}else{	// found existing table, check version
 			VersionInfo v=new VersionInfo(check.get("Name"));
 			if(v.isOlder(VERSION)){
-				SWTHelper.showError("Privatrechnung: Falsche Version", "Die Datenbank hat eine zu alte Version dieser Tabelle");
+				if(v.isOlder("0.3.0")){
+					createTable(TABLENAME,UPDATE_030);
+				}else{
+					SWTHelper.showError("Privatrechnung: Falsche Version", "Die Datenbank hat eine zu alte Version dieser Tabelle");
+				}
 				
 			}
 		}
 		
 	}
 	
-	static void createTable(){
-		ByteArrayInputStream bais;
-		try {
-			bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-			if(j.execScript(bais,true,false)==false){
-				MessageDialog.openError(null,"Datenbank-Fehler","Konnte Tabelle nicht erstellen");
-			}
-		} catch (UnsupportedEncodingException e) {
-			// should really never happen
-			e.printStackTrace();
-		}
+	public static void createTable(){
+		createTable(TABLENAME,createDB);
 	}
+	
 	public Leistung(String subsystem,String parent, final String name, final String kuerzel, 
 			final String kostenInRp, final String preisInRp, final String ZeitInMin, String DatumVon, String DatumBis){
 		create(null);
