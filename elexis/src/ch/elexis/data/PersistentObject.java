@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3854 2008-04-30 18:31:23Z rgw_ch $
+ *    $Id: PersistentObject.java 3856 2008-05-02 11:58:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1042,6 +1042,7 @@ public abstract class PersistentObject{
             return true; 
         }catch(Exception ex){
             ExHandler.handle(ex);
+            log.log("Fehler bei: "+cmd+"("+field+"="+value+")", Log.ERRORS);
             return false;
         }
         
@@ -1376,6 +1377,12 @@ public abstract class PersistentObject{
             return true;
         }catch(Exception ex){
             ExHandler.handle(ex);
+            StringBuilder sb=new StringBuilder();
+            sb.append("Fehler bei ").append(cmd).append("\nFelder:\n");
+            for(int i=0;i<fields.length;i++){
+            	sb.append(fields[i]).append("=").append(values[i]).append("\n");
+            }
+            log.log(sb.toString(), Log.ERRORS);
             return false;
         }
 	}
