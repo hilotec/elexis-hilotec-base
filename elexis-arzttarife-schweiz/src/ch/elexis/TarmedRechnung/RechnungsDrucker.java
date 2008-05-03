@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3687 2008-02-18 17:16:02Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3859 2008-05-03 10:37:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -162,8 +162,12 @@ public class RechnungsDrucker implements IRnOutputter{
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog ddlg=new DirectoryDialog(parent.getShell());
 				dirname=ddlg.open();
-				Hub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, dirname);
-				tName.setText(dirname);
+				if(dirname==null){
+					SWTHelper.alert("Verzeichnisname fehlr", "Sie müssen ein existierendes Verzeichnis auswählen");
+				}else{
+					Hub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, dirname);
+					tName.setText(dirname);
+				}
 			}
 		});
 	    tName=new Text(cSaveCopy,SWT.BORDER|SWT.READ_ONLY);
