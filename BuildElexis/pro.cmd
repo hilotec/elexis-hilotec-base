@@ -5,11 +5,11 @@ set JAVA_HOME=e:\dev\jdk150
 :varsok
 cd rsc\build
 if not *%1==*plugged goto unplugged
-call ant elexis-pro
+call ant pro
 goto finish
 
 :unplugged
-call ant elexis-pro -Dunplugged=true
+call ant pro -Dunplugged=true
 
 :finish
 cd ..\..

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 3825 2008-04-21 07:52:26Z rgw_ch $
+<!-- $Id: build.xml 3858 2008-05-03 10:29:31Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
 	windows		: Windows-Installer erstellen
-	Linux x86	: Linux x386 - Installer erstellen
+	Linux  	    : Linux x386 - Installer erstellen
 	clean       : Letzten Build wegräumen
-
-	Es werden jeweils plugin, full install und full install mit jre erstellt.
+    pro         : die Zusatzplugins erstellen
 
 	Voraussetzungen:
 	- Ant muss installiert sein
@@ -90,279 +89,11 @@
 		</copy>
 		<exec command="texify elexis.tex" dir="${source}/dokumentation" />
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
-		<!-- new version without demo  
-		<mkdir dir="${dist}/demoDB"/>
-		<copy todir="${dist}/demoDB">
-			<fileset dir="${dest}/../demoDB_${dbversion}"/>	
-		</copy>
-		-->
 	</target>
 
-	<!-- Hier alle einzubindenden Plugins eintragen. Reihenfolge nicht ändern. -->
 
-	<!-- Basisplugins; für die normale Programmfunktion erforderlich -->
-	<target name="main" depends="prepare">
-		<ant antfile="../jdomwrapper/build.xml"/>
-		<ant antfile="../elexis/build.xml"/>
-		<ant antfile="../elexis-importer/build.xml"/>
-		<ant antfile="../elexis-updater/build.xml"/>
-		<ant antfile="../elexis-simpletext/build.xml"/>
-		
-		<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
-		     Standarddistribution dabei -->
-		<ant antfile="../elexis-artikel-schweiz/build.xml"/>
-		<ant antfile="../elexis-ebanking-schweiz/build.xml"/>
-		<ant antfile="../elexis-arzttarife-schweiz/build.xml"/>
-		<ant antfile="../elexis-befunde/build.xml"/>
-		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml"/>
-		<ant antfile="../elexis-mail/build.xml"/>
-		<ant antfile="../elexis-EMR-Printer/build.xml"/>
-		<ant antfile="../elexis-medikamente-bag/build.xml"/>
-		
-		<available file="../iatrix-help-wiki" property="iatrixhelp.ok"/>
-		   <antcall target="iatrixhelp"/>				
-		<available file="../elexis-icpc/build.xml" property="icpc.ok"/>
-			<antcall target="icpc"/>
-		<available file="../elexis-agenda/build.xml" property="agenda.ok"/>
-			<antcall target="agenda"/>
-		<available file="../OOwrapper/build.xml" property="oowrapper.ok"/>
-		<available file="../noatext/build.xml" property="noatext.ok"/>
-		<available file="../elexis-nachrichten/build.xml" property="nachrichten.ok"/>
-			<antcall target="nachrichten"/>
-		<available file="../medshare-directories/build.xml" property="directories.ok"/>
-			<antcall target="directories"/>
-		<available file="../elexis-bildanzeige/build.xml" property="bildanzeige.ok"/>
-			<antcall target="bildanzeige"/>
-		<available file="../elexis-omnivore/build.xml" property="omnivore.ok"/>
-			<antcall target="omnivore"/>
-		<available file="../elexis-privatnotizen/build.xml" property="privatnotizen.ok"/>
-			<antcall target="privatnotizen"/>
-	</target>
+	<target name="all" depends="prepare"/>
 
-	<!-- Optionale Plugins, für die Programmfunktion nicht unbedingt erforderlich -->
-	<target name="options" depends="prepare">
-		<available file="../elexis-rosenstudio/build.xml" property="rosenstudio.ok"/>
-		   <antcall target="rosenstudio"/>
-		<available file="../elexis-artikel-oesterreich/build.xml" property="artaustria.ok"/>
-			<antcall target="artaustria"/>
-        <available file="../elexis-eigendiagnosen/build.xml" property="eigendiagnosen.ok"/>
-          <antcall target="eigendiagnosen"/>
-
-		<available file="../Sgam-Exchange/build.xml" property="sgamxchange.ok"/>
-			<antcall target="sgamxchange"/>
-		<available file="../elexis-trustx-embed/build.xml" property="trustx.ok"/>
-			<antcall target="trustx"/>
-		<available file="../elexis-importer-aerztekasse/build.xml" property="aekasse.ok"/>
-			<antcall target="aekasse"/>
-		<available file="../elexis-externe-dokumente/build.xml" property="extdok.ok"/>
-			<antcall target="extdok"/>
-		<available file="../Laborimport-Viollier/build.xml" property="viollier.ok"/>
-			<antcall target="viollier"/>
-		<available file="../elexis-laborimport-bioanalytica" property="bioanalytica.ok"/>
-			<antcall target="bioanalytica"/>
-		<available file="../elexis-privatrechnung/build.xml" property="privatrechnung.ok"/>
-			<antcall target="privatrechnung"/>
-		<available file="../elexis-notes/build.xml" property="notes.ok"/>
-			<antcall target="notes"/>
-		<available file="../medshare-importer-csv/build.xml" property="importer_csv.ok"/>
-			<antcall target="importer-csv"/>
-	</target>
-
-	
-	<!-- These plugins are not part of the standard distribution -->
-	<target name="elexis-pro" depends="all">
-		
-		<available file="../elexis-h-net/build.xml" property="hnet.ok"/>
-			<antcall target="hnet"/>
-
-		<!--ant antfile="../elexis-pro/build.xml"/ -->
-		
-		<available file="../Laborimport-Logolab/build.xml" property="logolab.ok"/>
-		    <antcall target="logolab"/>
-		<available file="../Laborimport-aerztelabor-badena/build.xml" property="badena.ok"/>
-		   <antcall target="badena"/>
-		<available file="../Laborimport-Medica/build.xml" property="medica.ok"/>
-		  <antcall target="medica"/>
-		<available file="../elexis-kassenbuch/build.xml" property="kassenbuch.ok"/>
-			<antcall target="kassenbuch"/>
-		<available file="../elexis-importer-praxistar/build.xml" property="praxistar.ok"/>
-			<antcall target="praxistar"/>
-		<available file="../elexis-connect-abxmicros/build.xml" property="abxmicros.ok"/>
-			<antcall target="abxmicros"/>
-		<available file="../elexis-connect-urilux/build.xml" property="urilux.ok"/>
-			<antcall target="urilux"/>
-		<available file="../molemax/build.xml" property="molemax.ok"/>
-			<antcall target="molemax"/>
-		
-		<available file="../elexis-galexis/build.xml" property="galexis.ok"/>
-		<antcall target="galexis"/>
-		<available file="../Laborimport-TeamW/build.xml" property="teamw.ok"/>
-		    <antcall target="teamw"/>
-		<available file="../Laborimport-Krech/build.xml" property="krech.ok"/>
-			<antcall target="krech"/>
-		<available file="../Laborimport-Unilabs/build.xml" property="unilabs.ok"/>
-			<antcall target="unilabs"/>
-		<available file="../elexis-importer-vitodata/build.xml" property="vitodata.ok"/>
-			<antcall target="vitodata"/>
-		<available file="../elexis-importer-aeskulap/build.xml" property="aeskulap.ok"/>
-			<antcall target="aeskulap"/>
-		<available file="../Laborimport-Risch/build.xml" property="risch.ok"/>
-			<antcall target="risch"/>
-		<available file="../elexis-importer-praxisdesktop/build.xml" property="praxisdesktop.ok"/>
-			<antcall target="praxisdesktop"/>
-		<available file="../elexis-covercard/build.xml" property="covercard.ok"/>
-			<antcall target="covercard"/>
-		<available file="../elexis-importer-argolead/build.xml" property="argolead.ok"/>
-			<antcall target="argolead"/>
-		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok"/>
-			<antcall target="mythic"/>
-		<available file="../noatext/build.xml" property="noatext.ok"/>
-		  <antcall target="noatext"/>
-		<available file="../elexis-connect-abxmicros/build.xml" property="abxmicros.ok"/>
-		  <antcall target="abxmicros"/>
-	</target>
-
-	<target name="all" depends="main,options"/>
-
-	<target name="logolab" if="logolab.ok">
-	   <ant antfile="../Laborimport-Logolab/build.xml"/>
-	</target>
-	    
-	<target name="teamw" if="teamw.ok">
-	      <ant antfile="../Laborimport-TeamW/build.xml"/>
-	</target>
-		
-	<target name="iatrixhelp" if="iatrixhelp.ok">
-		  <ant antfile="../iatrix-help-wiki/build.xml"/>
-	</target>
-	<target name="rosenstudio" if="rosenstudio.ok">
-	       <ant antfile="../elexis-rosenstudio/build.xml"/>
-	</target>
-	<target name="hnet" if="hnet.ok">
-	        <ant antfile="../elexis-h-net/build.xml"/>
-	    </target>
-	<target name="directories" if="directories.ok">
-		<ant antfile="../medshare-directories/build.xml"/>
-	</target>
-	<target name="extdok" if="extdok.ok">
-		<ant antfile="../elexis-externe-dokumente/build.xml"/>
-	</target>
-	<target name="covercard" if="covercard.ok">
-		<ant antfile="../elexis-covercard/build.xml"/>
-	</target>
-	<target name="praxisdesktop" if="praxisdesktop.ok" depends="main">
-		<ant antfile="../elexis-importer-praxisdesktop/build.xml"/>
-	</target>
-	<target name="aeskulap" if="aeskulap.ok" depends="main">
-		<ant antfile="../elexis-importer-aeskulap/build.xml"/>
-	</target>
-	<target name="vitodata" if="vitodata.ok">
-		<ant antfile="../elexis-importer-vitodata/build.xml"/>
-	</target>
-	<target name="unilabs" if="unilabs.ok">
-		<ant antfile="../Laborimport-Unilabs/build.xml"/>
-	</target>
-	<target name="krech" if="krech.ok" depends="main">
-		<ant antfile="../Laborimport-Krech/build.xml"/>
-	</target>
-	<target name="galexis" if="galexis.ok">
-		<ant antfile="../elexis-galexis/build.xml"/>
-	</target>
-	<target name="risch" if="risch.ok">
-		<ant antfile="../Laborimport-Risch/build.xml"/>
-	</target>
-	<target name="nachrichten" if="nachrichten.ok">
-		<ant antfile="../elexis-nachrichten/build.xml"/>
-	</target>
-	<target name="notes" if="notes.ok">
-		<ant antfile="../elexis-notes/build.xml"/>
-	</target>
-	<target name="omnivore" if="omnivore.ok">
-		<ant antfile="../elexis-omnivore/build.xml"/>
-	</target>
-	<target name="bildanzeige" if="bildanzeige.ok">
-		<ant antfile="../elexis-bildanzeige/build.xml"/>
-	</target>
-	<target name="privatnotizen" if="privatnotizen.ok">
-		<ant antfile="../elexis-privatnotizen/build.xml"/>
-	</target>
-	<target name="privatrechnung" if="privatrechnung.ok" depends="main">
-		<ant antfile="../elexis-privatrechnung/build.xml"/>
-	</target>
-   <target name="eigendiagnosen" if="eigendiagnosen.ok">
-        <ant antfile="../elexis-eigendiagnosen/build.xml"/>
-    </target>
-
-	<target name="agenda" if="agenda.ok">
-		<ant antfile="../elexis-agenda/build.xml"/>
-	</target>
-	<target name="icpc" if="icpc.ok">
-		<ant antfile="../elexis-icpc/build.xml"/>
-	</target>
-	<target name="kassenbuch" if="kassenbuch.ok">
-		<ant antfile="../elexis-kassenbuch/build.xml"/>
-	</target>
-	<target name="praxistar" if="praxistar.ok">
-		<ant antfile="../elexis-importer-praxistar/build.xml"/>
-	</target>
-	<target name="noatext" if="noatext.ok">
-		<ant antfile="../noatext/build.xml"/>
-	</target>
-	<target name="oowrapper" if="oowrapper.ok">
-		<ant antfile="../OOwrapper/build.xml"/>
-	</target>
-	<target name="viollier" if="viollier.ok">
-		<ant antfile="../Laborimport-Viollier/build.xml"/>
-	</target>
-	<target name="bioanalytica" if="bioanalytica.ok">
-		<ant antfile="../elexis-laborimport-bioanalytica/build.xml"/>
-	</target>
-	
-	<target name="abxmicros" if="abxmicros.ok">
-		<ant antfile="../elexis-connect-abxmicros/build.xml"/>
-	</target>
-	
-	<target name="urilux" if="urilux.ok">
-			<ant antfile="../elexis-connect-urilux/build.xml"/>
-	</target>
-	
-	<target name="trustx" if="trustx.ok">
-		<ant antfile="../elexis-trustx-embed/build.xml"/>
-	</target>
-	
-	<target name="sgamxchange" if="sgamxchange.ok">
-		<ant antfile="../Sgam-Exchange/build.xml"/>
-	</target>
-
-	<target name="artaustria" if="artaustria.ok">
-		<ant antfile="../elexis-artikel-oesterreich/build.xml"/>
-	</target>
-
-	<target name="molemax" if="molemax.ok">
-		<ant antfile="../molemax/build.xml"/>
-	</target>
-		
-	<target name="aekasse" if="aekasse.ok">
-		<ant antfile="../elexis-importer-aerztekasse/build.xml"/>
-	</target>
-	
-	<target name="importer-csv" if="importer_csv.ok">
-		<ant antfile="../medshare-importer-csv/build.xml"/>
-	</target>
-	
-	<target name="medica" if="medica.ok">
-	   <ant antfile="../Laborimport-Medica/build.xml"/>
-	</target>
-	<target name="badena" if="badena.ok">
-	       <ant antfile="../Laborimport-aerztelabor-badena/build.xml"/>
-	 </target>
-	
-	<target name="argolead" if="argolead.ok">
-		<ant antfile="../elexis-importer-argolead/build.xml"/>
-	</target>
-	<target name="mythic" if="mythic.ok">
-		<ant antfile="../elexis-connect-mythic/build.xml"/>
-	</target>
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
 	<target name="make_addition">
@@ -405,9 +136,14 @@
 		<copy file="${docsource}/${pluginname}.pdf" todir="${doc}"/>
 	</target>
 	
+	<target name="pro" depends="prepare">
+		   <ant antfile="rsc/build/plugins.xml" target="elexis-pro"/>
+	</target>
+	
 	<!-- Windows - Version der Distribution -->
-	<target name="windows" depends="main">
-		<antcall target="noatext"/>		
+	<target name="windows" depends="prepare">
+		<ant antfile="rsc/build/plugins.xml" target="main"/>
+		<ant antfile="../noatext/build.xml"/>		
 		<ant antfile="../elexis-trustx-embed/build.xml"/>
 		 <mkdir dir="${dist}/jre"/>
 		 <copy todir="${dist}/jre">
@@ -419,9 +155,10 @@
 	</target>
 
 	<!-- Linux x86 Version der Distribution -->
-	<target name="Linux" depends="main">
-		<antcall target="oowrapper"/>
+	<target name="Linux" depends="prepare">
+		<ant antfile="../Oowrapper/build.xml"/>
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
+		
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
 		<exec executable="cp">
 			<arg line="-r ${jre} ${dist}/jre"/>
@@ -442,31 +179,7 @@
 		<exec executable="tar" dir="${dest}">
 		    <arg line="-czf ${output}/elexis-linux-i386-${version}.tgz Elexis-${version}"/>
 		</exec>
-		
-
 	</target>
-	
-	 <!--@deprecated-->
-	 <target name="Linux-installers" depends="all">
-		 <copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
-		 <exec executable="${makeself}">
-			 <arg value="--notemp"/>
-			 <arg value="${dist}"/>
-			 <arg value="${output}/elexis-linux-i386-${version}.run"/>
-			 <arg value="Elexis ${version} Beta"/>
-			 <arg value="chmod +x elexis"/>
-		 </exec>
-
-		<antcall target="copyjre"/>
-		<exec executable="${makeself}">
-			<arg value="--notemp"/>
-			<arg value="${dist}"/>
-			<arg value="${dest}/output/elexis-linux-jre-i386-${version}.run"/>
-			<arg value="Elexis ${version} Beta"/>
-			<arg value="chmod +x elexis; chmod +x jre/bin/java"/>
-		 </exec>
-
-	 </target>
 
 	<!-- Mac OSX Version der Distribution -->
 	<target name="mac" depends="all">
@@ -479,10 +192,4 @@
 		<delete dir="${dest}"/>
 	</target>
 
-	<target name="copyjre" description="Java runtime holen">
-		 <mkdir dir="${dist}/jre"/>
-		 <copy todir="${dist}/jre">
-			 <fileset dir="${jre}"/>
-		 </copy>
-    </target>
 </project>
