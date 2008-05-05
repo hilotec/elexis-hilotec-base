@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 3606 2008-02-01 13:14:02Z rgw_ch $
+ *  $Id: DocHandle.java 3867 2008-05-05 16:58:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -65,7 +65,7 @@ public class DocHandle extends PersistentObject {
 			VersionInfo vi=new VersionInfo(start.get("Titel"));
 			if(vi.isOlder(DBVERSION)){
 				if(vi.isOlder("1.1.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					start.set("Titel", DBVERSION);
 				}else{
 					MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
@@ -92,12 +92,7 @@ public class DocHandle extends PersistentObject {
 	   * Tabelle neu erstellen
 	   */
 	  public static void init(){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+		  createTable(TABLENAME,createDB);
 	  }
 	public static DocHandle load(String id){
 		DocHandle ret= new DocHandle(id);
