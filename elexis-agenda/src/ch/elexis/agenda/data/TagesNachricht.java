@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TagesNachricht.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: TagesNachricht.java 3872 2008-05-05 16:59:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
@@ -39,7 +39,7 @@ public class TagesNachricht extends PersistentObject {
 		if(!start.exists()){
 			try{
 				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
+				getConnection().execScript(bais,true, false);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
 			}

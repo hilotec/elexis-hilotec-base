@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *    $Id: Termin.java 3872 2008-05-05 16:59:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -29,6 +29,7 @@ import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -42,6 +43,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     public static String[] TerminTypes;
     public static String[] TerminStatus;
     public static String[] TerminBereiche;
+    private static final JdbcLink j=getConnection();
     
     //static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
     //static final String DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";    
