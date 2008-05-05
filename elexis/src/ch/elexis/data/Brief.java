@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Brief.java 2767 2007-07-09 10:51:59Z rgw_ch $
+ *  $Id: Brief.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -61,7 +61,7 @@ public class Brief extends PersistentObject {
 	}
     /** Einen neuen Briefeintrag erstellen */
 	public Brief(String Betreff, TimeTool Datum, Kontakt Absender, Kontakt dest, Konsultation bh, String typ){
-		j.setAutoCommit(false);
+		getConnection().setAutoCommit(false);
 		try{
 			super.create(null);
 			if(Datum==null){
@@ -82,12 +82,12 @@ public class Brief extends PersistentObject {
 				new String[]{Betreff,pat, dat,Absender==null?"":Absender.getId(),
 							dat, dst,bhdl,typ,"0"});
 			new contents(this);
-			j.commit();
+			getConnection().commit();
 		}catch(Throwable ex){
 			ExHandler.handle(ex);
-			j.rollback();
+			getConnection().rollback();
 		}finally{
-			j.setAutoCommit(true);
+			getConnection().setAutoCommit(true);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class Brief extends PersistentObject {
 		return true;
 	}
 	public boolean delete(){
-		j.exec("UPDATE HEAP SET deleted='1' WHERE ID="+getWrappedId());
+		getConnection().exec("UPDATE HEAP SET deleted='1' WHERE ID="+getWrappedId());
 		String konsID=get("BehandlungsID");
 		if(!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))){
 			Konsultation kons=Konsultation.load(konsID);
@@ -168,17 +168,17 @@ public class Brief extends PersistentObject {
 
 	/** Einen Brief unwiederruflich löschen */
 	public boolean remove(){
-		j.setAutoCommit(false);
+		getConnection().setAutoCommit(false);
 		try{
-			j.exec("DELETE FROM HEAP WHERE ID="+getWrappedId());
-			j.exec("DELETE FROM BRIEFE WHERE ID="+getWrappedId());
-			j.commit();
+			getConnection().exec("DELETE FROM HEAP WHERE ID="+getWrappedId());
+			getConnection().exec("DELETE FROM BRIEFE WHERE ID="+getWrappedId());
+			getConnection().commit();
 		}catch(Throwable ex){
 			ExHandler.handle(ex);
-			j.rollback();
+			getConnection().rollback();
 			return false;
 		}finally{
-			j.setAutoCommit(true);
+			getConnection().setAutoCommit(true);
 		}
 		return true;
 	}

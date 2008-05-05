@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3856 2008-05-02 11:58:31Z rgw_ch $
+ *    $Id: PersistentObject.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -96,7 +96,7 @@ public abstract class PersistentObject{
 	// maximum character length of int fields in tables
 	private static int MAX_INT_LENGTH = 10;
 	
-	protected static JdbcLink j=null;
+	private static JdbcLink j=null;
 	protected static Log log=Log.get("PersistentObject");
 	//private static final HuffmanTree tree;
     private String id;
@@ -135,7 +135,8 @@ public abstract class PersistentObject{
 	public static enum FieldType{
 		TEXT,LIST,JOINT
 	};
-	  /**
+	
+	/**
 	   * Connect to a database. 
 	   * In the first place, the method checks if there is a demoDB in the Elexis base directory. If
 	   * found, only this database will be used. If not, connection parameters are taken from the provided
@@ -162,8 +163,8 @@ public abstract class PersistentObject{
     	}
     	if(demo.exists() && demo.isDirectory()){
     		j=JdbcLink.createInProcHsqlDBLink(demo.getAbsolutePath()+"/db");
-    		if(j.connect("sa", "")){
-    			return connect(j);
+    		if(getConnection().connect("sa", "")){
+    			return connect(getConnection());
     		}else{
     			MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Fehler mit Demo-Datenbank", "Es wurde zar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
     			return false;
@@ -188,19 +189,19 @@ public abstract class PersistentObject{
             j=JdbcLink.createInProcHsqlDBLink(d);
             user="sa";
             pwd="";
-            typ=j.DBFlavor;
+            typ=getConnection().DBFlavor;
         }else {
             j=new JdbcLink(driver,connectstring,typ);
         }
-		if(j.connect(user,pwd)==true){
-            log.log("Verbunden mit "+j.dbDriver()+", "+connectstring,Log.SYNCMARK);
-            return connect(j);
+		if(getConnection().connect(user,pwd)==true){
+            log.log("Verbunden mit "+getConnection().dbDriver()+", "+connectstring,Log.SYNCMARK);
+            return connect(getConnection());
         }
         return false;
 	}
     public static boolean connect(final JdbcLink jd){
     	j=jd;
-    	  Hub.globalCfg=new SqlSettings(j,"CONFIG");
+    	  Hub.globalCfg=new SqlSettings(getConnection(),"CONFIG");
           // Zugriffskontrolle initialisieren
           Hub.acl.load();
           String created=Hub.globalCfg.get("dbversion",null);
@@ -217,7 +218,7 @@ public abstract class PersistentObject{
               try{
             	  Resource rsc=new Resource("ch.elexis.data");
                   is=rsc.getInputStream("createDB.script");
-                  stm=j.getStatement();
+                  stm=getConnection().getStatement();
                   if(stm.execScript(is,true, true)==true){
                 	  Log.setAlertLevel(Log.FATALS);
                   	Hub.globalCfg.undo();
@@ -232,7 +233,7 @@ public abstract class PersistentObject{
                       MessageDialog.openInformation(null,"Programmende","Es wurde eine neue Datenbank angelegt. Das Programm muss beendet werden. Bitte starten Sie danach neu.");
                       System.exit(1);
                   }else{
-                      log.log("Kein create script für Datenbanktyp "+j.DBFlavor+" gefunden.",Log.ERRORS);
+                      log.log("Kein create script für Datenbanktyp "+getConnection().DBFlavor+" gefunden.",Log.ERRORS);
                       return false;
                   }
               }catch(Throwable ex){
@@ -240,7 +241,7 @@ public abstract class PersistentObject{
                   return false;
               }
               finally{
-              	j.releaseStatement(stm);
+              	getConnection().releaseStatement(stm);
               	try{
               		is.close();
               	}catch(Exception ex){
@@ -337,7 +338,7 @@ public abstract class PersistentObject{
      * @return null, wenn die Sperre belegt war, sonst eine id für unlock
      */
     public static synchronized String lock(final String name, final boolean wait){
-    	Stm stm=j.getStatement();
+    	Stm stm=getConnection().getStatement();
     	String lockname="lock"+name;
     	String lockid=StringTool.unique("lock");
     	while(true){
@@ -373,7 +374,7 @@ public abstract class PersistentObject{
 	    		break;
 	    	}
     	}
-    	j.releaseStatement(stm);
+    	getConnection().releaseStatement(stm);
     	return lockid;
     }
     /** 
@@ -384,13 +385,13 @@ public abstract class PersistentObject{
      */
     public static synchronized boolean unlock(final String name, final String id){
     	String lockname="lock"+name;
-    	String lock=j.queryString("SELECT wert from CONFIG WHERE param="+JdbcLink.wrap(lockname));
+    	String lock=getConnection().queryString("SELECT wert from CONFIG WHERE param="+JdbcLink.wrap(lockname));
     	if(StringTool.isNothing(lock)){
     		return false;
     	}
     	String[] res=lock.split("#");
     	if(res[0].equals(id)){
-    		j.exec("DELETE FROM CONFIG WHERE param="+JdbcLink.wrap(lockname));
+    		getConnection().exec("DELETE FROM CONFIG WHERE param="+JdbcLink.wrap(lockname));
     		return true;
     	}
     	return false;
@@ -478,7 +479,7 @@ public abstract class PersistentObject{
 		if(StringTool.isNothing(getId())){
 			return INVALID_ID;
 		}
-		String ch=j.queryString("SELECT ID FROM "+getTableName()+" WHERE "+"ID="+getWrappedId());
+		String ch=getConnection().queryString("SELECT ID FROM "+getTableName()+" WHERE "+"ID="+getWrappedId());
         if(ch==null){
         	return INEXISTENT;
         }
@@ -615,7 +616,7 @@ public abstract class PersistentObject{
     	}
     	ret=new ArrayList<Etikette>();
     	StringBuilder sb=new StringBuilder();
-    	Stm stm=j.getStatement();
+    	Stm stm=getConnection().getStatement();
 		
     	sb.append("SELECT etikette FROM ")
     		.append(Etikette.LINKTABLE).append(" WHERE ")
@@ -635,7 +636,7 @@ public abstract class PersistentObject{
     		return null;
     	}
     	finally{
-    		j.releaseStatement(stm);
+    		getConnection().releaseStatement(stm);
     	}
     	Collections.sort(ret);
     	cache.put(ID, ret, getCacheTime());
@@ -652,7 +653,7 @@ public abstract class PersistentObject{
     	sb.append("DELETE FROM ").append(Etikette.LINKTABLE)
     		.append(" WHERE obj=").append(getWrappedId())
     		.append(" AND etikette=").append(et.getWrappedId());
-    	j.exec(sb.toString());
+    	getConnection().exec(sb.toString());
     }
     
     public void addEtikette(Etikette et){
@@ -667,7 +668,7 @@ public abstract class PersistentObject{
     		.append("(obj,etikette) VALUES (")
     		.append(getWrappedId()).append(",")
     		.append(et.getWrappedId()).append(");");
-    	j.exec(sb.toString());
+    	getConnection().exec(sb.toString());
     }
     /**
      * Feststellen, ob ein PersistentObject als gelöscht markiert wurde 
@@ -809,7 +810,7 @@ public abstract class PersistentObject{
 		}
 		sql.append("SELECT ").append(mapped).append(" FROM ")
 		    	.append(table).append(" WHERE ID='").append(id).append("'");
-		Stm stm=j.getStatement();
+		Stm stm=getConnection().getStatement();
         ResultSet rs=stm.query(sql.toString());
         String res=null;
         try{
@@ -828,7 +829,7 @@ public abstract class PersistentObject{
             ExHandler.handle(ex);
         }
         finally{
-            j.releaseStatement(stm);
+            getConnection().releaseStatement(stm);
         }
         return res;
 	}
@@ -841,7 +842,7 @@ public abstract class PersistentObject{
         sql.append("SELECT ").append(mapped).append(" FROM ")
             .append(table).append(" WHERE ID='").append(id).append("'");
        
-       Stm stm=j.getStatement();
+       Stm stm=getConnection().getStatement();
        ResultSet res=stm.query(sql.toString());
        try{
            if((res != null) && (res.next()==true)){
@@ -850,7 +851,7 @@ public abstract class PersistentObject{
        }catch(Exception ex){
            ExHandler.handle(ex);
        }finally{
-           j.releaseStatement(stm);
+           getConnection().releaseStatement(stm);
        }
        return null;
     }
@@ -928,9 +929,9 @@ public abstract class PersistentObject{
 							sql.append(" DESC");
 						}
 					}
-					Stm stm=j.getStatement();
+					Stm stm=getConnection().getStatement();
 					List<String> ret=stm.queryList(sql.toString(),new String[]{"ID"});
-					j.releaseStatement(stm);
+					getConnection().releaseStatement(stm);
 					return ret;
 				}
 		 }else{
@@ -962,9 +963,9 @@ public abstract class PersistentObject{
 				.append(abfr[3]).append(" WHERE ").append(abfr[2])
 				.append("=").append(getWrappedId());
 			
-			Stm stm=j.getStatement();
+			Stm stm=getConnection().getStatement();
 			ResultSet rs=stm.query(sql.toString());
-			j.releaseStatement(stm);
+			getConnection().releaseStatement(stm);
 			LinkedList<String[]> list=new LinkedList<String[]>();
 			try{
 				while(rs.next()==true){
@@ -1027,7 +1028,7 @@ public abstract class PersistentObject{
         }
         sql.append("=? WHERE ID=").append(getWrappedId());
         String cmd=sql.toString();
-        PreparedStatement pst=j.prepareStatement(cmd);
+        PreparedStatement pst=getConnection().prepareStatement(cmd);
         
         encode(1,pst,field,value);
         if(tracetable!=null){
@@ -1105,7 +1106,7 @@ public abstract class PersistentObject{
         if(tracetable!=null){
         	doTrace(cmd);
         }
-        PreparedStatement stm=j.prepareStatement(cmd);
+        PreparedStatement stm=getConnection().prepareStatement(cmd);
         try{
             stm.setBytes(1,value);
             stm.executeUpdate();
@@ -1144,7 +1145,7 @@ public abstract class PersistentObject{
         tracer.append(pcname).append(",");
         tracer.append(username).append(",");
         tracer.append(JdbcLink.wrap(sql.replace('\'','/'))).append(")");
-	    j.exec(tracer.toString());
+	    getConnection().exec(tracer.toString());
     }
     /**
 	 * Eine Element einer n:m Verknüpfung eintragen. Zur Tabellendefinition wird das mapping 
@@ -1181,9 +1182,9 @@ public abstract class PersistentObject{
                 if(tracetable!=null){
                     String sql=head.toString();
                     doTrace(sql);
-                    return j.exec(sql);
+                    return getConnection().exec(sql);
                 }
-				return j.exec(head.toString());
+				return getConnection().exec(head.toString());
 			}
 		}
 		log.log("Fehlerhaftes Mapping: "+mapped,Log.ERRORS);
@@ -1204,7 +1205,7 @@ public abstract class PersistentObject{
                     String sq=sql.toString();
                     doTrace(sq);
                 }
-				j.exec(sql.toString());
+				getConnection().exec(sql.toString());
 				return;
 			}
 		}
@@ -1263,7 +1264,7 @@ public abstract class PersistentObject{
 		StringBuffer sql=new StringBuffer(300);
 		sql.append("INSERT INTO ").append(getTableName())
 		.append("(ID) VALUES (").append(getWrappedId()).append(")");
-		if (j.exec(sql.toString())!=0){
+		if (getConnection().exec(sql.toString())!=0){
             setConstraint();
             return true;
 		}
@@ -1303,7 +1304,7 @@ public abstract class PersistentObject{
 			return false;
 		}
 		String[] m=mapped.split(":");// m[1] FremdID, m[2] eigene ID, m[3] Name Joint
-		j.exec("DELETE FROM "+m[3]+" WHERE "+m[2]+"="+getWrappedId());
+		getConnection().exec("DELETE FROM "+m[3]+" WHERE "+m[2]+"="+getWrappedId());
 		return true;
 	}
 	/**
@@ -1361,7 +1362,7 @@ public abstract class PersistentObject{
 		sql.delete(sql.length()-1,100000);
 		sql.append(" WHERE ID=").append(getWrappedId());
         String cmd=sql.toString();
-        PreparedStatement pst=j.prepareStatement(cmd);
+        PreparedStatement pst=getConnection().prepareStatement(cmd);
         for(int i=0;i<fields.length;i++){
         	encode(i+1,pst,fields[i],values[i]);
         }
@@ -1425,7 +1426,7 @@ public abstract class PersistentObject{
 		sql.delete(sql.length()-1,1000);
 		sql.append(" FROM ").append(getTableName()).append(" WHERE ID=")
 		.append(getWrappedId());
-		Stm stm=j.getStatement();
+		Stm stm=getConnection().getStatement();
 		ResultSet res=stm.query(sql.toString());
 		try{
 			if((res!=null) && res.next()){
@@ -1446,7 +1447,7 @@ public abstract class PersistentObject{
 			ExHandler.handle(ex);
 			return false;
 		}finally{
-			j.releaseStatement(stm);
+			getConnection().releaseStatement(stm);
 		}
 		
 	}
@@ -1620,11 +1621,11 @@ public abstract class PersistentObject{
      *
      */
 	public static void disconnect() {
-		if(j!=null){
-            if(j.DBFlavor.startsWith("hsqldb")){
-                j.exec("SHUTDOWN COMPACT");
+		if(getConnection()!=null){
+            if(getConnection().DBFlavor.startsWith("hsqldb")){
+                getConnection().exec("SHUTDOWN COMPACT");
             }
-            j.disconnect();
+            getConnection().disconnect();
     		j=null;
     		log.log("Verbindung zur Datenbank getrennt.",Log.INFOS);
     		cache.stat();
@@ -1728,7 +1729,7 @@ public abstract class PersistentObject{
 		ByteArrayInputStream bais;
 		try {
 			bais = new ByteArrayInputStream(jointDB.getBytes("UTF-8"));
-			if(j.execScript(bais,true,false)==false){
+			if(getConnection().execScript(bais,true,false)==false){
 				SWTHelper.showError("Datenbank-Fehler","Konnte Tabelle "+name+" nicht erstellen");
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -1749,6 +1750,6 @@ public abstract class PersistentObject{
 		for(Object o:qbe.execute()){
 			((PersistentObject)o).delete();
 		}
-		j.exec("DROP TABLE "+name);
+		getConnection().exec("DROP TABLE "+name);
 	}
 }

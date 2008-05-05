@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Zahlung.java 1672 2007-01-26 21:19:37Z rgw_ch $
+ * $Id: Zahlung.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -35,7 +35,7 @@ public class Zahlung extends PersistentObject {
 		StringBuilder sb=new StringBuilder();
 		sb.append("DELETE FROM KONTO WHERE ID=")
 			.append(getWrappedId());
-		j.exec(sb.toString());
+		getConnection().exec(sb.toString());
 		Rechnung rn=getRechnung();
 		if(rn!=null){
 			rn.addTrace(Rechnung.CORRECTION, "Zahlung gelöscht");

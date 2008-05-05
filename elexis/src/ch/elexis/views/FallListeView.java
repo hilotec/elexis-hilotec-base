@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallListeView.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ *  $Id: FallListeView.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -64,7 +64,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
     private Patient actPatient;
     private Fall actFall;
     private Konsultation actBehandlung;
-    private Filter behandlungsFilter;
+    //private Filter behandlungsFilter;
     private Image iClosed;
 	
     
@@ -188,6 +188,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 	            {
 	            	if(actFall!=null){
 	            		Konsultation[] alle=actFall.getBehandlungen(true);
+	            		/*
 	            		if(behandlungsFilter!=null){
 	            			ArrayList<Konsultation> al=new ArrayList<Konsultation>(alle.length);
 	            			for(int i=0;i<alle.length;i++){
@@ -197,6 +198,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 	            			}
 	            			return al.toArray();
 	            		}
+	            		*/
 	            		return actFall.getBehandlungen(true);
 	            	}
 	            	return new Object[0];
@@ -214,7 +216,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 		tk.adapt(sash,false,false);
     	GlobalEvents.getInstance().addActivationListener(this,this);
 	    sash.setWeights(new int[]{50,50});
-	    behandlungsFilter=null;
+	    //behandlungsFilter=null;
 	    createMenuAndToolbar();
 		createContextMenu();
         ((DefaultContentProvider)fallCf.getContentProvider()).startListening();

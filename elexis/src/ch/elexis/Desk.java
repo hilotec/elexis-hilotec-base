@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *    $Id: Desk.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -37,11 +37,12 @@ import ch.rgw.tools.StringTool;
  * Enthält ausserdem Registries für einige Ressourcen
  */
 public class Desk implements IPlatformRunnable {
-    public static Display theDisplay;
-    public static FormToolkit theToolkit;
-    public static FontRegistry theFontRegistry;
-    public static ImageRegistry theImageRegistry;
-    public static ColorRegistry theColorRegistry;
+    public static Display theDisplay=null;
+    public static FormToolkit theToolkit=null;
+    public static FontRegistry theFontRegistry=null;
+    public static ImageRegistry theImageRegistry=null;
+    public static ColorRegistry theColorRegistry=null;
+    
     public static final String COL_RED="rot";
     public static final String COL_GREEN="gruen";
     public static final String COL_BLUE="blau";
@@ -118,9 +119,9 @@ public class Desk implements IPlatformRunnable {
 		if(theColorRegistry==null){
 			theColorRegistry=new ColorRegistry(theDisplay,true);
 		}
-		synchronized(theImageRegistry){
-			if(theImageRegistry==null){
-				theImageRegistry=new ImageRegistry(theDisplay);
+		if(theImageRegistry==null){
+			theImageRegistry=new ImageRegistry(theDisplay);
+			synchronized(theImageRegistry){
 				theImageRegistry.put(IMG_HOME,Hub.getImageDescriptor("rsc/home.ico")); //$NON-NLS-1$
 				theImageRegistry.put(IMG_ADRESSETIKETTE,Hub.getImageDescriptor("rsc/adretikette.ico")); //$NON-NLS-1$
 				theImageRegistry.put(IMG_PATIENTETIKETTE,Hub.getImageDescriptor("rsc/patetikette.ico")); //$NON-NLS-1$

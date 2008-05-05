@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 3609 2008-02-04 16:20:39Z rgw_ch $
+ *    $Id: Kontakt.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 
@@ -208,7 +208,7 @@ public class Kontakt extends PersistentObject{
 	 */
 	public void removeBezugsKontakt(Kontakt adr){
         if(adr!=null){
-            j.exec("DELETE FROM KONTAKT_ADRESS_JOINT WHERE otherID="+adr.getWrappedId());
+            getConnection().exec("DELETE FROM KONTAKT_ADRESS_JOINT WHERE otherID="+adr.getWrappedId());
         }
 	}
 	

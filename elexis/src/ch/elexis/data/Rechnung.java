@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: Rechnung.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -248,7 +248,7 @@ public class Rechnung extends PersistentObject {
 		Money betrag=getBetrag();
 		new Zahlung(this,betrag,"Storno");
 		if(reopen==true){
-			j.exec("UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID="+getWrappedId());
+			getConnection().exec("UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID="+getWrappedId());
 		}
 		setStatus(RnStatus.STORNIERT);
 	}
@@ -526,6 +526,7 @@ public class Rechnung extends PersistentObject {
 	}
 	/** Die nächste Rechnungsnummer holen. */
 	public static String getNextRnNummer(){
+		JdbcLink j=getConnection();
 		Stm stm=j.getStatement();
 		String nr=null;
 		while(true){

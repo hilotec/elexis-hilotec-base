@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, D. Lutz and Elexis
+ * Copyright (c) 2005-2008, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id$
+ *  $Id: LabGroup.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,6 +19,7 @@ import java.util.List;
 
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
@@ -29,9 +30,10 @@ import ch.rgw.tools.JdbcLink.Stm;
  * @author Daniel Lutz <danlutz@watz.ch>
  *
  */
-public class LabGroup extends PersistentObject implements Comparable{
+public class LabGroup extends PersistentObject implements Comparable<LabGroup>{
 	private static final String TABLENAME = "LABGROUPS";
 	private static final String GROUP_ITEM_TABLENAME = "LABGROUP_ITEM_JOINT";
+	private JdbcLink j=getConnection();
 	
 	@Override
 	protected String getTableName() {
@@ -92,11 +94,7 @@ public class LabGroup extends PersistentObject implements Comparable{
 	/**
 	 * Compare the names of two groups
 	 */
-	public int compareTo(Object arg0) {
-		if (!(arg0 instanceof LabGroup)) {
-			return -1;
-		}
-		
+	public int compareTo(LabGroup arg0) {
 		LabGroup other = (LabGroup) arg0;
 		return getName().compareTo(other.getName());
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: Konsultation.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -51,6 +51,8 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class Konsultation extends PersistentObject implements Comparable<Konsultation>{
 	volatile int actEntry;
+	private JdbcLink j=getConnection();
+	
 	protected String getTableName() {
 		return "BEHANDLUNGEN";
 	}

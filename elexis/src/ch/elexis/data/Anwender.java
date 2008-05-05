@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *  $Id: Anwender.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -244,7 +244,7 @@ public class Anwender extends Person {
 				}
 			}
 
-			Hub.userCfg=new SqlSettings(j,"USERCONFIG","Param","Value","UserID="+a.getWrappedId());
+			Hub.userCfg=new SqlSettings(getConnection(),"USERCONFIG","Param","Value","UserID="+a.getWrappedId());
 
 			Hub.mainActions.adaptForUser();
 		

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3854 2008-04-30 18:31:23Z rgw_ch $
+ *    $Id: Etikette.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -139,13 +139,13 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	@Override
 	public boolean delete() {
 		StringBuilder sb=new StringBuilder();
-    	Stm stm=j.getStatement();
+    	Stm stm=getConnection().getStatement();
 		
     	sb.append("DELETE FROM ")
     		.append(Etikette.LINKTABLE).append(" WHERE ")
     		.append("etikette = '").append(getId()).append("'");
     	stm.exec(sb.toString());
-    	j.releaseStatement(stm);
+    	getConnection().releaseStatement(stm);
 		return super.delete();
 	}
 	public static Etikette load(String id){

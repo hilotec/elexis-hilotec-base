@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Reminder.java 3093 2007-09-04 09:35:55Z rgw_ch $
+ *  $Id: Reminder.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -264,7 +264,7 @@ public class Reminder extends PersistentObject implements Comparable{
 	
 	@Override
 	public boolean delete() {
-		j.exec("DELETE FROM REMINDERS_RESPONSIBLE_LINK WHERE ReminderID="+getWrappedId());
+		getConnection().exec("DELETE FROM REMINDERS_RESPONSIBLE_LINK WHERE ReminderID="+getWrappedId());
 		return super.delete();
 	}
 	

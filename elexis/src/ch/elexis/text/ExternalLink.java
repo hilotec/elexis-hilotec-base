@@ -12,9 +12,9 @@ import ch.rgw.tools.ExHandler;
 
 public class ExternalLink implements IKonsExtension {
 	public static final String ID="ch.elexis.text.ExternalLink";
-	EnhancedTextField mine;
+	//EnhancedTextField mine;
 	public String connect(EnhancedTextField tf) {
-		mine=tf;
+		//mine=tf;
 		return ID;
 	}
 

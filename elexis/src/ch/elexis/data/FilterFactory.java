@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FilterFactory.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: FilterFactory.java 3866 2008-05-05 16:58:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,7 +35,7 @@ public class FilterFactory {
 	public enum OPERATORS{IST,ENTHAELT,BEGINNT,ENDET,ISTNICHT,ENTHAELTNICHT,REGEXP};
 	public enum LINK{AND,OR};
 	public static final String[] OperatorNames={"ist","enthält","beginnt mit","endet mit","ist nicht","enthält nicht","Regexp"};
-	public static final String[] LinkNames={"UND","ODER"};
+	static final String[] LinkNames={"UND","ODER"};
 	
 	public static Filter createFilter(Class<? extends PersistentObject> clazz, String...strings){
 		return new Filter(clazz,strings);
