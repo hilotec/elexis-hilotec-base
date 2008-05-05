@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3730 2008-03-19 21:41:03Z rgw_ch $
+ *  $Id: BAGMedi.java 3868 2008-05-05 16:58:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -73,7 +73,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 				"KompendiumText=EXT:"+EXTTABLE+":KompendiumText");
 		
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_PHARMACODE	, "Pharmacode", Xid.ASSIGNMENT_REGIONAL);
-		String v=j.queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
+		String v=getConnection().queryString("SELECT substance FROM "+JOINTTABLE+" WHERE ID='VERSION';");
 		
 		if(v==null){
 			createTable("BAGMedi",jointDB);
@@ -84,7 +84,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 				if(vi.isOlder("0.1.1")){
 					createTable("Exttable", extDB);
 				}
-				j.exec("UPDATE "+JOINTTABLE+" SET substance='"+VERSION+"' WHERE ID='VERSION';");
+				getConnection().exec("UPDATE "+JOINTTABLE+" SET substance='"+VERSION+"' WHERE ID='VERSION';");
 			}
 		}
 		// make sure, the substances table is created
@@ -243,7 +243,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 	@Override
 	public boolean delete() {
 		String sql="UPDATE "+EXTTABLE+" SET deleted='1' WHERE ID="+getWrappedId();
-		j.exec(sql);
+		getConnection().exec(sql);
 		return super.delete();
 	}
 
