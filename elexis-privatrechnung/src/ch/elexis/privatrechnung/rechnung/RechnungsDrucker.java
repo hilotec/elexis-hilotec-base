@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3336 2007-11-12 19:07:28Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3861 2008-05-05 16:13:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -133,7 +133,7 @@ public class RechnungsDrucker implements IRnOutputter {
 				 						(status_vorher==RnStatus.MAHNUNG_3)){
 				 					rn.setStatus(status_vorher+1);
 				 				}
-				 				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+RnStatus.Text[rn.getStatus()]);
+				 				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+RnStatus.getStatusText(rn.getStatus()));
 			        		}catch(Exception ex){
 			        			SWTHelper.showError("Fehler beim Drucken der Rechnung "+rn.getRnId(), ex.getMessage());
 			        			errors++;
