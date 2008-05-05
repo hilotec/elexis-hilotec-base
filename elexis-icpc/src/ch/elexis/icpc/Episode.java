@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 3310 2007-11-05 17:58:43Z rgw_ch $
+ *  $Id: Episode.java 3875 2008-05-05 16:59:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -64,6 +64,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
     
 	static{
 		addMapping(TABLENAME, "PatientID","Title", "StartDate", "Number", "Status","ExtInfo","DiagLink=JOINT:Diagnosis:Episode:"+LINKNAME);
+		JdbcLink j=getConnection();
 		Episode version=load("1");
 		if(!version.exists()){
 			createTable(TABLENAME, createDB);
@@ -72,7 +73,7 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 			VersionInfo vi=new VersionInfo(version.get("Title"));
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("0.2.0")){
-					PersistentObject.j.exec(j.translateFlavor("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';"));
+					j.exec(j.translateFlavor("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';"));
 					version.set("Title", VERSION);
 				}
 

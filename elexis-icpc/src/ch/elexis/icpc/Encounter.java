@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Encounter.java 2744 2007-07-07 15:49:06Z rgw_ch $
+ *  $Id: Encounter.java 3875 2008-05-05 16:59:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
-import java.io.ByteArrayInputStream;
-
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
@@ -42,17 +39,12 @@ public class Encounter extends PersistentObject {
 		addMapping(TABLENAME,"KonsID=KONS","EpisodeID=EPISODE","RFE","Diag","Proc","ExtInfo");
 		Encounter version=load("1");
 		if(!version.exists()){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+			createTable(TABLENAME, createDB);
 		}else{
 			VersionInfo vi=new VersionInfo(version.get("KonsID"));
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("0.2.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					version.set("KonsID", VERSION);
 				}
 			}

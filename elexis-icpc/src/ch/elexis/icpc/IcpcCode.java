@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 2739 2007-07-07 14:07:55Z rgw_ch $
+ *    $Id: IcpcCode.java 3875 2008-05-05 16:59:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -51,14 +51,8 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		addMapping(TABLENAME,"component","text=txt","short","icd10","criteria","inclusion",
 				"exclusion","consider","note");
 	}
-	public static boolean initialize(){
-		try{
-			ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-			return j.execScript(bais,true, false);
-		}catch(Exception ex){
-			ExHandler.handle(ex);
-			return false;
-		}
+	public static void initialize(){
+		createTable(TABLENAME, createDB);
 	}
 	public static Tree getRoot(){
 		if(root==null){
@@ -139,15 +133,12 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	public static void reload(){
 		IcpcCode ic=IcpcCode.load("ver");
 		if(!ic.exists()){
-			if(!IcpcCode.initialize()){
-				MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Fehler bei ICPC-Code", "Konnte die Datenbank nicht erstellen");
-				return;
-			}
+			initialize();
 		}else{
 			VersionInfo vi=new VersionInfo(ic.getText());
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("1.1.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					ic.set("text", VERSION);
 				}
 			}
