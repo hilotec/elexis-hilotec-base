@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Message.java 3095 2007-09-04 11:21:59Z rgw_ch $
+ * $Id: Message.java 3876 2008-05-05 16:59:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -41,22 +41,14 @@ public class Message extends PersistentObject {
 
 		Message ver=load("VERSION");
 		if(ver.state()<PersistentObject.DELETED){
-			createTable();
+			initialize();
 		}
 	}
 	
-	static void createTable(){
-		ByteArrayInputStream bais;
-		try {
-			bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-			if(j.execScript(bais,true,false)==false){
-				MessageDialog.openError(null,"Datenbank-Fehler","Konnte Tabelle nicht erstellen");
-			}
-		} catch (UnsupportedEncodingException e) {
-			// should really never happen
-			e.printStackTrace();
-		}
+	static void initialize(){
+		createTable(TABLENAME,createDB);
 	}
+	
 	public Message(final Anwender an, final String text){
 		create(null);
 		TimeTool tt=new TimeTool();
