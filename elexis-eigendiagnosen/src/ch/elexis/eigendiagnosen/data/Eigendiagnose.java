@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 2920 2007-07-25 19:15:19Z rgw_ch $
+ *    $Id: Eigendiagnose.java 3863 2008-05-05 16:58:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
@@ -47,7 +43,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose{
 		addMapping(TABLENAME, "parent", "Text=title","Kuerzel=code","Kommentar=comment","ExtInfo");
 		Eigendiagnose check=load("VERSION");
 		if(check.state()<PersistentObject.DELETED){		// Object never existed, so we have to create the database
-			createTable();
+			initialize();
 		}else{	// found existing table, check version
 			VersionInfo v=new VersionInfo(check.get("Text"));
 			if(v.isOlder(VERSION)){
@@ -62,17 +58,8 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose{
 		set(new String[]{"parent","Kuerzel","Text","Kommentar"},
 			new String[]{parent==null ? "NIL" : parent,code,text,comment});
 	}
-	static void createTable(){
-		ByteArrayInputStream bais;
-		try {
-			bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-			if(j.execScript(bais,true,false)==false){
-				MessageDialog.openError(null,"Datenbank-Fehler","Konnte Tabelle nicht erstellen");
-			}
-		} catch (UnsupportedEncodingException e) {
-			// should really never happen
-			e.printStackTrace();
-		}
+	public static void initialize(){
+		createTable(TABLENAME,createDB);
 	}
 	@Override
 	public String getLabel() {
