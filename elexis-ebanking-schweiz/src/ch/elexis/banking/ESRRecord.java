@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 3749 2008-03-27 13:47:01Z danlutz $
+ *  $Id: ESRRecord.java 3865 2008-05-05 16:58:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
-
-import java.io.ByteArrayInputStream;
 
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -20,7 +18,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.util.Money;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -76,16 +73,11 @@ public class ESRRecord extends PersistentObject{
 		);
 		ESRRecord init=load("1");
 		if(init==null){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+			createTable(TABLENAME, createDB);
 		}else{
 			String v=init.get("File");
 			if(StringTool.isNothing(v)){ // < version 1
-				PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+				getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 				init.set("File", VERSION);
 			}
 		}
