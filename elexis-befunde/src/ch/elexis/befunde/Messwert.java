@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 3677 2008-02-15 16:44:36Z rgw_ch $
+ *    $Id: Messwert.java 3873 2008-05-05 16:59:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 
 /** 
  * Here we define our own data type for our "measurements"-Plugin. The Type is derived from
@@ -138,6 +139,7 @@ public class Messwert extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Messwert getSetup(){
+		JdbcLink j=getConnection();
 		Messwert setup=new Messwert("__SETUP__"); //$NON-NLS-1$
 		
 		
@@ -167,7 +169,7 @@ public class Messwert extends PersistentObject {
 					  }
 				}
 				if(Integer.parseInt(v)<2){ // version 1 auf 2
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 				}else{ // version 0 auf 1
 					StringBuilder titles=new StringBuilder();
 					Map.Entry[] entryset=(Map.Entry[])names.entrySet().toArray(new Map.Entry[0]);
