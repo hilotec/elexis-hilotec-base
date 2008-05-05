@@ -153,7 +153,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			this.code=code;
 		}
 		void setName(String name){
-			this.name=name==null ? name : name.toLowerCase();
+			this.name = name!=null ? name : name.toLowerCase();
 		}
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,

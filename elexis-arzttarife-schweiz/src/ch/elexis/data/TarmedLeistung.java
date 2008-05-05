@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 3420 2007-12-06 20:36:09Z rgw_ch $
+ * $Id: TarmedLeistung.java 3860 2008-05-05 16:13:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -40,8 +40,8 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class TarmedLeistung extends VerrechenbarAdapter{
     Hashtable<String,String> ext;
-    public static TarmedComparator tarmedComparator;
-    public static TarmedOptifier tarmedOptifier;
+    public static final TarmedComparator tarmedComparator;
+    public static final TarmedOptifier tarmedOptifier;
     public static final TimeTool INFINITE = new TimeTool("19991231");
     
     static{

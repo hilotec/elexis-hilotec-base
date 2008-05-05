@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3859 2008-05-03 10:37:16Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3860 2008-05-05 16:13:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -86,7 +86,7 @@ public class RechnungsDrucker implements IRnOutputter{
 				 						(status_vorher==RnStatus.MAHNUNG_3)){
 				 					rn.setStatus(status_vorher+1);
 				 				}
-				 				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+RnStatus.Text[rn.getStatus()]);
+				 				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+RnStatus.getStatusText(rn.getStatus()));
 			        		}catch(Exception ex){
 			        			String msg=ex.getMessage();
 			        			if(msg==null){

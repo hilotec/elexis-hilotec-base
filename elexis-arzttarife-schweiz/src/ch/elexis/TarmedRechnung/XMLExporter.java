@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3840 2008-04-23 17:20:55Z rgw_ch $
+ * $Id: XMLExporter.java 3860 2008-05-05 16:13:01Z rgw_ch $
  *******************************************************************************/
 
 
@@ -1055,7 +1055,7 @@ public class XMLExporter implements IRnOutputter {
 					(status_vorher==RnStatus.MAHNUNG_3)){
 				rn.setStatus(status_vorher+1);
 			}
-			rn.addTrace(Rechnung.OUTPUT, getDescription()+": "+RnStatus.Text[rn.getStatus()]);		
+			rn.addTrace(Rechnung.OUTPUT, getDescription()+": "+RnStatus.getStatusText(rn.getStatus()));		
 	}
 
 	public boolean canBill(final Fall fall) {
