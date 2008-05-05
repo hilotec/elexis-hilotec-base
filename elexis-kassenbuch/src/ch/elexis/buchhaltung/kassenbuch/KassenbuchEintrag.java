@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenbuchEintrag.java 3738 2008-03-22 07:51:31Z rgw_ch $
+ *  $Id: KassenbuchEintrag.java 3871 2008-05-05 16:59:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -53,17 +53,12 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 		addMapping(TABLENAME, "Betrag=Amount", "Text=Entry", "Datum=S:D:Date","Saldo=Total","BelegNr=Nr","Kategorie=Category");
 		KassenbuchEintrag version=KassenbuchEintrag.load("1");
 		if(!version.exists()){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+			createTable(TABLENAME, createDB);
 		}else{
 			VersionInfo vi=new VersionInfo(version.getText());
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("1.0.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 				}
 				if(vi.isOlder("1.1.0")){
 					createTable(TABLENAME, "ALTER TABLE "+TABLENAME+" ADD Category VARCHAR(80);");
