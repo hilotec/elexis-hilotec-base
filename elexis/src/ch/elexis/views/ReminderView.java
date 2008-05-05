@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 3753 2008-03-28 12:23:19Z rgw_ch $
+ * $Id: ReminderView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -60,9 +60,9 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	// Patient pat;
-	String dateDue;
-	Reminder.Status status;
-	Reminder.Typ typ;
+	//String dateDue;
+	//Reminder.Status status;
+	//Reminder.Typ typ;
 	Query<Reminder> qbe;
 	Settings cfg;
 	ReminderFilter filter;

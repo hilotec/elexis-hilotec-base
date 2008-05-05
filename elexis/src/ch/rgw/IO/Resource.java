@@ -1,4 +1,4 @@
-// $Id: Resource.java 1182 2006-10-29 14:48:00Z rgw_ch $
+// $Id: Resource.java 3862 2008-05-05 16:14:14Z rgw_ch $
 
 package ch.rgw.IO;
 import java.io.*;
@@ -21,7 +21,7 @@ public class Resource {
   Class clazz;
   String resbase;
   static Log log;
-  String basedir; 
+  //String basedir; 
 
   static{
     log=Log.get(Messages.getString("Resource.1")); //$NON-NLS-1$

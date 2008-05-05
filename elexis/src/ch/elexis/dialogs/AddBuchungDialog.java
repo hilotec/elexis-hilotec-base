@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AddBuchungDialog.java 1662 2007-01-25 14:25:24Z rgw_ch $
+ * $Id: AddBuchungDialog.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -36,7 +36,7 @@ import ch.elexis.util.SWTHelper;
 public class AddBuchungDialog extends TitleAreaDialog {
 
 	Text betrag,text;
-	int result;
+	//int result;
 	Patient pat;
 	
 	public AddBuchungDialog(Shell parentShell, Patient p) {

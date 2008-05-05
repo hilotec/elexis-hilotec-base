@@ -166,7 +166,7 @@ public class KonsZumVerrechnenView2 extends ViewPart {
 		}
 		
 	}
-	class TreeLabelProvider extends LabelProvider{
+	private static class TreeLabelProvider extends LabelProvider{
 
 		@Override
 		public Image getImage(Object element) {

@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id$
+ *  $Id: LabGroupPrefs.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -198,7 +198,7 @@ public class LabGroupPrefs extends PreferencePage implements
 		}
 	}
 	
-	class GroupsContentProvider implements IStructuredContentProvider {
+	static class GroupsContentProvider implements IStructuredContentProvider {
 	    public Object[] getElements(Object inputElement) {
 	    	Query<LabGroup> query = new Query<LabGroup>(LabGroup.class);
 	    	query.orderBy(false, new String[] {"Name"});
@@ -220,7 +220,7 @@ public class LabGroupPrefs extends PreferencePage implements
 	    }
 	}
 
-	class ItemsLabelProvider extends DefaultLabelProvider {
+	static class ItemsLabelProvider extends DefaultLabelProvider {
 		@Override
 		public String getText(Object element) {
 			if (element instanceof LabItem) {

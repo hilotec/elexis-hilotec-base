@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFTextPlugin.java 3243 2007-10-09 04:25:36Z rgw_ch $
+ *  $Id: ETFTextPlugin.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -167,7 +167,7 @@ public class ETFTextPlugin implements ITextPlugin {
 	}
 
 	public boolean setFont(String name, int style, float size) {
-		Font font=new Font(Desk.theDisplay,name,Math.round(size),style);
+		//Font font=new Font(Desk.theDisplay,name,Math.round(size),style);
 		return true;
 	}
 

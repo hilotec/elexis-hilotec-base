@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 3593 2008-01-29 10:16:30Z rgw_ch $
+ *  $Id: RezepteView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 
@@ -74,7 +74,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 	private final FormToolkit tk=Desk.theToolkit;
 	private Form master;
 	ListViewer lv;
-	Label ausgestellt;
+	//Label ausgestellt;
 	ListViewer lvRpLines;
 	private Action newRpAction,deleteRpAction;
 	private Action addLineAction, removeLineAction;

@@ -1,4 +1,4 @@
-// $Id: JdbcLink.java 3319 2007-11-06 18:44:10Z rgw_ch $
+// $Id: JdbcLink.java 3862 2008-05-05 16:14:14Z rgw_ch $
 
 package ch.rgw.tools;
 import java.io.BufferedWriter;
@@ -15,7 +15,7 @@ import ch.elexis.util.Log;
  */
 
 public class JdbcLink {
-  public static final String Version(){return "2.3.2";}
+  public static final String getVersion(){return "2.3.2";}
   public int lastErrorCode;
   public String lastErrorString;
   public int verMajor=0;
@@ -236,20 +236,22 @@ public class JdbcLink {
    * Statement MUSS mit releaseStatement wieder zurückgegeben werden.
    * @return ein Stm (JdbcLink-spezifische Statement-Variante) 
    */
-  public synchronized Stm getStatement(){
-	  if(statements.isEmpty()){
-		  try{
-			  return new Stm();
-		  }catch(Throwable ex){
-			  ExHandler.handle(ex);
-			  lastErrorCode=CONNECTION_CANT_CREATE_STATEMENT;
-			  lastErrorString=ex.getMessage();
-			  log.log(lastErrorString,Log.ERRORS);
-			  return null;
+  public Stm getStatement(){
+	  synchronized(statements){
+		  if(statements.isEmpty()){
+			  try{
+				  return new Stm();
+			  }catch(Throwable ex){
+				  ExHandler.handle(ex);
+				  lastErrorCode=CONNECTION_CANT_CREATE_STATEMENT;
+				  lastErrorString=ex.getMessage();
+				  log.log(lastErrorString,Log.ERRORS);
+				  return null;
+			  }
+	
+		  }else{
+			  return (Stm)statements.remove(0);
 		  }
-
-	  }else{
-		  return (Stm)statements.remove(0);
 	  }
   }
   
@@ -259,12 +261,14 @@ public class JdbcLink {
    * @param s
    */
   @SuppressWarnings("unchecked")
-public synchronized void releaseStatement(Stm s){
-	  if(s!=null){
-		  if(statements.size()<keepStatements){
-			  statements.add(s);
-		  }else{
-			  s.delete();
+public void releaseStatement(Stm s){
+	  synchronized(statements){
+		  if(s!=null){
+			  if(statements.size()<keepStatements){
+				  statements.add(s);
+			  }else{
+				  s.delete();
+			  }
 		  }
 	  }
   }

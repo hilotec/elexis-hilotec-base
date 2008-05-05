@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 3824 2008-04-21 07:52:20Z rgw_ch $
+ *  $Id: TextContainer.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -63,7 +63,7 @@ import ch.rgw.tools.TimeTool;
 
 public class TextContainer {
 	
-	private ITextPlugin plugin;
+	private ITextPlugin plugin=null;
 	private static Log log=Log.get("TextContainer");
 	private Shell shell;
 	public static final String TEMPLATE_REGEXP="\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]";

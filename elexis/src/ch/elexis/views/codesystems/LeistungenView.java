@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LeistungenView.java 3784 2008-04-18 15:15:56Z rgw_ch $
+ *  $Id: LeistungenView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -79,6 +79,7 @@ public class LeistungenView extends ViewPart implements ActivationListener, ISav
 		ICodeElement ics=(ICodeElement)Hub.poFactory.createTemplate(Leistungsblock.class);
 		if(ics==null){
 			SWTHelper.alert("Fehler", "ICodeElement=null");
+			throw new NullPointerException("ICodeElement; LeistungenView");
 		}
 		if(StringTool.isNothing(ics.getCodeSystemName())){
 			SWTHelper.alert("Fehler", "CodeSystemname=null");

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 3718 2008-03-13 14:38:16Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -279,7 +279,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 	public void setFocus() {
 		
 	}
-	class CtlSelectionListener extends SelectionAdapter{
+	private static class CtlSelectionListener extends SelectionAdapter{
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
 			//fireChangedEvent(); do nothing. Only refresh by click on the refresh button 

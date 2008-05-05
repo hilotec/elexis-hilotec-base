@@ -124,7 +124,7 @@ public class LaborLink implements IKonsExtension {
 		
 	}
 
-	class LaborVerordnungDialog extends TitleAreaDialog {
+	static class LaborVerordnungDialog extends TitleAreaDialog {
 		// height of laborViewer
 		private static final int LINES_TO_SHOW = 20;
 		
@@ -458,7 +458,7 @@ public class LaborLink implements IKonsExtension {
 			super.okPressed();
 		}
 		
-		class Group {
+		static class Group {
 			String name;
 			String shortName;
 			List<LabItem> items;

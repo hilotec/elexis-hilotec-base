@@ -1,4 +1,4 @@
-// $Id: TimeSpan.java 725 2006-08-13 17:00:24Z rgw_ch $
+// $Id: TimeSpan.java 3862 2008-05-05 16:14:14Z rgw_ch $
 
 package ch.rgw.tools;
 
@@ -63,7 +63,12 @@ public class TimeSpan implements Comparable
     	}
         return false;
     }
-    public int compareTo(Object other)
+    
+    @Override
+	public int hashCode() {
+    	return (until.getTimeInSeconds()-from.getTimeInSeconds());
+	}
+	public int compareTo(Object other)
     {	TimeSpan o=(TimeSpan)other;
     	if(equals(other)==true) return 0;
         if(from.isEqual(o.from))

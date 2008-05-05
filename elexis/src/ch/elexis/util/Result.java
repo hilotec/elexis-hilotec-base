@@ -69,8 +69,9 @@ public class Result<T>{
 					result=m;
 				}
 			}
+			return result.result;
 		}
-		return result.result;
+		return null;
 	}
 	
 	/**

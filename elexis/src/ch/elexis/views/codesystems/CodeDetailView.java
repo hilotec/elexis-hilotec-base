@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CodeDetailView.java 2079 2007-03-13 17:19:32Z rgw_ch $
+ * $Id: CodeDetailView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -43,7 +43,7 @@ import ch.elexis.views.IDetailDisplay;
 public class CodeDetailView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2{
 	public final static String ID="ch.elexis.codedetailview";
 	private CTabFolder ctab;
-	private IAction importAction,deleteAction;
+	private IAction importAction /*,deleteAction*/;
 	private ViewMenus viewmenus;
 	private Hashtable<String,ImporterPage> importers;
 	
@@ -76,7 +76,7 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 		});
 		makeActions();
 		viewmenus=new ViewMenus(getViewSite());
-		viewmenus.createMenu(importAction,deleteAction);
+		viewmenus.createMenu(importAction /*,deleteAction*/);
 		GlobalEvents.getInstance().addSelectionListener(this);
 		GlobalEvents.getInstance().addActivationListener(this,this);
 		

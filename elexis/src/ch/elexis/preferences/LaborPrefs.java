@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborPrefs.java 3846 2008-04-26 10:43:10Z rgw_ch $
+ *  $Id: LaborPrefs.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -249,7 +249,7 @@ public class LaborPrefs extends PreferencePage implements
 		}
 		return ret;
 	}
-	class LabListLabelProvider extends LabelProvider implements ITableLabelProvider{
+	static class LabListLabelProvider extends LabelProvider implements ITableLabelProvider{
 
 		public Image getColumnImage(Object element, int columnIndex) {
 			// TODO Automatisch erstellter Methoden-Stub

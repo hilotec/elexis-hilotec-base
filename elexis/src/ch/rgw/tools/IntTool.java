@@ -1,4 +1,4 @@
-// $Id: IntTool.java 23 2006-03-24 15:36:01Z rgw_ch $
+// $Id: IntTool.java 3862 2008-05-05 16:14:14Z rgw_ch $
 package ch.rgw.tools;
 
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class IntTool
    */
   public static long fromBytesLong(byte[] arr, int offset)
   { int low=fromBytesInt(arr,offset);
-    long ret=fromBytesInt(arr,offset+4)<<32;
+    long ret=((long)fromBytesInt(arr,offset+4))<<32;
     ret|=low;
     return ret;
   }
@@ -189,11 +189,13 @@ public class IntTool
   	}
 	return s;
   }
+  /*
   public static String toHexString(int x)
   {	int hi=x>>16;
   	int lo=x&0x0000ffff;
   	return toHexString(hi)+toHexString(lo);
   }
+  */
   public static String toHexString(byte x)
   {	int hi=x/16;
   	int lo=x-hi;

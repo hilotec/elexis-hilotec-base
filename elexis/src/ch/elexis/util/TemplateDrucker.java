@@ -30,7 +30,7 @@ import ch.rgw.tools.StringTool;
 public class TemplateDrucker {
     TemplatePrintView tpw;
     IWorkbenchPage page;
-    IProgressMonitor monitor;
+    //IProgressMonitor monitor;
     Patient patient;
     String template;
     String printer;

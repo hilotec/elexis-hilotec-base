@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PingerJob.java 23 2006-03-24 15:36:01Z rgw_ch $
+ * $Id: PingerJob.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -67,7 +67,7 @@ public class PingerJob extends Job {
 		return Status.OK_STATUS;
 	}
 	
-	class ListenerDef{
+	private static class ListenerDef{
 		private long freq;
 		private long nextPing;
 		Listener listen;

@@ -176,7 +176,7 @@ public class MedicalElement extends XChangeElement{
 	public MedicalElement(XChangeImporter parent, Element e, Patient p){
 		super(parent,e);
 		p.set("istPatient", "1");
-		Patient pat=Patient.load(p.getId());
+		//Patient pat=Patient.load(p.getId());
 				
 	}
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id$
+ *  $Id: BillSummary.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -241,7 +241,7 @@ ActivationListener, ISaveablePart2 {
                 	text = rechnung.getOffenerBetrag().toString();
                 	break;
                 case STATUS:
-                	text = RnStatus.Text[rechnung.getStatus()];
+                	text = RnStatus.getStatusText(rechnung.getStatus());
                 	break;
                 case GARANT:
                 	text = rechnung.getFall().getGarant().getLabel();
@@ -464,7 +464,7 @@ ActivationListener, ISaveablePart2 {
 				sbLine.append("\t");
 				sbLine.append(rechnung.getOffenerBetrag().toString());
 				sbLine.append("\t");
-				sbLine.append(RnStatus.Text[rechnung.getStatus()]);
+				sbLine.append(RnStatus.getStatusText(rechnung.getStatus()));
 				sbLine.append("\t");
 				sbLine.append(rechnung.getFall().getGarant().getLabel());
 				sbLine.append(lineSeparator);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3854 2008-04-30 18:31:23Z rgw_ch $
+ *  $Id: KonsDetailView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -88,7 +88,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	Combo cbFall;
 	private Konsultation actKons;
     FormToolkit tk;
-    Form form,bottm;
+    Form form /*,bottm*/;
     //private Hyperlink hDg,hVer;
     private DiagnosenDisplay dd;
     private VerrechnungsDisplay vd;

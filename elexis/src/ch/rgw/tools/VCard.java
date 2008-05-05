@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VCard.java 2157 2007-03-22 15:10:20Z rgw_ch $
+ *  $Id: VCard.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.rgw.tools;
 
@@ -37,7 +37,7 @@ public class VCard {
 			line=br.readLine();
 		}while(!line.equalsIgnoreCase("begin:vcard"));
 		line=br.readLine();
-		while(!line.equalsIgnoreCase("end:vcard")){
+		while((line!=null) && (!line.equalsIgnoreCase("end:vcard"))){
 			String[] split=line.split("[:;]",2);
 			if(split.length>1){
 				elements.put(split[0], split[1]);

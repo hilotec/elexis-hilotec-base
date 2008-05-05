@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: AccountListView.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ *  $Id: AccountListView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -275,15 +275,14 @@ ActivationListener, ISaveablePart2 {
     		List<Patient> patients = query.execute();
     		if (patients == null) {
     			result = new Object[0];
-    		}
+    		}else{
+    			for (Patient patient : patients) {
+    				AccountListEntry entry = new AccountListEntry(patient);
+    				entries.add(entry);
+    			}
     		
-    		for (Patient patient : patients) {
-    			AccountListEntry entry = new AccountListEntry(patient);
-    			entries.add(entry);
+    			result = entries.toArray();
     		}
-    		
-    		result = entries.toArray();
-			
 			return Status.OK_STATUS;
 		}
 		

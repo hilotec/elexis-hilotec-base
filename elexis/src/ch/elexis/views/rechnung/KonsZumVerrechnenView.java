@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3844 2008-04-25 20:48:42Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -102,14 +102,11 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
     public static final String ID="ch.elexis.BehandlungenVerrechnenView"; //$NON-NLS-1$
     CommonViewer cv;
     ViewerConfigurer vc;
-    TreeViewer tv;
     FormToolkit tk=Desk.theToolkit;
     Form left,right;
-    FormText expl;
     @SuppressWarnings("unchecked")	LazyTree tAll;
     @SuppressWarnings("unchecked")	Tree tSelection;
     TreeViewer tvSel;
-    Hyperlink hAction, hSelection;
     LazyTreeListener ltl;
     ViewMenus menu;
     private IAction billAction,printAction,clearAction,wizardAction,refreshAction, detailAction;

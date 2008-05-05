@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnStatus.java 3311 2007-11-05 17:58:56Z rgw_ch $
+ *  $Id: RnStatus.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 
@@ -41,7 +41,7 @@ public class RnStatus {
 	public static final int ZU_DRUCKEN=			23;
 	public static final int AUSSTEHEND=			24;
 	
-    public static final String[] Text={"Unbekannt","Verrechnet","Nicht verrechnen",
+    private static final String[] Text={"Unbekannt","Verrechnet","Nicht verrechnen",
         "laufend","Rn. offen","Offen und gedruckt","Zahlungserinnerung",
         "Zahlungserinnerung gedruckt","2. Mahnung","2. Mahnung gedruckt",
         "3. Mahnung","3. Mahnung gedruckt","In Betreibung","Teilverlust",
@@ -57,4 +57,13 @@ public class RnStatus {
     	"Kein Rechnungsempfänger", "Kein Garant", "Validierungsfehler",
     	"Vom Empfänger zurückgewiesen"};
 
+    public static String[] getStatusTexts(){
+    	return Text;
+    }
+    public static String getStatusText(int idx){
+    	if(idx>0 && idx<Text.length){
+    		return Text[idx];
+    	}
+    	return "??";
+    }
 }

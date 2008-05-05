@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 3800 2008-04-20 12:44:30Z rgw_ch $
+ * $Id: AccessControlDefaults.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -157,9 +157,17 @@ public class AccessControlDefaults {
     public static final String AC_SHOWPERSPECTIVE= ACTIONS +"/Perspektivenauswahl";
     public static final String AC_SHOWVIEW= ACTIONS +"/Viewauswahl";
     
-	public static final String[] Alle={AC_EXIT,AC_ABOUT,AC_HELP,AC_LOGIN,"LoadInfoStore"};
+	private static final String[] Alle={AC_EXIT,AC_ABOUT,AC_HELP,AC_LOGIN,"LoadInfoStore"};
 	
-    public static final String[] Anwender={DATA,ACTIONS,DOCUMENT,KONS,LEISTUNGEN};
+    private static final String[] Anwender={DATA,ACTIONS,DOCUMENT,KONS,LEISTUNGEN};
+
+	public static String[] getAlle() {
+		return Alle;
+	}
+
+	public static String[] getAnwender() {
+		return Anwender;
+	}
 	
     // Admin has all rights anyway
     /*

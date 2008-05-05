@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 2485 2007-06-06 11:11:57Z rgw_ch $
+ *    $Id: AccessControl.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -313,8 +313,8 @@ public class AccessControl {
     /** Alles auf Standard zurücksetzen und dbUID generieren */
 	public void reset(){
 	    rights.clear();
-        grant(ALL_GROUP,AccessControlDefaults.Alle); //$NON-NLS-1$
-        grant(USER_GROUP,AccessControlDefaults.Anwender); //$NON-NLS-1$
+        grant(ALL_GROUP,AccessControlDefaults.getAlle()); //$NON-NLS-1$
+        grant(USER_GROUP,AccessControlDefaults.getAnwender()); //$NON-NLS-1$
         //grant(ADMIN_GROUP,AccessControlDefaults.Admin); //$NON-NLS-1$
         rights.put("dbUID", StringTool.unique("db%id"));
         flush();

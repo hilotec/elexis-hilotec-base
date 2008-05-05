@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3781 2008-04-18 07:32:42Z rgw_ch $
+// $Id: StringTool.java 3862 2008-05-05 16:14:14Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -46,8 +46,8 @@ import ch.rgw.net.NetTool;
 public class StringTool
 {
   
-  public static String Version(){return "1.16.0";}
-  public static String default_charset="utf-8";
+  public static final String Version(){return "1.16.0";}
+  public static final String default_charset="utf-8";
   public static final String leer="";
   public static final String space=" ";
   public static final String crlf="\r\n";

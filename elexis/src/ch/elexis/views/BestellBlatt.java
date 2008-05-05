@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BestellBlatt.java 3108 2007-09-07 11:03:34Z rgw_ch $
+ *    $Id: BestellBlatt.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -46,7 +46,7 @@ public class BestellBlatt extends ViewPart implements ICallback{
 		int i=1;
 		Money sum=new Money();
 		tbl[0]=new String[]{"Anzahl","Pharmacode","Name","Einzelpreis","Zeilenpreis"};
-		DecimalFormat df=new DecimalFormat("\u00a4\u00a4  #.00");
+		//DecimalFormat df=new DecimalFormat("\u00a4\u00a4  #.00");
 		for(Item it:items){
 			String[] row=new String[5];
 			row[0]=Integer.toString(it.num);

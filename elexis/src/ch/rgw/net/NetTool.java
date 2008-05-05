@@ -1,4 +1,4 @@
-// $Id: NetTool.java 2439 2007-05-24 21:43:27Z rgw_ch $
+// $Id: NetTool.java 3862 2008-05-05 16:14:14Z rgw_ch $
 package ch.rgw.net;
 /* Created on 27.11.2004
  *
@@ -21,7 +21,7 @@ import java.util.Scanner;
 
 public class NetTool
 {   static final String Version="1.0.0";   
-    public static java.util.ArrayList<String> IPs=new java.util.ArrayList<String>();
+    public static final java.util.ArrayList<String> IPs=new java.util.ArrayList<String>();
     public static String hostname;
    
 	static

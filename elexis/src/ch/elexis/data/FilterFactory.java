@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FilterFactory.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ *  $Id: FilterFactory.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -154,7 +154,7 @@ public class FilterFactory {
 				}
 			return false;
 		}
-		private class term{
+		private static class term{
 			LINK link;
 			String field;
 			OPERATORS op;

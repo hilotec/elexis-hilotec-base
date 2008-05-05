@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 3748 2008-03-27 11:33:58Z rgw_ch $
+ *    $Id: Desk.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -118,39 +118,41 @@ public class Desk implements IPlatformRunnable {
 		if(theColorRegistry==null){
 			theColorRegistry=new ColorRegistry(theDisplay,true);
 		}
-		if(theImageRegistry==null){
-			theImageRegistry=new ImageRegistry(theDisplay);
-			theImageRegistry.put(IMG_HOME,Hub.getImageDescriptor("rsc/home.ico")); //$NON-NLS-1$
-			theImageRegistry.put(IMG_ADRESSETIKETTE,Hub.getImageDescriptor("rsc/adretikette.ico")); //$NON-NLS-1$
-			theImageRegistry.put(IMG_PATIENTETIKETTE,Hub.getImageDescriptor("rsc/patetikette.ico")); //$NON-NLS-1$
-			theImageRegistry.put(IMG_VERSIONEDETIKETTE, Hub.getImageDescriptor("rsc/patvetikette.ico")); //$NON-NLS-1$
-			theImageRegistry.put(IMG_DELETE,Hub.getImageDescriptor("rsc/delete.gif")); //$NON-NLS-1$
-			theImageRegistry.put(IMG_MANN,Hub.getImageDescriptor("rsc/mann.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_FRAU,Hub.getImageDescriptor("rsc/frau.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_VIP,Hub.getImageDescriptor("rsc/vip.png")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_PRINTER,Hub.getImageDescriptor("rsc/printer.png")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_PRINT,Hub.getImageDescriptor("rsc/print.gif")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_FILTER,Hub.getImageDescriptor("rsc/filter_ps.gif")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_NEW,Hub.getImageDescriptor("rsc/new2.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_LOGO48,Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_IMPORT,Hub.getImageDescriptor("rsc/import.gif")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_EDIT, Hub.getImageDescriptor("rsc/schreiben.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_ACHTUNG, Hub.getImageDescriptor("rsc/achtung.png")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_OK, Hub.getImageDescriptor("rsc/ok.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_TICK, Hub.getImageDescriptor("rsc/tick.png")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_FEHLER,Hub.getImageDescriptor("rsc/fehler.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_REFRESH, Hub.getImageDescriptor("rsc/refresh.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_WIZARD, Hub.getImageDescriptor("rsc/wizard.ico")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_ADDITEM, Hub.getImageDescriptor("rsc/add.gif")); //$NON-NLS-1$
-	        theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor("rsc/page_go.png")); //$NON_NLS-1$
-	        theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor("rsc/ausrufez.png")); //$NON_NLS-1$
-	        theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor("rsc/ausrufez_rot.ico")); //$NON_NLS-1$
-	        theImageRegistry.put(IMG_REMOVEITEM, Hub.getImageDescriptor("rsc/minus.ico")); //$NON_NLS-1$
-	        theImageRegistry.put(IMG_NETWORK, Hub.getImageDescriptor("rsc/netzwerk.ico")); //$NON_NLS-1$
-	        theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor("rsc/book.png"));  //$NON_NLS-1$
-	        theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor("rsc/person.ico"));  //$NON_NLS-1$
-	        theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor("rsc/personok.ico"));  //$NON_NLS-1$
-	        theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor("rsc/floppy.png"));  //$NON_NLS-1$
+		synchronized(theImageRegistry){
+			if(theImageRegistry==null){
+				theImageRegistry=new ImageRegistry(theDisplay);
+				theImageRegistry.put(IMG_HOME,Hub.getImageDescriptor("rsc/home.ico")); //$NON-NLS-1$
+				theImageRegistry.put(IMG_ADRESSETIKETTE,Hub.getImageDescriptor("rsc/adretikette.ico")); //$NON-NLS-1$
+				theImageRegistry.put(IMG_PATIENTETIKETTE,Hub.getImageDescriptor("rsc/patetikette.ico")); //$NON-NLS-1$
+				theImageRegistry.put(IMG_VERSIONEDETIKETTE, Hub.getImageDescriptor("rsc/patvetikette.ico")); //$NON-NLS-1$
+				theImageRegistry.put(IMG_DELETE,Hub.getImageDescriptor("rsc/delete.gif")); //$NON-NLS-1$
+				theImageRegistry.put(IMG_MANN,Hub.getImageDescriptor("rsc/mann.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_FRAU,Hub.getImageDescriptor("rsc/frau.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_VIP,Hub.getImageDescriptor("rsc/vip.png")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_PRINTER,Hub.getImageDescriptor("rsc/printer.png")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_PRINT,Hub.getImageDescriptor("rsc/print.gif")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_FILTER,Hub.getImageDescriptor("rsc/filter_ps.gif")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_NEW,Hub.getImageDescriptor("rsc/new2.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_LOGO48,Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_IMPORT,Hub.getImageDescriptor("rsc/import.gif")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_EDIT, Hub.getImageDescriptor("rsc/schreiben.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_ACHTUNG, Hub.getImageDescriptor("rsc/achtung.png")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_OK, Hub.getImageDescriptor("rsc/ok.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_TICK, Hub.getImageDescriptor("rsc/tick.png")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_FEHLER,Hub.getImageDescriptor("rsc/fehler.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_REFRESH, Hub.getImageDescriptor("rsc/refresh.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_WIZARD, Hub.getImageDescriptor("rsc/wizard.ico")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_ADDITEM, Hub.getImageDescriptor("rsc/add.gif")); //$NON-NLS-1$
+		        theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor("rsc/page_go.png")); //$NON_NLS-1$
+		        theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor("rsc/ausrufez.png")); //$NON_NLS-1$
+		        theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor("rsc/ausrufez_rot.ico")); //$NON_NLS-1$
+		        theImageRegistry.put(IMG_REMOVEITEM, Hub.getImageDescriptor("rsc/minus.ico")); //$NON_NLS-1$
+		        theImageRegistry.put(IMG_NETWORK, Hub.getImageDescriptor("rsc/netzwerk.ico")); //$NON_NLS-1$
+		        theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor("rsc/book.png"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor("rsc/person.ico"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor("rsc/personok.ico"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor("rsc/floppy.png"));  //$NON_NLS-1$
+			}
 		}
 		try {
 				// 	Wir wollen die schicken runden Tabs von Eclipse 3.x

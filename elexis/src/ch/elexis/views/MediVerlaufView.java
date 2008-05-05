@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MediVerlaufView.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ *  $Id: MediVerlaufView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -228,7 +228,16 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 			}
 			
 		}
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof MediAbgabe){
+				return compareTo((MediAbgabe)obj)==0;
+			}
+			return false;
+		}
 	}
+
+	
 
 	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
@@ -245,7 +254,7 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 		
 	}
 	
-	class MediSorter extends ViewerSorter{
+	private static class MediSorter extends ViewerSorter{
 
 		@Override
 		public int compare(final Viewer viewer, final Object e1, final Object e2) {

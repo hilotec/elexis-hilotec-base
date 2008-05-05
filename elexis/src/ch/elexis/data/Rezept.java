@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 3529 2008-01-14 14:56:24Z rgw_ch $
+ *  $Id: Rezept.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -153,7 +153,7 @@ public class Rezept extends PersistentObject {
 	}
 	/** Eine Rezeptzeile hinzufügen 
 	 * @deprecated use addPrescription
-	 * */
+	 * 
 	@Deprecated 
 	public void addLine(final RpZeile z){
 		String raw=getText();
@@ -165,7 +165,7 @@ public class Rezept extends PersistentObject {
 		}
 		set("Text",raw);
 	}
-	
+	*/
 	public void addPrescription(final Prescription p){
 		p.set("RezeptID", getId());
 	}
@@ -195,7 +195,7 @@ public class Rezept extends PersistentObject {
 		return ret;
 	}
 	
-	private class RpZeile{
+	private static class RpZeile{
 		public static final String fieldSeparator="¦";
 		String num,name,pck,ds,bem;
 

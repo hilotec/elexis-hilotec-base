@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Prescription.java 3680 2008-02-15 17:27:17Z rgw_ch $
+ * $Id: Prescription.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -193,9 +193,10 @@ public class Prescription extends PersistentObject {
 	public boolean isDragOK() {
 		return true;
 	}
+	/*
 	static class Term{
 		String begin;
 		String dose;
 	}
-	
+	*/
 }

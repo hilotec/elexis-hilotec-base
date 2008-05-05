@@ -1,4 +1,4 @@
-// $Id: Settings.java 2698 2007-07-03 12:51:47Z rgw_ch $
+// $Id: Settings.java 3862 2008-05-05 16:14:14Z rgw_ch $
 
 package ch.rgw.IO;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public abstract class Settings implements Serializable, Cloneable{
   public static String Version(){return "4.2.2";}
   private static int SerializedVersion=5;
   private static final long serialVersionUID = 0xdcb17fe20021006L+SerializedVersion;
-  protected static Log log;
+  protected static final Log log;
   protected Hashtable node;
   private volatile String path=null;
   private volatile boolean dirty=false;

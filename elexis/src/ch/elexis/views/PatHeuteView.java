@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3823 2008-04-20 16:43:50Z rgw_ch $
+ * $Id: PatHeuteView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -239,7 +239,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		Composite bottom=form.getBody();
 		bottom.setLayout(new GridLayout(2,false));
-		tk.createLabel(bottom,"Patienten");
+		tk.createLabel(bottom,"Konsultationen");
 		tPat=tk.createText(bottom,"",SWT.BORDER); //$NON-NLS-1$
 		tPat.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		tPat.setEditable(false);

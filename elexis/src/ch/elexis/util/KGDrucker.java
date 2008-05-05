@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation, based on RechnungsDrucker
  *
- * $Id: KGDrucker.java 1183 2006-10-29 15:11:21Z rgw_ch $
+ * $Id: KGDrucker.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -29,7 +29,7 @@ import ch.rgw.tools.ExHandler;
 public class KGDrucker {
     KGPrintView kgp;
     IWorkbenchPage kgPage;
-    IProgressMonitor monitor;
+    //IProgressMonitor monitor;
     Patient patient;
 
     public void doPrint(Patient pat) {

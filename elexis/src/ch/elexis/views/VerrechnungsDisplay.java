@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3837 2008-04-23 04:39:11Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -228,7 +228,7 @@ public class VerrechnungsDisplay extends Composite {
         		}
         	}
         });
-        MenuItem sep=new MenuItem(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
+        /*MenuItem sep=*/new MenuItem(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
         MenuItem chgText=new MenuItem(ret,SWT.NONE);
         chgText.setText("Text ändern");
         chgText.addSelectionListener(new SelectionAdapter(){

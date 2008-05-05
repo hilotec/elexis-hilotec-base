@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ScriptUtil.java 3604 2008-02-01 13:13:49Z rgw_ch $
+ * $Id: ScriptUtil.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -41,7 +41,7 @@ public class ScriptUtil {
 		String desc=adr[3];
 		String[] params=null;
 		if(adr.length==5){
-			params=adr[4].split(".");
+			params=adr[4].split("\\.");
 		}
 		
 		PersistentObject ref=null;

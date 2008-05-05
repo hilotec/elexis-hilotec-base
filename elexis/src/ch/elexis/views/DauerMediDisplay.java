@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DauerMediDisplay.java 2524 2007-06-17 15:18:50Z rgw_ch $
+ * $Id: DauerMediDisplay.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -70,7 +70,7 @@ public class DauerMediDisplay extends DynamicListDisplay {
 	
 	class DauerMediListener implements DLDListener {
 		IViewSite site;
-		DynamicListDisplay dld;
+
 		DauerMediListener(IViewSite s){
 			site=s;
 		}

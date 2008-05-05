@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 3841 2008-04-25 12:02:43Z danlutz $
+ * $Id: BestellView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -74,7 +74,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 	public static final String ID="ch.elexis.BestellenView";
 	Form form;
 	FormToolkit tk=Desk.theToolkit;
-	LabeledInputField.AutoForm tblArtikel;
+	//LabeledInputField.AutoForm tblArtikel;
 	TableViewer tv;
 	Bestellung actBestellung;
 	ViewMenus viewmenus;

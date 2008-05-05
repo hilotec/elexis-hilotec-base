@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 3849 2008-04-29 12:03:48Z rgw_ch $
+ *  $Id: Money.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -243,6 +243,10 @@ public class Money implements Comparable<Money> {
 		return cents==other.cents;
 	}
 	
+	@Override
+	public int hashCode() {
+		return cents;
+	}
 	public int compareTo(Money other){
 		   return this.cents - other.getCents();
 	} 

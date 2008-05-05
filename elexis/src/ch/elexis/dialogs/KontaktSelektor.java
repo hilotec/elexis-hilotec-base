@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 2980 2007-08-11 17:45:58Z rgw_ch $
+ *  $Id: KontaktSelektor.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -70,7 +70,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	Button bAll,bPersons,bOrgs;
 	KontaktFilter fp;
 	FilterButtonAdapter fba;
-	int	type;
+	//int	type;
 
 	boolean showBezugsKontakt = false;
 	private ListViewer bezugsKontaktViewer = null;
@@ -364,7 +364,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			}
 		}
 	}
-	class KontaktFilter implements FilterProvider{
+	static class KontaktFilter implements FilterProvider{
 		int type;
 		Query qbe;
 		

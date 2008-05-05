@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUFZeugnis.java 1728 2007-02-03 10:08:17Z rgw_ch $
+ *  $Id: AUFZeugnis.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -29,7 +29,6 @@ public class AUFZeugnis extends ViewPart implements ICallback, ActivationListene
 	public static final String ID="ch.elexis.AUFView";
 	TextContainer text;
 	Brief actBrief;
-	ViewPart self;
 	
 	public AUFZeugnis() {
 	}
@@ -44,7 +43,6 @@ public class AUFZeugnis extends ViewPart implements ICallback, ActivationListene
 	}
 	@Override
 	public void createPartControl(Composite parent) {
-		self=this;
 		text=new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent,this);
 		GlobalEvents.getInstance().addActivationListener(this,this);

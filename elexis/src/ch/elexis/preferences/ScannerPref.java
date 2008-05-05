@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnwenderPref.java 2425 2007-05-21 12:12:32Z rgw_ch $
+ *  $Id: ScannerPref.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,7 +45,7 @@ public class ScannerPref extends FieldEditorPreferencePage implements
 IWorkbenchPreferencePage {
 	public static String ID = "ch.elexis.preferences.ScannerPrefs";
 	
-	private class TextScannerListener implements Listener {
+	private static class TextScannerListener implements Listener {
 		final Text textfield;
 		
 		public TextScannerListener(Text textfield) {

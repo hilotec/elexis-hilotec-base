@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Tree.java 1183 2006-10-29 15:11:21Z rgw_ch $
+ * $Id: Tree.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -72,8 +72,6 @@ public class Tree<T> {
 			}else{
 				prev.next=this;
 			}
-		}else{
-			parent.first=this;
 		}
 	}
 	/**

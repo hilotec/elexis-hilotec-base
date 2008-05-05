@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsFilter.java 1236 2006-11-06 18:14:43Z rgw_ch $
+ *  $Id: KonsFilter.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -110,7 +110,7 @@ public class KonsFilter {
 		return lastVal;
 	}
 	
-	private class Constraint{
+	private static class Constraint{
 		int mode;
 		String word;
 		Constraint(int m, String w){

@@ -147,8 +147,8 @@ public class RnDialogs {
 			ret.setLayout(new FillLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 			cbStates=new Combo(ret,SWT.READ_ONLY);
-			cbStates.setItems(RnStatus.Text);
-			cbStates.setVisibleItemCount(RnStatus.Text.length);
+			cbStates.setItems(RnStatus.getStatusTexts());
+			cbStates.setVisibleItemCount(RnStatus.getStatusTexts().length);
 			cbStates.select(rn.getStatus());
 			return ret;
 		}

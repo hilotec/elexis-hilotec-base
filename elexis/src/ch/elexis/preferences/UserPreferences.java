@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: UserPreferences.java 3437 2007-12-12 16:48:05Z rgw_ch $
+ *  $Id: UserPreferences.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -165,6 +165,7 @@ public class UserPreferences extends PreferencePage implements
 							}
 							sb.append(load, 0, x);
 						}
+						reader.close();
 						NamedBlob blob=NamedBlob.load("Workspace:"+name);
 						InMemorySettings ims=new InMemorySettings();
 						ims.set("perspectivelayout", sb.toString());

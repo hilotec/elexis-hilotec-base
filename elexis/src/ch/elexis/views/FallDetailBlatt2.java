@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 3693 2008-02-19 19:58:22Z danlutz $
+ *  $Id: FallDetailBlatt2.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -64,7 +64,6 @@ public class FallDetailBlatt2 extends Composite {
 	Combo cAbrechnung,cReason;
 	DatePickerCombo dpVon, dpBis;
 	Text tBezeichnung, tGarant;
-    Button accept,reject;
     Hyperlink autoFill;
     List<Control> lReqs=new ArrayList<Control>();
 	public FallDetailBlatt2(final Composite parent){

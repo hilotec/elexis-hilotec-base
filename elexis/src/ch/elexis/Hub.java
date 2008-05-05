@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 3823 2008-04-20 16:43:50Z rgw_ch $
+ *    $Id: Hub.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -105,16 +105,16 @@ public class Hub extends AbstractUIPlugin {
 	public static Mandant actMandant;
 
 	/** Die zentrale Zugriffskontrolle */
-	public static AccessControl acl=new AccessControl();
+	public static final AccessControl acl=new AccessControl();
 	
 	/** Der Initialisierer für die Voreinstellungen */
-	public static PreferenceInitializer pin;
+	public static final PreferenceInitializer pin=new PreferenceInitializer();;
 	
 	/** Hintergrundjobs zum Nachladen von Daten */
-    public static JobPool jobPool;
+    public static final JobPool jobPool=JobPool.getJobPool();;
     
     /** Factory für interne PersistentObjects */
-    public static PersistentObjectFactory poFactory;
+    public static final PersistentObjectFactory poFactory=new PersistentObjectFactory();
 	   
     /** Heartbeat */
     public static Heartbeat heart;
@@ -163,10 +163,7 @@ public class Hub extends AbstractUIPlugin {
             log.log(msg,Log.FATALS);
         }
         log.log(Messages.Hub_24+getBasePath(),Log.INFOS);
-        poFactory=new PersistentObjectFactory();
- 		pin=new PreferenceInitializer();
  		pin.initializeDefaultPreferences();
-        jobPool=JobPool.getJobPool();
         jobPool.addJob(new ListLoader<Patient>("PatientenListe",new Query<Patient>(Patient.class),new String[]{"Name","Vorname"})); //$NON-NLS-1$
         //jobPool.addJob(new ListLoader<Plz>("Plz",new Query(Plz.class),new String[]{"Plz","Ort"}));
 
@@ -315,7 +312,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 3823 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 3862 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -332,23 +329,6 @@ public class Hub extends AbstractUIPlugin {
         }
         return res;
     }
-    /*
-    @SuppressWarnings("deprecation") //$NON-NLS-1$
-	public static String getBasePath(){
-    	URL url=null;
-		try {
-			url = Platform.asLocalURL(new URL(FileTool.getClassPath(Hub.class)));
-			File f=new File(url.getPath());
-			return f.getParentFile().getParentFile().getParentFile().getParent();
-		} catch (MalformedURLException e) {
-			ExHandler.handle(e);
-		} catch (IOException e) {
-			ExHandler.handle(e);
-		}
-		
-    	return ""; //$NON-NLS-1$
-    }
-    */
    
     public static String getBasePath(){
     	return PlatformHelper.getBasePath(PLUGIN_ID);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Samdas.java 2990 2007-08-14 23:19:37Z danlutz $
+ *  $Id: Samdas.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -35,9 +35,9 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class Samdas {
-	public static Namespace ns=Namespace.getNamespace("samdas","http://www.elexis.ch/XSD");
-	public static Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XML Schema-instance");
-	public static Namespace nsschema=Namespace.getNamespace("schemaLocation","http://www.elexis.ch/XSD EMR.xsd");
+	public static final Namespace ns=Namespace.getNamespace("samdas","http://www.elexis.ch/XSD");
+	public static final Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XML Schema-instance");
+	public static final Namespace nsschema=Namespace.getNamespace("schemaLocation","http://www.elexis.ch/XSD EMR.xsd");
 	
 	private Document doc;
 	private Element eRoot;

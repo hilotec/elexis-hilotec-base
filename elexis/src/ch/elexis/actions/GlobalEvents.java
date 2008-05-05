@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ * $Id: GlobalEvents.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -324,7 +324,7 @@ public class GlobalEvents implements IPartListener2 {
 		public void reloadContents(Class<? extends PersistentObject> clazz);
     }
     
-    private class GlobalListener implements ISelectionChangedListener{
+    private static class GlobalListener implements ISelectionChangedListener{
     	boolean daempfung;
         public void selectionChanged(final SelectionChangedEvent event)
         {	

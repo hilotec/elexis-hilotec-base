@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 2828 2007-07-18 05:15:39Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -163,9 +163,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	public void initializeGrants(){
 		Hub.globalCfg.set("groups", "Alle,Admin,Anwender");
-		Hub.acl.grant("Alle",AccessControlDefaults.Alle);
+		Hub.acl.grant("Alle",AccessControlDefaults.getAlle());
        	//Hub.acl.grant("Admin",AccessControlDefaults.Admin);
-       	Hub.acl.grant("Anwender",AccessControlDefaults.Anwender);
+       	Hub.acl.grant("Anwender",AccessControlDefaults.getAnwender());
         Hub.acl.flush();
 	}
 }

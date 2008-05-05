@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3543 2008-01-16 17:58:24Z rgw_ch $
+ *  $Id: Rechnung.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -348,7 +348,7 @@ public class Rechnung extends PersistentObject {
 	public int getStatus(){
 		try {
 			int i= Integer.parseInt(checkNull(get("RnStatus")));
-			if((i<0) || (i>=RnStatus.Text.length)){
+			if((i<0) || (i>=RnStatus.getStatusTexts().length)){
 				return RnStatus.UNBEKANNT;
 			}
 			return i;

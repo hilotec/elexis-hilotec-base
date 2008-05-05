@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Ablauf.java 2666 2007-06-29 13:39:32Z danlutz $
+ *  $Id: Ablauf.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -85,7 +85,7 @@ public class Ablauf  extends FieldEditorPreferencePage
 	
 	}
 
-	class EmptyFileFieldEditor extends FileFieldEditor{
+	static class EmptyFileFieldEditor extends FileFieldEditor{
 		public EmptyFileFieldEditor(final String abl_logfile, final String string, final Composite fieldEditorParent) {
 			super(abl_logfile, string, fieldEditorParent);
 		}

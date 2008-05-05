@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 3699 2008-02-19 21:33:30Z danlutz $
+ *  $Id: TextView.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -42,7 +42,7 @@ import ch.rgw.tools.ExHandler;
 public class TextView extends ViewPart implements ActivationListener{
 	public final static String ID="ch.elexis.TextView";
 	TextContainer txt;
-	CommonViewer cv;
+	//CommonViewer cv;
 	Composite textContainer=null;
 	private Brief actBrief;
 	private Log log=Log.get("TextView");

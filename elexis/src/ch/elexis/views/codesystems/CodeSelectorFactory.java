@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 2869 2007-07-23 05:07:40Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -130,7 +130,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 		List lbPatient, lbUser;
 		CommonViewer cv;
 		ViewerConfigurer vc;
-		AbstractDataLoaderJob dataloader;
+		//AbstractDataLoaderJob dataloader;
 		protected cPage(CTabFolder ctab){
 			super(ctab,SWT.NONE);
 		}

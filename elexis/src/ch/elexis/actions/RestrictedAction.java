@@ -129,7 +129,7 @@ abstract public class RestrictedAction extends Action {
 	 * Event containing the required right. 
 	 * @author danlutz
 	 */
-	public class RestrictionEvent {
+	public static class RestrictionEvent {
 		public String necessaryRight;
 		
 		public RestrictionEvent(String necessaryRight) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 3698 2008-02-19 21:13:34Z danlutz $
+ * $Id: RechnungsBlatt.java 3862 2008-05-05 16:14:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -80,14 +80,14 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	private ExpandableComposite ecAusgaben;
 	private ExpandableComposite ecKons;
 	
-	public static final InputData[] rndata={
+	static final InputData[] rndata={
     	new InputData("RnNummer"),
     	new InputData("RnDatum"),
     	new InputData("Rechnungsstatus","RnStatus",new LabeledInputField.IContentProvider(){
 
 			public void displayContent(PersistentObject po, InputData ltf) {
 				Rechnung r=(Rechnung)po;
-				ltf.setText(RnStatus.Text[r.getStatus()]);
+				ltf.setText(RnStatus.getStatusText(r.getStatus()));
 				
 			}
 			public void reloadContent(PersistentObject po, InputData ltf) {
@@ -381,7 +381,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	    	for(String s:trace){
 	    		String[] stm=s.split("\\s*:\\s");
 	    		StringBuilder sb=new StringBuilder();
-	    		sb.append(stm[0]).append(" : ").append(RnStatus.Text[Integer.parseInt(stm[1])]);
+	    		sb.append(stm[0]).append(" : ").append(RnStatus.getStatusText(Integer.parseInt(stm[1])));
 	    		lbJournal.add(sb.toString());
 	    	}
 	    	if(actRn.getStatus()==RnStatus.FEHLERHAFT){
