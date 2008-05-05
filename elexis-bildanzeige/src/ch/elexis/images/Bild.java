@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 2759 2007-07-08 11:28:43Z rgw_ch $
+ *    $Id: Bild.java 3864 2008-05-05 16:58:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -55,7 +55,7 @@ public class Bild extends PersistentObject {
 			VersionInfo vi=new VersionInfo(start.get("Titel"));
 			if(vi.isOlder(DBVERSION)){
 				if(vi.isOlder("1.1.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					start.set("Titel", DBVERSION);
 				}else{
 					MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
@@ -69,12 +69,7 @@ public class Bild extends PersistentObject {
 	   * Tabelle neu erstellen
 	   */
 	  public static void init(){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+		  	createTable(TABLENAME, createDB);
 	  }
 
 	  public Bild(Patient patient, String Titel, byte[] data){
