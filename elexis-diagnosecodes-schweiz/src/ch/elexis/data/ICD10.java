@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICD10.java 3049 2007-08-31 15:55:06Z rgw_ch $
+ *    $Id: ICD10.java 3869 2008-05-05 16:58:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -41,12 +41,15 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 					"CREATE INDEX icd2 ON ICD10 (ICDCode);"+ //$NON-NLS-1$
 					"INSERT INTO "+TABLENAME+" (ID,ICDTxt) VALUES ('1',"+JdbcLink.wrap(VERSION)+");";
 	
+	public static void initialize(){
+		createTable(TABLENAME,create);
+	}
 	static{
 		addMapping("ICD10","parent","Code=ICDCode","Text=ICDTxt","encoded","ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		String check=PersistentObject.j.queryString("SELECT ID FROM "+TABLENAME+" WHERE icdcode LIKE 'A%'");
+		String check=getConnection().queryString("SELECT ID FROM "+TABLENAME+" WHERE icdcode LIKE 'A%'");
 		ICD10 version=load("1");
 		if(check==null) {
-			createTable();
+			initialize();
 		}else{
 			VersionInfo vi=new VersionInfo(version.get("Text"));
 			if(!version.exists()){
@@ -54,7 +57,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 			}
 			if(vi.isOlder(VERSION)){
 				if(vi.isOlder("1.0.1")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					version.set("Text", VERSION);
 				}
 			}
@@ -73,16 +76,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	static final int TEXT=10;
 	
 	
-	static public boolean createTable(){
-		try{
-			ByteArrayInputStream bais=new ByteArrayInputStream(create.getBytes("UTF-8")); //$NON-NLS-1$
-			return j.execScript(bais,true, false);
-		}catch(Exception ex){
-			ExHandler.handle(ex);
-			return false;
-		}
-			
-	}
+	
 	public static ICD10 load(final String id){
 		return new ICD10(id);
 	}

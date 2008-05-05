@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICDImporter.java 1749 2007-02-06 21:04:45Z rgw_ch $
+ *    $Id: ICDImporter.java 3869 2008-05-05 16:58:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -118,7 +118,7 @@ public class ICDImporter extends ImporterPage {
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		monitor.beginTask(Messages.ICDImporter_icdImport,15000);
 		monitor.subTask(Messages.ICDImporter_createTable);
-		ICD10.createTable();
+		ICD10.initialize();
 		monitor.worked(500);
 		if(monitor.isCanceled()){
 			return Status.CANCEL_STATUS;
