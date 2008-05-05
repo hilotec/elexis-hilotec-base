@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 2743 2007-07-07 15:49:00Z rgw_ch $
+ *  $Id: Note.java 3874 2008-05-05 16:59:38Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -43,17 +43,12 @@ public class Note extends PersistentObject {
 		addMapping(TABLENAME,"Parent","Title","Contents","Datum=S:D:Date","refs");
 		Note start=load("1");
 		if(!start.exists()){
-			try{
-				ByteArrayInputStream bais=new ByteArrayInputStream(create.getBytes("UTF-8"));
-				j.execScript(bais,true, false);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-			}
+			createTable(TABLENAME, create);
 		}else{
 			VersionInfo vi=new VersionInfo(start.get("Title"));
 			if(vi.isOlder(DBVERSION)){
 				if(vi.isOlder("0.2.0")){
-					PersistentObject.j.exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					start.set("Title", DBVERSION);
 				}
 			}
