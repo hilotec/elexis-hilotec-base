@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elex
+ * Copyright (c) 2005-2008, G. Weirich and Elex
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 3860 2008-05-05 16:13:01Z rgw_ch $
+ * $Id: TarmedLeistung.java 3870 2008-05-05 16:59:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -44,17 +44,20 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     public static final TarmedOptifier tarmedOptifier;
     public static final TimeTool INFINITE = new TimeTool("19991231");
     
+    private static final JdbcLink j=getConnection();
     static{
-    	String checkExist=PersistentObject.j.queryString("SELECT * FROM TARMED WHERE ID LIKE '10%'");
+    	String checkExist=j.queryString("SELECT * FROM TARMED WHERE ID LIKE '10%'");
     	if(checkExist==null){
     		String filepath=PlatformHelper.getBasePath("ch.elexis.arzttarife_ch")+File.separator+"createDB.script";
+    		Stm stm=j.getStatement();
     		try {
 				FileInputStream fis=new FileInputStream(filepath);
-				Stm stm=PersistentObject.j.getStatement();
 				stm.execScript(fis, true, true);
 			} catch (Exception e) {
 				ExHandler.handle(e);
 				SWTHelper.showError("Kann Tarmed-Datenbank nicht erstellen", "create-Script nicht gefunden in "+filepath);
+			}finally{
+				j.releaseStatement(stm);
 			}
     		
     	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 2847 2007-07-20 13:29:47Z rgw_ch $
+ * $Id: LaborLeistung.java 3870 2008-05-05 16:59:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,7 +26,7 @@ public class LaborLeistung extends VerrechenbarAdapter{
 		addMapping("ARTIKEL", "Name","Text=Name","EK_Preis","VK_Preis","Typ","Code=SubID","ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 	}
 	public static void createTable(){
-		j.exec("DELETE FROM ARTIKEL WHERE TYP='Laborleistung'"); //$NON-NLS-1$
+		getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Laborleistung'"); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("unchecked") 

@@ -143,7 +143,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 		}
 		
 	}
-	class Filter extends ViewerFilter{
+	private static class Filter extends ViewerFilter{
 		TimeTool from=new TimeTool();
 		TimeTool until=new TimeTool();
 		String code;
@@ -153,7 +153,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			this.code=code;
 		}
 		void setName(String name){
-			this.name = name!=null ? name : name.toLowerCase();
+			this.name = name==null ? null : name.toLowerCase();
 		}
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,

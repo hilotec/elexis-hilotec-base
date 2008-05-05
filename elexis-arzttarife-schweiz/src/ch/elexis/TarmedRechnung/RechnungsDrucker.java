@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3860 2008-05-05 16:13:01Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3870 2008-05-05 16:59:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -47,11 +47,11 @@ import ch.elexis.views.RnPrintView2;
 import ch.rgw.tools.ExHandler;
 
 public class RechnungsDrucker implements IRnOutputter{
-	Mandant actMandant;
+	//Mandant actMandant;
 	TarmedACL ta=TarmedACL.getInstance();
 	RnPrintView2 rnp;
 	IWorkbenchPage rnPage;
-	IProgressMonitor monitor;
+	//IProgressMonitor monitor;
 	private Button bESR, bForms, bIgnoreFaults, bSaveFileAs;
 	String dirname=Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, null);
 	Text tName;

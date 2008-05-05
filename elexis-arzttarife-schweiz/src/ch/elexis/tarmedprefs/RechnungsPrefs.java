@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 3493 2008-01-01 15:57:21Z rgw_ch $
+ * $Id: RechnungsPrefs.java 3870 2008-05-05 16:59:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -52,10 +52,10 @@ public class RechnungsPrefs extends PreferencePage implements
 
 	Combo cbMands;
 	HashMap<String,Mandant> hMandanten;
-	Hyperlink hRechng,hTreat,hPost,hBank;
+	Hyperlink hTreat,hPost,hBank;
 	IHyperlinkListener hDetailListener;
 	FocusListener focusListener;
-	Text tRechng,tTreat,tPost,tBank;
+	Text tTreat,tPost,tBank;
 	Text tESRNormalFontName;
 	Text tESRNormalFontSize;
 	Text tESROCRFontName;

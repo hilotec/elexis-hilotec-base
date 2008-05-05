@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  *    
- * $Id: TarmedImporter.java 3564 2008-01-18 12:16:06Z rgw_ch $
+ * $Id: TarmedImporter.java 3870 2008-05-05 16:59:14Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -50,7 +50,7 @@ public class TarmedImporter extends ImporterPage{
 	
 	JdbcLink j,pj;
 	Stm source,dest;
-	Text tDb;
+	//Text tDb;
 	private String lang;
 
 	public TarmedImporter(){}
