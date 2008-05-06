@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ * $Id: Query.java 3877 2008-05-06 06:40:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -54,13 +54,13 @@ public class Query<T>{
     private final LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
     private String ordering;
     private ArrayList<String> exttables=new ArrayList<String>(2);
-    private static final JdbcLink j=PersistentObject.getConnection();
     
 /**
  * Konstruktor 
  * @param cl Die Klasse, auf die die Abfrage angewendet werden soll (z.B. Patient.class)
  */
     public Query(final Class<? extends PersistentObject> cl){
+
 		try{
 			template=Hub.poFactory.createTemplate(cl);
            //template=cl.newInstance();
@@ -275,7 +275,7 @@ public class Query<T>{
 	public String findSingle(final String f,final String op, final String v){
 		clear();
 		sql.append(link).append(template.map(f)).append(op).append(JdbcLink.wrap(v));
-		String ret=j.queryString(sql.toString());
+		String ret=PersistentObject.getConnection().queryString(sql.toString());
 		return ret;
 	}
 	
@@ -311,7 +311,7 @@ public class Query<T>{
 	    	if(previous!=null){
 	    		previous.close();
 	    	}
-	    	PreparedStatement ps=j.prepareStatement(sql.toString());
+	    	PreparedStatement ps=PersistentObject.getConnection().prepareStatement(sql.toString());
 	    	return ps;
     	}catch(Exception ex){
     		ExHandler.handle(ex);
@@ -410,7 +410,7 @@ public class Query<T>{
         
         Stm stm=null;
         try{
-            stm=j.getStatement();
+            stm=PersistentObject.getConnection().getStatement();
             /*
             if(Hub.acl.request("Query"+template.getClass().getSimpleName())==false){
                 log.log("Nicht genügend Rechte zum Lesen von "+template.getClass().getSimpleName(),Log.ERRORS);
@@ -441,7 +441,7 @@ public class Query<T>{
             log.log("Fehler bei Datenbankabfrage ",Log.ERRORS);
             return null;
         }finally{
-            j.releaseStatement(stm);
+        	PersistentObject.getConnection().releaseStatement(stm);
         }
     }
     /*
@@ -463,9 +463,9 @@ public class Query<T>{
      */
 	public int size() {
 		try{
-			Stm stm=j.getStatement();
+			Stm stm=PersistentObject.getConnection().getStatement();
 			String res=stm.queryString("SELECT COUNT(*) FROM "+template.getTableName());
-			j.releaseStatement(stm);
+			PersistentObject.getConnection().releaseStatement(stm);
 			return Integer.parseInt(res);
 		}catch(Exception ex){
 			ExHandler.handle(ex);
