@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnStatus.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: RnStatus.java 3879 2008-05-06 08:43:57Z rgw_ch $
  *******************************************************************************/
 
 
@@ -53,7 +53,7 @@ public class RnStatus {
     	NO_DIAG,NO_MANDATOR,NO_CASE,NO_DEBITOR,NO_GUARANTOR,VALIDATION_ERROR,REJECTED_BY_PEER,SUM_MISMATCH,INTERNAL_ERROR;
     };
    
-    public static final String[] RejectStrings={"Keine Diagnose",
+    private static final String[] RejectStrings={"Keine Diagnose",
     	"Kein Rechnungsempfänger", "Kein Garant", "Validierungsfehler",
     	"Vom Empfänger zurückgewiesen"};
 
@@ -66,4 +66,11 @@ public class RnStatus {
     	}
     	return "??";
     }
+	public static String[] getRejectStrings() {
+		return RejectStrings;
+	}
+    
+	public static String getRejectString(REJECTCODE code){
+		return RejectStrings[code.ordinal()];
+	}
 }
