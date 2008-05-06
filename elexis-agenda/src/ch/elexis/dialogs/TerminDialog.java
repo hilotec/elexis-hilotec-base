@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 3853 2008-04-30 17:28:33Z rgw_ch $
+ *  $Id: TerminDialog.java 3878 2008-05-06 08:43:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -138,9 +138,10 @@ public class TerminDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		ScrolledComposite sc=new ScrolledComposite(parent,SWT.H_SCROLL|SWT.V_SCROLL);
-		Composite ret=new Composite(parent,SWT.NONE);
+		sc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		Composite ret=new Composite(sc,SWT.NONE);
 		sc.setContent(ret);
-		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		//ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		Composite topRow=new Composite(ret,SWT.BORDER);
 		topRow.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -392,6 +393,7 @@ public class TerminDialog extends TitleAreaDialog {
 		//bSearch.setEnabled(false);
 		//bNext.setEnabled(false);
 		//bPrev.setEnabled(false);
+		ret.setSize(ret.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return sc;
 	}
 
