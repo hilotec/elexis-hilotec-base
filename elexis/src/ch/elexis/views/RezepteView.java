@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: RezepteView.java 3881 2008-05-06 16:53:59Z rgw_ch $
  *******************************************************************************/
 
 
@@ -34,7 +34,6 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
@@ -49,7 +48,9 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Fall;
 import ch.elexis.data.ICodeElement;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
@@ -250,6 +251,16 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 					mb.open();
 					return;
 				}
+				Fall fall=GlobalEvents.getSelectedFall();
+				if(fall==null){
+					Konsultation k=act.getLetzteKons(false);
+					if(k==null){
+						SWTHelper.alert("Kein Fall ausgewählt", "Erstellen oder wählen Sie bitte den Fall, zu dem dieses Rp gehört");
+						return;
+					}else{
+						fall=k.getFall();
+					}
+				}
 				new Rezept(act);
 				lv.refresh();
 			}
@@ -339,7 +350,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		}
 	}
 
-	class RezeptContentProvider implements IStructuredContentProvider{
+	private static class RezeptContentProvider implements IStructuredContentProvider{
 
 		public Object[] getElements(final Object inputElement) {
 			Rezept rp=(Rezept)GlobalEvents.getInstance().getSelectedObject(Rezept.class);
@@ -353,7 +364,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) { /*leer*/}
 	}
 
-	class RezeptLabelProvider extends LabelProvider{
+	private static class RezeptLabelProvider extends LabelProvider{
 
 		@Override
 		public String getText(final Object element) {

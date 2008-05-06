@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 3472 2007-12-20 20:57:14Z rgw_ch $
+ *  $Id: AUF2.java 3881 2008-05-06 16:53:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -89,11 +89,19 @@ public class AUF2 extends ViewPart implements ActivationListener, SelectionListe
 			 }
 			@Override
 			public void run() {
+				Patient pat=GlobalEvents.getSelectedPatient();
+				if(pat==null){
+					SWTHelper.showError("Kein patient selektiert", "Wählen aus, wen diese AUF betreffen soll");
+					return;
+				}
 				if(GlobalEvents.getSelectedFall()==null){
 					Konsultation kons=GlobalEvents.getSelectedKons();
 					if(kons==null){
-						SWTHelper.showError(Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
-						return;
+						kons=pat.getLetzteKons(false);
+						if(kons==null){
+							SWTHelper.showError(Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+							return;
+						}
 					}
 					GlobalEvents.getInstance().fireSelectionEvent(kons.getFall());
 				}

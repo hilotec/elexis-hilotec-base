@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: Rezept.java 3881 2008-05-06 16:53:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -20,7 +20,6 @@ import org.jdom.Element;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -96,7 +95,7 @@ public class Rezept extends PersistentObject {
 		return getDate()+" "+m.getLabel();
 	}
 	
-	/** Alle Rezeotzeilen als Liste holen */ 
+	/** Alle Rezeotzeilen als Liste holen  
 	@Deprecated
 	public List<RpZeile> getLinesOld(){
 		String raw=getText();
@@ -109,10 +108,11 @@ public class Rezept extends PersistentObject {
 		}
 		return ret;
 	}
-	
+	*/
 	public List<Prescription> getLines(){
 		List<String> list=getList("Zeilen",false);
 		// Kompatibilitätslayer
+		/*
 		if(list.isEmpty()){			
 			Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
 			List<RpZeile> rz=getLinesOld();
@@ -129,6 +129,7 @@ public class Rezept extends PersistentObject {
 			}
 			return lr;
 		}
+		*/
 		// Ende KOmpatibilitätslayer
 		List<Prescription> ret=new ArrayList<Prescription>(list.size());
 		for(String s:list){
@@ -138,8 +139,10 @@ public class Rezept extends PersistentObject {
 	}
 	
 	/** Eine Rezeptzeile entfernen 
-	 * @deprecated use removePrescripion*/
-	@Deprecated
+	 * deprecated use removePrescripion
+	Deprecated
+	*/
+	 /*
 	public void removeLine(final RpZeile z){
 		String raw=getText();
 		String zs=z.toString();
@@ -148,13 +151,12 @@ public class Rezept extends PersistentObject {
 		set("Text",raw.replaceAll("\\r*\\n\\r*\\n", "\n"));
 	}
 	
-	public void removePrescription(final Prescription p){
-		p.set("RezeptID", "");
-	}
+	*/
+	
 	/** Eine Rezeptzeile hinzufügen 
-	 * @deprecated use addPrescription
+	 * deprecated use addPrescription
 	 * 
-	@Deprecated 
+	Deprecated 
 	public void addLine(final RpZeile z){
 		String raw=getText();
 		if(StringTool.isNothing(raw)){
@@ -166,9 +168,20 @@ public class Rezept extends PersistentObject {
 		set("Text",raw);
 	}
 	*/
+	
+	/**
+	 * Eine Rezeptzeile entfernen
+	 */
+	public void removePrescription(final Prescription p){
+		p.set("RezeptID", "");
+	}
+	/**
+	 * Eine Rezeptzeile hinzufügen
+	 */
 	public void addPrescription(final Prescription p){
 		p.set("RezeptID", getId());
 	}
+	
 	@Override
 	public boolean delete() {
 		Brief brief=getBrief();

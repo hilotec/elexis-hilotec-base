@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 3831 2008-04-21 16:24:26Z rgw_ch $
+ *    $Id: Etiketten.java 3881 2008-05-06 16:53:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -30,6 +31,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,14 +43,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.data.DBImage;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.ImageChooser;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
@@ -161,8 +164,24 @@ public class  Etiketten extends PreferencePage implements
 			}});
 		GridData gdImage=new GridData(32,32);
 		cImage.setLayoutData(gdImage);
-		Button bNewImage=new Button(bottom,SWT.PUSH);
-		bNewImage.setText("Bild...");
+		Composite cImage=new Composite(bottom,SWT.NONE);
+		cImage.setLayout(new FillLayout());
+		Button bExistingImage=new Button(cImage, SWT.PUSH);
+		bExistingImage.setText("Bild aus Archiv...");
+		bExistingImage.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ImageChooser imc=new ImageChooser(getShell());
+				if(imc.open()==Dialog.OK){
+					act.setImage(imc.getSelection());
+					setEtikette(act);
+				}
+			}
+			
+		});
+		Button bNewImage=new Button(cImage,SWT.PUSH);
+		bNewImage.setText("Bild aus Datei...");
 		bNewImage.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {

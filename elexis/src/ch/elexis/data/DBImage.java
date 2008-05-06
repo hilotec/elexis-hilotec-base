@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DBImage.java 3786 2008-04-19 09:57:12Z rgw_ch $
+ *    $Id: DBImage.java 3881 2008-05-06 16:53:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -73,6 +73,6 @@ public class DBImage extends PersistentObject {
 	protected DBImage(String id){
 		super(id);
 	}
-	private DBImage(){}
+	protected DBImage(){}
 
 }
