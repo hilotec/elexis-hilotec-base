@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: RnContentProvider.java 3883 2008-05-07 12:25:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -318,7 +318,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 				tFall=new Tree(tPat,fall);
 				hFaelle.put(fall.getId(), tFall);
 			}
-			//Tree<Rechnung> tRn=new Tree(tFall,rn);
+			Tree<Rechnung> tRn=new Tree(tFall,rn);
 			monitor.worked(multiplyer);
 		}
 	
