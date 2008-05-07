@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -165,6 +164,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
 				String filename=fd.open();
 				if(filename!=null){
 					hl.setText(filename);
+					getOkButton().setEnabled(true);
 				}
 			}
 			

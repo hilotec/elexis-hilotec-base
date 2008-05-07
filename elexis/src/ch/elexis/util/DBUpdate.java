@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 3852 2008-04-30 15:04:47Z rgw_ch $
+ * $Id: DBUpdate.java 3884 2008-05-07 20:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -230,7 +230,8 @@ public class DBUpdate {
 			"CREATE INDEX DBIMAGE1 on DBIMAGE(Title);",
 			
 			// 1.7.1
-			"ALTER TABLE LABORITEMS MODIFY Einheit VARCHAR(20);"
+			"ALTER TABLE LABORITEMS MODIFY Einheit VARCHAR(20);"+
+			"ALTER TABLE ETIKETTEN MODIFY importance VARCHAR(7);"
 			
 	  };
 	  static Log log=Log.get("DBUpdate");
