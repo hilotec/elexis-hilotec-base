@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 3881 2008-05-06 16:53:59Z rgw_ch $
+ *    $Id: Etiketten.java 3882 2008-05-07 05:08:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -164,6 +164,7 @@ public class  Etiketten extends PreferencePage implements
 			}});
 		GridData gdImage=new GridData(32,32);
 		cImage.setLayoutData(gdImage);
+		/*
 		Composite cImage=new Composite(bottom,SWT.NONE);
 		cImage.setLayout(new FillLayout());
 		Button bExistingImage=new Button(cImage, SWT.PUSH);
@@ -180,27 +181,18 @@ public class  Etiketten extends PreferencePage implements
 			}
 			
 		});
-		Button bNewImage=new Button(cImage,SWT.PUSH);
-		bNewImage.setText("Bild aus Datei...");
+		*/
+		Button bNewImage=new Button(bottom,SWT.PUSH);
+		bNewImage.setText("Bild...");
 		bNewImage.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(act!=null){
-					FileDialog fd=new FileDialog(getShell(),SWT.OPEN);
-					fd.setFilterExtensions(new String[]{"*.ico","*.png","*.gif","*.jpg","*.*"});
-					fd.setFilterNames(new String[]{"Icon-Dateien","Portable Network Graphics",
-							"Grafics Interchange Format", "JPEG","Alle Dateien"});
-					String filename=fd.open();
-					if(filename!=null){
-						try{
-							File file=new File(filename);
-							DBImage dbimg=new DBImage(act.getLabel()+":"+file.getName(),new FileInputStream(file));
-							act.setImage(dbimg);
-						}catch(Exception ex){
-							ExHandler.handle(ex);
-						}
-					}
-					setEtikette(act);
+					ImageChooser imc=new ImageChooser(getShell());
+					if(imc.open()==Dialog.OK){
+						act.setImage(imc.getSelection());
+						setEtikette(act);
+					}	
 				}
 			}
 		});

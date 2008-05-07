@@ -17,14 +17,13 @@ import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -35,28 +34,30 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.AbstractElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.FilteredList;
-import org.eclipse.ui.menus.MenuUtil;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
+import ch.elexis.Desk;
 import ch.elexis.data.DBImage;
 import ch.elexis.data.Query;
-import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 public class ImageChooser extends AbstractElementListSelectionDialog{
 	
 	private Object[] fElements;
-
+	private Hyperlink hl;
+	private Text tTitle;
+	private static String NOFILESELECTED="(Bitte Datei wählen)";
+	private Button bDB, bFile;
+	private DBImage result;
+	
 	public DBImage getSelection(){
-
-		Object[] sel=getResult();
-		if(sel!=null && sel.length>0){
-			return (DBImage)sel[0];
-		}
-		return null;
+		return result;
 	}
 	
 	public ImageChooser(Shell shell){
@@ -90,7 +91,15 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
      * @see SelectionStatusDialog#computeResult()
      */
     protected void computeResult() {
-        setResult(Arrays.asList(getSelectedElements()));
+    	if(bDB.getSelection()){
+    		setResult(Arrays.asList(getSelectedElements()));
+    		Object[] sel=getResult();
+    		if(sel!=null && sel.length>0){
+    			result=(DBImage)sel[0];
+    		}else{
+    			result=null;
+    		}
+    	}
     }
 
     private Menu createMenu(Control parent){
@@ -117,16 +126,65 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
      */
     protected Control createDialogArea(Composite parent) {
         Composite ret = (Composite) super.createDialogArea(parent);
-
+        bDB=new Button(ret,SWT.RADIO);
+        bDB.setText("Bild aus Datenbank verwenden");
         createMessageArea(ret);
         createFilterText(ret);
         FilteredList list=createFilteredList(ret);
         list.setMenu(createMenu(list));
+        list.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				bFile.setSelection(false);
+				bDB.setSelection(true);
+			}
+        	
+        });
         new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Group gBottom=new Group(ret,SWT.BORDER);
-		gBottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		gBottom.setText("Oder Bild aus Datei erstellen");
-		gBottom.setLayout(new GridLayout(2,false));
+		bFile=new Button(ret,SWT.RADIO);
+		bFile.setText("Oder Bild aus Datei erstellen und importieren");
+        Composite cBottom=new Composite(ret,SWT.BORDER);
+		cBottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		
+		cBottom.setLayout(new GridLayout(2,false));
+		new Label(cBottom,SWT.NONE).setText("Datei");
+		new Label(cBottom,SWT.NONE).setText("Bildtitel");
+		hl=new Hyperlink(cBottom,SWT.NONE);
+		tTitle=new Text(cBottom,SWT.BORDER);
+		hl.addHyperlinkListener(new HyperlinkAdapter(){
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				bFile.setSelection(true);
+				bDB.setSelection(false);
+				FileDialog fd=new FileDialog(getShell(),SWT.OPEN);
+				fd.setFilterExtensions(new String[]{"*.ico","*.png","*.gif","*.jpg","*.*"});
+				fd.setFilterNames(new String[]{"Icon-Dateien","Portable Network Graphics",
+						"Grafics Interchange Format", "JPEG","Alle Dateien"});
+				String filename=fd.open();
+				if(filename!=null){
+					hl.setText(filename);
+				}
+			}
+			
+		});
+		hl.setText(NOFILESELECTED);
+		hl.setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+		hl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tTitle.addKeyListener(new KeyAdapter(){
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				bFile.setSelection(true);
+				bDB.setSelection(false);
+			}
+			
+		});
+		bDB.setSelection(true);
+		
+		/*
 		final LabeledInputField liTitle=new LabeledInputField(gBottom,"Titel für das Bild");
 		liTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Button bFile=new Button(gBottom,SWT.PUSH);
@@ -158,6 +216,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
 			}
 			
 		});
+		*/
 		Query<DBImage> qbe=new Query<DBImage>(DBImage.class);
 		List<DBImage> imgs=qbe.execute();
 		if(imgs!=null){
@@ -170,7 +229,21 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
         return ret;
     }
 	
-	
+    @Override
+    public void okPressed(){
+    	if(bFile.getSelection()){
+    		String fname=hl.getText();
+    		if(!fname.equals(NOFILESELECTED)){
+				try{
+					File file=new File(fname);
+					result=new DBImage(tTitle.getText()+":"+file.getName(),new FileInputStream(file));
+				}catch(Exception ex){
+					ExHandler.handle(ex);
+				}
+    		}
+    	}
+		super.okPressed();
+    }
 
 	@Override
 	public void create(){
