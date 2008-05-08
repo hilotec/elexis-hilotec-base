@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 3849 2008-04-29 12:03:48Z rgw_ch $
+ *  $Id: LabResult.java 3887 2008-05-08 14:34:13Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -27,10 +27,13 @@ import ch.rgw.tools.TimeTool;
 public class LabResult extends PersistentObject {
 	public static final int PATHOLOGIC = 1<<0; 
 	public static final int OBSERVE = 1<<1;         // Anwender erklärt den Parameter für beobachtungswürdig
-	public static final int NORMAL = 1<<2;         // Anwender erklärt den Wert explizit für normal (auch wenn er formal ausserhalb des Normbereichs ist) 
+	public static final int NORMAL = 1<<2;         // Anwender erklärt den Wert explizit für normal (auch wenn er formal ausserhalb des Normbereichs ist)
+	
+	private static final String TABLENAME = "LABORWERTE";
+	
 	@Override
 	protected String getTableName() {
-		return "LABORWERTE";
+		return TABLENAME;
 	}
 	static{
 		addMapping("LABORWERTE","PatientID","Datum=S:D:Datum",
