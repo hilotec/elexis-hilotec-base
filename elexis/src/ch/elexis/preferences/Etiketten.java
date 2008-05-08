@@ -8,13 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 3882 2008-05-07 05:08:01Z rgw_ch $
+ *    $Id: Etiketten.java 3886 2008-05-08 06:22:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +29,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,20 +37,16 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
-import ch.elexis.data.DBImage;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.ImageChooser;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
 
 public class  Etiketten extends PreferencePage implements
 		IWorkbenchPreferencePage {
