@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 3844 2008-04-25 20:48:42Z rgw_ch $
+ *  $Id: LabItem.java 3888 2008-05-08 14:38:16Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -237,6 +237,20 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	}
 	
 	public int compareTo(LabItem other) {
+		// check for null; put null values at the end
+		if (other == null) {
+			return -1;
+		}
+		
+		// first, compare the groups
+		String mineGroup = getGroup();
+		String otherGroup = other.getGroup();
+		if (!mineGroup.equals(otherGroup)) {
+			// groups differ, just compare groups
+			return mineGroup.compareTo(otherGroup);
+		}
+		
+		// compare item priorities
 		String mine=getPrio();
 		String others=other.getPrio();
 		if((mine.matches("[0-9]+")) && (others.matches("[0-9]+"))){
@@ -246,7 +260,4 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		}
 		return mine.compareTo(others);
 	}
-
-	
-
 }
