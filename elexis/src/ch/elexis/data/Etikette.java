@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *    $Id: Etikette.java 3890 2008-05-09 23:17:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -60,6 +60,9 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout(2,false));
 		Image img=getImage();
+		if(img==null){
+			img=Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+		}
 		Composite cImg=new Composite(ret,SWT.BORDER);
 		cImg.setBackgroundImage(img);
 		GridData gd1=new GridData(img.getBounds().width,img.getBounds().height);

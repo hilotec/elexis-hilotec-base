@@ -213,6 +213,9 @@ public class LabeledInputField extends Composite {
     			mine.setText(t);
     		}
     	}
+    	public LabeledInputField getWidget(){
+    		return mine;
+    	}
     	public void setEditable(boolean ed){
     		mine.ctl.setEnabled(ed);
     	}
