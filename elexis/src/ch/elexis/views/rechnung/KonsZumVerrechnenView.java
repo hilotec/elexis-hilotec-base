@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 3889 2008-05-09 11:51:52Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -445,13 +445,13 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 			@SuppressWarnings("unchecked") 
 			@Override
 			public void run(){
-				int rejected=0;
 				if(((StructuredSelection)tvSel.getSelection()).size()>0){
 					if(!SWTHelper.askYesNo("Dies erstellt alle Rechnungen in der Auswahl", "Wollen Sie wirklich aus allen Konsultationen im rechten Feld Rechnungen erstellen?")){
 						return;
 					}
 				}
 				for(Tree tPat=tSelection.getFirstChild();tPat!=null;tPat=tPat.getNextSibling()){
+					int rejected=0;
 					for(Tree tFall=tPat.getFirstChild();tFall!=null;tFall=tFall.getNextSibling()){
 						Fall fall=(Fall)tFall.contents;
 						if(Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)){
