@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: LabeledInputField.java 3891 2008-05-10 09:31:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -40,21 +40,13 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
  *
  */
 public class LabeledInputField extends Composite {
-	static public enum Typ{TEXT,BOOL,LIST,LINK,DATE,MONEY};
+	static public enum Typ{TEXT,BOOL,LIST,LINK,DATE,MONEY,COMBO};
     Label lbl;
     Control ctl;
     FormToolkit tk=Desk.theToolkit;
     
     public LabeledInputField(Composite parent, String label){
     	this(parent,label,Typ.TEXT);
-        /*
-    	super(parent,SWT.NONE);
-        setLayout(new GridLayout(1,false));
-        lbl=tk.createLabel(this, label, SWT.BOLD);
-        ctl=tk.createText(this, "", SWT.BORDER);
-        ctl.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-        lbl.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-        */
     }
     
     public LabeledInputField(Composite parent, String label, Typ typ){
@@ -82,10 +74,14 @@ public class LabeledInputField extends Composite {
 			ctl=new DatePickerCombo(this,SWT.NONE);
 			ctl.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 			setText("");
+			break;
+		case COMBO:
+			ctl=new Combo(this,SWT.SINGLE|SWT.BORDER);
+			ctl.setLayoutData(new GridData(GridData.FILL_BOTH/*|GridData.GRAB_VERTICAL*/));
+			break;
 		default:
 			break;
 		}
-        //ctl.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
         lbl.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
     }
     
@@ -107,7 +103,13 @@ public class LabeledInputField extends Composite {
 	    		}
 	    		list.select(selidx);
     		}
+    	}else if(ctl instanceof Combo){
+    		Combo combo=(Combo)ctl;
+    		if(!StringTool.isNothing(text)){
+    			combo.setText(text);
+    		}
     	}else if(ctl instanceof DatePickerCombo){
+    	
     		DatePickerCombo dp=(DatePickerCombo)ctl;
     		dp.setDate(new TimeTool(text).getTime());
     	}
@@ -123,6 +125,8 @@ public class LabeledInputField extends Composite {
     		}else{
     			return StringTool.join(sel, ",");
     		}
+    	}else if(ctl instanceof Combo){
+    		return ((Combo)ctl).getText();
     	}else if(ctl instanceof DatePickerCombo){
     		return ((DatePickerCombo)ctl).getText();
     	}
@@ -162,7 +166,7 @@ public class LabeledInputField extends Composite {
     }
     
     public static class InputData{
-    	public enum Typ{STRING,INT,CURRENCY,LIST,HYPERLINK,DATE};
+    	public enum Typ{STRING,INT,CURRENCY,LIST,HYPERLINK,DATE,COMBO};
     	String sAnzeige,sFeldname,sHashname;
     	Typ tFeldTyp;
     	Object ext;
@@ -193,6 +197,13 @@ public class LabeledInputField extends Composite {
     		sHashname=hashname;
     		tFeldTyp=Typ.LIST;
     		ext=choices;
+    	}
+    	public InputData(String anzeige, String feldname, String hashname, String[] comboItems, boolean bDropDown){
+    		sAnzeige=anzeige;
+    		sFeldname=feldname;
+    		sHashname=hashname;
+    		tFeldTyp=Typ.COMBO;
+    		ext=comboItems;
     	}
     	public void setParent(LabeledInputField p){
     		mine=p;
@@ -251,11 +262,16 @@ public class LabeledInputField extends Composite {
     		cFields=new Control[def.length];
     		for(int i=0;i<def.length;i++){
     			ltf=null;
-    			if(def[i].tFeldTyp==InputData.Typ.LIST){
+    			InputData.Typ typ=def[i].tFeldTyp;
+    			if(typ==InputData.Typ.LIST){
     				ltf=addComponent(def[i].sAnzeige,LabeledInputField.Typ.LIST);
     				((List)ltf.getControl()).setItems((String[])def[i].ext);
-    			}else{
-    				if(def[i].tFeldTyp==InputData.Typ.HYPERLINK){
+    			}else if(typ==InputData.Typ.COMBO){
+    				ltf=addComponent(def[i].sAnzeige, LabeledInputField.Typ.COMBO);
+    				((Combo)ltf.getControl()).setItems((String[])def[i].ext);
+    			}
+    			else{
+    				if(typ==InputData.Typ.HYPERLINK){
     					ltf=addComponent(def[i].sAnzeige,LabeledInputField.Typ.LINK);
         				ltf.lbl.setData(i);
     					ltf.lbl.addMouseListener(new MouseAdapter(){

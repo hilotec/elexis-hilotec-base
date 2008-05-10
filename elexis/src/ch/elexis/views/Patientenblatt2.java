@@ -86,7 +86,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 			new InputData("Name","Name",InputData.Typ.STRING,null),
 			new InputData("Vorname","Vorname",InputData.Typ.STRING,null),
 			new InputData("Geburtsdatum","Geburtsdatum",InputData.Typ.DATE,null),
-			new InputData("Geschlecht","Geschlecht",null,new String[]{Person.FEMALE,Person.MALE}),
+			new InputData("Geschlecht","Geschlecht",null,new String[]{Person.FEMALE,Person.MALE},false),
 			new InputData("Telefon 1","Telefon1",InputData.Typ.STRING,null),
 			new InputData("Telefon 2","Telefon2",InputData.Typ.STRING,null),
 			new InputData("Mobil","Natel",InputData.Typ.STRING,null),
