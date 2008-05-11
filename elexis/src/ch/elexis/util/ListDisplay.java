@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 3915 2008-05-11 09:47:24Z rgw_ch $
+ * $Id: ListDisplay.java 3917 2008-05-11 17:12:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -81,7 +81,13 @@ public class ListDisplay<T> extends Composite {
 	public void enableHyperlinks(boolean bEnable){
 		cLinks.setEnabled(bEnable);
 		for(Control c:cLinks.getChildren()){
-			c.setVisible(bEnable);
+			Hyperlink hl=(Hyperlink)c;
+			if(bEnable){
+				hl.setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+			}else{
+				hl.setForeground(Desk.theColorRegistry.get(Desk.COL_GREY));
+			}
+			c.setEnabled(bEnable);
 		}
 	}
 	/**

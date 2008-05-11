@@ -125,6 +125,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
     private final ViewMenus viewmenu;
     private final ExpandableComposite ecdm,ecZA;
     private boolean bLocked=true;
+    Hyperlink hHA;
     
 	Patientenblatt2(final Composite parent, final IViewSite site)
 	{
@@ -141,7 +142,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
         Composite cPersonalien=tk.createComposite(form.getBody());
         cPersonalien.setLayout(new GridLayout(2,false));
         cPersonalien.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-        Hyperlink hHA=tk.createHyperlink(cPersonalien,"Anschrift",SWT.NONE);
+        hHA=tk.createHyperlink(cPersonalien,"Anschrift",SWT.NONE);
 		hHA.addHyperlinkListener(hr);
 		hHA.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		inpAdresse=tk.createFormText(cPersonalien,false);
@@ -421,6 +422,12 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		bLocked=bLock;
 		ipp.setLocked(bLock);
 		inpZusatzAdresse.enableHyperlinks(!bLock);
+		hHA.setEnabled(!bLock);
+		if(bLock){
+			hHA.setForeground(Desk.theColorRegistry.get(Desk.COL_GREY));
+		}else{
+			hHA.setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+		}
 		lockAction.setChecked(bLock);
 	}
 	public void activation(final boolean mode) {
