@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *  $Id: Konsultation.java 3913 2008-05-11 06:41:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -326,9 +326,18 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 				mandantOK = false;
 			}
 
-			// TODO use getRechnung().exists()
-			if (checkBill && getRechnung() != null) {
-				billOK = false;
+			if(checkBill){
+				Rechnung rn=getRechnung();
+				if(rn==null || (!rn.exists())){
+					billOK=true;
+				}else{
+					int stat=rn.getStatus();
+					if(stat==RnStatus.STORNIERT){
+						billOK=true;
+					}else{
+						billOK=false;
+					}
+				}
 			}
 		}
 		
