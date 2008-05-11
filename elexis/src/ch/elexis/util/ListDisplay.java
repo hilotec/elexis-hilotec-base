@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 3204 2007-09-25 15:40:05Z rgw_ch $
+ * $Id: ListDisplay.java 3915 2008-05-11 09:47:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -19,6 +19,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -77,6 +78,12 @@ public class ListDisplay<T> extends Composite {
 		}
 	}
 
+	public void enableHyperlinks(boolean bEnable){
+		cLinks.setEnabled(bEnable);
+		for(Control c:cLinks.getChildren()){
+			c.setVisible(bEnable);
+		}
+	}
 	/**
 	 * Ein Objekt der Liste hinzufügen
 	 * @param item das Objekt. Muss getLabel() implementieren

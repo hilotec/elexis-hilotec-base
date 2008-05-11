@@ -18,20 +18,18 @@ package ch.elexis.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -47,13 +45,13 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
@@ -65,23 +63,23 @@ import ch.elexis.dialogs.AnschriftEingabeDialog;
 import ch.elexis.dialogs.KontaktDetailDialog;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.UserSettings2;
-import ch.elexis.util.DynamicListDisplay;
 import ch.elexis.util.InputPanel;
 import ch.elexis.util.LabeledInputField;
+import ch.elexis.util.ListDisplay;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.WidgetFactory;
-import ch.elexis.util.DynamicListDisplay.DLDListener;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 /**
  * Detailansicht eines Patientrecords
+ * Ersatz für Patientenblatt mit erweiterter Funktionalität (Lock, Nutzung von InputPanel)
  */
 public class Patientenblatt2 extends Composite implements GlobalEvents.SelectionListener, ActivationListener{
 	private final FormToolkit tk;
 	private InputPanel ipp;
+	private IAction lockAction;
 	InputData[] fields=new InputData[]{
 			new InputData("Name","Name",InputData.Typ.STRING,null),
 			new InputData("Vorname","Vorname",InputData.Typ.STRING,null),
@@ -118,7 +116,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	private final static String FIXMEDIKATION="Fixmedikation"; 
 	//private final static String[] lbLists={"Fixmedikation"/*,"Reminders" */};
 	private final FormText inpAdresse;
-	private final DynamicListDisplay inpZusatzAdresse /*, dlReminder */;
+	private final ListDisplay<BezugsKontakt> inpZusatzAdresse /*, dlReminder */;
 	private final DauerMediDisplay dmd;
 	Patient actPatient;
 	IViewSite viewsite;
@@ -126,6 +124,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
     private final ScrolledForm form;
     private final ViewMenus viewmenu;
     private final ExpandableComposite ecdm,ecZA;
+    private boolean bLocked=true;
     
 	Patientenblatt2(final Composite parent, final IViewSite site)
 	{
@@ -163,11 +162,12 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 
         ecZA.addExpansionListener(ecExpansionListener);
         
-		inpZusatzAdresse=new DynamicListDisplay(ecZA,SWT.NONE,new DLDListener(){
+		inpZusatzAdresse=new ListDisplay<BezugsKontakt>(ecZA,SWT.NONE,new ListDisplay.LDListener(){
 			public boolean dropped(final PersistentObject dropped) {
 				return false;
 			}
 
+			
 			public void hyperlinkActivated(final String l) {
 				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Kontakt für Zusatzadresse","Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
 				if(ksl.open()==Dialog.OK){
@@ -182,56 +182,49 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 					
 				}
 			
+			}
+
+			public String getLabel(Object o) {
+				BezugsKontakt bezugsKontakt = (BezugsKontakt) o;
+
+				StringBuffer sb = new StringBuffer();
+				sb.append(bezugsKontakt.getLabel());
+				
+				Kontakt other = Kontakt.load(bezugsKontakt.get("otherID"));
+				if (other.exists()) {
+					List<String> tokens = new ArrayList<String>();
+					
+					String telefon1 = other.get("Telefon1");
+					String telefon2 = other.get("Telefon2");
+					String mobile = other.get("NatelNr");
+					String eMail = other.get("E-Mail");
+					String fax = other.get("Fax");
+					
+					if (!StringTool.isNothing(telefon1)) {
+						tokens.add("T1: " + telefon1);
+					}
+					if (!StringTool.isNothing(telefon2)) {
+						tokens.add("T2: " + telefon2);
+					}
+					if (!StringTool.isNothing(mobile)) {
+						tokens.add("M: " + mobile);
+					}
+					if (!StringTool.isNothing(fax)) {
+						tokens.add("F: " + fax);
+					}
+					if (!StringTool.isNothing(eMail)) {
+						tokens.add(eMail);
+					}
+					for (String token : tokens) {
+						sb.append(", ");
+						sb.append(token);
+					}
+					return sb.toString();
+				}
+				return "?";
 			}});
 		inpZusatzAdresse.addHyperlinks("Hinzu...");
 		inpZusatzAdresse.setMenu(createZusatzAdressMenu());
-		inpZusatzAdresse.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-			    // TODO: make this behaviour configurable in preferences
-			
-				if (element instanceof BezugsKontakt) {
-					BezugsKontakt bezugsKontakt = (BezugsKontakt) element;
-
-					StringBuffer sb = new StringBuffer();
-					sb.append(bezugsKontakt.getLabel());
-					
-					Kontakt other = Kontakt.load(bezugsKontakt.get("otherID"));
-					if (other.exists()) {
-						List<String> tokens = new ArrayList<String>();
-						
-						String telefon1 = other.get("Telefon1");
-						String telefon2 = other.get("Telefon2");
-						String mobile = other.get("NatelNr");
-						String eMail = other.get("E-Mail");
-						String fax = other.get("Fax");
-						
-						if (!StringTool.isNothing(telefon1)) {
-							tokens.add("T1: " + telefon1);
-						}
-						if (!StringTool.isNothing(telefon2)) {
-							tokens.add("T2: " + telefon2);
-						}
-						if (!StringTool.isNothing(mobile)) {
-							tokens.add("M: " + mobile);
-						}
-						if (!StringTool.isNothing(fax)) {
-							tokens.add("F: " + fax);
-						}
-						if (!StringTool.isNothing(eMail)) {
-							tokens.add(eMail);
-						}
-						for (String token : tokens) {
-							sb.append(", ");
-							sb.append(token);
-						}
-					}
-					
-					return sb.toString();
-				} else {
-					return element.toString();
-				}
-			}
-		});
 		
         ecZA.setClient(inpZusatzAdresse);
 		for(int i=0;i<lbExpandable.length;i++){
@@ -265,9 +258,11 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		dmd=new DauerMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
 		makeActions();
+		//form.getToolBarManager().add(lockAction);
 		viewmenu=new ViewMenus(viewsite);
 		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,GlobalActions.printBlatt,GlobalActions.printRoeBlatt);
-        GlobalEvents.getInstance().addActivationListener(this,site.getPart());
+        viewmenu.createToolbar(lockAction);
+		GlobalEvents.getInstance().addActivationListener(this,site.getPart());
         tk.paintBordersFor(form.getBody());
 	}
     
@@ -298,7 +293,11 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 				}
 			}
 			if(newvalue!=null){
-				actPatient.set(field,newvalue);
+				if(bLocked){
+					((Text)e.getSource()).setText(oldvalue);
+				}else{
+					actPatient.set(field,newvalue);
+				}
 			}
 		}
 	}
@@ -386,6 +385,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		dmd.reload();
 		//setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
 		form.reflow(true);
+		setLocked(true);
 	}
     public void refresh(){
     	form.reflow(true);
@@ -402,8 +402,25 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
     }
 	
 	private void makeActions(){
+		lockAction=new RestrictedAction(AccessControlDefaults.PATIENT_MODIFY,"gesichert",Action.AS_CHECK_BOX){
+			{
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_LOCK_CLOSED));
+				setToolTipText("Blatt gegen Änderungen sichern");
+				setChecked(true);
+			}
+			@Override
+			public void doRun() {
+				setLocked(isChecked());
+			}
+			
+		};
 	}
 
+	public void setLocked(boolean bLock){
+		bLocked=bLock;
+		ipp.setLocked(bLock);
+		inpZusatzAdresse.enableHyperlinks(!bLock);
+	}
 	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub
 		

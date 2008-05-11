@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LabeledInputField.java 3891 2008-05-10 09:31:39Z rgw_ch $
+ * $Id: LabeledInputField.java 3915 2008-05-11 09:47:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -306,6 +306,7 @@ public class LabeledInputField extends Composite {
 							switch (inp.tFeldTyp) {
 					
 							case STRING:
+							case COMBO:
 							case INT:
 							case DATE:
 								val=inp.getText();
@@ -368,6 +369,7 @@ public class LabeledInputField extends Composite {
     			case STRING:
     			case INT:
     			case LIST:
+    			case COMBO:
     			case DATE:
     				if(StringTool.isNothing(val)){
     					val=StringTool.leer;
@@ -382,7 +384,6 @@ public class LabeledInputField extends Composite {
     				//def[i].setText(Double.toString(betr/100.0));
 					break;
     			}
-   			
     		}
     	}
     }

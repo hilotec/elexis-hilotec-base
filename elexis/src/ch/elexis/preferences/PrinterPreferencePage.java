@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PrinterPreferencePage.java 2511 2007-06-11 11:45:13Z danlutz $
+ * $Id: PrinterPreferencePage.java 3915 2008-05-11 09:47:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -35,6 +35,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 	Text tEinzelblattSchacht;
 	Button bEtiketten;
 	Button cEtiketten;
+	Button bClear;
 	PrinterSelector psel;
 	
 	@Override
@@ -124,6 +125,19 @@ public class PrinterPreferencePage extends PreferencePage implements
 		tA5Schacht.setText(Hub.localCfg.get("Drucker/A5/Schacht",""));
 		tEinzelblatt.setText(Hub.localCfg.get("Drucker/Einzelblatt/Name",""));
 		tEinzelblattSchacht.setText(Hub.localCfg.get("Drucker/Einzelblatt/Schacht",""));
+		new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		bClear=new Button(ret,SWT.PUSH);
+		bClear.setText("Druckereinstellungen löschen");
+		bClear.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		bClear.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				tEtiketten.setText("");
+				tA4.setText("");
+				tA4ESR.setText("");
+				tA5.setText("");
+			}
+		});
 		return ret;
 	}
 	class PrinterSelector extends SelectionAdapter{

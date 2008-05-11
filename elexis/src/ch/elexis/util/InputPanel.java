@@ -7,9 +7,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.ColumnLayout;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.util.LabeledInputField.AutoForm;
@@ -41,8 +38,8 @@ public class InputPanel extends Composite{
 			}
 		}
 		setLayout(new GridLayout());
-		top=new Composite(this,SWT.BORDER);
-		top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		//top=new Composite(this,SWT.BORDER);
+		//top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		//Composite bottom=new Composite(this,SWT.NONE);
 		//bottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		af=new LabeledInputField.AutoForm(this,fields,min,max);
