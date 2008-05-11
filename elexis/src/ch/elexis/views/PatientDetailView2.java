@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientDetailView2.java 3915 2008-05-11 09:47:24Z rgw_ch $
+ *  $Id: PatientDetailView2.java 3916 2008-05-11 14:48:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -30,6 +30,7 @@ public class PatientDetailView2 extends ViewPart implements ISaveablePart2{
     @Override
     public void createPartControl(Composite parent)
     {
+    	setPartName("Patient Detail");
         parent.setLayout(new FillLayout());
         pb=new Patientenblatt2(parent,getViewSite());
 

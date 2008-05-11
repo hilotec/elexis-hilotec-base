@@ -129,6 +129,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	Patientenblatt2(final Composite parent, final IViewSite site)
 	{
 		super(parent,SWT.NONE);
+		
 		viewsite=site;
 		parent.setLayout(new FillLayout());
 		setLayout(new FillLayout());
@@ -420,6 +421,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		bLocked=bLock;
 		ipp.setLocked(bLock);
 		inpZusatzAdresse.enableHyperlinks(!bLock);
+		lockAction.setChecked(bLock);
 	}
 	public void activation(final boolean mode) {
 		// TODO Auto-generated method stub

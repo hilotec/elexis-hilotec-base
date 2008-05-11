@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Desk.java 3915 2008-05-11 09:47:24Z rgw_ch $
+ *    $Id: Desk.java 3916 2008-05-11 14:48:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -154,7 +154,7 @@ public class Desk implements IPlatformRunnable {
 		        theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor("rsc/person.ico"));  //$NON_NLS-1$
 		        theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor("rsc/personok.ico"));  //$NON_NLS-1$
 		        theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor("rsc/floppy.png"));  //$NON_NLS-1$
-		        theImageRegistry.put(IMG_LOCK_CLOSED, Hub.getImageDescriptor("rsc/schloss.ico"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_LOCK_CLOSED, Hub.getImageDescriptor("rsc/emblem-readonly.png"));  //$NON_NLS-1$
 			}
 		}
 		try {
