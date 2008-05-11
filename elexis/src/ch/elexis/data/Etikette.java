@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3890 2008-05-09 23:17:47Z rgw_ch $
+ *    $Id: Etikette.java 3912 2008-05-11 05:35:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -21,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Desk;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.JdbcLink.Stm;
 
 
@@ -60,15 +62,19 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout(2,false));
 		Image img=getImage();
-		if(img==null){
-			img=Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+		GridData gd1=null;
+		GridData gd2=null;;
+		Composite cImg=new Composite(ret,SWT.NONE);
+		if(img!=null){
+			cImg.setBackgroundImage(img);
+			gd1=new GridData(img.getBounds().width,img.getBounds().height);
+			gd2=new GridData(SWT.DEFAULT,img.getBounds().height);
+		}else{
+			gd1=new GridData(10,10);
+			gd2=new GridData(SWT.DEFAULT,SWT.DEFAULT);
 		}
-		Composite cImg=new Composite(ret,SWT.BORDER);
-		cImg.setBackgroundImage(img);
-		GridData gd1=new GridData(img.getBounds().width,img.getBounds().height);
 		cImg.setLayoutData(gd1);
 		Label lbl=new Label(ret,SWT.NONE);
-		GridData gd2=new GridData(SWT.DEFAULT,img.getBounds().height);
 		lbl.setLayoutData(gd2);
 		lbl.setText(getLabel());
 		lbl.setForeground(getForeground());
