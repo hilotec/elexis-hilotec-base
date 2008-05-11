@@ -8,17 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 3758 2008-03-28 18:16:48Z rgw_ch $
+ * $Id: RnPrintView2.java 3914 2008-05-11 06:41:38Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -61,7 +57,7 @@ import ch.rgw.tools.TimeTool;
  * bills we keep things easier here. Thus this approach does not optimize printer access but rather
  * waits for each page to be printed before starting the next.
  * 
- * We also corrected several prblems around the TrustCenter-system. Tokens are printed only on TG bills and
+ * We also corrected several problems around the TrustCenter-system. Tokens are printed only on TG bills and
  * only if the mandator has a TC contract. 
  * Tokens are computed correctly now with the TC number as identifier in TG bills and left as ESR in TP bills.
  * @author Gerry
@@ -631,7 +627,11 @@ public class RnPrintView2 extends ViewPart {
 			}else if(t1.equals("001")){
 				return 1;				// nicht-tarmed immer unterhalb tarmed
 			}else{				// nicht-tarmed - nicht-tarmed: alphabetisch
-				return e0.getText().compareToIgnoreCase(e1.getText());
+				int diffc=t0.compareTo(t1);
+				if(diffc==0){
+					diffc=e0.getText().compareToIgnoreCase(e1.getText());
+				}
+				return diffc;
 			}
 		}
 	}
