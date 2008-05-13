@@ -122,7 +122,7 @@ public class TagesView extends BaseAgendaView{
 		});
 		
 		Button bPrint=new Button(top,SWT.CENTER|SWT.PUSH|SWT.FLAT);
-		bPrint.setImage(Desk.theImageRegistry.get(Desk.IMG_PRINT));
+		bPrint.setImage(Desk.theImageRegistry.get(Desk.IMG_PRINTER));
 		bPrint.setToolTipText(Messages.TagesView_printDay); 
 		bPrint.addSelectionListener(new SelectionAdapter(){
 			@Override
