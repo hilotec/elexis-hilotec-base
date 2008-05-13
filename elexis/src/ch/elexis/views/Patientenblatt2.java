@@ -30,7 +30,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
@@ -47,6 +50,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
@@ -80,6 +84,9 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	private final FormToolkit tk;
 	private InputPanel ipp;
 	private IAction lockAction;
+	MenuItem delZA;
+	private final static String CFG_BEZUGSKONTAKTTYPEN="Bezugskontakttypen";
+	private final static String SPLITTER="#!>";
 	InputData[] fields=new InputData[]{
 			new InputData("Name","Name",InputData.Typ.STRING,null),
 			new InputData("Vorname","Vorname",InputData.Typ.STRING,null),
@@ -174,9 +181,10 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Kontakt für Zusatzadresse","Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
 				if(ksl.open()==Dialog.OK){
 					Kontakt k=(Kontakt) ksl.getSelection();
-					InputDialog id=new InputDialog(getShell(),"Bezugstext für Adresse","Geben Sie bitte einen Text ein, der die Bedeutung dieser Adresse erklärt","",null);
-					if(id.open()==Dialog.OK){
-						String bezug=id.getValue();
+					BezugsKontaktAuswahl bza=new BezugsKontaktAuswahl();
+					//InputDialog id=new InputDialog(getShell(),"Bezugstext für Adresse","Geben Sie bitte einen Text ein, der die Bedeutung dieser Adresse erklärt","",null);
+					if(bza.open()==Dialog.OK){
+						String bezug=bza.getResult();
 						BezugsKontakt bk=actPatient.addBezugsKontakt(k, bezug);
 						inpZusatzAdresse.add(bk);
 						form.reflow(true);
@@ -306,15 +314,17 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	private Menu createZusatzAdressMenu()
     {
             Menu ret=new Menu(inpZusatzAdresse);
-            MenuItem delZA=new MenuItem(ret,SWT.NONE);
+            delZA=new MenuItem(ret,SWT.NONE);
             delZA.setText("Adresse entfernen");
             delZA.addSelectionListener(new SelectionAdapter(){
                 @Override
                 public void widgetSelected(final SelectionEvent e)
                 {
-                    BezugsKontakt a=(BezugsKontakt)inpZusatzAdresse.getSelection();
-                    actPatient.removeBezugsKontakt(Kontakt.load(a.get("otherID")));
-                    setPatient(actPatient);
+                	if(!bLocked){
+                		BezugsKontakt a=(BezugsKontakt)inpZusatzAdresse.getSelection();
+                		actPatient.removeBezugsKontakt(Kontakt.load(a.get("otherID")));
+                		setPatient(actPatient);
+                	}
                 }
                 
             });
@@ -423,6 +433,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		ipp.setLocked(bLock);
 		inpZusatzAdresse.enableHyperlinks(!bLock);
 		hHA.setEnabled(!bLock);
+		delZA.setEnabled(!bLock);
 		if(bLock){
 			hHA.setForeground(Desk.theColorRegistry.get(Desk.COL_GREY));
 		}else{
@@ -447,6 +458,49 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 
 	public void clearEvent(final Class<? extends PersistentObject> template) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	class BezugsKontaktAuswahl extends Dialog{
+		Combo cbType;
+		String result="";
+		
+		public BezugsKontaktAuswahl() {
+			super(Patientenblatt2.this.getShell());
+		}
+
+		@Override
+		public void create() {
+			super.create();
+			getShell().setText("Art des Bezugskontakts");
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite ret=(Composite)super.createDialogArea(parent);
+			new Label(ret,SWT.NONE).setText("Bitte geben Sie die Art des Bezugskontakts ein");
+			cbType=new Combo(ret,SWT.NONE);
+			cbType.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			String bez=Hub.globalCfg.get(CFG_BEZUGSKONTAKTTYPEN, "");
+			cbType.setItems(bez.split(SPLITTER));
+			return ret;
+		}
+
+		@Override
+		protected void okPressed() {
+			result=cbType.getText();
+			String[] items=cbType.getItems();
+			String nitem=cbType.getText();
+			String res="";
+			if(StringTool.getIndex(items, nitem)==-1){
+				res=nitem+SPLITTER;
+			}
+			Hub.globalCfg.set(CFG_BEZUGSKONTAKTTYPEN, res+StringTool.join(items, SPLITTER));
+			super.okPressed();
+		}
+		public String getResult(){
+			return result;
+		}
 		
 	}
 	
