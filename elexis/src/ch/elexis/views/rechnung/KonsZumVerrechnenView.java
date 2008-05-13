@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 3889 2008-05-09 11:51:52Z danlutz $
+ *  $Id: KonsZumVerrechnenView.java 3918 2008-05-13 16:13:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -533,7 +533,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2{
 		};
 		printAction=new Action(Messages.getString("KonsZumVerrechnenView.printSelection")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT)); 
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER)); 
 				setToolTipText(Messages.getString("KonsZumVerrechnenView.printToolTip")); //$NON-NLS-1$
 			}
 			@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: RnActions.java 3918 2008-05-13 16:13:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -67,7 +67,7 @@ public class RnActions {
     	
     	printListeAction=new Action("Liste drucken"){
     		{
-    			setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT));
+    			setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
     			setToolTipText("Die angezeigte Liste ausdrucken");
     		}
     		@Override

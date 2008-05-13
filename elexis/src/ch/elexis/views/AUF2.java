@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 3881 2008-05-06 16:53:59Z rgw_ch $
+ *  $Id: AUF2.java 3918 2008-05-13 16:13:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -141,7 +141,7 @@ public class AUF2 extends ViewPart implements ActivationListener, SelectionListe
 		 };
 		 printAUF=new Action(Messages.getString("AUF2.print")){ //$NON-NLS-1$
 			 {
-				 setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT));
+				 setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
 				 setToolTipText(Messages.getString("AUF2.createPrint")); //$NON-NLS-1$
 			 }
 				@Override

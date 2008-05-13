@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 3881 2008-05-06 16:53:59Z rgw_ch $
+ *  $Id: RezepteView.java 3918 2008-05-13 16:13:09Z rgw_ch $
  *******************************************************************************/
 
 
@@ -325,8 +325,8 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 				}
 			}
 		};
-		addLineAction.setImageDescriptor(Hub.getImageDescriptor("rsc/add.gif"));
-		printAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor("print"));
+		addLineAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
+		printAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
 		newRpAction.setImageDescriptor(Hub.getImageDescriptor("rsc/rpneu.ico"));
 	}
 	public void activation(final boolean mode) {

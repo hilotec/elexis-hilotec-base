@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: PatHeuteView.java 3918 2008-05-13 16:13:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -585,7 +585,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		};
 		printAction=new Action("Liste drucken"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT));
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Detaillierten Abrechnungsbericht drucken");
 			}
 			@Override

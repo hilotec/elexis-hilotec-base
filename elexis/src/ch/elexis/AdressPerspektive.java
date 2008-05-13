@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AdressPerspektive.java 1127 2006-10-19 09:24:51Z rgw_ch $
+ *    $Id: AdressPerspektive.java 3918 2008-05-13 16:13:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -40,7 +40,6 @@ public class AdressPerspektive implements IPerspectiveFactory {
 		IFolderLayout details=layout.createFolder("details",IPageLayout.BOTTOM,1.0f,editorArea); //$NON-NLS-1$
 		oben.addView(KontakteView.ID);
 		details.addView(KontaktDetailView.ID);
-
 	}
 
 }

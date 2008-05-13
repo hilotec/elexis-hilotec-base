@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 3917 2008-05-11 17:12:33Z rgw_ch $ 
+<!-- $Id: plugin.xml 3918 2008-05-13 16:13:09Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -266,7 +266,7 @@
       <view
             category="ch.elexis.textKategorie"
             class="ch.elexis.views.RezeptBlatt"
-            icon="rsc/print.gif"
+            icon="rsc/printer.png"
             id="ch.elexis.RezeptBlatt"
             name="%elexis.prescriptionPrintView"/>
       <view
