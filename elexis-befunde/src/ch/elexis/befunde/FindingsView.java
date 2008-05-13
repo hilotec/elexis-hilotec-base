@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 3677 2008-02-15 16:44:36Z rgw_ch $
+ *    $Id: FindingsView.java 3919 2008-05-13 16:13:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -328,7 +328,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		};
 		printValuesAction=new Action("Drucken"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINT));
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Diese Messwerte drucken");
 			}
 			@Override
