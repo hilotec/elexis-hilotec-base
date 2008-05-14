@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id$
+ *    $Id: Desk.java 3916 2008-05-11 14:48:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -174,7 +174,7 @@ public class Desk implements IApplication {
 
 	}
 
-	public String getImageBase(){
+	static String getImageBase(){
 		String imageBase=Hub.localCfg.get(PreferenceConstants.USR_PLAF,"rsc/");
 		return imageBase;
 	}
@@ -219,7 +219,7 @@ public class Desk implements IApplication {
 		}
 		return theImageRegistry;
 	}
-	public ImageDescriptor getImageDescriptor(String imagename){
+	public static ImageDescriptor getImageDescriptor(String imagename){
 		ImageDescriptor ret=theImageRegistry.getDescriptor(imagename);
 		if(ret==null){
 			ret=Hub.getImageDescriptor(getImageBase()+imagename+".png");
@@ -236,7 +236,7 @@ public class Desk implements IApplication {
 		return ret;
 	}
 	
-	public Image getImage(String name){
+	public static Image getImage(String name){
 		Image ret=theImageRegistry.get(name);
 		if(ret==null){
 			ImageDescriptor id=getImageDescriptor(name);

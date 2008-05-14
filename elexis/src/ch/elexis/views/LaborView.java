@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 3844 2008-04-25 20:48:42Z rgw_ch $
+ *  $Id: LaborView.java 3923 2008-05-14 13:32:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -796,10 +796,10 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			}
 		};
 		
-		newAction.setImageDescriptor(Hub.getImageDescriptor("rsc/add.gif"));
+		newAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM)); 		//Hub.getImageDescriptor("rsc/add.gif"));
 		fwdAction.setImageDescriptor(Hub.getImageDescriptor("rsc/arrow_next.gif"));
 		backAction.setImageDescriptor(Hub.getImageDescriptor("rsc/arrow_prev.gif"));
-		printAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor("print"));
+		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 		xmlAction.setImageDescriptor(Hub.getImageDescriptor("rsc/xml.gif"));
 	}
 	public Document makeXML(){
