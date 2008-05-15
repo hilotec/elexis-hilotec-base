@@ -37,10 +37,15 @@ import ch.rgw.IO.FileTool;
 import ch.rgw.tools.StringTool;
 
 public class Desk implements IApplication {
+	/** @deprecated use getDisplay() */
 	public static Display theDisplay=null;
+	/** @deprecated use getToolkit() */
     public static FormToolkit theToolkit=null;
+    /** @deprecated use getFontRegistry() */
     public static FontRegistry theFontRegistry=null;
+    /** @deprecated use getImage and getImageDescriptor */
     public static ImageRegistry theImageRegistry=null;
+    /** @deprecated use getColor */
     public static ColorRegistry theColorRegistry=null;
     
     public static final String COL_RED="rot";
@@ -93,9 +98,9 @@ public class Desk implements IApplication {
     /** warning */
     public static final String IMG_ACHTUNG="achtung"; //$NON-NLS-1$
     /** ok */
-    public static final String IMG_OK="AllesOK"; //$NON-NLS-1$
+    public static final String IMG_OK="ok"; //$NON-NLS-1$
     /** tick */
-    public static final String IMG_TICK="abgehakt"; //$NON-NLS-1$
+    public static final String IMG_TICK="tick"; //$NON-NLS-1$
     /** error */
 	public static final String IMG_FEHLER = "fehler"; //$NON-NLS-1$
 	/** refresh/reload */
@@ -103,7 +108,7 @@ public class Desk implements IApplication {
 	/** wizard/doing things automagically */
 	public static final String IMG_WIZARD="wizard"; //$NON-NLS-1$
 	/** add something to an existing object */
-	public static final String IMG_ADDITEM="addItem"; //$NON_NLS-1$
+	public static final String IMG_ADDITEM="add"; //$NON_NLS-1$
 	/** remove something from an existing object */
 	public static final String IMG_REMOVEITEM="minus";	//$NON_NLS-1$
 	/** excalamation mark red*/
@@ -178,7 +183,7 @@ public class Desk implements IApplication {
 		String imageBase=Hub.localCfg.get(PreferenceConstants.USR_PLAF,"rsc/");
 		return imageBase;
 	}
-	public ImageRegistry getImageRegistry(){
+	public static ImageRegistry getImageRegistry(){
 		if(theImageRegistry==null){
 			theImageRegistry=new ImageRegistry(theDisplay);
 			String imageBase=getImageBase();
@@ -247,7 +252,7 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
-	public ColorRegistry getColorRegistry(){
+	public static ColorRegistry getColorRegistry(){
 
 		if(theColorRegistry==null){
 			theColorRegistry=new ColorRegistry(theDisplay,true);
@@ -255,7 +260,7 @@ public class Desk implements IApplication {
 		return theColorRegistry;
 	}
 	
-	public FormToolkit getToolkit(){
+	public static FormToolkit getToolkit(){
 		if(theToolkit==null){
 			theToolkit=new FormToolkit(theDisplay);
 		}
@@ -269,7 +274,7 @@ public class Desk implements IApplication {
 		return theDisplay;
 	}
 	
-	public FontRegistry getFontRegistry(){
+	public static FontRegistry getFontRegistry(){
 		if(theFontRegistry==null){
 			theFontRegistry=new FontRegistry(theDisplay,true);
 		}
