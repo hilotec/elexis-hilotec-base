@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OmnivoreView.java 3754 2008-03-28 12:59:12Z rgw_ch $
+ *  $Id: OmnivoreView.java 3926 2008-05-15 11:09:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.views;
@@ -128,8 +128,8 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 					c1=new TimeTool(d1.get("Datum")).toString(TimeTool.DATE_COMPACT);
 					c2=new TimeTool(d2.get("Datum")).toString(TimeTool.DATE_COMPACT);
 				}else if(sortMode==SORTMODE_TITLE){
-					c1=d1.get("Titel");
-					c2=d2.get("Titel");
+					c1=d1.get("Titel").toLowerCase();
+					c2=d2.get("Titel").toLowerCase();
 				}else{
 					c1="";
 					c2="";
@@ -276,7 +276,7 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 		importAction = new Action("Importiere") {
 			{
 				setToolTipText("Externes Dokument importieren");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 			public void run() {
 				FileDialog fd=new FileDialog(getViewSite().getShell(),SWT.OPEN);

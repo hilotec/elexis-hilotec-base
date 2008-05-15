@@ -8,13 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 3867 2008-05-05 16:58:48Z rgw_ch $
+ *  $Id: DocHandle.java 3926 2008-05-15 11:09:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
