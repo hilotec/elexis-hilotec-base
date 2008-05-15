@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 3919 2008-05-13 16:13:16Z rgw_ch $
+ *    $Id: FindingsView.java 3927 2008-05-15 11:09:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -270,7 +270,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 	private void makeActions(){
 		newValueAction=new Action(Messages.getString("MesswerteView.enterNewValue")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 				setToolTipText("Eine neue Messung hinzufügen");
 			}
 			@Override
@@ -287,7 +287,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		};
 		editValueAction=new Action("Edit..."){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText("Text ansehen oder ändern");
 			}
 			@Override
