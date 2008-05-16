@@ -347,7 +347,8 @@ public class Importer extends ImporterPage {
 										"--logPath", downloadDirPath,
 										"--ini", iniPath,
 										"--verbose", "INF",
-										"-#OpenMedicalKey#"
+										"-#OpenMedicalKey#",
+										"-allInOne"
 								}
 						}
 				);
