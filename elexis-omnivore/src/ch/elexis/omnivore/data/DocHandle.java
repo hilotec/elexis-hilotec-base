@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 3926 2008-05-15 11:09:24Z rgw_ch $
+ *  $Id: DocHandle.java 3932 2008-05-16 17:25:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -36,7 +36,7 @@ import ch.rgw.tools.VersionInfo;
 
 public class DocHandle extends PersistentObject {
 	public static final String TABLENAME="CH_ELEXIS_OMNIVORE_DATA";
-	public static final String DBVERSION="1.1.0";
+	public static final String DBVERSION="1.2.0";
 	public static final String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25) primary key,"+
@@ -44,15 +44,19 @@ public class DocHandle extends PersistentObject {
 		"PatID			VARCHAR(25),"+
 		"Datum			CHAR(8),"+
 		"Title 			VARCHAR(80),"+	
-		"Mimetype		VARCHAR(50),"+
-		"Keywords		VARCHAR(80),"+
-		"Path			VARCHAR(80),"+
+		"Mimetype		VARCHAR(255),"+
+		"Keywords		VARCHAR(255),"+
+		"Path			VARCHAR(255),"+
 		"Doc			BLOB);"+
 		"CREATE INDEX OMN1 ON "+TABLENAME+" (PatID);"+
 		"CREATE INDEX OMN2 ON "+TABLENAME+" (Keywords);" +
 		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');";
 		
-
+	public static final String upd120=
+		"ALTER TABLE "+TABLENAME+" MODIFY Mimetype VARCHAR(255);"+
+		"ALTER TABLE "+TABLENAME+" MODIFY Keywords VARCHAR(255);"+
+		"ALTER TABLE "+TABLENAME+" Modify Path VARCHAR(255);";
+	
 	static{
 		addMapping(
 			TABLENAME,"PatID","Datum=S:D:Datum","Titel=Title","Keywords","Path","Doc","Mimetype"
@@ -66,10 +70,15 @@ public class DocHandle extends PersistentObject {
 				if(vi.isOlder("1.1.0")){
 					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					start.set("Titel", DBVERSION);
-				}else{
-					MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
+				}else if (vi.isOlder("1.2.0")){
+					createTable(TABLENAME, upd120);
+					start.set("Titel", DBVERSION);
+				}
+				else{
+					MessageDialog.openError(Desk.getTopShell(), "Versionskonsflikt", 
 						"Die Datentabelle für Dokumentspeicherung (Omnivore) hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
 				}
+			
 			}
 		}
 	}
@@ -182,6 +191,11 @@ public class DocHandle extends PersistentObject {
 				}
 				bis.close();
 				baos.close();
+				String nam=file.getName();
+				if(nam.length()>255){
+					SWTHelper.showError("Fehler beim Einlesen", "Der Dateiname ist zu lang (max. 255 Zeichen");
+					return;
+				}
 				new DocHandle(baos.toByteArray(),act,fid.title,file.getName(),fid.keywords);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
