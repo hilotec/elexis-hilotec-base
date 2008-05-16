@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 3923 2008-05-14 13:32:30Z rgw_ch $
+ *  $Id: LaborView.java 3931 2008-05-16 17:25:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -132,7 +132,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	private final FormToolkit tk=Desk.theToolkit;
 	private Form form;
 	// Formula handling
-	private final Pattern varsPattern=Pattern.compile("[a-zA-Z]+_[0-9]+");
+	private final Pattern varsPattern=Pattern.compile("[a-zA-Z0-9]+_[0-9]+");
 	private final HashMap<String, List<LabItem>> formulaRelations=new HashMap<String,List<LabItem>>();
 	private final ArrayList<LabItem> lFormulas=new ArrayList<LabItem>();
 	
