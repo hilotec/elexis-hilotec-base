@@ -45,6 +45,7 @@
 
 \begin{document}
 \maketitle
+\tableofcontents
 \section{Einführung}
 Der Weg vom Erbringen einer Leistung bis zum Einbuchen der Zahlung umfasst eine ganze Reihe verschiedener Schritte, die korrekt aufeinander abgestimmt werden müssen. Diese Broschüre erklärt die Konzepte und das Vorgehen beim Tarmed-System.
 
@@ -72,7 +73,7 @@ Es sei an dieser Stelle nochmal darauf hingewiesen, dass diese Konfiguration nic
 \medskip
 
 \subsection{Abrechnungssysteme}
-Die Leistungsverrechnung ist in Elexis als Plugin realisiert und damit auswechselbar oder auch ergänzbar - man kann nach Tarmed und nach CHOP, nach einem beliebigen Privatrechnungssystem und/oder nach einem österreichischen System abrechnen, das hängt nur davon ab, welche Plugins man installiert hat. Auch der Wechsel auf ein jetzt noch nicht bekanntes Tarifsystem ist damit kein Problem. Jedes Tarif-Plugin enthält das Codesystem selbst, sowie einen Mechanismus, um Rechnungen auszugeben, die zu diesem System konform sind (so muss eine Tarmed-Rechnung nicht nur andere Positionen beinhalten, sondern auch formal anders aussehen, als etwa eine Privatrechnung einer Heilpraktikerin). Ausserdem beinhaltet ein Abrechnungssystem je nachdem bestimmte ANgaben, die vorhanden sein müssen, um Rechnungen erstellen zu können (z.B. Kostenträger, Versicherungsnummer u. Ä.)
+Die Leistungsverrechnung ist in Elexis als Plugin realisiert und damit auswechselbar oder auch ergänzbar - man kann nach Tarmed und nach CHOP, nach einem beliebigen Privatrechnungssystem und/oder nach einem österreichischen System abrechnen, das hängt nur davon ab, welche Plugins man installiert hat. Auch der Wechsel auf ein jetzt noch nicht bekanntes Tarifsystem ist damit kein Problem. Jedes Tarif-Plugin enthält das Codesystem selbst, sowie einen Mechanismus, um Rechnungen auszugeben, die zu diesem System konform sind (so muss eine Tarmed-Rechnung nicht nur andere Positionen beinhalten, sondern auch formal anders aussehen, als etwa eine Privatrechnung einer Heilpraktikerin). Ausserdem beinhaltet ein Abrechnungssystem je nachdem bestimmte Angaben, die vorhanden sein müssen, um Rechnungen erstellen zu können (z.B. Kostenträger, Versicherungsnummer u. Ä.)
 
 
 \medskip
@@ -83,7 +84,7 @@ Leistungscode, Ausgabeziel und erforderliche Daten, sowie die Tarifstufe sind in
   \includegraphics[width=0.9\textwidth]{abr1}\\
   \caption{Abrechnungssysteme: Übersicht}\label{fig:abr1}
 \end{figure}
-Es kann beliebig viele Abrechnungssysteme geben, und die Namen der einzelnen Abrechnungssysteme sind seitens Elexis egal. Um alle Schweizer Systeme abzudecken, sollten allerdings Abrechnungssysteme mit den Namen 'KVG', 'UVG', 'IV', 'MV' und 'VVG' vorhanden sein. Weitere können nach belieben dazukommen. Es ist beispielsweise problemlos möglich, zwei verschiedene KVG-Systeme mit verschiedenen Taxpunktwerten zu definieren.
+Es kann beliebig viele Abrechnungssysteme geben, und die Namen der einzelnen Abrechnungssysteme sind seitens Elexis egal. Um alle Schweizer Systeme abzudecken, sollten allerdings Abrechnungssysteme mit den Namen 'KVG', 'UVG', 'IV', 'MV' und 'VVG' vorhanden sein. Weitere können nach Belieben dazukommen. Es ist beispielsweise problemlos möglich, zwei verschiedene KVG-Systeme mit verschiedenen Taxpunktwerten zu definieren.
 
 \medskip
 
@@ -101,7 +102,7 @@ Durch Rechtsklick kann man einen Eintrag in dieser Liste wieder löschen. Sie se
 
 \subsection{Mandanten und Rechnungssteller}
 
-Jeder Kontakt zwischen der Praxis und einem Patienten steht unter der Verantwortung eines \textit{Mandanten} und geht auf Rechnung eines \textit{Rechnungsstellers}. Im einfachsten und in der Schweiz üblichen Fall sind Mandant und Rechnungssteller identisch. Es ist aber auch möglich, dass ein Mandant im Fixlohn angestellt ist, auf eigen Verantwortung arbeitet, aber für einen anderen Rechnungssteller abrechnet (z.B. in einem HMO-Zentrum oder einer Polikinik). Dies ist nicht zu verwechseln mit einem Assistenten: Ein Assistent ist selber kein Mandant, sondern arbeitet auf Rechnung und unter der Verantwortung eines Mandanten. 
+Jeder Kontakt zwischen der Praxis und einem Patienten steht unter der Verantwortung eines \textit{Mandanten} und geht auf Rechnung eines \textit{Rechnungsstellers}. Im einfachsten und in der Schweiz üblichen Fall sind Mandant und Rechnungssteller identisch. Es ist aber auch möglich, dass ein Mandant im Fixlohn angestellt ist, auf eigen Verantwortung arbeitet, aber für einen anderen Rechnungssteller abrechnet (z.B. in einem HMO-Zentrum oder einer Polikinik). Dies ist nicht zu verwechseln mit einem Assistenten: Ein Assistent ist selber kein Mandant, sondern arbeitet auf Rechnung und unter der Verantwortung eines Mandanten.
 
 \medskip
 
@@ -109,10 +110,104 @@ Einen Mandanten erstellt man, indem man ihn unter den \textit{Kontakten} anlegt 
 
 Diese Zusammenhänge sind auch im Elexis-Handbuch beschrieben, genaueres bitte ich dort nachzulesen.
 
-\medksip
+\medskip
 
-Zurück zum Tarmed-System: Wenn das Plugin 'elexis-arzttarife-schweiz' installiert ist, finden.
+Zurück zum Tarmed-System: Wenn das Plugin 'elexis-arzttarife-schweiz' installiert ist, finden Sie unter \textsc{Datei-Einstellungen-Abrechnungssysteme} auch die Positionen 'Labortarif' und 'Tarmed-Rechnungen' (S. Abb. \ref{fig:abr1}). Wählen Sie zunächst den Punkt Labortarife (Abb. \ref{fig:abr3}):
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr3}\\
+  \caption{Labor-Taxpunkt}\label{fig:abr3}
+\end{figure}
+Hier muss der Multiplikator gleich wie bei den Abrechnungssystemen eingegeben werden. Auch hier kann ein einmal eingetragener Wert nicht mehr geändert werden und er ist ab dem Stichdatum bis zur nächsten Änderung gültig.
 
+\medskip
+
+Gehen Sie dann zum Punkt 'Tarmed-Rechnungen'. Es erscheint ein Dialog wie in Abb. \ref{fig:abr4}.
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.9\textwidth]{abr4}\\
+  \caption{Tarmedrechnungs-Einstellungen}\label{fig:abr4}
+\end{figure}
+
+Hier müssen Sie für jeden Mandanten und Rechnungssteller \textit{separat} alle für die Abrechnung relevanten Daten eingeben. Wählen Sie also im Combobox.Feld ganz oben zunächst einen Mandanten aus. Dadurch erscheint im Feld hinter 'Leistungserbringer' der Name dieses Mandanten. Klicken Sie dann auf das blaue Wort 'Leistungserbringer'. Es öffnet sich eine Dialogbox wie in Abb \ref{fig:abr5}.
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr5}\\
+  \caption{Einstellung pro Mandant}\label{fig:abr5}
+\end{figure}
+
+Um eine Zeile zu ändern müssen Sie in dieser Zeile die \textbf{Eingabetaste} drücken, dann den neuen Wert eingeben, dann nochmal die \textbf{Eingabetaste} drücken und erst dann mit der Maus oder der Pfeiltaste ein anderes Feld aufsuchen.
+
+Die Bedeutung der einzelnen Zeilen ist:
+\begin{itemize}
+\item Anrede: Sie haben es erraten ;-)
+\item Kanton: Der Standort Ihrer Praxis. Wenn Sie in mehreren Kantonen praktizieren, müssen Sie einen eigenen Mandanten für jeden Kanton erstellen (z.B. Müller TI und Müller AG).
+\item EAN: Ihre europäische Artikelnummer (Ja, wenn Sie ein in der Schweiz zugelassener Arzt sind, dann sind Sie auch ein europäischer Artikel, vergleichbar einer Milchtüte oder einem Badeschwamm). Falls Sie Ihre EAN nicht kennen, wenden Sie sich an die EAN.
+\item NIF: Wenn Sie IV-Fälle behandeln, benötigen Sie eine Nummer der IV, die sich NIF nennt. Fragen Sie mich nicht, wieso die IV nicht die EAN verwenden kann.
+\item KSK: Santésuisse hat Ihnen eine ZSR- oder KSK-Nummer gegeben, damit Sie über die Kassen abrechnen dürfen. Geben Sie diese Nummer ohne Punkte, Striche oder Leerzeichen ein. Und fragen Sie mich nicht, wieso Santésuisse nicht die EAN oder die NIF verwendet.
+\item TarmedESR5OrEsr9: Das zu verwendende ESR-System. Fragen Sie  nicht, sondern schreiben Sie 'esr9'. Ausser, wenn Sie genau wissen, was Sie tun. Aber dann brauchen Sie eh nicht zu fragen.
+\item TarmedEsrPlus: Dito. Schreiben Sie im Zweifelsfall einfach 'esr16or27'.
+\item TarmedTiersGarantOrPayant: Schreiben Sie garant oder payant je nach Ihrem bevorzugten Abrechnungssystem. Hat aber zur Zeit nicht viel Konsequenz, was Sie da hinschreiben.
+\item TarmedSpezialität: Der Titel, der Ihre 'Dignität' definiert. Fragen zum  Dignitätskonzept beantworten gerne und erschöpfend TarmedSuisse und die FMH.
+\item TarmedKanton Nochmal der Praxisstandort.
+\item TarmedErbringungsOrt praxis oder klinik (Wo Sie Ihre Leistungen erbringen)
+\item TarmedDiagnoseSystem: Nach welcher Systematik Sie Standardmässig Diagnosen auf den Rechnungen angeben. Schreiben Sie TI für Tessiner-Code, ausser wenn Sie einen guten und von TarmedSuisse abgesegneten Grund haben, etwas anderes zu schreiben.
+\end{itemize}
+
+Klicken Sie dann auf 'OK' um diesen Dialog wieder zu schliessen und wieder zu Abb. \ref{fig:abr4} zurückzukommen.
+
+
+\subsection{Post- oder Bankkonto}
+Jetzt müssen Sie das Konto angeben, auf das Sie die Zahlungen für Ihre Rechnungen erwarten. Sie benötigen ein VESR oder BESR Konto, zusammenfassend auch ESR-Konto genannt. Ein VESR-Konto ist ein ESR-Konto bei der Post, ein BESR-Konto ist eines bei einer Bank. Ein ESR-Konto ist eines, das mit diesen orangen (früher blauen) Einzahlungsscheinen befüllt wird, auf denen eine Referenznummer steht und deren Mitteilungskästchen mit einem vorgedruckten 'Keine Mitteilungen anbringen' beschriftet ist.
+
+Das schöne an ESR-Konti ist, dass Dateien mit Zahlungseingängen automatisch eingelesen und verarbeitet werden können, so dass Sie die Zahlungen nicht manuell verbuchen müssen, sondern diese Aufgabe an den Computer delegieren können.
+
+\medskip
+
+ \textbf{Dringende Empfehlung} Falls Sie schon ein ESR-Konto haben, das Sie mit einem anderen Programm benutzen, eröffnen Sie ein neues für die Benutzung mit Elexis, weil sonst die ESR-Zeilen nicht bzw. falsch interpretiert werden und beide Programme bei jedem Einlesen Fehlermeldungen ausspucken werden!
+
+\medskip
+
+Eröffnen Sie also je nach Geschmack bei der Post oder Ihrer Lieblingsbank ein ESR-Konto. Klicken Sie je nachdem auf das blaue Wort 'Postkonto' oder 'Bankverbindung'\footnote{Im Fall von 'Bankverbindung' muss Ihre Bank zuvor als Kontakt erfasst worden sein}.
+
+\begin{figure}[htbp]
+     \begin{minipage}{0.5\textwidth}
+      \centering
+       \includegraphics[width=0.95\textwidth]{abr6}
+       \caption{VESR (Post)}
+       	\label{fig:abr6}
+     \end{minipage}\hfill
+     \begin{minipage}{0.5\textwidth}
+      \centering
+       \includegraphics[width=0.95\textwidth]{abr7}
+       \caption{BESR (Bank)}
+       \label{fig:abr7}
+     \end{minipage}
+   \end{figure}
+
+Je nach Auswahl erscheint eine Dialogbox wie Abb. \ref{fig:abr6} oder Abb. \ref{fig:abr7}. Beim Postkonto müssen Sie nur die VESR-Teilnehmernummer eintragen, die Sie von der Post erhalten haben. Beim Bankkonto benötigen Sie zunächst die Bank: Klicken Sie auf das blaue 'Finanzinstitut' und wählen Sie den hoffentlich zuvor angelegten Kontakt, der Ihre Bank beschreibt. Geben Sie dann neben TarmedESRParticipantNumber die VESR-Teilnehmernummer \textit{der Bank} ein. Neben TarmedESRIdentity müssen Sie die BESR-Identitätsnummer eingeben, die Sie von der Bank bekommen haben. Klicken Sie dann auf OK, um wieder zu Abb. \ref{fig:abr4} zurückzukommen.
+
+\subsection{TrustCenter}
+Da gibt es nicht viel zu sagen. Falls Sie einen TC-Vertrag haben, setzen Sie hier ein Häkchen und wählen Ihr TrustCenter aus. (Wenn Sie das tun, dann wird auf dem Rückforderungsbeleg von TG-Rechnungen ein passendes Token gedruckt, das beinahe wie eine ESR-Zeile aussieht, aber keine ist).
+
+\subsection{Einzahlungsschein}
+Elexis benötigt a4-Papier mit \textit{unten} integriertem ESR-Einzahlungsschein. Also das unterste Drittel der A4-Seite ist der orange Einzahlungsschein des Typs BESR oder VESR (bei ersterem steht eine Zeile 'zugunsten von' im Empfänger-Feld).
+
+Zunächst benötigen Sie eine Schriftart des Typs OCR-B. diese Schriftart muss auf dem Computer installiert sein, von dem aus die Rechnungen gedruckt werden sollen \footnote{Tatsächlich empfehlen wir ausdrücklich, Rechnungen immer vom selben PC auf denselben Drucker auszugeben. Erst wenn das reibungslos funktioniert, können Experimente mit unterschiedlichen PC's gemacht werden, wenn es unbedingt sein muss.}. Nein, diese Schriftart ist nicht Bestandteil von Elexis, da sie lizenzpflichtig ist. Möglicherweise haben Sie aber von einem anderen ESR-fähigen Programm eine solche Schriftart irgendwo installiert und können diese verwenden. Ansonsten können Sie sich auch an die Post oder Ihre Bank wenden um zu erfahren, wo Sie diese Schriftart kaufen können. Sie benötigen Ausserdem eine ESR-Schablone, auf der Sie die korrekte Grösse und Positionierung der Codierzeile ablesen können.
+
+\medskip
+
+Nun zu den Einstellungen:
+\begin{itemize}
+\item Unter 'Schrift' geben Sie diejenige Schriftart ein, die der Einzahlungsschein ausserhalb der ESR-Zeile haben soll. Nehmen Sie hier irgendetwas nach Ihrem Geschmack (es muss natürlich eine auf dem PC installierte Schriftart sein).
+\item Unter 'Grösse' geben Sie die gewünschte Schriftgrösse in Punkt ein.
+\item Unter 'Schrift (Codierzeile)' müssen Sie die OCR-B Schriftart angeben.
+\item Mit 'Grösse (Codierzeile)' müssen Sie etwas experimentieren, bis Sie die korrekte Grösse haben
+\end{itemize}
+
+
+
+Weil unterschiedliche Drucker das Papier nicht hunterprozentig identisch positionieren, und weil die Post ein wenig kritisch bezüglich der Position der ESR-Zeile ist, kann man hier den
 
 \section{Schritt für Schritt: Verrechnen, Rechnungen erstellen und ausgeben}
 \label{rechnungenerstellen}
