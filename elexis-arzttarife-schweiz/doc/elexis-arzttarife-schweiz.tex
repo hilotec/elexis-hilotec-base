@@ -122,17 +122,19 @@ Hier muss der Multiplikator gleich wie bei den Abrechnungssystemen eingegeben we
 
 \medskip
 
-Gehen Sie dann zum Punkt 'Tarmed-Rechnungen'. Es erscheint ein Dialog wie in Abb. \ref{fig:abr4}.
+Gehen Sie dann zum Punkt 'Tarmed-Rechnungen'. Es erscheint ein Dialog wie in Abb.\ref{fig:abr4}.
 \begin{figure}
+    \center
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.9\textwidth]{abr4}\\
+  \includegraphics[width=0.75\textwidth]{abr4}\\
   \caption{Tarmedrechnungs-Einstellungen}\label{fig:abr4}
 \end{figure}
 
 Hier müssen Sie für jeden Mandanten und Rechnungssteller \textit{separat} alle für die Abrechnung relevanten Daten eingeben. Wählen Sie also im Combobox.Feld ganz oben zunächst einen Mandanten aus. Dadurch erscheint im Feld hinter 'Leistungserbringer' der Name dieses Mandanten. Klicken Sie dann auf das blaue Wort 'Leistungserbringer'. Es öffnet sich eine Dialogbox wie in Abb \ref{fig:abr5}.
 \begin{figure}
   % Requires \usepackage{graphicx}
-  \includegraphics{abr5}\\
+  \center
+  \includegraphics[width=0.75\textwidth]{abr5}\\
   \caption{Einstellung pro Mandant}\label{fig:abr5}
 \end{figure}
 
@@ -193,23 +195,105 @@ Da gibt es nicht viel zu sagen. Falls Sie einen TC-Vertrag haben, setzen Sie hie
 \subsection{Einzahlungsschein}
 Elexis benötigt a4-Papier mit \textit{unten} integriertem ESR-Einzahlungsschein. Also das unterste Drittel der A4-Seite ist der orange Einzahlungsschein des Typs BESR oder VESR (bei ersterem steht eine Zeile 'zugunsten von' im Empfänger-Feld).
 
-Zunächst benötigen Sie eine Schriftart des Typs OCR-B. diese Schriftart muss auf dem Computer installiert sein, von dem aus die Rechnungen gedruckt werden sollen \footnote{Tatsächlich empfehlen wir ausdrücklich, Rechnungen immer vom selben PC auf denselben Drucker auszugeben. Erst wenn das reibungslos funktioniert, können Experimente mit unterschiedlichen PC's gemacht werden, wenn es unbedingt sein muss.}. Nein, diese Schriftart ist nicht Bestandteil von Elexis, da sie lizenzpflichtig ist. Möglicherweise haben Sie aber von einem anderen ESR-fähigen Programm eine solche Schriftart irgendwo installiert und können diese verwenden. Ansonsten können Sie sich auch an die Post oder Ihre Bank wenden um zu erfahren, wo Sie diese Schriftart kaufen können. Sie benötigen Ausserdem eine ESR-Schablone, auf der Sie die korrekte Grösse und Positionierung der Codierzeile ablesen können.
+Zunächst benötigen Sie eine Schriftart des Typs OCR-B. diese Schriftart muss auf dem Computer installiert sein, von dem aus die Rechnungen gedruckt werden sollen \footnote{Tatsächlich empfehlen wir ausdrücklich, Rechnungen immer vom selben PC auf denselben Drucker auszugeben. Erst wenn das reibungslos funktioniert, können Experimente mit unterschiedlichen PC's gemacht werden, wenn es unbedingt sein muss.}. Nein, diese Schriftart ist nicht Bestandteil von Elexis, da sie lizenzpflichtig ist. Möglicherweise haben Sie aber von einem anderen ESR-fähigen Programm eine solche Schriftart irgendwo installiert und können diese verwenden. Ansonsten können Sie sich auch an die Post oder Ihre Bank wenden um zu erfahren, wo Sie diese Schriftart kaufen können. 
 
-\medskip
+
+Weil unterschiedliche Drucker das Papier nicht hunterprozentig identisch positionieren, und weil die Post ein wenig kritisch bezüglich der
+Position der ESR-Zeile ist, kann man ausserdem den Ausdruck hier entsprechend konfigurieren. Sie benötigen ev eine ESR-Schablone, auf der Sie die korrekte Grösse und Positionierung der Codierzeile ablesen können.
 
 Nun zu den Einstellungen:
 \begin{itemize}
 \item Unter 'Schrift' geben Sie diejenige Schriftart ein, die der Einzahlungsschein ausserhalb der ESR-Zeile haben soll. Nehmen Sie hier irgendetwas nach Ihrem Geschmack (es muss natürlich eine auf dem PC installierte Schriftart sein).
 \item Unter 'Grösse' geben Sie die gewünschte Schriftgrösse in Punkt ein.
 \item Unter 'Schrift (Codierzeile)' müssen Sie die OCR-B Schriftart angeben.
-\item Mit 'Grösse (Codierzeile)' müssen Sie etwas experimentieren, bis Sie die korrekte Grösse haben
+\item Mit 'Grösse (Codierzeile)' und der 'Schriftstärke' müssen Sie etwas experimentieren, bis Sie die korrekte OCR-lesbare Zeile haben
+\item Horizontale Korrektur der Codierzeile: Mit positiven Werten schieben Sie die Codierzeile nach rechts, mit negativen nach links.
+\item Vertikale Korrektur der Codierzeile: Mit positiven Werten schieben Sie die Zeile nach unten, mit negativen nach oben.
+\item Horizontale Korrektur global: Wenn besipielsweise die Zahlen nicht schön in die Felder kommen, können Sie hier den Einzahlungsschein als ganzes verschieben. (Sie müssen danach allerdings vermutlich die Codierzeile wieder neu positionieren).
+\item vertikale Korrektur global: Den ganzen Einzahlungsschein-Inhalt nach oben oder unten verschieben.
 \end{itemize}
 
+Dann können Sie diese Dialogbox schliessen.
 
+\subsection{Druckvorlagen}
+Wie (fast) alles, was in Elexis ausgedruckt wird, basieren auch Rechnungen auf Druckvorlagen. Bei Tarmed heissen diese System-Vorlagen:
 
-Weil unterschiedliche Drucker das Papier nicht hunterprozentig identisch positionieren, und weil die Post ein wenig kritisch bezüglich der Position der ESR-Zeile ist, kann man hier den
+\medskip
+
+\begin{tabular}{|l|l|}
+\hline
+Tarmedrechung\_EZ & Tarmedrechnung mit ESR\\
+Tarmedrechnung\_M1 & Erste Mahnung mit ESR\\
+Tarmedrechnung\_M2 & Zweite Mahnung mit ESR\\
+Tarmedrechnung\_M3 & Dritte Mahnung mit ESR\\
+\hline
+Tarmedrechnung\_S1 & Rückforderungsbeleg/TP-Rechnung erste Seite\\
+Tarmedrechnung\_S2 & Rückforderungsbeleg/TP-Rechnung Folgeseite\\
+\hline
+  
+\end{tabular}
+
+\medskip
+
+Diese Vorlagen sollten mit der Installation bereits vorhanden sein. Sie können die oberen 4 anpassen, aber es dürfen nur die oberen zwei Drittel des Blattes verwendet werden (das unterste Drittel wird der Einzahlungsschein). Achtung: Wenn Sie mehrere Mandanten haben und mandantenspezifische Texte verwenden, dann müssen Sie jede Vorlage mehrmals, einmal für jeden Mandanten, speichern. (Standardmässig sind die Rechnungsvorlagen für 'alle' gespeichert)
+
+Die Seiten S1 und S2 sollten wenn überhaupt nur sehr vorsichtig geändert werden, da das Layout nicht geändert werden darf. Andernfalls sind es keine gültigen Tarmed-Rechnungen mehr.
+
+Wie immer müssen Sie, wenn Sie eine Systemvorlage geändert haben, diese anschliessend explizit mit 'als Vorlage speichern... Systemvorlage' zurückspeichern, sonst gehen die Änderungen verloren.
+
 
 \section{Schritt für Schritt: Verrechnen, Rechnungen erstellen und ausgeben}
 \label{rechnungenerstellen}
+\subsection{Fälle, Rechnungsempfänger und Kostenträger}
+Ein 'Fall' ist die Zuordnung eines Patienten zu einem Kostenträger und einer Identifikation des Kostenträgers für den Fall. Beispiel: Patient, Krankenkasse und Versicherungsnummer für KVG-Behandlungen oder Patient, Versicherung und Unfallnummer für UVG-Behandlungen, oder Patient, IV-Stelle und AHV-Nummer für IV-Behandlungen.
+
+\medskip
+
+Damit bleibt ein Fall auch immer so lange gültig, wie die Behandlungen demselben Versicherungsereignis zugeordnet bleiben. Ein KVG-Fall also bis der Patient die Kasse wechselt, ein UVG-Fall bis der Unfall abgeschlossen ist. Das Erstellen von Rechnungen hängt zunächst nicht damit zusammen -- Ein und derselbe Fall kann keine, eine oder mehrere Rechnungen haben. Es werden immer automatisch alle noch nicht verrechneten Konsultationen auf die nächste Rechnung genommen. (Ausser, wenn man es manuell anders macht).
+
+\medskip
+
+\textbf{Wichtig:} Ein einmal erstellter Fall ist wie ein Krankenkassenkärtli oder ein Unfallschein zu betrachten. Das heisst, er darf nicht mehr geändert werden. Wenn sich etwas an der Versicherung ändert, muss ein neuer Fall erstellt werden.
+
+\subsubsection{Fall-Erfordernisse}
 \label{fall-erfordernisse}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.9\textwidth]{abr8}\\
+  \caption{Fall-Detail}\label{fig:abr8}
+\end{figure}
+
+Ein Fall ist immer einem Abrechnungssystem zugeordnet. Beim Erstellen eines neuen Falls muss im obersten Feld die 'Abrechnungsmethode' angegeben werden (s. Abb.\ref{fig:abr8}).
+Darunter geben Sie eine Bezeichnung ein. Diese ist nur zur internen Markierung des Falles gedacht, damit Sie wissen, welcher Fall gemeint ist. Sie können hier irgendetwas schreiben, z.B. 'Beinbruch'.
+Darunter das Feld 'Grund für die Versicherung' ist ein Tarmed-Erfordernis und wird auf der Rechnung erscheinen.
+\textit{Startdatum} ist bei Unfällen idR das Unfalldatum, bei KVG-Behandlungen die erste Konsultation.
+\textit{Enddatum} ist nur anzugeben, wenn der Fall abgeschlossen wird, also z.B. der Unfall abgeschlossen ist oder die Kasse gewechselt wird. Sobald ein Enddatum angegeben sit, ist der Fall als 'geschlossen' markiert und kann keine weiteren Konsultationen mehr aufnehmen.
+Die nächsten Zeilen betreffen die für die Rechnungsstellung erforderlichen Daten. Diese hängen davon ab, was beim Erstellen des Abrechnungssystems dieses Falles definiert wurde.
+Immer erforderlich ist der \textit{Rechnungsempfänger} - Wenn es keinen Rechnungsempfänger gibt, kann Elexis keine Rechnung erstellen. 
+Alle anderen Angaben hängen wie gesagt vom Abrechnungssystem ab. 
+
+Elexis betrachtet einen Fall als ungültig, wenn nicht alle Erfordernisse angegeben sind. Der Fall ist dann mit einem roten Punkt markiert. Wenn alle Erfordernisse eingetragen sind, wird der Punkt grün.
+
+\subsubsection{Tiers Garant und Tiers Payant}
+Tiers Payant bedeutet: Rechnungsempfänger und Kostenträger sind identisch. Tiers Garant bedeutet: Der Rechnungsempfänger ist nicht identisch mit dem Kostenträger. Es kann der Patient selbst sein, oder dessen Vormund, oder das Sozialamt. Tiers Soldant ist wiederum eine Variante von Tiers Payant, bei der der Kostenträger den nicht dem Selbstbehalt unterworfenen Anteil der Rechnung direkt an den Leistungserbringer zahlt.
+
+Sie legen also beim Erstellen eines Falles fest, ob eine TP-Rechnung oder eine TG-Rechnung mit Rückforderungsbeleg erstellt wird: Wenn Sie für Kostenträger und Rechnungsempfänger denselben Kontakt auswählen, wird es TP, sonst TG.
+
+\subsection{Rechnungen erstellen}
+Es gibt zwei prinzipiell gleichwertige Möglichkeiten, Rechnungen zu erstellen: Sofortrechnung und (halb-)automatischer Rechnungslauf.
+
+\subsubsection{Sofortrechnung}
+Klicken Sie mit der rechten Maustaste in der 'Fälle'-View auf den Fall und wählen Sie 'Rechnung erstellen'. Es wird direkt eine Rechnung über alle noch offenen Konsultationen des aktuellen Mandanten des gewählten Falles erstellt.
+
+\subsubsection{(halb-)automatischer Rechnungslauf}
+Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen zum Verrechnen'
+
+\section{Zahlungen verbuchen}
+
+\subsection{Zahlungen manuell verbuchen}
+
+\subsection{ESR-Files einlesen}
+
+\section{Mahnwesen}
+
 \end{document}
