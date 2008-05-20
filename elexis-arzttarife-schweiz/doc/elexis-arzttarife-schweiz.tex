@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 3939 2008-05-19 17:19:40Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 3940 2008-05-20 04:59:35Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -126,7 +126,7 @@ Gehen Sie dann zum Punkt 'Tarmed-Rechnungen'. Es erscheint ein Dialog wie in Abb
 \begin{figure}
     \center
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.75\textwidth]{abr4}\\
+  \includegraphics[width=0.85\textwidth]{abr4}\\
   \caption{Tarmedrechnungs-Einstellungen}\label{fig:abr4}
 \end{figure}
 
@@ -144,7 +144,7 @@ Die Bedeutung der einzelnen Zeilen ist:
 \begin{itemize}
 \item Anrede: Sie haben es erraten ;-)
 \item Kanton: Der Standort Ihrer Praxis. Wenn Sie in mehreren Kantonen praktizieren, müssen Sie einen eigenen Mandanten für jeden Kanton erstellen (z.B. Müller TI und Müller AG).
-\item EAN: Ihre europäische Artikelnummer (Ja, wenn Sie ein in der Schweiz zugelassener Arzt sind, dann sind Sie auch ein europäischer Artikel, vergleichbar einer Milchtüte oder einem Badeschwamm). Falls Sie Ihre EAN nicht kennen, wenden Sie sich an die EAN.
+\item EAN: Ihre europäische Artikelnummer (Ja, wenn Sie ein in der Schweiz zugelassener Arzt sind, dann sind Sie auch ein europäischer Artikel, vergleichbar einer Milchtüte oder einem Badeschwamm). Falls Sie Ihre EAN nicht kennen, wenden Sie sich an die FMH.
 \item NIF: Wenn Sie IV-Fälle behandeln, benötigen Sie eine Nummer der IV, die sich NIF nennt. Fragen Sie mich nicht, wieso die IV nicht die EAN verwenden kann.
 \item KSK: Santésuisse hat Ihnen eine ZSR- oder KSK-Nummer gegeben, damit Sie über die Kassen abrechnen dürfen. Geben Sie diese Nummer ohne Punkte, Striche oder Leerzeichen ein. Und fragen Sie mich nicht, wieso Santésuisse nicht die EAN oder die NIF verwendet.
 \item TarmedESR5OrEsr9: Das zu verwendende ESR-System. Fragen Sie  nicht, sondern schreiben Sie 'esr9'. Ausser, wenn Sie genau wissen, was Sie tun. Aber dann brauchen Sie eh nicht zu fragen.
@@ -153,10 +153,10 @@ Die Bedeutung der einzelnen Zeilen ist:
 \item TarmedSpezialität: Der Titel, der Ihre 'Dignität' definiert. Fragen zum  Dignitätskonzept beantworten gerne und erschöpfend TarmedSuisse und die FMH.
 \item TarmedKanton Nochmal der Praxisstandort.
 \item TarmedErbringungsOrt praxis oder klinik (Wo Sie Ihre Leistungen erbringen)
-\item TarmedDiagnoseSystem: Nach welcher Systematik Sie Standardmässig Diagnosen auf den Rechnungen angeben. Schreiben Sie TI für Tessiner-Code, ausser wenn Sie einen guten und von TarmedSuisse abgesegneten Grund haben, etwas anderes zu schreiben.
+\item TarmedDiagnoseSystem: Nach welcher Systematik Sie standardmässig Diagnosen auf den Rechnungen angeben. Schreiben Sie TI für Tessiner-Code, ausser wenn Sie einen guten und von TarmedSuisse abgesegneten Grund haben, etwas anderes zu schreiben.
 \end{itemize}
 
-Klicken Sie dann auf 'OK' um diesen Dialog wieder zu schliessen und wieder zu Abb. \ref{fig:abr4} zurückzukommen.
+Klicken Sie dann auf 'OK' um diesen Dialog wieder zu schliessen und wieder zu Abb.\ref{fig:abr4} zurückzukommen.
 
 
 \subsection{Post- oder Bankkonto}
@@ -195,7 +195,7 @@ Da gibt es nicht viel zu sagen. Falls Sie einen TC-Vertrag haben, setzen Sie hie
 \subsection{Einzahlungsschein}
 Elexis benötigt a4-Papier mit \textit{unten} integriertem ESR-Einzahlungsschein. Also das unterste Drittel der A4-Seite ist der orange Einzahlungsschein des Typs BESR oder VESR (bei ersterem steht eine Zeile 'zugunsten von' im Empfänger-Feld).
 
-Zunächst benötigen Sie eine Schriftart des Typs OCR-B. diese Schriftart muss auf dem Computer installiert sein, von dem aus die Rechnungen gedruckt werden sollen \footnote{Tatsächlich empfehlen wir ausdrücklich, Rechnungen immer vom selben PC auf denselben Drucker auszugeben. Erst wenn das reibungslos funktioniert, können Experimente mit unterschiedlichen PC's gemacht werden, wenn es unbedingt sein muss.}. Nein, diese Schriftart ist nicht Bestandteil von Elexis, da sie lizenzpflichtig ist. Möglicherweise haben Sie aber von einem anderen ESR-fähigen Programm eine solche Schriftart irgendwo installiert und können diese verwenden. Ansonsten können Sie sich auch an die Post oder Ihre Bank wenden um zu erfahren, wo Sie diese Schriftart kaufen können. 
+Zunächst benötigen Sie eine Schriftart des Typs OCR-B. diese Schriftart muss auf dem Computer installiert sein, von dem aus die Rechnungen gedruckt werden sollen \footnote{Tatsächlich empfehlen wir ausdrücklich, Rechnungen immer vom selben PC auf denselben Drucker auszugeben. Erst wenn das reibungslos funktioniert, können Experimente mit unterschiedlichen PC's gemacht werden, wenn es unbedingt sein muss.}. Nein, diese Schriftart ist nicht Bestandteil von Elexis, da sie lizenzpflichtig ist. Möglicherweise haben Sie aber von einem anderen ESR-fähigen Programm eine solche Schriftart irgendwo installiert und können diese verwenden. Ansonsten können Sie sich auch an die Post oder Ihre Bank wenden um zu erfahren, wo Sie diese Schriftart kaufen können.
 
 
 Weil unterschiedliche Drucker das Papier nicht hunterprozentig identisch positionieren, und weil die Post ein wenig kritisch bezüglich der
@@ -230,7 +230,7 @@ Tarmedrechnung\_M3 & Dritte Mahnung mit ESR\\
 Tarmedrechnung\_S1 & Rückforderungsbeleg/TP-Rechnung erste Seite\\
 Tarmedrechnung\_S2 & Rückforderungsbeleg/TP-Rechnung Folgeseite\\
 \hline
-  
+
 \end{tabular}
 
 \medskip
@@ -241,6 +241,12 @@ Die Seiten S1 und S2 sollten wenn überhaupt nur sehr vorsichtig geändert werde
 
 Wie immer müssen Sie, wenn Sie eine Systemvorlage geändert haben, diese anschliessend explizit mit 'als Vorlage speichern... Systemvorlage' zurückspeichern, sonst gehen die Änderungen verloren.
 
+\subsubsection{Druckvorlagen auf Drucker konfigurieren}
+Sie müssen Elexis mitteilen, auf welchem Drucker und in welchem Schacht die Seiten mit ESR-Papier und die weissen Seiten ausgedruckt werden sollen. Beim NOAText-Plugin (Das ist das Textsystem, welches standardmässig unter Windows installiert ist), erfolgt diese Einstellung \textit{nicht} wie vielleicht erwartet unter \textsc{Datei-Einstellungen-Drucker}, sondern bei der Druckvorlage. Die Optionen unter \textsc{Datei-Einstellungen-Drucker} betreffend A4-Papier und ESR-Papier müssen in diesem Fall vielmehr sogar leer gelassen werden, damit die Druckkonfiguration gelingt!
+
+\medskip
+
+Um das Druckziel einzustellen, gehem Sie so vor: Laden Sie die betreffende Systemvorlage, z.B. 'Tarmedrechnung\_EZ' mit dem Menüpunkt \textsc{Systemvorlage laden} im lokalen Menu der Briefe-View. Wählen Sie dann im OpenOffice-Menu dieses Dokuments \textsc{Datei-Drucken...}. Geben Sie im Druckdialog unter 'Eigenschaften' den richtigen Drucker und Schacht ein.  Drucken Sie sie dann aus und schauen Sie, ob sie wirklich aus dem erwarteten Drucker und Schacht gedruckt wird. \textbf{Speichern} Sie dann die Vorlage wieder als Systemvorlage, und zwar unter demselben Namen, den sie vorher hatte. Wiederholen Sie diese Schritte für alle oben genannten Tarmedrechnungs-Vorlagen. (Dabei müssen \_S1 und \_S2 natürlich auf dem Schacht für weisses Papier ausgegeben werden, die anderen aus dem Schacht für ESR-Papier).
 
 \section{Schritt für Schritt: Verrechnen, Rechnungen erstellen und ausgeben}
 \label{rechnungenerstellen}
@@ -255,11 +261,11 @@ Damit bleibt ein Fall auch immer so lange gültig, wie die Behandlungen demselbe
 
 \textbf{Wichtig:} Ein einmal erstellter Fall ist wie ein Krankenkassenkärtli oder ein Unfallschein zu betrachten. Das heisst, er darf nicht mehr geändert werden. Wenn sich etwas an der Versicherung ändert, muss ein neuer Fall erstellt werden.
 
-\subsubsection{Fall-Erfordernisse}
+\subsubsection{Fall-Eigenschaften}
 \label{fall-erfordernisse}
 \begin{figure}
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.9\textwidth]{abr8}\\
+  \includegraphics[width=0.7\textwidth]{abr8}\\
   \caption{Fall-Detail}\label{fig:abr8}
 \end{figure}
 
@@ -269,8 +275,8 @@ Darunter das Feld 'Grund für die Versicherung' ist ein Tarmed-Erfordernis und w
 \textit{Startdatum} ist bei Unfällen idR das Unfalldatum, bei KVG-Behandlungen die erste Konsultation.
 \textit{Enddatum} ist nur anzugeben, wenn der Fall abgeschlossen wird, also z.B. der Unfall abgeschlossen ist oder die Kasse gewechselt wird. Sobald ein Enddatum angegeben sit, ist der Fall als 'geschlossen' markiert und kann keine weiteren Konsultationen mehr aufnehmen.
 Die nächsten Zeilen betreffen die für die Rechnungsstellung erforderlichen Daten. Diese hängen davon ab, was beim Erstellen des Abrechnungssystems dieses Falles definiert wurde.
-Immer erforderlich ist der \textit{Rechnungsempfänger} - Wenn es keinen Rechnungsempfänger gibt, kann Elexis keine Rechnung erstellen. 
-Alle anderen Angaben hängen wie gesagt vom Abrechnungssystem ab. 
+Immer erforderlich ist der \textit{Rechnungsempfänger} - Wenn es keinen Rechnungsempfänger gibt, kann Elexis keine Rechnung erstellen.
+Alle anderen Angaben hängen wie gesagt vom Abrechnungssystem ab.
 
 Elexis betrachtet einen Fall als ungültig, wenn nicht alle Erfordernisse angegeben sind. Der Fall ist dann mit einem roten Punkt markiert. Wenn alle Erfordernisse eingetragen sind, wird der Punkt grün.
 
@@ -286,14 +292,52 @@ Es gibt zwei prinzipiell gleichwertige Möglichkeiten, Rechnungen zu erstellen: 
 Klicken Sie mit der rechten Maustaste in der 'Fälle'-View auf den Fall und wählen Sie 'Rechnung erstellen'. Es wird direkt eine Rechnung über alle noch offenen Konsultationen des aktuellen Mandanten des gewählten Falles erstellt.
 
 \subsubsection{(halb-)automatischer Rechnungslauf}
-Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen zum Verrechnen'
+Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen zum Verrechnen'. Hier findet sich in der linken Hälfte eine Liste aller noch unverrechneter Konsultationen des aktuellen Mandanten, gruppiert nach Patienten und Fällen. In der rechten Hälfte findet sich eine Liste derjenigen Konsultationen, die zum Rechnungserstellen vorgemerkt sind. Es gibt nun verschiedene Möglichkeiten, Konsultationen zwischen der linken und der rechten Liste zu verschieben:
+\begin{itemize}
+\item Alle Konsultationen aller Fälle eines Patienten: Ziehen Sie mit der Maus einen Patienteneintrag von der linken in die rechte Hälfte. Wenn Sie mehrere Patienten gleichzeitig auswählen wollen, können Sie wie in Windows gewohnt mit Druck auf die Shift- oder Ctrl-Taste und Mausklick mehrere auswählen und dann gemeinsam nach rechts ziehen. (Um \textit{alle} auszuwählen klicken Sie zunächst auf den ersten, dann mit 'Shift' auf den letzten Eintrag der Liste).
+\item Alle Konsultationen eines Falles eines Patienten: Klicken Sie auf das (+)-Zeichen neben dem Patientennamen. Sie sehen alle Fälle, die noch unverrechnete Konsultationen enthalten. Ziehen Sie den gewünschten Fall in die rechte Hälfte.
+\item Einzelne Konsultationen: Klicken Sie auf das (+)-Zeichen neben dem Fall. Sie sehen alle noch unverrechneten Konsultationen dieses Falles. Ziehen Sie eine oder mehrere ins rechte Feld.
+\item Alle Konsultationen, die innerhalb eines bestimmten Zeitraums liegen: Öffnen Sie das View-Menu und wählen Sie 
+\item Alle Konsultationen einer Serie, welche begonnen hat vor einem bestimmten Datum
+\item Alle Konsultationen einer Serie, deren letzte vor einem bestimmten Datum war
+\item Alle Konsultationen des vergangenen Kalenderquartals
+\item Alle Konsultationen, deren summierter Betrag eine bestimmte Höhe überschreitet.
+\end{itemize}
+
+Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methoden anwenden.
+
+
+\subsection{Rechnungen ausgeben}
+
+\subsubsection{Ausgabeziele}
+
+\subsubsection{Ausgabe auf Drucker}
+
+\subsubsection{Ausgabe in XML-Datei}
+
+\subsubsection{Ausgabe an Intermediär}
 
 \section{Zahlungen verbuchen}
 
 \subsection{Zahlungen manuell verbuchen}
 
 \subsection{ESR-Files einlesen}
+Die Post oder Ihre Bank teilt Ihnen eine Methode mit, wie Sie die Dateien mit den Zahlungseingängen (ESR-Dateien) erhalten können. Meist geht das heutzutage über dasselbe Internet-Portal, das Sie auch zum e-Banking verwenden. Manchmal werden die Files aber auch auf Diskette oder per verschlüsselter Mail geschickt.
 
 \section{Mahnwesen}
+
+\section{Weitere Unterstützung}
+\subsection{Website}
+Auf der Site http://www.elexis.ch werden aktuelle Informationen veröffentlicht. Es existiert auch eine Rubrik FAQ (Frequently Asked Questions), wo eventuell genau die Frage behandelt wird, die Sie auch grad stellen wollten. Schauen Sie also immer zuerst auf der Website nach. Diese enhält auch eine ausgezeichnete Suchfunktion, mit der Sie sowohl die ganze Site als auch nut die FAQ nach Stichwörtern durchsuchen können.
+
+\subsection{Forum}
+Unter http://www.elexis-forum.ch existiert ein Forum, in dem jede/r (auch Sie!) Fragen stellen und beantworten oder allgemeine Bemerkungen, Tips und Tricks, Kritiken usw. loswerden kann. Da Elexis ein community-Projekt sein will, wäre es schön, wenn Sie Fragen, die auf der Website nicht geklärt werden, im Forum besprechen würden, damit Andere auch etwas davon haben.
+Wenn Sie sich als User im Forum angemeldet haben, dann können Sie es so einstellen, dass Ihnen automatisch nut die seit dem letzten Besuch neuen Themen angezeigt werden. Oder Sie können auch einen sog. RSS-Feed abonnieren, dann erhalten Sie jeweils die Titel der neuesten Beiträge als Newsfeed in Ihren Browser, ohne die Site aufsuchen zu müssen. Das Vorgehen, um Feeds zu abonnieren, ist in diesem Thread behandelt: http://www.elexis-forum.ch/viewtopic.php?t=10
+Auch das Forum hat eine Suchfunktion, mit der Sie interessierende Themen nach Stichwörtern suchen können.
+
+\subsection{Hilfe-Wiki}
+Unter http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/Uebersicht existiert eine Hilfe-Seite, die ständig erweitert wird. Auch an dieser Seite können Sie aktiv mitmachen und eigene Erkenntnisse oder gelöste Probleme notieren, damit sie Anderen wieder zugute kommen.
+Dieses Hilfe-Wiki wird standardmässig auch aufgerufen, wenn Sie von Elexis aus den 'Hilfe'-Button klicken, oder wenn Sie in irgendeiner View, zu der Sie Hilfe möchten, die F1-Taste drücken.
+
 
 \end{document}
