@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 3940 2008-05-20 04:59:35Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 3941 2008-05-20 13:09:36Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -297,14 +297,33 @@ Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen
 \item Alle Konsultationen aller Fälle eines Patienten: Ziehen Sie mit der Maus einen Patienteneintrag von der linken in die rechte Hälfte. Wenn Sie mehrere Patienten gleichzeitig auswählen wollen, können Sie wie in Windows gewohnt mit Druck auf die Shift- oder Ctrl-Taste und Mausklick mehrere auswählen und dann gemeinsam nach rechts ziehen. (Um \textit{alle} auszuwählen klicken Sie zunächst auf den ersten, dann mit 'Shift' auf den letzten Eintrag der Liste).
 \item Alle Konsultationen eines Falles eines Patienten: Klicken Sie auf das (+)-Zeichen neben dem Patientennamen. Sie sehen alle Fälle, die noch unverrechnete Konsultationen enthalten. Ziehen Sie den gewünschten Fall in die rechte Hälfte.
 \item Einzelne Konsultationen: Klicken Sie auf das (+)-Zeichen neben dem Fall. Sie sehen alle noch unverrechneten Konsultationen dieses Falles. Ziehen Sie eine oder mehrere ins rechte Feld.
-\item Alle Konsultationen, die innerhalb eines bestimmten Zeitraums liegen: Öffnen Sie das View-Menu und wählen Sie 
-\item Alle Konsultationen einer Serie, welche begonnen hat vor einem bestimmten Datum
-\item Alle Konsultationen einer Serie, deren letzte vor einem bestimmten Datum war
-\item Alle Konsultationen des vergangenen Kalenderquartals
-\item Alle Konsultationen, deren summierter Betrag eine bestimmte Höhe überschreitet.
+\item Alle Konsultationen, die innerhalb eines bestimmten Zeitraums liegen: Öffnen Sie das View-Menu und wählen Sie 'Nach Datum auswählen'. Geben Sie in der dann öffnenden Dialogbox (Abb.\ref{fig:abr10}) das gewünschte Anfangs- und Enddatum ein.
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr10}\\
+  \caption{Konsultationen nach Datum auswählen}\label{fig:abr10}
+\end{figure}
+    
+\item Automatische Auswahl anhand verschiedener Kriterien: Klicken Sie das 'Zauberstab-Icon' und wählen Sie aus der Dialogbox wie Abb.\ref{fig:abr9} die gewünschten Kriterien aus:
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr9}\\
+  \caption{Konsultationen automatisch auswählen}\label{fig:abr9}
+\end{figure}
+\begin{itemize}
+    \item Alle Konsultationen einer Serie, deren erste vor einem bestimmten Datum war
+    \item Alle Konsultationen einer Serie, deren letzte vor einem bestimmten Datum war
+    \item Alle Konsultationen des vergangenen Kalenderquartals
+    \item Alle Konsultationen, deren summierter Betrag eine bestimmte Höhe überschreitet.
+    \end{itemize}
 \end{itemize}
 
-Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methoden anwenden.
+Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methoden anwenden. In jedem Fall haben Sie anschliessend eine Anzahl Patienteneinträge in der rechten Hälfte des Fensters. Bis zu diesem Zeitpunkt ist noch nichts 'irreversibles' passiert. Sie können einzelne Einträge wieder entfernen, indem sie sie mit der rechten Maustaste anklicken und 'aus Auswahl entfernen' wählen. Sie können auch die ganze Auswahl wieder leeren, indem Sie auf das rote X - Symbol klicken. Oder Sie können die Auswahl ausdrucken, indem Sie auf das Druckersymbol klicken.
+
+\medskip
+
+Wenn Sie sicher sind, dass alles stimmt, können Sie nun aus der Auswahl Rechnungen erstellen lassen. \textbf{Achtung:} Dieser Schritt ist nicht mehr reversibel. Einmal erstellte Rechnungen können nicht mehr 'ungeschehen' gemacht werden. Klicken Sie also auf den Button 'Rechnungen erstellen'. 
+
 
 
 \subsection{Rechnungen ausgeben}
@@ -325,6 +344,17 @@ Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methode
 Die Post oder Ihre Bank teilt Ihnen eine Methode mit, wie Sie die Dateien mit den Zahlungseingängen (ESR-Dateien) erhalten können. Meist geht das heutzutage über dasselbe Internet-Portal, das Sie auch zum e-Banking verwenden. Manchmal werden die Files aber auch auf Diskette oder per verschlüsselter Mail geschickt.
 
 \section{Mahnwesen}
+
+\section{Merksätze}
+\begin{itemize}
+\item Eine Konsultation gehört immer zu genau einem Fall und genau einem Mandanten
+\item Ein Fall gehört immer zu genau einem bestimmten Abrechnungssystem
+\item Ein Fall ist unveränderlich wie ein Krankenkassenkärtli. Wenn etwas geändert werden muss, muss ein neuer Fall erstellt werden
+\item Ein Fall kann Konsultationen mehrerer Mandanten beinhalten.
+\item Eine Rechnung gehört immer zu genau einem Fall und genau einem Mandanten. Wenn ein Patient mehrere offene Fälle und/oder mehrere behandelnde Mandanten hat, wird für jeden Fall und jeden Mandanten eine separate Rechnung erstellt.
+\item Eine einmal erstellte Rechnung ist unveränderlich. Sie kann nur storniert und neu erstellt werden.
+\item Eingelesene ESR-Dateien müssen \textbf{sofort} verbucht werden, damit keine Zahlungseingänge verlorengehen.
+\end{itemize}
 
 \section{Weitere Unterstützung}
 \subsection{Website}
