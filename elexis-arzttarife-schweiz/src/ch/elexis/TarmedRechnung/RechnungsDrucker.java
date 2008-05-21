@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3870 2008-05-05 16:59:14Z rgw_ch $
+ * $Id: RechnungsDrucker.java 3942 2008-05-21 08:09:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -93,6 +93,7 @@ public class RechnungsDrucker implements IRnOutputter{
 			        				msg="interner Fehler";
 			        			}
 			        			SWTHelper.showError("Fehler beim Drucken der Rechnung "+rn.getNr(), msg);
+			        			errors++;
 			        		}
 			 			}
 			        	monitor.done();

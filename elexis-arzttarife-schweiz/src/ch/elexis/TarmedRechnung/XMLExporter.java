@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3860 2008-05-05 16:13:01Z rgw_ch $
+ * $Id: XMLExporter.java 3942 2008-05-21 08:09:41Z rgw_ch $
  *******************************************************************************/
 
 
@@ -422,17 +422,17 @@ public class XMLExporter implements IRnOutputter {
 					String arzl=vv.getExtInfo("AL");
 					String tecl=vv.getExtInfo("TL");
 					double tlTl, tlAL,mult;
-					// if(arzl!=null){							// earlier system no more supported
+					if(arzl!=null){							// earlier system no more supported
 						tlTl=Double.parseDouble(tecl);
 						mult=PersistentObject.checkZeroDouble(vv.get("VK_Scale"));
 						tlAL=Double.parseDouble(arzl);
-					/*
+					
 					}else{
 						tlTl=tl.getTL();
 						tlAL=tl.getAL();
 						mult=tl.getVKMultiplikator(tt, actFall);
 					}
-					*/
+					
 					if(tl.getText().indexOf('%')!=-1){		// %-Zuschlag
 						if(tlTl==0.0){
 							tlAL=vv.getEffPreis().getCents();

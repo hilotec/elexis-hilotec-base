@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 3941 2008-05-20 13:09:36Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 3942 2008-05-21 08:09:41Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -242,6 +242,7 @@ Die Seiten S1 und S2 sollten wenn überhaupt nur sehr vorsichtig geändert werde
 Wie immer müssen Sie, wenn Sie eine Systemvorlage geändert haben, diese anschliessend explizit mit 'als Vorlage speichern... Systemvorlage' zurückspeichern, sonst gehen die Änderungen verloren.
 
 \subsubsection{Druckvorlagen auf Drucker konfigurieren}
+\label{druckkonfiguration}
 Sie müssen Elexis mitteilen, auf welchem Drucker und in welchem Schacht die Seiten mit ESR-Papier und die weissen Seiten ausgedruckt werden sollen. Beim NOAText-Plugin (Das ist das Textsystem, welches standardmässig unter Windows installiert ist), erfolgt diese Einstellung \textit{nicht} wie vielleicht erwartet unter \textsc{Datei-Einstellungen-Drucker}, sondern bei der Druckvorlage. Die Optionen unter \textsc{Datei-Einstellungen-Drucker} betreffend A4-Papier und ESR-Papier müssen in diesem Fall vielmehr sogar leer gelassen werden, damit die Druckkonfiguration gelingt!
 
 \medskip
@@ -303,7 +304,7 @@ Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen
   \includegraphics{abr10}\\
   \caption{Konsultationen nach Datum auswählen}\label{fig:abr10}
 \end{figure}
-    
+
 \item Automatische Auswahl anhand verschiedener Kriterien: Klicken Sie das 'Zauberstab-Icon' und wählen Sie aus der Dialogbox wie Abb.\ref{fig:abr9} die gewünschten Kriterien aus:
 \begin{figure}
   % Requires \usepackage{graphicx}
@@ -318,19 +319,95 @@ Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen
     \end{itemize}
 \end{itemize}
 
-Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methoden anwenden. In jedem Fall haben Sie anschliessend eine Anzahl Patienteneinträge in der rechten Hälfte des Fensters. Bis zu diesem Zeitpunkt ist noch nichts 'irreversibles' passiert. Sie können einzelne Einträge wieder entfernen, indem sie sie mit der rechten Maustaste anklicken und 'aus Auswahl entfernen' wählen. Sie können auch die ganze Auswahl wieder leeren, indem Sie auf das rote X - Symbol klicken. Oder Sie können die Auswahl ausdrucken, indem Sie auf das Druckersymbol klicken.
+Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methoden anwenden. In jedem Fall haben Sie anschliessend eine Anzahl Patienteneinträge in der rechten Hälfte des Fensters. Bis zu diesem Zeitpunkt ist noch nichts 'irreversibles' passiert. Sie können einzelne Einträge wieder entfernen, indem sie sie mit der rechten Maustaste anklicken und 'aus Auswahl entfernen' wählen. Sie können auch die ganze Auswahl wieder leeren, indem Sie auf das rote X - Symbol klicken. Oder Sie können die Liste der Rechnungen in der Auswahl ausdrucken, indem Sie auf das Druckersymbol klicken.
 
 \medskip
 
-Wenn Sie sicher sind, dass alles stimmt, können Sie nun aus der Auswahl Rechnungen erstellen lassen. \textbf{Achtung:} Dieser Schritt ist nicht mehr reversibel. Einmal erstellte Rechnungen können nicht mehr 'ungeschehen' gemacht werden. Klicken Sie also auf den Button 'Rechnungen erstellen'. 
+Wenn Sie sicher sind, dass alles stimmt, können Sie nun aus der Auswahl Rechnungen erstellen lassen. \textbf{Achtung:} Dieser Schritt ist nicht mehr reversibel. Einmal erstellte Rechnungen können nicht mehr 'ungeschehen' gemacht werden. Klicken Sie also auf den Button 'Rechnungen erstellen'.
+Wenn Sie unter \textsc{Datei-Einstellungen-Abrechnungssysteme} den Punkt 'Strenge Gültigkeitsprüfung beim Rechnungserstellen  angekreuzt hatten, erfolgt vor dem Rechnungserstellen noch eine Konformitätsprüfung (welche  vom gewählten Abrechnungssystem abhängt). Bei Rechnungen nach Tarmed wird z.B. geprüft, ob die EAN des Kostenträgers angegeben ist und ob eine Rechnungsdiagnose vorhanden ist. Bei Fehlern wird die Rechnung nicht erstellt und die Konsultationen bleiben offen. (Es erscheint eine entsprechende Fehlermeldung für jede Rechnung, die nicht erstellt werden kann).
+
+Wenn die 'Strenge Gültigkeitsprüfung' nicht angekreuzt ist, genügt es, wenn ein Rechnungsempfänger vorhanden ist, um die Rechnung zu erstellen.
+
+\medskip
+
+\textbf{Wichtig:} Elexis lässt Ihnen zwar die Wahl, wie 'stur' Sie beim Prüfen der Rechnungsvoraussetzungen sein wollen, aber dies hat natürlich keinerlei Einfluss darauf, wie 'stur' die Gegenseite ist. Eine Rechnung, die nicht Tarmed-Konform ist, kann vom TrustCenter oder der Kasse zurückgewiesen werden. Dies ist dann kein Fehler von Elexis, sondern von den fehlenden Daten. Wenn Sie die 'strenge Prüfung' eingeschaltet lassen, wird Elexis nur Tarmed-Konforme Rechnungen erstellen\footnote{Fehler wie immer vorbehalten}, aber Sie dafür mit Fehlermeldungen 'nerven', wenn die Daten nicht konform sind.
+
+\subsection{Rechnungen anzeigen, kontrollieren und ausgeben}
+Wenn Sie eine Rechnung erstellt haben, durchläut sie einen Zyklus von verschiedenen Statusänderungen, bis sie schliesslich einen Endpunkt erreicht hat. Zunächst hat sie den Status 'Offen'\footnote{Eine Ausnahme sind Rechnungen, deren Totalbetrag 0.00 ist: Solche Rechnungen werden automatisch unmittelbar nach dem Erstellen auf den Status 'bezahlt' gesetzt.}. Das bedeutet, sie wurde erstellt, aber noch nirgendshin übermittelt oder ausgegeben. Sie finden alle Rechnungen in der View 'Rechnungen' (S. Abb.\ref{fig:abr11}), welche standardmässig in der Abrechnungs-Perspektive vorhanden ist (Aber natürlich auch in jede andere Perspektive eingebaut werden kann).
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \center
+  \includegraphics[width=0.7\textwidth]{abr11}\\
+  \caption{Rechnungen-View}\label{fig:abr11}
+\end{figure}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \center
+  \includegraphics[width=5.5cm]{abr12}\\
+  \caption{Rechnungsliste-Filter}\label{fig:abr12}
+\end{figure}
+
+Wie Sie sehen, können Sie die Liste der Rechnungen nach bestimmten Kriterien Filtern. Nach jeder Änderung des Filters kann die Liste mit dem 'Neu einlesen'-Button wieder unter Anwendung der geänderten Filterbedingungen neu eingelesen werden.
+
+\begin{itemize}
+
+\item Mit der Combobox ganz links kann die Liste nach Status gefiltert werden. Alle neu erstellten Rechnungen finden Sie beispielsweise unter dem Status 'Offen', alle bezahlten Rechnungen unter dem Status 'bezahlt' usw.
+
+\item Mit dem nächsten Feld 'Patient' können nur Rechnungen eines bestimmten Patienten angezeigt werden. Nach Klick auf das blaue Wort 'Patient' öffnet sich ein Dialog, in dem Sie den gewünschten Patienten auswählen können. Wenn Sie in diesem Dialog 'Abbrechen' bzw. 'Cancel' klicken, wird der Filter wieder auf 'Alle Patienten' gesetzt, ansonsten auf den ausgewählten Patienten.
+
+\item Mit der Combobox 'Zahlungssystem' können nur Rechnungen eines bestimmten Zahlungssystems angezeigt werden. Wenn Sie beispielsweise das Zahlungssystem auf 'UVG' und den Status auf 'Offen' setzen und die Liste neu einlesen, können Sie einen Rechnungslauf mit allen offenen UVG-Rechnungen machen.
+
+\item Im Feld 'RnNummer' könne Sie direkt eine Rchnungsnummer eingeben und die Eingabetaste drücken, um die genannte Rechnung aufzurufen.
+
+\item mit dem 'Filtern'-Button können Sie eine weitere Dialogbox aufrufen (Abb.\ref{fig:abr12}), um weitere  Bedingungen für den Filter einzugeben:
+    \begin{itemize}
+    \item Betrag von-bis: Geben Sie jeweils einen Betrag in der Form x.xx ein. Es werden diejenigen Rechnungen ausgewählt, deren Totalbetrag zwischen diesen beiden liegt.
+    \item Rechnungsdatum von-bis: Geben Sie jeweils ein Datum ein (Durch klick auf das Dreieck öffnet sich ein Kalender). Es werden diejenigen Rechnungen angezeigt, die zwischen diesen Daten erstell wurden. Sie können auch das erste Feld leer lassen, dann werden alle ausgewählt, die irgendwann vor dem im zweiten Feld genannten Datum erstellt wurden, oder sie können das zweite Feld leer lassem, dann werden alle irgendwann nach dem Datum im ersten Feld ausgegeben.
+    \item Statusdatum von-bis: Gleich wie Rechnungsdatum, aber es wird das Datum der letzten Statusänderung als Kriterium genommen.
+    \end{itemize}
+    
+\end{itemize}
 
 
+Je nach Filterung werden in der Liste nun alle Patienten angezeigt, welche Rechnungen haben, die den genannten Kriterien entsprechen. Wenn Sie einen Patienteneintrag mit der rechten Maustaste anklicken, können Sie die View Patient-Details aufrufen. Durch Klick auf das (+)-Symbol können Sie anzeigen lassen, welche Fälle davon betroffen sind. Durch KLick mit der rechten Maustaste auf einen Fall können Sie sich die Falldetails anzeigen lassen, und durch Klick auf das (+) Symbol vor den Fällen können die einzelnen Rechnungen angezeigt werden. Durch Rechtsklick auf eine Rechnung kommen Sie zum Rechnungs-Menü, auf das wir späterbei der zurückkommen werden.
 
-\subsection{Rechnungen ausgeben}
+\medskip
+
+Wenn eine Rechnung angeklickt wird, können durch Klick auf die Rechte Maustaste die Details der Rechnung angezeigt werden, wenn die Rechnungsdetail-View offen ist (Abb.\ref{fig:abr13}).
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.9\textwidth]{abr13}\\
+  \caption{Rechnungsdetail}\label{fig:abr13}
+\end{figure}
+
+Die Felder im oberen Abschnitt sollten selbsterklärend sein. Unten finden sich mehrere aufklappbare Felder.
+\begin{itemize}
+\item Buchungen: Alle Buchungen für diese Rechnung, ggf. mit einem Buchungstext
+\item Bemerkungen: Hier können Sie beliebige Bemerkungen eingeben, z.B. Gründe für manuelle Statusänderungen oder Zahlungsaufschub etc. Diese Bemerkungn erscheinen nicht auf der Rechnung, sondern dienen nur der persönlichen Information in der Rechnungsdetail-View.
+\item Statusänderungen: Datum und Zeit jeder Änderung des Rechnungsstatus, sowie Bezeichnung des neuen Status.
+\item Fehlermeldungen: Falls es bei der Rechnungsausgabe zu Fehlern gekommen ist, genauere Bezeichnung des Fehlers.
+\item Ausgaben: Alle bisher erfolgten Ausgaben mit Datum, Zeit und Ausgabeziel dieser Rechnung.
+\item Konsultationen: Sämtliche Verrechnungspositionen und Diagnosen der mit dieser Rechnung erfassten Konsultationen.
+\end{itemize}
+
+\subsubsection{Rechnungen zur Ausgabe auswählen}
+Wählen Sie nun in der Rechnungsliste-View alle Patienten, Fälle oder Einzelrechnungen aus, die Sie ausgeben wollen. Wie gewohnt können Sie entweder einzelne Einträge mit der linken Maustaste auswählen, oder mit leichzeitiger CTRL-Taste mehrere oder mit gleichzeitier Shift-Taste ganze Reihen selektieren. 
+
+\medskip
+
+Klicken Sie dann auf den Button 'Rechnungen ausgeben'. Es öffnet sich der Rechnungsausgabe-Dialog (Abb.\ref{fig:abr14}).
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr14}\\
+  \caption{Rechnungs-Ausgabe}\label{fig:abr14}
+\end{figure}
+Hier müssen Sie zunöchst das passende Rechnungsausgabeziel auswählen, wobei die beim letzten Mal getroffene Wahl als Vorgabe erscheint.
 
 \subsubsection{Ausgabeziele}
+Eine Rechnung kann auf verschiedene Ziele ausgegeben werden. Ein Rechnungsziel kann etwa der Drucker sein, oder auch ein Rechnungsintermediär, oder ein TrustCenter oder auch einfach eine Datei, die einem anderen Programm zur Weiterverarbeitung übergeben werden kann. Das Standard-Ausgabeziel wird mit der Wahl der Abrechnungsmethode eines Falles vorgegeben, man kann aber auch auf andere Ziele ausgeben. Man kann eine Rechnung oder eine Rechnungsserie auch erst auf eines und danach noch auf ein anderes Ziel ausgeben.
 
 \subsubsection{Ausgabe auf Drucker}
+Dies wird nur dann gelingen, wenn die Druckformatforlagen korrekt installiert und auf den Drucker eingestellt worden sind (Vgl. \ref{druckkonfiguration} auf S. \pageref{druckkonfiguration}).
 
 \subsubsection{Ausgabe in XML-Datei}
 
