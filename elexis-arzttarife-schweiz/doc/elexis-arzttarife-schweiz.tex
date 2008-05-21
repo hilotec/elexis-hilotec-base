@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 3942 2008-05-21 08:09:41Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 3944 2008-05-21 15:59:18Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -44,10 +44,29 @@
 \author{Gerry Weirich}
 
 \begin{document}
+
+\extratitle{
+    \vfill
+	\begin{center}
+		\includegraphics{elexis-logo}
+	\end{center}
+    \begin{center}
+    Handbuch für die Abrechnung nach Tarmed
+    \end{center}
+    \begin{center}
+    \vfill
+   \copyright 2008 by G.Weirich. Nachdruck und Weitergabe, auch auszugsweise, sowohl in elektronischer als auch in Papierform, nur mit Genehmigung des Autors.
+
+    \end{center}
+    \vfill
+}
 \maketitle
+
 \tableofcontents
 \section{Einführung}
 Der Weg vom Erbringen einer Leistung bis zum Einbuchen der Zahlung umfasst eine ganze Reihe verschiedener Schritte, die korrekt aufeinander abgestimmt werden müssen. Diese Broschüre erklärt die Konzepte und das Vorgehen beim Tarmed-System.
+
+   
 
 \medskip
 
@@ -333,7 +352,7 @@ Wenn die 'Strenge Gültigkeitsprüfung' nicht angekreuzt ist, genügt es, wenn e
 \textbf{Wichtig:} Elexis lässt Ihnen zwar die Wahl, wie 'stur' Sie beim Prüfen der Rechnungsvoraussetzungen sein wollen, aber dies hat natürlich keinerlei Einfluss darauf, wie 'stur' die Gegenseite ist. Eine Rechnung, die nicht Tarmed-Konform ist, kann vom TrustCenter oder der Kasse zurückgewiesen werden. Dies ist dann kein Fehler von Elexis, sondern von den fehlenden Daten. Wenn Sie die 'strenge Prüfung' eingeschaltet lassen, wird Elexis nur Tarmed-Konforme Rechnungen erstellen\footnote{Fehler wie immer vorbehalten}, aber Sie dafür mit Fehlermeldungen 'nerven', wenn die Daten nicht konform sind.
 
 \subsection{Rechnungen anzeigen, kontrollieren und ausgeben}
-Wenn Sie eine Rechnung erstellt haben, durchläut sie einen Zyklus von verschiedenen Statusänderungen, bis sie schliesslich einen Endpunkt erreicht hat. Zunächst hat sie den Status 'Offen'\footnote{Eine Ausnahme sind Rechnungen, deren Totalbetrag 0.00 ist: Solche Rechnungen werden automatisch unmittelbar nach dem Erstellen auf den Status 'bezahlt' gesetzt.}. Das bedeutet, sie wurde erstellt, aber noch nirgendshin übermittelt oder ausgegeben. Sie finden alle Rechnungen in der View 'Rechnungen' (S. Abb.\ref{fig:abr11}), welche standardmässig in der Abrechnungs-Perspektive vorhanden ist (Aber natürlich auch in jede andere Perspektive eingebaut werden kann).
+Wenn Sie eine Rechnung erstellt haben, durchläuft sie einen Zyklus von verschiedenen Statusänderungen, bis sie schliesslich einen Endpunkt erreicht hat. Zunächst hat sie den Status 'Offen'\footnote{Eine Ausnahme sind Rechnungen, deren Totalbetrag 0.00 ist: Solche Rechnungen werden automatisch unmittelbar nach dem Erstellen auf den Status 'bezahlt' gesetzt.}. Das bedeutet, sie wurde erstellt, aber noch nirgendshin übermittelt oder ausgegeben. Sie finden alle Rechnungen in der View 'Rechnungen' (S. Abb.\ref{fig:abr11}), welche standardmässig in der Abrechnungs-Perspektive vorhanden ist (Aber natürlich auch in jede andere Perspektive eingebaut werden kann).
 \begin{figure}
   % Requires \usepackage{graphicx}
   \center
@@ -362,10 +381,10 @@ Wie Sie sehen, können Sie die Liste der Rechnungen nach bestimmten Kriterien Fi
 \item mit dem 'Filtern'-Button können Sie eine weitere Dialogbox aufrufen (Abb.\ref{fig:abr12}), um weitere  Bedingungen für den Filter einzugeben:
     \begin{itemize}
     \item Betrag von-bis: Geben Sie jeweils einen Betrag in der Form x.xx ein. Es werden diejenigen Rechnungen ausgewählt, deren Totalbetrag zwischen diesen beiden liegt.
-    \item Rechnungsdatum von-bis: Geben Sie jeweils ein Datum ein (Durch klick auf das Dreieck öffnet sich ein Kalender). Es werden diejenigen Rechnungen angezeigt, die zwischen diesen Daten erstell wurden. Sie können auch das erste Feld leer lassen, dann werden alle ausgewählt, die irgendwann vor dem im zweiten Feld genannten Datum erstellt wurden, oder sie können das zweite Feld leer lassem, dann werden alle irgendwann nach dem Datum im ersten Feld ausgegeben.
+    \item Rechnungsdatum von-bis: Geben Sie jeweils ein Datum ein (Durch Klick auf das Dreieck öffnet sich ein Kalender). Es werden diejenigen Rechnungen angezeigt, die zwischen diesen Daten erstellt wurden. Sie können auch das erste Feld leer lassen, dann werden alle ausgewählt, die irgendwann vor dem im zweiten Feld genannten Datum erstellt wurden, oder sie können das zweite Feld leer lassem, dann werden alle irgendwann nach dem Datum im ersten Feld ausgegeben.
     \item Statusdatum von-bis: Gleich wie Rechnungsdatum, aber es wird das Datum der letzten Statusänderung als Kriterium genommen.
     \end{itemize}
-    
+
 \end{itemize}
 
 
@@ -373,7 +392,7 @@ Je nach Filterung werden in der Liste nun alle Patienten angezeigt, welche Rechn
 
 \medskip
 
-Wenn eine Rechnung angeklickt wird, können durch Klick auf die Rechte Maustaste die Details der Rechnung angezeigt werden, wenn die Rechnungsdetail-View offen ist (Abb.\ref{fig:abr13}).
+Wenn eine Rechnung angeklickt wird, können die Details der Rechnung angezeigt werden, wenn die Rechnungsdetail-View offen ist (Abb.\ref{fig:abr13}).
 \begin{figure}
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.9\textwidth]{abr13}\\
@@ -383,7 +402,7 @@ Wenn eine Rechnung angeklickt wird, können durch Klick auf die Rechte Maustaste
 Die Felder im oberen Abschnitt sollten selbsterklärend sein. Unten finden sich mehrere aufklappbare Felder.
 \begin{itemize}
 \item Buchungen: Alle Buchungen für diese Rechnung, ggf. mit einem Buchungstext
-\item Bemerkungen: Hier können Sie beliebige Bemerkungen eingeben, z.B. Gründe für manuelle Statusänderungen oder Zahlungsaufschub etc. Diese Bemerkungn erscheinen nicht auf der Rechnung, sondern dienen nur der persönlichen Information in der Rechnungsdetail-View.
+\item Bemerkungen: Hier können Sie beliebige Bemerkungen eingeben, z.B. Gründe für manuelle Statusänderungen oder Zahlungsaufschub etc. Diese Bemerkungen erscheinen nicht auf der Rechnung, sondern dienen nur der persönlichen Information in der Rechnungsdetail-View.
 \item Statusänderungen: Datum und Zeit jeder Änderung des Rechnungsstatus, sowie Bezeichnung des neuen Status.
 \item Fehlermeldungen: Falls es bei der Rechnungsausgabe zu Fehlern gekommen ist, genauere Bezeichnung des Fehlers.
 \item Ausgaben: Alle bisher erfolgten Ausgaben mit Datum, Zeit und Ausgabeziel dieser Rechnung.
@@ -391,7 +410,7 @@ Die Felder im oberen Abschnitt sollten selbsterklärend sein. Unten finden sich 
 \end{itemize}
 
 \subsubsection{Rechnungen zur Ausgabe auswählen}
-Wählen Sie nun in der Rechnungsliste-View alle Patienten, Fälle oder Einzelrechnungen aus, die Sie ausgeben wollen. Wie gewohnt können Sie entweder einzelne Einträge mit der linken Maustaste auswählen, oder mit leichzeitiger CTRL-Taste mehrere oder mit gleichzeitier Shift-Taste ganze Reihen selektieren. 
+Wählen Sie nun in der Rechnungsliste-View alle Patienten, Fälle oder Einzelrechnungen aus, die Sie ausgeben wollen. Wie gewohnt können Sie entweder einzelne Einträge mit der linken Maustaste auswählen, oder mit gleichzeitiger CTRL-Taste mehrere oder mit gleichzeitiger Shift-Taste ganze Reihen selektieren.
 
 \medskip
 
@@ -401,29 +420,100 @@ Klicken Sie dann auf den Button 'Rechnungen ausgeben'. Es öffnet sich der Rechn
   \includegraphics{abr14}\\
   \caption{Rechnungs-Ausgabe}\label{fig:abr14}
 \end{figure}
-Hier müssen Sie zunöchst das passende Rechnungsausgabeziel auswählen, wobei die beim letzten Mal getroffene Wahl als Vorgabe erscheint.
+Hier müssen Sie zunächst das passende Rechnungsausgabeziel auswählen, wobei die beim letzten Mal getroffene Wahl als Vorgabe erscheint.
 
 \subsubsection{Ausgabeziele}
-Eine Rechnung kann auf verschiedene Ziele ausgegeben werden. Ein Rechnungsziel kann etwa der Drucker sein, oder auch ein Rechnungsintermediär, oder ein TrustCenter oder auch einfach eine Datei, die einem anderen Programm zur Weiterverarbeitung übergeben werden kann. Das Standard-Ausgabeziel wird mit der Wahl der Abrechnungsmethode eines Falles vorgegeben, man kann aber auch auf andere Ziele ausgeben. Man kann eine Rechnung oder eine Rechnungsserie auch erst auf eines und danach noch auf ein anderes Ziel ausgeben.
+Eine Rechnung kann auf verschiedene Ziele ausgegeben werden. Ein Rechnungsziel kann etwa der Drucker sein, oder auch ein Rechnungsintermediär, oder ein TrustCenter oder auch einfach eine Datei, die einem anderen Programm zur Weiterverarbeitung übergeben werden kann. Das Standard-Ausgabeziel wird mit der Wahl der Abrechnungsmethode eines Falles vorgegeben, man kann aber auch auf andere Ziele ausgeben. Man kann eine Rechnung oder eine Rechnungsserie auch erst auf eines und danach noch auf ein anderes Ziel ausgeben. Welche Ausgabeziele vorhanden sind, hängt von den installierten  Abrechnungsplugins ab. Wenn Sie elexis-arzttarife-schweiz installiert haben, sind die Ausgabeziele 'Als Tarmed-Rechnung ausdrucken' und 'Tarmed XML-4.0 Datei für TrustCenter' vorhanden, und ich werde im Folgenden diese beiden kurz beschreiben.
 
 \subsubsection{Ausgabe auf Drucker}
-Dies wird nur dann gelingen, wenn die Druckformatforlagen korrekt installiert und auf den Drucker eingestellt worden sind (Vgl. \ref{druckkonfiguration} auf S. \pageref{druckkonfiguration}).
+Dies wird nur dann gelingen, wenn die Druckformatforlagen korrekt installiert und auf den Drucker eingestellt worden sind (Vgl. \ref{druckkonfiguration} auf S. \pageref{druckkonfiguration}). Sie können wählen, ob Sie die Seite mit dem Einzahlungsschein ('Mit ESR') oder den Rückforderungsbeleg resp. das TP-Rechnungsformular ('Mit Rechnungsformular') oder beides ausdrucken wollen. Falls Sie bei UVG-Rechnungen keinen Einzahlungsschein benötigen, können Sie z.B. alle UVG-Rechnungen auswählen und mit diesen einen Rechnungslauf mit nur dem Rechnungsformular machen.
+Ausserdem können Sie noch angeben, ob die Rechnung 'als Kopie' markiert werden soll. Das empfiehlt sich dann, wenn ein Patient einen Zweitausdruck verlangt weil der erste verlorengegangen ist: Es werden dann Rückfragen vermieden, falls das Formular doch zweimal bei der Kasse eingereicht wird.
+
+\medskip
+
+Last but not least können Sie im untersten Abschnitt der Dialogbox noch festlegen, dass die Rechnung zusätzlich zum Ausdruck auch als XML-Datei fürs TrustCenter gespeichert werden soll.
+Da TrustX aus irgendwelchen Gründen einen proprietären Layer um die verwendeten Verschlüsselungsalgorithmen gepackt hat, kann die Übermittlung nur mit dem von TrustX bereitgestellten Programm erfolgen\footnote{Im Prinzip kann mann das TrustX-Modul auch einbinden, wie das vom elexis-trustx Plugin gemacht wird. Ich rate davon inzwischen allerdings ab: Da das TrustX-Modul unter Vista Administratorrechte verlangt, ist es eine potentielle Sicherheitslücke. Und wenn es Teil von Elexis wäre, müssten Sie Elexis selbst ebenfalls mit Administratorrechten starten, was ich vom Sicherheitsstandpunkt her inakzeptabel fände.}. Sie können es hier herunterladen (für windows):
+\begin {verbatim}
+ http://www.trustx.ch/trustx-praxis/documents/trustx-2_1_14-de.msi
+\end{verbatim}
+Wenn Sie dieses Programm installieren und gemäss Anleitung konfigurieren (Unter Vista müssen Sie es so konfigurieren, dass es im Kompatibilitätsmodus läuft und Administratorrechte bekommt), dann legt es unter anderem auch ein Verzeichnis für Rechnungen an (z.B. c:$\backslash$programme$\backslash$arpage$\backslash$trustx$\backslash$rechnungen)
+Klicken Sie unter Elexis im Ausgabe-Dialog  (Abb.\ref{fig:abr14}) auf den 'Verzeichnis'-Knopf und suchen Sie dieses Verzeichnis auf. Dann können Sie ein Häkchen bei 'auch als XML-Datei für TrustCenter speichern' setzen. Elexis merkt sich die gewählte Einstellung und das Verzeichnis fürs nächste Mal.
+
+\medskip
+
+Wenn Sie auf  'OK' Klicken, beginnt der Rechnungslauf mit den ausgewählten Rechnungen. GGf. wird auch die entsprechende XML-Version ins TrustX-Verzeichnis gespeichert. Sie können dann im Anschluss das TrustX-Programm starten (Abb.\ref{fig:abr15}) und auf 'Auto' klicken\footnote{Es muss auch ein ASAS-Tunnel installiert sein, damit das TrustX-Programm läuft}.
+
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.8\textwidth]{abr15}\\
+  \caption{TrustX-Programm}\label{fig:abr15}
+\end{figure}
 
 \subsubsection{Ausgabe in XML-Datei}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr16}\\
+  \caption{Ausgabeziel XML}\label{fig:abr16}
+\end{figure}
 
-\subsubsection{Ausgabe an Intermediär}
+Dieses Ausgabeziel (Abb.\ref{fig:abr16}) speichert die gewählten Rechnungen in einem wählbaren Verzeichnis. Klicken Sie auf den 'ändern' - Button um das Verzeichnis zu ändern und dann auf OK um die ausgewählten Rechnungen dorthin zu schreiben. Dieses Format kann von einer Vielzahl von Intermediären weiterverarbeitet werden (Aerztekasse, Medidata, H-Clearing usw.). Deshalb ist dieses Ausgabeziel für alle Fälle geeignet, wo kein spezifisches Plugin existiert.
 
 \section{Zahlungen verbuchen}
 
 \subsection{Zahlungen manuell verbuchen}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr17}\\
+  \caption{Rechnungs-Menü}\label{fig:abr17}
+\end{figure}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr18}\\
+  \caption{Buchung hinzufügen}\label{fig:abr18}
+\end{figure}
+
+
+Wenn eine Teilzahlung oder eine Barzahlung, oder eine Zahlung über die 'normalen' roten Einzahlungsscheine hereinkommt, kann Elexis nicht von sich aus wissen, zu welcher Rechnung und welchem Patienten diese Zahlung gehört. In solchen Fällen müssen Sie die Zahlung manuell verbuchen. Klicken Sie dazu mit der rechten Maustaste auf die Rechnung, der die Buchung hinzugefügt werden soll (Abb.\ref{fig:abr17}. Es öffnet sich ein Dialog wie in Abb.\ref{fig:abr18}. Geben Sie dort das Buchungsdatum, einen Betrag in der Form x.xx und einen Buchungstext ein.
+
 
 \subsection{ESR-Files einlesen}
 Die Post oder Ihre Bank teilt Ihnen eine Methode mit, wie Sie die Dateien mit den Zahlungseingängen (ESR-Dateien) erhalten können. Meist geht das heutzutage über dasselbe Internet-Portal, das Sie auch zum e-Banking verwenden. Manchmal werden die Files aber auch auf Diskette oder per verschlüsselter Mail geschickt.
+Diese Files enthalten sogenannte ESR-Records, anhand derer Elexis erkennen kann, zu welcher Rechnung eine Zahlung gehört.
+
+\subsubsection{Die magische ESR-Zeile}
+\label{esrline}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=1.0\textwidth]{abr19}\\
+  \caption{BESR-Zeile}\label{fig:abr19}
+\end{figure}
+
+Eigentlich ist gar nichts Magisches dabei: Beim Drucken der Rechnung erstellt Elexis eine ESR-Zeile in von der Post festgelegtem Format, in die alle nötigen Angaben codiert sind, um die Zahlung aufs richtige Konto zu leiten und festzustellen, zu welcher Rechnung und welchem Patienten eine Zahlung gehört. Die ESR-Zeile sieht so aus wie in Abb.\ref{fig:abr19}. Bitte beachten Sie, dass Elexis hier nur Dinge eintragen kann, die Sie ihm mitgeteilt haben. Also wenn Sie beispielsweise keine ESR-Vertragsnummer für den betreffenden Mandanten eingegeben haben, dann wird da auch keine ESR-Vertragsnummer stehen können, sondern Elexis schreibt dann 'FEHLER'. Bei der \textbf{ZWINGEND vorgeschriebenen manuellen Kontrolle der ersten Rechnungen} sollte das auffallen.
+
+\medskip
+
+Die Bank schickt dann genau diese ESR-Zeile wieder mit, wenn eine Zahlung eingegangen ist, so dass Elexis sie 'wiedererkennt'. Speichern Sie also das von der Bank erhaltene ESR-File irgendwo ab, wo Sie es wiederfinden und öffnen Sie in Elexis die ESR-View (Abb.\ref{fig:abr20}).
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.9\textwidth]{abr20}\\
+  \caption{ESR-View}\label{fig:abr20}
+\end{figure}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.9\textwidth}{abr21}\\
+  \caption{ESR-Detail}\label{fig:abr21}
+\end{figure}
+
+Mit dem Import-Button können Sie das von Ihrer Bank erhaltene ESR-File importieren. Es erscheint dann jeweils ein grüner Balken, der eine Summe der in diesem File enthaltenen Zahlungen ausweist, und darüber die einzelnen ESR-Records. Wenn Sie einen ESR.Recotd näher ansehen wollen, können Sie darauf doppelklicken, dann erscheint ein Dialog wie in Abb.\ref{fig:abr21}.
+
+
+
 
 \section{Mahnwesen}
 
 \section{Merksätze}
 \begin{itemize}
+\item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen die ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
 \item Eine Konsultation gehört immer zu genau einem Fall und genau einem Mandanten
 \item Ein Fall gehört immer zu genau einem bestimmten Abrechnungssystem
 \item Ein Fall ist unveränderlich wie ein Krankenkassenkärtli. Wenn etwas geändert werden muss, muss ein neuer Fall erstellt werden
@@ -431,6 +521,8 @@ Die Post oder Ihre Bank teilt Ihnen eine Methode mit, wie Sie die Dateien mit de
 \item Eine Rechnung gehört immer zu genau einem Fall und genau einem Mandanten. Wenn ein Patient mehrere offene Fälle und/oder mehrere behandelnde Mandanten hat, wird für jeden Fall und jeden Mandanten eine separate Rechnung erstellt.
 \item Eine einmal erstellte Rechnung ist unveränderlich. Sie kann nur storniert und neu erstellt werden.
 \item Eingelesene ESR-Dateien müssen \textbf{sofort} verbucht werden, damit keine Zahlungseingänge verlorengehen.
+\item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen die ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
+
 \end{itemize}
 
 \section{Weitere Unterstützung}
@@ -446,5 +538,9 @@ Auch das Forum hat eine Suchfunktion, mit der Sie interessierende Themen nach St
 Unter http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/Uebersicht existiert eine Hilfe-Seite, die ständig erweitert wird. Auch an dieser Seite können Sie aktiv mitmachen und eigene Erkenntnisse oder gelöste Probleme notieren, damit sie Anderen wieder zugute kommen.
 Dieses Hilfe-Wiki wird standardmässig auch aufgerufen, wenn Sie von Elexis aus den 'Hilfe'-Button klicken, oder wenn Sie in irgendeiner View, zu der Sie Hilfe möchten, die F1-Taste drücken.
 
+\subsection{E-Mail}
+Sie werden sehen, dass das Abrechnen nicht so schwierig ist, wie es scheint. Das Lesen dieser Broschüre hat wesentlich länger gedauert, als ein Rechnungslauf dauern wird, wenn Sie die Grundprinzipien erst mal 'verinnerlicht' haben. Die Komplexität kommt eher aus der Vielzahl der möglichen Optionen. Da man aber in der eigenen Praxis nur eine begrenzte Anzahl davon benötigt, wird es schon viel einfacher.
+
+Dennoch: Da es von vitaler Notwendigkeit ist, dass Rechnungen korrekt erstellt und Zahlungen korrekt eingebucht werden, erhalten Sie als registrierter Elexis-Anwender für den Bereich 'Abrechnen' in Elexis vorerst unlimitierten E-Mail-Support von support (at) elexis.ch. Vom kostenlosen Support wird aber nichts abgedeckt, was in dieser Broschüre behandelt wird. Lesen Sie also bitte diese Broschüre erst durch, und wenn dann noch etwas unklar ist, fragen Sie im Forum (s. oben), oder allenfalls direkt \textbf{per e-mail} bei mir, nicht bei jemand anderem.
 
 \end{document}
