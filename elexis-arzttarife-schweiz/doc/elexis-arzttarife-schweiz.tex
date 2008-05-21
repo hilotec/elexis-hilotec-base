@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 3944 2008-05-21 15:59:18Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 3946 2008-05-21 19:10:39Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -53,8 +53,8 @@
     \begin{center}
     Handbuch für die Abrechnung nach Tarmed
     \end{center}
-    \begin{center}
     \vfill
+    \begin{center}
    \copyright 2008 by G.Weirich. Nachdruck und Weitergabe, auch auszugsweise, sowohl in elektronischer als auch in Papierform, nur mit Genehmigung des Autors.
 
     \end{center}
@@ -63,12 +63,23 @@
 \maketitle
 
 \tableofcontents
+\clearpage
 \section{Einführung}
 Der Weg vom Erbringen einer Leistung bis zum Einbuchen der Zahlung umfasst eine ganze Reihe verschiedener Schritte, die korrekt aufeinander abgestimmt werden müssen. Diese Broschüre erklärt die Konzepte und das Vorgehen beim Tarmed-System.
 
-   
+\bigskip
 
-\medskip
+\begin{picture}(200,10)
+\line(100,0){200}
+\end{picture}
+
+\textbf{Achtung:} Es kann nicht garantiert werden, dass alle in dieser Broschüre gemachten Angaben richtig sind und zu korrekten Rechnungen führen. Für die Korrektheit der von Ihnen erstellten Rechnungen sind in erster Linie Sie selber verantwortlich. Es wird daher dringend empfohlen, dass Sie Ihre Rechnungen vor dem Versand kontrollieren.
+
+\begin{picture}(200,10)
+\line(100,0){200}
+\end{picture}
+
+\bigskip
 
 Folgende Fragen müssen beantwortet werden, um korrekte Rechnungen zu erstellen und Zahlungen entgegenzunehmen\footnote{Dies ist nicht Elexis-spezifisch, sondern muss in jedem Praxisprogramm 'irgendwie' festgelegt werden. Bloss kann es bei weniger flexiblen Programmen 'festverdrahtet' sein, oder bei teuren Installationsveträgen kann die Konfiguration schon vom Hersteller vorgenommen werden sein. Da Elexis aber 'empowerment' des Anwenders auf den Fahnen stehen hat, müssen und dürfen Sie diese Dinge hier selber in die Hand nehmen (oder sich selber eine Supportfirma suchen, die es für Sie macht).}:
 
@@ -92,11 +103,12 @@ Es sei an dieser Stelle nochmal darauf hingewiesen, dass diese Konfiguration nic
 \medskip
 
 \subsection{Abrechnungssysteme}
+\index{Abrechnungssystem}\index{UVG}\index{KVG}\index{VVG}\index{Privatrechnung}
 Die Leistungsverrechnung ist in Elexis als Plugin realisiert und damit auswechselbar oder auch ergänzbar - man kann nach Tarmed und nach CHOP, nach einem beliebigen Privatrechnungssystem und/oder nach einem österreichischen System abrechnen, das hängt nur davon ab, welche Plugins man installiert hat. Auch der Wechsel auf ein jetzt noch nicht bekanntes Tarifsystem ist damit kein Problem. Jedes Tarif-Plugin enthält das Codesystem selbst, sowie einen Mechanismus, um Rechnungen auszugeben, die zu diesem System konform sind (so muss eine Tarmed-Rechnung nicht nur andere Positionen beinhalten, sondern auch formal anders aussehen, als etwa eine Privatrechnung einer Heilpraktikerin). Ausserdem beinhaltet ein Abrechnungssystem je nachdem bestimmte Angaben, die vorhanden sein müssen, um Rechnungen erstellen zu können (z.B. Kostenträger, Versicherungsnummer u. Ä.)
 
 
 \medskip
-
+\index{Leistungscode}
 Leistungscode, Ausgabeziel und erforderliche Daten, sowie die Tarifstufe sind in Elexis als 'Abrechnungssystem' zusammengefasst (S. Abb. \ref{fig:abr1}):
 \begin{figure}
   % Requires \usepackage{graphicx}
@@ -114,13 +126,13 @@ Um ein neues Abrechnungssystem zu erstellen, klickt man auf 'Neu...', um ein bes
   \caption{KVG-Abrechnungssystem}\label{fig:abr2}
 \end{figure}
 Der Name ist wie gesagt frei wählbar. Für Leistungscode-System und Standard-Rechnungsausgabe können Sie aus den von den vorhandenen Abrechnungs-Plugins beigesteuerten Optionen wählen. Der Multiplikator ist die anzuwendende Tarifstufe (der 'Taxpunkt') für dieses System. Ein Multiplikator muss immer in Form einer Dezimalzahl angegeben werden und gilt immer ab einem bestimmten Datum so lange, bis ein anderer Multiplikator definiert wird. \textbf{Ein einmal eingegebener Multiplikator kann weder gelöscht noch geändert werden!}
-
+\index{Taxpunkt}
 Unter 'Notwendige Daten' geben Sie an, was für Angaben vorhanden sein müssen, damit ein Fall, der dieses Abrechnungssystem hat, als gültiog betrachtet wird. Solche Angaben können ein Kontakt sein, wie z.B. Kostenträger, oder ein Text, wie z.B. Versicherungs- oder Unfallnummer oder Vertragsnummer etc., oder es kann ein Datum sein, z.B. ein Unfalldatum.
 Implizit immer notwendig ist der Kontakt 'Rechnungsempfänger', der deshalb hier nicht separat eingetragen werden darf.
 Durch Rechtsklick kann man einen Eintrag in dieser Liste wieder löschen. Sie sehen das, was Sie hier eingegeben haben wieder unter den 'Fall-Details' als Fall-Erfordernisse (s. \ref{fall-erfordernisse}, S. \pageref{fall-erfordernisse}).
 
 \subsection{Mandanten und Rechnungssteller}
-
+\index{Mandant}\index{Rechnungssteller}\index{Assistenzarzt}
 Jeder Kontakt zwischen der Praxis und einem Patienten steht unter der Verantwortung eines \textit{Mandanten} und geht auf Rechnung eines \textit{Rechnungsstellers}. Im einfachsten und in der Schweiz üblichen Fall sind Mandant und Rechnungssteller identisch. Es ist aber auch möglich, dass ein Mandant im Fixlohn angestellt ist, auf eigen Verantwortung arbeitet, aber für einen anderen Rechnungssteller abrechnet (z.B. in einem HMO-Zentrum oder einer Polikinik). Dies ist nicht zu verwechseln mit einem Assistenten: Ein Assistent ist selber kein Mandant, sondern arbeitet auf Rechnung und unter der Verantwortung eines Mandanten.
 
 \medskip
@@ -138,6 +150,7 @@ Zurück zum Tarmed-System: Wenn das Plugin 'elexis-arzttarife-schweiz' installie
   \caption{Labor-Taxpunkt}\label{fig:abr3}
 \end{figure}
 Hier muss der Multiplikator gleich wie bei den Abrechnungssystemen eingegeben werden. Auch hier kann ein einmal eingetragener Wert nicht mehr geändert werden und er ist ab dem Stichdatum bis zur nächsten Änderung gültig.
+\index{Taxpunkt}
 
 \medskip
 
@@ -145,11 +158,11 @@ Gehen Sie dann zum Punkt 'Tarmed-Rechnungen'. Es erscheint ein Dialog wie in Abb
 \begin{figure}
     \center
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.85\textwidth]{abr4}\\
+  \includegraphics[width=0.95\textwidth]{abr4}\\
   \caption{Tarmedrechnungs-Einstellungen}\label{fig:abr4}
 \end{figure}
-
-Hier müssen Sie für jeden Mandanten und Rechnungssteller \textit{separat} alle für die Abrechnung relevanten Daten eingeben. Wählen Sie also im Combobox.Feld ganz oben zunächst einen Mandanten aus. Dadurch erscheint im Feld hinter 'Leistungserbringer' der Name dieses Mandanten. Klicken Sie dann auf das blaue Wort 'Leistungserbringer'. Es öffnet sich eine Dialogbox wie in Abb \ref{fig:abr5}.
+\index{Leistungserbringer}\index{Mandant}\index{Rechnungssteller}
+Hier müssen Sie für jeden Mandanten und Rechnungssteller \textit{separat} alle für die Abrechnung relevanten Daten eingeben. Wählen Sie also im Combobox-Feld ganz oben zunächst einen Mandanten aus. Dadurch erscheint im Feld hinter 'Leistungserbringer' der Name dieses Mandanten. Klicken Sie dann auf das blaue Wort 'Leistungserbringer'. Es öffnet sich eine Dialogbox wie in Abb \ref{fig:abr5}.
 \begin{figure}
   % Requires \usepackage{graphicx}
   \center
@@ -160,6 +173,7 @@ Hier müssen Sie für jeden Mandanten und Rechnungssteller \textit{separat} alle
 Um eine Zeile zu ändern müssen Sie in dieser Zeile die \textbf{Eingabetaste} drücken, dann den neuen Wert eingeben, dann nochmal die \textbf{Eingabetaste} drücken und erst dann mit der Maus oder der Pfeiltaste ein anderes Feld aufsuchen.
 
 Die Bedeutung der einzelnen Zeilen ist:
+\index{EAN}\index{ZSR}\index{NIF}\index{ESR}
 \begin{itemize}
 \item Anrede: Sie haben es erraten ;-)
 \item Kanton: Der Standort Ihrer Praxis. Wenn Sie in mehreren Kantonen praktizieren, müssen Sie einen eigenen Mandanten für jeden Kanton erstellen (z.B. Müller TI und Müller AG).
@@ -179,6 +193,7 @@ Klicken Sie dann auf 'OK' um diesen Dialog wieder zu schliessen und wieder zu Ab
 
 
 \subsection{Post- oder Bankkonto}
+\index{Bankkonto}\index{Postkonto}\index{VESR}\index{BESR}\index{ESR}
 Jetzt müssen Sie das Konto angeben, auf das Sie die Zahlungen für Ihre Rechnungen erwarten. Sie benötigen ein VESR oder BESR Konto, zusammenfassend auch ESR-Konto genannt. Ein VESR-Konto ist ein ESR-Konto bei der Post, ein BESR-Konto ist eines bei einer Bank. Ein ESR-Konto ist eines, das mit diesen orangen (früher blauen) Einzahlungsscheinen befüllt wird, auf denen eine Referenznummer steht und deren Mitteilungskästchen mit einem vorgedruckten 'Keine Mitteilungen anbringen' beschriftet ist.
 
 Das schöne an ESR-Konti ist, dass Dateien mit Zahlungseingängen automatisch eingelesen und verarbeitet werden können, so dass Sie die Zahlungen nicht manuell verbuchen müssen, sondern diese Aufgabe an den Computer delegieren können.
@@ -209,11 +224,14 @@ Eröffnen Sie also je nach Geschmack bei der Post oder Ihrer Lieblingsbank ein E
 Je nach Auswahl erscheint eine Dialogbox wie Abb. \ref{fig:abr6} oder Abb. \ref{fig:abr7}. Beim Postkonto müssen Sie nur die VESR-Teilnehmernummer eintragen, die Sie von der Post erhalten haben. Beim Bankkonto benötigen Sie zunächst die Bank: Klicken Sie auf das blaue 'Finanzinstitut' und wählen Sie den hoffentlich zuvor angelegten Kontakt, der Ihre Bank beschreibt. Geben Sie dann neben TarmedESRParticipantNumber die VESR-Teilnehmernummer \textit{der Bank} ein. Neben TarmedESRIdentity müssen Sie die BESR-Identitätsnummer eingeben, die Sie von der Bank bekommen haben. Klicken Sie dann auf OK, um wieder zu Abb. \ref{fig:abr4} zurückzukommen.
 
 \subsection{TrustCenter}
+\index{TrustCenter}
 Da gibt es nicht viel zu sagen. Falls Sie einen TC-Vertrag haben, setzen Sie hier ein Häkchen und wählen Ihr TrustCenter aus. (Wenn Sie das tun, dann wird auf dem Rückforderungsbeleg von TG-Rechnungen ein passendes Token gedruckt, das beinahe wie eine ESR-Zeile aussieht, aber keine ist).
 
 \subsection{Einzahlungsschein}
+\index{ESR-Papier}
 Elexis benötigt a4-Papier mit \textit{unten} integriertem ESR-Einzahlungsschein. Also das unterste Drittel der A4-Seite ist der orange Einzahlungsschein des Typs BESR oder VESR (bei ersterem steht eine Zeile 'zugunsten von' im Empfänger-Feld).
 
+\index{OCR-Schriftart}
 Zunächst benötigen Sie eine Schriftart des Typs OCR-B. diese Schriftart muss auf dem Computer installiert sein, von dem aus die Rechnungen gedruckt werden sollen \footnote{Tatsächlich empfehlen wir ausdrücklich, Rechnungen immer vom selben PC auf denselben Drucker auszugeben. Erst wenn das reibungslos funktioniert, können Experimente mit unterschiedlichen PC's gemacht werden, wenn es unbedingt sein muss.}. Nein, diese Schriftart ist nicht Bestandteil von Elexis, da sie lizenzpflichtig ist. Möglicherweise haben Sie aber von einem anderen ESR-fähigen Programm eine solche Schriftart irgendwo installiert und können diese verwenden. Ansonsten können Sie sich auch an die Post oder Ihre Bank wenden um zu erfahren, wo Sie diese Schriftart kaufen können.
 
 
@@ -235,6 +253,7 @@ Nun zu den Einstellungen:
 Dann können Sie diese Dialogbox schliessen.
 
 \subsection{Druckvorlagen}
+\index{Rechnungsvorlagen}
 Wie (fast) alles, was in Elexis ausgedruckt wird, basieren auch Rechnungen auf Druckvorlagen. Bei Tarmed heissen diese System-Vorlagen:
 
 \medskip
@@ -262,15 +281,19 @@ Wie immer müssen Sie, wenn Sie eine Systemvorlage geändert haben, diese anschl
 
 \subsubsection{Druckvorlagen auf Drucker konfigurieren}
 \label{druckkonfiguration}
+\index{Drucken!Vorlagen}
+\index{Drucken!Korrektur}
+\index{Drucken!Schacht}
 Sie müssen Elexis mitteilen, auf welchem Drucker und in welchem Schacht die Seiten mit ESR-Papier und die weissen Seiten ausgedruckt werden sollen. Beim NOAText-Plugin (Das ist das Textsystem, welches standardmässig unter Windows installiert ist), erfolgt diese Einstellung \textit{nicht} wie vielleicht erwartet unter \textsc{Datei-Einstellungen-Drucker}, sondern bei der Druckvorlage. Die Optionen unter \textsc{Datei-Einstellungen-Drucker} betreffend A4-Papier und ESR-Papier müssen in diesem Fall vielmehr sogar leer gelassen werden, damit die Druckkonfiguration gelingt!
 
 \medskip
 
-Um das Druckziel einzustellen, gehem Sie so vor: Laden Sie die betreffende Systemvorlage, z.B. 'Tarmedrechnung\_EZ' mit dem Menüpunkt \textsc{Systemvorlage laden} im lokalen Menu der Briefe-View. Wählen Sie dann im OpenOffice-Menu dieses Dokuments \textsc{Datei-Drucken...}. Geben Sie im Druckdialog unter 'Eigenschaften' den richtigen Drucker und Schacht ein.  Drucken Sie sie dann aus und schauen Sie, ob sie wirklich aus dem erwarteten Drucker und Schacht gedruckt wird. \textbf{Speichern} Sie dann die Vorlage wieder als Systemvorlage, und zwar unter demselben Namen, den sie vorher hatte. Wiederholen Sie diese Schritte für alle oben genannten Tarmedrechnungs-Vorlagen. (Dabei müssen \_S1 und \_S2 natürlich auf dem Schacht für weisses Papier ausgegeben werden, die anderen aus dem Schacht für ESR-Papier).
+Um das Druckziel einzustellen, gehen Sie so vor: Laden Sie die betreffende Systemvorlage, z.B. 'Tarmedrechnung\_EZ' mit dem Menüpunkt \textsc{Systemvorlage laden} im lokalen Menu der Briefe-View. Wählen Sie dann im OpenOffice-Menu dieses Dokuments \textsc{Datei-Drucken...}. Geben Sie im Druckdialog unter 'Eigenschaften' den richtigen Drucker und Schacht ein.  Drucken Sie sie dann aus und schauen Sie, ob sie wirklich aus dem erwarteten Drucker und Schacht gedruckt wird. \textbf{Speichern} Sie dann die Vorlage wieder als Systemvorlage, und zwar unter demselben Namen, den sie vorher hatte. Wiederholen Sie diese Schritte für alle oben genannten Tarmedrechnungs-Vorlagen. (Dabei müssen \_S1 und \_S2 natürlich auf dem Schacht für weisses Papier ausgegeben werden, die anderen aus dem Schacht für ESR-Papier).
 
 \section{Schritt für Schritt: Verrechnen, Rechnungen erstellen und ausgeben}
 \label{rechnungenerstellen}
 \subsection{Fälle, Rechnungsempfänger und Kostenträger}
+\index{Fall}
 Ein 'Fall' ist die Zuordnung eines Patienten zu einem Kostenträger und einer Identifikation des Kostenträgers für den Fall. Beispiel: Patient, Krankenkasse und Versicherungsnummer für KVG-Behandlungen oder Patient, Versicherung und Unfallnummer für UVG-Behandlungen, oder Patient, IV-Stelle und AHV-Nummer für IV-Behandlungen.
 
 \medskip
@@ -279,7 +302,8 @@ Damit bleibt ein Fall auch immer so lange gültig, wie die Behandlungen demselbe
 
 \medskip
 
-\textbf{Wichtig:} Ein einmal erstellter Fall ist wie ein Krankenkassenkärtli oder ein Unfallschein zu betrachten. Das heisst, er darf nicht mehr geändert werden. Wenn sich etwas an der Versicherung ändert, muss ein neuer Fall erstellt werden.
+\textbf{Wichtig:} Ein einmal erstellter Fall ist wie ein Krankenkassenkärtli oder ein 
+\index{Fall!ändern} Unfallschein zu betrachten. Das heisst, er darf nicht mehr geändert werden. Wenn sich etwas an der Versicherung ändert, muss ein neuer Fall erstellt werden.
 
 \subsubsection{Fall-Eigenschaften}
 \label{fall-erfordernisse}
@@ -288,12 +312,13 @@ Damit bleibt ein Fall auch immer so lange gültig, wie die Behandlungen demselbe
   \includegraphics[width=0.7\textwidth]{abr8}\\
   \caption{Fall-Detail}\label{fig:abr8}
 \end{figure}
-
+\index{Fall!Eigenschaften}
 Ein Fall ist immer einem Abrechnungssystem zugeordnet. Beim Erstellen eines neuen Falls muss im obersten Feld die 'Abrechnungsmethode' angegeben werden (s. Abb.\ref{fig:abr8}).
 Darunter geben Sie eine Bezeichnung ein. Diese ist nur zur internen Markierung des Falles gedacht, damit Sie wissen, welcher Fall gemeint ist. Sie können hier irgendetwas schreiben, z.B. 'Beinbruch'.
 Darunter das Feld 'Grund für die Versicherung' ist ein Tarmed-Erfordernis und wird auf der Rechnung erscheinen.
 \textit{Startdatum} ist bei Unfällen idR das Unfalldatum, bei KVG-Behandlungen die erste Konsultation.
-\textit{Enddatum} ist nur anzugeben, wenn der Fall abgeschlossen wird, also z.B. der Unfall abgeschlossen ist oder die Kasse gewechselt wird. Sobald ein Enddatum angegeben sit, ist der Fall als 'geschlossen' markiert und kann keine weiteren Konsultationen mehr aufnehmen.
+\index{Fall!Abschliessen}
+\textit{Enddatum} ist nur anzugeben, wenn der Fall abgeschlossen wird, also z.B. der Unfall abgeschlossen ist oder die Kasse gewechselt wird. Sobald ein Enddatum angegeben ist, ist der Fall als 'geschlossen' markiert und kann keine weiteren Konsultationen mehr aufnehmen.
 Die nächsten Zeilen betreffen die für die Rechnungsstellung erforderlichen Daten. Diese hängen davon ab, was beim Erstellen des Abrechnungssystems dieses Falles definiert wurde.
 Immer erforderlich ist der \textit{Rechnungsempfänger} - Wenn es keinen Rechnungsempfänger gibt, kann Elexis keine Rechnung erstellen.
 Alle anderen Angaben hängen wie gesagt vom Abrechnungssystem ab.
@@ -301,6 +326,7 @@ Alle anderen Angaben hängen wie gesagt vom Abrechnungssystem ab.
 Elexis betrachtet einen Fall als ungültig, wenn nicht alle Erfordernisse angegeben sind. Der Fall ist dann mit einem roten Punkt markiert. Wenn alle Erfordernisse eingetragen sind, wird der Punkt grün.
 
 \subsubsection{Tiers Garant und Tiers Payant}
+\index{Tiers Garant}\index{Tiers Payant} \index{Tiers Soldant} \index{TG}\index{TP}\index{Rechnungsempfänger}\index{Kostenträger}
 Tiers Payant bedeutet: Rechnungsempfänger und Kostenträger sind identisch. Tiers Garant bedeutet: Der Rechnungsempfänger ist nicht identisch mit dem Kostenträger. Es kann der Patient selbst sein, oder dessen Vormund, oder das Sozialamt. Tiers Soldant ist wiederum eine Variante von Tiers Payant, bei der der Kostenträger den nicht dem Selbstbehalt unterworfenen Anteil der Rechnung direkt an den Leistungserbringer zahlt.
 
 Sie legen also beim Erstellen eines Falles fest, ob eine TP-Rechnung oder eine TG-Rechnung mit Rückforderungsbeleg erstellt wird: Wenn Sie für Kostenträger und Rechnungsempfänger denselben Kontakt auswählen, wird es TP, sonst TG.
@@ -309,9 +335,11 @@ Sie legen also beim Erstellen eines Falles fest, ob eine TP-Rechnung oder eine T
 Es gibt zwei prinzipiell gleichwertige Möglichkeiten, Rechnungen zu erstellen: Sofortrechnung und (halb-)automatischer Rechnungslauf.
 
 \subsubsection{Sofortrechnung}
+\index{Sofortrechnung}
 Klicken Sie mit der rechten Maustaste in der 'Fälle'-View auf den Fall und wählen Sie 'Rechnung erstellen'. Es wird direkt eine Rechnung über alle noch offenen Konsultationen des aktuellen Mandanten des gewählten Falles erstellt.
 
 \subsubsection{(halb-)automatischer Rechnungslauf}
+\index{Rechnungslauf}
 Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen zum Verrechnen'. Hier findet sich in der linken Hälfte eine Liste aller noch unverrechneter Konsultationen des aktuellen Mandanten, gruppiert nach Patienten und Fällen. In der rechten Hälfte findet sich eine Liste derjenigen Konsultationen, die zum Rechnungserstellen vorgemerkt sind. Es gibt nun verschiedene Möglichkeiten, Konsultationen zwischen der linken und der rechten Liste zu verschieben:
 \begin{itemize}
 \item Alle Konsultationen aller Fälle eines Patienten: Ziehen Sie mit der Maus einen Patienteneintrag von der linken in die rechte Hälfte. Wenn Sie mehrere Patienten gleichzeitig auswählen wollen, können Sie wie in Windows gewohnt mit Druck auf die Shift- oder Ctrl-Taste und Mausklick mehrere auswählen und dann gemeinsam nach rechts ziehen. (Um \textit{alle} auszuwählen klicken Sie zunächst auf den ersten, dann mit 'Shift' auf den letzten Eintrag der Liste).
@@ -342,9 +370,10 @@ Je nach Gewohnheiten Ihrer Praxis werden Sie vermutlich nicht alle diese Methode
 
 \medskip
 
+\index{Rechnung!erstellen}
 Wenn Sie sicher sind, dass alles stimmt, können Sie nun aus der Auswahl Rechnungen erstellen lassen. \textbf{Achtung:} Dieser Schritt ist nicht mehr reversibel. Einmal erstellte Rechnungen können nicht mehr 'ungeschehen' gemacht werden. Klicken Sie also auf den Button 'Rechnungen erstellen'.
 Wenn Sie unter \textsc{Datei-Einstellungen-Abrechnungssysteme} den Punkt 'Strenge Gültigkeitsprüfung beim Rechnungserstellen  angekreuzt hatten, erfolgt vor dem Rechnungserstellen noch eine Konformitätsprüfung (welche  vom gewählten Abrechnungssystem abhängt). Bei Rechnungen nach Tarmed wird z.B. geprüft, ob die EAN des Kostenträgers angegeben ist und ob eine Rechnungsdiagnose vorhanden ist. Bei Fehlern wird die Rechnung nicht erstellt und die Konsultationen bleiben offen. (Es erscheint eine entsprechende Fehlermeldung für jede Rechnung, die nicht erstellt werden kann).
-
+\index{Rechnung!Gültigkeitsprüfung}
 Wenn die 'Strenge Gültigkeitsprüfung' nicht angekreuzt ist, genügt es, wenn ein Rechnungsempfänger vorhanden ist, um die Rechnung zu erstellen.
 
 \medskip
@@ -352,6 +381,7 @@ Wenn die 'Strenge Gültigkeitsprüfung' nicht angekreuzt ist, genügt es, wenn e
 \textbf{Wichtig:} Elexis lässt Ihnen zwar die Wahl, wie 'stur' Sie beim Prüfen der Rechnungsvoraussetzungen sein wollen, aber dies hat natürlich keinerlei Einfluss darauf, wie 'stur' die Gegenseite ist. Eine Rechnung, die nicht Tarmed-Konform ist, kann vom TrustCenter oder der Kasse zurückgewiesen werden. Dies ist dann kein Fehler von Elexis, sondern von den fehlenden Daten. Wenn Sie die 'strenge Prüfung' eingeschaltet lassen, wird Elexis nur Tarmed-Konforme Rechnungen erstellen\footnote{Fehler wie immer vorbehalten}, aber Sie dafür mit Fehlermeldungen 'nerven', wenn die Daten nicht konform sind.
 
 \subsection{Rechnungen anzeigen, kontrollieren und ausgeben}
+\index{Rechnung!kontrollieren}
 Wenn Sie eine Rechnung erstellt haben, durchläuft sie einen Zyklus von verschiedenen Statusänderungen, bis sie schliesslich einen Endpunkt erreicht hat. Zunächst hat sie den Status 'Offen'\footnote{Eine Ausnahme sind Rechnungen, deren Totalbetrag 0.00 ist: Solche Rechnungen werden automatisch unmittelbar nach dem Erstellen auf den Status 'bezahlt' gesetzt.}. Das bedeutet, sie wurde erstellt, aber noch nirgendshin übermittelt oder ausgegeben. Sie finden alle Rechnungen in der View 'Rechnungen' (S. Abb.\ref{fig:abr11}), welche standardmässig in der Abrechnungs-Perspektive vorhanden ist (Aber natürlich auch in jede andere Perspektive eingebaut werden kann).
 \begin{figure}
   % Requires \usepackage{graphicx}
@@ -388,10 +418,11 @@ Wie Sie sehen, können Sie die Liste der Rechnungen nach bestimmten Kriterien Fi
 \end{itemize}
 
 
-Je nach Filterung werden in der Liste nun alle Patienten angezeigt, welche Rechnungen haben, die den genannten Kriterien entsprechen. Wenn Sie einen Patienteneintrag mit der rechten Maustaste anklicken, können Sie die View Patient-Details aufrufen. Durch Klick auf das (+)-Symbol können Sie anzeigen lassen, welche Fälle davon betroffen sind. Durch KLick mit der rechten Maustaste auf einen Fall können Sie sich die Falldetails anzeigen lassen, und durch Klick auf das (+) Symbol vor den Fällen können die einzelnen Rechnungen angezeigt werden. Durch Rechtsklick auf eine Rechnung kommen Sie zum Rechnungs-Menü, auf das wir späterbei der zurückkommen werden.
+Je nach Filterung werden in der Liste nun alle Patienten angezeigt, welche Rechnungen haben, die den genannten Kriterien entsprechen. Wenn Sie einen Patienteneintrag mit der rechten Maustaste anklicken, können Sie die View Patient-Details aufrufen. Durch Klick auf das (+)-Symbol können Sie anzeigen lassen, welche Fälle davon betroffen sind. Durch KLick mit der rechten Maustaste auf einen Fall können Sie sich die Falldetails anzeigen lassen, und durch Klick auf das (+) Symbol vor den Fällen können die einzelnen Rechnungen angezeigt werden. Durch Rechtsklick auf eine Rechnung kommen Sie zum Rechnungs-Menü, auf das wir später noch zurückkommen werden.
 
 \medskip
 
+\index{Rechnung!kontrollieren}
 Wenn eine Rechnung angeklickt wird, können die Details der Rechnung angezeigt werden, wenn die Rechnungsdetail-View offen ist (Abb.\ref{fig:abr13}).
 \begin{figure}
   % Requires \usepackage{graphicx}
@@ -403,6 +434,7 @@ Die Felder im oberen Abschnitt sollten selbsterklärend sein. Unten finden sich 
 \begin{itemize}
 \item Buchungen: Alle Buchungen für diese Rechnung, ggf. mit einem Buchungstext
 \item Bemerkungen: Hier können Sie beliebige Bemerkungen eingeben, z.B. Gründe für manuelle Statusänderungen oder Zahlungsaufschub etc. Diese Bemerkungen erscheinen nicht auf der Rechnung, sondern dienen nur der persönlichen Information in der Rechnungsdetail-View.
+    \index{Rechnung!Bemerkungen}
 \item Statusänderungen: Datum und Zeit jeder Änderung des Rechnungsstatus, sowie Bezeichnung des neuen Status.
 \item Fehlermeldungen: Falls es bei der Rechnungsausgabe zu Fehlern gekommen ist, genauere Bezeichnung des Fehlers.
 \item Ausgaben: Alle bisher erfolgten Ausgaben mit Datum, Zeit und Ausgabeziel dieser Rechnung.
@@ -423,6 +455,7 @@ Klicken Sie dann auf den Button 'Rechnungen ausgeben'. Es öffnet sich der Rechn
 Hier müssen Sie zunächst das passende Rechnungsausgabeziel auswählen, wobei die beim letzten Mal getroffene Wahl als Vorgabe erscheint.
 
 \subsubsection{Ausgabeziele}
+\index{Rechnung!ausgeben}\index{Rechnung!drucken}
 Eine Rechnung kann auf verschiedene Ziele ausgegeben werden. Ein Rechnungsziel kann etwa der Drucker sein, oder auch ein Rechnungsintermediär, oder ein TrustCenter oder auch einfach eine Datei, die einem anderen Programm zur Weiterverarbeitung übergeben werden kann. Das Standard-Ausgabeziel wird mit der Wahl der Abrechnungsmethode eines Falles vorgegeben, man kann aber auch auf andere Ziele ausgeben. Man kann eine Rechnung oder eine Rechnungsserie auch erst auf eines und danach noch auf ein anderes Ziel ausgeben. Welche Ausgabeziele vorhanden sind, hängt von den installierten  Abrechnungsplugins ab. Wenn Sie elexis-arzttarife-schweiz installiert haben, sind die Ausgabeziele 'Als Tarmed-Rechnung ausdrucken' und 'Tarmed XML-4.0 Datei für TrustCenter' vorhanden, und ich werde im Folgenden diese beiden kurz beschreiben.
 
 \subsubsection{Ausgabe auf Drucker}
@@ -432,7 +465,7 @@ Ausserdem können Sie noch angeben, ob die Rechnung 'als Kopie' markiert werden 
 \medskip
 
 Last but not least können Sie im untersten Abschnitt der Dialogbox noch festlegen, dass die Rechnung zusätzlich zum Ausdruck auch als XML-Datei fürs TrustCenter gespeichert werden soll.
-Da TrustX aus irgendwelchen Gründen einen proprietären Layer um die verwendeten Verschlüsselungsalgorithmen gepackt hat, kann die Übermittlung nur mit dem von TrustX bereitgestellten Programm erfolgen\footnote{Im Prinzip kann mann das TrustX-Modul auch einbinden, wie das vom elexis-trustx Plugin gemacht wird. Ich rate davon inzwischen allerdings ab: Da das TrustX-Modul unter Vista Administratorrechte verlangt, ist es eine potentielle Sicherheitslücke. Und wenn es Teil von Elexis wäre, müssten Sie Elexis selbst ebenfalls mit Administratorrechten starten, was ich vom Sicherheitsstandpunkt her inakzeptabel fände.}. Sie können es hier herunterladen (für windows):
+Da TrustX aus irgendwelchen Gründen einen proprietären Layer um die verwendeten Übermittlungsdienste gepackt hat, kann die Übermittlung nur mit dem von TrustX bereitgestellten Programm erfolgen\footnote{Im Prinzip kann mann das TrustX-Modul auch einbinden, wie das vom elexis-trustx Plugin gemacht wird. Ich rate davon inzwischen allerdings ab: Da das TrustX-Modul unter Vista Administratorrechte verlangt, ist es eine potentielle Sicherheitslücke. Und wenn es Teil von Elexis wäre, müssten Sie Elexis selbst ebenfalls mit Administratorrechten starten, was ich vom Sicherheitsstandpunkt her inakzeptabel fände.}. Sie können es hier herunterladen (für windows):
 \begin {verbatim}
  http://www.trustx.ch/trustx-praxis/documents/trustx-2_1_14-de.msi
 \end{verbatim}
@@ -472,11 +505,12 @@ Dieses Ausgabeziel (Abb.\ref{fig:abr16}) speichert die gewählten Rechnungen in 
   \caption{Buchung hinzufügen}\label{fig:abr18}
 \end{figure}
 
-
+\index{Zahlungen!verbuchen}\index{Teilzahlung}\index{Barzahlung}
 Wenn eine Teilzahlung oder eine Barzahlung, oder eine Zahlung über die 'normalen' roten Einzahlungsscheine hereinkommt, kann Elexis nicht von sich aus wissen, zu welcher Rechnung und welchem Patienten diese Zahlung gehört. In solchen Fällen müssen Sie die Zahlung manuell verbuchen. Klicken Sie dazu mit der rechten Maustaste auf die Rechnung, der die Buchung hinzugefügt werden soll (Abb.\ref{fig:abr17}. Es öffnet sich ein Dialog wie in Abb.\ref{fig:abr18}. Geben Sie dort das Buchungsdatum, einen Betrag in der Form x.xx und einen Buchungstext ein.
 
 
 \subsection{ESR-Files einlesen}
+\index{ESR}
 Die Post oder Ihre Bank teilt Ihnen eine Methode mit, wie Sie die Dateien mit den Zahlungseingängen (ESR-Dateien) erhalten können. Meist geht das heutzutage über dasselbe Internet-Portal, das Sie auch zum e-Banking verwenden. Manchmal werden die Files aber auch auf Diskette oder per verschlüsselter Mail geschickt.
 Diese Files enthalten sogenannte ESR-Records, anhand derer Elexis erkennen kann, zu welcher Rechnung eine Zahlung gehört.
 
@@ -500,34 +534,106 @@ Die Bank schickt dann genau diese ESR-Zeile wieder mit, wenn eine Zahlung eingeg
 \end{figure}
 \begin{figure}
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.9\textwidth}{abr21}\\
+  \includegraphics[width=0.9\textwidth]{abr21}\\
   \caption{ESR-Detail}\label{fig:abr21}
 \end{figure}
 
-Mit dem Import-Button können Sie das von Ihrer Bank erhaltene ESR-File importieren. Es erscheint dann jeweils ein grüner Balken, der eine Summe der in diesem File enthaltenen Zahlungen ausweist, und darüber die einzelnen ESR-Records. Wenn Sie einen ESR.Recotd näher ansehen wollen, können Sie darauf doppelklicken, dann erscheint ein Dialog wie in Abb.\ref{fig:abr21}.
+Mit dem Import-Button können Sie das von Ihrer Bank erhaltene ESR-File importieren. Es erscheint dann jeweils ein grüner Balken, der eine Summe der in diesem File enthaltenen Zahlungen ausweist, und darüber die einzelnen ESR-Records. Wenn Sie einen ESR-Record näher ansehen wollen, können Sie darauf doppelklicken, dann erscheint ein Dialog wie in Abb.\ref{fig:abr21}.
 
+\medskip
 
+\index{Zahlungen!verbuchen}\index{Rechnung!Zahlungseingang}
+Alle Records, die problemlos eingelesen und zugeordnet werden können, verbucht Elexis automatisch. Das heisst, die Zahlung wird der entsprechenden Rechnung gutgeschrieben und der Rechnungsstatus ggf. angepasst, z.B. von 'offen und gedruckt' auf 'teilweise bezahlt' oder 'bezahlt'. Wenn der bezahlte Betrag höher ist, als der noch offene Betrag der Rechnung fragt Elexis, ob es die Zahlung trotzdem verbuchen soll. Wenn Sie dann mit 'Ja' antworten, erhält die Rechnung den Status 'Zuviel bezahlt' und der offene Betrag bekommt einen negativen Wert. Wenn Sie mit 'Nein' antworten, wird die Zahlung nicht verbucht und wird in der ESR-Liste grau hinterlegt. Die Frage, was Sie damit machen sollen, kann Ihnen Elexis nicht beantworten, das müssen Sie dann selber entscheiden.
 
+\medskip
+
+Manchmal kann ein Record nicht zugeordet werden. Beispielsweise könnte ein Einzahler mit einem ebanking-Programm eine fehlerhafte ESR-Zeile eingegeben haben (Zwar gibt es eine Prüfziffer, um das zu verhindern, aber es können damit nicht alle Falscheingaben abgefangen werden). Oder es kann eine Zahlung sein, die von einer Rechnung eines anderen Programms stammt (welches natürlich andere Patienten- und Rechnungsnummern hat und die auch anders codiert). In diesem Fall entdeckt Elexis, dass z.B. die Rechnungsnummer gar nicht zum Patienten passt, oder dass Rechnungsnummer oder Patient gar nicht existieren. Solche ESR-Records können nicht verbucht werden, sondern erscheinen rot hinterlegt in der Liste.
 
 \section{Mahnwesen}
+Es soll schon vorgekommen sein, dass ein Patient die Rechnung nicht innerhalb der vorgegebenen Zahlungsfrist bezahlt hat. In solchen Fällen soll eine Zahlungserinnerung geschickt werden, bei weiterhin ausbleibender Zahlung dann eine zweite oder dritte Mahnung, und vielleicht soll der zusätzliche Aufwand mit einer Mahngebühr verrechnet werden. Es gibt zwei Möglichkeiten, dies anzugehen: manuell oder automatisch.
+
+\subsection{manuelles Mahnen}
+Ich selber bevorzuge diese Methode. Sie erlaubt mit, etwas feiner zu steuern, wann ich wen mahnen will. Die Frau X. hat immer bezahlt, der lasse ich es auch mal durchgehen, wenn sie diesmal drei Monate lang knapp bei Kasse ist, während der Herr Y. jeweils das Zahlen gern ganz vergisst, den mahne ich eher etwas früher.
+
+\medskip
+
+Am besten macht man das mit dem Filter der Rechnungsliste (Abb.\ref{fig:abr12}). Geben Sie dort unter 'Statusdatum von-bis' im bis-Feld ein Datum z.B. 40 Tage in der Vergangenheit ein, klicken Sie OK, wählen Sie im Status-Feld 'offen und gedruckt' und lesen Sie die Liste neu ein. Sie haben dann alle Rechnungen vor sich, die vor mehr als 40 Tagen gedruckt worden sind und seither keine Statusänderungen bekamen. Wenn Sie nun eine dieser Rechnungen Mahnen wollen, klicken Sie sie mit der rechten Maustaste an und wählen 'Mahnstufe erhöhen'. Diese Mahnung erhäkt dann den Status 'Zahlungserinnerung'. Beim nächsten Ausgeben wird sie den Status 'ZE gedruckt' erhalten.
+
+\medskip
+
+Machen Sie dasselbe, indem Sie ein Statusdatum z.B. 15 Tage in der Vergangenheit eingeben für den Status 'ZE gedruckt', dann erhalten Sie eine Liste aller Rechnungen, welche vor mehr als 15 Tagen den Status 'ZE gedruckt' erhalten haben und seither keine Statusänderung bekamen. Wenn Sie hier 'Mahnstufe erhöhen' eingeben, erhält die Rechnung den Status '2. Mahnung' und nach dem Drucken '2. Mahnung gedruckt'. Wenn Sie eine Mahngebühr hinzufügen wollen, dann klicken Sie die Rechnung nochmal mit der rechten Maustaste an, und wählen Sie 'Gebühr zuschlagen'. Es öffnet sich ein Dialog wie in Abb.\ref{fig:abr22}.
+\index{Mahngebühr}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr22}\\
+  \caption{Gebühr zuschlagen}\label{fig:abr22}
+\end{figure}
+Geben Sie dort das Datum, einen Betrag der Form x.xx und einen Text ein (Der Text wird so auf der Rechnung neben dem Betrag erscheinen).
+
+\medskip 
+\index{Mahnung}\index{Betreiben}\index{Verlust}\index{Totalverlust}\index{Teilverlust}\index{Rechnung!abschreiben}
+Gehen Sie analog für die Zweiten Mahnungen vor, um die Dritte Mahnung herauszulassen. Hier ist allerdings für Elexis Ende der Fahnenstange. Ob und wann Sie die Betreibung einleiten wollen, müssen Sie selber entscheiden und den Status selber auf 'In Betreibung' setzen. Alternativ können Sie den Status auf 'Teilverlust' oder 'Totalverlust' setzen, wenn Sie den offenen Betrag defintiv abschreiben wollen. (Sie können bei der Jahresbilanz dann die Verluste auflisten und in der Steuererklärung als Debitorenverluste angeben)
+
+\medskip
+
+Alle Rechnungen die noch auszugeben sind, können mit dem Pseudostatus 'zu drucken' aufgesucht werden. Diese Liste enthält dann also alle Rechnungen mit dem Status 'offen', 'Zahlungserinnerung', 'Zweite Mahnung' und 'Dritte Mahnung'. Nach der Ausgabe werden sie automatisch entsprechend auf 'offen und gedruckt', 'ZE gedruckt', '2. Mahnung gedruckt' und '3. Mahnung gedruckt' gesetzt.
+
+
+\subsection{automatischer Mahnlauf}
+Im unteren Abschnitt der 'Rechnungen'-View (\ref{fig:abr11}) ist Ihnen vermutlich bereits das Feld 'Mahnungen-Automatik' aufgefallen. Hier können Sie einstellen, nach wieviel Tagen jeweils die erste, zweite und dritte Mahnung erstellt werden soll (Tage jeweils von der letzten Statusänderung an gerechnet), und wieviel Mahngebühr zugeschlagen werden soll. Wenn Sie diese Angaben eingetragen haben, können Sie einen automatischen Mahnlauf mit dem 'Zauberstab' Button starten. Es werden dan automatisch erste, zweite und dritte Mahnungen ertstellt und als 'zu drucken' zur Ausgabe bereitgehalten.
+
+\section{Fehlerhafte Rechnungen}
+\index{Rechnung!korrigieren}\index{Rechnung!löschen}
+Let's face it: Manchmal enthält eine Rechnung Fehler. Wir haben nach bestem Wissen und Gewissen abgerechnet, aber der unbestechliche Krankenkassencomputer hat doch festgestellt, dass wir irgendwo 65 Rappen zuviel berechnet haben, und hat ein automatisches Schreiben (selbstverständlich per A-Post und mit Kopie an den Patienten) rausgelassen, in dem wir des Betrugs bezichtigt werden. Wir müssen also die Rechnung korrigieren und nach Canossa tragen. Bei letzterem kann Elexis auch nicht helfen, für die Korrektur aber gilt:
+
+\medskip
+
+\textit{Eine einmal erstellte Rechnung kann nicht geändert werden!}
+
+\medskip
+
+Der Grund dafür ist: Sobald Rechnungen korrigierbar wären, käme es mit Sicherheit vor, dass früher oder später unterschiedliche Rechnungen mit derselben Nummer im Umlauf wären. Wenn dann jemand (und sei es das Steueramt) eine Frage zu Rechnung 32456 hat, wird es schwierig zu sagen, welche Variante dieser Rechnung denn nun gemeint ist. Deshalb: \textit{Rechnungen sind unveränderlich}.
+
+Das einzige, was man mit einer fehlerhaften Rechnung machen kann ist: Stornieren. Damit bleibt sie bestehen, aber es wird deutlich, das sie ungültig ist.
+
+\medskip
+
+\index{Rechnung!stornieren}
+Um eine Rechnung zu stornieren, klicken Sie sie mit der rechten Maustaste an und wählen 'Stornieren'\footnote{Bitte stornieren Sie \textbf{nicht, niemals, gar nie} durch manuelle Änderung des Rechnungsstatus auf 'storniert', weil sonst die Buchungen nicht mehr stimmen}. Dadurch geschieht folgendes: Auf das Konto des Patienten wird eine Negativbuchung in Höhe des Rechnungsbetrags gemacht, und die Storno-Meldung wird an alle Ausgabeziele weitergegeben (Also wenn Sie die ursprüngliche Rechnung ans TrustCenter geschickt hatten, wird auch die Stornobuchung ans Trustcenter gemeldet).
+
+Ausserdem können Sie angeben, ob Sie die Konsultationen für eine neue Verrechnung freigeben wollen (was üblicherweise der Fall ist) oder nicht - dann sind die entsprechenden Umsätze auf Nimmerwiedersehen verloren.
+
+\medskip
+
+Nach dem Storno sind die Konsultationen wieder offen, Sie können also alle nötigen Korrekturen anbringen und dann eine neue Rechnung erstellen.
+
+\section{Patientenkonto}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics{abr23}\\
+  \caption{Konto-View}\label{fig:abr23}
+\end{figure}
+
+Die oft auch interessante Frage, 'Wo stehe ich finanziell mit diesem Patienten' beantwortet die View 'Konto' (Abb.\ref{fig:abr23}). Hier sehen Sie alle Buchungen zum aktuell ausgewählten Patienten und das resultierende Guthaben resp. die resultierend Schuld.
+
 
 \section{Merksätze}
 \begin{itemize}
-\item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen die ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
+\item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen die mindestens ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
 \item Eine Konsultation gehört immer zu genau einem Fall und genau einem Mandanten
 \item Ein Fall gehört immer zu genau einem bestimmten Abrechnungssystem
 \item Ein Fall ist unveränderlich wie ein Krankenkassenkärtli. Wenn etwas geändert werden muss, muss ein neuer Fall erstellt werden
 \item Ein Fall kann Konsultationen mehrerer Mandanten beinhalten.
 \item Eine Rechnung gehört immer zu genau einem Fall und genau einem Mandanten. Wenn ein Patient mehrere offene Fälle und/oder mehrere behandelnde Mandanten hat, wird für jeden Fall und jeden Mandanten eine separate Rechnung erstellt.
 \item Eine einmal erstellte Rechnung ist unveränderlich. Sie kann nur storniert und neu erstellt werden.
-\item Eingelesene ESR-Dateien müssen \textbf{sofort} verbucht werden, damit keine Zahlungseingänge verlorengehen.
-\item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen die ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
+\item Von der Bank heruntergeladene ESR-Dateien müssen \textbf{sofort} in Elexis eingelesen und verbucht werden, damit keine Zahlungseingänge verlorengehen.
+\item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen mindestens die ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
 
 \end{itemize}
 
 \section{Weitere Unterstützung}
 \subsection{Website}
-Auf der Site http://www.elexis.ch werden aktuelle Informationen veröffentlicht. Es existiert auch eine Rubrik FAQ (Frequently Asked Questions), wo eventuell genau die Frage behandelt wird, die Sie auch grad stellen wollten. Schauen Sie also immer zuerst auf der Website nach. Diese enhält auch eine ausgezeichnete Suchfunktion, mit der Sie sowohl die ganze Site als auch nut die FAQ nach Stichwörtern durchsuchen können.
+Auf der Site http://www.elexis.ch werden aktuelle Informationen veröffentlicht. Es existiert auch eine Rubrik FAQ (Frequently Asked Questions), wo eventuell genau die Frage behandelt wird, die Sie auch grad stellen wollten. Schauen Sie also immer zuerst auf der Website nach. Diese enhält auch eine ausgezeichnete Suchfunktion, mit der Sie sowohl die ganze Site als auch nur die FAQ nach Stichwörtern durchsuchen können.
 
 \subsection{Forum}
 Unter http://www.elexis-forum.ch existiert ein Forum, in dem jede/r (auch Sie!) Fragen stellen und beantworten oder allgemeine Bemerkungen, Tips und Tricks, Kritiken usw. loswerden kann. Da Elexis ein community-Projekt sein will, wäre es schön, wenn Sie Fragen, die auf der Website nicht geklärt werden, im Forum besprechen würden, damit Andere auch etwas davon haben.
@@ -542,5 +648,8 @@ Dieses Hilfe-Wiki wird standardmässig auch aufgerufen, wenn Sie von Elexis aus 
 Sie werden sehen, dass das Abrechnen nicht so schwierig ist, wie es scheint. Das Lesen dieser Broschüre hat wesentlich länger gedauert, als ein Rechnungslauf dauern wird, wenn Sie die Grundprinzipien erst mal 'verinnerlicht' haben. Die Komplexität kommt eher aus der Vielzahl der möglichen Optionen. Da man aber in der eigenen Praxis nur eine begrenzte Anzahl davon benötigt, wird es schon viel einfacher.
 
 Dennoch: Da es von vitaler Notwendigkeit ist, dass Rechnungen korrekt erstellt und Zahlungen korrekt eingebucht werden, erhalten Sie als registrierter Elexis-Anwender für den Bereich 'Abrechnen' in Elexis vorerst unlimitierten E-Mail-Support von support (at) elexis.ch. Vom kostenlosen Support wird aber nichts abgedeckt, was in dieser Broschüre behandelt wird. Lesen Sie also bitte diese Broschüre erst durch, und wenn dann noch etwas unklar ist, fragen Sie im Forum (s. oben), oder allenfalls direkt \textbf{per e-mail} bei mir, nicht bei jemand anderem.
+\clearpage
+\section{Index}
+\printindex
 
 \end{document}
