@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 3711 2008-02-28 14:00:11Z danlutz $
+ *  $Id: NOAText.java 3950 2008-05-22 18:39:15Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -50,6 +50,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.ReplaceCallback;
 import ch.elexis.util.Log;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -287,7 +288,10 @@ public class NOAText implements ITextPlugin {
 	public boolean findOrReplace(final String pattern, final ReplaceCallback cb) {
 		SearchDescriptor search=new SearchDescriptor(pattern);
 		search.setUseRegularExpression(true);
-		
+		if(doc==null){
+			SWTHelper.showError("No doc in bill", "Fehler:","Es ist keine Rechnungsvorlage definiert");
+			return false;
+		}
 		ISearchResult searchResult = doc.getSearchService().findAll(search);
 		if(!searchResult.isEmpty()) {
 			ITextRange[] textRanges = searchResult.getTextRanges();
