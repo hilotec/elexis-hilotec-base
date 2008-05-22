@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3951 2008-05-22 19:34:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -63,7 +63,7 @@ import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-public abstract class BaseAgendaView extends ViewPart implements BackingStoreListener,  HeartListener, ActivationListener {
+public abstract class BaseAgendaView extends ViewPart implements BackingStoreListener,  HeartListener, ActivationListener{
 
 	protected TimeTool actDate;	
 	protected  String actBereich;
@@ -81,10 +81,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	protected BaseAgendaView(){
 		self=this;
 		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); 
-		actBereich=getPartProperty("actBereich");
-		if(actBereich==null){
-			actBereich=bereiche[0];
-		}
+		actBereich=Hub.userCfg.get(PreferenceConstants.AG_BEREICH, bereiche[0]);
 	}
 	abstract public void create(Composite parent);
 	
@@ -173,6 +170,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				}});
 		}else if(clazz.equals(Anwender.class)){
 			updateActions();
+			setBereich(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, bereiche[0]));
 		}
 	}
 
@@ -182,7 +180,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	public void setBereich(String b){
 		actBereich=b;
 		setPartName("Agenda "+b); //$NON-NLS-1$
-		setPartProperty("actBereich", b);
+		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, b);
 		if(pinger!=null){
 			pinger.doSync();
 		}
@@ -238,6 +236,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		AgendaActions.updateActions();
 		tv.refresh();
 	}
+	
 	protected void makeActions(){
 		dayLimitsAction=new Action("Tagesgrenzen"){
 			@Override
@@ -426,7 +425,6 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 						public void widgetSelected(SelectionEvent e) {
 							MenuItem mi=(MenuItem)e.getSource();
 							setBereich(mi.getText());
-							setPartProperty("actBereich", mi.getText());
 							tv.refresh();
 						}
 						

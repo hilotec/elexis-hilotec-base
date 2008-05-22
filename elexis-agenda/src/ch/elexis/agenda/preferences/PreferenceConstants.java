@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *  $Id: PreferenceConstants.java 3951 2008-05-22 19:34:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
@@ -25,6 +25,7 @@ public class PreferenceConstants {
 	public static final String AG_TIMEPREFERENCES	= "agenda/zeitvorgaben";
 	public static final String AG_DAYPREFERENCES	= "agenda/tagesvorgaben";
 	public static final String AG_SHOW_REASON       = "agenda/show_reason";
+	public static final String AG_BEREICH           = "agenda/bereich";
 	
 	public static final String AG_SYNC_TYPE			= "agenda/sync/db_type";
 	public static final String AG_SYNC_HOST			= "agenda/sync/db_host";
