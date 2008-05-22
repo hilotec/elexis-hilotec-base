@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: KonsDetailView.java 3948 2008-05-22 18:34:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -103,7 +103,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	public void createPartControl(final Composite p) {
 		SashForm sash=new SashForm(p,SWT.VERTICAL);
 		
-        tk=Desk.theToolkit;
+        tk=Desk.getToolkit();
         form=tk.createForm(sash);
         form.getBody().setLayout(new GridLayout(1,true));
         form.setText("Keine Konsultation ausgewählt");
@@ -114,7 +114,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         cDesc.setLayout(new RowLayout(SWT.HORIZONTAL));
         cDesc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
         lBeh=tk.createLabel(cDesc,"Keine Konsultation ausgewählt");
-        emFont=new Font(Desk.theDisplay,"Helvetica",11,SWT.BOLD);
+        emFont=Desk.getFont("Helvetica",11,SWT.BOLD);
         lBeh.setFont(emFont);
         hlMandant=tk.createHyperlink(cDesc, "--", SWT.NONE);
         hlMandant.addHyperlinkListener(new HyperlinkAdapter(){

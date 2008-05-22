@@ -13,16 +13,21 @@
 
 package ch.elexis;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -33,6 +38,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
+import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.StringTool;
 
@@ -41,12 +47,11 @@ public class Desk implements IApplication {
 	public static Display theDisplay=null;
 	/** @deprecated use getToolkit() */
     public static FormToolkit theToolkit=null;
-    /** @deprecated use getFontRegistry() */
-    public static FontRegistry theFontRegistry=null;
     /** @deprecated use getImage and getImageDescriptor */
     public static ImageRegistry theImageRegistry=null;
     /** @deprecated use getColor */
     public static ColorRegistry theColorRegistry=null;
+    
     
     public static final String COL_RED="rot";
     public static final String COL_GREEN="gruen";
@@ -125,13 +130,11 @@ public class Desk implements IApplication {
 	public static final String IMG_DISK= "diskette";  //$NON_NLS-1$
 	public static final String IMG_LOCK_CLOSED="schloss_zu";  //$NON_NLS-1$
 	
-	public static final String FONT_SMALL="small";
-    
+   
 	public Desk(){
 		getDisplay();
 		getImageRegistry();
 		getColorRegistry();
-		getFontRegistry();
 		getToolkit();
 	}
 	public Object start(IApplicationContext context) throws Exception {
@@ -267,18 +270,30 @@ public class Desk implements IApplication {
 		return theToolkit;
 	}
 	
-	public Display getDisplay(){
+	public static Display getDisplay(){
 		if(theDisplay==null){
 			theDisplay = PlatformUI.createDisplay();
 		}
 		return theDisplay;
 	}
 	
-	public static FontRegistry getFontRegistry(){
-		if(theFontRegistry==null){
-			theFontRegistry=new FontRegistry(theDisplay,true);
+	
+	public static Font getFont(String cfgName){
+		FontRegistry fr=JFaceResources.getFontRegistry();
+		if(!fr.hasValueFor(cfgName)){
+			FontData[] fd=PreferenceConverter.getFontDataArray(new SettingsPreferenceStore(Hub.userCfg), cfgName);
+			fr.put(cfgName, fd);
 		}
-		return theFontRegistry;
+		return fr.get(cfgName);
+	}
+	public static Font getFont(String name, int height, int style){
+		String key=name+":"+Integer.toString(height)+":"+Integer.toString(style);
+		FontRegistry fr=JFaceResources.getFontRegistry();
+		if(!fr.hasValueFor(key)){
+			FontData[] fd=new FontData[]{new FontData(name,height,style)};
+			fr.put(key, fd);
+		}
+		return fr.get(key);
 	}
 	/** 
 	 * Eine Color aus einer RGB-Beschreibung als Hex-String herstellen

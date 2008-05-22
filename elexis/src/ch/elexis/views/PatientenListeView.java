@@ -8,11 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 3821 2008-04-20 13:48:00Z rgw_ch $
+ * $Id: PatientenListeView.java 3948 2008-05-22 18:34:11Z rgw_ch $
  *******************************************************************************/
 
 
 package ch.elexis.views;
+
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -42,6 +44,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Reminder;
 import ch.elexis.data.FilterFactory.Filter;
 import ch.elexis.dialogs.PatientErfassenDialog;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
@@ -87,18 +90,33 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     public void createPartControl(final Composite parent)
     {
 		cv=new CommonViewer();
-		
 		loader=(AbstractDataLoaderJob)Hub.jobPool.getJob("PatientenListe");
+		ArrayList<String> fields=new ArrayList<String>();
+		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR,false)){
+			fields.add("PatientNr");
+		}
+		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWNAME,true)){
+			fields.add("Name");
+		}
+		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,true)){
+			fields.add("Vorname");
+		}
+		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB,true)){
+			fields.add("Geburtsdatum");
+		}
+
+
 		vc=new ViewerConfigurer(
 				new LazyContentProvider(cv,loader, AccessControlDefaults.PATIENT_DISPLAY),
 				new PatLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Name","Vorname","Geburtsdatum"}),
+				new DefaultControlFieldProvider(cv, fields.toArray(new String[0])),
 				new ViewerConfigurer.DefaultButtonProvider(), //cv,Patient.class),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,SWT.SINGLE,cv)
 		);
         cv.create(vc,parent,SWT.NONE,getViewSite());
         // let user select patient by pressing ENTER in the control fields
         cv.getConfigurer().getControlFieldProvider().addChangeListener(new ControlFieldSelectionListener());
+        cv.getViewerWidget().getControl().setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
         makeActions();
         menus=new ViewMenus(getViewSite());
         menus.createToolbar(newPatAction,filterAction);

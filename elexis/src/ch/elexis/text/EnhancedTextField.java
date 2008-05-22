@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 3022 2007-08-27 07:11:53Z danlutz $
+ *  $Id: EnhancedTextField.java 3948 2008-05-22 18:34:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -49,6 +49,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import ch.elexis.ApplicationActionBarAdvisor;
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
@@ -57,6 +58,7 @@ import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.Query;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.Result;
@@ -148,6 +150,7 @@ public class EnhancedTextField extends Composite {
 		super(parent,SWT.NONE);
 		setLayout(new GridLayout());
 		text=new StyledText(this,SWT.WRAP|SWT.BORDER|SWT.V_SCROLL);
+		text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 		text.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		text.addVerifyListener(new ETFVerifyListener());
 		text.addVerifyKeyListener(new ShortcutListener(this));

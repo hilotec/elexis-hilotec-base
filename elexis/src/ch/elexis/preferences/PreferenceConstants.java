@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 3918 2008-05-13 16:13:09Z rgw_ch $
+ *    $Id: PreferenceConstants.java 3948 2008-05-22 18:34:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -78,6 +78,12 @@ public class PreferenceConstants {
 	public static final String USR_REMINDEROTHERS= "reminder/others";
 	public static final String USR_MFU_LIST_SIZE= "mfulist/size";
 	public static final String USR_PLAF= "anwender/plaf";
+	public static final String USR_DEFAULTFONT = "anwender/stdfont";
+	public static final String USR_SMALLFONT = "anwender/smallfont";
+	public static final String USR_PATLIST_SHOWPATNR = "anwender/patlist/zeigenr";
+	public static final String USR_PATLIST_SHOWNAME = "anwender/patlist/zeigename";
+	public static final String USR_PATLIST_SHOWFIRSTNAME = "anwender/patlist/zeigevorname";
+	public static final String USR_PATLIST_SHOWDOB = "anwender/patlist/zeigegebdat";
 	
 	// Menu item "lock perspectives" (GlobalActions.fixLayoutAction)
 	public static final String USR_FIX_LAYOUT = "perspectives/fix_layout";

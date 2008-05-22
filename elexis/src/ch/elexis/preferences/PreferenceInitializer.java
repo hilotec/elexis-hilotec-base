@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 3948 2008-05-22 18:34:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -16,6 +16,8 @@ import java.io.File;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -127,20 +129,21 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 *
 	 */
 	public void initializeDisplayPreferences(Display display){
-		Desk.theColorRegistry.put(Desk.COL_RED, new RGB(255,0,0));
-		Desk.theColorRegistry.put(Desk.COL_GREEN,new RGB(0,255,0));
-		Desk.theColorRegistry.put(Desk.COL_BLUE,new RGB(0,0,255));
-		Desk.theColorRegistry.put(Desk.COL_SKYTBLUE, new RGB(135,206,250));
-		Desk.theColorRegistry.put(Desk.COL_LIGHTBLUE, new RGB(0,191,255));
-		Desk.theColorRegistry.put(Desk.COL_BLACK, new RGB(0,0,0));
-		Desk.theColorRegistry.put(Desk.COL_GREY, new RGB(0x60,0x60,0x60));
-		Desk.theColorRegistry.put(Desk.COL_WHITE, new RGB(255,255,255));
-		Desk.theColorRegistry.put(Desk.COL_DARKGREY, new RGB(50,50,50));
-		Desk.theColorRegistry.put(Desk.COL_LIGHTGREY, new RGB(180,180,180));
-		Desk.theColorRegistry.put(Desk.COL_GREY60, new RGB(153,153,153));
-		Desk.theColorRegistry.put(Desk.COL_GREY20, new RGB(51,51,51));
+		Desk.getColorRegistry().put(Desk.COL_RED, new RGB(255,0,0));
+		Desk.getColorRegistry().put(Desk.COL_GREEN,new RGB(0,255,0));
+		Desk.getColorRegistry().put(Desk.COL_BLUE,new RGB(0,0,255));
+		Desk.getColorRegistry().put(Desk.COL_SKYTBLUE, new RGB(135,206,250));
+		Desk.getColorRegistry().put(Desk.COL_LIGHTBLUE, new RGB(0,191,255));
+		Desk.getColorRegistry().put(Desk.COL_BLACK, new RGB(0,0,0));
+		Desk.getColorRegistry().put(Desk.COL_GREY, new RGB(0x60,0x60,0x60));
+		Desk.getColorRegistry().put(Desk.COL_WHITE, new RGB(255,255,255));
+		Desk.getColorRegistry().put(Desk.COL_DARKGREY, new RGB(50,50,50));
+		Desk.getColorRegistry().put(Desk.COL_LIGHTGREY, new RGB(180,180,180));
+		Desk.getColorRegistry().put(Desk.COL_GREY60, new RGB(153,153,153));
+		Desk.getColorRegistry().put(Desk.COL_GREY20, new RGB(51,51,51));
 		
-		Desk.theFontRegistry.put(Desk.FONT_SMALL, new FontData[]{new FontData("Helvetica",7,SWT.NORMAL),null});
+		FontData[] small=	new FontData[]{new FontData("Helvetica",7,SWT.NORMAL)};
+		Hub.userCfg.set(PreferenceConstants.USR_SMALLFONT+"_default", PreferenceConverter.getStoredRepresentation(small));
 	}
 	
 	/** 

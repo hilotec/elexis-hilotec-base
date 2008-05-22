@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: UserSettings2.java 3948 2008-05-22 18:34:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -35,7 +38,10 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 		super(GRID);
 		setPreferenceStore(prefs);
 		prefs.setDefault(EXPANDABLE_COMPOSITES, REMEMBER_STATE);
-		System.out.println(getPreferenceStore().getString(EXPANDABLE_COMPOSITES));
+		prefs.setDefault(PreferenceConstants.USR_PATLIST_SHOWPATNR, false);
+		prefs.setDefault(PreferenceConstants.USR_PATLIST_SHOWNAME, true);
+		prefs.setDefault(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME, true);
+		prefs.setDefault(PreferenceConstants.USR_PATLIST_SHOWDOB, true);
 	}
 	@Override
 	protected void createFieldEditors() {
@@ -46,6 +52,12 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 				{"Letzten Zustand merken",REMEMBER_STATE}	
 				
 		},getFieldEditorParent()));
+		new Label(getFieldEditorParent(),SWT.SEPARATOR|SWT.HORIZONTAL);
+		new Label(getFieldEditorParent(),SWT.NONE).setText("Anzuzeigende Felder in Patientenliste");
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWPATNR,"Patient-Nr", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWNAME,"Name",getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,"Vorname",getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,"Geburtsdatum",getFieldEditorParent()));
 	}
 
 	public void init(IWorkbench workbench) {
