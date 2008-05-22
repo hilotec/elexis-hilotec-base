@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *  $Id: Anwender.java 3952 2008-05-22 19:35:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -21,10 +21,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.PatientPerspektive;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.IO.SqlSettings;
@@ -254,6 +256,7 @@ public class Anwender extends Person {
 				perspektive=PatientPerspektive.ID;
 			}
 			try{
+				Desk.updateFont(PreferenceConstants.USR_DEFAULTFONT);
 				IWorkbenchWindow win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				PlatformUI.getWorkbench().showPerspective(perspektive,win);
 				Hub.heart.resume(true);

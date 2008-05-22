@@ -277,6 +277,12 @@ public class Desk implements IApplication {
 		return theDisplay;
 	}
 	
+
+	public static void updateFont(String cfgName){
+		FontRegistry fr=JFaceResources.getFontRegistry();
+		FontData[] fd=PreferenceConverter.getFontDataArray(new SettingsPreferenceStore(Hub.userCfg), cfgName);
+		fr.put(cfgName, fd);
+	}
 	
 	public static Font getFont(String cfgName){
 		FontRegistry fr=JFaceResources.getFontRegistry();
