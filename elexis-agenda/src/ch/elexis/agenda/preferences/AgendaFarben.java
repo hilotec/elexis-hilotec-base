@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaFarben.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ * $Id: AgendaFarben.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.preferences;
+package ch.elexis.agenda.preferences;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -31,6 +31,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;

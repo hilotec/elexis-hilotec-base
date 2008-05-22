@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3762 2008-04-01 10:38:25Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -50,6 +50,7 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -57,7 +58,6 @@ import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
@@ -81,7 +81,10 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	protected BaseAgendaView(){
 		self=this;
 		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); 
-		actBereich=bereiche[0];
+		actBereich=getPartProperty("actBereich");
+		if(actBereich==null){
+			actBereich=bereiche[0];
+		}
 	}
 	abstract public void create(Composite parent);
 	
@@ -179,6 +182,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	public void setBereich(String b){
 		actBereich=b;
 		setPartName("Agenda "+b); //$NON-NLS-1$
+		setPartProperty("actBereich", b);
 		if(pinger!=null){
 			pinger.doSync();
 		}
@@ -422,6 +426,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 						public void widgetSelected(SelectionEvent e) {
 							MenuItem mi=(MenuItem)e.getSource();
 							setBereich(mi.getText());
+							setPartProperty("actBereich", mi.getText());
 							tv.refresh();
 						}
 						

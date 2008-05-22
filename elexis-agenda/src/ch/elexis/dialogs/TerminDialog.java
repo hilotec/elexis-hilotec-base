@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 3878 2008-05-06 08:43:38Z rgw_ch $
+ *  $Id: TerminDialog.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -56,9 +56,9 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.NumberInput;
 import ch.elexis.util.Plannables;
@@ -639,7 +639,7 @@ public class TerminDialog extends TitleAreaDialog {
 			
 			// Lineal zeichnen
 			g.setBackground(def);
-	        g.setFont(Desk.theFontRegistry.get("small")); //$NON-NLS-1$
+	        g.setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
 			
 			g.drawLine(0,sep,d.x,sep);
 			if(rasterIndex>=rasterValues.length){

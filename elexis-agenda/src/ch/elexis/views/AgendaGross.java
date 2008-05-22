@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: AgendaGross.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -47,10 +47,10 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.TagesNachricht;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;

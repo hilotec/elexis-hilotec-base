@@ -29,38 +29,38 @@
       <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="ch.elexis.preferences.AgendaDefinitionen"
+            class="ch.elexis.agenda.preferences.AgendaDefinitionen"
             id="ch.elexis.Agendaprefs"
             name="Agenda"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
-            class="ch.elexis.preferences.AgendaFarben"
+            class="ch.elexis.agenda.preferences.AgendaFarben"
             id="ch.Agendapref.colors"
             name="%Farben"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
-            class="ch.elexis.preferences.AgendaImages"
+            class="ch.elexis.agenda.preferences.AgendaImages"
             id="elexis-agenda.imageprefs"
             name="Agenda-Icons"/>
       <page
             category="ch.elexis.Agendaprefs"
-            class="ch.elexis.preferences.AgendaDruck"
+            class="ch.elexis.agenda.preferences.AgendaDruck"
             id="ch.elexis.preferences.AgendaDruck"
             name="Druck">
       </page>
       <page
             category="ch.elexis.Agendaprefs"
-            class="ch.elexis.preferences.Zeitvorgaben"
+            class="ch.elexis.agenda.preferences.Zeitvorgaben"
             id="ch.agendaprefs.zeiten"
             name="%Zeitvorgaben"/>
       <page
             category="ch.elexis.Agendaprefs"
-            class="ch.elexis.preferences.Tageseinteilung"
+            class="ch.elexis.agenda.preferences.Tageseinteilung"
             id="ch.elexis.agenda.tageseinteilung"
             name="%Tageseinteilung"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
-            class="ch.elexis.preferences.AgendaAnzeige"
+            class="ch.elexis.agenda.preferences.AgendaAnzeige"
             id="ch.elexis.agenda.anzeige"
             name="%Ansicht"/>
       </extension>

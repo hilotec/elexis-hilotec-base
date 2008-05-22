@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *    
  *  $Id: TagesView.java 916 2006-09-13 08:33:14Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.preferences;
+package ch.elexis.agenda.preferences;
 
 import java.util.Hashtable;
 
@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 
 import ch.elexis.Hub;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,11 @@ import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.*;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.dialogs.DateSelectorDialog;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.*;
@@ -62,7 +62,7 @@ public class TagesView extends BaseAgendaView{
 		top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		actDate=new TimeTool();
 		bToday=new Button(top,SWT.CENTER|SWT.PUSH|SWT.FLAT);
-		bToday.setImage(Desk.theImageRegistry.get(Activator.IMG_HOME));
+		bToday.setImage(Desk.getImage(Activator.IMG_HOME));
 		bToday.setToolTipText(Messages.TagesView_showToday); 
 		bToday.addSelectionListener(new SelectionAdapter(){
 
@@ -139,7 +139,7 @@ public class TagesView extends BaseAgendaView{
 		
 		tDetail=new Text(sash,SWT.MULTI|SWT.BORDER|SWT.WRAP);
 		lCreator=new Label(parent,SWT.NONE);
-		lCreator.setFont(Desk.theFontRegistry.get(Desk.FONT_SMALL));
+		lCreator.setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
 		lCreator.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lCreator.setText(" - ");
 		

@@ -11,7 +11,7 @@
  * $Id$
  *******************************************************************************/
 
-package ch.elexis.preferences;
+package ch.elexis.agenda.preferences;
 
 import java.util.List;
 
@@ -35,6 +35,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 
 public class AgendaDruck extends PreferencePage implements

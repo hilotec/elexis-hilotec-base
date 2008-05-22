@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 3743 2008-03-26 15:28:02Z danlutz $
+ *  $Id: PreferenceConstants.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.preferences;
+package ch.elexis.agenda.preferences;
 
 public class PreferenceConstants {
 	public static final String AG_BEREICHE			= "agenda/bereiche";

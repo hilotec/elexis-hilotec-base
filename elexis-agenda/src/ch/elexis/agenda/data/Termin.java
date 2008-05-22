@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3872 2008-05-05 16:59:27Z rgw_ch $
+ *    $Id: Termin.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -23,10 +23,10 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;

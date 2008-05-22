@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plannables.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: Plannables.java 3947 2008-05-22 18:33:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -23,8 +23,8 @@ import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Query;
-import ch.elexis.preferences.PreferenceConstants;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
