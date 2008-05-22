@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 3946 2008-05-21 19:10:39Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 3949 2008-05-22 18:35:36Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -302,8 +302,8 @@ Damit bleibt ein Fall auch immer so lange gültig, wie die Behandlungen demselbe
 
 \medskip
 
-\textbf{Wichtig:} Ein einmal erstellter Fall ist wie ein Krankenkassenkärtli oder ein 
-\index{Fall!ändern} Unfallschein zu betrachten. Das heisst, er darf nicht mehr geändert werden. Wenn sich etwas an der Versicherung ändert, muss ein neuer Fall erstellt werden.
+\textbf{Wichtig:} Ein einmal erstellter Fall ist wie ein Krankenkassenkärtli oder ein
+\index{Fall!ändern} Unfallschein zu betrachten. Das heisst, er darf nicht mehr geändert werden.\footnote{Selbstverständlich ist es gestattet, fehlende Angaben später nachzutragen, oder Tippfehler zu korrigieren, wenn etwa die Versicherungsnummer sich nicht geändert hat, aber falsch eingegeben worden ist} Wenn sich etwas an der Versicherung ändert, muss ein neuer Fall erstellt werden.
 
 \subsubsection{Fall-Eigenschaften}
 \label{fall-erfordernisse}
@@ -526,7 +526,7 @@ Eigentlich ist gar nichts Magisches dabei: Beim Drucken der Rechnung erstellt El
 
 \medskip
 
-Die Bank schickt dann genau diese ESR-Zeile wieder mit, wenn eine Zahlung eingegangen ist, so dass Elexis sie 'wiedererkennt'. Speichern Sie also das von der Bank erhaltene ESR-File irgendwo ab, wo Sie es wiederfinden und öffnen Sie in Elexis die ESR-View (Abb.\ref{fig:abr20}).
+Die Bank schickt dann genau diese ESR-Zeile wieder mit, wenn eine Zahlung eingegangen ist, so dass Elexis sie 'wiedererkennt'. Speichern Sie also das von der Bank erhaltene ESR-File irgendwo ab, wo Sie es wiederfinden\footnote{Alle mir bekannten Banken geben dem ESR-File einen eindeutigen Namen, so dass nie mehrmals ein File mit demselben Namen kommt. Lassen Sie sich nicht verleiten, die Files unter immer demselben Namen zu speichern, sondern behalten Sie den Namen be  den die Bank dem File gibt. Elexis wird sich nämlich weigern, ein ESR-File mit einem Namen einzulesen, der schonmal eingelesen wurde, um Doppelbuchungen zu vermeiden. Falls Ihre Bank keine eindeutigen Dateinamen liefert, benennen Sie sie selbst um, dass sie eindeutig werden, z.B. 'ESR20080521.txt' (also jahr/monat/Tag im Namen eingebaut)} und öffnen Sie in Elexis die ESR-View (Abb.\ref{fig:abr20}).
 \begin{figure}
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.9\textwidth]{abr20}\\
@@ -570,7 +570,7 @@ Machen Sie dasselbe, indem Sie ein Statusdatum z.B. 15 Tage in der Vergangenheit
 \end{figure}
 Geben Sie dort das Datum, einen Betrag der Form x.xx und einen Text ein (Der Text wird so auf der Rechnung neben dem Betrag erscheinen).
 
-\medskip 
+\medskip
 \index{Mahnung}\index{Betreiben}\index{Verlust}\index{Totalverlust}\index{Teilverlust}\index{Rechnung!abschreiben}
 Gehen Sie analog für die Zweiten Mahnungen vor, um die Dritte Mahnung herauszulassen. Hier ist allerdings für Elexis Ende der Fahnenstange. Ob und wann Sie die Betreibung einleiten wollen, müssen Sie selber entscheiden und den Status selber auf 'In Betreibung' setzen. Alternativ können Sie den Status auf 'Teilverlust' oder 'Totalverlust' setzen, wenn Sie den offenen Betrag defintiv abschreiben wollen. (Sie können bei der Jahresbilanz dann die Verluste auflisten und in der Steuererklärung als Debitorenverluste angeben)
 
