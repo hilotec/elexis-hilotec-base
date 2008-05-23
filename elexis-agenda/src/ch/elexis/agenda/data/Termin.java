@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *    $Id: Termin.java 3956 2008-05-23 10:57:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -39,7 +39,7 @@ import ch.rgw.tools.VersionInfo;
  */
 
 public class Termin extends PersistentObject implements Cloneable, Comparable, IPlannable{
-	public static final String VERSION="1.2.2";
+	public static final String VERSION="1.2.3";
     public static String[] TerminTypes;
     public static String[] TerminStatus;
     public static String[] TerminBereiche;
@@ -56,8 +56,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     	    "Beginn          CHAR(4),"+
     	    "Dauer           CHAR(4),"+
     	    "Grund           TEXT,"+
-    	    "TerminTyp       VARCHAR(20),"+
-    	    "TerminStatus    VARCHAR(20),"+
+    	    "TerminTyp       VARCHAR(50),"+
+    	    "TerminStatus    VARCHAR(50),"+
     	    "ErstelltVon     VARCHAR(25),"+
     	    "Angelegt        VARCHAR(10),"+
     	    "lastedit	     VARCHAR(10),"+
@@ -72,6 +72,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
     	"CREATE INDEX agnbereich on AGNTERMINE (Bereich);"+
     	"INSERT INTO AGNTERMINE (ID) VALUES ('1');";
 
+    private static final String upd122="ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);"+
+    "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);";
     
     static{
       addMapping("AGNTERMINE",
@@ -115,6 +117,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 				  }else if(j.DBFlavor.equalsIgnoreCase("mysql")){
 					  j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);");
 				  }
+			  }else if(vi.isOlder("1.2.3")){
+				  createTable("AGNTERMINE", upd122);
 			  }
 			  Version.set("Wer", VERSION);
 		  }

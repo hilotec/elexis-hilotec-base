@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3951 2008-05-22 19:34:27Z rgw_ch $
+ *  $Id: BaseAgendaView.java 3956 2008-05-23 10:57:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -44,6 +44,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.Synchronizer;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
+import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -162,7 +163,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 	// BackingStoreListener
 	public void reloadContents(Class clazz) {
 		if(clazz.equals(Termin.class)){
-			Desk.theDisplay.asyncExec(new Runnable(){
+			Desk.getDisplay().asyncExec(new Runnable(){
 				public void run() {
 					if(!tv.getControl().isDisposed()){
 						tv.refresh(true);
@@ -170,6 +171,11 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				}});
 		}else if(clazz.equals(Anwender.class)){
 			updateActions();
+			if(tv!=null){
+				if(!tv.getControl().isDisposed()){
+					tv.getControl().setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_DEFAULTFONT));
+				}
+			}
 			setBereich(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, bereiche[0]));
 		}
 	}
