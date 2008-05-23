@@ -16,7 +16,6 @@ package ch.elexis.views;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -29,7 +28,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -93,33 +91,6 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	public final static String CFG_EXTRAFIELDS="views/patientenblatt/extrafelder";
 	private final static String SPLITTER="#!>";
 
-	InputData[] fields=new InputData[]{
-			new InputData("Name","Name",InputData.Typ.STRING,null),
-			new InputData("Vorname","Vorname",InputData.Typ.STRING,null),
-			new InputData("Geburtsdatum","Geburtsdatum",InputData.Typ.DATE,null),
-			new InputData("Geschlecht","Geschlecht",null,new String[]{Person.FEMALE,Person.MALE},false),
-			new InputData("Telefon 1","Telefon1",InputData.Typ.STRING,null),
-			new InputData("Telefon 2","Telefon2",InputData.Typ.STRING,null),
-			new InputData("Mobil","Natel",InputData.Typ.STRING,null),
-			new InputData("Fax","Fax",InputData.Typ.STRING,null),
-			new InputData("E-Mail","E-Mail",InputData.Typ.STRING,null),
-			new InputData("Gruppe","Gruppe",InputData.Typ.STRING,null),
-			new InputData("Konto","Konto",new LabeledInputField.IContentProvider(){
-
-				public void displayContent(PersistentObject po, InputData ltf) {
-					ltf.setText(actPatient.getKontostand().getAmountAsString());
-					
-				}
-
-				public void reloadContent(PersistentObject po, InputData ltf) {
-					if(new AddBuchungDialog(getShell(),actPatient).open()==Dialog.OK){
-						ltf.setText(actPatient.getKontostand().getAmountAsString());
-					}
-				}
-				
-			})
-			
-	};
 	private final static String[] lbExpandable={"Diagnosen","Persönliche Anamnese",/*"Familienanamnese",
 			"Systemanamnese",*/"Allergien","Risiken","Bemerkungen"};
 	private final Text[] txExpandable=new Text[lbExpandable.length];
@@ -195,6 +166,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
         tk=Desk.getToolkit();
     	form=tk.createScrolledForm(this);
         form.getBody().setLayout(new GridLayout());
+        /*
         form.getBody().addControlListener(new ControlAdapter(){
 
 			@Override
@@ -207,9 +179,10 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 			}
         	
         });
+        */
         cUserfields=new Composite(form.getBody(),SWT.NONE);
         cUserfields.setLayout(new GridLayout());
-        cUserfields.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+        cUserfields.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
         recreateUserpanel();
         
         Composite cPersonalien=tk.createComposite(form.getBody());
