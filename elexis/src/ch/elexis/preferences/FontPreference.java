@@ -5,7 +5,9 @@ import org.eclipse.jface.preference.FontFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 
 public class FontPreference extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
@@ -30,8 +32,10 @@ public class FontPreference extends FieldEditorPreferencePage implements
 
 	@Override
 	public boolean performOk() {
-		
-		return super.performOk();
+		boolean ret=super.performOk();
+		Desk.updateFont(PreferenceConstants.USR_DEFAULTFONT);
+		GlobalEvents.getInstance().fireSelectionEvent(Hub.actUser);
+		return ret;
 	}
 	
 
