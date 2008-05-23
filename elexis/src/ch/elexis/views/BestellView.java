@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: BestellView.java 3959 2008-05-23 12:17:33Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -158,9 +158,7 @@ public class BestellView extends ViewPart implements ISaveablePart2{
 		viewmenus.createToolbar(wizardAction,saveAction,loadAction,printAction,sendAction);
 		viewmenus.createMenu(wizardAction,saveAction,loadAction,printAction,sendAction, exportClipboardAction);
 		viewmenus.createViewerContextMenu(tv,new IAction[]{removeAction,countAction});
-		/* Disabled, not yet finished
 		form.getToolBarManager().add(checkInAction);
-		*/
 		form.updateToolBar();
 		setBestellung(null);
 		tv.setInput(getViewSite());
