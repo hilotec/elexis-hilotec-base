@@ -23,10 +23,14 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -134,8 +138,54 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
     private final ViewMenus viewmenu;
     private final ExpandableComposite ecdm,ecZA;
     private boolean bLocked=true;
+    private Composite cUserfields;
     Hyperlink hHA;
     
+    void recreateUserpanel(){
+	    	//cUserfields.setRedraw(false);
+	    	if(ipp!=null){
+	    		ipp.dispose();
+	    		ipp=null;
+	    	}
+	    	
+	    	ArrayList<InputData> fields=new ArrayList<InputData>(20);
+	    	fields.add(new InputData("Name","Name",InputData.Typ.STRING,null));
+			fields.add(new InputData("Vorname","Vorname",InputData.Typ.STRING,null));
+			fields.add(new InputData("Geburtsdatum","Geburtsdatum",InputData.Typ.DATE,null));
+			fields.add(new InputData("Geschlecht","Geschlecht",null,new String[]{Person.FEMALE,Person.MALE},false));
+			fields.add(new InputData("Telefon 1","Telefon1",InputData.Typ.STRING,null));
+			fields.add(new InputData("Telefon 2","Telefon2",InputData.Typ.STRING,null));
+			fields.add(new InputData("Mobil","Natel",InputData.Typ.STRING,null));
+			fields.add(new InputData("Fax","Fax",InputData.Typ.STRING,null));
+			fields.add(new InputData("E-Mail","E-Mail",InputData.Typ.STRING,null));
+			fields.add(new InputData("Gruppe","Gruppe",InputData.Typ.STRING,null));
+			fields.add(new InputData("Konto","Konto",new LabeledInputField.IContentProvider(){
+
+				public void displayContent(PersistentObject po, InputData ltf) {
+					ltf.setText(actPatient.getKontostand().getAmountAsString());
+					
+				}
+
+				public void reloadContent(PersistentObject po, InputData ltf) {
+					if(new AddBuchungDialog(getShell(),actPatient).open()==Dialog.OK){
+						ltf.setText(actPatient.getKontostand().getAmountAsString());
+					}
+				}
+				
+			}));
+
+	    	String[] userfields=Hub.userCfg.get(CFG_EXTRAFIELDS,"").split(",");
+	    	for(String extfield:userfields){
+	    		if(!StringTool.isNothing(extfield)){
+	    			fields.add(new InputData(extfield,"ExtInfo",InputData.Typ.STRING,extfield));
+	    		}
+	    	}
+			ipp=new InputPanel(cUserfields,2,6,fields.toArray(new InputData[0]));
+	    	ipp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+	    	ipp.changed(ipp.getChildren());
+		    	// cUserfields.setRedraw(true);
+	    	cUserfields.setBounds(ipp.getBounds());
+    }
 	Patientenblatt2(final Composite parent, final IViewSite site)
 	{
 		super(parent,SWT.NONE);
@@ -143,17 +193,25 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		parent.setLayout(new FillLayout());
 		setLayout(new FillLayout());
         tk=Desk.getToolkit();
-    	ArrayList<InputData> extfields=new ArrayList<InputData>(Arrays.asList(fields));
-    	String[] userfields=Hub.userCfg.get(CFG_EXTRAFIELDS,"").split(",");
-    	for(String extfield:userfields){
-    		if(!StringTool.isNothing(extfield)){
-    			extfields.add(new InputData(extfield,"ExtInfo",InputData.Typ.STRING,extfield));
-    		}
-    	}
-        form=tk.createScrolledForm(this);
+    	form=tk.createScrolledForm(this);
         form.getBody().setLayout(new GridLayout());
-		ipp=new InputPanel(form.getBody(),3,6,extfields.toArray(new InputData[0]));
-		ipp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+        form.getBody().addControlListener(new ControlAdapter(){
+
+			@Override
+			public void controlResized(ControlEvent e) {
+				Rectangle si=form.getBody().getBounds();
+				cUserfields.setSize(si.width, si.height);
+				ipp.layout();
+				GridData gd=(GridData)cUserfields.getLayoutData();
+				gd.heightHint=ipp.getSize().y;
+			}
+        	
+        });
+        cUserfields=new Composite(form.getBody(),SWT.NONE);
+        cUserfields.setLayout(new GridLayout());
+        cUserfields.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+        recreateUserpanel();
+        
         Composite cPersonalien=tk.createComposite(form.getBody());
         cPersonalien.setLayout(new GridLayout(2,false));
         cPersonalien.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -418,13 +476,14 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
             setPatient((Patient)obj);
         }else if(obj instanceof Anwender){
         	setPatient(GlobalEvents.getSelectedPatient());
+        	recreateUserpanel();
         }
     }
 	
 	private void makeActions(){
 		lockAction=new RestrictedAction(AccessControlDefaults.PATIENT_MODIFY,"gesichert",Action.AS_CHECK_BOX){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_LOCK_CLOSED));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
 				setToolTipText("Blatt gegen Änderungen sichern");
 				setChecked(true);
 			}

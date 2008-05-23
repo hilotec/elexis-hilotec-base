@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LabeledInputField.java 3915 2008-05-11 09:47:24Z rgw_ch $
+ * $Id: LabeledInputField.java 3960 2008-05-23 16:37:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -57,7 +57,7 @@ public class LabeledInputField extends Composite {
         lbl.setText(label);
         switch (typ) {
         case LINK:
-        	lbl.setForeground(Desk.theColorRegistry.get("blau")); //$NON-NLS-1$
+        	lbl.setForeground(Desk.getColorRegistry().get(Desk.COL_BLUE)); //$NON-NLS-1$
         	ctl=tk.createText(this,"",SWT.NONE);
         	ctl.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
         	break;

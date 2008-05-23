@@ -1,7 +1,5 @@
 package ch.elexis.util;
 
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,21 +25,11 @@ public class InputPanel extends Composite{
 			LabeledInputField widget=id.getWidget();
 			if(widget!=null){
 				Label lbl=widget.getLabelComponent();
-				FontRegistry fr=JFaceResources.getFontRegistry();
-				Font lblFont=fr.get("lblFont");
-				if(lblFont==null){
-					//Font old=lbl.getFont();
-					lblFont=new Font(Desk.theDisplay,"Helvetica",8,SWT.ITALIC);
-					fr.put("lblFont", lblFont.getFontData());
-				}
+				Font lblFont=Desk.getFont("Helvetica", 8, SWT.ITALIC);
 				lbl.setFont(lblFont);
 			}
 		}
 		setLayout(new GridLayout());
-		//top=new Composite(this,SWT.BORDER);
-		//top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		//Composite bottom=new Composite(this,SWT.NONE);
-		//bottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		af=new LabeledInputField.AutoForm(this,fields,min,max);
         af.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 	}
