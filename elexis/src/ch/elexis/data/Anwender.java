@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 3952 2008-05-22 19:35:06Z rgw_ch $
+ *  $Id: Anwender.java 3955 2008-05-23 10:57:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -262,6 +262,7 @@ public class Anwender extends Person {
 				Hub.heart.resume(true);
 				GlobalEvents.getInstance().fireSelectionEvent(Hub.actUser);
 				GlobalEvents.getInstance().fireUpdateEvent(Anwender.class);
+				GlobalEvents.getInstance().fireUserEvent();
 				return true;
 			}catch(Exception ex){
 				ExHandler.handle(ex);

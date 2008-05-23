@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 3952 2008-05-22 19:35:06Z rgw_ch $
+ * $Id: PatientenListeView.java 3955 2008-05-23 10:57:32Z rgw_ch $
  *******************************************************************************/
 
 
@@ -35,10 +35,9 @@ import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.FilterFactory;
 import ch.elexis.data.Patient;
@@ -57,7 +56,7 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
 
-public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2, HeartListener, SelectionListener{
+public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2, HeartListener, UserListener{
     public static final String  ID="ch.elexis.PatListView";
     private CommonViewer cv;
     private ViewerConfigurer vc;
@@ -73,7 +72,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     	//cv.getViewerWidget().removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
     	((LazyContentProvider)cv.getConfigurer().getContentProvider()).stopListening();
     	GlobalEvents.getInstance().removeActivationListener(this,this);
-		GlobalEvents.getInstance().removeSelectionListener(this);
+		GlobalEvents.getInstance().removeUserListener(this);
     	super.dispose();
 	}
 
@@ -128,7 +127,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         patFilter=FilterFactory.createFilter(Patient.class,"Diagnosen","PersAnamnese","SystemAnamnese","Dauermedikation",
         		"Allergien","Risiken","Bemerkung","PatientNr","Strasse","Ort");
         GlobalEvents.getInstance().addActivationListener(this,this);
-		GlobalEvents.getInstance().addSelectionListener(this);
+		GlobalEvents.getInstance().addUserListener(this);
 		
     }
 	
@@ -350,12 +349,9 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	    	}
 	    }
 	}
-	public void clearEvent(Class<? extends PersistentObject> template) {
-		
-	}
 
-	public void selectionEvent(PersistentObject obj) {
-		if(obj instanceof Anwender){
+	public void UserChanged() {
+		if(!cv.getViewerWidget().getControl().isDisposed()){
 			cv.getViewerWidget().getControl().setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 			cv.notify(CommonViewer.Message.update);
 		}

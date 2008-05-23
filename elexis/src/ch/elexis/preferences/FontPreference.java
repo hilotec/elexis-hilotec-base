@@ -8,6 +8,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.data.Anwender;
 
 public class FontPreference extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
@@ -35,6 +36,8 @@ public class FontPreference extends FieldEditorPreferencePage implements
 		boolean ret=super.performOk();
 		Desk.updateFont(PreferenceConstants.USR_DEFAULTFONT);
 		GlobalEvents.getInstance().fireSelectionEvent(Hub.actUser);
+		GlobalEvents.getInstance().fireUserEvent();
+		GlobalEvents.getInstance().fireUpdateEvent(Anwender.class);
 		return ret;
 	}
 	

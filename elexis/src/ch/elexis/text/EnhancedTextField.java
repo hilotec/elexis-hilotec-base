@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 3953 2008-05-23 07:48:16Z rgw_ch $
+ *  $Id: EnhancedTextField.java 3955 2008-05-23 10:57:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -54,6 +54,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.IVerrechenbar;
@@ -133,7 +134,7 @@ public class EnhancedTextField extends Composite {
 				}
 		 };
 		 ApplicationActionBarAdvisor.editMenu.addMenuListener(globalMenuListener);
-		 GlobalEvents.getInstance().addSelectionListener(ucl);
+		 GlobalEvents.getInstance().addUserListener(ucl);
     }
     public void disconnectGlobalActions(IViewSite site){
     	 IActionBars actionBars = site.getActionBars();
@@ -141,7 +142,7 @@ public class EnhancedTextField extends Composite {
 		 actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),null);
 		 actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),null);
 		 ApplicationActionBarAdvisor.editMenu.removeMenuListener(globalMenuListener);
-		 GlobalEvents.getInstance().removeSelectionListener(ucl);
+		 GlobalEvents.getInstance().removeUserListener(ucl);
 		 
     }
     public void addDropReceiver(Class clazz,IKonsExtension ext){
@@ -660,18 +661,9 @@ public class EnhancedTextField extends Composite {
 		
 	}
 
-	class UserChangeListener implements SelectionListener{
-
-		public void clearEvent(Class<? extends PersistentObject> template) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void selectionEvent(PersistentObject obj) {
-			if(obj instanceof Anwender){
-				text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
-			}
-			
+	class UserChangeListener implements UserListener{
+		public void UserChanged() {
+			text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 		}
 		
 	}

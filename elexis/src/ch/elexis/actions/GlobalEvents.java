@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: GlobalEvents.java 3955 2008-05-23 10:57:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -41,13 +41,15 @@ import ch.elexis.views.codesystems.ICodeSelectorTarget;
  * To send a message about changed selection, call fireSelectionEvent. GlobalEvents
  * will distribute the event among all listeners.
  * 
- * To get informed about activation or deactivatioon of a workbench part, register as 
+ * To get informed about activation or deactivation of a workbench part, register as 
  * ActivationListener.
  * 
  * To get informed when a change of the databse occurs, register as BackingStoreListener.
  * 
  * To get informed about creation, deletion or modification of PersistentObject, register
  * as ObjectListener
+ * 
+ * To be informed when a user change occurs, register as UserListener
  * 
  * Zentrale Verarbeitung und Verteilung von Ereignissen.
  * Wer z.B. über eine Änderung der Auswahl informiert werden möchte, registriert
@@ -58,6 +60,8 @@ import ch.elexis.views.codesystems.ICodeSelectorTarget;
  * registriert sich als ActivationListener
  * Wer über eine Änderung einer Datenbasis informiert werden will (um z.B. eine Liste
  * neu einzulesen), registriert sich als BackingStoreListener
+ * Wer informiert werden will, wenn der Anwender oder der Mandant sich änder, registriert
+ * sich als UserListener
  * @author Gerry
  *
  */
@@ -69,6 +73,7 @@ public class GlobalEvents implements IPartListener2 {
     private final LinkedList<ObjectListener> objectListeners;
     private final Hashtable<IWorkbenchPart,LinkedList<ActivationListener>> activationListeners;
     private final ObjectFilterRegistry filters=new ObjectFilterRegistry();
+    private final LinkedList<UserListener> userListeners;
     
     private ICodeSelectorTarget codeSelectorTarget = null;
     private static GlobalEvents theInstance;
@@ -80,6 +85,7 @@ public class GlobalEvents implements IPartListener2 {
         storeListeners=new LinkedList<BackingStoreListener>();
         activationListeners=new Hashtable<IWorkbenchPart,LinkedList<ActivationListener>>();
         objectListeners=new LinkedList<ObjectListener>();
+        userListeners=new LinkedList<UserListener>();
         theListener=new GlobalListener();
 
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(this);
@@ -141,18 +147,6 @@ public class GlobalEvents implements IPartListener2 {
      * @param win das Fenster, das beobachtet werden soll.
      */
     public void addSelectionListener(final SelectionListener l /*, IWorkbenchWindow win */){
-    	/*
-    	if(win==null){
-    		win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    	}
-    	
-    	LinkedList<SelectionListener> list=listeners.get(win);
-    	if(list==null){
-    		list=new LinkedList<SelectionListener>();
-    		listeners.put(win, list);
-    	}
-        list.add(l);
-        */
     	selectionListeners.add(l);
     }
     
@@ -162,22 +156,35 @@ public class GlobalEvents implements IPartListener2 {
      * @param l
      */
     public void removeSelectionListener(final SelectionListener l /*,IWorkbenchWindow win */){
-    	/*
-    	if(win==null){
-    		win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    	}
-    	LinkedList<SelectionListener> list=listeners.get(win);
-    	if(list!=null){
-    		list.remove(l);
-    	}
-    	*/
     	selectionListeners.remove(l);
     }
     
+    /**
+     * Add a listener that will be informed, as user or mandantor changes
+     */
+    public void addUserListener(final UserListener l){
+    	userListeners.add(l);
+    }
+
+    /**
+     * remove a previously added UserListener
+     * @param l
+     */
+    public void removeUserListener(final UserListener l){
+    	userListeners.remove(l);
+    }
+    /**
+     * add a listener that will be informed, as Members of a given class should
+     * be reloiaded from the database
+     */
     public void addBackingStoreListener(final BackingStoreListener l){
     	storeListeners.add(l);
     }
-    
+
+    /**
+     * remove a previously added BackingStoreIstener
+     * @param l
+     */
     public void removeBackingStoreListener(final BackingStoreListener l){
     	storeListeners.remove(l);
     }
@@ -196,10 +203,14 @@ public class GlobalEvents implements IPartListener2 {
     		list.remove(l);
     	}
     }
-    
+
+    /**
+     * Die Lebenszustands-Änderung eines Objekts anzeigen
+     *
+     */
     public enum CHANGETYPE{update,delete,create};
     public void fireObjectEvent(final PersistentObject o, final CHANGETYPE type){
-    	Desk.theDisplay.asyncExec(new Runnable(){
+    	Desk.getDisplay().asyncExec(new Runnable(){
 
 			public void run() {
 				for(ObjectListener ol:objectListeners){
@@ -225,11 +236,6 @@ public class GlobalEvents implements IPartListener2 {
     	}else{
     		log.log("fireSelectionEvent: " + selected.getClass().getName() + "::" + selected.getId(), Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
     	}
-    	/*
-        if(win==null){
-        	win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        }
-        */
         // TODO Das ist unbefriedigend. Lieber Abhängigkeit Pat/Fall/Kons beim Klienten auflösen
         if(selected instanceof Patient){
         	Hub.setWindowText((Patient)selected);
@@ -265,31 +271,21 @@ public class GlobalEvents implements IPartListener2 {
         
     }
     static PersistentObject sourceObj;
-    //static IWorkbenchWindow sourceWin;
-    private void doDispatchEvent(/*IWorkbenchWindow win,*/final PersistentObject obj){
-    	if((obj==null) || /*((sourceWin==win) &&*/ (sourceObj==obj)){
+
+    private void doDispatchEvent(final PersistentObject obj){
+    	if((obj==null) || (sourceObj==obj)){
     		return;
     	}
     
     	log.log("doDispatch: " + obj.getClass().getName() + "::" + obj.getId(), Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
     	
     		// Endlosschleife vermeiden.
-    	//sourceWin=win;
     	sourceObj=obj;
        	if(SelectionTracker.change(obj) || true){
-       		/*
-	       	LinkedList<SelectionListener> list=listeners.get(win);
-	       	if(list!=null){
-	       		for(SelectionListener l:list){
-	       			l.selectionEvent(obj);
-	       		}
-	       	}
-	       	*/
        		for(SelectionListener l:selectionListeners){
        			l.selectionEvent(obj);
        		}
        	}
-       	//sourceWin=null;
        	sourceObj=null;
     }
     /**
@@ -300,6 +296,15 @@ public class GlobalEvents implements IPartListener2 {
 	public void fireUpdateEvent(final Class clazz){
     	for(BackingStoreListener lis:storeListeners){
     		lis.reloadContents(clazz);
+    	}
+    }
+    
+    /**
+     * Die Information senden, dass entweder der Anwender oder der Mandant geändert haben
+     */
+    public void fireUserEvent(){
+    	for(UserListener l:userListeners){
+    		l.UserChanged();
     	}
     }
     /**
@@ -361,14 +366,8 @@ public class GlobalEvents implements IPartListener2 {
 	public void clearSelection(final Class<? extends PersistentObject> template /*, IWorkbenchWindow win*/){
     	log.log("clearSelection: " + template.getName(), Log.DEBUGMSG); //$NON-NLS-1$
 
-    	/*
-    	if(win==null){
-    		win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    	}
-    	*/
     	SelectionTracker.clearObject(template);
-    	//final LinkedList<SelectionListener> list=(LinkedList<SelectionListener>) (win==null ? listeners.values().toArray()[0] : listeners.get(win));
-    	Desk.theDisplay.syncExec(new Runnable(){
+    	Desk.getDisplay().syncExec(new Runnable(){
     		public void run(){
     			for(SelectionListener l:selectionListeners){
     				l.clearEvent(template);
@@ -381,16 +380,6 @@ public class GlobalEvents implements IPartListener2 {
     	static SelectionTracker tracker;
     	@SuppressWarnings("unchecked")
 		Hashtable<Class,PersistentObject> objects=new Hashtable<Class,PersistentObject>();
-    	// IWorkbenchWindow window;
-    	/*
-    	SelectionTracker next;
-    	static SelectionTracker find(IWorkbenchWindow win) {
-    		if(root==null){
-    			return null;
-    		}
-    		return root.findFor(win);
-    	}
-    	*/
     	@SuppressWarnings("unchecked")
 		static PersistentObject getObject(/*IWorkbenchWindow win,*/ final Class template){
     		//SelectionTracker t=find(win);
@@ -403,16 +392,10 @@ public class GlobalEvents implements IPartListener2 {
     			tracker.objects.remove(template);
     		}
     	}
-    	static boolean change(/* IWorkbenchWindow win,*/ final PersistentObject sel){
-    		if(/*(win==null) ||*/ (sel==null)){
+    	static boolean change(final PersistentObject sel){
+    		if(sel==null){
     			return false;
     		}
-    		/*
-    		SelectionTracker found=find(win);
-    		if(found==null){
-    			found=new SelectionTracker(win);
-    		}
-    		*/
     		if(tracker==null){
     			tracker=new SelectionTracker();
     		}
@@ -423,25 +406,11 @@ public class GlobalEvents implements IPartListener2 {
     		tracker.objects.put(sel.getClass(),sel);
     		return true;
     	}
-    	/*
-    	SelectionTracker(IWorkbenchWindow win){
-    		next=root;
-    		root=this;
-    		window=win;
-    	}
-    	
-    	SelectionTracker findFor(IWorkbenchWindow win){
-    		if(window.equals(win)){
-    			return this;
-    		}
-    		if(next==null){
-    			return null;
-    		}
-    		return next.findFor(win);
-    	}
-    	*/
     }
     
+    public interface UserListener{
+    	public void UserChanged();
+    }
     public interface ObjectListener{
     	public void objectChanged(PersistentObject o);
     	public void objectCreated(PersistentObject o);
