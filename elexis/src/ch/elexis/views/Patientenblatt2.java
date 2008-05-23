@@ -16,6 +16,7 @@ package ch.elexis.views;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -84,8 +85,10 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	private InputPanel ipp;
 	private IAction lockAction;
 	MenuItem delZA;
-	private final static String CFG_BEZUGSKONTAKTTYPEN="Bezugskontakttypen";
+	private final static String CFG_BEZUGSKONTAKTTYPEN="views/patientenblatt/Bezugskontakttypen";
+	public final static String CFG_EXTRAFIELDS="views/patientenblatt/extrafelder";
 	private final static String SPLITTER="#!>";
+
 	InputData[] fields=new InputData[]{
 			new InputData("Name","Name",InputData.Typ.STRING,null),
 			new InputData("Vorname","Vorname",InputData.Typ.STRING,null),
@@ -136,14 +139,20 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	Patientenblatt2(final Composite parent, final IViewSite site)
 	{
 		super(parent,SWT.NONE);
-		
 		viewsite=site;
 		parent.setLayout(new FillLayout());
 		setLayout(new FillLayout());
-        tk=Desk.theToolkit;
+        tk=Desk.getToolkit();
+    	ArrayList<InputData> extfields=new ArrayList<InputData>(Arrays.asList(fields));
+    	String[] userfields=Hub.userCfg.get(CFG_EXTRAFIELDS,"").split(",");
+    	for(String extfield:userfields){
+    		if(!StringTool.isNothing(extfield)){
+    			extfields.add(new InputData(extfield,"ExtInfo",InputData.Typ.STRING,extfield));
+    		}
+    	}
         form=tk.createScrolledForm(this);
         form.getBody().setLayout(new GridLayout());
-		ipp=new InputPanel(form.getBody(),3,6,fields);
+		ipp=new InputPanel(form.getBody(),3,6,extfields.toArray(new InputData[0]));
 		ipp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
         Composite cPersonalien=tk.createComposite(form.getBody());
         cPersonalien.setLayout(new GridLayout(2,false));

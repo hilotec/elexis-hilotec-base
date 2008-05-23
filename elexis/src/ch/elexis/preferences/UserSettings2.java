@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: UserSettings2.java 3948 2008-05-22 18:34:11Z rgw_ch $
+ * $Id: UserSettings2.java 3958 2008-05-23 12:08:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -23,6 +23,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import ch.elexis.Hub;
+import ch.elexis.preferences.inputs.MultilineFieldEditor;
+import ch.elexis.preferences.inputs.StringListFieldEditor;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.views.Patientenblatt2;
 
 public class UserSettings2 extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
@@ -58,6 +62,11 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWNAME,"Name",getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,"Vorname",getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,"Geburtsdatum",getFieldEditorParent()));
+		new Label(getFieldEditorParent(),SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		new Label(getFieldEditorParent(),SWT.NONE).setText("Zusatzfelder im Patient-Detail-Blatt");
+		addField(new MultilineFieldEditor(Patientenblatt2.CFG_EXTRAFIELDS,"Zusatzfelder",5,SWT.NONE, 
+				true,getFieldEditorParent()));
+		
 	}
 
 	public void init(IWorkbench workbench) {
