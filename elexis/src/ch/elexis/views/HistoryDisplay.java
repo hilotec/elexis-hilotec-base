@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-s008, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryDisplay.java 2205 2007-04-13 08:28:15Z danlutz $
+ *  $Id: HistoryDisplay.java 3957 2008-05-23 11:26:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -28,9 +28,11 @@ import org.eclipse.ui.forms.widgets.FormText;
 import ch.elexis.Desk;
 import ch.elexis.actions.*;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
+import ch.elexis.preferences.PreferenceConstants;
 
 /**
  * Anzeige der vergangenen Konsultationen.
@@ -41,11 +43,12 @@ import ch.elexis.data.Patient;
  * @author Gerry
  *
  */
-public class HistoryDisplay extends ScrolledComposite implements BackgroundJobListener{
+public class HistoryDisplay extends ScrolledComposite implements BackgroundJobListener, UserListener{
 	FormText text;
 	ArrayList<Konsultation> lKons;
 	StringBuilder sb;
 	HistoryLoader loader;
+	private boolean bLock;
 	HistoryDisplay self=this;
 	
 	boolean multiline = false;
@@ -57,10 +60,10 @@ public class HistoryDisplay extends ScrolledComposite implements BackgroundJobLi
 		super(parent,SWT.V_SCROLL|SWT.BORDER);
 		this.multiline = multiline;
 		lKons=new ArrayList<Konsultation>(20);
-		text=Desk.theToolkit.createFormText(this,false);
+		text=Desk.getToolkit().createFormText(this,false);
 		text.setWhitespaceNormalized(true);
-		text.setColor("blau",Desk.theColorRegistry.get("blau"));
-		text.setColor("gruen",	Desk.theColorRegistry.get("hellgrau"));
+		text.setColor("blau",Desk.getColorRegistry().get("blau"));
+		text.setColor("gruen",	Desk.getColorRegistry().get("hellgrau"));
 		setContent(text);
 		text.addHyperlinkListener(new HyperlinkAdapter(){
 
@@ -81,8 +84,15 @@ public class HistoryDisplay extends ScrolledComposite implements BackgroundJobLi
 			}
 			
 		});
+		GlobalEvents.getInstance().addUserListener(this);
 	}
 	
+	
+	@Override
+	public void dispose() {
+		GlobalEvents.getInstance().removeUserListener(this);
+		super.dispose();
+	}
 	public void setFilter(KonsFilter f){
 		stop();
 		loader.setFilter(f);
@@ -91,12 +101,12 @@ public class HistoryDisplay extends ScrolledComposite implements BackgroundJobLi
 		start(null);
 	}
 	public void start(KonsFilter f){
-		stop();
-		sb.setLength(0);
-		loader=new HistoryLoader(sb,lKons,multiline);
-		loader.setFilter(f);
-		loader.addListener(this);
-		loader.schedule();
+			stop();
+			sb.setLength(0);
+			loader=new HistoryLoader(sb,lKons,multiline);
+			loader.setFilter(f);
+			loader.addListener(this);
+			loader.schedule();
 	}
 	public void stop(){
 		if(loader!=null){
@@ -125,7 +135,7 @@ public class HistoryDisplay extends ScrolledComposite implements BackgroundJobLi
 	}
 
 	public void jobFinished(BackgroundJob j) {
-		Desk.theDisplay.asyncExec(new Runnable(){
+		Desk.getDisplay().asyncExec(new Runnable(){
 			public void run() {
 				String s=(String)loader.getData();
 				//System.out.println(s);
@@ -136,5 +146,10 @@ public class HistoryDisplay extends ScrolledComposite implements BackgroundJobLi
 					text.setSize(text.computeSize(self.getSize().x-10,SWT.DEFAULT));
 				}
 			}});
+	}
+	public void UserChanged() {
+		if(text!=null && (!text.isDisposed())){
+			text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+		}
 	}
 }
