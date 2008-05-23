@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 3948 2008-05-22 18:34:11Z rgw_ch $
+ *  $Id: EnhancedTextField.java 3953 2008-05-23 07:48:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -53,10 +53,13 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Leistungsblock;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.IKonsExtension;
@@ -92,6 +95,7 @@ public class EnhancedTextField extends Composite {
     private static Pattern underline=Pattern.compile("_\\S+_");
     private IAction copyAction,cutAction,pasteAction;
     private IMenuListener globalMenuListener;
+    private UserChangeListener ucl=new UserChangeListener();
 
     public void addMenuListener(IMenuListener ml){
     	menuMgr.addMenuListener(ml);
@@ -129,6 +133,7 @@ public class EnhancedTextField extends Composite {
 				}
 		 };
 		 ApplicationActionBarAdvisor.editMenu.addMenuListener(globalMenuListener);
+		 GlobalEvents.getInstance().addSelectionListener(ucl);
     }
     public void disconnectGlobalActions(IViewSite site){
     	 IActionBars actionBars = site.getActionBars();
@@ -136,7 +141,7 @@ public class EnhancedTextField extends Composite {
 		 actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),null);
 		 actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),null);
 		 ApplicationActionBarAdvisor.editMenu.removeMenuListener(globalMenuListener);
-		 
+		 GlobalEvents.getInstance().removeSelectionListener(ucl);
 		 
     }
     public void addDropReceiver(Class clazz,IKonsExtension ext){
@@ -264,6 +269,7 @@ public class EnhancedTextField extends Composite {
 		});
 		text.addExtendedModifyListener(new RangeTracker());
 		new PersistentObjectDropTarget(text,dropper);
+		
 		dirty=false;
 	}
 	
@@ -654,4 +660,19 @@ public class EnhancedTextField extends Composite {
 		
 	}
 
+	class UserChangeListener implements SelectionListener{
+
+		public void clearEvent(Class<? extends PersistentObject> template) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void selectionEvent(PersistentObject obj) {
+			if(obj instanceof Anwender){
+				text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+			}
+			
+		}
+		
+	}
 }

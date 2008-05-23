@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3948 2008-05-22 18:34:11Z rgw_ch $
+ *  $Id: KonsDetailView.java 3953 2008-05-23 07:48:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -33,7 +33,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
@@ -79,6 +82,7 @@ import ch.rgw.tools.VersionedResource.ResourceItem;
  */
 public class KonsDetailView extends ViewPart  implements SelectionListener, ActivationListener, ISaveablePart2, ObjectListener{
 	public static final String ID="ch.elexis.Konsdetail";
+	public static final String CFG_VERTRELATION="vertrelation";
 	static Log log=Log.get("Detail");
 	Hashtable<String, IKonsExtension>hXrefs;
 	EnhancedTextField text;
@@ -98,10 +102,20 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     Font emFont;
     Composite cDesc;
     Composite cEtiketten;    
+    private int[] sashWeights=null;
+    private SashForm sash;
     
 	@Override
+	public void saveState(IMemento memento) {
+		int[] w=sash.getWeights();
+		memento.putString(CFG_VERTRELATION, Integer.toString(w[0])+","+Integer.toString(w[1]));
+		super.saveState(memento);
+	}
+
+
+	@Override
 	public void createPartControl(final Composite p) {
-		SashForm sash=new SashForm(p,SWT.VERTICAL);
+		sash=new SashForm(p,SWT.VERTICAL);
 		
         tk=Desk.getToolkit();
         form=tk.createForm(sash);
@@ -176,10 +190,10 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     	text.setXrefs(hXrefs);
 		GridData gd=new GridData(GridData.FILL_HORIZONTAL|GridData.FILL_VERTICAL|GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL);
 		text.setLayoutData(gd);
-	
 		tk.adapt(text);
 		SashForm bf=new SashForm(sash,SWT.HORIZONTAL);
-        Composite botleft=tk.createComposite(bf);
+
+		Composite botleft=tk.createComposite(bf);
         botleft.setLayout(new GridLayout(1,false));
         Composite botright=tk.createComposite(bf);
         botright.setLayout(new GridLayout(1,false));
@@ -189,7 +203,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         vd=new VerrechnungsDisplay(getSite().getPage(),botright,SWT.NONE);
         vd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
         
-        sash.setWeights(new int[]{80,20});
+        
         makeActions();
         ViewMenus menu=new ViewMenus(getViewSite());
         if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
@@ -197,6 +211,8 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
         }else{
         	menu.createMenu(versionFwdAction,versionBackAction,GlobalActions.neueKonsAction,GlobalActions.delKonsAction, GlobalActions.redateAction);
         }
+		sash.setWeights(sashWeights==null ? new int[]{80,20} : sashWeights);
+
         menu.createToolbar(GlobalActions.neueKonsAction,saveAction);
         GlobalEvents.getInstance().addActivationListener(this,this);
         GlobalEvents.getInstance().addObjectListener(this);
@@ -206,6 +222,19 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	}
 	
 	
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		
+		String state=memento.getString(CFG_VERTRELATION);
+		if(state==null){
+			state="80,20";
+		}
+		String[] sw=state.split(",");
+		sashWeights=new int[]{Integer.parseInt(sw[0]),Integer.parseInt(sw[1])};
+		super.init(site, memento);
+	}
+
+
 	/* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#dispose()
      */
