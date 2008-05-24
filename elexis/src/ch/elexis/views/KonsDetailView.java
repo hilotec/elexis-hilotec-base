@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3953 2008-05-23 07:48:16Z rgw_ch $
+ *  $Id: KonsDetailView.java 3963 2008-05-24 04:49:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -225,12 +225,16 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		
-		String state=memento.getString(CFG_VERTRELATION);
-		if(state==null){
-			state="80,20";
+		if(memento==null){
+			sashWeights=new int[]{80,20};
+		}else{
+			String state=memento.getString(CFG_VERTRELATION);
+			if(state==null){
+				state="80,20";
+			}
+			String[] sw=state.split(",");
+			sashWeights=new int[]{Integer.parseInt(sw[0]),Integer.parseInt(sw[1])};
 		}
-		String[] sw=state.split(",");
-		sashWeights=new int[]{Integer.parseInt(sw[0]),Integer.parseInt(sw[1])};
 		super.init(site, memento);
 	}
 
