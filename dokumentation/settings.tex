@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: settings.tex 3368 2007-11-27 11:59:05Z rgw_ch $
+% *  $Id: settings.tex 3966 2008-05-26 09:16:52Z rgw_ch $
 % *******************************************************************************
 %
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -121,6 +121,20 @@ Einstellungen(im Wesentlichen alles was im Zweig \textsc{Anwender} der
 Einstellungen vorhanden ist), während die Buttons \glqq
 Arbeitsplatzeinstellungen \ldots\grqq{} die auf der lokalen Station
 gespeicherten Perspektivenlayouts betreffen.
+\subsection{Anwender - Ansicht}
+\label{userconfig}
+Hier sind verschiedene Ansichtsoptionen zusammengefasst:
+\begin{itemize}
+\item Erweiterbare Felder: Hier geht es um die 'aufklappbaren' Felder in manchen Views, z.B. der Patient-Detail View die Felder Diagnosen oder Bemerkungen etc. Man kann festlegen, dass solche Felder immer erstmal geschlosse oder immer erstmal geöffnet sein sollen, oder dass sie sich ihren letzten Zustand merken sollen.
+\item Anzuzeigende Felder in Patientenliste: Dies definiert die Filterfelder mit denen man in der Patientenliste Patienten suchen kann. Standardmässig werden Name, Vorname und Geburtsdatum als Filterkriterien angeboten, man kann aber auch PatientNr anzeigen lassen.
+    
+\item Zusatzfelder im Patient-Detail-Blatt: Hier können Sie beliebige zuätzliche Text-Angaben erfassen, die Sie für einen Patienten erfassen können wollen, und die nicht mit Bemerkungen oder Etiketten erfasst werden können. Geben Sie einfach pro Zeile einen Namen für einen abzuspeichernden Datentyp ein.
+    
+\end{itemize}
+
+\subsection{Anwender - Schriftarten}
+Hier können Sie die Standardschriftart und -grösse für alle View-Inhalte angeben. Einzelne Views und Plugins können immer noch andere Schriftarten einstellen, aber dies ist die Standardvorgabe.
+
 \section{Datenaustausch}
 Dies ist eine Sammelkategorie für Einstellungen von Plugins, die Datenaustausch von und nach Elexis anbieten. Ob und welche Einstellungsseiten hier zu finden sind, hängt von den installierten Transport-Plugins ab.
 \section{Datenbank}
@@ -129,7 +143,8 @@ Anzeige von Einstellungsdetails der aktuellen Datenbankverbindung
 Hier kann man für jede Papierart den dazugehörigen Drucker und -Schacht auswählen. Beim Labeldrucker kann man ausserdem einstellen, ob der Druckerauswahldiealog überhaupt jedesmal vor dem Drucken angezeigt werden soll (wenn man z.B. mehrere Labeldrucker hat).
 \section{E-Mail}
 Diese Einstellungen sind für das Versenden von E-Mails aus Elexis wichtig. Dies wird inbesondere beim automatischen Versenden von Fehlermeldungen verwendet. Dies wird auf Seite \pageref{senderrors} genauer beschrieben.
-\section{Gruppen und Rechte}
+
+\Section{Gruppen und Rechte}
 Dies ist die zentrale Benutzerverwaltung. Auf diesen Einstellungsseiten können Anwender und Mandanten eingerichtet und die Zugriffsrechte verteilt werden. Das Konzept der Gruppen ist auf Seite \pageref{sec:gruppen} genauer erläutert.
 Legen Sie zunächst unter \textsc{Gruppen und Rechte} fest, welche Anwendergruppen Sie benötigen.
 Um einen neuen Anwender oder Mandanten einzurichten, müssen Sie diesen zunächst als \glqq Kontakt \grqq{} erfassen, und dort unter Kontakt-Details als Anwender bzw. Mandant kennzeichnen. Dann können Sie unter \textsc{Gruppen und Rechte - Mandanten} dem Mandanten einen Benutzernamen und ein Passwort zuordnen, und angeben, welchen Gruppen er zugehörig sein soll.
