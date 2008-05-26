@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 3964 2008-05-26 04:23:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -32,6 +32,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -42,7 +44,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Hub;
-import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.ICodeElement;
@@ -53,14 +54,20 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
-import ch.elexis.util.MFUList;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.CommonViewer.DoubleClickListener;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
+/**
+ * Bereitstellung der Auswahlluste für Codes aller Art: Oben häufigste des Anwenders, in der Mitte
+ * häufigste des Patienten, unten ganze Systenatik
+ * @author Gerry
+ *
+ */
 public abstract class CodeSelectorFactory implements IExecutableExtension{
+	/** Anzahl der in den oberen zwei Listen zu haltenden Elemente */
 	public static int ITEMS_TO_SHOW_IN_MFU_LIST=15;
 	
 	public CodeSelectorFactory(){}
@@ -70,7 +77,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 	}
 	
 	public abstract ViewerConfigurer createViewerConfigurer(CommonViewer cv);
-	public abstract Class getElementClass();
+	public abstract Class<? extends PersistentObject> getElementClass();
 	public abstract void  dispose();
 	public abstract String getCodeSystemName();
 	public String getCodeSystemCode(){
@@ -117,20 +124,40 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 		}
 	}
 
+	private static class ResizeListener extends ControlAdapter{
+		private String k;
+		private SashForm mine;
+		
+		ResizeListener(SashForm form, String key){
+			k=key;
+			mine=form;
+		}
+		
+		@Override
+		public void controlResized(ControlEvent e) {
+			int[] weights=mine.getWeights();
+			StringBuilder v=new StringBuilder();
+			v.append(Integer.toString(weights[0])).append(",")
+				.append(Integer.toString(weights[1])).append(",")
+				.append(Integer.toString(weights[2]));
+			Hub.localCfg.set(k, v.toString());
+			
+		}
+		
+	}
 
-	public static class cPage extends Composite implements GlobalEvents.SelectionListener, GlobalEvents.BackingStoreListener{
-		//FormToolkit tk=Desk.theToolkit;
+	public static class cPage extends Composite implements GlobalEvents.SelectionListener{
 		IViewSite site;
 		ICodeElement template;
-		//Form form;
-		//ExpandableComposite ecUser,ecPatient,ecAll;
 		java.util.List<String> lUser,lPatient;
 		ArrayList<PersistentObject> alPatient;
 		ArrayList<PersistentObject> alUser;
 		List lbPatient, lbUser;
 		CommonViewer cv;
 		ViewerConfigurer vc;
-		//AbstractDataLoaderJob dataloader;
+		int[] sashWeights=null;
+		ResizeListener resizeListener;
+		
 		protected cPage(CTabFolder ctab){
 			super(ctab,SWT.NONE);
 		}
@@ -139,15 +166,24 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			template=v;
 			site=s;
 			setLayout(new FillLayout());
-			SashForm sash=new SashForm(this,SWT.VERTICAL);
-			
+			SashForm sash=new SashForm(this,SWT.VERTICAL|SWT.SMOOTH);
+			String cfgKey="ansicht/codesystem/"+v.getCodeSystemName();
+			resizeListener=new ResizeListener(sash,cfgKey);
+			String sashW=Hub.localCfg.get(cfgKey, "20,20,60");
+			sashWeights=new int[3];
+			int i=0;
+			for(String sw:sashW.split(",")){
+				sashWeights[i++]=Integer.parseInt(sw);
+			}
 			Group gUser=new Group(sash,SWT.NONE);
+			gUser.addControlListener(resizeListener);
 			gUser.setText("Ihre häufigsten");
 			gUser.setLayout(new FillLayout());
 			gUser.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 			lbUser=new List(gUser,SWT.MULTI|SWT.V_SCROLL);
 
 			Group gPatient=new Group(sash,SWT.NONE);
+			gPatient.addControlListener(resizeListener);
 			gPatient.setText("Häufigste des Patienten");
 			gPatient.setLayout(new FillLayout());
 			gPatient.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
@@ -184,17 +220,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 				public void doubleClicked(PersistentObject obj, CommonViewer cv) {
 					ICodeSelectorTarget target = GlobalEvents.getInstance().getCodeSelectorTarget();
 					if (target != null) {
-						/*
-						String title = "Element hinzufügen";
-						String message = "Wollen Sie das ausgewählte Element "
-							+ "'" + obj.getLabel() + "' zu "
-							+ "'" + target.getName() + "' hinzufügen?";
-						if (SWTHelper.askYesNo(title, message)) {
-						*/
 							target.codeSelected(obj);
-						/*
-						}
-						*/
 					}
 				}
 			});
@@ -204,11 +230,16 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			
 			dragEnable(lbUser);
 			dragEnable(lbPatient);
-			sash.setWeights(new int[]{20,20,60});
+			try{
+				sash.setWeights(sashWeights);
+			}catch(Throwable t){
+				ExHandler.handle(t);
+				sash.setWeights(new int[]{20,20,60});
+			}
 			refresh();
 		}
 		public void selectionEvent(PersistentObject obj) {
-			if(obj instanceof Patient){
+			if((obj instanceof Patient) || (obj instanceof Anwender)){
 				refresh();
 			}
 		}
@@ -275,16 +306,11 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			}
 			
 		}
-		public void clearEvent(Class template) {
+		public void clearEvent(Class<? extends PersistentObject> template) {
 			// TODO Auto-generated method stub
 			
 		}
-		public void reloadContents(Class clazz) {
-			if(clazz.equals(Anwender.class)){
-				refresh();
-			}
-			
-		}
+
 	}
 	static DragSource dragEnable(final List list) {
 	DragSource src;
@@ -343,17 +369,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 
 					ICodeSelectorTarget target = GlobalEvents.getInstance().getCodeSelectorTarget();
 					if (target != null) {
-						/*
-						String title = "Element hinzufügen";
-						String message = "Wollen Sie das ausgewählte Element "
-							+ "'" + po.getLabel() + "' zu "
-							+ "'" + target.getName() + "' hinzufügen?";
-						if (SWTHelper.askYesNo(title, message)) {
-						*/
 							target.codeSelected(po);
-						/*
-						}
-						*/
 					}
 
 				}
