@@ -32,4 +32,16 @@ TODO: Alle relevanten Änderungen angeben, insbesondere Verhaltensänderungen.
      
  * Omnivore: Spalten können sortiert werden durch Klick auf Spaltenkopf
  
-   
+ 26.5.08 gweirich
+ * Standardschriftarten für alle Views können eungestellt werden, als User-Settimg.
+ Eine View, die die vom Anwender gewünschte Standardschriftart einstellen will, kann diese 
+ Schriftart mit Desk.getFont(PreferenceConstants.USR_DEFAULTFONT) einlesen. Ausserdem sollte
+ eine solche View einen UserChangeListener bei GlobalEvents einhängen, um bei einem Userwechsel jeweils 
+ wieder die richtige Schriftart einzustellen.
+  
+ * Agenda merkt sich den zuletzt eingestellten Bereich
+ 
+ * KonsDetailView und CodeSelektor merken sich die zuletzt eingestellten Grössenverhältnisse der einzelnen 
+ Teilfenster.
+  
+ * Anwendereinstellungen zeigen die vorhandenen EInstellungsseiten an

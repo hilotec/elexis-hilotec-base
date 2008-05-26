@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnwenderPref.java 2425 2007-05-21 12:12:32Z rgw_ch $
+ *  $Id: AnwenderPref.java 3965 2008-05-26 09:16:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 import java.util.Hashtable;
@@ -56,7 +56,7 @@ public class AnwenderPref extends PreferencePage implements
 	@Override
 	protected Control createContents(Composite parent) {
 		if(Hub.acl.request(AccessControlDefaults.ACL_USERS)){
-			FormToolkit tk=new FormToolkit(Desk.theDisplay);
+			FormToolkit tk=new FormToolkit(Desk.getDisplay());
 			Form form=tk.createForm(parent);
 			Composite body=form.getBody();
 			body.setLayout(new GridLayout(1,false));

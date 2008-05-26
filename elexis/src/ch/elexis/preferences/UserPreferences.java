@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: UserPreferences.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: UserPreferences.java 3965 2008-05-26 09:16:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
 
 import java.io.*;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.PreferencePage;
@@ -39,7 +40,10 @@ public class UserPreferences extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	Button bLoad, bSave, bWorkspaceLoad, bWorkspaceSave;
-	Text tLoad, tSave, tWorkspaceLoad, tWorkspaceSave;
+	//Text tLoad, tSave, tWorkspaceLoad, tWorkspaceSave;
+	Combo cbUserSave, cbWSSave, cbUserLoad,cbWSLoad;
+	String[] userPrefs;
+	String[] WSPrefs;
 	
 	public UserPreferences(){
 		noDefaultAndApplyButton();
@@ -58,6 +62,16 @@ public class UserPreferences extends PreferencePage implements
 				"Einstellungen für sich spezifisch einstellen, oder aus einem gespeicherten Satz laden.\n"+
 				"Sie können auch Ihre Einstellungen in einem benannten Datensatz speichern."); 
 		desc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		List<NamedBlob> userBlobs=NamedBlob.findFromPrefix("UserCfg:");
+		userPrefs=new String[userBlobs.size()];
+		for(int i=0;i<userPrefs.length;i++){
+			userPrefs[i]=userBlobs.get(i).getId().split(":")[1];
+		}
+		List<NamedBlob> wsBlobs=NamedBlob.findFromPrefix("Workspace:");
+		WSPrefs=new String[wsBlobs.size()];
+		for(int i=0;i<WSPrefs.length;i++){
+			WSPrefs[i]=wsBlobs.get(i).getId().split(":")[1];
+		}
 		bLoad=new Button(ret,SWT.PUSH);
 		bLoad.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bLoad.setText("Einstellungen laden von...     ");
@@ -65,7 +79,7 @@ public class UserPreferences extends PreferencePage implements
 		bLoad.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String name=tLoad.getText();
+				String name=cbUserLoad.getText();
 				if(StringTool.isNothing(name)){
 					SWTHelper.showInfo("Kein Name angegeben", "Bitte geben Sie den Namen der Konfiguration an, die Sie laden möchten");
 				}else if(NamedBlob.exists("UserCfg:"+name)){
@@ -78,15 +92,16 @@ public class UserPreferences extends PreferencePage implements
 			}
 			
 		});
-		tLoad=new Text(ret,SWT.BORDER);
-		tLoad.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cbUserLoad=new Combo(ret,SWT.READ_ONLY|SWT.SINGLE);
+		cbUserLoad.setItems(userPrefs);
+		cbUserLoad.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bSave=new Button(ret,SWT.PUSH);
 		bSave.setText("Einstellungen speichern nach...");
 		bSave.setLayoutData(new GridData(GridData.FILL));
 		bSave.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String name=tSave.getText();
+				String name=cbUserSave.getText();
 				if(StringTool.isNothing(name)){
 					SWTHelper.showInfo("Kein Name angegeben", "Bitte geben Sie einen Namen für die zu speichernde Konfiguration ein");
 				}else{
@@ -94,19 +109,20 @@ public class UserPreferences extends PreferencePage implements
 					InMemorySettings ims=new InMemorySettings();
 					ims.overlay(Hub.userCfg, Settings.OVL_REPLACE);
 					blob.put(ims.getNode());
-					SWTHelper.showInfo("Konfiguration gespeochert", "Die aktuelle Konfiguratiion wurde unter dem Namen "+name+" gespeichert");
-					tSave.setText("");
+					SWTHelper.showInfo("Konfiguration gespeichert", "Die aktuelle Konfiguration wurde unter dem Namen "+name+" gespeichert");
+					cbUserSave.setText("");
 				}
 			}
 		});
-		tSave=new Text(ret,SWT.BORDER);
-		tSave.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		cbUserSave=new Combo(ret,SWT.SINGLE);
+		cbUserSave.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		cbUserSave.setItems(userPrefs);
 		bWorkspaceLoad=new Button(ret,SWT.PUSH);
 		bWorkspaceLoad.setText("Arbeitsplatzeinstellung laden von:");
 		bWorkspaceLoad.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String name=tWorkspaceLoad.getText();
+				String name=cbWSLoad.getText();
 
 
 				if(StringTool.isNothing(name)){
@@ -141,14 +157,15 @@ public class UserPreferences extends PreferencePage implements
 			
 		});
 		bWorkspaceLoad.setLayoutData(new GridData(GridData.FILL));
-		tWorkspaceLoad=new Text(ret,SWT.BORDER);
-		tWorkspaceLoad.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cbWSLoad=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
+		cbWSLoad.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cbWSLoad.setItems(WSPrefs);
 		bWorkspaceSave=new Button(ret,SWT.PUSH);
 		bWorkspaceSave.setText("Arbeitsplatzeinstellungen speichern nach");
 		bWorkspaceSave.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String name=tWorkspaceSave.getText();
+				String name=cbWSSave.getText();
 
 				if(StringTool.isNothing(name)){
 					SWTHelper.showInfo("Kein Name angegeben", "Bitte geben Sie den Namen der Konfiguration an, die Sie speichern möchten");
@@ -179,8 +196,9 @@ public class UserPreferences extends PreferencePage implements
 			
 		});
 		bWorkspaceSave.setLayoutData(new GridData(GridData.FILL));
-		tWorkspaceSave=new Text(ret,SWT.BORDER);
-		tWorkspaceSave.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cbWSSave=new Combo(ret,SWT.SINGLE);
+		cbWSSave.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cbWSSave.setItems(WSPrefs);
 		return ret;
 	}
 

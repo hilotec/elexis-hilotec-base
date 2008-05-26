@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 3964 2008-05-26 04:23:35Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 3965 2008-05-26 09:16:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IViewSite;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Anwender;
@@ -239,7 +240,13 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			refresh();
 		}
 		public void selectionEvent(PersistentObject obj) {
-			if((obj instanceof Patient) || (obj instanceof Anwender)){
+			if(obj instanceof Patient){
+				refresh();
+			}
+			if(obj instanceof Anwender){
+				lbPatient.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+				lbUser.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+				cv.getViewerWidget().getControl().setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 				refresh();
 			}
 		}

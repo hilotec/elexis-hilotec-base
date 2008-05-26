@@ -8,12 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 3786 2008-04-19 09:57:12Z rgw_ch $
+ *  $Id: NamedBlob.java 3965 2008-05-26 09:16:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.io.File;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
@@ -125,11 +129,42 @@ public class NamedBlob extends PersistentObject {
 		}
 		return ni;
 	}
-	private NamedBlob(){};
-	private NamedBlob(final String id){
+	protected NamedBlob(){};
+	protected NamedBlob(final String id){
 		super(id);
 	}
 
+	/**
+	 * find all NamedBlox with a name with a given prefix. Muxh faster than
+	 * findSimilar.
+	 * @param prefix the orefix to look for
+	 * @return  list with all NamedBlobs wohse name matches (case sensitively)
+	 * the prefix
+	 */
+	public static List<NamedBlob> findFromPrefix(final String prefix){
+		Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
+		qbe.add("ID", "Like", prefix+"%");
+		return qbe.execute();
+	}
+	/**
+	 * Find all namedBlobs whose name match the given regular expression
+	 * @param name a regular expression to match
+	 * @return a list of all NamedBlobs with a name that matches the regular expression
+	 */
+	public static List<NamedBlob> findSimilar(final String name){
+		Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
+		qbe.addPostQueryFilter(new IFilter(){
+			public boolean select(Object toTest) {
+				NamedBlob nb=(NamedBlob)toTest;
+				if(nb.getId().matches(name)){
+					return true;
+				}
+				return false;
+			}
+			
+		});
+		return qbe.execute();
+	}
 	/**
 	 * remove all BLOBS with a given name prefix and a last write time older than the given value
 	 * needs the administrative right AC_PURGE
@@ -147,4 +182,5 @@ public class NamedBlob extends PersistentObject {
 			}
 		}
 	}
+	
 }
