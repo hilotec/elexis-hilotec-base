@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: AgendaActions.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: AgendaActions.java 3971 2008-05-27 15:31:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -63,7 +63,7 @@ public class AgendaActions {
 		};
 		delTerminAction=new Action(Messages.AgendaActions_deleteDate){ 
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.getImageRegistry().getDescriptor(Desk.IMG_DELETE));
 				setToolTipText(Messages.AgendaActions_deleteDate); 
 			}
 			@Override

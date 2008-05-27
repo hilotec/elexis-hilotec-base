@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *  $Id: TerminDialog.java 3971 2008-05-27 15:31:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -441,7 +441,7 @@ public class TerminDialog extends TitleAreaDialog {
 		super.create();
 
 		setMessage(Messages.TerminDialog_editTermins); 
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImageRegistry().get(Desk.IMG_LOGO48));
 		getShell().setText(Messages.TerminDialog_termin); 
 		dayBar.recalc();
 		if(actPlannable instanceof Termin){

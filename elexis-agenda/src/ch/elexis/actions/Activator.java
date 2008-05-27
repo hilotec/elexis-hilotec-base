@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 1545 2007-01-06 14:20:57Z rgw_ch $
+ *  $Id: Activator.java 3971 2008-05-27 15:31:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -52,7 +52,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		AgendaActions.makeActions();
 		//theDay=new TimeTool();
-		Desk.theImageRegistry.put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png"));
+		Desk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png"));
 	}
 
 	/*
