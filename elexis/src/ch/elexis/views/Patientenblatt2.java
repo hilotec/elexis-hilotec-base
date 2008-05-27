@@ -22,13 +22,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -211,10 +208,11 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
         ecZA.addExpansionListener(ecExpansionListener);
         
 		inpZusatzAdresse=new ListDisplay<BezugsKontakt>(ecZA,SWT.NONE,new ListDisplay.LDListener(){
+			/*
 			public boolean dropped(final PersistentObject dropped) {
 				return false;
 			}
-
+			 */
 			
 			public void hyperlinkActivated(final String l) {
 				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Kontakt für Zusatzadresse","Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
@@ -475,9 +473,9 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		hHA.setEnabled(!bLock);
 		delZA.setEnabled(!bLock);
 		if(bLock){
-			hHA.setForeground(Desk.theColorRegistry.get(Desk.COL_GREY));
+			hHA.setForeground(Desk.getColor(Desk.COL_GREY));
 		}else{
-			hHA.setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+			hHA.setForeground(Desk.getColor(Desk.COL_BLUE));
 		}
 		lockAction.setChecked(bLock);
 	}

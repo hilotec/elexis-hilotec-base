@@ -255,6 +255,10 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
+	/** shortcut for getColorRegistry().get(String col) */
+	public static Color getColor(String desc){
+		return theColorRegistry.get(desc);
+	}
 	public static ColorRegistry getColorRegistry(){
 
 		if(theColorRegistry==null){
