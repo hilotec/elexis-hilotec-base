@@ -1,4 +1,4 @@
-// $Id: JdbcLink.java 3862 2008-05-05 16:14:14Z rgw_ch $
+// $Id: JdbcLink.java 3969 2008-05-27 12:31:42Z michael_imhof $
 
 package ch.rgw.tools;
 import java.io.BufferedWriter;
@@ -209,7 +209,11 @@ public class JdbcLink {
         		  out[j++]='\'';
         		  break;
         	  }
-          case 92: out[j++]='\\';
+          case 92: boolean before = (i > 1 && in[i-1] == 92);
+          		   boolean after = (i < in.length - 1 && in[i+1] == 92);
+          		   if (!before && !after) {
+          			   out[j++]='\\';
+          		   }
           }
 		  out[j++]=in[i];
 	  }
