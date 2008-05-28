@@ -1,14 +1,6 @@
 package ch.elexis.util;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.zip.GZIPInputStream;
 
 public class UtilFile {
 	public static String DIRECTORY_SEPARATOR = File.separator;
