@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *  $Id: Rechnung.java 3972 2008-05-28 05:14:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -451,7 +451,7 @@ public class Rechnung extends PersistentObject {
 			trace=new ArrayList<String>();
 		}
 		trace.add(new TimeTool().toString(TimeTool.FULL_GER)+": "+text);
-		hash.put(name,StringTool.flatten(trace));
+		hash.put(name,StringTool.pack(trace));
 		flushExtension(hash);
 	}
 	/**

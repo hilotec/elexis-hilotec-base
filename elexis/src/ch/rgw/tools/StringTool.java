@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3862 2008-05-05 16:14:14Z rgw_ch $
+// $Id: StringTool.java 3972 2008-05-28 05:14:08Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -181,7 +181,12 @@ public static String flattenStrings(final Hashtable h)
    * @param compressMode
    * @return
    */
-  public static byte[] flatten(final Collection<String> strings){
+  public static byte[] pack(final Collection<String> strings){
+	  String res=join(strings,"\n");
+	  return CompEx.Compress(res,CompEx.ZIP);
+  }
+  
+  public static byte[] pack(final String[] strings){
 	  String res=join(strings,"\n");
 	  return CompEx.Compress(res,CompEx.ZIP);
   }
