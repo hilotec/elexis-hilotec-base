@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3976 2008-05-29 14:32:50Z michael_imhof $
+ * $Id: XMLExporter.java 3977 2008-05-29 16:23:18Z rgw_ch $
  *******************************************************************************/
 
 
@@ -675,7 +675,7 @@ public class XMLExporter implements IRnOutputter {
 		// In Tiers Payant, the insurance element is mandatory, and, furthermore, MUST be an Organization. So in TP, we
 		// insert an insurance element in any case, and, if the guarantor is a person, we "convert" it to an organization
 		if(tiers.equals("TG")){
-			if(kostentraeger instanceof Organisation){
+			if(kostentraeger.istOrganisation()){
 				if(iEAN.matches("[0-9]{13,13}")){
 					insurance.setAttribute("ean_party",iEAN);
 					insurance.addContent(buildAdressElement(kostentraeger));

@@ -3,10 +3,10 @@
 0
 0
 1
-elexis-arzttarife-schweiz.tex
-1
-1
-0
+D:\Source\elexis_trunk\dokumentation\elexis.tex
+7
+7
+6
 
 
 
@@ -15,6 +15,49 @@ elexis-arzttarife-schweiz.tex
 
 elexis-arzttarife-schweiz.tex
 TeX:UTF-8
-286273531 0 -1 22509 -1 22852 23 23 830 585 0 206 595 -1 -1 0 0 81 -1 -1 81 1 0 22852 -1   0
+17838075 0 -1 22509 -1 22852 23 23 830 585 0 206 595 -1 -1 0 0 81 -1 -1 81 1 0 22852 -1   0
+D:\Source\elexis_trunk\dokumentation\elexis.tex
+TeX:UTF-8:UNIX
+152154099 0 -1 0 -1 1526 22 29 712 460 0 278 85 -1 -1 0 0 -1 -1 -1 -1 1 0 1526 -1   0
+D:\Source\elexis_trunk\dokumentation\views\rest.tex
+TeX:UTF-8:UNIX
+17936371 0 -1 0 -1 2155 44 58 734 489 0 158 306 -1 -1 0 0 -1 -1 -1 -1 1 0 2155 -1   0
+D:\Source\elexis_trunk\dokumentation\views\stammdaten.tex
+TeX:UTF-8
+17838067 0 -1 3065 -1 6366 66 87 756 518 0 430 374 -1 -1 0 0 -1 -1 -1 -1 1 0 6366 -1   0
+D:\Source\elexis_trunk\dokumentation\installs\default.tex
+TeX:UTF-8:UNIX
+17936371 0 -1 0 -1 0 88 116 778 547 0 22 0 -1 -1 0 0 -1 -1 -1 -1 1 0 0 -1   0
+D:\Source\elexis_trunk\dokumentation\tour\customize.tex
+TeX:UTF-8:UNIX
+17936371 0 -1 0 -1 0 110 145 800 576 0 22 0 -1 -1 0 0 -1 -1 -1 -1 1 0 0 -1   0
+D:\Source\elexis_trunk\dokumentation\settings.tex
+TeX:UTF-8
+286273523 0 -1 8778 -1 8976 132 174 822 605 0 22 510 -1 -1 0 0 -1 -1 -1 -1 1 0 8976 -1   0
 
-*elexis-arzttarife-schweiz.tex
+*D:\Source\elexis_trunk\dokumentation\elexis.tex
+>
+*installs/default
+*tour/patneu
+*tour/customize
+*konzepte
+*menu
+*views/einfuehrung
+*views/stammdaten
+*views/konsviews
+*views/laborview
+*views/abrechnung
+*views/rest
+*plugins/einleitung
+*plugins/agenda
+*plugins/befunde
+*plugins/arzttarife
+*text/einleitung
+*text/vorlagen
+*text/datenfelder
+*multiuser
+*appendix/voraussetzungen
+*appendix/vollversion
+*settings
+*appendix/sicherheit
+<
