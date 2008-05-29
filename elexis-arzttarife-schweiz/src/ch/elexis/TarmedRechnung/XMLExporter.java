@@ -8,14 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3942 2008-05-21 08:09:41Z rgw_ch $
+ * $Id: XMLExporter.java 3975 2008-05-29 14:30:11Z michael_imhof $
  *******************************************************************************/
 
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
 
 package ch.elexis.TarmedRechnung;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -117,6 +116,9 @@ public class XMLExporter implements IRnOutputter {
 	private String outputDir;
 	private static final String PREFIX="TarmedRn:";
 	private static final Log log=Log.get("XMLExporter");
+
+	protected static String TIER_PAYANT = "TP";
+	protected static String TIER_GARANT = "TG";
 	
 	public void clear(){
 		actFall=null;
@@ -255,23 +257,11 @@ public class XMLExporter implements IRnOutputter {
 		actFall=rn.getFall();
 		actPatient=actFall.getPatient();
 		actMandant=rn.getMandant();
-		Kontakt kostentraeger=actFall.getRequiredContact(TarmedRequirements.INSURANCE);
-		// We try to figure out whether we should use Tiers Payant or Tiers Garant.
-		// if unsure, we make it TG
-		String tiers="TG";
+		Kontakt kostentraeger=getKostentraeger(rn);
+
+		String tiers=getTier(rn);
 		Patient pat=actFall.getPatient();
 		Kontakt rnAdressat=actFall.getGarant();
-		
-		if((kostentraeger!=null) && (kostentraeger.isValid())){
-			if(rnAdressat.equals(kostentraeger)){
-				tiers="TP";
-			}else{
-				tiers="TG";
-			}
-		}else{
-			kostentraeger=rnAdressat;
-			tiers="TG";
-		}
 		String tcCode=TarmedRequirements.getTCCode(actMandant);
 		
 		if(kostentraeger==null){
@@ -284,23 +274,24 @@ public class XMLExporter implements IRnOutputter {
 		root.setAttribute("schemaLocation", "http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd",nsxsi);
 
 		// Rolle
-		root.setAttribute("role","production");												// 10030/32
+		root.setAttribute("role", getRole(rn));												// 10030/32
 		xmlRn=new Document(root);
 
 		// header
 		Element header=new Element("header",ns);										// 10050
 		root.addContent(header);
+		
+		String mEAN=getSenderEAN(rn); 
 		Element sender=new Element("sender",ns);										// 10051
-		String mEAN=TarmedRequirements.getEAN(actMandant); //(String)actMandant.getInfoElement("EAN");
-		
 		sender.setAttribute("ean_party",mEAN);
-		String kEAN=TarmedRequirements.getEAN(kostentraeger); //(String)kostentraeger.getInfoElement("EAN");
 		
+		String iEAN=getIntermediateEAN(rn);
 		Element intermediate=new Element("intermediate",ns);							// 10052
-		intermediate.setAttribute("ean_party",kEAN);
+		intermediate.setAttribute("ean_party",iEAN);
 		
+		String rEAN=getRecipientEAN(rn);
 		Element recipient=new Element("recipient",ns);									// 10053
-		recipient.setAttribute("ean_party",kEAN);
+		recipient.setAttribute("ean_party",rEAN);
 		
 		header.addContent(sender);
 		header.addContent(intermediate);
@@ -463,10 +454,10 @@ public class XMLExporter implements IRnOutputter {
 					if(!StringTool.isNothing(bezug)){
 						el.setAttribute("ref_code",bezug);
 					}
-					el.setAttribute("ean_provider",TarmedRequirements.getEAN(actMandant.getRechnungssteller()));		//	22390
+					el.setAttribute("ean_provider", getRechnungsstellerEAN(rn));		//	22390
 					//el.setAttribute("ean_provider",actMandant.getInfoString("EAN"));			//	22390
 					//el.setAttribute("ean_responsible",actMandant.getInfoString("EAN"));		//	22400
-					el.setAttribute("ean_responsible",TarmedRequirements.getEAN(actMandant));	//	22400
+					el.setAttribute("ean_responsible",getSenderEAN(rn));	//	22400
 					el.setAttribute("billing_role","both");										//	22410
 					el.setAttribute("medical_role","self_employed");							//	22430
 					Hashtable detail=b.getDetailsFor(tl);
@@ -666,7 +657,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element biller=new Element("biller",ns);												//	11070 -> 11400
 		//biller.setAttribute("ean_party",actMandant.getInfoString("EAN"));						//	11402
-		biller.setAttribute("ean_party",TarmedRequirements.getEAN(actMandant.getRechnungssteller()));	//	11402
+		biller.setAttribute("ean_party", getRechnungsstellerEAN(rn));	//	11402
 		biller.setAttribute("zsr",TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString("KSK"));								//	11403
 		String spec=actMandant.getInfoString(ta.SPEC);							
 		if(!spec.equals("")){
@@ -686,8 +677,8 @@ public class XMLExporter implements IRnOutputter {
 		// insert an insurance element in any case, and, if the guarantor is a person, we "convert" it to an organization
 		if(tiers.equals("TG")){
 			if(kostentraeger instanceof Organisation){
-				if(kEAN.matches("[0-9]{13,13}")){
-					insurance.setAttribute("ean_party",kEAN);
+				if(iEAN.matches("[0-9]{13,13}")){
+					insurance.setAttribute("ean_party",iEAN);
 					insurance.addContent(buildAdressElement(kostentraeger));
 					eTiers.addContent(insurance);
 				}
@@ -699,7 +690,7 @@ public class XMLExporter implements IRnOutputter {
 				kEAN="2000000000000";		
 			}
 			*/
-			insurance.setAttribute("ean_party",kEAN);
+			insurance.setAttribute("ean_party",iEAN);
 			Element company=new Element("company",ns);
 			Element companyname=new Element("companyname",ns);
 			companyname.setText(kostentraeger.get("Bezeichnung1"));
@@ -744,7 +735,7 @@ public class XMLExporter implements IRnOutputter {
 
 		Element referrer=new Element("referrer",ns);											//	11120
 		Kontakt auftraggeber=actMandant;		// TODO
-		referrer.setAttribute("ean_party",TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.getInfoString("EAN"));
+		referrer.setAttribute("ean_party", getAuftraggeberEAN(rn)); //auftraggeber.getInfoString("EAN"));
 		referrer.setAttribute("zsr",TarmedRequirements.getKSK(auftraggeber)); //auftraggeber.getInfoString("KSK"));
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
@@ -1071,5 +1062,71 @@ public class XMLExporter implements IRnOutputter {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * We try to figure out whether we should use Tiers Payant or Tiers Garant.
+	 * if unsure, we make it TG
+	 */
+	protected String getTier(Rechnung rn) {
+		Fall tempFall=rn.getFall();
+		
+		Kontakt kostentraeger=tempFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt rnAdressat=tempFall.getGarant();
+		String tiers = TIER_GARANT;
+		
+		if((kostentraeger!=null) && (kostentraeger.isValid())){
+			if(rnAdressat.equals(kostentraeger)){
+				tiers=TIER_PAYANT;
+			}else{
+				tiers=TIER_GARANT;
+			}
+		}else{
+			tiers=TIER_GARANT;
+		}
+		
+		return tiers;
+	}
+	
+	protected Kontakt getKostentraeger(Rechnung rn) {
+		Fall tempFall=rn.getFall();
+		Kontakt tempPatient=tempFall.getPatient();
+		
+		Kontakt kostentraeger=tempFall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt rnAdressat=tempFall.getGarant();
+		
+		if(kostentraeger==null || !kostentraeger.isValid()){
+			kostentraeger=rnAdressat;
+		}
+		
+		if(kostentraeger==null){
+			kostentraeger=tempPatient;
+		}
+		
+		return kostentraeger;
+	}
+	
+	protected String getSenderEAN(Rechnung rn) {
+		return TarmedRequirements.getEAN(rn.getMandant());//(String)actMandant.getInfoElement("EAN");
+	}
+    
+	protected String getIntermediateEAN(Rechnung rn) {
+		return TarmedRequirements.getEAN(getKostentraeger(rn)); //(String)kostentraeger.getInfoElement("EAN");
+	}
+	
+	protected String getRecipientEAN(Rechnung rn) {
+		return TarmedRequirements.getEAN(getKostentraeger(rn)); //(String)kostentraeger.getInfoElement("EAN");
+	}
+	
+	protected String getAuftraggeberEAN(Rechnung rn) {
+		return TarmedRequirements.getEAN(rn.getMandant()); //(String)kostentraeger.getInfoElement("EAN");
+	}
+	
+	protected String getRechnungsstellerEAN(Rechnung rn) {
+		return TarmedRequirements.getEAN(rn.getMandant().getRechnungssteller());
+	}
+	
+	protected String getRole(Rechnung rn) {
+		return "production";
 	}
 }
