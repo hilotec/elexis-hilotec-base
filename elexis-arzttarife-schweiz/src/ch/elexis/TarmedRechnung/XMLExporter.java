@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3975 2008-05-29 14:30:11Z michael_imhof $
+ * $Id: XMLExporter.java 3976 2008-05-29 14:32:50Z michael_imhof $
  *******************************************************************************/
 
 
@@ -82,7 +82,6 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-
 
 
 /**
