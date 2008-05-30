@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 2378 2007-05-16 05:12:19Z rgw_ch $
+ *  $Id: Rechnungslauf.java 3979 2008-05-30 15:32:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -31,6 +31,12 @@ import ch.elexis.data.Query;
 import ch.elexis.util.Money;
 import ch.rgw.tools.TimeTool;
 
+/**
+ * Aktion für das "Zauberstab"-Icon in der KonsZumVerrechnen View -> Dialog mit verschiedenen Kriterien zur Komnsultationsauswahl
+ * und Rechnungslauf anhand dieser Auswahl
+ * @author gerry
+ *
+ */
 public class Rechnungslauf implements IRunnableWithProgress {
 	
 	TimeTool ttFirstBefore, ttLastBefore, ttHeute,limitQuartal;
@@ -84,7 +90,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				if((kPatient==null) || (!kPatient.exists())){
 					continue;
 				}
-				if(ttFirstBefore!=null){
+				if(ttFirstBefore!=null){							// Alle Serien mit Beginn vor einem bestimmten Datum
 					cmp.set(k.getDatum());
 					if(cmp.isBefore(ttFirstBefore)){
 						for(Konsultation k2:list){
