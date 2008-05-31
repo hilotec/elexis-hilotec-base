@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3877 2008-05-06 06:40:01Z rgw_ch $
+ * $Id: Query.java 3983 2008-05-31 19:23:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -180,7 +180,7 @@ public class Query<T>{
 +     * Kleinschreibung umgewandelt, so dass die Gross-/Kleinschreibung egal ist.
 	 * @return false bei Fehler in der Syntax oder nichtexistenten Feldern
 	 */
-	public boolean add(final String feld,final String operator, String wert,final boolean toLower){
+	public boolean add(final String feld,String operator, String wert,final boolean toLower){
 		String mapped;
 		mapped=template.map(feld);
 		// treat date parameter separately
@@ -243,6 +243,10 @@ public class Query<T>{
 		}
 
 		if(wert==null){
+			if(operator.equalsIgnoreCase("is") || operator.equals("=")){
+				// let's be a bit fault tolerant
+				operator="";
+			}
 			append(mapped,"is",operator,"null");
 		}else{
 			wert=PersistentObject.getConnection().wrapFlavored(wert);

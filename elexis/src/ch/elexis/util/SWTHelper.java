@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 3685 2008-02-18 17:15:50Z rgw_ch $
+ * $Id: SWTHelper.java 3983 2008-05-31 19:23:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -22,7 +22,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -42,7 +41,6 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.rgw.tools.StringTool;
 
 /** statische Hilfsfunktionen für SWT-Objekte */
@@ -82,12 +80,12 @@ public class SWTHelper {
 
 	/** Eine Alertbox anzeigen (synchron) */
 	public static void alert(final String title, final String message){
-		if(Desk.theDisplay==null){
+		if(Desk.getDisplay()==null){
 			Desk.theDisplay = PlatformUI.createDisplay();
 		}
-		Shell shell=Desk.theDisplay.getActiveShell();
+		Shell shell=Desk.getDisplay().getActiveShell();
 		if(shell==null){
-			shell=new Shell(Desk.theDisplay);
+			shell=new Shell(Desk.getDisplay());
 		}
 		MessageBox msg=new MessageBox(shell,SWT.ICON_ERROR|SWT.OK);
 		msg.setText(title);
@@ -96,12 +94,12 @@ public class SWTHelper {
 	}
 	
 	/**
-	 * Eine Standard-Fehlermeldung asynchron zeigen
+	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
 	 * @param title Titel
 	 * @param message Nachricht
 	 */
 	public static void showError(final String title, final String message){
-		Desk.theDisplay.syncExec(new Runnable(){
+		Desk.getDisplay().syncExec(new Runnable(){
 
 			public void run() {
 				Shell shell=Desk.getTopShell();
@@ -116,9 +114,9 @@ public class SWTHelper {
 	 */
 	public static void showError(final String logHeader, final String title, final String message){
 		log.log(logHeader+": "+title+"->"+message, Log.ERRORS);
-		Desk.theDisplay.syncExec(new Runnable(){
+		Desk.getDisplay().syncExec(new Runnable(){
 			public void run() {
-				Shell shell=Desk.theDisplay.getActiveShell();
+				Shell shell=Desk.getDisplay().getActiveShell();
 				MessageDialog.openError(shell, title, message);
 			}});
 	}
@@ -129,7 +127,7 @@ public class SWTHelper {
 	 * @param message Nachricht
 	 */
 	public static void showInfo(final String title, final String message){
-		Desk.theDisplay.syncExec(new Runnable(){
+		Desk.getDisplay().syncExec(new Runnable(){
 
 			public void run() {
 				Shell shell=Desk.getTopShell();
@@ -138,14 +136,14 @@ public class SWTHelper {
 	}
 
 	/**
-	 * Eine mit Ja oder Nein zu beantwortende Frage zeigen
+	 * Eine mit Ja oder Nein zu beantwortende Frage im UI-Thread zeigen
 	 * @param title Titel
 	 * @param message Nachricht
 	 * @return true: User hat Ja geklickt
 	 */
 	public static boolean askYesNo(final String title, final String message){
 		InSync rn=new InSync(title,message);
-		Desk.theDisplay.syncExec(rn);
+		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
 	}
 	private static class InSync implements Runnable{
