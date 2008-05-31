@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 1664 2007-01-26 06:14:17Z rgw_ch $
+ *  $Id: ESRView.java 3982 2008-05-31 10:58:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -39,6 +39,7 @@ import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.*;
 import ch.elexis.util.*;
 import ch.rgw.tools.StringTool;
@@ -144,7 +145,7 @@ public class ESRView extends ViewPart implements ActivationListener{
 		
 		
 		public Color getForeground(Object element, int columnIndex) {
-			return Desk.theDisplay.getSystemColor(SWT.COLOR_BLACK);
+			return Desk.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		}
 		
 		
@@ -152,18 +153,18 @@ public class ESRView extends ViewPart implements ActivationListener{
 			if(element instanceof ESRRecord){
 				ESRRecord rec=(ESRRecord)element;
 				if(rec.getTyp().equals(ESRRecord.MODE.Summenrecord)){
-					return Desk.theDisplay.getSystemColor(SWT.COLOR_GREEN);
+					return Desk.getDisplay().getSystemColor(SWT.COLOR_GREEN);
 				}
 				String buch=rec.getGebucht();
 				if(rec.getRejectCode().equals(ESRRecord.REJECT.OK)){
 					if(StringTool.isNothing(buch)){
-						return Desk.theDisplay.getSystemColor(SWT.COLOR_GRAY);
+						return Desk.getDisplay().getSystemColor(SWT.COLOR_GRAY);
 					}
-					return Desk.theDisplay.getSystemColor(SWT.COLOR_WHITE);
+					return Desk.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 				}
-				return Desk.theDisplay.getSystemColor(SWT.COLOR_RED);
+				return Desk.getDisplay().getSystemColor(SWT.COLOR_RED);
 			}
-			return Desk.theDisplay.getSystemColor(SWT.COLOR_DARK_BLUE);
+			return Desk.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE);
 		}
 		
 		
@@ -180,6 +181,13 @@ public class ESRView extends ViewPart implements ActivationListener{
 			monitor.beginTask("Lade ESR", SWT.INDETERMINATE);
 		
 			qbe.clear();
+			if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
+				if(Hub.actMandant==null){
+					return null;
+				}
+				qbe.add("MandantID", "=", Hub.actMandant.getId());
+			}
+			
 			vc.getControlFieldProvider().setQuery(qbe);
 			qbe.orderBy(true,new String[]{"Datum","Gebucht"});
 			List<ESRRecord> list=qbe.execute();
