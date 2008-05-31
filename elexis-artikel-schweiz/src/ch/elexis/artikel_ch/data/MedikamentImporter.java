@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 3678 2008-02-15 17:27:05Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3981 2008-05-31 04:59:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,7 +32,9 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
+import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 
 public class MedikamentImporter extends ImporterPage {
 	static final String EQUALS = "=";
@@ -76,9 +79,24 @@ public class MedikamentImporter extends ImporterPage {
 		while((in=br.readLine())!=null){
 			String reca=new String(in.substring(0,2));			// recordart
 			String cmut=new String(in.substring(2,3));			// mutationscode
-			String pk=new String(in.substring(3,10));			// Pharmacode
-			String id=qbe.findSingle(SUBID, EQUALS, pk);
-			Artikel a=Artikel.load(id);
+			String pkraw=new String(in.substring(3,10)).trim();		// Pharmacode
+			String pk="0";
+			try{
+				long pkl=Long.parseLong(pkraw);					// führende Nullen entfernen
+				pk=Long.toString(pkl);	
+			}catch(Exception ex){
+				ExHandler.handle(ex);
+				log.log("Falscher Pharmacode: pkraw", Log.ERRORS);
+			}
+			
+			//String id=qbe.findSingle(SUBID, EQUALS, pk);
+			qbe.clear();
+			qbe.add(SUBID, EQUALS, pk);
+			List<Artikel> lArt=qbe.execute();
+			if(lArt.size()>1){
+				// TODO Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
+			}
+			Artikel a=lArt.size()>0 ? lArt.get(0) : null;
 			if((a==null) || (!a.exists())){
 				if(cmut.equals("3") || (!reca.equals("11"))){	// ausser handel oder kein Stammsatz
 					continue;
