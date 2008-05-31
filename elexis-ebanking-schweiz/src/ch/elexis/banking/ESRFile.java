@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRFile.java 1663 2007-01-25 14:25:41Z rgw_ch $
+ *  $Id: ESRFile.java 3984 2008-05-31 19:23:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
@@ -35,8 +37,8 @@ public class ESRFile {
 	 * @param filename vollständiger Pfadname der Datei
 	 * @return true wenn die Datei erfolgreich gelesen werden konnte
 	 */
-	public Result<List<ESRRecord>> read(String filename){
-		File file=new File(filename);
+	public Result<List<ESRRecord>> read(File file, final IProgressMonitor monitor){
+		
 		if(!file.exists()){
 			return new Result<List<ESRRecord>>(Log.ERRORS,1,"Die Angegebene ESR-Datei wurde nicht gefunden",null,true);
 		}
@@ -56,6 +58,7 @@ public class ESRFile {
 			String in;
 			//String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
 			while((in=br.readLine())!=null){
+				monitor.worked(1);
 				ESRRecord esr=new ESRRecord(name,in);
 				list.add(esr);
 			}

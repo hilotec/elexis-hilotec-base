@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 3982 2008-05-31 10:58:47Z rgw_ch $
+ *  $Id: ESRView.java 3984 2008-05-31 19:23:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -31,6 +34,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
@@ -42,6 +46,7 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.*;
 import ch.elexis.util.*;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -185,7 +190,12 @@ public class ESRView extends ViewPart implements ActivationListener{
 				if(Hub.actMandant==null){
 					return null;
 				}
+				qbe.startGroup();
 				qbe.add("MandantID", "=", Hub.actMandant.getId());
+				qbe.or();
+				qbe.add("MandantID", "", null);
+				qbe.endGroup();
+				qbe.and();
 			}
 			
 			vc.getControlFieldProvider().setQuery(qbe);
@@ -207,49 +217,70 @@ public class ESRView extends ViewPart implements ActivationListener{
 		loadESRFile=new Action("ESR-Datei einlesen"){
 			{
 				setToolTipText("Auswahl einer von der Bank heruntergeladenen ESR-Datei zum Einlesen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 			@Override
 			public void run(){
 				FileDialog fld=new FileDialog(getViewSite().getShell(),SWT.OPEN);
 				fld.setText("ESR Datei auswählen");
-				String filename=fld.open();
+				final String filename=fld.open();
 				if(filename!=null){
-					ESRFile esrf=new ESRFile();
-					Result<List<ESRRecord>> result=esrf.read(filename);
-					if(result.isOK()){
-						for(ESRRecord rec:result.get()){
-							if(rec.getRejectCode().equals(ESRRecord.REJECT.OK)){
-								if(rec.getTyp().equals(ESRRecord.MODE.Summenrecord)){
-									Hub.log.log("ESR eingelesen. Summe "+rec.getBetrag(), Log.INFOS);
-								}else if( (rec.getTyp().equals(ESRRecord.MODE.Storno_edv)) || (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))){
-									Rechnung rn=rec.getRechnung();
-									Money zahlung=rec.getBetrag().negate();
-									rn.addZahlung(zahlung, "Storno für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
-									rec.setGebucht(null);
+					final ESRFile esrf=new ESRFile();
+					final File file=new File(filename);
+					try {
+						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress(){
+
+							public void run(IProgressMonitor monitor)
+									throws InvocationTargetException,
+									InterruptedException {
+								monitor.beginTask("Lese ESR-Datei ein", (int)(file.length()/25));
+								Result<List<ESRRecord>> result=esrf.read(file,monitor);
+								if(result.isOK()){
+									for(ESRRecord rec:result.get()){
+										monitor.worked(1);
+										if(rec.getRejectCode().equals(ESRRecord.REJECT.OK)){
+											if(rec.getTyp().equals(ESRRecord.MODE.Summenrecord)){
+												Hub.log.log("ESR eingelesen. Summe "+rec.getBetrag(), Log.INFOS);
+											}else if( (rec.getTyp().equals(ESRRecord.MODE.Storno_edv)) || (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))){
+												Rechnung rn=rec.getRechnung();
+												Money zahlung=rec.getBetrag().negate();
+												rn.addZahlung(zahlung, "Storno für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
+												rec.setGebucht(null);
+											}else{
+												Rechnung rn=rec.getRechnung();
+												if(rn.getStatus()==RnStatus.BEZAHLT){
+													if(SWTHelper.askYesNo("Rechnung schon bezahlt", "Rechnung "+rn.getNr()+" ist bereits bezahlt. Trotzdem buchen?")==false){
+														continue;
+													}
+												}
+												Money zahlung=rec.getBetrag();
+												Money offen=rn.getOffenerBetrag();
+												if(zahlung.isMoreThan(offen)){
+													if(SWTHelper.askYesNo("Betrag zu hoch", "Die Zahlung für Rechnung "+rn.getNr()+" übersteigt den offenen Betrag. Trotzdem buchen?")==false){
+														continue;
+													}
+												}
+												
+												rn.addZahlung(zahlung, "VESR für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
+												rec.setGebucht(null);
+											}
+										}
+									}
+									monitor.done();
 								}else{
-									Rechnung rn=rec.getRechnung();
-									if(rn.getStatus()==RnStatus.BEZAHLT){
-										if(MessageDialog.openConfirm(getViewSite().getShell(), "Rechnung schon bezahlt", "Rechnung "+rn.getNr()+" ist bereits bezahlt. Trotzdem buchen?")==false){
-											continue;
-										}
-									}
-									Money zahlung=rec.getBetrag();
-									Money offen=rn.getOffenerBetrag();
-									if(zahlung.isMoreThan(offen)){
-										if(MessageDialog.openConfirm(getViewSite().getShell(), "Betrag zu hoch", "Die Zahlung für Rechnung "+rn.getNr()+" übersteigt den offenen Betrag. Trotzdem buchen?")==false){
-											continue;
-										}
-									}
-									
-									rn.addZahlung(zahlung, "VESR für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
-									rec.setGebucht(null);
-								}
+									result.display("Fehler beim ESR-Einlesen:");
+								}			
 							}
-						}
-					}else{
-						result.display("Fehler beim ESR-Einlesen:");
+							
+						});
+					} catch (InvocationTargetException e) {
+						ExHandler.handle(e);
+						SWTHelper.showError("Fehler beim ESR-Einlesen", "Fehler beim ESR-Einlesen", "Die Datei konnte nicht eingelesen werden "+e.getMessage()+e.getCause().getMessage());
+					} catch (InterruptedException e) {
+						ExHandler.handle(e);
+						SWTHelper.showError("ESR interupted", "Das Einlesen wurde unterbrochen",e.getMessage());
 					}
+					
 				}
 				JobPool.getJobPool().activate("ESR-Loader", Job.SHORT);
 				//cv.notify(CommonViewer.Message.update);
