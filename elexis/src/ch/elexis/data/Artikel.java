@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3851 2008-04-30 13:40:34Z rgw_ch $
+ * $Id: Artikel.java 3987 2008-06-01 06:19:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -43,8 +43,8 @@ public class Artikel extends VerrechenbarAdapter{
 	private static final String VK_PREIS = "VK_Preis";
 	private static final String EK_PREIS = "EK_Preis";
 	private static final String EIGENNAME = "Eigenname";
-	private static final String TYP = "Typ";
-	private static final String NAME = "Name";
+	public static final String TYP = "Typ";
+	public static final String NAME = "Name";
 	public static final String TABLENAME="ARTIKEL";
 	
 	@Override
