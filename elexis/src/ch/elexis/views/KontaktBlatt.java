@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktBlatt.java 3519 2008-01-12 06:32:35Z rgw_ch $
+ * $Id: KontaktBlatt.java 3990 2008-06-01 12:02:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -56,11 +56,14 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 	private ScrolledForm form;
 	private FormToolkit tk;
 	AutoForm afDetails;
+	/*
 	static final String[] ExtFlds={"EAN="+Xid.DOMAIN_EAN,
+		"rEAN="+.DOMAIN_RECIPIENT_EAN,
 		"AHV="+Xid.DOMAIN_AHV,
 		"OID="+Xid.DOMAIN_OID,
 		"UUID="+Xid.DOMAIN_ELEXIS
 		};
+	*/
 	static final InputData[] def=new InputData[]{
 		new InputData("Bezeichnung1"),
 		new InputData("Bezeichnung2"),
@@ -91,7 +94,11 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 			}
 
 			public void reloadContent(PersistentObject po, InputData ltf) {
-				KontaktExtDialog dlg=new KontaktExtDialog(Desk.getTopShell(),(Kontakt) po,ExtFlds);
+				ArrayList<String> extFlds=new ArrayList<String>();
+				for(String dom:Xid.getXIDDomains()){
+					extFlds.add(Xid.getSimpleNameForXIDDomain(dom)+"="+dom);
+				}
+				KontaktExtDialog dlg=new KontaktExtDialog(Desk.getTopShell(),(Kontakt) po,extFlds.toArray(new String[0]));
 				dlg.create();
 				dlg.setTitle("Identifikationselemente anzeigen/setzen"); //$NON-NLS-1$
 				dlg.getShell().setText("Identifikation");
@@ -107,7 +114,7 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 	public KontaktBlatt(Composite parent, int style, IViewSite vs){
 		super(parent,style);
 		site=vs;
-		tk=Desk.theToolkit;
+		tk=Desk.getToolkit();
 		setLayout(new FillLayout());
 		form=tk.createScrolledForm(this);
 		Composite body=form.getBody();

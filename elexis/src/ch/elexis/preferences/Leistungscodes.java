@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 3183 2007-09-20 09:39:06Z rgw_ch $
+ * $Id: Leistungscodes.java 3990 2008-06-01 12:02:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -109,7 +109,7 @@ public class Leistungscodes extends PreferencePage implements
 					TableItem sel=table.getItem(idx);
 					String ssel=sel.getText(0);
 					for(String s1:systeme){
-						if(s1.startsWith(ssel)){
+						if(s1.equals(ssel)){
 							String[] pre=new String[4];
 							pre[0]=s1;
 							pre[1]=Fall.getCodeSystem(s1);
@@ -242,7 +242,7 @@ public class Leistungscodes extends PreferencePage implements
 			ld=new ListDisplay<String>(ret, SWT.NONE, new ListDisplay.LDListener(){
 
 				public void hyperlinkActivated(final String l) {
-					String msg="Bitte geben Sie den Namen für diese Vorbedingung ein";
+					String msg="Bitte geben Sie den Namen (oder Name=Konstante) für diese Vorbedingung ein";
 					InputDialog inp=new InputDialog(getShell(),l+" hinzufügen",msg,"",null);
 					if(inp.open()==Dialog.OK){
 						String req=inp.getValue();

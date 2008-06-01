@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3988 2008-06-01 06:23:27Z rgw_ch $
+ * $Id: Xid.java 3990 2008-06-01 12:02:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -50,7 +50,6 @@ public class Xid extends PersistentObject {
 	public static final String DOMAIN_AUSTRIAN_PASSPORT="www.xid.ch/id/passport/at";
 	public static final String DOMAIN_GERMAN_PASSPORT="www.xid.ch/id/passport/de";
 	public final static String DOMAIN_EAN ="www.xid.ch/id/ean";
-	public final static String DOMAIN_RECIPIENT_EAN="www.xid.ch/id/recipient_ean";
 	public final static String DOMAIN_OID ="www.xid.ch/id/oid";
 	
 	static{

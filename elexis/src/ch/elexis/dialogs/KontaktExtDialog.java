@@ -8,11 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktExtDialog.java 3553 2008-01-17 12:51:54Z rgw_ch $
+ * $Id: KontaktExtDialog.java 3990 2008-06-01 12:02:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -40,6 +42,11 @@ public class KontaktExtDialog extends TitleAreaDialog {
 		super(shell);
 		this.k=k;
 		f=defvalues;
+		Arrays.sort(f, new Comparator<String>(){
+
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
+			}});
 	}
 	@Override
 	protected Control createDialogArea(Composite parent) {
