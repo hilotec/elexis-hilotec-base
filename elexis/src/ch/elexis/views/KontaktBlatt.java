@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktBlatt.java 3990 2008-06-01 12:02:32Z rgw_ch $
+ * $Id: KontaktBlatt.java 3991 2008-06-01 13:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -37,8 +37,11 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Person;
 import ch.elexis.data.Xid;
+import ch.elexis.data.Xid.XIDDomain;
 import ch.elexis.dialogs.AnschriftEingabeDialog;
 import ch.elexis.dialogs.KontaktExtDialog;
 import ch.elexis.util.LabeledInputField;
@@ -95,8 +98,13 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 
 			public void reloadContent(PersistentObject po, InputData ltf) {
 				ArrayList<String> extFlds=new ArrayList<String>();
+				Kontakt k=(Kontakt)po;
 				for(String dom:Xid.getXIDDomains()){
-					extFlds.add(Xid.getSimpleNameForXIDDomain(dom)+"="+dom);
+					XIDDomain xd=Xid.getDomain(dom);
+					if((k.istPerson() && xd.isDisplayedFor(Person.class)) || 
+						(k.istOrganisation() && xd.isDisplayedFor(Organisation.class)))	{
+						extFlds.add(Xid.getSimpleNameForXIDDomain(dom)+"="+dom);
+					}
 				}
 				KontaktExtDialog dlg=new KontaktExtDialog(Desk.getTopShell(),(Kontakt) po,extFlds.toArray(new String[0]));
 				dlg.create();

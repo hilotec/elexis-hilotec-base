@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3990 2008-06-01 12:02:32Z rgw_ch $
+ * $Id: Xid.java 3991 2008-06-01 13:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -57,10 +58,10 @@ public class Xid extends PersistentObject {
 		domains=new Hashtable<String,XIDDomain>();
 		String storedDomains=Hub.globalCfg.get("LocalXIDDomains", null);
 		if(storedDomains==null){
-			domains.put(DOMAIN_ELEXIS,new XIDDomain(DOMAIN_ELEXIS,"UUID",ASSIGNMENT_LOCAL|QUALITY_GUID));
-			domains.put(DOMAIN_AHV,new XIDDomain(DOMAIN_AHV,"AHV",ASSIGNMENT_REGIONAL|QUALITY_GUID));
-			domains.put(DOMAIN_OID,new XIDDomain(DOMAIN_OID,"OID",ASSIGNMENT_GLOBAL|QUALITY_GUID));
-			domains.put(DOMAIN_EAN,new XIDDomain(DOMAIN_EAN,"EAN",ASSIGNMENT_GLOBAL));
+			domains.put(DOMAIN_ELEXIS,new XIDDomain(DOMAIN_ELEXIS,"UUID",ASSIGNMENT_LOCAL|QUALITY_GUID,"ch.elexis.data.PersistentObject"));
+			domains.put(DOMAIN_AHV,new XIDDomain(DOMAIN_AHV,"AHV",ASSIGNMENT_REGIONAL|QUALITY_GUID,"ch.elexis.data.Person"));
+			domains.put(DOMAIN_OID,new XIDDomain(DOMAIN_OID,"OID",ASSIGNMENT_GLOBAL|QUALITY_GUID,"ch.elexis.data.PersistentObject"));
+			domains.put(DOMAIN_EAN,new XIDDomain(DOMAIN_EAN,"EAN",ASSIGNMENT_GLOBAL,"ch.elexis.data.Kontakt"));
 			storeDomains();
 		}else{
 			for(String dom:storedDomains.split(";")){
@@ -69,10 +70,14 @@ public class Xid extends PersistentObject {
 					log.log("Fehler in XID-Domain "+dom, Log.ERRORS);
 				}
 				String simpleName="";
-				if(spl.length==3){
+				if(spl.length>=3){
 					simpleName=spl[2];
 				}
-				domains.put(spl[0],new XIDDomain(spl[0],simpleName,Integer.parseInt(spl[1])));
+				String displayOptions="Kontakt";
+				if(spl.length>=4){
+					displayOptions=spl[3];
+				}
+				domains.put(spl[0],new XIDDomain(spl[0],simpleName,Integer.parseInt(spl[1]),displayOptions));
 			}
 		}
 	}
@@ -204,7 +209,7 @@ public class Xid extends PersistentObject {
 			if(domain.matches(".*[;#].*")){
 				log.log("XID Domain "+domain+" ungültig", Log.ERRORS);
 			}else{
-				domains.put(domain,new XIDDomain(domain,simpleName==null ? "" : simpleName,quality));
+				domains.put(domain,new XIDDomain(domain,simpleName==null ? "" : simpleName,quality,"Kontakt"));
 				storeDomains();
 				return true;
 			}
@@ -244,6 +249,10 @@ public class Xid extends PersistentObject {
 		}
 		return xd.simple_name;
 	}
+	public static XIDDomain getDomain(String name){
+		return domains.get(name);
+	}
+	
 	protected Xid(final String id){
 		super(id);
 	}
@@ -263,7 +272,13 @@ public class Xid extends PersistentObject {
 		StringBuilder sb=new StringBuilder();
 		for(String k:domains.keySet()){
 			XIDDomain xd=domains.get(k);
-			sb.append(k).append("#").append(xd.getQuality()).append("#").append(xd.getSimpleName()).append(";");
+			sb.append(k).append("#")
+				.append(xd.getQuality())
+				.append("#")
+				.append(xd.getSimpleName())
+				.append("#")
+				.append(xd.getDisplayOptions())
+				.append(";");
 		}
 		Hub.globalCfg.set("LocalXIDDomains", sb.toString());
 	}
@@ -279,10 +294,17 @@ public class Xid extends PersistentObject {
 		String domain_name;
 		String simple_name;
 		int quality;
-		public XIDDomain(String dname, String simplename,int quality){
+		ArrayList<Class> displayOptions=new ArrayList<Class>();
+		public XIDDomain(String dname, String simplename,int quality, String options){
 			domain_name=dname;
 			simple_name=simplename;
 			this.quality=quality;
+			for(String op:options.split(",")){
+				try{
+					Class clazz=Class.forName(op);
+					displayOptions.add(clazz);
+				}catch(Exception ex){}
+			}
 		}
 		public String getSimpleName() {
 			return simple_name;
@@ -295,6 +317,27 @@ public class Xid extends PersistentObject {
 		}
 		public int getQuality() {
 			return quality;
+		}
+
+		public void addDisplayOption(Class clazz){
+			if(!displayOptions.contains(clazz)){
+				displayOptions.add(clazz);
+				storeDomains();
+			}
+		}
+		public void removeDisplayOption(Class clazz){
+			displayOptions.remove(clazz);
+			storeDomains();
+		}
+		public boolean isDisplayedFor(Class clazz){
+			return displayOptions.contains(clazz);
+		}
+		String getDisplayOptions(){
+			StringBuilder r=new StringBuilder();
+			for(Class clazz:displayOptions){
+				r.append(clazz.getName()).append(",");
+			}
+			return r.toString();
 		}
 	}
 }

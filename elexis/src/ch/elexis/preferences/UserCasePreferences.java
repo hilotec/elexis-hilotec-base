@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id$
+ *  $Id: UserCasePreferences.java 3991 2008-06-01 13:32:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 

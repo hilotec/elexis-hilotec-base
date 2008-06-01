@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 3948 2008-05-22 18:34:11Z rgw_ch $ 
+<!-- $Id: plugin.xml 3991 2008-06-01 13:32:22Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -522,6 +522,12 @@
             class="ch.elexis.preferences.FontPreference"
             id="ch.elexis.user.fontselector"
             name="Schriftarten">
+      </page>
+      <page
+            category="ch.elexis.preferences.UserPreferences"
+            class="ch.elexis.preferences.XIDEdit"
+            id="ch.elexis.preferences.xid.edit"
+            name="XIDs">
       </page>
    </extension>
    <extension
