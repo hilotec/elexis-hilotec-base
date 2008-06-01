@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3991 2008-06-01 13:32:22Z rgw_ch $
+ * $Id: Xid.java 3992 2008-06-01 13:43:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,8 +20,10 @@ import java.util.Set;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
+import ch.rgw.tools.VersionInfo;
 
 public class Xid extends PersistentObject {
+	private static final String VERSION="1.0.0";
 	private static final String TABLENAME="XID";
 	private static Log log=Log.get("XID");
 	/**
@@ -79,6 +81,14 @@ public class Xid extends PersistentObject {
 				}
 				domains.put(spl[0],new XIDDomain(spl[0],simpleName,Integer.parseInt(spl[1]),displayOptions));
 			}
+		}
+		VersionInfo vv=new ch.rgw.tools.VersionInfo(Hub.Version);
+		if(vv.isOlder("1.3.2")){
+			XIDDomain xd=domains.get(DOMAIN_EAN);
+			xd.addDisplayOption(Person.class);
+			xd.addDisplayOption(Organisation.class);
+			xd=domains.get(DOMAIN_AHV);
+			xd.addDisplayOption(Person.class);
 		}
 	}
 	/**
