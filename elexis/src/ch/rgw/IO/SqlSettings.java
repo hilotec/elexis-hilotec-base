@@ -1,4 +1,4 @@
-// $Id: SqlSettings.java 1132 2006-10-19 18:18:49Z rgw_ch $
+// $Id: SqlSettings.java 3994 2008-06-01 18:08:38Z rgw_ch $
 
 package ch.rgw.IO;
 import java.sql.*;
@@ -40,6 +40,25 @@ public class SqlSettings extends Settings {
 		tbl=tablename;
 		undo();
 	}
+	
+	
+	
+	
+	 
+	@Override
+	public void remove(String key) {
+		super.remove(key);
+		Stm stm=j.getStatement();
+	    StringBuilder sql=new StringBuilder(300);
+    	sql.append("DELETE FROM ").append(tbl).append(" WHERE ");
+        if(constraint!=null){
+    	   sql.append(constraint).append(" AND ");
+    	}
+    	sql.append(paramColumn).append(" LIKE ").append(JdbcLink.wrap(key+"%"));
+    	stm.exec(sql.toString());
+    	j.releaseStatement(stm);
+	}
+	
 	/* (non-Javadoc)
 	 * @see ch.rgw.tools.Settings#flush()
 	 */
@@ -96,7 +115,7 @@ public class SqlSettings extends Settings {
     	}
 		j.releaseStatement(stm);
  }
-		
+	
 
 	/* (non-Javadoc)
 	 * @see ch.rgw.tools.Settings#undo()

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 3990 2008-06-01 12:02:32Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 3994 2008-06-01 18:08:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -333,10 +333,9 @@ public class FallDetailBlatt2 extends Composite {
 				if(r.length<2){
 					continue;
 				}
-				String[] v=r[0].split("=");
 				if(r[1].equals("T")){
-					lReqs.add(tk.createLabel(form.getBody(), v[0]));
-					String val=v.length>1 ? v[1] :f.getInfoString(r[0]);
+					lReqs.add(tk.createLabel(form.getBody(), r[0]));
+					String val=f.getInfoString(r[0]);
 					Text tx=tk.createText(form.getBody(), val);
 					tx.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					tx.addFocusListener(new Focusreact(r[0]));

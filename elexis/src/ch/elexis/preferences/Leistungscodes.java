@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 3990 2008-06-01 12:02:32Z rgw_ch $
+ * $Id: Leistungscodes.java 3994 2008-06-01 18:08:38Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -73,7 +73,7 @@ public class Leistungscodes extends PreferencePage implements
 		ret.setLayout(new GridLayout(2,false));
 		Label l1=new Label(ret,SWT.NONE);
 		l1.setText("Konfigurierte Abrechnungssysteme");
-		l1.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		l1.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		SWTHelper.createHyperlink(ret, "Neu...", new HyperlinkAdapter(){
 			@Override
@@ -86,6 +86,20 @@ public class Leistungscodes extends PreferencePage implements
 					Hub.globalCfg.set(key+"/leistungscodes",result[1]);
 					Hub.globalCfg.set(key+"/standardausgabe", result[2]);
 					Hub.globalCfg.set(key+"/bedingungen",result[3]);
+					systeme=Hub.globalCfg.nodes(CFG_KEY);
+					reload();
+				}
+			}
+			
+		});
+		SWTHelper.createHyperlink(ret, "Löschen...", new HyperlinkAdapter(){
+
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				TableItem sel=table.getSelection()[0];
+				String bName=sel.getText(0);
+				if(SWTHelper.askYesNo("Wirklich "+bName+" Löschen?", "Diese Aktion lässt sich nicht rückgängig\nmachen und kann fehlehafte Fälle bewirken!")){
+					Fall.removeAbrechnungssystem(bName);
 					systeme=Hub.globalCfg.nodes(CFG_KEY);
 					reload();
 				}
@@ -185,7 +199,8 @@ public class Leistungscodes extends PreferencePage implements
 		Label lbTaxp;
 		String[] result;
 		MultiplikatorEditor mke;
-		ListDisplay<String> ld;
+		ListDisplay<String> ldRequirements;
+		ListDisplay<String> ldConstants;
 		
 		AbrechnungsTypDialog(final Shell shell, final String[] abrdef){
 			super(shell);
@@ -239,10 +254,10 @@ public class Leistungscodes extends PreferencePage implements
 			
 			mke=new MultiplikatorEditor(ret,name);
 			mke.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			ld=new ListDisplay<String>(ret, SWT.NONE, new ListDisplay.LDListener(){
+			ldRequirements=new ListDisplay<String>(ret, SWT.NONE, new ListDisplay.LDListener(){
 
 				public void hyperlinkActivated(final String l) {
-					String msg="Bitte geben Sie den Namen (oder Name=Konstante) für diese Vorbedingung ein";
+					String msg="Bitte geben Sie den Namen für diese Vorbedingung ein";
 					InputDialog inp=new InputDialog(getShell(),l+" hinzufügen",msg,"",null);
 					if(inp.open()==Dialog.OK){
 						String req=inp.getValue();
@@ -253,7 +268,7 @@ public class Leistungscodes extends PreferencePage implements
 						}else{
 							req+=":D";							// Date
 						}
-						ld.add(req);
+						ldRequirements.add(req);
 					}
 				}
 
@@ -273,26 +288,76 @@ public class Leistungscodes extends PreferencePage implements
 				}
 				
 			});
-			ld.addHyperlinks("Kontakt... ","  Text... "," Datum... ");
-			ld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			ldRequirements.addHyperlinks("Kontakt... ","  Text... "," Datum... ");
+			ldRequirements.setLayoutData(SWTHelper.getFillGridData(1, true, 4, true));
 			if((result!=null) && (result.length>3) &&(result[3]!=null)){
 				String[] reqs=result[3].split(";");
 				for(String req:reqs){
-					ld.add(req);
+					ldRequirements.add(req);
 				}
 			}
-			Menu menu=new Menu(ld);
+			Menu menu=new Menu(ldRequirements);
 			MenuItem del=new MenuItem(menu,SWT.NONE);
 			del.setText("Löschen");
 			del.addSelectionListener(new SelectionAdapter(){
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					String sel=ld.getSelection();
-					ld.remove(sel);
+					String sel=ldRequirements.getSelection();
+					ldRequirements.remove(sel);
 				}
 				
 			});
-			ld.setMenu(menu);
+			ldRequirements.setMenu(menu);
+			new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
+			new Label(ret,SWT.NONE).setText("Fallkonstanten");
+			ldConstants=new ListDisplay<String>(ret,SWT.NONE,new ListDisplay.LDListener(){
+
+				public String getLabel(Object o) {
+					return (String)o;
+				}
+
+				public void hyperlinkActivated(String l) {
+					String msg="Bitte geben Sie den Namen und Wert als 'Name=Wert' für diese Konstante ein";
+					InputDialog inp=new InputDialog(getShell(),l+" hinzufügen",msg,"",null);
+					if(inp.open()==Dialog.OK){
+						String[] req=inp.getValue().split("=");
+						if(req.length!=2){
+							SWTHelper.showError("Falscheingabe", "Sie müssen eine Konstante in der Form Name=Wert eingeben");
+						}else{
+							ldConstants.add(inp.getValue());
+							String bs=result[0];
+							if(bs==null){
+								bs=tName.getText();
+							}
+							if(StringTool.isNothing(bs)){
+								SWTHelper.showError("Konstante anlegen nicht möglich", "Sie müssne zuerst einen Namen eingeben");
+							}else{
+								Fall.addBillingSystemConstant(bs, inp.getValue());
+							}
+						}
+					}
+					
+				}});
+			ldConstants.addHyperlinks("Konstante...");
+			if(result!=null){
+				for(String con:Fall.getBillingSystemConstants(result[0])){
+					ldConstants.add(con);
+				}
+			}
+			ldConstants.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			Menu menu2=new Menu(ldConstants);
+			MenuItem del2=new MenuItem(menu2,SWT.NONE);
+			del2.setText("Löschen");
+			del2.addSelectionListener(new SelectionAdapter(){
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					String sel=ldConstants.getSelection();
+					ldConstants.remove(sel);
+					Fall.removeBillingSystemConstant(result[0], sel);
+				}
+				
+			});
+			ldConstants.setMenu(menu2);
 			return ret;
 		}
 
@@ -311,7 +376,7 @@ public class Leistungscodes extends PreferencePage implements
 			result[0]=tName.getText();
 			result[1]=cbLstg.getText();
 			result[2]=cbRechn.getText();
-			result[3]=StringTool.join(ld.getAll(), ";");
+			result[3]=StringTool.join(ldRequirements.getAll(), ";");
 			super.okPressed();
 		}
 		public String[] getResult(){

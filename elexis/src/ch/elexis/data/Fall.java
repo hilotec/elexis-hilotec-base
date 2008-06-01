@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3755 2008-03-28 14:58:45Z danlutz $
+ *    $Id: Fall.java 3994 2008-06-01 18:08:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -209,6 +209,9 @@ public class Fall extends PersistentObject{
 	}
 	public String getRequiredString(final String name){
 		String kid=getInfoString(name);
+		if(StringTool.isNothing(kid)){
+			kid=getBillingSystemConstant(getAbrechnungsSystem(), name);
+		}
 		return kid;
 	}
 	
@@ -573,6 +576,10 @@ public class Fall extends PersistentObject{
 		Hub.globalCfg.set(key+"/bedingungen", StringTool.join(requirements, ";"));
 	}
 	
+	public static void removeAbrechnungssystem(final String systemName){
+		Hub.globalCfg.remove(Leistungscodes.CFG_KEY+"/"+systemName);
+		Hub.globalCfg.flush();
+	}
 	public static String getCodeSystem(final String billingSystem){
 		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/leistungscodes", null);
 		if(ret==null){		// compatibility
@@ -591,6 +598,50 @@ public class Fall extends PersistentObject{
 		return ret;
 	}
 	
+	public static String[] getBillingSystemConstants(final String billingSystem){
+		String bc=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/constants", null);
+		if(bc==null){
+			return new String[0];
+		}else{
+			return bc.split("#");
+		}
+	}
+	
+	public static String getBillingSystemConstant(final String billingSystem, final String constant){
+		String[] c=getBillingSystemConstants(billingSystem);
+		for(String bc:c){
+			String[] val=bc.split("=");
+			if(val[0].equalsIgnoreCase(constant)){
+				return val[1];
+			}
+		}
+		return "";
+	}
+	/**
+	 * add a billing system constant
+	 * @param billingSystem the Billing system
+	 * @param constant a String of the form name=value
+
+	 */
+	public static void addBillingSystemConstant(final String billingSystem, final String constant){
+		if(constant.indexOf('=')!=-1){
+			String bc=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/constants", null);
+			if(bc!=null){
+				bc+="#"+constant;
+			}else{
+				bc=constant;
+			}
+			Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/"+billingSystem+"/constants",bc);
+		}
+	}
+	public static void removeBillingSystemConstant(final String billingSystem, final String constant){
+		String bc=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/constants", null);
+		bc=bc.replaceAll(constant, "");
+		bc=bc.replaceAll("##", "#");
+		bc=bc.replaceFirst("#$", "");
+		bc=bc.replaceFirst("^#", "");
+		Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/"+billingSystem+"/constants",bc);
+	}
 	public static String getBillingSystemAttribute(final String billingSystem, final String attr){
 		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/"+attr, null);
 		return ret;

@@ -30,7 +30,7 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 	
 	@Override
 	protected Control createContents(Composite parent) {
-		table=new Table(parent,SWT.NONE);
+		table=new Table(parent,SWT.FULL_SELECTION);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		TableColumn tc0=new TableColumn(table,SWT.NONE);
 		tc0.setText("Kurzname");
@@ -65,6 +65,19 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 				TableItem[] sel=table.getSelection();
 				if(sel!=null && sel.length>0){
 					new XidEditDialog(getShell(),sel[0].getText(1)).open();
+					for(TableItem it:table.getItems()){
+						XIDDomain xd=Xid.getDomain(it.getText(1));
+						//it.setText(0,Xid.getSimpleNameForXIDDomain(dom));
+						StringBuilder sb=new StringBuilder();
+						if(xd.isDisplayedFor(Person.class)){
+							sb.append("P");
+						}
+						if(xd.isDisplayedFor(Organisation.class)){
+							sb.append("O");
+						}
+						it.setText(2,sb.toString());
+					}
+					table.redraw();
 				}
 			}
 			
