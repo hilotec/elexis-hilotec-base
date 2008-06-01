@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Validator.java 2985 2007-08-13 16:13:59Z rgw_ch $
+ * $Id: Validator.java 3993 2008-06-01 18:08:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -48,7 +48,7 @@ public class Validator {
 			return res;
 		}
 		*/
-		String ean=m.getInfoString("EAN"); //$NON-NLS-1$
+		String ean=TarmedRequirements.getEAN(m);
 		if(StringTool.isNothing(ean)){
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
 			res.add(Log.ERRORS,3,Messages.Validator_NoEAN,rn,true);
@@ -59,8 +59,8 @@ public class Validator {
 			res.add(Log.ERRORS,7,Messages.Validator_NoName,rn,true);
 			return res;
 		}
+		ean=TarmedRequirements.getEAN(kostentraeger);
 		
-		ean=kostentraeger.getInfoString("EAN"); //$NON-NLS-1$
 		if(StringTool.isNothing(ean) || (!ean.matches("[0-9]{13}"))){ //$NON-NLS-1$
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
 			res.add(Log.ERRORS,6,Messages.Validator_NoEAN2,rn,true);
