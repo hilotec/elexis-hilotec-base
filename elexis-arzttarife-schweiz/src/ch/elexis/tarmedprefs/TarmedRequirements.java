@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3715 2008-02-29 17:07:17Z rgw_ch $
+ * $Id: TarmedRequirements.java 3989 2008-06-01 12:02:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
+import ch.elexis.Hub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
@@ -24,8 +26,10 @@ public class TarmedRequirements {
 	public static final String INSURANCE="Kostenträger";
 	public static final String INSURANCE_NUMBER="Versicherungsnummer";
 	public static final String CASE_NUMBER="Fallnummer";
+	public static final String INTERMEDIATE="Intermediär";
 	public static final String ACCIDENT_NUMBER="Unfallnummer";
 	public final static String SSN ="AHV-Nummer";
+	public static final String EAN_PSEUDO="2000000000000";
 	
 	public static final String ACCIDENT_DATE="Unfalldatum";
 	
@@ -34,10 +38,12 @@ public class TarmedRequirements {
 	
 	public static final String DOMAIN_KSK="www.xid.ch/id/ksk";
 	public static final String DOMAIN_NIF="www.xid.ch/id/nif";
+	public final static String DOMAIN_RECIPIENT_EAN="www.xid.ch/id/recipient_ean";
 
 	static{
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL);
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, "NIF", Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
 	public static String getEAN(final Kontakt k){
@@ -51,11 +57,28 @@ public class TarmedRequirements {
 		}
 		// end
 		if(ret.length()==0){
-			ret="2000000000000";
+			ret=EAN_PSEUDO;
 		}
 		return ret;
 	}
 	
+	public static String getRecipientEAN(final Kontakt k){
+		String ret= k.getXid(DOMAIN_RECIPIENT_EAN);
+		if(ret.length()==0){
+			ret="unknown";
+		}
+		return ret;
+	}
+	
+	/**
+	 * Get EAN of the Intermediate where the bill shpould be sent. This must be
+	 * a Fall-requirement as defined in INTERMEDIATE and must contain the EAN
+	 * @param fall
+	 * @return the intermediate EAN as defined or the empty String (never null)
+	 */
+	public static String getIntermediateEAN(final Fall fall){
+		return fall.getRequiredString(INTERMEDIATE);
+	}
 	/**
 	 * wandelt KSK's von der G123456-Schreibweise in die G 1234.56 Schreibweise um
 	 * und umgekehrt

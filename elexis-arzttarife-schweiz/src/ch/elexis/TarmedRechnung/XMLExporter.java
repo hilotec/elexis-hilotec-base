@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3978 2008-05-30 07:12:58Z michael_imhof $
+ * $Id: XMLExporter.java 3989 2008-06-01 12:02:22Z rgw_ch $
  *******************************************************************************/
 
 
@@ -295,12 +295,14 @@ public class XMLExporter implements IRnOutputter {
 		
 		sender.setAttribute("ean_party",mEAN);
 		String kEAN=TarmedRequirements.getEAN(kostentraeger); //(String)kostentraeger.getInfoElement("EAN");
+		String rEAN=TarmedRequirements.getRecipientEAN(kostentraeger);
+		String iEAN=TarmedRequirements.getIntermediateEAN(actFall);
 		
 		Element intermediate=new Element("intermediate",ns);							// 10052
-		intermediate.setAttribute("ean_party",kEAN);
+		intermediate.setAttribute("ean_party",iEAN.length()==0 ? rEAN : iEAN);
 		
 		Element recipient=new Element("recipient",ns);									// 10053
-		recipient.setAttribute("ean_party",kEAN);
+		recipient.setAttribute("ean_party",rEAN);
 		
 		header.addContent(sender);
 		header.addContent(intermediate);
