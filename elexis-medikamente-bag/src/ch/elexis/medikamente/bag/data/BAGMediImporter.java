@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediImporter.java 3203 2007-09-25 15:39:54Z rgw_ch $
+ *  $Id: BAGMediImporter.java 3985 2008-06-01 06:19:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,9 +28,12 @@ import ch.elexis.data.Query;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 public class BAGMediImporter extends ImporterPage {
 	static Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
+	static Logger log=Logger.getLogger(BAGMediImporter.class.getName());
 	
 	public BAGMediImporter() {
 		// TODO Auto-generated constructor stub
@@ -77,11 +83,44 @@ public class BAGMediImporter extends ImporterPage {
 	 * @return
 	 */
 	public static boolean importUpdate(final String[] row){
-		String pharmacode=row[2];
-		qbe.clear();
-		String id=qbe.findSingle("SubID", "=", pharmacode);
-		BAGMedi imp;
-		if(id==null){
+		String pharmacode="0";
+		BAGMedi imp=null;
+		// Kein Pharmacode, dann nach Name suchen
+		if(StringTool.isNothing(row[2].trim())){
+			String mid=qbe.findSingle(Artikel.NAME, "=", row[7]);
+			if(mid!=null){
+				imp=BAGMedi.load(mid);
+			}
+		}else{
+			try{
+				// strip leading zeroes
+				int pcode=Integer.parseInt(row[2].trim());
+				pharmacode=Integer.toString(pcode);
+			}catch(Exception ex){
+				ExHandler.handle(ex);
+				log.log(Level.WARNING, "Pharmacode falsch: "+row[2]);
+			}
+	
+			qbe.clear();
+			qbe.add(Artikel.SUB_ID, "=", pharmacode);
+			List<Artikel> lArt=qbe.execute();
+			if(lArt.size()>1){
+				// Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
+				Iterator<Artikel> it=lArt.iterator();
+				boolean hasValid=false;
+				while(it.hasNext()){
+					Artikel ax=it.next();
+					if(hasValid || (!ax.isValid())){
+						it.remove();
+					}else{
+						hasValid=true;
+					}
+				}
+				
+			}
+			imp=lArt.size()>0 ? BAGMedi.load(lArt.get(0).getId()) : null;
+		}
+		if(imp==null || (!imp.isValid())){
 			imp=new BAGMedi(row[7],pharmacode);
 			
 			String sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
@@ -89,7 +128,6 @@ public class BAGMediImporter extends ImporterPage {
 			PersistentObject.getConnection().exec(sql);
 			
 		}else{
-			imp=BAGMedi.load(id);
 			
 			String sql=new StringBuilder().append("SELECT ID FROM ")
 				.append(BAGMedi.EXTTABLE).append(" WHERE ID=")
