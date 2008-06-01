@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 3981 2008-05-31 04:59:16Z rgw_ch $
+ *  $Id: MedikamentImporter.java 3986 2008-06-01 06:19:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -94,21 +95,32 @@ public class MedikamentImporter extends ImporterPage {
 			qbe.add(SUBID, EQUALS, pk);
 			List<Artikel> lArt=qbe.execute();
 			if(lArt.size()>1){
-				// TODO Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
+				// Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
+				Iterator<Artikel> it=lArt.iterator();
+				boolean hasValid=false;
+				while(it.hasNext()){
+					Artikel ax=it.next();
+					if(hasValid || (!ax.isValid())){
+						it.remove();
+					}else{
+						hasValid=true;
+					}
+				}
+				
 			}
 			Artikel a=lArt.size()>0 ? lArt.get(0) : null;
 			if((a==null) || (!a.exists())){
 				if(cmut.equals("3") || (!reca.equals("11"))){	// ausser handel oder kein Stammsatz
-					continue;
+					continue;		// Dann Artikel nicht neu erstellen, falls er nicht existiert
 				}
 			}else{
-				if(cmut.equals("3")){
+				if(cmut.equals("3")){	// Wen n er existiert, muss er gelöscht werden
 					a.delete();
 					continue;
 				}
 			}
 
-			if(reca.equals("11")){
+			if(reca.equals("11")){		// Stammsatz
 				titel=new String(in.substring(10,60)).trim();	// Text
 				ek=new String(in.substring(60,66)).trim();		// EK-Preis
 				vk=new String(in.substring(66,72)).trim();		// VK-Preis
@@ -136,7 +148,7 @@ public class MedikamentImporter extends ImporterPage {
 				ext.put(EAN,ean);
 				ext.put(MWST_TYP,mwst);
 				a.setHashtable(Artikel.EXT_INFO,ext);
-			}else if(reca.equals("10")){
+			}else if(reca.equals("10")){		// Update-Satz
 				ek=new String(in.substring(10, 16));
 				vk=new String(in.substring(16,22));
 				kasse=new String(in.substring(22,23));
@@ -158,7 +170,7 @@ public class MedikamentImporter extends ImporterPage {
 			monitor.subTask(a.getLabel());
 			a=null;
 			in=null;
-			if(counter++>1000){
+			if(counter++>1000){						// Speicher freigeben
 				PersistentObject.clearCache();
 				System.gc();
 				Thread.sleep(100);
