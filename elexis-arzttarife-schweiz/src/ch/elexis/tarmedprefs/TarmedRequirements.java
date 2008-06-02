@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3989 2008-06-01 12:02:22Z rgw_ch $
+ * $Id: TarmedRequirements.java 3995 2008-06-02 05:22:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -32,6 +32,7 @@ public class TarmedRequirements {
 	public static final String EAN_PSEUDO="2000000000000";
 	
 	public static final String ACCIDENT_DATE="Unfalldatum";
+	public static final String CASE_LAW="Gesetz";
 	
 	public static final String BILLINGSYSTEM_NAME="TarmedLeistung";
 	public static final String OUTPUTTER_NAME="Tarmed-Drucker";
@@ -160,20 +161,20 @@ public class TarmedRequirements {
 	}
 	
 	public static String getGesetz(final Fall fall) {
-		String gesetz=fall.getAbrechnungsSystem();															// 16000
-		String g1=fall.getRequiredString("Gesetz");
-		if(g1.length()>0){
-			gesetz=g1;
-		}else{
-			if(!gesetz.matches("KVG|UVG|MV|VVG")){
-				gesetz=Fall.getBillingSystemAttribute(gesetz, "gesetz");
-			}
-			if(gesetz==null){
-				gesetz="VVG";
-			}
+		String billingSystem=fall.getAbrechnungsSystem();
+		String gesetz=fall.getRequiredString("Gesetz");
+		if(gesetz.length()==0){
+			gesetz=Fall.getBillingSystemConstant(billingSystem, CASE_LAW);
 		}
-		if(gesetz.equalsIgnoreCase("iv")){
-			gesetz="ivg";
+		if(gesetz.length()==0){	// compatibility. To be removed
+			gesetz=Fall.getBillingSystemAttribute(billingSystem, "gesetz");
+		}
+		if(gesetz.length()==0){
+			if(billingSystem.matches("KVG|UVG|MV|VVG")){
+				gesetz=billingSystem;
+			}else if(billingSystem.equalsIgnoreCase("iv")){
+					gesetz="ivg";
+			}
 		}
 		if(StringTool.isNothing(gesetz)){
 			gesetz="KVG";
