@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktBlatt.java 3991 2008-06-01 13:32:22Z rgw_ch $
+ * $Id: KontaktBlatt.java 3997 2008-06-02 08:33:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -59,14 +59,7 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 	private ScrolledForm form;
 	private FormToolkit tk;
 	AutoForm afDetails;
-	/*
-	static final String[] ExtFlds={"EAN="+Xid.DOMAIN_EAN,
-		"rEAN="+.DOMAIN_RECIPIENT_EAN,
-		"AHV="+Xid.DOMAIN_AHV,
-		"OID="+Xid.DOMAIN_OID,
-		"UUID="+Xid.DOMAIN_ELEXIS
-		};
-	*/
+	
 	static final InputData[] def=new InputData[]{
 		new InputData("Bezeichnung1"),
 		new InputData("Bezeichnung2"),
@@ -107,9 +100,6 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 					}
 				}
 				KontaktExtDialog dlg=new KontaktExtDialog(Desk.getTopShell(),(Kontakt) po,extFlds.toArray(new String[0]));
-				dlg.create();
-				dlg.setTitle("Identifikationselemente anzeigen/setzen"); //$NON-NLS-1$
-				dlg.getShell().setText("Identifikation");
 				dlg.open();
 				
 			}

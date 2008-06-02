@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktExtDialog.java 3990 2008-06-01 12:02:32Z rgw_ch $
+ * $Id: KontaktExtDialog.java 3997 2008-06-02 08:33:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -59,6 +59,9 @@ public class KontaktExtDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
+		setTitle(k.getLabel());
+		setMessage("Bitte geben Sie die notwendigen Identifikationsdaten ein");
+		getShell().setText("Identifikationselemente");
 	}
 	@Override
 	protected void okPressed() {
