@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3994 2008-06-01 18:08:38Z rgw_ch $
+ *    $Id: Fall.java 3996 2008-06-02 05:22:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -106,7 +106,7 @@ public class Fall extends PersistentObject{
 		super(id);
 	}
 	/**
-	 * Einen neuen Fall zu einem Patienten mit einer Bezichnung erstellen
+	 * Einen neuen Fall zu einem Patienten mit einer Bezeichnung erstellen
 	 * (Garant muss später noch ergänzt werden; Datum wird von heute genommen
 	 * @param PatientID
 	 * @param Bezeichnung
@@ -207,6 +207,13 @@ public class Fall extends PersistentObject{
 			}
 		}
 	}
+	
+	/**
+	 * Retrieve a required String Value from this billing system's definition. If no variale with that
+	 * name is found, the billings system constants will be searched 
+	 * @param name
+	 * @return a string that might be empty but will never be null.
+	 */
 	public String getRequiredString(final String name){
 		String kid=getInfoString(name);
 		if(StringTool.isNothing(kid)){
@@ -642,8 +649,16 @@ public class Fall extends PersistentObject{
 		bc=bc.replaceFirst("^#", "");
 		Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/"+billingSystem+"/constants",bc);
 	}
+	/**
+	 * 
+	 * @param billingSystem
+	 * @param attr
+	 * @return
+	 * @deprecated use getBillingSystemConstant
+	 */
+	@Deprecated
 	public static String getBillingSystemAttribute(final String billingSystem, final String attr){
-		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/"+attr, null);
+		String ret=Hub.globalCfg.get(Leistungscodes.CFG_KEY+"/"+billingSystem+"/"+attr, "");
 		return ret;
 	}
 	/**
