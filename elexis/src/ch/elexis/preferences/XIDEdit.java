@@ -135,6 +135,7 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 			if(bOrg.getSelection()){
 				mine.addDisplayOption(Organisation.class);
 			}
+			mine.setSimpleName(tShort.getText());
 			super.okPressed();
 		}
 		
