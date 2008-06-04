@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 4000 2008-06-04 11:55:01Z rgw_ch $
+ * $Id: PatHeuteView.java 4001 2008-06-04 15:06:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -618,7 +618,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		
 		filterAction=new Action("Filter",Action.AS_CHECK_BOX){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_FILTER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 				setToolTipText("Verrechnungspositionen zum Zählen eingeben");
 			}
 			@Override

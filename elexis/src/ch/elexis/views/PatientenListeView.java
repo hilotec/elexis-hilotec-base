@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 3955 2008-05-23 10:57:32Z rgw_ch $
+ * $Id: PatientenListeView.java 4001 2008-06-04 15:06:20Z rgw_ch $
  *******************************************************************************/
 
 
@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
@@ -50,6 +52,7 @@ import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.LazyContentProvider;
+import ch.elexis.util.ListDisplay;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
@@ -58,6 +61,8 @@ import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
 
 public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2, HeartListener, UserListener{
     public static final String  ID="ch.elexis.PatListView";
+    private static final String FELD_HINZU="Feld...";
+    private static final String LEEREN="Leeren";
     private CommonViewer cv;
     private ViewerConfigurer vc;
     private AbstractDataLoaderJob loader;
@@ -66,7 +71,9 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     Filter patFilter;
     private Patient actPatient;
     //private SortedSet<Reminder> myReminders;
-
+    ListDisplay<PersistentObject> ldFilter;
+    Composite parent;
+    
     @Override
 	public void dispose() {
     	//cv.getViewerWidget().removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
@@ -91,6 +98,8 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	@Override
     public void createPartControl(final Composite parent)
     {
+		this.parent=parent;
+		parent.setLayout(new GridLayout());
 		cv=new CommonViewer();
 		loader=(AbstractDataLoaderJob)Hub.jobPool.getJob("PatientenListe");
 		ArrayList<String> fields=new ArrayList<String>();
@@ -106,8 +115,27 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB,true)){
 			fields.add("Geburtsdatum");
 		}
+		makeActions();
+		ldFilter=new ListDisplay<PersistentObject>(parent,SWT.NONE,new ListDisplay.LDListener(){
 
+			public String getLabel(Object o) {
+				if(o instanceof PersistentObject){
+					return ((PersistentObject)o).getLabel();
+				}else{
+					return o.toString();
+				}
+			}
 
+			public void hyperlinkActivated(String l) {
+				if(l.equals(FELD_HINZU)){
+					
+				}
+				
+			}
+			
+		});
+		ldFilter.addHyperlinks(FELD_HINZU,LEEREN);
+		
 		vc=new ViewerConfigurer(
 				new LazyContentProvider(cv,loader, AccessControlDefaults.PATIENT_DISPLAY),
 				new PatLabelProvider(),
@@ -119,7 +147,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         // let user select patient by pressing ENTER in the control fields
         cv.getConfigurer().getControlFieldProvider().addChangeListener(new ControlFieldSelectionListener());
         cv.getViewerWidget().getControl().setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
-        makeActions();
+        
         menus=new ViewMenus(getViewSite());
         menus.createToolbar(newPatAction,filterAction);
         menus.createControlContextMenu(cv.getViewerWidget().getControl(), new PatientMenuPopulator(this));
@@ -197,8 +225,13 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     private void makeActions(){
         
         filterAction=new Action("Liste filtern",Action.AS_CHECK_BOX){
+        	{
+        		setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
+        		setToolTipText("Liste filtern");
+        	}
 			@Override
 			public void run() {
+				/*
 			 	loader.getQuery().removePostQueryFilter(patFilter);
 			 	if(isChecked()){
 			 		if(FilterFactory.createFilterDialog(patFilter,getViewSite().getShell()).open()==Dialog.OK){
@@ -207,15 +240,23 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 			 	}
                 loader.invalidate();
                 cv.notify(CommonViewer.Message.update);
-				
+				*/
+				GridData gd=(GridData)ldFilter.getLayoutData();
+				if(filterAction.isChecked()){
+					gd.heightHint=50;
+					//gd.minimumHeight=15;
+				}else{
+					gd.heightHint=0;
+				}
+				parent.layout(true);
+
 			}
 			
         };
        
-        filterAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor("filter"));
         newPatAction=new Action("Neuer Patient"){
         	{
-        		setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+        		setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
         		setToolTipText("Neuen Patienteneintrag erstellen");
         	}
         	@Override
