@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4001 2008-06-04 15:06:20Z rgw_ch $
+ * $Id: PatientenListeView.java 4002 2008-06-04 16:33:37Z rgw_ch $
  *******************************************************************************/
 
 
@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -42,6 +43,7 @@ import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.FilterFactory;
+import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Reminder;
@@ -53,6 +55,7 @@ import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.LazyContentProvider;
 import ch.elexis.util.ListDisplay;
+import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
@@ -72,6 +75,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     private Patient actPatient;
     //private SortedSet<Reminder> myReminders;
     ListDisplay<PersistentObject> ldFilter;
+    PersistentObjectDropTarget dropTarget;
     Composite parent;
     
     @Override
@@ -135,7 +139,9 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 			
 		});
 		ldFilter.addHyperlinks(FELD_HINZU,LEEREN);
-		
+		ldFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		((GridData)ldFilter.getLayoutData()).heightHint=0;
+		dropTarget=new PersistentObjectDropTarget("Statfilter",ldFilter,new DropReceiver());
 		vc=new ViewerConfigurer(
 				new LazyContentProvider(cv,loader, AccessControlDefaults.PATIENT_DISPLAY),
 				new PatLabelProvider(),
@@ -395,6 +401,17 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		if(!cv.getViewerWidget().getControl().isDisposed()){
 			cv.getViewerWidget().getControl().setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 			cv.notify(CommonViewer.Message.update);
+		}
+	}
+	private  class DropReceiver implements PersistentObjectDropTarget.Receiver {
+		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
+			if(o instanceof IVerrechenbar){
+				ldFilter.add(o);
+			 }
+		}
+
+		public boolean accept(final PersistentObject o) {
+			return true;
 		}
 	}
 }
