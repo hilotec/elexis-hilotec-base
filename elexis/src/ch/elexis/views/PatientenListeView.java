@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4002 2008-06-04 16:33:37Z rgw_ch $
+ * $Id: PatientenListeView.java 4003 2008-06-04 18:35:52Z rgw_ch $
  *******************************************************************************/
 
 
@@ -64,8 +64,6 @@ import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
 
 public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2, HeartListener, UserListener{
     public static final String  ID="ch.elexis.PatListView";
-    private static final String FELD_HINZU="Feld...";
-    private static final String LEEREN="Leeren";
     private CommonViewer cv;
     private ViewerConfigurer vc;
     private AbstractDataLoaderJob loader;
@@ -74,8 +72,8 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     Filter patFilter;
     private Patient actPatient;
     //private SortedSet<Reminder> myReminders;
-    ListDisplay<PersistentObject> ldFilter;
-    PersistentObjectDropTarget dropTarget;
+    PatListFilterBox plfb;
+
     Composite parent;
     
     @Override
@@ -120,28 +118,10 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 			fields.add("Geburtsdatum");
 		}
 		makeActions();
-		ldFilter=new ListDisplay<PersistentObject>(parent,SWT.NONE,new ListDisplay.LDListener(){
+		plfb=new PatListFilterBox(parent);
+		plfb.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		((GridData)plfb.getLayoutData()).heightHint=0;
 
-			public String getLabel(Object o) {
-				if(o instanceof PersistentObject){
-					return ((PersistentObject)o).getLabel();
-				}else{
-					return o.toString();
-				}
-			}
-
-			public void hyperlinkActivated(String l) {
-				if(l.equals(FELD_HINZU)){
-					
-				}
-				
-			}
-			
-		});
-		ldFilter.addHyperlinks(FELD_HINZU,LEEREN);
-		ldFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		((GridData)ldFilter.getLayoutData()).heightHint=0;
-		dropTarget=new PersistentObjectDropTarget("Statfilter",ldFilter,new DropReceiver());
 		vc=new ViewerConfigurer(
 				new LazyContentProvider(cv,loader, AccessControlDefaults.PATIENT_DISPLAY),
 				new PatLabelProvider(),
@@ -247,9 +227,9 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
                 loader.invalidate();
                 cv.notify(CommonViewer.Message.update);
 				*/
-				GridData gd=(GridData)ldFilter.getLayoutData();
+				GridData gd=(GridData)plfb.getLayoutData();
 				if(filterAction.isChecked()){
-					gd.heightHint=50;
+					gd.heightHint=80;
 					//gd.minimumHeight=15;
 				}else{
 					gd.heightHint=0;
@@ -403,15 +383,5 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 			cv.notify(CommonViewer.Message.update);
 		}
 	}
-	private  class DropReceiver implements PersistentObjectDropTarget.Receiver {
-		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
-			if(o instanceof IVerrechenbar){
-				ldFilter.add(o);
-			 }
-		}
 
-		public boolean accept(final PersistentObject o) {
-			return true;
-		}
-	}
 }
