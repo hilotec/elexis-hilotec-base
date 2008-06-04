@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 3918 2008-05-13 16:13:09Z rgw_ch $
+ * $Id: PatHeuteView.java 4000 2008-06-04 11:55:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -91,11 +91,13 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 	private IAction printAction, reloadAction, filterAction, statAction;
 	CommonViewer cv;
 	ViewerConfigurer vc;
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk=Desk.getToolkit();
 	Form form;
 	Text tPat,tTime,tMoney, tTime2, tMoney2;
 	TimeTool datVon,datBis;
-	boolean bOnlyOpen;
+	//boolean bOnlyOpen;
+	boolean bOpen=true;
+	boolean bClosed=true;
 	private Konsultation[] kons;
 	private final KonsLoader kload;
 	private int numPat;
@@ -172,6 +174,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			}
 			
 		});
+		/*
 		final Button bKonsType=new Button(top,SWT.TOGGLE);
 		bKonsType.setText(Messages.getString("PatHeuteView.onlyOpen")); //$NON-NLS-1$
 		bKonsType.addSelectionListener(new SelectionAdapter(){
@@ -180,21 +183,25 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				bOnlyOpen=bKonsType.getSelection();
 			}
 		});
-		//ldFilter.setVisible(false);
-		/*
-		ExpandableComposite ecFilter=tk.createExpandableComposite(parent,ExpandableComposite.TWISTIE);
-		ecFilter.setText("Filter");
-
-		ecFilter.setClient(ldFilter);
-		ecFilter.addExpansionListener(new ExpansionAdapter(){
-
-			@Override
-			public void expansionStateChanged(ExpansionEvent e) {
-				form.layout();
-			}
-			
-		});
 		*/
+		final Button bOpenKons=new Button(top,SWT.CHECK);
+		bOpenKons.setText("offene");
+		bOpenKons.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				bOpen=bOpenKons.getSelection();
+			}
+		});
+		final Button bClosedKons=new Button(top,SWT.CHECK);
+		bClosedKons.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				bClosed=bClosedKons.getSelection();
+			}
+		});
+		bClosedKons.setText("abgerechnete");
+		bOpenKons.setSelection(bOpen);
+		bClosedKons.setSelection(bClosed);
 		cv=new CommonViewer();
 		vc=new ViewerConfigurer(
 				new DefaultContentProvider(cv,Patient.class){
@@ -228,12 +235,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LIST,SWT.V_SCROLL,cv)
 		);
 		cv.create(vc,parent,SWT.BORDER,getViewSite());
-		//cv.getViewerWidget().getControl().setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-
-
-		//Group grpAll=new Group(parent,SWT.BORDER);
-		//grpAll.setText("Alle Patienten");
-		//grpAll.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+	
 		form=tk.createForm(parent);
 		form.setText("Alle");
 		form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
@@ -444,8 +446,15 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 				}
 				qbe.add("MandantID", "=", Hub.actMandant.getId());
 			}
-			if(bOnlyOpen){
+			
+			if(bOpen && !bClosed){
 				qbe.add("RechnungsID", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if(bClosed && !bOpen){
+				qbe.add("RechnungsID", "NOT", null);
+			}
+			if(!bClosed && !bOpen){
+				qbe.insertFalse();
 			}
 			qbe.addPostQueryFilter(new IFilter(){
 				public boolean select(final Object toTest) {

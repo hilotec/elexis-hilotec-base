@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 3983 2008-05-31 19:23:27Z rgw_ch $
+ * $Id: SWTHelper.java 4000 2008-06-04 11:55:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -381,6 +381,9 @@ public class SWTHelper {
 	}
 	
 	public static int size(final Rectangle r){
+		if(r==null){
+			return 0;
+		}
 		return (r.width-r.x)*(r.height-r.y);
 	}	
 	
