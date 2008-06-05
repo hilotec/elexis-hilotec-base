@@ -8,22 +8,28 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4005 2008-06-05 12:14:42Z rgw_ch $
+ * $Id: PatListFilterBox.java 4006 2008-06-05 16:17:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.List;
 
+import ch.elexis.data.Etikette;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.PersistentObjectDropTarget;
+import ch.elexis.util.SWTHelper;
 
 /**
  * This will be displayed on top of the PatientListeView. It allows to drop Objects (Artikel, 
@@ -38,7 +44,7 @@ import ch.elexis.util.PersistentObjectDropTarget;
  */
 public class PatListFilterBox extends ListDisplay<PersistentObject> implements IFilter{
     PersistentObjectDropTarget dropTarget;
-    private static final String FELD_HINZU="Feld...";
+    private static final String ETIKETTE="Etikette... ";
     private static final String LEEREN="Leeren";
     private ArrayList<IPatFilter> filters=new ArrayList<IPatFilter>();
     private IPatFilter defaultFilter=new PatFilterImpl();
@@ -57,9 +63,13 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			}
 
 			public void hyperlinkActivated(String l) {
-				clear();
+				if(l.equals(LEEREN)){
+					clear();
+				}else if(l.equals(ETIKETTE)){
+					new EtikettenAuswahl().open();
+				}
 			}});
-		addHyperlinks(LEEREN);
+		addHyperlinks(ETIKETTE,LEEREN);
 		dropTarget=new PersistentObjectDropTarget("Statfilter",this,new DropReceiver());
 
 	}
@@ -143,5 +153,45 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		 * @throws Exception 
 		 */
 		public int accept(Patient p, PersistentObject o);
+	}
+	
+	class EtikettenAuswahl extends Dialog{
+		List lEtiketten;
+		Etikette[] etiketten;
+		Etikette[] result;
+		public EtikettenAuswahl() {
+			super(PatListFilterBox.this.getShell());
+		}
+
+		@Override
+		public void create() {
+			super.create();
+			getShell().setText("Etikette/n für Filter auswählen");
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite ret=(Composite) super.createDialogArea(parent);
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			lEtiketten=new List(ret,SWT.MULTI);
+			Query<Etikette> qbe=new Query<Etikette>(Etikette.class);
+			etiketten=qbe.execute().toArray(new Etikette[0]);
+			String[] etexts=new String[etiketten.length];
+			for(int i=0;i<etiketten.length;i++){
+				etexts[i]=etiketten[i].getLabel();
+			}
+			lEtiketten.setItems(etexts);
+			return ret;
+		}
+
+		@Override
+		protected void okPressed() {
+			int[] indices=lEtiketten.getSelectionIndices();
+			result=new Etikette[indices.length];
+			for(int i=0;i<indices.length;i++){
+				add(etiketten[indices[i]]);
+			}
+			super.okPressed();
+		}
 	}
 }

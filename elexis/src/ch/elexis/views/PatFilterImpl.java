@@ -8,19 +8,26 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4005 2008-06-05 12:14:42Z rgw_ch $
+ * $Id: PatFilterImpl.java 4006 2008-06-05 16:17:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
+import java.util.List;
+
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Etikette;
+import ch.elexis.data.Fall;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
+import ch.elexis.data.Query;
 import ch.elexis.data.Script;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.views.PatListFilterBox.IPatFilter;
 
 /**
@@ -35,13 +42,58 @@ public class PatFilterImpl implements IPatFilter {
 		if(o instanceof Kontakt){
 			// 
 		}else if(o instanceof IVerrechenbar){
-			
+			IVerrechenbar iv=(IVerrechenbar)o;
+			Fall[] faelle=p.getFaelle();
+			for(Fall fall:faelle){
+				Konsultation[] konsen=fall.getBehandlungen(false);
+				for(Konsultation k:konsen){
+					List<Verrechnet> lv=k.getLeistungen();
+					for(Verrechnet v:lv){
+						if(v.getVerrechenbar().equals(iv)){
+							return ACCEPT;
+						}
+					}
+				}
+			}
+			return REJECT;
+
 		}else if(o instanceof IDiagnose){
-			
-		}else if(o instanceof Prescription){
-			
+			IDiagnose diag=(IDiagnose)o;
+			Fall[] faelle=p.getFaelle();
+			for(Fall fall:faelle){
+				Konsultation[] konsen=fall.getBehandlungen(false);
+				for(Konsultation k:konsen){
+					List<IDiagnose> id=k.getDiagnosen();
+					if(id.contains(diag)){
+						return ACCEPT;
+					}
+				}
+			}
+			return REJECT;
 		}else if(o instanceof Artikel){
-			
+			Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
+			qbe.add("PatientID", "=", p.getId());
+			qbe.add("ArtikelID", "=",o.getId());
+			if(qbe.execute().size()>0){
+				return ACCEPT;
+			}
+			return REJECT;
+		}else if(o instanceof Prescription){
+			Artikel art=((Prescription)o).getArtikel();
+			Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
+			qbe.add("PatientID", "=", p.getId());
+			qbe.add("ArtikelID", "=", art.getId());
+			if(qbe.execute().size()>0){
+				return ACCEPT;
+			}
+			return REJECT;
+		}else if(o instanceof Etikette){
+			List<Etikette> etis=p.getEtiketten();
+			Etikette e=(Etikette)o;
+			if(etis.contains(e)){
+				return ACCEPT;
+			}
+			return REJECT;
 		}else if(o instanceof Script){
 			Object ret;
 			try {
@@ -58,4 +110,5 @@ public class PatFilterImpl implements IPatFilter {
 		return DONT_HANDLE;
 	}
 
+	
 }

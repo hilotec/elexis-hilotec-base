@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenDisplay.java 2913 2007-07-25 14:36:44Z rgw_ch $
+ *  $Id: DiagnosenDisplay.java 4006 2008-06-05 16:17:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -55,7 +55,7 @@ public class DiagnosenDisplay extends Composite implements Draggable {
 	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent, final int style){
 		super(parent,style);
 		setLayout(new GridLayout());
-		hDg=Desk.theToolkit.createHyperlink(this,"Behandlungsdiagnosen",SWT.NONE);
+		hDg=Desk.getToolkit().createHyperlink(this,"Behandlungsdiagnosen",SWT.NONE);
         hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
         hDg.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
@@ -69,7 +69,7 @@ public class DiagnosenDisplay extends Composite implements Draggable {
 				}
 			}
         });
-        tDg=Desk.theToolkit.createTable(this,SWT.SINGLE|SWT.WRAP);
+        tDg=Desk.getToolkit().createTable(this,SWT.SINGLE|SWT.WRAP);
         tDg.setLayoutData(new GridData(GridData.FILL_BOTH));
         tDg.setMenu(createDgMenu());
       
