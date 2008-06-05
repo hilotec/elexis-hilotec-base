@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4004 2008-06-05 05:22:34Z rgw_ch $
+ * $Id: PatListFilterBox.java 4005 2008-06-05 12:14:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -42,9 +42,11 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
     private static final String LEEREN="Leeren";
     private ArrayList<IPatFilter> filters=new ArrayList<IPatFilter>();
     private IPatFilter defaultFilter=new PatFilterImpl();
+    private boolean parseError=false;
     
 	PatListFilterBox(Composite parent){
-		super(parent,SWT.NONE,new LDListener(){
+		super(parent,SWT.NONE,null);
+		setDLDListener(new LDListener(){
 
 			public String getLabel(Object o) {
 				if(o instanceof PersistentObject){
@@ -55,10 +57,9 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			}
 
 			public void hyperlinkActivated(String l) {
-				// TODO Auto-generated method stub
-				
+				clear();
 			}});
-		addHyperlinks(FELD_HINZU,LEEREN);
+		addHyperlinks(LEEREN);
 		dropTarget=new PersistentObjectDropTarget("Statfilter",this,new DropReceiver());
 
 	}
@@ -72,11 +73,18 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		}
 	}
 	
+	public void reset(){
+		parseError=false;
+	}
 	/**
 	 * We select the Patient with an AND operation running over all filter conditions
 	 * If no filter was registered for a type, we use our defaultFilter
+	 * @throws Exception 
 	 */
 	public boolean select(Object toTest) {
+		if(parseError){
+			return false;
+		}
 		if(toTest instanceof Patient){
 			Patient p=(Patient)toTest;
 
@@ -89,11 +97,18 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 					}
 					if(result==IPatFilter.ACCEPT){
 						handled=true;
+					}else if(result==IPatFilter.FILTER_FAULT){
+						parseError=true;
 					}
+					
 				}
 				if(!handled){
-					if(defaultFilter.accept(p, cond)==IPatFilter.REJECT){
+					int result=defaultFilter.accept(p, cond);
+					if(result==IPatFilter.REJECT){
 						return false;
+					}
+					if(result==IPatFilter.FILTER_FAULT){
+						parseError=true;
 					}
 				}
 
@@ -117,12 +132,15 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		public static final int ACCEPT=1;
 		/** We do not handle this type of filter object */
 		public static final int DONT_HANDLE=0;
+		/** We encountered an error while trying to filter */
+		public static final int FILTER_FAULT=-2;
 		
 		/**
 		 * Will the Patient be accepted for the Filter depending on the Object? 
 		 * @param p The Patient to consider
 		 * @param o The Object to check
 		 * @return one of REJECT, ACCEPT, DONT_HANDLE
+		 * @throws Exception 
 		 */
 		public int accept(Patient p, PersistentObject o);
 	}

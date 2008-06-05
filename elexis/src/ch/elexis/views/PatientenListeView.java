@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4004 2008-06-05 05:22:34Z rgw_ch $
+ * $Id: PatientenListeView.java 4005 2008-06-05 12:14:42Z rgw_ch $
  *******************************************************************************/
 
 
@@ -41,11 +41,9 @@ import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Etikette;
-import ch.elexis.data.FilterFactory;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Reminder;
-import ch.elexis.data.FilterFactory.Filter;
 import ch.elexis.dialogs.PatientErfassenDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.CommonViewer;
@@ -229,6 +227,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				if(filterAction.isChecked()){
 					gd.heightHint=80;
 					//gd.minimumHeight=15;
+					plfb.reset();
 		 			loader.getQuery().addPostQueryFilter(plfb);
 				}else{
 					gd.heightHint=0;

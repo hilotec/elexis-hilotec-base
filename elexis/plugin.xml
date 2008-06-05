@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 3991 2008-06-01 13:32:22Z rgw_ch $ 
+<!-- $Id: plugin.xml 4005 2008-06-05 12:14:42Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -406,6 +406,11 @@
             icon="rsc/person.ico"
             id="ch.elexis.PatDetail_v2"
             name="Patient Detail (v2)">
+      </view>
+      <view
+            class="ch.elexis.views.ScriptView"
+            id="ch.elexis.scriptsView"
+            name="Script">
       </view>
    </extension>
    <extension

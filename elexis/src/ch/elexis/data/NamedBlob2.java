@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob2.java 3786 2008-04-19 09:57:12Z rgw_ch $
+ *  $Id: NamedBlob2.java 4005 2008-06-05 12:14:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -32,7 +32,7 @@ public class NamedBlob2 extends PersistentObject {
 	 * @return the contents
 	 */
 	public byte[] getBytes(){
-		byte[] comp=getBinary("inhalt");
+		byte[] comp=getBinary("Contents");
 		if((comp==null) || (comp.length==0)){
 			return null;
 		}
@@ -46,7 +46,7 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	public void putBytes(byte[] in){
 		byte[] comp=CompEx.Compress(in, CompEx.ZIP);
-		setBinary("inhalt", comp);
+		setBinary("Contents", comp);
 		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
@@ -56,7 +56,7 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public Hashtable getHashtable(){
-		return getHashtable("inhalt");
+		return getHashtable("Contents");
 	}
 	/**
 	 * Put the contents as Hashtable. The Hashtable will be compressed
@@ -64,7 +64,7 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void put(final Hashtable in){
-		setHashtable("inhalt",in);
+		setHashtable("Contents",in);
 		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	/**
@@ -72,7 +72,7 @@ public class NamedBlob2 extends PersistentObject {
 	 * @return the previously stored string. 
 	 */
 	public String getString(){
-		byte[] comp=getBinary("inhalt");
+		byte[] comp=getBinary("Contents");
 		if((comp==null) || (comp.length==0)){
 			return "";
 		}
@@ -91,7 +91,7 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	public void putString(final String string){
 		byte[] comp=CompEx.Compress(string, CompEx.ZIP);
-		setBinary("inhalt", comp);
+		setBinary("Contents", comp);
 		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	@Override
@@ -105,7 +105,7 @@ public class NamedBlob2 extends PersistentObject {
 	}
 	
 	static{
-		addMapping(TABLENAME,"inhalt=Contents","Datum=S:D:datum","lastupdate");
+		addMapping(TABLENAME,"Contents","Datum=S:D:datum","lastupdate");
 	}
 
 	/** 
@@ -137,8 +137,8 @@ public class NamedBlob2 extends PersistentObject {
 		}
 		return ni;
 	}
-	private NamedBlob2(){};
-	private NamedBlob2(final String id){
+	protected NamedBlob2(){};
+	protected NamedBlob2(final String id){
 		super(id);
 	}
 
