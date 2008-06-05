@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4003 2008-06-04 18:35:52Z rgw_ch $
+ * $Id: PatientenListeView.java 4004 2008-06-05 05:22:34Z rgw_ch $
  *******************************************************************************/
 
 
@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -43,7 +42,6 @@ import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.FilterFactory;
-import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Reminder;
@@ -54,8 +52,6 @@ import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.LazyContentProvider;
-import ch.elexis.util.ListDisplay;
-import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
@@ -69,7 +65,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     private AbstractDataLoaderJob loader;
     private ViewMenus menus;
     private IAction filterAction,newPatAction;
-    Filter patFilter;
+    // Filter patFilter;
     private Patient actPatient;
     //private SortedSet<Reminder> myReminders;
     PatListFilterBox plfb;
@@ -138,8 +134,8 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         menus.createToolbar(newPatAction,filterAction);
         menus.createControlContextMenu(cv.getViewerWidget().getControl(), new PatientMenuPopulator(this));
         ((LazyContentProvider)vc.getContentProvider()).startListening();
-        patFilter=FilterFactory.createFilter(Patient.class,"Diagnosen","PersAnamnese","SystemAnamnese","Dauermedikation",
-        		"Allergien","Risiken","Bemerkung","PatientNr","Strasse","Ort");
+        //patFilter=FilterFactory.createFilter(Patient.class,"Diagnosen","PersAnamnese","SystemAnamnese","Dauermedikation",
+        //		"Allergien","Risiken","Bemerkung","PatientNr","Strasse","Ort");
         GlobalEvents.getInstance().addActivationListener(this,this);
 		GlobalEvents.getInstance().addUserListener(this);
 		
@@ -227,10 +223,13 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
                 loader.invalidate();
                 cv.notify(CommonViewer.Message.update);
 				*/
+			 	loader.getQuery().removePostQueryFilter(plfb);
+
 				GridData gd=(GridData)plfb.getLayoutData();
 				if(filterAction.isChecked()){
 					gd.heightHint=80;
 					//gd.minimumHeight=15;
+		 			loader.getQuery().addPostQueryFilter(plfb);
 				}else{
 					gd.heightHint=0;
 				}
