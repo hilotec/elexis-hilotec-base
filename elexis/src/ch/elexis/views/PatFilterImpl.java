@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4006 2008-06-05 16:17:52Z rgw_ch $
+ * $Id: PatFilterImpl.java 4007 2008-06-05 16:57:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -16,6 +16,7 @@ package ch.elexis.views;
 import java.util.List;
 
 import ch.elexis.data.Artikel;
+import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.Fall;
 import ch.elexis.data.IDiagnose;
@@ -40,7 +41,13 @@ public class PatFilterImpl implements IPatFilter {
 
 	public int accept(Patient p, PersistentObject o){
 		if(o instanceof Kontakt){
-			// 
+			Query<BezugsKontakt> qbe=new Query<BezugsKontakt>(BezugsKontakt.class);
+			qbe.add("myID", "=", p.getId());
+			qbe.add("otherID", "=", o.getId());
+			if(qbe.execute().size()>0){
+				return ACCEPT;
+			}
+			return REJECT;
 		}else if(o instanceof IVerrechenbar){
 			IVerrechenbar iv=(IVerrechenbar)o;
 			Fall[] faelle=p.getFaelle();
