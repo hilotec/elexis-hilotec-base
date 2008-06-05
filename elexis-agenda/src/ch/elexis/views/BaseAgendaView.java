@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 3956 2008-05-23 10:57:43Z rgw_ch $
+ *  $Id: BaseAgendaView.java 4008 2008-06-05 19:20:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -378,7 +378,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		exportAction=new Action("Agenda exportieren"){
 			{
 				setToolTipText("Termine eines Bereichs exportieren");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EXPORT));
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_GOFURTHER));
 			}
 			@Override
 			public void run(){
