@@ -96,6 +96,8 @@ public class Desk implements IApplication {
     /** exporting items */
     public static final String IMG_EXPORT="export"; //$NON-NLS-1$
     
+    public static final String IMG_GOFURTHER="gofurther"; //$NON-NLS-1$
+    
     /** the 48x48 pixel version of the elexis(tm) logo */
     public static final String IMG_LOGO48="elexislogo48"; //$NON-NLS-1$
     /** editing an item */
@@ -213,7 +215,8 @@ public class Desk implements IApplication {
 		        theImageRegistry.put(IMG_REFRESH, Hub.getImageDescriptor(imageBase+"refresh.ico")); //$NON-NLS-1$
 		        theImageRegistry.put(IMG_WIZARD, Hub.getImageDescriptor(imageBase+"wizard.ico")); //$NON-NLS-1$
 		        theImageRegistry.put(IMG_ADDITEM, Hub.getImageDescriptor(imageBase+"add.gif")); //$NON-NLS-1$
-		        theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor(imageBase+"page_go.png")); //$NON_NLS-1$
+		        theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor(imageBase+"export.ico")); //$NON_NLS-1$		        
+		        theImageRegistry.put(IMG_GOFURTHER, Hub.getImageDescriptor(imageBase+"page_go.png")); //$NON_NLS-1$
 		        theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor(imageBase+"ausrufez.png")); //$NON_NLS-1$
 		        theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor(imageBase+"ausrufez_rot.ico")); //$NON_NLS-1$
 		        theImageRegistry.put(IMG_REMOVEITEM, Hub.getImageDescriptor(imageBase+"minus.ico")); //$NON_NLS-1$

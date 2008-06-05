@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 3918 2008-05-13 16:13:09Z rgw_ch $
+ * $Id: RnActions.java 4009 2008-06-05 19:20:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -160,7 +160,7 @@ public class RnActions {
 		rnExportAction=new Action(Messages.getString("RechnungsListeView.printAction")){ //$NON-NLS-1$
 			{
 				setToolTipText(Messages.getString("RechnungsListeView.printToolTip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EXPORT));
+				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_GOFURTHER));
 			}
 			@Override
 			public void run(){
