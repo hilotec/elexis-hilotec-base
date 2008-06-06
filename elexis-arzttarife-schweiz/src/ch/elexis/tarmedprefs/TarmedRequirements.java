@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 3995 2008-06-02 05:22:20Z rgw_ch $
+ * $Id: TarmedRequirements.java 4012 2008-06-06 12:57:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -162,6 +162,9 @@ public class TarmedRequirements {
 	
 	public static String getGesetz(final Fall fall) {
 		String billingSystem=fall.getAbrechnungsSystem();
+		if(StringTool.isNothing(billingSystem)){
+			billingSystem=Fall.getAbrechnungsSysteme()[0];
+		}
 		String gesetz=fall.getRequiredString("Gesetz");
 		if(gesetz.length()==0){
 			gesetz=Fall.getBillingSystemConstant(billingSystem, CASE_LAW);
