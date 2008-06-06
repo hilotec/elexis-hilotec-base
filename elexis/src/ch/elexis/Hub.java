@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 3992 2008-06-01 13:43:13Z rgw_ch $
+ *    $Id: Hub.java 4011 2008-06-06 12:57:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -271,9 +271,10 @@ public class Hub extends AbstractUIPlugin {
 				sb.append("  -  Kein Patient ausgewählt");
 			}else{
 				String nr=pat.getPatCode();
-				int act=new TimeTool().get(TimeTool.YEAR);
-				int patg=new TimeTool(pat.getGeburtsdatum()).get(TimeTool.YEAR);
-				int alter=act-patg;
+				//int act=new TimeTool().get(TimeTool.YEAR);
+				//int patg=new TimeTool(pat.getGeburtsdatum()).get(TimeTool.YEAR);
+				//int alter=act-patg;
+				String alter=pat.getAlter();
 				sb.append("  / ").append(pat.getLabel())
 					.append("(").append(alter).append(") - ")
 					.append("[").append(nr).append("]");
@@ -312,7 +313,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 3992 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4011 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
