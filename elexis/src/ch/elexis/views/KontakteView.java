@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 3724 2008-03-14 16:13:21Z rgw_ch $
+ * $Id: KontakteView.java 4010 2008-06-06 08:02:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -46,7 +46,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	private String[] fields={"Kuerzel","Bezeichnung1","Bezeichnung2","Strasse","Plz","Ort"};
 	private ViewMenus menu;
 	
-    ListLoader dataloader=new ListLoader("Kontakte",new Query<Kontakt>(Kontakt.class),new String[]{"Bezeichnung1"});
+    ListLoader dataloader=new ListLoader("Kontakte",new Query<Kontakt>(Kontakt.class),new String[]{"Bezeichnung1","Bezeichnung2"});
 	
     public KontakteView() {
         Hub.jobPool.addJob(dataloader);
