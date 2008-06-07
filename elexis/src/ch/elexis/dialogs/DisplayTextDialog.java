@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DisplayTextDialog.java 2524 2007-06-17 15:18:50Z rgw_ch $
+ *  $Id: DisplayTextDialog.java 4013 2008-06-07 06:18:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -24,7 +24,6 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.util.SWTHelper;
 
@@ -40,7 +39,7 @@ public class DisplayTextDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		ScrolledForm form=Desk.theToolkit.createScrolledForm(parent);
+		ScrolledForm form=Desk.getToolkit().createScrolledForm(parent);
 		form.getBody().setLayout(new GridLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Control ret=null;
@@ -60,11 +59,11 @@ public class DisplayTextDialog extends TitleAreaDialog {
 			cnt=cnt.replaceAll("\\\\\\.BR\\\\", "<br/>");
 			cnt=cnt.replaceAll("\\n\\n", "\\n");
 
-			ret=Desk.theToolkit.createFormText(form.getBody(),false);
+			ret=Desk.getToolkit().createFormText(form.getBody(),false);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			((FormText)ret).setText("<form>"+cnt+"</form>", true, true);
 		}
-		SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),getShell());
+		SWTHelper.center(Desk.getTopShell(),getShell());
 		return ret;
 	}
 
@@ -74,7 +73,7 @@ public class DisplayTextDialog extends TitleAreaDialog {
 		getShell().setText(t);
 		setTitle(GlobalEvents.getSelectedPatient().getLabel());
 		setMessage(m);
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		
 	}	
 	

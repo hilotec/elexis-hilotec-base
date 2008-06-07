@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 4013 2008-06-07 06:18:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,7 +21,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 
-import ch.elexis.Hub;
+import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.dialogs.AddElementToBlockDialog;
 import ch.elexis.util.IOptifier;
@@ -134,7 +134,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 		addToBlockAction=new Action("Zu Leistungsblock..."){
 			@Override
 			public void run(){
-				AddElementToBlockDialog adb=new AddElementToBlockDialog(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
+				AddElementToBlockDialog adb=new AddElementToBlockDialog(Desk.getTopShell());
 				if(adb.open()==Dialog.OK){
 					ICodeElement ice=(ICodeElement) GlobalEvents.getInstance().getSelectedObject(el.getClass());
 					Leistungsblock lb=adb.getResult();

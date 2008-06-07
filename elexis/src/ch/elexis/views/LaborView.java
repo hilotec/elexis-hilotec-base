@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 3931 2008-05-16 17:25:35Z rgw_ch $
+ *  $Id: LaborView.java 4013 2008-06-07 06:18:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -106,9 +106,9 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	
 	final static int NUMCOLUMNS=7;			// Pro Seite angezeigte Laborspalten 
 	final static int COL_OFFSET=2;			// Für Information benötigte Spalten
-	final static Color COL_PATHOLOGIC=Desk.theColorRegistry.get(Desk.COL_RED);
-	final static Color COL_REMARK=Desk.theColorRegistry.get(Desk.COL_BLUE);
-	final static Color COL_BACKGND=Desk.theColorRegistry.get(Desk.COL_WHITE);
+	final static Color COL_PATHOLOGIC=Desk.getColor(Desk.COL_RED);
+	final static Color COL_REMARK=Desk.getColor(Desk.COL_BLUE);
+	final static Color COL_BACKGND=Desk.getColor(Desk.COL_WHITE);
 	int	actPage;							// Aktuell angezeigte Seite
 	int firstColumn, lastColumn;			// Erste und letzte Datumspalte der aktuellen Seite
 	Patient actPatient;						// Aktuell ausgewählter Patient
@@ -129,7 +129,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	
 	private Action fwdAction, backAction, printAction, importAction, xmlAction, newAction, setStateAction;
 	private ViewMenus menu;
-	private final FormToolkit tk=Desk.theToolkit;
+	private final FormToolkit tk=Desk.getToolkit();
 	private Form form;
 	// Formula handling
 	private final Pattern varsPattern=Pattern.compile("[a-zA-Z0-9]+_[0-9]+");
@@ -913,7 +913,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 
 	public void reloadContents(final Class clazz) {
 		if(clazz.equals(LabItem.class)){
-			Desk.theDisplay.asyncExec(new Runnable(){
+			Desk.getDisplay().asyncExec(new Runnable(){
 				public void run() {
 					rebuild();		
 				}
