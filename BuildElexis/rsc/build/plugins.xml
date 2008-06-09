@@ -75,6 +75,8 @@
     
     <!-- These plugins are not part of the standard distribution -->
     <target name="elexis-pro" depends="options">
+        <available file="../omnivore-direct/build.xml" property="omnivoredirect.ok"/>
+          <antcall target="omnivoredirect"/>
         
         <available file="../elexis-h-net/build.xml" property="hnet.ok"/>
             <antcall target="hnet"/>
@@ -122,6 +124,7 @@
             <antcall target="mythic"/>
         <available file="../elexis-connect-abxmicros/build.xml" property="abxmicros.ok"/>
           <antcall target="abxmicros"/>
+
     </target>
     
         <target name="logolab" if="logolab.ok">
@@ -265,5 +268,10 @@
     <target name="mythic" if="mythic.ok">
         <ant antfile="../elexis-connect-mythic/build.xml"/>
     </target>
+	
+	<target name="omnivoredirect" if="omnivoredirect.ok">
+		 <ant antfile="../omnivore-direct/build.xml"/>
+	</target>
+	
     <target name="all"/>
 </project>
