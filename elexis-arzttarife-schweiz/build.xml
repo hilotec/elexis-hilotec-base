@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 3005 2007-08-21 21:37:43Z rgw_ch $
+ * $Id: build.xml 4016 2008-06-09 16:24:15Z rgw_ch $
 -->
 <project name="elexis-arzttarife-schweiz" default="all">
 	<property name="sourcedir" value="${source}/elexis-arzttarife-schweiz/"/>
@@ -43,6 +43,7 @@
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
 		<copy file="${sourcedir}/createDB.script" tofile="${plugindir}/createDB.script"/>
 		<tstamp/>
+	    <ant antfile="../BuildElexis/rsc/build/build.xml" target="texify"/>
 		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.elexis.arzttarife_ch_${version}.${DSTAMP}.zip"/>
 	</target>
 </project>

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 3989 2008-06-01 12:02:22Z rgw_ch $
+ * $Id: XMLExporter.java 4016 2008-06-09 16:24:15Z rgw_ch $
  *******************************************************************************/
 
 
@@ -299,7 +299,18 @@ public class XMLExporter implements IRnOutputter {
 		String iEAN=TarmedRequirements.getIntermediateEAN(actFall);
 		
 		Element intermediate=new Element("intermediate",ns);							// 10052
-		intermediate.setAttribute("ean_party",iEAN.length()==0 ? rEAN : iEAN);
+		if(iEAN.length()==0){
+			if(!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
+				if(kEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
+					iEAN=kEAN;
+				}else{
+					iEAN=TarmedRequirements.EAN_PSEUDO;
+				}
+			}else{
+				iEAN=rEAN;
+			}
+		}
+		intermediate.setAttribute("ean_party",iEAN);
 		
 		Element recipient=new Element("recipient",ns);									// 10053
 		recipient.setAttribute("ean_party",rEAN);
