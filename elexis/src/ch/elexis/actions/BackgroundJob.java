@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BackgroundJob.java 1131 2006-10-19 13:56:13Z rgw_ch $
+ * $Id: BackgroundJob.java 4014 2008-06-09 15:17:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -96,9 +96,10 @@ public abstract class BackgroundJob extends Job {
 
     protected void fireFinished(){
         log.log(Messages.getString("BackgroundJob.2")+jobname,Log.INFOS); //$NON-NLS-1$
-        Desk.theDisplay.syncExec(new Runnable(){
+        Desk.getDisplay().syncExec(new Runnable(){
             public void run()
-            {   for(BackgroundJobListener l:listeners){
+            {   LinkedList<BackgroundJobListener> lCopy=new LinkedList<BackgroundJobListener>(listeners);
+            	for(BackgroundJobListener l:lCopy){
                     l.jobFinished(self);
                 }
             }
@@ -112,9 +113,9 @@ public abstract class BackgroundJob extends Job {
      */
     public void addListener(BackgroundJobListener l)
     {
-    	if(!listeners.contains(l)){
-    		listeners.add(l);
-    	}
+    		if(!listeners.contains(l)){
+    			listeners.add(l);
+    		}
     }
     /**
      * Einen Listener wieder entfernen. Dies ist z.B. notwendig, wenn ein
@@ -123,7 +124,7 @@ public abstract class BackgroundJob extends Job {
      */
     public void removeListener(BackgroundJobListener l)
     {
-        listeners.remove(l);
+    		listeners.remove(l);
     }
     
     /** Anfragen, ob dieser Job mindestens einmal korrekt beendet wurde */
