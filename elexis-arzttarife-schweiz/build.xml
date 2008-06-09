@@ -9,9 +9,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 4016 2008-06-09 16:24:15Z rgw_ch $
+ * $Id: build.xml 4017 2008-06-09 17:00:21Z rgw_ch $
 -->
 <project name="elexis-arzttarife-schweiz" default="all">
+   <property name="pluginname" value="elexis-arzttarife-schweiz"/>
 	<property name="sourcedir" value="${source}/elexis-arzttarife-schweiz/"/>
 	<property name="plugindir" value="${dist}/plugins/ch.elexis.arzttarife_ch_${version}"/>
 	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
