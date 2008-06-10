@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRFile.java 3984 2008-05-31 19:23:32Z rgw_ch $
+ *  $Id: ESRFile.java 4018 2008-06-10 16:05:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,10 +58,20 @@ public class ESRFile {
 			BufferedReader br=new BufferedReader(ir);
 			String in;
 			//String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
+			LinkedList<String> records=new LinkedList<String>();
 			while((in=br.readLine())!=null){
-				monitor.worked(1);
-				ESRRecord esr=new ESRRecord(name,in);
+				for(int i=0;i<in.length();i+=128){
+					int eidx=i+125;
+					if(eidx>=in.length()){
+						eidx=in.length()-1;
+					}
+					records.add(in.substring(i, eidx));
+				}
+			}
+			for(String s:records){
+				ESRRecord esr=new ESRRecord(name,s);
 				list.add(esr);
+				monitor.worked(1);
 			}
 			return new Result<List<ESRRecord>>(0,0,"OK",list,false);
 			

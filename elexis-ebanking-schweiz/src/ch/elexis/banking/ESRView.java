@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 3984 2008-05-31 19:23:32Z rgw_ch $
+ *  $Id: ESRView.java 4018 2008-06-10 16:05:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -43,14 +42,27 @@ import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.*;
-import ch.elexis.util.*;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
+import ch.elexis.util.CommonViewer;
+import ch.elexis.util.DefaultControlFieldProvider;
+import ch.elexis.util.LazyContentProvider;
+import ch.elexis.util.Log;
+import ch.elexis.util.Money;
+import ch.elexis.util.Result;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SimpleWidgetProvider;
+import ch.elexis.util.ViewMenus;
+import ch.elexis.util.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ESRView extends ViewPart implements ActivationListener{
+public class ESRView extends ViewPart implements ActivationListener, UserListener{
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
@@ -68,6 +80,7 @@ public class ESRView extends ViewPart implements ActivationListener{
 	public void dispose(){
 		Hub.acl.revokeFromSelf(DISPLAY_ESR);
 		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
+		GlobalEvents.getInstance().removeUserListener(this);
 	}
 	
 	@Override
@@ -105,7 +118,7 @@ public class ESRView extends ViewPart implements ActivationListener{
 			
 		});
 		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
-		
+		GlobalEvents.getInstance().addUserListener(this);
 	}
 
 	@Override
@@ -188,7 +201,7 @@ public class ESRView extends ViewPart implements ActivationListener{
 			qbe.clear();
 			if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
 				if(Hub.actMandant==null){
-					return null;
+					return Status.CANCEL_STATUS;
 				}
 				qbe.startGroup();
 				qbe.add("MandantID", "=", Hub.actMandant.getId());
@@ -278,7 +291,7 @@ public class ESRView extends ViewPart implements ActivationListener{
 						SWTHelper.showError("Fehler beim ESR-Einlesen", "Fehler beim ESR-Einlesen", "Die Datei konnte nicht eingelesen werden "+e.getMessage()+e.getCause().getMessage());
 					} catch (InterruptedException e) {
 						ExHandler.handle(e);
-						SWTHelper.showError("ESR interupted", "Das Einlesen wurde unterbrochen",e.getMessage());
+						SWTHelper.showError("ESR interrupted", "Das Einlesen wurde unterbrochen",e.getMessage());
 					}
 					
 				}
@@ -295,6 +308,10 @@ public class ESRView extends ViewPart implements ActivationListener{
 
 	public void visible(boolean mode) {
 		esrl.activate(mode);
+	}
+
+	public void UserChanged() {
+		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT);
 	}
 
 }
