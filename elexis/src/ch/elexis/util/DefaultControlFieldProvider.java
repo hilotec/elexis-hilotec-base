@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 3692 2008-02-19 19:54:29Z danlutz $
+ *  $Id: DefaultControlFieldProvider.java 4019 2008-06-10 16:05:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -39,7 +39,6 @@ import ch.elexis.data.Query;
 import ch.elexis.text.ElexisText;
 import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.ViewerConfigurer.ControlFieldProvider;
-import ch.elexis.views.View;
 import ch.rgw.tools.StringTool;
 
 /** 
@@ -79,7 +78,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
         ml=new ModListener();
         sl=new SelListener();
         listeners=new LinkedList<ControlFieldListener>();
-        tk=Desk.theToolkit;
+        tk=Desk.getToolkit();
 	}
 	public Composite createControl(final Composite parent) {
             Form form=tk.createForm(parent);
@@ -179,7 +178,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
 
     public void fireChangedEvent(){
     	if(!bCeaseFire){
-	    	Desk.theDisplay.syncExec(new Runnable(){
+	    	Desk.getDisplay().syncExec(new Runnable(){
 				public void run() {
 					for(ControlFieldListener lis:listeners){
 			    		lis.changed(fields,lastFiltered);

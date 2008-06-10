@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 3481 2007-12-26 08:18:56Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 4019 2008-06-10 16:05:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -58,7 +58,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     @Override
     public void initialize(final IWorkbenchConfigurer configurer)
     {
-        loginshell=new Shell(Desk.theDisplay);
+        loginshell=new Shell(Desk.getDisplay());
         Log.setAlert(loginshell);
         if(PersistentObject.connect(Hub.localCfg)==false){
             Log.setAlertLevel(Log.ERRORS);
@@ -99,7 +99,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         //Hub.jobPool.queue("Plz");
         Hub.jobPool.queue("Anschriften");
     
-        Hub.pin.initializeDisplayPreferences(Desk.theDisplay);
+        Hub.pin.initializeDisplayPreferences(Desk.getDisplay());
         configurer.setSaveAndRestore(true);
         Log.setAlert(null);
         super.initialize(configurer);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 4010 2008-06-06 08:02:58Z rgw_ch $
+ * $Id: KontakteView.java 4019 2008-06-10 16:05:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -142,6 +142,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	public void selected() {
     	StructuredViewer viewer = cv.getViewerWidget();
     	Object[] elements = cv.getConfigurer().getContentProvider().getElements(viewer.getInput());
+    	
     	if (elements != null && elements.length > 0) {
     		Object element = elements[0];
     		/*

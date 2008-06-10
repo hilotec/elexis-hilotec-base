@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 3135 2007-09-10 19:33:59Z rgw_ch $
+ *    $Id: ViewerConfigurer.java 4019 2008-06-10 16:05:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -62,7 +63,7 @@ public class ViewerConfigurer{
         widgetProvider=wp;
     }
 
-    public interface CommonContentProvider extends IStructuredContentProvider,ControlFieldListener{
+    public interface CommonContentProvider extends IStructuredContentProvider, ControlFieldListener{
     	public void startListening();
     	public void stopListening();
     }
