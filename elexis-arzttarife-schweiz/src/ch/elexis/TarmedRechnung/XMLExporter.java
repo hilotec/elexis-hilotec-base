@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4016 2008-06-09 16:24:15Z rgw_ch $
+ * $Id: XMLExporter.java 4020 2008-06-10 17:37:14Z rgw_ch $
  *******************************************************************************/
 
 
@@ -393,6 +393,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		TimeTool ttFirst=new TimeTool("2100-12-12");
 		TimeTool ttLast=new TimeTool("2000-01-01");
+		int recordNumber=1;
 		for(Konsultation b:lb){
 			List<IDiagnose> ld=b.getDiagnosen();
 			for(IDiagnose dg:ld){
@@ -417,7 +418,7 @@ public class XMLExporter implements IRnOutputter {
 			}else{
 				sessionNumber=1;
 			}
-			int recordNumber=1;
+
 			lastDate=dateShort;
 			//unit.mt x unit_factor.mt x scale_factor.mt x external_factor.mt x quantity = amount.mt
 			// unit.tt x unit_factor.tt x scale_factor.tt x external_factor.tt x quantity = amount.tt
