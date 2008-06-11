@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4020 2008-06-10 17:37:14Z rgw_ch $
+ * $Id: XMLExporter.java 4026 2008-06-11 14:12:17Z michael_imhof $
  *******************************************************************************/
 
 
@@ -153,6 +153,9 @@ public class XMLExporter implements IRnOutputter {
 			SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
 				public Control getControl(Composite parent) {
 					return createSettingsControl(parent);
+				}
+				public void beforeClosing() {
+					// Nothing
 				}
 			});
 			if(dlg.open()!=Dialog.OK){
@@ -1085,5 +1088,9 @@ public class XMLExporter implements IRnOutputter {
 			}
 		}
 		return false;
+	}
+	
+	public void saveComposite() {
+		// Nothing
 	}
 }

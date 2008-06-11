@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3942 2008-05-21 08:09:41Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4026 2008-06-11 14:12:17Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -35,7 +35,6 @@ import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Fall;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.tarmedprefs.PreferenceConstants;
@@ -56,6 +55,8 @@ public class RechnungsDrucker implements IRnOutputter{
 	String dirname=Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, null);
 	Text tName;
 	
+	private boolean bESRSelected, bFormsSelected, bIgnoreFaultsSelected, bSaveFileAsSelected;
+	
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rechnungen) {
 		
 		rnPage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -72,8 +73,8 @@ public class RechnungsDrucker implements IRnOutputter{
 			        	 int errors=0;
 			        	 for(Rechnung rn:rechnungen){
 			        		try{
-				 				if(rnp.doPrint(rn,type, bSaveFileAs.getSelection() ? dirname+File.separator+rn.getNr()+".xml"
-				 						: null, bESR.getSelection(),bForms.getSelection(), !bIgnoreFaults.getSelection(),monitor)==false){
+				 				if(rnp.doPrint(rn,type, bSaveFileAsSelected ? dirname+File.separator+rn.getNr()+".xml"
+				 						: null, bESRSelected,bFormsSelected, !bIgnoreFaultsSelected,monitor)==false){
 				 					String errms=Messages.RechnungsDrucker_TheBill+rn.getNr()+Messages.RechnungsDrucker_Couldntbeprintef;
 				 					res.add(Log.ERRORS, 1, errms, rn, true);
 				 					errors++;
@@ -183,5 +184,12 @@ public class RechnungsDrucker implements IRnOutputter{
 
 	public boolean canBill(final Fall fall) {
 		return true;
+	}
+	
+	public void saveComposite() {
+		bESRSelected = bESR.getSelection();
+		bFormsSelected = bForms.getSelection();
+		bIgnoreFaultsSelected = bIgnoreFaults.getSelection();
+		bSaveFileAsSelected = bSaveFileAs.getSelection();
 	}
 }
