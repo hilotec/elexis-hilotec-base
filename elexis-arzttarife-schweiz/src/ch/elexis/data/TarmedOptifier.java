@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4032 2008-06-11 16:59:12Z rgw_ch $
+ * $Id: TarmedOptifier.java 4034 2008-06-11 17:47:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -178,22 +178,27 @@ public class TarmedOptifier implements IOptifier {
 
 			String tcid=code.getCode();
 
+			double factor=PersistentObject.checkZeroDouble(check.get("VK_Scale"));
 // Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
 			if(tcid.equals("35.0020")){
+				double sum=0.0;
 				for(Verrechnet v:lst){
 					if(v.getVerrechenbar() instanceof TarmedLeistung){
 						TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
 						if(tl.getSparteAsText().equals("OP I")){
-							
+							int tech=tl.getTL();
+							double abzug=tech*4.0/10.0;
+							sum-=abzug;
 						}
 					}
 				}
+				sum=sum*factor/100.0;
+				check.setPreis(new Money(sum));
 			}
 //Notfall-Zuschläge
-			Money sum=new Money(0);
 			if(tcid.startsWith("00.25")){ //$NON-NLS-1$
+				Money sum=new Money(0);
 				int subcode=Integer.parseInt(tcid.substring(5));
-				double factor=PersistentObject.checkZeroDouble(check.get("VK_Scale"));
 				switch(subcode){
 				case 10:	// Mo-Fr 7-19, Sa 7-12: 60 TP
 					break;
