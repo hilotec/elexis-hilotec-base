@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 3483 2007-12-29 12:01:11Z rgw_ch $
+ *  $Id: TrustXTransmit.java 4029 2008-06-11 14:14:52Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -254,6 +254,10 @@ public class TrustXTransmit implements IRnOutputter{
 
 	public boolean canBill(final Fall fall) {
 		return true;
+	}
+	
+	public void saveComposite() {
+		// Nothing
 	}
 
 }
