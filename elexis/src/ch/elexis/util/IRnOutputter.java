@@ -67,5 +67,11 @@ public interface IRnOutputter {
 	 * @return
 	 */
 	public Control createSettingsControl(Composite parent);
+	
+	/**
+	 * Methode is called before dialog is closed. Used to save the widget contents
+	 * before the composite is disposed;
+	 */
+	public void saveComposite();
 
 }
