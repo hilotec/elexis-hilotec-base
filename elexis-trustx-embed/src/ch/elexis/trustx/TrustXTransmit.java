@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 4029 2008-06-11 14:14:52Z michael_imhof $
+ *  $Id: TrustXTransmit.java 4031 2008-06-11 16:58:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -259,5 +259,6 @@ public class TrustXTransmit implements IRnOutputter{
 	public void saveComposite() {
 		// Nothing
 	}
+
 
 }
