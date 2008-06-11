@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3861 2008-05-05 16:13:11Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4028 2008-06-11 14:14:34Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -35,7 +35,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
-import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
@@ -44,8 +43,6 @@ import ch.rgw.tools.ExHandler;
 
 public class RechnungsDrucker implements IRnOutputter {
 	String templateESR,templateBill;
-	
-	TextContainer tc;
 	
 	/**
 	 * We'll take all sorts of bills
@@ -102,7 +99,6 @@ public class RechnungsDrucker implements IRnOutputter {
 	 */
 	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn) {
 		IWorkbenchPage rnPage;
-		IProgressMonitor monitor;
 		final Result<Rechnung> result=new Result<Rechnung>(); //=new Result<Rechnung>(Log.ERRORS,99,"Not yet implemented",null,true);
 		rnPage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
@@ -168,6 +164,8 @@ public class RechnungsDrucker implements IRnOutputter {
 		return "Privatrechnung auf Drucker";
 	}
 
-	
+	public void saveComposite() {
+		// Nothing
+	}
 	
 }
