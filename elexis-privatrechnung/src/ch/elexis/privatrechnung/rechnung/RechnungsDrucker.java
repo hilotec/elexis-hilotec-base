@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4028 2008-06-11 14:14:34Z michael_imhof $
+ * $Id: RechnungsDrucker.java 4030 2008-06-11 16:57:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -163,6 +163,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	public String getDescription() {
 		return "Privatrechnung auf Drucker";
 	}
+
 
 	public void saveComposite() {
 		// Nothing
