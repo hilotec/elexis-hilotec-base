@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4026 2008-06-11 14:12:17Z michael_imhof $
+ * $Id: XMLExporter.java 4032 2008-06-11 16:59:12Z rgw_ch $
  *******************************************************************************/
 
 
@@ -1089,7 +1089,6 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return false;
 	}
-	
 	public void saveComposite() {
 		// Nothing
 	}

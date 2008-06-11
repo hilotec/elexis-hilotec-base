@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4026 2008-06-11 14:12:17Z michael_imhof $
+ * $Id: RechnungsDrucker.java 4032 2008-06-11 16:59:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -192,4 +192,5 @@ public class RechnungsDrucker implements IRnOutputter{
 		bIgnoreFaultsSelected = bIgnoreFaults.getSelection();
 		bSaveFileAsSelected = bSaveFileAs.getSelection();
 	}
+
 }

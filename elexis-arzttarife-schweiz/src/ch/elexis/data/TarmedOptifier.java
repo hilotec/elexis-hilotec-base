@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 3780 2008-04-18 04:53:52Z rgw_ch $
+ * $Id: TarmedOptifier.java 4032 2008-06-11 16:59:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -172,10 +172,24 @@ public class TarmedOptifier implements IOptifier {
 					}
 				}
 			}
+
 			
-//Notfall-Zuschläge
+			
+
 			String tcid=code.getCode();
 
+// Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
+			if(tcid.equals("35.0020")){
+				for(Verrechnet v:lst){
+					if(v.getVerrechenbar() instanceof TarmedLeistung){
+						TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
+						if(tl.getSparteAsText().equals("OP I")){
+							
+						}
+					}
+				}
+			}
+//Notfall-Zuschläge
 			Money sum=new Money(0);
 			if(tcid.startsWith("00.25")){ //$NON-NLS-1$
 				int subcode=Integer.parseInt(tcid.substring(5));
