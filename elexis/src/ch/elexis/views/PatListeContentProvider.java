@@ -1,9 +1,12 @@
 package ch.elexis.views;
 
+import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import ch.elexis.Hub;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
@@ -35,11 +38,22 @@ public class PatListeContentProvider implements CommonContentProvider,
 		}
 	}
 
+	public void setFilter(IFilter f){
+		qbe.addPostQueryFilter(f);
+		bValid=false;
+	}
+	public void removeFilter(IFilter f){
+		qbe.removePostQueryFilter(f);
+		bValid=false;
+	}
 	public Object[] getElements(Object inputElement) {
 		if(bValid){
 			return pats;
 		}
 		qbe.clear();
+		if(!Hub.acl.request(AccessControlDefaults.PATIENT_DISPLAY)){
+			return new Object[0];
+		}
 		viewer.getConfigurer().getControlFieldProvider().setQuery(qbe);
 		String[] actualOrder;
 		int idx=StringTool.getIndex(order, firstOrder);
@@ -59,7 +73,6 @@ public class PatListeContentProvider implements CommonContentProvider,
 		qbe.orderBy(false, actualOrder);
 		pats= qbe.execute().toArray(new Patient[0]);
 		((TableViewer)viewer.getViewerWidget()).setItemCount(pats.length);
-		viewer.getViewerWidget().refresh();
 		bValid=true;
 		return pats;
 	}
@@ -78,6 +91,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 		}else{
 			viewer.notify(CommonViewer.Message.notempty);
 		}
+		viewer.notify(CommonViewer.Message.update);
 	}
 
 	public void reorder(String field) {
@@ -95,6 +109,9 @@ public class PatListeContentProvider implements CommonContentProvider,
 			getElements(viewer);
 		}
 		((TableViewer)viewer.getViewerWidget()).replace(pats[index], index);
+	}
+	public void invalidate(){
+		bValid=false;
 	}
 
 }

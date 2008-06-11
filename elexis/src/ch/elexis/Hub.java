@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4011 2008-06-06 12:57:50Z rgw_ch $
+ *    $Id: Hub.java 4021 2008-06-11 11:29:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -164,7 +164,7 @@ public class Hub extends AbstractUIPlugin {
         }
         log.log(Messages.Hub_24+getBasePath(),Log.INFOS);
  		pin.initializeDefaultPreferences();
-        jobPool.addJob(new ListLoader<Patient>("PatientenListe",new Query<Patient>(Patient.class),new String[]{"Name","Vorname"})); //$NON-NLS-1$
+        // jobPool.addJob(new ListLoader<Patient>("PatientenListe",new Query<Patient>(Patient.class),new String[]{"Name","Vorname"})); //$NON-NLS-1$
         //jobPool.addJob(new ListLoader<Plz>("Plz",new Query(Plz.class),new String[]{"Plz","Ort"}));
 
 	}
@@ -313,7 +313,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4011 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4021 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

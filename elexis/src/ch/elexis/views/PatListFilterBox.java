@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4006 2008-06-05 16:17:52Z rgw_ch $
+ * $Id: PatListFilterBox.java 4021 2008-06-11 11:29:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -86,6 +88,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	public void reset(){
 		parseError=false;
 	}
+	
 	/**
 	 * We select the Patient with an AND operation running over all filter conditions
 	 * If no filter was registered for a type, we use our defaultFilter

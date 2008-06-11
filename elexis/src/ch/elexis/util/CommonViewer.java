@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CommonViewer.java 3135 2007-09-10 19:33:59Z rgw_ch $
+ * $Id: CommonViewer.java 4021 2008-06-11 11:29:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -165,7 +165,7 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
     	if(viewer.getControl().isDisposed()){
     		return;
     	}
-    	Desk.theDisplay.asyncExec(new Runnable(){
+    	Desk.getDisplay().asyncExec(new Runnable(){
     		public void run(){
     			switch(m){
     	        case update:

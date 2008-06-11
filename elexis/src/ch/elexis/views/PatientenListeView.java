@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4019 2008-06-10 16:05:22Z rgw_ch $
+ * $Id: PatientenListeView.java 4021 2008-06-11 11:29:28Z rgw_ch $
  *******************************************************************************/
 
 
@@ -33,7 +33,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
@@ -49,7 +48,6 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
-import ch.elexis.util.LazyContentProvider;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
@@ -60,20 +58,15 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     public static final String  ID="ch.elexis.PatListView";
     private CommonViewer cv;
     private ViewerConfigurer vc;
-    //private AbstractDataLoaderJob loader;
     private ViewMenus menus;
     private IAction filterAction,newPatAction;
-    // Filter patFilter;
     private Patient actPatient;
-    //private SortedSet<Reminder> myReminders;
     PatListFilterBox plfb;
     PatListeContentProvider plcp;
     Composite parent;
     
     @Override
 	public void dispose() {
-    	//cv.getViewerWidget().removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
-    	//((LazyContentProvider)cv.getConfigurer().getContentProvider()).stopListening();
     	plcp.stopListening();
     	GlobalEvents.getInstance().removeActivationListener(this,this);
 		GlobalEvents.getInstance().removeUserListener(this);
@@ -89,7 +82,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     }
     
     public void reload(){
-    	//loader.invalidate();
     	cv.notify(CommonViewer.Message.update);
     }
 	@Override
@@ -98,7 +90,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		this.parent=parent;
 		parent.setLayout(new GridLayout());
 		cv=new CommonViewer();
-		//loader=(AbstractDataLoaderJob)Hub.jobPool.getJob("PatientenListe");
 		ArrayList<String> fields=new ArrayList<String>();
 		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR,false)){
 			fields.add("PatientNr");
@@ -135,7 +126,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         menus.createToolbar(newPatAction,filterAction);
         menus.createControlContextMenu(cv.getViewerWidget().getControl(), new PatientMenuPopulator(this));
         plcp.startListening();
-        //((LazyContentProvider)vc.getContentProvider()).startListening();
         GlobalEvents.getInstance().addActivationListener(this,this);
 		GlobalEvents.getInstance().addUserListener(this);
 		
@@ -213,17 +203,16 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
         	}
 			@Override
 			public void run() {
-			
-			 	//loader.getQuery().removePostQueryFilter(plfb);
-
 				GridData gd=(GridData)plfb.getLayoutData();
 				if(filterAction.isChecked()){
 					gd.heightHint=80;
 					//gd.minimumHeight=15;
 					plfb.reset();
-		 			//loader.getQuery().addPostQueryFilter(plfb);
+					plcp.setFilter(plfb);
+					
 				}else{
 					gd.heightHint=0;
+					plcp.removeFilter(plfb);
 				}
 				parent.layout(true);
 

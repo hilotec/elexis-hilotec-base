@@ -8,14 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 4019 2008-06-10 16:05:22Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 4021 2008-06-11 11:29:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
 import java.io.File;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
@@ -93,7 +92,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     		Hub.log.log("Error executing PreStartUpdate "+ex.getMessage(), Log.ERRORS);
     	}
 
-        Hub.jobPool.activate("PatientenListe",Job.LONG);
+        //Hub.jobPool.activate("PatientenListe",Job.LONG);
         Hub.jobPool.queue("Tarmed");
         Hub.jobPool.queue("ICD"); //$NON-NLS-1$
         //Hub.jobPool.queue("Plz");
