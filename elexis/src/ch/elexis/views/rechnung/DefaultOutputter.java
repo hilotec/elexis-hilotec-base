@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 3056 2007-09-02 07:56:00Z rgw_ch $
+ *  $Id: DefaultOutputter.java 4025 2008-06-11 14:07:10Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -65,14 +65,18 @@ public class DefaultOutputter implements IRnOutputter {
 					public Control getControl(Composite parent) {
 						return iro.createSettingsControl(parent);
 
-					}});
+					}
+					public void beforeClosing() {
+						iro.saveComposite();
+					}
+				});
 				if(dlg.open()==Dialog.OK){
 					configured.add(iro);
 				}else{
 					continue;
 				}
 			}
-			res.add(fall.getOutputter().doOutput(type, Arrays.asList(new Rechnung[]{rn})));
+			res.add(iro.doOutput(type, Arrays.asList(new Rechnung[]{rn})));
 		}
 		return null;
 	}
@@ -81,4 +85,7 @@ public class DefaultOutputter implements IRnOutputter {
 		return "Fall-Standardausgabe";
 	}
 
+	public void saveComposite() {
+		// Nothing
+	}
 }
