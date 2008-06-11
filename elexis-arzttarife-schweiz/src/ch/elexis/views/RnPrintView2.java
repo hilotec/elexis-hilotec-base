@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4022 2008-06-11 11:44:23Z rgw_ch $
+ * $Id: RnPrintView2.java 4027 2008-06-11 14:14:09Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -99,6 +99,12 @@ public class RnPrintView2 extends ViewPart {
 
 	private void createBrief(final String template, final Kontakt adressat){
 		actBrief=text.createFromTemplateName(null,template,Brief.RECHNUNG,adressat, Messages.RnPrintView_tarmedBill);	
+	}
+	private boolean deleteBrief() {
+		if (actBrief != null) {
+			return actBrief.delete();
+		}
+		return true;
 	}
 	@Override
 	public void setFocus() {
@@ -234,7 +240,7 @@ public class RnPrintView2 extends ViewPart {
 		
 			if(esr.printBESR(bank,adressat,rs,mEZDue.roundTo5().getCentsAsString(),text)==false){
 				// avoid dead letters
-				actBrief.delete();
+				deleteBrief();;
 				Hub.setMandant(mSave);
 				return false;
 			}
@@ -252,7 +258,7 @@ public class RnPrintView2 extends ViewPart {
 				SWTHelper.showError("Fehler beim Drucken", "Konnte den Drucker nicht starten");
 				rn.addTrace(Rechnung.REJECTED, "Druckerfehler");
 				// avoid dead letters
-				actBrief.delete();
+				deleteBrief();;
 				Hub.setMandant(mSave);
 				return false;
 			}
@@ -261,7 +267,7 @@ public class RnPrintView2 extends ViewPart {
 		}
 		if(withForms==false){
 			// avoid dead letters
-			actBrief.delete();
+			deleteBrief();;
 			Hub.setMandant(mSave);
 			return true;
 		}
@@ -382,7 +388,7 @@ public class RnPrintView2 extends ViewPart {
 				dLine = XMLTool.xmlDoubleToMoney(am).getAmount();
 			} catch (NumberFormatException ex) {
 				// avoid dead letters
-				actBrief.delete();
+				deleteBrief();;
 				log.log("Fehlerhaftes Format für amount bei "+sb.toString(), Log.ERRORS);
 				Hub.setMandant(mSave);
 				return false;
@@ -424,7 +430,7 @@ public class RnPrintView2 extends ViewPart {
 				
 				if(text.getPlugin().print(printer,tarmedTray, false)==false){
 					// avoid dead letters
-					actBrief.delete();
+					deleteBrief();;
 					Hub.setMandant(mSave);
 					return false;
 				}
@@ -443,7 +449,7 @@ public class RnPrintView2 extends ViewPart {
 			}
 			if(text.getPlugin().print(printer,tarmedTray, false)==false){
 				// avoid dead letters
-				actBrief.delete();
+				deleteBrief();;
 				Hub.setMandant(mSave);
 				return false;
 			}
@@ -503,13 +509,13 @@ public class RnPrintView2 extends ViewPart {
 		
 		if(text.getPlugin().print(printer,tarmedTray, false)==false){
 			// avoid dead letters
-			actBrief.delete();
+			deleteBrief();;
 			Hub.setMandant(mSave);
 		 	return false;
 		}
 		monitor.worked(2);
 		// avoid dead letters
-		actBrief.delete();
+		deleteBrief();;
 		Hub.setMandant(mSave);
 		return true;
 	}
