@@ -5,10 +5,10 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- * $Id$
+ * $Id: build.xml 4035 2008-06-12 09:27:42Z rgw_ch $
 -->
 <project name="iatrix-help-wiki" default="all">
-	<property name="plugin_version" value="1.1.0"/>
+	<property name="plugin_version" value="1.3.1"/>
 	<property name="sourcedir" value="${source}/iatrix-help-wiki/"/>
 	<property name="plugindir" value="${dist}/plugins/org.iatrix.help.wiki_${plugin_version}"/>
 	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
