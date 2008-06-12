@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4007 2008-06-05 16:57:41Z rgw_ch $
+ * $Id: PatFilterImpl.java 4037 2008-06-12 14:30:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.List;
+
+import com.sun.org.apache.regexp.internal.RE;
 
 import ch.elexis.data.Artikel;
 import ch.elexis.data.BezugsKontakt;
@@ -23,6 +25,8 @@ import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.NamedBlob;
+import ch.elexis.data.NamedBlob2;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
@@ -101,6 +105,21 @@ public class PatFilterImpl implements IPatFilter {
 				return ACCEPT;
 			}
 			return REJECT;
+		}else if (o instanceof NamedBlob){
+			NamedBlob nb=(NamedBlob)o;
+			String[] val=nb.getString().split("::");
+			String test=p.get(val[0]);
+			if(test==null){
+				return DONT_HANDLE;
+			}
+			String op=val[1];
+			if(op.equals("=")){
+				return test.equalsIgnoreCase(val[2]) ? ACCEPT : REJECT;
+			}else if(op.equals("LIKE")){
+				return test.toLowerCase().contains(val[2].toLowerCase()) ? ACCEPT : REJECT;
+			}else if(op.equals("Regexp")){
+				return test.matches(val[2]) ? ACCEPT : REJECT;
+			}
 		}else if(o instanceof Script){
 			Object ret;
 			try {

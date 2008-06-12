@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4021 2008-06-11 11:29:28Z rgw_ch $
+ * $Id: PatListFilterBox.java 4037 2008-06-12 14:30:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -17,15 +17,19 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.data.Etikette;
+import ch.elexis.data.NamedBlob;
+import ch.elexis.data.NamedBlob2;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -46,8 +50,10 @@ import ch.elexis.util.SWTHelper;
  */
 public class PatListFilterBox extends ListDisplay<PersistentObject> implements IFilter{
     PersistentObjectDropTarget dropTarget;
-    private static final String ETIKETTE="Etikette... ";
-    private static final String LEEREN="Leeren";
+    private static final String ETIKETTE="Etikette...";
+    private static final String FELD="Feld...";
+    private static final String LEEREN=" Leeren";
+    private static final String NB_PREFIX="PLF_FLD:";
     private ArrayList<IPatFilter> filters=new ArrayList<IPatFilter>();
     private IPatFilter defaultFilter=new PatFilterImpl();
     private boolean parseError=false;
@@ -57,7 +63,9 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		setDLDListener(new LDListener(){
 
 			public String getLabel(Object o) {
-				if(o instanceof PersistentObject){
+				if(o instanceof NamedBlob){
+					return "Feld: "+((NamedBlob)o).getString();
+				}else if(o instanceof PersistentObject){
 					return o.getClass().getSimpleName()+":"+((PersistentObject)o).getLabel();
 				}else{
 					return o.toString();
@@ -69,9 +77,11 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 					clear();
 				}else if(l.equals(ETIKETTE)){
 					new EtikettenAuswahl().open();
+				}else if(l.equals(FELD)){
+					new FeldauswahlDlg().open();
 				}
 			}});
-		addHyperlinks(ETIKETTE,LEEREN);
+		addHyperlinks(FELD,ETIKETTE,LEEREN);
 		dropTarget=new PersistentObjectDropTarget("Statfilter",this,new DropReceiver());
 
 	}
@@ -193,6 +203,49 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			result=new Etikette[indices.length];
 			for(int i=0;i<indices.length;i++){
 				add(etiketten[indices[i]]);
+			}
+			super.okPressed();
+		}
+	}
+	
+	class FeldauswahlDlg extends Dialog{
+		Text tFeld, tValue;
+		Combo cbOp;
+		public NamedBlob value;
+		public FeldauswahlDlg() {
+			super(PatListFilterBox.this.getShell());
+		}
+		@Override
+		public void create() {
+			super.create();
+			getShell().setText("Filterbedingung eingeben");
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite ret=(Composite) super.createDialogArea(parent);
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			ret.setLayout(new GridLayout(3,false));
+			new Label(ret,SWT.NONE).setText("Feld");
+			new Label(ret,SWT.NONE).setText(" ");
+			new Label(ret,SWT.NONE).setText("Wert");
+			tFeld=new Text(ret,SWT.BORDER);
+			tFeld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			cbOp=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
+			cbOp.setItems(new String[]{"=","LIKE","Regexp"});
+			cbOp.select(0);
+			tValue=new Text(ret,SWT.BORDER);
+			tValue.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			return ret;
+		}
+
+		@Override
+		protected void okPressed() {
+			String fld=tFeld.getText();
+			if(fld.length()>0){
+				value=NamedBlob.load(NB_PREFIX+fld);
+				value.putString(fld+"::"+cbOp.getText()+"::"+tValue.getText());
+				PatListFilterBox.this.add(value);
 			}
 			super.okPressed();
 		}

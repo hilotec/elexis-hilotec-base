@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 3983 2008-05-31 19:23:27Z rgw_ch $
+ * $Id: ListDisplay.java 4037 2008-06-12 14:30:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
@@ -56,7 +57,9 @@ public class ListDisplay<T> extends Composite {
         dlisten=dld;
 		setLayout(new GridLayout(1,false));
 		cLinks=new Composite(this,SWT.NONE);
-		cLinks.setLayout(new FillLayout());
+		RowLayout rl=new RowLayout(SWT.HORIZONTAL);
+		rl.spacing=2;
+		cLinks.setLayout(rl);
 		
 		list=new List(this,SWT.SINGLE|SWT.V_SCROLL);
 		list.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));

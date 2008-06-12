@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnOutputDialog.java 4024 2008-06-11 14:06:29Z michael_imhof $
+ *  $Id: RnOutputDialog.java 4037 2008-06-12 14:30:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -35,7 +35,6 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 
 public class RnOutputDialog extends TitleAreaDialog {
@@ -106,7 +105,7 @@ public class RnOutputDialog extends TitleAreaDialog {
 			setTitle("Rechnung ausgeben");
 			setMessage("Wählen Sie bitte das Ausgabeziel für diese Rechnung aus");
 		}
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 
 	@Override
@@ -115,7 +114,7 @@ public class RnOutputDialog extends TitleAreaDialog {
 		if(idx!=-1){
 			IRnOutputter rop=lo.get(idx);
 			rop.saveComposite();
-			Result<Rechnung> result=rop.doOutput(bCopy.getSelection() ? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn);
+			/* Result<Rechnung> result= */rop.doOutput(bCopy.getSelection() ? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn);
 		}
 		super.okPressed();
 	}
