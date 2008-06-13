@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 3345 2007-11-14 17:20:16Z danlutz $
+ * $Id: RechnungsDrucker.java 4038 2008-06-13 05:16:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung2.rechnung;
@@ -231,5 +231,10 @@ public class RechnungsDrucker implements IRnOutputter {
 		}
 		tc.getPlugin().print(toPrinter, esrTray, false);
 		return ret;
+	}
+
+	public void saveComposite() {
+		// TODO Auto-generated method stub
+		
 	}
 }
