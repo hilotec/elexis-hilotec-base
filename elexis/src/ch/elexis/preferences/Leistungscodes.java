@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 3994 2008-06-01 18:08:38Z rgw_ch $
+ * $Id: Leistungscodes.java 4040 2008-06-13 12:45:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -50,6 +50,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ListDisplay;
+import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -179,6 +180,9 @@ public class Leistungscodes extends PreferencePage implements
 				 .append(" AND DATUM_BIS >").append(actdat);
 				String tp=PersistentObject.getConnection().queryString(sql.toString());
 				if(StringTool.isNothing(tp)){
+					if(Hub.getSystemLogLevel()>Log.INFOS){
+						SWTHelper.alert("Taxpunktwert nicht gefunden", "Abfrage: "+sql.toString());
+					}
 					tp="1.0";
 				}
 				it.setText(3,tp);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4021 2008-06-11 11:29:28Z rgw_ch $
+ *    $Id: Hub.java 4040 2008-06-13 12:45:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -188,6 +188,9 @@ public class Hub extends AbstractUIPlugin {
 		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT,Log.ERRORS));
     }
 
+    public static int getSystemLogLevel(){
+    	return localCfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS); 
+    }
 	/**
 	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench,
 	 * durchgeführt werden sollen.
@@ -313,7 +316,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4021 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4040 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

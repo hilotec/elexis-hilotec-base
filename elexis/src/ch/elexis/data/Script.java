@@ -4,8 +4,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.swt.SWTError;
+
 import bsh.EvalError;
 import bsh.Interpreter;
+import bsh.ParseException;
+import bsh.TargetError;
+import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -40,6 +46,9 @@ public class Script extends NamedBlob2 {
 		String t=getString();
 		if(!StringTool.isNothing(t)){
 			try {
+				if(params==null){
+					params=new PersistentObject[0];
+				}
 				Matcher matcher=varPattern.matcher(t);
 				// Suche Variablen der Form [Patient.Alter]
 				StringBuffer sb = new StringBuffer();
@@ -61,10 +70,20 @@ public class Script extends NamedBlob2 {
 					}
 				}
 				matcher.appendTail(sb);
+				scripter.set("actPatient", GlobalEvents.getSelectedPatient());
+				scripter.set("actFall", GlobalEvents.getSelectedFall());
+				scripter.set("actKons", GlobalEvents.getSelectedKons());
+				scripter.set("Elexis", Hub.plugin);
 				return scripter.eval(sb.toString());
-			} catch (EvalError e) {
-				ExHandler.handle(e);
-				SWTHelper.showError("Script error", "Script Fehler", e.getErrorText());
+			}catch(TargetError e){
+				SWTHelper.showError("Script target Error", "Script Fehler", "Target Error: "+e.getTarget());
+				throw(new Exception(e.getMessage()));
+			}catch(ParseException e){
+				SWTHelper.showError("Script syntax Error", "Script syntax fehler: "+e.getErrorText());
+				throw(new Exception(e.getMessage()));
+			}
+			catch (EvalError e) {
+				SWTHelper.showError("Script general error","Script Fehler", "Allgemeiner Script Fehler: "+ e.getErrorText());
 				throw(new Exception(e.getMessage()));
 			}
 		}

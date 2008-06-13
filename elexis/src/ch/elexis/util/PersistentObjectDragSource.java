@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource.java 2913 2007-07-25 14:36:44Z rgw_ch $
+ * $Id: PersistentObjectDragSource.java 4040 2008-06-13 12:45:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -34,6 +34,8 @@ import ch.elexis.data.PersistentObject;
 public class PersistentObjectDragSource implements DragSourceListener {
 	private final StructuredViewer viewer;
 	private IStructuredSelection ts;
+	private static PersistentObject draggedObject;
+	
 	public PersistentObjectDragSource(final StructuredViewer v){
 		viewer=v;
 		v.addDragSupport(DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, this);
@@ -47,19 +49,24 @@ public class PersistentObjectDragSource implements DragSourceListener {
 		Object[] sel=ts.toArray();
 	    if((sel==null) || (sel.length==0)){
 	        event.doit=false;
+	        draggedObject=null;
 	    }else{
 		    Object s=sel[0];
+		    PersistentObject po=null;
 		    if (s instanceof ch.elexis.util.Tree) {
 		        ch.elexis.util.Tree tree = (ch.elexis.util.Tree) s;
 		        if (tree.contents  instanceof PersistentObject) {
-		            PersistentObject po = (PersistentObject) tree.contents;
+		            po = (PersistentObject) tree.contents;
 		            event.doit=po.isDragOK();
 		        }
 		    }else if(s instanceof PersistentObject){
-		        PersistentObject po = (PersistentObject) s;
+		        po = (PersistentObject) s;
 		        event.doit=po.isDragOK();
 		    }else{
 		        event.doit=false;
+		    }
+		    if(event.doit){
+		    	draggedObject=po;
 		    }
 	    }
 	}
@@ -91,4 +98,7 @@ public class PersistentObjectDragSource implements DragSourceListener {
 	    
 	}
 	
+	public static PersistentObject getDraggedObject(){
+		return draggedObject;
+	}
 }

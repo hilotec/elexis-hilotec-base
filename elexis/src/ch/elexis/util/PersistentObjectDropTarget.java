@@ -38,23 +38,20 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 		this.name=name;
 	}
 	public void dragEnter(DropTargetEvent event) {
-		/*
+		
 		boolean bOk=false;
-		String drp=(String)event.data;
-        String[] dl=drp.split(",");
-        for(String obj:dl){
-            PersistentObject dropped=Hub.poFactory.createFromString(obj);
-            if(rc.accept(dropped)){
-            	bOk=true;
-            }
+        PersistentObject dropped=PersistentObjectDragSource.getDraggedObject();;
+        if(rc.accept(dropped)){
+          	bOk=true;
         }
+        
 		if(bOk){
 			event.detail=DND.DROP_COPY;
 		}else{
 			event.detail=DND.DROP_NONE;
 		}
-		*/
-		event.detail=DND.DROP_COPY;
+		
+		//event.detail=DND.DROP_COPY;
 
 	}
 
@@ -84,7 +81,9 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 	}
 
 	public void dropAccept(DropTargetEvent event) {
-		// TODO Auto-generated method stub
+		if(!rc.accept(PersistentObjectDragSource.getDraggedObject())){
+			event.detail=DND.DROP_NONE;
+		}
 
 	}
 	 

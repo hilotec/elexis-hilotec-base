@@ -1,6 +1,5 @@
 package ch.elexis.views;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -16,11 +15,14 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
+import ch.elexis.actions.RestrictedAction;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Script;
 import ch.elexis.scripting.ScriptEditor;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.tools.ExHandler;
 
 /**
  * Display and edit Beanshell-Scripts
@@ -29,7 +31,7 @@ import ch.elexis.util.ViewMenus;
  */
 public class ScriptView extends ViewPart {
 	public static final String ID="ch.elexis.scriptsView";
-	private IAction newScriptAction, editScriptAction, removeScriptAction;
+	private IAction newScriptAction, editScriptAction, removeScriptAction, execScriptAction;
 	TableViewer tv;
 	ScrolledForm form;
 	
@@ -70,7 +72,7 @@ public class ScriptView extends ViewPart {
 		makeActions();
 		ViewMenus menu=new ViewMenus(getViewSite());
 		menu.createToolbar(newScriptAction);
-		menu.createViewerContextMenu(tv, editScriptAction, removeScriptAction);
+		menu.createViewerContextMenu(tv, editScriptAction, execScriptAction, null, removeScriptAction);
 		tv.setInput(this);
 	}
 
@@ -81,14 +83,14 @@ public class ScriptView extends ViewPart {
 	}
 
 	private void makeActions(){
-		newScriptAction=new Action("Neues Script"){
+		newScriptAction=new RestrictedAction(AccessControlDefaults.SCRIPT_EDIT,"Neues Script"){
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText("Ein neues Script erstellen");
 			}
 
 			@Override
-			public void run() {
+			public void doRun() {
 				InputDialog inp=new InputDialog(getSite().getShell(),"Name für das Script",
 						"Geben Sie bitte einen Namen (Nur Buchstaben, Ziffern, _ und -) ein",
 						null,null);
@@ -99,13 +101,13 @@ public class ScriptView extends ViewPart {
 			}
 			
 		};
-		editScriptAction=new Action("Script bearbeiten"){
+		editScriptAction=new RestrictedAction(AccessControlDefaults.SCRIPT_EDIT,"Script bearbeiten"){
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText("Script bearbeiten");
 			}
 			@Override
-			public void run() {
+			public void doRun() {
 				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
 				if(sel!=null && sel.size()!=0){
 					Script script=(Script)sel.getFirstElement();
@@ -117,18 +119,37 @@ public class ScriptView extends ViewPart {
 				
 			}
 		};
-		removeScriptAction=new Action("Script löschen"){
+		removeScriptAction=new RestrictedAction(AccessControlDefaults.SCRIPT_EDIT,"Script löschen"){
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Script unwiderruflich löschen");
 			}
 			@Override
-			public void run() {
+			public void doRun() {
 				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
 				if(sel!=null && sel.size()!=0){
 					Script script=(Script)sel.getFirstElement();
 					script.delete();
 					tv.refresh();
+				}
+			}
+		};
+		execScriptAction=new RestrictedAction(AccessControlDefaults.SCRIPT_EXECUTE,"Script ausführen"){
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
+				setToolTipText("Script ausführen");
+			}
+			@Override
+			public void doRun(){
+				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
+				if(sel!=null && sel.size()!=0){
+					Script script=(Script)sel.getFirstElement();
+					try{
+						Object ret=script.execute(null);
+						SWTHelper.showInfo("Script Ausgabe", ret.toString());
+					}catch(Exception ex){
+						ExHandler.handle(ex);
+					}
 				}
 			}
 		};

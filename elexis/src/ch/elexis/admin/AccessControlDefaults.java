@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: AccessControlDefaults.java 4040 2008-06-13 12:45:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -128,6 +128,10 @@ public class AccessControlDefaults {
     public static final String KONS_EDIT= KONS+"/Bearbeiten";
     public static final String KONS_DELETE= DELETE+"/Konsultation";
     public static final String KONS_REASSIGN= KONS+"/zuordnen";
+    
+    public static final String SCRIPT="Script";
+    public static final String SCRIPT_EXECUTE=SCRIPT+"/ausführen";
+    public static final String SCRIPT_EDIT=SCRIPT+"/bearbeiten";
     
     public static final String CASE="Fall";
     public static final String CASE_MODIFY=CASE+"/Ändern";

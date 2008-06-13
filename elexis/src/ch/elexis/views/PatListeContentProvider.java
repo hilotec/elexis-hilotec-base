@@ -1,5 +1,7 @@
 package ch.elexis.views;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -71,7 +73,12 @@ public class PatListeContentProvider implements CommonContentProvider,
 			}while(idx!=begin);
 		}
 		qbe.orderBy(false, actualOrder);
-		pats= qbe.execute().toArray(new Patient[0]);
+		List<Patient> lPats=qbe.execute();
+		if(lPats==null){
+			pats=new Patient[0];
+		}else{
+			pats= lPats.toArray(new Patient[0]);
+		}
 		((TableViewer)viewer.getViewerWidget()).setItemCount(pats.length);
 		bValid=true;
 		return pats;

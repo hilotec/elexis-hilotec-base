@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4039 2008-06-13 07:39:53Z rgw_ch $
+ * $Id: PatListFilterBox.java 4040 2008-06-13 12:45:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -27,12 +27,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.Hub;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.data.NamedBlob2;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.data.Script;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
@@ -91,6 +94,11 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		}
 
 		public boolean accept(final PersistentObject o) {
+			if(o instanceof Script){
+				if(Hub.acl.request(AccessControlDefaults.SCRIPT_EXECUTE)==false){
+					return false;
+				}
+			}
 			return true;
 		}
 	}
