@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4037 2008-06-12 14:30:37Z rgw_ch $
+ * $Id: PatListFilterBox.java 4039 2008-06-13 07:39:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -131,6 +131,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 						return false;
 					}
 					if(result==IPatFilter.FILTER_FAULT){
+						remove(cond);
 						parseError=true;
 					}
 				}
