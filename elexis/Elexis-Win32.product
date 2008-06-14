@@ -4,10 +4,10 @@
 <product name="Elexis" id="ch.elexis.ElexisProduct" application="ch.elexis.ElexisApp" useFeatures="false">
 
    <aboutInfo>
-      <image path="/Elexis/rsc/elexis48.gif"/>
+      <image path="/elexis/rsc/elexis48.gif"/>
       <text>
          Elexis - die Praxis.
-(c) 2005-2007 by G. Weirich and Elexis
+(c) 2005-2008 by G. Weirich and Elexis
 http://www.elexis.ch
 
 Informationen und Referenzinstallation:
