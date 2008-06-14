@@ -24,7 +24,7 @@ Rietstrasse 30
 -Xmx256m</vmArgs>
    </launcherArgs>
 
-   <windowImages i16="/Elexis/rsc/elexis2_16.gif" i32="/Elexis/rsc/elexis32_2.gif" i48="/Elexis/rsc/elexis48.gif"/>
+   <windowImages i16="/elexis/rsc/elexis2_16.gif" i32="/elexis/rsc/elexis32_2.gif" i48="/elexis/rsc/elexis48.gif"/>
 
    <splash
       location="ch.elexis" />
@@ -37,6 +37,7 @@ Rietstrasse 30
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
@@ -99,14 +100,14 @@ Rietstrasse 30
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.win32.win32.x86"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.tomcat"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.update.configurator"/>
       <plugin id="org.eclipse.update.core"/>
-      <plugin id="org.eclipse.update.core.win32"/>
+      <plugin id="org.eclipse.update.core.win32" fragment="true"/>
       <plugin id="org.mortbay.jetty"/>
    </plugins>
 
