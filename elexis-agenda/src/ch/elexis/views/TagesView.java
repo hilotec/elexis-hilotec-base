@@ -98,7 +98,7 @@ public class TagesView extends BaseAgendaView{
 				//Point pt=bDay.getLocation();
 				//dsl.getShell().setLocation(pt.x, pt.y);
 				dsl.create();
-				Point m=Desk.theDisplay.getCursorLocation();
+				Point m=Desk.getDisplay().getCursorLocation();
 				dsl.getShell().setLocation(m.x,m.y);
 				if(dsl.open()==Dialog.OK){
 					TimeTool dat=dsl.getSelectedDate();
@@ -109,6 +109,7 @@ public class TagesView extends BaseAgendaView{
 			
 		});
 		bDay.setText(actDate.toString(TimeTool.DATE_GER));
+		
 		Button bPlus=new Button(top,SWT.PUSH);
 		bPlus.setToolTipText(Messages.TagesView_nextDay); 
 		
@@ -122,7 +123,7 @@ public class TagesView extends BaseAgendaView{
 		});
 		
 		Button bPrint=new Button(top,SWT.CENTER|SWT.PUSH|SWT.FLAT);
-		bPrint.setImage(Desk.theImageRegistry.get(Desk.IMG_PRINTER));
+		bPrint.setImage(Desk.getImage(Desk.IMG_PRINTER));
 		bPrint.setToolTipText(Messages.TagesView_printDay); 
 		bPrint.addSelectionListener(new SelectionAdapter(){
 			@Override
