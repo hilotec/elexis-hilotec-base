@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 3453 2007-12-14 16:17:41Z rgw_ch $
+ * $Id: ControlFieldProvider.java 4044 2008-06-16 19:38:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
 
+import java.io.File;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,6 +30,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
+import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
 import ch.elexis.text.ElexisText;
 import ch.elexis.util.CommonViewer;
@@ -37,7 +41,7 @@ import ch.elexis.util.SWTHelper;
 public class ControlFieldProvider extends DefaultControlFieldProvider {
 	Text tMedi, tSubst;
 	Button bGenerics, bGroup;
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk=Desk.getToolkit();
 	boolean bGenericsOnly;
 	
 	public ControlFieldProvider(final CommonViewer viewer) {
@@ -52,7 +56,7 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
 	   //Composite ret=new Composite(parent,style);
         ret.setLayout(new GridLayout(2,false));
         Button bReload=new Button(ret,SWT.PUSH);
-        bReload.setImage(Desk.theImageRegistry.get(Desk.IMG_REFRESH));
+        bReload.setImage(Desk.getImage(Desk.IMG_REFRESH));
         bReload.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -101,7 +105,11 @@ public class ControlFieldProvider extends DefaultControlFieldProvider {
             selectors[i].setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
         }
         bGenerics=new Button(ret,SWT.TOGGLE);
-        bGenerics.setImage(BAGMediFactory.loadImageDescriptor("icons/ggruen.png").createImage());
+        String img="icons"+File.separator+"ggruen.png";
+        ImageDescriptor image=BAGMediFactory.loadImageDescriptor(img);
+        if(image!=null){
+        	bGenerics.setImage(image.createImage());
+        }
         bGenerics.addSelectionListener(new SelectionAdapter(){
 
 			@Override

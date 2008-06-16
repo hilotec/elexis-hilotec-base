@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediLabelProvider.java 3229 2007-09-28 16:41:20Z rgw_ch $
+ * $Id: BAGMediLabelProvider.java 4044 2008-06-16 19:38:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -85,9 +85,9 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
     			}
 
     			if (order) {
-    				return Desk.theColorRegistry.get(Desk.COL_RED);
+    				return Desk.getColor(Desk.COL_RED);
     			} else {
-    				return Desk.theColorRegistry.get(Desk.COL_BLUE);
+    				return Desk.getColor(Desk.COL_BLUE);
     			}
     		}
     	}
@@ -101,11 +101,11 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
 			BAGMedi bm=(BAGMedi) element;
 			String g=StringTool.unNull(bm.get("Generikum"));
 			if(g.startsWith("G")){
-				return Desk.theImageRegistry.get(BAGMedi.IMG_GENERIKUM);
+				return Desk.getImage(BAGMedi.IMG_GENERIKUM);
 			}else if(g.startsWith("O")){
-				return Desk.theImageRegistry.get(BAGMedi.IMG_HAS_GENERIKA);
+				return Desk.getImage(BAGMedi.IMG_HAS_GENERIKA);
 			}else{
-				return Desk.theImageRegistry.get(BAGMedi.IMG_ORIGINAL);
+				return Desk.getImage(BAGMedi.IMG_ORIGINAL);
 			}
 		}
 		

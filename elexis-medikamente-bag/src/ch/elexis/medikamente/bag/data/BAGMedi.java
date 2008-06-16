@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 3868 2008-05-05 16:58:54Z rgw_ch $
+ *  $Id: BAGMedi.java 4044 2008-06-16 19:38:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -89,9 +90,10 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi>{
 		}
 		// make sure, the substances table is created
 		Substance.load("VERSION");
-		Desk.theImageRegistry.put(IMG_GENERIKUM, BAGMediFactory.loadImageDescriptor("icons/ggruen.png"));
-		Desk.theImageRegistry.put(IMG_HAS_GENERIKA, BAGMediFactory.loadImageDescriptor("icons/orot.png"));
-		Desk.theImageRegistry.put(IMG_ORIGINAL, BAGMediFactory.loadImageDescriptor("icons/oblau.ico"));
+		String imgroot="icons"+File.separator;
+		Desk.getImageRegistry().put(IMG_GENERIKUM, BAGMediFactory.loadImageDescriptor(imgroot+"ggruen.png"));
+		Desk.getImageRegistry().put(IMG_HAS_GENERIKA, BAGMediFactory.loadImageDescriptor(imgroot+"orot.png"));
+		Desk.getImageRegistry().put(IMG_ORIGINAL, BAGMediFactory.loadImageDescriptor(imgroot+"oblau.ico"));
 	}
 	
 	/**
