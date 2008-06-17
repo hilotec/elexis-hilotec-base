@@ -158,8 +158,8 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
 				bFile.setSelection(true);
 				bDB.setSelection(false);
 				FileDialog fd=new FileDialog(getShell(),SWT.OPEN);
-				fd.setFilterExtensions(new String[]{"*.ico","*.png","*.gif","*.jpg","*.*"});
-				fd.setFilterNames(new String[]{"Icon-Dateien","Portable Network Graphics",
+				fd.setFilterExtensions(new String[]{"*.png","*.gif","*.jpg","*.*"});
+				fd.setFilterNames(new String[]{"Portable Network Graphics",
 						"Grafics Interchange Format", "JPEG","Alle Dateien"});
 				String filename=fd.open();
 				if(filename!=null){
@@ -170,7 +170,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog{
 			
 		});
 		hl.setText(NOFILESELECTED);
-		hl.setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+		hl.setForeground(Desk.getColor(Desk.COL_BLUE));
 		hl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tTitle.addKeyListener(new KeyAdapter(){

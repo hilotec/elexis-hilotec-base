@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 4006 2008-06-05 16:17:52Z rgw_ch $
+ *    $Id: Etiketten.java 4046 2008-06-17 11:47:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -61,7 +61,7 @@ public class  Etiketten extends PreferencePage implements
 	void setEtikette(Etikette et){
 		act=et;
 		if(et==null){
-			cImage.setBackground(Desk.getColorRegistry().get(Desk.COL_WHITE));
+			cImage.setBackground(Desk.getColor(Desk.COL_WHITE));
 			cFore.setBackground(Desk.getColor(Desk.COL_BLACK));
 			cBack.setBackground(Desk.getColor(Desk.COL_LIGHTGREY));
 			spWert.setSelection(0);
@@ -152,7 +152,7 @@ public class  Etiketten extends PreferencePage implements
 						return;
 					}
 				}
-				gc.setForeground(Desk.theColorRegistry.get(Desk.COL_GREY20));
+				gc.setForeground(Desk.getColor(Desk.COL_GREY20));
 				gc.fillRectangle(0, 0, 32, 32);
 			}});
 		GridData gdImage=new GridData(32,32);
