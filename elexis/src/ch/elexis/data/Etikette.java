@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 3912 2008-05-11 05:35:03Z rgw_ch $
+ *    $Id: Etikette.java 4045 2008-06-17 11:00:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -22,7 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Desk;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.JdbcLink.Stm;
 
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4021 2008-06-11 11:29:28Z rgw_ch $
+ * $Id: PatientenListeView.java 4045 2008-06-17 11:00:42Z rgw_ch $
  *******************************************************************************/
 
 
@@ -131,6 +131,9 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		
     }
 	
+	public PatListeContentProvider getContentProvider(){
+		return plcp;
+	}
     @Override
     public void setFocus()
     {     vc.getControlFieldProvider().setFocus();

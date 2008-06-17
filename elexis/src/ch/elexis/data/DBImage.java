@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DBImage.java 3881 2008-05-06 16:53:59Z rgw_ch $
+ *    $Id: DBImage.java 4045 2008-06-17 11:00:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,6 +22,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageLoader;
 
 import ch.elexis.Desk;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 
 public class DBImage extends PersistentObject {
 	public static final String DBVERSION="1.0.0";
@@ -42,19 +44,29 @@ public class DBImage extends PersistentObject {
 	}
 	public DBImage(String name, InputStream source){
 		ImageLoader iml=new ImageLoader();
-		iml.load(source);
-		ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		iml.save(baos, SWT.IMAGE_PNG);
-		create(null);
-		set("Titel",name);
-		setBinary("Bild", baos.toByteArray());
+		try{
+			iml.load(source);
+			ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			iml.save(baos, SWT.IMAGE_PNG);
+			create(null);
+			set("Titel",name);
+			setBinary("Bild", baos.toByteArray());
+		}catch(Exception ex){
+			SWTHelper.showError("Image error", "Bild ungültig","Das Bild konnte nicht geladen werden "+ex.getMessage());
+			ExHandler.handle(ex);
+		}
 	}
 
 	public Image getImage(){
 		byte[] in=getBinary("Bild");
 		ByteArrayInputStream bais=new ByteArrayInputStream(in);
-		Image ret=new Image(Desk.theDisplay,bais);
-		return ret;
+		try{
+			Image ret=new Image(Desk.getDisplay(),bais);
+			return ret;
+		}catch(Exception ex){
+			SWTHelper.showError("Image Error", "Ungültiges Bild", "Das Bild ist ungültig "+ex.getMessage());
+			return null;
+		}
 	}
 	
 	public static DBImage load(String id){
