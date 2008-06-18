@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4040 2008-06-13 12:45:37Z rgw_ch $
+ * $Id: PatListFilterBox.java 4047 2008-06-18 13:38:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -31,7 +31,6 @@ import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Etikette;
 import ch.elexis.data.NamedBlob;
-import ch.elexis.data.NamedBlob2;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -106,7 +105,27 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	public void reset(){
 		parseError=false;
 	}
+	public boolean aboutToStart(){
+		for(PersistentObject cond:getAll()){
+			if(cond instanceof Script){
+				if(!defaultFilter.aboutToStart(cond)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	
+	public boolean finished(){
+		for(PersistentObject cond:getAll()){
+			if(cond instanceof Script){
+				if(!defaultFilter.finished(cond)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	/**
 	 * We select the Patient with an AND operation running over all filter conditions
 	 * If no filter was registered for a type, we use our defaultFilter
@@ -175,6 +194,9 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		 * @throws Exception 
 		 */
 		public int accept(Patient p, PersistentObject o);
+		
+		public boolean aboutToStart(PersistentObject o);
+		public boolean finished(PersistentObject o);
 	}
 	
 	class EtikettenAuswahl extends Dialog{

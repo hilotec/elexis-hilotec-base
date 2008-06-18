@@ -23,6 +23,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 	boolean bValid=false;
 	String[] order;
 	String firstOrder;
+	PatListFilterBox pfilter;
 	
 	public PatListeContentProvider(CommonViewer cv, String[] fieldsToOrder){
 		viewer=cv;
@@ -40,12 +41,14 @@ public class PatListeContentProvider implements CommonContentProvider,
 		}
 	}
 
-	public void setFilter(IFilter f){
+	public void setFilter(PatListFilterBox f){
 		qbe.addPostQueryFilter(f);
+		pfilter=f;
 		bValid=false;
 	}
-	public void removeFilter(IFilter f){
+	public void removeFilter(PatListFilterBox f){
 		qbe.removePostQueryFilter(f);
+		pfilter=null;
 		bValid=false;
 	}
 	public Object[] getElements(Object inputElement) {
@@ -55,6 +58,9 @@ public class PatListeContentProvider implements CommonContentProvider,
 		qbe.clear();
 		if(!Hub.acl.request(AccessControlDefaults.PATIENT_DISPLAY)){
 			return new Object[0];
+		}
+		if(pfilter!=null){
+			pfilter.aboutToStart();
 		}
 		viewer.getConfigurer().getControlFieldProvider().setQuery(qbe);
 		String[] actualOrder;
@@ -81,6 +87,9 @@ public class PatListeContentProvider implements CommonContentProvider,
 		}
 		((TableViewer)viewer.getViewerWidget()).setItemCount(pats.length);
 		bValid=true;
+		if(pfilter!=null){
+			pfilter.finished();
+		}
 		return pats;
 	}
 

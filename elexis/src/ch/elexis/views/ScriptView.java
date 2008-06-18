@@ -95,7 +95,7 @@ public class ScriptView extends ViewPart {
 						"Geben Sie bitte einen Namen (Nur Buchstaben, Ziffern, _ und -) ein",
 						null,null);
 				if(inp.open()==Dialog.OK){
-					/* Script n= */ new Script(inp.getValue(),"");
+					/* Script n= */ Script.create(inp.getValue(),"");
 					tv.refresh();
 				}
 			}

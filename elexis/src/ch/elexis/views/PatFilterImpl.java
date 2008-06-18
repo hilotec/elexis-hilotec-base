@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4037 2008-06-12 14:30:37Z rgw_ch $
+ * $Id: PatFilterImpl.java 4047 2008-06-18 13:38:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -33,7 +33,9 @@ import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Script;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.util.SWTHelper;
 import ch.elexis.views.PatListFilterBox.IPatFilter;
+import ch.rgw.tools.ExHandler;
 
 /**
  * Default implementation of IPatFilter. Will be called after all other filters
@@ -134,6 +136,33 @@ public class PatFilterImpl implements IPatFilter {
 			}
 		}
 		return DONT_HANDLE;
+	}
+
+	public boolean aboutToStart(PersistentObject filter) {
+		if(filter instanceof Script){
+			try {
+				((Script)filter).init();
+				return true;
+			} catch (Exception e) {
+				ExHandler.handle(e);
+				SWTHelper.showError("Fehler beim Initialisieren des Scripts", e.getMessage());
+			}
+		}
+		return false;
+
+	}
+
+	public boolean finished(PersistentObject filter) {
+		if(filter instanceof Script){
+			try {
+				((Script)filter).finished();
+				return true;
+			} catch (Exception e) {
+				ExHandler.handle(e);
+				SWTHelper.showError("Fehler beim Abschluss des Scripts", e.getMessage());
+			}
+		}
+		return false;
 	}
 
 	

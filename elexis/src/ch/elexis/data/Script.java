@@ -29,12 +29,19 @@ public class Script extends NamedBlob2 {
 	private static Interpreter scripter=new Interpreter();
 	
 	
-	public Script(String name, String contents){
-		create(PREFIX+name);
+	public static Script create(String name, String contents){
+		String mid=PREFIX+name;
+		Script ret=new Script(mid);
+		if(ret.state()==INEXISTENT){
+			ret.create(mid);
+		}else if(ret.state()==DELETED){
+			ret.undelete();
+		}
 		if(StringTool.isNothing(contents)){
 			contents="/* empty */";
 		}
-		putString(contents);
+		ret.putString(contents);
+		return ret;
 	}
 	@Override
 	public String getLabel() {
@@ -42,39 +49,58 @@ public class Script extends NamedBlob2 {
 		return name[1];
 	}
 
+	public void init() throws Exception{
+		scripter.set("finished",false);
+		scripter.set("init",true);
+		scripter.eval(parse(getString(),new PersistentObject[0]));
+		scripter.set("init", false);
+	}
+	public void finished() throws Exception{
+		scripter.set("finished", true);
+		scripter.eval(parse(getString(),null));
+	}
+	private String parse(String t, PersistentObject... params){
+		if(params==null){
+			params=new PersistentObject[0];
+		}
+		Matcher matcher=varPattern.matcher(t);
+		// Suche Variablen der Form [Patient.Alter]
+		StringBuffer sb = new StringBuffer();
+		while(matcher.find()){
+			boolean bMatched=false;
+			String var=matcher.group().replaceAll("[\\[\\]]", "");
+			String[] fields=var.split("\\.");
+			if(fields.length>1){
+				String fqname="ch.elexis.data."+fields[0];
+				for(PersistentObject o:params){
+					if(o.getClass().getName().equals(fqname)){
+						String repl=o.get(fields[1]);
+						repl=repl.replace('\\', '/');
+						repl=repl.replace('\"', ' ');
+						repl=repl.replace('\n', ' ');
+						repl=repl.replace('\r', ' ');
+						matcher.appendReplacement(sb, "\""+repl+"\"");
+						bMatched=true;
+					}
+				}
+			}
+			if(!bMatched){
+				matcher.appendReplacement(sb, "\"\"");
+			}
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
+	}
 	public Object execute(PersistentObject... params) throws Exception{
 		String t=getString();
 		if(!StringTool.isNothing(t)){
+			String parsed=parse(t,params);
 			try {
-				if(params==null){
-					params=new PersistentObject[0];
-				}
-				Matcher matcher=varPattern.matcher(t);
-				// Suche Variablen der Form [Patient.Alter]
-				StringBuffer sb = new StringBuffer();
-				while(matcher.find()){
-					String var=matcher.group().replaceAll("[\\[\\]]", "");
-					String[] fields=var.split("\\.");
-					if(fields.length>1){
-						String fqname="ch.elexis.data."+fields[0];
-						for(PersistentObject o:params){
-							if(o.getClass().getName().equals(fqname)){
-								String repl=o.get(fields[1]);
-								repl=repl.replace('\\', '/');
-								repl=repl.replace('\"', ' ');
-								repl=repl.replace('\n', ' ');
-								repl=repl.replace('\r', ' ');
-								matcher.appendReplacement(sb, "\""+repl+"\"");
-							}
-						}
-					}
-				}
-				matcher.appendTail(sb);
 				scripter.set("actPatient", GlobalEvents.getSelectedPatient());
 				scripter.set("actFall", GlobalEvents.getSelectedFall());
 				scripter.set("actKons", GlobalEvents.getSelectedKons());
 				scripter.set("Elexis", Hub.plugin);
-				return scripter.eval(sb.toString());
+				return scripter.eval(parsed);
 			}catch(TargetError e){
 				SWTHelper.showError("Script target Error", "Script Fehler", "Target Error: "+e.getTarget());
 				throw(new Exception(e.getMessage()));
