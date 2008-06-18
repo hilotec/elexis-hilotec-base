@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4047 2008-06-18 13:38:22Z rgw_ch $
+ * $Id: PatFilterImpl.java 4049 2008-06-18 17:36:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -126,6 +126,7 @@ public class PatFilterImpl implements IPatFilter {
 			Object ret;
 			try {
 				Script script=(Script)o;
+				script.setVariable("patient", p);
 				ret = script.execute(p);
 				if(ret instanceof Integer){
 					return (Integer)ret;
