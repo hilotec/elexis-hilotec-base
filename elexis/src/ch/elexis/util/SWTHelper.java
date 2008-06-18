@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 4000 2008-06-04 11:55:01Z rgw_ch $
+ * $Id: SWTHelper.java 4048 2008-06-18 13:49:45Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -366,10 +366,16 @@ public class SWTHelper {
 		protected Control createDialogArea(final Composite parent) {
 			return dialogAreaProvider.getControl(parent);
 		}
+		@Override
+		protected void okPressed() {
+			dialogAreaProvider.beforeClosing();
+			super.okPressed();
+		}
 		
 	}
 	public interface IControlProvider{
 		public Control getControl(Composite parent);
+		public void beforeClosing();
 	}
 	
 	public static java.awt.Font createAWTFontFromSWTFont(final Font swtFont){
