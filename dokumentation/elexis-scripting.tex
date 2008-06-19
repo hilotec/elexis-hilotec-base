@@ -1,0 +1,114 @@
+% *******************************************************************************
+% * Copyright (c) 2008 by Elexis
+% * All rights reserved. This document and the accompanying materials
+% * are made available under the terms of the Eclipse Public License v1.0
+% * which accompanies this distribution, and is available at
+% * http://www.eclipse.org/legal/epl-v10.html
+% *
+% * Contributors:
+% *    G. Weirich
+% *
+% *  $Id: elexis-privatrechnung.tex 3739 2008-03-23 20:20:40Z rgw_ch $
+% *******************************************************************************
+% !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
+
+\documentclass[a4paper]{scrartcl}
+\usepackage{german}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\makeindex
+% Hier ein etwas skurriler Block, der dazu dient, die Unterschiede
+% zwischen pdflatex und latex auszubügeln
+% Grafiken müssen als png oder gif (für pdflatex) und als eps (für Latex)
+% vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
+% das System nimmt je nach Renderer die geeignete Variante.
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+	\pdffalse              	%normales LaTeX wird ausgeführt
+\else
+	\pdfoutput=1
+	\pdftrue               	%pdfLaTeX wird ausgeführt
+\fi
+
+\ifpdf
+	\usepackage[pdftex]{graphicx}
+	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+\else
+	\usepackage[dvips]{graphicx}
+	\DeclareGraphicsExtensions{.eps}
+\fi
+
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage[]{hyperref}
+\usepackage{color}
+\begin{document}
+\title{Elexis-Scripting}
+\author{Gerry Weirich}
+\maketitle
+
+\section{Einführung}
+Scripting ist eine sehr mächtige Möglichkeit, die Funktionalität von Elexis selbst zu erweitern, ohne in den Programmcode eingreifen zu müssen. Ein Script ist eine Art Miniprogramm, ds innerhalb von Elexis ausgeführt wird, und das Zugriff auf alle von Elexis verwalteten Daten hat.
+
+\medskip
+
+Scripts können an verschiedenen Stellen eingesetzt werden. Beispielsweise bei der Berechnung von formelbasierten Laborwerten oder Befunden, oder bei der Filterung der Patientenliste, oder auch als Selbständige Funktionen.
+
+\section{Sprache und Syntax}
+Die zu verwendende Sprache ist ein vereinfachtes Java (aber auch 'richtiges' Java geht). Im Genensatz zu einem 'echten' Java-Programm brauchen Sie keinen Compiler. Stattdessen wird das Script Interpretiert, also in dem Moment analysiert und in Computerbefehle umgesetzt, in dem es ausgeführt wird. Ein genauere Erläuterung des Interpreters finden Sie bei dessen Hersteller Beanshell (http://www.beanshell.org). Hier nur eine ganz kurze Einführung:
+
+\subsection{Grundsätzlicher Aufbau}
+
+\begin{verbatim}
+    /* Dies ist ein Beispiel-Script. Text welcher zwischen diesen Kommentarsymbolen
+       steht, wird als Kommentar betrachtet, dient also nur der Erhellung oder
+       Erheiterung des menschlichen Lesers. Der Interpreter hingegen ignoriert
+       solchen Text schlicht. Sie sollten bei komplexeren Scripts nicht mit Kommentaren
+       sparen, da sie Ihnen helfen, später zu verstehen, was Sie eigentlich machen
+       wollten. Und anderen kann es helfen, Ihr Script zu verstehen. */
+
+    // Auch dies ist ein Kommentar, aber bei // geht der Kommentar immer nur
+    // bis zum Ende der aktuellen Zeile.
+
+    irgendwas=10;
+        /* Wir haben soeben eine Variable namens 'irgendwas' erstellt,
+           und ihr den Wert 10 zugewiesen. Beachten Sie bitte auch, dass
+           am Ende jedes Statements ein ; steht, damit der Computer weiss,
+           dass das Statement hier fertig ist. */
+
+    heute="Mittwoch";
+        /* Hier haben wir eine Variable namens 'heute' erstellt und ihr
+           den Wert 'Mittwoch' zugewiesen. Beachten Sie, dass Zeichenketten
+           immer in Anführungszeichen stehen müssen. */
+
+    grosseZahl=1000;    // Ich denke, das ist klar.
+
+    zusammen=irgendwas+grosseZahl;
+        // 'zusammen' sollte jetzt 1010 sein, wenn Ihr Computer nicht kaputt ist
+
+        // wir wollen das gleich mal testen:
+    if(zusammen==1010){
+        resultat="Computer rechnet richtig";
+    }else{
+        resultat="Computer rechnet falsch";
+    }
+
+        // Ihr Computer kann natürlich auch multiplizieren und dividieren
+    produkt=irgendwas*grosseZahl*3.4;
+    quotient=grosseZahl/(irgendwas-2);
+
+        // Einfaches Rechnen mit Variablen
+    irgendwas=irgendwas+5;     // irgendwas ist jetzt 15
+    irgendwas+=3;               // irgendwas ist jetzt 18
+    irgendwas++;                // irgendwas ist jetzt 19
+
+    heute=heute+" 18. Juni";    // 'heute' ist jetzt "Mittwoch 18. Juni"
+
+\end{verbatim}
+
+\section{Verbindung mit Elexis}
+
+
+
+\end{document} 
