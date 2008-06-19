@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.swt.SWTError;
-
 import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.ParseException;
@@ -14,7 +12,6 @@ import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /**
