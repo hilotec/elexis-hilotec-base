@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 4025 2008-06-11 14:07:10Z michael_imhof $
+ *  $Id: DefaultOutputter.java 4055 2008-06-20 07:27:39Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -63,6 +63,7 @@ public class DefaultOutputter implements IRnOutputter {
 			if(!configured.contains(iro)){
 				SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
 					public Control getControl(Composite parent) {
+						parent.getShell().setText(iro.getDescription());
 						return iro.createSettingsControl(parent);
 
 					}
