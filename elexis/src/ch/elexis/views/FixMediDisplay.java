@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4056 2008-06-20 13:17:43Z rgw_ch $
+ * $Id: FixMediDisplay.java 4058 2008-06-20 15:39:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewSite;
@@ -31,6 +32,8 @@ import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.Money;
+import ch.elexis.util.PersistentObjectDropTarget;
+import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
@@ -55,6 +58,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		super(parent,SWT.NONE,null);
 		lCost=new Label(this,SWT.NONE);
 		lCost.setText(TTCOST);
+		lCost.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		dlisten=new DauerMediListener(s);
 		self=this;
 		addHyperlinks("Hinzu... ","Liste... ","Rezept... ");
@@ -62,44 +66,88 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		ViewMenus menu=new ViewMenus(s);
 		menu.createControlContextMenu(list,stopMedicationAction,changeMedicationAction,null,removeMedicationAction);
 		setDLDListener(dlisten);
+		PersistentObjectDropTarget dt=new PersistentObjectDropTarget("Fixmedikation",this,
+				new PersistentObjectDropTarget.Receiver(){
+
+					public boolean accept(PersistentObject o) {
+						if(o instanceof Prescription){
+							return true;
+						}
+						if(o instanceof Artikel){
+							return true;
+						}
+						return false;
+					}
+
+					public void dropped(PersistentObject o, DropTargetEvent e) {
+						if(o instanceof Artikel){
+							Prescription pre=new Prescription((Artikel)o,GlobalEvents.getSelectedPatient(),"","");
+							pre.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
+							MediDetailDialog dlg=new MediDetailDialog(getShell(),pre);
+							if(dlg.open()==Window.OK){
+								//self.add(pre);
+								reload();
+							}
+
+						}else if(o instanceof Prescription){
+							Prescription pre=(Prescription)o;
+							Prescription now=new Prescription(pre.getArtikel(),GlobalEvents.getSelectedPatient(),pre.getDosis(),pre.getBemerkung());
+							now.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
+							//self.add(now);
+							reload();
+						}						
+					}});
 	}
 	
 	
 	public void reload(){
 		clear();
 		Patient act=GlobalEvents.getSelectedPatient();
-		Money cost=new Money();
+		double cost=0.0;
 		boolean canCalculate=true;
 		if(act!=null){
 			Prescription[] pre=act.getFixmedikation();
 			for(Prescription pr:pre){
-				float num=0;
-				try{
-					String dosis=pr.getDosis();
-					if(dosis.matches("[0-9]+[xX][0-9]+")){
-						String[] dose=dosis.split("[xX]");
-						int count=Integer.parseInt(dose[0]);
-						num=getNum(dose[1])*count;
-					}else if(dosis.indexOf('-')!=-1){
-						String[] dos=dosis.split("-");
-						if(dos.length>2){
-							for(String d:dos){
-								num+=getNum(d);
+				if(canCalculate){
+					float num=0;
+					try{
+						String dosis=pr.getDosis();
+						if(dosis.matches("[0-9]+[xX][0-9]+")){
+							String[] dose=dosis.split("[xX]");
+							int count=Integer.parseInt(dose[0]);
+							num=getNum(dose[1])*count;
+						}else if(dosis.indexOf('-')!=-1){
+							String[] dos=dosis.split("-");
+							if(dos.length>2){
+								for(String d:dos){
+									num+=getNum(d);
+								}
+							}else{
+								num=getNum(dos[1]);
 							}
 						}else{
-							num=getNum(dos[1]);
+							canCalculate=false;
 						}
-					}else{
+						Artikel art=pr.getArtikel();
+						int ve=art.guessVE();
+						if(ve!=0){
+							Money price=pr.getArtikel().getVKPreis();
+							cost+=num*price.getAmount()/ve;
+						}else{
+							canCalculate=false;
+						}
+					}catch(Exception ex){
+						ExHandler.handle(ex);
 						canCalculate=false;
 					}
-					Artikel art=pr.getArtikel();
-					int ve=art.getVerpackungsEinheit();
-					Money price=pr.getArtikel().getVKPreis();
-				}catch(Exception ex){
-					ExHandler.handle(ex);
-					canCalculate=false;
 				}
 				add(pr);
+			}
+			if(canCalculate){
+				double rounded=Math.round(100.0*cost)/100.0;
+				lCost.setText(TTCOST+Double.toString(rounded));
+			}else{
+				lCost.setText(TTCOST+"?");
 			}
 		}
 	}
@@ -121,27 +169,6 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		DauerMediListener(IViewSite s){
 			site=s;
 		}
-	
-		public boolean dropped(PersistentObject dropped) {
-			if(dropped instanceof Artikel){
-				Prescription pre=new Prescription((Artikel)dropped,GlobalEvents.getSelectedPatient(),"","");
-				pre.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
-				MediDetailDialog dlg=new MediDetailDialog(getShell(),pre);
-				if(dlg.open()==Window.OK){
-					self.add(pre);
-				}
-				return true;
-			}else if(dropped instanceof Prescription){
-				Prescription pre=(Prescription)dropped;
-				Prescription now=new Prescription(pre.getArtikel(),GlobalEvents.getSelectedPatient(),pre.getDosis(),pre.getBemerkung());
-				now.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
-				self.add(now);
-				return true;
-			}else{
-				return false;
-			}
-		}
-
 		public void hyperlinkActivated(String l) {
 			try{
 				if(l.equals("Hinzu... ")){
@@ -186,6 +213,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				Prescription pr=(Prescription)getSelection();
 				if(pr!=null){
 					new MediDetailDialog(getShell(),pr).open();
+					reload();
 					redraw();
 				}
 			}
@@ -201,6 +229,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				if(pr!=null){
 					remove(pr);
 					pr.delete();	// this does not delete but stop the Medication. Sorry for that
+					reload();
 				}
 			}
 		};
@@ -215,6 +244,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				if(pr!=null){
 					remove(pr);
 					pr.remove();	// this does, in fact, remove the medication from the database
+					reload();
 				}
 			}
 		};

@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 4057 2008-06-20 13:43:54Z rgw_ch $
+ * $Id: Artikel.java 4058 2008-06-20 15:39:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ch.elexis.Hub;
 import ch.elexis.preferences.PreferenceConstants;
@@ -46,6 +48,7 @@ public class Artikel extends VerrechenbarAdapter{
 	public static final String TYP = "Typ";
 	public static final String NAME = "Name";
 	public static final String TABLENAME="ARTIKEL";
+	public static Pattern NAME_VE_PATTERN=Pattern.compile(".+ ([0-9]+) Stk.*");
 	
 	@Override
 	protected String getTableName() {
@@ -181,6 +184,27 @@ public class Artikel extends VerrechenbarAdapter{
 		return 0;
 	}
 	
+	/**
+	 * Versuche, die Verpakcungseinheit herauszufinden. Entweder haben wir sie im Artikeldetail
+	 * angegeben, dann ist es trivial, oder vielleicht steht im Namen etwas wie xx Stk.
+	 * @return einen educated guess oder 0 (unknown)
+	 */
+	public int guessVE(){
+		int ret=getVerpackungsEinheit();
+		if(ret==0){
+			String name=getName();
+			Matcher matcher=NAME_VE_PATTERN.matcher(name);
+			if(matcher.matches()){
+				String num=matcher.group(1);
+				try{
+					return Integer.parseInt(num);
+				}catch(Exception ex){
+					
+				}
+			}
+		}
+		return ret;
+	}
 	public int getTotalCount(){
 		int pack=getIstbestand();
 		int VE=getPackungsGroesse();
