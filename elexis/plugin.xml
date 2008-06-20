@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 4051 2008-06-19 11:07:14Z rgw_ch $ 
+<!-- $Id: plugin.xml 4053 2008-06-20 04:56:03Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -533,11 +533,6 @@
             class="ch.elexis.preferences.XIDEdit"
             id="ch.elexis.preferences.xid.edit"
             name="XIDs">
-      </page>
-      <page
-            class="ch.elexis.preferences.Script"
-            id="ch.elexis.preferences.scipting"
-            name="Scripts">
       </page>
    </extension>
    <extension

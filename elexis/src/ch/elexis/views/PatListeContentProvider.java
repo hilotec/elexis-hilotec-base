@@ -2,11 +2,15 @@ package ch.elexis.views;
 
 import java.util.List;
 
-import org.eclipse.jface.viewers.IFilter;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Patient;
@@ -19,8 +23,9 @@ public class PatListeContentProvider implements CommonContentProvider,
 		ILazyContentProvider {
 	CommonViewer viewer;
 	Query<Patient> qbe;
-	Patient[] pats;
+	Object[] pats;
 	boolean bValid=false;
+	boolean bUpdating=false;
 	String[] order;
 	String firstOrder;
 	PatListFilterBox pfilter;
@@ -52,44 +57,72 @@ public class PatListeContentProvider implements CommonContentProvider,
 		bValid=false;
 	}
 	public Object[] getElements(Object inputElement) {
-		if(bValid){
+		if(bValid || bUpdating){
 			return pats;
 		}
-		qbe.clear();
+		pats=new String[]{"Lade Daten..."};
+		((TableViewer)viewer.getViewerWidget()).setItemCount(1);
+		//viewer.getViewerWidget().refresh(true);
 		if(!Hub.acl.request(AccessControlDefaults.PATIENT_DISPLAY)){
 			return new Object[0];
 		}
-		if(pfilter!=null){
-			pfilter.aboutToStart();
-		}
-		viewer.getConfigurer().getControlFieldProvider().setQuery(qbe);
-		String[] actualOrder;
-		int idx=StringTool.getIndex(order, firstOrder);
-		if( (idx==-1) || (idx==0)){
-			actualOrder=order;
-		}else{
-			actualOrder=new String[order.length];
-			int n=0;
-			int begin=idx;
-			do{
-				actualOrder[n++]=order[idx++];
-				if(idx>=order.length){
-					idx=0;
+		
+		Job job=new Job("Lade Patientenliste"){
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Patientenliste laden...", IProgressMonitor.UNKNOWN);
+				qbe.clear();
+				if(pfilter!=null){
+					pfilter.aboutToStart();
 				}
-			}while(idx!=begin);
-		}
-		qbe.orderBy(false, actualOrder);
-		List<Patient> lPats=qbe.execute();
-		if(lPats==null){
-			pats=new Patient[0];
-		}else{
-			pats= lPats.toArray(new Patient[0]);
-		}
-		((TableViewer)viewer.getViewerWidget()).setItemCount(pats.length);
-		bValid=true;
-		if(pfilter!=null){
-			pfilter.finished();
-		}
+				viewer.getConfigurer().getControlFieldProvider().setQuery(qbe);
+				String[] actualOrder;
+				int idx=StringTool.getIndex(order, firstOrder);
+				if( (idx==-1) || (idx==0)){
+					actualOrder=order;
+				}else{
+					actualOrder=new String[order.length];
+					int n=0;
+					int begin=idx;
+					do{
+						actualOrder[n++]=order[idx++];
+						if(idx>=order.length){
+							idx=0;
+						}
+					}while(idx!=begin);
+				}
+				qbe.orderBy(false, actualOrder);
+				List<Patient> lPats=qbe.execute();
+				if(lPats==null){
+					pats=new Patient[0];
+				}else{
+					pats= lPats.toArray(new Patient[0]);
+				}
+				Desk.getDisplay().syncExec(new Runnable(){
+
+					public void run() {
+						((TableViewer)viewer.getViewerWidget()).setItemCount(pats.length);
+						bValid=true;
+						if(pfilter!=null){
+							pfilter.finished();
+						}
+						viewer.getViewerWidget().refresh();
+						bUpdating=false;
+						
+					}
+					
+				});
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+			
+		};
+		job.setPriority(Job.LONG);
+		job.setUser(true);
+		job.setSystem(false);
+		bUpdating=true;
+		job.schedule();
 		return pats;
 	}
 
@@ -107,7 +140,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 		}else{
 			viewer.notify(CommonViewer.Message.notempty);
 		}
-		viewer.notify(CommonViewer.Message.update);
+		//viewer.notify(CommonViewer.Message.update);
 	}
 
 	public void reorder(String field) {
