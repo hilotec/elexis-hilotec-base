@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 4056 2008-06-20 13:17:43Z rgw_ch $
+ * $Id: Artikel.java 4057 2008-06-20 13:43:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -390,7 +390,7 @@ public class Artikel extends VerrechenbarAdapter{
 		Hashtable ext=getHashtable(EXT_INFO);
 		double vpe= checkZeroDouble((String)ext.get(VERPACKUNGSEINHEIT));
 		double vke= checkZeroDouble((String)ext.get(VERKAUFSEINHEIT));
-		if(vpe!=vke){
+		if((vpe>0.0) && (vke>0.0) && (vpe!=vke)){
 			return (int)Math.round(vke*(vkt/vpe));
 		}else{
 			return (int)Math.round(vkt);
