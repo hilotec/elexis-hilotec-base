@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DauerMediView.java 1832 2007-02-18 09:12:31Z rgw_ch $
+ * $Id: DauerMediView.java 4056 2008-06-20 13:17:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,7 +29,7 @@ import ch.elexis.util.SWTHelper;
  */
 public class DauerMediView extends ViewPart implements ActivationListener, SelectionListener{
 	public final static String ID="ch.elexis.dauermedikationview";
-	DauerMediDisplay dmd;
+	FixMediDisplay dmd;
 	public DauerMediView() {
 		
 	}
@@ -37,7 +37,7 @@ public class DauerMediView extends ViewPart implements ActivationListener, Selec
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
-		dmd=new DauerMediDisplay(parent,getViewSite());
+		dmd=new FixMediDisplay(parent,getViewSite());
 		dmd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		GlobalEvents.getInstance().addActivationListener(this, this);
 	}

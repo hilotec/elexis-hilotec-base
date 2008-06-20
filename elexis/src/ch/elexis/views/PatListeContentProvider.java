@@ -60,8 +60,11 @@ public class PatListeContentProvider implements CommonContentProvider,
 		if(bValid || bUpdating){
 			return pats;
 		}
-		pats=new String[]{"Lade Daten..."};
-		((TableViewer)viewer.getViewerWidget()).setItemCount(1);
+		if(pfilter!=null){
+			pats=new String[]{"Lade Daten..."};
+			((TableViewer)viewer.getViewerWidget()).setItemCount(1);
+		}
+		
 		//viewer.getViewerWidget().refresh(true);
 		if(!Hub.acl.request(AccessControlDefaults.PATIENT_DISPLAY)){
 			return new Object[0];
@@ -118,7 +121,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 			}
 			
 		};
-		job.setPriority(Job.LONG);
+		job.setPriority(Job.SHORT);
 		job.setUser(true);
 		job.setSystem(false);
 		bUpdating=true;

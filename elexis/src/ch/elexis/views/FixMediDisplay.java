@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DauerMediDisplay.java 4056 2008-06-20 13:17:43Z rgw_ch $
+ * $Id: FixMediDisplay.java 4056 2008-06-20 13:17:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Desk;
@@ -28,7 +29,8 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
-import ch.elexis.util.DynamicListDisplay;
+import ch.elexis.util.ListDisplay;
+import ch.elexis.util.Money;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
@@ -36,18 +38,23 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Display and let the user modify the medication of the currently selected patient
+ * This is a pop-in-Replacement for DauerMediDisplay
+ * To claculate the daily cost wie accept the forms 1-1-1-1 and 1x1, 2x3 and so on
  * @author gerry
  *
- *@deprecated use FixMediDisplay
  */
-@Deprecated
-public class DauerMediDisplay extends DynamicListDisplay {
-	private DLDListener dlisten;
+public class FixMediDisplay extends ListDisplay<Prescription> {
+	private static final String TTCOST="Tagestherapiekosten: ";
+	private LDListener dlisten;
 	private IAction stopMedicationAction,changeMedicationAction,removeMedicationAction;
-	DauerMediDisplay self;
+	FixMediDisplay self;
+	Label lCost;
 	
-	public DauerMediDisplay(Composite parent, IViewSite s){
+	
+	public FixMediDisplay(Composite parent, IViewSite s){
 		super(parent,SWT.NONE,null);
+		lCost=new Label(this,SWT.NONE);
+		lCost.setText(TTCOST);
 		dlisten=new DauerMediListener(s);
 		self=this;
 		addHyperlinks("Hinzu... ","Liste... ","Rezept... ");
@@ -61,16 +68,54 @@ public class DauerMediDisplay extends DynamicListDisplay {
 	public void reload(){
 		clear();
 		Patient act=GlobalEvents.getSelectedPatient();
+		Money cost=new Money();
+		boolean canCalculate=true;
 		if(act!=null){
 			Prescription[] pre=act.getFixmedikation();
 			for(Prescription pr:pre){
+				float num=0;
+				try{
+					String dosis=pr.getDosis();
+					if(dosis.matches("[0-9]+[xX][0-9]+")){
+						String[] dose=dosis.split("[xX]");
+						int count=Integer.parseInt(dose[0]);
+						num=getNum(dose[1])*count;
+					}else if(dosis.indexOf('-')!=-1){
+						String[] dos=dosis.split("-");
+						if(dos.length>2){
+							for(String d:dos){
+								num+=getNum(d);
+							}
+						}else{
+							num=getNum(dos[1]);
+						}
+					}else{
+						canCalculate=false;
+					}
+					Artikel art=pr.getArtikel();
+					int ve=art.getVerpackungsEinheit();
+					Money price=pr.getArtikel().getVKPreis();
+				}catch(Exception ex){
+					ExHandler.handle(ex);
+					canCalculate=false;
+				}
 				add(pr);
 			}
 		}
 	}
 	
+	private float getNum(String n){
+		if(n.indexOf('/')!=-1){
+			String[] bruch=n.split("/");
+			float zaehler=Float.parseFloat(bruch[0]);
+			float nenner=Float.parseFloat(bruch[1]);
+			return zaehler/nenner;
+		}else{
+			return Float.parseFloat(n);
+		}
+	}
 	
-	class DauerMediListener implements DLDListener {
+	class DauerMediListener implements LDListener {
 		IViewSite site;
 
 		DauerMediListener(IViewSite s){
@@ -122,12 +167,19 @@ public class DauerMediDisplay extends DynamicListDisplay {
 			}
 			
 		}
+
+		public String getLabel(Object o) {
+			if(o instanceof Prescription){
+				return ((Prescription)o).getLabel();
+			}
+			return o.toString();
+		}
 	}
 	private void makeActions(){
 		
 		changeMedicationAction=new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,"Ändern..."){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText("Dauermedikation modifizieren");
 			}
 			public void doRun(){
@@ -141,7 +193,7 @@ public class DauerMediDisplay extends DynamicListDisplay {
 		
 		stopMedicationAction=new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,"Stoppen"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REMOVEITEM));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
 				setToolTipText("Diese Medikation stoppen");
 			}
 			public void doRun(){
@@ -155,7 +207,7 @@ public class DauerMediDisplay extends DynamicListDisplay {
 		
 		removeMedicationAction=new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION,"Löschen"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Medikation unwiederruflich löschen");
 			}
 			public void doRun(){

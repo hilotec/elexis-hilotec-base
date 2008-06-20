@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 3987 2008-06-01 06:19:26Z rgw_ch $
+ * $Id: Artikel.java 4056 2008-06-20 13:17:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -193,12 +193,7 @@ public class Artikel extends VerrechenbarAdapter{
 		}
 		return pack;
 	}
-	public int getPackungsGroesse(){
-		return checkZero(getExt(VERPACKUNGSEINHEIT));
-	}
-	public int getAbgabeEinheit(){
-		return checkZero(getExt(VERKAUFSEINHEIT));
-	}
+	
 	public int getMaxbestand(){
 		try{
 			return checkZero(get(MAXBESTAND));
@@ -350,6 +345,13 @@ public class Artikel extends VerrechenbarAdapter{
 	public int getVerkaufseinheit(){
 		Hashtable ext=getHashtable(EXT_INFO);
 		return checkZero((String)ext.get(VERKAUFSEINHEIT));
+	}
+	
+	public int getPackungsGroesse(){
+		return checkZero(getExt(VERPACKUNGSEINHEIT));
+	}
+	public int getAbgabeEinheit(){
+		return checkZero(getExt(VERKAUFSEINHEIT));
 	}
 	@SuppressWarnings("unchecked")
 	public void setExt(final String name, final String value){

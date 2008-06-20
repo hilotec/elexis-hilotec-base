@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 4037 2008-06-12 14:30:37Z rgw_ch $
+ * $Id: ListDisplay.java 4056 2008-06-20 13:17:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
