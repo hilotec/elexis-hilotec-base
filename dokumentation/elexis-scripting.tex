@@ -61,15 +61,17 @@ Die zu verwendende Sprache ist ein vereinfachtes Java (aber auch 'richtiges' Jav
 \subsection{Grundsätzlicher Aufbau}
 
 \begin{verbatim}
-    /* Dies ist ein Beispiel-Script. Text welcher zwischen diesen Kommentarsymbolen
+    /* Dies ist ein Beispiel-Script. Text, welcher zwischen diesen Kommentarsymbolen
        steht, wird als Kommentar betrachtet, dient also nur der Erhellung oder
        Erheiterung des menschlichen Lesers. Der Interpreter hingegen ignoriert
-       solchen Text schlicht. Sie sollten bei komplexeren Scripts nicht mit Kommentaren
-       sparen, da sie Ihnen helfen, später zu verstehen, was Sie eigentlich machen
-       wollten. Und anderen kann es helfen, Ihr Script zu verstehen. */
+       solchen Text schlicht. Sie sollten bei komplexeren Scripts nicht mit
+       Kommentaren sparen, da sie Ihnen helfen, später zu verstehen, was Sie
+       eigentlich machen wollten. Und anderen kann es helfen, Ihr Script zu
+       verstehen.
+    */
 
     // Auch dies ist ein Kommentar, aber bei // geht der Kommentar immer nur
-    // bis zum Ende der aktuellen Zeile.
+    // bis zum Ende der aktuellen Zeile, bei /* immer bis zum nächsten */
 
     irgendwas=10;
         /* Wir haben soeben eine Variable namens 'irgendwas' erstellt,
@@ -89,9 +91,12 @@ Die zu verwendende Sprache ist ein vereinfachtes Java (aber auch 'richtiges' Jav
 
         // wir wollen das gleich mal testen:
     if(zusammen==1010){
+                // Geschweifte Klammern markieren zusammengehörende Blöcke
         resultat="Computer rechnet richtig";
+        wertDesComputers=1000;
     }else{
         resultat="Computer rechnet falsch";
+        wertDesComputers=0;
     }
 
         // Ihr Computer kann natürlich auch multiplizieren und dividieren
@@ -105,10 +110,37 @@ Die zu verwendende Sprache ist ein vereinfachtes Java (aber auch 'richtiges' Jav
 
     heute=heute+" 18. Juni";    // 'heute' ist jetzt "Mittwoch 18. Juni"
 
+
 \end{verbatim}
 
 \section{Verbindung mit Elexis}
+Ein Script kann Verbindung mit Elexis aufnehmen, indem es in Elexis definierte Java-Objekte
+verwendet. Um dies auszunützen, braucht man allerdings gewisse Kennntnisse von Elexis-Interna.
 
+Es ist daher wohl sinnvoll zunächst einfach die in Beispielen gezeigten Objekte zu verwenden.
+Auf diese Weise stellt sich das nötige Kennenlernen der sinnvoll verwendbaren Objekte mit der
+Zeit von allein ein. Oder man lässt sich benötigte Scripts von jemand anderem erstellen.
 
+\medskip
+
+Ach so, wenn Sie mit dem Begriff 'Objekt' nichts anfangen können, dann nur soviel: Ein Objekt (bei objektorientierten Programmiersprachen wie Java) ein Programm-Konstrukt, das bestimmte Eigenschaften und Fähigkeiten (sog. 'Methoden') hat. Beispiel:
+\begin{small}
+\begin{verbatim}
+ import de.volkswagen.autos.*;    // Wir importieren die benötigten Objekte
+    
+ meinAuto=new Kaefer();           // Wir erstellen ein Objekt eines bestimmten Typs
+ meinAuto.setFarbe("Grün");       // Wir setzen Eigenschaften eines Objekts
+ if(meinAuto.istKaputt()){        // Wir fragen eine Eigenschaft eines Objekts ab
+     // wir bleiben zuhause
+ }else{
+     meinAuto.fahreNach("Bern");   // Wir starten eine 'Methode' des Objekts
+ }
+
+\end{verbatim}
+\end{small}
+
+Beachten Sie in obigem Beispiel, dass uns die genaue Implementation des 'Kaefers' nicht zu interessieren braucht. Wir müssen weder wissen, wie er hergestellt wird, noch woraus er besteht. Wir müssen nur wissen, welche seiner Eigenschaften und Methoden für uns nützlich sind.
+Das macht Objekte so nützlich in der Programmierung. Man muss nicht alles selber machen, sondern
+kann die Vorarbeiten anderer (oder eigene frühere Vorarbeiten) nutzen.
 
 \end{document} 
