@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: UserSettings2.java 3960 2008-05-23 16:37:31Z rgw_ch $
+ * $Id: UserSettings2.java 4061 2008-06-21 23:22:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -74,7 +74,7 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 	}
 	@Override
 	public boolean performOk() {
-		prefs.flush();
+		Hub.userCfg.flush();
 		return super.performOk();
 	}
 	
