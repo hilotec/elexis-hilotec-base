@@ -123,23 +123,23 @@ Zeit von allein ein. Oder man lässt sich benötigte Scripts von jemand anderem 
 
 \medskip
 
-Ach so, wenn Sie mit dem Begriff 'Objekt' nichts anfangen können, dann nur soviel: Ein Objekt (bei objektorientierten Programmiersprachen wie Java) ein Programm-Konstrukt, das bestimmte Eigenschaften und Fähigkeiten (sog. 'Methoden') hat. Beispiel:
+Ach so, wenn Sie mit dem Begriff 'Objekt' nichts anfangen können, dann nur soviel: Ein Objekt ist (bei objektorientierten Programmiersprachen wie Java) ein Programm-Konstrukt, das bestimmte Eigenschaften und Fähigkeiten (sog. 'Methoden') hat. Beispiel:
 \begin{small}
 \begin{verbatim}
- import de.volkswagen.autos.*;    // Wir importieren die benötigten Objekte
-    
- meinAuto=new Kaefer();           // Wir erstellen ein Objekt eines bestimmten Typs
- meinAuto.setFarbe("Grün");       // Wir setzen Eigenschaften eines Objekts
- if(meinAuto.istKaputt()){        // Wir fragen eine Eigenschaft eines Objekts ab
+ import de.volkswagen.autos.*;  // importiere die benötigten Klassen
+
+ meinAuto=new Kaefer();         // erstelle ein Objekt einer bestimmten Klasse
+ meinAuto.setFarbe("Grün");     // setze Eigenschaften des Objekts
+ if(meinAuto.istKaputt()){      // frage eine Eigenschaft des Objekts ab
      // wir bleiben zuhause
  }else{
-     meinAuto.fahreNach("Bern");   // Wir starten eine 'Methode' des Objekts
+     meinAuto.fahreNach("Bern"); // führe eine Methode des Objekts aus.
  }
 
 \end{verbatim}
 \end{small}
 
-Beachten Sie in obigem Beispiel, dass uns die genaue Implementation des 'Kaefers' nicht zu interessieren braucht. Wir müssen weder wissen, wie er hergestellt wird, noch woraus er besteht. Wir müssen nur wissen, welche seiner Eigenschaften und Methoden für uns nützlich sind.
+Beachten Sie in obigem Beispiel, dass uns die genaue Implementation des 'Kaefers' nicht zu interessieren braucht. Wir müssen weder wissen, wie er hergestellt wird, noch woraus er besteht. Wir müssen nur wissen, welche seiner Eigenschaften und Methoden für uns interessant sind.
 Das macht Objekte so nützlich in der Programmierung. Man muss nicht alles selber machen, sondern
 kann die Vorarbeiten anderer (oder eigene frühere Vorarbeiten) nutzen.
 
