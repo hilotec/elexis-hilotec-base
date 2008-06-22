@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2008, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsultationView.java 535 2006-07-07 20:17:04Z rgw_ch $
+ *  $Id: FaelleView.java 4063 2008-06-22 16:51:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -93,9 +93,9 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 			if(element instanceof Fall){
 				Fall fall=(Fall)element;
 				if(fall.isValid()){
-					return Desk.theImageRegistry.get(Desk.IMG_OK);
+					return Desk.getImage(Desk.IMG_OK);
 				}else{
-					return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+					return Desk.getImage(Desk.IMG_FEHLER);
 				}
 			}
 			return super.getColumnImage(element, columnIndex);
@@ -166,7 +166,7 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 		konsFilterAction=new Action("Konsultationen filtern",Action.AS_CHECK_BOX){
 			{
 				setToolTipText("Nur Konsultationen dieses Falls anzeigen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_FILTER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
 			@Override
 			public void run(){

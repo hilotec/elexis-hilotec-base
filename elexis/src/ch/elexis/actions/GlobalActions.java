@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 3554 2008-01-17 14:17:18Z danlutz $
+ * $Id: GlobalActions.java 4063 2008-06-22 16:51:46Z rgw_ch $
  *******************************************************************************/
 
 
@@ -73,6 +73,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.NeuerFallDialog;
 import ch.elexis.dialogs.SelectFallDialog;
@@ -150,7 +151,7 @@ public class GlobalActions {
      
         helpAction=new Action("Handbuch"){
         	{
-        		setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_BOOK));
+        		setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_BOOK));
         		setToolTipText("Handbuch öffnen");
         		
         	}
@@ -177,12 +178,12 @@ public class GlobalActions {
        
         	//ActionFactory.SAVE_PERSPECTIVE.create(window);
         resetPerspectiveAction=ActionFactory.RESET_PERSPECTIVE.create(window);
-        resetPerspectiveAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REFRESH));
+        resetPerspectiveAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
         
         homeAction=new Action(Messages.getString("GlobalActions.Home")){ //$NON-NLS-1$
         	{	setId("home"); //$NON-NLS-1$
         	 	setActionDefinitionId(Hub.COMMAND_PREFIX + "home"); 	 //$NON-NLS-1$
-        	 	setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_HOME)); 
+        	 	setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_HOME)); 
         	 	setToolTipText(Messages.getString("GlobalActions.HomeToolTip")); //$NON-NLS-1$
         	 	help.setHelp(this, "ch.elexis.globalactions.homeAction"); //$NON-NLS-1$
         	 }
@@ -201,21 +202,7 @@ public class GlobalActions {
     				ExHandler.handle(ex);
     			}
         	}
-        	/*
-        	public void run(){
-        		try{
-					IWorkbenchWindow win=PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					PlatformUI.getWorkbench().showPerspective(PatientPerspektive.ID,win);
-					mainWindow.getActivePage().showView(PatientDetailView.ID);
-					PatientenListeView pv=(PatientenListeView) mainWindow.getActivePage().showView(PatientenListeView.ID);
-					pv.reset();
-					//GlobalEvents.getInstance().clearSelection(getViewSite(),PatientDetailView.class);
-				}catch(Exception ex){
-					ExHandler.handle(ex);
-				}
-        	}
-        	*/
-        };
+         };
         savePerspectiveAsDefaultAction=new Action("als Startperspektive speichern"){
         	{
         		setId("start");
@@ -244,7 +231,6 @@ public class GlobalActions {
     				}
    					ch.elexis.data.Anwender.logoff();
                     adaptForUser();
-    				//PlatformUI.getWorkbench().showPerspective(LoginPerspektive.ID,win);
                     LoginDialog  dlg=new LoginDialog(win.getShell());
                     dlg.create();
                     dlg.setTitle(Messages.getString("GlobalActions.LoginDialogTitle")); //$NON-NLS-1$
@@ -271,19 +257,7 @@ public class GlobalActions {
         		imp.open();
         	}
         };
-        /*
-        importTarmedAction=new Action("Import Tarmed"){
-        	{ setId("importTarmed");
-        		setActionDefinitionId(Hub.COMMAND_PREFIX+"import"); 	}
-        	public void run(){
-        		TarmedImporter ti=new TarmedImporter("tarmed");
-        		if(ti.connect()){
-        			ti.convert();
-        		}
-        	}
-        };
-        */
-
+    
         connectWizardAction=new Action(Messages.getString("GlobalActions.Connection")){ //$NON-NLS-1$
         	{	setId("connectWizard"); //$NON-NLS-1$
         		setActionDefinitionId(Hub.COMMAND_PREFIX+"connectWizard"); //$NON-NLS-1$
@@ -313,7 +287,7 @@ public class GlobalActions {
         };
         printKontaktEtikette=new Action(Messages.getString("GlobalActions.PrintContactLabel")){ //$NON-NLS-1$
         	{	setToolTipText(Messages.getString("GlobalActions.PrintContactLabelToolTip")); //$NON-NLS-1$
-        		setImageDescriptor(Desk.theImageRegistry.getDescriptor("adressetikette")); //$NON-NLS-1$
+        		setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADRESSETIKETTE)); //$NON-NLS-1$
         	}
         	@Override
         	public void run(){
@@ -322,7 +296,7 @@ public class GlobalActions {
         };
         
 		printAdresse=new Action(Messages.getString("GlobalActions.PrintAddressLabel")){ //$NON-NLS-1$
-			{	setImageDescriptor(Desk.theImageRegistry.getDescriptor("adressetikette")); //$NON-NLS-1$
+			{	setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADRESSETIKETTE)); //$NON-NLS-1$
 				setToolTipText(Messages.getString("GlobalActions.PrintAddressLabelToolTip")); //$NON-NLS-1$
 			}
 			@Override
@@ -337,7 +311,7 @@ public class GlobalActions {
 		printVersionedEtikette=new Action(Messages.getString("GlobalActions.PrintVersionedLabel")){
 			{
 				setToolTipText(Messages.getString("GlobalActions.PrintVersionedLabelToolTip"));
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_VERSIONEDETIKETTE));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_VERSIONEDETIKETTE));
 			}
 			@Override
 			public void run(){
@@ -377,7 +351,7 @@ public class GlobalActions {
 		
 		printEtikette=new Action(Messages.getString("GlobalActions.PrintLabel")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PATIENTETIKETTE)); 
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PATIENTETIKETTE)); 
 				setToolTipText(Messages.getString("GlobalActions.PrintLabelToolTip")); //$NON-NLS-1$
 			}
 			@Override
@@ -423,7 +397,7 @@ public class GlobalActions {
                 String printer = Hub.localCfg.get("Drucker/Einzelblatt/Name", null);
                 String tray = Hub.localCfg.get("Drucker/Einzelblatt/Schacht", null);
 
-				MessageBox mb=new MessageBox(Desk.theDisplay.getActiveShell(), SWT.ICON_INFORMATION | SWT.OK | SWT.CANCEL);
+				MessageBox mb=new MessageBox(Desk.getDisplay().getActiveShell(), SWT.ICON_INFORMATION | SWT.OK | SWT.CANCEL);
 				mb.setText("Papier einlegen");
 				mb.setMessage("Bitte legen Sie im Einzelblatteinzug Papier ein.");
 				if (mb.open() == SWT.OK) {
@@ -457,20 +431,27 @@ public class GlobalActions {
 			@Override
 			public void run(){
 				Fall actFall=GlobalEvents.getSelectedFall();
-				Konsultation[] bhdl=actFall.getBehandlungen(false);
-				ArrayList<Konsultation> lBehdl=new ArrayList<Konsultation>(bhdl.length);
-				for(Konsultation b:bhdl){
-					if(b.getRechnung()==null){
-						lBehdl.add(b);
+				Mandant mnd=Hub.actMandant;
+				if(actFall!=null && mnd!=null){
+					String mndid=mnd.getId();
+					Konsultation[] bhdl=actFall.getBehandlungen(false);
+					ArrayList<Konsultation> lBehdl=new ArrayList<Konsultation>(bhdl.length);
+					for(Konsultation b:bhdl){
+						Rechnung rn=b.getRechnung();
+						if(rn==null || rn.getStatus()==RnStatus.STORNIERT){
+							if(b.getMandant().getId().equals(mndid)){
+								lBehdl.add(b);
+							}
+						}
 					}
-				}
-				Result res=Rechnung.build(lBehdl);
-				if(!res.isOK()){
-					ErrorDialog.openError(mainWindow.getShell(),Messages.getString("GlobalActions.Error"),Messages.getString("GlobalActions.BillErrorMessage"),res.asStatus()); //$NON-NLS-1$ //$NON-NLS-2$
-					//Rechnung rn=(Rechnung)res.get();
-					//rn.storno(true);
-					//rn.delete();
-					
+					Result<Rechnung> res=Rechnung.build(lBehdl);
+					if(!res.isOK()){
+						ErrorDialog.openError(mainWindow.getShell(),Messages.getString("GlobalActions.Error"),Messages.getString("GlobalActions.BillErrorMessage"),res.asStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+						//Rechnung rn=(Rechnung)res.get();
+						//rn.storno(true);
+						//rn.delete();
+						
+					}
 				}
 				//setFall(actFall,null);
 			}
@@ -490,8 +471,6 @@ public class GlobalActions {
 					Fall f=dlg.result;
 					if(f!=null){
 						k.setFall(f);
-						//setPatient(actPatient);
-						//setFall(f,actBehandlung);
 						GlobalEvents.getInstance().fireSelectionEvent(f);
 					}
 				}
@@ -510,8 +489,6 @@ public class GlobalActions {
 				if(dlg.open()==Dialog.OK){
 					TimeTool date=dlg.getSelectedDate();
 					k.setDatum(date.toString(TimeTool.DATE_GER), false);
-					//setPatient(actPatient);
-					//setFall(actFall,actBehandlung);
 					GlobalEvents.getInstance().fireSelectionEvent(k);
 				}
 			}
@@ -565,7 +542,7 @@ public class GlobalActions {
 		};
 		neueKonsAction=new Action(Messages.getString("GlobalActions.NewKons")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText(Messages.getString("GlobalActions.NewKonsToolTip")); //$NON-NLS-1$
 			}
 			@Override
@@ -575,7 +552,7 @@ public class GlobalActions {
 		};
 		neuerFallAction=new Action(Messages.getString("GlobalActions.NewCase")){ //$NON-NLS-1$
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor("new")); //$NON-NLS-1$
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW)); //$NON-NLS-1$
 				setToolTipText(Messages.getString("GlobalActions.NewCaseToolTip")); //$NON-NLS-1$
 			}
 			@Override
@@ -629,7 +606,7 @@ public class GlobalActions {
 		}
 		Konsultation actLetzte=actFall.getLetzteBehandlung();
 		if((actLetzte!=null) && actLetzte.getDatum().equals(new TimeTool().toString(TimeTool.DATE_GER))){
-			if(MessageDialog.openQuestion(Desk.theDisplay.getActiveShell(), Messages.getString("GlobalActions.SecondForToday"),  //$NON-NLS-1$
+			if(MessageDialog.openQuestion(Desk.getTopShell(), Messages.getString("GlobalActions.SecondForToday"),  //$NON-NLS-1$
 					Messages.getString("GlobalActions.SecondForTodayQuestion"))==false){ //$NON-NLS-1$
 				return;
 			}
@@ -684,7 +661,7 @@ public class GlobalActions {
     	String driver = Hub.localCfg.get(cfgPrefix + "Driver", null); //$NON-NLS-1$
     	boolean choose = Hub.localCfg.get(cfgPrefix + "Choose", false); //$NON-NLS-1$
     	if (choose || StringTool.isNothing(printer) || StringTool.isNothing(driver)) {
-    		Shell shell=Desk.theDisplay.getActiveShell();
+    		Shell shell=Desk.getTopShell();
     		PrintDialog pdlg=new PrintDialog(shell);
     		pd=pdlg.open();
     	} else {
