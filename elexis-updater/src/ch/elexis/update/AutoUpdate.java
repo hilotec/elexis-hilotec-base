@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AutoUpdate.java 4050 2008-06-18 17:37:13Z rgw_ch $
+ * $Id: AutoUpdate.java 4065 2008-06-23 14:51:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.update;
@@ -47,7 +47,7 @@ public class AutoUpdate {
 				String[] subs=basedir.list();		
 				job=new UpdateJob(subs);
 				job.schedule();
-				//Hub.addShutdownJob(new ReplaceJob(basedir, downloads));
+				Hub.addShutdownJob(new ReplaceJob(basedir, downloads));
 			}
 			
 
