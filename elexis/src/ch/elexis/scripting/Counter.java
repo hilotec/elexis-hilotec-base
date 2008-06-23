@@ -2,9 +2,15 @@ package ch.elexis.scripting;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Hashtable;
+import java.util.LinkedList;
+
+import ch.elexis.data.PersistentObject;
 
 public class Counter {
 	private ArrayList<Float> list=new ArrayList<Float>();
+	private Hashtable<Object, Integer> hash=new Hashtable<Object,Integer>(); 
 	
 	public void add(float i){
 		list.add(new Float(i));
@@ -33,5 +39,51 @@ public class Counter {
 			return (f1+f2)/2;
 		}
 		return f1;
+	}
+	
+	public void add(Object o){
+		System.out.println(((PersistentObject)o).getLabel());
+		Integer c=hash.get(o);
+		int cx=0;
+		if(c==null){
+			cx=1;
+		}else{
+			cx=c+1;
+		}
+		hash.put(o, new Integer(cx));
+	}
+	
+	public ObjCounter[] getTopTen(){
+		ArrayList<ObjCounter> aoc=new ArrayList<ObjCounter>(hash.size());
+		for(Object o:hash.keySet()){
+			aoc.add(new ObjCounter(o,hash.get(o)));
+		}
+		Collections.sort(aoc, new Comparator<ObjCounter>(){
+
+			public int compare(ObjCounter arg0, ObjCounter arg1) {
+				return arg1.count-arg0.count;
+			}
+			
+		});
+		return aoc.toArray(new ObjCounter[0]);
+	}
+
+	public String getTopTenAsString(){
+		ObjCounter[] cnt=getTopTen();
+		StringBuilder sb=new StringBuilder();
+		for(ObjCounter oc:cnt){
+			sb.append(oc.count).append("\t\t");
+			PersistentObject po=(PersistentObject)oc.obj;
+			sb.append(po.getLabel()).append("\n");
+		}
+		return sb.toString();
+	}
+	class ObjCounter{
+		ObjCounter(Object obj,int num){
+			this.obj=obj;
+			count=num;
+		}
+		Object obj;
+		int count;
 	}
 }
