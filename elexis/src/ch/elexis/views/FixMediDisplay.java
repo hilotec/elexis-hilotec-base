@@ -8,9 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4058 2008-06-20 15:39:22Z rgw_ch $
+ * $Id: FixMediDisplay.java 4066 2008-06-23 14:51:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
@@ -32,6 +35,7 @@ import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.Money;
+import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
@@ -66,7 +70,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		ViewMenus menu=new ViewMenus(s);
 		menu.createControlContextMenu(list,stopMedicationAction,changeMedicationAction,null,removeMedicationAction);
 		setDLDListener(dlisten);
-		PersistentObjectDropTarget dt=new PersistentObjectDropTarget("Fixmedikation",this,
+		new PersistentObjectDropTarget("Fixmedikation",this,
 				new PersistentObjectDropTarget.Receiver(){
 
 					public boolean accept(PersistentObject o) {
@@ -97,6 +101,16 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							reload();
 						}						
 					}});
+		new PersistentObjectDragSource2(list,new PersistentObjectDragSource2.Draggable(){
+
+			public List<PersistentObject> getSelection() {
+				Prescription pr=FixMediDisplay.this.getSelection();
+				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>(1);
+				if(pr!=null){
+					ret.add(pr);
+				}
+				return ret;
+			}});
 	}
 	
 	
