@@ -7,9 +7,9 @@ Haftungsausschluss.
 
 a) Beschreibung, Umfang  und Mindestvoraussetzungen
 ---------------------------------------------------
-Dies ist eine vollst�ndige Elexis-Installation f�r Windows inklusive Java Runtime und OpenOffice. 
+Dies ist eine vollständige Elexis-Installation für Windows inklusive Java Runtime und OpenOffice. 
 
-Diese Version l�uft nur auf Microsoft Windows 2000, XP oder Vista. Der Computer sollte mindestens 512MB RAM haben und auf der Festplatte m�ssen mindestens 350MB frei sein.
+Diese Version läuft nur auf Microsoft Windows 2000, XP oder Vista. Der Computer sollte mindestens 512MB RAM haben und auf der Festplatte müssen mindestens 350MB frei sein.
 
 b) Programmstart
 ----------------
@@ -17,13 +17,13 @@ Lesen Sie bitte die Dokumentation "erste Schritte" auf http://www.elexis.ch. Eve
 
 d) Deinstallation
 -----------------
-Im Startmenu finden Sie nebst Elexis auch einen Menuepunkt "Deinstallation". W�hlen Sie diesen Punkt, um Elexis vollst�ndig zu l�schen (Achtung: Dies l�scht auch alle Daten, die Sie vielleicht seit der Installation in Elexis eingegeben haben).
-Sie k�nnen auch einfach den Elexis-Ordner l�schen. Auch dies deinstalliert das Programm vollst�ndig.
+Im Startmenu finden Sie nebst Elexis auch einen Menuepunkt "Deinstallation". Wählen Sie diesen Punkt, um Elexis vollständig zu löschen (Achtung: Dies löscht auch alle Daten, die Sie vielleicht seit der Installation in Elexis eingegeben haben).
+Sie können auch einfach den Elexis-Ordner löschen. Auch dies deinstalliert das Programm vollständig.
 
 
 f) Zusatzmaterialien und Handbuch
 ---------------------------------
-Ein Handbuch (elexis.pdf) wurde ebenfalls mitinstalliert. Bitte lesen Sie dort zun�chst nach, wenn Probleme auftreten.
+Ein Handbuch (elexis.pdf) wurde ebenfalls mitinstalliert. Bitte lesen Sie dort zunächst nach, wenn Probleme auftreten.
 
 
 --------------------------------------------------------------------------------------
