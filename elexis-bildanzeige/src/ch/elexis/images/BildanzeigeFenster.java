@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,32 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BildanzeigeFenster.java 1208 2006-11-02 09:09:35Z rgw_ch $
+ *    $Id: BildanzeigeFenster.java 4071 2008-06-25 05:08:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Desk;
@@ -63,6 +73,43 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 		canvas.setSize(r.width, r.height);
 		return ret;
 	}
+	
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		Button bClose=createButton(parent, org.eclipse.jface.dialogs.Dialog.OK, "Schliessen", true);
+		bClose.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				BildanzeigeFenster.this.okPressed();
+			}
+			
+		});
+		Button bExport=createButton(parent,4,"Export...",false);
+		bExport.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fd=new FileDialog(BildanzeigeFenster.this.getShell(),SWT.SAVE);
+				String fname=fd.open();
+				if(fname!=null){
+					File file=new File(fname);
+					try{
+						if(!file.createNewFile() || !file.canWrite()){
+							SWTHelper.showError("Fehler", "Kann Datei "+fname+" nicht erstellen");
+						}else{
+							byte[] arr=bild.getData();
+							FileOutputStream fout=new FileOutputStream(file);
+							fout.write(arr);
+							fout.close();
+						}
+					}catch(Exception ex){
+							SWTHelper.showError("Fehler", "Fehler beim Schreiben von "+fname);
+					}
+				}
+			}
+		});
+		//super.createButtonsForButtonBar(parent);
+	}
 
 	@Override
 	public void create() {
@@ -70,7 +117,7 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 		getShell().setText(bild.getPatient().getLabel());
 		setTitle(bild.getLabel());
 		setMessage(bild.get("Info"));
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	
 	
