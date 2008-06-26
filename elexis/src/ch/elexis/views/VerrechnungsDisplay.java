@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4075 2008-06-26 14:16:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -40,6 +40,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.util.Log;
@@ -60,7 +61,7 @@ public class VerrechnungsDisplay extends Composite {
 	VerrechnungsDisplay(final IWorkbenchPage page, Composite parent, int style){
 		super(parent,style);
 		setLayout(new GridLayout());
-		hVer=Desk.theToolkit.createHyperlink(this,"Verrechnung",SWT.NONE);
+		hVer=Desk.getToolkit().createHyperlink(this,"Verrechnung",SWT.NONE);
         hVer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
         hVer.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
@@ -78,7 +79,7 @@ public class VerrechnungsDisplay extends Composite {
 			}
         });
 
-		tVerr=Desk.theToolkit.createTable(this,SWT.SINGLE);
+		tVerr=Desk.getToolkit().createTable(this,SWT.SINGLE);
         tVerr.setLayoutData(new GridData(GridData.FILL_BOTH));
         tVerr.setMenu(createVerrMenu());
         dropTarget=new PersistentObjectDropTarget("Verrechnen",tVerr,new DropReceiver());
@@ -118,6 +119,9 @@ public class VerrechnungsDisplay extends Composite {
 		public boolean accept(PersistentObject o) {
 			if (GlobalEvents.getSelectedPatient() != null) {
 				if(o instanceof IVerrechenbar){
+					return true;
+				}
+				if(o instanceof Leistungsblock){
 					return true;
 				}
 			}
