@@ -53,7 +53,7 @@ public class Counter {
 		hash.put(o, new Integer(cx));
 	}
 	
-	public ObjCounter[] getTopTen(){
+	public ObjCounter[] getTopList(int num){
 		ArrayList<ObjCounter> aoc=new ArrayList<ObjCounter>(hash.size());
 		for(Object o:hash.keySet()){
 			aoc.add(new ObjCounter(o,hash.get(o)));
@@ -65,11 +65,15 @@ public class Counter {
 			}
 			
 		});
-		return aoc.toArray(new ObjCounter[0]);
+		ObjCounter[] ret=new ObjCounter[num];
+		for(int i=0;i<num;i++){
+			ret[i]=aoc.get(i);
+		}
+		return ret;
 	}
 
-	public String getTopTenAsString(){
-		ObjCounter[] cnt=getTopTen();
+	public String getTopListAsString(int num){
+		ObjCounter[] cnt=getTopList(num);
 		StringBuilder sb=new StringBuilder();
 		for(ObjCounter oc:cnt){
 			sb.append(oc.count).append("\t\t");
