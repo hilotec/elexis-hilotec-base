@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4068 2008-06-24 14:11:48Z rgw_ch $
+<!-- $Id: build.xml 4076 2008-06-27 12:12:51Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -88,6 +88,7 @@
 		</copy>
 		<exec command="texify elexis.tex" dir="${source}/dokumentation" />
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
+		<available file="../Elexis-MMC" property="updater.ok"/>
 	</target>
 
 
@@ -135,17 +136,10 @@
 		<copy file="${docsource}/${pluginname}.pdf" todir="${doc}"/>
 	</target>
 	
-	<target name="updater">
-		<mkdir dir="${env.TEMP}/elexis-mmc"/>
-		<echo message="${source}"/>
-		<javac srcdir="${source}/Elexis-MMC/src" destdir="${env.TEMP}/elexis-mmc"
-		         debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
-		<jar basedir="${env.TEMP}/elexis-mmc" destfile="${dist}/elexis-mmc.jar">
-			<manifest>
-				<attribute name="Main-Class" value="ch.elexis.mmc.Starter"/>
-			</manifest>
-		</jar>
+	<target name="updater" if="updater.ok">
+		   <ant antfile="updater.xml"/>
 	</target>
+	
 	
 	<target name="pro" depends="prepare">
 		   <ant antfile="rsc/build/plugins.xml" target="elexis-pro"/>
