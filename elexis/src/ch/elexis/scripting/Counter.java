@@ -65,6 +65,7 @@ public class Counter {
 			}
 			
 		});
+		num=Math.min(num,aoc.size());
 		ObjCounter[] ret=new ObjCounter[num];
 		for(int i=0;i<num;i++){
 			ret[i]=aoc.get(i);
