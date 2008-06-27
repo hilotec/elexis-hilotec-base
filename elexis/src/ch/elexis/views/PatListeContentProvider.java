@@ -160,7 +160,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 		if(!bValid){
 			getElements(viewer);
 		}
-		if(pats.length>=index){
+		if(pats.length>index){
 			((TableViewer)viewer.getViewerWidget()).replace(pats[index], index);
 		}else{
 			((TableViewer)viewer.getViewerWidget()).replace("-", index);
