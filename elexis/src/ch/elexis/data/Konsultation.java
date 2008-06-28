@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 3913 2008-05-11 06:41:32Z rgw_ch $
+ *  $Id: Konsultation.java 4081 2008-06-28 09:38:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -295,7 +295,8 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	
 	/** das Behandlungsdatum auslesen */
 	public String getDatum(){
-		return  get("Datum");
+		String ret=get("Datum");
+		return  ret;
 	}
 	public Rechnung getRechnung(){
 		return Rechnung.load(get("RechnungsID"));
