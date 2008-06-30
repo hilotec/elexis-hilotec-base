@@ -7,7 +7,7 @@
         <ant antfile="../jdomwrapper/build.xml"/>
         <ant antfile="../elexis/build.xml"/>
         <ant antfile="../elexis-importer/build.xml"/>
-        <ant antfile="../elexis-updater/build.xml"/>
+        <!-- ant antfile="../elexis-updater/build.xml"/ -->
         <ant antfile="../elexis-simpletext/build.xml"/>
         
         <!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
