@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: TrustCenters.java 4088 2008-06-30 11:51:42Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.data;
 
 import java.util.ArrayList;
@@ -26,22 +38,62 @@ public class TrustCenters {
 		return list;
 	}
 	
+	/** EAN des TrustCenters holen */
+	public static String getTCEAN(String tcName){
+		return getTCEAN(tc.get(tcName));
+	}
+	
+	public static String getTCEAN(Integer tcCode){
+		if(tcCode==null){
+			return null;
+		}
+		return tcEAN.get(tcCode);
+	}
+	/*
+	TC Aargau  	aar  	7601001370135  	57
+	Ctésias 	cte 	7601001370210 	51
+	GallOnet  	gal 	7601001370241 	52
+	hawatrust 	haw 	7601001370159 	53
+	medkey 	med 		7601001370333 	54
+	PonteNova 	pon 	7601001370203 	55
+	syndata 	syn 	7601001370166 	56
+	TC thurcare thu 	7601001370173 	58
+	TC ticino 	tic 	7601001370722 	59
+	trustmed 	tru 	7601001370227 	61
+	ZueriDoc 	zue 	7601001370456 	60
+	TC test 	tes 	7601001370128 	69
+	 */
 	public static final HashMap<String, Integer> tc=new HashMap<String, Integer>();
+	public static final HashMap<Integer,String> tcEAN=new HashMap<Integer,String>();
 	static{
 		tc.put("Ctésias", CTESIAS); //$NON-NLS-1$
+		tcEAN.put(CTESIAS, "7601001370210"); //$NON-NLS-1$
 		tc.put("GallOnet", GALLONET); //$NON-NLS-1$
+		tcEAN.put(GALLONET, "7601001370241");
 		tc.put("hawatrust", HAWATRUST); //$NON-NLS-1$
+		tcEAN.put(HAWATRUST, "7601001370159");
 		tc.put("+medkey", MEDKEY); //$NON-NLS-1$
+		tcEAN.put(MEDKEY, "7601001370333");
 		tc.put("PonteNova", PONTENOVA); //$NON-NLS-1$
+		tcEAN.put(PONTENOVA, "7601001370203");
 		tc.put("syndata", SYNDATA); //$NON-NLS-1$
+		tcEAN.put(SYNDATA, "7601001370166");
 		tc.put("TC Aargau", TC_AARGAU); //$NON-NLS-1$
+		tcEAN.put(TC_AARGAU, "7601001370135");
 		tc.put("thurcare", THURCARE); //$NON-NLS-1$
+		tcEAN.put(THURCARE, "7601001370173");
 		tc.put("TC Ticino", TC_TICINO); //$NON-NLS-1$
+		tcEAN.put(TC_TICINO, "7601001370722");
 		tc.put("TC züridoc", ZUERIDOC); //$NON-NLS-1$
+		tcEAN.put(ZUERIDOC, "7601001370456");
 		tc.put("trustmed", TRUSTMED); //$NON-NLS-1$
+		tcEAN.put(TRUSTMED, "7601001370227");
 		tc.put("TC test", TC_TEST); //$NON-NLS-1$
+		tcEAN.put(TC_TEST, "7601001370128");
 		
 	}
+	
+	
 	/*
 	Ctésias 51 71
 	GallOnet 52 72
@@ -56,4 +108,5 @@ public class TrustCenters {
 	trustmed 61 81
 	TC test 69 89
 	*/
+	
 }

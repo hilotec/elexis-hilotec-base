@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4032 2008-06-11 16:59:12Z rgw_ch $
+ * $Id: XMLExporter.java 4088 2008-06-30 11:51:42Z rgw_ch $
  *******************************************************************************/
 
 
@@ -67,6 +67,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TarmedLeistung;
+import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.elexis.preferences.Leistungscodes;
@@ -299,18 +300,33 @@ public class XMLExporter implements IRnOutputter {
 		sender.setAttribute("ean_party",mEAN);
 		String kEAN=TarmedRequirements.getEAN(kostentraeger); //(String)kostentraeger.getInfoElement("EAN");
 		String rEAN=TarmedRequirements.getRecipientEAN(kostentraeger);
+
+		// Try to find the intermediate EAN. If jave explicitely set
+		// an intermediate EAN, we'll use this one. Otherweise, we'll
+		// check whether the mandator has a TC contract. if so, we try to
+		// find the TC's EAN.
+		// If nothing approb^priate is found, we'll try to use the receiver EAN
+		// or at least the guarantor EAN.
+		// If everything fails we use a pseudo EAN to make the Validators happy
 		String iEAN=TarmedRequirements.getIntermediateEAN(actFall);
-		
 		Element intermediate=new Element("intermediate",ns);							// 10052
 		if(iEAN.length()==0){
-			if(!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
-				if(kEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
-					iEAN=kEAN;
-				}else{
-					iEAN=TarmedRequirements.EAN_PSEUDO;
+			if(TarmedRequirements.hasTCContract(actMandant)){
+				String trustCenter=TarmedRequirements.getTCName(actMandant);
+				if(trustCenter.length()>0){
+					iEAN=TrustCenters.getTCEAN(trustCenter);
 				}
-			}else{
-				iEAN=rEAN;
+			}
+			if(iEAN==null){
+				if(!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
+					if(kEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
+						iEAN=kEAN;
+					}else{
+						iEAN=TarmedRequirements.EAN_PSEUDO; // make validator happy
+					}
+				}else{
+					iEAN=rEAN;
+				}
 			}
 		}
 		intermediate.setAttribute("ean_party",iEAN);

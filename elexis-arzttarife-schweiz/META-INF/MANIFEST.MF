@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tarife für ambulante Arztbehandlungen in der Schweiz
 Bundle-SymbolicName: ch.elexis.arzttarife_ch; singleton:=true
-Bundle-Version: 1.3.0
+Bundle-Version: 1.3.2
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.artikel_ch,
