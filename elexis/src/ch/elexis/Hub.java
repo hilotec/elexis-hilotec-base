@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4082 2008-06-30 11:51:09Z rgw_ch $
+ *    $Id: Hub.java 4090 2008-06-30 14:21:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -148,7 +148,7 @@ public class Hub extends AbstractUIPlugin {
 		}
 		
 		String basePath=UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis"));
-		localCfg.set("elexis-basepath", basePath);
+		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath));
 		
 		// Exception handler initialiseren, Output wie log, auf eigene Klassen begrenzen
         ExHandler.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE,"")); //$NON-NLS-1$
@@ -320,7 +320,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4082 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4090 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
