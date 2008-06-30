@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource2.java 2913 2007-07-25 14:36:44Z rgw_ch $
+ * $Id: PersistentObjectDragSource2.java 4089 2008-06-30 14:21:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
 
 import ch.elexis.data.PersistentObject;
 
-public class PersistentObjectDragSource2 implements DragSourceListener {
+public class PersistentObjectDragSource2 extends DragSourceImpl implements DragSourceListener {
 	Draggable renderer;
 	Control dragSource;
 	List<PersistentObject> selection;
@@ -61,6 +61,9 @@ public class PersistentObjectDragSource2 implements DragSourceListener {
 	        event.doit=false;
 	    }else{
 	        event.doit=selection.get(0).isDragOK();
+	    }
+	    if(event.doit){
+	    	PersistentObjectDragSource.draggedObject=selection.get(0);
 	    }
 	}
 	

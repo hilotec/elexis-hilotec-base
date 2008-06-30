@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 3965 2008-05-26 09:16:42Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 4089 2008-06-30 14:21:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -55,6 +55,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
+import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.CommonViewer.DoubleClickListener;
@@ -229,8 +230,11 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			doubleClickEnable(lbUser);
 			doubleClickEnable(lbPatient);
 			
-			dragEnable(lbUser);
-			dragEnable(lbPatient);
+			//dragEnable(lbUser);
+			//dragEnable(lbPatient);
+			new PersistentObjectDragSource2(lbUser,new DragEnabler(lbUser));
+			new PersistentObjectDragSource2(lbPatient,new DragEnabler(lbPatient));
+			
 			try{
 				sash.setWeights(sashWeights);
 			}catch(Throwable t){
@@ -319,6 +323,22 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 		}
 
 	}
+	static class DragEnabler implements PersistentObjectDragSource2.Draggable{
+		List list;
+		DragEnabler(final List list){
+			this.list=list;
+		}
+		public java.util.List<PersistentObject> getSelection() {
+			int sel=list.getSelectionIndex();
+			 ArrayList<PersistentObject> backing=(ArrayList<PersistentObject>)list.getData();
+			 PersistentObject po=backing.get(sel);
+			 ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>();
+			 ret.add(po);
+			 return ret;
+		}
+		
+	}
+	/*
 	static DragSource dragEnable(final List list) {
 	DragSource src;
 	src=new DragSource(list, DND.DROP_COPY);
@@ -356,9 +376,10 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 		}
 		
 	});
+	
 	return src;
 	}
-	
+	*/
 	// add double click listener for ICodeSelectorTarget
 	static void doubleClickEnable(final List list) {
 		list.addSelectionListener(new SelectionListener() {

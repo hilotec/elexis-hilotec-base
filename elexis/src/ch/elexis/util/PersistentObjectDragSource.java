@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource.java 4040 2008-06-13 12:45:37Z rgw_ch $
+ * $Id: PersistentObjectDragSource.java 4089 2008-06-30 14:21:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -31,10 +31,9 @@ import ch.elexis.data.PersistentObject;
  * @author gerry
  *
  */
-public class PersistentObjectDragSource implements DragSourceListener {
+public class PersistentObjectDragSource extends DragSourceImpl implements DragSourceListener {
 	private final StructuredViewer viewer;
 	private IStructuredSelection ts;
-	private static PersistentObject draggedObject;
 	
 	public PersistentObjectDragSource(final StructuredViewer v){
 		viewer=v;
