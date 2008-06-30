@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4091 2008-06-30 19:19:57Z rgw_ch $
+<!-- $Id: build.xml 4092 2008-06-30 19:48:25Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -192,7 +192,10 @@
 			<arg line="+x elexis"/>
 		</exec>
 			
-		<zip basedir="${dist}" destfile="${dest}/output/elexis-macosx-${version}.zip"/>
+		<zip destfile="${dest}/output/elexis-macosx-${version}.zip" update="true">
+			<zipfileset dir="${dist}"/>
+			<zipfileset file="${dist}/elexis.app/Contents/MacOS/elexis" prefix="elexis.app/Contents/MacOS" filemode="755"/>
+		</zip>
 	</target>
 
 	<!-- Alles aufräumen -->
