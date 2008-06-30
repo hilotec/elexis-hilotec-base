@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4077 2008-06-27 15:35:42Z rgw_ch $
+<!-- $Id: build.xml 4091 2008-06-30 19:19:57Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -164,6 +164,7 @@
 		<!-- ant antfile="../Oowrapper/build.xml"/ -->
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
 		
+		<ant antfile="rsc/build/plugins.xml" target="main"/>
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
 		<exec executable="cp">
 			<arg line="-r ${jre} ${dist}/jre"/>
@@ -184,8 +185,13 @@
 	</target>
 
 	<!-- Mac OSX Version der Distribution -->
-	<target name="mac" depends="all">
+	<target name="mac" depends="prepare">
 		<copy file="${rsc}/elexis-mac.icns" tofile="${dist}/elexis-mac.icns"/>
+		<ant antfile="rsc/build/plugins.xml" target="main"/>
+		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
+			<arg line="+x elexis"/>
+		</exec>
+			
 		<zip basedir="${dist}" destfile="${dest}/output/elexis-macosx-${version}.zip"/>
 	</target>
 
