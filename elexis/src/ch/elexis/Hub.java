@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4040 2008-06-13 12:45:37Z rgw_ch $
+ *    $Id: Hub.java 4082 2008-06-30 11:51:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -50,6 +50,7 @@ import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.PluginCleaner;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.UtilFile;
 import ch.rgw.IO.FileTool;
 import ch.rgw.IO.Settings;
 import ch.rgw.IO.SqlSettings;
@@ -71,7 +72,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID="ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX=PLUGIN_ID+".commands."; //$NON-NLS-1$
 	static final String neededJRE="1.5.0"; //$NON-NLS-1$
-    public static final String Version="1.3.1"; //$NON-NLS-1$
+    public static final String Version="1.3.2"; //$NON-NLS-1$
     public static final String DBVersion="1.7.1"; //$NON-NLS-1$
     static final String[] mine={"ch.elexis","ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
     private static List<ShutdownJob> shutdownJobs=new LinkedList<ShutdownJob>();
@@ -145,6 +146,9 @@ public class Hub extends AbstractUIPlugin {
 				break;
 			}
 		}
+		
+		String basePath=UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis"));
+		localCfg.set("elexis-basepath", basePath);
 		
 		// Exception handler initialiseren, Output wie log, auf eigene Klassen begrenzen
         ExHandler.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE,"")); //$NON-NLS-1$
@@ -316,7 +320,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4040 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4082 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -356,7 +360,7 @@ public class Hub extends AbstractUIPlugin {
     			}
     		}
     	}
-    	Display dis=Desk.theDisplay;
+    	Display dis=Desk.getDisplay();
     	if(dis==null){
     		dis=PlatformUI.createDisplay();
     	}
