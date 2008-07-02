@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4088 2008-06-30 11:51:42Z rgw_ch $
+ * $Id: XMLExporter.java 4093 2008-07-02 17:14:26Z rgw_ch $
  *******************************************************************************/
 
 
@@ -300,12 +300,15 @@ public class XMLExporter implements IRnOutputter {
 		sender.setAttribute("ean_party",mEAN);
 		String kEAN=TarmedRequirements.getEAN(kostentraeger); //(String)kostentraeger.getInfoElement("EAN");
 		String rEAN=TarmedRequirements.getRecipientEAN(kostentraeger);
+		if(rEAN.equals("unknown")){
+			rEAN=kEAN;
+		}
 
 		// Try to find the intermediate EAN. If jave explicitely set
 		// an intermediate EAN, we'll use this one. Otherweise, we'll
 		// check whether the mandator has a TC contract. if so, we try to
 		// find the TC's EAN.
-		// If nothing approb^priate is found, we'll try to use the receiver EAN
+		// If nothing appropriate is found, we'll try to use the receiver EAN
 		// or at least the guarantor EAN.
 		// If everything fails we use a pseudo EAN to make the Validators happy
 		String iEAN=TarmedRequirements.getIntermediateEAN(actFall);
