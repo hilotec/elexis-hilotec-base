@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 3979 2008-05-30 15:32:46Z rgw_ch $
+ *  $Id: Rechnungslauf.java 4094 2008-07-03 16:40:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -26,6 +26,7 @@ import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.Money;
@@ -67,11 +68,12 @@ public class Rechnungslauf implements IRunnableWithProgress {
 	}
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
+			String kMandantID=Hub.actMandant.getId();
 			Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
 			qbe.add("RechnungsID", "", null);
-			if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
-				qbe.add("MandantID", "=", Hub.actMandant.getId());
-			}
+			//if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
+				qbe.add("MandantID", "=", kMandantID);
+			//}
 			monitor.beginTask("Analysiere Konsultationen", IProgressMonitor.UNKNOWN);
 			monitor.subTask("Lese Konsultationen ein");
 			List<Konsultation> list=qbe.execute();
@@ -87,6 +89,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				}
 				String kfID=kFall.getId();
 				Patient kPatient=kFall.getPatient();
+				
 				if((kPatient==null) || (!kPatient.exists())){
 					continue;
 				}
@@ -95,7 +98,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					if(cmp.isBefore(ttFirstBefore)){
 						for(Konsultation k2:list){
 							String fid=k2.get("FallID");
-							if((fid!=null) && (fid.equals(kfID))){
+							String mid=k2.get("MandantID");
+							if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
 									hKons.put(k2, kPatient);
 							}
 						}
@@ -107,7 +111,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					if(cmp.isBefore(ttFirstBefore)){
 						for(Konsultation k2:list){
 							String fid=k2.get("FallID");
-							if((fid!=null) && (fid.equals(kfID))){
+							String mid=k2.get("MandantID");
+							if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
 								hKons.put(k2, kPatient);
 							}
 						}
@@ -118,7 +123,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					Map<Konsultation,Patient> list2=new HashMap<Konsultation,Patient>(100);
 					for(Konsultation k2:list){
 					String fid=k2.get("FallID");
-					if((fid!=null) && (fid.equals(kfID))){
+					String mid=k2.get("MandantID");
+					if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
 						list2.put(k2,kPatient);
 							sum.addAmount(k2.getUmsatz()/100.0);
 						}
