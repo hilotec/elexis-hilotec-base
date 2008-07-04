@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: KontaktMatcher.java 4095 2008-07-04 15:55:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -170,7 +170,7 @@ public class KontaktMatcher {
 				}
 			}
 			if(!StringTool.isNothing(strasse)){
-				if(sameStreet(kk[i].get("Strasse"),strasse)){
+				if(isSameStreet(kk[i].get("Strasse"),strasse)){
 					score[i]+=3;
 				}
 			}
@@ -198,11 +198,35 @@ public class KontaktMatcher {
 		return found;
 	}
 	
-	static String normalizePhone(final String nr){
+	/**
+	 * try to figure out which part of a string is the zip and which is the place
+	 * @param str a string containing possibly zip and possibly place
+	 * @return always a two element array, [0] is zip or "", [1] is place or ""
+	 */
+	public static String[] normalizeAddress(String str){
+		String[] ret=str.split("\\s+",2);
+		if(ret.length<2){
+			String[] rx=new String[2];
+			rx[0]="";
+			rx[1]=ret[0];
+			return rx;
+		}
+		return ret;
+	}
+	/**
+	 * Remove all non-numbers out of phone strings
+	 * @param nr
+	 * @return
+	 */
+	public static String normalizePhone(final String nr){
 		return nr.replaceAll("[\\s-:\\.]", "");
 	}
 	
-	static boolean sameStreet(final String s1, final String s2){
+	/**
+	 * Try to figure out if two street strings denote the same street address
+	 * @return true if the streets seem to be equal
+	 */
+	public static boolean isSameStreet(final String s1, final String s2){
 		String[] ns1=normalizeStrasse(s1);
 		String[] ns2=normalizeStrasse(s2);
 		if(!(ns1[0].matches(ns2[0]))){
@@ -272,9 +296,9 @@ public class KontaktMatcher {
 
 	/**
 	 * Decide whether a person is identical to given personal data. Normalize all names:
-	 * Ulmlaute will be converted, ccents will be eliminatet and double names will be reduced
+	 * Ulmlaute will be converted, accents will be eliminatet and double names will be reduced
 	 * to their first part. 
-	 * @return true if the given person seems to be the same tha the given personalia
+	 * @return true if the given person seems to be the same than the given personalia
 	 */
 	public static boolean isSame(final Person a, final String nameB, final String firstnameB, final String gebDatB){
 		try{
