@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4102 2008-07-05 18:20:26Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4103 2008-07-05 19:23:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -73,6 +73,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	//int	type;
 
 	boolean showBezugsKontakt = false;
+	String extraText=null; 
 	private ListViewer bezugsKontaktViewer = null;
 	private boolean isSelecting = false;
 	
@@ -101,6 +102,10 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		this.showBezugsKontakt = showBezugsKontakt;
 	}
 	
+	public KontaktSelektor(Shell parentShell, Class which, String t, String m, String extra) {
+		this(parentShell, which, t, m);
+		extraText=extra;
+	}
 	@Override
 	public boolean close() {
 		cv.removeDoubleClickListener(this);
@@ -209,7 +214,9 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		if (showBezugsKontakt) {
 			new Label(ret, SWT.NONE).setText("Andere Kontakte");
 		}
-		
+		if(extraText!=null){
+			new Label(ret,SWT.WRAP).setText(extraText);
+		}
 		vc=new ViewerConfigurer(
 		   new LazyContentProvider(cv,dataloader, null),
 		   new DefaultLabelProvider(),
@@ -389,8 +396,14 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	
 	}
 	
+	public static Kontakt showInSync(Class clazz, String title, String message, String extra){
+		InSync rn=new InSync(clazz,title,message,extra);
+		Desk.getDisplay().syncExec(rn);
+		return rn.ret;
+
+	}
 	public static Kontakt showInSync(Class clazz, String title, String message){
-		InSync rn=new InSync(clazz,title,message);
+		InSync rn=new InSync(clazz,title,message,null);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
 
@@ -399,15 +412,17 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		Kontakt ret;
 		String title, message;
 		Class clazz;
-		InSync(Class clazz,String title, String message){
+		String extra;
+		InSync(Class clazz,String title, String message,String extra){
 			this.title=title;
 			this.message=message;
 			this.clazz=clazz;
+			this.extra=extra;
 		}
 		
 		public void run() {
 			Shell shell=Desk.getDisplay().getActiveShell();
-			KontaktSelektor ksl=new KontaktSelektor(shell,clazz,title,message);
+			KontaktSelektor ksl=new KontaktSelektor(shell,clazz,title,message,extra);
 			if(ksl.open()==Dialog.OK){
 				ret=(Kontakt)ksl.getSelection();
 			}else{
