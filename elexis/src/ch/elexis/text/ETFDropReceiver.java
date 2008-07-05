@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFDropReceiver.java 2916 2007-07-25 17:08:58Z rgw_ch $
+ *  $Id: ETFDropReceiver.java 4097 2008-07-05 10:01:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -50,8 +50,8 @@ public class ETFDropReceiver implements Receiver{
 	public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 		IKonsExtension rec=targets.get(o.getClass());
 		if(rec!=null){
-			Point point=Desk.theDisplay.getCursorLocation();
-			Point mapped=Desk.theDisplay.map(null, etf.text, point);
+			Point point=Desk.getDisplay().getCursorLocation();
+			Point mapped=Desk.getDisplay().map(null, etf.text, point);
 			Point maxOffset=etf.text.getLocationAtOffset(etf.text.getCharCount());
 			int pos=etf.text.getCharCount();
 			if(mapped.y<maxOffset.y){
