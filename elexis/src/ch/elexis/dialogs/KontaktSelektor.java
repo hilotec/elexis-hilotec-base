@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4010 2008-06-06 08:02:58Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4102 2008-07-05 18:20:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -223,8 +223,12 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						KontaktDetailDialog kdd=new KontaktDetailDialog(parent.getShell(),new String[]{vc.getControlFieldProvider().getValues()[1],""});
-						kdd.open();
+						String[] vals=new String[3];
+						vals[0]=vc.getControlFieldProvider().getValues()[1];
+						KontaktErfassenDialog ked=new KontaktErfassenDialog(parent.getShell(),vals);
+						ked.open();
+						//KontaktDetailDialog kdd=new KontaktDetailDialog(parent.getShell(),new String[]{vc.getControlFieldProvider().getValues()[1],""});
+						//kdd.open();
 					}
 					
 				});
@@ -387,7 +391,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	
 	public static Kontakt showInSync(Class clazz, String title, String message){
 		InSync rn=new InSync(clazz,title,message);
-		Desk.theDisplay.syncExec(rn);
+		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
 
 	}
@@ -402,7 +406,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		}
 		
 		public void run() {
-			Shell shell=Desk.theDisplay.getActiveShell();
+			Shell shell=Desk.getDisplay().getActiveShell();
 			KontaktSelektor ksl=new KontaktSelektor(shell,clazz,title,message);
 			if(ksl.open()==Dialog.OK){
 				ret=(Kontakt)ksl.getSelection();
