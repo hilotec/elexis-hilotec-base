@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4100 2008-07-05 13:17:13Z rgw_ch $
+ * $Id: KontaktMatcher.java 4101 2008-07-05 13:24:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
 
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
+
+import ch.elexis.Desk;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
@@ -61,6 +64,11 @@ public class KontaktMatcher {
 				Organisation org= new Organisation(name,"");
 				addAddress(org,strasse,plz,ort);
 				return org;
+			}else if(createMode==CreateMode.ASK){
+				ConflictResolveDialog crd=new ConflictResolveDialog(Desk.getTopShell(),null);
+				if(crd.open()==Dialog.OK){
+					return (Organisation)crd.getResult();
+				}
 			}
 		}
 		if(found.size()==1){
