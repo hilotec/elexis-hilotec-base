@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4101 2008-07-05 13:24:26Z rgw_ch $
+ * $Id: KontaktMatcher.java 4104 2008-07-05 19:23:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -23,6 +23,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.KontaktSelektor;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -65,16 +66,22 @@ public class KontaktMatcher {
 				addAddress(org,strasse,plz,ort);
 				return org;
 			}else if(createMode==CreateMode.ASK){
-				ConflictResolveDialog crd=new ConflictResolveDialog(Desk.getTopShell(),null);
-				if(crd.open()==Dialog.OK){
-					return (Organisation)crd.getResult();
-				}
+				return (Organisation)KontaktSelektor.showInSync(Organisation.class, "Organisation nicht gefunden",
+						name+", "+strasse+", "+plz+" "+ort,
+						resolve1);
 			}
 		}
 		if(found.size()==1){
 			return found.get(0);
 		}
-		return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
+		// more than 1 hit
+		if(createMode==CreateMode.ASK){
+			return (Organisation)KontaktSelektor.showInSync(Organisation.class, "Organisation nicht eindeutig",
+					name+", "+strasse+", "+plz+" "+ort,
+					resolve1);
+		}else{
+			return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
+		}
 	}
 	
 	/**
@@ -149,13 +156,28 @@ public class KontaktMatcher {
 				Person ret=new Person(name,vorname,birthdate,sex);
 				addAddress(ret,strasse,plz,ort);
 				return ret;
+			}else if(createMode==CreateMode.ASK){
+				return (Person)KontaktSelektor.showInSync(Person.class, "Person nicht gefunden",
+						name+" "+vorname+
+						(StringTool.isNothing(gebdat) ? "" : ", "+gebdat)+
+						", "+strasse+", "+plz+" "+ort,
+						resolve1);
 			}
 			return null;
 		}
 		if(found.size()==1){
 			return found.get(0);
 		}
-		return (Person)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort,natel);
+		// more than 1 hit
+		if(createMode==CreateMode.ASK){
+			return (Person)KontaktSelektor.showInSync(Person.class, "Person nicht eindeutig",
+					name+" "+vorname+
+					(StringTool.isNothing(gebdat) ? "" : ", "+gebdat)+
+					", "+strasse+", "+plz+" "+ort,
+					resolve1);
+		}else{
+			return (Person)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort,natel);
+		}
 	}
 
 	/**
@@ -356,4 +378,15 @@ public class KontaktMatcher {
 		String[] ret=name.split("\\s*[- ]\\s*");
 		return ret[0];
 	}
+	
+	final static String resolve1=
+		"Es kann nicht automatisch entschieden werden, ob dieser\n"+
+		"Kontakt in der Datenbank enthalten ist, bzw. welchem\n" +
+		"existierenden Kontakt dies entspricht.\n"+
+		"Bitte wählen Sie unten aus, welchem Kontakt dieser neue\n" +
+		"Eintrag entspricht, oder Klicken Sie 'Neu erstellen', um den\n"+
+		"Kontakt manuell neu zu erstellen, oder Klicken Sie 'OK', um\n"+
+		"automatisch einen Kontakt anhand der übergebenen Daten erstellen\n"+
+		"zu lassen. 'Cancel' bricht den Importvorgang ab.";
+
 }

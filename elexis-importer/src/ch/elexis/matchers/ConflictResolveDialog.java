@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ConflictResolveDialog.java 4101 2008-07-05 13:24:26Z rgw_ch $
+ * $Id: ConflictResolveDialog.java 4104 2008-07-05 19:23:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -26,6 +26,7 @@ import ch.elexis.data.Organisation;
 public class ConflictResolveDialog extends TitleAreaDialog {
 	private Kontakt res;
 	private Kontakt mine;
+	
 	
 	public ConflictResolveDialog(Shell shell, Kontakt k) {
 		super(shell);
