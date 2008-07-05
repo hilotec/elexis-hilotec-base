@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4066 2008-06-23 14:51:44Z rgw_ch $
+ * $Id: FixMediDisplay.java 4099 2008-07-05 13:03:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -46,7 +46,7 @@ import ch.rgw.tools.TimeTool;
 /**
  * Display and let the user modify the medication of the currently selected patient
  * This is a pop-in-Replacement for DauerMediDisplay
- * To claculate the daily cost wie accept the forms 1-1-1-1 and 1x1, 2x3 and so on
+ * To calculate the daily cost wie accept the forms 1-1-1-1 and 1x1, 2x3 and so on
  * @author gerry
  *
  */
@@ -126,7 +126,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 					float num=0;
 					try{
 						String dosis=pr.getDosis();
-						if(dosis.matches("[0-9]+[xX][0-9]+")){
+						if(dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")){
 							String[] dose=dosis.split("[xX]");
 							int count=Integer.parseInt(dose[0]);
 							num=getNum(dose[1])*count;
@@ -157,11 +157,15 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				}
 				add(pr);
 			}
+			double rounded=Math.round(100.0*cost)/100.0;
 			if(canCalculate){
-				double rounded=Math.round(100.0*cost)/100.0;
 				lCost.setText(TTCOST+Double.toString(rounded));
 			}else{
-				lCost.setText(TTCOST+"?");
+				if(rounded==0.0){
+					lCost.setText(TTCOST+"?");
+				}else{
+					lCost.setText(TTCOST+">"+Double.toString(rounded));
+				}
 			}
 		}
 	}
