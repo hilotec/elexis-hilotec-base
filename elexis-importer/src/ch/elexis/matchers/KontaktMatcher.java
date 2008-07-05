@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4098 2008-07-05 10:02:08Z rgw_ch $
+ * $Id: KontaktMatcher.java 4100 2008-07-05 13:17:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -30,11 +30,12 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class KontaktMatcher {
-
+	public enum CreateMode{FAIL,CREATE,ASK};
+	
 	public static Kontakt findKontakt(final String name, final String strasse, final String plz, final String ort){
-		Organisation o=findOrganisation(name, strasse, plz, ort, false);
+		Organisation o=findOrganisation(name, strasse, plz, ort, CreateMode.FAIL);
 		if(o==null){
-			Person p=findPerson(name, "", "", "", strasse, plz, ort, "", false);
+			Person p=findPerson(name, "", "", "", strasse, plz, ort, "", CreateMode.FAIL);
 			return p;
 		}else{
 			return o;
@@ -50,12 +51,13 @@ public class KontaktMatcher {
 	 * @return the organization that matches best the given parameters or null if no
 	 * such organization was found
 	 */
-	public static Organisation findOrganisation(final String name, final String strasse, final String plz, final String ort, final boolean createIfNotExists){
+	public static Organisation findOrganisation(final String name, final String strasse, 
+			final String plz, final String ort, final CreateMode createMode){
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		qbe.add("Name", "=", name);
 		List<Organisation> found=qbe.execute();
 		if(found.size()==0){
-			if(createIfNotExists){
+			if(createMode==CreateMode.CREATE){
 				Organisation org= new Organisation(name,"");
 				addAddress(org,strasse,plz,ort);
 				return org;
@@ -82,7 +84,7 @@ public class KontaktMatcher {
 	 */
 	public static Person findPerson(final String name, final String vorname, final String gebdat,
 				final String gender, final String strasse, final String plz, final String ort,
-				final String natel, final boolean createIfNotExists){
+				final String natel, final CreateMode createMode){
 		
 		Query<Person> qbe=new Query<Person>(Person.class);
 		String sex="";
@@ -135,7 +137,7 @@ public class KontaktMatcher {
 		}
 		List<Person> found=qbe.execute();
 		if(found.size()==0){
-			if(createIfNotExists){
+			if(createMode==CreateMode.CREATE){
 				Person ret=new Person(name,vorname,birthdate,sex);
 				addAddress(ret,strasse,plz,ort);
 				return ret;

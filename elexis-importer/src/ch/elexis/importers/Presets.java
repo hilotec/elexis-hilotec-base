@@ -27,6 +27,7 @@ import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.elexis.matchers.KontaktMatcher;
+import ch.elexis.matchers.KontaktMatcher.CreateMode;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
@@ -87,7 +88,7 @@ public class Presets {
 			String natel=StringTool.getSafe(row, 12);
 			Kontakt k=null;
 			if(StringTool.isNothing(typ)|| typ.equals("0")){
-				k=KontaktMatcher.findOrganisation(bez1, strasse, plz, ort, true);
+				k=KontaktMatcher.findOrganisation(bez1, strasse, plz, ort, CreateMode.CREATE);
 				if(k==null){
 					continue;
 				}
@@ -96,7 +97,7 @@ public class Presets {
 			}else{
 				String sex=StringTool.getSafe(row, 7);
 				String gebdat=StringTool.getSafe(row, 6);
-				k=KontaktMatcher.findPerson(bez1, bez2, gebdat, sex, strasse, plz, ort, natel, true);
+				k=KontaktMatcher.findPerson(bez1, bez2, gebdat, sex, strasse, plz, ort, natel, CreateMode.CREATE);
 				if(k==null){
 					continue;
 				}
@@ -287,13 +288,13 @@ public class Presets {
 			pat.set("Natel", StringTool.getSafe(row,7));
 			pat.set("Telefon2", StringTool.getSafe(row,8));
 			if(!StringTool.isNothing(StringTool.getSafe(row,10))){
-				Organisation org=KontaktMatcher.findOrganisation(row[10], "", "", "", true);
+				Organisation org=KontaktMatcher.findOrganisation(row[10], "", "", "", CreateMode.CREATE);
 				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "KVG");
 				fall.setRequiredContact("Kostenträger", org);
 				fall.setGarant(pat);
 			}
 			if(!StringTool.isNothing(StringTool.getSafe(row,11))){
-				Organisation org=KontaktMatcher.findOrganisation(row[11], "", "", "", true);
+				Organisation org=KontaktMatcher.findOrganisation(row[11], "", "", "", CreateMode.CREATE);
 				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "UVG");
 				fall.setRequiredContact("Kostenträger", org);
 				fall.setGarant(org);

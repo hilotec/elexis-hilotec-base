@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktImporterBlatt.java 3834 2008-04-22 15:43:12Z rgw_ch $
+ * $Id: KontaktImporterBlatt.java 4100 2008-07-05 13:17:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -32,6 +32,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Person;
 import ch.elexis.matchers.KontaktMatcher;
+import ch.elexis.matchers.KontaktMatcher.CreateMode;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.BinConverter;
@@ -146,7 +147,7 @@ public class KontaktImporterBlatt extends Composite{
 			String EANInsurance=StringTool.getSafe(row,5);
 			String EANReceiver=StringTool.getSafe(row,6);
 			String[] adr=splitAdress(adresse);
-			Organisation kk=KontaktMatcher.findOrganisation(name, adr[0], adr[1], adr[2], true);
+			Organisation kk=KontaktMatcher.findOrganisation(name, adr[0], adr[1], adr[2], CreateMode.CREATE);
 			if(kk==null){
 				return false;
 			}
