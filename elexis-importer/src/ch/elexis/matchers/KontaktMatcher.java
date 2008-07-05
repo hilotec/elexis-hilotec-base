@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4095 2008-07-04 15:55:38Z rgw_ch $
+ * $Id: KontaktMatcher.java 4098 2008-07-05 10:02:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -164,24 +164,35 @@ public class KontaktMatcher {
 		
 		for(int i=0;i<kk.length;i++){
 			
+			// If we have the same mobile number, that's a strong hint
 			if(!StringTool.isNothing(natel)){
 				if(normalizePhone(kk[i].get("NatelNr")).equals(normalizePhone(natel))){
 					score[i]+=5;
 				}
 			}
+			
+			// If we have the same street address, that's also a good hint
 			if(!StringTool.isNothing(strasse)){
 				if(isSameStreet(kk[i].get("Strasse"),strasse)){
 					score[i]+=3;
+				}else{
+					score[i]-=2;	
 				}
 			}
+			
+			// If we have the same zip or the same olace, that's a quite weak hint.
 			if(!StringTool.isNothing(plz)){
 				if(plz.equals(kk[i].get("Plz"))){
 					score[i]+=2;
+				}else{
+					score[i]-=1;
 				}
 			}
 			if(!StringTool.isNothing(ort)){
 				if(ort.equals(kk[i].get("Ort"))){
 					score[i]+=1;
+				}else{
+					score[i]-=1;
 				}
 			}
 
@@ -194,6 +205,9 @@ public class KontaktMatcher {
 				}
 				found=kk[i];
 			}
+		}
+		if(found==null){	// nothing did match at all
+			found=kk[0];	// we just take the first one
 		}
 		return found;
 	}
