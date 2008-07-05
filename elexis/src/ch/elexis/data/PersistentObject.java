@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *    $Id: PersistentObject.java 4096 2008-07-05 05:09:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -658,17 +658,20 @@ public abstract class PersistentObject{
     
     public void addEtikette(Etikette et){
     	String ID=new StringBuilder().append("ETK").append(getId()).toString();
-    	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
-    	if(ret!=null){
+    	List<Etikette> ret=(List<Etikette>)cache.get(ID);
+    	if(ret==null){
+    		ret=getEtiketten();
+    	}
+    	if(!ret.contains(et)){
     		ret.add(et);
     		Collections.sort(ret);
+    		StringBuilder sb=new StringBuilder();
+    		sb.append("INSERT INTO ").append(Etikette.LINKTABLE)
+    			.append("(obj,etikette) VALUES (")
+    			.append(getWrappedId()).append(",")
+    			.append(et.getWrappedId()).append(");");
+    		getConnection().exec(sb.toString());
     	}
-    	StringBuilder sb=new StringBuilder();
-    	sb.append("INSERT INTO ").append(Etikette.LINKTABLE)
-    		.append("(obj,etikette) VALUES (")
-    		.append(getWrappedId()).append(",")
-    		.append(et.getWrappedId()).append(");");
-    	getConnection().exec(sb.toString());
     }
     /**
      * Feststellen, ob ein PersistentObject als gelöscht markiert wurde 

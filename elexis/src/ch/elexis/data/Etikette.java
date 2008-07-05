@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 4045 2008-06-17 11:00:42Z rgw_ch $
+ *    $Id: Etikette.java 4096 2008-07-05 05:09:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -45,10 +45,10 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	public Etikette(String name, Color fg, Color bg){
 		create(null);
 		if(fg==null){
-			fg=Desk.theColorRegistry.get(Desk.COL_BLACK);
+			fg=Desk.getColor(Desk.COL_BLACK);
 		}
 		if(bg==null){
-			bg=Desk.theColorRegistry.get(Desk.COL_WHITE);
+			bg=Desk.getColor(Desk.COL_WHITE);
 		}
 		set(new String[]{"Name","vg", "bg"}, new String[]{
 				name,
@@ -82,10 +82,10 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	public Image getImage(){
 		DBImage image=DBImage.load(get("BildID"));
 		if(image!=null){
-			Image ret=Desk.theImageRegistry.get(image.getName());
+			Image ret=Desk.getImage(image.getName());
 			if(ret==null){
 				ret=image.getImage();
-				Desk.theImageRegistry.put(image.getName(), ret);
+				Desk.getImageRegistry().put(image.getName(), ret);
 			}
 			return ret;
 		}
@@ -119,7 +119,7 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 		}
 	}
 	public void register(){
-		Desk.theImageRegistry.put(get("Name"), new DBImageDescriptor(get("Name")));
+		Desk.getImageRegistry().put(get("Name"), new DBImageDescriptor(get("Name")));
 	}
 	
 	public Color getBackground(){
@@ -155,6 +155,8 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
     	getConnection().releaseStatement(stm);
 		return super.delete();
 	}
+	
+	
 	public static Etikette load(String id){
 		Etikette ret=new Etikette(id);
 		if(!ret.exists()){
