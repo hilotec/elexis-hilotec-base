@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4104 2008-07-05 19:23:25Z rgw_ch $
+ * $Id: KontaktMatcher.java 4105 2008-07-06 11:04:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -57,6 +57,8 @@ public class KontaktMatcher {
 	 */
 	public static Organisation findOrganisation(final String name, final String strasse, 
 			final String plz, final String ort, final CreateMode createMode){
+		String[] hints=new String[10];
+		hints[0]=name;
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		qbe.add("Name", "=", name);
 		List<Organisation> found=qbe.execute();
@@ -380,13 +382,10 @@ public class KontaktMatcher {
 	}
 	
 	final static String resolve1=
-		"Es kann nicht automatisch entschieden werden, ob dieser\n"+
-		"Kontakt in der Datenbank enthalten ist, bzw. welchem\n" +
-		"existierenden Kontakt dies entspricht.\n"+
-		"Bitte wählen Sie unten aus, welchem Kontakt dieser neue\n" +
-		"Eintrag entspricht, oder Klicken Sie 'Neu erstellen', um den\n"+
-		"Kontakt manuell neu zu erstellen, oder Klicken Sie 'OK', um\n"+
-		"automatisch einen Kontakt anhand der übergebenen Daten erstellen\n"+
-		"zu lassen. 'Cancel' bricht den Importvorgang ab.";
+		"Es kann nicht automatisch entschieden werden, ob dieser Kontakt in der\n"+
+		"Datenbank enthalten ist, bzw. welchem existierenden Kontakt dies entspricht.\n" +
+		"Bitte wählen Sie unten aus, welchem Kontakt dieser neue Eintrag entspricht,\n" +
+		"oder Klicken Sie 'Neu erstellen', um den Kontakt neu zu erstellen.\n"+
+		"'Cancel' bricht den Importvorgang ab.";
 
 }
