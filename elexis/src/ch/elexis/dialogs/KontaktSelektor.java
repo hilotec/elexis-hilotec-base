@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4103 2008-07-05 19:23:13Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4106 2008-07-06 11:04:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -70,6 +70,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	Button bAll,bPersons,bOrgs;
 	KontaktFilter fp;
 	FilterButtonAdapter fba;
+	String[] hints;
 	//int	type;
 
 	boolean showBezugsKontakt = false;
@@ -113,6 +114,14 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		return super.close();
 	}
 
+	/**
+	 * Provide a few hints in case the user clicks "Neu erstellen". The hints is an array of up to 10 Strings
+	 * as used in KontaktErfassenDialog
+	 * @param hints Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
+	 */
+	public void setHints(String[] hints){
+		this.hints=hints;
+	}
 
 	/* (Kein Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -230,12 +239,12 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						String[] vals=new String[3];
-						vals[0]=vc.getControlFieldProvider().getValues()[1];
-						KontaktErfassenDialog ked=new KontaktErfassenDialog(parent.getShell(),vals);
+						if(hints==null){
+							hints=new String[3];
+							hints[0]=vc.getControlFieldProvider().getValues()[1];
+						}
+						KontaktErfassenDialog ked=new KontaktErfassenDialog(parent.getShell(),hints);
 						ked.open();
-						//KontaktDetailDialog kdd=new KontaktDetailDialog(parent.getShell(),new String[]{vc.getControlFieldProvider().getValues()[1],""});
-						//kdd.open();
 					}
 					
 				});
@@ -397,23 +406,37 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	}
 	
 	public static Kontakt showInSync(Class clazz, String title, String message, String extra){
-		InSync rn=new InSync(clazz,title,message,extra);
+		InSync rn=new InSync(clazz,title,message,extra,null);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
 
 	}
 	public static Kontakt showInSync(Class clazz, String title, String message){
-		InSync rn=new InSync(clazz,title,message,null);
+		InSync rn=new InSync(clazz,title,message,null,null);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
 
 	}
+	public static Kontakt showInSync(Class clazz, String title, String message, String extra, String[] hints){
+		InSync rn=new InSync(clazz,title,message,extra,hints);
+		Desk.getDisplay().syncExec(rn);
+		return rn.ret;
+
+	}
+	public static Kontakt showInSync(Class clazz, String title, String message, String[] hints){
+		InSync rn=new InSync(clazz,title,message,null,hints);
+		Desk.getDisplay().syncExec(rn);
+		return rn.ret;
+
+	}
+
 	private static class InSync implements Runnable{
 		Kontakt ret;
 		String title, message;
 		Class clazz;
 		String extra;
-		InSync(Class clazz,String title, String message,String extra){
+		String[] hints;
+		InSync(Class clazz,String title, String message,String extra, String[] hints){
 			this.title=title;
 			this.message=message;
 			this.clazz=clazz;
@@ -423,6 +446,9 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		public void run() {
 			Shell shell=Desk.getDisplay().getActiveShell();
 			KontaktSelektor ksl=new KontaktSelektor(shell,clazz,title,message,extra);
+			if(hints!=null){
+				ksl.setHints(hints);
+			}
 			if(ksl.open()==Dialog.OK){
 				ret=(Kontakt)ksl.getSelection();
 			}else{
