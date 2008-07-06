@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4105 2008-07-06 11:04:21Z rgw_ch $
+ * $Id: KontaktMatcher.java 4108 2008-07-06 18:07:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -27,6 +27,7 @@ import ch.elexis.dialogs.KontaktSelektor;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import static ch.elexis.dialogs.KontaktSelektor.*;
 
 /**
  * Class to match personal data to contacts
@@ -57,8 +58,11 @@ public class KontaktMatcher {
 	 */
 	public static Organisation findOrganisation(final String name, final String strasse, 
 			final String plz, final String ort, final CreateMode createMode){
-		String[] hints=new String[10];
-		hints[0]=name;
+		String[] hints=new String[HINTSIZE];
+		hints[HINT_NAME]=name;
+		hints[HINT_STREET]=strasse;
+		hints[HINT_ZIP]=plz;
+		hints[HINT_PLACE]=ort;
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		qbe.add("Name", "=", name);
 		List<Organisation> found=qbe.execute();
@@ -70,7 +74,7 @@ public class KontaktMatcher {
 			}else if(createMode==CreateMode.ASK){
 				return (Organisation)KontaktSelektor.showInSync(Organisation.class, "Organisation nicht gefunden",
 						name+", "+strasse+", "+plz+" "+ort,
-						resolve1);
+						resolve1,hints);
 			}
 		}
 		if(found.size()==1){
@@ -80,7 +84,7 @@ public class KontaktMatcher {
 		if(createMode==CreateMode.ASK){
 			return (Organisation)KontaktSelektor.showInSync(Organisation.class, "Organisation nicht eindeutig",
 					name+", "+strasse+", "+plz+" "+ort,
-					resolve1);
+					resolve1,hints);
 		}else{
 			return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
 		}
@@ -102,6 +106,14 @@ public class KontaktMatcher {
 	public static Person findPerson(final String name, final String vorname, final String gebdat,
 				final String gender, final String strasse, final String plz, final String ort,
 				final String natel, final CreateMode createMode){
+		String[] hints=new String[HINTSIZE];
+		hints[HINT_NAME]=name;
+		hints[HINT_FIRSTNAME]=vorname;
+		hints[HINT_BIRTHDATE]=gebdat;
+		hints[HINT_SEX]=gender;
+		hints[HINT_STREET]=strasse;
+		hints[HINT_ZIP]=plz;
+		hints[HINT_PLACE]=ort;
 		
 		Query<Person> qbe=new Query<Person>(Person.class);
 		String sex="";
@@ -163,7 +175,7 @@ public class KontaktMatcher {
 						name+" "+vorname+
 						(StringTool.isNothing(gebdat) ? "" : ", "+gebdat)+
 						", "+strasse+", "+plz+" "+ort,
-						resolve1);
+						resolve1,hints);
 			}
 			return null;
 		}
@@ -176,7 +188,7 @@ public class KontaktMatcher {
 					name+" "+vorname+
 					(StringTool.isNothing(gebdat) ? "" : ", "+gebdat)+
 					", "+strasse+", "+plz+" "+ort,
-					resolve1);
+					resolve1,hints);
 		}else{
 			return (Person)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort,natel);
 		}

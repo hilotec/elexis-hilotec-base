@@ -7,12 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 3524 2008-01-13 17:03:39Z rgw_ch $
+ *  $Id: ExcelWrapper.java 4108 2008-07-06 18:07:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
 
 import java.io.FileInputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -100,14 +101,19 @@ public class ExcelWrapper {
 								}else{
 									ret.add("");
 								}
-							}else /*if(types[i].equals(Double.class))*/{
+							}else if(types[i].equals(Double.class)){
 								ret.add(Double.toString(cell.getNumericCellValue())); break;
+							}else /* if(types[i].equals(String.class)) */ { 
+								double cv=cell.getNumericCellValue();
+								//String r=Double.toString(cv);
+								String r=NumberFormat.getNumberInstance().format(cv);
+								ret.add(r);
 							}
 							break;
 						} // else fall thru
 					case HSSFCell.CELL_TYPE_FORMULA:
 						ret.add(Double.toString(cell.getNumericCellValue())); break;
-					case HSSFCell.CELL_TYPE_STRING: ret.add(cell.getStringCellValue()); break;
+					case HSSFCell.CELL_TYPE_STRING: ret.add(cell.toString()); break;
 					default: ret.add("unknown cell type");
 				}
 				
