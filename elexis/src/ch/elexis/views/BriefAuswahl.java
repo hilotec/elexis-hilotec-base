@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 3683 2008-02-16 11:46:37Z rgw_ch $
+ *    $Id: BriefAuswahl.java 4109 2008-07-06 19:35:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -66,7 +66,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener, Activat
 	//private ViewMenus menu;
 	//private IAction delBriefAction;
 	public BriefAuswahl() {
-		tk=Desk.theToolkit;
+		tk=Desk.getToolkit();
 	}
 
 	@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 3706 2008-02-24 21:12:28Z rgw_ch $
+ *  $Id: Person.java 4109 2008-07-06 19:35:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -118,20 +118,18 @@ public class Person extends Kontakt {
     }
 	/**
 	 * Return a short or long label for this Person
-	 * 
-	 * This implementation returns "<Vorname> <Name>" for both label types.
-	 * 
 	 * @return a label describing this Person
 	 */
 	public String getLabel(boolean shortLabel) {
-		StringBuilder sb=new StringBuilder();
+		StringBuilder sb=new StringBuilder();		
 		
 		if (shortLabel) {
 			sb.append(getVorname()).append(" ").append(getName());
+			return sb.toString();
 		} else {
-			sb.append(getVorname()).append(" ").append(getName());
+			return getPersonalia();
 		}
-		return sb.toString();
+		
 	}
 	
 	/** Einen String mit den Personalien holen */

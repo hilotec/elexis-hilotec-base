@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4107 2008-07-06 18:07:25Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4109 2008-07-06 19:35:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -49,6 +49,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
@@ -58,6 +59,8 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.CommonViewer.DoubleClickListener;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListener{
 	 //Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
@@ -139,6 +142,21 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		for(int i=0;i<hints.length;i++){	// make KontaktErfassenDialog happy
 			if(hints[i]==null){
 				hints[i]="";
+			}
+		}
+		if(!StringTool.isNothing(hints[HINT_BIRTHDATE])){
+			TimeTool tt=new TimeTool();
+			if(tt.set(hints[HINT_BIRTHDATE])){
+				hints[HINT_BIRTHDATE]=tt.toString(TimeTool.DATE_GER);
+			}else{
+				hints[HINT_BIRTHDATE]="";
+			}
+		}
+		if(!StringTool.isNothing(hints[HINT_SEX])){
+			if(hints[HINT_SEX].toLowerCase().startsWith("m")){
+				hints[HINT_SEX]=Person.MALE;
+			}else{
+				hints[HINT_SEX]=Person.FEMALE;
 			}
 		}
 	}
@@ -265,6 +283,9 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 						}
 						KontaktErfassenDialog ked=new KontaktErfassenDialog(parent.getShell(),hints);
 						ked.open();
+						Kontakt kr=ked.getResult();
+						cv.getViewerWidget().refresh();
+						cv.getViewerWidget().setSelection(new StructuredSelection(kr), true);
 					}
 					
 				});

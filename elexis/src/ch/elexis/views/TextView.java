@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: TextView.java 4109 2008-07-06 19:35:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -196,7 +196,7 @@ public class TextView extends ViewPart implements ActivationListener{
 		
 		newDocAction=new Action("Neues Dokument"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
 			public void run(){
 				actBrief = null;

@@ -9,7 +9,7 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added Anschrift
  *    
- * $Id: KontaktErfassenDialog.java 4102 2008-07-05 18:20:26Z rgw_ch $
+ * $Id: KontaktErfassenDialog.java 4109 2008-07-06 19:35:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -157,10 +157,14 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		cbSex
 				.setItems(new String[] {
 						Messages.getString("KontaktErfassenDialog.male"), Messages.getString("KontaktErfassenDialog.female") }); //$NON-NLS-1$ //$NON-NLS-2$
-		if (StringTool.isNothing(fld[1])) {
-			cbSex.select(0);
-		} else {
-			cbSex.select(StringTool.isFemale(fld[1]) ? 1 : 0);
+		if(fld[KontaktSelektor.HINT_SEX].length()==0){
+			if (StringTool.isNothing(fld[1])) {
+				cbSex.select(0);
+			} else {
+				cbSex.select(StringTool.isFemale(fld[1]) ? 1 : 0);
+			}
+		}else{
+			cbSex.select(fld[KontaktSelektor.HINT_SEX].equals(Person.MALE) ? 0 : 1);
 		}
 
 		new Label(ret, SWT.NONE).setText(Messages
