@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4106 2008-07-06 11:04:28Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4107 2008-07-06 18:07:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -60,7 +60,22 @@ import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.CommonViewer.DoubleClickListener;
 
 public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListener{
-	//private Class clazz;
+	 //Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
+	public static final int HINTSIZE=11;
+	
+	public static final int HINT_NAME=0;
+	public static final int HINT_FIRSTNAME=1;
+	public static final int HINT_BIRTHDATE=2;
+	public static final int HINT_STREET=3;
+	public static final int HINT_ZIP=4;
+	public static final int HINT_PLACE=5;
+	public static final int HINT_PHONE=6;
+	public static final int HINT_ADD=7;
+	public static final int HINT_FAX=8;
+	public static final int HINT_MAIL=9;
+	public static final int HINT_SEX=10;
+	
+	//	private Class clazz;
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	private String title;
@@ -119,8 +134,13 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	 * as used in KontaktErfassenDialog
 	 * @param hints Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
 	 */
-	public void setHints(String[] hints){
-		this.hints=hints;
+	public void setHints(String[] h){
+		this.hints=h;
+		for(int i=0;i<hints.length;i++){	// make KontaktErfassenDialog happy
+			if(hints[i]==null){
+				hints[i]="";
+			}
+		}
 	}
 
 	/* (Kein Javadoc)
@@ -441,6 +461,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			this.message=message;
 			this.clazz=clazz;
 			this.extra=extra;
+			this.hints=hints;
 		}
 		
 		public void run() {
