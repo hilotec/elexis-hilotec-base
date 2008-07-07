@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4113 2008-07-07 13:46:20Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4115 2008-07-07 14:37:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -383,17 +383,18 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	 */
 	@Override
 	protected void okPressed() {
-		if(selection==null){
-			Object bKSel = getBezugsKontaktSelection();
-			if (bKSel instanceof Kontakt) {
-				selection = bKSel;
-			} else if (bKSel instanceof BezugsKontakt) {
-				BezugsKontakt bezugsKontakt = (BezugsKontakt) bKSel;
-				Kontakt kontakt = Kontakt.load(bezugsKontakt.get("otherID"));
-				if (kontakt.exists()) {
-					selection = kontakt;
-				}
-			} else {
+
+		Object bKSel = getBezugsKontaktSelection();
+		if (bKSel instanceof Kontakt) {
+			selection = bKSel;
+		} else if (bKSel instanceof BezugsKontakt) {
+			BezugsKontakt bezugsKontakt = (BezugsKontakt) bKSel;
+			Kontakt kontakt = Kontakt.load(bezugsKontakt.get("otherID"));
+			if (kontakt.exists()) {
+				selection = kontakt;
+			}
+		} else {
+			if(selection==null){
 				Object[] sel=cv.getSelection();
 				if((sel!=null) && (sel.length>0)){
 					selection=sel[0];
