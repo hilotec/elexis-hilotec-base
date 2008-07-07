@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4045 2008-06-17 11:00:42Z rgw_ch $
+ * $Id: PatientenListeView.java 4116 2008-07-07 16:41:50Z rgw_ch $
  *******************************************************************************/
 
 
 package ch.elexis.views;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -64,6 +65,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     PatListFilterBox plfb;
     PatListeContentProvider plcp;
     Composite parent;
+
     
     @Override
 	public void dispose() {
@@ -236,12 +238,26 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
     						"Sie dürfen keinen neuen Patienten anlegen.");
             		return;
             	}
-            	
-        		PatientErfassenDialog ped=new PatientErfassenDialog(getViewSite().getShell(),vc.getControlFieldProvider().getValues());
+                HashMap<String, String> ctlFields=new HashMap<String, String>();
+                String[] fx=vc.getControlFieldProvider().getValues();
+                int i=0;
+                if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR,false)){
+        			ctlFields.put(Patient.PATID,fx[i++]);
+        		}
+        		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWNAME,true)){
+        			ctlFields.put(Patient.NAME, fx[i++]);
+        		}
+        		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,true)){
+        			ctlFields.put(Patient.FIRSTNAME, fx[i++]);
+        		}
+        		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB,true)){
+        			ctlFields.put(Patient.DOB, fx[i++]);
+        		}
+        		PatientErfassenDialog ped=new PatientErfassenDialog(getViewSite().getShell(),ctlFields);
         		if(ped.open()==Dialog.OK){
         			vc.getControlFieldProvider().clearValues();
         			actPatient=ped.getResult();
-        			//loader.invalidate();
+        			plcp.invalidate();
         			cv.notify(CommonViewer.Message.update);
         			cv.setSelection(actPatient,true);
         		}

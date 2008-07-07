@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientErfassenDialog.java 3712 2008-02-28 18:02:25Z danlutz $
+ *  $Id: PatientErfassenDialog.java 4116 2008-07-07 16:41:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -39,7 +40,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.TimeTool.TimeFormatException;
 
 public class PatientErfassenDialog extends TitleAreaDialog {
-	String[] fld;
+	HashMap<String,String> fld;
 	Text tName, tVorname, tGebDat, tStrasse, tPlz, tOrt, tTel;
 	Combo cbSex;
 	Patient result;
@@ -47,9 +48,17 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		return result;
 	}
 	
-	public PatientErfassenDialog(final Shell parent, final String[] fields){
+	public PatientErfassenDialog(final Shell parent, final HashMap<String, String> fields){
 		super(parent);
 		fld=fields;
+	}
+	
+	private String getField(String name){
+		String ret=fld.get(name);
+		if(ret==null){
+			ret="";
+		}
+		return ret;
 	}
 	@Override
 	protected Control createDialogArea(final Composite parent) {
@@ -58,43 +67,43 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout(2,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.Name")); //$NON-NLS-1$
 		tName=new Text(ret,SWT.BORDER);
-		tName.setText(fld[0]);
+		tName.setText(getField(Patient.NAME));
 		tName.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.firstName")); //$NON-NLS-1$
 		tVorname=new Text(ret,SWT.BORDER);
-		tVorname.setText(fld[1]);
+		tVorname.setText(getField(Patient.FIRSTNAME));
 		tVorname.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.sex")); //$NON-NLS-1$
 		cbSex=new Combo(ret, SWT.SINGLE);
 		cbSex.setItems(new String[]{Messages.getString("PatientErfassenDialog.male"),Messages.getString("PatientErfassenDialog.female")}); //$NON-NLS-1$ //$NON-NLS-2$
-		if(StringTool.isNothing(fld[1])){
+		if(StringTool.isNothing(getField(Patient.SEX))){
 			cbSex.select(0);
 		}else{
-			cbSex.select(StringTool.isFemale(fld[1]) ? 1:0);
+			cbSex.select(StringTool.isFemale(getField(Patient.FIRSTNAME)) ? 1:0);
 		}
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.birthDate")); //$NON-NLS-1$
 		tGebDat=new Text(ret,SWT.BORDER);
-		tGebDat.setText(fld[2]);
+		tGebDat.setText(getField(Patient.DOB));
 		tGebDat.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.street")); //$NON-NLS-1$
 		tStrasse=new Text(ret,SWT.BORDER);
-		tStrasse.setText(fld.length > 3? fld[3]: "");
+		tStrasse.setText(getField(Patient.STREET));
 		tStrasse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.zip")); //$NON-NLS-1$
 		tPlz=new Text(ret,SWT.BORDER);
-		tPlz.setText(fld.length > 4? fld[4]: "");
+		tPlz.setText(getField(Patient.ZIP));
 		tPlz.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.city")); //$NON-NLS-1$
 		tOrt=new Text(ret,SWT.BORDER);
-		tOrt.setText(fld.length > 5? fld[5]: "");
+		tOrt.setText(getField(Patient.PLACE));
 		tOrt.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.phone")); //$NON-NLS-1$
 		tTel=new Text(ret,SWT.BORDER);
-		tTel.setText(fld.length > 6? fld[6]: "");
+		tTel.setText(getField(Patient.PHONE1));
 		tTel.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		return ret;
 	}
@@ -104,7 +113,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		setMessage(Messages.getString("PatientErfassenDialog.pleaseEnterPersonalia")); //$NON-NLS-1$
 		setTitle(Messages.getString("PatientErfassenDialog.enterData")); //$NON-NLS-1$
 		getShell().setText(Messages.getString("PatientErfassenDialog.enterPatient")); //$NON-NLS-1$
-		setTitleImage(Desk.theImageRegistry.get("elexislogo48"));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	@Override
 	protected void okPressed() {
