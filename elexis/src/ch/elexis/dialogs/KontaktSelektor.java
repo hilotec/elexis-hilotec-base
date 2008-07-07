@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4109 2008-07-06 19:35:50Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4113 2008-07-07 13:46:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -283,9 +283,10 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 						}
 						KontaktErfassenDialog ked=new KontaktErfassenDialog(parent.getShell(),hints);
 						ked.open();
-						Kontakt kr=ked.getResult();
-						cv.getViewerWidget().refresh();
-						cv.getViewerWidget().setSelection(new StructuredSelection(kr), true);
+						selection=ked.getResult();
+						okPressed();
+						//cv.getViewerWidget().refresh();
+						//cv.getViewerWidget().setSelection(new StructuredSelection(kr), true);
 					}
 					
 				});
@@ -382,21 +383,23 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	 */
 	@Override
 	protected void okPressed() {
-		Object bKSel = getBezugsKontaktSelection();
-		if (bKSel instanceof Kontakt) {
-			selection = bKSel;
-		} else if (bKSel instanceof BezugsKontakt) {
-			BezugsKontakt bezugsKontakt = (BezugsKontakt) bKSel;
-			Kontakt kontakt = Kontakt.load(bezugsKontakt.get("otherID"));
-			if (kontakt.exists()) {
-				selection = kontakt;
-			}
-		} else {
-			Object[] sel=cv.getSelection();
-			if((sel!=null) && (sel.length>0)){
-				selection=sel[0];
-			}else{
-				selection=null;
+		if(selection==null){
+			Object bKSel = getBezugsKontaktSelection();
+			if (bKSel instanceof Kontakt) {
+				selection = bKSel;
+			} else if (bKSel instanceof BezugsKontakt) {
+				BezugsKontakt bezugsKontakt = (BezugsKontakt) bKSel;
+				Kontakt kontakt = Kontakt.load(bezugsKontakt.get("otherID"));
+				if (kontakt.exists()) {
+					selection = kontakt;
+				}
+			} else {
+				Object[] sel=cv.getSelection();
+				if((sel!=null) && (sel.length>0)){
+					selection=sel[0];
+				}else{
+					selection=null;
+				}
 			}
 		}
 		((LazyContentProvider)vc.getContentProvider()).stopListening();
