@@ -75,6 +75,8 @@
     
     <!-- These plugins are not part of the standard distribution -->
     <target name="elexis-pro" depends="options">
+    	<available file="../elexis-be-connector/build.xml" property="blueevidence.ok"/>
+    	   <antcall target="blueevidence"/>
         <available file="../omnivore-direct/build.xml" property="omnivoredirect.ok"/>
           <antcall target="omnivoredirect"/>
         
@@ -127,7 +129,11 @@
 
     </target>
     
-        <target name="logolab" if="logolab.ok">
+	<target name="blueevidence" if="blueevidence.ok">
+	       <ant antfile="../elexis-be-connector/build.xml"/>
+	</target>
+	
+    <target name="logolab" if="logolab.ok">
        <ant antfile="../Laborimport-Logolab/build.xml"/>
     </target>
         
