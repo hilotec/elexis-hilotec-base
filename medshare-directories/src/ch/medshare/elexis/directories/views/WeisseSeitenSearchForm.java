@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchForm.java 3544 2008-01-17 07:50:18Z michael_imhof $
+ * $Id: WeisseSeitenSearchForm.java 4117 2008-07-07 16:41:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -181,7 +181,7 @@ public class WeisseSeitenSearchForm extends Composite {
 	public void openPatientenDialog(KontaktEntry entry) {
 		if (entry != null) {
 			final PatientErfassenDialog dialog = new PatientErfassenDialog(
-					getShell(), getFields(entry));
+					getShell(), entry.toHashmap());
 			dialog.open();
 		}
 	}

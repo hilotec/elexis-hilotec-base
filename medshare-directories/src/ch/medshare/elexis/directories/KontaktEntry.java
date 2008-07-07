@@ -7,11 +7,18 @@
  *
  * Contributors:
  *    M. Imhof - initial implementation
+ *    G. Weirich - added toHashmap
  *    
- * $Id: KontaktEntry.java 3442 2007-12-14 07:39:59Z michael_imhof $
+ * $Id: KontaktEntry.java 4117 2008-07-07 16:41:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
+
+import java.util.HashMap;
+
+import javax.print.attribute.HashPrintJobAttributeSet;
+
+import ch.elexis.data.Patient;
 
 public class KontaktEntry {
 	private final String vorname;
@@ -42,6 +49,36 @@ public class KontaktEntry {
 		this.isDetail = isDetail;
 	}
 
+	/**
+	 * Fill all fields into a hashmap
+	 * @return a hashmap with all non-empty fields with standard names
+	 * @author gerry
+	 */
+	public HashMap<String,String> toHashmap(){
+		HashMap<String, String> ret=new HashMap<String, String>();
+		if(countValue(name)>0){
+			ret.put(Patient.NAME, name);
+		}
+		if(countValue(vorname)>0){
+			ret.put(Patient.FIRSTNAME, vorname);
+		}
+		if(countValue(adresse)>0){
+			ret.put(Patient.STREET, adresse);
+		}
+		if(countValue(plz)>0){
+			ret.put(Patient.ZIP, plz);
+		}
+		if(countValue(ort)>0){
+			ret.put(Patient.PLACE, ort);
+		}
+		if(countValue(tel)>0){
+			ret.put(Patient.PHONE1, tel);
+		}
+		if(countValue(fax)>0){
+			ret.put(Patient.FAX, fax);
+		}
+		return ret;
+	}
 	public String getName() {
 		return this.name;
 	}
