@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4093 2008-07-02 17:14:26Z rgw_ch $
+ * $Id: XMLExporter.java 4111 2008-07-07 13:23:00Z rgw_ch $
  *******************************************************************************/
 
 
@@ -551,7 +551,8 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("obligation","true");										//	28630
 					el.setAttribute("validate","true");											//	28620
 					mAnalysen.addMoney(mAmountLocal);
-				}else if((v instanceof Medikament) || (v instanceof Medical)){
+				}else if((v instanceof Medikament) || (v instanceof Medical) || 
+						(v.getCodeSystemCode()=="400")){
 					el=new Element("record_drug",ns);
 					Money preis=vv.getEffPreis(); // b.getEffPreis(v);
 					el.setAttribute("unit",XMLTool.moneyToXmlDouble(preis));
