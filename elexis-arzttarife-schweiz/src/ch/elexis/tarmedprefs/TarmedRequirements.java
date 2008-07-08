@@ -8,14 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 4012 2008-06-06 12:57:57Z rgw_ch $
+ * $Id: TarmedRequirements.java 4118 2008-07-08 12:12:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
-import ch.elexis.Hub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Xid;
@@ -60,7 +58,7 @@ public class TarmedRequirements {
 		if(ret.length()==0){
 			ret=EAN_PSEUDO;
 		}
-		return ret;
+		return ret.trim();
 	}
 	
 	public static String getRecipientEAN(final Kontakt k){
@@ -68,7 +66,7 @@ public class TarmedRequirements {
 		if(ret.length()==0){
 			ret="unknown";
 		}
-		return ret;
+		return ret.trim();
 	}
 	
 	/**
@@ -78,7 +76,7 @@ public class TarmedRequirements {
 	 * @return the intermediate EAN as defined or the empty String (never null)
 	 */
 	public static String getIntermediateEAN(final Fall fall){
-		return fall.getRequiredString(INTERMEDIATE);
+		return fall.getRequiredString(INTERMEDIATE).trim();
 	}
 	/**
 	 * wandelt KSK's von der G123456-Schreibweise in die G 1234.56 Schreibweise um
@@ -97,7 +95,7 @@ public class TarmedRequirements {
 			return KSK;
 		}
 		KSK=KSK.substring(0,1)+" "+KSK.substring(1, 5)+"."+KSK.substring(5);
-		return KSK;
+		return KSK.trim();
 	}
 	
 	public static String getKSK(final Kontakt k){
@@ -110,7 +108,7 @@ public class TarmedRequirements {
 			}
 		}
 		// end
-		return ret.replaceAll("[\\s\\.\\-]", "");
+		return ret.replaceAll("[\\s\\.\\-]", "").trim();
 	}
 	
 	public static String getNIF(final Kontakt k){
@@ -123,7 +121,7 @@ public class TarmedRequirements {
 			}
 		}
 		// end
-		return ret;
+		return ret.trim();
 	}
 	
 	public static boolean setEAN(final Kontakt k,final String ean){
@@ -153,7 +151,7 @@ public class TarmedRequirements {
 				setAHV(p,ahv);
 			}
 		}
-		return ahv;
+		return ahv.trim();
 	}
 	
 	public static void setAHV(final Person p, final String ahv){

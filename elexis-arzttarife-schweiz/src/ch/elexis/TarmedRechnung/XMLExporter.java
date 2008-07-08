@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4111 2008-07-07 13:23:00Z rgw_ch $
+ * $Id: XMLExporter.java 4118 2008-07-08 12:12:39Z rgw_ch $
  *******************************************************************************/
 
 
@@ -179,6 +179,19 @@ public class XMLExporter implements IRnOutputter {
 		return true;
 	}
 
+	private void negate(Element el, String attr){
+		String v=el.getAttributeValue(attr);
+		if(!StringTool.isNothing(v)){
+			if(!v.equals("0.00")){
+				if(v.startsWith("-")){
+					v=v.substring(1);
+				}else{
+					v="-"+v;
+				}
+				el.setAttribute(attr,v);
+			}
+		}
+	}
 	/**
 	 * Export a bill as XML. We do, in fact first check whether this bill was exported already. And if so
 	 * we do not create it again but load the old one. There is deliberately no possibility to 
@@ -226,11 +239,38 @@ public class XMLExporter implements IRnOutputter {
 					Element services=detail.getChild("services", ns);
 					List<Element> sr=services.getChildren();
 					for(Element el:sr){
+						try{
+							negate(el,"quantity");
+							//negate(el,"unit.mt");
+							//negate(el,"unit.tt");
+							negate(el,"amount.mt");
+							negate(el,"amount.tt");
+							//negate(el,"unit");
+							negate(el,"amount");
+							/*
 							Money betrag=XMLTool.xmlDoubleToMoney(el.getAttributeValue("amount"));
 							el.setAttribute("amount", XMLTool.moneyToXmlDouble(betrag.negate()));
+							*/
+							
+						}catch(Exception ex){
+							ExHandler.handle(ex);
+						}
 					}
-					Money betrag=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));
-					balance.setAttribute("amount",XMLTool.moneyToXmlDouble(betrag.negate()));
+					//Money betrag=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));
+					//balance.setAttribute("amount",XMLTool.moneyToXmlDouble(betrag.negate()));
+					negate(balance,"amount");
+					negate(balance,"amount_tarmed");
+					negate(balance,"amount_tarmed.mt");
+					negate(balance,"amount_tarmed.tt");
+					negate(balance,"amount_cantonal");
+					negate(balance,"amount_unclassified");
+					negate(balance,"amount_drug");
+					negate(balance,"amount_lab");
+					negate(balance,"amount_migel");
+					negate(balance,"amount_physio");
+					negate(balance,"amount_obligations");
+					balance.setAttribute("amount_due","0.00");
+					balance.setAttribute("amount_prepaid","0.00");
 				}
 				
 				if(dest!=null){
@@ -413,8 +453,8 @@ public class XMLExporter implements IRnOutputter {
 		String lastDate="";
 		int sessionNumber=1;
 		
-		TimeTool ttFirst=new TimeTool("2100-12-12");
-		TimeTool ttLast=new TimeTool("2000-01-01");
+		TimeTool ttFirst=new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
+		TimeTool ttLast=new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 		int recordNumber=1;
 		for(Konsultation b:lb){
 			List<IDiagnose> ld=b.getDiagnosen();
@@ -786,11 +826,12 @@ public class XMLExporter implements IRnOutputter {
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
 		
-		if(tiers.equals("TG")){
+		if(tiers.equals("TG") && (TarmedRequirements.hasTCContract(actMandant))){
 			Element demand=new Element("demand",ns);
 			demand.setAttribute("tc_demand_id","0");
 			demand.setAttribute("tc_token",besr.createCodeline(rn.getBetrag().getCentsAsString(), tcCode));
 			demand.setAttribute("insurance_demand_date",makeTarmedDatum(rn.getDatumRn()));
+			eTiers.addContent(demand);
 		}
 									
 		
@@ -799,8 +840,10 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element detail=new Element("detail",ns);													//	15000
 		
-		detail.setAttribute("date_begin",makeTarmedDatum(rn.getDatumVon()));							// 15002
-		detail.setAttribute("date_end",makeTarmedDatum(rn.getDatumBis()));					//	15003
+		//detail.setAttribute("date_begin",makeTarmedDatum(rn.getDatumVon()));						// 15002
+		//detail.setAttribute("date_end",makeTarmedDatum(rn.getDatumBis()));						//	15003
+		detail.setAttribute("date_begin",makeTarmedDatum(ttFirst.toString(TimeTool.DATE_GER)));		// 15002
+		detail.setAttribute("date_end",makeTarmedDatum(ttLast.toString(TimeTool.DATE_GER)));		// 15002
 		detail.setAttribute("canton",actMandant.getInfoString(ta.KANTON));							//	15004
 		detail.setAttribute("service_locality","practice");											//	15021
 		
@@ -940,7 +983,11 @@ public class XMLExporter implements IRnOutputter {
 			familyname.setText(k.get("Bezeichnung1"));
 			ret.addContent(familyname);
 			Element givenname=new Element("givenname",ns);
-			givenname.setText(k.get("Bezeichnung2"));
+			String gn=k.get("Bezeichnung2");
+			if(StringTool.isNothing(gn)){
+				gn="Unbekannt";			// givenname is a mandatory field
+			}
+			givenname.setText(gn);
 			ret.addContent(givenname);
 			ret.addContent(buildPostalElement(k));
 			ret.addContent(buildTelekomElement(k));
