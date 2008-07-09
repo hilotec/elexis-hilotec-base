@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4118 2008-07-08 12:12:39Z rgw_ch $
+ * $Id: XMLExporter.java 4119 2008-07-09 05:15:51Z rgw_ch $
  *******************************************************************************/
 
 
@@ -88,7 +88,16 @@ import ch.rgw.tools.VersionInfo;
 
 
 /**
- * Exportiert eine ELexis-Rechnung im XML 4.0 Format von xmldata.ch
+ * Exportiert eine Elexis-Rechnung im XML 4.0 Format von xmldata.ch
+ * Bitte KEINE Änderungen an dieser Klasse durchführen. Senden Sie Verbesserungsvorschläge oder Wünsche 
+ * als Mail oder direkt als Patch an weirich@elexis.ch.
+ * 
+ * In den meisten Fällen kann diese Klasse als BlackBox zum Erstellen von Tarmed-konformen XML-Files zur 
+ * Weiterverarbeitung verwendet werden.
+ * DoExport(..) liefert ein JDOM-Dokument, das die gewünschte Rechnung enthält. Diese kann vom Aufrufer
+ * dann an einen Intermediär oder auf einen Drucker ausgegeben werden.
+ * Der Output dieses Exporters ist TrustX zertifiziert. Änderungen sollten in den seltensten
+ * Fällen nötig sein. Falls doch:  Fehlermeldungen bitte an weirich@elexis.ch
  * @author gerry
  *
  */
@@ -119,6 +128,9 @@ public class XMLExporter implements IRnOutputter {
 	private static final String PREFIX="TarmedRn:";
 	private static final Log log=Log.get("XMLExporter");
 	
+	/**
+	 * Reset exporter
+	 */
 	public void clear(){
 		actFall=null;
 		actPatient=null;
@@ -148,6 +160,11 @@ public class XMLExporter implements IRnOutputter {
 		clear();
 	}
 
+	/**
+	 * Output a Collection of bills. This essentially calls doExport() für each bill in rnn
+	 * @param type desired mode (original, copy, storno)
+	 * @param rnn a Collection of Rechnung - Objects to output
+	 */
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn) {
 		Result<Rechnung> ret=new Result<Rechnung>();
 		if(outputDir==null){
@@ -199,8 +216,7 @@ public class XMLExporter implements IRnOutputter {
 	 * remains stored.
 	 * @param rechnung the bill to export
 	 * @param dest a full filepath  to save the final document (or null to not save it)
-	 * @param isCopy true to mark  as copy 
-	 * @param isStorno mark this bill to cancel
+	 * @param type Type of output (original, copy, storno 
 	 * @param doVerify true if the bill should be sent trough a verifyer after creation.
 	 * @return the jdom XML-Document that contains the bill 
 	 */
@@ -344,7 +360,7 @@ public class XMLExporter implements IRnOutputter {
 			rEAN=kEAN;
 		}
 
-		// Try to find the intermediate EAN. If jave explicitely set
+		// Try to find the intermediate EAN. If we have explicitely set
 		// an intermediate EAN, we'll use this one. Otherweise, we'll
 		// check whether the mandator has a TC contract. if so, we try to
 		// find the TC's EAN.
@@ -453,6 +469,12 @@ public class XMLExporter implements IRnOutputter {
 		String lastDate="";
 		int sessionNumber=1;
 		
+		// To make the validator happy, the attribute date_begin must duplicate exactly
+		// the date of the first billing position end date_end must duplicate exactly
+		// the date of the last billed consultation. If we have non-billed entries in
+		// the patient's record we must forget these for the sake of xml-confirmity
+		// so we use ttFirst and ttLast to check he the dates (instead of the begin end end
+		// dates that are stored in the bill
 		TimeTool ttFirst=new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
 		TimeTool ttLast=new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 		int recordNumber=1;
@@ -467,10 +489,10 @@ public class XMLExporter implements IRnOutputter {
 			}
 			List<Verrechnet> lv=b.getLeistungen();
 			TimeTool tt=new TimeTool(b.getDatum());
-			if(tt.isBefore(ttFirst)){
+			if(tt.isBefore(ttFirst)){				// make validator happy
 				ttFirst.set(tt);
 			}
-			if(tt.isAfter(ttLast)){
+			if(tt.isAfter(ttLast)){					// make validator even happier 
 				ttLast.set(tt);
 			}
 			String dateShort=tt.toString(TimeTool.DATE_COMPACT);
@@ -760,7 +782,8 @@ public class XMLExporter implements IRnOutputter {
 		// The 'insurance' element is optional in Tiers Garant so in TG we only insert this Element, if we have all
 		// data absolutely correct
 		// In Tiers Payant, the insurance element is mandatory, and, furthermore, MUST be an Organization. So in TP, we
-		// insert an insurance element in any case, and, if the guarantor is a person, we "convert" it to an organization
+		// insert an insurance element in any case, and, if the guarantor is a person, 
+		// we "convert" it to an organization to make the validator happy
 		if(tiers.equals("TG")){
 			if(kostentraeger.istOrganisation()){
 				if(kEAN.matches("[0-9]{13,13}")){
@@ -807,7 +830,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		patient.setAttribute("gender",gender);
 		String gebDat=pat.getGeburtsdatum();
-		if(StringTool.isNothing(gebDat)){
+		if(StringTool.isNothing(gebDat)){					// make validator happy if we don't know the birthdate
 			patient.setAttribute("birthdate","0001-00-00T00:00:00");
 		}else{
 			patient.setAttribute("birthdate",new TimeTool(pat.getGeburtsdatum()).toString(TimeTool.DATE_MYSQL)+"T00:00:00");
@@ -840,10 +863,12 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element detail=new Element("detail",ns);													//	15000
 		
-		//detail.setAttribute("date_begin",makeTarmedDatum(rn.getDatumVon()));						// 15002
-		//detail.setAttribute("date_end",makeTarmedDatum(rn.getDatumBis()));						//	15003
+		// --detail.setAttribute("date_begin",makeTarmedDatum(rn.getDatumVon()));					// 15002
+		// --detail.setAttribute("date_end",makeTarmedDatum(rn.getDatumBis()));						//	15003
+		// use the versions below to make the validator happy
 		detail.setAttribute("date_begin",makeTarmedDatum(ttFirst.toString(TimeTool.DATE_GER)));		// 15002
 		detail.setAttribute("date_end",makeTarmedDatum(ttLast.toString(TimeTool.DATE_GER)));		// 15002
+		
 		detail.setAttribute("canton",actMandant.getInfoString(ta.KANTON));							//	15004
 		detail.setAttribute("service_locality","practice");											//	15021
 		
@@ -871,7 +896,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element versicherung=new Element(gesetz.toLowerCase(),ns);									//	16700
 		versicherung.setAttribute("reason",match_type(actFall.getGrund()));
-		if(gesetz.equalsIgnoreCase("ivg")){
+		if(gesetz.equalsIgnoreCase("ivg")){		
 			String caseNumber=actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			if( (!caseNumber.matches("[0-9]{14}")) &&	// seit 1.1.2000 gültige Nummer
 				(!caseNumber.matches("[0-9]{10}")) &&	// bis 31.12.1999 gültige Nummer
@@ -984,8 +1009,8 @@ public class XMLExporter implements IRnOutputter {
 			ret.addContent(familyname);
 			Element givenname=new Element("givenname",ns);
 			String gn=k.get("Bezeichnung2");
-			if(StringTool.isNothing(gn)){
-				gn="Unbekannt";			// givenname is a mandatory field
+			if(StringTool.isNothing(gn)){		
+				gn="Unbekannt";			// make validator happy
 			}
 			givenname.setText(gn);
 			ret.addContent(givenname);
