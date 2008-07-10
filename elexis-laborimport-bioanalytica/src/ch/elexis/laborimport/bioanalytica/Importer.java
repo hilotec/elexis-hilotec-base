@@ -41,6 +41,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
@@ -180,13 +181,15 @@ public class Importer extends ImporterPage {
 				}else{
 					li=list.get(0);
 				}
-				LabResult lr;
+				LabResult lr;;
 				Query<LabResult> qr=new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId());
 				qr.add("Datum", "=", obx.getDate().toString(TimeTool.DATE_GER));
 				qr.add("ItemID", "=", li.getId());
-				List<LabResult> existing = qr.execute();
-				if(existing.size()!=0){
+				List<LabResult> existingResults = qr.execute();
+				if(existingResults != null && existingResults.size()!=0){
+					lr = null;
+					
 					/*
 					if(SWTHelper.askYesNo("Dieser Laborwert wurde schon importiert", "Weitermachen?")){
 						obx=obr.nextOBX(obx);
@@ -200,14 +203,64 @@ public class Importer extends ImporterPage {
 					// we just overwrite the values; for recognizing succeeding results,
 					// we would need a concept of a "lab order".
 					// it's not enough only to consider "folgt" values, since there may
-					// be succeeding values 
-					lr = existing.get(0);
-					if (obx.isFormattedText()) {
-						lr.setResult("text");
-						lr.set("Kommentar", obx.getResultValue());
+					// be succeeding values
+					
+					// 2008-07-10, danlutz: it happens that we get multiple results from
+					//                      multiple orders of the same day. so without
+					//                      order management, we just need to import
+					//                      all values
+
+					for (LabResult existingResult : existingResults) {
+						String oldResult = existingResult.getResult();
+						String oldComment = existingResult.get("Kommentar");
+						
+						String newResult;
+						String newComment;
+						
+						if (obx.isFormattedText()) {
+							newResult = "text";
+							newComment = PersistentObject.checkNull(obx.getResultValue());
+						} else {
+							newResult = PersistentObject.checkNull(obx.getResultValue());
+							newComment = PersistentObject.checkNull(obx.getComment());
+						}
+						
+						// check if we have a result from a not-yet finished order
+						if (oldResult.equals(FOLGT_TEXT)) {
+							// overwrite this result
+							lr = existingResult;
+							
+							// we are going to replace an existing value, so add it to the "unseen" values
+							lr.addToUnseen();
+							
+							break;
+						}
+						
+						// check if we have a result with the same values
+						if (oldResult.equals(newResult) && oldComment.equals(newComment)) {
+							// just overwrite this result
+							lr = existingResult;
+							break;
+						}
+					}
+					
+					
+					if (lr != null) {
+						// update an existing result
+						if (obx.isFormattedText()) {
+							lr.setResult("text");
+							lr.set("Kommentar", obx.getResultValue());
+						} else {
+							lr.setResult(obx.getResultValue());
+							lr.set("Kommentar", obx.getComment());
+						}
 					} else {
-						lr.setResult(obx.getResultValue());
-						lr.set("Kommentar", obx.getComment());
+						// create a new result
+						if(obx.isFormattedText()){
+							lr=new LabResult(pat,obx.getDate(),li,"text",obx.getResultValue());
+						}else{
+							lr=new LabResult(pat,obx.getDate(),li,obx.getResultValue(),obx.getComment());
+						}
 					}
 				} else {
 					if(obx.isFormattedText()){
