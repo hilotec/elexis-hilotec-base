@@ -59,8 +59,20 @@ public class XMLTool {
 	public static String doubleToXmlDouble(double value, int factionalDigits) {
 		long cents = Math.round(value * 100);
 		// we force to use a literal "."
+	/*
 		String xmlDouble = String.format("%d.%02d", cents / 100, cents % 100);
+	
 		return xmlDouble;
+	*/
+		// honor signum
+		int absCents = Math.abs((int)cents);
+		int signum = Integer.signum((int)cents);
+		int abs = absCents / 100;
+		int frac = absCents % 100;
+		
+		String xmlDouble = String.format("%d.%02d", signum * abs, frac);
+		return xmlDouble;
+	
 	}
 	
 	/**
