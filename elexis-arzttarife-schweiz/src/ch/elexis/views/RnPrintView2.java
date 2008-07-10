@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4027 2008-06-11 14:14:09Z michael_imhof $
+ * $Id: RnPrintView2.java 4121 2008-07-10 10:52:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -149,7 +149,7 @@ public class RnPrintView2 extends ViewPart {
 		if(TarmedRequirements.hasTCContract(rs) && paymentMode.equals("TG")){
 			 tcCode=TarmedRequirements.getTCCode(rs);
 		}else if(paymentMode.equals("TP")){
-			tcCode="20";
+			tcCode="01";
 		}
 		GlobalEvents.getInstance().fireSelectionEvent(rs);
 		Fall fall=rn.getFall();
