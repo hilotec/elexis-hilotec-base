@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4119 2008-07-09 05:15:51Z rgw_ch $
+ * $Id: XMLExporter.java 4120 2008-07-10 10:46:41Z rgw_ch $
  *******************************************************************************/
 
 
@@ -730,7 +730,8 @@ public class XMLExporter implements IRnOutputter {
 			//esr.setAttribute("type",m.getInfoString(ta.ESRPLUS));	// 16or27 oder 16or27plus
 			esr.setAttribute("type","16or27"); // Nur dieses Format unterstützt							10461
 			String refnr=besr.makeRefNr(true);	
-			String codingline=besr.createCodeline(mDue.getCentsAsString(),null);
+			//String codingline=besr.createCodeline(mDue.getCentsAsString(),null);
+			String codingline=besr.createCodeline(XMLTool.moneyToXmlDouble(mDue).replaceFirst("[.,]", ""),null);
 			esr.setAttribute("reference_number",refnr);			// 16 oder 27 stellige ref nr			10470
 			esr.setAttribute("coding_line",codingline);			// codierzeile							10479
 		}else{
@@ -852,7 +853,8 @@ public class XMLExporter implements IRnOutputter {
 		if(tiers.equals("TG") && (TarmedRequirements.hasTCContract(actMandant))){
 			Element demand=new Element("demand",ns);
 			demand.setAttribute("tc_demand_id","0");
-			demand.setAttribute("tc_token",besr.createCodeline(rn.getBetrag().getCentsAsString(), tcCode));
+			
+			demand.setAttribute("tc_token",besr.createCodeline(XMLTool.moneyToXmlDouble(mDue).replaceFirst("[.,]", ""),tcCode));
 			demand.setAttribute("insurance_demand_date",makeTarmedDatum(rn.getDatumRn()));
 			eTiers.addContent(demand);
 		}
