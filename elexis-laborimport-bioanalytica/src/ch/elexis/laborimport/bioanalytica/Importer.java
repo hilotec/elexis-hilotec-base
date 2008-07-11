@@ -189,7 +189,7 @@ public class Importer extends ImporterPage {
 				LabResult lr;;
 				Query<LabResult> qr=new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId());
-				qr.add("Datum", "=", obx.getDate().toString(TimeTool.DATE_GER));
+				qr.add("Datum", "=", sampleDate.toString(TimeTool.DATE_GER));
 				qr.add("ItemID", "=", li.getId());
 				List<LabResult> existingResults = qr.execute();
 				if(existingResults != null && existingResults.size()!=0){
