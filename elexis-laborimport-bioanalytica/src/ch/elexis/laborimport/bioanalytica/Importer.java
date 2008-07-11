@@ -154,6 +154,11 @@ public class Importer extends ImporterPage {
 		int number = 1;
 		String timestamp = new TimeTool().toString(TimeTool.TIMESTAMP);
 		while(obr!=null){
+			// the date in the obr record is the date when the sample
+			// has been produced. The date in the obx record is the date
+			// when the order has been imported by the lab
+			TimeTool sampleDate = obr.getDate();
+			
 			HL7.OBX obx=obr.firstOBX();
 			while(obx!=null){
 				String itemname=obx.getItemName();
@@ -257,16 +262,16 @@ public class Importer extends ImporterPage {
 					} else {
 						// create a new result
 						if(obx.isFormattedText()){
-							lr=new LabResult(pat,obx.getDate(),li,"text",obx.getResultValue());
+							lr=new LabResult(pat,sampleDate,li,"text",obx.getResultValue());
 						}else{
-							lr=new LabResult(pat,obx.getDate(),li,obx.getResultValue(),obx.getComment());
+							lr=new LabResult(pat,sampleDate,li,obx.getResultValue(),obx.getComment());
 						}
 					}
 				} else {
 					if(obx.isFormattedText()){
-						lr=new LabResult(pat,obx.getDate(),li,"text",obx.getResultValue());
+						lr=new LabResult(pat,sampleDate,li,"text",obx.getResultValue());
 					}else{
-						lr=new LabResult(pat,obx.getDate(),li,obx.getResultValue(),obx.getComment());
+						lr=new LabResult(pat,sampleDate,li,obx.getResultValue(),obx.getComment());
 					}
 				}
 				//notifyMandant(lr);
