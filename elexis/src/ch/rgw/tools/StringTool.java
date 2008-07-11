@@ -1,4 +1,4 @@
-// $Id: StringTool.java 3972 2008-05-28 05:14:08Z rgw_ch $
+// $Id: StringTool.java 4127 2008-07-11 18:46:05Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -845,6 +845,9 @@ public static Hashtable foldStrings(final String s)
      * @return den String, der maximal len Zeichen lang ist
      */
     public static String limitLength(final String orig, final int len){
+    	if(orig==null){
+    		return "";
+    	}
     	if(orig.length()>len){
     		return orig.substring(0, len);
     	}
