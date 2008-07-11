@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4120 2008-07-10 10:46:41Z rgw_ch $
+ * $Id: XMLExporter.java 4128 2008-07-11 18:46:11Z rgw_ch $
  *******************************************************************************/
 
 
@@ -997,20 +997,20 @@ public class XMLExporter implements IRnOutputter {
 		if(k.istPerson()==false){
 			ret=new Element("company",ns);
 			Element companyname=new Element("companyname",ns);
-			companyname.setText(k.get("Bezeichnung1"));
+			companyname.setText(StringTool.limitLength(k.get("Bezeichnung1"),35));
 			ret.addContent(companyname);
 			ret.addContent(buildPostalElement(k));
 			ret.addContent(buildTelekomElement(k));
 			ret.addContent(buildOnlineElement(k));
 		}else{
 			ret=new Element("person",ns);
-			setAttributeIfNotEmpty(ret, "salutation", k.getInfoString("Anrede"));
-			setAttributeIfNotEmpty(ret,"title",k.get("Titel"));
+			setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"),35);
+			setAttributeIfNotEmptyWithLimit(ret,"title",k.get("Titel"),35);
 			Element familyname=new Element("familyname",ns);
-			familyname.setText(k.get("Bezeichnung1"));
+			familyname.setText(StringTool.limitLength(k.get("Bezeichnung1"),35));
 			ret.addContent(familyname);
 			Element givenname=new Element("givenname",ns);
-			String gn=k.get("Bezeichnung2");
+			String gn=k.get(StringTool.limitLength("Bezeichnung2",35));
 			if(StringTool.isNothing(gn)){		
 				gn="Unbekannt";			// make validator happy
 			}
@@ -1024,23 +1024,27 @@ public class XMLExporter implements IRnOutputter {
 	}
 	public Element buildPostalElement(final Kontakt k){
 		Element ret=new Element("postal",ns);
-		addElementIfExists(ret,"pobox",null,k.getInfoString("Postfach"),null);
-		addElementIfExists(ret,"street",null,k.get("Strasse"),null);
-		Element zip=addElementIfExists(ret,"zip",null,k.get("Plz"),"0000");
-		setAttributeIfNotEmpty(zip, "countrycode", k.get("Land"));
-		addElementIfExists(ret, "city", null, k.get("Ort"),"Unbekannt");
+		addElementIfExists(ret,"pobox",null,StringTool.limitLength(k.getInfoString("Postfach"),35),null);
+		addElementIfExists(ret,"street",null,StringTool.limitLength(k.get("Strasse"),35),null);
+		Element zip=addElementIfExists(ret,"zip",null,StringTool.limitLength(k.get("Plz"),9),"0000");
+		setAttributeIfNotEmpty(zip, "countrycode", StringTool.limitLength(k.get("Land"),3));
+		addElementIfExists(ret, "city", null, StringTool.limitLength(k.get("Ort"),35),"Unbekannt");
 		return ret;
 	}
 	public Element buildOnlineElement(final Kontakt k){
 		Element ret=new Element("online",ns);
+		String email=StringTool.limitLength(k.get("E-Mail"), 70);
+		if(!email.matches(".+@.+")){
+			email="mail@invalid.invalid";
+		}
 		addElementIfExists(ret, "email", null, k.get("E-Mail"),"mail@invalid.invalid");
-		addElementIfExists(ret, "url", null, k.get("Website"),null);
+		addElementIfExists(ret, "url", null, StringTool.limitLength(k.get("Website"),100),null);
 		return ret;
 	}
 	public Element buildTelekomElement(final Kontakt k){
 		Element ret=new Element("telecom",ns);
-		addElementIfExists(ret, "phone", null, k.get("Telefon1"),"555-555 55 55");
-		addElementIfExists(ret, "fax", null, k.get("Fax"),null);
+		addElementIfExists(ret, "phone", null, StringTool.limitLength(k.get("Telefon1"),25),"555-555 55 55");
+		addElementIfExists(ret, "fax", null, StringTool.limitLength(k.get("Fax"),25),null);
 		return ret;
 	}
 	public static String makeTarmedDatum(final String datum){
@@ -1075,6 +1079,12 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
+	private boolean setAttributeIfNotEmptyWithLimit(final Element element, final String name, String value, final int len){
+		if(value.length()>=len){
+			value=value.substring(0,len-1);
+		}
+		return setAttributeIfNotEmpty(element, name, value);
+	}
 	private boolean setAttributeIfNotEmpty(final Element element,final String name, final String value){
 		if(element==null){
 			return false;
