@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 4013 2008-06-07 06:18:37Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 4129 2008-07-12 13:52:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -28,6 +28,7 @@ import ch.elexis.util.IOptifier;
 import ch.elexis.util.Money;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.JdbcLink.Stm;
 
 public abstract class VerrechenbarAdapter extends PersistentObject implements
 		IVerrechenbar {
@@ -80,16 +81,26 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 
 	public void setVKMultiplikator(final TimeTool von, TimeTool bis, final double factor, final String typ){
 		StringBuilder sql=new StringBuilder();
+		String eoue=new TimeTool(TimeTool.END_OF_UNIX_EPOCH).toString(TimeTool.DATE_COMPACT);
 		if(bis==null){
 			bis=new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
 		}
+		String from=von.toString(TimeTool.DATE_COMPACT);
+		Stm stm=getConnection().getStatement();
+		sql.append("UPDATE VK_PREISE SET DATUM_BIS=")
+			.append(JdbcLink.wrap(from))
+			.append(" WHERE (DATUM_BIS=")
+			.append(JdbcLink.wrap(eoue)).append(" OR DATUM_BIS='99991231') AND TYP=")
+			.append(JdbcLink.wrap(typ));
+		stm.exec(sql.toString());
+		sql.setLength(0);
 		sql.append("INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,MULTIPLIKATOR,TYP) VALUES (")
 			.append(JdbcLink.wrap(von.toString(TimeTool.DATE_COMPACT))).append(",")
 			.append(JdbcLink.wrap(bis.toString(TimeTool.DATE_COMPACT))).append(",")
 			.append(JdbcLink.wrap(Double.toString(factor))).append(",")
 			.append(JdbcLink.wrap(typ)).append(");");
-		getConnection().exec(sql.toString());
-			
+		stm.exec(sql.toString());
+		getConnection().releaseStatement(stm);
 	}
 	
 	public double getVKMultiplikator(final TimeTool date, final String typ){
