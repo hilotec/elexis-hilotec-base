@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PrefsPage.java 3845 2008-04-26 10:43:02Z rgw_ch $
+ *    $Id: PrefsPage.java 4134 2008-07-13 19:13:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -81,7 +81,7 @@ public class PrefsPage extends Composite {
 			for(int i=0;i<texts.length;i++){
 				labels[i]=new Label(this,SWT.NONE);
 				labels[i].setText("F"+Integer.toString(i+1));
-				labels[i].setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+				labels[i].setForeground(Desk.getColor(Desk.COL_BLUE));
 				labels[i].addMouseListener(new ScriptListener(i));
 				texts[i]=SWTHelper.createText(this, 1, SWT.NONE);
 				checkboxes[i]=new Button(this,SWT.CHECK);

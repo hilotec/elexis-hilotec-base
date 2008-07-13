@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 3927 2008-05-15 11:09:29Z rgw_ch $
+ *    $Id: FindingsView.java 4134 2008-07-13 19:13:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -69,7 +69,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 	@Override
 	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
-		form=Desk.theToolkit.createScrolledForm(parent);
+		form=Desk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body=form.getBody();
 		body.setLayout(new FillLayout());
@@ -307,7 +307,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		};
 		deleteValueAction=new Action("Löschen"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Die gewählte Messung löschen");
 			}
 			@Override
@@ -328,7 +328,7 @@ public class FindingsView extends ViewPart implements ActivationListener,
 		};
 		printValuesAction=new Action("Drucken"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Diese Messwerte drucken");
 			}
 			@Override

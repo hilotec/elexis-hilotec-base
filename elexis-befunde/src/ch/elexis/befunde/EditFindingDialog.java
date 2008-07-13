@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EditFindingDialog.java 3677 2008-02-15 16:44:36Z rgw_ch $
+ *    $Id: EditFindingDialog.java 4134 2008-07-13 19:13:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -117,7 +117,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 			setTitle(pat.getLabel());
 		}
 		setMessage("Geben Sie bitte den Text für "+name+" ein");
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 
 	@SuppressWarnings("unchecked")
