@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4034 2008-06-11 17:47:11Z rgw_ch $
+ * $Id: TarmedOptifier.java 4133 2008-07-13 19:10:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -189,6 +189,27 @@ public class TarmedOptifier implements IOptifier {
 							int tech=tl.getTL();
 							double abzug=tech*4.0/10.0;
 							sum-=abzug;
+						}
+					}
+				}
+				sum=sum*factor/100.0;
+				check.setPreis(new Money(sum));
+			}
+			
+// Zuschläge für Insellappen
+			else if(tcid.equals("04.1930")){
+				double sum=0.0;
+				for(Verrechnet v:lst){
+					if(v.getVerrechenbar() instanceof TarmedLeistung){
+						TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
+						String tlc=tl.getCode();
+						int z=v.getZahl();
+						if(tlc.equals("04.1910") || tlc.equals("04.1920") || 
+						   tlc.equals("04.1940") || tlc.equals("04.1950")){
+							double al=(tl.getAL()*15)/10.0;
+							double tel=(tl.getTL()*15)/10.0;
+							sum+=al*z;
+							sum+=tel*z;
 						}
 					}
 				}
