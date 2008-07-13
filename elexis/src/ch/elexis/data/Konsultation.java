@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 4081 2008-06-28 09:38:42Z rgw_ch $
+ *  $Id: Konsultation.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -356,7 +356,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 				msg = "Diese Behandlung ist nicht von Ihnen";
 			}
 			Status status = new Status(Status.WARNING, "ch.elexis", 1, msg, null);
-			ErrorDialog.openError(Desk.theDisplay.getActiveShell(), "Konsultation kann nicht geändert werden", msg, status);
+			ErrorDialog.openError(Desk.getTopShell(), "Konsultation kann nicht geändert werden", msg, status);
 		}
 		
 		return false;

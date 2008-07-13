@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 3398 2007-11-27 21:21:21Z rgw_ch $
+ *  $Id: HistoryLoader.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -85,7 +85,7 @@ public class HistoryLoader extends BackgroundJob {
 				return 0;
 			}});
 		monitor.worked(50);
-		Iterator it=lKons.iterator();
+		Iterator<Konsultation> it=lKons.iterator();
 		sb.append("<form>"); //$NON-NLS-1$
 		globalFilter=GlobalEvents.getInstance().getObjectFilters().getFilterFor(Konsultation.class);
 		while(!monitor.isCanceled()){
@@ -96,7 +96,7 @@ public class HistoryLoader extends BackgroundJob {
 				monitor.done();
 				return Status.OK_STATUS;
 			}
-			Konsultation k=(Konsultation)it.next();
+			Konsultation k=it.next();
 			if(filter!=null){
 				if(filter.pass(k)==false){
 					continue;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4096 2008-07-05 05:09:31Z rgw_ch $
+ *    $Id: PersistentObject.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -166,7 +166,7 @@ public abstract class PersistentObject{
     		if(getConnection().connect("sa", "")){
     			return connect(getConnection());
     		}else{
-    			MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Fehler mit Demo-Datenbank", "Es wurde zar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
+    			MessageDialog.openError(Desk.getTopShell(), "Fehler mit Demo-Datenbank", "Es wurde zar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
     			return false;
     		}
     	}
@@ -643,7 +643,8 @@ public abstract class PersistentObject{
     	return ret;
     }
     
-    public void removeEtikette(Etikette et){
+    @SuppressWarnings("unchecked")
+	public void removeEtikette(Etikette et){
     	String ID=new StringBuilder().append("ETK").append(getId()).toString();
     	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
     	if(ret!=null){
@@ -656,7 +657,8 @@ public abstract class PersistentObject{
     	getConnection().exec(sb.toString());
     }
     
-    public void addEtikette(Etikette et){
+    @SuppressWarnings("unchecked")
+	public void addEtikette(Etikette et){
     	String ID=new StringBuilder().append("ETK").append(getId()).toString();
     	List<Etikette> ret=(List<Etikette>)cache.get(ID);
     	if(ret==null){

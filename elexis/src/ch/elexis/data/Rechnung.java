@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 3972 2008-05-28 05:14:08Z rgw_ch $
+ *  $Id: Rechnung.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -296,7 +296,7 @@ public class Rechnung extends PersistentObject {
 				Money old=new Money(oldVal);
 				String nr=checkNull(get("RnNummer"));
 				String message="Der errechnete Rechnungsbetrag ("+betrag.getAmountAsString()+") weicht vom Rechnungsbetrag ("+old.getAmountAsString()+") ab. Trotzdem weriterfahren?";
-				if(!MessageDialog.openConfirm(Desk.theDisplay.getActiveShell(), "Differenz bei der Rechnung "+nr, message)){
+				if(!MessageDialog.openConfirm(Desk.getTopShell(), "Differenz bei der Rechnung "+nr, message)){
 					return false;
 				}
 			}

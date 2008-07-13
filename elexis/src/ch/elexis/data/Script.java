@@ -54,7 +54,7 @@ public class Script extends NamedBlob2 {
 	}
 	public void finished() throws Exception{
 		scripter.set("finished", true);
-		scripter.eval(parse(getString(),null));
+		scripter.eval(parse(getString(),(PersistentObject[])null));
 	}
 	public void setVariable(String name, Object value) throws EvalError{
 		scripter.set(name, value);

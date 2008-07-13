@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 4021 2008-06-11 11:29:28Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -74,8 +74,8 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         try{
     		final Class<?> up=Class.forName("ch.elexis.PreStartUpdate");
     		Hub.log.log("Found PreStartUpdate, executing", Log.SYNCMARK);
-    		Object psu=up.newInstance();
-    		psu=null;
+    		//Object psu=up.newInstance();
+    		//psu=null;
     		Hub.addShutdownJob(new ShutdownJob(){
 
 				public void doit() throws Exception {

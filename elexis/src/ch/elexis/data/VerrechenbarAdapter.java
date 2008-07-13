@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 4129 2008-07-12 13:52:54Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -63,7 +63,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 		return optifier;
 	}
 
-	public Comparator getComparator() {
+	public Comparator<IVerrechenbar> getComparator() {
 		return comparator;
 	}
 

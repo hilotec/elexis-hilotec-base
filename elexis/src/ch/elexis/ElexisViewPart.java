@@ -1,12 +1,10 @@
 package ch.elexis;
 
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ObjectListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;

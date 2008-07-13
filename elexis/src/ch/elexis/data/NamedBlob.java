@@ -8,13 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 3965 2008-05-26 09:16:42Z rgw_ch $
+ *  $Id: NamedBlob.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.io.File;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;

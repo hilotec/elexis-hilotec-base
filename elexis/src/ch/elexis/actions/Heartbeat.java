@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 3761 2008-04-01 10:38:20Z rgw_ch $
+ * $Id: Heartbeat.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -179,7 +179,7 @@ public class Heartbeat {
 		@Override
 		public void run() {
 			if(!isSuspended){
-				Desk.theDisplay.asyncExec(new Runnable(){
+				Desk.getDisplay().asyncExec(new Runnable(){
 					public void run(){
 						// low frequency
 						if (counter % FREQUENCY_LOW_MULTIPLIER == 0) {

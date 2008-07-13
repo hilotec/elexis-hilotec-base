@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 3992 2008-06-01 13:43:13Z rgw_ch $
+ * $Id: Xid.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -272,6 +272,7 @@ public class Xid extends PersistentObject {
 		return TABLENAME;
 	}
 
+	@SuppressWarnings("serial")
 	public static class XIDException extends Exception{
 		public XIDException( final String reason) {
 			super(reason);
@@ -304,7 +305,8 @@ public class Xid extends PersistentObject {
 		String domain_name;
 		String simple_name;
 		int quality;
-		ArrayList<Class> displayOptions=new ArrayList<Class>();
+		ArrayList<Class<? extends PersistentObject>> displayOptions=new ArrayList<Class<? extends PersistentObject>>();
+		@SuppressWarnings("unchecked")
 		public XIDDomain(String dname, String simplename,int quality, String options){
 			domain_name=dname;
 			simple_name=simplename;
@@ -329,22 +331,22 @@ public class Xid extends PersistentObject {
 			return quality;
 		}
 
-		public void addDisplayOption(Class clazz){
+		public void addDisplayOption(Class<? extends PersistentObject> clazz){
 			if(!displayOptions.contains(clazz)){
 				displayOptions.add(clazz);
 				storeDomains();
 			}
 		}
-		public void removeDisplayOption(Class clazz){
+		public void removeDisplayOption(Class<? extends PersistentObject> clazz){
 			displayOptions.remove(clazz);
 			storeDomains();
 		}
-		public boolean isDisplayedFor(Class clazz){
+		public boolean isDisplayedFor(Class<? extends PersistentObject> clazz){
 			return displayOptions.contains(clazz);
 		}
 		String getDisplayOptions(){
 			StringBuilder r=new StringBuilder();
-			for(Class clazz:displayOptions){
+			for(Class<? extends PersistentObject> clazz:displayOptions){
 				r.append(clazz.getName()).append(",");
 			}
 			return r.toString();

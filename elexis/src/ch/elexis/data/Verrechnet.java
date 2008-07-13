@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 3783 2008-04-18 14:22:27Z rgw_ch $
+ * $Id: Verrechnet.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,7 +16,6 @@ package ch.elexis.data;
 import java.util.Hashtable;
 
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.rgw.tools.TimeTool;
@@ -119,6 +118,7 @@ public class Verrechnet extends PersistentObject {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void setExtInfo(final String key, final String value){
 		Hashtable ext=getHashtable("Detail");
 		ext.put(key,value);
@@ -126,6 +126,7 @@ public class Verrechnet extends PersistentObject {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String getExtInfo(final String key){
 		Hashtable ext=getHashtable("Detail");
 		return (String)ext.get(key);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *    $Id: AccessControl.java 4138 2008-07-13 19:39:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -102,6 +102,7 @@ public class AccessControl {
      * Immer true, wenn der Anwender zur Gruppe "Admin" gehört.
      * Immer false, wenn kein Anwender angemeldet ist
      */
+	@SuppressWarnings("unchecked")
 	public boolean request(Anwender user, String right){
         if(StringTool.isNothing(right)){
         	return true;
@@ -263,9 +264,9 @@ public class AccessControl {
 		ArrayList<String> ret=new ArrayList<String>();
 		Pattern p=Pattern.compile("([a-zA-Z0-9]+)"+right); //$NON-NLS-1$
 
-		Enumeration e=rights.keys();
+		Enumeration<String> e=rights.keys();
 		while(e.hasMoreElements()){
-			String k=(String)e.nextElement();
+			String k=e.nextElement();
 			Matcher m=p.matcher(k);
 			if(m.matches()){
 				String grp=m.group(1);
@@ -281,9 +282,9 @@ public class AccessControl {
 		ArrayList<Anwender> ret=new ArrayList<Anwender>();
 		Pattern p=Pattern.compile("([a-zA-Z0-9]+)"+right); //$NON-NLS-1$
 
-		Enumeration e=rights.keys();
+		Enumeration<String> e=rights.keys();
 		while(e.hasMoreElements()){
-			String k=(String)e.nextElement();
+			String k=e.nextElement();
 			Matcher m=p.matcher(k);
 			if(m.matches()){
 				String grp=m.group(1);
@@ -298,9 +299,9 @@ public class AccessControl {
 	public void deleteGrant(String grant){
 		Pattern p=Pattern.compile("([a-zA-Z0-9]+)"+grant); //$NON-NLS-1$
 
-		Enumeration e=rights.keys();
+		Enumeration<String> e=rights.keys();
 		while(e.hasMoreElements()){
-			String k=(String)e.nextElement();
+			String k=e.nextElement();
 			Matcher m=p.matcher(k);
 			if(m.matches()){
 				rights.remove(k);
