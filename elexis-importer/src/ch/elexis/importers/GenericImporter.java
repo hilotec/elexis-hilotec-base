@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.elexis.Hub;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 
