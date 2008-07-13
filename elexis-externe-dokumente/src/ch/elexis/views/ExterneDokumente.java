@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    Daniel Lutz - initial implementation
+ *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: ExterneDokumente.java 3028 2007-08-27 07:22:45Z danlutz $
+ *  $Id: ExterneDokumente.java 4136 2008-07-13 19:22:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -88,7 +89,7 @@ import ch.rgw.tools.TimeTool;
 // TODO datum
 
 public class ExterneDokumente extends ViewPart implements SelectionListener, ActivationListener {
-	private static final String NONE = "Keine Dokumente";
+	//private static final String NONE = "Keine Dokumente";
 
 	// Erwartete Anzahl Dokumente falls noch nicht bekannt
 	private static final int DEFAULT_SIZE = 1;
@@ -247,6 +248,7 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		public void dispose() {
 	    	job.removeListener(this);
 		}
+		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object parent) {
 	        Object result = job.getData();
 	        if(result == null){
@@ -714,6 +716,7 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void clearEvent(Class template) {
 		// leer
 	}

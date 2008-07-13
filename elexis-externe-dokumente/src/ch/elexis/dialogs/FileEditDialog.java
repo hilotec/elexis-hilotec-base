@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, Daniel Lutz and Elexis
+ * Copyright (c) 2005-2008, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    Daniel Lutz - initial implementation
+ *    G. Weirich - small changes to follow API changes
  *    
- *  $Id$
+ *  $Id: FileEditDialog.java 4136 2008-07-13 19:22:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -122,7 +123,7 @@ public class FileEditDialog extends TitleAreaDialog {
 		setMessage("Datei umbenennen oder Datum der letzten Änderung setzen");
 		setTitle("Datei-Eigenschaften");
 		getShell().setText("Datei-Eigenschaften");
-		setTitleImage(Desk.theImageRegistry.get("elexislogo48"));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	@Override
 	protected void okPressed() {

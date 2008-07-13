@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    Daniel Lutz - initial implementation
+ *    G. Weirich - small changes to follow API changes
  *    
- *  $Id$
+ *  $Id: VerifierDialog.java 4136 2008-07-13 19:22:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -210,6 +211,7 @@ public class VerifierDialog extends TitleAreaDialog {
 	    	job.removeListener(this);
 	    	//JobPool.getJobPool().
 		}
+		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object parent) {
 	        Object result = job.getData();
 	        if(result == null){
@@ -274,7 +276,7 @@ public class VerifierDialog extends TitleAreaDialog {
 		public Image getColumnImage(Object obj, int index) {
 			switch (index) {
 			case STATUS_COLUMN:
-				return Desk.theImageRegistry.get(Desk.IMG_FEHLER);
+				return Desk.getImage(Desk.IMG_FEHLER);
 			case NAME_COLUMN:
 				return getImage(obj);
 			}
@@ -408,6 +410,6 @@ public class VerifierDialog extends TitleAreaDialog {
 		setMessage("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
 		setTitle("Dateien überprüfen");
 		getShell().setText("Dateien überprüfen");
-		setTitleImage(Desk.theImageRegistry.get("elexislogo48"));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 }
