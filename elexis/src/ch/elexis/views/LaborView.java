@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 4013 2008-06-07 06:18:37Z rgw_ch $
+ *  $Id: LaborView.java 4131 2008-07-13 12:28:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -773,7 +773,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 			public void run(){
 				DateSelectorDialog dsd=new DateSelectorDialog(getViewSite().getShell());
 				dsd.create();
-				Point m=Desk.theDisplay.getCursorLocation();
+				Point m=Desk.getDisplay().getCursorLocation();
 				dsd.getShell().setLocation(m.x,m.y);
 				if(dsd.open()==Dialog.OK){
 					String date=dsd.getSelectedDate().toString(TimeTool.DATE_COMPACT);
