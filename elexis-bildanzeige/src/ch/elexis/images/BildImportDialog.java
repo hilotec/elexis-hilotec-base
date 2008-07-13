@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BildImportDialog.java 1041 2006-10-05 14:52:41Z rgw_ch $
+ * $Id: BildImportDialog.java 4135 2008-07-13 19:18:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -48,7 +48,7 @@ public class BildImportDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout());
 		Composite cImage=new Composite(ret,SWT.BORDER);
 		cImage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		img=new Image(Desk.theDisplay,iml.data[0]);
+		img=new Image(Desk.getDisplay(),iml.data[0]);
 		cImage.addPaintListener(new PaintListener(){
 			public void paintControl(PaintEvent e) {
 				GC gc=e.gc;
@@ -82,7 +82,7 @@ public class BildImportDialog extends TitleAreaDialog {
 		getShell().setText("Bild importieren");
 		setTitle("Dieses Bild importieren?");
 		setMessage("Geben Sie bitte einen Titel und das gewünschte Speicherformat an");
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	@Override
 	protected void okPressed() {

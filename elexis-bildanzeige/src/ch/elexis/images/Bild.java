@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 3864 2008-05-05 16:58:17Z rgw_ch $
+ *    $Id: Bild.java 4135 2008-07-13 19:18:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
 
 import java.io.ByteArrayInputStream;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Image;
 
 import ch.elexis.Desk;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.ExHandler;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
@@ -58,8 +57,8 @@ public class Bild extends PersistentObject {
 					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					start.set("Titel", DBVERSION);
 				}else{
-					MessageDialog.openError(Desk.theDisplay.getActiveShell(), "Versionskonsflikt", 
-						"Die Datentabelle für Bildanzeige hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
+					SWTHelper.showError("Versionskonsflikt", 
+							"Die Datentabelle für Bildanzeige hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
 				}
 			}
 		}
@@ -74,8 +73,7 @@ public class Bild extends PersistentObject {
 
 	  public Bild(Patient patient, String Titel, byte[] data){
 		  if(patient==null){
-			  MessageDialog.openError(Desk.theDisplay.getActiveShell().getShell(), "Kein Patient ausgewählt", 
-					  "Sie müssen einen Patienten auswählen, um ein Bildzuzuordnen");
+			  SWTHelper.showError("Kein Patient ausgewählt", "Sie müssen einen Patienten auswählen, um ein Bildzuzuordnen");
 			  return;
 		  }
 		  create(null);
@@ -100,7 +98,7 @@ public class Bild extends PersistentObject {
 	public Image createImage(){
 		byte[] data=getBinary("Bild");
 		ByteArrayInputStream bais=new ByteArrayInputStream(data);
-		Image ret=new Image(Desk.theDisplay,bais);
+		Image ret=new Image(Desk.getDisplay(),bais);
 		return ret;
 	}
 	public static Bild load(String ID) {
