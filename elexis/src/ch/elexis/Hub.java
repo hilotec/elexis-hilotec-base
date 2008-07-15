@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ *    $Id: Hub.java 4142 2008-07-15 16:47:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -277,9 +277,6 @@ public class Hub extends AbstractUIPlugin {
 				sb.append("  -  Kein Patient ausgewählt");
 			}else{
 				String nr=pat.getPatCode();
-				//int act=new TimeTool().get(TimeTool.YEAR);
-				//int patg=new TimeTool(pat.getGeburtsdatum()).get(TimeTool.YEAR);
-				//int alter=act-patg;
 				String alter=pat.getAlter();
 				sb.append("  / ").append(pat.getLabel())
 					.append("(").append(alter).append(") - ")
@@ -287,6 +284,11 @@ public class Hub extends AbstractUIPlugin {
 				
 				if(Reminder.findForPatient(pat,Hub.actUser).size()!=0){
 					sb.append("    *** Reminders *** ");
+				}
+				String act=new TimeTool().toString(TimeTool.DATE_COMPACT);
+				String patg=new TimeTool(pat.getGeburtsdatum()).toString(TimeTool.DATE_COMPACT);
+				if(act.substring(4).equals(patg.substring(4))){
+					sb.append("   +++ Hat Geburtstag +++  ");
 				}
 			}
 			if(mainActions.mainWindow!=null){
@@ -319,7 +321,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4138 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4142 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
