@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 3865 2008-05-05 16:58:23Z rgw_ch $
+ *  $Id: ESRRecord.java 4140 2008-07-15 16:47:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -29,6 +29,8 @@ import ch.rgw.tools.TimeTool;
 public class ESRRecord extends PersistentObject{
 	private static final String VERSION="1";
 	private static final String TABLENAME="ESRRECORDS";
+	private static final int POSITION_PAT_NR=11;
+	private static final int POSITION_RN_NR=20;
 	
 	public static enum MODE{Gutschrift_edv,Storno_edv,Korrektur_edv,
 			Gutschrift_Schalter,Storno_Schalter,Korrektur_Schalter,
@@ -166,7 +168,7 @@ public class ESRRecord extends PersistentObject{
 			String esrline=codeline.substring(12,39);
 			
 			// Von der RechnungsNummer führende Nullen wegbringen
-			int rnnr=Integer.parseInt(esrline.substring(20,26));
+			int rnnr=Integer.parseInt(esrline.substring(POSITION_RN_NR,26));
 			Query<Rechnung> qbe_r=new Query<Rechnung>(Rechnung.class);
 			String rnid=qbe_r.findSingle("RnNummer","=",Integer.toString(rnnr));
 			if(rnid==null){
@@ -180,7 +182,7 @@ public class ESRRecord extends PersistentObject{
 				mandantID=m.getId();
 				 
 			}
-			String PatNr=esrline.substring(9,20);
+			String PatNr=esrline.substring(POSITION_PAT_NR,POSITION_RN_NR);
 			long patnr=Long.parseLong(PatNr);	// führende Nullen wegbringen
 			String PatID=new Query<Patient>(Patient.class).findSingle("PatientNr","=",Long.toString(patnr));
 			if(PatID==null){
