@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4128 2008-07-11 18:46:11Z rgw_ch $
+ * $Id: XMLExporter.java 4141 2008-07-15 16:47:34Z rgw_ch $
  *******************************************************************************/
 
 
@@ -488,12 +488,18 @@ public class XMLExporter implements IRnOutputter {
 				}
 			}
 			List<Verrechnet> lv=b.getLeistungen();
+			if(lv.size()==0){
+				continue;
+			}
 			TimeTool tt=new TimeTool(b.getDatum());
+			//System.out.println(tt.toString(TimeTool.DATE_GER));
 			if(tt.isBefore(ttFirst)){				// make validator happy
 				ttFirst.set(tt);
+				//System.out.println(ttFirst.toString(TimeTool.DATE_GER));
 			}
 			if(tt.isAfter(ttLast)){					// make validator even happier 
 				ttLast.set(tt);
+				//System.out.println(ttLast.toString(TimeTool.DATE_GER));
 			}
 			String dateShort=tt.toString(TimeTool.DATE_COMPACT);
 			String dateForTarmed=makeTarmedDatum(b.getDatum());
@@ -700,8 +706,8 @@ public class XMLExporter implements IRnOutputter {
 		vat.setAttribute("vat", "0.0");
 		Element vatrate=new Element("vat_rate",ns);
 		vatrate.setAttribute("vat_rate","0.0");
-		vatrate.setAttribute("amount","0.0");
-		vatrate.setAttribute("vat","0.0");
+		vatrate.setAttribute("amount",XMLTool.moneyToXmlDouble(mDue));
+		vatrate.setAttribute("vat","0.00");
 		vat.addContent(vatrate);
 		balance.addContent(vat);
 		invoice.addContent(balance);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4121 2008-07-10 10:52:32Z rgw_ch $
+ * $Id: RnPrintView2.java 4141 2008-07-15 16:47:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -495,7 +495,7 @@ public class RnPrintView2 extends ViewPart {
 		tp.setFont("Helvetica",SWT.NORMAL,9); //$NON-NLS-1$
 		footer.setLength(0);
 		footer.append("■ 0\t0\t\t").append(df.format(mwst0)).append("\t 0.00\n") //$NON-NLS-1$ //$NON-NLS-2$
-			.append("■ 1\t7.4\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074*mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			.append("■ 1\t7.6\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074*mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			.append("■ 2\t2.4\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.024*mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cursor=print(cursor,tp,false,footer.toString());
 		cursor=print(cursor,tp,true,"\n Total\t\t\t"); //$NON-NLS-1$
