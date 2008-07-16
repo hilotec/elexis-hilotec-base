@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 3763 2008-04-01 17:43:50Z rgw_ch $
+ * $Id: HL7.java 4143 2008-07-16 04:57:15Z rgw_ch $
  */
  
 
@@ -160,18 +160,23 @@ public class HL7 {
 				qbe.add("PatientNr", "=", pid);
 				list=qbe.execute();
 			}
-			String[] name=elPid[5].split("\\^");
-			if (name.length > 0) {
-				nachname = name[0];
-			}
-			if (name.length > 1) {
-				vorname = name[1];
-			}
-			gebdat=elPid[7];
-			if(elPid.length>8){
-				sex=elPid[8].equalsIgnoreCase("M") ? Person.MALE : Person.FEMALE;
-			}else{
-				sex=StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
+			
+			if(elPid.length>5){
+				String[] name=elPid[5].split("\\^");
+				if (name.length > 0) {
+					nachname = name[0];
+				}
+				if (name.length > 1) {
+					vorname = name[1];
+				}
+				if(elPid.length>7){
+					gebdat=elPid[7];
+					if(elPid.length>8){
+						sex=elPid[8].equalsIgnoreCase("M") ? Person.MALE : Person.FEMALE;
+					}else{
+						sex=StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
+					}
+				}
 			}
 			if(( pid==null ) || (list.size()!=1)){
 				// We did not find the patient using the PatID, so we try the name and birthdate
@@ -221,9 +226,11 @@ public class HL7 {
 			}else{
 				// if the patient with the given ID was found, we verify, if it is the correct name
 				pat= list.get(0);
-				if(!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)){
-					pat=null;
-					return new Result<Patient>(Log.WARNINGS,4,"Patient mit dieser ID schon mit anderem Namen vorhanden",null,true);
+				if(nachname.length()!=0 && vorname.length()!=0){
+					if(!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)){
+						pat=null;
+						return new Result<Patient>(Log.WARNINGS,4,"Patient mit dieser ID schon mit anderem Namen vorhanden",null,true);
+					}
 				}
 			}
 		}
