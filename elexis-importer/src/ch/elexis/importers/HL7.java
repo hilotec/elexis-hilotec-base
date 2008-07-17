@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4143 2008-07-16 04:57:15Z rgw_ch $
+ * $Id: HL7.java 4145 2008-07-17 05:49:33Z rgw_ch $
  */
  
 
@@ -280,10 +280,15 @@ public class HL7 {
 	}
 	/**
 	 * Find the first OBR record in the file
-	 * @return an OBR or null if none was found
+	 * @return an OBR (which might be empty)
 	 */
 	public OBR firstOBR(){
-		return new OBR(0).nextOBR(0);
+		OBR ret=new OBR(0).nextOBR(0);
+		if(ret==null){
+			ret=new OBR(0);
+			ret.field=new String[20];
+		}
+		return ret;
 	}
 
 	/**
