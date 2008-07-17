@@ -9,6 +9,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -29,9 +34,11 @@ public class PatListeContentProvider implements CommonContentProvider,
 	String[] order;
 	String firstOrder;
 	PatListFilterBox pfilter;
+	ViewPart site;
 	
-	public PatListeContentProvider(CommonViewer cv, String[] fieldsToOrder){
+	public PatListeContentProvider(CommonViewer cv, String[] fieldsToOrder, ViewPart s){
 		viewer=cv;
+		site=s;
 		order=fieldsToOrder;
 		firstOrder=fieldsToOrder[0];
 	}
@@ -75,6 +82,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Patientenliste laden...", IProgressMonitor.UNKNOWN);
+				
 				qbe.clear();
 				if(pfilter!=null){
 					pfilter.aboutToStart();
@@ -122,10 +130,17 @@ public class PatListeContentProvider implements CommonContentProvider,
 			
 		};
 		job.setPriority(Job.SHORT);
-		job.setUser(true);
-		job.setSystem(false);
+		job.setUser(false);
+		//job.setSystem(true);
 		bUpdating=true;
-		job.schedule();
+		IWorkbenchSiteProgressService siteService =
+		      (IWorkbenchSiteProgressService)site.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		   siteService.schedule(job, 0 /* now */, true /* use the half-busy cursor in the part */);
+
+	   job.setProperty(IProgressConstants.ICON_PROPERTY, Desk.getImage(Desk.IMG_AUSRUFEZ_ROT));
+
+
+		// job.schedule();
 		return pats;
 	}
 

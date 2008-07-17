@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, D. Lutz and Elexis
+ * Copyright (c) 2006-2008, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    D. Lutz - initial implementation
+ *    G. Weirich - Adapted for API changes
  *    
- *    $Id$
+ *    $Id: LaborLink.java 4144 2008-07-17 05:48:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.laborlink;
@@ -101,7 +102,7 @@ public class LaborLink implements IKonsExtension {
 				// insert XRef
 				textField.insertXRef(-1, "Labor", PROVIDER_ID, "");
 
-				LaborVerordnungDialog dialog = new LaborVerordnungDialog(Desk.theDisplay.getActiveShell(),
+				LaborVerordnungDialog dialog = new LaborVerordnungDialog(Desk.getTopShell(),
 						patient, date);
 				dialog.open();
 			}

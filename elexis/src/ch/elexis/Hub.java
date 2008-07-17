@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4142 2008-07-15 16:47:40Z rgw_ch $
+ *    $Id: Hub.java 4144 2008-07-17 05:48:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -286,9 +286,12 @@ public class Hub extends AbstractUIPlugin {
 					sb.append("    *** Reminders *** ");
 				}
 				String act=new TimeTool().toString(TimeTool.DATE_COMPACT);
-				String patg=new TimeTool(pat.getGeburtsdatum()).toString(TimeTool.DATE_COMPACT);
-				if(act.substring(4).equals(patg.substring(4))){
-					sb.append("   +++ Hat Geburtstag +++  ");
+				TimeTool ttPatg=new TimeTool();
+				if(ttPatg.set(pat.getGeburtsdatum())){
+					String patg=ttPatg.toString(TimeTool.DATE_COMPACT);
+					if(act.substring(4).equals(patg.substring(4))){
+						sb.append("   +++ Hat Geburtstag +++  ");
+					}
 				}
 			}
 			if(mainActions.mainWindow!=null){
@@ -321,7 +324,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4142 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4144 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

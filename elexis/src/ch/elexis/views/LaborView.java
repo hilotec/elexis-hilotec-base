@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 4131 2008-07-13 12:28:57Z rgw_ch $
+ *  $Id: LaborView.java 4144 2008-07-17 05:48:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -350,29 +350,38 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 						}
 						LabResult lr=lrs[idx-COL_OFFSET];
 						TimeTool ttDaten=new TimeTool(sDaten[idx_values]);
+						String t=text.getText();
 						if(lr==null){
-							lr=new LabResult(actPatient,ttDaten,lit,text.getText(),"");
-							lrs[idx-COL_OFFSET]=lr;
+							if(t.length()>0){
+								lr=new LabResult(actPatient,ttDaten,lit,text.getText(),"");
+								lrs[idx-COL_OFFSET]=lr;
+							}
 						}else{
-							lr.setResult(text.getText());
+							if(t.length()==0){
+								lr.delete();
+							}else{
+								lr.setResult(text.getText());
+							}
 						}
-						List<LabItem> toCalc=formulaRelations.get(lr.getItem().makeVarName());
-						if(toCalc!=null){
-							for(LabItem litem:toCalc){
-								String evaluated=litem.evaluate(actPatient, ttDaten);
-								if(evaluated!=null){
-									LabResult artifact=LabResult.getForDate(actPatient, ttDaten, litem);
-									if(artifact==null){
-										artifact=new LabResult(actPatient,ttDaten,litem,evaluated,"");
-									}else{
-										artifact.setResult(evaluated);
+						if(lr!=null){
+							List<LabItem> toCalc=formulaRelations.get(lr.getItem().makeVarName());
+							if(toCalc!=null){
+								for(LabItem litem:toCalc){
+									String evaluated=litem.evaluate(actPatient, ttDaten);
+									if(evaluated!=null){
+										LabResult artifact=LabResult.getForDate(actPatient, ttDaten, litem);
+										if(artifact==null){
+											artifact=new LabResult(actPatient,ttDaten,litem,evaluated,"");
+										}else{
+											artifact.setResult(evaluated);
+										}
+										Integer row=hLabItems.get(litem.getId());
+										if(row==null){
+											continue;
+										}
+										rows[row].setText(idx,evaluated);
+		
 									}
-									Integer row=hLabItems.get(litem.getId());
-									if(row==null){
-										continue;
-									}
-									rows[row].setText(idx,evaluated);
-	
 								}
 							}
 						}
@@ -437,7 +446,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	    	// Zuerst sehen, für wieviele Daten Laborwerte vorliegen, und diese Daten auf Index mappen
 	    	// Hier müssen wir ausnahmsweise direkt auf den JdbcLink zugreifen
 			Stm stm=PersistentObject.getConnection().getStatement();
-			ResultSet rs=stm.query("SELECT DISTINCT Datum FROM LABORWERTE WHERE PatientID="+actPatient.getWrappedId()+" ORDER BY Datum");
+			ResultSet rs=stm.query("SELECT DISTINCT Datum FROM LABORWERTE WHERE PatientID="+actPatient.getWrappedId()+" AND deleted='0' ORDER BY Datum");
 			LinkedList<String> lDaten=new LinkedList<String>();
 			try{
 				int col=0;

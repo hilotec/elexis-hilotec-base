@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContainer.java 2767 2007-07-09 10:51:59Z rgw_ch $
+ *  $Id: XChangeContainer.java 4144 2008-07-17 05:48:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.omg.CORBA.INVALID_ACTIVITY;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Kontakt;
@@ -51,7 +50,7 @@ import ch.rgw.tools.TimeTool;
  */
 @SuppressWarnings("unchecked")
 public class XChangeContainer {
-public static final String Version="0.2.0";
+public static final String Version="0.3.0";
 	
 	public static final Namespace ns=Namespace.getNamespace("SgamXChange","http://informatics.sgam.ch/eXChange");
 	public static final Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XML Schema-instance");

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4116 2008-07-07 16:41:50Z rgw_ch $
+ * $Id: PatientenListeView.java 4144 2008-07-17 05:48:36Z rgw_ch $
  *******************************************************************************/
 
 
@@ -105,7 +105,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB,true)){
 			fields.add("Geburtsdatum");
 		}
-		plcp=new PatListeContentProvider(cv,fields.toArray(new String[0]));
+		plcp=new PatListeContentProvider(cv,fields.toArray(new String[0]),this);
 		makeActions();
 		plfb=new PatListFilterBox(parent);
 		plfb.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
