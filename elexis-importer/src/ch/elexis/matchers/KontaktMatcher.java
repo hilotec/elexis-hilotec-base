@@ -8,16 +8,22 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4108 2008-07-06 18:07:37Z rgw_ch $
+ * $Id: KontaktMatcher.java 4147 2008-07-17 21:17:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
 
+import static ch.elexis.dialogs.KontaktSelektor.HINTSIZE;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_BIRTHDATE;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_FIRSTNAME;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_NAME;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_PLACE;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_SEX;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_STREET;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_ZIP;
+
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
-
-import ch.elexis.Desk;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
@@ -27,13 +33,14 @@ import ch.elexis.dialogs.KontaktSelektor;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import static ch.elexis.dialogs.KontaktSelektor.*;
 
 /**
  * Class to match personal data to contacts
  * @author gerry
+ * @deprecated use ch.elexis.exchange.KontaktMatcher
  *
  */
+@Deprecated
 public class KontaktMatcher {
 	public enum CreateMode{FAIL,CREATE,ASK};
 	
