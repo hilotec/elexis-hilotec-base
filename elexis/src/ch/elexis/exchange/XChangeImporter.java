@@ -3,19 +3,14 @@ package ch.elexis.exchange;
 import java.io.CharArrayReader;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
-import ch.elexis.Desk;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
-import ch.elexis.data.Query;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
@@ -53,99 +48,59 @@ public class XChangeImporter extends XChangeContainer{
 	/**
 	 * Convert an already loaded xChange-Document into the internal data representation of elexis.
 	 */
-	public Result doImport(){
+	@SuppressWarnings("unchecked")
+	public Result<String> doImport(){
 
 		List<Element> eCont=eRoot.getChildren("contact", ns);
-		Result result=null;
 		for(Element e:eCont){
 			String iex=e.getAttributeValue("id");
 			Kontakt insert=Kontakt.load(idMap.get(iex));
+			Element eA=e.getChild("address", ns);
 			if((insert==null) || (insert.state()<PersistentObject.DELETED)){
-				String[] params, values;
 				boolean isPerson;
 				if(e.getAttributeValue("type").equals("organization")){
-					params=new String[]{"Bezeichnung1"};
-					values=new String[]{e.getAttributeValue("name")};
 					isPerson=false;
+					insert=KontaktMatcher.findOrganisation(e.getAttributeValue("name"), 
+									eA.getAttributeValue("street"),
+									eA.getAttributeValue("zip"),
+									eA.getAttributeValue("city"),
+									KontaktMatcher.CreateMode.CREATE);
 				}else{
-					params=new String[]{"Bezeichnung1","Bezeichnung2","Geburtsdatum","Geschlecht"};
-					values=new String[]{e.getAttributeValue("lastname"),
-										e.getAttributeValue("firstname"),
-										e.getAttributeValue("birthdate"),
-										e.getAttributeValue("sex").equals("male") ? "m" : "w"};
 					isPerson=true;
-				}
-				List<Kontakt> list=new Query<Kontakt>(Kontakt.class).queryFields(params, values, true);
-				if(list.size()==0){
-					insert=createKontakt(e);
-				}else{
-					Result res=resolveConflict(values[0]+" "+(values.length>1 ? values[1] : ""), list.toArray(new PersistentObject[0]));
-					if(res==null){
-						continue;
+					String natel="";
+					List<Element> connections=e.getChildren("connection",ns);
+					for(Element connection:connections){
+						if(connection.getAttributeValue("type").equalsIgnoreCase("natel")){
+							natel=connection.getAttributeValue("identification");
+						}
 					}
-					insert=(Kontakt) res.get();
-					if(insert==null){
-						insert=createKontakt(e);
-					}else{
-						idMap.put(iex, insert.getId());
-					}
+					
+					insert=KontaktMatcher.findPerson(e.getAttributeValue("lastname"),
+							e.getAttributeValue("firstname"),
+							e.getAttributeValue("birthdate"),
+							e.getAttributeValue("sex").equals("male") ? Person.MALE : Person.FEMALE,
+							eA.getAttributeValue("street"),
+							eA.getAttributeValue("zip"),
+							eA.getAttributeValue("city"),
+							natel,
+							KontaktMatcher.CreateMode.CREATE
+							);
 				}
+				idMap.put(e.getAttributeValue("id"),insert.getId());		// Mapping eintragen
 				if(isPerson){
-					insert.set("istPerson", "1");
 					Element eMedical=e.getChild("medical",ns);
 					if(eMedical!=null){
 						MedicalElement medical=new MedicalElement(this,eMedical,Patient.load(insert.getId()));
 					}
-				}else{
-					insert.set("istOrganisation", "1");
 				}
 			}
 			importAddress(e,insert);
 			importRelations(e,insert);
 		}
-		return result;
+		return new Result<String>("OK");
 		
 	}
-	private Result<PersistentObject> resolveConflict(String prop, PersistentObject... choices){
-		ConflictSolver cs=new ConflictSolver(prop,choices);
-		Desk.theDisplay.syncExec(cs);
-		return cs.getResult();
-	}
-	private class ConflictSolver implements Runnable{
-		Result<PersistentObject> result;
-		PersistentObject[] choices;
-		String prop;
-		
-		ConflictSolver(String prop, PersistentObject[] choices){
-			this.choices=choices;
-			this.prop=prop;
-		}
-		public void run() {
-			Shell shell=Desk.theDisplay.getActiveShell();
-			ImportKonfliktDialog ikd=new ImportKonfliktDialog(shell,choices,prop);
-			if(ikd.open()==Dialog.OK){
-				result=ikd.result;
-			} 
-		}
-		Result<PersistentObject> getResult(){
-			return result;
-		}
-	}
-	private Kontakt createKontakt(Element e){
-		Kontakt ret;
-		if(e.getAttributeValue("type").equals("person")){
-			String name=e.getAttributeValue("lastname");
-			String vorname=e.getAttributeValue("firstname");
-			String gebdat=e.getAttributeValue("birthdate");
-			String geschlecht=e.getAttributeValue("sex").equals("male") ? "m" : "w";
-			ret=new Person(name,vorname,gebdat,geschlecht);
-		}else{
-			String name=e.getAttributeValue("name");
-			ret=new Organisation(name,"");
-		}
-		idMap.put(e.getAttributeValue("id"),ret.getId());		// Mapping eintragen
-		return ret;
-	}
+	
 	/**
 	 * Import an address element. Elexis does not support multiple adresses, so wie map all but the
 	 * default address to "Bemerkung"

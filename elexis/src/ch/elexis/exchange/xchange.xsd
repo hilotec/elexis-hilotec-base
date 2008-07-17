@@ -12,14 +12,15 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="address">
-		<xs:complexType>
-			<xs:attribute name="street" type="xs:string" use="optional"/>
-			<xs:attribute name="zip" type="xs:NMTOKEN" use="optional"/>
-			<xs:attribute name="city" type="xs:string" use="optional"/>
-			<xs:attribute name="country" type="xs:NMTOKEN" use="optional"/>
-			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
-		</xs:complexType>
+	<xs:element name="address" type="addressType">
+
+		<xs:annotation>
+			<xs:documentation>
+				The contents of the Element is a label /
+				address-sticker. Linebreaks can be
+				<lf>o
+			</xs:documentation>
+		</xs:annotation>
 	</xs:element>
 	<xs:element name="allergies">
 		<xs:complexType>
@@ -69,8 +70,7 @@
 				<xs:element ref="episode" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="city" type="xs:string"/>
+	</xs:element>
 	<xs:element name="connection">
 		<xs:complexType>
 			<xs:attribute name="identification" type="xs:string" use="required"/>
@@ -80,10 +80,10 @@
 	<xs:element name="contact">
 		<xs:complexType>
 			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="address"/>
-				<xs:element ref="connection"/>
-				<xs:element ref="contactref"/>
-				<xs:element ref="medical"/>
+				<xs:element ref="address" maxOccurs="unbounded" minOccurs="0"/>
+				<xs:element ref="connection" maxOccurs="unbounded" minOccurs="0"/>
+				<xs:element ref="contactref" maxOccurs="unbounded" minOccurs="0"/>
+				<xs:element ref="medical" maxOccurs="1" minOccurs="0"/>
 			</xs:choice>
 			<xs:attribute name="birthdate" type="xs:NMTOKEN"/>
 			<xs:attribute name="firstname" type="xs:NMTOKEN"/>
@@ -102,8 +102,7 @@
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
 			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="country" type="xs:string"/>
+	</xs:element>
 	<xs:element name="diagnosis">
 		<xs:complexType>
 			<xs:attribute name="code" type="xs:NMTOKEN" use="required"/>
@@ -191,8 +190,7 @@
 				<xs:element ref="medication" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="phone" type="xs:string"/>
+	</xs:element>
 	<xs:element name="record">
 		<xs:complexType>
 			<xs:sequence>
@@ -222,8 +220,7 @@
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="street" type="xs:string"/>
+	</xs:element>
 	<xs:element name="summary" type="xs:string"/>
 	<xs:element name="text">
 		<xs:complexType mixed="true">
@@ -233,4 +230,12 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="zip" type="xs:string"/>
+
+	<xs:complexType name="addressType" mixed="true">
+
+		<xs:attribute name="street" type="xs:string"></xs:attribute>
+		<xs:attribute name="zip" type="xs:string"></xs:attribute>
+		<xs:attribute name="city" type="xs:string"></xs:attribute>
+		<xs:attribute name="country" type="xs:string"></xs:attribute>
+	</xs:complexType>
 </xs:schema>
