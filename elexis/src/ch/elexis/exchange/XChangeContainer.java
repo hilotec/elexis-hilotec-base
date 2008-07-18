@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContainer.java 4144 2008-07-17 05:48:36Z rgw_ch $
+ *  $Id: XChangeContainer.java 4149 2008-07-18 08:43:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -170,7 +170,9 @@ public static final String Version="0.3.0";
 		ContactElement contact=new ContactElement(this,k);
 		eRoot.addContent(contact.getElement());
 		if(withMedical && k.istPatient()){
-			contact.add(new MedicalElement(this,Patient.load(k.getId())));
+			MedicalElement me=new MedicalElement(this);
+			me.writeToXML(Patient.load(k.getId()));
+			contact.add(me);
 		}
 		return contact;
 	}

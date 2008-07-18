@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anschrift.java 2618 2007-06-24 10:08:05Z rgw_ch $
+ *  $Id: Anschrift.java 4149 2008-07-18 08:43:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -79,7 +79,11 @@ public class Anschrift{
  		Strasse=s;
  	}
  	public void setPlz(String plz){
- 		Plz=plz.length()>6 ? plz.substring(0, 6) : plz;
+ 		if(plz!=null){
+ 			Plz=plz.length()>6 ? plz.substring(0, 6) : plz;
+ 		}else{
+ 			Plz="";
+ 		}
  	}
  	public void setOrt(String ort){
  		Ort=ort;

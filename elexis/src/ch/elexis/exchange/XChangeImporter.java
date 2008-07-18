@@ -14,6 +14,7 @@ import ch.elexis.data.Person;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 public class XChangeImporter extends XChangeContainer{
 	public XChangeImporter(){
@@ -58,7 +59,7 @@ public class XChangeImporter extends XChangeContainer{
 			Element eA=e.getChild("address", ns);
 			if((insert==null) || (insert.state()<PersistentObject.DELETED)){
 				boolean isPerson;
-				if(e.getAttributeValue("type").equals("organization")){
+				if("organization".equals(e.getAttributeValue("type"))){
 					isPerson=false;
 					insert=KontaktMatcher.findOrganisation(e.getAttributeValue("name"), 
 									eA.getAttributeValue("street"),
@@ -69,9 +70,11 @@ public class XChangeImporter extends XChangeContainer{
 					isPerson=true;
 					String natel="";
 					List<Element> connections=e.getChildren("connection",ns);
-					for(Element connection:connections){
-						if(connection.getAttributeValue("type").equalsIgnoreCase("natel")){
-							natel=connection.getAttributeValue("identification");
+					if(connections!=null){
+						for(Element connection:connections){
+							if(connection.getAttributeValue("type").equalsIgnoreCase("natel")){
+								natel=connection.getAttributeValue("identification");
+							}
 						}
 					}
 					
@@ -90,7 +93,8 @@ public class XChangeImporter extends XChangeContainer{
 				if(isPerson){
 					Element eMedical=e.getChild("medical",ns);
 					if(eMedical!=null){
-						MedicalElement medical=new MedicalElement(this,eMedical,Patient.load(insert.getId()));
+						MedicalElement medical=new MedicalElement(this);
+						medical.readFromXML(eMedical, Patient.load(insert.getId()));
 					}
 				}
 			}
@@ -112,11 +116,17 @@ public class XChangeImporter extends XChangeContainer{
 				String type=eAdr.getAttributeValue("type");
 				if(type==null || type.equalsIgnoreCase("default")){
 					Anschrift an=new Anschrift(insert);
-					an.setStrasse(eAdr.getChildText("street", ns));
-					an.setOrt(eAdr.getChildText("city",ns));
-					an.setPlz(eAdr.getChildText("zip", ns));
-					an.setLand(eAdr.getChildText("country", ns));
-					insert.setAnschrift(an);	
+					an.setStrasse(eAdr.getAttributeValue("street"));
+					an.setOrt(eAdr.getAttributeValue("city"));
+					an.setPlz(eAdr.getAttributeValue("zip"));
+					an.setLand(eAdr.getAttributeValue("country"));
+					insert.setAnschrift(an);
+					String postanschrift=eAdr.getText();
+					if(StringTool.isNothing(postanschrift.trim())){
+						insert.createStdAnschrift();
+					}else{
+						insert.set("Anschrift", postanschrift);
+					}
 				}
 				else{
 					StringBuilder sb=new StringBuilder();

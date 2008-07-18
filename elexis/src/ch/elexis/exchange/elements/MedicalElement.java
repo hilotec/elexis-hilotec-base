@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,11 @@ import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.XChangeImporter;
 
+/**
+ * THis represents the medical History of a given patient
+ * @author gerry
+ *
+ */
 public class MedicalElement extends XChangeElement{
 	private Element eRecords, eAnalyses, eDocuments, eAllergies, eMedications;
 	private AnamnesisElement elAnamnesis; 
@@ -35,6 +40,9 @@ public class MedicalElement extends XChangeElement{
 		super(parent,el);
 	}
 	
+	public MedicalElement(XChangeContainer parent){
+		super(parent);
+	}
 	public void add(AnamnesisElement ae){
 		elAnamnesis=ae;
 		super.add(ae);
@@ -133,8 +141,7 @@ public class MedicalElement extends XChangeElement{
 	/**
 	 * Create a new MedicalElement from the EMR of Patient p
 	 */
-	public MedicalElement(XChangeContainer parent, Patient p){
-		super(parent);
+	public boolean writeToXML(Patient p){
 		e=new Element("medical",XChangeContainer.ns);
 		add(new AnamnesisElement(this));
 		Fall[] faelle=p.getFaelle();
@@ -164,20 +171,20 @@ public class MedicalElement extends XChangeElement{
 			}
 
 		}
-
+		return true;
 	}
 
 	/**
 	 * Import the MedicalElement e from parent into Patient p
-	 * @param parent the Importer
 	 * @param e the actual element to import from
 	 * @param p the patient to import to
 	 */
-	public MedicalElement(XChangeImporter parent, Element e, Patient p){
-		super(parent,e);
+	public boolean readFromXML(Element e, Patient p){
 		p.set("istPatient", "1");
 		//Patient pat=Patient.load(p.getId());
-				
+		List<RecordElement> records=getRecords();
+		
+		return true;
 	}
 
 	public String toString(){

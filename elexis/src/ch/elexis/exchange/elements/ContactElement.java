@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 2636 2007-06-26 18:19:20Z rgw_ch $
+ *  $Id: ContactElement.java 4149 2008-07-18 08:43:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -111,7 +111,9 @@ public class ContactElement extends XChangeElement{
 
 	public ContactElement(XChangeContainer parent, Patient p){
 		this(parent,(Kontakt)p);
-		add(new MedicalElement(parent,p));
+		MedicalElement me=new MedicalElement(parent);
+		me.writeToXML(p);
+		add(me);
 	}
 	
 	public String toString(){
