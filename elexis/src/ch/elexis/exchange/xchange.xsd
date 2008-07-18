@@ -4,21 +4,14 @@
            targetNamespace="SgamXChange"
            xmlns="SgamXChange"
            elementFormDefault="qualified">
-	<xs:element name="XCHANGE">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="document" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="contact" minOccurs="1" maxOccurs="unbounded"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+	<xs:element name="XCHANGE" type="xChangeDescriptor"/>	
 	<xs:element name="address" type="addressType">
 
 		<xs:annotation>
 			<xs:documentation>
 				The contents of the Element is a label /
 				address-sticker. Linebreaks can be
-				<lf>o
+				&lt;lf&gt; or &lt;crlf&gt; 
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
@@ -77,27 +70,9 @@
 			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="contact">
-		<xs:complexType>
-			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="address" maxOccurs="unbounded" minOccurs="0"/>
-				<xs:element ref="connection" maxOccurs="unbounded" minOccurs="0"/>
-				<xs:element ref="contactref" maxOccurs="unbounded" minOccurs="0"/>
-				<xs:element ref="medical" maxOccurs="1" minOccurs="0"/>
-			</xs:choice>
-			<xs:attribute name="birthdate" type="xs:NMTOKEN"/>
-			<xs:attribute name="firstname" type="xs:NMTOKEN"/>
-			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
-			<xs:attribute name="lastname" type="xs:NMTOKEN"/>
-			<xs:attribute name="middlename" type="xs:NMTOKEN"/>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="salutation" type="xs:NMTOKEN"/>
-			<xs:attribute name="sex" type="xs:NMTOKEN"/>
-			<xs:attribute name="title" type="xs:NMTOKEN"/>
-			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
-		</xs:complexType>
+	<xs:element name="contact" type="xChangeContact">
 	</xs:element>
-	<xs:element name="contactref">
+	<xs:element name="association">
 		<xs:complexType>
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
 			<xs:attribute name="type" type="xs:NMTOKEN" use="required"/>
@@ -109,25 +84,7 @@
 			<xs:attribute name="codesystem" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="document">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="summary" minOccurs="0"/>
-			</xs:sequence>
-			<xs:attribute name="content" type="xs:NMTOKEN"/>
-			<xs:attribute name="creatorID" type="xs:NMTOKEN"/>
-			<xs:attribute name="creatorName" type="xs:NMTOKEN"/>
-			<xs:attribute name="date" type="xs:NMTOKEN" use="required"/>
-			<xs:attribute name="dest" type="xs:integer"/>
-			<xs:attribute name="hint" type="xs:string"/>
-			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
-			<xs:attribute name="origin" type="xs:integer"/>
-			<xs:attribute name="record" type="xs:NMTOKEN"/>
-			<xs:attribute name="responsible" type="xs:integer"/>
-			<xs:attribute name="title" type="xs:string"/>
-			<xs:attribute name="type" type="xs:string"/>
-			<xs:attribute name="version" type="xs:NMTOKEN"/>
-		</xs:complexType>
+	<xs:element name="document" type="xChangeDocument">
 	</xs:element>
 	<xs:element name="documents">
 		<xs:complexType>
@@ -136,17 +93,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="episode">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="diagnosis" minOccurs="0"/>
-				<xs:element ref="text" minOccurs="0"/>
-			</xs:sequence>
-			<xs:attribute name="date" type="xs:NMTOKEN"/>
-			<xs:attribute name="id" type="xs:integer" use="required"/>
-			<xs:attribute name="inactive" type="xs:NMTOKEN"/>
-			<xs:attribute name="title" type="xs:NMTOKEN"/>
-		</xs:complexType>
+	<xs:element name="episode" type="xChangeEpisode">
 	</xs:element>
 	<xs:element name="image">
 		<xs:complexType>
@@ -238,4 +185,115 @@
 		<xs:attribute name="city" type="xs:string"></xs:attribute>
 		<xs:attribute name="country" type="xs:string"></xs:attribute>
 	</xs:complexType>
+	
+	<xs:complexType name="xChangeDescriptor">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded"
+				ref="document">
+			</xs:element>
+			<xs:element minOccurs="1" maxOccurs="unbounded"
+				ref="contact">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="xChangeContact">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element minOccurs="0" maxOccurs="unbounded"
+				ref="address">
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="unbounded"
+				ref="connection">
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="unbounded"
+				ref="association">
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="1" ref="medical"></xs:element>
+		</xs:choice>
+		<xs:attribute name="birthdate" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="firstname" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute use="required" name="id" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="lastname" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="middlename" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="name" type="xs:string"></xs:attribute>
+		<xs:attribute name="salutation" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="sex" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="title" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute use="required" name="type" type="xs:NMTOKEN"></xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="xChangeDocument">
+		<xs:sequence>
+			<xs:element minOccurs="0" ref="summary"></xs:element>
+		</xs:sequence>
+		<xs:attribute name="content" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="creatorID" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="creatorName" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute use="required" name="date" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="dest" type="xs:integer"></xs:attribute>
+		<xs:attribute name="hint" type="xs:string"></xs:attribute>
+		<xs:attribute use="required" name="id" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="origin" type="xs:integer"></xs:attribute>
+		<xs:attribute name="record" type="xs:NMTOKEN"></xs:attribute>
+		<xs:attribute name="responsible" type="xs:integer"></xs:attribute>
+		<xs:attribute name="title" type="xs:string"></xs:attribute>
+		<xs:attribute name="type" type="xs:string"></xs:attribute>
+		<xs:attribute name="version" type="xs:NMTOKEN"></xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="xChangeEpisode">
+		<xs:sequence>
+			<xs:element minOccurs="0" ref="diagnosis"></xs:element>
+			<xs:element minOccurs="0" ref="text"></xs:element>
+			<xs:element name="insurance" type="insuranceType"></xs:element>
+		</xs:sequence>
+		<xs:attribute name="begin" type="xs:date"></xs:attribute>
+		<xs:attribute use="required" name="id" type="xs:string"></xs:attribute>
+		<xs:attribute name="active" type="xs:boolean"></xs:attribute>
+		<xs:attribute name="title" type="xs:string"></xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="insuranceType">
+
+
+		<xs:sequence>
+			<xs:element name="contract" type="tariffType"
+				maxOccurs="unbounded" minOccurs="1">
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="contactref" type="xs:string"></xs:attribute>
+		<xs:attribute name="reason">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="disease"></xs:enumeration>
+					<xs:enumeration value="accident"></xs:enumeration>
+					<xs:enumeration value="maternity"></xs:enumeration>
+					<xs:enumeration value="prevention"></xs:enumeration>
+					<xs:enumeration value="birthdefect"></xs:enumeration>
+					<xs:enumeration value="other"></xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+
+
+		<xs:attribute name="publicDiagnosis" type="xs:string"></xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="tariffType">
+		<xs:attribute name="country">
+			<xs:annotation>
+				<xs:documentation>
+					ISO Countrycode for the country, that tariff applies
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"></xs:minLength>
+					<xs:maxLength value="3"></xs:maxLength>
+					<xs:whiteSpace value="collapse"></xs:whiteSpace>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="name" type="xs:string"></xs:attribute>
+		<xs:attribute name="caseID" type="xs:string"></xs:attribute>
+	</xs:complexType>
+	
+    <xs:attribute name="contactref" type="xs:string"></xs:attribute>
 </xs:schema>
