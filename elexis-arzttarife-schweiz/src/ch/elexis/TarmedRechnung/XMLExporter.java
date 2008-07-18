@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4141 2008-07-15 16:47:34Z rgw_ch $
+ * $Id: XMLExporter.java 4148 2008-07-18 07:23:03Z rgw_ch $
  *******************************************************************************/
 
 
@@ -582,14 +582,14 @@ public class XMLExporter implements IRnOutputter {
 						el.setAttribute("body_location",location);
 					}
 					el.setAttribute("unit.mt",XMLTool.doubleToXmlDouble(tlAL/100.0, 2));		//	22470
-					el.setAttribute("unit_factor.mt",df.format(mult));							//	22480  (strebt gegen 0)
+					el.setAttribute("unit_factor.mt",XMLTool.doubleToXmlDouble(mult,2));		//	22480  (strebt gegen 0)
 					el.setAttribute("scale_factor.mt","1.00");									//	22490
 					el.setAttribute("external_factor.mt","1.00");								//	22500
 					el.setAttribute("amount.mt",XMLTool.moneyToXmlDouble(mAL));					//	22510
 					
 					
 					el.setAttribute("unit.tt",XMLTool.doubleToXmlDouble(tlTl/100.0, 2));		//	22520
-					el.setAttribute("unit_factor.tt",df.format(mult));							//	22530
+					el.setAttribute("unit_factor.tt",XMLTool.doubleToXmlDouble(mult,2));		//	22530
 					el.setAttribute("scale_factor.tt","1.00");									//	22540
 					el.setAttribute("external_factor.tt","1.00");								//	22550
 					el.setAttribute("amount.tt",XMLTool.moneyToXmlDouble(mTL));					//	22560
