@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4147 2008-07-17 21:17:13Z rgw_ch $
+ * $Id: KontaktMatcher.java 4151 2008-07-19 06:29:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -37,10 +37,8 @@ import ch.rgw.tools.TimeTool;
 /**
  * Class to match personal data to contacts
  * @author gerry
- * @deprecated use ch.elexis.exchange.KontaktMatcher
- *
  */
-@Deprecated
+
 public class KontaktMatcher {
 	public enum CreateMode{FAIL,CREATE,ASK};
 	
