@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ *    $Id: PersistentObject.java 4152 2008-07-19 10:35:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -540,9 +540,7 @@ public abstract class PersistentObject{
      * of local quality will be returned
      */
     public Xid getXid(){
-    	Query<Xid> qbe=new Query<Xid>(Xid.class);
-    	qbe.add("object", "=", getId());
-    	List<Xid> res=qbe.execute();
+    	List<Xid> res=getXids();
     	if(res.size()==0){
     		try{
     			return new Xid(this,Xid.DOMAIN_ELEXIS,getId());
@@ -565,6 +563,15 @@ public abstract class PersistentObject{
     	return ret;
     }
     
+    /**
+     * retrieve all XIDs of this object
+     * @return a List that might be empty but is never null
+     */
+    public List<Xid> getXids(){
+    	Query<Xid> qbe=new Query<Xid>(Xid.class);
+    	qbe.add("object", "=", getId());
+    	return qbe.execute();
+    }
     /**
      * Assign a XID to this object.
      * @param domain the domain whose ID will be assigned
