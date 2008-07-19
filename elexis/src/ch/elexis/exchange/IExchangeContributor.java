@@ -14,7 +14,6 @@
 package ch.elexis.exchange;
 
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.jdom.Element;
 
 import ch.elexis.data.PersistentObject;
 
@@ -29,16 +28,13 @@ public interface IExchangeContributor extends IExecutableExtension{
 	/**
 	 * An Element is to be exported. The method can contribute its own data
 	 * @param container the target Container
-	 * @param exporting the newly created Element containing the data
 	 * @param object the data to be exported
 	 */
-	public void exportHook(XChangeContainer container, Element exporting, PersistentObject object);
+	public void exportHook(XChangeContainer container, PersistentObject object);
 	
 	/**
 	 * An Element ist to be imported. The method can fetch data it can handle
 	 * @param container the source container
-	 * @param importing the element to be imported
-	 * @param target object
 	 */
-	public void importHook (XChangeContainer container, Element importing, PersistentObject dest);
+	public void importHook (XChangeContainer container);
 }
