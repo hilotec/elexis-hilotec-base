@@ -1,11 +1,27 @@
 package ch.elexis.exchange;
 
-import java.util.List;
-
-import org.jdom.Element;
+import java.util.Properties;
 
 
-public interface XChangeContainer extends IDataSender, IDataReceiver{
+public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	
-
+	/**
+	 * Set any implementation-spezific configuration
+	 * @param props
+	 */
+	public void setConfiguration(Properties props){
+		this.props=props;
+	}
+	
+	public void setProperty(String name, String value){
+		if(props==null){
+			props=new Properties();
+		}
+		props.setProperty(name, value);
+	}
+	
+	protected Properties getProperties(){
+		return props;
+	}
+	protected Properties props;
 }
