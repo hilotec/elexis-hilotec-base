@@ -46,4 +46,46 @@ public class XIDHandler {
 		}
 		return ret;
 	}
+
+	public enum XIDMATCH{NONE,POSSIBLE,SURE};
+	/**
+	 * Compare a XID XML-Element with the xids of a PersistentObject
+	 * @param eXid a XID Element conforming to xchange.xsd
+	 * @param po a PersistentObject to match
+	 * @return XIDMATCH.SURE if both xids match in one or more identities of GUID quality or in two or more
+	 *  identities without GUID quality but more than local assignment.<br/>
+	 *  XIDMATCH.POSSIBLE if the xids match in one identity without GUID quality
+	 *  XIDMATCH.NONE otherwise.
+	 */
+	@SuppressWarnings("unchecked")
+	public XIDMATCH match(Element eXid, PersistentObject po) {
+		if(po.getId().equals(eXid.getAttributeValue(XID_UUID))){
+			return XIDMATCH.SURE;
+		}
+		int sure=0;
+		List<Xid> poXids=po.getXids();
+		List<Element> idents=eXid.getChildren(XID_IDENTITY, eXid.getNamespace());
+		for(Xid xid:poXids){
+			String domain=xid.getDomain();
+			String domid=xid.getDomainId();
+			for(Element ident:idents){
+				if(ident.getAttributeValue(XID_DOMAIN).equals(domain) &&
+						ident.getAttributeValue(XID_DOMAIN_ID).equals(domid)){
+					if(isUUID(xid)){
+						return XIDMATCH.SURE;
+					}else{
+						if(xid.getQuality()>Xid.ASSIGNMENT_LOCAL){
+							sure++;
+						}
+					}
+				}
+			}
+		}
+		switch(sure){
+			case 0:return XIDMATCH.NONE;
+			case 1: return XIDMATCH.POSSIBLE;
+			default: return XIDMATCH.SURE;
+		}
+		
+	}
 }

@@ -10,13 +10,11 @@ import java.util.Map.Entry;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Xid;
-
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	protected Element eRoot;
 	protected HashMap<String,byte[]> binFiles=new HashMap<String,byte[]>();
+	public XIDHandler xidHandler=new XIDHandler();
 	
 	public abstract Namespace getNamespace();
 	
