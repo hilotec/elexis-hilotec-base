@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Xid;
+
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	protected Element eRoot;
@@ -84,6 +87,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	public Iterator<Entry<String, byte[]>> getBinaries(){
 		return binFiles.entrySet().iterator();
 	}
+	
 	
 	/**
 	 * Set any implementation-spezific configuration

@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 3885 2008-05-08 04:30:58Z rgw_ch $
+# * $Id: createDB.script 4157 2008-07-20 06:38:10Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -191,10 +191,10 @@ CREATE TABLE LEISTUNGEN(
 	LEISTG_CODE		VARCHAR(25),
 	KLASSE			VARCHAR(80),
 	ZAHL			CHAR(3),
-	EK_KOSTEN		CHAR(6),
+	EK_KOSTEN		CHAR(8),
 	VK_TP			CHAR(6),
 	VK_SCALE		CHAR(6),
-	VK_PREIS		CHAR(6),
+	VK_PREIS		CHAR(8),
 	SCALE			CHAR(4) DEFAULT '100',
 	DETAIL			BLOB
 );
