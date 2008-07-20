@@ -43,6 +43,7 @@ public class XIDHandler {
 			int v1=val&3;
 			ident.setAttribute(XID_QUALITY,XID_QUALITIES[v1]);
 			ident.setAttribute(XID_GUID, Boolean.toString(isUUID(xid)));
+			ret.addContent(ident);
 		}
 		return ret;
 	}

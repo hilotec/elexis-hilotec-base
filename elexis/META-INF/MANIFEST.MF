@@ -6,17 +6,8 @@ Bundle-Version: 1.3.2
 Bundle-Activator: ch.elexis.Hub
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.ui.forms,
- org.eclipse.help,
- org.apache.ant,
- org.apache.lucene,
- org.eclipse.help.appserver,
- org.eclipse.help.base,
+Require-Bundle: org.eclipse.ui.forms,
  org.eclipse.help.ui,
- org.eclipse.help.webapp,
- org.eclipse.update.core,
  ch.elexis.jdomwrapper
 Eclipse-LazyStart: true
 Bundle-ClassPath: bin/,
