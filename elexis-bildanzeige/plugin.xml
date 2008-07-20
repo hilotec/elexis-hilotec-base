@@ -8,10 +8,12 @@
             name="elexis-bildanzeige"/>
    </extension>
    <extension
-         point="ch.elexis.ExchangeContribution">
-      <ExchangeHandler
-            class="ch.elexis.images.ExchangeContributor"
-            name="elexis-bildanzeige.ExchangeHandler1"/>
+         point="ch.elexis.Transporter">
+      <Transporter
+            AcceptableTypes="ch.elexis.data.Konsultation"
+            name="Bildanzeige"
+            xChangeContribution="ch.elexis.images.ExchangeContributor">
+      </Transporter>
    </extension>
 
 </plugin>

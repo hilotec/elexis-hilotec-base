@@ -20,7 +20,7 @@ import ch.rgw.tools.ExHandler;
 
 public class ExchangeContributor implements IExchangeContributor {
 
-	public void exportHook(XChangeContainer container, Element exporting, PersistentObject object) {
+	public void exportHook(XChangeContainer container, PersistentObject object) {
 		if(object instanceof Konsultation){
 			Konsultation k=(Konsultation)object;
 			Samdas smd=new Samdas(k.getEintrag().getHead());
@@ -31,7 +31,7 @@ public class ExchangeContributor implements IExchangeContributor {
 					Bild bild=new Bild(xref.getID());
 					byte[] data=bild.getData();
 					if(data!=null && data.length>0){
-						Element eXref=new Element("xref",XChangeContainer.ns);
+						Element eXref=container.createElement("xref");
 						eXref.setAttribute("id",bild.getId());
 						eXref.setAttribute("type","image/jpeg");
 						eXref.setAttribute("pos",Integer.toString(xref.getPos()));
@@ -43,7 +43,7 @@ public class ExchangeContributor implements IExchangeContributor {
 						//eXref.addContent(base64);
 						eXref.setAttribute("content","ext");
 						container.addBinary(bild.getId(), data);
-						exporting.addContent(eXref);
+						//exporting.addContent(eXref);
 					}
 				}
 			}
@@ -52,7 +52,7 @@ public class ExchangeContributor implements IExchangeContributor {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void importHook(XChangeContainer container, Element importing, PersistentObject dest) {
+	public void importHook(XChangeContainer container) {
 		if(dest instanceof Konsultation){
 			Konsultation k=(Konsultation)dest;
 			List<Element> xrefs=importing.getChildren("xref", XChangeContainer.ns);
