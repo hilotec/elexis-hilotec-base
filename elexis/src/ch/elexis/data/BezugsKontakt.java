@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BezugsKontakt.java 2765 2007-07-09 10:47:39Z rgw_ch $
+ * $Id: BezugsKontakt.java 4161 2008-07-21 04:55:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -37,6 +37,13 @@ public class BezugsKontakt extends PersistentObject {
 		return new BezugsKontakt(id);
 	}
 
+	public Kontakt getBezugsKontakt(){
+		return Kontakt.load(get("otherID"));
+	}
+	
+	public String getBezug(){
+		return checkNull(get("Bezug"));
+	}
 	@Override
 	protected String getTableName() {
 		return tablename;
