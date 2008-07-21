@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 4140 2008-07-15 16:47:25Z rgw_ch $
+ *  $Id: ESRRecord.java 4162 2008-07-21 11:22:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -178,8 +178,14 @@ public class ESRRecord extends PersistentObject{
 			}else{
 				vals[6]=rnid;
 				rn=Rechnung.load(rnid);
-				m=rn.getMandant();
-				mandantID=m.getId();
+				if(rn==null){
+					rejectCode=REJECT.RN_NUMMER;
+					vals[6]="";
+					mandantID="";
+				}else{
+					m=rn.getMandant();
+					mandantID=m.getId();
+				}
 				 
 			}
 			String PatNr=esrline.substring(POSITION_PAT_NR,POSITION_RN_NR);
