@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SoftCache.java 3507 2008-01-08 16:56:29Z rgw_ch $
+ *    $Id: SoftCache.java 4163 2008-07-21 15:34:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data.cache;
@@ -128,7 +128,6 @@ public class SoftCache<K> {
 			ce.get();
 			it.remove();
 		}
-		System.gc();
 		
 		if(Hub.DEBUGMODE){
 			long freeAfter=Runtime.getRuntime().freeMemory();

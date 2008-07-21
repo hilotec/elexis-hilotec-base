@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4152 2008-07-19 10:35:47Z rgw_ch $
+ *    $Id: PersistentObject.java 4163 2008-07-21 15:34:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1704,7 +1704,6 @@ public abstract class PersistentObject{
 		synchronized(cache){
 			cache.clear();
 		}
-		System.gc();
 	}
 	public static void resetCache(){
 		synchronized(cache){
