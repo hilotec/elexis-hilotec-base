@@ -53,9 +53,11 @@ public class ExchangeContributor implements IExchangeContributor {
 
 	@SuppressWarnings("unchecked")
 	public void importHook(XChangeContainer container) {
-		if(dest instanceof Konsultation){
-			Konsultation k=(Konsultation)dest;
-			List<Element> xrefs=importing.getChildren("xref", XChangeContainer.ns);
+		String rootpath=container.getProperty("ROOTPATH");
+		List<Element> records=container.getElements(rootpath+"/records/record");
+		for(Element re:records){
+			/*
+			List<Element> xrefs=re.getChildren("xref", container.getNamespace());
 			Samdas smd=new Samdas(k.getEintrag().getHead());
 			if(xrefs!=null){
 				for(Element e:xrefs){
@@ -88,7 +90,7 @@ public class ExchangeContributor implements IExchangeContributor {
 					}
 				}
 			}
-
+*/
 		}
 		
 	}
