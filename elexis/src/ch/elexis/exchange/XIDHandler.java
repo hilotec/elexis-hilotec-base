@@ -17,7 +17,8 @@ public class XIDHandler {
 	public static final String XID_QUALITY="quality";
 	public static final String XID_GUID="isGUID";
 	public static final String[] XID_QUALITIES={
-		"localAssignement",
+		"unknownAssignment",
+		"localAssignment",
 		"regionalAssignment",
 		"globalAssignment"
 	};

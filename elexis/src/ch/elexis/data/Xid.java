@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ * $Id: Xid.java 4166 2008-07-22 09:34:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -61,9 +61,9 @@ public class Xid extends PersistentObject {
 		String storedDomains=Hub.globalCfg.get("LocalXIDDomains", null);
 		if(storedDomains==null){
 			domains.put(DOMAIN_ELEXIS,new XIDDomain(DOMAIN_ELEXIS,"UUID",ASSIGNMENT_LOCAL|QUALITY_GUID,"ch.elexis.data.PersistentObject"));
-			domains.put(DOMAIN_AHV,new XIDDomain(DOMAIN_AHV,"AHV",ASSIGNMENT_REGIONAL|QUALITY_GUID,"ch.elexis.data.Person"));
+			domains.put(DOMAIN_AHV,new XIDDomain(DOMAIN_AHV,"AHV",ASSIGNMENT_REGIONAL,"ch.elexis.data.Person"));
 			domains.put(DOMAIN_OID,new XIDDomain(DOMAIN_OID,"OID",ASSIGNMENT_GLOBAL|QUALITY_GUID,"ch.elexis.data.PersistentObject"));
-			domains.put(DOMAIN_EAN,new XIDDomain(DOMAIN_EAN,"EAN",ASSIGNMENT_GLOBAL,"ch.elexis.data.Kontakt"));
+			domains.put(DOMAIN_EAN,new XIDDomain(DOMAIN_EAN,"EAN",ASSIGNMENT_REGIONAL,"ch.elexis.data.Kontakt"));
 			storeDomains();
 		}else{
 			for(String dom:storedDomains.split(";")){
