@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 3883 2008-05-07 12:25:24Z rgw_ch $
+ * $Id: RnContentProvider.java 4167 2008-07-22 15:08:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -252,11 +252,17 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 			q1.addPostQueryFilter(new IFilter(){
 
 				public boolean select(Object toTest) {
-					Rechnung rn=(Rechnung) toTest;
-					Fall fall=rn.getFall();
-					String abr=fall.getAbrechnungsSystem();
-					if(abr.equals(val[4])){
-						return true;
+					if(toTest instanceof Rechnung){
+						Rechnung rn=(Rechnung) toTest;
+						Fall fall=rn.getFall();
+						if(fall!=null){
+							String abr=fall.getAbrechnungsSystem();
+							if(abr!=null){
+								if(abr.equals(val[4])){
+									return true;
+								}
+							}
+						}
 					}
 					return false;
 				}
