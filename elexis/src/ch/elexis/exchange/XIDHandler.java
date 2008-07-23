@@ -7,6 +7,7 @@ import org.jdom.Namespace;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
+import ch.elexis.util.XMLTool;
 
 public class XIDHandler {
 	public static final String XID_ELEMENT="xid";
@@ -29,9 +30,9 @@ public class XIDHandler {
 	
 	public Element createXidElement(PersistentObject po, Namespace ns){
 		Xid best=po.getXid();
-		String id=po.getId();
+		String id=XMLTool.idToXMLID(po.getId());
 		if((best.getQuality()&7)>=Xid.QUALITY_GUID){
-			id=best.getDomainId();
+			id=XMLTool.idToXMLID(best.getDomainId());
 		}else{
 			po.addXid(Xid.DOMAIN_ELEXIS, id, true);
 		}

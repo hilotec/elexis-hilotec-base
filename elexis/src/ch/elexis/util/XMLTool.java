@@ -137,4 +137,31 @@ public class XMLTool {
 		ret.append("</table>");
 		return ret.toString();
 	}
+	
+	/**
+	 * Conversion betweeen Elexis id's and XML ID types. XML id types must not begin with
+	 * a number but may contain letters and numbers.
+	 * Elexis ID's are always hexadecimal strings thus will never contain a letter other than
+	 * a-f but might start with a number. Thus if it starts with a number, we prefix an "x"
+	 * @param id an elexis id
+	 * @return a String conforming to tghe XML ID type
+	 */
+	public static String idToXMLID(String id){
+		if(id.matches("[0-9].+")){
+			return "x"+id;
+		}
+		return id;
+	}
+	/**
+	 * Since elexis id's never contain the letter "x" we can be sure that a starting letter x
+	 * can be removed to leave us with the original elexis id
+	 * @param xmlid an XML ID
+	 * @return the conforming elexis id
+	 */
+	public static String xmlIDtoID(String xmlid){
+		if(xmlid.startsWith("x")){
+			return xmlid.substring(1);
+		}
+		return xmlid;
+	}
 }
