@@ -28,14 +28,16 @@ public class XIDHandler {
 	}
 	
 	public Element createXidElement(PersistentObject po, Namespace ns){
-		List<Xid> xids=po.getXids();
 		Xid best=po.getXid();
 		String id=po.getId();
-		if(best.getQuality()>=Xid.QUALITY_GUID){
+		if((best.getQuality()&7)>=Xid.QUALITY_GUID){
 			id=best.getDomainId();
+		}else{
+			po.addXid(Xid.DOMAIN_ELEXIS, id, true);
 		}
 		Element ret=new Element(XID_ELEMENT,ns);
 		ret.setAttribute(XID_UUID, id);
+		List<Xid> xids=po.getXids();
 		for(Xid xid:xids){
 			Element ident=new Element(XID_IDENTITY,ns);
 			ident.setAttribute(XID_DOMAIN, xid.getDomain());

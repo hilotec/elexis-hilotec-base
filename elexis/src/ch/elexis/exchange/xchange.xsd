@@ -19,33 +19,34 @@
 
 	<xs:complexType name="xChangeDescriptor">
 		<xs:sequence>
-            <xs:element name="header" type="xChange:headerType" maxOccurs="1" minOccurs="1"></xs:element>
-
-
-
-			<xs:element name="documents" type="xChange:documentListType"
-				maxOccurs="1" minOccurs="0">
+			<xs:element name="header" type="xChange:headerType"
+				maxOccurs="1" minOccurs="1">
 			</xs:element>
 			<xs:element name="contacts" type="xChange:contactsListType"
 				maxOccurs="unbounded" minOccurs="1">
-			</xs:element>
+			</xs:element>
+			<xs:element name="documents" type="xChange:documentListType"
+				maxOccurs="1" minOccurs="0">
+			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="id" type="xs:ID"></xs:attribute>
-		<xs:attribute name="origin" type="xs:IDREF"></xs:attribute>
+		<xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
+		<xs:attribute name="origin" type="xs:IDREF" use="required"></xs:attribute>
 
-		<xs:attribute name="destination" type="xs:IDREF"></xs:attribute>
-		<xs:attribute name="timestamp" type="xs:dateTime"></xs:attribute>
+		<xs:attribute name="destination" type="xs:IDREF" use="optional"></xs:attribute>
+		<xs:attribute name="timestamp" type="xs:dateTime" use="required"></xs:attribute>
+
+
+		<xs:attribute name="responsible" type="xs:IDREF" use="required"></xs:attribute>
 	</xs:complexType>
 	<xs:complexType name="xChangeContactType">
 
-			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="unbounded"
-					type="xChange:addressType" name="address">
-				</xs:element>
+			<xs:sequence>
 				<xs:element name="xid" type="xChange:XIDType"
 					maxOccurs="1" minOccurs="1">
 				</xs:element>
-				<xs:element name="medical" type="xChange:medicalType" maxOccurs="1" minOccurs="0"></xs:element>
+            <xs:element minOccurs="0" maxOccurs="unbounded" type="xChange:addressType" name="address">
+				</xs:element>
+            <xs:element name="medical" type="xChange:medicalType" maxOccurs="1" minOccurs="0"></xs:element>
             <xs:element name="contactref" minOccurs="0" maxOccurs="unbounded" type="xChange:contactRefType" />
         </xs:sequence>
 			<xs:attribute use="required" name="id" type="xs:ID"></xs:attribute>
@@ -143,10 +144,10 @@
     <xs:complexType name="XIDType">
     	<xs:sequence>
     		<xs:element name="identity" maxOccurs="unbounded"
-    			minOccurs="1" type="xs:string">
+    			minOccurs="1" type="xChange:identityType">
     		</xs:element>
     	</xs:sequence>
-    	<xs:attribute name="uuid" type="xs:ID"></xs:attribute>
+    	<xs:attribute name="uuid" type="xs:IDREF"></xs:attribute>
     </xs:complexType>
     
 
@@ -344,7 +345,7 @@
 
     <xs:complexType name="contactsListType">
     	<xs:sequence>
-    		<xs:element name="xChangeParty" type="xChange:xChangeContactType"></xs:element>
+    		<xs:element name="contact" type="xChange:xChangeContactType"></xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -398,12 +399,18 @@
     </xs:complexType>
 
     <xs:complexType name="headerType">
-    	<xs:attribute name="protocolVersion" type="xs:string"></xs:attribute>
-    	<xs:attribute name="creatorName" type="xs:string"></xs:attribute>
-    	<xs:attribute name="creatorID" type="xs:string"></xs:attribute>
-    	<xs:attribute name="creatorVersion" type="xs:string"></xs:attribute>
-    	<xs:attribute name="responsible" type="xs:string"></xs:attribute>
-    	<xs:attribute name="language" type="xs:string"></xs:attribute>
-    	<xs:attribute name="authorization" type="xs:string"></xs:attribute>
+    	<xs:attribute name="protocolVersion" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="creatorName" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="creatorID" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="creatorVersion" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="language" type="xs:string" use="optional"></xs:attribute>
+    	<xs:attribute name="authorization" type="xs:string" use="optional"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="identityType">
+    	<xs:attribute name="domain" type="xs:string"></xs:attribute>
+    	<xs:attribute name="domainID" type="xs:string"></xs:attribute>
+    	<xs:attribute name="quality" type="xs:string"></xs:attribute>
+    	<xs:attribute name="isGUID" type="xs:boolean"></xs:attribute>
     </xs:complexType>
 </xs:schema>

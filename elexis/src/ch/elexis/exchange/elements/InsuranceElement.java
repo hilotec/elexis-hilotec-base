@@ -32,13 +32,28 @@ public class InsuranceElement extends XChangeElement {
 		if(!fall.isOpen()){
 			setAttribute(ATTR_DATEUNTIL,new TimeTool(fall.getEndDatum()).toString(TimeTool.DATE_ISO));
 		}
-		setAttribute(ATTR_REASON, fall.getGrund());
+		setAttribute(ATTR_REASON, translateReason(fall.getGrund()));
 		ContactElement eGarant=p.addContact(garant);
 		setAttribute(ATTR_COMPANYREF,eGarant.getAttributeValue("id"));
 		ContractElement eContract=new ContractElement(p);
 		addContent(eContract);
 	}
 	
+	public String translateReason(String grund){
+		if(grund.equals(Fall.TYPE_ACCIDENT)){
+			return "accident";
+		}else if(grund.equals(Fall.TYPE_BIRTHDEFECT)){
+			return "birthdefect";
+		}else if(grund.equals(Fall.TYPE_DISEASE)){
+			return "disease";
+		}else if(grund.equals(Fall.TYPE_MATERNITY)){
+			return "maternity";
+		}else if(grund.equals(Fall.TYPE_PREVENTION)){
+			return "prevention";
+		}else{
+			return "other";
+		}
+	}
 	static class ContractElement extends XChangeElement{
 		public static final String XMLNAME="contract";
 		public static final String ATTR_COUNTRY="country";

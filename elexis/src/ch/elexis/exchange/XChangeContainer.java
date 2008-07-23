@@ -29,7 +29,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	public static final String Version="1.0.1";
 	public static final Namespace ns=Namespace.getNamespace("xChange","http://informatics.sgam.ch/xChange");
 	public static final Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XML Schema-instance");
-	public static final Namespace nsschema=Namespace.getNamespace("schemaLocation","http://informatics.sgam.ch/xChange SgamXChange.xsd");
+	public static final Namespace nsschema=Namespace.getNamespace("schemaLocation","http://informatics.sgam.ch/xChange xchange.xsd");
 
 	public static final String ROOT_ELEMENT="xChange";
 	public static final String ROOTPATH="/"+ROOT_ELEMENT+"/";
