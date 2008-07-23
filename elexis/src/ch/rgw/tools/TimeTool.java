@@ -1,4 +1,4 @@
-// $Id: TimeTool.java 3482 2007-12-26 08:19:21Z rgw_ch $
+// $Id: TimeTool.java 4169 2008-07-23 11:55:30Z rgw_ch $
 
 package ch.rgw.tools;
 
@@ -16,7 +16,7 @@ public class TimeTool extends GregorianCalendar{
 	 * 
 	 */
 	private static final long serialVersionUID = 0xc3efadd1L;
-	public static String Version(){return "3.1.0";}
+	public static String Version(){return "3.2.0";}
 	public static final String BEGINNING_OF_UNIX_EPOCH="19700101";	// Erster Tag, der mit dieser Version verwendet werden kann
 	public static final String END_OF_UNIX_EPOCH="20380118";		// Letzter Tag, der mit dieser Version verwendet werden kann
 	
@@ -46,18 +46,21 @@ public class TimeTool extends GregorianCalendar{
   public static final int DATE_SIMPLE=11;
   public static final int WEEKDAY=12;
   public static final int TIMESTAMP=13;
+  public static final int DATETIME_XML=14;
 
-  private static SimpleDateFormat full_ger=new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss");
-  private static SimpleDateFormat large_ger=new SimpleDateFormat("dd.MM.yyyy, HH:mm");
-  private static SimpleDateFormat time_full=new SimpleDateFormat("HH:mm:ss");
-  private static SimpleDateFormat time_small=new SimpleDateFormat("HH:mm");
-  private static SimpleDateFormat full_mysql=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-  private static SimpleDateFormat date_mysql=new SimpleDateFormat("yyyy-MM-dd");
-  private static SimpleDateFormat date_ger=new SimpleDateFormat("dd.MM.yyyy");
+  private static final SimpleDateFormat full_ger=new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss");
+  private static final SimpleDateFormat large_ger=new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+  private static final SimpleDateFormat time_full=new SimpleDateFormat("HH:mm:ss");
+  private static final SimpleDateFormat time_small=new SimpleDateFormat("HH:mm");
+  private static final SimpleDateFormat full_mysql=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  private static final SimpleDateFormat date_mysql=new SimpleDateFormat("yyyy-MM-dd");
+  private static final SimpleDateFormat date_ger=new SimpleDateFormat("dd.MM.yyyy");
   // private static SimpleDateFormat full_compact=new SimpleDateFormat("ddMMyyyyHHmm");
   private static SimpleDateFormat time_compact=new SimpleDateFormat("HHmm");
-  private static SimpleDateFormat date_compact=new SimpleDateFormat("yyyyMMdd");
-  private static SimpleDateFormat timestamp=new SimpleDateFormat("yyyyMMddHHmmss");
+  private static final SimpleDateFormat date_compact=new SimpleDateFormat("yyyyMMdd");
+  private static final SimpleDateFormat timestamp=new SimpleDateFormat("yyyyMMddHHmmss");
+  private static final SimpleDateFormat datetime_xm=new SimpleDateFormat("yyyy-MM-dd'T'HH:m:ss");
+  
   private static SimpleDateFormat pref_full=full_ger;
   private static SimpleDateFormat pref_small=date_ger;
   private static boolean wrap=true;
@@ -495,6 +498,7 @@ public String toString()
       case DATE_GER: res= date_ger.format(getTime()); break;
       case TIME_COMPACT: res= time_compact.format(getTime()); break;
       case DATE_COMPACT: res= date_compact.format(getTime()); break;
+      case DATETIME_XML: res=datetime_xm.format(getTime()); break;
       case WEEKDAY:	res=wdays[get(DAY_OF_WEEK)-1]; break;
       // case FULL_COMPACT: res= full_compact.format(getTime()); break;
       case TIMESTAMP: res=timestamp.format(getTime()); break;
