@@ -13,6 +13,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.text.Samdas;
 import ch.elexis.text.Samdas.Record;
 import ch.elexis.text.Samdas.XRef;
@@ -54,7 +55,7 @@ public class ExchangeContributor implements IExchangeContributor {
 	@SuppressWarnings("unchecked")
 	public void importHook(XChangeContainer container) {
 		String rootpath=container.getProperty("ROOTPATH");
-		List<Element> records=container.getElements(rootpath+"/records/record");
+		List<RecordElement> records=(List<RecordElement>) container.getElements(rootpath+"/records/record");
 		for(Element re:records){
 			/*
 			List<Element> xrefs=re.getChildren("xref", container.getNamespace());
