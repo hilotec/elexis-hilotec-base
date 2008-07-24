@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
+ *  $Id: MedicalElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -114,6 +114,7 @@ public class MedicalElement extends XChangeElement{
 		if(eRecords==null){
 			eRecords=new Element("records",getContainer().getNamespace());
 			addContent(eRecords);
+			getContainer().addChoice(eRecords, "KG-Einträge", eRecords);
 		}
 		eRecords.addContent(rc);
 	}
@@ -129,6 +130,7 @@ public class MedicalElement extends XChangeElement{
 		if(eAnalyses==null){
 			eAnalyses=new Element(FindingElement.ENCLOSING,getContainer().getNamespace());
 			addContent(eAnalyses);
+			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
 		}
 		eAnalyses.addContent(le);
 	}
@@ -140,6 +142,7 @@ public class MedicalElement extends XChangeElement{
 		if(eDocuments==null){
 			eDocuments=new Element("documents",getContainer().getNamespace());
 			addContent(eDocuments);
+			getContainer().addChoice(eDocuments, "Dokumente", eDocuments);
 		}
 		eDocuments.addContent(de);
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 3887 2008-05-08 14:34:13Z danlutz $
+ *  $Id: LabResult.java 4176 2008-07-24 19:50:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -158,7 +158,12 @@ public class LabResult extends PersistentObject {
 
 	@Override
 	public String getLabel() {
-		return getResult();
+		StringBuilder sb=new StringBuilder();
+		sb.append(getItem().getLabel())
+			.append(", ").append(getDate())
+			.append(": ").append(getResult());
+		return sb.toString();
+		//return getResult();
 	}
 
 	public static LabResult getForDate(final Patient pat,final TimeTool date,final LabItem item){

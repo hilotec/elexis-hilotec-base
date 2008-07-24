@@ -24,6 +24,7 @@ import ch.elexis.exchange.elements.MedicationElement;
 import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
+import ch.elexis.preferences.UserCasePreferences;
 import ch.elexis.util.Tree;
 
 
@@ -48,6 +49,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	
 	protected Element eRoot;
 	protected HashMap<String,byte[]> binFiles=new HashMap<String,byte[]>();
+	protected HashMap<Element,UserChoice> choices=new HashMap<Element,UserChoice>();
 	public XIDHandler xidHandler=new XIDHandler();
 	
 	public abstract Kontakt findContact(String id);
@@ -66,6 +68,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		if(eContacts==null){
 			eContacts=new Element(ENCLOSE_CONTACTS,ns);
 			eRoot.addContent(eContacts);
+			choices.put(eContacts, new UserChoice(true,"Kontakte",eContacts));
 		}else{
 			List<ContactElement> lContacts=eContacts.getChildren(ContactElement.XMLNAME, ns);
 			for(ContactElement e:lContacts){
@@ -76,6 +79,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		}
 		ContactElement contact=new ContactElement(this,k);
 		eContacts.addContent(contact);
+		choices.put(contact, new UserChoice(true,k.getLabel(),k));
 		return contact;
 	}
 	
@@ -88,6 +92,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		}
 		MedicalElement eMedical=new MedicalElement(this,pat);
 		ret.add(eMedical);
+		choices.put(eMedical, new UserChoice(true,"Krankengeschichte",eMedical));
 		return ret;
 	}
 
@@ -112,7 +117,10 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	public byte[] getBinary(String id){
 		return binFiles.get(id);
 	}
-	
+
+	public void addChoice(Element e,String name, Object o){
+		choices.put(e, new UserChoice(true,name,o));
+	}
 	
 	/**
 	 * Get the root element.
@@ -125,8 +133,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	/**
 	 * Retrieve a List of all Elements with a given Name at a given path
 	 * @param path a string of the form /element1/element2/name will get all Elements with "name" in the body of
-	 * element2. If name is *, will retrieve all Children of element2. Path must begin at root level but without 
-	 * naming the root element.
+	 * element2. If name is *, will retrieve all Children of element2. Path must begin at root level.
 	 * @return a possibly empty list af all matching elements at the given position
 	 */
 	@SuppressWarnings("unchecked")
@@ -134,7 +141,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		LinkedList<XChangeElement> ret=new LinkedList<XChangeElement>();
 		String[] trace=path.split("/");
 		Element runner=eRoot;
-		for(int i=0;i<trace.length-1;i++){
+		for(int i=2;i<trace.length-1;i++){
 			runner=runner.getChild(trace[i], ns);
 			if(runner==null){
 				return ret;

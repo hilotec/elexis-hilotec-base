@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentElement.java 4174 2008-07-24 13:06:05Z rgw_ch $
+ *  $Id: DocumentElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -65,7 +65,8 @@ public class DocumentElement extends XChangeElement{
 		if(idex!=null){
 			setAttribute(ATTR_RECORDREF, XMLTool.idToXMLID(idex));
 		}
-		setHint("Dies ist ein Dokument im OpenDocument-Format. Sie können es zum Beipsiel mit OpenOffice (http://www.openoffice.org) lesen");
+		setHint("Dies ist ein Dokument im OpenDocument-Format. Sie können es zum Beispiel mit OpenOffice (http://www.openoffice.org) lesen");
+		parent.addChoice(this, b.getLabel(), b);
 	}
 	
 	public void setTitle(String title){

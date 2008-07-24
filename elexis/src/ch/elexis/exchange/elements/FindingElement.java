@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
+ *  $Id: FindingElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -77,6 +77,7 @@ public class FindingElement extends XChangeElement{
 		addContent(eResult);
 		eResult.setText(lr.getResult());
 		setAttribute(ATTR_ABNORMAL,"indeterminate");	// TODO
+		home.addChoice(this, lr.getLabel(), lr);
 	}
 	
 	/*

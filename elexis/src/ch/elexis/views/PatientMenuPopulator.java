@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientMenuPopulator.java 3800 2008-04-20 12:44:30Z rgw_ch $
+ *  $Id: PatientMenuPopulator.java 4176 2008-07-24 19:50:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -129,7 +129,12 @@ public class PatientMenuPopulator implements IMenuPopulator {
 	            if(p!=null){
 	                List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.Transporter");
 					for(final IConfigurationElement ic:list){
+						String name=ic.getAttribute("name");
+						System.out.println(name);
 						String handler=ic.getAttribute("AcceptableTypes");
+						if(handler==null){
+							continue;
+						}
 						if(handler.contains("ch.elexis.data.Patient") || (handler.contains("ch.elexis.data.*"))){
 							MenuItem it=new MenuItem(menu,SWT.NONE);
 							it.setText(ic.getAttribute("name"));

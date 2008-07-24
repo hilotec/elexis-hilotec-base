@@ -64,7 +64,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="AcceptableTypes" type="string">
+         <attribute name="AcceptableTypes" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -85,8 +85,6 @@
             <annotation>
                <documentation>
                   
-                  
-               
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":ch.elexis.exchange.IExchangeContributor"/>
