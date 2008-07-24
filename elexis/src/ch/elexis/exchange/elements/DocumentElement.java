@@ -8,18 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: DocumentElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
+import org.jdom.Element;
+
 import ch.elexis.data.Brief;
-import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.util.Log;
-import ch.elexis.util.Result;
+import ch.elexis.util.XMLTool;
 import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("serial")
@@ -53,19 +52,25 @@ public class DocumentElement extends XChangeElement{
 	public DocumentElement(XChangeContainer parent, Brief b){
 		this(parent);
 		setAttribute(ATTR_MIMETYPE,b.getMimeType());
-		setAttribute("id",b.getId());
+		setID(b.getId());
 		setAttribute(ATTR_PLACEMENT,PLACEMENT_INFILE);
-		parent.addBinary(b.getId(), b.loadBinary());
+		parent.addBinary(getAttributeValue("id"), b.loadBinary());
 		setAttribute(ATTR_TITLE,b.getLabel());
-		ContactElement eAdr=parent.addContact(b.getAdressat());
-		setAttribute(ATTR_DESTINATION,eAdr.getAttributeValue("id"));
+		Kontakt kAdr=b.getAdressat();
+		if(kAdr.isValid()){
+			ContactElement eAdr=parent.addContact(kAdr);
+			setAttribute(ATTR_DESTINATION,eAdr.getAttributeValue("id"));
+		}
 		ContactElement eAbs=parent.addContact(Kontakt.load(b.get("AbsenderID")));
 		setAttribute(ATTR_ORIGIN,eAbs.getAttributeValue("id"));
 		setAttribute(ATTR_DATE,new TimeTool(b.getDatum()).toString(TimeTool.DATE_ISO));
 		String idex=b.get("BehandlungsID");
 		if(idex!=null){
-			setAttribute(ATTR_RECORDREF, idex);
+			setAttribute(ATTR_RECORDREF, XMLTool.idToXMLID(idex));
 		}
+		Element eHint=new Element(ELEMENT_HINT,getContainer().getNamespace());
+		eHint.setText("Dies ist ein Dokument im OpenDocument-Format. Sie können es zum Beipsiel mit OpenOffice (http://www.openoffice.org) lesen");
+		addContent(eHint);
 	}
 	
 	/*

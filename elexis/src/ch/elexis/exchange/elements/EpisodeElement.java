@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EpisodeElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: EpisodeElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -41,7 +41,7 @@ public class EpisodeElement extends XChangeElement{
 	public EpisodeElement(XChangeContainer parent, Konsultation k, IDiagnose dg){
 		super(parent);
 		setAttribute(ATTR_BEGINDATE,new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
-		setAttribute("id",StringTool.unique("episode"));
+		setID(StringTool.unique("episode"));
 		DiagnosisElement eDiag=new DiagnosisElement(parent,dg);
 		addContent(eDiag);
 		setAttribute(ATTR_TITLE,dg.getLabel());

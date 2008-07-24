@@ -147,8 +147,10 @@ public class XMLTool {
 	 * @return a String conforming to tghe XML ID type
 	 */
 	public static String idToXMLID(String id){
-		if(id.matches("[0-9].+")){
-			return "x"+id;
+		if(id!=null){
+			if(id.matches("[0-9].+")){
+				return "x"+id;
+			}
 		}
 		return id;
 	}
@@ -159,8 +161,10 @@ public class XMLTool {
 	 * @return the conforming elexis id
 	 */
 	public static String xmlIDtoID(String xmlid){
-		if(xmlid.startsWith("x")){
-			return xmlid.substring(1);
+		if(xmlid!=null){
+			if(xmlid.startsWith("x")){
+				return xmlid.substring(1);
+			}
 		}
 		return xmlid;
 	}

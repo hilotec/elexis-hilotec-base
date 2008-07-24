@@ -23,7 +23,7 @@
 				maxOccurs="1" minOccurs="1">
 			</xs:element>
 			<xs:element name="contacts" type="xChange:contactsListType"
-				maxOccurs="unbounded" minOccurs="1">
+				maxOccurs="1" minOccurs="1">
 			</xs:element>
 			<xs:element name="documents" type="xChange:documentListType"
 				maxOccurs="1" minOccurs="0">
@@ -32,7 +32,7 @@
 		<xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
 		<xs:attribute name="origin" type="xs:IDREF" use="required"></xs:attribute>
 
-		<xs:attribute name="destination" type="xs:IDREF" use="optional"></xs:attribute>
+		<xs:attribute name="destination" type="xs:string" use="optional"></xs:attribute>
 		<xs:attribute name="timestamp" type="xs:dateTime" use="required"></xs:attribute>
 
 
@@ -62,7 +62,7 @@
 			<xs:simpleType>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="person"></xs:enumeration>
-					<xs:enumeration value="organisation"></xs:enumeration>
+					<xs:enumeration value="organization"></xs:enumeration>
 				</xs:restriction>
 			</xs:simpleType>
 		</xs:attribute>
@@ -132,12 +132,12 @@
     <xs:complexType name="medicalType">
     	<xs:sequence>
 
-    		<xs:element type="xChange:recordListType" name="records" maxOccurs="1" minOccurs="1"/>
+            <xs:element name="anamnesis" type="xChange:episodeListType" maxOccurs="1" minOccurs="0" />
+            <xs:element type="xChange:recordListType" name="records" maxOccurs="1" minOccurs="1"/>
     		<xs:element type="xChange:findingsListType" name="findings" maxOccurs="1" minOccurs="0"/>
     		<xs:element type="xChange:documentListType" name="documents" maxOccurs="1" minOccurs="0"/>
     		<xs:element type="xChange:medicationListType" name="medications" maxOccurs="1" minOccurs="0"/>
-    		<xs:element type="xChange:riskListType" name="risks" maxOccurs="1" minOccurs="0"/>
-    		<xs:element name="anamnesis" type="xChange:episodeListType" maxOccurs="1" minOccurs="0"/>
+    		<xs:element type="xChange:riskListType" name="risks" maxOccurs="1" minOccurs="0"/>
     	</xs:sequence>
     </xs:complexType>
 
@@ -172,17 +172,27 @@
     <xs:complexType name="findingType">
     	<xs:choice minOccurs="0" maxOccurs="unbounded">
     		<xs:element maxOccurs="1" type="xChange:imageType" name="image"></xs:element>
-    		<xs:element maxOccurs="1" type="xChange:resultType" name="result"></xs:element>
+    		<xs:element maxOccurs="1" type="xs:string" name="result"></xs:element>
     	</xs:choice>
         <xs:attribute name="id" type="xs:NMTOKEN"></xs:attribute>
         <xs:attribute use="required" name="name" type="xs:string"></xs:attribute>
         <xs:attribute use="required" name="lab" type="xs:IDREF"></xs:attribute>
-        <xs:attribute name="abnormal" type="xs:boolean"></xs:attribute>
-    	<xs:attribute use="required" name="classification"
+        <xs:attribute name="abnormal">
+        	<xs:simpleType>
+        		<xs:restriction base="xs:string">
+        			<xs:enumeration value="true"></xs:enumeration>
+        			<xs:enumeration value="false"></xs:enumeration>
+        			<xs:enumeration value="1"></xs:enumeration>
+        			<xs:enumeration value="0"></xs:enumeration>
+        			<xs:enumeration value="indeterminate"></xs:enumeration>
+        		</xs:restriction>
+        	</xs:simpleType>
+        </xs:attribute>
+        <xs:attribute use="required" name="classification"
     		type="xs:NMTOKEN">
     	</xs:attribute>
     	<xs:attribute use="required" name="date" type="xs:date"></xs:attribute>
-    	<xs:attribute name="normRange" type="xs:NMTOKEN"></xs:attribute>
+    	<xs:attribute name="normRange" type="xs:string"></xs:attribute>
     	<xs:attribute name="type">
     		<xs:simpleType>
     			<xs:restriction base="xs:NMTOKEN">
@@ -238,7 +248,7 @@
     <xs:complexType name="recordListType">
     	<xs:sequence>
 
-    		<xs:element name="records" type="xChange:recordType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    		<xs:element name="record" type="xChange:recordType" maxOccurs="unbounded" minOccurs="1"></xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -255,9 +265,6 @@
     		</xs:documentation>
     	</xs:annotation>
     	<xs:sequence>
-    		<xs:element name="xid" type="xChange:XIDType" maxOccurs="1"
-    			minOccurs="1">
-    		</xs:element>
     		<xs:element name="hint" type="xs:string" maxOccurs="1"
     			minOccurs="1">
     			<xs:annotation>
@@ -277,7 +284,7 @@
     			</xs:annotation>
     		</xs:element>
     	</xs:sequence>
-    	<xs:attribute name="id" type="xs:ID">
+    	<xs:attribute name="id" type="xs:ID" use="required">
     		<xs:annotation>
     			<xs:documentation>
     				globally unique id. Must duplicate tze XID's UUID
@@ -299,7 +306,7 @@
     			</xs:documentation>
     		</xs:annotation>
     	</xs:attribute>
-    	<xs:attribute name="destination" type="xs:IDREF">
+    	<xs:attribute name="destination" type="xs:IDREF" use="optional">
     		<xs:annotation>
     			<xs:documentation>
     				Reference to tthe xChangeParty this document weas
@@ -307,7 +314,7 @@
     			</xs:documentation>
     		</xs:annotation>
     	</xs:attribute>
-    	<xs:attribute name="mimetype" type="xs:string">
+    	<xs:attribute name="mimetype" type="xs:string" use="required">
     		<xs:annotation>
     			<xs:documentation>
     				Mimetype of the document
@@ -321,7 +328,7 @@
     			</xs:documentation>
     		</xs:annotation>
     	</xs:attribute>
-    	<xs:attribute name="placement" type="xChange:placementType">
+    	<xs:attribute name="placement" type="xChange:placementType" use="required">
     		<xs:annotation>
     			<xs:documentation>
     				Location of the document. Inline: base64 encoded in
@@ -331,8 +338,8 @@
     			</xs:documentation>
     		</xs:annotation>
     	</xs:attribute>
-    	<xs:attribute name="date" type="xs:date"></xs:attribute>
-    	<xs:attribute name="recordref" type="xs:IDREF"></xs:attribute>
+    	<xs:attribute name="date" type="xs:date" use="required"></xs:attribute>
+    	<xs:attribute name="recordref" type="xs:IDREF" use="optional"></xs:attribute>
     </xs:complexType>
 
     <xs:simpleType name="placementType">
@@ -345,7 +352,7 @@
 
     <xs:complexType name="contactsListType">
     	<xs:sequence>
-    		<xs:element name="contact" type="xChange:xChangeContactType"></xs:element>
+    		<xs:element name="contact" type="xChange:xChangeContactType" maxOccurs="unbounded" minOccurs="1"></xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -374,10 +381,11 @@
 
     <xs:complexType name="recordType">
     <xs:sequence>
-            <xs:element name="text"></xs:element>
-            <xs:element name="episode" maxOccurs="unbounded" type="xs:IDREF"/>
-        </xs:sequence>
-        <xs:attribute use="required" name="id" type="xs:string"></xs:attribute>
+    	<xs:element name="text" maxOccurs="unbounded" minOccurs="0"></xs:element>
+
+    	<xs:element name="episode" type="xChange:episodeRefType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    </xs:sequence>
+    <xs:attribute use="required" name="id" type="xs:ID"></xs:attribute>
         <xs:attribute use="required" name="author" type="xs:string"></xs:attribute>
         <xs:attribute use="required" name="date" type="xs:date"></xs:attribute>
 
@@ -394,7 +402,7 @@
 
     <xs:complexType name="findingsListType">
     	<xs:sequence>
-    		<xs:element name="findings" type="xChange:findingType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    		<xs:element name="finding" type="xChange:findingType" maxOccurs="unbounded" minOccurs="1"></xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -412,5 +420,9 @@
     	<xs:attribute name="domainID" type="xs:string"></xs:attribute>
     	<xs:attribute name="quality" type="xs:string"></xs:attribute>
     	<xs:attribute name="isGUID" type="xs:boolean"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="episodeRefType">
+    	<xs:attribute name="ref" type="xs:IDREF"></xs:attribute>
     </xs:complexType>
 </xs:schema>

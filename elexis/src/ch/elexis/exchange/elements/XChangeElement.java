@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: XChangeElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -17,6 +17,7 @@ import org.jdom.Element;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
+import ch.elexis.util.XMLTool;
 
 public abstract class XChangeElement extends Element{
 	private XChangeContainer parent;
@@ -50,17 +51,10 @@ public abstract class XChangeElement extends Element{
 	}
 	
 	public void setID(String id){
-		if(id.matches("[0-9][0-9a-zA-Z]+")){
-			id="x"+id;
-		}
-		setAttribute("id", id);
+		setAttribute("id", XMLTool.idToXMLID(id));
 	}
 	public String getID(){
-		String id=getAttr("id");
-		if(id.startsWith("x")){
-			return id.substring(1);
-		}
-		return id;
+		return XMLTool.xmlIDtoID(getAttr("id"));
 	}
 	protected void add(final XChangeElement el){
 		addContent(el);

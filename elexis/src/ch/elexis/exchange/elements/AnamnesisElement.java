@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnamnesisElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: AnamnesisElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -90,7 +90,8 @@ public class AnamnesisElement extends XChangeElement{
 	*/
 	
 	/**
-	 * link a record element to this anamnesis (every episodehas a number of treatments related to that episode)
+	 * link a record element to this anamnesis (every episode has a number of treatments 
+	 * related to that episode)
 	 * We try to find an episode for each of the diagnoses of the Konsultation given
 	 * @param k
 	 * @param r
@@ -104,8 +105,7 @@ public class AnamnesisElement extends XChangeElement{
 				hLink.put(dg,episode);
 				addContent(episode);
 			}
-			Element episodeRef=new Element(EpisodeElement.XMLNAME,getContainer().getNamespace());
-		
+			EpisodeRefElement episodeRef=new EpisodeRefElement(getContainer(),episode);
 			r.addContent(episodeRef);
 		}
 	}

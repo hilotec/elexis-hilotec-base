@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: MedicalElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -60,7 +60,7 @@ public class MedicalElement extends XChangeElement{
 				addRecord(record);
 			}
 		}
-		
+	
 		Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
 		qbe.add("PatientID", "=", p.getId());
 		List<LabResult> labs=qbe.execute();
@@ -69,6 +69,7 @@ public class MedicalElement extends XChangeElement{
 				addAnalyse(new FindingElement(getContainer(),lr));
 			}
 		}
+		
 		Query <Brief> qb=new Query<Brief>(Brief.class);
 		qb.add("PatientID", "=", p.getId());
 		List<Brief> lBriefe=qb.execute();
@@ -78,7 +79,7 @@ public class MedicalElement extends XChangeElement{
 			}
 
 		}
-		
+	
 	}
 
 

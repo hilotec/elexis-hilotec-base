@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RecordElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: RecordElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -51,7 +51,7 @@ public class RecordElement extends XChangeElement{
 			ContactElement cMandant=c.addContact(kMandant);
 			setAttribute("responsible",cMandant.getAttributeValue("id"));
 		}
-		setAttribute("id",k.getId());
+		setID(k.getId());
 		VersionedResource vr=k.getEintrag();
     	ResourceItem entry=vr.getVersion(vr.getHeadVersion());
     	if(entry!=null){

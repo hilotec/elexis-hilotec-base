@@ -3,7 +3,7 @@ package ch.elexis.exchange.elements;
 import ch.elexis.exchange.XChangeContainer;
 
 public class EpisodeRefElement extends XChangeElement {
-	public static final String XMLNAME="episoderef";
+	public static final String XMLNAME="episode";
 	
 	@Override
 	public String getXMLName() {
@@ -16,6 +16,6 @@ public class EpisodeRefElement extends XChangeElement {
 	
 	public EpisodeRefElement(XChangeContainer parent, EpisodeElement episode){
 		super(parent);
-		setAttribute("idref", episode.getAttributeValue("id"));
+		setAttribute("ref", episode.getAttributeValue("id"));
 	}
 }

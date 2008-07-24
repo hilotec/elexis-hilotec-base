@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: FindingElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -24,7 +24,7 @@ import ch.rgw.tools.TimeTool;
 @SuppressWarnings("serial")
 public class FindingElement extends XChangeElement{
 	public static final String ENCLOSING="findings";
-	public static final String XMLNAME="result";
+	public static final String XMLNAME="finding";
 	public static final String ATTR_DATE="date";
 	public static final String ATTR_CLASSIFICATION="classification";
 	public static final String ATTR_ABNORMAL="abnormal";
@@ -45,7 +45,7 @@ public class FindingElement extends XChangeElement{
 	
 	
 	public String getXMLName(){
-		return "result";
+		return XMLNAME;
 	}
 	
 	FindingElement(XChangeContainer p){
