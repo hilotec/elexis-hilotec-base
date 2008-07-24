@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
+ *  $Id: DocumentElement.java 4174 2008-07-24 13:06:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -55,24 +55,60 @@ public class DocumentElement extends XChangeElement{
 		setID(b.getId());
 		setAttribute(ATTR_PLACEMENT,PLACEMENT_INFILE);
 		parent.addBinary(getAttributeValue("id"), b.loadBinary());
-		setAttribute(ATTR_TITLE,b.getLabel());
-		Kontakt kAdr=b.getAdressat();
-		if(kAdr.isValid()){
-			ContactElement eAdr=parent.addContact(kAdr);
-			setAttribute(ATTR_DESTINATION,eAdr.getAttributeValue("id"));
-		}
-		ContactElement eAbs=parent.addContact(Kontakt.load(b.get("AbsenderID")));
-		setAttribute(ATTR_ORIGIN,eAbs.getAttributeValue("id"));
-		setAttribute(ATTR_DATE,new TimeTool(b.getDatum()).toString(TimeTool.DATE_ISO));
+
+		setTitle(b.getLabel());
+		setDestination(b.getAdressat());
+		setOriginator(Kontakt.load(b.get("AbsenderID")));
+		setDate(b.getDatum());
+
 		String idex=b.get("BehandlungsID");
 		if(idex!=null){
 			setAttribute(ATTR_RECORDREF, XMLTool.idToXMLID(idex));
 		}
+		setHint("Dies ist ein Dokument im OpenDocument-Format. Sie können es zum Beipsiel mit OpenOffice (http://www.openoffice.org) lesen");
+	}
+	
+	public void setTitle(String title){
+		setAttribute(ATTR_TITLE, title);
+	}
+	
+	public void setOriginator(Kontakt k){
+		if(k!=null && k.isValid()){
+			ContactElement ce=getContainer().addContact(k);
+			setAttribute(ATTR_ORIGIN,ce.getAttributeValue("id"));
+		}
+	}
+	
+	public void setDestination(Kontakt k){
+		if(k!=null && k.isValid()){
+			ContactElement ce=getContainer().addContact(k);
+			setAttribute(ATTR_DESTINATION,ce.getAttributeValue("id"));
+		}
+	}
+	
+	public void addMeta(String name, String value){
+		MetaElement meta=new MetaElement(getContainer(),name,value);
+		add(meta);
+	}
+	
+	public void setDate(String date){
+		TimeTool tt=new TimeTool(date);
+		setAttribute(ATTR_DATE, tt.toString(TimeTool.DATE_ISO));
+	}
+	
+	public void setHint(String hint){
 		Element eHint=new Element(ELEMENT_HINT,getContainer().getNamespace());
-		eHint.setText("Dies ist ein Dokument im OpenDocument-Format. Sie können es zum Beipsiel mit OpenOffice (http://www.openoffice.org) lesen");
+		eHint.setText(hint);
 		addContent(eHint);
 	}
 	
+	public void setSubject(String subject){
+		setAttribute(ATTR_SUBJECT, subject);
+	}
+	
+	public void setMimetype(String desc){
+		setAttribute(ATTR_MIMETYPE, desc);
+	}
 	/*
 	public Result<String> doImport(Patient p){
 		XChangeContainer parent=getContainer();

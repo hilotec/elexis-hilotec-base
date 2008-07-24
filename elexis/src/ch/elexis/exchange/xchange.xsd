@@ -40,15 +40,21 @@
 	</xs:complexType>
 	<xs:complexType name="xChangeContactType">
 
-			<xs:sequence>
+			<xs:sequence>
+
 				<xs:element name="xid" type="xChange:XIDType"
 					maxOccurs="1" minOccurs="1">
 				</xs:element>
-            <xs:element minOccurs="0" maxOccurs="unbounded" type="xChange:addressType" name="address">
+				<xs:element minOccurs="0" maxOccurs="unbounded"
+					type="xChange:addressType" name="address">
 				</xs:element>
-            <xs:element name="medical" type="xChange:medicalType" maxOccurs="1" minOccurs="0"></xs:element>
-            <xs:element name="contactref" minOccurs="0" maxOccurs="unbounded" type="xChange:contactRefType" />
-        </xs:sequence>
+				<xs:element name="medical" type="xChange:medicalType"
+					maxOccurs="1" minOccurs="0">
+				</xs:element>
+				<xs:element name="contactref" minOccurs="0"
+					maxOccurs="unbounded" type="xChange:contactRefType" />
+				<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+			</xs:sequence>
 			<xs:attribute use="required" name="id" type="xs:ID"></xs:attribute>
         <xs:attribute name="birthdate" type="xs:date" use="optional"></xs:attribute>
 		<xs:attribute name="firstname" type="xs:string" use="optional"></xs:attribute>
@@ -274,7 +280,8 @@
     				</xs:documentation>
     			</xs:annotation>
     		</xs:element>
-    		<xs:element name="contents" type="xs:string" maxOccurs="1"
+            <xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+            <xs:element name="contents" type="xs:string" maxOccurs="1"
     			minOccurs="0">
     			<xs:annotation>
     				<xs:documentation>
@@ -282,7 +289,7 @@
     					document. If placement was url: The URL.
     				</xs:documentation>
     			</xs:annotation>
-    		</xs:element>
+    		</xs:element>
     	</xs:sequence>
     	<xs:attribute name="id" type="xs:ID" use="required">
     		<xs:annotation>
@@ -424,5 +431,10 @@
 
     <xs:complexType name="episodeRefType">
     	<xs:attribute name="ref" type="xs:IDREF"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="metaType">
+    	<xs:attribute name="name" type="xs:string"></xs:attribute>
+    	<xs:attribute name="value" type="xs:string"></xs:attribute>
     </xs:complexType>
 </xs:schema>
