@@ -13,6 +13,7 @@ import org.jdom.Namespace;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
+import ch.elexis.exchange.IExchangeContributor.UserChoice;
 import ch.elexis.exchange.XIDHandler.XIDMATCH;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactRefElement;
@@ -23,6 +24,7 @@ import ch.elexis.exchange.elements.MedicationElement;
 import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
+import ch.elexis.util.Tree;
 
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver{
@@ -156,6 +158,16 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		return binFiles.entrySet().iterator();
 	}
 	
+	public List<Object> getSelectedChildren(Tree<UserChoice> tSelection){
+		List<Object> ret=new LinkedList<Object>();
+		for(Tree<UserChoice> runner:tSelection.getChildren()){
+			UserChoice choice=runner.contents;
+			if(choice.isSelected()){
+				ret.add(choice.object);
+			}
+		}
+		return ret;
+	}
 	
 	/**
 	 * Set any implementation-spezific configuration
