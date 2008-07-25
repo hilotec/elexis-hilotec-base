@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: ContactElement.java 4179 2008-07-25 11:01:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -19,9 +19,11 @@ import java.util.List;
 import org.jdom.Element;
 
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.XIDHandler;
+import ch.elexis.util.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -138,5 +140,14 @@ public class ContactElement extends XChangeElement{
 	public String getXMLName() {
 		return XMLNAME;
 	}
+
+	public PersistentObject doImport(){
+		Element xid=getChild(ELEM_XID);
+		if(xid!=null){
+			
+		}
+		return null;
+	}
+	
 	
 }

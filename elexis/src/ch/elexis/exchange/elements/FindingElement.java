@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
+ *  $Id: FindingElement.java 4179 2008-07-25 11:01:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -61,8 +61,10 @@ public class FindingElement extends XChangeElement{
 		setAttribute(ATTR_CLASSIFICATION,CLASSIFICATION_LABVALUE);
 		setAttribute(ATTR_NAME, li.getKuerzel());
 		Labor lab=li.getLabor();
-	    ContactElement cLabor=home.addContact(lab);
-		setAttribute(ATTR_LAB,cLabor.getAttributeValue("id"));
+		if(lab!=null && lab.isValid()){
+			ContactElement cLabor=home.addContact(lab);
+			setAttribute(ATTR_LAB,cLabor.getAttributeValue("id"));
+		}
 		if(li.getTyp().equals(LabItem.typ.NUMERIC)){
 			setAttribute(ATTR_TYPE,TYPE_NUMERIC);
 			setAttribute(ATTR_NORMRANGE,li.getRefM());		// TODO anpassen

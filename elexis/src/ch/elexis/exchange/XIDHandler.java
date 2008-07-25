@@ -1,5 +1,6 @@
 package ch.elexis.exchange;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom.Element;
@@ -92,5 +93,33 @@ public class XIDHandler {
 			default: return XIDMATCH.SURE;
 		}
 		
+	}
+	
+	public PersistentObject findObject(Element eXid){
+		List<Element> idents=eXid.getChildren(XID_IDENTITY, eXid.getNamespace());
+		List<PersistentObject> candidates=new LinkedList<PersistentObject>();
+		boolean lastGuid=false;
+		int lastQuality=0;
+		for(Element ident:idents){
+			String domain=ident.getAttributeValue(XID_DOMAIN);
+			String domain_id=ident.getAttributeValue(XID_DOMAIN_ID);
+			String quality=ident.getAttributeValue(XID_QUALITY);
+			String isguid=ident.getAttributeValue(XID_GUID);
+			PersistentObject cand=Xid.findObject(domain, domain_id);
+			
+			if(cand!=null){
+				boolean actGuid=Boolean.parseBoolean(isguid);
+				int actQuality=Integer.parseInt(quality);
+				if(candidates.contains(cand)){
+					if((lastGuid==true) && (actGuid==false)){
+						continue;
+					}
+				}
+				candidates.add(cand);
+				lastQuality=actQuality;
+				lastGuid=actGuid;
+			}
+		}
+		return null;
 	}
 }
