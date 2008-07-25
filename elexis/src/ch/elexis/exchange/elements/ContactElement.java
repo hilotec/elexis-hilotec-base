@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4179 2008-07-25 11:01:27Z rgw_ch $
+ *  $Id: ContactElement.java 4180 2008-07-25 17:46:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -19,6 +19,7 @@ import java.util.List;
 import org.jdom.Element;
 
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.exchange.XChangeContainer;
@@ -141,12 +142,33 @@ public class ContactElement extends XChangeElement{
 		return XMLNAME;
 	}
 
-	public PersistentObject doImport(){
-		Element xid=getChild(ELEM_XID);
-		if(xid!=null){
-			
+	public PersistentObject doImport(PersistentObject context){
+		Element eXid=getChild(ELEM_XID);
+		Kontakt ret=null;
+		if(eXid!=null){
+			List<PersistentObject> cands=getContainer().xidHandler.findObject(eXid);
+			if(cands.size()==0){
+				if(getAttributeValue(ATTR_TYPE).equalsIgnoreCase(VALUE_PERSON)){
+					String s=getAttr(ATTR_SEX).equals(VALUE_MALE) ? Person.MALE : Person.FEMALE;
+					ret=new Person(getAttr(ATTR_LASTNAME),
+							getAttr(ATTR_FIRSTNAME),
+							getAttr(ATTR_BIRTHDATE),
+							s);
+					
+				}else{
+					ret=new Organisation(getAttr(ATTR_LASTNAME),getAttr(ATTR_FIRSTNAME));
+				}
+			}else if(cands.size()==1){
+				if(getAttr(ATTR_TYPE).equalsIgnoreCase(VALUE_PERSON)){
+					ret=Person.load(cands.get(0).getId());
+				}else{
+					ret=Organisation.load(cands.get(0).getId());
+				}
+			}
+			MedicalElement me=(MedicalElement)getChild(MedicalElement.XMLNAME);
+			me.doImport(ret);
 		}
-		return null;
+		return ret;
 	}
 	
 	

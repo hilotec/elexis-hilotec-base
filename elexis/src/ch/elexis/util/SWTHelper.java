@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 4048 2008-06-18 13:49:45Z michael_imhof $
+ * $Id: SWTHelper.java 4180 2008-07-25 17:46:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -155,7 +155,7 @@ public class SWTHelper {
 		}
 		
 		public void run() {
-			Shell shell=Desk.theDisplay.getActiveShell();
+			Shell shell=Desk.getTopShell();
 			ret=MessageDialog.openConfirm(shell, title, message);
 		}
 		
@@ -248,9 +248,9 @@ public class SWTHelper {
 	public static Color getContrast(final Color col){
 		 double val=col.getRed()*0.56+col.getGreen()*0.33+col.getBlue()*0.11;
 		    if(val<=110){
-		        return Desk.theDisplay.getSystemColor(SWT.COLOR_WHITE);
+		        return Desk.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 		    }
-		    return Desk.theDisplay.getSystemColor(SWT.COLOR_BLACK);
+		    return Desk.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 	}
 	
 	/**
@@ -263,7 +263,7 @@ public class SWTHelper {
 	public static Label createHyperlink(final Composite parent, final String text, final IHyperlinkListener lis){
 		final Label ret=new Label(parent,SWT.NONE);
 		ret.setText(text);
-		ret.setForeground(Desk.theColorRegistry.get(Messages.getString("SWTHelper.blue"))); //$NON-NLS-1$
+		ret.setForeground(Desk.getColorRegistry().get(Messages.getString("SWTHelper.blue"))); //$NON-NLS-1$
 		ret.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mouseDown(final MouseEvent e) {

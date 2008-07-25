@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
+ *  $Id: MedicalElement.java 4180 2008-07-25 17:46:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -23,6 +23,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
 
@@ -207,5 +208,10 @@ public class MedicalElement extends XChangeElement{
 		}
 		
 		return ret.toString();
+	}
+	
+	public PersistentObject doImport(PersistentObject context){
+		
+		return null;
 	}
 }

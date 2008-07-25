@@ -95,7 +95,8 @@ public class XIDHandler {
 		
 	}
 	
-	public PersistentObject findObject(Element eXid){
+	@SuppressWarnings("unchecked")
+	public List<PersistentObject> findObject(Element eXid){
 		List<Element> idents=eXid.getChildren(XID_IDENTITY, eXid.getNamespace());
 		List<PersistentObject> candidates=new LinkedList<PersistentObject>();
 		boolean lastGuid=false;
@@ -114,12 +115,17 @@ public class XIDHandler {
 					if((lastGuid==true) && (actGuid==false)){
 						continue;
 					}
+					if(actQuality<lastQuality){
+						continue;
+					}
+					candidates.remove(cand);
 				}
 				candidates.add(cand);
 				lastQuality=actQuality;
 				lastGuid=actGuid;
 			}
 		}
-		return null;
+		
+		return candidates;
 	}
 }
