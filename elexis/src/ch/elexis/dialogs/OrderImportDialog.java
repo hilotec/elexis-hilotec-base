@@ -45,19 +45,18 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.actions.ScannerEvents;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Bestellung;
 import ch.elexis.text.ElexisText;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
  
 /*
  * @author Daniel Lutz
@@ -488,7 +487,10 @@ public class OrderImportDialog extends TitleAreaDialog {
 			
 			if (element instanceof OrderElement) {
 				OrderElement orderElement = (OrderElement) element;
-				text = orderElement.artikel.getEAN();
+				text = orderElement.artikel.getExt("EAN");
+				if (StringTool.isNothing(text)) {
+					text = orderElement.artikel.getEAN();
+				}
 			}
 			
 			return text;
