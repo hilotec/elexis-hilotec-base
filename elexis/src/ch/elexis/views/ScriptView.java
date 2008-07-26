@@ -17,6 +17,7 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Script;
 import ch.elexis.scripting.ScriptEditor;
 import ch.elexis.util.PersistentObjectDragSource;
@@ -145,7 +146,7 @@ public class ScriptView extends ViewPart {
 				if(sel!=null && sel.size()!=0){
 					Script script=(Script)sel.getFirstElement();
 					try{
-						Object ret=script.execute(null);
+						Object ret=script.execute();
 						SWTHelper.showInfo("Script Ausgabe", ret.toString());
 					}catch(Exception ex){
 						ExHandler.handle(ex);
