@@ -31,12 +31,10 @@
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
 		<xs:attribute name="origin" type="xs:IDREF" use="required"></xs:attribute>
-
 		<xs:attribute name="destination" type="xs:string" use="optional"></xs:attribute>
 		<xs:attribute name="timestamp" type="xs:dateTime" use="required"></xs:attribute>
-
-
 		<xs:attribute name="responsible" type="xs:IDREF" use="required"></xs:attribute>
+		<xs:attribute name="authorization" type="xs:string" use="optional"></xs:attribute>
 	</xs:complexType>
 	<xs:complexType name="xChangeContactType">
 
@@ -138,12 +136,20 @@
     <xs:complexType name="medicalType">
     	<xs:sequence>
 
-            <xs:element name="anamnesis" type="xChange:episodeListType" maxOccurs="1" minOccurs="0" />
-            <xs:element type="xChange:recordListType" name="records" maxOccurs="1" minOccurs="1"/>
-    		<xs:element type="xChange:findingsListType" name="findings" maxOccurs="1" minOccurs="0"/>
-    		<xs:element type="xChange:documentListType" name="documents" maxOccurs="1" minOccurs="0"/>
-    		<xs:element type="xChange:medicationListType" name="medications" maxOccurs="1" minOccurs="0"/>
-    		<xs:element type="xChange:riskListType" name="risks" maxOccurs="1" minOccurs="0"/>
+    		<xs:element name="anamnesis" type="xChange:episodeListType"
+    			maxOccurs="1" minOccurs="0" />
+    		<xs:element type="xChange:recordListType" name="records"
+    			maxOccurs="1" minOccurs="1" />
+    		<xs:element type="xChange:findingsListType" name="findings"
+    			maxOccurs="1" minOccurs="0" />
+    		<xs:element type="xChange:documentListType" name="documents"
+    			maxOccurs="1" minOccurs="0" />
+    		<xs:element type="xChange:medicationListType"
+    			name="medications" maxOccurs="1" minOccurs="0" />
+    		<xs:element type="xChange:riskListType" name="risks"
+    			maxOccurs="1" minOccurs="0" />
+
+    		<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -164,6 +170,9 @@
     			risk
     		</xs:documentation>
     	</xs:annotation>
+    	<xs:sequence>
+    		<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    	</xs:sequence>
     	<xs:attribute use="required" name="confirmedBy"
     		type="xs:IDREF">
     	</xs:attribute>
@@ -390,7 +399,10 @@
     <xs:sequence>
     	<xs:element name="text" maxOccurs="unbounded" minOccurs="0"></xs:element>
 
-    	<xs:element name="episode" type="xChange:episodeRefType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    	<xs:element name="episode" type="xChange:episodeRefType"
+    		maxOccurs="unbounded" minOccurs="0">
+    	</xs:element>
+    	<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
     </xs:sequence>
     <xs:attribute use="required" name="id" type="xs:ID"></xs:attribute>
         <xs:attribute use="required" name="author" type="xs:string"></xs:attribute>
@@ -419,7 +431,7 @@
     	<xs:attribute name="creatorID" type="xs:string" use="required"></xs:attribute>
     	<xs:attribute name="creatorVersion" type="xs:string" use="required"></xs:attribute>
     	<xs:attribute name="language" type="xs:string" use="optional"></xs:attribute>
-    	<xs:attribute name="authorization" type="xs:string" use="optional"></xs:attribute>
+    
     </xs:complexType>
 
     <xs:complexType name="identityType">

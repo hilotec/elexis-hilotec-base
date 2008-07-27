@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
+ *  $Id: MedicalElement.java 4187 2008-07-27 19:07:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -157,9 +157,10 @@ public class MedicalElement extends XChangeElement{
 			eRecords=getChild(XChangeContainer.ENCLOSE_RECORDS);
 		}
 		if(eRecords!=null){
-			List<Element> records=eRecords.getChildren(RecordElement.XMLNAME, getContainer().getNamespace());
-			for(Element el:records){
-				ret.add(new RecordElement(getContainer()));
+			List<RecordElement> records=eRecords.getChildren(RecordElement.XMLNAME, getContainer().getNamespace());
+			for(RecordElement el:records){
+				el.setContainer(getContainer());
+				ret.add(el);
 			}
 		}
 		return ret;
@@ -173,9 +174,10 @@ public class MedicalElement extends XChangeElement{
 			eAnalyses=getChild(XChangeContainer.ENCLOSE_FINDINGS);
 		}
 		if(eAnalyses!=null){
-			List<Element> analyses=eAnalyses.getChildren(FindingElement.XMLNAME,getContainer().getNamespace());
-			for(Element el:analyses){
-				ret.add(new FindingElement(getContainer()));
+			List<FindingElement> analyses=eAnalyses.getChildren(FindingElement.XMLNAME,getContainer().getNamespace());
+			for(FindingElement el:analyses){
+				el.setContainer(getContainer());
+				ret.add(el);
 			}
 		}
 		return ret;
@@ -190,9 +192,10 @@ public class MedicalElement extends XChangeElement{
 			eDocuments=getChild(XChangeContainer.ENCLOSE_DOCUMENTS);
 		}
 		if(eDocuments!=null){
-			List<Element> documents=eDocuments.getChildren(DocumentElement.XMLNAME, getContainer().getNamespace());
-			for(Element el:documents){
-				ret.add(new DocumentElement(getContainer()));
+			List<DocumentElement> documents=eDocuments.getChildren(DocumentElement.XMLNAME, getContainer().getNamespace());
+			for(DocumentElement el:documents){
+				el.setContainer(getContainer());
+				ret.add(el);
 			}
 		}
 		return ret;

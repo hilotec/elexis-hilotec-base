@@ -8,18 +8,20 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnamnesisElement.java 4173 2008-07-24 10:25:05Z rgw_ch $
+ *  $Id: AnamnesisElement.java 4187 2008-07-27 19:07:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom.Element;
 
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.TimeTool;
 
@@ -89,6 +91,15 @@ public class AnamnesisElement extends XChangeElement{
 	}
 	*/
 	
+	public List<EpisodeElement> getEpisodes(){
+		List<EpisodeElement> ret=new LinkedList<EpisodeElement>();
+		List<EpisodeElement> lep=getChildren(EpisodeElement.XMLNAME, getContainer().getNamespace());
+		for(EpisodeElement el:lep){
+			el.setContainer(getContainer());
+			ret.add(el);
+		}
+		return ret;
+	}
 	/**
 	 * link a record element to this anamnesis (every episode has a number of treatments 
 	 * related to that episode)
@@ -127,6 +138,9 @@ public class AnamnesisElement extends XChangeElement{
 		}
 	}
 	
+	public PersistentObject doImport(PersistentObject context){
+		return null;
+	}
 	public String toString(){
 		StringBuilder ret=new StringBuilder();
 		List<EpisodeElement> episodes=null; //getEpisodes();
