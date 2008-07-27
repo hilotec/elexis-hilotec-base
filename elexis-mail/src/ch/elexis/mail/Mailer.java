@@ -9,10 +9,12 @@
  *    G. Weirich - initial implementation
  *    R. Zweifel - SMTP-Authentifizierung
  *    
- *  $Id: Mailer.java 3705 2008-02-24 20:42:30Z rgw_ch $
+ *  $Id: Mailer.java 4183 2008-07-27 12:06:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -127,7 +129,21 @@ public class Mailer {
 		return false;
 	}
 	
-	public boolean addFilePart(Message msg, String filename){
+	public boolean addFilePart(Message msg, File file){
+		if(!file.canRead()){
+			return false;
+		}
+		try {
+			MimeMultipart content=(MimeMultipart)msg.getContent();
+			MimeBodyPart filePart=new MimeBodyPart();
+			filePart.attachFile(file);
+			filePart.setFileName(file.getName());
+			content.addBodyPart(filePart);
+			return true;
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+		} 
+		
 		return false;
 	}
 	
