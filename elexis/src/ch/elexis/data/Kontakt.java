@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *    $Id: Kontakt.java 4184 2008-07-27 12:06:47Z rgw_ch $
  *******************************************************************************/
 
 
@@ -222,6 +222,10 @@ public class Kontakt extends PersistentObject{
 	}
 	protected Kontakt(){
 		// System.out.println("Kontakt");
+	}
+	
+	public String getMailAddress(){
+		return checkNull(get("E-Mail"));
 	}
 
 	/** Die Reminders zu diesem Kontakt holen */
