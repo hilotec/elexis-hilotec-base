@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AddressElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: AddressElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -25,6 +25,7 @@ public class AddressElement extends XChangeElement {
 	public static final String ATTR_CITY="city";
 	public static final String ATTR_COUNTRY="country";
 	public static final String ATTR_DESCRIPTION="description";
+	public static final String VALUE_DEFAULT="default";
 	
 	public AddressElement(XChangeContainer parent){
 		super(parent);

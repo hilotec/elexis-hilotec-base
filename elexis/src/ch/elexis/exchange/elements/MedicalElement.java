@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4180 2008-07-25 17:46:09Z rgw_ch $
+ *  $Id: MedicalElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -154,10 +154,10 @@ public class MedicalElement extends XChangeElement{
 	public List<RecordElement> getRecords(){
 		List<RecordElement> ret=new LinkedList<RecordElement>();
 		if(eRecords==null){
-			eRecords=getChild("records");
+			eRecords=getChild(XChangeContainer.ENCLOSE_RECORDS);
 		}
 		if(eRecords!=null){
-			List<Element> records=eRecords.getChildren("record", getContainer().getNamespace());
+			List<Element> records=eRecords.getChildren(RecordElement.XMLNAME, getContainer().getNamespace());
 			for(Element el:records){
 				ret.add(new RecordElement(getContainer()));
 			}
@@ -170,10 +170,10 @@ public class MedicalElement extends XChangeElement{
 	public List<FindingElement> getAnalyses(){
 		List<FindingElement> ret=new LinkedList<FindingElement>();
 		if(eAnalyses==null){
-			eAnalyses=getChild("analyses");
+			eAnalyses=getChild(XChangeContainer.ENCLOSE_FINDINGS);
 		}
 		if(eAnalyses!=null){
-			List<Element> analyses=eAnalyses.getChildren("analyse",getContainer().getNamespace());
+			List<Element> analyses=eAnalyses.getChildren(FindingElement.XMLNAME,getContainer().getNamespace());
 			for(Element el:analyses){
 				ret.add(new FindingElement(getContainer()));
 			}
@@ -187,10 +187,10 @@ public class MedicalElement extends XChangeElement{
 	public List<DocumentElement> getDocuments(){
 		List<DocumentElement> ret=new LinkedList<DocumentElement>();
 		if(eDocuments==null){
-			eDocuments=getChild("documents");
+			eDocuments=getChild(XChangeContainer.ENCLOSE_DOCUMENTS);
 		}
 		if(eDocuments!=null){
-			List<Element> documents=eDocuments.getChildren("documents", getContainer().getNamespace());
+			List<Element> documents=eDocuments.getChildren(DocumentElement.XMLNAME, getContainer().getNamespace());
 			for(Element el:documents){
 				ret.add(new DocumentElement(getContainer()));
 			}
@@ -210,8 +210,16 @@ public class MedicalElement extends XChangeElement{
 		return ret.toString();
 	}
 	
+	/**
+	 * Load medical data from xchange-file into patient
+	 * @param context the Patient 
+	 * @return the patient
+	 */
 	public PersistentObject doImport(PersistentObject context){
+		Patient pat=Patient.load(context.getId());
+		AnamnesisElement elAnamnesis=getAnamnesis();
+		List<RecordElement> records=getRecords();
 		
-		return null;
+		return pat;
 	}
 }

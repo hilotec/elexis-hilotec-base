@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4180 2008-07-25 17:46:09Z rgw_ch $
+ *  $Id: ContactElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -22,11 +22,13 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
+import ch.elexis.exchange.KontaktMatcher;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.XIDHandler;
 import ch.elexis.util.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+
 
 /**
  * A Contact can contain elements of the types address, 
@@ -148,15 +150,40 @@ public class ContactElement extends XChangeElement{
 		if(eXid!=null){
 			List<PersistentObject> cands=getContainer().xidHandler.findObject(eXid);
 			if(cands.size()==0){
+				AddressElement ae=null;
+				List<AddressElement> lae=getAddresses();
+				if(lae.size()>0){
+					if(lae.size()==1){
+						ae=lae.get(0);
+					}else{
+						for(AddressElement adr:lae){
+							if(adr.getAttributeValue(AddressElement.ATTR_DESCRIPTION).equalsIgnoreCase(AddressElement.VALUE_DEFAULT)){
+								ae=adr;
+								break;
+							}
+						}
+						if(ae==null){
+							ae=lae.get(0);
+						}
+					}
+					
+				}
+				String strasse=null;
+				String plz=null;
+				String ort=null;
+				String natel=null;
+				if(ae!=null){
+					strasse=ae.getAttr(AddressElement.ATTR_STREET);
+					plz=ae.getAttr(AddressElement.ATTR_ZIP);
+					ort=ae.getAttr(AddressElement.ATTR_CITY);
+				}
 				if(getAttributeValue(ATTR_TYPE).equalsIgnoreCase(VALUE_PERSON)){
 					String s=getAttr(ATTR_SEX).equals(VALUE_MALE) ? Person.MALE : Person.FEMALE;
-					ret=new Person(getAttr(ATTR_LASTNAME),
-							getAttr(ATTR_FIRSTNAME),
-							getAttr(ATTR_BIRTHDATE),
-							s);
+					ret=KontaktMatcher.findPerson(getAttr(ATTR_LASTNAME), getAttr(ATTR_FIRSTNAME),
+							getAttr(ATTR_BIRTHDATE), s, strasse, plz, ort, natel, KontaktMatcher.CreateMode.CREATE);
 					
 				}else{
-					ret=new Organisation(getAttr(ATTR_LASTNAME),getAttr(ATTR_FIRSTNAME));
+					ret=KontaktMatcher.findOrganisation(getAttr(ATTR_LASTNAME), strasse, plz, ort, KontaktMatcher.CreateMode.CREATE);
 				}
 			}else if(cands.size()==1){
 				if(getAttr(ATTR_TYPE).equalsIgnoreCase(VALUE_PERSON)){

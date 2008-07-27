@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 4179 2008-07-25 11:01:27Z rgw_ch $
+ *  $Id: XChangeElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -31,12 +31,16 @@ public abstract class XChangeElement extends Element {
 	protected XChangeElement(final XChangeContainer p){
 		super();
 		parent=p;
-		setNamespace(p.ns);
+		setNamespace(XChangeContainer.ns);
 		setName(getXMLName());
 	}
 
 	public XChangeContainer getContainer(){
 		return parent;
+	}
+	
+	public void setContainer(XChangeContainer c){
+		parent=c;
 	}
 	
 	public abstract String getXMLName();

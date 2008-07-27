@@ -63,6 +63,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	 * @param k the contact to insert
 	 * @return the Element node of the newly inserted (or earlier inserted) contact
 	 */
+	@SuppressWarnings("unchecked")
 	public ContactElement addContact(Kontakt k){
 		Element eContacts=eRoot.getChild(ENCLOSE_CONTACTS, ns);
 		if(eContacts==null){
@@ -73,6 +74,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 			List<ContactElement> lContacts=eContacts.getChildren(ContactElement.XMLNAME, ns);
 			for(ContactElement e:lContacts){
 				if(xidHandler.match(e.getChild(XIDHandler.XID_ELEMENT, ns),k)==XIDMATCH.SURE){
+					e.setContainer(this);
 					return e;	
 				}
 			}
