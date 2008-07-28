@@ -18,7 +18,8 @@
         <ant antfile="../elexis-befunde/build.xml"/>
         <ant antfile="../elexis-diagnosecodes-schweiz/build.xml"/>
         <ant antfile="../elexis-mail/build.xml"/>
-        <ant antfile="../elexis-EMR-Printer/build.xml"/>
+        <!-- ant antfile="../elexis-EMR-Printer/build.xml"/ -->
+    	
         <ant antfile="../elexis-medikamente-bag/build.xml"/>
         
         <available file="../iatrix-help-wiki" property="iatrixhelp.ok"/>
@@ -35,8 +36,8 @@
             <antcall target="nachrichten"/>
         <available file="../medshare-directories/build.xml" property="directories.ok"/>
             <antcall target="directories"/>
-        <available file="../elexis-bildanzeige/build.xml" property="bildanzeige.ok"/>
-            <antcall target="bildanzeige"/>
+        <!-- available file="../elexis-bildanzeige/build.xml" property="bildanzeige.ok"/>
+            <antcall target="bildanzeige"/ -->
         <available file="../elexis-omnivore/build.xml" property="omnivore.ok"/>
             <antcall target="omnivore"/>
         <available file="../elexis-privatnotizen/build.xml" property="privatnotizen.ok"/>
@@ -70,6 +71,8 @@
             <antcall target="notes"/>
         <available file="../medshare-importer-csv/build.xml" property="importer_csv.ok"/>
             <antcall target="importer-csv"/>
+    	<available file="../medshare-connect-abacusjunior/build.xml" property="connect_abacus.ok"/>
+    	    <antcall target="abacusjunior"/>
     </target>
 
     
@@ -129,6 +132,10 @@
 
     </target>
     
+	<target name="abacusjunior" if="connect_abacus.ok">
+	   <ant antfile="../medshare-connect-abacusjunior/build.xml"/>
+	</target>
+	
 	<target name="blueevidence" if="blueevidence.ok">
 	       <ant antfile="../elexis-be-connector/build.xml"/>
 	</target>
