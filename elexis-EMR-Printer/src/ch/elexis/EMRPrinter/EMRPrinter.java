@@ -1,8 +1,10 @@
 package ch.elexis.EMRPrinter;
 import org.jdom.Element;
 
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
-import ch.elexis.exchange.XChangeExporter;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
@@ -17,13 +19,13 @@ import ch.elexis.util.Result;
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EMRPrinter.java 2808 2007-07-15 10:30:43Z rgw_ch $
+ *  $Id: EMRPrinter.java 4195 2008-07-29 10:38:58Z rgw_ch $
  *******************************************************************************/
 
 /**
  * Class to export electronic medical records (EMR) to a printer
  */
-public class EMRPrinter extends XChangeExporter{
+public class EMRPrinter extends XChangeContainer{
 	Patient mine;
 	ContactElement base;
 	boolean bSuccess;
@@ -45,11 +47,25 @@ public class EMRPrinter extends XChangeExporter{
 	public Result<Element> store(Object output) {
 		if(output instanceof Patient){
 			mine=(Patient)output;
-			base=addContact(mine, true);
+			base=addContact(mine);
 			bSuccess=true;
-			return new Result<Element>(base.getElement());
+			return new Result<Element>(base);
 		}
 		return new Result<Element>(Log.ERRORS,1,"invalid element",null,true);
+	}
+	@Override
+	public Kontakt findContact(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Result finalizeImport() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public Result<Object> load(Element input, Object context) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintDialog.java 4178 2008-07-25 05:14:45Z rgw_ch $
+ *  $Id: PrintDialog.java 4195 2008-07-29 10:38:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.EMRPrinter;
 
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
+import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
@@ -31,9 +32,9 @@ import ch.elexis.util.SWTHelper;
  *
  */
 public class PrintDialog extends TitleAreaDialog implements ICallback{
-	XChangeExporter exporter;	
+	XChangeContainer exporter;	
 	
-	public PrintDialog(XChangeExporter exp){
+	public PrintDialog(XChangeContainer exp){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		exporter=exp;
 	}
