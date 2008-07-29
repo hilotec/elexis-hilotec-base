@@ -89,11 +89,9 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	
 	public void addMapping(XChangeElement element, PersistentObject obj){
 		mapElementToObject.put(element, obj);
+		mapObjectToElement.put(obj,element);
 	}
 	
-	public void addMapping(PersistentObject obj, XChangeElement element){
-		mapObjectToElement.put(obj, element);
-	}
 	
 	public PersistentObject getMapping(XChangeElement element){
 		return mapElementToObject.get(element);
@@ -238,6 +236,10 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		boolean bSelected;
 		String title;
 		Object object;
+		
+		public void select(boolean bSelection){
+			bSelected=bSelection;
+		}
 		public boolean isSelected(){
 			return bSelected;
 		}

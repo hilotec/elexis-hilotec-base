@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
+ *  $Id: XChangeElement.java 4199 2008-07-29 16:33:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.IDataReceiver;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.Log;

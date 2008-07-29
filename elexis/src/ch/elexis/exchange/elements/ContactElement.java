@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4186 2008-07-27 15:16:44Z rgw_ch $
+ *  $Id: ContactElement.java 4199 2008-07-29 16:33:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -109,7 +109,7 @@ public class ContactElement extends XChangeElement{
 			setAttribute(ATTR_LASTNAME, k.getLabel());
 		}
 		add(new AddressElement(parent, k.getAnschrift(),"default"));
-		
+		parent.addMapping(this,k);
 	}
 	
 	public List<ContactRefElement> getAssociations(){

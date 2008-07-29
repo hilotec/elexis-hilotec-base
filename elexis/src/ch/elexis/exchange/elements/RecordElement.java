@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RecordElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
+ *  $Id: RecordElement.java 4199 2008-07-29 16:33:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,13 +17,10 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.Samdas;
-import ch.elexis.util.Result;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.VersionedResource.ResourceItem;
@@ -70,6 +67,7 @@ public class RecordElement extends XChangeElement{
 				}
 			}
     	}
+    	c.addMapping(this, k);
 	}
 	
 	/*
