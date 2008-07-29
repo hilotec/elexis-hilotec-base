@@ -13,7 +13,7 @@ import org.jdom.Namespace;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
-import ch.elexis.exchange.IExchangeContributor.UserChoice;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.XIDHandler.XIDMATCH;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactRefElement;
@@ -24,7 +24,6 @@ import ch.elexis.exchange.elements.MedicationElement;
 import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
-import ch.elexis.preferences.UserCasePreferences;
 import ch.elexis.util.Tree;
 
 
@@ -50,6 +49,9 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	protected Element eRoot;
 	protected HashMap<String,byte[]> binFiles=new HashMap<String,byte[]>();
 	protected HashMap<Element,UserChoice> choices=new HashMap<Element,UserChoice>();
+	private HashMap<XChangeElement,PersistentObject> mapElementToObject=new HashMap<XChangeElement, PersistentObject>();
+	private HashMap<PersistentObject,XChangeElement> mapObjectToElement=new HashMap<PersistentObject, XChangeElement>();
+	
 	public XIDHandler xidHandler=new XIDHandler();
 	
 	public abstract Kontakt findContact(String id);
@@ -85,6 +87,28 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		return contact;
 	}
 	
+	public void addMapping(XChangeElement element, PersistentObject obj){
+		mapElementToObject.put(element, obj);
+	}
+	
+	public void addMapping(PersistentObject obj, XChangeElement element){
+		mapObjectToElement.put(obj, element);
+	}
+	
+	public PersistentObject getMapping(XChangeElement element){
+		return mapElementToObject.get(element);
+	}
+	
+	public XChangeElement getMapping(PersistentObject obj){
+		return mapObjectToElement.get(obj);
+	}
+	
+	public UserChoice getChoice(Element key){
+		return choices.get(key);
+	}
+	public void addChoice(Element key, String name){
+		choices.put(key, new UserChoice(true,name,key));
+	}
 
 	public ContactElement addPatient(Patient pat){
 		ContactElement ret=addContact(pat);
@@ -167,6 +191,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		return binFiles.entrySet().iterator();
 	}
 	
+	/*
 	public List<Object> getSelectedChildren(Tree<UserChoice> tSelection){
 		List<Object> ret=new LinkedList<Object>();
 		for(Tree<UserChoice> runner:tSelection.getChildren()){
@@ -177,6 +202,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		}
 		return ret;
 	}
+	*/
 	
 	/**
 	 * Set any implementation-spezific configuration
@@ -208,4 +234,23 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		return props;
 	}
 	protected Properties props;
+	public static class UserChoice{
+		boolean bSelected;
+		String title;
+		Object object;
+		public boolean isSelected(){
+			return bSelected;
+		}
+		public String getTitle(){
+			return title;
+		}
+		public Object getObject(){
+			return object;
+		}
+		public UserChoice(boolean bSelected, String title, Object object){
+			this.bSelected=bSelected;
+			this.title=title;
+			this.object=object;
+		}
+	}
 }

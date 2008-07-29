@@ -16,7 +16,6 @@ package ch.elexis.exchange;
 import org.eclipse.core.runtime.IExecutableExtension;
 
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.Tree;
 
 /**
  * A Class that wants to contribute data to eXChange or that can load data from eXChange must
@@ -31,40 +30,14 @@ public interface IExchangeContributor extends IExecutableExtension{
 	 * @param container the target Container
 	 * @param object the data to be exported
 	 */
-	public void exportHook(XChangeContainer container, Tree<UserChoice> selectedObjects);
+	public void exportHook(XChangeContainer container, PersistentObject context);
 	
 	/**
 	 * An Element ist to be imported. The method can fetch data it can handle
 	 * @param container the source container
 	 */
-	public void importHook (XChangeContainer container);
+	public void importHook (XChangeContainer container, PersistentObject context);
 	
-	/**
-	 * Create Elements to lett the user chose a given Object to export or not.
-	 * @param container the target container
-	 * @return A Tree object containing the description of the whole plugin as root and the
-	 * individual objects as leafs.
-	 */
-	public Tree<UserChoice> selectionHook(XChangeContainer container);
 	
-	static class UserChoice{
-		boolean bSelected;
-		String title;
-		Object object;
-		public boolean isSelected(){
-			return bSelected;
-		}
-		public String getTitle(){
-			return title;
-		}
-		public Object getObject(){
-			return object;
-		}
-		public UserChoice(boolean bSelected, String title, Object object){
-			this.bSelected=bSelected;
-			this.title=title;
-			this.object=object;
-		}
-	}
 	
 }

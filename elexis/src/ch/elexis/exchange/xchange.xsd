@@ -402,7 +402,10 @@
     	<xs:element name="episode" type="xChange:episodeRefType"
     		maxOccurs="unbounded" minOccurs="0">
     	</xs:element>
-    	<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+            <xs:element name="markup" type="xChange:markupType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+            <xs:element name="meta" type="xChange:metaType"
+    		maxOccurs="unbounded" minOccurs="0">
+    	</xs:element>
     </xs:sequence>
     <xs:attribute use="required" name="id" type="xs:ID"></xs:attribute>
         <xs:attribute use="required" name="author" type="xs:string"></xs:attribute>
@@ -448,5 +451,38 @@
     <xs:complexType name="metaType">
     	<xs:attribute name="name" type="xs:string"></xs:attribute>
     	<xs:attribute name="value" type="xs:string"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="markupType">
+    	<xs:annotation>
+    		<xs:documentation>
+    			A markup inside the record text. A markup can be any
+    			structural information inside the text (e.g. "Subj") or
+    			a modification of the appearance of the text (e.g.
+    			"bold"). The pos-attribute tells the position inside orf
+    			the text where this markup will appear. The length
+    			attribute tells the number of characters (inlcuding
+    			whitespace and linebreak) will be included by this
+    			markup. The length can be omitted ot set to 0, then the
+    			markup is solely a positional information or the text
+    			attibute put at the given position.
+    		</xs:documentation>
+    	</xs:annotation>
+    	<xs:sequence>
+    		<xs:element name="meta" type="xChange:metaType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xs:element>
+    	</xs:sequence>
+    	<xs:attribute name="pos" type="xs:int" use="required"></xs:attribute>
+    	<xs:attribute name="length" type="xs:int" use="optional">
+    		<xs:annotation>
+    			<xs:documentation>
+
+    			</xs:documentation>
+    		</xs:annotation>
+    	</xs:attribute>
+    	<xs:attribute name="type" type="xs:string"></xs:attribute>
+    	<xs:attribute name="text" type="xs:string"></xs:attribute>
+    	<xs:attribute name="hint" type="xs:string"></xs:attribute>
     </xs:complexType>
 </xs:schema>
