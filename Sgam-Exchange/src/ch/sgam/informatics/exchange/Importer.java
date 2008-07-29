@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Importer.java 2621 2007-06-24 11:05:57Z rgw_ch $
+ *  $Id: Importer.java 4200 2008-07-29 16:34:38Z rgw_ch $
  *******************************************************************************/
 package ch.sgam.informatics.exchange;
 
@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
-import ch.elexis.exchange.XChangeImporter;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
