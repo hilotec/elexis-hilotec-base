@@ -1,25 +1,24 @@
 package ch.elexis.images;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.jdom.Element;
 
-import sun.misc.BASE64Decoder;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.elements.MarkupElement;
+import ch.elexis.exchange.elements.MetaElement;
 import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.text.Samdas;
 import ch.elexis.text.Samdas.Record;
 import ch.elexis.text.Samdas.XRef;
-import ch.rgw.tools.ExHandler;
 
 public class ExchangeContributor implements IExchangeContributor {
+	public static final String PLUGIN_ID="ch.elexis.bildanzeige";
 
 	public void exportHook(XChangeContainer container, PersistentObject object) {
 		if(object instanceof Konsultation){
@@ -32,19 +31,15 @@ public class ExchangeContributor implements IExchangeContributor {
 					Bild bild=new Bild(xref.getID());
 					byte[] data=bild.getData();
 					if(data!=null && data.length>0){
-						Element eXref=container.createElement("xref");
-						eXref.setAttribute("id",bild.getId());
-						eXref.setAttribute("type","image/jpeg");
+						MarkupElement eXref=new MarkupElement(container);
+						eXref.setAttribute("type",PLUGIN_ID);
 						eXref.setAttribute("pos",Integer.toString(xref.getPos()));
 						eXref.setAttribute("len",Integer.toString(xref.getLength()));
 						eXref.setAttribute("hint","warn Bild konnte nicht angezeigt werden");
-						//BASE64Encoder b64=new BASE64Encoder();
-						//String base64=b64.encode(data);
-						//eXref.setAttribute("content","inline");
-						//eXref.addContent(base64);
-						eXref.setAttribute("content","ext");
+						MetaElement mID=new MetaElement(container,"idref",bild.getId());
+						eXref.addContent(mID);
 						container.addBinary(bild.getId(), data);
-						//exporting.addContent(eXref);
+						//container.addChoice(key, name)
 					}
 				}
 			}
@@ -53,7 +48,7 @@ public class ExchangeContributor implements IExchangeContributor {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void importHook(XChangeContainer container) {
+	public void importHook(XChangeContainer container, PersistentObject context) {
 		String rootpath=container.getProperty("ROOTPATH");
 		List<RecordElement> records=(List<RecordElement>) container.getElements(rootpath+"/records/record");
 		for(Element re:records){
