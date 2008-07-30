@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 3294 2007-10-26 15:33:06Z rgw_ch $
+ * $Id: build.xml 4205 2008-07-30 15:36:44Z rgw_ch $
 -->
 <project name="medshare-directories" default="all">
 	<!-- modify the following 2 lines -->
@@ -29,9 +29,6 @@
 		<pathelement location="${dist}/plugins/ch.elexis.arzttarife_ch_${version}"/>
 		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}"/>
 		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-				<include name="*.jar"/>
-    	</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
