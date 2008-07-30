@@ -10,7 +10,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 4198 2008-07-29 12:54:13Z rgw_ch $
+ * $Id: build.xml 4204 2008-07-30 15:36:31Z rgw_ch $
 -->
 <project name="medshare-connect-abacusjunior" default="all">
 	<!-- modify the following 2 lines -->
@@ -32,11 +32,8 @@
 		<fileset dir="${plugindir}">
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-			<include name="*.jar"/>
-		</fileset>
 		<fileset dir="${dist}/plugins/ch.elexis.importer.div_${version}">
-					<include name="*.jar"/>
+			<include name="*.jar"/>
 		</fileset>
 	</path>
 	
