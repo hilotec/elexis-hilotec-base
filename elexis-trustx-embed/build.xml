@@ -30,11 +30,11 @@
 			<fileset dir="${plugindir}">
 				<include name="*.jar"/>
 			</fileset>
-			<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-					<include name="*.jar"/>
-			</fileset>
 			<pathelement location="${dist}/plugins/ch.elexis.arzttarife_ch_${version}/"/>
 			<pathelement location="${elexis_plugin}/bin"/>
+			<fileset dir="${elexis_plugin}/lib">
+			                <include name="*.jar"/>
+			</fileset>
 		</path>
 		
 		<target name="checkout" unless="unplugged">

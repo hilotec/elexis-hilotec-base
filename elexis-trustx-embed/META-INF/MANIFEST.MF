@@ -7,7 +7,6 @@ Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.arzttarife_ch,
  ch.elexis,
- ch.elexis.jdomwrapper,
  org.eclipse.swt,
  org.eclipse.ui,
  org.eclipse.core.runtime
