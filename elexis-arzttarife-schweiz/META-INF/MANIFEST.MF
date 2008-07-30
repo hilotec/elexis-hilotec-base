@@ -5,15 +5,17 @@ Bundle-SymbolicName: ch.elexis.arzttarife_ch; singleton:=true
 Bundle-Version: 1.3.2
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.artikel_ch,
- ch.elexis,
- ch.elexis.jdomwrapper,
+Require-Bundle: ch.elexis,
+ ch.elexis.artikel_ch,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.elexis.ebanking_ch
-Export-Package: ch.elexis.data,
+Export-Package: ch.elexis.TarmedRechnung,
+ ch.elexis.arzttarife_schweiz,
+ ch.elexis.data,
  ch.elexis.tarmedprefs,
- ch.elexis.TarmedRechnung
+ ch.elexis.views
 Bundle-ClassPath: bin/,
  .
+Import-Package: org.jdom

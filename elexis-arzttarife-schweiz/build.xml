@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 4017 2008-06-09 17:00:21Z rgw_ch $
+ * $Id: build.xml 4203 2008-07-30 15:36:17Z rgw_ch $
 -->
 <project name="elexis-arzttarife-schweiz" default="all">
    <property name="pluginname" value="elexis-arzttarife-schweiz"/>
@@ -23,9 +23,12 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-			<include name="*.jar"/>
+		<fileset dir="${elexis_plugin}/lib">
+		            <include name="*.jar"/>
 		</fileset>
+		<!-- fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
+			<include name="*.jar"/>
+		</fileset -->
 		<pathelement location="${dist}/plugins/ch.elexis.ebanking_ch_${version}"/>
 		<pathelement location="${dist}/plugins/ch.elexis.artikel_ch_${version}"/>
 	</path>
