@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 2648 2007-06-28 19:45:31Z rgw_ch $
+ * $Id: build.xml 4207 2008-07-30 15:37:33Z rgw_ch $
 -->
 <project name="Elexis-Galexis" default="all">
 	<!-- modify the following 2 lines -->
@@ -28,9 +28,6 @@
 		</fileset>
 		<pathelement location="${elexis_plugin}/bin"/>
 		<fileset dir="${plugindir}">
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
 			<include name="*.jar"/>
 		</fileset>
 
