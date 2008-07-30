@@ -7,7 +7,6 @@ Bundle-Localization: plugin
 Bundle-Vendor: informatics.sgam.ch
 Require-Bundle: ch.elexis.mail,
  ch.elexis,
- ch.elexis.jdomwrapper,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface,
