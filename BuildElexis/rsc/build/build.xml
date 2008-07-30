@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4206 2008-07-30 15:37:11Z rgw_ch $
+<!-- $Id: build.xml 4215 2008-07-30 16:03:07Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -173,7 +173,6 @@
 	<target name="Linux" depends="prepare">
 		<!-- ant antfile="../Oowrapper/build.xml"/ -->
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
-		
 		<ant antfile="rsc/build/plugins.xml" target="main"/>
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
 		<exec executable="cp">

@@ -1,5 +1,5 @@
 #! /bin/sh
-# $Id: clean.sh 655 2006-08-04 09:26:31Z rgw_ch $
+# $Id: clean.sh 4215 2008-07-30 16:03:07Z rgw_ch $
 cd rsc/build
-$ANT_HOME/bin/ant clean
+ant clean
 cd ../.. 

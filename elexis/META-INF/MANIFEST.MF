@@ -230,7 +230,6 @@ Export-Package: .,
  ch.rgw.net,
  ch.rgw.tools;uses:="ch.elexis.util",
  com.tiff.common.ui.datepicker;uses:="org.eclipse.swt.events,org.eclipse.swt.graphics,org.eclipse.swt.widgets",
- org.apache.commons.logging,
  org.jdom;uses:="org.jdom.filter",
  org.jdom.filter;uses:="org.jdom",
  org.jdom.input;
