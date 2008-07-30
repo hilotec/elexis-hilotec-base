@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 1566 2007-01-07 15:48:01Z rgw_ch $
+ * $Id: build.xml 4208 2008-07-30 15:37:50Z rgw_ch $
 -->
 <project name="elexis-bildanzeige" default="all">
 	<property name="sourcedir" value="${source}/elexis-bildanzeige/"/>
@@ -21,10 +21,10 @@
 		<fileset dir="${dist}/plugins">
 			<include name="*.jar"/>
 		</fileset>
-		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-			<include name="*.jar"/>
+		<fileset dir="${elexis_plugin}/lib">
+		            <include name="*.jar"/>
 		</fileset>
+		<pathelement location="${elexis_plugin}/bin"/>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
