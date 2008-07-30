@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4132 2008-07-13 15:29:15Z rgw_ch $
+<!-- $Id: build.xml 4206 2008-07-30 15:37:11Z rgw_ch $
 
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
@@ -33,7 +33,7 @@
 	    	Elexis - die Praxis
 	</description>
 	<property environment="env"/>
-	<property name="version" value="1.3.2"/>
+	<property name="version" value="1.3.3"/>
 	<property name="javatarget" value="1.5"/>
 	<property file="rsc/build/local.properties"/>
 	<property name="dist"  value="${dest}/Elexis-${version}"/>
@@ -86,7 +86,7 @@
 		<copy todir="${dist}">
 			<fileset dir="${eclipse}"/>
 		</copy>
-		<exec command="texify elexis.tex" dir="${source}/dokumentation" />
+		<antcall target="doc"/>
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
 		<condition property="updater.ok">
 			<and>
@@ -97,7 +97,9 @@
 		
 	</target>
 
-	<target name="all" depends="prepare"/>
+	<target name="all">
+	   <echo message="Please use another target"/>
+	 </target>
 
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
@@ -109,7 +111,7 @@
 			<fileset dir="${dist}/plugins/${targetdir}"/>
 		</copy>
 		<zip basedir="${additions}/${pluginname}" destfile="${additions}/${pluginname}.zip"/>
-		<deltree dir="${additions}/${pluginname}"/>
+		<delete dir="${additions}/${pluginname}"/>
 	</target>
 
 	<target name="copy_plugin">
@@ -135,7 +137,10 @@
 		</copy>
 	</target>
 
-	<target name="texify">
+	<target name="doc" unless="skip_texify">
+        <exec command="texify elexis.tex" dir="${source}/dokumentation" />	
+	</target>
+	<target name="texify" unless="skip_texify">
 		<echo message="texify ${sourcedir}/doc/${pluginname}.tex dir=${docsource}" />
 	    <exec command="texify ${sourcedir}/doc/${pluginname}.tex" dir="${docsource}" />
 		<copy file="${docsource}/${pluginname}.pdf" todir="${doc}"/>
