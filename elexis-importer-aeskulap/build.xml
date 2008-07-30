@@ -29,9 +29,6 @@
 		<pathelement location="${dist}/plugins/ch.elexis.arzttarife_ch_${version}"/>
 		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}"/>
 		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-				<include name="*.jar"/>
-    	</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
