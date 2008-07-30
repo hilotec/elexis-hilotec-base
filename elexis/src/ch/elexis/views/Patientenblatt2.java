@@ -460,7 +460,15 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 			}
 			@Override
 			public void doRun() {
-				setLocked(isChecked());
+				if(isChecked()){
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
+					setLocked(true);
+				}else{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_OPEN));
+					setLocked(false);
+				}
+				
+				
 			}
 			
 		};

@@ -131,6 +131,7 @@ public class Desk implements IApplication {
 	public static final String IMG_PERSON_OK="personOK";  //$NON_NLS-1$
 	public static final String IMG_DISK= "diskette";  //$NON_NLS-1$
 	public static final String IMG_LOCK_CLOSED="schloss_zu";  //$NON_NLS-1$
+	public static final String IMG_LOCK_OPEN="schloss_offen";  //$NON_NLS-1$
 	
    
 	public Desk(){
@@ -225,7 +226,8 @@ public class Desk implements IApplication {
 		        theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor(imageBase+"person.ico"));  //$NON_NLS-1$
 		        theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor(imageBase+"personok.ico"));  //$NON_NLS-1$
 		        theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase+"floppy.png"));  //$NON_NLS-1$
-		        theImageRegistry.put(IMG_LOCK_CLOSED, Hub.getImageDescriptor(imageBase+"emblem-readonly.png"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_LOCK_CLOSED, Hub.getImageDescriptor(imageBase+"lock.png"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_LOCK_OPEN, Hub.getImageDescriptor(imageBase+"lock_open.png"));  //$NON_NLS-1$
 			}
 		}
 		return theImageRegistry;
