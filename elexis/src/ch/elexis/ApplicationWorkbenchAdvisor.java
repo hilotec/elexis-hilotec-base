@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 4219 2008-08-01 17:45:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -114,7 +114,8 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		dlg.setTitle(Messages.ApplicationWorkbenchAdvisor_8);
 		dlg.setMessage(Messages.ApplicationWorkbenchAdvisor_9);
 		dlg.open();
-	
+		
+
 		/** Had to remove this, because it prevents us from starting from scratch */
 		// check if there is a valid user
 		if ((Hub.actUser == null) || !Hub.actUser.isValid()) {

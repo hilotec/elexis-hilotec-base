@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationActionBarAdvisor.java 2404 2007-05-20 13:39:30Z rgw_ch $
+ * $Id: ApplicationActionBarAdvisor.java 4219 2008-08-01 17:45:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -160,27 +160,35 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
      */
     protected void fillCoolBar(ICoolBarManager coolBar)
     {
-        ToolBarContributionItem ci=new ToolBarContributionItem();
-        ci.getToolBarManager().add(GlobalActions.homeAction);
-        //ci.getToolBarManager().add(GlobalActions.resetPerspectiveAction);
+    	ToolBarManager tbm=new ToolBarManager();
+    	coolBar.add(tbm);
+        //ToolBarContributionItem ci=new ToolBarContributionItem();
+        //ci.setCurrentHeight(16);
+        tbm.add(GlobalActions.homeAction);
+        tbm.add(GlobalActions.resetPerspectiveAction);
         //ci.getToolBarManager().add(GlobalActions.savePerspectiveAction);
-        ci.getToolBarManager().add(new Separator());
-        ci.getToolBarManager().add(GlobalActions.printEtikette);
-        ci.getToolBarManager().add(GlobalActions.printVersionedEtikette);
-        ci.getToolBarManager().add(GlobalActions.printAdresse);
-    	coolBar.add(ci);
+        tbm.add(new Separator());
+        tbm.add(GlobalActions.printEtikette);
+        tbm.add(GlobalActions.printVersionedEtikette);
+        tbm.add(GlobalActions.printAdresse);
+    	//coolBar.add(ci);
+    	
         //coolBar.add(MainMenuActions.exitAction);
         //coolBar.add(newAction);
     	
     	// add actions for opening perspectives
+    	
     	if(Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS,"true").equalsIgnoreCase("true")){
-	        ci.getToolBarManager().add(new Separator());
+    		ToolBarManager tb2=new ToolBarManager();
+	        //ci.getToolBarManager().add(new Separator());
 	    	for (IAction action:openPerspectiveActions) {
 	        	if (action != null) {
-	        		ci.getToolBarManager().add(action);
+	        		tb2.add(action);
 	        	}
 	    	}
+	    	coolBar.add(tb2);
     	}
+    	
     }
 
     /**

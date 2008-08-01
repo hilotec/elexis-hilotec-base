@@ -194,7 +194,7 @@ public class Desk implements IApplication {
 			theImageRegistry=new ImageRegistry(theDisplay);
 			String imageBase=getImageBase();
 			synchronized(theImageRegistry){
-				theImageRegistry.put(IMG_HOME,Hub.getImageDescriptor(imageBase+"home.ico")); //$NON-NLS-1$
+				theImageRegistry.put(IMG_HOME,Hub.getImageDescriptor(imageBase+"home.png")); //$NON-NLS-1$
 				theImageRegistry.put(IMG_ADRESSETIKETTE,Hub.getImageDescriptor(imageBase+"adretikette.ico")); //$NON-NLS-1$
 				theImageRegistry.put(IMG_PATIENTETIKETTE,Hub.getImageDescriptor(imageBase+"patetikette.ico")); //$NON-NLS-1$
 				theImageRegistry.put(IMG_VERSIONEDETIKETTE, Hub.getImageDescriptor(imageBase+"patvetikette.ico")); //$NON-NLS-1$
