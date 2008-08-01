@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4187 2008-07-27 19:07:26Z rgw_ch $
+ *  $Id: MedicalElement.java 4218 2008-08-01 10:36:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -18,14 +18,17 @@ import java.util.List;
 
 import org.jdom.Element;
 
+import ch.elexis.data.Artikel;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
+import ch.rgw.tools.StringTool;
 
 /**
  * THis represents the medical History of a given patient
@@ -35,7 +38,7 @@ import ch.elexis.exchange.XChangeContainer;
 @SuppressWarnings("serial")
 public class MedicalElement extends XChangeElement{
 	public static final String XMLNAME="medical";
-	private Element eRecords, eAnalyses, eDocuments, eAllergies, eMedications;
+	private Element eRecords, eAnalyses, eDocuments, eRisks, eMedications;
 	private AnamnesisElement elAnamnesis;
 	
 	public String getXMLName(){
@@ -80,7 +83,22 @@ public class MedicalElement extends XChangeElement{
 			}
 
 		}
-	
+		Prescription[] medis=p.getFixmedikation();
+		for(Prescription medi:medis){
+			add(new MedicationElement(getContainer(),medi));
+		}
+		String risks=p.get("Risiken");
+		if(!StringTool.isNothing(risks)){
+			for(String r:risks.split("[\\n\\r]+")){
+				add(new RiskElement(getContainer(),r));
+			}
+		}
+		risks=p.get("Allergien");
+		if(!StringTool.isNothing(risks)){
+			for(String r:risks.split("[\\n\\r]+")){
+				add(new RiskElement(getContainer(),r));
+			}
+		}
 	}
 
 
@@ -89,7 +107,23 @@ public class MedicalElement extends XChangeElement{
 		super.add(ae);
 	}
 
+	public void add(RiskElement re){
+		if(eRisks==null){
+			eRisks=new Element(XChangeContainer.ENCLOSE_RISKS,getContainer().getNamespace());
+			addContent(eRisks);
+			getContainer().addChoice(eRisks, "Risiken");
+		}
+		eRisks.addContent(re);
+	}
 	
+	public void add(MedicationElement med){
+		if(eMedications==null){
+			eMedications=new Element(XChangeContainer.ENCLOSE_MEDICATIONS,getContainer().getNamespace());
+			getContainer().addChoice(eMedications, "Medikamente");
+			addContent(eMedications);
+		}
+		eMedications.addContent(med);
+	}
 	/**
 	 * Return or create the anamnesis-Element
 	 * @return the newly created or existing anamnesis element
@@ -105,7 +139,7 @@ public class MedicalElement extends XChangeElement{
 	}
 	
 	/**
-	 * Add a medical record. Thios will create the records-parent element if neccessary
+	 * Add a medical record. This will create the records-parent element if neccessary
 	 * @param rc the RecordElement to add
 	 */
 	public void addRecord(RecordElement rc){

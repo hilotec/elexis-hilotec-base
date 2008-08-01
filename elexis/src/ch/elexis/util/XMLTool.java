@@ -17,6 +17,8 @@ import java.util.List;
 
 import org.jdom.Element;
 
+import ch.rgw.tools.TimeTool;
+
 
 /**
  * This class provides various helper methods for handling XML data. 
@@ -167,5 +169,14 @@ public class XMLTool {
 			}
 		}
 		return xmlid;
+	}
+	
+	public static String dateTimeToXmlDateTime(String dateTime){
+		TimeTool tt=new TimeTool(dateTime);
+		return tt.toString(TimeTool.DATETIME_XML);
+	}
+	
+	public static String dateToXmlDate(String date){
+		return new TimeTool(date).toString(TimeTool.DATE_ISO);
 	}
 }

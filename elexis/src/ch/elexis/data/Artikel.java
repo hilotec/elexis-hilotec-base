@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 4058 2008-06-20 15:39:22Z rgw_ch $
+ * $Id: Artikel.java 4218 2008-08-01 10:36:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -31,6 +31,7 @@ import ch.rgw.tools.TimeTool;
  * Patienten verordnet werden kann
  */
 public class Artikel extends VerrechenbarAdapter{
+	public static final String XID_PHARMACODE="www.xid.ch/id/pharmacode/ch";
 	public static final String SUB_ID = "SubID";
 	public static final String ARTIKEL = "Artikel";
 	private static final String LIEFERANT_ID = "LieferantID";
@@ -58,6 +59,7 @@ public class Artikel extends VerrechenbarAdapter{
 		addMapping(TABLENAME,LIEFERANT_ID,NAME,MAXBESTAND,MINBESTAND,
 				ISTBESTAND,EK_PREIS,VK_PREIS,TYP,EXT_INFO,"EAN",
 				SUB_ID,"Eigenname=Name_intern","Codeclass","Klasse");
+		Xid.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode", Xid.ASSIGNMENT_REGIONAL);
 	}
     /**
      * This implementation of PersistentObject#load is special in that it tries to load

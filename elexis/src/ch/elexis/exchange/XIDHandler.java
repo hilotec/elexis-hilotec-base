@@ -6,9 +6,12 @@ import java.util.List;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import ch.elexis.data.Artikel;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
 import ch.elexis.util.XMLTool;
+import ch.rgw.tools.StringTool;
 
 public class XIDHandler {
 	public static final String XID_ELEMENT="xid";
@@ -28,8 +31,32 @@ public class XIDHandler {
 	public boolean isUUID(Xid xid){
 		return (xid.getQuality()&4)!=0;
 	}
+	public Element createXidElement(Artikel art, Namespace ns){
+		String id=XMLTool.idToXMLID(art.getId());
+		Element ret=new Element(XID_ELEMENT,ns);
+		ret.setAttribute(XID_UUID, id);
+		String ean=art.getEAN();
+		if(!StringTool.isNothing(ean)){
+			Element ident=new Element(XID_IDENTITY,ns);
+			ident.setAttribute(XID_DOMAIN, Xid.DOMAIN_EAN);
+			ident.setAttribute(XID_DOMAIN_ID,ean);
+			ident.setAttribute(XID_QUALITY, XID_QUALITIES[2]);
+			ident.setAttribute(XID_GUID,Boolean.toString(false));
+			ret.addContent(ident);
+		}
+		String pk=art.getPharmaCode();
+		if(!StringTool.isNothing(pk)){
+			Element ident=new Element(XID_IDENTITY,ns);
+			ident.setAttribute(XID_DOMAIN, Artikel.XID_PHARMACODE);
+			ident.setAttribute(XID_DOMAIN_ID,pk);
+			ident.setAttribute(XID_QUALITY, XID_QUALITIES[2]);
+			ident.setAttribute(XID_GUID,Boolean.toString(false));
+			ret.addContent(ident);
+		}
+		return ret;
+	}
 	
-	public Element createXidElement(PersistentObject po, Namespace ns){
+	public Element createXidElement(Kontakt po, Namespace ns){
 		Xid best=po.getXid();
 		String id=XMLTool.idToXMLID(po.getId());
 		if((best.getQuality()&7)>=Xid.QUALITY_GUID){

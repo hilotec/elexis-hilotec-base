@@ -9,6 +9,7 @@ public class RiskElement extends XChangeElement {
 	public static final String ATTR_FIRSTMENTIONED="firstMentioned";
 	public static final String ATTR_SUBSTANCE="substance";
 	public static final String ATTR_RELEVANCE="relevance";
+	public static String ELEMENT_META="meta";
 	
 	@Override
 	public String getXMLName() {
@@ -19,4 +20,9 @@ public class RiskElement extends XChangeElement {
 		super(parent);
 	}
 
+	public RiskElement(XChangeContainer parent, String name){
+		super(parent);
+		setAttribute(ATTR_SUBSTANCE, name);
+		parent.addChoice(this, name);
+	}
 }
