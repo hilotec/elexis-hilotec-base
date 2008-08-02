@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4218 2008-08-01 10:36:23Z rgw_ch $
+ *  $Id: MedicalElement.java 4224 2008-08-02 19:12:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import ch.elexis.data.Artikel;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -70,7 +69,7 @@ public class MedicalElement extends XChangeElement{
 		List<LabResult> labs=qbe.execute();
 		if(labs!=null){
 			for(LabResult lr:labs){
-				addAnalyse(new FindingElement(getContainer(),lr));
+				ResultElement.addResult(this, lr);
 			}
 		}
 		
@@ -155,10 +154,10 @@ public class MedicalElement extends XChangeElement{
 	}
 	
 	/**
-	 * Add a finding 
+	 * Add a result 
 	 * @param le
 	 */
-	public void addAnalyse(FindingElement le){
+	public void addAnalyse(ResultElement le){
 		if(eAnalyses==null){
 			eAnalyses=getChild(FindingElement.ENCLOSING);
 		}
@@ -170,6 +169,17 @@ public class MedicalElement extends XChangeElement{
 		eAnalyses.addContent(le);
 	}
 	
+	public void addFindingItem(FindingElement fe){
+		if(eAnalyses==null){
+			eAnalyses=getChild(FindingElement.ENCLOSING);
+		}
+		if(eAnalyses==null){
+			eAnalyses=new Element(FindingElement.ENCLOSING,getContainer().getNamespace());
+			addContent(eAnalyses);
+			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
+		}
+		eAnalyses.addContent(fe);
+	}
 	public void addDocument(DocumentElement de){
 		if(eDocuments==null){
 			eDocuments=getChild("documents");

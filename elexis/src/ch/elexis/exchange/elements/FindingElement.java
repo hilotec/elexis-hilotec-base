@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4223 2008-08-02 15:45:48Z rgw_ch $
+ *  $Id: FindingElement.java 4224 2008-08-02 19:12:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import java.util.List;
 
 import org.jdom.Element;
 
@@ -26,22 +28,15 @@ import ch.rgw.tools.TimeTool;
 public class FindingElement extends XChangeElement{
 	public static final String ENCLOSING="findings";
 	public static final String XMLNAME="finding";
-	public static final String ATTR_DATE="date";
-	public static final String ATTR_CLASSIFICATION="classification";
-	public static final String ATTR_ABNORMAL="abnormal";
-	public static final String ATTR_LAB="lab";
 	public static final String ATTR_NAME="name";
 	public static final String ATTR_NORMRANGE="normRange";
 	public static final String ATTR_TYPE="type";
 	public static final String ATTR_UNITS="unit";
 	public static final String ATTR_GROUP="group";
 	
-	public static final String ELEMENT_IMAGE="image";
-	public static final String ELEMENT_RESULT="result";
 	public static final String ELEMENT_XID="xid";
 	public static final String XIDBASE="www.xid.ch/labitems/";
-	
-	public static final String CLASSIFICATION_LABVALUE="lab";
+
 	public static final String TYPE_NUMERIC="numeric";
 	public static final String TYPE_TEXT="text";
 	public static final String TYPE_IMAGE="image";
@@ -58,19 +53,13 @@ public class FindingElement extends XChangeElement{
 	}
 	
 	
-	public FindingElement(XChangeContainer home, LabResult lr){
-		super(home);
 	
-		LabItem li=lr.getItem();
-		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATE_ISO));
-		setAttribute(ATTR_CLASSIFICATION,CLASSIFICATION_LABVALUE);
+	
+	FindingElement(XChangeContainer home, LabItem li){
+		super(home);
+
 		setAttribute(ATTR_NAME, li.getKuerzel());
-		Labor lab=li.getLabor();
-		if(lab!=null && lab.isValid()){
-			ContactElement cLabor=home.addContact(lab);
-			setAttribute(ATTR_LAB,cLabor.getAttributeValue("id"));
-		}
-		if(li.getTyp().equals(LabItem.typ.NUMERIC)){
+			if(li.getTyp().equals(LabItem.typ.NUMERIC)){
 			setAttribute(ATTR_TYPE,TYPE_NUMERIC);
 			setAttribute(ATTR_NORMRANGE,li.getRefM());		// TODO anpassen
 			setAttribute(ATTR_UNITS,li.getEinheit());
@@ -81,14 +70,8 @@ public class FindingElement extends XChangeElement{
 			setAttribute(ATTR_TYPE,TYPE_TEXT);
 		}
 		setAttribute(ATTR_GROUP,li.getGroup());
-		
 		Element eXid=home.xidHandler.createXidElement(li, home.getNamespace());
 		addContent(eXid);
-		Element eResult=new Element(ELEMENT_RESULT,home.getNamespace());
-		addContent(eResult);
-		eResult.setText(lr.getResult());
-		setAttribute(ATTR_ABNORMAL,"indeterminate");	// TODO
-		home.addChoice(this, lr.getLabel(), lr);
 	}
 	
 	/*
