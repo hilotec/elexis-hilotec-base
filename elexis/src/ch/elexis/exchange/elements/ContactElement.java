@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4199 2008-07-29 16:33:39Z rgw_ch $
+ *  $Id: ContactElement.java 4220 2008-08-02 10:53:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -183,7 +183,7 @@ public class ContactElement extends XChangeElement{
 							getAttr(ATTR_BIRTHDATE), s, strasse, plz, ort, natel, KontaktMatcher.CreateMode.CREATE);
 					
 				}else{
-					ret=KontaktMatcher.findOrganisation(getAttr(ATTR_LASTNAME), strasse, plz, ort, KontaktMatcher.CreateMode.CREATE);
+					ret=KontaktMatcher.findOrganisation(getAttr(ATTR_LASTNAME), getAttr(ATTR_FIRSTNAME), strasse, plz, ort, KontaktMatcher.CreateMode.CREATE);
 				}
 			}else if(cands.size()==1){
 				if(getAttr(ATTR_TYPE).equalsIgnoreCase(VALUE_PERSON)){

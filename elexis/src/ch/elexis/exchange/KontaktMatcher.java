@@ -43,7 +43,7 @@ public class KontaktMatcher {
 	public enum CreateMode{FAIL,CREATE,ASK};
 	
 	public static Kontakt findKontakt(final String name, final String strasse, final String plz, final String ort){
-		Organisation o=findOrganisation(name, strasse, plz, ort, CreateMode.FAIL);
+		Organisation o=findOrganisation(name, "", strasse, plz, ort, CreateMode.FAIL);
 		if(o==null){
 			Person p=findPerson(name, "", "", "", strasse, plz, ort, "", CreateMode.FAIL);
 			return p;
@@ -61,7 +61,7 @@ public class KontaktMatcher {
 	 * @return the organization that matches best the given parameters or null if no
 	 * such organization was found
 	 */
-	public static Organisation findOrganisation(final String name, final String strasse, 
+	public static Organisation findOrganisation(final String name, final String zusatz, final String strasse, 
 			final String plz, final String ort, final CreateMode createMode){
 		String[] hints=new String[HINTSIZE];
 		hints[HINT_NAME]=name;
@@ -70,10 +70,13 @@ public class KontaktMatcher {
 		hints[HINT_PLACE]=ort;
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		qbe.add("Name", "=", name);
+		if(!StringTool.isNothing(zusatz)){
+			qbe.add("Zusatz1", "=", zusatz);
+		}
 		List<Organisation> found=qbe.execute();
 		if(found.size()==0){
 			if(createMode==CreateMode.CREATE){
-				Organisation org= new Organisation(name,"");
+				Organisation org= new Organisation(name,zusatz==null ? "" : zusatz);
 				addAddress(org,strasse,plz,ort);
 				return org;
 			}else if(createMode==CreateMode.ASK){
@@ -248,17 +251,13 @@ public class KontaktMatcher {
 			}
 
 		}
-		Kontakt found=null;
-		for(int i=0;i<score.length;i++){
-			if(score[i]>0){
-				if(found!=null){
-					return null;
-				}
+		Kontakt found=kk[0];
+		int scored=score[0];
+		for(int i=1;i<score.length;i++){		// we'll take the match with the highest score
+			if(score[i]>scored){
 				found=kk[i];
+				scored=score[i];
 			}
-		}
-		if(found==null){	// nothing did match at all
-			found=kk[0];	// we just take the first one
 		}
 		return found;
 	}
