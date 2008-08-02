@@ -185,12 +185,16 @@
     	<xs:attribute name="relevance" type="xs:string"></xs:attribute>
     </xs:complexType>
     <xs:complexType name="findingType">
-    	<xs:choice minOccurs="0" maxOccurs="unbounded">
-    		<xs:element maxOccurs="1" type="xChange:imageType"
-    			name="image">
+    	<xs:sequence>
+    		<xs:element name="xid" type="xChange:XIDType" maxOccurs="1"
+    			minOccurs="1">
     		</xs:element>
-    		<xs:element maxOccurs="1" type="xs:string" name="result"></xs:element>
-    	</xs:choice>
+    		<xs:choice>
+    			<xs:element name="image" type="xChange:imageType"></xs:element>
+    			<xs:element name="result" type="xs:string"></xs:element>
+    		</xs:choice>
+
+    	</xs:sequence>
     	<xs:attribute name="id" type="xs:NMTOKEN"></xs:attribute>
     	<xs:attribute use="required" name="name" type="xs:string"></xs:attribute>
     	<xs:attribute use="required" name="lab" type="xs:IDREF"></xs:attribute>
@@ -232,15 +236,14 @@
     </xs:complexType>
     
     <xs:complexType name="imageType">
-		<xs:attribute use="required" name="content"
-			type="xs:NMTOKEN">
+        <xs:attribute use="required" name="id" type="xs:IDREF">
 		</xs:attribute>
-		<xs:attribute use="required" name="hint"
-			type="xs:NMTOKEN">
-		</xs:attribute>
-		<xs:attribute use="required" name="id"
+        <xs:attribute use="required" name="content"
 			type="xs:string">
 		</xs:attribute>
+		<xs:attribute use="required" name="hint"
+			type="xs:string">
+		</xs:attribute>
   	 </xs:complexType>
 
     <xs:complexType name="medicationType">
