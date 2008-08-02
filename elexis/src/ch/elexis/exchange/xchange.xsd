@@ -186,28 +186,33 @@
     </xs:complexType>
     <xs:complexType name="findingType">
     	<xs:choice minOccurs="0" maxOccurs="unbounded">
-    		<xs:element maxOccurs="1" type="xChange:imageType" name="image"></xs:element>
+    		<xs:element maxOccurs="1" type="xChange:imageType"
+    			name="image">
+    		</xs:element>
     		<xs:element maxOccurs="1" type="xs:string" name="result"></xs:element>
     	</xs:choice>
-        <xs:attribute name="id" type="xs:NMTOKEN"></xs:attribute>
-        <xs:attribute use="required" name="name" type="xs:string"></xs:attribute>
-        <xs:attribute use="required" name="lab" type="xs:IDREF"></xs:attribute>
-        <xs:attribute name="abnormal">
-        	<xs:simpleType>
-        		<xs:restriction base="xs:string">
-        			<xs:enumeration value="true"></xs:enumeration>
-        			<xs:enumeration value="false"></xs:enumeration>
-        			<xs:enumeration value="1"></xs:enumeration>
-        			<xs:enumeration value="0"></xs:enumeration>
-        			<xs:enumeration value="indeterminate"></xs:enumeration>
-        		</xs:restriction>
-        	</xs:simpleType>
-        </xs:attribute>
-        <xs:attribute use="required" name="classification"
+    	<xs:attribute name="id" type="xs:NMTOKEN"></xs:attribute>
+    	<xs:attribute use="required" name="name" type="xs:string"></xs:attribute>
+    	<xs:attribute use="required" name="lab" type="xs:IDREF"></xs:attribute>
+    	<xs:attribute name="abnormal">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:enumeration value="true"></xs:enumeration>
+    				<xs:enumeration value="false"></xs:enumeration>
+    				<xs:enumeration value="1"></xs:enumeration>
+    				<xs:enumeration value="0"></xs:enumeration>
+    				<xs:enumeration value="indeterminate"></xs:enumeration>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:attribute>
+    	<xs:attribute use="required" name="classification"
     		type="xs:NMTOKEN">
     	</xs:attribute>
-    	<xs:attribute use="required" name="date" type="xs:date"></xs:attribute>
-    	<xs:attribute name="normRange" type="xs:string"></xs:attribute>
+    	<xs:attribute use="required" name="date" type="xs:date"></xs:attribute>
+
+
+    	<xs:attribute name="normRange" type="xs:string"></xs:attribute>
+
     	<xs:attribute name="type">
     		<xs:simpleType>
     			<xs:restriction base="xs:NMTOKEN">
@@ -219,6 +224,7 @@
     		</xs:simpleType>
     	</xs:attribute>
     	<xs:attribute name="unit" type="xs:string"></xs:attribute>
+    	<xs:attribute name="group" type="xs:string"></xs:attribute>
     </xs:complexType>
     <xs:complexType name="contactRefType">
     	<xs:attribute use="required" name="refID" type="xs:IDREF"></xs:attribute>
@@ -416,7 +422,6 @@
         <xs:attribute name="responsible" type="xs:IDREF"></xs:attribute>
     </xs:complexType>
     
-    <xs:complexType name="resultType"></xs:complexType>
 
     <xs:complexType name="riskListType">
     	<xs:sequence>
@@ -487,4 +492,5 @@
     	<xs:attribute name="text" type="xs:string"></xs:attribute>
     	<xs:attribute name="hint" type="xs:string"></xs:attribute>
     </xs:complexType>
+
 </xs:schema>

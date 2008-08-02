@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4179 2008-07-25 11:01:27Z rgw_ch $
+ *  $Id: FindingElement.java 4221 2008-08-02 14:17:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -33,6 +33,7 @@ public class FindingElement extends XChangeElement{
 	public static final String ATTR_NORMRANGE="normRange";
 	public static final String ATTR_TYPE="type";
 	public static final String ATTR_UNITS="unit";
+	public static final String ATTR_GROUP="group";
 	
 	public static final String ELEMENT_IMAGE="image";
 	public static final String ELEMENT_RESULT="result";
@@ -75,6 +76,8 @@ public class FindingElement extends XChangeElement{
 		}else if(li.getTyp().equals(LabItem.typ.TEXT)){
 			setAttribute(ATTR_TYPE,TYPE_TEXT);
 		}
+		
+		setAttribute(ATTR_GROUP,li.getGroup());
 		Element eResult=new Element(ELEMENT_RESULT,getContainer().getNamespace());
 		addContent(eResult);
 		eResult.setText(lr.getResult());
