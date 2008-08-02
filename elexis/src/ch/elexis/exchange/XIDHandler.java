@@ -8,8 +8,10 @@ import org.jdom.Namespace;
 
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.LabItem;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
+import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.util.XMLTool;
 import ch.rgw.tools.StringTool;
 
@@ -30,6 +32,20 @@ public class XIDHandler {
 	
 	public boolean isUUID(Xid xid){
 		return (xid.getQuality()&4)!=0;
+	}
+	public Element createXidElement(LabItem li, Namespace ns){
+		String id=XMLTool.idToXMLID(li.getId());
+		Element ret=new Element(XID_ELEMENT,ns);
+		ret.setAttribute(XID_UUID, id);
+		String domain=FindingElement.XIDBASE+li.getLabor().getLabel();
+		Xid.localRegisterXIDDomainIfNotExists(domain, li.getLabel(), Xid.ASSIGNMENT_LOCAL);
+		Element ident=new Element(XID_IDENTITY,ns);
+		ident.setAttribute(XID_DOMAIN, domain);
+		ident.setAttribute(XID_DOMAIN_ID,li.getName());
+		ident.setAttribute(XID_QUALITY, XID_QUALITIES[1]);
+		ident.setAttribute(XID_GUID,Boolean.toString(true));
+		ret.addContent(ident);
+		return ret;
 	}
 	public Element createXidElement(Artikel art, Namespace ns){
 		String id=XMLTool.idToXMLID(art.getId());

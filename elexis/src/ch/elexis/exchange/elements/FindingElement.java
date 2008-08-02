@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4221 2008-08-02 14:17:28Z rgw_ch $
+ *  $Id: FindingElement.java 4223 2008-08-02 15:45:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -19,6 +19,7 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Labor;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.XIDHandler;
 import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("serial")
@@ -37,12 +38,15 @@ public class FindingElement extends XChangeElement{
 	
 	public static final String ELEMENT_IMAGE="image";
 	public static final String ELEMENT_RESULT="result";
+	public static final String ELEMENT_XID="xid";
+	public static final String XIDBASE="www.xid.ch/labitems/";
 	
 	public static final String CLASSIFICATION_LABVALUE="lab";
 	public static final String TYPE_NUMERIC="numeric";
 	public static final String TYPE_TEXT="text";
 	public static final String TYPE_IMAGE="image";
 	public static final String TYPE_ABSOLUTE="absolute";
+	
 	
 	
 	public String getXMLName(){
@@ -76,9 +80,11 @@ public class FindingElement extends XChangeElement{
 		}else if(li.getTyp().equals(LabItem.typ.TEXT)){
 			setAttribute(ATTR_TYPE,TYPE_TEXT);
 		}
-		
 		setAttribute(ATTR_GROUP,li.getGroup());
-		Element eResult=new Element(ELEMENT_RESULT,getContainer().getNamespace());
+		
+		Element eXid=home.xidHandler.createXidElement(li, home.getNamespace());
+		addContent(eXid);
+		Element eResult=new Element(ELEMENT_RESULT,home.getNamespace());
 		addContent(eResult);
 		eResult.setText(lr.getResult());
 		setAttribute(ATTR_ABNORMAL,"indeterminate");	// TODO
