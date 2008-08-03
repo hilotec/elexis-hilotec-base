@@ -6,7 +6,7 @@
       provider-name="elexis.ch"
       plugin="ch.elexis">
 
-   <description>
+   <description url="http://www.elexis.ch">
       Elexis Praxisprogramm Release 1.3
    </description>
 
