@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultElement.java 4225 2008-08-03 06:26:01Z rgw_ch $
+ *  $Id: ResultElement.java 4231 2008-08-03 20:27:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -63,8 +63,8 @@ public class ResultElement extends XChangeElement {
 		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATE_ISO));
 		setAttribute(ATTR_LABITEM, ch.elexis.util.XMLTool.idToXMLID(lr.getItem().getId()));
 		Element eResult=new Element(ELEMENT_TEXTRESULT,home.getNamespace());
-		addContent(eResult);
 		eResult.setText(lr.getResult());
+		addContent(eResult);
 		// setAttribute(ATTR_NORMAL,);	// TODO
 		home.addChoice(this, lr.getLabel(), lr);
 	}
