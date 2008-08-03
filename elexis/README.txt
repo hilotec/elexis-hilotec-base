@@ -1,3 +1,6 @@
+$Id$
+------------------------------------------------------------------------
+
 Versionen
 =========
 
@@ -7,6 +10,7 @@ DATUM 1.0
 DATUM 1.1
 DATUM 1.1.1
 DATUM 1.1.2
+1.8.2008 1.3.3
 
 Änderungen
 ==========
@@ -45,3 +49,12 @@ TODO: Alle relevanten Änderungen angeben, insbesondere Verhaltensänderungen.
  Teilfenster.
   
  * Anwendereinstellungen zeigen die vorhandenen EInstellungsseiten an
+ 
+ --------------------------
+ 1.8.08 gweirich, 1.3.3
+ Folgende Plugins sind obsolet und sollten aus dem workspace entfernt werden:
+ - jdomwrapper (jdom.jar befindet sich jetzt im Zentralplugin und wird von diesem exportiert)
+ - Sgam-Exchange (Compiliert nicht mehr mit xChange 1.0.1)
+ - Elexis-EMR-Printer (Compiliert nicht mehr mit xChange 1.0.1)
+ 
+Diese Plugins werden demnächst aus dem aktiven Zweig des Repository gelöscht.
