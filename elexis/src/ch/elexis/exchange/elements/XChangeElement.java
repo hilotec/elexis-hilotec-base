@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 4199 2008-07-29 16:33:39Z rgw_ch $
+ *  $Id: XChangeElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -66,6 +66,9 @@ public abstract class XChangeElement extends Element {
 		addContent(el);
 	}
 	
+	protected XidElement getXid(){
+		return (XidElement)getChild(XidElement.XMLNAME,getContainer().getNamespace());
+	}
 	@SuppressWarnings("unchecked")
 	protected List<Element> getElements(final String name){
 		return getChildren(name,getContainer().getNamespace());

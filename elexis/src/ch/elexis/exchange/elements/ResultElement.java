@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultElement.java 4231 2008-08-03 20:27:49Z rgw_ch $
+ *  $Id: ResultElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -45,7 +45,7 @@ public class ResultElement extends XChangeElement {
 	public static ResultElement addResult(MedicalElement me, LabResult lr){
 		List<FindingElement> findings=me.getAnalyses();
 		for(FindingElement fe:findings){
-			if(fe.getID().equals(lr.getItem().getId())){
+			if(fe.getXid().getID().equals(lr.getItem().getId())){
 				ResultElement re=new ResultElement(me.getContainer(),lr);
 				me.addAnalyse(re);
 				return re;

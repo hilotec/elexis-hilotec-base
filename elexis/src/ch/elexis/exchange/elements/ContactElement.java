@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4220 2008-08-02 10:53:07Z rgw_ch $
+ *  $Id: ContactElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -86,8 +86,8 @@ public class ContactElement extends XChangeElement{
 	 */
 	public ContactElement(XChangeContainer parent, Kontakt k){
 		super(parent);
-		Element eXid=parent.xidHandler.createXidElement(k, getNamespace());
-		setID(eXid.getAttributeValue(XIDHandler.XID_UUID));
+		XidElement eXid=new XidElement(parent,k);
+		setID(eXid.getID());
 		addContent(eXid);
 		if(k.istPerson()){
 			Person p=Person.load(k.getId());

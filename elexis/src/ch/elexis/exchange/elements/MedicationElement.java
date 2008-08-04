@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicationElement.java 4218 2008-08-01 10:36:23Z rgw_ch $
+ *  $Id: MedicationElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -58,7 +58,7 @@ public class MedicationElement extends XChangeElement {
 		setAttribute(ATTRIB_FREQUENCY,dose);
 		setAttribute(ATTRIB_PRODUCT,art.getLabel());
 		setAttribute(ATTRIB_REMARK,remark);
-		addContent(parent.xidHandler.createXidElement(art, parent.getNamespace()));
+		addContent(new XidElement(parent,art));
 		parent.addChoice(this, pr.getLabel(),pr);
 	}
 	

@@ -12,6 +12,7 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.elements.FindingElement;
+import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.XMLTool;
 import ch.rgw.tools.StringTool;
 
@@ -30,71 +31,9 @@ public class XIDHandler {
 		"globalAssignment"
 	};
 	
-	public boolean isUUID(Xid xid){
-		return (xid.getQuality()&4)!=0;
-	}
-	public Element createXidElement(LabItem li, Namespace ns){
-		String id=XMLTool.idToXMLID(li.getId());
-		Element ret=new Element(XID_ELEMENT,ns);
-		ret.setAttribute(XID_UUID, id);
-		String domain=FindingElement.XIDBASE+li.getLabor().getLabel();
-		Xid.localRegisterXIDDomainIfNotExists(domain, li.getLabel(), Xid.ASSIGNMENT_LOCAL);
-		Element ident=new Element(XID_IDENTITY,ns);
-		ident.setAttribute(XID_DOMAIN, domain);
-		ident.setAttribute(XID_DOMAIN_ID,li.getName());
-		ident.setAttribute(XID_QUALITY, XID_QUALITIES[1]);
-		ident.setAttribute(XID_GUID,Boolean.toString(true));
-		ret.addContent(ident);
-		return ret;
-	}
-	public Element createXidElement(Artikel art, Namespace ns){
-		String id=XMLTool.idToXMLID(art.getId());
-		Element ret=new Element(XID_ELEMENT,ns);
-		ret.setAttribute(XID_UUID, id);
-		String ean=art.getEAN();
-		if(!StringTool.isNothing(ean)){
-			Element ident=new Element(XID_IDENTITY,ns);
-			ident.setAttribute(XID_DOMAIN, Xid.DOMAIN_EAN);
-			ident.setAttribute(XID_DOMAIN_ID,ean);
-			ident.setAttribute(XID_QUALITY, XID_QUALITIES[2]);
-			ident.setAttribute(XID_GUID,Boolean.toString(false));
-			ret.addContent(ident);
-		}
-		String pk=art.getPharmaCode();
-		if(!StringTool.isNothing(pk)){
-			Element ident=new Element(XID_IDENTITY,ns);
-			ident.setAttribute(XID_DOMAIN, Artikel.XID_PHARMACODE);
-			ident.setAttribute(XID_DOMAIN_ID,pk);
-			ident.setAttribute(XID_QUALITY, XID_QUALITIES[2]);
-			ident.setAttribute(XID_GUID,Boolean.toString(false));
-			ret.addContent(ident);
-		}
-		return ret;
-	}
 	
-	public Element createXidElement(Kontakt po, Namespace ns){
-		Xid best=po.getXid();
-		String id=XMLTool.idToXMLID(po.getId());
-		if((best.getQuality()&7)>=Xid.QUALITY_GUID){
-			id=XMLTool.idToXMLID(best.getDomainId());
-		}else{
-			po.addXid(Xid.DOMAIN_ELEXIS, id, true);
-		}
-		Element ret=new Element(XID_ELEMENT,ns);
-		ret.setAttribute(XID_UUID, id);
-		List<Xid> xids=po.getXids();
-		for(Xid xid:xids){
-			Element ident=new Element(XID_IDENTITY,ns);
-			ident.setAttribute(XID_DOMAIN, xid.getDomain());
-			ident.setAttribute(XID_DOMAIN_ID, xid.getDomainId());
-			int val=xid.getQuality();
-			int v1=val&3;
-			ident.setAttribute(XID_QUALITY,XID_QUALITIES[v1]);
-			ident.setAttribute(XID_GUID, Boolean.toString(isUUID(xid)));
-			ret.addContent(ident);
-		}
-		return ret;
-	}
+	
+	
 
 	public enum XIDMATCH{NONE,POSSIBLE,SURE};
 	/**
@@ -120,7 +59,7 @@ public class XIDHandler {
 			for(Element ident:idents){
 				if(ident.getAttributeValue(XID_DOMAIN).equals(domain) &&
 						ident.getAttributeValue(XID_DOMAIN_ID).equals(domid)){
-					if(isUUID(xid)){
+					if(XidElement.isUUID(xid)){
 						return XIDMATCH.SURE;
 					}else{
 						if(xid.getQuality()>Xid.ASSIGNMENT_LOCAL){

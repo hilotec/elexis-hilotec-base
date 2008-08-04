@@ -8,21 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4224 2008-08-02 19:12:53Z rgw_ch $
+ *  $Id: FindingElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import java.util.List;
-
 import org.jdom.Element;
 
 import ch.elexis.data.LabItem;
-import ch.elexis.data.LabResult;
-import ch.elexis.data.Labor;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.XIDHandler;
-import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("serial")
 public class FindingElement extends XChangeElement{
@@ -70,7 +64,7 @@ public class FindingElement extends XChangeElement{
 			setAttribute(ATTR_TYPE,TYPE_TEXT);
 		}
 		setAttribute(ATTR_GROUP,li.getGroup());
-		Element eXid=home.xidHandler.createXidElement(li, home.getNamespace());
+		XidElement eXid=new XidElement(home,li);
 		addContent(eXid);
 	}
 	
