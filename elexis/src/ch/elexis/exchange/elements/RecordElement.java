@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RecordElement.java 4199 2008-07-29 16:33:39Z rgw_ch $
+ *  $Id: RecordElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,6 +21,9 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.Samdas;
+import ch.elexis.text.Samdas.Record;
+import ch.elexis.text.Samdas.XRef;
+import ch.elexis.util.XMLTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.VersionedResource.ResourceItem;
@@ -46,9 +49,9 @@ public class RecordElement extends XChangeElement{
 			setAttribute("responsible","unknown");
 		}else{
 			ContactElement cMandant=c.addContact(kMandant);
-			setAttribute("responsible",cMandant.getAttributeValue("id"));
+			setAttribute("responsible",cMandant.getID());
 		}
-		setID(k.getId());
+		setAttribute("id", XMLTool.idToXMLID(k.getId()));
 		c.addChoice(this, k.getLabel(), k);
 		VersionedResource vr=k.getEintrag();
     	ResourceItem entry=vr.getVersion(vr.getHeadVersion());
@@ -56,14 +59,18 @@ public class RecordElement extends XChangeElement{
 	    	setAttribute("author",entry.remark);
 	   	
 			Samdas samdas=new Samdas(k.getEintrag().getHead());
-			Element sRecord=samdas.getRecordElement();
-			if(sRecord!=null){
-				//Samdas.Record record=new Samdas.Record(sRecord);
-				Element sText=sRecord.getChild("text",Samdas.ns);
-				if(sText!=null){
+			Record record=samdas.getRecord();
+			if(record!=null){
+				String st=record.getText();
+				if(st!=null){
 					Element eText=new Element("text",getContainer().getNamespace());
-					eText.addContent(sText.getText());
+					eText.addContent(st);
 					addContent(eText);
+					List<XRef> xrefs=record.getXrefs();
+					for(XRef xref:xrefs){
+						MarkupElement me=new MarkupElement(getContainer(),xref);
+						add(me);
+					}
 				}
 			}
     	}

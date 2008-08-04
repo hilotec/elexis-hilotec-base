@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
+ *  $Id: ContactElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -24,8 +24,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.exchange.KontaktMatcher;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.XIDHandler;
-import ch.elexis.util.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -87,7 +85,6 @@ public class ContactElement extends XChangeElement{
 	public ContactElement(XChangeContainer parent, Kontakt k){
 		super(parent);
 		XidElement eXid=new XidElement(parent,k);
-		setID(eXid.getID());
 		addContent(eXid);
 		if(k.istPerson()){
 			Person p=Person.load(k.getId());
@@ -115,7 +112,8 @@ public class ContactElement extends XChangeElement{
 	public List<ContactRefElement> getAssociations(){
 		List<ContactRefElement> ret=new LinkedList<ContactRefElement>();
 		for(Element el:getElements("connection")){
-			ret.add(new ContactRefElement(getContainer()));
+			((ContactRefElement)el).setContainer(getContainer());
+			ret.add((ContactRefElement)el);
 		}
 		return ret;
 	}
@@ -145,10 +143,10 @@ public class ContactElement extends XChangeElement{
 	}
 
 	public PersistentObject doImport(PersistentObject context){
-		Element eXid=getChild(ELEM_XID);
+		XidElement eXid=getXid();
 		Kontakt ret=null;
 		if(eXid!=null){
-			List<PersistentObject> cands=getContainer().xidHandler.findObject(eXid);
+			List<PersistentObject> cands=eXid.findObject();
 			if(cands.size()==0){
 				AddressElement ae=null;
 				List<AddressElement> lae=getAddresses();

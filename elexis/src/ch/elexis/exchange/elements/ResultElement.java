@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
+ *  $Id: ResultElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -20,6 +20,7 @@ import org.jdom.Element;
 
 import ch.elexis.data.LabResult;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.util.XMLTool;
 import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("serial")
@@ -59,7 +60,7 @@ public class ResultElement extends XChangeElement {
 	}
 	private ResultElement(XChangeContainer home, LabResult lr){
 		super(home);
-		setID(lr.getId());
+		setAttribute("id",XMLTool.idToXMLID(lr.getId()));
 		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATE_ISO));
 		setAttribute(ATTR_LABITEM, ch.elexis.util.XMLTool.idToXMLID(lr.getItem().getId()));
 		Element eResult=new Element(ELEMENT_TEXTRESULT,home.getNamespace());

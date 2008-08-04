@@ -14,7 +14,6 @@ import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.exchange.XIDHandler.XIDMATCH;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactRefElement;
 import ch.elexis.exchange.elements.DocumentElement;
@@ -24,11 +23,12 @@ import ch.elexis.exchange.elements.MedicationElement;
 import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
+import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.Tree;
 
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver{
-	public static final String Version="1.0.1";
+	public static final String Version="1.0.2";
 	public static final Namespace ns=Namespace.getNamespace("xChange","http://informatics.sgam.ch/xChange");
 	public static final Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XML Schema-instance");
 	public static final Namespace nsschema=Namespace.getNamespace("schemaLocation","http://informatics.sgam.ch/xChange xchange.xsd");
@@ -52,8 +52,6 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	private HashMap<XChangeElement,PersistentObject> mapElementToObject=new HashMap<XChangeElement, PersistentObject>();
 	private HashMap<PersistentObject,XChangeElement> mapObjectToElement=new HashMap<PersistentObject, XChangeElement>();
 	
-	public XIDHandler xidHandler=new XIDHandler();
-	
 	public abstract Kontakt findContact(String id);
 	
 	
@@ -75,7 +73,8 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		}else{
 			List<ContactElement> lContacts=eContacts.getChildren(ContactElement.XMLNAME, ns);
 			for(ContactElement e:lContacts){
-				if(xidHandler.match(e.getChild(XIDHandler.XID_ELEMENT, ns),k)==XIDMATCH.SURE){
+				XidElement xid=e.getXid();
+				if( (xid!=null) && (xid.match(k)==XidElement.XIDMATCH.SURE)){
 					e.setContainer(this);
 					return e;	
 				}

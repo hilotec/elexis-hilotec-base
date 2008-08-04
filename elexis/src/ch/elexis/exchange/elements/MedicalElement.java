@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4224 2008-08-02 19:12:53Z rgw_ch $
+ *  $Id: MedicalElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
+import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -98,6 +99,7 @@ public class MedicalElement extends XChangeElement{
 				add(new RiskElement(getContainer(),r));
 			}
 		}
+		
 	}
 
 

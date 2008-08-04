@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicationElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
+ *  $Id: MedicationElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -16,7 +16,6 @@ package ch.elexis.exchange.elements;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.XIDHandler;
 import ch.elexis.util.XMLTool;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;

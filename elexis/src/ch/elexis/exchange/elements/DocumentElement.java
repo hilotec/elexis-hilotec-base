@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentElement.java 4176 2008-07-24 19:50:11Z rgw_ch $
+ *  $Id: DocumentElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,6 +17,7 @@ import org.jdom.Element;
 
 import ch.elexis.data.Brief;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.XMLTool;
 import ch.rgw.tools.TimeTool;
@@ -52,9 +53,9 @@ public class DocumentElement extends XChangeElement{
 	public DocumentElement(XChangeContainer parent, Brief b){
 		this(parent);
 		setAttribute(ATTR_MIMETYPE,b.getMimeType());
-		setID(b.getId());
+		setDefaultXid(b.getId());
 		setAttribute(ATTR_PLACEMENT,PLACEMENT_INFILE);
-		parent.addBinary(getAttributeValue("id"), b.loadBinary());
+		parent.addBinary(getID(), b.loadBinary());
 
 		setTitle(b.getLabel());
 		setDestination(b.getAdressat());
@@ -76,14 +77,14 @@ public class DocumentElement extends XChangeElement{
 	public void setOriginator(Kontakt k){
 		if(k!=null && k.isValid()){
 			ContactElement ce=getContainer().addContact(k);
-			setAttribute(ATTR_ORIGIN,ce.getAttributeValue("id"));
+			setAttribute(ATTR_ORIGIN,ce.getID());
 		}
 	}
 	
 	public void setDestination(Kontakt k){
 		if(k!=null && k.isValid()){
 			ContactElement ce=getContainer().addContact(k);
-			setAttribute(ATTR_DESTINATION,ce.getAttributeValue("id"));
+			setAttribute(ATTR_DESTINATION,ce.getID());
 		}
 	}
 	

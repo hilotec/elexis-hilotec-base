@@ -1,6 +1,7 @@
 package ch.elexis.exchange.elements;
 
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.text.Samdas.XRef;
 
 @SuppressWarnings("serial")
 public class MarkupElement extends XChangeElement {
@@ -18,5 +19,14 @@ public class MarkupElement extends XChangeElement {
 
 	public MarkupElement(XChangeContainer parent){
 		super(parent);
+	}
+	
+	public MarkupElement(XChangeContainer home, XRef xref){
+		super(home);
+		setAttribute(ATTR_POS, Integer.toString(xref.getPos()));
+		setAttribute(ATTR_LEN,Integer.toString(xref.getLength()));
+		setAttribute(ATTR_TYPE,xref.getProvider());
+		add(new MetaElement(home,"id",xref.getID()));
+		add(new MetaElement(home,"provider",xref.getProvider()));
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactRefElement.java 4169 2008-07-23 11:55:30Z rgw_ch $
+ *  $Id: ContactRefElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -36,7 +36,8 @@ public class ContactRefElement extends XChangeElement {
 		String beziehung=bk.getBezug();
 		setDescription(beziehung);
 		ContactElement ce=parent.addContact(bezug);
-		setId(ce.getAttr("id"));
+		setId(ce.getID());
+		parent.addChoice(this, bk.getLabel(),bk);
 	}
 	
 	public void setDescription(String type){

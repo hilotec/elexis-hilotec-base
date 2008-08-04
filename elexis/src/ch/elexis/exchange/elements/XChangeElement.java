@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
+ *  $Id: XChangeElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -15,11 +15,13 @@ import java.util.List;
 import org.jdom.Element;
 
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Xid;
 import ch.elexis.exchange.IDataReceiver;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.Log;
 import ch.elexis.util.Result;
 import ch.elexis.util.XMLTool;
+import ch.rgw.tools.StringTool;
 
 public abstract class XChangeElement extends Element {
 	private XChangeContainer parent;
@@ -56,17 +58,31 @@ public abstract class XChangeElement extends Element {
 		return ret==null ? "" : ret;
 	}
 	
-	public void setID(String id){
-		setAttribute("id", XMLTool.idToXMLID(id));
+	
+	public void setDefaultXid(String id){
+		XidElement xid=new XidElement(getContainer());
+		xid.addIdentity(Xid.DOMAIN_ELEXIS, id, Xid.ASSIGNMENT_LOCAL, true);
+		xid.setMainID(null);
+		add(xid);
 	}
+	
 	public String getID(){
-		return XMLTool.xmlIDtoID(getAttr("id"));
+		String rawID=getAttr("id");
+		if(rawID.length()==0){
+			XidElement eXid=getXid();
+			if(eXid!=null){
+				rawID=eXid.getAttr("id");
+			}
+		}
+		//return XMLTool.xmlIDtoID(rawID);
+		return rawID;
 	}
+	
 	protected void add(final XChangeElement el){
 		addContent(el);
 	}
 	
-	protected XidElement getXid(){
+	public XidElement getXid(){
 		return (XidElement)getChild(XidElement.XMLNAME,getContainer().getNamespace());
 	}
 	@SuppressWarnings("unchecked")

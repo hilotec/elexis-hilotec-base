@@ -8,12 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4232 2008-08-04 05:11:27Z rgw_ch $
+ *  $Id: FindingElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
-
-import org.jdom.Element;
 
 import ch.elexis.data.LabItem;
 import ch.elexis.exchange.XChangeContainer;

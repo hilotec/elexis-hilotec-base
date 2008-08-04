@@ -34,7 +34,7 @@ public class InsuranceElement extends XChangeElement {
 		}
 		setAttribute(ATTR_REASON, translateReason(fall.getGrund()));
 		ContactElement eGarant=p.addContact(garant);
-		setAttribute(ATTR_COMPANYREF,eGarant.getAttributeValue("id"));
+		setAttribute(ATTR_COMPANYREF,eGarant.getID());
 		ContractElement eContract=new ContractElement(p);
 		addContent(eContract);
 	}
