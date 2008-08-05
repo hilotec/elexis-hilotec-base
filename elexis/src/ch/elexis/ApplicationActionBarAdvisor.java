@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationActionBarAdvisor.java 4219 2008-08-01 17:45:47Z rgw_ch $
+ * $Id: ApplicationActionBarAdvisor.java 4236 2008-08-05 18:47:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -161,23 +161,25 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     protected void fillCoolBar(ICoolBarManager coolBar)
     {
     	ToolBarManager tbm=new ToolBarManager();
-    	coolBar.add(tbm);
         //ToolBarContributionItem ci=new ToolBarContributionItem();
         //ci.setCurrentHeight(16);
-        tbm.add(GlobalActions.homeAction);
-        tbm.add(GlobalActions.resetPerspectiveAction);
+        
+    	tbm.add(GlobalActions.homeAction);
+    	
+    	tbm.add(GlobalActions.resetPerspectiveAction);
+    	
         //ci.getToolBarManager().add(GlobalActions.savePerspectiveAction);
         tbm.add(new Separator());
         tbm.add(GlobalActions.printEtikette);
         tbm.add(GlobalActions.printVersionedEtikette);
         tbm.add(GlobalActions.printAdresse);
+        
     	//coolBar.add(ci);
-    	
         //coolBar.add(MainMenuActions.exitAction);
         //coolBar.add(newAction);
-    	
     	// add actions for opening perspectives
-    	
+
+        coolBar.add(tbm);    	
     	if(Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS,"true").equalsIgnoreCase("true")){
     		ToolBarManager tb2=new ToolBarManager();
 	        //ci.getToolBarManager().add(new Separator());
