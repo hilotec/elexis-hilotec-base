@@ -1,4 +1,4 @@
-// $Id: TimeTool.java 4169 2008-07-23 11:55:30Z rgw_ch $
+// $Id: TimeTool.java 4235 2008-08-05 16:59:43Z rgw_ch $
 
 package ch.rgw.tools;
 
@@ -59,7 +59,7 @@ public class TimeTool extends GregorianCalendar{
   private static SimpleDateFormat time_compact=new SimpleDateFormat("HHmm");
   private static final SimpleDateFormat date_compact=new SimpleDateFormat("yyyyMMdd");
   private static final SimpleDateFormat timestamp=new SimpleDateFormat("yyyyMMddHHmmss");
-  private static final SimpleDateFormat datetime_xm=new SimpleDateFormat("yyyy-MM-dd'T'HH:m:ss");
+  private static final SimpleDateFormat datetime_xml=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
   
   private static SimpleDateFormat pref_full=full_ger;
   private static SimpleDateFormat pref_small=date_ger;
@@ -498,7 +498,7 @@ public String toString()
       case DATE_GER: res= date_ger.format(getTime()); break;
       case TIME_COMPACT: res= time_compact.format(getTime()); break;
       case DATE_COMPACT: res= date_compact.format(getTime()); break;
-      case DATETIME_XML: res=datetime_xm.format(getTime()); break;
+      case DATETIME_XML: res=datetime_xml.format(getTime()); break;
       case WEEKDAY:	res=wdays[get(DAY_OF_WEEK)-1]; break;
       // case FULL_COMPACT: res= full_compact.format(getTime()); break;
       case TIMESTAMP: res=timestamp.format(getTime()); break;

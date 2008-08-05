@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
+ *  $Id: ResultElement.java 4235 2008-08-05 16:59:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -46,7 +46,7 @@ public class ResultElement extends XChangeElement {
 	public static ResultElement addResult(MedicalElement me, LabResult lr){
 		List<FindingElement> findings=me.getAnalyses();
 		for(FindingElement fe:findings){
-			if(fe.getXid().getID().equals(lr.getItem().getId())){
+			if(fe.getXid().getID().equals(XMLTool.idToXMLID(lr.getItem().getId()))){
 				ResultElement re=new ResultElement(me.getContainer(),lr);
 				me.addAnalyse(re);
 				return re;
@@ -61,7 +61,7 @@ public class ResultElement extends XChangeElement {
 	private ResultElement(XChangeContainer home, LabResult lr){
 		super(home);
 		setAttribute("id",XMLTool.idToXMLID(lr.getId()));
-		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATE_ISO));
+		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATETIME_XML));
 		setAttribute(ATTR_LABITEM, ch.elexis.util.XMLTool.idToXMLID(lr.getItem().getId()));
 		Element eResult=new Element(ELEMENT_TEXTRESULT,home.getNamespace());
 		eResult.setText(lr.getResult());

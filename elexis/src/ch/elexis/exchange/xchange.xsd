@@ -46,11 +46,10 @@
 				<xs:element minOccurs="0" maxOccurs="unbounded"
 					type="xChange:addressType" name="address">
 				</xs:element>
-				<xs:element name="medical" type="xChange:medicalType"
+            <xs:element name="contactref" minOccurs="0" maxOccurs="unbounded" type="xChange:contactRefType" />
+            <xs:element name="medical" type="xChange:medicalType"
 					maxOccurs="1" minOccurs="0">
-				</xs:element>
-				<xs:element name="contactref" minOccurs="0"
-					maxOccurs="unbounded" type="xChange:contactRefType" />
+				</xs:element>
 				<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
 			</xs:sequence>
         <xs:attribute name="lastname" type="xs:string" use="required"></xs:attribute>
@@ -298,13 +297,13 @@
     	</xs:sequence>
     	<xs:attribute use="required" name="product" type="xs:string">
     	</xs:attribute>
-    	<xs:attribute use="required" name="dosage" type="xs:string">
+    	<xs:attribute use="optional" name="dosage" type="xs:string">
     	</xs:attribute>
     	<xs:attribute name="dosageUnit" type="xs:string"></xs:attribute>
     	<xs:attribute name="frequency" type="xs:string"></xs:attribute>
-    	<xs:attribute use="required" name="startDate" type="xs:date">
+    	<xs:attribute use="optional" name="startDate" type="xs:date">
     	</xs:attribute>
-    	<xs:attribute use="required" name="stopDate" type="xs:date">
+    	<xs:attribute use="optional" name="stopDate" type="xs:date">
     	</xs:attribute>
 
     	<xs:attribute name="substance" type="xs:string"></xs:attribute>
@@ -493,7 +492,7 @@
                 	</xs:documentation>
                 </xs:annotation>
     		</xs:element>
-    		<xs:element name="meta" type="xChange:metaType">
+    		<xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0">
     			<xs:annotation>
     				<xs:documentation>
     					any additional informations the application
@@ -585,19 +584,20 @@
     </xs:complexType>
 
     <xs:complexType name="findingsListType">
-        <xs:annotation>
-        	<xs:documentation>
-        		container around the findings-section of this medical
-        		element
-        	</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-        	<xs:element name="finding" type="xChange:findingType"
-        		maxOccurs="unbounded" minOccurs="1">
-        	</xs:element>
-        	<xs:element name="result" type="xChange:resultType" maxOccurs="unbounded" minOccurs="1"></xs:element>
-        </xs:sequence>
-    </xs:complexType>
+    	<xs:annotation>
+    		<xs:documentation>
+    			container around the findings-section of this medical
+    			element
+    		</xs:documentation>
+    	</xs:annotation>
+
+    	<xs:sequence>
+    		<xs:choice maxOccurs="unbounded" minOccurs="0">
+    			<xs:element name="finding" type="xChange:findingType"></xs:element>
+    			<xs:element name="result" type="xChange:resultType"></xs:element>
+    		</xs:choice>
+    	</xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="headerType">
         <xs:annotation>
@@ -821,4 +821,8 @@
     			</xs:documentation>
     		</xs:annotation></xs:attribute>
     </xs:complexType>
+
+    <xs:group name="ModelGroupDefinition">
+    	<xs:sequence></xs:sequence>
+    </xs:group>
 </xs:schema>
