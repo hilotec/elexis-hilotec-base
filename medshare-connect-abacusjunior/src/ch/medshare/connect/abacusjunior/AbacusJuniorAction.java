@@ -39,7 +39,7 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 		{
 			try 
 			{
-				_log = new Logger(Hub.getBasePath()+ File.separator + "abacusjunior.log");
+				_log = new Logger(System.getProperty("user.home") + File.separator + "elexis" + File.separator + "abacusjunior.log");
 			}
 			catch (FileNotFoundException e) 
 			{
