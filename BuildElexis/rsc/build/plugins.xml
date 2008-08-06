@@ -247,6 +247,7 @@
     </target>
     
     <target name="sgamxchange" if="sgamxchange.ok">
+    	<ant antfile="../fop-wrapper/build.xml"/>
         <ant antfile="../Sgam-xChange/build.xml"/>
     </target>
 
