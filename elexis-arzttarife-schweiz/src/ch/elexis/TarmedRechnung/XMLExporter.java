@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4148 2008-07-18 07:23:03Z rgw_ch $
+ * $Id: XMLExporter.java 4245 2008-08-07 18:32:08Z rgw_ch $
  *******************************************************************************/
 
 
@@ -376,7 +376,7 @@ public class XMLExporter implements IRnOutputter {
 					iEAN=TrustCenters.getTCEAN(trustCenter);
 				}
 			}
-			if(iEAN==null){
+			if(StringTool.isNothing(iEAN)){
 				if(!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
 					if(kEAN.matches("(20[0-9]{11}|76[0-9]{11})")){
 						iEAN=kEAN;
@@ -482,9 +482,11 @@ public class XMLExporter implements IRnOutputter {
 			List<IDiagnose> ld=b.getDiagnosen();
 			for(IDiagnose dg:ld){
 				String dgc=dg.getCode();
-				dgsys=dg.getCodeSystemName();
-				if(sbDiagnosen.indexOf(dgc)==-1){
-					sbDiagnosen.append(dg.getCode()).append(" ");
+				if(dgc!=null){
+					dgsys=dg.getCodeSystemName();
+					if(sbDiagnosen.indexOf(dgc)==-1){
+						sbDiagnosen.append(dg.getCode()).append(" ");
+					}
 				}
 			}
 			List<Verrechnet> lv=b.getLeistungen();
