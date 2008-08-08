@@ -10,6 +10,7 @@ public class MarkupElement extends XChangeElement {
 	public static final String ATTR_LEN="length";
 	public static final String ATTR_TYPE="type";
 	public static final String ATTR_TEXT="text";
+	public static final String ATTRIB_HINT="hint";
 	public static final String ELEME_META="meta";
 	
 	@Override

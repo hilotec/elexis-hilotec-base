@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
+ *  $Id: MedicalElement.java 4247 2008-08-08 14:40:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -54,6 +54,7 @@ public class MedicalElement extends XChangeElement{
 	 */
 	public MedicalElement(XChangeContainer parent, Patient p){
 		super(parent);
+		parent.addMapping(this, p);
 		add(new AnamnesisElement(getContainer()));
 		Fall[] faelle=p.getFaelle();
 		for(Fall fall:faelle){
@@ -182,16 +183,20 @@ public class MedicalElement extends XChangeElement{
 		}
 		eAnalyses.addContent(fe);
 	}
+	@SuppressWarnings("unchecked")
 	public void addDocument(DocumentElement de){
 		if(eDocuments==null){
 			eDocuments=getChild("documents");
 		}
 		if(eDocuments==null){
-			eDocuments=new Element("documents",getContainer().getNamespace());
+			eDocuments=new Element(getContainer().ENCLOSE_DOCUMENTS,getContainer().getNamespace());
 			addContent(eDocuments);
 			getContainer().addChoice(eDocuments, "Dokumente", eDocuments);
 		}
-		eDocuments.addContent(de);
+		List<DocumentElement> lEx=eDocuments.getChildren(DocumentElement.XMLNAME);
+		if(!lEx.contains(de)){
+			eDocuments.addContent(de);
+		}
 	
 	}
 	

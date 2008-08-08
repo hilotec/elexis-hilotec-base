@@ -24,7 +24,7 @@ import ch.elexis.exchange.elements.RecordElement;
 import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
 import ch.elexis.exchange.elements.XidElement;
-import ch.elexis.util.Tree;
+import ch.elexis.util.Extensions;
 
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver{
@@ -49,9 +49,12 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	protected Element eRoot;
 	protected HashMap<String,byte[]> binFiles=new HashMap<String,byte[]>();
 	protected HashMap<Element,UserChoice> choices=new HashMap<Element,UserChoice>();
+	
 	private HashMap<XChangeElement,PersistentObject> mapElementToObject=new HashMap<XChangeElement, PersistentObject>();
 	private HashMap<PersistentObject,XChangeElement> mapObjectToElement=new HashMap<PersistentObject, XChangeElement>();
 	
+	protected List<IExchangeContributor> lex=Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution");
+
 	public abstract Kontakt findContact(String id);
 	
 	
@@ -116,12 +119,16 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		MedicalElement eMedical=new MedicalElement(this,pat);
 		ret.add(eMedical);
 		choices.put(eMedical, new UserChoice(true,"Krankengeschichte",eMedical));
+		for(IExchangeContributor iex:lex){
+			iex.exportHook(eMedical);
+		}
 		return ret;
 	}
 
 	public List<ContactElement> getContactElements(){
 		return (List<ContactElement>)getElements(ROOTPATH+ENCLOSE_CONTACTS+"/"+ContactElement.XMLNAME);
 	}
+	
 	
 	/**
 	 * Add a binary content to the Container
