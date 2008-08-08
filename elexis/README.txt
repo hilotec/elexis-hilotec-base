@@ -11,6 +11,7 @@ DATUM 1.1
 DATUM 1.1.1
 DATUM 1.1.2
 1.8.2008 1.3.3
+8.8.2008: Letzte revision 1.3.3, SVN rev. 4245
 
 Änderungen
 ==========
