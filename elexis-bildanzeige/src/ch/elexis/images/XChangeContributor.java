@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: XChangeContributor.java 4248 2008-08-08 14:40:49Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.images;
 
 import java.util.List;
@@ -6,42 +18,39 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.jdom.Element;
 
-import ch.elexis.data.Konsultation;
+import ch.elexis.Hub;
+import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
 import ch.elexis.exchange.IExchangeContributor;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.elements.MarkupElement;
-import ch.elexis.exchange.elements.MetaElement;
+import ch.elexis.exchange.elements.DocumentElement;
+import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.exchange.elements.RecordElement;
-import ch.elexis.text.Samdas;
-import ch.elexis.text.Samdas.Record;
-import ch.elexis.text.Samdas.XRef;
+import ch.elexis.util.XMLTool;
 
-public class ExchangeContributor implements IExchangeContributor {
+public class XChangeContributor implements IExchangeContributor {
 	public static final String PLUGIN_ID="ch.elexis.bildanzeige";
 
-	public void exportHook(XChangeContainer container, PersistentObject object) {
-		if(object instanceof Konsultation){
-			Konsultation k=(Konsultation)object;
-			Samdas smd=new Samdas(k.getEintrag().getHead());
-			Record record=smd.getRecord();
-			List<XRef> xrefs=record.getXrefs();
-			for(XRef xref:xrefs){
-				if(xref.getProvider().equals("bildanzeige")){
-					Bild bild=new Bild(xref.getID());
-					byte[] data=bild.getData();
-					if(data!=null && data.length>0){
-						MarkupElement eXref=new MarkupElement(container);
-						eXref.setAttribute("type",PLUGIN_ID);
-						eXref.setAttribute("pos",Integer.toString(xref.getPos()));
-						eXref.setAttribute("len",Integer.toString(xref.getLength()));
-						eXref.setAttribute("hint","warn Bild konnte nicht angezeigt werden");
-						MetaElement mID=new MetaElement(container,"idref",bild.getId());
-						eXref.addContent(mID);
-						container.addBinary(bild.getId(), data);
-						//container.addChoice(key, name)
-					}
-				}
+	public void exportHook(MedicalElement me) {
+		
+		Patient p=(Patient)me.getContainer().getMapping(me);
+		Query<Bild> qbe=new Query<Bild>(Bild.class);
+		qbe.add("PatID", "=", p.getId());
+		List<Bild> images=qbe.execute();
+		for(Bild img:images){
+			byte[] data=img.getData();
+			if(data!=null && data.length>0){
+				DocumentElement de=new DocumentElement(me.getContainer());
+				de.setMimetype("image/jpeg");
+				de.setDate(XMLTool.dateToXmlDate(img.getDate()));
+				de.setTitle(img.getTitle());
+				de.setOriginator(Hub.actMandant);
+				de.setHint(img.getInfo());
+				de.setDefaultXid(img.getId());
+				me.getContainer().addBinary(img.getId(), data);
+				me.getContainer().addChoice(de, img.getLabel());
+				me.addDocument(de);
 			}
 		}
 		
@@ -96,5 +105,11 @@ public class ExchangeContributor implements IExchangeContributor {
 		
 	}
 
+	public boolean init(MedicalElement me,boolean bExport){
+		if(bExport){
+			
+		}
+		return true;
+	}
 	
 }

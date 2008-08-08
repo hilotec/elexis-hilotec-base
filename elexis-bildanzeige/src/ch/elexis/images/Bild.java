@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 4135 2008-07-13 19:18:15Z rgw_ch $
+ *    $Id: Bild.java 4248 2008-08-08 14:40:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -90,6 +90,17 @@ public class Bild extends PersistentObject {
 		return sb.toString();
 	}
 
+	public String getDate(){
+		return get("Datum");
+	}
+	
+	public String getTitle(){
+		return get("Titel");
+	}
+	
+	public String getInfo(){
+		return get("Info");
+	}
 	/**
 	 * Image des Bildes erzeugen. Achtung: dieses muss nach Gebrauch 
 	 * mit dispose() wieder entsorgt werden.

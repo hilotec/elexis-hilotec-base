@@ -12,7 +12,14 @@
       <Transporter
             AcceptableTypes="ch.elexis.data.Konsultation"
             name="Bildanzeige"
-            xChangeContribution="ch.elexis.images.ExchangeContributor">
+            xChangeContribution="ch.elexis.images.XChangeContributor">
       </Transporter>
+   </extension>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.images.BildFactory"
+            name="Bildanzeige">
+      </Factory>
    </extension>
 </plugin>
