@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
+ *  $Id: FindingElement.java 4253 2008-08-09 19:11:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -40,7 +40,7 @@ public class FindingElement extends XChangeElement{
 		return XMLNAME;
 	}
 	
-	FindingElement(XChangeContainer p){
+	protected FindingElement(XChangeContainer p){
 		super(p);
 	}
 	
