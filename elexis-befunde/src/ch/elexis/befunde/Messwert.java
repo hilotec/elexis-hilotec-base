@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 3873 2008-05-05 16:59:32Z rgw_ch $
+ *    $Id: Messwert.java 4252 2008-08-09 19:11:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -43,8 +43,8 @@ import ch.rgw.tools.JdbcLink;
  */
 public class Messwert extends PersistentObject {
 	public static final int VERSION=3;
-	static final String SETUP_SEPARATOR=";;";
-	static final String SETUP_CHECKSEPARATOR=":/:";
+	public static final String SETUP_SEPARATOR=";;";
+	public static final String SETUP_CHECKSEPARATOR=":/:";
 	/**
 	 * Name of the table. By convention, every tablename has to have its plugin ID as prefix, to avoid naming 
 	 * conflicts. Unfortunaltely, this plugin was created before that convention was declared and therfore
