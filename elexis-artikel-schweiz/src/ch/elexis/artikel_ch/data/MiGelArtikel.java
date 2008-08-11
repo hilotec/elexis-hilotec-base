@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelArtikel.java 1742 2007-02-06 20:48:17Z rgw_ch $
+ *  $Id: MiGelArtikel.java 4257 2008-08-11 10:55:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -19,7 +19,7 @@ import ch.rgw.tools.StringTool;
 public class MiGelArtikel extends Artikel{
 	public MiGelArtikel(String code, String text, String unit, Money price){
 		create("MiGeL"+code);
-		String shortname=StringTool.getFirstLine(text,80);
+		String shortname=StringTool.getFirstLine(text,120);
 		set(new String[]{"Name","Typ","SubID"},new String[]{shortname,"MiGeL",code});
 		setExt("FullText",text);
 		setExt("unit",unit==null? "-" : unit);
