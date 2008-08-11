@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDialogs.java 4258 2008-08-11 13:59:37Z rgw_ch $
+ * $Id: RnDialogs.java 4259 2008-08-11 14:01:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -78,7 +78,7 @@ public class RnDialogs {
 			setTitle(Messages.getString("RnDialogs.invoice")+rn.getNr()); //$NON-NLS-1$
 			getShell().setText(Messages.getString("RnDialogs.addExpense")); //$NON-NLS-1$
 			setMessage(Messages.getString("RnDialogs.enterAmount")); //$NON-NLS-1$
-			setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+			setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		}
 		@Override
 		protected void okPressed() {
