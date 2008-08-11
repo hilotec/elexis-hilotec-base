@@ -82,8 +82,9 @@ public class XChangeContributor implements IExchangeContributor {
 				String name=m.get("Name");
 				String[] fl=params.get(name);
 				if(fl!=null){
-					BefundElement.addBefund(me,m,fl);
-					
+					for(String field:fl){
+						BefundElement.addBefund(me,m,field);
+					}
 				}
 			}
 		}

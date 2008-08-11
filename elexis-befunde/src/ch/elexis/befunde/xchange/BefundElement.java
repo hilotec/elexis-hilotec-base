@@ -24,26 +24,33 @@ import ch.elexis.util.XMLTool;
 @SuppressWarnings("serial")
 public class BefundElement extends ResultElement {
 	
-	public static BefundElement addBefund(MedicalElement me, Messwert mw, String[] fl){
+	/**
+	 * Ein neues Resultat hinzufügen. Erstellt ggf. das dazugehörige FindingElement. ID des FindingElements ist die id des Messwerts
+	 * mit angehängtem Spalten-Namen
+	 * @param me 
+	 * @param mw
+	 * @param fl
+	 * @return
+	 */
+	public static BefundElement addBefund(MedicalElement me, Messwert mw, String field){
 		List<FindingElement> findings=me.getAnalyses();
-		for(String field:fl){
-			String raw_id=mw.getId()+field;
-			String id=XMLTool.idToXMLID(raw_id);
-			for(FindingElement fe:findings){
-				if(fe.getXid().getID().equals(id)){
-					BefundElement bf=new BefundElement(me.getContainer(),mw);
-					me.addAnalyse(bf);
-					return bf;
-				}
+		String raw_id=mw.getId()+field;
+		String id=XMLTool.idToXMLID(raw_id);
+		for(FindingElement fe:findings){
+			if(fe.getXid().getID().equals(id)){
+				BefundElement bf=new BefundElement(me.getContainer(),mw, field);
+				me.addAnalyse(bf);
+				return bf;
 			}
-			BefundeItem bi=new BefundeItem(me.getContainer());
-			me.addFindingItem(bi);
 		}
-		BefundElement bf=new BefundElement(me.getContainer(),mw);
+		BefundeItem bi=new BefundeItem(me.getContainer());
+		me.addFindingItem(bi);
+		BefundElement bf=new BefundElement(me.getContainer(),mw,field);
 		me.addAnalyse(bf);
 		return bf;
 	}
-	BefundElement(XChangeContainer home, Messwert mw){
+	
+	BefundElement(XChangeContainer home, Messwert mw, String field){
 		super(home);
 	
 	}
