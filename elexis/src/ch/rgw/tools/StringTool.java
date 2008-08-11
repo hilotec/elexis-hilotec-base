@@ -1,4 +1,4 @@
-// $Id: StringTool.java 4127 2008-07-11 18:46:05Z rgw_ch $
+// $Id: StringTool.java 4256 2008-08-11 10:55:18Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -786,7 +786,7 @@ public static Hashtable foldStrings(final String s)
     	}
     	String[] lines=in.split(lineSeparators);
     	if(lines[0].length()>maxChars){
-    		int ix=lines[0].lastIndexOf(' ');
+    		int ix=lines[0].lastIndexOf(' ',maxChars);
     		return lines[0].substring(0,ix);
     	}
     	return lines[0];
