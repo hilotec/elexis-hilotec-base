@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDetailView.java 1189 2006-10-29 20:55:48Z rgw_ch $
+ * $Id: RnDetailView.java 4258 2008-08-11 13:59:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
