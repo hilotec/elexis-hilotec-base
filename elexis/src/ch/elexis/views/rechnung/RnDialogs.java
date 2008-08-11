@@ -233,9 +233,11 @@ public class RnDialogs {
 		protected void okPressed() {
 			rn.storno(bReactivate.getSelection());
 			for(Button exporter:exporters){
-				IRnOutputter iro=(IRnOutputter)exporter.getData();
-				if(iro!=null){
-					iro.doOutput(IRnOutputter.TYPE.STORNO, Arrays.asList(new Rechnung[]{rn}));
+				if (exporter.getSelection()) {
+					IRnOutputter iro=(IRnOutputter)exporter.getData();
+					if(iro!=null){
+						iro.doOutput(IRnOutputter.TYPE.STORNO, Arrays.asList(new Rechnung[]{rn}));
+					}
 				}
 			}
 			super.okPressed();
