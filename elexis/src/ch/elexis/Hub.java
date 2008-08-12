@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4246 2008-08-08 10:56:18Z rgw_ch $
+ *    $Id: Hub.java 4262 2008-08-12 16:13:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,10 +52,12 @@ import ch.elexis.util.PluginCleaner;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.UtilFile;
 import ch.rgw.IO.FileTool;
+import ch.rgw.IO.LockFile;
 import ch.rgw.IO.Settings;
 import ch.rgw.IO.SqlSettings;
 import ch.rgw.IO.SysSettings;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
@@ -119,9 +122,11 @@ public class Hub extends AbstractUIPlugin {
     /** Heartbeat */
     public static Heartbeat heart;
     
+    private static File userDir;
+    
     public Hub() {
 		plugin = this;
-		PluginCleaner.clean(new File(getBasePath()).getParent());
+		//PluginCleaner.clean(new File(getBasePath()).getParent());
 		// Log und Exception-Handler initialisieren
 		log=Log.get("Elexis startup"); //$NON-NLS-1$
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
@@ -130,7 +135,8 @@ public class Hub extends AbstractUIPlugin {
  		mandantCfg=localCfg;
  		// initialize log with default configuration
  		initializeLog(localCfg);
-
+ 		initializeLock();
+ 		
 		// Kommandozeile lesen und lokale Konfiguration einlesen
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
 		String[] args=Platform.getApplicationArgs();
@@ -148,6 +154,7 @@ public class Hub extends AbstractUIPlugin {
 		
 		String basePath=UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis"));
 		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath));
+		localCfg.set("elexis-userDir", userDir.getAbsolutePath());
 		
 		// Exception handler initialiseren, Output wie log, auf eigene Klassen begrenzen
         ExHandler.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE,"")); //$NON-NLS-1$
@@ -167,8 +174,7 @@ public class Hub extends AbstractUIPlugin {
         }
         log.log(Messages.Hub_24+getBasePath(),Log.INFOS);
  		pin.initializeDefaultPreferences();
-        // jobPool.addJob(new ListLoader<Patient>("PatientenListe",new Query<Patient>(Patient.class),new String[]{"Name","Vorname"})); //$NON-NLS-1$
-        //jobPool.addJob(new ListLoader<Plz>("Plz",new Query(Plz.class),new String[]{"Plz","Ort"}));
+
 
 	}
     
@@ -179,6 +185,12 @@ public class Hub extends AbstractUIPlugin {
 		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, "elexis.log"); //$NON-NLS-1$
 		int maxLogfileSize = -1;
 		try {
+			File fLog=new File(logfileName);
+			String dir=UtilFile.getFilepath(fLog.getAbsolutePath());
+			if(StringTool.isNothing(logfileName) || logfileName.equalsIgnoreCase("none")){
+				dir=System.getProperty("user.home")+File.separator+"elexis";
+			}
+			userDir=new File(dir);
 			String defaultValue = new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString();
 			String value = cfg.get(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, defaultValue);
 			maxLogfileSize = Integer.parseInt(value.trim());
@@ -191,6 +203,17 @@ public class Hub extends AbstractUIPlugin {
 		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT,Log.ERRORS));
     }
 
+    private void initializeLock(){
+    	try{
+ 			LockFile lockfile=new LockFile(userDir,"elexislock",4,86400);
+ 			if(!lockfile.lock()){
+ 				SWTHelper.alert("Zu viele Instanzen", "Es können keine weiteren Elexis-Instanzen gestartet werden");
+ 				System.exit(2);
+ 			}
+ 		}catch(IOException ex){
+ 			log.log("Can not aquire lock file", Log.ERRORS);
+ 		}
+    }
     public static int getSystemLogLevel(){
     	return localCfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS); 
     }
@@ -324,7 +347,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4246 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4262 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -387,5 +410,14 @@ public class Hub extends AbstractUIPlugin {
     	if(!shutdownJobs.contains(job)){
     		shutdownJobs.add(job);
     	}
+    }
+    
+    /**
+     * return a directory suitable for plugin specific configuration data
+     * @return a directory that exists always and is always writable and readable for plugins of the
+     * currentli running elexis instance
+     */
+    public File getWritableUserDir(){
+    	return userDir;
     }
 }
