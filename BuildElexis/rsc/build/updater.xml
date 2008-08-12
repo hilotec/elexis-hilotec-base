@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="elexis-updater" default="updater" basedir="../../">
 
-<target name="updater">
-        <property file="rsc/build/local.properties"/>
-        <property environment="env"/>
-        <property name="version" value="1.3.4"/>
-        <property name="dist"  value="${dest}/Elexis-${version}"/>
-        <property name="targetfile" value="elexis-mmc_1.0.0.20080806.jar"/>
-        <mkdir dir="${env.TEMP}/elexis-mmc"/>
-        <echo message="${source}"/>
-        <javac srcdir="${source}/Elexis-MMC/src" destdir="${env.TEMP}/elexis-mmc"
-                 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
-        <jar basedir="${env.TEMP}/elexis-mmc" destfile="${env.TEMP}/elexis-mmc.jar">
-            <manifest>
-                <attribute name="Main-Class" value="ch.elexis.mmc.Starter"/>
-            </manifest>
-        </jar>
-        <taskdef name="yguard"
-        classname="com.yworks.yguard.YGuardTask"
-        classpath="${dest}/../yguard.jar"/>
-      <yguard>
-        <inoutpair in="${env.TEMP}/elexis-mmc.jar" out="${dist}/${targetfile}"/>
-        <rename logfile="obfusc.log">
-          <property name="error-checking" value="pedantic"/>
-          <keep>
-            <class name="ch.elexis.Desk"/>
-            <method class="ch.elexis.mmc.Starter"
-                name="void main(java.lang.String[])"/>
-          </keep>
-        </rename>
-      </yguard>
-    </target>
+	<target name="updater">
+		<property file="rsc/build/local.properties" />
+		<property environment="env" />
+		<property name="version" value="1.3.4" />
+		<property name="dist" value="${dest}/Elexis-${version}" />
+		<property name="targetfile" value="elexis-mmc_1.0.0.20080812.jar" />
+		<mkdir dir="${env.TEMP}/elexis-mmc" />
+		<echo message="${source}" />
+		<javac srcdir="${source}/Elexis-MMC/src" destdir="${env.TEMP}/elexis-mmc" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8" />
+		<jar basedir="${env.TEMP}/elexis-mmc" destfile="${env.TEMP}/elexis-mmc.jar">
+			<manifest>
+				<attribute name="Main-Class" value="ch.elexis.mmc.Starter" />
+			</manifest>
+		</jar>
+		<taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${dest}/../yguard.jar" />
+		<yguard>
+			<inoutpair in="${env.TEMP}/elexis-mmc.jar" out="${dist}/${targetfile}" />
+			<rename logfile="obfusc.log">
+				<property name="error-checking" value="pedantic" />
+				<keep>
+					<class name="ch.elexis.Desk" />
+					<method class="ch.elexis.mmc.Starter" name="void main(java.lang.String[])" />
+				</keep>
+			</rename>
+		</yguard>
+	</target>
 
 </project>

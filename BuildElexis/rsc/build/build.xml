@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4241 2008-08-06 17:27:18Z rgw_ch $
-
+<!-- $Id: build.xml 4263 2008-08-12 20:46:29Z rgw_ch $
+    (c) 2005-2008 by G. Weirich
+    
+    This file reflects my personal environment. It is not intended for
+    public use. You may, however, use it if you like to, but everyhting 
+    can be changed without notice from one version to another, and there is absolutely
+    no guarantee that it works correctly nor that it works at all. If it turns your
+    500GB Harddisk into a 5.25" Floppy-Disk, that's your own silly fault. I warned you. 
+    
+     
 	Dieses Ant-Script erstellt die Release-Versionen von Elexis
 	Targets:
 	windows		: Windows-Installer erstellen
-	Linux  	    : Linux x386 - Installer erstellen
+	Linux  	    : Linux x386 - Tarball erstellen
+	mac         : MacOSX - Paket erstellen
 	clean       : Letzten Build wegräumen
     pro         : die Zusatzplugins erstellen
+    quick       : Wie pro aber ohne Dokumentation
+    all         : Linux, Windows und Mac erstellen
 
 	Voraussetzungen:
+	Folgende Verzeichnisstruktur muss existieren
+	${rcpbase}/windows/jre     - enthält das passende jre
+	                  /rcp     - enthält die unveränderlichen files von Eclipse
+	          /linux/jre
+	                /rcp
+	          /mac/rcp  
+	   
 	- Ant muss installiert sein
 	- Version muss unter Eclipse auf dieser Maschine korrekt lauffähig sein
 	- LaTeX inklusive KOMA muss installiert sein, es muss ein kommando 'texify'
@@ -17,12 +35,11 @@
 	- Es muss ein externes file namens local.properties im selben Verzeichnis wie dieses
 	  build.xml existieren, das folgende systemspezifischen Daten enthält:
 	  - svnrepo=svn://localhost/pd2/	# localhost gegen passende Adresse austauschen
-	  - eclipse=e:/dev/eclipse	    	# Welche Eclipsebasis verwendet werden soll (RCP-Basis)
+	  - rcpbase=e:/dev/build	    	# rcpbase, die die statischen files enthält (s.o.)
 	  - keystore=u:/keys/hwkeys			# Zum Signieren der Jars
 	  - source=/home/src/eclipse		# Wo die Quellcodes sind
 	  - makeself				        # Pfad zum makeself -executable (für Linux-Distri)
 	  - nsis				            # Pfad zum nsis-Executable (für Windows-Distri)
-	  - jre					            # Pfad zum einzubindenden jre
 	  - dest				            # Pfad zum Ausgabe-Verzeichnis
 	  - ooo								# Pfad zum OpenOffice Verzeichnis
 	(c) 2005-2008 G. Weirich
@@ -83,9 +100,6 @@
 		<mkdir dir="${plugins}"/>
 		<mkdir dir="${docsource}"/>
 		<mkdir dir="${doc}"/>
-		<copy todir="${dist}">
-			<fileset dir="${eclipse}"/>
-		</copy>
 		<antcall target="doc"/>
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
 		<condition property="updater.ok">
@@ -157,12 +171,16 @@
 	
 	<!-- Windows - Version der Distribution -->
 	<target name="windows" depends="prepare, updater">
+		<delete dir="${dist}"/>
+		<copy todir="${dist}">
+			  <fileset dir="${rcpbase}/windows/rcp"/>
+		</copy>
 		<ant antfile="rsc/build/plugins.xml" target="main"/>
 		<ant antfile="../noatext/build.xml"/>		
 		<ant antfile="../elexis-trustx-embed/build.xml"/>
 		 <mkdir dir="${dist}/jre"/>
 		 <copy todir="${dist}/jre">
-			 <fileset dir="${jre}"/>
+			 <fileset dir="${rcpbase}/windows/jre"/>
 		 </copy>
 		<exec dir="rsc/build" executable="${nsis}">
 			<arg line="elexis-win32-nodemo.nsi"/>
@@ -171,20 +189,18 @@
 
 	<!-- Linux x86 Version der Distribution -->
 	<target name="Linux" depends="prepare">
-		<!-- ant antfile="../Oowrapper/build.xml"/ -->
-		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
+		<delete dir="${dist}"/>
+		<copy todir="${dist}">
+			  <fileset dir="${rcpbase}/linux/rcp"/>
+		</copy>
 		<ant antfile="rsc/build/plugins.xml" target="main"/>
+		<ant antfile="../Oowrapper/build.xml"/>
+		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
+		
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
 		<exec executable="cp">
 			<arg line="-r ${jre} ${dist}/jre"/>
 		</exec>
-		 <!-- exec executable="${makeself}">
-			 <arg value="- -notemp"/>
-			 <arg value="${dist}"/>
-			 <arg value="${output}/elexis-linux-i386-${version}.run"/>
-			 <arg value="Elexis ${version}"/>
-			 <arg value="chmod +x elexis"/>
-		 </exec-->
 		<exec executable="chmod" dir="${dist}">
 					<arg line="+x elexis"/>
 		</exec>
@@ -195,6 +211,10 @@
 
 	<!-- Mac OSX Version der Distribution -->
 	<target name="mac" depends="prepare">
+		<delete dir="${dist}"/>
+		<copy todir="${dist}">
+			  <fileset dir="${rcpbase}/mac/rcp"/>
+		</copy>
 		<copy file="${rsc}/elexis-mac.icns" tofile="${dist}/elexis-mac.icns"/>
 		<ant antfile="rsc/build/plugins.xml" target="main"/>
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
