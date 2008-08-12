@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 4115 2008-07-07 14:37:10Z rgw_ch $
+ *  $Id: KontaktSelektor.java 4261 2008-08-12 08:03:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -64,7 +64,7 @@ import ch.rgw.tools.TimeTool;
 
 public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListener{
 	 //Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
-	public static final int HINTSIZE=11;
+	public static final int HINTSIZE=12;
 	
 	public static final int HINT_NAME=0;
 	public static final int HINT_FIRSTNAME=1;
@@ -77,6 +77,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	public static final int HINT_FAX=8;
 	public static final int HINT_MAIL=9;
 	public static final int HINT_SEX=10;
+	public static final int HINT_PATIENT=11;
 	
 	//	private Class clazz;
 	CommonViewer cv;

@@ -13,20 +13,14 @@
 
 package ch.elexis.exchange;
 
-import static ch.elexis.dialogs.KontaktSelektor.HINTSIZE;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_BIRTHDATE;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_FIRSTNAME;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_NAME;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_PLACE;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_SEX;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_STREET;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_ZIP;
+import static ch.elexis.dialogs.KontaktSelektor.*;
 
 import java.util.List;
 
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
@@ -98,6 +92,17 @@ public class KontaktMatcher {
 		}
 	}
 	
+	public static Patient findPatient(final String name, final String vorname, final String gebdat,
+			final String gender, final String strasse, final String plz, final String ort,
+			final String natel, final CreateMode createMode){
+		Person pat= findPerson(name,vorname,gebdat,gender,strasse,plz,ort,natel,createMode,true);
+		return Patient.load(pat.getId());
+	}
+	public static Person findPerson(final String name, final String vorname, final String gebdat,
+			final String gender, final String strasse, final String plz, final String ort,
+			final String natel, final CreateMode createMode){
+		return findPerson(name,vorname,gebdat,gender,strasse,plz,ort,natel,createMode,false);
+	}
 	/**
 	 * find the Person matching the given parameters
 	 * @param name
@@ -113,7 +118,7 @@ public class KontaktMatcher {
 	 */
 	public static Person findPerson(final String name, final String vorname, final String gebdat,
 				final String gender, final String strasse, final String plz, final String ort,
-				final String natel, final CreateMode createMode){
+				final String natel, final CreateMode createMode, final boolean isPatient){
 		String[] hints=new String[HINTSIZE];
 		hints[HINT_NAME]=name;
 		hints[HINT_FIRSTNAME]=vorname;
@@ -122,7 +127,9 @@ public class KontaktMatcher {
 		hints[HINT_STREET]=strasse;
 		hints[HINT_ZIP]=plz;
 		hints[HINT_PLACE]=ort;
-		
+		if(isPatient){
+			hints[HINT_PATIENT]="1";
+		}
 		Query<Person> qbe=new Query<Person>(Person.class);
 		String sex="";
 		String birthdate="";

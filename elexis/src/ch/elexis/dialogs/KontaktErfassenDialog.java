@@ -9,7 +9,7 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added Anschrift
  *    
- * $Id: KontaktErfassenDialog.java 4113 2008-07-07 13:46:20Z rgw_ch $
+ * $Id: KontaktErfassenDialog.java 4261 2008-08-12 08:03:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -106,6 +106,11 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 				bPatientChanged(bPatient.getSelection());
 			}
 		});
+		if(fld.length>KontaktSelektor.HINT_PATIENT){
+			if(!StringTool.isNothing(fld[KontaktSelektor.HINT_PATIENT])){
+				bPatient.setSelection(true);
+			}
+		}
 		bAnwender = Desk.getToolkit().createButton(cTypes, Messages
 				.getString("KontaktErfassenDialog.user"), SWT.CHECK); //$NON-NLS-1$
 		bAnwender.addSelectionListener(new SelectionAdapter() {
