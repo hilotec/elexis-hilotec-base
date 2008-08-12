@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4265 2008-08-12 23:09:34Z rgw_ch $
+<!-- $Id: build.xml 4266 2008-08-12 23:12:28Z rgw_ch $
     (c) 2005-2008 by G. Weirich
     
     This file reflects my personal environment. It is not intended for
@@ -194,7 +194,7 @@
 			  <fileset dir="${rcpbase}/linux/rcp"/>
 		</copy>
 		<ant antfile="rsc/build/plugins.xml" target="main"/>
-		<ant antfile="../Oowrapper/build.xml"/>
+		<ant antfile="../OOwrapper/build.xml"/>
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
 		
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
