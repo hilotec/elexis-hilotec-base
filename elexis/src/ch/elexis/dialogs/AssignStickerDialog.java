@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AssignEtiketteDialog.java 3821 2008-04-20 13:48:00Z rgw_ch $
+ * $Id: AssignStickerDialog.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -25,21 +25,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import ch.elexis.data.Etikette;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
 
-public class AssignEtiketteDialog extends TitleAreaDialog {
+public class AssignStickerDialog extends TitleAreaDialog {
 	PersistentObject mine;
 	Table table;
-	List<Etikette> alleEtiketten;
-	List<Etikette> mineEtiketten;
+	List<Sticker> alleEtiketten;
+	List<Sticker> mineEtiketten;
 	
-	public AssignEtiketteDialog(Shell shell, PersistentObject obj){
+	public AssignStickerDialog(Shell shell, PersistentObject obj){
 		super(shell);
 		mine=obj;
-		mineEtiketten=mine.getEtiketten();
+		mineEtiketten=mine.getStickers();
 	}
 
 	@Override
@@ -48,12 +48,12 @@ public class AssignEtiketteDialog extends TitleAreaDialog {
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		Label lbl=new Label(ret,SWT.WRAP);
-		lbl.setText("Bitte bestätigen Sie alle benötigten Etiketten mit Häkchen");
+		lbl.setText("Bitte bestätigen Sie alle benötigten Sticker mit Häkchen");
 		table=new Table(ret,SWT.CHECK|SWT.SINGLE);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Query<Etikette> qbe=new Query<Etikette>(Etikette.class);
+		Query<Sticker> qbe=new Query<Sticker>(Sticker.class);
 		alleEtiketten=qbe.execute();
-		for(Etikette et:alleEtiketten){
+		for(Sticker et:alleEtiketten){
 			TableItem it=new TableItem(table,SWT.NONE);
 			if(mineEtiketten.contains(et)){
 				it.setChecked(true);
@@ -70,23 +70,23 @@ public class AssignEtiketteDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Etiketten");
-		setMessage("Geben Sie bitte die Etiketten für "+mine.getLabel()+" ein.");
-		getShell().setText("Elexis Etiketten");
+		setTitle("Sticker");
+		setMessage("Geben Sie bitte die Sticker für "+mine.getLabel()+" ein.");
+		getShell().setText("Elexis Sticker");
 	}
 
 	@Override
 	protected void okPressed() {
 		
 		for(TableItem it:table.getItems()){
-			Etikette et=(Etikette)it.getData();
+			Sticker et=(Sticker)it.getData();
 			if(it.getChecked()){
 				if(!mineEtiketten.contains(et)){
-					mine.addEtikette(et);
+					mine.addSticker(et);
 				}
 			}else{
 				if(mineEtiketten.contains(et)){
-					mine.removeEtikette(et);
+					mine.removeSticker(et);
 				}
 			}
 		}

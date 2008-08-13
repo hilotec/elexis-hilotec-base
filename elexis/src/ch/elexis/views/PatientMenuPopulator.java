@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientMenuPopulator.java 4176 2008-07-24 19:50:11Z rgw_ch $
+ *  $Id: PatientMenuPopulator.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -32,7 +32,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Patient;
-import ch.elexis.dialogs.AssignEtiketteDialog;
+import ch.elexis.dialogs.AssignStickerDialog;
 import ch.elexis.exchange.IDataSender;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
@@ -40,12 +40,12 @@ import ch.elexis.util.ViewMenus.IMenuPopulator;
 import ch.rgw.tools.ExHandler;
 
 public class PatientMenuPopulator implements IMenuPopulator {
-	IAction exportKGAction, delPatAction,etiketteAction;
+	IAction exportKGAction, delPatAction,stickerAction;
 	PatientenListeView mine;
 	
 	public IAction[] fillMenu() {
 		LinkedList<IAction> ret=new LinkedList<IAction>();
-		ret.add(etiketteAction);
+		ret.add(stickerAction);
 		if(Hub.acl.request(AccessControlDefaults.KONTAKT_DELETE)){
 			ret.add(delPatAction);
 		}
@@ -59,14 +59,14 @@ public class PatientMenuPopulator implements IMenuPopulator {
 	
 	PatientMenuPopulator(PatientenListeView plv){
 		mine=plv;
-		etiketteAction=new RestrictedAction(AccessControlDefaults.KONTAKT_ETIKETTE, "Etiketten..."){
+		stickerAction=new RestrictedAction(AccessControlDefaults.KONTAKT_ETIKETTE, "Sticker..."){
 			{
-				setToolTipText("Etiketten anheften oder entfernen");
+				setToolTipText("Sticker anheften oder entfernen");
 			}
 			@Override
 			public void doRun() {
 				Patient p=mine.getSelectedPatient();
-				AssignEtiketteDialog aed=new AssignEtiketteDialog(Hub.getActiveShell(),p);
+				AssignStickerDialog aed=new AssignStickerDialog(Hub.getActiveShell(),p);
 				aed.open();
 			}
 			

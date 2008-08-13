@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4047 2008-06-18 13:38:22Z rgw_ch $
+ * $Id: PatListFilterBox.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.Etikette;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -201,8 +201,8 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	
 	class EtikettenAuswahl extends Dialog{
 		List lEtiketten;
-		Etikette[] etiketten;
-		Etikette[] result;
+		Sticker[] etiketten;
+		Sticker[] result;
 		public EtikettenAuswahl() {
 			super(PatListFilterBox.this.getShell());
 		}
@@ -218,8 +218,8 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			Composite ret=(Composite) super.createDialogArea(parent);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			lEtiketten=new List(ret,SWT.MULTI);
-			Query<Etikette> qbe=new Query<Etikette>(Etikette.class);
-			etiketten=qbe.execute().toArray(new Etikette[0]);
+			Query<Sticker> qbe=new Query<Sticker>(Sticker.class);
+			etiketten=qbe.execute().toArray(new Sticker[0]);
 			String[] etexts=new String[etiketten.length];
 			for(int i=0;i<etiketten.length;i++){
 				etexts[i]=etiketten[i].getLabel();
@@ -231,7 +231,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		@Override
 		protected void okPressed() {
 			int[] indices=lEtiketten.getSelectionIndices();
-			result=new Etikette[indices.length];
+			result=new Sticker[indices.length];
 			for(int i=0;i<indices.length;i++){
 				add(etiketten[indices[i]]);
 			}

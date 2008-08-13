@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4163 2008-07-21 15:34:41Z rgw_ch $
+ *    $Id: PersistentObject.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -607,34 +607,34 @@ public abstract class PersistentObject{
     }
     
     /**
-     * hilt die "höchstwertige" Etikette, falls mehrere existieren
+     * holt den "höchstwertigen" Sticker, falls mehrere existieren
      * @return
      */
-    public Etikette getEtikette(){
-    	List<Etikette> list=getEtiketten();
+    public Sticker getSticker(){
+    	List<Sticker> list=getStickers();
     	return list.size()>0 ? list.get(0) : null;
     }
     @SuppressWarnings("unchecked")
-	public List<Etikette> getEtiketten(){
+	public List<Sticker> getStickers(){
     	String ID=new StringBuilder().append("ETK").append(getId()).toString();
-    	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
+    	ArrayList<Sticker> ret=(ArrayList<Sticker>)cache.get(ID);
     	if(ret!=null){
     		return ret;
     	}
-    	ret=new ArrayList<Etikette>();
+    	ret=new ArrayList<Sticker>();
     	StringBuilder sb=new StringBuilder();
     	Stm stm=getConnection().getStatement();
 		
     	sb.append("SELECT etikette FROM ")
-    		.append(Etikette.LINKTABLE).append(" WHERE ")
+    		.append(Sticker.LINKTABLE).append(" WHERE ")
     		.append("obj = '").append(getId()).append("'");
     	try{
     		ResultSet res=stm.query(sb.toString());
 
     		while(res!=null && res.next()){
-    			Etikette et=Etikette.load(res.getString(1));
+    			Sticker et=Sticker.load(res.getString(1));
     			if(et!=null && et.exists()){
-    				ret.add(Etikette.load(res.getString(1)));
+    				ret.add(Sticker.load(res.getString(1)));
     			}
     		}
     		res.close();
@@ -651,31 +651,31 @@ public abstract class PersistentObject{
     }
     
     @SuppressWarnings("unchecked")
-	public void removeEtikette(Etikette et){
+	public void removeSticker(Sticker et){
     	String ID=new StringBuilder().append("ETK").append(getId()).toString();
-    	ArrayList<Etikette> ret=(ArrayList<Etikette>)cache.get(ID);
+    	ArrayList<Sticker> ret=(ArrayList<Sticker>)cache.get(ID);
     	if(ret!=null){
     		ret.remove(et);
     	}
     	StringBuilder sb=new StringBuilder();
-    	sb.append("DELETE FROM ").append(Etikette.LINKTABLE)
+    	sb.append("DELETE FROM ").append(Sticker.LINKTABLE)
     		.append(" WHERE obj=").append(getWrappedId())
     		.append(" AND etikette=").append(et.getWrappedId());
     	getConnection().exec(sb.toString());
     }
     
     @SuppressWarnings("unchecked")
-	public void addEtikette(Etikette et){
-    	String ID=new StringBuilder().append("ETK").append(getId()).toString();
-    	List<Etikette> ret=(List<Etikette>)cache.get(ID);
+	public void addSticker(Sticker et){
+    	String ID=new StringBuilder().append("STK").append(getId()).toString();
+    	List<Sticker> ret=(List<Sticker>)cache.get(ID);
     	if(ret==null){
-    		ret=getEtiketten();
+    		ret=getStickers();
     	}
     	if(!ret.contains(et)){
     		ret.add(et);
     		Collections.sort(ret);
     		StringBuilder sb=new StringBuilder();
-    		sb.append("INSERT INTO ").append(Etikette.LINKTABLE)
+    		sb.append("INSERT INTO ").append(Sticker.LINKTABLE)
     			.append("(obj,etikette) VALUES (")
     			.append(getWrappedId()).append(",")
     			.append(et.getWrappedId()).append(");");

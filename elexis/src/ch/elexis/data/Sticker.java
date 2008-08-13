@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etikette.java 4096 2008-07-05 05:09:31Z rgw_ch $
+ *    $Id: Sticker.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -30,7 +30,7 @@ import ch.rgw.tools.JdbcLink.Stm;
  * @author gerry
  *
  */
-public class Etikette extends PersistentObject implements Comparable<Etikette>{
+public class Sticker extends PersistentObject implements Comparable<Sticker>{
 	static final String TABLENAME="ETIKETTEN";
 	static final String LINKTABLE="ETIKETTEN_OBJECT_LINK";
 		
@@ -42,7 +42,7 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 		);
 	}
 	
-	public Etikette(String name, Color fg, Color bg){
+	public Sticker(String name, Color fg, Color bg){
 		create(null);
 		if(fg==null){
 			fg=Desk.getColor(Desk.COL_BLACK);
@@ -149,7 +149,7 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
     	Stm stm=getConnection().getStatement();
 		
     	sb.append("DELETE FROM ")
-    		.append(Etikette.LINKTABLE).append(" WHERE ")
+    		.append(Sticker.LINKTABLE).append(" WHERE ")
     		.append("etikette = '").append(getId()).append("'");
     	stm.exec(sb.toString());
     	getConnection().releaseStatement(stm);
@@ -157,18 +157,18 @@ public class Etikette extends PersistentObject implements Comparable<Etikette>{
 	}
 	
 	
-	public static Etikette load(String id){
-		Etikette ret=new Etikette(id);
+	public static Sticker load(String id){
+		Sticker ret=new Sticker(id);
 		if(!ret.exists()){
 			return null;
 		}
 		return ret;
 	}
-	protected Etikette(String id){
+	protected Sticker(String id){
 		super(id);
 	}
-	protected Etikette(){}
-	public int compareTo(Etikette o) {
+	protected Sticker(){}
+	public int compareTo(Sticker o) {
 		if(o != null){
 			return o.getWert()-getWert();
 		}

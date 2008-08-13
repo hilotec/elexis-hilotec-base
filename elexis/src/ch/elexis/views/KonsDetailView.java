@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 3963 2008-05-24 04:49:28Z rgw_ch $
+ *  $Id: KonsDetailView.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -54,7 +54,7 @@ import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
-import ch.elexis.data.Etikette;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
@@ -264,7 +264,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
     	}
 		if(pat!=null){
 			form.setText(pat.getPersonalia());
-			List<Etikette> etis=pat.getEtiketten();
+			List<Sticker> etis=pat.getStickers();
 			if(etis!=null && etis.size()>0){
 				Point size=form.getHead().getSize();
 				//RowLayout rl=new RowLayout(SWT.HORIZONTAL);
@@ -273,7 +273,7 @@ public class KonsDetailView extends ViewPart  implements SelectionListener, Acti
 				//rl.pack=true;
 				//rl.wrap=true;
 				//cEtiketten.setLayout(rl);
-				for(Etikette et:etis){
+				for(Sticker et:etis){
 					if(et!=null){
 						et.createForm(cEtiketten);
 					}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4144 2008-07-17 05:48:36Z rgw_ch $
+ * $Id: PatientenListeView.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 
@@ -40,7 +40,7 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.Etikette;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Reminder;
@@ -151,7 +151,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				if(Reminder.findRemindersDueFor(pat, Hub.actUser,false).size()>0){
 					return Desk.getImage(Desk.IMG_AUSRUFEZ);
 				}
-				Etikette et=pat.getEtikette();
+				Sticker et=pat.getSticker();
 				Image im=null;
 				if(et!=null && (im=et.getImage())!=null){
 					return im;
@@ -170,7 +170,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		public Color getBackground(final Object element, final int columnIndex) {
 			if(element instanceof Patient){
 				Patient pat=(Patient)element;
-				Etikette et=pat.getEtikette();
+				Sticker et=pat.getSticker();
 				if(et!=null){
 					return et.getBackground();
 				}
@@ -181,7 +181,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		public Color getForeground(final Object element, final int columnIndex) {
 			if(element instanceof Patient){
 				Patient pat=(Patient)element;
-				Etikette et=pat.getEtikette();
+				Sticker et=pat.getSticker();
 				if(et!=null){
 					return et.getForeground();
 				}

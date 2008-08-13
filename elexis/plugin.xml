@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 4227 2008-08-03 10:00:45Z rgw_ch $ 
+<!-- $Id: plugin.xml 4268 2008-08-13 08:35:03Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -517,9 +517,9 @@
             name="%elexis.scannerPrefs">
       </page>
       <page
-            class="ch.elexis.preferences.Etiketten"
-            id="ch.elexis.prefs.etiketten"
-            name="Etiketten">
+            class="ch.elexis.preferences.Stickers"
+            id="ch.elexis.prefs.sticker"
+            name="Sticker">
       </page>
       <page
             category="ch.elexis.preferences.UserPreferences"

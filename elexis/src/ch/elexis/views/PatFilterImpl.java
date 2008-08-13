@@ -8,30 +8,27 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4049 2008-06-18 17:36:53Z rgw_ch $
+ * $Id: PatFilterImpl.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.List;
 
-import com.sun.org.apache.regexp.internal.RE;
-
 import ch.elexis.data.Artikel;
 import ch.elexis.data.BezugsKontakt;
-import ch.elexis.data.Etikette;
 import ch.elexis.data.Fall;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.NamedBlob;
-import ch.elexis.data.NamedBlob2;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Script;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.PatListFilterBox.IPatFilter;
@@ -100,9 +97,9 @@ public class PatFilterImpl implements IPatFilter {
 				return ACCEPT;
 			}
 			return REJECT;
-		}else if(o instanceof Etikette){
-			List<Etikette> etis=p.getEtiketten();
-			Etikette e=(Etikette)o;
+		}else if(o instanceof Sticker){
+			List<Sticker> etis=p.getStickers();
+			Sticker e=(Sticker)o;
 			if(etis.contains(e)){
 				return ACCEPT;
 			}

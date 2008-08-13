@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Etiketten.java 4046 2008-06-17 11:47:17Z rgw_ch $
+ *    $Id: Stickers.java 4268 2008-08-13 08:35:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -43,22 +43,22 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
-import ch.elexis.data.Etikette;
+import ch.elexis.data.Sticker;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.ImageChooser;
 import ch.elexis.util.SWTHelper;
 
-public class  Etiketten extends PreferencePage implements
+public class  Stickers extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	Combo combo;
 	Canvas cImage,cFore,cBack;
-	Etikette act;
-	List<Etikette> lEtiketten;
+	Sticker act;
+	List<Sticker> lEtiketten;
 	Button bNew, bRemove;
 	Spinner spWert;
 	
-	void setEtikette(Etikette et){
+	void setSticker(Sticker et){
 		act=et;
 		if(et==null){
 			cImage.setBackground(Desk.getColor(Desk.COL_WHITE));
@@ -88,7 +88,7 @@ public class  Etiketten extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				int i=combo.getSelectionIndex();
 				if(i>-1){
-					setEtikette(lEtiketten.get(i));
+					setSticker(lEtiketten.get(i));
 					bRemove.setEnabled(true);
 				}
 			}
@@ -104,27 +104,27 @@ public class  Etiketten extends PreferencePage implements
 				}
 				
 			}});
-		for(Etikette et:lEtiketten){
+		for(Sticker et:lEtiketten){
 			combo.add(et.getLabel());
 		}
 		//new Label(ret,SWT.NONE).setText("Anzeige");
 		Composite bottom=new Composite(ret,SWT.NONE);
 		bottom.setLayout(new GridLayout(2,false));
 		bNew=new Button(bottom,SWT.PUSH);
-		bNew.setText("Neue Etikette");
+		bNew.setText("Neuer Sticker");
 		bNew.addSelectionListener(new SelectionAdapter(){
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String name=combo.getText();
-				Etikette n=new Etikette(name,null,null);
+				Sticker n=new Sticker(name,null,null);
 				lEtiketten.add(n);
 				combo.add(n.getLabel());
 			}
 			
 		});
 		bRemove=new Button(bottom,SWT.PUSH);
-		bRemove.setText("Etikette löschen");
+		bRemove.setText("Sticker löschen");
 		bRemove.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -132,7 +132,7 @@ public class  Etiketten extends PreferencePage implements
 				if(idx>-1){
 					//String n=combo.getItem(idx);
 					combo.remove(idx);
-					Etikette eti=lEtiketten.get(idx);
+					Sticker eti=lEtiketten.get(idx);
 					lEtiketten.remove(idx);
 					eti.delete();
 				}
@@ -184,7 +184,7 @@ public class  Etiketten extends PreferencePage implements
 					ImageChooser imc=new ImageChooser(getShell());
 					if(imc.open()==Dialog.OK){
 						act.setImage(imc.getSelection());
-						setEtikette(act);
+						setSticker(act);
 					}	
 				}
 			}
@@ -204,7 +204,7 @@ public class  Etiketten extends PreferencePage implements
 					if(rgb!=null){
 						act.setForeground(Desk.createColor(rgb));
 					}
-					setEtikette(act);
+					setSticker(act);
 				}
 			}
 			
@@ -224,7 +224,7 @@ public class  Etiketten extends PreferencePage implements
 					if(rgb!=null){
 						act.setBackground(Desk.createColor(rgb));
 					}
-					setEtikette(act);
+					setSticker(act);
 				}
 			}
 			
@@ -238,19 +238,19 @@ public class  Etiketten extends PreferencePage implements
 				}
 				
 			}});
-		new Label(bottom,SWT.NONE).setText("'Wert' des Etiketts");
+		new Label(bottom,SWT.NONE).setText("'Wert' des Stickers");
 		bNew.setEnabled(false);
 		bRemove.setEnabled(false);
 		return ret;
 	}
 
 	public void init(IWorkbench workbench) {
-		Query<Etikette> qbe=new Query<Etikette>(Etikette.class);
+		Query<Sticker> qbe=new Query<Sticker>(Sticker.class);
 		lEtiketten=qbe.execute();
 		if(lEtiketten!=null){
 			
 		}else{
-			lEtiketten=new LinkedList<Etikette>();
+			lEtiketten=new LinkedList<Sticker>();
 		}
 		
 	}
