@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 3888 2008-05-08 14:38:16Z danlutz $
+ *  $Id: LabItem.java 4269 2008-08-13 13:44:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -167,7 +167,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	 */
 	public String makeVarName(){
 		String[] group=getGroup().split(" ",2);
-		String num=getPrio();
+		String num=getPrio().trim();
 		return group[0]+"_"+num;
 	}
 	public String getRefW(){
