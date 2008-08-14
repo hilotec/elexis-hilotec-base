@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ * $Id: Verrechnet.java 4272 2008-08-14 10:40:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -73,7 +73,8 @@ public class Verrechnet extends PersistentObject {
 	}
 	/** Den effektiv verrechneten Preis holen (braucht nicht TP*Scale zu sein */
 	public Money getEffPreis(){
-		return new Money(checkZero(get("VK_Preis")));
+		double amount=checkZero(get("VK_Preis"))*checkZero(get("Scale"))/100.0;
+		return new Money((int)Math.round(amount));
 	}
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
 
@@ -119,7 +120,7 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setExtInfo(final String key, final String value){
+	public void setDetail(final String key, final String value){
 		Hashtable ext=getHashtable("Detail");
 		ext.put(key,value);
 		setHashtable("Detail", ext);
@@ -127,7 +128,7 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public String getExtInfo(final String key){
+	public String getDetail(final String key){
 		Hashtable ext=getHashtable("Detail");
 		return (String)ext.get(key);
 	}

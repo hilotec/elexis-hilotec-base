@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ *  $Id: Konsultation.java 4272 2008-08-14 10:40:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -650,7 +650,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
     	}
     }
     
-    /** Den tatsächlich verrechneten Preis (in Rappen) eines Artikels holen */
+    /** Den tatsächlich verrechneten Preis (in Rappen) eines Artikels holen 
     @Deprecated
     public Money getEffPreis(IVerrechenbar v){
     	StringBuilder sb=new StringBuilder();
@@ -674,15 +674,20 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
     		j.releaseStatement(stm);
     	}
     }
-    
+    */
+    /**
+     * (Beliebige) Konsultationsspezifische Details zu einem Verrechnungscode werden in einer HAshtable gespeichert,
+     * die hier rückgelesen werden kann.
+     * @param v
+     * @return
+     
     @SuppressWarnings("unchecked")
-	public Hashtable getDetailsFor(IVerrechenbar v){
+	public Hashtable getDetailsFor(Verrechnet v){
     	Stm stm=j.getStatement();
     	try {
         	StringBuilder sb=new StringBuilder();
         	sb.append("SELECT DETAIL FROM LEISTUNGEN WHERE BEHANDLUNG=")
-        		.append(getWrappedId()) /*.append(" AND KLASSE=")
-        		.append(JdbcLink.wrap(v.getClass().getName()))*/
+        		.append(getWrappedId()) 
         		.append("AND LEISTG_CODE=").append(JdbcLink.wrap(v.getId()));
 
 			ResultSet rs=stm.query(sb.toString());
@@ -715,8 +720,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
     	}
     	StringBuilder sql=new StringBuilder(1000);
         sql.append("UPDATE LEISTUNGEN SET DETAIL=? WHERE BEHANDLUNG=")
-           		.append(getWrappedId()) /*.append(" AND KLASSE=")
-        		.append(JdbcLink.wrap(v.getClass().getName())) */
+           		.append(getWrappedId()) 
         		.append("AND LEISTG_CODE=").append(JdbcLink.wrap(v.getId()));
 
         String cmd=sql.toString();
@@ -730,7 +734,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
         }
 
     }
-    
+   */
     @Override
 	public boolean delete() {
 		return delete(true);

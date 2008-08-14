@@ -460,15 +460,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 			}
 			@Override
 			public void doRun() {
-				if(isChecked()){
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
-					setLocked(true);
-				}else{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_OPEN));
-					setLocked(false);
-				}
-				
-				
+				setLocked(isChecked());
 			}
 			
 		};
@@ -482,8 +474,10 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		delZA.setEnabled(!bLock);
 		if(bLock){
 			hHA.setForeground(Desk.getColor(Desk.COL_GREY));
+			lockAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
 		}else{
 			hHA.setForeground(Desk.getColor(Desk.COL_BLUE));
+			lockAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_OPEN));
 		}
 		lockAction.setChecked(bLock);
 	}
