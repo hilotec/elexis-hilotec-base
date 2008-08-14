@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4133 2008-07-13 19:10:59Z rgw_ch $
+ * $Id: TarmedOptifier.java 4271 2008-08-14 10:39:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -130,8 +130,8 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 				}
-				check.setExtInfo("AL", Integer.toString(tc.getAL()));
-				check.setExtInfo("TL", Integer.toString(tc.getTL()));
+				check.setDetail("AL", Integer.toString(tc.getAL()));
+				check.setDetail("TL", Integer.toString(tc.getTL()));
 				lst.add(check);
 			}
 			/* Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> vorerst raus
@@ -181,6 +181,7 @@ public class TarmedOptifier implements IOptifier {
 			double factor=PersistentObject.checkZeroDouble(check.get("VK_Scale"));
 // Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
 			if(tcid.equals("35.0020")){
+				/*
 				double sum=0.0;
 				for(Verrechnet v:lst){
 					if(v.getVerrechenbar() instanceof TarmedLeistung){
@@ -188,10 +189,25 @@ public class TarmedOptifier implements IOptifier {
 						if(tl.getSparteAsText().equals("OP I")){
 							int tech=tl.getTL();
 							double abzug=tech*4.0/10.0;
-							sum-=abzug;
+							sum+=abzug;
 						}
 					}
 				}
+				sum=sum*factor/100.0;
+				check.setPreis(new Money(sum));
+				*/
+				double sum=0.0;
+				for(Verrechnet v:lst){
+					if(v.getVerrechenbar() instanceof TarmedLeistung){
+						TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
+						if(tl.getSparteAsText().equals("OP I")){
+							int tech=tl.getTL();
+							sum+=tech;
+						}
+					}
+				}
+				double scale=-0.4;
+				check.setDetail("scale", Double.toString(scale));
 				sum=sum*factor/100.0;
 				check.setPreis(new Money(sum));
 			}

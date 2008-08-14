@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 3870 2008-05-05 16:59:14Z rgw_ch $
+ * $Id: TarmedLeistung.java 4271 2008-08-14 10:39:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -173,7 +173,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
                 if((in==null)|| (in.length==0)){
                     ext=new Hashtable<String,String>();
                 }else{
-                    ext=StringTool.fold(in,StringTool.GLZ,null);
+                    ext=StringTool.fold(in,StringTool.GUESS,null);
                 }
             }
         }catch(Exception ex){
@@ -189,7 +189,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     /** Erweiterte Informationen rückspeichern */
     public void flushExtension(){
         if(ext!=null){
-            byte[] flat=StringTool.flatten(ext,StringTool.GLZ,null);
+            byte[] flat=StringTool.flatten(ext);
             PreparedStatement preps=j.prepareStatement("UPDATE TARMED_EXTENSION SET limits=? WHERE CODE="+getWrappedId()); //$NON-NLS-1$
             try{
                 preps.setBytes(1,flat);
@@ -348,6 +348,7 @@ public class TarmedLeistung extends VerrechenbarAdapter{
     	loadExtension();
     	return (int)Math.round(checkZeroDouble(ext.get("TP_TL"))*100); //$NON-NLS-1$
     }
+    
     /** Preis der Leistung in Rappen 
     public int getPreis(TimeTool date, String subgroup)
     {
