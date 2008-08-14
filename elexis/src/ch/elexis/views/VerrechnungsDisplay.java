@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4075 2008-06-26 14:16:25Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4274 2008-08-14 16:24:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -187,7 +187,7 @@ public class VerrechnungsDisplay extends Composite {
         		Verrechnet v=(Verrechnet)ti.getData();
         		//String p=Rechnung.geldFormat.format(v.getEffPreisInRappen()/100.0);
         		String p=v.getEffPreis().getAmountAsString();
-        		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Preis für Leistung ändern","Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)",p,null);
+        		InputDialog dlg=new InputDialog(Desk.getTopShell(),"Preis für Leistung ändern","Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)",p,null);
         		if(dlg.open()==Dialog.OK){
         			//v.setPreisInRappen(Integer.parseInt(dlg.getValue().replaceAll("\\.","")));
         			try{
@@ -209,7 +209,7 @@ public class VerrechnungsDisplay extends Composite {
         		TableItem ti=tVerr.getItem(sel);
         		Verrechnet v=(Verrechnet)ti.getData();
         		String p=Integer.toString(v.getZahl());
-        		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl (oder Bruchzahl wie 1/3) für die Leistung bzw. den Artikel ein",p,null);
+        		InputDialog dlg=new InputDialog(Desk.getTopShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl (oder Bruchzahl wie 1/3) für die Leistung bzw. den Artikel ein",p,null);
         		if(dlg.open()==Dialog.OK){
         			try{
         				String val=dlg.getValue();

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4272 2008-08-14 10:40:04Z rgw_ch $
+ * $Id: Verrechnet.java 4274 2008-08-14 16:24:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -59,11 +59,21 @@ public class Verrechnet extends PersistentObject {
 	public void setText(String text){
 		set("Leistg_txt",text);
 	}
+	public void setScale(double scale){
+		int sca=(int)Math.round(scale*100);
+		setInt("Scale",sca);
+	}
+	
+	public double getScale(){
+		int sca=checkZero("Scale");
+		return ((double)sca)/100.0;
+	}
 	/** Den effektiven Preis setzen (braucht nicht TP*Scale zu sein */
+
 	public void setPreis(final Money m){
 		set("VK_Preis",m.getCentsAsString());
 	}
-	
+
 	/**
 	 * Einkaufskosten
 	 */
@@ -73,8 +83,11 @@ public class Verrechnet extends PersistentObject {
 	}
 	/** Den effektiv verrechneten Preis holen (braucht nicht TP*Scale zu sein */
 	public Money getEffPreis(){
+		return new Money(checkZero(get("VK_Preis")));
+		/*
 		double amount=checkZero(get("VK_Preis"))*checkZero(get("Scale"))/100.0;
 		return new Money((int)Math.round(amount));
+		*/
 	}
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
 
