@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4267 2008-08-12 23:32:05Z rgw_ch $
+<!-- $Id: build.xml 4286 2008-08-15 16:24:50Z rgw_ch $
     (c) 2005-2008 by G. Weirich
     
     This file reflects my personal environment. It is not intended for
@@ -160,7 +160,7 @@
 		<copy file="${sourcedir}/doc/${pluginname}.pdf" todir="${doc}"/>
 	</target>
 	
-	<target name="updater" if="updater.ok">
+	<target name="updater" depends="prepare" if="updater.ok">
 		   <ant antfile="rsc/build/updater.xml"/>
 	</target>
 	
@@ -170,11 +170,12 @@
 	</target>
 	
 	<!-- Windows - Version der Distribution -->
-	<target name="windows" depends="prepare, updater">
+	<target name="windows" depends="prepare">
 		<delete dir="${dist}"/>
 		<copy todir="${dist}">
 			  <fileset dir="${rcpbase}/windows/rcp"/>
 		</copy>
+		<antcall target="updater"/>
 		<ant antfile="rsc/build/plugins.xml" target="main"/>
 		<ant antfile="../noatext/build.xml"/>		
 		<ant antfile="../elexis-trustx-embed/build.xml"/>
