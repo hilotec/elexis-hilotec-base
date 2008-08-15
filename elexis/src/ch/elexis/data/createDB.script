@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 4276 2008-08-14 18:14:09Z rgw_ch $
+# * $Id: createDB.script 4284 2008-08-15 14:46:23Z rgw_ch $
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -539,7 +539,8 @@ CREATE TABLE ETIKETTEN(
     importance	VARCHAR(7),
     Name        VARCHAR(40),
     foreground  CHAR(6),
-    background  CHAR(6)
+    background  CHAR(6),
+    classes     VARCHAR(255)
 );
 CREATE INDEX ETIKETTE1 on ETIKETTEN(Name);
 

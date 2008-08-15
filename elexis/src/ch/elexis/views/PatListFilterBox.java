@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ * $Id: PatListFilterBox.java 4284 2008-08-15 14:46:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -52,7 +52,7 @@ import ch.elexis.util.SWTHelper;
  */
 public class PatListFilterBox extends ListDisplay<PersistentObject> implements IFilter{
     PersistentObjectDropTarget dropTarget;
-    private static final String ETIKETTE="Etikette...";
+    private static final String ETIKETTE="Sticker...";
     private static final String FELD="Feld...";
     private static final String LEEREN=" Leeren";
     private static final String NB_PREFIX="PLF_FLD:";
