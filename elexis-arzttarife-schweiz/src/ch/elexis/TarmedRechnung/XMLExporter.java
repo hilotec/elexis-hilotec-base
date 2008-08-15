@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4271 2008-08-14 10:39:50Z rgw_ch $
+ * $Id: XMLExporter.java 4279 2008-08-15 05:11:54Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -463,7 +463,8 @@ public class XMLExporter implements IRnOutputter {
 
 		Element services = new Element("services", ns);
 
-		DecimalFormat df = new DecimalFormat("#0.00");
+		//DecimalFormat df = new DecimalFormat("#0.00");
+		
 		// Alle Informationen je Konsultation sammeln
 		// alle Preise (in Rappen) auflisten
 		StringBuilder sbDiagnosen = new StringBuilder();
@@ -589,16 +590,40 @@ public class XMLExporter implements IRnOutputter {
 						location = "none";
 					}
 					el.setAttribute("body_location", location);
+					/*
+					 * workaround to make validator happy
+					 * to be removed later
+					 */
+					if(tlAL<0.0){
+						if(scale>0){
+							scale*=-1;
+						}
+						tlAL*=-1;
+					}
+					// end workaround
+					
 					el.setAttribute("unit.mt", XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); //	22470
 					el.setAttribute("unit_factor.mt", XMLTool.doubleToXmlDouble(mult, 2)); //	22480  (strebt gegen 0)
-					el.setAttribute("scale_factor.mt", XMLTool.doubleToXmlDouble(scale, 2)); //	22490
-					el.setAttribute("external_factor.mt", "1.00"); //	22500
+					el.setAttribute("scale_factor.mt", XMLTool.doubleToXmlDouble(scale, 1)); //	22490
+					el.setAttribute("external_factor.mt", "1.0"); //	22500
 					el.setAttribute("amount.mt", XMLTool.moneyToXmlDouble(mAL)); //	22510
 
+					/*
+					 * workaround to make validator happy
+					 * to be removed later
+					 */
+					if(tlTl<0.0){
+						if(scale>0){
+							scale*=-1;
+						}
+						tlTl*=-1;
+					}
+					// end workaround
+					
 					el.setAttribute("unit.tt", XMLTool.doubleToXmlDouble(tlTl / 100.0, 2)); //	22520
 					el.setAttribute("unit_factor.tt", XMLTool.doubleToXmlDouble(mult, 2)); //	22530
-					el.setAttribute("scale_factor.tt", XMLTool.doubleToXmlDouble(scale, 2)); //	22540
-					el.setAttribute("external_factor.tt", "1.00"); //	22550
+					el.setAttribute("scale_factor.tt", XMLTool.doubleToXmlDouble(scale, 1)); //	22540
+					el.setAttribute("external_factor.tt", "1.0"); //	22550
 					el.setAttribute("amount.tt", XMLTool.moneyToXmlDouble(mTL)); //	22560
 					Money mAmountLocal = new Money(mAL);
 					mAmountLocal.addMoney(mTL);
