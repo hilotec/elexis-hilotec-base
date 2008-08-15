@@ -53,9 +53,10 @@ public class XMLTool {
 	
 	/**
 	 * Convert a double value to String conforming to the double datatype
-	 * of the XML specification.
+	 * of the XML specification. (This means mainly, that we have to use
+	 * the swiss "." also if the PC's locale is set to germany or austria.)
 	 * @param value the value to be converted
-	 * @param factionalDigits the number of digits after the point (currently ignored, i. e. 2)
+	 * @param factionalDigits the number of digits after the point
 	 * @return the formated String
 	 */
 	public static String doubleToXmlDouble(double value, int factionalDigits) {
@@ -72,7 +73,8 @@ public class XMLTool {
 		int abs = absCents / 100;
 		int frac = absCents % 100;
 		
-		String xmlDouble = String.format("%d.%02d", signum * abs, frac);
+		String dec="%d.%0"+Integer.toString(factionalDigits)+"d";
+		String xmlDouble = String.format(dec, signum * abs, frac);
 		return xmlDouble;
 	
 	}
