@@ -19,6 +19,7 @@ import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.exchange.elements.ResultElement;
+import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.XMLTool;
 
 @SuppressWarnings("serial")
@@ -37,10 +38,13 @@ public class BefundElement extends ResultElement {
 		String raw_id=mw.getId()+field;
 		String id=XMLTool.idToXMLID(raw_id);
 		for(FindingElement fe:findings){
-			if(fe.getXid().getID().equals(id)){
-				BefundElement bf=new BefundElement(me.getContainer(),mw, field);
-				me.addAnalyse(bf);
-				return bf;
+			XidElement eXid=fe.getXid();
+			if(eXid!=null){
+				if(id.equals(eXid.getID())){
+					BefundElement bf=new BefundElement(me.getContainer(),mw, field);
+					me.addAnalyse(bf);
+					return bf;
+				}
 			}
 		}
 		BefundeItem bi=new BefundeItem(me.getContainer());
