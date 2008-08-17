@@ -8,6 +8,7 @@ import org.jdom.Element;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
+import ch.elexis.data.Labor;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
@@ -48,11 +49,17 @@ public class XidElement extends XChangeElement {
 	public XidElement(XChangeContainer home, LabItem li){
 		super(home);
 		setAttribute(ATTR_ID, XMLTool.idToXMLID(li.getId()));
-		String domain=FindingElement.XIDBASE+li.getLabor().getLabel();
+		StringBuilder domainRoot=new StringBuilder(FindingElement.XIDBASE);
+		Labor lab=li.getLabor();
+		if(lab==null || (!lab.isValid())){
+			domainRoot.append("unknown");
+		}else{
+			domainRoot.append(lab.get("Bezeichnung1"));
+		}
+		String domain=domainRoot.toString();
 		Xid.localRegisterXIDDomainIfNotExists(domain, li.getLabel(), Xid.ASSIGNMENT_LOCAL);
-		Identity ident=new Identity(home,domain,li.getName(),1,true);
+		Identity ident=new Identity(home,domain,li.getName(),Xid.ASSIGNMENT_LOCAL,true);
 		addContent(ident);
-
 	}
 	
 	public XidElement(XChangeContainer home, Artikel art){
