@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4262 2008-08-12 16:13:00Z rgw_ch $
+ *    $Id: Hub.java 4287 2008-08-17 10:20:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -276,6 +276,7 @@ public class Hub extends AbstractUIPlugin {
 		setWindowText(null);
 		GlobalEvents.getInstance().fireSelectionEvent(Hub.actMandant);
 		GlobalEvents.getInstance().fireUpdateEvent(Mandant.class);
+		GlobalEvents.getInstance().fireUserEvent();
 	}
 	
 	public static void setWindowText(Patient pat){
@@ -347,7 +348,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4262 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4287 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
