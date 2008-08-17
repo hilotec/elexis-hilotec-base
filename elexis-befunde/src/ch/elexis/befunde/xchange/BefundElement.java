@@ -14,6 +14,8 @@ package ch.elexis.befunde.xchange;
 
 import java.util.List;
 
+import org.jdom.Element;
+
 import ch.elexis.befunde.Messwert;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.FindingElement;
@@ -21,6 +23,7 @@ import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.exchange.elements.ResultElement;
 import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.XMLTool;
+import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("serial")
 public class BefundElement extends ResultElement {
@@ -41,13 +44,13 @@ public class BefundElement extends ResultElement {
 			XidElement eXid=fe.getXid();
 			if(eXid!=null){
 				if(id.equals(eXid.getID())){
-					BefundElement bf=new BefundElement(me.getContainer(),mw, field);
+					BefundElement bf=new BefundElement(me.getContainer(), mw, field);
 					me.addAnalyse(bf);
 					return bf;
 				}
 			}
 		}
-		BefundeItem bi=new BefundeItem(me.getContainer());
+		BefundeItem bi=new BefundeItem(me.getContainer(),mw,field);
 		me.addFindingItem(bi);
 		BefundElement bf=new BefundElement(me.getContainer(),mw,field);
 		me.addAnalyse(bf);
@@ -56,6 +59,15 @@ public class BefundElement extends ResultElement {
 	
 	BefundElement(XChangeContainer home, Messwert mw, String field){
 		super(home);
-	
+		TimeTool tt=new TimeTool(mw.getDate());
+		String date=tt.toString(TimeTool.DATE_COMPACT);
+		String raw_id=mw.getId()+field+date;
+		setAttribute("id",XMLTool.idToXMLID(raw_id));
+		setAttribute(ATTR_DATE,tt.toString(TimeTool.DATETIME_XML));
+		setAttribute(ATTR_LABITEM,XMLTool.idToXMLID(mw.getId()+field));
+		Element eResult=new Element(ELEMENT_TEXTRESULT,home.getNamespace());
+		eResult.setText(mw.getResult(field));
+		addContent(eResult);
+		home.addChoice(this, mw.getLabel()+":"+field, mw);
 	}
 }

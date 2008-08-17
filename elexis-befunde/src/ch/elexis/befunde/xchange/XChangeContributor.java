@@ -30,18 +30,19 @@ import ch.rgw.tools.StringTool;
 /**
  * Plug into the elexis xChange model.
  * Since we have that slightly weird model of finding definition in this
- * elexis-befunde-Plugin, this is more complicated as in similar projects.
+ * elexis-befunde-Plugin, this is more complicated as in other plugins.
  * First we need to figure out the Names of the Tabs in the FindingsView. These are
  * encoded in the hashtable as value of the Item "Setup". We can retrieve this item 
  * with the call to Messwert.getSetup(); Its Befunde-Member holds a hashtable that encodes
  * all finding items.
  * The names of the items are listet as hash value with the key "names", a String separated by SETUP_SEPARATOR
- * The fields of each item are listet as hash values with the key [name]_FIELDS. Each is a String
+ * The fields of each item are listed as hash values with the key [name]_FIELDS. Each is a String
  * separated by SETUP_SEPARATOR. Every field contains a name and a multiline-indicator, separated by
  * SETUP_CHECKSEPARATOR. The name can, optionally, contain a script definition. In that case it ist a
  * String of the form result=script
  * 
- * We create from every finding item a BefundeItem and from every finding entry a BefundElement
+ * We create from every finding item an xChange:BefundeItem and from every finding entry an 
+ * xChange:BefundElement.
  * Thus if we have a tab "Cardio" defined, with the elements RRSyst,RRDiast,HR, there will be three
  * FindingElements called Cardio:RRSyst, Cardio:RRDiast, Cardio:HR
  * @author Gerry

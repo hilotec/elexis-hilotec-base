@@ -12,13 +12,23 @@
  *******************************************************************************/
 package ch.elexis.befunde.xchange;
 
+import ch.elexis.befunde.Messwert;
+import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.FindingElement;
+import ch.elexis.exchange.elements.XidElement;
 
+@SuppressWarnings("serial")
 public class BefundeItem extends FindingElement {
 	
-	BefundeItem(XChangeContainer home){
+	BefundeItem(XChangeContainer home, Messwert mw, String field){
 		super(home);
+		setAttribute(ATTR_NAME,mw.getLabel()+":"+field);
+		setAttribute(ATTR_GROUP,"Messwert");
+		XidElement eXid=new XidElement(home);
+		eXid.addIdentity(Xid.DOMAIN_ELEXIS, mw.getId()+field, Xid.ASSIGNMENT_LOCAL, true);
+		eXid.setMainID(null);
+		addContent(eXid);
 	}
 	
 }

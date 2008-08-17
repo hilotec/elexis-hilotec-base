@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 4252 2008-08-09 19:11:10Z rgw_ch $
+ *    $Id: Messwert.java 4288 2008-08-17 12:32:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -104,6 +104,11 @@ public class Messwert extends PersistentObject {
 		set(new String[]{"PatientID","Name","Datum"},pat.getId(),name,date); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setHashtable("Befunde",bf); //$NON-NLS-1$
 	}
+	
+	public String getDate(){
+		return get("Datum");
+	}
+	
 	/**
 	 * a concise, human readable indentification for the measurement. Subclasses should always override this,
 	 * because the abse implementation of PersistentObject gives only an empty string.
@@ -116,6 +121,11 @@ public class Messwert extends PersistentObject {
 		return get("Name"); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("unchecked")
+	public String getResult(String field){
+		Hashtable<String, String> hash=getHashtable("Befunde");
+		return hash.get(field);
+	}
 	/** 
 	 * -required-
 	 * Name of the table, where objects of this class should be persisted. See remarks above near the field TABLENAME
