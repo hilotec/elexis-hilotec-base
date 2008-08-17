@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008, G. Weirich, SGAM.Informatics and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: XChangeContainer.java 4290 2008-08-17 16:16:49Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.exchange;
 
 import java.util.HashMap;
@@ -113,9 +126,11 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	public ContactElement addPatient(Patient pat){
 		ContactElement ret=addContact(pat);
 		List<BezugsKontakt> bzl=pat.getBezugsKontakte();
+		
 		for(BezugsKontakt bz:bzl){
 			ret.add(new ContactRefElement(this,bz));
 		}
+		
 		MedicalElement eMedical=new MedicalElement(this,pat);
 		ret.add(eMedical);
 		choices.put(eMedical, new UserChoice(true,"Krankengeschichte",eMedical));

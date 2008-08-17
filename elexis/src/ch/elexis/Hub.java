@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4287 2008-08-17 10:20:25Z rgw_ch $
+ *    $Id: Hub.java 4290 2008-08-17 16:16:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -36,6 +36,7 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.Heartbeat;
 import ch.elexis.actions.JobPool;
+import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControl;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Mandant;
@@ -48,7 +49,6 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
-import ch.elexis.util.PluginCleaner;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.UtilFile;
 import ch.rgw.IO.FileTool;
@@ -135,7 +135,6 @@ public class Hub extends AbstractUIPlugin {
  		mandantCfg=localCfg;
  		// initialize log with default configuration
  		initializeLog(localCfg);
- 		initializeLock();
  		
 		// Kommandozeile lesen und lokale Konfiguration einlesen
  		localCfg=new SysSettings(SysSettings.USER_SETTINGS,Desk.class);
@@ -204,11 +203,24 @@ public class Hub extends AbstractUIPlugin {
     }
 
     private void initializeLock(){
+    	final int timeoutSeconds=600;
     	try{
- 			LockFile lockfile=new LockFile(userDir,"elexislock",4,86400);
- 			if(!lockfile.lock()){
+ 			final LockFile lockfile=new LockFile(userDir,"elexislock",4,timeoutSeconds);
+ 			final int n=lockfile.lock();
+ 			if(n==0){
  				SWTHelper.alert("Zu viele Instanzen", "Es können keine weiteren Elexis-Instanzen gestartet werden");
  				System.exit(2);
+ 			}else{
+ 				HeartListener lockListener=new HeartListener(){
+ 					long timeSet;
+					public void heartbeat() {
+						long now=System.currentTimeMillis();
+						if((now-timeSet)>timeoutSeconds){
+							lockfile.updateLock(n);
+							timeSet=now;
+						}
+					}};
+				heart.addListener(lockListener, Heartbeat.FREQUENCY_LOW);
  			}
  		}catch(IOException ex){
  			log.log("Can not aquire lock file", Log.ERRORS);
@@ -226,6 +238,7 @@ public class Hub extends AbstractUIPlugin {
         //log.log("Basedir: "+getBasePath(),Log.DEBUGMSG);
     	super.start(context);
     	heart=Heartbeat.getInstance();
+ 		initializeLock();
 	}
 
 	/**
@@ -348,7 +361,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4287 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4290 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");

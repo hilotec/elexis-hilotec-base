@@ -1,5 +1,5 @@
 // (c) 2008 by G. Weirich
-// $Id: LockFile.java 4262 2008-08-12 16:13:00Z rgw_ch $
+// $Id: LockFile.java 4290 2008-08-17 16:16:49Z rgw_ch $
 
 package ch.rgw.IO;
 
@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -42,20 +43,22 @@ public class LockFile {
 	/**
 	 * create a lockfile with the given patterns. There will be created at most maxNUm
 	 * lockfiles. Each of them will expire after timeoutSeconds, or after the application exits.
-	 * @return true on success, false if there are already maxNum lockfiles
+	 * @return lock number on success, 0 if there are already maxNum lockfiles
 	 * @throws IOException id something went wrong
 	 */
-	public boolean lock() throws IOException{
+	public int lock() throws IOException{
 		int n=1;
 
 		while(n<=maxNum){
 			File file=new File(baseDir,constructFilename(n));
 			if(!isLockValid(file)){
-				return createLockfile(file);
+				if(createLockfile(file)){
+					return n;
+				}
 			}
 			n++;
 		}
-		return false;
+		return 0;
 	}
 	
 	private boolean isLockValid(File file) throws IOException{
@@ -95,6 +98,27 @@ public class LockFile {
 	private String constructFilename(int n){
 		return new StringBuilder().append(baseName).append(".")
 			.append(Integer.toString(n)).toString();
+	}
+	
+	/**
+	 * Refresh the lock i.e. extend its validity time by the original timeout once again
+	 * @param n number of the lockfile (as received by the lock() call)
+	 * @return true on success
+	 */
+	public boolean updateLock(int n){
+		File file=new File(baseDir,constructFilename(n));
+		if(!file.exists()){
+			return false;
+		}
+		try{
+			DataOutputStream daos=new DataOutputStream(new FileOutputStream(file));
+			daos.writeUTF(new TimeTool().toString(TimeTool.FULL_ISO));
+			daos.close();
+			return true;
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return false;
+		}
 	}
 	/**
 	 * check if at least one lockfile with the given pattern exists
