@@ -76,6 +76,9 @@
     
     <!-- These plugins are not part of the standard distribution -->
     <target name="elexis-pro" depends="options">
+    	<available file="../elexis-timer/build.xml" property="elexistimer.ok"/>
+    	   <antcall target="elexistimer"/>
+    	
     	<available file="../elexis-be-connector/build.xml" property="blueevidence.ok"/>
     	   <antcall target="blueevidence"/>
     	
@@ -131,6 +134,10 @@
 
     </target>
     
+	<target name="elexistimer" if="elexistimer.ok">
+	   <ant antfile="../elexis-timer/build.xml"/>
+	</target>
+	
 	<target name="abacusjunior" if="connect_abacus.ok">
 	   <ant antfile="../medshare-connect-abacusjunior/build.xml"/>
 	</target>
