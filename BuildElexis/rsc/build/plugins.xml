@@ -76,6 +76,9 @@
     
     <!-- These plugins are not part of the standard distribution -->
     <target name="elexis-pro" depends="options">
+    	<available file="../elexis-mediserv/build.xml" property="mediserv.ok"/>
+    	   <antcall target="mediserv"/>
+        
     	<available file="../elexis-timer/build.xml" property="elexistimer.ok"/>
     	   <antcall target="elexistimer"/>
     	
@@ -134,6 +137,10 @@
 
     </target>
     
+	<target name="mediserv" if="mediserv.ok">
+	   <ant antfile="../elexis-mediserv/build.xml"/>
+	</target>
+	
 	<target name="elexistimer" if="elexistimer.ok">
 	   <ant antfile="../elexis-timer/build.xml"/>
 	</target>
