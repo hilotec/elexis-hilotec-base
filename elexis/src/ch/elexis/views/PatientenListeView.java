@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ * $Id: PatientenListeView.java 4294 2008-08-19 12:46:08Z rgw_ch $
  *******************************************************************************/
 
 
@@ -242,16 +242,24 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
                 String[] fx=vc.getControlFieldProvider().getValues();
                 int i=0;
                 if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR,false)){
-        			ctlFields.put(Patient.PATID,fx[i++]);
+                	if(i<fx.length){
+                		ctlFields.put(Patient.PATID,fx[i++]);
+                	}
         		}
         		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWNAME,true)){
-        			ctlFields.put(Patient.NAME, fx[i++]);
+        			if(i<fx.length){
+        				ctlFields.put(Patient.NAME, fx[i++]);
+        			}
         		}
         		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,true)){
-        			ctlFields.put(Patient.FIRSTNAME, fx[i++]);
+        			if(i<fx.length){
+        				ctlFields.put(Patient.FIRSTNAME, fx[i++]);
+        			}
         		}
         		if(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB,true)){
-        			ctlFields.put(Patient.DOB, fx[i++]);
+        			if(i<fx.length){
+        				ctlFields.put(Patient.DOB, fx[i++]);
+        			}
         		}
         		PatientErfassenDialog ped=new PatientErfassenDialog(getViewSite().getShell(),ctlFields);
         		if(ped.open()==Dialog.OK){
