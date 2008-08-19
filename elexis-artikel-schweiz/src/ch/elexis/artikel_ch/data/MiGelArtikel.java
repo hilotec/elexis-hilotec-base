@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelArtikel.java 4257 2008-08-11 10:55:31Z rgw_ch $
+ *  $Id: MiGelArtikel.java 4293 2008-08-19 12:45:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -39,7 +39,7 @@ public class MiGelArtikel extends Artikel{
 	}
 	@Override
 	public String getCode() {
-		return get("SubID");
+		return checkNull(get("SubID"));
 	}
 	@Override
 	public String getCodeSystemName() {
