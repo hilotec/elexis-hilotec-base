@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AbrechnungsPerspektive.java 1517 2007-01-01 20:51:22Z rgw_ch $
+ *    $Id: AbrechnungsPerspektive.java 4295 2008-08-20 17:39:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -36,17 +36,20 @@ import ch.elexis.views.rechnung.RnDetailView;
  */
 public class AbrechnungsPerspektive implements IPerspectiveFactory {
 	public static final String ID = "ch.elexis.AbrechnungPerspektive"; //$NON-NLS-1$
-
-	public void createInitialLayout(IPageLayout layout) {
+	
+	public void createInitialLayout(IPageLayout layout){
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
-		if(Hub.localCfg.get(PreferenceConstants.SHOWSIDEBAR,"true").equals("true")){ //$NON-NLS-1$ //$NON-NLS-2$
-			layout.addStandaloneView(Starter.ID, false, SWT.LEFT, 0.1f, editorArea);
+		if (Hub.localCfg
+			.get(PreferenceConstants.SHOWSIDEBAR, "true").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
+			layout.addStandaloneView(Starter.ID, false, SWT.LEFT, 0.1f,
+				editorArea);
 		}
 		IFolderLayout fld = layout.createFolder("AbrechnungsFolder", SWT.RIGHT, //$NON-NLS-1$
-				0.6f, editorArea);
-		IFolderLayout frd = layout.createFolder("Detailfolder", SWT.RIGHT, 0.4f, editorArea); //$NON-NLS-1$
+			0.6f, editorArea);
+		IFolderLayout frd =
+			layout.createFolder("Detailfolder", SWT.RIGHT, 0.4f, editorArea); //$NON-NLS-1$
 		fld.addView(PatHeuteView.ID);
 		fld.addView(KonsZumVerrechnenView.ID);
 		fld.addView(RechnungsListeView.ID);
@@ -60,5 +63,5 @@ public class AbrechnungsPerspektive implements IPerspectiveFactory {
 		layout.addShowViewShortcut(KonsDetailView.ID);
 		layout.addShowViewShortcut(RechnungsListeView.ID);
 	}
-
+	
 }

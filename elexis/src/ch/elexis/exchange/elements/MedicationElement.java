@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicationElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
+ *  $Id: MedicationElement.java 4295 2008-08-20 17:39:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -72,7 +72,7 @@ public class MedicationElement extends XChangeElement {
 	}
 	
 	public String getText(){
-		return getText();
+		return getAttr(ATTRIB_SUBSTANCE);
 	}
 	public String getDosage(){
 		return getAttr(ATTRIB_DOSAGE);
