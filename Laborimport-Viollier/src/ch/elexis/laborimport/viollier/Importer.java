@@ -18,7 +18,7 @@
  * - Re-Adapted to Viollier
  * - Added -allInOne option from OpenMedical
  * 
- * $Id: Importer.java 3516 2008-01-11 10:32:42Z rgw_ch $
+ * $Id: Importer.java 4296 2008-08-20 17:39:13Z rgw_ch $
  */
 
 package ch.elexis.laborimport.viollier;
@@ -157,7 +157,7 @@ public class Importer extends ImporterPage {
 				LabResult lr;
 				Query<LabResult> qr=new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId());
-				qr.add("Datum", "=", obx.getDate().toString(TimeTool.DATE_GER));
+				qr.add("Datum", "=", obr.getDate().toString(TimeTool.DATE_GER));
 				qr.add("ItemID", "=", li.getId());
 				if(qr.execute().size()!=0){
 					if(SWTHelper.askYesNo("Dieser Laborwert wurde schon importiert", "Weitermachen?")){
@@ -168,9 +168,9 @@ public class Importer extends ImporterPage {
 					}
 				}
 				if(obx.isFormattedText()){
-					lr=new LabResult(pat,obx.getDate(),li,"text",obx.getResultValue());
+					lr=new LabResult(pat,obr.getDate(),li,"text",obx.getResultValue());
 				}else{
-					lr=new LabResult(pat,obx.getDate(),li,obx.getResultValue(),obx.getComment());
+					lr=new LabResult(pat,obr.getDate(),li,obx.getResultValue(),obx.getComment());
 				}
 	
 				if(obx.isPathologic()){
