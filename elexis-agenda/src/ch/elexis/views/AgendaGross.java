@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *  $Id: AgendaGross.java 4299 2008-08-20 20:49:26Z danlutz $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -203,9 +203,19 @@ public class AgendaGross extends BaseAgendaView {
 			}
 
 		});
-	}
 
-	protected void updateDate() {
+		// set initial widget values
+		initialize();
+	}
+	
+	/*
+	 * Intialize dayMessage field
+	 */
+	protected void initialize() {
+		setDayMessage();
+	}
+	
+	protected void setDayMessage() {
 		TagesNachricht tn=TagesNachricht.load(actDate);
 		lbDayString.setText("");
 		dayMessage.setText("");
@@ -213,6 +223,10 @@ public class AgendaGross extends BaseAgendaView {
 			lbDayString.setText(tn.getZeile());
 			dayMessage.setText(tn.getLangtext());
 		}
+	}
+
+	protected void updateDate() {
+		setDayMessage();
 		pinger.doSync();
 		tv.refresh();
 	}
