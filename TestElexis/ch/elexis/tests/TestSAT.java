@@ -10,20 +10,13 @@ import ch.rgw.tools.GnuPG;
 import junit.framework.TestCase;
 
 public class TestSAT extends TestCase {
-	String keyring;
-	String homedir;
-	GnuPG gpg;
+	static String homedir;
+	static GnuPG gpg;
 	static String encrypted;
-	
-	@Override
-	protected void setUp() throws Exception {
-		keyring=System.getenv("TEMP")+File.separator+"gpgkeys";
+
+	public TestSAT(){
 		homedir=System.getenv("TEMP")+File.separator+"gpghome";
-		File file=new File(keyring);
-		if(file.exists()){
-			file.delete();
-		}
-		file=new File(homedir);
+		File file=new File(homedir);
 		if(file.exists()){
 			FileTool.deltree(file.getAbsolutePath());
 		}
@@ -33,7 +26,7 @@ public class TestSAT extends TestCase {
 		gpg.setHomedir(homedir);
 		gpg.generateKey("Alice Elexistesterin", "alice@elexis.ch", "aliceelexis".toCharArray(), "alice");
 		gpg.generateKey("Bob Elexistester", "bob@elexis.ch", "bobelexis".toCharArray(), "bob");
-		super.setUp();
+	
 	}
 	
 	public void testWrap() throws Exception{
