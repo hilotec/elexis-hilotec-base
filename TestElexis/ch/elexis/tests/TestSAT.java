@@ -22,7 +22,7 @@ public class TestSAT extends TestCase {
 		}
 		file.mkdirs();
 		gpg=new GnuPG(false);
-		gpg.setExecutable("c:/tools/gnupg/gpg.exe");
+		gpg.setExecutable("e:/tools/gpg/gpg.exe");
 		gpg.setHomedir(homedir);
 		gpg.generateKey("Alice Elexistesterin", "alice@elexis.ch", "aliceelexis".toCharArray(), "alice");
 		gpg.generateKey("Bob Elexistester", "bob@elexis.ch", "bobelexis".toCharArray(), "bob");
@@ -43,5 +43,8 @@ public class TestSAT extends TestCase {
 		SAT sat=new SAT(gpg,"bob@elexis.ch");
 		Result<HashMap<String,Object>> result=sat.unwrap(encrypted,"bobelexis".toCharArray());
 		assertTrue(result.isOK());
+		HashMap<String, Object> res=result.get();
+		String val=(String)res.get("test");
+		assertEquals(val, "Ein Testtect");
 	}
 }
