@@ -1,4 +1,4 @@
-//$Id: GnuPG.java 4304 2008-08-24 06:54:00Z rgw_ch $
+//$Id: GnuPG.java 4305 2008-08-24 18:27:40Z rgw_ch $
 package ch.rgw.tools;
    
 import java.io.*;
@@ -11,7 +11,7 @@ import ch.rgw.tools.StringTool;
   * A class that implements PGP interface for Java.
   * <P>
   * 
-  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4304 2008-08-24 06:54:00Z rgw_ch $
+  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4305 2008-08-24 18:27:40Z rgw_ch $
   * 
   * @author Yaniv Yemini, January 2004.
   * @author Based on a class GnuPG by John Anderson, which can be found
@@ -202,14 +202,14 @@ public class GnuPG {
   *            passphrase for the secret key to sign with
   * @return true upon success
   */
- public boolean signAndEncrypt(String inStr, String secID, String keyID,
+ public boolean signAndEncrypt(String inStr, String senderKey, String receiverKey,
          String passPhrase) {
      boolean success = false;
 
      File tmpFile = createTempFile(inStr);
 
      if (tmpFile != null) {
-         success = runGnuPG("-u " + secID + " -r " + keyID
+         success = runGnuPG("-u " + senderKey + " -r " + receiverKey
                  + " --passphrase-fd 0 -se " + tmpFile.getAbsolutePath(),
                  passPhrase);
          tmpFile.delete();
@@ -254,20 +254,7 @@ public class GnuPG {
      return success;
  }
 
- public boolean encryptSigned(String inStr, String receiverKey, String senderKey, char[] pwd){
-	 
-	 boolean success=false;
-	 File tmpFile=createTempFile(inStr);
-	 
-	 if(tmpFile!=null){
-		 success=runGnuPG("--passphrase-fd 0 --encrypt -s -a -r "+receiverKey+" -u "+senderKey, new String(pwd));
-		 tmpFile.delete();
-		 if (success && this.gpg_exitCode != 0) {
-             success = false;
-         }
-	 }
-	 return success;
- }
+
  /**
   * Decrypt
   * 
