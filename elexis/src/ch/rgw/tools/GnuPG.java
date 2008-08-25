@@ -1,17 +1,24 @@
-//$Id: GnuPG.java 4305 2008-08-24 18:27:40Z rgw_ch $
+//$Id: GnuPG.java 4307 2008-08-25 05:18:48Z rgw_ch $
 package ch.rgw.tools;
    
-import java.io.*;
-
-import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.StringTool;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 
 /**
   * A class that implements PGP interface for Java.
   * <P>
   * 
-  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4305 2008-08-24 18:27:40Z rgw_ch $
+  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4307 2008-08-25 05:18:48Z rgw_ch $
   * 
   * @author Yaniv Yemini, January 2004.
   * @author Based on a class GnuPG by John Anderson, which can be found
@@ -37,7 +44,7 @@ public class GnuPG {
  // Class vars:
  private int gpg_exitCode = -1;
 
- private String gpg_result;
+ private byte[] gpg_result;
 
  private String gpg_err;
  private boolean gpgOK;
@@ -70,6 +77,35 @@ public class GnuPG {
   * @author synic
   * @created March 9, 2005
   */
+
+ class ProcessStreamInput extends Thread{
+	 InputStream is;
+	 OutputStream os;
+	 ByteArrayOutputStream baos=new ByteArrayOutputStream();
+	 
+	 ProcessStreamInput(InputStream is){
+		 this.is=is;
+	 }
+     public void run() {
+         try {
+             BufferedInputStream bis = new BufferedInputStream(is);
+             int in;
+             while(((in=bis.read())!=-1)){
+            	 baos.write(in);
+             }
+             bis.close();
+             baos.close();
+         } catch (IOException ioe) {
+             ExHandler.handle(ioe);
+         }
+     }
+     
+     public byte[] getInput(){
+    	 return baos.toByteArray();
+     }
+
+ }
+ @Deprecated
  class ProcessStreamReader extends Thread {
      InputStream is;
 
@@ -134,6 +170,7 @@ public class GnuPG {
      }
 
  }
+
 
  /**
   * Sign
@@ -430,7 +467,7 @@ public class GnuPG {
   * 
   * @return result string.
   */
- public String getResult() {
+ public byte[] getResult() {
      return gpg_result;
  }
 
@@ -488,11 +525,15 @@ public class GnuPG {
              return false;
          }
      }
-
+     /*
      ProcessStreamReader psr_stdout = new ProcessStreamReader(p
              .getInputStream(), "ERROR");
+      */
      ProcessStreamReader psr_stderr = new ProcessStreamReader(p
-             .getErrorStream(), "OUTPUT");
+             .getErrorStream(), "ERROR");
+    
+     ProcessStreamInput psr_stdout=new ProcessStreamInput(p.getInputStream());
+  
      psr_stdout.start();
      psr_stderr.start();
      try {
@@ -517,7 +558,7 @@ public class GnuPG {
      } catch (IllegalThreadStateException itse) {
          return false;
      }
-     gpg_result = psr_stdout.getString();
+     gpg_result = psr_stdout.getInput();
      gpg_err = psr_stderr.getString();
 
      return true;
@@ -534,7 +575,8 @@ public class GnuPG {
   */
  private File createTempFile(String inStr) {
      File tmpFile = null;
-     FileWriter fw;
+     //FileWriter fw;
+     FileOutputStream fos;
 
      try {
          tmpFile = File.createTempFile("YGnuPG", null);
@@ -544,10 +586,16 @@ public class GnuPG {
      }
 
      try {
+    	 /*
          fw = new FileWriter(tmpFile);
          fw.write(inStr);
          fw.flush();
          fw.close();
+         */
+    	 fos=new FileOutputStream(tmpFile);
+    	 byte[] bytes=inStr.getBytes("utf-8");
+    	 fos.write(bytes);
+    	 fos.close();
      } catch (Exception e) {
          // delete our file:
          tmpFile.delete();
@@ -572,121 +620,8 @@ public class GnuPG {
  public boolean isAvailable(){
 	 return gpgOK;
  }
-
  
- /**
-  * Description of the Method
-  * 
-  * @param xEncryptedData
-  *            Description of the Parameter
-  * @return Description of the Return Value
-  */
- public String decryptExtension(String xEncryptedData) {
-     //String gnupgPassword = BuddyList.getInstance().getGnuPGPassword();
-	 String gnupgPassword=null;
-     String encoding = null;
-     xEncryptedData = xEncryptedData.replaceAll("(\n)+$", "");
-     xEncryptedData = xEncryptedData.replaceAll("^(\n)+", "");
-     if ((gnupgPassword != null)
-             && decrypt("-----BEGIN PGP MESSAGE-----\nVersion: bla\n\n"
-                     + xEncryptedData + "\n-----END PGP MESSAGE-----\n",
-                     gnupgPassword)) {
-         try {
-             String systemEncoding = new String(getResult().getBytes(),
-                     "UTF8");
-             encoding = systemEncoding;
-         } catch (java.io.UnsupportedEncodingException e) {
-         }
 
-     }
-     return encoding.replaceAll("\n+$", "");
- }
-
- /**
-  * Description of the Method
-  * 
-  * @param Data
-  *            Description of the Parameter
-  * @param gnupgSecretKey
-  *            Description of the Parameter
-  * @param gnupgPublicKey
-  *            Description of the Parameter
-  * @return Description of the Return Value
-  */
- public String encryptExtension(String Data, String gnupgSecretKey,
-         String gnupgPublicKey) {
-     String encryptedData = null;
-     try {
-         byte[] utf8 = Data.getBytes("UTF8");
-         String string = new String(utf8, streamEncoding());
-         Data = string;
-     } catch (java.io.UnsupportedEncodingException e) {
-     }
-
-     if (encrypt(Data, gnupgSecretKey, gnupgPublicKey)) {
-         encryptedData = getResult();
-         encryptedData = encryptedData.replaceAll(
-                 "-----BEGIN PGP MESSAGE-----(\n.*)+\n\n", "");
-         encryptedData = encryptedData.replaceAll(
-                 "\n-----END PGP MESSAGE-----\n", "");
-
-     }
-     return encryptedData;
- }
-
- /**
-  * Description of the Method
-  * 
-  * @param Data
-  *            Description of the Parameter
-  * @param gnupgSecretKey
-  *            Description of the Parameter
-  * @param gnupgPublicKey
-  *            Description of the Parameter
-  * @return Description of the Return Value
-  */
- public String signExtension(String Data, String gnupgSecretKey) {
-     String gnupgPassword=null;
-     String signedData = null;
-     try {
-         byte[] utf8 = Data.getBytes("UTF8");
-         String string = new String(utf8, streamEncoding());
-         Data = string;
-     } catch (java.io.UnsupportedEncodingException e) {
-     }
-
-     if ((gnupgPassword != null)
-             && (sign(Data, gnupgSecretKey, gnupgPassword))) {
-         signedData = getResult();
-         signedData = signedData.replaceAll(
-                 "-----BEGIN PGP SIGNATURE-----(\n.*)+\n\n", "");
-         signedData = signedData.replaceAll(
-                 "\n-----END PGP SIGNATURE-----\n", "");
-         signedData = signedData.replaceAll("^(\n)+", "");
-         signedData = signedData.replaceAll("(\n)+$", "");
-     }
-     return signedData;
- }
-
- public String verifyExtension(String xSignedData, String messageBody) {
-     String id = null;
-     try {
-         byte[] utf8 = messageBody.getBytes("UTF8");
-         String string = new String(utf8, streamEncoding());
-         messageBody = string;
-     } catch (java.io.UnsupportedEncodingException e) {
-     }
-     messageBody = messageBody.replaceAll("(\n)+$", "");
-     xSignedData = xSignedData.replaceAll("(\n)+$", "");
-     messageBody = messageBody.replaceAll("^(\n)+", "");
-     xSignedData = xSignedData.replaceAll("^(\n)+", "");
-     if (verify("-----BEGIN PGP SIGNATURE-----\nVersion: bla\n\n"
-             + xSignedData + "\n-----END PGP SIGNATURE-----", messageBody)) {
-         id = getErrorString();
-         id = id.replaceAll(".*ID (.*)(\n.*)+", "$1");
-     }
-     return id;
- }
  /**
     * Gets stream encoding
     *

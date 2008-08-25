@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: Result.java 4307 2008-08-25 05:18:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -73,6 +74,16 @@ public class Result<T>{
 		return result==null ? null : result.result;
 	}
 	
+	public int LevelToLogLevel(final Level level){
+		switch (level.intValue()){
+		case 400:
+		case 500:
+		case 600: return Log.DEBUGMSG;
+		case 900: return Log.WARNINGS;
+		case 1000: return Log.ERRORS;
+		}
+		return Log.TRACE;
+	}
 	/**
 	 * Mapping zwischen logSeverity (Log.ERRORS, Log.INFOS, usw) und
 	 * RCP Status Severity (Status.OK, Stauts.INFO, usw)
@@ -158,6 +169,9 @@ public class Result<T>{
 	public Result(){
 	}
 	
+	public Result(Level severity, int code, String text, T result, boolean log){
+		add(LevelToLogLevel(severity),code,text,result,log);
+	}
 	public Result(int severity,int code, String text, T result, boolean log){
 		add(severity,code,text,result,log);
 	}
