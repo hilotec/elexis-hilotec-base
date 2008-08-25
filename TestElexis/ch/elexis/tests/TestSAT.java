@@ -22,7 +22,7 @@ public class TestSAT extends TestCase {
 		}
 		file.mkdirs();
 		gpg=new GnuPG(false);
-		gpg.setExecutable("e:/tools/gpg/gpg.exe");
+		gpg.setExecutable("c:/tools/gnupg/gpg.exe");
 		gpg.setHomedir(homedir);
 		gpg.generateKey("Alice Elexistesterin", "alice@elexis.ch", "aliceelexis".toCharArray(), "alice");
 		gpg.generateKey("Bob Elexistester", "bob@elexis.ch", "bobelexis".toCharArray(), "bob");
