@@ -33,10 +33,10 @@ public class TestSAT extends TestCase {
 		SAT sat=new SAT(gpg,"alice@elexis.ch");
 		HashMap<String, Object> hash=new HashMap<String, Object>();
 		hash.put("test", "Ein Testtext");
-		byte[] result=sat.wrap(hash, "bob@elexis.ch", "aliceelexis".toCharArray());
+		String result=sat.wrap(hash, "bob@elexis.ch", "aliceelexis".toCharArray());
 		assertNotNull(result);
-		System.out.println(result);
-		//encrypted=result;
+		System.out.println(new String(result));
+		encrypted=result;
 	}
 	
 	public void testUnwrap() throws Exception{
