@@ -45,6 +45,6 @@ public class TestSAT extends TestCase {
 		assertTrue(result.isOK());
 		HashMap<String, Object> res=result.get();
 		String val=(String)res.get("test");
-		assertEquals(val, "Ein Testtect");
+		assertEquals(val, "Ein Testtext");
 	}
 }
