@@ -105,8 +105,20 @@ public class Script extends NamedBlob2 {
 				SWTHelper.showError("Script target Error", "Script Fehler", "Target Error: "+e.getTarget());
 				throw(new Exception(e.getMessage()));
 			}catch(ParseException e){
-				SWTHelper.showError("Script syntax Error", "Script syntax fehler: "+e.getErrorText());
-				throw(new Exception(e.getMessage()));
+				String msg="";
+				if(e!=null){
+					try{
+						msg=e.getErrorText();
+						if(msg==null);
+						msg="";
+					}catch(Exception ex){
+						msg="unbekannter Fehler";
+					}
+				}
+				String line="Script Syntax Fehler "+msg;
+				String titel="Script syntax Error";
+				SWTHelper.showError(titel,line);
+				// throw(new Exception(e.getMessage()));
 			}
 			catch (EvalError e) {
 				SWTHelper.showError("Script general error","Script Fehler", "Allgemeiner Script Fehler: "+ e.getErrorText());

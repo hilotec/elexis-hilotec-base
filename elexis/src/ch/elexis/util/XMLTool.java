@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, D. Lutz and Elexis
+ * Copyright (c) 2007-2008, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,25 @@
  *
  * Contributors:
  *    D. Lutz - initial implementation
+ *    G. Weirich - additional methods
  *    
- *  $Id$
+ *  $Id: XMLTool.java 4313 2008-08-26 16:59:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 
+import sun.misc.BASE64Encoder;
+
+import ch.rgw.tools.Base64;
 import ch.rgw.tools.TimeTool;
 
 
@@ -172,13 +181,79 @@ public class XMLTool {
 		}
 		return xmlid;
 	}
-	
+	/**
+	 * Convert a TimeTool into an XML dateTime type
+	 * @param dateTime
+	 * @return
+	 */
 	public static String dateTimeToXmlDateTime(String dateTime){
 		TimeTool tt=new TimeTool(dateTime);
 		return tt.toString(TimeTool.DATETIME_XML);
 	}
 	
+	/**
+	 * Copnvert a date part of a TimeTool to an XML date type 
+	 * @param date
+	 * @return
+	 */
 	public static String dateToXmlDate(String date){
 		return new TimeTool(date).toString(TimeTool.DATE_ISO);
 	}
+	
+	/**
+	 * Convert a HashMap of String/Object pairs into a SOAP compatible XML structure.
+	 * Ad this time, only String, int, long, byte, byte[] and Hashmaps thereof are supported
+	 * as Object types
+	 * @param hash
+	 * @param name
+	 * @param ns
+	 * @return
+	 */
+	public static Element HashMapToXML(HashMap<String, Object> hash, String name, Namespace ns){
+		Element ret=new Element("hash",ns);
+		ret.setAttribute("name", name);
+		Set<Entry<String, Object>> vars=hash.entrySet();
+		for(Entry<String,Object> entry:vars){
+			Element var;
+			String n=entry.getKey();
+			Object o=entry.getValue();
+			if(o instanceof String){
+				var=new Element("string",ns);
+				var.setAttribute("name",n);
+				var.setText((String)o);
+			}else if( (o instanceof Integer) ||
+					  (o instanceof Long)    ||
+					  (o instanceof Short)   ||
+					  (o instanceof Byte)){
+				var=new Element("int",ns);
+				var.setAttribute("name","n");
+				var.setText(o.toString());
+			}else if(o instanceof HashMap){
+				var=HashMapToXML((HashMap)o, n, ns);
+			}else if(o instanceof byte[]){
+				var=new Element("array",ns);
+				var.setAttribute("name",n);
+				var.setText(new BASE64Encoder().encode((byte[])o));
+			}else{
+				var=null;
+			}
+			if(var==null){
+				return null;
+			}
+			ret.addContent(var);
+		}
+		return ret;
+	}
+	
+	public static HashMap<String,Object> XMLToHashMap(Element elem){
+		HashMap<String,Object> ret=new HashMap<String,Object>();
+		List<Element> vars=elem.getChildren();
+		for(Element var:vars){
+			String type=var.getName();
+			
+		}
+		return null;
+	}
+	
+	
 }
