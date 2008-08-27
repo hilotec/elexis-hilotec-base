@@ -3,11 +3,11 @@ package ch.elexis.tests;
 import java.io.File;
 import java.util.HashMap;
 
-import ch.elexis.pro.SAT;
+import junit.framework.TestCase;
+import ch.elexis.exchange.SAT;
 import ch.elexis.util.Result;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.GnuPG;
-import junit.framework.TestCase;
 
 public class TestSAT extends TestCase {
 	static String homedir;
