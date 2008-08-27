@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SAT.java 4314 2008-08-26 21:04:59Z rgw_ch $
+ * $Id: SAT.java 4317 2008-08-27 05:19:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
 
 import java.util.HashMap;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ch.elexis.exchange.SoapConverter;
 import ch.elexis.util.Result;
@@ -29,6 +31,7 @@ import ch.rgw.tools.GnuPG;
  *
  */
 public class SAT {
+	static final Pattern signature=Pattern.compile(".+pgp: good signature from:(.+)");
 	GnuPG gpg;
 	String userKey;
 	/**
@@ -45,6 +48,12 @@ public class SAT {
 	public Result<HashMap<String, Object>>unwrap(String encrypted, char[] pwd){
 		if(gpg.decrypt(encrypted, new String(pwd))){
 			String dec=gpg.getResult();
+			String msg=gpg.getErrorString();
+			Matcher matcher=signature.matcher(msg);
+			String user=null;
+			if(matcher.matches()){
+				user=matcher.group(1);
+			}
 			try{
 				SoapConverter sc=new SoapConverter();
 				sc.load(dec);
@@ -52,6 +61,11 @@ public class SAT {
 				Long ts=(Long)hash.get("ADM_timestamp");
 				if(ts==null || ((System.currentTimeMillis()-ts)>300000)){
 					return new Result<HashMap<String, Object>>(Level.WARNING,3,"Timeout",null,false);
+				}
+				if(user==null){
+					hash.remove("ADM_user");
+				}else{
+					hash.put("ADM_user", user);
 				}
 				return new Result<HashMap<String, Object>>(hash);
 			}catch(Exception ex){
