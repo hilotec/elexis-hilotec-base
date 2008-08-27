@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SAT.java 4317 2008-08-27 05:19:24Z rgw_ch $
+ * $Id: SAT.java 4318 2008-08-27 12:57:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -31,7 +31,10 @@ import ch.rgw.tools.GnuPG;
  *
  */
 public class SAT {
-	static final Pattern signature=Pattern.compile(".+pgp: good signature from:(.+)");
+	public static final String ADM_TIMESTAMP="ADM_timestamp";
+	public static final String ADM_SIGNED_BY="ADM_user";
+	static final Pattern signatureEN=Pattern.compile(".+gpg: good signature from:(.+)",Pattern.DOTALL);
+	static final Pattern signatureDE=Pattern.compile(".+gpg: Korrekte Unterschrift von .+<(.+)>.*",Pattern.DOTALL);
 	GnuPG gpg;
 	String userKey;
 	/**
@@ -49,23 +52,28 @@ public class SAT {
 		if(gpg.decrypt(encrypted, new String(pwd))){
 			String dec=gpg.getResult();
 			String msg=gpg.getErrorString();
-			Matcher matcher=signature.matcher(msg);
+			Matcher matcher=signatureEN.matcher(msg);
 			String user=null;
 			if(matcher.matches()){
 				user=matcher.group(1);
+			}else{
+				matcher=signatureDE.matcher(msg);
+				if(matcher.matches()){
+					user=matcher.group(1).trim();
+				}
 			}
 			try{
 				SoapConverter sc=new SoapConverter();
 				sc.load(dec);
 				HashMap<String, Object> hash=sc.getParameters();
-				Long ts=(Long)hash.get("ADM_timestamp");
+				Long ts=(Long)hash.get(ADM_TIMESTAMP);
 				if(ts==null || ((System.currentTimeMillis()-ts)>300000)){
 					return new Result<HashMap<String, Object>>(Level.WARNING,3,"Timeout",null,false);
 				}
 				if(user==null){
-					hash.remove("ADM_user");
+					hash.remove(ADM_SIGNED_BY);
 				}else{
-					hash.put("ADM_user", user);
+					hash.put(ADM_SIGNED_BY, user);
 				}
 				return new Result<HashMap<String, Object>>(hash);
 			}catch(Exception ex){
@@ -86,7 +94,7 @@ public class SAT {
 	 */
 	public String wrap(HashMap<String, Object> hash, String dest, char[] senderPwd){
 		try{
-			hash.put("ADM_timestamp", System.currentTimeMillis());
+			hash.put(ADM_TIMESTAMP, System.currentTimeMillis());
 			SoapConverter sc=new SoapConverter();
 			sc.create();
 			sc.addHashMap("params", hash);
