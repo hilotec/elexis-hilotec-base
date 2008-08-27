@@ -5,7 +5,7 @@ Name Elexis
 
 # Defines
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.3.1
+!define VERSION 1.3.4
 
 !define REGKEY "SOFTWARE\${PRODUCTNAME}"
 
@@ -57,7 +57,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile "$%SOFTWARE%\elexis\deploy\output\elexis-windows-${VERSION}.exe"
+OutFile "$%SOFTWARE%\elexis\deploy\output\elexis-windows-demo-${VERSION}.exe"
 InstallDir $PROGRAMFILES\Elexis
 CRCCheck on
 XPStyle on
