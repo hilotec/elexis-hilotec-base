@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientDetailView.java 590 2006-07-24 15:40:40Z rgw_ch $
+ *  $Id: PatientDetailView.java 4321 2008-08-28 12:44:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -23,6 +23,12 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Patient;
 
+/**
+ * 
+ * @author gerry
+ *@deprecated use PatientDetailView2
+ */
+@Deprecated
 public class PatientDetailView extends ViewPart implements ISaveablePart2{
     public static final String ID="ch.elexis.PatDetail";
     Patientenblatt pb;

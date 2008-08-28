@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PatientPerspektive.java 2947 2007-08-03 10:16:42Z rgw_ch $
+ *    $Id: PatientPerspektive.java 4321 2008-08-28 12:44:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -27,7 +27,7 @@ import ch.elexis.views.KonsDetailView;
 import ch.elexis.views.KonsListe;
 import ch.elexis.views.LaborView;
 import ch.elexis.views.PatHeuteView;
-import ch.elexis.views.PatientDetailView;
+import ch.elexis.views.PatientDetailView2;
 import ch.elexis.views.PatientenListeView;
 import ch.elexis.views.RezepteView;
 import ch.elexis.views.Starter;
@@ -52,7 +52,7 @@ public class PatientPerspektive implements IPerspectiveFactory {
 		IFolderLayout leftbottom=layout.createFolder("links.unten", IPageLayout.BOTTOM, 0.7f, "Links.folder");
 		IFolderLayout right=layout.createFolder("Rechts.folder",IPageLayout.RIGHT, 0.7f, "Haupt.Folder");
 		
-		main.addView(PatientDetailView.ID);
+		main.addView(PatientDetailView2.ID);
 		left.addView(PatientenListeView.ID);
 		//left.addView(KonsListe.ID);
 		//left.addView(FallListeView.ID);
@@ -72,7 +72,7 @@ public class PatientPerspektive implements IPerspectiveFactory {
 		layout.addFastView(LeistungenView.ID,0.5f);
 		layout.addFastView(DiagnosenView.ID,0.5f);
 		layout.addPerspectiveShortcut(ID);
-		layout.addShowViewShortcut(PatientDetailView.ID);
+		layout.addShowViewShortcut(PatientDetailView2.ID);
 		layout.addShowViewShortcut(PatientenListeView.ID);
         //layout.addShowViewShortcut(FallListeView.ID);
 		layout.addPerspectiveShortcut(FaelleView.ID);
