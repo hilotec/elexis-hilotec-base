@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
-import ch.elexis.exchange.SAT;
-import ch.elexis.util.Result;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.GnuPG;
+import ch.rgw.tools.Result;
+import ch.rgw.tools.SAT;
 
 public class TestSAT extends TestCase {
 	static String homedir;
