@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 3986 2008-06-01 06:19:21Z rgw_ch $
+ *  $Id: MedikamentImporter.java 4324 2008-08-29 16:43:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -25,8 +25,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.Artikel;
@@ -45,8 +43,8 @@ public class MedikamentImporter extends ImporterPage {
 	private static final String LAGERART = "Lagerart";
 	private static final String KASSENTYP = "Kassentyp";
 	private static final String VK_PREIS = "VK_Preis";
-	Button bClear;
-	boolean bDelete;
+	//Button bClear;
+	//boolean bDelete;
 	public MedikamentImporter() {}
 
 	final static String SUBID="SubID";
@@ -66,6 +64,7 @@ public class MedikamentImporter extends ImporterPage {
 		PersistentObject.setDefaultCacheLifetime(2);
 		String in;
 		String mode=" (Modus: Daten ergänzen/update)";
+		/*
 		if(bDelete==true){
 			if(SWTHelper.askYesNo("Wirklich Daten löschen", 
 					"Achtung: Wenn die alten Daten gelöscht werden, kann es\nsein, dass bestehende Bezüge ungültig werden.")){
@@ -73,6 +72,7 @@ public class MedikamentImporter extends ImporterPage {
 				mode=" (Modus: Alles neu erstellen)";
 			}
 		}
+		*/
 		monitor.beginTask("Medikamenten Import"+mode,(int)(l/100));
 		Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
 		int counter=0;
@@ -197,16 +197,17 @@ public class MedikamentImporter extends ImporterPage {
 	public Composite createPage(final Composite parent) {
 		Composite ret=new ImporterPage.FileBasedImporter(parent,this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-		bClear=new Button(parent,SWT.CHECK|SWT.WRAP);
-		bClear.setText("Alle Daten vorher löschen (VORSICHT! Bitte Anleitung beachten)");
-		bClear.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+		//bClear=new Button(parent,SWT.CHECK|SWT.WRAP);
+		//bClear.setText("Alle Daten vorher löschen (VORSICHT! Bitte Anleitung beachten)");
+		//bClear.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		return ret;                        
 	}
 
+	/*
 	@Override
 	public void collect() {
 		bDelete=bClear.getSelection();
 		super.collect();
 	}
-	
+	*/
 }
