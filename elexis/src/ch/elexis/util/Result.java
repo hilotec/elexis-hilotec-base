@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Result.java 4307 2008-08-25 05:18:48Z rgw_ch $
+ *  $Id: Result.java 4322 2008-08-29 16:42:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -35,8 +35,9 @@ import ch.elexis.Hub;
  * Eine Methode kann entweder ein neues Result-Objekt erzeugen, oder ein übergebenes Resultobjekt um 
  * eine Meldung erweitern.
  * @author Gerry
- *
+ * @deprecated use ch.rgw.tools.Result
  */
+@Deprecated
 public class Result<T>{
 	List<msg> list=new ArrayList<msg>();
 	private int severity=0;

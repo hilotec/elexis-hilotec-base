@@ -9,13 +9,12 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - additional methods
  *    
- *  $Id: XMLTool.java 4313 2008-08-26 16:59:49Z rgw_ch $
+ *  $Id: XMLTool.java 4322 2008-08-29 16:42:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -24,8 +23,6 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import sun.misc.BASE64Encoder;
-
-import ch.rgw.tools.Base64;
 import ch.rgw.tools.TimeTool;
 
 

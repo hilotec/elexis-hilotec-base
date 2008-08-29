@@ -1,4 +1,4 @@
-//$Id: GnuPG.java 4311 2008-08-26 05:10:33Z rgw_ch $
+//$Id: GnuPG.java 4322 2008-08-29 16:42:51Z rgw_ch $
 package ch.rgw.tools;
    
 import java.io.*;
@@ -11,7 +11,7 @@ import ch.rgw.tools.StringTool;
   * A class that implements PGP interface for Java.
   * <P>
   * 
-  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4311 2008-08-26 05:10:33Z rgw_ch $
+  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4322 2008-08-29 16:42:51Z rgw_ch $
   * 
   * @author Yaniv Yemini, January 2004.
   * @author Based on a class GnuPG by John Anderson, which can be found
@@ -112,13 +112,13 @@ public class GnuPG {
       */
      public void run() {
          try {
-             BufferedInputStream br = new BufferedInputStream(is);
-             StringBuilder sb=new StringBuilder();
-             int in=-1;
-             while ((in = br.read()) != -1) {
-                 sb.append((char)in);
+             InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr);
+             String line = null;
+             while ((line = br.readLine()) != null) {
+                 fullLine = fullLine + line + "\n";
              }
-             fullLine=sb.toString();
+
          } catch (IOException ioe) {
              ioe.printStackTrace();
          }
@@ -244,10 +244,10 @@ public class GnuPG {
   *            ID of public key to encrypt with
   * @return true upon success
   */
- public boolean encrypt(String inStr, String receiverKey, String senderKey) {
+ public boolean encrypt(String inStr, String secID, String keyID) {
 
      boolean success;
-     success = runGnuPG("-u " + senderKey + " -r " + receiverKey + " --encrypt", inStr);
+     success = runGnuPG("-u " + secID + " -r " + keyID + " --encrypt", inStr);
      if (success && this.gpg_exitCode != 0) {
          success = false;
      }
@@ -278,7 +278,16 @@ public class GnuPG {
      }
      return success;
  }
+ 
+ 	public boolean signKey(String keyname, String passphrase){
+		boolean success=runGnuPG("--passphrase-fd 0 --yes --sign-key "+keyname, passphrase);
+		if(success && this.gpg_exitCode !=0){
+			success=false;
+		}
+		return success;
+	 }
 
+ 
  public boolean decrypt(File inFile, String outFile, String passPhrase){
      boolean success = false;
 
@@ -325,7 +334,7 @@ public class GnuPG {
  /**
   * import key
   */
- public boolean importKey(String keyname){
+ public boolean importKeyFile(String keyname){
 	 boolean success=runGnuPG("--import "+keyname,null);
 	 if (success && this.gpg_exitCode != 0) {
          success = false;
@@ -333,7 +342,7 @@ public class GnuPG {
 	 return success;
  }
  
- public boolean importKeyFromClipboard(String key){
+ public boolean importKey(String key){
 	 File tmpFile = createTempFile(key);
 	 boolean success=false;
 	 if(tmpFile!=null){
@@ -345,7 +354,8 @@ public class GnuPG {
 	 }
 	 return success;
  }
- /**
+ 
+  /**
   * List secret keys in keyring
   * 
   * @param ID
@@ -368,7 +378,7 @@ public class GnuPG {
  public boolean generateKey(String name, String mail, char[] pwd, String bem){
 	 boolean success;
 	 StringBuilder sb=new StringBuilder();
-	 sb.append("Key-Type: DSA\n Key-Length: 1024\n Subkey-Type: ELG-E\n Subkey-Length: 1024")
+	 sb.append("Key-Type: DSA\n Key-Length: 2048\n Subkey-Type: ELG-E\n Subkey-Length: 2048")
 	 	.append("\n Name-Real: ").append(name);
 	 if(!StringTool.isNothing(bem)){
 	 	sb.append("\n Name-Comment: ").append(bem);
@@ -385,7 +395,23 @@ public class GnuPG {
      return success;
  	 
  }
+
  
+ public boolean changeKeyPassphrase(String key, String oldpwd, String newpwd){
+	 boolean success;
+	 StringBuilder sb=new StringBuilder();
+	 sb.append("passwd\n")
+	 	.append(oldpwd).append("\n")
+	 	.append(newpwd).append("\n")
+	 	.append(newpwd).append("\n")
+	 	.append("quit\n");
+	 success=runGnuPG("--edit-key "+key, sb.toString());
+     if (success && this.gpg_exitCode != 0) {
+         success = false;
+     }
+     return success;
+
+ }
  /**
   * Verify a signature
   * 
@@ -451,6 +477,15 @@ public class GnuPG {
      return gpg_exitCode;
  }
 
+public void runWithCommand(String command){
+	 try {
+		Process p=Runtime.getRuntime().exec(executable+" "+command);
+
+		//p.waitFor();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+ }
  /**
   * Runs GnuPG external program
   * 
