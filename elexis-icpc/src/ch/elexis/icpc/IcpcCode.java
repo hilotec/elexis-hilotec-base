@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 3875 2008-05-05 16:59:47Z rgw_ch $
+ *    $Id: IcpcCode.java 4327 2008-08-31 21:24:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -28,12 +28,13 @@ import ch.rgw.tools.VersionInfo;
 
 public class IcpcCode extends PersistentObject implements IDiagnose {
 	static final String TABLENAME="CH_ELEXIS_ICPC";
-	static final String VERSION="1.1.0";
+	static final String VERSION="1.2.0";
 	public static final String createDB="CREATE TABLE "+TABLENAME+" ("+
 	"ID			CHAR(3) primary key,"+
 	"deleted	CHAR(1) default '0',"+
 	"component	CHAR(2),"+
 	"short		VARCHAR(80),"+
+	"synonyms   VARCHAR(250),"+
 	"icd10		    TEXT,"+
 	"txt			TEXT,"+	
 	"criteria		TEXT,"+
@@ -49,7 +50,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	
 	static{
 		addMapping(TABLENAME,"component","text=txt","short","icd10","criteria","inclusion",
-				"exclusion","consider","note");
+				"exclusion","consider","note","synonyms");
 	}
 	public static void initialize(){
 		createTable(TABLENAME, createDB);
@@ -140,6 +141,9 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 				if(vi.isOlder("1.1.0")){
 					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
 					ic.set("text", VERSION);
+				}
+				if(vi.isOlder("1.2.0")){
+					getConnection().equals("ALTER TABLE "+TABLENAME+" ADD synonyms VARCHAR(250);");
 				}
 			}
 		}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcImporter.java 1723 2007-02-02 21:17:08Z rgw_ch $
+ *    $Id: IcpcImporter.java 4327 2008-08-31 21:24:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -83,11 +83,11 @@ public class IcpcImporter extends ImporterPage {
 		monitor.worked(1);
 		monitor.subTask("Lese Daten ein");
 		PreparedStatement ps=pj.prepareStatement("INSERT INTO "+IcpcCode.TABLENAME+" (" +
-				"ID,component,txt,short,icd10,criteria,inclusion,exclusion,consider,note)"+
-				"VALUES (?,?,?,?,?,?,?,?,?,?);");
+				"ID,component,txt,synonyms,short,icd10,criteria,inclusion,exclusion,consider,note)"+
+				"VALUES (?,?,?,?,?,?,?,?,?,?,?);");
 		monitor.worked(1);
 		try{
-			ResultSet res=stmSrc.query("SELECT * FROM ICPC2");
+			ResultSet res=stmSrc.query("SELECT * FROM \"ICPC2eGM\"");
 			while(res.next()){
 				ps.setString(1, res.getString(1));
 				ps.setString(2, res.getString(2));
@@ -99,6 +99,7 @@ public class IcpcImporter extends ImporterPage {
 				ps.setString(8, res.getString(8));
 				ps.setString(9, res.getString(9));
 				ps.setString(10, res.getString(10));
+				ps.setString(11, res.getString(11));
 				ps.execute();
 				if(monitor.isCanceled()){
 					return Status.CANCEL_STATUS;
