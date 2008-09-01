@@ -2,12 +2,12 @@
 <feature
       id="ch.elexis"
       label="elexis basic feature"
-      version="1.3.4"
+      version="1.4.0"
       provider-name="elexis.ch"
       plugin="ch.elexis">
 
    <description url="http://www.elexis.ch">
-      Elexis Praxisprogramm Release 1.3
+      Elexis Praxisprogramm Release 1.4
    </description>
 
    <copyright>
@@ -38,145 +38,145 @@
          id="ch.elexis"
          download-size="0"
          install-size="0"
-         version="1.3.0"/>
+         version="1.4.0"/>
 
    <plugin
          id="ch.elexis.arzttarife_ch"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.artikel_ch"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.diagnosecodes_ch"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.rgw.OOWrapper"
          download-size="0"
          install-size="0"
-         version="1.3.0"/>
+         version="1.4.0"/>
 
    <plugin
          id="ch.elexis.befunde"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.ebanking_ch"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.agenda"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.externe_dokumente"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.bildanzeige"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.icpc"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.mail"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.privatnotizen"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.omnivore"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.Textplugin"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.notes"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.importer.div"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.noatext"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.medshare.elexis_directories"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="org.iatrix.help.wiki"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
          id="ch.elexis.messages"
          download-size="0"
          install-size="0"
-         version="1.3.0"
+         version="1.4.0"
          unpack="false"/>
 
    <plugin
@@ -190,7 +190,14 @@
          id="ch.elexis.medikamente.bag"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.4.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.molemax"
+         download-size="0"
+         install-size="0"
+         version="1.4.0"
          unpack="false"/>
 
 </feature>
