@@ -6,7 +6,7 @@ Name Elexis
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.3.4
+!define VERSION 1.4.0
 !define COMPANY "G. Weirich"
 !define URL http://www.elexis.ch
 

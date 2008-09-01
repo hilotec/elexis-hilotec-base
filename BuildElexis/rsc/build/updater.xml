@@ -2,14 +2,15 @@
 <project name="elexis-updater" default="updater" basedir="../../">
 
 	<target name="updater">
+	    <tstamp/>
 		<property file="rsc/build/local.properties" />
 		<property environment="env" />
-		<property name="version" value="1.3.4" />
+		<property name="version" value="1.4.0" />
 		<property name="dist" value="${dest}/Elexis-${version}" />
-		<property name="targetfile" value="elexis-mmc_1.1.0.20080815.jar" />
+		<property name="targetfile" value="elexis-mmc_1.2.0.${DSTAMP}.jar" />
 		<mkdir dir="${env.TEMP}/elexis-mmc" />
 		<echo message="${source}" />
-		<javac srcdir="${source}/Elexis-MMC/src" destdir="${env.TEMP}/elexis-mmc" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8" />
+		<javac srcdir="${source}/Elexis-MMC/src" destdir="${env.TEMP}/elexis-mmc" debug="no" optimize="yes" target="1.5" encoding="UTF-8" />
 		<jar basedir="${env.TEMP}/elexis-mmc" destfile="${env.TEMP}/elexis-mmc.jar">
 			<manifest>
 				<attribute name="Main-Class" value="ch.elexis.mmc.Starter" />

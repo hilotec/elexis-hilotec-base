@@ -5,7 +5,7 @@
         <!-- Basisplugins; für die normale Programmfunktion erforderlich -->
     <target name="main">
         <ant antfile="../elexis/build.xml"/>
-    	<ant antfile="../jdomwrapper/build.xml"/>
+    	<!-- ant antfile="../jdomwrapper/build.xml"/ -->
         <ant antfile="../elexis-importer/build.xml"/>
         <ant antfile="../elexis-simpletext/build.xml"/>
         
