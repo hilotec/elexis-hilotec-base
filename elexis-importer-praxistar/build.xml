@@ -31,9 +31,6 @@
 		<pathelement location="${dist}/plugins/ch.elexis.icpc_${version}"/>
 		<pathelement location="${dist}/plugins/ch.elexis.diagnosecodes_ch_${version}"/>
 		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${dist}/plugins/ch.elexis.jdomwrapper_${version}">
-				<include name="*.jar"/>
-    	</fileset>
 	</path>
 	
 	<target name="checkout" unless="unplugged">
