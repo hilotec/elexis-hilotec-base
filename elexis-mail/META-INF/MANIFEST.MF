@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: E-Mail Plugin für Elexis
 Bundle-SymbolicName: ch.elexis.mail;singleton:=true
-Bundle-Version: 1.3.0
+Bundle-Version: 1.4.0
 Bundle-Activator: ch.elexis.mail.Activator
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
