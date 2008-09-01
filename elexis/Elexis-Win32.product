@@ -54,7 +54,6 @@ Rietstrasse 30
       <plugin id="ch.elexis.ebanking_ch"/>
       <plugin id="ch.elexis.icpc"/>
       <plugin id="ch.elexis.importer.div"/>
-      <plugin id="ch.elexis.jdomwrapper"/>
       <plugin id="ch.elexis.kassenbuch"/>
       <plugin id="ch.elexis.laborimport_viollier"/>
       <plugin id="ch.elexis.mail"/>
@@ -62,9 +61,9 @@ Rietstrasse 30
       <plugin id="ch.elexis.noatext"/>
       <plugin id="ch.elexis.omnivore"/>
       <plugin id="ch.elexis.privatnotizen"/>
-      <plugin id="ch.elexis.update_tool"/>
       <plugin id="ch.medshare.elexis_directories"/>
       <plugin id="com.ibm.icu"/>
+      <plugin id="com.ibm.icu36.data.update" fragment="true"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.servlet.jsp"/>
       <plugin id="org.apache.ant"/>

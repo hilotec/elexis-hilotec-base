@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 4284 2008-08-15 14:46:23Z rgw_ch $
+ * $Id: DBUpdate.java 4337 2008-09-01 15:41:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -219,6 +219,7 @@ public class DBUpdate {
 			// 1.7.2
 			"ALTER TABLE LEISTUNGEN ADD SCALE2 CHAR(4);"
 					+"ALTER TABLE ETIKETTEN ADD classes VARCHAR(255);"
+					+"ALTER TABLE LABORWERTE ADD zeit CHAR(6);"
 
 	};
 	static Log log = Log.get("DBUpdate");

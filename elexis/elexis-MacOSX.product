@@ -40,7 +40,6 @@ Rietstrasse 30
 
    <plugins>
       <plugin id="ch.elexis"/>
-      <plugin id="ch.elexis.EMRPrinter"/>
       <plugin id="ch.elexis.Textplugin"/>
       <plugin id="ch.elexis.agenda"/>
       <plugin id="ch.elexis.artikel_ch"/>
@@ -51,7 +50,6 @@ Rietstrasse 30
       <plugin id="ch.elexis.ebanking_ch"/>
       <plugin id="ch.elexis.icpc"/>
       <plugin id="ch.elexis.importer.div"/>
-      <plugin id="ch.elexis.jdomwrapper"/>
       <plugin id="ch.elexis.laborimport_viollier"/>
       <plugin id="ch.elexis.mail"/>
       <plugin id="ch.elexis.medikamente.bag"/>
@@ -59,8 +57,6 @@ Rietstrasse 30
       <plugin id="ch.elexis.notes"/>
       <plugin id="ch.elexis.omnivore"/>
       <plugin id="ch.elexis.privatnotizen"/>
-      <plugin id="ch.elexis.update_tool"/>
-      <plugin id="ch.sgam.xchange"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.ibm.icu.source"/>
       <plugin id="javax.servlet"/>
@@ -102,11 +98,11 @@ Rietstrasse 30
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
+      <plugin id="org.eclipse.swt.carbon.macosx"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.tomcat"/>
       <plugin id="org.eclipse.ui"/>
-      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
+      <plugin id="org.eclipse.ui.carbon"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.workbench"/>
