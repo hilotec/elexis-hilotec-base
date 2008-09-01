@@ -12,6 +12,8 @@ DATUM 1.1.1
 DATUM 1.1.2
 1.8.2008 1.3.3
 8.8.2008: Letzte revision 1.3.3, SVN rev. 4245
+1.9.2008: Letzte revision 1.3.4, SVN rev. 4329. 
+          Release 1.3.4 auf Server, Trunk auf 1.4.0
 
 Änderungen
 ==========
