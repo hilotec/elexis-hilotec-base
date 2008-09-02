@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 3955 2008-05-23 10:57:32Z rgw_ch $
+ * $Id: GlobalEvents.java 4362 2008-09-02 20:32:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -437,7 +437,7 @@ public class GlobalEvents implements IPartListener2 {
 		}
 	}
 	public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-		// TODO Auto-generated method stub
+		//partActivated(partRef);
 		
 	}
 	public void partClosed(final IWorkbenchPartReference partRef) {
