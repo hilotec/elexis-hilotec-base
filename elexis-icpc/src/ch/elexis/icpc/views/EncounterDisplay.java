@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterDisplay.java 4356 2008-09-02 16:20:10Z rgw_ch $
+ *    $Id: EncounterDisplay.java 4361 2008-09-02 20:31:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -77,6 +77,7 @@ public class EncounterDisplay extends Composite {
 					actEncounter.setRFE((IcpcCode)o);
 					setEncounter(actEncounter);
 				}
+				GlobalEvents.getInstance().removeCodeSelectorTarget();
 			}
 			
 		});
@@ -102,6 +103,7 @@ public class EncounterDisplay extends Composite {
 					actEncounter.setDiag((IcpcCode)o);
 					setEncounter(actEncounter);
 				}
+				GlobalEvents.getInstance().removeCodeSelectorTarget();
 			}
 			
 		});
@@ -124,6 +126,7 @@ public class EncounterDisplay extends Composite {
 					actEncounter.setProc((IcpcCode)o);
 					setEncounter(actEncounter);
 				}
+				GlobalEvents.getInstance().removeCodeSelectorTarget();
 			}
 			
 		});
