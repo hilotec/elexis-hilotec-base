@@ -8,27 +8,26 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 4327 2008-08-31 21:24:08Z rgw_ch $
+ *    $Id: IcpcCode.java 4356 2008-09-02 16:20:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 
-import ch.elexis.Desk;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.Tree;
-import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
 public class IcpcCode extends PersistentObject implements IDiagnose {
 	static final String TABLENAME="CH_ELEXIS_ICPC";
 	static final String VERSION="1.2.0";
+
+	
 	public static final String createDB="CREATE TABLE "+TABLENAME+" ("+
 	"ID			CHAR(3) primary key,"+
 	"deleted	CHAR(1) default '0',"+
@@ -99,35 +98,37 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	public static IcpcCode load(String id){
 		return new IcpcCode(id);
 	}
-	
 	public static final String[] classes={
-		"A: General and unspecified",
-		"B: Blood, blood-forming organs and immune mechanism(spleen, bone marrow)",
-		"D: Digestive",
-		"F: Eye",
-		"H: Ear (Hearing)",
-		"K: Circulatory",
-		"L: Musculoskeletal (Locomotion)",
-		"N: Neurological",
-		"P: Psychological",
-		"R: Respiratory",
-		"S: Skin",
-		"T: Endocrine, metabolic and nutritional",
-		"U: Urological",
-		"W: Pregnancy, child-bearing, family planning",
-		"X: Female genital",
-		"Y: Male genital",
-		"Z Social Problems"
+		Messages.IcpcCode_class_A,
+		Messages.IcpcCode_class_B,
+		Messages.IcpcCode_class_D,
+		Messages.IcpcCode_class_F,
+		Messages.IcpcCode_class_H,
+		Messages.IcpcCode_class_K,
+		Messages.IcpcCode_class_L,
+		Messages.IcpcCode_class_N,
+		Messages.IcpcCode_class_P,
+		Messages.IcpcCode_class_R,
+		Messages.IcpcCode_class_S,
+		Messages.IcpcCode_class_T,
+		Messages.IcpcCode_class_U,
+		Messages.IcpcCode_class_W,
+		Messages.IcpcCode_class_X,
+		Messages.IcpcCode_class_Y,
+		Messages.IcpcCode_class_Z
 	};
-	
+	/*
+	public static final String[] components_de={
+	};
+	*/
 	public static final String[] components={
-		"1: Complaint and symptom component",
-		"2: Diagnostic, screening and preventive component",
-		"3: Medication, treatment, procedure component",
-		"4: Test result component",
-		"5: Administrative component",
-		"6: Referrals and other reasons for encounter",
-		"7: Diagnosis/disease component"
+		Messages.IcpcCode_comp_1,
+		Messages.IcpcCode_comp_2,
+		Messages.IcpcCode_comp_3,
+		Messages.IcpcCode_comp_4,
+		Messages.IcpcCode_comp_5,
+		Messages.IcpcCode_comp_6,
+		Messages.IcpcCode_comp_7
 	};
 	
 	@SuppressWarnings("unchecked")
@@ -143,7 +144,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 					ic.set("text", VERSION);
 				}
 				if(vi.isOlder("1.2.0")){
-					getConnection().equals("ALTER TABLE "+TABLENAME+" ADD synonyms VARCHAR(250);");
+					getConnection().equals("ALTER TABLE "+TABLENAME+" ADD synonyms VARCHAR(255)");
 				}
 			}
 		}
@@ -156,7 +157,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 				String cmp=components[j];
 				Tree tComp=new Tree(tClass,cmp);
 				qbe.clear();
-				qbe.add("component", "=", cmp.substring(0,1));
+				qbe.add("component", StringTool.equals, cmp.substring(0,1));
 				qbe.startGroup();
 				qbe.add("ID", "Like", "*%");
 				qbe.or();
@@ -184,7 +185,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	public String storeToString(){
 		StringBuilder sb=new StringBuilder();
 		sb.append(getClass().getName()).append("::").append(getId()).append("::");
-		sb.append(realCode==null ? "" : realCode);
+		sb.append(realCode==null ? " " : realCode);
 		return sb.toString();
 	}
 	public Iterable<IAction> getActions() {

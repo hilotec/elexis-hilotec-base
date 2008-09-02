@@ -33,6 +33,14 @@
             icon="icons/wonca16.png"
             id="ch.elexis.icpc.encounterView"
             name="Encounters"/>
+      <view
+            allowMultiple="false"
+            category="ch.elexis.icpcCategory"
+            class="ch.elexis.icpc.views.ICPCCodesView"
+            icon="icons/wonca16.png"
+            id="ch.elexis.icpc.codesView"
+            name="ICPC2-Codes">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterView.java 1836 2007-02-18 09:13:08Z rgw_ch $
+ *    $Id: EncounterView.java 4356 2008-09-02 16:20:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -22,8 +23,11 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.icpc.CodeSelectorFactory;
 import ch.elexis.icpc.Encounter;
+import ch.elexis.util.CommonViewer;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.ViewerConfigurer;
 
 public class EncounterView extends ViewPart implements ActivationListener,
 		SelectionListener {

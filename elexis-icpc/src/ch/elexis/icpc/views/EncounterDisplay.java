@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterDisplay.java 2787 2007-07-12 11:45:02Z rgw_ch $
+ *    $Id: EncounterDisplay.java 4356 2008-09-02 16:20:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -32,7 +34,6 @@ import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.IcpcCode;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.views.codesystems.DiagnosenView;
 import ch.rgw.tools.ExHandler;
 
 /**
@@ -59,7 +60,9 @@ public class EncounterDisplay extends Composite {
 		body.setLayout(new GridLayout());
 		gRfe=new Group(body,SWT.NONE);
 		gRfe.setText("RFE / Problem");
-		gRfe.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		GridData gd=SWTHelper.getFillGridData(1, true, 1, true);
+		gd.heightHint=30;
+		gRfe.setLayoutData(gd);
 		podRfe=new PersistentObjectDropTarget(gRfe,new PersistentObjectDropTarget.Receiver(){
 
 			public boolean accept(PersistentObject o) {
@@ -79,12 +82,12 @@ public class EncounterDisplay extends Composite {
 		});
 		
 		gRfe.setLayout(new FillLayout());
-		gRfe.addMouseListener(new ClickReact(podRfe));
+		gRfe.addMouseListener(new ClickReact(podRfe,"RFE"));
 		lRfe=new Label(gRfe,SWT.WRAP);
 		
 		gDiag=new Group(body,SWT.NONE);
 		gDiag.setText("Diagnose");
-		gDiag.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gDiag.setLayoutData(GridDataFactory.copyData(gd));
 		podDiag=new PersistentObjectDropTarget(gDiag,new PersistentObjectDropTarget.Receiver(){
 
 			public boolean accept(PersistentObject o) {
@@ -103,7 +106,7 @@ public class EncounterDisplay extends Composite {
 			
 		});
 		gDiag.setLayout(new FillLayout());
-		gDiag.addMouseListener(new ClickReact(podDiag));
+		gDiag.addMouseListener(new ClickReact(podDiag,"DG"));
 		lDiag=new Label(gDiag,SWT.WRAP);
 		gProc=new Group(body,SWT.NONE);
 		gProc.setText("Procedere");
@@ -124,9 +127,9 @@ public class EncounterDisplay extends Composite {
 			}
 			
 		});
-		gProc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gProc.setLayoutData(GridDataFactory.copyData(gd));
 		gProc.setLayout(new FillLayout());
-		gProc.addMouseListener(new ClickReact(podProc));
+		gProc.addMouseListener(new ClickReact(podProc,"PROC"));
 		lProc=new Label(gProc,SWT.WRAP);
 	}
 	
@@ -149,15 +152,18 @@ public class EncounterDisplay extends Composite {
 	}
 	class ClickReact extends MouseAdapter{
 		PersistentObjectDropTarget pod;
-		ClickReact(PersistentObjectDropTarget pod){
+		String mode;
+		ClickReact(PersistentObjectDropTarget pod, String mode){
 			this.pod=pod;
+			this.mode=mode;
 		}
 		
 		@Override
 		public void mouseUp(MouseEvent arg0) {
 			try{
-				Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DiagnosenView.ID);
+				ICPCCodesView cov=(ICPCCodesView)Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ICPCCodesView.ID);
 				GlobalEvents.getInstance().setCodeSelectorTarget(pod);
+				cov.setComponent(mode);
 			}catch(Exception ex){
 				ExHandler.handle(ex);
 				

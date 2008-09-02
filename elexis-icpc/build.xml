@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 2362 2007-05-09 04:51:08Z rgw_ch $
+ * $Id: build.xml 4356 2008-09-02 16:20:10Z rgw_ch $
 -->
 <project name="elexis-Icpc" default="all">
 	<!-- modify the following 2 lines -->
@@ -44,6 +44,7 @@
 	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
 	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
 		<tstamp/>
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="texify"/>
 		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
 	</target>
