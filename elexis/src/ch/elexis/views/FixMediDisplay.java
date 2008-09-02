@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4099 2008-07-05 13:03:43Z rgw_ch $
+ * $Id: FixMediDisplay.java 4359 2008-09-02 17:14:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -56,7 +56,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	private IAction stopMedicationAction,changeMedicationAction,removeMedicationAction;
 	FixMediDisplay self;
 	Label lCost;
-	
+	PersistentObjectDropTarget target;
 	
 	public FixMediDisplay(Composite parent, IViewSite s){
 		super(parent,SWT.NONE,null);
@@ -70,7 +70,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		ViewMenus menu=new ViewMenus(s);
 		menu.createControlContextMenu(list,stopMedicationAction,changeMedicationAction,null,removeMedicationAction);
 		setDLDListener(dlisten);
-		new PersistentObjectDropTarget("Fixmedikation",this,
+		target=new PersistentObjectDropTarget("Fixmedikation",this,
 				new PersistentObjectDropTarget.Receiver(){
 
 					public boolean accept(PersistentObject o) {
@@ -111,6 +111,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				}
 				return ret;
 			}});
+
 	}
 	
 	
@@ -191,6 +192,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			try{
 				if(l.equals("Hinzu... ")){
 					site.getPage().showView(LeistungenView.ID);
+					GlobalEvents.getInstance().setCodeSelectorTarget(target);
 				}else if(l.equals("Liste... ")){
 					
 					RezeptBlatt rpb=(RezeptBlatt)site.getPage().showView(RezeptBlatt.ID);

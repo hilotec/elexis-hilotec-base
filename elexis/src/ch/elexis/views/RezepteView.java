@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 3918 2008-05-13 16:13:09Z rgw_ch $
+ *  $Id: RezepteView.java 4359 2008-09-02 17:14:20Z rgw_ch $
  *******************************************************************************/
 
 
@@ -72,7 +72,7 @@ import ch.rgw.tools.ExHandler;
  */
 public class RezepteView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2 {
 	public static final String ID="ch.elexis.Rezepte";
-	private final FormToolkit tk=Desk.theToolkit;
+	private final FormToolkit tk=Desk.getToolkit();
 	private Form master;
 	ListViewer lv;
 	//Label ausgestellt;
@@ -325,8 +325,8 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 				}
 			}
 		};
-		addLineAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
-		printAction.setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
+		addLineAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
+		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 		newRpAction.setImageDescriptor(Hub.getImageDescriptor("rsc/rpneu.ico"));
 	}
 	public void activation(final boolean mode) {
