@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: elexis-icpc.tex 4356 2008-09-02 16:20:10Z rgw_ch $
+% *  $Id: elexis-icpc.tex 4360 2008-09-02 17:16:05Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -66,7 +66,7 @@ Wenn ein Patient wegen eines Problems behandelt wird, dann ist dies ein 'Encount
 Für jeden Encounter innerhalb einer Konsultation werden nun nach ICPC drei Elemente codiert:
 \begin{itemize}
 \item \textbf{RFE}: Reason for encounter. Warum ist der Patient gekommen? Hier geht es also nicht darum, eine medizinische Diagnose anzugeben, sondern vielmehr einen ICPC2-Code, der möglichst genau das abbildet, was uns der Patient gesagt hat.
-item \textbf{Diagnose}: Dies enthält nun die Interpretation des Arztes in dessen Denkschema: Was denkt der Arzt, was hinter den Beschwerden des Patienten steckt.
+\item \textbf{Diagnose}: Dies enthält nun die Interpretation des Arztes in dessen Denkschema: Was denkt der Arzt, was hinter den Beschwerden des Patienten steckt.
 \item \textbf{Procedere}: Dies ist der vorläufige Behandlungsplan: Was wurde getan oder geplant?
 \end{itemize}
 
@@ -76,6 +76,28 @@ Alle drei Elemente können für ein- und dasselbe Problem bei jedem Encounter wi
 Nach Installation des Plugins finden Sie eine ICPC-Perspektive vor. Diese ist nur als Beispiel zu verstehen, und kann wie in Elexis üblich, beliebig an Ihre Vorlieben und Ihren Bildschirm angepasst werden. Sie können Views entfernen oder zufügen, oder Views anders anordnen.
 Zur Anwendung von ICPC-2 benötigen Sie aber mindestens die Views 'Konsultation', 'Probleme', 'Encounters' und 'ICPC2-Codes'.
 
+\subsection{Ein Problem erstellen und bearbeiten}
+Klicken Sie in der Probleme-View auf den roten Stern. Sie können dann ein neues Problem erfassen. Für jedes Problem kann ein Name, ein Beginn-Datum und eine Nummer angegeben werden. Probleme werden in der Probleme-View immer anhand der Nummer sortiert. Es sind auch hierarchische Nummern (1.1.2 oder so) möglich. Das Beginn-Datum kann als genaues Datum oder auch nur als Jahr angegeben werden. Standardmässig wird das aktuelle Datum genommen.
+
+\medskip
+
+Wenn Sie mit der rechten Maustaste auf ein Problem klicken
+
+
+\subsection{Ein Problem in einer Konsultation behandeln}
+Ziehen Sie ein Problem aus der Problemliste mit der Maus ins Konsultationsfenster der aktuellen Konsultation. Es erscheint der Text Problem: gefolgt vom grün unterlegten Namen des Problems.
+
+\subsection{Ein Encounter codieren}
+b
+
+\subsection{Einem Problem eine Krankenkassendiagnose zuordnen}
+Üblicherweise wollen (und eigentlich müssen!) wir den Krankenkassen nur eine stark vereinfachte Version der Diagnose liefern. In der Schweiz hat sich der Tessiner Code für die auf den Rechnungen erscheinende Diagnose eingebürgert, im UVG-Bereich auch der ICD-10. Sie können einen solchen Code aus dem Diagnosen-Fenster auf ein Problem ziehen, dann wird künftig immer wenn dieses Problem behandelt wird, der so zugeordete Diagnosecode automatisch ins 'Diagnose'-Feld der Konsultation (und damit auf die Rechnung) gesetzt.
+
+\subsection{Ein Problem durch die Zeit verfolgen}
+Klicken Sie auf den Filter-Knopf in der Probleme-View und markieren Sie das interessierende Problem.  In der Konsultationen-View werden dann nur noch diejenigen Konsultationen aufgelistet, in denen dieses Problem behandelt wurde.
+
+\subsection{Die Entwicklung eines Problems chronologisch aufzeigen}
+In der 'Encounters'-View wird für das aktuell markierte Problem die entsprechende RFE, Diagnose und Procedere chronologisch aufgelistet gezeigt.
 
 
 \end{document} 

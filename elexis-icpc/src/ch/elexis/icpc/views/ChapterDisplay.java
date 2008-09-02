@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ChapterDisplay.java 4356 2008-09-02 16:20:10Z rgw_ch $
+ *    $Id: ChapterDisplay.java 4360 2008-09-02 17:16:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
@@ -18,11 +18,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
 
 import ch.elexis.Desk;
 import ch.elexis.data.Query;
@@ -30,6 +32,7 @@ import ch.elexis.icpc.IcpcCode;
 import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.WidgetFactory;
@@ -51,14 +54,21 @@ public class ChapterDisplay extends Composite {
 		setLayout(new FillLayout());
 		form=tk.createScrolledForm(this);
 		Composite body=form.getBody();
-		body.setLayout(new GridLayout());
+		body.setLayout(new GridLayout(2,false));
 		form.setText(chapter);
+		Composite cLeft=tk.createComposite(body);
+		cLeft.setLayout(new GridLayout());
+		cLeft.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		Composite cRight=tk.createComposite(body);
+		cRight.setLayout(new GridLayout());
+		cRight.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ec=new ExpandableComposite[IcpcCode.components.length];
 		
 		for(int i=0;i<ec.length;i++){
 			String c=IcpcCode.components[i];
-			ec[i]=WidgetFactory.createExpandableComposite(tk, form, c);
-            UserSettings2.setExpandedState(ec[i], UC2_HEADING+c);
+			ec[i]=tk.createExpandableComposite(cLeft, ExpandableComposite.TWISTIE);
+	        ec[i].setText(c);
+            UserSettings2.setExpandedState(ec[i], UC2_HEADING+c.substring(0,1));
             Composite inlay=new Composite(ec[i],SWT.NONE);
             inlay.setLayout(new FillLayout());
 			CommonViewer cv=new CommonViewer();
@@ -76,13 +86,27 @@ public class ChapterDisplay extends Composite {
                     	CommonViewer cv=(CommonViewer)src.getData();
                     	cv.notify(CommonViewer.Message.update);
                     }
-                    UserSettings2.saveExpandedState(UC2_HEADING+src.getText(), e.getState());
+                    UserSettings2.saveExpandedState(UC2_HEADING+src.getText().substring(0, 1), e.getState());
                 }
+	            public void expansionStateChanged(ExpansionEvent e){
+	                form.reflow(true);
+	            }
+
                 
             });
             ec[i].setClient(inlay);
-
 		}
+		
+		Section sCrit=tk.createSection(cRight, Section.EXPANDED);
+		sCrit.setText("Kriterien");
+		Section sIncl=tk.createSection(cRight,Section.EXPANDED);
+		sIncl.setText("Einschliesslich");
+		//gCrit.setText("Einschlisslich");
+		Group gExcl=new Group(cRight,SWT.NONE);
+		//gCrit.setText("Aussgenommen");
+		Group gNote=new Group(cRight,SWT.NONE);
+		//gCrit.setText("Anmerkung");
+		
 	}
 	
 	
@@ -111,16 +135,21 @@ public class ChapterDisplay extends Composite {
 		}
 		if("RFE".equals(mode)){
 			// all components enabled
+			
 		}else if("DG".equals(mode)){
 			// only 1 and 7 enabled
 			for(int i=1;i<6;i++){
 				ec[i].setEnabled(false);
+				//ec[i].setExpanded(false);
 			}
 		}else if("PROC".equals(mode)){
 			// 2,3,5,6 enabled
 			ec[0].setEnabled(false);
+			//ec[0].setExpanded(false);
 			ec[3].setEnabled(false);
+			//ec[3].setExpanded(false);
 			ec[6].setEnabled(false);
+			//ec[6].setExpanded(false);
 		}
 	}
 }

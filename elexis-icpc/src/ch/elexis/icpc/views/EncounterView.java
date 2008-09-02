@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterView.java 4356 2008-09-02 16:20:10Z rgw_ch $
+ *    $Id: EncounterView.java 4360 2008-09-02 17:16:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -58,7 +58,9 @@ public class EncounterView extends ViewPart implements ActivationListener,
 	}
 
 	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
+		if(!mode){
+			GlobalEvents.getInstance().removeCodeSelectorTarget();
+		}
 
 	}
 
