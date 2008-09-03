@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id: LabGroup.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *  $Id: LabGroup.java 4368 2008-09-03 21:13:24Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -66,6 +66,11 @@ public class LabGroup extends PersistentObject implements Comparable<LabGroup>{
 		setName(name);
 		addItems(items);
 	}
+	
+	public boolean delete() {
+		removeAll();
+		return super.delete();
+	}
 
 	/**
 	 * Get the name of this LabGroup;
@@ -109,8 +114,8 @@ public class LabGroup extends PersistentObject implements Comparable<LabGroup>{
         StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ItemID FROM " + GROUP_ITEM_TABLENAME)
 			.append(" WHERE GroupID = " + getWrappedId());
-		
-    	Stm stm = j.getStatement();
+
+		Stm stm = j.getStatement();
     	ResultSet rs = stm.query(sql.toString());
     	try {
     		while(rs.next()) {
