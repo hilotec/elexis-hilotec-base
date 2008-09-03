@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 4056 2008-06-20 13:17:43Z rgw_ch $
+ * $Id: ListDisplay.java 4364 2008-09-03 14:12:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -161,5 +161,6 @@ public class ListDisplay<T> extends Composite {
     public void removeListener(final SelectionListener l){
     	list.removeSelectionListener(l);
     }
+    
     
 }
