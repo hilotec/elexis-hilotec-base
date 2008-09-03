@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: elexis-icpc.tex 4360 2008-09-02 17:16:05Z rgw_ch $
+% *  $Id: elexis-icpc.tex 4363 2008-09-03 05:17:34Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -49,28 +49,30 @@
 \maketitle
 
 \section{Einführung}
-ICPC-2, der \textbf{I}nternational \textbf{C}lassification of \textbf{P}rimary \textbf{C}are ist ein Codierungswerkzeug für die Bedürfnise der Grundversorger. Der Ansatz des Hausarztes ist meist 'Grundzentriert' und nicht 'Diagnosezentriert': Die erste Frage ist 'Warum kommt der Patient'. Dementsprechend kommen hier oft Bezeichnungen zur Anwendung, die in bekannten Codesystemen wie ICD-10 oder CHOP nicht gut codiert werden können ('Unwohlsein', oder 'Angst vor Krebs' etc.). ICPC erlaubt also die Abbildung der Tätigkeit des Hausarztes und ist darum ein geeignetes Werkzeug, um sowohl Abrechnungsstatistische als auch wissenschaftliche Daten dieser Tätigkeit zu erheben. Gleichzeitig ist ICPC nach einer gewissen Eingewöhnungszeit auch sehr einfach in der Anwendung - Die Codierung ist viel weniger Zeitraubend, als mit ICD-10, da der Code weniger umfangreich und stärker 'Grundzentriert' ist, wie wir unten weiter ausführen werden.
+ICPC-2, die \textbf{I}nternational \textbf{C}lassification of \textbf{P}rimary \textbf{C}are ist ein Codierungswerkzeug für die Bedürfnise der Grundversorger und versucht dessen Tätigkeit besser abzubilden, als ältere Codierungssysteme wie ICD-10.
+
+Der Ansatz des Hausarztes ist meist 'Grundzentriert' und nicht 'Diagnosezentriert': Die erste Frage ist 'Warum kommt der Patient?' Dementsprechend kommen hier oft Bezeichnungen zur Anwendung, die in bekannten Codesystemen wie ICD-10 oder CHOP nicht gut codiert werden können ('Unwohlsein', oder 'Angst vor Krebs' etc.). ICPC erlaubt also die Abbildung der Tätigkeit des Hausarztes und ist darum ein geeignetes Werkzeug, um sowohl Abrechnungsstatistische als auch wissenschaftliche Daten dieser Tätigkeit zu erheben. Gleichzeitig ist ICPC nach einer gewissen Eingewöhnungszeit auch sehr einfach in der Anwendung - Die Codierung ist viel weniger Zeitraubend, als mit ICD-10, da der Code weniger umfangreich und stärker 'Grundzentriert' ist, wie wir unten weiter ausführen werden.
 
 \medskip
-ICPC ist lizenzpflichtig. Inhaber der Lizenz für die Schweiz ist die Schweizerische Gesellschaft für Allgemeinmedizin (SGAM). Man kann sich dort gegen eine Gebühr registrieren lassen und erhält dann eine Datenbank mit der aktuellen Codeversion. Näheres s. http://www.icpc.ch.
+ICPC ist lizenzpflichtig. Inhaber der Lizenz für die Schweiz ist die Schweizerische Gesellschaft für Allgemeinmedizin (SGAM). Man kann sich dort gegen eine Gebühr registrieren lassen und erhält dann eine Datenbank mit der aktuellen Codeversion. Näheres s. http://www.icpc.ch. In Elexis ist nur die Infrastruktur vorhanden, um diese Datenbank einzulesen. Die Daten selbst muss der interssierte Anwender selbst besorgen.
 
 \section{Codierungsprinzipien}
-Basis der Codierung ist eine 'Episode'. Diese ist eine alte Bekannte, auch wenn Sie sie vielleicht eher als 'Problem' in einer Problemliste aufgeführt haben. Die Elexis-Implementation von ICPC verwendet deshalb auch gleich eine Problemliste anstatt einer 'Episodenliste' -- beides ist aber, his auf die Bezeichnung -- dasselbe.
+ Ausgangspunkt der ICPC-Codierung ist eine 'Episode'. Diese ist eine alte Bekannte, auch wenn Sie sie bisher vielleicht eher als 'Problem' in einer Problemliste aufgeführt haben. Die Elexis-Implementation von ICPC verwendet deshalb auch gleich de vertrauten Begriff 'Problemliste' anstatt einer 'Episodenliste', beides ist aber -- bis auf die Bezeichnung -- dasselbe. Ein Problem hat immer einen Anfang, manchml auch ein Ende, es kann aktiv oder passiv sein und es kann im Lauf der Zeit mit unterschiedlichen Diagnosen und Behandlungsplänen 'hinterlegt' sein. 
 
 \medskip
 
-Wenn ein Patient wegen eines Problems behandelt wird, dann ist dies ein 'Encounter'. Mangels eines besseren deutschen Worts bezeichnen wir dies hier weiterhin als Encounter. Ein Encounter ist nicht dasselbe wie eine Konsultation: Während einer Konsutlation können mehrere Probleme behandelt werden, was mehreren Encounters entspricht. Ein Problem dauert also eine bestimmte Zeit im Leben eines Menschen, und ein Encounter ist jeder Punkt innerhalb dieses Zeitraums, an dem er den Arzt wegen dieses Problems aufsucht.
+Wenn ein Patient wegen eines Problems behandelt wird, dann ist dies ein 'Encounter'. Mangels eines besseren deutschen Worts bezeichnen wir dies hier weiterhin als Encounter. Ein Encounter ist nicht dasselbe wie eine Konsultation: Während einer Konsultation können mehrere Probleme behandelt werden, was mehreren Encounters entspricht. Ein Problem dauert also eine bestimmte Zeit im Leben eines Menschen, und ein Encounter ist jeder Punkt innerhalb dieses Zeitraums, an dem er den Arzt wegen dieses Problems aufsucht.
 
 \medskip
 
 Für jeden Encounter innerhalb einer Konsultation werden nun nach ICPC drei Elemente codiert:
 \begin{itemize}
-\item \textbf{RFE}: Reason for encounter. Warum ist der Patient gekommen? Hier geht es also nicht darum, eine medizinische Diagnose anzugeben, sondern vielmehr einen ICPC2-Code, der möglichst genau das abbildet, was uns der Patient gesagt hat.
+\item \textbf{RFE}: Reason for encounter. Warum ist der Patient gekommen? Hier geht es also nicht darum, eine medizinische Diagnose anzugeben, sondern vielmehr einen ICPC2-Code, der möglichst genau das abbildet, was uns der Patient als Konsultationsgrund genannt hat.
 \item \textbf{Diagnose}: Dies enthält nun die Interpretation des Arztes in dessen Denkschema: Was denkt der Arzt, was hinter den Beschwerden des Patienten steckt.
 \item \textbf{Procedere}: Dies ist der vorläufige Behandlungsplan: Was wurde getan oder geplant?
 \end{itemize}
 
-Alle drei Elemente können für ein- und dasselbe Problem bei jedem Encounter wieder anders sein. unter http://www.icpc.ch/index.php?id=20 finden Sie eine Grafik, die diese Zusammenhänge sehr schön zeigt.
+Alle drei Elemente können für ein- und dasselbe Problem bei jedem Encounter wieder anders sein. auf http://www.icpc.ch/index.php?id=20 finden Sie eine Grafik, die diese Zusammenhänge sehr schön zeigt.
 
 \section{Anwendung in Elexis}
 Nach Installation des Plugins finden Sie eine ICPC-Perspektive vor. Diese ist nur als Beispiel zu verstehen, und kann wie in Elexis üblich, beliebig an Ihre Vorlieben und Ihren Bildschirm angepasst werden. Sie können Views entfernen oder zufügen, oder Views anders anordnen.
@@ -81,14 +83,17 @@ Klicken Sie in der Probleme-View auf den roten Stern. Sie können dann ein neues
 
 \medskip
 
-Wenn Sie mit der rechten Maustaste auf ein Problem klicken
+Wenn Sie mit der rechten Maustaste auf ein Problem klicken, können Sie das Problem für aktiv oder passiv erklären (Ein passives Problem erscheint ausgegraut), Sie können es umbenennen oder durch Vergabe einer anderen Nummer irgendwo anders einsortieren. Sie können es auch löschen. Im Allgemein ist es aber emfehlenswert, es nur inaktiv zu schalten.
+
 
 
 \subsection{Ein Problem in einer Konsultation behandeln}
 Ziehen Sie ein Problem aus der Problemliste mit der Maus ins Konsultationsfenster der aktuellen Konsultation. Es erscheint der Text Problem: gefolgt vom grün unterlegten Namen des Problems.
 
 \subsection{Ein Encounter codieren}
-b
+Ein Ecounter ist wie gesagt der Schnittpunkt eines Problems mit einer Konsulation. Soald Sie ein Problem wie oben beschrieben in ein Konsultationsfenster gezogen haben, haben Sie ein Encounter erstellt. Das Encounter hat 'automatisch' ein zugeordnetes Problem, ein Datum und einen Namen, was noch fehlt, sind RFE, Diagnose und Procedere. Machen Sie dazu einen Doppelcklick auf den Titel des Problems in der Konsultation. Im Fenter 'Encounter' erscheint nun diese Encounter ausgewählt. Wenn Si auf eines der Felder 'RFE', 'Diagnose' oder 'Procedere' klicken, erscheint die ICPCCodes-View, die wir im Folgenden etwas genauer anschauen wollen:
+
+
 
 \subsection{Einem Problem eine Krankenkassendiagnose zuordnen}
 Üblicherweise wollen (und eigentlich müssen!) wir den Krankenkassen nur eine stark vereinfachte Version der Diagnose liefern. In der Schweiz hat sich der Tessiner Code für die auf den Rechnungen erscheinende Diagnose eingebürgert, im UVG-Bereich auch der ICD-10. Sie können einen solchen Code aus dem Diagnosen-Fenster auf ein Problem ziehen, dann wird künftig immer wenn dieses Problem behandelt wird, der so zugeordete Diagnosecode automatisch ins 'Diagnose'-Feld der Konsultation (und damit auf die Rechnung) gesetzt.
