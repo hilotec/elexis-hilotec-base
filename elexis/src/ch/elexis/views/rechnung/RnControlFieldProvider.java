@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 4365 2008-09-03 15:55:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -53,14 +53,14 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 		"Alle","Offen","Offen & gedruckt","Teilw. bezahlt","Bezahlt","Zuviel bezahlt",
 		"Zahlungserinnerung","ZE gedruckt","2. Mahnung","2. M. gedruckt","3. Mahnung",
 		"3. M. gedruckt","In Betreibung","Teilverlust","Totalverlust","Storniert","Fehlerhaft",
-		"zu drucken","ausstehend"};
+		"zu drucken","ausstehend","mahnstopp"};
 	
 	
 	final static int[] statInts={
 		RnStatus.UNBEKANNT, RnStatus.OFFEN, RnStatus.OFFEN_UND_GEDRUCKT, RnStatus.TEILZAHLUNG, RnStatus.BEZAHLT,RnStatus.ZUVIEL_BEZAHLT,
 		RnStatus.MAHNUNG_1, RnStatus.MAHNUNG_1_GEDRUCKT, RnStatus.MAHNUNG_2, RnStatus.MAHNUNG_2_GEDRUCKT, RnStatus.MAHNUNG_3,
 		RnStatus.MAHNUNG_3_GEDRUCKT, RnStatus.IN_BETREIBUNG, RnStatus.TEILVERLUST, RnStatus.TOTALVERLUST,RnStatus.STORNIERT, 
-		RnStatus.FEHLERHAFT, RnStatus.ZU_DRUCKEN,RnStatus.AUSSTEHEND};
+		RnStatus.FEHLERHAFT, RnStatus.ZU_DRUCKEN,RnStatus.AUSSTEHEND,RnStatus.MAHNSTOPP};
 	
 	final static int STAT_DEFAULT_INDEX = 1;
 	private final static String ALLE="[ --- Alle Patienten --- ]";
