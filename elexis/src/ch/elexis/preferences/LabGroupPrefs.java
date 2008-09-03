@@ -8,12 +8,13 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id: LabGroupPrefs.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: LabGroupPrefs.java 4369 2008-09-03 21:15:24Z danlutz $
  *******************************************************************************/
 
 package ch.elexis.preferences;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.InputDialog;
@@ -31,10 +32,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
@@ -55,30 +58,48 @@ public class LabGroupPrefs extends PreferencePage implements
 	private ComboViewer groupsViewer;
 	private ListViewer itemsViewer;
 	
+	Button newButton;
+	Button removeButton;
+	Button addItemButton;
+	Button removeItemButton;
+	
 	public LabGroupPrefs() {
 		super("Gruppen");
 	}
 
 	protected Control createContents(Composite parent){
 		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		composite.setLayout(new GridLayout(1, false));
 		
 		Label label;
+		GridLayout layout;
 		
 		Composite topArea = new Composite(composite, SWT.NONE);
 		topArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		topArea.setLayout(new GridLayout(3, false));
+		layout = new GridLayout(3, false);
+		layout.verticalSpacing = 20;
+		topArea.setLayout(layout);
 		
 		label = new Label(topArea, SWT.NONE);
-		label.setText("Für die Laborverordnung können hier zusätzlich zu den normalen Laborgruppen "
+		label.setText("Für Laborverordnungen und Laborblätter können hier\n"
+				+ "zusätzlich zu den normalen Laborgruppen\n"
 				+ "weitere Gruppen definiert werden, z. B. \"Diabeteskontrolle\".");
 		label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+
+		GridData gd;
 		
 		label = new Label(topArea, SWT.NONE);
 		label.setText("Gruppe:");
+		gd = SWTHelper.getFillGridData(1, false, 1, false);
+		gd.verticalAlignment = GridData.BEGINNING;
+		label.setLayoutData(gd);
 		
+
 		groupsViewer = new ComboViewer(topArea, SWT.READ_ONLY);
-		groupsViewer.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gd = SWTHelper.getFillGridData(1, true, 1, false);
+		gd.verticalAlignment = GridData.BEGINNING;
+		groupsViewer.getControl().setLayoutData(gd);
 		
 		groupsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 		    public void selectionChanged(SelectionChangedEvent event) {
@@ -89,6 +110,8 @@ public class LabGroupPrefs extends PreferencePage implements
 		    		
 		    		itemsViewer.refresh();
 		    	}
+		    	
+		    	updateButtonsState();
 		    }
 		});
 		
@@ -97,7 +120,12 @@ public class LabGroupPrefs extends PreferencePage implements
 		
 		groupsViewer.setInput(this);
 		
-		Button newButton = new Button(topArea, SWT.PUSH);
+		Composite groupButtonArea = new Composite(topArea, SWT.PUSH);
+		layout = new GridLayout(1, false);
+		layout.marginHeight = 0;
+		groupButtonArea.setLayout(layout);
+		
+		newButton = new Button(groupButtonArea, SWT.PUSH);
 		newButton.setText("Neu...");
 		newButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -117,6 +145,31 @@ public class LabGroupPrefs extends PreferencePage implements
 				widgetSelected(e);
 			}
 		});
+
+		removeButton = new Button(groupButtonArea, SWT.PUSH);
+		removeButton.setText("Löschen");
+		removeButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (actGroup != null) {
+					if (SWTHelper.askYesNo("Gruppe Löschen",
+							"Wollen Sie die Gruppe \"" + actGroup.getLabel()
+							+ "\" wirklich löschen?")) {
+					
+						actGroup.delete();
+						actGroup = null;
+						groupsViewer.refresh();
+						itemsViewer.refresh();
+						selectFirstGroup();
+					}
+				}
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
+		
 		
 		Composite bottomArea = new Composite(composite, SWT.NONE);
 		bottomArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -128,6 +181,12 @@ public class LabGroupPrefs extends PreferencePage implements
 		itemsViewer = new ListViewer(bottomArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		itemsViewer.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
+		itemsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		    public void selectionChanged(SelectionChangedEvent event) {
+		    	updateItemButtonsState();
+		    }
+		});
+		
 		itemsViewer.setContentProvider(new GroupItemsContentProvider());
 		itemsViewer.setLabelProvider(new ItemsLabelProvider());
 		
@@ -137,15 +196,15 @@ public class LabGroupPrefs extends PreferencePage implements
 		buttonArea.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 		buttonArea.setLayout(new GridLayout(2, true));
 		
-		Button newItemButton = new Button(buttonArea, SWT.PUSH);
-		newItemButton.setText("Hinzufügen...");
-		newItemButton.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		addItemButton = new Button(buttonArea, SWT.PUSH);
+		addItemButton.setText("Hinzufügen...");
+		addItemButton.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		Button removeItemButton = new Button(buttonArea, SWT.PUSH);
+		removeItemButton = new Button(buttonArea, SWT.PUSH);
 		removeItemButton.setText("Entfernen");
 		removeItemButton.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		newItemButton.addSelectionListener(new SelectionListener() {
+		addItemButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				if (actGroup != null) {
 					ItemsSelectionDialog dialog = new ItemsSelectionDialog(
@@ -198,6 +257,36 @@ public class LabGroupPrefs extends PreferencePage implements
 		}
 	}
 	
+	private void updateButtonsState() {
+		updateGroupButtonsState();
+		updateItemButtonsState();
+	}
+	
+	private void updateGroupButtonsState() {
+		if (actGroup != null) {
+			removeButton.setEnabled(true);
+		} else {
+			removeButton.setEnabled(false);
+		}
+	}
+	
+	private void updateItemButtonsState() {
+		if (actGroup != null) {
+			addItemButton.setEnabled(true);
+			
+	    	IStructuredSelection sel = (IStructuredSelection) itemsViewer.getSelection();
+	    	Object element = sel.getFirstElement();
+	    	if (element instanceof LabItem) {
+	    		removeItemButton.setEnabled(true);
+	    	} else {
+	    		removeItemButton.setEnabled(false);
+	    	}
+		} else {
+			addItemButton.setEnabled(false);
+			removeItemButton.setEnabled(false);
+		}
+	}
+	
 	static class GroupsContentProvider implements IStructuredContentProvider {
 	    public Object[] getElements(Object inputElement) {
 	    	Query<LabGroup> query = new Query<LabGroup>(LabGroup.class);
@@ -242,6 +331,7 @@ public class LabGroupPrefs extends PreferencePage implements
 	    public Object[] getElements(Object inputElement) {
 	    	if (actGroup != null) {
 	    		List<LabItem> items = actGroup.getItems();
+	    		Collections.sort(items);
 	    		return items.toArray();
 	    	} else {
 	    		return new Object[] {};
@@ -291,28 +381,27 @@ public class LabGroupPrefs extends PreferencePage implements
 			
 			viewer.setInput(this);
 			
-			setSelection();
-			
 			return composite;
-		}
-		
-		private void setSelection() {
-			List<LabItem> items = group.getItems();
-			viewer.setSelection(new StructuredSelection(items));
 		}
 		
 		protected void buttonPressed(int buttonId) {
 			if (buttonId == OK) {
 				IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+
+				// list of existing items
+				List<LabItem> existingItems = group.getItems();
+				
 				List<LabItem> items = new ArrayList<LabItem>();
 				for (Object obj : sel.toList()) {
 					if (obj instanceof LabItem) {
 						LabItem item = (LabItem) obj;
-						items.add(item);
+						if (!existingItems.contains(item)) {
+							items.add(item);
+						}
 					}
 				}
 				
-				group.setItems(items);
+				group.addItems(items);
 			}
 			
 			setReturnCode(buttonId);
@@ -328,6 +417,10 @@ public class LabGroupPrefs extends PreferencePage implements
 		    	if (items == null) {
 		    		items = new ArrayList<LabItem>();
 		    	}
+		    	
+		    	// remove items already contained in the group
+		    	List<LabItem> contained = group.getItems();
+		    	items.removeAll(contained);
 		    	
 		    	return items.toArray();
 		    }
