@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 3784 2008-04-18 15:15:56Z rgw_ch $
+ * $Id: IVerrechenbar.java 4370 2008-09-04 13:47:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.IFilter;
 import ch.elexis.util.IOptifier;
 import ch.elexis.util.Money;
-import ch.elexis.util.Result;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 /**

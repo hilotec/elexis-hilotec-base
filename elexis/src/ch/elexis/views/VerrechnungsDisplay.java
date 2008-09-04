@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4274 2008-08-14 16:24:00Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4370 2008-09-04 13:47:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -46,64 +46,63 @@ import ch.elexis.data.Verrechnet;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
 import ch.elexis.util.PersistentObjectDropTarget;
-import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 public class VerrechnungsDisplay extends Composite {
 	Table tVerr;
 	private Hyperlink hVer;
 	private PersistentObjectDropTarget dropTarget;
-	private Log log=Log.get("VerrechnungsDisplay");
+	private Log log = Log.get("VerrechnungsDisplay");
 	
 	VerrechnungsDisplay(final IWorkbenchPage page, Composite parent, int style){
-		super(parent,style);
+		super(parent, style);
 		setLayout(new GridLayout());
-		hVer=Desk.getToolkit().createHyperlink(this,"Verrechnung",SWT.NONE);
-        hVer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
-        hVer.addHyperlinkListener(new HyperlinkAdapter(){
+		hVer = Desk.getToolkit().createHyperlink(this, "Verrechnung", SWT.NONE);
+		hVer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+		hVer.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				try{
-					if(StringTool.isNothing(LeistungenView.ID)){
+			public void linkActivated(HyperlinkEvent e){
+				try {
+					if (StringTool.isNothing(LeistungenView.ID)) {
 						SWTHelper.alert("Fehler", "LeistungenView.ID");
 					}
 					page.showView(LeistungenView.ID);
 					GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
-				}catch(Exception ex){
+				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log.log("Fehler beim Starten des Leistungscodes "+ex.getMessage(),Log.ERRORS );
+					log
+						.log("Fehler beim Starten des Leistungscodes " + ex.getMessage(),
+							Log.ERRORS);
 				}
 			}
-        });
-
-		tVerr=Desk.getToolkit().createTable(this,SWT.SINGLE);
-        tVerr.setLayoutData(new GridData(GridData.FILL_BOTH));
-        tVerr.setMenu(createVerrMenu());
-        dropTarget=new PersistentObjectDropTarget("Verrechnen",tVerr,new DropReceiver());
+		});
+		
+		tVerr = Desk.getToolkit().createTable(this, SWT.SINGLE);
+		tVerr.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tVerr.setMenu(createVerrMenu());
+		dropTarget = new PersistentObjectDropTarget("Verrechnen", tVerr, new DropReceiver());
 	}
 	
 	public void clear(){
 		tVerr.removeAll();
 	}
 	
-	public void addPersistentObject(PersistentObject o) {
+	public void addPersistentObject(PersistentObject o){
 		Konsultation actKons = GlobalEvents.getSelectedKons();
 		if (actKons != null) {
 			if (o instanceof IVerrechenbar) {
 				if (Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
-					SWTHelper
-							.alert("Fehlende Rechte",
-									"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
+					SWTHelper.alert("Fehlende Rechte",
+						"Sie haben nicht die Berechtigung, Leistungen zu verrechnen");
 				} else {
-					Result<IVerrechenbar> result = actKons
-					.addLeistung((IVerrechenbar) o);
-
+					Result<IVerrechenbar> result = actKons.addLeistung((IVerrechenbar) o);
+					
 					if (!result.isOK()) {
-						SWTHelper.alert("Diese Verrechnung ist ungültig",
-								result.toString());
+						SWTHelper.alert("Diese Verrechnung ist ungültig", result.toString());
 					}
 					setLeistungen(actKons);
 				}
@@ -112,16 +111,16 @@ public class VerrechnungsDisplay extends Composite {
 	}
 	
 	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
-		public void dropped(PersistentObject o, DropTargetEvent ev) {
+		public void dropped(PersistentObject o, DropTargetEvent ev){
 			addPersistentObject(o);
 		}
-
-		public boolean accept(PersistentObject o) {
+		
+		public boolean accept(PersistentObject o){
 			if (GlobalEvents.getSelectedPatient() != null) {
-				if(o instanceof IVerrechenbar){
+				if (o instanceof IVerrechenbar) {
 					return true;
 				}
-				if(o instanceof Leistungsblock){
+				if (o instanceof Leistungsblock) {
 					return true;
 				}
 			}
@@ -130,132 +129,147 @@ public class VerrechnungsDisplay extends Composite {
 	}
 	
 	void setLeistungen(Konsultation b){
-        List<Verrechnet> lgl=b.getLeistungen();
-        //DecimalFormat df=new DecimalFormat("0.00");
-        //Collections.sort(lgl,TarmedLeistung.tarmedComparator);
-        tVerr.setRedraw(false);
-        tVerr.removeAll();
-        StringBuilder sdg=new StringBuilder();
-        Money sum=new Money(0);
-        //double sum=0;
-        for(Verrechnet lst:lgl){
-            sdg.setLength(0);
-            int z=lst.getZahl();
-            //double preis=(z*lst.getEffPreisInRappen())/100.0;
-            Money preis=lst.getEffPreis().multiply(z);
-            sum.addMoney(preis);
-            sdg.append(z).append(" ").append(lst.getCode())
-             .append(" ").append(lst.getText())
-             .append(" (").append(preis.getAmountAsString()).append(")");
-            TableItem ti=new TableItem(tVerr,SWT.WRAP);
-            ti.setText(sdg.toString());
-            ti.setData(lst);
-        }
-        tVerr.setRedraw(true);
-        sdg.setLength(0);
-        sdg.append("Verrechnung (")
-         .append(sum.getAmountAsString()).append(")");
-        hVer.setText(sdg.toString());
-    }
+		List<Verrechnet> lgl = b.getLeistungen();
+		// DecimalFormat df=new DecimalFormat("0.00");
+		// Collections.sort(lgl,TarmedLeistung.tarmedComparator);
+		tVerr.setRedraw(false);
+		tVerr.removeAll();
+		StringBuilder sdg = new StringBuilder();
+		Money sum = new Money(0);
+		// double sum=0;
+		for (Verrechnet lst : lgl) {
+			sdg.setLength(0);
+			int z = lst.getZahl();
+			// double preis=(z*lst.getEffPreisInRappen())/100.0;
+			Money preis = lst.getEffPreis().multiply(z);
+			sum.addMoney(preis);
+			sdg.append(z).append(" ").append(lst.getCode()).append(" ").append(lst.getText())
+				.append(" (").append(preis.getAmountAsString()).append(")");
+			TableItem ti = new TableItem(tVerr, SWT.WRAP);
+			ti.setText(sdg.toString());
+			ti.setData(lst);
+		}
+		tVerr.setRedraw(true);
+		sdg.setLength(0);
+		sdg.append("Verrechnung (").append(sum.getAmountAsString()).append(")");
+		hVer.setText(sdg.toString());
+	}
 	
-	class delVerrListener extends SelectionAdapter{
-        public void widgetSelected(SelectionEvent e){
-        	int sel=tVerr.getSelectionIndex();
-        	TableItem ti=tVerr.getItem(sel);
-        	Result result=GlobalEvents.getSelectedKons().removeLeistung((Verrechnet)ti.getData());
-            if(!result.isOK()){
-                SWTHelper.alert("Leistungsposition kann nicht entfernt werden",result.toString());
-            }
-            setLeistungen(GlobalEvents.getSelectedKons());
-        }
-    }
+	class delVerrListener extends SelectionAdapter {
+		public void widgetSelected(SelectionEvent e){
+			int sel = tVerr.getSelectionIndex();
+			TableItem ti = tVerr.getItem(sel);
+			Result result =
+				GlobalEvents.getSelectedKons().removeLeistung((Verrechnet) ti.getData());
+			if (!result.isOK()) {
+				SWTHelper.alert("Leistungsposition kann nicht entfernt werden", result.toString());
+			}
+			setLeistungen(GlobalEvents.getSelectedKons());
+		}
+	}
 	
+	private Menu createVerrMenu(){
+		Menu ret = new Menu(tVerr);
+		MenuItem delVerr = new MenuItem(ret, SWT.NONE);
+		delVerr.setText("Leistungsposition entfernen");
+		delVerr.addSelectionListener(new delVerrListener());
+		MenuItem chgPrice = new MenuItem(ret, SWT.NONE);
+		chgPrice.setText("Preis ändern");
+		chgPrice.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				int sel = tVerr.getSelectionIndex();
+				// String ext=actBehandlung.getFall().getGesetz();
+				TableItem ti = tVerr.getItem(sel);
+				Verrechnet v = (Verrechnet) ti.getData();
+				// String p=Rechnung.geldFormat.format(v.getEffPreisInRappen()/100.0);
+				String p = v.getEffPreis().getAmountAsString();
+				InputDialog dlg =
+					new InputDialog(Desk.getTopShell(), "Preis für Leistung ändern",
+						"Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)", p, null);
+				if (dlg.open() == Dialog.OK) {
+					// v.setPreisInRappen(Integer.parseInt(dlg.getValue().replaceAll("\\.","")));
+					try {
+						Money newPrice = new Money(dlg.getValue());
+						v.setPreis(newPrice);
+						setLeistungen(GlobalEvents.getSelectedKons());
+					} catch (ParseException ex) {
+						SWTHelper.showError("Falsche Betragseingabe",
+							"Der eingegebene Betrag konnte nicht interpretiert werden");
+					}
+				}
+			}
+		});
+		MenuItem chgNumber = new MenuItem(ret, SWT.NONE);
+		chgNumber.setText("Zahl ändern");
+		chgNumber.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				int sel = tVerr.getSelectionIndex();
+				TableItem ti = tVerr.getItem(sel);
+				Verrechnet v = (Verrechnet) ti.getData();
+				String p = Integer.toString(v.getZahl());
+				InputDialog dlg =
+					new InputDialog(
+						Desk.getTopShell(),
+						"Zahl der Leistung ändern",
+						"Geben Sie bitte die neue Anwendungszahl (oder Bruchzahl wie 1/3) für die Leistung bzw. den Artikel ein",
+						p, null);
+				if (dlg.open() == Dialog.OK) {
+					try {
+						String val = dlg.getValue();
+						if (!StringTool.isNothing(val)) {
+							String[] frac = val.split("/");
+							if (frac.length > 1) {
+								Money price = v.getEffPreis();
+								price.multiply(Double.parseDouble(frac[0])
+									/ Double.parseDouble(frac[1]));
+								v.setPreis(price);
+								v.setText(v.getText() + " (" + val + " OP)");
+							} else {
+								int neu = Integer.parseInt(dlg.getValue());
+								v.changeAnzahl(neu);
+							}
+						}
+						setLeistungen(GlobalEvents.getSelectedKons());
+					} catch (NumberFormatException ne) {
+						SWTHelper.showError("Ungültige Eingabe",
+							"Bitte geben Sie eine ganze Zahl oder einen Bruch der Form x/y ein");
+					}
+				}
+			}
+		});
+		/* MenuItem sep= */new MenuItem(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
+		MenuItem chgText = new MenuItem(ret, SWT.NONE);
+		chgText.setText("Text ändern");
+		chgText.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				int sel = tVerr.getSelectionIndex();
+				TableItem ti = tVerr.getItem(sel);
+				Verrechnet v = (Verrechnet) ti.getData();
+				String oldText = v.getText();
+				InputDialog dlg =
+					new InputDialog(
+						Desk.theDisplay.getActiveShell(),
+						"Text der Leistung ändern",
+						"Geben Sie bitte die neue Beschreibung für die Leistung bzw. den Artikel ein",
+						oldText, null);
+				if (dlg.open() == Dialog.OK) {
+					String input = dlg.getValue();
+					if (input.matches("[0-9\\.,]+")) {
+						if (!SWTHelper
+							.askYesNo("Wirklich Text ändern?",
+								"Sie haben eine Zahl eingegeben. Soll dies wirklich der neue Name für die Leistung sein?")) {
+							return;
+						}
+					}
+					v.setText(input);
+					setLeistungen(GlobalEvents.getSelectedKons());
+				}
+			}
+		});
+		return ret;
+	}
 	
-    private Menu createVerrMenu(){
-        Menu ret=new Menu(tVerr);
-        MenuItem delVerr=new MenuItem(ret,SWT.NONE);
-        delVerr.setText("Leistungsposition entfernen");
-        delVerr.addSelectionListener(new delVerrListener());
-        MenuItem chgPrice=new MenuItem(ret,SWT.NONE);
-        chgPrice.setText("Preis ändern");
-        chgPrice.addSelectionListener(new SelectionAdapter(){
-        	@Override
-        	public void widgetSelected(SelectionEvent e){
-        		int sel=tVerr.getSelectionIndex();
-        		//String ext=actBehandlung.getFall().getGesetz();
-        		TableItem ti=tVerr.getItem(sel);
-        		Verrechnet v=(Verrechnet)ti.getData();
-        		//String p=Rechnung.geldFormat.format(v.getEffPreisInRappen()/100.0);
-        		String p=v.getEffPreis().getAmountAsString();
-        		InputDialog dlg=new InputDialog(Desk.getTopShell(),"Preis für Leistung ändern","Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)",p,null);
-        		if(dlg.open()==Dialog.OK){
-        			//v.setPreisInRappen(Integer.parseInt(dlg.getValue().replaceAll("\\.","")));
-        			try{
-        				Money newPrice=new Money(dlg.getValue());
-        				v.setPreis(newPrice);
-        				setLeistungen(GlobalEvents.getSelectedKons());
-        			}catch(ParseException ex){
-        				SWTHelper.showError("Falsche Betragseingabe", "Der eingegebene Betrag konnte nicht interpretiert werden");
-        			}
-        		}
-        	}
-        });
-        MenuItem chgNumber=new MenuItem(ret,SWT.NONE);
-        chgNumber.setText("Zahl ändern");
-        chgNumber.addSelectionListener(new SelectionAdapter(){
-        	@Override
-        	public void widgetSelected(SelectionEvent e){
-        		int sel=tVerr.getSelectionIndex();
-        		TableItem ti=tVerr.getItem(sel);
-        		Verrechnet v=(Verrechnet)ti.getData();
-        		String p=Integer.toString(v.getZahl());
-        		InputDialog dlg=new InputDialog(Desk.getTopShell(),"Zahl der Leistung ändern","Geben Sie bitte die neue Anwendungszahl (oder Bruchzahl wie 1/3) für die Leistung bzw. den Artikel ein",p,null);
-        		if(dlg.open()==Dialog.OK){
-        			try{
-        				String val=dlg.getValue();
-        				if(!StringTool.isNothing(val)){
-        					String[] frac=val.split("/");
-        					if(frac.length>1){
-        						Money price=v.getEffPreis();
-        						price.multiply(Double.parseDouble(frac[0])/Double.parseDouble(frac[1]));
-        						v.setPreis(price);
-        						v.setText(v.getText()+" ("+val+" OP)");
-        					}else{
-        						int neu=Integer.parseInt(dlg.getValue());
-                				v.changeAnzahl(neu);		
-        					}
-        				}
-        				setLeistungen(GlobalEvents.getSelectedKons());
-        			}catch(NumberFormatException ne){
-        				SWTHelper.showError("Ungültige Eingabe", "Bitte geben Sie eine ganze Zahl oder einen Bruch der Form x/y ein");
-        			}
-        		}
-        	}
-        });
-        /*MenuItem sep=*/new MenuItem(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
-        MenuItem chgText=new MenuItem(ret,SWT.NONE);
-        chgText.setText("Text ändern");
-        chgText.addSelectionListener(new SelectionAdapter(){
-        	@Override
-        	public void widgetSelected(SelectionEvent e){
-        		int sel=tVerr.getSelectionIndex();
-        		TableItem ti=tVerr.getItem(sel);
-        		Verrechnet v=(Verrechnet)ti.getData();
-        		String oldText=v.getText();
-        		InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),"Text der Leistung ändern","Geben Sie bitte die neue Beschreibung für die Leistung bzw. den Artikel ein",oldText,null);
-        		if(dlg.open()==Dialog.OK){
-        			String input=dlg.getValue();
-        			if(input.matches("[0-9\\.,]+")){
-        				if(!SWTHelper.askYesNo("Wirklich Text ändern?", "Sie haben eine Zahl eingegeben. Soll dies wirklich der neue Name für die Leistung sein?")){
-        					return;
-        				}
-        			}
-        			v.setText(input);
-        			setLeistungen(GlobalEvents.getSelectedKons());
-        		}
-        	}
-        });
-        return ret;
-    }
-
 }

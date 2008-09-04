@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 3558 2008-01-17 14:35:23Z danlutz $
+ * $Id: Patientenblatt.java 4370 2008-09-04 13:47:13Z rgw_ch $
  *******************************************************************************/
 
 
@@ -75,7 +75,9 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Detailansicht eines Patientrecords
+ * @deprecated use Patientenblatt2
  */
+@Deprecated
 public class Patientenblatt extends Composite implements GlobalEvents.SelectionListener, ActivationListener{
 	private final FormToolkit tk;
 	private final static String[] lbSimple={"Name","Vorname","Geburtsdatum","Geschlecht","Telefon 1",

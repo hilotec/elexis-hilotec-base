@@ -98,7 +98,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	//private final static String[] lbLists={"Fixmedikation"/*,"Reminders" */};
 	private final FormText inpAdresse;
 	private final ListDisplay<BezugsKontakt> inpZusatzAdresse /*, dlReminder */;
-	private final DauerMediDisplay dmd;
+	private final FixMediDisplay dmd;
 	Patient actPatient;
 	IViewSite viewsite;
 	private final Hyperlinkreact hr=new Hyperlinkreact();
@@ -302,7 +302,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		ecdm=WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
 		UserSettings2.setExpandedState(ecdm, "Patientenblatt/"+FIXMEDIKATION);
 		ecdm.addExpansionListener(ecExpansionListener);
-		dmd=new DauerMediDisplay(ecdm,site);
+		dmd=new FixMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
 		makeActions();
 		//form.getToolBarManager().add(lockAction);

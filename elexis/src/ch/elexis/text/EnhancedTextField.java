@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 3955 2008-05-23 10:57:32Z rgw_ch $
+ *  $Id: EnhancedTextField.java 4370 2008-09-04 13:47:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -53,27 +53,26 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.actions.GlobalEvents.UserListener;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Leistungsblock;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget;
-import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
+
 /**
- * Ein StyledText mit erweiterten Eigenschaften. Kann XML-Dokumente von SAmDaS-Typ lesen.
- * Aus Kompatibiltätsgründen können auch reine Texteinträge gelesen werden, werden beim Speichern
- * aber nach XML gewandelt.
+ * Ein StyledText mit erweiterten Eigenschaften. Kann XML-Dokumente von SAmDaS-Typ lesen. Aus
+ * Kompatibiltätsgründen können auch reine Texteinträge gelesen werden, werden beim Speichern aber
+ * nach XML gewandelt.
+ * 
  * @author Gerry
- *
+ * 
  */
 public class EnhancedTextField extends Composite {
 	public static final String MACRO_KEY = "enhancedtextfield/macro_key";
@@ -90,512 +89,539 @@ public class EnhancedTextField extends Composite {
 	boolean dirty;
 	MenuManager menuMgr;
 	private Konsultation actKons;
-    private static Pattern outline=Pattern.compile("^\\S+:",Pattern.MULTILINE);
-    private static Pattern bold=Pattern.compile("\\*\\S+\\*");
-    private static Pattern italic=Pattern.compile("\\/\\S+\\/");
-    private static Pattern underline=Pattern.compile("_\\S+_");
-    private IAction copyAction,cutAction,pasteAction;
-    private IMenuListener globalMenuListener;
-    private UserChangeListener ucl=new UserChangeListener();
-
-    public void addMenuListener(IMenuListener ml){
-    	menuMgr.addMenuListener(ml);
-    }
-    public void removeMenuListener(IMenuListener ml){
-    	menuMgr.removeMenuListener(ml);
-    }
-    public void setXrefs(Hashtable<String, IKonsExtension> xrefs){
-    	hXrefs=xrefs;
-    }
-    /**
-     * Only needed for billing macros
-     * @param k kons to bill, can be null then billing macros are disabled
-     */
-    public void setKons(Konsultation k){
-    	actKons=k;
-    }
-    
-    public void connectGlobalActions(IViewSite site){
-    	makeActions();
-    	 IActionBars actionBars = site.getActionBars();
-		 actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),copyAction);
-		 actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),cutAction);
-		 actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),pasteAction);
-		 globalMenuListener=new IMenuListener(){
-				public void menuAboutToShow(IMenuManager manager) {
-					if(text.getSelectionCount()==0){
-						copyAction.setEnabled(false);
-						cutAction.setEnabled(false);
-					}else{
-						copyAction.setEnabled(true);
-						cutAction.setEnabled(true);
-					}
-					
+	private static Pattern outline = Pattern.compile("^\\S+:", Pattern.MULTILINE);
+	private static Pattern bold = Pattern.compile("\\*\\S+\\*");
+	private static Pattern italic = Pattern.compile("\\/\\S+\\/");
+	private static Pattern underline = Pattern.compile("_\\S+_");
+	private IAction copyAction, cutAction, pasteAction;
+	private IMenuListener globalMenuListener;
+	private UserChangeListener ucl = new UserChangeListener();
+	
+	public void addMenuListener(IMenuListener ml){
+		menuMgr.addMenuListener(ml);
+	}
+	
+	public void removeMenuListener(IMenuListener ml){
+		menuMgr.removeMenuListener(ml);
+	}
+	
+	public void setXrefs(Hashtable<String, IKonsExtension> xrefs){
+		hXrefs = xrefs;
+	}
+	
+	/**
+	 * Only needed for billing macros
+	 * 
+	 * @param k
+	 *            kons to bill, can be null then billing macros are disabled
+	 */
+	public void setKons(Konsultation k){
+		actKons = k;
+	}
+	
+	public void connectGlobalActions(IViewSite site){
+		makeActions();
+		IActionBars actionBars = site.getActionBars();
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), cutAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pasteAction);
+		globalMenuListener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager){
+				if (text.getSelectionCount() == 0) {
+					copyAction.setEnabled(false);
+					cutAction.setEnabled(false);
+				} else {
+					copyAction.setEnabled(true);
+					cutAction.setEnabled(true);
 				}
-		 };
-		 ApplicationActionBarAdvisor.editMenu.addMenuListener(globalMenuListener);
-		 GlobalEvents.getInstance().addUserListener(ucl);
-    }
-    public void disconnectGlobalActions(IViewSite site){
-    	 IActionBars actionBars = site.getActionBars();
-    	 actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),null);
-		 actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),null);
-		 actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),null);
-		 ApplicationActionBarAdvisor.editMenu.removeMenuListener(globalMenuListener);
-		 GlobalEvents.getInstance().removeUserListener(ucl);
-		 
-    }
-    public void addDropReceiver(Class clazz,IKonsExtension ext){
-    	dropper.addReceiver(clazz, ext);
-    }
-    public void removeDropReceiver(Class clazz, IKonsExtension ext){
-    	dropper.removeReceiver(clazz, ext);
-    }
-    
+				
+			}
+		};
+		ApplicationActionBarAdvisor.editMenu.addMenuListener(globalMenuListener);
+		GlobalEvents.getInstance().addUserListener(ucl);
+	}
+	
+	public void disconnectGlobalActions(IViewSite site){
+		IActionBars actionBars = site.getActionBars();
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), null);
+		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), null);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), null);
+		ApplicationActionBarAdvisor.editMenu.removeMenuListener(globalMenuListener);
+		GlobalEvents.getInstance().removeUserListener(ucl);
+		
+	}
+	
+	public void addDropReceiver(Class clazz, IKonsExtension ext){
+		dropper.addReceiver(clazz, ext);
+	}
+	
+	public void removeDropReceiver(Class clazz, IKonsExtension ext){
+		dropper.removeReceiver(clazz, ext);
+	}
+	
 	public EnhancedTextField(final Composite parent){
-		super(parent,SWT.NONE);
+		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
-		text=new StyledText(this,SWT.WRAP|SWT.BORDER|SWT.V_SCROLL);
+		text = new StyledText(this, SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
-		text.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		text.addVerifyListener(new ETFVerifyListener());
 		text.addVerifyKeyListener(new ShortcutListener(this));
-		dropper=new ETFDropReceiver(this);
-		menuMgr=new MenuManager();
-		 menuMgr.setRemoveAllWhenShown(true);
-         menuMgr.addMenuListener(new IMenuListener(){
-             @SuppressWarnings("unchecked")
-			public void menuAboutToShow(IMenuManager manager) {
-            	 manager.add(GlobalActions.cutAction);
-            	 manager.add(GlobalActions.copyAction);
-            	 manager.add(GlobalActions.pasteAction);
-            	 manager.add(new Separator());
-            	 manager.add(new Action("als Makro..."){
-            		 String tx;
-            		 {
-            			 tx=text.getSelectionText();
-            			 if(StringTool.isNothing(tx)){
-            				 setEnabled(false);
-            			 }else{
-            				 setEnabled(true);
-            			 }
-            		 }
-					@Override
-					public void run() {
-						
-						InputDialog in=new InputDialog(parent.getShell(),"Neues Makro erstellen","Geben Sie bitte einen Namen für das Makro ein",null,null);
-						if(in.open()==Dialog.OK){
-							StringBuilder name=new StringBuilder(in.getValue());
-							name.reverse();
-							Hub.userCfg.set("makros/"+name,tx);
+		dropper = new ETFDropReceiver(this);
+		menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			@SuppressWarnings("unchecked")
+			public void menuAboutToShow(IMenuManager manager){
+				manager.add(GlobalActions.cutAction);
+				manager.add(GlobalActions.copyAction);
+				manager.add(GlobalActions.pasteAction);
+				manager.add(new Separator());
+				manager.add(new Action("als Makro...") {
+					String tx;
+					{
+						tx = text.getSelectionText();
+						if (StringTool.isNothing(tx)) {
+							setEnabled(false);
+						} else {
+							setEnabled(true);
 						}
 					}
-            		 
-            	 });
-            	 if(hXrefs!=null){
-            		 boolean bAdditions=false;
-	            	 for(IKonsExtension k:hXrefs.values()){
-	            		 IAction[] acs=k.getActions();
-	            		 if(acs!=null){
-	            			 for(IAction ac:acs){
-	            				 manager.add(ac);
-	            				 bAdditions=true;
-	            			 }
-	            		 }
-	            	 }
-	            	 if(bAdditions){
-	            		 manager.add(new Action("Querverweis entfernen"){
-	            			 Samdas.XRef actRef=null;
-	            			 {
-	            				setEnabled(false);
-	            				int cp=text.getCaretOffset();
-	            				actRef=findLinkRef(cp);
-	            				if(actRef!=null){
-	            					setEnabled(true);
-	            				}
-	            			 }
-	            			@Override
-	            			public void run(){
-	            				List<Samdas.XRef> xrefs=record.getXrefs();
-	            				Samdas.XRef eRemove=null;
-	            				for(Samdas.XRef xref:xrefs){
-	            					if((xref.getProvider().equals(actRef.getProvider())) &&
-	            							(xref.getID().equals(actRef.getID()))){
-	            						IKonsExtension ex=hXrefs.get(actRef.getProvider());
-	            						if(ex!=null){
-	            							eRemove=xref;
-	            							text.replaceTextRange(actRef.getPos(), actRef.getLength(), "");
-	            							ex.removeXRef(actRef.getProvider(), actRef.getID());
-	            						}
-	            					}
-	            					
-	            				}
-	            				record.remove(eRemove);
-	            				doFormat(getDocumentAsText());
-	            			}
-							
-	            		 });
-	            	 }
-            	 }
-             }
-         });
-         Menu menu=menuMgr.createContextMenu(text);
-         text.setMenu(menu);
-		text.setWordWrap(true);
-		text.addMouseListener(new MouseAdapter(){
-			
-			
-
-			public void mouseDoubleClick(MouseEvent e) {
-			    //System.out.println("Line="+e.y/text.getLineHeight());
-			    //System.out.println("Caret="+text.getCaretOffset());
-				if(e.button!=1){
-					super.mouseDoubleClick(e);
-				}else{
-					if(links!=null){
-						try{
-							int ch=text.getOffsetAtLocation(new Point(e.x,e.y));
-							Samdas.XRef lr=findLinkRef(ch);
-							if(lr!=null){
-								IKonsExtension xr=hXrefs.get(lr.getProvider());
-								xr.doXRef(lr.getProvider(),lr.getID());
+					
+					@Override
+					public void run(){
+						
+						InputDialog in =
+							new InputDialog(parent.getShell(), "Neues Makro erstellen",
+								"Geben Sie bitte einen Namen für das Makro ein", null, null);
+						if (in.open() == Dialog.OK) {
+							StringBuilder name = new StringBuilder(in.getValue());
+							name.reverse();
+							Hub.userCfg.set("makros/" + name, tx);
+						}
+					}
+					
+				});
+				if (hXrefs != null) {
+					boolean bAdditions = false;
+					for (IKonsExtension k : hXrefs.values()) {
+						IAction[] acs = k.getActions();
+						if (acs != null) {
+							for (IAction ac : acs) {
+								manager.add(ac);
+								bAdditions = true;
 							}
-								
-						}catch(IllegalArgumentException iax){
+						}
+					}
+					if (bAdditions) {
+						manager.add(new Action("Querverweis entfernen") {
+							Samdas.XRef actRef = null;
+							{
+								setEnabled(false);
+								int cp = text.getCaretOffset();
+								actRef = findLinkRef(cp);
+								if (actRef != null) {
+									setEnabled(true);
+								}
+							}
+							
+							@Override
+							public void run(){
+								List<Samdas.XRef> xrefs = record.getXrefs();
+								Samdas.XRef eRemove = null;
+								for (Samdas.XRef xref : xrefs) {
+									if ((xref.getProvider().equals(actRef.getProvider()))
+										&& (xref.getID().equals(actRef.getID()))) {
+										IKonsExtension ex = hXrefs.get(actRef.getProvider());
+										if (ex != null) {
+											eRemove = xref;
+											text.replaceTextRange(actRef.getPos(), actRef
+												.getLength(), "");
+											ex.removeXRef(actRef.getProvider(), actRef.getID());
+										}
+									}
+									
+								}
+								record.remove(eRemove);
+								doFormat(getDocumentAsText());
+							}
+							
+						});
+					}
+				}
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(text);
+		text.setMenu(menu);
+		text.setWordWrap(true);
+		text.addMouseListener(new MouseAdapter() {
+			
+			public void mouseDoubleClick(MouseEvent e){
+				// System.out.println("Line="+e.y/text.getLineHeight());
+				// System.out.println("Caret="+text.getCaretOffset());
+				if (e.button != 1) {
+					super.mouseDoubleClick(e);
+				} else {
+					if (links != null) {
+						try {
+							int ch = text.getOffsetAtLocation(new Point(e.x, e.y));
+							Samdas.XRef lr = findLinkRef(ch);
+							if (lr != null) {
+								IKonsExtension xr = hXrefs.get(lr.getProvider());
+								xr.doXRef(lr.getProvider(), lr.getID());
+							}
+							
+						} catch (IllegalArgumentException iax) {
 							/* Klick ausserhalb des Textbereichs: egal */
 						}
 					}
 				}
-			  }
+			}
 		});
 		text.addExtendedModifyListener(new RangeTracker());
-		new PersistentObjectDropTarget(text,dropper);
+		new PersistentObjectDropTarget(text, dropper);
 		
-		dirty=false;
+		dirty = false;
 	}
 	
 	public boolean isDirty(){
 		return dirty;
 	}
+	
 	public void setDirty(boolean d){
-		dirty=d;
+		dirty = d;
 	}
+	
 	/**
-	 * Text formatieren (d.h. Style-Ranges erstellen. Es wird unterschieden zwischen dem KG-Eintrag alten 
-	 * Stils und dem neuen XML-basierten format.
+	 * Text formatieren (d.h. Style-Ranges erstellen. Es wird unterschieden zwischen dem KG-Eintrag
+	 * alten Stils und dem neuen XML-basierten format.
 	 */
 	void doFormat(String tx){
-        text.setStyleRange(null);
-		if(tx.startsWith("<")){
+		text.setStyleRange(null);
+		if (tx.startsWith("<")) {
 			doFormatXML(tx);
-			tx=text.getText();
-		}else{
-			samdas=new Samdas(tx);
-			record=samdas.getRecord();
+			tx = text.getText();
+		} else {
+			samdas = new Samdas(tx);
+			record = samdas.getRecord();
 			text.setText(tx);
 		}
 		
-        // Überschriften formatieren
+		// Überschriften formatieren
 		
-		 // obsoleted by markups!
-        Matcher matcher=outline.matcher(tx);
-        while(matcher.find()==true){
-            StyleRange n=new StyleRange();
-            n.start=matcher.start();
-            n.length=matcher.end()-n.start;
-            n.fontStyle=SWT.BOLD;
-            text.setStyleRange(n);
-        }
-        
-        matcher=bold.matcher(tx);
-        while(matcher.find()==true){
-            StyleRange n=new StyleRange();
-            n.start=matcher.start();
-            n.length=matcher.end()-n.start;
-            n.fontStyle=SWT.BOLD;
-            text.setStyleRange(n);
-        }
-        matcher=italic.matcher(tx);
-        while(matcher.find()==true){
-            StyleRange n=new StyleRange();
-            n.start=matcher.start();
-            n.length=matcher.end()-n.start;
-            n.fontStyle=SWT.ITALIC;
-            text.setStyleRange(n);
-        }
-    
-        matcher=underline.matcher(tx);
-        while(matcher.find()==true){
-            StyleRange n=new StyleRange();
-            n.start=matcher.start();
-            n.length=matcher.end()-n.start;
-            n.underline=true;
-            text.setStyleRange(n);
-        }
-     // Obsoleted, do not rely 
-    }
+		// obsoleted by markups!
+		Matcher matcher = outline.matcher(tx);
+		while (matcher.find() == true) {
+			StyleRange n = new StyleRange();
+			n.start = matcher.start();
+			n.length = matcher.end() - n.start;
+			n.fontStyle = SWT.BOLD;
+			text.setStyleRange(n);
+		}
+		
+		matcher = bold.matcher(tx);
+		while (matcher.find() == true) {
+			StyleRange n = new StyleRange();
+			n.start = matcher.start();
+			n.length = matcher.end() - n.start;
+			n.fontStyle = SWT.BOLD;
+			text.setStyleRange(n);
+		}
+		matcher = italic.matcher(tx);
+		while (matcher.find() == true) {
+			StyleRange n = new StyleRange();
+			n.start = matcher.start();
+			n.length = matcher.end() - n.start;
+			n.fontStyle = SWT.ITALIC;
+			text.setStyleRange(n);
+		}
+		
+		matcher = underline.matcher(tx);
+		while (matcher.find() == true) {
+			StyleRange n = new StyleRange();
+			n.start = matcher.start();
+			n.length = matcher.end() - n.start;
+			n.underline = true;
+			text.setStyleRange(n);
+		}
+		// Obsoleted, do not rely
+	}
+	
 	@SuppressWarnings("unchecked")
 	void doFormatXML(String tx){
-		samdas=new Samdas(tx);
-		record=samdas.getRecord();
-		List<Samdas.XRef> xrefs=record.getXrefs();
+		samdas = new Samdas(tx);
+		record = samdas.getRecord();
+		List<Samdas.XRef> xrefs = record.getXrefs();
 		text.setText(record.getText());
-		int textlen=text.getCharCount();
-		markups=record.getMarkups();
-		links=new ArrayList<Samdas.XRef>(xrefs.size());
-		ranges=new ArrayList<Samdas.Range>(xrefs.size()+markups.size());
-		for(Samdas.Markup m:markups){
-			String type=m.getType();
-			StyleRange n=new StyleRange();
-			n.start=m.getPos();
-			n.length=m.getLength();
-			if(type.equalsIgnoreCase("emphasized")){
-				n.strikeout=true;
-			}else if(type.equalsIgnoreCase("bold")){
-				n.fontStyle=SWT.BOLD;
-			}else if(type.equalsIgnoreCase("italic")){
-				n.fontStyle=SWT.ITALIC;
-			}else if(type.equalsIgnoreCase("underlined")){
-				n.underline=true;
+		int textlen = text.getCharCount();
+		markups = record.getMarkups();
+		links = new ArrayList<Samdas.XRef>(xrefs.size());
+		ranges = new ArrayList<Samdas.Range>(xrefs.size() + markups.size());
+		for (Samdas.Markup m : markups) {
+			String type = m.getType();
+			StyleRange n = new StyleRange();
+			n.start = m.getPos();
+			n.length = m.getLength();
+			if (type.equalsIgnoreCase("emphasized")) {
+				n.strikeout = true;
+			} else if (type.equalsIgnoreCase("bold")) {
+				n.fontStyle = SWT.BOLD;
+			} else if (type.equalsIgnoreCase("italic")) {
+				n.fontStyle = SWT.ITALIC;
+			} else if (type.equalsIgnoreCase("underlined")) {
+				n.underline = true;
 			}
-			if((n.start+n.length)>textlen){
-				n.length=textlen-n.start;
+			if ((n.start + n.length) > textlen) {
+				n.length = textlen - n.start;
 			}
-			if((n.length>0) && (n.start>=0)){
+			if ((n.length > 0) && (n.start >= 0)) {
 				text.setStyleRange(n);
 				ranges.add(m);
-			}else{
+			} else {
 				// fehlerhaftes Markup entfernen.
 				record.remove(m);
 			}
-
+			
 		}
-		for(Samdas.XRef xref:xrefs){
-			IKonsExtension xProvider=hXrefs.get(xref.getProvider());
-			if(xProvider==null){
+		for (Samdas.XRef xref : xrefs) {
+			IKonsExtension xProvider = hXrefs.get(xref.getProvider());
+			if (xProvider == null) {
 				continue;
 			}
-			StyleRange n=new StyleRange();
-			n.start=xref.getPos();
-			n.length=xref.getLength();
-			if(xProvider.doLayout(n,xref.getProvider(),xref.getID())==true){
+			StyleRange n = new StyleRange();
+			n.start = xref.getPos();
+			n.length = xref.getLength();
+			if (xProvider.doLayout(n, xref.getProvider(), xref.getID()) == true) {
 				links.add(xref);
 			}
 			
-			if((n.start+n.length)>text.getCharCount()){
-				n.length=text.getCharCount()-n.start;
+			if ((n.start + n.length) > text.getCharCount()) {
+				n.length = text.getCharCount() - n.start;
 			}
-			if((n.length>0) && (n.start>=0)){
+			if ((n.length > 0) && (n.start >= 0)) {
 				text.setStyleRange(n);
 				ranges.add(xref);
-			}else{
+			} else {
 				xref.setPos(0);
 			}
 		}
-
+		
 	}
+	
 	/**
 	 * Querverweis einfügen.
-	 * @param pos Einfügeposition im Text oder -1: An Caretposition
-	 * @param string der einzufügende Bezeichner. 
-	 * @param provider XRef-Provider wie beim Extensionpoint XREf angegeben
-	 * @param id vom Provider vergebene Identifikation für diesen Querverweis (beliebiger String) 
+	 * 
+	 * @param pos
+	 *            Einfügeposition im Text oder -1: An Caretposition
+	 * @param string
+	 *            der einzufügende Bezeichner.
+	 * @param provider
+	 *            XRef-Provider wie beim Extensionpoint XREf angegeben
+	 * @param id
+	 *            vom Provider vergebene Identifikation für diesen Querverweis (beliebiger String)
 	 */
 	@SuppressWarnings("unchecked")
 	public void insertXRef(int pos, String string, String provider, String id){
-		if(pos==-1){
-			pos=text.getCaretOffset();
-		}else{
+		if (pos == -1) {
+			pos = text.getCaretOffset();
+		} else {
 			text.setCaretOffset(pos);
 		}
-		int len=string.trim().length();
+		int len = string.trim().length();
 		text.insert(string);
 		record.setText(text.getText());
 		
-		Samdas.XRef xref=new Samdas.XRef(provider,id,pos,len);
+		Samdas.XRef xref = new Samdas.XRef(provider, id, pos, len);
 		record.add(xref);
 		setDirty(true);
 		doFormat(getDocumentAsText());
 	}
+	
 	/**
 	 * Markup erstellen
-	 * @param type '*' bold, '/' italic, '_', underline
+	 * 
+	 * @param type
+	 *            '*' bold, '/' italic, '_', underline
 	 */
 	public void createMarkup(char type, int pos, int len){
-		String typ="bold";
-		switch(type){
-		case '/': typ="italic"; break;
-		case '_': typ="underline"; break;
+		String typ = "bold";
+		switch (type) {
+		case '/':
+			typ = "italic";
+			break;
+		case '_':
+			typ = "underline";
+			break;
 		}
-		Samdas.Markup markup=new Samdas.Markup(pos,len,typ);
+		Samdas.Markup markup = new Samdas.Markup(pos, len, typ);
 		record.add(markup);
 		doFormat(getDocumentAsText());
 	}
+	
 	/**
 	 * Den Text mit len zeichen ab start durch nt ersetzen
 	 */
 	public void replace(int start, int len, String nt){
 		text.replaceTextRange(start, len, nt);
 	}
-	class ETFVerifyListener implements VerifyListener{
-	    public void verifyText(VerifyEvent e)
-        {
-	    	
-        	// if(e.text.length()<2){ wieso das??? weiss nicht mehr, was ich damit wollte
-        		dirty=true;
-        	//}
+	
+	class ETFVerifyListener implements VerifyListener {
+		public void verifyText(VerifyEvent e){
+			
+			// if(e.text.length()<2){ wieso das??? weiss nicht mehr, was ich damit wollte
+			dirty = true;
+			// }
+			
+			String macroKey = Hub.userCfg.get(MACRO_KEY, MACRO_KEY_DEFAULT);
+			
+			// Wenn der macroKey gedrückt wurde, das Wort rückwärts von der aktuellen Position
+			// bis zum letzten whitespace scannen.
+			if (e.text.equals(macroKey)) {
+				StringBuilder s = new StringBuilder();
+				int start = e.start;
+				while (--start >= 0) {
+					String t = text.getTextRange(start, 1);
+					if (t.matches("\\S")) {
+						s.append(t);
+					} else {
+						break;
+					}
+				}
+				// Dann prüfen, ob dieses Wort einem Makronamen entspricht
+				String code = s.toString();
+				String comp = Hub.userCfg.get("makros/" + code, null);
+				if (comp != null) { // Ja -> Makri umwandeln
+					start += 1;
+					text.replaceTextRange(start, (e.end - start), comp);
+					e.doit = false;
+					doFormat(getDocumentAsText());
+					text.setCaretOffset(start + comp.length());
+				} else { // Nein -> prüfen, ob es einem Leistungsblocknamen entspricht
+					Query<Leistungsblock> qbe = new Query<Leistungsblock>(Leistungsblock.class);
+					qbe.add("Name", "=", s.reverse().toString());
+					qbe.startGroup();
+					qbe.add("MandantID", "=", Hub.actMandant.getId());
+					qbe.or();
+					qbe.add("MandantID", "", null);
+					qbe.endGroup();
+					List<Leistungsblock> list = qbe.execute();
+					if ((list != null) && (list.size() > 0) && (actKons != null)) {
+						Leistungsblock lb = list.get(0);
+						for (ICodeElement ice : lb.getElements()) {
+							Result<IVerrechenbar> result = actKons.addLeistung((IVerrechenbar) ice);
+							if (!result.isOK()) {
+								SWTHelper
+									.alert("Diese Verrechnung ist ungültig", result.toString());
+								// also see KonsDetailView.DropReceiver
+							}
+						}
+						start += 1;
+						text.replaceTextRange(start, e.end - start, "");
+						e.doit = false;
+						actKons.updateEintrag(getDocumentAsText(), false);
+						setDirty(false);
+						GlobalEvents.getInstance().fireObjectEvent(actKons,
+							GlobalEvents.CHANGETYPE.update);
+					}
+					
+				}
+				// Wenn ein : gedrückt wurde, prüfen, ob es ein Wort am Zeilenanfang ist und ggf.
+				// fett formatieren.
+			} else if (e.text.equals(":")) {
+				int lineStart = text.getOffsetAtLine(text.getLineAtOffset(e.start));
+				String line = text.getText(lineStart, e.start - 1);
+				if (line.matches("^\\S+")) {
+					/*
+					 * StyleRange n=new StyleRange(); n.start=lineStart; n.length=line.length();
+					 * n.fontStyle=SWT.BOLD; text.setStyleRange(n);
+					 */
+					createMarkup('*', lineStart, line.length());
+				}
+			}
+			// Wenn ein *, _ oder / gedrückt wurde, prüfen, ob vor dem aktuellen Wort dasselbe
+			// Zeichen steht
+			// und wenn ja, entsprechende Formatierung anwenden.
+			else if (e.text.matches("[\\*/_]")) {
+				int start = e.start;
+				String t = "";
+				while (--start >= 0) {
+					t = text.getTextRange(start, 1);
+					if (t.equals(e.text)) {
+						createMarkup(t.charAt(0), start, e.start - start);
+						e.doit = true;
+						break;
+					}
+					if (t.matches("\\s")) {
+						break;
+					}
+				}
+				/*
+				 * e.doit=true; Desk.theDisplay.asyncExec(new Runnable(){
+				 * 
+				 * public void run() { int off=text.getCaretOffset();
+				 * actKons.updateEintrag(getDocumentAsText(), false); setDirty(false);
+				 * //GlobalEvents.getInstance().fireObjectEvent(actKons,
+				 * GlobalEvents.CHANGETYPE.update); setText(getDocumentAsText());
+				 * text.setCaretOffset(off); }t });
+				 */
 
-        	String macroKey = Hub.userCfg.get(MACRO_KEY, MACRO_KEY_DEFAULT);
-
-        	// Wenn der macroKey gedrückt wurde, das Wort rückwärts von der aktuellen Position 
-        	// bis zum letzten whitespace scannen.
-            if(e.text.equals(macroKey)){
-                StringBuilder s=new StringBuilder();
-                int start=e.start;    
-                while(--start>=0){
-                    String t=text.getTextRange(start,1);
-                    if(t.matches("\\S")){
-                        s.append(t);
-                    }else{
-                        break;
-                    }
-                }
-                // Dann prüfen, ob dieses Wort einem Makronamen entspricht
-                String code=s.toString();
-            	String comp=Hub.userCfg.get("makros/"+code,null);
-            	if(comp!=null){		// Ja -> Makri umwandeln
-            		start+=1;
-            		text.replaceTextRange(start,(e.end-start),comp);
-            		e.doit=false;
-            		doFormat(getDocumentAsText());
-            		text.setCaretOffset(start+comp.length());
-            	}else{	// Nein -> prüfen, ob es einem Leistungsblocknamen entspricht
-            		Query<Leistungsblock> qbe=new Query<Leistungsblock>(Leistungsblock.class);
-            		qbe.add("Name", "=", s.reverse().toString());
-            		qbe.startGroup();
-            		qbe.add("MandantID", "=", Hub.actMandant.getId());
-            		qbe.or();
-            		qbe.add("MandantID", "", null);
-            		qbe.endGroup();
-            		List<Leistungsblock> list=qbe.execute();
-            		if((list!=null) && (list.size()>0) && (actKons!=null)){
-            			Leistungsblock lb=list.get(0);
-            			for(ICodeElement ice:lb.getElements()){
-            				Result result = actKons.addLeistung((IVerrechenbar)ice);
-    		        		if(!result.isOK()){
-    		        			SWTHelper.alert("Diese Verrechnung ist ungültig",result.toString());
-    		        			// also see KonsDetailView.DropReceiver
-    		        		}
-            			}
-            			start+=1;
-                		text.replaceTextRange(start, e.end-start, "");
-                		e.doit=false;
-                		actKons.updateEintrag(getDocumentAsText(), false);
-                		setDirty(false);
-                		GlobalEvents.getInstance().fireObjectEvent(actKons, GlobalEvents.CHANGETYPE.update);
-            		}
-        			
-            		
-            	}
-            // Wenn ein : gedrückt wurde, prüfen, ob es ein Wort am Zeilenanfang ist und ggf. fett formatieren.
-            }else if(e.text.equals(":")){
-                int lineStart=text.getOffsetAtLine(text.getLineAtOffset(e.start));
-                String line=text.getText(lineStart,e.start-1);
-                if(line.matches("^\\S+")){
-                	/*
-                    StyleRange n=new StyleRange();
-                    n.start=lineStart;
-                    n.length=line.length();
-                    n.fontStyle=SWT.BOLD;
-                    text.setStyleRange(n);
-                    */
-                	createMarkup('*',lineStart,line.length());
-                }
-            }
-            // Wenn ein *, _ oder / gedrückt wurde, prüfen, ob vor dem aktuellen Wort dasselbe Zeichen steht
-            // und wenn ja, entsprechende Formatierung anwenden. 
-            else if(e.text.matches("[\\*/_]")){
-            	int start=e.start;
-            	String t="";
-                while(--start>=0){
-                    t=text.getTextRange(start,1);
-                    if(t.equals(e.text)){
-                    	createMarkup(t.charAt(0),start,e.start-start);
-                    	e.doit=true;
-                    	break;
-                    }
-                    if(t.matches("\\s")){
-                    	break;
-                    }
-                }
-                	/*
-                	e.doit=true;
-                	Desk.theDisplay.asyncExec(new Runnable(){
-
-						public void run() {
-							int off=text.getCaretOffset();
-                    		actKons.updateEintrag(getDocumentAsText(), false);
-                    		setDirty(false);
-                    		//GlobalEvents.getInstance().fireObjectEvent(actKons, GlobalEvents.CHANGETYPE.update);
-                    		setText(getDocumentAsText());
-		                	text.setCaretOffset(off);
-						}t
-                	});
-					*/
-                
-            }
-            
-        }
-     
+			}
+			
+		}
+		
 	}
 	
-	public void setText(String ntext) {
-        doFormat(ntext);
-        setDirty(false);
+	public void setText(String ntext){
+		doFormat(ntext);
+		setDirty(false);
 	}
 	
-	public void putCaretToEnd() {
+	public void putCaretToEnd(){
 		text.setCaretOffset(text.getCharCount());
 		text.setFocus();
 	}
 	
 	/**
 	 * Alle Änderungen seit dem letzten speichern zurücknehmen
+	 * 
 	 * @TODO: multi-undo
 	 */
 	public void undo(){
-		XMLOutputter xo=new XMLOutputter(Format.getRawFormat());
-		String oldText= xo.outputString(samdas.getDocument());
+		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
+		String oldText = xo.outputString(samdas.getDocument());
 		setText(oldText);
 	}
+	
 	/**
 	 * Liefert das dem Textfeld zugrundeliegende Samdas
 	 */
 	public Samdas getContents(){
 		return samdas;
 	}
+	
 	/**
 	 * Liefert den Inhalt des Textfields als jdom-Document zurück
 	 */
 	public Document getDocument(){
 		record.setText(text.getText());
-		//StyleRange[] rgs=text.getStyleRanges();
+		// StyleRange[] rgs=text.getStyleRanges();
 		return samdas.getDocument();
 	}
+	
 	/**
 	 * Liefert den Inhalt des Textfelds als XML-Text zurück
 	 */
 	public String getDocumentAsText(){
-		XMLOutputter xo=new XMLOutputter(Format.getRawFormat());
+		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
 		return xo.outputString(getDocument());
 	}
-
+	
 	Samdas.XRef findLinkRef(int cp){
-		Samdas.XRef ret=null;
-		if(links!=null){
-			for(Samdas.XRef lr:links){
-				if((lr.getPos()<=cp) && ((lr.getPos()+lr.getLength())>=cp)){
-					ret=lr;
+		Samdas.XRef ret = null;
+		if (links != null) {
+			for (Samdas.XRef lr : links) {
+				if ((lr.getPos() <= cp) && ((lr.getPos() + lr.getLength()) >= cp)) {
+					ret = lr;
 					break;
 				}
 			}
@@ -608,61 +634,63 @@ public class EnhancedTextField extends Composite {
 	 * 
 	 * @return das zugrundeliegende Text-Control
 	 */
-	public Control getControl() {
+	public Control getControl(){
 		return text;
 	}
 	
 	/**
-	 * Wenn Änderungen des Texts stattfinden, müssen unsere xref- und markup- EInträge
-	 * ggf mitverschoben werden. Leider können wir dazu nicht die sowieso immer nachgeführten
+	 * Wenn Änderungen des Texts stattfinden, müssen unsere xref- und markup- EInträge ggf
+	 * mitverschoben werden. Leider können wir dazu nicht die sowieso immer nachgeführten
 	 * StyleRanges verwenden, weil StyledText da immer nur Kopien rausgibt :-(
+	 * 
 	 * @author gerry
-	 *
+	 * 
 	 */
-	class RangeTracker implements ExtendedModifyListener{
-
-		public void modifyText(ExtendedModifyEvent event) {
-			if(ranges!=null){
-				int pos=event.start;
-				int len=event.length;
-				String text=event.replacedText;
-				int diff=len-text.length();
-				for(Samdas.Range r:ranges){
-					int spos=r.getPos();
-					if(spos>=pos){
-						r.setPos(spos+diff);
+	class RangeTracker implements ExtendedModifyListener {
+		
+		public void modifyText(ExtendedModifyEvent event){
+			if (ranges != null) {
+				int pos = event.start;
+				int len = event.length;
+				String text = event.replacedText;
+				int diff = len - text.length();
+				for (Samdas.Range r : ranges) {
+					int spos = r.getPos();
+					if (spos >= pos) {
+						r.setPos(spos + diff);
 					}
 				}
 			}
 		}
 		
 	}
+	
 	private void makeActions(){
-		//copyAction=ActionFactory.COPY.create();
-		cutAction=new Action("cu&t"){
+		// copyAction=ActionFactory.COPY.create();
+		cutAction = new Action("cu&t") {
 			@Override
-			public void run() {
+			public void run(){
 				text.cut();
 			}
 			
 		};
-		pasteAction=new Action("&Paste"){
+		pasteAction = new Action("&Paste") {
 			@Override
-			public void run() {
+			public void run(){
 				text.paste();
 			}
 		};
-		copyAction=new Action("&copy"){
+		copyAction = new Action("&copy") {
 			@Override
-			public void run() {
+			public void run(){
 				text.copy();
 			}
 		};
 		
 	}
-
-	class UserChangeListener implements UserListener{
-		public void UserChanged() {
+	
+	class UserChangeListener implements UserListener {
+		public void UserChanged(){
 			text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 		}
 		

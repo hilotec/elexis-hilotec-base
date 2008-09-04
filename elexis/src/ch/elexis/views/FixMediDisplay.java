@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4359 2008-09-02 17:14:20Z rgw_ch $
+ * $Id: FixMediDisplay.java 4370 2008-09-04 13:47:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -44,231 +44,248 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Display and let the user modify the medication of the currently selected patient
- * This is a pop-in-Replacement for DauerMediDisplay
- * To calculate the daily cost wie accept the forms 1-1-1-1 and 1x1, 2x3 and so on
+ * Display and let the user modify the medication of the currently selected patient This is a
+ * pop-in-Replacement for DauerMediDisplay To calculate the daily cost wie accept the forms 1-1-1-1
+ * and 1x1, 2x3 and so on
+ * 
  * @author gerry
- *
+ * 
  */
 public class FixMediDisplay extends ListDisplay<Prescription> {
-	private static final String TTCOST="Tagestherapiekosten: ";
+	private static final String TTCOST = "Tagestherapiekosten: ";
 	private LDListener dlisten;
-	private IAction stopMedicationAction,changeMedicationAction,removeMedicationAction;
+	private IAction stopMedicationAction, changeMedicationAction, removeMedicationAction;
 	FixMediDisplay self;
 	Label lCost;
 	PersistentObjectDropTarget target;
 	
 	public FixMediDisplay(Composite parent, IViewSite s){
-		super(parent,SWT.NONE,null);
-		lCost=new Label(this,SWT.NONE);
+		super(parent, SWT.NONE, null);
+		lCost = new Label(this, SWT.NONE);
 		lCost.setText(TTCOST);
 		lCost.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		dlisten=new DauerMediListener(s);
-		self=this;
-		addHyperlinks("Hinzu... ","Liste... ","Rezept... ");
+		dlisten = new DauerMediListener(s);
+		self = this;
+		addHyperlinks("Hinzu... ", "Liste... ", "Rezept... ");
 		makeActions();
-		ViewMenus menu=new ViewMenus(s);
-		menu.createControlContextMenu(list,stopMedicationAction,changeMedicationAction,null,removeMedicationAction);
+		ViewMenus menu = new ViewMenus(s);
+		menu.createControlContextMenu(list, stopMedicationAction, changeMedicationAction, null,
+			removeMedicationAction);
 		setDLDListener(dlisten);
-		target=new PersistentObjectDropTarget("Fixmedikation",this,
-				new PersistentObjectDropTarget.Receiver(){
-
-					public boolean accept(PersistentObject o) {
-						if(o instanceof Prescription){
+		target =
+			new PersistentObjectDropTarget("Fixmedikation", this,
+				new PersistentObjectDropTarget.Receiver() {
+					
+					public boolean accept(PersistentObject o){
+						if (o instanceof Prescription) {
 							return true;
 						}
-						if(o instanceof Artikel){
+						if (o instanceof Artikel) {
 							return true;
 						}
 						return false;
 					}
-
-					public void dropped(PersistentObject o, DropTargetEvent e) {
-						if(o instanceof Artikel){
-							Prescription pre=new Prescription((Artikel)o,GlobalEvents.getSelectedPatient(),"","");
+					
+					public void dropped(PersistentObject o, DropTargetEvent e){
+						if (o instanceof Artikel) {
+							Prescription pre =
+								new Prescription((Artikel) o, GlobalEvents.getSelectedPatient(),
+									"", "");
 							pre.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
-							MediDetailDialog dlg=new MediDetailDialog(getShell(),pre);
-							if(dlg.open()==Window.OK){
-								//self.add(pre);
+							MediDetailDialog dlg = new MediDetailDialog(getShell(), pre);
+							if (dlg.open() == Window.OK) {
+								// self.add(pre);
 								reload();
 							}
-
-						}else if(o instanceof Prescription){
-							Prescription pre=(Prescription)o;
-							Prescription now=new Prescription(pre.getArtikel(),GlobalEvents.getSelectedPatient(),pre.getDosis(),pre.getBemerkung());
+							
+						} else if (o instanceof Prescription) {
+							Prescription pre = (Prescription) o;
+							Prescription now =
+								new Prescription(pre.getArtikel(), GlobalEvents
+									.getSelectedPatient(), pre.getDosis(), pre.getBemerkung());
 							now.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
-							//self.add(now);
+							// self.add(now);
 							reload();
-						}						
-					}});
-		new PersistentObjectDragSource2(list,new PersistentObjectDragSource2.Draggable(){
-
-			public List<PersistentObject> getSelection() {
-				Prescription pr=FixMediDisplay.this.getSelection();
-				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>(1);
-				if(pr!=null){
+						}
+					}
+				});
+		new PersistentObjectDragSource2(list, new PersistentObjectDragSource2.Draggable() {
+			
+			public List<PersistentObject> getSelection(){
+				Prescription pr = FixMediDisplay.this.getSelection();
+				ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>(1);
+				if (pr != null) {
 					ret.add(pr);
 				}
 				return ret;
-			}});
-
+			}
+		});
+		
 	}
-	
 	
 	public void reload(){
 		clear();
-		Patient act=GlobalEvents.getSelectedPatient();
-		double cost=0.0;
-		boolean canCalculate=true;
-		if(act!=null){
-			Prescription[] pre=act.getFixmedikation();
-			for(Prescription pr:pre){
-				if(canCalculate){
-					float num=0;
-					try{
-						String dosis=pr.getDosis();
-						if(dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")){
-							String[] dose=dosis.split("[xX]");
-							int count=Integer.parseInt(dose[0]);
-							num=getNum(dose[1])*count;
-						}else if(dosis.indexOf('-')!=-1){
-							String[] dos=dosis.split("-");
-							if(dos.length>2){
-								for(String d:dos){
-									num+=getNum(d);
-								}
-							}else{
-								num=getNum(dos[1]);
+		Patient act = GlobalEvents.getSelectedPatient();
+		double cost = 0.0;
+		boolean canCalculate = true;
+		if (act != null) {
+			Prescription[] pre = act.getFixmedikation();
+			for (Prescription pr : pre) {
+				float num = 0;
+				try {
+					String dosis = pr.getDosis();
+					if (dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")) {
+						String[] dose = dosis.split("[xX]");
+						int count = Integer.parseInt(dose[0]);
+						num = getNum(dose[1]) * count;
+					} else if (dosis.indexOf('-') != -1) {
+						String[] dos = dosis.split("-");
+						if (dos.length > 2) {
+							for (String d : dos) {
+								num += getNum(d);
 							}
-						}else{
-							canCalculate=false;
+						} else {
+							num = getNum(dos[1]);
 						}
-						Artikel art=pr.getArtikel();
-						int ve=art.guessVE();
-						if(ve!=0){
-							Money price=pr.getArtikel().getVKPreis();
-							cost+=num*price.getAmount()/ve;
-						}else{
-							canCalculate=false;
-						}
-					}catch(Exception ex){
-						ExHandler.handle(ex);
-						canCalculate=false;
+					} else {
+						canCalculate = false;
 					}
+					Artikel art = pr.getArtikel();
+					int ve = art.guessVE();
+					if (ve != 0) {
+						Money price = pr.getArtikel().getVKPreis();
+						cost += num * price.getAmount() / ve;
+					} else {
+						canCalculate = false;
+					}
+				} catch (Exception ex) {
+					ExHandler.handle(ex);
+					canCalculate = false;
 				}
 				add(pr);
 			}
-			double rounded=Math.round(100.0*cost)/100.0;
-			if(canCalculate){
-				lCost.setText(TTCOST+Double.toString(rounded));
-			}else{
-				if(rounded==0.0){
-					lCost.setText(TTCOST+"?");
-				}else{
-					lCost.setText(TTCOST+">"+Double.toString(rounded));
+			double rounded = Math.round(100.0 * cost) / 100.0;
+			if (canCalculate) {
+				lCost.setText(TTCOST + Double.toString(rounded));
+			} else {
+				if (rounded == 0.0) {
+					lCost.setText(TTCOST + "?");
+				} else {
+					lCost.setText(TTCOST + ">" + Double.toString(rounded));
 				}
 			}
 		}
 	}
 	
 	private float getNum(String n){
-		if(n.indexOf('/')!=-1){
-			String[] bruch=n.split("/");
-			float zaehler=Float.parseFloat(bruch[0]);
-			float nenner=Float.parseFloat(bruch[1]);
-			return zaehler/nenner;
-		}else{
+		if (n.indexOf('/') != -1) {
+			String[] bruch = n.split("/");
+			float zaehler = Float.parseFloat(bruch[0]);
+			float nenner = Float.parseFloat(bruch[1]);
+			return zaehler / nenner;
+		} else {
 			return Float.parseFloat(n);
 		}
 	}
 	
 	class DauerMediListener implements LDListener {
 		IViewSite site;
-
+		
 		DauerMediListener(IViewSite s){
-			site=s;
+			site = s;
 		}
-		public void hyperlinkActivated(String l) {
-			try{
-				if(l.equals("Hinzu... ")){
+		
+		public void hyperlinkActivated(String l){
+			try {
+				if (l.equals("Hinzu... ")) {
 					site.getPage().showView(LeistungenView.ID);
 					GlobalEvents.getInstance().setCodeSelectorTarget(target);
-				}else if(l.equals("Liste... ")){
+				} else if (l.equals("Liste... ")) {
 					
-					RezeptBlatt rpb=(RezeptBlatt)site.getPage().showView(RezeptBlatt.ID);
-					rpb.createEinnahmeliste(GlobalEvents.getSelectedPatient(),getAll().toArray(new Prescription[0]));
-				}else if(l.equals("Rezept... ")){
-					Rezept rp=new Rezept(GlobalEvents.getSelectedPatient());
-					for(Prescription p:getAll().toArray(new Prescription[0])){
+					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
+					rpb.createEinnahmeliste(GlobalEvents.getSelectedPatient(), getAll().toArray(
+						new Prescription[0]));
+				} else if (l.equals("Rezept... ")) {
+					Rezept rp = new Rezept(GlobalEvents.getSelectedPatient());
+					for (Prescription p : getAll().toArray(new Prescription[0])) {
 						/*
-						rp.addLine(new RpZeile("1",p.getArtikel().getLabel(),"",
-								p.getDosis(),p.getBemerkung()));
-								*/
+						 * rp.addLine(new RpZeile("1",p.getArtikel().getLabel(),"",
+						 * p.getDosis(),p.getBemerkung()));
+						 */
 						rp.addPrescription(new Prescription(p));
 					}
-					RezeptBlatt rpb=(RezeptBlatt)site.getPage().showView(RezeptBlatt.ID);
+					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
 					rpb.createRezept(rp);
 				}
-			}catch(Exception ex){
+			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
 			
 		}
-
-		public String getLabel(Object o) {
-			if(o instanceof Prescription){
-				return ((Prescription)o).getLabel();
+		
+		public String getLabel(Object o){
+			if (o instanceof Prescription) {
+				return ((Prescription) o).getLabel();
 			}
 			return o.toString();
 		}
 	}
+	
 	private void makeActions(){
 		
-		changeMedicationAction=new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,"Ändern..."){
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText("Dauermedikation modifizieren");
-			}
-			public void doRun(){
-				Prescription pr=(Prescription)getSelection();
-				if(pr!=null){
-					new MediDetailDialog(getShell(),pr).open();
-					reload();
-					redraw();
+		changeMedicationAction =
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, "Ändern...") {
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText("Dauermedikation modifizieren");
 				}
-			}
-		};
+				
+				public void doRun(){
+					Prescription pr = (Prescription) getSelection();
+					if (pr != null) {
+						new MediDetailDialog(getShell(), pr).open();
+						reload();
+						redraw();
+					}
+				}
+			};
 		
-		stopMedicationAction=new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,"Stoppen"){
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
-				setToolTipText("Diese Medikation stoppen");
-			}
-			public void doRun(){
-				Prescription pr=(Prescription) getSelection();
-				if(pr!=null){
-					remove(pr);
-					pr.delete();	// this does not delete but stop the Medication. Sorry for that
-					reload();
+		stopMedicationAction =
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, "Stoppen") {
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+					setToolTipText("Diese Medikation stoppen");
 				}
-			}
-		};
+				
+				public void doRun(){
+					Prescription pr = (Prescription) getSelection();
+					if (pr != null) {
+						remove(pr);
+						pr.delete(); // this does not delete but stop the Medication. Sorry for
+										// that
+						reload();
+					}
+				}
+			};
 		
-		removeMedicationAction=new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION,"Löschen"){
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText("Medikation unwiederruflich löschen");
-			}
-			public void doRun(){
-				Prescription pr=(Prescription) getSelection();
-				if(pr!=null){
-					remove(pr);
-					pr.remove();	// this does, in fact, remove the medication from the database
-					reload();
+		removeMedicationAction =
+			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, "Löschen") {
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+					setToolTipText("Medikation unwiederruflich löschen");
 				}
-			}
-		};
+				
+				public void doRun(){
+					Prescription pr = (Prescription) getSelection();
+					if (pr != null) {
+						remove(pr);
+						pr.remove(); // this does, in fact, remove the medication from the
+										// database
+						reload();
+					}
+				}
+			};
 		
 	}
-
+	
 }
