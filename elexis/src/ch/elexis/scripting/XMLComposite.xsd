@@ -7,17 +7,13 @@
 
     <complexType name="body">
     	<sequence>
-    		<element name="col" type="string"></element>
+    		<element name="columns" type="tns:coldef" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="items" type="tns:itemdef"></element>
     	</sequence>
     </complexType>
     
-    <complexType name="rowdef">
-    	<sequence>
-    		<element name="col" type="tns:coldef" maxOccurs="unbounded" minOccurs="1"></element>
-    	</sequence>
-    	<attribute name="title" type="string"></attribute>
-    	<attribute name="type" type="string"></attribute>
-    </complexType>
 
     <complexType name="header">
     	<sequence>
@@ -28,7 +24,10 @@
     	</sequence>
     </complexType>
     
-    <complexType name="coldef"></complexType>
+    <complexType name="coldef">
+    	<attribute name="title" type="string"></attribute>
+    	<attribute name="date" type="string"></attribute>
+    </complexType>
 
 
     <complexType name="composite">
@@ -39,4 +38,11 @@
     </complexType>
 
     <element name="XMLComposite" type="tns:composite"></element>
+
+    <complexType name="itemdef">
+    	<sequence>
+    		<element name="objectclass" type="string"></element>
+    	</sequence>
+    	<attribute name="title" type="string"></attribute>
+    </complexType>
 </schema>
