@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgHeartListener.java 3684 2008-02-16 11:46:42Z rgw_ch $
+ * $Id: MsgHeartListener.java 4371 2008-09-04 13:47:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -23,18 +23,18 @@ import ch.elexis.data.Query;
 public class MsgHeartListener implements HeartListener {
 	boolean bSkip;
 	
-	public void heartbeat() {
-		if(!bSkip){
-			if(Hub.actUser!=null){
-				Query<Message> qbe=new Query<Message>(Message.class);
+	public void heartbeat(){
+		if (!bSkip) {
+			if (Hub.actUser != null) {
+				Query<Message> qbe = new Query<Message>(Message.class);
 				qbe.add("to", "=", Hub.actUser.getId());
-				final List<Message> res=qbe.execute();
-				if(res.size()>0){
-					Desk.theDisplay.asyncExec(new Runnable(){
-						public void run() {
-							bSkip=true;
-							new MsgDetailDialog(Hub.getActiveShell(),res.get(0)).open();
-							bSkip=false;
+				final List<Message> res = qbe.execute();
+				if (res.size() > 0) {
+					Desk.getDisplay().asyncExec(new Runnable() {
+						public void run(){
+							bSkip = true;
+							new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
+							bSkip = false;
 						}
 					});
 					
@@ -42,5 +42,5 @@ public class MsgHeartListener implements HeartListener {
 			}
 		}
 	}
-
+	
 }

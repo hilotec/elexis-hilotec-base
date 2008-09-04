@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MessageDelegate.java 3089 2007-09-03 15:56:23Z rgw_ch $
+ * $Id: MessageDelegate.java 4371 2008-09-04 13:47:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -21,25 +21,25 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import ch.elexis.Hub;
 
 public class MessageDelegate implements IWorkbenchWindowActionDelegate {
-
-	public void dispose() {
-		// TODO Auto-generated method stub
-
+	
+	public void dispose(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void init(final IWorkbenchWindow window) {
-		// TODO Auto-generated method stub
-
+	
+	public void init(final IWorkbenchWindow window){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void run(final IAction action) {
-		new MsgDetailDialog(Hub.getActiveShell(),null).open();
-
+	
+	public void run(final IAction action){
+		new MsgDetailDialog(Hub.getActiveShell(), null).open();
+		
 	}
-
-	public void selectionChanged(final IAction action, final ISelection selection) {
-		// TODO Auto-generated method stub
-
+	
+	public void selectionChanged(final IAction action, final ISelection selection){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 }

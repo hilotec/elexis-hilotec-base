@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgDetailDialog.java 3116 2007-09-08 20:08:26Z rgw_ch $
+ * $Id: MsgDetailDialog.java 4371 2008-09-04 13:47:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -34,50 +34,51 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public class MsgDetailDialog extends Dialog {
-
+	
 	Label lbFrom;
 	Combo cbTo;
 	Text text;
 	Message msg;
 	Anwender[] users;
-	Button bOK, bRecall,bAsReminder,bAnswer, bCancel;
-	ClickListener clickListener=new ClickListener();
+	Button bOK, bRecall, bAsReminder, bAnswer, bCancel;
+	ClickListener clickListener = new ClickListener();
 	
 	MsgDetailDialog(final Shell shell, final Message msg){
 		super(shell);
-		this.msg=msg;
+		this.msg = msg;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(final Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createDialogArea(final Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ret.setLayout(new GridLayout(4,false));
-		Label l1=new Label(ret,SWT.NONE);
-		String l= (msg==null) ? new TimeTool().toString(TimeTool.FULL_GER) : 
-								new TimeTool(msg.get("time")).toString(TimeTool.FULL_GER); 
+		ret.setLayout(new GridLayout(4, false));
+		Label l1 = new Label(ret, SWT.NONE);
+		String l =
+			(msg == null) ? new TimeTool().toString(TimeTool.FULL_GER) : new TimeTool(msg
+				.get("time")).toString(TimeTool.FULL_GER);
 		
-		l1.setText("Nachricht vom "+ l); 
-				
-				
+		l1.setText("Nachricht vom " + l);
+		
 		l1.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
-
-		new Label(ret,SWT.NONE).setText("Von:");
-		lbFrom=new Label(ret,SWT.NONE);
 		
-		new Label(ret,SWT.NONE).setText("  -   An: ");
-		cbTo=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
-		new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
-		new Label(ret,SWT.NONE).setText("Nachricht:");
-		text=SWTHelper.createText(ret, 4, SWT.BORDER);
+		new Label(ret, SWT.NONE).setText("Von:");
+		lbFrom = new Label(ret, SWT.NONE);
+		
+		new Label(ret, SWT.NONE).setText("  -   An: ");
+		cbTo = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
+		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4,
+			true, 1, false));
+		new Label(ret, SWT.NONE).setText("Nachricht:");
+		text = SWTHelper.createText(ret, 1, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
-		users=Hub.getUserList().toArray(new Anwender[0]);
-		for(Anwender a:users){
+		users = Hub.getUserList().toArray(new Anwender[0]);
+		for (Anwender a : users) {
 			cbTo.add(a.getLabel());
 		}
-		if(msg==null){
+		if (msg == null) {
 			lbFrom.setText(Hub.actUser.getLabel());
-		}else{
+		} else {
 			lbFrom.setText(msg.getSender().getLabel());
 			cbTo.setText(msg.getDest().getLabel());
 			cbTo.setEnabled(false);
@@ -86,66 +87,68 @@ public class MsgDetailDialog extends Dialog {
 		
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
-		if(msg==null){
+		if (msg == null) {
 			getShell().setText("Nachricht erstellen");
-		}else{
+		} else {
 			getShell().setText("Nachricht lesen");
 		}
 	}
-
+	
 	@Override
-	protected void createButtonsForButtonBar(final Composite parent) {
+	protected void createButtonsForButtonBar(final Composite parent){
 		String sOK;
-		if(msg==null){
-			sOK="Senden";
-		}else{
-			sOK="Löschen";
+		if (msg == null) {
+			sOK = "Senden";
+		} else {
+			sOK = "Löschen";
 		}
-		bOK=createButton(parent, IDialogConstants.OK_ID, sOK, false);
-		bAnswer=createButton(parent, IDialogConstants.CLIENT_ID+1, "Anworten",false);
+		bOK = createButton(parent, IDialogConstants.OK_ID, sOK, false);
+		parent.getShell().setDefaultButton(bOK);
+		bAnswer = createButton(parent, IDialogConstants.CLIENT_ID + 1, "Anworten", false);
 		bAnswer.addSelectionListener(clickListener);
-		bAsReminder=createButton(parent, IDialogConstants.CLIENT_ID+2,"Als Reminder",false);
+		bAsReminder = createButton(parent, IDialogConstants.CLIENT_ID + 2, "Als Reminder", false);
 		bAsReminder.addSelectionListener(clickListener);
-		bCancel=createButton(parent, IDialogConstants.CANCEL_ID,"Abbruch", false);
-		if(msg==null){
+		bCancel = createButton(parent, IDialogConstants.CANCEL_ID, "Abbruch", false);
+		if (msg == null) {
 			bAnswer.setEnabled(false);
 		}
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		if(msg==null){
-			int idx=cbTo.getSelectionIndex();
-			if(idx!=-1){
-				msg=new Message(users[idx],text.getText());
+	protected void okPressed(){
+		if (msg == null) {
+			int idx = cbTo.getSelectionIndex();
+			if (idx != -1) {
+				msg = new Message(users[idx], text.getText());
 			}
-		}else{
+		} else {
 			msg.delete();
 		}
 		super.okPressed();
 	}
-
-	class ClickListener extends SelectionAdapter{
-
+	
+	class ClickListener extends SelectionAdapter {
+		
 		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			Button bOrigin=((Button)e.getSource());
-			if(bOrigin!=null){
-				if(bOrigin.equals(bAnswer)){
+		public void widgetSelected(final SelectionEvent e){
+			Button bOrigin = ((Button) e.getSource());
+			if (bOrigin != null) {
+				if (bOrigin.equals(bAnswer)) {
 					lbFrom.setText(Hub.actUser.getLabel());
 					cbTo.setText(msg.getSender().getLabel());
 					bOK.setText("Senden");
 					msg.delete();
-					msg=null;
-				}else{
-					int idx=cbTo.getSelectionIndex();
-					if(idx!=-1){
-						Reminder rem=new Reminder(users[idx],new TimeTool().toString(TimeTool.DATE_GER),
-								Reminder.Typ.anzeigeTodoAll,"",text.getText());
+					msg = null;
+				} else {
+					int idx = cbTo.getSelectionIndex();
+					if (idx != -1) {
+						Reminder rem =
+							new Reminder(users[idx], new TimeTool().toString(TimeTool.DATE_GER),
+								Reminder.Typ.anzeigeTodoAll, "", text.getText());
 						rem.addResponsible(users[idx]);
 					}
 					okPressed();
