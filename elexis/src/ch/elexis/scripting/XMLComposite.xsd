@@ -41,7 +41,9 @@
 
     <complexType name="itemdef">
     	<sequence>
-    		<element name="objectclass" type="string"></element>
+    		<element name="objectclass" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="fillIn" type="string"></element>
+    		<element name="readOut" type="string"></element>
     	</sequence>
     	<attribute name="title" type="string"></attribute>
     </complexType>
