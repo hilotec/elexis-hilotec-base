@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4277 2008-08-14 18:14:21Z rgw_ch $
+ * $Id: TarmedOptifier.java 4373 2008-09-04 13:48:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,7 +17,9 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.arzttarife_schweiz.Messages;
-import ch.elexis.util.*;
+import ch.elexis.util.IOptifier;
+import ch.elexis.util.Money;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -76,7 +78,7 @@ public class TarmedOptifier implements IOptifier {
 			if (!StringTool.isNothing(dVon)) {
 				TimeTool tVon = new TimeTool(dVon);
 				if (date.isBefore(tVon)) {
-					return new Result<IVerrechenbar>(Log.WARNINGS, NOTYETVALID, code.getCode()
+					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOTYETVALID, code.getCode()
 							+ " noch nicht gültig", null, false);
 				}
 			}
@@ -84,7 +86,7 @@ public class TarmedOptifier implements IOptifier {
 			if (!StringTool.isNothing(dBis)) {
 				TimeTool tBis = new TimeTool(dBis);
 				if (date.isAfter(tBis)) {
-					return new Result<IVerrechenbar>(Log.WARNINGS, NOMOREVALID, code.getCode()
+					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOMOREVALID, code.getCode()
 							+ " nicht mehr gültig", null, false);
 				}
 			}
@@ -118,7 +120,7 @@ public class TarmedOptifier implements IOptifier {
 						for (Verrechnet v : lst) {
 							if (v.getCode().equals(e)) {
 								check.delete();
-								return new Result<IVerrechenbar>(Log.WARNINGS, EXKLUSION, code.getCode()
+								return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION, code.getCode()
 										+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
 							}
 							if (v.getVerrechenbar() instanceof TarmedLeistung) {
@@ -126,7 +128,7 @@ public class TarmedOptifier implements IOptifier {
 								for (String e2 : ex2.split(",")) { //$NON-NLS-1$
 									if (e2.equals(code.getCode())) {
 										check.delete();
-										return new Result<IVerrechenbar>(Log.WARNINGS, EXKLUSION, code.getCode()
+										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, EXKLUSION, code.getCode()
 												+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
 									}
 								}
@@ -165,7 +167,7 @@ public class TarmedOptifier implements IOptifier {
 								int menge = Math.round(Float.parseFloat(f[1]));
 								if (check.getZahl() > menge) {
 									check.setZahl(menge);
-									return new Result<IVerrechenbar>(Log.WARNINGS, KUMULATION, Messages.TarmedOptifier_codemax
+									return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, KUMULATION, Messages.TarmedOptifier_codemax
 											+ menge
 											+ Messages.TarmedOptifier_perSession, null, false); //$NON-NLS-1$ //$NON-NLS-2$
 								}
@@ -284,11 +286,11 @@ public class TarmedOptifier implements IOptifier {
 					break;
 
 				}
-				return new Result<IVerrechenbar>(0, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
+				return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 			}
 			return new Result<IVerrechenbar>(null);
 		}
-		return new Result<IVerrechenbar>(Log.ERRORS, LEISTUNGSTYP, Messages.TarmedOptifier_BadType, null, true); //$NON-NLS-1$
+		return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, LEISTUNGSTYP, Messages.TarmedOptifier_BadType, null, true); //$NON-NLS-1$
 	}
 
 	/**
