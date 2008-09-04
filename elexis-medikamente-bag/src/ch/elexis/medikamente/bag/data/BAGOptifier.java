@@ -6,7 +6,7 @@ import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.util.IOptifier;
-import ch.elexis.util.Result;
+import ch.rgw.tools.Result;
 
 public class BAGOptifier implements IOptifier {
 
