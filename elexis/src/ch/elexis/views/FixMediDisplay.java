@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4370 2008-09-04 13:47:13Z rgw_ch $
+ * $Id: FixMediDisplay.java 4376 2008-09-05 16:58:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -45,7 +45,8 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Display and let the user modify the medication of the currently selected patient This is a
- * pop-in-Replacement for DauerMediDisplay To calculate the daily cost wie accept the forms 1-1-1-1
+ * pop-in-Replacement for DauerMediDisplay.
+ * To calculate the daily cost wie accept the forms 1-1-1-1
  * and 1x1, 2x3 and so on
  * 
  * @author gerry
@@ -58,6 +59,10 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	FixMediDisplay self;
 	Label lCost;
 	PersistentObjectDropTarget target;
+	static final String REZEPT = "Rezept... ";
+	static final String LISTE = "Liste... ";
+	static final String HINZU = "Hinzu... ";
+	static final String KOPIEREN = "Kopieren ";
 	
 	public FixMediDisplay(Composite parent, IViewSite s){
 		super(parent, SWT.NONE, null);
@@ -66,7 +71,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		lCost.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		dlisten = new DauerMediListener(s);
 		self = this;
-		addHyperlinks("Hinzu... ", "Liste... ", "Rezept... ");
+		addHyperlinks(HINZU, LISTE, REZEPT);
 		makeActions();
 		ViewMenus menu = new ViewMenus(s);
 		menu.createControlContextMenu(list, stopMedicationAction, changeMedicationAction, null,
@@ -197,15 +202,15 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		
 		public void hyperlinkActivated(String l){
 			try {
-				if (l.equals("Hinzu... ")) {
+				if (l.equals(HINZU)) {
 					site.getPage().showView(LeistungenView.ID);
 					GlobalEvents.getInstance().setCodeSelectorTarget(target);
-				} else if (l.equals("Liste... ")) {
+				} else if (l.equals(LISTE)) {
 					
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
 					rpb.createEinnahmeliste(GlobalEvents.getSelectedPatient(), getAll().toArray(
 						new Prescription[0]));
-				} else if (l.equals("Rezept... ")) {
+				} else if (l.equals(REZEPT)) {
 					Rezept rp = new Rezept(GlobalEvents.getSelectedPatient());
 					for (Prescription p : getAll().toArray(new Prescription[0])) {
 						/*
@@ -216,6 +221,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 					}
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
 					rpb.createRezept(rp);
+				}else if(l.equals(KOPIEREN)){
+					toClipBoard(true);
 				}
 			} catch (Exception ex) {
 				ExHandler.handle(ex);

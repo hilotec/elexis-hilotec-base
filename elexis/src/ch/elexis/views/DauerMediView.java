@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DauerMediView.java 4056 2008-06-20 13:17:43Z rgw_ch $
+ * $Id: DauerMediView.java 4376 2008-09-05 16:58:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
@@ -29,6 +32,7 @@ import ch.elexis.util.SWTHelper;
  */
 public class DauerMediView extends ViewPart implements ActivationListener, SelectionListener{
 	public final static String ID="ch.elexis.dauermedikationview";
+	private IAction toClipBoardAction;
 	FixMediDisplay dmd;
 	public DauerMediView() {
 		
@@ -39,6 +43,8 @@ public class DauerMediView extends ViewPart implements ActivationListener, Selec
 		parent.setLayout(new GridLayout());
 		dmd=new FixMediDisplay(parent,getViewSite());
 		dmd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		makeActions();
+		getViewSite().getActionBars().getToolBarManager().add(toClipBoardAction);
 		GlobalEvents.getInstance().addActivationListener(this, this);
 	}
 
@@ -72,5 +78,20 @@ public class DauerMediView extends ViewPart implements ActivationListener, Selec
 		if((obj==null) || (obj instanceof Patient)){
 			dmd.reload();
 		}
+	}
+	private void makeActions(){
+		toClipBoardAction=new Action("Kopieren"){
+			{
+				setToolTipText("In Zwischenablage kopieren");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
+			}
+
+			@Override
+			public void run(){
+				dmd.toClipBoard(true);
+			}
+			
+		};
+		
 	}
 }

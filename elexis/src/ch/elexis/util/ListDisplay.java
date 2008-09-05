@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ListDisplay.java 4364 2008-09-03 14:12:31Z rgw_ch $
+ * $Id: ListDisplay.java 4376 2008-09-05 16:58:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -45,8 +48,17 @@ public class ListDisplay<T> extends Composite {
     private LDListener dlisten;
     private final Composite cLinks;
 	private final FormToolkit tk=Desk.getToolkit();
-	
+	Transfer myTransfer=TextTransfer.getInstance();
 	    
+	public void toClipBoard(boolean bAsString){
+		Clipboard clip=new Clipboard(Desk.getDisplay());
+		StringBuilder sb=new StringBuilder();
+		for(String s:list.getItems()){
+			sb.append(s).append("\n");
+		}
+		clip.setContents(new Object[]{sb.toString()}, new Transfer[]{myTransfer});
+	}
+	
 	public void setDLDListener(final LDListener dld){
 		dlisten=dld;
 	}

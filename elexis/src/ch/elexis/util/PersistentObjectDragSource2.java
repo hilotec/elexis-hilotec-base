@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource2.java 4364 2008-09-03 14:12:31Z rgw_ch $
+ * $Id: PersistentObjectDragSource2.java 4376 2008-09-05 16:58:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -31,7 +31,7 @@ public class PersistentObjectDragSource2 extends DragSourceImpl implements DragS
 	Draggable renderer;
 	Control dragSource;
 	List<PersistentObject> selection;
-	Clipboard clip=new Clipboard(Desk.getDisplay());
+	
 	Transfer myTransfer=TextTransfer.getInstance();
 	
 	public PersistentObjectDragSource2(final Control source, final Draggable renderer){
@@ -42,9 +42,7 @@ public class PersistentObjectDragSource2 extends DragSourceImpl implements DragS
 		mine.addDragListener(this);
 	}
 	
-	public void toClipBoard(){
-		clip.setContents(new Object[]{"haha"}, new Transfer[]{myTransfer});
-	}
+	
 	public void dragFinished(final DragSourceEvent event) {
 		// TODO Auto-generated method stub
 

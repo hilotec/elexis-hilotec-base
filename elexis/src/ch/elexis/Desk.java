@@ -132,6 +132,7 @@ public class Desk implements IApplication {
 	public static final String IMG_DISK= "diskette";  //$NON_NLS-1$
 	public static final String IMG_LOCK_CLOSED="schloss_zu";  //$NON_NLS-1$
 	public static final String IMG_LOCK_OPEN="schloss_offen";  //$NON_NLS-1$
+	public static final String IMG_CLIPBOARD = "clipboard"; //$NON_NLS-1$
 	
    
 	public Desk(){
@@ -228,6 +229,7 @@ public class Desk implements IApplication {
 		        theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase+"floppy.png"));  //$NON_NLS-1$
 		        theImageRegistry.put(IMG_LOCK_CLOSED, Hub.getImageDescriptor(imageBase+"lock.png"));  //$NON_NLS-1$
 		        theImageRegistry.put(IMG_LOCK_OPEN, Hub.getImageDescriptor(imageBase+"lock_open.png"));  //$NON_NLS-1$
+		        theImageRegistry.put(IMG_CLIPBOARD, Hub.getImageDescriptor(imageBase+"clipboard.png"));
 			}
 		}
 		return theImageRegistry;
