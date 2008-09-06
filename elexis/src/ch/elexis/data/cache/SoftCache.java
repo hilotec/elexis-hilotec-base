@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SoftCache.java 4163 2008-07-21 15:34:41Z rgw_ch $
+ *    $Id: SoftCache.java 4377 2008-09-06 11:30:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data.cache;
@@ -27,7 +27,7 @@ import ch.elexis.util.Log;
  * @author Gerry
  */
 @SuppressWarnings("unchecked")
-public class SoftCache<K> {
+public class SoftCache<K> implements IPersistentObjectCache<K> {
 	private static boolean enabled=true;
 	private int num=2000;
 	private float load=0.7f;
@@ -49,9 +49,8 @@ public class SoftCache<K> {
 	}
 	
 	
-	/**
-	 * Insert an Object that will stay until it is manually removed, or memory gets low, or
-	 * at most for ICacheable#getCacheTime seconds
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#put(K, java.lang.Object, int)
 	 */
 	public void put(final K key, final Object object, final int timeToCacheInSeconds){
 		if(enabled){
@@ -62,9 +61,8 @@ public class SoftCache<K> {
 	
 	
 	
-	/**
-	 * retrieve a previously inserted object
-	 * @return the object or null, if the object was expired or removed bei the garbage collector.
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#get(K)
 	 */
 	public Object get(final K key){
 		if(!enabled){
@@ -85,17 +83,23 @@ public class SoftCache<K> {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#remove(K)
+	 */
 	public void remove(final K key){
 		cache.remove(key);
 		removed++;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#clear()
+	 */
 	public void clear(){
 		purge();
 		cache.clear();
 	}
-	/**
-	 * write statistics to log
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#stat()
 	 */
 	public void stat(){
 		long total=hits+misses+removed+expired;
@@ -113,10 +117,8 @@ public class SoftCache<K> {
 		
 	}
 	
-	/**
-	 * Expire and remove all Objects (without removing the SoftReferences, to avoid
-	 * ConcurrentModificationExceptions)
-	 *
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#purge()
 	 */
 	public void purge(){
 		Iterator<K> it=cache.keySet().iterator();
@@ -139,8 +141,8 @@ public class SoftCache<K> {
 			Hub.log.log(sb.toString(), Log.INFOS);
 		}
 	}
-	/**
-	 * completely delete cache
+	/* (non-Javadoc)
+	 * @see ch.elexis.data.cache.IPersistentObjectCache#reset()
 	 */
 	public synchronized void reset(){
 		purge();

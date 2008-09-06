@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ *    $Id: PersistentObject.java 4377 2008-09-06 11:30:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,19 +26,15 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import com.mysql.jdbc.PacketTooBigException;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Xid.XIDException;
+import ch.elexis.data.cache.EhBasedCache;
+import ch.elexis.data.cache.IPersistentObjectCache;
 import ch.elexis.data.cache.SoftCache;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
@@ -58,6 +54,8 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.JdbcLink.Stm;
+
+import com.mysql.jdbc.PacketTooBigException;
 
 
 /**
@@ -101,8 +99,8 @@ public abstract class PersistentObject{
 	//private static final HuffmanTree tree;
     private String id;
     private static Hashtable<String,String> mapping;
-    private static SoftCache<String> cache;
-    private static Job cacheCleaner;
+    private static IPersistentObjectCache<String> cache;
+    //private static Job cacheCleaner;
     private static String username;
     private static String pcname;
     private static String tracetable;
@@ -116,8 +114,10 @@ public abstract class PersistentObject{
 			default_lifetime=CACHE_MIN_LIFETIME;
 			Hub.localCfg.set(PreferenceConstants.ABL_CACHELIFETIME, CACHE_MIN_LIFETIME);
 		}
-		cache=new SoftCache<String>(2000,0.7f);
-        
+		
+	 //cache=new SoftCache<String>(2000,0.7f);
+		cache=new EhBasedCache<String>(null);
+      /*  
 		cacheCleaner=new Job("CacheCleaner"){
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -129,8 +129,9 @@ public abstract class PersistentObject{
         };
         cacheCleaner.setUser(false);
         cacheCleaner.setPriority(Job.DECORATE);
+        */
         //cacheCleaner.schedule(300000L);
-        log.log("Cache setup: default_lifetime "+default_lifetime, Log.INFOS);
+        //log.log("Cache setup: default_lifetime "+default_lifetime, Log.INFOS);
     }
 	public static enum FieldType{
 		TEXT,LIST,JOINT
@@ -847,9 +848,20 @@ public abstract class PersistentObject{
 	}
 
 		
-    protected byte[] getBinary(final String field){
+	protected byte[] getBinary(final String field){
+		String key=getKey(field);
+		Object o=cache.get(key);
+		if(o instanceof byte[]){
+			return (byte[])o;
+		}
+		byte[] ret=getBinaryRaw(field);
+		cache.put(key,ret,getCacheTime());
+		return ret;
+	}
+	
+    private byte[] getBinaryRaw(final String field){
         StringBuilder sql=new StringBuilder();
-        String mapped=/*map*/(field);
+        String mapped=(field);
         String table=getTableName();
         sql.append("SELECT ").append(mapped).append(" FROM ")
             .append(table).append(" WHERE ID='").append(id).append("'");
@@ -876,7 +888,7 @@ public abstract class PersistentObject{
         		return (VersionedResource)o;
 	        }
         }
-        byte[] blob=getBinary(field);
+        byte[] blob=getBinaryRaw(field);
         VersionedResource ret=VersionedResource.load(blob);
         cache.put(key,ret,getCacheTime());
         return ret;
@@ -894,7 +906,7 @@ public abstract class PersistentObject{
         if(o instanceof Hashtable){
                return (Hashtable)o;
         }
-        byte[] blob=getBinary(field);
+        byte[] blob=getBinaryRaw(field);
         if(blob==null){
             return new Hashtable();
         }
