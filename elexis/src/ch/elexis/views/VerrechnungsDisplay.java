@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4370 2008-09-04 13:47:13Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4386 2008-09-07 15:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -141,7 +141,8 @@ public class VerrechnungsDisplay extends Composite {
 			sdg.setLength(0);
 			int z = lst.getZahl();
 			// double preis=(z*lst.getEffPreisInRappen())/100.0;
-			Money preis = lst.getEffPreis().multiply(z);
+			//Money preis = lst.getEffPreis().multiply(z);
+			Money preis=lst.getNettoPreis();
 			sum.addMoney(preis);
 			sdg.append(z).append(" ").append(lst.getCode()).append(" ").append(lst.getText())
 				.append(" (").append(preis.getAmountAsString()).append(")");

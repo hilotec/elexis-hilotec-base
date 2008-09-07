@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4377 2008-09-06 11:30:01Z rgw_ch $
+ *    $Id: PersistentObject.java 4386 2008-09-07 15:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -115,8 +115,8 @@ public abstract class PersistentObject{
 			Hub.localCfg.set(PreferenceConstants.ABL_CACHELIFETIME, CACHE_MIN_LIFETIME);
 		}
 		
-	 //cache=new SoftCache<String>(2000,0.7f);
-		cache=new EhBasedCache<String>(null);
+	    cache=new SoftCache<String>(3000,0.7f);
+		//cache=new EhBasedCache<String>(null);
       /*  
 		cacheCleaner=new Job("CacheCleaner"){
 			@Override

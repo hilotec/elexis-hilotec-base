@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4382 2008-09-07 13:58:58Z rgw_ch $
+ * $Id: Verrechnet.java 4386 2008-09-07 15:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -52,12 +52,12 @@ public class Verrechnet extends PersistentObject {
 		long preis = Math.round(tp * factor);
 		set(new String[] {
 			"Konsultation", "Leistg_txt", "Leistg_code", "Klasse", "Zahl",
-			"EK_Kosten", "VK_TP", "VK_Scale", "VK_Preis", "Scale"
+			"EK_Kosten", "VK_TP", "VK_Scale", "VK_Preis", "Scale", "Scale2"
 		}, new String[] {
 			kons.getId(), iv.getText(), iv.getId(), iv.getClass().getName(),
 			Integer.toString(zahl), iv.getKosten(dat).getCentsAsString(),
 			Integer.toString(tp), Double.toString(factor),
-			Long.toString(preis), "100"
+			Long.toString(preis), "100","100"
 		});
 		if (iv instanceof Artikel) {
 			((Artikel) iv).einzelAbgabe(1);
@@ -93,7 +93,10 @@ public class Verrechnet extends PersistentObject {
 	 * @return the primary svcale factor as double
 	 */
 	public double getPrimaryScaleFactor(){
-		int sca = checkZero("Scale");
+		int sca = checkZero(get("Scale"));
+		if(sca==0){
+			return 1.0;
+		}
 		return ((double) sca) / 100.0;
 	}
 	
@@ -106,7 +109,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	public void setSecondaryScaleFactor(double scale){
 		int sca = (int) Math.round(scale * 100);
-		setInt("Scale", sca);
+		setInt("Scale2", sca);
 	}
 	
 	/**
@@ -116,7 +119,10 @@ public class Verrechnet extends PersistentObject {
 	 * @return the factor
 	 */
 	public double getSecondaryScaleFactor(){
-		int sca = checkZero("Scale");
+		int sca = checkZero(get("Scale2"));
+		if(sca==0){
+			return 1.0;
+		}
 		return ((double) sca) / 100.0;
 	}
 	
@@ -160,7 +166,29 @@ public class Verrechnet extends PersistentObject {
 		 */
 	}
 	
+	/**
+	 * Den Preis nach Anwendung sämtlicher SKalierungsfaktoren zurückgeben
+	 * @return
+	 */
+	public Money getNettoPreis(){
+
+		Money brutto=getBruttoPreis();
+		brutto.multiply(getPrimaryScaleFactor());
+		brutto.multiply(getSecondaryScaleFactor());
+		return brutto;
+	}
 	
+	/**
+	 * Den Preis nach Anwendung des Taxpunktwerts (aber ohne sonstige Skalierungen) holen
+	 */
+	public Money getBruttoPreis(){
+		int tp=checkZero(get("VK_TP"));
+		Konsultation k = getKons();
+		Fall fall = k.getFall();
+		TimeTool date = new TimeTool(k.getDatum());
+		double taxpunktwert = getVerrechenbar().getFactor(date, fall);
+		return new Money((int) Math.round(taxpunktwert * tp));
+	}
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
 	
 	public Money getStandardPreis(){
