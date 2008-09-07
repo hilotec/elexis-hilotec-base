@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4381 2008-09-07 13:58:32Z rgw_ch $
+ * $Id: TarmedOptifier.java 4385 2008-09-07 15:53:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -197,7 +197,7 @@ public class TarmedOptifier implements IOptifier {
 			
 			String tcid = code.getCode();
 			
-			double factor = PersistentObject.checkZeroDouble(check.get("VK_Scale"));
+			// double factor = PersistentObject.checkZeroDouble(check.get("VK_Scale"));
 			// Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
 			if (tcid.equals("35.0020")) {
 				
@@ -217,6 +217,7 @@ public class TarmedOptifier implements IOptifier {
 				
 				// check.setPreis(new Money(sum));
 				check.setTP(sum);
+				check.setDetail("TL", Double.toString(sum));
 				check.setPrimaryScaleFactor(-0.4);
 				/*
 				 * double sum=0.0; for(Verrechnet v:lst){ if(v.getVerrechenbar() instanceof
@@ -229,7 +230,8 @@ public class TarmedOptifier implements IOptifier {
 
 			// Zuschläge für Insellappen 50% auf AL und TL bei 1910,20,40,50
 			else if (tcid.equals("04.1930")) {
-				double sum = 0.0;
+				double sumAL = 0.0;
+				double sumTL = 0.0;
 				for (Verrechnet v : lst) {
 					if (v.getVerrechenbar() instanceof TarmedLeistung) {
 						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
@@ -237,7 +239,8 @@ public class TarmedOptifier implements IOptifier {
 						int z = v.getZahl();
 						if (tlc.equals("04.1910") || tlc.equals("04.1920") || tlc.equals("04.1940")
 							|| tlc.equals("04.1950")) {
-							sum += (tl.getAL() + tl.getTL()) * z;
+							sumAL += tl.getAL() * z;
+							sumTL += tl.getTL() * z;
 							// double al = (tl.getAL() * 15) / 10.0;
 							// double tel = (tl.getTL() * 15) / 10.0;
 							// sum += al * z;
@@ -247,12 +250,14 @@ public class TarmedOptifier implements IOptifier {
 				}
 				// sum = sum * factor / 100.0;
 				// check.setPreis(new Money(sum));
-				check.setTP(sum);
+				check.setTP(sumAL+sumTL);
+				check.setDetail("AL", Double.toString(sumAL));
+				check.setDetail("TL", Double.toString(sumTL));
 				check.setPrimaryScaleFactor(0.5);
 			}
 			// Notfall-Zuschläge
 			if (tcid.startsWith("00.25")) { //$NON-NLS-1$
-				double sum=0.0;
+				double sum = 0.0;
 				int subcode = Integer.parseInt(tcid.substring(5));
 				switch (subcode) {
 				case 10: // Mo-Fr 7-19, Sa 7-12: 60 TP
@@ -267,14 +272,15 @@ public class TarmedOptifier implements IOptifier {
 							if (tl.getCode().startsWith("00.25")) { //$NON-NLS-1$
 								continue;
 							}
-							sum+=(tl.getAL() * v.getZahl());
-							//int summand = tl.getAL() >> 2; // TODO ev. float?
+							sum += (tl.getAL() * v.getZahl());
+							// int summand = tl.getAL() >> 2; // TODO ev. float?
 							// -> Rundung?
-							//((sum.addCent(summand * v.getZahl());
+							// ((sum.addCent(summand * v.getZahl());
 						}
 					}
-					//check.setPreis(sum.multiply(factor));
+					// check.setPreis(sum.multiply(factor));
 					check.setTP(sum);
+					check.setDetail("AL", Double.toString(sum));
 					check.setPrimaryScaleFactor(0.25);
 					break;
 				case 40: // 22-7: 180 TP
@@ -287,13 +293,14 @@ public class TarmedOptifier implements IOptifier {
 							if (tl.getCode().startsWith("00.25")) { //$NON-NLS-1$
 								continue;
 							}
-							//int summand = tl.getAL() >> 1;
-							//sum.addCent(summand * v.getZahl());
-							sum+=(tl.getAL()*v.getZahl());
+							// int summand = tl.getAL() >> 1;
+							// sum.addCent(summand * v.getZahl());
+							sum += (tl.getAL() * v.getZahl());
 						}
 					}
-					//check.setPreis(sum.multiply(factor));
+					// check.setPreis(sum.multiply(factor));
 					check.setTP(sum);
+					check.setDetail("AL", Double.toString(sum));
 					check.setPrimaryScaleFactor(0.5);
 					break;
 				
