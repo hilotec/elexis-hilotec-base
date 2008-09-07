@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4387 2008-09-07 19:21:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -141,8 +141,8 @@ public class VerrechnungsDisplay extends Composite {
 			sdg.setLength(0);
 			int z = lst.getZahl();
 			// double preis=(z*lst.getEffPreisInRappen())/100.0;
-			//Money preis = lst.getEffPreis().multiply(z);
-			Money preis=lst.getNettoPreis();
+			// Money preis = lst.getEffPreis().multiply(z);
+			Money preis = lst.getNettoPreis();
 			sum.addMoney(preis);
 			sdg.append(z).append(" ").append(lst.getCode()).append(" ").append(lst.getText())
 				.append(" (").append(preis.getAmountAsString()).append(")");
@@ -184,15 +184,27 @@ public class VerrechnungsDisplay extends Composite {
 				TableItem ti = tVerr.getItem(sel);
 				Verrechnet v = (Verrechnet) ti.getData();
 				// String p=Rechnung.geldFormat.format(v.getEffPreisInRappen()/100.0);
-				String p = v.getEffPreis().getAmountAsString();
+				Money oldPrice = v.getBruttoPreis();
+				String p = oldPrice.getAmountAsString();
 				InputDialog dlg =
 					new InputDialog(Desk.getTopShell(), "Preis für Leistung ändern",
-						"Geben Sie bitte den neuen Preis für die Leistung ein (x.xx)", p, null);
+						"Geben Sie bitte den neuen Preis für die Leistung ein (x.xx oder -x%)", p,
+						null);
 				if (dlg.open() == Dialog.OK) {
 					// v.setPreisInRappen(Integer.parseInt(dlg.getValue().replaceAll("\\.","")));
 					try {
-						Money newPrice = new Money(dlg.getValue());
-						v.setPreis(newPrice);
+						String val=dlg.getValue().trim();
+						Money newPrice=new Money(oldPrice);
+						if(val.endsWith("%") && val.length()>1){
+							val=val.substring(0, val.length()-1);
+							double percent=Double.parseDouble(val);
+							newPrice.multiply(percent/100.0);
+						}else{
+							newPrice = new Money(val);
+						}
+						double factor=(oldPrice.getAmount()*100.0)/newPrice.getAmount();
+						v.setSecondaryScaleFactor(factor);
+						//v.setPreis(newPrice);
 						setLeistungen(GlobalEvents.getSelectedKons());
 					} catch (ParseException ex) {
 						SWTHelper.showError("Falsche Betragseingabe",
