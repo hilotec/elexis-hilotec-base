@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Validator.java 3993 2008-06-01 18:08:25Z rgw_ch $
+ * $Id: Validator.java 4381 2008-09-07 13:58:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -18,8 +18,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.elexis.util.Log;
-import ch.elexis.util.Result;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 public class Validator {
@@ -33,14 +32,14 @@ public class Validator {
 		
 		if((m==null) || (!m.isValid()) ){
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoMandator);
-			res.add(Log.ERRORS,2,Messages.Validator_NoMandator,rn,true);
+			res.add(Result.SEVERITY.ERROR,2,Messages.Validator_NoMandator,rn,true);
 	
 		}
 		Fall fall=rn.getFall();
 		
 		if((fall==null) || (!fall.isValid())){
 			rn.reject(RnStatus.REJECTCODE.NO_CASE, Messages.Validator_NoCase);
-			res.add(Log.ERRORS,4,Messages.Validator_NoCase,rn,true);
+			res.add(Result.SEVERITY.ERROR,4,Messages.Validator_NoCase,rn,true);
 		}
 		/*
 		String g=fall.getGesetz();
@@ -51,28 +50,28 @@ public class Validator {
 		String ean=TarmedRequirements.getEAN(m);
 		if(StringTool.isNothing(ean)){
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
-			res.add(Log.ERRORS,3,Messages.Validator_NoEAN,rn,true);
+			res.add(Result.SEVERITY.ERROR,3,Messages.Validator_NoEAN,rn,true);
 		}
 		Kontakt kostentraeger=fall.getRequiredContact(TarmedRequirements.INSURANCE);
 		if(kostentraeger==null){
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
-			res.add(Log.ERRORS,7,Messages.Validator_NoName,rn,true);
+			res.add(Result.SEVERITY.ERROR,7,Messages.Validator_NoName,rn,true);
 			return res;
 		}
 		ean=TarmedRequirements.getEAN(kostentraeger);
 		
 		if(StringTool.isNothing(ean) || (!ean.matches("[0-9]{13}"))){ //$NON-NLS-1$
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
-			res.add(Log.ERRORS,6,Messages.Validator_NoEAN2,rn,true);
+			res.add(Result.SEVERITY.ERROR,6,Messages.Validator_NoEAN2,rn,true);
 		}
 		String bez=kostentraeger.get("Bezeichnung1"); //$NON-NLS-1$
 		if(StringTool.isNothing(bez)){
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
-			res.add(Log.ERRORS,7,Messages.Validator_NoName,rn,true);
+			res.add(Result.SEVERITY.ERROR,7,Messages.Validator_NoName,rn,true);
 		}
 		if(StringTool.isNothing(xp.diagnosen)){
 			rn.reject(RnStatus.REJECTCODE.NO_DIAG, Messages.Validator_NoDiagnosis);
-			res.add(Log.ERRORS,8,Messages.Validator_NoDiagnosis,rn,true);
+			res.add(Result.SEVERITY.ERROR,8,Messages.Validator_NoDiagnosis,rn,true);
 		}
 		return res;
 	}

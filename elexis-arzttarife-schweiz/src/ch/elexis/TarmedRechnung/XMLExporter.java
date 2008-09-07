@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4279 2008-08-15 05:11:54Z rgw_ch $
+ * $Id: XMLExporter.java 4381 2008-09-07 13:58:32Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
@@ -76,10 +75,10 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
 import ch.elexis.util.Money;
-import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.XMLTool;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -181,7 +180,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		for (Rechnung rn : rnn) {
 			if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, false) == null) {
-				ret.add(Log.ERRORS, 1, "Fehler in Rechnung " + rn.getNr(), rn, true);
+				ret.add(Result.SEVERITY.ERROR, 1, "Fehler in Rechnung " + rn.getNr(), rn, true);
 			}
 		}
 		return ret;
@@ -548,13 +547,14 @@ public class XMLExporter implements IRnOutputter {
 						tlAL = tl.getAL();
 						mult = tl.getVKMultiplikator(tt, actFall);
 					}
-
+					/* obsoleted in 1.4
 					if (tl.getText().indexOf('%') != -1) { // %-Zuschlag oder Abzüge
 						if (tlTl == 0.0) {
 							tlAL = vv.getEffPreis().getCents();
 							mult = 1.0;
 						}
 					}
+					*/
 					tpTarmedTL += tlTl * zahl;
 					tpTarmedAL += tlAL * zahl;
 					/*
@@ -593,14 +593,14 @@ public class XMLExporter implements IRnOutputter {
 					/*
 					 * workaround to make validator happy
 					 * to be removed later
-					 */
+					 
 					if(tlAL<0.0){
 						if(scale>0){
 							scale*=-1;
 						}
 						tlAL*=-1;
 					}
-					// end workaround
+					// end workaround obsoleted in 1.3 */
 					
 					el.setAttribute("unit.mt", XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); //	22470
 					el.setAttribute("unit_factor.mt", XMLTool.doubleToXmlDouble(mult, 2)); //	22480  (strebt gegen 0)
@@ -611,14 +611,14 @@ public class XMLExporter implements IRnOutputter {
 					/*
 					 * workaround to make validator happy
 					 * to be removed later
-					 */
+					 *
 					if(tlTl<0.0){
 						if(scale>0){
 							scale*=-1;
 						}
 						tlTl*=-1;
 					}
-					// end workaround
+					// end workaround obsoleted in 1.4 */
 					
 					el.setAttribute("unit.tt", XMLTool.doubleToXmlDouble(tlTl / 100.0, 2)); //	22520
 					el.setAttribute("unit_factor.tt", XMLTool.doubleToXmlDouble(mult, 2)); //	22530
