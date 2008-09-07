@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4030 2008-06-11 16:57:58Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4380 2008-09-07 13:58:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -37,136 +37,139 @@ import ch.elexis.data.RnStatus;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
-import ch.elexis.util.Result;
+import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 
 public class RechnungsDrucker implements IRnOutputter {
-	String templateESR,templateBill;
+	String templateESR, templateBill;
 	
 	/**
 	 * We'll take all sorts of bills
 	 */
-	public boolean canBill(final Fall fall) {
+	public boolean canBill(final Fall fall){
 		return true;
 	}
-
+	
 	/**
 	 * We never storno
 	 */
-	public boolean canStorno(final Rechnung rn) {
+	public boolean canStorno(final Rechnung rn){
 		return false;
 	}
-
+	
 	/**
-	 * Create the Control that will be presented to the user before
-	 * selecting the bill output target.
-	 * Here we simply chose a template to use for the bill. In fact we need two
-	 * templates: a template for the page with summary and giro and a template for the other pages
+	 * Create the Control that will be presented to the user before selecting the bill output
+	 * target. Here we simply chose a template to use for the bill. In fact we need two templates: a
+	 * template for the page with summary and giro and a template for the other pages
 	 */
-	public Control createSettingsControl(final Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	public Control createSettingsControl(final Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
-		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung (ESR-Seite)");
-		final Text tVorlageESR=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText("Formatvorlage für Rechnung (ESR-Seite)");
+		final Text tVorlageESR = new Text(ret, SWT.BORDER);
 		tVorlageESR.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, ""));
-		tVorlageESR.addFocusListener(new FocusAdapter(){
+		tVorlageESR.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(final FocusEvent ev){
-				templateESR=tVorlageESR.getText();
+				templateESR = tVorlageESR.getText();
 				Hub.globalCfg.set(PreferenceConstants.cfgTemplateESR, templateESR);
 			}
 		});
-		new Label(ret,SWT.NONE).setText("Formatvorlage für Rechnung (Folgeseiten)");
-		final Text tVorlageRn=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText("Formatvorlage für Rechnung (Folgeseiten)");
+		final Text tVorlageRn = new Text(ret, SWT.BORDER);
 		tVorlageRn.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, ""));
-		tVorlageRn.addFocusListener(new FocusAdapter(){
+		tVorlageRn.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(final FocusEvent ev){
-				templateBill=tVorlageRn.getText();
+				templateBill = tVorlageRn.getText();
 				Hub.globalCfg.set(PreferenceConstants.cfgTemplateBill, templateBill);
 			}
 		});
-		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "privatrechnung_ESR"));
-		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "privatrechnung_S2"));
+		tVorlageESR.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR,
+			"privatrechnung_ESR"));
+		tVorlageRn.setText(Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill,
+			"privatrechnung_S2"));
 		return ret;
 	}
-
+	
 	/**
 	 * Print the bill(s)
 	 */
-	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn) {
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn){
 		IWorkbenchPage rnPage;
-		final Result<Rechnung> result=new Result<Rechnung>(); //=new Result<Rechnung>(Log.ERRORS,99,"Not yet implemented",null,true);
-		rnPage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		final Result<Rechnung> result = new Result<Rechnung>(); // =new
+																// Result<Rechnung>(Log.ERRORS,99,"Not
+																// yet implemented",null,true);
+		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-		final Result<Rechnung> res=new Result<Rechnung>();
+		final Result<Rechnung> res = new Result<Rechnung>();
 		
-		try{
-			final RnPrintView rnp=(RnPrintView)rnPage.showView(RnPrintView.ID);
-			progressService.runInUI(
-			      PlatformUI.getWorkbench().getProgressService(),
-			      new IRunnableWithProgress() {
-			         public void run(final IProgressMonitor monitor) {
-			        	 monitor.beginTask("Drucke Rechnungen",rnn.size()*10);
-			        	 int errors=0;
-			        	 for(Rechnung rn:rnn){
-			        		try{
-			        			result.add(rnp.doPrint(rn));
-			        			monitor.worked(10);
-				 				if(!result.isOK()){
-				 					String errms="Rechnung "+rn.getNr()+"konnte nicht gedruckt werden";
-				 					res.add(Log.ERRORS, 1, errms, rn, true);
-				 					errors++;
-				 					continue;
-				 				}
-								int status_vorher=rn.getStatus();
-				 				if( (status_vorher==RnStatus.OFFEN) ||
-				 						(status_vorher==RnStatus.MAHNUNG_1) ||
-				 						(status_vorher==RnStatus.MAHNUNG_2) ||
-				 						(status_vorher==RnStatus.MAHNUNG_3)){
-				 					rn.setStatus(status_vorher+1);
-				 				}
-				 				rn.addTrace(Rechnung.OUTPUT,getDescription()+": "+RnStatus.getStatusText(rn.getStatus()));
-			        		}catch(Exception ex){
-			        			SWTHelper.showError("Fehler beim Drucken der Rechnung "+rn.getRnId(), ex.getMessage());
-			        			errors++;
-			        		}
-			 			}
-			        	monitor.done();
-			        	if(errors==0){
-			        		SWTHelper.showInfo("OK", "OK");
-			        	}else{
-			        		SWTHelper.showError("Fehler", "Fehler");
-			        	}
-			         }
-			      },
-			      null);
-
+		try {
+			final RnPrintView rnp = (RnPrintView) rnPage.showView(RnPrintView.ID);
+			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
+				new IRunnableWithProgress() {
+					public void run(final IProgressMonitor monitor){
+						monitor.beginTask("Drucke Rechnungen", rnn.size() * 10);
+						int errors = 0;
+						for (Rechnung rn : rnn) {
+							try {
+								result.add(rnp.doPrint(rn));
+								monitor.worked(10);
+								if (!result.isOK()) {
+									String errms =
+										"Rechnung " + rn.getNr() + "konnte nicht gedruckt werden";
+									res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
+									errors++;
+									continue;
+								}
+								int status_vorher = rn.getStatus();
+								if ((status_vorher == RnStatus.OFFEN)
+									|| (status_vorher == RnStatus.MAHNUNG_1)
+									|| (status_vorher == RnStatus.MAHNUNG_2)
+									|| (status_vorher == RnStatus.MAHNUNG_3)) {
+									rn.setStatus(status_vorher + 1);
+								}
+								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": "
+									+ RnStatus.getStatusText(rn.getStatus()));
+							} catch (Exception ex) {
+								SWTHelper.showError("Fehler beim Drucken der Rechnung "
+									+ rn.getRnId(), ex.getMessage());
+								errors++;
+							}
+						}
+						monitor.done();
+						if (errors == 0) {
+							SWTHelper.showInfo("OK", "OK");
+						} else {
+							SWTHelper.showError("Fehler", "Fehler");
+						}
+					}
+				}, null);
+			
 			rnPage.hideView(rnp);
-
-		}catch(Exception ex){
+			
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			res.add(Log.ERRORS,2,ex.getMessage(),null,true);
-			ErrorDialog.openError(null,"Exception","Exception",
-					res.asStatus());
+			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
+			ErrorDialog.openError(null, "Exception", "Exception", ResultAdapter.getResultAsStatus(res));
 			return res;
 		}
-		if(!result.isOK()){
-				result.display("Fehler beim Rechnungsdruck");
+		if (!result.isOK()) {
+			ResultAdapter.displayResult(result, "Fehler beim Rechnungsdruck");
 		}
 		return result;
 	}
-
-	public String getDescription() {
+	
+	public String getDescription(){
 		return "Privatrechnung auf Drucker";
 	}
-
-
-	public void saveComposite() {
-		// Nothing
+	
+	public void saveComposite(){
+	// Nothing
 	}
 	
 }

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: RnPrintView.java 4380 2008-09-07 13:58:12Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
 import java.util.Collections;
@@ -21,94 +33,105 @@ import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.Money;
-import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class RnPrintView extends ViewPart {
-	final static String ID="ch.elexis.privatrechnung.view";
+	final static String ID = "ch.elexis.privatrechnung.view";
 	String templateBill, templateESR;
 	TextContainer tc;
 	Fall fall;
+	
 	@Override
-	public void createPartControl(final Composite parent) {
-		tc=new TextContainer(parent.getShell());
-		tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback(){
-
-			public void save() {
-				// we don't save
+	public void createPartControl(final Composite parent){
+		tc = new TextContainer(parent.getShell());
+		tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback() {
+			
+			public void save(){
+			// we don't save
 			}
-
-			public boolean saveAs() {
-				return false;	// nope
-			}});
-
-
+			
+			public boolean saveAs(){
+				return false; // nope
+			}
+		});
+		
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
+	
 	/**
 	 * print a bill into a text container
 	 */
 	public Result<Rechnung> doPrint(final Rechnung rn){
-		if(templateBill==null){
-			templateBill=Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "");
+		if (templateBill == null) {
+			templateBill = Hub.globalCfg.get(PreferenceConstants.cfgTemplateBill, "");
 		}
-		if(templateESR==null){
-			templateESR=Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "");
+		if (templateESR == null) {
+			templateESR = Hub.globalCfg.get(PreferenceConstants.cfgTemplateESR, "");
 		}
-
-		Result<Rechnung> ret=new Result<Rechnung>();
-		fall=rn.getFall();
+		
+		Result<Rechnung> ret = new Result<Rechnung>();
+		fall = rn.getFall();
 		GlobalEvents.getInstance().fireSelectionEvent(fall);
-		Kontakt adressat=fall.getGarant();//.getRequiredContact("Rechnungsempfänger");
-		if(!adressat.isValid()){
-			adressat=fall.getPatient();
+		Kontakt adressat = fall.getGarant();// .getRequiredContact("Rechnungsempfänger");
+		if (!adressat.isValid()) {
+			adressat = fall.getPatient();
 		}
-		tc.createFromTemplateName(null, templateBill, Brief.RECHNUNG, adressat,rn.getNr());
+		tc.createFromTemplateName(null, templateBill, Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
-		List<Konsultation> kons=rn.getKonsultationen();
-		Collections.sort(kons, new Comparator<Konsultation>(){
-			TimeTool t0=new TimeTool();
-			TimeTool t1=new TimeTool();
-			public int compare(final Konsultation arg0, final Konsultation arg1) {
+		List<Konsultation> kons = rn.getKonsultationen();
+		Collections.sort(kons, new Comparator<Konsultation>() {
+			TimeTool t0 = new TimeTool();
+			TimeTool t1 = new TimeTool();
+			
+			public int compare(final Konsultation arg0, final Konsultation arg1){
 				t0.set(arg0.getDatum());
 				t1.set(arg1.getDatum());
 				return t0.compareTo(t1);
 			}
 			
 		});
-		Object pos=tc.getPlugin().insertText("[Leistungen]", "Leistungen\n", SWT.LEFT);
-		Money sum=new Money();
-		for(Konsultation k:kons){
+		Object pos = tc.getPlugin().insertText("[Leistungen]", "Leistungen\n", SWT.LEFT);
+		Money sum = new Money();
+		for (Konsultation k : kons) {
 			tc.getPlugin().setFont("Helvetica", SWT.BOLD, 12);
-			pos=tc.getPlugin().insertText(pos, new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER)+"\n", SWT.LEFT);
+			pos =
+				tc.getPlugin().insertText(pos,
+					new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + "\n", SWT.LEFT);
 			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 10);
-			for(Verrechnet vv:k.getLeistungen()){
-				Money preis=vv.getEffPreis();
-				int zahl=vv.getZahl();
-				Money subtotal=new Money(preis);
+			for (Verrechnet vv : k.getLeistungen()) {
+				Money preis = vv.getEffPreis();
+				int zahl = vv.getZahl();
+				Money subtotal = new Money(preis);
 				subtotal.multiply(zahl);
-				StringBuilder sb=new StringBuilder();
-				sb.append(zahl).append("\t").append(vv.getText()).append("\t").append(preis.getAmountAsString())
-					.append("\t").append(subtotal.getAmountAsString()).append("\n");
-				pos=tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
+				StringBuilder sb = new StringBuilder();
+				sb.append(zahl).append("\t").append(vv.getText()).append("\t").append(
+					preis.getAmountAsString()).append("\t").append(subtotal.getAmountAsString())
+					.append("\n");
+				pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 				sum.addMoney(subtotal);
 			}
 		}
-		pos=tc.getPlugin().insertText(pos, "____________________________________________________________________\nTotal:\t\t\t"+sum.getAmountAsString(),SWT.LEFT);
-		String toPrinter=Hub.localCfg.get("Drucker/A4/Name",null);
+		pos =
+			tc.getPlugin().insertText(
+				pos,
+				"____________________________________________________________________\nTotal:\t\t\t"
+					+ sum.getAmountAsString(), SWT.LEFT);
+		String toPrinter = Hub.localCfg.get("Drucker/A4/Name", null);
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
-		ESR esr=new ESR(Hub.globalCfg.get(PreferenceConstants.esrIdentity,""),
-				Hub.globalCfg.get(PreferenceConstants.esrUser,""),rn.getRnId(),27);
-		Kontakt bank=Kontakt.load(Hub.globalCfg.get(PreferenceConstants.cfgBank,""));
-		if(!bank.isValid()){
+		ESR esr =
+			new ESR(Hub.globalCfg.get(PreferenceConstants.esrIdentity, ""), Hub.globalCfg.get(
+				PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
+		Kontakt bank = Kontakt.load(Hub.globalCfg.get(PreferenceConstants.cfgBank, ""));
+		if (!bank.isValid()) {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}
 		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
@@ -116,14 +139,14 @@ public class RnPrintView extends ViewPart {
 		tc.getPlugin().print(Hub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
 		return ret;
 	}
-
+	
 	private void fillFields(){
-		Kontakt versicherung=Kontakt.load(fall.getInfoString("Versicherung"));
-		if(versicherung.isValid()){
+		Kontakt versicherung = Kontakt.load(fall.getInfoString("Versicherung"));
+		if (versicherung.isValid()) {
 			tc.replace("\\?\\?Versicherung\\.Name\\?\\?]", versicherung.getLabel());
 			tc.replace("\\?\\?Versicherung\\.Anschrift\\?\\?", versicherung.getPostAnschrift(true));
 		}
-
+		
 	}
-
+	
 }
