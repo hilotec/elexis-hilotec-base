@@ -61,3 +61,18 @@ TODO: Alle relevanten Änderungen angeben, insbesondere Verhaltensänderungen.
  - Elexis-EMR-Printer (Compiliert nicht mehr mit xChange 1.0.1)
  
 Diese Plugins werden demnächst aus dem aktiven Zweig des Repository gelöscht.
+
+---------------------------------------
+6.9.2008 gweirich 1.4.0
+Straffung des Codes. ch.elexis.Result wurde deprecated und gegen ch.elexis.tools.Result
+ersetzt. Dieses hat keine SWT- und JFace- Abhängigkeiten und kann darum auch für
+Interaktionszwecke verwendet werden. Alle RnOutputter müssen angepasst werden.
+(Im Allgemeinen reicht es, auf ch.rgw.tools.Result zu verweisen und bei ehleren statt Log.xxx
+die entsüprechenden Result.SEVERITY.xxx werte zu verwenden)
+Eclipse-Spezifische Anpasungen werden im ch.elexis.uil.ReusltAdapter gemacht.
+
+
+Abrechnung: Konzept mit %-ZTuschlägen udn Abzügen geändert. Diese werden wie gewöhnliche Codes
+behandelt und erhaltena uch immer einen positiven Taxpunktwert, aber erhalten
+einen internen Skalierungsfaktor in Höhe ihres Prozentsatzes. Dieser Skalierungsfaktor kann auch negativ sein.
+

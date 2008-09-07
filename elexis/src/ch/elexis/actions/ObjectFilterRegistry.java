@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich and D. Lutz - initial implementation
  *    
- * $Id: ObjectFilterRegistry.java 2908 2007-07-25 11:51:02Z rgw_ch $
+ * $Id: ObjectFilterRegistry.java 4382 2008-09-07 13:58:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -21,13 +21,14 @@ import ch.elexis.actions.GlobalEvents.IObjectFilterProvider;
 import ch.elexis.data.PersistentObject;
 
 public class ObjectFilterRegistry {
-
-	private final Hashtable<Class<? extends PersistentObject>,GlobalEvents.IObjectFilterProvider> hash=
-					new Hashtable<Class<? extends PersistentObject>, GlobalEvents.IObjectFilterProvider>();
-
-	public synchronized void registerObjectFilter(final Class<? extends PersistentObject> clazz,final GlobalEvents.IObjectFilterProvider provider){
-		IObjectFilterProvider old=hash.get(clazz);
-		if(old!=null){
+	
+	private final Hashtable<Class<? extends PersistentObject>, GlobalEvents.IObjectFilterProvider> hash =
+		new Hashtable<Class<? extends PersistentObject>, GlobalEvents.IObjectFilterProvider>();
+	
+	public synchronized void registerObjectFilter(final Class<? extends PersistentObject> clazz,
+		final GlobalEvents.IObjectFilterProvider provider){
+		IObjectFilterProvider old = hash.get(clazz);
+		if (old != null) {
 			old.deactivate();
 		}
 		hash.put(clazz, provider);
@@ -35,15 +36,16 @@ public class ObjectFilterRegistry {
 		GlobalEvents.getInstance().fireUpdateEvent(clazz);
 	}
 	
-	public void unregisterObjectFilter(final Class<? extends PersistentObject> clazz,final GlobalEvents.IObjectFilterProvider provider){
+	public void unregisterObjectFilter(final Class<? extends PersistentObject> clazz,
+		final GlobalEvents.IObjectFilterProvider provider){
 		hash.remove(clazz);
 		provider.deactivate();
 		GlobalEvents.getInstance().fireUpdateEvent(clazz);
 	}
 	
 	public IFilter getFilterFor(final Class<? extends PersistentObject> clazz){
-		IObjectFilterProvider prov=hash.get(clazz);
-		if(prov!=null){
+		IObjectFilterProvider prov = hash.get(clazz);
+		if (prov != null) {
 			return prov.getFilter();
 		}
 		return null;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4276 2008-08-14 18:14:09Z rgw_ch $
+ * $Id: Verrechnet.java 4382 2008-09-07 13:58:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,6 +26,10 @@ import ch.rgw.tools.TimeTool;
  * Verrechnet ist zunächst Taxpunkwert(TP) mal Scale (Immer in der kleinsten
  * Währungseinheit, also Rappen oder ggf. cent). Der effektive Preis kann aber
  * geändert werden (Rabatt etc.)
+ * Nebst VK_Scale, welche in der Schweiz dem taxpunktwert entspricht, können noch externe
+ * und interne zusätzlich Skalierungen angewendet werden. PrimaryScalefactor wird beispielsweise für
+ * %-Reduktionen oder Zusschläge gemäss Tarmed verwendet, SecondaryScalefactor kann ein Rabatt oder ein 
+ * Privatzuschschlag sein.
  * 
  * @author gerry
  * 
@@ -117,9 +121,16 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	/**
+	 * Taxpunktpreis setzen
+	 * @param tp
+	 */
+	public void setTP(double tp){
+		set("VK_TP",Long.toString(Math.round(tp)));
+	}
+	/**
 	 * Den effektiven Preis setzen (braucht nicht TP*Scale zu sein
 	 * 
-	 * @deprecated use setFactor
+	 * @deprecated use setTP and setFactor
 	 */
 	@Deprecated
 	public void setPreis(final Money m){
@@ -148,6 +159,7 @@ public class Verrechnet extends PersistentObject {
 		 * return new Money((int)Math.round(amount));
 		 */
 	}
+	
 	
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
 	

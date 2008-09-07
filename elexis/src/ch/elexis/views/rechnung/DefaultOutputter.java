@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 4055 2008-06-20 07:27:39Z michael_imhof $
+ *  $Id: DefaultOutputter.java 4382 2008-09-07 13:58:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Label;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Result;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Result;
 
 /**
  * This outputter takes the output target from the case's billing syste,

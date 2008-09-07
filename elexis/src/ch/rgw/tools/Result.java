@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.print.attribute.standard.Severity;
+
 
 /**
  * Universelles Rückgabe-Objekt. Ein Result beinhaltet die Information, ob
@@ -41,6 +43,10 @@ public class Result<T>{
 	
 	public SEVERITY getSeverity(){
 		return severity;
+	}
+	
+	public List<msg> getMessages(){
+		return list;
 	}
 	/**
 	 * Kurze Abfrage, ob alles fehlerfrei war
@@ -119,7 +125,7 @@ public class Result<T>{
 		add(severity,code,text,result,bLog);
 	}
 	
-	class msg{
+	public class msg{
 		int code;
 		String text;
 		SEVERITY severity;
@@ -129,6 +135,15 @@ public class Result<T>{
 			text=t;
 			severity=s;
 			result=r;
+		}
+		public SEVERITY getSeverity(){
+			return severity;
+		}
+		public int getCode(){
+			return code;
+		}
+		public String getText(){
+			return text;
 		}
 	}
 
