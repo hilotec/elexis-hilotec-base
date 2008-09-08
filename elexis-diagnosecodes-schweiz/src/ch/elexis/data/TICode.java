@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TICode.java 3168 2007-09-16 16:10:58Z rgw_ch $
+ *    $Id: TICode.java 4391 2008-09-08 09:46:44Z rgw_ch $
  *******************************************************************************/
 
 
 package ch.elexis.data;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import ch.elexis.diagnosecodes_schweiz.Messages;
@@ -291,7 +292,7 @@ public class TICode extends PersistentObject implements IDiagnose{
 	public String getCodeSystemCode() {
 		return "999"; //$NON-NLS-1$
 	}
-	public Iterable<IAction> getActions() {
+	public List<IAction> getActions() {
 		// TODO Auto-generated method stub
 		return null;
 	}
