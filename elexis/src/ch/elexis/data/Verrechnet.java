@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ * $Id: Verrechnet.java 4395 2008-09-08 17:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -73,6 +73,14 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	/**
+	 * Taxpunktwert auslesen
+	 * @return
+	 */
+	public double getTPW(){
+		return checkZeroDouble(get("VK_Scale"));
+	}
+	
+	/**
 	 * set the primary scale factor (usually system specific or "internal" to
 	 * the code system NOTE: This ist NOT identical to the multiplier or
 	 * "Taxpunkt". The final price will be calculated as VK_PREIS * VK_SCALE *
@@ -125,6 +133,7 @@ public class Verrechnet extends PersistentObject {
 		}
 		return ((double) sca) / 100.0;
 	}
+	
 	
 	/**
 	 * Taxpunktpreis setzen

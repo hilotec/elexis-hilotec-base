@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4393 2008-09-08 09:48:16Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4395 2008-09-08 17:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -62,7 +62,7 @@ public class VerrechnungsDisplay extends Composite {
 	private Hyperlink hVer;
 	private PersistentObjectDropTarget dropTarget;
 	private Log log = Log.get("VerrechnungsDisplay");
-	private IAction chPriceAction, chCountAction, chTextAction, removeAction, detailsAction;
+	private IAction chPriceAction, chCountAction, chTextAction, removeAction;
 	private static final String CHPRICE="Preis ändern";
 	private static final String CHCOUNT="Zahl ändern";
 	private static final String REMOVE="Position entfernen";
@@ -196,7 +196,7 @@ public class VerrechnungsDisplay extends Composite {
 				Verrechnet v = (Verrechnet) ti.getData();
 				manager.add(chPriceAction);
 				manager.add(chCountAction);
-				List<IAction> itemActions=v.getVerrechenbar().getActions();
+				List<IAction> itemActions=v.getVerrechenbar().getActions(v);
 				if( (itemActions!=null) && (itemActions.size()>0)){
 					manager.add(new Separator());
 					for(IAction a:itemActions){

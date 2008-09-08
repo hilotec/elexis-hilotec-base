@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICodeElement.java 4393 2008-09-08 09:48:16Z rgw_ch $
+ * $Id: ICodeElement.java 4395 2008-09-08 17:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -36,7 +36,8 @@ public interface ICodeElement {
 	/** Das Element in Klartext-Form */
 	public String getText();
 
-	/** Kontext-Aktionen für dieses Code-Element */
-	public List<IAction> getActions();
+	/** Kontext-Aktionen für dieses Code-Element 
+	 * @param kontext TODO*/
+	public List<IAction> getActions(Verrechnet kontext);
 
 }

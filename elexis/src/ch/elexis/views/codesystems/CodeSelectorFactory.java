@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 4362 2008-09-02 20:32:38Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 4395 2008-09-08 17:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -189,13 +189,13 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			gAll.setText("Alle");
 			gAll.setLayout(new GridLayout());
 			cv=new CommonViewer();
-			Iterable<IAction> actions=v.getActions();
+			Iterable<IAction> actions=v.getActions(null);
 			if(actions!=null){
 				MenuManager menu=new MenuManager();
 				menu.setRemoveAllWhenShown(true);
 				menu.addMenuListener(new IMenuListener(){
 					public void menuAboutToShow(IMenuManager manager) {
-						Iterable<IAction> actions=v.getActions();
+						Iterable<IAction> actions=v.getActions(null);
 						for(IAction ac:actions){
 							manager.add(ac);
 						}

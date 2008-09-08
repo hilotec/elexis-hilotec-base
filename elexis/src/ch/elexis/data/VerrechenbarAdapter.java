@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 4393 2008-09-08 09:48:16Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 4395 2008-09-08 17:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -68,7 +68,7 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements
 		return ifilter;
 	}
 
-	public List<IAction> getActions() {
+	public List<IAction> getActions(Verrechnet kontext) {
 		ArrayList<IAction> actions = new ArrayList<IAction>(1);
 		if(addToBlockAction==null){
 			makeActions(this);
