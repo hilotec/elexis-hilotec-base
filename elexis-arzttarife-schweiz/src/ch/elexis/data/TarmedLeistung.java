@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4392 2008-09-08 09:47:22Z rgw_ch $
+ * $Id: TarmedLeistung.java 4396 2008-09-08 17:21:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -444,12 +444,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	}
 
 	@Override
-	public List<IAction> getActions() {
-		List<IAction> ret=super.getActions();
+	public List<IAction> getActions(final Verrechnet kontext) {
+		List<IAction> ret=super.getActions(kontext);
 		ret.add(new Action("Details"){
 			@Override
 			public void run(){
-				new TarmedDetailDialog(Desk.getTopShell(),TarmedLeistung.this).open();
+				new TarmedDetailDialog(Desk.getTopShell(),kontext).open();
 			}
 		});
 		return ret;
