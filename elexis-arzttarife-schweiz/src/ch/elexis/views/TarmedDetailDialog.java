@@ -65,13 +65,8 @@ public class TarmedDetailDialog extends Dialog {
 		new Label(ret,SWT.NONE).setText(mAll.getAmountAsString());
 		
 		String mins=Integer.toString(tl.getMinutes());
-		new Label(ret,SWT.NONE).setText("Minutage:");
-		new Label(ret,SWT.NONE).setText(mins);
-		
-		
-		Label min=new Label(ret,SWT.NONE);
-		min.setText(Integer.toString(tl.getMinutes())+" Minuten");
-		min.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		new Label(ret,SWT.NONE).setText("Zeit:");
+		new Label(ret,SWT.NONE).setText(mins+" min.");
 		
 		new Label(ret,SWT.NONE).setText("Seite");
 		cSide=new Combo(ret,SWT.SINGLE);
