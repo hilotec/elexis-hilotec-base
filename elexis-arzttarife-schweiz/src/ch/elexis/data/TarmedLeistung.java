@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elex
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4396 2008-09-08 17:21:34Z rgw_ch $
+ * $Id: TarmedLeistung.java 4401 2008-09-08 20:27:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -48,6 +48,8 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
+	public static final String SIDE="Seite";
+	public static final String PFLICHTLEISTUNG="obligation";
 	
 	private static final JdbcLink j = getConnection();
 	static {

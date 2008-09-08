@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4385 2008-09-07 15:53:02Z rgw_ch $
+ * $Id: XMLExporter.java 4401 2008-09-08 20:27:47Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -607,9 +607,13 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("ean_responsible", TarmedRequirements.getEAN(actMandant)); // 22400
 					el.setAttribute("billing_role", "both"); // 22410
 					el.setAttribute("medical_role", "self_employed"); // 22430
-					String location = vv.getDetail("Seite"); // 22450
+					String location = vv.getDetail(TarmedLeistung.SIDE); // 22450
 					if (StringTool.isNothing(location)) {
 						location = "none";
+					}else if(location.equalsIgnoreCase("l")){
+						location="left";
+					}else{
+						location="right";
 					}
 					el.setAttribute("body_location", location);
 					/*
@@ -647,7 +651,12 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("amount", XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
 					el.setAttribute("vat_rate", "0"); // 22590
 					el.setAttribute("validate", "true"); // 22620
-					el.setAttribute("obligation", "true"); // 22630
+					String obl=vv.getDetail(TarmedLeistung.PFLICHTLEISTUNG);
+					if((obl==null) || (Boolean.parseBoolean(obl)){
+						el.setAttribute("obligation", "true"); // 22630
+					}else{
+						el.setAttribute("obligation","false");
+					}
 					
 				} else if (v instanceof LaborLeistung) {
 					el = new Element("record_lab", ns); // 28000
@@ -695,7 +704,7 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("validate", "true");
 					mMigel.addMoney(mAmountLocal);
 				} else {
-					Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					Money preis = vv.getEffPreis(); 
 					el = new Element("record_unclassified", ns);
 					el.setAttribute("tariff_type", v.getCodeSystemCode());
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));

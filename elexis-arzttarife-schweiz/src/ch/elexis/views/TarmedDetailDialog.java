@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: TarmedDetailDialog.java 4401 2008-09-08 20:27:47Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.views;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -33,15 +46,15 @@ public class TarmedDetailDialog extends Dialog {
 		//td.display(tl);
 		TarmedLeistung tl=(TarmedLeistung)v.getVerrechenbar();
 		Composite ret=(Composite)super.createDialogArea(parent);
-		ret.setLayout(new GridLayout(6,true));
+		ret.setLayout(new GridLayout(6,false));
 		
 		double tpAL=tl.getAL()/100.0;
 		double tpTL=tl.getTL()/100.0;
 		double tpw=v.getTPW();
 		Money mAL=new Money(tpAL*tpw);
 		Money mTL=new Money(tpTL*tpw);
-		double tpAll=tpAL+tpTL;
-		Money mAll=new Money(tpAll);
+		double tpAll=Math.round((tpAL+tpTL)*100.0)/100.0;
+		Money mAll=new Money(tpAll*tpw);
 		
 		new Label(ret,SWT.NONE).setText("TP AL");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpAL));
@@ -70,10 +83,22 @@ public class TarmedDetailDialog extends Dialog {
 		
 		new Label(ret,SWT.NONE).setText("Seite");
 		cSide=new Combo(ret,SWT.SINGLE);
+		cSide.setItems(new String[]{"egal","links","rechts"});
 		
 		new Label(ret,SWT.NONE).setText("Pflichtleist.");
 		bPflicht=new Button(ret,SWT.CHECK);
-		
+		String sPflicht=v.getDetail(TarmedLeistung.PFLICHTLEISTUNG);
+		if((sPflicht==null) || (Boolean.parseBoolean(sPflicht))){
+			bPflicht.setSelection(true);
+		}
+		String side=v.getDetail(TarmedLeistung.SIDE);
+		if(side==null){
+			cSide.select(0);
+		}else if(side.equalsIgnoreCase("l")){
+			cSide.select(1);
+		}else{
+			cSide.select(2);
+		}
 		return ret;
 	}
 	@Override
@@ -81,7 +106,21 @@ public class TarmedDetailDialog extends Dialog {
 		super.create();
 		getShell().setText("Tarmed-Details");
 	}
+	@Override
+	protected void okPressed(){
+		int idx=cSide.getSelectionIndex();
+		if(idx<1){
+			v.setDetail(TarmedLeistung.SIDE, null);
+		}else if(idx==1){
+			v.setDetail(TarmedLeistung.SIDE, "l");
+		}else{
+			v.setDetail(TarmedLeistung.SIDE, "r");
+		}
+		v.setDetail(TarmedLeistung.PFLICHTLEISTUNG, Boolean.toString(bPflicht.getSelection()));
+		super.okPressed();
+	}
 
+	
 	
 }
 
