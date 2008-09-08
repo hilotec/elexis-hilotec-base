@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 4389 2008-09-08 09:46:09Z rgw_ch $
+ *    $Id: Eigendiagnose.java 4397 2008-09-08 17:21:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.VersionInfo;
 
@@ -92,7 +93,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 	
 	protected Eigendiagnose(){}
 	
-	public List<IAction> getActions(){
+	public List<IAction> getActions(Verrechnet kontext){
 		// TODO Auto-generated method stub
 		return null;
 	}
