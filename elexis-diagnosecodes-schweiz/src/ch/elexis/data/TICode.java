@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TICode.java 4391 2008-09-08 09:46:44Z rgw_ch $
+ *    $Id: TICode.java 4398 2008-09-08 17:22:10Z rgw_ch $
  *******************************************************************************/
 
 
@@ -292,7 +292,7 @@ public class TICode extends PersistentObject implements IDiagnose{
 	public String getCodeSystemCode() {
 		return "999"; //$NON-NLS-1$
 	}
-	public List<IAction> getActions() {
+	public List<IAction> getActions(Verrechnet kontext) {
 		// TODO Auto-generated method stub
 		return null;
 	}
