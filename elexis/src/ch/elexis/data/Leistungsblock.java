@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsblock.java 2079 2007-03-13 17:19:32Z rgw_ch $
+ * $Id: Leistungsblock.java 4393 2008-09-08 09:48:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -170,7 +170,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement{
 	public boolean isDragOK() {
 		return true;
 	}
-	public Iterable<IAction> getActions() {
+	public List<IAction> getActions() {
 		
 		return null;
 	}

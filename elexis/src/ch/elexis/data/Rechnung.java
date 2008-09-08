@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ *  $Id: Rechnung.java 4393 2008-09-08 09:48:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -280,9 +280,10 @@ public class Rechnung extends PersistentObject {
 		if (reopen == true) {
 			getConnection().exec(
 				"UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID=" + getWrappedId());
-			setStatus(RnStatus.ABGESCHRIEBEN);
-		}else{
 			setStatus(RnStatus.STORNIERT);
+		}else{
+
+			setStatus(RnStatus.ABGESCHRIEBEN);
 		}
 	}
 	
