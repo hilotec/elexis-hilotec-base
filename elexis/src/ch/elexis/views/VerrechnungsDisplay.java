@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4387 2008-09-07 19:21:45Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4388 2008-09-08 04:59:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -198,12 +198,14 @@ public class VerrechnungsDisplay extends Composite {
 						if(val.endsWith("%") && val.length()>1){
 							val=val.substring(0, val.length()-1);
 							double percent=Double.parseDouble(val);
-							newPrice.multiply(percent/100.0);
+							double amount=newPrice.getAmount();
+							amount+=amount*percent/100.0;
+							newPrice=new Money(amount);
 						}else{
 							newPrice = new Money(val);
 						}
-						double factor=(oldPrice.getAmount()*100.0)/newPrice.getAmount();
-						v.setSecondaryScaleFactor(factor);
+						double factor=(newPrice.getAmount()*100.0)/oldPrice.getAmount();
+						v.setSecondaryScaleFactor(Math.round(factor)/100.0);
 						//v.setPreis(newPrice);
 						setLeistungen(GlobalEvents.getSelectedKons());
 					} catch (ParseException ex) {
