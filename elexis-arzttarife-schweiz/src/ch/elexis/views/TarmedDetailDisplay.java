@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedDetailDisplay.java 2387 2007-05-18 12:27:53Z danlutz $
+ * $Id: TarmedDetailDisplay.java 4392 2008-09-08 09:47:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -49,8 +49,8 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 	public TarmedDetailDisplay(){
 		
 	}
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		tk=Desk.theToolkit;
+	public Composite createDisplay(Composite parent, IViewSite notUsed) {
+		tk=Desk.getToolkit();
 		form=tk.createScrolledForm(parent);
 		TableWrapLayout twl=new TableWrapLayout();
 		//twl.numColumns=4;

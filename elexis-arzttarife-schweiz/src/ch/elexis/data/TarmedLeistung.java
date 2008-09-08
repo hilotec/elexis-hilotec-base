@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4373 2008-09-04 13:48:37Z rgw_ch $
+ * $Id: TarmedLeistung.java 4392 2008-09-08 09:47:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,12 +19,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IFilter;
 
+import ch.elexis.Desk;
 import ch.elexis.util.IOptifier;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -436,5 +441,22 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public List<IAction> getActions() {
+		List<IAction> ret=super.getActions();
+		ret.add(new Action("Details"){
+			@Override
+			public void run(){
+				new TarmedDetailDialog(Desk.getTopShell(),TarmedLeistung.this).open();
+			}
+		});
+		return ret;
+	}
+	
+	public void makeActions(){
+		
+		
 	}
 }
