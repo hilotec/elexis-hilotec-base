@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 4356 2008-09-02 16:20:10Z rgw_ch $
+ *    $Id: IcpcCode.java 4390 2008-09-08 09:46:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -188,7 +188,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		sb.append(realCode==null ? " " : realCode);
 		return sb.toString();
 	}
-	public Iterable<IAction> getActions() {
+	public List<IAction> getActions() {
 		// TODO Auto-generated method stub
 		return null;
 	}
