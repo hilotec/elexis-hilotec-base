@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 4390 2008-09-08 09:46:29Z rgw_ch $
+ *    $Id: IcpcCode.java 4399 2008-09-08 17:22:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IAction;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.util.Tree;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
@@ -188,7 +189,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		sb.append(realCode==null ? " " : realCode);
 		return sb.toString();
 	}
-	public List<IAction> getActions() {
+	public List<IAction> getActions(Verrechnet kontext) {
 		// TODO Auto-generated method stub
 		return null;
 	}
