@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4395 2008-09-08 17:21:12Z rgw_ch $
+ * $Id: Verrechnet.java 4402 2008-09-08 20:27:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -249,7 +249,11 @@ public class Verrechnet extends PersistentObject {
 	@SuppressWarnings("unchecked")
 	public void setDetail(final String key, final String value){
 		Hashtable ext = getHashtable("Detail");
-		ext.put(key, value);
+		if(value==null){
+			ext.remove(key);
+		}else{
+			ext.put(key, value);
+		}
 		setHashtable("Detail", ext);
 		
 	}
