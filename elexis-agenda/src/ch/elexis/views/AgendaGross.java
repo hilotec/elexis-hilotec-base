@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 4299 2008-08-20 20:49:26Z danlutz $
+ *  $Id: AgendaGross.java 4405 2008-09-09 20:27:31Z danlutz $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -137,7 +138,12 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			
 		});
-		dayMessage=SWTHelper.createText(right, 4, SWT.NONE);
+		dayMessage=SWTHelper.createText(right, 4, SWT.V_SCROLL);
+
+		// set text field's maximum width to the width of the calendar
+		GridData gd = (GridData) dayMessage.getLayoutData();
+		gd.widthHint = cal.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		
 		dayMessage.addFocusListener(new FocusAdapter(){
 
 			@Override
