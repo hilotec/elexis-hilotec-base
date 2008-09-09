@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4401 2008-09-08 20:27:47Z rgw_ch $
+ * $Id: XMLExporter.java 4403 2008-09-09 10:37:23Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -607,22 +607,9 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("ean_responsible", TarmedRequirements.getEAN(actMandant)); // 22400
 					el.setAttribute("billing_role", "both"); // 22410
 					el.setAttribute("medical_role", "self_employed"); // 22430
-					String location = vv.getDetail(TarmedLeistung.SIDE); // 22450
-					if (StringTool.isNothing(location)) {
-						location = "none";
-					}else if(location.equalsIgnoreCase("l")){
-						location="left";
-					}else{
-						location="right";
-					}
-					el.setAttribute("body_location", location);
-					/*
-					 * workaround to make validator happy to be removed later
-					 * 
-					 * if(tlAL<0.0){ if(scale>0){ scale*=-1; } tlAL*=-1; } // end workaround
-					 * obsoleted in 1.3
-					 */
-
+					
+					el.setAttribute("body_location", TarmedLeistung.getSide(vv)); // 22450
+					
 					el.setAttribute("unit.mt", XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
 					el.setAttribute("unit_factor.mt", XMLTool.doubleToXmlDouble(mult, 2)); // 22480
 					// (strebt
@@ -633,13 +620,6 @@ public class XMLExporter implements IRnOutputter {
 						1)); // 22500
 					el.setAttribute("amount.mt", XMLTool.moneyToXmlDouble(mAL)); // 22510
 					
-					/*
-					 * workaround to make validator happy to be removed later
-					 * 
-					 * if(tlTl<0.0){ if(scale>0){ scale*=-1; } tlTl*=-1; } // end workaround
-					 * obsoleted in 1.4
-					 */
-
 					el.setAttribute("unit.tt", XMLTool.doubleToXmlDouble(tlTl / 100.0, 2)); // 22520
 					el.setAttribute("unit_factor.tt", XMLTool.doubleToXmlDouble(mult, 2)); // 22530
 					el.setAttribute("scale_factor.tt", XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22540
@@ -651,12 +631,8 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("amount", XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
 					el.setAttribute("vat_rate", "0"); // 22590
 					el.setAttribute("validate", "true"); // 22620
-					String obl=vv.getDetail(TarmedLeistung.PFLICHTLEISTUNG);
-					if((obl==null) || (Boolean.parseBoolean(obl)){
-						el.setAttribute("obligation", "true"); // 22630
-					}else{
-						el.setAttribute("obligation","false");
-					}
+					
+					el.setAttribute("obligation", Boolean.toString(TarmedLeistung.isObligation(vv)));
 					
 				} else if (v instanceof LaborLeistung) {
 					el = new Element("record_lab", ns); // 28000
@@ -704,7 +680,7 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("validate", "true");
 					mMigel.addMoney(mAmountLocal);
 				} else {
-					Money preis = vv.getEffPreis(); 
+					Money preis = vv.getEffPreis();
 					el = new Element("record_unclassified", ns);
 					el.setAttribute("tariff_type", v.getCodeSystemCode());
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));

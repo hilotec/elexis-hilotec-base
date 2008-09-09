@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedDetailDialog.java 4401 2008-09-08 20:27:47Z rgw_ch $
+ * $Id: TarmedDetailDialog.java 4403 2008-09-09 10:37:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -46,36 +46,62 @@ public class TarmedDetailDialog extends Dialog {
 		//td.display(tl);
 		TarmedLeistung tl=(TarmedLeistung)v.getVerrechenbar();
 		Composite ret=(Composite)super.createDialogArea(parent);
-		ret.setLayout(new GridLayout(6,false));
+		ret.setLayout(new GridLayout(8,false));
 		
+		Label lTitle=new Label(ret,SWT.WRAP);
+		lTitle.setText(tl.getText());
+		lTitle.setLayoutData(SWTHelper.getFillGridData(8, true, 1, true));
 		double tpAL=tl.getAL()/100.0;
 		double tpTL=tl.getTL()/100.0;
+		String arzl = v.getDetail("AL");
+		String tecl = v.getDetail("TL");
+		double primaryScale = v.getPrimaryScaleFactor();
+		double secondaryScale = v.getSecondaryScaleFactor();
+		if(arzl!=null){
+			tpAL=Double.parseDouble(arzl);
+		}
+		if(tecl!=null){
+			tpTL=Double.parseDouble(tecl);
+		}
 		double tpw=v.getTPW();
-		Money mAL=new Money(tpAL*tpw);
-		Money mTL=new Money(tpTL*tpw);
+		Money mAL=new Money(tpAL*tpw*primaryScale*secondaryScale);
+		Money mTL=new Money(tpTL*tpw*primaryScale*secondaryScale);
 		double tpAll=Math.round((tpAL+tpTL)*100.0)/100.0;
-		Money mAll=new Money(tpAll*tpw);
+		Money mAll=new Money(tpAll*tpw*primaryScale*secondaryScale);
 		
 		new Label(ret,SWT.NONE).setText("TP AL");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpAL));
+		new Label(ret,SWT.NONE).setText(" x ");
 		new Label(ret,SWT.NONE).setText("TP-Wert");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpw));
+		new Label(ret,SWT.NONE).setText(" = ");
 		new Label(ret,SWT.NONE).setText("CHF AL");
 		new Label(ret,SWT.NONE).setText(mAL.getAmountAsString());
 		
+		
 		new Label(ret,SWT.NONE).setText("TP TL");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpTL));
+		new Label(ret,SWT.NONE).setText(" x ");
 		new Label(ret,SWT.NONE).setText("TP-Wert");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpw));
+		new Label(ret,SWT.NONE).setText(" = ");
 		new Label(ret,SWT.NONE).setText("CHF TL");
 		new Label(ret,SWT.NONE).setText(mTL.getAmountAsString());
 		
-		new Label(ret,SWT.NONE).setText("TP Total");
+		Label sep=new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
+		sep.setLayoutData(SWTHelper.getFillGridData(8, true, 1, false));
+		
+		new Label(ret,SWT.NONE).setText("TP ");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpAll));
+		new Label(ret,SWT.NONE).setText(" x ");
 		new Label(ret,SWT.NONE).setText("TP-Wert");
 		new Label(ret,SWT.NONE).setText(Double.toString(tpw));
-		new Label(ret,SWT.NONE).setText("CHF Total");
+		new Label(ret,SWT.NONE).setText(" = ");
+		new Label(ret,SWT.NONE).setText("CHF ");
 		new Label(ret,SWT.NONE).setText(mAll.getAmountAsString());
+		
+		Label sep2=new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
+		sep2.setLayoutData(SWTHelper.getFillGridData(8, true, 1, false));
 		
 		String mins=Integer.toString(tl.getMinutes());
 		new Label(ret,SWT.NONE).setText("Zeit:");
@@ -99,12 +125,13 @@ public class TarmedDetailDialog extends Dialog {
 		}else{
 			cSide.select(2);
 		}
+		ret.pack();
 		return ret;
 	}
 	@Override
 	public void create(){
 		super.create();
-		getShell().setText("Tarmed-Details");
+		getShell().setText("Tarmed-Details: "+v.getCode());
 	}
 	@Override
 	protected void okPressed(){

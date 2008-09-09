@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4401 2008-09-08 20:27:47Z rgw_ch $
+ * $Id: TarmedLeistung.java 4403 2008-09-09 10:37:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -457,8 +457,27 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		return ret;
 	}
 	
-	public void makeActions(){
-		
-		
+	public static boolean isObligation(Verrechnet v){
+		IVerrechenbar vv=v.getVerrechenbar();
+		if(vv instanceof TarmedLeistung){
+			String obli=v.getDetail(PFLICHTLEISTUNG);
+			if((obli==null) || (Boolean.parseBoolean(obli))){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static String getSide(Verrechnet v){
+		IVerrechenbar vv=v.getVerrechenbar();
+		if(vv instanceof TarmedLeistung){
+			String side=v.getDetail(SIDE);
+			if("l".equalsIgnoreCase(side)){
+				return "left";
+			}else if("r".equalsIgnoreCase(side)){
+				return "right";
+			}
+		}
+		return "none";
 	}
 }
