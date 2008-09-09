@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - additional methods
  *    
- *  $Id: XMLTool.java 4322 2008-08-29 16:42:51Z rgw_ch $
+ *  $Id: XMLTool.java 4404 2008-09-09 14:48:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -78,8 +78,12 @@ public class XMLTool {
 		int signum = Integer.signum((int)cents);
 		int abs = absCents / 100;
 		int frac = absCents % 100;
-		
 		String dec="%d.%0"+Integer.toString(factionalDigits)+"d";
+		// The - sign is lost if the integer is 0
+		if( (abs==0) && (signum<0)){
+			dec="-"+dec;
+		}
+		
 		String xmlDouble = String.format(dec, signum * abs, frac);
 		return xmlDouble;
 	
