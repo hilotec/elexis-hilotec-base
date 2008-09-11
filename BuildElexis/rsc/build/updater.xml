@@ -5,9 +5,8 @@
 	    <tstamp/>
 		<property file="rsc/build/local.properties" />
 		<property environment="env" />
-		<property name="version" value="1.4.0" />
 		<property name="dist" value="${dest}/Elexis-${version}" />
-		<property name="targetfile" value="elexis-mmc_1.2.0.${DSTAMP}.jar" />
+		<property name="targetfile" value="elexis-mmc_${version}.${DSTAMP}.jar" />
 		<mkdir dir="${env.TEMP}/elexis-mmc" />
 		<echo message="${source}" />
 		<javac srcdir="${source}/Elexis-MMC/src" destdir="${env.TEMP}/elexis-mmc" debug="no" optimize="yes" target="1.5" encoding="UTF-8" />
