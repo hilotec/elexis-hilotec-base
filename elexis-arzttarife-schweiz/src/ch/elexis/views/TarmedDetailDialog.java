@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedDetailDialog.java 4403 2008-09-09 10:37:23Z rgw_ch $
+ * $Id: TarmedDetailDialog.java 4407 2008-09-11 15:32:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -58,10 +58,10 @@ public class TarmedDetailDialog extends Dialog {
 		double primaryScale = v.getPrimaryScaleFactor();
 		double secondaryScale = v.getSecondaryScaleFactor();
 		if(arzl!=null){
-			tpAL=Double.parseDouble(arzl);
+			tpAL=Double.parseDouble(arzl)/100.0;
 		}
 		if(tecl!=null){
-			tpTL=Double.parseDouble(tecl);
+			tpTL=Double.parseDouble(tecl)/100.0;
 		}
 		double tpw=v.getTPW();
 		Money mAL=new Money(tpAL*tpw*primaryScale*secondaryScale);
