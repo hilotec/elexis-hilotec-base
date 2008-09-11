@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ *    $Id: PersistentObject.java 4409 2008-09-11 18:41:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1121,7 +1121,14 @@ public abstract class PersistentObject{
         unlock("VersionedResource",lockid);
         return ret;
     }
-	protected int setBinary(final String field, final byte[] value){
+    
+    protected int setBinary(final String field, final byte[] value){
+    	String key=getKey(field);
+    	cache.put(key, value, getCacheTime());
+    	return setBinaryRaw(field,value);
+    }
+    
+	private int setBinaryRaw(final String field, final byte[] value){
 		StringBuilder sql=new StringBuilder(1000);
         sql.append("UPDATE ").append(getTableName()).append(" SET ")
         	.append(/*map*/(field)).append("=?")

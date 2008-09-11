@@ -48,217 +48,235 @@ import ch.elexis.preferences.LabSettings;
 import ch.elexis.util.ViewMenus;
 
 /**
- * This view displays all LabResults that are not marked as seen by the doctor. One can mark them individually
- * or globally as seen from this view.
+ * This view displays all LabResults that are not marked as seen by the doctor. One can mark them
+ * individually or globally as seen from this view.
+ * 
  * @author gerry
- *
+ * 
  */
-public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener{
-	public final static String ID="ch.elexis.LabNotSeenView";
+public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener {
+	public final static String ID = "ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
-	LabResult[] unseen=null;
-	private String lastUpdate=null;
+	LabResult[] unseen = null;
+	private String lastUpdate = null;
 	
-	private static final String[] columnHeaders={"Patient","Parameter","Normbereich","Datum","Wert"};
-	private static final int[] colWidths=new int[]{250,100,60,70,50};
+	private static final String[] columnHeaders = {
+		"Patient", "Parameter", "Normbereich", "Datum", "Wert"
+	};
+	private static final int[] colWidths = new int[] {
+		250, 100, 60, 70, 50
+	};
 	private IAction markAllAction, markPersonAction;
 	
+	public LabNotSeenView(){}
 	
-	public LabNotSeenView() {
-	}
-
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		parent.setLayout(new FillLayout());
-		Table table=new Table(parent,SWT.CHECK|SWT.V_SCROLL);
-		for(int i=0;i<columnHeaders.length;i++){
-			TableColumn tc=new TableColumn(table,SWT.NONE);
+		Table table = new Table(parent, SWT.CHECK | SWT.V_SCROLL);
+		for (int i = 0; i < columnHeaders.length; i++) {
+			TableColumn tc = new TableColumn(table, SWT.NONE);
 			tc.setText(columnHeaders[i]);
 			tc.setWidth(colWidths[i]);
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		tv=new CheckboxTableViewer(table);
+		tv = new CheckboxTableViewer(table);
 		tv.setContentProvider(new LabNotSeenContentProvider());
 		tv.setLabelProvider(new LabNotSeenLabelProvider());
 		tv.setUseHashlookup(true);
 		GlobalEvents.getInstance().addActivationListener(this, this);
-
-		tv.addSelectionChangedListener(new ISelectionChangedListener(){
-
-			public void selectionChanged(final SelectionChangedEvent event) {
-				IStructuredSelection sel=(IStructuredSelection)event.getSelection();
-				if(!sel.isEmpty()){
-					LabResult lr=(LabResult)sel.getFirstElement();
+		
+		tv.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			public void selectionChanged(final SelectionChangedEvent event){
+				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+				if (!sel.isEmpty()) {
+					LabResult lr = (LabResult) sel.getFirstElement();
 					GlobalEvents.getInstance().fireSelectionEvent(lr.getPatient());
 				}
 				
-			}});
-		tv.addCheckStateListener(new ICheckStateListener(){
+			}
+		});
+		tv.addCheckStateListener(new ICheckStateListener() {
 			boolean bDaempfung;
-			public void checkStateChanged(final CheckStateChangedEvent event) {
-				if(bDaempfung==false){
-					bDaempfung=true;
-					LabResult lr=(LabResult)event.getElement();
-					boolean state=event.getChecked();
-					if(state){
-						if(Hub.acl.request(AccessControlDefaults.LAB_SEEN)){
+			
+			public void checkStateChanged(final CheckStateChangedEvent event){
+				if (bDaempfung == false) {
+					bDaempfung = true;
+					LabResult lr = (LabResult) event.getElement();
+					boolean state = event.getChecked();
+					if (state) {
+						if (Hub.acl.request(AccessControlDefaults.LAB_SEEN)) {
 							lr.removeFromUnseen();
-						}else{
+						} else {
 							tv.setChecked(lr, false);
 						}
-					}else{
+					} else {
 						lr.addToUnseen();
 					}
-					bDaempfung=false;
+					bDaempfung = false;
 				}
 			}
 			
 		});
 		makeActions();
-		ViewMenus menu=new ViewMenus(getViewSite());
-		menu.createToolbar(markPersonAction,markAllAction);
+		ViewMenus menu = new ViewMenus(getViewSite());
+		menu.createToolbar(markPersonAction, markAllAction);
 		tv.setInput(this);
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEvents.getInstance().removeActivationListener(this, this);
 		super.dispose();
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	static class LabNotSeenLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider{
-
-		public Image getColumnImage(final Object element, final int columnIndex) {
+	
+	static class LabNotSeenLabelProvider extends LabelProvider implements ITableLabelProvider,
+			IColorProvider {
+		
+		public Image getColumnImage(final Object element, final int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public String getColumnText(final Object element, final int columnIndex) {
-			if(element instanceof String){
-				return columnIndex==0 ? (String)element : "";
+		
+		public String getColumnText(final Object element, final int columnIndex){
+			if (element instanceof String) {
+				return columnIndex == 0 ? (String) element : "";
 			}
-			LabResult lr=(LabResult)element;
-			switch(columnIndex){
-			case 0: return lr.getPatient().getLabel();
-			case 1: return lr.getItem().getName();
-			case 2: 
-				Patient pat=lr.getPatient();
-				if(pat.getGeschlecht().equalsIgnoreCase("m")){
+			LabResult lr = (LabResult) element;
+			switch (columnIndex) {
+			case 0:
+				return lr.getPatient().getLabel();
+			case 1:
+				return lr.getItem().getName();
+			case 2:
+				Patient pat = lr.getPatient();
+				if (pat.getGeschlecht().equalsIgnoreCase("m")) {
 					return lr.getItem().getRefM();
-				}else{
+				} else {
 					return lr.getItem().getRefW();
 				}
-			case 3: return lr.getDate();
-			case 4:	return lr.getResult();
+			case 3:
+				return lr.getDate();
+			case 4:
+				return lr.getResult();
 			}
 			return "?";
 		}
-
-		public Color getBackground(final Object element) {
+		
+		public Color getBackground(final Object element){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public Color getForeground(final Object element) {
-			if(element instanceof String){
-				return Desk.theColorRegistry.get(Desk.COL_GREY);
+		
+		public Color getForeground(final Object element){
+			if (element instanceof String) {
+				return Desk.getColor(Desk.COL_GREY);
 			}
-			LabResult lr=(LabResult)element;
+			LabResult lr = (LabResult) element;
 			
-			if(lr.isFlag(LabResult.PATHOLOGIC)){
-				return Desk.theColorRegistry.get(Desk.COL_RED);
-			}else{
-				return Desk.theColorRegistry.get(Desk.COL_BLACK);
+			if (lr.isFlag(LabResult.PATHOLOGIC)) {
+				return Desk.getColor(Desk.COL_RED);
+			} else {
+				return Desk.getColor(Desk.COL_BLACK);
 			}
 		}
 		
 	}
 	
-	class LabNotSeenContentProvider implements IStructuredContentProvider{
-
-		public Object[] getElements(final Object inputElement) {
-			if(unseen==null){
-				return new Object[]{"..lade.."};
+	class LabNotSeenContentProvider implements IStructuredContentProvider {
+		
+		public Object[] getElements(final Object inputElement){
+			if (unseen == null) {
+				return new Object[] {
+					"..lade.."
+				};
 			}
 			return unseen;
 		}
-
-		public void dispose() { /* don't mind */}
-		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-			// don't mind
+		
+		public void dispose(){ /* don't mind */}
+		
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
+		// don't mind
 		}
 		
 	}
-
-	public void activation(final boolean mode) {
-		// don't mind
+	
+	public void activation(final boolean mode){
+	// don't mind
 	}
-
-	public void visible(final boolean mode) {
-		if(mode){
+	
+	public void visible(final boolean mode){
+		if (mode) {
 			heartbeat();
-			Hub.heart.addListener(this, Hub.localCfg.get(LabSettings.LABNEW_HEARTRATE,Heartbeat.FREQUENCY_HIGH));
-		}else{
+			Hub.heart.addListener(this, Hub.localCfg.get(LabSettings.LABNEW_HEARTRATE,
+				Heartbeat.FREQUENCY_HIGH));
+		} else {
 			Hub.heart.removeListener(this);
 		}
-
+		
 	}
-
-	public void heartbeat() {
-		String last=LabResult.getLastUpdateUnseen();
-		if(lastUpdate!=null){
-			if(lastUpdate.compareTo(last)>=0){
+	
+	public void heartbeat(){
+		String last = LabResult.getLastUpdateUnseen();
+		if (lastUpdate != null) {
+			if (lastUpdate.compareTo(last) >= 0) {
 				return;
 			}
 		}
-		lastUpdate=last;
-		unseen=LabResult.getUnseen().toArray(new LabResult[0]);
-		Desk.theDisplay.asyncExec(new Runnable(){
-			public void run() {
+		lastUpdate = last;
+		unseen = LabResult.getUnseen().toArray(new LabResult[0]);
+		Desk.getDisplay().asyncExec(new Runnable() {
+			public void run(){
 				tv.refresh();
 			}
 		});
-
+		
 	}
-
+	
 	private void makeActions(){
-		markAllAction=new RestrictedAction(AccessControlDefaults.LAB_SEEN,"Alle markieren"){
+		markAllAction = new RestrictedAction(AccessControlDefaults.LAB_SEEN, "Alle markieren") {
 			{
 				setToolTipText("Alle Einträge als gelesen markieren");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_TICK));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_TICK));
 			}
+			
 			@Override
-			public void doRun() {
+			public void doRun(){
 				tv.setAllChecked(true);
-				for(LabResult lr:LabResult.getUnseen()){
+				for (LabResult lr : LabResult.getUnseen()) {
 					lr.removeFromUnseen();
 				}
 			}
 			
 		};
-		markPersonAction=new RestrictedAction(AccessControlDefaults.LAB_SEEN,"Alle des gewählten Patienten markieren"){
-			{
-				setToolTipText("Alle Einträge des gewählten patienten als gelesen markieren");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PERSON_OK));
-			}
-			@Override
-			public void doRun() {
-				Patient act=GlobalEvents.getSelectedPatient();
-				for(LabResult lr:unseen){
-					if(lr.getPatient().equals(act)){
-						lr.removeFromUnseen();
-						tv.setChecked(lr, true);
+		markPersonAction =
+			new RestrictedAction(AccessControlDefaults.LAB_SEEN,
+				"Alle des gewählten Patienten markieren") {
+				{
+					setToolTipText("Alle Einträge des gewählten patienten als gelesen markieren");
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PERSON_OK));
+				}
+				
+				@Override
+				public void doRun(){
+					Patient act = GlobalEvents.getSelectedPatient();
+					for (LabResult lr : unseen) {
+						if (lr.getPatient().equals(act)) {
+							lr.removeFromUnseen();
+							tv.setChecked(lr, true);
+						}
 					}
 				}
-			}
-		};
+			};
 	}
-
+	
 }
