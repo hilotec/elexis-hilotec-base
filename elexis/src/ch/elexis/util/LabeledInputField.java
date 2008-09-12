@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LabeledInputField.java 3960 2008-05-23 16:37:31Z rgw_ch $
+ * $Id: LabeledInputField.java 4410 2008-09-12 14:28:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -43,7 +43,7 @@ public class LabeledInputField extends Composite {
 	static public enum Typ{TEXT,BOOL,LIST,LINK,DATE,MONEY,COMBO};
     Label lbl;
     Control ctl;
-    FormToolkit tk=Desk.theToolkit;
+    FormToolkit tk=Desk.getToolkit();
     
     public LabeledInputField(Composite parent, String label){
     	this(parent,label,Typ.TEXT);
@@ -106,7 +106,11 @@ public class LabeledInputField extends Composite {
     	}else if(ctl instanceof Combo){
     		Combo combo=(Combo)ctl;
     		if(!StringTool.isNothing(text)){
-    			combo.setText(text);
+    			int idx=StringTool.getIndex(combo.getItems(), text);
+    			if(idx!=-1){
+    				combo.select(idx);
+    			}
+    			// combo.setText(text);
     		}
     	}else if(ctl instanceof DatePickerCombo){
     	
@@ -343,6 +347,10 @@ public class LabeledInputField extends Composite {
     		}
     		
     	}
+    	/**
+    	 * Angezeigte Daten aus DB neu laden
+    	 * @param o Das Objekt aus dem Daten geladen werden
+    	 */
     	public void reload(PersistentObject o){
     		act=o;
     		if(o==null){
