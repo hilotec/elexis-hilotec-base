@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 3697 2008-02-19 21:09:38Z danlutz $
+ * $Id: RechnungsListeView.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -68,7 +68,7 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
     NumberInput niDaysTo1st, niDaysTo2nd, niDaysTo3rd;
     MoneyInput mi1st,mi2nd,mi3rd;
     SelectionListener mahnWizardListener;
-    FormToolkit tk=Desk.theToolkit;
+    FormToolkit tk=Desk.getToolkit();
     
 	
 	@Override

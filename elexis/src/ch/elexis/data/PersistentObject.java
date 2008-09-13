@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4409 2008-09-11 18:41:31Z rgw_ch $
+ *    $Id: PersistentObject.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -131,7 +131,7 @@ public abstract class PersistentObject{
         cacheCleaner.setPriority(Job.DECORATE);
         */
         //cacheCleaner.schedule(300000L);
-        //log.log("Cache setup: default_lifetime "+default_lifetime, Log.INFOS);
+        log.log("Cache setup: default_lifetime "+default_lifetime, Log.INFOS);
     }
 	public static enum FieldType{
 		TEXT,LIST,JOINT

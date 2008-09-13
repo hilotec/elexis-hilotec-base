@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 4009 2008-06-05 19:20:29Z rgw_ch $
+ * $Id: RnActions.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -33,6 +33,8 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.RestrictedAction;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -48,6 +50,7 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.Tree;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.views.PatientDetailView;
+import ch.elexis.views.PatientDetailView2;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -67,7 +70,7 @@ public class RnActions {
     	
     	printListeAction=new Action("Liste drucken"){
     		{
-    			setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
+    			setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
     			setToolTipText("Die angezeigte Liste ausdrucken");
     		}
     		@Override
@@ -80,7 +83,7 @@ public class RnActions {
     	mahnWizardAction=new Action("Mahnungen-Automatik"){
     		{
     			setToolTipText("Automatischer Mahnlauf gem. untenstehenden Angaben");
-    			setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_WIZARD));
+    			setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
     		}
     		@Override
 			public void run(){
@@ -160,7 +163,7 @@ public class RnActions {
 		rnExportAction=new Action(Messages.getString("RechnungsListeView.printAction")){ //$NON-NLS-1$
 			{
 				setToolTipText(Messages.getString("RechnungsListeView.printToolTip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_GOFURTHER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
 			@Override
 			public void run(){
@@ -174,7 +177,7 @@ public class RnActions {
 			public void run() {
 				IWorkbenchPage rnPage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try{
-					/* PatientDetailView fdv=(PatientDetailView)*/rnPage.showView(PatientDetailView.ID);
+					/* PatientDetailView fdv=(PatientDetailView)*/rnPage.showView(PatientDetailView2.ID);
 				}catch(Exception ex){
 					ExHandler.handle(ex);
 				}
@@ -231,7 +234,7 @@ public class RnActions {
 		reloadAction=new Action("Neu einlesen"){
 			{
 				setToolTipText("Liste neu einlesen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REFRESH));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
 			}
 			@Override
 			public void run() {
@@ -242,7 +245,7 @@ public class RnActions {
 		addPaymentAction=new Action("Buchung/Zahlung hinzufügen"){
 			{
 				setToolTipText("Einen Betrag als Zahlung eingeben");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_ADDITEM));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 			}
 			@Override
 			public void run(){
@@ -258,7 +261,7 @@ public class RnActions {
 		
 		addExpenseAction=new Action("Gebühr zuschlagen"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REMOVEITEM));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
 			}
 			@Override
 			public void run(){
@@ -272,13 +275,13 @@ public class RnActions {
 			}
 		};
 		
-		changeStatusAction=new Action("Status ändern"){
+		changeStatusAction=new RestrictedAction(AccessControlDefaults.ADMIN_CHANGE_BILLSTATUS_MANUALLY,"Status ändern"){
 			{
 				setToolTipText("Manuelle Statusänderung (Vorsicht!");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 			}
 			@Override
-			public void run(){
+			public void doRun(){
 				List<Rechnung> list=view.createList();
 				if(list.size()>0){
 					Rechnung actRn=list.get(0);
@@ -290,7 +293,7 @@ public class RnActions {
 		};
 		stornoAction=new Action("Stornieren"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Rechnung für ungültig erklären");
 			}
 			@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDialogs.java 4259 2008-08-11 14:01:55Z rgw_ch $
+ * $Id: RnDialogs.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -157,12 +157,14 @@ public class RnDialogs {
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite ret=new Composite(parent,SWT.NONE);
-			ret.setLayout(new FillLayout());
+			ret.setLayout(new GridLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 			cbStates=new Combo(ret,SWT.READ_ONLY);
 			cbStates.setItems(RnStatus.getStatusTexts());
 			cbStates.setVisibleItemCount(RnStatus.getStatusTexts().length);
 			cbStates.select(rn.getStatus());
+			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			new Label(ret,SWT.WRAP).setText("Achtung!\nManuelles Ändern des Status kann zu Inkonsistenzen führen!");
 			return ret;
 		}
 		@Override

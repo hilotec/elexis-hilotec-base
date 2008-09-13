@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnMenuListener.java 2782 2007-07-11 16:10:48Z rgw_ch $
+ * $Id: RnMenuListener.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
@@ -42,12 +43,13 @@ public class RnMenuListener implements IMenuListener {
 						manager.add(view.actions.delRnAction);
 						manager.add(view.actions.reactivateRnAction);
 					}else{
+						((RestrictedAction)view.actions.changeStatusAction).reflectRight();
 						manager.add(view.actions.rnExportAction);
 						manager.add(view.actions.addPaymentAction);
 						manager.add(view.actions.addExpenseAction);
-						manager.add(view.actions.changeStatusAction);
 						manager.add(view.actions.increaseLevelAction);
 						manager.add(new Separator());
+						manager.add(view.actions.changeStatusAction);
 						manager.add(view.actions.stornoAction);
 						boolean bSomething=rn.getStatus()!=RnStatus.STORNIERT;
 						view.actions.rnExportAction.setEnabled(bSomething);

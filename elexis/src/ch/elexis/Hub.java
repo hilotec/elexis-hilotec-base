@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4358 2008-09-02 16:32:25Z rgw_ch $
+ *    $Id: Hub.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -361,7 +361,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
     public static String getRevision(final boolean withdate)
     {
-    	String SVNREV="$LastChangedRevision: 4358 $"; //$NON-NLS-1$
+    	String SVNREV="$LastChangedRevision: 4411 $"; //$NON-NLS-1$
         String res=SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$","$1"); //$NON-NLS-1$ //$NON-NLS-2$
         if(withdate==true){
       	  	File base=new File(getBasePath()+"/rsc/compiletime.txt");
@@ -433,5 +433,26 @@ public class Hub extends AbstractUIPlugin {
      */
     public File getWritableUserDir(){
     	return userDir;
+    }
+    
+    /**
+     * Return a directory suitable for temporary files. Most probably this will be a default tempdir
+     * provided by the os. If none such exists, it will be the user dir.
+     * @return always a valid and writable directory.
+     */
+    public File getTempDir(){
+    	File ret=null;
+    	String temp=System.getProperty("java.io.tmpdir");
+    	if(!StringTool.isNothing(temp)){
+    		ret=new File(temp);
+    		if(ret.exists() && ret.isDirectory()){
+    			return ret;
+    		}else{
+    			if(ret.mkdirs()){
+    				return ret;
+    			}
+    		}
+    	}
+    	return getWritableUserDir();
     }
 }

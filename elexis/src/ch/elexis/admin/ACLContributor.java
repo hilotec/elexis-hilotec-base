@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 4040 2008-06-13 12:45:37Z rgw_ch $
+ *  $Id: ACLContributor.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 import static ch.elexis.admin.AccessControlDefaults.*; 
@@ -18,7 +18,7 @@ import static ch.elexis.admin.AccessControlDefaults.*;
  *
  */
 public class ACLContributor implements IACLContributor {
-	String[] acls=new String[]{
+	private String[] acls=new String[]{
 			 ACCOUNTING_GLOBAL, ACCOUNTING_BILLCREATE, ACCOUNTING_BILLMODIFY,
 			 ACCOUNTING_READ,
 			 ACL_USERS, DATA, KONTAKT_DELETE, DELETE,DELETE_FORCED,
@@ -30,6 +30,7 @@ public class ACLContributor implements IACLContributor {
 			 AC_HELP,AC_IMORT,AC_LOGIN,AC_PREFS,AC_PURGE,
 			 AC_SHOWPERSPECTIVE,AC_SHOWVIEW,
 			 DOCUMENT,DOCUMENT_CREATE,DOCUMENT_SYSTEMPLATE,DOCUMENT_TEMPLATE,
+			 ADMIN_CHANGE_BILLSTATUS_MANUALLY,
 			 ADMIN_KONS_EDIT_IF_BILLED,ADMIN_VIEW_ALL_REMINDERS,
 			 MEDICATION_MODIFY, DELETE_MEDICATION, DELETE_LABITEMS,
 			 CASE_MODIFY,SCRIPT_EXECUTE, SCRIPT_EDIT

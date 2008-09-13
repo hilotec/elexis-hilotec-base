@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 4040 2008-06-13 12:45:37Z rgw_ch $
+ * $Id: AccessControlDefaults.java 4411 2008-09-13 20:47:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -86,10 +86,14 @@ public class AccessControlDefaults {
      * New Code: Use only the following constants
      */
     
+    public static final String ACCOUNTING="Rechnungen";
+    public static final String ACCOUNTING_CREATE=ACCOUNTING+"/erstellen";
+    public static final String ACCOUNTING_MODIFY=ACCOUNTING+"/bearbeiten";
+    
     public static final String ACCOUNTING_GLOBAL="AccountingGlobal";
     public static final String ACCOUNTING_READ=ACCOUNTING_GLOBAL+"/read";
     public static final String ACCOUNTING_BILLCREATE=ACCOUNTING_GLOBAL+"/createBills";
-    public static final String ACCOUNTING_BILLMODIFY= ACCOUNTING_GLOBAL+"/modifyBills";
+    public static final String ACCOUNTING_BILLMODIFY= ACCOUNTING_GLOBAL+"/modifyBills";    
         
     public static final String ACL_USERS="Zugriff/Rechte erteilen";
     public static final String DELETE= "Löschen";
@@ -140,6 +144,7 @@ public class AccessControlDefaults {
     // TODO: maybe we should just use KONS_EDIT 
     public static final String ADMIN_KONS_EDIT_IF_BILLED = "Admin/Konsultation/Ändern/Verrechnet";
     public static final String ADMIN_VIEW_ALL_REMINDERS = "Admin/Reminders/Alle Anzeigen";
+    public static final String ADMIN_CHANGE_BILLSTATUS_MANUALLY="Admin/Rechnungen/manuelle Statusänderung";
     
     public static final String DOCUMENT= "Dokumente";
     public static final String DOCUMENT_CREATE= DOCUMENT+"/Erstellen";
@@ -163,7 +168,7 @@ public class AccessControlDefaults {
     
 	private static final String[] Alle={AC_EXIT,AC_ABOUT,AC_HELP,AC_LOGIN,"LoadInfoStore"};
 	
-    private static final String[] Anwender={DATA,ACTIONS,DOCUMENT,KONS,LEISTUNGEN};
+    private static final String[] Anwender={DATA,ACTIONS,DOCUMENT,KONS,LEISTUNGEN,ACCOUNTING};
 
 	public static String[] getAlle() {
 		return Alle;
