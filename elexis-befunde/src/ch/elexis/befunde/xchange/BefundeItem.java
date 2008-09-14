@@ -16,6 +16,8 @@ import ch.elexis.befunde.Messwert;
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.FindingElement;
+import ch.elexis.exchange.elements.MetaElement;
+import ch.elexis.exchange.elements.ResultElement;
 import ch.elexis.exchange.elements.XidElement;
 
 @SuppressWarnings("serial")
@@ -29,6 +31,7 @@ public class BefundeItem extends FindingElement {
 		eXid.addIdentity(Xid.DOMAIN_ELEXIS, mw.getId()+field, Xid.ASSIGNMENT_LOCAL, true);
 		eXid.setMainID(null);
 		addContent(eXid);
+		add(new MetaElement(home,ResultElement.ATTRIB_CREATOR,Messwert.PLUGIN_ID));
 	}
 	
 }

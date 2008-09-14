@@ -20,6 +20,7 @@ import ch.elexis.befunde.Messwert;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.exchange.elements.MedicalElement;
+import ch.elexis.exchange.elements.MetaElement;
 import ch.elexis.exchange.elements.ResultElement;
 import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.XMLTool;
@@ -65,6 +66,7 @@ public class BefundElement extends ResultElement {
 		setAttribute("id",XMLTool.idToXMLID(raw_id));
 		setAttribute(ATTR_DATE,tt.toString(TimeTool.DATETIME_XML));
 		setAttribute(ATTR_LABITEM,XMLTool.idToXMLID(mw.getId()+field));
+		add(new MetaElement(home,ATTRIB_CREATOR,Messwert.PLUGIN_ID));
 		Element eResult=new Element(ELEMENT_TEXTRESULT,home.getNamespace());
 		eResult.setText(mw.getResult(field));
 		addContent(eResult);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 4288 2008-08-17 12:32:51Z rgw_ch $
+ *    $Id: Messwert.java 4415 2008-09-14 20:09:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -43,6 +43,7 @@ import ch.rgw.tools.JdbcLink;
  */
 public class Messwert extends PersistentObject {
 	public static final int VERSION=3;
+	public static final String PLUGIN_ID="ch.elexis.befunde";
 	public static final String SETUP_SEPARATOR=";;";
 	public static final String SETUP_CHECKSEPARATOR=":/:";
 	/**

@@ -23,6 +23,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.IExchangeContributor;
+import ch.elexis.exchange.IExchangeDataHandler;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.rgw.tools.StringTool;
@@ -107,6 +108,11 @@ public class XChangeContributor implements IExchangeContributor {
 			String propertyName, Object data) throws CoreException {
 		
 
+	}
+
+	public IExchangeDataHandler[] getImportHandlers(){
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
