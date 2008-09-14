@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultElement.java 4235 2008-08-05 16:59:43Z rgw_ch $
+ *  $Id: ResultElement.java 4414 2008-09-14 20:08:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -29,6 +29,8 @@ public class ResultElement extends XChangeElement {
 	public static final String ATTR_DATE="timestamp";
 	public static final String ATTR_NORMAL="isNormal";
 	public static final String ATTR_LABITEM="findingRef";
+	public static final String ELEMENT_META="meta";
+	public static final String ATTRIB_CREATOR="creator";
 	public static final String ELEMENT_IMAGE="image";
 	public static final String ELEMENT_TEXTRESULT="textResult";
 	public static final String ELEMENT_DOCRESULT="documentRef";

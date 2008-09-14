@@ -778,26 +778,31 @@
         	<xs:documentation>a medical result</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-    		<xs:element name="textResult" type="xs:string" maxOccurs="1" minOccurs="0">
-    			<xs:annotation>
-    				<xs:documentation>
-    					if the result is a text or a value, it must be
-    					given here. If the result is a document or
-    					image, this can be omitted or can contain a
-    					textual explanation of the image.
+            <xs:element name="meta" type="xChange:metaType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+            <xs:element name="textResult" type="xs:string" maxOccurs="1"
+        		minOccurs="0">
+        		<xs:annotation>
+        			<xs:documentation>
+        				if the result is a text or a value, it must be
+        				given here. If the result is a document or
+        				image, this can be omitted or can contain a
+        				textual explanation of the image.
 
-    				</xs:documentation>
-    			</xs:annotation></xs:element>
-    		<xs:element name="documentRef" type="xs:IDREF" maxOccurs="1" minOccurs="0">
-    			<xs:annotation>
-    				<xs:documentation>
-    					indicates that the result is in the
-    					documents-section and might be a letter or an
-    					image
-    				</xs:documentation>
-    			</xs:annotation></xs:element>
-    	</xs:sequence>
-    	<xs:attribute name="id" type="xs:ID" use="required">
+        			</xs:documentation>
+        		</xs:annotation>
+        	</xs:element>
+        	<xs:element name="documentRef" type="xs:IDREF" maxOccurs="1"
+        		minOccurs="0">
+        		<xs:annotation>
+        			<xs:documentation>
+        				indicates that the result is in the
+        				documents-section and might be a letter or an
+        				image
+        			</xs:documentation>
+        		</xs:annotation>
+        	</xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="required">
     		<xs:annotation>
     			<xs:documentation>globally unique id</xs:documentation>
     		</xs:annotation></xs:attribute>

@@ -13,6 +13,8 @@
 
 package ch.elexis.exchange;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IExecutableExtension;
 
 import ch.elexis.data.PersistentObject;
@@ -46,4 +48,9 @@ public interface IExchangeContributor extends IExecutableExtension{
 	 */
 	public boolean init(MedicalElement me, boolean bExport);
 	
+	/**
+	 * Request a List of all data types this Contributor can handle during import
+	 * @return a LIst of IExchangeDataHandlers
+	 */
+	public IExchangeDataHandler[] getImportHandlers();
 }
