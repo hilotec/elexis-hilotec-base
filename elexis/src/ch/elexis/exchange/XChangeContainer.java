@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XChangeContainer.java 4290 2008-08-17 16:16:49Z rgw_ch $
+ * $Id: XChangeContainer.java 4416 2008-09-15 14:24:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -21,7 +21,9 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.jdom.xpath.XPath;
 
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
@@ -38,6 +40,8 @@ import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
 import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.Extensions;
+import ch.elexis.util.Log;
+import ch.rgw.tools.ExHandler;
 
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver{
@@ -60,6 +64,8 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	
 	
 	protected Element eRoot;
+	protected static Log log=Log.get("XChange");
+	
 	protected HashMap<String,byte[]> binFiles=new HashMap<String,byte[]>();
 	protected HashMap<Element,UserChoice> choices=new HashMap<Element,UserChoice>();
 	
@@ -145,6 +151,56 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	}
 	
 	
+	/**
+	 * Find the registered Data handler that matches best the given element
+	 * @param el  Element o be imported
+	 * @return the best matching handler or null if no handler exists at all for the given data type
+	 */
+	@SuppressWarnings("unchecked")
+	public IExchangeDataHandler findImportHandler(XChangeElement el){
+		IExchangeDataHandler ret=null;
+		int matchedRestrictions=0;
+		for(IExchangeContributor iex:lex){
+			IExchangeDataHandler[] handlers=iex.getImportHandlers();
+			for(IExchangeDataHandler cand:handlers){
+				if(cand.getDatatype().equalsIgnoreCase(el.getXMLName())){
+					if(ret==null){
+						ret=cand;
+					}
+					String[] restrictions=cand.getRestrictions();
+					if(restrictions!=null){
+						int matches=0;
+						for(String r:restrictions){
+							try {
+								XPath xpath=XPath.newInstance(r);
+								List<Object> nodes=xpath.selectNodes(el);
+								if(nodes.size()>0){
+									if(++matches>matchedRestrictions){
+										ret=cand;
+										matchedRestrictions=matches;
+									}else if(matches==matchedRestrictions){
+										if(ret.getValue()<cand.getValue()){
+											ret=cand;
+										}
+									}
+								}
+							} catch (JDOMException e) {
+								ExHandler.handle(e);
+								log.log("Parse error JDOM "+e.getMessage(), Log.WARNINGS);
+							}
+						}
+						
+					}else{
+						if(ret.getValue()<cand.getValue()){
+							ret=cand;
+						}
+					}
+					
+				}
+			}
+		}
+		return ret;
+	}
 	/**
 	 * Add a binary content to the Container
 	 * @param id a unique identifier for the content
