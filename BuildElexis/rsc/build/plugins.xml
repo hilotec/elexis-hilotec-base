@@ -118,6 +118,9 @@
             <antcall target="krech"/>
         <available file="../Laborimport-Unilabs/build.xml" property="unilabs.ok"/>
             <antcall target="unilabs"/>
+        <available file="../Laborimport-Unilabs-Mitteland/build.xml" property="unilabs_ml.ok"/>
+            <antcall target="unilabs_ml"/>
+
         <available file="../elexis-importer-vitodata/build.xml" property="vitodata.ok"/>
             <antcall target="vitodata"/>
         <available file="../elexis-importer-aeskulap/build.xml" property="aeskulap.ok"/>
@@ -191,6 +194,9 @@
     <target name="unilabs" if="unilabs.ok">
         <ant antfile="../Laborimport-Unilabs/build.xml"/>
     </target>
+	<target name="unilabs_ml" if="unilabs_ml.ok">
+	        <ant antfile="../Laborimport-Unilabs-Mittelland/build.xml"/>
+	 </target>
     <target name="krech" if="krech.ok">
         <ant antfile="../Laborimport-Krech/build.xml"/>
     </target>
