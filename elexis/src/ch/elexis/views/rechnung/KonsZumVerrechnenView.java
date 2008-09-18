@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 4419 2008-09-18 11:42:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -672,36 +672,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			};
 	}
 	
-	/**
-	 * Automatische Auwahl der Konsultationen, die verrechnet werden sollen Regel 1: Wer weniger als
-	 * zwei Konsultationen hat, wird dann verrechnet, wenn die letzte Konsultation mehr als einen
-	 * Monat her ist Regel 2: Wer mehr als zwei Konsultationen hat, bekommt eine Rechnung über alle
-	 * Konsultationen des vergangenen Quartals
-	 * 
-	 * @SuppressWarnings("unchecked") private void doSelect(final IProgressMonitor monitor){
-	 *                                //Letzte Quartalsgrenze finden TimeTool limitQuartal=new
-	 *                                TimeTool();; limitQuartal.set(TimeTool.DAY_OF_MONTH,1);
-	 *                                TimeTool limitMonat; TimeTool act=new TimeTool(); TimeTool
-	 *                                dat=new TimeTool(); limitMonat=new TimeTool(act);
-	 *                                limitMonat.add(TimeTool.MONTH, -1);
-	 *                                limitMonat.set(TimeTool.DAY_OF_MONTH, 1); String
-	 *                                heute=act.toString(TimeTool.DATE_COMPACT).substring(4);
-	 * 
-	 * if(heute.compareTo("0930")>0){ //$NON-NLS-1$ limitQuartal.set(TimeTool.MONTH,9); // 1.10.
-	 * }else if(heute.compareTo("0630")>0){ //$NON-NLS-1$ limitQuartal.set(TimeTool.MONTH,6); }else
-	 * if(heute.compareTo("0331")>0){ //$NON-NLS-1$ limitQuartal.set(TimeTool.MONTH,3); }else{
-	 * limitQuartal.set(TimeTool.MONTH,1); } List<Tree> lAll=(List<Tree>)tAll.getChildren();
-	 * monitor.beginTask(Messages.getString("KonsZumVerrechnenView.analyzeCons"), lAll.size()+1);
-	 * //$NON-NLS-1$ for(Tree tP:lAll){ monitor.worked(1); for(Tree tF:(List<Tree>)tP.getChildren()){
-	 * List<Tree> tK=(List<Tree>)tF.getChildren(); if(tK.size()<3){ boolean isLater=false;
-	 * for(Tree tk:tK){ Konsultation k=(Konsultation)tk.contents; dat.set(k.getDatum());
-	 * if(dat.isAfter(limitMonat)){ isLater=true; break; } } if(isLater==false){ // Weniger als 3
-	 * Kons, alle mehr als einen Monat her -> auswahl. for(Tree tk:tK){
-	 * selectBehandlung((Konsultation)tk.contents, tAll, tSelection); } } }else{ // Mehr als 3 Kons
-	 * for(Tree tk:tK){ Konsultation k=(Konsultation)tk.contents; dat.set(k.getDatum());
-	 * if(dat.isBefore(limitQuartal)){ selectBehandlung(k, tAll, tSelection); } } }
-	 * if(monitor.isCanceled()){ monitor.done(); return; } } } monitor.done(); }
-	 */
+	
 	/**
 	 * Auwahl der Konsultationen, die verrechnet werden sollen, nach Datum. Es erscheint ein Dialog,
 	 * wo man den gewünschten Bereich wählen kann.
