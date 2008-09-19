@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 3996 2008-06-02 05:22:25Z rgw_ch $
+ *    $Id: Fall.java 4420 2008-09-19 15:41:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -59,7 +59,23 @@ public class Fall extends PersistentObject{
 				"PatientID","res=Diagnosen","DatumVon=S:D:DatumVon","DatumBis=S:D:DatumBis",
                 "GarantID","Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum",
 				"Bezeichnung","Grund","xGesetz=Gesetz","Kostentraeger=KostentrID",
-				"VersNummer","FallNummer","BetriebsNummer","ExtInfo");
+				"VersNummer","FallNummer","RnPlanung=BetriebsNummer","ExtInfo");
+	}
+	
+	public TimeTool getBillingDate(){
+		String r=get("RnPlanung");
+		if(StringTool.isNothing(r)){
+			return null;
+		}
+		TimeTool ret=new TimeTool();
+		if(ret.set(r)){
+			return ret;
+		}
+		return null;
+	}
+	
+	public void setBillingDate(TimeTool dat){
+		set("RnPlanung",dat.toString(TimeTool.DATE_GER));
 	}
 	
 	@Override
@@ -158,6 +174,11 @@ public class Fall extends PersistentObject{
 		set("DatumBis",dat);
 	}
 	
+	/**
+	 * Den Rechnungsempfänger liefern
+	 * 
+	 * @return
+	 */
 	public Kontakt getGarant(){
 		Kontakt ret= Kontakt.load(get("GarantID"));
 		if((ret==null) || (!ret.isValid())){

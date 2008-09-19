@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: RechnungsBlatt.java 4420 2008-09-19 15:41:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -25,6 +25,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -67,10 +68,10 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	org.eclipse.swt.widgets.List lbOutputs;
 	Rechnung actRn;
 	ScrolledForm form;
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk=Desk.getToolkit();
 	//Button bBuchung,bPrint,bStorno,bGebuehr,bGutschrift;
 	Text tRejects,tBemerkungen;
-	
+	Label rnAdressat;
 	ListViewer konsultationenViewer;
 		
 	private ExpandableComposite ecBuchungen;
@@ -133,6 +134,8 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
     		li.setEditable(false);
     	}
     	rnform.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+    	rnAdressat=new Label(body,SWT.NONE);
+    	rnAdressat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
     	
 		IExpansionListener ecExpansionListener =  new ExpansionAdapter(){
             @Override
@@ -356,13 +359,13 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	public void selectionEvent(PersistentObject obj) {
 		if(obj instanceof Rechnung){
 			actRn=(Rechnung)obj;
-			Desk.theDisplay.syncExec(new Runnable(){
+			Desk.getDisplay().syncExec(new Runnable(){
 				public void run() {
 					display();
 				}
 			});
 		} else if (obj instanceof Anwender) {
-			Desk.theDisplay.syncExec(new Runnable() {
+			Desk.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					display();
 				}
@@ -371,11 +374,13 @@ public class RechnungsBlatt extends Composite implements ActivationListener,
 	}
 	public void display(){
     	rnform.reload(actRn);
+    	rnAdressat.setText("");
     	buchungen.refresh(true);
     	lbJournal.removeAll();
     	tRejects.setText("");
     	lbOutputs.removeAll();
     	if(actRn!=null){
+    		rnAdressat.setText("Adressat: "+actRn.getFall().getGarant().getLabel());
     		form.setText(actRn.getLabel());
 	    	List<String> trace=actRn.getTrace(Rechnung.STATUS_CHANGED);
 	    	for(String s:trace){
