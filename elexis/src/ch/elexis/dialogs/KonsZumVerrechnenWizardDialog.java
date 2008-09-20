@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenWizardDialog.java 4420 2008-09-19 15:41:29Z rgw_ch $
+ *  $Id: KonsZumVerrechnenWizardDialog.java 4422 2008-09-20 09:03:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -60,7 +60,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 	
 	public TimeTool ttFirstBefore, ttLastBefore;
 	public Money mAmount;
-	public boolean bQuartal;
+	public boolean bQuartal, bMarked;
 	
 	public KonsZumVerrechnenWizardDialog(final Shell parentShell){
 		super(parentShell);
@@ -75,6 +75,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 		cbMarked = new Button(ret, SWT.CHECK);
 		cbMarked.setText(ALLMARKED);
 		cbMarked.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		cbMarked.setSelection(true);
 		cbBefore = new Button(ret, SWT.CHECK);
 		cbBefore.setText(TREATMENTBEGINBEFORE);
 		sp1 = new Spinner(ret, SWT.NONE);
@@ -83,10 +84,10 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 		sp1.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
 				int days = sp1.getSelection();
-				TimeTool tt=new TimeTool();
-				tt.add(TimeTool.DAY_OF_YEAR, -1*days);
+				TimeTool tt = new TimeTool();
+				tt.add(TimeTool.DAY_OF_YEAR, -1 * days);
 				dp1.setDate(tt.getTime());
-				Hub.localCfg.set(CONFIG + "beginBefore", (int)days);
+				Hub.localCfg.set(CONFIG + "beginBefore", (int) days);
 			}
 			
 		});
@@ -106,10 +107,10 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 		sp2.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
 				int days = sp2.getSelection();
-				TimeTool tt=new TimeTool();
-				tt.add(TimeTool.DAY_OF_YEAR, -1*days);
+				TimeTool tt = new TimeTool();
+				tt.add(TimeTool.DAY_OF_YEAR, -1 * days);
 				dp2.setDate(tt.getTime());
-				Hub.localCfg.set(CONFIG + "endBefore", (int)days);
+				Hub.localCfg.set(CONFIG + "endBefore", (int) days);
 			}
 			
 		});
@@ -138,6 +139,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed(){
+		
 		if (cbBefore.getSelection()) {
 			ttFirstBefore = new TimeTool(dp1.getDate().getTime());
 		}
@@ -148,6 +150,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 			mAmount = mi1.getMoney(false);
 		}
 		bQuartal = cbQuartal.getSelection();
+		bMarked = cbMarked.getSelection();
 		super.okPressed();
 	}
 	
