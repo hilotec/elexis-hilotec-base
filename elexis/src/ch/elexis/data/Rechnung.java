@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 4422 2008-09-20 09:03:09Z rgw_ch $
+ *  $Id: Rechnung.java 4423 2008-09-20 11:41:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -68,14 +68,15 @@ public class Rechnung extends PersistentObject {
 	/**
 	 * Eine Rechnung aus einer Behandlungsserie erstellen. Es werde aus dieser Serie nur diejenigen
 	 * Behandlungen verwendet, die zum selben Mandanten und zum selben Fall gehören. Falls der Fall
-	 * einen Rechnungssteller hat, werden alle Konsultationen ungeachtet des Mandanten
+	 * einen Rechnungssteller hat, werden alle Konsultationen ungeachtet des Mandanten verrechnet
 	 * 
 	 * @return Ein Result mit ggf. der erstellten Rechnung als Inhalt
 	 */
 	public static Result<Rechnung> build(final List<Konsultation> behandlungen){
 		Result<Rechnung> result = new Result<Rechnung>();
 		if ((behandlungen == null) || (behandlungen.size() == 0)) {
-			return result.add(Result.SEVERITY.WARNING, 1, "Die Rechnung enthält keine Behandlungen", null, true);
+			return result.add(Result.SEVERITY.WARNING, 1,
+				"Die Rechnung enthält keine Behandlungen", null, true);
 		}
 		Rechnung ret = new Rechnung();
 		ret.create(null);
@@ -98,8 +99,8 @@ public class Rechnung extends PersistentObject {
 			Mandant bm = b.getMandant();
 			if ((bm == null) || (!bm.isValid())) {
 				result =
-					result.add(Result.SEVERITY.ERROR, 1,
-						"Ungültiger Mandant bei Konsultation " + b.getLabel(), ret, true);
+					result.add(Result.SEVERITY.ERROR, 1, "Ungültiger Mandant bei Konsultation "
+						+ b.getLabel(), ret, true);
 				continue;
 			}
 			if (m == null) {
@@ -112,26 +113,28 @@ public class Rechnung extends PersistentObject {
 				 */
 				if (!bm.getId().equals(Hub.actMandant.getId())) {
 					result =
-						result.add(Result.SEVERITY.ERROR, 2, "Die Liste enthält unterschiedliche Mandanten "
-							+ b.getLabel(), ret, true);
+						result.add(Result.SEVERITY.ERROR, 2,
+							"Die Liste enthält unterschiedliche Mandanten " + b.getLabel(), ret,
+							true);
 					continue;
 				}
 			}
 			Fall bf = b.getFall();
 			if (bf == null) {
 				result =
-					result.add(Result.SEVERITY.ERROR, 3, "Fehlender Fall bei Konsultation " + b.getLabel(),
-						ret, true);
+					result.add(Result.SEVERITY.ERROR, 3, "Fehlender Fall bei Konsultation "
+						+ b.getLabel(), ret, true);
 				continue;
 			}
 			if (f == null) {
 				f = bf;
 				ret.set("FallID", f.getId());
+				f.setBillingDate(null); // ggf. Rechnungsvorschlag löschen
 			} else {
 				if (!f.getId().equals(bf.getId())) {
 					result =
-						result.add(Result.SEVERITY.ERROR, 4, "Die Liste enthält unterschiedliche Faelle "
-							+ b.getLabel(), ret, true);
+						result.add(Result.SEVERITY.ERROR, 4,
+							"Die Liste enthält unterschiedliche Faelle " + b.getLabel(), ret, true);
 					continue;
 				}
 			}
@@ -141,8 +144,8 @@ public class Rechnung extends PersistentObject {
 			}
 			if (actDate.set(b.getDatum()) == false) {
 				result =
-					result.add(Result.SEVERITY.ERROR, 5, "Ungültiges Datum bei Konsultation " + b.getLabel(),
-						ret, true);
+					result.add(Result.SEVERITY.ERROR, 5, "Ungültiges Datum bei Konsultation "
+						+ b.getLabel(), ret, true);
 				continue;
 			}
 			if (actDate.isBefore(startDate)) {
@@ -278,18 +281,18 @@ public class Rechnung extends PersistentObject {
 		Money betrag = getBetrag();
 		new Zahlung(this, betrag, "Storno");
 		if (reopen == true) {
-			Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
+			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 			qbe.add("RechnungsID", "=", getId());
-			for(Konsultation k:qbe.execute()){
+			for (Konsultation k : qbe.execute()) {
 				k.set("RechnungsID", null);
 			}
 			/*
-			getConnection().exec(
-				"UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID=" + getWrappedId());
-			*/
+			 * getConnection().exec( "UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID=" +
+			 * getWrappedId());
+			 */
 			setStatus(RnStatus.STORNIERT);
-		}else{
-
+		} else {
+			
 			setStatus(RnStatus.ABGESCHRIEBEN);
 		}
 	}
@@ -580,6 +583,14 @@ public class Rechnung extends PersistentObject {
 		return null;
 	}
 	
+	/**
+	 * Eien Rechnung anhand ihrer Nummer holen
+	 * 
+	 * @param Rnnr
+	 *            die Rechnungsnummer
+	 * @return die Rechnung mit dieser Nummer oder Null, wenn keine Rechnung mit dieser Nummer
+	 *         existiert.
+	 */
 	public static Rechnung getFromNr(final String Rnnr){
 		String id = new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", Rnnr);
 		Rechnung ret = load(id);

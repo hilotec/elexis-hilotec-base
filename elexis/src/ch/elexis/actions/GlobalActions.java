@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ * $Id: GlobalActions.java 4423 2008-09-20 11:41:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -64,6 +65,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.LoginDialog;
 import ch.elexis.PatientPerspektive;
+import ch.elexis.commands.FallPlaneRechnung;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
@@ -108,7 +110,7 @@ public class GlobalActions {
 	public static IAction printEtikette, printBlatt, printAdresse, printVersionedEtikette;
 	public static IAction printRoeBlatt;
 	public static IAction delFallAction, delKonsAction, openFallaction, filterAction,
-			reopenFallAction, makeBillAction;
+			reopenFallAction, makeBillAction, planeRechnungAction;
 	public static IAction moveBehandlungAction, redateAction, neueKonsAction, neuerFallAction;
 	
 	public static MenuManager perspectiveMenu, viewMenu;
@@ -633,6 +635,11 @@ public class GlobalActions {
 					}
 				}
 			};
+		planeRechnungAction=new Action(Messages.getString("GlobalActions.PlaneRechnung")){
+				public void run(){
+					
+				}
+		};
 	}
 	
 	/**
