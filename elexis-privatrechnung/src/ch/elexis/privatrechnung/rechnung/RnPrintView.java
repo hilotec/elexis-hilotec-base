@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 4380 2008-09-07 13:58:12Z rgw_ch $
+ * $Id: RnPrintView.java 4421 2008-09-20 09:02:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
@@ -106,7 +106,7 @@ public class RnPrintView extends ViewPart {
 					new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + "\n", SWT.LEFT);
 			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 10);
 			for (Verrechnet vv : k.getLeistungen()) {
-				Money preis = vv.getEffPreis();
+				Money preis = vv.getNettoPreis();
 				int zahl = vv.getZahl();
 				Money subtotal = new Money(preis);
 				subtotal.multiply(zahl);

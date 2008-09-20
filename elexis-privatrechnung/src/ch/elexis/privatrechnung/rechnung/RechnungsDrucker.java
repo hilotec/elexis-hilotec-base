@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4380 2008-09-07 13:58:12Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4421 2008-09-20 09:02:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
@@ -36,7 +36,6 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Log;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -102,8 +101,8 @@ public class RechnungsDrucker implements IRnOutputter {
 	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn){
 		IWorkbenchPage rnPage;
 		final Result<Rechnung> result = new Result<Rechnung>(); // =new
-																// Result<Rechnung>(Log.ERRORS,99,"Not
-																// yet implemented",null,true);
+		// Result<Rechnung>(Log.ERRORS,99,"Not
+		// yet implemented",null,true);
 		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
@@ -155,7 +154,8 @@ public class RechnungsDrucker implements IRnOutputter {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
-			ErrorDialog.openError(null, "Exception", "Exception", ResultAdapter.getResultAsStatus(res));
+			ErrorDialog.openError(null, "Exception", "Exception", ResultAdapter
+				.getResultAsStatus(res));
 			return res;
 		}
 		if (!result.isOK()) {
