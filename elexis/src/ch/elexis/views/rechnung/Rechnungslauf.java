@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 4425 2008-09-21 15:50:10Z rgw_ch $
+ *  $Id: Rechnungslauf.java 4426 2008-09-21 20:00:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -33,138 +33,149 @@ import ch.elexis.util.Money;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Aktion für das "Zauberstab"-Icon in der KonsZumVerrechnen View -> Dialog mit verschiedenen Kriterien zur Komnsultationsauswahl
- * und Rechnungslauf anhand dieser Auswahl
+ * Aktion für das "Zauberstab"-Icon in der KonsZumVerrechnen View -> Dialog mit
+ * verschiedenen Kriterien zur Komnsultationsauswahl und Rechnungslauf anhand
+ * dieser Auswahl
+ * 
  * @author gerry
- *
+ * 
  */
 public class Rechnungslauf implements IRunnableWithProgress {
-	
-	TimeTool ttFirstBefore, ttLastBefore, ttHeute,limitQuartal;
+
+	TimeTool ttFirstBefore, ttLastBefore, ttHeute, limitQuartal;
 	Money mLimit;
 	boolean bQuartal, bMarked;
 	Hashtable<Konsultation, Patient> hKons;
 	KonsZumVerrechnenView kzv;
-	
-	public Rechnungslauf(KonsZumVerrechnenView kzv, boolean bMarked, TimeTool ttFirstBefore, TimeTool ttLastBefore, Money mLimit, boolean bQuartal){
-		this.ttFirstBefore=ttFirstBefore;
-		this.ttLastBefore=ttLastBefore;
-		this.mLimit=mLimit;
-		this.bQuartal=bQuartal;
-		hKons=new Hashtable<Konsultation,Patient>(1000);
-		ttHeute=new TimeTool();
-		limitQuartal=new TimeTool();
-		String heute=ttHeute.toString(TimeTool.DATE_COMPACT).substring(4);
-		if(heute.compareTo("0930")>0){ //$NON-NLS-1$
-			limitQuartal.set(TimeTool.MONTH,9);	// 1.10.
-		}else if(heute.compareTo("0630")>0){ //$NON-NLS-1$
-			limitQuartal.set(TimeTool.MONTH,6);
-		}else if(heute.compareTo("0331")>0){ //$NON-NLS-1$
-			limitQuartal.set(TimeTool.MONTH,3);
-		}else{
-			limitQuartal.set(TimeTool.MONTH,1);
+
+	public Rechnungslauf(KonsZumVerrechnenView kzv, boolean bMarked,
+			TimeTool ttFirstBefore, TimeTool ttLastBefore, Money mLimit,
+			boolean bQuartal, boolean bSkip) {
+		this.ttFirstBefore = ttFirstBefore;
+		this.ttLastBefore = ttLastBefore;
+		this.mLimit = mLimit;
+		this.bQuartal = bQuartal;
+		hKons = new Hashtable<Konsultation, Patient>(1000);
+		ttHeute = new TimeTool();
+		limitQuartal = new TimeTool();
+		String heute = ttHeute.toString(TimeTool.DATE_COMPACT).substring(4);
+		if (heute.compareTo("0930") > 0) { //$NON-NLS-1$
+			limitQuartal.set(TimeTool.MONTH, 9); // 1.10.
+		} else if (heute.compareTo("0630") > 0) { //$NON-NLS-1$
+			limitQuartal.set(TimeTool.MONTH, 6);
+		} else if (heute.compareTo("0331") > 0) { //$NON-NLS-1$
+			limitQuartal.set(TimeTool.MONTH, 3);
+		} else {
+			limitQuartal.set(TimeTool.MONTH, 1);
 		}
-		this.bMarked=bMarked;
-		this.kzv=kzv;
+		this.bMarked = bMarked;
+		this.kzv = kzv;
 	}
+
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-			String kMandantID=Hub.actMandant.getId();
-			Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
-			qbe.add("RechnungsID", "", null);
-			//if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
-				qbe.add("MandantID", "=", kMandantID);
-			//}
-			monitor.beginTask("Analysiere Konsultationen", IProgressMonitor.UNKNOWN);
-			monitor.subTask("Lese Konsultationen ein");
-			List<Konsultation> list=qbe.execute();
-			TimeTool now=new TimeTool();
-			TimeTool cmp=new TimeTool();
-			for(Konsultation k:list){
-				monitor.worked(1);
-				if(hKons.get(k)!=null){
-					continue;
-				}
-				Fall kFall=k.getFall();
-				if((kFall==null) || (!kFall.exists())){
-					continue;
-				}
-				String kfID=kFall.getId();
-				Patient kPatient=kFall.getPatient();
-				
-				if((kPatient==null) || (!kPatient.exists())){
-					continue;
-				}
-				if(bMarked){										// Alle zur Verrechnung markierten Fälle abrechnen
-					TimeTool bd=kFall.getBillingDate();
-					if( (bd!=null) && (bd.isBeforeOrEqual(now))){
-						for(Konsultation k2:list){
-							String fid=k2.get("FallID");
-							String mid=k2.get("MandantID");
-							if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
-									hKons.put(k2, kPatient);
-							}
+		String kMandantID = Hub.actMandant.getId();
+		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+		qbe.add("RechnungsID", "", null);
+		// if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
+		qbe.add("MandantID", "=", kMandantID);
+		// }
+		monitor
+				.beginTask("Analysiere Konsultationen",
+						IProgressMonitor.UNKNOWN);
+		monitor.subTask("Lese Konsultationen ein");
+		List<Konsultation> list = qbe.execute();
+		TimeTool now = new TimeTool();
+		TimeTool cmp = new TimeTool();
+		for (Konsultation k : list) {
+			monitor.worked(1);
+			if (hKons.get(k) != null) {
+				continue;
+			}
+			Fall kFall = k.getFall();
+			if ((kFall == null) || (!kFall.exists())) {
+				continue;
+			}
+			String kfID = kFall.getId();
+			Patient kPatient = kFall.getPatient();
+
+			if ((kPatient == null) || (!kPatient.exists())) {
+				continue;
+			}
+			if (bMarked) { // Alle zur Verrechnung markierten Fälle abrechnen
+				TimeTool bd = kFall.getBillingDate();
+				if ((bd != null) && (bd.isBeforeOrEqual(now))) {
+					for (Konsultation k2 : list) {
+						String fid = k2.get("FallID");
+						String mid = k2.get("MandantID");
+						if ((fid != null) && (fid.equals(kfID))
+								&& (mid.equals(kMandantID))) {
+							hKons.put(k2, kPatient);
 						}
-					}
-				}
-				if(ttFirstBefore!=null){							// Alle Serien mit Beginn vor einem bestimmten Datum
-					cmp.set(k.getDatum());
-					if(cmp.isBefore(ttFirstBefore)){
-						for(Konsultation k2:list){
-							String fid=k2.get("FallID");
-							String mid=k2.get("MandantID");
-							if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
-									hKons.put(k2, kPatient);
-							}
-						}
-					}
-				}
-				
-				if(ttLastBefore!=null){
-					cmp.set(k.getDatum());
-					if(cmp.isBefore(ttFirstBefore)){
-						for(Konsultation k2:list){
-							String fid=k2.get("FallID");
-							String mid=k2.get("MandantID");
-							if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
-								hKons.put(k2, kPatient);
-							}
-						}
-					}
-				}
-				if(mLimit!=null){
-					Money sum=new Money();
-					Map<Konsultation,Patient> list2=new HashMap<Konsultation,Patient>(100);
-					for(Konsultation k2:list){
-					String fid=k2.get("FallID");
-					String mid=k2.get("MandantID");
-					if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
-						list2.put(k2,kPatient);
-							sum.addAmount(k2.getUmsatz()/100.0);
-						}
-					}
-					if(sum.isMoreThan(mLimit)){
-						hKons.putAll(list2);
-					}
-				}
-			
-				
-				if(bQuartal){
-					cmp.set(k.getDatum());
-					if(cmp.isBefore(limitQuartal)){
-						hKons.put(k, kPatient);
 					}
 				}
 			}
-			monitor.subTask("erstelle Listen");
-			Enumeration<Konsultation> en=hKons.keys();
-			while(en.hasMoreElements()){
-				kzv.selectKonsultation(en.nextElement());
-				monitor.worked(1);
+			if (ttFirstBefore != null) { // Alle Serien mit Beginn vor einem
+											// bestimmten Datum
+				cmp.set(k.getDatum());
+				if (cmp.isBefore(ttFirstBefore)) {
+					for (Konsultation k2 : list) {
+						String fid = k2.get("FallID");
+						String mid = k2.get("MandantID");
+						if ((fid != null) && (fid.equals(kfID))
+								&& (mid.equals(kMandantID))) {
+							hKons.put(k2, kPatient);
+						}
+					}
+				}
 			}
-			monitor.done();
+
+			if (ttLastBefore != null) {
+				cmp.set(k.getDatum());
+				if (cmp.isBefore(ttFirstBefore)) {
+					for (Konsultation k2 : list) {
+						String fid = k2.get("FallID");
+						String mid = k2.get("MandantID");
+						if ((fid != null) && (fid.equals(kfID))
+								&& (mid.equals(kMandantID))) {
+							hKons.put(k2, kPatient);
+						}
+					}
+				}
+			}
+			if (mLimit != null) {
+				Money sum = new Money();
+				Map<Konsultation, Patient> list2 = new HashMap<Konsultation, Patient>(
+						100);
+				for (Konsultation k2 : list) {
+					String fid = k2.get("FallID");
+					String mid = k2.get("MandantID");
+					if ((fid != null) && (fid.equals(kfID))
+							&& (mid.equals(kMandantID))) {
+						list2.put(k2, kPatient);
+						sum.addAmount(k2.getUmsatz() / 100.0);
+					}
+				}
+				if (sum.isMoreThan(mLimit)) {
+					hKons.putAll(list2);
+				}
+			}
+
+			if (bQuartal) {
+				cmp.set(k.getDatum());
+				if (cmp.isBefore(limitQuartal)) {
+					hKons.put(k, kPatient);
+				}
+			}
+		}
+		monitor.subTask("erstelle Listen");
+		Enumeration<Konsultation> en = hKons.keys();
+		while (en.hasMoreElements()) {
+			kzv.selectKonsultation(en.nextElement());
+			monitor.worked(1);
+		}
+		monitor.done();
 
 	}
-	
 
 }
