@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailView.java 2865 2007-07-22 15:26:06Z rgw_ch $
+ *  $Id: FallDetailView.java 4424 2008-09-21 13:56:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -29,42 +29,38 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.SWTHelper;
 
 public class FallDetailView extends ViewPart implements SelectionListener, ISaveablePart2 {
-	public static final String ID="ch.elexis.FallDetailView";
+	public static final String ID = "ch.elexis.FallDetailView";
 	FallDetailBlatt2 fdb;
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
-		fdb=new FallDetailBlatt2(parent);
+		fdb = new FallDetailBlatt2(parent);
 		fdb.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		GlobalEvents.getInstance().addSelectionListener(this);
 	}
-
-    
 	
 	@Override
-	public void setFocus() {}
-
-		
-
+	public void setFocus(){}
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEvents.getInstance().removeSelectionListener(this);
 		super.dispose();
 	}
 	
-	/*  2 Methoden des Selection listeners */
-	public void selectionEvent(PersistentObject obj) {
-		if(obj instanceof Fall){
-			fdb.setFall((Fall)obj);
+	/* 2 Methoden des Selection listeners */
+	public void selectionEvent(PersistentObject obj){
+		if (obj instanceof Fall) {
+			fdb.setFall((Fall) obj);
 		} else if (obj instanceof Patient) {
-			// Fall der letzten Konsultation waehlen, falls aktueller Fall nicht zum Patienten gehoert
+			// Fall der letzten Konsultation waehlen, falls aktueller Fall nicht zum Patienten
+			// gehoert
 			// (siehe KonsDetailView.selectionEvent())
 			Patient patient = (Patient) obj;
 			Fall selectedFall = GlobalEvents.getSelectedFall();
 			
-			if (selectedFall == null ||
-					!selectedFall.getPatient().equals(patient)) {
+			if (selectedFall == null || !selectedFall.getPatient().equals(patient)) {
 				
 				Konsultation letzteKons = patient.getLetzteKons(false);
 				if (letzteKons != null) {
@@ -75,32 +71,37 @@ public class FallDetailView extends ViewPart implements SelectionListener, ISave
 			}
 		}
 	}
-
-	public void clearEvent(Class template) {
-		if(template.equals(Patient.class) || template.equals(Fall.class)){
+	
+	public void clearEvent(Class template){
+		if (template.equals(Patient.class) || template.equals(Fall.class)) {
 			fdb.setFall(null);
 		}
 	}
-
-	/* ******
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
-	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist.
+	
+	/***********************************************************************************************
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
 	 * Gibt es da keine einfachere Methode?
-	 */ 
-	public int promptToSaveOnClose() {
-		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
+	 */
+	public int promptToSaveOnClose(){
+		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
+				: ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
-	public void doSaveAs() { /* leer */}
-	public boolean isDirty() {
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */}
+	
+	public void doSaveAs(){ /* leer */}
+	
+	public boolean isDirty(){
 		return true;
 	}
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-
+	
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 3994 2008-06-01 18:08:38Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 4424 2008-09-21 13:56:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -42,6 +42,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.dialogs.KontaktSelektor;
+import ch.elexis.util.DayDateCombo;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -49,339 +50,335 @@ import ch.rgw.tools.TimeTool;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 /**
- * Display detail data of a Fall 
+ * Display detail data of a Fall
  */
 public class FallDetailBlatt2 extends Composite {
 	private final FormToolkit tk;
 	private final ScrolledForm form;
-	String[] Abrechnungstypen=Fall.getAbrechnungsSysteme();
+	String[] Abrechnungstypen = Fall.getAbrechnungsSysteme();
 	private Fall actFall;
+	DayDateCombo ddc;
 	
-    public static final String[] Reasons={Fall.TYPE_DISEASE,
-    	Fall.TYPE_ACCIDENT,Fall.TYPE_MATERNITY,Fall.TYPE_PREVENTION,Fall.TYPE_BIRTHDEFECT,Fall.TYPE_OTHER};
-    public static final String[] dgsys=null;
-	Combo cAbrechnung,cReason;
+	public static final String[] Reasons =
+		{
+			Fall.TYPE_DISEASE, Fall.TYPE_ACCIDENT, Fall.TYPE_MATERNITY, Fall.TYPE_PREVENTION,
+			Fall.TYPE_BIRTHDEFECT, Fall.TYPE_OTHER
+		};
+	public static final String[] dgsys = null;
+	Combo cAbrechnung, cReason;
 	DatePickerCombo dpVon, dpBis;
 	Text tBezeichnung, tGarant;
-    Hyperlink autoFill;
-    List<Control> lReqs=new ArrayList<Control>();
+	Hyperlink autoFill;
+	List<Control> lReqs = new ArrayList<Control>();
+	
 	public FallDetailBlatt2(final Composite parent){
-		super(parent,SWT.NONE);
-		tk=Desk.getToolkit();
-		form=tk.createScrolledForm(this);
-		Composite top=form.getBody();
+		super(parent, SWT.NONE);
+		tk = Desk.getToolkit();
+		form = tk.createScrolledForm(this);
+		Composite top = form.getBody();
 		setLayout(new FillLayout());
-		top.setLayout(new GridLayout(2,false));
-		tk.createLabel(top,"Abrechnungsmethode");
-		Composite cpAbrechnung=new Composite(top,SWT.NONE);
-		cpAbrechnung.setLayout(new GridLayout(2,false));
-		cAbrechnung=new Combo(cpAbrechnung,SWT.READ_ONLY);
-		autoFill=tk.createHyperlink(cpAbrechnung, "Daten übernehmen", SWT.NONE);
-		autoFill.addHyperlinkListener(new HyperlinkAdapter(){
-
+		top.setLayout(new GridLayout(2, false));
+		tk.createLabel(top, "Abrechnungsmethode");
+		Composite cpAbrechnung = new Composite(top, SWT.NONE);
+		cpAbrechnung.setLayout(new GridLayout(2, false));
+		cAbrechnung = new Combo(cpAbrechnung, SWT.READ_ONLY);
+		autoFill = tk.createHyperlink(cpAbrechnung, "Daten übernehmen", SWT.NONE);
+		autoFill.addHyperlinkListener(new HyperlinkAdapter() {
+			
 			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				Fall f=getFall();
+			public void linkActivated(final HyperlinkEvent e){
+				Fall f = getFall();
 				if (f == null) {
 					return;
 				}
-				String abr=f.getAbrechnungsSystem();
+				String abr = f.getAbrechnungsSystem();
 				// make sure compatibility methods are called
-
-				String ktNew=f.getInfoString("Kostenträger");
-				String ktOld=f.get("Kostentraeger");
 				
-				if(StringTool.isNothing(ktNew)){
-					Kontakt k=Kontakt.load(ktOld);
-					if(k.isValid()){
+				String ktNew = f.getInfoString("Kostenträger");
+				String ktOld = f.get("Kostentraeger");
+				
+				if (StringTool.isNothing(ktNew)) {
+					Kontakt k = Kontakt.load(ktOld);
+					if (k.isValid()) {
 						f.setRequiredContact("Kostenträger", k);
 					}
 				}
-				String vnNew=f.getInfoString("Versicherungsnummer");
-				//String vnOld=f.getVersNummer();
-				String vnOld=f.get("VersNummer");
-				if(StringTool.isNothing(vnNew)){
+				String vnNew = f.getInfoString("Versicherungsnummer");
+				// String vnOld=f.getVersNummer();
+				String vnOld = f.get("VersNummer");
+				if (StringTool.isNothing(vnNew)) {
 					f.setRequiredString("Versicherungsnummer", vnOld);
 				}
 				
 				Fall[] faelle = f.getPatient().getFaelle();
-				for(Fall f0:faelle){
+				for (Fall f0 : faelle) {
 					if (f0.getId().equals(f.getId())) {
 						// ignore current Fall
 						continue;
 					}
 					
-					if(f0.getAbrechnungsSystem().equals(abr)){
-						if(f.getInfoString("Rechnungsempfänger").equals("")){
-							f.setInfoString("Rechnungsempfänger",f0.get("GarantID"));
+					if (f0.getAbrechnungsSystem().equals(abr)) {
+						if (f.getInfoString("Rechnungsempfänger").equals("")) {
+							f.setInfoString("Rechnungsempfänger", f0.get("GarantID"));
 						}
-						if(f.getInfoString("Kostenträger").equals("")) {
-							f.setInfoString("Kostenträger",f0.get("Kostentraeger"));
+						if (f.getInfoString("Kostenträger").equals("")) {
+							f.setInfoString("Kostenträger", f0.get("Kostentraeger"));
 						}
-						
+						if (f.getInfoString("Versicherungsnummer").equals("")) {
+							f.setInfoString("Versicherungsnummer", f0
+								.getInfoString("Versicherungsnummer"));
+						}
 						// TODO break? or looking for the most current Fall?
 						break;
 					}
 				}
-		    	setFall(f);
-				
-				// copy data from previous Fall of the same Gesetz
-				
-				/* fix this later
-				Fall f=GlobalEvents.getSelectedFall();
-				// don't do anything if no Fall is selected
-				
-				
-				Fall[] faelle = f.getPatient().getFaelle();
-				String g=f.getGesetz();
-				for(Fall f0:faelle){
-					if (f0.getId().equals(f.getId())) {
-						// ignore current Fall
-						continue;
-					}
-					
-					if(f0.getGesetz().equals(g)){
-						f.setGarant(f0.getGarant());
-						String pm=f0.getPaymentMode();
-						f.setPaymentMode(pm);
-						Kontakt k=f0.getKostentraeger();
-						f.setKostentraeger(k);
-						// TODO break? or looking for the most current Fall?
-					}
-				}
-		    	setFall(f);
-		    	*/
+				setFall(f);
 			}
 		});
 		cAbrechnung.setItems(Abrechnungstypen);
-
-        cAbrechnung.addSelectionListener(new SelectionAdapter(){
-            @Override
-            public void widgetSelected(final SelectionEvent e)
-            {
-                int i=cAbrechnung.getSelectionIndex();
-                Fall fall=getFall();
-                if(fall!=null){
-                	if(fall.getBehandlungen(false).length>0){
-                		if(Hub.acl.request(AccessControlDefaults.CASE_MODIFY)){
-	                		if(SWTHelper.askYesNo("Abrechnungssystem sollte nicht geändert werden", 
-	                				"Wenn Sie das Abrechnungssystem ändern, werden eventuell die bereits abgerechneten Konsultationen dieses Falles fehlerhaft sein. Wirklich fortfahren?")){
-		                		fall.setAbrechnungsSystem(cAbrechnung.getItem(i));
-		                		setFall(fall);
-		                		GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-		                		return;
-	                		}
-                		}else{
-                			SWTHelper.alert("Abrechnungssystem kann nicht geändert werden", "Sie haben keine ausreichenden Rechte, um das Abrechnungssystem dieses Falles zu ändern.");
-                		}
-                		String gesetz=fall.getAbrechnungsSystem();
-                		if(ch.rgw.tools.StringTool.isNothing(gesetz)){
-                			gesetz="frei";
-                		}
-                		cAbrechnung.select(cAbrechnung.indexOf(gesetz));
-                		
-                	}else{
-                		fall.setAbrechnungsSystem(Abrechnungstypen[i]);
-                		setFall(fall);
-                		GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-                	// Falls noch kein Garant gesetzt ist: Garanten des letzten Falles zum selben Gesetz nehmen
-                	}
-                	
-                }
-            }
-            
-        });
-		tk.createLabel(top,"Bezeichnung");
-		tBezeichnung=tk.createText(top,"");
-        tBezeichnung.addFocusListener(new FocusAdapter(){
+		
+		cAbrechnung.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void focusLost(final FocusEvent e) {
-				String newval=((Text)e.getSource()).getText();
-	            Fall fall=getFall();
-	            if(fall!=null){
-	            	fall.set("Bezeichnung",newval);
-	            	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-	            }	
-				super.focusLost(e);
-			}});
-        tBezeichnung.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		tk.createLabel(top,"Grund für Versicherung");
-		cReason=new Combo(top,SWT.READ_ONLY);
-		cReason.setItems(Reasons);
-		cReason.addSelectionListener(new SelectionAdapter(){
-			@Override
-            public void widgetSelected(final SelectionEvent e)
-            {
-                int i=cReason.getSelectionIndex();
-                Fall fall=getFall();
-                if(fall!=null){
-                	fall.setGrund(Reasons[i]);
-                	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-                }
-            }
+			public void widgetSelected(final SelectionEvent e){
+				int i = cAbrechnung.getSelectionIndex();
+				Fall fall = getFall();
+				if (fall != null) {
+					if (fall.getBehandlungen(false).length > 0) {
+						if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY)) {
+							if (SWTHelper
+								.askYesNo(
+									"Abrechnungssystem sollte nicht geändert werden",
+									"Wenn Sie das Abrechnungssystem ändern, werden eventuell die bereits abgerechneten Konsultationen dieses Falles fehlerhaft sein. Wirklich fortfahren?")) {
+								fall.setAbrechnungsSystem(cAbrechnung.getItem(i));
+								setFall(fall);
+								GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+								return;
+							}
+						} else {
+							SWTHelper
+								.alert("Abrechnungssystem kann nicht geändert werden",
+									"Sie haben keine ausreichenden Rechte, um das Abrechnungssystem dieses Falles zu ändern.");
+						}
+						String gesetz = fall.getAbrechnungsSystem();
+						if (ch.rgw.tools.StringTool.isNothing(gesetz)) {
+							gesetz = "frei";
+						}
+						cAbrechnung.select(cAbrechnung.indexOf(gesetz));
+						
+					} else {
+						fall.setAbrechnungsSystem(Abrechnungstypen[i]);
+						setFall(fall);
+						GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+						// Falls noch kein Garant gesetzt ist: Garanten des letzten Falles zum
+						// selben Gesetz nehmen
+					}
+					
+				}
+			}
+			
 		});
-        cReason.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-        tk.createLabel(top, "Startdatum");
-        dpVon=new DatePickerCombo(top,SWT.NONE);
-        dpVon.addSelectionListener(new SelectionAdapter(){
-
+		tk.createLabel(top, "Bezeichnung");
+		tBezeichnung = tk.createText(top, "");
+		tBezeichnung.addFocusListener(new FocusAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				Fall fall=getFall();
-				fall.setBeginnDatum(new TimeTool(dpVon.getDate().getTime()).toString(TimeTool.DATE_GER));
-				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			public void focusLost(final FocusEvent e){
+				String newval = ((Text) e.getSource()).getText();
+				Fall fall = getFall();
+				if (fall != null) {
+					fall.set("Bezeichnung", newval);
+					GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+				}
+				super.focusLost(e);
 			}
-        	
-        });
-        tk.createLabel(top, "Enddatum");
-        dpBis=new DatePickerCombo(top,SWT.NONE);
-        dpBis.addSelectionListener(new SelectionAdapter(){
-
+		});
+		tBezeichnung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tk.createLabel(top, "Grund für Versicherung");
+		cReason = new Combo(top, SWT.READ_ONLY);
+		cReason.setItems(Reasons);
+		cReason.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				Fall fall=getFall();
-				fall.setEndDatum(new TimeTool(dpBis.getDate().getTime()).toString(TimeTool.DATE_GER));
-				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-			}
-        	
-        });
-        Hyperlink hlGarant=tk.createHyperlink(top, "Rechnungsempfänger", SWT.NONE);
-		hlGarant.addHyperlinkListener(new HyperlinkAdapter(){
-			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				KontaktSelektor ksl=new KontaktSelektor(getShell(),	Kontakt.class,"Garant auswählen",
-						"Bitte wählen Sie den Rechnungsempfänger aus", true);
-				if(ksl.open()==Dialog.OK){
-					Kontakt sel=(Kontakt)ksl.getSelection();
-			        Fall fall=getFall();
-			        if(fall!=null){
-			        	fall.setGarant(sel);
-			        	setFall(fall);
-	                	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-			        }
+			public void widgetSelected(final SelectionEvent e){
+				int i = cReason.getSelectionIndex();
+				Fall fall = getFall();
+				if (fall != null) {
+					fall.setGrund(Reasons[i]);
+					GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
 				}
 			}
 		});
-        
-		tGarant=tk.createText(top, "");
+		cReason.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tk.createLabel(top, "Startdatum");
+		dpVon = new DatePickerCombo(top, SWT.NONE);
+		dpVon.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				Fall fall = getFall();
+				fall.setBeginnDatum(new TimeTool(dpVon.getDate().getTime())
+					.toString(TimeTool.DATE_GER));
+				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			}
+			
+		});
+		tk.createLabel(top, "Enddatum");
+		dpBis = new DatePickerCombo(top, SWT.NONE);
+		dpBis.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				Fall fall = getFall();
+				fall.setEndDatum(new TimeTool(dpBis.getDate().getTime())
+					.toString(TimeTool.DATE_GER));
+				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			}
+			
+		});
+		ddc = new DayDateCombo(top, "Zur Abrechnung vormerken in ", " Tagen bzw. ab dem ");
+		ddc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		tk.createSeparator(top, SWT.HORIZONTAL).setLayoutData(
+			SWTHelper.getFillGridData(2, true, 1, false));
+		
+		Hyperlink hlGarant = tk.createHyperlink(top, "Rechnungsempfänger", SWT.NONE);
+		hlGarant.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(final HyperlinkEvent e){
+				KontaktSelektor ksl =
+					new KontaktSelektor(getShell(), Kontakt.class, "Garant auswählen",
+						"Bitte wählen Sie den Rechnungsempfänger aus", true);
+				if (ksl.open() == Dialog.OK) {
+					Kontakt sel = (Kontakt) ksl.getSelection();
+					Fall fall = getFall();
+					if (fall != null) {
+						fall.setGarant(sel);
+						setFall(fall);
+						GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+					}
+				}
+			}
+		});
+		
+		tGarant = tk.createText(top, "");
 		tGarant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.paintBordersFor(top);
 		setFall(getFall());
-
+		
 	}
 	
-	class Focusreact implements FocusListener{
-        private final String field;
-        Focusreact(final String dbField){
-            field=dbField;
-        }
-        public void focusGained(final FocusEvent e)
-        { /* nichts */}
-
-        public void focusLost(final FocusEvent e)
-        {
-            String newval=((Text)e.getSource()).getText();
-            Fall fall=getFall();
-            if(fall!=null){
-            	fall.setInfoString(field,newval);
-            	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-            }
-        }
-        
-    }
+	class Focusreact implements FocusListener {
+		private final String field;
+		
+		Focusreact(final String dbField){
+			field = dbField;
+		}
+		
+		public void focusGained(final FocusEvent e){ /* nichts */}
+		
+		public void focusLost(final FocusEvent e){
+			String newval = ((Text) e.getSource()).getText();
+			Fall fall = getFall();
+			if (fall != null) {
+				fall.setInfoString(field, newval);
+				GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
+			}
+		}
+		
+	}
+	
 	public void setFall(final Fall f){
-		actFall=f;
-		for(Control c:lReqs){
+		actFall = f;
+		for (Control c : lReqs) {
 			c.dispose();
 		}
 		lReqs.clear();
 		cAbrechnung.setItems(Fall.getAbrechnungsSysteme());
-		if(f==null){
+		if (f == null) {
 			form.setText("Kein Fall ausgewählt");
 			tBezeichnung.setText("");
 			cReason.select(0);
 			return;
 		}
-    	
-
+		
 		form.setText(f.getLabel());
 		tBezeichnung.setText(f.getBezeichnung());
-		String grund=f.getGrund();
-		int ix=cReason.indexOf(grund);
-		if(ix==-1){
-			ix=0;
+		String grund = f.getGrund();
+		int ix = cReason.indexOf(grund);
+		if (ix == -1) {
+			ix = 0;
 		}
 		cReason.select(ix);
-		String abr=f.getAbrechnungsSystem();
+		String abr = f.getAbrechnungsSystem();
 		cAbrechnung.setText(abr);
-		TimeTool tt=new TimeTool();
-		if(tt.set(f.getBeginnDatum())==true){
+		TimeTool tt = new TimeTool();
+		if (tt.set(f.getBeginnDatum()) == true) {
 			dpVon.setDate(tt.getTime());
-		}else{
+		} else {
 			dpVon.setDate(null);
 		}
-		if(tt.set(f.getEndDatum())==true){
+		if (tt.set(f.getEndDatum()) == true) {
 			dpBis.setDate(tt.getTime());
-		}else{
+		} else {
 			dpBis.setDate(null);
 		}
 		tGarant.setText(f.getGarant().getLabel());
-		String reqs=f.getRequirements();
-		if(reqs!=null){
-			for(String req:reqs.split(";")){
-				final String[] r=req.split(":");
-				if(r.length<2){
+		String reqs = f.getRequirements();
+		if (reqs != null) {
+			for (String req : reqs.split(";")) {
+				final String[] r = req.split(":");
+				if (r.length < 2) {
 					continue;
 				}
-				if(r[1].equals("T")){
+				if (r[1].equals("T")) {
 					lReqs.add(tk.createLabel(form.getBody(), r[0]));
-					String val=f.getInfoString(r[0]);
-					Text tx=tk.createText(form.getBody(), val);
+					String val = f.getInfoString(r[0]);
+					Text tx = tk.createText(form.getBody(), val);
 					tx.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					tx.addFocusListener(new Focusreact(r[0]));
 					lReqs.add(tx);
-				}else if(r[1].equals("D")){
+				} else if (r[1].equals("D")) {
 					lReqs.add(tk.createLabel(form.getBody(), r[0]));
-					final DatePickerCombo dp=new DatePickerCombo(form.getBody(),SWT.NONE);
-					String dat=f.getInfoString(r[0]);
-					if(tt.set(dat)){
+					final DatePickerCombo dp = new DatePickerCombo(form.getBody(), SWT.NONE);
+					String dat = f.getInfoString(r[0]);
+					if (tt.set(dat)) {
 						dp.setDate(tt.getTime());
 					}
 					dp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-					dp.addSelectionListener(new SelectionAdapter(){
+					dp.addSelectionListener(new SelectionAdapter() {
 						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							TimeTool tt=new TimeTool(dp.getDate().getTime());
+						public void widgetSelected(final SelectionEvent e){
+							TimeTool tt = new TimeTool(dp.getDate().getTime());
 							f.setInfoString(r[0], tt.toString(TimeTool.DATE_GER));
-						}});
+						}
+					});
 					lReqs.add(dp);
-				}else if(r[1].equals("K")){
-					Hyperlink hl=tk.createHyperlink(form.getBody(), r[0], SWT.NONE);
-					String val=f.getInfoString(r[0]);
-					if(val.startsWith("**ERROR")){
-						val="";
-					}else{
-						Kontakt k=Kontakt.load(val);
-						val=k.getLabel();
+				} else if (r[1].equals("K")) {
+					Hyperlink hl = tk.createHyperlink(form.getBody(), r[0], SWT.NONE);
+					String val = f.getInfoString(r[0]);
+					if (val.startsWith("**ERROR")) {
+						val = "";
+					} else {
+						Kontakt k = Kontakt.load(val);
+						val = k.getLabel();
 					}
-					Text tx=tk.createText(form.getBody(), val);
-					hl.addHyperlinkListener(new HyperlinkAdapter(){
+					Text tx = tk.createText(form.getBody(), val);
+					hl.addHyperlinkListener(new HyperlinkAdapter() {
 						@Override
-						public void linkActivated(final HyperlinkEvent e) {
-							KontaktSelektor ksl=new KontaktSelektor(getShell(),	Kontakt.class,"Kontakt auswählen",
-									"Bitte wählen Sie den Kontakt für "+r[0]+" aus", true);
-							if(ksl.open()==Dialog.OK){
-								Kontakt sel=(Kontakt)ksl.getSelection();
-						        Fall fall=getFall();
-						        if(fall!=null){
-						        	if (sel != null) {
-						        		fall.setInfoString(r[0], sel.getId());
-						        	} else {
-						        		fall.setInfoString(r[0], "");
-						        	}
-						        	setFall(fall);
-				                	GlobalEvents.getInstance().fireSelectionEvent(fall.getPatient());
-						        }
+						public void linkActivated(final HyperlinkEvent e){
+							KontaktSelektor ksl =
+								new KontaktSelektor(getShell(), Kontakt.class, "Kontakt auswählen",
+									"Bitte wählen Sie den Kontakt für " + r[0] + " aus", true);
+							if (ksl.open() == Dialog.OK) {
+								Kontakt sel = (Kontakt) ksl.getSelection();
+								Fall fall = getFall();
+								if (fall != null) {
+									if (sel != null) {
+										fall.setInfoString(r[0], sel.getId());
+									} else {
+										fall.setInfoString(r[0], "");
+									}
+									setFall(fall);
+									GlobalEvents.getInstance()
+										.fireSelectionEvent(fall.getPatient());
+								}
 							}
 						}
 					});
@@ -391,17 +388,21 @@ public class FallDetailBlatt2 extends Composite {
 					lReqs.add(tx);
 				}
 			}
+			TimeTool bt = f.getBillingDate();
+			if (bt != null) {
+				ddc.setDates(new TimeTool(), bt);
+			}
 			form.reflow(true);
 			form.redraw();
 		}
 		
 	}
-
+	
 	private Fall getFall(){
-		if(actFall==null){
-			Fall ret= GlobalEvents.getSelectedFall();
-			if(ret!=null){
-				actFall=ret;
+		if (actFall == null) {
+			Fall ret = GlobalEvents.getSelectedFall();
+			if (ret != null) {
+				actFall = ret;
 			}
 		}
 		return actFall;
