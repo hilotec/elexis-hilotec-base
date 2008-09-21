@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayDateCombo.java 4424 2008-09-21 13:56:56Z rgw_ch $
+ *  $Id: DayDateCombo.java 4425 2008-09-21 15:50:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -17,12 +17,15 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TypedListener;
 
 import ch.elexis.Desk;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
@@ -70,9 +73,14 @@ public class DayDateCombo extends Composite {
 	public void setDates(TimeTool baseDate, TimeTool endDate){
 		this.baseDate = new TimeTool(baseDate);
 		removeListeners();
-		dp.setDate(endDate.getTime());
-		int days = baseDate.secondsTo(endDate) / 86400;
-		spinner.setValues(days, 0, 999, 0, 1, 10);
+		if(endDate==null){
+			dp.setDate(null);
+			spinner.setValues(0, 0, 999, 0, 1, 10);
+		}else{
+			dp.setDate(endDate.getTime());
+			int days = baseDate.secondsTo(endDate) / 86400;
+			spinner.setValues(days+1, 0, 999, 0, 1, 10);
+		}
 		setListeners();
 	}
 	
@@ -81,17 +89,49 @@ public class DayDateCombo extends Composite {
 	 * @return a TimeTool with the DatePicker's date
 	 */
 	public TimeTool getDate(){
+		if(StringTool.isNothing(dp.getText())){
+			return null;
+		}
 		return new TimeTool(dp.getDate().getTime());
 	}
 	
+	public void addSelectionListener(SelectionListener listener){
+		checkWidget();
+
+		if (listener == null)
+		{
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+
+		TypedListener typedListener = new TypedListener(listener);
+		addListener(SWT.Selection, typedListener);
+		addListener(SWT.DefaultSelection, typedListener);
+
+	}
+	
+	public void removeSelectionListener(SelectionListener listener)
+	{
+		checkWidget();
+
+		if (listener == null)
+		{
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+
+		removeListener(SWT.Selection, listener);
+		removeListener(SWT.DefaultSelection, listener);
+	}
+
 	private void setListeners(){
 		spinner.addModifyListener(spl);
 		dp.addSelectionListener(dl);
+		dp.addModifyListener(dl);
 	}
 	
 	private void removeListeners(){
 		spinner.removeModifyListener(spl);
 		dp.removeSelectionListener(dl);
+		dp.removeModifyListener(dl);
 	}
 	
 	class SpinnerListener implements ModifyListener {
@@ -104,13 +144,13 @@ public class DayDateCombo extends Composite {
 			dp.setDate(nt.getTime());
 			Event e = new Event();
 			e.time = me.time;
-			notifyListeners(SWT.DefaultSelection, e);
+			notifyListeners(SWT.Selection, e);
 			setListeners();
 		}
 		
 	}
 	
-	class DateListener extends SelectionAdapter {
+	class DateListener extends SelectionAdapter implements ModifyListener {
 		
 		@Override
 		public void widgetSelected(SelectionEvent se){
@@ -120,8 +160,15 @@ public class DayDateCombo extends Composite {
 			spinner.setValues(days, 0, 999, 0, 1, 10);
 			Event e = new Event();
 			e.time = se.time;
-			notifyListeners(SWT.DefaultSelection, e);
+			notifyListeners(SWT.Selection, e);
 			setListeners();
+		}
+
+		public void modifyText(ModifyEvent me){
+			String t=dp.getText();
+			Event e = new Event();
+			e.time = me.time;
+			notifyListeners(SWT.Selection, e);
 		}
 		
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 4419 2008-09-18 11:42:53Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 4425 2008-09-21 15:50:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -552,7 +552,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							PlatformUI.getWorkbench().getProgressService();
 						try {
 							progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
-								new Rechnungslauf(self, kzvd.ttFirstBefore, kzvd.ttLastBefore,
+								new Rechnungslauf(self, kzvd.bMarked, kzvd.ttFirstBefore, kzvd.ttLastBefore,
 									kzvd.mAmount, kzvd.bQuartal), null);
 						} catch (Throwable ex) {
 							ExHandler.handle(ex);

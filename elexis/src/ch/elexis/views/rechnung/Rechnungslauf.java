@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 4094 2008-07-03 16:40:17Z rgw_ch $
+ *  $Id: Rechnungslauf.java 4425 2008-09-21 15:50:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -42,11 +42,11 @@ public class Rechnungslauf implements IRunnableWithProgress {
 	
 	TimeTool ttFirstBefore, ttLastBefore, ttHeute,limitQuartal;
 	Money mLimit;
-	boolean bQuartal;
+	boolean bQuartal, bMarked;
 	Hashtable<Konsultation, Patient> hKons;
 	KonsZumVerrechnenView kzv;
 	
-	public Rechnungslauf(KonsZumVerrechnenView kzv, TimeTool ttFirstBefore, TimeTool ttLastBefore, Money mLimit, boolean bQuartal){
+	public Rechnungslauf(KonsZumVerrechnenView kzv, boolean bMarked, TimeTool ttFirstBefore, TimeTool ttLastBefore, Money mLimit, boolean bQuartal){
 		this.ttFirstBefore=ttFirstBefore;
 		this.ttLastBefore=ttLastBefore;
 		this.mLimit=mLimit;
@@ -64,6 +64,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		}else{
 			limitQuartal.set(TimeTool.MONTH,1);
 		}
+		this.bMarked=bMarked;
 		this.kzv=kzv;
 	}
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -77,6 +78,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			monitor.beginTask("Analysiere Konsultationen", IProgressMonitor.UNKNOWN);
 			monitor.subTask("Lese Konsultationen ein");
 			List<Konsultation> list=qbe.execute();
+			TimeTool now=new TimeTool();
 			TimeTool cmp=new TimeTool();
 			for(Konsultation k:list){
 				monitor.worked(1);
@@ -92,6 +94,18 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				
 				if((kPatient==null) || (!kPatient.exists())){
 					continue;
+				}
+				if(bMarked){										// Alle zur Verrechnung markierten Fälle abrechnen
+					TimeTool bd=kFall.getBillingDate();
+					if( (bd!=null) && (bd.isBeforeOrEqual(now))){
+						for(Konsultation k2:list){
+							String fid=k2.get("FallID");
+							String mid=k2.get("MandantID");
+							if((fid!=null) && (fid.equals(kfID)) && (mid.equals(kMandantID))){
+									hKons.put(k2, kPatient);
+							}
+						}
+					}
 				}
 				if(ttFirstBefore!=null){							// Alle Serien mit Beginn vor einem bestimmten Datum
 					cmp.set(k.getDatum());

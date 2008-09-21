@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 4424 2008-09-21 13:56:56Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 4425 2008-09-21 15:50:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -233,8 +233,19 @@ public class FallDetailBlatt2 extends Composite {
 			}
 			
 		});
-		ddc = new DayDateCombo(top, "Zur Abrechnung vormerken in ", " Tagen bzw. ab dem ");
+		ddc = new DayDateCombo(top, "Zur Abrechnung vorschlagen in ", " Tagen bzw. ab dem ");
 		ddc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		ddc.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				TimeTool nDate = ddc.getDate();
+				Fall fall = getFall();
+				if (fall != null) {
+					fall.setBillingDate(nDate);
+				}
+			}
+		});
+		tk.adapt(ddc);
 		tk.createSeparator(top, SWT.HORIZONTAL).setLayoutData(
 			SWTHelper.getFillGridData(2, true, 1, false));
 		
@@ -389,9 +400,7 @@ public class FallDetailBlatt2 extends Composite {
 				}
 			}
 			TimeTool bt = f.getBillingDate();
-			if (bt != null) {
-				ddc.setDates(new TimeTool(), bt);
-			}
+			ddc.setDates(new TimeTool(), bt);
 			form.reflow(true);
 			form.redraw();
 		}
