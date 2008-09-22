@@ -1,12 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: ErstelleRnnCommand.java 4428 2008-09-22 11:25:23Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -21,17 +33,26 @@ import ch.elexis.util.Tree;
 import ch.elexis.views.rechnung.Messages;
 import ch.rgw.tools.Result;
 
+/**
+ * Command um Rechnungen aus einer Liste von Patienten, Fällen und Konsultationen zu erstellen
+ * Der Parameter des Commands muss ein Tree sein, welcher in der ersten Ebene die Patienten,
+ * in der zweiten die Fälle und in der Dritten die zu verrechnenden Konsultationen
+ * enthält. 
+ * @author gerry
+ * 
+ */
 public class ErstelleRnnCommand extends AbstractHandler {
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(ExecutionEvent eev) throws ExecutionException{
-		Map params=eev.getParameters();
-		Tree tSelection=(Tree)params.get("selection");
-		for (Tree tPat = tSelection.getFirstChild(); tPat != null; tPat =
-			tPat.getNextSibling()) {
+
+		Tree tSelection = (Tree) Handler.getParam(eev);
+		IProgressMonitor monitor=Handler.getMonitor(eev);
+		Result<Rechnung> res=null;
+		for (Tree tPat = tSelection.getFirstChild(); tPat != null; tPat = tPat.getNextSibling()) {
 			int rejected = 0;
-			for (Tree tFall = tPat.getFirstChild(); tFall != null; tFall =
-				tFall.getNextSibling()) {
+			for (Tree tFall = tPat.getFirstChild(); tFall != null; tFall = tFall.getNextSibling()) {
 				Fall fall = (Fall) tFall.contents;
 				if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)) {
 					if (!fall.isValid()) {
@@ -44,14 +65,17 @@ public class ErstelleRnnCommand extends AbstractHandler {
 				for (Tree t : lt) {
 					lb.add((Konsultation) t.contents);
 				}
-				Result<Rechnung> res = Rechnung.build(lb);
+				res = Rechnung.build(lb);
+				if(monitor!=null){
+					monitor.worked(1);
+				}
 				if (!res.isOK()) {
 					ErrorDialog.openError(HandlerUtil.getActiveShell(eev), Messages
 						.getString("KonsZumVerrechnenView.errorInInvoice"), //$NON-NLS-1$
 						Messages.getString("KonsZumVerrechnenView.invoiceForCase", //$NON-NLS-1$
 							new Object[] {
 								fall.getLabel()
-							}), ResultAdapter.getResultAsStatus(res)); 
+							}), ResultAdapter.getResultAsStatus(res));
 				} else {
 					tPat.remove(tFall);
 				}
@@ -67,7 +91,7 @@ public class ErstelleRnnCommand extends AbstractHandler {
 				tSelection.remove(tPat);
 			}
 		}
-		return null;
+		return res;
 	}
 	
 }

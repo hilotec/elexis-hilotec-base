@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 4427 2008-09-22 05:15:21Z rgw_ch $
+ *  $Id: Rechnungslauf.java 4428 2008-09-22 11:25:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import ch.elexis.Hub;
+import ch.elexis.commands.Handler;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -41,7 +42,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 	
 	TimeTool ttFirstBefore, ttLastBefore, ttHeute, limitQuartal;
 	Money mLimit;
-	boolean bQuartal, bMarked;
+	boolean bQuartal, bMarked, bSkip;
 	Hashtable<Konsultation, Patient> hKons;
 	KonsZumVerrechnenView kzv;
 	
@@ -51,6 +52,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		this.ttLastBefore = ttLastBefore;
 		this.mLimit = mLimit;
 		this.bQuartal = bQuartal;
+		this.bSkip=bSkip;
 		hKons = new Hashtable<Konsultation, Patient>(1000);
 		ttHeute = new TimeTool();
 		limitQuartal = new TimeTool();
@@ -162,6 +164,10 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		while (en.hasMoreElements()) {
 			kzv.selectKonsultation(en.nextElement());
 			monitor.worked(1);
+		}
+		if(bSkip){
+			monitor.subTask("erstelle Rechnungen");
+			Handler.executeWithProgress(kzv.getViewSite(), "bill.create", kzv.tSelection, monitor);
 		}
 		monitor.done();
 		

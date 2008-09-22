@@ -8,27 +8,23 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 4427 2008-09-22 05:15:21Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 4428 2008-09-22 11:25:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,7 +51,6 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -65,20 +60,18 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.commands.Handler;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.KonsZumVerrechnenWizardDialog;
-import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.BasicTreeContentProvider;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.LazyTree;
-import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.Tree;
@@ -86,7 +79,6 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.util.LazyTree.LazyTreeListener;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
@@ -246,7 +238,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		});
 		tvSel.getControl().setMenu(selMenu.createContextMenu(tvSel.getControl()));
 		menu = new ViewMenus(getViewSite());
-		menu.createToolbar(refreshAction, wizardAction,  printAction, clearAction, null, billAction);
+		menu.createToolbar(refreshAction, wizardAction, printAction, clearAction, null, billAction);
 		menu.createMenu(wizardAction, selectByDateAction);
 		menu.createViewerContextMenu(cv.getViewerWidget(), detailAction);
 	}
@@ -468,49 +460,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							return;
 						}
 					}
-
-					/*
-					for (Tree tPat = tSelection.getFirstChild(); tPat != null; tPat =
-						tPat.getNextSibling()) {
-						int rejected = 0;
-						for (Tree tFall = tPat.getFirstChild(); tFall != null; tFall =
-							tFall.getNextSibling()) {
-							Fall fall = (Fall) tFall.contents;
-							if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)) {
-								if (!fall.isValid()) {
-									rejected++;
-									continue;
-								}
-							}
-							Collection<Tree> lt = tFall.getChildren();
-							ArrayList<Konsultation> lb = new ArrayList<Konsultation>(lt.size() + 1);
-							for (Tree t : lt) {
-								lb.add((Konsultation) t.contents);
-							}
-							Result<Rechnung> res = Rechnung.build(lb);
-							if (!res.isOK()) {
-								ErrorDialog.openError(getViewSite().getShell(), Messages
-									.getString("KonsZumVerrechnenView.errorInInvoice"), //$NON-NLS-1$
-									Messages.getString("KonsZumVerrechnenView.invoiceForCase", //$NON-NLS-1$
-										new Object[] {
-											fall.getLabel()
-										}), ResultAdapter.getResultAsStatus(res)); 
-							} else {
-								tPat.remove(tFall);
-							}
-						}
-						if (rejected != 0) {
-							SWTHelper
-								.showError(
-									"Fehlerhafte Falldefinitionen",
-									Integer.toString(rejected)
-										+ " Rechnungen wurden nicht erstellt, weil die Fälle nicht alle notwendigen Angaben enthalten. "
-										+ "Bitte kontrollieren Sie die Fall-Details");
-						} else {
-							tSelection.remove(tPat);
-						}
-					}
-					*/
+					Handler.execute(getViewSite(), "bill.create", tSelection);
 					tvSel.refresh();
 				}
 			};
@@ -554,7 +504,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 						IProgressService progressService =
 							PlatformUI.getWorkbench().getProgressService();
 						try {
-							progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
+							progressService.runInUI(progressService,
 								new Rechnungslauf(self, kzvd.bMarked, kzvd.ttFirstBefore,
 									kzvd.ttLastBefore, kzvd.mAmount, kzvd.bQuartal, kzvd.bSkip),
 								null);
