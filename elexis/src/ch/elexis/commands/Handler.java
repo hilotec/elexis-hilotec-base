@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Handler.java 4428 2008-09-22 11:25:23Z rgw_ch $
+ *  $Id: Handler.java 4430 2008-09-22 17:22:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -62,7 +62,9 @@ public class Handler {
 	 */
 	public static Object execute(IViewSite origin, String commandID, Object param){
 		HashMap<String,Object> hp=new HashMap<String,Object>();
-		hp.put("param", param);
+		if(param!=null){
+			hp.put("param", param);
+		}
 		return execute(origin,commandID,hp);
 	}
 	
@@ -77,9 +79,11 @@ public class Handler {
 	public static Object getParam(ExecutionEvent eev){
 		Map<String,String> params=eev.getParameters();
 		String np=params.get(Handler.DEFAULTPARAM);
-		HashMap<String, Object> map=(HashMap<String, Object>) getParam(np);
-		if(map!=null){
-			return map.get("param");
+		if(np!=null){
+			HashMap<String, Object> map=(HashMap<String, Object>) getParam(np);
+			if(map!=null){
+				return map.get("param");
+			}
 		}
 		return null;
 	}

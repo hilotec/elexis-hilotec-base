@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 4423 2008-09-20 11:41:33Z rgw_ch $
+ * $Id: GlobalActions.java 4430 2008-09-22 17:22:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -494,7 +494,7 @@ public class GlobalActions {
 						ArrayList<Konsultation> lBehdl = new ArrayList<Konsultation>(bhdl.length);
 						for (Konsultation b : bhdl) {
 							Rechnung rn = b.getRechnung();
-							if (rn == null){ // || rn.getStatus() == RnStatus.STORNIERT) {
+							if (rn == null) { // || rn.getStatus() == RnStatus.STORNIERT) {
 								if (b.getMandant().getId().equals(mndid)) {
 									lBehdl.add(b);
 								}
@@ -635,10 +635,10 @@ public class GlobalActions {
 					}
 				}
 			};
-		planeRechnungAction=new Action(Messages.getString("GlobalActions.PlaneRechnung")){
-				public void run(){
-					
-				}
+		planeRechnungAction = new Action(Messages.getString("GlobalActions.PlaneRechnung")) {
+			public void run(){
+
+			}
 		};
 	}
 	

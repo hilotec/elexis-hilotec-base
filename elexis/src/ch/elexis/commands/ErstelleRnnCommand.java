@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErstelleRnnCommand.java 4428 2008-09-22 11:25:23Z rgw_ch $
+ *  $Id: ErstelleRnnCommand.java 4430 2008-09-22 17:22:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -42,6 +42,7 @@ import ch.rgw.tools.Result;
  * 
  */
 public class ErstelleRnnCommand extends AbstractHandler {
+	public static final String ID="bill.create";
 	
 	@SuppressWarnings("unchecked")
 	@Override
