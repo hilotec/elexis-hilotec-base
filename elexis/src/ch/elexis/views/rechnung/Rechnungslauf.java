@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 4426 2008-09-21 20:00:48Z rgw_ch $
+ *  $Id: Rechnungslauf.java 4427 2008-09-22 05:15:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -23,34 +23,30 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import ch.elexis.Hub;
-import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.Money;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Aktion für das "Zauberstab"-Icon in der KonsZumVerrechnen View -> Dialog mit
- * verschiedenen Kriterien zur Komnsultationsauswahl und Rechnungslauf anhand
- * dieser Auswahl
+ * Aktion für das "Zauberstab"-Icon in der KonsZumVerrechnen View -> Dialog mit verschiedenen
+ * Kriterien zur Konsultationsauswahl und Rechnungslauf anhand dieser Auswahl
  * 
  * @author gerry
  * 
  */
 public class Rechnungslauf implements IRunnableWithProgress {
-
+	
 	TimeTool ttFirstBefore, ttLastBefore, ttHeute, limitQuartal;
 	Money mLimit;
 	boolean bQuartal, bMarked;
 	Hashtable<Konsultation, Patient> hKons;
 	KonsZumVerrechnenView kzv;
-
-	public Rechnungslauf(KonsZumVerrechnenView kzv, boolean bMarked,
-			TimeTool ttFirstBefore, TimeTool ttLastBefore, Money mLimit,
-			boolean bQuartal, boolean bSkip) {
+	
+	public Rechnungslauf(KonsZumVerrechnenView kzv, boolean bMarked, TimeTool ttFirstBefore,
+		TimeTool ttLastBefore, Money mLimit, boolean bQuartal, boolean bSkip){
 		this.ttFirstBefore = ttFirstBefore;
 		this.ttLastBefore = ttLastBefore;
 		this.mLimit = mLimit;
@@ -71,18 +67,16 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		this.bMarked = bMarked;
 		this.kzv = kzv;
 	}
-
+	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
+		InterruptedException{
 		String kMandantID = Hub.actMandant.getId();
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 		qbe.add("RechnungsID", "", null);
 		// if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
 		qbe.add("MandantID", "=", kMandantID);
 		// }
-		monitor
-				.beginTask("Analysiere Konsultationen",
-						IProgressMonitor.UNKNOWN);
+		monitor.beginTask("Analysiere Konsultationen", IProgressMonitor.UNKNOWN);
 		monitor.subTask("Lese Konsultationen ein");
 		List<Konsultation> list = qbe.execute();
 		TimeTool now = new TimeTool();
@@ -98,7 +92,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			}
 			String kfID = kFall.getId();
 			Patient kPatient = kFall.getPatient();
-
+			
 			if ((kPatient == null) || (!kPatient.exists())) {
 				continue;
 			}
@@ -108,36 +102,33 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					for (Konsultation k2 : list) {
 						String fid = k2.get("FallID");
 						String mid = k2.get("MandantID");
-						if ((fid != null) && (fid.equals(kfID))
-								&& (mid.equals(kMandantID))) {
+						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 						}
 					}
 				}
 			}
 			if (ttFirstBefore != null) { // Alle Serien mit Beginn vor einem
-											// bestimmten Datum
+				// bestimmten Datum
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(ttFirstBefore)) {
 					for (Konsultation k2 : list) {
 						String fid = k2.get("FallID");
 						String mid = k2.get("MandantID");
-						if ((fid != null) && (fid.equals(kfID))
-								&& (mid.equals(kMandantID))) {
+						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 						}
 					}
 				}
 			}
-
+			
 			if (ttLastBefore != null) {
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(ttFirstBefore)) {
 					for (Konsultation k2 : list) {
 						String fid = k2.get("FallID");
 						String mid = k2.get("MandantID");
-						if ((fid != null) && (fid.equals(kfID))
-								&& (mid.equals(kMandantID))) {
+						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 						}
 					}
@@ -145,13 +136,11 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			}
 			if (mLimit != null) {
 				Money sum = new Money();
-				Map<Konsultation, Patient> list2 = new HashMap<Konsultation, Patient>(
-						100);
+				Map<Konsultation, Patient> list2 = new HashMap<Konsultation, Patient>(100);
 				for (Konsultation k2 : list) {
 					String fid = k2.get("FallID");
 					String mid = k2.get("MandantID");
-					if ((fid != null) && (fid.equals(kfID))
-							&& (mid.equals(kMandantID))) {
+					if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 						list2.put(k2, kPatient);
 						sum.addAmount(k2.getUmsatz() / 100.0);
 					}
@@ -160,7 +149,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					hKons.putAll(list2);
 				}
 			}
-
+			
 			if (bQuartal) {
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(limitQuartal)) {
@@ -175,7 +164,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			monitor.worked(1);
 		}
 		monitor.done();
-
+		
 	}
-
+	
 }

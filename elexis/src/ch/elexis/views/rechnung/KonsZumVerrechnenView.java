@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 4426 2008-09-21 20:00:48Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 4427 2008-09-22 05:15:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -54,6 +55,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -244,7 +246,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		});
 		tvSel.getControl().setMenu(selMenu.createContextMenu(tvSel.getControl()));
 		menu = new ViewMenus(getViewSite());
-		menu.createToolbar(billAction, printAction, clearAction, wizardAction, refreshAction);
+		menu.createToolbar(refreshAction, wizardAction,  printAction, clearAction, null, billAction);
 		menu.createMenu(wizardAction, selectByDateAction);
 		menu.createViewerContextMenu(cv.getViewerWidget(), detailAction);
 	}
@@ -466,6 +468,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							return;
 						}
 					}
+
+					/*
 					for (Tree tPat = tSelection.getFirstChild(); tPat != null; tPat =
 						tPat.getNextSibling()) {
 						int rejected = 0;
@@ -485,14 +489,12 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							}
 							Result<Rechnung> res = Rechnung.build(lb);
 							if (!res.isOK()) {
-								ErrorDialog
-									.openError(
-										getViewSite().getShell(),
-										Messages.getString("KonsZumVerrechnenView.errorInInvoice"), //$NON-NLS-1$
-										Messages
-											.getString(
-												"KonsZumVerrechnenView.invoiceForCase", new Object[] { fall.getLabel()}), 
-												ResultAdapter.getResultAsStatus(res)); //$NON-NLS-1$
+								ErrorDialog.openError(getViewSite().getShell(), Messages
+									.getString("KonsZumVerrechnenView.errorInInvoice"), //$NON-NLS-1$
+									Messages.getString("KonsZumVerrechnenView.invoiceForCase", //$NON-NLS-1$
+										new Object[] {
+											fall.getLabel()
+										}), ResultAdapter.getResultAsStatus(res)); 
 							} else {
 								tPat.remove(tFall);
 							}
@@ -508,6 +510,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							tSelection.remove(tPat);
 						}
 					}
+					*/
 					tvSel.refresh();
 				}
 			};
@@ -552,8 +555,9 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							PlatformUI.getWorkbench().getProgressService();
 						try {
 							progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
-								new Rechnungslauf(self, kzvd.bMarked, kzvd.ttFirstBefore, kzvd.ttLastBefore,
-									kzvd.mAmount, kzvd.bQuartal, kzvd.bSkip), null);
+								new Rechnungslauf(self, kzvd.bMarked, kzvd.ttFirstBefore,
+									kzvd.ttLastBefore, kzvd.mAmount, kzvd.bQuartal, kzvd.bSkip),
+								null);
 						} catch (Throwable ex) {
 							ExHandler.handle(ex);
 						}
@@ -671,7 +675,6 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				}
 			};
 	}
-	
 	
 	/**
 	 * Auwahl der Konsultationen, die verrechnet werden sollen, nach Datum. Es erscheint ein Dialog,
