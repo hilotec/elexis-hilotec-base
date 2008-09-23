@@ -52,57 +52,57 @@ import ch.elexis.util.FtpServer;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.Messages;
-import ch.elexis.util.Result;
+import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.UtilFile;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Result.SEVERITY;
 
 public class Importer extends ImporterPage {
 	public static final String MY_LAB = "Team W"; //$NON-NLS-1$
 	public static final String PLUGIN_ID = "ch.elexis.laborimport_teamw"; //$NON-NLS-1$
-
+	
 	protected static Log log = Log.get(PLUGIN_ID); //$NON-NLS-1$
-
+	
 	private static final String COMMENT_NAME = "Kommentar"; //$NON-NLS-1$
 	private static final String COMMENT_CODE = "kommentar"; //$NON-NLS-1$
 	private static final String COMMENT_GROUP = "00 Kommentar"; //$NON-NLS-1$
-
+	
 	private static final String PRAXIS_SEMAPHORE = "praxis.sem"; //$NON-NLS-1$
 	private static final String TEAMW_SEMAPHORE = "teamw.sem"; //$NON-NLS-1$
-
+	
 	// importer type
 	private static final int FILE = 1;
 	private static final int DIRECT = 2;
-
+	
 	private class SemaphoreException extends Exception {
 		private static final long serialVersionUID = -2150109019599639291L;
-
-		public SemaphoreException(String arg0) {
+		
+		public SemaphoreException(String arg0){
 			super(arg0, null);
 		}
-
-		public SemaphoreException(Throwable cause) {
+		
+		public SemaphoreException(Throwable cause){
 			super(cause);
 		}
 	}
-
-	public Importer() {
-	}
-
+	
+	public Importer(){}
+	
 	@Override
-	public Composite createPage(final Composite parent) {
+	public Composite createPage(final Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		LabImporter labImporter = new LabImporter(ret, this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		labImporter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		return ret;
 	}
-
-	private Result<String> parse(final HL7 hl7, final Kontakt labor,
-			final Patient pat) {
+	
+	private Result<String> parse(final HL7 hl7, final Kontakt labor, final Patient pat){
 		HL7.OBR obr = hl7.firstOBR();
 		int nummer = 0;
 		String dat = new TimeTool().toString(TimeTool.DATE_GER);
@@ -113,7 +113,7 @@ public class Importer extends ImporterPage {
 				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
 				qbe.add("LaborID", "=", labor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				// disabled, this would avoid renaming the title
-				//qbe.add("titel", "=", itemname);
+				// qbe.add("titel", "=", itemname);
 				qbe.add("kuerzel", "=", obx.getItemCode()); //$NON-NLS-1$ //$NON-NLS-2$
 				List<LabItem> list = qbe.execute();
 				LabItem li = null;
@@ -122,7 +122,8 @@ public class Importer extends ImporterPage {
 					if (obx.isFormattedText()) {
 						typ = LabItem.typ.TEXT;
 					}
-					li = new LabItem(
+					li =
+						new LabItem(
 							obx.getItemCode(),
 							itemname,
 							labor,
@@ -130,9 +131,8 @@ public class Importer extends ImporterPage {
 							obx.getRefRange(),
 							obx.getUnits(),
 							typ,
-							ch.elexis.laborimport.teamw.Messages
-									.getString("Importer.automatisch") + dat, Integer //$NON-NLS-1$
-									.toString(nummer++));
+							ch.elexis.laborimport.teamw.Messages.getString("Importer.automatisch") + dat, Integer //$NON-NLS-1$
+								.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
@@ -142,28 +142,26 @@ public class Importer extends ImporterPage {
 				qr.add("Datum", "=", obx.getDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$ //$NON-NLS-2$
 				qr.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (qr.execute().size() != 0) {
-					if (SWTHelper
-							.askYesNo(
-									ch.elexis.laborimport.teamw.Messages
-											.getString("Importer.question.allreadyImported"), //$NON-NLS-1$
-									ch.elexis.laborimport.teamw.Messages
-											.getString("Importer.question.allreadyImported.continue"))) { //$NON-NLS-1$
+					if (SWTHelper.askYesNo(ch.elexis.laborimport.teamw.Messages
+						.getString("Importer.question.allreadyImported"), //$NON-NLS-1$
+						ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.question.allreadyImported.continue"))) { //$NON-NLS-1$
 						obx = obr.nextOBX(obx);
 						continue;
 					} else {
-						return new Result<String>(
-								ch.elexis.laborimport.teamw.Messages
-										.getString("Importer.cancelled")); //$NON-NLS-1$
+						return new Result<String>(ch.elexis.laborimport.teamw.Messages
+							.getString("Importer.cancelled")); //$NON-NLS-1$
 					}
 				}
 				if (obx.isFormattedText()) {
 					lr = new LabResult(pat, obx.getDate(), li, "text", obx //$NON-NLS-1$
-							.getResultValue());
+						.getResultValue());
 				} else {
-					lr = new LabResult(pat, obx.getDate(), li, obx
-							.getResultValue(), obx.getComment());
+					lr =
+						new LabResult(pat, obx.getDate(), li, obx.getResultValue(), obx
+							.getComment());
 				}
-
+				
 				if (obx.isPathologic()) {
 					lr.setFlag(LabResult.PATHOLOGIC, true);
 				}
@@ -171,15 +169,15 @@ public class Importer extends ImporterPage {
 			}
 			obr = obr.nextOBR(obr);
 		}
-
+		
 		// add comments as a LabResult
-
+		
 		String comments = hl7.getComments();
 		if (!StringTool.isNothing(comments)) {
 			obr = hl7.firstOBR();
 			if (obr != null) {
 				TimeTool commentsDate = obr.getDate();
-
+				
 				// find LabItem
 				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
 				qbe.add("LaborID", "=", labor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -191,11 +189,11 @@ public class Importer extends ImporterPage {
 					// LabItem doesn't yet exist
 					LabItem.typ typ = LabItem.typ.TEXT;
 					li = new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "", //$NON-NLS-1$ //$NON-NLS-2$
-							"", typ, COMMENT_GROUP, Integer.toString(nummer++)); //$NON-NLS-1$
+						"", typ, COMMENT_GROUP, Integer.toString(nummer++)); //$NON-NLS-1$
 				} else {
 					li = list.get(0);
 				}
-
+				
 				// add LabResult
 				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -203,44 +201,47 @@ public class Importer extends ImporterPage {
 				qr.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (qr.execute().size() == 0) {
 					// only add coments not yet existing
-
+					
 					new LabResult(pat, commentsDate, li, "Text", comments); //$NON-NLS-1$
 				}
 			}
 		}
-
-		return new Result<String>(ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.ok")); //$NON-NLS-1$
+		
+		return new Result<String>(ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Equivalent to importFile(new File(file), null)
-	 * @param filepath the file to be imported (full path)
+	 * 
+	 * @param filepath
+	 *            the file to be imported (full path)
 	 * @return
 	 */
-	private Result<?> importFile(final String filepath) {
+	private Result<?> importFile(final String filepath){
 		File file = new File(filepath);
 		Result<?> result = importFile(file, null);
 		if (result.isOK()) {
 			if (!file.delete()) {
 				log.log("Datei " + file.getPath() //$NON-NLS-1$
-						+ " konnte nicht gelöscht werden.", Log.WARNINGS); //$NON-NLS-1$
+					+ " konnte nicht gelöscht werden.", Log.WARNINGS); //$NON-NLS-1$
 			}
 		}
 		return result;
 	}
-
+	
 	/**
-	 * Import the given HL7 file. Optionally, move the file into the given
-	 * archive directory
-	 * @param file the file to be imported (full path)
-	 * @param archiveDir a directory where the file should be moved to on success,
-	 * or null if it should not be moved.
+	 * Import the given HL7 file. Optionally, move the file into the given archive directory
+	 * 
+	 * @param file
+	 *            the file to be imported (full path)
+	 * @param archiveDir
+	 *            a directory where the file should be moved to on success, or null if it should not
+	 *            be moved.
 	 * @return the result as type Result
 	 */
-	private Result<?> importFile(final File file, final File archiveDir) {
-		HL7 hl7 = new HL7(ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.lab") + MY_LAB, MY_LAB); //$NON-NLS-1$
+	private Result<?> importFile(final File file, final File archiveDir){
+		HL7 hl7 =
+			new HL7(ch.elexis.laborimport.teamw.Messages.getString("Importer.lab") + MY_LAB, MY_LAB); //$NON-NLS-1$
 		Result<String> resultLoad = hl7.load(file.getAbsolutePath());
 		if (resultLoad.isOK()) {
 			Result<Patient> resultPatient = hl7.getPatient(false);
@@ -249,35 +250,32 @@ public class Importer extends ImporterPage {
 				if (resultKontakt.isOK()) {
 					Patient pat = resultPatient.get();
 					Kontakt labor = resultKontakt.get();
-
+					
 					Result<String> resultParse = parse(hl7, labor, pat);
-
+					
 					// move result to archive
 					if (resultParse.isOK()) {
 						if (archiveDir != null) {
 							if (archiveDir.exists() && archiveDir.isDirectory()) {
-								if (file.exists() && file.isFile()
-										&& file.canRead()) {
-									File newFile = new File(archiveDir, file
-											.getName());
+								if (file.exists() && file.isFile() && file.canRead()) {
+									File newFile = new File(archiveDir, file.getName());
 									if (!file.renameTo(newFile)) {
-										String msg = MessageFormat
-												.format(
-														ch.elexis.laborimport.teamw.Messages
-																.getString("Importer.error.moveToArchive"), //$NON-NLS-1$
-														new Object[] { file
-																.getAbsolutePath() });
-										SWTHelper
-												.showError(
-														ch.elexis.laborimport.teamw.Messages
-																.getString("Importer.error.archivieren"), //$NON-NLS-1$
-														msg);
+										String msg =
+											MessageFormat.format(
+												ch.elexis.laborimport.teamw.Messages
+													.getString("Importer.error.moveToArchive"), //$NON-NLS-1$
+												new Object[] {
+													file.getAbsolutePath()
+												});
+										SWTHelper.showError(ch.elexis.laborimport.teamw.Messages
+											.getString("Importer.error.archivieren"), //$NON-NLS-1$
+											msg);
 									}
 								}
 							}
 						}
 					}
-
+					
 					GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
 					return resultParse;
 				} else {
@@ -289,60 +287,58 @@ public class Importer extends ImporterPage {
 		}
 		return resultLoad;
 	}
-
-	protected FtpServer openConnection(String host, String user, String pwd)
-			throws IOException {
+	
+	protected FtpServer openConnection(String host, String user, String pwd) throws IOException{
 		FtpServer ftp = null;
 		if (ftp == null) {
 			ftp = new FtpServer();
 		}
-
+		
 		if (!ftp.isConnected()) {
 			ftp.connect(host);
 			ftp.mode(FtpServer.BINARY_FILE_TYPE);
 		}
-
+		
 		if (ftp.isConnected()) {
 			if (!ftp.login(user, pwd)) {
 				throw new IOException(ftp.getReplyStrings()[0]);
 			}
 		}
-
+		
 		ftp.enterLocalPassiveMode();
-
+		
 		return ftp;
 	}
-
-	protected void closeConnection(FtpServer ftp) throws IOException {
+	
+	protected void closeConnection(FtpServer ftp) throws IOException{
 		if (ftp != null && ftp.isConnected()) {
 			ftp.disconnect();
 			ftp = null;
 		}
 	}
-
-	protected void addSemaphore(FtpServer ftp, String downloadDir)
-			throws SemaphoreException {
+	
+	protected void addSemaphore(FtpServer ftp, String downloadDir) throws SemaphoreException{
 		try {
 			uploadSemaphore(ftp);
 			// Teamw.sem checken
 			String[] filenameList = ftp.listNames();
 			for (String filename : filenameList) {
 				if (filename.toLowerCase().equals(TEAMW_SEMAPHORE)) {
-					throw new SemaphoreException(
-							ch.elexis.laborimport.teamw.Messages.getString("Importer.semaphore.error")); //$NON-NLS-1$
+					throw new SemaphoreException(ch.elexis.laborimport.teamw.Messages
+						.getString("Importer.semaphore.error")); //$NON-NLS-1$
 				}
 			}
 		} catch (IOException e) {
 			throw new SemaphoreException(e);
 		}
 	}
-
+	
 	/**
 	 * praxis.sem auf FTP Server kopieren
 	 */
-	protected void uploadSemaphore(FtpServer ftp) throws IOException {
+	protected void uploadSemaphore(FtpServer ftp) throws IOException{
 		File file = new File(System.getProperty("user.home", "") //$NON-NLS-1$ //$NON-NLS-2$
-				+ System.getProperty("file.separator") + PRAXIS_SEMAPHORE); //$NON-NLS-1$
+			+ System.getProperty("file.separator") + PRAXIS_SEMAPHORE); //$NON-NLS-1$
 		file.createNewFile();
 		ftp.uploadFile(file.getName(), file.getPath());
 	}
@@ -350,51 +346,49 @@ public class Importer extends ImporterPage {
 	/**
 	 * praxis.sem auf FTP Server löschen
 	 */
-	protected void removeSemaphore(FtpServer ftp) throws IOException {
+	protected void removeSemaphore(FtpServer ftp) throws IOException{
 		ftp.deleteFile(PRAXIS_SEMAPHORE);
 	}
-
-	private Result<?> importDirect() {
-		String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP,
-				PreferencePage.FTP);
+	
+	private Result<?> importDirect(){
+		String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
 		if (PreferencePage.BATCH.equals(batchOrFtp)) {
 			return importDirectBatch();
 		}
 		
 		return importDirectFtp();
 	}
-
-	private Result<?> importDirectFtp() {
-		Result<String> result = new Result<String>(
-				ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
-
-		String ftpHost = Hub.globalCfg.get(PreferencePage.FTP_HOST,
-				PreferencePage.DEFAULT_FTP_HOST);
-		String user = Hub.globalCfg.get(PreferencePage.FTP_USER,
-				PreferencePage.DEFAULT_FTP_USER);
-		String pwd = Hub.globalCfg.get(PreferencePage.FTP_PWD,
-				PreferencePage.DEFAULT_FTP_PWD);
-		String downloadDir = UtilFile.getCorrectPath(Hub.globalCfg.get(
-				PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
-
+	
+	private Result<?> importDirectFtp(){
+		Result<String> result =
+			new Result<String>(ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
+		
+		String ftpHost =
+			Hub.globalCfg.get(PreferencePage.FTP_HOST, PreferencePage.DEFAULT_FTP_HOST);
+		String user = Hub.globalCfg.get(PreferencePage.FTP_USER, PreferencePage.DEFAULT_FTP_USER);
+		String pwd = Hub.globalCfg.get(PreferencePage.FTP_PWD, PreferencePage.DEFAULT_FTP_PWD);
+		String downloadDir =
+			UtilFile.getCorrectPath(Hub.globalCfg.get(PreferencePage.DL_DIR,
+				PreferencePage.DEFAULT_DL_DIR));
+		
 		FtpServer ftp = null;
 		try {
 			List<String> hl7FileList = new Vector<String>();
 			try {
 				ftp = openConnection(ftpHost, user, pwd);
 				addSemaphore(ftp, downloadDir);
-
+				
 				String[] filenameList = ftp.listNames();
 				log.log("Verbindung mit Labor " + MY_LAB //$NON-NLS-1$
-						+ " erfolgreich. " + filenameList.length //$NON-NLS-1$
-						+ " Dateien gefunden.", Log.INFOS); //$NON-NLS-1$
+					+ " erfolgreich. " + filenameList.length //$NON-NLS-1$
+					+ " Dateien gefunden.", Log.INFOS); //$NON-NLS-1$
 				for (String filename : filenameList) {
 					if (filename.toUpperCase().endsWith("HL7")) { //$NON-NLS-1$
 						ftp.downloadFile(filename, downloadDir + filename);
 						log.log("Datei <" + filename + "> downloaded.", //$NON-NLS-1$ //$NON-NLS-2$
-								Log.INFOS);
+							Log.INFOS);
 						hl7FileList.add(filename);
-						// Zeile um Files auf FTP zu löschen. 
+						// Zeile um Files auf FTP zu löschen.
 						ftp.deleteFile(filename);
 					}
 				}
@@ -402,15 +396,19 @@ public class Importer extends ImporterPage {
 				removeSemaphore(ftp);
 				closeConnection(ftp);
 			}
-
-			String header = MessageFormat.format(
-					ch.elexis.laborimport.teamw.Messages
-							.getString("Importer.import.header"), //$NON-NLS-1$
-					new Object[] { MY_LAB });
-			String question = MessageFormat.format(
-					ch.elexis.laborimport.teamw.Messages
-							.getString("Importer.import.message"), //$NON-NLS-1$
-					new Object[] { hl7FileList.size(), downloadDir });
+			
+			String header =
+				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.import.header"), //$NON-NLS-1$
+					new Object[] {
+						MY_LAB
+					});
+			String question =
+				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.import.message"), //$NON-NLS-1$
+					new Object[] {
+						hl7FileList.size(), downloadDir
+					});
 			if (SWTHelper.askYesNo(header, question)) {
 				for (String filename : hl7FileList) {
 					importFile(downloadDir + filename);
@@ -418,73 +416,72 @@ public class Importer extends ImporterPage {
 				}
 			}
 		} catch (IOException e) {
-			result = new Result<String>(Log.ERRORS, 1, e.getMessage(), MY_LAB,
-					true);
-			result.display(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.error.import")); //$NON-NLS-1$
+			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
+			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
+				.getString("Importer.error.import")); //$NON-NLS-1$
 		} catch (SemaphoreException e) {
-			result = new Result<String>(Log.WARNINGS, 1, e.getMessage(),
-					MY_LAB, true);
-			result.display(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.error.import")); //$NON-NLS-1$
+			result = new Result<String>(SEVERITY.WARNING, 1, e.getMessage(), MY_LAB, true);
+			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
+				.getString("Importer.error.import")); //$NON-NLS-1$
 		}
-
+		
 		return result;
 	}
-
-	private Result<?> importDirectBatch() {
-		Result<String> result = new Result<String>(
-				ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
-
-		String batchFile = UtilFile.getCorrectPath(Hub.globalCfg.get(
-				PreferencePage.BATCH_DATEI, "")); //$NON-NLS-1$
-		String downloadDir = UtilFile.getCorrectPath(Hub.globalCfg.get(
-				PreferencePage.DL_DIR, PreferencePage.DEFAULT_DL_DIR));
-
+	
+	private Result<?> importDirectBatch(){
+		Result<String> result =
+			new Result<String>(ch.elexis.laborimport.teamw.Messages.getString("Importer.ok")); //$NON-NLS-1$
+		
+		String batchFile =
+			UtilFile.getCorrectPath(Hub.globalCfg.get(PreferencePage.BATCH_DATEI, "")); //$NON-NLS-1$
+		String downloadDir =
+			UtilFile.getCorrectPath(Hub.globalCfg.get(PreferencePage.DL_DIR,
+				PreferencePage.DEFAULT_DL_DIR));
+		
 		if (batchFile == null || batchFile.length() == 0) {
-			return new Result<String>(
-					Log.ERRORS,
-					1,
-					ch.elexis.laborimport.teamw.Messages.getString("Importer.leereBatchdatei.error"), //$NON-NLS-1$
-					MY_LAB, true);
+			return new Result<String>(SEVERITY.ERROR, 1, ch.elexis.laborimport.teamw.Messages
+				.getString("Importer.leereBatchdatei.error"), //$NON-NLS-1$
+				MY_LAB, true);
 		}
-
+		
 		try {
 			Process process = Runtime.getRuntime().exec(batchFile);
 			int exitValue = -1;
 			try {
 				exitValue = process.waitFor();
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				log.log(e.getMessage(), Log.INFOS);
 			}
 			if (exitValue != 0) {
-				return new Result<String>(
-						Log.ERRORS,
-						1,
-						ch.elexis.laborimport.teamw.Messages.getString("Importer.batchFehler.error") + process.exitValue(), //$NON-NLS-1$
-						MY_LAB, true);
+				return new Result<String>(SEVERITY.ERROR, 1, ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.batchFehler.error") + process.exitValue(), //$NON-NLS-1$
+					MY_LAB, true);
 			}
 			
 			List<String> hl7FileList = new Vector<String>();
 			File ddDir = new File(downloadDir);
-				
+			
 			String[] filenameList = ddDir.list();
 			for (String filename : filenameList) {
 				if (filename.toUpperCase().endsWith("HL7")) { //$NON-NLS-1$
 					log.log("Datei <" + filename + "> downloaded.", //$NON-NLS-1$ //$NON-NLS-2$
-							Log.INFOS);
+						Log.INFOS);
 					hl7FileList.add(filename);
 				}
 			}
 			
-			String header = MessageFormat.format(
-					ch.elexis.laborimport.teamw.Messages
-							.getString("Importer.import.header"), //$NON-NLS-1$
-					new Object[] { MY_LAB });
-			String question = MessageFormat.format(
-					ch.elexis.laborimport.teamw.Messages
-							.getString("Importer.import.message"), //$NON-NLS-1$
-					new Object[] { hl7FileList.size(), downloadDir });
+			String header =
+				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.import.header"), //$NON-NLS-1$
+					new Object[] {
+						MY_LAB
+					});
+			String question =
+				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
+					.getString("Importer.import.message"), //$NON-NLS-1$
+					new Object[] {
+						hl7FileList.size(), downloadDir
+					});
 			if (SWTHelper.askYesNo(header, question)) {
 				for (String filename : hl7FileList) {
 					importFile(downloadDir + filename);
@@ -492,17 +489,16 @@ public class Importer extends ImporterPage {
 				}
 			}
 		} catch (IOException e) {
-			result = new Result<String>(Log.ERRORS, 1, e.getMessage(), MY_LAB,
-					true);
-			result.display(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.error.import")); //$NON-NLS-1$
+			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
+			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
+				.getString("Importer.error.import")); //$NON-NLS-1$
 		}
 		
 		return result;
 	}
-
+	
 	@Override
-	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		int type;
 		try {
 			String sType = results[0];
@@ -510,31 +506,30 @@ public class Importer extends ImporterPage {
 		} catch (NumberFormatException ex) {
 			type = FILE;
 		}
-
+		
 		if ((type != FILE) && (type != DIRECT)) {
 			type = FILE;
 		}
-
+		
 		if (type == FILE) {
 			String filename = results[1];
-			return importFile(filename).asStatus();
+			return ResultAdapter.getResultAsStatus(importFile(filename));
 		} else {
-			return importDirect().asStatus();
+			return ResultAdapter.getResultAsStatus(importDirect());
 		}
 	}
-
+	
 	@Override
-	public String getDescription() {
-		return ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.title.description"); //$NON-NLS-1$
+	public String getDescription(){
+		return ch.elexis.laborimport.teamw.Messages.getString("Importer.title.description"); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public String getTitle() {
+	public String getTitle(){
 		return ch.elexis.laborimport.teamw.Messages.getString("Importer.lab") + MY_LAB; //$NON-NLS-1$
 	}
-
-	String getBasePath() {
+	
+	String getBasePath(){
 		try {
 			URL url = Platform.getBundle(PLUGIN_ID).getEntry("/"); //$NON-NLS-1$
 			url = FileLocator.toFileURL(url);
@@ -546,161 +541,149 @@ public class Importer extends ImporterPage {
 			return null;
 		}
 	}
-
+	
 	/**
-	 * An importer that lets the user select a file to import or directly import
-	 * the data from the lab.
-	 * The chosen type (file or direct import) is stored in results[0] (FILE or DIRECT).
-	 * If FILE is chosen, the file path is stored in results[1].
+	 * An importer that lets the user select a file to import or directly import the data from the
+	 * lab. The chosen type (file or direct import) is stored in results[0] (FILE or DIRECT). If
+	 * FILE is chosen, the file path is stored in results[1].
+	 * 
 	 * @author gerry, danlutz
-	 *
+	 * 
 	 */
 	private class LabImporter extends Composite {
 		private final Button bFile;
 		private final Button bDirect;
-
+		
 		private final Text tFilename;
-
-		public LabImporter(final Composite parent, final ImporterPage home) {
+		
+		public LabImporter(final Composite parent, final ImporterPage home){
 			super(parent, SWT.BORDER);
 			setLayout(new GridLayout(3, false));
-
+			
 			bFile = new Button(this, SWT.RADIO);
 			bFile.setText(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.label.importFile")); //$NON-NLS-1$
+				.getString("Importer.label.importFile")); //$NON-NLS-1$
 			bFile.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-
+			
 			Label lFile = new Label(this, SWT.NONE);
 			lFile.setText("    " + Messages.getString("ImporterPage.file")); //$NON-NLS-1$ //$NON-NLS-2$
 			GridData gd = SWTHelper.getFillGridData(1, false, 1, false);
 			gd.horizontalAlignment = GridData.END;
 			gd.widthHint = lFile.getSize().x + 20;
-
+			
 			tFilename = new Text(this, SWT.BORDER);
-			tFilename.setLayoutData(SWTHelper
-					.getFillGridData(1, true, 1, false));
-
+			tFilename.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			
 			Button bBrowse = new Button(this, SWT.PUSH);
 			bBrowse.setText(Messages.getString("ImporterPage.browse")); //$NON-NLS-1$
-
-			String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP,
-					PreferencePage.FTP);
-			String direktHerkunft = ch.elexis.laborimport.teamw.Messages.getString("Importer.ftp.label"); //$NON-NLS-1$
+			
+			String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
+			String direktHerkunft =
+				ch.elexis.laborimport.teamw.Messages.getString("Importer.ftp.label"); //$NON-NLS-1$
 			if (PreferencePage.BATCH.equals(batchOrFtp)) {
-				direktHerkunft = ch.elexis.laborimport.teamw.Messages.getString("Importer.batch.label"); //$NON-NLS-1$
+				direktHerkunft =
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.batch.label"); //$NON-NLS-1$
 			}
 			bDirect = new Button(this, SWT.RADIO);
-			bDirect
-					.setText(ch.elexis.laborimport.teamw.Messages
-							.getString("Importer.label.importDirect") + " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			bDirect.setText(ch.elexis.laborimport.teamw.Messages
+				.getString("Importer.label.importDirect") + " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			bDirect.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-
-			int type = Hub.localCfg.get(
-					"ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-
+			
+			int type = Hub.localCfg.get("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			home.results = new String[2];
-
+			
 			if (type == FILE) {
 				bFile.setSelection(true);
 				bDirect.setSelection(false);
-
-				String filename = Hub.localCfg.get(
-						"ImporterPage/" + home.getTitle() + "/filename", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				
+				String filename =
+					Hub.localCfg.get("ImporterPage/" + home.getTitle() + "/filename", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				tFilename.setText(filename);
-
+				
 				home.results[0] = new Integer(FILE).toString();
 				home.results[1] = filename;
 			} else {
 				bFile.setSelection(false);
 				bDirect.setSelection(true);
-
+				
 				tFilename.setText(""); //$NON-NLS-1$
-
+				
 				home.results[0] = new Integer(DIRECT).toString();
 				home.results[1] = ""; //$NON-NLS-1$
 			}
-
+			
 			SelectionAdapter sa = new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					Button button = (Button) e.getSource();
-
+					
 					// only handle selection == true
 					if (!button.getSelection()) {
 						return;
 					}
-
+					
 					int type = FILE;
-
+					
 					if (button == bFile) {
 						type = FILE;
 					} else if (button == bDirect) {
 						type = DIRECT;
 					}
-
+					
 					if (type == FILE) {
 						bFile.setSelection(true);
 						bDirect.setSelection(false);
-
+						
 						String filename = tFilename.getText();
-
+						
 						home.results[0] = new Integer(FILE).toString();
 						home.results[1] = filename;
-
-						Hub.localCfg
-								.set(
-										"ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-						Hub.localCfg
-								.set(
-										"ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
+						
+						Hub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
+						Hub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						bFile.setSelection(false);
 						bDirect.setSelection(true);
-
+						
 						tFilename.setText(""); //$NON-NLS-1$
-
+						
 						home.results[0] = new Integer(DIRECT).toString();
 						home.results[1] = ""; //$NON-NLS-1$
-
-						Hub.localCfg
-								.set(
-										"ImporterPage/" + home.getTitle() + "/type", DIRECT); //$NON-NLS-1$ //$NON-NLS-2$
-						Hub.localCfg
-								.set(
-										"ImporterPage/" + home.getTitle() + "/filename", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						
+						Hub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", DIRECT); //$NON-NLS-1$ //$NON-NLS-2$
+						Hub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 				}
 			};
-
+			
 			bFile.addSelectionListener(sa);
 			bDirect.addSelectionListener(sa);
-
+			
 			bBrowse.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(final SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e){
 					bFile.setSelection(true);
 					bDirect.setSelection(false);
-
+					
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
-					fdl.setFilterExtensions(new String[] { "*" }); //$NON-NLS-1$
-					fdl.setFilterNames(new String[] { Messages
-							.getString("ImporterPage.allFiles") }); //$NON-NLS-1$
+					fdl.setFilterExtensions(new String[] {
+						"*"}); //$NON-NLS-1$
+					fdl.setFilterNames(new String[] {
+						Messages.getString("ImporterPage.allFiles")}); //$NON-NLS-1$
 					String filename = fdl.open();
 					if (filename == null) {
 						filename = ""; //$NON-NLS-1$
 					}
-
+					
 					tFilename.setText(filename);
 					home.results[0] = new Integer(FILE).toString();
 					home.results[1] = filename;
-
-					Hub.localCfg.set(
-							"ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
-					Hub.localCfg
-							.set(
-									"ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
+					
+					Hub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", FILE); //$NON-NLS-1$ //$NON-NLS-2$
+					Hub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", filename); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-
+				
 			});
 		}
 	}
