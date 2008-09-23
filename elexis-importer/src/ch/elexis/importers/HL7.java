@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4298 2008-08-20 17:39:41Z rgw_ch $
+ * $Id: HL7.java 4431 2008-09-23 13:55:57Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -17,12 +17,12 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.matchers.KontaktMatcher;
-import ch.elexis.util.Log;
-import ch.elexis.util.Result;
+import ch.elexis.exchange.KontaktMatcher;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Result.SEVERITY;
 
 /**
  * This class parses a HL7 file containing lab results. It tries to comply with several possible
@@ -71,13 +71,13 @@ public class HL7 {
 	public Result<String> load(final String filename){
 		File file = new File(filename);
 		if (!file.canRead()) {
-			return new Result<String>(Log.WARNINGS, 1, "Kann Datei nicht lesen", filename, true);
+			return new Result<String>(SEVERITY.WARNING, 1, "Kann Datei nicht lesen", filename, true);
 		}
 		try {
 			FileReader fr = new FileReader(file);
 			char[] in = new char[(int) file.length()];
 			if (fr.read(in) != in.length) {
-				return new Result<String>(Log.WARNINGS, 3, "EOF", filename, true);
+				return new Result<String>(SEVERITY.WARNING, 3, "EOF", filename, true);
 			}
 			String hl7raw = new String(in);
 			lines = hl7raw.split("[\\r\\n]+");
@@ -86,7 +86,8 @@ public class HL7 {
 			return new Result<String>("OK");
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<String>(Log.ERRORS, 2, "Exception beim Lesen", ex.getMessage(), true);
+			return new Result<String>(SEVERITY.ERROR, 2, "Exception beim Lesen", ex.getMessage(),
+				true);
 		}
 		
 	}
@@ -235,7 +236,7 @@ public class HL7 {
 								"Patient auswählen", "Wer ist " + nachname + " " + vorname + " ,"
 									+ gebdat + "?");
 						if (pat == null) {
-							return new Result<Patient>(Log.WARNINGS, 1,
+							return new Result<Patient>(SEVERITY.WARNING, 1,
 								"Patient nicht in Datenbank", null, true);
 						}
 					}
@@ -246,7 +247,7 @@ public class HL7 {
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
 						pat = null;
-						return new Result<Patient>(Log.WARNINGS, 4,
+						return new Result<Patient>(SEVERITY.WARNING, 4,
 							"Patient mit dieser ID schon mit anderem Namen vorhanden", null, true);
 					}
 				}
@@ -260,7 +261,7 @@ public class HL7 {
 		if (msh.length > 9) {
 			return new Result<String>(msh[9]);
 		}
-		return new Result<String>(Log.ERRORS, 1, "Invalid MSH", "Error", true);
+		return new Result<String>(SEVERITY.ERROR, 1, "Invalid MSH", "Error", true);
 	}
 	
 	/**
