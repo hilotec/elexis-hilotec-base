@@ -18,7 +18,7 @@
  * - Re-Adapted to Viollier
  * - Added -allInOne option from OpenMedical
  * 
- * $Id: Importer.java 4433 2008-09-23 13:56:43Z rgw_ch $
+ * $Id: Importer.java 4437 2008-09-24 11:21:53Z rgw_ch $
  */
 
 package ch.elexis.laborimport.viollier;
@@ -53,6 +53,7 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.importers.HL7;
+import ch.elexis.importers.HL7Parser;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.Messages;
@@ -69,9 +70,7 @@ public class Importer extends ImporterPage {
 	
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 	
-	private static final String COMMENT_NAME = "Kommentar";
-	private static final String COMMENT_CODE = "kommentar";
-	private static final String COMMENT_GROUP = "00 Kommentar";
+	private HL7Parser hlp=new HL7Parser(MY_LAB);
 	
 	// importer type
 	private static final int FILE = 1;
@@ -99,7 +98,7 @@ public class Importer extends ImporterPage {
 					URLClassLoader urlLoader =
 						getURLClassLoader(new URL("file", null, jar.getAbsolutePath()));
 					
-					Class openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
+					Class<?> openmedicalClass = urlLoader.loadClass(OPENMEDICAL_MAINCLASS);
 					
 					// try to get the download method
 					Method meth;
@@ -131,169 +130,8 @@ public class Importer extends ImporterPage {
 		return ret;
 	}
 	
-	private Result<String> parse(final HL7 hl7, final Kontakt labor, final Patient pat){
-		HL7.OBR obr = hl7.firstOBR();
-		int nummer = 0;
-		String dat = new TimeTool().toString(TimeTool.DATE_GER);
-		while (obr != null) {
-			HL7.OBX obx = obr.firstOBX();
-			while (obx != null) {
-				String itemname = obx.getItemName();
-				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
-				qbe.add("LaborID", "=", labor.getId());
-				// disabled, this would avoid renaming the title
-				// qbe.add("titel", "=", itemname);
-				qbe.add("kuerzel", "=", obx.getItemCode());
-				List<LabItem> list = qbe.execute();
-				LabItem li = null;
-				if (list.size() < 1) {
-					LabItem.typ typ = LabItem.typ.NUMERIC;
-					if (obx.isFormattedText()) {
-						typ = LabItem.typ.TEXT;
-					}
-					li =
-						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(), obx
-							.getRefRange(), obx.getUnits(), typ, "Z Automatisch_" + dat, Integer
-							.toString(nummer++));
-				} else {
-					li = list.get(0);
-				}
-				LabResult lr;
-				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
-				qr.add("PatientID", "=", pat.getId());
-				qr.add("Datum", "=", obr.getDate().toString(TimeTool.DATE_GER));
-				qr.add("ItemID", "=", li.getId());
-				if (qr.execute().size() != 0) {
-					if (SWTHelper.askYesNo("Dieser Laborwert wurde schon importiert",
-						"Weitermachen?")) {
-						obx = obr.nextOBX(obx);
-						continue;
-					} else {
-						return new Result<String>("Cancelled");
-					}
-				}
-				if (obx.isFormattedText()) {
-					lr = new LabResult(pat, obr.getDate(), li, "text", obx.getResultValue());
-				} else {
-					lr =
-						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
-							.getComment());
-				}
-				
-				if (obx.isPathologic()) {
-					lr.setFlag(LabResult.PATHOLOGIC, true);
-				}
-				obx = obr.nextOBX(obx);
-			}
-			obr = obr.nextOBR(obr);
-		}
-		
-		// add comments as a LabResult
-		
-		String comments = hl7.getComments();
-		if (!StringTool.isNothing(comments)) {
-			obr = hl7.firstOBR();
-			if (obr != null) {
-				TimeTool commentsDate = obr.getDate();
-				
-				// find LabItem
-				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
-				qbe.add("LaborID", "=", labor.getId());
-				qbe.add("titel", "=", COMMENT_NAME);
-				qbe.add("kuerzel", "=", COMMENT_CODE);
-				List<LabItem> list = qbe.execute();
-				LabItem li = null;
-				if (list.size() < 1) {
-					// LabItem doesn't yet exist
-					LabItem.typ typ = LabItem.typ.TEXT;
-					li =
-						new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "", "", typ,
-							COMMENT_GROUP, Integer.toString(nummer++));
-				} else {
-					li = list.get(0);
-				}
-				
-				// add LabResult
-				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
-				qr.add("PatientID", "=", pat.getId());
-				qr.add("Datum", "=", commentsDate.toString(TimeTool.DATE_GER));
-				qr.add("ItemID", "=", li.getId());
-				if (qr.execute().size() == 0) {
-					// only add coments not yet existing
-					
-					new LabResult(pat, commentsDate, li, "Text", comments);
-				}
-			}
-		}
-		
-		return new Result<String>("OK");
-	}
 	
-	/**
-	 * Equivalent to importFile(new File(file), null)
-	 * 
-	 * @param filepath
-	 *            the file to be imported (full path)
-	 * @return
-	 */
-	private Result importFile(final String filepath){
-		return importFile(new File(filepath), null);
-	}
-	
-	/**
-	 * Import the given HL7 file. Optionally, move the file into the given archive directory
-	 * 
-	 * @param file
-	 *            the file to be imported (full path)
-	 * @param archiveDir
-	 *            a directory where the file should be moved to on success, or null if it should not
-	 *            be moved.
-	 * @return the result as type Result
-	 */
-	private Result importFile(final File file, final File archiveDir){
-		HL7 hl7 = new HL7("Labor " + MY_LAB, MY_LAB);
-		Result<String> r = hl7.load(file.getAbsolutePath());
-		if (r.isOK()) {
-			Result<Patient> res = hl7.getPatient(false);
-			if (res.isOK()) {
-				Result<Kontakt> rk = hl7.getLabor();
-				if (rk.isOK()) {
-					Patient pat = res.get();
-					Kontakt labor = rk.get();
-					
-					Result ret = parse(hl7, labor, pat);
-					
-					// move result to archive
-					if (ret.isOK()) {
-						if (archiveDir != null) {
-							if (archiveDir.exists() && archiveDir.isDirectory()) {
-								if (file.exists() && file.isFile() && file.canRead()) {
-									File newFile = new File(archiveDir, file.getName());
-									if (!file.renameTo(newFile)) {
-										SWTHelper.showError("Fehler beim Archivieren", "Die Datei "
-											+ file.getAbsolutePath()
-											+ " konnte nicht ins Archiv verschoben werden.");
-									}
-								}
-							}
-						}
-					}
-					
-					GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
-					return ret;
-				} else {
-					return rk;
-				}
-			} else {
-				ResultAdapter.displayResult(res, "Fehler beim Import");
-				return res;
-			}
-		}
-		return r;
-		
-	}
-	
-	private Result importDirect(){
+	private Result<?> importDirect(){
 		if (openmedicalObject == null) {
 			return new Result<String>(SEVERITY.ERROR, 1, MY_LAB, "Fehlerhafte Konfiguration", true);
 		}
@@ -343,7 +181,7 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result rs = importFile(f, archiveDir);
+				Result<?> rs = hlp.importFile(f, archiveDir);
 				if (!rs.isOK()) {
 					// importFile already shows error
 					// rs.display("Fehler beim Import");
@@ -378,7 +216,7 @@ public class Importer extends ImporterPage {
 		
 		if (type == FILE) {
 			String filename = results[1];
-			return ResultAdapter.getResultAsStatus(importFile(filename));
+			return ResultAdapter.getResultAsStatus(hlp.importFile(filename));
 		} else {
 			return ResultAdapter.getResultAsStatus(importDirect());
 		}
