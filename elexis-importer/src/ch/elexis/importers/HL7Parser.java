@@ -182,4 +182,15 @@ public class HL7Parser {
 		return r;
 		
 	}
+
+	/**
+	 * Equivalent to importFile(new File(file), null)
+	 * 
+	 * @param filepath
+	 *            the file to be imported (full path)
+	 * @return
+	 */
+	public Result<?> importFile(final String filepath){
+		return importFile(new File(filepath), null);
+	}
 }
