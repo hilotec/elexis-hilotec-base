@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 4430 2008-09-22 17:22:09Z rgw_ch $ 
+<!-- $Id: plugin.xml 4435 2008-09-24 04:45:37Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -56,7 +56,11 @@
             class="ch.elexis.AbrechnungsPerspektive"
             icon="rsc/money.png"
             id="ch.elexis.AbrechnungPerspektive"
-            name="%elexis.accountingPerspective"/>
+            name="%elexis.accountingPerspective">
+         <description>
+            Eine Perspektive zum Rechnungen erstellen und ausdrucken
+         </description>
+      </perspective>
       <perspective
             class="ch.elexis.LeistungPerspektive"
             icon="rsc/tick.png"
@@ -571,6 +575,13 @@
             id="ch.elexis.commands.bills"
             name="bills">
       </category>
+      <command
+            categoryId="ch.elexis.commands.bills"
+            defaultHandler="ch.elexis.commands.MahnlaufCommand"
+            description="Mahnungen erstellen"
+            id="bill.reminder"
+            name="Mahnlauf">
+      </command>
    </extension>
    <extension
          point="ch.elexis.Sidebar">
@@ -629,6 +640,18 @@
             name="Fall-Standard"
             outputter="ch.elexis.views.rechnung.DefaultOutputter">
       </Rechnung>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="context for billing"
+            id="ch.elexis.context.billing"
+            name="billing"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
    </extension>
 
 </plugin>
