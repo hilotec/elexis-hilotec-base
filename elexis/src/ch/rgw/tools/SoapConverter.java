@@ -1,5 +1,6 @@
 package ch.rgw.tools;
 
+import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.jdom.output.XMLOutputter;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-import ch.rgw.tools.ExHandler;
 
 public class SoapConverter {
 	public static final Namespace ns=Namespace.getNamespace("soap", "http://www.w3.org/2001/12/soap-envelope");
@@ -24,6 +24,7 @@ public class SoapConverter {
 	public static final String TYPE_FLOAT="float";
 	public static final String TYPE_ARRAY="array";
 	public static final String TYPE_HASH="hash";
+	public static final String TYPE_SIGNATURE="signature";
 	
 	private Document doc;
 	private Element eRoot;
@@ -33,7 +34,23 @@ public class SoapConverter {
 	public SoapConverter(){
 	}
 	
-	
+	public boolean load(byte[] input){
+		SAXBuilder builder = new SAXBuilder();
+		ByteArrayInputStream bais=new ByteArrayInputStream(input);
+		try{
+			doc=builder.build(bais);
+			eRoot=doc.getRootElement();
+			bValid=true;
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			bValid=false;
+		}
+		return bValid;
+	}
+
+	public Document getXML(){
+		return doc;
+	}
 	public boolean load(String input) {
 		SAXBuilder builder = new SAXBuilder();
 		try{
@@ -47,6 +64,19 @@ public class SoapConverter {
 		}
 		return bValid;
 		
+	}
+	
+	public Element getParameter(String name){
+		if(bValid){
+			Element body=eRoot.getChild("Body",ns);
+			List<Element> params=body.getChildren("parameter",ns);
+			for(Element el:params){
+				if(el.getAttributeValue("name").equalsIgnoreCase(name)){
+					return el;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public HashMap<String, Object> getParameters(){
@@ -67,7 +97,7 @@ public class SoapConverter {
 						res=Double.parseDouble(s);
 					}else if(type.equals(TYPE_ARRAY)){
 						res=new BASE64Decoder().decodeBuffer(s);
-					}else{
+					}else{ // TODO Hashmap
 						res="** unsupported type **";
 					}
 				}catch(Exception ex){
@@ -95,7 +125,7 @@ public class SoapConverter {
 		bValid=true;
 	}
 	
-	public String toXML(){
+	public String toString(){
 		if(doc!=null && eRoot!=null){
 			Format format=Format.getPrettyFormat();
 			format.setEncoding("utf-8");
@@ -105,47 +135,57 @@ public class SoapConverter {
 		return null;
 	}
 	
-	private Element createParameter(String name, String type){
+	private Element createParameter(Element parent, String name, String type){
+		if(parent==null){
+			parent=eBody;
+		}
 		Element ret=new Element("parameter",ns);
 		ret.setAttribute("type",type);
 		ret.setAttribute("name",name);
-		eBody.addContent(ret);
+		parent.addContent(ret);
 		return ret;
 	}
 	public void addString(String name, String s){
-		createParameter(name,TYPE_STRING).setText(s);
+		createParameter(eBody,name,TYPE_STRING).setText(s);
 	}
 	
 	public void addIntegral(String name, long x){
-		createParameter(name,TYPE_INTEGRAL).setText(Long.toString(x));
+		createParameter(eBody, name,TYPE_INTEGRAL).setText(Long.toString(x));
 	}
 	public void addFloat(String name, double x){
-		createParameter(name, TYPE_FLOAT).setText(Double.toString(x));
+		createParameter(eBody,name, TYPE_FLOAT).setText(Double.toString(x));
 	}	
 	
 	public void addArray(String name, byte[] arr){
 		String res=new BASE64Encoder().encode(arr);
-		createParameter(name,TYPE_ARRAY).setText(res);
+		createParameter(eBody, name,TYPE_ARRAY).setText(res);
 	}
-	public void addObject(String name, Object obj){
+	public void addObject(Element parent, String name, Object obj) throws Exception {
 		if(obj instanceof String){
-			addString(name,(String)obj);
+			createParameter(parent,name,TYPE_STRING).setText((String)obj);
 		}else if((obj instanceof Double) ||
 				 (obj instanceof Float)){
-			addFloat(name, (Double)obj);
+			createParameter(eBody,name, TYPE_FLOAT).setText(Double.toString((Double)obj));
 		}else if((obj instanceof Integer) ||
 				 (obj instanceof Long) ||
 				 (obj instanceof Byte) ){
-			addIntegral(name, (Long)obj);
+			createParameter(eBody, name,TYPE_INTEGRAL).setText(Long.toString((Long)obj));
 		}else if(obj instanceof byte[]){
-			addArray(name, (byte[])obj);
+			String res=new BASE64Encoder().encode((byte[])obj);
+			createParameter(eBody, name,TYPE_ARRAY).setText(res);
+		}else if(obj instanceof HashMap){
+			addHashMap(parent, name, (HashMap<String, Object>)obj);
+		}else{
+			throw new Exception("Invalid type for SoapConverter");
 		}
 	}
-	public void addHashMap(String name, HashMap<String, Object> hash){
-		//Element ret=createParameter(name, TYPE_HASH);
+	public void addHashMap(Element parent, String name, HashMap<String, Object> hash) throws Exception{
+		Element ret=createParameter(parent, name, TYPE_HASH);
 		Set<Entry<String, Object>> entries=hash.entrySet();
 		for(Entry<String,Object> entry:entries){
-			addObject(entry.getKey(),entry.getValue());
+			addObject(ret,entry.getKey(),entry.getValue());
 		}
 	}
+
+ 
 }

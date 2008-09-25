@@ -1,4 +1,4 @@
-// $Id: StringTool.java 4358 2008-09-02 16:32:25Z rgw_ch $
+// $Id: StringTool.java 4442 2008-09-25 20:30:29Z rgw_ch $
 
 package ch.rgw.tools;
 import java.awt.Font;
@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -59,6 +60,25 @@ public class StringTool
   private static int ipHash;
   private static long sequence;
   
+  public static String createString(byte[] bytes){
+	  try {
+		return new String(bytes,default_charset);
+	} catch (UnsupportedEncodingException e) {
+		// should not happen
+		ExHandler.handle(e);
+	}
+	return null;
+  }
+  
+  public static byte[] getBytes(String string){
+	  try {
+		return string.getBytes(default_charset);
+	} catch (UnsupportedEncodingException e) {
+		// should not happen
+		ExHandler.handle(e);
+	}
+	return null;
+  }
   /*public StringTool(String s)
   { mine=new String(s);
   }*/

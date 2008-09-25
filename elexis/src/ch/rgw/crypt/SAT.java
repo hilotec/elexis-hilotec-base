@@ -16,13 +16,20 @@ package ch.rgw.crypt;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jdom.Document;
+import org.jdom.Element;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.SoapConverter;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.Result.SEVERITY;
 
 import sun.misc.BASE64Decoder;
@@ -38,55 +45,60 @@ import sun.misc.BASE64Encoder;
 public class SAT {
 	public static final String ADM_TIMESTAMP="ADM_timestamp";
 	public static final String ADM_SIGNED_BY="ADM_user";
-	static final Pattern signatureEN=Pattern.compile(".+gpg: good signature from .+<(.+)>.*",Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
-	static final Pattern signatureDE=Pattern.compile(".+gpg: Korrekte Unterschrift von .+<(.+)>.*",Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
-	GnuPG gpg;
+	public static final String ADM_PAYLOAD="ADM_payload";
+	public static final String ADM_SIGNATURE="ADM_signature";
+
+	
+	//static final Pattern signatureEN=Pattern.compile(".+gpg: good signature from .+<(.+)>.*",Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
+	//static final Pattern signatureDE=Pattern.compile(".+gpg: Korrekte Unterschrift von .+<(.+)>.*",Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
+	Cryptologist crypt;
 	String userKey;
 	/**
 	 * Create a new SAT actor
 	 * @param gpg a fully configured GnuPG
 	 * @param sender the keyname of the sender.
 	 */
-	public SAT(GnuPG gpg, String userKey){
-		this.gpg=gpg;
+	public SAT(Cryptologist c, String userKey){
+		crypt=c;
 		this.userKey=userKey;
 	}
 
-	
-	public Result<HashMap<String, Object>>unwrap(String encrypted, char[] pwd){
-		if(gpg.decrypt(encrypted, new String(pwd))){
-			String dec=gpg.getResult();
-			String msg=gpg.getErrorString();
-			Matcher matcher=signatureEN.matcher(msg);
-			String user=null;
-			if(matcher.matches()){
-				user=matcher.group(1);
-			}else{
-				matcher=signatureDE.matcher(msg);
-				if(matcher.matches()){
-					user=matcher.group(1).trim();
-				}
+	/**
+	 * Decrypt, and verify a packet
+	 * @param encrypted the encrypted packet
+	 * @param pwd the password to decrypt
+	 * @return a hashmap with the Parameters and an additional parameter "ADM_user" containing the sender's ID
+	 */
+	public Result<HashMap<String, Object>>unwrap(byte[] encrypted, char[] pwd){
+		byte[] decrypted=crypt.decrypt(encrypted, pwd);
+		SoapConverter sc=new SoapConverter();
+		if(sc.load(decrypted)){
+			HashMap<String, Object> fields=sc.getParameters();
+			String user=(String)fields.get(ADM_SIGNED_BY);
+			Long ts=(Long)fields.get(ADM_TIMESTAMP);
+			byte[] payload=(byte[])fields.get(ADM_PAYLOAD);
+			byte[] signature=(byte[])fields.get(ADM_SIGNATURE);
+			if( (StringTool.isNothing(user))|| (payload==null) || (signature==null)){
+				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,4,"Bad protocol",null,true);
 			}
-			try{
-				SoapConverter sc=new SoapConverter();
-				sc.load(dec);
-				HashMap<String, Object> hash=sc.getParameters();
-				Long ts=(Long)hash.get(ADM_TIMESTAMP);
-				if(ts==null || ((System.currentTimeMillis()-ts)>300000)){
-					return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,3,"Timeout",null,false);
-				}
-				if(user==null){
-					hash.remove(ADM_SIGNED_BY);
+			if(ts==null || ((System.currentTimeMillis()-ts)>300000)){
+				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,3,"Timeout",null,true);
+			}
+			if(crypt.verify(payload, signature, user)){
+				sc=new SoapConverter();
+				if(sc.load(payload)){
+					HashMap<String, Object> res=sc.getParameters();
+					res.put(ADM_SIGNED_BY, user);
+					return new Result<HashMap<String, Object>>(res);
 				}else{
-					hash.put(ADM_SIGNED_BY, user);
+					return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,6,"Bad protocol",null,true);
 				}
-				return new Result<HashMap<String, Object>>(hash);
-			}catch(Exception ex){
-				ExHandler.handle(ex);
-				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,2,"Deserialize error "+ex.getMessage(),null,true);
+			}else{
+				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,5,"Bad signature",null,true);
 			}
+		}else{
+			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,7,"Bad protocol",null,true);
 		}
-		return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,1,"Decode error",null,true);
 	}
 	
 	/**
@@ -95,17 +107,21 @@ public class SAT {
 	 * Serializables. Keynames starting with ADM_ are reserved and must not be used.
 	 * @param dest the receiver. The Object will be encoded with the receiver's public key
 	 * @param pwd Password for the sender's private key
-	 * @return a String containig the ASCII-armored encrypted and signed hashtable or null on error 
+	 * @return a byte array containing the signed and encrypted Hashmap 
 	 */
-	public String wrap(HashMap<String, Object> hash, String dest, char[] senderPwd){
+	public byte[] wrap(HashMap<String, Object> hash, String dest, char[] senderPwd){
 		try{
-			hash.put(ADM_TIMESTAMP, System.currentTimeMillis());
 			SoapConverter sc=new SoapConverter();
 			sc.create("xidClient","0.0.1","elexis.ch");
-			sc.addHashMap("params", hash);
-			if(gpg.signAndEncrypt(sc.toXML(), userKey, dest, new String(senderPwd))){
-				return gpg.getResult();
-			}
+			sc.addHashMap(null,ADM_PAYLOAD, hash);
+			sc.addIntegral(ADM_TIMESTAMP, System.currentTimeMillis());
+			sc.addString(ADM_SIGNED_BY, userKey);
+			byte[] digest=calcDigest(sc);
+			byte[] signature=crypt.sign(digest, senderPwd);
+			sc.addArray(ADM_SIGNATURE, signature);
+			String xml=sc.toString();
+			byte[] wrapped=crypt.encrypt(StringTool.getBytes(xml), dest);
+			return wrapped;
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 		}
@@ -132,5 +148,36 @@ public class SAT {
 			ExHandler.handle(ex);
 		}
 	    return output;
+	}
+	
+	private byte[] calcDigest(SoapConverter sc){
+		try {
+			MessageDigest digest=MessageDigest.getInstance("SHA-1");
+			Document doc=sc.getXML();
+			Element eRoot=doc.getRootElement();
+			Element body=eRoot.getChild("Body", SoapConverter.ns);
+			addParameters(body,digest);
+			return digest.digest(); 
+		} catch (NoSuchAlgorithmException e) {
+			ExHandler.handle(e);
+		}
+		return null;
+	}
+	
+	private void addParameters(Element e, MessageDigest digest){
+		List<Element> params=e.getChildren("parameter", SoapConverter.ns);
+		for(Element el:params){
+			String type=el.getAttributeValue("type");
+			String name=el.getAttributeValue("name");
+			if(type.equalsIgnoreCase(SoapConverter.TYPE_HASH)){
+				addParameters(el,digest);
+			}else if(type.equalsIgnoreCase(SoapConverter.TYPE_SIGNATURE)){
+				continue;
+			}else{
+				digest.update(StringTool.getBytes(type));
+				digest.update(StringTool.getBytes(name));
+				digest.update(StringTool.getBytes(el.getTextTrim()));
+			}
+		}
 	}
 }
