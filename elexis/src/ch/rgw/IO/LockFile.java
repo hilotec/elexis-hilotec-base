@@ -1,5 +1,5 @@
 // (c) 2008 by G. Weirich
-// $Id: LockFile.java 4290 2008-08-17 16:16:49Z rgw_ch $
+// $Id: LockFile.java 4439 2008-09-25 12:17:38Z rgw_ch $
 
 package ch.rgw.IO;
 
@@ -14,7 +14,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
- * A file that creates and detects lockfile to provide cooperative detection od running
+ * A class that creates and detects lockfile to provide cooperative detection od running
  * instances of an applicatiion (or for other purposes)
  * @author gerry
  *
@@ -26,11 +26,12 @@ public class LockFile {
 	int timeOutSeconds;
 	
 	/**
-	 * Create an instance of a lockfile. Lock() will create a file in the given dir and
+	 * Create an instance of a LockFile class. This will not yet create an actual file.
+	 * A call to LockFile#lock() will create a file in the given dir and
 	 * with the given name and a suffix ranging from 1 to maxNum.
 	 * @param dir the dir where the lockfile(s) should be created
 	 * @param basename the basename for the files
-	 * @param maxNum maximum number of instances of this lock that may be aquired simulatously
+	 * @param maxNum maximum number of instances of this lock that may be aquired simultaneously
 	 * @param timeoutSeconds after what time will a lock treaded as invalid
 	 */
 	public LockFile(File dir, String basename, int maxNum, int timeoutSeconds){
@@ -41,9 +42,11 @@ public class LockFile {
 	}
 	
 	/**
-	 * create a lockfile with the given patterns. There will be created at most maxNUm
+	 * create a lockfile with the parameters as given to the constructor. There will be created at most maxNUm
 	 * lockfiles. Each of them will expire after timeoutSeconds, or after the application exits.
-	 * @return lock number on success, 0 if there are already maxNum lockfiles
+	 * If the application does not exist normally, the lockfile might not be deleted. It will the be considered
+	 * valid until the expire time is reached.
+	 * @return lock number on success, 0 if there are already maxNum lockfiles and the lock could not be aquired
 	 * @throws IOException id something went wrong
 	 */
 	public int lock() throws IOException{
@@ -60,6 +63,7 @@ public class LockFile {
 		}
 		return 0;
 	}
+	
 	
 	private boolean isLockValid(File file) throws IOException{
 		if(!file.exists()){
@@ -101,7 +105,9 @@ public class LockFile {
 	}
 	
 	/**
-	 * Refresh the lock i.e. extend its validity time by the original timeout once again
+	 * Refresh the lock i.e. extend its validity time by the original timeout once again. An 
+	 * application should prefer this update mechanism over a too long timeout, because
+	 * in case of abnormal termination, the lock does not stay too long active.
 	 * @param n number of the lockfile (as received by the lock() call)
 	 * @return true on success
 	 */
@@ -121,7 +127,7 @@ public class LockFile {
 		}
 	}
 	/**
-	 * check if at least one lockfile with the given pattern exists
+	 * Check if at least one lockfile with the given pattern exists
 	 * @return true if one ore more lockfiles exist
 	 * @throws IOException 
 	 */

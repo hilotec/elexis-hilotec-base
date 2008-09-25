@@ -1,9 +1,10 @@
-//$Id: GnuPG.java 4322 2008-08-29 16:42:51Z rgw_ch $
-package ch.rgw.tools;
+//$Id: GnuPG.java 4439 2008-09-25 12:17:38Z rgw_ch $
+package ch.rgw.crypt;
    
 import java.io.*;
 
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 
@@ -11,7 +12,7 @@ import ch.rgw.tools.StringTool;
   * A class that implements PGP interface for Java.
   * <P>
   * 
-  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4322 2008-08-29 16:42:51Z rgw_ch $
+  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4439 2008-09-25 12:17:38Z rgw_ch $
   * 
   * @author Yaniv Yemini, January 2004.
   * @author Based on a class GnuPG by John Anderson, which can be found
@@ -25,7 +26,7 @@ import ch.rgw.tools.StringTool;
   * Modified 2006/10 by G. Weirich for use in Elexis
  */
 
-public class GnuPG {
+public class GnuPG implements Cryptologist{
     
  // Constants:
  //private final String kGnuPGCommand;
@@ -731,6 +732,44 @@ public void runWithCommand(String command){
                new ByteArrayOutputStream());
        return out.getEncoding();
    }
+
+public byte[] decrypt(byte[] encrypted, char[] pwd){
+	try {
+		if(decrypt(new String(encrypted,"utf-8"), new String(pwd))){
+			String dec=getResult();
+			return dec.getBytes("utf-8");
+		}
+	} catch (UnsupportedEncodingException e) {
+		// should not happen
+		e.printStackTrace();
+	}
+	return null;
+}
+
+public Result<byte[]> decryptSigned(byte[] source, char[] pwd){
+	
+	return null;
+}
+
+public byte[] encrypt(byte[] source){
+
+	return null;
+}
+
+public byte[] encryptAndSign(byte[] source){
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public byte[] sign(byte[] source){
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public Result<String> verify(byte[] data, byte[] signature){
+	// TODO Auto-generated method stub
+	return null;
+}
     
     
 }

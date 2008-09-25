@@ -11,7 +11,7 @@
  * $Id: SAT.java 4317 2008-08-27 05:19:24Z rgw_ch $
  *******************************************************************************/
 
-package ch.rgw.tools;
+package ch.rgw.crypt;
 
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -19,6 +19,11 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
+import ch.rgw.tools.SoapConverter;
+import ch.rgw.tools.Result.SEVERITY;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
