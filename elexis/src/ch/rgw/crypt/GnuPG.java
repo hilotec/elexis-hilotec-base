@@ -1,4 +1,4 @@
-//$Id: GnuPG.java 4439 2008-09-25 12:17:38Z rgw_ch $
+//$Id: GnuPG.java 4440 2008-09-25 12:18:51Z rgw_ch $
 package ch.rgw.crypt;
    
 import java.io.*;
@@ -12,7 +12,7 @@ import ch.rgw.tools.StringTool;
   * A class that implements PGP interface for Java.
   * <P>
   * 
-  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4439 2008-09-25 12:17:38Z rgw_ch $
+  * It calls gpg (GnuPG) program to do all the PGP commands. $Id: GnuPG.java 4440 2008-09-25 12:18:51Z rgw_ch $
   * 
   * @author Yaniv Yemini, January 2004.
   * @author Based on a class GnuPG by John Anderson, which can be found
@@ -733,6 +733,7 @@ public void runWithCommand(String command){
        return out.getEncoding();
    }
 
+    
 public byte[] decrypt(byte[] encrypted, char[] pwd){
 	try {
 		if(decrypt(new String(encrypted,"utf-8"), new String(pwd))){
@@ -751,24 +752,26 @@ public Result<byte[]> decryptSigned(byte[] source, char[] pwd){
 	return null;
 }
 
-public byte[] encrypt(byte[] source){
-
-	return null;
-}
 
 public byte[] encryptAndSign(byte[] source){
 	// TODO Auto-generated method stub
 	return null;
 }
 
-public byte[] sign(byte[] source){
+public byte[] sign(byte[] source, char [] pwd){
 	// TODO Auto-generated method stub
 	return null;
 }
 
-public Result<String> verify(byte[] data, byte[] signature){
+
+public byte[] encrypt(byte[] source, String receiverKeyName){
 	// TODO Auto-generated method stub
 	return null;
+}
+
+public boolean verify(byte[] data, byte[] signature, String signerKeyName){
+	// TODO Auto-generated method stub
+	return false;
 }
     
     
