@@ -6,16 +6,27 @@
 
 package ch.rgw.crypt;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,24 +35,26 @@ import javax.crypto.spec.DHParameterSpec;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
+import chapter6.X509V1CreateExample;
 
 /**
  * Vereinfachtes API für die Java Kryptographie-Klassen KeyManager stellt die Verbindung zu einem
  * keystore her und lässt auf die darin befindlichen Schlüssel zugreifen.
  */
 
-public class KeyManager {
+public class JCEKeyManager {
 	public static String Version(){
-		return "0.1.4";
+		return "0.1.5";
 	}
 	
 	private KeyStore ks;
 	private static SecureRandom _srnd;
 	private static Logger log;
 	
-	private KeyManager(){}
+	@SuppressWarnings("unused")
+	private JCEKeyManager(){}
 	
-	char[] pwd = null;
+	char[] storePwd = null;
 	String ksType;
 	String ksFile;
 	
@@ -61,7 +74,7 @@ public class KeyManager {
 	 * @param keystorePwd
 	 *            password for the keystore must not be null.
 	 */
-	public KeyManager(String keystoreFile, String type, char[] keystorePwd){
+	public JCEKeyManager(String keystoreFile, String type, char[] keystorePwd){
 		if (StringTool.isNothing(keystoreFile)) {
 			ksFile = System.getProperty("user.home") + "/.keystore";
 		} else {
@@ -72,9 +85,9 @@ public class KeyManager {
 		if(StringTool.isNothing(type)){
 			ksType="jks";
 		}else{
-			ksType="jces";
+			ksType=type;
 		}
-		
+		storePwd=keystorePwd;
 	}
 	
 	/**
@@ -83,7 +96,7 @@ public class KeyManager {
 	public boolean load(){
 		try {
 			ks = KeyStore.getInstance(ksType);
-			ks.load(new FileInputStream(ksFile), pwd);
+			ks.load(new FileInputStream(ksFile), storePwd);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 				log.log(Level.SEVERE, "No Keystore found or coudl not open Keystore");
@@ -92,6 +105,19 @@ public class KeyManager {
 		return true;
 	}
 	
+	public boolean create(){
+		return load() && save();
+	}
+	
+	public boolean save(){
+		try {
+			ks.store(new FileOutputStream(ksFile), storePwd);
+			return true;
+		} catch (Exception e) {
+			ExHandler.handle(e);
+		}
+		return false;
+	}
 	public boolean isKeystoreLoaded(){
 		return (ks == null) ? false : true;
 	}
@@ -153,7 +179,43 @@ public class KeyManager {
 			return null;
 		}
 	}
+
+	public boolean addCertificate(X509Certificate cert){
+		
+		try {
+			ks.setCertificateEntry(cert.getSubjectX500Principal().getName(), cert);
+			return save();
+		} catch (KeyStoreException e) {
+			ExHandler.handle(e);
+			return false;
+		}
+	}
 	
+	public Certificate createCertificate(PublicKey pk, PrivateKey signingKey){
+		CertificateFactory cf=CertificateFactory.getInstance("X.509");
+		X509Certificate x5=
+	}
+	public boolean addKeyPair(KeyPair kp){
+		PrivateKey privk=kp.getPrivate();
+		PublicKey pubk=kp.getPublic();
+		CertificateFactory cf=CertificateFactory.getInstance("X.509");
+		
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        bOut.write(X509V1CreateExample.generateV1Certificate(kp).getEncoded());
+        
+        bOut.close();
+        
+        InputStream in = new ByteArrayInputStream(bOut.toByteArray());
+        
+        // create the certificate factory
+        CertificateFactory fact = CertificateFactory.getInstance("X.509","BC");
+        
+        // read the certificate
+        X509Certificate    x509Cert = (X509Certificate)fact.generateCertificate(in);
+        
+		ks.setKeyEntry(alias, key, pwd, chain)
+	}
+	/*
 	public DHParameterSpec createParams() throws Exception{
 		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
 		paramGen.init(512);
@@ -178,8 +240,6 @@ public class KeyManager {
 		}
 		
 	}
+	*/
 	
-	public byte[] createSecretKey(int bitsize, PrivateKey encoder){
-		return null;
-	}
 }
