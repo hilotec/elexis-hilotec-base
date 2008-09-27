@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.ui,
  ch.elexis,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ ch.rgw.utility
 Bundle-ClassPath: activation.jar,
  mail.jar,
  .
