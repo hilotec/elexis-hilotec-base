@@ -35,7 +35,6 @@ import javax.crypto.spec.DHParameterSpec;
 import ch.rgw.IO.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
-import chapter6.X509V1CreateExample;
 
 /**
  * Vereinfachtes API für die Java Kryptographie-Klassen KeyManager stellt die Verbindung zu einem
@@ -190,11 +189,13 @@ public class JCEKeyManager {
 			return false;
 		}
 	}
-	
+	/*
 	public Certificate createCertificate(PublicKey pk, PrivateKey signingKey){
 		CertificateFactory cf=CertificateFactory.getInstance("X.509");
-		X509Certificate x5=
+	
 	}
+	*/
+	/*
 	public boolean addKeyPair(KeyPair kp){
 		PrivateKey privk=kp.getPrivate();
 		PublicKey pubk=kp.getPublic();
@@ -215,6 +216,7 @@ public class JCEKeyManager {
         
 		ks.setKeyEntry(alias, key, pwd, chain)
 	}
+	*/
 	/*
 	public DHParameterSpec createParams() throws Exception{
 		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
