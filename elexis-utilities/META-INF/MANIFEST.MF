@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Systemunabhängige Utilities
+Bundle-SymbolicName: ch.rgw.utility
+Bundle-Version: 1.0.0
+Bundle-ClassPath: lib/jdom.jar,
+ rgw-toolbox.jar
+Bundle-Vendor: G. Weirich
+Export-Package: .,
+ ch.rgw.compress;uses:="ch.rgw.io",
+ ch.rgw.crypt;uses:="ch.rgw.tools",
+ ch.rgw.io;uses:="ch.rgw.tools",
+ ch.rgw.tools;uses:="org.jdom",
+ ch.rgw.tools.net,
+ org.apache.commons.compress.bzip2,
+ org.jdom;uses:="org.jdom.filter",
+ org.jdom.adapters;uses:="org.w3c.dom,org.jdom",
+ org.jdom.filter;uses:="org.jdom",
+ org.jdom.input;
+  uses:="org.xml.sax,
+   org.xml.sax.ext,
+   org.xml.sax.helpers,
+   org.w3c.dom,
+   org.jdom",
+ org.jdom.output;
+  uses:="org.xml.sax,
+   org.xml.sax.ext,
+   org.xml.sax.helpers,
+   org.w3c.dom,
+   org.jdom",
+ org.jdom.transform;
+  uses:="javax.xml.transform.sax,
+   org.xml.sax,
+   org.xml.sax.ext,
+   org.jdom",
+ org.jdom.xpath;uses:="org.jdom"
