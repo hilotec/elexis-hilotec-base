@@ -9,4 +9,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: ch.elexis,
  org.eclipse.ui,
  org.eclipse.ui.forms,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ ch.rgw.utility
