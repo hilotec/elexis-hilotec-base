@@ -8,4 +8,5 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.elexis.importer.div,
- ch.elexis.arzttarife_ch
+ ch.elexis.arzttarife_ch,
+ ch.rgw.utility
