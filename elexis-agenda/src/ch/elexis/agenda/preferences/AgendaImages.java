@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaImages.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ * $Id: AgendaImages.java 4462 2008-09-27 19:52:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
@@ -22,76 +22,86 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
-import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.util.Plannables;
-import ch.rgw.IO.FileTool;
-import ch.rgw.tools.ExHandler;
-
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.util.Plannables;
+import ch.rgw.io.FileTool;
+import ch.rgw.tools.ExHandler;
 
 public class AgendaImages extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	private SettingsPreferenceStore prefs;
-	
+
 	public AgendaImages() {
-		prefs=new SettingsPreferenceStore(Hub.userCfg);
-        setPreferenceStore(prefs);
-        setDescription(Messages.AgendaImages_imagesForAgenda); 
+		prefs = new SettingsPreferenceStore(Hub.userCfg);
+		setPreferenceStore(prefs);
+		setDescription(Messages.AgendaImages_imagesForAgenda);
 	}
-
-
 
 	@Override
 	protected Control createContents(final Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
-		ret.setLayout(new GridLayout(3,false));
-		for(String t:Termin.TerminTypes){
-			Image img=Plannables.getTypImage(t);
-			Label lImg=new Label(ret,SWT.NONE);
+		Composite ret = new Composite(parent, SWT.NONE);
+		ret.setLayout(new GridLayout(3, false));
+		for (String t : Termin.TerminTypes) {
+			Image img = Plannables.getTypImage(t);
+			Label lImg = new Label(ret, SWT.NONE);
 			lImg.setImage(img);
-			Label lTx=new Label(ret,SWT.NONE);
+			Label lTx = new Label(ret, SWT.NONE);
 			lTx.setText(t);
-			Button bCh=new Button(ret,SWT.PUSH);
-			bCh.setText(Messages.AgendaImages_change); 
+			Button bCh = new Button(ret, SWT.PUSH);
+			bCh.setText(Messages.AgendaImages_change);
 			bCh.setData(t);
-			bCh.addSelectionListener(new SelectionAdapter(){
+			bCh.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					FileDialog fdl=new FileDialog(parent.getShell(),SWT.OPEN);
-					String dpath=Activator.getBasePath().replaceFirst("\\\\bin", "")+File.separator+"icons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
+					String dpath = Activator.getBasePath().replaceFirst(
+							"\\\\bin", "") + File.separator + "icons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					fdl.setFilterPath(dpath);
-					String name=fdl.open();
-					File src=new File(name);
+					String name = fdl.open();
+					File src = new File(name);
 					try {
-						Image img=new Image(Desk.theDisplay,new FileInputStream(src));
-						if(img!=null){					// File bezeichnet ein lesbares Bild
-							File dest=new File(dpath+File.separator+src.getName());
-							if(!dest.getAbsolutePath().equalsIgnoreCase(src.getAbsolutePath())){	
+						Image img = new Image(Desk.theDisplay,
+								new FileInputStream(src));
+						if (img != null) { // File bezeichnet ein lesbares Bild
+							File dest = new File(dpath + File.separator
+									+ src.getName());
+							if (!dest.getAbsolutePath().equalsIgnoreCase(
+									src.getAbsolutePath())) {
 
 								// Ist noch nicht im richtigen Verzeichnis
-								if(FileTool.copyFile(src, dest, FileTool.FAIL_IF_EXISTS)==false){
-									MessageDialog.openError(parent.getShell(), Messages.AgendaImages_cannotCopy,  
-											Messages.AgendaImages_6+name+Messages.AgendaImages_7); 
+								if (FileTool.copyFile(src, dest,
+										FileTool.FAIL_IF_EXISTS) == false) {
+									MessageDialog.openError(parent.getShell(),
+											Messages.AgendaImages_cannotCopy,
+											Messages.AgendaImages_6 + name
+													+ Messages.AgendaImages_7);
 									return;
 								}
 							}
-							String t=(String)((Button)e.getSource()).getData();
-							Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX+t, Messages.AgendaImages_8+dest.getName()); 
+							String t = (String) ((Button) e.getSource())
+									.getData();
+							Hub.userCfg.set(
+									PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
+									Messages.AgendaImages_8 + dest.getName());
 						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}
 				}
-				
+
 			});
 		}
 		return ret;

@@ -12,7 +12,8 @@ Require-Bundle: ch.elexis,
  org.eclipse.swt,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ ch.rgw.utility
 Eclipse-LazyStart: true
 Import-Package: org.apache.commons.logging;version="1.0.4"
 Bundle-ClassPath: lib/ical4j-1.0-beta4.jar,
