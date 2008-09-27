@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.jface,
  ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ ch.rgw.utility
 Eclipse-LazyStart: false
 Bundle-Activator: ch.elexis.icpc.Activator
 Export-Package: ch.elexis.icpc
