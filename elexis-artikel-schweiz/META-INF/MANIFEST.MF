@@ -9,7 +9,8 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms,
- ch.elexis.importer.div
+ ch.elexis.importer.div,
+ ch.rgw.utility
 Export-Package: ch.elexis.artikel_ch.data,
  ch.elexis.artikel_ch.views
 Bundle-ClassPath: bin/,
