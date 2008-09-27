@@ -32,6 +32,7 @@
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="org.apache.commons.logging"/>
       <import plugin="ch.elexis.Textplugin"/>
+      <import plugin="ch.rgw.utility"/>
    </requires>
 
    <plugin
