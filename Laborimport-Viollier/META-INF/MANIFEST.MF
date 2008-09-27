@@ -9,6 +9,7 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms,
- ch.elexis.importer.div
+ ch.elexis.importer.div,
+ ch.rgw.utility
 Bundle-ClassPath: JMedTransferO.jar,
  .
