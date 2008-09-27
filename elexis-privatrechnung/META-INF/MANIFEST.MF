@@ -10,4 +10,5 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  ch.elexis.importer.div,
  org.eclipse.ui.forms,
- ch.elexis.ebanking_ch
+ ch.elexis.ebanking_ch,
+ ch.rgw.utility
