@@ -7,4 +7,5 @@ Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
- org.eclipse.jface
+ org.eclipse.jface,
+ ch.rgw.utility
