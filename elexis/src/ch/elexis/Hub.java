@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4428 2008-09-22 11:25:23Z rgw_ch $
+ *    $Id: Hub.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -17,12 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IParameter;
-import org.eclipse.core.commands.IParameterValues;
-import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
@@ -30,14 +25,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -60,21 +51,22 @@ import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.UtilFile;
-import ch.rgw.IO.FileTool;
-import ch.rgw.IO.LockFile;
-import ch.rgw.IO.Settings;
-import ch.rgw.IO.SqlSettings;
-import ch.rgw.IO.SysSettings;
+import ch.rgw.io.FileTool;
+import ch.rgw.io.LockFile;
+import ch.rgw.io.Settings;
+import ch.rgw.io.SqlSettings;
+import ch.rgw.io.SysSettings;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 /**
- * Diese Klasse ist der OSGi-Activator und steuert somit Start und Ende der Anwendung. Ganz früh
- * (vor dem Initialisieren der anwendung) und ganz spät (unmittelbar vor dem Entfernen der
- * Anwendung) notwendige Schritte müssen hier durchgeführt werden. Ausserdem werden hier globale
- * Variablen und Konstanten angelegt.
+ * Diese Klasse ist der OSGi-Activator und steuert somit Start und Ende der
+ * Anwendung. Ganz früh (vor dem Initialisieren der anwendung) und ganz spät
+ * (unmittelbar vor dem Entfernen der Anwendung) notwendige Schritte müssen hier
+ * durchgeführt werden. Ausserdem werden hier globale Variablen und Konstanten
+ * angelegt.
  */
 public class Hub extends AbstractUIPlugin {
 	// Globale Konstanten
@@ -84,67 +76,67 @@ public class Hub extends AbstractUIPlugin {
 	static final String neededJRE = "1.5.0"; //$NON-NLS-1$
 	public static final String Version = "1.4.0"; //$NON-NLS-1$
 	public static final String DBVersion = "1.7.2"; //$NON-NLS-1$
-	static final String[] mine = {
-		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] mine = { "ch.elexis", "ch.rgw" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static List<ShutdownJob> shutdownJobs = new LinkedList<ShutdownJob>();
-	
+
 	// Globale Variable
 	/** Das Singleton-Objekt dieser Klasse */
 	public static Hub plugin;
-	
+
 	/** Lokale Einstellungen (Werden in der Registry bzw. ~/.java gespeichert) */
 	public static Settings localCfg;
-	
+
 	/** Globale Einstellungen (Werden in der Datenbank gespeichert) */
 	public static Settings globalCfg;
-	
+
 	/** Anwenderspezifische Einstellungen (Werden in der Datenbank gespeichert) */
 	public static Settings userCfg;
-	
+
 	/** Mandantspezifische EInstellungen (Werden in der Datenbank gespeichert) */
 	public static Settings mandantCfg;
-	
+
 	/** Zentrale Logdatei */
 	public static Log log;
-	
+
 	/** Globale Aktionen */
 	public static GlobalActions mainActions;
-	
+
 	/** Der aktuell angemeldete Anwender */
 	public static Anwender actUser;
-	
+
 	/** Der Mandant, auf dessen namen die aktuellen Handlungen gehen */
 	public static Mandant actMandant;
-	
+
 	/** Die zentrale Zugriffskontrolle */
 	public static final AccessControl acl = new AccessControl();
-	
+
 	/** Der Initialisierer für die Voreinstellungen */
 	public static final PreferenceInitializer pin = new PreferenceInitializer();;
-	
+
 	/** Hintergrundjobs zum Nachladen von Daten */
 	public static final JobPool jobPool = JobPool.getJobPool();;
-	
+
 	/** Factory für interne PersistentObjects */
 	public static final PersistentObjectFactory poFactory = new PersistentObjectFactory();
-	
+
 	/** Heartbeat */
 	public static Heartbeat heart;
-	
+
 	private static File userDir;
-	
-	public Hub(){
+
+	public Hub() {
 		plugin = this;
 		// PluginCleaner.clean(new File(getBasePath()).getParent());
 		// Log und Exception-Handler initialisieren
 		log = Log.get("Elexis startup"); //$NON-NLS-1$
 		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
-		// Damit Anfragen auf userCfg und mandantCfg bei nicht eingeloggtem User keine NPE werfen
+		// Damit Anfragen auf userCfg und mandantCfg bei nicht eingeloggtem User
+		// keine NPE werfen
 		userCfg = localCfg;
 		mandantCfg = localCfg;
 		// initialize log with default configuration
 		initializeLog(localCfg);
-		
+
 		// Kommandozeile lesen und lokale Konfiguration einlesen
 		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
 		String[] args = Platform.getApplicationArgs();
@@ -153,77 +145,91 @@ public class Hub extends AbstractUIPlugin {
 				String[] c = s.split("="); //$NON-NLS-1$
 				log.log(Messages.Hub_12 + c[1], Log.INFOS);
 				localCfg = localCfg.getBranch(c[1], true);
-				
+
 				// initialize log with special configuration
 				initializeLog(localCfg);
 				break;
 			}
 		}
-		
-		String basePath = UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis"));
+
+		String basePath = UtilFile.getFilepath(PlatformHelper
+				.getBasePath("ch.elexis"));
 		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath));
 		localCfg.set("elexis-userDir", userDir.getAbsolutePath());
-		
-		// Exception handler initialiseren, Output wie log, auf eigene Klassen begrenzen
+
+		// Exception handler initialiseren, Output wie log, auf eigene Klassen
+		// begrenzen
 		ExHandler.setOutput(localCfg.get(PreferenceConstants.ABL_LOGFILE, "")); //$NON-NLS-1$
 		ExHandler.setClasses(mine);
-		
+
 		// Java Version prüfen
-		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		log.log("Elexis " + Version + ", build " + getRevision(true) + Messages.Hub_19 + //$NON-NLS-1$ //$NON-NLS-2$
-			Messages.Hub_20 + vI.version(), Log.SYNCMARK);
-		
+		VersionInfo vI = new VersionInfo(System.getProperty(
+				"java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		log
+				.log(
+						"Elexis " + Version + ", build " + getRevision(true) + Messages.Hub_19 + //$NON-NLS-1$ //$NON-NLS-2$
+								Messages.Hub_20 + vI.version(), Log.SYNCMARK);
+
 		if (vI.isOlder(neededJRE)) {
 			String msg = Messages.Hub_21 + neededJRE;
 			getLog().log(new Status(Status.ERROR, "ch.elexis", //$NON-NLS-1$
-				-1, msg, new Exception(msg)));
+					-1, msg, new Exception(msg)));
 			SWTHelper.alert(Messages.Hub_23, msg);
 			log.log(msg, Log.FATALS);
 		}
 		log.log(Messages.Hub_24 + getBasePath(), Log.INFOS);
 		pin.initializeDefaultPreferences();
-		
+
 	}
-	
+
 	/*
 	 * called by constructor
 	 */
-	private void initializeLog(final Settings cfg){
-		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, "elexis.log"); //$NON-NLS-1$
+	private void initializeLog(final Settings cfg) {
+		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE,
+				"elexis.log"); //$NON-NLS-1$
 		int maxLogfileSize = -1;
 		try {
 			File fLog = new File(logfileName);
 			String dir = UtilFile.getFilepath(fLog.getAbsolutePath());
-			if (StringTool.isNothing(logfileName) || logfileName.equalsIgnoreCase("none")) {
-				dir = System.getProperty("user.home") + File.separator + "elexis";
+			if (StringTool.isNothing(logfileName)
+					|| logfileName.equalsIgnoreCase("none")) {
+				dir = System.getProperty("user.home") + File.separator
+						+ "elexis";
 			}
 			userDir = new File(dir);
-			String defaultValue = new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString();
-			String value = cfg.get(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, defaultValue);
+			String defaultValue = new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE)
+					.toString();
+			String value = cfg.get(PreferenceConstants.ABL_LOGFILE_MAX_SIZE,
+					defaultValue);
 			maxLogfileSize = Integer.parseInt(value.trim());
 		} catch (NumberFormatException ex) {
 			// do nothing
 		}
-		
+
 		Log.setLevel(cfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS));
 		Log.setOutput(logfileName, maxLogfileSize);
-		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT, Log.ERRORS));
+		Log
+				.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT,
+						Log.ERRORS));
 	}
-	
-	private void initializeLock(){
+
+	private void initializeLock() {
 		final int timeoutSeconds = 600;
 		try {
-			final LockFile lockfile = new LockFile(userDir, "elexislock", 4, timeoutSeconds);
+			final LockFile lockfile = new LockFile(userDir, "elexislock", 4,
+					timeoutSeconds);
 			final int n = lockfile.lock();
 			if (n == 0) {
-				SWTHelper.alert("Zu viele Instanzen",
-					"Es können keine weiteren Elexis-Instanzen gestartet werden");
+				SWTHelper
+						.alert("Zu viele Instanzen",
+								"Es können keine weiteren Elexis-Instanzen gestartet werden");
 				System.exit(2);
 			} else {
 				HeartListener lockListener = new HeartListener() {
 					long timeSet;
-					
-					public void heartbeat(){
+
+					public void heartbeat() {
 						long now = System.currentTimeMillis();
 						if ((now - timeSet) > timeoutSeconds) {
 							lockfile.updateLock(n);
@@ -237,35 +243,36 @@ public class Hub extends AbstractUIPlugin {
 			log.log("Can not aquire lock file", Log.ERRORS);
 		}
 	}
-	
-	public static int getSystemLogLevel(){
+
+	public static int getSystemLogLevel() {
 		return localCfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS);
 	}
-	
+
 	/**
-	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench, durchgeführt werden
-	 * sollen.
+	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench,
+	 * durchgeführt werden sollen.
 	 */
 	@Override
-	public void start(final BundleContext context) throws Exception{
+	public void start(final BundleContext context) throws Exception {
 		// log.log("Basedir: "+getBasePath(),Log.DEBUGMSG);
 		super.start(context);
 		heart = Heartbeat.getInstance();
 		initializeLock();
 	}
-	
+
 	/**
 	 * Programmende
 	 */
 	@Override
-	public void stop(final BundleContext context) throws Exception{
+	public void stop(final BundleContext context) throws Exception {
 		heart.stop();
 		JobPool.getJobPool().dispose();
 		if (Hub.actUser != null) {
 			Anwender.logoff();
 		}
 		if (globalCfg != null) {
-			// We should not flush acl's at this point, since this might overwrite other client's
+			// We should not flush acl's at this point, since this might
+			// overwrite other client's
 			// settings
 			// acl.flush();
 			globalCfg.flush();
@@ -276,8 +283,7 @@ public class Hub extends AbstractUIPlugin {
 		plugin = null;
 		if ((shutdownJobs != null) && (shutdownJobs.size() > 0)) {
 			Shell shell = new Shell(Display.getDefault());
-			MessageDialog dlg =
-				new MessageDialog(
+			MessageDialog dlg = new MessageDialog(
 					shell,
 					"Elexis: Konfiguration",
 					Dialog.getDefaultImage(),
@@ -291,20 +297,20 @@ public class Hub extends AbstractUIPlugin {
 			dlg.close();
 		}
 	}
-	
-	public static void setMandant(final Mandant m){
+
+	public static void setMandant(final Mandant m) {
 		if (actMandant != null) {
 			// Hub.mandantCfg.dump(null);
 			mandantCfg.flush();
 		}
 		if (m == null) {
 			if ((mainActions != null) && (mainActions.mainWindow != null)
-				&& (mainActions.mainWindow.getShell() != null)) {
+					&& (mainActions.mainWindow.getShell() != null)) {
 				mandantCfg = userCfg;
 			}
 		} else {
-			mandantCfg =
-				new SqlSettings(PersistentObject.getConnection(),
+			mandantCfg = new SqlSettings(
+					PersistentObject.getConnection(),
 					"USERCONFIG", "Param", "Value", "UserID=" + m.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		actMandant = m;
@@ -313,8 +319,8 @@ public class Hub extends AbstractUIPlugin {
 		GlobalEvents.getInstance().fireUpdateEvent(Mandant.class);
 		GlobalEvents.getInstance().fireUserEvent();
 	}
-	
-	public static void setWindowText(Patient pat){
+
+	public static void setWindowText(Patient pat) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Elexis ").append(Version).append(" - ");
 		if (Hub.actUser == null) {
@@ -324,7 +330,7 @@ public class Hub extends AbstractUIPlugin {
 		}
 		if (Hub.actMandant == null) {
 			sb.append(" Kein Mandant ");
-			
+
 		} else {
 			sb.append(" / ").append(Hub.actMandant.getLabel());
 		}
@@ -336,9 +342,9 @@ public class Hub extends AbstractUIPlugin {
 		} else {
 			String nr = pat.getPatCode();
 			String alter = pat.getAlter();
-			sb.append("  / ").append(pat.getLabel()).append("(").append(alter).append(") - ")
-				.append("[").append(nr).append("]");
-			
+			sb.append("  / ").append(pat.getLabel()).append("(").append(alter)
+					.append(") - ").append("[").append(nr).append("]");
+
 			if (Reminder.findForPatient(pat, Hub.actUser).size() != 0) {
 				sb.append("    *** Reminders *** ");
 			}
@@ -358,32 +364,37 @@ public class Hub extends AbstractUIPlugin {
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in relative path.
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
 	 * 
 	 * @param path
 	 *            the path
 	 * @return the image descriptor
 	 */
-	public static ImageDescriptor getImageDescriptor(final String path){
+	public static ImageDescriptor getImageDescriptor(final String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis", path); //$NON-NLS-1$
 	}
-	
-	public static String getId(){
+
+	public static String getId() {
 		return "Elexis v." + Version + ", r." + getRevision(false) + " "
-			+ System.getProperty("os.name") + "/" + System.getProperty("os.version");
+				+ System.getProperty("os.name") + "/"
+				+ System.getProperty("os.version");
 	}
-	
+
 	/**
-	 * Revisionsnummer und Erstellungsdatum dieser Instanz ermitteln. Dazu wird die beim letzten
-	 * Commit von Subversion geänderte Variable LastChangedRevision untersucht, und fürs Datum das
-	 * von ANT beim build eingetragene Datum gesucht. Wenn diese Instanz nicht von ANT erstellt
-	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
+	 * Revisionsnummer und Erstellungsdatum dieser Instanz ermitteln. Dazu wird
+	 * die beim letzten Commit von Subversion geänderte Variable
+	 * LastChangedRevision untersucht, und fürs Datum das von ANT beim build
+	 * eingetragene Datum gesucht. Wenn diese Instanz nicht von ANT erstellt
+	 * wurde, handelt es sich um eine Entwicklerversion, welche unter
+	 * Eclipse-Kontrolle abläuft.
 	 */
-	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4428 $"; //$NON-NLS-1$
-		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getRevision(final boolean withdate) {
+		String SVNREV = "$LastChangedRevision: 4450 $"; //$NON-NLS-1$
+		String res = SVNREV.replaceFirst(
+				"\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
 			if (base.canRead()) {
@@ -391,7 +402,9 @@ public class Hub extends AbstractUIPlugin {
 				if (dat.equals("@TODAY@")) {
 					res += Messages.Hub_38;
 				} else {
-					res += ", " + new TimeTool(dat + "00").toString(TimeTool.FULL_GER);
+					res += ", "
+							+ new TimeTool(dat + "00")
+									.toString(TimeTool.FULL_GER);
 				}
 			} else {
 				res += ",compiletime not known";
@@ -399,22 +412,22 @@ public class Hub extends AbstractUIPlugin {
 		}
 		return res;
 	}
-	
-	public static String getBasePath(){
+
+	public static String getBasePath() {
 		return PlatformHelper.getBasePath(PLUGIN_ID);
 	}
-	
-	public static List<Anwender> getUserList(){
+
+	public static List<Anwender> getUserList() {
 		Query<Anwender> qbe = new Query<Anwender>(Anwender.class);
 		return qbe.execute();
 	}
-	
-	public static List<Mandant> getMandantenList(){
+
+	public static List<Mandant> getMandantenList() {
 		Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 		return qbe.execute();
 	}
-	
-	public static Shell getActiveShell(){
+
+	public static Shell getActiveShell() {
 		if (plugin != null) {
 			IWorkbench wb = plugin.getWorkbench();
 			if (wb != null) {
@@ -430,9 +443,10 @@ public class Hub extends AbstractUIPlugin {
 		}
 		return new Shell(dis);
 	}
-	
+
 	/**
-	 * A job that executes during sstop() of the plugin (that means after the workbench is shut down
+	 * A job that executes during sstop() of the plugin (that means after the
+	 * workbench is shut down
 	 * 
 	 * @author gerry
 	 * 
@@ -443,30 +457,31 @@ public class Hub extends AbstractUIPlugin {
 		 */
 		public void doit() throws Exception;
 	}
-	
-	public static void addShutdownJob(final ShutdownJob job){
+
+	public static void addShutdownJob(final ShutdownJob job) {
 		if (!shutdownJobs.contains(job)) {
 			shutdownJobs.add(job);
 		}
 	}
-	
+
 	/**
 	 * return a directory suitable for plugin specific configuration data
 	 * 
-	 * @return a directory that exists always and is always writable and readable for plugins of the
-	 *         currentli running elexis instance
+	 * @return a directory that exists always and is always writable and
+	 *         readable for plugins of the currentli running elexis instance
 	 */
-	public File getWritableUserDir(){
+	public File getWritableUserDir() {
 		return userDir;
 	}
-	
+
 	/**
-	 * Return a directory suitable for temporary files. Most probably this will be a default tempdir
-	 * provided by the os. If none such exists, it will be the user dir.
+	 * Return a directory suitable for temporary files. Most probably this will
+	 * be a default tempdir provided by the os. If none such exists, it will be
+	 * the user dir.
 	 * 
 	 * @return always a valid and writable directory.
 	 */
-	public File getTempDir(){
+	public File getTempDir() {
 		File ret = null;
 		String temp = System.getProperty("java.io.tmpdir");
 		if (!StringTool.isNothing(temp)) {

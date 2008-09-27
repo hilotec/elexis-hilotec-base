@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob2.java 4005 2008-06-05 12:14:42Z rgw_ch $
+ *  $Id: NamedBlob2.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -16,84 +16,100 @@ import java.util.Hashtable;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.rgw.Compress.CompEx;
+import ch.rgw.compress.CompEx;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Well, just a clone of NamedBlob, but using table HEAP2 - sort of a cheap load balancing
+ * Well, just a clone of NamedBlob, but using table HEAP2 - sort of a cheap load
+ * balancing
+ * 
  * @author Gerry
- *
+ * 
  */
 public class NamedBlob2 extends PersistentObject {
-	private static final String TABLENAME="HEAP2";
-	
+	private static final String TABLENAME = "HEAP2";
+
 	/**
 	 * return the contents as array of bytes
+	 * 
 	 * @return the contents
 	 */
-	public byte[] getBytes(){
-		byte[] comp=getBinary("Contents");
-		if((comp==null) || (comp.length==0)){
+	public byte[] getBytes() {
+		byte[] comp = getBinary("Contents");
+		if ((comp == null) || (comp.length == 0)) {
 			return null;
 		}
 		return CompEx.expand(comp);
 	}
-	
+
 	/**
-	 * put the contents as array of bytes. the array will be stored in compressed form
-	 * @param the contents that will override previous contents
+	 * put the contents as array of bytes. the array will be stored in
+	 * compressed form
+	 * 
+	 * @param the
+	 *            contents that will override previous contents
 	 * 
 	 */
-	public void putBytes(byte[] in){
-		byte[] comp=CompEx.Compress(in, CompEx.ZIP);
+	public void putBytes(byte[] in) {
+		byte[] comp = CompEx.Compress(in, CompEx.ZIP);
 		setBinary("Contents", comp);
-		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
+		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
-	
+
 	/**
-	 * return the contents as Hashtable (will probably fail if the data was not stored using put(Hashtable)
+	 * return the contents as Hashtable (will probably fail if the data was not
+	 * stored using put(Hashtable)
+	 * 
 	 * @return the previously stored Hashtable
 	 */
 	@SuppressWarnings("unchecked")
-	public Hashtable getHashtable(){
+	public Hashtable getHashtable() {
 		return getHashtable("Contents");
 	}
+
 	/**
 	 * Put the contents as Hashtable. The Hashtable will be compressed
-	 * @param in a Hashtable
+	 * 
+	 * @param in
+	 *            a Hashtable
 	 */
 	@SuppressWarnings("unchecked")
-	public void put(final Hashtable in){
-		setHashtable("Contents",in);
-		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
+	public void put(final Hashtable in) {
+		setHashtable("Contents", in);
+		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
+
 	/**
-	 * return the contents as String (will probably fail if the data was not stored using putString) 
-	 * @return the previously stored string. 
+	 * return the contents as String (will probably fail if the data was not
+	 * stored using putString)
+	 * 
+	 * @return the previously stored string.
 	 */
-	public String getString(){
-		byte[] comp=getBinary("Contents");
-		if((comp==null) || (comp.length==0)){
+	public String getString() {
+		byte[] comp = getBinary("Contents");
+		if ((comp == null) || (comp.length == 0)) {
 			return "";
 		}
-		byte[] exp=CompEx.expand(comp);
-		try{
-			return new String(exp,"utf-8");
-		}catch(Exception ex){
+		byte[] exp = CompEx.expand(comp);
+		try {
+			return new String(exp, "utf-8");
+		} catch (Exception ex) {
 			// should really not happen
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Store a String. The String will be stored as compressed byte[]
+	 * 
 	 * @param string
 	 */
-	public void putString(final String string){
-		byte[] comp=CompEx.Compress(string, CompEx.ZIP);
+	public void putString(final String string) {
+		byte[] comp = CompEx.Compress(string, CompEx.ZIP);
 		setBinary("Contents", comp);
-		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
+		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
+
 	@Override
 	public String getLabel() {
 		return getId();
@@ -103,57 +119,67 @@ public class NamedBlob2 extends PersistentObject {
 	protected String getTableName() {
 		return "HEAP2";
 	}
-	
-	static{
-		addMapping(TABLENAME,"Contents","Datum=S:D:datum","lastupdate");
+
+	static {
+		addMapping(TABLENAME, "Contents", "Datum=S:D:datum", "lastupdate");
 	}
 
-	/** 
+	/**
 	 * creates or loads a NamedBlob2
-	 * @param name the NamedBlob2 to get
-	 * @param bFailIfExists true - create if not exists, otherwise return null. false: if exists:_ return existing
-
+	 * 
+	 * @param name
+	 *            the NamedBlob2 to get
+	 * @param bFailIfExists
+	 *            true - create if not exists, otherwise return null. false: if
+	 *            exists:_ return existing
+	 * 
 	 */
-	public static NamedBlob2 create(String name, boolean bFailIfExists){
-		NamedBlob2 nb=load(name);
-		if(nb==null){
-			nb=new NamedBlob2();
+	public static NamedBlob2 create(String name, boolean bFailIfExists) {
+		NamedBlob2 nb = load(name);
+		if (nb == null) {
+			nb = new NamedBlob2();
 			nb.create(name);
-		}else{
-			if(bFailIfExists){
+		} else {
+			if (bFailIfExists) {
 				return null;
 			}
 		}
 		return nb;
 	}
+
 	/**
 	 * Load or create a NamedBlob with a given Name.
+	 * 
 	 * @return the NamedBlob with that Name or null if no such NamedBlob exists
 	 */
-	public static NamedBlob2 load(final String id){
-		NamedBlob2 ni=new NamedBlob2(id);
-		if(!ni.exists()){
+	public static NamedBlob2 load(final String id) {
+		NamedBlob2 ni = new NamedBlob2(id);
+		if (!ni.exists()) {
 			return null;
 		}
 		return ni;
 	}
-	protected NamedBlob2(){};
-	protected NamedBlob2(final String id){
+
+	protected NamedBlob2() {
+	};
+
+	protected NamedBlob2(final String id) {
 		super(id);
 	}
 
 	/**
-	 * remove all BLOBS with a given name prefix and a last write time older than the given value
-	 * needs the administrative right AC_PURGE
+	 * remove all BLOBS with a given name prefix and a last write time older
+	 * than the given value needs the administrative right AC_PURGE
+	 * 
 	 * @param prefix
 	 * @param older
 	 */
-	public static void cleanup(final String prefix,final TimeTool older){
-		if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
-			Query<NamedBlob2> qbe=new Query<NamedBlob2>(NamedBlob2.class);
+	public static void cleanup(final String prefix, final TimeTool older) {
+		if (Hub.acl.request(AccessControlDefaults.AC_PURGE)) {
+			Query<NamedBlob2> qbe = new Query<NamedBlob2>(NamedBlob2.class);
 			qbe.add("Datum", "<", older.toString(TimeTool.DATE_COMPACT));
-			for(NamedBlob2 nb:qbe.execute()){
-				if(nb.getId().startsWith(prefix)){
+			for (NamedBlob2 nb : qbe.execute()) {
+				if (nb.getId().startsWith(prefix)) {
 					nb.delete();
 				}
 			}

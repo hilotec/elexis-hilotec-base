@@ -38,6 +38,10 @@ Rietstrasse 30
       </win>
    </launcher>
 
+
+   <vm>
+   </vm>
+
    <plugins>
       <plugin id="ch.elexis"/>
       <plugin id="ch.elexis.Textplugin"/>
@@ -57,6 +61,7 @@ Rietstrasse 30
       <plugin id="ch.elexis.notes"/>
       <plugin id="ch.elexis.omnivore"/>
       <plugin id="ch.elexis.privatnotizen"/>
+      <plugin id="ch.rgw.utility"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.ibm.icu.source"/>
       <plugin id="javax.servlet"/>
@@ -98,11 +103,11 @@ Rietstrasse 30
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.carbon.macosx"/>
+      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.tomcat"/>
       <plugin id="org.eclipse.ui"/>
-      <plugin id="org.eclipse.ui.carbon"/>
+      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.workbench"/>

@@ -8,13 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 4152 2008-07-19 10:35:47Z rgw_ch $
+ *  $Id: Person.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
-
-import org.jdom.Element;
 
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -185,9 +183,5 @@ public class Person extends Kontakt {
 			this.cause=cause;
 		}
 	}
-	
-	public Element toXML(){
-		Element ret=new Element("person");
-		return ret;
-	}
+
 }

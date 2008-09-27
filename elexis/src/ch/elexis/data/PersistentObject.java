@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4422 2008-09-20 09:03:09Z rgw_ch $
+ *    $Id: PersistentObject.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -41,11 +41,10 @@ import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.elexis.util.DBUpdate;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.Compress.CompEx;
-import ch.rgw.IO.Resource;
-import ch.rgw.IO.Settings;
-import ch.rgw.IO.SqlSettings;
-import ch.rgw.net.NetTool;
+import ch.rgw.compress.CompEx;
+import ch.rgw.io.Resource;
+import ch.rgw.io.Settings;
+import ch.rgw.io.SqlSettings;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -53,6 +52,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.net.NetTool;
 
 import com.mysql.jdbc.PacketTooBigException;
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ *  $Id: NamedBlob.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -20,63 +20,75 @@ import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.rgw.Compress.CompEx;
-import ch.rgw.IO.FileTool;
+import ch.rgw.compress.CompEx;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * A named Blob is just that: An arbitrarly named piece of arbitrary data. The name must be unique (among
- * NamedBlobs). We provide methods to store and retrieve data as Hashtables and Strings (Both will be stored
- * in zip-compressed form)
+ * A named Blob is just that: An arbitrarly named piece of arbitrary data. The
+ * name must be unique (among NamedBlobs). We provide methods to store and
+ * retrieve data as Hashtables and Strings (Both will be stored in
+ * zip-compressed form)
+ * 
  * @author Gerry
- *
+ * 
  */
 public class NamedBlob extends PersistentObject {
 
 	/**
-	 * return the contents as Hashtable (will probably fail if the data was not stored using put(Hashtable)
+	 * return the contents as Hashtable (will probably fail if the data was not
+	 * stored using put(Hashtable)
+	 * 
 	 * @return the previously stored Hashtable
 	 */
 	@SuppressWarnings("unchecked")
-	public Hashtable getHashtable(){
+	public Hashtable getHashtable() {
 		return getHashtable("inhalt");
 	}
+
 	/**
 	 * Put the contents as Hashtable. The Hashtable will be compressed
-	 * @param in a Hashtable
+	 * 
+	 * @param in
+	 *            a Hashtable
 	 */
 	@SuppressWarnings("unchecked")
-	public void put(final Hashtable in){
-		setHashtable("inhalt",in);
-		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
+	public void put(final Hashtable in) {
+		setHashtable("inhalt", in);
+		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
+
 	/**
-	 * return the contents as String (will probably fail if the data was not stored using putString) 
-	 * @return the previously stored string. 
+	 * return the contents as String (will probably fail if the data was not
+	 * stored using putString)
+	 * 
+	 * @return the previously stored string.
 	 */
-	public String getString(){
-		byte[] comp=getBinary("inhalt");
-		if((comp==null) || (comp.length==0)){
+	public String getString() {
+		byte[] comp = getBinary("inhalt");
+		if ((comp == null) || (comp.length == 0)) {
 			return "";
 		}
-		byte[] exp=CompEx.expand(comp);
-		try{
-			return new String(exp,"utf-8");
-		}catch(Exception ex){
+		byte[] exp = CompEx.expand(comp);
+		try {
+			return new String(exp, "utf-8");
+		} catch (Exception ex) {
 			// should really not happen
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Store a String. The String will be stored as compressed byte[]
+	 * 
 	 * @param string
 	 */
-	public void putString(final String string){
-		byte[] comp=CompEx.Compress(string, CompEx.ZIP);
+	public void putString(final String string) {
+		byte[] comp = CompEx.Compress(string, CompEx.ZIP);
 		setBinary("inhalt", comp);
-		set("Datum",new TimeTool().toString(TimeTool.DATE_GER));
+		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
+
 	@Override
 	public String getLabel() {
 		return getId();
@@ -86,100 +98,117 @@ public class NamedBlob extends PersistentObject {
 	protected String getTableName() {
 		return "HEAP";
 	}
-	
-	static{
-		addMapping("HEAP","inhalt","Datum=S:D:datum","lastupdate");
+
+	static {
+		addMapping("HEAP", "inhalt", "Datum=S:D:datum", "lastupdate");
 	}
+
 	/**
-	 * Ask if this NamedBlob exists 
-	 * @param id the unique name of the NamedBlob to query
+	 * Ask if this NamedBlob exists
+	 * 
+	 * @param id
+	 *            the unique name of the NamedBlob to query
 	 * @return true if a NamedBlob with this name exists
 	 */
-	public static boolean exists(final String id){
-		StringBuilder path=new StringBuilder();
+	public static boolean exists(final String id) {
+		StringBuilder path = new StringBuilder();
 		path.append(System.getenv("TEMP"));
 		path.append(File.separator);
-		String idr=id.replaceAll("\\:", "\\\\");
+		String idr = id.replaceAll("\\:", "\\\\");
 		path.append(idr);
-		File file=new File(path.toString());
-		if(file.exists()){
+		File file = new File(path.toString());
+		if (file.exists()) {
 			return true;
 		}
-		NamedBlob ni=new NamedBlob(id);
+		NamedBlob ni = new NamedBlob(id);
 		return ni.exists();
 	}
-	
+
 	/**
-	 * Load or create a NamedBlob with a given Name. Caution: This will never return an inexistent
-	 * NamedBlob, because it will be created if necessary. Use exists() to check, whether a NamedBlob
-	 * exists.
-	 * @param id the unique name
+	 * Load or create a NamedBlob with a given Name. Caution: This will never
+	 * return an inexistent NamedBlob, because it will be created if necessary.
+	 * Use exists() to check, whether a NamedBlob exists.
+	 * 
+	 * @param id
+	 *            the unique name
 	 * @return the NamedBlob with that Name (which may be just newly created)
 	 */
-	public static NamedBlob load(final String id){
-		NamedBlob ni=new NamedBlob(id);
-		if(ni.state()<DELETED){
+	public static NamedBlob load(final String id) {
+		NamedBlob ni = new NamedBlob(id);
+		if (ni.state() < DELETED) {
 			ni.create(id);
-			File file=new File("c:\\temp"+File.separator+id.replaceAll(":", "\\\\"));
-			if(file.exists()){
-				String fi=FileTool.readFile(file);
+			File file = new File("c:\\temp" + File.separator
+					+ id.replaceAll(":", "\\\\"));
+			if (file.exists()) {
+				String fi = FileTool.readFile(file);
 				ni.putString(fi);
 			}
 		}
 		return ni;
 	}
-	protected NamedBlob(){};
-	protected NamedBlob(final String id){
+
+	protected NamedBlob() {
+	};
+
+	protected NamedBlob(final String id) {
 		super(id);
 	}
 
 	/**
 	 * find all NamedBlox with a name with a given prefix. Muxh faster than
 	 * findSimilar.
-	 * @param prefix the orefix to look for
-	 * @return  list with all NamedBlobs wohse name matches (case sensitively)
-	 * the prefix
+	 * 
+	 * @param prefix
+	 *            the orefix to look for
+	 * @return list with all NamedBlobs wohse name matches (case sensitively)
+	 *         the prefix
 	 */
-	public static List<NamedBlob> findFromPrefix(final String prefix){
-		Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
-		qbe.add("ID", "Like", prefix+"%");
+	public static List<NamedBlob> findFromPrefix(final String prefix) {
+		Query<NamedBlob> qbe = new Query<NamedBlob>(NamedBlob.class);
+		qbe.add("ID", "Like", prefix + "%");
 		return qbe.execute();
 	}
+
 	/**
 	 * Find all namedBlobs whose name match the given regular expression
-	 * @param name a regular expression to match
-	 * @return a list of all NamedBlobs with a name that matches the regular expression
+	 * 
+	 * @param name
+	 *            a regular expression to match
+	 * @return a list of all NamedBlobs with a name that matches the regular
+	 *         expression
 	 */
-	public static List<NamedBlob> findSimilar(final String name){
-		Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
-		qbe.addPostQueryFilter(new IFilter(){
+	public static List<NamedBlob> findSimilar(final String name) {
+		Query<NamedBlob> qbe = new Query<NamedBlob>(NamedBlob.class);
+		qbe.addPostQueryFilter(new IFilter() {
 			public boolean select(Object toTest) {
-				NamedBlob nb=(NamedBlob)toTest;
-				if(nb.getId().matches(name)){
+				NamedBlob nb = (NamedBlob) toTest;
+				if (nb.getId().matches(name)) {
 					return true;
 				}
 				return false;
 			}
-			
+
 		});
 		return qbe.execute();
 	}
+
 	/**
-	 * remove all BLOBS with a given name prefix and a last write time older than the given value
-	 * needs the administrative right AC_PURGE
+	 * remove all BLOBS with a given name prefix and a last write time older
+	 * than the given value needs the administrative right AC_PURGE
+	 * 
 	 * @param prefix
 	 * @param older
 	 */
-	public static void cleanup(final String prefix,final TimeTool older){
-		if(Hub.acl.request(AccessControlDefaults.AC_PURGE)){
-			Query<NamedBlob> qbe=new Query<NamedBlob>(NamedBlob.class);
+	public static void cleanup(final String prefix, final TimeTool older) {
+		if (Hub.acl.request(AccessControlDefaults.AC_PURGE)) {
+			Query<NamedBlob> qbe = new Query<NamedBlob>(NamedBlob.class);
 			qbe.add("Datum", "<", older.toString(TimeTool.DATE_COMPACT));
-			for(NamedBlob nb:qbe.execute()){
-				if(nb.getId().startsWith(prefix)){
+			for (NamedBlob nb : qbe.execute()) {
+				if (nb.getId().startsWith(prefix)) {
 					nb.delete();
 				}
 			}
 		}
 	}
-	
+
 }

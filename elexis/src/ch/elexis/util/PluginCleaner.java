@@ -3,7 +3,7 @@ package ch.elexis.util;
 import java.io.File;
 import java.util.HashMap;
 
-import ch.rgw.IO.FileTool;
+import ch.rgw.io.FileTool;
 
 public class PluginCleaner {
 

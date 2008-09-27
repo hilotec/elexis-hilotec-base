@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IDataReceiver.java 2413 2007-05-20 17:14:05Z rgw_ch $
+ *  $Id: IDataReceiver.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
 
 import org.jdom.Element;
 
-import ch.elexis.util.Result;
+import ch.rgw.tools.Result;
+
 
 /**
  * A generic mediator between XML-Sources and Elexis objects

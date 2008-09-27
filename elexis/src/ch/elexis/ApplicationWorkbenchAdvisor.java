@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 4219 2008-08-01 17:45:47Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -29,7 +29,7 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;
-import ch.rgw.IO.FileTool;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
 /**

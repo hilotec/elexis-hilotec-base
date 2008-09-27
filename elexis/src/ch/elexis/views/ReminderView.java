@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: ReminderView.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -47,94 +47,106 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
-import ch.rgw.IO.Settings;
+import ch.rgw.io.Settings;
 import ch.rgw.tools.TimeTool;
 
-public class ReminderView extends ViewPart implements ActivationListener, BackingStoreListener, SelectionListener, HeartListener{
-	public static final String ID="ch.elexis.reminderview";
-	private IAction newReminderAction, deleteReminderAction, onlyOpenReminderAction, ownReminderAction;
+public class ReminderView extends ViewPart implements ActivationListener,
+		BackingStoreListener, SelectionListener, HeartListener {
+	public static final String ID = "ch.elexis.reminderview";
+	private IAction newReminderAction, deleteReminderAction,
+			onlyOpenReminderAction, ownReminderAction;
 	private RestrictedAction othersReminderAction;
 	private RestrictedAction selectPatientAction;
 	private boolean bVisible;
-	
+
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	// Patient pat;
-	//String dateDue;
-	//Reminder.Status status;
-	//Reminder.Typ typ;
+	// String dateDue;
+	// Reminder.Status status;
+	// Reminder.Typ typ;
 	Query<Reminder> qbe;
 	Settings cfg;
 	ReminderFilter filter;
 	private Patient actPatient;
-	
+
 	public ReminderView() {
-		qbe=new Query<Reminder>(Reminder.class);
-	
+		qbe = new Query<Reminder>(Reminder.class);
+
 	}
 
 	@Override
 	public void createPartControl(final Composite parent) {
-		cv=new CommonViewer();
-		filter=new ReminderFilter();
-		vc=new ViewerConfigurer(
-				new ViewerConfigurer.ContentProviderAdapter(){
+		cv = new CommonViewer();
+		filter = new ReminderFilter();
+		vc = new ViewerConfigurer(
+				new ViewerConfigurer.ContentProviderAdapter() {
 					@Override
 					public Object[] getElements(final Object inputElement) {
 						// Display reminders only if one is logged in
-						if(Hub.actUser==null){
+						if (Hub.actUser == null) {
 							return new Object[0];
 						}
-						SortedSet<Reminder> allReminders=Hub.actUser.getReminders(null);
-						if(othersReminderAction.isChecked() && Hub.acl.request(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS)){
+						SortedSet<Reminder> allReminders = Hub.actUser
+								.getReminders(null);
+						if (othersReminderAction.isChecked()
+								&& Hub.acl
+										.request(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS)) {
 							qbe.clear();
-							 allReminders.addAll(qbe.execute());
-						}else{
-							if(ownReminderAction.isChecked()){
+							allReminders.addAll(qbe.execute());
+						} else {
+							if (ownReminderAction.isChecked()) {
 								qbe.clear();
 								qbe.add("Creator", "=", Hub.actUser.getId());
 								allReminders.addAll(qbe.execute());
 							}
-				// compatibility to old reminders where responsible was given instead of n:m
+							// compatibility to old reminders where responsible
+							// was given instead of n:m
 							qbe.clear();
 							qbe.add("Responsible", "=", Hub.actUser.getId());
 							allReminders.addAll(qbe.execute());
-				// ..to be removed later
+							// ..to be removed later
 						}
 						return allReminders.toArray();
-							
+
 					}
-				},
-				new ReminderLabelProvider(),
-				null, //new DefaultControlFieldProvider(cv,new String[]{"Fällig"}),
+				}, new ReminderLabelProvider(),
+				null, // new DefaultControlFieldProvider(cv,new
+						// String[]{"Fällig"}),
 				new ViewerConfigurer.DefaultButtonProvider(),
-				new  SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE,SWT.SINGLE,cv)
-		);
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE,
+						SWT.SINGLE, cv));
 		makeActions();
-		ViewMenus menu=new ViewMenus(getViewSite());
+		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createToolbar(newReminderAction);
-		menu.createMenu(newReminderAction,deleteReminderAction,onlyOpenReminderAction,ownReminderAction,othersReminderAction, selectPatientAction);
-		
-		if(Hub.acl.request(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS)){
+		menu.createMenu(newReminderAction, deleteReminderAction,
+				onlyOpenReminderAction, ownReminderAction,
+				othersReminderAction, selectPatientAction);
+
+		if (Hub.acl.request(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS)) {
 			othersReminderAction.setEnabled(true);
-			othersReminderAction.setChecked(Hub.userCfg.get(PreferenceConstants.USR_REMINDEROTHERS, false));
-		}else{
+			othersReminderAction.setChecked(Hub.userCfg.get(
+					PreferenceConstants.USR_REMINDEROTHERS, false));
+		} else {
 			othersReminderAction.setEnabled(false);
 		}
 		cv.create(vc, parent, SWT.NONE, getViewSite());
-		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener(){
-			public void doubleClicked(final PersistentObject obj, final CommonViewer cv) {
-				new EditReminderDialog(getViewSite().getShell(),(Reminder)obj).open();
+		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
+			public void doubleClicked(final PersistentObject obj,
+					final CommonViewer cv) {
+				new EditReminderDialog(getViewSite().getShell(), (Reminder) obj)
+						.open();
 				cv.notify(CommonViewer.Message.update);
 			}
 		});
-		menu.createViewerContextMenu(cv.getViewerWidget(), selectPatientAction, deleteReminderAction);
+		menu.createViewerContextMenu(cv.getViewerWidget(), selectPatientAction,
+				deleteReminderAction);
 		cv.getViewerWidget().addFilter(filter);
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+		GlobalEvents.getInstance().addActivationListener(this,
+				getViewSite().getPart());
 		GlobalEvents.getInstance().addSelectionListener(this);
 	}
 
-	
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
@@ -142,24 +154,30 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	}
 
 	@Override
-	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
+	public void dispose() {
+		GlobalEvents.getInstance().removeActivationListener(this,
+				getViewSite().getPart());
 		GlobalEvents.getInstance().removeSelectionListener(this);
-		Hub.userCfg.set(PreferenceConstants.USR_REMINDERSOPEN, onlyOpenReminderAction.isChecked());
+		Hub.userCfg.set(PreferenceConstants.USR_REMINDERSOPEN,
+				onlyOpenReminderAction.isChecked());
 	}
-	class ReminderLabelProvider extends DefaultLabelProvider implements IColorProvider{
-		
+
+	class ReminderLabelProvider extends DefaultLabelProvider implements
+			IColorProvider {
+
 		public Color getBackground(final Object element) {
-			if(element instanceof Reminder){
-				Reminder.Status stat=((Reminder)element).getStatus();
-				cfg=Hub.userCfg.getBranch(PreferenceConstants.USR_REMINDERCOLORS, true);			
-				if(stat==Reminder.Status.faellig){
+			if (element instanceof Reminder) {
+				Reminder.Status stat = ((Reminder) element).getStatus();
+				cfg = Hub.userCfg.getBranch(
+						PreferenceConstants.USR_REMINDERCOLORS, true);
+				if (stat == Reminder.Status.faellig) {
 					return Desk.getColorFromRGB(cfg.get("fällig", "FFFFFF"));
-				}else if(stat==Reminder.Status.ueberfaellig){
-					return Desk.getColorFromRGB(cfg.get("überfällig", "FF0000"));
-				}else if(stat==Reminder.Status.geplant){
+				} else if (stat == Reminder.Status.ueberfaellig) {
+					return Desk
+							.getColorFromRGB(cfg.get("überfällig", "FF0000"));
+				} else if (stat == Reminder.Status.geplant) {
 					return Desk.getColorFromRGB(cfg.get("geplant", "00FF00"));
-				}else{
+				} else {
 					return null;
 				}
 			}
@@ -169,76 +187,92 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 		public Color getForeground(final Object element) {
 			return null;
 		}
-		
+
 	}
-	
-	private void makeActions(){
-		newReminderAction=new Action("Neu..."){
+
+	private void makeActions() {
+		newReminderAction = new Action("Neu...") {
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Desk.theImageRegistry
+						.getDescriptor(Desk.IMG_NEW));
 				setToolTipText("Einen neuen Reminder erstellen");
 			}
+
 			@Override
-			public void run(){
-				EditReminderDialog erd=new EditReminderDialog(getViewSite().getShell(),null);
+			public void run() {
+				EditReminderDialog erd = new EditReminderDialog(getViewSite()
+						.getShell(), null);
 				erd.open();
 				cv.notify(CommonViewer.Message.update_keeplabels);
 			}
 		};
-		deleteReminderAction=new Action("Löschen"){
+		deleteReminderAction = new Action("Löschen") {
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.theImageRegistry
+						.getDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Markierten Reminder löschen");
 			}
+
 			@Override
-			public void run(){
-				Object[] sel=cv.getSelection();
-				if((sel!=null) && (sel.length>0)){
-					Reminder r=(Reminder)sel[0];
+			public void run() {
+				Object[] sel = cv.getSelection();
+				if ((sel != null) && (sel.length > 0)) {
+					Reminder r = (Reminder) sel[0];
 					r.delete();
 					cv.notify(CommonViewer.Message.update_keeplabels);
 				}
 			}
 		};
-		onlyOpenReminderAction=new Action("Nur fällige",Action.AS_CHECK_BOX){
+		onlyOpenReminderAction = new Action("Nur fällige", Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Nur aktive Reminder anzeigen");
 			}
+
 			@Override
-			public void run(){
-				boolean bChecked=onlyOpenReminderAction.isChecked();
-				Hub.userCfg.set(PreferenceConstants.USR_REMINDERSOPEN, bChecked);
+			public void run() {
+				boolean bChecked = onlyOpenReminderAction.isChecked();
+				Hub.userCfg
+						.set(PreferenceConstants.USR_REMINDERSOPEN, bChecked);
 				cv.notify(CommonViewer.Message.update_keeplabels);
 			}
 		};
-		ownReminderAction=new Action("Von mir erstellte",Action.AS_CHECK_BOX){
+		ownReminderAction = new Action("Von mir erstellte", Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Auch von mir erstellte Reminder für andere Anwender anzeigen");
 			}
+
 			@Override
-			public void run(){
-				boolean bChecked=ownReminderAction.isChecked();
+			public void run() {
+				boolean bChecked = ownReminderAction.isChecked();
 				Hub.userCfg.set(PreferenceConstants.USR_REMINDEROWN, bChecked);
 				cv.notify(CommonViewer.Message.update_keeplabels);
 			}
 		};
-		othersReminderAction=new RestrictedAction(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS,"Fremde",Action.AS_CHECK_BOX){
+		othersReminderAction = new RestrictedAction(
+				AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS, "Fremde",
+				Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Auch Reminders anderer Anwender anzeigen");
 			}
+
 			@Override
-			public void doRun(){
-				Hub.userCfg.set(PreferenceConstants.USR_REMINDEROTHERS, othersReminderAction.isChecked());
+			public void doRun() {
+				Hub.userCfg.set(PreferenceConstants.USR_REMINDEROTHERS,
+						othersReminderAction.isChecked());
 				cv.notify(CommonViewer.Message.update_keeplabels);
 			}
 		};
-		
-		selectPatientAction = new RestrictedAction(AccessControlDefaults.PATIENT_DISPLAY, "Patient aktivieren", Action.AS_UNSPECIFIED) {
+
+		selectPatientAction = new RestrictedAction(
+				AccessControlDefaults.PATIENT_DISPLAY, "Patient aktivieren",
+				Action.AS_UNSPECIFIED) {
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PERSON));
+				setImageDescriptor(Desk.theImageRegistry
+						.getDescriptor(Desk.IMG_PERSON));
 				setToolTipText("Patient aktivieren, der zu dieser Pendenz gehört");
 			}
-			public void doRun(){
+
+			public void doRun() {
 				Object[] sel = cv.getSelection();
 				if (sel != null && sel.length > 0) {
 					Reminder reminder = (Reminder) sel[0];
@@ -249,7 +283,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				}
 			}
 		};
-		
+
 	}
 
 	public void activation(final boolean mode) {
@@ -257,69 +291,75 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	}
 
 	public void visible(final boolean mode) {
-		bVisible=mode;
-		if(mode){
-			
-			//GlobalEvents.getInstance().addSelectionListener(this);
+		bVisible = mode;
+		if (mode) {
+
+			// GlobalEvents.getInstance().addSelectionListener(this);
 			GlobalEvents.getInstance().addBackingStoreListener(this);
 			Hub.heart.addListener(this);
 			cv.notify(CommonViewer.Message.update);
 			heartbeat();
-		}else{
-			//GlobalEvents.getInstance().removeSelectionListener(this);
+		} else {
+			// GlobalEvents.getInstance().removeSelectionListener(this);
 			GlobalEvents.getInstance().removeBackingStoreListener(this);
 			Hub.heart.removeListener(this);
 		}
-		
+
 	}
 
 	public void reloadContents(final Class<? extends PersistentObject> clazz) {
-		if(clazz.equals(Reminder.class)){
+		if (clazz.equals(Reminder.class)) {
 			cv.notify(CommonViewer.Message.update);
 		}
 	}
 
 	public void clearEvent(final Class<? extends PersistentObject> template) {
-		if(template.equals(Patient.class)){
-			
+		if (template.equals(Patient.class)) {
+
 		}
 	}
 
 	public void selectionEvent(final PersistentObject obj) {
-		if(obj instanceof Patient){
-			if(((Patient)obj).equals(actPatient)){
+		if (obj instanceof Patient) {
+			if (((Patient) obj).equals(actPatient)) {
 				return;
 			}
-			actPatient=(Patient)obj;
-			if(bVisible){
+			actPatient = (Patient) obj;
+			if (bVisible) {
 				cv.notify(CommonViewer.Message.update);
 			}
-			Desk.theDisplay.asyncExec(new Runnable(){
+			Desk.theDisplay.asyncExec(new Runnable() {
 
 				public void run() {
-					List<Reminder> list=Reminder.findRemindersDueFor((Patient)obj, Hub.actUser,true);
-					if(list.size()!=0){
-						StringBuilder sb=new StringBuilder();
-						for(Reminder r:list){
+					List<Reminder> list = Reminder.findRemindersDueFor(
+							(Patient) obj, Hub.actUser, true);
+					if (list.size() != 0) {
+						StringBuilder sb = new StringBuilder();
+						for (Reminder r : list) {
 							sb.append(r.getMessage()).append("\n\n");
 						}
-						SWTHelper.alert("Wichtige Reminders zu diesem Patienten", sb.toString());
+						SWTHelper.alert(
+								"Wichtige Reminders zu diesem Patienten", sb
+										.toString());
 					}
 				}
-				
+
 			});
-		}else if(obj instanceof Anwender){
-			boolean bChecked=Hub.userCfg.get(PreferenceConstants.USR_REMINDERSOPEN, true);
+		} else if (obj instanceof Anwender) {
+			boolean bChecked = Hub.userCfg.get(
+					PreferenceConstants.USR_REMINDERSOPEN, true);
 			onlyOpenReminderAction.setChecked(bChecked);
-			ownReminderAction.setChecked(Hub.userCfg.get(PreferenceConstants.USR_REMINDEROWN, false));
+			ownReminderAction.setChecked(Hub.userCfg.get(
+					PreferenceConstants.USR_REMINDEROWN, false));
 
 			// get state from user's configuration
-			othersReminderAction.setChecked(Hub.userCfg.get(PreferenceConstants.USR_REMINDEROTHERS, false));
-			
+			othersReminderAction.setChecked(Hub.userCfg.get(
+					PreferenceConstants.USR_REMINDEROTHERS, false));
+
 			// update action's access rights
 			othersReminderAction.reflectRight();
 
-			if(bVisible){
+			if (bVisible) {
 				cv.notify(CommonViewer.Message.update);
 			}
 		}
@@ -328,31 +368,33 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	public void heartbeat() {
 		cv.notify(CommonViewer.Message.update_keeplabels);
 	}
-	class ReminderFilter extends ViewerFilter{
+
+	class ReminderFilter extends ViewerFilter {
 		@Override
-		public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-			if(element instanceof Reminder){
-				Reminder check=(Reminder)element;
-				if(onlyOpenReminderAction.isChecked()){
-					if(check.getDateDue().isAfter(new TimeTool())){
+		public boolean select(final Viewer viewer, final Object parentElement,
+				final Object element) {
+			if (element instanceof Reminder) {
+				Reminder check = (Reminder) element;
+				if (onlyOpenReminderAction.isChecked()) {
+					if (check.getDateDue().isAfter(new TimeTool())) {
 						return false;
 					}
-					if(check.getStatus().ordinal()>2){
+					if (check.getStatus().ordinal() > 2) {
 						return false;
 					}
 				}
-				Patient act=GlobalEvents.getSelectedPatient();
-				if(act!=null){
-					if(!check.get("IdentID").equals(act.getId())){
-						if(check.getTyp()!=Reminder.Typ.anzeigeTodoAll){
+				Patient act = GlobalEvents.getSelectedPatient();
+				if (act != null) {
+					if (!check.get("IdentID").equals(act.getId())) {
+						if (check.getTyp() != Reminder.Typ.anzeigeTodoAll) {
 							return false;
 						}
 					}
 				}
-				
+
 			}
 			return true;
 		}
-				
+
 	}
 }

@@ -8,19 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 3881 2008-05-06 16:53:59Z rgw_ch $
+ *  $Id: Rezept.java 4450 2008-09-27 19:49:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.Element;
-
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
 import ch.rgw.tools.TimeTool;
+import org.jdom.*;
 
 /**
  * Ein Rezept besteht aus einem Mandanten, einem Patienten, einem Datum und einer Prescription-Liste
