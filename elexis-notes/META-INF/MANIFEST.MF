@@ -9,4 +9,5 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
- ch.elexis.Textplugin
+ ch.elexis.Textplugin,
+ ch.rgw.utility
