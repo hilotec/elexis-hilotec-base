@@ -10,7 +10,8 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
  org.eclipse.ui,
- ch.elexis.ebanking_ch
+ ch.elexis.ebanking_ch,
+ ch.rgw.utility
 Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.arzttarife_schweiz,
  ch.elexis.data,
