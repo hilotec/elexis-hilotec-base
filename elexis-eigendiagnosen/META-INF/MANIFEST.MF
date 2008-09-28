@@ -8,4 +8,5 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.elexis.importer.div,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ ch.rgw.utility
