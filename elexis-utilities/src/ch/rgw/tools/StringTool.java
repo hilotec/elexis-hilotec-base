@@ -221,22 +221,6 @@ public static String flattenStrings(final Hashtable h)
 	  }
 	  
   }
-  @SuppressWarnings("unchecked")
-public static byte[] flatten(final Hashtable hash){
-      try{
-    	  ByteArrayOutputStream baos=new ByteArrayOutputStream(hash.size()*30);
-          ZipOutputStream zos=new ZipOutputStream(baos);
-       	  zos.putNextEntry(new ZipEntry("hash"));
-       	  ObjectOutputStream oos=new ObjectOutputStream(zos);
-          oos.writeObject(hash);
-		  zos.close();
-		  baos.close();
-          return baos.toByteArray();
-      }catch(Exception ex){
-          ExHandler.handle(ex);
-          return null;
-      }
-  }
   /**
    * Eine Hashtable in ein komprimiertes Byte-Array umwandeln
    * @param hash	die Hashtable
@@ -278,22 +262,6 @@ public static byte[] flatten(final Hashtable hash, final int compressMode, final
       }
   }
   
-  @SuppressWarnings("unchecked")
-public static Hashtable fold(final byte[] flat){
-      try{
-          ByteArrayInputStream bais=new ByteArrayInputStream(flat);
-        	ZipInputStream zis=new ZipInputStream(bais); 
-			zis.getNextEntry();
-			ObjectInputStream ois=new ObjectInputStream(zis);
-			Hashtable<Object,Object> res=(Hashtable<Object,Object>)ois.readObject();
-			ois.close();
-			bais.close();
-			return res;
-      }catch(Exception ex){
-          ExHandler.handle(ex);
-          return null;
-      }
-  }
   /** Ein mit flatten() erzeugtes Byte-Array wieder in eine HAshtable zurückverwandeln
    * 
    * @param flat Die komprimierte Hashtable
@@ -303,6 +271,7 @@ public static Hashtable fold(final byte[] flat){
    */
   @SuppressWarnings("unchecked")
   @Deprecated
+
 public static Hashtable fold(final byte[] flat, final int compressMode, final Object ExtInfo)
   {	
       ObjectInputStream ois=null;
