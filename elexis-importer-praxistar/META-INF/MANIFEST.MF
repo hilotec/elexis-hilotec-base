@@ -10,4 +10,5 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.elexis.icpc,
- ch.elexis.diagnosecodes_ch
+ ch.elexis.diagnosecodes_ch,
+ ch.rgw.utility
