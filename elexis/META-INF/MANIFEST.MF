@@ -10,9 +10,7 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.ui.forms,
  org.eclipse.help.ui
 Eclipse-LazyStart: true
-Bundle-ClassPath: .,
- bin/,
- hsqldb.jar,
+Bundle-ClassPath: hsqldb.jar,
  postgresql.jar,
  mysql-connector.jar,
  lib/bsh-core-2.0b4.jar,
