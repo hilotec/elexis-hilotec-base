@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4403 2008-09-09 10:37:23Z rgw_ch $
+ * $Id: TarmedLeistung.java 4478 2008-09-28 06:28:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -208,7 +208,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	/** Erweiterte Informationen rückspeichern */
 	public void flushExtension(){
 		if (ext != null) {
-			byte[] flat = StringTool.flatten(ext);
+			byte[] flat = StringTool.flatten(ext,StringTool.ZIP,null);
 			PreparedStatement preps =
 				j
 					.prepareStatement("UPDATE TARMED_EXTENSION SET limits=? WHERE CODE=" + getWrappedId()); //$NON-NLS-1$
