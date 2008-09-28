@@ -9,6 +9,7 @@ Require-Bundle: ch.elexis.arzttarife_ch,
  ch.elexis,
  org.eclipse.swt,
  org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ ch.rgw.utility
 Bundle-ClassPath: .,
  com4j.jar
