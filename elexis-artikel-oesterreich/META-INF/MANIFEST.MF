@@ -5,7 +5,8 @@ Bundle-SymbolicName: ch.elexis.artikel_at;singleton:=true
 Bundle-Version: 0.3.3
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis,
+Require-Bundle: ch.rgw.utility,
+ ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms

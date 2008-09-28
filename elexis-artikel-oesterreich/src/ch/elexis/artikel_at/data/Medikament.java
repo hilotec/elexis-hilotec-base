@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Medikament.java 2365 2007-05-10 14:04:26Z rgw_ch $
+ *  $Id: Medikament.java 4477 2008-09-28 06:28:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
