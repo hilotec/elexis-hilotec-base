@@ -6,6 +6,7 @@ Bundle-Version: 1.3.2.20080805
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.elexis,
- ch.elexis.importer.div
+ ch.elexis.importer.div,
+ ch.rgw.utility
 Eclipse-LazyStart: true
 Bundle-Vendor: medshare.ch
