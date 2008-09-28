@@ -7,12 +7,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.compress.bzip2.CBZip2InputStream;
 import org.apache.commons.compress.bzip2.CBZip2OutputStream;
 
-import ch.rgw.Compress.*;
-
-import junit.framework.TestCase;
+import ch.rgw.compress.CompEx;
+import ch.rgw.compress.GLZInputStream;
+import ch.rgw.compress.GLZOutputStream;
+import ch.rgw.compress.HuffmanInputStream;
+import ch.rgw.compress.HuffmanOutputStream;
+import ch.rgw.compress.HuffmanTree;
+import ch.rgw.compress.RLL;
 
 public class TestCompress extends TestCase {
 	byte[] in,out;
