@@ -7,4 +7,5 @@ Bundle-Vendor: medshare.ch
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
- ch.elexis
+ ch.elexis,
+ ch.rgw.utility
