@@ -8,14 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *    $Id: PersistentObject.java 4475 2008-09-28 06:27:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -25,6 +28,9 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -118,8 +124,8 @@ public abstract class PersistentObject {
 		// cache=new EhBasedCache<String>(null);
 		/*
 		 * cacheCleaner=new Job("CacheCleaner"){ @Override protected IStatus run(final
-		 * IProgressMonitor monitor) { cache.purge(); schedule(60000L); return Status.OK_STATUS; }
-		 *  }; cacheCleaner.setUser(false); cacheCleaner.setPriority(Job.DECORATE);
+		 * IProgressMonitor monitor) { cache.purge(); schedule(60000L); return Status.OK_STATUS; } };
+		 * cacheCleaner.setUser(false); cacheCleaner.setPriority(Job.DECORATE);
 		 */
 		// cacheCleaner.schedule(300000L);
 		log.log("Cache setup: default_lifetime " + default_lifetime, Log.INFOS);
@@ -515,7 +521,7 @@ public abstract class PersistentObject {
 		}
 		String deleted = get("deleted");
 		if (deleted == null) { // if we cant't find the column called 'deleted', the object exists
-								// anyway
+			// anyway
 			return EXISTS;
 		}
 		if (showDeleted) {
@@ -952,7 +958,7 @@ public abstract class PersistentObject {
 		if (blob == null) {
 			return new Hashtable();
 		}
-		Hashtable<Object, Object> ret = StringTool.fold(blob);
+		Hashtable<Object, Object> ret = fold(blob);
 		if (ret == null) {
 			return new Hashtable();
 		}
@@ -1145,7 +1151,7 @@ public abstract class PersistentObject {
 			return 0;
 		}
 		try {
-			byte[] bin = StringTool.flatten(hash);
+			byte[] bin = flatten(hash);
 			/*
 			 * Hashtable res=StringTool.fold(bin); if(res==null){ String
 			 * ls=StringTool.flattenStrings(hash); //byte[]
@@ -1739,8 +1745,7 @@ public abstract class PersistentObject {
 	 * private class CacheField implements ICacheable{ Object contents; long expires;
 	 * CacheField(Object value){ contents=value; expires=System.currentTimeMillis()+lifetime; }
 	 * boolean expired(){ long act=System.currentTimeMillis(); if(expires<act){ return true; }
-	 * return false; }
-	 *  }
+	 * return false; } }
 	 */
 
 	@Override
@@ -1860,4 +1865,40 @@ public abstract class PersistentObject {
 		}
 		getConnection().exec("DROP TABLE " + name);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public byte[] flatten(final Hashtable hash){
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(hash.size() * 30);
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			zos.putNextEntry(new ZipEntry("hash"));
+			ObjectOutputStream oos = new ObjectOutputStream(zos);
+			oos.writeObject(hash);
+			zos.close();
+			baos.close();
+			return baos.toByteArray();
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Hashtable fold(final byte[] flat){
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(flat);
+			ZipInputStream zis = new ZipInputStream(bais);
+			zis.getNextEntry();
+			ObjectInputStream ois = new ObjectInputStream(zis);
+			Hashtable<Object, Object> res = (Hashtable<Object, Object>) ois.readObject();
+			ois.close();
+			bais.close();
+			return res;
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
+	}
+	
+
 }

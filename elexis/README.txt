@@ -67,12 +67,30 @@ Diese Plugins werden demnächst aus dem aktiven Zweig des Repository gelöscht.
 Straffung des Codes. ch.elexis.Result wurde deprecated und gegen ch.elexis.tools.Result
 ersetzt. Dieses hat keine SWT- und JFace- Abhängigkeiten und kann darum auch für
 Interaktionszwecke verwendet werden. Alle RnOutputter müssen angepasst werden.
-(Im Allgemeinen reicht es, auf ch.rgw.tools.Result zu verweisen und bei ehleren statt Log.xxx
-die entsüprechenden Result.SEVERITY.xxx werte zu verwenden)
-Eclipse-Spezifische Anpasungen werden im ch.elexis.uil.ReusltAdapter gemacht.
+(Im Allgemeinen reicht es, auf ch.rgw.tools.Result zu verweisen und bei Fehlern statt Log.xxx
+die entsprechenden Result.SEVERITY.xxx werte zu verwenden)
+Eclipse-Spezifische Anpassungen werden im ch.elexis.uil.ReusltAdapter gemacht.
 
 
-Abrechnung: Konzept mit %-ZTuschlägen udn Abzügen geändert. Diese werden wie gewöhnliche Codes
-behandelt und erhaltena uch immer einen positiven Taxpunktwert, aber erhalten
+Abrechnung: Konzept mit %-Zuschlägen udn Abzügen geändert. Diese werden wie gewöhnliche Codes
+behandelt und erhalten auch immer einen positiven Taxpunktwert, aber erhalten
 einen internen Skalierungsfaktor in Höhe ihres Prozentsatzes. Dieser Skalierungsfaktor kann auch negativ sein.
 
+-------------------------------------------------------
+30.9.2008 gweirich 1.4.0
+a) Weitere Straffung: Das Package ch.rgw.tools, welches weder SWT- noch Swing- Abhängigkeiten enthält,
+wurde in ein eigenes Plugin elexis-utausgelagert. Dies vereinfacht die Verwendung desselben Codes auf verschiedenen 
+Plattformen (z.B. die geplanten Elexis- Webservices werden die Klassen aus ch.rgw.crypt zur Kommunikation
+nutzen).
+
+Folge: Viele Plugins werden zunächst nicht mehr compilieren. Dort bitte eine Abhängigkeit auf ch.rgw.tools
+eintragen, dann sollte es wieder gehen (Natürlich erst, nachdem das Plugin elexis-utilities ausgecheckt wurde)
+
+b) Der MySQL Connector wurde aus dem Kernplugin entfernt und in ein eigenes Plugin "mysql-adapter" ausgelagert.
+Dies um Lizenzproblemen zuvorzukommen. Mysql-connector steht unter der GPL, die nicht in allen Punkten
+zur EPL von Elexis kompatibel ist. Jetzt sollte es sauber sein. Kurzum: Man muss auch das Plugin 
+mysql-adapter auschecken. Der Elexis-Kern und elexis-utilities haben Abhängigkeiten zu diesem Plugin.
+Es ist geplant, auch die anderen Datenbankverbindungen aus dem Kern herauszunehmen.
+
+In der Run-Configuration müssen die entsprechenden Plugins ebenfalls eingetragen werden
+(z.B. mit Klick auf "Add required plugins", damit sie beim Start eingebunden werden.
