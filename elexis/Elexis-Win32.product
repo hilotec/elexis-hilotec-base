@@ -38,7 +38,6 @@ Rietstrasse 30
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -58,10 +57,12 @@ Rietstrasse 30
       <plugin id="ch.elexis.laborimport_viollier"/>
       <plugin id="ch.elexis.mail"/>
       <plugin id="ch.elexis.medikamente.bag"/>
+      <plugin id="ch.elexis.mysql.connector"/>
       <plugin id="ch.elexis.noatext"/>
       <plugin id="ch.elexis.omnivore"/>
       <plugin id="ch.elexis.privatnotizen"/>
       <plugin id="ch.medshare.elexis_directories"/>
+      <plugin id="ch.rgw.utility"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.ibm.icu36.data.update" fragment="true"/>
       <plugin id="javax.servlet"/>
