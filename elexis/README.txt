@@ -79,12 +79,13 @@ einen internen Skalierungsfaktor in Höhe ihres Prozentsatzes. Dieser Skalierung
 -------------------------------------------------------
 30.9.2008 gweirich 1.4.0
 a) Weitere Straffung: Das Package ch.rgw.tools, welches weder SWT- noch Swing- Abhängigkeiten enthält,
-wurde in ein eigenes Plugin elexis-utausgelagert. Dies vereinfacht die Verwendung desselben Codes auf verschiedenen 
+wurde in ein eigenes Plugin elexis-utilities ausgelagert. Dies vereinfacht die Verwendung desselben Codes auf verschiedenen 
 Plattformen (z.B. die geplanten Elexis- Webservices werden die Klassen aus ch.rgw.crypt zur Kommunikation
 nutzen).
 
 Folge: Viele Plugins werden zunächst nicht mehr compilieren. Dort bitte eine Abhängigkeit auf ch.rgw.tools
-eintragen, dann sollte es wieder gehen (Natürlich erst, nachdem das Plugin elexis-utilities ausgecheckt wurde)
+eintragen, dann sollte es wieder gehen (Natürlich erst, nachdem das Plugin elexis-utilities ausgecheckt wurde).
+Wenn compile-errors auftreten hilft meist ein "clean".
 
 b) Der MySQL Connector wurde aus dem Kernplugin entfernt und in ein eigenes Plugin "mysql-adapter" ausgelagert.
 Dies um Lizenzproblemen zuvorzukommen. Mysql-connector steht unter der GPL, die nicht in allen Punkten
