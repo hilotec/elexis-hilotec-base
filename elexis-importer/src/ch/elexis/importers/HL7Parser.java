@@ -32,8 +32,20 @@ public class HL7Parser {
 		myLab=mylab;
 	}
 	
-	public Result<String> parse(final HL7 hl7, final Kontakt labor, final Patient pat){
+	public Result<String> parse(final HL7 hl7,boolean createPatientIfNotFound){
+		Result<Kontakt> res=hl7.getLabor();
+		if(!res.isOK()){
+			return new Result<String>(Result.SEVERITY.ERROR,1,"Lab not found",hl7.getFilename(),true);
+		}
+		final Kontakt labor=res.get();
+		Result<Patient> r2=hl7.getPatient(createPatientIfNotFound);
+		if(!r2.isOK()){
+			return new Result<String>(Result.SEVERITY.ERROR,1,"Patient not found",hl7.getFilename(),true);
+		}
+		Patient pat=r2.get();
+		
 		HL7.OBR obr = hl7.firstOBR();
+		
 		int nummer = 0;
 		String dat = new TimeTool().toString(TimeTool.DATE_GER);
 		while (obr != null) {
@@ -140,7 +152,7 @@ public class HL7Parser {
 	 *            be moved.
 	 * @return the result as type Result
 	 */
-	public Result<?> importFile(final File file, final File archiveDir){
+	public Result<?> importFile(final File file, final File archiveDir, boolean bCreatePatientIfNotExists){
 		HL7 hl7 = new HL7("Labor " + myLab, myLab);
 		Result<String> r = hl7.load(file.getAbsolutePath());
 		if (r.isOK()) {
@@ -151,7 +163,7 @@ public class HL7Parser {
 					Patient pat = res.get();
 					Kontakt labor = rk.get();
 					
-					Result<?> ret = parse(hl7, labor, pat);
+					Result<?> ret = parse(hl7, bCreatePatientIfNotExists);
 					
 					// move result to archive
 					if (ret.isOK()) {
@@ -190,7 +202,7 @@ public class HL7Parser {
 	 *            the file to be imported (full path)
 	 * @return
 	 */
-	public Result<?> importFile(final String filepath){
-		return importFile(new File(filepath), null);
+	public Result<?> importFile(final String filepath, boolean bCreatePatientIfNotExists){
+		return importFile(new File(filepath), null, bCreatePatientIfNotExists);
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4431 2008-09-23 13:55:57Z rgw_ch $
+ * $Id: HL7.java 4500 2008-09-30 12:58:41Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -35,6 +35,7 @@ public class HL7 {
 	String separator;
 	String labName;
 	String labID;
+	String filename;
 	
 	String[] lines;
 	Kontakt labor;
@@ -70,6 +71,7 @@ public class HL7 {
 	 */
 	public Result<String> load(final String filename){
 		File file = new File(filename);
+		this.filename=filename;
 		if (!file.canRead()) {
 			return new Result<String>(SEVERITY.WARNING, 1, "Kann Datei nicht lesen", filename, true);
 		}
@@ -111,6 +113,9 @@ public class HL7 {
 		return new String[0];
 	}
 	
+	public String getFilename(){
+		return filename;
+	}
 	/**
 	 * This method tries to find the patient denoted by this HL7-record. We try the PID-field
 	 * PatientID, that is documented as "PlacerID". But unfortunately not all labs use this field.
