@@ -18,7 +18,7 @@
  * - Re-Adapted to Viollier
  * - Added -allInOne option from OpenMedical
  * 
- * $Id: Importer.java 4437 2008-09-24 11:21:53Z rgw_ch $
+ * $Id: Importer.java 4501 2008-09-30 12:59:05Z rgw_ch $
  */
 
 package ch.elexis.laborimport.viollier;
@@ -181,7 +181,7 @@ public class Importer extends ImporterPage {
 			});
 			for (String file : files) {
 				File f = new File(downloadDir, file);
-				Result<?> rs = hlp.importFile(f, archiveDir);
+				Result<?> rs = hlp.importFile(f, archiveDir,false);
 				if (!rs.isOK()) {
 					// importFile already shows error
 					// rs.display("Fehler beim Import");
@@ -216,7 +216,7 @@ public class Importer extends ImporterPage {
 		
 		if (type == FILE) {
 			String filename = results[1];
-			return ResultAdapter.getResultAsStatus(hlp.importFile(filename));
+			return ResultAdapter.getResultAsStatus(hlp.importFile(filename,false));
 		} else {
 			return ResultAdapter.getResultAsStatus(importDirect());
 		}
