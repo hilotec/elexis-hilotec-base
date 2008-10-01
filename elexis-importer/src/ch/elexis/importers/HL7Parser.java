@@ -26,23 +26,25 @@ public class HL7Parser {
 	private static final String COMMENT_CODE = "kommentar";
 	private static final String COMMENT_GROUP = "00 Kommentar";
 	
-	public String myLab="?";
+	public String myLab = "?";
 	
 	public HL7Parser(String mylab){
-		myLab=mylab;
+		myLab = mylab;
 	}
 	
-	public Result<String> parse(final HL7 hl7,boolean createPatientIfNotFound){
-		Result<Kontakt> res=hl7.getLabor();
-		if(!res.isOK()){
-			return new Result<String>(Result.SEVERITY.ERROR,1,"Lab not found",hl7.getFilename(),true);
+	public Result<String> parse(final HL7 hl7, boolean createPatientIfNotFound){
+		Result<Kontakt> res = hl7.getLabor();
+		if (!res.isOK()) {
+			return new Result<String>(Result.SEVERITY.ERROR, 1, "Lab not found", hl7.getFilename(),
+				true);
 		}
-		final Kontakt labor=res.get();
-		Result<Patient> r2=hl7.getPatient(createPatientIfNotFound);
-		if(!r2.isOK()){
-			return new Result<String>(Result.SEVERITY.ERROR,1,"Patient not found",hl7.getFilename(),true);
+		final Kontakt labor = res.get();
+		Result<Patient> r2 = hl7.getPatient(createPatientIfNotFound);
+		if (!r2.isOK()) {
+			return new Result<String>(Result.SEVERITY.ERROR, 1, "Patient not found", hl7
+				.getFilename(), true);
 		}
-		Patient pat=r2.get();
+		Patient pat = r2.get();
 		
 		HL7.OBR obr = hl7.firstOBR();
 		
@@ -152,49 +154,35 @@ public class HL7Parser {
 	 *            be moved.
 	 * @return the result as type Result
 	 */
-	public Result<?> importFile(final File file, final File archiveDir, boolean bCreatePatientIfNotExists){
+	public Result<?> importFile(final File file, final File archiveDir,
+		boolean bCreatePatientIfNotExists){
 		HL7 hl7 = new HL7("Labor " + myLab, myLab);
 		Result<String> r = hl7.load(file.getAbsolutePath());
 		if (r.isOK()) {
-			Result<Patient> res = hl7.getPatient(false);
-			if (res.isOK()) {
-				Result<Kontakt> rk = hl7.getLabor();
-				if (rk.isOK()) {
-					Patient pat = res.get();
-					Kontakt labor = rk.get();
-					
-					Result<?> ret = parse(hl7, bCreatePatientIfNotExists);
-					
-					// move result to archive
-					if (ret.isOK()) {
-						if (archiveDir != null) {
-							if (archiveDir.exists() && archiveDir.isDirectory()) {
-								if (file.exists() && file.isFile() && file.canRead()) {
-									File newFile = new File(archiveDir, file.getName());
-									if (!file.renameTo(newFile)) {
-										SWTHelper.showError("Fehler beim Archivieren", "Die Datei "
-											+ file.getAbsolutePath()
-											+ " konnte nicht ins Archiv verschoben werden.");
-									}
-								}
+			Result<?> ret = parse(hl7, bCreatePatientIfNotExists);
+			// move result to archive
+			if (ret.isOK()) {
+				if (archiveDir != null) {
+					if (archiveDir.exists() && archiveDir.isDirectory()) {
+						if (file.exists() && file.isFile() && file.canRead()) {
+							File newFile = new File(archiveDir, file.getName());
+							if (!file.renameTo(newFile)) {
+								SWTHelper.showError("Fehler beim Archivieren", "Die Datei "
+									+ file.getAbsolutePath()
+									+ " konnte nicht ins Archiv verschoben werden.");
 							}
 						}
 					}
-					
-					GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
-					return ret;
-				} else {
-					return rk;
 				}
-			} else {
-				ResultAdapter.displayResult(res, "Fehler beim Import");
-				return res;
 			}
+			
+			GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+			return ret;
 		}
 		return r;
 		
 	}
-
+	
 	/**
 	 * Equivalent to importFile(new File(file), null)
 	 * 
