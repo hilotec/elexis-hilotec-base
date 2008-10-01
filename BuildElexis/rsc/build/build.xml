@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4336 2008-09-01 15:41:38Z rgw_ch $
+<!-- $Id: build.xml 4505 2008-10-01 17:18:20Z rgw_ch $
     (c) 2005-2008 by G. Weirich
     
     This file reflects my personal environment. It is not intended for
@@ -49,188 +49,205 @@
 	<description>
 	    	Elexis - die Praxis
 	</description>
-	<property environment="env"/>
-	<property name="version" value="1.4.0"/>
-	<property name="javatarget" value="1.5"/>
-	<property file="rsc/build/local.properties"/>
-	<property name="dist"  value="${dest}/Elexis-${version}"/>
-	<property name="name" value="Elexis"/>
-	<property name="doc"   value="${dest}/doc"/>
-	<property name="docsource" value="${dest}/output/docsource"/>
-	<property name="output" value="${dest}/output"/>
-	<property name="updatefiles" value="${output}/updater"/>
-	<property name="additions" value="${output}/additional"/>
-	<property name="plugins" value="${output}/plugins"/>
-	<property name="rsc" value="rsc"/>
-	<property name="debug" value="yes"/>
-	<property name="optimize" value="no"/>
+	<property environment="env" />
+	<property name="version" value="1.4.0" />
+	<property name="javatarget" value="1.5" />
+	<property file="rsc/build/local.properties" />
+	<property name="dist" value="${dest}/Elexis-${version}" />
+	<property name="name" value="Elexis" />
+	<property name="doc" value="${dest}/doc" />
+	<property name="docsource" value="${dest}/output/docsource" />
+	<property name="output" value="${dest}/output" />
+	<property name="updatefiles" value="${output}/updater" />
+	<property name="additions" value="${output}/additional" />
+	<property name="plugins" value="${output}/plugins" />
+	<property name="rsc" value="rsc" />
+	<property name="debug" value="yes" />
+	<property name="optimize" value="no" />
+	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}" />
 
 	<!-- Pfade für -classpath des Java-compilers festlegen -->
+
 	<path id="eclipseclasses">
-		<pathelement location="${dist}/plugins/"/>
-		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${elexis_plugin}">
-			<include name="*.jar"/>
+		<pathelement location="${dist}/plugins/" />
+		<pathelement location="${dist}/plugins/ch.elexis_${version}/bin" />
+		<fileset dir="${dist}/plugins/ch.elexis_${version}">
+			<include name="*.jar" />
 		</fileset>
-		<fileset dir="${elexis_plugin}/lib">
-		     <include name="*.jar"/>
+		<fileset dir="${dist}/plugins/ch.elexis_${version}/lib">
+			<include name="*.jar" />
 		</fileset>
-		<fileset dir="${eclipse}/plugins">
-			<include name="*.jar"/>
+		<fileset dir="${dist}/plugins">
+			<include name="*.jar" />
 		</fileset>
-		<pathelement location="${elexis_ebanking_plugin}"/>
-		<pathelement location="${elexis_artikel_plugin}"/>
+		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}" />
+		<fileset dir="${dist}/plugins/ch.elexis.importer.div_${version}">
+			<include name="*.jar" />
+		</fileset>
+		<!-- pathelement location="${elexis_ebanking_plugin}"/>
+		<pathelement location="${elexis_artikel_plugin}"/ -->
+		<pathelement location="${dist}/plugins/ch.rgw.utility_${version}" />
+		<fileset dir="${dist}/plugins/ch.rgw.utility_${version}/lib">
+			<include name="*.jar" />
+		</fileset>
 	</path>
 	<path id="unoclasses">
-		<pathelement location="${elexis_plugin}/bin"/>
+		<pathelement location="${elexis_plugin}/bin" />
 		<fileset dir="${eclipse}/plugins">
-			<include name="*.jar"/>
+			<include name="*.jar" />
 		</fileset>
 		<fileset dir="${elexis_oowrapper_plugin}">
-			<include name="*.jar"/>
+			<include name="*.jar" />
 		</fileset>
 	</path>
+	<target name="checkout" unless="unplugged">
+		<exec executable="svn" dir="${copysrc}">
+			<arg line="update" />
+		</exec>
+	</target>
 
 	<target name="prepare">
-		<mkdir dir="${dest}"/>
-		<mkdir dir="${dist}"/>
-		<mkdir dir="${output}"/>
-		<mkdir dir="${updatefiles}"/>
-		<mkdir dir="${additions}"/>
-		<mkdir dir="${plugins}"/>
-		<mkdir dir="${docsource}"/>
-		<mkdir dir="${doc}"/>
-		<antcall target="doc"/>
-		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"></copy>
+		<mkdir dir="${dest}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${output}" />
+		<mkdir dir="${updatefiles}" />
+		<mkdir dir="${additions}" />
+		<mkdir dir="${plugins}" />
+		<mkdir dir="${docsource}" />
+		<mkdir dir="${doc}" />
+		<antcall target="doc" />
+		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}">
+		</copy>
 		<condition property="updater.ok">
 			<and>
-				<available file="../Elexis-MMC"/>
-				<available file="${dest}/../yguard.jar"/>
+				<available file="../Elexis-MMC" />
+				<available file="${dest}/../yguard.jar" />
 			</and>
-			</condition>
-		
+		</condition>
+
 	</target>
 
 	<target name="all">
-	   <echo message="Please use another target"/>
-	 </target>
+		<echo message="Please use another target" />
+	</target>
 
 	<!-- Plugin ins additions-Verzeichnis für externe plugins bereitstellen -->
 	<!-- make_addition, pluginname  -->
 	<target name="make_addition">
-		<mkdir dir="${additions}/${pluginname}"/>
-		<mkdir dir="${additions}/${pluginname}/plugins"/>
-		<mkdir dir="${additions}/${pluginname}/plugins/${targetdir}"/>
+		<mkdir dir="${additions}/${pluginname}" />
+		<mkdir dir="${additions}/${pluginname}/plugins" />
+		<mkdir dir="${additions}/${pluginname}/plugins/${targetdir}" />
 		<copy todir="${additions}/${pluginname}/plugins/${targetdir}">
-			<fileset dir="${dist}/plugins/${targetdir}"/>
+			<fileset dir="${dist}/plugins/${targetdir}" />
 		</copy>
-		<zip basedir="${additions}/${pluginname}" destfile="${additions}/${pluginname}.zip"/>
-		<delete dir="${additions}/${pluginname}"/>
+		<zip basedir="${additions}/${pluginname}" destfile="${additions}/${pluginname}.zip" />
+		<delete dir="${additions}/${pluginname}" />
 	</target>
 
 	<target name="copy_plugin">
-		<echo message="${copydest} , und ${copysrc}"/>
-		<mkdir dir="${copydest}"/>
+		<echo message="${copydest} , und ${copysrc}" />
+		<antcall target="checkout" />
+		<mkdir dir="${copydest}" />
 		<copy todir="${copydest}">
 			<fileset dir="${copysrc}">
-				<include name="*.jar"/>
-				<include name="*.xml"/>
-				<include name="*.bmp"/>
-				<include name="*.properties"/>
-				<include name="bin/**/*.properties"/>
-				<include name="icons/**/*.*"/>
-				<include name="rsc/**/*.*"/>
-				<include name="lib/**/*.*"/>
-				<include name= "META-INF/MANIFEST.MF"/>
-				<include name="meta-inf/manifest.mf"/>
+				<include name="*.jar" />
+				<include name="*.xml" />
+				<include name="*.bmp" />
+				<include name="*.properties" />
+				<include name="bin/**/*.properties" />
+				<include name="icons/**/*.*" />
+				<include name="rsc/**/*.*" />
+				<include name="lib/**/*.*" />
+				<include name="META-INF/MANIFEST.MF" />
+				<include name="meta-inf/manifest.mf" />
 			</fileset>
 		</copy>
 		<copy todir="${copydest}" failonerror="false">
-			<fileset dir="${copysrc}/src" includes="**/*.script"/>
-			<fileset dir="${copysrc}/src" includes="**/*.properties"/>
+			<fileset dir="${copysrc}/src" includes="**/*.script" />
+			<fileset dir="${copysrc}/src" includes="**/*.properties" />
 		</copy>
 	</target>
 
 	<target name="doc" unless="skip_texify">
-        <exec command="texify elexis.tex" dir="${source}/dokumentation" />	
+		<exec command="texify elexis.tex" dir="${source}/dokumentation" />
 	</target>
 	<target name="texify" unless="skip_texify">
 		<!-- echo message="texify ${sourcedir}/doc/${pluginname}.tex" / -->
-	    <exec command="texify ${sourcedir}/doc/${pluginname}.tex" dir="${sourcedir}/doc"/>
-		<copy file="${sourcedir}/doc/${pluginname}.pdf" todir="${doc}"/>
+		<exec command="texify ${sourcedir}/doc/${pluginname}.tex" dir="${sourcedir}/doc" />
+		<copy file="${sourcedir}/doc/${pluginname}.pdf" todir="${doc}" />
 	</target>
-	
+
 	<target name="updater" depends="prepare" if="updater.ok">
-		   <ant antfile="rsc/build/updater.xml"/>
+		<ant antfile="rsc/build/updater.xml" />
 	</target>
-	
-	
+
+
 	<target name="pro" depends="prepare">
-		   <ant antfile="rsc/build/plugins.xml" target="elexis-pro"/>
+		<ant antfile="rsc/build/plugins.xml" target="elexis-pro" inheritrefs="true" />
 	</target>
-	
+
 	<!-- Windows - Version der Distribution -->
 	<target name="windows" depends="prepare">
-		<delete dir="${dist}"/>
+		<delete dir="${dist}" />
 		<copy todir="${dist}">
-			  <fileset dir="${rcpbase}/windows/rcp"/>
+			<fileset dir="${rcpbase}/windows/rcp" />
 		</copy>
-		<antcall target="updater"/>
-		<ant antfile="rsc/build/plugins.xml" target="main"/>
-		<ant antfile="../noatext/build.xml"/>		
-		<ant antfile="../elexis-trustx-embed/build.xml"/>
-		 <mkdir dir="${dist}/jre"/>
-		 <copy todir="${dist}/jre">
-			 <fileset dir="${rcpbase}/windows/jre"/>
-		 </copy>
+		<antcall target="updater" />
+		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
+		<ant antfile="../noatext/build.xml" />
+		<ant antfile="../elexis-trustx-embed/build.xml" />
+		<mkdir dir="${dist}/jre" />
+		<copy todir="${dist}/jre">
+			<fileset dir="${rcpbase}/windows/jre" />
+		</copy>
 		<exec dir="rsc/build" executable="${nsis}">
-			<arg line="elexis-win32-nodemo.nsi"/>
+			<arg line="elexis-win32-nodemo.nsi" />
 		</exec>
 	</target>
 
 	<!-- Linux x86 Version der Distribution -->
 	<target name="Linux" depends="prepare">
-		<delete dir="${dist}"/>
+		<delete dir="${dist}" />
 		<copy todir="${dist}">
-			  <fileset dir="${rcpbase}/linux/rcp"/>
+			<fileset dir="${rcpbase}/linux/rcp" />
 		</copy>
-		<ant antfile="rsc/build/plugins.xml" target="main"/>
-		<ant antfile="../OOwrapper/build.xml"/>
-		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm"/>
-		
+		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
+		<ant antfile="../OOwrapper/build.xml" />
+		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm" />
+
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
 		<exec executable="cp">
-			<arg line="-r ${rcpbase}/linux/jre ${dist}/jre"/>
+			<arg line="-r ${rcpbase}/linux/jre ${dist}/jre" />
 		</exec>
 		<exec executable="chmod" dir="${dist}">
-					<arg line="+x elexis"/>
+			<arg line="+x elexis" />
 		</exec>
 		<exec executable="tar" dir="${dest}">
-		    <arg line="-czf ${output}/elexis-linux-i386-${version}.tgz Elexis-${version}"/>
+			<arg line="-czf ${output}/elexis-linux-i386-${version}.tgz Elexis-${version}" />
 		</exec>
 	</target>
 
 	<!-- Mac OSX Version der Distribution -->
 	<target name="mac" depends="prepare">
-		<delete dir="${dist}"/>
+		<delete dir="${dist}" />
 		<copy todir="${dist}">
-			  <fileset dir="${rcpbase}/mac/rcp"/>
+			<fileset dir="${rcpbase}/mac/rcp" />
 		</copy>
-		<copy file="${rsc}/elexis-mac.icns" tofile="${dist}/elexis-mac.icns"/>
-		<ant antfile="rsc/build/plugins.xml" target="main"/>
+		<copy file="${rsc}/elexis-mac.icns" tofile="${dist}/elexis-mac.icns" />
+		<ant antfile="rsc/build/plugins.xml" target="main" />
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
-			<arg line="+x elexis"/>
+			<arg line="+x elexis" />
 		</exec>
-			
+
 		<zip destfile="${dest}/output/elexis-macosx-${version}.zip" update="true">
-			<zipfileset dir="${dist}"/>
-			<zipfileset file="${dist}/elexis.app/Contents/MacOS/elexis" prefix="elexis.app/Contents/MacOS" filemode="755"/>
+			<zipfileset dir="${dist}" />
+			<zipfileset file="${dist}/elexis.app/Contents/MacOS/elexis" prefix="elexis.app/Contents/MacOS" filemode="755" />
 		</zip>
 	</target>
 
 	<!-- Alles aufräumen -->
 	<target name="clean" description="Alle vom Build erstellen files löschen">
-		<delete dir="${dest}"/>
+		<delete dir="${dest}" />
 	</target>
 
 </project>
