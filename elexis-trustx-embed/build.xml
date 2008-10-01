@@ -13,44 +13,45 @@
 -->
 <project name="elexis-trustx-embed" default="all">
 	<!-- modify the following 2 lines -->
-		<property name="pluginname" value="elexis-trustx-embed"/>
-		<property name="targetdir" value="elexis_trustx_embed_${version}"/>
+	<property name="pluginname" value="elexis-trustx-embed" />
+	<property name="targetdir" value="elexis_trustx_embed_${version}" />
 
-		<!-- the remainder of the file can be copied without modifications for most plugins -->
-		<property name="sourcedir" value="${source}/${pluginname}"/>
-		<property name="plugindir" value="${dist}/plugins/${targetdir}"/>
-		<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
-		
-		<!-- Pfade für -classpath des Java-compilers festlegen -->
-		<path id="eclipseclasses">
-			<fileset dir="${dist}/plugins">
-				<include name="*.jar"/>
-			</fileset>
-			<pathelement location="${elexis_plugin}/bin"/>
-			<fileset dir="${plugindir}">
-				<include name="*.jar"/>
-			</fileset>
-			<pathelement location="${dist}/plugins/ch.elexis.arzttarife_ch_${version}/"/>
-			<pathelement location="${elexis_plugin}/bin"/>
-			<fileset dir="${elexis_plugin}/lib">
-			                <include name="*.jar"/>
-			</fileset>
-		</path>
-		
-		<target name="checkout" unless="unplugged">
-				<exec executable="svn" dir="${sourcedir}"><arg line="update"/></exec>	
-		</target>
-			
-		<target name="all">
-			<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
-				 <property name="copydest" value="${plugindir}"/>
-				 <property name="copysrc" value="${sourcedir}"/>
-			</ant>
-		    <copy file="${sourcedir}/com4j.dll" todir="${plugindir}"/>
-		 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
-		 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
-			<tstamp/>
-			<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
-			<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
+	<!-- the remainder of the file can be copied without modifications for most plugins -->
+	<property name="sourcedir" value="${source}/${pluginname}" />
+	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
+	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}" />
+
+	<!-- Pfade für -classpath des Java-compilers festlegen -->
+	<path id="eclipseclasses">
+		<fileset dir="${dist}/plugins">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement location="${elexis_plugin}/bin" />
+		<fileset dir="${plugindir}">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement location="${dist}/plugins/ch.elexis.arzttarife_ch_${version}/" />
+		<pathelement location="${elexis_plugin}/bin" />
+		<fileset dir="${elexis_plugin}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="checkout" unless="unplugged">
+		<exec executable="svn" dir="${sourcedir}">
+			<arg line="update" />
+		</exec>
+	</target>
+
+	<target name="all">
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
+			<property name="copydest" value="${plugindir}" />
+			<property name="copysrc" value="${sourcedir}" />
+		</ant>
+		<copy file="${sourcedir}/com4j.dll" todir="${plugindir}" />
+		<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8" />
+		<tstamp />
+		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip" />
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition" />
 	</target>
 </project>
