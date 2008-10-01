@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4475 2008-09-28 06:27:36Z rgw_ch $
+ *    $Id: PersistentObject.java 4512 2008-10-01 17:20:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -59,8 +59,6 @@ import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.net.NetTool;
-
-import com.mysql.jdbc.PacketTooBigException;
 
 /**
  * Base class for all objects to be stored in the database. A PersistentObject has an unique ID,
@@ -1205,14 +1203,14 @@ public abstract class PersistentObject {
 			stm.setBytes(1, value);
 			stm.executeUpdate();
 			return 1;
-		} catch (PacketTooBigException pigex) {
-			ExHandler.handle(pigex);
-			SWTHelper.showError("setBytes", "Schreibfehler",
-				"Der Datensatz war zu gross zum Schreiben");
-		} catch (Exception ex) {
+		} /*
+			 * we remove this because it creates a dependency on mysql catch (PacketTooBigException
+			 * pigex) { ExHandler.handle(pigex); SWTHelper.showError("setBytes", "Schreibfehler",
+			 * "Der Datensatz war zu gross zum Schreiben"); }
+			 */catch (Exception ex) {
 			log.log("Fehler beim Ausführen der Abfrage " + cmd, Log.ERRORS);
 			SWTHelper.showError("setBytes", "Schreibfehler",
-				"Es trat ein Fehler beim Schreiben auf.");
+				"Es trat ein Fehler beim Schreiben auf. Eventuell war der EDatensatz zu gross.");
 		}
 		return 0;
 	}
@@ -1900,5 +1898,4 @@ public abstract class PersistentObject {
 		}
 	}
 	
-
 }

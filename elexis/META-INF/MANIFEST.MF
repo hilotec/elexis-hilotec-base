@@ -6,8 +6,7 @@ Bundle-Version: 1.4.0
 Bundle-Activator: ch.elexis.Hub
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.mysql.connector,
- ch.rgw.utility,
+Require-Bundle: ch.rgw.utility,
  org.eclipse.ui.forms,
  org.eclipse.help.ui
 Eclipse-LazyStart: true
