@@ -9,7 +9,6 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  ch.elexis.importer.div,
- ch.rgw.OOWrapper,
  ch.rgw.utility
 Bundle-ClassPath: lib/commons-net-1.4.1.jar,
  .
