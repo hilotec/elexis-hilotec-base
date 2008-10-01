@@ -11,6 +11,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.hl7.universal.Preferences"
             id="ch.elexis.laborimport.hl7.preferences"
             name="HL7 Dateien">

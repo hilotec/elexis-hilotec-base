@@ -53,7 +53,7 @@ public class Importer extends Action implements IAction {
 				}
 			}
 			if (err > 0) {
-				ResultAdapter.displayResult(r, Integer.toString(err) + " Datein hatten Fehler");
+				ResultAdapter.displayResult(r, Integer.toString(err) + " Dateien hatten Fehler");
 			}
 		}
 	}
