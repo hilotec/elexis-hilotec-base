@@ -12,36 +12,27 @@
  * $Id: build.xml 651 2006-08-02 13:36:10Z rgw_ch $
 -->
 <project name="oowrapper" default="all">
-	<property name="sourcedir" value="${source}/OOwrapper/"/>
-	<property name="plugindir" value="${dist}/plugins/ch.rgw.OOWrapper_${version}"/>
-	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
-	
-	<!-- Pfade für -classpath des Java-compilers festlegen -->
-	<path id="eclipseclasses">
-		<fileset dir="${dist}/plugins">
-			<include name="*.jar"/>
-		</fileset>
-		<pathelement location="${elexis_plugin}/bin"/>
-		<fileset dir="${plugindir}">
-			<include name="*.jar"/>
-		</fileset>
+	<property name="sourcedir" value="${source}/OOwrapper/" />
+	<property name="plugindir" value="${dist}/plugins/ch.rgw.OOWrapper_${version}" />
 
-	</path>
-	<target name="checkout" unless="unplugged">
-			<exec executable="svn" dir="${sourcedir}"><arg line="update"/></exec>	
-	</target>
-		
 	<target name="all">
-		
+
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
-			 <property name="copydest" value="${plugindir}"/>
-			 <property name="copysrc" value="${sourcedir}"/>
+			<property name="copydest" value="${plugindir}" />
+			<property name="copysrc" value="${sourcedir}" />
 		</ant>
-		<mkdir dir="${plugindir}/bin"/>
-	 	<javac srcdir="${sourcedir}" destdir="${plugindir}/bin" classpathref="eclipseclasses"
-	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
-		<tstamp/>
-		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.rgw.OOWrapper_${version}.${DSTAMP}.zip"/>
+		<mkdir dir="${plugindir}/bin" />
+		<javac srcdir="${sourcedir}" destdir="${plugindir}/bin" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8">
+			<classpath>
+				<path refid="eclipseclasses" />
+				<fileset dir="${plugindir}">
+					<include name="*.jar" />
+				</fileset>
+
+			</classpath>
+		</javac>
+		<tstamp />
+		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.rgw.OOWrapper_${version}.${DSTAMP}.zip" />
 	</target>
 
 </project>
