@@ -19,8 +19,6 @@
 	<!-- the remainder of the file can be copied without modifications for most plugins -->
 	<property name="sourcedir" value="${source}/${pluginname}" />
 	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
-	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}" />
-
 
 	<target name="all">
 
@@ -35,7 +33,9 @@
 				<fileset dir="${plugindir}">
 					<include name="*.jar" />
 				</fileset>
-
+				<fileset dir="${dist}/plugins/ch.elexis.icpc_${version}">
+					<include name="*.jar" />
+				</fileset>
 			</classpath>
 		</javac>
 
