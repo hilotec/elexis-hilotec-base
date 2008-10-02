@@ -13,44 +13,31 @@
 -->
 <project name="elexis-eigendiagnosen" default="all">
 	<!-- modify the following 2 lines -->
-	<property name="pluginname" value="elexis-eigendiagnosen"/>
-	<property name="targetdir" value="ch.elexis.eigendiagnosen_${version}"/>
+	<property name="pluginname" value="elexis-eigendiagnosen" />
+	<property name="targetdir" value="ch.elexis.eigendiagnosen_${version}" />
 
 	<!-- the remainder of the file can be copied without modifications for most plugins -->
-	<property name="sourcedir" value="${source}/${pluginname}"/>
-	<property name="plugindir" value="${dist}/plugins/${targetdir}"/>
-	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
-	
-	<!-- Pfade für -classpath des Java-compilers festlegen -->
-	<path id="eclipseclasses">
-		<fileset dir="${dist}/plugins">
-			<include name="*.jar"/>
-		</fileset>
-		<pathelement location="${elexis_plugin}/bin"/>
-		<pathelement location="${dist}/plugins/ch.elexis.importer.div_${version}"/>
-		<fileset dir="${dist}/plugins/ch.elexis.importer.div_${version}">
-				<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${plugindir}">
-			<include name="*.jar"/>
-		</fileset>
-		<pathelement location="${dist}/plugins/ch.elexis.ebanking_ch_${version}"/>
-	</path>
-	
-	<target name="checkout" unless="unplugged">
-			<exec executable="svn" dir="${sourcedir}"><arg line="update"/></exec>	
-	</target>
-		
+	<property name="sourcedir" value="${source}/${pluginname}" />
+	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
+
 	<target name="all">
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
-			 <property name="copydest" value="${plugindir}"/>
-			 <property name="copysrc" value="${sourcedir}"/>
+			<property name="copydest" value="${plugindir}" />
+			<property name="copysrc" value="${sourcedir}" />
 		</ant>
-	 	<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses"
-	 	 debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8"/>
-		<tstamp/>
-		<ant antfile="../BuildElexis/rsc/build/build.xml" target="texify"/>
-		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip"/>
-		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition"/>
+		<javac srcdir="${sourcedir}" destdir="${plugindir}" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8">
+			<classpath>
+				<path refid="eclipseclasses" />
+				<fileset dir="${plugindir}">
+					<include name="*.jar" />
+				</fileset>
+				<pathelement location="${dist}/plugins/ch.elexis.ebanking_ch_${version}" />
+
+			</classpath>
+		</javac>
+		<tstamp />
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="texify" />
+		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip" />
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition" />
 	</target>
 </project>
