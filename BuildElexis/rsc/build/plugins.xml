@@ -33,6 +33,7 @@
 
 		<available file="../mysql-adapter/build.xml" property="mysql.ok" />
 		<antcall target="mysql" inheritrefs="true" />
+		
 		<available file="../iatrix-help-wiki/build.xml" property="iatrixhelp.ok" />
 		<antcall target="iatrixhelp" inheritrefs="true" />
 		<available file="../elexis-icpc/build.xml" property="icpc.ok" />
