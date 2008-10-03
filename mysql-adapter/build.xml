@@ -12,8 +12,12 @@
  * $Id: build.xml 631 2006-08-01 13:55:35Z rgw_ch $
 -->
 <project name="mysql-adapter" default="all">
-	<property name="sourcedir" value="${source}/mysql-adapter/" />
-	<property name="plugindir" value="ch.elexis.mysql.connector_${version}" />
+	<property name="pluginname" value="mysql-adapter/" />
+	<property name="targetdir" value="ch.elexis.mysql.connector_${version}" />
+
+	<!-- the remainder of the file can be copied without modifications for most plugins -->
+	<property name="sourcedir" value="${source}/${pluginname}" />
+	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
 
 	<target name="all">
 
@@ -22,6 +26,6 @@
 			<property name="copysrc" value="${sourcedir}" />
 		</ant>
 		<tstamp />
-		<zip basedir="${plugindir}" destfile="${updatefiles}/${plugindir}.${DSTAMP}.zip" />
+		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip" />
 	</target>
 </project>
