@@ -36,6 +36,7 @@
 				<fileset dir="${dist}/plugins/ch.elexis.icpc_${version}">
 					<include name="*.jar" />
 				</fileset>
+				<pathelement location="${dist}/plugins/ch.elexis.icpc_${version}"/>
 			</classpath>
 		</javac>
 
