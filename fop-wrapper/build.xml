@@ -14,10 +14,6 @@
 <project name="elexis-fop_wrapper" default="all">
 	<property name="sourcedir" value="${source}/fop-wrapper/"/>
 	<property name="plugindir" value="${dist}/plugins/ch.elexis.fop_wrapper_${version}"/>
-
-	<target name="checkout" unless="unplugged">
-			<exec executable="svn" dir="${sourcedir}"><arg line="update"/></exec>	
-	</target>
 	
 	<target name="all">
 		
