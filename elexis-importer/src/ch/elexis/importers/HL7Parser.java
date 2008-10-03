@@ -63,7 +63,7 @@ public class HL7Parser {
 				LabItem li = null;
 				if (list.size() < 1) {
 					LabItem.typ typ = LabItem.typ.NUMERIC;
-					if (obx.isFormattedText()) {
+					if (obx.isFormattedText() || obx.isPlainText()) {
 						typ = LabItem.typ.TEXT;
 					}
 					li =
@@ -87,8 +87,8 @@ public class HL7Parser {
 						return new Result<String>("Cancelled");
 					}
 				}
-				if (obx.isFormattedText()) {
-					lr = new LabResult(pat, obr.getDate(), li, "text", obx.getResultValue());
+				if (obx.isFormattedText() || (obx.isPlainText())) {
+					lr = new LabResult(pat, obr.getDate(), li, "text", obx.getResultValue()+"\n"+obx.getComment());
 				} else {
 					lr =
 						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx

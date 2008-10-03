@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4500 2008-09-30 12:58:41Z rgw_ch $
+ * $Id: HL7.java 4556 2008-10-03 13:08:09Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -511,6 +511,9 @@ public class HL7 {
 			return true;
 		}
 		
+		public boolean isPlainText(){
+			return (obxFields[2].equals("TX"));
+		}
 		public boolean isFormattedText(){
 			return (obxFields[2].equals("FT"));
 		}
