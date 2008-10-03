@@ -42,7 +42,7 @@ public class Importer extends Action implements IAction {
 					return false;
 				}
 			})) {
-				r.add(hl7.load(fn));
+				r.add(hl7.load(dir.getAbsolutePath()+File.separator+fn));
 				if (r.isOK()) {
 					r = hlp.parse(hl7, false);
 					if (!r.isOK()) {
