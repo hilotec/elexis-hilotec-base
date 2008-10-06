@@ -1,11 +1,13 @@
 package ch.rgw.crypt;
 
+import ch.rgw.tools.Result;
+
 
 /**
  * A Cryptologist knows how to encrypt, decrypt, sign and verify byte arrays
  * The key generation and the management of the keys is implementation specific
- * The Cryptologist handles only identifiers of the keys, not the key themselves.
- * The implementation can use any key management to retrieve keys from that key identifiers 
+ * The Cryptologist handles only identifiers of the keys, not the keys themselves.
+ * The implementation can use any key management to retrieve keys from that key identifiers. 
  * 
  * @author gerry
  * 
@@ -54,6 +56,6 @@ public interface Cryptologist {
 	 * @param signerKeyName name of the signer's public key
 	 * @return
 	 */
-	public boolean verify(byte[] data, byte[] signature, String signerKeyName);
+	public Result<String> verify(byte[] data, byte[] signature, String signerKeyName);
 	
 }

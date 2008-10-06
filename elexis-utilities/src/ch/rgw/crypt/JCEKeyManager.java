@@ -6,21 +6,41 @@
 
 package ch.rgw.crypt;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
+import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Vereinfachtes API für die Java Kryptographie-Klassen KeyManager stellt die
@@ -47,6 +67,13 @@ public class JCEKeyManager {
 
 	static {
 		log = Logger.getLogger("KeyManager");
+		Security
+				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
+		// provider
+		// .
+		// _srnd = SecureRandom.getInstance("SHA1PRNG","SUN"); // Create random
+		// number generator.
+
 		_srnd = new SecureRandom();
 	}
 
@@ -82,8 +109,12 @@ public class JCEKeyManager {
 	/**
 	 * Keystore laden
 	 */
-	public boolean load() {
+	public boolean load(boolean bCreateIfNotExists) {
 		try {
+			File ksf=new File(ksFile);
+			if(!ksf.exists()){
+				return create(false);
+			}
 			ks = KeyStore.getInstance(ksType);
 			ks.load(new FileInputStream(ksFile), storePwd);
 		} catch (Exception ex) {
@@ -95,8 +126,27 @@ public class JCEKeyManager {
 		return true;
 	}
 
-	public boolean create() {
-		return load() && save();
+	public boolean create(boolean bDeleteIfExists) {
+		File ksF = new File(ksFile);
+		if(ksF.exists()){
+			if(bDeleteIfExists){
+				if(!ksF.delete()){
+					return false;
+				}
+			}else{
+				return false;
+			}
+		}
+		if (ks == null) {
+			try {
+				ks = KeyStore.getInstance(ksType);
+				ks.load(null, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return save();
 	}
 
 	public boolean save() {
@@ -113,11 +163,18 @@ public class JCEKeyManager {
 		return (ks == null) ? false : true;
 	}
 
-	/** Public key mit dem Alias alias holen */
+	/**
+	 * Public key mit dem Alias alias holen. Es wird auf Gültigkeit des
+	 * Zertifiktats getestet
+	 * 
+	 * @param alias
+	 *            Name des gesuchten Schlüssels
+	 * @return den gesuchten Schlüssel oder null - nicht gefunden
+	 * */
 	public PublicKey getPublicKey(String alias) {
 		if (ks == null) {
 			log.log(Level.WARNING, "Keystore nicht geladen");
-			if (!load()) {
+			if (!load(true)) {
 				return null;
 			}
 		}
@@ -174,6 +231,13 @@ public class JCEKeyManager {
 		}
 	}
 
+	/**
+	 * Zertifikat dem keystore zufügen
+	 * 
+	 * @param cert
+	 *            Ein X.509 Zertifikat
+	 * @return true bei Erfolg
+	 */
 	public boolean addCertificate(X509Certificate cert) {
 
 		try {
@@ -185,38 +249,110 @@ public class JCEKeyManager {
 			return false;
 		}
 	}
+
 	/*
 	 * public Certificate createCertificate(PublicKey pk, PrivateKey
 	 * signingKey){ CertificateFactory
-	 * cf=CertificateFactory.getInstance("X.509");
-	 *  }
+	 * cf=CertificateFactory.getInstance("X.509"); } throws InvalidKeyException,
+	 * NoSuchProviderException, SignatureException {
 	 */
-	/*
-	 * public boolean addKeyPair(KeyPair kp){ PrivateKey privk=kp.getPrivate();
-	 * PublicKey pubk=kp.getPublic(); CertificateFactory
-	 * cf=CertificateFactory.getInstance("X.509");
+
+	/**
+	 * Generate a certificate from a public key and a signing private key.
 	 * 
-	 * ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-	 * bOut.write(X509V1CreateExample.generateV1Certificate(kp).getEncoded());
+	 * @param pk
+	 *            the key to make a certficate from
+	 * @param signingKey
+	 *            the signer's private key
+	 * @param name
+	 *            of the issuer
+	 * @param name
+	 *            of the certificate holder
+	 * @return the signed certificate.
+	 * @throws KeyStoreException
 	 * 
-	 * bOut.close();
-	 * 
-	 * InputStream in = new ByteArrayInputStream(bOut.toByteArray());
-	 *  // create the certificate factory CertificateFactory fact =
-	 * CertificateFactory.getInstance("X.509","BC");
-	 *  // read the certificate X509Certificate x509Cert =
-	 * (X509Certificate)fact.generateCertificate(in);
-	 * 
-	 * ks.setKeyEntry(alias, key, pwd, chain) }
 	 */
+	public X509Certificate generateCertificate(PublicKey pk,
+			PrivateKey signingKey, String issuer, String subject,
+			TimeTool ttFrom, TimeTool ttUntil) throws InvalidKeyException,
+			NoSuchProviderException, SignatureException,
+			CertificateEncodingException, IllegalStateException,
+			NoSuchAlgorithmException, KeyStoreException {
+
+		// generate the certificate
+		X509V1CertificateGenerator certGen = new X509V1CertificateGenerator();
+
+		certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
+		certGen.setIssuerDN(new X500Principal("CN=" + issuer));
+		if (ttFrom == null) {
+			ttFrom = new TimeTool();
+		}
+		if (ttUntil == null) {
+			ttUntil = new TimeTool(ttFrom);
+			ttUntil.add(TimeTool.YEAR, 2);
+		}
+		certGen.setNotBefore(ttFrom.getTime());
+		certGen.setNotAfter(ttUntil.getTime());
+		certGen.setSubjectDN(new X500Principal("CN=" + subject));
+		certGen.setPublicKey(pk);
+		certGen.setSignatureAlgorithm("SHA256WithRSAEncryption");
+		X509Certificate cert = certGen.generate(signingKey, "BC");
+		ks.setCertificateEntry(subject, cert);
+		return cert;
+	}
+
+	public boolean addKeyPair(KeyPair kp, String alias, char[] keyPwd)
+			throws Exception {
+		PrivateKey privk = kp.getPrivate();
+		PublicKey pubk = kp.getPublic();
+		CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
+		Certificate cert = generateCertificate(pubk, privk, alias, alias, null,
+				null);
+		ks.setKeyEntry(alias, privk, keyPwd, new Certificate[] { cert });
+
+		return true;
+	}
+
+	public boolean existsPrivate(String alias) {
+		try {
+			return ks.isKeyEntry(alias);
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean existsCertificate(String alias) {
+		try {
+			return ks.isCertificateEntry(alias);
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return false;
+		}
+	}
+
+	public KeyPair generateKey(String alias) {
+		try {
+			KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA", "BC");
+			kp.initialize(1024, _srnd);
+			return kp.generateKeyPair();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 	/*
 	 * public DHParameterSpec createParams() throws Exception{
 	 * AlgorithmParameterGenerator paramGen =
 	 * AlgorithmParameterGenerator.getInstance("DH"); paramGen.init(512);
 	 * AlgorithmParameters params = paramGen.generateParameters();
 	 * DHParameterSpec dhps = (DHParameterSpec)
-	 * params.getParameterSpec(DHParameterSpec.class); return dhps;
-	 *  }
+	 * params.getParameterSpec(DHParameterSpec.class); return dhps; }
 	 * 
 	 * public KeyPair createKeyPair(DHParameterSpec params){ try {
 	 * KeyPairGenerator kpg = KeyPairGenerator.getInstance("DiffieHellman"); if
@@ -224,7 +360,7 @@ public class JCEKeyManager {
 	 * kpg.generateKeyPair();
 	 * 
 	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; }
-	 *  }
+	 * }
 	 */
 
 }
