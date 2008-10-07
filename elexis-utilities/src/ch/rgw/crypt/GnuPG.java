@@ -634,8 +634,12 @@ public class GnuPG implements Cryptologist {
 		return null;
 	}
 	
-	public boolean verify(byte[] data, byte[] signature, String signerKeyName){
-		return verify(StringTool.createString(data), StringTool.createString(signature));
+	public Result<String> verify(byte[] data, byte[] signature, String signerKeyName){
+		if( verify(StringTool.createString(data), StringTool.createString(signature))){
+			return new Result<String>("OK");
+		}else{
+			return new Result<String>(Result.SEVERITY.ERROR,1,"Signature not valid", signerKeyName,true);
+		}
 	}
 	
 }

@@ -35,5 +35,4 @@ Export-Package: .,
    javax.xml.transform.sax,
    org.xml.sax",
  org.jdom.xpath;uses:="org.jdom"
-Require-Bundle: ch.elexis.mysql.connector,
- org.junit
+Require-Bundle: ch.elexis.mysql.connector

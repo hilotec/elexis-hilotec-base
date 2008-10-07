@@ -94,7 +94,8 @@ public class SAT {
 						Result.SEVERITY.ERROR, 3, "Timeout", null, true);
 			}
 			byte[] digest = calcDigest(sc);
-			if (crypt.verify(digest, signature, user)) {
+			Result<String> res=crypt.verify(digest, signature, user);
+			if (res.isOK()) {
 				HashMap<String, Object> ret = (HashMap<String, Object>) fields
 						.get(ADM_PAYLOAD);
 				ret.put(ADM_SIGNED_BY, user);
