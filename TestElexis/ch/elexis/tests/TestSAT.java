@@ -28,7 +28,7 @@ public class TestSAT extends TestCase {
 		 * "alice"); gpg.generateKey("Bob Elexistester", "bob@elexis.ch", "bobelexis".toCharArray(),
 		 * "bob");
 		 */
-		crypt = new JCECrypter();
+		//crypt = new JCECrypter();
 	}
 	
 	public void testWrap() throws Exception{
