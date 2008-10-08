@@ -1,6 +1,7 @@
 package ch.elexis.tests;
 
 import java.io.File;
+import java.security.KeyPair;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
@@ -15,27 +16,32 @@ public class TestSAT extends TestCase {
 	Cryptologist crypt;
 	static byte[] encrypted;
 	
-	public TestSAT(){
+	public TestSAT() throws Exception{
 		homedir = System.getenv("TEMP") + File.separator + "crypt";
+	
 		File file = new File(homedir);
-		if (file.exists()) {
-			FileTool.deltree(file.getAbsolutePath());
+		if (!file.exists()) {
+			file.mkdirs();	
 		}
-		file.mkdirs();
-		/*
-		 * gpg=new GnuPG(false); gpg.setExecutable("d:/apps/gpg/gpg.exe"); gpg.setHomedir(homedir);
-		 * gpg.generateKey("Alice Elexistesterin", "alice@elexis.ch", "aliceelexis".toCharArray(),
-		 * "alice"); gpg.generateKey("Bob Elexistester", "bob@elexis.ch", "bobelexis".toCharArray(),
-		 * "bob");
-		 */
-		//crypt = new JCECrypter();
+		
+		crypt=new JCECrypter(null,null,"admin","adminkey".toCharArray());
+		
 	}
 	
+	public void testCreateKeys() throws Exception{
+		if(!crypt.hasKeyOf("alice")){
+			KeyPair kp=crypt.generateKeys("alice","alicepwd".toCharArray(),null,null);
+			
+		}
+		if(!crypt.hasKeyOf("bob")){
+			KeyPair kp=crypt.generateKeys("bob","bobpwd".toCharArray(),null,null);
+		}
+	}
 	public void testWrap() throws Exception{
-		SAT sat = new SAT(crypt, "alice@elexis.ch");
+		SAT sat = new SAT(crypt, "alice");
 		HashMap<String, Object> hash = new HashMap<String, Object>();
 		hash.put("test", "Ein Testtext");
-		byte[] result = sat.wrap(hash, "bob@elexis.ch", "aliceelexis".toCharArray());
+		byte[] result = sat.wrap(hash, "bob", "alicepwd".toCharArray());
 		assertNotNull(result);
 		System.out.println(new String(result));
 		encrypted = result;

@@ -2,10 +2,15 @@
 package ch.rgw.crypt;
 
 import java.io.*;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * A class that implements PGP interface for Java.
@@ -640,6 +645,38 @@ public class GnuPG implements Cryptologist {
 		}else{
 			return new Result<String>(Result.SEVERITY.ERROR,1,"Signature not valid", signerKeyName,true);
 		}
+	}
+
+	@Override
+	public boolean addCertificate(X509Certificate cert) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Certificate generateCertificate(PublicKey pk, String alias,
+			TimeTool validFrom, TimeTool validUntil) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom,
+			TimeTool validUntil) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasCertificateOf(String alias) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasKeyOf(String alias) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

@@ -1,18 +1,24 @@
 package ch.rgw.crypt;
 
 import java.io.File;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.TimeTool;
 
 public class JCECrypter implements Cryptologist {
 	private JCEKeyManager km;
@@ -23,15 +29,16 @@ public class JCECrypter implements Cryptologist {
 		userKey=mykey;
 		pwd=keypwd;
 		if(keystore==null){
-			keystore=System.getenv("user.home")+File.separator+".JCECrypter";
+			keystore=System.getProperty("user.home")+File.separator+".JCECrypter";
 			if(kspwd==null){
 				kspwd="JCECrypterDefault".toCharArray();
 			}
 		}
 		km=new JCEKeyManager(keystore,null,kspwd);
 		if(!km.existsPrivate(mykey)){
-			KeyPair kp=km.generateKey(mykey);
-			km.addKeyPair(kp, mykey, keypwd);
+			KeyPair kp=km.generateKeys();
+			X509Certificate cert=km.generateCertificate(kp.getPublic(), kp.getPrivate(), userKey, userKey, null, null);
+			km.addKeyPair(kp.getPrivate(),cert,pwd);
 		}
 	}
 	
@@ -93,5 +100,38 @@ public class JCECrypter implements Cryptologist {
 		}
 		return new Result<String>(Result.SEVERITY.FATAL,3,"could not verify",signerKeyName,true);
 	}
+	public boolean hasCertificateOf(String alias){
+		return km.existsCertificate(alias);
+	}
+	public boolean hasKeyOf(String alias){
+		return km.existsPrivate(alias);
+	}
+	public boolean addCertificate(X509Certificate cert){
+		return km.addCertificate(cert);
+	}
+	public KeyPair generateKeys( String alias, char[] keypwd, TimeTool validFrom, TimeTool validUntil){
+		KeyPair ret= km.generateKeys();
+		if(alias!=null){
+			X509Certificate cert=generateCertificate(ret.getPublic(), alias, validFrom, validUntil);
+			try {
+				km.addKeyPair(ret.getPrivate(), cert, keypwd);
+			} catch (Exception ex) {
+				ExHandler.handle(ex);
+				return null;
+			}
+		}
+		return ret;
+	}
 	
+	public X509Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom, TimeTool validUntil){
+		PrivateKey priv=km.getPrivateKey(userKey, pwd);
+		try {
+			X509Certificate ret= km.generateCertificate(pk, priv, userKey, alias, validFrom, validUntil);
+			return ret;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

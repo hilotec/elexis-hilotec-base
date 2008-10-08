@@ -1,6 +1,13 @@
 package ch.rgw.crypt;
 
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
 import ch.rgw.tools.Result;
+import ch.rgw.tools.TimeTool;
 
 
 /**
@@ -58,4 +65,10 @@ public interface Cryptologist {
 	 */
 	public Result<String> verify(byte[] data, byte[] signature, String signerKeyName);
 	
+	public boolean hasCertificateOf(String alias);
+	public boolean hasKeyOf(String alias);
+	public boolean addCertificate(X509Certificate cert);
+	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom, TimeTool validUntil);
+	
+	public Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom, TimeTool validUntil);
 }

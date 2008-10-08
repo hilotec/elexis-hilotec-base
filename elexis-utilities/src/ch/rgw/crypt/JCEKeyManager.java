@@ -301,14 +301,10 @@ public class JCEKeyManager {
 		return cert;
 	}
 
-	public boolean addKeyPair(KeyPair kp, String alias, char[] keyPwd)
+	public boolean addKeyPair(PrivateKey kpriv, X509Certificate cert, char[] keyPwd)
 			throws Exception {
-		PrivateKey privk = kp.getPrivate();
-		PublicKey pubk = kp.getPublic();
-		CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
-		Certificate cert = generateCertificate(pubk, privk, alias, alias, null,
-				null);
-		ks.setKeyEntry(alias, privk, keyPwd, new Certificate[] { cert });
+		String alias=cert.getSubjectDN().getName();
+		ks.setKeyEntry(alias, kpriv, keyPwd, new Certificate[] { cert });
 
 		return true;
 	}
@@ -331,7 +327,7 @@ public class JCEKeyManager {
 		}
 	}
 
-	public KeyPair generateKey(String alias) {
+	public KeyPair generateKeys() {
 		try {
 			KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA", "BC");
 			kp.initialize(1024, _srnd);
