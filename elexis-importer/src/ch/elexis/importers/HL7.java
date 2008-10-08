@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4556 2008-10-03 13:08:09Z rgw_ch $
+ * $Id: HL7.java 4564 2008-10-08 13:52:42Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -511,8 +511,34 @@ public class HL7 {
 			return true;
 		}
 		
+		/**
+		 * HL7 defines TX for plaintext and NM for numeric. Unfortunately, some labs put numbers in TX fields,
+		 * thus we have to check
+		 * @return true if the field is TX and contains not only numbers.
+		 */
 		public boolean isPlainText(){
-			return (obxFields[2].equals("TX"));
+			if(obxFields[2].equals("TX")){
+				String res=getResultValue();
+				if(res.matches("[0-9]+")){
+					return false;
+				}else{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean isNumeric(){
+			String type=obxFields[2];
+			if(type.equals("TX")){
+				String res=getResultValue();
+				if(res.matches("[0-9]+")){
+					return true;
+				}
+			}else if(type.equals("NM")){
+				return true;
+			}
+			return false;
 		}
 		public boolean isFormattedText(){
 			return (obxFields[2].equals("FT"));

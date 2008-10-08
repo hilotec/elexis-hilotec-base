@@ -15,7 +15,6 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
