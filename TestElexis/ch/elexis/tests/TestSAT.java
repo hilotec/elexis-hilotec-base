@@ -29,17 +29,18 @@ public class TestSAT extends TestCase {
 		}
 	}
 	public void testWrap() throws Exception{
-		SAT sat = new SAT(crypt, "alice");
+		crypt=new JCECrypter(null,null,"alice","alicepwd".toCharArray());
+		SAT sat = new SAT(crypt);
 		HashMap<String, Object> hash = new HashMap<String, Object>();
 		hash.put("test", "Ein Testtext");
-		byte[] result = sat.wrap(hash, "bob", "alicepwd".toCharArray());
+		byte[] result = sat.wrap(hash, "bob");
 		assertNotNull(result);
 		System.out.println(new String(result));
 		encrypted = result;
 	}
 	
 	public void testUnwrap() throws Exception{
-		SAT sat = new SAT(crypt, "bob@elexis.ch");
+		SAT sat = new SAT(crypt);
 		Result<HashMap<String, Object>> result = sat.unwrap(encrypted, "bobelexis".toCharArray());
 		assertTrue(result.isOK());
 		HashMap<String, Object> res = result.get();
