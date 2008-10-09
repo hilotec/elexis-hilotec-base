@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4564 2008-10-08 13:52:42Z rgw_ch $
+ * $Id: HL7.java 4572 2008-10-09 17:59:20Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -519,7 +519,7 @@ public class HL7 {
 		public boolean isPlainText(){
 			if(obxFields[2].equals("TX")){
 				String res=getResultValue();
-				if(res.matches("[0-9]+")){
+				if(res.matches("[<>0-9\\.,]+")){
 					return false;
 				}else{
 					return true;
@@ -532,7 +532,7 @@ public class HL7 {
 			String type=obxFields[2];
 			if(type.equals("TX")){
 				String res=getResultValue();
-				if(res.matches("[0-9]+")){
+				if(res.matches("<>[0-9\\.,]+")){
 					return true;
 				}
 			}else if(type.equals("NM")){

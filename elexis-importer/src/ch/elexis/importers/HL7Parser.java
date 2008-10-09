@@ -77,17 +77,20 @@ public class HL7Parser {
 				qr.add("PatientID", "=", pat.getId());
 				qr.add("Datum", "=", obr.getDate().toString(TimeTool.DATE_GER));
 				qr.add("ItemID", "=", li.getId());
-				if (qr.execute().size() != 0) {
-					if (SWTHelper.askYesNo("Dieser Laborwert wurde schon importiert",
-						"Weitermachen?")) {
+				List<LabResult> qrr = qr.execute();
+				if (qrr.size() != 0) {
+					LabResult lrr = qrr.get(0);
+					
+					if (!SWTHelper.askYesNo("Laborwert wurde schon importiert: " + lrr.getLabel(),
+						"Überschreiben?")) {
 						obx = obr.nextOBX(obx);
 						continue;
-					} else {
-						return new Result<String>("Cancelled");
 					}
 				}
 				if (obx.isFormattedText() || (obx.isPlainText())) {
-					lr = new LabResult(pat, obr.getDate(), li, "text", obx.getResultValue()+"\n"+obx.getComment());
+					lr =
+						new LabResult(pat, obr.getDate(), li, "text", obx.getResultValue() + "\n"
+							+ obx.getComment());
 				} else {
 					lr =
 						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
@@ -134,7 +137,6 @@ public class HL7Parser {
 				qr.add("ItemID", "=", li.getId());
 				if (qr.execute().size() == 0) {
 					// only add coments not yet existing
-					
 					new LabResult(pat, commentsDate, li, "Text", comments);
 				}
 			}
