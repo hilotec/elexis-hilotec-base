@@ -303,12 +303,20 @@ public class JCEKeyManager {
 
 	public boolean addKeyPair(PrivateKey kpriv, X509Certificate cert, char[] keyPwd)
 			throws Exception {
-		String alias=cert.getSubjectDN().getName();
+		String alias=getName(cert);
 		ks.setKeyEntry(alias, kpriv, keyPwd, new Certificate[] { cert });
 
 		return true;
 	}
 
+	String getName(X509Certificate cert){
+		String cn=cert.getSubjectDN().getName();
+		int s=cn.indexOf('=');
+		if(s!=-1){
+			return cn.substring(s+1);
+		}
+		return cn;
+	}
 	public boolean existsPrivate(String alias) {
 		try {
 			return ks.isKeyEntry(alias);
