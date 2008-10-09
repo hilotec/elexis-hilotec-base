@@ -52,19 +52,15 @@ public class SAT {
 	// Unterschrift von
 	// .+<(.+)>.*",Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
 	Cryptologist crypt;
-	String userKey;
-
+	
 	/**
 	 * Create a new SAT actor
 	 * 
 	 * @param c
 	 *            a fully configured Cryptologist
-	 * @param userKey
-	 *            the keyname of the sender.
 	 */
-	public SAT(Cryptologist c, String userKey) {
+	public SAT(Cryptologist c) {
 		crypt = c;
-		this.userKey = userKey;
 	}
 
 	/**
@@ -125,16 +121,15 @@ public class SAT {
 	 *            Password for the sender's private key
 	 * @return a byte array containing the signed and encrypted Hashmap
 	 */
-	public byte[] wrap(HashMap<String, Object> hash, String dest,
-			char[] senderPwd) {
+	public byte[] wrap(HashMap<String, Object> hash, String dest) {
 		try {
 			SoapConverter sc = new SoapConverter();
 			sc.create("xidClient", "0.0.1", "elexis.ch");
 			sc.addHashMap(null, ADM_PAYLOAD, hash);
 			sc.addIntegral(ADM_TIMESTAMP, System.currentTimeMillis());
-			sc.addString(ADM_SIGNED_BY, userKey);
+			//sc.addString(ADM_SIGNED_BY, userKey);
 			byte[] digest = calcDigest(sc);
-			byte[] signature = crypt.sign(digest, senderPwd);
+			byte[] signature = crypt.sign(digest);
 			sc.addArray(ADM_SIGNATURE, signature);
 			String xml = sc.toString();
 			byte[] wrapped = crypt.encrypt(StringTool.getBytes(xml), dest);

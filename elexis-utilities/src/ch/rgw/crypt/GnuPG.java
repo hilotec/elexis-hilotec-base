@@ -625,8 +625,8 @@ public class GnuPG implements Cryptologist {
 		return null;
 	}
 	
-	public byte[] sign(byte[] source, char[] pwd){
-		if (sign(StringTool.createString(source), identity, new String(pwd))) {
+	public byte[] sign(byte[] source){
+		if (sign(StringTool.createString(source), identity, new String(passphrase))) {
 			return StringTool.getBytes(getResult());
 		}
 		return null;

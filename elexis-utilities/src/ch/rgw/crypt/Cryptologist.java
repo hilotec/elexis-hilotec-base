@@ -38,11 +38,9 @@ public interface Cryptologist {
 	 * 
 	 * @param source
 	 *            the bytes to sign
-	 * @param pwd
-	 *            the password of the signer's secret key
 	 * @return the signature
 	 */
-	public byte[] sign(byte[] source, char[] pwd);
+	public byte[] sign(byte[] source);
 	
 	/**
 	 * decrypt a byte array

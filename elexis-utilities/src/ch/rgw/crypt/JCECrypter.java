@@ -70,11 +70,11 @@ public class JCECrypter implements Cryptologist {
 		return null;
 	}
 	
-	public byte[] sign(byte[] source, char[] pwd){
+	public byte[] sign(byte[] source){
 		try {
-			Signature sig=Signature.getInstance("RSA", "BC");
+			Signature sig=Signature.getInstance("SHA1withRSA", "BC");
 			PrivateKey pk=km.getPrivateKey(userKey, pwd);
-			SecureRandom sr=SecureRandom.getInstance("DSA", "BC");
+			SecureRandom sr=new SecureRandom();
 			sig.initSign(pk, sr);
 			sig.update(source);
 			return sig.sign();
