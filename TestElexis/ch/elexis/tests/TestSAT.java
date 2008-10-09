@@ -1,6 +1,5 @@
 package ch.elexis.tests;
 
-import java.security.KeyPair;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
@@ -11,11 +10,11 @@ import ch.rgw.tools.Result;
 
 public class TestSAT extends TestCase {
 	static String homedir;
-	Cryptologist crypt;
+	static Cryptologist crypt;
 	static byte[] encrypted;
 	
-	public TestSAT() throws Exception{
 		
+	public void testCreate() throws Exception{
 		crypt=new JCECrypter(null,null,"admin","adminkey".toCharArray());
 		assertTrue(crypt.hasKeyOf("admin"));
 	}
