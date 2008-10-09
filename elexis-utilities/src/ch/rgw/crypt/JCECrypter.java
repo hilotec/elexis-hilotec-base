@@ -35,10 +35,14 @@ public class JCECrypter implements Cryptologist {
 			}
 		}
 		km=new JCEKeyManager(keystore,null,kspwd);
-		if(!km.existsPrivate(mykey)){
-			KeyPair kp=km.generateKeys();
-			X509Certificate cert=km.generateCertificate(kp.getPublic(), kp.getPrivate(), userKey, userKey, null, null);
-			km.addKeyPair(kp.getPrivate(),cert,pwd);
+		if(km.load(true)){
+			if(!km.existsPrivate(mykey)){
+				KeyPair kp=km.generateKeys();
+				X509Certificate cert=km.generateCertificate(kp.getPublic(), kp.getPrivate(), userKey, userKey, null, null);
+				km.addKeyPair(kp.getPrivate(),cert,pwd);
+			}
+		}else{
+			km=null;
 		}
 	}
 	
@@ -107,7 +111,10 @@ public class JCECrypter implements Cryptologist {
 		return km.existsPrivate(alias);
 	}
 	public boolean addCertificate(X509Certificate cert){
-		return km.addCertificate(cert);
+		if(km.addCertificate(cert)){
+			return km.save();
+		}
+		return false;
 	}
 	public KeyPair generateKeys( String alias, char[] keypwd, TimeTool validFrom, TimeTool validUntil){
 		KeyPair ret= km.generateKeys();
@@ -115,6 +122,7 @@ public class JCECrypter implements Cryptologist {
 			X509Certificate cert=generateCertificate(ret.getPublic(), alias, validFrom, validUntil);
 			try {
 				km.addKeyPair(ret.getPrivate(), cert, keypwd);
+				km.save();
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				return null;

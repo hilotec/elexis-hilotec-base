@@ -640,41 +640,36 @@ public class GnuPG implements Cryptologist {
 	}
 	
 	public Result<String> verify(byte[] data, byte[] signature, String signerKeyName){
-		if( verify(StringTool.createString(data), StringTool.createString(signature))){
+		if (verify(StringTool.createString(data), StringTool.createString(signature))) {
 			return new Result<String>("OK");
-		}else{
-			return new Result<String>(Result.SEVERITY.ERROR,1,"Signature not valid", signerKeyName,true);
+		} else {
+			return new Result<String>(Result.SEVERITY.ERROR, 1, "Signature not valid",
+				signerKeyName, true);
 		}
 	}
-
-	@Override
-	public boolean addCertificate(X509Certificate cert) {
+	
+	public boolean addCertificate(X509Certificate cert){
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public Certificate generateCertificate(PublicKey pk, String alias,
-			TimeTool validFrom, TimeTool validUntil) {
+	
+	public Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom,
+		TimeTool validUntil){
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom,
-			TimeTool validUntil) {
+	
+	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom, TimeTool validUntil){
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public boolean hasCertificateOf(String alias) {
+	
+	public boolean hasCertificateOf(String alias){
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public boolean hasKeyOf(String alias) {
+	
+	public boolean hasKeyOf(String alias){
 		// TODO Auto-generated method stub
 		return false;
 	}
