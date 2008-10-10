@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4512 2008-10-01 17:20:22Z rgw_ch $
+ *    $Id: PersistentObject.java 4576 2008-10-10 13:05:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1046,7 +1046,7 @@ public abstract class PersistentObject {
 			getConnection().releaseStatement(stm);
 			LinkedList<String[]> list = new LinkedList<String[]>();
 			try {
-				while (rs.next() == true) {
+				while ((rs!=null) && rs.next()) {
 					String[] line = new String[extra.length + 1];
 					line[0] = rs.getString(abfr[1]);
 					for (int i = 1; i < extra.length + 1; i++) {
