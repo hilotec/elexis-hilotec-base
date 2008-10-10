@@ -242,13 +242,13 @@ public class Importer extends ImporterPage {
 	private Result<?> importFile(final File file, final File archiveDir){
 		HL7 hl7 =
 			new HL7(ch.elexis.laborimport.teamw.Messages.getString("Importer.lab") + MY_LAB, MY_LAB); //$NON-NLS-1$
-		Result<String> resultLoad = hl7.load(file.getAbsolutePath());
+		Result<Object> resultLoad = hl7.load(file.getAbsolutePath());
 		if (resultLoad.isOK()) {
-			Result<Patient> resultPatient = hl7.getPatient(false);
+			Result<Object> resultPatient = hl7.getPatient(false);
 			if (resultPatient.isOK()) {
 				Result<Kontakt> resultKontakt = hl7.getLabor();
 				if (resultKontakt.isOK()) {
-					Patient pat = resultPatient.get();
+					Patient pat = (Patient)resultPatient.get();
 					Kontakt labor = resultKontakt.get();
 					
 					Result<String> resultParse = parse(hl7, labor, pat);
