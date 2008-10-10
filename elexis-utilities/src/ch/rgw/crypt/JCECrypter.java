@@ -56,14 +56,14 @@ public class JCECrypter implements Cryptologist {
 		super.finalize();
 	}
 
-	public byte[] decrypt(byte[] encrypted, char[] pwd){
+	public byte[] decrypt(byte[] encrypted){
 		// TODO Auto-generated method stub
-		return null;
+		return encrypted;
 	}
 	
 	public byte[] encrypt(byte[] source, String receiverKeyName){
 		try{
-			
+			return source;
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 		}

@@ -617,8 +617,8 @@ public class GnuPG implements Cryptologist {
 		return out.getEncoding();
 	}
 	
-	public byte[] decrypt(byte[] encrypted, char[] pwd){
-		if (decrypt(StringTool.createString(encrypted), new String(pwd))) {
+	public byte[] decrypt(byte[] encrypted){
+		if (decrypt(StringTool.createString(encrypted), new String(passphrase))) {
 			String dec = getResult();
 			return StringTool.getBytes(dec);
 		}

@@ -32,9 +32,8 @@ import ch.rgw.tools.SoapConverter;
 import ch.rgw.tools.StringTool;
 
 /**
- * Secure Authenticated Transmission The Transmitter stores a hashtable in an
- * encrypted and signed wrapper. For best compatibility we use SOAP messages
- * encrypted with GnuPG
+ * Secure Authenticated Transmission The Transmitter stores a hashtable in an encrypted and signed
+ * wrapper. For best compatibility we use SOAP messages encrypted with GnuPG
  * 
  * @author Gerry
  * 
@@ -44,7 +43,7 @@ public class SAT {
 	public static final String ADM_SIGNED_BY = "ADM_user";
 	public static final String ADM_PAYLOAD = "ADM_payload";
 	public static final String ADM_SIGNATURE = "ADM_signature";
-
+	
 	// static final Pattern signatureEN=Pattern.compile(".+gpg: good signature
 	// from
 	// .+<(.+)>.*",Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
@@ -59,10 +58,10 @@ public class SAT {
 	 * @param c
 	 *            a fully configured Cryptologist
 	 */
-	public SAT(Cryptologist c) {
+	public SAT(Cryptologist c){
 		crypt = c;
 	}
-
+	
 	/**
 	 * Decrypt, and verify a packet
 	 * 
@@ -70,11 +69,11 @@ public class SAT {
 	 *            the encrypted packet
 	 * @param pwd
 	 *            the password to decrypt
-	 * @return a hashmap with the Parameters and an additional parameter
-	 *         "ADM_user" containing the sender's ID
+	 * @return a hashmap with the Parameters and an additional parameter "ADM_user" containing the
+	 *         sender's ID
 	 */
-	public Result<HashMap<String, Object>> unwrap(byte[] encrypted, char[] pwd) {
-		byte[] decrypted = crypt.decrypt(encrypted, pwd);
+	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
+		byte[] decrypted = crypt.decrypt(encrypted);
 		SoapConverter sc = new SoapConverter();
 		if (sc.load(decrypted)) {
 			HashMap<String, Object> fields = sc.getParameters();
@@ -82,52 +81,49 @@ public class SAT {
 			Long ts = (Long) fields.get(ADM_TIMESTAMP);
 			byte[] signature = (byte[]) fields.get(ADM_SIGNATURE);
 			if ((StringTool.isNothing(user)) || (signature == null)) {
-				return new Result<HashMap<String, Object>>(
-						Result.SEVERITY.ERROR, 4, "Bad protocol", null, true);
+				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 4,
+					"Bad protocol", null, true);
 			}
 			if (ts == null || ((System.currentTimeMillis() - ts) > 300000)) {
-				return new Result<HashMap<String, Object>>(
-						Result.SEVERITY.ERROR, 3, "Timeout", null, true);
+				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 3, "Timeout",
+					null, true);
 			}
 			byte[] digest = calcDigest(sc);
-			Result<String> res=crypt.verify(digest, signature, user);
+			Result<String> res = crypt.verify(digest, signature, user);
 			if (res.isOK()) {
-				HashMap<String, Object> ret = (HashMap<String, Object>) fields
-						.get(ADM_PAYLOAD);
+				HashMap<String, Object> ret = (HashMap<String, Object>) fields.get(ADM_PAYLOAD);
 				ret.put(ADM_SIGNED_BY, user);
 				return new Result<HashMap<String, Object>>(ret);
 			} else {
-				return new Result<HashMap<String, Object>>(
-						Result.SEVERITY.ERROR, 6, "Bad protocol", null, true);
+				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 6,
+					"Bad protocol", null, true);
 			}
 		} else {
-			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,
-					5, "Bad signature", null, true);
+			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 5, "Bad signature",
+				null, true);
 		}
-
+		
 	}
-
+	
 	/**
-	 * Transmit a hashtable.
+	 * Sign and encrypt a HashMap. We sign the unencrypted data and encrypt later. This imposes more
+	 * load on verifying (since it must be decrspted prior to verify the signature) but improves
+	 * stability against replay attacks.
 	 * 
 	 * @param hash
-	 *            a hashtable containing arbitrary String/Object pairs. All
-	 *            objects must be Serializables. Keynames starting with ADM_ are
-	 *            reserved and must not be used.
+	 *            a hashtable containing arbitrary String/Object pairs. All objects must be
+	 *            Serializables. Keynames starting with ADM_ are reserved and must not be used.
 	 * @param dest
-	 *            the receiver. The Object will be encoded with the receiver's
-	 *            public key
-	 * @param pwd
-	 *            Password for the sender's private key
+	 *            the receiver. The Object will be encoded with the receiver's public key
 	 * @return a byte array containing the signed and encrypted Hashmap
 	 */
-	public byte[] wrap(HashMap<String, Object> hash, String dest) {
+	public byte[] wrap(HashMap<String, Object> hash, String dest){
 		try {
 			SoapConverter sc = new SoapConverter();
 			sc.create("xidClient", "0.0.1", "elexis.ch");
 			sc.addHashMap(null, ADM_PAYLOAD, hash);
 			sc.addIntegral(ADM_TIMESTAMP, System.currentTimeMillis());
-			//sc.addString(ADM_SIGNED_BY, userKey);
+			// sc.addString(ADM_SIGNED_BY, userKey);
 			byte[] digest = calcDigest(sc);
 			byte[] signature = crypt.sign(digest);
 			sc.addArray(ADM_SIGNATURE, signature);
@@ -139,31 +135,30 @@ public class SAT {
 		}
 		return null;
 	}
-
-	public String sendRequest(String hostaddress, String request) {
+	
+	public String sendRequest(String hostaddress, String request){
 		String output = "";
 		try {
 			// Connect to server
 			URLConnection conn = (new URL(hostaddress)).openConnection();
-
+			
 			// Get output stream
 			conn.setDoOutput(true);
-			OutputStreamWriter out = new OutputStreamWriter(conn
-					.getOutputStream());
-
+			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+			
 			String rx = new BASE64Encoder().encode(request.getBytes("utf-8"));
 			out.write("request=" + rx);
 			out.close();
 			byte[] in = new BASE64Decoder().decodeBuffer(conn.getInputStream());
 			return new String(in, "utf-8");
-
+			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
 		return output;
 	}
-
-	private byte[] calcDigest(SoapConverter sc) {
+	
+	private byte[] calcDigest(SoapConverter sc){
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
 			Document doc = sc.getXML();
@@ -176,8 +171,8 @@ public class SAT {
 		}
 		return null;
 	}
-
-	private void addParameters(Element e, MessageDigest digest) {
+	
+	private void addParameters(Element e, MessageDigest digest){
 		List<Element> params = e.getChildren("parameter", SoapConverter.ns);
 		for (Element el : params) {
 			String type = el.getAttributeValue("type");

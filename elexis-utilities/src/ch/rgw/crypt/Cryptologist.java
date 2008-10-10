@@ -47,11 +47,9 @@ public interface Cryptologist {
 	 * 
 	 * @param encrypted
 	 *            the encrypted bytes
-	 * @param pwd
-	 *            the passweord of the destinator's secret key
 	 * @return the plain array or null of decryption failed
 	 */
-	public byte[] decrypt(byte[] encrypted, char[] pwd);
+	public byte[] decrypt(byte[] encrypted);
 	
 	/**
 	 * Verify a MAC
