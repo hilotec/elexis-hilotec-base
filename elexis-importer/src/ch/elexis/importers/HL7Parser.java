@@ -31,19 +31,18 @@ public class HL7Parser {
 		myLab = mylab;
 	}
 	
-	public Result<String> parse(final HL7 hl7, boolean createPatientIfNotFound){
+	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound){
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
-			return new Result<String>(Result.SEVERITY.ERROR, 1, "Lab not found", hl7.getFilename(),
+			return new Result<Object>(Result.SEVERITY.ERROR, 1, "Lab not found", hl7.getFilename(),
 				true);
 		}
 		final Kontakt labor = res.get();
-		Result<Patient> r2 = hl7.getPatient(createPatientIfNotFound);
+		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
 		if (!r2.isOK()) {
-			return new Result<String>(Result.SEVERITY.ERROR, 1, "Patient not found", hl7
-				.getFilename(), true);
+			return new Result<Object>(r2.getMessages());
 		}
-		Patient pat = r2.get();
+		Patient pat = (Patient)r2.get();
 		
 		HL7.OBR obr = hl7.firstOBR();
 		
@@ -142,7 +141,7 @@ public class HL7Parser {
 			}
 		}
 		
-		return new Result<String>("OK");
+		return new Result<Object>("OK");
 	}
 	
 	/**
@@ -158,7 +157,7 @@ public class HL7Parser {
 	public Result<?> importFile(final File file, final File archiveDir,
 		boolean bCreatePatientIfNotExists){
 		HL7 hl7 = new HL7("Labor " + myLab, myLab);
-		Result<String> r = hl7.load(file.getAbsolutePath());
+		Result<Object> r = hl7.load(file.getAbsolutePath());
 		if (r.isOK()) {
 			Result<?> ret = parse(hl7, bCreatePatientIfNotExists);
 			// move result to archive

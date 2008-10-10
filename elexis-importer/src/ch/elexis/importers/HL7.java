@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4572 2008-10-09 17:59:20Z rgw_ch $
+ * $Id: HL7.java 4578 2008-10-10 13:05:36Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -32,6 +32,8 @@ import ch.rgw.tools.Result.SEVERITY;
  * 
  */
 public class HL7 {
+	public enum RECORDTYPE{TEXT,CODED,NUMERIC,STRUCTURED,OTHER};
+	
 	String separator;
 	String labName;
 	String labID;
@@ -69,26 +71,26 @@ public class HL7 {
 	 *            String
 	 * @return
 	 */
-	public Result<String> load(final String filename){
+	public Result<Object> load(final String filename){
 		File file = new File(filename);
 		this.filename=filename;
 		if (!file.canRead()) {
-			return new Result<String>(SEVERITY.WARNING, 1, "Kann Datei nicht lesen", filename, true);
+			return new Result<Object>(SEVERITY.WARNING, 1, "Kann Datei nicht lesen", filename, true);
 		}
 		try {
 			FileReader fr = new FileReader(file);
 			char[] in = new char[(int) file.length()];
 			if (fr.read(in) != in.length) {
-				return new Result<String>(SEVERITY.WARNING, 3, "EOF", filename, true);
+				return new Result<Object>(SEVERITY.WARNING, 3, "EOF", filename, true);
 			}
 			String hl7raw = new String(in);
 			lines = hl7raw.split("[\\r\\n]+");
 			separator = "\\" + lines[0].substring(3, 4);
 			fr.close();
-			return new Result<String>("OK");
+			return new Result<Object>("OK");
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<String>(SEVERITY.ERROR, 2, "Exception beim Lesen", ex.getMessage(),
+			return new Result<Object>(SEVERITY.ERROR, 2, "Exception beim Lesen", ex.getMessage(),
 				true);
 		}
 		
@@ -134,7 +136,7 @@ public class HL7 {
 	 * @return the Patient or null if it was not found and createIfNotFound was false, or an error
 	 *         indicating the problem if it could not be created
 	 */
-	public Result<Patient> getPatient(final boolean createIfNotFound){
+	public Result<Object> getPatient(final boolean createIfNotFound){
 		Query<Patient> qbe = new Query<Patient>(Patient.class);
 		List<Patient> list = null;
 		String nachname = "";
@@ -241,7 +243,7 @@ public class HL7 {
 								"Patient auswählen", "Wer ist " + nachname + " " + vorname + " ,"
 									+ gebdat + "?");
 						if (pat == null) {
-							return new Result<Patient>(SEVERITY.WARNING, 1,
+							return new Result<Object>(SEVERITY.WARNING, 1,
 								"Patient nicht in Datenbank", null, true);
 						}
 					}
@@ -252,13 +254,13 @@ public class HL7 {
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
 						pat = null;
-						return new Result<Patient>(SEVERITY.WARNING, 4,
+						return new Result<Object>(SEVERITY.WARNING, 4,
 							"Patient mit dieser ID schon mit anderem Namen vorhanden", null, true);
 					}
 				}
 			}
 		}
-		return new Result<Patient>(pat);
+		return new Result<Object>(pat);
 	}
 	
 	public Result<String> getUID(){
@@ -440,6 +442,7 @@ public class HL7 {
 		int of;
 		String[] obxFields;
 		OBR myOBR;
+
 		
 		OBX(final OBR obr, final int off){
 			of = off;
@@ -511,6 +514,21 @@ public class HL7 {
 			return true;
 		}
 		
+		
+		public RECORDTYPE getType(){
+			String type=obxFields[2];
+			if(type.equals("TX") || type.equals("ST") || type.equals("FT")){
+				return RECORDTYPE.TEXT;
+			}else if(type.equals("NM") || type.equals("MO")){
+				return RECORDTYPE.NUMERIC;
+			}else if(type.equals("CE")){
+				return RECORDTYPE.CODED;
+			}else if(type.equals("SN")){
+				return RECORDTYPE.STRUCTURED;
+			}else{
+				return RECORDTYPE.OTHER;
+			}
+		}
 		/**
 		 * HL7 defines TX for plaintext and NM for numeric. Unfortunately, some labs put numbers in TX fields,
 		 * thus we have to check
