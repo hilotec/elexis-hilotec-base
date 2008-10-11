@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4578 2008-10-10 13:05:36Z rgw_ch $
+ * $Id: HL7.java 4579 2008-10-11 05:35:25Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -32,7 +32,13 @@ import ch.rgw.tools.Result.SEVERITY;
  * 
  */
 public class HL7 {
-	public enum RECORDTYPE{TEXT,CODED,NUMERIC,STRUCTURED,OTHER};
+	public enum RECORDTYPE {
+		TEXT, CODED, NUMERIC, STRUCTURED, OTHER
+	};
+	
+	public enum RESULTSTATUS {
+		CORR, DEL, FINAL, DETAIL, PRELIMINARY, NOTVERIFIED, UNKNOWN
+	};
 	
 	String separator;
 	String labName;
@@ -73,7 +79,7 @@ public class HL7 {
 	 */
 	public Result<Object> load(final String filename){
 		File file = new File(filename);
-		this.filename=filename;
+		this.filename = filename;
 		if (!file.canRead()) {
 			return new Result<Object>(SEVERITY.WARNING, 1, "Kann Datei nicht lesen", filename, true);
 		}
@@ -118,6 +124,7 @@ public class HL7 {
 	public String getFilename(){
 		return filename;
 	}
+	
 	/**
 	 * This method tries to find the patient denoted by this HL7-record. We try the PID-field
 	 * PatientID, that is documented as "PlacerID". But unfortunately not all labs use this field.
@@ -442,7 +449,6 @@ public class HL7 {
 		int of;
 		String[] obxFields;
 		OBR myOBR;
-
 		
 		OBX(final OBR obr, final int off){
 			of = off;
@@ -514,32 +520,36 @@ public class HL7 {
 			return true;
 		}
 		
-		
 		public RECORDTYPE getType(){
-			String type=obxFields[2];
-			if(type.equals("TX") || type.equals("ST") || type.equals("FT")){
+			String type = obxFields[2];
+			if (type.equals("TX") || type.equals("ST") || type.equals("FT")) {
+				if(getResultValue().matches("[<>]?[0-9\\.,]+")){
+					return RECORDTYPE.NUMERIC;
+				}
 				return RECORDTYPE.TEXT;
-			}else if(type.equals("NM") || type.equals("MO")){
+			} else if (type.equals("NM") || type.equals("MO")) {
 				return RECORDTYPE.NUMERIC;
-			}else if(type.equals("CE")){
+			} else if (type.equals("CE")) {
 				return RECORDTYPE.CODED;
-			}else if(type.equals("SN")){
+			} else if (type.equals("SN")) {
 				return RECORDTYPE.STRUCTURED;
-			}else{
+			} else {
 				return RECORDTYPE.OTHER;
 			}
 		}
+		
 		/**
-		 * HL7 defines TX for plaintext and NM for numeric. Unfortunately, some labs put numbers in TX fields,
-		 * thus we have to check
+		 * HL7 defines TX for plaintext and NM for numeric. Unfortunately, some labs put numbers in
+		 * TX fields, thus we have to check
+		 * 
 		 * @return true if the field is TX and contains not only numbers.
 		 */
 		public boolean isPlainText(){
-			if(obxFields[2].equals("TX")){
-				String res=getResultValue();
-				if(res.matches("[<>0-9\\.,]+")){
+			if (obxFields[2].equals("TX")) {
+				String res = getResultValue();
+				if (res.matches("[<>0-9\\.,]+")) {
 					return false;
-				}else{
+				} else {
 					return true;
 				}
 			}
@@ -547,19 +557,42 @@ public class HL7 {
 		}
 		
 		public boolean isNumeric(){
-			String type=obxFields[2];
-			if(type.equals("TX")){
-				String res=getResultValue();
-				if(res.matches("<>[0-9\\.,]+")){
+			String type = obxFields[2];
+			if (type.equals("TX")) {
+				String res = getResultValue();
+				if (res.matches("<>[0-9\\.,]+")) {
 					return true;
 				}
-			}else if(type.equals("NM")){
+			} else if (type.equals("NM")) {
 				return true;
 			}
 			return false;
 		}
+		
 		public boolean isFormattedText(){
 			return (obxFields[2].equals("FT"));
+		}
+		
+		public RESULTSTATUS getStatus(){
+			if (obxFields.length < 12) {
+				return RESULTSTATUS.UNKNOWN;
+			}
+			String stat = obxFields[11];
+			if (stat.equals("C")) {
+				return RESULTSTATUS.CORR;
+			} else if (stat.equals("D")) {
+				return RESULTSTATUS.DEL;
+			} else if (stat.equals("F")) {
+				return RESULTSTATUS.FINAL;
+			} else if (stat.equals("O")) {
+				return RESULTSTATUS.DETAIL;
+			} else if (stat.equals("P")) {
+				return RESULTSTATUS.PRELIMINARY;
+			} else if (stat.equals("R")) {
+				return RESULTSTATUS.NOTVERIFIED;
+			} else {
+				return RESULTSTATUS.UNKNOWN;
+			}
 		}
 		
 		/**
