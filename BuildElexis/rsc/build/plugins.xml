@@ -19,7 +19,7 @@
 		<ant antfile="../elexis-utilities/build.xml" />
 		<ant antfile="../elexis/build.xml" />
 		<ant antfile="../elexis-importer/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-simpletext/build.xml" inheritrefs="true"/>
+		<ant antfile="../elexis-simpletext/build.xml" inheritrefs="true" />
 
 		<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
              Standarddistribution dabei -->
@@ -33,7 +33,7 @@
 
 		<available file="../mysql-adapter/build.xml" property="mysql.ok" />
 		<antcall target="mysql" inheritrefs="true" />
-		
+
 		<available file="../iatrix-help-wiki/build.xml" property="iatrixhelp.ok" />
 		<antcall target="iatrixhelp" inheritrefs="true" />
 		<available file="../elexis-icpc/build.xml" property="icpc.ok" />
@@ -92,6 +92,9 @@
 
 	<!-- These plugins are not part of the standard distribution -->
 	<target name="elexis-pro" depends="options">
+		<available file="../Statistics/build.xml" property="waeltistatistics.ok" />
+		<antcall target="waeltistatistics" inheritrefs="true" />
+
 		<available file="../elexis-mediserv/build.xml" property="mediserv.ok" />
 		<antcall target="mediserv" inheritrefs="true" />
 
@@ -154,8 +157,11 @@
 
 	</target>
 
+	<target name="waeltistatistics" if="waeltistatistics.ok">
+		<ant antfile="../Statistics/build.xml" inheritrefs="true" />
+	</target>
 	<target name="mysql" if="mysql.ok">
-		<ant antfile="../mysql-adapter/build.xml" inheritrefs="true"/>
+		<ant antfile="../mysql-adapter/build.xml" inheritrefs="true" />
 	</target>
 	<target name="hl7import" if="hl7import.ok">
 		<ant antfile="../Laborimport-HL7-Universal/build.xml" inheritrefs="true" />
