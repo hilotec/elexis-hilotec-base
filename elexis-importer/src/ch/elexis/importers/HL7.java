@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4579 2008-10-11 05:35:25Z rgw_ch $
+ * $Id: HL7.java 4582 2008-10-12 17:47:50Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -451,30 +451,65 @@ public class HL7 {
 		OBR myOBR;
 		
 		OBX(final OBR obr, final int off){
-			of = off;
-			obxFields = lines[of].split(separator);
+			setPosition(off);
 			myOBR = obr;
 		}
 		
+		private void setPosition(final int off){
+			of = off;
+			obxFields = lines[of].split(separator);
+		}
 		public String getObxNr(){
 			return obxFields[1];
 		}
 		
 		public String getItemCode(){
-			return obxFields[3].split("\\^")[0];
+			String[] fl = getField(3).split("\\^");
+			if (fl[0].startsWith("HIS-")) {
+				return "Hist";
+			} else {
+				return fl[0];
+			}
 		}
 		
 		public String getItemName(){
 			String raw = getField(3);
 			String[] split = raw.split("\\^");
 			if (split.length > 1) {
-				return split[1];
+				if(split[0].startsWith("HIS-")){
+					return "Histologie";
+				}else{
+					return split[1];
+				}
 			}
 			return split[0];
 		}
 		
 		public String getResultValue(){
-			return getField(5);
+			StringBuilder ret = new StringBuilder();
+			int lastPos=of;
+			if (getType().equals(RECORDTYPE.TEXT)) {
+				String[] flds = getField(3).split("\\^");
+				if (flds.length > 1) {
+					while (flds[0].startsWith("HIS-")) {
+						lastPos=of;
+						ret.append("*.").append(flds[1]).append(".*:\n").append(getField(5))
+							.append("\n\n");
+						OBX nextOBX = myOBR.nextOBX(this);
+						if (nextOBX == null) {
+							break;
+						}
+						setPosition(nextOBX.of);
+						flds=getField(3).split("\\^");
+					}
+					setPosition(lastPos);
+				}
+			}
+			if (ret.length() == 0) {
+				return getField(5);
+			} else {
+				return ret.toString();
+			}
 		}
 		
 		public String getUnits(){
@@ -521,9 +556,9 @@ public class HL7 {
 		}
 		
 		public RECORDTYPE getType(){
-			String type = obxFields[2];
+			String type = getField(2);
 			if (type.equals("TX") || type.equals("ST") || type.equals("FT")) {
-				if(getResultValue().matches("[<>]?[0-9\\.,]+")){
+				if (getField(5).matches("[<>]?[0-9\\.,]+")) {
 					return RECORDTYPE.NUMERIC;
 				}
 				return RECORDTYPE.TEXT;
@@ -545,8 +580,8 @@ public class HL7 {
 		 * @return true if the field is TX and contains not only numbers.
 		 */
 		public boolean isPlainText(){
-			if (obxFields[2].equals("TX")) {
-				String res = getResultValue();
+			if (getField(2).equals("TX")) {
+				String res = getField(5);
 				if (res.matches("[<>0-9\\.,]+")) {
 					return false;
 				} else {
@@ -557,9 +592,9 @@ public class HL7 {
 		}
 		
 		public boolean isNumeric(){
-			String type = obxFields[2];
+			String type = getField(2);
 			if (type.equals("TX")) {
-				String res = getResultValue();
+				String res = getField(5);
 				if (res.matches("<>[0-9\\.,]+")) {
 					return true;
 				}
@@ -574,10 +609,7 @@ public class HL7 {
 		}
 		
 		public RESULTSTATUS getStatus(){
-			if (obxFields.length < 12) {
-				return RESULTSTATUS.UNKNOWN;
-			}
-			String stat = obxFields[11];
+			String stat = getField(11);
 			if (stat.equals("C")) {
 				return RESULTSTATUS.CORR;
 			} else if (stat.equals("D")) {
