@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DisplayTextDialog.java 4013 2008-06-07 06:18:37Z rgw_ch $
+ *  $Id: DisplayTextDialog.java 4583 2008-10-12 17:48:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -55,13 +55,14 @@ public class DisplayTextDialog extends TitleAreaDialog {
 			cnt=cnt.replaceAll("<","&lt;");
 			cnt=cnt.replaceAll(">","&gt;");
 			cnt=cnt.replaceAll("\n","<br />");
+			cnt=cnt.replaceAll("\\*\\.(.{1,30})\\.\\*", "<b>$1</b>");
 			cnt=cnt.replaceAll("\\\\\\.br\\\\", "<br/>");
 			cnt=cnt.replaceAll("\\\\\\.BR\\\\", "<br/>");
 			cnt=cnt.replaceAll("\\n\\n", "\\n");
 
 			ret=Desk.getToolkit().createFormText(form.getBody(),false);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			((FormText)ret).setText("<form>"+cnt+"</form>", true, true);
+			((FormText)ret).setText("<form><p>"+cnt+"</p></form>", true, true);
 		}
 		SWTHelper.center(Desk.getTopShell(),getShell());
 		return ret;
