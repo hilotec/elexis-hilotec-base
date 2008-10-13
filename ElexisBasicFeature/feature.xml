@@ -19,6 +19,7 @@
    </license>
 
    <requires>
+      <import plugin="ch.rgw.utility"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="ch.elexis"/>
@@ -30,9 +31,7 @@
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="org.apache.commons.logging"/>
       <import plugin="ch.elexis.Textplugin"/>
-      <import plugin="ch.rgw.utility"/>
    </requires>
 
    <plugin
@@ -178,13 +177,6 @@
          download-size="0"
          install-size="0"
          version="1.4.0"
-         unpack="false"/>
-
-   <plugin
-         id="ch.elexis.privatrechnung2"
-         download-size="0"
-         install-size="0"
-         version="1.3.0"
          unpack="false"/>
 
    <plugin
