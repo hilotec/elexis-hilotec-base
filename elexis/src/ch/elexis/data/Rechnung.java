@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 4423 2008-09-20 11:41:33Z rgw_ch $
+ *  $Id: Rechnung.java 4585 2008-10-13 09:32:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -672,11 +672,11 @@ public class Rechnung extends PersistentObject {
 		Patient p = getFall().getPatient();
 		String pid;
 		if (Hub.globalCfg.get("PatIDMode", "number").equals("number")) {
-			pid = StringTool.pad(SWT.LEFT, '0', p.getPatCode(), 6);
+			pid = StringTool.pad(StringTool.LEFT, '0', p.getPatCode(), 6);
 		} else {
 			pid = new TimeTool(p.getGeburtsdatum()).toString(TimeTool.DATE_COMPACT);
 		}
-		String nr = StringTool.pad(SWT.LEFT, '0', getNr(), 6);
+		String nr = StringTool.pad(StringTool.LEFT, '0', getNr(), 6);
 		return pid + nr;
 	}
 	

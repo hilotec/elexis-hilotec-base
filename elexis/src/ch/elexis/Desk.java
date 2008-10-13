@@ -368,7 +368,7 @@ public class Desk implements IApplication {
 	 * @return die Farbe als Color, ist in Regisry gespeichert
 	 */
 	public static Color getColorFromRGB(final String coldesc) {
-		String col = StringTool.pad(SWT.LEFT, '0', coldesc, 6);
+		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
 		if (!theColorRegistry.hasValueFor(col)) {
 			RGB rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16),
 					Integer.parseInt(col.substring(2, 4), 16), Integer
@@ -388,11 +388,11 @@ public class Desk implements IApplication {
 	public static String createColor(final RGB rgb) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(
-				StringTool.pad(SWT.LEFT, '0', Integer.toHexString(rgb.red), 2))
+				StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.red), 2))
 				.append(
-						StringTool.pad(SWT.LEFT, '0', Integer
+						StringTool.pad(StringTool.LEFT, '0', Integer
 								.toHexString(rgb.green), 2)).append(
-						StringTool.pad(SWT.LEFT, '0', Integer
+						StringTool.pad(StringTool.LEFT, '0', Integer
 								.toHexString(rgb.blue), 2));
 		String srgb = sb.toString();
 		theColorRegistry.put(srgb, rgb);
