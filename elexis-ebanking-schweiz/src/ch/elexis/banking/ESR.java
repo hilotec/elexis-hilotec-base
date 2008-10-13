@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 3686 2008-02-18 17:15:57Z rgw_ch $
+ *  $Id: ESR.java 4587 2008-10-13 09:33:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -87,7 +87,7 @@ public class ESR {
 		if(tcCode==null){
 			tcCode="01";												// ESR in CHF
 		}
-		String betrag=wrap(tcCode+StringTool.pad(SWT.LEFT,'0',amount,10));		// Betrag auf 10 Stellen erweitert
+		String betrag=wrap(tcCode+StringTool.pad(StringTool.LEFT,'0',amount,10));		// Betrag auf 10 Stellen erweitert
 		cl.append(betrag);
 		cl.append(">");													// Trennzeichen
 		cl.append(makeRefNr(false));									// Referenznummer
@@ -147,7 +147,7 @@ public class ESR {
 			Hub.log.log("Fehlerhafte Teilnehmerdefinition "+tn,Log.ERRORS);
 			return "**FEHLER**";
 		}
-		return ptn[0]+StringTool.pad(SWT.LEFT,'0',ptn[1],6)+ptn[2];
+		return ptn[0]+StringTool.pad(StringTool.LEFT,'0',ptn[1],6)+ptn[2];
 	}
 	/** 
 	 * Eine beliebige Ziffernfolge mit der Modulo-10 Prüfsumme verpacken
@@ -247,7 +247,7 @@ public class ESR {
 		
 		
 		String Franken=Integer.toString(fr);
-		String Rappen=StringTool.pad(SWT.LEFT,'0',Integer.toString(rp),2);
+		String Rappen=StringTool.pad(StringTool.LEFT,'0',Integer.toString(rp),2);
 		p.insertTextAt(baseX+5,yOff+50,wFr,hFr-3,Franken,SWT.RIGHT);
 		p.insertTextAt(xGiro+baseX+5,yOff+50,wFr,hFr-3,Franken,SWT.RIGHT);
 		p.insertTextAt(40+baseX,yOff+50,wRp,hFr-3,Rappen,SWT.RIGHT);
