@@ -4,6 +4,7 @@ Bundle-Name: Systemunabhängige Utilities
 Bundle-SymbolicName: ch.rgw.utility
 Bundle-Version: 1.0.0
 Bundle-ClassPath: lib/jdom.jar,
+ lib/bcprov-jdk15-140.jar,
  bin/,
  .
 Bundle-Vendor: G. Weirich
