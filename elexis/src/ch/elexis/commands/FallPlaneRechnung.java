@@ -11,7 +11,6 @@ import ch.elexis.Desk;
 
 public class FallPlaneRechnung extends AbstractHandler {
 
-	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException{
 		InputDialog dlg=new InputDialog(Desk.getTopShell(),"Rechnungsstellung planen", 
 			"Nach wievielen Tagen soll dieser Fall zur Rechnung vorgeschlagen werden?",

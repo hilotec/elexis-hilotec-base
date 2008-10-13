@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MahnlaufCommand.java 4430 2008-09-22 17:22:09Z rgw_ch $
+ *  $Id: MahnlaufCommand.java 4588 2008-10-13 12:54:55Z tschaller $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -31,7 +31,6 @@ import ch.rgw.tools.TimeTool;
 public class MahnlaufCommand extends AbstractHandler {
 	public final static String ID = "bill.reminder";
 	
-	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException{
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
 		qbe.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT));

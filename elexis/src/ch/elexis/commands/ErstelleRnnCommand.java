@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErstelleRnnCommand.java 4430 2008-09-22 17:22:09Z rgw_ch $
+ *  $Id: ErstelleRnnCommand.java 4588 2008-10-13 12:54:55Z tschaller $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -45,7 +45,6 @@ public class ErstelleRnnCommand extends AbstractHandler {
 	public static final String ID="bill.create";
 	
 	@SuppressWarnings("unchecked")
-	@Override
 	public Object execute(ExecutionEvent eev) throws ExecutionException{
 
 		Tree tSelection = (Tree) Handler.getParam(eev);
