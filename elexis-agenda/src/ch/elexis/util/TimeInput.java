@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TimeInput.java 1864 2007-02-20 21:47:44Z rgw_ch $
+ *  $Id: TimeInput.java 4584 2008-10-13 09:32:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -94,7 +94,7 @@ public class TimeInput extends Composite {
 	public void setTimeInMinutes(int min){
 		String h=Integer.toString(min/60);
 		String m=Integer.toString(min%60);
-		text.setText(h+":"+StringTool.pad(SWT.LEFT, '0', m, 2));
+		text.setText(h+":"+StringTool.pad(StringTool.LEFT, '0', m, 2));
 		
 	}
 	private boolean isAcceptable(String input){

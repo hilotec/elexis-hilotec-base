@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 3956 2008-05-23 10:57:43Z rgw_ch $
+ *    $Id: Termin.java 4584 2008-10-13 09:32:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -629,9 +629,9 @@ public Object clone()
       int hour=t/60;
       int minute=t-(hour*60);
       StringBuffer ret=new StringBuffer();
-      ret.append(StringTool.pad(SwingConstants.LEFT,'0',Integer.toString(hour),2));
+      ret.append(StringTool.pad(StringTool.LEFT,'0',Integer.toString(hour),2));
       ret.append(":");
-      ret.append(StringTool.pad(SwingConstants.LEFT,'0',Integer.toString(minute),2));
+      ret.append(StringTool.pad(StringTool.LEFT,'0',Integer.toString(minute),2));
       return ret.toString();
   }
   public int getDauer(){
