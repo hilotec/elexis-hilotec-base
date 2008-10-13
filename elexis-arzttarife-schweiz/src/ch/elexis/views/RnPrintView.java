@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 3489 2007-12-30 13:28:16Z rgw_ch $
+ * $Id: RnPrintView.java 4586 2008-10-13 09:33:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -572,7 +572,7 @@ public class RnPrintView extends ViewPart {
 		}
 		text=(TextContainer) ctF.getData("text"); //$NON-NLS-1$
 		replaceHeaderFields(text, rn);
-		text.replace("\\[Seite\\]",StringTool.pad(SWT.LEFT,'0',Integer.toString(page),2)); //$NON-NLS-1$
+		text.replace("\\[Seite\\]",StringTool.pad(StringTool.LEFT,'0',Integer.toString(page),2)); //$NON-NLS-1$
 		return text;
 		
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4141 2008-07-15 16:47:34Z rgw_ch $
+ * $Id: RnPrintView2.java 4586 2008-10-13 09:33:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -522,7 +522,7 @@ public class RnPrintView2 extends ViewPart {
 	private void insertPage(final int page,final Kontakt adressat, final Rechnung rn){
 		createBrief("Tarmedrechnung_S2", adressat);
 		replaceHeaderFields(text, rn);
-		text.replace("\\[Seite\\]",StringTool.pad(SWT.LEFT,'0',Integer.toString(page),2)); //$NON-NLS-1$
+		text.replace("\\[Seite\\]",StringTool.pad(StringTool.LEFT,'0',Integer.toString(page),2)); //$NON-NLS-1$
 	}
 	/*
 	private TextContainer insertPage(final int page, final Kontakt adressat, TextContainer text, final Rechnung rn){
