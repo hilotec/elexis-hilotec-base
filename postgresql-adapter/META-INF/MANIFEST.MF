@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Datenbankverbindung mit PostgreSQL
+Bundle-SymbolicName: ch.elexis.postgresql.connector
+Bundle-Version: 1.0.0
+Bundle-ClassPath: postgresql.jar
+Export-Package: org.postgresql,
+ org.postgresql.core,
+ org.postgresql.core.v2,
+ org.postgresql.core.v3,
+ org.postgresql.ds,
+ org.postgresql.ds.common,
+ org.postgresql.fastpath,
+ org.postgresql.geometric,
+ org.postgresql.jdbc2,
+ org.postgresql.jdbc2.optional,
+ org.postgresql.jdbc3,
+ org.postgresql.largeobject,
+ org.postgresql.ssl,
+ org.postgresql.translation,
+ org.postgresql.util
+Bundle-Vendor: elexis.ch
