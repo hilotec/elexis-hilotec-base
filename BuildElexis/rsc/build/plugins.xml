@@ -34,6 +34,9 @@
 		<available file="../mysql-adapter/build.xml" property="mysql.ok" />
 		<antcall target="mysql" inheritrefs="true" />
 
+		<available file="../postgresql-adapter/build.xml" property="postgresql.ok" />
+		<antcall target="postgresql" inheritrefs="true" />
+
 		<available file="../iatrix-help-wiki/build.xml" property="iatrixhelp.ok" />
 		<antcall target="iatrixhelp" inheritrefs="true" />
 		<available file="../elexis-icpc/build.xml" property="icpc.ok" />
@@ -160,8 +163,12 @@
 	<target name="waeltistatistics" if="waeltistatistics.ok">
 		<ant antfile="../Statistics/build.xml" inheritrefs="true" />
 	</target>
+
 	<target name="mysql" if="mysql.ok">
 		<ant antfile="../mysql-adapter/build.xml" inheritrefs="true" />
+	</target>
+	<target name="postgresql" if="postgresql.ok">
+		<ant antfile="../postgresql-adapter/build.xml" inheritrefs="true" />
 	</target>
 	<target name="hl7import" if="hl7import.ok">
 		<ant antfile="../Laborimport-HL7-Universal/build.xml" inheritrefs="true" />
