@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRFile.java 4018 2008-06-10 16:05:14Z rgw_ch $
+ *  $Id: ESRFile.java 4599 2008-10-14 10:19:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -21,67 +21,75 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
-import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 
 /**
- * Ein ESRFile ist eine Datei, wie sie von der Bank heruntergeladen werden kann, um
- * VESR-Records zu verbuchen
+ * Ein ESRFile ist eine Datei, wie sie von der Bank heruntergeladen werden kann, um VESR-Records zu
+ * verbuchen
+ * 
  * @author gerry
- *
+ * 
  */
 public class ESRFile {
-	List<ESRRecord> list=new ArrayList<ESRRecord>();
+	List<ESRRecord> list = new ArrayList<ESRRecord>();
 	String name;
+	
 	/**
 	 * ein ESR-File einlesen
-	 * @param filename vollständiger Pfadname der Datei
+	 * 
+	 * @param filename
+	 *            vollständiger Pfadname der Datei
 	 * @return true wenn die Datei erfolgreich gelesen werden konnte
 	 */
 	public Result<List<ESRRecord>> read(File file, final IProgressMonitor monitor){
 		
-		if(!file.exists()){
-			return new Result<List<ESRRecord>>(Log.ERRORS,1,"Die Angegebene ESR-Datei wurde nicht gefunden",null,true);
+		if (!file.exists()) {
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 1,
+				"Die Angegebene ESR-Datei wurde nicht gefunden", null, true);
 		}
-		if(!file.canRead()){
-			return new Result<List<ESRRecord>>(Log.ERRORS,2,"Kann ESR-Datei nicht lesen",null,true);
+		if (!file.canRead()) {
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2,
+				"Kann ESR-Datei nicht lesen", null, true);
 		}
-		name=file.getName();
-		Query<ESRRecord> qesr=new Query<ESRRecord>(ESRRecord.class);
+		name = file.getName();
+		Query<ESRRecord> qesr = new Query<ESRRecord>(ESRRecord.class);
 		qesr.add("File", "=", name);
-		List<ESRRecord> list=qesr.execute();
-		if(list.size()>0){
-			return new Result<List<ESRRecord>>(Log.ERRORS,4,"Diese ESR-Datei wurde bereits eingelesen",null,true);
+		List<ESRRecord> list = qesr.execute();
+		if (list.size() > 0) {
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
+				"Diese ESR-Datei wurde bereits eingelesen", null, true);
 		}
-		try{
-			InputStreamReader ir=new InputStreamReader(new FileInputStream(file));
-			BufferedReader br=new BufferedReader(ir);
+		try {
+			InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
+			BufferedReader br = new BufferedReader(ir);
 			String in;
-			//String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
-			LinkedList<String> records=new LinkedList<String>();
-			while((in=br.readLine())!=null){
-				for(int i=0;i<in.length();i+=128){
-					int eidx=i+125;
-					if(eidx>=in.length()){
-						eidx=in.length()-1;
+			// String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
+			LinkedList<String> records = new LinkedList<String>();
+			while ((in = br.readLine()) != null) {
+				for (int i = 0; i < in.length(); i += 128) {
+					int eidx = i + 125;
+					if (eidx >= in.length()) {
+						eidx = in.length() - 1;
 					}
 					records.add(in.substring(i, eidx));
 				}
 			}
-			for(String s:records){
-				ESRRecord esr=new ESRRecord(name,s);
+			for (String s : records) {
+				ESRRecord esr = new ESRRecord(name, s);
 				list.add(esr);
 				monitor.worked(1);
 			}
-			return new Result<List<ESRRecord>>(0,0,"OK",list,false);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false);
 			
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<List<ESRRecord>>(Log.ERRORS,3,"Exception while parsing",list,true);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, "Exception while parsing",
+				list, true);
 		}
 		
 	}
-
+	
 	public List<ESRRecord> getLastResult(){
 		return list;
 	}

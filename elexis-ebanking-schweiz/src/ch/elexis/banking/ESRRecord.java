@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 4162 2008-07-21 11:22:34Z rgw_ch $
+ *  $Id: ESRRecord.java 4599 2008-10-14 10:19:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -110,6 +110,7 @@ public class ESRRecord extends PersistentObject{
 			date=new TimeTool();
 		}
 		set("Gebucht",date.toString(TimeTool.DATE_GER));
+		set("RejectCode","0");
 	}
 	
 	/**
@@ -192,10 +193,14 @@ public class ESRRecord extends PersistentObject{
 			long patnr=Long.parseLong(PatNr);	// führende Nullen wegbringen
 			String PatID=new Query<Patient>(Patient.class).findSingle("PatientNr","=",Long.toString(patnr));
 			if(PatID==null){
-				rejectCode=REJECT.PAT_NUMMER;
+				if(rejectCode==REJECT.OK){
+						rejectCode=REJECT.PAT_NUMMER;
+				}
 				vals[7]="";
 			}else if ( (rn!=null) && (!rn.getFall().getPatient().getId().equals(PatID))){
-				rejectCode=REJECT.PAT_FALSCH;
+				if(rejectCode==REJECT.OK){
+					rejectCode=REJECT.PAT_FALSCH;
+				}
 				vals[7]="";
 			}else{
 			
