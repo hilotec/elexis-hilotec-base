@@ -40,7 +40,7 @@ public class HL7Parser {
 		final Kontakt labor = res.get();
 		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
 		if (!r2.isOK()) {
-			return new Result<Object>(r2.getMessages());
+			return r2;
 		}
 		Patient pat = (Patient)r2.get();
 		
