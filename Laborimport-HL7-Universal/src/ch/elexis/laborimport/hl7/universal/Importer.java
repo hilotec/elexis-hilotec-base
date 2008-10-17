@@ -33,6 +33,11 @@ public class Importer extends Action implements IAction {
 					"Konfigurationsfehler",
 					"Das Transferverzeichnis ist nicht korrekt eingestellt");
 		} else {
+			File archiveDir = new File(dir, "archive");
+			if (!archiveDir.exists()) {
+				archiveDir.mkdir();
+			}
+			
 			int err = 0;
 			int files = 0;
 			Result<Object> r = null;
