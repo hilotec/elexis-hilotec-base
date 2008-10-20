@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis-utilities"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis-importer"/>
+	<classpathentry kind="lib" path="/elexis-utilities/lib/bcprov-jdk15-140.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
