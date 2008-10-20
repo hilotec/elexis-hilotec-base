@@ -79,34 +79,39 @@ public class SoapConverter {
 		return null;
 	}
 	
+	public HashMap<String,Object> loadHash(Element parm){
+		HashMap<String,Object> ret=new HashMap<String,Object>();
+		List<Element> params=parm.getChildren("parameter", ns);
+		for(Element param:params){
+			String type=param.getAttributeValue("type");
+			String s=param.getText();
+			Object res=null;
+			try{
+				if(type.equals(TYPE_STRING)){
+					res=s;
+				}else if(type.equals(TYPE_INTEGRAL)){
+					res=Long.parseLong(s);
+				}else if(type.equals(TYPE_FLOAT)){
+					res=Double.parseDouble(s);
+				}else if(type.equals(TYPE_ARRAY)){
+					res=new BASE64Decoder().decodeBuffer(s);
+				}else if(type.equals(TYPE_HASH)){
+					res=loadHash(param);
+				}else{ 
+					res="** unsupported type **";
+				}
+			}catch(Exception ex){
+				ExHandler.handle(ex);
+				res="** parse error **";
+			}
+			ret.put(param.getAttributeValue("name"), res);
+		}
+		return ret;
+	}
 	public HashMap<String, Object> getParameters(){
 		if(bValid){
-			HashMap<String, Object> ret=new HashMap<String, Object>();
 			Element body=eRoot.getChild("Body",ns);
-			List<Element> params=body.getChildren("parameter", ns);
-			for(Element param:params){
-				String type=param.getAttributeValue("type");
-				String s=param.getText();
-				Object res=null;
-				try{
-					if(type.equals(TYPE_STRING)){
-						res=s;
-					}else if(type.equals(TYPE_INTEGRAL)){
-						res=Long.parseLong(s);
-					}else if(type.equals(TYPE_FLOAT)){
-						res=Double.parseDouble(s);
-					}else if(type.equals(TYPE_ARRAY)){
-						res=new BASE64Decoder().decodeBuffer(s);
-					}else{ // TODO Hashmap
-						res="** unsupported type **";
-					}
-				}catch(Exception ex){
-					ExHandler.handle(ex);
-					res="** parse error **";
-				}
-				ret.put(param.getAttributeValue("name"), res);
-			}
-			return ret;
+			return loadHash(body);
 		}
 		return null;
 	}

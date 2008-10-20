@@ -367,4 +367,8 @@ public class JCEKeyManager {
 	 * }
 	 */
 
+	public SecureRandom getRandom() {
+		return _srnd;
+	}
+
 }

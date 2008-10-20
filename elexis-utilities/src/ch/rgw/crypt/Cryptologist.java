@@ -49,7 +49,7 @@ public interface Cryptologist {
 	 *            the encrypted bytes
 	 * @return the plain array or null of decryption failed
 	 */
-	public byte[] decrypt(byte[] encrypted);
+	public Result<byte[]> decrypt(byte[] encrypted);
 	
 	/**
 	 * Verify a MAC
@@ -67,4 +67,6 @@ public interface Cryptologist {
 	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom, TimeTool validUntil);
 	
 	public Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom, TimeTool validUntil);
+
+	public String getUser();
 }

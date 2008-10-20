@@ -73,7 +73,11 @@ public class SAT {
 	 *         sender's ID
 	 */
 	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
-		byte[] decrypted = crypt.decrypt(encrypted);
+		Result<byte[]> dec = crypt.decrypt(encrypted);
+		if(!dec.isOK()){
+			return new Result<HashMap<String, Object>>(dec.getSeverity(),1,"Decrypt error",null,true);
+		}
+		byte[] decrypted=dec.get();
 		SoapConverter sc = new SoapConverter();
 		if (sc.load(decrypted)) {
 			HashMap<String, Object> fields = sc.getParameters();
@@ -123,7 +127,7 @@ public class SAT {
 			sc.create("xidClient", "0.0.1", "elexis.ch");
 			sc.addHashMap(null, ADM_PAYLOAD, hash);
 			sc.addIntegral(ADM_TIMESTAMP, System.currentTimeMillis());
-			// sc.addString(ADM_SIGNED_BY, userKey);
+			sc.addString(ADM_SIGNED_BY, crypt.getUser());
 			byte[] digest = calcDigest(sc);
 			byte[] signature = crypt.sign(digest);
 			sc.addArray(ADM_SIGNATURE, signature);
@@ -179,7 +183,7 @@ public class SAT {
 			String name = el.getAttributeValue("name");
 			if (type.equalsIgnoreCase(SoapConverter.TYPE_HASH)) {
 				addParameters(el, digest);
-			} else if (type.equalsIgnoreCase(SoapConverter.TYPE_SIGNATURE)) {
+			} else if (name.equalsIgnoreCase(ADM_SIGNATURE)) {
 				continue;
 			} else {
 				digest.update(StringTool.getBytes(type));

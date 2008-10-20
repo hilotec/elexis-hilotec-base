@@ -617,10 +617,10 @@ public class GnuPG implements Cryptologist {
 		return out.getEncoding();
 	}
 	
-	public byte[] decrypt(byte[] encrypted){
+	public Result<byte[]> decrypt(byte[] encrypted){
 		if (decrypt(StringTool.createString(encrypted), new String(passphrase))) {
 			String dec = getResult();
-			return StringTool.getBytes(dec);
+			return new Result<byte[]>(StringTool.getBytes(dec));
 		}
 		return null;
 	}
@@ -672,6 +672,11 @@ public class GnuPG implements Cryptologist {
 	public boolean hasKeyOf(String alias){
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public String getUser() {
+		return identity;
 	}
 	
 }
