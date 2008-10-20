@@ -246,7 +246,6 @@ public class JCECrypter implements Cryptologist {
 		return null;
 	}
 
-	@Override
 	public String getUser() {
 		return userKey;
 	}

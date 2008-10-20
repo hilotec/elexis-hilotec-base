@@ -674,7 +674,6 @@ public class GnuPG implements Cryptologist {
 		return false;
 	}
 
-	@Override
 	public String getUser() {
 		return identity;
 	}
