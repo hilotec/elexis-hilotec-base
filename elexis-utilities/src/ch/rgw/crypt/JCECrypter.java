@@ -1,12 +1,10 @@
 package ch.rgw.crypt;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.OutputStream;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -16,10 +14,8 @@ import java.security.Signature;
 import java.security.cert.X509Certificate;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import ch.rgw.tools.ExHandler;
@@ -77,7 +73,8 @@ public class JCECrypter implements Cryptologist {
 
 		try {
 			PrivateKey pk = km.getPrivateKey(userKey, pwd);
-			Cipher rsaCip = Cipher.getInstance("RSA/None/OAEPPadding", "BC");
+			//Cipher rsaCip = Cipher.getInstance("RSA/None/OAEPPadding", "BC");
+			Cipher rsaCip=Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			rsaCip.init(Cipher.DECRYPT_MODE, pk);
 			ByteArrayInputStream bais=new ByteArrayInputStream(encrypted);
 			DataInputStream di=new DataInputStream(bais);
@@ -93,7 +90,7 @@ public class JCECrypter implements Cryptologist {
 			int len=di.readInt();
 			byte[] d=new byte[len];
 			di.readFully(d);
-			Key aesKey = (SecretKey)new SecretKeySpec(rsaCip.doFinal(d), "AES");
+			Key bfKey = (SecretKey)new SecretKeySpec(rsaCip.doFinal(d), "Blowfish");
             /*
 			mark=di.readShort();
             if(mark!=IV_MARKER){
@@ -104,8 +101,8 @@ public class JCECrypter implements Cryptologist {
 			di.readFully(d);
 			byte[] iv=rsaCip.doFinal(d);
 			*/
-			Cipher aesCip=Cipher.getInstance("Blowfish" /*AES/CBC/PKCS7Padding"*/, "BC");
-			aesCip.init(Cipher.DECRYPT_MODE, aesKey /*, new IvParameterSpec(iv)*/);
+			Cipher aesCip=Cipher.getInstance("Blowfish");
+			aesCip.init(Cipher.DECRYPT_MODE, bfKey /*, new IvParameterSpec(iv)*/);
 			mark=di.readShort();
 			if(mark!=DATA_MARKER){
             	return new Result<byte[]>(Result.SEVERITY.ERROR,4,"unexpected block marker",null,true);
@@ -113,7 +110,7 @@ public class JCECrypter implements Cryptologist {
 			len=di.readInt();
 			d=new byte[len];
 			di.readFully(d);
-			return new Result<byte[]>(aesCip.doFinal(encrypted));
+			return new Result<byte[]>(aesCip.doFinal(d));
 			
 		} catch (Exception e) {
 			ExHandler.handle(e);
@@ -124,15 +121,14 @@ public class JCECrypter implements Cryptologist {
 	public byte[] encrypt(byte[] source, String receiverKeyName) {
 		try {
 			PublicKey cert = km.getPublicKey(receiverKeyName);
-			Cipher aesCip = Cipher.getInstance(
-					"Blowfish","BC");
-			Key aesKey=generateAESKey();
-			aesCip.init(Cipher.ENCRYPT_MODE, aesKey);
-	        byte[] aes_key_enc = aesKey.getEncoded();
-	        //byte[] aes_iv = aesCip.getIV();
+			Cipher bfCip = Cipher.getInstance(
+					"Blowfish");
+			byte[] bfKey=generateBlowfishKey();
+			SecretKeySpec spec=new SecretKeySpec(bfKey,"Blowfish");
+			bfCip.init(Cipher.ENCRYPT_MODE, spec);
 	        
-	        
-	        Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
+	        //Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
+			Cipher rsaCip=Cipher.getInstance("RSA/ECB/PKCS1Padding");
 	        rsaCip.init(Cipher.ENCRYPT_MODE, cert);
 	
 	        ByteArrayOutputStream baos=new ByteArrayOutputStream();
@@ -140,10 +136,10 @@ public class JCECrypter implements Cryptologist {
 	        
 	        dao.writeShort(MAGIC);
 	        dao.writeShort(VERSION);
-	        writeBlock(dao,rsaCip.doFinal(aes_key_enc),KEY_MARKER);
+	        writeBlock(dao,rsaCip.doFinal(bfKey),KEY_MARKER);
 	        //writeBlock(dao,rsaCip.doFinal(aes_iv),IV_MARKER);
 	       // aesCip.init(Cipher.ENCRYPT_MODE, aesKey,new IvParameterSpec(aes_iv));
-	        writeBlock(dao,aesCip.doFinal(source),DATA_MARKER);
+	        writeBlock(dao,bfCip.doFinal(source),DATA_MARKER);
 	        dao.flush();
 			return baos.toByteArray();
 			
@@ -250,6 +246,16 @@ public class JCECrypter implements Cryptologist {
 		return userKey;
 	}
 
+	private byte[] generateBlowfishKey(){
+		try{
+			KeyGenerator key_gen = KeyGenerator.getInstance("Blowfish"); 
+			SecretKey key= key_gen.generateKey();
+			return key.getEncoded();
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return null;
+		}
+	}
 	private Key generateAESKey() {
 		try{
 			KeyGenerator key_gen = KeyGenerator.getInstance("AES", "BC"); 

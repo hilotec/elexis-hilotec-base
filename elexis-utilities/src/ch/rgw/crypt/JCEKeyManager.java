@@ -67,11 +67,8 @@ public class JCEKeyManager {
 
 	static {
 		log = Logger.getLogger("KeyManager");
-		Security
-				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
-		// provider
-		// .
-		// _srnd = SecureRandom.getInstance("SHA1PRNG","SUN"); // Create random
+		// Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); 
+		//_srnd = SecureRandom.getInstance("SHA1PRNG"); // Create random
 		// number generator.
 
 		_srnd = new SecureRandom();
@@ -91,6 +88,12 @@ public class JCEKeyManager {
 	 *            password for the keystore must not be null.
 	 */
 	public JCEKeyManager(String keystoreFile, String type, char[] keystorePwd) {
+		try {
+			_srnd = SecureRandom.getInstance("SHA1PRNG");
+		} catch (NoSuchAlgorithmException e) {
+			ExHandler.handle(e);
+			_srnd=new SecureRandom();
+		} // Create random
 		if (StringTool.isNothing(keystoreFile)) {
 			ksFile = System.getProperty("user.home") + "/.keystore";
 		} else {
@@ -337,15 +340,11 @@ public class JCEKeyManager {
 
 	public KeyPair generateKeys() {
 		try {
-			KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA", "BC");
+			KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA");
 			kp.initialize(1024, _srnd);
 			return kp.generateKeyPair();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			ExHandler.handle(e);
 		}
 		return null;
 
