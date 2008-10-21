@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 4599 2008-10-14 10:19:17Z rgw_ch $
+ *  $Id: ESRView.java 4617 2008-10-21 11:49:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -67,7 +67,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
-	public final static String DISPLAY_ESR = "DisplayESR";
+	public final static String DISPLAY_ESR = "DisplayESR"; //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	private Action loadESRFile;
 	private ViewMenus menus;
@@ -89,7 +89,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 		parent.setLayout(new GridLayout());
 		cv = new CommonViewer();
 		qbe = new Query<ESRRecord>(ESRRecord.class);
-		esrloader = (ESRLoader) JobPool.getJobPool().getJob("ESR-Loader");
+		esrloader = (ESRLoader) JobPool.getJobPool().getJob("ESR-Loader"); //$NON-NLS-1$
 		if (esrloader == null) {
 			esrloader = new ESRLoader(qbe);
 			JobPool.getJobPool().addJob(esrloader);
@@ -102,7 +102,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, parent, SWT.None, getViewSite());
-		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT);
+		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(loadESRFile);
@@ -130,7 +130,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 	
 	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider,
 			ITableColorProvider {
-		DecimalFormat df = new DecimalFormat("###0.00");
+		DecimalFormat df = new DecimalFormat("###0.00"); //$NON-NLS-1$
 		
 		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
@@ -141,24 +141,24 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-					return "-- " + rec.getFile() + " " + rec.getBetrag() + " --";
-				} else if (rec.getId().equals("1")) {
-					return "RechnungNr  Eingelesen/Verrechnet/Gutgeschrieben  Patient  Buchung";
+					return "-- " + rec.getFile() + " " + rec.getBetrag() + " --"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				} else if (rec.getId().equals("1")) { //$NON-NLS-1$
+					return Messages.ESRView_headline;
 				}
 				StringBuilder sb = new StringBuilder(100);
 				Rechnung rn = rec.getRechnung();
 				if (rn != null) {
-					sb.append(rn.getNr()).append(": ");
+					sb.append(rn.getNr()).append(": "); //$NON-NLS-1$
 				}
 				String betrag = rec.getBetrag().getAmountAsString();
-				sb.append(rec.getEinlesedatatum()).append("/").append(rec.getVerarbeitungsdatum())
-					.append("/").append(rec.getValuta()).append(" - ").append(
-						rec.getPatient().getLabel()).append(" - ").append(betrag);
+				sb.append(rec.getEinlesedatatum()).append("/").append(rec.getVerarbeitungsdatum()) //$NON-NLS-1$
+					.append("/").append(rec.getValuta()).append(" - ").append( //$NON-NLS-1$ //$NON-NLS-2$
+						rec.getPatient().getLabel()).append(" - ").append(betrag); //$NON-NLS-1$
 				String dat = rec.getGebucht();
 				if (StringTool.isNothing(dat)) {
-					sb.append(" Nicht verbucht!");
+					sb.append(Messages.ESRView_not_booked);
 				} else {
-					sb.append(" Verbucht: ").append(new TimeTool(dat).toString(TimeTool.DATE_GER));
+					sb.append(Messages.ESRView_booked).append(new TimeTool(dat).toString(TimeTool.DATE_GER));
 				}
 				return sb.toString();
 			}
@@ -193,7 +193,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 		Query<ESRRecord> qbe;
 		
 		ESRLoader(Query<ESRRecord> qbe){
-			super("ESR-Loader", qbe, new String[] {
+			super("ESR-Loader", qbe, new String[] { //$NON-NLS-1$
 				"Datum"
 			});
 			this.qbe = qbe;
@@ -201,7 +201,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 		
 		@Override
 		public IStatus execute(IProgressMonitor monitor){
-			monitor.beginTask("Lade ESR", SWT.INDETERMINATE);
+			monitor.beginTask(Messages.ESRView_loadESR, SWT.INDETERMINATE);
 			
 			qbe.clear();
 			if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
@@ -209,17 +209,17 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 					return Status.CANCEL_STATUS;
 				}
 				qbe.startGroup();
-				qbe.add("MandantID", "=", Hub.actMandant.getId());
+				qbe.add("MandantID", "=", Hub.actMandant.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				qbe.or();
-				qbe.add("MandantID", "", null);
-				qbe.add("RejectCode", "<>", "0");
+				qbe.add("MandantID", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.add("RejectCode", "<>", "0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				qbe.endGroup();
 				qbe.and();
 			}
 			
 			vc.getControlFieldProvider().setQuery(qbe);
 			qbe.orderBy(true, new String[] {
-				"Datum", "Gebucht"
+				"Datum", "Gebucht" //$NON-NLS-1$ //$NON-NLS-2$
 			});
 			List<ESRRecord> list = qbe.execute();
 			result = list.toArray();
@@ -229,23 +229,23 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 		
 		@Override
 		public int getSize(){
-			return PersistentObject.getConnection().queryInt("SELECT COUNT(0) FROM ESRRECORDS");
+			return PersistentObject.getConnection().queryInt("SELECT COUNT(0) FROM ESRRECORDS"); //$NON-NLS-1$
 			
 		}
 		
 	}
 	
 	private void makeActions(){
-		loadESRFile = new Action("ESR-Datei einlesen") {
+		loadESRFile = new Action(Messages.ESRView_read_ESR) {
 			{
-				setToolTipText("Auswahl einer von der Bank heruntergeladenen ESR-Datei zum Einlesen");
+				setToolTipText(Messages.ESRView_read_ESR_explain);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 			
 			@Override
 			public void run(){
 				FileDialog fld = new FileDialog(getViewSite().getShell(), SWT.OPEN);
-				fld.setText("ESR Datei auswählen");
+				fld.setText(Messages.ESRView_selectESR);
 				final String filename = fld.open();
 				if (filename != null) {
 					final ESRFile esrf = new ESRFile();
@@ -256,7 +256,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 								
 								public void run(IProgressMonitor monitor)
 									throws InvocationTargetException, InterruptedException{
-									monitor.beginTask("Lese ESR-Datei ein",
+									monitor.beginTask(Messages.ESRView_reading_ESR,
 										(int) (file.length() / 25));
 									Result<List<ESRRecord>> result = esrf.read(file, monitor);
 									if (result.isOK()) {
@@ -265,7 +265,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 											if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
 												if (rec.getTyp()
 													.equals(ESRRecord.MODE.Summenrecord)) {
-													Hub.log.log("ESR eingelesen. Summe "
+													Hub.log.log(Messages.ESRView_ESR_finished
 														+ rec.getBetrag(), Log.INFOS);
 												} else if ((rec.getTyp()
 													.equals(ESRRecord.MODE.Storno_edv))
@@ -273,8 +273,8 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 														.equals(ESRRecord.MODE.Storno_Schalter))) {
 													Rechnung rn = rec.getRechnung();
 													Money zahlung = rec.getBetrag().negate();
-													rn.addZahlung(zahlung, "Storno für rn "
-														+ rn.getNr() + " / "
+													rn.addZahlung(zahlung, Messages.ESRView_storno_for
+														+ rn.getNr() + " / " //$NON-NLS-1$
 														+ rec.getPatient().getPatCode());
 													rec.setGebucht(null);
 												} else {
@@ -282,10 +282,10 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 													if (rn.getStatus() == RnStatus.BEZAHLT) {
 														if (SWTHelper
 															.askYesNo(
-																"Rechnung schon bezahlt",
-																"Rechnung "
+																Messages.ESRView_paid,
+																Messages.ESRView_rechnung
 																	+ rn.getNr()
-																	+ " ist bereits bezahlt. Trotzdem buchen?") == false) {
+																	+ Messages.ESRView_ispaid) == false) {
 															continue;
 														}
 													}
@@ -294,16 +294,16 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 													if (zahlung.isMoreThan(offen)) {
 														if (SWTHelper
 															.askYesNo(
-																"Betrag zu hoch",
-																"Die Zahlung für Rechnung "
+																Messages.ESRView_toohigh,
+																Messages.ESRView_paymentfor
 																	+ rn.getNr()
-																	+ " übersteigt den offenen Betrag. Trotzdem buchen?") == false) {
+																	+ Messages.ESRView_morethan) == false) {
 															continue;
 														}
 													}
 													
-													rn.addZahlung(zahlung, "VESR für rn "
-														+ rn.getNr() + " / "
+													rn.addZahlung(zahlung, Messages.ESRView_vesrfor
+														+ rn.getNr() + " / " //$NON-NLS-1$
 														+ rec.getPatient().getPatCode());
 													rec.setGebucht(null);
 												}
@@ -312,24 +312,24 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 										monitor.done();
 									} else {
 										ResultAdapter.displayResult(result,
-											"Fehler beim ESR-Einlesen:");
+											Messages.ESRView_errorESR);
 									}
 								}
 								
 							});
 					} catch (InvocationTargetException e) {
 						ExHandler.handle(e);
-						SWTHelper.showError("Fehler beim ESR-Einlesen", "Fehler beim ESR-Einlesen",
-							"Die Datei konnte nicht eingelesen werden " + e.getMessage()
+						SWTHelper.showError(Messages.ESRView_errorESR2, Messages.ESRView_errrorESR2,
+							Messages.ESRView_couldnotread + e.getMessage()
 								+ e.getCause().getMessage());
 					} catch (InterruptedException e) {
 						ExHandler.handle(e);
-						SWTHelper.showError("ESR interrupted", "Das Einlesen wurde unterbrochen", e
+						SWTHelper.showError("ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$
 							.getMessage());
 					}
 					
 				}
-				JobPool.getJobPool().activate("ESR-Loader", Job.SHORT);
+				JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
 				// cv.notify(CommonViewer.Message.update);
 			}
 		};
@@ -345,7 +345,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 	}
 	
 	public void UserChanged(){
-		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT);
+		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
 	}
 	
 }

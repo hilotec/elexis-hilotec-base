@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRFile.java 4599 2008-10-14 10:19:17Z rgw_ch $
+ *  $Id: ESRFile.java 4617 2008-10-21 11:49:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -46,11 +46,11 @@ public class ESRFile {
 		
 		if (!file.exists()) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 1,
-				"Die Angegebene ESR-Datei wurde nicht gefunden", null, true);
+				Messages.ESRFile_esrfile_not_founde, null, true);
 		}
 		if (!file.canRead()) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2,
-				"Kann ESR-Datei nicht lesen", null, true);
+				Messages.ESRFile_cannot_read_esr, null, true);
 		}
 		name = file.getName();
 		Query<ESRRecord> qesr = new Query<ESRRecord>(ESRRecord.class);
@@ -58,7 +58,7 @@ public class ESRFile {
 		List<ESRRecord> list = qesr.execute();
 		if (list.size() > 0) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
-				"Diese ESR-Datei wurde bereits eingelesen", null, true);
+				Messages.ESRFile_file_already_read, null, true);
 		}
 		try {
 			InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
