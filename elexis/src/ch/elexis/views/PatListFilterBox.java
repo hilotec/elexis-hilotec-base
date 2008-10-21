@@ -8,13 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4284 2008-08-15 14:46:23Z rgw_ch $
+ * $Id: PatListFilterBox.java 4619 2008-10-21 15:45:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.SWT;
@@ -25,8 +30,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Sticker;
@@ -40,61 +47,68 @@ import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 
 /**
- * This will be displayed on top of the PatientListeView. It allows to drop Objects (Artikel, 
- * IVerrechnet, IDiagnose etc.) as filter conditions.
- * The PatListFilterBox will also be added as an IFilter to the StructuredViewer that displays
- * the patients thus allowing to filter the list according to the conditions.
+ * This will be displayed on top of the PatientListeView. It allows to drop Objects (Artikel,
+ * IVerrechnet, IDiagnose etc.) as filter conditions. The PatListFilterBox will also be added as an
+ * IFilter to the StructuredViewer that displays the patients thus allowing to filter the list
+ * according to the conditions.
  * 
  * The Objects that can act as filter conditions must e declared as IPatFilter. Later, we'll define
  * an extension point for Plugins to connect their classes.
+ * 
  * @author Gerry
- *
+ * 
  */
-public class PatListFilterBox extends ListDisplay<PersistentObject> implements IFilter{
-    PersistentObjectDropTarget dropTarget;
-    private static final String ETIKETTE="Sticker...";
-    private static final String FELD="Feld...";
-    private static final String LEEREN=" Leeren";
-    private static final String NB_PREFIX="PLF_FLD:";
-    private ArrayList<IPatFilter> filters=new ArrayList<IPatFilter>();
-    private IPatFilter defaultFilter=new PatFilterImpl();
-    private boolean parseError=false;
-    
+public class PatListFilterBox extends ListDisplay<PersistentObject> implements IFilter {
+	PersistentObjectDropTarget dropTarget;
+	private static final String ETIKETTE = "Sticker...";
+	private static final String FELD = "Feld...";
+	private static final String LEEREN = " Leeren";
+	private static final String NB_PREFIX = "PLF_FLD:";
+	private ArrayList<IPatFilter> filters = new ArrayList<IPatFilter>();
+	private IPatFilter defaultFilter = new PatFilterImpl();
+	private boolean parseError = false;
+	private IAction removeFilterAction;
+	
 	PatListFilterBox(Composite parent){
-		super(parent,SWT.NONE,null);
-		setDLDListener(new LDListener(){
-
-			public String getLabel(Object o) {
-				if(o instanceof NamedBlob){
-					return "Feld: "+((NamedBlob)o).getString();
-				}else if(o instanceof PersistentObject){
-					return o.getClass().getSimpleName()+":"+((PersistentObject)o).getLabel();
-				}else{
+		super(parent, SWT.NONE, null);
+		setDLDListener(new LDListener() {
+			
+			public String getLabel(Object o){
+				if (o instanceof NamedBlob) {
+					return "Feld: " + ((NamedBlob) o).getString();
+				} else if (o instanceof PersistentObject) {
+					return o.getClass().getSimpleName() + ":" + ((PersistentObject) o).getLabel();
+				} else {
 					return o.toString();
 				}
 			}
-
-			public void hyperlinkActivated(String l) {
-				if(l.equals(LEEREN)){
+			
+			public void hyperlinkActivated(String l){
+				if (l.equals(LEEREN)) {
 					clear();
-				}else if(l.equals(ETIKETTE)){
+				} else if (l.equals(ETIKETTE)) {
 					new EtikettenAuswahl().open();
-				}else if(l.equals(FELD)){
+				} else if (l.equals(FELD)) {
 					new FeldauswahlDlg().open();
 				}
-			}});
-		addHyperlinks(FELD,ETIKETTE,LEEREN);
-		dropTarget=new PersistentObjectDropTarget("Statfilter",this,new DropReceiver());
-
+			}
+		});
+		makeActions();
+		setMenu(removeFilterAction);
+		addHyperlinks(FELD, ETIKETTE, LEEREN);
+		dropTarget = new PersistentObjectDropTarget("Statfilter", this, new DropReceiver());
+		
 	}
-	private  class DropReceiver implements PersistentObjectDropTarget.Receiver {
-		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
+
+	
+	private class DropReceiver implements PersistentObjectDropTarget.Receiver {
+		public void dropped(final PersistentObject o, final DropTargetEvent ev){
 			PatListFilterBox.this.add(o);
 		}
-
-		public boolean accept(final PersistentObject o) {
-			if(o instanceof Script){
-				if(Hub.acl.request(AccessControlDefaults.SCRIPT_EXECUTE)==false){
+		
+		public boolean accept(final PersistentObject o){
+			if (o instanceof Script) {
+				if (Hub.acl.request(AccessControlDefaults.SCRIPT_EXECUTE) == false) {
 					return false;
 				}
 			}
@@ -103,12 +117,13 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	}
 	
 	public void reset(){
-		parseError=false;
+		parseError = false;
 	}
+	
 	public boolean aboutToStart(){
-		for(PersistentObject cond:getAll()){
-			if(cond instanceof Script){
-				if(!defaultFilter.aboutToStart(cond)){
+		for (PersistentObject cond : getAll()) {
+			if (cond instanceof Script) {
+				if (!defaultFilter.aboutToStart(cond)) {
 					return false;
 				}
 			}
@@ -117,168 +132,194 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	}
 	
 	public boolean finished(){
-		for(PersistentObject cond:getAll()){
-			if(cond instanceof Script){
-				if(!defaultFilter.finished(cond)){
+		for (PersistentObject cond : getAll()) {
+			if (cond instanceof Script) {
+				if (!defaultFilter.finished(cond)) {
 					return false;
 				}
 			}
 		}
 		return true;
 	}
+	
 	/**
-	 * We select the Patient with an AND operation running over all filter conditions
-	 * If no filter was registered for a type, we use our defaultFilter
-	 * @throws Exception 
+	 * We select the Patient with an AND operation running over all filter conditions If no filter
+	 * was registered for a type, we use our defaultFilter
+	 * 
+	 * @throws Exception
 	 */
-	public boolean select(Object toTest) {
-		if(parseError){
+	public boolean select(Object toTest){
+		if (parseError) {
 			return false;
 		}
-		if(toTest instanceof Patient){
-			Patient p=(Patient)toTest;
-
-			for(PersistentObject cond:getAll()){
-				boolean handled=false;
-				for(IPatFilter filter:filters){
-					int result=filter.accept(p, cond);
-					if(result==IPatFilter.REJECT){
+		if (toTest instanceof Patient) {
+			Patient p = (Patient) toTest;
+			
+			for (PersistentObject cond : getAll()) {
+				boolean handled = false;
+				for (IPatFilter filter : filters) {
+					int result = filter.accept(p, cond);
+					if (result == IPatFilter.REJECT) {
 						return false;
 					}
-					if(result==IPatFilter.ACCEPT){
-						handled=true;
-					}else if(result==IPatFilter.FILTER_FAULT){
-						parseError=true;
+					if (result == IPatFilter.ACCEPT) {
+						handled = true;
+					} else if (result == IPatFilter.FILTER_FAULT) {
+						parseError = true;
 					}
 					
 				}
-				if(!handled){
-					int result=defaultFilter.accept(p, cond);
-					if(result==IPatFilter.REJECT){
+				if (!handled) {
+					int result = defaultFilter.accept(p, cond);
+					if (result == IPatFilter.REJECT) {
 						return false;
 					}
-					if(result==IPatFilter.FILTER_FAULT){
+					if (result == IPatFilter.FILTER_FAULT) {
 						remove(cond);
-						parseError=true;
+						parseError = true;
 					}
 				}
-
+				
 			}
 			return true; // Only if all conditions accept or don't handle
 		}
 		return false;
 	}
-
+	
 	public void addPatFilter(IPatFilter filter){
 		filters.add(filter);
 	}
+	
 	public void removeFilter(IPatFilter filter){
 		filters.remove(filter);
 	}
 	
-	public interface IPatFilter{
+	public interface IPatFilter {
 		/** The Patient is not selected with the filter object */
-		public static final int REJECT=-1;
+		public static final int REJECT = -1;
 		/** The Patient is selected with the filter objct */
-		public static final int ACCEPT=1;
+		public static final int ACCEPT = 1;
 		/** We do not handle this type of filter object */
-		public static final int DONT_HANDLE=0;
+		public static final int DONT_HANDLE = 0;
 		/** We encountered an error while trying to filter */
-		public static final int FILTER_FAULT=-2;
+		public static final int FILTER_FAULT = -2;
 		
 		/**
-		 * Will the Patient be accepted for the Filter depending on the Object? 
-		 * @param p The Patient to consider
-		 * @param o The Object to check
+		 * Will the Patient be accepted for the Filter depending on the Object?
+		 * 
+		 * @param p
+		 *            The Patient to consider
+		 * @param o
+		 *            The Object to check
 		 * @return one of REJECT, ACCEPT, DONT_HANDLE
-		 * @throws Exception 
+		 * @throws Exception
 		 */
 		public int accept(Patient p, PersistentObject o);
 		
 		public boolean aboutToStart(PersistentObject o);
+		
 		public boolean finished(PersistentObject o);
 	}
 	
-	class EtikettenAuswahl extends Dialog{
+	class EtikettenAuswahl extends Dialog {
 		List lEtiketten;
 		Sticker[] etiketten;
 		Sticker[] result;
-		public EtikettenAuswahl() {
+		
+		public EtikettenAuswahl(){
 			super(PatListFilterBox.this.getShell());
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText("Etikette/n für Filter auswählen");
 		}
-
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=(Composite) super.createDialogArea(parent);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = (Composite) super.createDialogArea(parent);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			lEtiketten=new List(ret,SWT.MULTI);
-			Query<Sticker> qbe=new Query<Sticker>(Sticker.class);
-			etiketten=qbe.execute().toArray(new Sticker[0]);
-			String[] etexts=new String[etiketten.length];
-			for(int i=0;i<etiketten.length;i++){
-				etexts[i]=etiketten[i].getLabel();
+			lEtiketten = new List(ret, SWT.MULTI);
+			Query<Sticker> qbe = new Query<Sticker>(Sticker.class);
+			etiketten = qbe.execute().toArray(new Sticker[0]);
+			String[] etexts = new String[etiketten.length];
+			for (int i = 0; i < etiketten.length; i++) {
+				etexts[i] = etiketten[i].getLabel();
 			}
 			lEtiketten.setItems(etexts);
 			return ret;
 		}
-
+		
 		@Override
-		protected void okPressed() {
-			int[] indices=lEtiketten.getSelectionIndices();
-			result=new Sticker[indices.length];
-			for(int i=0;i<indices.length;i++){
+		protected void okPressed(){
+			int[] indices = lEtiketten.getSelectionIndices();
+			result = new Sticker[indices.length];
+			for (int i = 0; i < indices.length; i++) {
 				add(etiketten[indices[i]]);
 			}
 			super.okPressed();
 		}
 	}
 	
-	class FeldauswahlDlg extends Dialog{
+	class FeldauswahlDlg extends Dialog {
 		Text tFeld, tValue;
 		Combo cbOp;
 		public NamedBlob value;
-		public FeldauswahlDlg() {
+		
+		public FeldauswahlDlg(){
 			super(PatListFilterBox.this.getShell());
 		}
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText("Filterbedingung eingeben");
 		}
-
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=(Composite) super.createDialogArea(parent);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = (Composite) super.createDialogArea(parent);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			ret.setLayout(new GridLayout(3,false));
-			new Label(ret,SWT.NONE).setText("Feld");
-			new Label(ret,SWT.NONE).setText(" ");
-			new Label(ret,SWT.NONE).setText("Wert");
-			tFeld=new Text(ret,SWT.BORDER);
+			ret.setLayout(new GridLayout(3, false));
+			new Label(ret, SWT.NONE).setText("Feld");
+			new Label(ret, SWT.NONE).setText(" ");
+			new Label(ret, SWT.NONE).setText("Wert");
+			tFeld = new Text(ret, SWT.BORDER);
 			tFeld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			cbOp=new Combo(ret,SWT.SINGLE|SWT.READ_ONLY);
-			cbOp.setItems(new String[]{"=","LIKE","Regexp"});
+			cbOp = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
+			cbOp.setItems(new String[] {
+				"=", "LIKE", "Regexp"
+			});
 			cbOp.select(0);
-			tValue=new Text(ret,SWT.BORDER);
+			tValue = new Text(ret, SWT.BORDER);
 			tValue.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			return ret;
 		}
-
+		
 		@Override
-		protected void okPressed() {
-			String fld=tFeld.getText();
-			if(fld.length()>0){
-				value=NamedBlob.load(NB_PREFIX+fld);
-				value.putString(fld+"::"+cbOp.getText()+"::"+tValue.getText());
+		protected void okPressed(){
+			String fld = tFeld.getText();
+			if (fld.length() > 0) {
+				value = NamedBlob.load(NB_PREFIX + fld);
+				value.putString(fld + "::" + cbOp.getText() + "::" + tValue.getText());
 				PatListFilterBox.this.add(value);
 			}
 			super.okPressed();
 		}
+	}
+	
+	private void makeActions(){
+		removeFilterAction=new Action("entfernen"){
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+				setToolTipText("Diese Filterbedingung entfernen");
+			}
+			@Override
+			public void run(){
+				PersistentObject sel=getSelection();
+				remove(sel);
+			}
+		};
 	}
 }
