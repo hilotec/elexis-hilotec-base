@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesList.java 1647 2007-01-22 21:44:08Z rgw_ch $
+ *  $Id: NotesList.java 4621 2008-10-22 05:25:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.notes;
@@ -24,9 +24,10 @@ import ch.elexis.util.SWTHelper;
 
 public class NotesList extends Composite {
 	TreeViewer tv;
+	
 	NotesList(Composite parent){
-		super(parent,SWT.NONE);
-		tv=new TreeViewer(this,SWT.NONE);
+		super(parent, SWT.NONE);
+		tv = new TreeViewer(this, SWT.NONE);
 		setLayout(new GridLayout());
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setContentProvider(new NotesContentProvider());
@@ -36,6 +37,7 @@ public class NotesList extends Composite {
 		tv.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 		
 	}
+	
 	public void dispose(){
 		tv.removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 	}
