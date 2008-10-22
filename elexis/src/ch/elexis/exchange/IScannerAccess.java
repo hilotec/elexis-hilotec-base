@@ -24,6 +24,9 @@ public interface IScannerAccess {
 	 */
 	public ISource[] getSources();
 
+	public ISource getDefaultSource();
+	
+	public void setDefaultSource(ISource src);
 	/**
 	 * let the user enter configuration details (e.g. resolution settings, color
 	 * settings) with the scanner specific dialog
