@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesDetail.java 3242 2007-10-09 04:25:24Z rgw_ch $
+ *  $Id: NotesDetail.java 4626 2008-10-22 18:11:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -36,29 +36,30 @@ public class NotesDetail extends Composite {
 	private ETFTextPlugin etf;
 	List lRefs;
 	ScrolledForm fNote, fRefs;
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk = Desk.getToolkit();
 	private IAction newRefAction, delRefAction;
 	Note actNote;
 	
 	NotesDetail(Composite parent){
-		super(parent,SWT.NONE);
-		etf=new ETFTextPlugin();
+		super(parent, SWT.NONE);
+		etf = new ETFTextPlugin();
 		
 		setLayout(new GridLayout());
-		SashForm sash=new SashForm(this,SWT.VERTICAL);
+		SashForm sash = new SashForm(this, SWT.VERTICAL);
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		fNote=tk.createScrolledForm(sash);
+		fNote = tk.createScrolledForm(sash);
 		fNote.getBody().setLayout(new GridLayout());
-		etf.createContainer(fNote.getBody(),new SaveCallback()).setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		etf.createContainer(fNote.getBody(), new SaveCallback()).setLayoutData(
+			SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
-		fRefs=tk.createScrolledForm(sash);
+		fRefs = tk.createScrolledForm(sash);
 		fRefs.getBody().setLayout(new GridLayout());
-		lRefs=new List(fRefs.getBody(),SWT.SINGLE);
-		lRefs.addMouseListener(new MouseAdapter(){
+		lRefs = new List(fRefs.getBody(), SWT.SINGLE);
+		lRefs.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				String[] sel=lRefs.getSelection();
-				if(sel.length>0){
+			public void mouseDoubleClick(MouseEvent e){
+				String[] sel = lRefs.getSelection();
+				if (sel.length > 0) {
 					execute(sel[0]);
 				}
 			}
@@ -71,63 +72,68 @@ public class NotesDetail extends Composite {
 		fRefs.getToolBarManager().add(delRefAction);
 		fRefs.updateToolBar();
 		tk.adapt(lRefs, true, true);
-		sash.setWeights(new int[]{80,20});
+		sash.setWeights(new int[] {
+			80, 20
+		});
 	}
 	
 	public void setNote(Note note){
-		actNote=note;
+		actNote = note;
 		fNote.setText(note.get("Title"));
 		etf.loadFromByteArray(note.getContent(), false);
-		//etf.insertText("",note.get("Contents"),SWT.LEFT);
+		// etf.insertText("",note.get("Contents"),SWT.LEFT);
 		lRefs.removeAll();
-		for(String s:note.getRefs()){
+		for (String s : note.getRefs()) {
 			lRefs.add(s);
 		}
 	}
 	
 	public void execute(String filename){
-		try{
-			int r=filename.lastIndexOf('.');
-			String ext="";
-			if(r!=-1){
-				ext=filename.substring(r+1);
+		try {
+			int r = filename.lastIndexOf('.');
+			String ext = "";
+			if (r != -1) {
+				ext = filename.substring(r + 1);
 			}
-			Program proggie=Program.findProgram(ext);
-			if(proggie!=null){
+			Program proggie = Program.findProgram(ext);
+			if (proggie != null) {
 				proggie.execute(filename);
-			}else{
-				if(Program.launch(filename)==false){
-					Runtime.getRuntime().exec(filename);	
+			} else {
+				if (Program.launch(filename) == false) {
+					Runtime.getRuntime().exec(filename);
 				}
-								
+				
 			}
-
-		}catch(Exception ex){
+			
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			SWTHelper.showError("Konnte Datei nicht starten", ex.getMessage());
 		}
 	}
 	
 	private void makeActions(){
-		newRefAction=new Action("Neu..."){
+		newRefAction = new Action("Neu...") {
 			{
 				setToolTipText("Einen neuen Querverweis erstellen");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
 			}
+			
 			public void run(){
-				if(new AddLinkDialog(getShell(),actNote).open()==Dialog.OK){
+				if (new AddLinkDialog(getShell(), actNote).open() == Dialog.OK) {
 					setNote(actNote);
 				}
 			}
 		};
-		delRefAction=new Action("Löschen..."){
+		delRefAction = new Action("Löschen...") {
 			{
 				setToolTipText("Querverweis löschen");
 				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
 			}
+			
 			public void run(){
-				String actRef=lRefs.getSelection()[0];
-				if(SWTHelper.askYesNo("Querverweis löschen", "Wirklich diesen Querverweis löschen?")){
+				String actRef = lRefs.getSelection()[0];
+				if (SWTHelper.askYesNo("Querverweis löschen",
+					"Wirklich diesen Querverweis löschen?")) {
 					actNote.removeRef(actRef);
 					setNote(actNote);
 				}
@@ -135,15 +141,15 @@ public class NotesDetail extends Composite {
 		};
 	}
 	
-	class SaveCallback implements ICallback{
-
-		public void save() {
-			byte[] cnt=etf.storeToByteArray();
+	class SaveCallback implements ICallback {
+		
+		public void save(){
+			byte[] cnt = etf.storeToByteArray();
 			actNote.setContent(cnt);
 			
 		}
-
-		public boolean saveAs() {
+		
+		public boolean saveAs(){
 			// TODO Auto-generated method stub
 			return false;
 		}

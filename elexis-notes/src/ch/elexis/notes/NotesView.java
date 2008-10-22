@@ -8,11 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 4624 2008-10-22 13:32:17Z rgw_ch $
+ *  $Id: NotesView.java 4626 2008-10-22 18:11:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
-
-import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -21,7 +19,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -33,13 +30,13 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.exchange.IScannerAccess;
-import ch.elexis.exchange.IScannerAccess.ISource;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 
 public class NotesView extends ViewPart implements ActivationListener, SelectionListener {
+	private static final String PREFERRED_SCANSERVICE="ScanToPDFService";
 	ScrolledForm fMaster;
 	NotesList master;
 	NotesDetail detail;
@@ -170,7 +167,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 			}
 			
 		};
-		if (Extensions.isServiceAvailable("ScannerService")) {
+		if (Extensions.isServiceAvailable(PREFERRED_SCANSERVICE)) {
 			hasScanner = true;
 			scanAction = new Action("Scannen...") {
 				{
@@ -180,30 +177,27 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 				
 				public void run(){
 					try {
-						IScannerAccess scanner =
-							(IScannerAccess) Extensions.findBestService("ScannerService");
+						 Object scanner =
+							 Extensions.findBestService(PREFERRED_SCANSERVICE);
 						if (scanner != null) {
-							ISource defsrc = scanner.getDefaultSource();
-							if (defsrc != null) {
-								ArrayList<ImageData> images = new ArrayList<ImageData>();
-								do {
-									ImageData imageData = scanner.aquire(defsrc);
-									images.add(imageData);
-								} while (SWTHelper.askYesNo("Bild gelesen",
-									"Weitere Seiten hinzufügen?"));
+							Result<byte[]> res=(Result<byte[]>)Extensions.executeService(scanner, "acquire", new Class[0], new Object[0]);
+							if(res.isOK()){
 								Note act = (Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
+								byte[] pdf=res.get();
 								InputDialog id =
 									new InputDialog(
 										getViewSite().getShell(),
-										"Neues Dokument einbinden",
-										"Bitte geben Sie einen Namen für das eben gescannte Dokument ein.",
+										"Neues Dokument importieren",
+										"Bitte geben Sie einen Namen für das eben gescannte Document ein",
 										"", null);
 								if (id.open() == Dialog.OK) {
-									/* Note note= */new Note(act, id.getValue(), "");
-											master.tv.refresh();
+									/* Note note= */new Note(act, id.getValue(), pdf, "application/pdf");
+									master.tv.refresh();
 								}
+								
 							}
-						}		
+						}
+									
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}

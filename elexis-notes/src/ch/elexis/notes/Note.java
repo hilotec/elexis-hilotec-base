@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4624 2008-10-22 13:32:17Z rgw_ch $
+ *  $Id: Note.java 4626 2008-10-22 18:11:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -25,19 +25,20 @@ import ch.rgw.tools.VersionInfo;
 
 public class Note extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_NOTES";
-	private static final String DBVERSION = "0.3.0";
+	private static final String DBVERSION = "0.3.1";
 	
 	private static final String create =
 		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25),"
 			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80),"
 			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255),"
-			+ "refs			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,Title,Parent) VALUES('1','"
+			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,Title,Parent) VALUES('1','"
 			+ DBVERSION + "','xxx');";
 	
-	private static final String upd030 = "ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);";
+	private static final String upd031 = "ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);"+
+		"ALTER TABLE "+TABLENAME+" ADD mimetype VARCHAR(80);";
 	
 	static {
-		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords");
+		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords", "mimetype");
 		Note start = load("1");
 		if (!start.exists()) {
 			createTable(TABLENAME, create);
@@ -48,8 +49,8 @@ public class Note extends PersistentObject {
 					getConnection().exec(
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
 				}
-				if (vi.isOlder("0.3.0")) {
-					createTable(TABLENAME, upd030);
+				if (vi.isOlder("0.3.1")) {
+					createTable(TABLENAME, upd031);
 				}
 				start.set("Title", DBVERSION);
 			}
@@ -59,8 +60,8 @@ public class Note extends PersistentObject {
 	public Note(Note parent, String title, String text){
 		create(null);
 		set(new String[] {
-			"Title", "Datum"
-		}, title, new TimeTool().toString(TimeTool.DATE_GER));
+			"Title", "Datum", "mimetype"
+		}, title, new TimeTool().toString(TimeTool.DATE_GER), "text/plain");
 		try {
 			setContent(text.getBytes("utf-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -72,11 +73,11 @@ public class Note extends PersistentObject {
 		}
 	}
 	
-	public Note(Note parent, String title, byte[] contents){
+	public Note(Note parent, String title, byte[] contents, String mimetype){
 		create(null);
 		set(new String[] {
-			"Title", "Datum"
-		}, title, new TimeTool().toString(TimeTool.DATE_GER));
+			"Title", "Datum" , "mimetype"
+		}, title, new TimeTool().toString(TimeTool.DATE_GER),mimetype);
 		setContent(contents);
 		if (parent != null) {
 			set("Parent", parent.getId());
