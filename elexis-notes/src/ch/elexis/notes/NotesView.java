@@ -8,9 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 4621 2008-10-22 05:25:23Z rgw_ch $
+ *  $Id: NotesView.java 4624 2008-10-22 13:32:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
+
+import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -19,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -31,6 +34,7 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.IScannerAccess;
+import ch.elexis.exchange.IScannerAccess.ISource;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -39,7 +43,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 	ScrolledForm fMaster;
 	NotesList master;
 	NotesDetail detail;
-	boolean hasScanner=false;
+	boolean hasScanner = false;
 	private IAction newCategoryAction, newNoteAction, delNoteAction, scanAction;
 	FormToolkit tk = Desk.getToolkit();
 	
@@ -54,7 +58,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 		// detail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		fMaster.setText("Kategorien");
-		if(hasScanner){
+		if (hasScanner) {
 			fMaster.getToolBarManager().add(scanAction);
 			fMaster.getToolBarManager().add(new Separator());
 		}
@@ -166,18 +170,41 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 			}
 			
 		};
-		if(Extensions.isServiceAvailable("ScannerService")){
-			hasScanner=true;
-			scanAction=new Action("Scannen..."){
+		if (Extensions.isServiceAvailable("ScannerService")) {
+			hasScanner = true;
+			scanAction = new Action("Scannen...") {
 				{
 					setToolTipText("Document mit dem Scanner einlesen");
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 				}
+				
 				public void run(){
 					try {
-						IScannerAccess scanner=(IScannerAccess)Extensions.findBestService("ScannerService");
-						scanner.aquire(null);
-					}catch(Exception ex){
+						IScannerAccess scanner =
+							(IScannerAccess) Extensions.findBestService("ScannerService");
+						if (scanner != null) {
+							ISource defsrc = scanner.getDefaultSource();
+							if (defsrc != null) {
+								ArrayList<ImageData> images = new ArrayList<ImageData>();
+								do {
+									ImageData imageData = scanner.aquire(defsrc);
+									images.add(imageData);
+								} while (SWTHelper.askYesNo("Bild gelesen",
+									"Weitere Seiten hinzufügen?"));
+								Note act = (Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
+								InputDialog id =
+									new InputDialog(
+										getViewSite().getShell(),
+										"Neues Dokument einbinden",
+										"Bitte geben Sie einen Namen für das eben gescannte Dokument ein.",
+										"", null);
+								if (id.open() == Dialog.OK) {
+									/* Note note= */new Note(act, id.getValue(), "");
+											master.tv.refresh();
+								}
+							}
+						}		
+					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}
 				}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4621 2008-10-22 05:25:23Z rgw_ch $
+ *  $Id: Note.java 4624 2008-10-22 13:32:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -25,16 +25,19 @@ import ch.rgw.tools.VersionInfo;
 
 public class Note extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_NOTES";
-	private static final String DBVERSION = "0.2.0";
+	private static final String DBVERSION = "0.3.0";
 	
 	private static final String create =
 		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25),"
 			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80),"
-			+ "Date			CHAR(8)," + "Contents		BLOB," + "refs			TEXT);" + "INSERT INTO " + TABLENAME
-			+ " (ID,Title,Parent) VALUES('1','" + DBVERSION + "','xxx');";
+			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255),"
+			+ "refs			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,Title,Parent) VALUES('1','"
+			+ DBVERSION + "','xxx');";
+	
+	private static final String upd030 = "ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);";
 	
 	static {
-		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs");
+		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords");
 		Note start = load("1");
 		if (!start.exists()) {
 			createTable(TABLENAME, create);
@@ -44,8 +47,11 @@ public class Note extends PersistentObject {
 				if (vi.isOlder("0.2.0")) {
 					getConnection().exec(
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
-					start.set("Title", DBVERSION);
 				}
+				if (vi.isOlder("0.3.0")) {
+					createTable(TABLENAME, upd030);
+				}
+				start.set("Title", DBVERSION);
 			}
 		}
 	}
@@ -61,6 +67,17 @@ public class Note extends PersistentObject {
 			ExHandler.handle(e);
 			// should never happen
 		}
+		if (parent != null) {
+			set("Parent", parent.getId());
+		}
+	}
+	
+	public Note(Note parent, String title, byte[] contents){
+		create(null);
+		set(new String[] {
+			"Title", "Datum"
+		}, title, new TimeTool().toString(TimeTool.DATE_GER));
+		setContent(contents);
 		if (parent != null) {
 			set("Parent", parent.getId());
 		}
