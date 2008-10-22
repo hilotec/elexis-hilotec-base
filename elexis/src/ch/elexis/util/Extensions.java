@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Extensions.java 4620 2008-10-21 18:03:20Z rgw_ch $
+ * $Id: Extensions.java 4622 2008-10-22 05:25:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -134,13 +134,19 @@ public class Extensions {
 	}
 	
 	/**
-	 * We duplicate in sense the OSGi Service Registry, but place it on top of the Extension point
+	 * We sort of replicate the OSGi Service Registry, but place it on top of the Extension point
 	 * system.
 	 * 
-	 * @param name
-	 * @return
+	 * A Plugin can publish a service by accessing the ExtensionPoint ch.elexis.ServiceRegistry and
+	 * defining a service with an aritrary name.
+	 * A different plugin can implement the same Service "better" by using the same name but declaring
+	 * a higher "value"
+	 * A Client can retrieve and use Services through isServiceAvailable() and findBestService()
+	 * @param name name of the service to load
+	 * @return the interface Object that the "best" Service with this name defines or null if no
+	 * service with the given name could be loaded.
 	 */
-	public Object findBestService(String name){
+	public static Object findBestService(String name){
 		int value=Integer.MIN_VALUE;
 		IConfigurationElement best=null;
 		List<IConfigurationElement> services=getExtensions("ch.elexis.ServiceRegistry");
@@ -170,5 +176,16 @@ public class Extensions {
 		}
 		
 		
+	}
+	
+	public static boolean isServiceAvailable(String name){
+		List<IConfigurationElement> services=getExtensions("ch.elexis.ServiceRegistry");
+		for(IConfigurationElement ic:services){
+			String nam=ic.getAttribute("name");
+			if(nam.equalsIgnoreCase(name)){
+				return true;
+			}
+		}
+		return false;
 	}
 }
