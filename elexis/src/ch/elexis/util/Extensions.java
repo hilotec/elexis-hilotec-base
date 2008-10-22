@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Extensions.java 4622 2008-10-22 05:25:52Z rgw_ch $
+ * $Id: Extensions.java 4625 2008-10-22 17:04:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -178,6 +179,17 @@ public class Extensions {
 		
 	}
 	
+	public static Object executeService(Object service, String method, Class[] types, Object[] params){
+		try{
+			Method m=service.getClass().getMethod(method, types);
+			return m.invoke(service, params);
+			
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return null;
+		}
+		
+	}
 	public static boolean isServiceAvailable(String name){
 		List<IConfigurationElement> services=getExtensions("ch.elexis.ServiceRegistry");
 		for(IConfigurationElement ic:services){
