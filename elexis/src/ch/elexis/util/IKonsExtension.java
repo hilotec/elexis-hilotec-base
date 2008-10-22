@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IKonsExtension.java 2130 2007-03-19 16:33:45Z rgw_ch $
+ * $Id: IKonsExtension.java 4627 2008-10-22 18:27:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
-
-import java.util.Collection;
-import java.util.Collections;
 
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.action.IAction;
@@ -23,67 +20,79 @@ import org.eclipse.swt.custom.StyleRange;
 import ch.elexis.text.EnhancedTextField;
 
 /**
- * Erweiterung für Konsultationseinträge. Wird vom Extensionpoint KonsExtensions benötigt
- * Eine KonsExtension kann Textstellen umformatieren, kann Hyperlinks einfügen und kann
- * Einträge für das Popup-Menu der Konsultationsanzeige definieren.
- * Die IKonsExtension wird zunächst beim Analysieren der KonsExtension mit connect()
- * initialisiert. Dann wird sie beim Rendern des Texts im KonsDetailView für jedes
- * von ihr deklarierte xref-tag einmal aufgerufen (doLayout). Sie kann da "true" zurückgeben 
- * um anzuzeigen, dass sie auf Mausklicks reagieren will, oder false, wenn es nur um Layout
- * ohne Klickaktivität geht. Falls sie auf doLayout "true" zurückgegeben hat, wird sie immer
- * dann via doXref aufgerufe, wenn der Benutzer den von ihr gesetzten Link anklickt.
- * Schliesslich wird die IKonsExtension immer dann aufgerufen, wenn der Anwender das Kontext-
- * menu des Textfelds anzeigen will (rechte Maustaste). Wenn getAction eine IAction zurückliefert,
- * dann wird diese ins Kontextmenu eingebunden. Wenn getAction null zurückliefert, erfolgt keine
- * Veränderung des Kontxtmenüs.
- * Referenzimplementation: ch.elexis.privatnotizen
+ * Erweiterung für Konsultationseinträge. Wird vom Extensionpoint KonsExtensions benötigt Eine
+ * KonsExtension kann Textstellen umformatieren, kann Hyperlinks einfügen und kann Einträge für das
+ * Popup-Menu der Konsultationsanzeige definieren. Die IKonsExtension wird zunächst beim Analysieren
+ * der KonsExtension mit connect() initialisiert. Dann wird sie beim Rendern des Texts im
+ * KonsDetailView für jedes von ihr deklarierte xref-tag einmal aufgerufen (doLayout). Sie kann da
+ * "true" zurückgeben um anzuzeigen, dass sie auf Mausklicks reagieren will, oder false, wenn es nur
+ * um Layout ohne Klickaktivität geht. Falls sie auf doLayout "true" zurückgegeben hat, wird sie
+ * immer dann via doXref aufgerufe, wenn der Benutzer den von ihr gesetzten Link anklickt.
+ * Schliesslich wird die IKonsExtension immer dann aufgerufen, wenn der Anwender das Kontext- menu
+ * des Textfelds anzeigen will (rechte Maustaste). Wenn getAction eine IAction zurückliefert, dann
+ * wird diese ins Kontextmenu eingebunden. Wenn getAction null zurückliefert, erfolgt keine
+ * Veränderung des Kontxtmenüs. Referenzimplementation: ch.elexis.privatnotizen
+ * 
  * @author gerry
- *
+ * 
  */
-public interface IKonsExtension extends IExecutableExtension{
+public interface IKonsExtension extends IExecutableExtension {
 	
 	/**
 	 * diese KonsExtension mit einem EnhancedTextField verknüpfen
-	 * @param tf das TextField, an das diese Extension gebunden wird
+	 * 
+	 * @param tf
+	 *            das TextField, an das diese Extension gebunden wird
 	 * @return einen Namen, der diese Extension eindeutig identifiziert
 	 */
 	public String connect(EnhancedTextField tf);
+	
 	/**
 	 * Einen Querverweis für die Darstellung layouten
-	 * @param n	eine StyleRange zum beliebig bearbeiten
-	 * @param provider den Provider-String, den diese IKonsExtension dem Extension-Point
-	 * angegeben hat
-	 * @param id die ID, die die IKonsExtension dieser Textstelle zugewiesen hat
+	 * 
+	 * @param n
+	 *            eine StyleRange zum beliebig bearbeiten
+	 * @param provider
+	 *            den Provider-String, den diese IKonsExtension dem Extension-Point angegeben hat
+	 * @param id
+	 *            die ID, die die IKonsExtension dieser Textstelle zugewiesen hat
 	 * @return true wenn der Text auch als Hyperlink funktionieren soll
 	 */
 	public boolean doLayout(StyleRange n, String provider, String id);
+	
 	/**
 	 * Aktion für einen Querverweis auslösen (wurde angeklickt)
-	 * @param refProvider Provider-String
-	 * @param refID ID für die angeklickte Textstelle
+	 * 
+	 * @param refProvider
+	 *            Provider-String
+	 * @param refID
+	 *            ID für die angeklickte Textstelle
 	 * @return false wenn bei der Aktion ein Fehler auftrat
 	 */
-	public boolean doXRef(String refProvider, String refID); 	
+	public boolean doXRef(String refProvider, String refID);
 	
 	/**
 	 * Transportable Repräsentation des eingebetteten Inhalts liefern
-	 * @param refProvider Provider-String
-	 * @param refID ID für das betreffende Object
-	 * @return ein MimePart mit dem Objekt, oder null, wenn die Extension keine Tranpsortform hat 
+	 * 
+	 * @param refProvider
+	 *            Provider-String
+	 * @param refID
+	 *            ID für das betreffende Object
+	 * @return ein MimePart mit dem Objekt, oder null, wenn die Extension keine Tranpsortform hat
 	 */
-	//public MimePart doRender(String refProvider, String refID);
+	// public MimePart doRender(String refProvider, String refID);
 	
-	
-	//public boolean doImport(MimePart object, int pos, String title);
-	
+	// public boolean doImport(MimePart object, int pos, String title);
 	/**
 	 * Actions für diese Extension holen. z.B. für Kontextmenu
 	 */
 	public IAction[] getActions();
-
+	
 	/**
 	 * Ein Object wurde eingefügt, z.B. mit drag&drop
-	 * @param o eingefügtes Object
+	 * 
+	 * @param o
+	 *            eingefügtes Object
 	 */
 	public void insert(Object o, int pos);
 	
