@@ -15,5 +15,13 @@
             Class="ch.elexis.notes.NoteFactory"
             name="NotesFactory"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.notes.Preferences"
+            id="Preferences"
+            name="Notizen">
+      </page>
+   </extension>
 
 </plugin>

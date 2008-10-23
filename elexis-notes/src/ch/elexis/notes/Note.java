@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4626 2008-10-22 18:11:56Z rgw_ch $
+ *  $Id: Note.java 4631 2008-10-23 11:29:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -101,6 +101,7 @@ public class Note extends PersistentObject {
 		return StringTool.splitAL(all, ",");
 	}
 	
+
 	public void addRef(String ref){
 		List<String> refs = getRefs();
 		refs.add(ref);

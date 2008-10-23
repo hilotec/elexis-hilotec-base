@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesDetail.java 4626 2008-10-22 18:11:56Z rgw_ch $
+ *  $Id: NotesDetail.java 4631 2008-10-23 11:29:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -115,7 +115,7 @@ public class NotesDetail extends Composite {
 		newRefAction = new Action("Neu...") {
 			{
 				setToolTipText("Einen neuen Querverweis erstellen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
 			
 			public void run(){
@@ -127,7 +127,7 @@ public class NotesDetail extends Composite {
 		delRefAction = new Action("Löschen...") {
 			{
 				setToolTipText("Querverweis löschen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
 			
 			public void run(){

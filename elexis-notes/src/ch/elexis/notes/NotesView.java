@@ -8,9 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 4626 2008-10-22 18:11:56Z rgw_ch $
+ *  $Id: NotesView.java 4631 2008-10-23 11:29:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -24,14 +28,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.text.ExternalLink;
+import ch.elexis.text.Samdas;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
@@ -113,7 +123,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 		newCategoryAction = new Action("Neue Kategorie") {
 			{
 				setToolTipText("Eine neue Haupt-Kategorie erstellen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
 			
 			public void run(){
@@ -191,7 +201,29 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 										"Bitte geben Sie einen Namen für das eben gescannte Document ein",
 										"", null);
 								if (id.open() == Dialog.OK) {
-									/* Note note= */new Note(act, id.getValue(), pdf, "application/pdf");
+									String name=id.getValue();
+									String basedir=Hub.localCfg.get(Preferences.CFGTREE, null);
+									if(basedir==null){
+										SWTHelper.alert("Basisverzeichnis falsch", "Es ist kein Basisverzeichnis definiert");
+										return;
+									}
+									File file=new File(basedir,name.replaceAll("\\s", "_")+".pdf");
+									if(!file.createNewFile()){
+										SWTHelper.alert("Importfehler", "Kann Datei "+file.getAbsolutePath()+" nicht schreiben");
+										return;
+									}
+									FileOutputStream fout=new FileOutputStream(file);
+									BufferedOutputStream bout=new BufferedOutputStream(fout);
+									bout.write(pdf);
+									bout.close();
+									Samdas samdas=new Samdas(name);
+									Samdas.Record record=samdas.getRecord();
+									Samdas.XRef xref=new Samdas.XRef(ExternalLink.ID,file.getAbsolutePath(),0,name.length());
+									record.add(xref);
+									XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
+									String cnt= xo.outputString(samdas.getDocument());
+									byte[] nb=CompEx.Compress(cnt.getBytes("utf-8"), CompEx.ZIP);
+									/* Note note= */new Note(act, name, nb, "text/xml");
 									master.tv.refresh();
 								}
 								
