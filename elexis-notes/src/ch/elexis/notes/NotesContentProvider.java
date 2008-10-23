@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesContentProvider.java 1644 2007-01-22 17:03:45Z rgw_ch $
+ *  $Id: NotesContentProvider.java 4632 2008-10-23 12:31:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -21,11 +23,13 @@ import ch.elexis.data.Query;
 
 public class NotesContentProvider implements ITreeContentProvider {
 	Query<Note> qbe=new Query<Note>(Note.class);
+	NoteComparator nc=new NoteComparator();
 	
 	public Object[] getChildren(Object element) {
 		qbe.clear();
 		qbe.add("Parent", "=", ((Note)element).getId());
 		List<Note> res=qbe.execute();
+		Collections.sort(res,nc);
 		return res.toArray();
 	}
 
@@ -45,6 +49,8 @@ public class NotesContentProvider implements ITreeContentProvider {
 		qbe.clear();
 		qbe.add("Parent", "", null);
 		List<Note> res=qbe.execute();
+		Collections.sort(res, nc);
+		
 		return res.toArray();
 	}
 
