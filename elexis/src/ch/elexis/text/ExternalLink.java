@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExternalLink.java 4627 2008-10-22 18:27:21Z rgw_ch $
+ *  $Id: ExternalLink.java 4630 2008-10-23 11:28:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
 
+import ch.elexis.Desk;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -26,12 +27,13 @@ public class ExternalLink implements IKonsExtension {
 	public static final String ID="ch.elexis.text.ExternalLink";
 	//EnhancedTextField mine;
 	public String connect(EnhancedTextField tf) {
-		//mine=tf;
+		tf.addXrefHandler(ID, this);
 		return ID;
 	}
 
 	public boolean doLayout(StyleRange n, String provider, String id) {
 		n.underline=true;
+		n.foreground=Desk.getColor(Desk.COL_BLUE);
 		return true;
 	}
 

@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFTextPlugin.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: ETFTextPlugin.java 4630 2008-10-23 11:28:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
 import java.io.InputStream;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
