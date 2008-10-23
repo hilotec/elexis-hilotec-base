@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 3545 2008-01-17 07:50:26Z michael_imhof $
+ * $Id: DirectoriesContentParser.java 4628 2008-10-23 07:57:50Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -20,56 +20,25 @@ import java.util.Vector;
 
 public class DirectoriesContentParser extends HtmlParser {
 
-	private static final String B_SEARCH_WORDS_BEGIN = "<b class=\"searchWords\">"; //$NON-NLS-1$
-	private static final String B_BEGIN = "<b>"; //$NON-NLS-1$
-	private static final String B_END = "</b>"; //$NON-NLS-1$
-
-	private static final String DIV_SEARCH_INFO_BEGIN = "<div id=\"searchInfo\">"; //$NON-NLS-1$
-	private static final String DIV_END = "</div>"; //$NON-NLS-1$
-
-	private static final String SPAN_BEGIN = "<span>"; //$NON-NLS-1$
-	private static final String SPAN_END = "</span>"; //$NON-NLS-1$
-
-	private static final String BR_BEGIN = "<br>"; //$NON-NLS-1$
-
-	private static final String ADR_LIST_TAG = "adrListLev"; //$NON-NLS-1$
-	private static final String ADR_LIST_AVOID_TAG = "adrListLev0Cat"; //$NON-NLS-1$
-
-	private static final String ADR_DETAIL_TAG = "adrNameDetLev"; //$NON-NLS-1$
-	private static final String ADR_DETAIL_AVOID_TAG = "adrNameDetLev2"; //$NON-NLS-1$
+	private static final String ADR_LIST_TAG = "class=\"vcard searchResult resrowclr"; //$NON-NLS-1$
+	private static final String ADR_DETAIL_TAG = "<div class=\"resrowclr";; //$NON-NLS-1$
 
 	public DirectoriesContentParser(String htmlText) {
 		super(htmlText);
 	}
 	
-	private String[] getSpacedParts(final String text) {
-		List<String> parts = new Vector<String>();
-		HtmlParser spaceParser = new HtmlParser(text);
-		while (spaceParser.getNextPos(" ") > 0) {
-			parts.add(spaceParser.extractTo(" "));
+	/**
+	 * Retourniert String in umgekehrter Reihenfolge
+	 */
+	private String reverseString(String text) {
+		if (text == null) {
+			return "";
 		}
-		parts.add(spaceParser.getTail());
-		return parts.toArray(new String[parts.size()]);
-	}
-
-	private String[] getPlzOrt(String text) {
-		String plz = ""; //$NON-NLS-1$
-		String ort = text;
-		if (text != null && text.trim().length() > 0) {
-			HtmlParser ortParser = new HtmlParser(text);
-			if (ortParser.getNextPos(B_SEARCH_WORDS_BEGIN) >= 0) {
-				plz = ortParser.extract(B_SEARCH_WORDS_BEGIN, B_END);
-				ort = ortParser.extract(B_SEARCH_WORDS_BEGIN, B_END);
-			} else {
-				int plzEndIndex = text.trim().indexOf(" "); //$NON-NLS-1$
-				if (plzEndIndex < 0) {
-					plzEndIndex = 5;
-				}
-				plz = text.trim().substring(0, plzEndIndex).trim();
-				ort = text.trim().substring(plzEndIndex).trim();
-			}
+		String reversed = "";
+		for (char c: text.toCharArray()) {
+			reversed = c + reversed;
 		}
-		return new String[] { plz, ort };
+		return reversed;
 	}
 
 	private String[] getVornameNachname(String text) {
@@ -86,15 +55,24 @@ public class DirectoriesContentParser extends HtmlParser {
 	/**
 	 * Informationen zur Suche werden extrahiert. 
 	 * Bsp:
-	 *   <div id="searchInfo"> <b>4540</b> Treffer zu: <b>pfister</b></div>
-	 */
+	 * 	<div class="summary"> 
+	 * 		<strong>23</strong> Treffer für 
+	 * 		<strong	class="what">müller hans</strong> in 
+	 * 		<strong class="where">bern</strong>
+	 * 		<span class="spacer">&nbsp;</span> 
+	 * 		<a href="http://tel.local.ch/de/">Neue Suche</a> 
+	 * 	</div>
+	 */	 
 	public String getSearchInfo() {
 		reset();
-		String searchInfoText = extract(DIV_SEARCH_INFO_BEGIN, DIV_END);
+		String searchInfoText =
+			extract("<div class=\"summary\">", "<span class=\"spacer\">");
 		if (searchInfoText == null) {
 			return "";//$NON-NLS-1$
 		}
-		return searchInfoText.replace(B_BEGIN, "").replace(B_END, "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+		return searchInfoText.replace("<strong class=\"what\">", "").replace(
+			"<strong class=\"where\">", "").replace("<strong>", "").replace(
+			"</strong>", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -117,20 +95,12 @@ public class DirectoriesContentParser extends HtmlParser {
 		while (listIndex > 0 || detailIndex > 0) {
 			KontaktEntry entry = null;
 			if (detailIndex < 0 || (listIndex >= 0 && listIndex < detailIndex)) {
-				int listCatIndex = getNextPos(ADR_LIST_AVOID_TAG);
-				if (listCatIndex != listIndex) {
-					entry = extractListKontakt();
-				} else { // adrListLev0Cat darf nicht
-					moveTo(ADR_LIST_AVOID_TAG);
-				}
+				// Parsing Liste
+				entry = extractListKontakt();
 			} else if (listIndex < 0
 					|| (detailIndex >= 0 && detailIndex < listIndex)) {
-				int detail2Index = getNextPos(ADR_DETAIL_AVOID_TAG);
-				if (detail2Index != detailIndex) {
-					entry = extractKontakt();
-				} else { // adrNameDetLev2 darf nicht
-					moveTo(ADR_DETAIL_AVOID_TAG);
-				}
+				// Parsing Einzeladresse
+				entry = extractKontakt();
 			}
 			if (entry != null) {
 				kontakte.add(entry);
@@ -145,13 +115,54 @@ public class DirectoriesContentParser extends HtmlParser {
 	/**
 	 * Extrahiert einen Kontakt aus einem Listeintrag
 	 * Bsp: 
-     *	 <div class="adrListLev0">
-	 *	   <a
-	 *	      href="/weisseseiten/base.aspx?do=goresultdetail&amp;entryid=78779&amp;searchtype=adr_simple">
-	 *	      Albrecht Michael u. Imhof Nicole
-     *	   </a>
-     *	   , Wagenleise 1, 3904 Naters
-     *	 </div>
+		<div id="te_ojUHu3vXsUWJbXidz2_sRQ"
+				onmouseover="lcl.search.onEntryHover(this)"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/ILwo-yKRTlguXS4TFuVPuA?what=Meier&start=3'); }"
+				class="vcard searchResult resrowclr_yellow mappable">
+				<div class="imgbox">
+					<a
+						href="http://tel.local.ch/de/d/ILwo-yKRTlguXS4TFuVPuA?what=Meier&amp;start=3">
+						<img
+							xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
+							src="http://s.staticlocal.ch/images/pois/na/blue1.png"
+							alt="Dieser Eintrag kann auf der Karte angezeigt werden"
+							height="26" width="27" />
+					</a>
+				</div>
+				<div class="entrybox">
+					<h4>
+						<span class="category" title="Garage">
+							Garage
+						</span>
+						<br>
+							<a class="fn"
+								href="http://tel.local.ch/de/d/ILwo-yKRTlguXS4TFuVPuA?what=Meier&amp;start=3">
+								Autocenter
+								<span class="highlight">Meier</span>
+								AG
+							</a>
+						</br>
+					</h4>
+					<p class="bold phoneNumber">
+						<span class="label">Tel.</span>
+						<span class="tel">
+							<a class="phonenr"
+								href="callto://+41627234359">
+								062 723 43 59
+							</a>
+						</span>
+					</p>
+					<p class="adr">
+						<span class="street-address">
+							Hauptstrasse 158
+						</span>
+						,
+						<span class="postal-code">5742</span>
+						<span class="locality">Kölliken</span>
+					</p>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
 	 */
 	private KontaktEntry extractListKontakt() throws IOException,
 			MalformedURLException {
@@ -159,254 +170,181 @@ public class DirectoriesContentParser extends HtmlParser {
 		if (!moveTo(ADR_LIST_TAG)) { // Kein neuer Eintrag
 			return null;
 		}
-
-		moveTo("href=\""); //$NON-NLS-1$
-
-		// Name
-		String name = extract("\">", "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// Geo: Adresse, Ort, Plz
-		String geo = extractTo(DIV_END);
-		if (geo != null) {
-			geo = geo.trim();
-			if (geo.startsWith(",")) { //$NON-NLS-1$
-				geo = geo.substring(1);
-			}
-			geo = geo.trim();
-		}
-		String adresse = ""; //$NON-NLS-1$
-		int commaIndex = geo.indexOf(","); //$NON-NLS-1$
-		if (commaIndex > 0) {
-			adresse = geo.substring(0, commaIndex).trim();
-			geo = geo.substring(commaIndex + 1).trim();
-		}
-
-		String[] plzOrt = getPlzOrt(geo);
-		String[] vornameNachname = getVornameNachname(name);
-
-		return new KontaktEntry(vornameNachname[0], vornameNachname[1], "", //$NON-NLS-1$
-				adresse, plzOrt[0], plzOrt[1], "", "", "", false); //$NON-NLS-1$
-	}
-	
-	private static String[] POSTFACH_TEXTE = { "Postfach", "Case postale", "Casella Postale" };
-	/**
-	 * Überprüft ob Postfach in Ort gespeichert ist.
-	 */
-	private String getPostfach(String text) {	
-		String postfachText = "";
-		for (String postfachStr: POSTFACH_TEXTE) {
-			if (text.trim().toUpperCase().startsWith(postfachStr.toUpperCase())) {
-				postfachText = postfachStr;
-			}
-		}
-		if (postfachText.length() > 0) {
-			// Hat es noch eine Nummer zu Postfach?
-			String restText = text.substring(postfachText.length(), text.length()).trim();
-			String[] parts = getSpacedParts(restText);
-			String postfachNr = "";
-			if (parts.length > 2) { // Könnte sein..
-				try {
-					postfachNr = " " + Integer.parseInt(parts[0]);
-				} catch(NumberFormatException e) {
-					// Wahrscheinlich ist das doch keine Postfach-Nr
-				}
-			}
-			postfachText += postfachNr;
-		}
 		
-		return postfachText;
+		// Name, Vorname, Zusatz
+		moveTo("<div class=\"entrybox\">");
+
+		int catIndex = getNextPos("<span class=\"category\"");
+		int nextEntryPoxIndex = getNextPos("<div class=\"entrybox\">");
+		String zusatz = "";
+		if (catIndex > 0 && catIndex < nextEntryPoxIndex) {
+			moveTo("<span class=\"category\"");
+			zusatz = extract("\">", "</span>");
+		}
+
+		// Name, Vorname
+		moveTo("<a class=\"fn\"");
+	
+		String nameVornameText = extract("\">", "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+		nameVornameText = nameVornameText.replace("<span class=\"highlight\">","").replace("</span>", "");
+		
+		if (nameVornameText == null || nameVornameText.length() == 0) { // Keine leeren Inhalte
+			return null;
+		}
+		String[] vornameNachname = getVornameNachname(nameVornameText);
+		String vorname = vornameNachname[0];
+		String nachname = vornameNachname[1];
+		
+		// Tel-Nr
+		moveTo("<a class=\"phonenr\"");
+		String telNr = extract(">", "</a>");
+		
+		// Adresse, Ort, Plz
+		String adressTxt = extract("<p class=\"adr\">", "</p>");
+		String strasse = new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>");
+		String plz = new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>");
+		String ort = new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>");
+
+		return new KontaktEntry(vorname, nachname, zusatz, //$NON-NLS-1$
+			strasse, plz, ort, telNr, "", "", false); //$NON-NLS-1$
 	}
 
 	/**
 	 * Extrahiert einen Kontakt aus einem Detaileintrag
 	 * Bsp: 
-     *   <div class="adrNameDetLev0" style="">
-	 *	    <span>Schaller Regula und Tony</span>
-	 *		<br>
-	 *	      Speckhubel 132
-	 *		  <br>
-	 *		    3631 Höfen b. Thun
-	 *		    <br>
-	 *	 </div>
+		<div class="resrowclr_yellow">
+		</br>
+		<img class="imgbox"
+			src="http://s.staticlocal.ch/images/pois/na/blue.png" alt="poi"/>
+		<p class="role">Garage</p>
+		<h2 class="fn">Auto Meier AG</h2>
+		<p class="role">Opel-Vertretung</p>
+		<div class="addressBlockMain">
+			<div class="streetAddress">
+				<span class="street-address">Hauptstrasse 253</span>
+				</br>
+				<span class="post-office-box">Postfach<br></span>
+				<span class="postal-code">5314</span>
+				<span class="locality">Kleindöttingen</span>
+			</div>
+			</br>
+			<table>
+				<tbody>
+					<tr class="phoneNumber">
+						<td>
+							<span class="contact">Telefon:</span>
+						</td>
+						<td class="tel">
+							<a class="phonenr" href="callto://+41562451818">
+								056 245 18 18
+							</a>
+						</td>
+						<td id="freecall"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br class="bighr"/>
+		<div id="moreAddresses">
+			<h3>Zusatzeintrag</h3>
+			<div class="additionalAddress" id="additionalAddress1">
+				<span class="role">Verkauf</span>
+				</br>
+				<table>
+					<tbody>
+						<tr class="phoneNumber">
+							<td>
+								<span class="contact">Telefon:</span>
+							</td>
+							<td class="tel">
+								<a class="phonenr"
+									href="callto://+41448104211">
+									044 810 42 11
+								</a>
+							</td>
+							<td id="freecall"></td>
+						</tr>
+						<tr>
+							<td>
+								<span class="contact">Fax:</span>
+							</td>
+							<td>
+								*&nbsp;044 810 54 40
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;
+							</td>
+							<td>&nbsp;
+							</td>
+							<td></td>
+						</tr>
+						<tr class="">
+							<td>
+								<span class="contact">E-Mail:</span>
+							</td>
+							<td>
+								*&nbsp;<a href="mailto:info@kvd.ch">
+									info@kvd.ch
+									</a>
+							</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 	 */
 	private KontaktEntry extractKontakt() {
 		if (!moveTo(ADR_DETAIL_TAG)) { // Kein neuer Eintrag
 			return null;
 		}
 
-		// Name
-		String name = extract(SPAN_BEGIN, SPAN_END);
-		if (name == null || name.length() == 0) { // Keine leeren Inhalte
+		// Name, Vorname
+		String nameVornameText = extract("<h2 class=\"fn\">", "</h2>");
+		if (nameVornameText == null || nameVornameText.length() == 0) { // Keine leeren Inhalte
 			return null;
 		}
-		
-		String[] vornameNachname = getVornameNachname(name);
+		String[] vornameNachname = getVornameNachname(nameVornameText);
 		String vorname = vornameNachname[0];
 		String nachname = vornameNachname[1];
-
-		// Adresse. 1 oder 2 Einträge
-		String[] adrArray = new String[3];
-		int arrayPos = 0;
-		int divPos = getNextPos(DIV_END);
-		int nextPos = getNextPos(BR_BEGIN);
-		moveTo(BR_BEGIN);
-		while (nextPos < divPos && arrayPos < adrArray.length) {
-			String entryText = extractTo(BR_BEGIN);
-			adrArray[arrayPos] = entryText;
-			nextPos = getNextPos(BR_BEGIN);
-			arrayPos++;
-		}
-
-		String zusatz = ""; //$NON-NLS-1$
-		String adresse = ""; //$NON-NLS-1$
-		String plz = ""; //$NON-NLS-1$
-		String ort = ""; //$NON-NLS-1$
-		int max = 0;
-		while (max < adrArray.length && adrArray[max] != null) {
-			max++;
-		}
-		max--;
 		
-		// Füllen
-		if (max >= 0) {
-			zusatz = getPostfach(adrArray[max]);
-			if (zusatz.length() > 0) {
-				max--;
-			}
-			String[] plzOrt = getPlzOrt(adrArray[max]);
-			plz = plzOrt[0];
-			ort = plzOrt[1];
-			max--;
-		}
-		if (max >= 0) {
-			adresse = adrArray[max].trim();
-			max--;
-		}
-		if (max >= 0) {
-			zusatz = adrArray[max].trim();
-			max--;
+		//Zusatz
+		String zusatz = "";
+		if (moveTo("<p class=\"role\">")) {
+			zusatz = extractTo("</p>");
 		}
 
-		// Tel/Fax & Email
-		int adrIndex = getNextPos(ADR_DETAIL_TAG);
-		int listIndex = getNextPos(ADR_LIST_TAG);
-		int endIndex = adrIndex;
-		if ((listIndex >= 0 && listIndex < endIndex) || endIndex < 0) {
-			endIndex = listIndex;
+		// Adresse
+		String adressTxt = extract("<div class=\"streetAddress\">", "</div>");
+		String streetAddress = new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>");
+		String poBox = new HtmlParser(adressTxt).extract("<span class=\"post-office-box\">", "</span>");
+		String plzCode = new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>");
+		String ort = new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>");
+		
+		if (zusatz == null || zusatz.length() == 0) {
+			zusatz = poBox;
+		}
+
+		// Tel/Fax & Email	
+		moveTo("<tr class=\"phoneNumber\">");
+
+		moveTo("<a class=\"phonenr\"");
+		String tel = extract("\">", "</a>");
+		String fax = "";
+		if (moveTo("<span class=\"contact\">Fax")) {
+			fax = extract("<td>", "</td>").replace("&nbsp;", "").replace("*", "").trim();
+		}
+		String email = "";
+		if (moveTo("<span class=\"contact\">E-Mail")) {
+			moveTo("<span class=\"obfuscml\"");
+			email = extract("\">", "</span>");
+			// Email Adresse wird verkehrt gesendet
+			email = reverseString(email);
 		}
 		
-		String[] adrStrings = extractAdressDetails(endIndex);
- 		String tel = extractTelefonNr(adrStrings);
-		String fax = extractFax(adrStrings);
-		String email = extractEmailAdr(adrStrings);
-
-		return new KontaktEntry(vorname, nachname, zusatz, adresse, plz, ort,
+		return new KontaktEntry(vorname, nachname, zusatz, streetAddress, plzCode, ort,
 				tel, fax, email, true);
-	}
-	
-	/**
-	 * Extrahiert Adressdetails (Tel, Fax & Email) aus einem Detaileintrag. 
-	 * Information ist nach den Kontaktinformationen gespeichert.
-	 * Bsp: 
-     *   <div class="adrNumDet" style="">
-	 *	    <span class="noAdvert">*</span>
-	 *		<a href="callto:+41333412345"
-	 *	      onclick="return VoIp_Check('de');">
-	 *		  033 341 23 45
-	 *		</a>
-	 *	 </div>
-	 *   <div class="adrInfo" id="" style="">
-	 *     Fax
-	 *   </div>
-	 *   <div class="adrNumDet" style="">
-	 *     <span class="noAdvert">* </span>
-	 *     033 341 23 46
-	 *   </div>  
-	 *   <div class="adrInfo" id="" style="">
-	 *     E-Mail
-	 *   </div>
-	 *   <div class="adrNumDet" style="">
-	 *     <span class="noAdvert">* </span>
-	 *     <a href="mailto:info@medshare.net" target="_blank">
-	 *       info@medshare.net
-	 *     </a>
-	 *   </div>
-	 */
-	private String[] extractAdressDetails(int endIndex) {
-		String[] strings = new String[] { "", "", "" };
-		
-		// Tel Nr
-		int nextPos = getNextPos("callto:");
-		if (nextPos > 0 && (nextPos < endIndex || endIndex < 0)) { // Tel Nr:
-			String tel = extract("callto:", "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			if (tel != null) {
-				tel = tel.replace("+41", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (tel.length() > 8) {
-					int len = tel.length();
-					String tel3 = tel.substring(len - 2);
-					String tel2 = tel.substring(len - 4, len - 2);
-					String tel1 = tel.substring(len - 7, len - 4);
-					String tel0 = tel.substring(0, len - 7);
-					tel = tel0 + " " + tel1 + " " + tel2 + " " + tel3; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
-				strings[0] = tel;
-			}
-		}
-		
-		String email = null;
-		String fax = null;
-		
-		// Fax
-		nextPos = getNextPos("adrNumDet");
-		if (nextPos > 0 && (nextPos < endIndex || endIndex < 0)) {
-			moveTo("adrNumDet");
-			fax = extract("</span>", "</div>"); //$NON-NLS-1$ //$NON-NLS-2$$
-			if (fax != null) {
-				if (fax.contains("mailto:")) {
-					email = new HtmlParser(fax).extract("mailto:", "\"");
-					fax = null;
-				} else if (fax.contains("http://")) { // Internet Adresse
-					fax = null;
-				}
-			}
-		}
-		
-		// Email
-		if (email == null) {
-			nextPos = getNextPos("mailto:");
-			if (nextPos > 0 && (nextPos < endIndex || endIndex < 0)) {
-				email = extract("mailto:", "\"");
-			}
-		}
-		
-		if (fax != null) {
-			strings[1] = fax;
-		}
-		if (email != null) {
-			strings[2] = email;
-		}
-		
-		return strings;
-	}
-	
-	private String extractTelefonNr(String[] strings) {
-		if (strings.length > 0) {
-			return strings[0];
-		}
-		return "";
-	}
-	
-	private String extractFax(String[] strings) {
-		if (strings.length > 1) {
-			return strings[1];
-		}
-		return "";
-	}
-	
-	private String extractEmailAdr(String[] strings) {
-		if (strings.length > 2) {
-			return strings[2];
-		}
-		return "";
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: HtmlParser.java 3514 2008-01-11 09:47:24Z michael_imhof $
+ * $Id: HtmlParser.java 4628 2008-10-23 07:57:50Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -34,6 +34,10 @@ public class HtmlParser {
 				.startsWith(prefix);
 	}
 
+	/** 
+	 * Verschiebt Cursor bis zur Position
+	 * nach dem gefundenen String
+	 */
 	public boolean moveTo(String keyString) {
 		int newPos = getNextPos(keyString);
 		if (newPos >= 0) {
@@ -50,7 +54,7 @@ public class HtmlParser {
 
 	public String extractTo(String endKeyString) {
 		int newPos = getNextPos(endKeyString);
-		String text = null;
+		String text = "";
 		if (newPos >= 0) {
 			text = htmlText.substring(currentPos, newPos);
 			currentPos = newPos + endKeyString.length();
@@ -65,14 +69,16 @@ public class HtmlParser {
 		if (theEnd >= htmlText.length()) {
 			theEnd = htmlText.length() - 1;
 		}
-		//System.out.println("Current: " + htmlText.substring(pos, theEnd));
+		if (pos < theEnd) {
+			System.out.println("Current: " + htmlText.substring(pos, theEnd));
+		}
 	}
 
 	public String extract(String startKeyString, String endKeyString) {
 		if (moveTo(startKeyString)) {
 			return extractTo(endKeyString);
 		}
-		return null;
+		return "";
 	}
 
 	public int getNextPos(String keyString, int pos) {

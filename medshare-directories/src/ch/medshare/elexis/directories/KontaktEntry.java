@@ -9,14 +9,12 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added toHashmap
  *    
- * $Id: KontaktEntry.java 4117 2008-07-07 16:41:59Z rgw_ch $
+ * $Id: KontaktEntry.java 4628 2008-10-23 07:57:50Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
 
 import java.util.HashMap;
-
-import javax.print.attribute.HashPrintJobAttributeSet;
 
 import ch.elexis.data.Patient;
 
