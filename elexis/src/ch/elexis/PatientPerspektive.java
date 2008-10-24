@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PatientPerspektive.java 4321 2008-08-28 12:44:09Z rgw_ch $
+ *    $Id: PatientPerspektive.java 4633 2008-10-24 13:08:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -54,8 +54,6 @@ public class PatientPerspektive implements IPerspectiveFactory {
 		
 		main.addView(PatientDetailView2.ID);
 		left.addView(PatientenListeView.ID);
-		//left.addView(KonsListe.ID);
-		//left.addView(FallListeView.ID);
 		leftbottom.addView(FaelleView.ID);
 		left.addView(PatHeuteView.ID);
 		main.addView(KonsDetailView.ID);

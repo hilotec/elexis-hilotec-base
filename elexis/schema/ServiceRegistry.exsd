@@ -59,21 +59,21 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  an optional longer description
+                  an optional longer description. The description should include details on Methods the actor offers.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="default" value="0">
             <annotation>
                <documentation>
-                  The vakue, an integer describing how good this service can perform the given task. De default of 0 ist an intermediate quality
+                  The value, an integer describing how good this service can perform the given task. The default of 0 ist an intermediate quality. A Plugin should not expect that this self-rating is always honored since the user might override to prefer a lower rated implementation of the same service.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="actor" type="string" use="required">
             <annotation>
                <documentation>
-                  an object that does the work. The caller must know how it is designed
+                  an object that does the work. The caller must know what methods it offers.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java"/>

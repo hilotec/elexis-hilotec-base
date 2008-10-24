@@ -1,4 +1,4 @@
-// $Id: BBSView.java 1050 2006-10-05 21:05:45Z rgw_ch $
+// $Id: BBSView.java 4633 2008-10-24 13:08:33Z rgw_ch $
 /*
  * Created on 10.09.2005
  */
@@ -43,6 +43,7 @@ import ch.elexis.util.ViewerConfigurer;
  * des Reminder-Konzepts zu Threads ähnlich newsreader und Webforen.
  * @author gerry
  */
+@Deprecated
 public class BBSView extends ViewPart implements ISelectionChangedListener, ISaveablePart2{
     public static final String ID="ch.elexis.BBSView";
     private CommonViewer headlines;

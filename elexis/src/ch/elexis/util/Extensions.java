@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Extensions.java 4625 2008-10-22 17:04:26Z rgw_ch $
+ * $Id: Extensions.java 4633 2008-10-24 13:08:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -139,34 +139,38 @@ public class Extensions {
 	 * system.
 	 * 
 	 * A Plugin can publish a service by accessing the ExtensionPoint ch.elexis.ServiceRegistry and
-	 * defining a service with an aritrary name.
-	 * A different plugin can implement the same Service "better" by using the same name but declaring
-	 * a higher "value"
-	 * A Client can retrieve and use Services through isServiceAvailable() and findBestService()
-	 * @param name name of the service to load
-	 * @return the interface Object that the "best" Service with this name defines or null if no
-	 * service with the given name could be loaded.
+	 * defining a service with an arbitrary name. It must offer an Object declared as "actor" that
+	 * performs the service. The Methods to use must be documented. (@see executeService)
+	 * 
+	 * A different plugin can implement the same Service "better" by using the same name but
+	 * declaring a higher "value" A Client can retrieve and use Services through
+	 * isServiceAvailable() and findBestService()
+	 * 
+	 * @param name
+	 *            name of the service to load
+	 * @return the actor-Object that the "best" Service with this name offers or null if no service
+	 *         with the given name could be loaded.
 	 */
 	public static Object findBestService(String name){
-		int value=Integer.MIN_VALUE;
-		IConfigurationElement best=null;
-		List<IConfigurationElement> services=getExtensions("ch.elexis.ServiceRegistry");
-		for(IConfigurationElement ic:services){
-			String nam=ic.getAttribute("name");
-			if(nam.equalsIgnoreCase(name)){
-				String val=ic.getAttribute("value");
-				if(val!=null){
-					int ival=Integer.parseInt(val);
-					if(ival>value){
-						value=ival;
-						best=ic;
+		int value = Integer.MIN_VALUE;
+		IConfigurationElement best = null;
+		List<IConfigurationElement> services = getExtensions("ch.elexis.ServiceRegistry");
+		for (IConfigurationElement ic : services) {
+			String nam = ic.getAttribute("name");
+			if (nam.equalsIgnoreCase(name)) {
+				String val = ic.getAttribute("value");
+				if (val != null) {
+					int ival = Integer.parseInt(val);
+					if (ival > value) {
+						value = ival;
+						best = ic;
 					}
 				}
 			}
 		}
-		if(best==null){
+		if (best == null) {
 			return null;
-		}else {
+		} else {
 			try {
 				return best.createExecutableExtension("actor");
 				
@@ -176,25 +180,49 @@ public class Extensions {
 			}
 		}
 		
-		
 	}
 	
-	public static Object executeService(Object service, String method, Class[] types, Object[] params){
-		try{
-			Method m=service.getClass().getMethod(method, types);
+	/**
+	 * Execute a method of the service actor, that is known by name and signature
+	 * 
+	 * @param service
+	 *            The service actor as returned by findBestService()
+	 * @param method
+	 *            the name of the method to be called
+	 * @param types
+	 *            the parameter types
+	 * @param params
+	 *            the parameters
+	 * @return an Object that ist implementation dependent or null if the method call failed. It is
+	 *         recommended that an actor returns a ch.elexis.Result to allow error handling.
+	 */
+	public static Object executeService(Object service, String method, Class[] types,
+		Object[] params){
+		try {
+			Method m = service.getClass().getMethod(method, types);
 			return m.invoke(service, params);
 			
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return null;
 		}
 		
 	}
+	
+	/**
+	 * Ask whether a service is available. The call is cheap because no Object will be
+	 * instantaniated. Note: If this call returns true, a call to findBestService() might still
+	 * return null, because a Service might have gone unavailable in the meantime.
+	 * 
+	 * @param name
+	 *            the name of the service to find.
+	 * @return true if at least one implementation of a service with the given name is registered
+	 */
 	public static boolean isServiceAvailable(String name){
-		List<IConfigurationElement> services=getExtensions("ch.elexis.ServiceRegistry");
-		for(IConfigurationElement ic:services){
-			String nam=ic.getAttribute("name");
-			if(nam.equalsIgnoreCase(name)){
+		List<IConfigurationElement> services = getExtensions("ch.elexis.ServiceRegistry");
+		for (IConfigurationElement ic : services) {
+			String nam = ic.getAttribute("name");
+			if (nam.equalsIgnoreCase(name)) {
 				return true;
 			}
 		}
