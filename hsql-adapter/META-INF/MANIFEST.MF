@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Database adapter for HSQL-DB
-Bundle-SymbolicName: hsql_adapter
+Bundle-SymbolicName: ch.elexis.hsql.connector
 Bundle-Version: 1.0.0
 Bundle-ClassPath: hsqldb.jar
 Export-Package: org.hsqldb,
