@@ -12,6 +12,7 @@ import ch.elexis.importers.HL7;
 import ch.elexis.importers.HL7Parser;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.Result;
 
 public class Importer extends Action implements IAction {
@@ -25,7 +26,6 @@ public class Importer extends Action implements IAction {
 
 	@Override
 	public void run() {
-		HL7 hl7 = new HL7(MY_LAB, "Praxis");
 		File dir = new File(Hub.localCfg.get(Preferences.CFG_DIRECTORY,
 				File.separator));
 		if ((!dir.exists()) || (!dir.isDirectory())) {
@@ -37,10 +37,13 @@ public class Importer extends Action implements IAction {
 			if (!archiveDir.exists()) {
 				archiveDir.mkdir();
 			}
-			
+			File errorDir=new File(dir,"fehlerhaft");
+			if (!errorDir.exists()) {
+				errorDir.mkdir();
+			}
 			int err = 0;
 			int files = 0;
-			Result<Object> r = null;
+			Result<?> r = null;
 			for (String fn : dir.list(new FilenameFilter() {
 
 				public boolean accept(File arg0, String arg1) {
@@ -51,19 +54,17 @@ public class Importer extends Action implements IAction {
 				}
 			})) {
 				files++;
-				r = hl7.load(dir.getAbsolutePath() + File.separator + fn);
-				if (r.isOK()) {
-					r = hlp.parse(hl7, false);
-					if (!r.isOK()) {
-						err++;
-					}
-				} else {
+				File hl7file=new File(dir,fn);
+				r=hlp.importFile(hl7file, archiveDir, false);
+				if (!r.isOK()) {
 					err++;
+					File errFile=new File(errorDir,fn);
+					hl7file.renameTo(errFile);
 				}
 			}
 			if (err > 0) {
 				ResultAdapter.displayResult(r, Integer.toString(err) + " von "
-						+ Integer.toString(files) + " Dateien hatten Fehler");
+						+ Integer.toString(files) + " Dateien hatten Fehler\n");
 			} else if (files == 0) {
 				SWTHelper.showInfo("Laborimport",
 						"Es waren keine Dateien zum Import vorhanden");
