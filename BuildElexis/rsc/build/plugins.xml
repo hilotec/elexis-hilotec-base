@@ -37,6 +37,9 @@
 		<available file="../postgresql-adapter/build.xml" property="postgresql.ok" />
 		<antcall target="postgresql" inheritrefs="true" />
 
+		<available file="../hsql-adapter/build.xml" property="hsql.ok" />
+		<antcall target="hsql" inheritrefs="true" />
+
 		<available file="../iatrix-help-wiki/build.xml" property="iatrixhelp.ok" />
 		<antcall target="iatrixhelp" inheritrefs="true" />
 		<available file="../elexis-icpc/build.xml" property="icpc.ok" />
@@ -170,6 +173,10 @@
 	<target name="postgresql" if="postgresql.ok">
 		<ant antfile="../postgresql-adapter/build.xml" inheritrefs="true" />
 	</target>
+	<target name="hsql" if="hsql.ok">
+		<ant antfile="../hsql-adapter/build.xml" inheritrefs="true" />
+	</target>
+
 	<target name="hl7import" if="hl7import.ok">
 		<ant antfile="../Laborimport-HL7-Universal/build.xml" inheritrefs="true" />
 	</target>
