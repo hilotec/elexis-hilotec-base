@@ -8,18 +8,22 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DisplayTextDialog.java 4583 2008-10-12 17:48:00Z rgw_ch $
+ *  $Id: DisplayTextDialog.java 4634 2008-10-27 05:22:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
 
+import java.awt.FlowLayout;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
@@ -40,7 +44,7 @@ public class DisplayTextDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		ScrolledForm form=Desk.getToolkit().createScrolledForm(parent);
-		form.getBody().setLayout(new GridLayout());
+		form.getBody().setLayout(new ColumnLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Control ret=null;
 		if(cnt.startsWith("<html>")){
@@ -61,7 +65,7 @@ public class DisplayTextDialog extends TitleAreaDialog {
 			cnt=cnt.replaceAll("\\n\\n", "\\n");
 
 			ret=Desk.getToolkit().createFormText(form.getBody(),false);
-			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			//ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			((FormText)ret).setText("<form><p>"+cnt+"</p></form>", true, true);
 		}
 		SWTHelper.center(Desk.getTopShell(),getShell());
@@ -75,7 +79,11 @@ public class DisplayTextDialog extends TitleAreaDialog {
 		setTitle(GlobalEvents.getSelectedPatient().getLabel());
 		setMessage(m);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
-		
+		Rectangle screen=Desk.getDisplay().getBounds();
+		int w=screen.width-screen.width/4;
+		int h=screen.width-screen.width/4;
+		getShell().setBounds(0, 0, w, h);
+		SWTHelper.center(getShell());
 	}	
 	
 
