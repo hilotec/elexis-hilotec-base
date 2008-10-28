@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: HtmlParser.java 4628 2008-10-23 07:57:50Z michael_imhof $
+ * $Id: HtmlParser.java 4643 2008-10-28 12:19:52Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -65,6 +65,9 @@ public class HtmlParser {
 	}
 
 	private void display(int pos) {
+		if (true) {
+			return;
+		}
 		int theEnd = pos + 1000;
 		if (theEnd >= htmlText.length()) {
 			theEnd = htmlText.length() - 1;
