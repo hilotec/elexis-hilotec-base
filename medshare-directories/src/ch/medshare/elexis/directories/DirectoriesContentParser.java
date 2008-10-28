@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 4628 2008-10-23 07:57:50Z michael_imhof $
+ * $Id: DirectoriesContentParser.java 4642 2008-10-28 12:16:47Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -50,6 +50,10 @@ public class DirectoriesContentParser extends HtmlParser {
 			nachname = text.trim().substring(0, nameEndIndex).trim();
 		}
 		return new String[] { vorname, nachname };
+	}
+	
+	private String removeDirt(String text) {
+		return text.replace("<span class=\"highlight\">","").replace("</span>", "");
 	}
 
 	/**
@@ -186,7 +190,7 @@ public class DirectoriesContentParser extends HtmlParser {
 		moveTo("<a class=\"fn\"");
 	
 		String nameVornameText = extract("\">", "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
-		nameVornameText = nameVornameText.replace("<span class=\"highlight\">","").replace("</span>", "");
+		nameVornameText = removeDirt(nameVornameText);
 		
 		if (nameVornameText == null || nameVornameText.length() == 0) { // Keine leeren Inhalte
 			return null;
@@ -201,9 +205,9 @@ public class DirectoriesContentParser extends HtmlParser {
 		
 		// Adresse, Ort, Plz
 		String adressTxt = extract("<p class=\"adr\">", "</p>");
-		String strasse = new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>");
-		String plz = new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>");
-		String ort = new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>");
+		String strasse = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>"));
+		String plz = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>"));
+		String ort = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>"));
 
 		return new KontaktEntry(vorname, nachname, zusatz, //$NON-NLS-1$
 			strasse, plz, ort, telNr, "", "", false); //$NON-NLS-1$
@@ -318,10 +322,10 @@ public class DirectoriesContentParser extends HtmlParser {
 
 		// Adresse
 		String adressTxt = extract("<div class=\"streetAddress\">", "</div>");
-		String streetAddress = new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>");
-		String poBox = new HtmlParser(adressTxt).extract("<span class=\"post-office-box\">", "</span>");
-		String plzCode = new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>");
-		String ort = new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>");
+		String streetAddress = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>"));
+		String poBox = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"post-office-box\">", "</span>"));
+		String plzCode = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>"));
+		String ort = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>"));
 		
 		if (zusatz == null || zusatz.length() == 0) {
 			zusatz = poBox;
