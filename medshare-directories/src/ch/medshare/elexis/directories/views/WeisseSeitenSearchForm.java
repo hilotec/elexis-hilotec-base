@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: WeisseSeitenSearchForm.java 4642 2008-10-28 12:16:47Z michael_imhof $
+ * $Id: WeisseSeitenSearchForm.java 4646 2008-10-29 07:39:39Z michael_imhof $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories.views;
@@ -88,7 +88,7 @@ public class WeisseSeitenSearchForm extends Composite {
 
 		geoText.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR) {
+				if (e.character == SWT.CR) {
 					searchAction(nameText.getText(), geoText.getText());
 				}
 			}
