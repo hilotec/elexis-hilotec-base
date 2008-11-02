@@ -121,22 +121,25 @@ public static final String Version(){return "1.0.2";}
     	  }
     	  clear();
     	  try{
-    		  BufferedReader fi=new BufferedReader(new FileReader(filename));
-    		  String line;
-    		  while((line=fi.readLine())!=null){
-    			  line=line.replaceAll("#.*","").trim();
-    			  if(StringTool.isNothing(line)){
-    				  continue;
-    			  }
-    			  String[] pair=line.split("=");
-    			  if(pair.length!=2){
-    				  log.log("Format Error in config file "+filename,Log.ERRORS);
-    				  continue;
-    			  }
-    			  set(pair[0].trim(),pair[1].trim());
+    		  File fl=new File(filename);
+    		  if(fl.exists() && fl.canRead()){
+	    		  BufferedReader fi=new BufferedReader(new FileReader(fl));
+	    		  String line;
+	    		  while((line=fi.readLine())!=null){
+	    			  line=line.replaceAll("#.*","").trim();
+	    			  if(StringTool.isNothing(line)){
+	    				  continue;
+	    			  }
+	    			  String[] pair=line.split("=");
+	    			  if(pair.length!=2){
+	    				  log.log("Format Error in config file "+filename,Log.ERRORS);
+	    				  continue;
+	    			  }
+	    			  set(pair[0].trim(),pair[1].trim());
+	    		  }
+	    		  fi.close();
+	    		  cleaned();
     		  }
-    		  fi.close();
-    		  cleaned();
     	  }
     	  catch(Exception ex)
     	  { 	ExHandler.handle(ex);
