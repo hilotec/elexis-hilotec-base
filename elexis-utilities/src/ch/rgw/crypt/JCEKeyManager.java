@@ -6,8 +6,6 @@
 
 package ch.rgw.crypt;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,13 +21,10 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
