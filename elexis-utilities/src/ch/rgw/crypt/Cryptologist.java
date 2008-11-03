@@ -65,8 +65,9 @@ public interface Cryptologist {
 	public boolean hasKeyOf(String alias);
 	public boolean addCertificate(X509Certificate cert);
 	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom, TimeTool validUntil);
-	
-	public Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom, TimeTool validUntil);
+	public X509Certificate getCertificate(String alias);
+	public X509Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom, TimeTool validUntil);
 
 	public String getUser();
+	public boolean isFunctional();
 }

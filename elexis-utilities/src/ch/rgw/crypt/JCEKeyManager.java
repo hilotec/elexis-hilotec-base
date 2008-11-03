@@ -197,6 +197,29 @@ public class JCEKeyManager {
 
 	}
 
+	public X509Certificate getCertificate(String alias){
+		if (ks == null) {
+			log.log(Level.WARNING, "Keystore nicht geladen");
+			if (!load(true)) {
+				return null;
+			}
+		}
+		try {
+
+			java.security.cert.Certificate cert = ks.getCertificate(alias);
+			if (cert == null) {
+				log.log(Level.WARNING, "No certificate \"" + alias + "\"found");
+				return null;
+			} else {
+				return (X509Certificate)cert;
+			}
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
+
+		
+	}
 	/** Public key aus einem Input Stream lesen */
 	public PublicKey getPublicKey(InputStream is) {
 		try {

@@ -653,7 +653,7 @@ public class GnuPG implements Cryptologist {
 		return false;
 	}
 	
-	public Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom,
+	public X509Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom,
 		TimeTool validUntil){
 		// TODO Auto-generated method stub
 		return null;
@@ -676,6 +676,18 @@ public class GnuPG implements Cryptologist {
 
 	public String getUser() {
 		return identity;
+	}
+
+	@Override
+	public X509Certificate getCertificate(String alias) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isFunctional() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }
