@@ -678,13 +678,11 @@ public class GnuPG implements Cryptologist {
 		return identity;
 	}
 
-	@Override
 	public X509Certificate getCertificate(String alias) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public boolean isFunctional() {
 		// TODO Auto-generated method stub
 		return false;

@@ -268,12 +268,10 @@ public class JCECrypter implements Cryptologist {
 		}
 	}
 
-	@Override
 	public X509Certificate getCertificate(String alias) {
 		return km.getCertificate(alias);
 	}
 
-	@Override
 	public boolean isFunctional() {
 		return true;
 	}
