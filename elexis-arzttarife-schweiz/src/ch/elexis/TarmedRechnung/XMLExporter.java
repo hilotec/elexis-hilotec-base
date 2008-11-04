@@ -8,10 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4664 2008-11-04 09:56:26Z rgw_ch $
+ * $Id: XMLExporter.java 4665 2008-11-04 17:41:57Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
+/*  THIS FILE IS FROZEN. DO NOT MODIFY */
 
 package ch.elexis.TarmedRechnung;
 
@@ -159,7 +160,8 @@ public class XMLExporter implements IRnOutputter {
 	}
 	
 	/**
-	 * Output a Collection of bills. This essentially calls doExport() für each bill in rnn
+	 * Output a Collection of bills. This essentially lets the user modify the output settings (if
+	 * any) and then calls doExport() für each bill in rnn
 	 * 
 	 * @param type
 	 *            desired mode (original, copy, storno)
@@ -219,17 +221,19 @@ public class XMLExporter implements IRnOutputter {
 	 * Export a bill as XML. We do, in fact first check whether this bill was exported already. And
 	 * if so we do not create it again but load the old one. There is deliberately no possibility to
 	 * avoid this behaviour. (One can only delete or storno a bill and recreate it (even then the
-	 * stored xml remains stored.
+	 * stored xml remains stored. Additionally, the caller can chose to store the bill as XML in the
+	 * file system. This is done if the parameter dest ist given. On success the caller will receive
+	 * a JDOM Document containing the bill. 
 	 * 
 	 * @param rechnung
 	 *            the bill to export
 	 * @param dest
 	 *            a full filepath to save the final document (or null to not save it)
 	 * @param type
-	 *            Type of output (original, copy, storno
+	 *            Type of output (original, copy, storno)
 	 * @param doVerify
 	 *            true if the bill should be sent trough a verifyer after creation.
-	 * @return the jdom XML-Document that contains the bill
+	 * @return the jdom XML-Document that contains the bill. Might be null on failure.
 	 */
 	@SuppressWarnings("unchecked")
 	public Document doExport(final Rechnung rechnung, final String dest,
