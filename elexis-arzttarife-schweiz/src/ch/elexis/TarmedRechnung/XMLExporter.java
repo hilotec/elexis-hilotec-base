@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4403 2008-09-09 10:37:23Z rgw_ch $
+ * $Id: XMLExporter.java 4664 2008-11-04 09:56:26Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -577,11 +577,10 @@ public class XMLExporter implements IRnOutputter {
 					tpTarmedTL += tlTl * zahl;
 					tpTarmedAL += tlAL * zahl;
 					/*
-					 * Money mAL=new Money((int)Math.round(tlAL*mult)); Money mTL=new
-					 * Money((int)Math.round(tlTl*mult));
+					 * Money mAL=new Money((int)Math.round(tlALmult)); Money mTL=new
+					 * Money((int)Math.round(tlTlmult));
 					 * 
-					 * mTarmedAL.addCent(mAL.getCents()*zahl);
-					 * mTarmedTL.addCent(mTL.getCents()*zahl);
+					 * mTarmedAL.addCent(mAL.getCents()zahl); mTarmedTL.addCent(mTL.getCents()zahl);
 					 */
 					// Änderung 17.4. 08
 					Money mAL =
@@ -632,7 +631,9 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("vat_rate", "0"); // 22590
 					el.setAttribute("validate", "true"); // 22620
 					
-					el.setAttribute("obligation", Boolean.toString(TarmedLeistung.isObligation(vv)));
+					el
+						.setAttribute("obligation", Boolean.toString(TarmedLeistung
+							.isObligation(vv)));
 					
 				} else if (v instanceof LaborLeistung) {
 					el = new Element("record_lab", ns); // 28000
@@ -965,7 +966,8 @@ public class XMLExporter implements IRnOutputter {
 			if (ahv.length() == 0) {
 				ahv = actFall.getRequiredString(TarmedRequirements.SSN).replaceAll("[^0-9]", "");
 			}
-			if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (!ahv.matches("[0-9]{11}"))) {
+			boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}");
+			if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (bAHVValid == false)) {
 				rn.reject(REJECTCODE.VALIDATION_ERROR, "AHV-Nummer ungültig");
 			} else {
 				versicherung.setAttribute("ssn", ahv);
