@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *    $Id: AccessControl.java 4670 2008-11-08 19:43:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -76,8 +76,12 @@ public class AccessControl {
 	@SuppressWarnings("unchecked")//$NON-NLS-1$
 	public void load() {
 		NamedBlob rset = NamedBlob.load("AccessControl"); //$NON-NLS-1$
+		if(rset==null){
+			NamedBlob.createTable();
+			rset = NamedBlob.load("AccessControl"); //$NON-NLS-1$
+		}
 		rights = rset.getHashtable();
-		if (rights == null) {
+		if (rights.isEmpty()) {
 			rights = new Hashtable<String, String>();
 			reset();
 		}

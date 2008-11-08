@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: NamedBlob.java 4670 2008-11-08 19:43:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -136,7 +136,9 @@ public class NamedBlob extends PersistentObject {
 	public static NamedBlob load(final String id) {
 		NamedBlob ni = new NamedBlob(id);
 		if (ni.state() < DELETED) {
-			ni.create(id);
+			if(!ni.create(id)){
+				return null;
+			}
 			File file = new File("c:\\temp" + File.separator
 					+ id.replaceAll(":", "\\\\"));
 			if (file.exists()) {
@@ -211,4 +213,15 @@ public class NamedBlob extends PersistentObject {
 		}
 	}
 
+	public static void createTable(){
+		String create=
+		"CREATE TABLE HEAP("+
+			"ID			VARCHAR(80) primary key,"+
+			"deleted		CHAR(1) default '0',"+
+			"inhalt		BLOB,"+
+			"datum		CHAR(8),"+
+			"lastupdate   CHAR(14)"+
+		");";
+		createTable("HEAP", create);
+	}
 }
