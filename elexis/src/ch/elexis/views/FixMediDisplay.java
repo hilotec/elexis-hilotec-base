@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4376 2008-09-05 16:58:02Z rgw_ch $
+ * $Id: FixMediDisplay.java 4673 2008-11-09 17:01:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -45,8 +45,7 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Display and let the user modify the medication of the currently selected patient This is a
- * pop-in-Replacement for DauerMediDisplay.
- * To calculate the daily cost wie accept the forms 1-1-1-1
+ * pop-in-Replacement for DauerMediDisplay. To calculate the daily cost wie accept the forms 1-1-1-1
  * and 1x1, 2x3 and so on
  * 
  * @author gerry
@@ -221,7 +220,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 					}
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
 					rpb.createRezept(rp);
-				}else if(l.equals(KOPIEREN)){
+				} else if (l.equals(KOPIEREN)) {
 					toClipBoard(true);
 				}
 			} catch (Exception ex) {
@@ -269,7 +268,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 					if (pr != null) {
 						remove(pr);
 						pr.delete(); // this does not delete but stop the Medication. Sorry for
-										// that
+						// that
 						reload();
 					}
 				}
@@ -287,7 +286,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 					if (pr != null) {
 						remove(pr);
 						pr.remove(); // this does, in fact, remove the medication from the
-										// database
+						// database
 						reload();
 					}
 				}

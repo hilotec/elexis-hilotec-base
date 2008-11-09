@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 4359 2008-09-02 17:14:20Z rgw_ch $
+ *  $Id: RezepteView.java 4673 2008-11-09 17:01:26Z rgw_ch $
  *******************************************************************************/
 
 
@@ -45,8 +45,10 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
 import ch.elexis.data.ICodeElement;
@@ -56,6 +58,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rezept;
+import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -78,7 +81,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 	//Label ausgestellt;
 	ListViewer lvRpLines;
 	private Action newRpAction,deleteRpAction;
-	private Action addLineAction, removeLineAction;
+	private Action addLineAction, removeLineAction, changeMedicationAction;
 	private ViewMenus menus;
 	private Action printAction;
 	private Patient actPatient;
@@ -128,7 +131,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 		menus=new ViewMenus(getViewSite());
 		//menus.createToolbar(newRpAction, addLineAction, printAction );
 		menus.createMenu(newRpAction,addLineAction,printAction, deleteRpAction);
-		menus.createViewerContextMenu(lvRpLines, removeLineAction);
+		menus.createViewerContextMenu(lvRpLines, removeLineAction, changeMedicationAction);
 		IToolBarManager tm=getViewSite().getActionBars().getToolBarManager();
 		List<IAction> importers=Extensions.getClasses(Extensions.getExtensions("ch.elexis.RezeptHook"), "RpToolbarAction",false);
 		for(IAction ac:importers){
@@ -325,6 +328,23 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 				}
 			}
 		};
+		changeMedicationAction =
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, "Ändern...") {
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText("Einnahmevorschriften ändern");
+				}
+				
+				public void doRun(){
+					Rezept rp=(Rezept)GlobalEvents.getInstance().getSelectedObject(Rezept.class);
+					IStructuredSelection sel=(IStructuredSelection)lvRpLines.getSelection();
+					Prescription pr=(Prescription)sel.getFirstElement();
+					if (pr != null) {
+						new MediDetailDialog(getViewSite().getShell(), pr).open();
+						lvRpLines.refresh();
+					}
+				}
+			};
 		addLineAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 		newRpAction.setImageDescriptor(Hub.getImageDescriptor("rsc/rpneu.ico"));
