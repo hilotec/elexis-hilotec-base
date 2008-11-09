@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 4118 2008-07-08 12:12:39Z rgw_ch $
+ * $Id: TarmedRequirements.java 4672 2008-11-09 16:53:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -46,6 +46,9 @@ public class TarmedRequirements {
 	}
 	
 	public static String getEAN(final Kontakt k){
+		if(k==null){
+			return null;
+		}
 		String ret= k.getXid(Xid.DOMAIN_EAN);
 		// compatibility layer
 		if(ret.length()==0){
