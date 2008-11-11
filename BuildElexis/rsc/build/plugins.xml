@@ -93,6 +93,9 @@
 		<antcall target="abacusjunior" inheritrefs="true" />
 		<available file="../Laborimport-HL7-Universal/build.xml" property="hl7import.ok" />
 		<antcall target="hl7import" inheritrefs="true" />
+		<available file="../elexis-MediDirect/build.xml" property="medidirect.ok" />
+		<antcall target="medidirect" inheritrefs="true" />
+
 	</target>
 
 
@@ -161,6 +164,10 @@
 		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok" />
 		<antcall target="mythic" inheritrefs="true" />
 
+	</target>
+
+	<target name="medidirect" if="medidirect.ok">
+		<ant antfile="../elexis-MediDirect/build.xml" inheritrefs="true" />
 	</target>
 
 	<target name="waeltistatistics" if="waeltistatistics.ok">
