@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErstelleRnnCommand.java 4588 2008-10-13 12:54:55Z tschaller $
+ *  $Id: ErstelleRnnCommand.java 4676 2008-11-11 12:35:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -16,11 +16,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.ParameterValueConversionException;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import ch.elexis.Hub;
 import ch.elexis.data.Fall;
@@ -31,6 +38,7 @@ import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.Tree;
 import ch.elexis.views.rechnung.Messages;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 /**
@@ -46,8 +54,13 @@ public class ErstelleRnnCommand extends AbstractHandler {
 	
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent eev) throws ExecutionException{
-
-		Tree tSelection = (Tree) Handler.getParam(eev);
+		Tree<?> tSelection=null;
+		String px=eev.getParameter("ch.elexis.RechnungErstellen.parameter");
+		try{
+			tSelection=(Tree<?>)new TreeToStringConverter().convertToObject(px);
+		}catch(ParameterValueConversionException pe){
+			throw new ExecutionException("Bad parameter "+pe.getMessage());
+		}
 		IProgressMonitor monitor=Handler.getMonitor(eev);
 		Result<Rechnung> res=null;
 		for (Tree tPat = tSelection.getFirstChild(); tPat != null; tPat = tPat.getNextSibling()) {
@@ -93,5 +106,23 @@ public class ErstelleRnnCommand extends AbstractHandler {
 		}
 		return res;
 	}
-	
+
+	public static Object ExecuteWithParams(IViewSite origin, Tree<?> tSelection){
+		IHandlerService handlerService = (IHandlerService) origin.getService(IHandlerService.class);
+		ICommandService cmdService = (ICommandService) origin.getService(ICommandService.class);
+		try {
+			Command command = cmdService.getCommand("bill.create");
+			Parameterization px = new Parameterization(command.getParameter("ch.elexis.RechnungErstellen.parameter"),
+				new TreeToStringConverter().convertToString(tSelection));
+			ParameterizedCommand parmCommand =
+				new ParameterizedCommand(command, new Parameterization[] {
+					px
+				});
+			
+			return handlerService.executeCommand(parmCommand, null);
+			
+		} catch (Exception ex) {
+			throw new RuntimeException("add.command not found");
+		}
+	}
 }

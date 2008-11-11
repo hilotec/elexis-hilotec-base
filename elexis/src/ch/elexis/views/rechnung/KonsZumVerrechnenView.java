@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 4428 2008-09-22 11:25:23Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 4676 2008-11-11 12:35:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -18,6 +18,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -49,8 +52,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -60,7 +65,8 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.commands.Handler;
+import ch.elexis.commands.ErstelleRnnCommand;
+import ch.elexis.commands.TreeToStringConverter;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -460,7 +466,26 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 							return;
 						}
 					}
-					Handler.execute(getViewSite(), "bill.create", tSelection);
+					//Handler.execute(getViewSite(), "bill.create", tSelection);
+					ErstelleRnnCommand.ExecuteWithParams(getViewSite(), tSelection);
+					/*
+					IHandlerService handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
+					ICommandService cmdService = (ICommandService) getViewSite().getService(ICommandService.class);
+					try {
+						Command command = cmdService.getCommand("bill.create");
+						Parameterization px = new Parameterization(command.getParameter("ch.elexis.RechnungErstellen.parameter"),
+							new TreeToStringConverter().convertToString(tSelection));
+						ParameterizedCommand parmCommand =
+							new ParameterizedCommand(command, new Parameterization[] {
+								px
+							});
+						
+						handlerService.executeCommand(parmCommand, null);
+						
+					} catch (Exception ex) {
+						throw new RuntimeException("add.command not found");
+					}*/
+					
 					tvSel.refresh();
 				}
 			};
