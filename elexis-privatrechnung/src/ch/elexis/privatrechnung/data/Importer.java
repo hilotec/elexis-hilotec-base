@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Importer.java 4297 2008-08-20 17:39:26Z rgw_ch $
+ * $Id: Importer.java 4678 2008-11-12 14:15:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -29,9 +29,10 @@ import ch.elexis.data.Query;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
-import ch.elexis.util.Result;
+import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -94,8 +95,8 @@ public class Importer extends ImporterPage {
 	 */
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
-		PersistentObject.getConnection().exec("DROP TABLE " + Leistung.TABLENAME + ";");
-		Leistung.createTable();
+		//PersistentObject.getConnection().exec("DROP TABLE " + Leistung.TABLENAME + ";");
+		//Leistung.createTable();
 		File file = new File(results[0]);
 		if (!file.canRead()) {
 			log.log("Can't read " + results[0], Log.ERRORS);
@@ -115,7 +116,7 @@ public class Importer extends ImporterPage {
 		if (res.isOK()) {
 
 		}
-		return res.asStatus();
+		return ResultAdapter.getResultAsStatus(res);
 	}
 	
 	/**
@@ -138,7 +139,7 @@ public class Importer extends ImporterPage {
 		final IProgressMonitor mon){
 		ExcelWrapper xl = new ExcelWrapper();
 		if (!xl.load(file, 0)) {
-			return new Result<String>(Status.ERROR, 1, "Bad file format", file,
+			return new Result<String>(Result.SEVERITY.ERROR, 1, "Bad file format", file,
 				true);
 		}
 		xl.setFieldTypes(new Class[] {
@@ -164,7 +165,7 @@ public class Importer extends ImporterPage {
 			return new Result<String>("OK");
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<String>(Log.ERRORS, 1, "Could not read " + file,
+			return new Result<String>(Result.SEVERITY.ERROR, 1, "Could not read " + file,
 				ex.getMessage(), true);
 		}
 		
@@ -173,23 +174,25 @@ public class Importer extends ImporterPage {
 	// parentCode 0,codeID 1,codeName 2,cost 3,price 4 ,time 5, validFrom
 	// 6,validUntil 7,factor 8
 	private void importLine(final String[] line){
-		if (line[5].equals("")) {
-			line[5] = TimeTool.BEGINNING_OF_UNIX_EPOCH;
-		}
-		if (line[6].equals("")) {
-			line[6] = TimeTool.END_OF_UNIX_EPOCH;
-		}
-		Query<Leistung> qbe=new Query<Leistung>(Leistung.class);
-		qbe.add("Kuerzel", "=", line[1]);
-		List<Leistung> res=qbe.execute();
-		Leistung lst;
-		if(res.size()>0){
-			lst=res.get(0);
-			lst.set(new String[]{"parent","Name","Kosten","Preis","Zeit","DatumVon","DatumBis"},
-				line[0],line[2],line[3],line[4],line[5],line[6],line[7]);
-		}else{
-			new Leistung(null, line[0], line[2], line[1], line[3], line[4],
-				line[5], line[6], line[7]);	
+		if(line.length==9){
+			if (line[6].equals("")) {
+				line[6] = TimeTool.BEGINNING_OF_UNIX_EPOCH;
+			}
+			if (line[7].equals("")) {
+				line[7] = TimeTool.END_OF_UNIX_EPOCH;
+			}
+			Query<Leistung> qbe=new Query<Leistung>(Leistung.class);
+			qbe.add("Kuerzel", "=", line[1]);
+			List<Leistung> res=qbe.execute();
+			Leistung lst;
+			if(res.size()>0){
+				lst=res.get(0);
+				lst.set(new String[]{"parent","Name","Kosten","Preis","Zeit","DatumVon","DatumBis"},
+					line[0],line[2],line[3],line[4],line[5],line[6],line[7]);
+			}else{
+				new Leistung(null, line[0], line[2], line[1], line[3], line[4],
+					line[5], line[6], line[7]);	
+			}
 		}
 	}
 }

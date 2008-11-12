@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 3857 2008-05-02 15:42:35Z rgw_ch $
+ * $Id: Leistung.java 4678 2008-11-12 14:15:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -16,6 +16,7 @@ package ch.elexis.privatrechnung.data;
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.VerrechenbarAdapter;
+import ch.elexis.util.IOptifier;
 import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -226,4 +227,8 @@ public class Leistung extends VerrechenbarAdapter {
 		return true;
 	}
 	
+	@Override
+	public IOptifier getOptifier() {
+		return optifier;
+	}
 }
