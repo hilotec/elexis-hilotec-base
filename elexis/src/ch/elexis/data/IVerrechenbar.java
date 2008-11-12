@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 4393 2008-09-08 09:48:16Z rgw_ch $
+ * $Id: IVerrechenbar.java 4679 2008-11-12 14:17:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -95,7 +95,7 @@ public interface IVerrechenbar extends ICodeElement {
 			Verrechnet foundVerrechnet = null;
 			for (Verrechnet verrechnet : old) {
 				if (verrechnet.getVerrechenbar().getId().equals(code.getId())) {
-					if (verrechnet.getVerrechenbar().getText().equals(
+					if (verrechnet.getText().equals(
 							code.getText())) {
 						foundVerrechnet = verrechnet;
 						break;
