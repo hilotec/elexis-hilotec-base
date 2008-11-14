@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4641 2008-10-27 20:15:22Z rgw_ch $
+ *    $Id: PersistentObject.java 4682 2008-11-14 17:09:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,6 +16,7 @@ package ch.elexis.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -205,8 +206,7 @@ public abstract class PersistentObject {
 	public static boolean connect(final JdbcLink jd){
 		j = jd;
 		Hub.globalCfg = new SqlSettings(getConnection(), "CONFIG");
-		// Zugriffskontrolle initialisieren
-		Hub.acl.load();
+		
 		String created = Hub.globalCfg.get("dbversion", null);
 		
 		if (created == null) {
@@ -219,13 +219,16 @@ public abstract class PersistentObject {
 			java.io.InputStream is = null;
 			Stm stm = null;
 			try {
-				Resource rsc = new Resource("ch.elexis.data");
-				is = rsc.getInputStream("createDB.script");
+				String createscript=Hub.getBasePath()+File.separator+"rsc"+File.separator+"createDB.script";
+				is=new FileInputStream(createscript);
+				//Resource rsc = new Resource("ch.elexis.data");
+				//is = rsc.getInputStream("createDB.script");
 				stm = getConnection().getStatement();
 				if (stm.execScript(is, true, true) == true) {
 					Log.setAlertLevel(Log.FATALS);
 					Hub.globalCfg.undo();
 					Hub.globalCfg.set("created", new TimeTool().toString(TimeTool.FULL_GER));
+					Hub.acl.load();
 					Anwender.init();
 					Mandant.init();
 					Hub.pin.initializeGrants();
@@ -256,6 +259,8 @@ public abstract class PersistentObject {
 				}
 			}
 		}
+		// Zugriffskontrolle initialisieren
+		Hub.acl.load();
 		VersionInfo vi = new VersionInfo(Hub.globalCfg.get("dbversion", "0.0.0"));
 		log.log("Verlangte Datenbankversion: " + Hub.DBVersion, Log.INFOS);
 		log.log("Gefundene Datenbankversion: " + vi.version(), Log.INFOS);
