@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 3830 2008-04-21 12:43:19Z rgw_ch $
+% *  $Id: konzepte.tex 4680 2008-11-14 05:56:41Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -81,35 +81,35 @@ Jede Konsultation ist auch einem \textit{Fall} zugeordnet. Ein Fall ist hier ehe
 
 Ein Fall kann immer nur einen Patienten und ein Abrechnungssystem haben, kann aber durchaus  Konsultationen mehrerer Mandanten beinhalten. (Es wird dann für jeden Mandanten eine separate Rechnung erstellt).
 
-\section{Etiketten}
-\index{Etiketten}\index{Markierungen}
+\section{Sticker}
+\index{Sticker}\index{Etiketten}\index{Markierungen}
 \label{Etiketten}
-Patienten und andere Datenbankinhalte können mit \index{Etiketten} markiert werden. Eine Etikette ist ein im Prinzip beliebiges Merkmal, das mit dem entsprechenden Datenbankobjekt verknüpft wird. Beispielsweise könnte ein Patienten mit den Etiketten 'Hausarztmodell', 'MRSA' oder anderen markiert werden. Eine solche Etikette wird beim Aufruf des entsprechenden Obekts mit angezeigt.
+Patienten und andere Datenbankinhalte können mit 'Stickern' markiert werden. Ein Sticker ist ein im Prinzip beliebiges Merkmal, das mit dem entsprechenden Datenbankobjekt verknüpft wird. Beispielsweise könnte ein Patienten mit den Stickern 'Hausarztmodell', 'MRSA' oder anderen markiert werden. Ein solcher Sticker wird beim Aufruf des entsprechenden Obekts mit angezeigt.
 
 \textbf{Beispiele}
-Etiketten werden unter \textsc{Datei-Einstellungen-Etiketten} definiert (S. Abb. \ref{fig:etiketten1}). Es können beliebig viele Etiketten definiert werden. Um eine neue Etikette anzulegen, schrieben Sie den Text für die Etikette ins obere Feld und klicken dann auf 'Neue Etikette'. Die eben angelegte Etikette erscheint dann mit Standardwerten in der Liste. Markieren Sie die Etikette und geben Sie je nach Wunsch ein Bild (Format 16x16 bis höchstens 32x32 Pixel), eine Textfarbe und eine Hintergrundfarbe ein. Die Bedeutung des 'Werts' sehen Sie weiter unten.
+ Stickerwerden unter \textsc{Datei-Einstellungen-Sticker} definiert (S. Abb. \ref{fig:etiketten1}). Es können beliebig viele Sticker definiert werden. Um einen neuen Sticker anzulegen, schrieben Sie den Text für den Sticker ins obere Feld und klicken dann auf 'Neuer Sticker'. Der eben angelegte Sticker erscheint dann mit Standardwerten in der Liste. Markieren Sie ihn und geben Sie je nach Wunsch ein Bild (Format 16x16 bis höchstens 32x32 Pixel), eine Textfarbe und eine Hintergrundfarbe ein. Die Bedeutung des 'Werts' sehen Sie weiter unten.
 
 \begin{figure}
     \includegraphics{images/etikette1}
-    \caption{Etiketten erstellen}
+    \caption{Sticker erstellen}
     \label{fig:etiketten1}
 \end{figure}
 
-So erstellte Etiketten können einem Patienten durch Rechtsklick in der Patientenliste und Auswahl von 'Etikette...' zugeordnet werden. Jeder Patient kann null bis beliebig viele Etiketten erhalten. In der Patientenliste wird nun der entsprechende EIntrag mit dem der Etikette zugeordenen Bild, Vordergrund- und Hintergrundfarbe angezeigt (Abb. \ref{fig:etiketten2}).
+So erstellte Sticker können einem Patienten durch Rechtsklick in der Patientenliste und Auswahl von 'Sticker...' zugeordnet werden. Jeder Patient kann null bis beliebig viele Sticker erhalten. In der Patientenliste wird nun der entsprechende Eintrag mit dem dem Sticker zugeordenen Bild, Vordergrund- und Hintergrundfarbe angezeigt (Abb. \ref{fig:etiketten2}).
 \begin{figure}
     \includegraphics{images/etikette3}
-    \caption{Anzeige der Etikette}
+    \caption{Anzeige der Sticker}
     \label{fig:etiketten2}
 \end{figure}
 
-Hier sieht man nun auch denn Sinn des 'Wert'-Attributs einer Etikette: Wenn ein Patient mehrere Etiketten zugeordnet hat, dann wird in der Patientenliste immer diejenige mit dem höchsten 'Wert' angezeigt. Was für Zahlen Sie da konkret einsetzen, ist egal. Die abolute Grösse spielt keine Rolle, nur das Verhältnis zueinander.
+Hier sieht man nun auch denn Sinn des 'Wert'-Attributs eines Stickers: Wenn ein Patient mehrere Sticker zugeordnet hat, dann wird in der Patientenliste immer diejenige mit dem höchsten 'Wert' angezeigt. Was für Zahlen Sie da konkret einsetzen, ist egal. Die abolute Grösse spielt keine Rolle, nur das Verhältnis zueinander.
 
 \medskip
 
-Wenn Sie einen Konsulaltionseintrag öffnen, sehen Sie alle zugeordneten Etiketten.
+Wenn Sie einen Konsulaltionseintrag öffnen, sehen Sie alle zugeordneten Sticker.
 \begin{figure}
     \includegraphics{images/etikette2}
-    \caption{Konsultation mit Etiketten}
+    \caption{Konsultation mit Stickern}
     \label{fig:etiketten3}
 \end{figure}
 
