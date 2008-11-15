@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelLabelProvider.java 2507 2007-06-08 14:30:56Z danlutz $
+ *  $Id: ArtikelLabelProvider.java 4683 2008-11-15 20:39:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -23,68 +23,69 @@ import ch.elexis.data.Artikel;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.DefaultLabelProvider;
 
-public class ArtikelLabelProvider extends DefaultLabelProvider implements ITableColorProvider{
-
+public class ArtikelLabelProvider extends DefaultLabelProvider implements ITableColorProvider {
+	
 	@Override
-	public Image getColumnImage(Object element, int columnIndex) {
-		if(element instanceof Artikel){
+	public Image getColumnImage(Object element, int columnIndex){
+		if (element instanceof Artikel) {
 			return null;
-		}else{
-			return Desk.theImageRegistry.get(Desk.IMG_ACHTUNG);
+		} else {
+			return Desk.getImage(Desk.IMG_ACHTUNG);
 		}
 	}
-
+	
 	@Override
-	public String getColumnText(Object element, int columnIndex) {
-		if(element instanceof Artikel){
-			Artikel art=(Artikel)element;
-			String ret=art.getInternalName();
-			if(art.isLagerartikel()){
-				ret+=" ("+Integer.toString(art.getTotalCount())+")";
+	public String getColumnText(Object element, int columnIndex){
+		if (element instanceof Artikel) {
+			Artikel art = (Artikel) element;
+			String ret = art.getInternalName();
+			if (art.isLagerartikel()) {
+				ret += " (" + Integer.toString(art.getTotalCount()) + ")";
 			}
 			return ret;
 		}
 		return super.getColumnText(element, columnIndex);
 	}
-
+	
 	/**
-	 * Lagerartikel are shown in blue, arrticles that should be ordered
-	 * are shown in red
+	 * Lagerartikel are shown in blue, arrticles that should be ordered are shown in red
 	 */
-	public Color getForeground(Object element, int columnIndex) {
-    	if (element instanceof Artikel) {
-    		Artikel art = (Artikel) element;
-    		
-    		if (art.isLagerartikel()) {
-    			int trigger = Hub.globalCfg.get(PreferenceConstants.INVENTORY_ORDER_TRIGGER, PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
-
-    			int ist = art.getIstbestand();
-    			int min = art.getMinbestand();
-
-    			boolean order = false;
-    			switch (trigger) {
-    			case PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW:
-    				order = (ist < min);
-    				break;
-    			case PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL:
-    				order = (ist <= min);
-    				break;
-    			default:
-    				order = (ist < min);
-    			}
-
-    			if (order) {
-    				return Desk.theColorRegistry.get(Desk.COL_RED);
-    			} else {
-    				return Desk.theColorRegistry.get(Desk.COL_BLUE);
-    			}
-    		}
-    	}
-    	
-    	return null;
-    }
-
-	public Color getBackground(Object element, int columnIndex) {
+	public Color getForeground(Object element, int columnIndex){
+		if (element instanceof Artikel) {
+			Artikel art = (Artikel) element;
+			
+			if (art.isLagerartikel()) {
+				int trigger =
+					Hub.globalCfg.get(PreferenceConstants.INVENTORY_ORDER_TRIGGER,
+						PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
+				
+				int ist = art.getIstbestand();
+				int min = art.getMinbestand();
+				
+				boolean order = false;
+				switch (trigger) {
+				case PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW:
+					order = (ist < min);
+					break;
+				case PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL:
+					order = (ist <= min);
+					break;
+				default:
+					order = (ist < min);
+				}
+				
+				if (order) {
+					return Desk.getColor(Desk.COL_RED);
+				} else {
+					return Desk.getColor(Desk.COL_BLUE);
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public Color getBackground(Object element, int columnIndex){
 		
 		return null;
 	}

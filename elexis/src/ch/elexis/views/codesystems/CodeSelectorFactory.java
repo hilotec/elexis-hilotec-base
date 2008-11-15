@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 4395 2008-09-08 17:21:12Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 4683 2008-11-15 20:39:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -59,164 +59,174 @@ import ch.rgw.tools.StringTool;
 /**
  * Bereitstellung der Auswahlluste für Codes aller Art: Oben häufigste des Anwenders, in der Mitte
  * häufigste des Patienten, unten ganze Systenatik
+ * 
  * @author Gerry
- *
+ * 
  */
-public abstract class CodeSelectorFactory implements IExecutableExtension{
+public abstract class CodeSelectorFactory implements IExecutableExtension {
 	/** Anzahl der in den oberen zwei Listen zu haltenden Elemente */
-	public static int ITEMS_TO_SHOW_IN_MFU_LIST=15;
+	public static int ITEMS_TO_SHOW_IN_MFU_LIST = 15;
 	
 	public CodeSelectorFactory(){}
+	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+		throws CoreException{
 
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-		
 	}
 	
 	public abstract ViewerConfigurer createViewerConfigurer(CommonViewer cv);
+	
 	public abstract Class<? extends PersistentObject> getElementClass();
-	public abstract void  dispose();
+	
+	public abstract void dispose();
+	
 	public abstract String getCodeSystemName();
+	
 	public String getCodeSystemCode(){
 		return "999";
 	}
 	
-	
 	public static void makeTabs(CTabFolder ctab, IViewSite site, String point){
-		ITEMS_TO_SHOW_IN_MFU_LIST=Hub.userCfg.get(PreferenceConstants.USR_MFU_LIST_SIZE, 15);
-		java.util.List<IConfigurationElement> list=Extensions.getExtensions(point);
+		ITEMS_TO_SHOW_IN_MFU_LIST = Hub.userCfg.get(PreferenceConstants.USR_MFU_LIST_SIZE, 15);
+		java.util.List<IConfigurationElement> list = Extensions.getExtensions(point);
 		ctab.setSimple(false);
-
-		if(list!=null){
-			for(IConfigurationElement ic:list){
+		
+		if (list != null) {
+			for (IConfigurationElement ic : list) {
 				try {
-					PersistentObjectFactory po=(PersistentObjectFactory)ic.createExecutableExtension("ElementFactory");
-					CodeSelectorFactory cs=(CodeSelectorFactory)ic.createExecutableExtension("CodeSelectorFactory");
-					if(cs==null){
+					PersistentObjectFactory po =
+						(PersistentObjectFactory) ic.createExecutableExtension("ElementFactory");
+					CodeSelectorFactory cs =
+						(CodeSelectorFactory) ic.createExecutableExtension("CodeSelectorFactory");
+					if (cs == null) {
 						SWTHelper.alert("Fehler", "CodeSelectorFactory is null");
 					}
-					ICodeElement ics=(ICodeElement)po.createTemplate(cs.getElementClass());
-					if(ics==null){
+					ICodeElement ics = (ICodeElement) po.createTemplate(cs.getElementClass());
+					if (ics == null) {
 						SWTHelper.alert("Fehler", "CodeElement is null");
 					}
-					String cname=ics.getCodeSystemName();
-					if(StringTool.isNothing(cname)){
+					String cname = ics.getCodeSystemName();
+					if (StringTool.isNothing(cname)) {
 						SWTHelper.alert("Fehler", "codesystemname");
-						cname="??";
+						cname = "??";
 					}
-					CTabItem ct=new CTabItem(ctab,SWT.NONE);
-									
+					CTabItem ct = new CTabItem(ctab, SWT.NONE);
+					
 					ct.setText(cname);
 					ct.setData(ics);
-					cPage page=new cPage(ctab, site,ics,cs);	
+					cPage page = new cPage(ctab, site, ics, cs);
 					ct.setControl(page);
 					
 				} catch (CoreException ex) {
 					ExHandler.handle(ex);
 				}
 			}
-			if(ctab.getItemCount()>0){
+			if (ctab.getItemCount() > 0) {
 				ctab.setSelection(0);
 			}
 		}
 	}
-
-	private static class ResizeListener extends ControlAdapter{
+	
+	private static class ResizeListener extends ControlAdapter {
 		private String k;
 		private SashForm mine;
 		
 		ResizeListener(SashForm form, String key){
-			k=key;
-			mine=form;
+			k = key;
+			mine = form;
 		}
 		
 		@Override
-		public void controlResized(ControlEvent e) {
-			int[] weights=mine.getWeights();
-			StringBuilder v=new StringBuilder();
-			v.append(Integer.toString(weights[0])).append(",")
-				.append(Integer.toString(weights[1])).append(",")
-				.append(Integer.toString(weights[2]));
+		public void controlResized(ControlEvent e){
+			int[] weights = mine.getWeights();
+			StringBuilder v = new StringBuilder();
+			v.append(Integer.toString(weights[0])).append(",").append(Integer.toString(weights[1]))
+				.append(",").append(Integer.toString(weights[2]));
 			Hub.localCfg.set(k, v.toString());
 			
 		}
 		
 	}
-
-	public static class cPage extends Composite implements GlobalEvents.SelectionListener{
+	
+	public static class cPage extends Composite implements GlobalEvents.SelectionListener {
 		IViewSite site;
 		ICodeElement template;
-		java.util.List<String> lUser,lPatient;
+		java.util.List<String> lUser, lPatient;
 		ArrayList<PersistentObject> alPatient;
 		ArrayList<PersistentObject> alUser;
 		List lbPatient, lbUser;
 		CommonViewer cv;
 		ViewerConfigurer vc;
-		int[] sashWeights=null;
+		int[] sashWeights = null;
 		ResizeListener resizeListener;
 		
 		protected cPage(CTabFolder ctab){
-			super(ctab,SWT.NONE);
+			super(ctab, SWT.NONE);
 		}
-		cPage(final CTabFolder ctab, final IViewSite s, final ICodeElement v, final CodeSelectorFactory cs){
-			super(ctab,SWT.NONE);
-			template=v;
-			site=s;
+		
+		cPage(final CTabFolder ctab, final IViewSite s, final ICodeElement v,
+			final CodeSelectorFactory cs){
+			super(ctab, SWT.NONE);
+			template = v;
+			site = s;
 			setLayout(new FillLayout());
-			SashForm sash=new SashForm(this,SWT.VERTICAL|SWT.SMOOTH);
-			String cfgKey="ansicht/codesystem/"+v.getCodeSystemName();
-			resizeListener=new ResizeListener(sash,cfgKey);
-			String sashW=Hub.localCfg.get(cfgKey, "20,20,60");
-			sashWeights=new int[3];
-			int i=0;
-			for(String sw:sashW.split(",")){
-				sashWeights[i++]=Integer.parseInt(sw);
+			SashForm sash = new SashForm(this, SWT.VERTICAL | SWT.SMOOTH);
+			String cfgKey = "ansicht/codesystem/" + v.getCodeSystemName();
+			resizeListener = new ResizeListener(sash, cfgKey);
+			String sashW = Hub.localCfg.get(cfgKey, "20,20,60");
+			sashWeights = new int[3];
+			int i = 0;
+			for (String sw : sashW.split(",")) {
+				sashWeights[i++] = Integer.parseInt(sw);
 			}
-			Group gUser=new Group(sash,SWT.NONE);
+			Group gUser = new Group(sash, SWT.NONE);
 			gUser.addControlListener(resizeListener);
 			gUser.setText("Ihre häufigsten");
 			gUser.setLayout(new FillLayout());
-			gUser.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-			lbUser=new List(gUser,SWT.MULTI|SWT.V_SCROLL);
-
-			Group gPatient=new Group(sash,SWT.NONE);
+			gUser.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			lbUser = new List(gUser, SWT.MULTI | SWT.V_SCROLL);
+			
+			Group gPatient = new Group(sash, SWT.NONE);
 			gPatient.addControlListener(resizeListener);
 			gPatient.setText("Häufigste des Patienten");
 			gPatient.setLayout(new FillLayout());
-			gPatient.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-			lbPatient=new List(gPatient,SWT.MULTI|SWT.V_SCROLL);
-
-			Group gAll=new Group(sash,SWT.NONE);
+			gPatient.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			lbPatient = new List(gPatient, SWT.MULTI | SWT.V_SCROLL);
+			
+			Group gAll = new Group(sash, SWT.NONE);
 			gAll.setText("Alle");
 			gAll.setLayout(new GridLayout());
-			cv=new CommonViewer();
-			Iterable<IAction> actions=v.getActions(null);
-			if(actions!=null){
-				MenuManager menu=new MenuManager();
+			cv = new CommonViewer();
+			Iterable<IAction> actions = v.getActions(null);
+			if (actions != null) {
+				MenuManager menu = new MenuManager();
 				menu.setRemoveAllWhenShown(true);
-				menu.addMenuListener(new IMenuListener(){
-					public void menuAboutToShow(IMenuManager manager) {
-						Iterable<IAction> actions=v.getActions(null);
-						for(IAction ac:actions){
+				menu.addMenuListener(new IMenuListener() {
+					public void menuAboutToShow(IMenuManager manager){
+						Iterable<IAction> actions = v.getActions(null);
+						for (IAction ac : actions) {
 							manager.add(ac);
 						}
 						
-					}});
+					}
+				});
 				cv.setContextMenu(menu);
 			}
-			vc=cs.createViewerConfigurer(cv);
-			Composite cvc=new Composite(gAll,SWT.NONE);
+			vc = cs.createViewerConfigurer(cv);
+			Composite cvc = new Composite(gAll, SWT.NONE);
 			cvc.setLayout(new GridLayout());
-			cvc.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-			cv.create(vc,cvc,SWT.NONE,this);
-			cv.getViewerWidget().getControl().setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+			cvc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			cv.create(vc, cvc, SWT.NONE, this);
+			cv.getViewerWidget().getControl().setLayoutData(
+				SWTHelper.getFillGridData(1, true, 1, true));
 			vc.getContentProvider().startListening();
 			
 			// add double click listener for CodeSelectorTarget
 			cv.addDoubleClickListener(new DoubleClickListener() {
-				public void doubleClicked(PersistentObject obj, CommonViewer cv) {
+				public void doubleClicked(PersistentObject obj, CommonViewer cv){
 					ICodeSelectorTarget target = GlobalEvents.getInstance().getCodeSelectorTarget();
 					if (target != null) {
-							target.codeSelected(obj);
+						target.codeSelected(obj);
 					}
 				}
 			});
@@ -224,176 +234,146 @@ public abstract class CodeSelectorFactory implements IExecutableExtension{
 			doubleClickEnable(lbUser);
 			doubleClickEnable(lbPatient);
 			
-			//dragEnable(lbUser);
-			//dragEnable(lbPatient);
-			new PersistentObjectDragSource2(lbUser,new DragEnabler(lbUser));
-			new PersistentObjectDragSource2(lbPatient,new DragEnabler(lbPatient));
+			// dragEnable(lbUser);
+			// dragEnable(lbPatient);
+			new PersistentObjectDragSource2(lbUser, new DragEnabler(lbUser));
+			new PersistentObjectDragSource2(lbPatient, new DragEnabler(lbPatient));
 			
-			try{
+			try {
 				sash.setWeights(sashWeights);
-			}catch(Throwable t){
+			} catch (Throwable t) {
 				ExHandler.handle(t);
-				sash.setWeights(new int[]{20,20,60});
+				sash.setWeights(new int[] {
+					20, 20, 60
+				});
 			}
 			refresh();
 		}
-		public void selectionEvent(PersistentObject obj) {
-			if(obj instanceof Patient){
+		
+		public void selectionEvent(PersistentObject obj){
+			if (obj instanceof Patient) {
 				refresh();
 			}
-			if(obj instanceof Anwender){
+			if (obj instanceof Anwender) {
 				lbPatient.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 				lbUser.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
-				cv.getViewerWidget().getControl().setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+				cv.getViewerWidget().getControl().setFont(
+					Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 				refresh();
 			}
 		}
-	
-	
-		/* (Kein Javadoc)
+		
+		/*
+		 * (Kein Javadoc)
+		 * 
 		 * @see org.eclipse.swt.widgets.Widget#dispose()
 		 */
 		@Override
-		public void dispose() {
+		public void dispose(){
 			vc.getContentProvider().stopListening();
 			super.dispose();
 		}
+		
 		public void refresh(){
 			lbUser.removeAll();
-			if(Hub.actUser==null){
-				//Hub.log.log("ActUser ist null!", Log.ERRORS);
+			if (Hub.actUser == null) {
+				// Hub.log.log("ActUser ist null!", Log.ERRORS);
 				return;
 			}
-			if(template==null){
+			if (template == null) {
 				Hub.log.log("Template ist null!", Log.ERRORS);
 				return;
 			}
-			lUser=Hub.actUser.getStatForItem(template.getClass().getName());
-			alUser=new ArrayList<PersistentObject>();
+			lUser = Hub.actUser.getStatForItem(template.getClass().getName());
+			alUser = new ArrayList<PersistentObject>();
 			lbUser.setData(alUser);
-			for(int i=0;i<ITEMS_TO_SHOW_IN_MFU_LIST;i++){
-				if(i>=lUser.size()){
+			for (int i = 0; i < ITEMS_TO_SHOW_IN_MFU_LIST; i++) {
+				if (i >= lUser.size()) {
 					break;
 				}
-				PersistentObject po=Hub.poFactory.createFromString(lUser.get(i));
+				PersistentObject po = Hub.poFactory.createFromString(lUser.get(i));
 				alUser.add(po);
-				String lbl=po.getLabel();
-				if(StringTool.isNothing(lbl)){
-					lbl="?";
+				String lbl = po.getLabel();
+				if (StringTool.isNothing(lbl)) {
+					lbl = "?";
 					continue;
 				}
 				lbUser.add(lbl);
 			}
 			lbPatient.removeAll();
-	
-			Patient act=GlobalEvents.getSelectedPatient();
-			if(act!=null){
-				lPatient=act.getStatForItem(template.getClass().getName());
-			}else{
-				lPatient=new java.util.ArrayList<String>();
+			
+			Patient act = GlobalEvents.getSelectedPatient();
+			if (act != null) {
+				lPatient = act.getStatForItem(template.getClass().getName());
+			} else {
+				lPatient = new java.util.ArrayList<String>();
 			}
-			alPatient=new ArrayList<PersistentObject>();
+			alPatient = new ArrayList<PersistentObject>();
 			lbPatient.setData(alPatient);
-			for(int i=0;i<ITEMS_TO_SHOW_IN_MFU_LIST;i++){
-				if(i>=lPatient.size()){
+			for (int i = 0; i < ITEMS_TO_SHOW_IN_MFU_LIST; i++) {
+				if (i >= lPatient.size()) {
 					break;
 				}
-				PersistentObject po=Hub.poFactory.createFromString(lPatient.get(i));
-				if(po!=null){
+				PersistentObject po = Hub.poFactory.createFromString(lPatient.get(i));
+				if (po != null) {
 					alPatient.add(po);
-					String label=po.getLabel();
-					if(label==null){
+					String label = po.getLabel();
+					if (label == null) {
 						lbPatient.add("?");
-					}else{
+					} else {
 						lbPatient.add(label);
 					}
 				}
 			}
 			
 		}
-		public void clearEvent(Class<? extends PersistentObject> template) {
-			// TODO Auto-generated method stub
-			
-		}
-
-	}
-	static class DragEnabler implements PersistentObjectDragSource2.Draggable{
-		List list;
-		DragEnabler(final List list){
-			this.list=list;
-		}
-		public java.util.List<PersistentObject> getSelection() {
-			int sel=list.getSelectionIndex();
-			 ArrayList<PersistentObject> backing=(ArrayList<PersistentObject>)list.getData();
-			 PersistentObject po=backing.get(sel);
-			 ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>();
-			 ret.add(po);
-			 return ret;
+		
+		public void clearEvent(Class<? extends PersistentObject> template){
+		// TODO Auto-generated method stub
+		
 		}
 		
 	}
-	/*
-	static DragSource dragEnable(final List list) {
-	DragSource src;
-	src=new DragSource(list, DND.DROP_COPY);
-	src.setTransfer(new Transfer[]{TextTransfer.getInstance()});
-	src.addDragListener(new DragSourceListener(){
-
-		public void dragStart(DragSourceEvent event) {
-			int sel=list.getSelectionIndex();
-			if(sel!=-1){
-				event.doit=true;
-				list.setData("sel", sel);		// Workaraound für MacOS X
-			}
-			
-		}
-
-		@SuppressWarnings("unchecked")
-		public void dragSetData(DragSourceEvent event) {
-			 if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-				 //int sel=list.getSelectionIndex();		// Mac OS-X hat zu diesem Zeitpunkt die Selection verloren ?!?
-				 Integer sel=(Integer)list.getData("sel");
-				 if(sel==null){
-					 event.data=null;
-				 	return;
-				 }
-				 ArrayList<PersistentObject> backing=(ArrayList<PersistentObject>)list.getData();
-				 PersistentObject po=backing.get(sel);
-				 event.data = po.storeToString();
-			 }
-			
-		}
-
-		public void dragFinished(DragSourceEvent event) {
-			
-			
-		}
-		
-	});
 	
-	return src;
+	static class DragEnabler implements PersistentObjectDragSource2.Draggable {
+		List list;
+		
+		DragEnabler(final List list){
+			this.list = list;
+		}
+		
+		public java.util.List<PersistentObject> getSelection(){
+			int sel = list.getSelectionIndex();
+			ArrayList<PersistentObject> backing = (ArrayList<PersistentObject>) list.getData();
+			PersistentObject po = backing.get(sel);
+			ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
+			ret.add(po);
+			return ret;
+		}
+		
 	}
-	*/
+	
 	// add double click listener for ICodeSelectorTarget
-	static void doubleClickEnable(final List list) {
+	static void doubleClickEnable(final List list){
 		list.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				// normal selection, do nothing
+			public void widgetSelected(SelectionEvent e){
+			// normal selection, do nothing
 			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
+			
+			public void widgetDefaultSelected(SelectionEvent e){
 				// double clicked
-
+				
 				int sel = list.getSelectionIndex();
 				if (sel != -1) {
-					ArrayList<PersistentObject> backing = (ArrayList<PersistentObject>)list.getData();
+					ArrayList<PersistentObject> backing =
+						(ArrayList<PersistentObject>) list.getData();
 					PersistentObject po = backing.get(sel);
-
+					
 					ICodeSelectorTarget target = GlobalEvents.getInstance().getCodeSelectorTarget();
 					if (target != null) {
-							target.codeSelected(po);
+						target.codeSelected(po);
 					}
-
+					
 				}
 			}
 		});
