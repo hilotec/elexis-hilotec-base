@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AbrechnungsPerspektive.java 4295 2008-08-20 17:39:00Z rgw_ch $
+ *    $Id: AbrechnungsPerspektive.java 4686 2008-11-18 17:54:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -22,7 +22,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.views.KonsDetailView;
 import ch.elexis.views.PatHeuteView;
-import ch.elexis.views.PatientDetailView;
+import ch.elexis.views.PatientDetailView2;
 import ch.elexis.views.Starter;
 import ch.elexis.views.rechnung.KonsZumVerrechnenView;
 import ch.elexis.views.rechnung.RechnungsListeView;
@@ -56,7 +56,7 @@ public class AbrechnungsPerspektive implements IPerspectiveFactory {
 		frd.addView(RnDetailView.ID);
 		frd.addView(KonsDetailView.ID);
 		frd.addPlaceholder(FallDetailView.ID);
-		frd.addPlaceholder(PatientDetailView.ID);
+		frd.addPlaceholder(PatientDetailView2.ID);
 		layout.addShowViewShortcut(PatHeuteView.ID);
 		layout.addShowViewShortcut(KonsZumVerrechnenView.ID);
 		layout.addShowViewShortcut(RnDetailView.ID);
