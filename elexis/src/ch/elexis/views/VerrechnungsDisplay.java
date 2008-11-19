@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4422 2008-09-20 09:03:09Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4687 2008-11-19 16:00:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -26,8 +26,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -166,8 +164,8 @@ public class VerrechnungsDisplay extends Composite {
 	}
 	
 	/*
-	 * class delVerrListener extends SelectionAdapter { public void widgetSelected(SelectionEvent e) {
-	 * int sel = tVerr.getSelectionIndex(); TableItem ti = tVerr.getItem(sel); Result<Verrechnet>
+	 * class delVerrListener extends SelectionAdapter { public void widgetSelected(SelectionEvent e)
+	 * { int sel = tVerr.getSelectionIndex(); TableItem ti = tVerr.getItem(sel); Result<Verrechnet>
 	 * result = GlobalEvents.getSelectedKons().removeLeistung( (Verrechnet) ti.getData()); if
 	 * (!result.isOK()) { SWTHelper.alert("Leistungsposition kann nicht entfernt werden",
 	 * result.toString()); } setLeistungen(GlobalEvents.getSelectedKons()); } }
@@ -240,11 +238,12 @@ public class VerrechnungsDisplay extends Composite {
 						if (val.endsWith("%") && val.length() > 1) {
 							val = val.substring(0, val.length() - 1);
 							double percent = Double.parseDouble(val);
-							double factor=1.0+(percent/100.0);
-							//double amount = newPrice.getAmount();
-							//amount += amount * percent / 100.0;
-							//newPrice = new Money(amount);
-							//double factor = (newPrice.getAmount() * 100.0) / oldPrice.getAmount();
+							double factor = 1.0 + (percent / 100.0);
+							// double amount = newPrice.getAmount();
+							// amount += amount * percent / 100.0;
+							// newPrice = new Money(amount);
+							// double factor = (newPrice.getAmount() * 100.0) /
+							// oldPrice.getAmount();
 							v.setSecondaryScaleFactor(factor);
 						} else {
 							newPrice = new Money(val);
