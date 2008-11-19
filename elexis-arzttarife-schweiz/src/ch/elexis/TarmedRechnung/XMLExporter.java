@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4665 2008-11-04 17:41:57Z rgw_ch $
+ * $Id: XMLExporter.java 4688 2008-11-19 16:00:13Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -223,7 +223,7 @@ public class XMLExporter implements IRnOutputter {
 	 * avoid this behaviour. (One can only delete or storno a bill and recreate it (even then the
 	 * stored xml remains stored. Additionally, the caller can chose to store the bill as XML in the
 	 * file system. This is done if the parameter dest ist given. On success the caller will receive
-	 * a JDOM Document containing the bill. 
+	 * a JDOM Document containing the bill.
 	 * 
 	 * @param rechnung
 	 *            the bill to export
@@ -658,9 +658,12 @@ public class XMLExporter implements IRnOutputter {
 				} else if ((v instanceof Medikament) || (v instanceof Medical)
 					|| (v.getCodeSystemCode() == "400")) {
 					el = new Element("record_drug", ns);
-					Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					Artikel art=(Artikel)v;
+					double mult=art.getFactor(tt, actFall);
+					Money preis=vv.getNettoPreis();
+					//Money preis = vv.getEffPreis(); // b.getEffPreis(v);
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));
-					el.setAttribute("unit_factor", "1.0");
+					el.setAttribute("unit_factor", XMLTool.doubleToXmlDouble(mult, 2));
 					el.setAttribute("tariff_type", "400"); // Pharmacode-basiert
 					el.setAttribute("code", ((Artikel) v).getPharmaCode());
 					Money mAmountLocal = new Money(preis);
@@ -685,7 +688,7 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("validate", "true");
 					mMigel.addMoney(mAmountLocal);
 				} else {
-					Money preis = vv.getEffPreis();
+					Money preis = vv.getNettoPreis();
 					el = new Element("record_unclassified", ns);
 					el.setAttribute("tariff_type", v.getCodeSystemCode());
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));
