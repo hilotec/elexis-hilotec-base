@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: SettingsPreferenceStore.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: SettingsPreferenceStore.java 4689 2008-11-20 09:26:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -126,8 +126,16 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 		return Float.parseFloat(get(name));
 	}
 
+	/**
+	 * return an Integer. If the Value is not an Integer ot nonexistent, we return 0
+	 * (@see IPreferenceStore)
+	 */
 	public int getInt(String name) {
-		return Integer.parseInt(get(name));
+		try{
+			return Integer.parseInt(get(name));
+		}catch(NumberFormatException ne){
+			return 0;
+		}
 	}
 
 	public long getLong(String name) {
