@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4682 2008-11-14 17:09:03Z rgw_ch $
+ *    $Id: Hub.java 4690 2008-11-20 12:40:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -370,7 +370,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4682 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 4690 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
@@ -449,7 +449,7 @@ public class Hub extends AbstractUIPlugin {
 	 * @return a directory that exists always and is always writable and readable for plugins of the
 	 *         currently running elexis instance
 	 */
-	public File getWritableUserDir(){
+	public static File getWritableUserDir(){
 		if (userDir == null) {
 			String userhome = null;
 			
@@ -481,7 +481,7 @@ public class Hub extends AbstractUIPlugin {
 	 * 
 	 * @return always a valid and writable directory.
 	 */
-	public File getTempDir(){
+	public static File getTempDir(){
 		File ret = null;
 		String temp = System.getProperty("java.io.tmpdir");
 		if (!StringTool.isNothing(temp)) {
