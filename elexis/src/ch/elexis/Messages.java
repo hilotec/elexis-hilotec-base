@@ -56,6 +56,10 @@ public class Messages extends NLS {
 	public static String LoginDialog_1;
 
 	public static String LoginDialog_4;
+
+	public static String LoginDialog_login;
+
+	public static String LoginDialog_terminate;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

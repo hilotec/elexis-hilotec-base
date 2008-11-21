@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: LoginDialog.java 1129 2006-10-19 11:20:27Z rgw_ch $
+ *    $Id: LoginDialog.java 4693 2008-11-21 11:07:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -51,8 +52,12 @@ public class LoginDialog extends TitleAreaDialog {
 			usr.setText("Administrator"); //$NON-NLS-1$
 			pwd.setText("admin"); //$NON-NLS-1$
 		}
+		
 		return ret;
 	}
+	
+	
+	
 	@Override
 	protected void okPressed() {
 		if(Anwender.login(usr.getText(),pwd.getText())==true){
@@ -68,6 +73,12 @@ public class LoginDialog extends TitleAreaDialog {
 		Hub.actMandant=null;
 		Hub.mainActions.adaptForUser();
 		super.cancelPressed();
+	}
+	@Override
+	public void create(){
+		super.create();
+		getButton(IDialogConstants.OK_ID).setText(Messages.LoginDialog_login);
+		getButton(IDialogConstants.CANCEL_ID).setText(Messages.LoginDialog_terminate);
 	}
 
 }

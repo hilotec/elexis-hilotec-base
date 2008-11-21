@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 4430 2008-09-22 17:22:09Z rgw_ch $
+ * $Id: GlobalActions.java 4693 2008-11-21 11:07:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -38,6 +38,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -248,9 +249,12 @@ public class GlobalActions {
 						dlg.create();
 						dlg.setTitle(Messages.getString("GlobalActions.LoginDialogTitle")); //$NON-NLS-1$
 						dlg.setMessage(Messages.getString("GlobalActions.LoginDialogMessage")); //$NON-NLS-1$
+						//dlg.getButton(IDialogConstants.CANCEL_ID).setText("Beenden");
 						dlg.getShell().setText(
 							Messages.getString("GlobalActions.LoginDialogShelltext")); //$NON-NLS-1$
-						dlg.open();
+						if(dlg.open()==Dialog.CANCEL){
+							exitAction.run();
+						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}
