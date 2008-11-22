@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4690 2008-11-20 12:40:51Z rgw_ch $
+ *    $Id: Hub.java 4695 2008-11-22 05:58:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -150,7 +150,6 @@ public class Hub extends AbstractUIPlugin {
 		String basePath = UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis"));
 		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath));
 		
-		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
 		log.log("Elexis " + Version + ", build " + getRevision(true) + Messages.Hub_19 + //$NON-NLS-1$ //$NON-NLS-2$
@@ -194,7 +193,7 @@ public class Hub extends AbstractUIPlugin {
 		// begrenzen
 		ExHandler.setOutput(fLog.getAbsolutePath()); //$NON-NLS-1$
 		ExHandler.setClasses(mine);
-
+		
 	}
 	
 	private void initializeLock(){
@@ -370,7 +369,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4690 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 4695 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
@@ -388,20 +387,38 @@ public class Hub extends AbstractUIPlugin {
 		return res;
 	}
 	
+	/**
+	 * get the base directory of this currently running elexis application
+	 * 
+	 * @return the topmost directory of this application or null if this information could not be
+	 *         retrieved
+	 */
 	public static String getBasePath(){
 		return PlatformHelper.getBasePath(PLUGIN_ID);
 	}
 	
+	/**
+	 * get a list af all users known to this system
+	 */
 	public static List<Anwender> getUserList(){
 		Query<Anwender> qbe = new Query<Anwender>(Anwender.class);
 		return qbe.execute();
 	}
 	
+	/**
+	 * get a list of all mandators known to this system
+	 */
 	public static List<Mandant> getMandantenList(){
 		Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 		return qbe.execute();
 	}
 	
+	/**
+	 * get the currently active Shell. If no such Shell exists, it will be created using dhe default
+	 * Display.
+	 * 
+	 * @return always a valid shell. Never null
+	 */
 	public static Shell getActiveShell(){
 		if (plugin != null) {
 			IWorkbench wb = plugin.getWorkbench();
@@ -432,6 +449,12 @@ public class Hub extends AbstractUIPlugin {
 		public void doit() throws Exception;
 	}
 	
+	/**
+	 * Add a ShutdownJob to the list of jobs that has to be done after the Elexis workbench was shut
+	 * down.
+	 * 
+	 * @param job
+	 */
 	public static void addShutdownJob(final ShutdownJob job){
 		if (!shutdownJobs.contains(job)) {
 			shutdownJobs.add(job);
@@ -444,7 +467,8 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * return a directory suitable for plugin specific configuration data
+	 * return a directory suitable for plugin specific configuration data. If no such dir exists, it
+	 * will be created. If it could not be created, the application will refuse to start.
 	 * 
 	 * @return a directory that exists always and is always writable and readable for plugins of the
 	 *         currently running elexis instance
@@ -464,8 +488,8 @@ public class Hub extends AbstractUIPlugin {
 			}
 			userDir = new File(userhome, "elexis");
 		}
-		if (!userDir.exists()){
-			if (!userDir.mkdirs()){
+		if (!userDir.exists()) {
+			if (!userDir.mkdirs()) {
 				System.err.print("fatal: could not create Userdir");
 				SWTHelper.alert("Panic exit", "could not create userdir "
 					+ userDir.getAbsolutePath());

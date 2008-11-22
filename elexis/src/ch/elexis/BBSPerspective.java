@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BBSPerspective.java 1129 2006-10-19 11:20:27Z rgw_ch $
+ *    $Id: BBSPerspective.java 4695 2008-11-22 05:58:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -22,23 +22,24 @@ import ch.elexis.views.BBSView;
 import ch.elexis.views.Starter;
 
 /**
- * Schwarzes Brett. Jeder angemeldete Anwender kann Themen eröffnen und/oder Anwprten
- * zu schon erschienenen Texten schreiben 
+ * Schwarzes Brett. Jeder angemeldete Anwender kann Themen eröffnen und/oder Anwprten zu schon
+ * erschienenen Texten schreiben
+ * 
  * @author gerry
- *
+ * 
  */
 public class BBSPerspective implements IPerspectiveFactory {
-    public static final String ID="ch.elexis.SchwarzesBrett"; //$NON-NLS-1$
-    public void createInitialLayout(IPageLayout layout)
-    {
-    	String editorArea = layout.getEditorArea();
+	public static final String ID = "ch.elexis.SchwarzesBrett"; //$NON-NLS-1$
+	
+	public void createInitialLayout(IPageLayout layout){
+		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(true);
-		if(Hub.localCfg.get(PreferenceConstants.SHOWSIDEBAR,"true").equals("true")){ //$NON-NLS-1$ //$NON-NLS-2$
-			layout.addStandaloneView(Starter.ID,false,SWT.LEFT,0.1f,editorArea);
+		if (Hub.localCfg.get(PreferenceConstants.SHOWSIDEBAR, "true").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
+			layout.addStandaloneView(Starter.ID, false, SWT.LEFT, 0.1f, editorArea);
 		}
-        layout.addView(BBSView.ID,SWT.RIGHT,0.9f,editorArea);
-
-    }
-
+		layout.addView(BBSView.ID, SWT.RIGHT, 0.9f, editorArea);
+		
+	}
+	
 }
