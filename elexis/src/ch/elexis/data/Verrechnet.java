@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4402 2008-09-08 20:27:57Z rgw_ch $
+ * $Id: Verrechnet.java 4696 2008-11-24 17:25:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -195,8 +195,12 @@ public class Verrechnet extends PersistentObject {
 		Konsultation k = getKons();
 		Fall fall = k.getFall();
 		TimeTool date = new TimeTool(k.getDatum());
-		double taxpunktwert = getVerrechenbar().getFactor(date, fall);
-		return new Money((int) Math.round(taxpunktwert * tp));
+		IVerrechenbar v=getVerrechenbar();
+		double tpw=1.0;
+		if(v!=null){						// Unknown tax system
+			tpw=v.getFactor(date, fall); 
+		}
+		return new Money((int) Math.round(tpw * tp));
 	}
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
 	
@@ -205,8 +209,14 @@ public class Verrechnet extends PersistentObject {
 		Konsultation k = getKons();
 		Fall fall = k.getFall();
 		TimeTool date = new TimeTool(k.getDatum());
-		double factor = v.getFactor(date, fall);
-		int tp = v.getTP(date, fall);
+		double factor=1.0;
+		int tp=0;
+		if(v!=null){
+			factor = v.getFactor(date, fall);
+			tp = v.getTP(date, fall);
+		}else{
+			tp=checkZero(get("VK_TP"));
+		}
 		return new Money((int) Math.round(factor * tp));
 	}
 	
