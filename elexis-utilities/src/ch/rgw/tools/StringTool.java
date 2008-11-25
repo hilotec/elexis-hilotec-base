@@ -30,6 +30,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.bzip2.CBZip2InputStream;
 import org.apache.commons.compress.bzip2.CBZip2OutputStream;
 
+import com.sun.java_cup.internal.internal_error;
+
 import ch.rgw.compress.CompEx;
 import ch.rgw.compress.GLZInputStream;
 import ch.rgw.compress.GLZOutputStream;
@@ -865,6 +867,8 @@ public static Hashtable foldStrings(final String s)
      */
     public static String unambiguify(final String in){
     	String ret=in.toLowerCase();
+    	ret=ret.replaceAll("[^a-z]", "_");
+    	/*
     	ret=ret.replaceAll("ä", "ae");
     	ret=ret.replaceAll("ö", "oe");
     	ret=ret.replaceAll("ü", "ue");
@@ -873,6 +877,9 @@ public static Hashtable foldStrings(final String s)
     	ret=ret.replaceAll("à", "a");
     	ret=ret.replaceAll("â", "a");
     	ret=ret.replaceAll("ê", "e");
+    	ret=ret.replaceAll("ë", "e");
+    	ret=ret.replaceAll("î", "i");
+    	ret=ret.replaceAll("ñ", "n");*/
     	return ret;
     }
     /** 
