@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4582 2008-10-12 17:47:50Z rgw_ch $
+ * $Id: HL7.java 4697 2008-11-25 12:57:05Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -260,9 +260,14 @@ public class HL7 {
 				pat = list.get(0);
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
+						StringBuilder sb=new StringBuilder();
+						sb.append("Namenskonflikt bei Pat. mit der ID ").append(pid).append(":\n")
+							.append("Labor: ").append(nachname).append(StringTool.space).append(vorname)
+							.append("(").append(sex).append("),").append(gebdat).append("\n")
+							.append("Datenbank: ").append(pat.getLabel());
 						pat = null;
 						return new Result<Object>(SEVERITY.WARNING, 4,
-							"Patient mit dieser ID schon mit anderem Namen vorhanden", null, true);
+							sb.toString(), null, true);
 					}
 				}
 			}
