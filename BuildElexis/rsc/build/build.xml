@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 4639 2008-10-27 20:15:10Z rgw_ch $
+<!-- $Id: build.xml 4699 2008-11-27 11:59:27Z rgw_ch $
     (c) 2005-2008 by G. Weirich
     
     This file reflects my personal environment. It is not intended for
@@ -45,7 +45,7 @@
 	(c) 2005-2008 G. Weirich
 -->
 
-<project name="elexis" default="all" basedir="../../">
+<project name="elexis" default="windows" basedir="../../">
 	<description>
 	    	Elexis - die Praxis
 	</description>
@@ -178,7 +178,7 @@
 	</target>
 
 	<target name="updater" depends="prepare" if="updater.ok">
-		<ant antfile="rsc/build/updater.xml" />
+		<ant antfile="rsc/build/updater.xml" inheritrefs="true"/>
 	</target>
 
 
@@ -248,6 +248,8 @@
 	<!-- Alles aufräumen -->
 	<target name="clean" description="Alle vom Build erstellen files löschen">
 		<delete dir="${dest}" />
+		<delete dir="${env.TEMP}/elexis-mmc"/>
+		<delete file="${env.TEMP}/elexis-mmc.jar"/>
 	</target>
 
 </project>
