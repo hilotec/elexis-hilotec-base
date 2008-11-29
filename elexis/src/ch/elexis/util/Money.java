@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: Money.java 4701 2008-11-29 14:01:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -30,7 +30,7 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  *
  */
-public class Money implements Comparable<Money> {
+public class Money extends Number implements Comparable<Money> {
 	private static NumberFormat nf=NumberFormat.getInstance(Locale.getDefault());
 	private int cents;		//  The value of this money
 	private double frac;		// What rests after rounding
@@ -249,5 +249,22 @@ public class Money implements Comparable<Money> {
 	}
 	public int compareTo(Money other){
 		   return this.cents - other.getCents();
-	} 
+	}
+	
+	@Override
+    public double doubleValue() {
+        return this.getAmount();
+    }
+    @Override
+    public float floatValue() {
+        return new Float(this.getAmount());
+    }
+    @Override
+    public int intValue() {
+        return this.getCents();
+    }
+    @Override
+    public long longValue() {
+        return (long) this.getCents();
+    }
 }
