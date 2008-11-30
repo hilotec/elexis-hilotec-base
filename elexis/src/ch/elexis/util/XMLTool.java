@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - additional methods
  *    
- *  $Id: XMLTool.java 4404 2008-09-09 14:48:28Z rgw_ch $
+ *  $Id: XMLTool.java 4702 2008-11-30 07:17:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -28,10 +28,10 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * This class provides various helper methods for handling XML data. 
- *
+ * @deprecated use ch.rgw.tools.XMLTool from the plugin elexis-utilities
  * @author danlutz
  */
-
+@Deprecated
 public class XMLTool {
 	public static String moneyToXmlDouble(Money money) {
 		int cents = money.getCents();

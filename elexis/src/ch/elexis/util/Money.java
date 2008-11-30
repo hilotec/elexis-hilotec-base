@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 4701 2008-11-29 14:01:24Z rgw_ch $
+ *  $Id: Money.java 4702 2008-11-30 07:17:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -29,8 +29,11 @@ import ch.rgw.tools.StringTool;
  * The term "Amount" means here always the x.xx form of Money
  * @author gerry
  *
+ *@deprecated use ch.rwg.tools.Money from the plugin elexis-utilities
  */
+@Deprecated
 public class Money extends Number implements Comparable<Money> {
+	private static final long serialVersionUID=7466555366749958L;
 	private static NumberFormat nf=NumberFormat.getInstance(Locale.getDefault());
 	private int cents;		//  The value of this money
 	private double frac;		// What rests after rounding

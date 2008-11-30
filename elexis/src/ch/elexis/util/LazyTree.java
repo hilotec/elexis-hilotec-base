@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTree.java 3683 2008-02-16 11:46:37Z rgw_ch $
+ * $Id: LazyTree.java 4702 2008-11-30 07:17:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.IFilter;
  * @author gerry
  *
  */
-public class LazyTree<T> extends Tree {
+public class LazyTree<T> extends Tree<T> {
 	LazyTreeListener listen;
 	
 	@SuppressWarnings("unchecked")

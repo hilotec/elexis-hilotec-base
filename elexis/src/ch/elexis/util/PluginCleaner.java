@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import ch.rgw.io.FileTool;
 
+/** @deprecated do not use */
+@Deprecated
 public class PluginCleaner {
 
 	public static void clean(String basedir){
