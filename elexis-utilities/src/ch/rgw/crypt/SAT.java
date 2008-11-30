@@ -33,7 +33,7 @@ import ch.rgw.tools.StringTool;
 
 /**
  * Secure Authenticated Transmission The Transmitter stores a hashtable in an encrypted and signed
- * wrapper. For best compatibility we use SOAP messages encrypted with GnuPG
+ * wrapper.
  * 
  * @author Gerry
  * 
@@ -63,21 +63,20 @@ public class SAT {
 	}
 	
 	/**
-	 * Decrypt, and verify a packet
+	 * Decrypt, and verify a packet (using our preconfigured Cryptologist)
 	 * 
 	 * @param encrypted
 	 *            the encrypted packet
-	 * @param pwd
-	 *            the password to decrypt
-	 * @return a hashmap with the Parameters and an additional parameter "ADM_user" containing the
-	 *         sender's ID
+	 * @return a hashmap with the Parameters and an additional parameter "ADM_SIGNED_BY" containing
+	 *         the sender's ID
 	 */
 	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
 		Result<byte[]> dec = crypt.decrypt(encrypted);
-		if(!dec.isOK()){
-			return new Result<HashMap<String, Object>>(dec.getSeverity(),1,"Decrypt error",null,true);
+		if (!dec.isOK()) {
+			return new Result<HashMap<String, Object>>(dec.getSeverity(), 1, "Decrypt error", null,
+				true);
 		}
-		byte[] decrypted=dec.get();
+		byte[] decrypted = dec.get();
 		SoapConverter sc = new SoapConverter();
 		if (sc.load(decrypted)) {
 			HashMap<String, Object> fields = sc.getParameters();
@@ -119,7 +118,8 @@ public class SAT {
 	 *            Serializables. Keynames starting with ADM_ are reserved and must not be used.
 	 * @param dest
 	 *            the receiver. The Object will be encoded with the receiver's public key
-	 * @return a byte array containing the signed and encrypted Hashmap
+	 * @return a byte array containing the signed and encrypted Hashmap. This will remain valid for
+	 *         5 Minutes.
 	 */
 	public byte[] wrap(HashMap<String, Object> hash, String dest){
 		try {
