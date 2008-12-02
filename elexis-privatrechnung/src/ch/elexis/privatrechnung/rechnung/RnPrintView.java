@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 4421 2008-09-20 09:02:09Z rgw_ch $
+ * $Id: RnPrintView.java 4707 2008-12-02 16:44:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
@@ -32,8 +32,8 @@ import ch.elexis.data.Verrechnet;
 import ch.elexis.privatrechnung.data.PreferenceConstants;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
