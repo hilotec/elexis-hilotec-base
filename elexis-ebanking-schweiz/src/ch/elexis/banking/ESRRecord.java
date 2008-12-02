@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 4617 2008-10-21 11:49:55Z rgw_ch $
+ *  $Id: ESRRecord.java 4705 2008-12-02 16:43:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -17,7 +17,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.util.Money;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 

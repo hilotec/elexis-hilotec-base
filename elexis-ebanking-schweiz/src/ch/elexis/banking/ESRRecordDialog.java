@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecordDialog.java 4617 2008-10-21 11:49:55Z rgw_ch $
+ *  $Id: ESRRecordDialog.java 4705 2008-12-02 16:43:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -34,9 +34,9 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.InputData;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 /**

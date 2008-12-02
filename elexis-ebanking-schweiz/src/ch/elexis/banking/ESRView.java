@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 4617 2008-10-21 11:49:55Z rgw_ch $
+ *  $Id: ESRView.java 4705 2008-12-02 16:43:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -52,13 +52,13 @@ import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.LazyContentProvider;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
