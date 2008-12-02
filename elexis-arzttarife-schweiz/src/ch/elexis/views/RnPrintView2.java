@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4586 2008-10-13 09:33:08Z rgw_ch $
+ * $Id: RnPrintView2.java 4706 2008-12-02 16:44:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -45,12 +45,12 @@ import ch.elexis.text.ReplaceCallback;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SortedList;
-import ch.elexis.util.XMLTool;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.XMLTool;
 
 /**
  * This is a pop-in replacement for RnPrintView. To avoid several problems around OpenOffice based

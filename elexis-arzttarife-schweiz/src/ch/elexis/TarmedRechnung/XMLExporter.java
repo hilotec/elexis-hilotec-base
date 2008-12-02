@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4688 2008-11-19 16:00:13Z rgw_ch $
+ * $Id: XMLExporter.java 4706 2008-12-02 16:44:07Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -75,14 +75,14 @@ import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.XMLTool;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
+import ch.rgw.tools.XMLTool;
 
 /**
  * Exportiert eine Elexis-Rechnung im XML 4.0 Format von xmldata.ch Bitte KEINE Änderungen an dieser
@@ -658,10 +658,10 @@ public class XMLExporter implements IRnOutputter {
 				} else if ((v instanceof Medikament) || (v instanceof Medical)
 					|| (v.getCodeSystemCode() == "400")) {
 					el = new Element("record_drug", ns);
-					Artikel art=(Artikel)v;
-					double mult=art.getFactor(tt, actFall);
-					Money preis=vv.getNettoPreis();
-					//Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					Artikel art = (Artikel) v;
+					double mult = art.getFactor(tt, actFall);
+					Money preis = vv.getNettoPreis();
+					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute("unit_factor", XMLTool.doubleToXmlDouble(mult, 2));
 					el.setAttribute("tariff_type", "400"); // Pharmacode-basiert
