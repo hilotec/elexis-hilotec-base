@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 4422 2008-09-20 09:03:09Z rgw_ch $
+ * $Id: RechnungsBlatt.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -52,11 +52,11 @@ import ch.elexis.data.Zahlung;
 import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.WidgetFactory;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsBlatt extends Composite implements ActivationListener, SelectionListener,

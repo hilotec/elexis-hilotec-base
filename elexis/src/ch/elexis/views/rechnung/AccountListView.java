@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2008, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: AccountListView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: AccountListView.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -47,8 +47,8 @@ import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 
 
 /**

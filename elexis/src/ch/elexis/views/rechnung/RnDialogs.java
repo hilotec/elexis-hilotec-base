@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDialogs.java 4411 2008-09-13 20:47:59Z rgw_ch $
+ * $Id: RnDialogs.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -38,8 +37,9 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Money;
+import ch.elexis.util.MoneyInput;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -50,162 +50,187 @@ public class RnDialogs {
 		DatePickerCombo dp;
 		Text amount;
 		Text bemerkung;
+		
 		public GebuehrHinzuDialog(Shell shell, Rechnung r){
 			super(shell);
-			rn=r;
+			rn = r;
 		}
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=new Composite(parent,SWT.NONE);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.date")); //$NON-NLS-1$
-			dp=new DatePickerCombo(ret,SWT.NONE);
-			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
-			//nf=NumberFormat.getCurrencyInstance();
-			amount=new Text(ret,SWT.BORDER);
-			//amount.setText(rn.getOffenerBetrag().getAmountAsString());
-			amount.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
-			bemerkung=new Text(ret,SWT.MULTI|SWT.BORDER);
-			bemerkung.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.date")); //$NON-NLS-1$
+			dp = new DatePickerCombo(ret, SWT.NONE);
+			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
+			// nf=NumberFormat.getCurrencyInstance();
+			amount = new Text(ret, SWT.BORDER);
+			// amount.setText(rn.getOffenerBetrag().getAmountAsString());
+			amount.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
+			bemerkung = new Text(ret, SWT.MULTI | SWT.BORDER);
+			bemerkung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			amount.setFocus();
 			return ret;
 		}
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
-			setTitle(Messages.getString("RnDialogs.invoice")+rn.getNr()); //$NON-NLS-1$
+			setTitle(Messages.getString("RnDialogs.invoice") + rn.getNr()); //$NON-NLS-1$
 			getShell().setText(Messages.getString("RnDialogs.addExpense")); //$NON-NLS-1$
 			setMessage(Messages.getString("RnDialogs.enterAmount")); //$NON-NLS-1$
 			setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		}
+		
 		@Override
-		protected void okPressed() {
-			try{
-				//Number num=df.parse(amount.getText());
-				Money ret=new Money(amount).multiply(-1.0);
-				rn.addZahlung(ret,bemerkung.getText());
+		protected void okPressed(){
+			
+			// Number num=df.parse(amount.getText());
+			Money ret = MoneyInput.getFromTextField(amount);
+			if (ret != null) {
+				ret=ret.multiply(-1.0);
+				rn.addZahlung(ret, bemerkung.getText());
 				super.okPressed();
-			}catch(ParseException nex){
-				ErrorDialog.openError(getShell(),Messages.getString("RnDialogs.amountInvalid"),Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
-						new Status(1,"ch.elexis",1,"CurrencyFormat",null)); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				ErrorDialog
+					.openError(
+						getShell(),
+						Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
+						new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
+			
 		}
-
 	}
-	public static class BuchungHinzuDialog extends TitleAreaDialog{
+	
+	public static class BuchungHinzuDialog extends TitleAreaDialog {
 		Rechnung rn;
 		DatePickerCombo dp;
-		Text	amount,bemerkung;
+		Text amount, bemerkung;
+		
 		public BuchungHinzuDialog(Shell shell, Rechnung r){
 			super(shell);
-			rn=r;
+			rn = r;
 		}
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=new Composite(parent,SWT.NONE);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
-			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.date")); //$NON-NLS-1$
-			dp=new DatePickerCombo(ret,SWT.NONE);
+			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.date")); //$NON-NLS-1$
+			dp = new DatePickerCombo(ret, SWT.NONE);
 			dp.setDate(new Date());
-			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
-			//nf=NumberFormat.getCurrencyInstance();
-			amount=new Text(ret,SWT.BORDER);
-			//amount.setText(rn.getOffenerBetrag().getAmountAsString());
-			amount.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			new Label(ret,SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
-			bemerkung=new Text(ret,SWT.MULTI|SWT.BORDER);
-			bemerkung.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
+			// nf=NumberFormat.getCurrencyInstance();
+			amount = new Text(ret, SWT.BORDER);
+			// amount.setText(rn.getOffenerBetrag().getAmountAsString());
+			amount.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
+			bemerkung = new Text(ret, SWT.MULTI | SWT.BORDER);
+			bemerkung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			amount.setFocus();
 			return ret;
 		}
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
-			setTitle(Messages.getString("RnDialogs.invoice")+rn.getNr()); //$NON-NLS-1$
+			setTitle(Messages.getString("RnDialogs.invoice") + rn.getNr()); //$NON-NLS-1$
 			getShell().setText(Messages.getString("RnDialogs.addTransaction")); //$NON-NLS-1$
 			setMessage(Messages.getString("RnDialogs.enterAmount")); //$NON-NLS-1$
-			setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+			setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		}
+		
 		@Override
-		protected void okPressed() {
-			try{
-				//Number num=df.parse(amount.getText());
-				Money ret=new Money(amount);
-				rn.addZahlung(ret,bemerkung.getText());
+		protected void okPressed(){
+			// Number num=df.parse(amount.getText());
+			Money ret = MoneyInput.getFromTextField(amount);
+			if (ret != null) {
+				rn.addZahlung(ret, bemerkung.getText());
 				super.okPressed();
-			}catch(ParseException nex){
-				ErrorDialog.openError(getShell(),Messages.getString("RnDialogs.amountInvalid"),Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
-						new Status(1,"ch.elexis",1,"CurrencyFormat",null)); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				ErrorDialog
+					.openError(
+						getShell(),
+						Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
+						new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
+			
 		}
 		
 	}
-	public static class StatusAendernDialog extends TitleAreaDialog{
+	
+	public static class StatusAendernDialog extends TitleAreaDialog {
 		Rechnung rn;
 		Combo cbStates;
-
-		//RnStatus[] states=RnStatus.Text;
+		
+		// RnStatus[] states=RnStatus.Text;
 		
 		public StatusAendernDialog(Shell shell, Rechnung r){
 			super(shell);
-			rn=r;
+			rn = r;
 		}
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=new Composite(parent,SWT.NONE);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
-			ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-			cbStates=new Combo(ret,SWT.READ_ONLY);
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			cbStates = new Combo(ret, SWT.READ_ONLY);
 			cbStates.setItems(RnStatus.getStatusTexts());
 			cbStates.setVisibleItemCount(RnStatus.getStatusTexts().length);
 			cbStates.select(rn.getStatus());
 			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			new Label(ret,SWT.WRAP).setText("Achtung!\nManuelles Ändern des Status kann zu Inkonsistenzen führen!");
+			new Label(ret, SWT.WRAP)
+				.setText("Achtung!\nManuelles Ändern des Status kann zu Inkonsistenzen führen!");
 			return ret;
 		}
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
-			getShell().setText(Messages.getString("RnDialogs.invoiceNumber")+rn.getNr()); //$NON-NLS-1$
+			getShell().setText(Messages.getString("RnDialogs.invoiceNumber") + rn.getNr()); //$NON-NLS-1$
 			setTitle(Messages.getString("RnDialogs.modifyInvoiceState")); //$NON-NLS-1$
 			
-			setMessage(rn.getFall().getPatient().getLabel()+Messages.getString("RnDialogs.pleaseNewState")); //$NON-NLS-1$
+			setMessage(rn.getFall().getPatient().getLabel()
+				+ Messages.getString("RnDialogs.pleaseNewState")); //$NON-NLS-1$
 		}
+		
 		@Override
-		protected void okPressed() {
-			int idx=cbStates.getSelectionIndex();
-			if(idx!=-1){
+		protected void okPressed(){
+			int idx = cbStates.getSelectionIndex();
+			if (idx != -1) {
 				rn.setStatus(idx);
 			}
 			super.okPressed();
 		}
 		
 	}
-	public static class StornoDialog extends TitleAreaDialog{
+	
+	public static class StornoDialog extends TitleAreaDialog {
 		Rechnung rn;
 		Button bReactivate;
-		List<Button> exporters=new ArrayList<Button>();
+		List<Button> exporters = new ArrayList<Button>();
 		private List<IRnOutputter> lo;
+		
 		public StornoDialog(Shell shell, Rechnung r){
 			super(shell);
-			rn=r;
+			rn = r;
 		}
+		
 		@SuppressWarnings("unchecked")
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			lo=Extensions.getClasses("ch.elexis.RechnungsManager", "outputter");
-			Composite ret=new Composite(parent,SWT.NONE);
+		protected Control createDialogArea(Composite parent){
+			lo = Extensions.getClasses("ch.elexis.RechnungsManager", "outputter");
+			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
-			Label lbLocal=new Label(ret,SWT.NONE);
+			Label lbLocal = new Label(ret, SWT.NONE);
 			lbLocal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			lbLocal.setText("(Storno erfolgt nur local; bitte ggf. an Rn-Empfänger mitteilen)");
-			for(IRnOutputter rno:lo){
-				if(rno.canStorno(null) && hasTrace(rno.getDescription())){
-					Button cbStorno=new Button(ret,SWT.CHECK);
+			for (IRnOutputter rno : lo) {
+				if (rno.canStorno(null) && hasTrace(rno.getDescription())) {
+					Button cbStorno = new Button(ret, SWT.CHECK);
 					cbStorno.setData(rno);
 					cbStorno.setText(rno.getDescription());
 					cbStorno.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -213,45 +238,52 @@ public class RnDialogs {
 					exporters.add(cbStorno);
 				}
 			}
-			if(exporters.size()>0){
+			if (exporters.size() > 0) {
 				lbLocal.setText("Storno auch an folgende(s) Ausgabeziel(e) weiterleiten:");
 			}
-			new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
-			bReactivate=new Button(ret,SWT.CHECK);
+			new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(
+				1, false, 1, false));
+			bReactivate = new Button(ret, SWT.CHECK);
 			bReactivate.setText(Messages.getString("RnDialogs.reactivateConsultations"));
 			bReactivate.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			bReactivate.setSelection(true);
-			/*bYes=new Button(ret,SWT.RADIO);
-			bNo=new Button(ret,SWT.RADIO);
-			bYes.setText(Messages.getString("RnDialogs.yes")); //$NON-NLS-1$
-			bNo.setText(Messages.getString("RnDialogs.no")); //$NON-NLS-1$*/
-			ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+			/*
+			 * bYes=new Button(ret,SWT.RADIO); bNo=new Button(ret,SWT.RADIO);
+			 * bYes.setText(Messages.getString("RnDialogs.yes")); //$NON-NLS-1$
+			 * bNo.setText(Messages.getString("RnDialogs.no")); //$NON-NLS-1$
+			 */
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			return ret;
 		}
+		
 		private boolean hasTrace(String msg){
-			List<String> msgs=rn.getTrace(Rechnung.OUTPUT);
-			for(String m:msgs){
-				if(m.indexOf(msg)>-1){
+			List<String> msgs = rn.getTrace(Rechnung.OUTPUT);
+			for (String m : msgs) {
+				if (m.indexOf(msg) > -1) {
 					return true;
 				}
 			}
 			return false;
 		}
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
-			getShell().setText(Messages.getString("RnDialogs.invoice")+rn.getNr()); //$NON-NLS-1$
+			getShell().setText(Messages.getString("RnDialogs.invoice") + rn.getNr()); //$NON-NLS-1$
 			setTitle(Messages.getString("RnDialogs.reallyCancel")); //$NON-NLS-1$
 			//setMessage(Messages.getString("RnDialogs.reactivateConsultations")); //$NON-NLS-1$
 		}
+		
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			rn.storno(bReactivate.getSelection());
-			for(Button exporter:exporters){
+			for (Button exporter : exporters) {
 				if (exporter.getSelection()) {
-					IRnOutputter iro=(IRnOutputter)exporter.getData();
-					if(iro!=null){
-						iro.doOutput(IRnOutputter.TYPE.STORNO, Arrays.asList(new Rechnung[]{rn}));
+					IRnOutputter iro = (IRnOutputter) exporter.getData();
+					if (iro != null) {
+						iro.doOutput(IRnOutputter.TYPE.STORNO, Arrays.asList(new Rechnung[] {
+							rn
+						}));
 					}
 				}
 			}

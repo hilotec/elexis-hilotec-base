@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 4370 2008-09-04 13:47:13Z rgw_ch $
+ *  $Id: Konsultation.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -429,6 +429,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		} else {
 			return RnStatus.NICHT_VON_IHNEN;
 		}
+		
 	}
 	
 	public String getStatusText(){

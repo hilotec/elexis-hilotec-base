@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 4001 2008-06-04 15:06:20Z rgw_ch $
+ * $Id: PatHeuteView.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -71,7 +71,6 @@ import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultContentProvider;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.ListDisplay;
-import ch.elexis.util.Money;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SimpleWidgetProvider;
@@ -79,6 +78,7 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 

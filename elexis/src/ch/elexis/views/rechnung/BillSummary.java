@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: BillSummary.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: BillSummary.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -51,9 +51,9 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Zahlung;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.tools.Money;
 
 
 /**

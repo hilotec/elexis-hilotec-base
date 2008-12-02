@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 4116 2008-07-07 16:41:50Z rgw_ch $
+ *  $Id: Patient.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -18,10 +18,10 @@ import java.util.List;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;

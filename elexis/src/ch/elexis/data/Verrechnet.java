@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4696 2008-11-24 17:25:07Z rgw_ch $
+ * $Id: Verrechnet.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,7 +17,7 @@ import java.util.Hashtable;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 /**

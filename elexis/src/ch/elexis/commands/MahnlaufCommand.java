@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MahnlaufCommand.java 4588 2008-10-13 12:54:55Z tschaller $
+ *  $Id: MahnlaufCommand.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -24,8 +24,8 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.Money;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class MahnlaufCommand extends AbstractHandler {

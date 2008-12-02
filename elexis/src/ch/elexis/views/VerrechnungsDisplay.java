@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 4687 2008-11-19 16:00:04Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -47,11 +47,11 @@ import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AddBuchungDialog.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: AddBuchungDialog.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -25,8 +25,9 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.Desk;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Patient;
-import ch.elexis.util.Money;
+import ch.elexis.util.MoneyInput;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 
 /**
  * Eine Buchung zu einem Patientenkonto zufügen
@@ -62,14 +63,14 @@ public class AddBuchungDialog extends TitleAreaDialog {
 		super.create();
 		setTitle(Messages.getString("AddBuchungDialog.enterBooking")); //$NON-NLS-1$
 		setMessage(Messages.getString("AddBuchungDialog.dontManual")); //$NON-NLS-1$
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		getShell().setText(Messages.getString("AddBuchungDialog.manual")); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void okPressed() {
 		try{
-			Money mBetrag=new Money	(betrag);
+			Money mBetrag=MoneyInput.getFromTextField(betrag);
 			new AccountTransaction(pat,null,mBetrag,null,text.getText());
 		}catch(Exception ex){
 			SWTHelper.showError("Fehler bei Betrageingabe", "Kann den eingegebenen Betrag nicht interpretieren");

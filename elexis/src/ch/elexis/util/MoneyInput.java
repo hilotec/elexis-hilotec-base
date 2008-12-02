@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MoneyInput.java 4702 2008-11-30 07:17:57Z rgw_ch $
+ *  $Id: MoneyInput.java 4708 2008-12-02 16:44:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -141,9 +141,9 @@ public class MoneyInput extends Composite {
 	 * 
 	 * @return the Money or null
 	 */
-	public static Money getFromTextField(Text textField){
+	public static ch.rgw.tools.Money getFromTextField(Text textField){
 		try {
-			return new Money(textField.getText());
+			return new ch.rgw.tools.Money(textField.getText());
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return null;
