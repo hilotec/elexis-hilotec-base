@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 4428 2008-09-22 11:25:23Z rgw_ch $
+ *  $Id: Rechnungslauf.java 4709 2008-12-02 17:58:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -28,7 +28,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.util.Money;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 /**

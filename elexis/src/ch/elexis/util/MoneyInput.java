@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MoneyInput.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: MoneyInput.java 4709 2008-12-02 17:58:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -58,7 +59,7 @@ public class MoneyInput extends Composite {
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 	}
 	
-	public MoneyInput(final Composite parent, final String label, final Money money){
+	public MoneyInput(final Composite parent, final String label, final ch.rgw.tools.Money money){
 		this(parent, label);
 		text.setText(money.getAmountAsString());
 	}
@@ -71,9 +72,9 @@ public class MoneyInput extends Composite {
 				try {
 					String t = text.getText();
 					if (t.length() == 0) {
-						text.setText(new Money().getAmountAsString());
+						text.setText(new ch.rgw.tools.Money().getAmountAsString());
 					} else {
-						Money.checkInput(t);
+						ch.rgw.tools.Money.checkInput(t);
 					}
 					for (SelectionListener lis : listeners) {
 						Event ev = new Event();
@@ -102,13 +103,13 @@ public class MoneyInput extends Composite {
 	 * @param bNullIfEmpty
 	 *            if nothing was entered return null (Otherwise: return 0.00)
 	 */
-	public Money getMoney(final boolean bNullIfEmpty){
+	public ch.rgw.tools.Money getMoney(final boolean bNullIfEmpty){
 		String t = text.getText();
 		if (StringTool.isNothing(t)) {
 			if (bNullIfEmpty) {
 				return null;
 			} else {
-				return new Money();
+				return new ch.rgw.tools.Money();
 			}
 		}
 		try {
