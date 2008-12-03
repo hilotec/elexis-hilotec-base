@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenWizardDialog.java 4709 2008-12-02 17:58:03Z rgw_ch $
+ *  $Id: KonsZumVerrechnenWizardDialog.java 4710 2008-12-03 07:12:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -75,10 +75,12 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 
 		ddc2=new DayDateCombo(ret, "",TAGEN_BZW_DEM);
 		int prev = Hub.localCfg.get(CONFIG + "beginBefore", 30);
-		ddc1.setDays(prev, null);
+		TimeTool ttNow=new TimeTool();
+		ttNow.addHours(-24*prev);
+		ddc1.setDays(prev*-1);
 		
 		prev = Hub.localCfg.get(CONFIG + "endBefore", 20);
-		ddc2.setDays(prev, null);
+		ddc2.setDays(prev*-1);
 		
 		ddc1.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		

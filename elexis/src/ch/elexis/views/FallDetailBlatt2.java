@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallDetailBlatt2.java 4425 2008-09-21 15:50:10Z rgw_ch $
+ *  $Id: FallDetailBlatt2.java 4710 2008-12-03 07:12:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -400,7 +400,7 @@ public class FallDetailBlatt2 extends Composite {
 				}
 			}
 			TimeTool bt = f.getBillingDate();
-			ddc.setDates(new TimeTool(), bt);
+			ddc.setDates(bt);
 			form.reflow(true);
 			form.redraw();
 		}

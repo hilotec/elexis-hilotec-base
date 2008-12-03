@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayDateCombo.java 4709 2008-12-02 17:58:03Z rgw_ch $
+ *  $Id: DayDateCombo.java 4710 2008-12-03 07:12:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -43,8 +43,19 @@ public class DayDateCombo extends Composite {
 	private DatePickerCombo dp;
 	private SpinnerListener spl;
 	private DateListener dl;
-	private TimeTool baseDate;
-	boolean bReverse = false; // true: days are before baseDate
+	private TimeTool ttBase, ttNow;
+	private MODE mode;
+	
+	/**
+	 * Possible modes: The Spinner counts days UNTIL the given base-date or the spinner counts days
+	 * FROM the given base-date
+	 * 
+	 * @author Gerry
+	 * 
+	 */
+	public enum MODE {
+		DAYS_FROM_DATE, DAYS_UNTIL_DATE
+	};
 	
 	/**
 	 * Create the Composite
@@ -58,7 +69,7 @@ public class DayDateCombo extends Composite {
 	 */
 	public DayDateCombo(Composite parent, String text1, String text2){
 		super(parent, SWT.NONE);
-		
+		this.mode=mode;
 		setLayout(new RowLayout(SWT.HORIZONTAL));
 		Desk.getToolkit().createLabel(this, text1);
 		spl = new SpinnerListener();
@@ -66,7 +77,6 @@ public class DayDateCombo extends Composite {
 		spinner = new Spinner(this, SWT.NONE);
 		Desk.getToolkit().createLabel(this, text2);
 		dp = new DatePickerCombo(this, SWT.NONE);
-		baseDate = new TimeTool();
 		setListeners();
 	}
 	
@@ -78,26 +88,12 @@ public class DayDateCombo extends Composite {
 	 * @param endDate
 	 *            the date to calculate with the spinner
 	 */
-	public void setDates(TimeTool baseDate, TimeTool counterDate){
-		if (baseDate == null) {
-			baseDate = new TimeTool();
-		}
-		if (counterDate == null) {
-			counterDate = new TimeTool();
-		}
-		this.baseDate = new TimeTool(baseDate);
+	public void setDates(TimeTool baseDate){
+		ttBase = new TimeTool(baseDate);
 		removeListeners();
-		dp.setDate(counterDate.getTime());
-		int days = 0;
-		if (counterDate.isAfter(baseDate)) {
-			bReverse = true;
-			days = baseDate.secondsTo(counterDate) / 86400;
-		} else {
-			bReverse=false;
-			days = counterDate.secondsTo(baseDate) / 86400;
-		}
-		
-		spinner.setValues(days + 1, 0, 999, 0, 1, 10);
+		dp.setDate(ttBase.getTime());
+		int days = ttBase.secondsTo(ttNow);
+		spinner.setValues(Math.abs(days), 0, 999, 0, 1, 10);
 		setListeners();
 	}
 	
@@ -109,20 +105,11 @@ public class DayDateCombo extends Composite {
 	 * @param baseDate
 	 *            the date to calculate from or null=today
 	 */
-	public void setDays(int days, TimeTool baseDate){
-		removeListeners();
-		if (baseDate == null) {
-			baseDate = new TimeTool();
-		}
-		this.baseDate = new TimeTool(baseDate);
-		dp.setDate(baseDate.getTime());
-		if(days<0){
-			bReverse=true;
-			days*=-1;
-		}else{
-			bReverse=false;
-		}
-		spinner.setValues(days + 1, 0, 999, 0, 1, 10);
+	public void setDays(int days){
+		ttBase=new TimeTool(ttNow);
+		ttBase.addHours(days*24);
+		dp.setDate(ttBase.getTime());
+		spinner.setValues(Math.abs(days), 0, 999, 0, 1, 10);
 		setListeners();
 		
 	}
@@ -180,10 +167,8 @@ public class DayDateCombo extends Composite {
 		public void modifyText(ModifyEvent me){
 			removeListeners();
 			int d = spinner.getSelection();
-			if(bReverse){
-				d*=-1;
-			}
-			TimeTool nt = new TimeTool(baseDate);
+			
+			TimeTool nt = new TimeTool(ttBase);
 			nt.addHours(d * 24);
 			dp.setDate(nt.getTime());
 			Event e = new Event();
@@ -200,7 +185,7 @@ public class DayDateCombo extends Composite {
 		public void widgetSelected(SelectionEvent se){
 			removeListeners();
 			TimeTool nt = new TimeTool(dp.getDate().getTime());
-			int days = baseDate.secondsTo(nt) / 86400;
+			int days = ttBase.secondsTo(nt) / 86400;
 			spinner.setValues(days, 0, 999, 0, 1, 10);
 			Event e = new Event();
 			e.time = se.time;
