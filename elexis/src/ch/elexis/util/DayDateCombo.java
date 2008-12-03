@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayDateCombo.java 4710 2008-12-03 07:12:56Z rgw_ch $
+ *  $Id: DayDateCombo.java 4711 2008-12-03 18:09:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -44,18 +44,6 @@ public class DayDateCombo extends Composite {
 	private SpinnerListener spl;
 	private DateListener dl;
 	private TimeTool ttBase, ttNow;
-	private MODE mode;
-	
-	/**
-	 * Possible modes: The Spinner counts days UNTIL the given base-date or the spinner counts days
-	 * FROM the given base-date
-	 * 
-	 * @author Gerry
-	 * 
-	 */
-	public enum MODE {
-		DAYS_FROM_DATE, DAYS_UNTIL_DATE
-	};
 	
 	/**
 	 * Create the Composite
@@ -69,7 +57,8 @@ public class DayDateCombo extends Composite {
 	 */
 	public DayDateCombo(Composite parent, String text1, String text2){
 		super(parent, SWT.NONE);
-		this.mode=mode;
+		ttNow = new TimeTool();
+		ttNow.chop(3);
 		setLayout(new RowLayout(SWT.HORIZONTAL));
 		Desk.getToolkit().createLabel(this, text1);
 		spl = new SpinnerListener();
@@ -80,6 +69,10 @@ public class DayDateCombo extends Composite {
 		setListeners();
 	}
 	
+	public void setEnabled(boolean bEnable){
+		dp.setEnabled(bEnable);
+		spinner.setEnabled(bEnable);
+	}
 	/**
 	 * Set the dates of the composite.
 	 * 
@@ -89,10 +82,16 @@ public class DayDateCombo extends Composite {
 	 *            the date to calculate with the spinner
 	 */
 	public void setDates(TimeTool baseDate){
-		ttBase = new TimeTool(baseDate);
 		removeListeners();
+		if (baseDate == null) {
+			ttBase = new TimeTool();
+		} else {
+			ttBase = new TimeTool(baseDate);
+		}
+		ttBase.chop(3);
+		
 		dp.setDate(ttBase.getTime());
-		int days = ttBase.secondsTo(ttNow);
+		int days = ttBase.daysTo(ttNow);
 		spinner.setValues(Math.abs(days), 0, 999, 0, 1, 10);
 		setListeners();
 	}
@@ -106,20 +105,25 @@ public class DayDateCombo extends Composite {
 	 *            the date to calculate from or null=today
 	 */
 	public void setDays(int days){
-		ttBase=new TimeTool(ttNow);
-		ttBase.addHours(days*24);
+		removeListeners();
+		ttBase = new TimeTool(ttNow);
+		ttBase.addDays(days);
 		dp.setDate(ttBase.getTime());
 		spinner.setValues(Math.abs(days), 0, 999, 0, 1, 10);
 		setListeners();
-		
 	}
 	
 	/**
-	 * Get the actual setting of the DatePicker
+	 * Get the actual setting of the DatePicker.
 	 * 
-	 * @return a TimeTool with the DatePicker's date
+	 * @return a TimeTool with the DatePicker's date or null if the date is not set or the spinner
+	 *         is 0
 	 */
 	public TimeTool getDate(){
+		int v = spinner.getSelection();
+		if (v == 0) {
+			return null;
+		}
 		if (StringTool.isNothing(dp.getText())) {
 			return null;
 		}
@@ -167,10 +171,12 @@ public class DayDateCombo extends Composite {
 		public void modifyText(ModifyEvent me){
 			removeListeners();
 			int d = spinner.getSelection();
-			
-			TimeTool nt = new TimeTool(ttBase);
-			nt.addHours(d * 24);
-			dp.setDate(nt.getTime());
+			if(ttBase.isBefore(ttNow)){
+				d*=-1;
+			}
+			ttBase=new TimeTool(ttNow);
+			ttBase.addDays(d);
+			dp.setDate(ttBase.getTime());
 			Event e = new Event();
 			e.time = me.time;
 			notifyListeners(SWT.Selection, e);
@@ -185,8 +191,8 @@ public class DayDateCombo extends Composite {
 		public void widgetSelected(SelectionEvent se){
 			removeListeners();
 			TimeTool nt = new TimeTool(dp.getDate().getTime());
-			int days = ttBase.secondsTo(nt) / 86400;
-			spinner.setValues(days, 0, 999, 0, 1, 10);
+			int days = ttNow.daysTo(nt);
+			spinner.setValues(Math.abs(days), 0, 999, 0, 1, 10);
 			Event e = new Event();
 			e.time = se.time;
 			notifyListeners(SWT.Selection, e);
@@ -194,7 +200,7 @@ public class DayDateCombo extends Composite {
 		}
 		
 		public void modifyText(ModifyEvent me){
-			String t = dp.getText();
+			//String t = dp.getText();
 			Event e = new Event();
 			e.time = me.time;
 			notifyListeners(SWT.Selection, e);

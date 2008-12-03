@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenWizardDialog.java 4710 2008-12-03 07:12:56Z rgw_ch $
+ *  $Id: KonsZumVerrechnenWizardDialog.java 4711 2008-12-03 18:09:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -69,64 +71,22 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 		cbMarked.setSelection(true);
 		cbBefore = new Button(ret, SWT.CHECK);
 		cbBefore.setText(TREATMENTBEGINBEFORE);
-		ddc1=new DayDateCombo(ret,"",TAGEN_BZW_DEM);
+				ddc1=new DayDateCombo(ret,"",TAGEN_BZW_DEM);
 		cbTime = new Button(ret, SWT.CHECK);
 		cbTime.setText(TREATMENTENDBEFORE);
 
 		ddc2=new DayDateCombo(ret, "",TAGEN_BZW_DEM);
-		int prev = Hub.localCfg.get(CONFIG + "beginBefore", 30);
+		int prev = Hub.localCfg.get(CONFIG + "beginBefore", 30)*-1;
 		TimeTool ttNow=new TimeTool();
-		ttNow.addHours(-24*prev);
-		ddc1.setDays(prev*-1);
+		ttNow.addDays(prev);
+		ddc1.setDays(prev);
 		
 		prev = Hub.localCfg.get(CONFIG + "endBefore", 20);
-		ddc2.setDays(prev*-1);
-		
+		ddc2.setDays(prev);
 		ddc1.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+
 		
 		ddc2.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-		/*
-		sp1 = new Spinner(ret, SWT.NONE);
-		Date d = new Date();
-		d.setTime(d.getTime() - prev * 86400);
-		sp1.setValues(prev, 0, 365, 0, 1, 10);
-		sp1.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				int days = sp1.getSelection();
-				TimeTool tt = new TimeTool();
-				tt.add(TimeTool.DAY_OF_YEAR, -1 * days);
-				dp1.setDate(tt.getTime());
-				Hub.localCfg.set(CONFIG + "beginBefore", (int) days);
-			}
-
-		});
-		new Label(ret, SWT.NONE).setText(TAGEN_BZW_DEM);
-		dp1 = new DatePickerCombo(ret, SWT.NONE);
-		dp1.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		((GridData) dp1.getLayoutData()).widthHint = 50;
-		Date d = new Date();
-		d.setTime(d.getTime() - prev * 86400);
-		dp1.setDate(d);
-
-		cbTime = new Button(ret, SWT.CHECK);
-		cbTime.setText(TREATMENTENDBEFORE);
-		prev = Hub.localCfg.get(CONFIG + "endBefore", 20);
-		sp2 = new Spinner(ret, SWT.NONE);
-		sp2.setValues(prev, 0, 365, 0, 1, 10);
-		sp2.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				int days = sp2.getSelection();
-				TimeTool tt = new TimeTool();
-				tt.add(TimeTool.DAY_OF_YEAR, -1 * days);
-				dp2.setDate(tt.getTime());
-				Hub.localCfg.set(CONFIG + "endBefore", (int) days);
-			}
-
-		});
-		new Label(ret, SWT.NONE).setText(TAGEN_BZW_DEM);
-		dp2 = new DatePickerCombo(ret, SWT.NONE);
-		dp2.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		 */
 		cbAmount = new Button(ret, SWT.CHECK);
 		cbAmount.setText(TREATMENT_AMOUNTHIGHER);
 		mi1 = new MoneyInput(ret);
@@ -140,6 +100,22 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 		cbSkip = new Button(ret, SWT.CHECK);
 		cbSkip.setText(SKIPSELECTION);
 		cbSkip.setSelection(Hub.globalCfg .get(CFG_SKIP, false));
+		cbBefore.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				ddc1.setEnabled(cbBefore.getSelection());
+			}
+			
+		});
+		cbTime.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				ddc2.setEnabled(cbTime.getSelection());
+			}
+			
+		});
+		ddc1.setEnabled(false);
+		ddc2.setEnabled(false);
 		return ret;
 	}
 
