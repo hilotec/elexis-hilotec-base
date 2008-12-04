@@ -2,6 +2,7 @@
 
 package ch.rgw.tools;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import java.text.SimpleDateFormat;
@@ -23,10 +24,10 @@ public class TimeTool extends GregorianCalendar {
 	}
 	
 	public static final String BEGINNING_OF_UNIX_EPOCH = "19700101"; // Erster Tag, der mit
-																		// dieser Version verwendet
-																		// werden kann
+	// dieser Version verwendet
+	// werden kann
 	public static final String END_OF_UNIX_EPOCH = "20380118"; // Letzter Tag, der mit dieser
-																// Version verwendet werden kann
+	// Version verwendet werden kann
 	
 	public final static String[] Monate =
 		{
@@ -252,10 +253,10 @@ public class TimeTool extends GregorianCalendar {
 	
 	/*
 	 * ParseDate hat ein Problem: Es kann nicht a priori wissen, ob das Datum als yyyy-mm-dd,
-	 * yy-mm-dd, dd-mm-yy oder dd-mm-yyyy zu verstehen ist. dazu kommen noch dieselben Varianten mit .
-	 * statt - als Trenner. Die Heuristik geht so vor: Wenn eines vierstellig ist, ist das das Jahr.
-	 * Wenn keines vierstellig ist, dann gilt: Wenn eines über 31 ist, ist es das Jahr. Wenn keines
-	 * über 31 ist, dann wird bei Trennzeichen - angenommen, dass zuerst das Jahr steht
+	 * yy-mm-dd, dd-mm-yy oder dd-mm-yyyy zu verstehen ist. dazu kommen noch dieselben Varianten mit
+	 * . statt - als Trenner. Die Heuristik geht so vor: Wenn eines vierstellig ist, ist das das
+	 * Jahr. Wenn keines vierstellig ist, dann gilt: Wenn eines über 31 ist, ist es das Jahr. Wenn
+	 * keines über 31 ist, dann wird bei Trennzeichen - angenommen, dass zuerst das Jahr steht
 	 * (MySQL-Stil), wenn . das Trennzeichen ist, wird angenommen, dass das Jahr hinten steht. Wenn
 	 * eine so ermittelte zweistellige Jahreszahl grösser ist, als das aktuelle Jahr, werden 100
 	 * Jahre abgezogen. In der internen Repräsentation steht immer der Tag an erster Stelle
@@ -373,13 +374,27 @@ public class TimeTool extends GregorianCalendar {
 	// (positiv, wenn o > dieses,
 	// negativ, wenn o < dieses)
 	public int secondsTo(final TimeTool o){
-		if(o==null){
+		if (o == null) {
 			return 0;
 		}
 		long ot = o.getTimeInMillis() / 1000L;
 		long mt = getTimeInMillis() / 1000L;
 		long res = ot - mt;
 		return (int) res;
+	}
+	
+	/**
+	 * Return the number of daysd between (including) this and (excluding) an other TimeTool
+	 * 
+	 * @param o
+	 *            the other TimeTool
+	 * @return the difference in days, counting positive if o is after this and negative else
+	 */
+	public int daysTo(final TimeTool o){
+		long startToday = getTimeAsLong() - (get(HOUR_OF_DAY) * 3600000L);
+		long startOther = o.getTimeAsLong() - (o.get(HOUR_OF_DAY) * 3600000L);
+		long diff = startOther - startToday - 1;
+		return (int) (diff / 86400000L);
 	}
 	
 	public void setResolution(final long res){
@@ -481,6 +496,9 @@ public class TimeTool extends GregorianCalendar {
 		add(MILLISECOND, m * (int) resolution);
 	}
 	
+	public void addDays(final int d){
+		add(DAY_OF_YEAR,d);
+	}
 	public void addMinutes(final int m){
 		add(MINUTE, m);
 	}
