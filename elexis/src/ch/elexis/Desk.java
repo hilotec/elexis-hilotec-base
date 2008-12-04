@@ -47,7 +47,6 @@ public class Desk implements IApplication {
 	public static FormToolkit theToolkit = null;
 	
 	private static ImageRegistry theImageRegistry = null;
-	/** @deprecated use getColor */
 	private static ColorRegistry theColorRegistry = null;
 	
 	public static final String COL_RED = "rot";
@@ -151,6 +150,7 @@ public class Desk implements IApplication {
 			Hub.localCfg.clear();
 			Hub.localCfg.flush();
 		}
+		
 		try {
 			// Wir wollen die schicken runden Tabs von Eclipse 3.x
 			PlatformUI.getPreferenceStore().setValue(
@@ -192,7 +192,12 @@ public class Desk implements IApplication {
 	}
 	
 	static String getImageBase(){
-		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, "rsc/");
+		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, null);
+		if(imageBase==null){
+			imageBase="rsc/";
+		}else{
+			imageBase+="/icons/";
+		}
 		return imageBase;
 	}
 	
@@ -237,72 +242,6 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_LOCK_OPEN, getImageDescriptor(IMG_LOCK_OPEN));
 				theImageRegistry.put(IMG_CLIPBOARD, getImageDescriptor(IMG_CLIPBOARD));
 				
-				/*
-				 * theImageRegistry.put(IMG_HOME, Hub.getImageDescriptor(imageBase + "home.png"));
-				 * //$NON-NLS-1$ theImageRegistry.put(IMG_ADRESSETIKETTE, Hub
-				 * .getImageDescriptor(imageBase + "adretikette.ico")); //$NON-NLS-1$
-				 * 
-				 * 
-				 * theImageRegistry.put(IMG_PATIENTETIKETTE, Hub .getImageDescriptor(imageBase +
-				 * "patetikette.ico")); //$NON-NLS-1$ theImageRegistry.put(IMG_VERSIONEDETIKETTE,
-				 * Hub .getImageDescriptor(imageBase + "patvetikette.ico")); //$NON-NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_DELETE, Hub.getImageDescriptor(imageBase +
-				 * "delete.gif")); //$NON-NLS-1$ theImageRegistry.put(IMG_MANN,
-				 * Hub.getImageDescriptor(imageBase + "mann.ico")); //$NON-NLS-1$
-				 * theImageRegistry.put(IMG_FRAU, Hub.getImageDescriptor(imageBase + "frau.ico"));
-				 * //$NON-NLS-1$ theImageRegistry.put(IMG_VIP, Hub.getImageDescriptor(imageBase +
-				 * "vip.png")); //$NON-NLS-1$
-				 * 
-				 * theImageRegistry .put(IMG_PRINTER, Hub.getImageDescriptor(imageBase +
-				 * "printer.png")); //$NON-NLS-1$ theImageRegistry.put(IMG_FILTER, Hub
-				 * .getImageDescriptor(imageBase + "filter_ps.gif")); //$NON-NLS-1$
-				 * theImageRegistry.put(IMG_NEW, Hub.getImageDescriptor(imageBase + "new2.ico"));
-				 * //$NON-NLS-1$ theImageRegistry .put(IMG_LOGO48, Hub.getImageDescriptor(imageBase
-				 * + "elexis48.png")); //$NON-NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_IMPORT, Hub.getImageDescriptor(imageBase +
-				 * "import.gif")); //$NON-NLS-1$ theImageRegistry.put(IMG_EDIT,
-				 * Hub.getImageDescriptor(imageBase + "schreiben.ico")); //$NON-NLS-1$
-				 * theImageRegistry .put(IMG_ACHTUNG, Hub.getImageDescriptor(imageBase +
-				 * "achtung.png")); //$NON-NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_OK, Hub.getImageDescriptor(imageBase + "ok.ico"));
-				 * //$NON-NLS-1$ theImageRegistry.put(IMG_TICK, Hub.getImageDescriptor(imageBase +
-				 * "tick.png")); //$NON-NLS-1$ theImageRegistry.put(IMG_FEHLER,
-				 * Hub.getImageDescriptor(imageBase + "fehler.ico")); //$NON-NLS-1$
-				 * 
-				 * theImageRegistry .put(IMG_REFRESH, Hub.getImageDescriptor(imageBase +
-				 * "refresh.ico")); //$NON-NLS-1$ theImageRegistry.put(IMG_WIZARD,
-				 * Hub.getImageDescriptor(imageBase + "wizard.ico")); //$NON-NLS-1$
-				 * theImageRegistry.put(IMG_ADDITEM, Hub.getImageDescriptor(imageBase + "add.gif"));
-				 * //$NON-NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor(imageBase +
-				 * "export.ico")); // $NON_NLS-1$ theImageRegistry.put(IMG_GOFURTHER,
-				 * Hub.getImageDescriptor(imageBase + "page_go.png")); // $NON_NLS-1$
-				 * theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor(imageBase +
-				 * "ausrufez.png")); // $NON_NLS-1$ theImageRegistry.put(IMG_AUSRUFEZ_ROT,
-				 * Hub.getImageDescriptor(imageBase + "ausrufez_rot.ico")); // $NON_NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_REMOVEITEM, Hub .getImageDescriptor(imageBase +
-				 * "minus.ico")); // $NON_NLS-1$ theImageRegistry.put(IMG_NETWORK, Hub
-				 * .getImageDescriptor(imageBase + "netzwerk.ico")); // $NON_NLS-1$
-				 * theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor(imageBase + "book.png"));
-				 * // $NON_NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor(imageBase +
-				 * "person.ico")); // $NON_NLS-1$ theImageRegistry.put(IMG_PERSON_OK,
-				 * Hub.getImageDescriptor(imageBase + "personok.ico")); // $NON_NLS-1$
-				 * theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase + "floppy.png"));
-				 * // $NON_NLS-1$
-				 * 
-				 * theImageRegistry.put(IMG_LOCK_CLOSED, Hub .getImageDescriptor(imageBase +
-				 * "lock.png")); // $NON_NLS-1$ theImageRegistry.put(IMG_LOCK_OPEN,
-				 * Hub.getImageDescriptor(imageBase + "lock_open.png")); // $NON_NLS-1$
-				 * theImageRegistry.put(IMG_CLIPBOARD, Hub.getImageDescriptor(imageBase +
-				 * "clipboard.png"));
-				 */
 			}
 		}
 		return theImageRegistry;
@@ -326,6 +265,9 @@ public class Desk implements IApplication {
 			}
 			if (ret == null) {
 				ret = Hub.getImageDescriptor(getImageBase() + imagename + ".ico");
+			}
+			if(ret==null){
+				ret=Hub.getImageDescriptor("rsc/"+imagename);
 			}
 			if (ret != null) {
 				theImageRegistry.put(imagename, ret);

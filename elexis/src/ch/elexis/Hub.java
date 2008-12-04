@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4695 2008-11-22 05:58:01Z rgw_ch $
+ *    $Id: Hub.java 4732 2008-12-04 14:13:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -137,7 +137,11 @@ public class Hub extends AbstractUIPlugin {
 				String[] c = s.split("="); //$NON-NLS-1$
 				config = c[1];
 				localCfg = localCfg.getBranch(config, true);
-				break;
+			}else if(s.startsWith("--plaf=")){
+				String[] c = s.split("="); //$NON-NLS-1$
+				String plaf = c[1];
+				localCfg.set(PreferenceConstants.USR_PLAF, plaf);
+				localCfg.flush();
 			}
 		}
 		initializeLog(localCfg);
@@ -369,7 +373,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4695 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 4732 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
