@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="ch.elexis">
+<schema targetNamespace="ch.elexis" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="ch.elexis" id="Sidebar" name="Elexis Schnellstartleiste"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Hier können Plugins eigene Perspektiven zur Auswahl in der Startleiste einbinden.
 Die Perspektive muss dazu in der Standard Eclipse Perspective-Extension eingebunden sein und ausserdem Sidebar erweitern.
@@ -12,6 +12,11 @@ Die Perspektive muss dazu in der Standard Eclipse Perspective-Extension eingebun
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="Perspektive" minOccurs="1" maxOccurs="unbounded"/>
@@ -35,9 +40,9 @@ Die Perspektive muss dazu in der Standard Eclipse Perspective-Extension eingebun
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,49 +64,56 @@ Die Perspektive muss dazu in der Standard Eclipse Perspective-Extension eingebun
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The icon for this perspective in toolbars and sidebar. This will be searched relative to plaf setting
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          0.1.5
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Geben Sie hier ein Verwendungsbeispiel für den Erweiterungspunkt ein.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Geben Sie hier die API-Informationen ein.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Geben Sie hier Informationen zur bereitgestellten Implementierung dieses Erweiterungspunkts ein.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          (c) 2006 by G. Weirich
       </documentation>
