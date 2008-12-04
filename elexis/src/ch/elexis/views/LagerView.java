@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LagerView.java 4295 2008-08-20 17:39:00Z rgw_ch $
+ * $Id: LagerView.java 4727 2008-12-04 12:04:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -160,9 +160,9 @@ public class LagerView extends ViewPart implements DoubleClickListener, BackingS
 					}
 					
 					if (order) {
-						return Desk.theColorRegistry.get(Desk.COL_RED);
+						return Desk.getColor(Desk.COL_RED);
 					} else {
-						return Desk.theColorRegistry.get(Desk.COL_BLUE);
+						return Desk.getColor(Desk.COL_BLUE);
 					}
 				}
 			}

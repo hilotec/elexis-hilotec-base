@@ -48,7 +48,7 @@ public class Desk implements IApplication {
 	
 	private static ImageRegistry theImageRegistry = null;
 	/** @deprecated use getColor */
-	public static ColorRegistry theColorRegistry = null;
+	private static ColorRegistry theColorRegistry = null;
 	
 	public static final String COL_RED = "rot";
 	public static final String COL_GREEN = "gruen";

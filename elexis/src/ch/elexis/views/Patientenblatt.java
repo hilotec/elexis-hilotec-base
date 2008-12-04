@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 4370 2008-09-04 13:47:13Z rgw_ch $
+ * $Id: Patientenblatt.java 4727 2008-12-04 12:04:49Z rgw_ch $
  *******************************************************************************/
 
-
 package ch.elexis.views;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,123 +73,144 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Detailansicht eines Patientrecords
+ * 
  * @deprecated use Patientenblatt2
  */
 @Deprecated
-public class Patientenblatt extends Composite implements GlobalEvents.SelectionListener, ActivationListener{
+public class Patientenblatt extends Composite implements GlobalEvents.SelectionListener,
+		ActivationListener {
 	private final FormToolkit tk;
-	private final static String[] lbSimple={"Name","Vorname","Geburtsdatum","Geschlecht","Telefon 1",
-			"Telefon 2","Mobil","Fax","E-Mail","Gruppe","Konto"};
-	private final static String[] dfSimple={"Name","Vorname","Geburtsdatum","Geschlecht","Telefon1",
-			"Telefon2","Natel","Fax","E-Mail","Gruppe","Konto"};
-	private final Text[] txSimple=new Text[lbSimple.length];
-	private final static String[] lbExpandable={"Diagnosen","Persönliche Anamnese",/*"Familienanamnese",
-			"Systemanamnese",*/"Allergien","Risiken","Bemerkungen"};
-	private final Text[] txExpandable=new Text[lbExpandable.length];
-	private final static String[] dfExpandable={"Diagnosen","PersAnamnese",/*"FamilienAnamnese",
-			"SystemAnamnese",*/"Allergien","Risiken","Bemerkung"};
-	private final ExpandableComposite[] ec=new ExpandableComposite[lbExpandable.length];
-	private final static String FIXMEDIKATION="Fixmedikation"; 
-	//private final static String[] lbLists={"Fixmedikation"/*,"Reminders" */};
+	private final static String[] lbSimple =
+		{
+			"Name", "Vorname", "Geburtsdatum", "Geschlecht", "Telefon 1", "Telefon 2", "Mobil",
+			"Fax", "E-Mail", "Gruppe", "Konto"
+		};
+	private final static String[] dfSimple =
+		{
+			"Name", "Vorname", "Geburtsdatum", "Geschlecht", "Telefon1", "Telefon2", "Natel",
+			"Fax", "E-Mail", "Gruppe", "Konto"
+		};
+	private final Text[] txSimple = new Text[lbSimple.length];
+	private final static String[] lbExpandable = {
+		"Diagnosen", "Persönliche Anamnese",/*
+											 * "Familienanamnese", "Systemanamnese",
+											 */"Allergien", "Risiken", "Bemerkungen"
+	};
+	private final Text[] txExpandable = new Text[lbExpandable.length];
+	private final static String[] dfExpandable = {
+		"Diagnosen", "PersAnamnese",/*
+									 * "FamilienAnamnese", "SystemAnamnese",
+									 */"Allergien", "Risiken", "Bemerkung"
+	};
+	private final ExpandableComposite[] ec = new ExpandableComposite[lbExpandable.length];
+	private final static String FIXMEDIKATION = "Fixmedikation";
+	// private final static String[] lbLists={"Fixmedikation"/*,"Reminders" */};
 	private final FormText inpAdresse;
-	private final DynamicListDisplay inpZusatzAdresse /*, dlReminder */;
+	private final DynamicListDisplay inpZusatzAdresse /* , dlReminder */;
 	private final DauerMediDisplay dmd;
 	Patient actPatient;
 	IViewSite viewsite;
-	private final Hyperlinkreact hr=new Hyperlinkreact();
-    private final ScrolledForm form;
-    private final ViewMenus viewmenu;
-    private final ExpandableComposite ecdm,ecZA;
-    
-	Patientenblatt(final Composite parent, final IViewSite site)
-	{
-		super(parent,SWT.NONE);
-		viewsite=site;
+	private final Hyperlinkreact hr = new Hyperlinkreact();
+	private final ScrolledForm form;
+	private final ViewMenus viewmenu;
+	private final ExpandableComposite ecdm, ecZA;
+	
+	Patientenblatt(final Composite parent, final IViewSite site){
+		super(parent, SWT.NONE);
+		viewsite = site;
 		parent.setLayout(new FillLayout());
 		setLayout(new FillLayout());
-        tk=Desk.theToolkit;
-        form=tk.createScrolledForm(this);
-        TableWrapLayout twl=new TableWrapLayout();
+		tk = Desk.theToolkit;
+		form = tk.createScrolledForm(this);
+		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-       
-        LabeledInputField.Tableau tblPersonalien=new LabeledInputField.Tableau(form.getBody());
-        int tl=txSimple.length-1;
-		for(int i=0;i<tl;i++){
-		    txSimple[i]=(Text)tblPersonalien.addComponent(lbSimple[i]).getControl();
-            txSimple[i].addFocusListener(new Focusreact(dfSimple[i]));
-        }
-		LabeledInputField li=tblPersonalien.addComponent(lbSimple[tl]);
-		txSimple[tl]=(Text)li.getControl();
+		
+		LabeledInputField.Tableau tblPersonalien = new LabeledInputField.Tableau(form.getBody());
+		int tl = txSimple.length - 1;
+		for (int i = 0; i < tl; i++) {
+			txSimple[i] = (Text) tblPersonalien.addComponent(lbSimple[i]).getControl();
+			txSimple[i].addFocusListener(new Focusreact(dfSimple[i]));
+		}
+		LabeledInputField li = tblPersonalien.addComponent(lbSimple[tl]);
+		txSimple[tl] = (Text) li.getControl();
 		txSimple[tl].setEditable(false);
-		li.getLabelComponent().setForeground(Desk.theColorRegistry.get("blau"));
-		li.getLabelComponent().addMouseListener(new MouseAdapter(){
+		li.getLabelComponent().setForeground(Desk.getColor(Desk.COL_BLUE));
+		li.getLabelComponent().addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDown(final MouseEvent e) {
-				if(new AddBuchungDialog(getShell(),actPatient).open()==Dialog.OK){
+			public void mouseDown(final MouseEvent e){
+				if (new AddBuchungDialog(getShell(), actPatient).open() == Dialog.OK) {
 					setPatient(actPatient);
 				}
 				
-			}});
-        TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
-        twd.grabHorizontal=true;
-        tblPersonalien.setLayoutData(twd);
-        
-        Composite cPersonalien=tk.createComposite(form.getBody());
-        cPersonalien.setLayout(new GridLayout(2,false));
-        TableWrapData twd2=new TableWrapData(TableWrapData.FILL_GRAB);
-        twd2.grabHorizontal=true;
-        cPersonalien.setLayoutData(twd2);
-        Hyperlink hHA=tk.createHyperlink(cPersonalien,"Anschrift",SWT.NONE);
+			}
+		});
+		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
+		twd.grabHorizontal = true;
+		tblPersonalien.setLayoutData(twd);
+		
+		Composite cPersonalien = tk.createComposite(form.getBody());
+		cPersonalien.setLayout(new GridLayout(2, false));
+		TableWrapData twd2 = new TableWrapData(TableWrapData.FILL_GRAB);
+		twd2.grabHorizontal = true;
+		cPersonalien.setLayoutData(twd2);
+		Hyperlink hHA = tk.createHyperlink(cPersonalien, "Anschrift", SWT.NONE);
 		hHA.addHyperlinkListener(hr);
 		hHA.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		inpAdresse=tk.createFormText(cPersonalien,false);
-		inpAdresse.setText("---\n",false,false);
-		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+		inpAdresse = tk.createFormText(cPersonalien, false);
+		inpAdresse.setText("---\n", false, false);
+		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		IExpansionListener ecExpansionListener =  new ExpansionAdapter(){
-            @Override
-            public void expansionStateChanging(final ExpansionEvent e)
-            {
-            	ExpandableComposite src=(ExpandableComposite)e.getSource();
-                UserSettings2.saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
-            }
-            
-        };
+		IExpansionListener ecExpansionListener = new ExpansionAdapter() {
+			@Override
+			public void expansionStateChanging(final ExpansionEvent e){
+				ExpandableComposite src = (ExpandableComposite) e.getSource();
+				UserSettings2.saveExpandedState("Patientenblatt/" + src.getText(), e.getState());
+			}
+			
+		};
 		
-        ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
-        UserSettings2.setExpandedState(ecZA,"Patientenblatt/Zusatzadressen");
-
-        ecZA.addExpansionListener(ecExpansionListener);
-        
-		inpZusatzAdresse=new DynamicListDisplay(ecZA,SWT.NONE,new DLDListener(){
-			public boolean dropped(final PersistentObject dropped) {
+		ecZA = WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
+		UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
+		
+		ecZA.addExpansionListener(ecExpansionListener);
+		
+		inpZusatzAdresse = new DynamicListDisplay(ecZA, SWT.NONE, new DLDListener() {
+			public boolean dropped(final PersistentObject dropped){
 				return false;
 			}
-
-			public void hyperlinkActivated(final String l) {
-				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Kontakt für Zusatzadresse","Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
-				if(ksl.open()==Dialog.OK){
-					Kontakt k=(Kontakt) ksl.getSelection();
-					InputDialog id=new InputDialog(getShell(),"Bezugstext für Adresse","Geben Sie bitte einen Text ein, der die Bedeutung dieser Adresse erklärt","",null);
-					if(id.open()==Dialog.OK){
-						String bezug=id.getValue();
-						BezugsKontakt bk=actPatient.addBezugsKontakt(k, bezug);
+			
+			public void hyperlinkActivated(final String l){
+				KontaktSelektor ksl =
+					new KontaktSelektor(getShell(), Kontakt.class, "Kontakt für Zusatzadresse",
+						"Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
+				if (ksl.open() == Dialog.OK) {
+					Kontakt k = (Kontakt) ksl.getSelection();
+					InputDialog id =
+						new InputDialog(
+							getShell(),
+							"Bezugstext für Adresse",
+							"Geben Sie bitte einen Text ein, der die Bedeutung dieser Adresse erklärt",
+							"", null);
+					if (id.open() == Dialog.OK) {
+						String bezug = id.getValue();
+						BezugsKontakt bk = actPatient.addBezugsKontakt(k, bezug);
 						inpZusatzAdresse.add(bk);
 						form.reflow(true);
 					}
 					
 				}
-			
-			}});
+				
+			}
+		});
 		inpZusatzAdresse.addHyperlinks("Hinzu...");
 		inpZusatzAdresse.setMenu(createZusatzAdressMenu());
 		inpZusatzAdresse.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-			    // TODO: make this behaviour configurable in preferences
-			
+			public String getText(Object element){
+				// TODO: make this behaviour configurable in preferences
+				
 				if (element instanceof BezugsKontakt) {
 					BezugsKontakt bezugsKontakt = (BezugsKontakt) element;
-
+					
 					StringBuffer sb = new StringBuffer();
 					sb.append(bezugsKontakt.getLabel());
 					
@@ -233,219 +252,219 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 			}
 		});
 		
-        ecZA.setClient(inpZusatzAdresse);
-		for(int i=0;i<lbExpandable.length;i++){
-            ec[i]=WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
-            UserSettings2.setExpandedState(ec[i], "Patientenblatt/"+lbExpandable[i]);
-			txExpandable[i]=tk.createText(ec[i], "" , SWT.MULTI);
+		ecZA.setClient(inpZusatzAdresse);
+		for (int i = 0; i < lbExpandable.length; i++) {
+			ec[i] = WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
+			UserSettings2.setExpandedState(ec[i], "Patientenblatt/" + lbExpandable[i]);
+			txExpandable[i] = tk.createText(ec[i], "", SWT.MULTI);
 			txExpandable[i].addFocusListener(new Focusreact(dfExpandable[i]));
-            ec[i].setData("dbfield",dfExpandable[i]);
-            ec[i].addExpansionListener(new ExpansionAdapter(){
-                @Override
-                public void expansionStateChanging(final ExpansionEvent e)
-                {
-                	ExpandableComposite src=(ExpandableComposite)e.getSource();
-                    if(e.getState()==true){
-                        Text tx=(Text)src.getClient();
-                        if (actPatient != null) {
-                        	tx.setText(StringTool.unNull(actPatient.get((String)src.getData("dbfield"))));
-                        } else {
-                        	tx.setText("");
-                        }
-                    }
-                    UserSettings2.saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
-                }
-                
-            });
-            ec[i].setClient(txExpandable[i]);
+			ec[i].setData("dbfield", dfExpandable[i]);
+			ec[i].addExpansionListener(new ExpansionAdapter() {
+				@Override
+				public void expansionStateChanging(final ExpansionEvent e){
+					ExpandableComposite src = (ExpandableComposite) e.getSource();
+					if (e.getState() == true) {
+						Text tx = (Text) src.getClient();
+						if (actPatient != null) {
+							tx.setText(StringTool.unNull(actPatient.get((String) src
+								.getData("dbfield"))));
+						} else {
+							tx.setText("");
+						}
+					}
+					UserSettings2
+						.saveExpandedState("Patientenblatt/" + src.getText(), e.getState());
+				}
+				
+			});
+			ec[i].setClient(txExpandable[i]);
 		}
-		ecdm=WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
-		UserSettings2.setExpandedState(ecdm, "Patientenblatt/"+FIXMEDIKATION);
+		ecdm = WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
+		UserSettings2.setExpandedState(ecdm, "Patientenblatt/" + FIXMEDIKATION);
 		ecdm.addExpansionListener(ecExpansionListener);
-		dmd=new DauerMediDisplay(ecdm,site);
+		dmd = new DauerMediDisplay(ecdm, site);
 		ecdm.setClient(dmd);
-		//ExpandableComposite ecrm=WidgetFactory.createExpandableComposite(tk, form, lbLists[1]);
-		//setExpandedState(ecrm, "Patientenblatt/"+lbLists[1]);
-		//ecrm.setExpanded(true);
-		//ecrm.addExpansionListener(ecExpansionListener);
-		//dlReminder=new DynamicListDisplay(ecrm,SWT.NONE,null);
-		//ecrm.setClient(dlReminder);
+		// ExpandableComposite ecrm=WidgetFactory.createExpandableComposite(tk, form, lbLists[1]);
+		// setExpandedState(ecrm, "Patientenblatt/"+lbLists[1]);
+		// ecrm.setExpanded(true);
+		// ecrm.addExpansionListener(ecExpansionListener);
+		// dlReminder=new DynamicListDisplay(ecrm,SWT.NONE,null);
+		// ecrm.setClient(dlReminder);
 		makeActions();
-		viewmenu=new ViewMenus(viewsite);
-		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,GlobalActions.printBlatt,GlobalActions.printRoeBlatt);
-        GlobalEvents.getInstance().addActivationListener(this,site.getPart());
-        tk.paintBordersFor(form.getBody());
+		viewmenu = new ViewMenus(viewsite);
+		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,
+			GlobalActions.printBlatt, GlobalActions.printRoeBlatt);
+		GlobalEvents.getInstance().addActivationListener(this, site.getPart());
+		tk.paintBordersFor(form.getBody());
 	}
-    
-	
 	
 	@Override
 	public void dispose(){
 		GlobalEvents.getInstance().removeSelectionListener(this);
-		GlobalEvents.getInstance().removeActivationListener(this,viewsite.getPart());
+		GlobalEvents.getInstance().removeActivationListener(this, viewsite.getPart());
 		super.dispose();
 	}
 	
-	private Menu createZusatzAdressMenu()
-    {
-            Menu ret=new Menu(inpZusatzAdresse);
-            MenuItem delZA=new MenuItem(ret,SWT.NONE);
-            delZA.setText("Adresse entfernen");
-            delZA.addSelectionListener(new SelectionAdapter(){
-                @Override
-                public void widgetSelected(final SelectionEvent e)
-                {
-                    BezugsKontakt a=(BezugsKontakt)inpZusatzAdresse.getSelection();
-                    actPatient.removeBezugsKontakt(Kontakt.load(a.get("otherID")));
-                    setPatient(actPatient);
-                }
-                
-            });
-            MenuItem showZA=new MenuItem(ret,SWT.NONE);
-            showZA.setText("Adresse zeigen...");
-            showZA.addSelectionListener(new SelectionAdapter(){
-            	 @Override
-                 public void widgetSelected(final SelectionEvent e)
-                 {
-                     Kontakt a=Kontakt.load(((BezugsKontakt)inpZusatzAdresse.getSelection()).get("otherID"));
-                     KontaktDetailDialog kdd=new KontaktDetailDialog(form.getShell(),a);
-                     kdd.open();
-                 }
-            });
-            return ret;
-    }
-    class Hyperlinkreact extends HyperlinkAdapter{
-    	
+	private Menu createZusatzAdressMenu(){
+		Menu ret = new Menu(inpZusatzAdresse);
+		MenuItem delZA = new MenuItem(ret, SWT.NONE);
+		delZA.setText("Adresse entfernen");
+		delZA.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse.getSelection();
+				actPatient.removeBezugsKontakt(Kontakt.load(a.get("otherID")));
+				setPatient(actPatient);
+			}
+			
+		});
+		MenuItem showZA = new MenuItem(ret, SWT.NONE);
+		showZA.setText("Adresse zeigen...");
+		showZA.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				Kontakt a =
+					Kontakt.load(((BezugsKontakt) inpZusatzAdresse.getSelection()).get("otherID"));
+				KontaktDetailDialog kdd = new KontaktDetailDialog(form.getShell(), a);
+				kdd.open();
+			}
+		});
+		return ret;
+	}
+	
+	class Hyperlinkreact extends HyperlinkAdapter {
+		
 		@Override
 		@SuppressWarnings("synthetic-access")
-        public void linkActivated(final HyperlinkEvent e)
-        {  
-			if(actPatient!=null){
-				AnschriftEingabeDialog  aed=new AnschriftEingabeDialog(form.getShell(),actPatient);
+		public void linkActivated(final HyperlinkEvent e){
+			if (actPatient != null) {
+				AnschriftEingabeDialog aed =
+					new AnschriftEingabeDialog(form.getShell(), actPatient);
 				aed.open();
 				/*
-				Anschrift adr=actPatient.getAnschrift();
-			    inpAdresse.setText(adr.getEtikette(true, false),false,false);
-			    */
-			    inpAdresse.setText(actPatient.getPostAnschrift(false),false,false);
+				 * Anschrift adr=actPatient.getAnschrift(); inpAdresse.setText(adr.getEtikette(true,
+				 * false),false,false);
+				 */
+				inpAdresse.setText(actPatient.getPostAnschrift(false), false, false);
 			}
 		}
 	}
-	class Focusreact extends FocusAdapter{
+	
+	class Focusreact extends FocusAdapter {
 		private final String field;
+		
 		Focusreact(final String f){
-			field=f;
+			field = f;
 		}
+		
 		@Override
-		public void focusLost(final FocusEvent e) {
-			if(actPatient==null){
+		public void focusLost(final FocusEvent e){
+			if (actPatient == null) {
 				return;
 			}
-			String oldvalue=actPatient.get(field);
-			String newvalue=((Text)e.getSource()).getText();
-			if(oldvalue!=null){
-				if(oldvalue.equals(newvalue)){
+			String oldvalue = actPatient.get(field);
+			String newvalue = ((Text) e.getSource()).getText();
+			if (oldvalue != null) {
+				if (oldvalue.equals(newvalue)) {
 					return;
 				}
 			}
-			if(newvalue!=null){
-				actPatient.set(field,newvalue);
+			if (newvalue != null) {
+				actPatient.set(field, newvalue);
 			}
 		}
 	}
-	void setPatient(final Patient p) {
+	
+	void setPatient(final Patient p){
 		/*
-		 * work-around:
-		 * The ExpandableComposites for Zusatzadressen and DauerMedi are
-		 * expanded correctly only if the method setPatientInternal is called
-		 * twice. Just calling form.reflow() doesn't help, not even calling it
-		 * twice. Maybe the problem is that some ExpandableComposites contain
-		 * controls with a layout not implementing ILayoutExtension.  
+		 * work-around: The ExpandableComposites for Zusatzadressen and DauerMedi are expanded
+		 * correctly only if the method setPatientInternal is called twice. Just calling
+		 * form.reflow() doesn't help, not even calling it twice. Maybe the problem is that some
+		 * ExpandableComposites contain controls with a layout not implementing ILayoutExtension.
 		 */
 		setPatientInternal(p);
 		setPatientInternal(p);
 	}
-	private void setPatientInternal(final Patient p)
-	{
-		actPatient=p;
 	
-		if(actPatient==null){
-            form.setText("Kein Patient ausgewählt");
-            for(int i=0;i<txSimple.length;i++){
-                txSimple[i].setText("");
-            }
-            inpAdresse.setText("",false,false);
-            inpZusatzAdresse.clear();
-            return;
-        }
-
+	private void setPatientInternal(final Patient p){
+		actPatient = p;
+		
+		if (actPatient == null) {
+			form.setText("Kein Patient ausgewählt");
+			for (int i = 0; i < txSimple.length; i++) {
+				txSimple[i].setText("");
+			}
+			inpAdresse.setText("", false, false);
+			inpZusatzAdresse.clear();
+			return;
+		}
+		
 		txSimple[0].setText(StringTool.unNull(p.get("Name")));
 		txSimple[1].setText(StringTool.unNull(p.get("Vorname")));
-        form.setText(StringTool.unNull(p.get("Name"))+" "+StringTool.unNull(p.get("Vorname"))+" ("+p.getPatCode()+")");
-        txSimple[3].setText(StringTool.unNull(p.get("Geschlecht")));
-		TimeTool gd=new TimeTool();
-        if(gd.set(p.getGeburtsdatum())==false){
+		form.setText(StringTool.unNull(p.get("Name")) + " " + StringTool.unNull(p.get("Vorname"))
+			+ " (" + p.getPatCode() + ")");
+		txSimple[3].setText(StringTool.unNull(p.get("Geschlecht")));
+		TimeTool gd = new TimeTool();
+		if (gd.set(p.getGeburtsdatum()) == false) {
 			txSimple[2].setText(" ");
-		}else{
+		} else {
 			txSimple[2].setText(gd.toString(TimeTool.DATE_GER));
 		}
-        for(int i=4;i<10;i++){
-            txSimple[i].setText(PersistentObject.checkNull(p.get(dfSimple[i])));
-        }
-        txSimple[10].setText(p.getKontostand().getAmountAsString());
-        inpAdresse.setText(p.getPostAnschrift(false),false,false);
-        UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
+		for (int i = 4; i < 10; i++) {
+			txSimple[i].setText(PersistentObject.checkNull(p.get(dfSimple[i])));
+		}
+		txSimple[10].setText(p.getKontostand().getAmountAsString());
+		inpAdresse.setText(p.getPostAnschrift(false), false, false);
+		UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
 		inpZusatzAdresse.clear();
-		for(BezugsKontakt za : p.getBezugsKontakte()){
+		for (BezugsKontakt za : p.getBezugsKontakte()) {
 			inpZusatzAdresse.add(za);
 		}
 		
-        
-		for(int i=0;i<dfExpandable.length;i++){
-			UserSettings2.setExpandedState(ec[i], "Patientenblatt/"+ec[i].getText());
-            if(ec[i].isExpanded()==true){
-                txExpandable[i].setText(p.get(dfExpandable[i]));
-            }
+		for (int i = 0; i < dfExpandable.length; i++) {
+			UserSettings2.setExpandedState(ec[i], "Patientenblatt/" + ec[i].getText());
+			if (ec[i].isExpanded() == true) {
+				txExpandable[i].setText(p.get(dfExpandable[i]));
+			}
 		}
 		dmd.reload();
-		//setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
+		// setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
 		form.reflow(true);
 	}
-    public void refresh(){
-    	form.reflow(true);
-        //wf.getForm().redraw();
-    }
-
-    public void selectionEvent(final PersistentObject obj)
-    {
-        if(obj instanceof Patient){
-            setPatient((Patient)obj);
-        }else if(obj instanceof Anwender){
-        	setPatient(GlobalEvents.getSelectedPatient());
-        }
-    }
 	
-	private void makeActions(){
+	public void refresh(){
+		form.reflow(true);
+		// wf.getForm().redraw();
 	}
-
-	public void activation(final boolean mode) {
-		// TODO Auto-generated method stub
-		
+	
+	public void selectionEvent(final PersistentObject obj){
+		if (obj instanceof Patient) {
+			setPatient((Patient) obj);
+		} else if (obj instanceof Anwender) {
+			setPatient(GlobalEvents.getSelectedPatient());
+		}
 	}
-
-	public void visible(final boolean mode) {
-		if(mode==true){
-			setPatient((Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class));
+	
+	private void makeActions(){}
+	
+	public void activation(final boolean mode){
+	// TODO Auto-generated method stub
+	
+	}
+	
+	public void visible(final boolean mode){
+		if (mode == true) {
+			setPatient((Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class));
 			GlobalEvents.getInstance().addSelectionListener(this);
-		}else{
+		} else {
 			GlobalEvents.getInstance().removeSelectionListener(this);
 		}
 		
 	}
-
-	public void clearEvent(final Class<? extends PersistentObject> template) {
-		// TODO Auto-generated method stub
-		
+	
+	public void clearEvent(final Class<? extends PersistentObject> template){
+	// TODO Auto-generated method stub
+	
 	}
 	
 }

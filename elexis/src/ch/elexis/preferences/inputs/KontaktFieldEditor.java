@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktFieldEditor.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ * $Id: KontaktFieldEditor.java 4727 2008-12-04 12:04:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences.inputs;
@@ -33,37 +33,36 @@ public class KontaktFieldEditor extends FieldEditor {
 	private Settings cfg;
 	private String defaultText = "[Bitte auswählen]";
 	private Kontakt selected;
-
-	protected KontaktFieldEditor() {
-		// no defaults
+	
+	protected KontaktFieldEditor(){
+	// no defaults
 	}
-
-	public KontaktFieldEditor(Settings cfg, String name, String labelText,
-			Composite parent) {
+	
+	public KontaktFieldEditor(Settings cfg, String name, String labelText, Composite parent){
 		super(name, labelText, parent);
 		this.cfg = cfg;
 	}
-
+	
 	@Override
-	protected void adjustForNumColumns(int numColumns) {
+	protected void adjustForNumColumns(int numColumns){
 		((GridData) contactLabel.getLayoutData()).horizontalSpan = numColumns - 1;
-
+		
 	}
-
+	
 	@Override
-	protected void doFillIntoGrid(Composite parent, int numColumns) {
+	protected void doFillIntoGrid(Composite parent, int numColumns){
 		Control control = getLabelControl(parent);
 		GridData gd = new GridData();
 		gd.horizontalSpan = numColumns - 1;
 		control.setLayoutData(gd);
-
+		
 		Label cLabel = getChangeControl(parent);
 		cLabel.setLayoutData(new GridData());
-
+		
 	}
-
+	
 	@Override
-	protected void doLoad() {
+	protected void doLoad(){
 		if (contactLabel == null) {
 			return;
 		}
@@ -75,39 +74,38 @@ public class KontaktFieldEditor extends FieldEditor {
 			selected = null;
 		}
 	}
-
+	
 	@Override
-	protected void doLoadDefault() {
+	protected void doLoadDefault(){
 		contactLabel.setText(defaultText);
 		selected = null;
 	}
-
+	
 	@Override
-	protected void doStore() {
+	protected void doStore(){
 		if (selected == null) {
 			cfg.remove(getPreferenceName());
 		} else {
 			cfg.set(getPreferenceName(), selected.getId());
 		}
-
+		
 	}
-
+	
 	@Override
-	public int getNumberOfControls() {
+	public int getNumberOfControls(){
 		return 2;
 	}
-
-	protected Label getChangeControl(final Composite parent) {
+	
+	protected Label getChangeControl(final Composite parent){
 		if (contactLabel == null) {
 			contactLabel = new Label(parent, SWT.NONE);
-			contactLabel
-					.setForeground(Desk.theColorRegistry.get(Desk.COL_BLUE));
+			contactLabel.setForeground(Desk.getColor(Desk.COL_BLUE));
 			contactLabel.addMouseListener(new MouseAdapter() {
-
+				
 				@Override
-				public void mouseUp(MouseEvent e) {
-					KontaktSelektor ksl = new KontaktSelektor(
-							parent.getShell(), Kontakt.class, "Kontakt wählen",
+				public void mouseUp(MouseEvent e){
+					KontaktSelektor ksl =
+						new KontaktSelektor(parent.getShell(), Kontakt.class, "Kontakt wählen",
 							"Bitte wählen Sie den gewünschten Kontakt");
 					if (ksl.open() == Dialog.OK) {
 						selected = (Kontakt) ksl.getSelection();
@@ -117,13 +115,13 @@ public class KontaktFieldEditor extends FieldEditor {
 						selected = null;
 					}
 				}
-
+				
 			});
-
+			
 		} else {
 			checkParent(contactLabel, parent);
 		}
 		return contactLabel;
 	}
-
+	
 }
