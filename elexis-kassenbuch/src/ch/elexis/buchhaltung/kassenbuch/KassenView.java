@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenView.java 4719 2008-12-04 10:10:26Z rgw_ch $
+ *  $Id: KassenView.java 4726 2008-12-04 12:04:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -197,9 +197,9 @@ public class KassenView extends ViewPart implements ActivationListener, HeartLis
 			if (columnIndex == 4) {
 				KassenbuchEintrag kb = (KassenbuchEintrag) element;
 				if (kb.getSaldo().isNegative()) {
-					return Desk.theColorRegistry.get(Desk.COL_RED);
+					return Desk.getColor(Desk.COL_RED);
 				} else {
-					return Desk.theColorRegistry.get(Desk.COL_BLACK);
+					return Desk.getColor(Desk.COL_BLACK);
 				}
 			}
 			return null;
