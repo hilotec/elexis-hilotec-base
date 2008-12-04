@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 4008 2008-06-05 19:20:18Z rgw_ch $
+ *  $Id: BaseAgendaView.java 4724 2008-12-04 10:11:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -271,7 +271,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		};
 		terminAendernAction=new Action(Messages.TagesView_changeTermin){ 
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText(Messages.TagesView_changeThisTermin); 
 			}
 			@Override
@@ -311,7 +311,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		};
 		newTerminAction=new Action(Messages.TagesView_newTermin){ 
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_NEW));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText(Messages.TagesView_createNewTermin); 
 			}
 			@Override
@@ -325,7 +325,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		};
 		printAction=new Action("Tagesliste drucken"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Termine des gewählten Tages ausdrucken");
 			}
 			@Override
@@ -340,7 +340,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		};
 		printPatientAction=new Action("Patienten-Termine drucken"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_PRINTER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Zukünftige Termine des ausgewählten Patienten drucken");
 			}
 			@Override
@@ -378,7 +378,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		exportAction=new Action("Agenda exportieren"){
 			{
 				setToolTipText("Termine eines Bereichs exportieren");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_GOFURTHER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
 			@Override
 			public void run(){
@@ -390,7 +390,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		importAction=new Action("Termine importieren"){
 			{
 				setToolTipText("Termine aus einer iCal-Datei importieren");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 			@Override
 			public void run(){

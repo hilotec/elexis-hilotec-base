@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TerminSuchenDialog.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *    $Id: TerminSuchenDialog.java 4724 2008-12-04 10:11:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -27,22 +27,22 @@ public class TerminSuchenDialog extends TitleAreaDialog {
 	
 	TerminSuchenDialog(IPlannable act, Shell parent){
 		super(parent);
-		actPlannable=act;
+		actPlannable = act;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		// TODO Auto-generated method stub
 		return super.createDialogArea(parent);
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
-		setTitle(Messages.TerminSuchenDialog_findTermin); 
-		setMessage(Messages.TerminSuchenDialog_enterfind); 
-		getShell().setText(Messages.TerminSuchenDialog_findTermin); 
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitle(Messages.TerminSuchenDialog_findTermin);
+		setMessage(Messages.TerminSuchenDialog_enterfind);
+		getShell().setText(Messages.TerminSuchenDialog_findTermin);
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	
 }
