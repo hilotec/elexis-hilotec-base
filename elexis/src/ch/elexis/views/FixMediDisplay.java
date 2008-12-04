@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4673 2008-11-09 17:01:26Z rgw_ch $
+ * $Id: FixMediDisplay.java 4739 2008-12-04 21:01:33Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -34,13 +34,13 @@ import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.util.ListDisplay;
-import ch.elexis.util.Money;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 /**

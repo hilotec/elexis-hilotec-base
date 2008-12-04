@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 4583 2008-10-12 17:48:00Z rgw_ch $
+ *  $Id: LaborView.java 4739 2008-12-04 21:01:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -90,7 +90,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
 /**
- * Anzeige von Laboritems und Anzeige udn Eingabemöglichkeit von Laborwerten.
+ * Anzeige von Laboritems und Anzeige und Eingabemöglichkeit von Laborwerten.
  * 
  * @author gerry
  * 
@@ -104,6 +104,7 @@ import ch.rgw.tools.JdbcLink.Stm;
 public class LaborView extends ViewPart implements SelectionListener, ActivationListener,
 		BackingStoreListener, ISaveablePart2 {
 	public static final String ID = "ch.elexis.Labor";
+	private static final String ICON="labor_view";
 	private static Log log = Log.get("LaborView");
 	
 	final static int NUMCOLUMNS = 7; // Pro Seite angezeigte Laborspalten
@@ -145,6 +146,7 @@ public class LaborView extends ViewPart implements SelectionListener, Activation
 	
 	@Override
 	public void createPartControl(final Composite parent){
+		setTitleImage(Desk.getImage(ICON));
 		parent.setLayout(new GridLayout());
 		form = tk.createForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));

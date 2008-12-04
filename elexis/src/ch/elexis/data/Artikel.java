@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 4652 2008-10-31 17:08:47Z rgw_ch $
+ * $Id: Artikel.java 4739 2008-12-04 21:01:33Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 import ch.elexis.Hub;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
