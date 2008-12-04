@@ -23,7 +23,6 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -50,7 +49,7 @@ public class Desk implements IApplication {
 	public static ImageRegistry theImageRegistry = null;
 	/** @deprecated use getColor */
 	public static ColorRegistry theColorRegistry = null;
-
+	
 	public static final String COL_RED = "rot";
 	public static final String COL_GREEN = "gruen";
 	public static final String COL_BLUE = "blau";
@@ -63,7 +62,7 @@ public class Desk implements IApplication {
 	public static final String COL_LIGHTGREY = "hellgrau";
 	public static final String COL_GREY60 = "grau60";
 	public static final String COL_GREY20 = "grau20";
-
+	
 	/** Returning to some home place */
 	public static final String IMG_HOME = "home"; //$NON-NLS-1$
 	/** An Address label */
@@ -80,11 +79,11 @@ public class Desk implements IApplication {
 	public static final String IMG_FRAU = "frau"; //$NON-NLS-1$
 	/** a Very Important Person */
 	public static final String IMG_VIP = "vip"; //$NON-NLS-1$
-
+	
 	/** a printer */
 	public static final String IMG_PRINTER = "printer"; //$NON-NLS-1$
 	// public static final String IMG_PRINT="print"; //$NON-NLS-1$
-
+	
 	/** a filter */
 	public static final String IMG_FILTER = "filter"; //$NON-NLS-1$
 	/** creating a new Object */
@@ -93,9 +92,9 @@ public class Desk implements IApplication {
 	public static final String IMG_IMPORT = "import"; //$NON-NLS-1$
 	/** exporting items */
 	public static final String IMG_EXPORT = "export"; //$NON-NLS-1$
-
+	
 	public static final String IMG_GOFURTHER = "gofurther"; //$NON-NLS-1$
-
+	
 	/** the 48x48 pixel version of the elexis(tm) logo */
 	public static final String IMG_LOGO48 = "elexislogo48"; //$NON-NLS-1$
 	/** editing an item */
@@ -131,15 +130,15 @@ public class Desk implements IApplication {
 	public static final String IMG_LOCK_CLOSED = "schloss_zu"; // $NON_NLS-1$
 	public static final String IMG_LOCK_OPEN = "schloss_offen"; // $NON_NLS-1$
 	public static final String IMG_CLIPBOARD = "clipboard"; // $NON_NLS-1$
-
-	public Desk() {
+	
+	public Desk(){
 		getDisplay();
 		getImageRegistry();
 		getColorRegistry();
 		getToolkit();
 	}
-
-	public Object start(IApplicationContext context) throws Exception {
+	
+	public Object start(IApplicationContext context) throws Exception{
 		Map<String, String> args = context.getArguments();
 		if (args.containsKey("--clean-all")) {
 			String p = PreferenceInitializer.getDefaultDBPath();
@@ -150,14 +149,13 @@ public class Desk implements IApplication {
 		try {
 			// Wir wollen die schicken runden Tabs von Eclipse 3.x
 			PlatformUI.getPreferenceStore().setValue(
-					IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
-					false);
+				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
 			// Aber die Animationen sind eher nervend, nicht?
 			PlatformUI.getPreferenceStore().setValue(
-					IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
-
-			int returnCode = PlatformUI.createAndRunWorkbench(theDisplay,
-					new ApplicationWorkbenchAdvisor());
+				IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+			
+			int returnCode =
+				PlatformUI.createAndRunWorkbench(theDisplay, new ApplicationWorkbenchAdvisor());
 			// Die Funktion kehrt erst beim Programmende zurück.
 			Hub.heart.suspend();
 			System.out.println(Messages.Desk_37);
@@ -180,21 +178,20 @@ public class Desk implements IApplication {
 				theDisplay.dispose();
 			}
 		}
-
+		
 	}
-
-	public void stop() {
-		// TODO Auto-generated method stub
-
+	
+	public void stop(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	static String getImageBase() {
-		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF,
-				"rsc/");
+	
+	static String getImageBase(){
+		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, "rsc/");
 		return imageBase;
 	}
-
-	public static ImageRegistry getImageRegistry() {
+	
+	public static ImageRegistry getImageRegistry(){
 		if (theImageRegistry == null) {
 			theImageRegistry = new ImageRegistry(theDisplay);
 			String imageBase = getImageBase();
@@ -202,97 +199,108 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_HOME, getImageDescriptor(IMG_HOME));
 				theImageRegistry.put(IMG_ADRESSETIKETTE, getImageDescriptor(IMG_ADRESSETIKETTE));
 				theImageRegistry.put(IMG_PATIENTETIKETTE, getImageDescriptor(IMG_PATIENTETIKETTE));
-				theImageRegistry.put(IMG_VERSIONEDETIKETTE, getImageDescriptor(IMG_VERSIONEDETIKETTE));
+				theImageRegistry.put(IMG_VERSIONEDETIKETTE,
+					getImageDescriptor(IMG_VERSIONEDETIKETTE));
+				theImageRegistry.put(IMG_DELETE, getImageDescriptor(IMG_DELETE));
+				theImageRegistry.put(IMG_MANN, getImageDescriptor(IMG_MANN));
+				theImageRegistry.put(IMG_FRAU, Hub.getImageDescriptor(IMG_FRAU));
+				theImageRegistry.put(IMG_VIP, Hub.getImageDescriptor(imageBase + "vip.png"));
+				theImageRegistry.put(IMG_PRINTER, getImageDescriptor(IMG_PRINTER));
+				theImageRegistry.put(IMG_FILTER, getImageDescriptor(IMG_FILTER));
+				theImageRegistry.put(IMG_NEW, getImageDescriptor(IMG_NEW));
+				theImageRegistry.put(IMG_LOGO48, getImageDescriptor(IMG_LOGO48));
+				theImageRegistry.put(IMG_IMPORT, getImageDescriptor(IMG_IMPORT));
+				theImageRegistry.put(IMG_EDIT, getImageDescriptor(IMG_EDIT));
+				theImageRegistry.put(IMG_ACHTUNG, getImageDescriptor(IMG_ACHTUNG));
+				theImageRegistry.put(IMG_OK, getImageDescriptor(IMG_OK));
+				theImageRegistry.put(IMG_TICK, getImageDescriptor(IMG_TICK));
+				theImageRegistry.put(IMG_FEHLER, getImageDescriptor(IMG_FEHLER));
+				theImageRegistry.put(IMG_REFRESH, getImageDescriptor(IMG_REFRESH));
+				theImageRegistry.put(IMG_WIZARD, getImageDescriptor(IMG_WIZARD));
+				theImageRegistry.put(IMG_ADDITEM, getImageDescriptor(IMG_ADDITEM));
+				theImageRegistry.put(IMG_EXPORT, getImageDescriptor(IMG_EXPORT));
+				theImageRegistry.put(IMG_GOFURTHER, getImageDescriptor(IMG_GOFURTHER));
+				theImageRegistry.put(IMG_AUSRUFEZ, getImageDescriptor(IMG_AUSRUFEZ));
+				theImageRegistry.put(IMG_AUSRUFEZ_ROT, getImageDescriptor(IMG_AUSRUFEZ_ROT));
+				
 				/*
-				theImageRegistry.put(IMG_HOME, Hub.getImageDescriptor(imageBase
-						+ "home.png")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_ADRESSETIKETTE, Hub
-						.getImageDescriptor(imageBase + "adretikette.ico")); //$NON-NLS-1$
-				
-				
-				theImageRegistry.put(IMG_PATIENTETIKETTE, Hub
-						.getImageDescriptor(imageBase + "patetikette.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_VERSIONEDETIKETTE, Hub
-						.getImageDescriptor(imageBase + "patvetikette.ico")); //$NON-NLS-1$
+				 * theImageRegistry.put(IMG_HOME, Hub.getImageDescriptor(imageBase + "home.png"));
+				 * //$NON-NLS-1$ theImageRegistry.put(IMG_ADRESSETIKETTE, Hub
+				 * .getImageDescriptor(imageBase + "adretikette.ico")); //$NON-NLS-1$
+				 * 
+				 * 
+				 * theImageRegistry.put(IMG_PATIENTETIKETTE, Hub .getImageDescriptor(imageBase +
+				 * "patetikette.ico")); //$NON-NLS-1$ theImageRegistry.put(IMG_VERSIONEDETIKETTE,
+				 * Hub .getImageDescriptor(imageBase + "patvetikette.ico")); //$NON-NLS-1$
+				 * 
+				 * theImageRegistry.put(IMG_DELETE, Hub.getImageDescriptor(imageBase +
+				 * "delete.gif")); //$NON-NLS-1$ theImageRegistry.put(IMG_MANN,
+				 * Hub.getImageDescriptor(imageBase + "mann.ico")); //$NON-NLS-1$
+				 * theImageRegistry.put(IMG_FRAU, Hub.getImageDescriptor(imageBase + "frau.ico"));
+				 * //$NON-NLS-1$ theImageRegistry.put(IMG_VIP, Hub.getImageDescriptor(imageBase +
+				 * "vip.png")); //$NON-NLS-1$
+				 * 
+				 * theImageRegistry .put(IMG_PRINTER, Hub.getImageDescriptor(imageBase +
+				 * "printer.png")); //$NON-NLS-1$ theImageRegistry.put(IMG_FILTER, Hub
+				 * .getImageDescriptor(imageBase + "filter_ps.gif")); //$NON-NLS-1$
+				 * theImageRegistry.put(IMG_NEW, Hub.getImageDescriptor(imageBase + "new2.ico"));
+				 * //$NON-NLS-1$ theImageRegistry .put(IMG_LOGO48, Hub.getImageDescriptor(imageBase +
+				 * "elexis48.png")); //$NON-NLS-1$
+				 * 
+				 * theImageRegistry.put(IMG_IMPORT, Hub.getImageDescriptor(imageBase +
+				 * "import.gif")); //$NON-NLS-1$ theImageRegistry.put(IMG_EDIT,
+				 * Hub.getImageDescriptor(imageBase + "schreiben.ico")); //$NON-NLS-1$
+				 * theImageRegistry .put(IMG_ACHTUNG, Hub.getImageDescriptor(imageBase +
+				 * "achtung.png")); //$NON-NLS-1$
+				 * 
+				 * theImageRegistry.put(IMG_OK, Hub.getImageDescriptor(imageBase + "ok.ico"));
+				 * //$NON-NLS-1$ theImageRegistry.put(IMG_TICK, Hub.getImageDescriptor(imageBase +
+				 * "tick.png")); //$NON-NLS-1$ theImageRegistry.put(IMG_FEHLER,
+				 * Hub.getImageDescriptor(imageBase + "fehler.ico")); //$NON-NLS-1$
+				 * 
+				 * theImageRegistry .put(IMG_REFRESH, Hub.getImageDescriptor(imageBase +
+				 * "refresh.ico")); //$NON-NLS-1$ theImageRegistry.put(IMG_WIZARD,
+				 * Hub.getImageDescriptor(imageBase + "wizard.ico")); //$NON-NLS-1$
+				 * theImageRegistry.put(IMG_ADDITEM, Hub.getImageDescriptor(imageBase + "add.gif"));
+				 * //$NON-NLS-1$
+				 
+				theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor(imageBase + "export.ico")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_GOFURTHER, Hub.getImageDescriptor(imageBase
+					+ "page_go.png")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor(imageBase
+					+ "ausrufez.png")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor(imageBase
+					+ "ausrufez_rot.ico")); // $NON_NLS-1$
 				*/
-				theImageRegistry.put(IMG_DELETE, Hub
-						.getImageDescriptor(imageBase + "delete.gif")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_MANN, Hub.getImageDescriptor(imageBase
-						+ "mann.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_FRAU, Hub.getImageDescriptor(imageBase
-						+ "frau.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_VIP, Hub.getImageDescriptor(imageBase
-						+ "vip.png")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_PRINTER, Hub
-						.getImageDescriptor(imageBase + "printer.png")); //$NON-NLS-1$
-				// theImageRegistry.put(IMG_PRINT,Hub.getImageDescriptor(imageBase+"print.gif"));
-				// //$NON-NLS-1$
-				theImageRegistry.put(IMG_FILTER, Hub
-						.getImageDescriptor(imageBase + "filter_ps.gif")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_NEW, Hub.getImageDescriptor(imageBase
-						+ "new2.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_LOGO48, Hub
-						.getImageDescriptor(imageBase + "elexis48.png")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_IMPORT, Hub
-						.getImageDescriptor(imageBase + "import.gif")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_EDIT, Hub.getImageDescriptor(imageBase
-						+ "schreiben.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_ACHTUNG, Hub
-						.getImageDescriptor(imageBase + "achtung.png")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_OK, Hub.getImageDescriptor(imageBase
-						+ "ok.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_TICK, Hub.getImageDescriptor(imageBase
-						+ "tick.png")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_FEHLER, Hub
-						.getImageDescriptor(imageBase + "fehler.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_REFRESH, Hub
-						.getImageDescriptor(imageBase + "refresh.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_WIZARD, Hub
-						.getImageDescriptor(imageBase + "wizard.ico")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_ADDITEM, Hub
-						.getImageDescriptor(imageBase + "add.gif")); //$NON-NLS-1$
-				theImageRegistry.put(IMG_EXPORT, Hub
-						.getImageDescriptor(imageBase + "export.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_GOFURTHER, Hub
-						.getImageDescriptor(imageBase + "page_go.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_AUSRUFEZ, Hub
-						.getImageDescriptor(imageBase + "ausrufez.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub
-						.getImageDescriptor(imageBase + "ausrufez_rot.ico")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_REMOVEITEM, Hub
-						.getImageDescriptor(imageBase + "minus.ico")); // $NON_NLS-1$
+					.getImageDescriptor(imageBase + "minus.ico")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_NETWORK, Hub
-						.getImageDescriptor(imageBase + "netzwerk.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor(imageBase
-						+ "book.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_PERSON, Hub
-						.getImageDescriptor(imageBase + "person.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_PERSON_OK, Hub
-						.getImageDescriptor(imageBase + "personok.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase
-						+ "floppy.png")); // $NON_NLS-1$
+					.getImageDescriptor(imageBase + "netzwerk.ico")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor(imageBase + "book.png")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor(imageBase + "person.ico")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor(imageBase
+					+ "personok.ico")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase + "floppy.png")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_LOCK_CLOSED, Hub
-						.getImageDescriptor(imageBase + "lock.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_LOCK_OPEN, Hub
-						.getImageDescriptor(imageBase + "lock_open.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_CLIPBOARD, Hub
-						.getImageDescriptor(imageBase + "clipboard.png"));
+					.getImageDescriptor(imageBase + "lock.png")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_LOCK_OPEN, Hub.getImageDescriptor(imageBase
+					+ "lock_open.png")); // $NON_NLS-1$
+				theImageRegistry.put(IMG_CLIPBOARD, Hub.getImageDescriptor(imageBase
+					+ "clipboard.png"));
 			}
 		}
 		return theImageRegistry;
 	}
-
-	public static ImageDescriptor getImageDescriptor(String imagename) {
+	
+	public static ImageDescriptor getImageDescriptor(String imagename){
 		ImageDescriptor ret = theImageRegistry.getDescriptor(imagename);
 		if (ret == null) {
 			ret = Hub.getImageDescriptor(getImageBase() + imagename + ".png");
 			if (ret == null) {
-				ret = Hub.getImageDescriptor(getImageBase() + imagename
-						+ ".gif");
+				ret = Hub.getImageDescriptor(getImageBase() + imagename + ".gif");
 			}
 			if (ret == null) {
-				ret = Hub.getImageDescriptor(getImageBase() + imagename
-						+ ".ico");
+				ret = Hub.getImageDescriptor(getImageBase() + imagename + ".ico");
 			}
 			if (ret != null) {
 				theImageRegistry.put(imagename, ret);
@@ -300,8 +308,8 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
-
-	public static Image getImage(String name) {
+	
+	public static Image getImage(String name){
 		Image ret = theImageRegistry.get(name);
 		if (ret == null) {
 			ImageDescriptor id = getImageDescriptor(name);
@@ -312,62 +320,64 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
-
+	
 	/** shortcut for getColorRegistry().get(String col) */
-	public static Color getColor(String desc) {
+	public static Color getColor(String desc){
 		return theColorRegistry.get(desc);
 	}
-
-	public static ColorRegistry getColorRegistry() {
-
+	
+	public static ColorRegistry getColorRegistry(){
+		
 		if (theColorRegistry == null) {
 			theColorRegistry = new ColorRegistry(theDisplay, true);
 		}
 		return theColorRegistry;
 	}
-
-	public static FormToolkit getToolkit() {
+	
+	public static FormToolkit getToolkit(){
 		if (theToolkit == null) {
 			theToolkit = new FormToolkit(theDisplay);
 		}
 		return theToolkit;
 	}
-
-	public static Display getDisplay() {
+	
+	public static Display getDisplay(){
 		if (theDisplay == null) {
 			theDisplay = PlatformUI.createDisplay();
 		}
 		return theDisplay;
 	}
-
-	public static void updateFont(String cfgName) {
+	
+	public static void updateFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
-		FontData[] fd = PreferenceConverter.getFontDataArray(
-				new SettingsPreferenceStore(Hub.userCfg), cfgName);
+		FontData[] fd =
+			PreferenceConverter.getFontDataArray(new SettingsPreferenceStore(Hub.userCfg), cfgName);
 		fr.put(cfgName, fd);
 	}
-
-	public static Font getFont(String cfgName) {
+	
+	public static Font getFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(cfgName)) {
-			FontData[] fd = PreferenceConverter.getFontDataArray(
-					new SettingsPreferenceStore(Hub.userCfg), cfgName);
+			FontData[] fd =
+				PreferenceConverter.getFontDataArray(new SettingsPreferenceStore(Hub.userCfg),
+					cfgName);
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);
 	}
-
-	public static Font getFont(String name, int height, int style) {
-		String key = name + ":" + Integer.toString(height) + ":"
-				+ Integer.toString(style);
+	
+	public static Font getFont(String name, int height, int style){
+		String key = name + ":" + Integer.toString(height) + ":" + Integer.toString(style);
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(key)) {
-			FontData[] fd = new FontData[] { new FontData(name, height, style) };
+			FontData[] fd = new FontData[] {
+				new FontData(name, height, style)
+			};
 			fr.put(key, fd);
 		}
 		return fr.get(key);
 	}
-
+	
 	/**
 	 * Eine Color aus einer RGB-Beschreibung als Hex-String herstellen
 	 * 
@@ -375,17 +385,17 @@ public class Desk implements IApplication {
 	 *            Die Farbe als Beschreibung in Hex-Form
 	 * @return die Farbe als Color, ist in Regisry gespeichert
 	 */
-	public static Color getColorFromRGB(final String coldesc) {
+	public static Color getColorFromRGB(final String coldesc){
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
 		if (!theColorRegistry.hasValueFor(col)) {
-			RGB rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16),
-					Integer.parseInt(col.substring(2, 4), 16), Integer
-							.parseInt(col.substring(4, 6), 16));
+			RGB rgb =
+				new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(
+					2, 4), 16), Integer.parseInt(col.substring(4, 6), 16));
 			theColorRegistry.put(col, rgb);
 		}
 		return theColorRegistry.get(col);
 	}
-
+	
 	/**
 	 * Eine Hex-String Beeschreibung einer Farbe liefern
 	 * 
@@ -393,21 +403,17 @@ public class Desk implements IApplication {
 	 *            Die Farbe in RGB-Form
 	 * @return
 	 */
-	public static String createColor(final RGB rgb) {
+	public static String createColor(final RGB rgb){
 		StringBuilder sb = new StringBuilder();
-		sb.append(
-				StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.red), 2))
-				.append(
-						StringTool.pad(StringTool.LEFT, '0', Integer
-								.toHexString(rgb.green), 2)).append(
-						StringTool.pad(StringTool.LEFT, '0', Integer
-								.toHexString(rgb.blue), 2));
+		sb.append(StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.red), 2)).append(
+			StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.green), 2)).append(
+			StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.blue), 2));
 		String srgb = sb.toString();
 		theColorRegistry.put(srgb, rgb);
 		return srgb;
 	}
-
-	public static Shell getTopShell() {
+	
+	public static Shell getTopShell(){
 		Shell ret = null;
 		if (theDisplay != null) {
 			ret = theDisplay.getActiveShell();
