@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BuchungsDialog.java 3738 2008-03-22 07:51:31Z rgw_ch $
+ *  $Id: BuchungsDialog.java 4719 2008-12-04 10:10:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -25,54 +25,55 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class BuchungsDialog extends TitleAreaDialog {
-
+	
 	boolean bType;
 	LabeledInputField liBeleg, liDate, liBetrag;
 	Text text;
-	KassenbuchEintrag last,act;
+	KassenbuchEintrag last, act;
 	Combo cbCats;
 	
 	BuchungsDialog(Shell shell, boolean mode){
 		super(shell);
-		bType=mode;
-		act=null;
+		bType = mode;
+		act = null;
 	}
-
+	
 	BuchungsDialog(Shell shell, KassenbuchEintrag kbe){
 		super(shell);
-		act=kbe;
+		act = kbe;
 	}
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		Composite top=new Composite(ret,SWT.BORDER);
+		Composite top = new Composite(ret, SWT.BORDER);
 		top.setLayout(new FillLayout());
 		top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		liBeleg=new LabeledInputField(top,"Beleg");
-		liDate=new LabeledInputField(top,"Datum",LabeledInputField.Typ.DATE);
-		liBetrag=new LabeledInputField(top,"Betrag",LabeledInputField.Typ.MONEY);
-		Composite cCats=new Composite(ret,SWT.NONE);
+		liBeleg = new LabeledInputField(top, "Beleg");
+		liDate = new LabeledInputField(top, "Datum", LabeledInputField.Typ.DATE);
+		liBetrag = new LabeledInputField(top, "Betrag", LabeledInputField.Typ.MONEY);
+		Composite cCats = new Composite(ret, SWT.NONE);
 		cCats.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		cCats.setLayout(new GridLayout(2,false));
-		new Label(cCats,SWT.NONE).setText("Kategorie");
-		cbCats=new Combo(cCats,SWT.SINGLE);
+		cCats.setLayout(new GridLayout(2, false));
+		new Label(cCats, SWT.NONE).setText("Kategorie");
+		cbCats = new Combo(cCats, SWT.SINGLE);
 		cbCats.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbCats.setItems(KassenbuchEintrag.getCategories());
-		new Label(ret,SWT.NONE).setText("Buchungstext");
-		text=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText("Buchungstext");
+		text = new Text(ret, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		if(act==null){
-			last=KassenbuchEintrag.recalc();
+		if (act == null) {
+			last = KassenbuchEintrag.recalc();
 			liBeleg.setText(KassenbuchEintrag.nextNr(last));
-		}else{
+		} else {
 			liBeleg.setText(act.getBelegNr());
 			liDate.setText(act.getDate());
 			liBetrag.setText(act.getAmount().getAmountAsString());
@@ -81,49 +82,51 @@ public class BuchungsDialog extends TitleAreaDialog {
 		}
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
-		if(act==null){
-			if(bType){
+		if (act == null) {
+			if (bType) {
 				setTitle("Einnahme verbuchen");
-			}else{
+			} else {
 				setTitle("Ausgabe verbuchen");
 			}
-		}else{
+		} else {
 			setTitle("Buchung ändern");
 		}
 		setMessage("Bitte geben Sie den Betrag und einen Buchungstext ein");
 		getShell().setText("Buchung für Kassenbuch");
 		liBetrag.getControl().setFocus();
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		Money money=new Money();
-		try{
+	protected void okPressed(){
+		Money money = new Money();
+		try {
 			money.addAmount(liBetrag.getText());
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
-		TimeTool tt=new TimeTool(liDate.getText());
-		String bt=text.getText();
+		TimeTool tt = new TimeTool(liDate.getText());
+		String bt = text.getText();
 		
-		if(act==null){
-			if(!bType){
-				money=money.negate();
+		if (act == null) {
+			if (!bType) {
+				money = money.negate();
 			}
-			act=new KassenbuchEintrag(liBeleg.getText(),tt.toString(TimeTool.DATE_GER),money,bt,last);
-		}else{
-			act.set(new String[]{"BelegNr","Datum","Betrag","Text"},
-				liBeleg.getText(),tt.toString(TimeTool.DATE_GER),money.getCentsAsString(),
-				text.getText());
+			act =
+				new KassenbuchEintrag(liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money, bt,
+					last);
+		} else {
+			act.set(new String[] {
+				"BelegNr", "Datum", "Betrag", "Text"
+			}, liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money.getCentsAsString(), text
+				.getText());
 			KassenbuchEintrag.recalc();
 		}
 		act.setKategorie(cbCats.getText());
 		super.okPressed();
 	}
-	
 	
 }
