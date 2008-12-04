@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentSelectDialog.java 3520 2008-01-12 11:26:16Z rgw_ch $
+ *  $Id: DocumentSelectDialog.java 4722 2008-12-04 10:11:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -33,26 +33,24 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 /**
- * Select a Document or a template
- * Usage:
- * DocumentSelector dsl=new DocumentSelector(shell,mandant,TYPE_xxx);
- * if(dsl.open()==Dialog.OK){
- * 		doSomethingWith(dsl.result);
+ * Select a Document or a template Usage: DocumentSelector dsl=new
+ * DocumentSelector(shell,mandant,TYPE_xxx); if(dsl.open()==Dialog.OK){ doSomethingWith(dsl.result);
  * }
+ * 
  * @author gerry
- *
+ * 
  */
 public class DocumentSelectDialog extends TitleAreaDialog {
-	/** select an existing document out of the list of all documtents of the given mandator*/
-	public static final int TYPE_LOAD_DOCUMENT=0;
+	/** select an existing document out of the list of all documtents of the given mandator */
+	public static final int TYPE_LOAD_DOCUMENT = 0;
 	/** create a new document using one of the templates of the given mandator */
-	public static final int TYPE_CREATE_DOC_WITH_TEMPLATE=1;
-	/** open a user template of the given mandator for editing or export*/
-	public static final int TYPE_LOAD_TEMPLATE=2;
-	/** open a system template of the given  mandator for editing or export */ 
-	public static final int TYPE_LOAD_SYSTEMPLATE=4;
+	public static final int TYPE_CREATE_DOC_WITH_TEMPLATE = 1;
+	/** open a user template of the given mandator for editing or export */
+	public static final int TYPE_LOAD_TEMPLATE = 2;
+	/** open a system template of the given mandator for editing or export */
+	public static final int TYPE_LOAD_SYSTEMPLATE = 4;
 	
-	static final int TEMPLATE=TYPE_LOAD_TEMPLATE|TYPE_LOAD_SYSTEMPLATE;
+	static final int TEMPLATE = TYPE_LOAD_TEMPLATE | TYPE_LOAD_SYSTEMPLATE;
 	Person rel;
 	int type;
 	Brief result;
@@ -65,23 +63,26 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 	private Action deleteTextAction;
 	
 	/**
-	 * Create a new DocumentSelector. If the user clicks OK, the selected Brief will
-	 * be in result.
-	 * @param p the mandator whose templates/letters should be displayed
-	 * @param typ type of the selector to display (see TYPE_ constants)
+	 * Create a new DocumentSelector. If the user clicks OK, the selected Brief will be in result.
+	 * 
+	 * @param p
+	 *            the mandator whose templates/letters should be displayed
+	 * @param typ
+	 *            type of the selector to display (see TYPE_ constants)
 	 */
 	public DocumentSelectDialog(Shell shell, Person p, int typ){
 		super(shell);
-		rel=p;
-		type=typ;
+		rel = p;
+		type = typ;
 	}
+	
 	@Override
 	public void create(){
 		super.create();
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		
 		makeActions();
-		switch(type){
+		switch (type) {
 		case TYPE_LOAD_DOCUMENT:
 			setTitle("Dokument öffnen");
 			setMessage("Bitte wählen Sie das gewünschte Dokument aus untenstehender Liste und klicken Sie auf OK");
@@ -101,107 +102,114 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			setTitle("Systemvorlage laden");
 			setMessage("Dies sind die vom System benötigten Vorlagen");
 			getShell().setText("Vorlage laden");
-		}	
+		}
 	}
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		if((type&TEMPLATE) != 0){
-			new Label(ret,SWT.NONE).setText("Betreff");
-			tBetreff=SWTHelper.createText(ret, 1, SWT.NONE);
-			new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
+		if ((type & TEMPLATE) != 0) {
+			new Label(ret, SWT.NONE).setText("Betreff");
+			tBetreff = SWTHelper.createText(ret, 1, SWT.NONE);
+			new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		}
-		tv=new TableViewer(ret,SWT.V_SCROLL);
-		tv.setContentProvider(new IStructuredContentProvider(){
-
-			public Object[] getElements(Object inputElement) {
-				Query<Brief> qbe=new Query<Brief>(Brief.class);
-				if(type==TYPE_LOAD_DOCUMENT){
+		tv = new TableViewer(ret, SWT.V_SCROLL);
+		tv.setContentProvider(new IStructuredContentProvider() {
+			
+			public Object[] getElements(Object inputElement){
+				Query<Brief> qbe = new Query<Brief>(Brief.class);
+				if (type == TYPE_LOAD_DOCUMENT) {
 					qbe.add("Typ", "<>", Brief.TEMPLATE);
-				}else{
-					String sys= type==TYPE_LOAD_SYSTEMPLATE ? "=" : "<>";
-					qbe.add("Typ","=",Brief.TEMPLATE);
-					qbe.add("BehandlungsID",sys,"SYS");
+				} else {
+					String sys = type == TYPE_LOAD_SYSTEMPLATE ? "=" : "<>";
+					qbe.add("Typ", "=", Brief.TEMPLATE);
+					qbe.add("BehandlungsID", sys, "SYS");
 					qbe.startGroup();
-					qbe.add("DestID","=",Hub.actMandant.getId());
+					qbe.add("DestID", "=", Hub.actMandant.getId());
 					qbe.or();
-					qbe.add("DestID","=","");
+					qbe.add("DestID", "=", "");
 					qbe.endGroup();
 				}
 				qbe.and();
-				qbe.add("geloescht","<>","1");
+				qbe.add("geloescht", "<>", "1");
 				
-				if(type!=TYPE_LOAD_DOCUMENT){
+				if (type != TYPE_LOAD_DOCUMENT) {
 					qbe.orderBy(false, "Betreff");
-				}else{
+				} else {
 					qbe.orderBy(false, "Datum");
 				}
-				List<Brief> l=qbe.execute();
+				List<Brief> l = qbe.execute();
 				return l.toArray();
 			}
-
-			public void dispose() {}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			
+			public void dispose(){}
+			
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
 		});
 		tv.setLabelProvider(new DefaultLabelProvider());
 		makeActions();
-		menu=new MenuManager();
+		menu = new MenuManager();
 		menu.add(editNameAction);
-		menu.add((type&TEMPLATE)!=0 ? deleteTemplateAction : deleteTextAction);
+		menu.add((type & TEMPLATE) != 0 ? deleteTemplateAction : deleteTextAction);
 		tv.getControl().setMenu(menu.createContextMenu(tv.getControl()));
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setInput(this);
 		return ret;
 	}
+	
 	@Override
-	protected void okPressed() {
-		IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
-			if((sel!=null)&& (!sel.isEmpty())){
-			result=(Brief)sel.getFirstElement();
-			if((type&TEMPLATE)!=0){
-				betreff=tBetreff.getText();
+	protected void okPressed(){
+		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+		if ((sel != null) && (!sel.isEmpty())) {
+			result = (Brief) sel.getFirstElement();
+			if ((type & TEMPLATE) != 0) {
+				betreff = tBetreff.getText();
 			}
-			if(StringTool.isNothing(betreff)){
-				betreff=result.getBetreff();
+			if (StringTool.isNothing(betreff)) {
+				betreff = result.getBetreff();
 			}
 		}
 		super.okPressed();
 	}
+	
 	public Brief getSelectedDocument(){
 		return result;
 	}
+	
 	public String getBetreff(){
 		return betreff;
 	}
+	
 	private void makeActions(){
-		editNameAction=new Action("Betreff ändern..."){
+		editNameAction = new Action("Betreff ändern...") {
 			@Override
 			public void run(){
-				
+
 			}
 		};
-		deleteTemplateAction=new Action("Vorlage löschen"){
+		deleteTemplateAction = new Action("Vorlage löschen") {
 			@Override
 			public void run(){
-				Brief sel=(Brief)((IStructuredSelection)tv.getSelection()).getFirstElement();
-				if(MessageDialog.openConfirm(getShell(),"Vorlage löschen","Wirklich die Vorlage "+sel.getBetreff()+" löschen?")==true){
+				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
+				if (MessageDialog.openConfirm(getShell(), "Vorlage löschen",
+					"Wirklich die Vorlage " + sel.getBetreff() + " löschen?") == true) {
 					sel.delete();
 					tv.refresh();
 				}
 			}
 		};
-		deleteTextAction=new Action("Dokument löschen"){
+		deleteTextAction = new Action("Dokument löschen") {
 			@Override
 			public void run(){
-				Brief sel=(Brief)((IStructuredSelection)tv.getSelection()).getFirstElement();
-				if(MessageDialog.openConfirm(getShell(),"Dokument löschen","Wirklich das Dokument "+sel.getBetreff()+" löschen?")==true){
-					sel.set("geloescht","1");
+				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
+				if (MessageDialog.openConfirm(getShell(), "Dokument löschen",
+					"Wirklich das Dokument " + sel.getBetreff() + " löschen?") == true) {
+					sel.set("geloescht", "1");
 					tv.refresh();
 				}
 			}
 		};
 	}
 }
-

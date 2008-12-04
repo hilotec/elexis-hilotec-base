@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ * $Id: RnActions.java 4722 2008-12-04 10:11:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -340,7 +340,7 @@ public class RnActions {
 		};
 		rnFilterAction = new Action("Liste filtern", Action.AS_CHECK_BOX) {
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_FILTER));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 				setToolTipText("Bedingungen für die Anzeige eingeben");
 			}
 			

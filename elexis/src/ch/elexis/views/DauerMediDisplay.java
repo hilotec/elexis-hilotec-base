@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DauerMediDisplay.java 4056 2008-06-20 13:17:43Z rgw_ch $
+ * $Id: DauerMediDisplay.java 4722 2008-12-04 10:11:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -127,7 +127,7 @@ public class DauerMediDisplay extends DynamicListDisplay {
 		
 		changeMedicationAction=new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,"Ändern..."){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_EDIT));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText("Dauermedikation modifizieren");
 			}
 			public void doRun(){
@@ -141,7 +141,7 @@ public class DauerMediDisplay extends DynamicListDisplay {
 		
 		stopMedicationAction=new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,"Stoppen"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_REMOVEITEM));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
 				setToolTipText("Diese Medikation stoppen");
 			}
 			public void doRun(){
@@ -155,7 +155,7 @@ public class DauerMediDisplay extends DynamicListDisplay {
 		
 		removeMedicationAction=new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION,"Löschen"){
 			{
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_DELETE));
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Medikation unwiederruflich löschen");
 			}
 			public void doRun(){

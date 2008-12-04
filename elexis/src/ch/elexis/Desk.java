@@ -46,14 +46,14 @@ public class Desk implements IApplication {
 	/** @deprecated use getToolkit() */
 	public static FormToolkit theToolkit = null;
 	/** @deprecated use getImage and getImageDescriptor */
-	public static ImageRegistry theImageRegistry = null;
+	private static ImageRegistry theImageRegistry = null;
 	/** @deprecated use getColor */
 	public static ColorRegistry theColorRegistry = null;
 	
 	public static final String COL_RED = "rot";
 	public static final String COL_GREEN = "gruen";
 	public static final String COL_BLUE = "blau";
-	public static final String COL_SKYTBLUE = "himmelblau";
+	public static final String COL_SKYBLUE = "himmelblau";
 	public static final String COL_LIGHTBLUE = "hellblau";
 	public static final String COL_BLACK = "schwarz";
 	public static final String COL_GREY = "grau";
@@ -123,12 +123,17 @@ public class Desk implements IApplication {
 	public static final String IMG_NETWORK = "netzwerk"; // $NON_NLS-1$
 	/** a book */
 	public static final String IMG_BOOK = "buch";
-	/* a person */
+	/** a person */
 	public static final String IMG_PERSON = "person"; // $NON_NLS-1$
+	/** a person with an OK mark */
 	public static final String IMG_PERSON_OK = "personOK"; // $NON_NLS-1$
+	/** a diskette symbol */
 	public static final String IMG_DISK = "diskette"; // $NON_NLS-1$
+	/** a closed lock */
 	public static final String IMG_LOCK_CLOSED = "schloss_zu"; // $NON_NLS-1$
+	/** An opened lock */
 	public static final String IMG_LOCK_OPEN = "schloss_offen"; // $NON_NLS-1$
+	/** Clipboard symbol */
 	public static final String IMG_CLIPBOARD = "clipboard"; // $NON_NLS-1$
 	
 	public Desk(){

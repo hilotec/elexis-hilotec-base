@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 3948 2008-05-22 18:34:11Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 4722 2008-12-04 10:11:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -132,7 +132,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		Desk.getColorRegistry().put(Desk.COL_RED, new RGB(255,0,0));
 		Desk.getColorRegistry().put(Desk.COL_GREEN,new RGB(0,255,0));
 		Desk.getColorRegistry().put(Desk.COL_BLUE,new RGB(0,0,255));
-		Desk.getColorRegistry().put(Desk.COL_SKYTBLUE, new RGB(135,206,250));
+		Desk.getColorRegistry().put(Desk.COL_SKYBLUE, new RGB(135,206,250));
 		Desk.getColorRegistry().put(Desk.COL_LIGHTBLUE, new RGB(0,191,255));
 		Desk.getColorRegistry().put(Desk.COL_BLACK, new RGB(0,0,0));
 		Desk.getColorRegistry().put(Desk.COL_GREY, new RGB(0x60,0x60,0x60));

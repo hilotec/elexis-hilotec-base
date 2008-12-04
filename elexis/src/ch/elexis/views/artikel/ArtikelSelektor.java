@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ArtikelSelektor.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *    $Id: ArtikelSelektor.java 4722 2008-12-04 10:11:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -186,7 +186,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 			if (element instanceof Artikel) {
 				return null;
 			} else {
-				return Desk.theImageRegistry.get(Desk.IMG_ACHTUNG);
+				return Desk.getImage(Desk.IMG_ACHTUNG);
 			}
 		}
 		
