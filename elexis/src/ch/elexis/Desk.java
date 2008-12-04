@@ -282,7 +282,8 @@ public class Desk implements IApplication {
 			ImageDescriptor id = getImageDescriptor(name);
 			if (id != null) {
 				ret = id.createImage();
-				theImageRegistry.put(name, ret);
+				//theImageRegistry.remove(name);
+				//theImageRegistry.put(name, ret);
 			}
 		}
 		return ret;

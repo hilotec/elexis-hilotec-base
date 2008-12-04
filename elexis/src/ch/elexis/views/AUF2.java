@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ *  $Id: AUF2.java 4740 2008-12-04 21:13:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -53,9 +53,12 @@ public class AUF2 extends ViewPart implements ActivationListener, SelectionListe
 	TableViewer tv;
 	private Action newAUF, delAUF, modAUF, printAUF;
 	
+	public AUF2(){
+		setTitleImage(Desk.getImage(ICON));
+	}
 	@Override
 	public void createPartControl(Composite parent){
-		setTitleImage(Desk.getImage(ICON));
+		//setTitleImage(Desk.getImage(ICON));
 		setPartName(Messages.getString("AUF2.certificate")); //$NON-NLS-1$
 		tv = new TableViewer(parent);
 		tv.setLabelProvider(new DefaultLabelProvider());
