@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktImporterDialog.java 3211 2007-09-26 16:06:00Z rgw_ch $
+ *  $Id: KontaktImporterDialog.java 4715 2008-12-04 10:09:55Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.importers;
 
@@ -22,33 +22,32 @@ import ch.elexis.util.SWTHelper;
 
 public class KontaktImporterDialog extends TitleAreaDialog {
 	KontaktImporterBlatt kib;
+	
 	public KontaktImporterDialog(final Shell shell){
 		super(shell);
 	}
-
+	
 	@Override
-	protected Control createDialogArea(final Composite parent) {
-		kib=new KontaktImporterBlatt(parent);
+	protected Control createDialogArea(final Composite parent){
+		kib = new KontaktImporterBlatt(parent);
 		kib.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return kib;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle("Importiere Kontakt");
 		setMessage("Geben Sie bitte Dateityp und Datei zum importieren an");
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		getShell().setText("Importer");
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		/*
-		if(kib.doImport()){
-			super.okPressed();
-		}
-		*/
+	protected void okPressed(){
+	/*
+	 * if(kib.doImport()){ super.okPressed(); }
+	 */
 	}
 	
 }

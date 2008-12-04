@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, D. Lutz and Elexis
+ * Copyright (c) 2007-2008, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id$
+ * $Id: GenericImporterBlatt.java 4715 2008-12-04 10:09:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -68,26 +68,27 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 /**
- * A class to import any data from different sources.
- * The user can choose the type of data and how to map the fields.
- * He can specify a key file for mapping the data to existing objects.
-
+ * A class to import any data from different sources. The user can choose the type of data and how
+ * to map the fields. He can specify a key file for mapping the data to existing objects.
+ * 
  * @author Daniel Lutz <danlutz@watz.ch>
  */
-public class GenericImporterBlatt extends Composite{
+public class GenericImporterBlatt extends Composite {
 	static final String FILENAME_KEY = "ImporterPage/" + GenericImporter.TITLE + "/filename"; //$NON-NLS-1$ //$NON-NLS-2$
 	static final String LASTFIELDS_KEY = "ImporterPage/" + GenericImporter.TITLE + "/lastfields"; //$NON-NLS-1$ //$NON-NLS-2$
 	
-	static final String[] METHODS = new String[]{"XLS"};
-	private static final int XLS = 0; 
-
+	static final String[] METHODS = new String[] {
+		"XLS"
+	};
+	private static final int XLS = 0;
+	
 	int method = XLS;
 	String filename = "";
 	
 	Label lbFileName;
 	Combo cbMethods;
-
-	private Log log=Log.get("GenericImporter");
+	
+	private Log log = Log.get("GenericImporter");
 	
 	public GenericImporterBlatt(Composite parent){
 		super(parent, SWT.NONE);
@@ -97,18 +98,18 @@ public class GenericImporterBlatt extends Composite{
 		cbMethods = new Combo(this, SWT.SINGLE);
 		cbMethods.setItems(METHODS);
 		cbMethods.select(0);
-		cbMethods.addSelectionListener(new SelectionAdapter(){
+		cbMethods.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent arg0){
 				method = cbMethods.getSelectionIndex();
 			}
 		});
-
+		
 		Button bLoad = new Button(this, SWT.PUSH);
 		
 		bLoad.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
 				String file = fd.open();
 				lbFileName.setText(StringTool.isNothing(file) ? "" : file);
@@ -129,29 +130,30 @@ public class GenericImporterBlatt extends Composite{
 			lbFileName.setText("Bitte Dateityp und Datei wählen");
 		}
 	}
-
+	
 	public boolean doImport(){
 		Desk.theDisplay.syncExec(new Runnable() {
-			public void run() {
+			public void run(){
 				GenericImporterWizard wizard = new GenericImporterWizard(method, filename);
 				
-				WizardDialog dlg = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard) {
-					{
-						int style = getShellStyle();
-				        setShellStyle(style | SWT.MAX);
-
-					}
-				};
+				WizardDialog dlg =
+					new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getShell(), wizard) {
+						{
+							int style = getShellStyle();
+							setShellStyle(style | SWT.MAX);
+							
+						}
+					};
 				
 				dlg.open();
 			}
 		});
 		return true;
 	}
-
+	
 	/**
-	 * Wizard for importing generic data.
-	 * For now, we only support Excel.
+	 * Wizard for importing generic data. For now, we only support Excel.
 	 */
 	class GenericImporterWizard extends Wizard {
 		private int method;
@@ -159,11 +161,11 @@ public class GenericImporterBlatt extends Composite{
 		
 		MappingPage mappingPage;
 		SyncPage syncPage;
-
+		
 		ExcelWrapper excel;
 		PersistentObject template;
 		
-		GenericImporterWizard(int method, String filename) {
+		GenericImporterWizard(int method, String filename){
 			this.method = method;
 			this.filename = filename;
 			
@@ -178,14 +180,14 @@ public class GenericImporterBlatt extends Composite{
 			initInput();
 		}
 		
-		public boolean performFinish() {
+		public boolean performFinish(){
 			if (excel != null) {
 				// TODO close excel sheet
 			}
 			return true;
 		}
 		
-		public boolean performCancel() {
+		public boolean performCancel(){
 			// the same action as Finish
 			return performFinish();
 		}
@@ -193,7 +195,7 @@ public class GenericImporterBlatt extends Composite{
 		/**
 		 * prepares the input document
 		 */
-		private void initInput() {
+		private void initInput(){
 			excel = null;
 			
 			if ((!StringTool.isNothing(filename)) && method == XLS) {
@@ -203,7 +205,7 @@ public class GenericImporterBlatt extends Composite{
 				}
 			}
 		}
-
+		
 		class MappingPage extends WizardPage {
 			private ComboViewer typesViewer;
 			
@@ -214,26 +216,28 @@ public class GenericImporterBlatt extends Composite{
 			
 			private List<Field> inputAvailableFields;
 			private List<Field> dbAvailableFields;
-
+			
 			// accessed by SyncPage
 			private List<Field> inputChosenFields = new ArrayList<Field>();
 			private List<Field> dbChosenFields = new ArrayList<Field>();
 			private HashMap<String, Integer> inputFieldIndices = new HashMap<String, Integer>();
 			
-			MappingPage() {
+			MappingPage(){
 				super("Mapping", "Mapping", null);
-				String description = "Bitte wählen Sie in der oberen Liste den passenden Typ. " +
-						"Unten werde die entsprechenden Felder automatisch ausgewählt. " +
-						"Bei Bedarf können Sie diese Felder anpassen.";
+				String description =
+					"Bitte wählen Sie in der oberen Liste den passenden Typ. "
+						+ "Unten werde die entsprechenden Felder automatisch ausgewählt. "
+						+ "Bei Bedarf können Sie diese Felder anpassen.";
 				setDescription(description);
 			}
-
+			
 			/**
-			 * Set the requested object type. Intialize available fields
-			 * according to the type.
-			 * @param type a template of the requested type
+			 * Set the requested object type. Intialize available fields according to the type.
+			 * 
+			 * @param type
+			 *            a template of the requested type
 			 */
-			private void setType() {
+			private void setType(){
 				PersistentObject type = getSelectedType();
 				
 				// clear old data
@@ -247,23 +251,25 @@ public class GenericImporterBlatt extends Composite{
 				
 				inputAvailableFieldsViewer.setInput(inputAvailableFields);
 				if (inputAvailableFields.size() > 0) {
-					inputAvailableFieldsViewer.setSelection(new StructuredSelection(inputAvailableFieldsViewer.getElementAt(0)));
+					inputAvailableFieldsViewer.setSelection(new StructuredSelection(
+						inputAvailableFieldsViewer.getElementAt(0)));
 				}
 				
 				inputChosenFieldsViewer.setInput(inputChosenFields);
 				
 				dbAvailableFieldsViewer.setInput(dbAvailableFields);
 				if (dbAvailableFields.size() > 0) {
-					dbAvailableFieldsViewer.setSelection(new StructuredSelection(dbAvailableFieldsViewer.getElementAt(0)));
+					dbAvailableFieldsViewer.setSelection(new StructuredSelection(
+						dbAvailableFieldsViewer.getElementAt(0)));
 				}
-
+				
 				dbChosenFieldsViewer.setInput(dbChosenFields);
 				
 				checkCompleteness();
 				
 			}
 			
-			private void clearAllFields() {
+			private void clearAllFields(){
 				if (inputAvailableFields != null) {
 					inputAvailableFields.clear();
 				}
@@ -273,7 +279,7 @@ public class GenericImporterBlatt extends Composite{
 				if (inputFieldIndices != null) {
 					inputFieldIndices.clear();
 				}
-
+				
 				if (dbAvailableFields != null) {
 					dbAvailableFields.clear();
 				}
@@ -283,12 +289,12 @@ public class GenericImporterBlatt extends Composite{
 			}
 			
 			/**
-			 * Populates inputAvailableFields and dbAvailableFields,
-			 * and initialize inputFieldIndices
+			 * Populates inputAvailableFields and dbAvailableFields, and initialize
+			 * inputFieldIndices
 			 */
-			private void loadAvailableFields() {
+			private void loadAvailableFields(){
 				PersistentObject type = getSelectedType();
-
+				
 				inputAvailableFields = new ArrayList<Field>();
 				if (type != null) {
 					if (excel != null) {
@@ -301,15 +307,15 @@ public class GenericImporterBlatt extends Composite{
 								inputFieldIndices.put(name, new Integer(i));
 							}
 						}
-
+						
 					}
 				}
-
+				
 				dbAvailableFields = getAvailableFields(getSelectedType());
 			}
-
-			// choose initial set of fields 
-			private void setChosenFields() {
+			
+			// choose initial set of fields
+			private void setChosenFields(){
 				if (inputAvailableFields != null && dbAvailableFields != null) {
 					ArrayList<Field> inputFields = new ArrayList<Field>();
 					ArrayList<Field> dbFields = new ArrayList<Field>();
@@ -326,8 +332,7 @@ public class GenericImporterBlatt extends Composite{
 					inputChosenFields.addAll(inputFields);
 					dbAvailableFields.removeAll(dbFields);
 					dbChosenFields.addAll(dbFields);
-
-
+					
 					inputAvailableFieldsViewer.refresh();
 					inputChosenFieldsViewer.refresh();
 					dbAvailableFieldsViewer.refresh();
@@ -337,7 +342,7 @@ public class GenericImporterBlatt extends Composite{
 				}
 			}
 			
-			private Field findDbField(Field excelField) {
+			private Field findDbField(Field excelField){
 				for (Field dbField : dbAvailableFields) {
 					if (dbField.name.equals(excelField.name)) {
 						
@@ -348,15 +353,12 @@ public class GenericImporterBlatt extends Composite{
 				// not found
 				return null;
 			}
-
 			
 			/**
-			 * Check if the mapping is complete
-			 * - Fields are chosen
-			 * - There are the same size of input and db fields chosen
-			 * - There is at least one key field defined
+			 * Check if the mapping is complete - Fields are chosen - There are the same size of
+			 * input and db fields chosen - There is at least one key field defined
 			 */
-			private void checkCompleteness() {
+			private void checkCompleteness(){
 				boolean complete = false;
 				
 				PersistentObject type = getSelectedType();
@@ -387,12 +389,10 @@ public class GenericImporterBlatt extends Composite{
 				setPageComplete(complete);
 			}
 			
-			
-
-			private List<PersistentObject> getTypes() {
+			private List<PersistentObject> getTypes(){
 				List<PersistentObject> types = new ArrayList<PersistentObject>();
 				// TODO return all types available
-				//      (use the plugins PersistentObjectFactories)
+				// (use the plugins PersistentObjectFactories)
 				
 				PersistentObjectFactory factory = new PersistentObjectFactory();
 				
@@ -403,10 +403,10 @@ public class GenericImporterBlatt extends Composite{
 				return types;
 			}
 			
-			private List<Field> getAvailableFields(PersistentObject template) {
+			private List<Field> getAvailableFields(PersistentObject template){
 				List<Field> fields = new ArrayList<Field>();
 				Field field;
-
+				
 				if (template instanceof Person) {
 					fields.add(new Field("Name", true));
 					fields.add(new Field("Vorname", true));
@@ -424,14 +424,14 @@ public class GenericImporterBlatt extends Composite{
 					fields.add(new Field("E-Mail"));
 					fields.add(new Field("Website"));
 					fields.add(new Field("Titel"));
-					fields.add(new Field("Kuerzel"));	
+					fields.add(new Field("Kuerzel"));
 					fields.add(new Field("Bemerkung"));
 				} else if (template instanceof Organisation) {
 					fields.add(new Field("Name"));
 					fields.add(new Field("Zusatz1"));
 					fields.add(new Field("Ansprechperson"));
 					fields.add(new Field("Tel. direkt"));
-					fields.add(new Field("Kuerzel"));	
+					fields.add(new Field("Kuerzel"));
 					fields.add(new Field("Strasse"));
 					fields.add(new Field("Plz"));
 					fields.add(new Field("Ort"));
@@ -458,7 +458,7 @@ public class GenericImporterBlatt extends Composite{
 				return fields;
 			}
 			
-			private PersistentObject getSelectedType() {
+			private PersistentObject getSelectedType(){
 				IStructuredSelection sel = (IStructuredSelection) typesViewer.getSelection();
 				if (sel != null) {
 					Object obj = sel.getFirstElement();
@@ -470,7 +470,7 @@ public class GenericImporterBlatt extends Composite{
 				return null;
 			}
 			
-			private Field getViewerSelection(StructuredViewer viewer) {
+			private Field getViewerSelection(StructuredViewer viewer){
 				IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 				Object obj = sel.getFirstElement();
 				if (obj instanceof Field) {
@@ -480,11 +480,11 @@ public class GenericImporterBlatt extends Composite{
 				return null;
 			}
 			
-			private void addInputField() {
+			private void addInputField(){
 				Field field = getViewerSelection(inputAvailableFieldsViewer);
 				inputAvailableFields.remove(field);
 				inputChosenFields.add(field);
-
+				
 				inputAvailableFieldsViewer.refresh();
 				inputChosenFieldsViewer.refresh();
 				
@@ -493,19 +493,19 @@ public class GenericImporterBlatt extends Composite{
 				checkCompleteness();
 			}
 			
-			private void delInputField() {
+			private void delInputField(){
 				Field field = getViewerSelection(inputChosenFieldsViewer);
 				field.isKey = false;
 				inputChosenFields.remove(field);
 				inputAvailableFields.add(field);
-
+				
 				inputAvailableFieldsViewer.refresh();
 				inputChosenFieldsViewer.refresh();
 				
 				checkCompleteness();
 			}
 			
-			private void upInputField() {
+			private void upInputField(){
 				Field field = getViewerSelection(inputChosenFieldsViewer);
 				int index = inputChosenFields.indexOf(field);
 				if (index > 0) {
@@ -520,7 +520,7 @@ public class GenericImporterBlatt extends Composite{
 				checkCompleteness();
 			}
 			
-			private void downInputField() {
+			private void downInputField(){
 				Field field = getViewerSelection(inputChosenFieldsViewer);
 				int index = inputChosenFields.indexOf(field);
 				if (index < inputChosenFields.size() - 1) {
@@ -535,7 +535,7 @@ public class GenericImporterBlatt extends Composite{
 				checkCompleteness();
 			}
 			
-			private void keyInputField() {
+			private void keyInputField(){
 				Field field = getViewerSelection(inputChosenFieldsViewer);
 				field.isKey = !field.isKey;
 				
@@ -553,12 +553,12 @@ public class GenericImporterBlatt extends Composite{
 				
 				checkCompleteness();
 			}
-
-			private void addDbField() {
+			
+			private void addDbField(){
 				Field field = getViewerSelection(dbAvailableFieldsViewer);
 				dbAvailableFields.remove(field);
 				dbChosenFields.add(field);
-
+				
 				dbAvailableFieldsViewer.refresh();
 				dbChosenFieldsViewer.refresh();
 				
@@ -567,19 +567,19 @@ public class GenericImporterBlatt extends Composite{
 				checkCompleteness();
 			}
 			
-			private void delDbField() {
+			private void delDbField(){
 				Field field = getViewerSelection(dbChosenFieldsViewer);
 				field.isKey = false;
 				dbChosenFields.remove(field);
 				dbAvailableFields.add(field);
-
+				
 				dbAvailableFieldsViewer.refresh();
 				dbChosenFieldsViewer.refresh();
 				
 				checkCompleteness();
 			}
 			
-			private void upDbField() {
+			private void upDbField(){
 				Field field = getViewerSelection(dbChosenFieldsViewer);
 				int index = dbChosenFields.indexOf(field);
 				if (index > 0) {
@@ -594,7 +594,7 @@ public class GenericImporterBlatt extends Composite{
 				checkCompleteness();
 			}
 			
-			private void downDbField() {
+			private void downDbField(){
 				Field field = getViewerSelection(dbChosenFieldsViewer);
 				int index = dbChosenFields.indexOf(field);
 				if (index < dbChosenFields.size() - 1) {
@@ -609,7 +609,7 @@ public class GenericImporterBlatt extends Composite{
 				checkCompleteness();
 			}
 			
-			private void keyDbField() {
+			private void keyDbField(){
 				Field field = getViewerSelection(dbChosenFieldsViewer);
 				field.isKey = !field.isKey;
 				
@@ -627,14 +627,14 @@ public class GenericImporterBlatt extends Composite{
 				
 				checkCompleteness();
 			}
-
-			public void createControl(Composite parent) {
+			
+			public void createControl(Composite parent){
 				ArrayContentProvider arrayContentProvider = new ArrayContentProvider();
 				LabelProvider typeLabelProvider = new LabelProvider() {
-					public String getText(Object element) {
+					public String getText(Object element){
 						if (element instanceof PersistentObject) {
 							// TODO persistent objects should provide a human
-							//      readable description of themselves
+							// readable description of themselves
 							return ((PersistentObject) element).getClass().getSimpleName();
 						} else {
 							return element.toString();
@@ -642,7 +642,7 @@ public class GenericImporterBlatt extends Composite{
 					}
 				};
 				LabelProvider fieldLabelProvider = new LabelProvider() {
-					public String getText(Object element) {
+					public String getText(Object element){
 						String text = null;
 						
 						if (element instanceof Field) {
@@ -666,10 +666,10 @@ public class GenericImporterBlatt extends Composite{
 				Composite topArea = new Composite(composite, SWT.NONE);
 				topArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				topArea.setLayout(new GridLayout(2, false));
-
+				
 				label = new Label(topArea, SWT.NONE);
 				label.setText("Typ:");
-
+				
 				typesViewer = new ComboViewer(topArea, SWT.DROP_DOWN | SWT.READ_ONLY);
 				typesViewer.setContentProvider(arrayContentProvider);
 				typesViewer.setLabelProvider(typeLabelProvider);
@@ -679,7 +679,7 @@ public class GenericImporterBlatt extends Composite{
 				typesViewer.setInput(types);
 				typesViewer.setSelection(new StructuredSelection(typesViewer.getElementAt(0)));
 				typesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
+					public void selectionChanged(SelectionChangedEvent event){
 						setType();
 					}
 				});
@@ -694,7 +694,6 @@ public class GenericImporterBlatt extends Composite{
 				label = new Label(bottomArea, SWT.NONE);
 				label.setText("Felder Elexis");
 				
-				
 				FormData fd;
 				
 				Button addButton;
@@ -704,75 +703,75 @@ public class GenericImporterBlatt extends Composite{
 				Button keyButton;
 				Control availableFieldsControl;
 				Control chosenFieldsControl;
-
+				
 				// left area
 				
 				Composite leftArea = new Composite(bottomArea, SWT.NONE);
 				leftArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 				leftArea.setLayout(new FormLayout());
 				
-
 				addButton = new Button(leftArea, SWT.PUSH);
 				addButton.setText("+");
 				addButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						addInputField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				delButton = new Button(leftArea, SWT.PUSH);
 				delButton.setText("-");
 				delButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						delInputField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
 				
 				upButton = new Button(leftArea, SWT.PUSH);
 				upButton.setText("^");
 				upButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						upInputField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				downButton = new Button(leftArea, SWT.PUSH);
 				downButton.setText("v");
 				downButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						downInputField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				keyButton = new Button(leftArea, SWT.PUSH);
 				keyButton.setText("K");
 				keyButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						keyInputField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
-				inputAvailableFieldsViewer = new ComboViewer(leftArea, SWT.DROP_DOWN | SWT.READ_ONLY);
+				
+				inputAvailableFieldsViewer =
+					new ComboViewer(leftArea, SWT.DROP_DOWN | SWT.READ_ONLY);
 				availableFieldsControl = inputAvailableFieldsViewer.getControl();
 				
 				inputChosenFieldsViewer = new TableViewer(leftArea, SWT.BORDER);
 				chosenFieldsControl = inputChosenFieldsViewer.getControl();
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(availableFieldsControl, 0, SWT.CENTER);
 				addButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.top = new FormAttachment(0);
 				fd.left = new FormAttachment(addButton);
@@ -783,96 +782,96 @@ public class GenericImporterBlatt extends Composite{
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(availableFieldsControl, 5);
 				delButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(delButton, 5);
 				upButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(upButton);
 				downButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(downButton);
 				keyButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(availableFieldsControl, 0, SWT.LEFT);
 				fd.top = new FormAttachment(availableFieldsControl, 5);
 				fd.right = new FormAttachment(100);
 				fd.bottom = new FormAttachment(100);
 				chosenFieldsControl.setLayoutData(fd);
-
+				
 				// right area
 				
 				Composite rightArea = new Composite(bottomArea, SWT.NONE);
 				rightArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 				rightArea.setLayout(new FormLayout());
-
+				
 				addButton = new Button(rightArea, SWT.PUSH);
 				addButton.setText("+");
 				addButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						addDbField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				delButton = new Button(rightArea, SWT.PUSH);
 				delButton.setText("-");
 				delButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						delDbField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
 				
 				upButton = new Button(rightArea, SWT.PUSH);
 				upButton.setText("^");
 				upButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						upDbField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				downButton = new Button(rightArea, SWT.PUSH);
 				downButton.setText("v");
 				downButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						downDbField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				keyButton = new Button(rightArea, SWT.PUSH);
 				keyButton.setText("K");
 				keyButton.addSelectionListener(new SelectionListener() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						keyDbField();
 					}
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+					
+					public void widgetDefaultSelected(SelectionEvent e){}
 				});
-
+				
 				dbAvailableFieldsViewer = new ComboViewer(rightArea, SWT.DROP_DOWN | SWT.READ_ONLY);
 				availableFieldsControl = dbAvailableFieldsViewer.getControl();
 				
 				dbChosenFieldsViewer = new TableViewer(rightArea, SWT.BORDER);
 				chosenFieldsControl = dbChosenFieldsViewer.getControl();
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(availableFieldsControl, 0, SWT.CENTER);
 				addButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.top = new FormAttachment(0);
 				fd.left = new FormAttachment(addButton);
@@ -883,46 +882,46 @@ public class GenericImporterBlatt extends Composite{
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(availableFieldsControl, 5);
 				delButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(delButton, 5);
 				upButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(upButton);
 				downButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(0);
 				fd.top = new FormAttachment(downButton);
 				keyButton.setLayoutData(fd);
-
+				
 				fd = new FormData();
 				fd.left = new FormAttachment(availableFieldsControl, 0, SWT.LEFT);
 				fd.top = new FormAttachment(availableFieldsControl, 5);
 				fd.right = new FormAttachment(100);
 				fd.bottom = new FormAttachment(100);
 				chosenFieldsControl.setLayoutData(fd);
-
+				
 				// viewers configuration
-
+				
 				inputAvailableFieldsViewer.setContentProvider(arrayContentProvider);
 				inputAvailableFieldsViewer.setLabelProvider(fieldLabelProvider);
 				
 				inputChosenFieldsViewer.setContentProvider(arrayContentProvider);
 				inputChosenFieldsViewer.setLabelProvider(fieldLabelProvider);
-
+				
 				dbAvailableFieldsViewer.setContentProvider(arrayContentProvider);
 				dbAvailableFieldsViewer.setLabelProvider(fieldLabelProvider);
 				
 				dbChosenFieldsViewer.setContentProvider(arrayContentProvider);
 				dbChosenFieldsViewer.setLabelProvider(fieldLabelProvider);
-
+				
 				// set intial type selection
 				setType();
-
+				
 				setControl(composite);
 			}
 		}
@@ -930,9 +929,11 @@ public class GenericImporterBlatt extends Composite{
 		class SyncPage extends WizardPage {
 			private static final String PLUGIN_ID = "ch.elexis.importer.div";
 			
-			private static final String IMG_DATABASE = "ch.elexis.importers.GenericImporter_database";
+			private static final String IMG_DATABASE =
+				"ch.elexis.importers.GenericImporter_database";
 			private static final String IMG_DATABASE_PATH = "rsc/database.png";
-			private static final String IMG_CONFLICT = "ch.elexis.importers.GenericImporter_conflict";
+			private static final String IMG_CONFLICT =
+				"ch.elexis.importers.GenericImporter_conflict";
 			private static final String IMG_CONFLICT_PATH = "rsc/conflict.png";
 			
 			private static final int IMAGE_INPUT_ONLY = 1;
@@ -952,33 +953,36 @@ public class GenericImporterBlatt extends Composite{
 			private List<SyncElement> syncElements = new ArrayList<SyncElement>();
 			private SyncElement currentSyncElement = null;
 			
-			SyncPage() {
+			SyncPage(){
 				super("Synchronize", "Synchronize", null);
 				setDescription("Daten anpassen");
 			}
 			
-			private Image getImage(int id) {
+			private Image getImage(int id){
 				switch (id) {
 				case IMAGE_INPUT_ONLY:
-					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+					return PlatformUI.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJ_FILE);
 				case IMAGE_DB_ONLY:
-					return Desk.theImageRegistry.get(IMG_DATABASE);
+					return Desk.getImage(IMG_DATABASE);
 				case IMAGE_DIFF:
-					return Desk.theImageRegistry.get(IMG_CONFLICT);
+					return Desk.getImage(IMG_CONFLICT);
 				case IMAGE_EQUAL:
-					return Desk.theImageRegistry.get(Desk.IMG_OK);
+					return Desk.getImage(Desk.IMG_OK);
 				}
 				
 				return null;
 			}
 			
-			public void createControl(Composite parent) {
+			public void createControl(Composite parent){
 				// register images
-				if (Desk.theImageRegistry.getDescriptor(IMG_DATABASE) == null) {
-					Desk.theImageRegistry.put(IMG_DATABASE, AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, IMG_DATABASE_PATH));
+				if (Desk.getImageDescriptor(IMG_DATABASE) == null) {
+					Desk.getImageRegistry().put(IMG_DATABASE,
+						AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, IMG_DATABASE_PATH));
 				}
-				if (Desk.theImageRegistry.getDescriptor(IMG_CONFLICT) == null) {
-					Desk.theImageRegistry.put(IMG_CONFLICT, AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, IMG_CONFLICT_PATH));
+				if (Desk.getImageDescriptor(IMG_CONFLICT) == null) {
+					Desk.getImageRegistry().put(IMG_CONFLICT,
+						AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, IMG_CONFLICT_PATH));
 				}
 				
 				Composite composite = new Composite(parent, SWT.NONE);
@@ -987,23 +991,24 @@ public class GenericImporterBlatt extends Composite{
 				Button refreshButton = new Button(composite, SWT.PUSH);
 				refreshButton.setText("Aktualisieren");
 				refreshButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						refresh();
 					}
 				});
 				
-				mainViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+				mainViewer =
+					new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 				Control mainControl = mainViewer.getControl();
 				mainControl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 				
 				mainViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
+					public void selectionChanged(SelectionChangedEvent event){
 						setSyncElement();
 					}
 				});
 				
 				mainViewer.setLabelProvider(new ITableLabelProvider() {
-				    public Image getColumnImage(Object element, int columnIndex) {
+					public Image getColumnImage(Object element, int columnIndex){
 						Image image = null;
 						
 						if (element instanceof SyncElement) {
@@ -1027,134 +1032,141 @@ public class GenericImporterBlatt extends Composite{
 								// mark differences
 								if (syncElement.state == SyncElement.DIFF) {
 									int fieldIndex = columnIndex - 1;
-							    	HashMap<String, String> inputObject = syncElement.inputObject;
-							    	PersistentObject dbObject = syncElement.dbObject;
+									HashMap<String, String> inputObject = syncElement.inputObject;
+									PersistentObject dbObject = syncElement.dbObject;
 									
-					    			String inputKey = mappingPage.inputChosenFields.get(fieldIndex).name;
-					    			String dbKey = mappingPage.dbChosenFields.get(fieldIndex).name;
-					    			String inputValue = PersistentObject.checkNull(inputObject.get(inputKey)).trim();
-					    			String dbValue = PersistentObject.checkNull(dbObject.get(dbKey)).trim();
-					    			if (inputValue != null) {
-					    				// compare
-					    				if (inputValue.equals(dbValue)) {
-					    					// equal values
-					    					image = null;
-					    				} else {
-				    						// values differ, show conflict
-					    					image = getImage(IMAGE_DIFF);
-					    				}
-					    			} else {
-					    				 if (dbValue != null) {
-					    					 // only dbValue available, show conflict
-					    					 image = getImage(IMAGE_DIFF);
-					    				 } else {
-					    					 // no value available
-					    					 image = null;
-					    				 }
-					    			}
+									String inputKey =
+										mappingPage.inputChosenFields.get(fieldIndex).name;
+									String dbKey = mappingPage.dbChosenFields.get(fieldIndex).name;
+									String inputValue =
+										PersistentObject.checkNull(inputObject.get(inputKey))
+											.trim();
+									String dbValue =
+										PersistentObject.checkNull(dbObject.get(dbKey)).trim();
+									if (inputValue != null) {
+										// compare
+										if (inputValue.equals(dbValue)) {
+											// equal values
+											image = null;
+										} else {
+											// values differ, show conflict
+											image = getImage(IMAGE_DIFF);
+										}
+									} else {
+										if (dbValue != null) {
+											// only dbValue available, show conflict
+											image = getImage(IMAGE_DIFF);
+										} else {
+											// no value available
+											image = null;
+										}
+									}
 								}
 							}
 						}
-				    	
-				    	return image;
-				    }
-				    
-				    public String getColumnText(Object element, int columnIndex) {
-				    	String text = "";
-				    	
-				    	// commonly used variables
-				    	int fieldIndex;
-				    	HashMap<String, String> inputObject;
-				    	PersistentObject dbObject;
-				    	String key;
-				    	
-				    	if (columnIndex > 0 && element instanceof SyncElement) {
-					    	// first column is image
-					    	fieldIndex = columnIndex - 1;
-					    	
-				    		SyncElement syncElement = (SyncElement) element;
-				    		switch (syncElement.state) {
-				    		case SyncElement.INPUT_ONLY:
-				    			inputObject = syncElement.inputObject;
-				    			key = mappingPage.inputChosenFields.get(fieldIndex).name;
-				    			text = inputObject.get(key);
-				    			break;
-				    		case SyncElement.DB_ONLY:
-				    			dbObject = syncElement.dbObject;
-				    			key = mappingPage.dbChosenFields.get(fieldIndex).name;
-				    			text = dbObject.get(key);
-				    			break;
-				    		case SyncElement.DIFF:
-				    			inputObject = syncElement.inputObject;
-				    			dbObject = syncElement.dbObject;
-				    			String inputKey = mappingPage.inputChosenFields.get(fieldIndex).name;
-				    			String dbKey = mappingPage.dbChosenFields.get(fieldIndex).name;
-				    			String inputValue = PersistentObject.checkNull(inputObject.get(inputKey)).trim();
-				    			String dbValue = PersistentObject.checkNull(dbObject.get(dbKey)).trim();
-				    			if (inputValue != null) {
-				    				// compare
-				    				if (inputValue.equals(dbValue)) {
-				    					// equal values, only show one of them
-				    					text = inputValue;
-				    				} else {
-			    						// values differ, show both values
-				    					if (dbValue != null) {
-				    						text = inputValue + "/" + dbValue;
-				    					} else {
-				    						text = inputValue + "/";
-				    					}
-				    				}
-				    			} else {
-				    				 if (dbValue != null) {
-				    					 // only dbValue available
-				    					 text = "/" + dbValue;
-				    				 } else {
-				    					 // no value available
-				    					 text = "/";
-				    				 }
-				    			}
-				    			
-				    			break;
-				    		case SyncElement.EQUAL:
-				    			// all values equal, only show inputValue
-				    			inputObject = syncElement.inputObject;
-				    			key = mappingPage.inputChosenFields.get(fieldIndex).name;
-				    			text = inputObject.get(key);
-				    			break;
-				    		}
-				    	}
-				    	
-				    	return text;
-				    }
-
-				    public void addListener(ILabelProviderListener listener) {
-				    	// nothing to do
-				    }
-				    
-				    public void dispose() {
-				    	// nothing to do
-				    }
-				    
-				    public boolean isLabelProperty(Object element, String property) {
-				    	return false;
-				    }
-
-				    public void removeListener(ILabelProviderListener listener) {
-				    	// nothing to do
-				    }
+						
+						return image;
+					}
+					
+					public String getColumnText(Object element, int columnIndex){
+						String text = "";
+						
+						// commonly used variables
+						int fieldIndex;
+						HashMap<String, String> inputObject;
+						PersistentObject dbObject;
+						String key;
+						
+						if (columnIndex > 0 && element instanceof SyncElement) {
+							// first column is image
+							fieldIndex = columnIndex - 1;
+							
+							SyncElement syncElement = (SyncElement) element;
+							switch (syncElement.state) {
+							case SyncElement.INPUT_ONLY:
+								inputObject = syncElement.inputObject;
+								key = mappingPage.inputChosenFields.get(fieldIndex).name;
+								text = inputObject.get(key);
+								break;
+							case SyncElement.DB_ONLY:
+								dbObject = syncElement.dbObject;
+								key = mappingPage.dbChosenFields.get(fieldIndex).name;
+								text = dbObject.get(key);
+								break;
+							case SyncElement.DIFF:
+								inputObject = syncElement.inputObject;
+								dbObject = syncElement.dbObject;
+								String inputKey =
+									mappingPage.inputChosenFields.get(fieldIndex).name;
+								String dbKey = mappingPage.dbChosenFields.get(fieldIndex).name;
+								String inputValue =
+									PersistentObject.checkNull(inputObject.get(inputKey)).trim();
+								String dbValue =
+									PersistentObject.checkNull(dbObject.get(dbKey)).trim();
+								if (inputValue != null) {
+									// compare
+									if (inputValue.equals(dbValue)) {
+										// equal values, only show one of them
+										text = inputValue;
+									} else {
+										// values differ, show both values
+										if (dbValue != null) {
+											text = inputValue + "/" + dbValue;
+										} else {
+											text = inputValue + "/";
+										}
+									}
+								} else {
+									if (dbValue != null) {
+										// only dbValue available
+										text = "/" + dbValue;
+									} else {
+										// no value available
+										text = "/";
+									}
+								}
+								
+								break;
+							case SyncElement.EQUAL:
+								// all values equal, only show inputValue
+								inputObject = syncElement.inputObject;
+								key = mappingPage.inputChosenFields.get(fieldIndex).name;
+								text = inputObject.get(key);
+								break;
+							}
+						}
+						
+						return text;
+					}
+					
+					public void addListener(ILabelProviderListener listener){
+					// nothing to do
+					}
+					
+					public void dispose(){
+					// nothing to do
+					}
+					
+					public boolean isLabelProperty(Object element, String property){
+						return false;
+					}
+					
+					public void removeListener(ILabelProviderListener listener){
+					// nothing to do
+					}
 				});
 				mainViewer.setContentProvider(new IStructuredContentProvider() {
-					public Object[] getElements(Object inputElement) {
+					public Object[] getElements(Object inputElement){
 						return syncElements.toArray();
 					}
 					
-				    public void dispose() {
-				    	// nothing to do
-				    }
-
-				    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				    	// nothing to do
-				    }
+					public void dispose(){
+					// nothing to do
+					}
+					
+					public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+					// nothing to do
+					}
 				});
 				
 				// mainViewer gets input from syncElements
@@ -1180,61 +1192,64 @@ public class GenericImporterBlatt extends Composite{
 				
 				diff1Viewer.getTable().setLinesVisible(true);
 				diff2Viewer.getTable().setLinesVisible(true);
-
+				
 				// content provider
 				DiffViewerContentProvider dvcp = new DiffViewerContentProvider();
 				diff1Viewer.setContentProvider(dvcp);
 				diff2Viewer.setContentProvider(dvcp);
 				
 				// label provider
-				diff1Viewer.setLabelProvider(new DiffViewerLabelProvider(DiffViewerLabelProvider.INPUT));
-				diff2Viewer.setLabelProvider(new DiffViewerLabelProvider(DiffViewerLabelProvider.DB));
+				diff1Viewer.setLabelProvider(new DiffViewerLabelProvider(
+					DiffViewerLabelProvider.INPUT));
+				diff2Viewer
+					.setLabelProvider(new DiffViewerLabelProvider(DiffViewerLabelProvider.DB));
 				
 				// import new elements button
-				new Label(composite, SWT.NONE).setText("Alle neuen Daten importieren (ACHTUNG: Gefährlich!!!)");
+				new Label(composite, SWT.NONE)
+					.setText("Alle neuen Daten importieren (ACHTUNG: Gefährlich!!!)");
 				importNewButton = new Button(composite, SWT.PUSH);
 				importNewButton.setText("Alle neuen Daten importieren");
 				importNewButton.setImage(getImage(IMAGE_INPUT_ONLY));
 				importNewButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						importNew();
 					}
 				});
 				// TODO disabled for now
 				importNewButton.setEnabled(true);
-
+				
 				// import new elements button
-				new Label(composite, SWT.NONE).setText("Ausgewählte Daten aktualisieren (ACHTUNG: überschreibt bestehende Daten.)");
+				new Label(composite, SWT.NONE)
+					.setText("Ausgewählte Daten aktualisieren (ACHTUNG: überschreibt bestehende Daten.)");
 				updateButton = new Button(composite, SWT.PUSH);
 				updateButton.setText("Alle Werte importieren");
 				updateButton.setImage(getImage(IMAGE_DIFF));
 				updateButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+					public void widgetSelected(SelectionEvent e){
 						updateSelected();
 					}
 				});
 				// initial state: nothing selected
 				updateButton.setEnabled(false);
-
+				
 				setControl(composite);
-
 				
 			}
 			
-			private void refresh() {
+			private void refresh(){
 				createColumns();
 				sync();
 			}
 			
-			private void createColumns() {
+			private void createColumns(){
 				createColumns(mainViewer);
 				createColumns(diff1Viewer);
 				createColumns(diff2Viewer);
 			}
 			
-			private void createColumns(TableViewer viewer) {
+			private void createColumns(TableViewer viewer){
 				Table table = viewer.getTable();
-
+				
 				// remove existing columns
 				TableColumn[] oldColumns = table.getColumns();
 				if (oldColumns != null) {
@@ -1247,13 +1262,14 @@ public class GenericImporterBlatt extends Composite{
 				TableColumn imageColumn = new TableColumn(table, SWT.LEFT);
 				imageColumn.setWidth(IMAGE_COLUMN_WIDTH);
 				imageColumn.setText("");
-
+				
 				if (mappingPage.isPageComplete()) {
 					int columnsCount = mappingPage.inputChosenFields.size();
-					int columnSize = (table.getBounds().width - imageColumn.getWidth()) / columnsCount;
-
+					int columnSize =
+						(table.getBounds().width - imageColumn.getWidth()) / columnsCount;
+					
 					TableColumn[] columns = new TableColumn[columnsCount];
-
+					
 					for (int i = 0; i < columnsCount; i++) {
 						columns[i] = new TableColumn(table, SWT.LEFT);
 						columns[i].setWidth(columnSize);
@@ -1274,7 +1290,7 @@ public class GenericImporterBlatt extends Composite{
 				}
 			}
 			
-			private void sync() {
+			private void sync(){
 				// clear old data
 				syncElements.clear();
 				
@@ -1286,19 +1302,17 @@ public class GenericImporterBlatt extends Composite{
 					dbFieldNames.put(inputName, dbName);
 				}
 				
-				
 				// load objects from database
 				/*
 				 * bad performance. we actually don't require to load all objects from the database
-				Query<PersistentObject> query = new Query<PersistentObject>(template.getClass());
-				List<PersistentObject> dbObjects = query.execute();
-				if (dbObjects == null) {
-					dbObjects = new ArrayList<PersistentObject>();
-				}
-				*/
-				
+				 * Query<PersistentObject> query = new Query<PersistentObject>(template.getClass());
+				 * List<PersistentObject> dbObjects = query.execute(); if (dbObjects == null) {
+				 * dbObjects = new ArrayList<PersistentObject>(); }
+				 */
+
 				// load objects from excel, start with second row (first row is header)
-				List<HashMap<String, String>> inputObjects = new ArrayList<HashMap<String, String>>();
+				List<HashMap<String, String>> inputObjects =
+					new ArrayList<HashMap<String, String>>();
 				for (int i = excel.getFirstRow() + 1; i <= excel.getLastRow(); i++) {
 					List<String> row = excel.getRow(i);
 					if (row != null) {
@@ -1334,11 +1348,13 @@ public class GenericImporterBlatt extends Composite{
 				
 				// sync over all input objects
 				for (HashMap<String, String> rowMap : inputObjects) {
-					//PersistentObject dbObject = findDbObject(rowMap, dbObjects, keyFields);
-					PersistentObject dbObject = findDbObject(rowMap, keyFields, template.getClass());
+					// PersistentObject dbObject = findDbObject(rowMap, dbObjects, keyFields);
+					PersistentObject dbObject =
+						findDbObject(rowMap, keyFields, template.getClass());
 					
 					SyncElement syncElement = new SyncElement(rowMap, dbObject, dbFieldNames);
-					if (syncElement.state == SyncElement.INPUT_ONLY || syncElement.state == SyncElement.DIFF) {
+					if (syncElement.state == SyncElement.INPUT_ONLY
+						|| syncElement.state == SyncElement.DIFF) {
 						syncElements.add(syncElement);
 					}
 				}
@@ -1349,7 +1365,8 @@ public class GenericImporterBlatt extends Composite{
 				setSyncElement();
 			}
 			
-			private PersistentObject findDbObject(HashMap<String, String> inputObject, List<KeyFields> keyFields, Class typ) {
+			private PersistentObject findDbObject(HashMap<String, String> inputObject,
+				List<KeyFields> keyFields, Class typ){
 				Query<PersistentObject> query = new Query<PersistentObject>(typ);
 				for (KeyFields keyField : keyFields) {
 					String name = keyField.dbName;
@@ -1365,31 +1382,19 @@ public class GenericImporterBlatt extends Composite{
 				// not found
 				return null;
 			}
-
+			
 			/*
-			private PersistentObject findDbObject(HashMap<String, String> inputObject, List<PersistentObject> dbObjects, List<KeyFields> keyFields) {
-				for (PersistentObject dbObject : dbObjects) {
-					boolean found = true;
-					for (KeyFields keyField : keyFields) {
-						String inputValue = inputObject.get(keyField.inputName);
-						String dbValue = dbObject.get(keyField.dbName);
-						if (dbValue == null || !dbValue.equals(inputValue)) {
-							found = false;
-							break;
-						}
-					}
-					if (found) {
-						return dbObject;
-					}
-				}
-				
-				// not found
-				return null;
-			}
-			*/
-			
-			
-			private void setSyncElement() {
+			 * private PersistentObject findDbObject(HashMap<String, String> inputObject,
+			 * List<PersistentObject> dbObjects, List<KeyFields> keyFields) { for (PersistentObject
+			 * dbObject : dbObjects) { boolean found = true; for (KeyFields keyField : keyFields) {
+			 * String inputValue = inputObject.get(keyField.inputName); String dbValue =
+			 * dbObject.get(keyField.dbName); if (dbValue == null || !dbValue.equals(inputValue)) {
+			 * found = false; break; } } if (found) { return dbObject; } }
+			 * 
+			 * // not found return null; }
+			 */
+
+			private void setSyncElement(){
 				// this element is shown when multiple elements are selected in the mainViewer
 				final SyncElement UNKNOWN_SYNC_ELEMENT = new SyncElement();
 				
@@ -1403,14 +1408,13 @@ public class GenericImporterBlatt extends Composite{
 					// one element selected, show this element
 					Object element = selection.getFirstElement();
 					if (element instanceof SyncElement) {
-						currentSyncElement = (SyncElement) element; 
+						currentSyncElement = (SyncElement) element;
 					} else {
-						currentSyncElement =  null;
+						currentSyncElement = null;
 					}
 				} else {
 					currentSyncElement = UNKNOWN_SYNC_ELEMENT;
 				}
-
 				
 				diff1Viewer.setInput(currentSyncElement);
 				diff2Viewer.setInput(currentSyncElement);
@@ -1418,7 +1422,7 @@ public class GenericImporterBlatt extends Composite{
 				updateButton.setEnabled(isSelectionUpdatable());
 			}
 			
-			private boolean isSelectionUpdatable() {
+			private boolean isSelectionUpdatable(){
 				boolean updatable = false;
 				
 				IStructuredSelection selection = (IStructuredSelection) mainViewer.getSelection();
@@ -1439,11 +1443,11 @@ public class GenericImporterBlatt extends Composite{
 						}
 					}
 				}
-
+				
 				return updatable;
 			}
 			
-			private void importNew() {
+			private void importNew(){
 				List<SyncElement> imported = new ArrayList<SyncElement>();
 				for (SyncElement syncElement : syncElements) {
 					// don't import existing objects here
@@ -1456,19 +1460,20 @@ public class GenericImporterBlatt extends Composite{
 					if (inputObject != null) {
 						// warning: call to MappingPage
 						Class typ = mappingPage.getSelectedType().getClass();
-
+						
 						String[] fields = new String[mappingPage.dbChosenFields.size()];
 						for (int i = 0; i < fields.length; i++) {
 							fields[i] = mappingPage.dbChosenFields.get(i).name;
 						}
 						
-						String[] values = new String[fields.length]; 
+						String[] values = new String[fields.length];
 						for (int i = 0; i < fields.length; i++) {
 							String key = mappingPage.inputChosenFields.get(i).name;
 							values[i] = inputObject.get(key);
 						}
 						
-						PersistentObject po = new PersistentObjectFactory().create(typ, fields, values);
+						PersistentObject po =
+							new PersistentObjectFactory().create(typ, fields, values);
 						
 						imported.add(syncElement);
 					}
@@ -1479,7 +1484,7 @@ public class GenericImporterBlatt extends Composite{
 				mainViewer.setSelection(new StructuredSelection());
 			}
 			
-			private void updateSelected() {
+			private void updateSelected(){
 				IStructuredSelection selection = (IStructuredSelection) mainViewer.getSelection();
 				for (Object element : selection.toList()) {
 					if (element instanceof SyncElement) {
@@ -1491,15 +1496,16 @@ public class GenericImporterBlatt extends Composite{
 				mainViewer.refresh();
 				setSyncElement();
 			}
-
+			
 			/**
-			 * Update a single SyncElement to the database. Remove the element
-			 * form the current list (since its now of type EQUAL).
-			 * @param syncElement SyncElement of type DIFF
+			 * Update a single SyncElement to the database. Remove the element form the current list
+			 * (since its now of type EQUAL).
+			 * 
+			 * @param syncElement
+			 *            SyncElement of type DIFF
 			 */
-			private void updateSyncElement(SyncElement syncElement) {
-				if (syncElement == null
-						|| syncElement.state != SyncElement.DIFF) {
+			private void updateSyncElement(SyncElement syncElement){
+				if (syncElement == null || syncElement.state != SyncElement.DIFF) {
 					
 					return;
 				}
@@ -1513,35 +1519,37 @@ public class GenericImporterBlatt extends Composite{
 					for (int i = 0; i < fields.length; i++) {
 						fields[i] = mappingPage.dbChosenFields.get(i).name;
 					}
-
-					String[] values = new String[fields.length]; 
+					
+					String[] values = new String[fields.length];
 					for (int i = 0; i < fields.length; i++) {
 						String key = mappingPage.inputChosenFields.get(i).name;
 						values[i] = inputObject.get(key);
 					}
 					
 					dbObject.set(fields, values);
-
+					
 					syncElements.remove(syncElement);
 				}
 			}
 			
 			private class DiffViewerContentProvider implements IStructuredContentProvider {
-				public Object[] getElements(Object inputElement) {
+				public Object[] getElements(Object inputElement){
 					if (inputElement instanceof SyncElement) {
-						return new Object[] {inputElement};
+						return new Object[] {
+							inputElement
+						};
 					} else {
 						return new Object[] {};
 					}
 				}
 				
-			    public void dispose() {
-			    	// nothing to do
-			    }
-
-			    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			    	// nothing to do
-			    }
+				public void dispose(){
+				// nothing to do
+				}
+				
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+				// nothing to do
+				}
 			}
 			
 			private class DiffViewerLabelProvider implements ITableLabelProvider {
@@ -1550,130 +1558,130 @@ public class GenericImporterBlatt extends Composite{
 				
 				private int type;
 				
-				public DiffViewerLabelProvider(int type) {
+				public DiffViewerLabelProvider(int type){
 					this.type = type;
 				}
 				
-			    public Image getColumnImage(Object element, int columnIndex) {
-			    	Image image = null;
-			    	
-			    	// commonly used variables
-			    	int fieldIndex;
-			    	HashMap<String, String> inputObject;
-			    	PersistentObject dbObject;
-			    	String key;
-			    	
-			    	if (columnIndex > 0 && element instanceof SyncElement) {
-				    	// first column is image
-				    	fieldIndex = columnIndex - 1;
-				    	
-			    		SyncElement syncElement = (SyncElement) element;
-			    		switch (syncElement.state) {
-			    		case SyncElement.DIFF:
-			    			inputObject = syncElement.inputObject;
-			    			dbObject = syncElement.dbObject;
-			    			boolean equal = false;
-			    			if (inputObject != null && dbObject != null) {
-			    				String inputKey = mappingPage.inputChosenFields.get(fieldIndex).name;
-			    				String dbKey = mappingPage.dbChosenFields.get(fieldIndex).name;
-			    				String inputValue = inputObject.get(inputKey).trim();
-			    				String dbValue = dbObject.get(dbKey).trim();
-			    				if (inputValue.equals(dbValue)) {
-			    					equal = true;
-			    				}
-			    			}
-			    			if (!equal) {
-			    				image = getImage(IMAGE_DIFF);
-			    			}
-			    			break;
-			    		}
-			    	}
-			    	
-			    	return image;
-			    }
-			    
-			    public String getColumnText(Object element, int columnIndex) {
-			    	String text = "";
-			    	
-			    	// commonly used variables
-			    	int fieldIndex;
-			    	HashMap<String, String> inputObject;
-			    	PersistentObject dbObject;
-			    	String key;
-			    	
-			    	if (columnIndex > 0 && element instanceof SyncElement) {
-				    	// first column is image
-				    	fieldIndex = columnIndex - 1;
-				    	
-			    		SyncElement syncElement = (SyncElement) element;
-			    		switch (syncElement.state) {
-			    		case SyncElement.INPUT_ONLY:
-			    			if (type == INPUT) {
-			    				inputObject = syncElement.inputObject;
-			    				key = mappingPage.inputChosenFields.get(fieldIndex).name;
-			    				text = inputObject.get(key);
-			    			} else {
-			    				text = "";
-			    			}
-			    			break;
-			    		case SyncElement.DB_ONLY:
-			    			if (type == DB) {
-			    				dbObject = syncElement.dbObject;
-			    				key = mappingPage.dbChosenFields.get(fieldIndex).name;
-			    				text = dbObject.get(key);
-			    			} else {
-			    				text = "";
-			    			}
-			    			break;
-			    		case SyncElement.DIFF:
-			    			if (type == INPUT) {
-			    				inputObject = syncElement.inputObject;
-			    				key = mappingPage.inputChosenFields.get(fieldIndex).name;
-			    				text = inputObject.get(key);
-			    			} else {
-			    				dbObject = syncElement.dbObject;
-			    				key = mappingPage.dbChosenFields.get(fieldIndex).name;
-			    				text = dbObject.get(key);
-			    			}
-			    			break;
-			    		case SyncElement.EQUAL:
-			    			if (type == INPUT) {
-			    				inputObject = syncElement.inputObject;
-			    				key = mappingPage.inputChosenFields.get(fieldIndex).name;
-			    				text = inputObject.get(key);
-			    			} else {
-			    				dbObject = syncElement.dbObject;
-			    				key = mappingPage.dbChosenFields.get(fieldIndex).name;
-			    				text = dbObject.get(key);
-			    			}
-			    			break;
-			    		case SyncElement.UNKNOWN:
-			    			text = "?";
-			    			break;
-			    		}
-			    	}
-			    	
-			    	return text;
-			    }
-
-			    public void addListener(ILabelProviderListener listener) {
-			    	// nothing to do
-			    }
-			    
-			    public void dispose() {
-			    	// nothing to do
-			    }
-			    
-			    public boolean isLabelProperty(Object element, String property) {
-			    	return false;
-			    }
-
-			    public void removeListener(ILabelProviderListener listener) {
-			    	// nothing to do
-			    }
+				public Image getColumnImage(Object element, int columnIndex){
+					Image image = null;
+					
+					// commonly used variables
+					int fieldIndex;
+					HashMap<String, String> inputObject;
+					PersistentObject dbObject;
+					String key;
+					
+					if (columnIndex > 0 && element instanceof SyncElement) {
+						// first column is image
+						fieldIndex = columnIndex - 1;
+						
+						SyncElement syncElement = (SyncElement) element;
+						switch (syncElement.state) {
+						case SyncElement.DIFF:
+							inputObject = syncElement.inputObject;
+							dbObject = syncElement.dbObject;
+							boolean equal = false;
+							if (inputObject != null && dbObject != null) {
+								String inputKey =
+									mappingPage.inputChosenFields.get(fieldIndex).name;
+								String dbKey = mappingPage.dbChosenFields.get(fieldIndex).name;
+								String inputValue = inputObject.get(inputKey).trim();
+								String dbValue = dbObject.get(dbKey).trim();
+								if (inputValue.equals(dbValue)) {
+									equal = true;
+								}
+							}
+							if (!equal) {
+								image = getImage(IMAGE_DIFF);
+							}
+							break;
+						}
+					}
+					
+					return image;
+				}
+				
+				public String getColumnText(Object element, int columnIndex){
+					String text = "";
+					
+					// commonly used variables
+					int fieldIndex;
+					HashMap<String, String> inputObject;
+					PersistentObject dbObject;
+					String key;
+					
+					if (columnIndex > 0 && element instanceof SyncElement) {
+						// first column is image
+						fieldIndex = columnIndex - 1;
+						
+						SyncElement syncElement = (SyncElement) element;
+						switch (syncElement.state) {
+						case SyncElement.INPUT_ONLY:
+							if (type == INPUT) {
+								inputObject = syncElement.inputObject;
+								key = mappingPage.inputChosenFields.get(fieldIndex).name;
+								text = inputObject.get(key);
+							} else {
+								text = "";
+							}
+							break;
+						case SyncElement.DB_ONLY:
+							if (type == DB) {
+								dbObject = syncElement.dbObject;
+								key = mappingPage.dbChosenFields.get(fieldIndex).name;
+								text = dbObject.get(key);
+							} else {
+								text = "";
+							}
+							break;
+						case SyncElement.DIFF:
+							if (type == INPUT) {
+								inputObject = syncElement.inputObject;
+								key = mappingPage.inputChosenFields.get(fieldIndex).name;
+								text = inputObject.get(key);
+							} else {
+								dbObject = syncElement.dbObject;
+								key = mappingPage.dbChosenFields.get(fieldIndex).name;
+								text = dbObject.get(key);
+							}
+							break;
+						case SyncElement.EQUAL:
+							if (type == INPUT) {
+								inputObject = syncElement.inputObject;
+								key = mappingPage.inputChosenFields.get(fieldIndex).name;
+								text = inputObject.get(key);
+							} else {
+								dbObject = syncElement.dbObject;
+								key = mappingPage.dbChosenFields.get(fieldIndex).name;
+								text = dbObject.get(key);
+							}
+							break;
+						case SyncElement.UNKNOWN:
+							text = "?";
+							break;
+						}
+					}
+					
+					return text;
+				}
+				
+				public void addListener(ILabelProviderListener listener){
+				// nothing to do
+				}
+				
+				public void dispose(){
+				// nothing to do
+				}
+				
+				public boolean isLabelProperty(Object element, String property){
+					return false;
+				}
+				
+				public void removeListener(ILabelProviderListener listener){
+				// nothing to do
+				}
 			}
-
-
+			
 			// TODO dbFieldNames mapping may become outdated
 			class SyncElement {
 				static final int UNKNOWN = 0;
@@ -1690,11 +1698,13 @@ public class GenericImporterBlatt extends Composite{
 				
 				/**
 				 * Creates a new sync element.
+				 * 
 				 * @param inputObject
 				 * @param dbObject
 				 * @param dbFieldNames
 				 */
-				SyncElement(HashMap<String, String> inputObject, PersistentObject dbObject, HashMap<String, String> dbFieldNames) {
+				SyncElement(HashMap<String, String> inputObject, PersistentObject dbObject,
+					HashMap<String, String> dbFieldNames){
 					this.inputObject = inputObject;
 					this.dbObject = dbObject;
 					
@@ -1706,13 +1716,13 @@ public class GenericImporterBlatt extends Composite{
 				/**
 				 * Creates a dummy sync element of type UNKNOWN
 				 */
-				SyncElement() {
+				SyncElement(){
 					this(null, null, null);
 				}
 				
-				void sync() {
+				void sync(){
 					state = UNKNOWN;
-
+					
 					// handle simple cases
 					if (inputObject == null && dbObject == null) {
 						state = UNKNOWN;
@@ -1731,9 +1741,11 @@ public class GenericImporterBlatt extends Composite{
 					boolean equal = true;
 					for (String inputName : inputObject.keySet()) {
 						String dbName = dbFieldNames.get(inputName);
-
-						// TODO workaround: the db may return values padded with spaces, so we do a trim()
-						String inputValue = PersistentObject.checkNull(inputObject.get(inputName)).trim();
+						
+						// TODO workaround: the db may return values padded with spaces, so we do a
+						// trim()
+						String inputValue =
+							PersistentObject.checkNull(inputObject.get(inputName)).trim();
 						String dbValue = PersistentObject.checkNull(dbObject.get(dbName)).trim();
 						if (!inputValue.equals(dbValue)) {
 							equal = false;
@@ -1755,23 +1767,23 @@ public class GenericImporterBlatt extends Composite{
 			String name;
 			boolean isKey;
 			
-			Field(String name) {
+			Field(String name){
 				this(name, false);
 			}
 			
-			Field (String name, boolean isKey) {
+			Field(String name, boolean isKey){
 				this.name = name;
 				this.isKey = isKey;
 			}
 			
-			public String toString() {
+			public String toString(){
 				return name;
 			}
-
-			public boolean equals(Object o) {
+			
+			public boolean equals(Object o){
 				if (o instanceof Field) {
 					Field other = (Field) o;
-
+					
 					if (other.name.equals(this.name) && other.isKey == this.isKey) {
 						return true;
 					}
@@ -1785,7 +1797,7 @@ public class GenericImporterBlatt extends Composite{
 			String inputName;
 			String dbName;
 			
-			KeyFields(String inputName, String dbName) {
+			KeyFields(String inputName, String dbName){
 				this.inputName = inputName;
 				this.dbName = dbName;
 			}
