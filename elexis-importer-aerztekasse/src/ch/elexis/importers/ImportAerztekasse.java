@@ -200,7 +200,7 @@ public class ImportAerztekasse extends ImporterPage {
                 + ") Patienten eine andere Nummer. "
                 + "Versuchen Sie es dann erneut. (Der Patient "
                 + "wurde nicht importiert.)";
-        Desk.theDisplay.asyncExec(new Alert(title, message));
+        Desk.asyncExec(new Alert(title, message));
 
     }
     
@@ -209,7 +209,7 @@ public class ImportAerztekasse extends ImporterPage {
         String message = "Die Datei konnte nicht korrekt gelesen werden. "
                 + "Bitte überprüfen Sie den Inhalt der Datei.";
         
-        Desk.theDisplay.asyncExec(new Alert(title, message));
+        Desk.asyncExec(new Alert(title, message));
     }
 
     private void alertStorageError(String label) {
@@ -217,11 +217,11 @@ public class ImportAerztekasse extends ImporterPage {
         String message = "Fehler beim Speichern von Patient \"" + label
                 + "\": Einige Felder konnten nicht gespeichert werden.";
         
-        Desk.theDisplay.asyncExec(new Alert(title, message));
+        Desk.asyncExec(new Alert(title, message));
     }
     
     private void alert(String title, String message) {
-        Desk.theDisplay.asyncExec(new Alert(title, message));
+        Desk.asyncExec(new Alert(title, message));
     }
 
     
@@ -277,7 +277,7 @@ public class ImportAerztekasse extends ImporterPage {
                 String message = "Der aktuelle Patient konnte nicht korrekt gelesen werden. "
                         + "Bitte überprüfen Sie den Inhalt der Datei. "
                         + "Zeile: " + line;
-                Desk.theDisplay.asyncExec(new Alert(title, message));
+                Desk.asyncExec(new Alert(title, message));
                 
                 continue;
             }
