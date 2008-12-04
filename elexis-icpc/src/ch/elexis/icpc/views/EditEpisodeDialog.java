@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: EditEpisodeDialog.java 4723 2008-12-04 10:11:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -34,26 +34,29 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 	private static final int ACTIVE_INDEX = 0;
 	private static final int INACTIVE_INDEX = 1;
 	
-    private Episode episode;
-
-    private Text tStartDate;
-    private Text tTitle;
-    private Text tNumber;
-    private Combo cStatus;
+	private Episode episode;
 	
-    /**
-     * Create a new dialog for editing episodes. Passing <code>null</code> as episode
-     * creates a new episode.
-     * @param parentShell the parent shell
-     * @param episode the episode to edit, or null if a new episode should be created
-     */
-	public EditEpisodeDialog(Shell parentShell, Episode episode) {
+	private Text tStartDate;
+	private Text tTitle;
+	private Text tNumber;
+	private Combo cStatus;
+	
+	/**
+	 * Create a new dialog for editing episodes. Passing <code>null</code> as episode creates a new
+	 * episode.
+	 * 
+	 * @param parentShell
+	 *            the parent shell
+	 * @param episode
+	 *            the episode to edit, or null if a new episode should be created
+	 */
+	public EditEpisodeDialog(Shell parentShell, Episode episode){
 		super(parentShell);
 		this.episode = episode;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2, false));
@@ -61,7 +64,7 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 		new Label(ret, SWT.NONE).setText(Messages.StartDate);
 		tStartDate = new Text(ret, SWT.NONE);
 		tStartDate.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		new Label(ret, SWT.NONE).setText(Messages.Title);
 		tTitle = new Text(ret, SWT.NONE);
 		tTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -69,21 +72,21 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 		new Label(ret, SWT.NONE).setText(Messages.Number);
 		tNumber = new Text(ret, SWT.NONE);
 		tNumber.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		new Label(ret, SWT.NONE).setText(Messages.Status);
 		cStatus = new Combo(ret, SWT.SINGLE);
-		cStatus.add(Messages.Active);  // ACTIVE_INDEX
-		cStatus.add(Messages.Inactive);  // INACTIVE_INDEX
-
+		cStatus.add(Messages.Active); // ACTIVE_INDEX
+		cStatus.add(Messages.Inactive); // INACTIVE_INDEX
+		
 		initialize();
-
+		
 		return ret;
 	}
-
+	
 	/**
 	 * Set initial values of controls
 	 */
-	private void initialize() {
+	private void initialize(){
 		if (episode == null) {
 			// new episode
 			
@@ -110,23 +113,23 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 	}
 	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		
 		getShell().setText(Messages.EpisodeEditDialog_Title);
 		
 		if (episode == null) {
 			setTitle(Messages.EpisodeEditDialog_Create);
-		}else{
+		} else {
 			setTitle(Messages.EpisodeEditDialog_Edit);
 		}
 		setMessage(Messages.EpisodeEditDialog_EnterData);
-
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		String startDate = tStartDate.getText();
 		String title = tTitle.getText();
 		String number = tNumber.getText();
@@ -144,7 +147,11 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 			Patient actPatient = GlobalEvents.getSelectedPatient();
 			if (actPatient != null) {
 				episode = new Episode(actPatient, title);
-				episode.set(new String[] {"StartDate", "Number"}, new String[] {startDate, number});
+				episode.set(new String[] {
+					"StartDate", "Number"
+				}, new String[] {
+					startDate, number
+				});
 				episode.setStatus(status);
 				
 				GlobalEvents.getInstance().fireObjectEvent(episode, GlobalEvents.CHANGETYPE.create);
@@ -152,13 +159,17 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 		} else {
 			// modify existing episode
 			
-			episode.set(new String[] {"Title", "StartDate", "Number"}, new String[] {title, startDate, number});
+			episode.set(new String[] {
+				"Title", "StartDate", "Number"
+			}, new String[] {
+				title, startDate, number
+			});
 			episode.setStatus(status);
-
+			
 			GlobalEvents.getInstance().fireObjectEvent(episode, GlobalEvents.CHANGETYPE.update);
 		}
-
+		
 		super.okPressed();
 	}
-
+	
 }
