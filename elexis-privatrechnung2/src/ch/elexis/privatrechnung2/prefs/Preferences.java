@@ -112,7 +112,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	
 	@Override
 	protected Control createContents(Composite parent){
-		Color blau = Desk.theDisplay.getSystemColor(SWT.COLOR_BLUE);
+		Color blau = Desk.getColor(Desk.COL_BLUE);
 		hDetailListener = new DetailListener();
 		focusListener = new TextListener();
 		Composite ret = new Composite(parent, SWT.NONE);
@@ -306,11 +306,11 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		cbESROCRFontWeight.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 		
 		cbESROCRFontWeight.add(Messages.getString("RechnungsPrefs.light")); // FONT_MIN_INDEX
-																			// //$NON-NLS-1$
+		// //$NON-NLS-1$
 		cbESROCRFontWeight.add(Messages.getString("RechnungsPrefs.normal")); // FONT_NORMAL_INDEX
-																				// //$NON-NLS-1$
+		// //$NON-NLS-1$
 		cbESROCRFontWeight.add(Messages.getString("RechnungsPrefs.bold")); // FONT_BOLD_INDEX
-																			// //$NON-NLS-1$
+		// //$NON-NLS-1$
 		
 		cbESROCRFontWeight.addSelectionListener(new SelectionAdapter() {
 			@Override
