@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentSelector.java 2189 2007-03-30 15:51:10Z rgw_ch $
+ *  $Id: MedikamentSelector.java 4744 2008-12-04 21:37:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -68,7 +68,7 @@ public class MedikamentSelector extends CodeSelectorFactory implements ArtikelDe
 	}
 	
 	public boolean show(Artikel art) {
-		MedikamentDetailDialog mdd=new MedikamentDetailDialog(Desk.theDisplay.getActiveShell(),(Medikament)art);
+		MedikamentDetailDialog mdd=new MedikamentDetailDialog(Desk.getTopShell(),(Medikament)art);
 		mdd.open();
 		return false;
 	}
