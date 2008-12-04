@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id$
+ *  $Id: ESRView2.java 4750 2008-12-04 21:39:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -53,54 +53,54 @@ import ch.elexis.util.ViewerConfigurer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ESRView2 extends ViewPart implements ActivationListener{
+public class ESRView2 extends ViewPart implements ActivationListener {
 	public static final String ID = "ch.elexis.banking.ESRView2";
 	
 	private static final String JOB_NAME = "ESR-Loader2";
 	
-	private static final int DATUM_INDEX          = 0;
-	private static final int RN_NUMMER_INDEX      = 1;
-	private static final int BETRAG_INDEX         = 2;
-	private static final int EINGELESEN_INDEX     = 3;
-	private static final int VERRECHNET_INDEX     = 4;
+	private static final int DATUM_INDEX = 0;
+	private static final int RN_NUMMER_INDEX = 1;
+	private static final int BETRAG_INDEX = 2;
+	private static final int EINGELESEN_INDEX = 3;
+	private static final int VERRECHNET_INDEX = 4;
 	private static final int GUTGESCHRIEBEN_INDEX = 5;
-	private static final int PATIENT_INDEX        = 6;
-	private static final int BUCHUNG_INDEX        = 7;
-	private static final int DATEI_INDEX          = 8;
+	private static final int PATIENT_INDEX = 6;
+	private static final int BUCHUNG_INDEX = 7;
+	private static final int DATEI_INDEX = 8;
 	
 	private static final String[] COLUMN_TEXTS = {
-		"Datum",           // DATUM_INDEX
-		"Rn-Nummer",       // RN_NUMMER_INDEX
-		"Betrag", 		   // BETRAG
-		"Eingelesen",      // EINGELESEN_INDEX
-		"Verrechnet",      // VERRECHNET_INDEX
-		"Gutgeschrieben",  // GUTGESCHRIEBEN_INDEX
-		"Patient",         // PATIENT_INDEX
-		"Buchung",         // BUCHUNG_INDEX
-		"Datei",           // DATEI_INDEX
+		"Datum", // DATUM_INDEX
+		"Rn-Nummer", // RN_NUMMER_INDEX
+		"Betrag", // BETRAG
+		"Eingelesen", // EINGELESEN_INDEX
+		"Verrechnet", // VERRECHNET_INDEX
+		"Gutgeschrieben", // GUTGESCHRIEBEN_INDEX
+		"Patient", // PATIENT_INDEX
+		"Buchung", // BUCHUNG_INDEX
+		"Datei", // DATEI_INDEX
 	};
 	private static final int[] COLUMN_WIDTHS = {
-		60,  // DATUM_INDEX
-		50,  // RN_NUMMER_INDEX
-		50,  // BETRAG
-		80,  // EINGELESEN_INDEX
-		80,  // VERRECHNET_INDEX
-		80,  // GUTGESCHRIEBEN_INDEX
-		150,  // PATIENT_INDEX
-		80,  // BUCHUNG_INDEX
-		80,  // DATEI_INDEX
+		60, // DATUM_INDEX
+		50, // RN_NUMMER_INDEX
+		50, // BETRAG
+		80, // EINGELESEN_INDEX
+		80, // VERRECHNET_INDEX
+		80, // GUTGESCHRIEBEN_INDEX
+		150, // PATIENT_INDEX
+		80, // BUCHUNG_INDEX
+		80, // DATEI_INDEX
 	};
 	
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
-    public final static String DISPLAY_ESR="DisplayESR";
+	public final static String DISPLAY_ESR = "DisplayESR";
 	Query<ESRRecord> qbe;
-	//private Action loadESRFile;
+	// private Action loadESRFile;
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
 	
-	public ESRView2() {
+	public ESRView2(){
 		Hub.acl.grantForSelf(DISPLAY_ESR);
 	}
 	
@@ -111,37 +111,37 @@ public class ESRView2 extends ViewPart implements ActivationListener{
 	}
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
-		cv=new CommonViewer();
-		qbe=new Query<ESRRecord>(ESRRecord.class);
-		esrloader=(ESRLoader)JobPool.getJobPool().getJob(JOB_NAME);
-		if(esrloader==null){
-			esrloader=new ESRLoader(qbe);
+		cv = new CommonViewer();
+		qbe = new Query<ESRRecord>(ESRRecord.class);
+		esrloader = (ESRLoader) JobPool.getJobPool().getJob(JOB_NAME);
+		if (esrloader == null) {
+			esrloader = new ESRLoader(qbe);
 			JobPool.getJobPool().addJob(esrloader);
 		}
-
-		vc=new ViewerConfigurer(
-				new LazyContentProvider(cv,esrloader,DISPLAY_ESR),
-				new ESRLabelProvider(),
-				new DefaultControlFieldProvider(cv,new String[]{"Datum"}),
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,SWT.NONE,cv)
-				);
+		
+		vc =
+			new ViewerConfigurer(new LazyContentProvider(cv, esrloader, DISPLAY_ESR),
+				new ESRLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
+					"Datum"
+				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, parent, SWT.None, getViewSite());
 		
 		createColumns(cv.getViewerWidget());
 		
 		JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
 		makeActions();
-		menus=new ViewMenus(getViewSite());
-		menus.createToolbar(/*loadESRFile*/);
-		menus.createMenu(/*loadESRFile*/);
-		esrl=new ESRSelectionListener(getViewSite());
-		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener(){
-			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
-				ESRRecordDialog erd=new ESRRecordDialog(getViewSite().getShell(),(ESRRecord)obj);
-				if(erd.open()==Dialog.OK){
+		menus = new ViewMenus(getViewSite());
+		menus.createToolbar(/* loadESRFile */);
+		menus.createMenu(/* loadESRFile */);
+		esrl = new ESRSelectionListener(getViewSite());
+		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				ESRRecordDialog erd =
+					new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) obj);
+				if (erd.open() == Dialog.OK) {
 					cv.notify(CommonViewer.Message.update);
 				}
 			}
@@ -151,7 +151,7 @@ public class ESRView2 extends ViewPart implements ActivationListener{
 		
 	}
 	
-	private void createColumns(StructuredViewer viewer) {
+	private void createColumns(StructuredViewer viewer){
 		if (!(viewer instanceof TableViewer)) {
 			// no valid viewer, don't create columns
 			return;
@@ -169,23 +169,26 @@ public class ESRView2 extends ViewPart implements ActivationListener{
 			column.setWidth(COLUMN_WIDTHS[i]);
 		}
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider{
-		DecimalFormat df=new DecimalFormat("###0.00");
-		public Image getColumnImage(Object element, int columnIndex) {
+	
+	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider,
+			ITableColorProvider {
+		DecimalFormat df = new DecimalFormat("###0.00");
+		
+		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public String getColumnText(Object element, int columnIndex) {
+		
+		public String getColumnText(Object element, int columnIndex){
 			String text = "";
 			
-			if(element instanceof ESRRecord){
+			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
@@ -243,130 +246,109 @@ public class ESRView2 extends ViewPart implements ActivationListener{
 					}
 				}
 			}
-
+			
 			return text;
 		}
 		
-		
-		
-		public Color getForeground(Object element, int columnIndex) {
-			return Desk.theDisplay.getSystemColor(SWT.COLOR_BLACK);
+		public Color getForeground(Object element, int columnIndex){
+			return Desk.getColor(Desk.COL_BLACK);
 		}
 		
-		
-		public Color getBackground(Object element, int columnIndex) {
-			if(element instanceof ESRRecord){
-				ESRRecord rec=(ESRRecord)element;
-				if(rec.getTyp().equals(ESRRecord.MODE.Summenrecord)){
-					return Desk.theDisplay.getSystemColor(SWT.COLOR_GREEN);
+		public Color getBackground(Object element, int columnIndex){
+			if (element instanceof ESRRecord) {
+				ESRRecord rec = (ESRRecord) element;
+				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
+					return Desk.getColor(Desk.COL_GREEN);
 				}
-				String buch=rec.getGebucht();
-				if(rec.getRejectCode().equals(ESRRecord.REJECT.OK)){
-					if(StringTool.isNothing(buch)){
-						return Desk.theDisplay.getSystemColor(SWT.COLOR_GRAY);
+				String buch = rec.getGebucht();
+				if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
+					if (StringTool.isNothing(buch)) {
+						return Desk.getColor(Desk.COL_GREY);
 					}
-					return Desk.theDisplay.getSystemColor(SWT.COLOR_WHITE);
+					return Desk.getColor(Desk.COL_WHITE);
 				}
-				return Desk.theDisplay.getSystemColor(SWT.COLOR_RED);
+				return Desk.getColor(Desk.COL_RED);
 			}
-			return Desk.theDisplay.getSystemColor(SWT.COLOR_DARK_BLUE);
+			return Desk.getColor(Desk.COL_SKYBLUE);
 		}
-		
-		
 		
 	}
-	class ESRLoader extends AbstractDataLoaderJob{
-		//public static final int ORDER_RNNUMMER = 1;
-		//public static final int ORDER_
+	
+	class ESRLoader extends AbstractDataLoaderJob {
+		// public static final int ORDER_RNNUMMER = 1;
+		// public static final int ORDER_
 		
 		Query<ESRRecord> qbe;
-		ESRLoader(Query<ESRRecord> qbe){
-			super(JOB_NAME,qbe,new String[]{"Datum"});
-			this.qbe=qbe;
-		}
-		@Override
-		public IStatus execute(IProgressMonitor monitor) {
-			monitor.beginTask("Lade ESR", SWT.INDETERMINATE);
 		
+		ESRLoader(Query<ESRRecord> qbe){
+			super(JOB_NAME, qbe, new String[] {
+				"Datum"
+			});
+			this.qbe = qbe;
+		}
+		
+		@Override
+		public IStatus execute(IProgressMonitor monitor){
+			monitor.beginTask("Lade ESR", SWT.INDETERMINATE);
+			
 			qbe.clear();
 			vc.getControlFieldProvider().setQuery(qbe);
-			qbe.orderBy(true,new String[]{"Datum","Gebucht"});
-			List<ESRRecord> list=qbe.execute();
-			result=list.toArray();
+			qbe.orderBy(true, new String[] {
+				"Datum", "Gebucht"
+			});
+			List<ESRRecord> list = qbe.execute();
+			result = list.toArray();
 			monitor.done();
 			return Status.OK_STATUS;
 		}
-
+		
 		@Override
-		public int getSize() {
+		public int getSize(){
 			return PersistentObject.getConnection().queryInt("SELECT COUNT(0) FROM ESRRECORDS");
-
+			
 		}
 		
 	}
+	
 	private void makeActions(){
-		/*
-		loadESRFile=new Action("ESR-Datei einlesen"){
-			{
-				setToolTipText("Auswahl einer von der Bank heruntergeladenen ESR-Datei zum Einlesen");
-				setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT));
-			}
-			@Override
-			public void run(){
-				FileDialog fld=new FileDialog(getViewSite().getShell(),SWT.OPEN);
-				fld.setText("ESR Datei auswählen");
-				String filename=fld.open();
-				if(filename!=null){
-					ESRFile esrf=new ESRFile();
-					Result<List<ESRRecord>> result=esrf.read(filename);
-					if(result.isOK()){
-						for(ESRRecord rec:result.get()){
-							if(rec.getRejectCode().equals(ESRRecord.REJECT.OK)){
-								if(rec.getTyp().equals(ESRRecord.MODE.Summenrecord)){
-									Hub.log.log("ESR eingelesen. Summe "+rec.getBetrag(), Log.INFOS);
-								}else if( (rec.getTyp().equals(ESRRecord.MODE.Storno_edv)) || (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))){
-									Rechnung rn=rec.getRechnung();
-									Money zahlung=rec.getBetrag().negate();
-									rn.addZahlung(zahlung, "Storno für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
-									rec.setGebucht(null);
-								}else{
-									Rechnung rn=rec.getRechnung();
-									if(rn.getStatus()==RnStatus.BEZAHLT){
-										if(MessageDialog.openConfirm(getViewSite().getShell(), "Rechnung schon bezahlt", "Rechnung "+rn.getNr()+" ist bereits bezahlt. Trotzdem buchen?")==false){
-											continue;
-										}
-									}
-									Money zahlung=rec.getBetrag();
-									Money offen=rn.getOffenerBetrag();
-									if(zahlung.isMoreThan(offen)){
-										if(MessageDialog.openConfirm(getViewSite().getShell(), "Betrag zu hoch", "Die Zahlung für Rechnung "+rn.getNr()+" übersteigt den offenen Betrag. Trotzdem buchen?")==false){
-											continue;
-										}
-									}
-									
-									rn.addZahlung(zahlung, "VESR für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
-									rec.setGebucht(null);
-								}
-							}
-						}
-					}else{
-						result.display("Fehler beim ESR-Einlesen:");
-					}
-				}
-				JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
-				//cv.notify(CommonViewer.Message.update);
-			}
-		};
-		*/
+	/*
+	 * loadESRFile=new Action("ESR-Datei einlesen"){ {
+	 * setToolTipText("Auswahl einer von der Bank heruntergeladenen ESR-Datei zum Einlesen");
+	 * setImageDescriptor(Desk.theImageRegistry.getDescriptor(Desk.IMG_IMPORT)); }
+	 * 
+	 * @Override public void run(){ FileDialog fld=new
+	 * FileDialog(getViewSite().getShell(),SWT.OPEN); fld.setText("ESR Datei auswählen"); String
+	 * filename=fld.open(); if(filename!=null){ ESRFile esrf=new ESRFile(); Result<List<ESRRecord>>
+	 * result=esrf.read(filename); if(result.isOK()){ for(ESRRecord rec:result.get()){
+	 * if(rec.getRejectCode().equals(ESRRecord.REJECT.OK)){
+	 * if(rec.getTyp().equals(ESRRecord.MODE.Summenrecord)){
+	 * Hub.log.log("ESR eingelesen. Summe "+rec.getBetrag(), Log.INFOS); }else if(
+	 * (rec.getTyp().equals(ESRRecord.MODE.Storno_edv)) ||
+	 * (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))){ Rechnung rn=rec.getRechnung(); Money
+	 * zahlung=rec.getBetrag().negate(); rn.addZahlung(zahlung,
+	 * "Storno für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode()); rec.setGebucht(null);
+	 * }else{ Rechnung rn=rec.getRechnung(); if(rn.getStatus()==RnStatus.BEZAHLT){
+	 * if(MessageDialog.openConfirm(getViewSite().getShell(), "Rechnung schon bezahlt",
+	 * "Rechnung "+rn.getNr()+" ist bereits bezahlt. Trotzdem buchen?")==false){ continue; } } Money
+	 * zahlung=rec.getBetrag(); Money offen=rn.getOffenerBetrag(); if(zahlung.isMoreThan(offen)){
+	 * if(MessageDialog.openConfirm(getViewSite().getShell(), "Betrag zu hoch",
+	 * "Die Zahlung für Rechnung "
+	 * +rn.getNr()+" übersteigt den offenen Betrag. Trotzdem buchen?")==false){ continue; } }
+	 * 
+	 * rn.addZahlung(zahlung, "VESR für rn "+rn.getNr()+" / "+rec.getPatient().getPatCode());
+	 * rec.setGebucht(null); } } } }else{ result.display("Fehler beim ESR-Einlesen:"); } }
+	 * JobPool.getJobPool().activate(JOB_NAME, Job.SHORT); //cv.notify(CommonViewer.Message.update);
+	 * } };
+	 */
 	}
-
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-		
+	
+	public void activation(boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(boolean mode) {
+	
+	public void visible(boolean mode){
 		esrl.activate(mode);
 	}
-
+	
 }
