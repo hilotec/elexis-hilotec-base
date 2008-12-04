@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotizInputDialog.java 808 2006-08-28 04:54:26Z rgw_ch $
+ *  $Id: NotizInputDialog.java 4716 2008-12-04 10:10:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatnotizen;
@@ -23,30 +23,31 @@ import ch.elexis.util.SWTHelper;
 public class NotizInputDialog extends TitleAreaDialog {
 	private Privatnotiz mine;
 	private Text textField;
-	public NotizInputDialog(Shell shell, Privatnotiz note) {
+	
+	public NotizInputDialog(Shell shell, Privatnotiz note){
 		super(shell);
-		mine=note;
+		mine = note;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		textField=new Text(parent,SWT.MULTI|SWT.BORDER);
+	protected Control createDialogArea(Composite parent){
+		textField = new Text(parent, SWT.MULTI | SWT.BORDER);
 		textField.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		textField.setText(mine.getText());
 		return textField;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle("Notiz zum KG Eintrag");
 		getShell().setText("Privatnotiz");
-		setTitleImage(Desk.theImageRegistry.get(Desk.IMG_LOGO48));
+		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		setMessage("Geben Sie hier private Notizen zu diesem KG-Eintrag ein");
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		mine.setText(textField.getText());
 		super.okPressed();
 	}
