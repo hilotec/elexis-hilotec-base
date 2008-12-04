@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 4728 2008-12-04 12:04:58Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 4741 2008-12-04 21:34:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -38,7 +38,6 @@ import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.icpc.Activator;
 import ch.elexis.icpc.Episode;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -52,7 +51,7 @@ public class EpisodesDisplay extends Composite {
 	public EpisodesDisplay(final Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
-		form = Activator.getToolkit().createScrolledForm(this);
+		form = Desk.getToolkit().createScrolledForm(this);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());

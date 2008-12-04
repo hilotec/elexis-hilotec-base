@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Activator.java 1709 2007-02-01 14:34:08Z rgw_ch $
+ *    $Id: Activator.java 4741 2008-12-04 21:34:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
 
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ch.elexis.Desk;
 import ch.elexis.util.Log;
 
 
@@ -29,13 +27,7 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private static FormToolkit tk;
-	public static FormToolkit getToolkit(){
-		if(tk==null){
-			tk=new FormToolkit(Desk.theDisplay);
-		}
-		return tk;
-	}
+	//private static FormToolkit tk=Desk.getToolkit();
 	/**
 	 * The constructor
 	 */

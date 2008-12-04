@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterDisplay.java 4361 2008-09-02 20:31:44Z rgw_ch $
+ *    $Id: EncounterDisplay.java 4741 2008-12-04 21:34:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -26,10 +26,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.Activator;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.icpc.IcpcCode;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -53,7 +53,7 @@ public class EncounterDisplay extends Composite {
 
 	public EncounterDisplay(Composite parent){
 		super(parent,SWT.NONE);
-		form=Activator.getToolkit().createForm(this);
+		form=Desk.getToolkit().createForm(this);
 		setLayout(new GridLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body=form.getBody();
