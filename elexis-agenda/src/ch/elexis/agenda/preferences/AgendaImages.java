@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaImages.java 4462 2008-09-27 19:52:22Z rgw_ch $
+ * $Id: AgendaImages.java 4751 2008-12-04 21:40:15Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
@@ -73,7 +73,7 @@ public class AgendaImages extends PreferencePage implements
 					String name = fdl.open();
 					File src = new File(name);
 					try {
-						Image img = new Image(Desk.theDisplay,
+						Image img = new Image(Desk.getDisplay(),
 								new FileInputStream(src));
 						if (img != null) { // File bezeichnet ein lesbares Bild
 							File dest = new File(dpath + File.separator

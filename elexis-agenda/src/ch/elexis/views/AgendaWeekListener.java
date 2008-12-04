@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeekListener.java 3782 2008-04-18 08:50:22Z rgw_ch $
+ *  $Id: AgendaWeekListener.java 4751 2008-12-04 21:40:15Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -35,7 +35,7 @@ public class AgendaWeekListener implements BackingStoreListener, HeartListener,
 	}
 	public void reloadContents(Class<? extends PersistentObject> clazz) {
 		if(clazz.equals(Termin.class)){
-			Desk.theDisplay.asyncExec(new Runnable(){
+			Desk.asyncExec(new Runnable(){
 				public void run() {
 					parent.reload();
 				}});

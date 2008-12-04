@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 4592 2008-10-13 15:20:54Z rgw_ch $
+ *    $Id: Termin.java 4751 2008-12-04 21:40:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -356,7 +356,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 		if (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup))) {
 			MessageDialog msd =
 				new MessageDialog(
-					Desk.theDisplay.getActiveShell(),
+					Desk.getTopShell(),
 					"Terminserie löschen",
 					null,
 					"Dieser Termin gehört zu mehreren verknüpften Terminen. Soll die ganze Serie gelöscht werden?\n",
