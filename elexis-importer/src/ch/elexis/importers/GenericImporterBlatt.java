@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: GenericImporterBlatt.java 4715 2008-12-04 10:09:55Z rgw_ch $
+ * $Id: GenericImporterBlatt.java 4745 2008-12-04 21:37:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -132,7 +132,7 @@ public class GenericImporterBlatt extends Composite {
 	}
 	
 	public boolean doImport(){
-		Desk.theDisplay.syncExec(new Runnable() {
+		Desk.getDisplay().syncExec(new Runnable() {
 			public void run(){
 				GenericImporterWizard wizard = new GenericImporterWizard(method, filename);
 				
