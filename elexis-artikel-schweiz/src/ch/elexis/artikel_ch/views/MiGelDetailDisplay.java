@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelDetailDisplay.java 3104 2007-09-06 18:58:23Z rgw_ch $
+ *  $Id: MiGelDetailDisplay.java 4734 2008-12-04 21:00:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -26,70 +26,71 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import ch.elexis.Desk;
 import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.IDetailDisplay;
+import ch.rgw.tools.Money;
 
 public class MiGelDetailDisplay implements IDetailDisplay {
 	
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk = Desk.getToolkit();
 	ScrolledForm form;
-	LabeledInputField ifName,ifPreis;
+	LabeledInputField ifName, ifPreis;
 	Text tName, tLong;
 	MiGelArtikel act;
-
-	public Composite createDisplay(Composite parent, IViewSite site) {
+	
+	public Composite createDisplay(Composite parent, IViewSite site){
 		parent.setLayout(new GridLayout());
-		form=tk.createScrolledForm(parent);
+		form = tk.createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Composite ret=form.getBody();
+		Composite ret = form.getBody();
 		ret.setLayout(new GridLayout());
 		
-		//TableWrapLayout twl=new TableWrapLayout();
-		//ret.setLayout(twl);
+		// TableWrapLayout twl=new TableWrapLayout();
+		// ret.setLayout(twl);
 		
-		ifName=new LabeledInputField(ret,"Name");
+		ifName = new LabeledInputField(ret, "Name");
 		ifName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tName=(Text)ifName.getControl();
-		tName.addFocusListener(new FocusAdapter(){
+		tName = (Text) ifName.getControl();
+		tName.addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				if(act!=null){
+			public void focusLost(FocusEvent e){
+				if (act != null) {
 					act.setInternalName(tName.getText());
 				}
 				super.focusLost(e);
 			}
 			
 		});
-		ifPreis=new LabeledInputField(ret, "Preis, Einheit");
-		tLong=SWTHelper.createText(tk, ret, 4, SWT.READ_ONLY);
+		ifPreis = new LabeledInputField(ret, "Preis, Einheit");
+		tLong = SWTHelper.createText(tk, ret, 4, SWT.READ_ONLY);
 		
 		/*
-		tblArtikel=new LabeledInputField.AutoForm(ret,Artikeldetail.getFieldDefs(parent.getShell()));
-        
-        TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
-        twd.grabHorizontal=true;
-        tblArtikel.setLayoutData(twd);
-        */
-    		return ret;
+		 * tblArtikel=new
+		 * LabeledInputField.AutoForm(ret,Artikeldetail.getFieldDefs(parent.getShell()));
+		 * 
+		 * TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB); twd.grabHorizontal=true;
+		 * tblArtikel.setLayoutData(twd);
+		 */
+		return ret;
 	}
-
-	public Class getElementClass() {
+	
+	public Class getElementClass(){
 		return MiGelArtikel.class;
 	}
-
-	public void display(Object obj) {
-		if(obj instanceof MiGelArtikel){
-			act=(MiGelArtikel)obj;
+	
+	public void display(Object obj){
+		if (obj instanceof MiGelArtikel) {
+			act = (MiGelArtikel) obj;
 			form.setText(act.getLabel());
 			ifName.setText(act.getInternalName());
-			ifPreis.setText(new Money(act.getVKPreis()).getAmountAsString()+" "+act.getExt("unit"));
+			ifPreis.setText(new Money(act.getVKPreis()).getAmountAsString() + " "
+				+ act.getExt("unit"));
 			tLong.setText(act.getExt("FullText"));
-		} 
+		}
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return "MiGeL";
 	}
-
+	
 }
