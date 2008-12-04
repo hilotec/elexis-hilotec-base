@@ -222,6 +222,15 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_GOFURTHER, getImageDescriptor(IMG_GOFURTHER));
 				theImageRegistry.put(IMG_AUSRUFEZ, getImageDescriptor(IMG_AUSRUFEZ));
 				theImageRegistry.put(IMG_AUSRUFEZ_ROT, getImageDescriptor(IMG_AUSRUFEZ_ROT));
+				theImageRegistry.put(IMG_REMOVEITEM, getImageDescriptor(IMG_REMOVEITEM));
+				theImageRegistry.put(IMG_NETWORK, getImageDescriptor(IMG_NETWORK));
+				theImageRegistry.put(IMG_BOOK, getImageDescriptor(IMG_BOOK)); 
+				theImageRegistry.put(IMG_PERSON, getImageDescriptor(IMG_PERSON)); 
+				theImageRegistry.put(IMG_PERSON_OK, getImageDescriptor(IMG_PERSON_OK));
+				theImageRegistry.put(IMG_DISK, getImageDescriptor(IMG_DISK));
+				theImageRegistry.put(IMG_LOCK_CLOSED, getImageDescriptor(IMG_LOCK_CLOSED));
+				theImageRegistry.put(IMG_LOCK_OPEN, getImageDescriptor(IMG_LOCK_OPEN)); 
+				theImageRegistry.put(IMG_CLIPBOARD, getImageDescriptor(IMG_CLIPBOARD));
 				
 				/*
 				 * theImageRegistry.put(IMG_HOME, Hub.getImageDescriptor(imageBase + "home.png"));
@@ -271,22 +280,25 @@ public class Desk implements IApplication {
 					+ "ausrufez.png")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor(imageBase
 					+ "ausrufez_rot.ico")); // $NON_NLS-1$
-				*/
+				
 				theImageRegistry.put(IMG_REMOVEITEM, Hub
 					.getImageDescriptor(imageBase + "minus.ico")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_NETWORK, Hub
 					.getImageDescriptor(imageBase + "netzwerk.ico")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor(imageBase + "book.png")); // $NON_NLS-1$
+				
 				theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor(imageBase + "person.ico")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor(imageBase
 					+ "personok.ico")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase + "floppy.png")); // $NON_NLS-1$
+				
 				theImageRegistry.put(IMG_LOCK_CLOSED, Hub
 					.getImageDescriptor(imageBase + "lock.png")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_LOCK_OPEN, Hub.getImageDescriptor(imageBase
 					+ "lock_open.png")); // $NON_NLS-1$
 				theImageRegistry.put(IMG_CLIPBOARD, Hub.getImageDescriptor(imageBase
 					+ "clipboard.png"));
+					*/
 			}
 		}
 		return theImageRegistry;
