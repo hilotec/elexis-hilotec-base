@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4383 2008-09-07 13:59:06Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4731 2008-12-04 13:58:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung2.rechnung;
@@ -42,9 +42,9 @@ import ch.elexis.privatrechnung2.prefs.Preferences;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Money;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -104,7 +104,7 @@ public class RechnungsDrucker implements IRnOutputter {
 		}
 		Hub.globalCfg.set(settings, template);
 		Result<Rechnung> ret = new Result<Rechnung>(); // =new Result<Rechnung>(Log.ERRORS,99,"Not
-														// yet implemented",null,true);
+		// yet implemented",null,true);
 		
 		Dialog dlg = new Dialog(Desk.getTopShell()) {
 			
@@ -145,7 +145,7 @@ public class RechnungsDrucker implements IRnOutputter {
 		}
 		dlg.close();
 		if (!ret.isOK()) {
-			ResultAdapter.displayResult(ret,"Fehler beim Rechnungsdruck");
+			ResultAdapter.displayResult(ret, "Fehler beim Rechnungsdruck");
 		}
 		return ret;
 	}
