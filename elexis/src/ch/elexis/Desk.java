@@ -45,7 +45,7 @@ public class Desk implements IApplication {
 	public static Display theDisplay = null;
 	/** @deprecated use getToolkit() */
 	public static FormToolkit theToolkit = null;
-	/** @deprecated use getImage and getImageDescriptor */
+	
 	private static ImageRegistry theImageRegistry = null;
 	/** @deprecated use getColor */
 	public static ColorRegistry theColorRegistry = null;
@@ -208,8 +208,8 @@ public class Desk implements IApplication {
 					getImageDescriptor(IMG_VERSIONEDETIKETTE));
 				theImageRegistry.put(IMG_DELETE, getImageDescriptor(IMG_DELETE));
 				theImageRegistry.put(IMG_MANN, getImageDescriptor(IMG_MANN));
-				theImageRegistry.put(IMG_FRAU, Hub.getImageDescriptor(IMG_FRAU));
-				theImageRegistry.put(IMG_VIP, Hub.getImageDescriptor(imageBase + "vip.png"));
+				theImageRegistry.put(IMG_FRAU, getImageDescriptor(IMG_FRAU));
+				theImageRegistry.put(IMG_VIP, getImageDescriptor(imageBase + "vip.png"));
 				theImageRegistry.put(IMG_PRINTER, getImageDescriptor(IMG_PRINTER));
 				theImageRegistry.put(IMG_FILTER, getImageDescriptor(IMG_FILTER));
 				theImageRegistry.put(IMG_NEW, getImageDescriptor(IMG_NEW));
@@ -229,12 +229,12 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_AUSRUFEZ_ROT, getImageDescriptor(IMG_AUSRUFEZ_ROT));
 				theImageRegistry.put(IMG_REMOVEITEM, getImageDescriptor(IMG_REMOVEITEM));
 				theImageRegistry.put(IMG_NETWORK, getImageDescriptor(IMG_NETWORK));
-				theImageRegistry.put(IMG_BOOK, getImageDescriptor(IMG_BOOK)); 
-				theImageRegistry.put(IMG_PERSON, getImageDescriptor(IMG_PERSON)); 
+				theImageRegistry.put(IMG_BOOK, getImageDescriptor(IMG_BOOK));
+				theImageRegistry.put(IMG_PERSON, getImageDescriptor(IMG_PERSON));
 				theImageRegistry.put(IMG_PERSON_OK, getImageDescriptor(IMG_PERSON_OK));
 				theImageRegistry.put(IMG_DISK, getImageDescriptor(IMG_DISK));
 				theImageRegistry.put(IMG_LOCK_CLOSED, getImageDescriptor(IMG_LOCK_CLOSED));
-				theImageRegistry.put(IMG_LOCK_OPEN, getImageDescriptor(IMG_LOCK_OPEN)); 
+				theImageRegistry.put(IMG_LOCK_OPEN, getImageDescriptor(IMG_LOCK_OPEN));
 				theImageRegistry.put(IMG_CLIPBOARD, getImageDescriptor(IMG_CLIPBOARD));
 				
 				/*
@@ -258,8 +258,8 @@ public class Desk implements IApplication {
 				 * "printer.png")); //$NON-NLS-1$ theImageRegistry.put(IMG_FILTER, Hub
 				 * .getImageDescriptor(imageBase + "filter_ps.gif")); //$NON-NLS-1$
 				 * theImageRegistry.put(IMG_NEW, Hub.getImageDescriptor(imageBase + "new2.ico"));
-				 * //$NON-NLS-1$ theImageRegistry .put(IMG_LOGO48, Hub.getImageDescriptor(imageBase +
-				 * "elexis48.png")); //$NON-NLS-1$
+				 * //$NON-NLS-1$ theImageRegistry .put(IMG_LOGO48, Hub.getImageDescriptor(imageBase
+				 * + "elexis48.png")); //$NON-NLS-1$
 				 * 
 				 * theImageRegistry.put(IMG_IMPORT, Hub.getImageDescriptor(imageBase +
 				 * "import.gif")); //$NON-NLS-1$ theImageRegistry.put(IMG_EDIT,
@@ -277,38 +277,46 @@ public class Desk implements IApplication {
 				 * Hub.getImageDescriptor(imageBase + "wizard.ico")); //$NON-NLS-1$
 				 * theImageRegistry.put(IMG_ADDITEM, Hub.getImageDescriptor(imageBase + "add.gif"));
 				 * //$NON-NLS-1$
-				 
-				theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor(imageBase + "export.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_GOFURTHER, Hub.getImageDescriptor(imageBase
-					+ "page_go.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor(imageBase
-					+ "ausrufez.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_AUSRUFEZ_ROT, Hub.getImageDescriptor(imageBase
-					+ "ausrufez_rot.ico")); // $NON_NLS-1$
-				
-				theImageRegistry.put(IMG_REMOVEITEM, Hub
-					.getImageDescriptor(imageBase + "minus.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_NETWORK, Hub
-					.getImageDescriptor(imageBase + "netzwerk.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor(imageBase + "book.png")); // $NON_NLS-1$
-				
-				theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor(imageBase + "person.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_PERSON_OK, Hub.getImageDescriptor(imageBase
-					+ "personok.ico")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase + "floppy.png")); // $NON_NLS-1$
-				
-				theImageRegistry.put(IMG_LOCK_CLOSED, Hub
-					.getImageDescriptor(imageBase + "lock.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_LOCK_OPEN, Hub.getImageDescriptor(imageBase
-					+ "lock_open.png")); // $NON_NLS-1$
-				theImageRegistry.put(IMG_CLIPBOARD, Hub.getImageDescriptor(imageBase
-					+ "clipboard.png"));
-					*/
+				 * 
+				 * theImageRegistry.put(IMG_EXPORT, Hub.getImageDescriptor(imageBase +
+				 * "export.ico")); // $NON_NLS-1$ theImageRegistry.put(IMG_GOFURTHER,
+				 * Hub.getImageDescriptor(imageBase + "page_go.png")); // $NON_NLS-1$
+				 * theImageRegistry.put(IMG_AUSRUFEZ, Hub.getImageDescriptor(imageBase +
+				 * "ausrufez.png")); // $NON_NLS-1$ theImageRegistry.put(IMG_AUSRUFEZ_ROT,
+				 * Hub.getImageDescriptor(imageBase + "ausrufez_rot.ico")); // $NON_NLS-1$
+				 * 
+				 * theImageRegistry.put(IMG_REMOVEITEM, Hub .getImageDescriptor(imageBase +
+				 * "minus.ico")); // $NON_NLS-1$ theImageRegistry.put(IMG_NETWORK, Hub
+				 * .getImageDescriptor(imageBase + "netzwerk.ico")); // $NON_NLS-1$
+				 * theImageRegistry.put(IMG_BOOK, Hub.getImageDescriptor(imageBase + "book.png"));
+				 * // $NON_NLS-1$
+				 * 
+				 * theImageRegistry.put(IMG_PERSON, Hub.getImageDescriptor(imageBase +
+				 * "person.ico")); // $NON_NLS-1$ theImageRegistry.put(IMG_PERSON_OK,
+				 * Hub.getImageDescriptor(imageBase + "personok.ico")); // $NON_NLS-1$
+				 * theImageRegistry.put(IMG_DISK, Hub.getImageDescriptor(imageBase + "floppy.png"));
+				 * // $NON_NLS-1$
+				 * 
+				 * theImageRegistry.put(IMG_LOCK_CLOSED, Hub .getImageDescriptor(imageBase +
+				 * "lock.png")); // $NON_NLS-1$ theImageRegistry.put(IMG_LOCK_OPEN,
+				 * Hub.getImageDescriptor(imageBase + "lock_open.png")); // $NON_NLS-1$
+				 * theImageRegistry.put(IMG_CLIPBOARD, Hub.getImageDescriptor(imageBase +
+				 * "clipboard.png"));
+				 */
 			}
 		}
 		return theImageRegistry;
 	}
 	
+	/**
+	 * Return an ImageDescriptor. The Descriptor will be searched in the ImageRegistry first. If not
+	 * found, it will be searched as image file in the directory denoted by the current plaf. Images
+	 * with the extensions of png, gif and ico will be searched in this given order. If still no
+	 * image is found, it will be searched in rsc/
+	 * 
+	 * @param imagename the name of the image or the imagefile (without extension)
+	 * @return
+	 */
 	public static ImageDescriptor getImageDescriptor(String imagename){
 		ImageDescriptor ret = theImageRegistry.getDescriptor(imagename);
 		if (ret == null) {
