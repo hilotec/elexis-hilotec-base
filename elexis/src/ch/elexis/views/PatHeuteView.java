@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ * $Id: PatHeuteView.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -227,7 +227,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			}
 			
 		}, null, // new ViewerConfigurer.EmptyControlfieldProvider(),//
-					// DefaultControlFieldProvider(cv,new String[]{"Name","Vorname"}),
+			// DefaultControlFieldProvider(cv,new String[]{"Name","Vorname"}),
 			new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 				SimpleWidgetProvider.TYPE_LIST, SWT.V_SCROLL, cv));
 		cv.create(vc, parent, SWT.BORDER, getViewSite());
@@ -382,7 +382,7 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 			Collections.sort(sums);
 			monitor.worked(20);
 			monitor.done();
-			Desk.theDisplay.asyncExec(new Runnable() {
+			Desk.asyncExec(new Runnable() {
 				public void run(){
 					FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
 					fd.setFilterExtensions(new String[] {

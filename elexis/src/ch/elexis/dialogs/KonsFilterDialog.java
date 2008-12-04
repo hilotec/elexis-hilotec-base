@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsFilterDialog.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: KonsFilterDialog.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -43,7 +43,7 @@ public class KonsFilterDialog extends TitleAreaDialog {
 	Button bCase, bRegex;
 	
 	public KonsFilterDialog(Patient p, KonsFilter kf){
-		super(Desk.theDisplay.getActiveShell());
+		super(Desk.getTopShell());
 		filter = kf;
 		pat = p;
 	}

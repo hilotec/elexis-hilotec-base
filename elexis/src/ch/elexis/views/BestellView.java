@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ * $Id: BestellView.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -65,7 +65,6 @@ import ch.elexis.exchange.IDataSender;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.Extensions;
-import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
@@ -449,7 +448,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					}
 					
 					String clipboardText = export.toString();
-					Clipboard clipboard = new Clipboard(Desk.theDisplay);
+					Clipboard clipboard = new Clipboard(Desk.getDisplay());
 					TextTransfer textTransfer = TextTransfer.getInstance();
 					Transfer[] transfers = new Transfer[] {
 						textTransfer

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 4634 2008-10-27 05:22:55Z rgw_ch $
+ * $Id: SWTHelper.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -420,7 +420,7 @@ public class SWTHelper {
 		IControlProvider dialogAreaProvider;
 		
 		public SimpleDialog(final IControlProvider control){
-			super(Desk.theDisplay.getActiveShell());
+			super(Desk.getTopShell());
 			dialogAreaProvider = control;
 		}
 		

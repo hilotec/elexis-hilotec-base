@@ -395,4 +395,7 @@ public class Desk implements IApplication {
 		return ret;
 	}
 	
+	public static void asyncExec(Runnable runnable){
+		theDisplay.asyncExec(runnable);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Mandanten.java 3016 2007-08-26 13:26:12Z rgw_ch $
+ *  $Id: Mandanten.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -46,84 +46,85 @@ import ch.elexis.util.LabeledInputField.IContentProvider;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
 
-public class Mandanten extends PreferencePage implements
-IWorkbenchPreferencePage {
+public class Mandanten extends PreferencePage implements IWorkbenchPreferencePage {
 	private LabeledInputField.AutoForm lfa;
 	private InputData[] def;
 	
+	private Hashtable<String, Mandant> hMandanten = new Hashtable<String, Mandant>();
 	
-	
-	private Hashtable<String,Mandant> hMandanten=new Hashtable<String,Mandant>();
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Control createContents(Composite parent) {
-		if(Hub.acl.request(AccessControlDefaults.ACL_USERS)){
-			FormToolkit tk=new FormToolkit(Desk.theDisplay);
-			Form form=tk.createForm(parent);
-			Composite body=form.getBody();
-			body.setLayout(new GridLayout(1,false));
-			Combo mandanten=new Combo(body,SWT.DROP_DOWN|SWT.READ_ONLY);
-			Query qbe=new Query(Mandant.class);
-			List list=qbe.execute();
-			for(Mandant m:(List<Mandant>)list){
+	protected Control createContents(Composite parent){
+		if (Hub.acl.request(AccessControlDefaults.ACL_USERS)) {
+			FormToolkit tk = Desk.getToolkit();
+			Form form = tk.createForm(parent);
+			Composite body = form.getBody();
+			body.setLayout(new GridLayout(1, false));
+			Combo mandanten = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
+			Query qbe = new Query(Mandant.class);
+			List list = qbe.execute();
+			for (Mandant m : (List<Mandant>) list) {
 				mandanten.add(m.getLabel());
-				hMandanten.put(m.getLabel(),m);
+				hMandanten.put(m.getLabel(), m);
 			}
-			mandanten.addSelectionListener(new SelectionAdapter(){
-	
+			mandanten.addSelectionListener(new SelectionAdapter() {
+				
 				@Override
-				public void widgetSelected(SelectionEvent e) {
-					Combo source=(Combo)e.getSource();
-					String m=(source.getItem(source.getSelectionIndex()));
-					Mandant man=hMandanten.get(m);
+				public void widgetSelected(SelectionEvent e){
+					Combo source = (Combo) e.getSource();
+					String m = (source.getItem(source.getSelectionIndex()));
+					Mandant man = hMandanten.get(m);
 					lfa.reload(man);
 				}
 				
 			});
-			GridData gd=new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
-			//gd.horizontalSpan=2;
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+			// gd.horizontalSpan=2;
 			mandanten.setLayoutData(gd);
 			tk.adapt(mandanten);
-			lfa=new LabeledInputField.AutoForm(body,def);
-			lfa.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+			lfa = new LabeledInputField.AutoForm(body, def);
+			lfa.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			tk.paintBordersFor(body);
 			return form;
-		}else{
+		} else {
 			return new PrefAccessDenied(parent);
 		}
 	}
-
-	public void init(IWorkbench workbench) {
-		String grp=Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, "Admin");
+	
+	public void init(IWorkbench workbench){
+		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, "Admin");
 		
-		def=new InputData[]{
-				new InputData("Kürzel","Label",Typ.STRING,null),
-				new InputData("Passwort","ExtInfo",Typ.STRING,"UsrPwd"),
+		def =
+			new InputData[] {
+				new InputData("Kürzel", "Label", Typ.STRING, null),
+				new InputData("Passwort", "ExtInfo", Typ.STRING, "UsrPwd"),
 				// -> KSK, NIF und EAN gehören zu Tarmed.
 				// new InputData("KSK-Nr","ExtInfo",Typ.STRING,"KSK"),
 				// new InputData("NIF","ExtInfo",Typ.STRING,"NIF"),
 				// new InputData("EANr","ExtInfo",Typ.STRING,"EAN"),
-				new InputData("Gruppen","ExtInfo","Groups",grp.split(",")),
-				new InputData("Rechnungssteller","ExtInfo",new IContentProvider(){
-
-					public void displayContent(PersistentObject po,
-							InputData ltf) {
-						Mandant m=(Mandant)po;
-						Kontakt r=m.getRechnungssteller();
+				new InputData("Gruppen", "ExtInfo", "Groups", grp.split(",")),
+				new InputData("Rechnungssteller", "ExtInfo", new IContentProvider() {
+					
+					public void displayContent(PersistentObject po, InputData ltf){
+						Mandant m = (Mandant) po;
+						Kontakt r = m.getRechnungssteller();
 						ltf.setText(r.getLabel());
 					}
-
-					public void reloadContent(PersistentObject po, InputData ltf) {
-						Kontakt rsi=(Kontakt)po;
-						KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Rechnungssteller auswählen",
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
+						Kontakt rsi = (Kontakt) po;
+						KontaktSelektor ksl =
+							new KontaktSelektor(getShell(), Kontakt.class,
+								"Rechnungssteller auswählen",
 								"Wählen Sie bitte den Rechnungssteller aus (Standard: Mandant selber)");
-						if(ksl.open()==Dialog.OK){
-							rsi=(Kontakt)ksl.getSelection();
+						if (ksl.open() == Dialog.OK) {
+							rsi = (Kontakt) ksl.getSelection();
 						}
-						((Mandant)po).setRechnungssteller(rsi);
+						((Mandant) po).setRechnungssteller(rsi);
 						ltf.setText(rsi.getLabel());
-					}})
-		};	
+					}
+				})
+			};
 	}
-
+	
 }

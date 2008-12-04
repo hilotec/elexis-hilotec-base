@@ -1,4 +1,4 @@
-// $Id: BBSView.java 4727 2008-12-04 12:04:49Z rgw_ch $
+// $Id: BBSView.java 4743 2008-12-04 21:37:02Z rgw_ch $
 /*
  * Created on 10.09.2005
  */
@@ -74,7 +74,7 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 					SWT.NONE, null));
 		headlines.create(vc, sash, SWT.NONE, getViewSite());
 		
-		tk = new FormToolkit(Desk.theDisplay);
+		tk = Desk.getToolkit();
 		form = tk.createScrolledForm(sash);
 		form.getBody().setLayout(new GridLayout(1, false));
 		form.setText("Bitte links ein Thema auswählen");

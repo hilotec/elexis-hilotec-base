@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 4365 2008-09-03 15:55:54Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -260,7 +260,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider{
 	}
 
 	public void fireChangedEvent() {
-		Desk.theDisplay.syncExec(new Runnable(){
+		Desk.getDisplay().syncExec(new Runnable(){
 			public void run() {
 				for(ControlFieldListener lis:listeners){
 		    		lis.changed(new String[]{"Status"},new String[]{"0"}); //$NON-NLS-1$ //$NON-NLS-2$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2008, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,10 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: BillSummary.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: BillSummary.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
-
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,61 +54,60 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.Money;
 
-
 /**
  * This view shows the current patient's account
  */
 
-public class BillSummary extends ViewPart implements SelectionListener,
-ActivationListener, ISaveablePart2 {
-    
-	public static final String ID="ch.elexis.views.rechnung.BillSummary";
+public class BillSummary extends ViewPart implements SelectionListener, ActivationListener,
+		ISaveablePart2 {
+	
+	public static final String ID = "ch.elexis.views.rechnung.BillSummary";
 	
 	// command from org.eclipse.ui
 	private static final String COMMAND_COPY = "org.eclipse.ui.edit.copy";
 	
 	private FormToolkit tk;
-    private Form form;
-    private Label totalLabel;
-    private Label paidLabel;
-    private Label openLabel;
-    private TableViewer billsViewer;
-	    
+	private Form form;
+	private Label totalLabel;
+	private Label paidLabel;
+	private Label openLabel;
+	private TableViewer billsViewer;
+	
 	private Patient actPatient;
-
+	
 	private Action exportToClipboardAction;
 	
-    // column indices
-    private static final int NUMBER = 0;
-    private static final int DATE = 1;
-    private static final int AMOUNT = 2;
-    private static final int AMOUNT_DUE = 3;
-    private static final int STATUS = 4;
-    private static final int GARANT = 5;
-    
-    private static final String[] COLUMN_TEXT = {
-    	"Nummer",      // NUMBER
-    	"Datum",       // DATE
-    	"Betrag",      // AMOUNT
-    	"Offen",       // AMOUNT_DUE
-    	"Status",      // STATUS
-    	"Rechnungsempfänger", // GARANT
-    };
-    
-    private static final int[] COLUMN_WIDTH = {
-    	80,  // NUMBER
-    	80,  // DATE
-    	80,  // AMOUNT
-    	80,  // AMOUNT_DUE
-    	80,  // STATUS
-    	80,  // GARANT
-    };
-
-    private List<Rechnung> getRechnungen(Patient patient) {
-		List<Rechnung> rechnungen  = patient.getRechnungen();
+	// column indices
+	private static final int NUMBER = 0;
+	private static final int DATE = 1;
+	private static final int AMOUNT = 2;
+	private static final int AMOUNT_DUE = 3;
+	private static final int STATUS = 4;
+	private static final int GARANT = 5;
+	
+	private static final String[] COLUMN_TEXT = {
+		"Nummer", // NUMBER
+		"Datum", // DATE
+		"Betrag", // AMOUNT
+		"Offen", // AMOUNT_DUE
+		"Status", // STATUS
+		"Rechnungsempfänger", // GARANT
+	};
+	
+	private static final int[] COLUMN_WIDTH = {
+		80, // NUMBER
+		80, // DATE
+		80, // AMOUNT
+		80, // AMOUNT_DUE
+		80, // STATUS
+		80, // GARANT
+	};
+	
+	private List<Rechnung> getRechnungen(Patient patient){
+		List<Rechnung> rechnungen = patient.getRechnungen();
 		Collections.sort(rechnungen, new Comparator<Rechnung>() {
 			// compare on bill number
-			public int compare(Rechnung r1, Rechnung r2) {
+			public int compare(Rechnung r1, Rechnung r2){
 				// both null, consider as equal
 				if (r1 == null && r2 == null) {
 					return 0;
@@ -117,7 +115,7 @@ ActivationListener, ISaveablePart2 {
 				
 				// r1 is null, r2 not. sort r2 before r1
 				if (r1 == null) {
-					return 1; 
+					return 1;
 				}
 				
 				// r2 is null, r1 not. sort r1 before r2
@@ -138,22 +136,22 @@ ActivationListener, ISaveablePart2 {
 					return 0;
 				}
 			}
-
+			
 			// compare on id
-			public boolean equals(Object obj) {
+			public boolean equals(Object obj){
 				return (this == obj);
 			}
 		});
 		
 		return rechnungen;
-    }
+	}
 	
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
-        tk = Desk.theToolkit;
-        form = tk.createForm(parent);
+		tk = Desk.theToolkit;
+		form = tk.createForm(parent);
 		form.getBody().setLayout(new GridLayout(1, false));
-
+		
 		// general infos
 		Composite generalArea = tk.createComposite(form.getBody());
 		generalArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -162,128 +160,129 @@ ActivationListener, ISaveablePart2 {
 		tk.createLabel(generalArea, "Total:");
 		totalLabel = tk.createLabel(generalArea, "");
 		totalLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		tk.createLabel(generalArea, "Bezahlt:");
 		paidLabel = tk.createLabel(generalArea, "");
 		paidLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		tk.createLabel(generalArea, "Offen:");
 		openLabel = tk.createLabel(generalArea, "");
 		openLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		// bills
-        billsViewer = new TableViewer(form.getBody(), SWT.SINGLE | SWT.FULL_SELECTION);
-        Table table = billsViewer.getTable();
-        table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-        tk.adapt(table);
-
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-
-        // columns
-        TableColumn[] tc = new TableColumn[COLUMN_TEXT.length];
-        for (int i = 0; i < COLUMN_TEXT.length; i++) {
-        	tc[i] = new TableColumn(table, SWT.NONE);
-        	tc[i].setText(COLUMN_TEXT[i]);
-        	tc[i].setWidth(COLUMN_WIDTH[i]);
-        }
-        
-        billsViewer.setContentProvider(new IStructuredContentProvider() {
-        	public Object[] getElements(Object inputElement) {
-        		if (actPatient == null) {
-        			return new Object[] {"Kein Patient ausgewählt."};
-        		}
-
-        		return getRechnungen(actPatient).toArray();
-        	}
-
-        	public void dispose() {
-        		// nothing to do
-        	}
-
-        	public void inputChanged(Viewer viewer, Object oldInput,
-        			Object newInput) {
-        		// nothing to do
-        	}
-        });
-        billsViewer.setLabelProvider(new ITableLabelProvider() {
-            public void addListener(ILabelProviderListener listener) {
-                // nothing to do
-            }
-
-            public void removeListener(ILabelProviderListener listener) {
-                // nothing to do
-            }
-
-            public void dispose() {
-                // nothing to do
-            }
-
-            public String getColumnText(Object element, int columnIndex) {
-                if (!(element instanceof Rechnung)) {
-                    return "";
-                }
-                
-                Rechnung rechnung = (Rechnung) element;
-                String text = "";
-                
-                switch (columnIndex) {
-                case NUMBER:
-                	text = rechnung.get("RnNummer");
-                	break;
-                case DATE:
-                	text = rechnung.get("RnDatum");
-                	break;
-                case AMOUNT:
-                	text = rechnung.getBetrag().toString();
-                	break;
-                case AMOUNT_DUE:
-                	text = rechnung.getOffenerBetrag().toString();
-                	break;
-                case STATUS:
-                	text = RnStatus.getStatusText(rechnung.getStatus());
-                	break;
-                case GARANT:
-                	text = rechnung.getFall().getGarant().getLabel();
-                	break;
-                }
-                
-                return text;
-            }
-
-            public Image getColumnImage(Object element, int columnIndex) {
-            	return null;
-            }
-
-            public boolean isLabelProperty(Object element, String property) {
-                return false;
-            }
-        });
-
+		billsViewer = new TableViewer(form.getBody(), SWT.SINGLE | SWT.FULL_SELECTION);
+		Table table = billsViewer.getTable();
+		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tk.adapt(table);
+		
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		
+		// columns
+		TableColumn[] tc = new TableColumn[COLUMN_TEXT.length];
+		for (int i = 0; i < COLUMN_TEXT.length; i++) {
+			tc[i] = new TableColumn(table, SWT.NONE);
+			tc[i].setText(COLUMN_TEXT[i]);
+			tc[i].setWidth(COLUMN_WIDTH[i]);
+		}
+		
+		billsViewer.setContentProvider(new IStructuredContentProvider() {
+			public Object[] getElements(Object inputElement){
+				if (actPatient == null) {
+					return new Object[] {
+						"Kein Patient ausgewählt."
+					};
+				}
+				
+				return getRechnungen(actPatient).toArray();
+			}
+			
+			public void dispose(){
+			// nothing to do
+			}
+			
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+			// nothing to do
+			}
+		});
+		billsViewer.setLabelProvider(new ITableLabelProvider() {
+			public void addListener(ILabelProviderListener listener){
+			// nothing to do
+			}
+			
+			public void removeListener(ILabelProviderListener listener){
+			// nothing to do
+			}
+			
+			public void dispose(){
+			// nothing to do
+			}
+			
+			public String getColumnText(Object element, int columnIndex){
+				if (!(element instanceof Rechnung)) {
+					return "";
+				}
+				
+				Rechnung rechnung = (Rechnung) element;
+				String text = "";
+				
+				switch (columnIndex) {
+				case NUMBER:
+					text = rechnung.get("RnNummer");
+					break;
+				case DATE:
+					text = rechnung.get("RnDatum");
+					break;
+				case AMOUNT:
+					text = rechnung.getBetrag().toString();
+					break;
+				case AMOUNT_DUE:
+					text = rechnung.getOffenerBetrag().toString();
+					break;
+				case STATUS:
+					text = RnStatus.getStatusText(rechnung.getStatus());
+					break;
+				case GARANT:
+					text = rechnung.getFall().getGarant().getLabel();
+					break;
+				}
+				
+				return text;
+			}
+			
+			public Image getColumnImage(Object element, int columnIndex){
+				return null;
+			}
+			
+			public boolean isLabelProperty(Object element, String property){
+				return false;
+			}
+		});
+		
 		billsViewer.setInput(getViewSite());
 		
 		makeActions();
-		ViewMenus menu=new ViewMenus(getViewSite());
+		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createMenu(exportToClipboardAction);
-        GlobalEvents.getInstance().addActivationListener(this, this);
-        billsViewer.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
+		GlobalEvents.getInstance().addActivationListener(this, this);
+		billsViewer.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 	}
 	
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus() {
+	public void setFocus(){
 		billsViewer.getControl().setFocus();
 	}
 	
-    @Override
-    public void dispose() {
-        GlobalEvents.getInstance().removeActivationListener(this, this);
-        billsViewer.removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
-        super.dispose();
-    }
-
-    private void setPatient(Patient patient) {
+	@Override
+	public void dispose(){
+		GlobalEvents.getInstance().removeActivationListener(this, this);
+		billsViewer.removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
+		super.dispose();
+	}
+	
+	private void setPatient(Patient patient){
 		actPatient = patient;
 		
 		String title = "";
@@ -296,12 +295,12 @@ ActivationListener, ISaveablePart2 {
 		
 		setGeneralText();
 		billsViewer.refresh();
-
+		
 		form.layout();
 	}
 	
-    // maybe called from foreign thread
-	private void setGeneralText() {
+	// maybe called from foreign thread
+	private void setGeneralText(){
 		// check wheter the labels are valid, since we may be called
 		// from a different thread
 		if (totalLabel.isDisposed() || paidLabel.isDisposed() || openLabel.isDisposed()) {
@@ -326,104 +325,101 @@ ActivationListener, ISaveablePart2 {
 					}
 				}
 			}
-    		
-    		Money open = new Money(total);
-    		open.subtractMoney(paid);
-    		
-    		totalText = total.toString();
-    		paidText = paid.toString();
-    		openText = open.toString();
+			
+			Money open = new Money(total);
+			open.subtractMoney(paid);
+			
+			totalText = total.toString();
+			paidText = paid.toString();
+			openText = open.toString();
 		}
-
+		
 		totalLabel.setText(totalText);
 		paidLabel.setText(paidText);
 		openLabel.setText(openText);
 	}
-
+	
 	/*
 	 * SelectionListener methods
 	 */
-	
-    public void selectionEvent(PersistentObject obj) {
-        if (obj instanceof Patient) {
-            Patient selectedPatient = (Patient) obj;
 
-            setPatient(selectedPatient);
-        }
-    }
-
-    public void clearEvent(Class template) {
-        if (template.equals(Patient.class)) {
-            setPatient(null);
-        }
-    }
-    
-    /*
-     * ActivationListener
-     */
-    
-    public void activation(boolean mode) {
-    	// nothing to do
-    }
-
-    public void visible(boolean mode) {
-        if (mode == true) {
-            GlobalEvents.getInstance().addSelectionListener(this);
-            
-            Patient patient = GlobalEvents.getSelectedPatient();
-            setPatient(patient);
-        } else {
-            GlobalEvents.getInstance().removeSelectionListener(this);
-            
-            setPatient(null);
-        }
-    };
-
-
-	/* ******
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
-	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist.
-	 * Gibt es da keine einfachere Methode?
-	 */ 
-	public int promptToSaveOnClose() {
-		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
-	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
-	public void doSaveAs() { /* leer */}
-	public boolean isDirty() {
-		return true;
-	}
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	public boolean isSaveOnCloseNeeded() {
-		return true;
-	}
-	/*
-	class AccountEntry {
-		TimeTool date;
-		Money amount;
-		String remarks;
-		
-		AccountEntry(TimeTool date, Money amount, String remarks) {
-			this.date = date;
-			this.amount = amount;
-			this.remarks = remarks;
+	public void selectionEvent(PersistentObject obj){
+		if (obj instanceof Patient) {
+			Patient selectedPatient = (Patient) obj;
 			
-			if (remarks == null) {
-				remarks = "";
-			}
+			setPatient(selectedPatient);
 		}
 	}
-	*/
 	
+	public void clearEvent(Class template){
+		if (template.equals(Patient.class)) {
+			setPatient(null);
+		}
+	}
+	
+	/*
+	 * ActivationListener
+	 */
+
+	public void activation(boolean mode){
+	// nothing to do
+	}
+	
+	public void visible(boolean mode){
+		if (mode == true) {
+			GlobalEvents.getInstance().addSelectionListener(this);
+			
+			Patient patient = GlobalEvents.getSelectedPatient();
+			setPatient(patient);
+		} else {
+			GlobalEvents.getInstance().removeSelectionListener(this);
+			
+			setPatient(null);
+		}
+	};
+	
+	/*
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
+	 */
+	public int promptToSaveOnClose(){
+		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
+				: ISaveablePart2.NO;
+	}
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */}
+	
+	public void doSaveAs(){ /* leer */}
+	
+	public boolean isDirty(){
+		return true;
+	}
+	
+	public boolean isSaveAsAllowed(){
+		return false;
+	}
+	
+	public boolean isSaveOnCloseNeeded(){
+		return true;
+	}
+	
+	/*
+	 * class AccountEntry { TimeTool date; Money amount; String remarks;
+	 * 
+	 * AccountEntry(TimeTool date, Money amount, String remarks) { this.date = date; this.amount =
+	 * amount; this.remarks = remarks;
+	 * 
+	 * if (remarks == null) { remarks = ""; } } }
+	 */
+
 	private void makeActions(){
 		exportToClipboardAction = new Action("Export (Zwischenablage)") {
-            {
-                setToolTipText("Zusammenfassung in Zwischenablage kopieren");
-            }
-			public void run() {
+			{
+				setToolTipText("Zusammenfassung in Zwischenablage kopieren");
+			}
+			
+			public void run(){
 				exportToClipboard();
 			}
 		};
@@ -431,7 +427,7 @@ ActivationListener, ISaveablePart2 {
 		GlobalActions.registerActionHandler(this, exportToClipboardAction);
 	}
 	
-	private void exportToClipboard() {
+	private void exportToClipboard(){
 		String clipboardText = "";
 		String lineSeparator = System.getProperty("line.separator");
 		
@@ -439,7 +435,7 @@ ActivationListener, ISaveablePart2 {
 			List<Rechnung> rechnungen = getRechnungen(actPatient);
 			StringBuffer sbTable = new StringBuffer();
 			StringBuffer sbHeader = new StringBuffer();
-
+			
 			sbHeader.append(COLUMN_TEXT[NUMBER]);
 			sbHeader.append("\t");
 			sbHeader.append(COLUMN_TEXT[DATE]);
@@ -453,7 +449,7 @@ ActivationListener, ISaveablePart2 {
 			sbHeader.append(COLUMN_TEXT[GARANT]);
 			sbHeader.append(lineSeparator);
 			sbTable.append(sbHeader);
-
+			
 			for (Rechnung rechnung : rechnungen) {
 				StringBuffer sbLine = new StringBuffer();
 				sbLine.append(rechnung.get("RnNummer"));
@@ -470,18 +466,22 @@ ActivationListener, ISaveablePart2 {
 				sbLine.append(lineSeparator);
 				sbTable.append(sbLine);
 			}
-
+			
 			clipboardText = sbTable.toString();
 		} else {
 			clipboardText = "Keine Rechnungen verfügbar.";
 		}
-
-		Clipboard clipboard = new Clipboard(Desk.theDisplay);
+		
+		Clipboard clipboard = new Clipboard(Desk.getDisplay());
 		TextTransfer textTransfer = TextTransfer.getInstance();
-		Transfer[] transfers = new Transfer[]{textTransfer};
-		Object[] data = new Object[] {clipboardText};
+		Transfer[] transfers = new Transfer[] {
+			textTransfer
+		};
+		Object[] data = new Object[] {
+			clipboardText
+		};
 		clipboard.setContents(data, transfers);
 		clipboard.dispose();
 	}
-
+	
 }

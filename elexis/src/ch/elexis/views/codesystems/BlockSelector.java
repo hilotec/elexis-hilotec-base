@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockSelector.java 2500 2007-06-08 09:56:34Z danlutz $
+ *  $Id: BlockSelector.java 4743 2008-12-04 21:37:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -100,7 +100,7 @@ public class BlockSelector extends CodeSelectorFactory {
 				Object o=cv.getSelection()[0];
 				if(o instanceof Leistungsblock){
 					Leistungsblock lb=(Leistungsblock)o;
-					InputDialog dlg=new InputDialog(Desk.theDisplay.getActiveShell(),
+					InputDialog dlg=new InputDialog(Desk.getTopShell(),
 							"Block umbenennen","Geben Sie bitte einen neuen Namen für den Block ein",
 							lb.get("Name"),null);
 					if(dlg.open()==Dialog.OK){
