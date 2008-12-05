@@ -1,5 +1,8 @@
-PLAF in Elexis 1.4.  -  G. Weirich 12/09
-========================================
+** $Id: readme.txt 4754 2008-12-05 08:10:20Z rgw_ch $ **
+
+
+PLAF in Elexis 1.4.
+===================
 
 
 "plaf" (pluggable look and feel), aka "personality" is a technique to allow the user to
@@ -21,4 +24,33 @@ is found in the plaf, a default Icon from rsc/ will be used.
 
 View Icons
 ==========
-A View can define the following code:
+A view can define its icon from a plaf as follows:
+
+public class MyView extends ViewPart{
+	 static final String ICON="partname_view";
+
+	....
+	public void createPartControl(Composite parent) {
+    		Image icon=Desk.getImage(ICON);
+    		if(icon!=null){
+    			setTitleImage(icon);
+    		}
+		...
+	}
+	....
+}
+
+In this code the view's icon will be searched in the plaf first, and if not found
+the icon from plugin.xml will be used.
+The name of the image mus be the filename without extension. in the above example, the
+framework will look in the current plaf directory for the following files:
+
+	partname_view.png
+	partname_view.jpg
+	partnmame_view.ico
+
+in that order. The first matching file will be used as part title image.
+
+
+Perspective Icons
+=================
