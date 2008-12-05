@@ -1,5 +1,6 @@
-** $Id: readme.txt 4754 2008-12-05 08:10:20Z rgw_ch $ **
-
+********************************************************
+** $Id: readme.txt 4755 2008-12-05 08:15:38Z rgw_ch $ **
+********************************************************
 
 PLAF in Elexis 1.4.
 ===================
@@ -54,3 +55,11 @@ in that order. The first matching file will be used as part title image.
 
 Perspective Icons
 =================
+The Icons shown in the Window->Open Perspective->Other.. Menu are always taken from
+the declaration in plugin.xml. But we can change the icons of the toolbar programmatically:
+A perspektive should plug into the ch.elexis.Sidebar extension-point and declare the attribute
+"icon" (This attribute is new in Elexis 1.4). The attribute value is a basename of an image
+file (as explained above in "View Icons"). The framework will look in the plaf directory on 
+creating the toolbar and only if no mathcing image ios found, it will use the icon from the
+plugin.xml declaration.
+ 
