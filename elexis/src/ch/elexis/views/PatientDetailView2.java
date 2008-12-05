@@ -8,28 +8,36 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientDetailView2.java 3916 2008-05-11 14:48:53Z rgw_ch $
+ *  $Id: PatientDetailView2.java 4753 2008-12-05 06:24:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Patient;
 
 public class PatientDetailView2 extends ViewPart implements ISaveablePart2{
     public static final String ID="ch.elexis.PatDetail_v2";
+    static final String ICON="patientdetail_view";
     Patientenblatt2 pb;
 
+    
     @Override
     public void createPartControl(Composite parent)
     {
+    	Image icon=Desk.getImage(ICON);
+    	if(icon!=null){
+    		setTitleImage(icon);
+    	}
     	setPartName("Patient Detail");
         parent.setLayout(new FillLayout());
         pb=new Patientenblatt2(parent,getViewSite());
