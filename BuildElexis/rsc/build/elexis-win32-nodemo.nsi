@@ -10,7 +10,7 @@ Name Elexis
 !define COMPANY "G. Weirich"
 !define URL http://www.elexis.ch
 
-!define src "$%SOFTWARE%\elexis\deploy\${PRODUCTNAME}-${VERSION}"
+!define src "$%SOFTWARE%\elexis\deploy_140\${PRODUCTNAME}-${VERSION}"
 !define ooodir "$%SOFTWARE%\elexis\ooo"
 
 # MUI defines
@@ -45,7 +45,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE German
 
 # Installer attributes
-OutFile "$%SOFTWARE%\elexis\deploy\output\elexis-windows-${VERSION}.exe"
+OutFile "$%SOFTWARE%\elexis\deploy_140\output\elexis-windows-${VERSION}.exe"
 InstallDir $PROGRAMFILES\Elexis
 CRCCheck on
 XPStyle on
