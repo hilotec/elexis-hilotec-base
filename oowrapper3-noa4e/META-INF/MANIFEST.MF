@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Oowrapper3 Plug-in
 Bundle-SymbolicName: ch.elexis.oowrapper3;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: oowrapper3.Activator
+Bundle-Activator: ch.elexis.oowrapper3.Activator
 Bundle-Vendor: elexis.ch
 Require-Bundle: org.eclipse.core.runtime,
  ch.elexis;bundle-version="1.4.0",

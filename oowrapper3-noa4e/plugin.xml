@@ -4,14 +4,14 @@
    <extension
          point="ch.elexis.Text">
       <Texterweiterung
-            Klasse="oowrapper3.TextContainer"
+            Klasse="ch.elexis.oowrapper3.TextContainer"
             name="OOWrapper3">
       </Texterweiterung>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="oowrapper3.View"
+            class="ch.elexis.oowrapper3.View"
             id="ch.elexis.oowrapper3.view"
             name="OOWrapper"
             restorable="true">
