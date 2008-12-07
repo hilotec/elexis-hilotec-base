@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="ch.elexis.Text">
+      <Texterweiterung
+            Klasse="oowrapper3.TextContainer"
+            name="OOWrapper3">
+      </Texterweiterung>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="oowrapper3.View"
+            id="ch.elexis.oowrapper3.view"
+            name="OOWrapper"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
