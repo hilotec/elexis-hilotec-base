@@ -30,8 +30,6 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.bzip2.CBZip2InputStream;
 import org.apache.commons.compress.bzip2.CBZip2OutputStream;
 
-import com.sun.java_cup.internal.internal_error;
-
 import ch.rgw.compress.CompEx;
 import ch.rgw.compress.GLZInputStream;
 import ch.rgw.compress.GLZOutputStream;
