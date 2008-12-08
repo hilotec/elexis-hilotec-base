@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DetailDisplay.java 2883 2007-07-24 05:17:52Z rgw_ch $
+ *    $Id: DetailDisplay.java 4772 2008-12-08 13:36:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.views;
 
@@ -30,44 +30,44 @@ import ch.elexis.views.IDetailDisplay;
 public class DetailDisplay implements IDetailDisplay {
 	Form form;
 	LabeledInputField.AutoForm tblPls;
-	InputData[] data=new InputData[]{
-			new InputData("Kuerzel"), //$NON-NLS-1$
-			new InputData("Text"),
+	InputData[] data = new InputData[] {
+		new InputData("Kuerzel"), //$NON-NLS-1$
+		new InputData("Text"),
 	};
 	Text tComment;
-		
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		form=Desk.theToolkit.createForm(parent);
-		TableWrapLayout twl=new TableWrapLayout();
+	
+	public Composite createDisplay(Composite parent, IViewSite site){
+		form = Desk.getToolkit().createForm(parent);
+		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-			
-		tblPls=new LabeledInputField.AutoForm(form.getBody(),data);
-	        
-	    TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
-	    twd.grabHorizontal=true;
-	    tblPls.setLayoutData(twd);
-	    TableWrapData twd2=new TableWrapData(TableWrapData.FILL_GRAB);
-	    tComment=Desk.theToolkit.createText(form.getBody(), "",SWT.BORDER);
-	    tComment.setLayoutData(twd2);
-	    return form.getBody();
-
+		
+		tblPls = new LabeledInputField.AutoForm(form.getBody(), data);
+		
+		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
+		twd.grabHorizontal = true;
+		tblPls.setLayoutData(twd);
+		TableWrapData twd2 = new TableWrapData(TableWrapData.FILL_GRAB);
+		tComment = Desk.getToolkit().createText(form.getBody(), "", SWT.BORDER);
+		tComment.setLayoutData(twd2);
+		return form.getBody();
+		
 	}
-
-	public void display(Object obj) {
-		if(obj instanceof Eigendiagnose){	// should always be true...
-			Eigendiagnose ls=(Eigendiagnose)obj;
+	
+	public void display(Object obj){
+		if (obj instanceof Eigendiagnose) { // should always be true...
+			Eigendiagnose ls = (Eigendiagnose) obj;
 			form.setText(ls.getLabel());
 			tblPls.reload(ls);
 			tComment.setText(ls.get("Kommentar"));
 		}
 	}
-
-	public Class getElementClass() {
+	
+	public Class getElementClass(){
 		return Eigendiagnose.class;
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return Eigendiagnose.CODESYSTEM_NAME;
 	}
-
+	
 }
