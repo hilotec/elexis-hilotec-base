@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalDetailDisplay.java 3104 2007-09-06 18:58:23Z rgw_ch $
+ *  $Id: MedicalDetailDisplay.java 4770 2008-12-08 13:35:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -28,60 +28,61 @@ import ch.elexis.views.IDetailDisplay;
 import ch.elexis.views.artikel.Artikeldetail;
 
 public class MedicalDetailDisplay implements IDetailDisplay {
-
-	FormToolkit tk=Desk.theToolkit;
+	
+	FormToolkit tk = Desk.getToolkit();
 	ScrolledForm form;
 	LabeledInputField.AutoForm tblArtikel;
 	LabeledInputField ifName;
 	Text tName;
 	Medical act;
 	
-	public Composite createDisplay(Composite parent, IViewSite site) {
+	public Composite createDisplay(Composite parent, IViewSite site){
 		parent.setLayout(new FillLayout());
-		form=tk.createScrolledForm(parent);
-		Composite ret=form.getBody();
-		TableWrapLayout twl=new TableWrapLayout();
+		form = tk.createScrolledForm(parent);
+		Composite ret = form.getBody();
+		TableWrapLayout twl = new TableWrapLayout();
 		ret.setLayout(twl);
 		
-        ifName=new LabeledInputField(ret,"Name");
-        ifName.setLayoutData(new TableWrapData(TableWrapData.FILL));
-        tName=(Text)ifName.getControl();
-		tName.addFocusListener(new FocusAdapter(){
-
+		ifName = new LabeledInputField(ret, "Name");
+		ifName.setLayoutData(new TableWrapData(TableWrapData.FILL));
+		tName = (Text) ifName.getControl();
+		tName.addFocusListener(new FocusAdapter() {
+			
 			@Override
-			public void focusLost(FocusEvent e) {
-				if(act!=null){
+			public void focusLost(FocusEvent e){
+				if (act != null) {
 					act.setInternalName(tName.getText());
 				}
 				super.focusLost(e);
 			}
 			
 		});
-		tblArtikel=new LabeledInputField.AutoForm(ret,Artikeldetail.getFieldDefs(parent.getShell()));
-        
-        TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
-        twd.grabHorizontal=true;
-        tblArtikel.setLayoutData(twd);
-      
+		tblArtikel =
+			new LabeledInputField.AutoForm(ret, Artikeldetail.getFieldDefs(parent.getShell()));
+		
+		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
+		twd.grabHorizontal = true;
+		tblArtikel.setLayoutData(twd);
+		
 		return ret;
 	}
-
-	public Class getElementClass() {
+	
+	public Class getElementClass(){
 		return Medical.class;
 	}
-
-	public void display(Object obj) {
-		if(obj instanceof Medical){
-			act=(Medical)obj;
+	
+	public void display(Object obj){
+		if (obj instanceof Medical) {
+			act = (Medical) obj;
 			form.setText(act.getLabel());
 			tblArtikel.reload(act);
 			ifName.setText(act.getInternalName());
 		}
-
+		
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return "Medical";
 	}
-
+	
 }
