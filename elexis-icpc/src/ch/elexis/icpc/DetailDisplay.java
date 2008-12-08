@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DetailDisplay.java 1043 2006-10-05 15:00:16Z rgw_ch $
+ *    $Id: DetailDisplay.java 4767 2008-12-08 13:34:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -27,53 +27,54 @@ import ch.elexis.views.IDetailDisplay;
 
 public class DetailDisplay implements IDetailDisplay {
 	Text tLang, tICD, tCriteria, tInclude, tExclude, tConsider, tNote;
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk = Desk.getToolkit();
 	Form form;
-
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		//parent.setLayout(new FillLayout());
-		Composite wrapper=new Composite(parent,SWT.None);
+	
+	public Composite createDisplay(Composite parent, IViewSite site){
+		// parent.setLayout(new FillLayout());
+		Composite wrapper = new Composite(parent, SWT.None);
 		wrapper.setLayoutData(new GridLayout());
 		wrapper.setLayout(new GridLayout());
-		form=tk.createForm(wrapper);
+		form = tk.createForm(wrapper);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Composite ret=form.getBody();
-		ret.setLayout(new GridLayout(1,true));
+		Composite ret = form.getBody();
+		ret.setLayout(new GridLayout(1, true));
 		
 		tk.createLabel(ret, "Text:");
-		tLang=SWTHelper.createText(tk, ret, 2,SWT.READ_ONLY|SWT.MULTI|SWT.WRAP);
-		tk.createSeparator(ret, SWT.SEPARATOR|SWT.HORIZONTAL);
+		tLang = SWTHelper.createText(tk, ret, 2, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+		tk.createSeparator(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		
-		tk.createLabel(ret,"ICD-10 Entsprechungen:");
-		tICD=SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP);
-		tk.createSeparator(ret, SWT.HORIZONTAL|SWT.SEPARATOR);
-
+		tk.createLabel(ret, "ICD-10 Entsprechungen:");
+		tICD = SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+		tk.createSeparator(ret, SWT.HORIZONTAL | SWT.SEPARATOR);
+		
 		tk.createLabel(ret, "Kriterien:");
-		tCriteria=SWTHelper.createText(tk,ret, 3, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP);
-		tk.createSeparator(ret, SWT.HORIZONTAL|SWT.SEPARATOR);
+		tCriteria = SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+		tk.createSeparator(ret, SWT.HORIZONTAL | SWT.SEPARATOR);
 		
-		tk.createLabel(ret,"Einschliesslich:");
-		tInclude=SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP);
-		tk.createSeparator(ret, SWT.HORIZONTAL|SWT.SEPARATOR);;
+		tk.createLabel(ret, "Einschliesslich:");
+		tInclude = SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+		tk.createSeparator(ret, SWT.HORIZONTAL | SWT.SEPARATOR);
+		;
 		
-		tk.createLabel(ret,"Ausgeschlossen:");
-		tExclude=SWTHelper.createText(tk,ret, 3, SWT.READ_ONLY|SWT.WRAP|SWT.MULTI);
-		tk.createSeparator(ret, SWT.HORIZONTAL|SWT.SEPARATOR);
+		tk.createLabel(ret, "Ausgeschlossen:");
+		tExclude = SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
+		tk.createSeparator(ret, SWT.HORIZONTAL | SWT.SEPARATOR);
 		
-		tk.createLabel(ret,"zu berücksichtigen:");
-		tConsider=SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY|SWT.MULTI|SWT.WRAP);
-		tk.createSeparator(ret, SWT.HORIZONTAL|SWT.SEPARATOR);
+		tk.createLabel(ret, "zu berücksichtigen:");
+		tConsider = SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+		tk.createSeparator(ret, SWT.HORIZONTAL | SWT.SEPARATOR);
 		
-		tk.createLabel(ret,"Bemerkungen:");
-		tNote=SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY|SWT.WRAP|SWT.MULTI);
+		tk.createLabel(ret, "Bemerkungen:");
+		tNote = SWTHelper.createText(tk, ret, 3, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		
-		//tk.adapt(ret);
+		// tk.adapt(ret);
 		return ret;
 	}
-
-	public void display(Object obj) {
-		if(obj instanceof IcpcCode){
-			IcpcCode ipc=(IcpcCode)obj;
+	
+	public void display(Object obj){
+		if (obj instanceof IcpcCode) {
+			IcpcCode ipc = (IcpcCode) obj;
 			form.setText(IcpcCode.checkNull(ipc.get("short")));
 			tLang.setText(IcpcCode.checkNull(ipc.get("text")));
 			tICD.setText(IcpcCode.checkNull(ipc.get("icd10")));
@@ -82,17 +83,17 @@ public class DetailDisplay implements IDetailDisplay {
 			tExclude.setText(IcpcCode.checkNull(ipc.get("exclusion")));
 			tNote.setText(IcpcCode.checkNull(ipc.get("note")));
 			tConsider.setText(IcpcCode.checkNull(ipc.get("consider")));
-			//form.reflow(true);
+			// form.reflow(true);
 		}
-
+		
 	}
-
-	public Class getElementClass() {
+	
+	public Class getElementClass(){
 		return IcpcCode.class;
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return "ICPC";
 	}
-
+	
 }
