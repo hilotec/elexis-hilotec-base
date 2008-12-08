@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 4727 2008-12-04 12:04:49Z rgw_ch $
+ * $Id: Patientenblatt.java 4771 2008-12-08 13:36:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -120,7 +120,7 @@ public class Patientenblatt extends Composite implements GlobalEvents.SelectionL
 		viewsite = site;
 		parent.setLayout(new FillLayout());
 		setLayout(new FillLayout());
-		tk = Desk.theToolkit;
+		tk = Desk.getToolkit();
 		form = tk.createScrolledForm(this);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);

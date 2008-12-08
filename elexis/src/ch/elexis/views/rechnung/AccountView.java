@@ -10,7 +10,7 @@
  *    Gerry Weirich - adapted to use the new AccountTransaction-class
  *    				  actions added
  *    
- *  $Id: AccountView.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: AccountView.java 4771 2008-12-08 13:36:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -101,7 +101,7 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 		initializeJobs();
 		
 		parent.setLayout(new FillLayout());
-		tk = Desk.theToolkit;
+		tk = Desk.getToolkit();
 		form = tk.createForm(parent);
 		form.getBody().setLayout(new GridLayout(1, false));
 		

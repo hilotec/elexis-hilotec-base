@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - adapted for importing data from other databases
  *    
- *  $Id: DBImportFirstPage.java 3756 2008-03-28 17:33:20Z rgw_ch $
+ *  $Id: DBImportFirstPage.java 4771 2008-12-08 13:36:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.wizards;
 
@@ -36,81 +36,82 @@ public class DBImportFirstPage extends WizardPage {
 	List dbTypes;
 	Text server, dbName;
 	String defaultUser, defaultPassword;
-	JdbcLink j=null;
+	JdbcLink j = null;
 	
-	static final String[] supportedDB=new String[]{"mySQl","PostgreSQL", "ODBC"};
-    static final int MYSQL = 0;
-    static final int POSTGRESQL = 1;
-    static final int ODBC = 2;
-    
-	public DBImportFirstPage(String pageName) {
-		super(Messages.getString("DBImportFirstPage.connection"),Messages.getString("DBImportFirstPage.typeOfDB"),Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] supportedDB = new String[] {
+		"mySQl", "PostgreSQL", "ODBC"
+	};
+	static final int MYSQL = 0;
+	static final int POSTGRESQL = 1;
+	static final int ODBC = 2;
+	
+	public DBImportFirstPage(String pageName){
+		super(
+			Messages.getString("DBImportFirstPage.connection"), Messages.getString("DBImportFirstPage.typeOfDB"), Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		setMessage(Messages.getString("DBImportFirstPage.selectType") //$NON-NLS-1$
-                + Messages.getString("DBImportFirstPage.enterNameODBC")); //$NON-NLS-1$
+			+ Messages.getString("DBImportFirstPage.enterNameODBC")); //$NON-NLS-1$
 		setDescription(Messages.getString("DBImportFirstPage.theDesrciption")); //$NON-NLS-1$
 		
 	}
-
-	public DBImportFirstPage(String pageName, String title,
-			ImageDescriptor titleImage) {
+	
+	public DBImportFirstPage(String pageName, String title, ImageDescriptor titleImage){
 		super(pageName, title, titleImage);
 		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
-
 	
-	public void createControl(Composite parent) {
-		DBImportWizard wiz=(DBImportWizard)getWizard();
+	public void createControl(Composite parent){
+		DBImportWizard wiz = (DBImportWizard) getWizard();
 		
-		FormToolkit tk=Desk.theToolkit;
-		Form form=tk.createForm(parent);
+		FormToolkit tk = Desk.getToolkit();
+		Form form = tk.createForm(parent);
 		form.setText(Messages.getString("DBImportFirstPage.Connection")); //$NON-NLS-1$
-		Composite body=form.getBody();
+		Composite body = form.getBody();
 		body.setLayout(new TableWrapLayout());
-		tk.createLabel(body,Messages.getString("DBImportFirstPage.EnterType")); //$NON-NLS-1$
-		dbTypes=new List(body,SWT.BORDER);
+		tk.createLabel(body, Messages.getString("DBImportFirstPage.EnterType")); //$NON-NLS-1$
+		dbTypes = new List(body, SWT.BORDER);
 		dbTypes.setItems(supportedDB);
-		dbTypes.addSelectionListener(new SelectionAdapter(){
+		dbTypes.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int it=dbTypes.getSelectionIndex();
+			public void widgetSelected(SelectionEvent e){
+				int it = dbTypes.getSelectionIndex();
 				switch (it) {
 				case MYSQL:
 				case POSTGRESQL:
 					server.setEnabled(true);
 					dbName.setEnabled(true);
-					defaultUser="";
-					defaultPassword="";
+					defaultUser = "";
+					defaultPassword = "";
 					break;
-                case ODBC:
-                    server.setEnabled(false);
-                    dbName.setEnabled(true);
-                    defaultUser="sa";
-                    defaultPassword="";
-                    break;
+				case ODBC:
+					server.setEnabled(false);
+					dbName.setEnabled(true);
+					defaultUser = "sa";
+					defaultPassword = "";
+					break;
 				default:
 					break;
 				}
-				DBImportSecondPage sec=(DBImportSecondPage) getNextPage();
+				DBImportSecondPage sec = (DBImportSecondPage) getNextPage();
 				sec.name.setText(defaultUser);
 				sec.pwd.setText(defaultPassword);
-			
+				
 			}
 			
 		});
 		
-		tk.adapt(dbTypes,true,true);
-		tk.createLabel(body,Messages.getString("DBImportFirstPage.serverAddress")); //$NON-NLS-1$
-		server=tk.createText(body,"",SWT.BORDER);
+		tk.adapt(dbTypes, true, true);
+		tk.createLabel(body, Messages.getString("DBImportFirstPage.serverAddress")); //$NON-NLS-1$
+		server = tk.createText(body, "", SWT.BORDER);
 		
-		TableWrapData twr=new TableWrapData(TableWrapData.FILL_GRAB);
+		TableWrapData twr = new TableWrapData(TableWrapData.FILL_GRAB);
 		server.setLayoutData(twr);
-		tk.createLabel(body,Messages.getString("DBImportFirstPage.databaseName")); //$NON-NLS-1$
-		dbName=tk.createText(body,"",SWT.BORDER);
-		TableWrapData twr2=new TableWrapData(TableWrapData.FILL_GRAB);
+		tk.createLabel(body, Messages.getString("DBImportFirstPage.databaseName")); //$NON-NLS-1$
+		dbName = tk.createText(body, "", SWT.BORDER);
+		TableWrapData twr2 = new TableWrapData(TableWrapData.FILL_GRAB);
 		dbName.setLayoutData(twr2);
-		if(wiz.preset!=null && wiz.preset.length>1){
-			int idx=StringTool.getIndex(supportedDB, wiz.preset[0]);
-			if(idx<dbTypes.getItemCount()){
+		if (wiz.preset != null && wiz.preset.length > 1) {
+			int idx = StringTool.getIndex(supportedDB, wiz.preset[0]);
+			if (idx < dbTypes.getItemCount()) {
 				dbTypes.select(idx);
 			}
 			server.setText(wiz.preset[1]);

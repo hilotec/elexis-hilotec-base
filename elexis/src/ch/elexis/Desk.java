@@ -43,8 +43,7 @@ import ch.rgw.tools.StringTool;
 public class Desk implements IApplication {
 	/** @deprecated use getDisplay() */
 	public static Display theDisplay = null;
-	/** @deprecated use getToolkit() */
-	public static FormToolkit theToolkit = null;
+	private static FormToolkit theToolkit = null;
 	
 	private static ImageRegistry theImageRegistry = null;
 	private static ColorRegistry theColorRegistry = null;

@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: BillSummary.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ *  $Id: BillSummary.java 4771 2008-12-08 13:36:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -148,7 +148,7 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 	
 	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
-		tk = Desk.theToolkit;
+		tk = Desk.getToolkit();
 		form = tk.createForm(parent);
 		form.getBody().setLayout(new GridLayout(1, false));
 		

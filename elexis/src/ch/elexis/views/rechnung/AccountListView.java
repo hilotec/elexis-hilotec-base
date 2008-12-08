@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: AccountListView.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: AccountListView.java 4771 2008-12-08 13:36:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -92,7 +92,7 @@ ActivationListener, ISaveablePart2 {
 		loader = new DataLoader();
 		
 		parent.setLayout(new FillLayout());
-        tk = Desk.theToolkit;
+        tk = Desk.getToolkit();
         form = tk.createForm(parent);
 		form.getBody().setLayout(new GridLayout(1, false));
 
