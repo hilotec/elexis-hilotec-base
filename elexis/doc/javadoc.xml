@@ -6,7 +6,7 @@
 		auswählen. Von der Kommandozeile aus: ant -f javadoc.xml
 		
 		Dadurch wird jeweils die neueste Version der Dokumentation erstellt.
-		$Id: javadoc.xml 23 2006-03-24 15:36:01Z rgw_ch $
+		$Id: javadoc.xml 4778 2008-12-08 17:04:45Z rgw_ch $
 	-->
 <property environment="env"/>
 <property name="eclipse" value="${env.DEV}\eclipse"/>
@@ -91,14 +91,17 @@
 		 nonavbar="false"
 		 notree="false"
 		 overview="overview.html"
-		 packagenames="com.tiff.common.ui.datepicker,ch.elexis.util,ch.elexis.actions,ch.elexis.views,
-		 	ch.elexis,ch.elexis.preferences,ch.elexis.admin,ch.elexis.data,ch.elexis.wizards" 
+		 packagenames="ch.elexis"
+ 
                  source="1.5"
 	         sourcepath="../src"
 	         splitindex="true"
 	         use="true"
 	         version="true"
 	/>
+	   <!-- , ch.elexis.util,ch.elexis.actions,ch.elexis.views,
+	            ch.elexis,ch.elexis.preferences,ch.elexis.admin,ch.elexis.data,ch.elexis.wizards,ch.elexis.data.cache,
+	        ch.elexis.dialogs,ch.elexis.exchange"-->
 	<copy file="../rsc/elexis-logo.gif" tofile="../devdoc/elexis-logo.gif"/>
 
 </target>

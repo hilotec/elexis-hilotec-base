@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AbstractDataLoaderJob.java 1131 2006-10-19 13:56:13Z rgw_ch $
+ * $Id: AbstractDataLoaderJob.java 4778 2008-12-08 17:04:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -24,6 +24,9 @@ import ch.elexis.data.Query;
  * BackgroundJob, der für das Laden von Daten aus der Datenbank im Hintergrund
  * zuständig ist. Die konkrete Definition des Datenbankzugriffs ist Sache der
  * implementierenden Unterklassen.
+ * 
+ * @deprecated Die Funktionalität der BackgroundJobs kann seit Eclipse 3.0 von Eclipse-Jobs
+ * und Joblisteners übernommen werden. Neuer Code sollte direkt mit Eclipse Jobs arbeiten.
  * @author Gerry
  *
  */

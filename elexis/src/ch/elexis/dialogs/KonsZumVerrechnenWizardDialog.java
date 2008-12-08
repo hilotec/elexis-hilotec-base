@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenWizardDialog.java 4711 2008-12-03 18:09:45Z rgw_ch $
+ *  $Id: KonsZumVerrechnenWizardDialog.java 4778 2008-12-08 17:04:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -35,7 +35,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 	private static final String ALLMARKED = "Alle Fälle vorschlagen, die zum Abrechnen vorgemerkt sind und ausserdem:";
 	private static final String TAGEN_BZW_DEM = "Tagen bzw. dem";
 	private static final String RECHNUNGEN_ERSTELLEN = "Rechnungen erstellen";
-	private static final String BEHANDLUNGEN_ZUM_VERRECHNEN_AUTOMATISCH_AUSWÄHLEN = "Verrechnungsvorschlag erstellen";
+	private static final String BEHANDLUNGEN_ZUM_VERRECHNEN_AUTOMATISCH_AUSWAEHLEN = "Verrechnungsvorschlag erstellen";
 	private static final String RECHNUNGS_AUTOMATIK = "Rechnungs-Automatik";
 	private static final String TREATMENT_TRIMESTER = "Alle Behandlungen des vergangenen Quartals vorschlagen";
 	private static final String TREATMENT_AMOUNTHIGHER = "Alle Behandlungsserien vorschlagen, deren Betrag höher ist als:";
@@ -123,7 +123,7 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle(RECHNUNGS_AUTOMATIK);
-		setMessage(BEHANDLUNGEN_ZUM_VERRECHNEN_AUTOMATISCH_AUSWÄHLEN);
+		setMessage(BEHANDLUNGEN_ZUM_VERRECHNEN_AUTOMATISCH_AUSWAEHLEN);
 		getShell().setText(RECHNUNGEN_ERSTELLEN);
 	}
 

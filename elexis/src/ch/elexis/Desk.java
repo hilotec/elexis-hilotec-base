@@ -75,7 +75,7 @@ public class Desk implements IApplication {
 	public static final String IMG_MANN = "mann"; //$NON-NLS-1$
 	/** a female */
 	public static final String IMG_FRAU = "frau"; //$NON-NLS-1$
-	/** a Very Important Person */
+	/** a Very Important Person/Patient */
 	public static final String IMG_VIP = "vip"; //$NON-NLS-1$
 	
 	/** a printer */
@@ -134,6 +134,7 @@ public class Desk implements IApplication {
 	/** Clipboard symbol */
 	public static final String IMG_CLIPBOARD = "clipboard"; // $NON_NLS-1$
 	
+	
 	public Desk(){
 		getDisplay();
 		getImageRegistry();
@@ -190,20 +191,24 @@ public class Desk implements IApplication {
 	
 	}
 	
+	/**
+	 * get the base directory for images. This is dependend from the plaf chosen. If no plaf was chosen,
+	 * "modern" will be assumed.
+	 * @return a string denoting the directory with the images for the current plaf
+	 */
 	static String getImageBase(){
 		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, null);
-		if(imageBase==null){
-			imageBase="rsc/";
-		}else{
-			imageBase+="/icons/";
+		if (imageBase == null) {
+			imageBase = "/rsc/plaf/modern/icons/";
+		} else {
+			imageBase += "/icons/";
 		}
 		return imageBase;
 	}
 	
 	public static ImageRegistry getImageRegistry(){
 		if (theImageRegistry == null) {
-			theImageRegistry = new ImageRegistry(theDisplay);
-			String imageBase = getImageBase();
+			theImageRegistry = new ImageRegistry(getDisplay());
 			synchronized (theImageRegistry) {
 				theImageRegistry.put(IMG_HOME, getImageDescriptor(IMG_HOME));
 				theImageRegistry.put(IMG_ADRESSETIKETTE, getImageDescriptor(IMG_ADRESSETIKETTE));
@@ -213,7 +218,7 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_DELETE, getImageDescriptor(IMG_DELETE));
 				theImageRegistry.put(IMG_MANN, getImageDescriptor(IMG_MANN));
 				theImageRegistry.put(IMG_FRAU, getImageDescriptor(IMG_FRAU));
-				theImageRegistry.put(IMG_VIP, getImageDescriptor(imageBase + "vip.png"));
+				theImageRegistry.put(IMG_VIP, getImageDescriptor(IMG_VIP));
 				theImageRegistry.put(IMG_PRINTER, getImageDescriptor(IMG_PRINTER));
 				theImageRegistry.put(IMG_FILTER, getImageDescriptor(IMG_FILTER));
 				theImageRegistry.put(IMG_NEW, getImageDescriptor(IMG_NEW));
@@ -252,7 +257,8 @@ public class Desk implements IApplication {
 	 * with the extensions of png, gif and ico will be searched in this given order. If still no
 	 * image is found, it will be searched in rsc/
 	 * 
-	 * @param imagename the name of the image or the imagefile (without extension)
+	 * @param imagename
+	 *            the name of the image or the imagefile (without extension)
 	 * @return
 	 */
 	public static ImageDescriptor getImageDescriptor(String imagename){
@@ -265,8 +271,8 @@ public class Desk implements IApplication {
 			if (ret == null) {
 				ret = Hub.getImageDescriptor(getImageBase() + imagename + ".ico");
 			}
-			if(ret==null){
-				ret=Hub.getImageDescriptor("rsc/"+imagename);
+			if (ret == null) {
+				ret = Hub.getImageDescriptor("rsc/" + imagename);
 			}
 			if (ret != null) {
 				theImageRegistry.put(imagename, ret);
@@ -275,14 +281,20 @@ public class Desk implements IApplication {
 		return ret;
 	}
 	
+	/**
+	 * Return an image with a specified name. 
+	 * @see getImageDescriptor(String)
+	 * @param name the name of the image to retrieve
+	 * @return the Image or null if no such image was found 
+	 */
 	public static Image getImage(String name){
 		Image ret = theImageRegistry.get(name);
 		if (ret == null) {
 			ImageDescriptor id = getImageDescriptor(name);
 			if (id != null) {
 				ret = id.createImage();
-				//theImageRegistry.remove(name);
-				//theImageRegistry.put(name, ret);
+				// theImageRegistry.remove(name);
+				// theImageRegistry.put(name, ret);
 			}
 		}
 		return ret;
@@ -394,7 +406,20 @@ public class Desk implements IApplication {
 		return ret;
 	}
 	
+	/**
+	 * Run a runnable asynchroneously in the UI Thread
+	 * The method will immediately return (not wait for the runnable to exit)
+	 */
 	public static void asyncExec(Runnable runnable){
-		theDisplay.asyncExec(runnable);
+		getDisplay().asyncExec(runnable);
+	}
+
+	/**
+	 * Run a runnable synchroneously in the UI Thread.
+	 * The method will not return until the runnable exited
+	 * @param runnable
+	 */
+	public static void syncExec(Runnable runnable){
+		getDisplay().syncExec(runnable);
 	}
 }

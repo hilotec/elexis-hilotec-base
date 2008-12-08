@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 4693 2008-11-21 11:07:07Z rgw_ch $
+ * $Id: GlobalActions.java 4778 2008-12-08 17:04:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -29,7 +29,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -38,7 +37,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -66,7 +64,6 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.LoginDialog;
 import ch.elexis.PatientPerspektive;
-import ch.elexis.commands.FallPlaneRechnung;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
@@ -75,7 +72,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.NeuerFallDialog;
 import ch.elexis.dialogs.SelectFallDialog;
@@ -249,10 +245,10 @@ public class GlobalActions {
 						dlg.create();
 						dlg.setTitle(Messages.getString("GlobalActions.LoginDialogTitle")); //$NON-NLS-1$
 						dlg.setMessage(Messages.getString("GlobalActions.LoginDialogMessage")); //$NON-NLS-1$
-						//dlg.getButton(IDialogConstants.CANCEL_ID).setText("Beenden");
+						// dlg.getButton(IDialogConstants.CANCEL_ID).setText("Beenden");
 						dlg.getShell().setText(
 							Messages.getString("GlobalActions.LoginDialogShelltext")); //$NON-NLS-1$
-						if(dlg.open()==Dialog.CANCEL){
+						if (dlg.open() == Dialog.CANCEL) {
 							exitAction.run();
 						}
 					} catch (Exception ex) {
