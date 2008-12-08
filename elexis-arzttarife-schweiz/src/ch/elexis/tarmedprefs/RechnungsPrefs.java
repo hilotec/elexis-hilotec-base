@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 4748 2008-12-04 21:39:01Z rgw_ch $
+ * $Id: RechnungsPrefs.java 4773 2008-12-08 13:37:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -407,7 +407,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
 			Hyperlink hb =
-				Desk.theToolkit.createHyperlink(ret, Messages
+				Desk.getToolkit().createHyperlink(ret, Messages
 					.getString("RechnungsPrefs.FinanceInst"), SWT.NONE); //$NON-NLS-1$
 			hb.addHyperlinkListener(new HyperlinkAdapter() {
 				

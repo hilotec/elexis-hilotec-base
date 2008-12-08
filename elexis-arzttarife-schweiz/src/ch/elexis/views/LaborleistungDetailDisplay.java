@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungDetailDisplay.java 1633 2007-01-21 14:51:42Z rgw_ch $
+ * $Id: LaborleistungDetailDisplay.java 4773 2008-12-08 13:37:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -25,7 +25,7 @@ import ch.elexis.util.LabeledInputField.InputData;
 
 public class LaborleistungDetailDisplay implements IDetailDisplay {
 	Form form;
-	FormToolkit tk=Desk.theToolkit;
+	FormToolkit tk=Desk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
 	
 	InputData[] data=new InputData[]{
