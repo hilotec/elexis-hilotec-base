@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: AgendaActions.java 3971 2008-05-27 15:31:43Z rgw_ch $
+ *  $Id: AgendaActions.java 4780 2008-12-09 18:10:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -30,11 +30,27 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.dialogs.TerminStatusDialog;
 
+/**
+ * Some common actions for the agenda
+ * @author gerry
+ *
+ */
 public class AgendaActions {
-	public static IAction changeTerminStatusAction, delTerminAction, terminStatusAction;
-	public static IAction terminLeerAction;
+	
+	/** modify an appointment */
+	public static IAction changeTerminStatusAction; 
+	/** delete an appointment */
+	public static IAction delTerminAction;
+	/** Display or change the state of an appointment */
+	public static IAction terminStatusAction;
+	
+	//public static IAction terminLeerAction;
+	/** free a previously blocked time range */
 	public static IAction unblockAction;
 	
+	/**
+	 * Reflect the user's rights on the agenda actions
+	 */
 	public static void updateActions(){
 		changeTerminStatusAction.setEnabled(Hub.acl.request(ACLContributor.USE_AGENDA));
 		terminStatusAction.setEnabled(Hub.acl.request(ACLContributor.USE_AGENDA));
