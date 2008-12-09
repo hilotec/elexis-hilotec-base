@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 4703 2008-11-30 07:18:07Z rgw_ch $
+ *  $Id: Money.java 4779 2008-12-09 18:10:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;
@@ -16,8 +16,6 @@ package ch.rgw.tools;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-
-import ch.rgw.tools.StringTool;
 
 /**
  * A class representing Money (as you might have guessed) Simplifies and standardizes calculations

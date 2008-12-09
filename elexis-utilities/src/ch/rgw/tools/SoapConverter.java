@@ -31,7 +31,7 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /**
- * We try to make a simple converter frm and to SOAP without the huge overhead of Axis... This
+ * We try to make a simple converter from and to SOAP without the huge overhead of Axis... This
  * implementation deals only with a limited number of variable types.
  * 
  * @author Gerry

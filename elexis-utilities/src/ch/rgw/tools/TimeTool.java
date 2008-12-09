@@ -2,10 +2,8 @@
 
 package ch.rgw.tools;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 /**
  * Klasse zur einfachen Datum- und Zeitberarbeitung
@@ -20,50 +18,69 @@ public class TimeTool extends GregorianCalendar {
 	private static final long serialVersionUID = 0xc3efadd1L;
 	
 	public static String Version(){
-		return "3.2.0";
+		return "3.2.1";
 	}
 	
-	public static final String BEGINNING_OF_UNIX_EPOCH = "19700101"; // Erster Tag, der mit
-	// dieser Version verwendet
-	// werden kann
-	public static final String END_OF_UNIX_EPOCH = "20380118"; // Letzter Tag, der mit dieser
-	// Version verwendet werden kann
+	/** first day that can be set into a TimeTool */
+	public static final String BEGINNING_OF_UNIX_EPOCH = "19700101";
+	/** last date a TimeTool can be set to */
+	public static final String END_OF_UNIX_EPOCH = "20380118";
 	
+	/** Month names as full words */
 	public final static String[] Monate =
 		{
 			Messages.getString("TimeTool.january"), Messages.getString("TimeTool.february"), Messages.getString("TimeTool.march"), Messages.getString("TimeTool.april"), Messages.getString("TimeTool.may"), Messages.getString("TimeTool.june"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			Messages.getString("TimeTool.july"), Messages.getString("TimeTool.august"), Messages.getString("TimeTool.september"), Messages.getString("TimeTool.october"), Messages.getString("TimeTool.november"), Messages.getString("TimeTool.december")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	
+	/** Month names as three-letter-abbreviations */
 	public final static String[] Mon =
 		{
 			Messages.getString("TimeTool.jan"), Messages.getString("TimeTool.feb"), Messages.getString("TimeTool.mar"), Messages.getString("TimeTool.apr"), Messages.getString("TimeTool.may"), Messages.getString("TimeTool.jun"), Messages.getString("TimeTool.jul"), Messages.getString("TimeTool.aug"), Messages.getString("TimeTool.sep"), Messages.getString("TimeTool.oct"), Messages.getString("TimeTool.nov"), Messages.getString("TimeTool.dec")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
 	public final static String[] month_eng = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 	};
+	
+	/** Weekdays as abbreviations */
 	public final static String[] wdays =
 		{
 			Messages.getString("TimeTool.su"), Messages.getString("TimeTool.mo"), Messages.getString("TimeTool.tu"), Messages.getString("TimeTool.we"), Messages.getString("TimeTool.th"), Messages.getString("TimeTool.fr"), Messages.getString("TimeTool.sa")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+	/** weekdays as full words */
 	public final static String[] Wochentage =
 		{
 			Messages.getString("TimeTool.sunday"), Messages.getString("TimeTool.monday"), Messages.getString("TimeTool.tuesday"), Messages.getString("TimeTool.wednesday"), Messages.getString("TimeTool.thursday"), Messages.getString("TimeTool.friday"), Messages.getString("TimeTool.saturday")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	
+	/** Constant indicating a full date/time format in german notation (dd.MM.yyyyy hh:mm:ss) */
 	public static final int FULL_GER = 0;
+	/** Constant indicating a large date/time format in german notation (dd.MM.yyyyy hh:mm) */
 	public static final int LARGE_GER = 1;
+	/** Constant indicating a full time format (hh:mm:ss) */
 	public static final int TIME_FULL = 2;
+	/** Constant indicating a small time format (hh:mm) */
 	public static final int TIME_SMALL = 3;
+	/** Constant indicating a date in german notation (dd.mm.yy) */
 	public static final int DATE_GER = 4;
+	
+	/** Constant indicating a full date/time format in ISO notation (yyyyy-MM-dd hh:mm:ss) */
 	public static final int FULL_MYSQL = 5;
+	/** Constant indicating a date format in ISO notation (yyyyy-MM-dd) */
 	public static final int DATE_MYSQL = 6;
-	// Aliases fuer ISO-Format
+	/** Constant indicating a full date/time format in ISO notation (yyyyy-MM-dd hh:mm:ss) */
 	public static final int FULL_ISO = FULL_MYSQL;
+	/** Constant indicating a date format in ISO notation (yyyyy-MM-dd) */
 	public static final int DATE_ISO = DATE_MYSQL;
-	// public static final int FULL_COMPACT=7;
+	
+	/** Constant indicating a compact time format (hhmm) */
 	public static final int TIME_COMPACT = 8;
+	/** Constant indicating a compact date format (yyyyMMdd) */
 	public static final int DATE_COMPACT = 9;
+	/** Constant indicating a full date in the preferred format */
 	public static final int FULL = 10;
+	/** Constant indicating a simple date in the preferred format */
 	public static final int DATE_SIMPLE = 11;
 	public static final int WEEKDAY = 12;
+	/** Constant indicating a timestamp format (yyyyMMddhhmmss) */
 	public static final int TIMESTAMP = 13;
+	/** Constant indicating an XML Datetime format (yyyy-MM-ddThh:mm:ss) */
 	public static final int DATETIME_XML = 14;
 	
 	private static final SimpleDateFormat full_ger = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss");
@@ -86,14 +103,33 @@ public class TimeTool extends GregorianCalendar {
 	private static int defaultResolution = 1000;
 	private long resolution;
 	
+	/**
+	 * return the time as seconds
+	 * 
+	 * @return the seconds
+	 */
 	public static int getTimeInSeconds(){
 		return (int) (System.currentTimeMillis() / 1000L);
 	}
 	
+	/**
+	 * Parse a String for time information and return these in minutes
+	 * 
+	 * @param in
+	 *            a String formatted in one ofthe supported date/time formats
+	 * @return the value of the String expressed as minutes
+	 */
 	public static int getMinutesFromTimeString(final String in){
 		return getSecondsFromTimeString(in) / 60;
 	}
 	
+	/**
+	 * Parse a String for time information and return these in seconds
+	 * 
+	 * @param in
+	 *            a String formatted in one ofthe supported date/time formats
+	 * @return the value of the String expressed as seconds
+	 */
 	public static int getSecondsFromTimeString(final String in){
 		int[] fld = parseTime(in);
 		if (fld == null) {
@@ -102,15 +138,32 @@ public class TimeTool extends GregorianCalendar {
 		return fld[0] * 3600 + fld[1] * 60 + fld[2];
 	}
 	
+	/**
+	 * create a TimeTool set to the current date/time
+	 */
 	public TimeTool(){
 		resolution = defaultResolution; // Sekunden-Auflösung
 	}
 	
+	/**
+	 * Create a TimeTool set to another TimeTool's date/time
+	 * 
+	 * @param other
+	 *            another TimeTool which will not be affected
+	 */
 	public TimeTool(final TimeTool other){
 		this.setTimeInMillis(other.getTimeInMillis());
 		resolution = other.resolution;
 	}
 	
+	/**
+	 * Create a TimeTool set to the given units
+	 * 
+	 * @param t
+	 *            number of units
+	 * @param res
+	 *            multiplicator for the units in milliseconds
+	 */
 	public TimeTool(final int t, final int res){
 		if (res != 0) {
 			resolution = res;
@@ -125,11 +178,26 @@ public class TimeTool extends GregorianCalendar {
 		}
 	}
 	
+	/**
+	 * Create a TimeTool set to a date/time as indicated by a String
+	 * 
+	 * @param pre
+	 *            a date/time String in one of the supported formats. If the String can not be
+	 *            parsed, the TimeTool will be set to the current date/time
+	 */
 	public TimeTool(final String pre){
 		set(pre);
 		resolution = defaultResolution;
 	}
 	
+	/**
+	 * Create a TimeTool set to a date/time as indicated by a String
+	 * 
+	 * @param pre
+	 *            a date/time String in one of the supported formats.
+	 * @param bFailIfInvalid
+	 *            true: Throw an Exception if pre cannot be parsed, false: set to current date/time
+	 */
 	public TimeTool(final String pre, final boolean bFailIfInvalid) throws TimeFormatException{
 		boolean formalOK = set(pre);
 		resolution = defaultResolution;
@@ -139,6 +207,12 @@ public class TimeTool extends GregorianCalendar {
 		
 	}
 	
+	/**
+	 * Create a TimeTool set to the specified milliseconds
+	 * 
+	 * @param millis
+	 *            Milliseconds after the epoch (same as System.getCirrentTimeMillis()
+	 */
 	public TimeTool(final long millis){
 		this.setTimeInMillis(millis);
 		resolution = defaultResolution;
@@ -220,7 +294,13 @@ public class TimeTool extends GregorianCalendar {
 		}
 	}
 	
-	// nur Datum setzen, Zeit unverändert lassen
+	/**
+	 * Set the date, leave the Time untouched
+	 * 
+	 * @param dat
+	 *            the new dat
+	 * @return true if dat could be parsed successfully
+	 */
 	public boolean setDate(final String dat){
 		try {
 			int[] d = parseDate(dat);
@@ -237,13 +317,24 @@ public class TimeTool extends GregorianCalendar {
 		}
 	}
 	
+	/**
+	 * Set the date to the value of another TimeTool. Leave the time untouched
+	 * 
+	 * @param o
+	 *            source that will be untouched
+	 */
 	public void setDate(final TimeTool o){
 		set(YEAR, o.get(YEAR));
 		set(MONTH, o.get(MONTH));
 		set(DAY_OF_MONTH, o.get(DAY_OF_MONTH));
 	}
 	
-	// Nur Zeit setzen. Datum unver�ndert lassen
+	/**
+	 * Set the time, leave the date untouched
+	 * 
+	 * @param o
+	 *            a source tTimeTool that will not be changed
+	 */
 	public void setTime(final TimeTool o){
 		set(HOUR_OF_DAY, o.get(HOUR_OF_DAY));
 		set(MINUTE, o.get(MINUTE));
@@ -497,8 +588,9 @@ public class TimeTool extends GregorianCalendar {
 	}
 	
 	public void addDays(final int d){
-		add(DAY_OF_YEAR,d);
+		add(DAY_OF_YEAR, d);
 	}
+	
 	public void addMinutes(final int m){
 		add(MINUTE, m);
 	}

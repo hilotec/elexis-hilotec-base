@@ -46,7 +46,7 @@ public class StringTool
 {
   
   public static final String Version(){return "2.0.0";}
-  public static final String default_charset="utf-8";
+  private static String default_charset="utf-8";
   public static final String leer="";
   public static final String space=" ";
   public static final String equals="=";
@@ -61,6 +61,26 @@ public class StringTool
   public static final int LEFT=1;
   public static final int RIGHTS=2;
   
+  /**
+   * Set the charset to use in all charset-dependent String operations
+   * @param charset_name the name of the charset (that must be valid)
+   */
+  public static void setDefaultCharset(String charset_name){
+	  default_charset=charset_name;
+  }
+  
+  /**
+   * get the configured default charset 
+   * @return the charset name (defaults to utf-8)
+   */
+  public static String getDefaultCharset(){
+	  return default_charset;
+  }
+  /**
+   * create a String from a byte array, using the configured charset (defaults to utf-8)
+   * @param bytes an array of bytes rthat constitute a String in the indicated charset.
+   * @return the created String.
+   */
   public static String createString(byte[] bytes){
 	  try {
 		return new String(bytes,default_charset);
@@ -71,6 +91,11 @@ public class StringTool
 	return null;
   }
   
+  /**
+   * Create a byte arra from a String using the configured charset (defaults to utf-8)
+   * @param string
+   * @return
+   */
   public static byte[] getBytes(String string){
 	  try {
 		return string.getBytes(default_charset);
@@ -80,9 +105,13 @@ public class StringTool
 	}
 	return null;
   }
-  /*public StringTool(String s)
-  { mine=new String(s);
-  }*/
+
+  
+  /**
+   * return the bounds of a Rectangle around a String
+   * @deprecated this ist a dependency to Swing
+   */
+  @Deprecated
   public static Rectangle2D getStringBounds(final String s, final Graphics g)
   { if(isNothing(s)){
       return new Rectangle(0,0);
@@ -136,6 +165,13 @@ public static Vector splitV(final String m, final String delim)
   
     return v;  
   }
+  
+  /**
+   * Split a String into an ArrayList
+   * @param m the String to msplit
+   * @param delim the delimiter to split at
+   * @return an ArrayList containing at least one element without the delimiter
+   */
   @SuppressWarnings("unchecked")
 public static List<String> splitAL(final String m, final String delim)
   { ArrayList al=new ArrayList();
@@ -155,10 +191,13 @@ public static List<String> splitAL(final String m, final String delim)
      }
      return al;
   }
+  
+  
+  public static final String flattenSeparator="~#<";
   /** Wandelt eine Hashtable in einen String aus Kommagetrennten
    *  a=b-Paaren um.
    */
-  public static final String flattenSeparator="~#<";
+
   @SuppressWarnings("unchecked")
 public static String flattenStrings(final Hashtable h)
   {
@@ -201,18 +240,30 @@ public static String flattenStrings(final Hashtable h)
    * Eine String-Collection comprimieren
    * @param strings
    * @param compressMode
-   * @return
+   * @return ein byte array mit dem komprimierten Inhalt der String-Collection
    */
   public static byte[] pack(final Collection<String> strings){
 	  String res=join(strings,"\n");
 	  return CompEx.Compress(res,CompEx.ZIP);
   }
   
+  /**
+   * compress an array of single-lined Strings into a byte array
+   * @param strings an array of String that must not contain newline (\n) characters
+   * @return a byte array with the ZIP-compressed contents of the String array
+   */
   public static byte[] pack(final String[] strings){
 	  String res=join(strings,"\n");
 	  return CompEx.Compress(res,CompEx.ZIP);
   }
   
+  /**
+   * Unpack a Zip-compressed byte-Array in a List of Strings.
+   * @param pack a packed byte array as created by pack()
+   * @return an ArrayList of Strings
+   * @see pack(String[])
+   * @see pack(Collection<String>)
+   */
   public static List<String> unpack(final byte[] pack){
 	  try{
 		  String raw=new String(CompEx.expand(pack),default_charset);
@@ -228,6 +279,7 @@ public static String flattenStrings(final Hashtable h)
    * @param compressMode	GLZ, HUFF, BZIP2
    * @param ExtInfo	Je nach Kompressmode nötige zusatzinfo
    * @return das byte-Array mit der komprimierten Hashtable
+   * @deprecated compressmode is always ZIP now.
    */
   @SuppressWarnings("unchecked")
   @Deprecated
@@ -317,7 +369,7 @@ public static Hashtable fold(final byte[] flat, final int compressMode, final Ob
       
   }
   
-  static String ObjectToString(final Object o)
+  static private String ObjectToString(final Object o)
   {	
       if(o instanceof String){
           return "A"+(String)o;
@@ -342,7 +394,7 @@ public static Hashtable fold(final byte[] flat, final int compressMode, final Ob
       }
       return null;
   }
-  static Object StringToObject(final String s)
+  static private Object StringToObject(final String s)
   {
       String sx=s.substring(1);
       char pref=s.charAt(0);
@@ -366,6 +418,7 @@ public static Hashtable fold(final byte[] flat, final int compressMode, final Ob
       }
       return null;
   }
+  
   @SuppressWarnings("unchecked")
 public static Hashtable foldStrings(final String s)
   { Hashtable h=new Hashtable();
@@ -447,7 +500,7 @@ public static Hashtable foldStrings(final String s)
     }
     /**
      * Verlängert oder kürzt einen String.
-     * @param where SWT.LEFT vorne füllen, SWT.RIGHT hinten füllen
+     * @param where LEFT vorne füllen, RIGHT hinten füllen
      * @param chr Zeichen zum Füllen
      * @param src Quellstring
      * @param size erwünschte Länge
@@ -502,16 +555,6 @@ public static Hashtable foldStrings(final String s)
       return r2.replaceFirst(tren+"$","");
     }
 
-    /*
-    static public String join(Vector v, String tren)
-    { if( (v==null) || (v.size()==0)) return "";
-      StringBuffer res=new StringBuffer(100);
-      for(int i=0;i<v.size();i++)
-      { res.append(v.get(i)).append(tren);
-      }
-      String r2=res.toString();
-      return r2.replaceFirst(tren+"$","");
-    }*/
     public static String join(final Iterable<String> i, final String tren){
     	StringBuilder ret=new StringBuilder();
     	Iterator<String> it=i.iterator();
@@ -521,28 +564,9 @@ public static Hashtable foldStrings(final String s)
     			ret.append(tren);
     		}
     	}
-    	/*
-		StringBuffer ret=new StringBuffer(100);
-		for(String s:i){
-			ret.append(s).append(tren);
-		}
-		if(ret.length()>(tren.length()+1)){
-			ret.delete(ret.length()-tren.length(),20000);
-		}
-		*/
 		return ret.toString();
 	}
-/*
-    static public String join(java.util.List al, String tren)
-    { if( (al==null) || (al.size()==0)) return "";
-        StringBuffer res=new StringBuffer(100);
-        for(int i=0;i<al.size();i++)
-        { res.append(al.get(i)).append(tren);
-        }
-        String r2=res.toString();
-        return r2.replaceFirst(tren+"$","");
-    }
-    */
+
     private static final int offset=70;
     /**
      * Wandelt ein Byte-Array in einen druckbaren String um. (Alle Bytes werden in
@@ -605,7 +629,12 @@ public static Hashtable foldStrings(final String s)
     	t4+=sequence++;
         return Long.toHexString(t4)+Long.toHexString((long)(Math.random()*1000))+sequence;
       }
-      
+    
+      /**
+       * make sure a String is never null
+       * @param in a String or null
+       * @return "" if in was null, in otherwise
+       */
      public static String unNull(final String in){
     	 return (in==null)?"":in;
      }
@@ -860,24 +889,12 @@ public static Hashtable foldStrings(final String s)
     
     /**
      * String mit unterschiedlicher möglicher Schreibweise in einheitliche Schreibweise bringen
-     * @param in
-     * @return
+     * @param in ein String
+     * @return derselbe String, aber alle möglicherweise kritische Zeichen durch _ ersetzt.
      */
     public static String unambiguify(final String in){
     	String ret=in.toLowerCase();
     	ret=ret.replaceAll("[^a-z]", "_");
-    	/*
-    	ret=ret.replaceAll("ä", "ae");
-    	ret=ret.replaceAll("ö", "oe");
-    	ret=ret.replaceAll("ü", "ue");
-    	ret=ret.replaceAll("é", "e");
-    	ret=ret.replaceAll("è", "e");
-    	ret=ret.replaceAll("à", "a");
-    	ret=ret.replaceAll("â", "a");
-    	ret=ret.replaceAll("ê", "e");
-    	ret=ret.replaceAll("ë", "e");
-    	ret=ret.replaceAll("î", "i");
-    	ret=ret.replaceAll("ñ", "n");*/
     	return ret;
     }
     /** 
