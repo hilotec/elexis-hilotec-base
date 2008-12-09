@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4682 2008-11-14 17:09:03Z rgw_ch $
+ *    $Id: PersistentObject.java 4782 2008-12-09 18:10:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -123,8 +123,8 @@ public abstract class PersistentObject {
 		// cache=new EhBasedCache<String>(null);
 		/*
 		 * cacheCleaner=new Job("CacheCleaner"){ @Override protected IStatus run(final
-		 * IProgressMonitor monitor) { cache.purge(); schedule(60000L); return Status.OK_STATUS; } };
-		 * cacheCleaner.setUser(false); cacheCleaner.setPriority(Job.DECORATE);
+		 * IProgressMonitor monitor) { cache.purge(); schedule(60000L); return Status.OK_STATUS; }
+		 * }; cacheCleaner.setUser(false); cacheCleaner.setPriority(Job.DECORATE);
 		 */
 		// cacheCleaner.schedule(300000L);
 		log.log("Cache setup: default_lifetime " + default_lifetime, Log.INFOS);
@@ -143,11 +143,11 @@ public abstract class PersistentObject {
 	 * 
 	 * @return true on success
 	 * 
-	 * Verbindung mit der Datenbank herstellen. Die Verbindungsparameter werden aus den übergebenen
-	 * Settings entnommen. Falls am angegebenen Ort keine Datenbank gefunden wird, wird eine neue
-	 * erstellt, falls ein create-Script für diesen Datenbanktyp unter rsc gefunden wurde. Wenn die
-	 * Verbindung hergestell werden konnte, werden die global Settings mit dieser Datenbank
-	 * verbunden.
+	 *         Verbindung mit der Datenbank herstellen. Die Verbindungsparameter werden aus den
+	 *         übergebenen Settings entnommen. Falls am angegebenen Ort keine Datenbank gefunden
+	 *         wird, wird eine neue erstellt, falls ein create-Script für diesen Datenbanktyp unter
+	 *         rsc gefunden wurde. Wenn die Verbindung hergestell werden konnte, werden die global
+	 *         Settings mit dieser Datenbank verbunden.
 	 * @return true für ok, false wenn keine Verbindung hergestellt werden konnte.
 	 */
 	public static boolean connect(final Settings cfg){
@@ -155,15 +155,11 @@ public abstract class PersistentObject {
 		File demo = new File(base.getParentFile().getParent() + "/demoDB");
 		log.log("Verzeichnis Demo-Datenbank: " + demo.getAbsolutePath(), Log.DEBUGMSG);
 		/*
-		if (System.getProperty("os.name").toLowerCase().startsWith("mac")) {
-			demo =
-				demo.getParentFile().getParentFile().getParentFile().getParentFile()
-					.getParentFile();
-			demo = new File(demo, "demoDB");
-			log.log("Verzeichnis Demo-Datenbank mac-korrigiert: " + demo.getAbsolutePath(),
-				Log.DEBUGMSG);
-		}
-		*/
+		 * if (System.getProperty("os.name").toLowerCase().startsWith("mac")) { demo =
+		 * demo.getParentFile().getParentFile().getParentFile().getParentFile() .getParentFile();
+		 * demo = new File(demo, "demoDB"); log.log("Verzeichnis Demo-Datenbank mac-korrigiert: " +
+		 * demo.getAbsolutePath(), Log.DEBUGMSG); }
+		 */
 		if (demo.exists() && demo.isDirectory()) {
 			j = JdbcLink.createInProcHsqlDBLink(demo.getAbsolutePath() + "/db");
 			if (getConnection().connect("sa", "")) {
@@ -219,10 +215,11 @@ public abstract class PersistentObject {
 			java.io.InputStream is = null;
 			Stm stm = null;
 			try {
-				String createscript=Hub.getBasePath()+File.separator+"rsc"+File.separator+"createDB.script";
-				is=new FileInputStream(createscript);
-				//Resource rsc = new Resource("ch.elexis.data");
-				//is = rsc.getInputStream("createDB.script");
+				String createscript =
+					Hub.getBasePath() + File.separator + "rsc" + File.separator + "createDB.script";
+				is = new FileInputStream(createscript);
+				// Resource rsc = new Resource("ch.elexis.data");
+				// is = rsc.getInputStream("createDB.script");
 				stm = getConnection().getStatement();
 				if (stm.execScript(is, true, true) == true) {
 					Log.setAlertLevel(Log.FATALS);
@@ -1053,7 +1050,7 @@ public abstract class PersistentObject {
 			getConnection().releaseStatement(stm);
 			LinkedList<String[]> list = new LinkedList<String[]>();
 			try {
-				while ((rs!=null) && rs.next()) {
+				while ((rs != null) && rs.next()) {
 					String[] line = new String[extra.length + 1];
 					line[0] = rs.getString(abfr[1]);
 					for (int i = 1; i < extra.length + 1; i++) {
@@ -1211,10 +1208,10 @@ public abstract class PersistentObject {
 			stm.executeUpdate();
 			return 1;
 		} /*
-			 * we remove this because it creates a dependency on mysql catch (PacketTooBigException
-			 * pigex) { ExHandler.handle(pigex); SWTHelper.showError("setBytes", "Schreibfehler",
-			 * "Der Datensatz war zu gross zum Schreiben"); }
-			 */catch (Exception ex) {
+		 * we remove this because it creates a dependency on mysql catch (PacketTooBigException
+		 * pigex) { ExHandler.handle(pigex); SWTHelper.showError("setBytes", "Schreibfehler",
+		 * "Der Datensatz war zu gross zum Schreiben"); }
+		 */catch (Exception ex) {
 			log.log("Fehler beim Ausführen der Abfrage " + cmd, Log.ERRORS);
 			SWTHelper.showError("setBytes", "Schreibfehler",
 				"Es trat ein Fehler beim Schreiben auf. Eventuell war der EDatensatz zu gross.");
@@ -1327,9 +1324,9 @@ public abstract class PersistentObject {
 	 * tail=new StringBuffer(100); head.append("INSERT INTO
 	 * ").append(m[3]).append("(ID,").append(m[2]) .append(",").append(m[1]); tail.append(") VALUES
 	 * (").append(JdbcLink.wrap(StringTool.unique("aij"))).append(",")
-	 * .append(getWrappedId()).append(",").append(JdbcLink.wrap(oID)); if(extra!=null){ for(String s :
-	 * extra){ String[] def=s.split("="); if(def.length!=2){ log.log("Fehlerhafter Aufruf addToList
-	 * "+s,Log.ERRORS); return 0; } head.append(",").append(def[0]);
+	 * .append(getWrappedId()).append(",").append(JdbcLink.wrap(oID)); if(extra!=null){ for(String s
+	 * : extra){ String[] def=s.split("="); if(def.length!=2){ log.log("Fehlerhafter Aufruf
+	 * addToList "+s,Log.ERRORS); return 0; } head.append(",").append(def[0]);
 	 * tail.append(",").append(JdbcLink.wrap(def[1])); } } head.append(tail).append(")");
 	 * if(tracetable!=null){ String sql=head.toString(); doTrace(sql); return j.exec(sql); } return
 	 * j.exec(head.toString()); //j.exec("INSERT INTO ADRESS_IDENT_JOINT (IdentID,AdressID) VALUES
@@ -1576,7 +1573,7 @@ public abstract class PersistentObject {
 						return "";
 					}
 					byte[] exp = CompEx.expand(is);
-					return new String(exp, StringTool.default_charset);
+					return StringTool.createString(exp);
 					
 				case 'V':
 					byte[] in = rs.getBytes(mapped.substring(4));

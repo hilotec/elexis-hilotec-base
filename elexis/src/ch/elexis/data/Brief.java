@@ -8,11 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Brief.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: Brief.java 4782 2008-12-09 18:10:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
-
-import java.io.UnsupportedEncodingException;
 
 import ch.elexis.text.XrefExtension;
 import ch.rgw.compress.CompEx;
@@ -21,12 +19,11 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Ein Brief ist ein mit einem externen Programm erstelles Dokument. (Im Moment
- * immer OpenOffice.org). Die Klasse Briefe mit der Tabelle Briefe enthält dabei
- * die Meta-Informationen, während die private Klasse contents mit der Tabelle
- * HEAP die eigentlichen Dokumente als black box, nämlich im Binärformat des
- * erstellenden Programms, enthält. Ein Brief bezieht sich immer auf eine
- * bestimmte Konsultation, zu der er erstellt wurde.
+ * Ein Brief ist ein mit einem externen Programm erstelles Dokument. (Im Moment immer
+ * OpenOffice.org). Die Klasse Briefe mit der Tabelle Briefe enthält dabei die Meta-Informationen,
+ * während die private Klasse contents mit der Tabelle HEAP die eigentlichen Dokumente als black
+ * box, nämlich im Binärformat des erstellenden Programms, enthält. Ein Brief bezieht sich immer auf
+ * eine bestimmte Konsultation, zu der er erstellt wurde.
  * 
  * @author Gerry
  * 
@@ -40,36 +37,35 @@ public class Brief extends PersistentObject {
 	public static final String BESTELLUNG = "Bestellung";
 	public static final String RECHNUNG = "Rechnung";
 	public static final String SYSTEMPLATE = "Systemvorlagen";
-
+	
 	public static final String MIMETYPE_OO2 = "application/vnd.oasis.opendocument.text";
-
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return "BRIEFE";
 	}
-
+	
 	static {
-		addMapping("BRIEFE", "Betreff", "PatientID", "Datum=S:D:Datum",
-				"AbsenderID", "DestID", "BehandlungsID", "Typ",
-				"modifiziert=S:D:modifiziert", "geloescht", "MimeType",
-				"gedruckt=S:D:gedruckt", "Path");
+		addMapping("BRIEFE", "Betreff", "PatientID", "Datum=S:D:Datum", "AbsenderID", "DestID",
+			"BehandlungsID", "Typ", "modifiziert=S:D:modifiziert", "geloescht", "MimeType",
+			"gedruckt=S:D:gedruckt", "Path");
 	}
-
-	protected Brief() {/* leer */
+	
+	protected Brief(){/* leer */
 	}
-
-	protected Brief(String id) {
+	
+	protected Brief(String id){
 		super(id);
 	}
-
+	
 	/** Einen Brief anhand der ID aus der Datenbank laden */
-	public static Brief load(String id) {
+	public static Brief load(String id){
 		return new Brief(id);
 	}
-
+	
 	/** Einen neuen Briefeintrag erstellen */
-	public Brief(String Betreff, TimeTool Datum, Kontakt Absender,
-			Kontakt dest, Konsultation bh, String typ) {
+	public Brief(String Betreff, TimeTool Datum, Kontakt Absender, Kontakt dest, Konsultation bh,
+		String typ){
 		getConnection().setAutoCommit(false);
 		try {
 			super.create(null);
@@ -86,11 +82,13 @@ public class Brief extends PersistentObject {
 				dst = dest.getId();
 			}
 			String dat = Datum.toString(TimeTool.DATE_GER);
-			set(new String[] { "Betreff", "PatientID", "Datum", "AbsenderID",
-					"modifiziert", "DestID", "BehandlungsID", "Typ",
-					"geloescht" }, new String[] { Betreff, pat, dat,
-					Absender == null ? "" : Absender.getId(), dat, dst, bhdl,
-					typ, "0" });
+			set(new String[] {
+				"Betreff", "PatientID", "Datum", "AbsenderID", "modifiziert", "DestID",
+				"BehandlungsID", "Typ", "geloescht"
+			}, new String[] {
+				Betreff, pat, dat, Absender == null ? "" : Absender.getId(), dat, dst, bhdl, typ,
+				"0"
+			});
 			new contents(this);
 			getConnection().commit();
 		} catch (Throwable ex) {
@@ -100,33 +98,33 @@ public class Brief extends PersistentObject {
 			getConnection().setAutoCommit(true);
 		}
 	}
-
-	public void setPatient(Person k) {
+	
+	public void setPatient(Person k){
 		set("PatientID", k.getId());
 	}
-
-	public void setTyp(String typ) {
+	
+	public void setTyp(String typ){
 		set("Typ", typ);
 	}
-
-	public String getTyp() {
+	
+	public String getTyp(){
 		String t = get("Typ");
 		if (t == null) {
 			return "Brief";
 		}
 		return t;
 	}
-
+	
 	/** Speichern als Text */
-	public boolean save(String cnt) {
+	public boolean save(String cnt){
 		contents c = contents.load(getId());
 		c.save(cnt);
 		set("modifiziert", new TimeTool().toString(TimeTool.DATE_COMPACT));
 		return true;
 	}
-
+	
 	/** Speichern in Binärformat */
-	public boolean save(byte[] in, String mimetype) {
+	public boolean save(byte[] in, String mimetype){
 		if (in != null) {
 			// if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){
 			contents c = contents.load(getId());
@@ -139,38 +137,37 @@ public class Brief extends PersistentObject {
 		}
 		return false;
 	}
-
+	
 	/** Binärformat laden */
-	public byte[] loadBinary() {
+	public byte[] loadBinary(){
 		contents c = contents.load(getId());
 		return c.getBinary();
 	}
-
+	
 	/** Textformat laden */
-	public String read() {
+	public String read(){
 		contents c = contents.load(getId());
 		return c.read();
 	}
-
+	
 	/** Mime-Typ des Inhalts holen */
-	public String getMimeType() {
+	public String getMimeType(){
 		String gm = get("MimeType");
 		if (StringTool.isNothing(gm)) {
 			return MIMETYPE_OO2;
 		}
 		return gm;
 	}
-
-	public static boolean canHandle(String mimetype) {
+	
+	public static boolean canHandle(String mimetype){
 		/*
 		 * if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){ return true; }
 		 */
 		return true;
 	}
-
-	public boolean delete() {
-		getConnection().exec(
-				"UPDATE HEAP SET deleted='1' WHERE ID=" + getWrappedId());
+	
+	public boolean delete(){
+		getConnection().exec("UPDATE HEAP SET deleted='1' WHERE ID=" + getWrappedId());
 		String konsID = get("BehandlungsID");
 		if (!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))) {
 			Konsultation kons = Konsultation.load(konsID);
@@ -180,14 +177,13 @@ public class Brief extends PersistentObject {
 		}
 		return super.delete();
 	}
-
+	
 	/** Einen Brief unwiederruflich löschen */
-	public boolean remove() {
+	public boolean remove(){
 		getConnection().setAutoCommit(false);
 		try {
 			getConnection().exec("DELETE FROM HEAP WHERE ID=" + getWrappedId());
-			getConnection().exec(
-					"DELETE FROM BRIEFE WHERE ID=" + getWrappedId());
+			getConnection().exec("DELETE FROM BRIEFE WHERE ID=" + getWrappedId());
 			getConnection().commit();
 		} catch (Throwable ex) {
 			ExHandler.handle(ex);
@@ -198,88 +194,84 @@ public class Brief extends PersistentObject {
 		}
 		return true;
 	}
-
-	public String getBetreff() {
+	
+	public String getBetreff(){
 		return checkNull(get("Betreff"));
 	}
-
-	public void setBetreff(String nBetreff) {
+	
+	public void setBetreff(String nBetreff){
 		set("Betreff", nBetreff);
 	}
-
-	public String getDatum() {
+	
+	public String getDatum(){
 		return get("Datum");
 	}
-
-	public Kontakt getAdressat() {
+	
+	public Kontakt getAdressat(){
 		String dest = get("DestID");
 		return dest == null ? null : Kontakt.load(dest);
 	}
-
-	public Person getPatient() {
+	
+	public Person getPatient(){
 		Person pat = Person.load(get("PatientID"));
 		if ((pat != null) && (pat.state() > INVALID_ID)) {
 			return pat;
 		}
 		return null;
 	}
-
-	public String getLabel() {
+	
+	public String getLabel(){
 		return checkNull(get("Datum")) + " " + checkNull(get("Betreff"));
 	}
-
+	
 	private static class contents extends PersistentObject {
 		static {
 			addMapping("HEAP", "inhalt");
 		}
-
-		private contents(Brief br) {
+		
+		private contents(Brief br){
 			create(br.getId());
 		}
-
-		private contents(String id) {
+		
+		private contents(String id){
 			super(id);
 		}
-
-		byte[] getBinary() {
+		
+		byte[] getBinary(){
 			return getBinary("inhalt");
 		}
-
-		private String read() {
+		
+		private String read(){
 			byte[] raw = getBinary();
 			if (raw != null) {
-				try {
-					byte[] ret = CompEx.expand(raw);
-					return new String(ret, StringTool.default_charset);
-				} catch (UnsupportedEncodingException e) {
-					ExHandler.handle(e);
-				}
+				byte[] ret = CompEx.expand(raw);
+				return StringTool.createString(ret);
 			}
 			return "";
 		}
-
-		private void save(String contents) {
+		
+		private void save(String contents){
 			byte[] comp = CompEx.Compress(contents, CompEx.BZIP2);
 			setBinary("inhalt", comp);
 		}
-
-		private void save(byte[] contents) {
+		
+		private void save(byte[] contents){
 			setBinary("inhalt", contents);
 		}
-
+		
 		@Override
-		public String getLabel() {
+		public String getLabel(){
 			return getId();
 		}
-
-		static contents load(String id) {
+		
+		static contents load(String id){
 			return new contents(id);
 		}
-
+		
 		@Override
-		protected String getTableName() {
+		protected String getTableName(){
 			return "HEAP";
 		}
-
+		
 	}
 }
