@@ -1,5 +1,5 @@
 ********************************************************
-** $Id: readme.txt 4755 2008-12-05 08:15:38Z rgw_ch $ **
+** $Id: readme.txt 4785 2008-12-10 12:16:35Z psiska $ **
 ********************************************************
 
 PLAF in Elexis 1.4.
@@ -48,7 +48,7 @@ framework will look in the current plaf directory for the following files:
 
 	partname_view.png
 	partname_view.jpg
-	partnmame_view.ico
+	partname_view.ico
 
 in that order. The first matching file will be used as part title image.
 
