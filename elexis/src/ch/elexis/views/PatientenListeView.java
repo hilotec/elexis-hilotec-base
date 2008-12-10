@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 4795 2008-12-10 15:47:55Z rgw_ch $
+ * $Id: PatientenListeView.java 4799 2008-12-10 17:40:59Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -100,8 +100,14 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	
 	@Override
 	public void createPartControl(final Composite parent){
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		
 		this.parent = parent;
-		parent.setLayout(new GridLayout());
+		this.parent.setLayout(layout);
+		
 		cv = new CommonViewer();
 		ArrayList<String> fields = new ArrayList<String>();
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, false)) {

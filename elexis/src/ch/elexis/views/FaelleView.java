@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FaelleView.java 4063 2008-06-22 16:51:46Z rgw_ch $
+ *  $Id: FaelleView.java 4799 2008-12-10 17:40:59Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -47,13 +47,14 @@ import ch.elexis.util.ViewMenus;
 /**
  * Eine alternative, platzsparendere Fälle-View
  */
-public class FaelleView extends ViewPart implements ActivationListener, SelectionListener, BackingStoreListener{
-	public static final String ID="ch.elexis.schoebufaelle"; //$NON-NLS-1$
+public class FaelleView extends ViewPart implements ActivationListener,
+		SelectionListener, BackingStoreListener {
+	public static final String ID = "ch.elexis.schoebufaelle"; //$NON-NLS-1$
 	TableViewer tv;
 	ViewMenus menus;
 	private IAction konsFilterAction;
-	private final FallKonsFilter filter=new FallKonsFilter();
-	
+	private final FallKonsFilter filter = new FallKonsFilter();
+
 	public FaelleView() {
 		makeActions();
 	}
@@ -62,53 +63,60 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 	public void createPartControl(final Composite parent) {
 		setPartName(Messages.getString("FaelleView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
-		tv=new TableViewer(parent);
-		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1,true, 1, true));
+		tv = new TableViewer(parent);
+		tv.getControl().setLayoutData(
+				SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setContentProvider(new FaelleContentProvider());
 		tv.setLabelProvider(new FaelleLabelProvider());
-		tv.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
-		menus=new ViewMenus(getViewSite());
-		menus.createToolbar(konsFilterAction,neuerFallAction);
-		menus.createViewerContextMenu(tv, delFallAction,openFallaction,reopenFallAction,makeBillAction);
+		tv.addSelectionChangedListener(GlobalEvents.getInstance()
+				.getDefaultListener());
+		menus = new ViewMenus(getViewSite());
+		menus.createToolbar(konsFilterAction, neuerFallAction);
+		menus.createViewerContextMenu(tv, delFallAction, openFallaction,
+				reopenFallAction, makeBillAction);
 		GlobalEvents.getInstance().addActivationListener(this, this);
 		GlobalEvents.getInstance().addBackingStoreListener(this);
 		tv.setInput(getViewSite());
 	}
 
 	@Override
-	public void dispose(){
+	public void dispose() {
 		GlobalEvents.getInstance().removeActivationListener(this, this);
 		GlobalEvents.getInstance().removeBackingStoreListener(this);
 		super.dispose();
 	}
+
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
 	}
-	class FaelleLabelProvider extends DefaultLabelProvider{
+
+	class FaelleLabelProvider extends DefaultLabelProvider {
 
 		@Override
 		public Image getColumnImage(final Object element, final int columnIndex) {
-			if(element instanceof Fall){
-				Fall fall=(Fall)element;
-				if(fall.isValid()){
+			if (element instanceof Fall) {
+				Fall fall = (Fall) element;
+				if (fall.isValid()) {
 					return Desk.getImage(Desk.IMG_OK);
-				}else{
+				} else {
 					return Desk.getImage(Desk.IMG_FEHLER);
 				}
 			}
 			return super.getColumnImage(element, columnIndex);
 		}
-		
+
 	}
-	class FaelleContentProvider implements IStructuredContentProvider{
+
+	class FaelleContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(final Object inputElement) {
-			Patient act=(Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class);
-			if(act==null){
+			Patient act = (Patient) GlobalEvents.getInstance()
+					.getSelectedObject(Patient.class);
+			if (act == null) {
 				return new Object[0];
-			}else{
+			} else {
 				return act.getFaelle();
 			}
 
@@ -116,85 +124,91 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 
 		public void dispose() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+		public void inputChanged(final Viewer viewer, final Object oldInput,
+				final Object newInput) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
+
 	public void activation(final boolean mode) {
-		
+
 	}
 
 	public void visible(final boolean mode) {
-		if(mode){
+		if (mode) {
 			tv.refresh(true);
 			GlobalEvents.getInstance().addSelectionListener(this);
-		}else {
+		} else {
 			GlobalEvents.getInstance().removeSelectionListener(this);
 		}
 	}
 
 	public void clearEvent(final Class<? extends PersistentObject> template) {
-		if(template.equals(Patient.class)){
+		if (template.equals(Patient.class)) {
 			tv.refresh();
 		}
 	}
 
 	public void selectionEvent(final PersistentObject obj) {
-		if(obj instanceof Patient) {
+		if (obj instanceof Patient) {
 			tv.refresh(true);
-		}else if(obj instanceof Fall){
+		} else if (obj instanceof Fall) {
 			tv.refresh(true);
-			if(konsFilterAction.isChecked()){
-				filter.setFall((Fall)obj);
+			if (konsFilterAction.isChecked()) {
+				filter.setFall((Fall) obj);
 			}
 		}
 	}
 
 	public void reloadContents(final Class clazz) {
-		if(clazz.equals(Fall.class)){
+		if (clazz.equals(Fall.class)) {
 			tv.refresh(true);
 		}
-		
+
 	}
-	
-	private void makeActions(){
-		konsFilterAction=new Action("Konsultationen filtern",Action.AS_CHECK_BOX){
+
+	private void makeActions() {
+		konsFilterAction = new Action("Konsultationen filtern",
+				Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Nur Konsultationen dieses Falls anzeigen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
+
 			@Override
-			public void run(){
-				if(!isChecked()){
-					GlobalEvents.getInstance().getObjectFilters().unregisterObjectFilter(Konsultation.class, filter);
-				}else{
-					GlobalEvents.getInstance().getObjectFilters().registerObjectFilter(Konsultation.class, filter);
+			public void run() {
+				if (!isChecked()) {
+					GlobalEvents.getInstance().getObjectFilters()
+							.unregisterObjectFilter(Konsultation.class, filter);
+				} else {
+					GlobalEvents.getInstance().getObjectFilters()
+							.registerObjectFilter(Konsultation.class, filter);
 					filter.setFall(GlobalEvents.getSelectedFall());
 				}
 			}
-			
+
 		};
 	}
 
-	class FallKonsFilter implements IObjectFilterProvider, IFilter{
+	class FallKonsFilter implements IObjectFilterProvider, IFilter {
 
 		Fall mine;
 		boolean bDaempfung;
-		
-		void setFall(final Fall fall){
-			mine=fall;
+
+		void setFall(final Fall fall) {
+			mine = fall;
 			GlobalEvents.getInstance().fireUpdateEvent(Konsultation.class);
 		}
-		
+
 		public void activate() {
-			bDaempfung=true;
+			bDaempfung = true;
 			konsFilterAction.setChecked(true);
-			bDaempfung=false;
+			bDaempfung = false;
 		}
 
 		public void changed() {
@@ -202,9 +216,9 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 		}
 
 		public void deactivate() {
-			bDaempfung=true;
+			bDaempfung = true;
 			konsFilterAction.setChecked(false);
-			bDaempfung=false;
+			bDaempfung = false;
 		}
 
 		public IFilter getFilter() {
@@ -216,17 +230,17 @@ public class FaelleView extends ViewPart implements ActivationListener, Selectio
 		}
 
 		public boolean select(final Object toTest) {
-			if(mine==null){
+			if (mine == null) {
 				return true;
 			}
-			if(toTest instanceof Konsultation){
-				Konsultation k=(Konsultation)toTest;
-				if(k.getFall().equals(mine)){
+			if (toTest instanceof Konsultation) {
+				Konsultation k = (Konsultation) toTest;
+				if (k.getFall().equals(mine)) {
 					return true;
 				}
 			}
 			return false;
 		}
-		
+
 	}
 }

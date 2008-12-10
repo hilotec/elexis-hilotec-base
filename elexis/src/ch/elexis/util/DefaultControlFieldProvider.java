@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 4797 2008-12-10 16:19:46Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 4799 2008-12-10 17:40:59Z psiska $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -88,9 +88,10 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		// form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		// Composite ret=form.getBody();
 		Composite ret = new Composite(parent, SWT.NONE);
-		ret.setLayout(new GridLayout(2,false));
+		GridLayout layout = new GridLayout(2,false);
+		layout.marginWidth = 0;
+		ret.setLayout(layout);
 		ret.setBackground(parent.getBackground());
-		
 		
 		ImageHyperlink hClr = tk.createImageHyperlink(ret,SWT.NONE); //$NON-NLS-1$
 		hClr.setImage(Desk.getImage("cross_small"));
@@ -133,6 +134,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 			selectors[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			SWTHelper.setSelectOnFocus((Text) selectors[i].getWidget());
 		}
+
 		return ret;
 	}
 	
