@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 4019 2008-06-10 16:05:22Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 4795 2008-12-10 15:47:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -86,6 +86,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
             Composite ret=form.getBody();
 		   //Composite ret=new Composite(parent,style);
             ret.setLayout(new GridLayout(2,false));
+            ret.setBackground(parent.getBackground());
             Hyperlink hClr=tk.createHyperlink(ret,"x",SWT.NONE); //$NON-NLS-1$
 	        hClr.addHyperlinkListener(new HyperlinkAdapter(){
 
@@ -95,7 +96,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
                 }
                 
             });
-
+	        hClr.setBackground(parent.getBackground());
             Composite inner=new Composite(ret,SWT.NONE);
 	        GridLayout lRet=new GridLayout(fields.length,true);
 	        inner.setLayout(lRet);
@@ -113,6 +114,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider{
                     }
                     
                 });
+                hl.setBackground(parent.getBackground());
 	        }
 	        
 	        
