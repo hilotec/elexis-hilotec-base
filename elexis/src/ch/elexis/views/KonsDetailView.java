@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 4792 2008-12-10 15:23:09Z psiska $
+ *  $Id: KonsDetailView.java 4797 2008-12-10 16:19:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -133,6 +133,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener, Activ
 		lBeh = tk.createLabel(cDesc, "Keine Konsultation ausgewählt");
 		emFont = Desk.getFont("Helvetica", 11, SWT.BOLD);
 		lBeh.setFont(emFont);
+		lBeh.setBackground(p.getBackground());
 		hlMandant = tk.createHyperlink(cDesc, "--", SWT.NONE);
 		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
 			
@@ -148,6 +149,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener, Activ
 			}
 			
 		});
+		hlMandant.setBackground(p.getBackground());
 		// GridData gdBeh=new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
 		// lBeh.setLayoutData(gdBeh);
 		// lFall=tk.createLabel(form.getBody(),"Kein Fall ausgewählt");
