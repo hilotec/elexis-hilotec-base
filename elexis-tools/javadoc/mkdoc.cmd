@@ -1,5 +1,5 @@
 @echo off
-rem $Id: mkdoc.cmd 4781 2008-12-09 18:10:32Z rgw_ch $
+rem $Id: mkdoc.cmd 4800 2008-12-10 18:25:53Z rgw_ch $
 rem =========================
 set TOP=d:\source\elexis_trunk
 rem ==========================
@@ -33,4 +33,5 @@ call %j% elexis-privatnotizen ch
 call %j% iatrix-help-wiki org
 call %j% Laborimport-Viollier ch
 call %j% OOWrapper ch
+call %j% oowrapper3 ch
 call %j% SGAM-xChange ch
