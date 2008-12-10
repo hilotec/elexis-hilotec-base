@@ -16,7 +16,7 @@
             visible="true">
          <action
                class="ch.elexis.messages.MessageDelegate"
-               icon="icons/sprechblase.gif"
+               icon="icons/balloon.png"
                id="ch.elexis.message.show"
                label="Sende Nachricht"
                style="push"
