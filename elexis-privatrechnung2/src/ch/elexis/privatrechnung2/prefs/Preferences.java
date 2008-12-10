@@ -391,8 +391,8 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
 			Hyperlink hb =
-				Desk.theToolkit.createHyperlink(ret, Messages
-					.getString("RechnungsPrefs.FinanceInst"), SWT.NONE); //$NON-NLS-1$
+				Desk.getToolkit().createHyperlink(ret,
+					Messages.getString("RechnungsPrefs.FinanceInst"), SWT.NONE); //$NON-NLS-1$
 			hb.addHyperlinkListener(new HyperlinkAdapter() {
 				
 				@Override
