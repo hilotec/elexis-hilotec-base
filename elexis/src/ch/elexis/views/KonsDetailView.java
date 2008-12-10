@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 4757 2008-12-05 17:12:35Z rgw_ch $
+ *  $Id: KonsDetailView.java 4792 2008-12-10 15:23:09Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -468,6 +468,10 @@ public class KonsDetailView extends ViewPart implements SelectionListener, Activ
 				save();
 			}
 		};
+		
+		versionFwdAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
+		versionBackAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
+		purgeAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 	}
 	
 	public void save(){

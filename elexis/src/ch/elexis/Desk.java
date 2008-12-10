@@ -133,7 +133,10 @@ public class Desk implements IApplication {
 	public static final String IMG_LOCK_OPEN = "schloss_offen"; // $NON_NLS-1$
 	/** Clipboard symbol */
 	public static final String IMG_CLIPBOARD = "clipboard"; // $NON_NLS-1$
-	
+	/** Arrow right */
+	public static final String IMG_NEXT = "arrow_next"; // $NON_NLS-1$
+	/** Arrow left */
+	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$	
 	
 	public Desk(){
 		getDisplay();
@@ -245,7 +248,8 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_LOCK_CLOSED, getImageDescriptor(IMG_LOCK_CLOSED));
 				theImageRegistry.put(IMG_LOCK_OPEN, getImageDescriptor(IMG_LOCK_OPEN));
 				theImageRegistry.put(IMG_CLIPBOARD, getImageDescriptor(IMG_CLIPBOARD));
-				
+				theImageRegistry.put(IMG_NEXT, getImageDescriptor(IMG_NEXT));
+				theImageRegistry.put(IMG_PREVIOUS, getImageDescriptor(IMG_PREVIOUS));
 			}
 		}
 		return theImageRegistry;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 4109 2008-07-06 19:35:50Z rgw_ch $
+ *  $Id: TextView.java 4792 2008-12-10 15:23:09Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -205,7 +205,7 @@ public class TextView extends ViewPart implements ActivationListener{
 			}
 			
 		};
-        briefLadenAction.setImageDescriptor(Hub.getImageDescriptor("rsc/kuvert.ico"));
+        briefLadenAction.setImageDescriptor(Hub.getImageDescriptor("rsc/mail.png"));
         briefLadenAction.setToolTipText("Brief zum Bearbeiten öffnen");
         //briefNeuAction.setImageDescriptor(Hub.getImageDescriptor("rsc/schreiben.gif"));
         //briefNeuAction.setToolTipText("Einen neuen Brief erstellen");

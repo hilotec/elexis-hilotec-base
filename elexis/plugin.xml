@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 4788 2008-12-10 14:12:16Z psiska $ 
+<!-- $Id: plugin.xml 4792 2008-12-10 15:23:09Z psiska $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -40,7 +40,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="ch.elexis.ArtikelPerspektive"
-            icon="rsc/basket.png"
+            icon="rsc/pill.png"
             id="ch.elexis.ArtikelPerspektive"
             name="%elexis.articlePerspective"/>
       <perspective
@@ -120,28 +120,10 @@
             icon="rsc/printer.png"
             id="ch.elexis.views.TemplatePrintView"
             name="%elexis.templatePrintView"/>
-      <category
-            id="ch.elexis.messungenKategorie"
-            name="%elexis.measurementsCategory"/>
-      <category
-            id="ch.elexis.textKategorie"
-            name="%elexis.textCategory"/>
-      <category
-            id="ch.elexis.konsultationKategorie"
-            name="%elexis.konsCategory"/>
-      <category
-            id="ch.elexis.codesKategorie"
-            name="%elexis.codesCategory"/>
-      <category
-            id="ch.elexis.datenKategorie"
-            name="%elexis.dataCategory"/>
-      <category
-            id="ch.elexis.abrechnungKategorie"
-            name="%elexis.accountingCategory"/>
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.FallListeView"
-            icon="rsc/faelle.ico"
+            icon="rsc/documents_stack.png"
             id="ch.elexis.FallListeView"
             name="%elexis.caseKonsView"/>
       <view
@@ -182,6 +164,7 @@
       <view
             category="ch.elexis.datenKategorie"
             class="ch.elexis.views.KompendiumView"
+            icon="rsc/information.png"
             id="ch.elexis.Kompendium"
             name="%elexis.kompendiumView"/>
       <view
@@ -221,7 +204,7 @@
       <view
             category="ch.elexis.textKategorie"
             class="ch.elexis.views.BriefAuswahl"
-            icon="rsc/kuvert.ico"
+            icon="rsc/mail.png"
             id="ch.elexis.BriefAuswahlView"
             name="%elexis.selectLetterView"/>
       <view
@@ -278,7 +261,7 @@
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.PatHeuteView"
-            icon="rsc/calendar_day.png"
+            icon="rsc/calendar_view_day.png"
             id="ch.elexis.PatHeuteView"
             name="%elexis.patTodayView"/>
       <view
@@ -295,6 +278,7 @@
       <view
             category="ch.elexis.datenKategorie"
             class="ch.elexis.views.artikel.ArtikelView"
+            icon="rsc/pill.png"
             id="ch.elexis.artikelview"
             name="%elexis.articlesView"/>
       <view
@@ -350,7 +334,7 @@
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.FaelleView"
-            icon="rsc/faelle.ico"
+            icon="rsc/documents_stack.png"
             id="ch.elexis.schoebufaelle"
             name="%elexis.casesListView"/>
       <view
@@ -416,9 +400,28 @@
       </view>
       <view
             class="ch.elexis.views.ScriptView"
+            icon="rsc/script_code.png"
             id="ch.elexis.scriptsView"
             name="Script">
       </view>
+	<category
+            id="ch.elexis.messungenKategorie"
+            name="%elexis.measurementsCategory"/>
+      <category
+            id="ch.elexis.textKategorie"
+            name="%elexis.textCategory"/>
+      <category
+            id="ch.elexis.konsultationKategorie"
+            name="%elexis.konsCategory"/>
+      <category
+            id="ch.elexis.codesKategorie"
+            name="%elexis.codesCategory"/>
+      <category
+            id="ch.elexis.datenKategorie"
+            name="%elexis.dataCategory"/>
+      <category
+            id="ch.elexis.abrechnungKategorie"
+            name="%elexis.accountingCategory"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
