@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ * $Id: Verrechnet.java 4786 2008-12-10 13:05:37Z psiska $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -156,7 +156,7 @@ public class Verrechnet extends PersistentObject {
 	 * Einkaufskosten
 	 */
 	public Money getKosten(){
-		System.out.println(getText());
+		//System.out.println(getText());
 		return new Money(checkZero(get("EK_Kosten")));
 	}
 	

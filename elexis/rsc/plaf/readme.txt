@@ -1,5 +1,5 @@
 ********************************************************
-** $Id: readme.txt 4785 2008-12-10 12:16:35Z psiska $ **
+** $Id: readme.txt 4786 2008-12-10 13:05:37Z psiska $ **
 ********************************************************
 
 PLAF in Elexis 1.4.
@@ -14,7 +14,9 @@ the icons-feature ist implemented.
 
 It works as follows:
 The user can launch elexis with the parameter --plaf=<dir> where <dir> ist a elexis-root based
-path. The selected plaf will be remembered for the current user and used in future launches without --plaf  parameter. The only way to change a plaf is to run elexis once with a different --plaf setting.
+path. The selected plaf will be remembered for the current user and used in future 
+launches without --plaf  parameter. The only way to change a plaf is to run elexis once 
+with a different --plaf setting.
 
 
 Default Images (ch.elexis.Desk.IMG_xxx - images)
