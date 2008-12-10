@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 4631 2008-10-23 11:29:04Z rgw_ch $
+ *  $Id: NotesView.java 4802 2008-12-10 18:26:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -46,7 +48,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class NotesView extends ViewPart implements ActivationListener, SelectionListener {
-	private static final String PREFERRED_SCANSERVICE="ScanToPDFService";
+	private static final String PREFERRED_SCANSERVICE = "ScanToPDFService";
 	ScrolledForm fMaster;
 	NotesList master;
 	NotesDetail detail;
@@ -56,6 +58,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 	
 	@Override
 	public void createPartControl(Composite parent){
+		
 		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
 		fMaster = tk.createScrolledForm(sash);
 		fMaster.getBody().setLayout(new GridLayout());
@@ -72,6 +75,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 		fMaster.getToolBarManager().add(newCategoryAction);
 		fMaster.getToolBarManager().add(newNoteAction);
 		fMaster.getToolBarManager().add(delNoteAction);
+		fMaster.getToolBarManager().add(new Separator());
 		newNoteAction.setEnabled(false);
 		detail.setEnabled(false);
 		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
@@ -182,18 +186,23 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 			scanAction = new Action("Scannen...") {
 				{
 					setToolTipText("Document mit dem Scanner einlesen");
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
+					ImageDescriptor imgScanner =
+						AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.notes", "icons"
+							+ File.separator + "scanner.ico");
+					setImageDescriptor(imgScanner);
 				}
 				
 				public void run(){
 					try {
-						 Object scanner =
-							 Extensions.findBestService(PREFERRED_SCANSERVICE);
+						Object scanner = Extensions.findBestService(PREFERRED_SCANSERVICE);
 						if (scanner != null) {
-							Result<byte[]> res=(Result<byte[]>)Extensions.executeService(scanner, "acquire", new Class[0], new Object[0]);
-							if(res.isOK()){
-								Note act = (Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
-								byte[] pdf=res.get();
+							Result<byte[]> res =
+								(Result<byte[]>) Extensions.executeService(scanner, "acquire",
+									new Class[0], new Object[0]);
+							if (res.isOK()) {
+								Note act =
+									(Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
+								byte[] pdf = res.get();
 								InputDialog id =
 									new InputDialog(
 										getViewSite().getShell(),
@@ -201,35 +210,40 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 										"Bitte geben Sie einen Namen für das eben gescannte Document ein",
 										"", null);
 								if (id.open() == Dialog.OK) {
-									String name=id.getValue();
-									String basedir=Hub.localCfg.get(Preferences.CFGTREE, null);
-									if(basedir==null){
-										SWTHelper.alert("Basisverzeichnis falsch", "Es ist kein Basisverzeichnis definiert");
+									String name = id.getValue();
+									String basedir = Hub.localCfg.get(Preferences.CFGTREE, null);
+									if (basedir == null) {
+										SWTHelper.alert("Basisverzeichnis falsch",
+											"Es ist kein Basisverzeichnis definiert");
 										return;
 									}
-									File file=new File(basedir,name.replaceAll("\\s", "_")+".pdf");
-									if(!file.createNewFile()){
-										SWTHelper.alert("Importfehler", "Kann Datei "+file.getAbsolutePath()+" nicht schreiben");
+									File file =
+										new File(basedir, name.replaceAll("\\s", "_") + ".pdf");
+									if (!file.createNewFile()) {
+										SWTHelper.alert("Importfehler", "Kann Datei "
+											+ file.getAbsolutePath() + " nicht schreiben");
 										return;
 									}
-									FileOutputStream fout=new FileOutputStream(file);
-									BufferedOutputStream bout=new BufferedOutputStream(fout);
+									FileOutputStream fout = new FileOutputStream(file);
+									BufferedOutputStream bout = new BufferedOutputStream(fout);
 									bout.write(pdf);
 									bout.close();
-									Samdas samdas=new Samdas(name);
-									Samdas.Record record=samdas.getRecord();
-									Samdas.XRef xref=new Samdas.XRef(ExternalLink.ID,file.getAbsolutePath(),0,name.length());
+									Samdas samdas = new Samdas(name);
+									Samdas.Record record = samdas.getRecord();
+									Samdas.XRef xref =
+										new Samdas.XRef(ExternalLink.ID, file.getAbsolutePath(), 0,
+											name.length());
 									record.add(xref);
 									XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
-									String cnt= xo.outputString(samdas.getDocument());
-									byte[] nb=CompEx.Compress(cnt.getBytes("utf-8"), CompEx.ZIP);
+									String cnt = xo.outputString(samdas.getDocument());
+									byte[] nb = CompEx.Compress(cnt.getBytes("utf-8"), CompEx.ZIP);
 									/* Note note= */new Note(act, name, nb, "text/xml");
 									master.tv.refresh();
 								}
 								
 							}
 						}
-									
+						
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}

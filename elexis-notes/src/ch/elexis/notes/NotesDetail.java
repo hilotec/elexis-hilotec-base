@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesDetail.java 4631 2008-10-23 11:29:04Z rgw_ch $
+ *  $Id: NotesDetail.java 4802 2008-12-10 18:26:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -17,12 +17,15 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
@@ -35,6 +38,7 @@ import ch.rgw.tools.ExHandler;
 public class NotesDetail extends Composite {
 	private ETFTextPlugin etf;
 	List lRefs;
+	Text tKeywords;
 	ScrolledForm fNote, fRefs;
 	FormToolkit tk = Desk.getToolkit();
 	private IAction newRefAction, delRefAction;
@@ -52,6 +56,19 @@ public class NotesDetail extends Composite {
 		etf.createContainer(fNote.getBody(), new SaveCallback()).setLayoutData(
 			SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
+		tKeywords=tk.createText(fNote.getBody(), "");
+		tKeywords.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tKeywords.addFocusListener(new FocusAdapter(){
+
+			@Override
+			public void focusLost(FocusEvent e){
+				if(actNote!=null){
+					actNote.setKeywords(tKeywords.getText());
+				}
+				super.focusLost(e);
+			}
+			
+		});
 		fRefs = tk.createScrolledForm(sash);
 		fRefs.getBody().setLayout(new GridLayout());
 		lRefs = new List(fRefs.getBody(), SWT.SINGLE);
@@ -82,6 +99,7 @@ public class NotesDetail extends Composite {
 		fNote.setText(note.get("Title"));
 		etf.loadFromByteArray(note.getContent(), false);
 		// etf.insertText("",note.get("Contents"),SWT.LEFT);
+		tKeywords.setText(note.getKeywords());
 		lRefs.removeAll();
 		for (String s : note.getRefs()) {
 			lRefs.add(s);

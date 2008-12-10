@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4631 2008-10-23 11:29:04Z rgw_ch $
+ *  $Id: Note.java 4802 2008-12-10 18:26:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -31,14 +31,16 @@ public class Note extends PersistentObject {
 		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25),"
 			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80),"
 			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255),"
-			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,Title,Parent) VALUES('1','"
-			+ DBVERSION + "','xxx');";
+			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME
+			+ " (ID,Title,Parent) VALUES('1','" + DBVERSION + "','xxx');";
 	
-	private static final String upd031 = "ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);"+
-		"ALTER TABLE "+TABLENAME+" ADD mimetype VARCHAR(80);";
+	private static final String upd031 =
+		"ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);" + "ALTER TABLE " + TABLENAME
+			+ " ADD mimetype VARCHAR(80);";
 	
 	static {
-		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords", "mimetype");
+		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords",
+			"mimetype");
 		Note start = load("1");
 		if (!start.exists()) {
 			createTable(TABLENAME, create);
@@ -76,12 +78,18 @@ public class Note extends PersistentObject {
 	public Note(Note parent, String title, byte[] contents, String mimetype){
 		create(null);
 		set(new String[] {
-			"Title", "Datum" , "mimetype"
-		}, title, new TimeTool().toString(TimeTool.DATE_GER),mimetype);
+			"Title", "Datum", "mimetype"
+		}, title, new TimeTool().toString(TimeTool.DATE_GER), mimetype);
 		setContent(contents);
 		if (parent != null) {
 			set("Parent", parent.getId());
 		}
+	}
+	
+	public List<Note> getChildren(){
+		Query<Note> qbe = new Query<Note>(Note.class);
+		qbe.add("Parent", "=", getId());
+		return qbe.execute();
 	}
 	
 	public void setContent(byte[] cnt){
@@ -93,6 +101,14 @@ public class Note extends PersistentObject {
 		return getBinary("Contents");
 	}
 	
+	public String getKeywords(){
+		return checkNull(get("keywords"));
+	}
+	
+	public void setKeywords(String kw){
+		set("keywords",StringTool.limitLength(kw.toLowerCase(), 250));
+	}
+	
 	public List<String> getRefs(){
 		String all = get("refs");
 		if (StringTool.isNothing(all)) {
@@ -101,7 +117,6 @@ public class Note extends PersistentObject {
 		return StringTool.splitAL(all, ",");
 	}
 	
-
 	public void addRef(String ref){
 		List<String> refs = getRefs();
 		refs.add(ref);
