@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 4757 2008-12-05 17:12:35Z rgw_ch $
+ *  $Id: RezepteView.java 4788 2008-12-10 14:12:16Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -370,7 +370,7 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			};
 		addLineAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-		newRpAction.setImageDescriptor(Hub.getImageDescriptor("rsc/rpneu.ico"));
+		newRpAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 	}
 	
 	public void activation(final boolean mode){
