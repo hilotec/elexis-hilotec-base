@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 4788 2008-12-10 14:12:16Z psiska $
+ *  $Id: RezepteView.java 4789 2008-12-10 14:29:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -264,6 +264,10 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 	
 	private void makeActions(){
 		newRpAction = new Action("Neues Rezept") {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+				setToolTipText("Ein neues Rezept erstellen");
+			}
 			@Override
 			public void run(){
 				Patient act = (Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
@@ -370,7 +374,6 @@ public class RezepteView extends ViewPart implements SelectionListener, Activati
 			};
 		addLineAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-		newRpAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 	}
 	
 	public void activation(final boolean mode){
