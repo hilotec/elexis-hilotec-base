@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 4064 2008-06-22 16:52:45Z rgw_ch $
+ * $Id: ControlFieldProvider.java 4805 2008-12-11 13:58:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -40,86 +40,80 @@ import ch.elexis.util.SWTHelper;
 public class ControlFieldProvider extends DefaultControlFieldProvider {
 	Text tMedi, tSubst;
 	Button bGenerics, bGroup;
-	FormToolkit tk=Desk.getToolkit();
+	FormToolkit tk = Desk.getToolkit();
 	boolean bGenericsOnly;
 	
-	public ControlFieldProvider(final CommonViewer viewer) {
-		super(viewer, new String[]{"Medikament","Substanz","Notiz"});
+	public ControlFieldProvider(final CommonViewer viewer){
+		super(viewer, new String[] {
+			"Medikament", "Substanz", "Notiz"
+		});
 	}
-
+	
 	@Override
-	public Composite createControl(final Composite parent) {
-		Form form=tk.createForm(parent);
-        form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-        Composite ret=form.getBody();
-	   //Composite ret=new Composite(parent,style);
-        ret.setLayout(new GridLayout(2,false));
-        Button bReload=new Button(ret,SWT.PUSH);
-        bReload.setImage(Desk.getImage(Desk.IMG_REFRESH));
-        bReload.addSelectionListener(new SelectionAdapter(){
+	public Composite createControl(final Composite parent){
+		Form form = tk.createForm(parent);
+		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		Composite ret = form.getBody();
+		ret.setLayout(new GridLayout(2, false));
+		ret.setBackground(parent.getBackground());
+		Button bReload = new Button(ret, SWT.PUSH);
+		bReload.setImage(Desk.getImage(Desk.IMG_REFRESH));
+		bReload.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if(isEmpty()){
+			public void widgetSelected(final SelectionEvent e){
+				if (isEmpty()) {
 					fireChangedEvent();
-				}else{
+				} else {
 					clearValues();
 				}
 			}
-        	
-        });
-        /*Hyperlink hClr=tk.createHyperlink(ret,"x",SWT.NONE); //$NON-NLS-1$
-        hClr.addHyperlinkListener(new HyperlinkAdapter(){
-            @Override
-            public void linkActivated(final HyperlinkEvent e)
-            {	clearValues();
-            }
-            
-        });
-        */
-        Composite inner=new Composite(ret,SWT.NONE);
-        GridLayout lRet=new GridLayout(fields.length,true);
-        inner.setLayout(lRet);
-        inner.setLayoutData(SWTHelper.getFillGridData(1,true,2,true));
-        
-        for(String l:fields){
-            Hyperlink hl=tk.createHyperlink(inner,l,SWT.NONE);
-            hl.addHyperlinkListener(new HyperlinkAdapter(){
-
-                @Override
-                public void linkActivated(final HyperlinkEvent e)
-                {
-                    Hyperlink h=(Hyperlink)e.getSource();
-                    fireSortEvent(h.getText());
-                }
-                
-            });
-        }
-        
-        selectors=new ElexisText[fields.length];
-        for(int i=0;i<selectors.length;i++){
-            selectors[i]=new ElexisText(inner, SWT.BORDER);
-            selectors[i].addModifyListener(ml);
-            selectors[i].addSelectionListener(sl);
-            selectors[i].setToolTipText(Messages.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
-            selectors[i].setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-        }
-        bGenerics=new Button(ret,SWT.TOGGLE);
-        String img="icons"+File.separator+"ggruen.png";
-        ImageDescriptor image=BAGMediFactory.loadImageDescriptor(img);
-        if(image!=null){
-        	bGenerics.setImage(image.createImage());
-        }
-        bGenerics.addSelectionListener(new SelectionAdapter(){
-
+			
+		});
+		
+		Composite inner = new Composite(ret, SWT.NONE);
+		GridLayout lRet = new GridLayout(fields.length, true);
+		inner.setLayout(lRet);
+		inner.setLayoutData(SWTHelper.getFillGridData(1, true, 2, true));
+		
+		for (String l : fields) {
+			Hyperlink hl = tk.createHyperlink(inner, l, SWT.NONE);
+			hl.addHyperlinkListener(new HyperlinkAdapter() {
+				
+				@Override
+				public void linkActivated(final HyperlinkEvent e){
+					Hyperlink h = (Hyperlink) e.getSource();
+					fireSortEvent(h.getText());
+				}
+				
+			});
+			hl.setBackground(parent.getBackground());
+		}
+		
+		selectors = new ElexisText[fields.length];
+		for (int i = 0; i < selectors.length; i++) {
+			selectors[i] = new ElexisText(inner, SWT.BORDER);
+			selectors[i].addModifyListener(ml);
+			selectors[i].addSelectionListener(sl);
+			selectors[i].setToolTipText(Messages
+				.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
+			selectors[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		}
+		bGenerics = new Button(ret, SWT.TOGGLE);
+		String img = "icons" + File.separator + "ggruen.png";
+		ImageDescriptor image = BAGMediFactory.loadImageDescriptor(img);
+		if (image != null) {
+			bGenerics.setImage(image.createImage());
+		}
+		bGenerics.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				bGenericsOnly=bGenerics.getSelection();
+			public void widgetSelected(final SelectionEvent e){
+				bGenericsOnly = bGenerics.getSelection();
 				fireChangedEvent();
 			}
-        	
-        });
-        return ret;
+			
+		});
+		return ret;
 	}
-
-		
+	
 }
