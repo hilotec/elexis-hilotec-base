@@ -144,8 +144,8 @@ CREATE INDEX art3 on ARTIKEL (Codeclass);
 CREATE TABLE PATIENT_ARTIKEL_JOINT(
 	ID				VARCHAR(25) primary key,
 	deleted			CHAR(1) default '0',
-	PatientID		VARCHAR(25),					# patient 
-	ArtikelID		VARCHAR(25),					# article
+	PatientID		VARCHAR(25),					# foreign key from KONTAKT
+	ArtikelID		VARCHAR(25),					# foreign key from ARTIKEL
 	RezeptID		VARCHAR(25),					# prescription where this article was last given
 	DateFrom		CHAR(8),						# first date
 	DateUntil		CHAR(8),						# last date
@@ -171,9 +171,9 @@ CREATE TABLE PATIENT_GARANT_JOINT(
 CREATE TABLE KONTO(
 	ID				VARCHAR(25) primary key,
 	deleted			CHAR(1) default '0',
-	PatientID		VARCHAR(25),
-	RechnungsID		VARCHAR(25),
-	ZahlungsID		VARCHAR(25),
+	PatientID		VARCHAR(25),              # foreign key from KONTAKT 
+	RechnungsID		VARCHAR(25),              # foreign key from RECHNUNG
+	ZahlungsID		VARCHAR(25),              # foreign key from ZAHLUNG
 	Betrag			CHAR(8),
 	Datum			CHAR(8),
 	Bemerkung		VARCHAR(80)
@@ -276,10 +276,10 @@ CREATE TABLE BRIEFE(
 	modifiziert		CHAR(8),
 	gedruckt		CHAR(8),
 	geloescht		CHAR(2),
-	AbsenderID		VARCHAR(25),
-	DestID			VARCHAR(25),
-	BehandlungsID	VARCHAR(25),
-	PatientID		VARCHAR(25),
+	AbsenderID		VARCHAR(25),           # foreign key from KONTAKT
+	DestID			VARCHAR(25),           # foreign key from KONTAKT
+	BehandlungsID	VARCHAR(25),           # foreign key from BEHANDLUNG
+	PatientID		VARCHAR(25),           # foreign key from KONTAKT
 	Typ				VARCHAR(30),
 	MimeType		VARCHAR(80),
 	Path			TEXT
@@ -335,9 +335,9 @@ CREATE INDEX plz1 on PLZ (Ort);
 CREATE TABLE REMINDERS(
 	ID				VARCHAR(25) primary key,
 	deleted			CHAR(1) default '0',
-	IdentID			VARCHAR(25),
-	OriginID		VARCHAR(25),
-	Responsible  	VARCHAR(25),
+	IdentID			VARCHAR(25),                 # foreign key from KONTAKT
+	OriginID		VARCHAR(25),                 # foreign key from KONTAKT
+	Responsible  	VARCHAR(25),                 # foreign key from KONTAKT
 	DateDue			CHAR(8),
 	Status			VARCHAR(1),
 	Typ				VARCHAR(1),
@@ -348,8 +348,8 @@ CREATE TABLE REMINDERS(
 CREATE TABLE REMINDERS_RESPONSIBLE_LINK(
 	ID				VARCHAR(25) primary key,
 	deleted			CHAR(1) default '0',
-	ReminderID		VARCHAR(25),
-	ResponsibleID	VARCHAR(25)
+	ReminderID		VARCHAR(25),                  # foreign key from REMINDERS
+	ResponsibleID	VARCHAR(25)                   # foreign key from KONTAKT
 );
 
 CREATE INDEX rrl1 on REMINDERS_RESPONSIBLE_LINK (ReminderID);
@@ -401,7 +401,7 @@ CREATE TABLE LABORITEMS(
 	deleted		CHAR(1) default '0',
 	kuerzel		VARCHAR(80),
 	titel		VARCHAR(80),
-	laborID		VARCHAR(25),
+	laborID		VARCHAR(25),                   # foreign key from KONTAKT
 	RefMann		VARCHAR(80),
 	RefFrauOrTx TEXT,
 	Einheit		VARCHAR(20),
@@ -419,10 +419,10 @@ CREATE INDEX labit2 on LABORITEMS(laborID);
 CREATE TABLE LABORWERTE(
 	ID			VARCHAR(25) primary key,
 	deleted		CHAR(1) default '0',
-	PatientID	VARCHAR(25),
+	PatientID	VARCHAR(25),              # foreign key from KONTAKT
 	datum		CHAR(8),
 	zeit        CHAR(6),
-	ItemID		VARCHAR(25),
+	ItemID		VARCHAR(25),                # foreign key from LABORIMTEMS
 	Resultat	VARCHAR(80),
 	Flags		VARCHAR(10),
 	Origin		VARCHAR(30),
@@ -449,9 +449,9 @@ CREATE TABLE LABGROUP_ITEM_JOINT(
 CREATE TABLE REZEPTE(
 	ID			VARCHAR(25) primary key,
 	deleted		CHAR(1) default '0',
-	PatientID	VARCHAR(25),
-	MandantID	VARCHAR(25),
-	BriefID		VARCHAR(25),
+	PatientID	VARCHAR(25),                  # foreign key from KONTAKT
+	MandantID	VARCHAR(25),                  # foreign key from KONTAKT
+	BriefID		VARCHAR(25),                  # foreign key from BRIEFE
 	datum		CHAR(8),
 	RpTxt		TEXT,
 	RpZusatz	VARCHAR(80)
