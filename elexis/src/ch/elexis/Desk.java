@@ -137,6 +137,8 @@ public class Desk implements IApplication {
 	public static final String IMG_NEXT = "arrow_next"; // $NON_NLS-1$
 	/** Arrow left */
 	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$	
+	/** clear input field */
+	public static final String IMG_CLEAR = "cross_small";	// $NON_NLS-1$
 	
 	public Desk(){
 		getDisplay();
@@ -250,6 +252,7 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_CLIPBOARD, getImageDescriptor(IMG_CLIPBOARD));
 				theImageRegistry.put(IMG_NEXT, getImageDescriptor(IMG_NEXT));
 				theImageRegistry.put(IMG_PREVIOUS, getImageDescriptor(IMG_PREVIOUS));
+				theImageRegistry.put(IMG_CLEAR, getImageDescriptor(IMG_CLEAR));
 			}
 		}
 		return theImageRegistry;
