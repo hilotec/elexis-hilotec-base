@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FaelleView.java 4799 2008-12-10 17:40:59Z psiska $
+ *  $Id: FaelleView.java 4810 2008-12-12 11:13:10Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -71,7 +71,7 @@ public class FaelleView extends ViewPart implements ActivationListener,
 		tv.addSelectionChangedListener(GlobalEvents.getInstance()
 				.getDefaultListener());
 		menus = new ViewMenus(getViewSite());
-		menus.createToolbar(konsFilterAction, neuerFallAction);
+		menus.createToolbar(neuerFallAction, konsFilterAction);
 		menus.createViewerContextMenu(tv, delFallAction, openFallaction,
 				reopenFallAction, makeBillAction);
 		GlobalEvents.getInstance().addActivationListener(this, this);

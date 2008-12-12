@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 4804 2008-12-11 10:20:15Z psiska $
+ *    $Id: BriefAuswahl.java 4810 2008-12-12 11:13:10Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -333,16 +333,16 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 		 * } };
 		 */
 		briefLadenAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/file.gif"));
+				.getImageDescriptor("rsc/document_text.png"));
 		briefLadenAction.setToolTipText("Dokument zum Bearbeiten öffnen");
 		briefNeuAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/fileneu.gif"));
+				.getImageDescriptor("rsc/document__plus.png"));
 		briefNeuAction.setToolTipText("Einen neues Dokument erstellen");
 		editNameAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/rename.gif"));
+				.getImageDescriptor("rsc/document__pencil.png"));
 		editNameAction.setToolTipText("Dokument umbenennen");
 		deleteAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/filedel.gif"));
+				.getImageDescriptor("rsc/document__minus.png"));
 		deleteAction.setToolTipText("Dokument löschen");
 	}
 

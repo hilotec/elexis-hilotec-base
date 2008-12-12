@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 4794 2008-12-10 15:42:31Z psiska $ 
+<!-- $Id: plugin.xml 4810 2008-12-12 11:13:10Z psiska $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -129,7 +129,7 @@
       <view
             category="ch.elexis.messungenKategorie"
             class="ch.elexis.views.LaborView"
-            icon="rsc/reagenzglas.ico"
+            icon="rsc/labor_view.png"
             id="ch.elexis.Labor"
             name="%elexis.labView"/>
       <view
@@ -147,7 +147,7 @@
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RezepteView"
-            icon="rsc/rezept.ico"
+            icon="rsc/rezept_view.png"
             id="ch.elexis.Rezepte"
             name="%elexis.prescriptionView"/>
       <view
@@ -312,7 +312,7 @@
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.AUF2"
-            icon="rsc/auf.ico"
+            icon="rsc/auf.png"
             id="ch.elexis.auf"
             name="%elexis.aufView"/>
       <view

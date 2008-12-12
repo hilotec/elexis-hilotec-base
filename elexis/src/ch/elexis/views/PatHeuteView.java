@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatHeuteView.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ * $Id: PatHeuteView.java 4810 2008-12-12 11:13:10Z psiska $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -363,8 +363,13 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 		protected IStatus run(IProgressMonitor monitor){
 			HashMap<IVerrechenbar, StatCounter> counter = new HashMap<IVerrechenbar, StatCounter>();
 			monitor.beginTask("Berechne Statistik", kons.length + 20);
+			
+			System.out.println("Konsultationen (Elexis): " + kons.length);
+			int serviceCounter = 0;
+			
 			for (Konsultation k : kons) {
 				List<Verrechnet> list = k.getLeistungen();
+				serviceCounter += list.size();
 				for (Verrechnet v : list) {
 					StatCounter sc = counter.get(v.getVerrechenbar());
 					if (sc == null) {
@@ -378,6 +383,9 @@ public class PatHeuteView extends ViewPart implements SelectionListener, Activat
 					return Status.CANCEL_STATUS;
 				}
 			}
+			
+			System.out.println("Services (Elexis): " + serviceCounter);
+			
 			final List<StatCounter> sums = new LinkedList<StatCounter>(counter.values());
 			Collections.sort(sums);
 			monitor.worked(20);

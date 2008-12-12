@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KonsListe.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ * $Id: KonsListe.java 4810 2008-12-12 11:13:10Z psiska $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -53,7 +53,7 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 		liste.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		menus = new ViewMenus(getViewSite());
-		menus.createToolbar(filterAction, newKonsAction);
+		menus.createToolbar(newKonsAction, filterAction);
 		// GlobalEvents.getInstance().addSelectionListener(this,
 		// getViewSite().getWorkbenchWindow());
 		GlobalEvents.getInstance().addActivationListener(this, this);
