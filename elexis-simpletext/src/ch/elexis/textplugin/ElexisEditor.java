@@ -148,7 +148,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		}
 		
 		if (imageRegistry.get("print") == null) {
-			imageRegistry.put("print", getImageDescriptor("icons/print.gif"));
+			imageRegistry.put("print", getImageDescriptor("icons/printer.png"));
 		}
 	}
 	
