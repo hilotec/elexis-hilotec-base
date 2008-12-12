@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesList.java 4802 2008-12-10 18:26:18Z rgw_ch $
+ *  $Id: NotesList.java 4807 2008-12-12 08:58:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.notes;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.viewers.TreeViewer;
@@ -23,8 +24,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
+import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
@@ -35,18 +41,34 @@ public class NotesList extends Composite {
 	Text tFilter;
 	String filterExpr;
 	NotesFilter notesFilter = new NotesFilter();
+	HashMap<Note,String> matches=new HashMap<Note, String>();
 	
 	NotesList(Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		this.parent = parent;
-		tFilter = new Text(this, SWT.SINGLE);
+		Composite cFilter=new Composite(this,SWT.NONE);
+		cFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cFilter.setLayout(new GridLayout(3,false));
+		ImageHyperlink clearSearchFieldHyperlink=new ImageHyperlink(cFilter,SWT.NONE);
+		clearSearchFieldHyperlink.setImage(Desk.getImage(Desk.IMG_CLEAR));
+		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(HyperlinkEvent e){
+				tFilter.setText("");
+				filterExpr="";
+				matches.clear();
+				tv.collapseAll();
+				tv.removeFilter(notesFilter);
+			}});
+		new Label(cFilter,SWT.NONE).setText("Suchen: ");
+		tFilter = new Text(cFilter, SWT.SINGLE);
 		tFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		// ((GridData) filter.getLayoutData()).heightHint = 15;
 		tFilter.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e){
 				filterExpr = tFilter.getText().toLowerCase();
+				matches.clear();
 				if (filterExpr.length() == 0) {
 					tv.removeFilter(notesFilter);
 					tv.collapseAll();
@@ -74,29 +96,44 @@ public class NotesList extends Composite {
 		
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element){
-			String f = tFilter.getText();
-			if (f.length() == 0) {
+			
+			if (filterExpr.length() == 0) {
 				return true;
 			}
-			return isMatch((Note) element, f);
+			boolean bMatch=isMatch((Note) element, filterExpr);
+			if(bMatch){
+				Note parent=(Note)element;
+				while((parent=parent.getParent())!=null){
+					matches.put(parent, filterExpr);
+				}
+			}
+			return bMatch;
 		}
 		
 		private boolean isMatch(Note n, String t){
-			if (n.getLabel().toLowerCase().startsWith(t)) {
+			if(matches.get(n)!=null){
 				return true;
 			}
-			if(n.getKeywords().contains(t)){
+
+			String lbl=n.getLabel().toLowerCase();
+			if (lbl.startsWith(t) || 
+				n.getKeywords().contains(t)) {
+				matches.put(n, t);
+				
 				return true;
 			}
+			
 			List<Note> l = n.getChildren();
 			for (Note note : l) {
 				if (isMatch(note, t)) {
+					matches.put(n, t);
 					return true;
 				}
 			}
 			return false;
 		}
-		
+
+	
 	}
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4802 2008-12-10 18:26:18Z rgw_ch $
+ *  $Id: Note.java 4807 2008-12-12 08:58:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -59,6 +59,16 @@ public class Note extends PersistentObject {
 		}
 	}
 	
+	/**
+	 * Create a new Note with text content
+	 * 
+	 * @param parent
+	 *            the parent note or null if this is a top level note
+	 * @param title
+	 *            a Title for this note
+	 * @param text
+	 *            the text content of this note
+	 */
 	public Note(Note parent, String title, String text){
 		create(null);
 		set(new String[] {
@@ -75,6 +85,19 @@ public class Note extends PersistentObject {
 		}
 	}
 	
+	/**
+	 * Create a new Note with binary content
+	 * 
+	 * @param parent
+	 *            the parent note or null if this is a top level note
+	 * @param title
+	 *            a Title for this note
+	 * @param contents
+	 *            the contents of this note in
+	 * @param mimettype
+	 *            the mimetype of the contents
+	 */
+	
 	public Note(Note parent, String title, byte[] contents, String mimetype){
 		create(null);
 		set(new String[] {
@@ -84,6 +107,15 @@ public class Note extends PersistentObject {
 		if (parent != null) {
 			set("Parent", parent.getId());
 		}
+	}
+	
+	public Note getParent(){
+		String pid = get("Parent");
+		if (pid == null) {
+			return null;
+		}
+		Note p = Note.load(pid);
+		return p;
 	}
 	
 	public List<Note> getChildren(){
@@ -106,7 +138,7 @@ public class Note extends PersistentObject {
 	}
 	
 	public void setKeywords(String kw){
-		set("keywords",StringTool.limitLength(kw.toLowerCase(), 250));
+		set("keywords", StringTool.limitLength(kw.toLowerCase(), 250));
 	}
 	
 	public List<String> getRefs(){
