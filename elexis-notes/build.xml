@@ -19,7 +19,7 @@
 	<!-- the remainder of the file can be copied without modifications for most plugins -->
 	<property name="sourcedir" value="${source}/${pluginname}" />
 	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
-	
+
 	<target name="all">
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
 			<property name="copydest" value="${plugindir}" />
@@ -27,6 +27,7 @@
 		</ant>
 		<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8" />
 		<tstamp />
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="texify" />
 		<zip basedir="${plugindir}" destfile="${updatefiles}/ch.elexis.notes_${version}.${DSTAMP}.zip" />
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition" />
 	</target>
