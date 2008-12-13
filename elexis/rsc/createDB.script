@@ -17,7 +17,12 @@
 # noch keine Tabellen enthalten.
 # ---------------------------------------------
 # This script can create the elexis database on mysql, hsql and postresql servers
-# Tha database should exist already, but shpuld not contain any tables.
+# Tha database should exist already, but should not contain any tables.
+#
+# WARNING: The database layout is internal to elexis and must not be assumed stable.
+# Fields kan be omitted or changed between versions.
+# Access to persistent data has to be done via the API (ch.elexis.data.PersistentObject)
+
 
 # Table for all kinds of contact information (Patients, Relations, Labs)
 CREATE TABLE KONTAKT(
