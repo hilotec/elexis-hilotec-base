@@ -49,6 +49,7 @@
 
 		<available file="../OOwrapper/build.xml" property="oowrapper.ok" />
 		<available file="../noatext/build.xml" property="noatext.ok" />
+		<available file="../oowrapper3/build.xml" property="oowrapper3.ok" />
 
 		<available file="../elexis-nachrichten/build.xml" property="nachrichten.ok" />
 		<antcall target="nachrichten" inheritrefs="true" />
@@ -163,7 +164,7 @@
 		<antcall target="argolead" inheritrefs="true" />
 		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok" />
 		<antcall target="mythic" inheritrefs="true" />
-
+	    <antcall target="oowrapper3" inheritrefs="true"/>
 	</target>
 
 	<target name="medidirect" if="medidirect.ok">
@@ -293,8 +294,12 @@
 	</target>
 	<target name="oowrapper" if="oowrapper.ok">
 		<ant antfile="../OOwrapper/build.xml" inheritrefs="true" />
-
 	</target>
+	
+	<target name="oowrapper3" if="oowrapper3.ok">
+		<ant antfile="../oowrapper3/build.xml" inheritrefs="true" />
+	</target>
+
 	<target name="viollier" if="viollier.ok">
 		<ant antfile="../Laborimport-Viollier/build.xml" inheritrefs="true" />
 	</target>
