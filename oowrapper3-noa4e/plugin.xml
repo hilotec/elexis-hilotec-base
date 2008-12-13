@@ -8,14 +8,5 @@
             name="OOWrapper3">
       </Texterweiterung>
    </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            class="ch.elexis.oowrapper3.View"
-            id="ch.elexis.oowrapper3.view"
-            name="OOWrapper"
-            restorable="true">
-      </view>
-   </extension>
 
 </plugin>

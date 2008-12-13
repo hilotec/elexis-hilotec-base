@@ -1,5 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2008, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: TextContainer.java 4816 2008-12-13 15:45:11Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.oowrapper3;
 
+import java.awt.font.TextHitInfo;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +34,7 @@ import ag.ion.bion.officelayer.application.IOfficeApplication;
 import ag.ion.bion.officelayer.desktop.GlobalCommands;
 import ag.ion.bion.officelayer.desktop.IFrame;
 import ag.ion.bion.officelayer.document.DocumentDescriptor;
+import ag.ion.bion.officelayer.document.DocumentException;
 import ag.ion.bion.officelayer.document.IDocument;
 import ag.ion.bion.officelayer.text.ITextCursor;
 import ag.ion.bion.officelayer.text.ITextDocument;
@@ -29,6 +44,7 @@ import ag.ion.bion.officelayer.text.TextException;
 import ag.ion.bion.officelayer.text.table.ITextTablePropertyStore;
 import ag.ion.noa.frame.IDispatch;
 import ag.ion.noa.frame.IDispatchDelegate;
+import ag.ion.noa.printing.IPrintProperties;
 import ag.ion.noa.search.ISearchResult;
 import ag.ion.noa.search.SearchDescriptor;
 import ag.ion.noa4e.ui.widgets.OfficePanel;
@@ -48,6 +64,7 @@ public class TextContainer implements ITextPlugin {
 	private File myFile;
 	private SaveDelegate saveDelegate = new SaveDelegate();
 	private IDispatch saveold;
+	ICallback textHandler;
 	private static final Log log = Log.get("oowrapper3");
 	
 	public Composite createContainer(Composite parent, ICallback handler){
@@ -55,7 +72,7 @@ public class TextContainer implements ITextPlugin {
 		parent.setLayout(new GridLayout());
 		panel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		panel.setBuildAlwaysNewFrames(true);
-		
+		textHandler = handler;
 		return panel;
 	}
 	
@@ -82,7 +99,7 @@ public class TextContainer implements ITextPlugin {
 	private boolean setDoc(IDocument it){
 		if (it != null) {
 			doc = (ITextDocument) it;
-			IFrame frame=panel.getFrame();
+			IFrame frame = panel.getFrame();
 			// IDispatch saveold=frame.getDispatch(GlobalCommands.SAVE);
 			frame.disableDispatch(GlobalCommands.CLOSE_DOCUMENT);
 			frame.disableDispatch(GlobalCommands.QUIT_APPLICATION);
@@ -96,8 +113,12 @@ public class TextContainer implements ITextPlugin {
 	}
 	
 	public boolean clear(){
-		// TODO Auto-generated method stub
-		return false;
+		if (textHandler != null) {
+			textHandler.save();
+		}
+		clean();
+		doc.close();
+		return true;
 	}
 	
 	public boolean createEmptyDocument(){
@@ -150,7 +171,7 @@ public class TextContainer implements ITextPlugin {
 					return false;
 				}
 				for (ITextRange r : textRanges) {
-				
+					
 					cur.gotoRange(r, false);
 					String orig = cur.getString();
 					
@@ -331,9 +352,16 @@ public class TextContainer implements ITextPlugin {
 		return false;
 	}
 	
-	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished){
-		// TODO Auto-generated method stub
-		return false;
+	public boolean print(String toPrinter, String toTray, final boolean waitUntilFinished){
+		PrintProperties pprops = new PrintProperties("1-");
+		try {
+			doc.getPrintService().print(pprops);
+			return true;
+		} catch (DocumentException e) {
+			ExHandler.handle(e);
+			SWTHelper.showError("Fehler beim Drucken", e.getMessage());
+			return false;
+		}
 	}
 	
 	public void setFocus(){
@@ -341,7 +369,7 @@ public class TextContainer implements ITextPlugin {
 	}
 	
 	public boolean setFont(String name, int style, float size){
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 	
@@ -384,14 +412,32 @@ public class TextContainer implements ITextPlugin {
 		}
 	}
 	
-	private static class SaveDelegate implements IDispatchDelegate {
-		
+	private class SaveDelegate implements IDispatchDelegate {
 		
 		public void dispatch(Object[] arg0){
-			System.out.println("Save pressed");
+			if(textHandler!=null){
+				textHandler.save();
+			}
 			
 		}
 		
 	}
+	static class PrintProperties implements IPrintProperties {
+		private String mPages = "";
+		
+		PrintProperties(String pages){
+			mPages = pages;
+		}
+		
+		public short getCopyCount(){
+			return (short) 1;
+		}
+		
+		public String getPages(){
+			return mPages;
+		}
+		
+	}
+	
 	
 }
