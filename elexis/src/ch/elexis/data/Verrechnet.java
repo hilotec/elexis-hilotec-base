@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4786 2008-12-10 13:05:37Z psiska $
+ * $Id: Verrechnet.java 4814 2008-12-13 11:48:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -256,6 +256,11 @@ public class Verrechnet extends PersistentObject {
 		}
 	}
 	
+	/**
+	 * Set arbitrary additional informations to a service
+	 * @param key name of the information
+	 * @param value value of the information
+	 */
 	@SuppressWarnings("unchecked")
 	public void setDetail(final String key, final String value){
 		Hashtable ext = getHashtable("Detail");
@@ -268,12 +273,22 @@ public class Verrechnet extends PersistentObject {
 		
 	}
 	
+	/**
+	 * retrieve additional information
+	 * @param key name of the requested information
+	 * @return value if the information or null if no information with that name was found
+	 */
 	@SuppressWarnings("unchecked")
 	public String getDetail(final String key){
 		Hashtable ext = getHashtable("Detail");
 		return (String) ext.get(key);
 	}
 	
+	/**
+	 * Change the count for this service or article. If it ist an Artikel, the store will be
+	 * updated accordingly
+	 * @param neuAnzahl new count this service is to be billed.
+	 */
 	public void changeAnzahl(int neuAnzahl){
 		int vorher = getZahl();
 		setZahl(neuAnzahl);
@@ -299,6 +314,9 @@ public class Verrechnet extends PersistentObject {
 		return false;
 	}
 	
+	/**
+	 * return the IVerrechenbar this Verrechnet is based on
+	 */
 	public IVerrechenbar getVerrechenbar(){
 		String[] res = new String[2];
 		get(new String[] {
