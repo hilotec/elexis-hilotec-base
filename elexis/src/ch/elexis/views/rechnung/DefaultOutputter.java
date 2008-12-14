@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 4382 2008-09-07 13:58:58Z rgw_ch $
+ *  $Id: DefaultOutputter.java 4817 2008-12-14 15:44:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -32,61 +32,70 @@ import ch.rgw.tools.Result;
 
 /**
  * This outputter takes the output target from the case's billing syste,
+ * 
  * @author Gerry
- *
+ * 
  */
 public class DefaultOutputter implements IRnOutputter {
-	private ArrayList<IRnOutputter> configured=new ArrayList<IRnOutputter>();
+	private ArrayList<IRnOutputter> configured = new ArrayList<IRnOutputter>();
 	
-	public boolean canBill(Fall fall) {
+	public boolean canBill(Fall fall){
+		if (fall.getOutputter().getDescription().equals(getDescription())) {
+			return false;
+		}
 		return fall.getOutputter().canBill(fall);
 	}
-
-	public boolean canStorno(Rechnung rn) {
-		if(rn==null){
+	
+	public boolean canStorno(Rechnung rn){
+		if (rn == null) {
 			return false;
 		}
 		return rn.getFall().getOutputter().canStorno(rn);
 	}
-
-	public Control createSettingsControl(Composite parent) {
-		Label lbl=new Label(parent,SWT.WRAP);
-		lbl.setText("Für jede Rechnung das zum Abrechnungssystem des Falls gehörende\nStandard-Ausgabeziel wählen.");
+	
+	public Control createSettingsControl(Composite parent){
+		Label lbl = new Label(parent, SWT.WRAP);
+		lbl
+			.setText("Für jede Rechnung das zum Abrechnungssystem des Falls gehörende\nStandard-Ausgabeziel wählen.");
 		return lbl;
 	}
-
-	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn) {
-		Result<Rechnung> res=new Result<Rechnung>(null);
-		for(Rechnung rn:rnn){
-			Fall fall=rn.getFall();
-			final IRnOutputter iro=fall.getOutputter();
-			if(!configured.contains(iro)){
-				SWTHelper.SimpleDialog dlg=new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider(){
-					public Control getControl(Composite parent) {
-						parent.getShell().setText(iro.getDescription());
-						return iro.createSettingsControl(parent);
-
-					}
-					public void beforeClosing() {
-						iro.saveComposite();
-					}
-				});
-				if(dlg.open()==Dialog.OK){
+	
+	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn){
+		Result<Rechnung> res = new Result<Rechnung>(null);
+		for (Rechnung rn : rnn) {
+			Fall fall = rn.getFall();
+			final IRnOutputter iro = fall.getOutputter();
+			if (!configured.contains(iro)) {
+				SWTHelper.SimpleDialog dlg =
+					new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider() {
+						public Control getControl(Composite parent){
+							parent.getShell().setText(iro.getDescription());
+							return iro.createSettingsControl(parent);
+							
+						}
+						
+						public void beforeClosing(){
+							iro.saveComposite();
+						}
+					});
+				if (dlg.open() == Dialog.OK) {
 					configured.add(iro);
-				}else{
+				} else {
 					continue;
 				}
 			}
-			res.add(iro.doOutput(type, Arrays.asList(new Rechnung[]{rn})));
+			res.add(iro.doOutput(type, Arrays.asList(new Rechnung[] {
+				rn
+			})));
 		}
 		return null;
 	}
-
-	public String getDescription() {
+	
+	public String getDescription(){
 		return "Fall-Standardausgabe";
 	}
-
-	public void saveComposite() {
-		// Nothing
+	
+	public void saveComposite(){
+	// Nothing
 	}
 }
