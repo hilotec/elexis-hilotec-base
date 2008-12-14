@@ -584,7 +584,7 @@ public class JdbcLink {
 				return res;
 			} catch (Exception e) {
 				ExHandler.handle(e);
-				log.log("Fehler bei: " + SQLText, Log.ERRORS);
+				log.log("Fehler bei: " + SQLText+"\n:"+e.getMessage(), Log.ERRORS);
 				return null;
 			}
 			
