@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 4816 2008-12-13 15:45:11Z rgw_ch $
+ *  $Id: TextContainer.java 4819 2008-12-15 15:36:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.oowrapper3;
@@ -66,6 +66,7 @@ public class TextContainer implements ITextPlugin {
 	private IDispatch saveold;
 	ICallback textHandler;
 	private static final Log log = Log.get("oowrapper3");
+	private boolean bSaveOnFocusLost;
 	
 	public Composite createContainer(Composite parent, ICallback handler){
 		panel = new OfficePanel(parent, SWT.NONE);
@@ -379,7 +380,7 @@ public class TextContainer implements ITextPlugin {
 	}
 	
 	public void setSaveOnFocusLost(boolean save){
-	// TODO Auto-generated method stub
+		bSaveOnFocusLost=save;
 	
 	}
 	
