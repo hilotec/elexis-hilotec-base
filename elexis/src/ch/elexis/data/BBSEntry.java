@@ -1,4 +1,4 @@
-// $Id: BBSEntry.java 23 2006-03-24 15:36:01Z rgw_ch $
+// $Id: BBSEntry.java 4828 2008-12-17 16:43:33Z rgw_ch $
 /*******************************************************************************
  * Copyright (c) 2005, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
@@ -17,70 +17,78 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Ein Eintrag fürs Schwarze Brett. Einträge sind hierarchisch organisiert
+ * 
  * @author gerry
- *
+ * 
  */
 public class BBSEntry extends PersistentObject {
-    
-    static{
-        addMapping("BBS","reference","Thema=topic","datum=S:D:date","time",
-                "authorID","text=message");
-        
-    }
-    public BBSEntry(String topic, Anwender author, BBSEntry ref, String text){
-        create(null);
-        String refid= ref==null ? "NIL" : ref.getId();
-        TimeTool tt=new TimeTool();
-        set(new String[]{"reference","Thema","authorID","datum","time","text"},
-                refid,topic,author.getId(),
-                tt.toString(TimeTool.DATE_COMPACT),tt.toString(TimeTool.TIME_COMPACT),text);
-    }
-    public Anwender getAuthor(){
-        return Anwender.load(get("authorID"));
-    }
-    public BBSEntry getReference(){
-        return BBSEntry.load(get("reference"));
-    }
-    public String getTopic(){
-        return get("Thema");
-    }
-    public String getText(){
-        return get("text");
-    }
-    
-    @Override
-    public String getLabel()
-    {
-    	StringBuilder ret=new StringBuilder();
-    	ret.append(getDate()).append(",").append(getTime())
-    		.append(": ").append(get("Thema"))
-    		.append(" (").append(getAuthor().getLabel())
-    		.append(")");
-
-    	return ret.toString();
-    }
-
-    @Override
-    protected String getTableName()
-    {
-        return "BBS";
-    }
-    protected BBSEntry(){}
-    protected BBSEntry(String id){
-        super(id);
-    }
-    public static BBSEntry load(String id){
-        return new BBSEntry(id);
-    }
-	public String getDate() {
+	
+	static {
+		addMapping("BBS", "reference", "Thema=topic", "datum=S:D:date", "time", "authorID",
+			"text=message");
+		
+	}
+	
+	public BBSEntry(String topic, Anwender author, BBSEntry ref, String text){
+		create(null);
+		String refid = ref == null ? "NIL" : ref.getId();
+		TimeTool tt = new TimeTool();
+		set(new String[] {
+			"reference", "Thema", "authorID", "datum", "time", "text"
+		}, refid, topic, author.getId(), tt.toString(TimeTool.DATE_GER), tt
+			.toString(TimeTool.TIME_COMPACT), text);
+	}
+	
+	public Anwender getAuthor(){
+		return Anwender.load(get("authorID"));
+	}
+	
+	public BBSEntry getReference(){
+		return BBSEntry.load(get("reference"));
+	}
+	
+	public String getTopic(){
+		return get("Thema");
+	}
+	
+	public String getText(){
+		return get("text");
+	}
+	
+	@Override
+	public String getLabel(){
+		StringBuilder ret = new StringBuilder();
+		ret.append(getDate()).append(",").append(getTime()).append(": ").append(get("Thema"))
+			.append(" (").append(getAuthor().getLabel()).append(")");
+		
+		return ret.toString();
+	}
+	
+	@Override
+	protected String getTableName(){
+		return "BBS";
+	}
+	
+	protected BBSEntry(){}
+	
+	protected BBSEntry(String id){
+		super(id);
+	}
+	
+	public static BBSEntry load(String id){
+		return new BBSEntry(id);
+	}
+	
+	public String getDate(){
 		return get("datum");
 	}
+	
 	public String getTime(){
-		String t=get("time");
-		if(StringTool.isNothing((t))){
+		String t = get("time");
+		if (StringTool.isNothing((t))) {
 			return "00:00";
-		}else{
-			return t.substring(0,2)+":"+t.substring(2);
+		} else {
+			return t.substring(0, 2) + ":" + t.substring(2);
 		}
 	}
 }

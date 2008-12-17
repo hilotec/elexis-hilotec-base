@@ -8,10 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationWorkbenchWindowAdvisor.java 4219 2008-08-01 17:45:47Z rgw_ch $
+ * $Id: ApplicationWorkbenchWindowAdvisor.java 4828 2008-12-17 16:43:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
+
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -21,54 +22,53 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import ch.elexis.actions.ScannerEvents;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
+
 /**
- * Hier können Funktionen aufgerufen werden, die unmittelbar vor dem �ffnen des Hauptfensters erfolgen sollen.
- * Im Wesentlichen werden hier die Menue und Toolbars gesetzt 
+ * Hier können Funktionen aufgerufen werden, die unmittelbar vor dem öffnen des Hauptfensters
+ * erfolgen sollen. Im Wesentlichen werden hier die Menue und Toolbars gesetzt
  */
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
-
-	public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
+	
+	public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer){
 		super(configurer);
 	}
-
-	public ActionBarAdvisor createActionBarAdvisor(
-			IActionBarConfigurer configurer) {
+	
+	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer){
 		return new ApplicationActionBarAdvisor(configurer);
 	}
-
-    /**
-     * Diese Methode wird jeweils unmittelbar vor dem �ffnen des Anwendungsfensters
-     * ausgeführt.
-     */
-	public void preWindowOpen() {
+	
+	/**
+	 * Diese Methode wird jeweils unmittelbar vor dem öffnen des Anwendungsfensters ausgeführt.
+	 */
+	public void preWindowOpen(){
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-		//configurer.setInitialSize(new Point(900, 700));
+		// configurer.setInitialSize(new Point(900, 700));
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
 		configurer.setShowProgressIndicator(true);
 		configurer.setTitle("Elexis");
 		configurer.setShowFastViewBars(true);
-		if(Hub.localCfg.get(PreferenceConstants.SHOWPERSPECTIVESELECTOR,"false").equals("true")){
-			configurer.setShowPerspectiveBar(true);	
-		}else{
+		if (Hub.localCfg.get(PreferenceConstants.SHOWPERSPECTIVESELECTOR, "false").equals("true")) {
+			configurer.setShowPerspectiveBar(true);
+		} else {
 			configurer.setShowPerspectiveBar(false);
 		}
 		
 	}
-
+	
 	@Override
-	public void postWindowOpen() {
+	public void postWindowOpen(){
 
 	}
-
+	
 	@Override
-	public boolean preWindowShellClose() {
+	public boolean preWindowShellClose(){
 		Log.setAlert(null);
 		return true;
 	}
-
+	
 	@Override
-	public void createWindowContents(Shell shell) {
+	public void createWindowContents(Shell shell){
 		super.createWindowContents(shell);
 		ScannerEvents.addListenerToDisplay(shell.getDisplay());
 	}

@@ -1,4 +1,4 @@
-// $Id: BBSView.java 4743 2008-12-04 21:37:02Z rgw_ch $
+// $Id: BBSView.java 4828 2008-12-17 16:43:33Z rgw_ch $
 /*
  * Created on 10.09.2005
  */
@@ -27,8 +27,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.actions.GlobalActions;
+import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.BBSEntry;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
@@ -37,10 +37,12 @@ import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.Tree;
 import ch.elexis.util.TreeContentProvider;
 import ch.elexis.util.ViewerConfigurer;
+import ch.rgw.tools.ExHandler;
 
 /**
  * Bulletin Board System - ein Schwarzes Brett. Im Prinzip Erweiterung des Reminder-Konzepts zu
- * Threads ähnlich newsreader und Webforen.
+ * Threads ähnlich newsreader und Webforen. Farben können mit &lt;span
+ * color="rot"&gt;...&lt;/span&gt; kontrolliert werden (bzw. "grün" und "blau")
  * 
  * @author gerry
  */
@@ -52,7 +54,7 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 	private ScrolledForm form;
 	private FormToolkit tk;
 	private Query<BBSEntry> qbe;
-	private LazyTreeLoader loader;
+	private LazyTreeLoader<BBSEntry> loader;
 	private Label origin;
 	private FormText msg;
 	private Text input;
@@ -61,7 +63,7 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 	public void createPartControl(Composite parent){
 		SashForm sash = new SashForm(parent, SWT.NONE);
 		qbe = new Query<BBSEntry>(BBSEntry.class);
-		loader = new LazyTreeLoader("BBS", qbe, "reference", new String[] {
+		loader = new LazyTreeLoader<BBSEntry>("BBS", qbe, "reference", new String[] {
 			"datum", "time", "Thema"
 		});
 		headlines = new CommonViewer();
@@ -134,19 +136,25 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 		super.dispose();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void setDisplay(){
-		Object[] sel = headlines.getSelection();
+		Tree<BBSEntry>[] sel = (Tree<BBSEntry>[])headlines.getSelection();
 		if (sel == null || sel.length == 0) {
 			form.setText("Keine Nachricht ausgewählt");
 			return;
 		}
-		BBSEntry en = (BBSEntry) ((Tree) sel[0]).contents;
+		BBSEntry en = sel[0].contents;
 		form.setText(en.getTopic());
 		StringBuilder sb = new StringBuilder();
 		sb.append(en.getAuthor().getLabel()).append(" schrieb am ").append(en.getDate()).append(
 			" um ").append(en.getTime()).append(" Uhr:");
 		origin.setText(sb.toString());
-		msg.setText("<form><p>" + en.getText() + "</p></form>", true, true);
+		try{
+			msg.setText("<form><p>" + en.getText() + "</p></form>", true, true);
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+
+		}
 		input.setText("");
 	}
 	
