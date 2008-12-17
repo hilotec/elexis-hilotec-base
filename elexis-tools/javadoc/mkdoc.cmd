@@ -1,15 +1,25 @@
 @echo off
-rem $Id: mkdoc.cmd 4800 2008-12-10 18:25:53Z rgw_ch $
+rem $Id: mkdoc.cmd 4826 2008-12-17 16:43:02Z rgw_ch $
 rem =========================
 set TOP=d:\source\elexis_trunk
 rem ==========================
 
 set j=%TOP%\elexis-tools\javadoc\jdoc.cmd
-if *%1==* goto stay
-set DEST=%1\
-:stay
-call %j% elexis-utilities ch
-call %j% elexis ch
+set BASE=http://www.elexis.ch/javadoc
+
+mkdir elexis-utilities
+cd elexis-utilities
+%JAVA_HOME%\bin\javadoc -quiet -encoding "utf-8" -charset "utf-8" -docencoding "utf-8" -sourcepath %TOP%\elexis-utilities\src -public -subpackages ch
+cd ..
+
+
+mkdir elexis
+cd elexis
+%JAVA_HOME%\bin\javadoc -quiet -encoding "utf-8" -charset "utf-8" -docencoding "utf-8" -link ..\elexis-utilities -sourcepath %TOP%\elexis\src -classpath %TOP%\elexis-utilities\bin -public  -subpackages ch
+cd ..
+
+
+
 call %j% elexis-agenda ch
 call %j% elexis-artikel-schweiz ch
 call %j% elexis-arzttarife-schweiz ch

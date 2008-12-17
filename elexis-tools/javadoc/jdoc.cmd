@@ -1,8 +1,10 @@
 
-rem $Id: jdoc.cmd 4781 2008-12-09 18:10:32Z rgw_ch $
+rem $Id: jdoc.cmd 4826 2008-12-17 16:43:02Z rgw_ch $
 
-rem usage jdoc destdir sourcepath packages
+mkdir %1
+cd %1
 
-mkdir %DEST%%1
-%JAVA_HOME%\bin\javadoc -d %DEST%%1 -link file://localhost/%DEST%/elexis -link file://localhost/%DEST%/elexis-utilities -charset "utf-8" -docencoding "utf-8" -sourcepath %TOP%\%1\src -public -encoding "utf-8" -subpackages %2
+%JAVA_HOME%\bin\javadoc -charset "utf-8" -docencoding "utf-8" -encoding "utf-8" -link ..\elexis -link ..\elexis-utilities -sourcepath %TOP%\%1\src -public -subpackages %2
+
+cd ..
 
