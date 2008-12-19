@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 4751 2008-12-04 21:40:15Z rgw_ch $
+ *    $Id: Termin.java 4833 2008-12-19 17:25:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -38,7 +38,7 @@ import ch.rgw.tools.VersionInfo;
  * Termin-Klasse für Agenda
  */
 
-public class Termin extends PersistentObject implements Cloneable, Comparable, IPlannable {
+public class Termin extends PersistentObject implements Cloneable, Comparable<Termin>, IPlannable {
 	public static final String VERSION = "1.2.3";
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;
@@ -735,8 +735,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(final Object arg0){
-		Termin o = (Termin) arg0;
+	public int compareTo(final Termin o){
 		TimeSpan t0 = getTimeSpan();
 		TimeSpan t1 = o.getTimeSpan();
 		if (t0.from.isAfter(t1.from)) {
@@ -748,48 +747,6 @@ public class Termin extends PersistentObject implements Cloneable, Comparable, I
 		}
 	}
 	
-	/** Alle Termine des aktuellen Tages drucken */
-	
-	/*
-	 * static class terminPrinter implements Printable { private final int LINESIZE=12; private
-	 * final int FONTSIZE=9; private Termin[] table; public int print(Graphics pg, PageFormat pf,
-	 * int pageNum) throws PrinterException { int i,x; int mL=0; // l�ngstes Mandantenfeld int tL=0;
-	 * // l�ngstes Typfeld int sL=0; // l�ngstes Statusfeld int pL=0; // l�ngstes Personalienfeld
-	 * int dis=3; // Abstand zwischen zwei Feldern
-	 * 
-	 * //table=loadDay(Agenda.actDate.toString(TimeTool.DATE_COMPACT),Hub.localCfg.get(
-	 * "agenda/Angezeigt","niemand")); table=loadDay(new
-	 * TimeTool().toString(TimeTool.DATE_COMPACT),Hub.localCfg.get("agenda/Angezeigt","niemand"));
-	 * 
-	 * int lines=((int)((pf.getImageableHeight()-80.0)/LINESIZE)); if(pageNumlines>table.length) {
-	 * return Printable.NO_SUCH_PAGE; } Font body=new Font("Monospaced",Font.PLAIN,FONTSIZE);
-	 * for(i=pageNumlines;i<table.length;i++) { Termin t=table[i]; x=t.getTyp().length(); if(x>tL)
-	 * tL=x; x=t.get("BeiWem").length(); if(x>mL) mL=x; x=t.getStatus().length(); if(x>sL) sL=x;
-	 * x=t.getPersonalia().length(); if(x>pL) pL=x; }
-	 * 
-	 * String pn=""; if(pageNum>0) { pn=" - Seite "+Integer.toString(pageNum+1); }
-	 * 
-	 * pg.translate((int)pf.getImageableX(),(int)pf.getImageableY()); pg.setFont(new
-	 * Font("SansSerif",Font.BOLD,12));
-	 * //pg.drawString("Termine vom "+Agenda.actDate.toString(TimeTool.DATE_GER)+pn,0,20);
-	 * pg.drawString("Termine vom "+new TimeTool().toString(TimeTool.DATE_GER)+pn,0,20);
-	 * pg.setFont(body); int len=tL+mL+sL+pL+12+(3dis); FontMetrics fm=pg.getFontMetrics(body); int
-	 * maxc=(int)(pf.getImageableWidth()/fm.charWidth('M')); if(maxc<len) { dis=1; }
-	 * len=tL+mL+sL+12+(3dis); int zy=40; int k; for(i=pageNumlines,k=lines;i<table.length;i++) {
-	 * if(k--==0) break; Termin t=table[i]; TimeSpan ts=t.getTimeSpan(); StringBuffer line=new
-	 * StringBuffer(120); line.append(ts.from.toString(TimeTool.TIME_SMALL)+"-");
-	 * line.append(ts.until.toString(TimeTool.TIME_SMALL)+" ");
-	 * line.append(StringTool.pad(SwingConstants.RIGHT,' ',t.getTyp(),tL+dis));
-	 * line.append(StringTool.pad(SwingConstants.RIGHT,' ',t.getStatus(),sL+dis));
-	 * line.append(StringTool.pad(SwingConstants.RIGHT,' ',t.get("BeiWem"),mL+dis));
-	 * line.append(t.getPersonalia()); pg.drawString(line.toString(),0,zy);
-	 * pg.drawLine(0,zy+4,(int)pf.getImageableWidth(),zy+4); zy+=LINESIZE;
-	 * 
-	 * } //pg.drawString(Agenda.CopyrightMessage(false),20,(int)pf.getImageableHeight()-LINESIZE);
-	 * return Printable.PAGE_EXISTS; }
-	 * 
-	 * }
-	 */
 	@Override
 	protected String getTableName(){
 		return "AGNTERMINE";
