@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AccountTransaction.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: AccountTransaction.java 4834 2008-12-20 21:13:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -48,6 +48,9 @@ public class AccountTransaction extends PersistentObject {
 			z.getId());
 	}
 	
+	public String getDate(){
+		return get("Datum");
+	}
 	public Money getAmount(){
 		try {
 			return new Money(checkZero(get("Betrag")));
