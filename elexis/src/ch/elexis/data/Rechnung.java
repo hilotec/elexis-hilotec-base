@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: Rechnung.java 4835 2008-12-21 15:55:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -677,6 +677,28 @@ public class Rechnung extends PersistentObject {
 		}
 		String nr = StringTool.pad(StringTool.LEFT, '0', getNr(), 6);
 		return pid + nr;
+	}
+	
+	/**
+	 * Retrieve the state a bill had at a given moment
+	 * 
+	 * @param date
+	 *            the time to consider
+	 * @return the Status the bill had at this moment
+	 */
+	public int getStatusAtDate(TimeTool date){
+		List<String> trace = getTrace(Rechnung.STATUS_CHANGED);
+		int ret=getStatus();
+		TimeTool tt=new TimeTool();
+		for (String s : trace) {
+			String[] stm = s.split("\\s*:\\s");
+			if(tt.set(stm[0])){
+				if(tt.isBefore(date)){
+					ret=Integer.parseInt(stm[1]);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	@Override

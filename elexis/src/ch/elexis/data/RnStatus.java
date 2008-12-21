@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnStatus.java 4386 2008-09-07 15:53:39Z rgw_ch $
+ *  $Id: RnStatus.java 4835 2008-12-21 15:55:38Z rgw_ch $
  *******************************************************************************/
 
 
@@ -42,7 +42,23 @@ public class RnStatus {
 	public static final int AUSSTEHEND=			24;
 	public static final int MAHNSTOPP=			25;
 	public static final int ABGESCHRIEBEN=		26;	// Storniert und Kons nicht mehr freigegeben
-	
+
+	/**
+	 * Decide whether this state means an "active" state, i.e. the bill ist not paid or closed by any means
+	 * @return true if there are still payments awaited
+	 */
+	public static boolean isActive(int state){
+		if(state>LAUFEND && state<TEILVERLUST){
+			return true;
+		}
+		if(state==TEILZAHLUNG){
+			return true;
+		}
+		if(state>FEHLERHAFT && state<ABGESCHRIEBEN){
+			return true;
+		}
+		return false;
+	}
     private static final String[] Text={"Unbekannt","Verrechnet","Nicht verrechnen",
         "laufend","Rn. offen","Offen und gedruckt","Zahlungserinnerung",
         "Zahlungserinnerung gedruckt","2. Mahnung","2. Mahnung gedruckt",
