@@ -37,8 +37,8 @@ import ch.unibe.iam.scg.archie.ui.FieldTypes;
  */
 public class ListeNachFaelligkeit extends AbstractDataProvider {
 	private static final String NAME = "Rechnungen nach Fälligkeitsdatum";
-	private static final String DUE_AFTER_TEXT="Fällig nach Tagen";
-	private static final String DUE_DATE_TEXT="Stichtag";
+	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen";
+	private static final String DUE_DATE_TEXT = "Stichtag";
 	private int dueAfter;
 	private TimeTool stichTag;
 	
@@ -80,21 +80,26 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		monitor.subTask("Analysiere Rechnungen");
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		for (Rechnung rn : rnn) {
-			TimeTool date = new TimeTool(rn.getDatumRn());
-			date.addDays(dueAfter);
-			if (date.isBefore(stichTag)) {
-				Comparable<?>[] row = new Comparable[dataSet.getHeadings().size()];
-				row[0] = rn.getFall().getPatient().getPatCode();
-				row[1] = rn.getNr();
-				row[2] = date.toString(TimeTool.DATE_GER);
-				row[3] = rn.getBetrag().getAmountAsString();
-				result.add(row);
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			if (RnStatus.isActive(rn.getStatus())) {
+				TimeTool date = new TimeTool(rn.getDatumRn());
+				date.addDays(dueAfter);
+				if (date.isBefore(stichTag)) {
+					Comparable<?>[] row = new Comparable[dataSet.getHeadings().size()];
+					row[0] = rn.getFall().getPatient().getPatCode();
+					row[1] = rn.getNr();
+					row[2] = date.toString(TimeTool.DATE_GER);
+					row[3] = rn.getBetrag().getAmountAsString();
+					result.add(row);
+				}
 			}
 			monitor.worked(step);
 		}
 		this.dataSet.setContent(result);
 		monitor.done();
-		return Status.CANCEL_STATUS;
+		return Status.OK_STATUS;
 	}
 	
 	@Override
