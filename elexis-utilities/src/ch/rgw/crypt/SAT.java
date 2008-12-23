@@ -13,6 +13,7 @@
 
 package ch.rgw.crypt;
 
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -24,8 +25,6 @@ import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.SoapConverter;
@@ -71,6 +70,9 @@ public class SAT {
 	 *         the sender's ID
 	 */
 	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
+		if(encrypted.length<10){	// is probably an error message
+			return new Result<HashMap<String, Object>>(Result.SEVERITY.WARNING,7, "Server Error: "+new String(encrypted),null, true);
+		}
 		Result<byte[]> dec = crypt.decrypt(encrypted);
 		if (!dec.isOK()) {
 			return new Result<HashMap<String, Object>>(dec.getSeverity(), 1, "Decrypt error", null,
@@ -140,8 +142,9 @@ public class SAT {
 		return null;
 	}
 	
+	@Deprecated
 	public String sendRequest(String hostaddress, String request){
-		String output = "";
+		
 		try {
 			// Connect to server
 			URLConnection conn = (new URL(hostaddress)).openConnection();
@@ -150,16 +153,48 @@ public class SAT {
 			conn.setDoOutput(true);
 			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
 			
-			String rx = new BASE64Encoder().encode(request.getBytes("utf-8"));
+			String rx = new String(Base64Coder.encodeString(request));
 			out.write("request=" + rx);
 			out.close();
-			byte[] in = new BASE64Decoder().decodeBuffer(conn.getInputStream());
-			return new String(in, "utf-8");
+			StringBuilder sb = new StringBuilder();
+			InputStream is = conn.getInputStream();
+			int in;
+			while (((in = is.read()) != -1)) {
+				sb.append((byte) in);
+			}
+			return Base64Coder.decodeString(sb.toString()); // .decodeBuffer(conn.getInputStream());
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
+			return "";
 		}
-		return output;
+		
+	}
+	
+	public byte[] sendRequest(String hostaddress, byte[] request){
+		try {
+			// Connect to server
+			URLConnection conn = (new URL(hostaddress)).openConnection();
+			
+			// Get output stream
+			conn.setDoOutput(true);
+			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+			
+			String rx = new String(Base64Coder.encode(request));
+			out.write("request=" + rx);
+			out.close();
+			StringBuilder sb = new StringBuilder();
+			InputStream is = conn.getInputStream();
+			int in;
+			while (((in = is.read()) != -1)) {
+				sb.append((byte) in);
+			}
+			return Base64Coder.decode(sb.toString()); // .decodeBuffer(conn.getInputStream());
+			
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
 	}
 	
 	private byte[] calcDigest(SoapConverter sc){
