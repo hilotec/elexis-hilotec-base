@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Log.java 4843 2008-12-23 12:20:27Z rgw_ch $
+ * $Id: Log.java 4844 2008-12-23 13:31:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -165,8 +165,8 @@ public class Log {
 					type = Levels[level];
 				}
 				lastError =
-					new StringBuilder().append(type).append(" - ").append(prefix).append(": ")
-						.append(message).toString();
+					new StringBuilder().append(" |").append(type).append("| - ").append(prefix)
+						.append(": ").append(message).toString();
 				out.println(lastError); //$NON-NLS-1$
 				out.flush();
 				if (level <= alertLevel) {

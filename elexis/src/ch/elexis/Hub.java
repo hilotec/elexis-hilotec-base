@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4733 2008-12-04 19:13:07Z rgw_ch $
+ *    $Id: Hub.java 4844 2008-12-23 13:31:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -177,11 +177,13 @@ public class Hub extends AbstractUIPlugin {
 	private void initializeLog(final Settings cfg){
 		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null); //$NON-NLS-1$
 		int maxLogfileSize = -1;
-		File fLog;
+		String logPath;
 		if (logfileName == null) {
-			fLog = new File(userDir, "elexis.log");
+			logPath = new File(userDir, "elexis.log").getAbsolutePath();
+		} else if (logfileName.equalsIgnoreCase("none")) {
+			logPath = "none";
 		} else {
-			fLog = new File(logfileName);
+			logPath = new File(logfileName).getAbsolutePath();
 		}
 		try {
 			String defaultValue = new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString();
@@ -191,11 +193,11 @@ public class Hub extends AbstractUIPlugin {
 			// do nothing
 		}
 		Log.setLevel(cfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS));
-		Log.setOutput(fLog.getAbsolutePath(), maxLogfileSize);
+		Log.setOutput(logPath, maxLogfileSize);
 		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT, Log.ERRORS));
 		// Exception handler initialiseren, Output wie log, auf eigene Klassen
 		// begrenzen
-		ExHandler.setOutput(fLog.getAbsolutePath()); //$NON-NLS-1$
+		ExHandler.setOutput(logPath); //$NON-NLS-1$
 		ExHandler.setClasses(mine);
 		
 	}
@@ -373,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4733 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 4844 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
