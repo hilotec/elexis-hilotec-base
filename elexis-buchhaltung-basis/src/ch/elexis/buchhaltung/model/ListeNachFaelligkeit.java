@@ -40,14 +40,24 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen";
 	private static final String DUE_DATE_TEXT = "Stichtag";
 	private int dueAfter;
-	private TimeTool stichTag;
+	private TimeTool stichTag=new TimeTool();
 	
 	public ListeNachFaelligkeit(){
 		super(NAME);
 		
 	}
 	
-	@GetProperty(name = DUE_AFTER_TEXT, fieldType = FieldTypes.TEXT_NUMERIC, index = -2)
+	@SetProperty(name = DUE_DATE_TEXT)
+	public void setStichtag(String stichtag) throws SetDataException{
+		stichTag = new TimeTool(stichtag);
+	}
+	
+	@GetProperty(name = DUE_DATE_TEXT, fieldType = FieldTypes.TEXT_DATE, index = -2 )
+	public String getStichtag(){
+		return stichTag.toString(TimeTool.DATE_SIMPLE);
+	}
+
+	@GetProperty(name = DUE_AFTER_TEXT, fieldType = FieldTypes.TEXT_NUMERIC)
 	public int getDueAfter(){
 		return dueAfter;
 	}
@@ -57,16 +67,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		dueAfter = da;
 	}
 	
-	@SetProperty(name = DUE_DATE_TEXT)
-	public void setStichtag(String stichtag) throws SetDataException{
-		stichTag = new TimeTool(stichtag);
-	}
-	
-	@GetProperty(name = DUE_DATE_TEXT, fieldType = FieldTypes.TEXT_DATE)
-	public String getStichtag(){
-		return stichTag.toString(TimeTool.DATE_SIMPLE);
-	}
-	
+		
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		int totalwork = 1000000;
