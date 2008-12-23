@@ -19,10 +19,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import util.DateTool;
+
+import ch.elexis.data.Fall;
+import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
-import ch.rgw.tools.TimeTool;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
@@ -40,7 +43,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen";
 	private static final String DUE_DATE_TEXT = "Stichtag";
 	private int dueAfter;
-	private TimeTool stichTag=new TimeTool();
+	private DateTool stichTag=new DateTool();
 	
 	public ListeNachFaelligkeit(){
 		super(NAME);
@@ -49,12 +52,12 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	
 	@SetProperty(name = DUE_DATE_TEXT)
 	public void setStichtag(String stichtag) throws SetDataException{
-		stichTag = new TimeTool(stichtag);
+		stichTag = new DateTool(stichtag);
 	}
 	
 	@GetProperty(name = DUE_DATE_TEXT, fieldType = FieldTypes.TEXT_DATE, index = -2 )
 	public String getStichtag(){
-		return stichTag.toString(TimeTool.DATE_SIMPLE);
+		return stichTag.toString(DateTool.DATE_GER);
 	}
 
 	@GetProperty(name = DUE_AFTER_TEXT, fieldType = FieldTypes.TEXT_NUMERIC)
@@ -63,8 +66,8 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	}
 	
 	@SetProperty(name = DUE_AFTER_TEXT)
-	public void setDueAfter(int da){
-		dueAfter = da;
+	public void setDueAfter(int date){
+		dueAfter = date;
 	}
 	
 		
@@ -85,15 +88,23 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 				return Status.CANCEL_STATUS;
 			}
 			if (RnStatus.isActive(rn.getStatus())) {
-				TimeTool date = new TimeTool(rn.getDatumRn());
+			DateTool date = new DateTool(rn.getDatumRn());
 				date.addDays(dueAfter);
 				if (date.isBefore(stichTag)) {
 					Comparable<?>[] row = new Comparable[dataSet.getHeadings().size()];
-					row[0] = rn.getFall().getPatient().getPatCode();
-					row[1] = rn.getNr();
-					row[2] = date.toString(TimeTool.DATE_GER);
-					row[3] = rn.getBetrag().getAmountAsString();
-					result.add(row);
+					Fall fall=rn.getFall();
+					if(fall!=null){
+						Patient pat=fall.getPatient();
+						if(pat!=null){
+							row[0]=pat.getPatCode();
+							row[1] = rn.getNr();
+							row[2] = new DateTool(date);
+							row[3] = rn.getBetrag().getAmountAsString();
+							result.add(row);
+						}
+					}
+					
+					
 				}
 			}
 			monitor.worked(step);
