@@ -138,7 +138,11 @@ public class HL7 {
 			List<Patient> list=qbe.execute();
 			String[] name=elPid[5].split("\\^");
 			String gebdat=elPid[7];
-			String sex=elPid[8].equalsIgnoreCase("M") ? "m" : "w";
+			// sex may be not available
+			String sex = "?";
+			if (elPid[8] != null) {
+				sex=elPid[8].equalsIgnoreCase("M") ? "m" : "w";
+			}
 			
 			StringBuffer sb = new StringBuffer();
 			sb.append(name[0]);
