@@ -1,4 +1,4 @@
-// $Id: BBSView.java 4828 2008-12-17 16:43:33Z rgw_ch $
+// $Id: BBSView.java 4853 2008-12-24 14:59:06Z rgw_ch $
 /*
  * Created on 10.09.2005
  */
@@ -138,12 +138,12 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 	
 	@SuppressWarnings("unchecked")
 	public void setDisplay(){
-		Tree<BBSEntry>[] sel = (Tree<BBSEntry>[])headlines.getSelection();
+		Object[] sel = headlines.getSelection();
 		if (sel == null || sel.length == 0) {
 			form.setText("Keine Nachricht ausgewählt");
 			return;
 		}
-		BBSEntry en = sel[0].contents;
+		BBSEntry en = ((Tree<BBSEntry>) sel[0]).contents;
 		form.setText(en.getTopic());
 		StringBuilder sb = new StringBuilder();
 		sb.append(en.getAuthor().getLabel()).append(" schrieb am ").append(en.getDate()).append(
