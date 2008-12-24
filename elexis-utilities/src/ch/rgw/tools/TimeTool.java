@@ -3,6 +3,7 @@
 package ch.rgw.tools;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -724,4 +725,16 @@ public class TimeTool extends GregorianCalendar {
 			super(msg);
 		}
 	}
+
+	@Override
+	public int compareTo(Calendar arg0){
+		long diff=(getTimeInMillis()-arg0.getTimeInMillis());
+		if(diff<0){
+			return -1;
+		}else if(diff>0){
+			return 1;
+		}
+		return 0;
+	}
+	
 }
