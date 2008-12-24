@@ -43,7 +43,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen";
 	private static final String DUE_DATE_TEXT = "Stichtag";
 	private int dueAfter;
-	private DateTool stichTag=new DateTool();
+	private DateTool stichTag = new DateTool();
 	
 	public ListeNachFaelligkeit(){
 		super(NAME);
@@ -55,11 +55,11 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		stichTag = new DateTool(stichtag);
 	}
 	
-	@GetProperty(name = DUE_DATE_TEXT, fieldType = FieldTypes.TEXT_DATE, index = -2 )
+	@GetProperty(name = DUE_DATE_TEXT, fieldType = FieldTypes.TEXT_DATE, index = -2)
 	public String getStichtag(){
 		return stichTag.toString(DateTool.DATE_GER);
 	}
-
+	
 	@GetProperty(name = DUE_AFTER_TEXT, fieldType = FieldTypes.TEXT_NUMERIC)
 	public int getDueAfter(){
 		return dueAfter;
@@ -70,7 +70,6 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		dueAfter = date;
 	}
 	
-		
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		int totalwork = 1000000;
@@ -88,22 +87,21 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 				return Status.CANCEL_STATUS;
 			}
 			if (RnStatus.isActive(rn.getStatus())) {
-			DateTool date = new DateTool(rn.getDatumRn());
+				DateTool date = new DateTool(rn.getDatumRn());
 				date.addDays(dueAfter);
 				if (date.isBefore(stichTag)) {
 					Comparable<?>[] row = new Comparable[dataSet.getHeadings().size()];
-					Fall fall=rn.getFall();
-					if(fall!=null){
-						Patient pat=fall.getPatient();
-						if(pat!=null){
-							row[0]=pat.getPatCode();
-							row[1] = rn.getNr();
+					Fall fall = rn.getFall();
+					if (fall != null) {
+						Patient pat = fall.getPatient();
+						if (pat != null) {
+							row[0] = Integer.parseInt(pat.getPatCode());
+							row[1] = Integer.parseInt(rn.getNr());
 							row[2] = new DateTool(date);
-							row[3] = rn.getBetrag().getAmountAsString();
+							row[3] = rn.getBetrag();
 							result.add(row);
 						}
 					}
-					
 					
 				}
 			}
