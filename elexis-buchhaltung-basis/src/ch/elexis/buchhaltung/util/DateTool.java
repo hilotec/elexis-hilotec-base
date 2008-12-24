@@ -1,10 +1,8 @@
 package ch.elexis.buchhaltung.util;
 
-import java.util.Calendar;
-
 import ch.rgw.tools.TimeTool;
 
-public class DateTool extends TimeTool {
+public class DateTool extends TimeTool{
 	
 	public DateTool(){
 		super();
@@ -23,14 +21,9 @@ public class DateTool extends TimeTool {
 		return toString(TimeTool.DATE_SIMPLE);
 	}
 	
-	@Override
-	public int compareTo(Calendar arg0){
-		long diff=(getTimeInMillis()-arg0.getTimeInMillis());
-		if(diff<0){
-			return -1;
-		}else if(diff>0){
-			return 1;
-		}
-		return 0;
+	
+	public int compareTo(DateTool d1){
+		long diff=(getTimeInMillis()-d1.getTimeInMillis())/86400000L;	// consider only day-differences
+		return (int)diff;
 	}
 }
