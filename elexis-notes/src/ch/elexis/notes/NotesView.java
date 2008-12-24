@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 4802 2008-12-10 18:26:18Z rgw_ch $
+ *  $Id: NotesView.java 4851 2008-12-24 14:44:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -246,6 +246,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 						
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
+						SWTHelper.showError("Fehler beim Import", ex.getMessage());
 					}
 				}
 			};
