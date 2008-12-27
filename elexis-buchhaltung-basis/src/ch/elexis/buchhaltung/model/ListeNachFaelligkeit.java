@@ -95,7 +95,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 					if (fall != null) {
 						Patient pat = fall.getPatient();
 						if (pat != null) {
-							row[0] = Integer.parseInt(pat.getPatCode());
+							row[0] = Integer.parseInt(pat.get("PatientNr"));
 							row[1] = Integer.parseInt(rn.getNr());
 							row[2] = new DateTool(date);
 							row[3] = rn.getBetrag();

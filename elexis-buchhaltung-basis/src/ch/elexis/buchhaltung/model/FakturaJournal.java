@@ -58,7 +58,7 @@ public class FakturaJournal extends AbstractTimeSeries {
 			Patient pat = at.getPatient();
 			if (pat != null) {
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
-				row[0] = Integer.parseInt(pat.getPatCode());
+				row[0] = Integer.parseInt(pat.get("PatientNr"));
 				row[1] = at.getDate();
 				row[2] = at.getAmount();
 				row[4] = at.getRemark();

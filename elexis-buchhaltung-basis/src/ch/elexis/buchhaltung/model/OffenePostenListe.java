@@ -115,7 +115,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 					int status = rn.getStatusAtDate(now);
 					if (RnStatus.isActive(status)) {
 						Comparable[] row = new Comparable[this.getDataSet().getHeadings().size()];
-						row[0] = Integer.parseInt(pat.getPatCode());
+						row[0] = Integer.parseInt(pat.get("PatientNr"));
 						row[1] = rn.getNr();
 						List<Zahlung> zahlungen = rn.getZahlungen();
 						for (Zahlung z : zahlungen) {
