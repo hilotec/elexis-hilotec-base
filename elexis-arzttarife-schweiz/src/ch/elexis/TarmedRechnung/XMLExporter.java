@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4860 2008-12-28 08:05:38Z rgw_ch $
+ * $Id: XMLExporter.java 4862 2008-12-28 10:57:57Z tschaller $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -363,7 +363,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		Document xmlRn; // Ziffern "Referenzhandbuch Arztrechnung XML 4.0"
 		Element root = new Element("request", ns); // 10020/21
-		//root.addNamespaceDeclaration(nsdef);
+		// root.addNamespaceDeclaration(nsdef);
 		root.addNamespaceDeclaration(nsxsi); // 10022
 		root.setAttribute("schemaLocation",
 			"http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd", nsxsi);
@@ -376,10 +376,12 @@ public class XMLExporter implements IRnOutputter {
 		Element header = new Element("header", ns); // 10050
 		root.addContent(header);
 		Element sender = new Element("sender", ns); // 10051
-		String mEAN = TarmedRequirements.getEAN(actMandant); // (String)actMandant.getInfoElement("EAN");
+		String mEAN = TarmedRequirements.getEAN(actMandant); // (String)actMandant.getInfoElement(
+		// "EAN");
 		
 		sender.setAttribute("ean_party", mEAN);
-		String kEAN = TarmedRequirements.getEAN(kostentraeger); // (String)kostentraeger.getInfoElement("EAN");
+		String kEAN = TarmedRequirements.getEAN(kostentraeger); // (String)kostentraeger.
+		// getInfoElement("EAN");
 		String rEAN = TarmedRequirements.getRecipientEAN(kostentraeger);
 		if (rEAN.equals("unknown")) {
 			rEAN = kEAN;
@@ -428,7 +430,8 @@ public class XMLExporter implements IRnOutputter {
 		VersionInfo vi = new VersionInfo(Hub.Version);
 		// Versionen unter 100 werden nicht akzeptiert
 		// int
-		// tmi=Integer.parseInt(vi.maior())*100+Integer.parseInt(vi.minor())*10+Integer.parseInt(vi.rev());
+		// tmi=Integer.parseInt(vi.maior())*100+Integer.parseInt(vi.minor())*10+Integer.parseInt(vi.
+		// rev());
 		Element spackage = new Element("package", ns); // 10070
 		spackage.setText("Elexis");
 		spackage.setAttribute("version", vi.maior() + vi.minor() + vi.rev()); // 10071
@@ -818,7 +821,8 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString("KSK"));
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
+		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
 		if (!spec.equals("")) {
@@ -902,8 +906,12 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.getInfoString("EAN"));
-		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.getInfoString("KSK"));
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
+		// getInfoString
+		// ("EAN"));
+		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
+		// getInfoString
+		// ("KSK"));
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
 		
