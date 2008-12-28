@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4706 2008-12-02 16:44:07Z rgw_ch $
+ * $Id: XMLExporter.java 4860 2008-12-28 08:05:38Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -363,7 +363,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		Document xmlRn; // Ziffern "Referenzhandbuch Arztrechnung XML 4.0"
 		Element root = new Element("request", ns); // 10020/21
-		root.addNamespaceDeclaration(nsdef);
+		//root.addNamespaceDeclaration(nsdef);
 		root.addNamespaceDeclaration(nsxsi); // 10022
 		root.setAttribute("schemaLocation",
 			"http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd", nsxsi);
