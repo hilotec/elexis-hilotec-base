@@ -33,6 +33,15 @@ public class JCECrypter implements Cryptologist {
 	private String userKey;
 	private char[] pwd;
 
+	/**
+	 * Create a new Crypter. If the named keystore does not exist, it well
+	 * created newly and a key for the named user will be created as well.
+	 * @param keystore keystore to use or NULL for default keystore
+	 * @param kspwd keystore password or NULL for default password
+	 * @param mykey identifier for user's key in the named keystore
+	 * @param keypwd password for the user's key
+	 * @throws Exception
+	 */
 	public JCECrypter(String keystore, char[] kspwd, String mykey, char[] keypwd)
 			throws Exception {
 	
