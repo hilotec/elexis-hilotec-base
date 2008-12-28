@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4862 2008-12-28 10:57:57Z tschaller $
+ * $Id: XMLExporter.java 4863 2008-12-28 12:53:43Z tschaller $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -369,7 +371,7 @@ public class XMLExporter implements IRnOutputter {
 			"http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd", nsxsi);
 		
 		// Rolle
-		root.setAttribute("role", "production"); // 10030/32
+		root.setAttribute("role", getRole(actFall)); // 10030/32
 		xmlRn = new Document(root);
 		
 		// header
@@ -387,34 +389,20 @@ public class XMLExporter implements IRnOutputter {
 			rEAN = kEAN;
 		}
 		
-		// Try to find the intermediate EAN. If we have explicitely set
-		// an intermediate EAN, we'll use this one. Otherweise, we'll
-		// check whether the mandator has a TC contract. if so, we try to
-		// find the TC's EAN.
-		// If nothing appropriate is found, we'll try to use the receiver EAN
-		// or at least the guarantor EAN.
-		// If everything fails we use a pseudo EAN to make the Validators happy
-		String iEAN = TarmedRequirements.getIntermediateEAN(actFall);
-		Element intermediate = new Element("intermediate", ns); // 10052
-		if (iEAN.length() == 0) {
-			if (TarmedRequirements.hasTCContract(actMandant)) {
-				String trustCenter = TarmedRequirements.getTCName(actMandant);
-				if (trustCenter.length() > 0) {
-					iEAN = TrustCenters.getTCEAN(trustCenter);
-				}
-			}
-			if (StringTool.isNothing(iEAN)) {
-				if (!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")) {
-					if (kEAN.matches("(20[0-9]{11}|76[0-9]{11})")) {
-						iEAN = kEAN;
-					} else {
-						iEAN = TarmedRequirements.EAN_PSEUDO; // make validator happy
-					}
+		String iEAN = getIntermediateEAN(actFall);
+		if (StringTool.isNothing(iEAN)) {
+			// make validator happy
+			if (!rEAN.matches("(20[0-9]{11}|76[0-9]{11})")) {
+				if (kEAN.matches("(20[0-9]{11}|76[0-9]{11})")) {
+					iEAN = kEAN;
 				} else {
-					iEAN = rEAN;
+					iEAN = TarmedRequirements.EAN_PSEUDO;
 				}
+			} else {
+				iEAN = rEAN;
 			}
 		}
+		Element intermediate = new Element("intermediate", ns); // 10052
 		intermediate.setAttribute("ean_party", iEAN);
 		
 		Element recipient = new Element("recipient", ns); // 10053
@@ -835,6 +823,8 @@ public class XMLExporter implements IRnOutputter {
 		provider.setName("provider");
 		eTiers.addContent(provider);
 		
+		Element onlineElement = null; // tschaller: see comments in buildOnlineElement
+		
 		Element insurance = new Element("insurance", ns); // 11090
 		// The 'insurance' element is optional in Tiers Garant so in TG we only insert this Element,
 		// if we have all
@@ -864,7 +854,13 @@ public class XMLExporter implements IRnOutputter {
 			company.addContent(companyname);
 			company.addContent(buildPostalElement(kostentraeger));
 			company.addContent(buildTelekomElement(kostentraeger));
-			company.addContent(buildOnlineElement(kostentraeger));
+			// company.addContent(buildOnlineElement(kostentraeger)); // tschaller: see comments in
+			// buildOnlineElement
+			onlineElement = buildOnlineElement(kostentraeger);
+			if (onlineElement != null) {
+				company.addContent(onlineElement);
+			}
+			
 			insurance.addContent(company);
 			eTiers.addContent(insurance);
 			// note this may lead to a person mistreated as organization. So these faults should be
@@ -901,7 +897,9 @@ public class XMLExporter implements IRnOutputter {
 		eTiers.addContent(patient);
 		
 		Element guarantor = new Element("guarantor", ns); // 11110
-		guarantor.addContent(buildAdressElement(rnAdressat));
+		guarantor.addContent(buildAdressElement(rnAdressat, true)); // use "Anschrift" instead of
+		// contact details (e.g. for
+		// "gesetzliche Vertretung")
 		eTiers.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", ns); // 11120
@@ -1070,7 +1068,13 @@ public class XMLExporter implements IRnOutputter {
 			ret.addContent(companyname);
 			ret.addContent(buildPostalElement(k));
 			ret.addContent(buildTelekomElement(k));
-			ret.addContent(buildOnlineElement(k));
+			// ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
+			// buildOnlineElement
+			Element onlineElement = buildOnlineElement(k);
+			if (onlineElement != null) {
+				ret.addContent(onlineElement);
+			}
+			
 		} else {
 			ret = new Element("person", ns);
 			setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35);
@@ -1087,7 +1091,64 @@ public class XMLExporter implements IRnOutputter {
 			ret.addContent(givenname);
 			ret.addContent(buildPostalElement(k));
 			ret.addContent(buildTelekomElement(k));
-			ret.addContent(buildOnlineElement(k));
+			// ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
+			// buildOnlineElement
+			Element onlineElement = buildOnlineElement(k);
+			if (onlineElement != null) {
+				ret.addContent(onlineElement);
+			}
+		}
+		return ret;
+	}
+	
+	public Element buildAdressElement(final Kontakt k, final boolean useAnschrift){
+		Element ret;
+		if (k.istPerson() == false) {
+			ret = new Element("company", ns);
+			Element companyname = new Element("companyname", ns);
+			companyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
+			ret.addContent(companyname);
+			ret.addContent(buildPostalElement(k));
+			ret.addContent(buildTelekomElement(k));
+			Element onlineElement = buildOnlineElement(k);
+			if (onlineElement != null) {
+				ret.addContent(onlineElement);
+			}
+		} else {
+			ret = new Element("person", ns);
+			Element familyname = new Element("familyname", ns);
+			Element givenname = new Element("givenname", ns);
+			
+			String anschrift = k.get("Anschrift");
+			if (!useAnschrift || StringTool.isNothing(anschrift)
+				|| anschrift.equals(k.createStdAnschrift())) {
+				setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35);
+				setAttributeIfNotEmptyWithLimit(ret, "title", k.get("Titel"), 35);
+				familyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
+				String gn = k.get(StringTool.limitLength("Bezeichnung2", 35));
+				if (StringTool.isNothing(gn)) {
+					gn = "Unbekannt"; // make validator happy
+				}
+				givenname.setText(gn);
+				ret.addContent(familyname);
+				ret.addContent(givenname);
+				ret.addContent(buildPostalElement(k));
+			} else {
+				Postanschrift postAnschrift = new Postanschrift(k);
+				familyname.setText(StringTool.limitLength(postAnschrift.name, 35));
+				givenname.setText(StringTool.limitLength(postAnschrift.vorname, 35));
+				
+				setAttributeIfNotEmptyWithLimit(ret, "salutation", postAnschrift.anrede, 35);
+				ret.addContent(familyname);
+				ret.addContent(givenname);
+				ret.addContent(buildPostalElement(postAnschrift));
+			}
+			
+			ret.addContent(buildTelekomElement(k));
+			Element onlineElement = buildOnlineElement(k);
+			if (onlineElement != null) {
+				ret.addContent(onlineElement);
+			}
 		}
 		return ret;
 	}
@@ -1104,14 +1165,56 @@ public class XMLExporter implements IRnOutputter {
 		return ret;
 	}
 	
+	public Element buildPostalElement(final Postanschrift postanschrift){
+		Element ret = new Element("postal", ns);
+		addElementIfExists(ret, "pobox", null, StringTool.limitLength(postanschrift.adresse2, 35),
+			null);
+		addElementIfExists(ret, "street", null, StringTool.limitLength(postanschrift.adresse1, 35),
+			null);
+		Element zip =
+			addElementIfExists(ret, "zip", null, StringTool.limitLength(postanschrift.plz, 9),
+				"0000");
+		setAttributeIfNotEmpty(zip, "countrycode", StringTool.limitLength(postanschrift.land, 3));
+		addElementIfExists(ret, "city", null, StringTool.limitLength(postanschrift.ort, 35),
+			"Unbekannt");
+		return ret;
+	}
+	
 	public Element buildOnlineElement(final Kontakt k){
-		Element ret = new Element("online", ns);
-		String email = StringTool.limitLength(k.get("E-Mail"), 70);
-		if (!email.matches(".+@.+")) {
-			email = "mail@invalid.invalid";
+// Element ret = new Element("online", ns);
+// String email = StringTool.limitLength(k.get("E-Mail"), 70);
+// if (!email.matches(".+@.+")) {
+// email = "mail@invalid.invalid";
+// }
+// addElementIfExists(ret, "email", null, k.get("E-Mail"), "mail@invalid.invalid");
+// addElementIfExists(ret, "url", null, StringTool.limitLength(k.get("Website"), 100), null);
+// return ret;
+		
+		// Tony Schaller, 28.12.2008:
+		// optimized code: online element is created when it contains real content, only
+		Element ret = null;
+		
+		// mail adresse
+		String value = StringTool.limitLength(k.get("E-Mail"), 70);
+		if (!value.equals("")) {
+			if (!value.matches(".+@.+")) {
+				value = "mail@invalid.invalid";
+			}
+			if (ret == null) {
+				ret = new Element("online", ns);
+			}
+			addElementIfExists(ret, "email", null, value, null);
 		}
-		addElementIfExists(ret, "email", null, k.get("E-Mail"), "mail@invalid.invalid");
-		addElementIfExists(ret, "url", null, StringTool.limitLength(k.get("Website"), 100), null);
+		
+		// webseite
+		value = StringTool.limitLength(k.get("Website"), 100);
+		if (!value.equals("")) {
+			if (ret == null) {
+				ret = new Element("online", ns);
+				addElementIfExists(ret, "email", null, "mail@invalid.invalid", null);
+			}
+			addElementIfExists(ret, "url", null, value, null);
+		}
 		return ret;
 	}
 	
@@ -1279,5 +1382,138 @@ public class XMLExporter implements IRnOutputter {
 	
 	public void saveComposite(){
 	// Nothing
+	}
+	
+	protected String getIntermediateEAN(final Fall fall){
+		// Try to find the intermediate EAN. If we have explicitely set
+		// an intermediate EAN, we'll use this one. Otherweise, we'll
+		// check whether the mandator has a TC contract. if so, we try to
+		// find the TC's EAN.
+		// If nothing appropriate is found, we'll try to use the receiver EAN
+		// or at least the guarantor EAN.
+		// If everything fails we use a pseudo EAN to make the Validators happy
+		String iEAN = TarmedRequirements.getIntermediateEAN(actFall);
+		if (iEAN.length() == 0) {
+			if (TarmedRequirements.hasTCContract(actMandant)) {
+				String trustCenter = TarmedRequirements.getTCName(actMandant);
+				if (trustCenter.length() > 0) {
+					iEAN = TrustCenters.getTCEAN(trustCenter);
+				}
+			}
+		}
+		return iEAN;
+	}
+	
+	protected String getRole(final Fall fall){
+		return "production";
+	}
+	
+	private class Postanschrift {
+		private String anrede = "";
+		private String name = "";
+		private String vorname = "";
+		private String adresse1 = "";
+		private String adresse2 = "";
+		private String plz = "";
+		private String ort = "";
+		private String land = "";
+		
+		public Postanschrift(final Kontakt k){
+			super();
+			init(k);
+		}
+		
+		private void init(final Kontakt k){
+			String postAnschrift = k.getPostAnschrift(true);
+			
+			// Zeilen lesen
+			StringTokenizer tokenizer = new StringTokenizer(postAnschrift, "\n");
+			List<String> zeileList = new Vector<String>();
+			while (tokenizer.hasMoreElements()) {
+				zeileList.add(tokenizer.nextToken());
+			}
+			// Zeilen interpretieren (so gut es geht)
+			String plzOrt = "";
+			String nameVorname = "";
+			final int len = zeileList.size();
+			switch (len) {
+			case 0: // Kann gar nicht sein, aber man weiss ja nie!
+				throw new IllegalArgumentException("Keine Postanschrift");
+			case 1: // Nur Name vorname
+				nameVorname = zeileList.get(0);
+				break;
+			case 2: // NameVorname, Ortsangaben
+				nameVorname = zeileList.get(0);
+				plzOrt = zeileList.get(1);
+				break;
+			case 3: // NameVorname, Adr1, Ortsangaben ODER Anrede, NameVorname, Ortsangaben
+				if (zeileList.get(0).indexOf(" ") < 0) {
+					// Erste Zeile Anrede
+					anrede = zeileList.get(0);
+					nameVorname = zeileList.get(1);
+					plzOrt = zeileList.get(2);
+				} else {
+					// Erste Zeile NameVorname
+					nameVorname = zeileList.get(0);
+					adresse1 = zeileList.get(1);
+					plzOrt = zeileList.get(2);
+				}
+				break;
+			case 4: // NameVorname, Adr1, Adr2, Ortsangaben ODER Anrede, NameVorname, Adr1,
+				// Ortsangaben
+				if (zeileList.get(0).indexOf(" ") < 0) {
+					// Erste Zeile Anrede
+					anrede = zeileList.get(0);
+					nameVorname = zeileList.get(1);
+					adresse1 = zeileList.get(2);
+					plzOrt = zeileList.get(3);
+				} else {
+					// Erste Zeile NameVorname
+					nameVorname = zeileList.get(0);
+					adresse1 = zeileList.get(1);
+					adresse2 = zeileList.get(2);
+					plzOrt = zeileList.get(3);
+				}
+				break;
+			default:
+				if (len > 4) { // Anrede, NameVorname, Adr1, Adr2, Ortsangaben
+					anrede = zeileList.get(0);
+					nameVorname = zeileList.get(1);
+					adresse1 = zeileList.get(2);
+					adresse2 = zeileList.get(3);
+					plzOrt = zeileList.get(4);
+				}
+				break;
+			}
+			
+			// NameVorname aufteilen. Z.B. Von Allmen Christoph
+			if (!StringTool.isNothing(nameVorname)) {
+				nameVorname = nameVorname.trim();
+				int index = nameVorname.lastIndexOf(" "); // Z.B. Von Allmen Christoph
+				if (index > 0) {
+					name = nameVorname.substring(0, index);
+					vorname = nameVorname.substring(index + 1);
+				} else {
+					name = nameVorname;
+				}
+			}
+			
+			// plzOrt parsen. Z.B. CH-3600 Lenzburg
+			land = k.get("Land");
+			if (plzOrt.length() > 3 && plzOrt.substring(0, 3).indexOf("-") > 0) {
+				// Land exists
+				int index = plzOrt.indexOf("-");
+				land = plzOrt.substring(0, index);
+				plzOrt = plzOrt.substring(index + 1);
+			}
+			plz = k.get("Plz");
+			if (plzOrt.indexOf(" ") > 0) {
+				// Read zip code
+				int index = plzOrt.indexOf(" ");
+				plz = plzOrt.substring(0, index);
+				plzOrt = plzOrt.substring(index + 1);
+			}
+			ort = plzOrt;
+		}
 	}
 }
