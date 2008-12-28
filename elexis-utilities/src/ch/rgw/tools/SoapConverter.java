@@ -197,7 +197,7 @@ public class SoapConverter {
 		} else if ((obj instanceof Double) || (obj instanceof Float)) {
 			createParameter(eBody, name, TYPE_FLOAT).setText(Double.toString((Double) obj));
 		} else if ((obj instanceof Integer) || (obj instanceof Long) || (obj instanceof Byte)) {
-			createParameter(eBody, name, TYPE_INTEGRAL).setText(Long.toString((Long) obj));
+			createParameter(eBody, name, TYPE_INTEGRAL).setText(obj.toString());
 		} else if (obj instanceof byte[]) {
 			String res = new BASE64Encoder().encode((byte[]) obj);
 			createParameter(eBody, name, TYPE_ARRAY).setText(res);

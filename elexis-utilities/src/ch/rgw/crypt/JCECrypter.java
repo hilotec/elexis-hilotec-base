@@ -10,6 +10,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
 
@@ -48,6 +49,9 @@ public class JCECrypter implements Cryptologist {
 		
 		userKey = mykey;
 		pwd = keypwd;
+		Security
+		.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
+
 		if (keystore == null) {
 			keystore = System.getProperty("user.home") + File.separator
 					+ ".JCECrypter";

@@ -62,8 +62,9 @@ public class JCEKeyManager {
 
 	static {
 		log = Logger.getLogger("KeyManager");
-		// Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); 
-		//_srnd = SecureRandom.getInstance("SHA1PRNG"); // Create random
+		// Security.addProvider(new
+		// org.bouncycastle.jce.provider.BouncyCastleProvider());
+		// _srnd = SecureRandom.getInstance("SHA1PRNG"); // Create random
 		// number generator.
 
 		_srnd = new SecureRandom();
@@ -87,7 +88,7 @@ public class JCEKeyManager {
 			_srnd = SecureRandom.getInstance("SHA1PRNG");
 		} catch (NoSuchAlgorithmException e) {
 			ExHandler.handle(e);
-			_srnd=new SecureRandom();
+			_srnd = new SecureRandom();
 		} // Create random
 		if (StringTool.isNothing(keystoreFile)) {
 			ksFile = System.getProperty("user.home") + "/.keystore";
@@ -109,8 +110,8 @@ public class JCEKeyManager {
 	 */
 	public boolean load(boolean bCreateIfNotExists) {
 		try {
-			File ksf=new File(ksFile);
-			if(!ksf.exists()){
+			File ksf = new File(ksFile);
+			if (!ksf.exists()) {
 				return create(false);
 			}
 			ks = KeyStore.getInstance(ksType);
@@ -126,12 +127,12 @@ public class JCEKeyManager {
 
 	public boolean create(boolean bDeleteIfExists) {
 		File ksF = new File(ksFile);
-		if(ksF.exists()){
-			if(bDeleteIfExists){
-				if(!ksF.delete()){
+		if (ksF.exists()) {
+			if (bDeleteIfExists) {
+				if (!ksF.delete()) {
 					return false;
 				}
-			}else{
+			} else {
 				return false;
 			}
 		}
@@ -168,7 +169,7 @@ public class JCEKeyManager {
 	 * @param alias
 	 *            Name des gesuchten Schlüssels
 	 * @return den gesuchten Schlüssel oder null - nicht gefunden
-	 * */
+	 */
 	public PublicKey getPublicKey(String alias) {
 		if (ks == null) {
 			log.log(Level.WARNING, "Keystore nicht geladen");
@@ -192,7 +193,7 @@ public class JCEKeyManager {
 
 	}
 
-	public X509Certificate getCertificate(String alias){
+	public X509Certificate getCertificate(String alias) {
 		if (ks == null) {
 			log.log(Level.WARNING, "Keystore nicht geladen");
 			if (!load(true)) {
@@ -206,15 +207,15 @@ public class JCEKeyManager {
 				log.log(Level.WARNING, "No certificate \"" + alias + "\"found");
 				return null;
 			} else {
-				return (X509Certificate)cert;
+				return (X509Certificate) cert;
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return null;
 		}
 
-		
 	}
+
 	/** Public key aus einem Input Stream lesen */
 	public PublicKey getPublicKey(InputStream is) {
 		try {
@@ -262,9 +263,17 @@ public class JCEKeyManager {
 	public boolean addCertificate(X509Certificate cert) {
 
 		try {
-			ks.setCertificateEntry(cert.getSubjectX500Principal().getName(),
-					cert);
-			return save();
+			String[] n = cert.getSubjectX500Principal().getName().split(",");
+			for(String sub:n){
+				if(sub.startsWith("CN")){
+					String[] fx=sub.split("\\s*=\\s*");
+					if(fx.length>1){
+						ks.setCertificateEntry(fx[1].trim(), cert);
+						return true;
+					}
+				}
+			}
+			return false;
 		} catch (KeyStoreException e) {
 			ExHandler.handle(e);
 			return false;
@@ -322,22 +331,23 @@ public class JCEKeyManager {
 		return cert;
 	}
 
-	public boolean addKeyPair(PrivateKey kpriv, X509Certificate cert, char[] keyPwd)
-			throws Exception {
-		String alias=getName(cert);
+	public boolean addKeyPair(PrivateKey kpriv, X509Certificate cert,
+			char[] keyPwd) throws Exception {
+		String alias = getName(cert);
 		ks.setKeyEntry(alias, kpriv, keyPwd, new Certificate[] { cert });
 
 		return true;
 	}
 
-	String getName(X509Certificate cert){
-		String cn=cert.getSubjectDN().getName();
-		int s=cn.indexOf('=');
-		if(s!=-1){
-			return cn.substring(s+1);
+	String getName(X509Certificate cert) {
+		String cn = cert.getSubjectDN().getName();
+		int s = cn.indexOf('=');
+		if (s != -1) {
+			return cn.substring(s + 1);
 		}
 		return cn;
 	}
+
 	public boolean existsPrivate(String alias) {
 		try {
 			return ks.isKeyEntry(alias);
@@ -367,6 +377,7 @@ public class JCEKeyManager {
 		return null;
 
 	}
+
 	/*
 	 * public DHParameterSpec createParams() throws Exception{
 	 * AlgorithmParameterGenerator paramGen =
@@ -380,8 +391,7 @@ public class JCEKeyManager {
 	 * (params != null) { kpg.initialize(params); } KeyPair kp =
 	 * kpg.generateKeyPair();
 	 * 
-	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; }
-	 * }
+	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; } }
 	 */
 
 	public SecureRandom getRandom() {
