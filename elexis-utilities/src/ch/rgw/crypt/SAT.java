@@ -13,6 +13,7 @@
 
 package ch.rgw.crypt;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -180,16 +181,20 @@ public class SAT {
 			conn.setDoOutput(true);
 			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
 			
-			String rx = new String(Base64Coder.encode(request));
-			out.write("request=" + rx);
+			//String rx = new String(Base64Coder.encode(request));
+			String rx = StringTool.enPrintable(request,65);
+			out.write("request=" + rx); 
 			out.close();
-			StringBuilder sb = new StringBuilder();
+			//StringBuilder sb = new StringBuilder();
+			ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			InputStream is = conn.getInputStream();
 			int in;
 			while (((in = is.read()) != -1)) {
-				sb.append((byte) in);
+				//sb.append((byte) in);
+				baos.write(in);
 			}
-			return Base64Coder.decode(sb.toString()); // .decodeBuffer(conn.getInputStream());
+			//return Base64Coder.decode(sb.toString()); // .decodeBuffer(conn.getInputStream());
+			return baos.toByteArray();
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
