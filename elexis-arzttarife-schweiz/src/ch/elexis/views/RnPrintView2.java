@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4706 2008-12-02 16:44:07Z rgw_ch $
+ * $Id: RnPrintView2.java 4866 2008-12-29 13:47:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -67,7 +67,7 @@ public class RnPrintView2 extends ViewPart {
 	public static final String ID="ch.elexis.arzttarife_ch.printview2";
 
 	private double cmAvail=21.4;				// Verfügbare Druckhöhe in cm
-	private static double cmPerLine=0.65;		// Höhe pro Zeile
+	private static double cmPerLine=0.67;		// Höhe pro Zeile (0.65 plus Toleranz)
 	private static double cmFirstPage=13.0;		// Platz auf der ersten Seite
 	private static double cmMiddlePage=21.0;	// Platz auf Folgeseiten
 	private static double cmFooter=4.5;			// Platz für Endabrechnung
