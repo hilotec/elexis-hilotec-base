@@ -30,6 +30,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.SoapConverter;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.Result.SEVERITY;
 
 /**
  * Secure Authenticated Transmission The Transmitter stores a hashtable in an encrypted and signed
@@ -71,12 +72,12 @@ public class SAT {
 	 *         the sender's ID
 	 */
 	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
-		if(encrypted.length<10){	// is probably an error message
+		if(encrypted.length<25){	// is probably an error message
 			return new Result<HashMap<String, Object>>(Result.SEVERITY.WARNING,7, "Server Error: "+new String(encrypted),null, true);
 		}
 		Result<byte[]> dec = crypt.decrypt(encrypted);
-		if (!dec.isOK()) {
-			return new Result<HashMap<String, Object>>(dec.getSeverity(), 1, "Decrypt error", null,
+		if ((dec==null) || (!dec.isOK())) {
+			return new Result<HashMap<String, Object>>(dec==null ? SEVERITY.ERROR : dec.getSeverity(), 1, "Decrypt error", null,
 				true);
 		}
 		byte[] decrypted = dec.get();
@@ -182,7 +183,7 @@ public class SAT {
 			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
 			
 			//String rx = new String(Base64Coder.encode(request));
-			String rx = StringTool.enPrintable(request,65);
+			String rx = StringTool.enPrintableStrict(request);
 			out.write("request=" + rx); 
 			out.close();
 			//StringBuilder sb = new StringBuilder();

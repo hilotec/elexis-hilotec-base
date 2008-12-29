@@ -5,6 +5,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom.jar" sourcepath="elexis-utilitiessrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/bcprov-jdk15-140.jar" sourcepath="elexis-utilitiessrc.zip"/>
-	<classpathentry exported="true" kind="lib" path="bin" sourcepath="bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

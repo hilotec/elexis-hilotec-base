@@ -689,6 +689,53 @@ public class StringTool {
 		return out;
 	}
 
+	public static String enPrintableStrict(byte[] src){
+		byte[] out=new byte[src.length<<1];
+		try{
+			for(int i=0;i<src.length;i++){
+				int i1=(src[i] & 0xff)>>4;
+				byte o1= (byte)(i1+65);
+				if(o1>90){
+					o1+=7;
+				}
+				byte o2= (byte)((src[i]&0x0f)+65);
+				if(o2>90){
+					o2+=7;
+				}
+				out[2*i]=o1;
+				out[2*i+1]=o2;
+			}
+			return new String(out, default_charset);
+			
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return null;
+		}
+	}
+	
+	public static byte[] dePrintableStrict(String src){
+		byte[] input=null;
+		try {
+			input = src.getBytes(default_charset);
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
+		byte[] out = new byte[input.length / 2];
+		for (int i = 0; i < out.length; i++) {
+			int o1=input[2*i];
+			if(o1>96){
+				o1-=7;
+			}
+			int o2=input[2*i+1];
+			if(o2>96){
+				o2-=7;
+			}
+			out[i] = (byte) ((o1 - 65)<<4 + (o2 - 65));
+		}
+		return out;
+	}
+		
 	/**
 	 * Gibt eine zufällige und eindeutige Zeichenfolge zurück
 	 * 
