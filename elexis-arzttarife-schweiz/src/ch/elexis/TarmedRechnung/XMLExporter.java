@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4865 2008-12-29 09:32:43Z rgw_ch $
+ * $Id: XMLExporter.java 4868 2008-12-29 17:50:38Z tschaller $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -810,7 +810,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -895,15 +895,12 @@ public class XMLExporter implements IRnOutputter {
 		patient.addContent(buildAdressElement(pat));
 		eTiers.addContent(patient);
 		
-		Element guarantor = new Element("guarantor", ns); // 11110
-		guarantor.addContent(buildAdressElement(rnAdressat, true)); // use "Anschrift" instead of
-		// contact details (e.g. for
-		// "gesetzliche Vertretung")
+		Element guarantor = buildGuarantor(rnAdressat); // 11110
 		eTiers.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
 		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
 		
@@ -1057,45 +1054,47 @@ public class XMLExporter implements IRnOutputter {
 	}
 	
 	public Element buildAdressElement(final Kontakt k){
-		Element ret;
-		if (k.istPerson() == false) {
-			ret = new Element("company", ns);
-			Element companyname = new Element("companyname", ns);
-			companyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
-			ret.addContent(companyname);
-			ret.addContent(buildPostalElement(k));
-			ret.addContent(buildTelekomElement(k));
-			// ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
-			// buildOnlineElement
-			Element onlineElement = buildOnlineElement(k);
-			if (onlineElement != null) {
-				ret.addContent(onlineElement);
-			}
-			
-		} else {
-			ret = new Element("person", ns);
-			setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35);
-			setAttributeIfNotEmptyWithLimit(ret, "title", k.get("Titel"), 35);
-			Element familyname = new Element("familyname", ns);
-			familyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
-			ret.addContent(familyname);
-			Element givenname = new Element("givenname", ns);
-			String gn = k.get(StringTool.limitLength("Bezeichnung2", 35));
-			if (StringTool.isNothing(gn)) {
-				gn = "Unbekannt"; // make validator happy
-			}
-			givenname.setText(gn);
-			ret.addContent(givenname);
-			ret.addContent(buildPostalElement(k));
-			ret.addContent(buildTelekomElement(k));
-			// ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
-			// buildOnlineElement
-			Element onlineElement = buildOnlineElement(k);
-			if (onlineElement != null) {
-				ret.addContent(onlineElement);
-			}
-		}
-		return ret;
+		return buildAdressElement(k, false);
+// 29.12.2008 tschaller: this is the same as the other method called with useAnschrift=false
+// Element ret;
+// if (k.istPerson() == false) {
+// ret = new Element("company", ns);
+// Element companyname = new Element("companyname", ns);
+// companyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
+// ret.addContent(companyname);
+// ret.addContent(buildPostalElement(k));
+// ret.addContent(buildTelekomElement(k));
+// // ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
+// // buildOnlineElement
+// Element onlineElement = buildOnlineElement(k);
+// if (onlineElement != null) {
+// ret.addContent(onlineElement);
+// }
+//			
+// } else {
+// ret = new Element("person", ns);
+// setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35);
+// setAttributeIfNotEmptyWithLimit(ret, "title", k.get("Titel"), 35);
+// Element familyname = new Element("familyname", ns);
+// familyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
+// ret.addContent(familyname);
+// Element givenname = new Element("givenname", ns);
+// String gn = k.get(StringTool.limitLength("Bezeichnung2", 35));
+// if (StringTool.isNothing(gn)) {
+// gn = "Unbekannt"; // make validator happy
+// }
+// givenname.setText(gn);
+// ret.addContent(givenname);
+// ret.addContent(buildPostalElement(k));
+// ret.addContent(buildTelekomElement(k));
+// // ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
+// // buildOnlineElement
+// Element onlineElement = buildOnlineElement(k);
+// if (onlineElement != null) {
+// ret.addContent(onlineElement);
+// }
+// }
+// return ret;
 	}
 	
 	public Element buildAdressElement(final Kontakt k, final boolean useAnschrift){
@@ -1403,6 +1402,12 @@ public class XMLExporter implements IRnOutputter {
 	
 	protected String getRole(final Fall fall){
 		return "production";
+	}
+	
+	protected Element buildGuarantor(Kontakt garant){
+		Element guarantor = new Element("guarantor", ns);
+		guarantor.addContent(buildAdressElement(garant));
+		return guarantor;
 	}
 	
 	private class Postanschrift {
