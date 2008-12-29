@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4863 2008-12-28 12:53:43Z tschaller $
+ * $Id: XMLExporter.java 4865 2008-12-29 09:32:43Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -65,6 +65,7 @@ import ch.elexis.data.NamedBlob;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TarmedLeistung;
@@ -809,7 +810,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -827,12 +828,10 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element insurance = new Element("insurance", ns); // 11090
 		// The 'insurance' element is optional in Tiers Garant so in TG we only insert this Element,
-		// if we have all
-		// data absolutely correct
+		// if we have all data absolutely correct.
 		// In Tiers Payant, the insurance element is mandatory, and, furthermore, MUST be an
-		// Organization. So in TP, we
-		// insert an insurance element in any case, and, if the guarantor is a person,
-		// we "convert" it to an organization to make the validator happy
+		// Organization. So in TP, we insert an insurance element in any case, and, if the guarantor
+		// is a person, we "convert" it to an organization to make the validator happy
 		if (tiers.equals("TG")) {
 			if (kostentraeger.istOrganisation()) {
 				if (kEAN.matches("[0-9]{13,13}")) {
@@ -879,9 +878,9 @@ public class XMLExporter implements IRnOutputter {
 			return null;
 		}
 		if (StringTool.isNothing(pat.getGeschlecht())) { // we fall back to female. why not?
-			pat.set("Geschlecht", "w");
+			pat.set("Geschlecht", Person.FEMALE);
 		}
-		if (pat.getGeschlecht().equals("w")) {
+		if (pat.getGeschlecht().equals(Person.FEMALE)) {
 			gender = "female";
 		}
 		patient.setAttribute("gender", gender);
@@ -904,12 +903,10 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
-		// getInfoString
-		// ("EAN"));
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
+		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
-		// getInfoString
-		// ("KSK"));
+		
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
 		
