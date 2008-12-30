@@ -740,7 +740,7 @@ public class StringTool {
 			ExHandler.handle(ex);
 			return null;
 		}
-		byte[] out = new byte[(input.length >> 1) - 3];
+		byte[] out = new byte[(input.length-3) >> 1];
 		for (int i = 0; i < out.length; i++) {
 			int o1 = input[2 * i + 3]-65;
 			int o2 = input[2 * i + 4]-65;
