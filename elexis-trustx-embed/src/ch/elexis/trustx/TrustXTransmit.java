@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 4384 2008-09-07 13:59:14Z rgw_ch $
+ *  $Id: TrustXTransmit.java 4876 2008-12-30 09:56:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.trustx;
@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -73,14 +74,14 @@ public class TrustXTransmit implements IRnOutputter {
 	
 	/**
 	 * Export and transmit all bills contained in rnn
-	 * 
-	 * @param asCopy
-	 *            true to mar bills as "copy" or "resend"
 	 * @param rnn
 	 *            Collection of bills to transmit
+	 * @param asCopy
+	 *            true to mar bills as "copy" or "resend"
+	 * 
 	 * @return Result containing all erroneous bills.
 	 */
-	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn){
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn, Properties props){
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
 		
