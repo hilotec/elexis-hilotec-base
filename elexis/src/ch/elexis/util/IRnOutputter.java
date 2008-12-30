@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IRnOutputter.java 4382 2008-09-07 13:58:58Z rgw_ch $
+ * $Id: IRnOutputter.java 4873 2008-12-30 09:55:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -33,6 +34,13 @@ public interface IRnOutputter {
 	public static enum TYPE {
 		ORIG, COPY, STORNO
 	};
+	/** 
+	 * Property indicating the output method. 
+	 * "asDefault" -> The user requested output via default outputter
+	 * "byName" -> The user requested this outputter by name.
+	 * If the property is not set, byName will be assumed.
+	 */
+	public static final String PROP_OUTPUT_METHOD="OutputMethod";
 	
 	/**
 	 * A short textual description for this output (as Label)
@@ -46,9 +54,11 @@ public interface IRnOutputter {
 	 *            Type of the bill
 	 * @param rnn
 	 *            collection with all bills to process
+	 * @param props
+	 *            properties for various purposes. Can be null.
 	 * @return a result indicating errors
 	 */
-	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn);
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn, final Properties props);
 	
 	/**
 	 * Cancelling an already output bill: Depending on the type of the outputter, this might result

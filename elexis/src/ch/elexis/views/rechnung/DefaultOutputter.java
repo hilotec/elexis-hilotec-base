@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 4817 2008-12-14 15:44:16Z rgw_ch $
+ *  $Id: DefaultOutputter.java 4873 2008-12-30 09:55:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -16,7 +16,7 @@ package ch.elexis.views.rechnung;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Properties;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -60,8 +60,9 @@ public class DefaultOutputter implements IRnOutputter {
 		return lbl;
 	}
 	
-	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn){
+	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn, final Properties props){
 		Result<Rechnung> res = new Result<Rechnung>(null);
+		props.setProperty(IRnOutputter.PROP_OUTPUT_METHOD, "asDefault");
 		for (Rechnung rn : rnn) {
 			Fall fall = rn.getFall();
 			final IRnOutputter iro = fall.getOutputter();
@@ -84,9 +85,10 @@ public class DefaultOutputter implements IRnOutputter {
 					continue;
 				}
 			}
+			
 			res.add(iro.doOutput(type, Arrays.asList(new Rechnung[] {
 				rn
-			})));
+			}), props));
 		}
 		return null;
 	}

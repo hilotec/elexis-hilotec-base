@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnOutputDialog.java 4430 2008-09-22 17:22:09Z rgw_ch $
+ *  $Id: RnOutputDialog.java 4873 2008-12-30 09:55:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -16,6 +16,7 @@ package ch.elexis.views.rechnung;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -116,7 +117,7 @@ public class RnOutputDialog extends TitleAreaDialog {
 			IRnOutputter rop = lo.get(idx);
 			rop.saveComposite();
 			/* Result<Rechnung> result= */rop.doOutput(
-				bCopy.getSelection() ? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn);
+				bCopy.getSelection() ? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn, new Properties());
 		}
 		super.okPressed();
 	}

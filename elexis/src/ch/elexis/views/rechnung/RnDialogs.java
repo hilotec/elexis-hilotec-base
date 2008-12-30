@@ -8,16 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDialogs.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ * $Id: RnDialogs.java 4873 2008-12-30 09:55:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -90,7 +90,7 @@ public class RnDialogs {
 			// Number num=df.parse(amount.getText());
 			Money ret = MoneyInput.getFromTextField(amount);
 			if (ret != null) {
-				ret=ret.multiply(-1.0);
+				ret = ret.multiply(-1.0);
 				rn.addZahlung(ret, bemerkung.getText());
 				super.okPressed();
 			} else {
@@ -283,7 +283,7 @@ public class RnDialogs {
 					if (iro != null) {
 						iro.doOutput(IRnOutputter.TYPE.STORNO, Arrays.asList(new Rechnung[] {
 							rn
-						}));
+						}), new Properties());
 					}
 				}
 			}
