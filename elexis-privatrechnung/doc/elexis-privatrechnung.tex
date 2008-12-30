@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: elexis-privatrechnung.tex 3739 2008-03-23 20:20:40Z rgw_ch $
+% *  $Id: elexis-privatrechnung.tex 4885 2008-12-30 13:52:34Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -23,21 +23,8 @@
 % vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
 % das System nimmt je nach Renderer die geeignete Variante.
 
-\newif\ifpdf
-\ifx\pdfoutput\undefined
-	\pdffalse              	%normales LaTeX wird ausgeführt
-\else
-	\pdfoutput=1
-	\pdftrue               	%pdfLaTeX wird ausgeführt
-\fi
-
-\ifpdf
-	\usepackage[pdftex]{graphicx}
-	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
-\else
-	\usepackage[dvips]{graphicx}
-	\DeclareGraphicsExtensions{.eps}
-\fi
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
 
 \usepackage{floatflt}
 \usepackage{wrapfig}
