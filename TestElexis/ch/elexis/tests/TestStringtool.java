@@ -2,6 +2,8 @@ package ch.elexis.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import junit.framework.TestCase;
@@ -9,18 +11,12 @@ import ch.rgw.io.FileTool;
 import ch.rgw.tools.StringTool;
 
 public class TestStringtool extends TestCase {
-	String in;
-	Hashtable hash;
 	
+
 	protected void setUp() throws Exception{
-		String path = FileTool.getBasePath(TestStringtool.class);
-		File file = new File(path + "/hashtable.txt");
-		long l = file.length();
-		byte[] arr = new byte[(int) l];
-		FileInputStream fis = new FileInputStream(file);
-		fis.read(arr);
-		in = new String(arr);
+	
 	}
+	
 	
 	/**
 	 * Statdard-Vefrahren?
@@ -28,11 +24,23 @@ public class TestStringtool extends TestCase {
 	 * @throws Exception
 	 */
 	public void testFold() throws Exception{
-		hash = StringTool.foldStrings(in);
+		Hashtable<String,String> hash=new Hashtable<String,String>();
+		hash.put("first", "thisisfirst");
+		hash.put("second", "thisissecond");
 		assertNotNull(hash);
-		byte[] flat = StringTool.flatten(hash, StringTool.BZIP, null);
+		String flat = StringTool.flattenStrings(hash);
 		assertNotNull(flat);
-		Hashtable check = StringTool.fold(flat, StringTool.GUESS, null);
+		Hashtable check = StringTool.foldStrings(flat);
 		assertNotNull(check);
+	}
+	
+	public void testEnPrintable() throws Exception{
+		byte[] check=new byte[256];
+		for(int i=0;i<255;i++){
+			check[i]=(byte)i;
+		}
+		String print=StringTool.enPrintableStrict(check);
+		byte[] dec=StringTool.dePrintableStrict(print);
+		assertTrue(Arrays.equals(check, dec));
 	}
 }
