@@ -103,10 +103,10 @@ public class SAT {
 				return new Result<HashMap<String, Object>>(ret);
 			} else {
 				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 6,
-					"Bad protocol", null, true);
+					"Bad Signature", null, true);
 			}
 		} else {
-			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 5, "Bad signature",
+			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 5, "Invalid Message",
 				null, true);
 		}
 		
