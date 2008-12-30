@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4868 2008-12-29 17:50:38Z tschaller $
+ * $Id: XMLExporter.java 4874 2008-12-30 09:56:08Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -171,7 +172,7 @@ public class XMLExporter implements IRnOutputter {
 	 * @param rnn
 	 *            a Collection of Rechnung - Objects to output
 	 */
-	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn){
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn, Properties props){
 		Result<Rechnung> ret = new Result<Rechnung>();
 		if (outputDir == null) {
 			SWTHelper.SimpleDialog dlg =

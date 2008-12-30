@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4381 2008-09-07 13:58:32Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4874 2008-12-30 09:56:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -39,7 +40,6 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.util.IRnOutputter;
-import ch.elexis.util.Log;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.RnPrintView2;
@@ -59,7 +59,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	private boolean bESRSelected, bFormsSelected, bIgnoreFaultsSelected, bSaveFileAsSelected;
 	
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type,
-		final Collection<Rechnung> rechnungen){
+		final Collection<Rechnung> rechnungen, Properties props){
 		
 		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
@@ -122,7 +122,8 @@ public class RechnungsDrucker implements IRnOutputter {
 			ExHandler.handle(ex);
 			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
 			ErrorDialog.openError(null, Messages.RechnungsDrucker_ErrorsWhilePrinting,
-				Messages.RechnungsDrucker_CouldntOpenPrintView, ResultAdapter.getResultAsStatus(res));
+				Messages.RechnungsDrucker_CouldntOpenPrintView, ResultAdapter
+					.getResultAsStatus(res));
 			return res;
 		}
 		return res;
