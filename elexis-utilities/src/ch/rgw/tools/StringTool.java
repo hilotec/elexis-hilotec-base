@@ -247,11 +247,11 @@ public class StringTool {
 			String v = ObjectToString(h.get(ko));
 			String k = ObjectToString(ko);
 			if ((k == null) || (v == null) || k.matches(".*=.*")) { // log.log("attempt
-																	// to
-																	// flatten
-																	// unsupported
-																	// object
-																	// type",Log.FATALS);
+				// to
+				// flatten
+				// unsupported
+				// object
+				// type",Log.FATALS);
 				return null;
 			}
 			res.append(k).append("=").append(v).append(flattenSeparator);
@@ -492,7 +492,7 @@ public class StringTool {
 		for (int i = 1; i < elems.length; i++) {
 			String[] elem = elems[i].split("=", 2);
 			if (elem.length != 2) { // log.log("Fehler in
-									// Hash-Repr�sentation",Log.ERRORS);
+				// Hash-Repr�sentation",Log.ERRORS);
 				return null;
 			}
 			Object k = StringToObject(elem[0].trim());
@@ -689,53 +689,66 @@ public class StringTool {
 		return out;
 	}
 
-	public static String enPrintableStrict(byte[] src){
-		byte[] out=new byte[src.length<<1];
-		try{
-			for(int i=0;i<src.length;i++){
-				int i1=(src[i] & 0xff)>>4;
-				byte o1= (byte)(i1+65);
-				if(o1>90){
-					o1+=7;
-				}
-				byte o2= (byte)((src[i]&0x0f)+65);
-				if(o2>90){
-					o2+=7;
-				}
-				out[2*i]=o1;
-				out[2*i+1]=o2;
+	/**
+	 * Convert a byte array into a String that consists strictly only of numbers
+	 * and capital Letters. This can be useful for transmission over
+	 * 7-Bit-Channels (In fact, 4 bit channels would suffice) or Web Forms that
+	 * would need URLConversion otherwise.
+	 * 
+	 * @param src
+	 *            the source array
+	 * @return a String that is 2 times the length of src + 3 Bytes and consists
+	 *         only of [0-9A-P]*
+	 */
+	public static String enPrintableStrict(byte[] src) {
+		byte[] out = new byte[(src.length << 1) + 3];
+		try {
+			out[0] = 'E'; // header
+			out[1] = 'P';
+			out[2] = '1'; // Version
+			for (int i = 0; i < src.length; i++) {
+				int i1 = (src[i] & 0xff) >> 4;
+				byte o1 = (byte) (i1 + 65);
+				byte o2 = (byte) ((src[i] & 0x0f) + 65);
+				out[2 * i + 3] = o1;
+				out[2 * i + 4] = o2;
 			}
 			return new String(out, default_charset);
-			
-		}catch(Exception ex){
-			ExHandler.handle(ex);
-			return null;
-		}
-	}
-	
-	public static byte[] dePrintableStrict(String src){
-		byte[] input=null;
-		try {
-			input = src.getBytes(default_charset);
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return null;
 		}
-		byte[] out = new byte[input.length / 2];
+	}
+
+	/**
+	 * Convert a String that was created with enPrintableStrict() back into a
+	 * byte array
+	 * 
+	 * @param src
+	 *            a String previously created by enPrintableStrict
+	 * @return a byte array with the original data or null on errors
+	 */
+	public static byte[] dePrintableStrict(String src) {
+		byte[] input = null;
+		try {
+			input = src.getBytes(default_charset);
+			if ((input[0] != 'E') || (input[1] != 'P')) {
+				return null;
+			}
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
+		byte[] out = new byte[(input.length >> 1) - 3];
 		for (int i = 0; i < out.length; i++) {
-			int o1=input[2*i];
-			if(o1>96){
-				o1-=7;
-			}
-			int o2=input[2*i+1];
-			if(o2>96){
-				o2-=7;
-			}
-			out[i] = (byte) ((o1 - 65)<<4 + (o2 - 65));
+			int o1 = input[2 * i + 3]-65;
+			int o2 = input[2 * i + 4]-65;
+			out[i] = (byte) ((o1 << 4) + o2);
 		}
 		return out;
 	}
-		
+
 	/**
 	 * Gibt eine zufällige und eindeutige Zeichenfolge zurück
 	 * 
