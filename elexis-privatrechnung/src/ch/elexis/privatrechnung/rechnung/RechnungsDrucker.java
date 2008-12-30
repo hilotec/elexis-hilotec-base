@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4421 2008-09-20 09:02:09Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4875 2008-12-30 09:56:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.rechnung;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -98,7 +99,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * Print the bill(s)
 	 */
-	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn){
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn, Properties props){
 		IWorkbenchPage rnPage;
 		final Result<Rechnung> result = new Result<Rechnung>(); // =new
 		// Result<Rechnung>(Log.ERRORS,99,"Not
