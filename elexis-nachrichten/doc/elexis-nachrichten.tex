@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: elexis-nachrichten.tex 3666 2008-02-08 15:09:35Z rgw_ch $
+% *  $Id: elexis-nachrichten.tex 4878 2008-12-30 13:51:18Z rgw_ch $
 % *******************************************************************************
 
 \documentclass[a4paper]{scrartcl}
@@ -22,21 +22,8 @@
 % vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
 % das System nimmt je nach Renderer die geeignete Variante.
 
-\newif\ifpdf
-\ifx\pdfoutput\undefined
-	\pdffalse              	%normales LaTeX wird ausgeführt
-\else
-	\pdfoutput=1
-	\pdftrue               	%pdfLaTeX wird ausgeführt
-\fi
-
-\ifpdf
-	\usepackage[pdftex]{graphicx}
-	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
-\else
-	\usepackage[dvips]{graphicx}
-	\DeclareGraphicsExtensions{.eps}
-\fi
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
 
 \usepackage{floatflt}
 \usepackage{wrapfig}
@@ -73,7 +60,7 @@ Mit Klick auf 'senden' wird die Nachricht abgesendet. Elexis findet automatisch 
     \caption{Nachricht lesen}
 \end{figure}
 
-Die Empfängerin hat folgende Möglichkeiten: 
+Die Empfängerin hat folgende Möglichkeiten:
 \begin{itemize}
 \item Löschen - Nachricht wird gelöscht und erscheint nicht mehr
 \item Antworten - Es wird eine Nachricht an den Absender erstellt. Die ursrünglich Nachricht wird gelöscht.
