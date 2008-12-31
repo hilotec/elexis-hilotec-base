@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4385 2008-09-07 15:53:02Z rgw_ch $
+ * $Id: TarmedOptifier.java 4890 2008-12-31 12:39:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,7 +19,6 @@ import java.util.List;
 
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.util.IOptifier;
-import ch.elexis.util.Money;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -162,9 +161,10 @@ public class TarmedOptifier implements IOptifier {
 			/*
 			 * Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> vorerst raus //
 			 * "Zusammen mit" - Bedingung nicht erfüllt -> Hauptziffer einfügen. if(checkBezug){
-			 * if(bezugOK==false){ TarmedLeistung tl=TarmedLeistung.load(bezug); Result<IVerrechenbar>
-			 * r1=add(tl,kons); if(!r1.isOK()){ r1.add(Log.WARNINGS,KOMBINATION,code.getCode()+" nur
-			 * zusammen mit "+bezug,null,false); //$NON-NLS-1$ return r1; } } }
+			 * if(bezugOK==false){ TarmedLeistung tl=TarmedLeistung.load(bezug);
+			 * Result<IVerrechenbar> r1=add(tl,kons); if(!r1.isOK()){
+			 * r1.add(Log.WARNINGS,KOMBINATION,code.getCode()+" nur zusammen mit
+			 * "+bezug,null,false); //$NON-NLS-1$ return r1; } } }
 			 */
 
 			// Prüfen, ob zu oft verrechnet - diese Version prüft nur "pro
@@ -207,8 +207,7 @@ public class TarmedOptifier implements IOptifier {
 						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
 						if (tl.getSparteAsText().equals("OP I")) {
 							/*
-							 * int tech = tl.getTL(); double abzug = tech * 4.0 / 10.0; sum -=
-							 * abzug;
+							 * int tech = tl.getTL(); double abzug = tech 4.0 / 10.0; sum -= abzug;
 							 */
 							sum += tl.getTL();
 						}
@@ -224,7 +223,7 @@ public class TarmedOptifier implements IOptifier {
 				 * TarmedLeistung){ TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
 				 * if(tl.getSparteAsText().equals("OP I")){ int tech=tl.getTL(); sum+=tech; } } }
 				 * double scale=-0.4; check.setDetail("scale", Double.toString(scale));
-				 * sum=sum*factor/100.0; check.setPreis(new Money(sum));
+				 * sum=sumfactor/100.0; check.setPreis(new Money(sum));
 				 */
 			}
 
@@ -250,7 +249,7 @@ public class TarmedOptifier implements IOptifier {
 				}
 				// sum = sum * factor / 100.0;
 				// check.setPreis(new Money(sum));
-				check.setTP(sumAL+sumTL);
+				check.setTP(sumAL + sumTL);
 				check.setDetail("AL", Double.toString(sumAL));
 				check.setDetail("TL", Double.toString(sumTL));
 				check.setPrimaryScaleFactor(0.5);
