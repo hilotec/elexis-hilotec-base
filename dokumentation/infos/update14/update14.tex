@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: update14.tex 4889 2008-12-31 11:58:37Z rgw_ch $
+% *  $Id: update14.tex 4891 2008-12-31 12:39:28Z rgw_ch $
 % *******************************************************************************
 
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -63,11 +63,11 @@ Die Icons der ersten Elexis-Versionen waren jeweils bei Bedarf 'irgendwo' zusamm
 Umschalten kann man, indem man Elexis einen Startparameter mit dem gewünschten plaf mitgibt:
 
 \begin{itemize}
-\item elexis --plaf=rsc/plaf/modern  (neues Aussehen)
-\item elexis --plaf=rsc/plaf/classic (klassisches Aussehen)
+\item elexis - -plaf=rsc/plaf/modern  (neues Aussehen)
+\item elexis - -plaf=rsc/plaf/classic (klassisches Aussehen)
 \end{itemize}
 
-Eine einmal gewählte Oberfläche bleibt gespeichert bis zu einem erneutern expliziten Umschalten. Man braucht den Parameter also nicht jedesmal beim Start zu übergeben.
+Eine einmal gewählte Oberfläche bleibt gespeichert bis zu einem erneuten expliziten Umschalten. Man braucht den Parameter also nicht jedesmal beim Start zu übergeben.
 
 \subsection{Änderungen am Abrechnungssystem}
 \subsubsection{Abrechnungsvorschlag}
@@ -134,6 +134,12 @@ Mann jetzt auch im Rezept (wie bisher bereits schon bei der Fixmedikation) durch
 
 Immer dann wenn ein Kontakt ausgewählt werden soll (z.B. als Adressat von Briefen) kann jetzt auch gleich direkt ein neuer Kontakt inklusive Anschrift erstellt werden. (Abb. \ref{fig:kontakt})
 
+\subsection{Laborimporter}
+Die Laborimporter auf HL7-Basis wurden verbessert, so dass jetzt auch Histologie- und Zytologie-Resultate 'vernünftig' formatiert erscheinen sollten.
+
+\subsection{Basis}
+Eine Neuerung, die Sie vielleicht nicht auf den ersten Blick bemerken, die aber viel zur Programmstabilität und Detailverbesserungen beiträgt: Elexis basiert jetzt neu auf der aktuellen Eclipse-Version 3.4 (Ganymede).
+
 \subsection{Diverses}
 Diverse Details, denen hier kein eigenes Kapital gewidmet werden muss, bzw. die schon früher dokumentiert worden sind.
 
@@ -147,22 +153,25 @@ Es ist wichtig, dass keine gemischten Installationen mit 1.3.x und 1.4.x Plugins
 
 \begin{enumerate}
 \item Falls Sie gekaufte Zusatzplugins von Elexis haben, schreiben Sie eine Mail an support$@$elexis.ch mit einer Auflistung dieser Plugins. Sie erhalten die Updates auf 1.4 kostenlos.  Falls Sie gekaufte Zusatzplugins von anderen Anbietern haben, erkundigen Sie sich bei diesen Anbietern, ob die Plugins mit 1.4 lauffähig sind, bzw. zu welchen Bedingungen ein Update erfolgt.
-    
+
 \item Machen Sie das Update nach Praxisschluss, wenn Sie mindestens eine Stunde Zeit haben. Machen Sie es nur dann selbst, wenn Sie sich ggf. auch zutrauen, das System wieder auf den alten Stand zu bringen, falls etwas nicht gelingt. Das Update muss auf allen Arbeitsstationen separat erfolgen. Gemischter Betrieb von 1.3.x und 1.4.x an derselben Datenbank ist nicht möglich.
 \item Machen Sie eine komplette Sicherung der Datenbank und der vorhandenen Elexis-Installationsverzeichnisse.
 \item laden Sie den Installer von Elexis 1.4 für Ihr Betriebssystem von www.elexis.ch herunter.
 \item Benennen Sie das das vorhandene Verzeichnis um. Wenn Elexis in c:$\backslash$Programme$\backslash$elexis installiert ist, nennen Sie es z.B c:$\backslash$Programme$\backslash$elexis-alt. \textbf{Wichtig}: Nicht etwa kopieren, sondern umbenennen. Das Verzeichnis c:$\backslash$Programme$\backslash$elexis darf danach nicht mehr existieren.
 \item Starten (Windows) bzw. entpacken (Linux, Mac) Sie den Installer und wählen Sie als Installationsziel den Ort, an dem Elexis vorher installiert war (also im vorigen Beispiel c:$\backslash$Programme$\backslash$elexis). Auf diese Weise wird sichergestellt, dass alle internen und externen Referenzen gültig bleiben und nichts neu konfiguriert werden muss.
-\item starten Sie Elexis auf zunächst nur einer der Abeitsstationen und haben Sie ein wenig Geduld: Da die Datenbank reorganisiert wird, kann der erste Start bis 10 Minuten lang dauern, bevor das Elexis-Fenster erscheint.    
+\item starten Sie Elexis auf zunächst nur einer der Abeitsstationen und haben Sie ein wenig Geduld: Da die Datenbank reorganisiert wird, kann der erste Start bis 10 Minuten lang dauern, bevor das Elexis-Fenster erscheint.
 \item Starten Sie dann Elexis probeweise auf allen Arbeitsstationen. Testen Sie insbesondere auch, ob Sie Rezepte etc. drucken können, damit Sie etwaige Probleme nicht erst am nächsten Arbeitstag bemerken.
 \item Wenn alles normal läuft, installieren Sie allfällige Zusatzplugins (wie gesagt in einer für Elexis 1.4 zertifizierten Version).
 \end{enumerate}
 
+\subsection{Beta-Anwender}
+Falls Sie schon die Version 1.4 Beta verwendet hatten, müssen Sie trotzdem den Komplettinstaller herunterladen und wie oben beschrieben neu in ein leeres Verzeichnis installieren. Ein einfaches Update von 1.4 Beta auf 1.4 Release wird mit grosser Wahrscheinlichkeit zu verschiedenen Problemen und 'bockenden' Plugins  führen.
+
 \section{Ausblick}
-Version 1.4 wird voraussichtlich die letzte kostenlose Vollinstallation sein. Elexis wird zwar immer OpenSource und frei erhältlich bleiben, aber wer es kostenlos nutzen will, muss sich selber um die Zusammenstellung der benötigten Elemente kümmern \footnote{Die automatische Update-Funktion bleibt erhalten, wird aber nur Fehlerkorrekturen beinhalten.}. Die Pflege der Installationspakete und der dafür nötige Support sind ein ganz erheblicher Aufwand, der zukünftig finanziert werden muss, damit die Entwicklerkapazität des immer noch sehr kleinen Elexis-Kernteams auf Produktweiterentwicklungen statt auf Supportleistungen konzentriert werden kann. In der Pipeline ist inzwischen Elexis 2.0 mit einer ganzen Reihe von z.T. grundlegenden Neuerungen. Wenn Sie auf dem Laufenden gehalten werden möchten, haben Sie folgende Möglichkeiten: Entweder Sie schauen ab und zu auf der Website (http://www.elexis.ch) oder im elexis-forum (http://www.elexis-forum.ch\footnote{Beim Forum können Sie auch einen RSS-Feed abonnieren, damit Sie automatisch über neue Nachrichten informiert werden}) vorbei, oder Sie lassen Sich auf die Mailing-Liste setzen, dann werden Sie automatisch über relevante News informiert (Mail an support$@$elexis.ch genügt zum An- oder Abmelden).
+Version 1.4 wird voraussichtlich die letzte kostenlose Vollinstallation sein. Elexis wird zwar immer OpenSource und frei erhältlich bleiben, aber wer es kostenlos nutzen will, muss sich selber um die Zusammenstellung der benötigten Elemente kümmern\footnote{Die automatische Update-Funktion bleibt erhalten, wird aber nur Fehlerkorrekturen beinhalten.}. Die Pflege der Installationspakete und der dafür nötige Support sind ein ganz erheblicher Aufwand, der zukünftig finanziert werden muss, damit die Entwicklerkapazität des immer noch sehr kleinen Elexis-Kernteams auf Produktweiterentwicklungen statt auf Supportleistungen konzentriert werden kann. In der Pipeline ist inzwischen Elexis 2.0 mit einer ganzen Reihe von z.T. grundlegenden Neuerungen. Wenn Sie auf dem Laufenden gehalten werden möchten, haben Sie folgende Möglichkeiten: Entweder Sie schauen ab und zu auf der Website (http://www.elexis.ch) oder im elexis-forum (http://www.elexis-forum.ch\footnote{Beim Forum können Sie auch einen RSS-Feed abonnieren, damit Sie automatisch über neue Nachrichten informiert werden}) vorbei, oder Sie lassen Sich auf die Mailing-Liste setzen, dann werden Sie automatisch über relevante News informiert (Mail an support$@$elexis.ch genügt zum An- oder Abmelden).
 
 \medskip
 
 Ihre Fragen, Anregungen und Bemerkungen an support$@$elexis.ch sind willkommen und werden wie immer raschestmöglich beantwortet.
 
-\end{document} 
+\end{document}
