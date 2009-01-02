@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: stammdaten.tex 4896 2009-01-02 08:23:59Z rgw_ch $
+% *  $Id: stammdaten.tex 4898 2009-01-02 15:15:33Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -24,7 +24,8 @@ die als Patient markiert sind.
 	\caption{Patientenliste}
 	\label{fig:patlist}
 \end{figure}
-Die Eingabefelder oben (Name, Vorname, Geburtsdatum) dienen dem Filtern der
+
+Die Eingabefelder oben (Name, Vorname, Geburtsdatum) dienen dem Begrenzen der
 Liste gemäss den gewünschten Parametern.
 \begin{itemize}
   \item Bei Name und Vorname gilt:
@@ -54,12 +55,9 @@ entsprechen, dann wird in der Liste angezeigt: \glqq keine Daten\grqq.
 \index{Patient Nr} \index{Patientenliste!filtern}
 Sie können per Voreinstellungen die angezeigten Filterfelder beeinflussen (S. \ref{userconfig} auf S. \pageref{userconfig}).
 
-\subsubsection{Markierungen / Etiketten}
+\subsubsection{Markierungen / Sticker}
 \index{Patienten!markieren}\index{Patienten!hervorheben}
-Sie können die Anzeige der Patienteneinträge anhand bestimmter Kriterien beeinflussen. Diese Technik nennen wir hier 'Etiketten'. Jeder Patient kann null bis mehrere Etiketten haben, die dann sowohl in der Patientenliste als auch im Konsultationseintrag angezeigt werden. Genauere Angaben dazu finden Sie unter \ref{Etiketten} auf S. \pageref{Etiketten};
-
-Wie man Etiketten erstellen kann, ist in
-Etiketten werden im Menü textsc{Datei-Einstellungen-Etiketten} erstellt.
+Sie können die Anzeige der Patienteneinträge anhand bestimmter Kriterien beeinflussen. Diese Technik nennen wir hier 'Sticker'. Jeder Patient kann null bis mehrere Sticker haben, die dann sowohl in der Patientenliste als auch im Konsultationseintrag angezeigt werden können. Genauere Angaben dazu finden Sie unter \ref{Etiketten} auf S. \pageref{Etiketten};
 
 \subsubsection{Toolbar}
 \begin{itemize}
@@ -78,7 +76,7 @@ Etiketten werden im Menü textsc{Datei-Einstellungen-Etiketten} erstellt.
         \begin{minipage}{0.5\textwidth}
         \centering
     	\includegraphics[width=0.8\textwidth]{images/patlistfilter}
-    	\caption{Filterbedingungen eingeben}
+    	\caption{Filterbox öffnen}
     	\label{fig:patlistfilter}
         \end{minipage}\hfill
         \begin{minipage}{0.5\textwidth}
@@ -91,32 +89,24 @@ Etiketten werden im Menü textsc{Datei-Einstellungen-Etiketten} erstellt.
 
 Sie können den Filter auf verschiedene Weise beeinflussen:
 \begin{itemize}
-\item Nach Klick auf 'Feld...' öffnet sich eine Dialogbox wie in Abb. \ref{fig:filterexpr}. Sie können hier beliebige Datenbankfelder abfragen. Hierbei bedeutet '=': Der Ausdruck muss genau so sein, inklusive Gross/Kleinschrift. 'LIKE': Der Ausdruck muss so anfangen, Gross/Klein ist egal. 'REGEXP: Der Ausdruck soll mals regulärer Ausdruck interpretiert werden. Eine Erläuterung dieses Konzepts würde hier aber zu weit führen.
+\item Nach Klick auf 'Feld...' öffnet sich eine Dialogbox wie in Abb. \ref{fig:filterexpr}. Sie können hier beliebige Datenbankfelder abfragen. Hierbei bedeutet '=': Der Ausdruck muss genau so sein, inklusive Gross/Kleinschrift. 'LIKE': Der Ausdruck muss so anfangen, Gross/Klein ist egal. 'REGEXP: Der Ausdruck soll als regulärer Ausdruck interpretiert werden. Eine Erläuterung dieses Konzepts würde hier aber zu weit führen.
 \item Nach Klick auf 'Sticker' öffnet sich eine Dialogbox, die alle im System definierten Sticker enthält. Sie können ein oder durch mehrfachen Aufruf auch mehrere auswählen.
-\item Sie können ein Script aus der Sctip-View ins Filterfeld hineinziehen, welches beliebige Bedinungen errechnen kann.
+\item Sie können ein Script aus der Script-View (s. \ref{Script} auf S. \pageref{Script} ins Filterfeld hineinziehen, welches beliebige Bedingungen errechnen kann.
 \end{itemize}
 
-Die Filterbedingungen werden strikt von oben nach unten abgearbeitet. Also der als zweites eingegebene Filterausdruck wird überhaupt nur dann ausgewertet, wenn der erste passiert wurde. Es ist deswegen sinnvoll, weniger rechenintensove Filter (z.B. Sticker) oben und rechenintensivere (z.B. Scripts) weiter unten einzusetzen.
-Klicken Sie dann auf einen der Spaltenköpfe um die Liste neu - diesmal beeinflusst durch den Filter- einzulesen.
+Die Filterbedingungen werden strikt von oben nach unten abgearbeitet. Also der als zweites eingegebene Filterausdruck wird überhaupt nur dann ausgewertet, wenn der erste passiert wurde. Es ist deswegen sinnvoll, weniger rechenintensive Filter (z.B. Sticker) oben und rechenintensivere (z.B. Scripts) weiter unten einzusetzen.
+Klicken Sie dann auf einen der Spaltenköpfe oder auf das 'x', um die Liste neu - diesmal beeinflusst durch den Filter- einzulesen.
 
 \medskip
 
 Um eine Filterbedingung wieder zu entfernen können Sie sie rechts anklicken  und 'entfernen' klicken. Um alle zu entfernen, klicken Sie auf 'leeren'. Um den Filter nur temporär ausziuschalten, ohne ohn zu leeren, schliessen Sie ihn durch Klick auf den Filter-Knopf.
 
-\subsubsection{View-Menü}
-Das lokale Menü (s. Abb. \ref{fig:patlist}) enthält folgende Einträge:
-\begin{itemize}
-  \item Patient löschen (sofern der angemeldete Anwender die hierfür notwendigen
-  Rechte hat): Damit kann ein Patienteneintrag definitiv und unwiderruflich aus
-  der Datenbank gelöscht werden. Dies ist nur dann möglich, wenn zu diesem
-  Patienten keine Fälle (mehr) existieren.
-  \item Liste filtern: Dies öffnet ebenfalls die Filter-Dialogbox (s.o.)
-\end{itemize}
 
 \subsubsection{Kontextmenü}
 Das Kontextmenü erscheint, wenn Sie auf einem Pa\-tien\-ten\-eintrag mit der rech\-ten
 Maus\-taste klicken. Es enthält fol\-gende Ein\-träge:
 \begin{itemize}
+    \item Sticker... Sie können dem Patienten so einen Sticker (S. \ref{Etiketten}) zuweisen oder entfernen.
   \item Patient löschen (s. oben)\footnote{Sie benötigen dazu das Recht \textsc{Löschen/Kontakt} (Vgl. \ref{sec:gruppen})}
   \item KG exportieren. Falls ein Export-Plugin installiert ist, wird die KG des
   aktuell markierten Patienten über dieses Plugin exportiert. Falls mehrere
@@ -130,17 +120,22 @@ Maus\-taste klicken. Es enthält fol\-gende Ein\-träge:
 Diese View (Abb. \ref{fig:patdetail} zeigt Details des momentan ausgewählten
 Patienten resp. der momentan ausgewählten Patientin an
  %\usepackage{graphics} is needed for \includegraphics
-\begin{figure}[htp]
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{images/patdetail}
+
+\begin{figure}[t]
+\centering
+  \includegraphics[width=0.8\textwidth]{images/patdetail}
   \caption{Patient Detailansicht}
   \label{fig:patdetail}
-\end{center}
+  \hfill
+
 \end{figure}
-Alle Felder können durch einfaches Überschreiben geändert werden, sofern der
-aktuell eingeloggte Anwender die dazu erforderlichen Rechte besitzt. Eine
+
+Sie sehen, dass die einzelnen Einträge grau erscheinen und icht geändert werden können . Wenn Sie auf das Schloss-Symbol rechts oben klicken, können Sie die View entsperren (sofern Sie die entsprechenden Rechte besitzen). Dann können 
+alle Felder können durch einfaches Überschreiben geändert werden. Eine
 Änderung wird in dem Moment gespeichert, in dem ein Feld wieder verlassen wird.
-(Explizites Speichern ist in Elexis nie notwendig).
+(Explizites Speichern ist in Elexis nie notwendig). Bei erneutem Klick auf das Schloss, oder bei Auswahl eines anderen Patienten, wird die Sicherung gegen versehentliches Überschreiben wieder eingeschaltet.
+
+\medskip
 
 Die Felder im oberen Block sind alle einzeilige Textfelder und können direkt geändert
 werden, bis auf das Feld \glqq Konto\grqq{}, welches nicht direkt beschreibbar
@@ -154,7 +149,7 @@ von Rechnungen und Einlesen von ESR-Files. Manuelle Buchungen können zu
 Inkonsistenzen in der Buchhaltung führen. Führen Sie also nur dann manuelle
 Buchungen durch, wenn Sie sich über die Konsequenzen exakt bewusst sind.
 
-Das Feld \glqq Anschrift\grqq{} zeigt die Postanschrift des Patienten an. Diese
+Das Feld \glqq Anschrift\grqq{} zeigt die Postanschrift\footnote{Postanschrift ist das, was auf Briefumschlägen und Adressetiketten erscheint, muss also nicht unbedingt den eingegebenen Adressdaten entsprechen. Beispielsweise könnte hier noch c/o oder ein Postfach oder eine Kontaktperson stehen.} des Patienten an. Diese
 kann durch Klick auf den blauen Text \glqq Anschrift \grqq{}geändert werden.
 
 Die darunterstehenden Felder sind alle aufklappbar: Standardmässig ist nur der
@@ -169,7 +164,7 @@ Titel sichtbar, durch Klick darauf öffnet sich das Feld.
   Mit Rechtsklick auf einen Eintrag in diesem Feld öffnet sich ein Kontextmenü,
   mit dem man den vollständigen Eintrag anzeigen, oder den Eintrag entfernen kann.
   \item Die Felder \glqq Diagnose\grqq, \glqq Persönliche Anamnese\grqq{},
-  \glqq Allergien\grqq{}, \glqq Risiken\grqq{} und \glqq Bemerkungen \footnote{Falls in \textit{Bemerkungen} irgendwo :VIP: (mit den Doppelpunkten) steht, so wird der betreffende Pat. in roter Schrift angezeigt.}\grqq{}
+  \glqq Allergien\grqq{}, \glqq Risiken\grqq{} und \glqq Bemerkungen \grqq{}
   können direkt beschrieben werden und werden wie gewohnt sofort beim Verlassen
   gespeichert.
   \item Das Feld \glqq Fixmedikation\grqq{}entspricht der View Fixmedikation.

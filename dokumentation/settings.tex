@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: settings.tex 3999 2008-06-03 11:35:41Z rgw_ch $
+% *  $Id: settings.tex 4898 2009-01-02 15:15:33Z rgw_ch $
 % *******************************************************************************
 %
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -232,26 +232,7 @@ Erst wenn alle benötigten Parameter vorhanden sind, wird der errechnete Wert ei
 \end{figure}
 
 \section{Leistungscodes}
-Dies ist wieder eine Sammelrubrik, die je nach vorhandenen Plugins für die Leistungsabrechnung unterschiedlich gefüllt sein kann. In der Schweiz ist hier standardmössig Labortarif und Tarmed vorhanden. Diese sind auf Seite \pageref{arzttarife} genauer erklärt.
+Dies ist wieder eine Sammelrubrik, die je nach vorhandenen Plugins für die Leistungsabrechnung unterschiedlich gefüllt sein kann. In der Schweiz ist hier standardmässig Labortarif und Tarmed vorhanden. Diese sind auf Seite \pageref{arzttarife} genauer erklärt.
+
 \section{Textverarbeitung}
 Auch die verwendete Textverarbeitung für Briefe etc. ist in Elexis ja durch Plugins frei definierbar. Welche Textverarbeitung verwendet werden soll, kann hier eingestellt werden. Diese Einstellung sollte normalerweise nicht mehr verändert werden, wenn erste Dokumente erstellt wurden, da diese sonst eventuell nicht mehr ohne weiteres lesbar wären. Wir empfehlen, unter Windows das Plugin NOAText und unter Linux Office-Wrapper zu verwenden.
-\section{Update-Einstellungen}
-Elexis kann automatisch im Internet nach neuen Versionen des Kernprogramms und aller aktuell installierten Plugins suchen und diese ggf. auch automatisch herunterladen und installieren. Dieses Verhalten kann hier eingestellt werden.
-
-\begin{quote}
- \textit{Frage}: Beim Update kommt immer etwas wie \textit{32 Plugins ersetzt}, aber es wird nicht die neue Version geladen. Wenn ich nochmal Update mache, kommt wieder dieselbe Nachricht.
-
-
- \textit{Antwort}: Die Auto-Update-Funktion geht nur dann korrekt, wenn der ausführende Anwender Schreibrechte auf das elexis-plugins-Verzeichnis hat. Andernfalls können die betreffenden Programmteile ja nicht ersetzt werden.
-
-Dies ist bei XP und Vista standardmässig \textit{nicht} der Fall, sofern der Anwender keine Administratorrechte hat.
-
-\textit{Vorgehen}: Als Administrator dem Anwender, der Update-Recht haben soll, Schreibrechte auf das elexis-plugins-Verzeichnis geben (Dieser Anwender braucht selber ansonsten keine Administratorrechte).
-\end{quote}
-
-\begin{itemize}
-\item{update-site} Hier müssen Sie angeben auf welcher Site Elexis nach updates sehen soll. Verwenden Sie normalerweise die Voreinstellung.
-\item{Alle (0-nie) Tage automatisch suchen} Wenn Sie hier einen Wert ungleich null eintragen, dann gibt dieser Wert die Zahl der Tage an, die Elexis vor einem automatischen Update verstreichen lässt. Wenn der Wert null ist, dann wird Elexis nie von allein einen update-Vorgang starten (Dieser kann aber trotzdem immer manuell im Menu \textsc{Datei-Update} ausgelöst werden).
-\item{Verzeichnis für Zwischenspeicherung} Dies gibt das Verzeichnis an, in dem Elexis hehruntergeladene Updates zwischenspeichern kann bis zum Programmende.
-\end{itemize}
-Da Elexis nicht Teile von sich selber im laufenden Betrieb austauschen kann, geht das Update so vor: Zu ersetzende Programmteile werden zunächst in einem Verzeichnis zwischengespeichert. Erst beim nächsten Programmende werden diese Änderungen eingespielt und stehen beim nächsten Programmstart zur Verfügung. Sie werden deshalb eventuell beim Programm beenden nach einem Update eine Meldung sehen, die besagt, dass Sie den PC noch nicht ausschalten sollen, bis Elexis den Update-Vorgang fertiggestellt hat.
