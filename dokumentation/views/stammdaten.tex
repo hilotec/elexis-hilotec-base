@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: stammdaten.tex 3966 2008-05-26 09:16:52Z rgw_ch $
+% *  $Id: stammdaten.tex 4896 2009-01-02 08:23:59Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -58,7 +58,7 @@ Sie können per Voreinstellungen die angezeigten Filterfelder beeinflussen (S. \
 \index{Patienten!markieren}\index{Patienten!hervorheben}
 Sie können die Anzeige der Patienteneinträge anhand bestimmter Kriterien beeinflussen. Diese Technik nennen wir hier 'Etiketten'. Jeder Patient kann null bis mehrere Etiketten haben, die dann sowohl in der Patientenliste als auch im Konsultationseintrag angezeigt werden. Genauere Angaben dazu finden Sie unter \ref{Etiketten} auf S. \pageref{Etiketten};
 
-Wie man Etiketten erstellen kann, ist in 
+Wie man Etiketten erstellen kann, ist in
 Etiketten werden im Menü textsc{Datei-Einstellungen-Etiketten} erstellt.
 
 \subsubsection{Toolbar}
@@ -73,18 +73,36 @@ Etiketten werden im Menü textsc{Datei-Einstellungen-Etiketten} erstellt.
   Falls ein neuer Eintrag erstellt werden soll, und bereits ein Eintrag mit
   gleichen Daten existiert, dann erfolgt eine Rückfrage.
 
-  \item Mit der Taste \glqq Filter\grqq{} (s. Abb. \ref{fig:patlist}) können Sie
-  die Liste nach
-  verschiedenen Kriterien filtern (s. Abb. \ref{fig:patlistfilter}).
+  \item Mit der Taste \glqq Filter\grqq{} (s. Abb. \ref{fig:patlist}) öffnen und Schliessen Sie eine Filterbox, in der Sie bestimmte Kriterien eingeben können, nach denen die Liste gefiltert wird.(s. Abb. \ref{fig:patlistfilter}).
 	\begin{figure}[ht]
-    	\includegraphics{images/patlistfilter}
+        \begin{minipage}{0.5\textwidth}
+        \centering
+    	\includegraphics[width=0.8\textwidth]{images/patlistfilter}
     	\caption{Filterbedingungen eingeben}
     	\label{fig:patlistfilter}
+        \end{minipage}\hfill
+        \begin{minipage}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{images/patlistfilter2}
+        \caption{Filterausdruck}\label{fig:filterexpr}
+        \end{minipage}
     \end{figure}
-	\textbf{Achtung}: Der Filter rastet ein und wird erst wieder aufgehoben, wenn
-	Sie erneut auf den Filter-Knopf klicken. Solange er eingerastet ist, wirken
-	alle anderen Eingaben nur auf die bereits gefilterte Auswahl.
 \end{itemize}
+
+Sie können den Filter auf verschiedene Weise beeinflussen:
+\begin{itemize}
+\item Nach Klick auf 'Feld...' öffnet sich eine Dialogbox wie in Abb. \ref{fig:filterexpr}. Sie können hier beliebige Datenbankfelder abfragen. Hierbei bedeutet '=': Der Ausdruck muss genau so sein, inklusive Gross/Kleinschrift. 'LIKE': Der Ausdruck muss so anfangen, Gross/Klein ist egal. 'REGEXP: Der Ausdruck soll mals regulärer Ausdruck interpretiert werden. Eine Erläuterung dieses Konzepts würde hier aber zu weit führen.
+\item Nach Klick auf 'Sticker' öffnet sich eine Dialogbox, die alle im System definierten Sticker enthält. Sie können ein oder durch mehrfachen Aufruf auch mehrere auswählen.
+\item Sie können ein Script aus der Sctip-View ins Filterfeld hineinziehen, welches beliebige Bedinungen errechnen kann.
+\end{itemize}
+
+Die Filterbedingungen werden strikt von oben nach unten abgearbeitet. Also der als zweites eingegebene Filterausdruck wird überhaupt nur dann ausgewertet, wenn der erste passiert wurde. Es ist deswegen sinnvoll, weniger rechenintensove Filter (z.B. Sticker) oben und rechenintensivere (z.B. Scripts) weiter unten einzusetzen.
+Klicken Sie dann auf einen der Spaltenköpfe um die Liste neu - diesmal beeinflusst durch den Filter- einzulesen.
+
+\medskip
+
+Um eine Filterbedingung wieder zu entfernen können Sie sie rechts anklicken  und 'entfernen' klicken. Um alle zu entfernen, klicken Sie auf 'leeren'. Um den Filter nur temporär ausziuschalten, ohne ohn zu leeren, schliessen Sie ihn durch Klick auf den Filter-Knopf.
+
 \subsubsection{View-Menü}
 Das lokale Menü (s. Abb. \ref{fig:patlist}) enthält folgende Einträge:
 \begin{itemize}
