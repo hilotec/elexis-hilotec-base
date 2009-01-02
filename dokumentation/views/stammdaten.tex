@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: stammdaten.tex 4898 2009-01-02 15:15:33Z rgw_ch $
+% *  $Id: stammdaten.tex 4899 2009-01-02 17:49:30Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -130,7 +130,7 @@ Patienten resp. der momentan ausgewählten Patientin an
 
 \end{figure}
 
-Sie sehen, dass die einzelnen Einträge grau erscheinen und icht geändert werden können . Wenn Sie auf das Schloss-Symbol rechts oben klicken, können Sie die View entsperren (sofern Sie die entsprechenden Rechte besitzen). Dann können 
+Sie sehen, dass die einzelnen Einträge grau erscheinen und icht geändert werden können . Wenn Sie auf das Schloss-Symbol rechts oben klicken, können Sie die View entsperren (sofern Sie die entsprechenden Rechte besitzen). Dann können
 alle Felder können durch einfaches Überschreiben geändert werden. Eine
 Änderung wird in dem Moment gespeichert, in dem ein Feld wieder verlassen wird.
 (Explizites Speichern ist in Elexis nie notwendig). Bei erneutem Klick auf das Schloss, oder bei Auswahl eines anderen Patienten, wird die Sicherung gegen versehentliches Überschreiben wieder eingeschaltet.
@@ -168,7 +168,7 @@ Titel sichtbar, durch Klick darauf öffnet sich das Feld.
   können direkt beschrieben werden und werden wie gewohnt sofort beim Verlassen
   gespeichert.
   \item Das Feld \glqq Fixmedikation\grqq{}entspricht der View Fixmedikation.
-  \item Das Feld \glqq Reminders\grqq{} zeigt die Reminders zum aktuellen Patienten.
+
 \end{itemize}
 \subsection{Kontakte}
 Diese View (Abb. \ref{fig:kontaktlist}) zeigt eine Liste aller in Elexis
@@ -205,6 +205,16 @@ ein Kontakt natürlich nur entweder eine Organisation oder aber eine Person sein
 Achten Sie darauf, dies und bei Personen auch das Geschlecht (m oder w) korrekt
 zu erfassen, da Textformatvorlagen diese Informationen auswerten, um die
 korrekten Formulierungen auszuwählen.
+
+\medskip
+
+Das Feld 'Kürzel/ID' enthält bei Patienten die Patientennummer und sollte daher nicht geändert werden. Bei anderen Kontakten kann es sinnvoll sein, hier ein Kürzel zum schnellen auffinden einzusetzen. Beispielsweise könnten Ärzte mit der präfix 'az', gefolgt von der Spezialität gefolgt von den Initialen eingetragen werden, Krankenkassen mit der Präfix 'kk' etc. So wäre der Internist Dr. Erst Meier beispielsweise als azInnEM gespeichert, die Swica Schaffhausen als kkSwicaSH. Die EInträge müssen nicht eindeutig sein und man muss das auch nicht so zu machen; es hilft einem lediglich z.B. beim Briefe schreiben rascher den Adressaten zu finden etc.
+
+\medskip
+
+Das Feld 'Externe ID' dient dazu eine im Prinzip beliebig grosse Anzahl von extern vergebenen Identifikationen (XID) festzuhalten. Durch Klick auf das blaue 'Externe ID' öffnet sich ein Dialog in dem alle eingetragenen XID's dargestellt werden. Im Kontaktdetail angezeigt wird immer der 'beste' d.h. 'eindeutigste' der zur Verfügung stehenden Identifikatoren. Beispiele für XID's sind etwa EAN, BAG-Nummer, Sozialversicherungsnummer/AHV-Nummer etc.
+
+\medskip
 
 In der untersten Zeile steht die Postanschrift des betreffenden Kontakts. Dies
 ist die Adresse, wie sie beispielsweise im Adressfeld von Briefen oder

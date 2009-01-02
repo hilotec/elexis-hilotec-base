@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 3329 2007-11-07 17:44:06Z rgw_ch $
+% *  $Id: konsviews.tex 4899 2009-01-02 17:49:30Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -18,7 +18,7 @@
 \subsection{Fälle}
 Diese View (Abb. \ref{fig:faelle2} listet alle für den aktuell selektierten
 Patienten existierenden Fälle. \index{Fall-Liste}
-\begin{wrapfigure}{l}{6.5cm}
+\begin{wrapfigure}{l}{6.8cm}
   \includegraphics{images/faelleview}
   \caption{Fälle - View}
   \label{fig:faelle2}
@@ -60,6 +60,7 @@ folgenden Punkte:
 
 
 \clubpenalty=5000
+
 \subsection{Fälle und Kons}
  %\usepackage{graphics} is needed for \includegraphics
 \begin{wrapfigure}{l}{7cm}
@@ -157,13 +158,11 @@ Es können auch einige einfache Textauszeichnungen gemacht werden: Ein Wort am A
 
 \subsection{AUF}
 Diese View dient der Festlegung einer Arbeitsunfähigkeit. (Abb \ref{fig:auf})
-\index{AUF} \index{Arbeitsunfähigkeit}. %\usepackage{graphics} is needed for \includegraphics
-\begin{figure}[htp]
-\begin{center}
+\index{AUF} \index{Arbeitsunfähigkeit}. 
+\begin{figure}
   \includegraphics{images/aufview}
   \caption{AUF-View}
   \label{fig:auf}
-\end{center}
 \end{figure}
 Eine AUF bezieht sich immer auf einen bestimmten Fall. Wenn kein Fall markiert
 ist, werden Sie aufgefordert, zunächst einen anzugeben.
@@ -176,7 +175,7 @@ definitiv ausdrucken oder aufs Fax senden.
 
 \subsection{Rezepte}
 In dieser View werden Rezepte aufgenommen. \index{Rezept}Klicken Sie auf das \glqq Neu\grqq
--Symbol (roter Stern) und es wird ein neues Rezept mit dem Aktuellen Datum
+-Symbol (grünes plus) und es wird ein neues Rezept mit dem Aktuellen Datum
 erstellt. Ziehen Sie Artikel mittels Drag\&Drop aus einer Artikelliste oder der
 Dauermedikations-View in dieses Rezept. Mit Klick auf das \glqq Drucker\grqq -
 Symbol öffnen Sie eine Text-View, in der Sie noch manuelle Änderungen anbringen
@@ -187,15 +186,18 @@ existieren, welche an einer Stelle den Platzhalter [Rezeptzeilen] enthält. Dort
 werden die ausgewählten Artikel eingefügt.
 
 \subsection{Heute}
+\begin{wrapfigure}{l}{7cm}
+\includegraphics[width=6.5cm]{images/heute}
+\end{wrapfigure}
 Diese View dient dazu, Konsultationen eines bestimmten Zeitraums (standardmässig
 des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung und
 verrechnete Zeit jeder Konsultation einzeln und der Summe davon, Dies eignet
-sich beispielsweise, um abends die Abrechnungen des Tages nachzukontrollieren.
+sich beispielsweise, um abends die Abrechnungen des Tages nachzukontrollieren. DUch anklicken der entsprechenden Chec
 
 \subsection{Falldetail}
 \label{falldetail}
 \index{Fall!Detailansicht}
-Diese View (Abb. \ref{fig:falldetail}) dient zum Einstellen der Details eines Falls (Eine Dialogbox mit derselben View wird geöffnet, wenn man einen neuen Fall (s. \ref{definition:fall} S. \pageref{definition:fall}) erstellt). 
+Diese View (Abb. \ref{fig:falldetail}) dient zum Einstellen der Details eines Falls (Eine Dialogbox mit derselben View wird geöffnet, wenn man einen neuen Fall (s. \ref{definition:fall} S. \pageref{definition:fall}) erstellt).
 \begin{figure}
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\textwidth]{images/falldetail}\\
@@ -206,7 +208,7 @@ In der obersten Auswahlbox geben Sie an, welches Abrechnungssystem (S. auch \ref
 Das \textbf{Startdatum} ist üblicherweise das Datum der ersten Konsultation, oder bei Unfällen, das Unfalldatum. Das \textbf{Enddatum} hingegen bezeichnet das Datum, wen der Fall abgeschlossen wird. Ein Fall, welcher ein Enddatum hat, wird in der Fall-Liste (Abb. \ref{fig:faelle2}) als 'GESCHLOSSEN' markiert. Zu einem solchen Fall können keine Konsultationen mehr erstellt werden.
 In der Regel sollte ein Fall nur abgeschlossen werden, wenn es ein Unfall ist, welcher abgeschlossen ist, oder wenn der Patient den Versicherer wechselt und die Abrechnungsdaten darum ändern.
 
-Die nächste Zeile, Rechnungsempfänger, ist zwingend, damit überhaupt eine Rechnung erstellt werden kann. Dies muss ein bereits existierender Kontakt (z.B. der Patient selbst) sein. 
+Die nächste Zeile, Rechnungsempfänger, ist zwingend, damit überhaupt eine Rechnung erstellt werden kann. Dies muss ein bereits existierender Kontakt (z.B. der Patient selbst) sein.
 
 \medskip
 Alle weiteren Zeilen sind je nach gewähltem Abrechnungssystem unterschiedlich. Oft wird auch eine Zeile 'Kostenträger' vorhanden sein \footnote{Wichtige Anmerkung für das \textbf{Tarmed-System} (Schweiz): Wenn Rechnungsempfänger und Kostenträger identisch sind, wird eine Tiers Payant-Rechnung erstellt, andernfalls eine Tiers-Garant-Rechnung. Achten Sie also darauf, dass diese beiden Zeilen korrekt sind (Bei UVG-Fällen müssen also sowohl Rechnungsempfänger als auch Kostenträger der jeweilige Unfallversicherer sein, während bei KVG-Fällen in TG-Kantonen der Patient der Rechnungsempfänger und die Krankenkasse der Kostenträger ist)}.
