@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4731 2008-12-04 13:58:00Z rgw_ch $
+ * $Id: RechnungsDrucker.java 4897 2009-01-02 14:10:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung2.rechnung;
@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -97,7 +98,8 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * Print the bill(s)
 	 */
-	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn){
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn,
+		final Properties props){
 		template = tVorlage.getText();
 		if (StringTool.isNothing(template)) {
 			template = DEFAULT_TEMPLATE;

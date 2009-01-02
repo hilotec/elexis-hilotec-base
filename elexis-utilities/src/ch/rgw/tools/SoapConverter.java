@@ -27,8 +27,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import ch.rgw.crypt.Base64Coder;
 
 /**
  * We try to make a simple converter from and to SOAP without the huge overhead of Axis... This
@@ -115,7 +114,7 @@ public class SoapConverter {
 				} else if (type.equals(TYPE_FLOAT)) {
 					res = Double.parseDouble(s);
 				} else if (type.equals(TYPE_ARRAY)) {
-					res = new BASE64Decoder().decodeBuffer(s);
+					res = Base64Coder.decode(s);
 				} else if (type.equals(TYPE_HASH)) {
 					res = loadHash(param);
 				} else {
@@ -187,7 +186,7 @@ public class SoapConverter {
 	}
 	
 	public void addArray(String name, byte[] arr){
-		String res = new BASE64Encoder().encode(arr);
+		String res = new String(Base64Coder.encode(arr));
 		createParameter(eBody, name, TYPE_ARRAY).setText(res);
 	}
 	
@@ -199,7 +198,7 @@ public class SoapConverter {
 		} else if ((obj instanceof Integer) || (obj instanceof Long) || (obj instanceof Byte)) {
 			createParameter(eBody, name, TYPE_INTEGRAL).setText(obj.toString());
 		} else if (obj instanceof byte[]) {
-			String res = new BASE64Encoder().encode((byte[]) obj);
+			String res = new String(Base64Coder.encode((byte[]) obj));
 			createParameter(eBody, name, TYPE_ARRAY).setText(res);
 		} else if (obj instanceof HashMap) {
 			addHashMap(parent, name, (HashMap<String, Object>) obj);

@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - additional methods
  *    
- *  $Id: XMLTool.java 4703 2008-11-30 07:18:07Z rgw_ch $
+ *  $Id: XMLTool.java 4897 2009-01-02 14:10:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;
@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import sun.misc.BASE64Encoder;
+import ch.rgw.crypt.Base64Coder;
 
 /**
  * This class provides various helper methods for handling XML data.
@@ -230,7 +230,7 @@ public class XMLTool {
 			} else if (o instanceof byte[]) {
 				var = new Element("array", ns);
 				var.setAttribute("name", n);
-				var.setText(new BASE64Encoder().encode((byte[]) o));
+				var.setText(new String(Base64Coder.encode((byte[]) o)));
 			} else {
 				var = null;
 			}
