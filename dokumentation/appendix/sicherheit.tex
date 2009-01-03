@@ -5,7 +5,7 @@
 % * which accompanies this distribution, and is available at
 % * http://www.eclipse.org/legal/epl-v10.html
 % *
-% *  $Id: sicherheit.tex 4904 2009-01-03 17:58:33Z rgw_ch $
+% *  $Id: sicherheit.tex 4905 2009-01-03 18:30:50Z rgw_ch $
 %
 %*******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -27,12 +27,12 @@ Auf diese Punkte werden wir im Folgenden näher eingehen.
 
 \section{Sicherheit vor Datenverlust}\index{Datenverlust}
 Grundsätzlich besteht bei einem Computersystem jederzeit die Gefahr eines kompletten
-oder teilweisen Verlusts aller darauf gespeicherten Daten. Dies kann durch Fehler der Hardware
+oder teilweisen Verlusts aller der gespeicherten Daten. Dies kann durch Fehler der Hardware
 passieren (beispielsweise haben Festplatten nur eine begrenzte Lebensdauer von einigen Jahren
 im Dauerbetrieb und können dann unvermittelt unlesbar werden, weil wichtige Sektoren zerstört
 sind). Es kann auch durch äussere Einflüsse passieren (beispielsweise durch eine Spannungsspitze
 oder einen Ausfall im Stromnetz, während gerade wichtige Schreiboperationen stattfinden).
-Und last but not least können vorher nicht erkannte Fehler in den beteiligten Programmen
+Und nicht zuletzt können vorher nicht erkannte Fehler in den beteiligten Programmen
 sich plötzlich zeigen und zu Datenverlusten führen.
 
 Aus all diesen Gründen muss man sich überlegen:
@@ -67,7 +67,7 @@ Die vorherigen Versionen können bei Bedarf sehr leicht angesehen und/oder wiede
 Ein normaler Benutzer hat keine Möglichkeit, einen Eintrag unwiederbringlich zu löschen.
 Aus praktischen Gründen hat aber der Administrator als einziger standardmässig doch diese
 Möglichkeit. So können grob falsche Einträge doch gelöscht werden, oder die Datenbank kann von
-Zeit zu Zeit bereinigt werden, um das System schlanker zu machen. Gegen ainen allfälligen Vorwurf,
+Zeit zu Zeit bereinigt werden, um das System schlanker zu machen. Gegen einen allfälligen Vorwurf,
 Dokumente verfälscht zu haben, kann man sich bei diesem Konzept beispielsweise schützen, indem man
 vor jeder derartigen Bereinigung eine Kopie der Datenbank auf ein nur beschreibbares Medium
 überträgt und dieses Medium mit einem zuverlässigen Zeitstempel versieht oder notariell versiegelt
@@ -107,8 +107,9 @@ wird versucht herauszufinden, welches Programm den Port geöffnet hat. Und wenn 
 
 Ein derartiger Angriff aus Portscan, Programmanalyse und Einbruch braucht leider keinen hochintelligenten und zu allem entschlossenen
 Hacker, sondern es existieren massenhaft fixfertige Programme, die derartige Angriffe ohne menschliches Zutun an tausenden Computern
-pro Sekunde durchführen können, und welche beispielsweise von abenteuerlustigen oder einfach zerstörungswilligen Jugendlichen
-(\glqq Script kiddies\grqq) verbreitet werden.
+pro Sekunde durchführen können, und welche beispielsweise von abenteuerlustigen oder einfach zerstörungswilligen Jugendlichen (\glqq Script kiddies\grqq) verbreitet werden. In der letzten Zeit ist darüberhinaus eine ernstzunehmende Professionalisierung der Schadprogramme festzustellen, welche von Spammern finanziert wird, und deren Ziel es ist, angegriffene PC's für die Verbreitung von Spam und die Ausspähung vertraulicher Daten zu missbrauchen.
+
+\medskip
 
 Was kann man dagegen tun?
 \begin{itemize}
@@ -149,6 +150,8 @@ entsprechende Website oder Öffnen eines Office-Dokuments der Computer mit Schad
 Microsoft zwar diese Nachteile ihrer Programme erkannt und laufend Verbesserungen entwickelt, aber es werden doch immer wieder neue
 Sicherheitslücken bekannt. Selbstverständlich betrifft dieses grundsätzliche Problem auch andere Hersteller, aber Microsoft ist wegen
 seiner Bedeutung halt doch das weitaus häufigste Ziel von Angriffen.
+
+\medskip
 
 Was kann man dagegen tun?
 
@@ -194,6 +197,7 @@ Standardisierung nicht immer über WPA miteinander verbunden werden. Der aktuell
 IEEE 802.11i genannt. Dies ist nur mit brute force zu brechen und ist ausserdem international standardisiert, so dass alle IEEE
 802.11i-fähigen Geräte miteinander kommunizieren können sollten.
 
+\medskip
 Was kann man dagegen tun?
 
 Im Prinzip: Verwenden Sie möglichst kein WLAN, wenn Sie in Ihrem Netzwerk sensible Daten haben. Wenn Sie wirklich keine Möglichkeit haben,
@@ -208,6 +212,8 @@ wählen Sie keinen zu einfachen Schlüssel.
 Häufig versuchen Angreifer, Anwender durch irgendwelche geschickt formulierten Emails zum Ausführen eines virenverseuchten Mail-Anhangs oder
 zur Preisgabe sensibler Daten wie Passworte etc. zu verleiten.
 
+\medskip
+
 Was kann man dagegen tun?
 
 \begin{itemize}
@@ -216,8 +222,6 @@ Was kann man dagegen tun?
     \item{Führen Sie niemals Dateianhänge aus, wenn Sie nicht genau wissen, warum sie sie bekommen haben. Es genügt auch nicht, wenn Ihnen der
     Absender bekannt ist, da viele Viren Absenderangaben aus dem Adressbuch entnehmen und fälschen.}
 \end{itemize}
-
-\subsection{Angriff durch direkten Zugriff auf den Server oder die Festplatte}
 
 
 \section{Was hat dies alles mit Elexis zu tun?}
@@ -239,3 +243,15 @@ darüberhinaus besser sein, den Datenbank-Port gar nicht direkt nach aussen zu l
 verschlüsselte und gesicherte Kanäle wie SSH oder VPN zu ermöglichen. Eine weitere Erläuterung dieser Techniken würde aber den Rahmen
 dieses Artikels endgültig sprengen. Lassen Sie sich ggf. über für Sie sinnvolle Sicherheitsmassnahmen individuell beraten.
 
+\section{Last but not least: Angriff durch direkten Zugriff die Festplatte}
+Wenn ein Unbefugter physikalischen Zugang zum Server erhält, kann er in der Regel alles lesen, was auf diesem Server gespeichert ist, auch Ihre Datenbank. Lassen Sie sich nicht von den Sicherheitskonzepten des Betriebssystems täuschen: Ein Angreifer, der an den Server gelangt, kann zum Beispiel einfach die Harddisk ausbauen und an einem andern Computer -auf dem er Administratorrechte hat- auslesen. Dasselbe Problem stellt sich, wann die Harddisk verkauft oder entsorgt werden soll: Wer auch immer die Harddisk erhält, kann alles lesen - die Rechtevergabe des Betriebssystems gilt hier nicht\footnote{Nicht einmal das Löschen aller Daten hilft wirklich: Meist können gelöschte Daten mit mehr oder weniger viel Aufwand rekonstruiert werden.}
+
+\medskip
+
+Was kann man dagegen tun?
+Hier hilft eigentlich nur eines: Die Datenbank muss auf ein verschlüsseltes Verzeichnis des Servers installiert werden. Glücklicherweise bringen moderne Betriebssystem bereits alles mit, was zum Einrichten verschlüsselter Partitionen oder Verzeichnisse nötig ist\footnote{Manche allerdings nur in der 'Professional', 'Business' oder 'Server'-Variante}. Ausserdem gibt es kostenlose OpenSource Tools, die dasselbe tun können, wie z.B. TrueCrypt. 
+Der Nachteil eines verschlüsselten Dateisystems oder Verzeichnisses ist eine möglicherweise etwas reduzierte Zugriffsgeschwindigkeit und die Tatsache, dass Sie sich ein Passwort (einmal mehr) merken müssen. Und zwar gut merken, denn bei Verlust gibt es keine Chance, wieder an die Daten zu kommen.
+
+\subsection{Backup-Medien}
+Hier gilt natürlich dasselbe, wie oben geschrieben. Die beste Sicherung nützt nichts, wenn dafür unverschlüsselte Backup-Medien frei zugänglich aufbewahrt werden. Wenn Sie ein Backup von einer verschlüsselten Partition machen, wird das Backup idR unverschlüsselt sein. Andererseits spricht auch manches gegen Verschlüsselung dieser Medien: Sie wollen die Backups ja auch in 10 Jahren noch lesen können. Aber ob Sie das Passwort in 10 Jahren noch kennen, und ob das Entschlüsselungsprogramm in 10 Jahren überhaupt auf ihrem dannzumaligrn PC lauffähig sein wird, das ist gar nicht mal so sicher....
+Wir empfehlen eher, die Backups unverschlüsselt zu lassen und dafür die Medien an einem sicheren Ort aufzubewahren. 
