@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 4899 2009-01-02 17:49:30Z rgw_ch $
+% *  $Id: konsviews.tex 4901 2009-01-03 06:14:46Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -84,7 +84,7 @@ Anmerkung: Sie werden festgestellt haben, dass diese View und die vorher besproc
 
 \subsection{Konsultationen}
 \label{view:konsultationen}
-\begin{wrapfigure}{l}{7.5cm}
+\begin{wrapfigure}{L}{7.5cm}
   \includegraphics{images/konslisteview}
   \caption{Konsultationsliste}
   \label{fig:konslisteview}
@@ -136,12 +136,10 @@ Das Filtern der Konsultationen mit diesem Verfahren kann, da der Text jeder Kons
 \subsection{Konsultation}
  \label{konsview}
 Detailansicht eines Konsultationseintrags (S. Abb. \ref{fig:konsdetail}).
-\begin{figure}[htp]
-\begin{center}
+\begin{figure}[ht]
   \includegraphics{images/konsview}
   \caption{Konsultation: Detail}
   \label{fig:konsdetail}
-\end{center}
 \end{figure}
 
 Sie haben im Textfeld folgende zusätzlichen Möglichkeiten:
@@ -156,9 +154,10 @@ Wenn Sie den Namen eines Abrechnungsblocks tippen, gefolgt von \#, dann wird die
 Es können auch einige einfache Textauszeichnungen gemacht werden: Ein Wort am Anfang einer Zeile, welches von einem Doppelpunkt gefolgt ist, wird fett gedruckt. Ebenso ein Wort zwischen zwei *. Ein Wort zwischen zwei / wird kursiv geschrieben.
 \end{description}
 
+
 \subsection{AUF}
 Diese View dient der Festlegung einer Arbeitsunfähigkeit. (Abb \ref{fig:auf})
-\index{AUF} \index{Arbeitsunfähigkeit}. 
+\index{AUF} \index{Arbeitsunfähigkeit}.
 \begin{figure}
   \includegraphics{images/aufview}
   \caption{AUF-View}
@@ -185,14 +184,6 @@ Hierzu muss eine Textvorlage namens \glqq Rezept\grqq
 existieren, welche an einer Stelle den Platzhalter [Rezeptzeilen] enthält. Dort
 werden die ausgewählten Artikel eingefügt.
 
-\subsection{Heute}
-\begin{wrapfigure}{l}{7cm}
-\includegraphics[width=6.5cm]{images/heute}
-\end{wrapfigure}
-Diese View dient dazu, Konsultationen eines bestimmten Zeitraums (standardmässig
-des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung und
-verrechnete Zeit jeder Konsultation einzeln und der Summe davon, Dies eignet
-sich beispielsweise, um abends die Abrechnungen des Tages nachzukontrollieren. DUch anklicken der entsprechenden Chec
 
 \subsection{Falldetail}
 \label{falldetail}
@@ -213,6 +204,17 @@ Die nächste Zeile, Rechnungsempfänger, ist zwingend, damit überhaupt eine Rec
 \medskip
 Alle weiteren Zeilen sind je nach gewähltem Abrechnungssystem unterschiedlich. Oft wird auch eine Zeile 'Kostenträger' vorhanden sein \footnote{Wichtige Anmerkung für das \textbf{Tarmed-System} (Schweiz): Wenn Rechnungsempfänger und Kostenträger identisch sind, wird eine Tiers Payant-Rechnung erstellt, andernfalls eine Tiers-Garant-Rechnung. Achten Sie also darauf, dass diese beiden Zeilen korrekt sind (Bei UVG-Fällen müssen also sowohl Rechnungsempfänger als auch Kostenträger der jeweilige Unfallversicherer sein, während bei KVG-Fällen in TG-Kantonen der Patient der Rechnungsempfänger und die Krankenkasse der Kostenträger ist)}.
 
+\clearpage
+
+\subsection{Heute}
+\begin{wrapfigure}{L}{7cm}
+\includegraphics[width=6.5cm]{images/heute}
+\caption{View Heute}\label{fig:heute}
+\end{wrapfigure}
+Diese View (Abb. \ref{fig:heute}) dient dazu, Konsultationen eines bestimmten Zeitraums (standardmässig
+des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung und
+verrechnete Zeit jeder Konsultation einzeln und der Summe davon, Dies eignet
+sich beispielsweise, um abends die Abrechnungen des Tages nachzukontrollieren. DUch anklicken der entsprechenden Chec
 
 \subsection{Diagnosen}
 \label{view:diagnosen} \index{Diagnosen}
