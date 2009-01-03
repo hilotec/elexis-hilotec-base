@@ -8,12 +8,14 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: konsviews.tex 4901 2009-01-03 06:14:46Z rgw_ch $
+% *  $Id: konsviews.tex 4902 2009-01-03 10:47:34Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
 
 \section{Konsultationsbezogene Views}
+
+
 
 \subsection{Fälle}
 Diese View (Abb. \ref{fig:faelle2} listet alle für den aktuell selektierten
@@ -189,7 +191,7 @@ werden die ausgewählten Artikel eingefügt.
 \label{falldetail}
 \index{Fall!Detailansicht}
 Diese View (Abb. \ref{fig:falldetail}) dient zum Einstellen der Details eines Falls (Eine Dialogbox mit derselben View wird geöffnet, wenn man einen neuen Fall (s. \ref{definition:fall} S. \pageref{definition:fall}) erstellt).
-\begin{figure}
+\begin{figure}[ht]
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\textwidth]{images/falldetail}\\
   \caption{Fall-Detail}\label{fig:falldetail}
@@ -206,24 +208,16 @@ Alle weiteren Zeilen sind je nach gewähltem Abrechnungssystem unterschiedlich. 
 
 \clearpage
 
-\subsection{Heute}
-\begin{wrapfigure}{L}{7cm}
-\includegraphics[width=6.5cm]{images/heute}
-\caption{View Heute}\label{fig:heute}
-\end{wrapfigure}
-Diese View (Abb. \ref{fig:heute}) dient dazu, Konsultationen eines bestimmten Zeitraums (standardmässig
-des aktuellen Tages) darzustellen. Sie gibt einen Überblick über Verrechnung und
-verrechnete Zeit jeder Konsultation einzeln und der Summe davon, Dies eignet
-sich beispielsweise, um abends die Abrechnungen des Tages nachzukontrollieren. DUch anklicken der entsprechenden Chec
-
 \subsection{Diagnosen}
 \label{view:diagnosen} \index{Diagnosen}
-\begin{wrapfigure}{l}{5.5cm}
-    \includegraphics[width=5.5cm]{images/diagnosenview}
+Diese View (Abb. \ref{fig:diagnosen}) dient dazu, Diagnosen auszuwählen und einer Konsultation zuzuordnen.
+ \begin{wrapfigure}{l}{7cm}
+    \includegraphics[width=6.5cm]{images/diagnosenview}
     \label{fig:diagnosen}
+    \caption{Diagnosen-Auswahl}
 \end{wrapfigure}
-Diese View dient dazu, Diagnosen auszuwählen und einer Konsultation zuzuordnen. Unten sehen Sie eine Reihe von Reitern, die den installierten Diagnosecode-Plugins entsprechen (standardmässig TI-Code, ICD-10, und ICPC-2). Um eine Diagnose auszuwählen, wählen Sie zunächst aus diesen Reitern das entsprechende Codesystem und dann den Code. Die Auswahl kann durch Drag\&Drop oder durch Doppelklick erfolgen.
-
+Unten sehen Sie eine Reihe von Reitern, die den installierten Diagnosecode-Plugins entsprechen (standardmässig TI-Code, ICD-10, und ICPC-2).
+Um eine Diagnose auszuwählen, wählen Sie zunächst aus diesen Reitern das entsprechende Codesystem und dann den Code. Die Auswahl kann durch Drag\&Drop oder durch Doppelklick erfolgen.
 Für jedes Codesystem sehen Sie ein dreigeteiltes Fenster: Im obersten Bereich sind Ihre (d.h. des aktuell eingeloggten Anwenders) am häufigsten eingesetzten Diagnosen zu sehen; im mittleren Teil diejenigen Diagnosen, die beim aktuell ausgewählten Patienten bisher am häufigsten verwendet worden sind, und um unteren Teil die gesamte Systematik des gewählten Codesystems.
 
 \medskip
