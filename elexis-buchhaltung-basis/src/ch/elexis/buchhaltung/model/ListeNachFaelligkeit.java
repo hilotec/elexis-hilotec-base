@@ -80,6 +80,11 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		qbe.add("RnStatus", "<>", Integer.toString(RnStatus.BEZAHLT));
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
+		int size=rnn.size();
+		if(size==0){
+			monitor.done();
+			return Status.OK_STATUS;
+		}
 		int step = totalwork / rnn.size();
 		monitor.subTask("Analysiere Rechnungen");
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();

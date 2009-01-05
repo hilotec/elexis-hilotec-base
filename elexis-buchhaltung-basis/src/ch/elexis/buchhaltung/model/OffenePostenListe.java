@@ -99,9 +99,15 @@ public class OffenePostenListe extends AbstractDataProvider {
 		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT));
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
-		int step = totalwork / rnn.size();
-		monitor.subTask("Analysiere Rechnungen");
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+		int size=rnn.size();
+		if(size==0){
+			monitor.done();
+			this.dataSet.setContent(result);
+			return Status.OK_STATUS;
+		}
+		int step = totalwork / size;
+		monitor.subTask("Analysiere Rechnungen");
 		TimeTool now = getStichtag();
 		PatientIdFormatter pif=new PatientIdFormatter(8);
 		for (Rechnung rn : rnn) {

@@ -48,9 +48,15 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		monitor.subTask("Datenbankabfrage");
 		List<AccountTransaction> transactions = qbe.execute();
 		int sum = transactions.size();
+		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+		if(sum==0){
+			monitor.done();
+			this.dataSet.setContent(result);
+			return Status.OK_STATUS;
+		}
 		int step = total / sum;
 		monitor.worked(20 * step);
-		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+	
 		PatientIdFormatter pif=new PatientIdFormatter(8);
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
