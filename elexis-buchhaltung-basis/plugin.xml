@@ -11,21 +11,29 @@
    <extension
          point="ch.unibe.iam.scg.archie.dataprovider">
       <DataProvider
+            category="ch.elexis.buchhaltung.provider.category"
             class="ch.elexis.buchhaltung.model.FakturaJournal"
             name="FakturaJournal">
       </DataProvider>
       <DataProvider
+            category="ch.elexis.buchhaltung.provider.category"
             class="ch.elexis.buchhaltung.model.ZahlungsJournal"
             name="Zahlungsjournal">
       </DataProvider>
       <DataProvider
+            category="ch.elexis.buchhaltung.provider.category"
             class="ch.elexis.buchhaltung.model.OffenePostenListe"
             name="Offene Posten">
       </DataProvider>
       <DataProvider
+            category="ch.elexis.buchhaltung.provider.category"
             class="ch.elexis.buchhaltung.model.ListeNachFaelligkeit"
             name="Rechnungen nach Fälligkeit">
       </DataProvider>
+      <category
+            id="ch.elexis.buchhaltung.provider.category"
+            name="Buchhaltung">
+      </category>
    </extension>
 
 </plugin>
