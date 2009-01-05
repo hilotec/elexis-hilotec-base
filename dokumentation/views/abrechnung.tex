@@ -5,7 +5,7 @@
 % * which accompanies this distribution, and is available at
 % * http://www.eclipse.org/legal/epl-v10.html
 % *
-% *  $Id: abrechnung.tex 4902 2009-01-03 10:47:34Z rgw_ch $
+% *  $Id: abrechnung.tex 4911 2009-01-05 17:56:39Z rgw_ch $
 %
 %*******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
@@ -93,7 +93,7 @@ Hiermit werden Konsultationen nach bestimmten wählbaren Kriterien zum Abrechnen
 \item Alle Fälle vorschlagen, die zum Abrechnen vorgemerkt sind: Wenn Sie diese Checkbox anklicken werden die Konsultationen jener Fälle ausgewählt, bei denen Sie ein Abrechnungsdatum im Fall-Detail spezifiziert hatten (Vgl. Abb. \ref{fig:falldetail}).
 \item Alle Behandlungsserien vorschlagen, welche angefangen haben vor...: Damit werden sämtliche unverrechneten Konsultationen eines Falls (bis heute) ausgewählt, sofern mindestens eine der Konsulationen vor dem Stichtag stattgefunden hat.
 \item Alle Behandlungsserien vorschlagen, die geendet haben vor...: Damit werden sämtliche unverrechneten Konsultationen eine Falls ausgewählt, sofern die letzte Konsultation vor dem Stichtag stattgefunden hat.
-\item Alle Behandlungsserien vorschlagen, deren Betrag höher ist als...: Alle unvrrechneten Konsultationen eines Falls werden ausgewählt, sofern deren Gesamtbetrag höher als der genannte Grenzwert ist.
+\item Alle Behandlungsserien vorschlagen, deren Betrag höher ist als...: Alle unverrechneten Konsultationen eines Falls werden ausgewählt, sofern deren Gesamtbetrag höher als der genannte Grenzwert ist.
 \item Alle Behandlungen des vergangenen Quartals vorschlagen: Hierbei wird das letzte \textit{Kalenderquartal} abgerechnet. Es gelten also die Stichtage 31.3., 30.6, 30.9. und 31.12.
 \end{itemize}
 Bei allen Optionen gilt, dass sie nur ausgewertet werden, wenn das Häkchen in der Checkbox gesetzt ist. Es genügt also nicht, einen Wert einzutragen. Die verschiedenen Optionen gelten additiv: Es wird also am Schluss jede Konsultation ausgewählt, für die mindestens eine der aktiven Kriterien zutrifft.
@@ -112,7 +112,7 @@ Bei allen Optionen gilt, dass sie nur ausgewertet werden, wenn das Häkchen in d
 In dieser View (Abb. \ref{fig:rechnungen}) sehen Sie die erstellten Rechnungen. Eine Rechnung hat immer einen bestimmten Status:
 \begin{description}
     \item [Offen] Unmittelbar nach dem Erstellen.
-    \item{Offen und gedruckt} Die Rechnung wurde mindestens einmal ausgegeben (über den Drucker oder eine andere Exportmethode). Ab diesem Zeitpunkt beginnt die Zahlungsfrist zu laufen. (Elexis kann allerdings nicht feststellen, ob beispielsweise der Drucker die Rechnung nicht korrekt ausgedruckt hat, oder ob sie nicht abgeschickt wurde. Deshalb liegt in diesem Punkt eine potentielle Fehlerquelle)
+    \item [Offen und gedruckt] Die Rechnung wurde mindestens einmal ausgegeben (über den Drucker oder eine andere Exportmethode). Ab diesem Zeitpunkt beginnt die Zahlungsfrist zu laufen. (Elexis kann allerdings nicht feststellen, ob beispielsweise der Drucker die Rechnung nicht korrekt ausgedruckt hat, oder ob sie nicht abgeschickt wurde. Deshalb liegt in diesem Punkt eine potentielle Fehlerquelle)
     \item[Zahlungserinnerung] Die Zahlungserinnerung wurde erstellt, aber noch nicht ausgedruckt
     \item[ZE gedruckt] Die Zahlungserinnerung wurdr ausgedruckt
     \item [2. Mahnung erstellt, 2. Mahnung gedruckt, 3. Mahnung erstellt, 3. Mahnung gedruckt]: analog
