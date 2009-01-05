@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import ch.elexis.buchhaltung.util.DateTool;
+import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -54,12 +56,13 @@ public class FakturaJournal extends AbstractTimeSeries {
 		int step = total / sum;
 		monitor.worked(20 * step);
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+		PatientIdFormatter pif=new PatientIdFormatter(8);
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			if (pat != null) {
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
-				row[0] = Integer.parseInt(pat.get("PatientNr"));
-				row[1] = at.getDate();
+				row[0] = pif.format(pat.get("PatientNr"));
+				row[1] = new DateTool(at.getDate());
 				row[2] = at.getAmount();
 				row[4] = at.getRemark();
 				if (((Money) row[2]).isNegative()) {

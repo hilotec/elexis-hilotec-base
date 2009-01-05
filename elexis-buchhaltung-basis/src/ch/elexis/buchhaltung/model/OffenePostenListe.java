@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -102,6 +103,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		monitor.subTask("Analysiere Rechnungen");
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		TimeTool now = getStichtag();
+		PatientIdFormatter pif=new PatientIdFormatter(8);
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -115,7 +117,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 					int status = rn.getStatusAtDate(now);
 					if (RnStatus.isActive(status)) {
 						Comparable[] row = new Comparable[this.getDataSet().getHeadings().size()];
-						row[0] = Integer.parseInt(pat.get("PatientNr"));
+						row[0] = pif.format(pat.get("PatientNr"));
 						row[1] = rn.getNr();
 						List<Zahlung> zahlungen = rn.getZahlungen();
 						for (Zahlung z : zahlungen) {

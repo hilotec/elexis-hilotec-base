@@ -29,8 +29,4 @@ public class DateTool extends TimeTool{
 		return (int)diff;
 	}
 	
-	public int compareTo(DateTool d1){
-		long diff=(getTimeInMillis()-d1.getTimeInMillis())/86400000L;	// consider only day-differences
-		return (int)diff;
-	}
 }

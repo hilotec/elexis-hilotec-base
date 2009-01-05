@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 
 
 import ch.elexis.buchhaltung.util.DateTool;
+import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -82,6 +83,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		int step = totalwork / rnn.size();
 		monitor.subTask("Analysiere Rechnungen");
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
+		PatientIdFormatter pif=new PatientIdFormatter(8);
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -95,7 +97,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 					if (fall != null) {
 						Patient pat = fall.getPatient();
 						if (pat != null) {
-							row[0] = Integer.parseInt(pat.get("PatientNr"));
+							row[0] = pif.format(pat.get("PatientNr"));
 							row[1] = Integer.parseInt(rn.getNr());
 							row[2] = new DateTool(date);
 							row[3] = rn.getBetrag();
