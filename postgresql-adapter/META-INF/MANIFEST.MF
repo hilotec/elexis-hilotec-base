@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Datenbankverbindung mit PostgreSQL
-Bundle-SymbolicName: c
+Bundle-SymbolicName: ch.elexis.postgresql.cinnector
 Bundle-Version: 1.0.0
 Bundle-ClassPath: postgresql.jar
 Export-Package: org.postgresql;uses:="org.postgresql.largeobject,org.postgresql.fastpath,org.postgresql.core",
