@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgDetailDialog.java 4371 2008-09-04 13:47:51Z rgw_ch $
+ * $Id: MsgDetailDialog.java 4912 2009-01-06 06:05:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -139,10 +139,15 @@ public class MsgDetailDialog extends Dialog {
 			if (bOrigin != null) {
 				if (bOrigin.equals(bAnswer)) {
 					lbFrom.setText(Hub.actUser.getLabel());
-					cbTo.setText(msg.getSender().getLabel());
+					if(msg!=null){
+						Anwender an=msg.getSender();
+						if(an!=null){
+							cbTo.setText(an.getLabel());
+						}
+						msg.delete();
+						msg = null;
+					}
 					bOK.setText("Senden");
-					msg.delete();
-					msg = null;
 				} else {
 					int idx = cbTo.getSelectionIndex();
 					if (idx != -1) {
