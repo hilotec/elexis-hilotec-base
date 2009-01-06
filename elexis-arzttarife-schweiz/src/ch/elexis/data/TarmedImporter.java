@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  *    
- * $Id: TarmedImporter.java 3870 2008-05-05 16:59:14Z rgw_ch $
+ * $Id: TarmedImporter.java 4920 2009-01-06 17:33:32Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -47,6 +47,8 @@ import ch.rgw.tools.JdbcLink.Stm;
  *
  */
 public class TarmedImporter extends ImporterPage{
+	
+	private static final String SRC_ENCODING="iso-8859-1";
 	
 	JdbcLink j,pj;
 	Stm source,dest;
@@ -124,7 +126,7 @@ public class TarmedImporter extends ImporterPage{
                     continue;
                 }
                 TarmedLeistung tl=TarmedLeistung.load(code);
-                String txt=res.getString("BEZ_255"); //$NON-NLS-1$
+                String txt=convert(res, "BEZ_255"); //$NON-NLS-1$
                 int subcap=code.lastIndexOf('.');
                 String parent="NIL"; //$NON-NLS-1$
                 if(subcap!=-1){
@@ -148,11 +150,12 @@ public class TarmedImporter extends ImporterPage{
             	}
             	TarmedLeistung tl=TarmedLeistung.load(cc);
             	if(tl.exists()){
-            		tl.set("DigniQuanti",res.getString("QT_DIGNITAET"));
-            		tl.set("Sparte", res.getString("Sparte"));
+            		tl.set("DigniQuanti",convert(res,"QT_DIGNITAET"));
+            		tl.set("Sparte", convert(res,"Sparte"));
             	}else{
             		tl=new TarmedLeistung(cc,res.getString("KNR"), //$NON-NLS-1$ 
-                        "0000",res.getString("QT_DIGNITAET"),res.getString("Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        "0000",convert(res,"QT_DIGNITAET"),
+                        	convert(res,"Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             	}
                 tl.set(new String[]{"GueltigVon","GueltigBis"}, res.getString("GUELTIG_VON"),res.getString("GUELTIG_BIS"));
                 Stm sub=j.getStatement();
@@ -160,9 +163,9 @@ public class TarmedImporter extends ImporterPage{
                 String kurz=""; //$NON-NLS-1$
                 ResultSet rsub=sub.query("SELECT * FROM LEISTUNG_TEXT WHERE SPRACHE="+lang+" AND LNR="+tl.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
                 if(rsub.next()==true){
-                    kurz=rsub.getString("BEZ_255"); //$NON-NLS-1$
-                    String med=rsub.getString("MED_INTERPRET"); //$NON-NLS-1$
-                    String tech=rsub.getString("TECH_INTERPRET"); //$NON-NLS-1$
+                    kurz=convert(rsub,"BEZ_255"); //$NON-NLS-1$
+                    String med=convert(rsub,"MED_INTERPRET"); //$NON-NLS-1$
+                    String tech=convert(rsub,"TECH_INTERPRET"); //$NON-NLS-1$
                     preps_extension.setString(1,med);
                     preps_extension.setString(2,tech);
                     preps_extension.setString(3,tl.getId());
@@ -319,4 +322,11 @@ public class TarmedImporter extends ImporterPage{
 		return obi;
 	}
     
+	private String convert(ResultSet res, String field) throws Exception{
+		byte[] raw=res.getBytes(field);
+		if(raw==null){
+			return "";
+		}
+		return new String(raw,SRC_ENCODING);
+	}
 }
