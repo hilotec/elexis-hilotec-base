@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 4040 2008-06-13 12:45:37Z rgw_ch $
+ * $Id: Leistungscodes.java 4916 2009-01-06 14:38:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -176,8 +176,8 @@ public class Leistungscodes extends PreferencePage implements
 				String actdat=new TimeTool().toString(TimeTool.DATE_COMPACT);
 				sql.append("SELECT MULTIPLIKATOR FROM ").append("VK_PREISE").append(" WHERE TYP=")
 					.append(JdbcLink.wrap(name))
-					.append(" AND DATUM_VON <=").append(actdat)
-				 .append(" AND DATUM_BIS >").append(actdat);
+					.append(" AND DATUM_VON <=").append(JdbcLink.wrap(actdat))
+				 .append(" AND DATUM_BIS >").append(JdbcLink.wrap(actdat));
 				String tp=PersistentObject.getConnection().queryString(sql.toString());
 				if(StringTool.isNothing(tp)){
 					if(Hub.getSystemLogLevel()>Log.INFOS){
