@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediLabelProvider.java 4044 2008-06-16 19:38:10Z rgw_ch $
+ * $Id: BAGMediLabelProvider.java 4915 2009-01-06 14:38:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -91,7 +91,7 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
     			}
     		}
     	}
-    	
+    
     	return null;
 	}
 
@@ -100,6 +100,11 @@ public class BAGMediLabelProvider extends DefaultLabelProvider implements
 		if(element instanceof BAGMedi){
 			BAGMedi bm=(BAGMedi) element;
 			String g=StringTool.unNull(bm.get("Generikum"));
+			/*
+			if(g.equals("")){
+				return Desk.getImage(Desk.IMG_ACHTUNG);
+			}
+			*/
 			if(g.startsWith("G")){
 				return Desk.getImage(BAGMedi.IMG_GENERIKUM);
 			}else if(g.startsWith("O")){
