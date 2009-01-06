@@ -27,7 +27,10 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
+import ch.unibe.iam.scg.archie.annotations.GetProperty;
+import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
+import ch.unibe.iam.scg.archie.ui.FieldTypes;
 
 /**
  * An AbstractDataProvider that counts all bills,payments and stornos in a given period of time.
@@ -36,11 +39,20 @@ import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
  */
 public class FakturaJournal extends AbstractTimeSeries {
 	private static final String NAME = "Faktura Journal";
+	private boolean bOnlyActiveMandator;
 	
 	public FakturaJournal(){
 		super(NAME);
 	}
+	@GetProperty(name= "Nur aktueller Mandant", fieldType= FieldTypes.BUTTON_CHECKBOX, index=1)
+	public boolean getOnlyActiveMandator(){
+		return bOnlyActiveMandator;
+	}
 	
+	@SetProperty(name = "Nur aktueller Mandant", index=1)
+	public void setOnlyActiveMandator(boolean val){
+		bOnlyActiveMandator=val;
+	}
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		int total = 10000000;

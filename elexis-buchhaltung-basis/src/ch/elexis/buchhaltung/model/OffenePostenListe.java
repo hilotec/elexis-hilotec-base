@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import ch.elexis.Hub;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
@@ -43,6 +44,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 	private static final String NAME = "Offene Posten";
 	private TimeTool stichtag = new TimeTool();
 	private TimeTool startTag = new TimeTool();
+	private boolean bOnlyActiveMandator;
 	
 	public OffenePostenListe(){
 		super(NAME);
@@ -64,6 +66,15 @@ public class OffenePostenListe extends AbstractDataProvider {
 	
 	public TimeTool getStichtag(){
 		return new TimeTool(stichtag);
+	}
+	@GetProperty(name= "Nur aktueller Mandant", fieldType= FieldTypes.BUTTON_CHECKBOX)
+	public boolean getOnlyActiveMandator(){
+		return bOnlyActiveMandator;
+	}
+	
+	@SetProperty(name = "Nur aktueller Mandant")
+	public void setOnlyActiveMandator(boolean val){
+		bOnlyActiveMandator=val;
 	}
 	
 	@GetProperty(name = "Ausgangsdatum", fieldType = FieldTypes.TEXT_DATE)
@@ -97,6 +108,9 @@ public class OffenePostenListe extends AbstractDataProvider {
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
 		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT));
 		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT));
+		if(bOnlyActiveMandator){
+			qbe.add("MandandID", "=", Hub.actMandant.getId());
+		}
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
