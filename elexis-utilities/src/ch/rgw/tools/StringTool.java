@@ -1077,6 +1077,34 @@ public class StringTool {
 	}
 
 	/**
+	 * convert a String from a source encoding to this platform's default encoding
+	 * @param src the source string
+	 * @param srcEncoding the name of the encoding of the source
+	 * @return the transcoded String or the source String if the encoding is not supported
+	 */
+	public static String convertEncoding(String src, String srcEncoding){
+		try {
+			byte[] bytes=src.getBytes();
+			return new String(bytes,srcEncoding);
+		} catch (UnsupportedEncodingException e) {
+			return src;
+		}
+	}
+	
+	/**
+	 * convert a String Array from a source encoding to this platform's default encoding
+	 * @param src the source Array
+	 * @param srcEncoding the name of the encoding of the source
+	 * @return the transcoded Array or the source Array if the encoding is not supported
+	 */
+	public static String[] convertEncoding(String[] src, String srcEncoding){
+		String[] ret=new String[src.length];
+		for(int i=0;i<src.length;i++){
+			ret[i]=convertEncoding(src[i],srcEncoding);
+		}
+		return ret;
+	}
+	/**
 	 * Eine beliebige Ziffernfolge mit der Modulo-10 Prüfsumme verpacken
 	 * 
 	 * @param number
@@ -1111,6 +1139,7 @@ public class StringTool {
 		return null;
 	}
 
+	
 	/** Array für den modulo-10-Prüfsummencode */
 	private static final int[][] mod10Checksum = {
 			{ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5, 0 },
