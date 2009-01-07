@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MiGelImporter.java 3341 2007-11-14 13:35:48Z rgw_ch $
+ * $Id: MiGelImporter.java 4921 2009-01-07 18:29:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -32,12 +32,14 @@ import org.eclipse.swt.widgets.Composite;
 import au.com.bytecode.opencsv.CSVReader;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.ImporterPage;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
+import ch.rgw.tools.StringTool;
 
 public class MiGelImporter extends ImporterPage
 {
+	private static final String SRC_ENCODING="iso-8859-1";
 	boolean bDelete=false;
 	Button bClear;
 	String mode;
@@ -170,13 +172,15 @@ public class MiGelImporter extends ImporterPage
 	}
 
 	private IStatus importCSV(final File file, final IProgressMonitor monitor) throws FileNotFoundException,IOException{
-		CSVReader reader = new CSVReader(new FileReader(file.getAbsolutePath()));
+		InputStreamReader isr=new InputStreamReader(new FileInputStream(file),SRC_ENCODING);
+		CSVReader reader = new CSVReader(isr);
 	    String [] line;
 		monitor.subTask("MiGel einlesen");
 	    while ((line = reader.readNext()) != null) {
 	    	if(line.length<3){
 	    		continue;
 	    	}
+	    	//line=StringTool.convertEncoding(line, SRC_ENCODING);
 	    	Money betrag;
 			try{
 				betrag=new Money(Double.parseDouble(line[3]));
