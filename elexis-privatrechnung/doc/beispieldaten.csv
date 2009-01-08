@@ -13,9 +13,9 @@
 "Stuhl","Sessel","Fernsehsessel",5080,21270,70,01.01.00,31.12.38,1
 "Stuhl","Schemel","Schemel",580,1270,15,01.01.00,31.12.38,1
 "Elexis","Reise","Reisespesen pro Km",60,90,1,01.01.00,31.12.38,1
-"Elexis","Lokal","Support vor Ort (Std)",0,13000,60,01.01.00,31.12.38,1
+"Elexis","Lokal","Support vor Ort (Std)",0,14000,60,01.01.00,31.12.38,1
 "Elexis","Remote","Support Fernwartung (15')",1500,3000,15,01.01.00,31.12.38,1
-"Elexis","Prog","Programmierarbeiten (Std)",0,13000,60,01.01.00,31.12.38,1
+"Elexis","Prog","Programmierarbeiten (Std)",0,14000,60,01.01.00,31.12.38,1
 "NIL","Elexis","Elexis",0,0,0,01.01.00,31.12.38,1
 "Elexis","Bahn","Bahnkosten",0,0,0,01.01.00,31.12.38,1
 "Elexis","Tel","Telefonsupport (15')",5,3000,15,01.01.00,31.12.38,1
@@ -30,3 +30,4 @@
 "Plugins","MoleMax","MoleMax",0,46000,0,01.01.00,31.12.38,1
 "Elexis","Hard","Hardwareverkauf",0,0,0,01.01.00,31.12.38,1
 "Plugins","Privr","Elexis-Privatrechnung",0,3500,0,01.01.00,31.12.38,1
+"Elexis","Zert1","Zertifizierung Elexis Experte",10000,100000,240,01.01.00,31.12.38,1
