@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import ch.elexis.Hub;
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.data.AccountTransaction;
@@ -73,6 +74,7 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		monitor.worked(20 * step);
 	
 		PatientIdFormatter pif=new PatientIdFormatter(8);
+		String actMnId=Hub.actMandant.getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			Money amount = at.getAmount();
@@ -84,6 +86,15 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 				continue;
 			}
 			if (pat != null) {
+				if(bOnlyActiveMandator){
+					Rechnung rn=at.getRechnung();
+					if(rn==null){
+						continue;
+					}
+					if(!actMnId.equals(rn.get("MandantID"))){
+						continue;
+					}
+				}
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
 				row[0] = pif.format(pat.get("PatientNr"));
 				row[1] = new DateTool(at.getDate());
