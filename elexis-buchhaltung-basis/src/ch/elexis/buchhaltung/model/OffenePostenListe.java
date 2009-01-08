@@ -41,7 +41,15 @@ import ch.unibe.iam.scg.archie.ui.FieldTypes;
  *
  */
 public class OffenePostenListe extends AbstractDataProvider {
-	private static final String NAME = "Offene Posten";
+	private static final String OFFENE_RECHNUNGEN_PER = "Offene Rechnungen per ";
+	private static final String OFFENE_POSTEN = "Offene Posten";
+	private static final String ANALYSIERE_RECHNUNGEN = "Analysiere Rechnungen";
+	private static final String DATENBANKABFRAGE = "Datenbankabfrage";
+	private static final String NAME = OFFENE_POSTEN;
+	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
+	private static final String FIELD_AUSGANGSDATUM="Ausgangsdatum";
+	private static final String FIELD_STICHTAG="Stichtag";
+	
 	private TimeTool stichtag = new TimeTool();
 	private TimeTool startTag = new TimeTool();
 	private boolean bOnlyActiveMandator;
@@ -67,33 +75,33 @@ public class OffenePostenListe extends AbstractDataProvider {
 	public TimeTool getStichtag(){
 		return new TimeTool(stichtag);
 	}
-	@GetProperty(name= "Nur aktueller Mandant", fieldType= FieldTypes.BUTTON_CHECKBOX)
+	@GetProperty(name= FIELD_ACTMANDATOR, fieldType= FieldTypes.BUTTON_CHECKBOX)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}
 	
-	@SetProperty(name = "Nur aktueller Mandant")
+	@SetProperty(name = FIELD_ACTMANDATOR)
 	public void setOnlyActiveMandator(boolean val){
 		bOnlyActiveMandator=val;
 	}
 	
-	@GetProperty(name = "Ausgangsdatum", fieldType = FieldTypes.TEXT_DATE)
+	@GetProperty(name = FIELD_AUSGANGSDATUM, fieldType = FieldTypes.TEXT_DATE)
 	public String metaGetStarttag(){
 		return getStartTag().toString(TimeTool.DATE_SIMPLE);
 	}
 	
-	@SetProperty(name = "Ausgangsdatum", index = -2)
+	@SetProperty(name = FIELD_AUSGANGSDATUM, index = -2)
 	public void metaSetStarttag(String tag) throws SetDataException{
 		TimeTool tt = new TimeTool(tag);
 		this.setStartTag(tt);
 	}
 	
-	@GetProperty(name = "Stichtag", fieldType = FieldTypes.TEXT_DATE)
+	@GetProperty(name = FIELD_STICHTAG, fieldType = FieldTypes.TEXT_DATE)
 	public String metaGetStichtag(){
 		return getStichtag().toString(TimeTool.DATE_SIMPLE);
 	}
 	
-	@SetProperty(name = "Stichtag")
+	@SetProperty(name = FIELD_STICHTAG)
 	public void metaSetStichtag(String stichtag) throws SetDataException{
 		TimeTool tt = new TimeTool(stichtag);
 		this.setStichtag(tt);
@@ -102,14 +110,14 @@ public class OffenePostenListe extends AbstractDataProvider {
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		int totalwork = 1000000;
-		monitor.beginTask("Offene Rechnungen per " + getStichtag().toString(TimeTool.DATE_SIMPLE),
+		monitor.beginTask(OFFENE_RECHNUNGEN_PER + getStichtag().toString(TimeTool.DATE_SIMPLE),
 			totalwork);
-		monitor.subTask("Datenbankabfrage");
+		monitor.subTask(DATENBANKABFRAGE);
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
 		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT));
 		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT));
 		if(bOnlyActiveMandator){
-			qbe.add("MandandID", "=", Hub.actMandant.getId());
+			qbe.add("MandantID", "=", Hub.actMandant.getId());
 		}
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
@@ -121,7 +129,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 			return Status.OK_STATUS;
 		}
 		int step = totalwork / size;
-		monitor.subTask("Analysiere Rechnungen");
+		monitor.subTask(ANALYSIERE_RECHNUNGEN);
 		TimeTool now = getStichtag();
 		PatientIdFormatter pif=new PatientIdFormatter(8);
 		for (Rechnung rn : rnn) {
@@ -174,7 +182,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 	
 	@Override
 	public String getDescription(){
-		return "Offene Posten";
+		return OFFENE_POSTEN;
 	}
 	
 }

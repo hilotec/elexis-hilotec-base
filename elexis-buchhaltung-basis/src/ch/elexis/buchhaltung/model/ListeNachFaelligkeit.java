@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 
+import ch.elexis.Hub;
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.data.Fall;
@@ -40,11 +41,15 @@ import ch.unibe.iam.scg.archie.ui.FieldTypes;
  * 
  */
 public class ListeNachFaelligkeit extends AbstractDataProvider {
+	private static final String ANALYSIERE_RECHNUNGEN = "Analysiere Rechnungen";
+	private static final String DATENBANKABFRAGE = "Datenbankabfrage";
 	private static final String NAME = "Rechnungen nach Fälligkeitsdatum";
 	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen";
 	private static final String DUE_DATE_TEXT = "Stichtag";
+	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
 	private int dueAfter;
 	private DateTool stichTag = new DateTool();
+	private boolean bOnlyActiveMandator;
 	
 	public ListeNachFaelligkeit(){
 		super(NAME);
@@ -71,11 +76,21 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		dueAfter = date;
 	}
 	
+	@GetProperty(name= FIELD_ACTMANDATOR, fieldType= FieldTypes.BUTTON_CHECKBOX, index=2)
+	public boolean getOnlyActiveMandator(){
+		return bOnlyActiveMandator;
+	}
+	
+	@SetProperty(name = FIELD_ACTMANDATOR, index=1)
+	public void setOnlyActiveMandator(boolean val){
+		bOnlyActiveMandator=val;
+	}
+	
 	@Override
 	protected IStatus createContent(IProgressMonitor monitor){
 		int totalwork = 1000000;
 		monitor.beginTask(NAME, totalwork);
-		monitor.subTask("Datenbankabfrage");
+		monitor.subTask(DATENBANKABFRAGE);
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
 		qbe.add("RnStatus", "<>", Integer.toString(RnStatus.BEZAHLT));
 		List<Rechnung> rnn = qbe.execute();
@@ -86,12 +101,16 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 			return Status.OK_STATUS;
 		}
 		int step = totalwork / rnn.size();
-		monitor.subTask("Analysiere Rechnungen");
+		monitor.subTask(ANALYSIERE_RECHNUNGEN);
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		PatientIdFormatter pif=new PatientIdFormatter(8);
+		String actMnId=Hub.actMandant.getId();
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
+			}
+			if(bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))){
+				continue;
 			}
 			if (RnStatus.isActive(rn.getStatus())) {
 				DateTool date = new DateTool(rn.getDatumRn());

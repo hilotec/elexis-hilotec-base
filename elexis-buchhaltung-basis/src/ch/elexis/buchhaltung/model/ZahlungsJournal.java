@@ -27,13 +27,28 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
+import ch.unibe.iam.scg.archie.annotations.GetProperty;
+import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
+import ch.unibe.iam.scg.archie.ui.FieldTypes;
 
 public class ZahlungsJournal extends AbstractTimeSeries {
 	private static final String NAME = "Zahlungsjournal";
+	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
+	private boolean bOnlyActiveMandator;
 	
 	public ZahlungsJournal(){
 		super(NAME);
+	}
+	
+	@GetProperty(name= FIELD_ACTMANDATOR, fieldType= FieldTypes.BUTTON_CHECKBOX, index=1)
+	public boolean getOnlyActiveMandator(){
+		return bOnlyActiveMandator;
+	}
+	
+	@SetProperty(name = FIELD_ACTMANDATOR, index=1)
+	public void setOnlyActiveMandator(boolean val){
+		bOnlyActiveMandator=val;
 	}
 	
 	@Override
