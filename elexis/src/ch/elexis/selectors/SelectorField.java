@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Text;
 public class SelectorField extends Composite {
 	Label lbl;
 	Text text;
+	int len;
+	
 	private LinkedList<SelectorListener> listeners=new LinkedList<SelectorListener>();
 	
 	public SelectorField(Composite parent, String label){
@@ -35,9 +37,17 @@ public class SelectorField extends Composite {
 		text.addModifyListener(new ModifyListener(){
 
 			public void modifyText(ModifyEvent e){
-				// TODO Auto-generated method stub
+				String fld=text.getText();
+				int l2=fld.length();
+				if((l2>2) || (len>2)){
+					for(SelectorListener sl:listeners){
+						sl.selectionChanged(SelectorField.this);
+					}
+				}
+				len=l2;
 				
 			}});
+		len=0;
 	}
 	
 	public void addSelectorListener(SelectorListener listen){
