@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: SelectorField.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.selectors;
 
 import java.util.LinkedList;
@@ -56,5 +69,16 @@ public class SelectorField extends Composite {
 	
 	public void removeSelectorListener(SelectorListener listen){
 		listeners.remove(listen);
+	}
+
+	public void clear(){
+		text.setText("");
+	}
+	public String getText(){
+		return text.getText();
+	}
+	
+	String getLabel(){
+		return lbl.getText();
 	}
 }

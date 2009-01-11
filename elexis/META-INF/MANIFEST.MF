@@ -118,6 +118,7 @@ Export-Package: .,
    org.eclipse.jface.dialogs,
    com.tiff.common.ui.datepicker",
  ch.elexis.scripting;uses:="ch.elexis.data,org.eclipse.swt.widgets,org.eclipse.jface.dialogs",
+ ch.elexis.selectors,
  ch.elexis.text;
   uses:="ch.elexis.actions,
    ch.rgw.tools,

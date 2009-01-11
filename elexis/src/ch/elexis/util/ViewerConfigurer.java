@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 4358 2008-09-02 16:32:25Z rgw_ch $
+ *    $Id: ViewerConfigurer.java 4930 2009-01-11 17:33:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -70,6 +70,7 @@ public class ViewerConfigurer {
 		buttonProvider=new DefaultButtonProvider();
 		widgetProvider=wp;
 	}
+
 	
 	public interface CommonContentProvider extends IStructuredContentProvider, ControlFieldListener {
 		public void startListening();

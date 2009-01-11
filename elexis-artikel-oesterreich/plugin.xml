@@ -5,7 +5,7 @@
          point="ch.elexis.Verrechnungscode">
       <Artikel
             CodeDetailDisplay="ch.elexis.artikel_at.views.MedikamentDetail"
-            CodeSelectorFactory="ch.elexis.artikel_at.views.MedikamentSelector"
+            CodeSelectorFactory="ch.elexis.artikel_at.views.MedikamentSelector2"
             ElementFactory="ch.elexis.artikel_at.data.ArtikelFactory"
             ImporterClass="ch.elexis.artikel_at.data.MedikamentImporterVidal"
             name="Medikamente (A)"/>

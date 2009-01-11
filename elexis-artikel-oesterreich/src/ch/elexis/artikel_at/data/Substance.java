@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 4927 2009-01-10 21:26:30Z rgw_ch $
+ *  $Id: Substance.java 4930 2009-01-11 17:33:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -27,19 +27,21 @@ import ch.rgw.tools.VersionInfo;
 public class Substance extends PersistentObject {
 	static final String TABLENAME = "CH_ELEXIS_AUSTRIAMEDI_SUBSTANCE";
 	
-	static final String VERSION = "0.2.0";
+	static final String VERSION = "0.3.0";
 	static final String createDB =
 		"CREATE TABLE " + TABLENAME + "("
 			+ "ID		VARCHAR(25) primary key,"
 			+ "deleted	CHAR(1) default '0',"
-			+ "gruppe	VARCHAR(10)," // therap. gruppe
-			+ "name		VARCHAR(254)" + ");" + "CREATE INDEX CEMBS1 ON " + TABLENAME + " (gruppe);"
-			+ "CREATE INDEX CEMBS2 ON " + TABLENAME + " (name);" + "INSERT INTO " + TABLENAME
+			+ "index	VARCHAR(10)," // vidal-index
+			+ "name		VARCHAR(254));" 
+			+ "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (gruppe);"
+			+ "CREATE INDEX CAUSTRIAS2 ON " + TABLENAME + " (name);" 
+			+ "INSERT INTO " + TABLENAME
 			+ " (ID,name) VALUES ('VERSION','" + VERSION + "');";
 	
 	
 	static {
-		addMapping(TABLENAME, "name", "gruppe", "medis=JOINT:product:substance:"
+		addMapping(TABLENAME, "name", "index", "medis=JOINT:product:substance:"
 			+ Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
 		Substance v = load("VERSION");
 		if (v.state() < PersistentObject.DELETED) {

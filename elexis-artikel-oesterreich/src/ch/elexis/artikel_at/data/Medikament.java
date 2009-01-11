@@ -8,18 +8,32 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Medikament.java 4927 2009-01-10 21:26:30Z rgw_ch $
+ *  $Id: Medikament.java 4930 2009-01-11 17:33:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 import ch.elexis.data.Artikel;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.JdbcLink.Stm;
 
 public class Medikament extends Artikel {
-	private static final String VERSION = "0.2.0";
+	private static final String VERSION = "0.3.0";
+	
 	public static final String CODESYSTEMNAME = "Medikamente";
+	static final String JOINTTABLE = "CH_ELEXIS_AUSTRIAMEDI_JOINT";
+	static final String EXTTABLE = "CH_ELEXIS_AUSTRIAMEDI_EXT";
+	static final String ATCTABLE = "CH_ELEXIS_AUSTRIAMEDI_ATC";
+	
 	public static final String[] RSIGNS =
 		{
 			"P1", "P5", "R1", "R2", "SG", "S1", "S5", "W1", "W2", "W6", "W7", "W8", "W9", "W10",
@@ -31,14 +45,29 @@ public class Medikament extends Artikel {
 			"L6", "L9", "L12", "NE", "PS", "R", "RE1", "RE2", "U"
 		};
 	
-	static final String JOINTTABLE = "CH_ELEXIS_AUSTRIAMEDI_JOINT";
+	static final String extDB =
+		"CREATE TABLE " + EXTTABLE + "(" + "ID VARCHAR(25) primary key," + "deleted CHAR(2),"
+			+ "ATCCODE  VARCHAR(10)," + "NOTES VARCHAR(80)," + "MANUFACTURER VARCHAR(80),"
+			+ "DESCRIPTION BLOB" + ");";
+	
+	static final String atcDB =
+		"CREATE TABLE " + ATCTABLE + "(" + "IDMEDI			VARCHAR(25)," + "IDATC			VARCHAR(25));"
+			+ "CREATE INDEX " + ATCTABLE + "idx1" + " ON " + ATCTABLE + " (IDMEDI);"
+			+ "CREATE INDEX " + ATCTABLE + "idx2" + " ON " + ATCTABLE + " (IDATC);";
 	
 	static final String jointDB =
 		"CREATE TABLE " + JOINTTABLE + "(" + "ID				VARCHAR(25) primary key,"
 			+ "product			VARCHAR(25)," + "substance         VARCHAR(25)" + ");"
-			+ "CREATE INDEX CHEMBJ1 ON " + JOINTTABLE + " (product);" + "CREATE INDEX CHEMBJ2 ON "
-			+ JOINTTABLE + " (substance);" + "INSERT INTO " + JOINTTABLE
-			+ " (ID,substance) VALUES('VERSION','" + VERSION + "');";
+			+ "CREATE INDEX CHEAUSTRIAMJ1 ON " + JOINTTABLE + " (product);"
+			+ "CREATE INDEX CHAUSTRIAMJ2 ON " + JOINTTABLE + " (substance);" + "INSERT INTO "
+			+ JOINTTABLE + " (ID,substance) VALUES('VERSION','" + VERSION + "');";
+	
+	static {
+		addMapping(Artikel.TABLENAME, "Gruppe=ExtId", "Generikum=Codeclass",
+			"inhalt=JOINT:substance:product:" + JOINTTABLE, "keywords=EXT:" + EXTTABLE + ":notes",
+			"description=EXT:" + EXTTABLE + ":description", "KompendiumText=EXT:" + EXTTABLE
+				+ ":KompendiumText", "ATC=JOINT:IDATC:IDMEDI:" + ATCTABLE);
+	}
 	
 	public Medikament(String name, String typ, String subid){
 		super(name, typ, subid);
@@ -84,6 +113,23 @@ public class Medikament extends Artikel {
 		return StringTool.isNothing(r) ? "1" : r;
 	}
 	
+	public static List<Medikament> getWithATC(String atcCode){
+		Stm stm=getConnection().getStatement();
+		String sql="SELECT IDMEDI FROM "+ATCTABLE+" WHERE IDATC="+JdbcLink.wrap(atcCode);
+		LinkedList<Medikament> ret=new LinkedList<Medikament>();
+		try{
+			ResultSet res=stm.query(getConnection().translateFlavor(sql));
+			while(res!=null && res.next()){
+				ret.add(Medikament.load(res.getString(1)));
+			}
+			return ret;
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return null;
+		}finally{
+			getConnection().releaseStatement(stm);
+		}
+	}
 	@Override
 	public String getCode(){
 		return getPharmaCode();

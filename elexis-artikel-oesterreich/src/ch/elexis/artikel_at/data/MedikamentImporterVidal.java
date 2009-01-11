@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentImporterVidal.java 4927 2009-01-10 21:26:30Z rgw_ch $
+ *  $Id: MedikamentImporterVidal.java 4930 2009-01-11 17:33:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -32,8 +32,8 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Money;
 
 public class MedikamentImporterVidal extends ImporterPage {
 	
@@ -161,7 +161,11 @@ public class MedikamentImporterVidal extends ImporterPage {
 			} else if (qName.equals("ZNr")) {
 				act.put("ZnrNum", attr.getValue("ZNrNum"));
 				chars = new StringBuilder();
+			
+			}else if(qName.equals("SubstRef")){
+				
 			}
+			
 			
 		}
 		
@@ -268,6 +272,8 @@ public class MedikamentImporterVidal extends ImporterPage {
 			} else if (qName.equals("RemarkText")) {
 				act.put("RemarkText", chars.toString());
 				chars = null;
+			}else if(qName.equals("ATCCode")){
+				
 			}
 		}
 		
