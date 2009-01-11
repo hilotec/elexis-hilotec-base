@@ -601,7 +601,7 @@ public class StringTool {
 	 *            Zahl der Multiplikationen
 	 */
 	static public String filler(final String str, int num) {
-		StringBuffer s = new StringBuffer(num);
+		StringBuilder s = new StringBuilder(num);
 		while (num-- > 0) {
 			s.append(str);
 		}

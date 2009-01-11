@@ -103,6 +103,9 @@
 
 	<!-- These plugins are not part of the standard distribution -->
 	<target name="elexis-pro" depends="options">
+		<available file="../privatrechnung-berchtold/build.xml" property="berchtold.ok" />
+		<antcall target="berchtold" inheritrefs="true" />
+
 		<available file="../Statistics/build.xml" property="waeltistatistics.ok" />
 		<antcall target="waeltistatistics" inheritrefs="true" />
 
@@ -168,10 +171,14 @@
 		<antcall target="oowrapper3" inheritrefs="true" />
 	</target>
 
+	<target name="berchtold" if="berchtold.ok">
+		<ant antfile="../privatrechnung-berchtold/build.xml" inheritrefs="true" />
+	</target>
+
 	<target name="buchhaltungbasis" if="buchbasis.ok">
 		<ant antfile="../elexis-buchhaltung-basis/build.xml" inheritrefs="true" />
 	</target>
-	
+
 	<target name="medidirect" if="medidirect.ok">
 		<ant antfile="../elexis-MediDirect/build.xml" inheritrefs="true" />
 	</target>
