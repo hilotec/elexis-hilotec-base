@@ -31,4 +31,5 @@ public interface IACLContributor {
 	 * @return the plugin can return an array of corrected acls or null.
 	 */
 	public String[] reject(String[] acl);
+	
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4782 2008-12-09 18:10:43Z rgw_ch $
+ *    $Id: PersistentObject.java 4945 2009-01-13 17:50:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1214,7 +1214,7 @@ public abstract class PersistentObject {
 		 */catch (Exception ex) {
 			log.log("Fehler beim Ausführen der Abfrage " + cmd, Log.ERRORS);
 			SWTHelper.showError("setBytes", "Schreibfehler",
-				"Es trat ein Fehler beim Schreiben auf. Eventuell war der EDatensatz zu gross.");
+				"Es trat ein Fehler beim Schreiben auf. Eventuell war der Datensatz zu gross.");
 		}
 		return 0;
 	}

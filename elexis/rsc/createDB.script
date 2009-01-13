@@ -27,6 +27,7 @@
 # Table for all kinds of contact information (Patients, Relations, Labs)
 CREATE TABLE KONTAKT(
 	ID				VARCHAR(25) primary key,	# UUID
+	lastupdate      BIGINT,                     # timestamp of last update
 	deleted			CHAR(1) default '0',		# indicates that this object is marked deleted
 	istOrganisation	CHAR(1) default '0',		# this object is an organization 
 	istPerson		CHAR(1) default '0',		# this object is a person
@@ -70,6 +71,7 @@ CREATE INDEX k0 ON KONTAKT(Bezeichnung1);
 # BezugsTEXT
 CREATE TABLE KONTAKT_ADRESS_JOINT(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	myID		VARCHAR(25),					# ID of a KONTAKT 
 	otherID		VARCHAR(25),					# ID of a KONTAKT that ist related to myID
@@ -83,6 +85,7 @@ CREATE INDEX aij1 on KONTAKT_ADRESS_JOINT (myId);
 # notwendigerweise demselben Mandanten)
 CREATE TABLE FAELLE(
 	ID				VARCHAR(25) primary key,		# UUID
+	lastupdate      BIGINT,                         # timestamp of last write operation
 	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
 	PatientID		VARCHAR(25),					# foreign key from 'KONTAKT' -> patient
 	GarantID		VARCHAR(25),					# foreign key from 'KONTAKT' -> bill receiver 
@@ -105,6 +108,7 @@ CREATE INDEX i3 on FAELLE (PatientID);
 # Eine Behandlung ist ein einzelner Mandant/Patient - Kontakt
 CREATE TABLE BEHANDLUNGEN(
 	ID				VARCHAR(25) primary key,		# UUID
+	lastupdate      BIGINT,                         # timestamp
 	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
 	FallID			VARCHAR(25),					# foreign key from FAELLE -> case we belong to
 	MandantID		VARCHAR(25),					# foreign key from KONTAKT -> mandator
@@ -120,6 +124,7 @@ CREATE INDEX i4 on BEHANDLUNGEN (FallID);
 # 
 CREATE TABLE ARTIKEL(
 	ID				VARCHAR(25) primary key,		# UUID
+	lastupdate      BIGINT,                         # timestamp
 	deleted			CHAR(1) default '0',			# indicates that this object is marked deleted
 	EAN				VARCHAR(15),                    # the european article number
 	SubID			VARCHAR(20),                    # an ID depending of the type (e.g. Pharmacode)
@@ -135,7 +140,7 @@ CREATE TABLE ARTIKEL(
 	Typ				VARCHAR(15),					# type of the article
 	Codeclass		VARCHAR(10),					# used differently
 	ExtID			VARCHAR(25),					# used differently
-	LastUpdate		CHAR(8),						# date of last update (yyyymmdd)
+	LastImport		CHAR(8),						# date of last import (yyyymmdd)
 	ExtInfo			BLOB							# additional informations (hashtable)
 );
 
@@ -148,6 +153,7 @@ CREATE INDEX art3 on ARTIKEL (Codeclass);
 # Relation of an article to a patient
 CREATE TABLE PATIENT_ARTIKEL_JOINT(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	PatientID		VARCHAR(25),					# foreign key from KONTAKT
 	ArtikelID		VARCHAR(25),					# foreign key from ARTIKEL
@@ -163,18 +169,13 @@ CREATE TABLE PATIENT_ARTIKEL_JOINT(
 CREATE INDEX paj1 on PATIENT_ARTIKEL_JOINT(PATIENTID);
 CREATE INDEX PAJ2 on PATIENT_ARTIKEL_JOINT(REZEPTID);
 
-# relation of a patient to an insurance. Not used.
-CREATE TABLE PATIENT_GARANT_JOINT(
-	PatientID		VARCHAR(25) primary key,
-	GarantID		VARCHAR(25),
-	VersTyp			VARCHAR(10)
-);
 
 # Das Konto ist eine Liste sämtlicher Forderungen und Zahlungen
 # Somit lässt sich für jeden Patienten über alle bisherigen
 # Rechnungen eine übergreifende Bilanz erstellen und verrechnen.
 CREATE TABLE KONTO(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	PatientID		VARCHAR(25),              # foreign key from KONTAKT 
 	RechnungsID		VARCHAR(25),              # foreign key from RECHNUNG
@@ -190,6 +191,7 @@ CREATE INDEX konto2 on KONTO (PatientID);
 # Eine Leistung ist eine einzelne Verrechnungsposition
 CREATE TABLE LEISTUNGEN(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	BEHANDLUNG		VARCHAR(25),
 	LEISTG_TXT		VARCHAR(255),
@@ -211,6 +213,7 @@ CREATE INDEX lst2 on LEISTUNGEN(KlASSE,LEISTG_CODE);
 # Ein Leistungsblock ist eine benannte Kombination beliebig vieler Leistungen
 CREATE TABLE LEISTUNGSBLOCK(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	MandantID		VARCHAR(25),
 	Name			VARCHAR(30),
@@ -224,6 +227,7 @@ CREATE INDEX block2 on LEISTUNGSBLOCK(MandantID);
 CREATE TABLE EK_PREISE(
 	TYP				VARCHAR(80),
 	ID				VARCHAR(25),
+	lastupdate      BIGINT,
 	DATUM_VON		CHAR(8),
 	DATUM_BIS		CHAR(8),
 	MULTIPLIKATOR	CHAR(4)
@@ -236,6 +240,7 @@ CREATE INDEX ekp2 ON EK_PREISE (DATUM_VON);
 CREATE TABLE VK_PREISE(
 	TYP				VARCHAR(80),
 	ID				VARCHAR(25),
+	lastupdate      BIGINT,
 	DATUM_VON		CHAR(8),
 	DATUM_BIS		CHAR(8),
 	MULTIPLIKATOR	CHAR(4)
@@ -247,6 +252,7 @@ CREATE INDEX vkp2 on VK_PREISE (DATUM_VON);
 
 CREATE TABLE DIAGNOSEN(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	DG_TXT			VARCHAR(255),
 	DG_CODE			VARCHAR(25),
@@ -257,6 +263,7 @@ CREATE INDEX dg1 on DIAGNOSEN (KLASSE,DG_CODE);
 
 CREATE TABLE BEHDL_DG_JOINT(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	BehandlungsID	VARCHAR(25),
 	DiagnoseID		VARCHAR(25)
@@ -266,6 +273,7 @@ CREATE INDEX bdg1 on BEHDL_DG_JOINT (BehandlungsID);
 
 # Verschiedene Konfigurationsdaten
 CREATE TABLE CONFIG(
+    lastupdate      BIGINT,
 	param			VARCHAR(80) primary key,
 	wert			TEXT
 );
@@ -275,6 +283,7 @@ CREATE TABLE CONFIG(
 # den eigentlichen Briefen (welche in HEAP oder im Dateisystem sein können).
 CREATE TABLE BRIEFE(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	Betreff			VARCHAR(80),
 	Datum			CHAR(8),
@@ -295,6 +304,7 @@ CREATE INDEX i8 on BRIEFE (BehandlungsID);
 # Bills
 CREATE TABLE RECHNUNGEN(
 	ID				VARCHAR(25) primary key,     # UUID
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',         # indicates that this object is marked deleted
 	RnNummer		VARCHAR(8),                  # Number of the bill (unique within this database)
 	FallID			VARCHAR(25),                 # foreign key from FAELLE (case this bill belongs to)
@@ -317,6 +327,7 @@ CREATE INDEX Rn5 ON RECHNUNGEN (RnDatumBis);
 # payments
 CREATE TABLE ZAHLUNGEN(
 	ID				VARCHAR(25) primary key,     # UUID
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',         # indicates that this object is marked deleted
 	RechnungsID		VARCHAR(25),                 # bill this payment belongs to (can be null)
 	Betrag			CHAR(8),                     # amount of this payment in Rp/cents
@@ -326,19 +337,9 @@ CREATE TABLE ZAHLUNGEN(
 
 CREATE INDEX zahl1 on ZAHLUNGEN(RechnungsID);
 
-
-CREATE TABLE PLZ(
-	ID				VARCHAR(25) primary key,
-	Plz				VARCHAR(6),
-	Ort				VARCHAR(20),
-	Kanton			VARCHAR(2)
-);
-
-CREATE INDEX plz0 on PLZ (Plz);
-CREATE INDEX plz1 on PLZ (Ort);
-
 CREATE TABLE REMINDERS(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	IdentID			VARCHAR(25),                 # foreign key from KONTAKT
 	OriginID		VARCHAR(25),                 # foreign key from KONTAKT
@@ -352,6 +353,7 @@ CREATE TABLE REMINDERS(
 
 CREATE TABLE REMINDERS_RESPONSIBLE_LINK(
 	ID				VARCHAR(25) primary key,
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	ReminderID		VARCHAR(25),                  # foreign key from REMINDERS
 	ResponsibleID	VARCHAR(25)                   # foreign key from KONTAKT
@@ -382,6 +384,7 @@ CREATE INDEX trace2 on TRACES(Username);
 # Das Schwarze Brett der Praxis
 CREATE TABLE BBS(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted			CHAR(1) default '0',
 	reference	VARCHAR(25),
 	topic		VARCHAR(80),
@@ -403,6 +406,7 @@ CREATE INDEX bbs1 on BBS (reference);
 
 CREATE TABLE LABORITEMS(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	kuerzel		VARCHAR(80),
 	titel		VARCHAR(80),
@@ -423,6 +427,7 @@ CREATE INDEX labit2 on LABORITEMS(laborID);
 
 CREATE TABLE LABORWERTE(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	PatientID	VARCHAR(25),              # foreign key from KONTAKT
 	datum		CHAR(8),
@@ -440,11 +445,13 @@ CREATE INDEX labor3 on LABORWERTE (ItemID);
 
 CREATE TABLE LABGROUPS(
    ID VARCHAR(25) primary key,
+   lastupdate   BIGINT,
    deleted		CHAR(1) default '0',
    name VARCHAR(30)
 ); 
 
 CREATE TABLE LABGROUP_ITEM_JOINT(
+     lastupdate      BIGINT,
      GroupID        VARCHAR(25),
      ItemID         VARCHAR(25),
      Comment        TEXT
@@ -453,6 +460,7 @@ CREATE TABLE LABGROUP_ITEM_JOINT(
 
 CREATE TABLE REZEPTE(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	PatientID	VARCHAR(25),                  # foreign key from KONTAKT
 	MandantID	VARCHAR(25),                  # foreign key from KONTAKT
@@ -467,14 +475,15 @@ CREATE INDEX rp1 on REZEPTE(PatientID);
 # Tabelle zum Speichern von benannten BLOB's verschiedener Herkunft
 CREATE TABLE HEAP(
 	ID			VARCHAR(80) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	inhalt		BLOB,
-	datum		CHAR(8),
-	lastupdate   CHAR(14)
+	datum		CHAR(8)
 );
 
 CREATE TABLE AUF(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	PatientID	VARCHAR(25),
 	FallID		VARCHAR(25),
@@ -491,6 +500,7 @@ CREATE INDEX AUF1 on AUF(PatientID);
 
 CREATE TABLE EIGENLEISTUNGEN(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	Code		VARCHAR(20),
 	Bezeichnung VARCHAR(80),
@@ -503,12 +513,13 @@ CREATE TABLE HEAP2(
 	ID		    VARCHAR(80) primary key,
 	deleted		CHAR(1) default '0',
 	datum		CHAR(8),
-	lastupdate   CHAR(14),
+	lastupdate  BIGINT,
 	Contents	BLOB
 );
 
 CREATE TABLE LOGS(
 	ID			VARCHAR(25) primary key,	# log entry's id
+	lastupdate  BIGINT,
 	OID			VARCHAR(80),				# foreign key on modified object
 	datum		CHAR(8),					# date of modification
 	typ			VARCHAR(20),				
@@ -518,6 +529,7 @@ CREATE TABLE LOGS(
 );
 
 CREATE TABLE USERCONFIG(
+    lastupdate  BIGINT,
 	UserID		VARCHAR(25),
 	Param		VARCHAR(80),
 	Value		TEXT
@@ -527,6 +539,7 @@ CREATE INDEX UCFG2 ON USERCONFIG(UserID);
 
 CREATE TABLE XID(
 	ID			VARCHAR(25) primary key,
+	lastupdate  BIGINT,
 	deleted		CHAR(1) default '0',
 	type		VARCHAR(80),				# class of the object
 	object		VARCHAR(25),				# ID of the object
@@ -540,6 +553,7 @@ CREATE INDEX XIDIDX3 on XID(object);
 
 CREATE TABLE ETIKETTEN(  
     ID          VARCHAR(25) primary key,
+    lastupdate  BIGINT,
     Image       VARCHAR(25),
     deleted     CHAR(1) default '0',
     importance	VARCHAR(7),
@@ -551,6 +565,7 @@ CREATE TABLE ETIKETTEN(
 CREATE INDEX ETIKETTE1 on ETIKETTEN(Name);
 
 CREATE TABLE ETIKETTEN_OBJECT_LINK(
+    lastupdate  BIGINT,
 	obj			VARCHAR(25),
 	etikette	VARCHAR(25)
 );
@@ -559,6 +574,7 @@ CREATE INDEX ETIKETTE3 on ETIKETTEN_OBJECT_LINK(etikette);
 
 CREATE TABLE DBIMAGE (
     ID             VARCHAR(25) primary key,
+    lastupdate     BIGINT,
     deleted        CHAR(1) default '0',
     Datum          CHAR(8),
     Title          VARCHAR(80),  
@@ -567,6 +583,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.7.2');
-INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','1.4.0');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.0');
+INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.0.0');
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-20087, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 4670 2008-11-08 19:43:40Z rgw_ch $
+ *    $Id: AccessControl.java 4945 2009-01-13 17:50:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -29,54 +29,48 @@ import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 
 /**
- * Diese Klasse realisiert das Zugriffskontroll- und Rechteverwaltungskonzept
- * von Elexis.
+ * Diese Klasse realisiert das Zugriffskontroll- und Rechteverwaltungskonzept von Elexis.
  * <ul>
- * <li> Es gibt Gruppen und Anwender.</li>
+ * <li>Es gibt Gruppen und Anwender.</li>
  * <li>Jeder Anwender gehört zu mindestens einer Gruppe.</li>
  * <li>Es existiert von Anfang an eine Gruppe "Alle" und ein Anwender "Jeder"</li>
- * <li>Jedes Recht kann einer oder mehreren Gruppen und/oder einer onder
- * mehreren Anwendern gewährt werden.</li>
- * <li> Ein Anwender erhält alle Rechte, die ihm entweder individuell gewährt
- * wurden, oder die einer der Gruppen gewährt wurden, zu denen er gehört.</li>
+ * <li>Jedes Recht kann einer oder mehreren Gruppen und/oder einer onder mehreren Anwendern gewährt
+ * werden.</li>
+ * <li>Ein Anwender erhält alle Rechte, die ihm entweder individuell gewährt wurden, oder die einer
+ * der Gruppen gewährt wurden, zu denen er gehört.</li>
  * </ul>
- * Eine Ressource, die ein Zugriffsrecht realisieren will, muss diesem Recht
- * einen individuellen Namen geben. Zugriffsrechte können hierarchisch aufgebaut
- * sein. Beispielsweise kann ein Recht foo/bar/baz definiert sein. Wenn keine
- * Regel für baz existiert, dann wird nach einer Regel für bar gesucht und diese
- * Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo
- * gesucht. Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert.
- * Das Zugriffsrecht kann dann mit grant(gruppe,recht) oder
- * grant(Anwender,recht) gewährt resp. mit revoke(gruppe,Name) oder
- * revoke(Anwender,name) entzogen werden. Um herauszufinden, ob ein Anwender bw.
- * einer seiner Gruppen das Recht hat, auf eine ressource zuzugreifen, muss man
- * request(anwedner,recht) fragen. Eine Abkürzung ist request(recht). Dies
- * fragt, ob der aktuell eingeloggte Anwender das betreffende Recht hat.
+ * Eine Ressource, die ein Zugriffsrecht realisieren will, muss diesem Recht einen individuellen
+ * Namen geben. Zugriffsrechte können hierarchisch aufgebaut sein. Beispielsweise kann ein Recht
+ * foo/bar/baz definiert sein. Wenn keine Regel für baz existiert, dann wird nach einer Regel für
+ * bar gesucht und diese Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo
+ * gesucht. Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert. Das Zugriffsrecht
+ * kann dann mit grant(gruppe,recht) oder grant(Anwender,recht) gewährt resp. mit
+ * revoke(gruppe,Name) oder revoke(Anwender,name) entzogen werden. Um herauszufinden, ob ein
+ * Anwender bw. einer seiner Gruppen das Recht hat, auf eine ressource zuzugreifen, muss man
+ * request(anwedner,recht) fragen. Eine Abkürzung ist request(recht). Dies fragt, ob der aktuell
+ * eingeloggte Anwender das betreffende Recht hat.
  * 
  * @author Gerry
  * 
  */
 public class AccessControl {
-
-	public static final String ALL_GROUP = Messages
-			.getString("AccessControl.GroupAll");
-	public static final String USER_GROUP = Messages
-			.getString("AccessControl.GroupUsers");
-	public static final String ADMIN_GROUP = Messages
-			.getString("AccessControl.GroupAdmin");
+	
+	public static final String ALL_GROUP = Messages.getString("AccessControl.GroupAll");
+	public static final String USER_GROUP = Messages.getString("AccessControl.GroupUsers");
+	public static final String ADMIN_GROUP = Messages.getString("AccessControl.GroupAdmin");
 	public static final String GROUP_FOR_PREFERENCEPAGE = "ch.elexis.preferences.acl";
-
+	
 	private static Hashtable<String, String> rights;
 	private static Hashtable<String, List<String>> usergroups;
-
+	
 	// TODO: Cleanup alte Gruppen/Anwender
 	/**
 	 * Die Zugriffsrechte aus den globalen Settings laden.
 	 */
 	@SuppressWarnings("unchecked")//$NON-NLS-1$
-	public void load() {
+	public void load(){
 		NamedBlob rset = NamedBlob.load("AccessControl"); //$NON-NLS-1$
-		if(rset==null){
+		if (rset == null) {
 			NamedBlob.createTable();
 			rset = NamedBlob.load("AccessControl"); //$NON-NLS-1$
 		}
@@ -87,41 +81,40 @@ public class AccessControl {
 		}
 		usergroups = new Hashtable<String, List<String>>();
 	}
-
+	
 	/**
-	 * Zugriffsrechte zurücksichern. Alle Rechte, die seit dem letzten flush
-	 * geändert wurden, sind nur temporär bis zum nächsten flush()!
+	 * Zugriffsrechte zurücksichern. Alle Rechte, die seit dem letzten flush geändert wurden, sind
+	 * nur temporär bis zum nächsten flush()!
 	 */
-	public void flush() {
+	public void flush(){
 		NamedBlob.load("AccessControl").put(rights); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Zugriffsrecht für den aktuell angemeldeten Anwender erfragen.
 	 * 
 	 * @param right
 	 *            Name des erfragten Rechts
-	 * @return true, wenn der Anwender (oder eine der Gruppen, zu denen der
-	 *         Anwender gehört) das Recht hat.
+	 * @return true, wenn der Anwender (oder eine der Gruppen, zu denen der Anwender gehört) das
+	 *         Recht hat.
 	 */
-	public boolean request(String right) {
+	public boolean request(String right){
 		return (request(Hub.actUser, right));
 	}
-
+	
 	/**
 	 * Zugriffsrecht für einen Anwender erfragen
 	 * 
 	 * @param user
 	 *            Der Anwender
 	 * @param right
-	 *            Das Recht, das erfagt werden soll
-	 * @return true, wenn der Anwender (oder eine der Gruppen, zu der dieser
-	 *         Anwender gehört) dieses Recht hat. Immer true, wenn der Anwender
-	 *         zur Gruppe "Admin" gehört. Immer false, wenn kein Anwender
-	 *         angemeldet ist
+	 *            Das Recht, das erfragt werden soll
+	 * @return true, wenn der Anwender (oder eine der Gruppen, zu der dieser Anwender gehört) dieses
+	 *         Recht hat. Immer true, wenn der Anwender zur Gruppe "Admin" gehört. Immer false, wenn
+	 *         kein Anwender angemeldet ist
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean request(Anwender user, String right) {
+	public boolean request(Anwender user, String right){
 		if (StringTool.isNothing(right)) {
 			return true;
 		}
@@ -146,7 +139,7 @@ public class AccessControl {
 		if (rights.get(user.getId() + right) != null) {
 			return true;
 		}
-
+		
 		// Wenn das Recht für eine Gruppe, zu der der User gehört, besteht
 		List<String> list = usergroups.get(user.getId() + "#groups#"); //$NON-NLS-1$
 		// we cache the groups during runtime. If not yet in cache, load group
@@ -184,7 +177,7 @@ public class AccessControl {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Zugriffsrecht(e) erteilen
 	 * 
@@ -193,12 +186,12 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void grant(Anwender user, String... elements) {
+	public void grant(Anwender user, String... elements){
 		for (String right : elements) {
 			rights.put(user.getId() + right, "1"); //$NON-NLS-1$
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte entziehen
 	 * 
@@ -207,12 +200,12 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void revoke(Anwender user, String... elements) {
+	public void revoke(Anwender user, String... elements){
 		for (String right : elements) {
 			rights.remove(user.getId() + right);
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte erteilen
 	 * 
@@ -221,12 +214,12 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void grant(String group, String... elements) {
+	public void grant(String group, String... elements){
 		for (String right : elements) {
 			rights.put(group + right, "1"); //$NON-NLS-1$
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte entziehem
 	 * 
@@ -235,28 +228,28 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void revoke(String group, String... elements) {
+	public void revoke(String group, String... elements){
 		for (String right : elements) {
 			rights.remove(group + right);
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrecht für "self" erteilen
 	 * 
 	 */
-	public void grantForSelf(String... elements) {
+	public void grantForSelf(String... elements){
 		for (String r : elements) {
 			rights.put("Self" + r, "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-
-	public void revokeFromSelf(String... strings) {
+	
+	public void revokeFromSelf(String... strings){
 		for (String e : strings) {
 			rights.remove("Self" + e); //$NON-NLS-1$
 		}
 	}
-
+	
 	/**
 	 * Einen Anwender einer Gruppe zufügen
 	 * 
@@ -265,12 +258,12 @@ public class AccessControl {
 	 * @param user
 	 *            der Anwender
 	 */
-	public void addToGroup(String group, Anwender user) {
+	public void addToGroup(String group, Anwender user){
 		String g = remove(group, user);
 		g = g + "," + group; //$NON-NLS-1$
 		user.setInfoElement("Groups", g); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Einen Anwender aus einer Gruppe entfernen
 	 * 
@@ -279,12 +272,12 @@ public class AccessControl {
 	 * @param user
 	 *            der Anwender
 	 */
-	public void removeFromGroup(String group, Anwender user) {
+	public void removeFromGroup(String group, Anwender user){
 		String g = remove(group, user);
 		user.setInfoElement("Groups", g); //$NON-NLS-1$
 	}
-
-	private String remove(String group, Anwender user) {
+	
+	private String remove(String group, Anwender user){
 		String g = (String) user.getInfoElement("Groups"); //$NON-NLS-1$
 		if (g != null) {
 			g = g.replaceAll(user.getId(), ""); //$NON-NLS-1$
@@ -293,21 +286,32 @@ public class AccessControl {
 		}
 		return ""; //$NON-NLS-1$
 	}
-
-	public List<String> getGroups() {
+	
+	/**
+	 * Alle Gruppen holen
+	 * 
+	 * @return eine Liste aller definierten Gruppen
+	 */
+	public List<String> getGroups(){
 		ArrayList<String> ret = new ArrayList<String>();
-		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS,
-				ADMIN_GROUP);
+		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, ADMIN_GROUP);
 		for (String s : grp.split(",")) {
 			ret.add(s);
 		}
 		return ret;
 	}
-
-	public List<String> groupsForGrant(String right) {
+	
+	/**
+	 * Eine Liste aller Gruppen holen, die in bestimmtes Recht haben
+	 * 
+	 * @param right
+	 *            das zu erfragende Recht
+	 * @return Alle Gruppen, deren Mitglieder dieses Recht haben
+	 */
+	public List<String> groupsForGrant(String right){
 		ArrayList<String> ret = new ArrayList<String>();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
-
+		
 		Enumeration<String> e = rights.keys();
 		while (e.hasMoreElements()) {
 			String k = e.nextElement();
@@ -322,11 +326,19 @@ public class AccessControl {
 		}
 		return ret;
 	}
-
-	public List<Anwender> usersForGrant(String right) {
+	
+	/**
+	 * Alle Anwender efragen, die ein bestimmtes Recht haben
+	 * 
+	 * @param right
+	 *            das zu erfragende Recht
+	 * @return eine Liste aller Anwender, die das gesuchte Recht direkt (nicht über
+	 *         Gruppenmitgliedschaft) haben.
+	 */
+	public List<Anwender> usersForGrant(String right){
 		ArrayList<Anwender> ret = new ArrayList<Anwender>();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
-
+		
 		Enumeration<String> e = rights.keys();
 		while (e.hasMoreElements()) {
 			String k = e.nextElement();
@@ -341,10 +353,10 @@ public class AccessControl {
 		}
 		return ret;
 	}
-
-	public void deleteGrant(String grant) {
+	
+	public void deleteGrant(String grant){
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + grant); //$NON-NLS-1$
-
+		
 		Enumeration<String> e = rights.keys();
 		while (e.hasMoreElements()) {
 			String k = e.nextElement();
@@ -354,13 +366,13 @@ public class AccessControl {
 			}
 		}
 	}
-
-	public Settings asSettings() {
+	
+	public Settings asSettings(){
 		return new InMemorySettings(rights);
 	}
-
+	
 	/** Alles auf Standard zurücksetzen und dbUID generieren */
-	public void reset() {
+	public void reset(){
 		rights.clear();
 		grant(ALL_GROUP, AccessControlDefaults.getAlle()); //$NON-NLS-1$
 		grant(USER_GROUP, AccessControlDefaults.getAnwender()); //$NON-NLS-1$
@@ -368,8 +380,8 @@ public class AccessControl {
 		rights.put("dbUID", StringTool.unique("db%id"));
 		flush();
 	}
-
-	public String getDBUID() {
+	
+	public String getDBUID(){
 		String dbuid = rights.get("dbUID");
 		if (dbuid == null) {
 			dbuid = StringTool.unique("db%id");
