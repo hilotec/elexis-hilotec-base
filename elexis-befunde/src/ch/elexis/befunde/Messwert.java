@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Messwert.java 4415 2008-09-14 20:09:34Z rgw_ch $
+ *    $Id: Messwert.java 4934 2009-01-13 17:46:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -42,7 +42,7 @@ import ch.rgw.tools.JdbcLink;
  *
  */
 public class Messwert extends PersistentObject {
-	public static final int VERSION=3;
+	public static final int VERSION=4;
 	public static final String PLUGIN_ID="ch.elexis.befunde";
 	public static final String SETUP_SEPARATOR=";;";
 	public static final String SETUP_CHECKSEPARATOR=":/:";
@@ -172,6 +172,9 @@ public class Messwert extends PersistentObject {
 			Hashtable names=setup.getHashtable("Befunde");
 			String v=(String)names.get("VERSION");
 			if(v==null || Integer.parseInt(v)<VERSION){
+				if(Integer.parseInt(v)<4){
+					createTable(TABLENAME, "ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;");
+				}
 				if(Integer.parseInt(v)<3){
 					  if(j.DBFlavor.equalsIgnoreCase("postgresql")){
 						  j.exec("ALTER TABLE "+TABLENAME+" ALTER Name TYPE VARCHAR(80);");
@@ -271,6 +274,7 @@ public class Messwert extends PersistentObject {
 	 */
 	private static final String create="CREATE TABLE "+TABLENAME+" ("+ //$NON-NLS-1$ //$NON-NLS-2$
 	"ID			VARCHAR(25) primary key,"+ 	//$NON-NLS-1$
+	"lastupdate BIGINT,"+
 	"deleted	CHAR(1) default '0',"+		//$NON-NLS-1$
 	"PatientID	VARCHAR(25),"+ 				//$NON-NLS-1$
 	"Name		VARCHAR(80),"+ 				//$NON-NLS-1$
