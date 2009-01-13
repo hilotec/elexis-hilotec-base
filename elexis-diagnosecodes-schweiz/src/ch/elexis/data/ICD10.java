@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICD10.java 4398 2008-09-08 17:22:10Z rgw_ch $
+ *    $Id: ICD10.java 4947 2009-01-13 17:50:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,46 +22,33 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
 public class ICD10 extends PersistentObject implements IDiagnose {
-	public static final String VERSION = "1.0.1";
+	public static final String VERSION = "1.0.2";
 	public static final String TABLENAME = "ICD10";
-
+	
 	static final String create = "DROP INDEX icd1;" + //$NON-NLS-1$
-			"DROP INDEX icd2;"
-			+ //$NON-NLS-1$
-			"DROP TABLE ICD10;"
-			+ //$NON-NLS-1$
-			"CREATE TABLE ICD10 ("
-			+ //$NON-NLS-1$
-			"ID       VARCHAR(25) primary key, "
-			+ //$NON-NLS-1$
-			"deleted  CHAR(1) default '0',"
-			+ //$NON-NLS-1$
-			"parent   VARCHAR(25),"
-			+ //$NON-NLS-1$
-			"ICDCode  VARCHAR(10),"
-			+ //$NON-NLS-1$
-			"encoded  TEXT,"
-			+ //$NON-NLS-1$
-			"ICDTxt   TEXT,"
-			+ //$NON-NLS-1$
-			"ExtInfo  BLOB);"
-			+ //$NON-NLS-1$
-			"CREATE INDEX icd1 ON ICD10 (parent);"
-			+ //$NON-NLS-1$
-			"CREATE INDEX icd2 ON ICD10 (ICDCode);"
-			+ //$NON-NLS-1$
-			"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('1',"
-			+ JdbcLink.wrap(VERSION) + ");";
-
-	public static void initialize() {
+		"DROP INDEX icd2;" + //$NON-NLS-1$
+		"DROP TABLE ICD10;" + //$NON-NLS-1$
+		"CREATE TABLE ICD10 (" + //$NON-NLS-1$
+		"ID       VARCHAR(25) primary key, " + //$NON-NLS-1$
+		"lastupdate BIGINT,"+
+		"deleted  CHAR(1) default '0'," + //$NON-NLS-1$
+		"parent   VARCHAR(25)," + //$NON-NLS-1$
+		"ICDCode  VARCHAR(10)," + //$NON-NLS-1$
+		"encoded  TEXT," + //$NON-NLS-1$
+		"ICDTxt   TEXT," + //$NON-NLS-1$
+		"ExtInfo  BLOB);" + //$NON-NLS-1$
+		"CREATE INDEX icd1 ON ICD10 (parent);" + //$NON-NLS-1$
+		"CREATE INDEX icd2 ON ICD10 (ICDCode);" + //$NON-NLS-1$
+		"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('1'," + JdbcLink.wrap(VERSION) + ");";
+	
+	public static void initialize(){
 		createTable(TABLENAME, create);
 	}
-
+	
 	static {
-		addMapping(
-				"ICD10", "parent", "Code=ICDCode", "Text=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		String check = getConnection().queryString(
-				"SELECT ID FROM " + TABLENAME + " WHERE icdcode LIKE 'A%'");
+		addMapping("ICD10", "parent", "Code=ICDCode", "Text=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		String check =
+			getConnection().queryString("SELECT ID FROM " + TABLENAME + " WHERE icdcode LIKE 'A%'");
 		ICD10 version = load("1");
 		if (check == null) {
 			initialize();
@@ -73,8 +60,12 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("1.0.1")) {
 					getConnection().exec(
-							"ALTER TABLE " + TABLENAME
-									+ " ADD deleted CHAR(1) default '0';");
+						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
+					version.set("Text", VERSION);
+				}
+				if(vi.isOlder("1.0.2")){
+					getConnection().exec(
+						"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 					version.set("Text", VERSION);
 				}
 			}
@@ -91,103 +82,101 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	static final int CODE_SHORT = 8;
 	static final int CODE_COMPACT = 9;
 	static final int TEXT = 10;
-
-	public static ICD10 load(final String id) {
+	
+	public static ICD10 load(final String id){
 		return new ICD10(id);
 	}
-
-	public ICD10(final String parent, final String code, final String shortCode) {
+	
+	public ICD10(final String parent, final String code, final String shortCode){
 		create(null);
 		set("Code", code); //$NON-NLS-1$
 		set("encoded", shortCode); //$NON-NLS-1$
 		set("parent", parent); //$NON-NLS-1$
 		set("Text", getField(TEXT)); //$NON-NLS-1$
 	}
-
+	
 	/*
-	 * public String createParentCode(){ String code=getField(CODE); String
-	 * ret="NIL"; String chapter=getField(CHAPTER); String
-	 * group=chapter+":"+getField(GROUP); String supercode=getField(SUPERCODE);
-	 * if(code.equals(supercode)){ if(code.equals(group)){
-	 * if(code.equals(chapter)){ ret="NIL"; }else{ ret=chapter; } }else{
-	 * ret=group; } }else{ ret=supercode; } return ret; }
+	 * public String createParentCode(){ String code=getField(CODE); String ret="NIL"; String
+	 * chapter=getField(CHAPTER); String group=chapter+":"+getField(GROUP); String
+	 * supercode=getField(SUPERCODE); if(code.equals(supercode)){ if(code.equals(group)){
+	 * if(code.equals(chapter)){ ret="NIL"; }else{ ret=chapter; } }else{ ret=group; } }else{
+	 * ret=supercode; } return ret; }
 	 */
 
-	public String getEncoded() {
+	public String getEncoded(){
 		return get("encoded"); //$NON-NLS-1$
 	}
-
-	public String getField(final int f) {
+	
+	public String getField(final int f){
 		return getEncoded().split(";")[f]; //$NON-NLS-1$
 	}
-
-	public ICD10() {
-	}
-
-	protected ICD10(final String id) {
+	
+	public ICD10(){}
+	
+	protected ICD10(final String id){
 		super(id);
 	}
-
+	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		StringBuilder b = new StringBuilder();
 		b.append(getCode()).append(" ").append(getText()); //$NON-NLS-1$
 		return b.toString();
 	}
-
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return "ICD10"; //$NON-NLS-1$
 	}
-
-	public String getCode() {
+	
+	public String getCode(){
 		return get("Code"); //$NON-NLS-1$
 	}
-
-	public String getText() {
+	
+	public String getText(){
 		return get("Text"); //$NON-NLS-1$
 	}
-
-	public String getCodeSystemName() {
+	
+	public String getCodeSystemName(){
 		return "ICD-10"; //$NON-NLS-1$
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public void setExt(final String name, final String value) {
+	public void setExt(final String name, final String value){
 		Hashtable<String, String> ext = getExtInfo();
 		ext.put(name, value);
 		writeExtInfo(ext);
 	}
-
-	public String getExt(final String name) {
+	
+	public String getExt(final String name){
 		Hashtable ext = getExtInfo();
 		String ret = (String) ext.get(name);
 		return checkNull(ret);
 	}
-
-	public Hashtable getExtInfo() {
+	
+	public Hashtable getExtInfo(){
 		return getHashtable("ExtInfo"); //$NON-NLS-1$
 	}
-
-	public void writeExtInfo(final Hashtable ext) {
+	
+	public void writeExtInfo(final Hashtable ext){
 		setHashtable("ExtInfo", ext); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public boolean isDragOK() {
+	public boolean isDragOK(){
 		if (getField(TERMINAL).equals("T")) { //$NON-NLS-1$
 			return true;
 		}
 		return false;
 	}
-
-	public String getCodeSystemCode() {
+	
+	public String getCodeSystemCode(){
 		return "999"; //$NON-NLS-1$
 	}
-
-	public List<IAction> getActions(Verrechnet kontext) {
+	
+	public List<IAction> getActions(Verrechnet kontext){
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }
