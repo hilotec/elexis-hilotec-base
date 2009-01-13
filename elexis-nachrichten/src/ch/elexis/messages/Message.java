@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Message.java 4371 2008-09-04 13:47:51Z rgw_ch $
+ * $Id: Message.java 4937 2009-01-13 17:47:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -17,12 +17,13 @@ import ch.elexis.Hub;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 
 public class Message extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_MESSAGES";
-	private static final String VERSION = "0.1.0";
+	private static final String VERSION = "0.2.0";
 	private static final String createDB =
-		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key,"
+		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT,"
 			+ "deleted		CHAR(1) default '0'," + "origin		VARCHAR(25),"
 			+ "destination	VARCHAR(25),"
 			+ "dateTime		CHAR(14)," // yyyymmddhhmmss
@@ -35,7 +36,16 @@ public class Message extends PersistentObject {
 		Message ver = load("VERSION");
 		if (ver.state() < PersistentObject.DELETED) {
 			initialize();
+		} else {
+			VersionInfo vi = new VersionInfo(ver.get("from"));
+			if (vi.isOlder(VERSION)) {
+				if (vi.isOlder("0.2.0")) {
+					createTable(TABLENAME, "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+					ver.set("from", VERSION);
+				}
+			}
 		}
+		
 	}
 	
 	static void initialize(){

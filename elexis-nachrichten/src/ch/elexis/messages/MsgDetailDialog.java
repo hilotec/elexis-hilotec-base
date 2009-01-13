@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MsgDetailDialog.java 4912 2009-01-06 06:05:36Z rgw_ch $
+ * $Id: MsgDetailDialog.java 4937 2009-01-13 17:47:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -139,9 +139,9 @@ public class MsgDetailDialog extends Dialog {
 			if (bOrigin != null) {
 				if (bOrigin.equals(bAnswer)) {
 					lbFrom.setText(Hub.actUser.getLabel());
-					if(msg!=null){
-						Anwender an=msg.getSender();
-						if(an!=null){
+					if (msg != null) {
+						Anwender an = msg.getSender();
+						if (an != null) {
 							cbTo.setText(an.getLabel());
 						}
 						msg.delete();
