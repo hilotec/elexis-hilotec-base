@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 4738 2008-12-04 21:00:57Z rgw_ch $
+ *  $Id: BAGMedi.java 4939 2009-01-13 17:47:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -41,14 +41,16 @@ import ch.rgw.tools.VersionInfo;
 public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	static final String EXTTABLE = "CH_ELEXIS_MEDIKAMENTE_BAG_EXT";
 	static final String JOINTTABLE = "CH_ELEXIS_MEDIKAMENTE_BAG_JOINT";
-	static final String VERSION = "0.1.1";
+	static final String VERSION = "0.1.2";
 	public static final String IMG_GENERIKUM = "ch.elexis.medikamente.bag.generikum";
 	public static final String IMG_HAS_GENERIKA = "ch.elexis.medikamente.bag.has_generika";
 	public static final String IMG_ORIGINAL = "ch.elexis.medikamente.bag.original";
 	static final IOptifier bagOptifier = new BAGOptifier();
 	
 	static final String extDB =
-		"CREATE TABLE " + EXTTABLE + " (" + "ID				VARCHAR(25) primary key,"
+		"CREATE TABLE " + EXTTABLE + " (" + 
+		"ID				VARCHAR(25) primary key,"
+		+"lastupdate BIGINT,"
 			+ "deleted			CHAR(1) default '0'," + "keywords			VARCHAR(80)," + "prescription		TEXT,"
 			+ "KompendiumText	TEXT" + ");";
 	
@@ -82,6 +84,9 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.1.1")) {
 					createTable("Exttable", extDB);
+				}
+				if(vi.isOlder("0.1.2")){
+					createTable(EXTTABLE,"ALTER TABLE "+EXTTABLE+" add lastupdate BIGINT;");
 				}
 				getConnection()
 					.exec(
