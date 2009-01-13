@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4478 2008-09-28 06:28:10Z rgw_ch $
+ * $Id: TarmedLeistung.java 4942 2009-01-13 17:48:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -34,6 +34,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.JdbcLink.Stm;
 
 /**
@@ -45,11 +46,13 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class TarmedLeistung extends VerrechenbarAdapter {
 	Hashtable<String, String> ext;
+	private static final String VERSION="1.1.0";
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
 	public static final String SIDE="Seite";
 	public static final String PFLICHTLEISTUNG="obligation";
+	private static final String upd110="ALTER TABLE TARMED ADD lastupdate BIGINT";
 	
 	private static final JdbcLink j = getConnection();
 	static {
@@ -75,6 +78,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			"Sparte", "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 		);
+		TarmedLeistung tlv=TarmedLeistung.load("Version");
+		VersionInfo vi=new VersionInfo(tlv.get("Nick"));
+		if(vi.isOlder(VERSION)){
+			createTable("TARMED", upd110);
+			tlv.set("Nick", VERSION);
+		}
 		tarmedComparator = new TarmedComparator();
 		tarmedOptifier = new TarmedOptifier();
 	}

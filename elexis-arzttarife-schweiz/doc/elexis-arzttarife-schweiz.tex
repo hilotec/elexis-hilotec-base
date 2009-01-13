@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 4879 2008-12-30 13:51:33Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 4942 2009-01-13 17:48:53Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -42,7 +42,7 @@
     \end{center}
     \vfill
     \begin{center}
-   \copyright 2008 by G.Weirich. Nachdruck und Weitergabe, auch auszugsweise, sowohl in elektronischer als auch in Papierform, nur mit Genehmigung des Autors.
+   \copyright 2008-2009 by G.Weirich. Nachdruck und Weitergabe, auch auszugsweise, sowohl in elektronischer als auch in Papierform, nur mit Genehmigung des Autors.
 
     \end{center}
     \vfill
@@ -114,9 +114,13 @@ Um ein neues Abrechnungssystem zu erstellen, klickt man auf 'Neu...', um ein bes
 \end{figure}
 Der Name ist wie gesagt frei wählbar. Für Leistungscode-System und Standard-Rechnungsausgabe können Sie aus den von den vorhandenen Abrechnungs-Plugins beigesteuerten Optionen wählen. Der Multiplikator ist die anzuwendende Tarifstufe (der 'Taxpunkt') für dieses System. Ein Multiplikator muss immer in Form einer Dezimalzahl angegeben werden und gilt immer ab einem bestimmten Datum so lange, bis ein anderer Multiplikator definiert wird. \textbf{Ein einmal eingegebener Multiplikator kann weder gelöscht noch geändert werden!}
 \index{Taxpunkt}
+
 Unter 'Notwendige Daten' geben Sie an, was für Angaben vorhanden sein müssen, damit ein Fall, der dieses Abrechnungssystem hat, als gültiog betrachtet wird. Solche Angaben können ein Kontakt sein, wie z.B. Kostenträger, oder ein Text, wie z.B. Versicherungs- oder Unfallnummer oder Vertragsnummer etc., oder es kann ein Datum sein, z.B. ein Unfalldatum.
 Implizit immer notwendig ist der Kontakt 'Rechnungsempfänger', der deshalb hier nicht separat eingetragen werden darf.
 Durch Rechtsklick kann man einen Eintrag in dieser Liste wieder löschen. Sie sehen das, was Sie hier eingegeben haben wieder unter den 'Fall-Details' als Fall-Erfordernisse (s. \ref{fall-erfordernisse}, S. \pageref{fall-erfordernisse}).
+
+Unter 'Fallkonstanten' können je nach Abrechnungs-Plugin notwendige Daten eingetragen werden, die jedem auf diesem Abrechnungssystem basierenden Fall zugeordnet werden. Hier zum Beispiel das Gesetz, nach dem abgerechnet wird und die EAN des Intermediärs. Wenn der Hersteller Ihres Abrechnungsplugins hierzu keine Angaben gemacht hat, lassen Sie dieses Feld einfach leer.
+
 
 \subsection{Mandanten und Rechnungssteller}
 \index{Mandant}\index{Rechnungssteller}\index{Assistenzarzt}
@@ -342,10 +346,11 @@ Gehen Sie in die Rechnungen-Perspektive und öffnen Sie die View 'Konsultationen
 \item Automatische Auswahl anhand verschiedener Kriterien: Klicken Sie das 'Zauberstab-Icon' und wählen Sie aus der Dialogbox wie Abb.\ref{fig:abr9} die gewünschten Kriterien aus:
 \begin{figure}
   % Requires \usepackage{graphicx}
-  \includegraphics{abr9}\\
+  \includegraphics[width=1.0\textwidth]{abr9}\\
   \caption{Konsultationen automatisch auswählen}\label{fig:abr9}
 \end{figure}
 \begin{itemize}
+    \item Alle Konsultationen, deren Fall manuell zum Abrechnen vorgemerkt wurde (Im Fall-Detail)
     \item Alle Konsultationen einer Serie, deren erste vor einem bestimmten Datum war
     \item Alle Konsultationen einer Serie, deren letzte vor einem bestimmten Datum war
     \item Alle Konsultationen des vergangenen Kalenderquartals
@@ -369,11 +374,11 @@ Wenn die 'Strenge Gültigkeitsprüfung' nicht angekreuzt ist, genügt es, wenn e
 
 \subsection{Rechnungen anzeigen, kontrollieren und ausgeben}
 \index{Rechnung!kontrollieren}
-Wenn Sie eine Rechnung erstellt haben, durchläuft sie einen Zyklus von verschiedenen Statusänderungen, bis sie schliesslich einen Endpunkt erreicht hat. Zunächst hat sie den Status 'Offen'\footnote{Eine Ausnahme sind Rechnungen, deren Totalbetrag 0.00 ist: Solche Rechnungen werden automatisch unmittelbar nach dem Erstellen auf den Status 'bezahlt' gesetzt.}. Das bedeutet, sie wurde erstellt, aber noch nirgendshin übermittelt oder ausgegeben. Sie finden alle Rechnungen in der View 'Rechnungen' (S. Abb.\ref{fig:abr11}), welche standardmässig in der Abrechnungs-Perspektive vorhanden ist (Aber natürlich auch in jede andere Perspektive eingebaut werden kann).
+Wenn Sie eine Rechnung erstellt haben, durchläuft sie einen Zyklus von verschiedenen Statusänderungen, bis sie schliesslich einen Endpunkt erreicht hat. Zunächst hat sie den Status 'Offen'\footnote{Eine Ausnahme sind Rechnungen, deren Totalbetrag 0.00 ist: Solche Rechnungen werden automatisch unmittelbar nach dem Erstellen auf den Status 'bezahlt' gesetzt.}. Das bedeutet, sie wurde erstellt, aber noch nirgendwohin übermittelt oder ausgegeben. Sie finden alle Rechnungen in der View 'Rechnungen' (S. Abb.\ref{fig:abr11}), welche standardmässig in der Abrechnungs-Perspektive vorhanden ist (Aber natürlich auch in jede andere Perspektive eingebaut werden kann).
 \begin{figure}
   % Requires \usepackage{graphicx}
   \center
-  \includegraphics[width=0.7\textwidth]{abr11}\\
+  \includegraphics[width=0.9\textwidth]{abr11}\\
   \caption{Rechnungen-View}\label{fig:abr11}
 \end{figure}
 \begin{figure}
@@ -631,10 +636,9 @@ Auch das Forum hat eine Suchfunktion, mit der Sie interessierende Themen nach St
 Unter http://www.iatrix.org/pmwiki/pmwiki.php/Elexishilfe/Uebersicht existiert eine Hilfe-Seite, die ständig erweitert wird. Auch an dieser Seite können Sie aktiv mitmachen und eigene Erkenntnisse oder gelöste Probleme notieren, damit sie Anderen wieder zugute kommen.
 Dieses Hilfe-Wiki wird standardmässig auch aufgerufen, wenn Sie von Elexis aus den 'Hilfe'-Button klicken, oder wenn Sie in irgendeiner View, zu der Sie Hilfe möchten, die F1-Taste drücken.
 
-\subsection{E-Mail}
-Sie werden sehen, dass das Abrechnen nicht so schwierig ist, wie es scheint. Das Lesen dieser Broschüre hat wesentlich länger gedauert, als ein Rechnungslauf dauern wird, wenn Sie die Grundprinzipien erst mal 'verinnerlicht' haben. Die Komplexität kommt eher aus der Vielzahl der möglichen Optionen. Da man aber in der eigenen Praxis nur eine begrenzte Anzahl davon benötigt, wird es schon viel einfacher.
+\subsection{Wartungsvertrag}
+Wenn Sie einen Wartungsvertrag abgeschlossen haben, können Sie natürlich auch in diesem Rahmen Unterstützung erhalten. Über die genauen Bedingungen informiert Sie Ihr Elexis-Supporter.
 
-Dennoch: Da es von vitaler Notwendigkeit ist, dass Rechnungen korrekt erstellt und Zahlungen korrekt eingebucht werden, erhalten Sie als registrierter Elexis-Anwender für den Bereich 'Abrechnen' in Elexis vorerst unlimitierten E-Mail-Support von support (at) elexis.ch. Vom kostenlosen Support wird aber nichts abgedeckt, was in dieser Broschüre behandelt wird. Lesen Sie also bitte diese Broschüre erst durch, und wenn dann noch etwas unklar ist, fragen Sie im Forum (s. oben), oder allenfalls direkt \textbf{per e-mail} bei mir, nicht bei jemand anderem.
 \clearpage
 \section{Index}
 \printindex

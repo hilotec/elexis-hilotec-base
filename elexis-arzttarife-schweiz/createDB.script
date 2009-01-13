@@ -1,7 +1,8 @@
-# $Id: createDB.script 2755 2007-07-08 05:41:30Z rgw_ch $
+# $Id: createDB.script 4942 2009-01-13 17:48:53Z rgw_ch $
 
 CREATE TABLE TARMED(
 	ID				VARCHAR(14),
+	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	Parent			VARCHAR(14),
 	DigniQuanti		CHAR(5),
@@ -43,4 +44,4 @@ CREATE TABLE TARMED_DATEN(
 
 CREATE INDEX tarmed5 on TARMED_DATEN (Parameter);
 
-INSERT INTO TARMED (ID,Nickname) VALUES ('Version','1.0.1');
+INSERT INTO TARMED (ID,Nickname) VALUES ('Version','1.1.0');
