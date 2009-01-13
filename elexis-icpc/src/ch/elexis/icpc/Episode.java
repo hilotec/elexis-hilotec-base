@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 3875 2008-05-05 16:59:47Z rgw_ch $
+ *  $Id: Episode.java 4943 2009-01-13 17:49:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -26,19 +26,20 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
-public class Episode extends PersistentObject implements Comparable<Episode>{
-    public static final int INACTIVE = 0;
-    public static final int ACTIVE = 1;
-
-	protected static final String VERSION="0.4.0";
-	protected final static String TABLENAME="CH_ELEXIS_ICPC_EPISODES";
-		
-    protected static final String INACTIVE_VALUE = "0";
-    protected static final String ACTIVE_VALUE = "1";
-
-    private final static String createDB=
+public class Episode extends PersistentObject implements Comparable<Episode> {
+	public static final int INACTIVE = 0;
+	public static final int ACTIVE = 1;
+	
+	protected static final String VERSION = "0.4.1";
+	protected final static String TABLENAME = "CH_ELEXIS_ICPC_EPISODES";
+	
+	protected static final String INACTIVE_VALUE = "0";
+	protected static final String ACTIVE_VALUE = "1";
+	
+	private final static String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25),"+
+		"lastupdate		BIGINT,"+
 		"deleted 		CHAR(1) default '0',"+
 		"PatientID		VARCHAR(25),"+
 		"Title			VARCHAR(256),"+
@@ -52,31 +53,35 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 		
 		"INSERT INTO "+TABLENAME+" (ID,Title) VALUES ('1',"+JdbcLink.wrap(VERSION)+");";
 	
-    private static final String LINKNAME=TABLENAME+"_DIAGNOSES_LINK";
-    private final static String createLink=
-    	"CREATE TABLE "+LINKNAME+" ("+
-		"ID				VARCHAR(25),"+
-		"deleted		char(1) default '0',"+
-		"Episode		VARCHAR(25),"+
-		"Diagnosis		VARCHAR(80)"+
-		");";
-
-    
-	static{
-		addMapping(TABLENAME, "PatientID","Title", "StartDate", "Number", "Status","ExtInfo","DiagLink=JOINT:Diagnosis:Episode:"+LINKNAME);
-		JdbcLink j=getConnection();
-		Episode version=load("1");
-		if(!version.exists()){
+	private static final String LINKNAME = TABLENAME + "_DIAGNOSES_LINK";
+	private final static String createLink =
+		"CREATE TABLE " + LINKNAME + " (" + 
+		"ID				VARCHAR(25)," +
+		"lastupdate 	BIGINT,"+
+		"deleted		char(1) default '0',"
+			+ "Episode		VARCHAR(25)," + 
+			"Diagnosis		VARCHAR(80)" + ");";
+	
+	private static final String upd041="ALTER TABLE "+TABLENAME+" add lastupdate BIGINT;"+
+	"ALTER TABLE "+LINKNAME+" ADD lastupdate BIGINT;";
+	
+	static {
+		addMapping(TABLENAME, "PatientID", "Title", "StartDate", "Number", "Status", "ExtInfo",
+			"DiagLink=JOINT:Diagnosis:Episode:" + LINKNAME);
+		JdbcLink j = getConnection();
+		Episode version = load("1");
+		if (!version.exists()) {
 			createTable(TABLENAME, createDB);
-			createTable(TABLENAME+"_DIAGNOSES_LINK",createLink);
-		}else{
-			VersionInfo vi=new VersionInfo(version.get("Title"));
-			if(vi.isOlder(VERSION)){
-				if(vi.isOlder("0.2.0")){
-					j.exec(j.translateFlavor("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';"));
+			createTable(TABLENAME + "_DIAGNOSES_LINK", createLink);
+		} else {
+			VersionInfo vi = new VersionInfo(version.get("Title"));
+			if (vi.isOlder(VERSION)) {
+				if (vi.isOlder("0.2.0")) {
+					j.exec(j.translateFlavor("ALTER TABLE " + TABLENAME
+						+ " ADD deleted CHAR(1) default '0';"));
 					version.set("Title", VERSION);
 				}
-
+				
 				if (vi.isOlder("0.3.0")) {
 					String sql;
 					
@@ -91,23 +96,27 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 					// add column Status
 					sql = "ALTER TABLE " + TABLENAME + " ADD Status CHAR(1) DEFAULT '1';";
 					j.exec(j.translateFlavor(sql));
-
+					
 					version.set("Title", VERSION);
 				}
 				
-				if(vi.isOlder("0.3.1")){
-					String sql="ALTER TABLE "+TABLENAME+" ADD ExtInfo BLOB;";
+				if (vi.isOlder("0.3.1")) {
+					String sql = "ALTER TABLE " + TABLENAME + " ADD ExtInfo BLOB;";
 					j.exec(j.translateFlavor(sql));
 					version.set("Title", VERSION);
 				}
 				
-				if(vi.isOlder("0.3.2")){
-					String sql="ALTER TABLE "+TABLENAME+" MODIFY Title VARCHAR(256);";
+				if (vi.isOlder("0.3.2")) {
+					String sql = "ALTER TABLE " + TABLENAME + " MODIFY Title VARCHAR(256);";
 					j.exec(j.translateFlavor(sql));
 					version.set("Title", VERSION);
 				}
-				if(vi.isOlder("0.4.0")){
-					createTable(TABLENAME+"_DIAGNOSES_LINK", createLink);
+				if (vi.isOlder("0.4.0")) {
+					createTable(TABLENAME + "_DIAGNOSES_LINK", createLink);
+					version.set("Title", VERSION);
+				}
+				if(vi.isOlder("0.4.1")){
+					createTable(TABLENAME, upd041);
 					version.set("Title", VERSION);
 				}
 			}
@@ -116,61 +125,61 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 	
 	public Episode(final Patient pat, final String title){
 		create(null);
-		set(new String[]{"PatientID","Title"},pat.getId(),title);
+		set(new String[] {
+			"PatientID", "Title"
+		}, pat.getId(), title);
 	}
+	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		String title = get("Title");
-		//String startDate = get("StartDate");
+		// String startDate = get("StartDate");
 		String number = get("Number");
 		int status = getStatus();
 		
 		StringBuffer sb = new StringBuffer();
 		/*
-		if (!StringTool.isNothing(startDate)) {
-			sb.append(startDate);
-			sb.append(": ");
-		}
-		*/
-		if(!StringTool.isNothing(number)){
+		 * if (!StringTool.isNothing(startDate)) { sb.append(startDate); sb.append(": "); }
+		 */
+		if (!StringTool.isNothing(number)) {
 			sb.append(number).append(": ");
 		}
 		sb.append(title);
 		
 		/*
-		if (!StringTool.isNothing(number)) {
-			sb.append(" (" + number + ")");
-		}
-		*/
+		 * if (!StringTool.isNothing(number)) { sb.append(" (" + number + ")"); }
+		 */
 		if (status == INACTIVE) {
 			sb.append(" [" + getStatusText() + "]");
 		}
 		
 		return sb.toString();
 	}
-
+	
 	public List<IDiagnose> getDiagnoses(){
-		List<String[]> res=getList("DiagLink", null);
-		List<IDiagnose> ret=new ArrayList<IDiagnose>(res.size());
-		for(String[] diag:res){
-			IDiagnose id=(IDiagnose)Hub.poFactory.createFromString(diag[0]);
-			if(id!=null){
+		List<String[]> res = getList("DiagLink", null);
+		List<IDiagnose> ret = new ArrayList<IDiagnose>(res.size());
+		for (String[] diag : res) {
+			IDiagnose id = (IDiagnose) Hub.poFactory.createFromString(diag[0]);
+			if (id != null) {
 				ret.add(id);
 			}
 		}
 		return ret;
 	}
+	
 	public void addDiagnosis(final IDiagnose id){
-		String clazz=id.getClass().getName();
-		addToList("DiagLink", clazz+"::"+id.getCode(), new String[0]);
+		String clazz = id.getClass().getName();
+		addToList("DiagLink", clazz + "::" + id.getCode(), new String[0]);
 	}
 	
 	public void removeDiagnosis(final IDiagnose id){
-		String clazz=id.getClass().getName();
-		//removeFromList("DiagLink", clazz+"::"+id.getCode());
+		String clazz = id.getClass().getName();
+		// removeFromList("DiagLink", clazz+"::"+id.getCode());
 	}
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
 	
@@ -181,117 +190,126 @@ public class Episode extends PersistentObject implements Comparable<Episode>{
 	protected Episode(final String id){
 		super(id);
 	}
+	
 	protected Episode(){}
 	
 	@Override
-	public boolean isDragOK() {
+	public boolean isDragOK(){
 		return true;
 	}
-
-	public Patient getPatient() {
+	
+	public Patient getPatient(){
 		String id = get("PatientID");
 		Patient patient = Patient.load(id);
 		return patient;
 	}
-
+	
 	/**
 	 * Get the status of an episode
+	 * 
 	 * @return Episode.ACTIVE or Episode.INACTIVE
 	 */
-    public int getStatus() {
-        String statusText = get("Status");
-        if ((statusText != null) && statusText.equals(ACTIVE_VALUE)) {
-            return ACTIVE;
-        } else {
-            return INACTIVE;
-        }
-    }
-
-    /**
-     * Get the status localized text
-     * @return the status as localized text
-     */
-    public String getStatusText() {
-        int status = getStatus();
-        if (status == ACTIVE) {
-            return Messages.Active;
-        } else {
-            return Messages.Inactive;
-        }
-    }
-
-    /**
-     * Set the status of an episode
-     * @param status Episode.ACTIVE or Episode.INACTIVE
-     */
-    public void setStatus(final int status) {
-    	switch (status) {
-    	case ACTIVE:
-    		set("Status", ACTIVE_VALUE);
-    		break;
-    	case INACTIVE:
-    		set("Status", INACTIVE_VALUE);
-    		break;
-    	default:
-    		set("Status", ACTIVE_VALUE);
-    		break;
-    	}
-    }
-	public int compareTo(final Episode e2) {
-		VersionInfo v1=new VersionInfo(get("Number"));
-		VersionInfo v2=new VersionInfo(e2.get("Number"));
-		if(v1.isNewer(v2)){
+	public int getStatus(){
+		String statusText = get("Status");
+		if ((statusText != null) && statusText.equals(ACTIVE_VALUE)) {
+			return ACTIVE;
+		} else {
+			return INACTIVE;
+		}
+	}
+	
+	/**
+	 * Get the status localized text
+	 * 
+	 * @return the status as localized text
+	 */
+	public String getStatusText(){
+		int status = getStatus();
+		if (status == ACTIVE) {
+			return Messages.Active;
+		} else {
+			return Messages.Inactive;
+		}
+	}
+	
+	/**
+	 * Set the status of an episode
+	 * 
+	 * @param status
+	 *            Episode.ACTIVE or Episode.INACTIVE
+	 */
+	public void setStatus(final int status){
+		switch (status) {
+		case ACTIVE:
+			set("Status", ACTIVE_VALUE);
+			break;
+		case INACTIVE:
+			set("Status", INACTIVE_VALUE);
+			break;
+		default:
+			set("Status", ACTIVE_VALUE);
+			break;
+		}
+	}
+	
+	public int compareTo(final Episode e2){
+		VersionInfo v1 = new VersionInfo(get("Number"));
+		VersionInfo v2 = new VersionInfo(e2.get("Number"));
+		if (v1.isNewer(v2)) {
 			return 1;
-		}else if(v1.isOlder(v2)){
+		} else if (v1.isOlder(v2)) {
 			return -1;
 		}
 		return 0;
 	}
-
-    public String getStartDate() {
-        return get("StartDate");
-    }
-    
-    public void setStartDate(final String startDate) {
-    	set("StartDate", startDate);
-    }
-    
-    public String getTitle() {
-        return get("Title");
-    }
-    
-    public void setTitle(final String title) {
-    	set("Title", title);
-    }
-    
-    public String getNumber() {
-    	return get("Number");
-    }
-    
-    public void setNumber(final String number) {
-    	set("Number", number);
-    }
-    
-    @SuppressWarnings("unchecked")
-    public String getExtField(final String name) {
-    	Hashtable extInfo = getHashtable("ExtInfo");
-    	return (String) extInfo.get(name);
-    }
-
+	
+	public String getStartDate(){
+		return get("StartDate");
+	}
+	
+	public void setStartDate(final String startDate){
+		set("StartDate", startDate);
+	}
+	
+	public String getTitle(){
+		return get("Title");
+	}
+	
+	public void setTitle(final String title){
+		set("Title", title);
+	}
+	
+	public String getNumber(){
+		return get("Number");
+	}
+	
+	public void setNumber(final String number){
+		set("Number", number);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String getExtField(final String name){
+		Hashtable extInfo = getHashtable("ExtInfo");
+		return (String) extInfo.get(name);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void setExtField(final String name, final String text){
-		Hashtable extInfo=getHashtable("ExtInfo");
+		Hashtable extInfo = getHashtable("ExtInfo");
 		extInfo.put(name, text);
 		setHashtable("ExtInfo", extInfo);
 	}
+	
 	/**
 	 * find an Episode with a given name
-	 * @param name the name to find
+	 * 
+	 * @param name
+	 *            the name to find
 	 * @return the Episode with that name or null if none or more than one exist
 	 */
 	public static Episode findEpisode(final String name){
-		List<Episode> res=new Query<Episode>(Episode.class,"Title",name).execute();
-		if(res.size()==1){
+		List<Episode> res = new Query<Episode>(Episode.class, "Title", name).execute();
+		if (res.size() == 1) {
 			return res.get(0);
 		}
 		return null;
