@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungscodes.java 4916 2009-01-06 14:38:36Z rgw_ch $
+ * $Id: Leistungscodes.java 4931 2009-01-13 11:43:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -44,6 +45,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
@@ -300,6 +302,7 @@ public class Leistungscodes extends PreferencePage implements
 					ldRequirements.add(req);
 				}
 			}
+			/*
 			Menu menu=new Menu(ldRequirements);
 			MenuItem del=new MenuItem(menu,SWT.NONE);
 			del.setText("Löschen");
@@ -311,7 +314,21 @@ public class Leistungscodes extends PreferencePage implements
 				}
 				
 			});
-			ldRequirements.setMenu(menu);
+			*/
+			Action delItemAction=new Action("Löschen"){
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+					setToolTipText("Bedingung entfernen");
+				}
+
+				@Override
+				public void run(){
+					String sel=ldRequirements.getSelection();
+					ldRequirements.remove(sel);
+				}
+				
+			};
+			ldRequirements.setMenu(delItemAction);
 			new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL);
 			new Label(ret,SWT.NONE).setText("Fallkonstanten");
 			ldConstants=new ListDisplay<String>(ret,SWT.NONE,new ListDisplay.LDListener(){
