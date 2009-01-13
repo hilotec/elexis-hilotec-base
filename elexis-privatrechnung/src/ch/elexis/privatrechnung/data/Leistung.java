@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 4735 2008-12-04 21:00:33Z rgw_ch $
+ * $Id: Leistung.java 4944 2009-01-13 17:49:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -38,7 +38,7 @@ public class Leistung extends VerrechenbarAdapter {
 	static final String TABLENAME = "CH_ELEXIS_PRIVATRECHNUNG";
 	public static final String CODESYSTEM_NAME = "Privat";
 	public static final String CODESYSTEM_CODE = "999";
-	static final String VERSION = "0.3.0";
+	static final String VERSION = "0.3.1";
 	
 	/**
 	 * If the table does not exist when this plugin is loaded, it must create it on the fly. it
@@ -49,11 +49,10 @@ public class Leistung extends VerrechenbarAdapter {
 		"CREATE TABLE "
 			+ TABLENAME
 			+ "("
-			+ "ID				VARCHAR(25) primary key,"
-			+ // This field must always be present
-			"deleted		CHAR(1) default '0',"
-			+ // This field must always be present
-			"parent			VARCHAR(80),"
+			+ "ID	VARCHAR(25) primary key," // This field must always be present
+			+ "lastupdate BIGINT," // This field must always be present
+			+ "deleted		CHAR(1) default '0'," // This field must always be present
+			+ "parent			VARCHAR(80),"
 			+ "name			VARCHAR(499),"
 			+ "short			VARCHAR(80),"
 			+ "cost			CHAR(8),"
@@ -76,6 +75,7 @@ public class Leistung extends VerrechenbarAdapter {
 			+ "ALTER TABLE " + TABLENAME + " MODIFY price CHAR(8);" + "ALTER TABLE " + TABLENAME
 			+ " MODIFY parent VARCHAR(80);";
 	
+	private static final String UPDATE_031 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
 	/**
 	 * Here we define the mapping between internal fieldnames and database fieldnames. (@see
 	 * PersistentObject) then we try to load a version element. If this does not exist, we create
@@ -87,7 +87,7 @@ public class Leistung extends VerrechenbarAdapter {
 			"ExtInfo");
 		Leistung check = load("VERSION");
 		if (check.state() < PersistentObject.DELETED) { // Object never existed, so we have to
-														// create the database
+			// create the database
 			createTable(TABLENAME, createDB);
 		} else { // found existing table, check version
 			VersionInfo v = new VersionInfo(check.get("Name"));
@@ -95,9 +95,10 @@ public class Leistung extends VerrechenbarAdapter {
 				if (v.isOlder("0.3.0")) {
 					createTable(TABLENAME, UPDATE_030);
 					check.set("Name", "0.3.0");
-				} else {
-					SWTHelper.showError("Privatrechnung: Falsche Version",
-						"Die Datenbank hat eine zu alte Version dieser Tabelle");
+				}
+				if (v.isOlder("0.3.1")) {
+					createTable(TABLENAME, UPDATE_031);
+					check.set("Name", VERSION);
 				}
 				
 			}
