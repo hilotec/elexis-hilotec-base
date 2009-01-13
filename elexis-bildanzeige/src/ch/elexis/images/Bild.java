@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 4248 2008-08-08 14:40:49Z rgw_ch $
+ *    $Id: Bild.java 4938 2009-01-13 17:47:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -25,11 +25,12 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Bild extends PersistentObject {
-	public static final String DBVERSION="1.1.0";
-	public static final String TABLENAME="BILDANZEIGE";
+	public static final String DBVERSION = "1.2.0";
+	public static final String TABLENAME = "BILDANZEIGE";
 	public static final String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID				VARCHAR(25) primary key,"+
+		"lastupdate		BIGINT,"+	
 		"deleted		CHAR(1) default '0',"+
 		"PatID			VARCHAR(25),"+
 		"Datum			CHAR(8),"+
@@ -43,21 +44,26 @@ public class Bild extends PersistentObject {
 		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');";
 		
 
-	static{
-		addMapping(
-			TABLENAME,"PatID","Datum=S:D:Datum","Titel=Title","Keywords","Bild","Info"
-				);
-		Bild start=load("1");
-		if(start==null){
+	static {
+		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Bild", "Info");
+		Bild start = load("1");
+		if (start == null) {
 			init();
-		}else{
-			VersionInfo vi=new VersionInfo(start.get("Titel"));
-			if(vi.isOlder(DBVERSION)){
-				if(vi.isOlder("1.1.0")){
-					getConnection().exec("ALTER TABLE "+TABLENAME+" ADD deleted CHAR(1) default '0';");
+		} else {
+			VersionInfo vi = new VersionInfo(start.get("Titel"));
+			if (vi.isOlder(DBVERSION)) {
+				if(vi.isOlder("1.2.0")){
+					getConnection().exec(
+						"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 					start.set("Titel", DBVERSION);
-				}else{
-					SWTHelper.showError("Versionskonsflikt", 
+				}
+				if (vi.isOlder("1.1.0")) {
+					getConnection().exec(
+						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
+					start.set("Titel", DBVERSION);
+				} else {
+					SWTHelper
+						.showError("Versionskonsflikt",
 							"Die Datentabelle für Bildanzeige hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
 				}
 			}
@@ -65,31 +71,36 @@ public class Bild extends PersistentObject {
 	}
 	
 	/**
-	   * Tabelle neu erstellen
-	   */
-	  public static void init(){
-		  	createTable(TABLENAME, createDB);
-	  }
-
-	  public Bild(Patient patient, String Titel, byte[] data){
-		  if(patient==null){
-			  SWTHelper.showError("Kein Patient ausgewählt", "Sie müssen einen Patienten auswählen, um ein Bildzuzuordnen");
-			  return;
-		  }
-		  create(null);
-		  set(new String[]{"PatID","Titel","Datum"},patient.getId(),Titel,new TimeTool().toString(TimeTool.DATE_COMPACT));
-		  setBinary("Bild", data);
-	  }
-	  public Patient getPatient(){
-		  return Patient.load(get("PatID"));
-	  }
+	 * Tabelle neu erstellen
+	 */
+	public static void init(){
+		createTable(TABLENAME, createDB);
+	}
+	
+	public Bild(Patient patient, String Titel, byte[] data){
+		if (patient == null) {
+			SWTHelper.showError("Kein Patient ausgewählt",
+				"Sie müssen einen Patienten auswählen, um ein Bildzuzuordnen");
+			return;
+		}
+		create(null);
+		set(new String[] {
+			"PatID", "Titel", "Datum"
+		}, patient.getId(), Titel, new TimeTool().toString(TimeTool.DATE_COMPACT));
+		setBinary("Bild", data);
+	}
+	
+	public Patient getPatient(){
+		return Patient.load(get("PatID"));
+	}
+	
 	@Override
-	public String getLabel() {
-		StringBuilder sb=new StringBuilder();
-		sb.append(checkNull(get("Titel"))).append(" (").append(get("Datum")).append(")"); 
+	public String getLabel(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(checkNull(get("Titel"))).append(" (").append(get("Datum")).append(")");
 		return sb.toString();
 	}
-
+	
 	public String getDate(){
 		return get("Datum");
 	}
@@ -101,35 +112,40 @@ public class Bild extends PersistentObject {
 	public String getInfo(){
 		return get("Info");
 	}
+	
 	/**
-	 * Image des Bildes erzeugen. Achtung: dieses muss nach Gebrauch 
-	 * mit dispose() wieder entsorgt werden.
+	 * Image des Bildes erzeugen. Achtung: dieses muss nach Gebrauch mit dispose() wieder entsorgt
+	 * werden.
+	 * 
 	 * @return ein SWT-Image
 	 */
 	public Image createImage(){
-		byte[] data=getBinary("Bild");
-		ByteArrayInputStream bais=new ByteArrayInputStream(data);
-		Image ret=new Image(Desk.getDisplay(),bais);
+		byte[] data = getBinary("Bild");
+		ByteArrayInputStream bais = new ByteArrayInputStream(data);
+		Image ret = new Image(Desk.getDisplay(), bais);
 		return ret;
 	}
-	public static Bild load(String ID) {
-		Bild ret=new Bild(ID);
-		if(ret.exists()){
+	
+	public static Bild load(String ID){
+		Bild ret = new Bild(ID);
+		if (ret.exists()) {
 			return ret;
 		}
 		return null;
 	}
-
+	
 	public byte[] getData(){
-		return  getBinary("Bild");
+		return getBinary("Bild");
 	}
 	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return "BILDANZEIGE";
 	}
+	
 	protected Bild(String id){
 		super(id);
 	}
+	
 	protected Bild(){}
 }
