@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 4833 2008-12-19 17:25:46Z rgw_ch $
+ *    $Id: Termin.java 4936 2009-01-13 17:46:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -39,7 +39,7 @@ import ch.rgw.tools.VersionInfo;
  */
 
 public class Termin extends PersistentObject implements Cloneable, Comparable<Termin>, IPlannable {
-	public static final String VERSION = "1.2.3";
+	public static final String VERSION = "1.2.4";
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;
 	public static String[] TerminBereiche;
@@ -67,6 +67,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		"ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);"
 			+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);";
 	
+	private static final String upd124=
+		"ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;";
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", "Wer=PatID", "Tag", "Beginn", "Dauer", "Grund",
 			"Typ=TerminTyp", "Status=TerminStatus", "ErstelltVon", "ErstelltWann=Angelegt",
@@ -110,6 +112,9 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 					}
 				} else if (vi.isOlder("1.2.3")) {
 					createTable("AGNTERMINE", upd122);
+				}
+				if(vi.isOlder("1.2.4")){
+					createTable("AGNTERMINE", upd124);
 				}
 				Version.set("Wer", VERSION);
 			}
