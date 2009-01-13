@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4807 2008-12-12 08:58:25Z rgw_ch $
+ *  $Id: Note.java 4941 2009-01-13 17:47:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -25,10 +25,10 @@ import ch.rgw.tools.VersionInfo;
 
 public class Note extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_NOTES";
-	private static final String DBVERSION = "0.3.1";
+	private static final String DBVERSION = "0.3.2";
 	
 	private static final String create =
-		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25),"
+		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25)," + "lastupdate BIGINT,"
 			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80),"
 			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255),"
 			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME
@@ -38,6 +38,7 @@ public class Note extends PersistentObject {
 		"ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);" + "ALTER TABLE " + TABLENAME
 			+ " ADD mimetype VARCHAR(80);";
 	
+	private static final String upd032 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
 	static {
 		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords",
 			"mimetype");
@@ -54,6 +55,10 @@ public class Note extends PersistentObject {
 				if (vi.isOlder("0.3.1")) {
 					createTable(TABLENAME, upd031);
 				}
+				if(vi.isOlder("0.3.2")){
+					createTable(TABLENAME,upd032);
+				}
+						
 				start.set("Title", DBVERSION);
 			}
 		}
