@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenbuchEintrag.java 4719 2008-12-04 10:10:26Z rgw_ch $
+ *  $Id: KassenbuchEintrag.java 4940 2009-01-13 17:47:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
-import java.io.ByteArrayInputStream;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -33,11 +31,11 @@ import ch.rgw.tools.VersionInfo;
  */
 public class KassenbuchEintrag extends PersistentObject implements Comparable<KassenbuchEintrag> {
 	private static final String TABLENAME = "CH_ELEXIS_KASSENBUCH";
-	public static final String VERSION = "1.1.0";
+	public static final String VERSION = "1.2.0";
 	public static final String CATEGORIES = "ChElexisKassenbuchKategorien";
 	public static final String CATEGORY_SEPARATOR = "##";
 	private static final String createDB =
-		"CREATE TABLE " + TABLENAME + "(" + "ID			VARCHAR(25) primary key,"
+		"CREATE TABLE " + TABLENAME + "(" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT,"
 			+ "deleted 	CHAR(1) default '0'," + "Nr	    	VARCHAR(25)," + "Category	VARCHAR(80),"
 			+ "Date   	CHAR(8)," + "Amount 	CHAR(8)," + "Total  	CHAR(8)," + "Entry  	VARCHAR(80)"
 			+ ");" + "INSERT INTO " + TABLENAME + " (ID,Nr,Date,Entry) VALUES ('1','-','"
@@ -59,6 +57,9 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 				if (vi.isOlder("1.1.0")) {
 					createTable(TABLENAME, "ALTER TABLE " + TABLENAME
 						+ " ADD Category VARCHAR(80);");
+				}
+				if (vi.isOlder("1.2.0")) {
+					createTable(TABLENAME, "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 				}
 				version.set("Text", VERSION);
 			}
