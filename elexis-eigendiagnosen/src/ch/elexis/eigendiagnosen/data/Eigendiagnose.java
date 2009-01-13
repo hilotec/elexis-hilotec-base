@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 4397 2008-09-08 17:21:47Z rgw_ch $
+ *    $Id: Eigendiagnose.java 4935 2009-01-13 17:46:43Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -19,11 +19,10 @@ import org.eclipse.jface.action.IAction;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.VersionInfo;
 
 public class Eigendiagnose extends PersistentObject implements IDiagnose {
-	static final String VERSION = "0.1.0";
+	static final String VERSION = "0.1.1";
 	static final String TABLENAME = "CH_ELEXIS_EIGENDIAGNOSEN";
 	public static final String CODESYSTEM_NAME = "Eigendiagnosen";
 	private static final String createDB =
@@ -31,6 +30,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 			+ TABLENAME
 			+ "("
 			+ "ID			VARCHAR(25) primary key," // must always be present
+			+ "lastupdare BIGINT," // must always be present
 			+ "deleted		CHAR(1) default '0'," // must always be present
 			+ "parent		VARCHAR(20)," + "code			VARCHAR(20)," + "title			VARCHAR(80),"
 			+ "comment		TEXT," + "ExtInfo		BLOB);" + "CREATE INDEX " + TABLENAME + "_idx1 on "
@@ -51,9 +51,9 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 			initialize();
 		} else { // found existing table, check version
 			VersionInfo v = new VersionInfo(check.get("Text"));
-			if (v.isOlder(VERSION)) {
-				SWTHelper.showError("Eigendiagnose: Falsche Version",
-					"Die Datenbank hat eine zu alte Version dieser Tabelle");
+			if (v.isOlder("0.1.1")) {
+				createTable(TABLENAME, "ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;");
+				check.set("Text", VERSION);
 				
 			}
 		}
