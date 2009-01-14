@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4948 2009-01-14 06:09:20Z rgw_ch $
+ *    $Id: Hub.java 4955 2009-01-14 20:22:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -375,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4948 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 4955 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
