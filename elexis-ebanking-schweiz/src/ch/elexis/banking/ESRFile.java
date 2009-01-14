@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2008, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRFile.java 4617 2008-10-21 11:49:55Z rgw_ch $
+ *  $Id: ESRFile.java 4950 2009-01-14 13:21:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,9 +23,10 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.data.Query;
-import ch.elexis.util.Log;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.StringTool;
 
 /**
  * Ein ESRFile ist eine Datei, wie sie von der Bank heruntergeladen werden kann, um VESR-Records zu
@@ -34,6 +38,7 @@ import ch.rgw.tools.Result;
 public class ESRFile {
 	List<ESRRecord> list = new ArrayList<ESRRecord>();
 	String name;
+	String hash;
 	
 	/**
 	 * ein ESR-File einlesen
@@ -52,9 +57,15 @@ public class ESRFile {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2,
 				Messages.ESRFile_cannot_read_esr, null, true);
 		}
+		byte[] md5 = FileTool.checksum(file);
 		name = file.getName();
+		if (md5 != null) {
+			hash = StringTool.createString(md5);
+		} else {
+			hash = name;
+		}
 		Query<ESRRecord> qesr = new Query<ESRRecord>(ESRRecord.class);
-		qesr.add("File", "=", name);
+		qesr.add("File", "=", hash);
 		List<ESRRecord> list = qesr.execute();
 		if (list.size() > 0) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
@@ -76,7 +87,7 @@ public class ESRFile {
 				}
 			}
 			for (String s : records) {
-				ESRRecord esr = new ESRRecord(name, s);
+				ESRRecord esr = new ESRRecord(hash, s);
 				list.add(esr);
 				monitor.worked(1);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 4705 2008-12-02 16:43:57Z rgw_ch $
+ *  $Id: ESRView.java 4950 2009-01-14 13:21:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -141,7 +141,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-					return "-- " + rec.getFile() + " " + rec.getBetrag() + " --"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					return "-- Datei eingelesen am: " + rec.get("Datum") + ", " + rec.getBetrag() + " --"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				} else if (rec.getId().equals("1")) { //$NON-NLS-1$
 					return Messages.ESRView_headline;
 				}
@@ -158,7 +158,8 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 				if (StringTool.isNothing(dat)) {
 					sb.append(Messages.ESRView_not_booked);
 				} else {
-					sb.append(Messages.ESRView_booked).append(new TimeTool(dat).toString(TimeTool.DATE_GER));
+					sb.append(Messages.ESRView_booked).append(
+						new TimeTool(dat).toString(TimeTool.DATE_GER));
 				}
 				return sb.toString();
 			}
@@ -194,8 +195,8 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 		
 		ESRLoader(Query<ESRRecord> qbe){
 			super("ESR-Loader", qbe, new String[] { //$NON-NLS-1$
-				"Datum"
-			});
+					"Datum"
+				});
 			this.qbe = qbe;
 		}
 		
@@ -256,8 +257,8 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 								
 								public void run(IProgressMonitor monitor)
 									throws InvocationTargetException, InterruptedException{
-									monitor.beginTask(Messages.ESRView_reading_ESR,
-										(int) (file.length() / 25));
+									monitor.beginTask(Messages.ESRView_reading_ESR, (int) (file
+										.length() / 25));
 									Result<List<ESRRecord>> result = esrf.read(file, monitor);
 									if (result.isOK()) {
 										for (ESRRecord rec : result.get()) {
@@ -273,31 +274,29 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 														.equals(ESRRecord.MODE.Storno_Schalter))) {
 													Rechnung rn = rec.getRechnung();
 													Money zahlung = rec.getBetrag().negate();
-													rn.addZahlung(zahlung, Messages.ESRView_storno_for
-														+ rn.getNr() + " / " //$NON-NLS-1$
-														+ rec.getPatient().getPatCode());
+													rn.addZahlung(zahlung,
+														Messages.ESRView_storno_for + rn.getNr()
+															+ " / " //$NON-NLS-1$
+															+ rec.getPatient().getPatCode());
 													rec.setGebucht(null);
 												} else {
 													Rechnung rn = rec.getRechnung();
 													if (rn.getStatus() == RnStatus.BEZAHLT) {
-														if (SWTHelper
-															.askYesNo(
-																Messages.ESRView_paid,
-																Messages.ESRView_rechnung
-																	+ rn.getNr()
-																	+ Messages.ESRView_ispaid) == false) {
+														if (SWTHelper.askYesNo(
+															Messages.ESRView_paid,
+															Messages.ESRView_rechnung + rn.getNr()
+																+ Messages.ESRView_ispaid) == false) {
 															continue;
 														}
 													}
 													Money zahlung = rec.getBetrag();
 													Money offen = rn.getOffenerBetrag();
 													if (zahlung.isMoreThan(offen)) {
-														if (SWTHelper
-															.askYesNo(
-																Messages.ESRView_toohigh,
-																Messages.ESRView_paymentfor
-																	+ rn.getNr()
-																	+ Messages.ESRView_morethan) == false) {
+														if (SWTHelper.askYesNo(
+															Messages.ESRView_toohigh,
+															Messages.ESRView_paymentfor
+																+ rn.getNr()
+																+ Messages.ESRView_morethan) == false) {
 															continue;
 														}
 													}
@@ -319,9 +318,9 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 							});
 					} catch (InvocationTargetException e) {
 						ExHandler.handle(e);
-						SWTHelper.showError(Messages.ESRView_errorESR2, Messages.ESRView_errrorESR2,
-							Messages.ESRView_couldnotread + e.getMessage()
-								+ e.getCause().getMessage());
+						SWTHelper.showError(Messages.ESRView_errorESR2,
+							Messages.ESRView_errrorESR2, Messages.ESRView_couldnotread
+								+ e.getMessage() + e.getCause().getMessage());
 					} catch (InterruptedException e) {
 						ExHandler.handle(e);
 						SWTHelper.showError("ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$

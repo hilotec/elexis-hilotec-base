@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 4617 2008-10-21 11:49:55Z rgw_ch $
+ *  $Id: ESR.java 4950 2009-01-14 13:21:08Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -97,10 +97,10 @@ public class ESR {
 			tcCode = "01"; // ESR in CHF
 		}
 		String betrag = wrap(tcCode + StringTool.pad(StringTool.LEFT, '0', amount, 10)); // Betrag
-																							// auf
-																							// 10
-																							// Stellen
-																							// erweitert
+		// auf
+		// 10
+		// Stellen
+		// erweitert
 		cl.append(betrag);
 		cl.append(">"); // Trennzeichen
 		cl.append(makeRefNr(false)); // Referenznummer
