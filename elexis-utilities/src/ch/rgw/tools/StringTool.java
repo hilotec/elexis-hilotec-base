@@ -359,7 +359,7 @@ public class StringTool {
 			baos.close();
 			return baos.toByteArray();
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
+			ExHandler.handle(ex); 
 			return null;
 		}
 	}
@@ -423,7 +423,7 @@ public class StringTool {
 			bais.close();
 			return res;
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
+			// ExHandler.handle(ex);  deliberately don't mind
 			return null;
 		}
 

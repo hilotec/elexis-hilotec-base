@@ -90,7 +90,13 @@ public class VersionInfo implements Comparable<VersionInfo> {
 	}
 	
 	public boolean isNewerMinor(final VersionInfo vo){
-		return isNewerMaior(vo) ? true : compareElem(this.minor(), vo.minor()) > 0;
+		if(isNewerMaior(vo)){
+			return true;
+		}
+		if(isOlder(vo)){
+			return false;
+		}
+		return compareElem(this.minor(), vo.minor()) > 0;
 	}
 	
 	public boolean isNewerRev(final VersionInfo vo){
