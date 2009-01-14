@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 4936 2009-01-13 17:46:52Z rgw_ch $
+ *    $Id: Termin.java 4951 2009-01-14 13:21:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -50,6 +50,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final String createDB =
 		"CREATE TABLE AGNTERMINE("
 			+ "ID              VARCHAR(127) primary key,"
+			+"lastupdate BIGINT,"
 			+ // we need that size to be able to import ics files
 			"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25)," + "Tag             CHAR(8),"
 			+ "Beginn          CHAR(4)," + "Dauer           CHAR(4)," + "Grund           TEXT,"
