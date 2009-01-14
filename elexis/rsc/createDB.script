@@ -20,7 +20,7 @@
 # Tha database should exist already, but should not contain any tables.
 #
 # WARNING: The database layout is internal to elexis and must not be assumed stable.
-# Fields kan be omitted or changed between versions.
+# Fields can be omitted or changed between versions.
 # Access to persistent data has to be done via the API (ch.elexis.data.PersistentObject)
 
 
@@ -169,6 +169,11 @@ CREATE TABLE PATIENT_ARTIKEL_JOINT(
 CREATE INDEX paj1 on PATIENT_ARTIKEL_JOINT(PATIENTID);
 CREATE INDEX PAJ2 on PATIENT_ARTIKEL_JOINT(REZEPTID);
 
+CREATE TABLE ARTIKEL_DETAILS(   
+    ARTICLE_ID      VARCHAR(25),                    # foreign key from ARTIKEL                     
+    notes           TEXT,                           # informations or usage of the article
+    image           BLOB                            # an image or other binary data
+);
 
 # Das Konto ist eine Liste sämtlicher Forderungen und Zahlungen
 # Somit lässt sich für jeden Patienten über alle bisherigen

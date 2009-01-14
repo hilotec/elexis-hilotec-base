@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBUpdate.java 4945 2009-01-13 17:50:00Z rgw_ch $
+ * $Id: DBUpdate.java 4954 2009-01-14 17:00:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -239,6 +239,11 @@ public class DBUpdate {
 				+ "ALTER TABLE ETIKETTEN ADD lastupdate BIGINT;"
 				+ "ALTER TABLE ETIKETTEN_OBJECT_LINK ADD lastupdate BIGINT;"
 				+ "ALTER TABLE DBIMAGE ADD lastupdate BIGINT;"
+				+ "CREATE TABLE ARTIKEL_DETAILS("   
+				    +"ARTICLE_ID      VARCHAR(25),"                       
+				    +"notes           TEXT,"         
+				    +"image           BLOB"          
+				+");"
 		
 		};
 	static Log log = Log.get("DBUpdate");
