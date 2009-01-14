@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4949 2009-01-14 10:30:41Z rgw_ch $
+ *    $Id: PersistentObject.java 4952 2009-01-14 13:21:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1155,8 +1155,11 @@ public abstract class PersistentObject {
 			getConnection().exec(sql.toString());
 			return true;
 		}
-
-		cache.put(key, value, getCacheTime());
+		Object oldval=cache.get(key);
+		cache.put(key, value, getCacheTime());	// refresh cache
+		if(value.equals(oldval)){
+			return true;		// no need to write data if it ws already in cache
+		}
 
 		if (mapped.startsWith("EXT:")) {
 			int ix = mapped.indexOf(':', 5);
@@ -1551,7 +1554,8 @@ public abstract class PersistentObject {
 			sql.append("=?,");
 			cache.put(getKey(fields[i]), values[i], getCacheTime());
 		}
-		sql.delete(sql.length() - 1, 100000);
+		sql.append("lastupdate=?");
+		//sql.delete(sql.length() - 1, 100000);
 		sql.append(" WHERE ID=").append(getWrappedId());
 		String cmd = sql.toString();
 		PreparedStatement pst = getConnection().prepareStatement(cmd);
@@ -1566,6 +1570,7 @@ public abstract class PersistentObject {
 			doTrace(cmd + " " + params);
 		}
 		try {
+			pst.setLong(fields.length+1, System.currentTimeMillis());
 			pst.executeUpdate();
 			return true;
 		} catch (Exception ex) {
