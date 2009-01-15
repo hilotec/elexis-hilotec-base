@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	public final static String ID = "ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
 	LabResult[] unseen = null;
-	private String lastUpdate = null;
+	private long lastUpdate = 0;
 	
 	private static final String[] columnHeaders = {
 		"Patient", "Parameter", "Normbereich", "Datum", "Wert"
@@ -226,9 +226,9 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 	}
 	
 	public void heartbeat(){
-		String last = LabResult.getLastUpdateUnseen();
-		if (lastUpdate != null) {
-			if (lastUpdate.compareTo(last) >= 0) {
+		long last = LabResult.getLastUpdateUnseen();
+		if (lastUpdate != 0) {
+			if (lastUpdate >= last) {
 				return;
 			}
 		}

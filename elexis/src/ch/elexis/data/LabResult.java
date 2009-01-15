@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 4176 2008-07-24 19:50:11Z rgw_ch $
+ *  $Id: LabResult.java 4958 2009-01-15 13:17:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -231,8 +231,9 @@ public class LabResult extends PersistentObject {
 		return ret;
 	}
 	
-	public static String getLastUpdateUnseen(){
+	public static long getLastUpdateUnseen(){
 		NamedBlob unseen=NamedBlob.load("Labresult:unseen");
-		return unseen.get("lastupdate");
+		long lastup=unseen.getLastUpdate();
+		return lastup;
 	}
 }

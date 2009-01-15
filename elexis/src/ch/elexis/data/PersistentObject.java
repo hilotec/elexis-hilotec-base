@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4952 2009-01-14 13:21:22Z rgw_ch $
+ *    $Id: PersistentObject.java 4958 2009-01-15 13:17:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -351,6 +351,7 @@ public abstract class PersistentObject {
 			}
 		}
 		mapping.put(prefix + "deleted", "deleted");
+		mapping.put(prefix+"lastupdate","lastupdate");
 	}
 
 	/**
@@ -1853,13 +1854,6 @@ public abstract class PersistentObject {
 		}
 	}
 
-	/*
-	 * private class CacheField implements ICacheable{ Object contents; long
-	 * expires; CacheField(Object value){ contents=value;
-	 * expires=System.currentTimeMillis()+lifetime; } boolean expired(){ long
-	 * act=System.currentTimeMillis(); if(expires<act){ return true; } return
-	 * false; } }
-	 */
 
 	@Override
 	public boolean equals(final Object arg0) {
@@ -1869,10 +1863,20 @@ public abstract class PersistentObject {
 		return false;
 	}
 
+	/**
+	 * Return a String field making sure that it will never be null
+	 * @param in name of the field to retrieve
+	 * @return the field contents or "" if it was null
+	 */
 	public static String checkNull(final String in) {
 		return in == null ? "" : in;
 	}
 
+	/**
+	 * return a numeric field making sure the call will not fail on illegal values
+	 * @param in name of the field
+	 * @return the value of the field as integer or 0 if it was null or not nomeric.
+	 */
 	public static int checkZero(final String in) {
 		if (StringTool.isNothing(in)) {
 			return 0;
@@ -1885,6 +1889,11 @@ public abstract class PersistentObject {
 		}
 	}
 
+	/**
+	 * return a numeric field making sure the call will not fail on illegal values
+	 * @param in name of the field
+	 * @return the value of the field as double or 0.0 if it was null or not a Double.
+	 */
 	public static double checkZeroDouble(final String in) {
 		if (StringTool.isNothing(in)) {
 			return 0.0;
@@ -1897,6 +1906,19 @@ public abstract class PersistentObject {
 		}
 	}
 
+	/**
+	 * return the time of the last update of this object
+	 * @return the time (as given in System.currentTimeMillis()) of the last write
+	 * operation on this object or 0 if there was no valid lastupdate time
+	 */
+	public long getLastUpdate(){
+		try{
+			return Long.parseLong(get("lastupdate"));
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return 0L;
+		}
+	}
 	@Override
 	public int hashCode() {
 		return getId().hashCode();
