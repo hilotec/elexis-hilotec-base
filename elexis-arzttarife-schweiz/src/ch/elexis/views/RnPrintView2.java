@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView2.java 4866 2008-12-29 13:47:09Z rgw_ch $
+ * $Id: RnPrintView2.java 4956 2009-01-15 11:08:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -313,8 +313,15 @@ public class RnPrintView2 extends ViewPart {
 			text.replace("\\[F52\\]",diagnosis.getAttributeValue("code")); //$NON-NLS-1$ //$NON-NLS-2$
 			text.replace("\\[F53\\]",""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-
-
+		
+		Kontakt zuweiser=fall.getRequiredContact("Zuweiser");
+		if(zuweiser!=null){
+			String ean=TarmedRequirements.getEAN(zuweiser);
+			if(!ean.equals(TarmedRequirements.EAN_PSEUDO)){
+				text.replace("\\[F23\\]", ean);
+			}
+		}
+		
 		Element services=detail.getChild("services",ns); //$NON-NLS-1$
 		SortedList<Element> ls=new SortedList(services.getChildren(),new RnComparator());
 		
