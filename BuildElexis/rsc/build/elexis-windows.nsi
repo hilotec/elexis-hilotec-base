@@ -5,13 +5,13 @@ Name Elexis
 
 # Defines
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.4.0
+!define VERSION 2.0.0
 
 !define REGKEY "SOFTWARE\${PRODUCTNAME}"
 
 !define COMPANY "G. Weirich"
 !define URL http://www.elexis.ch
-!define src "$%SOFTWARE%\elexis\deploy_140\${PRODUCTNAME}-${VERSION}"
+!define src "$%SOFTWARE%\elexis\deploy_200\${PRODUCTNAME}-${VERSION}"
 !define demodb "$%SOFTWARE%\elexis\demoDB_1.6.0"
 !define ooodir "$%SOFTWARE%\elexis\ooo"
 
