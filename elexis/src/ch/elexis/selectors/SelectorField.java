@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorField.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ * $Id: SelectorField.java 4965 2009-01-16 23:38:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -78,6 +78,9 @@ public class SelectorField extends Composite {
 		return text.getText();
 	}
 	
+	public void setText(String txt){
+		text.setText(txt);
+	}
 	String getLabel(){
 		return lbl.getText();
 	}

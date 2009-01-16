@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ * $Id: SelectorPanel.java 4965 2009-01-16 23:38:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -27,35 +27,40 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import ch.elexis.Desk;
 
 public class SelectorPanel extends Composite implements SelectorListener {
-	boolean bCeaseFire;
+	boolean bCeaseFire, bExclusive;
 	private LinkedList<SelectorListener> listeners = new LinkedList<SelectorListener>();
-	
-	public SelectorPanel(Composite parent){
+
+	public SelectorPanel(Composite parent) {
 		super(parent, SWT.NONE);
 		setBackground(parent.getBackground());
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.fill = true;
 		layout.pack = true;
 		setLayout(layout);
-		ImageHyperlink hClr = Desk.getToolkit().createImageHyperlink(this, SWT.NONE);
+		ImageHyperlink hClr = Desk.getToolkit().createImageHyperlink(this,
+				SWT.NONE);
 		hClr.setImage(Desk.getImage(Desk.IMG_CLEAR));
 		hClr.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(final HyperlinkEvent e){
+			public void linkActivated(final HyperlinkEvent e) {
 				clearValues();
 			}
 		});
 		hClr.setBackground(parent.getBackground());
-		
+
 	}
-	
-	public void addFields(String... fields){
+
+	public void setExclusive(boolean excl) {
+		bExclusive = excl;
+	}
+
+	public void addFields(String... fields) {
 		for (String s : fields) {
 			new SelectorField(this, s).addSelectorListener(this);
 		}
 	}
-	
-	public void removeField(String field){
+
+	public void removeField(String field) {
 		for (Control c : getChildren()) {
 			if (c instanceof SelectorField) {
 				if (((SelectorField) c).getLabel().equalsIgnoreCase(field)) {
@@ -65,8 +70,8 @@ public class SelectorPanel extends Composite implements SelectorListener {
 			}
 		}
 	}
-	
-	public void clearValues(){
+
+	public void clearValues() {
 		bCeaseFire = true;
 		for (Control c : getChildren()) {
 			if (c instanceof SelectorField) {
@@ -75,8 +80,8 @@ public class SelectorPanel extends Composite implements SelectorListener {
 		}
 		bCeaseFire = false;
 	}
-	
-	public HashMap<String, String> getValues(){
+
+	public HashMap<String, String> getValues() {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		for (Control c : getChildren()) {
 			if (c instanceof SelectorField) {
@@ -86,20 +91,32 @@ public class SelectorPanel extends Composite implements SelectorListener {
 		}
 		return ret;
 	}
-	
-	public void selectionChanged(SelectorField field){
+
+	public void selectionChanged(SelectorField field) {
+		if (bExclusive) {
+			for (Control c : getChildren()) {
+				if (c instanceof SelectorField) {
+					SelectorField sf = (SelectorField) c;
+					if (!sf.getLabel().equals(field.getLabel())) {
+						sf.clear();
+					}
+				}
+			}
+		}
 		if (!bCeaseFire) {
+			bCeaseFire = true;
 			for (SelectorListener lis : listeners) {
 				lis.selectionChanged(field);
 			}
+			bCeaseFire = false;
 		}
 	}
-	
-	public void addSelectorListener(SelectorListener l){
+
+	public void addSelectorListener(SelectorListener l) {
 		listeners.add(l);
 	}
-	
-	public void removeSelectorListener(SelectorListener l){
+
+	public void removeSelectorListener(SelectorListener l) {
 		listeners.remove(l);
 	}
 }
