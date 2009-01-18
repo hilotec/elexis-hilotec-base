@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLPreferenceTree.java 4945 2009-01-13 17:50:00Z rgw_ch $
+ *  $Id: ACLPreferenceTree.java 4967 2009-01-18 16:52:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences.inputs;
 
@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,33 +30,48 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Hub;
+import ch.elexis.admin.ACE;
 import ch.elexis.data.Anwender;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.Tree;
+import ch.rgw.tools.Log;
 import ch.rgw.tools.StringTool;
 
 public class ACLPreferenceTree extends Composite {
-	Tree<String> acls;
-	// String[] acls;
+	Tree<ACE> acls;
 	TreeViewer tv;
 	org.eclipse.swt.widgets.List lbGroups;
 	org.eclipse.swt.widgets.List lbUsers;
 	List<Anwender> lUsers;
 	
-	public ACLPreferenceTree(Composite parent, String... a){
-		super(parent, SWT.NONE);
-		acls = new Tree<String>(null, null);
-		for (String s : a) {
-			String[] path = s.split("/");
-			Tree<String> t = acls;
-			for (String p : path) {
-				Tree<String> ch = t.find(p, false);
-				if (ch == null) {
-					ch = new Tree<String>(t, p);
-				}
-				t = ch;
-			}
+	private Tree<ACE> findParent(ACE t){
+		ACE parent=t.getParent();
+		if(parent.equals(ACE.ACE_ROOT)){
+			return acls;
 		}
+		Tree<ACE> parentTree=acls.find(parent, true);
+		if(parentTree!=null){
+			return parentTree;
+		}
+		Tree<ACE> grandParentTree= findParent(parent);
+		if(grandParentTree==null){
+			System.out.println("Fehler");
+			return new Tree<ACE>(acls,parent);
+		}
+		return new Tree<ACE>(grandParentTree,parent);
+		
+	}
+	public ACLPreferenceTree(Composite parent, ACE... acl){
+		super(parent, SWT.NONE);
+		acls = new Tree<ACE>(null, null);
+		for (ACE s : acl) {
+			Tree<ACE> parentTree=findParent(s);
+			if(parentTree!=null){
+				new Tree<ACE>(parentTree,s);
+			}else{
+				Hub.log.log("Could not find parent ACE "+s.getName(), Log.ERRORS);
+			}
+		}			
 		
 		setLayout(new GridLayout());
 		setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -94,7 +110,7 @@ public class ACLPreferenceTree extends Composite {
 			
 			@Override
 			public String getText(Object element){
-				return (String) ((Tree) element).contents;
+				return (String) ((Tree<ACE>) element).contents.getLocalizedName();
 			}
 			
 		});
@@ -127,8 +143,8 @@ public class ACLPreferenceTree extends Composite {
 				lbGroups.deselectAll();
 				lbUsers.deselectAll();
 				if (!sel.isEmpty()) {
-					Tree acl = (Tree) sel.getFirstElement();
-					String right = getAclName(acl);
+					Tree<ACE> acl = (Tree<ACE>) sel.getFirstElement();
+					ACE right = acl.contents;
 					List<String> grps = Hub.acl.groupsForGrant(right);
 					List<Anwender> users = Hub.acl.usersForGrant(right);
 					for (String g : grps) {
@@ -152,8 +168,8 @@ public class ACLPreferenceTree extends Composite {
 			public void widgetSelected(SelectionEvent arg0){
 				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				if (!sel.isEmpty()) {
-					Tree acl = (Tree) sel.getFirstElement();
-					String right = getAclName(acl);
+					Tree<ACE> acl = (Tree<ACE>) sel.getFirstElement();
+					ACE right = acl.contents;
 					String[] gsel = lbGroups.getSelection();
 					for (String g : lbGroups.getItems()) {
 						Hub.acl.revoke(g, right);
@@ -169,8 +185,8 @@ public class ACLPreferenceTree extends Composite {
 			public void widgetSelected(SelectionEvent arg0){
 				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				if (!sel.isEmpty()) {
-					Tree acl = (Tree) sel.getFirstElement();
-					String right = getAclName(acl);
+					Tree<ACE> acl = (Tree<ACE>) sel.getFirstElement();
+					ACE right = acl.contents;
 					int[] uSel = lbUsers.getSelectionIndices();
 					for (Anwender an : lUsers) {
 						Hub.acl.revoke(an, right);
@@ -181,19 +197,20 @@ public class ACLPreferenceTree extends Composite {
 				}
 			}
 		});
+		tv.setSorter(new ViewerSorter(){
+
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2){
+				Tree<ACE> t1=(Tree<ACE>)e1;
+				Tree<ACE> t2=(Tree<ACE>)e2;
+				return t1.contents.getLocalizedName().compareToIgnoreCase(t2.contents.getLocalizedName());
+			}
+			
+		});
 		tv.setInput(this);
 		
 	}
 	
-	private String getAclName(Tree tree){
-		StringBuilder sb = new StringBuilder();
-		sb.append((String) tree.contents);
-		while (!(tree = tree.getParent()).equals(acls)) {
-			sb.insert(0, "/");
-			sb.insert(0, (String) tree.contents);
-		}
-		return sb.toString();
-	}
 	
 	public void reload(){
 

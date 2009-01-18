@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: Anwender.java 4967 2009-01-18 16:52:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -26,6 +26,7 @@ import ch.elexis.Hub;
 import ch.elexis.PatientPerspektive;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.admin.ACE;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
@@ -189,15 +190,21 @@ public class Anwender extends Person {
 		admin.set(new String[] { "Name", "Label", "istAnwender" },
 				"Administrator", "Administrator", "1");
 		Hub.actUser = admin;
-		Hub.acl.grant(admin, "WriteInfoStore", "LoadInfoStore", "WriteGroups",
-				"ReadGroups");
+		Hub.acl.grant(admin, 
+			new ACE(ACE.ACE_IMPLICIT,"WriteInfoStore"),
+			new ACE(ACE.ACE_IMPLICIT,"LoadInfoStore"),
+			new ACE(ACE.ACE_IMPLICIT,"WriteGroups"),
+			new ACE(ACE.ACE_IMPLICIT,"ReadGroups"));
 		Hashtable hash = admin.getInfoStore();
 		hash.put("UsrPwd", "admin");
 		hash.put("Groups", "Admin,Anwender");
 		admin.flushInfoStore(hash);
-		Hub.acl.grant("Admin", "ReadUsrPwd", "WriteUsrPwd", "CreateAndDelete",
-				"WriteGroups");
-		Hub.acl.grant("System", "ReadUsrPwd");
+		Hub.acl.grant("Admin", 
+			new ACE(ACE.ACE_IMPLICIT,"ReadUsrPwd"),
+			new ACE(ACE.ACE_IMPLICIT,"WriteUsrPwd"),
+			new ACE(ACE.ACE_IMPLICIT,"CreateAndDelete"),
+				new ACE(ACE.ACE_IMPLICIT,"WriteGroups"));
+		Hub.acl.grant("System", new ACE(ACE.ACE_IMPLICIT,"ReadUsrPwd"));
 
 	}
 

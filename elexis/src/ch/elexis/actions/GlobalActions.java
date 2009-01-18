@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 4778 2008-12-08 17:04:45Z rgw_ch $
+ * $Id: GlobalActions.java 4967 2009-01-18 16:52:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -64,6 +64,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.LoginDialog;
 import ch.elexis.PatientPerspektive;
+import ch.elexis.admin.ACE;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
@@ -797,8 +798,8 @@ public class GlobalActions {
 		}
 	}
 	
-	private void setMenuForUser(final String name, final IAction action){
-		if (Hub.acl.request(name) == true) {
+	private void setMenuForUser(final ACE ace, final IAction action){
+		if (Hub.acl.request(ace) == true) {
 			action.setEnabled(true);
 		} else {
 			action.setEnabled(false);

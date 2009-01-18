@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 4945 2009-01-13 17:50:00Z rgw_ch $
+ *  $Id: ACLContributor.java 4967 2009-01-18 16:52:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -21,10 +21,10 @@ import static ch.elexis.admin.AccessControlDefaults.*;
  * 
  */
 public class ACLContributor implements IACLContributor {
-	private String[] acls =
-		new String[] {
+	private ACE[] acls =
+		new ACE[] {
 			ACCOUNTING_GLOBAL, ACCOUNTING_BILLCREATE, ACCOUNTING_BILLMODIFY, ACCOUNTING_READ,
-			ACL_USERS, DATA, KONTAKT_DELETE, DELETE, DELETE_FORCED, KONTAKT_DISPLAY,
+			ACL_USERS, DATA, KONTAKT, PATIENT, KONTAKT_DELETE, DELETE, DELETE_FORCED, KONTAKT_DISPLAY,
 			KONTAKT_INSERT, KONTAKT_MODIFY, KONTAKT_EXPORT, KONTAKT_ETIKETTE, PATIENT_DISPLAY,
 			PATIENT_INSERT, PATIENT_MODIFY, LAB_SEEN, LSTG_VERRECHNEN, KONS_CREATE, KONS_DELETE,
 			KONS_EDIT, KONS_REASSIGN, AC_ABOUT, AC_CHANGEMANDANT, AC_CONNECT, AC_EXIT, AC_HELP,
@@ -36,11 +36,11 @@ public class ACLContributor implements IACLContributor {
 		
 		};
 	
-	public String[] getACL(){
+	public ACE[] getACL(){
 		return acls;
 	}
 	
-	public String[] reject(final String[] acl){
+	public ACE[] reject(final ACE[] acl){
 		// TODO Management of collisions
 		return null;
 	}

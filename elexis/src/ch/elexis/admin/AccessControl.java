@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 4945 2009-01-13 17:50:00Z rgw_ch $
+ *    $Id: AccessControl.java 4967 2009-01-18 16:52:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -60,8 +60,11 @@ public class AccessControl {
 	public static final String ADMIN_GROUP = Messages.getString("AccessControl.GroupAdmin");
 	public static final String GROUP_FOR_PREFERENCEPAGE = "ch.elexis.preferences.acl";
 	
-	private static Hashtable<String, String> rights;
+	private static final String BLOBNAME="AccessControl";
+	private static final String ACLNAME="AccessControlACL";
+	private static Hashtable<String, ACE> rights;
 	private static Hashtable<String, List<String>> usergroups;
+	private static Hashtable<String,ACE> acls;
 	
 	// TODO: Cleanup alte Gruppen/Anwender
 	/**
@@ -69,14 +72,15 @@ public class AccessControl {
 	 */
 	@SuppressWarnings("unchecked")//$NON-NLS-1$
 	public void load(){
-		NamedBlob rset = NamedBlob.load("AccessControl"); //$NON-NLS-1$
+		NamedBlob rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		if (rset == null) {
 			NamedBlob.createTable();
-			rset = NamedBlob.load("AccessControl"); //$NON-NLS-1$
+			rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		}
+		NamedBlob aclset=NamedBlob.load(ACLNAME);
 		rights = rset.getHashtable();
-		if (rights.isEmpty()) {
-			rights = new Hashtable<String, String>();
+		acls=aclset.getHashtable();
+		if (rights.isEmpty() || acls.isEmpty()) {
 			reset();
 		}
 		usergroups = new Hashtable<String, List<String>>();
@@ -87,18 +91,19 @@ public class AccessControl {
 	 * nur temporär bis zum nächsten flush()!
 	 */
 	public void flush(){
-		NamedBlob.load("AccessControl").put(rights); //$NON-NLS-1$
+		NamedBlob.load(BLOBNAME).put(rights);
+		NamedBlob.load(ACLNAME).put(acls);
 	}
 	
 	/**
 	 * Zugriffsrecht für den aktuell angemeldeten Anwender erfragen.
 	 * 
 	 * @param right
-	 *            Name des erfragten Rechts
+	 *            Das erfragte Recht
 	 * @return true, wenn der Anwender (oder eine der Gruppen, zu denen der Anwender gehört) das
 	 *         Recht hat.
 	 */
-	public boolean request(String right){
+	public boolean request(ACE right){
 		return (request(Hub.actUser, right));
 	}
 	
@@ -114,10 +119,11 @@ public class AccessControl {
 	 *         kein Anwender angemeldet ist
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean request(Anwender user, String right){
-		if (StringTool.isNothing(right)) {
+	public boolean request(Anwender user, ACE rightACE){
+		if (rightACE==null) {
 			return true;
 		}
+		String right=rightACE.getCanonicalName();
 		if (rights == null) {
 			return false;
 		}
@@ -171,9 +177,9 @@ public class AccessControl {
 		}
 		// Falls das gewünschte Recht nicht geregelt ist, eine Hierarchiestufe
 		// höher suchen
-		int pos = right.lastIndexOf('/');
-		if (pos != -1) {
-			return request(user, right.substring(0, pos));
+		ACE parent=rightACE.getParent();
+		if (parent!=null) {
+			return request(user, parent);
 		}
 		return false;
 	}
@@ -186,9 +192,10 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void grant(Anwender user, String... elements){
-		for (String right : elements) {
-			rights.put(user.getId() + right, "1"); //$NON-NLS-1$
+	public void grant(Anwender user, ACE... elements){
+		for (ACE right : elements) {
+			rights.put(user.getId() + right.getCanonicalName(), right); //$NON-NLS-1$
+			acls.put(right.getCanonicalName(), right);
 		}
 	}
 	
@@ -200,9 +207,9 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void revoke(Anwender user, String... elements){
-		for (String right : elements) {
-			rights.remove(user.getId() + right);
+	public void revoke(Anwender user, ACE... elements){
+		for (ACE right : elements) {
+			rights.remove(user.getId() + right.getCanonicalName());
 		}
 	}
 	
@@ -214,9 +221,10 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void grant(String group, String... elements){
-		for (String right : elements) {
-			rights.put(group + right, "1"); //$NON-NLS-1$
+	public void grant(String group, ACE... elements){
+		for (ACE right : elements) {
+			rights.put(group + right.getCanonicalName(), right);
+			acls.put(right.getCanonicalName(), right);
 		}
 	}
 	
@@ -228,9 +236,9 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void revoke(String group, String... elements){
-		for (String right : elements) {
-			rights.remove(group + right);
+	public void revoke(String group, ACE... elements){
+		for (ACE right : elements) {
+			rights.remove(group + right.getCanonicalName());
 		}
 	}
 	
@@ -238,15 +246,16 @@ public class AccessControl {
 	 * Zugriffsrecht für "self" erteilen
 	 * 
 	 */
-	public void grantForSelf(String... elements){
-		for (String r : elements) {
-			rights.put("Self" + r, "1"); //$NON-NLS-1$ //$NON-NLS-2$
+	public void grantForSelf(ACE... elements){
+		for (ACE r : elements) {
+			rights.put("Self" + r.getCanonicalName(), r); //$NON-NLS-1$ //$NON-NLS-2$
+			acls.put(r.getCanonicalName(), r);
 		}
 	}
 	
-	public void revokeFromSelf(String... strings){
-		for (String e : strings) {
-			rights.remove("Self" + e); //$NON-NLS-1$
+	public void revokeFromSelf(ACE... strings){
+		for (ACE e : strings) {
+			rights.remove("Self" + e.getCanonicalName()); //$NON-NLS-1$
 		}
 	}
 	
@@ -308,8 +317,9 @@ public class AccessControl {
 	 *            das zu erfragende Recht
 	 * @return Alle Gruppen, deren Mitglieder dieses Recht haben
 	 */
-	public List<String> groupsForGrant(String right){
+	public List<String> groupsForGrant(ACE rightACE){
 		ArrayList<String> ret = new ArrayList<String>();
+		String right=rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
 		
 		Enumeration<String> e = rights.keys();
@@ -335,8 +345,9 @@ public class AccessControl {
 	 * @return eine Liste aller Anwender, die das gesuchte Recht direkt (nicht über
 	 *         Gruppenmitgliedschaft) haben.
 	 */
-	public List<Anwender> usersForGrant(String right){
+	public List<Anwender> usersForGrant(ACE rightACE){
 		ArrayList<Anwender> ret = new ArrayList<Anwender>();
+		String right=rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
 		
 		Enumeration<String> e = rights.keys();
@@ -354,7 +365,9 @@ public class AccessControl {
 		return ret;
 	}
 	
-	public void deleteGrant(String grant){
+	public void deleteGrant(ACE grantACE){
+		String grant=grantACE.getCanonicalName();
+		
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + grant); //$NON-NLS-1$
 		
 		Enumeration<String> e = rights.keys();
@@ -365,6 +378,7 @@ public class AccessControl {
 				rights.remove(k);
 			}
 		}
+		acls.remove(grantACE);
 	}
 	
 	public Settings asSettings(){
@@ -377,17 +391,17 @@ public class AccessControl {
 		grant(ALL_GROUP, AccessControlDefaults.getAlle()); //$NON-NLS-1$
 		grant(USER_GROUP, AccessControlDefaults.getAnwender()); //$NON-NLS-1$
 		// grant(ADMIN_GROUP,AccessControlDefaults.Admin); //$NON-NLS-1$
-		rights.put("dbUID", StringTool.unique("db%id"));
+		acls.put("dbUID", new ACE(ACE.ACE_ROOT,"dbUID",StringTool.unique("db%id")));
 		flush();
 	}
 	
 	public String getDBUID(){
-		String dbuid = rights.get("dbUID");
+		ACE dbuid = acls.get("dbUID");
 		if (dbuid == null) {
-			dbuid = StringTool.unique("db%id");
+			dbuid = new ACE(ACE.ACE_ROOT,"dbUID",StringTool.unique("db%id"));
 			rights.put("dbUID", dbuid);
 			flush();
 		}
-		return dbuid;
+		return dbuid.getLocalizedName();
 	}
 }
