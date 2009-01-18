@@ -13,10 +13,10 @@ import ch.rgw.tools.VersionInfo;
 
 public class Substance extends PersistentObject {
 	static final String TABLENAME = "CH_ELEXIS_MEDIKAMENTE_BAG_SUBSTANCE";
-	static final String VERSION = "0.2.0";
+	static final String VERSION = "0.3.0";
 	static final String createDB =
-		"CREATE TABLE " + TABLENAME + "("
-			+ "ID		VARCHAR(25) primary key,"
+		"CREATE TABLE " + TABLENAME + "(" + "ID		VARCHAR(25) primary key,"
+			+ "lastupdate	BIGINT,"
 			+ "deleted	CHAR(1) default '0',"
 			+ "gruppe	VARCHAR(10)," // therap. gruppe
 			+ "name		VARCHAR(254)" + ");" + "CREATE INDEX CEMBS1 ON " + TABLENAME + " (gruppe);"
@@ -27,6 +27,7 @@ public class Substance extends PersistentObject {
 		"ALTER TABLE " + TABLENAME + " MODIFY gruppe VARCHAR(10); ALTER TABLE " + TABLENAME
 			+ " MODIFY name VARCHAR(250);";
 	
+	private static final String UPD030 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
 	static {
 		addMapping(TABLENAME, "name", "gruppe", "medis=JOINT:product:substance:"
 			+ BAGMedi.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
@@ -38,11 +39,15 @@ public class Substance extends PersistentObject {
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.1.0")) {
 					SWTHelper.showError("Datenbank Fehler", "Tabelle Substance ist zu alt");
-				} else {
+				} 
+				if (vi.isOlder("0.2.0")) {
 					createTable(TABLENAME, UPD020);
-					
-					v.set("name", VERSION);
 				}
+				if (vi.isOlder("0.3.0")) {
+					createTable(TABLENAME, UPD030);
+				}
+				v.set("name", VERSION);
+				
 			}
 		}
 	}
@@ -56,7 +61,7 @@ public class Substance extends PersistentObject {
 		create(null);
 		set(new String[] {
 			"name", "gruppe"
-		}, StringTool.limitLength(name,250), group);
+		}, StringTool.limitLength(name, 250), group);
 	}
 	
 	public SortedSet<BAGMedi> findMedis(SortedSet<BAGMedi> list){
