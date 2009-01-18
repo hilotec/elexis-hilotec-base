@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelView.java 4975 2009-01-18 20:46:57Z rgw_ch $
+ * $Id: ArtikelView.java 4976 2009-01-18 20:47:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -16,10 +16,8 @@ package ch.elexis.views.artikel;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -31,7 +29,10 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
@@ -40,8 +41,12 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.*;
-import ch.elexis.views.*;
+import ch.elexis.util.CommonViewer;
+import ch.elexis.util.Extensions;
+import ch.elexis.util.ImporterPage;
+import ch.elexis.util.ViewMenus;
+import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.views.IDetailDisplay;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.ExHandler;
 
@@ -72,14 +77,15 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 				CTabItem top = ctab.getSelection();
 				if (top != null) {
 					String t = top.getText();
-
+					
 					MasterDetailsPage page = (MasterDetailsPage) top.getControl();
-					if(page==null){
+					if (page == null) {
 						try {
-							IDetailDisplay det=(IDetailDisplay) top.getData("detail");
-							IConfigurationElement ce=(IConfigurationElement) top.getData("ce");
+							IDetailDisplay det = (IDetailDisplay) top.getData("detail");
+							IConfigurationElement ce = (IConfigurationElement) top.getData("ce");
 							CodeSelectorFactory cs =
-								(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory");
+								(CodeSelectorFactory) ce
+									.createExecutableExtension("CodeSelectorFactory");
 							String a = ce.getAttribute("ImporterClass");
 							ImporterPage ip = null;
 							if (a != null) {
@@ -88,14 +94,14 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 									importers.put(det.getTitle(), ip);
 								}
 							}
-
+							
 							page = new MasterDetailsPage(ctab, cs, det);
 							top.setControl(page);
 							top.setData(det);
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
 						}
-		
+						
 					}
 					importAction.setEnabled(importers.get(t) != null);
 					ViewerConfigurer vc = page.cv.getConfigurer();
