@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ArtikelSelektor.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *    $Id: ArtikelSelektor.java 4975 2009-01-18 20:46:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -32,6 +32,8 @@ import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -64,28 +66,15 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 		ctab.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		java.util.List<IConfigurationElement> list =
 			Extensions.getExtensions("ch.elexis.Verrechnungscode");
+		ctab.addSelectionListener(new TabSelectionListener());
 		for (IConfigurationElement ice : list) {
 			if ("Artikel".equals(ice.getName())) {
 				try {
 					CodeSelectorFactory cs =
 						(CodeSelectorFactory) ice.createExecutableExtension("CodeSelectorFactory");
 					CTabItem ci = new CTabItem(ctab, SWT.NONE);
-					CommonViewer cv = new CommonViewer();
-					ViewerConfigurer vc = cs.createViewerConfigurer(cv);
-					Composite c = new Composite(ctab, SWT.NONE);
-					c.setLayout(new GridLayout());
-					cv.create(vc, c, SWT.V_SCROLL, getViewSite());
-					ci.setControl(c);
-					ci.setData(cv);
 					ci.setText(cs.getCodeSystemName());
-					cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
-						
-						public void doubleClicked(final PersistentObject obj, final CommonViewer cv){
-							new ArtikelDetailDialog(getViewSite().getShell(), obj).open();
-							
-						}
-					});
-					vc.getContentProvider().startListening();
+					ci.setData("csf",cs);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
@@ -229,5 +218,35 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 	
 	public boolean isSaveOnCloseNeeded(){
 		return true;
+	}
+	private class TabSelectionListener extends SelectionAdapter{
+
+		@Override
+		public void widgetSelected(SelectionEvent e){
+			CTabItem top=ctab.getSelection();
+			if(top!=null){
+				if(top.getControl()==null){
+					CommonViewer cv = new CommonViewer();
+					CodeSelectorFactory cs=(CodeSelectorFactory) top.getData("csf");
+					ViewerConfigurer vc = cs.createViewerConfigurer(cv);
+					Composite c = new Composite(ctab, SWT.NONE);
+					c.setLayout(new GridLayout());
+					cv.create(vc, c, SWT.V_SCROLL, getViewSite());
+					top.setControl(c);
+					top.setData(cv);
+					
+					cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
+						
+						public void doubleClicked(final PersistentObject obj, final CommonViewer cv){
+							new ArtikelDetailDialog(getViewSite().getShell(), obj).open();
+							
+						}
+					});
+					vc.getContentProvider().startListening();					
+				}
+			}
+			
+		}
+		
 	}
 }

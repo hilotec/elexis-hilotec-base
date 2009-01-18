@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelView.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ * $Id: ArtikelView.java 4975 2009-01-18 20:46:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -16,8 +16,10 @@ package ch.elexis.views.artikel;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -41,6 +43,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.*;
 import ch.elexis.views.*;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
+import ch.rgw.tools.ExHandler;
 
 public class ArtikelView extends ViewPart implements SelectionListener, ActivationListener,
 		ISaveablePart2 {
@@ -69,8 +72,32 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 				CTabItem top = ctab.getSelection();
 				if (top != null) {
 					String t = top.getText();
-					importAction.setEnabled(importers.get(t) != null);
+
 					MasterDetailsPage page = (MasterDetailsPage) top.getControl();
+					if(page==null){
+						try {
+							IDetailDisplay det=(IDetailDisplay) top.getData("detail");
+							IConfigurationElement ce=(IConfigurationElement) top.getData("ce");
+							CodeSelectorFactory cs =
+								(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory");
+							String a = ce.getAttribute("ImporterClass");
+							ImporterPage ip = null;
+							if (a != null) {
+								ip = (ImporterPage) ce.createExecutableExtension("ImporterClass");
+								if (ip != null) {
+									importers.put(det.getTitle(), ip);
+								}
+							}
+
+							page = new MasterDetailsPage(ctab, cs, det);
+							top.setControl(page);
+							top.setData(det);
+						} catch (Exception ex) {
+							ExHandler.handle(ex);
+						}
+		
+					}
+					importAction.setEnabled(importers.get(t) != null);
 					ViewerConfigurer vc = page.cv.getConfigurer();
 					vc.getControlFieldProvider().setFocus();
 				}
@@ -162,22 +189,10 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 				}
 				IDetailDisplay d =
 					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay");
-				CodeSelectorFactory cs =
-					(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory");
-				String a = ce.getAttribute("ImporterClass");
-				ImporterPage ip = null;
-				if (a != null) {
-					ip = (ImporterPage) ce.createExecutableExtension("ImporterClass");
-					if (ip != null) {
-						importers.put(d.getTitle(), ip);
-					}
-				}
-				MasterDetailsPage page = new MasterDetailsPage(ctab, cs, d);
 				CTabItem ct = new CTabItem(ctab, SWT.NONE);
 				ct.setText(d.getTitle());
-				ct.setControl(page);
-				ct.setData(d);
-				
+				ct.setData("ce", ce);
+				ct.setData("detail", d);
 			} catch (Exception ex) {
 				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
 				mb.setText("Fehler");

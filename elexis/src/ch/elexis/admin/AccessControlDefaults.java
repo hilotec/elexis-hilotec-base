@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ * $Id: AccessControlDefaults.java 4975 2009-01-18 20:46:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -33,7 +33,7 @@ public class AccessControlDefaults {
 	public static final ACE ACCOUNTING = new ACE(ACE.ACE_ROOT, "Rechnungen", "Rechnungen");
 	public static final ACE ACCOUNTING_CREATE = new ACE(ACCOUNTING, "erstellen", "erstellen");;
 	public static final ACE ACCOUNTING_MODIFY = new ACE(ACCOUNTING, "bearbeiten", "bearbeiten");
-	
+	public static final ACE ACE_ACCESS = new ACE(ADMIN, "Zugriff", "Zugriff");	
 	public static final ACE ACCOUNTING_GLOBAL =
 		new ACE(ACE.ACE_ROOT, "AccountingGlobal", "Globales Verrechnen");
 	public static final ACE ACCOUNTING_READ = new ACE(ACCOUNTING_GLOBAL, "read", "lesen");
@@ -42,7 +42,6 @@ public class AccessControlDefaults {
 	public static final ACE ACCOUNTING_BILLMODIFY =
 		new ACE(ACCOUNTING_GLOBAL, "modifyBills", "Rnn. ändern");
 	
-	public static final ACE ACE_ACCESS = new ACE(ACE.ACE_ROOT, "Zugriff", "Zugriff");
 	public static final ACE ACL_USERS = new ACE(ACE_ACCESS, "Rechte erteilen", "Rechte erteilen");
 	public static final ACE DELETE = new ACE(ACE.ACE_ROOT, "Löschen", "Löschen");
 	public final static ACE DELETE_FORCED = new ACE(DELETE, "Absolut", "absolut");
