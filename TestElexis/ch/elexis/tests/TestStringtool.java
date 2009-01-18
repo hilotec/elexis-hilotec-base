@@ -17,6 +17,13 @@ public class TestStringtool extends TestCase {
 	
 	}
 	
+	public void testAmbiguify() throws Exception{
+		String n1="abcädefüghiöjklè";
+		String n2="abcaedefÜghiOejklé";
+		String n3=StringTool.unambiguify(n1);
+		String n4=StringTool.unambiguify(n2);
+		assertEquals(n3,n4);
+	}
 	
 	/**
 	 * Statdard-Vefrahren?
@@ -43,4 +50,6 @@ public class TestStringtool extends TestCase {
 		byte[] dec=StringTool.dePrintableStrict(print);
 		assertTrue(Arrays.equals(check, dec));
 	}
+	
+	
 }

@@ -1072,7 +1072,7 @@ public class StringTool {
 	 */
 	public static String unambiguify(final String in) {
 		String ret = in.toLowerCase();
-		ret = ret.replaceAll("[^a-z]", "_");
+		ret = ret.replaceAll("([^a-z]|ue|oe|ae)", "_");
 		return ret;
 	}
 
