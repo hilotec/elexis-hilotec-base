@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id: ESRView2.java 4750 2008-12-04 21:39:45Z rgw_ch $
+ *  $Id: ESRView2.java 4970 2009-01-18 16:53:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -41,6 +41,7 @@ import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.admin.ACE;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
@@ -94,19 +95,20 @@ public class ESRView2 extends ViewPart implements ActivationListener {
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
-	public final static String DISPLAY_ESR = "DisplayESR";
+	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT,"DisplayESR");
 	Query<ESRRecord> qbe;
 	// private Action loadESRFile;
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
 	
 	public ESRView2(){
-		Hub.acl.grantForSelf(DISPLAY_ESR);
+		
+		// Hub.acl.grantForSelf(DISPLAY_ESR);
 	}
 	
 	@Override
 	public void dispose(){
-		Hub.acl.revokeFromSelf(DISPLAY_ESR);
+		//Hub.acl.revokeFromSelf(DISPLAY_ESR);
 		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
 	}
 	

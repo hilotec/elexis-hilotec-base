@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 4950 2009-01-14 13:21:08Z rgw_ch $
+ *  $Id: ESRView.java 4970 2009-01-18 16:53:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -43,6 +43,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.UserListener;
+import ch.elexis.admin.ACE;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -67,19 +68,19 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
-	public final static String DISPLAY_ESR = "DisplayESR"; //$NON-NLS-1$
+	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT, "DisplayESR"); //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	private Action loadESRFile;
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
 	
 	public ESRView(){
-		Hub.acl.grantForSelf(DISPLAY_ESR);
+	// Hub.acl.grantForSelf(DISPLAY_ESR);
 	}
 	
 	@Override
 	public void dispose(){
-		Hub.acl.revokeFromSelf(DISPLAY_ESR);
+		// Hub.acl.revokeFromSelf(DISPLAY_ESR);
 		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
 		GlobalEvents.getInstance().removeUserListener(this);
 	}
