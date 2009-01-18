@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4874 2008-12-30 09:56:08Z rgw_ch $
+ * $Id: XMLExporter.java 4971 2009-01-18 16:54:00Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -172,7 +172,8 @@ public class XMLExporter implements IRnOutputter {
 	 * @param rnn
 	 *            a Collection of Rechnung - Objects to output
 	 */
-	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn, Properties props){
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn,
+		Properties props){
 		Result<Rechnung> ret = new Result<Rechnung>();
 		if (outputDir == null) {
 			SWTHelper.SimpleDialog dlg =
@@ -794,7 +795,7 @@ public class XMLExporter implements IRnOutputter {
 		Element eTiers = null;
 		if (tiers.equals("TG")) {
 			eTiers = new Element("tiers_garant", ns); // 11020
-			String paymentPeriode = actMandant.getInfoString(ta.RNFRIST);
+			String paymentPeriode = actMandant.getInfoString("rnfrist");
 			if (StringTool.isNothing(paymentPeriode)) {
 				paymentPeriode = "30";
 			}
@@ -811,7 +812,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -901,7 +902,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
 		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
 		
