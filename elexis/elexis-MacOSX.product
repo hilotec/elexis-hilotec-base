@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.1"?>
+<?pde version="3.4"?>
 
 <product name="Elexis" id="ch.elexis.ElexisProduct" application="ch.elexis.ElexisApp" useFeatures="false">
 
@@ -17,7 +17,8 @@ Rietstrasse 30
       </text>
    </aboutInfo>
 
-   <configIni use="default"/>
+   <configIni use="default">
+   </configIni>
 
    <launcherArgs>
       <vmArgs>-Xms64m
@@ -30,14 +31,13 @@ Rietstrasse 30
       location="ch.elexis" />
    <launcher name="elexis">
       <linux icon="/Elexis/rsc/elexis48.xpm"/>
-      <macosx icon="/Elexis/elexis-mac.icns"/>
+      <macosx icon="/elexis/elexis-mac.icns"/>
       <solaris/>
       <win useIco="true">
          <ico path="/Elexis/rsc/elexis.ico"/>
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -50,71 +50,45 @@ Rietstrasse 30
       <plugin id="ch.elexis.arzttarife_ch"/>
       <plugin id="ch.elexis.befunde"/>
       <plugin id="ch.elexis.bildanzeige"/>
+      <plugin id="ch.elexis.covercard"/>
       <plugin id="ch.elexis.diagnosecodes_ch"/>
       <plugin id="ch.elexis.ebanking_ch"/>
+      <plugin id="ch.elexis.hsql.connector"/>
       <plugin id="ch.elexis.icpc"/>
       <plugin id="ch.elexis.importer.div"/>
-      <plugin id="ch.elexis.laborimport_viollier"/>
-      <plugin id="ch.elexis.mail"/>
       <plugin id="ch.elexis.medikamente.bag"/>
       <plugin id="ch.elexis.messages"/>
+      <plugin id="ch.elexis.mysql.connector"/>
       <plugin id="ch.elexis.notes"/>
-      <plugin id="ch.elexis.omnivore"/>
+      <plugin id="ch.elexis.postgresql.connector"/>
       <plugin id="ch.elexis.privatnotizen"/>
       <plugin id="ch.rgw.utility"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="com.ibm.icu.source"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.servlet.jsp"/>
-      <plugin id="org.apache.ant"/>
-      <plugin id="org.apache.commons.el"/>
-      <plugin id="org.apache.commons.logging"/>
-      <plugin id="org.apache.jasper"/>
       <plugin id="org.apache.lucene"/>
       <plugin id="org.apache.lucene.analysis"/>
-      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.jobs"/>
-      <plugin id="org.eclipse.core.net"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
-      <plugin id="org.eclipse.core.variables"/>
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
-      <plugin id="org.eclipse.equinox.http.jetty"/>
-      <plugin id="org.eclipse.equinox.http.registry"/>
-      <plugin id="org.eclipse.equinox.http.servlet"/>
-      <plugin id="org.eclipse.equinox.jsp.jasper"/>
-      <plugin id="org.eclipse.equinox.jsp.jasper.registry"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.help"/>
-      <plugin id="org.eclipse.help.appserver"/>
       <plugin id="org.eclipse.help.base"/>
       <plugin id="org.eclipse.help.ui"/>
-      <plugin id="org.eclipse.help.webapp"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
-      <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
-      <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
-      <plugin id="org.eclipse.text"/>
-      <plugin id="org.eclipse.tomcat"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.carbon" fragment="true"/>
       <plugin id="org.eclipse.ui.forms"/>
-      <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.workbench"/>
-      <plugin id="org.eclipse.update.configurator"/>
-      <plugin id="org.eclipse.update.core"/>
-      <plugin id="org.iatrix"/>
-      <plugin id="org.mortbay.jetty"/>
    </plugins>
 
 </product>
