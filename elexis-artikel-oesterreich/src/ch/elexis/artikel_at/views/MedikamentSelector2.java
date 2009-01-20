@@ -68,8 +68,7 @@ public class MedikamentSelector2 extends CodeSelectorFactory {
 	
 	@Override
 	public Class<? extends PersistentObject> getElementClass(){
-		// TODO Auto-generated method stub
-		return null;
+		return Medikament.class;
 	}
 	
 }
