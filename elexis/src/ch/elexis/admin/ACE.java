@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACE.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *  $Id: ACE.java 4986 2009-01-20 16:56:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -51,9 +51,8 @@ public class ACE implements Serializable {
 	}
 	
 	/**
-	 * create a new ACE with now localized name - The localized name will be the same as the
-	 * internal name. So this constructor should not be used for ACE's that will be shown to the
-	 * user.
+	 * create a new ACE with no localized name - The localized name will be the same as the internal
+	 * name. So this constructor should <b>not</b> be used for ACE's that will be shown to the user.
 	 * 
 	 * @param parent
 	 *            the parent ACE. If this is a top-evel ACE, use ACE_ROOT as parent.
@@ -88,19 +87,21 @@ public class ACE implements Serializable {
 	
 	/**
 	 * Change the localized name of this ACE
-	 * @param lName a new name to use as localized name
+	 * 
+	 * @param lName
+	 *            a new name to use as localized name
 	 */
 	public void setLocalizedName(String lName){
 		localizedName = lName;
 	}
 	
 	public String getCanonicalName(){
-		StringBuilder sp=new StringBuilder();
+		StringBuilder sp = new StringBuilder();
 		sp.append(getName());
-		ACE parent=getParent();
-		while((parent!=null) && (!parent.equals(ACE.ACE_ROOT))){
-			sp.insert(0, parent.getName()+"/");
-			parent=parent.getParent();
+		ACE parent = getParent();
+		while ((parent != null) && (!parent.equals(ACE.ACE_ROOT))) {
+			sp.insert(0, parent.getName() + "/");
+			parent = parent.getParent();
 		}
 		return sp.toString();
 	}

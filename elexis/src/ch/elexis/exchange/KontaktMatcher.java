@@ -373,11 +373,11 @@ public class KontaktMatcher {
 	 */
 	public static boolean isSame(final Person a, final String nameB, final String firstnameB, final String gebDatB){
 		try{
-			String name1=simpleName(StringTool.unambiguify(a.getName()));
-			String name2=simpleName(StringTool.unambiguify(nameB));
+			String name1=StringTool.unambiguify(simpleName(a.getName()));
+			String name2=StringTool.unambiguify(simpleName(nameB));
 			if(name1.equals(name2)){
-				String vorname1=simpleName(StringTool.unambiguify(a.getVorname()));
-				String vorname2=simpleName(StringTool.unambiguify(firstnameB));
+				String vorname1=StringTool.unambiguify(simpleName(a.getVorname()));
+				String vorname2=StringTool.unambiguify(simpleName(firstnameB));
 				if(vorname1.equals(vorname2)){
 					String gd1=a.getGeburtsdatum();
 					if(StringTool.isNothing(gd1)){
