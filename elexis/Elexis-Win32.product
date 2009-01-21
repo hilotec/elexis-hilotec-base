@@ -28,7 +28,8 @@ Rietstrasse 30
    <windowImages i16="/elexis/rsc/elexis2_16.gif" i32="/elexis/rsc/elexis32_2.gif" i48="/elexis/rsc/elexis48.gif"/>
 
    <splash
-      location="ch.elexis" />
+      location="ch.elexis"
+      startupProgressRect="5,275,445,15" />
    <launcher name="Elexis">
       <linux icon="/Elexis/rsc/elexis48.xpm"/>
       <macosx icon="/Elexis/elexis-mac.icns"/>
@@ -38,6 +39,7 @@ Rietstrasse 30
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
