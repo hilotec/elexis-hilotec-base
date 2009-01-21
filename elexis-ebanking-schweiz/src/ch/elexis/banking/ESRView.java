@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 4970 2009-01-18 16:53:37Z rgw_ch $
+ *  $Id: ESRView.java 4994 2009-01-21 12:57:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -68,7 +68,9 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
-	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT, "DisplayESR"); //$NON-NLS-1$
+	public final static ACE DISPLAY_ESR =
+		new ACE(AccessControlDefaults.DATA,
+			"ch.elexis.ebanking_ch:DisplayESR", "ESR Daten anzeigen"); //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	private Action loadESRFile;
 	private ViewMenus menus;
