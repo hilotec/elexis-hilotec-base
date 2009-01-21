@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACE.java 4986 2009-01-20 16:56:42Z rgw_ch $
+ *  $Id: ACE.java 4991 2009-01-21 06:44:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -95,7 +95,11 @@ public class ACE implements Serializable {
 		localizedName = lName;
 	}
 	
-	public String getCanonicalName(){
+	/**
+	 * get the full pathname of an ACE. This Method is internal to the ACL system and should
+	 * not be used externally
+	 */
+	String getCanonicalName(){
 		StringBuilder sp = new StringBuilder();
 		sp.append(getName());
 		ACE parent = getParent();

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *    $Id: AccessControl.java 4991 2009-01-21 06:44:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -39,8 +39,8 @@ import ch.rgw.tools.StringTool;
  * <li>Ein Anwender erhält alle Rechte, die ihm entweder individuell gewährt wurden, oder die einer
  * der Gruppen gewährt wurden, zu denen er gehört.</li>
  * </ul>
- * Eine Ressource, die ein Zugriffsrecht realisieren will, muss diesem Recht einen individuellen
- * Namen geben. Zugriffsrechte können hierarchisch aufgebaut sein. Beispielsweise kann ein Recht
+ * Eine Ressource, die ein Zugriffsrecht realisieren will, muss für dieses Recht ein ACE erstellen,
+ * Zugriffsrechte können hierarchisch aufgebaut sein. Beispielsweise kann ein Recht
  * foo/bar/baz definiert sein. Wenn keine Regel für baz existiert, dann wird nach einer Regel für
  * bar gesucht und diese Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo
  * gesucht. Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert. Das Zugriffsrecht
@@ -51,6 +51,7 @@ import ch.rgw.tools.StringTool;
  * eingeloggte Anwender das betreffende Recht hat.
  * 
  * @author Gerry
+ * @see ACE
  * 
  */
 public class AccessControl {
