@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACE.java 4991 2009-01-21 06:44:47Z rgw_ch $
+ *  $Id: ACE.java 4992 2009-01-21 06:54:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -34,7 +34,7 @@ public class ACE implements Serializable {
 	private ACE parent;
 	
 	/**
-	 * Create a new ACE
+	 * Create a new ACE. This is the recommended constructor for most cases.
 	 * 
 	 * @param parent
 	 *            the parent ACE. If this is a top-evel ACE, use ACE_ROOT as parent.
@@ -51,7 +51,7 @@ public class ACE implements Serializable {
 	}
 	
 	/**
-	 * create a new ACE with no localized name - The localized name will be the same as the internal
+	 * create a new ACE without localized name. The localized name will be the same as the internal
 	 * name. So this constructor should <b>not</b> be used for ACE's that will be shown to the user.
 	 * 
 	 * @param parent
