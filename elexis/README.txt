@@ -14,6 +14,8 @@ DATUM 1.1.2
 8.8.2008: Letzte revision 1.3.3, SVN rev. 4245
 1.9.2008: Letzte revision 1.3.4, SVN rev. 4329. 
           Release 1.3.4 auf Server, Trunk auf 1.4.0
+1.1.2009: Release 1.4.0 auf Server, Trunk auf 2.0.0
+
 
 Änderungen
 ==========
@@ -95,3 +97,10 @@ Es ist geplant, auch die anderen Datenbankverbindungen aus dem Kern herauszunehm
 
 In der Run-Configuration müssen die entsprechenden Plugins ebenfalls eingetragen werden
 (z.B. mit Klick auf "Add required plugins", damit sie beim Start eingebunden werden.
+
+-------------------------------------------------------------------------
+
+20.1.2009 gweirich 2.0.0
+Umbau des Rechtesystems. Statt einfacher Strings definieren jetzt ACE's (Access Control Elements)
+einzelne Zugriffsrechte. Diese haben den Vorteil, lokalisiert werden zu können (Der im Gruppen-und-Rechte-
+Dialog angezeigte Text muss nicht der Name des Rechts sein).
