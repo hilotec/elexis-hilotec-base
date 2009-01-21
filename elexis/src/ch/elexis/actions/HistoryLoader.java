@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ *  $Id: HistoryLoader.java 4996 2009-01-21 17:49:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -32,8 +32,9 @@ import ch.rgw.tools.VersionedResource;
 
 /**
  * Texte früherer Konsultationen asynchron nachladen.
+ * 
  * @author Gerry
- *
+ * 
  */
 public class HistoryLoader extends BackgroundJob {
 	StringBuilder sb;
@@ -44,111 +45,119 @@ public class HistoryLoader extends BackgroundJob {
 	boolean multiline = false;
 	
 	public void setFilter(final KonsFilter kf){
-		filter=kf;
+		filter = kf;
 	}
+	
 	/*
 	 * multine == true: show Konsultation text with newlines
 	 */
-	public HistoryLoader(final StringBuilder sb,final ArrayList<Konsultation> lKons){
+	public HistoryLoader(final StringBuilder sb, final ArrayList<Konsultation> lKons){
 		this(sb, lKons, false);
 	}
-	public HistoryLoader(final StringBuilder sb,final ArrayList<Konsultation> lKons, final boolean multiline){
+	
+	public HistoryLoader(final StringBuilder sb, final ArrayList<Konsultation> lKons,
+		final boolean multiline){
 		super(Messages.getString("HistoryLoader.LoadKonsMessage")); //$NON-NLS-1$
-		this.sb=sb;
-		this.lKons=lKons;
+		this.sb = sb;
+		this.lKons = lKons;
 		this.multiline = multiline;
 		this.setPriority(Job.DECORATE);
 		this.setUser(false);
 	}
-	@Override
-	public IStatus execute(final IProgressMonitor monitor) {
-		monitor.beginTask(Messages.getString("HistoryLoader.LoadKonsMessage"), lKons.size()+100); //$NON-NLS-1$
-		monitor.subTask(Messages.getString("HistoryLoader.Sorting")); //$NON-NLS-1$
-		if(lKons.isEmpty()){
-			return Status.OK_STATUS;
-		}
-		Collections.sort(lKons, new Comparator<Konsultation>(){
-			TimeTool t1=new TimeTool();
-			TimeTool t2=new TimeTool();
-			public int compare(final Konsultation o1, final Konsultation o2) {
-				if((o1==null) || (o2==null)){
-					return 0;
-				}
-				t1.set(o1.getDatum());
-				t2.set(o2.getDatum());
-				if(t1.isBefore(t2)){
-					return 1;
-				}
-				if(t1.isAfter(t2)){
-					return -1;
-				}
-				return 0;
-			}});
-		monitor.worked(50);
-		Iterator<Konsultation> it=lKons.iterator();
-		sb.append("<form>"); //$NON-NLS-1$
-		globalFilter=GlobalEvents.getInstance().getObjectFilters().getFilterFor(Konsultation.class);
-		while(!monitor.isCanceled()){
-			if(!it.hasNext()){
-				sb.append("</form>"); //$NON-NLS-1$
-				result=sb.toString();
-				monitor.worked(1);
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-			Konsultation k=it.next();
-			if(filter!=null){
-				if(filter.pass(k)==false){
-					continue;
-				}
-			}
-			if(globalFilter!=null){
-				if(globalFilter.select(k)==false){
-					continue;
-				}
-			}
-			VersionedResource vr=k.getEintrag();
-			String s=vr.getHead();
-			if(s!=null){
-				if(s.startsWith("<")){ //$NON-NLS-1$
-					Samdas samdas=new Samdas(s);
-					s=samdas.getRecordText();
-				}
-				s=s.replaceAll("<","&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
-				s=s.replaceAll(">","&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
-				s=s.replaceAll("&","&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (multiline) {
-					// TODO use system line separator
-					// replace Windows line separator
-					s = s.replaceAll("\r\n", "<br/>");
-					// replace remaining "manual" line separators
-					s = s.replaceAll("\n", "<br/>");
-				}
-				
-			}else{
-				s=""; //$NON-NLS-1$
-			}
-			String label=k.getLabel();
-			//label+="<br/>"+k.getFall().getLabel();
-			sb.append("<p><a href=\"") //$NON-NLS-1$
-				.append(k.getId()).append("\">") //$NON-NLS-1$
-				.append(label).append("</a><br/>") //$NON-NLS-1$
-				.append("<span color=\"gruen\">") //$NON-NLS-1$
-				.append(k.getFall().getLabel())
-				.append("</span><br/>") //$NON-NLS-1$
-				.append(s).append("</p>"); //$NON-NLS-1$
-			monitor.worked(1);
-			
-		}
-		sb.setLength(0);
-		monitor.done();
-		return Status.CANCEL_STATUS;
-	}
-
 	
 	@Override
-	public int getSize() {
+	public IStatus execute(final IProgressMonitor monitor){
+		synchronized (lKons) {
+			monitor.beginTask(
+				Messages.getString("HistoryLoader.LoadKonsMessage"), lKons.size() + 100); //$NON-NLS-1$
+			monitor.subTask(Messages.getString("HistoryLoader.Sorting")); //$NON-NLS-1$
+			if (lKons.isEmpty()) {
+				return Status.OK_STATUS;
+			}
+			Collections.sort(lKons, new Comparator<Konsultation>() {
+				TimeTool t1 = new TimeTool();
+				TimeTool t2 = new TimeTool();
+				
+				public int compare(final Konsultation o1, final Konsultation o2){
+					if ((o1 == null) || (o2 == null)) {
+						return 0;
+					}
+					t1.set(o1.getDatum());
+					t2.set(o2.getDatum());
+					if (t1.isBefore(t2)) {
+						return 1;
+					}
+					if (t1.isAfter(t2)) {
+						return -1;
+					}
+					return 0;
+				}
+			});
+			monitor.worked(50);
+			Iterator<Konsultation> it = lKons.iterator();
+			sb.append("<form>"); //$NON-NLS-1$
+			globalFilter =
+				GlobalEvents.getInstance().getObjectFilters().getFilterFor(Konsultation.class);
+			while (!monitor.isCanceled()) {
+				if (!it.hasNext()) {
+					sb.append("</form>"); //$NON-NLS-1$
+					result = sb.toString();
+					monitor.worked(1);
+					monitor.done();
+					return Status.OK_STATUS;
+				}
+				Konsultation k = it.next();
+				if (filter != null) {
+					if (filter.pass(k) == false) {
+						continue;
+					}
+				}
+				if (globalFilter != null) {
+					if (globalFilter.select(k) == false) {
+						continue;
+					}
+				}
+				VersionedResource vr = k.getEintrag();
+				String s = vr.getHead();
+				if (s != null) {
+					if (s.startsWith("<")) { //$NON-NLS-1$
+						Samdas samdas = new Samdas(s);
+						s = samdas.getRecordText();
+					}
+					s = s.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+					s = s.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
+					s = s.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (multiline) {
+						// TODO use system line separator
+						// replace Windows line separator
+						s = s.replaceAll("\r\n", "<br/>");
+						// replace remaining "manual" line separators
+						s = s.replaceAll("\n", "<br/>");
+					}
+					
+				} else {
+					s = ""; //$NON-NLS-1$
+				}
+				String label = k.getLabel();
+				// label+="<br/>"+k.getFall().getLabel();
+				sb.append("<p><a href=\"") //$NON-NLS-1$
+					.append(k.getId()).append("\">") //$NON-NLS-1$
+					.append(label).append("</a><br/>") //$NON-NLS-1$
+					.append("<span color=\"gruen\">") //$NON-NLS-1$
+					.append(k.getFall().getLabel()).append("</span><br/>") //$NON-NLS-1$
+					.append(s).append("</p>"); //$NON-NLS-1$
+				monitor.worked(1);
+				
+			}
+			sb.setLength(0);
+			monitor.done();
+		}
+		return Status.CANCEL_STATUS;
+	}
+	
+	@Override
+	public int getSize(){
 		return lKons.size();
 	}
-
+	
 }
