@@ -24,23 +24,28 @@
 		<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
              Standarddistribution dabei -->
 		<ant antfile="../elexis-artikel-schweiz/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-ebanking-schweiz/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-arzttarife-schweiz/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-ebanking-schweiz/build.xml"
+		     inheritrefs="true" />
+		<ant antfile="../elexis-arzttarife-schweiz/build.xml"
+		     inheritrefs="true" />
 		<ant antfile="../elexis-befunde/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml"
+		     inheritrefs="true" />
 		<ant antfile="../elexis-mail/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-medikamente-bag/build.xml" inheritrefs="true" />
 
 		<available file="../mysql-adapter/build.xml" property="mysql.ok" />
 		<antcall target="mysql" inheritrefs="true" />
 
-		<available file="../postgresql-adapter/build.xml" property="postgresql.ok" />
+		<available file="../postgresql-adapter/build.xml"
+		           property="postgresql.ok" />
 		<antcall target="postgresql" inheritrefs="true" />
 
 		<available file="../hsql-adapter/build.xml" property="hsql.ok" />
 		<antcall target="hsql" inheritrefs="true" />
 
-		<available file="../iatrix-help-wiki/build.xml" property="iatrixhelp.ok" />
+		<available file="../iatrix-help-wiki/build.xml"
+		           property="iatrixhelp.ok" />
 		<antcall target="iatrixhelp" inheritrefs="true" />
 		<available file="../elexis-icpc/build.xml" property="icpc.ok" />
 		<antcall target="icpc" inheritrefs="true" />
@@ -51,62 +56,84 @@
 		<available file="../noatext/build.xml" property="noatext.ok" />
 		<available file="../oowrapper3/build.xml" property="oowrapper3.ok" />
 
-		<available file="../elexis-nachrichten/build.xml" property="nachrichten.ok" />
+		<available file="../elexis-nachrichten/build.xml"
+		           property="nachrichten.ok" />
 		<antcall target="nachrichten" inheritrefs="true" />
-		<available file="../medshare-directories/build.xml" property="directories.ok" />
+		<available file="../medshare-directories/build.xml"
+		           property="directories.ok" />
 		<antcall target="directories" inheritrefs="true" />
-		<available file="../elexis-bildanzeige/build.xml" property="bildanzeige.ok" />
+		<available file="../elexis-bildanzeige/build.xml"
+		           property="bildanzeige.ok" />
 		<antcall target="bildanzeige" inheritrefs="true" />
 		<available file="../elexis-omnivore/build.xml" property="omnivore.ok" />
 		<antcall target="omnivore" inheritrefs="true" />
-		<available file="../elexis-privatnotizen/build.xml" property="privatnotizen.ok" />
+		<available file="../elexis-privatnotizen/build.xml"
+		           property="privatnotizen.ok" />
 		<antcall target="privatnotizen" inheritrefs="true" />
 	</target>
 
 	<!-- Optionale Plugins, für die Programmfunktion nicht unbedingt erforderlich -->
 	<target name="options" depends="main">
-		<available file="../elexis-rosenstudio/build.xml" property="rosenstudio.ok" />
+		<available file="../elexis-rosenstudio/build.xml"
+		           property="rosenstudio.ok" />
 		<antcall target="rosenstudio" inheritrefs="true" />
-		<available file="../elexis-artikel-oesterreich/build.xml" property="artaustria.ok" />
+		<available file="../elexis-artikel-oesterreich/build.xml"
+		           property="artaustria.ok" />
 		<antcall target="artaustria" inheritrefs="true" />
-		<available file="../elexis-eigendiagnosen/build.xml" property="eigendiagnosen.ok" />
+		<available file="../elexis-eigendiagnosen/build.xml"
+		           property="eigendiagnosen.ok" />
 		<antcall target="eigendiagnosen" inheritrefs="true" />
 
 		<available file="../Sgam-xChange/build.xml" property="sgamxchange.ok" />
 		<antcall target="sgamxchange" inheritrefs="true" />
-		<available file="../elexis-trustx-embed/build.xml" property="trustx.ok" />
+		<available file="../elexis-trustx-embed/build.xml"
+		           property="trustx.ok" />
 		<antcall target="trustx" inheritrefs="true" />
-		<available file="../elexis-importer-aerztekasse/build.xml" property="aekasse.ok" />
+		<available file="../elexis-importer-aerztekasse/build.xml"
+		           property="aekasse.ok" />
 		<antcall target="aekasse" inheritrefs="true" />
-		<available file="../elexis-externe-dokumente/build.xml" property="extdok.ok" />
+		<available file="../elexis-externe-dokumente/build.xml"
+		           property="extdok.ok" />
 		<antcall target="extdok" inheritrefs="true" />
-		<available file="../Laborimport-Viollier/build.xml" property="viollier.ok" />
+		<available file="../Laborimport-Viollier/build.xml"
+		           property="viollier.ok" />
 		<antcall target="viollier" inheritrefs="true" />
-		<available file="../elexis-laborimport-bioanalytica" property="bioanalytica.ok" />
+		<available file="../elexis-laborimport-bioanalytica"
+		           property="bioanalytica.ok" />
 		<antcall target="bioanalytica" inheritrefs="true" />
-		<available file="../elexis-privatrechnung/build.xml" property="privatrechnung.ok" />
+		<available file="../elexis-privatrechnung/build.xml"
+		           property="privatrechnung.ok" />
 		<antcall target="privatrechnung" inheritrefs="true" />
 		<available file="../elexis-notes/build.xml" property="notes.ok" />
 		<antcall target="notes" inheritrefs="true" />
-		<available file="../medshare-importer-csv/build.xml" property="importer_csv.ok" />
+		<available file="../medshare-importer-csv/build.xml"
+		           property="importer_csv.ok" />
 		<antcall target="importer-csv" inheritrefs="true" />
-		<available file="../medshare-connect-abacusjunior/build.xml" property="connect_abacus.ok" />
+		<available file="../medshare-connect-abacusjunior/build.xml"
+		           property="connect_abacus.ok" />
 		<antcall target="abacusjunior" inheritrefs="true" />
-		<available file="../Laborimport-HL7-Universal/build.xml" property="hl7import.ok" />
+		<available file="../Laborimport-HL7-Universal/build.xml"
+		           property="hl7import.ok" />
 		<antcall target="hl7import" inheritrefs="true" />
-		<available file="../elexis-MediDirect/build.xml" property="medidirect.ok" />
+		<available file="../elexis-MediDirect/build.xml"
+		           property="medidirect.ok" />
 		<antcall target="medidirect" inheritrefs="true" />
-		<available file="../elexis-buchhaltung-basis/build.xml" property="buchbasis.ok" />
+		<available file="../elexis-buchhaltung-basis/build.xml"
+		           property="buchbasis.ok" />
 		<antcall target="buchhaltungbasis" inheritrefs="true" />
 	</target>
 
 
 	<!-- These plugins are not part of the standard distribution -->
 	<target name="elexis-pro" depends="options">
-		<available file="../privatrechnung-berchtold/build.xml" property="berchtold.ok" />
+		<available file="../elexis-RezeptRose/build.xml" property="rrose.ok" />
+		<antcall target="rrose" inheritrefs="true" />
+		<available file="../privatrechnung-berchtold/build.xml"
+		           property="berchtold.ok" />
 		<antcall target="berchtold" inheritrefs="true" />
 
-		<available file="../Statistics/build.xml" property="waeltistatistics.ok" />
+		<available file="../Statistics/build.xml"
+		           property="waeltistatistics.ok" />
 		<antcall target="waeltistatistics" inheritrefs="true" />
 
 		<available file="../elexis-mediserv/build.xml" property="mediserv.ok" />
@@ -115,10 +142,12 @@
 		<available file="../elexis-timer/build.xml" property="elexistimer.ok" />
 		<antcall target="elexistimer" inheritrefs="true" />
 
-		<available file="../elexis-be-connector/build.xml" property="blueevidence.ok" />
+		<available file="../elexis-be-connector/build.xml"
+		           property="blueevidence.ok" />
 		<antcall target="blueevidence" inheritrefs="true" />
 
-		<available file="../omnivore-direct/build.xml" property="omnivoredirect.ok" />
+		<available file="../omnivore-direct/build.xml"
+		           property="omnivoredirect.ok" />
 		<antcall target="omnivoredirect" inheritrefs="true" />
 
 		<available file="../elexis-h-net/build.xml" property="hnet.ok" />
@@ -126,19 +155,26 @@
 
 		<!--ant antfile="../elexis-pro/build.xml"/ -->
 
-		<available file="../Laborimport-Logolab/build.xml" property="logolab.ok" />
+		<available file="../Laborimport-Logolab/build.xml"
+		           property="logolab.ok" />
 		<antcall target="logolab" inheritrefs="true" />
-		<available file="../Laborimport-aerztelabor-badena/build.xml" property="badena.ok" />
+		<available file="../Laborimport-aerztelabor-badena/build.xml"
+		           property="badena.ok" />
 		<antcall target="badena" inheritrefs="true" />
-		<available file="../Laborimport-Medica/build.xml" property="medica.ok" />
+		<available file="../Laborimport-Medica/build.xml"
+		           property="medica.ok" />
 		<antcall target="medica" inheritrefs="true" />
-		<available file="../elexis-kassenbuch/build.xml" property="kassenbuch.ok" />
+		<available file="../elexis-kassenbuch/build.xml"
+		           property="kassenbuch.ok" />
 		<antcall target="kassenbuch" inheritrefs="true" />
-		<available file="../elexis-importer-praxistar/build.xml" property="praxistar.ok" />
+		<available file="../elexis-importer-praxistar/build.xml"
+		           property="praxistar.ok" />
 		<antcall target="praxistar" inheritrefs="true" />
-		<available file="../elexis-connect-abxmicros/build.xml" property="abxmicros.ok" />
+		<available file="../elexis-connect-abxmicros/build.xml"
+		           property="abxmicros.ok" />
 		<antcall target="abxmicros" inheritrefs="true" />
-		<available file="../elexis-connect-urilux/build.xml" property="urilux.ok" />
+		<available file="../elexis-connect-urilux/build.xml"
+		           property="urilux.ok" />
 		<antcall target="urilux" inheritrefs="true" />
 		<available file="../molemax/build.xml" property="molemax.ok" />
 		<antcall target="molemax" inheritrefs="true" />
@@ -149,39 +185,53 @@
 		<antcall target="teamw" inheritrefs="true" />
 		<available file="../Laborimport-Krech/build.xml" property="krech.ok" />
 		<antcall target="krech" inheritrefs="true" />
-		<available file="../Laborimport-Unilabs/build.xml" property="unilabs.ok" />
+		<available file="../Laborimport-Unilabs/build.xml"
+		           property="unilabs.ok" />
 		<antcall target="unilabs" inheritrefs="true" />
-		<available file="../Laborimport-Unilabs-Mitteland/build.xml" property="unilabs_ml.ok" />
+		<available file="../Laborimport-Unilabs-Mitteland/build.xml"
+		           property="unilabs_ml.ok" />
 		<antcall target="unilabs_ml" inheritrefs="true" />
 
-		<available file="../elexis-importer-vitodata/build.xml" property="vitodata.ok" />
+		<available file="../elexis-importer-vitodata/build.xml"
+		           property="vitodata.ok" />
 		<antcall target="vitodata" inheritrefs="true" />
-		<available file="../elexis-importer-aeskulap/build.xml" property="aeskulap.ok" />
+		<available file="../elexis-importer-aeskulap/build.xml"
+		           property="aeskulap.ok" />
 		<antcall target="aeskulap" inheritrefs="true" />
 		<available file="../Laborimport-Risch/build.xml" property="risch.ok" />
 		<antcall target="risch" inheritrefs="true" />
-		<available file="../elexis-importer-praxisdesktop/build.xml" property="praxisdesktop.ok" />
+		<available file="../elexis-importer-praxisdesktop/build.xml"
+		           property="praxisdesktop.ok" />
 		<antcall target="praxisdesktop" inheritrefs="true" />
-		<available file="../elexis-covercard/build.xml" property="covercard.ok" />
+		<available file="../elexis-covercard/build.xml"
+		           property="covercard.ok" />
 		<antcall target="covercard" inheritrefs="true" />
-		<available file="../elexis-importer-argolead/build.xml" property="argolead.ok" />
+		<available file="../elexis-importer-argolead/build.xml"
+		           property="argolead.ok" />
 		<antcall target="argolead" inheritrefs="true" />
-		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok" />
+		<available file="../elexis-connect-mythic/build.xml"
+		           property="mythic.ok" />
 		<antcall target="mythic" inheritrefs="true" />
 		<antcall target="oowrapper3" inheritrefs="true" />
 	</target>
 
 	<target name="berchtold" if="berchtold.ok">
-		<ant antfile="../privatrechnung-berchtold/build.xml" inheritrefs="true" />
+		<ant antfile="../privatrechnung-berchtold/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="buchhaltungbasis" if="buchbasis.ok">
-		<ant antfile="../elexis-buchhaltung-basis/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-buchhaltung-basis/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="medidirect" if="medidirect.ok">
 		<ant antfile="../elexis-MediDirect/build.xml" inheritrefs="true" />
 	</target>
+
+    <target name="rrose" if="rrose.ok">
+        <ant antfile="../elexis-RezeptRose/build.xml" inheritrefs="true" />
+    </target>
 
 	<target name="waeltistatistics" if="waeltistatistics.ok">
 		<ant antfile="../Statistics/build.xml" inheritrefs="true" />
@@ -198,7 +248,8 @@
 	</target>
 
 	<target name="hl7import" if="hl7import.ok">
-		<ant antfile="../Laborimport-HL7-Universal/build.xml" inheritrefs="true" />
+		<ant antfile="../Laborimport-HL7-Universal/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="mediserv" if="mediserv.ok">
 		<ant antfile="../elexis-mediserv/build.xml" inheritrefs="true" />
@@ -209,7 +260,8 @@
 	</target>
 
 	<target name="abacusjunior" if="connect_abacus.ok">
-		<ant antfile="../medshare-connect-abacusjunior/build.xml" inheritrefs="true" />
+		<ant antfile="../medshare-connect-abacusjunior/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="blueevidence" if="blueevidence.ok">
@@ -237,25 +289,30 @@
 		<ant antfile="../medshare-directories/build.xml" inheritrefs="true" />
 	</target>
 	<target name="extdok" if="extdok.ok">
-		<ant antfile="../elexis-externe-dokumente/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-externe-dokumente/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="covercard" if="covercard.ok">
 		<ant antfile="../elexis-covercard/build.xml" inheritrefs="true" />
 	</target>
 	<target name="praxisdesktop" if="praxisdesktop.ok">
-		<ant antfile="../elexis-importer-praxisdesktop/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-importer-praxisdesktop/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="aeskulap" if="aeskulap.ok">
-		<ant antfile="../elexis-importer-aeskulap/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-importer-aeskulap/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="vitodata" if="vitodata.ok">
-		<ant antfile="../elexis-importer-vitodata/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-importer-vitodata/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="unilabs" if="unilabs.ok">
 		<ant antfile="../Laborimport-Unilabs/build.xml" inheritrefs="true" />
 	</target>
 	<target name="unilabs_ml" if="unilabs_ml.ok">
-		<ant antfile="../Laborimport-Unilabs-Mittelland/build.xml" inheritrefs="true" />
+		<ant antfile="../Laborimport-Unilabs-Mittelland/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="krech" if="krech.ok">
 		<ant antfile="../Laborimport-Krech/build.xml" inheritrefs="true" />
@@ -298,7 +355,8 @@
 		<ant antfile="../elexis-kassenbuch/build.xml" inheritrefs="true" />
 	</target>
 	<target name="praxistar" if="praxistar.ok">
-		<ant antfile="../elexis-importer-praxistar/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-importer-praxistar/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="noatext" if="noatext.ok">
 		<ant antfile="../noatext/build.xml" inheritrefs="true" />
@@ -316,11 +374,13 @@
 		<ant antfile="../Laborimport-Viollier/build.xml" inheritrefs="true" />
 	</target>
 	<target name="bioanalytica" if="bioanalytica.ok">
-		<ant antfile="../elexis-laborimport-bioanalytica/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-laborimport-bioanalytica/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="abxmicros" if="abxmicros.ok">
-		<ant antfile="../elexis-connect-abxmicros/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-connect-abxmicros/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="urilux" if="urilux.ok">
@@ -337,7 +397,8 @@
 	</target>
 
 	<target name="artaustria" if="artaustria.ok">
-		<ant antfile="../elexis-artikel-oesterreich/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-artikel-oesterreich/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="molemax" if="molemax.ok">
@@ -345,7 +406,8 @@
 	</target>
 
 	<target name="aekasse" if="aekasse.ok">
-		<ant antfile="../elexis-importer-aerztekasse/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-importer-aerztekasse/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="importer-csv" if="importer_csv.ok">
@@ -356,11 +418,13 @@
 		<ant antfile="../Laborimport-Medica/build.xml" inheritrefs="true" />
 	</target>
 	<target name="badena" if="badena.ok">
-		<ant antfile="../Laborimport-aerztelabor-badena/build.xml" inheritrefs="true" />
+		<ant antfile="../Laborimport-aerztelabor-badena/build.xml"
+		     inheritrefs="true" />
 	</target>
 
 	<target name="argolead" if="argolead.ok">
-		<ant antfile="../elexis-importer-argolead/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-importer-argolead/build.xml"
+		     inheritrefs="true" />
 	</target>
 	<target name="mythic" if="mythic.ok">
 		<ant antfile="../elexis-connect-mythic/build.xml" inheritrefs="true" />
