@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Zugriff.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *  $Id: Zugriff.java 4998 2009-01-22 11:36:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -41,6 +41,7 @@ public class Zugriff extends PreferencePage implements IWorkbenchPreferencePage 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Control createContents(Composite parent){
+		Hub.acl.load();
 		if (Hub.acl.request(AccessControlDefaults.ACL_USERS)) {
 			List<IACLContributor> acls =
 				Extensions.getClasses("ch.elexis.ACLContribution", "ACLContributor");

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 4991 2009-01-21 06:44:47Z rgw_ch $
+ *    $Id: AccessControl.java 4998 2009-01-22 11:36:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -24,6 +24,7 @@ import ch.elexis.Hub;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Log;
 import ch.rgw.io.InMemorySettings;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
@@ -40,15 +41,15 @@ import ch.rgw.tools.StringTool;
  * der Gruppen gewährt wurden, zu denen er gehört.</li>
  * </ul>
  * Eine Ressource, die ein Zugriffsrecht realisieren will, muss für dieses Recht ein ACE erstellen,
- * Zugriffsrechte können hierarchisch aufgebaut sein. Beispielsweise kann ein Recht
- * foo/bar/baz definiert sein. Wenn keine Regel für baz existiert, dann wird nach einer Regel für
- * bar gesucht und diese Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo
- * gesucht. Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert. Das Zugriffsrecht
- * kann dann mit grant(gruppe,recht) oder grant(Anwender,recht) gewährt resp. mit
- * revoke(gruppe,Name) oder revoke(Anwender,name) entzogen werden. Um herauszufinden, ob ein
- * Anwender bw. einer seiner Gruppen das Recht hat, auf eine ressource zuzugreifen, muss man
- * request(anwedner,recht) fragen. Eine Abkürzung ist request(recht). Dies fragt, ob der aktuell
- * eingeloggte Anwender das betreffende Recht hat.
+ * Zugriffsrechte können hierarchisch aufgebaut sein. Beispielsweise kann ein Recht foo/bar/baz
+ * definiert sein. Wenn keine Regel für baz existiert, dann wird nach einer Regel für bar gesucht
+ * und diese Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo gesucht.
+ * Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert. Das Zugriffsrecht kann dann
+ * mit grant(gruppe,recht) oder grant(Anwender,recht) gewährt resp. mit revoke(gruppe,Name) oder
+ * revoke(Anwender,name) entzogen werden. Um herauszufinden, ob ein Anwender bw. einer seiner
+ * Gruppen das Recht hat, auf eine ressource zuzugreifen, muss man request(anwedner,recht) fragen.
+ * Eine Abkürzung ist request(recht). Dies fragt, ob der aktuell eingeloggte Anwender das
+ * betreffende Recht hat.
  * 
  * @author Gerry
  * @see ACE
@@ -61,11 +62,12 @@ public class AccessControl {
 	public static final String ADMIN_GROUP = Messages.getString("AccessControl.GroupAdmin");
 	public static final String GROUP_FOR_PREFERENCEPAGE = "ch.elexis.preferences.acl";
 	
-	private static final String BLOBNAME="AccessControl";
-	private static final String ACLNAME="AccessControlACL";
+	private static final String BLOBNAME = "AccessControl";
+	private static final String ACLNAME = "AccessControlACL";
 	private static Hashtable<String, ACE> rights;
 	private static Hashtable<String, List<String>> usergroups;
-	private static Hashtable<String,ACE> acls;
+	private static Hashtable<String, ACE> acls;
+	private static final Log log = Log.get("AccessControl");
 	
 	// TODO: Cleanup alte Gruppen/Anwender
 	/**
@@ -78,13 +80,21 @@ public class AccessControl {
 			NamedBlob.createTable();
 			rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		}
-		NamedBlob aclset=NamedBlob.load(ACLNAME);
+		NamedBlob aclset = NamedBlob.load(ACLNAME);
 		rights = rset.getHashtable();
-		acls=aclset.getHashtable();
+		acls = aclset.getHashtable();
 		if (rights.isEmpty() || acls.isEmpty()) {
 			reset();
 		}
 		usergroups = new Hashtable<String, List<String>>();
+		log.log("loaded AccessControl", Log.INFOS);
+		for (String k1 : rights.keySet()) {
+			log.log(k1, Log.DEBUGMSG);
+		}
+		log.log("loaded ACLs", Log.INFOS);
+		for (String k1 : acls.keySet()) {
+			log.log(k1, Log.DEBUGMSG);
+		}
 	}
 	
 	/**
@@ -121,10 +131,10 @@ public class AccessControl {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean request(Anwender user, ACE rightACE){
-		if (rightACE==null) {
+		if (rightACE == null) {
 			return true;
 		}
-		String right=rightACE.getCanonicalName();
+		String right = rightACE.getCanonicalName();
 		if (rights == null) {
 			return false;
 		}
@@ -178,8 +188,8 @@ public class AccessControl {
 		}
 		// Falls das gewünschte Recht nicht geregelt ist, eine Hierarchiestufe
 		// höher suchen
-		ACE parent=rightACE.getParent();
-		if (parent!=null) {
+		ACE parent = rightACE.getParent();
+		if (parent != null) {
 			return request(user, parent);
 		}
 		return false;
@@ -320,7 +330,7 @@ public class AccessControl {
 	 */
 	public List<String> groupsForGrant(ACE rightACE){
 		ArrayList<String> ret = new ArrayList<String>();
-		String right=rightACE.getCanonicalName();
+		String right = rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
 		
 		Enumeration<String> e = rights.keys();
@@ -348,7 +358,7 @@ public class AccessControl {
 	 */
 	public List<Anwender> usersForGrant(ACE rightACE){
 		ArrayList<Anwender> ret = new ArrayList<Anwender>();
-		String right=rightACE.getCanonicalName();
+		String right = rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
 		
 		Enumeration<String> e = rights.keys();
@@ -367,7 +377,7 @@ public class AccessControl {
 	}
 	
 	public void deleteGrant(ACE grantACE){
-		String grant=grantACE.getCanonicalName();
+		String grant = grantACE.getCanonicalName();
 		
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + grant); //$NON-NLS-1$
 		
@@ -392,14 +402,14 @@ public class AccessControl {
 		grant(ALL_GROUP, AccessControlDefaults.getAlle()); //$NON-NLS-1$
 		grant(USER_GROUP, AccessControlDefaults.getAnwender()); //$NON-NLS-1$
 		// grant(ADMIN_GROUP,AccessControlDefaults.Admin); //$NON-NLS-1$
-		acls.put("dbUID", new ACE(ACE.ACE_ROOT,"dbUID",StringTool.unique("db%id")));
+		acls.put("dbUID", new ACE(ACE.ACE_ROOT, "dbUID", StringTool.unique("db%id")));
 		flush();
 	}
 	
 	public String getDBUID(){
 		ACE dbuid = acls.get("dbUID");
 		if (dbuid == null) {
-			dbuid = new ACE(ACE.ACE_ROOT,"dbUID",StringTool.unique("db%id"));
+			dbuid = new ACE(ACE.ACE_ROOT, "dbUID", StringTool.unique("db%id"));
 			rights.put("dbUID", dbuid);
 			flush();
 		}
