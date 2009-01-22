@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 5003 2009-01-22 19:42:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -93,10 +93,10 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     	}
 
         //Hub.jobPool.activate("PatientenListe",Job.LONG);
-        Hub.jobPool.queue("Tarmed");
-        Hub.jobPool.queue("ICD"); //$NON-NLS-1$
+        //Hub.jobPool.queue("Tarmed");
+        // Hub.jobPool.queue("ICD"); //$NON-NLS-1$
         //Hub.jobPool.queue("Plz");
-        Hub.jobPool.queue("Anschriften");
+        // Hub.jobPool.queue("Anschriften");
     
         Hub.pin.initializeDisplayPreferences(Desk.getDisplay());
         configurer.setSaveAndRestore(true);
