@@ -1,6 +1,6 @@
-rem $Id: clean.cmd 3962 2008-05-23 17:05:08Z rgw_ch $
+rem $Id: clean.cmd 5000 2009-01-22 14:26:47Z rgw_ch $
 rem if not *%JAVA_HOME% == * goto varsok
-set JAVA_HOME=%dev%\jdk150
+rem set JAVA_HOME=%dev%\jdk150
 
 :varsok
 cd rsc\build
