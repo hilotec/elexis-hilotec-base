@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentSelector.java 3452 2007-12-14 08:27:03Z michael_imhof $
+ *  $Id: MedikamentSelector.java 5001 2009-01-22 15:50:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -21,6 +21,7 @@ import ch.elexis.actions.JobPool;
 import ch.elexis.actions.ListLoader;
 import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.Medikament;
+import ch.elexis.artikel_ch.model.MedikamentLoader;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
@@ -32,6 +33,7 @@ import ch.elexis.views.artikel.ArtikelLabelProvider;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class MedikamentSelector extends CodeSelectorFactory {
+	/*
 	AbstractDataLoaderJob dataloader;
 	
 	public MedikamentSelector() {
@@ -42,12 +44,14 @@ public class MedikamentSelector extends CodeSelectorFactory {
 		}
 		JobPool.getJobPool().activate("Medikamente",Job.SHORT);
 	}
-
+	 */
+	// MedikamentLoader ml;
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		new ArtikelContextMenu((Medikament)new ArtikelFactory().createTemplate(Medikament.class),cv);
 		return new ViewerConfigurer(
-				new LazyContentProvider(cv,dataloader,null),
+				//new LazyContentProvider(cv,dataloader,null),
+			new MedikamentLoader(cv),
 				new ArtikelLabelProvider(),
 				new MedikamentControlFieldProvider(cv, new String[]{"Name"}),
 				new ViewerConfigurer.DefaultButtonProvider(),

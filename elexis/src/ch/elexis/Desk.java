@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -427,6 +428,7 @@ public class Desk implements IApplication {
 	 * @param runnable
 	 */
 	public static void syncExec(Runnable runnable){
-		getDisplay().syncExec(runnable);
+		//getDisplay().syncExec(runnable);
+		BusyIndicator.showWhile(getDisplay(), runnable);
 	}
 }

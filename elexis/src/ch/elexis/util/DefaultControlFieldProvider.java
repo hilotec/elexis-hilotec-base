@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 4808 2008-12-12 08:58:34Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 5001 2009-01-22 15:50:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -25,9 +25,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
