@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 4927 2009-01-10 21:26:30Z rgw_ch $
+ * $Id: Interaction.java 4999 2009-01-22 14:25:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -34,6 +34,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 	final static String VERSION = "0.2.1";
 	static final String createDB =
 		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25)	primary key,"
+			+ "lastupdate BIGINT,"
 			+ "deleted		CHAR(1) default '0'," + "Subst1		VARCHAR(25)," + "Subst2		VARCHAR(25),"
 			+ "Type			VARCHAR(20),"
 			+ "Relevance			CHAR(1),"

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentImporterVidal.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ *  $Id: MedikamentImporterVidal.java 4999 2009-01-22 14:25:53Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -63,6 +63,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 	public void collect(){
 		bDoClear = bClear.getSelection();
 	}
+	
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
@@ -163,7 +164,10 @@ public class MedikamentImporterVidal extends ImporterPage {
 				chars = new StringBuilder();
 			
 			}else if(qName.equals("SubstRef")){
-				
+				act=new Hashtable();
+				act.put("SubstID", attr.getValue("SubstID"));
+				act.put("SubstSalt", attr.getValue("SubstSalt"));
+				chars = new StringBuilder();
 			}
 			
 			
@@ -274,6 +278,8 @@ public class MedikamentImporterVidal extends ImporterPage {
 				chars = null;
 			}else if(qName.equals("ATCCode")){
 				
+			}else if(qName.equals("SubstRef")){
+				Substance subst=new Substance((String)act.get("SubstID"),chars.toString(),(String)act.get("SubstSalt"));
 			}
 		}
 		

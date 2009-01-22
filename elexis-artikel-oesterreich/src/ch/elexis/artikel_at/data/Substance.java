@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ *  $Id: Substance.java 4999 2009-01-22 14:25:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -31,10 +31,11 @@ public class Substance extends PersistentObject {
 	static final String createDB =
 		"CREATE TABLE " + TABLENAME + "("
 			+ "ID		VARCHAR(25) primary key,"
+			+ "lastupdate BIGINT,"
 			+ "deleted	CHAR(1) default '0',"
-			+ "index	VARCHAR(10)," // vidal-index
+			+ "salt		VARCHAR(30)," // vidal-index
 			+ "name		VARCHAR(254));" 
-			+ "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (gruppe);"
+			+ "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (index);"
 			+ "CREATE INDEX CAUSTRIAS2 ON " + TABLENAME + " (name);" 
 			+ "INSERT INTO " + TABLENAME
 			+ " (ID,name) VALUES ('VERSION','" + VERSION + "');";
@@ -59,11 +60,11 @@ public class Substance extends PersistentObject {
 		return get("name");
 	}
 	
-	public Substance(final String name, final String group){
-		create(null);
+	public Substance(final String substID, final String name, final String salt){
+		create(substID);
 		set(new String[] {
-			"name", "gruppe"
-		}, StringTool.limitLength(name, 250), group);
+			"name", "salt"
+		}, StringTool.limitLength(name, 250), salt);
 	}
 	
 	public SortedSet<Medikament> findMedis(SortedSet<Medikament> list){
@@ -79,7 +80,7 @@ public class Substance extends PersistentObject {
 	}
 	
 	public List<Substance> sameGroup(){
-		return allFromGroup(get("gruppe"));
+		return allFromGroup(get("index"));
 	}
 	
 	public static Substance find(final String name){
@@ -91,7 +92,7 @@ public class Substance extends PersistentObject {
 	}
 	
 	public static List<Substance> allFromGroup(final String group){
-		return new Query<Substance>(Substance.class, "gruppe", group).execute();
+		return new Query<Substance>(Substance.class, "index", group).execute();
 		
 	}
 	
@@ -132,9 +133,5 @@ public class Substance extends PersistentObject {
 		super(id);
 	}
 	
-	/*
-	 * public static class Interaction{ Substance subst; int type; String description; int severity;
-	 * 
-	 * }
-	 */
+	
 }
