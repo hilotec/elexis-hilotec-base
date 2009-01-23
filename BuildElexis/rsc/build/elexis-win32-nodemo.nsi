@@ -45,7 +45,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE German
 
 # Installer attributes
-OutFile "$%SOFTWARE%\elexis\deploy_140\output\elexis-windows-${VERSION}.exe"
+OutFile "$%SOFTWARE%\elexis\deploy_200\output\elexis-windows-${VERSION}.exe"
 InstallDir $PROGRAMFILES\Elexis
 CRCCheck on
 XPStyle on
