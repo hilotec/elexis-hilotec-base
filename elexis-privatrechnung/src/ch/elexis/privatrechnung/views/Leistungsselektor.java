@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsselektor.java 2859 2007-07-21 18:32:20Z rgw_ch $
+ * $Id: Leistungsselektor.java 5021 2009-01-23 16:34:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.views;
@@ -20,11 +20,11 @@ import ch.elexis.actions.JobPool;
 import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.Query;
 import ch.elexis.privatrechnung.data.Leistung;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.TreeContentProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.TreeContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 /**
