@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentSelectDialog.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: DocumentSelectDialog.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -28,8 +28,8 @@ import ch.elexis.Hub;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.rgw.tools.StringTool;
 
 /**

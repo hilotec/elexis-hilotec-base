@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LazyContentProvider.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *  $Id: LazyContentProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ILazyContentProvider;
@@ -25,8 +25,9 @@ import ch.elexis.actions.JobPool;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.admin.ACE;
 import ch.elexis.data.Query;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
-import ch.elexis.util.ViewerConfigurer.ControlFieldProvider;
+import ch.elexis.util.Messages;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
  * Ein Content-Provider, der benötigte Daten aus einem BackgroundJob bezieht und einem TableViewer

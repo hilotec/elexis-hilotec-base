@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CodeDetailView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: CodeDetailView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -38,6 +38,8 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.*;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.IDetailDisplay;
 
 public class CodeDetailView extends ViewPart implements SelectionListener, ActivationListener, ISaveablePart2{

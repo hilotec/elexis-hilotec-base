@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AddElementToBlockDialog.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: AddElementToBlockDialog.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Desk;
 import ch.elexis.data.Leistungsblock;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.BlockSelector;
 
 public class AddElementToBlockDialog extends TitleAreaDialog {

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErstelleRnnCommand.java 4676 2008-11-11 12:35:51Z rgw_ch $
+ *  $Id: ErstelleRnnCommand.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -36,10 +36,10 @@ import ch.elexis.data.Rechnung;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.Tree;
 import ch.elexis.views.rechnung.Messages;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.Tree;
 
 /**
  * Command um Rechnungen aus einer Liste von Patienten, Fällen und Konsultationen zu erstellen

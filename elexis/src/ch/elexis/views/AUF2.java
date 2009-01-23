@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 4740 2008-12-04 21:13:24Z rgw_ch $
+ *  $Id: AUF2.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -36,9 +36,9 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.EditAUFDialog;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.rgw.tools.ExHandler;
 
 /**

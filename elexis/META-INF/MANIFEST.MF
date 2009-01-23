@@ -157,6 +157,7 @@ Export-Package: .,
    org.eclipse.ui.forms.events,
    org.eclipse.swt.widgets,
    org.eclipse.jface.dialogs",
+ ch.elexis.util.viewers,
  ch.elexis.views;
   uses:="ch.rgw.tools,
    org.eclipse.core.runtime,

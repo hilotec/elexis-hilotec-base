@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -46,13 +46,13 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.CommonViewer.DoubleClickListener;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 

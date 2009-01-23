@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5010 2009-01-23 14:40:15Z rgw_ch $
+ * $Id: TreeDataLoader.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.Tree;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.rgw.tools.Tree;
 
 public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeContentProvider {
 	String parentColumn;

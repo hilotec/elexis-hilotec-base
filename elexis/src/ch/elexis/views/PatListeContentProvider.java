@@ -20,8 +20,8 @@ import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 import ch.rgw.tools.StringTool;
 
 public class PatListeContentProvider implements CommonContentProvider,

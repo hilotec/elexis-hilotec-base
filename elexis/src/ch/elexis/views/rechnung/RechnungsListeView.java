@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 4429 2008-09-22 12:24:10Z rgw_ch $
+ * $Id: RechnungsListeView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -39,15 +39,15 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Money;
 import ch.elexis.util.MoneyInput;
 import ch.elexis.util.NumberInput;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.Tree;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.rgw.tools.Tree;
 
 /**
  * Display a listing of all bills selected after several user selectable criteria. The selected

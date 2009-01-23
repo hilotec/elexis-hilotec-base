@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -37,8 +37,8 @@ import ch.elexis.data.Query;
 import ch.elexis.data.RnStatus;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.StringTool;
 
 /**

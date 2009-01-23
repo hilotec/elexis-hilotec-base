@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 4709 2008-12-02 17:58:03Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -69,18 +69,18 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.KonsZumVerrechnenWizardDialog;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
-import ch.elexis.util.BasicTreeContentProvider;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.LazyTree;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.Tree;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.LazyTree.LazyTreeListener;
+import ch.elexis.util.viewers.BasicTreeContentProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.LazyTree;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Tree;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.LazyTree.LazyTreeListener;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 

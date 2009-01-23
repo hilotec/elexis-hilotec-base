@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ArtikelSelektor.java 4975 2009-01-18 20:46:57Z rgw_ch $
+ *    $Id: ArtikelSelektor.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -46,11 +46,11 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.ArtikelDetailDialog;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.ExHandler;
 

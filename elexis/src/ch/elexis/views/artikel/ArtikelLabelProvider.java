@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelLabelProvider.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *  $Id: ArtikelLabelProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -21,7 +21,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Artikel;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class ArtikelLabelProvider extends DefaultLabelProvider implements ITableColorProvider {
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ * $Id: RnContentProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -34,14 +34,14 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
-import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Log;
-import ch.elexis.util.Tree;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Tree;
 
 /**
  * Contentprovider used in "RechnungsListeView" to display bills selected by some criteria

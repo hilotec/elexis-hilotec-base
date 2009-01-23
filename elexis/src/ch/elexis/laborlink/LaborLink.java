@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
  *    
- *    $Id: LaborLink.java 4144 2008-07-17 05:48:36Z rgw_ch $
+ *    $Id: LaborLink.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.laborlink;
@@ -53,9 +53,9 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
 import ch.elexis.text.EnhancedTextField;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.views.LaborView;
 import ch.rgw.tools.TimeTool;
 

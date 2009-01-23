@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EigenartikelSelektor.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *  $Id: EigenartikelSelektor.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -24,6 +24,12 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
 import ch.elexis.util.*;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.LazyContentProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class EigenartikelSelektor extends CodeSelectorFactory {

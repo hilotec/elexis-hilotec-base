@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 4786 2008-12-10 13:05:37Z psiska $
+ * $Id: BestellView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -63,10 +63,10 @@ import ch.elexis.data.Bestellung.Item;
 import ch.elexis.dialogs.OrderImportDialog;
 import ch.elexis.exchange.IDataSender;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.rgw.tools.ExHandler;
 
 public class BestellView extends ViewPart implements ISaveablePart2 {

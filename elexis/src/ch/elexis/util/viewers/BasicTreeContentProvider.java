@@ -8,15 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BasicTreeContentProvider.java 2208 2007-04-13 09:05:39Z danlutz $
+ * $Id: BasicTreeContentProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.rgw.tools.Tree;
 
 public class BasicTreeContentProvider implements ITreeContentProvider, CommonContentProvider {
 

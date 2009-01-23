@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DefaultLabelProvider.java 770 2006-08-21 16:56:45Z rgw_ch $
+ *    $Id: DefaultLabelProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;

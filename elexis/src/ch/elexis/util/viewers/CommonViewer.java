@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CommonViewer.java 4799 2008-12-10 17:40:59Z psiska $
+ * $Id: CommonViewer.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +33,10 @@ import org.eclipse.swt.widgets.Composite;
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.ViewerConfigurer.ControlFieldProvider;
+import ch.elexis.util.PersistentObjectDragSource;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
+import ch.rgw.tools.Tree;
 
 /**
  * Basis des Viewer-Systems. Ein Viewer zeigt eine Liste von Objekten einer

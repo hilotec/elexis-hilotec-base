@@ -8,15 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 5001 2009-01-22 15:50:06Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -37,9 +36,13 @@ import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.text.ElexisText;
-import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
-import ch.elexis.util.ViewerConfigurer.ControlFieldProvider;
+import ch.elexis.util.Messages;
+import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
+import ch.rgw.tools.IFilter;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.Tree;
 
 /**
  * Standardimplementation des ControlFieldProviders. Erzeugt ein Composite mit je einem

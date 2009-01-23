@@ -1,4 +1,4 @@
-// $Id: BBSView.java 4853 2008-12-24 14:59:06Z rgw_ch $
+// $Id: BBSView.java 5024 2009-01-23 16:36:39Z rgw_ch $
 /*
  * Created on 10.09.2005
  */
@@ -31,13 +31,13 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.BBSEntry;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.Tree;
-import ch.elexis.util.TreeContentProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.TreeContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Tree;
 
 /**
  * Bulletin Board System - ein Schwarzes Brett. Im Prinzip Erweiterung des Reminder-Konzepts zu

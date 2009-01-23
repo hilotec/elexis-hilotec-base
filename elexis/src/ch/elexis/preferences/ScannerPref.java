@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ScannerPref.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: ScannerPref.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.Hub;
 import ch.elexis.actions.ScannerEvents;
 import ch.elexis.preferences.inputs.ComboFieldEditor;
-import ch.elexis.util.CommonViewer.Message;
+import ch.elexis.util.viewers.CommonViewer.Message;
 
 
 

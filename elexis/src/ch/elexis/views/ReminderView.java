@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ * $Id: ReminderView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -41,12 +41,12 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
 import ch.elexis.dialogs.EditReminderDialog;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.TimeTool;
 

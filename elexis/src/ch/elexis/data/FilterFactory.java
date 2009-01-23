@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FilterFactory.java 3866 2008-05-05 16:58:42Z rgw_ch $
+ *  $Id: FilterFactory.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.Tree;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.Tree;
 
 public class FilterFactory {
 	public enum OPERATORS{IST,ENTHAELT,BEGINNT,ENDET,ISTNICHT,ENTHAELTNICHT,REGEXP};

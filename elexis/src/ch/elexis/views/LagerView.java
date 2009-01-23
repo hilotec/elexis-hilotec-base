@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LagerView.java 4727 2008-12-04 12:04:49Z rgw_ch $
+ * $Id: LagerView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -41,11 +41,11 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.ArtikelDetailDialog;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultContentProvider;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.CommonViewer.DoubleClickListener;
-import ch.elexis.util.ViewerConfigurer.WidgetProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
+import ch.elexis.util.viewers.ViewerConfigurer.WidgetProvider;
 
 public class LagerView extends ViewPart implements DoubleClickListener, BackingStoreListener,
 		ISaveablePart2 {

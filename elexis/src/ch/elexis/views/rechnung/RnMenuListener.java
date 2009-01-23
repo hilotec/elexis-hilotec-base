@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnMenuListener.java 4411 2008-09-13 20:47:59Z rgw_ch $
+ * $Id: RnMenuListener.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -22,7 +22,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
-import ch.elexis.util.Tree;
+import ch.rgw.tools.Tree;
 
 public class RnMenuListener implements IMenuListener {
 		

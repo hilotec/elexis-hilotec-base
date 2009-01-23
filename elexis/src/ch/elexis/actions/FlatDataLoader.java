@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5010 2009-01-23 14:40:15Z rgw_ch $
+ * $Id: FlatDataLoader.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer;
 
 /**
  * A PersistentObjectLoader for flat tables

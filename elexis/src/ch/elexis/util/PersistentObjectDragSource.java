@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource.java 4089 2008-06-30 14:21:21Z rgw_ch $
+ * $Id: PersistentObjectDragSource.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -52,8 +52,8 @@ public class PersistentObjectDragSource extends DragSourceImpl implements DragSo
 	    }else{
 		    Object s=sel[0];
 		    PersistentObject po=null;
-		    if (s instanceof ch.elexis.util.Tree) {
-		        ch.elexis.util.Tree tree = (ch.elexis.util.Tree) s;
+		    if (s instanceof ch.rgw.tools.Tree) {
+		        ch.rgw.tools.Tree tree = (ch.rgw.tools.Tree) s;
 		        if (tree.contents  instanceof PersistentObject) {
 		            po = (PersistentObject) tree.contents;
 		            event.doit=po.isDragOK();
@@ -77,8 +77,8 @@ public class PersistentObjectDragSource extends DragSourceImpl implements DragSo
 		Object[] sel=ts.toArray();				// Workaround für MacOS X (???)
 	    StringBuilder sb=new StringBuilder();
 	    for(Object s:sel){
-	        if(s instanceof ch.elexis.util.Tree){
-	            PersistentObject o=(PersistentObject)((ch.elexis.util.Tree)s).contents;
+	        if(s instanceof ch.rgw.tools.Tree){
+	            PersistentObject o=(PersistentObject)((ch.rgw.tools.Tree)s).contents;
 	            sb.append(o.storeToString()).append(","); //$NON-NLS-1$
 	        }else if(s instanceof PersistentObject){
 	            sb.append(((PersistentObject)s).storeToString()).append(","); //$NON-NLS-1$

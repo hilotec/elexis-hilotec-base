@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FaelleView.java 4810 2008-12-12 11:13:10Z psiska $
+ *  $Id: FaelleView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -40,9 +40,9 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 
 /**
  * Eine alternative, platzsparendere Fälle-View

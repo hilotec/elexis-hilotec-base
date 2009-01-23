@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalEvents.java 4778 2008-12-08 17:04:45Z rgw_ch $
+ * $Id: GlobalEvents.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -32,8 +32,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
-import ch.elexis.util.Tree;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
+import ch.rgw.tools.Tree;
 
 /**
  * Central management and distribution of events. To get informed about selection changes, register

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallListeView.java 4423 2008-09-20 11:41:33Z rgw_ch $
+ *  $Id: FallListeView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -58,14 +58,14 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultContentProvider;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.ButtonProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultContentProvider;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.ButtonProvider;
 
 /**
  * Eine View, die untereinander Fälle und zugehörigende Behandlungen des aktuell ausgewählten

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 5005 2009-01-23 05:48:01Z rgw_ch $
+ * $Id: KontakteView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -31,13 +31,13 @@ import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.DefaultLabelProvider;
-import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.ExHandler;
 
 public class KontakteView extends ViewPart implements ControlFieldListener, ISaveablePart2 {

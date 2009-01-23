@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLPreferenceTree.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *  $Id: ACLPreferenceTree.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences.inputs;
 
@@ -33,9 +33,9 @@ import ch.elexis.Hub;
 import ch.elexis.admin.ACE;
 import ch.elexis.data.Anwender;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.Tree;
 import ch.rgw.tools.Log;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.Tree;
 
 public class ACLPreferenceTree extends Composite {
 	Tree<ACE> acls;

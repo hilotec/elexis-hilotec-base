@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrDetailDialog.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: VerrDetailDialog.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -36,8 +36,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.Tree;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.Tree;
 
 public class VerrDetailDialog extends TitleAreaDialog {
 	Patient pat;

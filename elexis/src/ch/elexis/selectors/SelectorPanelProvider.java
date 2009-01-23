@@ -21,8 +21,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.Query;
-import ch.elexis.util.ViewerConfigurer.ControlFieldListener;
-import ch.elexis.util.ViewerConfigurer.ControlFieldProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 public class SelectorPanelProvider implements ControlFieldProvider {
 	private LinkedList<ControlFieldListener> listeners = new LinkedList<ControlFieldListener>();

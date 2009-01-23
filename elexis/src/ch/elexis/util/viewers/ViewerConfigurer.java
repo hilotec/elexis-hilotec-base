@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ *    $Id: ViewerConfigurer.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Composite;
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.util.Messages;
+import ch.rgw.tools.Tree;
 
 /**
  * Funktionalität für einen CommonViewer bereitstellen. Der ViewerConfigurer ist ein Container für
@@ -59,18 +61,18 @@ public class ViewerConfigurer {
 	}
 	
 	/**
-	 * Vereinfachter Konstruktor. Kein Kontrollfeld und kein Button 
+	 * Vereinfachter Konstruktor. Kein Kontrollfeld und kein Button
+	 * 
 	 * @param cnp
 	 * @param lp
 	 * @param wp
 	 */
 	public ViewerConfigurer(CommonContentProvider cnp, LabelProvider lp, WidgetProvider wp){
-		contentProvider=cnp;
-		labelProvider=lp;
-		buttonProvider=new DefaultButtonProvider();
-		widgetProvider=wp;
+		contentProvider = cnp;
+		labelProvider = lp;
+		buttonProvider = new DefaultButtonProvider();
+		widgetProvider = wp;
 	}
-
 	
 	public interface CommonContentProvider extends IStructuredContentProvider, ControlFieldListener {
 		public void startListening();
@@ -88,13 +90,13 @@ public class ViewerConfigurer {
 	 */
 	public interface ControlFieldProvider {
 		/** Das Kontrollfeld erstellen */
-		public Composite createControl(Composite parent);
+		public Composite createControl(final Composite parent);
 		
 		/** Einen Listener enifügen */
-		public void addChangeListener(ControlFieldListener cl);
+		public void addChangeListener(final ControlFieldListener cl);
 		
 		/** Einen Listener entfernen */
-		public void removeChangeListener(ControlFieldListener cl);
+		public void removeChangeListener(final ControlFieldListener cl);
 		
 		/** Die Werte der Filterbedingungen liefern */
 		public String[] getValues();
@@ -110,7 +112,7 @@ public class ViewerConfigurer {
 		 * 
 		 * @see Query
 		 */
-		public void setQuery(Query q);
+		public void setQuery(Query<? extends PersistentObject> q);
 		
 		/** Einen Filter erstellen, der den momentanen Bedingungen entspricht */
 		public ViewerFilter createFilter();
@@ -127,9 +129,9 @@ public class ViewerConfigurer {
 	
 	/** Listener für Änderungen des Kontrollfelds */
 	public interface ControlFieldListener {
-		public void changed(String[] fields, String[] values);
+		public void changed(final String[] fields, final String[] values);
 		
-		public void reorder(String field);
+		public void reorder(final String field);
 		
 		/**
 		 * ENTER has been pressed

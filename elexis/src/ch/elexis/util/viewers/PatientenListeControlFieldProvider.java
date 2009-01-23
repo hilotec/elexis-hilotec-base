@@ -11,7 +11,7 @@
  *  $Id$
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.util.viewers;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

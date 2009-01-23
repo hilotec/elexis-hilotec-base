@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ * $Id: RnActions.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -45,12 +45,12 @@ import ch.elexis.data.RnStatus;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.Tree;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.views.PatientDetailView2;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Tree;
 
 /**
  * Collection of bill-related actions

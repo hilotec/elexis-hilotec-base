@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id: LabGroupPrefs.java 4369 2008-09-03 21:15:24Z danlutz $
+ *  $Id: LabGroupPrefs.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -47,8 +47,8 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.data.LabGroup;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Query;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class LabGroupPrefs extends PreferencePage implements
 		IWorkbenchPreferencePage {

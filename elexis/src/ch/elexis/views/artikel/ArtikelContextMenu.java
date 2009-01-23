@@ -27,7 +27,7 @@ import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Artikel;
 import ch.elexis.dialogs.ArtikelDetailDialog;
-import ch.elexis.util.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer;
 
 public class ArtikelContextMenu {
 	private IAction deleteAction, createAction, editAction;

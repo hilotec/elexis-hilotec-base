@@ -5,8 +5,8 @@ import java.util.HashMap;
 import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.ParameterValueConversionException;
 
-import ch.elexis.util.Tree;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.Tree;
 
 public class TreeToStringConverter extends AbstractParameterValueConverter {
 	static final HashMap<String,Tree<?>> map=new HashMap<String, Tree<?>>();

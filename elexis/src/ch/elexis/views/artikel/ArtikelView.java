@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelView.java 4976 2009-01-18 20:47:36Z rgw_ch $
+ * $Id: ArtikelView.java 5024 2009-01-23 16:36:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -41,11 +41,11 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.CommonViewer;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.IDetailDisplay;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.ExHandler;
