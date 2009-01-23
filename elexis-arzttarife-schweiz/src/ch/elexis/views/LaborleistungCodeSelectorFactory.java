@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,66 +8,68 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungCodeSelectorFactory.java 1625 2007-01-19 20:01:59Z rgw_ch $
+ * $Id: LaborleistungCodeSelectorFactory.java 5009 2009-01-23 11:19:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.actions.AbstractDataLoaderJob;
-import ch.elexis.actions.JobPool;
-import ch.elexis.actions.ListLoader;
+import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.data.LaborLeistung;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
-import ch.elexis.util.LazyContentProvider;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
-	private AbstractDataLoaderJob dataloader;
+	// private AbstractDataLoaderJob dataloader;
 	private ViewerConfigurer vc;
+	private FlatDataLoader fdl;
 	
-	public LaborleistungCodeSelectorFactory() {
-	dataloader=(AbstractDataLoaderJob)JobPool.getJobPool().getJob("Labortarif"); //$NON-NLS-1$
-		
-		if(dataloader==null){
-			dataloader=new ListLoader<LaborLeistung>("Labortarif",new Query<LaborLeistung>(LaborLeistung.class),new String[]{"Code","Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			JobPool.getJobPool().addJob(dataloader);
-		}	
-		JobPool.getJobPool().activate("Labortarif",Job.SHORT); //$NON-NLS-1$
-	}
+	public LaborleistungCodeSelectorFactory(){
+	/*
+	 * dataloader=(AbstractDataLoaderJob)JobPool.getJobPool().getJob("Labortarif"); //$NON-NLS-1$
+	 * 
+	 * if(dataloader==null){ dataloader=new ListLoader<LaborLeistung>("Labortarif",new
+	 * Query<LaborLeistung>(LaborLeistung.class),new String[]{"Code","Text"}); //$NON-NLS-1$
+	 * //$NON-NLS-2$ //$NON-NLS-3$ JobPool.getJobPool().addJob(dataloader); }
+	 * JobPool.getJobPool().activate("Labortarif",Job.SHORT); //$NON-NLS-1$
+	 */
 
+	}
+	
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		vc=new ViewerConfigurer(
-				new LazyContentProvider(cv,dataloader,null),
-				new DefaultLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Code","Text"}), //$NON-NLS-1$ //$NON-NLS-2$
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE,null)
-				);
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		fdl = new FlatDataLoader(cv, new Query<LaborLeistung>(LaborLeistung.class));
+		fdl.setOrderField("Text");
+		vc =
+			new ViewerConfigurer(
+			// new LazyContentProvider(cv,dataloader,null),
+				fdl, new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
+					"Code", "Text"}), //$NON-NLS-1$ //$NON-NLS-2$
+				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		return vc;
 	}
-
+	
 	@Override
-	public Class getElementClass() {
+	public Class<? extends PersistentObject> getElementClass(){
 		return LaborLeistung.class;
 	}
-
+	
 	@Override
-	public void dispose() {
-		
+	public void dispose(){
+
 	}
-
+	
 	@Override
-	public String getCodeSystemName() {
+	public String getCodeSystemName(){
 		return "Analysetarif"; //$NON-NLS-1$
 	}
-
+	
 }
