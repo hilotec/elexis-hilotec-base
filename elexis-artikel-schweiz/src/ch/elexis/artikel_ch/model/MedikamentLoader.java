@@ -16,7 +16,7 @@ package ch.elexis.artikel_ch.model;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer;
 
 public class MedikamentLoader extends FlatDataLoader {
 	

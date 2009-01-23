@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MedicalLoader.java 5005 2009-01-23 05:48:01Z rgw_ch $
+ * $Id: MedicalLoader.java 5014 2009-01-23 16:31:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.model;
@@ -17,7 +17,7 @@ package ch.elexis.artikel_ch.model;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer;
 
 public class MedicalLoader extends FlatDataLoader {
 

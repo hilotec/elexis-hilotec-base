@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentControlFieldProvider.java 5001 2009-01-22 15:50:06Z rgw_ch $
+ *  $Id: MedikamentControlFieldProvider.java 5014 2009-01-23 16:31:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -30,9 +30,9 @@ import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.text.ElexisText;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.IScannerListener;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.views.KonsDetailView;
 
 public class MedikamentControlFieldProvider extends DefaultControlFieldProvider implements

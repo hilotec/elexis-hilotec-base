@@ -18,9 +18,9 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.text.ElexisText;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.IScannerListener;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.views.KonsDetailView;
 
 public class MedicalControlFieldProvider extends DefaultControlFieldProvider implements IScannerListener {

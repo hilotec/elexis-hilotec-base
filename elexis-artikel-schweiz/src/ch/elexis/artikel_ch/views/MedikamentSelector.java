@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentSelector.java 5006 2009-01-23 06:07:17Z rgw_ch $
+ *  $Id: MedikamentSelector.java 5014 2009-01-23 16:31:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -18,9 +18,9 @@ import org.eclipse.swt.SWT;
 import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.artikel_ch.model.MedikamentLoader;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.artikel.ArtikelContextMenu;
 import ch.elexis.views.artikel.ArtikelLabelProvider;
 import ch.elexis.views.codesystems.CodeSelectorFactory;

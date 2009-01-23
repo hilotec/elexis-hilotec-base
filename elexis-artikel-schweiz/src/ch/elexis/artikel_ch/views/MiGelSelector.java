@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelSelector.java 5002 2009-01-22 16:51:53Z rgw_ch $
+ *  $Id: MiGelSelector.java 5014 2009-01-23 16:31:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -23,12 +23,12 @@ import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.artikel_ch.model.MigelLoader;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.DefaultLabelProvider;
-import ch.elexis.util.LazyContentProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.LazyContentProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.artikel.ArtikelContextMenu;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 

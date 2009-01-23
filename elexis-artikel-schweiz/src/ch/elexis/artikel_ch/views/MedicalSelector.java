@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalSelector.java 5001 2009-01-22 15:50:06Z rgw_ch $
+ *  $Id: MedicalSelector.java 5014 2009-01-23 16:31:33Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.views;
 
@@ -22,11 +22,11 @@ import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.artikel_ch.model.MedicalLoader;
 import ch.elexis.data.Query;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.LazyContentProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.LazyContentProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.artikel.ArtikelContextMenu;
 import ch.elexis.views.artikel.ArtikelLabelProvider;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
