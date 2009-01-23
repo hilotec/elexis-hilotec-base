@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: CodeSelectorFactory.java 4356 2008-09-02 16:20:10Z rgw_ch $
+ *    $Id: CodeSelectorFactory.java 5015 2009-01-23 16:31:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -18,12 +18,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.Tree;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.rgw.tools.Tree;
 
 public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelectorFactory {
 

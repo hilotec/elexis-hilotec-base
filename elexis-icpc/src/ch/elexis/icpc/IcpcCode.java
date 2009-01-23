@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 4943 2009-01-13 17:49:14Z rgw_ch $
+ *    $Id: IcpcCode.java 5015 2009-01-23 16:31:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -20,8 +20,8 @@ import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.util.Tree;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.Tree;
 import ch.rgw.tools.VersionInfo;
 
 public class IcpcCode extends PersistentObject implements IDiagnose {

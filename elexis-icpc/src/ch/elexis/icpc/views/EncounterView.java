@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterView.java 4361 2008-09-02 20:31:44Z rgw_ch $
+ *    $Id: EncounterView.java 5015 2009-01-23 16:31:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -25,9 +25,9 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.CodeSelectorFactory;
 import ch.elexis.icpc.Encounter;
-import ch.elexis.util.CommonViewer;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer;
 
 public class EncounterView extends ViewPart implements ActivationListener,
 		SelectionListener {

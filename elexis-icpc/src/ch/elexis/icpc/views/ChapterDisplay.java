@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ChapterDisplay.java 4361 2008-09-02 20:31:44Z rgw_ch $
+ *    $Id: ChapterDisplay.java 5015 2009-01-23 16:31:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
@@ -35,12 +35,12 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.IcpcCode;
 import ch.elexis.preferences.UserSettings2;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.ContentProviderAdapter;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.ContentProviderAdapter;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
 import ch.rgw.tools.StringTool;
 
