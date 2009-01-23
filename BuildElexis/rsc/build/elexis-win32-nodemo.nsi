@@ -6,11 +6,11 @@ Name Elexis
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
 !define PRODUCTNAME "Elexis"
-!define VERSION 1.4.0
+!define VERSION 2.0.0
 !define COMPANY "G. Weirich"
 !define URL http://www.elexis.ch
 
-!define src "$%SOFTWARE%\elexis\deploy_140\${PRODUCTNAME}-${VERSION}"
+!define src "$%SOFTWARE%\elexis\deploy_200\${PRODUCTNAME}-${VERSION}"
 !define ooodir "$%SOFTWARE%\elexis\ooo"
 
 # MUI defines
