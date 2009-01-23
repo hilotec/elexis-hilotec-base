@@ -19,9 +19,9 @@ import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.model.ContentProvider;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.selectors.SelectorPanelProvider;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class MedikamentSelector2 extends CodeSelectorFactory {

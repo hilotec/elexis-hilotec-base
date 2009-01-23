@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ * $Id: ContentProvider.java 5013 2009-01-23 16:31:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.model;
@@ -23,7 +23,7 @@ import ch.elexis.artikel_at.views.MedikamentSelector2;
 import ch.elexis.data.Query;
 import ch.elexis.selectors.SelectorPanel;
 import ch.elexis.selectors.SelectorPanelProvider;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 
 public class ContentProvider implements CommonContentProvider {
 	MedikamentSelector2 msl;
@@ -71,7 +71,7 @@ public class ContentProvider implements CommonContentProvider {
 	
 	public void reorder(String field){
 		msl.reload();
-	
+		
 	}
 	
 	public void selected(){

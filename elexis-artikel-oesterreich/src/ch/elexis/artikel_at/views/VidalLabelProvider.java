@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VidalLabelProvider.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ *  $Id: VidalLabelProvider.java 5013 2009-01-23 16:31:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -22,8 +22,8 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.data.Artikel;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.Log;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class VidalLabelProvider extends DefaultLabelProvider implements ITableColorProvider {
 	public VidalLabelProvider(){
