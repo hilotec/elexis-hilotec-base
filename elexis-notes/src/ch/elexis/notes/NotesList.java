@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesList.java 4807 2008-12-12 08:58:25Z rgw_ch $
+ *  $Id: NotesList.java 5019 2009-01-23 16:33:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.notes;
@@ -32,8 +32,8 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class NotesList extends Composite {
 	TreeViewer tv;
