@@ -5,11 +5,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.LazyTree;
-import ch.elexis.util.LazyTree.LazyTreeListener;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.rgw.tools.LazyTree;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.LazyTree.LazyTreeListener;
 
 public class TarmedCodeProvider implements ITreeContentProvider,
 		CommonContentProvider {

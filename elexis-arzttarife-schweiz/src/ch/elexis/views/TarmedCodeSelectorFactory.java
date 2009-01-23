@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedCodeSelectorFactory.java 3420 2007-12-06 20:36:09Z rgw_ch $
+ * $Id: TarmedCodeSelectorFactory.java 5017 2009-01-23 16:33:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -17,10 +17,10 @@ import org.eclipse.swt.SWT;
 
 import ch.elexis.data.TarmedCodeProvider;
 import ch.elexis.data.TarmedLeistung;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
