@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TreeContentProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: TreeContentProvider.java 5025 2009-01-23 17:14:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -84,7 +84,7 @@ public class TreeContentProvider implements ITreeContentProvider, BackgroundJobL
 				result.setFilter(null);
 			} else {
 				result.setFilter(((DefaultControlFieldProvider) viewer.getConfigurer()
-					.getControlFieldProvider()).createIFilter());
+					.getControlFieldProvider()).createFilter());
 			}
 			Collection c = result.getChildren();
 			return c.toArray();

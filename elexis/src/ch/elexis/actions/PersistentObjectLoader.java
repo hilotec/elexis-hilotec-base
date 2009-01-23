@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5025 2009-01-23 17:14:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -16,12 +16,12 @@ package ch.elexis.actions;
 import java.util.LinkedList;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.rgw.tools.IFilter;
 
 /**
  * This is a replacement for the former BackgroundJob-System. Since it became clear that the
@@ -38,6 +38,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
 	private LinkedList<FilterProvider> filters = new LinkedList<FilterProvider>();
+	IFilter viewerFilter;
 	
 	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		this.cv = cv;
@@ -53,8 +54,8 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	 * user enters text or clicks the headings, a changed() or reorder() event will be fired
 	 */
 	public void startListening(){
+		viewerFilter = cv.getConfigurer().getControlFieldProvider().createFilter();
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
-		
 	}
 	
 	/**
@@ -87,18 +88,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	 *            the new values
 	 */
 	public void changed(String[] fields, String[] values){
-		cv.getViewerWidget().setFilters(new ViewerFilter[] {
-			new ViewerFilter() {
-				
-				@Override
-				public boolean select(Viewer viewer, Object parentElement, Object element){
-					// TODO Auto-generated method stub
-					return false;
-				}
-			}
-		});
 		reload();
-		
 	}
 	
 	/**

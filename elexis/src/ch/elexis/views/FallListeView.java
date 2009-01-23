@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallListeView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: FallListeView.java 5025 2009-01-23 17:14:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -32,7 +32,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -66,6 +65,7 @@ import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ButtonProvider;
+import ch.rgw.tools.IFilter;
 
 /**
  * Eine View, die untereinander Fälle und zugehörigende Behandlungen des aktuell ausgewählten
@@ -136,12 +136,12 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 						if (fallCf.getControlFieldProvider().isEmpty()) {
 							return actPatient.getFaelle();
 						} else {
-							ViewerFilter filter = fallCf.getControlFieldProvider().createFilter();
+							IFilter filter = fallCf.getControlFieldProvider().createFilter();
 							List<String> list = actPatient.getList("Faelle", true);
 							ArrayList<Fall> arr = new ArrayList<Fall>();
 							for (String s : list) {
 								Fall f = Fall.load(s);
-								if (filter.select(null, null, f)) {
+								if (filter.select(f)) {
 									arr.add(f);
 								}
 							}
@@ -209,8 +209,8 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 					if (actFall != null) {
 						Konsultation[] alle = actFall.getBehandlungen(true);
 						/*
-						 * if(behandlungsFilter!=null){ ArrayList<Konsultation> al=new ArrayList<Konsultation>(alle.length);
-						 * for(int i=0;i<alle.length;i++){
+						 * if(behandlungsFilter!=null){ ArrayList<Konsultation> al=new
+						 * ArrayList<Konsultation>(alle.length); for(int i=0;i<alle.length;i++){
 						 * if(behandlungsFilter.select(alle[i])==true){ al.add(alle[i]); } } return
 						 * al.toArray(); }
 						 */

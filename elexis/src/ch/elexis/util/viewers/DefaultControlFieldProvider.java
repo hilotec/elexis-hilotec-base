@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 5025 2009-01-23 17:14:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -262,54 +262,41 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		
 	}
 	
-	public ViewerFilter createFilter(){
-		return new ViewerFilter() {
-			
-			@Override
-			public boolean select(final Viewer viewer, final Object parentElement,
-				final Object element){
-				PersistentObject po = null;
-				if (element instanceof Tree) {
-					po = (PersistentObject) ((Tree) element).contents;
-				} else if (element instanceof PersistentObject) {
-					po = (PersistentObject) element;
-				} else {
-					return false;
-				}
-				if (po.isMatching(dbFields, PersistentObject.MATCH_LIKE, lastFiltered)) {
-					return true;
-				} else {
-					if (parentElement instanceof Tree) {
-						po = (PersistentObject) ((Tree) parentElement).contents;
-					} else if (parentElement instanceof PersistentObject) {
-						po = (PersistentObject) parentElement;
-					} else {
-						return false;
-					}
-					return po.isMatching(dbFields, PersistentObject.MATCH_LIKE, lastFiltered);
-				}
-				
-			}
-		};
-		
+	public IFilter createFilter(){
+		return new DefaultFilter();
 	}
 	
-	public IFilter createIFilter(){
-		return new IFilter() {
-			
-			public boolean select(final Object element){
-				PersistentObject po = null;
+	private class DefaultFilter extends ViewerFilter implements IFilter {
+		
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element){
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		public boolean select(Object element){
+			PersistentObject po = null;
+			if (element instanceof Tree) {
+				po = (PersistentObject) ((Tree) element).contents;
+			} else if (element instanceof PersistentObject) {
+				po = (PersistentObject) element;
+			} else {
+				return false;
+			}
+			if (po.isMatching(dbFields, PersistentObject.MATCH_LIKE, lastFiltered)) {
+				return true;
+			} else {
 				if (element instanceof Tree) {
-					po = (PersistentObject) ((Tree) element).contents;
-				} else if (element instanceof PersistentObject) {
-					po = (PersistentObject) element;
+					Tree p = ((Tree) element).getParent();
+					if (p == null) {
+						return false;
+					}
+					return select(p);
 				} else {
 					return false;
 				}
-				return po.isMatching(dbFields, PersistentObject.MATCH_LIKE, lastFiltered);
 			}
-			
-		};
+		}
 		
 	}
 	

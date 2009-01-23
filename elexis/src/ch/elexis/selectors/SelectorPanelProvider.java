@@ -17,12 +17,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
+import ch.rgw.tools.IFilter;
 
 public class SelectorPanelProvider implements ControlFieldProvider {
 	private LinkedList<ControlFieldListener> listeners = new LinkedList<ControlFieldListener>();
@@ -58,7 +58,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		return panel;
 	}
 	
-	public ViewerFilter createFilter(){
+	public IFilter createFilter(){
 		// TODO Auto-generated method stub
 		return null;
 	}

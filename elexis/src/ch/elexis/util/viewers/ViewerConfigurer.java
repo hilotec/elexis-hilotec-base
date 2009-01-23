@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *    $Id: ViewerConfigurer.java 5025 2009-01-23 17:14:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,6 +28,7 @@ import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.Messages;
+import ch.rgw.tools.IFilter;
 import ch.rgw.tools.Tree;
 
 /**
@@ -115,7 +115,7 @@ public class ViewerConfigurer {
 		public void setQuery(Query<? extends PersistentObject> q);
 		
 		/** Einen Filter erstellen, der den momentanen Bedingungen entspricht */
-		public ViewerFilter createFilter();
+		public IFilter createFilter();
 		
 		/** Eine Meldung absenden, dass der Filter geändert wurde */
 		
@@ -351,7 +351,7 @@ public class ViewerConfigurer {
 			return new Composite(parent, SWT.NONE);
 		}
 		
-		public ViewerFilter createFilter(){
+		public IFilter createFilter(){
 			return null;
 		}
 		
