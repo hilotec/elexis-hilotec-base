@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 4975 2009-01-18 20:46:57Z rgw_ch $
+ *    $Id: Hub.java 5004 2009-01-23 05:18:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.Heartbeat;
-import ch.elexis.actions.JobPool;
+//import ch.elexis.actions.JobPool;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControl;
 import ch.elexis.data.Anwender;
@@ -114,7 +114,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final PreferenceInitializer pin = new PreferenceInitializer();;
 	
 	/** Hintergrundjobs zum Nachladen von Daten */
-	public static final JobPool jobPool = JobPool.getJobPool();;
+	//public static final JobPool jobPool = JobPool.getJobPool();;
 	
 	/** Factory für interne PersistentObjects */
 	public static final PersistentObjectFactory poFactory = new PersistentObjectFactory();
@@ -252,7 +252,7 @@ public class Hub extends AbstractUIPlugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception{
 		heart.stop();
-		JobPool.getJobPool().dispose();
+		//JobPool.getJobPool().dispose();
 		if (Hub.actUser != null) {
 			Anwender.logoff();
 		}
@@ -375,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 4975 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5004 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");

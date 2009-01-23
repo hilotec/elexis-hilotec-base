@@ -8,31 +8,38 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelLoader.java 5004 2009-01-23 05:18:59Z rgw_ch $
+ * $Id: KontaktLoader.java 5004 2009-01-23 05:18:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
+
+import java.util.LinkedList;
 
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import ch.elexis.Desk;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
 
-public class ArtikelLoader implements CommonContentProvider, ILazyContentProvider {
-	
+public class KontaktLoader implements CommonContentProvider, ILazyContentProvider {
 	CommonViewer cv;
 	private static final String LOADMESSAGE = "Lade Daten...";
 	private Object[] data = null;
-	protected Query<?> qbe;
+	protected Query<Kontakt> qbe;
 	protected String orderField;
+	private LinkedList<FilterProvider> filters=new LinkedList<FilterProvider>();
+	public Query<Kontakt> getQuery(){
+		return qbe;
+	}
 	
-	public ArtikelLoader(CommonViewer cv){
+	public KontaktLoader(CommonViewer cv){
 		this.cv = cv;
-		
+		qbe=new Query<Kontakt>(Kontakt.class);
 	}
 	
 	public void startListening(){
@@ -43,24 +50,25 @@ public class ArtikelLoader implements CommonContentProvider, ILazyContentProvide
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
 	
+	public Object[] getElements(Object inputElement){
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public void dispose(){
 		stopListening();
 	}
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
 		reload();
-		
 	}
 	
 	public void changed(String[] fields, String[] values){
 		reload();
-		
 	}
 	
 	public void reorder(String field){
-		orderField = field;
 		reload();
-		
 	}
 	
 	public void selected(){
@@ -71,26 +79,7 @@ public class ArtikelLoader implements CommonContentProvider, ILazyContentProvide
 	public void updateElement(int index){
 		((TableViewer) cv.getViewerWidget()).replace(data[index], index);
 	}
-	
-	public Object[] getElements(Object inputElement){
-		
-		return null;
-	}
-	
-	/*
-	 * public void reload(){ TableViewer tv = (TableViewer) cv.getViewerWidget();
-	 * tv.setItemCount(1); tv.replace(LOADMESSAGE, 0);
-	 * 
-	 * try { PlatformUI.getWorkbench().getProgressService().run(false, false, new
-	 * IRunnableWithProgress() {
-	 * 
-	 * public void run(IProgressMonitor monitor) throws InvocationTargetException,
-	 * InterruptedException{ monitor.beginTask(LOADMESSAGE, IProgressMonitor.UNKNOWN); qbe.clear();
-	 * cv.getConfigurer().getControlFieldProvider().setQuery(qbe); if (orderField != null) {
-	 * qbe.orderBy(false, orderField); } data = qbe.execute().toArray(); monitor.done(); } }); }
-	 * catch (Exception e) { ExHandler.handle(e); } tv.remove(LOADMESSAGE);
-	 * tv.setItemCount(data.length); }
-	 */
+
 	public void reload(){
 		Desk.syncExec(new Runnable(){
 
@@ -101,6 +90,9 @@ public class ArtikelLoader implements CommonContentProvider, ILazyContentProvide
 
 				qbe.clear();
 				cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
+				for(FilterProvider fp:filters){
+					fp.applyFilter(qbe);
+				}
 				if (orderField != null) {
 					qbe.orderBy(false, orderField);
 				}
@@ -110,5 +102,12 @@ public class ArtikelLoader implements CommonContentProvider, ILazyContentProvide
 				tv.setItemCount(data.length);
 				
 			}});
+	}
+	public void addFilterProvider(FilterProvider fp){
+		filters.add(fp);
+	}
+	
+	public interface FilterProvider{
+	    public void applyFilter(Query<? extends PersistentObject> qbe);
 	}
 }

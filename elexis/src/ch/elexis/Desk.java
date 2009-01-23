@@ -166,7 +166,7 @@ public class Desk implements IApplication {
 				IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 			
 			int returnCode =
-				PlatformUI.createAndRunWorkbench(theDisplay, new ApplicationWorkbenchAdvisor());
+				PlatformUI.createAndRunWorkbench(getDisplay(), new ApplicationWorkbenchAdvisor());
 			// Die Funktion kehrt erst beim Programmende zurück.
 			Hub.heart.suspend();
 			System.out.println(Messages.Desk_37);
