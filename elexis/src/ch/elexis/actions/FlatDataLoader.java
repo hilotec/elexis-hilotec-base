@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5008 2009-01-23 11:19:49Z rgw_ch $
+ * $Id: FlatDataLoader.java 5010 2009-01-23 14:40:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -47,6 +47,7 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 				
 				qbe.clear();
 				cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
+				applyFilters();
 				if (orderField != null) {
 					qbe.orderBy(false, orderField);
 				}

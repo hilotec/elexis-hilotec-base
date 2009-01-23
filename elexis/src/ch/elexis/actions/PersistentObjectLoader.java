@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5008 2009-01-23 11:19:49Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5010 2009-01-23 14:40:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -55,6 +55,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
 		
 	}
+	
 	/**
 	 * stop listening the selector fields
 	 */
@@ -78,8 +79,11 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	
 	/**
 	 * One or more of the ControlField's selectors habe been changed
-	 * @param fields the field names
-	 * @param values the new values
+	 * 
+	 * @param fields
+	 *            the field names
+	 * @param values
+	 *            the new values
 	 */
 	public void changed(String[] fields, String[] values){
 		reload();
@@ -88,7 +92,9 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	
 	/**
 	 * The user request reordering of the table
-	 * @param field the field name after which the  table should e reordered
+	 * 
+	 * @param field
+	 *            the field name after which the table should e reordered
 	 */
 	public void reorder(String field){
 		reload();
@@ -103,11 +109,17 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 		filters.add(fp);
 	}
 	
+	public void applyFilters(){
+		for (FilterProvider fp : filters) {
+			fp.applyFilter(qbe);
+		}
+	}
+	
 	/**
-	 * a FilterProvider can modify the Query of this Loader. It will be called
-	 * before each reload.
+	 * a FilterProvider can modify the Query of this Loader. It will be called before each reload.
+	 * 
 	 * @author Gerry
-	 *
+	 * 
 	 */
 	public interface FilterProvider {
 		public void applyFilter(Query<? extends PersistentObject> qbe);

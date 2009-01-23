@@ -8,44 +8,73 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5008 2009-01-23 11:19:49Z rgw_ch $
+ * $Id: TreeDataLoader.java 5010 2009-01-23 14:40:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
+import ch.elexis.util.Tree;
 
 public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeContentProvider {
 	String parentColumn;
+	Tree<PersistentObject> root;
 	
 	public TreeDataLoader(CommonViewer cv, Query<? extends PersistentObject> qbe, String parentField){
 		super(cv, qbe);
 		parentColumn = parentField;
+		root = new Tree<PersistentObject>(null, null);
 	}
 	
 	@Override
 	protected void reload(){
-	// TODO Auto-generated method stub
-	
+		qbe.clear();
+		qbe.add(parentColumn, "=", "NIL");
+		applyFilters();
+		for (PersistentObject po : qbe.execute()) {
+			new Tree<PersistentObject>(root, po);
+		}
 	}
 	
 	public Object getParent(Object element){
-		// TODO Auto-generated method stub
+		if (element instanceof Tree) {
+			return ((Tree) element).getParent();
+		}
 		return null;
 	}
 	
 	public void updateChildCount(Object element, int currentChildCount){
-	// TODO Auto-generated method stub
-	
+		int num = 0;
+		if (element instanceof Tree) {
+			Tree<PersistentObject> t = (Tree<PersistentObject>) element;
+			if (!t.hasChildren()) {
+				qbe.clear();
+				qbe.add(parentColumn, "=", t.contents.getId());
+				applyFilters();
+				for (PersistentObject po : qbe.execute()) {
+					new Tree<PersistentObject>(t, po);
+				}
+			}
+			num = t.getChildren().size();
+		} else {
+			num = root.getChildren().size();
+		}
+		((TreeViewer) cv.getViewerWidget()).setChildCount(element, num);
 	}
 	
 	public void updateElement(Object parent, int index){
-	// TODO Auto-generated method stub
-	
+		Tree<PersistentObject> t;
+		if (parent instanceof Tree) {
+			t = (Tree<PersistentObject>) parent;
+		} else {
+			t = root;
+		}
+		
 	}
 	
 }
