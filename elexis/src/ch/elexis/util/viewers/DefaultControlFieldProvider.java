@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 5026 2009-01-23 17:32:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -270,8 +270,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element){
-			// TODO Auto-generated method stub
-			return false;
+			return select(element);
 		}
 		
 		public boolean select(Object element){

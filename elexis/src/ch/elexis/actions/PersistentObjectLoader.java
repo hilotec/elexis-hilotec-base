@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5026 2009-01-23 17:32:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -37,8 +37,8 @@ import ch.rgw.tools.IFilter;
 public abstract class PersistentObjectLoader implements CommonContentProvider {
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
-	private LinkedList<FilterProvider> filters = new LinkedList<FilterProvider>();
-	IFilter viewerFilter;
+	private LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
+	protected IFilter viewerFilter;
 	
 	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		this.cv = cv;
@@ -89,6 +89,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	 */
 	public void changed(String[] fields, String[] values){
 		reload();
+		// applyViewerFilter();
 	}
 	
 	/**
@@ -106,13 +107,23 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 
 	}
 	
-	public void addFilterProvider(FilterProvider fp){
-		filters.add(fp);
+	public void addQueryFilter(QueryFilter fp){
+		synchronized (queryFilters) {
+			queryFilters.add(fp);
+		}
 	}
 	
-	public void applyFilters(){
-		for (FilterProvider fp : filters) {
-			fp.applyFilter(qbe);
+	public void removeQueryFilter(QueryFilter fp){
+		synchronized (queryFilters) {
+			queryFilters.remove(fp);
+		}
+	}
+	
+	public void applyQueryFilters(){
+		synchronized (queryFilters) {
+			for (QueryFilter fp : queryFilters) {
+				fp.apply(qbe);
+			}
 		}
 	}
 	
@@ -122,9 +133,11 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	 * @author Gerry
 	 * 
 	 */
-	public interface FilterProvider {
-		public void applyFilter(Query<? extends PersistentObject> qbe);
+	public interface QueryFilter {
+		public void apply(Query<? extends PersistentObject> qbe);
 	}
 	
 	protected abstract void reload();
+	
+	protected abstract void applyViewerFilter();
 }

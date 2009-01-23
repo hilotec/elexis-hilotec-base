@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: TreeDataLoader.java 5026 2009-01-23 17:32:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -35,7 +35,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 	protected void reload(){
 		qbe.clear();
 		qbe.add(parentColumn, "=", "NIL");
-		applyFilters();
+		applyQueryFilters();
 		for (PersistentObject po : qbe.execute()) {
 			new Tree<PersistentObject>(root, po);
 		}
@@ -55,7 +55,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 			if (!t.hasChildren()) {
 				qbe.clear();
 				qbe.add(parentColumn, "=", t.contents.getId());
-				applyFilters();
+				applyQueryFilters();
 				for (PersistentObject po : qbe.execute()) {
 					new Tree<PersistentObject>(t, po);
 				}
@@ -75,6 +75,12 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 			t = root;
 		}
 		
+	}
+	
+	@Override
+	protected void applyViewerFilter(){
+	// TODO Auto-generated method stub
+	
 	}
 	
 }

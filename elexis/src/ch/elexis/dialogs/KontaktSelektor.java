@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: KontaktSelektor.java 5026 2009-01-23 17:32:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.Desk;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.PersistentObjectLoader.FilterProvider;
+import ch.elexis.actions.PersistentObjectLoader.QueryFilter;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
@@ -327,7 +327,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		vc.getContentProvider().startListening();
 		cv.addDoubleClickListener(this);
 		// cv.getViewerWidget().addFilter(filter);
-		kl.addFilterProvider(fp);
+		kl.addQueryFilter(fp);
 		
 		if (showBezugsKontakt) {
 			cv.getViewerWidget().addSelectionChangedListener(new ISelectionChangedListener() {
@@ -439,7 +439,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		}
 	}
 	
-	static class KontaktFilter implements FilterProvider {
+	static class KontaktFilter implements QueryFilter {
 		int type;
 		
 		KontaktFilter(int t){
@@ -450,7 +450,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			type = t;
 		}
 		
-		public void applyFilter(Query<? extends PersistentObject> qbe){
+		public void apply(Query<? extends PersistentObject> qbe){
 			if (type == 1) {
 				qbe.add("istPerson", "=", "1");
 			} else if (type == 2) {
