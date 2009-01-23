@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SubstanzSelektor.java 3128 2007-09-09 17:47:39Z rgw_ch $
+ * $Id: SubstanzSelektor.java 5016 2009-01-23 16:32:22Z rgw_ch $
  *****************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -20,12 +20,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.medikamente.bag.data.Substance;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultContentProvider;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.DefaultLabelProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultContentProvider;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 
 public class SubstanzSelektor extends Dialog {
 	CommonViewer cv;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PharmakaView.java 4775 2008-12-08 13:38:09Z rgw_ch $
+ * $Id: PharmakaView.java 5016 2009-01-23 16:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -22,13 +22,13 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.medikamente.bag.data.Substance;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultContentProvider;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.DefaultLabelProvider;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultContentProvider;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 
 public class PharmakaView extends ViewPart {
 	FormToolkit tk = Desk.getToolkit();

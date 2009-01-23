@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BAGMediLabelProvider.java 4915 2009-01-06 14:38:27Z rgw_ch $
+ * $Id: BAGMediLabelProvider.java 5016 2009-01-23 16:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -25,7 +25,7 @@ import ch.elexis.data.Artikel;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Substance;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.elexis.util.DefaultLabelProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.rgw.tools.StringTool;
 
 public class BAGMediLabelProvider extends DefaultLabelProvider implements

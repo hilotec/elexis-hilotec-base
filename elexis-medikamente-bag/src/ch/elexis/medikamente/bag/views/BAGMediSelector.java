@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMediSelector.java 3118 2007-09-08 23:45:16Z rgw_ch $
+ *  $Id: BAGMediSelector.java 5016 2009-01-23 16:32:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.views;
 
@@ -18,9 +18,9 @@ import org.eclipse.swt.SWT;
 
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.artikel.ArtikelContextMenu;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 

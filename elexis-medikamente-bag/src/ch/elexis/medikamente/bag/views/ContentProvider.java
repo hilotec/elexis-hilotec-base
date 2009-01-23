@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 3185 2007-09-22 18:24:59Z rgw_ch $
+ * $Id: ContentProvider.java 5016 2009-01-23 16:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.Viewer;
 import ch.elexis.data.Query;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Substance;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 
 public class ContentProvider implements CommonContentProvider {
 	CommonViewer cv;

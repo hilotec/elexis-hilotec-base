@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ControlFieldProvider.java 4805 2008-12-11 13:58:32Z rgw_ch $
+ * $Id: ControlFieldProvider.java 5016 2009-01-23 16:32:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
@@ -32,10 +32,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ch.elexis.Desk;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
 import ch.elexis.text.ElexisText;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.Messages;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
 
 public class ControlFieldProvider extends DefaultControlFieldProvider {
 	Text tMedi, tSubst;
