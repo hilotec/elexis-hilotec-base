@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelLoader.java 5004 2009-01-23 05:18:59Z rgw_ch $
+ * $Id: FlatDataLoader.java 5008 2009-01-23 11:19:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -23,8 +23,9 @@ import ch.elexis.util.CommonViewer;
 
 /**
  * A PersistentObjectLoader for flat tables
+ * 
  * @author Gerry
- *
+ * 
  */
 public class FlatDataLoader extends PersistentObjectLoader implements ILazyContentProvider {
 	private static final String LOADMESSAGE = "Lade Daten...";
@@ -53,15 +54,18 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 				data = qbe.execute().toArray();
 				tv.remove(LOADMESSAGE);
 				tv.setItemCount(data.length);
-				tv.refresh(true);
+				// tv.refresh(true);
 			}
 		});
 		
 	}
 	
 	public void updateElement(int index){
-	// TODO Auto-generated method stub
-	
+		TableViewer tv = (TableViewer) cv.getViewerWidget();
+		tv.replace(data[index], index);
 	}
 	
+	public void setOrderField(String name){
+		orderField = name;
+	}
 }

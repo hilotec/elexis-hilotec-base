@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelLoader.java 5004 2009-01-23 05:18:59Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5008 2009-01-23 11:19:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
