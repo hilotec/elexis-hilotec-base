@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ICDCodeSelectorFactory.java 2742 2007-07-07 15:48:55Z rgw_ch $
+ *    $Id: ICDCodeSelectorFactory.java 5018 2009-01-23 16:33:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -25,6 +25,11 @@ import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.ICD10;
 import ch.elexis.data.Query;
 import ch.elexis.util.*;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.TreeContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class ICDCodeSelectorFactory extends CodeSelectorFactory {

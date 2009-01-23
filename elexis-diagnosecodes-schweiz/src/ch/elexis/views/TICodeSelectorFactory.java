@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: TICodeSelectorFactory.java 2209 2007-04-13 09:30:35Z danlutz $
+ *    $Id: TICodeSelectorFactory.java 5018 2009-01-23 16:33:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -20,11 +20,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 import ch.elexis.data.TICode;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.SimpleWidgetProvider;
-import ch.elexis.util.ViewerConfigurer;
-import ch.elexis.util.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class TICodeSelectorFactory extends CodeSelectorFactory{
