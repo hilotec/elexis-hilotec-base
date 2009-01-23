@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id: ESRView2.java 4970 2009-01-18 16:53:37Z rgw_ch $
+ *  $Id: ESRView2.java 5020 2009-01-23 16:33:54Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -45,12 +45,12 @@ import ch.elexis.admin.ACE;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.LazyContentProvider;
-import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
-import ch.elexis.util.ViewerConfigurer;
+import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.LazyContentProvider;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
