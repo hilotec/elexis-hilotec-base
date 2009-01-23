@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 5004 2009-01-23 05:18:59Z rgw_ch $
+ * $Id: KontakteView.java 5005 2009-01-23 05:48:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -23,17 +23,17 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.KontaktLoader;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
+import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 import ch.elexis.util.DefaultControlFieldProvider;
 import ch.elexis.util.DefaultLabelProvider;
-import ch.elexis.util.LazyContentProvider;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.ViewerConfigurer;
@@ -59,8 +59,9 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			new ViewerConfigurer(
 				// new ViewerConfigurer.DefaultContentProvider(cv, Anschrift.class),
 				// new LazyContentProvider(cv,dataloader, AccessControlDefaults.KONTAKT_DISPLAY),
-				new KontaktLoader(cv), new DefaultLabelProvider(), new DefaultControlFieldProvider(
-					cv, fields), new ViewerConfigurer.DefaultButtonProvider(cv, Kontakt.class),
+				new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class)),
+				new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, fields),
+				new ViewerConfigurer.DefaultButtonProvider(cv, Kontakt.class),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		menu = new ViewMenus(getViewSite());
@@ -101,7 +102,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		menu.createMenu(GlobalActions.printKontaktEtikette);
 		menu.createToolbar(GlobalActions.printKontaktEtikette);
 		// cv.getViewerWidget().addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
-		((KontaktLoader) vc.getContentProvider()).startListening();
+		vc.getContentProvider().startListening();
 		vc.getControlFieldProvider().addChangeListener(this);
 		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
 			public void doubleClicked(PersistentObject obj, CommonViewer cv){
@@ -118,7 +119,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	}
 	
 	public void dispose(){
-		((KontaktLoader) vc.getContentProvider()).stopListening();
+		vc.getContentProvider().stopListening();
 		vc.getControlFieldProvider().removeChangeListener(this);
 		super.dispose();
 	}

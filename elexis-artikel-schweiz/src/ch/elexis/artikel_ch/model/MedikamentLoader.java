@@ -13,16 +13,15 @@
 
 package ch.elexis.artikel_ch.model;
 
-import ch.elexis.actions.ArtikelLoader;
+import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
 
-public class MedikamentLoader extends ArtikelLoader {
+public class MedikamentLoader extends FlatDataLoader {
 	
 	public MedikamentLoader(CommonViewer cv){
-		super(cv);
-		qbe = new Query<Medikament>(Medikament.class);
+		super(cv,new Query<Medikament>(Medikament.class));
 		orderField=Medikament.NAME;
 	}
 }

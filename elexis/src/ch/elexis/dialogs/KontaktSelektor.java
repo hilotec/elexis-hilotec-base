@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 5004 2009-01-23 05:18:59Z rgw_ch $
+ *  $Id: KontaktSelektor.java 5005 2009-01-23 05:48:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Desk;
+import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.KontaktLoader;
-import ch.elexis.actions.KontaktLoader.FilterProvider;
+import ch.elexis.actions.PersistentObjectLoader.FilterProvider;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
@@ -91,7 +91,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	String extraText = null;
 	private ListViewer bezugsKontaktViewer = null;
 	private boolean isSelecting = false;
-	private KontaktLoader kl;
+	private FlatDataLoader kl;
 	
 	@SuppressWarnings("unchecked")
 	public KontaktSelektor(Shell parentShell, Class which, String t, String m){
@@ -108,7 +108,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		 * Hub.jobPool.addJob(dataloader); dataloader.setPriority(Job.SHORT);
 		 * dataloader.setUser(true); dataloader.schedule(); }
 		 */
-		kl = new KontaktLoader(cv);
+		kl = new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class));
 		fp = new KontaktFilter(0);
 	}
 	
@@ -324,7 +324,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		cv.getViewerWidget().getControl().setLayoutData(gd);
 		setTitle(title);
 		setMessage(message);
-		((KontaktLoader) vc.getContentProvider()).startListening();
+		vc.getContentProvider().startListening();
 		cv.addDoubleClickListener(this);
 		// cv.getViewerWidget().addFilter(filter);
 		kl.addFilterProvider(fp);
@@ -370,7 +370,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	@Override
 	protected void cancelPressed(){
 		selection = null;
-		((KontaktLoader) vc.getContentProvider()).stopListening();
+		vc.getContentProvider().stopListening();
 		super.cancelPressed();
 	}
 	
@@ -414,7 +414,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 				}
 			}
 		}
-		((KontaktLoader) vc.getContentProvider()).stopListening();
+		vc.getContentProvider().stopListening();
 		cv.removeDoubleClickListener(this);
 		super.okPressed();
 	}
