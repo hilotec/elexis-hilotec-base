@@ -53,7 +53,7 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 				data = qbe.execute().toArray();
 				tv.remove(LOADMESSAGE);
 				tv.setItemCount(data.length);
-				
+				tv.refresh(true);
 			}
 		});
 		

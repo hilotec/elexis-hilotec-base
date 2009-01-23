@@ -8,24 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentSelector.java 5001 2009-01-22 15:50:06Z rgw_ch $
+ *  $Id: MedikamentSelector.java 5006 2009-01-23 06:07:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.actions.AbstractDataLoaderJob;
-import ch.elexis.actions.JobPool;
-import ch.elexis.actions.ListLoader;
 import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.artikel_ch.model.MedikamentLoader;
-import ch.elexis.data.Query;
 import ch.elexis.util.CommonViewer;
-import ch.elexis.util.DefaultControlFieldProvider;
-import ch.elexis.util.LazyContentProvider;
 import ch.elexis.util.SimpleWidgetProvider;
 import ch.elexis.util.ViewerConfigurer;
 import ch.elexis.views.artikel.ArtikelContextMenu;
@@ -34,44 +27,41 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class MedikamentSelector extends CodeSelectorFactory {
 	/*
-	AbstractDataLoaderJob dataloader;
-	
-	public MedikamentSelector() {
-		dataloader=(AbstractDataLoaderJob) JobPool.getJobPool().getJob("Medikamente");
-		if(dataloader==null){
-			dataloader=new ListLoader("Medikamente",new Query<Medikament>(Medikament.class),new String[]{"Name"});
-			JobPool.getJobPool().addJob(dataloader);
-		}
-		JobPool.getJobPool().activate("Medikamente",Job.SHORT);
-	}
+	 * AbstractDataLoaderJob dataloader;
+	 * 
+	 * public MedikamentSelector() { dataloader=(AbstractDataLoaderJob)
+	 * JobPool.getJobPool().getJob("Medikamente"); if(dataloader==null){ dataloader=new
+	 * ListLoader("Medikamente",new Query<Medikament>(Medikament.class),new String[]{"Name"});
+	 * JobPool.getJobPool().addJob(dataloader); }
+	 * JobPool.getJobPool().activate("Medikamente",Job.SHORT); }
 	 */
 	// MedikamentLoader ml;
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		new ArtikelContextMenu((Medikament)new ArtikelFactory().createTemplate(Medikament.class),cv);
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		new ArtikelContextMenu((Medikament) new ArtikelFactory().createTemplate(Medikament.class),
+			cv);
 		return new ViewerConfigurer(
-				//new LazyContentProvider(cv,dataloader,null),
-			new MedikamentLoader(cv),
-				new ArtikelLabelProvider(),
-				new MedikamentControlFieldProvider(cv, new String[]{"Name"}),
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE,null)
-		);
+			// new LazyContentProvider(cv,dataloader,null),
+			new MedikamentLoader(cv), new ArtikelLabelProvider(),
+			new MedikamentControlFieldProvider(cv, new String[] {
+				"Name"
+			}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+				SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 	}
-
+	
 	@Override
-	public Class getElementClass() {
+	public Class getElementClass(){
 		return Medikament.class;
 	}
-
+	
 	@Override
-	public void dispose() {
-		
+	public void dispose(){
+
 	}
-
+	
 	@Override
-	public String getCodeSystemName() {
+	public String getCodeSystemName(){
 		return "Medikamente";
 	}
-
+	
 }

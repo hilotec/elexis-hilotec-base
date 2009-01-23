@@ -47,11 +47,17 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 		return qbe;
 	}
 	
+	/**
+	 * start listening the selector fields of the ControlField of the loader's CommonViewer. If the
+	 * user enters text or clicks the headings, a changed() or reorder() event will be fired
+	 */
 	public void startListening(){
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
 		
 	}
-	
+	/**
+	 * stop listening the selector fields
+	 */
 	public void stopListening(){
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
@@ -70,11 +76,20 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 		
 	}
 	
+	/**
+	 * One or more of the ControlField's selectors habe been changed
+	 * @param fields the field names
+	 * @param values the new values
+	 */
 	public void changed(String[] fields, String[] values){
 		reload();
 		
 	}
 	
+	/**
+	 * The user request reordering of the table
+	 * @param field the field name after which the  table should e reordered
+	 */
 	public void reorder(String field){
 		reload();
 		
@@ -88,6 +103,12 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 		filters.add(fp);
 	}
 	
+	/**
+	 * a FilterProvider can modify the Query of this Loader. It will be called
+	 * before each reload.
+	 * @author Gerry
+	 *
+	 */
 	public interface FilterProvider {
 		public void applyFilter(Query<? extends PersistentObject> qbe);
 	}
