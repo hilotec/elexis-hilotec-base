@@ -8,15 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5027 2009-01-24 06:23:53Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5028 2009-01-24 08:22:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
 import java.util.LinkedList;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.Viewer;
 
 import ch.elexis.actions.DelayableJob.IWorker;
@@ -24,7 +22,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
-import ch.rgw.tools.IFilter;
 
 /**
  * This is a replacement for the former BackgroundJob-System. Since it became clear that the
@@ -41,7 +38,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
 	private LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
-	protected IFilter viewerFilter;
+	// protected IFilter viewerFilter;
 	protected DelayableJob dj;
 	
 	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
@@ -59,7 +56,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	 * user enters text or clicks the headings, a changed() or reorder() event will be fired
 	 */
 	public void startListening(){
-		viewerFilter = cv.getConfigurer().getControlFieldProvider().createFilter();
+		// viewerFilter = cv.getConfigurer().getControlFieldProvider().createFilter();
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
 	}
 	
@@ -80,7 +77,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	}
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-		dj.launch(0L);
+		dj.launch(0);
 		
 	}
 	
@@ -94,7 +91,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	 *            the new values
 	 */
 	public void changed(String[] fields, String[] values){
-		dj.launch(200L);
+		dj.launch(DelayableJob.DELAY_ADAPTIVE);
 	}
 	
 	/**
@@ -104,7 +101,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	 *            the field name after which the table should e reordered
 	 */
 	public void reorder(String field){
-		dj.launch(20L);
+		dj.launch(20);
 		
 	}
 	
@@ -142,5 +139,5 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 		public void apply(Query<? extends PersistentObject> qbe);
 	}
 	
-	protected abstract void applyViewerFilter();
+	// protected abstract void applyViewerFilter();
 }

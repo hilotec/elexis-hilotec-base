@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5027 2009-01-24 06:23:53Z rgw_ch $
+ * $Id: FlatDataLoader.java 5028 2009-01-24 08:22:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -88,16 +87,12 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		return Status.OK_STATUS;
 	}
 	
-	public void applyViewerFilter(){
-		LinkedList<PersistentObject> dest = new LinkedList<PersistentObject>();
-		for (PersistentObject po : raw) {
-			if (viewerFilter.select(po)) {
-				dest.add(po);
-			}
-		}
-		filtered = dest;
-	}
-	
+	/*
+	 * public void applyViewerFilter(){ LinkedList<PersistentObject> dest = new
+	 * LinkedList<PersistentObject>(); for (PersistentObject po : raw) { if
+	 * (viewerFilter.select(po)) { dest.add(po); } } filtered = dest; }
+	 */
+
 	public void updateElement(int index){
 		TableViewer tv = (TableViewer) cv.getViewerWidget();
 		tv.replace(filtered.get(index), index);

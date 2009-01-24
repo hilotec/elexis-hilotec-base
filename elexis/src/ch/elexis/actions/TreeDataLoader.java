@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5027 2009-01-24 06:23:53Z rgw_ch $
+ * $Id: TreeDataLoader.java 5028 2009-01-24 08:22:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -35,16 +35,10 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 	}
 	
 	/*
-	@Override
-	protected void reload(){
-		qbe.clear();
-		qbe.add(parentColumn, "=", "NIL");
-		applyQueryFilters();
-		for (PersistentObject po : qbe.execute()) {
-			new Tree<PersistentObject>(root, po);
-		}
-	}
-	*/
+	 * @Override protected void reload(){ qbe.clear(); qbe.add(parentColumn, "=", "NIL");
+	 * applyQueryFilters(); for (PersistentObject po : qbe.execute()) { new
+	 * Tree<PersistentObject>(root, po); } }
+	 */
 	public IStatus work(IProgressMonitor monitor){
 		monitor.beginTask("Lade Daten", IProgressMonitor.UNKNOWN);
 		qbe.clear();
@@ -52,7 +46,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		applyQueryFilters();
 		for (PersistentObject po : qbe.execute()) {
 			new Tree<PersistentObject>(root, po);
-			if(monitor.isCanceled()){
+			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 			monitor.worked(1);
@@ -60,13 +54,13 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		monitor.done();
 		return Status.OK_STATUS;
 	}
+	
 	public Object getParent(Object element){
 		if (element instanceof Tree) {
 			return ((Tree) element).getParent();
 		}
 		return null;
 	}
-	
 	
 	public void updateChildCount(Object element, int currentChildCount){
 		int num = 0;
@@ -95,12 +89,6 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 			t = root;
 		}
 		
-	}
-	
-	@Override
-	protected void applyViewerFilter(){
-	// TODO Auto-generated method stub
-	
 	}
 	
 }
