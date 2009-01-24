@@ -8,15 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5026 2009-01-23 17:32:50Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5027 2009-01-24 06:23:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
 import java.util.LinkedList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.Viewer;
 
+import ch.elexis.actions.DelayableJob.IWorker;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
@@ -34,15 +37,17 @@ import ch.rgw.tools.IFilter;
  * @author Gerry
  * 
  */
-public abstract class PersistentObjectLoader implements CommonContentProvider {
+public abstract class PersistentObjectLoader implements CommonContentProvider, IWorker {
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
 	private LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
 	protected IFilter viewerFilter;
+	protected DelayableJob dj;
 	
 	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		this.cv = cv;
 		this.qbe = qbe;
+		dj = new DelayableJob("Lade Daten", this);
 	}
 	
 	public Query<? extends PersistentObject> getQuery(){
@@ -75,12 +80,13 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	}
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-		reload();
+		dj.launch(0L);
 		
 	}
 	
 	/**
-	 * One or more of the ControlField's selectors habe been changed
+	 * One or more of the ControlField's selectors habe been changed. We'll wait a moment for more
+	 * changes before we launch the loader.
 	 * 
 	 * @param fields
 	 *            the field names
@@ -88,8 +94,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	 *            the new values
 	 */
 	public void changed(String[] fields, String[] values){
-		reload();
-		// applyViewerFilter();
+		dj.launch(200L);
 	}
 	
 	/**
@@ -99,7 +104,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	 *            the field name after which the table should e reordered
 	 */
 	public void reorder(String field){
-		reload();
+		dj.launch(20L);
 		
 	}
 	
@@ -136,8 +141,6 @@ public abstract class PersistentObjectLoader implements CommonContentProvider {
 	public interface QueryFilter {
 		public void apply(Query<? extends PersistentObject> qbe);
 	}
-	
-	protected abstract void reload();
 	
 	protected abstract void applyViewerFilter();
 }

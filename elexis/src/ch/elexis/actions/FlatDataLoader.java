@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5026 2009-01-23 17:32:50Z rgw_ch $
+ * $Id: FlatDataLoader.java 5027 2009-01-24 06:23:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -16,6 +16,9 @@ package ch.elexis.actions;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -40,29 +43,49 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		super(cv, qbe);
 	}
 	
-	@Override
-	protected void reload(){
-		Desk.syncExec(new Runnable() {
-			
+	/*
+	 * protected void reload(){ Desk.syncExec(new Runnable() {
+	 * 
+	 * public void run(){ TableViewer tv = (TableViewer) cv.getViewerWidget(); tv.setItemCount(1);
+	 * tv.replace(LOADMESSAGE, 0);
+	 * 
+	 * qbe.clear(); cv.getConfigurer().getControlFieldProvider().setQuery(qbe); applyQueryFilters();
+	 * if (orderField != null) { qbe.orderBy(false, orderField); }
+	 * 
+	 * raw = qbe.execute(); filtered = raw; tv.remove(LOADMESSAGE); tv.setItemCount(raw.size()); }
+	 * });
+	 * 
+	 * }
+	 */
+
+	public IStatus work(IProgressMonitor monitor){
+		final TableViewer tv = (TableViewer) cv.getViewerWidget();
+		// tv.setItemCount(1);
+		// tv.replace(LOADMESSAGE, 0);
+		
+		qbe.clear();
+		cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
+		applyQueryFilters();
+		if (orderField != null) {
+			qbe.orderBy(false, orderField);
+		}
+		if (monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
+		raw = qbe.execute();
+		if (monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
+		Desk.asyncExec(new Runnable() {
 			public void run(){
-				TableViewer tv = (TableViewer) cv.getViewerWidget();
-				tv.setItemCount(1);
-				tv.replace(LOADMESSAGE, 0);
-				
-				qbe.clear();
-				cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
-				applyQueryFilters();
-				if (orderField != null) {
-					qbe.orderBy(false, orderField);
-				}
-				
-				raw = qbe.execute();
+				tv.setItemCount(0);
 				filtered = raw;
-				tv.remove(LOADMESSAGE);
+				// tv.remove(LOADMESSAGE);
 				tv.setItemCount(raw.size());
 			}
 		});
 		
+		return Status.OK_STATUS;
 	}
 	
 	public void applyViewerFilter(){
