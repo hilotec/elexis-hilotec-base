@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 4965 2009-01-16 23:38:14Z rgw_ch $
+ * $Id: SelectorPanel.java 5029 2009-01-24 16:34:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -118,5 +118,16 @@ public class SelectorPanel extends Composite implements SelectorListener {
 
 	public void removeSelectorListener(SelectorListener l) {
 		listeners.remove(l);
+	}
+
+	public void titleClicked(final SelectorField field){
+		if(!bCeaseFire){
+			bCeaseFire=true;
+			for (SelectorListener lis : listeners) {
+				lis.titleClicked(field);
+			}
+			bCeaseFire=true;
+		}
+		
 	}
 }

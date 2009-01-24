@@ -15,4 +15,5 @@ package ch.elexis.selectors;
 
 public interface SelectorListener {
 	public void selectionChanged(SelectorField field);
+	public void titleClicked(SelectorField field);
 }

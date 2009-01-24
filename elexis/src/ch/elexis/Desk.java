@@ -13,6 +13,7 @@
 
 package ch.elexis;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.equinox.app.IApplication;
@@ -23,8 +24,10 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -48,6 +51,7 @@ public class Desk implements IApplication {
 	
 	private static ImageRegistry theImageRegistry = null;
 	private static ColorRegistry theColorRegistry = null;
+	private static HashMap<String, Cursor> cursors = null;
 	
 	public static final String COL_RED = "rot";
 	public static final String COL_GREEN = "gruen";
@@ -137,9 +141,11 @@ public class Desk implements IApplication {
 	/** Arrow right */
 	public static final String IMG_NEXT = "arrow_next"; // $NON_NLS-1$
 	/** Arrow left */
-	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$	
+	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$
 	/** clear input field */
-	public static final String IMG_CLEAR = "cross_small";	// $NON_NLS-1$
+	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$
+	
+	public static final String CUR_HYPERLINK = "cursor_hyperlink";
 	
 	public Desk(){
 		getDisplay();
@@ -198,8 +204,9 @@ public class Desk implements IApplication {
 	}
 	
 	/**
-	 * get the base directory for images. This is dependend from the plaf chosen. If no plaf was chosen,
-	 * "modern" will be assumed.
+	 * get the base directory for images. This is dependend from the plaf chosen. If no plaf was
+	 * chosen, "modern" will be assumed.
+	 * 
 	 * @return a string denoting the directory with the images for the current plaf
 	 */
 	static String getImageBase(){
@@ -290,10 +297,12 @@ public class Desk implements IApplication {
 	}
 	
 	/**
-	 * Return an image with a specified name. 
+	 * Return an image with a specified name.
+	 * 
 	 * @see getImageDescriptor(String)
-	 * @param name the name of the image to retrieve
-	 * @return the Image or null if no such image was found 
+	 * @param name
+	 *            the name of the image to retrieve
+	 * @return the Image or null if no such image was found
 	 */
 	public static Image getImage(String name){
 		Image ret = theImageRegistry.get(name);
@@ -365,6 +374,20 @@ public class Desk implements IApplication {
 		return fr.get(key);
 	}
 	
+	public static Cursor getCursor(String name){
+		if (cursors == null) {
+			cursors = new HashMap<String, Cursor>();
+		}
+		Cursor ret = cursors.get(name);
+		if (ret == null) {
+			if (name.equals(CUR_HYPERLINK)) {
+				ret=getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+				cursors.put(name, ret);
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Eine Color aus einer RGB-Beschreibung als Hex-String herstellen
 	 * 
@@ -415,20 +438,21 @@ public class Desk implements IApplication {
 	}
 	
 	/**
-	 * Run a runnable asynchroneously in the UI Thread
-	 * The method will immediately return (not wait for the runnable to exit)
+	 * Run a runnable asynchroneously in the UI Thread The method will immediately return (not wait
+	 * for the runnable to exit)
 	 */
 	public static void asyncExec(Runnable runnable){
 		getDisplay().asyncExec(runnable);
 	}
-
+	
 	/**
-	 * Run a runnable synchroneously in the UI Thread.
-	 * The method will not return until the runnable exited
+	 * Run a runnable synchroneously in the UI Thread. The method will not return until the runnable
+	 * exited
+	 * 
 	 * @param runnable
 	 */
 	public static void syncExec(Runnable runnable){
-		//getDisplay().syncExec(runnable);
+		// getDisplay().syncExec(runnable);
 		BusyIndicator.showWhile(getDisplay(), runnable);
 	}
 }

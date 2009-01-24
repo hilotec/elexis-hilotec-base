@@ -8,22 +8,28 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorField.java 4965 2009-01-16 23:38:14Z rgw_ch $
+ * $Id: SelectorField.java 5029 2009-01-24 16:34:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
 
 import java.util.LinkedList;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import ch.elexis.Desk;
 
 public class SelectorField extends Composite {
 	Label lbl;
@@ -37,25 +43,28 @@ public class SelectorField extends Composite {
 		setLayout(new GridLayout());
 		lbl=new Label(this,SWT.NONE);
 		lbl.setText(label);
+		//Font font=JFaceResources.getDefaultFont());
+		lbl.setForeground(Desk.getColor(Desk.COL_BLUE));
 		text=new Text(this,SWT.BORDER);
 		lbl.addMouseListener(new MouseAdapter(){
 
 			@Override
 			public void mouseUp(MouseEvent e){
-				// TODO Auto-generated method stub
-				super.mouseUp(e);
+				for(SelectorListener sl:listeners){
+					sl.titleClicked(SelectorField.this);
+				}
+		
 			}
 			
+			
 		});
+		lbl.setCursor(Desk.getCursor(Desk.CUR_HYPERLINK));
 		text.addModifyListener(new ModifyListener(){
 
 			public void modifyText(ModifyEvent e){
 				String fld=text.getText();
 				int l2=fld.length();
 				if((l2>2) || (len>2)){
-					for(SelectorListener sl:listeners){
-						sl.selectionChanged(SelectorField.this);
-					}
 				}
 				len=l2;
 				

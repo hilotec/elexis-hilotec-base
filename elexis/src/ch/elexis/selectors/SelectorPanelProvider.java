@@ -54,6 +54,10 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 			public void selectionChanged(SelectorField field){
 				fireChangedEvent();
 			}
+
+			public void titleClicked(SelectorField field){
+				fireClickedEvent(field.getLabel());
+			}
 		});
 		return panel;
 	}
@@ -61,6 +65,11 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	public IFilter createFilter(){
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public void fireClickedEvent(final String fieldname){
+		for (ControlFieldListener cl : listeners) {
+			cl.reorder(fieldname);
+		}
 	}
 	
 	public void fireChangedEvent(){
