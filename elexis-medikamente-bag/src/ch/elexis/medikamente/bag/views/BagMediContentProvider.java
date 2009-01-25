@@ -1,6 +1,7 @@
 package ch.elexis.medikamente.bag.views;
 
 import java.sql.PreparedStatement;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,13 +34,17 @@ public class BagMediContentProvider extends FlatDataLoader {
 	}
 
 	@Override
-	public IStatus work(IProgressMonitor monitor){
+	public IStatus work(IProgressMonitor monitor, HashMap<String, Object>params){
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
 		qbe.clear();
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
-		String[] values=cv.getConfigurer().getControlFieldProvider().getValues();
+		//String[] values=cv.getConfigurer().getControlFieldProvider().getValues();
+		String[] values=(String[])params.get(PARAM_VALUES);
+		if(values==null){
+			values=new String[2];
+		}
 		ids= qbe.execute(ps, new String[]{values[1]});
 		medis=new BAGMedi[ids.size()];
 		if (monitor.isCanceled()) {

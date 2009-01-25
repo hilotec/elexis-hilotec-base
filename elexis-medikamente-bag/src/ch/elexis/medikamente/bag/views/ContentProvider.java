@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 5016 2009-01-23 16:32:22Z rgw_ch $
+ * $Id: ContentProvider.java 5038 2009-01-25 19:48:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.medikamente.bag.views;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -106,7 +107,7 @@ public class ContentProvider implements CommonContentProvider {
 	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 	}
 
-	public void changed(final String[] fields, final String[] values) {
+	public void changed(HashMap<String, String> values) {
 		cv.notify(CommonViewer.Message.update_keeplabels);
 	}
 
