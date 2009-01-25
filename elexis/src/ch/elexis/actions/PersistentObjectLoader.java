@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5028 2009-01-24 08:22:00Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.jface.viewers.Viewer;
@@ -35,6 +36,8 @@ import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
  * 
  */
 public abstract class PersistentObjectLoader implements CommonContentProvider, IWorker {
+	public final static String PARAM_FIELDNAMES="fieldnames";
+	public final static String PARAM_VALUES="fieldvalues";
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
 	private LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
@@ -90,7 +93,8 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	 * @param values
 	 *            the new values
 	 */
-	public void changed(String[] fields, String[] values){
+	public void changed(HashMap<String, String> values){
+		dj.setRuntimeData(PARAM_VALUES, values);
 		dj.launch(DelayableJob.DELAY_ADAPTIVE);
 	}
 	

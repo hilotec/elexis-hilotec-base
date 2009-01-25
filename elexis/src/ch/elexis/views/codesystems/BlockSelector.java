@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockSelector.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ *  $Id: BlockSelector.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -165,7 +166,7 @@ public class BlockSelector extends CodeSelectorFactory {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
 		
 		/** Vom ControlFieldProvider */
-		public void changed(String[] fields, String[] values){
+		public void changed(HashMap<String, String> vals){
 			TreeViewer tv = (TreeViewer) cv.getViewerWidget();
 			if (filter != null) {
 				tv.removeFilter(filter);

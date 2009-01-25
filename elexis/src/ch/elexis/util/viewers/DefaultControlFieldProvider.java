@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 5026 2009-01-23 17:32:50Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -194,8 +195,12 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		if (!bCeaseFire) {
 			Desk.getDisplay().syncExec(new Runnable() {
 				public void run(){
+					HashMap<String, String> hm = new HashMap<String, String>();
+					for (int i = 0; i < fields.length; i++) {
+						hm.put(fields[i], lastFiltered[i]);
+					}
 					for (ControlFieldListener lis : listeners) {
-						lis.changed(fields, lastFiltered);
+						lis.changed(hm);
 					}
 				}
 			});

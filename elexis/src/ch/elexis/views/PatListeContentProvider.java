@@ -1,5 +1,6 @@
 package ch.elexis.views;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -150,7 +151,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {	}
 
-	public void changed(String[] fields, String[] values) {
+	public void changed(HashMap<String, String> vals) {
 		bValid=false;
 		getElements(viewer);
 		if(viewer.getConfigurer().getControlFieldProvider().isEmpty()){
@@ -163,7 +164,7 @@ public class PatListeContentProvider implements CommonContentProvider,
 
 	public void reorder(String field) {
 		firstOrder=field;
-		changed(null,null);
+		changed(null);
 	}
 
 	public void selected() {

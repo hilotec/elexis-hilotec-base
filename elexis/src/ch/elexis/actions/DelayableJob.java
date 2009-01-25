@@ -1,5 +1,7 @@
 package ch.elexis.actions;
 
+import java.util.HashMap;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -9,6 +11,7 @@ public class DelayableJob extends Job {
 	public static final int DELAY_ADAPTIVE = -1;
 	private long lastCall = 0L;
 	private int lastDelay = 200;
+	private HashMap<String, Object> privdata=new HashMap<String,Object>();
 	
 	public DelayableJob(String name, IWorker worker){
 		super(name);
@@ -44,12 +47,23 @@ public class DelayableJob extends Job {
 		this.schedule(delayMillis);
 	}
 	
+	/**
+	 * set arbitrary data that can be retrieved at run time
+	 * @param key a unique key
+	 * @param value n arbitrary object
+	 */
+	public void setRuntimeData(String key, Object value){
+		privdata.put(key, value);
+	}
+	public Object getRuntimeData(String key){
+		return privdata.get(key);
+	}
 	@Override
 	protected IStatus run(IProgressMonitor monitor){
-		return worker.work(monitor);
+		return worker.work(monitor,privdata);
 	}
 	
 	public interface IWorker {
-		public IStatus work(IProgressMonitor monitor);
+		public IStatus work(IProgressMonitor monitor, HashMap<String,Object> params);
 	}
 }

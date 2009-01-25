@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: KontakteView.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
+
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -129,7 +131,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		vc.getControlFieldProvider().setFocus();
 	}
 	
-	public void changed(String[] fields, String[] values){
+	public void changed(HashMap<String, String> values){
 		GlobalEvents.getInstance().clearSelection(Kontakt.class);
 	}
 	

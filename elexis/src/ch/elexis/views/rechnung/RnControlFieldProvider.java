@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -253,9 +254,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 	public void fireChangedEvent(){
 		Desk.getDisplay().syncExec(new Runnable() {
 			public void run(){
+				HashMap<String, String> hm = new HashMap<String, String>();
+				hm.put("Status", "0");
 				for (ControlFieldListener lis : listeners) {
-					lis.changed(new String[] {
-						"Status"}, new String[] { "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+					lis.changed(hm); //$NON-NLS-1$ //$NON-NLS-2$
 					
 				}
 			}

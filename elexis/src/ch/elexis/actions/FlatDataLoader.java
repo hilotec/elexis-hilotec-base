@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5028 2009-01-24 08:22:00Z rgw_ch $
+ * $Id: FlatDataLoader.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,7 +58,7 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	 * }
 	 */
 
-	public IStatus work(IProgressMonitor monitor){
+	public IStatus work(IProgressMonitor monitor, HashMap<String,Object> params){
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
 		// tv.setItemCount(1);
 		// tv.replace(LOADMESSAGE, 0);

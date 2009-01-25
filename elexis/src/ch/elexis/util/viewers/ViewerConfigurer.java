@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ *    $Id: ViewerConfigurer.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
+
+import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -129,8 +131,8 @@ public class ViewerConfigurer {
 	
 	/** Listener für Änderungen des Kontrollfelds */
 	public interface ControlFieldListener {
-		public void changed(final String[] fields, final String[] values);
-		
+		//public void changed(final String[] fields, final String[] values);
+		public void changed(HashMap<String, String> values);
 		public void reorder(final String field);
 		
 		/**
@@ -320,7 +322,7 @@ public class ViewerConfigurer {
 		
 		}
 		
-		public void changed(String[] fields, String[] values){
+		public void changed(HashMap<String,String> values){
 		// TODO Automatisch erstellter Methoden-Stub
 		
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: PatientenListeView.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -56,8 +56,9 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 
 /**
  * Display of Patients
+ * 
  * @author gerry
- *
+ * 
  */
 public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2,
 		HeartListener, UserListener {
@@ -81,6 +82,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	
 	/**
 	 * retrieve the patient that is currently selected in the list
+	 * 
 	 * @return the selected patient or null if none was selected
 	 */
 	public Patient getSelectedPatient(){
@@ -365,7 +367,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	 * listed, the first one is selected. (This listener only implements selected().)
 	 */
 	class ControlFieldSelectionListener implements ControlFieldListener {
-		public void changed(final String[] fields, final String[] values){
+		public void changed(HashMap<String, String> values){
 		// nothing to do (handled by LazyContentProvider)
 		}
 		

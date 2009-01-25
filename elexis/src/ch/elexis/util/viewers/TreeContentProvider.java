@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TreeContentProvider.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ *  $Id: TreeContentProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -115,7 +116,7 @@ public class TreeContentProvider implements ITreeContentProvider, BackgroundJobL
 		
 	}
 	
-	public void changed(String[] fields, String[] values){
+	public void changed(HashMap<String, String> vals){
 		if (viewer.getConfigurer().getControlFieldProvider().isEmpty()) {
 			viewer.notify(CommonViewer.Message.empty);
 		} else {

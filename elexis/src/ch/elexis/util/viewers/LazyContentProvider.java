@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LazyContentProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: LazyContentProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
+
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ILazyContentProvider;
@@ -109,7 +111,7 @@ public class LazyContentProvider implements CommonContentProvider, ILazyContentP
 		}
 	}
 	
-	public void changed(String[] fields, String[] values){
+	public void changed(HashMap<String, String> vals){
 		dataloader.invalidate();
 		if (tableviewer.getConfigurer().getControlFieldProvider().isEmpty()) {
 			tableviewer.notify(CommonViewer.Message.empty);
@@ -121,7 +123,7 @@ public class LazyContentProvider implements CommonContentProvider, ILazyContentP
 	
 	public void reorder(String field){
 		dataloader.setOrder(field);
-		changed(null, null);
+		changed(null);
 		
 	}
 	

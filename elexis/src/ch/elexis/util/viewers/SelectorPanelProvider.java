@@ -113,15 +113,8 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	
 	public void fireChangedEvent(){
 		HashMap<String, String> hv = panel.getValues();
-		String[] fld = new String[hv.size()];
-		String[] val = new String[hv.size()];
-		int i = 0;
-		for (Entry<String, String> e : hv.entrySet()) {
-			fld[i] = e.getKey();
-			val[i++] = e.getValue();
-		}
 		for (ControlFieldListener cl : listeners) {
-			cl.changed(fld, val);
+			cl.changed(hv);
 		}
 	}
 	

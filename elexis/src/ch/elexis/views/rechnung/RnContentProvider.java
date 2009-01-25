@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: RnContentProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -105,7 +106,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 	}
 	
 	// Vom ControlFieldListener
-	public void changed(final String[] fields, final String[] values){
+	public void changed(HashMap<String, String> values){
 		cv.notify(CommonViewer.Message.update);
 	}
 	

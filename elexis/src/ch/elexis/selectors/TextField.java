@@ -1,14 +1,21 @@
 package ch.elexis.selectors;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 public class TextField extends ActiveControl {
-
+	
 	public TextField(Composite parent, int displayBits, String displayName){
 		super(parent, displayBits, displayName);
 		setControl(new Text(this,SWT.BORDER));
+		getTextControl().addModifyListener(new ModifyListener(){
+
+			public void modifyText(ModifyEvent e){
+				fireChangedEvent();
+			}});
 	}
 	
 	public Text getTextControl(){

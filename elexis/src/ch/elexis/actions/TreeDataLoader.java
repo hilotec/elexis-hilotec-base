@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5028 2009-01-24 08:22:00Z rgw_ch $
+ * $Id: TreeDataLoader.java 5039 2009-01-25 19:49:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
+
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,7 +41,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 	 * applyQueryFilters(); for (PersistentObject po : qbe.execute()) { new
 	 * Tree<PersistentObject>(root, po); } }
 	 */
-	public IStatus work(IProgressMonitor monitor){
+	public IStatus work(IProgressMonitor monitor, HashMap<String, Object>params){
 		monitor.beginTask("Lade Daten", IProgressMonitor.UNKNOWN);
 		qbe.clear();
 		qbe.add(parentColumn, "=", "NIL");
