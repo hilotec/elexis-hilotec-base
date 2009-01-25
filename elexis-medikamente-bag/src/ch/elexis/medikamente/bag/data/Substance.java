@@ -12,7 +12,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Substance extends PersistentObject {
-	static final String TABLENAME = "CH_ELEXIS_MEDIKAMENTE_BAG_SUBSTANCE";
+	public static final String TABLENAME = "CH_ELEXIS_MEDIKAMENTE_BAG_SUBSTANCE";
 	static final String VERSION = "0.3.0";
 	static final String createDB =
 		"CREATE TABLE " + TABLENAME + "(" + "ID		VARCHAR(25) primary key,"

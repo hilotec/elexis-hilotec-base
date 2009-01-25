@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 4939 2009-01-13 17:47:18Z rgw_ch $
+ *  $Id: BAGMedi.java 5035 2009-01-25 17:13:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -40,7 +40,7 @@ import ch.rgw.tools.VersionInfo;
  */
 public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	static final String EXTTABLE = "CH_ELEXIS_MEDIKAMENTE_BAG_EXT";
-	static final String JOINTTABLE = "CH_ELEXIS_MEDIKAMENTE_BAG_JOINT";
+	public static final String JOINTTABLE = "CH_ELEXIS_MEDIKAMENTE_BAG_JOINT";
 	static final String VERSION = "0.1.2";
 	public static final String IMG_GENERIKUM = "ch.elexis.medikamente.bag.generikum";
 	public static final String IMG_HAS_GENERIKA = "ch.elexis.medikamente.bag.has_generika";
