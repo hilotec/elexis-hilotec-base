@@ -11,7 +11,7 @@
  * $Id: CommonViewer.java 4799 2008-12-10 17:40:59Z psiska $
  *******************************************************************************/
 
-package ch.elexis.selectors;
+package ch.elexis.util.viewers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,6 +20,9 @@ import java.util.Map.Entry;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.Query;
+import ch.elexis.selectors.SelectorField;
+import ch.elexis.selectors.SelectorListener;
+import ch.elexis.selectors.SelectorPanel;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.IFilter;

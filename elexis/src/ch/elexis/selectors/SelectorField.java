@@ -8,22 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorField.java 5029 2009-01-24 16:34:46Z rgw_ch $
+ * $Id: SelectorField.java 5031 2009-01-25 07:47:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
 
 import java.util.LinkedList;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -31,6 +27,11 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 
+/**
+ * A text field with
+ * @author Gerry
+ *
+ */
 public class SelectorField extends Composite {
 	Label lbl;
 	Text text;
@@ -90,7 +91,7 @@ public class SelectorField extends Composite {
 	public void setText(String txt){
 		text.setText(txt);
 	}
-	String getLabel(){
+	public String getLabel(){
 		return lbl.getText();
 	}
 }

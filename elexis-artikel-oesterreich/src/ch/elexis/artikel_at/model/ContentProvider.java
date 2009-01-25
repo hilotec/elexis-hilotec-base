@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 5013 2009-01-23 16:31:10Z rgw_ch $
+ * $Id: ContentProvider.java 5031 2009-01-25 07:47:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.model;
@@ -22,7 +22,7 @@ import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.views.MedikamentSelector2;
 import ch.elexis.data.Query;
 import ch.elexis.selectors.SelectorPanel;
-import ch.elexis.selectors.SelectorPanelProvider;
+import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 
 public class ContentProvider implements CommonContentProvider {
