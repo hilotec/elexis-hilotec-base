@@ -13,7 +13,8 @@
 
 package ch.elexis.selectors;
 
-public interface SelectorListener {
-	public void selectionChanged(SelectorField field);
-	public void titleClicked(SelectorField field);
+public interface ActiveControlListener {
+	public void contentsChanged(ActiveControl ac);
+	public void titleClicked(ActiveControl field);
+	public void invalidContents(ActiveControl field);
 }

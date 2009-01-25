@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5029 2009-01-24 16:34:46Z rgw_ch $
+ * $Id: SelectorPanel.java 5034 2009-01-25 16:36:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -25,11 +25,14 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 import ch.elexis.Desk;
+import ch.rgw.tools.LimitSizeStack;
 
-public class SelectorPanel extends Composite implements SelectorListener {
+public class SelectorPanel extends Composite implements ActiveControlListener {
 	boolean bCeaseFire, bExclusive;
-	private LinkedList<SelectorListener> listeners = new LinkedList<SelectorListener>();
-
+	private LinkedList<ActiveControlListener> listeners = new LinkedList<ActiveControlListener>();
+	private LimitSizeStack<TraceElement> undoList=new LimitSizeStack<TraceElement>(50);
+	private ImageHyperlink hClr;
+	
 	public SelectorPanel(Composite parent) {
 		super(parent, SWT.NONE);
 		setBackground(parent.getBackground());
@@ -37,7 +40,7 @@ public class SelectorPanel extends Composite implements SelectorListener {
 		layout.fill = true;
 		layout.pack = true;
 		setLayout(layout);
-		ImageHyperlink hClr = Desk.getToolkit().createImageHyperlink(this,
+		hClr = Desk.getToolkit().createImageHyperlink(this,
 				SWT.NONE);
 		hClr.setImage(Desk.getImage(Desk.IMG_CLEAR));
 		hClr.addHyperlinkListener(new HyperlinkAdapter() {
@@ -50,21 +53,32 @@ public class SelectorPanel extends Composite implements SelectorListener {
 
 	}
 
+	
 	public void setExclusive(boolean excl) {
 		bExclusive = excl;
 	}
 
-	public void addFields(String... fields) {
+	/*
+	public void addTextFields(String... fields) {
 		for (String s : fields) {
-			new SelectorField(this, s).addSelectorListener(this);
+			new TextField(this, s).addSelectorListener(this);
 		}
 	}
-
+	 */
+	
+	public void addField(ActiveControl ac){
+		ac.addListener(this);
+	}
+	public void addFields(ActiveControl...activeControls){
+		for(ActiveControl ac:activeControls){
+			ac.addListener(this);
+		}
+	}
 	public void removeField(String field) {
 		for (Control c : getChildren()) {
-			if (c instanceof SelectorField) {
-				if (((SelectorField) c).getLabel().equalsIgnoreCase(field)) {
-					((SelectorField) c).removeSelectorListener(this);
+			if (c instanceof ActiveControl) {
+				if (((ActiveControl) c).getLabel().equalsIgnoreCase(field)) {
+					((ActiveControl) c).removeSelectorListener(this);
 					c.dispose();
 				}
 			}
@@ -74,8 +88,8 @@ public class SelectorPanel extends Composite implements SelectorListener {
 	public void clearValues() {
 		bCeaseFire = true;
 		for (Control c : getChildren()) {
-			if (c instanceof SelectorField) {
-				((SelectorField) c).clear();
+			if (c instanceof ActiveControl) {
+				((ActiveControl) c).clear();
 			}
 		}
 		bCeaseFire = false;
@@ -84,50 +98,70 @@ public class SelectorPanel extends Composite implements SelectorListener {
 	public HashMap<String, String> getValues() {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		for (Control c : getChildren()) {
-			if (c instanceof SelectorField) {
-				SelectorField sf = (SelectorField) c;
-				ret.put(sf.getLabel(), sf.getText());
+			if (c instanceof ActiveControl) {
+				ActiveControl ac = (ActiveControl) c;
+				ret.put(ac.getLabel(), ac.getText());
 			}
 		}
 		return ret;
 	}
 
-	public void selectionChanged(SelectorField field) {
+	public void contentsChanged(ActiveControl field) {
 		if (bExclusive) {
 			for (Control c : getChildren()) {
-				if (c instanceof SelectorField) {
-					SelectorField sf = (SelectorField) c;
-					if (!sf.getLabel().equals(field.getLabel())) {
-						sf.clear();
+				if (c instanceof ActiveControl) {
+					ActiveControl ac = (ActiveControl) c;
+					if (!ac.getLabel().equals(field.getLabel())) {
+						String t=ac.getText();
+						if(t.length()>0){
+							new TraceElement(ac);
+							ac.clear();
+						}
 					}
 				}
 			}
 		}
+		new TraceElement(field);
 		if (!bCeaseFire) {
 			bCeaseFire = true;
-			for (SelectorListener lis : listeners) {
-				lis.selectionChanged(field);
+			for (ActiveControlListener lis : listeners) {
+				lis.contentsChanged(field);
 			}
 			bCeaseFire = false;
 		}
 	}
 
-	public void addSelectorListener(SelectorListener l) {
+	public void addSelectorListener(ActiveControlListener l) {
 		listeners.add(l);
 	}
 
-	public void removeSelectorListener(SelectorListener l) {
+	public void removeSelectorListener(ActiveControlListener l) {
 		listeners.remove(l);
 	}
 
-	public void titleClicked(final SelectorField field){
+	public void titleClicked(final ActiveControl field){
 		if(!bCeaseFire){
 			bCeaseFire=true;
-			for (SelectorListener lis : listeners) {
+			for (ActiveControlListener lis : listeners) {
 				lis.titleClicked(field);
 			}
 			bCeaseFire=true;
 		}
 		
+	}
+	
+	private class TraceElement{
+		ActiveControl control;
+		String value;
+		TraceElement(ActiveControl ac){
+			control=ac;
+			value=ac.getText();
+			undoList.push(this);
+		}
+	}
+
+	public void invalidContents(ActiveControl field){
+		hClr.setImage(Desk.getImage(Desk.IMG_ACHTUNG));
+		hClr.setToolTipText((String)field.getData(ActiveControl.POP_ERRMSG));
 	}
 }

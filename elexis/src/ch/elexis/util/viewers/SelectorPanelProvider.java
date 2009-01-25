@@ -19,10 +19,16 @@ import java.util.Map.Entry;
 
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.selectors.SelectorField;
-import ch.elexis.selectors.SelectorListener;
+import ch.elexis.selectors.ActiveControl;
+import ch.elexis.selectors.ActiveControlListener;
+import ch.elexis.selectors.ComboField;
+import ch.elexis.selectors.DateField;
+import ch.elexis.selectors.IntegerField;
+import ch.elexis.selectors.MoneyField;
 import ch.elexis.selectors.SelectorPanel;
+import ch.elexis.selectors.TextField;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.IFilter;
@@ -30,10 +36,11 @@ import ch.rgw.tools.IFilter;
 public class SelectorPanelProvider implements ControlFieldProvider {
 	private LinkedList<ControlFieldListener> listeners = new LinkedList<ControlFieldListener>();
 	private SelectorPanel panel;
-	private String[] fields;
+	private FieldDescriptor<? extends PersistentObject>[] fields;
 	private boolean bExclusive = false;
 	
-	public SelectorPanelProvider(String[] fields, boolean bExlusive){
+	public SelectorPanelProvider(FieldDescriptor<? extends PersistentObject>[] fields,
+		boolean bExlusive){
 		this.fields = fields;
 		this.bExclusive = bExlusive;
 	}
@@ -50,16 +57,44 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	
 	public Composite createControl(Composite parent){
 		panel = new SelectorPanel(parent);
-		panel.addFields(fields);
-		panel.setExclusive(bExclusive);
-		panel.addSelectorListener(new SelectorListener() {
+		for (FieldDescriptor<? extends PersistentObject> field : fields) {
+			ActiveControl ac = null;
+			switch (field.tFeldTyp) {
+			case STRING:
+				ac = new TextField(panel, 0, field.sAnzeige);
+				break;
+			case CURRENCY:
+				ac = new MoneyField(panel, 0, field.sAnzeige);
+				break;
+			case DATE:
+				ac = new DateField(panel, 0, field.sAnzeige);
+				break;
 			
-			public void selectionChanged(SelectorField field){
+			case COMBO:
+				ac = new ComboField(panel, 0, field.sAnzeige, (String[])field.ext);
+				break;
+			case INT:
+				ac=new IntegerField(panel,0,field.sAnzeige);
+			}
+			 ac.setData(ActiveControl.PROP_FIELDNAME, field.sFeldname);
+			 ac.setData(ActiveControl.PROP_HASHNAME, field.sHashname);
+			panel.addField(ac);
+		}
+		
+		panel.setExclusive(bExclusive);
+		panel.addSelectorListener(new ActiveControlListener() {
+			
+			public void contentsChanged(ActiveControl field){
 				fireChangedEvent();
 			}
-
-			public void titleClicked(SelectorField field){
+			
+			public void titleClicked(ActiveControl field){
 				fireClickedEvent(field.getLabel());
+			}
+
+			public void invalidContents(ActiveControl field){
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		return panel;
@@ -69,6 +104,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	public void fireClickedEvent(final String fieldname){
 		for (ControlFieldListener cl : listeners) {
 			cl.reorder(fieldname);
@@ -106,8 +142,8 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	
 	public boolean isEmpty(){
 		HashMap<String, String> vals = panel.getValues();
-		for (String s : fields) {
-			if (vals.get(s).length() > 0) {
+		for (FieldDescriptor<? extends PersistentObject> fd : fields) {
+			if (vals.get(fd.sAnzeige).length() > 0) {
 				return false;
 			}
 		}
@@ -122,7 +158,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		panel.setFocus();
 	}
 	
-	public void setQuery(Query q){
+	public void setQuery(Query<? extends PersistentObject> q){
 	// TODO Auto-generated method stub
 	
 	}
