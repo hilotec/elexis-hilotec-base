@@ -1,19 +1,18 @@
 package ch.rgw.tools;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 @SuppressWarnings("serial")
-public class LimitSizeStack<T> extends ArrayList<T> {
+public class LimitSizeStack<T> extends LinkedList<T> {
 	private int max;
 	
 	public LimitSizeStack(int limit){
-		super(limit);
 		max = limit;
 	}
 	
 	public void push(T elem){
 		if (size() >= max) {
-			remove(size());
+			remove(size()-1);
 		}
 		add(0, elem);
 	}
