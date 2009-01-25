@@ -1,5 +1,7 @@
 package ch.elexis.data;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -83,6 +85,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
 
+	/*
 	public void changed(String[] fields, String[] values) {
 		if(!code.equals(values[0])){
 			code=values[0];
@@ -111,7 +114,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			cv.notify(CommonViewer.Message.update_keeplabels);
 		}
 	}
-
+*/
 	public void reorder(String field) {
 		// TODO Auto-generated method stub
 
@@ -205,5 +208,9 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			return false;
 		}
 	
+	}
+	public void changed(HashMap<String, String> values){
+		// TODO Auto-generated method stub
+		
 	}
 }
