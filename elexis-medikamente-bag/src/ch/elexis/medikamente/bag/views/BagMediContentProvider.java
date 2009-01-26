@@ -23,6 +23,9 @@ public class BagMediContentProvider extends FlatDataLoader {
 	PreparedStatement psSubst, psNotes, psMedi;
 	private List<String> ids;
 	private BAGMedi[] medis;
+	private boolean bOnlyGenerics = false;
+	private String sGroup = "";
+	private boolean bOnlyStock;
 	
 	public BagMediContentProvider(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
@@ -42,34 +45,45 @@ public class BagMediContentProvider extends FlatDataLoader {
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
-		// String[] values=cv.getConfigurer().getControlFieldProvider().getValues();
-		HashMap<String, String> values = (HashMap<String, String>) params.get(PARAM_VALUES);
-		if (values == null) {
-			values = new HashMap<String, String>();
-		}
-		String subst = values.get(BAGMediSelector.FIELD_SUBSTANCE);
-		String notes = values.get(BAGMediSelector.FIELD_NOTES);
-		String names = values.get(BAGMediSelector.FIELD_NAME);
-		if (!StringTool.isNothing(names)) {
-			qbe.add(BAGMedi.NAME, "Like", names + "%");
+		if (sGroup.length() > 0) {
+			qbe.add("Gruppe", "=", sGroup);
 			medis = qbe.execute().toArray(new BAGMedi[0]);
+			cv.getConfigurer().getControlFieldProvider().clearValues();
+			sGroup = "";
 		} else {
-			if (!StringTool.isNothing(subst)) {
-				ids = qbe.execute(psSubst, new String[] {
-					subst + "%"
-				});
-			} else if (!StringTool.isNothing(notes)) {
-				ids = qbe.execute(psNotes, new String[] {
-					"%" + notes + "%"
-				});
-			} else {
-				ids = new ArrayList<String>();
+			// String[] values=cv.getConfigurer().getControlFieldProvider().getValues();
+			HashMap<String, String> values = (HashMap<String, String>) params.get(PARAM_VALUES);
+			if (values == null) {
+				values = new HashMap<String, String>();
 			}
-			medis = new BAGMedi[ids.size()];
-			if (monitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
+			String subst = values.get(BAGMediSelector.FIELD_SUBSTANCE);
+			String notes = values.get(BAGMediSelector.FIELD_NOTES);
+			String names = values.get(BAGMediSelector.FIELD_NAME);
+			if (StringTool.isNothing(subst) && StringTool.isNothing(notes)) {
+				qbe.add(BAGMedi.NAME, "Like", names + "%");
+				if (bOnlyGenerics) {
+					qbe.add("Generikum", "LIKE", "G%");
+				}
+				medis = qbe.execute().toArray(new BAGMedi[0]);
+			} else {
+				if (!StringTool.isNothing(subst)) {
+					ids = qbe.execute(psSubst, new String[] {
+						subst + "%"
+					});
+				} else if (!StringTool.isNothing(notes)) {
+					ids = qbe.execute(psNotes, new String[] {
+						"%" + notes + "%"
+					});
+				} else {
+					ids = new ArrayList<String>();
+				}
+				medis = new BAGMedi[ids.size()];
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
 			}
 		}
+		
 		Desk.asyncExec(new Runnable() {
 			public void run(){
 				tv.setItemCount(0);
@@ -84,12 +98,26 @@ public class BagMediContentProvider extends FlatDataLoader {
 	
 	@Override
 	public void updateElement(int index){
-		if (medis[index] == null) {
-			medis[index] = BAGMedi.load(ids.get(index));
+		if (index < medis.length) {
+			if (medis[index] == null) {
+				medis[index] = BAGMedi.load(ids.get(index));
+			}
+			TableViewer tv = (TableViewer) cv.getViewerWidget();
+			tv.replace(medis[index], index);
 		}
-		TableViewer tv = (TableViewer) cv.getViewerWidget();
-		tv.replace(medis[index], index);
 		
 	}
 	
+	public void setGroup(String group){
+		sGroup = group;
+	}
+	
+	public void toggleGenericsOnly(){
+		bOnlyGenerics = !bOnlyGenerics;
+	}
+	
+	public void toggleStockOnly(){
+		bOnlyStock = !bOnlyStock;
+		
+	}
 }
