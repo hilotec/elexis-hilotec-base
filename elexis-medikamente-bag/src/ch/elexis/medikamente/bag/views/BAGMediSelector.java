@@ -86,30 +86,46 @@ public class BAGMediSelector extends CodeSelectorFactory {
 			
 		};
 		genericsAction = new Action("Nur Generika") {
+			ImageDescriptor image_off, image_on;
 			{
-				String img = "icons" + File.separator + "ggruen.png";
-				ImageDescriptor image = BAGMediFactory.loadImageDescriptor(img);
-				setImageDescriptor(image);
+				String img_off = "icons" + File.separator + "ggruen.png";
+				String img_on = "icons" + File.separator + "ggruen_on.png";
+				image_off = BAGMediFactory.loadImageDescriptor(img_off);
+				image_on = BAGMediFactory.loadImageDescriptor(img_on);
+				setImageDescriptor(image_off);
 				setToolTipText("Nur Generika anzeigen");
 			}
 			
 			@Override
 			public void run(){
-				fdl.toggleGenericsOnly();
+				if(fdl.toggleGenericsOnly()){
+					setImageDescriptor(image_on);
+				}else{
+					setImageDescriptor(image_off);
+				}
 				slp.fireChangedEvent();
 			}
 		};
 		onStockAction = new Action("Nur Lagerartikel") {
+			ImageDescriptor image_on=null;
+			ImageDescriptor image_off=null;
 			{
-				String img = "icons" + File.separator + "lager.png";
-				ImageDescriptor image = BAGMediFactory.loadImageDescriptor(img);
-				setImageDescriptor(image);
+				String img_off = "icons" + File.separator + "lager.png";
+				String img_on = "icons" + File.separator + "lager_on.png";
+				image_off = BAGMediFactory.loadImageDescriptor(img_off);
+				image_on = BAGMediFactory.loadImageDescriptor(img_on);
+				setImageDescriptor(image_off);
 				setToolTipText("Nur Lagerartikel anzeigen");
 			}
 			
 			@Override
 			public void run(){
-				fdl.toggleStockOnly();
+
+				if(fdl.toggleStockOnly()){
+					setImageDescriptor(image_on);
+				}else{
+					setImageDescriptor(image_off);
+				}
 				slp.fireChangedEvent();
 			}
 		};

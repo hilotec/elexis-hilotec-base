@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 3983 2008-05-31 19:23:27Z rgw_ch $
+ * $Id: Query.java 5048 2009-01-26 21:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,11 +22,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.IFilter;
-
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -409,9 +408,11 @@ public class Query<T>{
 	 * @return Eine Liste der Objekte, die als Antwort auf die Anfrage geliefert wurden.
 	 */
     @SuppressWarnings("unchecked")
-	public Collection<T> queryExpression(final String expr, final Collection<T> ret){
+	public Collection<T> queryExpression(final String expr, Collection<T> ret){
         //LinkedList<T> ret=new LinkedList<T>();
-        
+        if(ret==null){
+    		ret=new LinkedList<T>();
+        }
         Stm stm=null;
         try{
             stm=PersistentObject.getConnection().getStatement();

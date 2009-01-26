@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ * $Id: RnContentProvider.java 5048 2009-01-26 21:44:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -40,6 +39,7 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.IFilter;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Tree;

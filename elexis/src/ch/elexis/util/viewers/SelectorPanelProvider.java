@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CommonViewer.java 4799 2008-12-10 17:40:59Z psiska $
+ * $Id: SelectorPanelProvider.java 5048 2009-01-26 21:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -17,7 +17,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -33,7 +36,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.IFilter;
 
-public class SelectorPanelProvider implements ControlFieldProvider {
+public class SelectorPanelProvider implements ControlFieldProvider{
 	private LinkedList<ControlFieldListener> listeners = new LinkedList<ControlFieldListener>();
 	private SelectorPanel panel;
 	private FieldDescriptor<? extends PersistentObject>[] fields;
@@ -167,4 +170,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	public SelectorPanel getPanel(){
 		return panel;
 	}
+
+	
+	
 }

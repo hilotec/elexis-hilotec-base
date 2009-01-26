@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 4801 2008-12-10 18:26:05Z rgw_ch $
+ * $Id: PatListFilterBox.java 5048 2009-01-26 21:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,6 +40,7 @@ import ch.elexis.data.Sticker;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.IFilter;
 
 /**
  * This will be displayed on top of the PatientListeView. It allows to drop Objects (Artikel,
@@ -95,7 +95,6 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		dropTarget = new PersistentObjectDropTarget("Statfilter", this, new DropReceiver());
 		
 	}
-
 	
 	private class DropReceiver implements PersistentObjectDropTarget.Receiver {
 		public void dropped(final PersistentObject o, final DropTargetEvent ev){
@@ -306,14 +305,15 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	}
 	
 	private void makeActions(){
-		removeFilterAction=new Action("entfernen"){
+		removeFilterAction = new Action("entfernen") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Diese Filterbedingung entfernen");
 			}
+			
 			@Override
 			public void run(){
-				PersistentObject sel=getSelection();
+				PersistentObject sel = getSelection();
 				remove(sel);
 			}
 		};

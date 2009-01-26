@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ * $Id: Artikel.java 5048 2009-01-26 21:44:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -38,8 +38,8 @@ public class Artikel extends VerrechenbarAdapter {
 	public static final String PHARMACODE = "Pharmacode";
 	public static final String EXT_INFO = "ExtInfo";
 	private static final String ANBRUCH = "Anbruch";
-	private static final String MINBESTAND = "Minbestand";
-	private static final String MAXBESTAND = "Maxbestand";
+	public static final String MINBESTAND = "Minbestand";
+	public static final String MAXBESTAND = "Maxbestand";
 	private static final String VERKAUFSEINHEIT = "Verkaufseinheit";
 	private static final String VERPACKUNGSEINHEIT = "Verpackungseinheit";
 	private static final String ISTBESTAND = "Istbestand";

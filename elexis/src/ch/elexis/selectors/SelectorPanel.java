@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5045 2009-01-26 17:26:15Z rgw_ch $
+ * $Id: SelectorPanel.java 5048 2009-01-26 21:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
@@ -92,21 +94,29 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			hp.setImage(ac.getImageDescriptor().createImage());
 			hp.setBackground(getParent().getBackground());
 			hp.setToolTipText(ac.getToolTipText());
-			hp.addHyperlinkListener(new ActionAdapter(ac));
+			ActionAdapter aa=new ActionAdapter(ac,hp);
+			hp.addHyperlinkListener(aa);
+			ac.addPropertyChangeListener(aa);
 		}
 		layout();
 	}
 	
-	private static class ActionAdapter extends HyperlinkAdapter {
+	private static class ActionAdapter extends HyperlinkAdapter implements IPropertyChangeListener{
 		IAction ac;
-		
-		ActionAdapter(final IAction action){
+		ImageHyperlink hp;
+		ActionAdapter(final IAction action, final ImageHyperlink hp){
 			ac = action;
+			this.hp=hp;
 		}
 		
 		@Override
 		public void linkActivated(HyperlinkEvent e){
 			ac.run();
+		}
+
+		public void propertyChange(PropertyChangeEvent event){
+			hp.getImage().dispose();
+			hp.setImage(ac.getImageDescriptor().createImage());
 		}
 		
 	}

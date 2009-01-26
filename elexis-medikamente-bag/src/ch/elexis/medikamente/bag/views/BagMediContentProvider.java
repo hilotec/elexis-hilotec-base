@@ -12,11 +12,14 @@ import org.eclipse.jface.viewers.TableViewer;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.FlatDataLoader;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.Substance;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.rgw.tools.IFilter;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
 public class BagMediContentProvider extends FlatDataLoader {
@@ -26,6 +29,10 @@ public class BagMediContentProvider extends FlatDataLoader {
 	private boolean bOnlyGenerics = false;
 	private String sGroup = "";
 	private boolean bOnlyStock;
+	
+	static final String FROM_SUBSTANCE="SELECT j.product FROM "
+		+BAGMedi.JOINTTABLE+" j, "
+		+Substance.TABLENAME+" s WHERE j.Substance=s.ID AND s.name LIKE ";
 	
 	public BagMediContentProvider(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
@@ -64,20 +71,38 @@ public class BagMediContentProvider extends FlatDataLoader {
 				if (bOnlyGenerics) {
 					qbe.add("Generikum", "LIKE", "G%");
 				}
+				if(bOnlyStock){
+					qbe.add(Artikel.MAXBESTAND, ">", "0");
+				}
 				medis = qbe.execute().toArray(new BAGMedi[0]);
 			} else {
 				if (!StringTool.isNothing(subst)) {
-					ids = qbe.execute(psSubst, new String[] {
-						subst + "%"
-					});
+					String sql=FROM_SUBSTANCE+JdbcLink.wrap(subst+"%");
+					if(bOnlyGenerics || bOnlyStock){
+						qbe.addPostQueryFilter(new IFilter(){
+
+							public boolean select(Object element){
+								BAGMedi medi=(BAGMedi)element;
+								if(bOnlyStock &! medi.isLagerartikel()){
+									return false;
+								}
+								if(bOnlyGenerics &! medi.isGenericum()){
+									return false;
+								}
+								return true;
+							}});
+					}
+					medis = qbe.queryExpression(sql, null).toArray(new BAGMedi[0]);
+				
 				} else if (!StringTool.isNothing(notes)) {
 					ids = qbe.execute(psNotes, new String[] {
 						"%" + notes + "%"
 					});
+					medis = new BAGMedi[ids.size()];
 				} else {
-					ids = new ArrayList<String>();
+					medis=new BAGMedi[0];
 				}
-				medis = new BAGMedi[ids.size()];
+
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
@@ -112,12 +137,13 @@ public class BagMediContentProvider extends FlatDataLoader {
 		sGroup = group;
 	}
 	
-	public void toggleGenericsOnly(){
+	public boolean toggleGenericsOnly(){
 		bOnlyGenerics = !bOnlyGenerics;
+		return bOnlyGenerics;
 	}
 	
-	public void toggleStockOnly(){
+	public boolean toggleStockOnly(){
 		bOnlyStock = !bOnlyStock;
-		
+		return bOnlyStock;
 	}
 }
