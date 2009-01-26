@@ -6,12 +6,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
+/**
+ * A job that does not execute immediately on launch but waits if there comes anothar call - e.g a
+ * key press of the user. The time the job waits is configurable but can also be adaptive - it
+ * remembers the time between earlier calls and decides accordingly, how long it should wait next
+ * time.
+ * 
+ * @author gerry
+ * 
+ */
 public class DelayableJob extends Job {
 	private IWorker worker;
 	public static final int DELAY_ADAPTIVE = -1;
 	private long lastCall = 0L;
 	private int lastDelay = 200;
-	private HashMap<String, Object> privdata=new HashMap<String,Object>();
+	private HashMap<String, Object> privdata = new HashMap<String, Object>();
 	
 	public DelayableJob(String name, IWorker worker){
 		super(name);
@@ -23,7 +32,7 @@ public class DelayableJob extends Job {
 	 * counter is reset and will wait for the specified time again. If the Job was already launched
 	 * when a re-launch occurs, the Job will be stopped if possible.
 	 * 
-	 * If the delay is DELAY_ADAPTIVE, the JOb will try to find the optimal delay by analyzing
+	 * If the delay is DELAY_ADAPTIVE, the Job will try to find the optimal delay by analyzing
 	 * earlier calls. So different typing speeds of different users can be handled.
 	 * 
 	 * @param delayMillis
@@ -42,28 +51,33 @@ public class DelayableJob extends Job {
 				delayMillis = lastDelay;
 			}
 			lastCall = System.currentTimeMillis();
-			System.out.println("Delay: " + delayMillis);
+			// System.out.println("Delay: " + delayMillis);
 		}
 		this.schedule(delayMillis);
 	}
 	
 	/**
 	 * set arbitrary data that can be retrieved at run time
-	 * @param key a unique key
-	 * @param value n arbitrary object
+	 * 
+	 * @param key
+	 *            a unique key
+	 * @param value
+	 *            n arbitrary object
 	 */
 	public void setRuntimeData(String key, Object value){
 		privdata.put(key, value);
 	}
+	
 	public Object getRuntimeData(String key){
 		return privdata.get(key);
 	}
+	
 	@Override
 	protected IStatus run(IProgressMonitor monitor){
-		return worker.work(monitor,privdata);
+		return worker.work(monitor, privdata);
 	}
 	
 	public interface IWorker {
-		public IStatus work(IProgressMonitor monitor, HashMap<String,Object> params);
+		public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params);
 	}
 }

@@ -39,7 +39,6 @@ import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.Heartbeat;
 import ch.elexis.actions.RestrictedAction;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.LabResult;
@@ -54,7 +53,7 @@ import ch.elexis.util.ViewMenus;
  * @author gerry
  * 
  */
-public class LabNotSeenView extends ViewPart implements ActivationListener, HeartListener {
+public class LabNotSeenView extends ViewPart implements HeartListener {
 	public final static String ID = "ch.elexis.LabNotSeenView";
 	CheckboxTableViewer tv;
 	LabResult[] unseen = null;
@@ -85,15 +84,15 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		tv.setContentProvider(new LabNotSeenContentProvider());
 		tv.setLabelProvider(new LabNotSeenLabelProvider());
 		tv.setUseHashlookup(true);
-		GlobalEvents.getInstance().addActivationListener(this, this);
-		
 		tv.addSelectionChangedListener(new ISelectionChangedListener() {
 			
 			public void selectionChanged(final SelectionChangedEvent event){
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				if (!sel.isEmpty()) {
-					LabResult lr = (LabResult) sel.getFirstElement();
-					GlobalEvents.getInstance().fireSelectionEvent(lr.getPatient());
+					if (sel.getFirstElement() instanceof LabResult) {
+						LabResult lr = (LabResult) sel.getFirstElement();
+						GlobalEvents.getInstance().fireSelectionEvent(lr.getPatient());
+					}
 				}
 				
 			}
@@ -123,12 +122,16 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createToolbar(markPersonAction, markAllAction);
+		heartbeat();
+		Hub.heart.addListener(this, Hub.localCfg.get(LabSettings.LABNEW_HEARTRATE,
+			Heartbeat.FREQUENCY_HIGH));
+		
 		tv.setInput(this);
 	}
 	
 	@Override
 	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+		Hub.heart.removeListener(this);
 		super.dispose();
 	}
 	
@@ -206,21 +209,6 @@ public class LabNotSeenView extends ViewPart implements ActivationListener, Hear
 		
 		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
 		// don't mind
-		}
-		
-	}
-	
-	public void activation(final boolean mode){
-	// don't mind
-	}
-	
-	public void visible(final boolean mode){
-		if (mode) {
-			heartbeat();
-			Hub.heart.addListener(this, Hub.localCfg.get(LabSettings.LABNEW_HEARTRATE,
-				Heartbeat.FREQUENCY_HIGH));
-		} else {
-			Hub.heart.removeListener(this);
 		}
 		
 	}

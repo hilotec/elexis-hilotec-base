@@ -15,8 +15,8 @@ package ch.elexis.util.viewers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.PersistentObject;
@@ -38,11 +38,16 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	private SelectorPanel panel;
 	private FieldDescriptor<? extends PersistentObject>[] fields;
 	private boolean bExclusive = false;
+	private IAction[] actions = null;;
 	
 	public SelectorPanelProvider(FieldDescriptor<? extends PersistentObject>[] fields,
 		boolean bExlusive){
 		this.fields = fields;
 		this.bExclusive = bExlusive;
+	}
+	
+	public void addActions(IAction... actions){
+		this.actions = actions;
 	}
 	
 	public void addChangeListener(ControlFieldListener cl){
@@ -61,26 +66,29 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 			ActiveControl ac = null;
 			switch (field.tFeldTyp) {
 			case STRING:
-				ac = new TextField(panel, 0, field.sAnzeige);
+				ac = new TextField(panel.getFieldParent(), 0, field.sAnzeige);
 				break;
 			case CURRENCY:
-				ac = new MoneyField(panel, 0, field.sAnzeige);
+				ac = new MoneyField(panel.getFieldParent(), 0, field.sAnzeige);
 				break;
 			case DATE:
-				ac = new DateField(panel, 0, field.sAnzeige);
+				ac = new DateField(panel.getFieldParent(), 0, field.sAnzeige);
 				break;
 			
 			case COMBO:
-				ac = new ComboField(panel, 0, field.sAnzeige, (String[])field.ext);
+				ac =
+					new ComboField(panel.getFieldParent(), 0, field.sAnzeige, (String[]) field.ext);
 				break;
 			case INT:
-				ac=new IntegerField(panel,0,field.sAnzeige);
+				ac = new IntegerField(panel.getFieldParent(), 0, field.sAnzeige);
 			}
-			 ac.setData(ActiveControl.PROP_FIELDNAME, field.sFeldname);
-			 ac.setData(ActiveControl.PROP_HASHNAME, field.sHashname);
+			ac.setData(ActiveControl.PROP_FIELDNAME, field.sFeldname);
+			ac.setData(ActiveControl.PROP_HASHNAME, field.sHashname);
 			panel.addField(ac);
 		}
-		
+		if (actions != null) {
+			panel.addActions(actions);
+		}
 		panel.setExclusive(bExclusive);
 		panel.addSelectorListener(new ActiveControlListener() {
 			
@@ -91,10 +99,10 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 			public void titleClicked(ActiveControl field){
 				fireClickedEvent(field.getLabel());
 			}
-
+			
 			public void invalidContents(ActiveControl field){
-				// TODO Auto-generated method stub
-				
+			// TODO Auto-generated method stub
+			
 			}
 		});
 		return panel;

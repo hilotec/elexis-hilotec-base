@@ -191,9 +191,9 @@ public class Desk implements IApplication {
 			if (theImageRegistry != null) {
 				theImageRegistry.dispose();
 			}
-			if ((theDisplay != null) && (!theDisplay.isDisposed())) {
-				theDisplay.dispose();
-			}
+			/*
+			 * if ((theDisplay != null) && (!theDisplay.isDisposed())) { theDisplay.dispose(); }
+			 */
 		}
 		
 	}
@@ -381,7 +381,7 @@ public class Desk implements IApplication {
 		Cursor ret = cursors.get(name);
 		if (ret == null) {
 			if (name.equals(CUR_HYPERLINK)) {
-				ret=getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+				ret = getDisplay().getSystemCursor(SWT.CURSOR_HAND);
 				cursors.put(name, ret);
 			}
 		}
