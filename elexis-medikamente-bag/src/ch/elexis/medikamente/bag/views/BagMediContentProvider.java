@@ -37,6 +37,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 	
 	public BagMediContentProvider(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
+		qbe.addPostQueryFilter(new QueryFilter());
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT m.product FROM ").append(BAGMedi.JOINTTABLE).append(" m, ").append(
 			Substance.TABLENAME).append(" s WHERE m.Substance=s.ID AND s.name LIKE ?;");
@@ -79,22 +80,8 @@ public class BagMediContentProvider extends FlatDataLoader {
 			} else {
 				if (!StringTool.isNothing(subst)) {
 					String sql = FROM_SUBSTANCE + JdbcLink.wrap(subst + "%");
-					if (bOnlyGenerics || bOnlyStock) {
-						qbe.addPostQueryFilter(new IFilter() {
-							
-							public boolean select(Object element){
-								BAGMedi medi = (BAGMedi) element;
-								if (bOnlyStock & !medi.isLagerartikel()) {
-									return false;
-								}
-								if (bOnlyGenerics & !medi.isGenericum()) {
-									return false;
-								}
-								return true;
-							}
-						});
-					}
-					Collection<BAGMedi> mediRaw = (Collection<BAGMedi>) qbe.queryExpression(sql, null);
+					Collection<BAGMedi> mediRaw =
+						(Collection<BAGMedi>) qbe.queryExpression(sql, null);
 					if (mediRaw == null) {
 						medis = new BAGMedi[0];
 					} else {
@@ -152,5 +139,19 @@ public class BagMediContentProvider extends FlatDataLoader {
 	public boolean toggleStockOnly(){
 		bOnlyStock = !bOnlyStock;
 		return bOnlyStock;
+	}
+	
+	class QueryFilter implements IFilter {
+		public boolean select(Object element){
+			BAGMedi medi = (BAGMedi) element;
+			if (bOnlyStock & !medi.isLagerartikel()) {
+				return false;
+			}
+			if (bOnlyGenerics & !medi.isGenericum()) {
+				return false;
+			}
+			return true;
+		}
+		
 	}
 }
