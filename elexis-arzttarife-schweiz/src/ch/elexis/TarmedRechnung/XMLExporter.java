@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 4971 2009-01-18 16:54:00Z rgw_ch $
+ * $Id: XMLExporter.java 5058 2009-01-27 19:22:43Z tschaller $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -384,7 +384,7 @@ public class XMLExporter implements IRnOutputter {
 		String mEAN = TarmedRequirements.getEAN(actMandant); // (String)actMandant.getInfoElement(
 		// "EAN");
 		
-		sender.setAttribute("ean_party", mEAN);
+		sender.setAttribute("ean_party", getSenderEAN(actMandant));
 		String kEAN = TarmedRequirements.getEAN(kostentraeger); // (String)kostentraeger.
 		// getInfoElement("EAN");
 		String rEAN = TarmedRequirements.getRecipientEAN(kostentraeger);
@@ -812,7 +812,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -902,7 +902,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
 		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
 		
@@ -1410,6 +1410,10 @@ public class XMLExporter implements IRnOutputter {
 		Element guarantor = new Element("guarantor", ns);
 		guarantor.addContent(buildAdressElement(garant));
 		return guarantor;
+	}
+	
+	protected String getSenderEAN(Mandant actMandant){
+		return TarmedRequirements.getEAN(actMandant);
 	}
 	
 	private class Postanschrift {
