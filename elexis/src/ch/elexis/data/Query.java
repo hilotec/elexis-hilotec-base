@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 5048 2009-01-26 21:44:06Z rgw_ch $
+ * $Id: Query.java 5049 2009-01-27 05:44:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -444,6 +444,7 @@ public class Query<T>{
             
         }catch(Exception ex){
             log.log("Fehler bei Datenbankabfrage ",Log.ERRORS);
+            ExHandler.handle(ex);
             return null;
         }finally{
         	PersistentObject.getConnection().releaseStatement(stm);
