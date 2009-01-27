@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 4642 2008-10-28 12:16:47Z michael_imhof $
+ * $Id: DirectoriesContentParser.java 5059 2009-01-27 20:33:44Z tschaller $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -63,6 +63,7 @@ public class DirectoriesContentParser extends HtmlParser {
 	 * 		<strong>23</strong> Treffer für 
 	 * 		<strong	class="what">müller hans</strong> in 
 	 * 		<strong class="where">bern</strong>
+	 * 		<div id="printlink" ....
 	 * 		<span class="spacer">&nbsp;</span> 
 	 * 		<a href="http://tel.local.ch/de/">Neue Suche</a> 
 	 * 	</div>
@@ -70,7 +71,7 @@ public class DirectoriesContentParser extends HtmlParser {
 	public String getSearchInfo() {
 		reset();
 		String searchInfoText =
-			extract("<div class=\"summary\">", "<span class=\"spacer\">");
+			extract("<div class=\"summary\">", "<div id=\"printlink\"");
 		if (searchInfoText == null) {
 			return "";//$NON-NLS-1$
 		}
@@ -200,8 +201,8 @@ public class DirectoriesContentParser extends HtmlParser {
 		String nachname = vornameNachname[1];
 		
 		// Tel-Nr
-		moveTo("<a class=\"phonenr\"");
-		String telNr = extract(">", "</a>");
+		moveTo("<span class=\"tel\"");
+		String telNr = extract(">", "</span>").replace("&nbsp;", "").replace("*", "").trim();
 		
 		// Adresse, Ort, Plz
 		String adressTxt = extract("<p class=\"adr\">", "</p>");
@@ -333,9 +334,11 @@ public class DirectoriesContentParser extends HtmlParser {
 
 		// Tel/Fax & Email	
 		moveTo("<tr class=\"phoneNumber\">");
-
-		moveTo("<a class=\"phonenr\"");
-		String tel = extract("\">", "</a>");
+		String tel = "";
+		if (moveTo("<span class=\"contact\">Telefon")) {
+			moveTo("<td class=\"tel\"");
+			tel = extract(">", "</td>").replace("&nbsp;", "").replace("*", "").trim();
+		}
 		String fax = "";
 		if (moveTo("<span class=\"contact\">Fax")) {
 			fax = extract("<td>", "</td>").replace("&nbsp;", "").replace("*", "").trim();
