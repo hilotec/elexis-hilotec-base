@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 5042 2009-01-25 20:42:04Z rgw_ch $
+ *  $Id: BAGMedi.java 5050 2009-01-27 05:46:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -117,7 +117,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	}
 	
 	public boolean isGenericum(){
-		return get("Generikum").startsWith("G");
+		return checkNull(get("Generikum")).startsWith("G");
 	}
 	
 	public boolean hasGenerica(){

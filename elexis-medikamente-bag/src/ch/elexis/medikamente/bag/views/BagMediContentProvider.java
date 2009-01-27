@@ -2,6 +2,7 @@ package ch.elexis.medikamente.bag.views;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,9 +31,9 @@ public class BagMediContentProvider extends FlatDataLoader {
 	private String sGroup = "";
 	private boolean bOnlyStock;
 	
-	static final String FROM_SUBSTANCE="SELECT j.product FROM "
-		+BAGMedi.JOINTTABLE+" j, "
-		+Substance.TABLENAME+" s WHERE j.Substance=s.ID AND s.name LIKE ";
+	static final String FROM_SUBSTANCE =
+		"SELECT j.product FROM " + BAGMedi.JOINTTABLE + " j, " + Substance.TABLENAME
+			+ " s WHERE j.Substance=s.ID AND s.name LIKE ";
 	
 	public BagMediContentProvider(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
@@ -71,38 +72,44 @@ public class BagMediContentProvider extends FlatDataLoader {
 				if (bOnlyGenerics) {
 					qbe.add("Generikum", "LIKE", "G%");
 				}
-				if(bOnlyStock){
+				if (bOnlyStock) {
 					qbe.add(Artikel.MAXBESTAND, ">", "0");
 				}
 				medis = qbe.execute().toArray(new BAGMedi[0]);
 			} else {
 				if (!StringTool.isNothing(subst)) {
-					String sql=FROM_SUBSTANCE+JdbcLink.wrap(subst+"%");
-					if(bOnlyGenerics || bOnlyStock){
-						qbe.addPostQueryFilter(new IFilter(){
-
+					String sql = FROM_SUBSTANCE + JdbcLink.wrap(subst + "%");
+					if (bOnlyGenerics || bOnlyStock) {
+						qbe.addPostQueryFilter(new IFilter() {
+							
 							public boolean select(Object element){
-								BAGMedi medi=(BAGMedi)element;
-								if(bOnlyStock &! medi.isLagerartikel()){
+								BAGMedi medi = (BAGMedi) element;
+								if (bOnlyStock & !medi.isLagerartikel()) {
 									return false;
 								}
-								if(bOnlyGenerics &! medi.isGenericum()){
+								if (bOnlyGenerics & !medi.isGenericum()) {
 									return false;
 								}
 								return true;
-							}});
+							}
+						});
 					}
-					medis = qbe.queryExpression(sql, null).toArray(new BAGMedi[0]);
-				
+					Collection<BAGMedi> mediRaw = (Collection<BAGMedi>) qbe.queryExpression(sql, null);
+					if (mediRaw == null) {
+						medis = new BAGMedi[0];
+					} else {
+						medis = mediRaw.toArray(new BAGMedi[0]);
+					}
+					
 				} else if (!StringTool.isNothing(notes)) {
 					ids = qbe.execute(psNotes, new String[] {
 						"%" + notes + "%"
 					});
 					medis = new BAGMedi[ids.size()];
 				} else {
-					medis=new BAGMedi[0];
+					medis = new BAGMedi[0];
 				}
-
+				
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
