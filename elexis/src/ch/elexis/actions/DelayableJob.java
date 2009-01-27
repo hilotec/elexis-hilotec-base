@@ -38,6 +38,7 @@ public class DelayableJob extends Job {
 	 * @param delayMillis
 	 */
 	public void launch(int delayMillis){
+
 		this.cancel();
 		if (delayMillis == DELAY_ADAPTIVE) {
 			if (lastCall == 0) {

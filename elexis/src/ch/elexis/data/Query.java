@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 5049 2009-01-27 05:44:12Z rgw_ch $
+ * $Id: Query.java 5052 2009-01-27 06:20:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -422,7 +422,7 @@ public class Query<T>{
                 return null;
             }*/
             ResultSet res=stm.query(expr);
-            while(res.next()==true){
+            while((res!=null) && (res.next()==true)){
                 String id=res.getString(1);
                 T o=(T)load.invoke(null,new Object[]{id});
                 if(o==null){

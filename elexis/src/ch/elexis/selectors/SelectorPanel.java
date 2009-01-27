@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5048 2009-01-26 21:44:06Z rgw_ch $
+ * $Id: SelectorPanel.java 5052 2009-01-27 06:20:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -149,7 +149,7 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	
 	public void clearValues(){
 		
-		Desk.syncExec(new Runnable() {
+		Desk.asyncExec(new Runnable() {
 			public void run(){
 				bCeaseFire = true;
 				for (Control c : cFields.getChildren()) {
