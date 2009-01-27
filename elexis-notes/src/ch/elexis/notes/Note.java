@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 4941 2009-01-13 17:47:56Z rgw_ch $
+ *  $Id: Note.java 5056 2009-01-27 13:04:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -23,10 +23,21 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
+/**
+ * A Note is an arbitrary Text or BLOB with a name and optional keywords. A Note can consist of or
+ * contain external links to files in the file system or URLs. Notes are stored hierarchically in a
+ * tree-like structure (which ist mapped to a flat database table via a "parent"-field).
+ * 
+ * @author gerry
+ * 
+ */
 public class Note extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_NOTES";
 	private static final String DBVERSION = "0.3.2";
 	
+	/**
+	 * The String that defines the database. Will be used only once at first start of this plugin
+	 */
 	private static final String create =
 		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25)," + "lastupdate BIGINT,"
 			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80),"
@@ -34,11 +45,22 @@ public class Note extends PersistentObject {
 			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME
 			+ " (ID,Title,Parent) VALUES('1','" + DBVERSION + "','xxx');";
 	
+	/**
+	 * Update to Version 0.31
+	 */
 	private static final String upd031 =
 		"ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);" + "ALTER TABLE " + TABLENAME
 			+ " ADD mimetype VARCHAR(80);";
 	
+	/**
+	 * Update to Version 0.32
+	 */
 	private static final String upd032 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
+	
+	/**
+	 * Initaialization: Create the table mappings (@see PersistentObject), check the version and
+	 * create or update the table if necessary
+	 */
 	static {
 		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords",
 			"mimetype");
@@ -55,10 +77,10 @@ public class Note extends PersistentObject {
 				if (vi.isOlder("0.3.1")) {
 					createTable(TABLENAME, upd031);
 				}
-				if(vi.isOlder("0.3.2")){
-					createTable(TABLENAME,upd032);
+				if (vi.isOlder("0.3.2")) {
+					createTable(TABLENAME, upd032);
 				}
-						
+				
 				start.set("Title", DBVERSION);
 			}
 		}
@@ -114,6 +136,11 @@ public class Note extends PersistentObject {
 		}
 	}
 	
+	/**
+	 * find the parent note of this note
+	 * 
+	 * @return the parent note or null if this is a top level note.
+	 */
 	public Note getParent(){
 		String pid = get("Parent");
 		if (pid == null) {
@@ -123,29 +150,62 @@ public class Note extends PersistentObject {
 		return p;
 	}
 	
+	/**
+	 * find the children of this note
+	 * 
+	 * @return a list of all Notes that are children of the current note. The list might me empty
+	 *         but is never null.
+	 */
 	public List<Note> getChildren(){
 		Query<Note> qbe = new Query<Note>(Note.class);
 		qbe.add("Parent", "=", getId());
 		return qbe.execute();
 	}
 	
+	/**
+	 * Set new binary content to the current note. Any old content will be overwritten.
+	 * 
+	 * @param cnt
+	 *            the new content
+	 */
 	public void setContent(byte[] cnt){
 		setBinary("Contents", cnt);
 		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
+	/**
+	 * retrieve the content of this note
+	 * 
+	 * @return a byte[] containing the data for this note's content
+	 */
 	public byte[] getContent(){
 		return getBinary("Contents");
 	}
 	
+	/**
+	 * retrieve the keywords that are associated with this note.
+	 * 
+	 * @return a String with a comma separated list of keywords that may be empty but is never null
+	 */
 	public String getKeywords(){
 		return checkNull(get("keywords"));
 	}
 	
+	/**
+	 * Enter keywords for this note
+	 * 
+	 * @param kw
+	 *            a string with a comma separated list of keywords (at most 250 chars)
+	 */
 	public void setKeywords(String kw){
 		set("keywords", StringTool.limitLength(kw.toLowerCase(), 250));
 	}
 	
+	/**
+	 * Return externals references associated with this Note
+	 * 
+	 * @return a List with urls of external refs
+	 */
 	public List<String> getRefs(){
 		String all = get("refs");
 		if (StringTool.isNothing(all)) {
@@ -154,12 +214,24 @@ public class Note extends PersistentObject {
 		return StringTool.splitAL(all, ",");
 	}
 	
+	/**
+	 * Add a new external ref
+	 * 
+	 * @param ref
+	 *            a string representing an URL
+	 */
 	public void addRef(String ref){
 		List<String> refs = getRefs();
 		refs.add(ref);
 		set("refs", StringTool.join(refs, ","));
 	}
 	
+	/**
+	 * remove an external reference
+	 * 
+	 * @param ref
+	 *            the reference to remove
+	 */
 	public void removeRef(String ref){
 		List<String> refs = getRefs();
 		refs.remove(ref);

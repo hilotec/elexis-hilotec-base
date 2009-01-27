@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 4851 2008-12-24 14:44:51Z rgw_ch $
+ *  $Id: NotesView.java 5056 2009-01-27 13:04:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -47,6 +47,13 @@ import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
+/**
+ * The eclipse View for the notes. Contains a master-Part (NotesList) and a details-part
+ * (NotesDetail)
+ * 
+ * @author gerry
+ * 
+ */
 public class NotesView extends ViewPart implements ActivationListener, SelectionListener {
 	private static final String PREFERRED_SCANSERVICE = "ScanToPDFService";
 	ScrolledForm fMaster;
@@ -181,6 +188,7 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 			}
 			
 		};
+		// Check if there is a scanner service available and if so, create a "Scan" button
 		if (Extensions.isServiceAvailable(PREFERRED_SCANSERVICE)) {
 			hasScanner = true;
 			scanAction = new Action("Scannen...") {

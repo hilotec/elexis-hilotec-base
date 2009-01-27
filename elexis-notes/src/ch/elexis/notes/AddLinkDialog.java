@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007.2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AddLinkDialog.java 4721 2008-12-04 10:10:41Z rgw_ch $
+ *  $Id: AddLinkDialog.java 5056 2009-01-27 13:04:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -17,7 +17,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;

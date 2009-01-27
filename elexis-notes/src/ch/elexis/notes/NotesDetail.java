@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesDetail.java 4802 2008-12-10 18:26:18Z rgw_ch $
+ *  $Id: NotesDetail.java 5056 2009-01-27 13:04:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -35,6 +35,12 @@ import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
+/**
+ * Dislplay details (text., links, keywords) of a note
+ * 
+ * @author gerry
+ * 
+ */
 public class NotesDetail extends Composite {
 	private ETFTextPlugin etf;
 	List lRefs;
@@ -56,13 +62,13 @@ public class NotesDetail extends Composite {
 		etf.createContainer(fNote.getBody(), new SaveCallback()).setLayoutData(
 			SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
-		tKeywords=tk.createText(fNote.getBody(), "");
+		tKeywords = tk.createText(fNote.getBody(), "");
 		tKeywords.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tKeywords.addFocusListener(new FocusAdapter(){
-
+		tKeywords.addFocusListener(new FocusAdapter() {
+			
 			@Override
 			public void focusLost(FocusEvent e){
-				if(actNote!=null){
+				if (actNote != null) {
 					actNote.setKeywords(tKeywords.getText());
 				}
 				super.focusLost(e);
@@ -106,6 +112,11 @@ public class NotesDetail extends Composite {
 		}
 	}
 	
+	/**
+	 * Run a program to view an external file
+	 * 
+	 * @param filename
+	 */
 	public void execute(String filename){
 		try {
 			int r = filename.lastIndexOf('.');

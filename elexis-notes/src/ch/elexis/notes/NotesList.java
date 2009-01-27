@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesList.java 5019 2009-01-23 16:33:32Z rgw_ch $
+ *  $Id: NotesList.java 5056 2009-01-27 13:04:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.notes;
@@ -35,33 +35,40 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 
+/**
+ * The left side of the notes View: Listing of all Notes and Search field
+ * 
+ * @author gerry
+ * 
+ */
 public class NotesList extends Composite {
 	TreeViewer tv;
 	Composite parent;
 	Text tFilter;
 	String filterExpr;
 	NotesFilter notesFilter = new NotesFilter();
-	HashMap<Note,String> matches=new HashMap<Note, String>();
+	HashMap<Note, String> matches = new HashMap<Note, String>();
 	
 	NotesList(Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		this.parent = parent;
-		Composite cFilter=new Composite(this,SWT.NONE);
+		Composite cFilter = new Composite(this, SWT.NONE);
 		cFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		cFilter.setLayout(new GridLayout(3,false));
-		ImageHyperlink clearSearchFieldHyperlink=new ImageHyperlink(cFilter,SWT.NONE);
+		cFilter.setLayout(new GridLayout(3, false));
+		ImageHyperlink clearSearchFieldHyperlink = new ImageHyperlink(cFilter, SWT.NONE);
 		clearSearchFieldHyperlink.setImage(Desk.getImage(Desk.IMG_CLEAR));
-		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter(){
+		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e){
 				tFilter.setText("");
-				filterExpr="";
+				filterExpr = "";
 				matches.clear();
 				tv.collapseAll();
 				tv.removeFilter(notesFilter);
-			}});
-		new Label(cFilter,SWT.NONE).setText("Suchen: ");
+			}
+		});
+		new Label(cFilter, SWT.NONE).setText("Suchen: ");
 		tFilter = new Text(cFilter, SWT.SINGLE);
 		tFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tFilter.addSelectionListener(new SelectionAdapter() {
@@ -100,10 +107,10 @@ public class NotesList extends Composite {
 			if (filterExpr.length() == 0) {
 				return true;
 			}
-			boolean bMatch=isMatch((Note) element, filterExpr);
-			if(bMatch){
-				Note parent=(Note)element;
-				while((parent=parent.getParent())!=null){
+			boolean bMatch = isMatch((Note) element, filterExpr);
+			if (bMatch) {
+				Note parent = (Note) element;
+				while ((parent = parent.getParent()) != null) {
 					matches.put(parent, filterExpr);
 				}
 			}
@@ -111,13 +118,12 @@ public class NotesList extends Composite {
 		}
 		
 		private boolean isMatch(Note n, String t){
-			if(matches.get(n)!=null){
+			if (matches.get(n) != null) {
 				return true;
 			}
-
-			String lbl=n.getLabel().toLowerCase();
-			if (lbl.startsWith(t) || 
-				n.getKeywords().contains(t)) {
+			
+			String lbl = n.getLabel().toLowerCase();
+			if (lbl.startsWith(t) || n.getKeywords().contains(t)) {
 				matches.put(n, t);
 				
 				return true;
@@ -132,8 +138,7 @@ public class NotesList extends Composite {
 			}
 			return false;
 		}
-
-	
+		
 	}
 	
 }
