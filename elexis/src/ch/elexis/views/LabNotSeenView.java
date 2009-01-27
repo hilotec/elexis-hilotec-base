@@ -13,6 +13,8 @@
 
 package ch.elexis.views;
 
+import java.util.logging.Level;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -45,6 +47,7 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.preferences.LabSettings;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.tools.Log;
 
 /**
  * This view displays all LabResults that are not marked as seen by the doctor. One can mark them
@@ -58,6 +61,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 	CheckboxTableViewer tv;
 	LabResult[] unseen = null;
 	private long lastUpdate = 0;
+	private Log log = Log.get("LabNotSeen");
 	
 	private static final String[] columnHeaders = {
 		"Patient", "Parameter", "Normbereich", "Datum", "Wert"
@@ -217,10 +221,12 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		long last = LabResult.getLastUpdateUnseen();
 		if (lastUpdate != 0) {
 			if (lastUpdate >= last) {
+				log.log(Level.FINE, "Heartbeat unused");
 				return;
 			}
 		}
 		lastUpdate = last;
+		log.log(Level.FINE, "Heartbeat used");
 		unseen = LabResult.getUnseen().toArray(new LabResult[0]);
 		Desk.getDisplay().asyncExec(new Runnable() {
 			public void run(){

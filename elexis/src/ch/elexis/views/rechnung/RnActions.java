@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: RnActions.java 5057 2009-01-27 17:44:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -97,7 +97,7 @@ public class RnActions {
 				Handler.execute(view.getViewSite(), MahnlaufCommand.ID, null);
 				view.cfp.clearValues();
 				view.cfp.cbStat
-					.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length - 2]);
+					.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length - 3]);
 				view.cfp.fireChangedEvent();
 			}
 		};
