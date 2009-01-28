@@ -19,6 +19,7 @@ import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.model.ContentProvider;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.FieldDescriptor;
 import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
@@ -29,9 +30,12 @@ public class MedikamentSelector2 extends CodeSelectorFactory {
 	public static final String SELECT_NAME = "Name";
 	public static final String SELECT_SUBSTANCE = "Substanz";
 	public static final String SELECT_NOTE = "Notiz";
-	String[] fields = new String[] {
-		SELECT_NAME, SELECT_SUBSTANCE, SELECT_NOTE
-	};
+	FieldDescriptor<?>[] fields =
+		{
+			new FieldDescriptor<Medikament>(SELECT_NAME),
+			new FieldDescriptor<Medikament>(SELECT_SUBSTANCE),
+			new FieldDescriptor<Medikament>(SELECT_NOTE),
+		};
 	private CommonViewer cv;
 	
 	@Override

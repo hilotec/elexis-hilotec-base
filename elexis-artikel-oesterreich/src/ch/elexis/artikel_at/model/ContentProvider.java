@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 5031 2009-01-25 07:47:48Z rgw_ch $
+ * $Id: ContentProvider.java 5062 2009-01-28 18:46:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.model;
@@ -65,7 +65,7 @@ public class ContentProvider implements CommonContentProvider {
 	
 	}
 	
-	public void changed(String[] fields, String[] values){
+	public void changed(HashMap<String, String> vars){
 		msl.reload();
 	}
 	
