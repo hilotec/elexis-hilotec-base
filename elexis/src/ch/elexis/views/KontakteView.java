@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ * $Id: KontakteView.java 5063 2009-01-29 08:51:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -33,6 +34,7 @@ import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.KontaktErfassenDialog;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
@@ -46,6 +48,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	public static final String ID = "ch.elexis.Kontakte";
 	private CommonViewer cv;
 	private ViewerConfigurer vc;
+	IAction dupKontakt, delKontakt, createKontakt;
 	private String[] fields = {
 		"Kuerzel", "Bezeichnung1", "Bezeichnung2", "Strasse", "Plz", "Ort"
 	};
@@ -63,43 +66,12 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 				// new LazyContentProvider(cv,dataloader, AccessControlDefaults.KONTAKT_DISPLAY),
 				new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class)),
 				new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, fields),
-				new ViewerConfigurer.DefaultButtonProvider(cv, Kontakt.class),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
+				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
+		makeActions();
+		cv.setObjectCreateAction(getViewSite(), createKontakt);
 		menu = new ViewMenus(getViewSite());
-		Action delKontakt = new Action("Löschen") {
-			@Override
-			public void run(){
-				Object[] o = cv.getSelection();
-				if (o != null) {
-					Kontakt k = (Kontakt) o[0];
-					k.delete();
-					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
-				}
-			}
-		};
-		Action dupKontakt = new Action("Kontakt duplizieren") {
-			@Override
-			public void run(){
-				Object[] o = cv.getSelection();
-				if (o != null) {
-					Kontakt k = (Kontakt) o[0];
-					Kontakt dup;
-					if (k.istPerson()) {
-						Person p = Person.load(k.getId());
-						dup =
-							new Person(p.getName(), p.getVorname(), p.getGeburtsdatum(), p
-								.getGeschlecht());
-					} else {
-						Organisation org = Organisation.load(k.getId());
-						dup = new Organisation(org.get("Name"), org.get("Zusatz1"));
-					}
-					dup.setAnschrift(k.getAnschrift());
-					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
-					// cv.getViewerWidget().refresh();
-				}
-			}
-		};
 		menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt, dupKontakt);
 		menu.createMenu(GlobalActions.printKontaktEtikette);
 		menu.createToolbar(GlobalActions.printKontaktEtikette);
@@ -187,5 +159,53 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	
 	public boolean isSaveOnCloseNeeded(){
 		return true;
+	}
+	
+	private void makeActions(){
+		delKontakt = new Action("Löschen") {
+			@Override
+			public void run(){
+				Object[] o = cv.getSelection();
+				if (o != null) {
+					Kontakt k = (Kontakt) o[0];
+					k.delete();
+					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
+				}
+			}
+		};
+		dupKontakt = new Action("Kontakt duplizieren") {
+			@Override
+			public void run(){
+				Object[] o = cv.getSelection();
+				if (o != null) {
+					Kontakt k = (Kontakt) o[0];
+					Kontakt dup;
+					if (k.istPerson()) {
+						Person p = Person.load(k.getId());
+						dup =
+							new Person(p.getName(), p.getVorname(), p.getGeburtsdatum(), p
+								.getGeschlecht());
+					} else {
+						Organisation org = Organisation.load(k.getId());
+						dup = new Organisation(org.get("Name"), org.get("Zusatz1"));
+					}
+					dup.setAnschrift(k.getAnschrift());
+					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
+					// cv.getViewerWidget().refresh();
+				}
+			}
+		};
+		createKontakt = new Action("Neuen Kontakt erstellen") {
+			@Override
+			public void run(){
+				String[] flds = cv.getConfigurer().getControlFieldProvider().getValues();
+				String[] predef = new String[] {
+					flds[1], flds[2], "", "", flds[3], flds[4], flds[5]
+				};
+				KontaktErfassenDialog ked =
+					new KontaktErfassenDialog(getViewSite().getShell(), predef);
+				ked.open();
+			}
+		};
 	}
 }
