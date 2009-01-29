@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 5026 2009-01-23 17:32:50Z rgw_ch $
+ *  $Id: KontaktSelektor.java 5064 2009-01-29 16:20:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -108,7 +108,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		 * Hub.jobPool.addJob(dataloader); dataloader.setPriority(Job.SHORT);
 		 * dataloader.setUser(true); dataloader.schedule(); }
 		 */
-		kl = new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class));
+		kl = new FlatDataLoader(cv, new Query<Kontakt>(which));
 		fp = new KontaktFilter(0);
 	}
 	
