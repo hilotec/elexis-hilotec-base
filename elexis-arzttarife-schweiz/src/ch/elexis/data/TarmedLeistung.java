@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 4942 2009-01-13 17:48:53Z rgw_ch $
+ * $Id: TarmedLeistung.java 5069 2009-01-30 17:49:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -46,13 +46,13 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class TarmedLeistung extends VerrechenbarAdapter {
 	Hashtable<String, String> ext;
-	private static final String VERSION="1.1.0";
+	private static final String VERSION = "1.1.0";
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
-	public static final String SIDE="Seite";
-	public static final String PFLICHTLEISTUNG="obligation";
-	private static final String upd110="ALTER TABLE TARMED ADD lastupdate BIGINT";
+	public static final String SIDE = "Seite";
+	public static final String PFLICHTLEISTUNG = "obligation";
+	private static final String upd110 = "ALTER TABLE TARMED ADD lastupdate BIGINT";
 	
 	private static final JdbcLink j = getConnection();
 	static {
@@ -78,9 +78,14 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			"Sparte", "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 		);
-		TarmedLeistung tlv=TarmedLeistung.load("Version");
-		VersionInfo vi=new VersionInfo(tlv.get("Nick"));
-		if(vi.isOlder(VERSION)){
+		TarmedLeistung tlv = TarmedLeistung.load("Version");
+		if (!tlv.exists()) {
+			tlv = new TarmedLeistung();
+			tlv.create("Version");
+			tlv.set("Nick", VERSION);
+		}
+		VersionInfo vi = new VersionInfo(tlv.get("Nick"));
+		if (vi.isOlder(VERSION)) {
 			createTable("TARMED", upd110);
 			tlv.set("Nick", VERSION);
 		}
@@ -217,7 +222,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	/** Erweiterte Informationen rückspeichern */
 	public void flushExtension(){
 		if (ext != null) {
-			byte[] flat = StringTool.flatten(ext,StringTool.ZIP,null);
+			byte[] flat = StringTool.flatten(ext, StringTool.ZIP, null);
 			PreparedStatement preps =
 				j
 					.prepareStatement("UPDATE TARMED_EXTENSION SET limits=? WHERE CODE=" + getWrappedId()); //$NON-NLS-1$
@@ -453,24 +458,24 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			return null;
 		}
 	}
-
+	
 	@Override
-	public List<IAction> getActions(final Verrechnet kontext) {
-		List<IAction> ret=super.getActions(kontext);
-		ret.add(new Action("Details"){
+	public List<IAction> getActions(final Verrechnet kontext){
+		List<IAction> ret = super.getActions(kontext);
+		ret.add(new Action("Details") {
 			@Override
 			public void run(){
-				new TarmedDetailDialog(Desk.getTopShell(),kontext).open();
+				new TarmedDetailDialog(Desk.getTopShell(), kontext).open();
 			}
 		});
 		return ret;
 	}
 	
 	public static boolean isObligation(Verrechnet v){
-		IVerrechenbar vv=v.getVerrechenbar();
-		if(vv instanceof TarmedLeistung){
-			String obli=v.getDetail(PFLICHTLEISTUNG);
-			if((obli==null) || (Boolean.parseBoolean(obli))){
+		IVerrechenbar vv = v.getVerrechenbar();
+		if (vv instanceof TarmedLeistung) {
+			String obli = v.getDetail(PFLICHTLEISTUNG);
+			if ((obli == null) || (Boolean.parseBoolean(obli))) {
 				return true;
 			}
 		}
@@ -478,12 +483,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	}
 	
 	public static String getSide(Verrechnet v){
-		IVerrechenbar vv=v.getVerrechenbar();
-		if(vv instanceof TarmedLeistung){
-			String side=v.getDetail(SIDE);
-			if("l".equalsIgnoreCase(side)){
+		IVerrechenbar vv = v.getVerrechenbar();
+		if (vv instanceof TarmedLeistung) {
+			String side = v.getDetail(SIDE);
+			if ("l".equalsIgnoreCase(side)) {
 				return "left";
-			}else if("r".equalsIgnoreCase(side)){
+			} else if ("r".equalsIgnoreCase(side)) {
 				return "right";
 			}
 		}
