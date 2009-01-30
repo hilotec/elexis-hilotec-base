@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockDetailDisplay.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *  $Id: BlockDetailDisplay.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -81,11 +81,12 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		this.site = site;
 		form = tk.createScrolledForm(parent);
 		Composite body = form.getBody();
+		body.setBackground(parent.getBackground());
 		body.setLayout(new GridLayout(2, false));
-		tk.createLabel(body, "Name");
+		tk.createLabel(body, "Name").setBackground(parent.getBackground());
 		tName = tk.createText(body, "", SWT.BORDER);
 		tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tk.createLabel(body, "Mandant");
+		tk.createLabel(body, "Mandant").setBackground(parent.getBackground());
 		cbMandant = new Combo(body, SWT.NONE);
 		cbMandant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.adapt(cbMandant);

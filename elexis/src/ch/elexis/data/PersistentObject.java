@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 4961 2009-01-16 23:31:32Z rgw_ch $
+ *    $Id: PersistentObject.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,9 +26,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -1707,6 +1709,39 @@ public abstract class PersistentObject {
 				}
 			}
 			
+		}
+		return true;
+	}
+	
+	/**
+	 * Testet ob dieses Objekt den angegebenen Feldern entspricht.
+	 * 
+	 * @param fields
+	 *            HashMap mit name,wert paaren für die Felder
+	 * @param mode
+	 *            Testmodus (MATCH_EXACT, MATCH_LIKE oder MATCH_REGEXP)
+	 * @return true wenn dieses Objekt die entsprechenden Felder hat
+	 */
+	public boolean isMatching(final HashMap<String, String> fields, final int mode){
+		for (Entry<String, String> entry : fields.entrySet()) {
+			String mine = get(entry.getKey());
+			String others = entry.getValue();
+			switch (mode) {
+			case MATCH_EXACT:
+				if (!mine.toLowerCase().equals(others.toLowerCase())) {
+					return false;
+				}
+				break;
+			case MATCH_LIKE:
+				if (!mine.toLowerCase().startsWith(others.toLowerCase())) {
+					return false;
+				}
+				break;
+			case MATCH_REGEXP:
+				if (!mine.matches(others)) {
+					return false;
+				}
+			}
 		}
 		return true;
 	}

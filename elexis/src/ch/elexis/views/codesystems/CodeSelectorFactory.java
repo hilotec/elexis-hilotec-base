@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -57,7 +57,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /**
- * Bereitstellung der Auswahlluste für Codes aller Art: Oben häufigste des Anwenders, in der Mitte
+ * Bereitstellung der Auswahlliste für Codes aller Art: Oben häufigste des Anwenders, in der Mitte
  * häufigste des Patienten, unten ganze Systenatik
  * 
  * @author Gerry

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5066 2009-01-30 10:32:48Z rgw_ch $
+ * $Id: SelectorPanel.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -16,10 +16,10 @@ package ch.elexis.selectors;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
@@ -27,9 +27,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.swt.widgets.ToolBar;
 
 import ch.elexis.Desk;
 import ch.rgw.tools.LimitSizeStack;
@@ -38,11 +36,12 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	boolean bCeaseFire, bExclusive;
 	private LinkedList<ActiveControlListener> listeners = new LinkedList<ActiveControlListener>();
 	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(50);
-	private ImageHyperlink hClr;
 	private Composite cFields;
-	private Composite cActions;
+	private ToolBarManager tActions;
+	private ToolBar tb;
+	private IAction aClr;
 	
-	public SelectorPanel(Composite parent){
+	public SelectorPanel(Composite parent, IAction... actions){
 		super(parent, SWT.NONE);
 		setBackground(parent.getBackground());
 		/*
@@ -52,29 +51,38 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		layout.marginLeft = 0;
 		layout.marginRight = 0;
 		setLayout(layout);
-		cActions = new Composite(this, SWT.NONE);
-		FormData fd = new FormData();
-		fd.top = new FormAttachment(0, 0);
-		fd.right = new FormAttachment(100, 0);
-		cActions.setLayoutData(fd);
-		cActions.setLayout(new FillLayout());
+		tActions = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		
-		hClr = Desk.getToolkit().createImageHyperlink(cActions, SWT.NONE);
-		hClr.setImage(Desk.getImage(Desk.IMG_CLEAR));
-		hClr.addHyperlinkListener(new HyperlinkAdapter() {
+		aClr = new Action("Felder leeren") {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLEAR));
+			}
+			
 			@Override
-			public void linkActivated(final HyperlinkEvent e){
+			public void run(){
 				clearValues();
 			}
-		});
-		hClr.setToolTipText("Eingabefelder löschen");
-		hClr.setBackground(parent.getBackground());
+		};
+		tActions.add(aClr);
+		for (IAction ac : actions) {
+			if (ac != null) {
+				tActions.add(ac);
+			} else {
+				tActions.add(new Separator());
+			}
+		}
+		tb = tActions.createControl(this);
+		FormData fdActions = new FormData();
+		fdActions.top = new FormAttachment(0, 0);
+		fdActions.right = new FormAttachment(100, 0);
+		tb.setLayoutData(fdActions);
 		cFields = new Composite(this, SWT.NONE);
-		fd = new FormData();
-		fd.top = new FormAttachment(hClr);
+		FormData fd = new FormData();
+		// fd.right = new FormAttachment(tb);
 		// fd.bottom = new FormAttachment(0, 0);
 		// fd.bottom = new FormAttachment(0, 0);
 		fd.left = new FormAttachment(0, 0);
+		fd.top = new FormAttachment(0, 0);
 		fd.right = new FormAttachment(100, 0);
 		cFields.setLayoutData(fd);
 		cFields.setLayout(new FillLayout());
@@ -91,44 +99,26 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	
 	public void addActions(final IAction... actions){
 		for (IAction ac : actions) {
-			ImageHyperlink hp = Desk.getToolkit().createImageHyperlink(cActions, SWT.NONE);
-			ImageDescriptor id = ac.getImageDescriptor();
-			if (id != null) {
-				hp.setImage(id.createImage());
+			if (ac != null) {
+				tActions.add(ac);
+			} else {
+				tActions.add(new Separator());
 			}
-			hp.setBackground(getParent().getBackground());
-			hp.setToolTipText(ac.getToolTipText());
-			ActionAdapter aa = new ActionAdapter(ac, hp);
-			hp.addHyperlinkListener(aa);
-			ac.addPropertyChangeListener(aa);
 		}
-		layout();
-	}
-	
-	private static class ActionAdapter extends HyperlinkAdapter implements IPropertyChangeListener {
-		IAction ac;
-		ImageHyperlink hp;
-		
-		ActionAdapter(final IAction action, final ImageHyperlink hp){
-			ac = action;
-			this.hp = hp;
-		}
-		
-		@Override
-		public void linkActivated(HyperlinkEvent e){
-			ac.run();
-		}
-		
-		public void propertyChange(PropertyChangeEvent event){
-			hp.getImage().dispose();
-			hp.setImage(ac.getImageDescriptor().createImage());
-		}
-		
 	}
 	
 	/*
-	 * public void addTextFields(String... fields) { for (String s : fields) { new TextField(this,
-	 * s).addSelectorListener(this); } }
+	 * private static class ActionAdapter extends HyperlinkAdapter implements
+	 * IPropertyChangeListener { IAction ac; ImageHyperlink hp;
+	 * 
+	 * ActionAdapter(final IAction action, final ImageHyperlink hp){ ac = action; this.hp = hp; }
+	 * 
+	 * @Override public void linkActivated(HyperlinkEvent e){ ac.run(); }
+	 * 
+	 * public void propertyChange(PropertyChangeEvent event){ hp.getImage().dispose();
+	 * hp.setImage(ac.getImageDescriptor().createImage()); }
+	 * 
+	 * }
 	 */
 
 	public void addField(ActiveControl ac){
@@ -136,9 +126,15 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	}
 	
 	public void addFields(ActiveControl... activeControls){
+		ActiveControl last = null;
 		for (ActiveControl ac : activeControls) {
 			ac.addListener(this);
+			last = ac;
 		}
+		if (tb.isReparentable() && last != null) {
+			tb.setParent(last.getControllerComposite());
+		}
+		layout();
 	}
 	
 	public void removeField(String field){
@@ -163,6 +159,7 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 					}
 				}
 				bCeaseFire = false;
+				contentsChanged(null);
 			}
 		});
 	}
@@ -179,7 +176,7 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	}
 	
 	public void contentsChanged(ActiveControl field){
-		if (bExclusive) {
+		if (bExclusive && (field != null)) {
 			for (Control c : cFields.getChildren()) {
 				if (c instanceof ActiveControl) {
 					ActiveControl ac = (ActiveControl) c;
@@ -193,7 +190,9 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 				}
 			}
 		}
-		new TraceElement(field);
+		if (field != null) {
+			new TraceElement(field);
+		}
 		if (!bCeaseFire) {
 			bCeaseFire = true;
 			for (ActiveControlListener lis : listeners) {
@@ -234,7 +233,8 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	}
 	
 	public void invalidContents(ActiveControl field){
-		hClr.setImage(Desk.getImage(Desk.IMG_ACHTUNG));
-		hClr.setToolTipText((String) field.getData(ActiveControl.POP_ERRMSG));
+		aClr.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ACHTUNG));
+		aClr.setToolTipText((String) field.getData(ActiveControl.POP_ERRMSG));
+		
 	}
 }

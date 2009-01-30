@@ -8,31 +8,78 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plafs.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *  $Id: Plafs.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.util.HashMap;
+
+import ch.elexis.Hub;
+import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.PlatformHelper;
+import ch.rgw.tools.ExHandler;
+
 /**
- * Stub for lazter development of plafs: Provide Strings not omly depending of the locale
- * but also of the plaf.
- * A client request a String and Plafs returns the value of that String matching the
+ * Stub for lazter development of plafs: Provide Strings not omly depending of the locale but also
+ * of the plaf. A client request a String and Plafs returns the value of that String matching the
  * actual plaf
+ * 
  * @author Gerry
- *
+ * 
  */
 public class Plafs {
-
+	private static final HashMap<String, String> p = new HashMap<String, String>();
+	
 	/**
 	 * return a plaf'ed STring
-	 * @param name Name of the String. The String may be prefixed by a namespace, separated with ::
+	 * 
+	 * @param name
+	 *            Name of the String. The String may be prefixed by a namespace, separated with ::
 	 * @return that String according to the current plaf
 	 */
-		public static String get(String name){
-			String[] str=name.split("::");
-			if(str.length>1){
+	public static String get(String name){
+		if (p.isEmpty()) {
+			load();
+		}
+		String px = p.get(name);
+		if (px == null) {
+			String[] str = name.split("::");
+			if (str.length > 1) {
 				return str[1];
-			}else{
+			} else {
 				return str[0];
 			}
+		} else {
+			return px;
 		}
+	}
+	
+	private static void load(){
+		String textBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, null);
+		if (textBase == null) {
+			textBase = "/rsc/plaf/modern/strings.plaf";
+		} else {
+			textBase += "/strings.plaf";
+		}
+		String fpath = PlatformHelper.getBasePath("ch.elexis") + textBase;
+		try {
+			FileInputStream file = new FileInputStream(fpath);
+			DataInputStream dais = new DataInputStream(file);
+			String line;
+			while (dais.available() > 0) {
+				line = dais.readUTF();
+				String[] flds = line.split("=");
+				if (flds.length > 1) {
+					p.put(flds[0], flds[1]);
+				}
+			}
+			dais.close();
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			p.put("plaf", "none");
+		}
+		
+	}
 }

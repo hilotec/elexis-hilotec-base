@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanelProvider.java 5052 2009-01-27 06:20:15Z rgw_ch $
+ * $Id: SelectorPanelProvider.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.data.PersistentObject;
@@ -32,8 +34,9 @@ import ch.elexis.selectors.TextField;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.IFilter;
+import ch.rgw.tools.Tree;
 
-public class SelectorPanelProvider implements ControlFieldProvider{
+public class SelectorPanelProvider implements ControlFieldProvider {
 	private LinkedList<ControlFieldListener> listeners = new LinkedList<ControlFieldListener>();
 	private SelectorPanel panel;
 	private FieldDescriptor<? extends PersistentObject>[] fields;
@@ -61,7 +64,11 @@ public class SelectorPanelProvider implements ControlFieldProvider{
 	}
 	
 	public Composite createControl(Composite parent){
-		panel = new SelectorPanel(parent);
+		if (actions == null) {
+			panel = new SelectorPanel(parent);
+		} else {
+			panel = new SelectorPanel(parent, actions);
+		}
 		for (FieldDescriptor<? extends PersistentObject> field : fields) {
 			ActiveControl ac = null;
 			switch (field.tFeldTyp) {
@@ -86,9 +93,9 @@ public class SelectorPanelProvider implements ControlFieldProvider{
 			ac.setData(ActiveControl.PROP_HASHNAME, field.sHashname);
 			panel.addField(ac);
 		}
-		if (actions != null) {
-			panel.addActions(actions);
-		}
+		/*
+		 * if (actions != null) { panel.addActions(actions); }
+		 */
 		panel.setExclusive(bExclusive);
 		panel.addSelectorListener(new ActiveControlListener() {
 			
@@ -109,8 +116,7 @@ public class SelectorPanelProvider implements ControlFieldProvider{
 	}
 	
 	public IFilter createFilter(){
-		// TODO Auto-generated method stub
-		return null;
+		return new DefaultFilter(panel);
 	}
 	
 	public void fireClickedEvent(final String fieldname){
@@ -136,7 +142,7 @@ public class SelectorPanelProvider implements ControlFieldProvider{
 		HashMap<String, String> vals = panel.getValues();
 		String[] ret = new String[fields.length];
 		for (int i = 0; i < ret.length; i++) {
-			ret[i] = vals.get(fields[i]);
+			ret[i] = vals.get(fields[i].sAnzeige);
 		}
 		return ret;
 	}
@@ -167,7 +173,50 @@ public class SelectorPanelProvider implements ControlFieldProvider{
 	public SelectorPanel getPanel(){
 		return panel;
 	}
-
 	
+	static class DefaultFilter extends ViewerFilter implements IFilter {
+		SelectorPanel slp;
+		
+		/**
+		 * @param fields
+		 */
+		/**
+		 * @param fields
+		 */
+		public DefaultFilter(SelectorPanel panel){
+			slp = panel;
+		}
+		
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element){
+			return select(element);
+		}
+		
+		public boolean select(Object element){
+			PersistentObject po = null;
+			if (element instanceof Tree) {
+				po = (PersistentObject) ((Tree) element).contents;
+			} else if (element instanceof PersistentObject) {
+				po = (PersistentObject) element;
+			} else {
+				return false;
+			}
+			HashMap<String, String> vals = slp.getValues();
+			if (po.isMatching(vals, PersistentObject.MATCH_LIKE)) {
+				return true;
+			} else {
+				if (element instanceof Tree) {
+					Tree p = ((Tree) element).getParent();
+					if (p == null) {
+						return false;
+					}
+					return select(p);
+				} else {
+					return false;
+				}
+			}
+		}
+		
+	}
 	
 }

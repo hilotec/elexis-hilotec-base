@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockSelector.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ *  $Id: BlockSelector.java 5070 2009-01-30 17:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -32,6 +32,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.GridLayout;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.data.ICodeElement;
@@ -40,14 +41,15 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.FieldDescriptor;
+import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 
 public class BlockSelector extends CodeSelectorFactory {
-	IAction deleteAction, renameAction;
+	IAction deleteAction, renameAction, createAction, exportAction;
 	CommonViewer cv;
 	
 	@Override
@@ -64,17 +66,22 @@ public class BlockSelector extends CodeSelectorFactory {
 				
 			}
 		});
+		FieldDescriptor<?>[] lbName = new FieldDescriptor<?>[] {
+			new FieldDescriptor<Leistungsblock>("Name")
+		};
 		cv.setContextMenu(mgr);
-		return new ViewerConfigurer(new BlockContentProvider(cv), new DefaultLabelProvider(),
-			new DefaultControlFieldProvider(cv, new String[] {
-				"Name"
-			}), new ViewerConfigurer.DefaultButtonProvider(cv, Leistungsblock.class),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 		
+		SelectorPanelProvider slp = new SelectorPanelProvider(lbName, true);
+		slp.addActions(createAction, exportAction);
+		ViewerConfigurer vc =
+			new ViewerConfigurer(new BlockContentProvider(cv), new DefaultLabelProvider(), slp,
+				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+		return vc;
 	}
 	
 	@Override
-	public Class getElementClass(){
+	public Class<? extends PersistentObject> getElementClass(){
 		return Leistungsblock.class;
 	}
 	
@@ -112,6 +119,32 @@ public class BlockSelector extends CodeSelectorFactory {
 				}
 			}
 		};
+		createAction = new Action("neu erstellen") {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+				setToolTipText("Neuen Block erstellen");
+			}
+			
+			@Override
+			public void run(){
+				String[] v = cv.getConfigurer().getControlFieldProvider().getValues();
+				if (v != null && v.length > 0 && v[0] != null && v[0].length() > 0) {
+					Leistungsblock lb = new Leistungsblock(v[0], Hub.actMandant);
+					cv.notify(CommonViewer.Message.update_keeplabels);
+				}
+			}
+		};
+		exportAction = new Action("Blöcke exportieren") {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EXPORT));
+				setToolTipText("Exportiert alle Blöcke in eine XML-Datei");
+			}
+			
+			@Override
+			public void run(){
+
+			}
+		};
 	}
 	
 	public static class BlockContentProvider implements ViewerConfigurer.CommonContentProvider,
@@ -124,17 +157,6 @@ public class BlockSelector extends CodeSelectorFactory {
 		}
 		
 		public void startListening(){
-			/*
-			 * Menu menu=new Menu(cv.getViewerWidget().getControl()); MenuItem mi=new
-			 * MenuItem(menu,SWT.NONE); mi.setText("Löschen"); mi.addSelectionListener(new
-			 * SelectionAdapter(){
-			 * 
-			 * @Override public void widgetSelected(SelectionEvent e) { Object
-			 * o=cv.getSelection()[0]; if(o instanceof Leistungsblock){
-			 * ((Leistungsblock)o).delete(); cv.notify(CommonViewer.Message.update); } }
-			 * 
-			 * }); cv.getViewerWidget().getControl().setMenu(menu);
-			 */
 			cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
 			GlobalEvents.getInstance().addBackingStoreListener(this);
 			
@@ -232,12 +254,6 @@ public class BlockSelector extends CodeSelectorFactory {
 				public void doubleClicked(PersistentObject obj, CommonViewer cv){
 					ICodeSelectorTarget target = GlobalEvents.getInstance().getCodeSelectorTarget();
 					if (target != null) {
-						/*
-						 * String title = "Element hinzufügen"; String message =
-						 * "Wollen Sie das ausgewählte Element " + "'" + obj.getLabel() + "' zu " +
-						 * "'" + target.getName() + "' hinzufügen?"; if (SWTHelper.askYesNo(title,
-						 * message)) {
-						 */
 						if (obj instanceof Leistungsblock) {
 							Leistungsblock block = (Leistungsblock) obj;
 							List<ICodeElement> elements = block.getElements();
