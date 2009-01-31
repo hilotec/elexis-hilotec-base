@@ -6,24 +6,23 @@
 
 	<include schemaLocation="xchange.xsd"></include>
 	<complexType name="leistungsblockTyp">
-		<choice>
-			<element name="offiziell"
-				type="xChange:vertragsleistungTyp">
+		<sequence maxOccurs="unbounded" minOccurs="1">
+			<choice maxOccurs="unbounded" minOccurs="1">
+				<element name="vertragsleistung"
+					type="xChange:vertragsleistungTyp">
+				</element>
+                <element name="eigenleistung" type="xChange:eigenleistungTyp">
 			</element>
-			<element name="eigenleistung"
-				type="xChange:eigenleistungTyp">
-			</element>
-		</choice>
+                <element name="leistungsblock" type="xChange:leistungsblockTyp"></element>
+            </choice>
+		</sequence>
 		<attribute name="name" type="string"></attribute>
 	</complexType>
 
-	<element name="xChange:leistungsblock"
-		type="xChange:leistungsblockTyp">
-	</element>
 
 	<complexType name="vertragsleistungTyp">
 		<sequence>
-			<element name="xid" type="xChange:XIDType"></element>
+			<element name="xid" type="xChange:XIDType" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 		<attribute name="CodesystemName" type="string"></attribute>
 		<attribute name="CodesystemCode" type="string"></attribute>
@@ -32,7 +31,7 @@
 
 	<complexType name="eigenleistungTyp">
 		<sequence>
-			<element name="xid" type="xChange:XIDType"></element>
+			<element name="xid" type="xChange:XIDType" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 		<attribute name="code" type="string"></attribute>
 		<attribute name="minuten" type="string"></attribute>
@@ -40,4 +39,12 @@
 		<attribute name="preis" type="string"></attribute>
 		<attribute name="text" type="string"></attribute>
 	</complexType>
+
+	<complexType name="leistungsbloecke">
+		<sequence maxOccurs="unbounded" minOccurs="1">
+			<element name="leistungsblock" type="xChange:leistungsblockTyp"></element>
+		</sequence>
+	</complexType>
+
+	<element name="leistungsbloecke" type="xChange:leistungsbloecke"></element>
 </schema>

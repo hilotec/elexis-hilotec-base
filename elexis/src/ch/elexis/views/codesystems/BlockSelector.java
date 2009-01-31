@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockSelector.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ *  $Id: BlockSelector.java 5072 2009-01-31 10:11:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.TreeDataLoader;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Leistungsblock;
@@ -145,6 +146,16 @@ public class BlockSelector extends CodeSelectorFactory {
 
 			}
 		};
+	}
+	
+	static class BlockContentProvider2 extends TreeDataLoader {
+		ViewerFilter filter;
+		
+		public BlockContentProvider2(CommonViewer cv, Query<? extends PersistentObject> qbe,
+			String parentField){
+			super(cv, qbe, parentField);
+		}
+		
 	}
 	
 	public static class BlockContentProvider implements ViewerConfigurer.CommonContentProvider,
