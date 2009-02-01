@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CodeDetailView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: CodeDetailView.java 5075 2009-02-01 16:40:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -56,6 +56,8 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 		importers=new Hashtable<String,ImporterPage>();
 		//List<IDetailDisplay> list=Extensions.getClasses("ch.elexis.Diagnosecode","CodeDetailDisplay");
 		addCustomBlocksPage();
+		importers.put(ctab.getItem(0).getText(),new BlockImporter());
+
 		addPagesFor("ch.elexis.Diagnosecode");
 		addPagesFor("ch.elexis.Verrechnungscode");
 		if(ctab.getItemCount()>0){
@@ -92,18 +94,8 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 		ct.setControl(page);
 		ct.setData(bdd);
 		page.sash.setWeights(new int[]{30,70});
-		
-		/*
-		EigenartikelSelektor es=new EigenartikelSelektor();
-		EigenartikelDisplay ead=new EigenartikelDisplay();
-		page=new MasterDetailsPage(ctab,es,ead);
-		ct=new CTabItem(ctab,SWT.NONE);
-		ct.setText(ead.getTitle());
-		ct.setControl(page);
-		ct.setData(ead);
-		page.sash.setWeights(new int[]{30,70});
-		*/
 	}
+	
 	private void makeActions() {
 		importAction=new Action("Import..."){
 			@Override
