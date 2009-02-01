@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExportiereBloeckeCommand.java 5072 2009-01-31 10:11:26Z rgw_ch $
+ *  $Id: ExportiereBloeckeCommand.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -25,22 +25,30 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
+import ch.rgw.tools.Result.SEVERITY;
 
 public class ExportiereBloeckeCommand extends AbstractHandler {
 	public static final String BLOECKE = "leistungsbloecke";
+
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		Query<Leistungsblock> qbe = new Query<Leistungsblock>(Leistungsblock.class);
 		List<Leistungsblock> bloecke = qbe.execute();
-		
+		for(Leistungsblock block:bloecke){
+			
+		}
 		return new Boolean(true);
 	}
 	
+	static{
+
+	}
 	static class BlockContainer extends XChangeContainer {
 		Document doc;
 		Element eRoot;
@@ -64,7 +72,10 @@ public class ExportiereBloeckeCommand extends AbstractHandler {
 		}
 		
 		public boolean canHandle(Class<? extends PersistentObject> clazz){
-			return true;
+			if(clazz.equals(Leistungsblock.class)){
+				return true;
+			}
+			return false;
 		}
 		
 		public boolean finalizeExport(){
@@ -72,8 +83,10 @@ public class ExportiereBloeckeCommand extends AbstractHandler {
 		}
 		
 		public Result<Element> store(Object output){
-			// TODO Auto-generated method stub
-			return null;
+			if(output instanceof Leistungsblock){
+				
+			}
+			return new Result<Element>(SEVERITY.ERROR,1,"Can't handle object type "+output.getClass().getName(),null,true);
 		}
 		
 		public Result finalizeImport(){

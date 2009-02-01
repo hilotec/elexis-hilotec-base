@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 5069 2009-01-30 17:49:09Z rgw_ch $
+ * $Id: TarmedLeistung.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,6 +45,7 @@ import ch.rgw.tools.JdbcLink.Stm;
  * 
  */
 public class TarmedLeistung extends VerrechenbarAdapter {
+	public static final String XIDDOMAIN="www.xid.ch/id/tarmedsuisse";
 	Hashtable<String, String> ext;
 	private static final String VERSION = "1.1.0";
 	public static final TarmedComparator tarmedComparator;
@@ -91,8 +92,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		}
 		tarmedComparator = new TarmedComparator();
 		tarmedOptifier = new TarmedOptifier();
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Tarmed", Xid.ASSIGNMENT_LOCAL);
 	}
-	
+
+	public String getXidDomain(){
+		return XIDDOMAIN;
+	}
 	/** Text zu einem Code der qualitativen Dignität holen */
 	public static String getTextForDigniQuali(final String dql){
 		if (dql == null) {

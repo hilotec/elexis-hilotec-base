@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 5048 2009-01-26 21:44:06Z rgw_ch $
+ * $Id: Artikel.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -55,7 +55,10 @@ public class Artikel extends VerrechenbarAdapter {
 	protected String getTableName(){
 		return TABLENAME;
 	}
-	
+
+	public String getXidDomain(){
+		return XID_PHARMACODE;
+	}
 	static {
 		addMapping(TABLENAME, LIEFERANT_ID, NAME, MAXBESTAND, MINBESTAND, ISTBESTAND, EK_PREIS,
 			VK_PREIS, TYP, EXT_INFO, "EAN", SUB_ID, "Eigenname=Name_intern", "Codeclass", "Klasse");

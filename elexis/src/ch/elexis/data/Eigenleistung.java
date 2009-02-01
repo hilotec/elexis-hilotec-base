@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Eigenleistung.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ * $Id: Eigenleistung.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,9 +17,16 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class Eigenleistung extends VerrechenbarAdapter {
+	public static final String XIDDOMAIN = "www.xid.ch/id/customservices";
 	
 	static {
 		addMapping("EIGENLEISTUNGEN", "Code", "Bezeichnung", "EK_Preis", "VK_Preis", "Zeit");
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Eigenleistungen", Xid.ASSIGNMENT_LOCAL
+			| Xid.QUALITY_GUID);
+	}
+	
+	public String getXidDomain(){
+		return XIDDOMAIN;
 	}
 	
 	@Override

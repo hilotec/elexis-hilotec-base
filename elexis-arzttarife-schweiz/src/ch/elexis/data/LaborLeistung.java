@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 4736 2008-12-04 21:00:40Z rgw_ch $
+ * $Id: LaborLeistung.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,12 +20,17 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class LaborLeistung extends VerrechenbarAdapter {
+	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch/";
 	
 	static {
 		addMapping(
 			"ARTIKEL", "Name", "Text=Name", "EK_Preis", "VK_Preis", "Typ", "Code=SubID", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Laborleistung", Xid.ASSIGNMENT_LOCAL);
 	}
-	
+
+	public String getXidDomain(){
+		return XIDDOMAIN;
+	}
 	public static void createTable(){
 		getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Laborleistung'"); //$NON-NLS-1$
 	}

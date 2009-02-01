@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 5010 2009-01-23 14:40:15Z rgw_ch $
+ * $Id: Xid.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -150,10 +150,18 @@ public class Xid extends PersistentObject {
 		return checkZero(get("quality"));
 	}
 	
+	/**
+	 * get the Domain this Xid is from
+	 * @return
+	 */
 	public String getDomain(){
 		return get("domain");
 	}
 	
+	/**
+	 * get the id of this Xid in its domain
+	 * @return
+	 */
 	public String getDomainId(){
 		return get("domain_id");
 	}
@@ -222,6 +230,15 @@ public class Xid extends PersistentObject {
 		return null;
 	}
 	
+	/**
+	 * Find the Xid of a given domain for the given ibject
+	 * 
+	 * @param o
+	 *            the object whose Xid should be find
+	 * @param domain
+	 *            the domain the Xid should be from
+	 * @return the Xid or null if no xid for the given domain was found on the given object
+	 */
 	public static Xid findXID(final PersistentObject o, final String domain){
 		Query<Xid> qbe = new Query<Xid>(Xid.class);
 		qbe.add("domain", "=", domain);

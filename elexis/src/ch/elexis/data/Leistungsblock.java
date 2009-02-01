@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsblock.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ * $Id: Leistungsblock.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -23,33 +23,42 @@ import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 
 public class Leistungsblock extends PersistentObject implements ICodeElement {
+	public static final String XIDDOMAIN = "www.xid.ch/id/elexis_leistungsblock";
+	
 	static {
 		addMapping("LEISTUNGSBLOCK", "Name", "MandantID", "Leistungen");
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Leistungsblock", Xid.ASSIGNMENT_LOCAL
+			| Xid.QUALITY_GUID);
 	}
-
-	public Leistungsblock(String Name, Mandant m) {
+	
+	public Leistungsblock(String Name, Mandant m){
 		create(null);
-		String[] f = new String[] { "Name", "MandantID" };
+		String[] f = new String[] {
+			"Name", "MandantID"
+		};
 		set(f, Name, m.getId());
 	}
-
+	
+	public String getName(){
+		return checkNull(get("Name"));
+	}
 	/**
-	 * return a List of elements contained in this block will never return null,
-	 * but the list might be empty
+	 * return a List of elements contained in this block will never return null, but the list might
+	 * be empty
 	 * 
 	 * @return a possibly empty list of ICodeElements
 	 */
-	public List<ICodeElement> getElements() {
+	public List<ICodeElement> getElements(){
 		return load();
 	}
-
+	
 	/**
 	 * Add an ICodeElement to this block
 	 * 
 	 * @param v
 	 *            an Element
 	 */
-	public void addElement(ICodeElement v) {
+	public void addElement(ICodeElement v){
 		if (v != null) {
 			List<ICodeElement> lst = load();
 			int i = 0;
@@ -63,15 +72,15 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 			flush(lst);
 		}
 	}
-
-	public void removeElement(ICodeElement v) {
+	
+	public void removeElement(ICodeElement v){
 		if (v != null) {
 			List<ICodeElement> lst = load();
 			lst.remove(v);
 			flush(lst);
 		}
 	}
-
+	
 	/**
 	 * Move a CodeElement inside the block
 	 * 
@@ -80,7 +89,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	 * @param offset
 	 *            offset to move. negative values move up, positive down
 	 */
-	public void moveElement(ICodeElement v, int offset) {
+	public void moveElement(ICodeElement v, int offset){
 		if (v != null) {
 			List<ICodeElement> lst = load();
 			int idx = lst.indexOf(v);
@@ -97,51 +106,50 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 			}
 		}
 	}
-
+	
 	@Override
-	public String storeToString() {
+	public String storeToString(){
 		return toString(load());
 	}
-
-	public String toString(List<ICodeElement> lst) {
+	
+	public String toString(List<ICodeElement> lst){
 		StringBuilder st = new StringBuilder();
 		for (ICodeElement v : lst) {
 			st.append(((PersistentObject) v).storeToString()).append(",");
 		}
 		return st.toString().replaceFirst(",$", "");
-
+		
 	}
-
+	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		return get("Name");
 	}
-
-	public String getText() {
+	
+	public String getText(){
 		return get("Name");
 	}
-
-	public String getCode() {
+	
+	public String getCode(){
 		return get("Name");
 	}
-
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return "LEISTUNGSBLOCK";
 	}
-
-	public static Leistungsblock load(String id) {
+	
+	public static Leistungsblock load(String id){
 		return new Leistungsblock(id);
 	}
-
-	protected Leistungsblock(String id) {
+	
+	protected Leistungsblock(String id){
 		super(id);
 	}
-
-	protected Leistungsblock() {
-	}
-
-	private boolean flush(List<ICodeElement> lst) {
+	
+	protected Leistungsblock(){}
+	
+	private boolean flush(List<ICodeElement> lst){
 		try {
 			if (lst == null) {
 				lst = new ArrayList<ICodeElement>();
@@ -154,8 +162,8 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 		}
 		return false;
 	}
-
-	private List<ICodeElement> load() {
+	
+	private List<ICodeElement> load(){
 		ArrayList<ICodeElement> lst = new ArrayList<ICodeElement>();
 		try {
 			lst = new ArrayList<ICodeElement>();
@@ -171,28 +179,28 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 		}
 		return lst;
 	}
-
+	
 	@Deprecated
-	public boolean isEmpty() {
+	public boolean isEmpty(){
 		byte[] comp = getBinary("Leistungen");
 		return (comp == null);
 	}
-
-	public String getCodeSystemName() {
+	
+	public String getCodeSystemName(){
 		return "Block";
 	}
-
-	public String getCodeSystemCode() {
+	
+	public String getCodeSystemCode(){
 		return "999";
 	}
-
+	
 	@Override
-	public boolean isDragOK() {
+	public boolean isDragOK(){
 		return true;
 	}
-
-	public List<IAction> getActions(Verrechnet kontext) {
-
+	
+	public List<IAction> getActions(Verrechnet kontext){
+		
 		return null;
 	}
 }

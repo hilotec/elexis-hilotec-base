@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ * $Id: IVerrechenbar.java 5073 2009-02-01 15:24:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -60,6 +60,8 @@ public interface IVerrechenbar extends ICodeElement {
 	
 	/** Zeitanrechnung für diese Leistung (in Minuten) */
 	public int getMinutes();
+	
+	public String getXidDomain();
 	
 	// public AbstractDataLoaderJob getDataloader();
 	public String[] getDisplayedFields();
