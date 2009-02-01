@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockSelector.java 5072 2009-01-31 10:11:26Z rgw_ch $
+ *  $Id: BlockSelector.java 5074 2009-02-01 15:58:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -16,6 +16,7 @@ package ch.elexis.views.codesystems;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -36,6 +37,9 @@ import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.TreeDataLoader;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
+import ch.elexis.commands.ExportiereBloeckeCommand;
+import ch.elexis.commands.Handler;
+import ch.elexis.commands.MahnlaufCommand;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
@@ -143,7 +147,13 @@ public class BlockSelector extends CodeSelectorFactory {
 			
 			@Override
 			public void run(){
-
+				//Handler.execute(null, ExportiereBloeckeCommand.ID, null);
+				try {
+					new ExportiereBloeckeCommand().execute(null);
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		};
 	}

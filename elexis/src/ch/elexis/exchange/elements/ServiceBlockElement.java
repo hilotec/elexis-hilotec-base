@@ -9,7 +9,7 @@ import ch.elexis.exchange.XChangeContainer;
 
 public class ServiceBlockElement extends XChangeElement {
 	public static final String XMLNAME="serviceblock";
-	public static final String ENCLOSING="servicelocks";
+	public static final String ENCLOSING="serviceblocks";
 	public static final String ATTR_NAME="name";
 	
 	public ServiceBlockElement(XChangeContainer p, Leistungsblock lb){
@@ -20,6 +20,7 @@ public class ServiceBlockElement extends XChangeElement {
 			if(ic instanceof IVerrechenbar ){
 				IVerrechenbar iv=(IVerrechenbar) ic;
 				ServiceElement se=new ServiceElement(p,iv);
+				addContent(se);
 			}
 		}
 	}

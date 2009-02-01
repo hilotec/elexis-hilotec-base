@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XidElement.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ *  $Id: XidElement.java 5074 2009-02-01 15:58:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -67,7 +67,7 @@ public class XidElement extends XChangeElement {
 		if(iv instanceof PersistentObject){
 			PersistentObject po=(PersistentObject)iv;
 			setAttribute(ATTR_ID, XMLTool.idToXMLID(po.getId()));
-			addIdentities(po, Leistungsblock.XIDDOMAIN, po.getId(), Xid.ASSIGNMENT_LOCAL, true);
+			addIdentities(po, iv.getXidDomain(), po.getId(), Xid.ASSIGNMENT_LOCAL, true);
 
 		}
 	}
