@@ -1,11 +1,24 @@
 package ch.elexis.views.codesystems;
 
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.SAXImpl;
+
+import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 
 public class BlockImporter extends ImporterPage {
 	
@@ -16,10 +29,35 @@ public class BlockImporter extends ImporterPage {
 		return fbi;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		// TODO Auto-generated method stub
-		return null;
+
+		String filename=results[0];
+		if(StringTool.isNothing(filename)){
+			return new Status(SWT.ERROR,"ch.elexis","No file given");
+		}
+		SAXBuilder builder=new SAXBuilder();
+		try{
+			FileInputStream fips=new FileInputStream(filename);
+			Document doc=builder.build(fips);
+			monitor.beginTask("Importiere Blöcke", IProgressMonitor.UNKNOWN);
+			Element eRoot=doc.getRootElement();
+			if(eRoot!=null){
+				Element eBlocks=eRoot.getChild("serviceblocks",XChangeContainer.ns);
+				if(eBlocks!=null){
+					List<Element> lBlocks=eBlocks.getChildren("serviceblock", XChangeContainer.ns);
+					for(Element eBlock:lBlocks){
+						
+					}
+				}
+			}
+			monitor.done();
+			return Status.OK_STATUS;
+		}catch(Exception ex){
+			return new Status(SWT.ERROR,"ch.elexis","parse error: "+ex.getMessage());
+		}
+
 	}
 	
 	@Override
