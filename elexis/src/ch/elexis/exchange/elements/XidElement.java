@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XidElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: XidElement.java 5082 2009-02-03 18:37:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -259,7 +259,7 @@ public class XidElement extends XChangeElement {
 			PersistentObject cand = Xid.findObject(domain, domain_id);
 			if (cand != null) {
 				boolean actGuid = Boolean.parseBoolean(isguid);
-				int actQuality = Integer.parseInt(quality);
+				int actQuality = StringTool.getIndex(IDENTITY_QUALITIES, quality);
 				if (candidates.contains(cand)) {
 					if ((lastGuid == true) && (actGuid == false)) {
 						continue;
