@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: InsuranceElement.java 4673 2008-11-09 17:01:26Z rgw_ch $
+ *  $Id: InsuranceElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import org.jdom.Element;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -33,8 +35,8 @@ public class InsuranceElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public InsuranceElement(XChangeContainer p){
-		super(p);
+	public InsuranceElement(XChangeContainer p, Element el){
+		super(p, el);
 	}
 	
 	public InsuranceElement(XChangeContainer p, Konsultation k){
@@ -50,7 +52,7 @@ public class InsuranceElement extends XChangeElement {
 		ContactElement eGarant = p.addContact(garant);
 		setAttribute(ATTR_COMPANYREF, eGarant.getID());
 		ContractElement eContract = new ContractElement(p);
-		addContent(eContract);
+		add(eContract);
 	}
 	
 	public String translateReason(String grund){

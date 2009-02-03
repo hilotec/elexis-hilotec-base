@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ConnectionElement.java 4673 2008-11-09 17:01:26Z rgw_ch $
+ *  $Id: ConnectionElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import org.jdom.Element;
 
 import ch.elexis.exchange.XChangeContainer;
 
@@ -29,8 +31,8 @@ public class ConnectionElement extends XChangeElement {
 		return "connection";
 	}
 	
-	public ConnectionElement(XChangeContainer parent){
-		super(parent);
+	public ConnectionElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	public ConnectionElement(XChangeContainer parent, String type, String cx){

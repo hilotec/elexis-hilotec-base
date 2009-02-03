@@ -6,21 +6,23 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 5076 2009-02-02 05:55:39Z rgw_ch $
+ *  $Id: XChangeElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom.Element;
 
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
-@SuppressWarnings("serial")
-public abstract class XChangeElement extends Element {
+public abstract class XChangeElement {
 	private XChangeContainer parent;
+	private Element ex = null;
 	
 	public enum FORMAT {
 		PLAIN, XML, HTML
@@ -30,10 +32,17 @@ public abstract class XChangeElement extends Element {
 	public static final int FORMAT_NOT_SUPPORTED = 1;
 	
 	protected XChangeElement(final XChangeContainer p){
-		super();
+		ex = new Element(getXMLName(), XChangeContainer.ns);
 		parent = p;
-		setNamespace(XChangeContainer.ns);
-		setName(getXMLName());
+	}
+	
+	protected XChangeElement(XChangeContainer parent, Element el){
+		this.parent = parent;
+		ex = el == null ? new Element(getXMLName(), XChangeContainer.ns) : el;
+	}
+	
+	public Element getElement(){
+		return ex;
 	}
 	
 	public XChangeContainer getContainer(){
@@ -54,7 +63,7 @@ public abstract class XChangeElement extends Element {
 	 * @return the value which can be an empty String but is never null.
 	 */
 	public String getAttr(final String name){
-		String ret = getAttributeValue(name);
+		String ret = ex.getAttributeValue(name);
 		return ret == null ? "" : ret;
 	}
 	
@@ -77,22 +86,44 @@ public abstract class XChangeElement extends Element {
 		return rawID;
 	}
 	
-	protected void add(final XChangeElement el){
-		addContent(el);
+	public void add(final XChangeElement el){
+		ex.addContent(el.ex);
 	}
 	
 	public XidElement getXid(){
-		return (XidElement) getChild(XidElement.XMLNAME, getContainer().getNamespace());
+		return new XidElement(getContainer(), ex.getChild(XidElement.XMLNAME, getContainer()
+			.getNamespace()));
 	}
 	
-	@SuppressWarnings("unchecked")
-	protected List<Element> getElements(final String name){
-		return getChildren(name, getContainer().getNamespace());
+	public List<? extends XChangeElement> getChildren(final String name,
+		final Class<? extends XChangeElement> clazz){
+		LinkedList<XChangeElement> ret = new LinkedList<XChangeElement>();
+		for (Object el : ex.getChildren(name, XChangeContainer.ns)) {
+			try {
+				XChangeElement xc =
+					clazz.getConstructor(XChangeContainer.class, Element.class).newInstance(
+						getContainer(), (Element) el);
+				ret.add(xc);
+			} catch (Exception e) {
+				ExHandler.handle(e);
+				return null;
+			}
+		}
+		return ret;
 	}
 	
-	@Override
-	public Element getChild(String name){
-		return super.getChild(name, getContainer().getNamespace());
+	public XChangeElement getChild(String name, Class<? extends XChangeElement> clazz){
+		Element el = ex.getChild(name, getContainer().getNamespace());
+		XChangeElement ret;
+		try {
+			ret =
+				clazz.getConstructor(XChangeContainer.class, Element.class).newInstance(
+					getContainer(), el);
+			return ret;
+		} catch (Exception e) {
+			ExHandler.handle(e);
+			return null;
+		}
 	}
 	
 	public Result<String> toString(final FORMAT format){
@@ -100,4 +131,7 @@ public abstract class XChangeElement extends Element {
 			"Format not supported", null, true);
 	}
 	
+	public void setAttribute(String attr, String value){
+		ex.setAttribute(attr, value);
+	}
 }

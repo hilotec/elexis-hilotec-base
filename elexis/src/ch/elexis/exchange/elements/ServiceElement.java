@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ServiceElement.java 5077 2009-02-02 17:30:33Z rgw_ch $
+ *  $Id: ServiceElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -40,11 +40,15 @@ public class ServiceElement extends XChangeElement {
 		setAttribute(ATTR_MINUTES, Integer.toString(iv.getMinutes()));
 		setAttribute(ATTR_COST, iv.getKosten(new TimeTool()).getCentsAsString());
 		setAttribute(ATTR_PRICE, Integer.toString(iv.getTP(new TimeTool(), null)));
-		addContent(new XidElement(p, iv));
+		add(new XidElement(p, iv));
 	}
 	
-	public static IVerrechenbar createObject(XChangeContainer home, Element el){
-		XidElement xide = (XidElement) el.getChild(XidElement.XMLNAME, XChangeContainer.ns);
+	public ServiceElement(XChangeContainer c, Element el){
+		super(c, el);
+	}
+	
+	public IVerrechenbar createObject(XChangeContainer home, Element el){
+		XidElement xide = (XidElement) getChild(XidElement.XMLNAME, XidElement.class);
 		List<PersistentObject> objs = xide.findObject();
 		for (PersistentObject po : objs) {
 			if (po instanceof IVerrechenbar) {

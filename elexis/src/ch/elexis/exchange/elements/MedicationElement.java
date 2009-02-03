@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,75 +8,78 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicationElement.java 4295 2008-08-20 17:39:00Z rgw_ch $
+ *  $Id: MedicationElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
+import org.jdom.Element;
+
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.util.XMLTool;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.XMLTool;
 
 @SuppressWarnings("serial")
 public class MedicationElement extends XChangeElement {
-	public static final String XMLNAME="medication";
-	public static final String ATTRIB_BEGINDATE="startDate";
-	public static final String ATTRIB_ENDDATE="stopDate";
-	public static final String ATTRIB_PRODUCT="product";
-	public static final String ATTRIB_DOSAGE="dosage";
-	public static final String ATTRIB_UNITS="dosageUnit";
-	public static final String ATTRIB_FREQUENCY="frequency";
-	public static final String ATTRIB_SUBSTANCE="substance";
-	public static final String ATTRIB_REMARK="remark";
-	public static final String ELEMENT_XID="xid";
-	public static final String ELEMENT_META="meta";
-	
+	public static final String XMLNAME = "medication";
+	public static final String ATTRIB_BEGINDATE = "startDate";
+	public static final String ATTRIB_ENDDATE = "stopDate";
+	public static final String ATTRIB_PRODUCT = "product";
+	public static final String ATTRIB_DOSAGE = "dosage";
+	public static final String ATTRIB_UNITS = "dosageUnit";
+	public static final String ATTRIB_FREQUENCY = "frequency";
+	public static final String ATTRIB_SUBSTANCE = "substance";
+	public static final String ATTRIB_REMARK = "remark";
+	public static final String ELEMENT_XID = "xid";
+	public static final String ELEMENT_META = "meta";
 	
 	public String getXMLName(){
 		return XMLNAME;
 	}
 	
-	public MedicationElement(XChangeContainer parent){
-		super(parent);
+	public MedicationElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	public MedicationElement(XChangeContainer parent, Prescription pr){
 		super(parent);
-		Artikel art=pr.getArtikel();
-		String begin=pr.getBeginDate();
-		String end=pr.getEndDate();
-		String dose=pr.getDosis();
-		String remark=pr.getBemerkung();
-		setAttribute(ATTRIB_BEGINDATE,XMLTool.dateToXmlDate(begin));
-		if(!StringTool.isNothing(end)){
+		Artikel art = pr.getArtikel();
+		String begin = pr.getBeginDate();
+		String end = pr.getEndDate();
+		String dose = pr.getDosis();
+		String remark = pr.getBemerkung();
+		setAttribute(ATTRIB_BEGINDATE, XMLTool.dateToXmlDate(begin));
+		if (!StringTool.isNothing(end)) {
 			setAttribute(ATTRIB_ENDDATE, XMLTool.dateToXmlDate(end));
 		}
-		setAttribute(ATTRIB_FREQUENCY,dose);
-		setAttribute(ATTRIB_PRODUCT,art.getLabel());
-		setAttribute(ATTRIB_REMARK,remark);
-		addContent(new XidElement(parent,art));
-		parent.addChoice(this, pr.getLabel(),pr);
+		setAttribute(ATTRIB_FREQUENCY, dose);
+		setAttribute(ATTRIB_PRODUCT, art.getLabel());
+		setAttribute(ATTRIB_REMARK, remark);
+		add(new XidElement(parent, art));
+		parent.addChoice(this, pr.getLabel(), pr);
 	}
 	
 	public String getFirstDate(){
-		String begin=getAttr(ATTRIB_BEGINDATE);
+		String begin = getAttr(ATTRIB_BEGINDATE);
 		return new TimeTool(begin).toString(TimeTool.DATE_GER);
 	}
 	
 	public String getLastDate(){
-		String last=getAttr(ATTRIB_ENDDATE);
+		String last = getAttr(ATTRIB_ENDDATE);
 		return new TimeTool(last).toString(TimeTool.DATE_GER);
 	}
 	
 	public String getText(){
 		return getAttr(ATTRIB_SUBSTANCE);
 	}
+	
 	public String getDosage(){
 		return getAttr(ATTRIB_DOSAGE);
 	}
+	
 	public String getSubstance(){
 		return getAttr(ATTRIB_SUBSTANCE);
 	}

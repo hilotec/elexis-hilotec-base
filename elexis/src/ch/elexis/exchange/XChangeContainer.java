@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XChangeContainer.java 4416 2008-09-15 14:24:49Z rgw_ch $
+ * $Id: XChangeContainer.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -31,6 +31,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactRefElement;
+import ch.elexis.exchange.elements.ContactsElement;
 import ch.elexis.exchange.elements.DocumentElement;
 import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.exchange.elements.MedicalElement;
@@ -43,76 +44,83 @@ import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 
-
-public abstract class XChangeContainer implements IDataSender, IDataReceiver{
-	public static final String Version="1.0.2";
-	public static final Namespace ns=Namespace.getNamespace("xChange","http://informatics.sgam.ch/xChange");
-	public static final Namespace nsxsi=Namespace.getNamespace("xsi","http://www.w3.org/2001/XML Schema-instance");
-	public static final Namespace nsschema=Namespace.getNamespace("schemaLocation","http://informatics.sgam.ch/xChange xchange.xsd");
-
-	public static final String ROOT_ELEMENT="xChange";
-	public static final String ROOTPATH="/"+ROOT_ELEMENT+"/";
+public abstract class XChangeContainer implements IDataSender, IDataReceiver {
+	public static final String Version = "1.0.2";
+	public static final Namespace ns =
+		Namespace.getNamespace("xChange", "http://informatics.sgam.ch/xChange");
+	public static final Namespace nsxsi =
+		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance");
+	public static final Namespace nsschema =
+		Namespace.getNamespace("schemaLocation", "http://informatics.sgam.ch/xChange xchange.xsd");
 	
-	public static final String ENCLOSE_CONTACTS=ContactElement.XMLNAME+"s";
-	public static final String PATIENT_ELEMENT="patient";
-	public static final String ENCLOSE_DOCUMENTS=DocumentElement.XMLNAME+"s";
-	public static final String ENCLOSE_RECORDS=RecordElement.XMLNAME+"s";
-	public static final String ENCLOSE_FINDINGS=FindingElement.XMLNAME+"s";
-	public static final String ENCLOSE_MEDICATIONS=MedicationElement.XMLNAME+"s";
-	public static final String ENCLOSE_RISKS=RiskElement.XMLNAME+"s";
-	public static final String ENCLOSE_EPISODES="anamnesis";
+	public static final String ROOT_ELEMENT = "xChange";
+	public static final String ROOTPATH = "/" + ROOT_ELEMENT + "/";
 	
+	public static final String ENCLOSE_CONTACTS = ContactElement.XMLNAME + "s";
+	public static final String PATIENT_ELEMENT = "patient";
+	public static final String ENCLOSE_DOCUMENTS = DocumentElement.XMLNAME + "s";
+	public static final String ENCLOSE_RECORDS = RecordElement.XMLNAME + "s";
+	public static final String ENCLOSE_FINDINGS = FindingElement.XMLNAME + "s";
+	public static final String ENCLOSE_MEDICATIONS = MedicationElement.XMLNAME + "s";
+	public static final String ENCLOSE_RISKS = RiskElement.XMLNAME + "s";
+	public static final String ENCLOSE_EPISODES = "anamnesis";
 	
 	protected Element eRoot;
-	protected static Log log=Log.get("XChange");
+	protected static Log log = Log.get("XChange");
 	
-	protected HashMap<String,byte[]> binFiles=new HashMap<String,byte[]>();
-	protected HashMap<Element,UserChoice> choices=new HashMap<Element,UserChoice>();
+	protected HashMap<String, byte[]> binFiles = new HashMap<String, byte[]>();
+	protected HashMap<XChangeElement, UserChoice> choices =
+		new HashMap<XChangeElement, UserChoice>();
 	
-	private HashMap<XChangeElement,PersistentObject> mapElementToObject=new HashMap<XChangeElement, PersistentObject>();
-	private HashMap<PersistentObject,XChangeElement> mapObjectToElement=new HashMap<PersistentObject, XChangeElement>();
+	private HashMap<XChangeElement, PersistentObject> mapElementToObject =
+		new HashMap<XChangeElement, PersistentObject>();
+	private HashMap<PersistentObject, XChangeElement> mapObjectToElement =
+		new HashMap<PersistentObject, XChangeElement>();
 	
-	protected List<IExchangeContributor> lex=Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution");
-
+	protected List<IExchangeContributor> lex =
+		Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution");
+	
 	public abstract Kontakt findContact(String id);
 	
-	
 	/**
-	 * Add a new Contact to the file. It will only be added, if it does not yet exist
-	 * Rule for the created ID: If a Contact has a really unique ID (EAN, Unique Patient Identifier)
-	 * then this shold be used. Otherwise a unique id should be generated (here we take the existing
-	 * id from Elexis which is by definition already a UUID)
-	 * @param k the contact to insert
+	 * Add a new Contact to the file. It will only be added, if it does not yet exist Rule for the
+	 * created ID: If a Contact has a really unique ID (EAN, Unique Patient Identifier) then this
+	 * shold be used. Otherwise a unique id should be generated (here we take the existing id from
+	 * Elexis which is by definition already a UUID)
+	 * 
+	 * @param k
+	 *            the contact to insert
 	 * @return the Element node of the newly inserted (or earlier inserted) contact
 	 */
 	@SuppressWarnings("unchecked")
 	public ContactElement addContact(Kontakt k){
-		Element eContacts=eRoot.getChild(ENCLOSE_CONTACTS, ns);
-		if(eContacts==null){
-			eContacts=new Element(ENCLOSE_CONTACTS,ns);
-			eRoot.addContent(eContacts);
-			choices.put(eContacts, new UserChoice(true,"Kontakte",eContacts));
-		}else{
-			List<ContactElement> lContacts=eContacts.getChildren(ContactElement.XMLNAME, ns);
-			for(ContactElement e:lContacts){
-				XidElement xid=e.getXid();
-				if( (xid!=null) && (xid.match(k)==XidElement.XIDMATCH.SURE)){
+		ContactsElement eContacts = new ContactsElement(this, eRoot.getChild(ENCLOSE_CONTACTS, ns));
+		if (eContacts == null) {
+			eContacts = new ContactsElement(this);
+			eRoot.addContent(eContacts.getElement());
+			choices.put(eContacts, new UserChoice(true, "Kontakte", eContacts));
+		} else {
+			List<ContactElement> lContacts =
+				(List<ContactElement>) eContacts.getChildren(ContactElement.XMLNAME,
+					ContactElement.class);
+			for (ContactElement e : (List<ContactElement>) lContacts) {
+				XidElement xid = e.getXid();
+				if ((xid != null) && (xid.match(k) == XidElement.XIDMATCH.SURE)) {
 					e.setContainer(this);
-					return e;	
+					return e;
 				}
 			}
 		}
-		ContactElement contact=new ContactElement(this,k);
-		eContacts.addContent(contact);
-		choices.put(contact, new UserChoice(true,k.getLabel(),k));
+		ContactElement contact = new ContactElement(this, k);
+		eContacts.add(contact);
+		choices.put(contact, new UserChoice(true, k.getLabel(), k));
 		return contact;
 	}
 	
 	public void addMapping(XChangeElement element, PersistentObject obj){
 		mapElementToObject.put(element, obj);
-		mapObjectToElement.put(obj,element);
+		mapObjectToElement.put(obj, element);
 	}
-	
 	
 	public PersistentObject getMapping(XChangeElement element){
 		return mapElementToObject.get(element);
@@ -125,74 +133,77 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	public UserChoice getChoice(Element key){
 		return choices.get(key);
 	}
-	public void addChoice(Element key, String name){
-		choices.put(key, new UserChoice(true,name,key));
+	
+	public void addChoice(XChangeElement key, String name){
+		choices.put(key, new UserChoice(true, name, key));
 	}
-
+	
 	public ContactElement addPatient(Patient pat){
-		ContactElement ret=addContact(pat);
-		List<BezugsKontakt> bzl=pat.getBezugsKontakte();
+		ContactElement ret = addContact(pat);
+		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
 		
-		for(BezugsKontakt bz:bzl){
-			ret.add(new ContactRefElement(this,bz));
+		for (BezugsKontakt bz : bzl) {
+			ret.add(new ContactRefElement(this, bz));
 		}
 		
-		MedicalElement eMedical=new MedicalElement(this,pat);
+		MedicalElement eMedical = new MedicalElement(this, pat);
 		ret.add(eMedical);
-		choices.put(eMedical, new UserChoice(true,"Krankengeschichte",eMedical));
-		for(IExchangeContributor iex:lex){
+		choices.put(eMedical, new UserChoice(true, "Krankengeschichte", eMedical));
+		for (IExchangeContributor iex : lex) {
 			iex.exportHook(eMedical);
 		}
 		return ret;
 	}
-
-	public List<ContactElement> getContactElements(){
-		return (List<ContactElement>)getElements(ROOTPATH+ENCLOSE_CONTACTS+"/"+ContactElement.XMLNAME);
-	}
 	
+	public List<ContactElement> getContactElements(){
+		return (List<ContactElement>) getElements(ROOTPATH + ENCLOSE_CONTACTS + "/"
+			+ ContactElement.XMLNAME);
+	}
 	
 	/**
 	 * Find the registered Data handler that matches best the given element
-	 * @param el  Element o be imported
+	 * 
+	 * @param el
+	 *            Element o be imported
 	 * @return the best matching handler or null if no handler exists at all for the given data type
 	 */
 	@SuppressWarnings("unchecked")
 	public IExchangeDataHandler findImportHandler(XChangeElement el){
-		IExchangeDataHandler ret=null;
-		int matchedRestrictions=0;
-		for(IExchangeContributor iex:lex){
-			IExchangeDataHandler[] handlers=iex.getImportHandlers();
-			for(IExchangeDataHandler cand:handlers){
-				if(cand.getDatatype().equalsIgnoreCase(el.getXMLName())){
-					if(ret==null){
-						ret=cand;
+		IExchangeDataHandler ret = null;
+		int matchedRestrictions = 0;
+		for (IExchangeContributor iex : lex) {
+			IExchangeDataHandler[] handlers = iex.getImportHandlers();
+			for (IExchangeDataHandler cand : handlers) {
+				if (cand.getDatatype().equalsIgnoreCase(el.getXMLName())) {
+					if (ret == null) {
+						ret = cand;
 					}
-					String[] restrictions=cand.getRestrictions();
-					if(restrictions!=null){
-						int matches=0;
-						for(String r:restrictions){
+					String[] restrictions = cand.getRestrictions();
+					if (restrictions != null) {
+						int matches = 0;
+						for (String r : restrictions) {
 							try {
-								XPath xpath=XPath.newInstance(r);
-								List<Object> nodes=xpath.selectNodes(el);
-								if(nodes.size()>0){
-									if(++matches>matchedRestrictions){
-										ret=cand;
-										matchedRestrictions=matches;
-									}else if(matches==matchedRestrictions){
-										if(ret.getValue()<cand.getValue()){
-											ret=cand;
+								XPath xpath = XPath.newInstance(r);
+								List<Object> nodes = xpath.selectNodes(el);
+								if (nodes.size() > 0) {
+									if (++matches > matchedRestrictions) {
+										ret = cand;
+										matchedRestrictions = matches;
+									} else if (matches == matchedRestrictions) {
+										if (ret.getValue() < cand.getValue()) {
+											ret = cand;
 										}
 									}
 								}
 							} catch (JDOMException e) {
 								ExHandler.handle(e);
-								log.log("Parse error JDOM "+e.getMessage(), Log.WARNINGS);
+								log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS);
 							}
 						}
 						
-					}else{
-						if(ret.getValue()<cand.getValue()){
-							ret=cand;
+					} else {
+						if (ret.getValue() < cand.getValue()) {
+							ret = cand;
 						}
 					}
 					
@@ -201,10 +212,14 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 		}
 		return ret;
 	}
+	
 	/**
 	 * Add a binary content to the Container
-	 * @param id a unique identifier for the content
-	 * @param contents the content
+	 * 
+	 * @param id
+	 *            a unique identifier for the content
+	 * @param contents
+	 *            the content
 	 */
 	public void addBinary(String id, byte[] contents){
 		binFiles.put(id, contents);
@@ -212,19 +227,22 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	
 	/**
 	 * get a binary content from the Container
-	 * @param id id of the content
+	 * 
+	 * @param id
+	 *            id of the content
 	 * @return the content or null if no such content exists
 	 */
 	public byte[] getBinary(String id){
 		return binFiles.get(id);
 	}
-
-	public void addChoice(Element e,String name, Object o){
-		choices.put(e, new UserChoice(true,name,o));
+	
+	public void addChoice(XChangeElement e, String name, Object o){
+		choices.put(e, new UserChoice(true, name, o));
 	}
 	
 	/**
 	 * Get the root element.
+	 * 
 	 * @return the root element
 	 */
 	public Element getRoot(){
@@ -233,23 +251,26 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	
 	/**
 	 * Retrieve a List of all Elements with a given Name at a given path
-	 * @param path a string of the form /element1/element2/name will get all Elements with "name" in the body of
-	 * element2. If name is *, will retrieve all Children of element2. Path must begin at root level.
+	 * 
+	 * @param path
+	 *            a string of the form /element1/element2/name will get all Elements with "name" in
+	 *            the body of element2. If name is *, will retrieve all Children of element2. Path
+	 *            must begin at root level.
 	 * @return a possibly empty list af all matching elements at the given position
 	 */
 	@SuppressWarnings("unchecked")
 	public List<? extends XChangeElement> getElements(String path){
-		LinkedList<XChangeElement> ret=new LinkedList<XChangeElement>();
-		String[] trace=path.split("/");
-		Element runner=eRoot;
-		for(int i=2;i<trace.length-1;i++){
-			runner=runner.getChild(trace[i], ns);
-			if(runner==null){
+		LinkedList<XChangeElement> ret = new LinkedList<XChangeElement>();
+		String[] trace = path.split("/");
+		Element runner = eRoot;
+		for (int i = 2; i < trace.length - 1; i++) {
+			runner = runner.getChild(trace[i], ns);
+			if (runner == null) {
 				return ret;
 			}
 		}
-		String name=trace[trace.length-1];
-		if(trace.equals("*")){
+		String name = trace[trace.length - 1];
+		if (trace.equals("*")) {
 			return runner.getChildren();
 		}
 		return runner.getChildren(name, ns);
@@ -267,69 +288,73 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver{
 	}
 	
 	/*
-	public List<Object> getSelectedChildren(Tree<UserChoice> tSelection){
-		List<Object> ret=new LinkedList<Object>();
-		for(Tree<UserChoice> runner:tSelection.getChildren()){
-			UserChoice choice=runner.contents;
-			if(choice.isSelected()){
-				ret.add(choice.object);
-			}
-		}
-		return ret;
-	}
-	*/
-	
+	 * public List<Object> getSelectedChildren(Tree<UserChoice> tSelection){ List<Object> ret=new
+	 * LinkedList<Object>(); for(Tree<UserChoice> runner:tSelection.getChildren()){ UserChoice
+	 * choice=runner.contents; if(choice.isSelected()){ ret.add(choice.object); } } return ret; }
+	 */
+
 	/**
 	 * Set any implementation-spezific configuration
+	 * 
 	 * @param props
 	 */
 	public void setConfiguration(Properties props){
-		this.props=props;
+		this.props = props;
 	}
 	
 	/**
 	 * Set a named property for this container
-	 * @param name the name of the property
-	 * @param value the value for the property
+	 * 
+	 * @param name
+	 *            the name of the property
+	 * @param value
+	 *            the value for the property
 	 */
 	public void setProperty(String name, String value){
-		if(props==null){
-			props=new Properties();
+		if (props == null) {
+			props = new Properties();
 		}
 		props.setProperty(name, value);
 	}
 	
 	public String getProperty(String name){
-		if(props==null){
-			props=new Properties();
+		if (props == null) {
+			props = new Properties();
 		}
 		return props.getProperty(name);
 	}
+	
 	protected Properties getProperties(){
 		return props;
 	}
+	
 	protected Properties props;
-	public static class UserChoice{
+	
+	public static class UserChoice {
 		boolean bSelected;
 		String title;
 		Object object;
 		
 		public void select(boolean bSelection){
-			bSelected=bSelection;
+			bSelected = bSelection;
 		}
+		
 		public boolean isSelected(){
 			return bSelected;
 		}
+		
 		public String getTitle(){
 			return title;
 		}
+		
 		public Object getObject(){
 			return object;
 		}
+		
 		public UserChoice(boolean bSelected, String title, Object object){
-			this.bSelected=bSelected;
-			this.title=title;
-			this.object=object;
+			this.bSelected = bSelected;
+			this.title = title;
+			this.object = object;
 		}
 	}
 }

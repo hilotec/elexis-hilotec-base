@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RiskElement.java 4673 2008-11-09 17:01:26Z rgw_ch $
+ *  $Id: RiskElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import org.jdom.Element;
 
 import ch.elexis.exchange.XChangeContainer;
 
@@ -29,8 +31,8 @@ public class RiskElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public RiskElement(XChangeContainer parent){
-		super(parent);
+	public RiskElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	public RiskElement(XChangeContainer parent, String name){

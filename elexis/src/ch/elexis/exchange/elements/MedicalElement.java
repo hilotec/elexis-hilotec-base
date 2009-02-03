@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 4247 2008-08-08 14:40:22Z rgw_ch $
+ *  $Id: MedicalElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -32,21 +31,26 @@ import ch.rgw.tools.StringTool;
 
 /**
  * THis represents the medical History of a given patient
+ * 
  * @author gerry
- *
+ * 
  */
 @SuppressWarnings("serial")
-public class MedicalElement extends XChangeElement{
-	public static final String XMLNAME="medical";
-	private Element eRecords, eAnalyses, eDocuments, eRisks, eMedications;
+public class MedicalElement extends XChangeElement {
+	public static final String XMLNAME = "medical";
+	private DocumentsElement eDocuments;
+	private RisksElement eRisks;
 	private AnamnesisElement elAnamnesis;
+	private MedicationsElement eMedications;
+	private RecordsElement eRecords;
+	private AnalysesElement eAnalyses;
 	
 	public String getXMLName(){
 		return XMLNAME;
 	}
 	
-	public MedicalElement(XChangeContainer parent){
-		super(parent);
+	public MedicalElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	/**
@@ -55,86 +59,88 @@ public class MedicalElement extends XChangeElement{
 	public MedicalElement(XChangeContainer parent, Patient p){
 		super(parent);
 		parent.addMapping(this, p);
-		add(new AnamnesisElement(getContainer()));
-		Fall[] faelle=p.getFaelle();
-		for(Fall fall:faelle){
-			Konsultation[] kons=fall.getBehandlungen(false);
-			for(Konsultation k:kons){
-				RecordElement record=new RecordElement(getContainer(),k);
+		add(new AnamnesisElement(getContainer(), null));
+		Fall[] faelle = p.getFaelle();
+		for (Fall fall : faelle) {
+			Konsultation[] kons = fall.getBehandlungen(false);
+			for (Konsultation k : kons) {
+				RecordElement record = new RecordElement(getContainer(), k);
 				getAnamnesis().link(k, record);
 				addRecord(record);
 			}
 		}
-	
-		Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
+		
+		Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
 		qbe.add("PatientID", "=", p.getId());
-		List<LabResult> labs=qbe.execute();
-		if(labs!=null){
-			for(LabResult lr:labs){
+		List<LabResult> labs = qbe.execute();
+		if (labs != null) {
+			for (LabResult lr : labs) {
 				ResultElement.addResult(this, lr);
 			}
 		}
 		
-		Query <Brief> qb=new Query<Brief>(Brief.class);
+		Query<Brief> qb = new Query<Brief>(Brief.class);
 		qb.add("PatientID", "=", p.getId());
-		List<Brief> lBriefe=qb.execute();
-		if((lBriefe!=null) && (lBriefe.size())>0){
-			for(Brief b:lBriefe){
-				addDocument(new DocumentElement(getContainer(),b));
+		List<Brief> lBriefe = qb.execute();
+		if ((lBriefe != null) && (lBriefe.size()) > 0) {
+			for (Brief b : lBriefe) {
+				addDocument(new DocumentElement(getContainer(), b));
 			}
-
+			
 		}
-		Prescription[] medis=p.getFixmedikation();
-		for(Prescription medi:medis){
-			add(new MedicationElement(getContainer(),medi));
+		Prescription[] medis = p.getFixmedikation();
+		for (Prescription medi : medis) {
+			add(new MedicationElement(getContainer(), medi));
 		}
-		String risks=p.get("Risiken");
-		if(!StringTool.isNothing(risks)){
-			for(String r:risks.split("[\\n\\r]+")){
-				add(new RiskElement(getContainer(),r));
+		String risks = p.get("Risiken");
+		if (!StringTool.isNothing(risks)) {
+			for (String r : risks.split("[\\n\\r]+")) {
+				add(new RiskElement(getContainer(), r));
 			}
 		}
-		risks=p.get("Allergien");
-		if(!StringTool.isNothing(risks)){
-			for(String r:risks.split("[\\n\\r]+")){
-				add(new RiskElement(getContainer(),r));
+		risks = p.get("Allergien");
+		if (!StringTool.isNothing(risks)) {
+			for (String r : risks.split("[\\n\\r]+")) {
+				add(new RiskElement(getContainer(), r));
 			}
 		}
 		
 	}
-
-
+	
 	public void add(AnamnesisElement ae){
-		elAnamnesis=ae;
+		elAnamnesis = ae;
 		super.add(ae);
 	}
-
+	
 	public void add(RiskElement re){
-		if(eRisks==null){
-			eRisks=new Element(XChangeContainer.ENCLOSE_RISKS,getContainer().getNamespace());
-			addContent(eRisks);
+		if (eRisks == null) {
+			eRisks = new RisksElement(getContainer(), null);
+			add(eRisks);
 			getContainer().addChoice(eRisks, "Risiken");
 		}
-		eRisks.addContent(re);
+		eRisks.add(re);
 	}
 	
 	public void add(MedicationElement med){
-		if(eMedications==null){
-			eMedications=new Element(XChangeContainer.ENCLOSE_MEDICATIONS,getContainer().getNamespace());
+		if (eMedications == null) {
+			eMedications = new MedicationsElement(getContainer(), null);
 			getContainer().addChoice(eMedications, "Medikamente");
-			addContent(eMedications);
+			add(eMedications);
 		}
-		eMedications.addContent(med);
+		eMedications.add(med);
 	}
+	
 	/**
 	 * Return or create the anamnesis-Element
+	 * 
 	 * @return the newly created or existing anamnesis element
 	 */
 	public AnamnesisElement getAnamnesis(){
-		if(elAnamnesis==null){
-			elAnamnesis=(AnamnesisElement)getChild(AnamnesisElement.XMLNAME);
-			if(elAnamnesis==null){
-				elAnamnesis=new AnamnesisElement(getContainer());
+		if (elAnamnesis == null) {
+			elAnamnesis =
+				(AnamnesisElement) getChild(AnamnesisElement.XMLNAME, AnamnesisElement.class);
+			if (elAnamnesis == null) {
+				elAnamnesis = new AnamnesisElement(getContainer(), null);
 			}
 		}
 		return elAnamnesis;
@@ -142,122 +148,127 @@ public class MedicalElement extends XChangeElement{
 	
 	/**
 	 * Add a medical record. This will create the records-parent element if neccessary
-	 * @param rc the RecordElement to add
+	 * 
+	 * @param rc
+	 *            the RecordElement to add
 	 */
 	public void addRecord(RecordElement rc){
-		if(eRecords==null){
-			eRecords=getChild("records");
+		if (eRecords == null) {
+			eRecords =
+				(RecordsElement) getChild(getContainer().ENCLOSE_RECORDS, RecordsElement.class);
 		}
-		if(eRecords==null){
-			eRecords=new Element("records",getContainer().getNamespace());
-			addContent(eRecords);
+		if (eRecords == null) {
+			eRecords = new RecordsElement(getContainer(), null);
+			add(eRecords);
 			getContainer().addChoice(eRecords, "KG-Einträge", eRecords);
 		}
-		eRecords.addContent(rc);
+		eRecords.add(rc);
 	}
 	
 	/**
-	 * Add a result 
+	 * Add a result
+	 * 
 	 * @param le
 	 */
 	public void addAnalyse(ResultElement le){
-		if(eAnalyses==null){
-			eAnalyses=getChild(FindingElement.ENCLOSING);
+		if (eAnalyses == null) {
+			eAnalyses = (AnalysesElement) getChild(FindingElement.ENCLOSING, AnalysesElement.class);
 		}
-		if(eAnalyses==null){
-			eAnalyses=new Element(FindingElement.ENCLOSING,getContainer().getNamespace());
-			addContent(eAnalyses);
+		if (eAnalyses == null) {
+			eAnalyses = new AnalysesElement(getContainer());
+			add(eAnalyses);
 			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
 		}
-		eAnalyses.addContent(le);
+		eAnalyses.add(le);
 	}
 	
 	public void addFindingItem(FindingElement fe){
-		if(eAnalyses==null){
-			eAnalyses=getChild(FindingElement.ENCLOSING);
+		if (eAnalyses == null) {
+			eAnalyses = (AnalysesElement) getChild(FindingElement.ENCLOSING, AnalysesElement.class);
 		}
-		if(eAnalyses==null){
-			eAnalyses=new Element(FindingElement.ENCLOSING,getContainer().getNamespace());
-			addContent(eAnalyses);
+		if (eAnalyses == null) {
+			eAnalyses = new AnalysesElement(getContainer());
+			add(eAnalyses);
 			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
 		}
-		eAnalyses.addContent(fe);
+		eAnalyses.add(fe);
 	}
+	
 	@SuppressWarnings("unchecked")
 	public void addDocument(DocumentElement de){
-		if(eDocuments==null){
-			eDocuments=getChild("documents");
+		if (eDocuments == null) {
+			getContainer();
+			eDocuments =
+				(DocumentsElement) getChild(XChangeContainer.ENCLOSE_DOCUMENTS,
+					DocumentsElement.class);
 		}
-		if(eDocuments==null){
-			eDocuments=new Element(getContainer().ENCLOSE_DOCUMENTS,getContainer().getNamespace());
-			addContent(eDocuments);
+		if (eDocuments == null) {
+			eDocuments = new DocumentsElement(getContainer(), null);
+			add(eDocuments);
 			getContainer().addChoice(eDocuments, "Dokumente", eDocuments);
 		}
-		List<DocumentElement> lEx=eDocuments.getChildren(DocumentElement.XMLNAME);
-		if(!lEx.contains(de)){
-			eDocuments.addContent(de);
+		List<DocumentElement> lEx =
+			(List<DocumentElement>) eDocuments.getChildren(DocumentElement.XMLNAME,
+				DocumentElement.class);
+		if (!lEx.contains(de)) {
+			eDocuments.add(de);
 		}
-	
+		
 	}
 	
 	/************************* Load methods *******************************************/
 	@SuppressWarnings("unchecked")
 	public List<RecordElement> getRecords(){
-		List<RecordElement> ret=new LinkedList<RecordElement>();
-		if(eRecords==null){
-			eRecords=getChild(XChangeContainer.ENCLOSE_RECORDS);
+		if (eRecords == null) {
+			eRecords =
+				(RecordsElement) getChild(XChangeContainer.ENCLOSE_RECORDS, RecordsElement.class);
 		}
-		if(eRecords!=null){
-			List<RecordElement> records=eRecords.getChildren(RecordElement.XMLNAME, getContainer().getNamespace());
-			for(RecordElement el:records){
-				el.setContainer(getContainer());
-				ret.add(el);
-			}
+		if (eRecords != null) {
+			List<RecordElement> records =
+				(List<RecordElement>) eRecords.getChildren(RecordElement.XMLNAME,
+					RecordElement.class);
+			return records;
 		}
-		return ret;
+		return null;
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public List<FindingElement> getAnalyses(){
-		List<FindingElement> ret=new LinkedList<FindingElement>();
-		if(eAnalyses==null){
-			eAnalyses=getChild(XChangeContainer.ENCLOSE_FINDINGS);
+		if (eAnalyses == null) {
+			eAnalyses =
+				(AnalysesElement) getChild(XChangeContainer.ENCLOSE_FINDINGS, AnalysesElement.class);
 		}
-		if(eAnalyses!=null){
-			List<FindingElement> analyses=eAnalyses.getChildren(FindingElement.XMLNAME,getContainer().getNamespace());
-			for(FindingElement el:analyses){
-				el.setContainer(getContainer());
-				ret.add(el);
-			}
+		if (eAnalyses != null) {
+			List<FindingElement> analyses =
+				(List<FindingElement>) eAnalyses.getChildren(FindingElement.XMLNAME,
+					FindingElement.class);
+			return analyses;
 		}
-		return ret;
+		return new LinkedList<FindingElement>();
 	}
-	
-	
 	
 	@SuppressWarnings("unchecked")
 	public List<DocumentElement> getDocuments(){
-		List<DocumentElement> ret=new LinkedList<DocumentElement>();
-		if(eDocuments==null){
-			eDocuments=getChild(XChangeContainer.ENCLOSE_DOCUMENTS);
+		if (eDocuments == null) {
+			eDocuments =
+				(DocumentsElement) getChild(XChangeContainer.ENCLOSE_DOCUMENTS,
+					DocumentsElement.class);
 		}
-		if(eDocuments!=null){
-			List<DocumentElement> documents=eDocuments.getChildren(DocumentElement.XMLNAME, getContainer().getNamespace());
-			for(DocumentElement el:documents){
-				el.setContainer(getContainer());
-				ret.add(el);
-			}
+		if (eDocuments != null) {
+			List<DocumentElement> documents =
+				(List<DocumentElement>) eDocuments.getChildren(DocumentElement.XMLNAME,
+					DocumentElement.class);
+			return documents;
+			
 		}
-		return ret;
+		return new LinkedList<DocumentElement>();
 	}
 	
-		
 	public String toString(){
-		StringBuilder ret=new StringBuilder();
+		StringBuilder ret = new StringBuilder();
 		ret.append(getAnamnesis().toString());
-		List<RecordElement> records=getRecords();
-		for(RecordElement record:records){
+		List<RecordElement> records = getRecords();
+		for (RecordElement record : records) {
 			ret.append("\n......\n").append(record.toString());
 		}
 		
@@ -266,13 +277,15 @@ public class MedicalElement extends XChangeElement{
 	
 	/**
 	 * Load medical data from xchange-file into patient
-	 * @param context the Patient 
+	 * 
+	 * @param context
+	 *            the Patient
 	 * @return the patient
 	 */
 	public PersistentObject doImport(PersistentObject context){
-		Patient pat=Patient.load(context.getId());
-		AnamnesisElement elAnamnesis=getAnamnesis();
-		List<RecordElement> records=getRecords();
+		Patient pat = Patient.load(context.getId());
+		AnamnesisElement elAnamnesis = getAnamnesis();
+		List<RecordElement> records = getRecords();
 		
 		return pat;
 	}

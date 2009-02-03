@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnamnesisElement.java 4187 2008-07-27 19:07:26Z rgw_ch $
+ *  $Id: AnamnesisElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom.Element;
@@ -25,112 +24,86 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.TimeTool;
 
-@SuppressWarnings("serial")
-public class AnamnesisElement extends XChangeElement{
-	public static final String XMLNAME="anamnesis";
+public class AnamnesisElement extends XChangeElement {
+	public static final String XMLNAME = "anamnesis";
 	
-	HashMap<IDiagnose, EpisodeElement> hLink=new HashMap<IDiagnose,EpisodeElement>();
-	HashMap<Element,IDiagnose> hBacklink;
-	HashMap<String,Element> hElements;
+	HashMap<IDiagnose, EpisodeElement> hLink = new HashMap<IDiagnose, EpisodeElement>();
+	HashMap<Element, IDiagnose> hBacklink;
+	HashMap<String, Element> hElements;
 	MedicalElement eMed;
 	
-	
 	public String getXMLName(){
-		return XMLNAME; 
+		return XMLNAME;
 	}
 	
 	/*
-	public List<EpisodeElement> getEpisodes(){
-		List<EpisodeElement> ret=new LinkedList<EpisodeElement>();
-		List<Element> episodes=getElements("episode");
-		for(Element episode:episodes){
-			ret.add(new EpisodeElement(eMed.parent));
-		}
-		return ret;
+	 * public List<EpisodeElement> getEpisodes(){ List<EpisodeElement> ret=new
+	 * LinkedList<EpisodeElement>(); List<Element> episodes=getElements("episode"); for(Element
+	 * episode:episodes){ ret.add(new EpisodeElement(eMed.parent)); } return ret; }
+	 */
+	public AnamnesisElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
-	*/
-	public AnamnesisElement(XChangeContainer parent){
-		super(parent);
-	}
-	
 	
 	/*
-	@SuppressWarnings("unchecked")
-	public AnamnesisElement(MedicalElement eMed, Element e1){
-		super(eMed.parent,e1);
-		this.eMed=eMed;
-		hBacklink=new HashMap<Element,IDiagnose>();
-		hElements=new HashMap<String,Element>();
-		List<Element> episodes=e1.getChildren("episode",XChangeContainer.ns);
-		if(episodes!=null){
-			for(Element ep:episodes){
-				hElements.put(ep.getAttributeValue("id"), ep);
-				Element eDiag=ep.getChild("diagnosis", XChangeContainer.ns);
-				String codesys=eDiag.getAttributeValue("codesystem");
-				String dgCode=eDiag.getAttributeValue("code");
-				List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.Diagnosecode");
-				for(IConfigurationElement ic:list){
-					try {
-						PersistentObjectFactory po=(PersistentObjectFactory)ic.createExecutableExtension("ElementFactory");
-						CodeSelectorFactory cs=(CodeSelectorFactory)ic.createExecutableExtension("CodeSelectorFactory");
-						if(cs.getCodeSystemName().equalsIgnoreCase(codesys)){
-							ICodeElement ics=(ICodeElement)po.createTemplate(cs.getElementClass());
-							String diag=ics.getClass().getName()+"::"+dgCode;
-							IDiagnose key=(IDiagnose)po.createFromString(diag);
-							if(key!=null){
-								hBacklink.put(ep,key);
-							}
-						}
-						
-					} catch (CoreException ex) {
-						ExHandler.handle(ex);
-					}
-				}
-			}
-		}
-	}
-	*/
-	
+	 * @SuppressWarnings("unchecked") public AnamnesisElement(MedicalElement eMed, Element e1){
+	 * super(eMed.parent,e1); this.eMed=eMed; hBacklink=new HashMap<Element,IDiagnose>();
+	 * hElements=new HashMap<String,Element>(); List<Element>
+	 * episodes=e1.getChildren("episode",XChangeContainer.ns); if(episodes!=null){ for(Element
+	 * ep:episodes){ hElements.put(ep.getAttributeValue("id"), ep); Element
+	 * eDiag=ep.getChild("diagnosis", XChangeContainer.ns); String
+	 * codesys=eDiag.getAttributeValue("codesystem"); String dgCode=eDiag.getAttributeValue("code");
+	 * List<IConfigurationElement> list=Extensions.getExtensions("ch.elexis.Diagnosecode");
+	 * for(IConfigurationElement ic:list){ try { PersistentObjectFactory
+	 * po=(PersistentObjectFactory)ic.createExecutableExtension("ElementFactory");
+	 * CodeSelectorFactory
+	 * cs=(CodeSelectorFactory)ic.createExecutableExtension("CodeSelectorFactory");
+	 * if(cs.getCodeSystemName().equalsIgnoreCase(codesys)){ ICodeElement
+	 * ics=(ICodeElement)po.createTemplate(cs.getElementClass()); String
+	 * diag=ics.getClass().getName()+"::"+dgCode; IDiagnose
+	 * key=(IDiagnose)po.createFromString(diag); if(key!=null){ hBacklink.put(ep,key); } }
+	 * 
+	 * } catch (CoreException ex) { ExHandler.handle(ex); } } } } }
+	 */
+
 	public List<EpisodeElement> getEpisodes(){
-		List<EpisodeElement> ret=new LinkedList<EpisodeElement>();
-		List<EpisodeElement> lep=getChildren(EpisodeElement.XMLNAME, getContainer().getNamespace());
-		for(EpisodeElement el:lep){
-			el.setContainer(getContainer());
-			ret.add(el);
-		}
-		return ret;
+		List<EpisodeElement> lep =
+			(List<EpisodeElement>) getChildren(EpisodeElement.XMLNAME, EpisodeElement.class);
+		return lep;
 	}
+	
 	/**
-	 * link a record element to this anamnesis (every episode has a number of treatments 
-	 * related to that episode)
-	 * We try to find an episode for each of the diagnoses of the Konsultation given
+	 * link a record element to this anamnesis (every episode has a number of treatments related to
+	 * that episode) We try to find an episode for each of the diagnoses of the Konsultation given
+	 * 
 	 * @param k
 	 * @param r
 	 */
 	public void link(Konsultation k, RecordElement r){
-		List<IDiagnose> kdl=k.getDiagnosen();
-		for(IDiagnose dg:kdl){
-			EpisodeElement episode=hLink.get(dg);
-			if(episode==null){
-				episode=new EpisodeElement(getContainer(),k,dg);
-				hLink.put(dg,episode);
-				addContent(episode);
+		List<IDiagnose> kdl = k.getDiagnosen();
+		for (IDiagnose dg : kdl) {
+			EpisodeElement episode = hLink.get(dg);
+			if (episode == null) {
+				episode = new EpisodeElement(getContainer(), k, dg);
+				hLink.put(dg, episode);
+				add(episode);
 			}
-			EpisodeRefElement episodeRef=new EpisodeRefElement(getContainer(),episode);
-			r.addContent(episodeRef);
+			EpisodeRefElement episodeRef = new EpisodeRefElement(getContainer(), episode);
+			r.add(episodeRef);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void doImport(RecordElement r, Konsultation k){
-		List<Element> eRefs=r.getChildren("episode",getContainer().getNamespace());
-		if(eRefs!=null){
-			for(Element eRef:eRefs){
-				String id=eRef.getAttributeValue("id");
-				Element episode=hElements.get(id);
-				if(episode!=null){
-					IDiagnose dg=hBacklink.get(episode);
-					if(dg!=null){
+		List<EpisodeElement> eRefs =
+			(List<EpisodeElement>) r.getChildren(EpisodeElement.XMLNAME, EpisodeElement.class);
+		if (eRefs != null) {
+			for (EpisodeElement eRef : eRefs) {
+				String id = eRef.getAttr("id");
+				Element episode = hElements.get(id);
+				if (episode != null) {
+					IDiagnose dg = hBacklink.get(episode);
+					if (dg != null) {
 						k.addDiagnose(dg);
 					}
 				}
@@ -141,16 +114,17 @@ public class AnamnesisElement extends XChangeElement{
 	public PersistentObject doImport(PersistentObject context){
 		return null;
 	}
+	
 	public String toString(){
-		StringBuilder ret=new StringBuilder();
-		List<EpisodeElement> episodes=null; //getEpisodes();
-		for(EpisodeElement episode:episodes){
-			ret.append(episode.getDiagnosis()).append(": ")
-				.append(new TimeTool(episode.getBeginDate()).toString(TimeTool.DATE_GER));
-			String end=episode.getEndDate();
-			if(end.equals("")){
+		StringBuilder ret = new StringBuilder();
+		List<EpisodeElement> episodes = null; // getEpisodes();
+		for (EpisodeElement episode : episodes) {
+			ret.append(episode.getDiagnosis()).append(": ").append(
+				new TimeTool(episode.getBeginDate()).toString(TimeTool.DATE_GER));
+			String end = episode.getEndDate();
+			if (end.equals("")) {
 				ret.append(": offen.");
-			}else{
+			} else {
 				ret.append("-").append(new TimeTool(end).toString(TimeTool.DATE_GER));
 			}
 			ret.append("\n").append(episode.getText()).append("\n");
@@ -159,18 +133,11 @@ public class AnamnesisElement extends XChangeElement{
 		return ret.toString();
 	}
 	/*
-	public Result<Element> create(Patient p){
-		Fall[] faelle=p.getFaelle();
-		for(Fall fall:faelle){
-			Konsultation[] konsultationen=fall.getBehandlungen(false);
-			for(Konsultation k:konsultationen){
-				List<IDiagnose> kdl=k.getDiagnosen();
-				
-			}
-		}
-		return new Result<Element>(e);
-	}
-	*/
+	 * public Result<Element> create(Patient p){ Fall[] faelle=p.getFaelle(); for(Fall fall:faelle){
+	 * Konsultation[] konsultationen=fall.getBehandlungen(false); for(Konsultation
+	 * k:konsultationen){ List<IDiagnose> kdl=k.getDiagnosen();
+	 * 
+	 * } } return new Result<Element>(e); }
+	 */
 
-	
 }

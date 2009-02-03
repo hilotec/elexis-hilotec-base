@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MarkupElement.java 4673 2008-11-09 17:01:26Z rgw_ch $
+ *  $Id: MarkupElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import org.jdom.Element;
 
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.text.Samdas.XRef;
@@ -31,8 +33,8 @@ public class MarkupElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public MarkupElement(XChangeContainer parent){
-		super(parent);
+	public MarkupElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	public MarkupElement(XChangeContainer home, XRef xref){

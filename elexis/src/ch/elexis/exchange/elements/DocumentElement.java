@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentElement.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ *  $Id: DocumentElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -45,12 +45,12 @@ public class DocumentElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public DocumentElement(XChangeContainer parent){
-		super(parent);
+	public DocumentElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	public DocumentElement(XChangeContainer parent, Brief b){
-		this(parent);
+		super(parent);
 		setAttribute(ATTR_MIMETYPE, b.getMimeType());
 		setDefaultXid(b.getId());
 		setAttribute(ATTR_PLACEMENT, PLACEMENT_INFILE);
@@ -100,7 +100,7 @@ public class DocumentElement extends XChangeElement {
 	public void setHint(String hint){
 		Element eHint = new Element(ELEMENT_HINT, getContainer().getNamespace());
 		eHint.setText(hint);
-		addContent(eHint);
+		getElement().addContent(eHint);
 	}
 	
 	public void setSubject(String subject){

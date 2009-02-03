@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FindingElement.java 4673 2008-11-09 17:01:26Z rgw_ch $
+ *  $Id: FindingElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import org.jdom.Element;
 
 import ch.elexis.data.LabItem;
 import ch.elexis.exchange.XChangeContainer;
@@ -38,8 +40,8 @@ public class FindingElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	protected FindingElement(XChangeContainer p){
-		super(p);
+	protected FindingElement(XChangeContainer p, Element el){
+		super(p, el);
 	}
 	
 	FindingElement(XChangeContainer home, LabItem li){
@@ -58,7 +60,7 @@ public class FindingElement extends XChangeElement {
 		}
 		setAttribute(ATTR_GROUP, li.getGroup());
 		XidElement eXid = new XidElement(home, li);
-		addContent(eXid);
+		add(eXid);
 	}
 	
 	/*

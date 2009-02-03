@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactRefElement.java 4233 2008-08-04 15:54:56Z rgw_ch $
+ *  $Id: ContactRefElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
+
+import org.jdom.Element;
 
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
@@ -19,25 +21,25 @@ import ch.elexis.exchange.XChangeContainer;
 
 public class ContactRefElement extends XChangeElement {
 	
-	public static final String CONTACTREF_DESCRIPTION="description";
-	public static final String CONTACTREF_REFID="refID";
+	public static final String CONTACTREF_DESCRIPTION = "description";
+	public static final String CONTACTREF_REFID = "refID";
 	
 	public String getXMLName(){
 		return "contactref";
 	}
 	
-	public ContactRefElement(XChangeContainer parent){
-		super(parent);
+	public ContactRefElement(XChangeContainer parent, Element el){
+		super(parent, el);
 	}
 	
 	public ContactRefElement(XChangeContainer parent, BezugsKontakt bk){
 		super(parent);
-		Kontakt bezug=bk.getBezugsKontakt();
-		String beziehung=bk.getBezug();
+		Kontakt bezug = bk.getBezugsKontakt();
+		String beziehung = bk.getBezug();
 		setDescription(beziehung);
-		ContactElement ce=parent.addContact(bezug);
+		ContactElement ce = parent.addContact(bezug);
 		setId(ce.getID());
-		parent.addChoice(this, bk.getLabel(),bk);
+		parent.addChoice(this, bk.getLabel(), bk);
 	}
 	
 	public void setDescription(String type){

@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XidElement.java 5074 2009-02-01 15:58:15Z rgw_ch $
+ *  $Id: XidElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,7 +21,6 @@ import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
-import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
@@ -56,19 +55,20 @@ public class XidElement extends XChangeElement {
 	}
 	
 	public static int getPureQuality(Xid xid){
-		return (xid.getQuality()&3);
+		return (xid.getQuality() & 3);
 	}
+	
 	public XidElement(XChangeContainer parent){
 		super(parent);
 	}
 	
 	public XidElement(XChangeContainer home, IVerrechenbar iv){
 		super(home);
-		if(iv instanceof PersistentObject){
-			PersistentObject po=(PersistentObject)iv;
+		if (iv instanceof PersistentObject) {
+			PersistentObject po = (PersistentObject) iv;
 			setAttribute(ATTR_ID, XMLTool.idToXMLID(po.getId()));
 			addIdentities(po, iv.getXidDomain(), po.getId(), Xid.ASSIGNMENT_LOCAL, true);
-
+			
 		}
 	}
 	
@@ -117,27 +117,34 @@ public class XidElement extends XChangeElement {
 			int v1 = val & 3;
 			Identity ident =
 				new Identity(home, xid.getDomain(), xid.getDomainId(), v1, isUUID(xid));
-			addContent(ident);
+			add(ident);
 		}
 		
 	}
 	
-	private void addIdentities( PersistentObject po, String domain, String domid, int q, boolean bGuid){
-		List<Xid> xids=po.getXids();
+	public XidElement(XChangeContainer c, Element child){
+		super(c, child);
+	}
 	
-		boolean bDomain=false;
-		XChangeContainer home=getContainer();
-		for(Xid xid:xids){
-			if(xid.getDomain().equals(domain)){
-				bDomain=true;
+	private void addIdentities(PersistentObject po, String domain, String domid, int q,
+		boolean bGuid){
+		List<Xid> xids = po.getXids();
+		
+		boolean bDomain = false;
+		XChangeContainer home = getContainer();
+		for (Xid xid : xids) {
+			if (xid.getDomain().equals(domain)) {
+				bDomain = true;
 			}
-			Identity ident=new Identity(home, xid.getDomain(),xid.getDomainId(), getPureQuality(xid), isUUID(xid) );
-			addContent(ident);
+			Identity ident =
+				new Identity(home, xid.getDomain(), xid.getDomainId(), getPureQuality(xid),
+					isUUID(xid));
+			add(ident);
 		}
-		if(bDomain==false){
+		if (bDomain == false) {
 			po.addXid(domain, domid, false);
-			Identity ident=new Identity(home,domain, domid,q,bGuid);
-			addContent(ident);
+			Identity ident = new Identity(home, domain, domid, q, bGuid);
+			add(ident);
 		}
 	}
 	
@@ -147,8 +154,8 @@ public class XidElement extends XChangeElement {
 	
 	public void setMainID(String domain){
 		Identity best = null;
-		for (Element ident : getElements(ELEMENT_IDENTITY)) {
-			Identity cand = (Identity) ident;
+		List<Identity> idents = (List<Identity>) getChildren(ELEMENT_IDENTITY, Identity.class);
+		for (Identity cand : idents) {
 			if (domain != null) {
 				if (cand.getAttr(ATTR_IDENTITY_DOMAIN).equalsIgnoreCase(domain)) {
 					best = cand;
@@ -200,18 +207,18 @@ public class XidElement extends XChangeElement {
 	 */
 	@SuppressWarnings("unchecked")
 	public XIDMATCH match(PersistentObject po){
-		if (po.getId().equals(getAttributeValue(XidElement.ATTR_ID))) {
+		if (po.getId().equals(getAttr(XidElement.ATTR_ID))) {
 			return XIDMATCH.SURE;
 		}
 		int sure = 0;
 		List<Xid> poXids = po.getXids();
-		List<Element> idents = getChildren(ELEMENT_IDENTITY, getContainer().getNamespace());
+		List<Identity> idents = (List<Identity>) getChildren(ELEMENT_IDENTITY, Identity.class);
 		for (Xid xid : poXids) {
 			String domain = xid.getDomain();
 			String domid = xid.getDomainId();
-			for (Element ident : idents) {
-				if (ident.getAttributeValue(ATTR_IDENTITY_DOMAIN).equals(domain)
-					&& ident.getAttributeValue(ATTR_IDENTITY_DOMAIN_ID).equals(domid)) {
+			for (Identity ident : idents) {
+				if (ident.getAttr(ATTR_IDENTITY_DOMAIN).equals(domain)
+					&& ident.getAttr(ATTR_IDENTITY_DOMAIN_ID).equals(domid)) {
 					if (XidElement.isUUID(xid)) {
 						return XIDMATCH.SURE;
 					} else {
@@ -236,19 +243,19 @@ public class XidElement extends XChangeElement {
 	/**
 	 * Find the Object(s) possibly matching this Xid-Element
 	 * 
-	 * @return
+	 * @return a List with matching objects that might be empty but will not be null.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<PersistentObject> findObject(){
-		List<Element> idents = getChildren(ELEMENT_IDENTITY, getContainer().getNamespace());
+		List<Identity> idents = (List<Identity>) getChildren(ELEMENT_IDENTITY, Identity.class);
 		List<PersistentObject> candidates = new LinkedList<PersistentObject>();
 		boolean lastGuid = false;
 		int lastQuality = 0;
-		for (Element ident : idents) {
-			String domain = ident.getAttributeValue(ATTR_IDENTITY_DOMAIN);
-			String domain_id = ident.getAttributeValue(ATTR_IDENTITY_DOMAIN_ID);
-			String quality = ident.getAttributeValue(ATTR_IDENTITY_QUALITY);
-			String isguid = ident.getAttributeValue(XidElement.ATTR_ISGUID);
+		for (XChangeElement ident : idents) {
+			String domain = ident.getAttr(ATTR_IDENTITY_DOMAIN);
+			String domain_id = ident.getAttr(ATTR_IDENTITY_DOMAIN_ID);
+			String quality = ident.getAttr(ATTR_IDENTITY_QUALITY);
+			String isguid = ident.getAttr(XidElement.ATTR_ISGUID);
 			PersistentObject cand = Xid.findObject(domain, domain_id);
 			if (cand != null) {
 				boolean actGuid = Boolean.parseBoolean(isguid);
@@ -277,8 +284,8 @@ public class XidElement extends XChangeElement {
 			return ELEMENT_IDENTITY;
 		}
 		
-		public Identity(XChangeContainer home){
-			super(home);
+		public Identity(XChangeContainer home, Element el){
+			super(home, el);
 		}
 		
 		public Identity(XChangeContainer home, String domain, String domain_id, int quality,
