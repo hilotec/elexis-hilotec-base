@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ * $Id: FlatDataLoader.java 5088 2009-02-04 15:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -58,11 +58,14 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	 * }
 	 */
 
-	public IStatus work(IProgressMonitor monitor, HashMap<String,Object> params){
+	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
 		// tv.setItemCount(1);
 		// tv.replace(LOADMESSAGE, 0);
-		
+		if (filtered != null) {
+			filtered.clear();
+		}
+		filtered = null;
 		qbe.clear();
 		cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
 		applyQueryFilters();
