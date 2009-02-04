@@ -74,6 +74,8 @@
 
 	<!-- Optionale Plugins, für die Programmfunktion nicht unbedingt erforderlich -->
 	<target name="options" depends="main">
+		<available file="../elexis-iatrix/build.xml" property="iatrixkg.ok" />
+		<antcall target="iatrixkg" inheritrefs="true" />
 		<available file="../elexis-rosenstudio/build.xml"
 		           property="rosenstudio.ok" />
 		<antcall target="rosenstudio" inheritrefs="true" />
@@ -215,6 +217,10 @@
 		<antcall target="oowrapper3" inheritrefs="true" />
 	</target>
 
+	<target name="iatrixkg" if="iatrixkg.ok">
+		<ant antfile="../elexis-iatrix/build.xml" inheritrefs="true" />
+	</target>
+
 	<target name="berchtold" if="berchtold.ok">
 		<ant antfile="../privatrechnung-berchtold/build.xml"
 		     inheritrefs="true" />
@@ -229,9 +235,9 @@
 		<ant antfile="../elexis-MediDirect/build.xml" inheritrefs="true" />
 	</target>
 
-    <target name="rrose" if="rrose.ok">
-        <ant antfile="../elexis-RezeptRose/build.xml" inheritrefs="true" />
-    </target>
+	<target name="rrose" if="rrose.ok">
+		<ant antfile="../elexis-RezeptRose/build.xml" inheritrefs="true" />
+	</target>
 
 	<target name="waeltistatistics" if="waeltistatistics.ok">
 		<ant antfile="../Statistics/build.xml" inheritrefs="true" />
