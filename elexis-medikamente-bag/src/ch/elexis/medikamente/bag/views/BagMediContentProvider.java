@@ -1,7 +1,6 @@
 package ch.elexis.medikamente.bag.views;
 
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +49,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 	@Override
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
+		// SortedSet<BAGMedi> coll=new TreeSet<BAGMedi>();
 		qbe.clear();
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -65,40 +65,50 @@ public class BagMediContentProvider extends FlatDataLoader {
 			if (values == null) {
 				values = new HashMap<String, String>();
 			}
-			String subst = values.get(BAGMediSelector.FIELD_SUBSTANCE);
-			String notes = values.get(BAGMediSelector.FIELD_NOTES);
-			String names = values.get(BAGMediSelector.FIELD_NAME);
-			if (StringTool.isNothing(subst) && StringTool.isNothing(notes)) {
-				qbe.add(BAGMedi.NAME, "Like", names + "%");
-				if (bOnlyGenerics) {
-					qbe.add("Generikum", "LIKE", "G%");
-				}
-				if (bOnlyStock) {
-					qbe.add(Artikel.MAXBESTAND, ">", "0");
-				}
+			if (values.isEmpty()) {
+				qbe.orderBy(false, new String[] {
+					BAGMedi.NAME
+				});
 				medis = qbe.execute().toArray(new BAGMedi[0]);
 			} else {
-				if (!StringTool.isNothing(subst)) {
-					String sql = FROM_SUBSTANCE + JdbcLink.wrap(subst + "%");
-					Collection<BAGMedi> mediRaw =
-						(Collection<BAGMedi>) qbe.queryExpression(sql, null);
-					if (mediRaw == null) {
-						medis = new BAGMedi[0];
+				String subst = values.get(BAGMediSelector.FIELD_SUBSTANCE);
+				String notes = values.get(BAGMediSelector.FIELD_NOTES);
+				String names = values.get(BAGMediSelector.FIELD_NAME);
+				if (StringTool.isNothing(subst) && StringTool.isNothing(notes)) {
+					qbe.add(BAGMedi.NAME, "Like", names + "%");
+					if (bOnlyGenerics) {
+						qbe.add("Generikum", "LIKE", "G%");
+					}
+					if (bOnlyStock) {
+						qbe.add(Artikel.MAXBESTAND, ">", "0");
+					}
+					qbe.orderBy(false, new String[] {
+						BAGMedi.NAME
+					});
+					medis = qbe.execute().toArray(new BAGMedi[0]);
+				} else {
+					if (!StringTool.isNothing(subst)) {
+						String sql = FROM_SUBSTANCE + JdbcLink.wrap(subst + "%");
+						Collection<BAGMedi> mediRaw =
+							(Collection<BAGMedi>) qbe.queryExpression(sql, null);
+						if (mediRaw == null) {
+							medis = new BAGMedi[0];
+						} else {
+							medis = mediRaw.toArray(new BAGMedi[0]);
+						}
+						
+					} else if (!StringTool.isNothing(notes)) {
+						ids = qbe.execute(psNotes, new String[] {
+							"%" + notes + "%"
+						});
+						medis = new BAGMedi[ids.size()];
 					} else {
-						medis = mediRaw.toArray(new BAGMedi[0]);
+						medis = new BAGMedi[0];
 					}
 					
-				} else if (!StringTool.isNothing(notes)) {
-					ids = qbe.execute(psNotes, new String[] {
-						"%" + notes + "%"
-					});
-					medis = new BAGMedi[ids.size()];
-				} else {
-					medis = new BAGMedi[0];
-				}
-				
-				if (monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
+					if (monitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
+					}
 				}
 			}
 		}
@@ -144,10 +154,10 @@ public class BagMediContentProvider extends FlatDataLoader {
 	class QueryFilter implements IFilter {
 		public boolean select(Object element){
 			BAGMedi medi = (BAGMedi) element;
-			if (bOnlyStock & !medi.isLagerartikel()) {
+			if (bOnlyStock && !medi.isLagerartikel()) {
 				return false;
 			}
-			if (bOnlyGenerics & !medi.isGenericum()) {
+			if (bOnlyGenerics && !medi.isGenericum()) {
 				return false;
 			}
 			return true;
