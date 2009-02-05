@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SimpleWidgetProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *    $Id: SimpleWidgetProvider.java 5090 2009-02-05 12:28:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -47,7 +47,7 @@ public class SimpleWidgetProvider implements WidgetProvider {
 	public StructuredViewer createViewer(Composite parent){
 		switch (type) {
 		case TYPE_TREE:
-			return new TreeViewer(parent);
+			return new TreeViewer(parent, style);
 		case TYPE_LIST:
 			return new ListViewer(parent, style);
 		case TYPE_TABLE:

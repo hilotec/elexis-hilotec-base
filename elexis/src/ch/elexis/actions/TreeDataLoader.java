@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ * $Id: TreeDataLoader.java 5090 2009-02-05 12:28:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
@@ -41,8 +42,9 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 	 * applyQueryFilters(); for (PersistentObject po : qbe.execute()) { new
 	 * Tree<PersistentObject>(root, po); } }
 	 */
-	public IStatus work(IProgressMonitor monitor, HashMap<String, Object>params){
+	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
 		monitor.beginTask("Lade Daten", IProgressMonitor.UNKNOWN);
+		root.clear();
 		qbe.clear();
 		qbe.add(parentColumn, "=", "NIL");
 		applyQueryFilters();
@@ -54,6 +56,13 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 			monitor.worked(1);
 		}
 		monitor.done();
+		
+		Desk.asyncExec(new Runnable() {
+			public void run(){
+				((TreeViewer) cv.getViewerWidget()).setChildCount(this, root.getChildren().size());
+			}
+		});
+		
 		return Status.OK_STATUS;
 	}
 	
