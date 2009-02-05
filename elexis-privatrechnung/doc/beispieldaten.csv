@@ -17,6 +17,7 @@
 "Elexis","Remote","Support Fernwartung (15')",1500,3000,15,01.01.00,31.12.38,1
 "Elexis","Prog","Programmierarbeiten (Std)",0,14000,60,01.01.00,31.12.38,1
 "NIL","Elexis","Elexis",0,0,0,01.01.00,31.12.38,1
+"Elexis","Wartung","Wartungsvertrag",0,95000,0,01.01.00,31.12.38,1
 "Elexis","Bahn","Bahnkosten",0,0,0,01.01.00,31.12.38,1
 "Elexis","Tel","Telefonsupport (15')",5,3000,15,01.01.00,31.12.38,1
 "Elexis","Plugins","Verkauf von Plugins",0,0,0,01.01.00,31.12.38,1

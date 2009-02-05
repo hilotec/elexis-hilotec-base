@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 5074 2009-02-01 15:58:15Z rgw_ch $
+ * $Id: Leistung.java 5089 2009-02-05 11:13:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -18,7 +18,6 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.VerrechenbarAdapter;
 import ch.elexis.data.Xid;
 import ch.elexis.util.IOptifier;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -30,7 +29,7 @@ import ch.rgw.tools.VersionInfo;
  * 
  */
 public class Leistung extends VerrechenbarAdapter {
-	public static final String XIDDOMAIN="www.xid.ch/id/customservice";
+	public static final String XIDDOMAIN = "www.xid.ch/id/customservice";
 	/**
 	 * Definition of the name of the table where Objects of this class should be stored the
 	 * tablename should alwas be prefixed with tghe plugin's id to avoid name clashes if a plugins
@@ -115,6 +114,7 @@ public class Leistung extends VerrechenbarAdapter {
 	public String getXidDomain(){
 		return XIDDOMAIN;
 	}
+	
 	public Leistung(String subsystem, String parent, final String name, final String kuerzel,
 		final String kostenInRp, final String preisInRp, final String ZeitInMin, String DatumVon,
 		String DatumBis){
