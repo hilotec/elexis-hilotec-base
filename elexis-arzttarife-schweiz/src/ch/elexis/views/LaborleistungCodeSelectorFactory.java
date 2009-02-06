@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungCodeSelectorFactory.java 5017 2009-01-23 16:33:00Z rgw_ch $
+ * $Id: LaborleistungCodeSelectorFactory.java 5097 2009-02-06 11:58:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -31,26 +31,15 @@ public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
 	private ViewerConfigurer vc;
 	private FlatDataLoader fdl;
 	
-	public LaborleistungCodeSelectorFactory(){
-	/*
-	 * dataloader=(AbstractDataLoaderJob)JobPool.getJobPool().getJob("Labortarif"); //$NON-NLS-1$
-	 * 
-	 * if(dataloader==null){ dataloader=new ListLoader<LaborLeistung>("Labortarif",new
-	 * Query<LaborLeistung>(LaborLeistung.class),new String[]{"Code","Text"}); //$NON-NLS-1$
-	 * //$NON-NLS-2$ //$NON-NLS-3$ JobPool.getJobPool().addJob(dataloader); }
-	 * JobPool.getJobPool().activate("Labortarif",Job.SHORT); //$NON-NLS-1$
-	 */
-
-	}
+	public LaborleistungCodeSelectorFactory(){}
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		fdl = new FlatDataLoader(cv, new Query<LaborLeistung>(LaborLeistung.class));
 		fdl.setOrderField("Text");
 		vc =
-			new ViewerConfigurer(
-			// new LazyContentProvider(cv,dataloader,null),
-				fdl, new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
+			new ViewerConfigurer(fdl, new DefaultLabelProvider(), new DefaultControlFieldProvider(
+				cv, new String[] {
 					"Code", "Text"}), //$NON-NLS-1$ //$NON-NLS-2$
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
@@ -70,6 +59,15 @@ public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public String getCodeSystemName(){
 		return "Analysetarif"; //$NON-NLS-1$
+	}
+	
+	@Override
+	public PersistentObject findElement(String code){
+		String id = new Query<LaborLeistung>(LaborLeistung.class).findSingle("Code", "=", code);
+		if (id != null) {
+			return LaborLeistung.load(id);
+		}
+		return null;
 	}
 	
 }
