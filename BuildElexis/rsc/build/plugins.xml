@@ -70,6 +70,8 @@
 		<available file="../elexis-privatnotizen/build.xml"
 		           property="privatnotizen.ok" />
 		<antcall target="privatnotizen" inheritrefs="true" />
+		<available file="../iatrix-messwerte/build.xml" property="iatrixmw.ok" />
+		<antcall target="iatrixmw" inheritrefs="true" />
 	</target>
 
 	<!-- Optionale Plugins, für die Programmfunktion nicht unbedingt erforderlich -->
@@ -215,6 +217,10 @@
 		           property="mythic.ok" />
 		<antcall target="mythic" inheritrefs="true" />
 		<antcall target="oowrapper3" inheritrefs="true" />
+	</target>
+
+	<target name="iatrixmw" if="iatrixmw.ok">
+		<ant antfile="../iatrix-messwerte/build.xml" inheritrefs="true" />
 	</target>
 
 	<target name="iatrixkg" if="iatrixkg.ok">
