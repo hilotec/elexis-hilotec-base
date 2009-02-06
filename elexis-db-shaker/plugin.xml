@@ -9,17 +9,17 @@
             visible="true">
          <menu
                id="sampleMenu"
-               label="Sample &amp;Menu">
+               label="Shredder">
             <separator name="sampleGroup"/>
          </menu>
          <action
                class="elexis_db_shaker.actions.Shake"
                icon="icons/sample.gif"
                id="elexis_db_shaker.actions.Shake"
-               label="&amp;Sample Action"
+               label="Shredder (Vorsicht!)"
                menubarPath="sampleMenu/sampleGroup"
                toolbarPath="sampleGroup"
-               tooltip="Hello, Eclipse world"/>
+               tooltip="Datenbank anonymisieren"/>
       </actionSet>
    </extension>
 
