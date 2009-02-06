@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5090 2009-02-05 12:28:36Z rgw_ch $
+ * $Id: TreeDataLoader.java 5096 2009-02-06 11:58:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -25,16 +25,26 @@ import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.Tree;
 
 public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeContentProvider {
-	String parentColumn;
-	Tree<PersistentObject> root;
+	protected String parentColumn;
+	protected Tree<PersistentObject> root;
+	protected CodeSelectorFactory home;
 	
 	public TreeDataLoader(CommonViewer cv, Query<? extends PersistentObject> qbe, String parentField){
 		super(cv, qbe);
 		parentColumn = parentField;
 		root = new Tree<PersistentObject>(null, null);
+	}
+	
+	public TreeDataLoader(CodeSelectorFactory csf, CommonViewer cv,
+		Query<? extends PersistentObject> qbe, String parentField){
+		super(cv, qbe);
+		parentColumn = parentField;
+		root = new Tree<PersistentObject>(null, null);
+		home = csf;
 	}
 	
 	/*
@@ -59,7 +69,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		
 		Desk.asyncExec(new Runnable() {
 			public void run(){
-				((TreeViewer) cv.getViewerWidget()).setChildCount(this, root.getChildren().size());
+				((TreeViewer) cv.getViewerWidget()).setChildCount(home, root.getChildren().size());
 			}
 		});
 		
@@ -99,7 +109,9 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		} else {
 			t = root;
 		}
-		
+		Tree elem = t.getChildren().toArray(new Tree[0])[index];
+		((TreeViewer) cv.getViewerWidget()).replace(parent, index, elem);
+		updateChildCount(elem, 0);
 	}
 	
 }

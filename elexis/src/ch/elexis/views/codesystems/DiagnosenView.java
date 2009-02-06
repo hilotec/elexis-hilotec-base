@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: DiagnosenView.java 5096 2009-02-06 11:58:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -29,82 +29,96 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
 
-public class DiagnosenView extends ViewPart implements ActivationListener, ISaveablePart2 {
-	public final static String ID="ch.elexis.DiagnosenView";
+public class DiagnosenView extends ViewPart implements ActivationListener,
+		ISaveablePart2 {
+	public final static String ID = "ch.elexis.DiagnosenView";
 	CTabFolder ctab;
 	CTabItem selected;
-	
+
 	public DiagnosenView() {
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
-		ctab=new CTabFolder(parent,SWT.BOTTOM);
+		ctab = new CTabFolder(parent, SWT.BOTTOM);
 		ctab.setSimple(false);
-		ctab.addSelectionListener(new SelectionAdapter(){
+		ctab.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(selected!=null){
-					cPage page=(cPage)selected.getControl();
-					page.cv.getConfigurer().getControlFieldProvider().clearValues();
+				if (selected != null) {
+					cPage page = (cPage) selected.getControl();
+					page.cv.getConfigurer().getControlFieldProvider()
+							.clearValues();
 				}
-				selected=ctab.getSelection();
-				((cPage)selected.getControl()).refresh();
+				selected = ctab.getSelection();
+				((cPage) selected.getControl()).refresh();
 				setFocus();
 			}
-			
+
 		});
 
-		CodeSelectorFactory.makeTabs(ctab, getViewSite(),"ch.elexis.Diagnosecode");
+		CodeSelectorFactory.makeTabs(ctab, getViewSite(),
+				"ch.elexis.Diagnosecode");
 
-		GlobalEvents.getInstance().addActivationListener(this,this);
+		GlobalEvents.getInstance().addActivationListener(this, this);
 	}
 
-	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this,this);
+	public void dispose() {
+		GlobalEvents.getInstance().removeActivationListener(this, this);
 		super.dispose();
 	}
 
 	@Override
 	public void setFocus() {
-		if((ctab!=null) && (ctab.getSelection()!=null)){
+		if ((ctab != null) && (ctab.getSelection() != null)) {
 			ctab.setFocus();
-			((CodeSelectorFactory.cPage)ctab.getSelection().getControl()).refresh();
+			((CodeSelectorFactory.cPage) ctab.getSelection().getControl())
+					.refresh();
 		}
 	}
 
 	public void activation(boolean mode) {
-		if(mode==false){
-			if(selected!=null){
-				cPage page=(cPage)selected.getControl();
+		if (mode == false) {
+			if (selected != null) {
+				cPage page = (cPage) selected.getControl();
 				page.cv.getConfigurer().getControlFieldProvider().clearValues();
 			}
-			
+
 			// remove any ICodeSelectiorTarget, since it's no more needed
 			GlobalEvents.getInstance().removeCodeSelectorTarget();
 		}
-		
+
 	}
-	public void visible(boolean mode){}
-	/* ******
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
-	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist.
-	 * Gibt es da keine einfachere Methode?
-	 */ 
+
+	public void visible(boolean mode) {
+	}
+
+	/*
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
+	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
+	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 */
 	public int promptToSaveOnClose() {
-		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
+		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
+				: ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
-	public void doSaveAs() { /* leer */}
+
+	public void doSave(IProgressMonitor monitor) { /* leer */
+	}
+
+	public void doSaveAs() { /* leer */
+	}
+
 	public boolean isDirty() {
 		return true;
 	}
+
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
+
 	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}

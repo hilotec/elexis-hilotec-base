@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 5096 2009-02-06 11:58:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -84,6 +84,11 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 	
 	public String getCodeSystemCode(){
 		return "999";
+	}
+	
+	public PersistentObject findElement(String code){
+		String s = getElementClass().getName() + "::" + code;
+		return Hub.poFactory.createFromString(s);
 	}
 	
 	public static void makeTabs(CTabFolder ctab, IViewSite site, String point){
