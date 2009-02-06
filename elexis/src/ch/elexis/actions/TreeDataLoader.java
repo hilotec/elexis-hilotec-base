@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5096 2009-02-06 11:58:52Z rgw_ch $
+ * $Id: TreeDataLoader.java 5106 2009-02-06 18:00:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -69,7 +69,8 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		
 		Desk.asyncExec(new Runnable() {
 			public void run(){
-				((TreeViewer) cv.getViewerWidget()).setChildCount(home, root.getChildren().size());
+				((TreeViewer) cv.getViewerWidget()).setChildCount(cv.getViewerWidget().getInput(),
+					root.getChildren().size());
 			}
 		});
 		
