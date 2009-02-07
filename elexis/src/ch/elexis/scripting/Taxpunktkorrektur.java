@@ -36,25 +36,34 @@ public class Taxpunktkorrektur {
 				+ " auf " + Double.toString(newTP) + " umrechnen?")) {
 				TimeTool ttFrom = new TimeTool();
 				if (!ttFrom.set(dateFrom)) {
-					writer.write("bad date format: " + dateFrom + " aborting.");
+					writer.write("bad date format: " + dateFrom + " aborting.\n");
 					return "Datumformat kann nicht interpretiert werden. Bitte als dd.mm.yyyy eingeben";
 				}
 				StringBuilder del = new StringBuilder();
 				del.append("DELETE FROM VK_PREISE WHERE TYP=").append(JdbcLink.wrap(abrsystem))
 					.append(" and DATUM_VON>=").append(
 						JdbcLink.wrap(ttFrom.toString(TimeTool.DATE_COMPACT)));
-				writer.write("removing old tp values");
+				writer.write("removing old tp values\n");
+				PersistentObject.getConnection().exec(del.toString());
+				del = new StringBuilder();
+				TimeTool yesterday = new TimeTool(ttFrom);
+				yesterday.addDays(-1);
+				del.append("UPDATE VK_PREISE SET DATUM_BIS=").append(
+					JdbcLink.wrap(yesterday.toString(TimeTool.DATE_COMPACT))).append(
+					" WHERE DATUM_BIS>").append(
+					JdbcLink.wrap(yesterday.toString(TimeTool.DATE_COMPACT)));
+				writer.write("adjusting multiplicators\n");
 				PersistentObject.getConnection().exec(del.toString());
 				del = new StringBuilder();
 				del
 					.append(
 						"INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,TYP,MULTIPLIKATOR) VALUES (")
-					.append(ttFrom.toString(TimeTool.DATE_COMPACT)).append(",").append(
-						"'99991231',").append(JdbcLink.wrap(abrsystem)).append(",").append(
+					.append(JdbcLink.wrap(ttFrom.toString(TimeTool.DATE_COMPACT))).append(",")
+					.append("'99991231',").append(JdbcLink.wrap(abrsystem)).append(",").append(
 						JdbcLink.wrap(Double.toString(newTP))).append(");");
-				writer.write("inserting new TP value");
+				writer.write("inserting new TP value\n");
 				PersistentObject.getConnection().exec(del.toString());
-				writer.write("collecting consultations");
+				writer.write("collecting consultations\n");
 				Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 				qbe.add("RechnungsID", "is", null);
 				qbe.add("Datum", ">=", ttFrom.toString(TimeTool.DATE_COMPACT));
@@ -67,11 +76,13 @@ public class Taxpunktkorrektur {
 					if (abr.equals(abrsystem)) {
 						List<Verrechnet> vv = k.getLeistungen();
 						for (Verrechnet v : vv) {
-							old.addMoney(v.getBruttoPreis().multiply(v.getZahl()));
+							old
+								.addMoney(new Money(v.get("VK_Preis"))
+									.multiply(v.getZahl() / 100.0));
 							v.setStandardPreis();
 							changed.addMoney(v.getBruttoPreis().multiply(v.getZahl()));
 						}
-						writer.write("konvertierte " + k.getVerboseLabel());
+						writer.write("konvertierte " + k.getVerboseLabel() + "\n");
 					}
 					i++;
 				}
@@ -81,7 +92,7 @@ public class Taxpunktkorrektur {
 					+ old.getAmountAsString() + "\nNeuer Gesamtbetrag: "
 					+ changed.getAmountAsString();
 			} else {
-				writer.write("aborted by user");
+				writer.write("aborted by user\n");
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
