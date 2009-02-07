@@ -34,6 +34,7 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
+               icon="icons/fire.png"
                id="ch.elexis.icpc.fire.menus.sampleMenu"
                label="Sample Menu"
                mnemonic="M">
@@ -50,7 +51,7 @@
                id="ch.elexis.icpc.fire.toolbars.sampleToolbar">
             <command
                   commandId="ch.elexis.icpc.fire.commands.sampleCommand"
-                  icon="icons/sample.gif"
+                  icon="icons/fire.png"
                   id="ch.elexis.icpc.fire.toolbars.sampleCommand"
                   tooltip="Say hello world">
             </command>
