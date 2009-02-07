@@ -2,24 +2,84 @@ package ch.elexis.scripting;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.util.List;
 
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.Money;
+import ch.rgw.tools.TimeTool;
 
 public class Taxpunktkorrektur {
 	FileWriter writer;
-
 	
-	public String recalc(String dateFrom, String dateUntil, String abrsystem, double newTP){
+	/**
+	 * Rechne alle Konsultationen seit einem Stichdatum (inklusive) auf einen neuen Taxpunktwert um
+	 * 
+	 * @param dateFrom
+	 * @param abrsystem
+	 * @param newTP
+	 * @return Einen String, der das Resulktat beschreibt.
+	 */
+	public String recalc(String dateFrom, String abrsystem, double newTP){
 		File file =
 			new File(System.getProperty("user.home") + File.separator + "elexis" + File.separator
 				+ "taxpunktkorrektur.log");
 		try {
 			writer = new FileWriter(file);
-			if (SWTHelper.askYesNo("WARNUNG", "Wirklich alle Konsultationen von " + dateFrom
-				+ " bis " + dateUntil + " auf " + Double.toString(newTP) + " umrechnen?")) {
-				;
+			if (SWTHelper.askYesNo("WARNUNG", "Wirklich alle Konsultationen seit dem " + dateFrom
+				+ " auf " + Double.toString(newTP) + " umrechnen?")) {
+				TimeTool ttFrom = new TimeTool();
+				if (!ttFrom.set(dateFrom)) {
+					writer.write("bad date format: " + dateFrom + " aborting.");
+					return "Datumformat kann nicht interpretiert werden. Bitte als dd.mm.yyyy eingeben";
+				}
+				StringBuilder del = new StringBuilder();
+				del.append("DELETE FROM VK_PREISE WHERE TYP=").append(JdbcLink.wrap(abrsystem))
+					.append(" and DATUM_VON>=").append(
+						JdbcLink.wrap(ttFrom.toString(TimeTool.DATE_COMPACT)));
+				writer.write("removing old tp values");
+				PersistentObject.getConnection().exec(del.toString());
+				del = new StringBuilder();
+				del
+					.append(
+						"INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,TYP,MULTIPLIKATOR) VALUES (")
+					.append(ttFrom.toString(TimeTool.DATE_COMPACT)).append(",").append(
+						"'99991231',").append(JdbcLink.wrap(abrsystem)).append(",").append(
+						JdbcLink.wrap(Double.toString(newTP))).append(");");
+				writer.write("inserting new TP value");
+				PersistentObject.getConnection().exec(del.toString());
+				writer.write("collecting consultations");
+				Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+				qbe.add("RechnungsID", "is", null);
+				qbe.add("Datum", ">=", ttFrom.toString(TimeTool.DATE_COMPACT));
+				int i = 0;
+				Money old = new Money();
+				Money changed = new Money();
+				for (Konsultation k : qbe.execute()) {
+					Fall fall = k.getFall();
+					String abr = fall.getAbrechnungsSystem();
+					if (abr.equals(abrsystem)) {
+						List<Verrechnet> vv = k.getLeistungen();
+						for (Verrechnet v : vv) {
+							old.addMoney(v.getBruttoPreis().multiply(v.getZahl()));
+							v.setStandardPreis();
+							changed.addMoney(v.getBruttoPreis().multiply(v.getZahl()));
+						}
+						writer.write("konvertierte " + k.getVerboseLabel());
+					}
+					i++;
+				}
+				
+				return "Abgeschlossen. " + Integer.toString(i)
+					+ " Konsultationen wurden umgrechnet.\nAlter Gesamtbetrag: "
+					+ old.getAmountAsString() + "\nNeuer Gesamtbetrag: "
+					+ changed.getAmountAsString();
 			} else {
 				writer.write("aborted by user");
 			}
