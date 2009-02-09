@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5058 2009-01-27 19:22:43Z tschaller $
+ * $Id: XMLExporter.java 5115 2009-02-09 10:30:52Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -812,7 +812,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -851,7 +851,7 @@ public class XMLExporter implements IRnOutputter {
 			insurance.setAttribute("ean_party", kEAN);
 			Element company = new Element("company", ns);
 			Element companyname = new Element("companyname", ns);
-			companyname.setText(kostentraeger.get("Bezeichnung1"));
+			companyname.setText(StringTool.limitLength(kostentraeger.get("Bezeichnung1"), 35));
 			company.addContent(companyname);
 			company.addContent(buildPostalElement(kostentraeger));
 			company.addContent(buildTelekomElement(kostentraeger));
@@ -902,7 +902,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
 		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
 		
