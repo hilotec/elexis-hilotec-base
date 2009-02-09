@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5115 2009-02-09 10:30:52Z rgw_ch $
+ * $Id: XMLExporter.java 5118 2009-02-09 21:03:41Z tschaller $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -315,6 +315,8 @@ public class XMLExporter implements IRnOutputter {
 					balance.setAttribute("amount_due", "0.00");
 					balance.setAttribute("amount_prepaid", "0.00");
 				}
+				
+				checkXML(ret, dest, rn, new Result<Rechnung>());
 				
 				if (dest != null) {
 					if (type.equals(TYPE.STORNO)) {
@@ -812,7 +814,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -902,7 +904,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
 		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
 		
@@ -1031,6 +1033,9 @@ public class XMLExporter implements IRnOutputter {
 		} else if (doVerify) {
 			new Validator().checkBill(this, new Result<Rechnung>());
 		}
+		
+		checkXML(xmlRn, dest, rn, new Result<Rechnung>());
+		
 		if (rn.getStatus() != RnStatus.FEHLERHAFT) {
 			try {
 				StringWriter stringWriter = new StringWriter();
@@ -1224,6 +1229,13 @@ public class XMLExporter implements IRnOutputter {
 		return ret;
 	}
 	
+	protected void checkXML(final Document xmlDoc, String dest, final Rechnung rn,
+		final Result<Rechnung> res){
+	// Do nothing
+	// This method is used for custom checks in inherited XMLExporters like for example
+	// MediPortOutputter
+	}
+	
 	public static String makeTarmedDatum(final String datum){
 		return new TimeTool(datum).toString(TimeTool.DATE_MYSQL) + "T00:00:00";
 	}
@@ -1347,7 +1359,7 @@ public class XMLExporter implements IRnOutputter {
 		return ret;
 	}
 	
-	void writeFile(final Document doc, final String dest) throws IOException{
+	protected void writeFile(final Document doc, final String dest) throws IOException{
 		FileOutputStream fout = new FileOutputStream(dest);
 		OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
 		XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
