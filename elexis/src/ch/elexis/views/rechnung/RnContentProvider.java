@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 5048 2009-01-26 21:44:06Z rgw_ch $
+ * $Id: RnContentProvider.java 5117 2009-02-09 17:47:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -238,9 +238,9 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 						q1.insertFalse();
 						q1.or();
 						for (Fall fall : faelle) {
-							if (fall.isOpen()) {
-								q1.add("FallID", "=", fall.getId());
-							}
+							// if (fall.isOpen()) {
+							q1.add("FallID", "=", fall.getId());
+							// }
 						}
 						q1.endGroup();
 					}

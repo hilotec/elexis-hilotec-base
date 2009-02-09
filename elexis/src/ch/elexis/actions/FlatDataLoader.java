@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5088 2009-02-04 15:34:42Z rgw_ch $
+ * $Id: FlatDataLoader.java 5117 2009-02-09 17:47:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -98,8 +98,13 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	 */
 
 	public void updateElement(int index){
-		TableViewer tv = (TableViewer) cv.getViewerWidget();
-		tv.replace(filtered.get(index), index);
+		if (index > 0 && index < filtered.size()) {
+			Object o = filtered.get(index);
+			if (o != null) {
+				TableViewer tv = (TableViewer) cv.getViewerWidget();
+				tv.replace(filtered.get(index), index);
+			}
+		}
 	}
 	
 	public void setOrderField(String name){
