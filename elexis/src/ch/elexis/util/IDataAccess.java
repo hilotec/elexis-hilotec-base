@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,31 +16,39 @@ package ch.elexis.util;
 import java.util.List;
 
 import ch.elexis.data.PersistentObject;
+import ch.rgw.tools.Result;
 
 /**
- * Interface that defines a number of data types to expose and grant access 
- * to them
+ * Interface that defines a number of data types to expose and grant access to them
+ * 
  * @author gerry
- *
+ * 
  */
 public interface IDataAccess {
-	public enum TYPE{STRING,INTEGER,DOUBLE}
-	public static final int INVALID_PARAMETERS=1;
-	public static final int OBJECT_NOT_FOUND=2;
+	public enum TYPE {
+		STRING, INTEGER, DOUBLE
+	}
 	
-	public static class Element{
-		public Element(final TYPE typ, final String name, final Class<? extends PersistentObject> ref, final int numOfParams){
-			this.typ=typ;
-			this.name=name;
-			this.reference=ref;
-			this.numOfParams=numOfParams;
+	public static final int INVALID_PARAMETERS = 1;
+	public static final int OBJECT_NOT_FOUND = 2;
+	
+	public static class Element {
+		public Element(final TYPE typ, final String name,
+			final Class<? extends PersistentObject> ref, final int numOfParams){
+			this.typ = typ;
+			this.name = name;
+			this.reference = ref;
+			this.numOfParams = numOfParams;
 		}
+		
 		public TYPE getTyp(){
 			return typ;
 		}
+		
 		public String getName(){
 			return name;
 		}
+		
 		TYPE typ;
 		String name;
 		Class<? extends PersistentObject> reference;
@@ -49,18 +57,25 @@ public interface IDataAccess {
 	
 	/**
 	 * return a list of all data provided by this interface
-	 * @return a (possibly empty) List of Elements 
+	 * 
+	 * @return a (possibly empty) List of Elements
 	 */
 	public List<Element> getList();
 	
 	/**
 	 * return specified data
-	 * @param descriptor description of the Object to retrieve (name and fields)
-	 * @param dependentObject Type of PersistentObject this data depends on
-	 * @param dates date definition. either a date string or "all" or "last"
-	 * @param params parameters that might be required for this element
+	 * 
+	 * @param descriptor
+	 *            description of the Object to retrieve (name and fields)
+	 * @param dependentObject
+	 *            Type of PersistentObject this data depends on
+	 * @param dates
+	 *            date definition. either a date string or "all" or "last"
+	 * @param params
+	 *            parameters that might be required for this element
 	 * @return some object depending of the request
 	 */
-	public Result<Object> getObject(String descriptor, PersistentObject dependentObject, String dates, String[] params);
+	public Result<Object> getObject(String descriptor, PersistentObject dependentObject,
+		String dates, String[] params);
 	
 }
