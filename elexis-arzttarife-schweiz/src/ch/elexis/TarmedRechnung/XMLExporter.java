@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5124 2009-02-11 14:43:46Z rgw_ch $
+ * $Id: XMLExporter.java 5126 2009-02-11 20:59:28Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -320,7 +320,7 @@ public class XMLExporter implements IRnOutputter {
 					balance.setAttribute("amount_prepaid", "0.00");
 				}
 				
-				checkXML(ret, dest, rn, new Result<Rechnung>());
+				checkXML(ret, dest, rn, doVerify);
 				
 				if (dest != null) {
 					if (type.equals(TYPE.STORNO)) {
@@ -1038,7 +1038,7 @@ public class XMLExporter implements IRnOutputter {
 			new Validator().checkBill(this, new Result<Rechnung>());
 		}
 		
-		checkXML(xmlRn, dest, rn, new Result<Rechnung>());
+		checkXML(xmlRn, dest, rn, doVerify);
 		
 		if (rn.getStatus() != RnStatus.FEHLERHAFT) {
 			try {
@@ -1233,12 +1233,30 @@ public class XMLExporter implements IRnOutputter {
 		return ret;
 	}
 	
+	/**
+	 * Validate XML of the created bill against the appropriate schema. Subclasses can override
+	 * to provide specific handling of errors. The default implementation will mark the bill
+	 * as erroneous if doVerify is true and XML Schema errors are present.
+	 * @param xmlDoc the bill
+	 * @param dest the destination path if the user chose output to file. Might be null
+	 * @param rn the bill to output
+	 * @param doVerify false if the user doesn't want strict validity check (subclasses may ignore)
+	 */
 	protected void checkXML(final Document xmlDoc, String dest, final Rechnung rn,
-		final Result<Rechnung> res){
-		Source source = new JDOMSource(xmlDoc);
-		String path =
-			PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc";
-		XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source);
+		final boolean doVerify){
+		if(doVerify){
+			Source source = new JDOMSource(xmlDoc);
+			String path =
+				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc";
+			List<String> errs=XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source);
+			if(!errs.isEmpty()){
+				StringBuilder sb=new StringBuilder();
+				for(String err:errs){
+					sb.append(err).append("\n");
+				}
+				rn.reject(RnStatus.REJECTCODE.VALIDATION_ERROR, sb.toString());
+			}
+		}
 		
 	}
 	
