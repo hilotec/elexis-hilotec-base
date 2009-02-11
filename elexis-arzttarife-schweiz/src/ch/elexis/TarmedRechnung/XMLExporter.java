@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5118 2009-02-09 21:03:41Z tschaller $
+ * $Id: XMLExporter.java 5124 2009-02-11 14:43:46Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -30,6 +30,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.xml.transform.Source;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -48,6 +50,7 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.jdom.transform.JDOMSource;
 
 import ch.elexis.Hub;
 import ch.elexis.artikel_ch.data.Medical;
@@ -79,6 +82,7 @@ import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.Log;
+import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
@@ -814,7 +818,7 @@ public class XMLExporter implements IRnOutputter {
 		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
 		biller.setAttribute("ean_party", TarmedRequirements
 			.getEAN(actMandant.getRechnungssteller())); // 11402
-		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); //actMandant.getInfoString
+		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString
 		// ("KSK"));
 		// // 11403
 		String spec = actMandant.getInfoString(ta.SPEC);
@@ -904,7 +908,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element referrer = new Element("referrer", ns); // 11120
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); //auftraggeber.
+		referrer.setAttribute("ean_party", TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
 		
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber.
 		
@@ -1231,9 +1235,11 @@ public class XMLExporter implements IRnOutputter {
 	
 	protected void checkXML(final Document xmlDoc, String dest, final Rechnung rn,
 		final Result<Rechnung> res){
-	// Do nothing
-	// This method is used for custom checks in inherited XMLExporters like for example
-	// MediPortOutputter
+		Source source = new JDOMSource(xmlDoc);
+		String path =
+			PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc";
+		XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source);
+		
 	}
 	
 	public static String makeTarmedDatum(final String datum){
