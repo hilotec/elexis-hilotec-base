@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 4835 2008-12-21 15:55:38Z rgw_ch $
+ *  $Id: Rechnung.java 5128 2009-02-12 10:44:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -172,7 +172,7 @@ public class Rechnung extends PersistentObject {
 						+ getRnDesc(ret) + ")", ret, true);
 			}
 			// garant=f.getGarant();
-			// kostentraeger=f.getKostentraeger();
+			
 		}
 		
 		// check if there are any Konsultationen
@@ -187,11 +187,7 @@ public class Rechnung extends PersistentObject {
 		 * if(garant==null || !garant.isValid()){ result=result.add(Log.ERRORS,7,"Die Rechnung hat
 		 * keinen Garanten ("+getRnDesc(ret)+")",ret,true); }
 		 */
-		/*
-		 * just take this out for now to allow me making bills if(kostentraeger==null ||
-		 * !kostentraeger.isValid()){ result=result.add(Log.ERRORS,8,"Die Rechnung hat keinen
-		 * Kostenträger ("+getRnDesc(ret)+")",ret,true); }
-		 */
+
 		String Datum = new TimeTool().toString(TimeTool.DATE_GER);
 		ret.set("RnDatumVon", startDate.toString(TimeTool.DATE_GER));
 		ret.set("RnDatumBis", endDate.toString(TimeTool.DATE_GER));
@@ -688,13 +684,13 @@ public class Rechnung extends PersistentObject {
 	 */
 	public int getStatusAtDate(TimeTool date){
 		List<String> trace = getTrace(Rechnung.STATUS_CHANGED);
-		int ret=getStatus();
-		TimeTool tt=new TimeTool();
+		int ret = getStatus();
+		TimeTool tt = new TimeTool();
 		for (String s : trace) {
 			String[] stm = s.split("\\s*:\\s");
-			if(tt.set(stm[0])){
-				if(tt.isBefore(date)){
-					ret=Integer.parseInt(stm[1]);
+			if (tt.set(stm[0])) {
+				if (tt.isBefore(date)) {
+					ret = Integer.parseInt(stm[1]);
 				}
 			}
 		}
