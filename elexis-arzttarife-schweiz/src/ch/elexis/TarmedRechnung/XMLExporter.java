@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5126 2009-02-11 20:59:28Z rgw_ch $
+ * $Id: XMLExporter.java 5129 2009-02-12 10:45:00Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -574,19 +574,8 @@ public class XMLExporter implements IRnOutputter {
 						tlAL = tl.getAL();
 						mult = tl.getVKMultiplikator(tt, actFall);
 					}
-					/*
-					 * obsoleted in 1.4 if (tl.getText().indexOf('%') != -1) { // %-Zuschlag oder
-					 * Abzüge if (tlTl == 0.0) { tlAL = vv.getEffPreis().getCents(); mult = 1.0; } }
-					 */
 					tpTarmedTL += tlTl * zahl;
 					tpTarmedAL += tlAL * zahl;
-					/*
-					 * Money mAL=new Money((int)Math.round(tlALmult)); Money mTL=new
-					 * Money((int)Math.round(tlTlmult));
-					 * 
-					 * mTarmedAL.addCent(mAL.getCents()zahl); mTarmedTL.addCent(mTL.getCents()zahl);
-					 */
-					// Änderung 17.4. 08
 					Money mAL =
 						new Money((int) Math.round(tlAL * mult * zahl * primaryScale
 							* secondaryScale));
@@ -644,7 +633,8 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("tariff_type", "316"); // 28060
 					LaborLeistung ll = (LaborLeistung) v;
 					double mult = ll.getFactor(tt, actFall);
-					Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					Money preis = vv.getNettoPreis();
 					double korr = preis.getCents() / mult;
 					el.setAttribute("unit", XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
 					el.setAttribute("unit_factor", XMLTool.doubleToXmlDouble(mult, 2)); // 28480
@@ -675,7 +665,8 @@ public class XMLExporter implements IRnOutputter {
 					mMedikament.addMoney(mAmountLocal);
 				} else if (v instanceof MiGelArtikel) {
 					el = new Element("record_migel", ns);
-					Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					Money preis = vv.getNettoPreis();
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute("unit_factor", "1.0");
 					el.setAttribute("tariff_type", "452"); // MiGeL ab 2001-basiert
@@ -929,9 +920,6 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element detail = new Element("detail", ns); // 15000
 		
-		// --detail.setAttribute("date_begin",makeTarmedDatum(rn.getDatumVon())); // 15002
-		// --detail.setAttribute("date_end",makeTarmedDatum(rn.getDatumBis())); // 15003
-		// use the versions below to make the validator happy
 		detail.setAttribute("date_begin", makeTarmedDatum(ttFirst.toString(TimeTool.DATE_GER))); // 15002
 		detail.setAttribute("date_end", makeTarmedDatum(ttLast.toString(TimeTool.DATE_GER))); // 15002
 		
@@ -1066,46 +1054,6 @@ public class XMLExporter implements IRnOutputter {
 	
 	public Element buildAdressElement(final Kontakt k){
 		return buildAdressElement(k, false);
-// 29.12.2008 tschaller: this is the same as the other method called with useAnschrift=false
-// Element ret;
-// if (k.istPerson() == false) {
-// ret = new Element("company", ns);
-// Element companyname = new Element("companyname", ns);
-// companyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
-// ret.addContent(companyname);
-// ret.addContent(buildPostalElement(k));
-// ret.addContent(buildTelekomElement(k));
-// // ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
-// // buildOnlineElement
-// Element onlineElement = buildOnlineElement(k);
-// if (onlineElement != null) {
-// ret.addContent(onlineElement);
-// }
-//			
-// } else {
-// ret = new Element("person", ns);
-// setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35);
-// setAttributeIfNotEmptyWithLimit(ret, "title", k.get("Titel"), 35);
-// Element familyname = new Element("familyname", ns);
-// familyname.setText(StringTool.limitLength(k.get("Bezeichnung1"), 35));
-// ret.addContent(familyname);
-// Element givenname = new Element("givenname", ns);
-// String gn = k.get(StringTool.limitLength("Bezeichnung2", 35));
-// if (StringTool.isNothing(gn)) {
-// gn = "Unbekannt"; // make validator happy
-// }
-// givenname.setText(gn);
-// ret.addContent(givenname);
-// ret.addContent(buildPostalElement(k));
-// ret.addContent(buildTelekomElement(k));
-// // ret.addContent(buildOnlineElement(k)); // tschaller: see comments in
-// // buildOnlineElement
-// Element onlineElement = buildOnlineElement(k);
-// if (onlineElement != null) {
-// ret.addContent(onlineElement);
-// }
-// }
-// return ret;
 	}
 	
 	public Element buildAdressElement(final Kontakt k, final boolean useAnschrift){
@@ -1234,24 +1182,30 @@ public class XMLExporter implements IRnOutputter {
 	}
 	
 	/**
-	 * Validate XML of the created bill against the appropriate schema. Subclasses can override
-	 * to provide specific handling of errors. The default implementation will mark the bill
-	 * as erroneous if doVerify is true and XML Schema errors are present.
-	 * @param xmlDoc the bill
-	 * @param dest the destination path if the user chose output to file. Might be null
-	 * @param rn the bill to output
-	 * @param doVerify false if the user doesn't want strict validity check (subclasses may ignore)
+	 * Validate XML of the created bill against the appropriate schema. Subclasses can override to
+	 * provide specific handling of errors. The default implementation will mark the bill as
+	 * erroneous if STRICT_BILLING is active and XML Schema errors are present.
+	 * 
+	 * @param xmlDoc
+	 *            the bill
+	 * @param dest
+	 *            the destination path if the user chose output to file. Might be null
+	 * @param rn
+	 *            the bill to output
+	 * @param doVerify
+	 *            false if the user doesn't want strict validity check (subclasses may ignore)
 	 */
 	protected void checkXML(final Document xmlDoc, String dest, final Rechnung rn,
 		final boolean doVerify){
-		if(doVerify){
+		if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, false)) {
 			Source source = new JDOMSource(xmlDoc);
 			String path =
 				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc";
-			List<String> errs=XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source);
-			if(!errs.isEmpty()){
-				StringBuilder sb=new StringBuilder();
-				for(String err:errs){
+			List<String> errs =
+				XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source);
+			if (!errs.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				for (String err : errs) {
 					sb.append(err).append("\n");
 				}
 				rn.reject(RnStatus.REJECTCODE.VALIDATION_ERROR, sb.toString());
