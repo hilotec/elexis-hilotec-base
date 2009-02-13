@@ -8,23 +8,22 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentImporterVidal.java 4999 2009-01-22 14:25:53Z rgw_ch $
+ *  $Id: MedikamentImporterVidal.java 5130 2009-02-13 17:33:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -42,9 +41,6 @@ public class MedikamentImporterVidal extends ImporterPage {
 	private static final String ENTRYTYPE_INSERT = "I";
 	private static final String ENTRYTYPE_UPDATE = "U";
 	
-	private Button bClear;
-	private boolean bDoClear;
-	
 	public MedikamentImporterVidal(){
 	// TODO Auto-generated constructor stub
 	}
@@ -53,29 +49,37 @@ public class MedikamentImporterVidal extends ImporterPage {
 	public Composite createPage(Composite parent){
 		Composite ret = new ImporterPage.FileBasedImporter(parent, this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		bClear = new Button(parent, SWT.CHECK | SWT.WRAP);
-		bClear.setText("Alle Daten vorher löschen (VORSICHT! Bitte Anleitung beachten)");
-		bClear.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return ret;
 	}
-	
-	@Override
-	public void collect(){
-		bDoClear = bClear.getSelection();
-	}
-	
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		// System.out.println(importFile);
 		monitor.beginTask("Importiere Vidal", -1);
-		if (bDoClear) {
-			monitor.subTask("Lösche alte Daten");
-			PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Vidal'");
+		SAXBuilder builder = new SAXBuilder();
+		monitor.subTask("Lese Datei ein");
+		Document doc = builder.build(new File(results[0]));
+		monitor.subTask("Analysiere Datei");
+		Element eRoot = doc.getRootElement();
+		Element eSubstances = eRoot.getChild("RpSubstRefs");
+		if (eSubstances != null) {
+			monitor.subTask("Lese Substancen ein");
+			for (Element eSubstance : (List<Element>) eSubstances.getChildren("SubstRef")) {
+				new Substance(eSubstance.getAttributeValue("SubstID"), eSubstance
+					.getAttributeValue("SubstSalt"), eSubstance.getTextTrim());
+			}
 		}
-		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-		SAXParser parser = saxFactory.newSAXParser();
-		parser.parse(results[0], new Handler(monitor));
+		Element eMedis=eRoot.getChild("RpData");
+		if(eMedis!=null){
+			monitor.subTask("Lese Medikamente ein");
+			for(Element eMedi:(List<Element>)eMedis.getChildren("RpData")){
+					new Medikament((String) eMedi.getAttributeValue("SName"),
+						"Vidal2", (String) act
+					.get("PhZNr"));
+)
+			}
+		}
+	
 		monitor.done();
 		return Status.OK_STATUS;
 	}
@@ -87,7 +91,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 	
 	@Override
 	public String getTitle(){
-		return "Medikamente (vidal)";
+		return "Medikamente (vidal v2)";
 	}
 	
 	class Handler extends org.xml.sax.helpers.DefaultHandler {
@@ -162,14 +166,13 @@ public class MedikamentImporterVidal extends ImporterPage {
 			} else if (qName.equals("ZNr")) {
 				act.put("ZnrNum", attr.getValue("ZNrNum"));
 				chars = new StringBuilder();
-			
-			}else if(qName.equals("SubstRef")){
-				act=new Hashtable();
+				
+			} else if (qName.equals("SubstRef")) {
+				act = new Hashtable();
 				act.put("SubstID", attr.getValue("SubstID"));
 				act.put("SubstSalt", attr.getValue("SubstSalt"));
 				chars = new StringBuilder();
 			}
-			
 			
 		}
 		
@@ -276,10 +279,12 @@ public class MedikamentImporterVidal extends ImporterPage {
 			} else if (qName.equals("RemarkText")) {
 				act.put("RemarkText", chars.toString());
 				chars = null;
-			}else if(qName.equals("ATCCode")){
-				
-			}else if(qName.equals("SubstRef")){
-				Substance subst=new Substance((String)act.get("SubstID"),chars.toString(),(String)act.get("SubstSalt"));
+			} else if (qName.equals("ATCCode")) {
+
+			} else if (qName.equals("SubstRef")) {
+				Substance subst =
+					new Substance((String) act.get("SubstID"), chars.toString(), (String) act
+						.get("SubstSalt"));
 			}
 		}
 		

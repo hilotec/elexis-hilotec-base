@@ -8,17 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Medikament.java 4930 2009-01-11 17:33:49Z rgw_ch $
+ *  $Id: Medikament.java 5130 2009-02-13 17:33:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 import ch.elexis.data.Artikel;
 import ch.rgw.tools.ExHandler;
@@ -27,9 +24,9 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
 public class Medikament extends Artikel {
-	private static final String VERSION = "0.3.0";
+	private static final String VERSION = "0.4.0";
 	
-	public static final String CODESYSTEMNAME = "Medikamente";
+	public static final String CODESYSTEMNAME = "Medikamente AT";
 	static final String JOINTTABLE = "CH_ELEXIS_AUSTRIAMEDI_JOINT";
 	static final String EXTTABLE = "CH_ELEXIS_AUSTRIAMEDI_EXT";
 	static final String ATCTABLE = "CH_ELEXIS_AUSTRIAMEDI_ATC";
@@ -76,11 +73,11 @@ public class Medikament extends Artikel {
 	
 	@Override
 	protected String getConstraint(){
-		return "Typ='Vidal'";
+		return "Typ='Vidal2'";
 	}
 	
 	protected void setConstraint(){
-		set("Typ", "Vidal");
+		set("Typ", "Vidal2");
 	}
 	
 	@Override
@@ -114,22 +111,23 @@ public class Medikament extends Artikel {
 	}
 	
 	public static List<Medikament> getWithATC(String atcCode){
-		Stm stm=getConnection().getStatement();
-		String sql="SELECT IDMEDI FROM "+ATCTABLE+" WHERE IDATC="+JdbcLink.wrap(atcCode);
-		LinkedList<Medikament> ret=new LinkedList<Medikament>();
-		try{
-			ResultSet res=stm.query(getConnection().translateFlavor(sql));
-			while(res!=null && res.next()){
+		Stm stm = getConnection().getStatement();
+		String sql = "SELECT IDMEDI FROM " + ATCTABLE + " WHERE IDATC=" + JdbcLink.wrap(atcCode);
+		LinkedList<Medikament> ret = new LinkedList<Medikament>();
+		try {
+			ResultSet res = stm.query(getConnection().translateFlavor(sql));
+			while (res != null && res.next()) {
 				ret.add(Medikament.load(res.getString(1)));
 			}
 			return ret;
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return null;
-		}finally{
+		} finally {
 			getConnection().releaseStatement(stm);
 		}
 	}
+	
 	@Override
 	public String getCode(){
 		return getPharmaCode();
