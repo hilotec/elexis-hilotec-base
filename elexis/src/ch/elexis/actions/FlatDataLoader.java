@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5117 2009-02-09 17:47:19Z rgw_ch $
+ * $Id: FlatDataLoader.java 5132 2009-02-14 10:35:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -43,25 +43,8 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		super(cv, qbe);
 	}
 	
-	/*
-	 * protected void reload(){ Desk.syncExec(new Runnable() {
-	 * 
-	 * public void run(){ TableViewer tv = (TableViewer) cv.getViewerWidget(); tv.setItemCount(1);
-	 * tv.replace(LOADMESSAGE, 0);
-	 * 
-	 * qbe.clear(); cv.getConfigurer().getControlFieldProvider().setQuery(qbe); applyQueryFilters();
-	 * if (orderField != null) { qbe.orderBy(false, orderField); }
-	 * 
-	 * raw = qbe.execute(); filtered = raw; tv.remove(LOADMESSAGE); tv.setItemCount(raw.size()); }
-	 * });
-	 * 
-	 * }
-	 */
-
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
-		// tv.setItemCount(1);
-		// tv.replace(LOADMESSAGE, 0);
 		if (filtered != null) {
 			filtered.clear();
 		}
@@ -83,7 +66,6 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 			public void run(){
 				tv.setItemCount(0);
 				filtered = raw;
-				// tv.remove(LOADMESSAGE);
 				tv.setItemCount(raw.size());
 			}
 		});
@@ -91,14 +73,8 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		return Status.OK_STATUS;
 	}
 	
-	/*
-	 * public void applyViewerFilter(){ LinkedList<PersistentObject> dest = new
-	 * LinkedList<PersistentObject>(); for (PersistentObject po : raw) { if
-	 * (viewerFilter.select(po)) { dest.add(po); } } filtered = dest; }
-	 */
-
 	public void updateElement(int index){
-		if (index > 0 && index < filtered.size()) {
+		if (index >= 0 && index < filtered.size()) {
 			Object o = filtered.get(index);
 			if (o != null) {
 				TableViewer tv = (TableViewer) cv.getViewerWidget();

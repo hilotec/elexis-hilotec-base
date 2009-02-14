@@ -8,14 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 5131 2009-02-14 06:09:20Z rgw_ch $
+ * $Id: Xid.java 5132 2009-02-14 10:35:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +28,18 @@ import ch.rgw.tools.VersionInfo;
  * to Persons but can be attributed to all kinds of entities. They are usable like OID's but are
  * more general and can interate other systems. A XID consists of a domain that denotes the
  * identifying system and an ID within this domain. The Domain name is globally unique, while the ID
- * can be globally unique, but might also be unique within its domain only.
+ * can be globally unique, but might also be unique within its domain only. To differentiate between
+ * such "qualities" there is a flag that indicates, that a XID is in fact a GUID. There is also a
+ * flag to indicate the range within a xid is valid (e.g. a social security number ist only an
+ * identifier within the country where it was created) The Flag ASSIGNMENT_LOCAL means that this XID
+ * is used only between different instances of this program, ASSIGNMENT_LOCAL means a XID used
+ * within a country while ASSIGNMENT_GLOBAL a globally used identifier is (e.g. an EAN or an OID)
+ * 
+ * To simplify working with XIDs for the user, a XID Domain can also have a short "nickname" that is
+ * valid and unique within the running instance of the program only and that is mapped to a full
+ * xid-domain. The Domain "www.xid.ch/id/ean" can be called "EAN". The two namings ar exchangeable
+ * within the defining instance, but a XID that leaves this instance of the program must always be
+ * named with its full name.
  * 
  * @author Gerry
  * 
@@ -53,7 +63,7 @@ public class Xid extends PersistentObject {
 	public static final int ASSIGNMENT_GLOBAL = 3;
 	
 	/**
-	 * Marker that the ID is a GUID (that is, guaranteed to exist only once)
+	 * Marker that the ID is a GUID (that is, guaranteed to exist only once through time and space)
 	 */
 	public static final int QUALITY_GUID = 4;
 	
@@ -99,6 +109,7 @@ public class Xid extends PersistentObject {
 				}
 				domains.put(spl[0], new XIDDomain(spl[0], simpleName, Integer.parseInt(spl[1]),
 					displayOptions));
+				domainMap.put(simpleName, spl[0]);
 			}
 		}
 		VersionInfo vv = new ch.rgw.tools.VersionInfo(Hub.Version);
@@ -112,7 +123,7 @@ public class Xid extends PersistentObject {
 	}
 	
 	/**
-	 * create a new XID. Does nothing if identical XIX already exists.
+	 * create a new XID. Does nothing if identical XID already exists.
 	 * 
 	 * @param o
 	 *            the object to identify with the new XID
@@ -165,6 +176,15 @@ public class Xid extends PersistentObject {
 	}
 	
 	/**
+	 * Tell whether this XID is a GUID
+	 * 
+	 * @return true if so.
+	 */
+	public boolean isGUID(){
+		return (getQuality() & QUALITY_GUID) != 0;
+	}
+	
+	/**
 	 * get the Domain this Xid is from
 	 * 
 	 * @return
@@ -212,12 +232,17 @@ public class Xid extends PersistentObject {
 	 * Find a XID from a domain and a domain_id
 	 * 
 	 * @param domain
-	 *            the domain to search an id from (e.g. www.ahv.ch)
+	 *            the domain to search an id from, Can be full name or local short name of the
+	 *            domain
 	 * @param id
 	 *            the id out of domain to retrieve
 	 * @return the xid holding that id from that domain or null if no such xid was found
 	 */
-	public static Xid findXID(final String domain, final String id){
+	public static Xid findXID(String domain, final String id){
+		String dom = domainMap.get(domain);
+		if (dom != null) {
+			domain = dom;
+		}
 		Query<Xid> qbe = new Query<Xid>(Xid.class);
 		qbe.add("domain", "=", domain);
 		qbe.add("domain_id", "=", id);
@@ -255,7 +280,11 @@ public class Xid extends PersistentObject {
 	 *            the domain the Xid should be from
 	 * @return the Xid or null if no xid for the given domain was found on the given object
 	 */
-	public static Xid findXID(final PersistentObject o, final String domain){
+	public static Xid findXID(final PersistentObject o, String domain){
+		String dom = domainMap.get(domain);
+		if (dom != null) {
+			domain = dom;
+		}
 		Query<Xid> qbe = new Query<Xid>(Xid.class);
 		qbe.add("domain", "=", domain);
 		qbe.add("object", "=", o.getId());
@@ -286,6 +315,9 @@ public class Xid extends PersistentObject {
 			} else {
 				domains.put(domain, new XIDDomain(domain, simpleName == null ? "" : simpleName,
 					quality, "Kontakt"));
+				if (simpleName != null) {
+					domainMap.put(simpleName, domain);
+				}
 				storeDomains();
 				return true;
 			}
@@ -337,6 +369,10 @@ public class Xid extends PersistentObject {
 	}
 	
 	public static XIDDomain getDomain(String name){
+		String dom = domainMap.get(name);
+		if (dom != null) {
+			name = dom;
+		}
 		return domains.get(name);
 	}
 	
