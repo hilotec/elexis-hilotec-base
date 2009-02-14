@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ * $Id: Xid.java 5131 2009-02-14 06:09:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,17 @@ import ch.elexis.Hub;
 import ch.elexis.util.Log;
 import ch.rgw.tools.VersionInfo;
 
+/**
+ * A XID is an external identifier, that is an ID from en external identifyer system. Examples are
+ * entities such as Social Security Number, Passport Number, OID, and others. XID's are not limites
+ * to Persons but can be attributed to all kinds of entities. They are usable like OID's but are
+ * more general and can interate other systems. A XID consists of a domain that denotes the
+ * identifying system and an ID within this domain. The Domain name is globally unique, while the ID
+ * can be globally unique, but might also be unique within its domain only.
+ * 
+ * @author Gerry
+ * 
+ */
 public class Xid extends PersistentObject {
 	private static final String VERSION = "1.0.0";
 	private static final String TABLENAME = "XID";
@@ -45,7 +57,8 @@ public class Xid extends PersistentObject {
 	 */
 	public static final int QUALITY_GUID = 4;
 	
-	private static Hashtable<String, XIDDomain> domains;
+	private static HashMap<String, XIDDomain> domains;
+	private static HashMap<String, String> domainMap;
 	
 	public static final String DOMAIN_ELEXIS = "www.elexis.ch/xid";
 	public static final String DOMAIN_AHV = "www.ahv.ch/xid";
@@ -57,7 +70,8 @@ public class Xid extends PersistentObject {
 	
 	static {
 		addMapping(TABLENAME, "type", "object", "domain", "domain_id", "quality");
-		domains = new Hashtable<String, XIDDomain>();
+		domains = new HashMap<String, XIDDomain>();
+		domainMap = new HashMap<String, String>();
 		String storedDomains = Hub.globalCfg.get("LocalXIDDomains", null);
 		if (storedDomains == null) {
 			domains.put(DOMAIN_ELEXIS, new XIDDomain(DOMAIN_ELEXIS, "UUID", ASSIGNMENT_LOCAL
@@ -152,6 +166,7 @@ public class Xid extends PersistentObject {
 	
 	/**
 	 * get the Domain this Xid is from
+	 * 
 	 * @return
 	 */
 	public String getDomain(){
@@ -160,6 +175,7 @@ public class Xid extends PersistentObject {
 	
 	/**
 	 * get the id of this Xid in its domain
+	 * 
 	 * @return
 	 */
 	public String getDomainId(){
@@ -262,7 +278,7 @@ public class Xid extends PersistentObject {
 	 */
 	public static boolean localRegisterXIDDomain(final String domain, String simpleName,
 		final int quality){
-		if (domains.contains(domain)) {
+		if (domains.containsKey(domain)) {
 			log.log("XID Domain " + domain + " bereits registriert", Log.ERRORS);
 		} else {
 			if (domain.matches(".*[;#].*")) {

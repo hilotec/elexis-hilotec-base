@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ *    $Id: PersistentObject.java 5131 2009-02-14 06:09:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -802,10 +802,6 @@ public abstract class PersistentObject {
 		if (ret instanceof String) {
 			return (String) ret;
 		}
-		/*
-		 * if((cf!=null) && (cf.expired()==false) && !(cf.contents instanceof VersionedResource)){
-		 * return (String)cf.contents; }
-		 */
 		boolean decrypt = false;
 		StringBuffer sql = new StringBuffer();
 		String mapped = map(field);
@@ -858,8 +854,14 @@ public abstract class PersistentObject {
 					return (String) res;
 				}
 			}
-			String method = "get" + field; // or try to find a "getter" Method
+			// try to find an XID with that name
+			String xid = getXid(field);
+			if (xid.length() > 0) {
+				return xid;
+			}
+			// or try to find a "getter" Method
 			// for the field
+			String method = "get" + field;
 			try {
 				Method mx = getClass().getMethod(method, new Class[0]);
 				Object ro = mx.invoke(this, new Object[0]);
