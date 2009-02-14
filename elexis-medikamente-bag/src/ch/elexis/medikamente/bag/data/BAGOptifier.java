@@ -20,7 +20,8 @@ public class BAGOptifier implements IOptifier {
 			for(Verrechnet v:old){
 				IVerrechenbar vv=v.getVerrechenbar();
 				if(vv.getCode().equals(code.getCode())){
-					v.setZahl(v.getZahl()+1);
+					v.changeAnzahl(v.getZahl() + 1);
+					//v.setZahl(v.getZahl()+1);
 					return new Result<IVerrechenbar>(code);
 				}
 				if(vv instanceof BAGMedi){
