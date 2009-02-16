@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ * $Id: SelectorPanel.java 5137 2009-02-16 18:19:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -78,9 +78,6 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		tb.setLayoutData(fdActions);
 		cFields = new Composite(this, SWT.NONE);
 		FormData fd = new FormData();
-		// fd.right = new FormAttachment(tb);
-		// fd.bottom = new FormAttachment(0, 0);
-		// fd.bottom = new FormAttachment(0, 0);
 		fd.left = new FormAttachment(0, 0);
 		fd.top = new FormAttachment(0, 0);
 		fd.right = new FormAttachment(100, 0);
@@ -132,7 +129,10 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			last = ac;
 		}
 		if (tb.isReparentable() && last != null) {
-			tb.setParent(last.getControllerComposite());
+			Composite ctl = last.getControllerComposite();
+			ctl.setLayout(new FormLayout());
+			tb.setParent(ctl);
+			// last.setLayout(new FormLayout());
 		}
 		layout();
 	}

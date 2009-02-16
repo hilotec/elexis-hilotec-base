@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanelProvider.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ * $Id: SelectorPanelProvider.java 5137 2009-02-16 18:19:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -72,6 +72,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		for (FieldDescriptor<? extends PersistentObject> field : fields) {
 			ActiveControl ac = null;
 			switch (field.tFeldTyp) {
+			case HYPERLINK:
 			case STRING:
 				ac = new TextField(panel.getFieldParent(), 0, field.sAnzeige);
 				break;
