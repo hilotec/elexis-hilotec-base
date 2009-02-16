@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioImporter.java 5136 2009-02-16 18:18:59Z rgw_ch $
+ * $Id: PhysioImporter.java 5138 2009-02-16 18:27:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -30,7 +30,7 @@ public class PhysioImporter extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		CSVReader reader = new CSVReader(new FileReader(results[0]));
+		CSVReader reader = new CSVReader(new FileReader(results[0]), ';');
 		String[] line = reader.readNext();
 		while ((line = reader.readNext()) != null) {
 			/* PhysioLeistung pl = */new PhysioLeistung(line[0], line[1], line[2], null, null);

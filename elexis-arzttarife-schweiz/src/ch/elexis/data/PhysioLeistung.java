@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistung.java 5136 2009-02-16 18:18:59Z rgw_ch $
+ * $Id: PhysioLeistung.java 5138 2009-02-16 18:27:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -30,7 +30,7 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 			+ "CREATE INDEX cheacp on " + TABLENAME + " (ziffer);";
 	
 	static {
-		addMapping(TABLENAME, "von=S:D:validFrom", "bis=S:D:vaildUntil", "Ziffer", "Titel",
+		addMapping(TABLENAME, "von=S:D:validFrom", "bis=S:D:validUntil", "Ziffer", "Titel",
 			"text=description", "TP");
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Physiotarif", Xid.ASSIGNMENT_LOCAL);
 		PhysioLeistung pv = PhysioLeistung.load("VERSION");
