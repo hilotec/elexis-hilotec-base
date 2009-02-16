@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5129 2009-02-12 10:45:00Z rgw_ch $
+ * $Id: XMLExporter.java 5136 2009-02-16 18:18:59Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -70,6 +70,7 @@ import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
+import ch.elexis.data.PhysioLeistung;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TarmedLeistung;
@@ -678,6 +679,23 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("obligation", "true");
 					el.setAttribute("validate", "true");
 					mMigel.addMoney(mAmountLocal);
+				} else if (v instanceof PhysioLeistung) {
+					el = new Element("record_physio", ns);
+					el.setAttribute("tariff_type", v.getCodeSystemCode()); // 28060
+					PhysioLeistung pl = (PhysioLeistung) v;
+					double mult = pl.getFactor(tt, actFall);
+					Money preis = vv.getNettoPreis();
+					double korr = preis.getCents() / mult;
+					el.setAttribute("unit", XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
+					el.setAttribute("unit_factor", XMLTool.doubleToXmlDouble(mult, 2)); // 28480
+					Money mAmountLocal = new Money(preis);
+					mAmountLocal.multiply(zahl);
+					el.setAttribute("amount", XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute("vat_rate", "0"); // 28590
+					el.setAttribute("obligation", "true"); // 28630
+					el.setAttribute("validate", "true"); // 28620
+					mPhysio.addMoney(mAmountLocal);
+					
 				} else {
 					Money preis = vv.getNettoPreis();
 					el = new Element("record_unclassified", ns);
@@ -726,7 +744,7 @@ public class XMLExporter implements IRnOutputter {
 		balance.setAttribute("amount_cantonal", "0.00"); // 10342
 		balance.setAttribute("amount_unclassified", XMLTool.moneyToXmlDouble(mUebrige)); // 10343
 		balance.setAttribute("amount_lab", XMLTool.moneyToXmlDouble(mAnalysen)); // 10344
-		balance.setAttribute("amount_physio", "0.00"); // 10346
+		balance.setAttribute("amount_physio", XMLTool.moneyToXmlDouble(mPhysio)); // 10346
 		balance.setAttribute("amount_drug", XMLTool.moneyToXmlDouble(mMedikament)); // 10347
 		balance.setAttribute("amount_migel", XMLTool.moneyToXmlDouble(mMigel)); // 10345
 		balance.setAttribute("amount_obligations", XMLTool.moneyToXmlDouble(mTotal)); // 10352

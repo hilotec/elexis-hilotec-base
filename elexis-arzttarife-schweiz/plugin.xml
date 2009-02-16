@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 3231 2007-09-30 14:10:54Z rgw_ch $ 
+<!-- $Id: plugin.xml 5136 2009-02-16 18:18:59Z rgw_ch $ 
  * Copyright (c) 2005-2006, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,6 +34,13 @@
             ElementFactory="ch.elexis.data.ArzttarifFactory"
             ImporterClass="ch.elexis.data.LaborleistungImporter"
             name="Laborleistung"/>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.PhysioDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.PhysioLeistungsCodeSelectorFactory"
+            ElementFactory="ch.elexis.data.ArzttarifFactory"
+            ImporterClass="ch.elexis.data.PhysioImporter"
+            name=" Physio-Leistung">
+      </Leistung>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -47,6 +54,12 @@
             class="ch.elexis.tarmedprefs.RechnungsPrefs"
             id="ch.elexis.tarmedrechnungspref"
             name="Tarmed-Rechnungen"/>
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.tarmedprefs.PhysioPrefs"
+            id="ch.elexis.arzttarife_ch.physioprefs"
+            name="Physiotherapie">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">
