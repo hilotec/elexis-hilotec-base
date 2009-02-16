@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistung.java 5138 2009-02-16 18:27:19Z rgw_ch $
+ * $Id: PhysioLeistung.java 5139 2009-02-16 21:10:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -25,7 +25,7 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	private static final String XIDDOMAIN = "www.xid.ch/id/physiotarif";
 	private static final String createDB =
 		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT,"
-			+ "deleted  CHAR(1)," + "validFrom	CHAR(8)," + "validUntil CHAR(8)," + "TP CHAR(8),"
+			+ "deleted  CHAR(1) default '0'," + "validFrom	CHAR(8)," + "validUntil CHAR(8)," + "TP CHAR(8),"
 			+ "ziffer		VARCHAR(6)," + "titel		VARCHAR(255)," + "description TEXT);"
 			+ "CREATE INDEX cheacp on " + TABLENAME + " (ziffer);";
 	
@@ -52,6 +52,7 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	protected String getTableName(){
 		return TABLENAME;
 	}
+	
 	
 	public String[] getDisplayedFields(){
 		return new String[] {
@@ -84,6 +85,18 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	@Override
 	public String getCodeSystemCode(){
 		return "311";
+	}
+
+	@Override
+	public String getText(){
+		StringBuilder sb=new StringBuilder();
+		sb.append(get("Ziffer")).append(" ").append(get("Titel"));
+		return sb.toString();
+	}
+
+	@Override
+	public String getCode(){
+		return get("Ziffer");
 	}
 	
 }

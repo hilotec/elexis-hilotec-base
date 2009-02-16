@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioImporter.java 5138 2009-02-16 18:27:19Z rgw_ch $
+ * $Id: PhysioImporter.java 5139 2009-02-16 21:10:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -16,6 +16,7 @@ import java.io.FileReader;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -31,11 +32,16 @@ public class PhysioImporter extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		CSVReader reader = new CSVReader(new FileReader(results[0]), ';');
+		monitor.beginTask("Importiere Physio", 100);
 		String[] line = reader.readNext();
 		while ((line = reader.readNext()) != null) {
+			monitor.subTask(line[1]);
+
 			/* PhysioLeistung pl = */new PhysioLeistung(line[0], line[1], line[2], null, null);
+			
 		}
-		return null;
+		monitor.done();
+		return Status.OK_STATUS;
 	}
 	
 	@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioDetailDisplay.java 5136 2009-02-16 18:18:59Z rgw_ch $
+ * $Id: PhysioDetailDisplay.java 5139 2009-02-16 21:10:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -24,6 +24,7 @@ import ch.elexis.data.PhysioLeistung;
 import ch.elexis.selectors.ActiveControl;
 import ch.elexis.selectors.SelectorPanel;
 import ch.elexis.selectors.TextField;
+import ch.elexis.util.SWTHelper;
 
 public class PhysioDetailDisplay implements IDetailDisplay {
 	Form form;
@@ -43,9 +44,11 @@ public class PhysioDetailDisplay implements IDetailDisplay {
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		slp.setLayoutData(twd);
-		
-		// GlobalEvents.getInstance().addActivationListener(this,this);
-		return form.getBody();
+		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		form.getHead().setBackground(Desk.getColor(Desk.COL_BLUE));
+		form.getBody().setBackground(Desk.getColor(Desk.COL_GREEN));
+		slp.setBackground(Desk.getColor(Desk.COL_RED));
+		return form;
 		
 	}
 	
@@ -56,7 +59,7 @@ public class PhysioDetailDisplay implements IDetailDisplay {
 		if (obj instanceof PhysioLeistung) {
 			PhysioLeistung pl = (PhysioLeistung) obj;
 			ctls[0].setText(pl.get("Ziffer"));
-			ctls[1].setText(pl.get("Text"));
+			ctls[1].setText(pl.get("Titel"));
 		} else {
 			ctls[0].setText("?");
 			ctls[1].setText("?");
