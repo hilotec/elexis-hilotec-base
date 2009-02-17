@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioImporter.java 5139 2009-02-16 21:10:30Z rgw_ch $
+ * $Id: PhysioImporter.java 5141 2009-02-17 10:25:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -35,9 +35,20 @@ public class PhysioImporter extends ImporterPage {
 		monitor.beginTask("Importiere Physio", 100);
 		String[] line = reader.readNext();
 		while ((line = reader.readNext()) != null) {
+			if (line.length < 3) {
+				continue;
+			}
 			monitor.subTask(line[1]);
-
-			/* PhysioLeistung pl = */new PhysioLeistung(line[0], line[1], line[2], null, null);
+			String id =
+				new Query<PhysioLeistung>(PhysioLeistung.class).findSingle("Ziffer", "=", line[0]);
+			if (id != null) {
+				PhysioLeistung pl = PhysioLeistung.load(id);
+				pl.set(new String[] {
+					"Titel", "TP"
+				}, line[1], line[2]);
+			} else {
+				/* PhysioLeistung pl = */new PhysioLeistung(line[0], line[1], line[2], null, null);
+			}
 			
 		}
 		monitor.done();

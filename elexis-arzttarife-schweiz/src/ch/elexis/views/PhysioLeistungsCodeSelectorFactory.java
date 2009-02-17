@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistungsCodeSelectorFactory.java 5139 2009-02-16 21:10:30Z rgw_ch $
+ * $Id: PhysioLeistungsCodeSelectorFactory.java 5141 2009-02-17 10:25:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -57,17 +57,17 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Physiotherapie";
+		return PhysioLeistung.CODESYSTEMNAME;
 	}
 	
 	@Override
 	public Class<? extends PersistentObject> getElementClass(){
 		return PhysioLeistung.class;
 	}
-
+	
 	@Override
 	public PersistentObject findElement(String code){
-		String id=new Query<PhysioLeistung>(PhysioLeistung.class).findSingle("Ziffer", "=", code);
+		String id = new Query<PhysioLeistung>(PhysioLeistung.class).findSingle("Ziffer", "=", code);
 		return PhysioLeistung.load(id);
 	}
 	

@@ -8,63 +8,51 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioDetailDisplay.java 5139 2009-02-16 21:10:30Z rgw_ch $
+ * $Id: PhysioDetailDisplay.java 5141 2009-02-17 10:25:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PhysioLeistung;
-import ch.elexis.selectors.ActiveControl;
-import ch.elexis.selectors.SelectorPanel;
-import ch.elexis.selectors.TextField;
-import ch.elexis.util.SWTHelper;
+import ch.elexis.util.LabeledInputField;
+import ch.elexis.util.LabeledInputField.InputData;
 
 public class PhysioDetailDisplay implements IDetailDisplay {
 	Form form;
-	SelectorPanel slp;
-	ActiveControl[] ctls;
+	FormToolkit tk = Desk.getToolkit();
+	LabeledInputField.AutoForm tblLab;
+	
+	InputData[] data = new InputData[] {
+		new InputData("Ziffer"), //$NON-NLS-1$
+		new InputData("TP", "TP", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
+		};
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
-		form = Desk.getToolkit().createForm(parent);
+		form = tk.createForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-		slp = new SelectorPanel(form.getBody());
-		ctls = new ActiveControl[] {
-			new TextField(slp, 0, "Ziffer"), new TextField(slp, 0, "Titel")
-		};
-		slp.addFields(ctls);
+		
+		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
 		
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
-		slp.setLayoutData(twd);
-		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		form.getHead().setBackground(Desk.getColor(Desk.COL_BLUE));
-		form.getBody().setBackground(Desk.getColor(Desk.COL_GREEN));
-		slp.setBackground(Desk.getColor(Desk.COL_RED));
-		return form;
-		
+		tblLab.setLayoutData(twd);
+		// GlobalEvents.getInstance().addActivationListener(this,this);
+		return form.getBody();
 	}
 	
 	public void display(Object obj){
-		if (ctls == null || ctls.length < 2) {
-			return;
-		}
-		if (obj instanceof PhysioLeistung) {
-			PhysioLeistung pl = (PhysioLeistung) obj;
-			ctls[0].setText(pl.get("Ziffer"));
-			ctls[1].setText(pl.get("Titel"));
-		} else {
-			ctls[0].setText("?");
-			ctls[1].setText("?");
-		}
-		
+		PhysioLeistung ll = (PhysioLeistung) obj;
+		form.setText(ll.getLabel());
+		tblLab.reload(ll);
 	}
 	
 	public Class<? extends PersistentObject> getElementClass(){

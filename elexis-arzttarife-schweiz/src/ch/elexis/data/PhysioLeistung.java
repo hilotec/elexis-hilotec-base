@@ -7,14 +7,15 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistung.java 5139 2009-02-16 21:10:30Z rgw_ch $
+ * $Id: PhysioLeistung.java 5141 2009-02-17 10:25:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
+import ch.elexis.tarmedprefs.PhysioPrefs;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Implementatuion of the swiss physiotherapy-tariff
+ * Implementation of the swiss physiotherapy-tariff
  * 
  * @author gerry
  * 
@@ -23,10 +24,12 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	public static final String VERSION = "0.0.1";
 	private static final String TABLENAME = "CH_ELEXIS_ARZTTARIFE_CH_PHYSIO";
 	private static final String XIDDOMAIN = "www.xid.ch/id/physiotarif";
+	public static final String CODESYSTEMNAME = "Physiotherapie";
+	
 	private static final String createDB =
 		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT,"
-			+ "deleted  CHAR(1) default '0'," + "validFrom	CHAR(8)," + "validUntil CHAR(8)," + "TP CHAR(8),"
-			+ "ziffer		VARCHAR(6)," + "titel		VARCHAR(255)," + "description TEXT);"
+			+ "deleted  CHAR(1) default '0'," + "validFrom	CHAR(8)," + "validUntil CHAR(8),"
+			+ "TP CHAR(8)," + "ziffer		VARCHAR(6)," + "titel		VARCHAR(255)," + "description TEXT);"
 			+ "CREATE INDEX cheacp on " + TABLENAME + " (ziffer);";
 	
 	static {
@@ -53,7 +56,6 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 		return TABLENAME;
 	}
 	
-	
 	public String[] getDisplayedFields(){
 		return new String[] {
 			"Ziffer", "Titel"
@@ -61,11 +63,11 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	}
 	
 	public double getFactor(TimeTool date, Fall fall){
-		return getVKMultiplikator(date, fall);
+		return getVKMultiplikator(date, PhysioPrefs.TP_ID);
 	}
 	
 	public int getTP(TimeTool date, Fall fall){
-		return 0;
+		return checkZero(get("TP"));
 	}
 	
 	public static PhysioLeistung load(String id){
@@ -86,17 +88,25 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	public String getCodeSystemCode(){
 		return "311";
 	}
-
+	
 	@Override
 	public String getText(){
-		StringBuilder sb=new StringBuilder();
-		sb.append(get("Ziffer")).append(" ").append(get("Titel"));
-		return sb.toString();
+		return get("Titel");
 	}
-
+	
 	@Override
 	public String getCode(){
 		return get("Ziffer");
+	}
+	
+	@Override
+	public String getCodeSystemName(){
+		return CODESYSTEMNAME;
+	}
+	
+	@Override
+	public boolean isDragOK(){
+		return true;
 	}
 	
 }
