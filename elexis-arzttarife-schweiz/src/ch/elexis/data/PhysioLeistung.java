@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistung.java 5141 2009-02-17 10:25:04Z rgw_ch $
+ * $Id: PhysioLeistung.java 5148 2009-02-18 15:19:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -87,6 +87,15 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	@Override
 	public String getCodeSystemCode(){
 		return "311";
+	}
+	
+	@Override
+	public String getLabel(){
+		String[] res = new String[2];
+		get(new String[] {
+			"Ziffer", "Titel"
+		}, res);
+		return new StringBuilder().append(res[0]).append(" ").append(res[1]).toString();
 	}
 	
 	@Override

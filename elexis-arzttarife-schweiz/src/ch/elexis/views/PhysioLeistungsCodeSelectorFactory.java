@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistungsCodeSelectorFactory.java 5141 2009-02-17 10:25:04Z rgw_ch $
+ * $Id: PhysioLeistungsCodeSelectorFactory.java 5148 2009-02-18 15:19:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -24,8 +24,10 @@ import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
+import ch.rgw.tools.IFilter;
 
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
+	Query<PhysioLeistung> qbe;
 	
 	public PhysioLeistungsCodeSelectorFactory(){
 	// TODO Auto-generated constructor stub
@@ -38,8 +40,15 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 				new FieldDescriptor<PhysioLeistung>("Ziffer", "Ziffer", null),
 				new FieldDescriptor<PhysioLeistung>("Text", "Text", null),
 			};
-		FlatDataLoader fdl =
-			new FlatDataLoader(cv, new Query<PhysioLeistung>(PhysioLeistung.class));
+		qbe = new Query<PhysioLeistung>(PhysioLeistung.class);
+		qbe.addPostQueryFilter(new IFilter() {
+			
+			public boolean select(Object toTest){
+				PersistentObject o = (PersistentObject) toTest;
+				return !(o.getId().equals("VERSION"));
+			}
+		});
+		FlatDataLoader fdl = new FlatDataLoader(cv, qbe);
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
 		ViewerConfigurer vc =
 			new ViewerConfigurer(fdl, new DefaultLabelProvider(), slp,
