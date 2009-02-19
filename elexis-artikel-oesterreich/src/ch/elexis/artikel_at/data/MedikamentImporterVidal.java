@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentImporterVidal.java 5130 2009-02-13 17:33:58Z rgw_ch $
+ *  $Id: MedikamentImporterVidal.java 5149 2009-02-19 17:29:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -69,17 +69,16 @@ public class MedikamentImporterVidal extends ImporterPage {
 					.getAttributeValue("SubstSalt"), eSubstance.getTextTrim());
 			}
 		}
-		Element eMedis=eRoot.getChild("RpData");
-		if(eMedis!=null){
+		Element eMedis = eRoot.getChild("RpData");
+		if (eMedis != null) {
 			monitor.subTask("Lese Medikamente ein");
-			for(Element eMedi:(List<Element>)eMedis.getChildren("RpData")){
-					new Medikament((String) eMedi.getAttributeValue("SName"),
-						"Vidal2", (String) act
-					.get("PhZNr"));
-)
-			}
+			/*
+			 * for(Element eMedi:(List<Element>)eMedis.getChildren("RpData")){ new
+			 * Medikament((String) eMedi.getAttributeValue("SName"), "Vidal2", (String) act
+			 * .get("PhZNr")); ) }
+			 */
 		}
-	
+		
 		monitor.done();
 		return Status.OK_STATUS;
 	}
