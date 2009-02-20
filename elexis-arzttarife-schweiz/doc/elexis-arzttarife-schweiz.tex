@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 4942 2009-01-13 17:48:53Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 5156 2009-02-20 19:53:54Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -90,6 +90,7 @@ Es sei an dieser Stelle nochmal darauf hingewiesen, dass diese Konfiguration nic
 \medskip
 
 \subsection{Abrechnungssysteme}
+\label{Abrechnungssysteme}
 \index{Abrechnungssystem}\index{UVG}\index{KVG}\index{VVG}\index{Privatrechnung}
 Die Leistungsverrechnung ist in Elexis als Plugin realisiert und damit auswechselbar oder auch ergänzbar - man kann nach Tarmed und nach CHOP, nach einem beliebigen Privatrechnungssystem und/oder nach einem österreichischen System abrechnen, das hängt nur davon ab, welche Plugins man installiert hat. Auch der Wechsel auf ein jetzt noch nicht bekanntes Tarifsystem ist damit kein Problem. Jedes Tarif-Plugin enthält das Codesystem selbst, sowie einen Mechanismus, um Rechnungen auszugeben, die zu diesem System konform sind (so muss eine Tarmed-Rechnung nicht nur andere Positionen beinhalten, sondern auch formal anders aussehen, als etwa eine Privatrechnung einer Heilpraktikerin). Ausserdem beinhaltet ein Abrechnungssystem je nachdem bestimmte Angaben, die vorhanden sein müssen, um Rechnungen erstellen zu können (z.B. Kostenträger, Versicherungsnummer u. Ä.)
 
@@ -134,14 +135,23 @@ Diese Zusammenhänge sind auch im Elexis-Handbuch beschrieben, genaueres bitte i
 
 \medskip
 
-Zurück zum Tarmed-System: Wenn das Plugin 'elexis-arzttarife-schweiz' installiert ist, finden Sie unter \textsc{Datei-Einstellungen-Abrechnungssysteme} auch die Positionen 'Labortarif' und 'Tarmed-Rechnungen' (S. Abb. \ref{fig:abr1}). Wählen Sie zunächst den Punkt Labortarife (Abb. \ref{fig:abr3}):
+Zurück zum Tarmed-System: Wenn das Plugin 'elexis-arzttarife-schweiz' installiert ist, finden Sie unter \textsc{Datei-Einstellungen-Abrechnungssysteme} auch die Positionen 'Labortarif', 'Physioterapie' und 'Tarmed-Rechnungen' (S. Abb. \ref{fig:abr1}). Wählen Sie zunächst den Punkt Labortarife (Abb. \ref{fig:abr3}):
 \begin{figure}
   % Requires \usepackage{graphicx}
-  \includegraphics{abr3}\\
+  \includegraphics[width=0.95\textwidth]{abr3}\\
   \caption{Labor-Taxpunkt}\label{fig:abr3}
 \end{figure}
 Hier muss der Multiplikator gleich wie bei den Abrechnungssystemen eingegeben werden. Auch hier kann ein einmal eingetragener Wert nicht mehr geändert werden und er ist ab dem Stichdatum bis zur nächsten Änderung gültig.
 \index{Taxpunkt}
+
+\medskip
+
+Für den Physiotherapie Tarif gehen Sie genau gleich vor wie beim Labortarif (Abb. \ref{fig:abr24}). Weitere Informationen finden Sie im Abschnitt \ref{physiotarif} auf Seite \pageref{physiotarif}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.95\textwidth]{abr24}\\
+  \caption{Physio-Taxpunkt}\label{fig:abr24}
+\end{figure}
 
 \medskip
 
@@ -622,6 +632,45 @@ Die oft auch interessante Frage, 'Wo stehe ich finanziell mit diesem Patienten' 
 \item \textbf{WICHTIG: Beim ersten Mal und jedesmal wenn irgendetwas an der Konfiguration geändert wird, müssen mindestens die ersten paar Rechnungen von Hand kontrolliert werden. Stimmt der Taxpunkt? Stimmt die ESR-Zeile? Stimmt der Zahlungsempfänger? Stimmt die Kontonummer? usw.}
 
 \end{itemize}
+
+\section{Informationen zu den einzelnen Tarifen}
+\subsection{Physiotherapie}
+\label{physiotarif}
+\subsubsection{Abrechnungssystem}
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.95\textwidth]{abr25}\\
+  \caption{Physio-Abrechnungssystem}\label{fig:abr25}
+\end{figure}
+Wenn Sie elektronisch abrechnen und der Empfänger Ihrer XML Rechnungen Wert auf die Angabe der ausführenden oder verantwortlichen Person\footnote{siehe auch \href{http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf}{XMLInvoice Referenzhandbuch Arzt-Rechnung}, Seite 58} legt, dann können Sie optional ein entsprechendes Abrechnungssystem konfigurieren (siehe Abschnitt \ref{Abrechnungssysteme} auf Seite \pageref{Abrechnungssysteme})
+. Dabei können Sie die beiden XML Felder (ean provider, ean responsible) sowohl als Fallkonstante oder bei den Notwendigen Daten erfassen. Der Unterschied liegt darin, dass Fallkonstante automatisch in die Rechnung übernommen werden und die Notwendigen Daten pro Fall individuell erfasst werden müssen. Das Beispiel in Abb.\ref{fig:abr25} führt also die ausführende Person als Fallkonstante und die verantwortliche Person als Variable pro Fall.\linebreak
+Hinweis: Beachten Sie, dass Fallkonstanten in der aktuellen Elexis Version 1.4.1 weder gelöscht, noch geändert werden können. Bei allfälligen Schreibfehlern müssen Sie das Abrechnungssystem löschen und neu erstellen.
+\subsubsection{Stammdatenpflege}
+Der Physiotarif kann in der Perspektive Leistungen bearbeitet werden (Abb.\ref{fig:abr26}). Die Leistungspositionen können dort manuell hinzugefügt und bearbeitet oder auch mittels Dreiecksmenü als CSV importiert werden (siehe \href{http://www.elexis.ch/jp/index.php?option=content&task=view&id=57}{Downloads Stammdaten auf www.elexis.ch}).
+\begin{figure}
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.95\textwidth]{abr26}\\
+  \caption{Physio-Tarif Stammdaten}\label{fig:abr26}
+\end{figure}
+\subsubsection{Taxpunkte}
+Damit die Behandlung der Taxpunkte in Elexis durchgängig gleich behandelt werden, erfolgt die Angabe der Anzahl Taxpunkte auch beim Physiotarif multipliziert mit 100. Für 24 Taxpunkte muss also 2400 eingegeben werden.
+\subsubsection{Spezialpositionen}
+Im Tarif sind nebst den herkömmlichen Leistungspositionen auch 2 Spezialfälle enthalten:
+\begin{flushleft}
+\begin{itemize}
+\item 
+Fixpreispositionen:\linebreak
+Bei den folgenden Positionen mutieren Sie bitte die Anzahl Taxpunkte so, dass bei der Multiplikation mit dem Multiplikator der gültige Frankenpreis resultiert. Aktuell gelten folgende Preise:\linebreak
+7362 Für Behandlung mit Vaginalsonde: CHF 50.--\linebreak
+7363 Für Behandlung mit Analsonde: CHF 90.--\linebreak
+Beispiel:\linebreak
+Multiplikator = 1.03\linebreak
+TP für 7362 = 50/1.03 = 48.54\linebreak
+Eingabe im Feld TP: 4854
+\item Zuschlagsposition für Mittel und Gegenstände resp. Verbandsmaterial:\linebreak
+Anstelle der Position 7360 aus dem Tarif verwenden Sie bitte die entsprechenden Artikel aus MiGeL
+\end{itemize}
+\end{flushleft}
 
 \section{Weitere Unterstützung}
 \subsection{Website}
