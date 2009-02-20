@@ -70,8 +70,12 @@
 		<available file="../elexis-privatnotizen/build.xml"
 		           property="privatnotizen.ok" />
 		<antcall target="privatnotizen" inheritrefs="true" />
-		<available file="../iatrix-messwerte/build.xml" property="iatrixmw.ok" />
+		<available file="../iatrix-messwerte/build.xml"
+		           property="iatrixmw.ok" />
 		<antcall target="iatrixmw" inheritrefs="true" />
+		<available file="../ch.unibe.iam.scg.archie/build.xml"
+		           property="archie.ok" />
+		<antcall target="archie" inheritrefs="true" />
 	</target>
 
 	<!-- Optionale Plugins, für die Programmfunktion nicht unbedingt erforderlich -->
@@ -219,6 +223,10 @@
 		<antcall target="oowrapper3" inheritrefs="true" />
 	</target>
 
+	<target name="archie" if="archie.ok">
+		<ant antfile="../ch.unibe.iam.scg.archie/build.xml"
+		     inheritrefs="true" />
+	</target>
 	<target name="iatrixmw" if="iatrixmw.ok">
 		<ant antfile="../iatrix-messwerte/build.xml" inheritrefs="true" />
 	</target>
