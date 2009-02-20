@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 4422 2008-09-20 09:03:09Z rgw_ch $
+ *    $Id: Fall.java 5153 2009-02-20 11:50:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -62,6 +62,7 @@ public class Fall extends PersistentObject {
 	
 	/**
 	 * Vorgeschlagenen Zeitpunkt für Rechnungsstellung holen (Eine Vorgabe die im fall gemacht wird)
+	 * 
 	 * @return
 	 */
 	public TimeTool getBillingDate(){
@@ -78,10 +79,12 @@ public class Fall extends PersistentObject {
 	
 	/**
 	 * Zeitpunkt für Rechnungsvorschlag setzen
-	 * @param dat Ein Zeitpinkt oder null
+	 * 
+	 * @param dat
+	 *            Ein Zeitpunkt oder null
 	 */
 	public void setBillingDate(TimeTool dat){
-		set("RnPlanung", dat==null ? null : dat.toString(TimeTool.DATE_GER));
+		set("RnPlanung", dat == null ? null : dat.toString(TimeTool.DATE_GER));
 	}
 	
 	@Override
@@ -174,7 +177,7 @@ public class Fall extends PersistentObject {
 	}
 	
 	/**
-	 * Anfangsdatum setzen Zul�ssige Formate: dd.mm.yy, dd.mm.yyyy, yyyymmdd, yy-mm-dd
+	 * Anfangsdatum setzen Zulässige Formate: dd.mm.yy, dd.mm.yyyy, yyyymmdd, yy-mm-dd
 	 */
 	public void setBeginnDatum(final String dat){
 		set("DatumVon", dat);
@@ -220,7 +223,7 @@ public class Fall extends PersistentObject {
 	}
 	
 	/**
-	 * Retrieve a required Konktat from this Fall's Billing system's requirements
+	 * Retrieve a required Kontakt from this Fall's Billing system's requirements
 	 * 
 	 * @param name
 	 *            the requested Kontakt's name
@@ -248,7 +251,7 @@ public class Fall extends PersistentObject {
 	}
 	
 	/**
-	 * Retrieve a required String Value from this billing system's definition. If no variale with
+	 * Retrieve a required String Value from this billing system's definition. If no variable with
 	 * that name is found, the billings system constants will be searched
 	 * 
 	 * @param name
