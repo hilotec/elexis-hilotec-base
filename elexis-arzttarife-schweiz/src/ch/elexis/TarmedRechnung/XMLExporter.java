@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5136 2009-02-16 18:18:59Z rgw_ch $
+ * $Id: XMLExporter.java 5152 2009-02-20 11:49:58Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -694,6 +694,10 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("vat_rate", "0"); // 28590
 					el.setAttribute("obligation", "true"); // 28630
 					el.setAttribute("validate", "true"); // 28620
+					el.setAttribute("ean_provider", TarmedRequirements.getProviderEAN(actFall));
+					el.setAttribute("ean_responsible", TarmedRequirements
+						.getResponsibleEAN(actFall));
+					
 					mPhysio.addMoney(mAmountLocal);
 					
 				} else {

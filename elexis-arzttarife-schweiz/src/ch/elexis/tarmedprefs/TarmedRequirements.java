@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 4672 2008-11-09 16:53:56Z rgw_ch $
+ * $Id: TarmedRequirements.java 5152 2009-02-20 11:49:58Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -28,6 +28,8 @@ public class TarmedRequirements {
 	public static final String ACCIDENT_NUMBER="Unfallnummer";
 	public final static String SSN ="AHV-Nummer";
 	public static final String EAN_PSEUDO="2000000000000";
+	public static final String EAN_PROVIDER="ean_provider";
+	public static final String EAN_RESPONSIBLE="ean_responsible";
 	
 	public static final String ACCIDENT_DATE="Unfalldatum";
 	public static final String CASE_LAW="Gesetz";
@@ -81,6 +83,33 @@ public class TarmedRequirements {
 	public static String getIntermediateEAN(final Fall fall){
 		return fall.getRequiredString(INTERMEDIATE).trim();
 	}
+	
+	/**
+	 * get ean_provider from Fall
+	 * @param fall
+	 * @return the EAN or "unknown" if no valid ean was provided 
+	 */
+	public static String getProviderEAN(final Fall fall){
+		String ean=fall.getRequiredString(EAN_PROVIDER).trim();
+		if(!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")){
+			return "unknown";
+		}
+		return ean;
+	}
+	
+	/**
+	 * get ean_responsible from Fall
+	 * @param fall
+	 * @return the EAN or "unknown" if no valid ean was provided 
+	 */
+	public static String getResponsibleEAN(final Fall fall){
+		String ean=fall.getRequiredString(EAN_RESPONSIBLE).trim();
+		if(!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")){
+			return "unknown";
+		}
+		return ean;
+	}
+	
 	/**
 	 * wandelt KSK's von der G123456-Schreibweise in die G 1234.56 Schreibweise um
 	 * und umgekehrt
