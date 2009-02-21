@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 5158 2009-02-21 07:37:49Z tschaller $
+% *  $Id: elexis-arzttarife-schweiz.tex 5159 2009-02-21 07:57:10Z rgw_ch $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -68,7 +68,7 @@ Der Weg vom Erbringen einer Leistung bis zum Einbuchen der Zahlung umfasst eine 
 
 \bigskip
 
-Folgende Fragen müssen beantwortet werden, um korrekte Rechnungen zu erstellen und Zahlungen entgegenzunehmen\footnote{Dies ist nicht Elexis-spezifisch, sondern muss in jedem Praxisprogramm 'irgendwie' festgelegt werden. Bloss kann es bei weniger flexiblen Programmen 'festverdrahtet' sein, oder bei teuren Installationsveträgen kann die Konfiguration schon vom Hersteller vorgenommen werden sein. Da Elexis aber 'empowerment' des Anwenders auf den Fahnen stehen hat, müssen und dürfen Sie diese Dinge hier selber in die Hand nehmen (oder sich selber eine Supportfirma suchen, die es für Sie macht).}:
+Folgende Fragen müssen beantwortet werden, um korrekte Rechnungen zu erstellen und Zahlungen entgegenzunehmen\footnote{Dies ist nicht Elexis-spezifisch, sondern muss in jedem Praxisprogramm 'irgendwie' festgelegt werden. Bloss kann es bei weniger flexiblen Programmen 'festverdrahtet' sein, oder bei manchen Installationsverträgen kann die Konfiguration schon vom Hersteller vorgenommen werden sein. Da Elexis aber 'empowerment' des Anwenders auf den Fahnen stehen hat, müssen und dürfen Sie diese Dinge hier selber in die Hand nehmen (oder sich selber eine Supportfirma suchen, die es für Sie macht).}:
 
 \begin{itemize}
 \item Welches Tarifsystem und welche Tarifstufe wende ich an?
@@ -91,11 +91,12 @@ Es sei an dieser Stelle nochmal darauf hingewiesen, dass diese Konfiguration nic
 
 \subsection{Abrechnungssysteme}
 \label{Abrechnungssysteme}
-\index{Abrechnungssystem}\index{UVG}\index{KVG}\index{VVG}\index{Privatrechnung}
+\index{Abrechnungssystem}\index{UVG}\index{KVG}\index{VVG}\index{Privatrechnung}\index{Physiotherapie}
 Die Leistungsverrechnung ist in Elexis als Plugin realisiert und damit auswechselbar oder auch ergänzbar - man kann nach Tarmed und nach CHOP, nach einem beliebigen Privatrechnungssystem und/oder nach einem österreichischen System abrechnen, das hängt nur davon ab, welche Plugins man installiert hat. Auch der Wechsel auf ein jetzt noch nicht bekanntes Tarifsystem ist damit kein Problem. Jedes Tarif-Plugin enthält das Codesystem selbst, sowie einen Mechanismus, um Rechnungen auszugeben, die zu diesem System konform sind (so muss eine Tarmed-Rechnung nicht nur andere Positionen beinhalten, sondern auch formal anders aussehen, als etwa eine Privatrechnung einer Heilpraktikerin). Ausserdem beinhaltet ein Abrechnungssystem je nachdem bestimmte Angaben, die vorhanden sein müssen, um Rechnungen erstellen zu können (z.B. Kostenträger, Versicherungsnummer u. Ä.)
 
 
 \medskip
+
 \index{Leistungscode}
 Leistungscode, Ausgabeziel und erforderliche Daten, sowie die Tarifstufe sind in Elexis als 'Abrechnungssystem' zusammengefasst (S. Abb. \ref{fig:abr1}):
 \begin{figure}
@@ -103,7 +104,7 @@ Leistungscode, Ausgabeziel und erforderliche Daten, sowie die Tarifstufe sind in
   \includegraphics[width=0.9\textwidth]{abr1}\\
   \caption{Abrechnungssysteme: Übersicht}\label{fig:abr1}
 \end{figure}
-Es kann beliebig viele Abrechnungssysteme geben, und die Namen der einzelnen Abrechnungssysteme sind seitens Elexis egal. Um alle Schweizer Systeme abzudecken, sollten allerdings Abrechnungssysteme mit den Namen 'KVG', 'UVG', 'IV', 'MV' und 'VVG' vorhanden sein. Weitere können nach Belieben dazukommen. Es ist beispielsweise problemlos möglich, zwei verschiedene KVG-Systeme mit verschiedenen Taxpunktwerten zu definieren.
+Es kann beliebig viele Abrechnungssysteme geben, und die Namen der einzelnen Abrechnungssysteme sind seitens Elexis egal. Um alle Schweizer Systeme abzudecken, sollten allerdings Abrechnungssysteme mit den Namen 'KVG', 'UVG', 'IV', 'MV' und 'VVG' vorhanden sein. Weitere können nach Belieben dazukommen. Es ist beispielsweise problemlos möglich, zwei verschiedene KVG-Systeme mit verschiedenen Taxpunktwerten zu definieren. Wenn das Plugin elexis-arzttarife-schweiz installiert ist (standardmässig ist das bei in der Schweiz installierten Elexis-Systemen immer der Fall), dann sind die Leistungscodes Tarmed, Analysenliste und Physiotherapietarif bereits eingeschlossen und die oben erwähnten Standard-Abrechnungssysteme werden beim ersten Erstellen eines Falls automatisch angelegt. Bei einer ganz frischen Elexis-Installation sollten Sie daher zunächst einen Patienten und einen Fall erstellen, um das Leistungscode-System zu initialisieren, damit Sie das nicht manuell machen müssen.
 
 \medskip
 
@@ -634,6 +635,34 @@ Die oft auch interessante Frage, 'Wo stehe ich finanziell mit diesem Patienten' 
 \end{itemize}
 
 \section{Informationen zu den einzelnen Tarifen}
+\subsection{Tarmed}
+In der Schweiz müssen Rechnungen gemäss Krankenversicherungsgesetz (KVG), Unfallversicherungsgesetz (UVG), Invalidenversicherungsgesetz (IV) und Militärversicherungsgesetz (MV) zwingend nach Tarmed abgerechnet werden.  Dem für alle Gesetze gleichen Leistungscodesystem stehen aber unterschiedliche Taxpunktwerte je nach Gesetz, Leistungserbringer und Kanton entgegen. Es müssen daher für KVG, UVG, IV und MV unterschiedliche Abrechnungssysteme erstellt werden, denen jeweils die am Ort der Leistungserbringung für dieses Gesetz gültigen Taxpunktwerte zugeordnet werden.  Ausserdem sollten je nach Gesetz und Abrechnungssystem auch folgende 'Notwendige Daten' (S. Abb. \ref{fig:abr2}) angegeben werden:\\
+
+\begin{itemize}
+\item \textbf{Generell}\begin{description}
+\item [Kostenträger (Kontakt):] Die Stelle, welche die Rechnung letztlich zahlt. Ist bei Tiers Payant identisch zum Rechnungsempfänger, bei Tiers Garant nicht.
+\item [Gesetz: (Text)]  Das bei der Rechnungserstellung anzuwendende Gesetz. Dies muss nur eingetragen werden, falls das Abrechnungssystem nicht gleich heisst, wie das Gesetz. Also wenn Sie z.B. ein Abrechnungssystem 'Konsilien nach KVG' haben, dann sollten Sie diesem Abrechnungssystem die Fallkonstante Gesetz=KVG zuordnen, wenn Ihr Abreczhnungssystem dagegen 'KVG' heisst, ist diese Konstante nicht nötig.
+\item [Intermediär (Text):] Falls elektronisch übermittelte Rechnungen nicht direkt, sondern über einen Intermediär wie Ärztekasse, H-Clearing, mediserv etc. gesendet werden sollen, ist hier die EAN des Intermediärs anzugeben.
+\end{description}
+\item\textbf{KVG}\begin{description}
+\item [Versicherungsnummer: ] Die Krankenkassen-Mitgliedsnummer des Patienten.
+\end{description}
+
+\item\textbf{UVG}\begin{description}
+\item [Unfallnummer: ] Die vom Versicherer veregebene Unfallnummer.
+\item [Unfalldatum: ] Nicht unbedingt identisch mit dem Fall-Beginndatum
+\end{description}
+
+\item\textbf{IV}\begin{description}
+\item [AHV-Nummer: ] Die alte oder neue AHV-Nummer.
+\item [Fallnummer: ] Die von der IV-Stelle vergebene Fallnummer
+\end{description}
+
+\end{itemize}
+
+\subsection{Eidgenössische Analysenliste (EAL)}
+Hier muss der Taxpunktwert unter \textsc{Datei-Einstellungen-Abrechnungssysteme-Labortarif} korrekt eingestellt werden.
+
 \subsection{Physiotherapie}
 \label{physiotarif}
 \subsubsection{Abrechnungssystem}
@@ -658,7 +687,7 @@ Damit die Behandlung der Taxpunkte in Elexis durchgängig gleich behandelt werde
 Im Tarif sind nebst den herkömmlichen Leistungspositionen auch 2 Spezialfälle enthalten:
 \begin{flushleft}
 \begin{itemize}
-\item 
+\item
 Fixpreispositionen:\linebreak
 Bei den folgenden Positionen mutieren Sie bitte die Anzahl Taxpunkte so, dass bei der Multiplikation mit dem Multiplikator der gültige Frankenpreis resultiert. Aktuell gelten folgende Preise:\linebreak
 7362 Für Behandlung mit Vaginalsonde: CHF 50.--\linebreak
