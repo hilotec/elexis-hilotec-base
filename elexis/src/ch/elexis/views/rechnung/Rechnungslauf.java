@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 4709 2008-12-02 17:58:03Z rgw_ch $
+ *  $Id: Rechnungslauf.java 5167 2009-02-21 19:01:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -81,15 +84,22 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		monitor.beginTask("Analysiere Konsultationen", IProgressMonitor.UNKNOWN);
 		monitor.subTask("Lese Konsultationen ein");
 		List<Konsultation> list = qbe.execute();
+		ArrayList<Konsultation> listbasic=new ArrayList<Konsultation>(list); 
+		HashMap<Fall, Object> hSkipCase=new HashMap<Fall, Object>();
 		TimeTool now = new TimeTool();
 		TimeTool cmp = new TimeTool();
-		for (Konsultation k : list) {
+		Iterator<Konsultation> it=listbasic.iterator();
+		while (it.hasNext()) {
+			Konsultation k=it.next();
 			monitor.worked(1);
 			if (hKons.get(k) != null) {
 				continue;
 			}
 			Fall kFall = k.getFall();
 			if ((kFall == null) || (!kFall.exists())) {
+				continue;
+			}
+			if(hSkipCase.get(kFall)!=null){
 				continue;
 			}
 			String kfID = kFall.getId();
@@ -101,11 +111,14 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			if (bMarked) { // Alle zur Verrechnung markierten Fälle abrechnen
 				TimeTool bd = kFall.getBillingDate();
 				if ((bd != null) && (bd.isBeforeOrEqual(now))) {
-					for (Konsultation k2 : list) {
+					Iterator<Konsultation> i2=list.iterator();
+					while(i2.hasNext()) {
+						Konsultation k2=i2.next();
 						String fid = k2.get("FallID");
 						String mid = k2.get("MandantID");
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
+							i2.remove();
 						}
 					}
 				}
@@ -114,24 +127,37 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				// bestimmten Datum
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(ttFirstBefore)) {
-					for (Konsultation k2 : list) {
+					Iterator<Konsultation> i2=list.iterator();
+					while(i2.hasNext()) {
+						Konsultation k2=i2.next();
 						String fid = k2.get("FallID");
 						String mid = k2.get("MandantID");
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
+							i2.remove();
 						}
 					}
 				}
 			}
 			
-			if (ttLastBefore != null) {
+			if (ttLastBefore != null) { // Alle Serien mit letzter Kons vor einem bestimmten Datum
 				cmp.set(k.getDatum());
-				if (cmp.isBefore(ttFirstBefore)) {
-					for (Konsultation k2 : list) {
+				if (cmp.isBefore(ttLastBefore)) {
+					Iterator<Konsultation> i2=list.iterator();
+					while(i2.hasNext()) {
+						Konsultation k2=i2.next();
 						String fid = k2.get("FallID");
 						String mid = k2.get("MandantID");
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
-							hKons.put(k2, kPatient);
+							cmp.set(k2.getDatum());
+							if(cmp.isAfter(ttLastBefore)){
+								hSkipCase.put(kFall, "1");
+								i2.remove();
+								break;
+							}else{
+								hKons.put(k2, kPatient);
+								i2.remove();
+							}
 						}
 					}
 				}
@@ -156,6 +182,13 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(limitQuartal)) {
 					hKons.put(k, kPatient);
+				}
+			}
+		}
+		if(ttLastBefore!=null){
+			for( Fall fall:hSkipCase.keySet()){
+				for(Konsultation kd:fall.getBehandlungen(false)){
+					hKons.remove(kd);
 				}
 			}
 		}
