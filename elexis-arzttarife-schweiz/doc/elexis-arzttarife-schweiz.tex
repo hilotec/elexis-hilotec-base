@@ -6,7 +6,7 @@
 % * Contributors:
 % *    G. Weirich - initial implementation
 % *
-% *  $Id: elexis-arzttarife-schweiz.tex 5156 2009-02-20 19:53:54Z rgw_ch $
+% *  $Id: elexis-arzttarife-schweiz.tex 5158 2009-02-21 07:37:49Z tschaller $
 % *******************************************************************************/
 
 \documentclass[a4paper]{scrartcl}
@@ -643,7 +643,7 @@ Die oft auch interessante Frage, 'Wo stehe ich finanziell mit diesem Patienten' 
   \caption{Physio-Abrechnungssystem}\label{fig:abr25}
 \end{figure}
 Wenn Sie elektronisch abrechnen und der Empfänger Ihrer XML Rechnungen Wert auf die Angabe der ausführenden oder verantwortlichen Person\footnote{siehe auch \href{http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf}{XMLInvoice Referenzhandbuch Arzt-Rechnung}, Seite 58} legt, dann können Sie optional ein entsprechendes Abrechnungssystem konfigurieren (siehe Abschnitt \ref{Abrechnungssysteme} auf Seite \pageref{Abrechnungssysteme})
-. Dabei können Sie die beiden XML Felder (ean provider, ean responsible) sowohl als Fallkonstante oder bei den Notwendigen Daten erfassen. Der Unterschied liegt darin, dass Fallkonstante automatisch in die Rechnung übernommen werden und die Notwendigen Daten pro Fall individuell erfasst werden müssen. Das Beispiel in Abb.\ref{fig:abr25} führt also die ausführende Person als Fallkonstante und die verantwortliche Person als Variable pro Fall.\linebreak
+. Dabei können Sie die beiden XML Felder (ean\_provider, ean\_responsible) sowohl als Fallkonstante oder bei den Notwendigen Daten erfassen. Der Unterschied liegt darin, dass Fallkonstante automatisch in die Rechnung übernommen werden und die Notwendigen Daten pro Fall individuell erfasst werden müssen. Das Beispiel in Abb.\ref{fig:abr25} führt also die ausführende Person als Fallkonstante und die verantwortliche Person als Variable pro Fall.\linebreak
 Hinweis: Beachten Sie, dass Fallkonstanten in der aktuellen Elexis Version 1.4.1 weder gelöscht, noch geändert werden können. Bei allfälligen Schreibfehlern müssen Sie das Abrechnungssystem löschen und neu erstellen.
 \subsubsection{Stammdatenpflege}
 Der Physiotarif kann in der Perspektive Leistungen bearbeitet werden (Abb.\ref{fig:abr26}). Die Leistungspositionen können dort manuell hinzugefügt und bearbeitet oder auch mittels Dreiecksmenü als CSV importiert werden (siehe \href{http://www.elexis.ch/jp/index.php?option=content&task=view&id=57}{Downloads Stammdaten auf www.elexis.ch}).
