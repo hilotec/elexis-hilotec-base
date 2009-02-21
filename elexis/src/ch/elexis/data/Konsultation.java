@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 4829 2008-12-17 17:05:11Z psiska $
+ *  $Id: Konsultation.java 5170 2009-02-21 19:44:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -692,7 +692,10 @@ public class Konsultation extends PersistentObject implements
 
 	}
 
-	/** Wieviel Umsatz (in Rappen) bringt uns diese Konsultation ein? */
+	/** Wieviel Umsatz (in Rappen) bringt uns diese Konsultation ein?
+	 * @deprecated not accurate. use getLeistungen()
+	 *  */
+	@Deprecated
 	public double getUmsatz() {
 		double sum = 0.0;
 		Stm stm = j.getStatement();
@@ -714,7 +717,10 @@ public class Konsultation extends PersistentObject implements
 
 	}
 
-	/** Wieviel vom Umsatz bleibt uns von dieser Konsultation? */
+	/** Wieviel vom Umsatz bleibt uns von dieser Konsultation? 
+	 * 
+	 * */
+	@Deprecated
 	public double getGewinn() {
 		return getUmsatz() - getKosten();
 	}

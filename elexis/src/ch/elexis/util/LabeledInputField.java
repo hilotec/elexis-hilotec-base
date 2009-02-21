@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LabeledInputField.java 4410 2008-09-12 14:28:19Z rgw_ch $
+ * $Id: LabeledInputField.java 5170 2009-02-21 19:44:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -29,6 +29,7 @@ import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Money;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 

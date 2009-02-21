@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 5167 2009-02-21 19:01:52Z rgw_ch $
+ *  $Id: Rechnungslauf.java 5170 2009-02-21 19:44:23Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -31,6 +31,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
@@ -170,7 +171,10 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					String mid = k2.get("MandantID");
 					if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 						list2.put(k2, kPatient);
-						sum.addAmount(k2.getUmsatz() / 100.0);
+						List<Verrechnet> lstg=k2.getLeistungen();
+						for(Verrechnet v:lstg){
+							sum.addMoney(v.getNettoPreis());
+						}
 					}
 				}
 				if (sum.isMoreThan(mLimit)) {

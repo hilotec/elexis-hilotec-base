@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedDetailDialog.java 4407 2008-09-11 15:32:29Z rgw_ch $
+ * $Id: TarmedDetailDialog.java 5170 2009-02-21 19:44:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.util.Money;
+import ch.rgw.tools.Money;
 import ch.elexis.util.SWTHelper;
 
 public class TarmedDetailDialog extends Dialog {

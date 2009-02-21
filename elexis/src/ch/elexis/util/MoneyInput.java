@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MoneyInput.java 4709 2008-12-02 17:58:03Z rgw_ch $
+ *  $Id: MoneyInput.java 5170 2009-02-21 19:44:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -16,6 +16,7 @@ package ch.elexis.util;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -113,6 +114,10 @@ public class MoneyInput extends Composite {
 			}
 		}
 		try {
+			char s=Money.getSeparator();
+			if(t.indexOf(s)==-1){
+				t+=s+"00";
+			}
 			return new Money(t);
 		} catch (ParseException px) {
 			ExHandler.handle(px);

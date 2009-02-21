@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2009, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *    Gerry Weirich - adapted to use the new AccountTransaction-class
  *    				  actions added
  *    
- *  $Id: AccountView.java 4771 2008-12-08 13:36:36Z rgw_ch $
+ *  $Id: AccountView.java 5170 2009-02-21 19:44:23Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -51,9 +51,9 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.AddBuchungDialog;
-import ch.elexis.util.Money;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.tools.Money;
 
 /**
  * This view shows the current patient's account
