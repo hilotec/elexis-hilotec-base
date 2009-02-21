@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Import_Agenda.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ * $Id: Import_Agenda.java 5171 2009-02-21 19:51:16Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
@@ -24,7 +24,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.Synchronizer;
@@ -33,10 +37,11 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
-import ch.elexis.util.Result;
+import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.JdbcLink.Stm;
 
 
@@ -67,7 +72,7 @@ public class Import_Agenda extends ImporterPage{
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		Result<JdbcLink> res=importer.getConnection();
 		if(!res.isOK()){
-			return res.asStatus();
+			return ResultAdapter.getResultAsStatus(res);
 		}
 		JdbcLink j=res.get();
 		int size=j.queryInt("SELECT COUNT(0) FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'");

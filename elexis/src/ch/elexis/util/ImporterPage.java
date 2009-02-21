@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - DBBased Importer
  *    
- * $Id: ImporterPage.java 3007 2007-08-23 11:18:16Z rgw_ch $
+ * $Id: ImporterPage.java 5171 2009-02-21 19:51:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -39,6 +39,7 @@ import ch.elexis.Hub;
 import ch.elexis.wizards.DBImportWizard;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -287,14 +288,14 @@ public abstract class ImporterPage implements IExecutableExtension{
         	}else if(h.results[0].equalsIgnoreCase("odbc")){ //$NON-NLS-1$
         		ret=JdbcLink.createODBCLink(h.results[1]);
         	}else{
-        		return new Result<JdbcLink>(Log.ERRORS,1,Messages.getString("ImporterPage.unknownType"),null,true); //$NON-NLS-1$
+        		return new Result<JdbcLink>(Result.SEVERITY.ERROR,1,Messages.getString("ImporterPage.unknownType"),null,true); //$NON-NLS-1$
         	}
         	if(ret!=null){
         		if(ret.connect(h.results[3], h.results[4])){
         			return new Result<JdbcLink>(ret);
         		}
         	}
-        	return new Result<JdbcLink>(Log.ERRORS,2,Messages.getString("ImporterPage.couldntConnect"),ret,true); //$NON-NLS-1$
+        	return new Result<JdbcLink>(Result.SEVERITY.ERROR,2,Messages.getString("ImporterPage.couldntConnect"),ret,true); //$NON-NLS-1$
         }
     }
 }
