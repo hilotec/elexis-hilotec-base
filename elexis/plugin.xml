@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 5075 2009-02-01 16:40:56Z rgw_ch $ 
+<!-- $Id: plugin.xml 5175 2009-02-22 17:54:06Z rgw_ch $ 
  * Copyright (c) 2005-2007, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -297,9 +297,10 @@
             id="ch.elexis.BestellBlatt"
             name="%elexis.orderPrintView"/>
       <view
+            allowMultiple="false"
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.KonsListe"
-            icon="rsc/book_open.png"
+            icon="rsc/plaf/modern/icons/book_open_view.png"
             id="ch.elexis.HistoryView"
             name="%elexis.historyView"/>
       <view
@@ -427,6 +428,14 @@
       <category
             id="ch.elexis.abrechnungKategorie"
             name="%elexis.accountingCategory"/>
+      <view
+            category="ch.elexis.konsultationKategorie"
+            class="ch.elexis.views.KonsListeView2"
+            icon="rsc/plaf/modern/icons/buch.png"
+            id="ch.elexis.HistoryViewV2"
+            name="Konsultationen (V2)"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

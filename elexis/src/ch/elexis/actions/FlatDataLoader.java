@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5132 2009-02-14 10:35:52Z rgw_ch $
+ * $Id: FlatDataLoader.java 5175 2009-02-22 17:54:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -49,8 +49,7 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 			filtered.clear();
 		}
 		filtered = null;
-		qbe.clear();
-		cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
+		setQuery();
 		applyQueryFilters();
 		if (orderField != null) {
 			qbe.orderBy(false, orderField);
@@ -72,7 +71,19 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		
 		return Status.OK_STATUS;
 	}
-	
+
+	public void setResult(List<PersistentObject> res){
+		raw=res;
+	}
+	/**
+	 * prepare the query so it returns the appropriate Objects on execute().
+	 * The default implemetation lets the ControlFieldProvider set the query.
+	 * Subclasses may override
+	 */
+	protected void setQuery(){
+		qbe.clear();
+		cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
+	}
 	public void updateElement(int index){
 		if (index >= 0 && index < filtered.size()) {
 			Object o = filtered.get(index);
