@@ -83,6 +83,9 @@ public class FileTool {
 		}
 		if (dest.exists()) {
 			String pname = dest.getAbsolutePath();
+			if(pname.equalsIgnoreCase(src.getAbsolutePath())){
+				return true;
+			}
 			switch (if_exists) {
 			case REPLACE_IF_EXISTS:
 				if (dest.delete() == false) {
