@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KonsListeView2.java 5175 2009-02-22 17:54:06Z rgw_ch $
+ * $Id: KonsListeView2.java 5176 2009-02-23 06:03:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -54,24 +55,24 @@ import ch.elexis.util.viewers.CommonViewer.Message;
 import ch.rgw.tools.ExHandler;
 
 public class KonsListeView2 extends ViewPart implements ActivationListener, SelectionListener {
-	public static final String ID="ch.elexis.HistoryViewV2";
+	public static final String ID = "ch.elexis.HistoryViewV2";
 	private IAction newKonsAction, filterAction;
 	Query<Konsultation> qbe;
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	private Patient actPatient;
-	private KonsFilter filter=null;
+	private KonsFilter filter = null;
+	private KonsLoader loader;
 	
 	@Override
 	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
-		cv=new CommonViewer();
-		qbe=new Query<Konsultation>(Konsultation.class);
-		vc=new ViewerConfigurer(
-			new KonsLoader(cv,qbe),
-			new KonsListeTextProvider(),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,0,cv)
-			);
+		cv = new CommonViewer();
+		qbe = new Query<Konsultation>(Konsultation.class);
+		loader = new KonsLoader(cv, qbe);
+		vc =
+			new ViewerConfigurer(loader, new KonsListeTextProvider(), new SimpleWidgetProvider(
+				SimpleWidgetProvider.TYPE_LAZYLIST, 0, cv));
 		makeActions();
 		ViewMenus menus = new ViewMenus(getViewSite());
 		menus.createToolbar(newKonsAction, filterAction);
@@ -138,97 +139,115 @@ public class KonsListeView2 extends ViewPart implements ActivationListener, Sele
 						setChecked(false);
 					}
 				}
-	
+				
 			}
 		};
-
-	}
-
-	public void activation(boolean mode){
-		// TODO Auto-generated method stub
 		
 	}
-
+	
+	public void activation(boolean mode){
+	// TODO Auto-generated method stub
+	
+	}
+	
 	public void visible(boolean mode){
-		if(mode){
+		if (mode) {
 			GlobalEvents.getInstance().addSelectionListener(this);
-		}else{
+		} else {
 			GlobalEvents.getInstance().removeSelectionListener(this);
 		}
 		
 	}
-
+	
 	public void clearEvent(Class<? extends PersistentObject> template){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	public void selectionEvent(PersistentObject obj){
-		if(obj instanceof Patient){
-			actPatient=(Patient)obj;
-			//((TableViewer)cv.getViewerWidget()).setItemCount(0);
-			cv.notify(Message.update);
+		if (obj instanceof Patient) {
+			Patient pat = (Patient) obj;
+			if (!pat.equals(actPatient)) {
+				actPatient = pat;
+				loader.invalidate();
+			}
 		}
 		
 	}
-	private class KonsLoader extends FlatDataLoader{
+	
+	private class KonsLoader extends FlatDataLoader {
 		PreparedStatement ps;
 		LinkedList<String> kids;
+		
 		private KonsLoader(CommonViewer cv, Query<Konsultation> qbe){
-			super(cv,qbe);
-			String sql="SELECT k.id from behandlungen as k, faelle as f where f.PatientID=? AND k.FallID=f.ID order by k.Datum";
-			ps=PersistentObject.getConnection().prepareStatement(sql);
+			super(cv, qbe);
+			String sql =
+				"SELECT k.id from behandlungen as k, faelle as f where f.PatientID=? AND k.FallID=f.ID order by k.Datum desc";
+			ps = PersistentObject.getConnection().prepareStatement(sql);
 		}
-
+		
+		void invalidate(){
+			kids = null;
+			reorder(null);
+		}
 		
 		@Override
 		public IStatus work(final IProgressMonitor monitor, final HashMap<String, Object> params){
-			try{
+			try {
+				if (actPatient == null) {
+					// return Status.CANCEL_STATUS;
+					Query<Patient> qp = new Query<Patient>(Patient.class);
+					qp.add("Bezeichnung1", "Like", "a%");
+					List<Patient> res = qp.execute();
+					actPatient = res.get(0);
+				}
 				ps.setString(1, actPatient.getId());
-				ResultSet rs=ps.executeQuery();
-				kids=new LinkedList<String>();
-				while(rs!=null && rs.next()){
+				ResultSet rs = ps.executeQuery();
+				kids = new LinkedList<String>();
+				while (rs != null && rs.next()) {
 					kids.add(rs.getString(1));
 				}
 				rs.close();
-				TableViewer tv = (TableViewer) cv.getViewerWidget();
-				tv.setItemCount(kids.size());
-			}catch(Exception ex){
+				Desk.asyncExec(new Runnable() {
+					public void run(){
+						TableViewer tv = (TableViewer) cv.getViewerWidget();
+						tv.setItemCount(kids.size());
+					}
+				});
+			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
 			
 			return Status.CANCEL_STATUS;
 		}
-
-
+		
 		@Override
 		public void updateElement(int index){
-			if(index>0 && index<kids.size()){
-				String kid=kids.get(index);
-				if(kid!=null){
-					Konsultation k=Konsultation.load(kid);
-					if(k.isValid()){
+			
+			if (kids != null && index >= 0 && index < kids.size()) {
+				String kid = kids.get(index);
+				if (kid != null) {
+					Konsultation k = Konsultation.load(kid);
+					if (k.exists()) {
 						TableViewer tv = (TableViewer) cv.getViewerWidget();
 						tv.replace(k, index);
 					}
 				}
 			}
 		}
-
-
-		
 		
 	}
-	private static class KonsListeTextProvider extends LabelProvider implements ITableLabelProvider{
-
+	
+	private static class KonsListeTextProvider extends LabelProvider implements ITableLabelProvider {
+		
 		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
+		
 		public String getColumnText(Object element, int columnIndex){
-			if(element instanceof Konsultation){
-				return ((Konsultation)element).getLabel();
+			if (element instanceof Konsultation) {
+				return ((Konsultation) element).getLabel();
 			}
 			return "?";
 		}
