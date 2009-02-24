@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KassenbuchEintrag.java 4940 2009-01-13 17:47:35Z rgw_ch $
+ *  $Id: KassenbuchEintrag.java 5193 2009-02-24 15:48:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -46,7 +46,7 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 			"BelegNr=Nr", "Kategorie=Category");
 		KassenbuchEintrag version = KassenbuchEintrag.load("1");
 		if (!version.exists()) {
-			createTable(TABLENAME, createDB);
+			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(version.getText());
 			if (vi.isOlder(VERSION)) {
@@ -55,11 +55,11 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
 				}
 				if (vi.isOlder("1.1.0")) {
-					createTable(TABLENAME, "ALTER TABLE " + TABLENAME
+					createOrModifyTable("ALTER TABLE " + TABLENAME
 						+ " ADD Category VARCHAR(80);");
 				}
 				if (vi.isOlder("1.2.0")) {
-					createTable(TABLENAME, "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 				}
 				version.set("Text", VERSION);
 			}
