@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 4951 2009-01-14 13:21:15Z rgw_ch $
+ *    $Id: Termin.java 5189 2009-02-24 15:48:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -50,7 +50,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final String createDB =
 		"CREATE TABLE AGNTERMINE("
 			+ "ID              VARCHAR(127) primary key,"
-			+"lastupdate BIGINT,"
+			+ "lastupdate BIGINT,"
 			+ // we need that size to be able to import ics files
 			"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25)," + "Tag             CHAR(8),"
 			+ "Beginn          CHAR(4)," + "Dauer           CHAR(4)," + "Grund           TEXT,"
@@ -68,8 +68,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		"ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);"
 			+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);";
 	
-	private static final String upd124=
-		"ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;";
+	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;";
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", "Wer=PatID", "Tag", "Beginn", "Dauer", "Grund",
 			"Typ=TerminTyp", "Status=TerminStatus", "ErstelltVon", "ErstelltWann=Angelegt",
@@ -112,10 +111,10 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 						j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);");
 					}
 				} else if (vi.isOlder("1.2.3")) {
-					createTable("AGNTERMINE", upd122);
+					createOrModifyTable(upd122);
 				}
-				if(vi.isOlder("1.2.4")){
-					createTable("AGNTERMINE", upd124);
+				if (vi.isOlder("1.2.4")) {
+					createOrModifyTable(upd124);
 				}
 				Version.set("Wer", VERSION);
 			}
