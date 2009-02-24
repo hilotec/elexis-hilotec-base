@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 4938 2009-01-13 17:47:09Z rgw_ch $
+ *    $Id: Bild.java 5186 2009-02-24 15:47:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -74,7 +74,7 @@ public class Bild extends PersistentObject {
 	 * Tabelle neu erstellen
 	 */
 	public static void init(){
-		createTable(TABLENAME, createDB);
+		createOrModifyTable(createDB);
 	}
 	
 	public Bild(Patient patient, String Titel, byte[] data){
