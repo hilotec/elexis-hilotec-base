@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Interaction.java 4999 2009-01-22 14:25:53Z rgw_ch $
+ * $Id: Interaction.java 5183 2009-02-24 15:47:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -66,7 +66,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 			"Contributor", "ContribDate=S:D:ContribDate");
 		Interaction v = load("VERSION");
 		if (v.state() < PersistentObject.DELETED) {
-			createTable("Interactions", createDB);
+			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(v.get("Type"));
 			if (vi.isOlder(VERSION)) {
@@ -74,7 +74,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 					final String update =
 						"ALTER TABLE " + TABLENAME + " ADD Contributor VARCHAR(25); "
 							+ "ALTER TABLE " + TABLENAME + " ADD ContribDate CHAR(8);";
-					createTable("Interaktion", update);
+					createOrModifyTable(update);
 					v.set("Type", VERSION);
 				} else {
 					SWTHelper.showError("Datenbank Fehler", "Tabelle Interactions ist zu alt");

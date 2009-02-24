@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 4999 2009-01-22 14:25:53Z rgw_ch $
+ *  $Id: Substance.java 5183 2009-02-24 15:47:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -46,7 +46,7 @@ public class Substance extends PersistentObject {
 			+ Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
 		Substance v = load("VERSION");
 		if (v.state() < PersistentObject.DELETED) {
-			createTable(TABLENAME, createDB);
+			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(v.get("name"));
 			if (vi.isOlder(VERSION)) {
