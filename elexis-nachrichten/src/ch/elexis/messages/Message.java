@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Message.java 4937 2009-01-13 17:47:02Z rgw_ch $
+ * $Id: Message.java 5182 2009-02-24 15:47:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -40,7 +40,7 @@ public class Message extends PersistentObject {
 			VersionInfo vi = new VersionInfo(ver.get("from"));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.2.0")) {
-					createTable(TABLENAME, "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 					ver.set("from", VERSION);
 				}
 			}
@@ -49,7 +49,7 @@ public class Message extends PersistentObject {
 	}
 	
 	static void initialize(){
-		createTable(TABLENAME, createDB);
+		createOrModifyTable(createDB);
 	}
 	
 	public Message(final Anwender an, final String text){
