@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRRecord.java 4950 2009-01-14 13:21:08Z rgw_ch $
+ *  $Id: ESRRecord.java 5185 2009-02-24 15:47:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -83,7 +83,7 @@ public class ESRRecord extends PersistentObject {
 		);
 		ESRRecord init = load("1"); //$NON-NLS-1$
 		if (init == null) {
-			createTable(TABLENAME, createDB);
+			createOrModifyTable(createDB);
 		} else {
 			String v = init.get("File"); //$NON-NLS-1$
 			if (StringTool.isNothing(v)) { // < version 1
@@ -93,7 +93,7 @@ public class ESRRecord extends PersistentObject {
 			}else{
 				VersionInfo vi=new VersionInfo(v);
 				if(vi.isOlder("2.0.0")){
-					createTable(TABLENAME, upd2);
+					createOrModifyTable(upd2);
 					
 				}
 				init.set("File", VERSION); //$NON-NLS-1$
