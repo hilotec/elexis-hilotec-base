@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 4933 2009-01-13 17:46:15Z rgw_ch $
+ *  $Id: DocHandle.java 5188 2009-02-24 15:47:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -76,11 +76,11 @@ public class DocHandle extends PersistentObject {
 					start.set("Titel", DBVERSION);
 				} 
 				if (vi.isOlder("1.2.0")) {
-					createTable(TABLENAME, upd120);
+					createOrModifyTable(upd120);
 					start.set("Titel", DBVERSION);
 				} 
 				if(vi.isOlder("1.2.1")){
-					createTable(TABLENAME, upd121);
+					createOrModifyTable(upd121);
 					start.set("Titel", DBVERSION);
 				}
 				
@@ -108,7 +108,7 @@ public class DocHandle extends PersistentObject {
 	 * Tabelle neu erstellen
 	 */
 	public static void init(){
-		createTable(TABLENAME, createDB);
+		createOrModifyTable(createDB);
 	}
 	
 	public static DocHandle load(String id){
