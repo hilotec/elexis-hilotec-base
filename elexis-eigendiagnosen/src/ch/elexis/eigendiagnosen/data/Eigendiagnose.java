@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 4935 2009-01-13 17:46:43Z rgw_ch $
+ *    $Id: Eigendiagnose.java 5181 2009-02-24 15:47:01Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -52,7 +52,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 		} else { // found existing table, check version
 			VersionInfo v = new VersionInfo(check.get("Text"));
 			if (v.isOlder("0.1.1")) {
-				createTable(TABLENAME, "ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;");
+				createOrModifyTable("ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;");
 				check.set("Text", VERSION);
 				
 			}
@@ -70,7 +70,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 	}
 	
 	public static void initialize(){
-		createTable(TABLENAME, createDB);
+		createOrModifyTable(createDB);
 	}
 	
 	@Override
