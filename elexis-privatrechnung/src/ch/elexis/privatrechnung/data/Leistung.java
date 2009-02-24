@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 5089 2009-02-05 11:13:18Z rgw_ch $
+ * $Id: Leistung.java 5180 2009-02-24 15:46:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -89,16 +89,16 @@ public class Leistung extends VerrechenbarAdapter {
 		Leistung check = load("VERSION");
 		if (check.state() < PersistentObject.DELETED) { // Object never existed, so we have to
 			// create the database
-			createTable(TABLENAME, createDB);
+			createOrModifyTable(createDB);
 		} else { // found existing table, check version
 			VersionInfo v = new VersionInfo(check.get("Name"));
 			if (v.isOlder(VERSION)) {
 				if (v.isOlder("0.3.0")) {
-					createTable(TABLENAME, UPDATE_030);
+					createOrModifyTable(UPDATE_030);
 					check.set("Name", "0.3.0");
 				}
 				if (v.isOlder("0.3.1")) {
-					createTable(TABLENAME, UPDATE_031);
+					createOrModifyTable(UPDATE_031);
 					check.set("Name", VERSION);
 				}
 				
@@ -108,7 +108,7 @@ public class Leistung extends VerrechenbarAdapter {
 	}
 	
 	public static void createTable(){
-		createTable(TABLENAME, createDB);
+		createOrModifyTable(createDB);
 	}
 	
 	public String getXidDomain(){
