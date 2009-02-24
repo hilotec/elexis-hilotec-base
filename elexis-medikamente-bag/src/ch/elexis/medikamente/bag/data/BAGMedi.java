@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BAGMedi.java 5050 2009-01-27 05:46:25Z rgw_ch $
+ *  $Id: BAGMedi.java 5187 2009-02-24 15:47:44Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -48,9 +48,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	static final IOptifier bagOptifier = new BAGOptifier();
 	
 	static final String extDB =
-		"CREATE TABLE " + EXTTABLE + " (" + 
-		"ID				VARCHAR(25) primary key,"
-		+"lastupdate BIGINT,"
+		"CREATE TABLE " + EXTTABLE + " (" + "ID				VARCHAR(25) primary key," + "lastupdate BIGINT,"
 			+ "deleted			CHAR(1) default '0'," + "keywords			VARCHAR(80)," + "prescription		TEXT,"
 			+ "KompendiumText	TEXT" + ");";
 	
@@ -77,16 +75,16 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 				"SELECT substance FROM " + JOINTTABLE + " WHERE ID='VERSION';");
 		
 		if (v == null) {
-			createTable("BAGMedi", jointDB);
-			createTable("BAGMedi", extDB);
+			createOrModifyTable(jointDB);
+			createOrModifyTable(extDB);
 		} else {
 			VersionInfo vi = new VersionInfo(v);
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.1.1")) {
-					createTable("Exttable", extDB);
+					createOrModifyTable(extDB);
 				}
-				if(vi.isOlder("0.1.2")){
-					createTable(EXTTABLE,"ALTER TABLE "+EXTTABLE+" add lastupdate BIGINT;");
+				if (vi.isOlder("0.1.2")) {
+					createOrModifyTable("ALTER TABLE " + EXTTABLE + " add lastupdate BIGINT;");
 				}
 				getConnection()
 					.exec(

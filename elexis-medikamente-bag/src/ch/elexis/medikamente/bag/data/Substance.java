@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ * $Id: Interaction.java 3188 2007-09-23 06:53:52Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
 import java.util.Collection;
@@ -33,18 +45,18 @@ public class Substance extends PersistentObject {
 			+ BAGMedi.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
 		Substance v = load("VERSION");
 		if (v.state() < PersistentObject.DELETED) {
-			createTable("Substance", createDB);
+			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(v.get("name"));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.1.0")) {
 					SWTHelper.showError("Datenbank Fehler", "Tabelle Substance ist zu alt");
-				} 
+				}
 				if (vi.isOlder("0.2.0")) {
-					createTable(TABLENAME, UPD020);
+					createOrModifyTable(UPD020);
 				}
 				if (vi.isOlder("0.3.0")) {
-					createTable(TABLENAME, UPD030);
+					createOrModifyTable(UPD030);
 				}
 				v.set("name", VERSION);
 				
