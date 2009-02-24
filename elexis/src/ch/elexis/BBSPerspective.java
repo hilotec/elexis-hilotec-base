@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BBSPerspective.java 4695 2008-11-22 05:58:01Z rgw_ch $
+ *    $Id: BBSPerspective.java 5194 2009-02-24 16:31:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -17,9 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.views.BBSView;
-import ch.elexis.views.Starter;
 
 /**
  * Schwarzes Brett. Jeder angemeldete Anwender kann Themen eröffnen und/oder Anwprten zu schon
@@ -35,9 +33,6 @@ public class BBSPerspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(true);
-		if (Hub.localCfg.get(PreferenceConstants.SHOWSIDEBAR, "true").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
-			layout.addStandaloneView(Starter.ID, false, SWT.LEFT, 0.1f, editorArea);
-		}
 		layout.addView(BBSView.ID, SWT.RIGHT, 0.9f, editorArea);
 		
 	}

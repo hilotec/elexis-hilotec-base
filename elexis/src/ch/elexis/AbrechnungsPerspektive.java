@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AbrechnungsPerspektive.java 4686 2008-11-18 17:54:13Z rgw_ch $
+ *    $Id: AbrechnungsPerspektive.java 5194 2009-02-24 16:31:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -18,12 +18,10 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.views.FallDetailView;
 import ch.elexis.views.KonsDetailView;
 import ch.elexis.views.PatHeuteView;
 import ch.elexis.views.PatientDetailView2;
-import ch.elexis.views.Starter;
 import ch.elexis.views.rechnung.KonsZumVerrechnenView;
 import ch.elexis.views.rechnung.RechnungsListeView;
 import ch.elexis.views.rechnung.RnDetailView;
@@ -41,15 +39,9 @@ public class AbrechnungsPerspektive implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
-		if (Hub.localCfg
-			.get(PreferenceConstants.SHOWSIDEBAR, "true").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
-			layout.addStandaloneView(Starter.ID, false, SWT.LEFT, 0.1f,
-				editorArea);
-		}
 		IFolderLayout fld = layout.createFolder("AbrechnungsFolder", SWT.RIGHT, //$NON-NLS-1$
 			0.6f, editorArea);
-		IFolderLayout frd =
-			layout.createFolder("Detailfolder", SWT.RIGHT, 0.4f, editorArea); //$NON-NLS-1$
+		IFolderLayout frd = layout.createFolder("Detailfolder", SWT.RIGHT, 0.4f, editorArea); //$NON-NLS-1$
 		fld.addView(PatHeuteView.ID);
 		fld.addView(KonsZumVerrechnenView.ID);
 		fld.addView(RechnungsListeView.ID);
