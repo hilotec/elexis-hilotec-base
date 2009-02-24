@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Note.java 5056 2009-01-27 13:04:37Z rgw_ch $
+ *  $Id: Note.java 5179 2009-02-24 15:46:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -66,7 +66,7 @@ public class Note extends PersistentObject {
 			"mimetype");
 		Note start = load("1");
 		if (!start.exists()) {
-			createTable(TABLENAME, create);
+			createOrModifyTable(create);
 		} else {
 			VersionInfo vi = new VersionInfo(start.get("Title"));
 			if (vi.isOlder(DBVERSION)) {
@@ -75,10 +75,10 @@ public class Note extends PersistentObject {
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
 				}
 				if (vi.isOlder("0.3.1")) {
-					createTable(TABLENAME, upd031);
+					createOrModifyTable(upd031);
 				}
 				if (vi.isOlder("0.3.2")) {
-					createTable(TABLENAME, upd032);
+					createOrModifyTable(upd032);
 				}
 				
 				start.set("Title", DBVERSION);
