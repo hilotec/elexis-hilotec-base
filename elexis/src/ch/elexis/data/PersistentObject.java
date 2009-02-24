@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5131 2009-02-14 06:09:20Z rgw_ch $
+ *    $Id: PersistentObject.java 5191 2009-02-24 15:48:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,8 +35,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -1914,22 +1917,31 @@ public abstract class PersistentObject {
 	 * Utility function to create or modify a table consistently. Should be used by all plugins that
 	 * contributa data types derived from PersistentObject
 	 * 
-	 * @param name
-	 *            name of the table to create
-	 * @param jointDB
+	 * @param sqlScript
 	 *            create string
 	 */
-	protected static void createTable(final String name, final String jointDB){
-		ByteArrayInputStream bais;
+	protected static void createOrModifyTable(final String sqlScript){
 		try {
-			bais = new ByteArrayInputStream(jointDB.getBytes("UTF-8"));
-			if (getConnection().execScript(bais, true, false) == false) {
-				SWTHelper.showError("Datenbank-Fehler", "Konnte Tabelle " + name
-					+ " nicht erstellen");
-			}
-		} catch (UnsupportedEncodingException e) {
-			// should really never happen
-			e.printStackTrace();
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+				new IRunnableWithProgress() {
+					public void run(IProgressMonitor moni){
+						moni.beginTask("Führe Datenbankmodifikation aus", IProgressMonitor.UNKNOWN);
+						try {
+							final ByteArrayInputStream bais;
+							bais = new ByteArrayInputStream(sqlScript.getBytes("UTF-8"));
+							if (getConnection().execScript(bais, true, false) == false) {
+								SWTHelper.showError("Datenbank-Fehler",
+									"Konnte Datenbank-Script nicht ausführen");
+							}
+							moni.done();
+						} catch (UnsupportedEncodingException e) {
+							// should really never happen
+							e.printStackTrace();
+						}
+					}
+				});
+		} catch (Exception e) {
+			SWTHelper.showError("Interner-Fehler", "Konnte Datenbank-Script nicht ausführen");
 		}
 	}
 	

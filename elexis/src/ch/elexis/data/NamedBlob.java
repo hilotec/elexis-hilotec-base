@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 5048 2009-01-26 21:44:06Z rgw_ch $
+ *  $Id: NamedBlob.java 5191 2009-02-24 15:48:18Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -210,6 +210,6 @@ public class NamedBlob extends PersistentObject {
 			"CREATE TABLE HEAP(" + "ID			VARCHAR(80) primary key,"
 				+ "deleted		CHAR(1) default '0'," + "inhalt		BLOB," + "datum		CHAR(8),"
 				+ "lastupdate   BIGINT" + ");";
-		createTable("HEAP", create);
+		createOrModifyTable(create);
 	}
 }
