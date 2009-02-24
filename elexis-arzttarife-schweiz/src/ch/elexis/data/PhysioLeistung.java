@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009, G. Weirich, medshare and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistung.java 5148 2009-02-18 15:19:02Z rgw_ch $
+ * $Id: PhysioLeistung.java 5192 2009-02-24 15:48:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -38,7 +38,7 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Physiotarif", Xid.ASSIGNMENT_LOCAL);
 		PhysioLeistung pv = PhysioLeistung.load("VERSION");
 		if (!pv.exists()) {
-			createTable(TABLENAME, createDB);
+			createOrModifyTable(createDB);
 			pv.create("VERSION");
 			pv.set("Ziffer", VERSION);
 		}
