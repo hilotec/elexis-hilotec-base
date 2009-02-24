@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz - extended table
  *    
- *  $Id: Episode.java 4943 2009-01-13 17:49:14Z rgw_ch $
+ *  $Id: Episode.java 5178 2009-02-24 15:46:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -71,8 +71,8 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 		JdbcLink j = getConnection();
 		Episode version = load("1");
 		if (!version.exists()) {
-			createTable(TABLENAME, createDB);
-			createTable(TABLENAME + "_DIAGNOSES_LINK", createLink);
+			createOrModifyTable(createDB);
+			createOrModifyTable(createLink);
 		} else {
 			VersionInfo vi = new VersionInfo(version.get("Title"));
 			if (vi.isOlder(VERSION)) {
@@ -112,11 +112,11 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 					version.set("Title", VERSION);
 				}
 				if (vi.isOlder("0.4.0")) {
-					createTable(TABLENAME + "_DIAGNOSES_LINK", createLink);
+					createOrModifyTable(createLink);
 					version.set("Title", VERSION);
 				}
 				if(vi.isOlder("0.4.1")){
-					createTable(TABLENAME, upd041);
+					createOrModifyTable(upd041);
 					version.set("Title", VERSION);
 				}
 			}

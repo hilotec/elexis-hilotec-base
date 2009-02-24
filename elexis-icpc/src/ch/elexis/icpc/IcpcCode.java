@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcCode.java 5015 2009-01-23 16:31:47Z rgw_ch $
+ *    $Id: IcpcCode.java 5178 2009-02-24 15:46:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -55,7 +55,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		VersionInfo vi = new VersionInfo(ver.get("text"));
 		if (vi.isOlder(VERSION)) {
 			if (vi.isOlder("1.2.1")) {
-				createTable(TABLENAME, "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+				createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 				ver.set("text", VERSION);
 			}
 		}
@@ -63,7 +63,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public static void initialize(){
-		createTable(TABLENAME, createDB);
+		createOrModifyTable(createDB);
 	}
 	
 	public static Tree getRoot(){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Encounter.java 5119 2009-02-10 17:42:43Z rgw_ch $
+ *  $Id: Encounter.java 5178 2009-02-24 15:46:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -34,7 +34,7 @@ public class Encounter extends PersistentObject {
 		addMapping(TABLENAME, "KonsID=KONS", "EpisodeID=EPISODE", "RFE", "Diag", "Proc", "ExtInfo");
 		Encounter version = load("1");
 		if (!version.exists()) {
-			createTable(TABLENAME, createDB);
+			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(version.get("KonsID"));
 			if (vi.isOlder(VERSION)) {
@@ -43,7 +43,7 @@ public class Encounter extends PersistentObject {
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
 					version.set("KonsID", VERSION);
 				} else if (vi.isOlder("0.2.1")) {
-					createTable(TABLENAME, "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 					version.set("KonsID", VERSION);
 				}
 			}
