@@ -1,5 +1,5 @@
 /**
- * (c) 2007 by G. Weirich
+ * (c) 2007-2009 by G. Weirich
  * All rights reserved
  * $Id: HL7.java 2491 2007-06-08 07:14:29Z rgw_ch $
  * 
@@ -24,8 +24,8 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.util.Log;
-import ch.elexis.util.Result;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -67,7 +67,7 @@ public class HL7 {
 	 */
 	public Result<String> load(File file){
 		if(!file.canRead()){
-			return new Result<String>(Log.ERRORS,1,"Kann Datei nicht lesen",file.getAbsolutePath(),true);
+			return new Result<String>(Result.SEVERITY.ERROR,1,"Kann Datei nicht lesen",file.getAbsolutePath(),true);
 		}
 		try{
 			//FileReader fr=new FileReader(file);
@@ -76,7 +76,7 @@ public class HL7 {
 			InputStreamReader fr = new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET);
 			char[] in=new char[(int)file.length()];
 			if(fr.read(in)!=in.length){
-				return new Result<String>(Log.ERRORS,3,"EOF",file.getAbsolutePath(),true);
+				return new Result<String>(Result.SEVERITY.ERROR,3,"EOF",file.getAbsolutePath(),true);
 			}
 			String hl7raw=new String(in);
 			lines=hl7raw.split("[\\r\\n]+");
@@ -85,7 +85,7 @@ public class HL7 {
 			return new Result<String>("OK");
 		}catch(Exception ex){
 			ExHandler.handle(ex);
-			return new Result<String>(Log.ERRORS,2,"Exception beim Lesen",ex.getMessage(),true);
+			return new Result<String>(Result.SEVERITY.ERROR,2,"Exception beim Lesen",ex.getMessage(),true);
 		} finally {
 		}
 		
@@ -166,7 +166,7 @@ public class HL7 {
 				if (psa.getPatient() != null) {
 					pat = psa.getPatient();
 				} else {
-					return new Result<Patient>(Log.WARNINGS,1,"Patient nicht in Datenbank (ID: " + pid + ")",null,true);
+					return new Result<Patient>(Result.SEVERITY.WARNING,1,"Patient nicht in Datenbank (ID: " + pid + ")",null,true);
 				}
 			}else{
 				// if the patient with the given ID was found, we verify, if it is the correct name and sex
@@ -185,7 +185,7 @@ public class HL7 {
 					if (psa.getPatient() != null) {
 						pat = psa.getPatient();
 					} else {
-						return new Result<Patient>(Log.WARNINGS,4,"Patient mit dieser ID (" + pid + ") schon mit anderem Namen vorhanden"
+						return new Result<Patient>(Result.SEVERITY.WARNING,4,"Patient mit dieser ID (" + pid + ") schon mit anderem Namen vorhanden"
 								+ "(Labor: " + labLabel + ", Elexis: " + elexisLabel + ")",null,true);
 					}
 				}
