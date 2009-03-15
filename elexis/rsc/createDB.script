@@ -96,8 +96,8 @@ CREATE TABLE FAELLE(
 	Diagnosen		VARCHAR(80),					# diagnoses related to this case
 	DatumVon		CHAR(8),						# date of beginning
 	DatumBis		CHAR(8),						# end date
-	Bezeichnung		VARCHAR(50),					# title of the case
-	Grund			VARCHAR(50),					# reason for treatment
+	Bezeichnung		VARCHAR(80),					# title of the case
+	Grund			VARCHAR(80),					# reason for treatment
 	Gesetz			VARCHAR(20),					# deprecated, do not use
 	Status			VARCHAR(80),					# deprecated, do not use
 	ExtInfo			BLOB							# additional informations (hashtable)
@@ -136,7 +136,7 @@ CREATE TABLE ARTIKEL(
 	Minbestand		CHAR(4),						# min number on stock before ordering
 	Istbestand		CHAR(4),						# actual number on stock
 	EK_Preis		CHAR(8),						# cost (buy) in cents/rp
-	VK_Preis		CHAR(8),						# price (sell) in ents/rp
+	VK_Preis		CHAR(8),						# price (sell) in cents/rp
 	Typ				VARCHAR(15),					# type of the article
 	Codeclass		VARCHAR(10),					# used differently
 	ExtID			VARCHAR(25),					# used differently
