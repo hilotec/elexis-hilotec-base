@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, D. Lutz and Elexis
+ * Copyright (c) 2007-2009, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *    G. Weirich - additional methods
  *    medshare GmbH - XML validator
  *    
- *  $Id: XMLTool.java 5125 2009-02-11 14:45:05Z rgw_ch $
+ *  $Id: XMLTool.java 5206 2009-03-15 23:20:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.tools;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -28,8 +30,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -337,6 +342,22 @@ public class XMLTool {
 			
 		}
 		return null;
+	}
+	
+	public static boolean writeXMLDocument(Document doc, String dest){
+		try {
+			FileOutputStream fout = new FileOutputStream(dest);
+			OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
+			XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
+			xout.output(doc, cout);
+			cout.close();
+			fout.close();
+			return true;
+		} catch (Exception e) {
+			ExHandler.handle(e);
+			return false;
+		}
+		
 	}
 	
 }
