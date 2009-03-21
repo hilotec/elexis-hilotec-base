@@ -10,3 +10,4 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
  ch.rgw.utility
+Export-Package: ch.elexis.befunde.xchange
