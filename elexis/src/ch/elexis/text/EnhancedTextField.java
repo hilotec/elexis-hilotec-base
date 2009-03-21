@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 4630 2008-10-23 11:28:46Z rgw_ch $
+ *  $Id: EnhancedTextField.java 5219 2009-03-21 18:55:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -109,12 +109,13 @@ public class EnhancedTextField extends Composite {
 		hXrefs = xrefs;
 	}
 	
-	public void addXrefHandler(String id,IKonsExtension xref){
-		if(hXrefs==null){
-			hXrefs=new Hashtable<String, IKonsExtension>();
+	public void addXrefHandler(String id, IKonsExtension xref){
+		if (hXrefs == null) {
+			hXrefs = new Hashtable<String, IKonsExtension>();
 		}
 		hXrefs.put(id, xref);
 	}
+	
 	/**
 	 * Only needed for billing macros
 	 * 
@@ -389,26 +390,28 @@ public class EnhancedTextField extends Composite {
 			}
 			
 		}
-		for (Samdas.XRef xref : xrefs) {
-			IKonsExtension xProvider = hXrefs.get(xref.getProvider());
-			if (xProvider == null) {
-				continue;
-			}
-			StyleRange n = new StyleRange();
-			n.start = xref.getPos();
-			n.length = xref.getLength();
-			if (xProvider.doLayout(n, xref.getProvider(), xref.getID()) == true) {
-				links.add(xref);
-			}
-			
-			if ((n.start + n.length) > text.getCharCount()) {
-				n.length = text.getCharCount() - n.start;
-			}
-			if ((n.length > 0) && (n.start >= 0)) {
-				text.setStyleRange(n);
-				ranges.add(xref);
-			} else {
-				xref.setPos(0);
+		if (hXrefs != null) {
+			for (Samdas.XRef xref : xrefs) {
+				IKonsExtension xProvider = hXrefs.get(xref.getProvider());
+				if (xProvider == null) {
+					continue;
+				}
+				StyleRange n = new StyleRange();
+				n.start = xref.getPos();
+				n.length = xref.getLength();
+				if (xProvider.doLayout(n, xref.getProvider(), xref.getID()) == true) {
+					links.add(xref);
+				}
+				
+				if ((n.start + n.length) > text.getCharCount()) {
+					n.length = text.getCharCount() - n.start;
+				}
+				if ((n.length > 0) && (n.start >= 0)) {
+					text.setStyleRange(n);
+					ranges.add(xref);
+				} else {
+					xref.setPos(0);
+				}
 			}
 		}
 		

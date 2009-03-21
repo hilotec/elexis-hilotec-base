@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ * $Id: GlobalActions.java 5219 2009-03-21 18:55:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -153,10 +153,10 @@ public class GlobalActions {
 				}
 			};
 		
-		helpAction = new Action("Handbuch") {
+		helpAction = new Action(Messages.getString("GlobalActions.ac_handbook")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_BOOK));
-				setToolTipText("Handbuch öffnen");
+				setToolTipText(Messages.getString("GlobalActions.ac_openhandbook")); //$NON-NLS-1$
 				
 			}
 			
@@ -211,7 +211,7 @@ public class GlobalActions {
 					}
 				}
 			};
-		savePerspectiveAsDefaultAction = new Action("als Startperspektive speichern") {
+		savePerspectiveAsDefaultAction = new Action(Messages.getString("GlobalActions.saveasstartperspective")) { //$NON-NLS-1$
 			{
 				setId("start");
 				// setActionDefinitionId(Hub.COMMAND_PREFIX+"startPerspective");
@@ -336,15 +336,15 @@ public class GlobalActions {
 			};
 		
 		printVersionedEtikette =
-			new Action(Messages.getString("GlobalActions.PrintVersionedLabel")) {
+			new Action(Messages.getString("GlobalActions.PrintVersionedLabel")) { //$NON-NLS-1$
 				{
-					setToolTipText(Messages.getString("GlobalActions.PrintVersionedLabelToolTip"));
+					setToolTipText(Messages.getString("GlobalActions.PrintVersionedLabelToolTip")); //$NON-NLS-1$
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_VERSIONEDETIKETTE));
 				}
 				
 				@Override
 				public void run(){
-					PrinterData pd = getPrinterData("Etiketten");
+					PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
 					if (pd != null) {
 						Printer prn = new Printer(pd);
 						if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
@@ -397,7 +397,7 @@ public class GlobalActions {
 				
 				@Override
 				public void run(){
-					PrinterData pd = getPrinterData("Etiketten");
+					PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
 					if (pd != null) {
 						Printer prn = new Printer(pd);
 						if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
@@ -452,8 +452,8 @@ public class GlobalActions {
 					MessageBox mb =
 						new MessageBox(Desk.getDisplay().getActiveShell(), SWT.ICON_INFORMATION
 							| SWT.OK | SWT.CANCEL);
-					mb.setText("Papier einlegen");
-					mb.setMessage("Bitte legen Sie im Einzelblatteinzug Papier ein.");
+					mb.setText("Papier einlegen"); //$NON-NLS-1$
+					mb.setMessage("Bitte legen Sie im Einzelblatteinzug Papier ein."); //$NON-NLS-1$
 					if (mb.open() == SWT.OK) {
 						new TemplateDrucker("KG-Deckblatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
 					}
@@ -504,8 +504,8 @@ public class GlobalActions {
 						Result<Rechnung> res = Rechnung.build(lBehdl);
 						if (!res.isOK()) {
 							ErrorDialog.openError(mainWindow.getShell(), Messages
-								.getString("GlobalActions.Error"), Messages
-								.getString("GlobalActions.BillErrorMessage"), ResultAdapter
+								.getString("GlobalActions.Error"), Messages //$NON-NLS-1$
+								.getString("GlobalActions.BillErrorMessage"), ResultAdapter //$NON-NLS-1$
 								.getResultAsStatus(res)); //$NON-NLS-1$ //$NON-NLS-2$
 							// Rechnung rn=(Rechnung)res.get();
 							// rn.storno(true);
@@ -636,7 +636,7 @@ public class GlobalActions {
 					}
 				}
 			};
-		planeRechnungAction = new Action(Messages.getString("GlobalActions.PlaneRechnung")) {
+		planeRechnungAction = new Action(Messages.getString("GlobalActions.plaBill")) { //$NON-NLS-1$
 			public void run(){
 
 			}
@@ -681,8 +681,8 @@ public class GlobalActions {
 			}
 		}
 		if (!actFall.isOpen()) {
-			SWTHelper.showError("Fall geschlossen",
-				"Zu einem geschlossenen Fall können keine neuen Konsultationen erstellt werden");
+			SWTHelper.showError(Messages.getString("GlobalActions.casclosed"), //$NON-NLS-1$
+				Messages.getString("GlobalActions.caseclosedexplanation")); //$NON-NLS-1$
 			return;
 		}
 		Konsultation actLetzte = actFall.getLetzteBehandlung();
@@ -704,7 +704,7 @@ public class GlobalActions {
 	}
 	
 	protected void printAdr(final Kontakt k){
-		PrinterData pd = getPrinterData("Etiketten");
+		PrinterData pd = getPrinterData(Messages.getString("GlobalActions.printersticker")); //$NON-NLS-1$
 		if (pd != null) {
 			Printer prn = new Printer(pd);
 			if (prn.startJob("Etikette drucken") == true) { //$NON-NLS-1$

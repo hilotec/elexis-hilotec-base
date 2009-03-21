@@ -47,9 +47,27 @@ public class Messages extends NLS {
 
 	public static String Hub_24;
 
-	public static String Hub_28;
-
 	public static String Hub_38;
+
+	public static String Hub_compiletimenotknown;
+
+	public static String Hub_message_birthday;
+
+	public static String Hub_message_configuration;
+
+	public static String Hub_message_reminders;
+
+	public static String Hub_nomandantor;
+
+	public static String Hub_nomoreinstances;
+
+	public static String Hub_nopatientselected;
+
+	public static String Hub_nouserloggedin;
+
+	public static String Hub_title_configuration;
+
+	public static String Hub_toomanyinstances;
 
 	public static String LoginDialog_0;
 

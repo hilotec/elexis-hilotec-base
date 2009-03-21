@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 5004 2009-01-23 05:18:59Z rgw_ch $
+ *    $Id: Hub.java 5219 2009-03-21 18:55:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -180,8 +180,8 @@ public class Hub extends AbstractUIPlugin {
 		String logPath;
 		if (logfileName == null) {
 			logPath = new File(userDir, "elexis.log").getAbsolutePath();
-		} else if (logfileName.equalsIgnoreCase("none")) {
-			logPath = "none";
+		} else if (logfileName.equalsIgnoreCase("none")) { //$NON-NLS-1$
+			logPath = "none"; //$NON-NLS-1$
 		} else {
 			logPath = new File(logfileName).getAbsolutePath();
 		}
@@ -208,8 +208,8 @@ public class Hub extends AbstractUIPlugin {
 			final LockFile lockfile = new LockFile(userDir, "elexislock", 4, timeoutSeconds);
 			final int n = lockfile.lock();
 			if (n == 0) {
-				SWTHelper.alert("Zu viele Instanzen",
-					"Es können keine weiteren Elexis-Instanzen gestartet werden");
+				SWTHelper.alert(Messages.Hub_toomanyinstances,
+					Messages.Hub_nomoreinstances);
 				System.exit(2);
 			} else {
 				HeartListener lockListener = new HeartListener() {
@@ -226,7 +226,7 @@ public class Hub extends AbstractUIPlugin {
 				heart.addListener(lockListener, Heartbeat.FREQUENCY_LOW);
 			}
 		} catch (IOException ex) {
-			log.log("Can not aquire lock file", Log.ERRORS);
+			log.log("Can not aquire lock file", Log.ERRORS); //$NON-NLS-1$
 		}
 	}
 	
@@ -272,9 +272,9 @@ public class Hub extends AbstractUIPlugin {
 			MessageDialog dlg =
 				new MessageDialog(
 					shell,
-					"Elexis: Konfiguration",
+					Messages.Hub_title_configuration,
 					Dialog.getDefaultImage(),
-					"Bitte schalten Sie den PC nicht aus und warten Sie mit Elexis-Neustart, bis diese Nachricht verschwindet",
+					Messages.Hub_message_configuration,
 					SWT.ICON_INFORMATION, new String[] {}, 0);
 			dlg.setBlockOnOpen(false);
 			dlg.open();
@@ -311,12 +311,12 @@ public class Hub extends AbstractUIPlugin {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Elexis ").append(Version).append(" - ");
 		if (Hub.actUser == null) {
-			sb.append("Kein Anwender eingeloggt - ");
+			sb.append(Messages.Hub_nouserloggedin);
 		} else {
-			sb.append(" ").append(Hub.actUser.getLabel());
+			sb.append(" ").append(Hub.actUser.getLabel()); //$NON-NLS-1$
 		}
 		if (Hub.actMandant == null) {
-			sb.append(" Kein Mandant ");
+			sb.append(Messages.Hub_nomandantor);
 			
 		} else {
 			sb.append(" / ").append(Hub.actMandant.getLabel());
@@ -325,7 +325,7 @@ public class Hub extends AbstractUIPlugin {
 			pat = GlobalEvents.getSelectedPatient();
 		}
 		if (pat == null) {
-			sb.append("  -  Kein Patient ausgewählt");
+			sb.append(Messages.Hub_nopatientselected);
 		} else {
 			String nr = pat.getPatCode();
 			String alter = pat.getAlter();
@@ -333,14 +333,14 @@ public class Hub extends AbstractUIPlugin {
 				.append("[").append(nr).append("]");
 			
 			if (Reminder.findForPatient(pat, Hub.actUser).size() != 0) {
-				sb.append("    *** Reminders *** ");
+				sb.append(Messages.Hub_message_reminders);
 			}
 			String act = new TimeTool().toString(TimeTool.DATE_COMPACT);
 			TimeTool ttPatg = new TimeTool();
 			if (ttPatg.set(pat.getGeburtsdatum())) {
 				String patg = ttPatg.toString(TimeTool.DATE_COMPACT);
 				if (act.substring(4).equals(patg.substring(4))) {
-					sb.append("   +++ Hat Geburtstag +++  ");
+					sb.append(Messages.Hub_message_birthday);
 				}
 			}
 		}
@@ -375,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5004 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5219 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
@@ -387,7 +387,7 @@ public class Hub extends AbstractUIPlugin {
 					res += ", " + new TimeTool(dat + "00").toString(TimeTool.FULL_GER);
 				}
 			} else {
-				res += ",compiletime not known";
+				res += Messages.Hub_compiletimenotknown;
 			}
 		}
 		return res;
