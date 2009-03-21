@@ -49,6 +49,8 @@
 		<antcall target="iatrixhelp" inheritrefs="true" />
 		<available file="../elexis-icpc/build.xml" property="icpc.ok" />
 		<antcall target="icpc" inheritrefs="true" />
+		<available file="../elexis-fire/build.xml" property="fire.ok" />
+		<antcall target="fire" inheritrefs="true" />
 		<available file="../elexis-agenda/build.xml" property="agenda.ok" />
 		<antcall target="agenda" inheritrefs="true" />
 
@@ -370,6 +372,9 @@
 	</target>
 	<target name="icpc" if="icpc.ok">
 		<ant antfile="../elexis-icpc/build.xml" inheritrefs="true" />
+	</target>
+	<target name="fire" if="fire.ok">
+		<ant antfile="../elexis-fire/build.xml" inheritrefs="true" />
 	</target>
 	<target name="kassenbuch" if="kassenbuch.ok">
 		<ant antfile="../elexis-kassenbuch/build.xml" inheritrefs="true" />
