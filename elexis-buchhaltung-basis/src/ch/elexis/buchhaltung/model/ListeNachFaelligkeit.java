@@ -32,7 +32,7 @@ import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.SetDataException;
-import ch.unibe.iam.scg.archie.ui.FieldTypes;
+import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
  * An AbstractDataProvider that calculates income due at a given date
@@ -61,12 +61,12 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		stichTag = new DateTool(stichtag);
 	}
 	
-	@GetProperty(name = DUE_DATE_TEXT, fieldType = FieldTypes.TEXT_DATE, index = -2)
+	@GetProperty(name = DUE_DATE_TEXT, widgetType = WidgetTypes.TEXT_DATE, index = -2)
 	public String getStichtag(){
 		return stichTag.toString(DateTool.DATE_GER);
 	}
 	
-	@GetProperty(name = DUE_AFTER_TEXT, fieldType = FieldTypes.TEXT_NUMERIC)
+	@GetProperty(name = DUE_AFTER_TEXT, widgetType = WidgetTypes.TEXT_NUMERIC)
 	public int getDueAfter(){
 		return dueAfter;
 	}
@@ -76,7 +76,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		dueAfter = date;
 	}
 	
-	@GetProperty(name= FIELD_ACTMANDATOR, fieldType= FieldTypes.BUTTON_CHECKBOX, index=2)
+	@GetProperty(name= FIELD_ACTMANDATOR, widgetType= WidgetTypes.BUTTON_CHECKBOX, index=2)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}

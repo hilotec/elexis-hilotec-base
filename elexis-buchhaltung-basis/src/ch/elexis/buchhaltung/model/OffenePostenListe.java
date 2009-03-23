@@ -33,7 +33,7 @@ import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.SetDataException;
-import ch.unibe.iam.scg.archie.ui.FieldTypes;
+import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
  * Find all bills that are payable at a given date
@@ -75,7 +75,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 	public TimeTool getStichtag(){
 		return new TimeTool(stichtag);
 	}
-	@GetProperty(name= FIELD_ACTMANDATOR, fieldType= FieldTypes.BUTTON_CHECKBOX)
+	@GetProperty(name= FIELD_ACTMANDATOR, widgetType= WidgetTypes.BUTTON_CHECKBOX)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}
@@ -85,7 +85,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		bOnlyActiveMandator=val;
 	}
 	
-	@GetProperty(name = FIELD_AUSGANGSDATUM, fieldType = FieldTypes.TEXT_DATE)
+	@GetProperty(name = FIELD_AUSGANGSDATUM, widgetType = WidgetTypes.TEXT_DATE)
 	public String metaGetStarttag(){
 		return getStartTag().toString(TimeTool.DATE_SIMPLE);
 	}
@@ -96,7 +96,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		this.setStartTag(tt);
 	}
 	
-	@GetProperty(name = FIELD_STICHTAG, fieldType = FieldTypes.TEXT_DATE)
+	@GetProperty(name = FIELD_STICHTAG, widgetType = WidgetTypes.TEXT_DATE)
 	public String metaGetStichtag(){
 		return getStichtag().toString(TimeTool.DATE_SIMPLE);
 	}

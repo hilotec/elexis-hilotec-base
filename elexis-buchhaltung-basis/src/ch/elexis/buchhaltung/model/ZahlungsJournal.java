@@ -31,7 +31,7 @@ import ch.rgw.tools.TimeTool;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
-import ch.unibe.iam.scg.archie.ui.FieldTypes;
+import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 public class ZahlungsJournal extends AbstractTimeSeries {
 	private static final String NAME = "Zahlungsjournal";
@@ -42,7 +42,7 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		super(NAME);
 	}
 	
-	@GetProperty(name= FIELD_ACTMANDATOR, fieldType= FieldTypes.BUTTON_CHECKBOX, index=1)
+	@GetProperty(name= FIELD_ACTMANDATOR, widgetType= WidgetTypes.BUTTON_CHECKBOX, index=1)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}

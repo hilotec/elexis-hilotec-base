@@ -33,7 +33,7 @@ import ch.rgw.tools.TimeTool;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
 import ch.unibe.iam.scg.archie.annotations.SetProperty;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
-import ch.unibe.iam.scg.archie.ui.FieldTypes;
+import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
  * An AbstractDataProvider that counts all bills,payments and stornos in a given period of time.
@@ -47,7 +47,7 @@ public class FakturaJournal extends AbstractTimeSeries {
 	public FakturaJournal(){
 		super(NAME);
 	}
-	@GetProperty(name= "Nur aktueller Mandant", fieldType= FieldTypes.BUTTON_CHECKBOX, index=1)
+	@GetProperty(name= "Nur aktueller Mandant", widgetType= WidgetTypes.BUTTON_CHECKBOX, index=1)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}
