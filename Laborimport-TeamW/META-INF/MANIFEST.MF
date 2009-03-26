@@ -4,11 +4,11 @@ Bundle-Name: Elexis Plugin für Import Laborwerte TeamW
 Bundle-SymbolicName: ch.elexis.laborimport_teamw;singleton:=true
 Bundle-Version: 1.2.1
 Bundle-Vendor: elexis.ch
-Require-Bundle: ch.elexis,
+Require-Bundle: ch.rgw.utility,
+ ch.elexis,
+ ch.elexis.importer.div,
  org.eclipse.core.runtime,
  org.eclipse.ui,
- org.eclipse.ui.forms,
- ch.elexis.importer.div,
- ch.rgw.utility
+ org.eclipse.ui.forms
 Bundle-ClassPath: lib/commons-net-1.4.1.jar,
  .

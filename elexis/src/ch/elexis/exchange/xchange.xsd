@@ -559,15 +559,15 @@
 
     <xs:complexType name="recordType">
     <xs:sequence>
-    	<xs:element name="text" maxOccurs="unbounded" minOccurs="0" type="xs:string"></xs:element>
+            <xs:element name="chunk" type="xChange:chunkType"></xs:element>
 
-            <xs:element name="markup" type="xChange:markupType" maxOccurs="unbounded" minOccurs="0"></xs:element>
-            <xs:element name="episode" type="xChange:episodeRefType"
+    	<xs:element name="episode" type="xChange:episodeRefType"
     		maxOccurs="unbounded" minOccurs="0">
     	</xs:element>
-            <xs:element name="meta" type="xChange:metaType"
+    	<xs:element name="meta" type="xChange:metaType"
     		maxOccurs="unbounded" minOccurs="0">
-    	</xs:element>
+    	</xs:element>
+
     </xs:sequence>
     <xs:attribute use="required" name="id" type="xs:ID"></xs:attribute>
         <xs:attribute use="required" name="author" type="xs:string"></xs:attribute>
@@ -830,4 +830,49 @@
     <xs:group name="ModelGroupDefinition">
     	<xs:sequence></xs:sequence>
     </xs:group>
+
+    <xs:complexType name="chunkType">
+        <xs:annotation>
+        	<xs:documentation>A Chunk is a part of a record. It has an optional title, a text, an optional style information (display hint) 
+and optional markups.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+    		<xs:element name="title" type="xs:string" maxOccurs="1"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element name="text" type="xs:string" maxOccurs="1"
+    			minOccurs="1">
+    		</xs:element>
+            <xs:element name="style" type="xChange:styleType" maxOccurs="1" minOccurs="0"></xs:element>
+            <xs:element name="markup" type="xChange:markupType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="styleType">
+    	<xs:sequence>
+    		<xs:element name="bounds" type="xChange:rectangleType"></xs:element>
+    	</xs:sequence>
+
+
+
+
+    	<xs:attribute name="opacity" type="xs:double"></xs:attribute>
+    	<xs:attribute name="background" type="xs:string"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="rgbType">
+    	<xs:attribute name="red" type="xs:int"></xs:attribute>
+    	<xs:attribute name="green" type="xs:int"></xs:attribute>
+    	<xs:attribute name="blue" type="xs:int"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="rectangleType">
+    	<xs:attribute name="x" type="xs:int"></xs:attribute>
+    	<xs:attribute name="y" type="xs:int"></xs:attribute>
+    	<xs:attribute name="w" type="xs:int"></xs:attribute>
+    	<xs:attribute name="h" type="xs:int"></xs:attribute>
+    	<xs:attribute name="unit" type="xs:string"></xs:attribute>
+    </xs:complexType>
 </xs:schema>

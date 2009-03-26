@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Samdas.java 4627 2008-10-22 18:27:21Z rgw_ch $
+ *  $Id: Samdas.java 5223 2009-03-26 20:34:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -17,6 +17,7 @@ import java.io.CharArrayReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Rectangle;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -125,7 +126,7 @@ public class Samdas {
 	}
 	
 	/**
-	 * A record is an EMR entry
+	 * A record is an Text entry. It can optionally contain style informations
 	 * 
 	 * @author Gerry
 	 * 
@@ -207,6 +208,19 @@ public class Samdas {
 		}
 	}
 	
+	/**
+	 * A style is a display hint for a given Record or Range
+	 * a Record can have several styles for several output media.
+	 *
+	 */
+	public static class Style{
+		/** Position and size (relative to parent element */
+		private Rectangle bounds;
+		/** Opacity from 0 (transparent) to 1 (opaque) */
+		private double opacity;
+		/** Background color as rgb */
+		private long rgbBackground;
+	}
 	/**
 	 * A Range is a part of the text. It is defined by a position, a length and a type.
 	 * 
@@ -303,6 +317,10 @@ public class Samdas {
 		}
 	}
 	
+	public static class Box{
+
+	}
+	@Deprecated
 	public static class Finding {
 		protected Element el;
 		
@@ -326,18 +344,19 @@ public class Samdas {
 		}
 	}
 	
+	@Deprecated
 	public static class Analyse extends Finding {
 		public Analyse(){
 			super(new Element("analysis"));
 		}
 	}
-	
+	@Deprecated
 	public static class Image extends Finding {
 		public Image(){
 			super(new Element("image"));
 		}
 	}
-	
+	@Deprecated
 	public static class ECG extends Finding {
 		public ECG(){
 			super(new Element("ecg"));
