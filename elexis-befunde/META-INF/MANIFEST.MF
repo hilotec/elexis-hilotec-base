@@ -6,8 +6,8 @@ Bundle-Version: 1.4.0
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis,
+ ch.rgw.utility,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.ui.forms,
- ch.rgw.utility
+ org.eclipse.ui.forms
 Export-Package: ch.elexis.befunde.xchange
