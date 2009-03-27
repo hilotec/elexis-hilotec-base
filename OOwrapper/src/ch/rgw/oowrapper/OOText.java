@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOText.java 3690 2008-02-19 19:43:45Z danlutz $
+ *  $Id: OOText.java 5227 2009-03-27 13:09:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.rgw.oowrapper;
@@ -348,6 +348,7 @@ public class OOText implements ITextPlugin{
 			bean.clear();
 			bean.loadFromURL(url, null);
 			bean.getDocument().setModified(false);
+			//bean.setEnabled(true);
 			return true;
 		}catch(NoConnectionException nce){
 			bean=null;
