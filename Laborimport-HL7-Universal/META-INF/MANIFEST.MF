@@ -7,5 +7,4 @@ Bundle-Vendor: elexis.ch
 Require-Bundle: ch.elexis,
  org.eclipse.ui,
  ch.elexis.importer.div,
- ch.rgw.utility,
- org.eclipse.ui.forms;bundle-version="3.3.103"
+ ch.rgw.utility
