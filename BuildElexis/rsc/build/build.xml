@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 5217 2009-03-21 08:43:55Z rgw_ch $
+<!-- $Id: build.xml 5230 2009-03-30 16:43:09Z rgw_ch $
     (c) 2005-2009 by G. Weirich
     
     This file reflects my personal environment. It is not intended for
@@ -116,8 +116,6 @@
 		<mkdir dir="${docsource}" />
 		<mkdir dir="${doc}" />
 		<antcall target="doc" />
-		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}">
-		</copy>
 		<condition property="updater.ok">
 			<and>
 				<available file="../Elexis-MMC" />
@@ -170,6 +168,8 @@
 
 	<target name="doc" unless="skip_texify">
 		<exec command="texify --pdf elexis.tex" dir="${source}/dokumentation" />
+		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"/>
+
 	</target>
 	<target name="texify" unless="skip_texify">
 		<!-- echo message="texify ${sourcedir}/doc/${pluginname}.tex" / -->
@@ -203,6 +203,22 @@
 		<exec dir="rsc/build" executable="${nsis}">
 			<arg line="elexis-win32-nodemo.nsi" />
 		</exec>
+	</target>
+
+	<!-- Windows-Zip Version der Distribution -->
+	<target name="winzip" depends="prepare">
+		<delete dir="${dist}" />
+		<copy todir="${dist}">
+			<fileset dir="${rcpbase}/windows/rcp" />
+		</copy>
+		<antcall target="updater" />
+		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
+		<ant antfile="../noatext/build.xml" inheritrefs="true"/>
+		<mkdir dir="${dist}/jre" />
+		<copy todir="${dist}/jre">
+					<fileset dir="${rcpbase}/windows/jre" />
+				</copy>
+		<zip basedir="${dest}/Elexis-${version}" destfile="${output}/elexis-windows-${version}.zip"/>
 	</target>
 
 	<!-- Linux x86 Version der Distribution -->

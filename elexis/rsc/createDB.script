@@ -497,7 +497,7 @@ CREATE TABLE AUF(
 	DatumAUZ	CHAR(8),
 	DatumVon	CHAR(8),
 	DatumBis	CHAR(8),
-	Grund		VARCHAR(10),
+	Grund		VARCHAR(50),
 	AUFZusatz	VARCHAR(80)
 );
 	
@@ -588,6 +588,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.0');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.1');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.0.0');
 
