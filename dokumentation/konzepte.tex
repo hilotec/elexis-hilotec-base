@@ -8,7 +8,7 @@
 % * Contributors:
 % *    G. Weirich
 % *
-% *  $Id: konzepte.tex 4903 2009-01-03 11:44:22Z rgw_ch $
+% *  $Id: konzepte.tex 5231 2009-04-02 13:16:56Z rgw_ch $
 % *******************************************************************************
 % !Mode:: "TeX:UTF-8" (encoding info for WinEdt)
 
@@ -192,7 +192,8 @@ Im Fall von xls muss die Datei eine Tabelle 0 mit folgenden Spalten enthalten:
 \hline
 \hline  ID & eine (im Prinzip beliebige, innerhalb der Datei aber eindeutige) Identifikation\\
 \hline IstPerson & 1 wenn der Eintrag eine Person bezeichnet, 0 andernfalls (Organisation etc.)\\
-\hline Titel & Ein Titel, Anredem Bezugsperson etc.\\
+\hline IstPatient & 1 wenn der Eintrag einen Patienten bezeichnet, 0 andernfalls\\
+\hline Titel & Ein Titel, Anrede, Bezugsperson etc.\\
 \hline Bezeichnung1 & Bei Personen der Name\\
 \hline Bezeichnung2 & Bei Personen der Vorname\\
 \hline Zusatz & \\
@@ -204,7 +205,7 @@ Im Fall von xls muss die Datei eine Tabelle 0 mit folgenden Spalten enthalten:
 \hline Telefon 2 & weitere Nummer\\
 \hline Mobil & Mobiltelefon\\
 \hline Strasse & Strasse und Hausnr.\\
-\hline Plz & PLZ entweder als 1224 oder CH-1224 geschrieben\\
+\hline Plz & PLZ entweder als 1224 oder CH-1224 geschrieben. Muss im Eingabefile als Text formatiert sein\\
 \hline Ort & \\
 \hline Postadresse & Adresse, wie sie auf Adressetiketten erscheinen soll. Zeilensprünge als $\backslash$n\\
 \hline EAN & Die EAN als EAN13\\

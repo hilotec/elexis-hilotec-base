@@ -51,7 +51,7 @@ public class Presets {
 	}
 	public static final boolean importUniversal(final ExcelWrapper exw, final boolean bKeepID, final IProgressMonitor moni){
 		exw.setFieldTypes(new Class[]{
-				Integer.class,Integer.class,String.class,	// ID, IstPerson, Titel
+				Integer.class,Integer.class,Integer.class, String.class,	// ID, IstPerson, IstPatient, Titel
 				String.class,String.class,String.class,		// Bezeichnung1, Bezeichnung2, Zusatz
 				TimeTool.class,String.class,String.class,   // Geburtsdatum, Geschlecht, E-Mail
 				String.class,String.class,String.class,		// Website, Telefon 1, Telefon 2
@@ -78,14 +78,15 @@ public class Presets {
 			}
 			
 			String typ=StringTool.getSafe(row,1);
-			String titel=StringTool.getSafe(row, 2);
-			String bez1=StringTool.getSafe(row,3);
-			String bez2=StringTool.getSafe(row,4);
-			String zusatz=StringTool.getSafe(row, 5);
-			String strasse=StringTool.getSafe(row, 13);
-			String plz=StringTool.getSafe(row, 14);
-			String ort=StringTool.getSafe(row, 15);
-			String natel=StringTool.getSafe(row, 12);
+			String ispat=StringTool.getSafe(row, 2);
+			String titel=StringTool.getSafe(row, 3);
+			String bez1=StringTool.getSafe(row,4);
+			String bez2=StringTool.getSafe(row,5);
+			String zusatz=StringTool.getSafe(row, 6);
+			String strasse=StringTool.getSafe(row, 14);
+			String plz=StringTool.getSafe(row, 15);
+			String ort=StringTool.getSafe(row, 16);
+			String natel=StringTool.getSafe(row, 13);
 			Kontakt k=null;
 			if(StringTool.isNothing(typ)|| typ.equals("0")){
 				k=KontaktMatcher.findOrganisation(bez1, strasse, plz, ort, CreateMode.CREATE);
@@ -95,8 +96,8 @@ public class Presets {
 				k.set("Zusatz1", bez2);
 				k.set("Bezeichnung3", zusatz);
 			}else{
-				String sex=StringTool.getSafe(row, 7);
-				String gebdat=StringTool.getSafe(row, 6);
+				String sex=StringTool.getSafe(row, 8);
+				String gebdat=StringTool.getSafe(row, 7);
 				k=KontaktMatcher.findPerson(bez1, bez2, gebdat, sex, strasse, plz, ort, natel, CreateMode.CREATE);
 				if(k==null){
 					continue;
@@ -106,15 +107,15 @@ public class Presets {
 			}
 			moni.subTask(k.getLabel());
 			k.set(new String[]{"E-Mail","Website","Telefon1","Telefon2","Natel","Strasse","Plz","Ort","Anschrift"},
-					StringTool.getSafe(row, 8),
 					StringTool.getSafe(row, 9),
 					StringTool.getSafe(row, 10),
 					StringTool.getSafe(row, 11),
+					StringTool.getSafe(row, 12),
 					natel,
 					strasse,
 					plz,
 					ort,
-					StringTool.getSafe(row, 16));
+					StringTool.getSafe(row, 17));
 			if(EAN.matches("[0-9]{13,13}")){
 				k.addXid(Xid.DOMAIN_EAN, EAN, true);
 			}
