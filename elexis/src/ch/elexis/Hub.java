@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 5219 2009-03-21 18:55:10Z rgw_ch $
+ *    $Id: Hub.java 5235 2009-04-07 16:28:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -226,7 +226,7 @@ public class Hub extends AbstractUIPlugin {
 				heart.addListener(lockListener, Heartbeat.FREQUENCY_LOW);
 			}
 		} catch (IOException ex) {
-			log.log("Can not aquire lock file", Log.ERRORS); //$NON-NLS-1$
+			log.log("Can not aquire lock file in "+userDir, Log.ERRORS); //$NON-NLS-1$
 		}
 	}
 	
@@ -375,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5219 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5235 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt");
