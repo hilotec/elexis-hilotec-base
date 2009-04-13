@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 5241 2009-04-13 13:27:33Z rgw_ch $
+ *  $Id: ESR.java 5242 2009-04-13 18:30:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -233,7 +233,7 @@ public class ESR {
 		int wRp = 10; // Breite des Rappen-Felds
 		int wRef = 81; // Breite des Ref-Nr-Felds
 		int hRef = 10; // Höhe des Ref-Nr-Felds
-		int xRef = 122; // x-Offset des Ref-Nr-Felds
+		int xRef = 116; // x-Offset des Ref-Nr-Felds
 		int yRef = 33; // y-Offset des Ref-Nr-Felds
 		int xGiro = 60; // x-Offset des Giro-Abschnitts
 		int hAdr = 10; // Höhe des Adressat-Felds
@@ -262,7 +262,8 @@ public class ESR {
 		xBase += manualXOffsetESR;
 		yBase += manualYOffsetESR;
 		xGiro += manualXOffsetESR;
-
+		xRef += manualXOffsetESR;
+		
 		if (bank != null && bank.isValid()) {
 			// BESR
 
@@ -304,14 +305,14 @@ public class ESR {
 		String Rappen = StringTool.pad(StringTool.LEFT, '0', Integer
 				.toString(rp), 2);
 		p.insertTextAt(xBase + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.RIGHT);
-		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.RIGHT);
+		
 
 		p.insertTextAt(xBase + 40, yBase + 50, wRp, hFr - 3, Rappen, SWT.RIGHT);
-		p.insertTextAt(xGiro + 40, yBase + 50, wRp, hFr - 3, Rappen, SWT.RIGHT);
+
 
 		// Referenznummer
-		p.insertTextAt(xBase + 117, yBase + yRef, wRef, hRef, makeRefNr(true),
-				SWT.RIGHT);
+		p.insertTextAt(xRef, yBase + yRef, wRef, hRef, makeRefNr(true),
+				SWT.CENTER);
 		// Kontonummer
 		String konto = makeParticipantNumber(true);
 		p.insertTextAt(xBase + xKonto, yBase + yKonto, wKonto, hKonto, konto,
@@ -323,8 +324,10 @@ public class ESR {
 		String refNr = makeRefNr(false).replaceFirst("^0+", "");
 		String abs1 = refNr + "\n" + schuldner.getPostAnschrift(true);
 		p.insertTextAt(xBase, yBase + yGarant1, xGiro, 25, abs1, SWT.LEFT);
-		p.insertTextAt(xBase + xRef, yBase + yGarant2, wRef, 25, schuldner
+		p.insertTextAt(xRef, yBase + yGarant2, xGiro, 25, schuldner
 				.getPostAnschrift(true), SWT.LEFT);
+		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.RIGHT);
+		p.insertTextAt(xGiro + 40, yBase + 50, wRp, hFr - 3, Rappen, SWT.RIGHT);
 		printESRCodeLine(p, betragInRappen, null);
 
 		return true;
