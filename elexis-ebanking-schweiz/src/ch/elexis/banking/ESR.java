@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 5242 2009-04-13 18:30:56Z rgw_ch $
+ *  $Id: ESR.java 5244 2009-04-14 09:01:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -228,12 +228,12 @@ public class ESR {
 		int yBase = 192; // Offset Einzahlungsschein 19.2cm (absolut vom
 		// Papierrand)
 		int xBase = 0; // Offset Einzahlunsschein 0mm (absolut vom Papierrand)
-		int wFr = 30; // Breite des Franken-Felds
+		int wFr = 40; // Breite des Franken-Felds
 		int hFr = 5; // Höhe des FrankenFeld
 		int wRp = 10; // Breite des Rappen-Felds
 		int wRef = 81; // Breite des Ref-Nr-Felds
 		int hRef = 10; // Höhe des Ref-Nr-Felds
-		int xRef = 116; // x-Offset des Ref-Nr-Felds
+		int xRef = 63; // x-Offset des Ref-Nr-Felds von xGiro
 		int yRef = 33; // y-Offset des Ref-Nr-Felds
 		int xGiro = 60; // x-Offset des Giro-Abschnitts
 		int hAdr = 10; // Höhe des Adressat-Felds
@@ -262,7 +262,6 @@ public class ESR {
 		xBase += manualXOffsetESR;
 		yBase += manualYOffsetESR;
 		xGiro += manualXOffsetESR;
-		xRef += manualXOffsetESR;
 		
 		if (bank != null && bank.isValid()) {
 			// BESR
@@ -304,14 +303,14 @@ public class ESR {
 		String Franken = Integer.toString(fr);
 		String Rappen = StringTool.pad(StringTool.LEFT, '0', Integer
 				.toString(rp), 2);
-		p.insertTextAt(xBase + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.RIGHT);
+		p.insertTextAt(xBase + 3, yBase + 50, wFr, hFr - 3, Franken, SWT.CENTER);
 		
 
-		p.insertTextAt(xBase + 40, yBase + 50, wRp, hFr - 3, Rappen, SWT.RIGHT);
+		p.insertTextAt(xBase + 45, yBase + 50, wRp, hFr - 3, Rappen, SWT.LEFT);
 
 
 		// Referenznummer
-		p.insertTextAt(xRef, yBase + yRef, wRef, hRef, makeRefNr(true),
+		p.insertTextAt(xGiro+xRef, yBase + yRef, wRef, hRef, makeRefNr(true),
 				SWT.CENTER);
 		// Kontonummer
 		String konto = makeParticipantNumber(true);
@@ -322,12 +321,15 @@ public class ESR {
 
 		// remove leading zeros from reference number
 		String refNr = makeRefNr(false).replaceFirst("^0+", "");
+		
+		// Schzuldneradresse. Links mit refNr grad darüber, auf Giro-Abshcnitt ohne refNr
 		String abs1 = refNr + "\n" + schuldner.getPostAnschrift(true);
 		p.insertTextAt(xBase, yBase + yGarant1, xGiro, 25, abs1, SWT.LEFT);
-		p.insertTextAt(xRef, yBase + yGarant2, xGiro, 25, schuldner
+		p.insertTextAt(xGiro+xRef, yBase + yGarant2, xGiro, 25, schuldner
 				.getPostAnschrift(true), SWT.LEFT);
-		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.RIGHT);
-		p.insertTextAt(xGiro + 40, yBase + 50, wRp, hFr - 3, Rappen, SWT.RIGHT);
+		
+		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.CENTER);
+		p.insertTextAt(xGiro + 45, yBase + 50, wRp, hFr - 3, Rappen, SWT.LEFT);
 		printESRCodeLine(p, betragInRappen, null);
 
 		return true;
