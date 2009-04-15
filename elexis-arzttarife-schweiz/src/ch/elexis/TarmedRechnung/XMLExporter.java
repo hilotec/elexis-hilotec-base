@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5152 2009-02-20 11:49:58Z rgw_ch $
+ * $Id: XMLExporter.java 5248 2009-04-15 13:13:54Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -656,7 +656,8 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute("unit", XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute("unit_factor", XMLTool.doubleToXmlDouble(mult, 2));
 					el.setAttribute("tariff_type", "400"); // Pharmacode-basiert
-					el.setAttribute("code", ((Artikel) v).getPharmaCode());
+					String pk=((Artikel) v).getPharmaCode();
+					el.setAttribute("code", StringTool.pad(StringTool.LEFT, '0', pk, 7));
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
 					el.setAttribute("amount", XMLTool.moneyToXmlDouble(mAmountLocal));
