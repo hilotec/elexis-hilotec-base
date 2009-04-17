@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- * $Id: DirectoriesContentParser.java 5059 2009-01-27 20:33:44Z tschaller $
+ * $Id: DirectoriesContentParser.java 5255 2009-04-17 11:07:53Z tschaller $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -202,7 +202,8 @@ public class DirectoriesContentParser extends HtmlParser {
 		
 		// Tel-Nr
 		moveTo("<span class=\"tel\"");
-		String telNr = extract(">", "</span>").replace("&nbsp;", "").replace("*", "").trim();
+		moveTo("<a class=\"phonenr\"");
+		String telNr = extract(">", "</a>").replace("&nbsp;", "").replace("*", "").trim();
 		
 		// Adresse, Ort, Plz
 		String adressTxt = extract("<p class=\"adr\">", "</p>");
@@ -323,10 +324,16 @@ public class DirectoriesContentParser extends HtmlParser {
 
 		// Adresse
 		String adressTxt = extract("<div class=\"streetAddress\">", "</div>");
-		String streetAddress = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"street-address\">", "</span>"));
-		String poBox = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"post-office-box\">", "</span>"));
-		String plzCode = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"postal-code\">", "</span>"));
-		String ort = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>"));
+		HtmlParser parser = new HtmlParser(adressTxt);
+		String streetAddress = removeDirt(parser.extract("<span class=\"street-address\">", "</span>"));
+		String poBox = removeDirt(parser.extract("<span class=\"post-office-box\">", "</span>"));
+		String plzCode = removeDirt(parser.extract("<span class=\"postal-code\">", "</span>"));
+		
+		//Ort
+		//String ort = removeDirt(new HtmlParser(adressTxt).extract("<span class=\"locality\">", "</span>"));
+		parser.moveTo("<tr class=\"locality\">");
+		parser.moveTo("<a href=");
+		String ort = removeDirt(parser.extract(">", "</a>").replace("&nbsp;", "").trim());
 		
 		if (zusatz == null || zusatz.length() == 0) {
 			zusatz = poBox;
@@ -337,7 +344,8 @@ public class DirectoriesContentParser extends HtmlParser {
 		String tel = "";
 		if (moveTo("<span class=\"contact\">Telefon")) {
 			moveTo("<td class=\"tel\"");
-			tel = extract(">", "</td>").replace("&nbsp;", "").replace("*", "").trim();
+			moveTo("<a class=\"phonenr\"");
+			tel = extract(">", "</a>").replace("&nbsp;", "").replace("*", "").trim();
 		}
 		String fax = "";
 		if (moveTo("<span class=\"contact\">Fax")) {
