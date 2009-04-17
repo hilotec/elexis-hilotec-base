@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5248 2009-04-15 13:13:54Z rgw_ch $
+ * $Id: XMLExporter.java 5252 2009-04-17 08:09:16Z tschaller $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -917,7 +917,7 @@ public class XMLExporter implements IRnOutputter {
 		patient.addContent(buildAdressElement(pat));
 		eTiers.addContent(patient);
 		
-		Element guarantor = buildGuarantor(rnAdressat); // 11110
+		Element guarantor = buildGuarantor(rnAdressat, actPatient); // 11110
 		eTiers.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", ns); // 11120
@@ -1419,7 +1419,11 @@ public class XMLExporter implements IRnOutputter {
 		return "production";
 	}
 	
-	protected Element buildGuarantor(Kontakt garant){
+	protected Element buildGuarantor(Kontakt garant, Kontakt patient){
+		// Patient wird im override des MediPort Plugins verwendet
+		// Hinweis:
+		// XML Standard: http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
+		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
 		Element guarantor = new Element("guarantor", ns);
 		guarantor.addContent(buildAdressElement(garant));
 		return guarantor;
