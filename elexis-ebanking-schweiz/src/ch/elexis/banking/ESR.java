@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESR.java 5244 2009-04-14 09:01:27Z rgw_ch $
+ *  $Id: ESR.java 5253 2009-04-17 08:13:50Z tschaller $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -246,6 +246,7 @@ public class ESR {
 		// Empfangsschein
 		int yGarant2 = 50; // y-Offset des Absender-Adressblocks auf dem
 		// Girozettel
+		int wAdresse = 55; // Breite des Adressfeldes (unabhängig von Offsets)
 		int manualYOffsetESR = Hub.localCfg.get(ESR_PRINTER_BASE_OFFSET_Y,
 				ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
 		int manualXOffsetESR = Hub.localCfg.get(ESR_PRINTER_BASE_OFFSET_X,
@@ -272,26 +273,26 @@ public class ESR {
 					bank.get("Bezeichnung2")).append("\n").append(
 					bank.get("Plz")).append(" ").append(bank.get("Ort"));
 			// auf Abschnitt
-			p.insertTextAt(xBase, yBase + 8, xGiro - 5, hAdr - 2, badr
+			p.insertTextAt(xBase, yBase + 8, wAdresse, hAdr - 2, badr
 					.toString(), SWT.LEFT);
 			// auf Giro-Zettel
-			p.insertTextAt(xGiro, yBase + 8, xGiro - 5, hAdr - 2, badr
+			p.insertTextAt(xGiro, yBase + 8, wAdresse, hAdr - 2, badr
 					.toString(), SWT.LEFT);
 
 			// Empfaenger
 			// auf Abschnitt
-			p.insertTextAt(xBase, yBase + 20, xGiro - 5, hBeg - 1, empfaenger
+			p.insertTextAt(xBase, yBase + 20, wAdresse, hBeg - 1, empfaenger
 					.getPostAnschrift(true), SWT.LEFT);
 			// auf Giro-Zettel
-			p.insertTextAt(xGiro, yBase + 20, xGiro - 5, hBeg - 1, empfaenger
+			p.insertTextAt(xGiro, yBase + 20, wAdresse, hBeg - 1, empfaenger
 					.getPostAnschrift(true), SWT.LEFT);
 		} else {
 			// VESR
 
 			int height = hAdr + 2 + hBeg;
-			p.insertTextAt(xBase, yBase + 8, xGiro - 5, height, empfaenger
+			p.insertTextAt(xBase, yBase + 8, wAdresse, height, empfaenger
 					.getPostAnschrift(true), SWT.LEFT);
-			p.insertTextAt(xGiro, yBase + 8, xGiro - 5, height, empfaenger
+			p.insertTextAt(xGiro, yBase + 8, wAdresse, height, empfaenger
 					.getPostAnschrift(true), SWT.LEFT);
 		}
 
@@ -324,8 +325,8 @@ public class ESR {
 		
 		// Schzuldneradresse. Links mit refNr grad darüber, auf Giro-Abshcnitt ohne refNr
 		String abs1 = refNr + "\n" + schuldner.getPostAnschrift(true);
-		p.insertTextAt(xBase, yBase + yGarant1, xGiro, 25, abs1, SWT.LEFT);
-		p.insertTextAt(xGiro+xRef, yBase + yGarant2, xGiro, 25, schuldner
+		p.insertTextAt(xBase, yBase + yGarant1, wAdresse, 25, abs1, SWT.LEFT);
+		p.insertTextAt(xGiro+xRef, yBase + yGarant2, wAdresse, 25, schuldner
 				.getPostAnschrift(true), SWT.LEFT);
 		
 		p.insertTextAt(xGiro + 5, yBase + 50, wFr, hFr - 3, Franken, SWT.CENTER);
