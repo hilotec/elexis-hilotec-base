@@ -773,7 +773,9 @@ public class StringTool {
 			t4 ^= t0;
 		}
 		t4 += sequence++;
-		return Long.toHexString(t4)
+		long idx=sequence%salties.length;
+		char start=salties[(int)idx];
+		return start+Long.toHexString(t4)
 				+ Long.toHexString((long) (Math.random() * 1000)) + sequence;
 	}
 
@@ -1153,4 +1155,12 @@ public class StringTool {
 			{ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7, 3 },
 			{ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1, 2 },
 			{ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1 } };
+	
+	private static final char[] salties={
+		'q','w','e','r','t','z','u','o','i','p',
+		'a','s','d','f','g','h','j','k','l','y',
+		'x','c','v','b','n','m','Q','A','Y','W',
+		'E','D','C','R','F','V','T','G','B','Z',
+		'H','N','U','J','M','I','K','O','L','P'
+	};
 }
