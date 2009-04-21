@@ -2,16 +2,16 @@
 <feature
       id="ch.elexis"
       label="elexis basic feature"
-      version="1.4.0"
+      version="2.0.0"
       provider-name="elexis.ch"
       plugin="ch.elexis">
 
    <description url="http://www.elexis.ch">
-      Elexis Praxisprogramm Release 1.4
+      Elexis Praxisprogramm Release 2.0
    </description>
 
    <copyright>
-      (c)2006-2008 by G. Weirich and Elexis
+      (c)2005-2009 by G. Weirich and Elexis
    </copyright>
 
    <license>
@@ -191,6 +191,13 @@
          download-size="0"
          install-size="0"
          version="1.4.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.rgw.utility"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
