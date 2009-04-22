@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 4998 2009-01-22 11:36:34Z rgw_ch $
+ *    $Id: AccessControl.java 5265 2009-04-22 17:19:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -77,6 +77,7 @@ public class AccessControl {
 	public void load(){
 		NamedBlob rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		if (rset == null) {
+			log.log("Warnung: ACEs nicht gefunden, erstelle neu ", Log.ERRORS);
 			NamedBlob.createTable();
 			rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		}
