@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *  $Id: Anwender.java 5266 2009-04-23 13:41:31Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -178,7 +178,7 @@ public class Anwender extends Person {
 	}
 
 	/**
-	 * Den ersten Benutzer anlegen unt initiale Zugriffsrechte setzen Wird von
+	 * Den ersten Benutzer anlegen und initiale Zugriffsrechte setzen Wird von
 	 * PersistentObject() aufgerufen, wenn die Datenbank neu angelegt wurde.
 	 */
 	@SuppressWarnings("unchecked")

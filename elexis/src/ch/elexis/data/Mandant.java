@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Mandant.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *    $Id: Mandant.java 5266 2009-04-23 13:41:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
-import ch.elexis.Hub;
 
 /**
  * Ein Mandant ist ein Anwender (und damit eine Person und damit ein Kontakt), der zusätzlich eigene
@@ -35,67 +34,6 @@ public class Mandant extends Anwender {
 		return false;
 	}
 	
-	/**
-	 * KSK-Nr lesen
-	 * 
-	 * @Deprecated belongs to Arzttarife-Schweiz
-	 * */
-	
-	@Deprecated
-	public String getKsk(){
-		return checkNull((String) getInfoElement("KSK"));
-	}
-	
-	/**
-	 * KSK-Nr. setzen. Es erfolgt keine Prüfung auf Plausibilit�t
-	 * 
-	 * @Deprecated belongs to Arzttarife-Schweiz
-	 * */
-	
-	@Deprecated
-	public void setKsk(String ksk){
-		setInfoElement("KSK", ksk);
-	}
-	
-	/**
-	 * NIF lesen
-	 * 
-	 * @Deprecated belongs to Arzttarife-Schweiz
-	 * */
-	@Deprecated
-	public String getNif(){
-		return checkNull((String) getInfoElement("NIF"));
-	}
-	
-	/**
-	 * NIF setzen. Es erfolgt keine Prüfung auf Plausibilit�t
-	 * 
-	 * @Deprecated belongs to Arzttarife-Schweiz
-	 * */
-	@Deprecated
-	public void setNif(String nif){
-		setInfoElement("NIF", nif);
-	}
-	
-	/**
-	 * @Deprecated belongs to Arzttarife-Schweiz
-	 */
-	@Deprecated
-	public String getQuantDignitaet(){
-		return checkNull((String) getInfoElement("QuantDignität"));
-	}
-	
-	/** @Deprecated belongs to Arzttarife-Schweiz */
-	@Deprecated
-	public String getQualiDignitaet(){
-		return checkNull((String) getInfoElement("QualiDignität"));
-	}
-	
-	/** @Deprecated belongs to Arzttarife-Schweiz */
-	@Deprecated
-	public String getSparte(){
-		return checkNull((String) getInfoElement("Sparte"));
-	}
 	
 	public Rechnungssteller getRechnungssteller(){
 		Rechnungssteller ret = Rechnungssteller.load(getInfoString("Rechnungssteller"));

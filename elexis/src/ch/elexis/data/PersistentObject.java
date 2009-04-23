@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5259 2009-04-21 13:01:42Z rgw_ch $
+ *    $Id: PersistentObject.java 5266 2009-04-23 13:41:31Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -47,6 +47,7 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Xid.XIDException;
 import ch.elexis.data.cache.IPersistentObjectCache;
 import ch.elexis.data.cache.SoftCache;
+import ch.elexis.dialogs.ErsterMandantDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.preferences.SettingsPreferenceStore;
@@ -254,6 +255,7 @@ public abstract class PersistentObject {
 					Mandant.init();
 					Hub.pin.initializeGrants();
 					Hub.pin.initializeGlobalPreferences();
+					new ErsterMandantDialog(Hub.getActiveShell()).open();
 					Hub.globalCfg.flush();
 					Hub.localCfg.flush();
 					disconnect();

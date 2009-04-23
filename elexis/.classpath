@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="bin" sourcepath="bin"/>
 	<classpathentry exported="true" kind="lib" path="postgresql.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bsh-core-2.0b4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.jar"/>
@@ -10,4 +9,3 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
-
