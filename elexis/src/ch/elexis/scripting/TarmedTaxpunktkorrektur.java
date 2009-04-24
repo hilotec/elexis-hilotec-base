@@ -15,7 +15,7 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
-public class Taxpunktkorrektur {
+public class TarmedTaxpunktkorrektur {
 	FileWriter writer;
 	
 	/**
