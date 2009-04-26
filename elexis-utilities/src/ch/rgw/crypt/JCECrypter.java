@@ -68,6 +68,7 @@ public class JCECrypter implements Cryptologist {
 				X509Certificate cert = km.generateCertificate(kp.getPublic(),
 						kp.getPrivate(), userKey, userKey, null, null);
 				km.addKeyPair(kp.getPrivate(), cert, pwd);
+				// km.addCertificate(cert);
 				km.save();
 			}
 		} else {
