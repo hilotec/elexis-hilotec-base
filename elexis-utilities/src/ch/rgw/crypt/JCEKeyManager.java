@@ -102,6 +102,13 @@ public class JCEKeyManager {
 		} else {
 			ksType = type;
 		}
+		File fks=new File(ksFile);
+		if(!fks.exists()){
+			File fksPath=fks.getParentFile();
+			if(!fksPath.exists()){
+				fksPath.mkdirs();
+			}
+		}
 		storePwd = keystorePwd;
 	}
 
