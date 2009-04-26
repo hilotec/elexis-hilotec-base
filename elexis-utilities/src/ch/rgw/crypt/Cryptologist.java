@@ -65,6 +65,8 @@ public interface Cryptologist {
 	
 	public boolean addCertificate(X509Certificate cert);
 	
+	public boolean addCertificate(byte[] certEncoded);
+	
 	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom, TimeTool validUntil);
 	
 	public X509Certificate getCertificate(String alias);

@@ -12,6 +12,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import javax.crypto.Cipher;
@@ -225,6 +227,19 @@ public class JCECrypter implements Cryptologist {
 		return false;
 	}
 
+	public boolean addCertificate(byte[] certEncoded){
+		ByteArrayInputStream bais=new ByteArrayInputStream(certEncoded);
+		X509Certificate cert;
+		try {
+			CertificateFactory cf=CertificateFactory.getInstance("X.509");
+			cert = (X509Certificate)cf.generateCertificate(bais);
+			return addCertificate(cert);
+		} catch (CertificateException e) {
+			ExHandler.handle(e);
+			return false;
+		}
+
+	}
 	public KeyPair generateKeys(String alias, char[] keypwd,
 			TimeTool validFrom, TimeTool validUntil) {
 		KeyPair ret = km.generateKeys();

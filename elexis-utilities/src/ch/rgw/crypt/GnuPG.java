@@ -687,5 +687,10 @@ public class GnuPG implements Cryptologist {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	public boolean addCertificate(byte[] certEncoded) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }
