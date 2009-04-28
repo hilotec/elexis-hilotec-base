@@ -1,8 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: ErsterMandantDialog.java 5272 2009-04-28 16:48:15Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.dialogs;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -17,7 +30,8 @@ import ch.rgw.tools.StringTool;
 
 public class ErsterMandantDialog extends TitleAreaDialog {
 	Text tUsername,tPwd1,tPwd2,tTitle,tFirstname,tLastname,tEmail,tStreet,tZip,tPlace,tPhone, tFax;
-	
+	String[] anreden={"Herr","Frau","Firma"};
+	Combo cbAnrede;
 	
 	public ErsterMandantDialog(Shell parent){
 		super(parent);
@@ -34,26 +48,41 @@ public class ErsterMandantDialog extends TitleAreaDialog {
 		tUsername.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Passwort");
 		tPwd1=new Text(ret,SWT.BORDER|SWT.PASSWORD);
+		tPwd1.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Passwort wdh.");
 		tPwd2=new Text(ret,SWT.BORDER|SWT.PASSWORD);
+		tPwd2.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		new Label(ret,SWT.NONE).setText("Anrede");
+		cbAnrede=new Combo(ret,SWT.SIMPLE|SWT.SINGLE);
+		cbAnrede.setItems(anreden);
+
 		new Label(ret,SWT.NONE).setText("Titel");
 		tTitle=new Text(ret,SWT.BORDER);
+		tTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Vorname");
 		tFirstname=new Text(ret,SWT.BORDER);
+		tFirstname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Name");
 		tLastname=new Text(ret,SWT.BORDER);
+		tLastname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("E-Mail");
 		tEmail=new Text(ret,SWT.BORDER);
+		tEmail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Strasse");
 		tStreet=new Text(ret,SWT.BORDER);
+		tStreet.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Plz");
 		tZip=new Text(ret,SWT.BORDER);
+		tZip.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Ort");
 		tPlace=new Text(ret,SWT.BORDER);
+		tPlace.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Telefon");
 		tPhone=new Text(ret,SWT.BORDER);
+		tPhone.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret,SWT.NONE).setText("Telefax");
 		tFax=new Text(ret,SWT.BORDER);
+		tFax.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return rx;
 	}
 
@@ -61,7 +90,7 @@ public class ErsterMandantDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		getShell().setText("Ersten Mandanten erstellen");
-		setMessage("Bitte geben Sie die Daten für den Hauptmandanten/Praxisbesitzer ein.\nWenn Sie abbrechen können Sie später den Mandanten manuell erstellen.");
+		setMessage("Bitte geben Sie die Daten für den Hauptmandanten/Praxisbesitzer ein.\nWenn Sie jetzt abbrechen, können Sie später den Mandanten manuell erstellen.");
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 
@@ -83,10 +112,17 @@ public class ErsterMandantDialog extends TitleAreaDialog {
 			return;
 		}
 		Mandant m=new Mandant(username,pwd);
+		String g=Person.MALE;
+		if(cbAnrede.getText().startsWith("F")){
+			g=Person.FEMALE;
+		}
 		m.set(new String[]{"Name","Vorname","Titel","Geschlecht","E-Mail","Telefon1","Fax","Strasse","Plz","Ort"}, 
-				tLastname.getText(),tFirstname.getText(), tTitle.getText(),Person.MALE,
+				tLastname.getText(),tFirstname.getText(), tTitle.getText(),g,
 				email,tPhone.getText(),tFax.getText(),tStreet.getText(),tZip.getText(),
 				tStreet.getText());
+		String gprs=m.getInfoString("groups");
+		gprs="Admin,Anwender";
+		m.setInfoElement("Groups", gprs);
 		super.okPressed();
 	}
 	

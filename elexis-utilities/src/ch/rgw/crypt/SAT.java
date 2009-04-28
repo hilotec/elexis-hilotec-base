@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,8 @@ public class SAT {
 	public static final String ADM_SIGNED_BY = "ADM_user";
 	public static final String ADM_PAYLOAD = "ADM_payload";
 	public static final String ADM_SIGNATURE = "ADM_signature";
+	public static final String ERR_SERVER="Server error: ";
+	public static final String ERR_DECRYPT="Decrypt error: ";
 	
 	// static final Pattern signatureEN=Pattern.compile(".+gpg: good signature
 	// from
@@ -73,11 +75,11 @@ public class SAT {
 	 */
 	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
 		if(encrypted.length<25){	// is probably an error message
-			return new Result<HashMap<String, Object>>(Result.SEVERITY.WARNING,7, "Server Error: "+new String(encrypted),null, true);
+			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,7, ERR_SERVER+new String(encrypted),null, true);
 		}
 		Result<byte[]> dec = crypt.decrypt(encrypted);
 		if ((dec==null) || (!dec.isOK())) {
-			return new Result<HashMap<String, Object>>(dec==null ? SEVERITY.ERROR : dec.getSeverity(), 1, "Decrypt error", null,
+			return new Result<HashMap<String, Object>>(dec==null ? SEVERITY.ERROR : dec.getSeverity(), 1, ERR_DECRYPT, null,
 				true);
 		}
 		byte[] decrypted = dec.get();
