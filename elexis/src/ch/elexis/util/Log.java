@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Log.java 4844 2008-12-23 13:31:29Z rgw_ch $
+ * $Id: Log.java 5275 2009-05-01 15:39:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -163,6 +163,9 @@ public class Log {
 				String type = "";
 				if (level > SYNCMARK) {
 					type = Levels[level];
+				}
+				if(message==null){
+					message=" *!*!*! Internal Error: NULL Log Message !*!*! ";
 				}
 				lastError =
 					new StringBuilder().append(" |").append(type).append("| - ").append(prefix)
