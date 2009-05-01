@@ -97,15 +97,15 @@ public class SAT {
 				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 3, "Timeout",
 					null, true);
 			}
+			HashMap<String, Object> ret = (HashMap<String, Object>) fields.get(ADM_PAYLOAD);
 			byte[] digest = calcDigest(sc);
 			Result<String> res = crypt.verify(digest, signature, user);
 			if (res.isOK()) {
-				HashMap<String, Object> ret = (HashMap<String, Object>) fields.get(ADM_PAYLOAD);
 				ret.put(ADM_SIGNED_BY, user);
 				return new Result<HashMap<String, Object>>(ret);
 			} else {
 				return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 6,
-					"Bad Signature", null, true);
+					"Bad Signature", ret, true);
 			}
 		} else {
 			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR, 5, "Invalid Message",

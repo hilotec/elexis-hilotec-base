@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class SoapConverter {
 				} else if (type.equals(TYPE_HASH)) {
 					res = loadHash(param);
 				} else {
-					res = "** unsupported type **";
+					res = "** unsupported type ** "+type;
 				}
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
@@ -194,16 +194,16 @@ public class SoapConverter {
 		if (obj instanceof String) {
 			createParameter(parent, name, TYPE_STRING).setText((String) obj);
 		} else if ((obj instanceof Double) || (obj instanceof Float)) {
-			createParameter(eBody, name, TYPE_FLOAT).setText(Double.toString((Double) obj));
+			createParameter(parent, name, TYPE_FLOAT).setText(Double.toString((Double) obj));
 		} else if ((obj instanceof Integer) || (obj instanceof Long) || (obj instanceof Byte)) {
-			createParameter(eBody, name, TYPE_INTEGRAL).setText(obj.toString());
+			createParameter(parent, name, TYPE_INTEGRAL).setText(obj.toString());
 		} else if (obj instanceof byte[]) {
 			String res = new String(Base64Coder.encode((byte[]) obj));
-			createParameter(eBody, name, TYPE_ARRAY).setText(res);
+			createParameter(parent, name, TYPE_ARRAY).setText(res);
 		} else if (obj instanceof HashMap) {
 			addHashMap(parent, name, (HashMap<String, Object>) obj);
 		} else {
-			throw new Exception("Invalid type for SoapConverter");
+			throw new Exception("Invalid type for SoapConverter: "+obj.getClass().getName());
 		}
 	}
 	
