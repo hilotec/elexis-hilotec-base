@@ -126,7 +126,7 @@ public class JCEKeyManager {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			log.log(Level.SEVERE,
-					"No Keystore found or coudl not open Keystore");
+					"No Keystore found or could not open Keystore: "+ex.getMessage());
 			return false;
 		}
 		return true;
