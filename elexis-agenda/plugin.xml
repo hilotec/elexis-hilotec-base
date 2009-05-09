@@ -25,6 +25,14 @@
             id="ch.elexis.agenda.Views"
             name="Agenda">
       </category>
+      <view
+            allowMultiple="false"
+            category="ch.elexis.agenda.Views"
+            class="ch.elexis.views.AgendaParallel"
+            id="ch.elexis.agenda.parallelview"
+            name="Parallelanzeige"
+            restorable="true">
+      </view>
    </extension>
       <extension
          point="org.eclipse.ui.preferencePages">
@@ -75,6 +83,35 @@
          <ACLContribution
                ACLContributor="ch.elexis.agenda.acl.ACLContributor"
                name="elexis-agenda.ACLContribution"/>
+      </extension>
+      <extension
+            point="org.eclipse.ui.commands">
+         <category
+               id="ch.elexis.agenda.commands"
+               name="Agenda Commands">
+         </category>
+         <command
+               categoryId="ch.elexis.agenda.commands"
+               defaultHandler="ch.elexis.agenda.commands.ExportCommand"
+               description="Exportiere Termine nach iCal"
+               id="ch.elexis.agenda.commands.export"
+               name="export">
+            <commandParameter
+                  id="ch.elexis.agenda.param.resource"
+                  name="resource"
+                  optional="false">
+            </commandParameter>
+            <commandParameter
+                  id="ch.elexis.agenda.param.from"
+                  name="Date from"
+                  optional="false">
+            </commandParameter>
+            <commandParameter
+                  id="ch.elexis.agenda.param.until"
+                  name="Date until"
+                  optional="false">
+            </commandParameter>
+         </command>
       </extension>
    
 

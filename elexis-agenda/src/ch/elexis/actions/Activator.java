@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,24 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 4462 2008-09-27 19:52:22Z rgw_ch $
+ *  $Id: Activator.java 5280 2009-05-09 10:46:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import ch.elexis.Desk;
 import ch.elexis.util.Log;
-import ch.rgw.io.FileTool;
-import ch.rgw.tools.ExHandler;
 
 /**
  * Einen Activator braucht man immer dann, wenn man irgendwelche Dinge sicher zu
@@ -99,26 +91,5 @@ public class Activator extends AbstractUIPlugin {
 				"ch.elexis.agenda", path); //$NON-NLS-1$
 	}
 
-	/**
-	 * Basispfad des Plugins holen
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("deprecation")//$NON-NLS-1$
-	public static String getBasePath() {
-		URL url = null;
-		try {
-			url = Platform.asLocalURL(new URL(FileTool
-					.getClassPath(Activator.class)));
-			File f = new File(url.getPath());
-			return f.getParentFile().getParentFile().getParentFile()
-					.getParent();
-		} catch (MalformedURLException e) {
-			ExHandler.handle(e);
-		} catch (IOException e) {
-			ExHandler.handle(e);
-		}
-		return ""; //$NON-NLS-1$
-	}
-
+	
 }

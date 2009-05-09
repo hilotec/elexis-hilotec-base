@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaImages.java 4751 2008-12-04 21:40:15Z rgw_ch $
+ * $Id: AgendaImages.java 5280 2009-05-09 10:46:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
@@ -37,6 +37,7 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.elexis.util.Plannables;
+import ch.elexis.util.PlatformHelper;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
@@ -67,7 +68,8 @@ public class AgendaImages extends PreferencePage implements
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
-					String dpath = Activator.getBasePath().replaceFirst(
+					
+					String dpath = PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst(
 							"\\\\bin", "") + File.separator + "icons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					fdl.setFilterPath(dpath);
 					String name = fdl.open();

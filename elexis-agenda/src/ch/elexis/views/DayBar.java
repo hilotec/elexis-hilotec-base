@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: DayBar.java 5280 2009-05-09 10:46:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;

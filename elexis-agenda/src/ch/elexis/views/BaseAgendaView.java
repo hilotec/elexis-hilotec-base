@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 4724 2008-12-04 10:11:27Z rgw_ch $
+ *  $Id: BaseAgendaView.java 5280 2009-05-09 10:46:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -54,6 +54,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
@@ -160,25 +161,8 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		
 	};
 
-	// BackingStoreListener
-	public void reloadContents(Class clazz) {
-		if(clazz.equals(Termin.class)){
-			Desk.getDisplay().asyncExec(new Runnable(){
-				public void run() {
-					if(!tv.getControl().isDisposed()){
-						tv.refresh(true);
-					}
-				}});
-		}else if(clazz.equals(Anwender.class)){
-			updateActions();
-			if(tv!=null){
-				if(!tv.getControl().isDisposed()){
-					tv.getControl().setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_DEFAULTFONT));
-				}
-			}
-			setBereich(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, bereiche[0]));
-		}
-	}
+
+
 
 	public String getBereich() {
 		return actBereich;
@@ -448,6 +432,27 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		mgr.add(importAction);
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
+	}
+
+	// BackingStoreListener
+	public void reloadContents(Class<? extends PersistentObject> clazz) {
+		if(clazz.equals(Termin.class)){
+			Desk.getDisplay().asyncExec(new Runnable(){
+				public void run() {
+					if(!tv.getControl().isDisposed()){
+						tv.refresh(true);
+					}
+				}});
+		}else if(clazz.equals(Anwender.class)){
+			updateActions();
+			if(tv!=null){
+				if(!tv.getControl().isDisposed()){
+					tv.getControl().setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_DEFAULTFONT));
+				}
+			}
+			setBereich(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, bereiche[0]));
+		}
+		
 	}
 
 

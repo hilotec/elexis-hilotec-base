@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErstelleRnnCommand.java 5072 2009-01-31 10:11:26Z rgw_ch $
+ *  $Id: ErstelleRnnCommand.java 5280 2009-05-09 10:46:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -110,7 +110,7 @@ public class ErstelleRnnCommand extends AbstractHandler {
 		IHandlerService handlerService = (IHandlerService) origin.getService(IHandlerService.class);
 		ICommandService cmdService = (ICommandService) origin.getService(ICommandService.class);
 		try {
-			Command command = cmdService.getCommand("bill.create");
+			Command command = cmdService.getCommand(ID);
 			Parameterization px =
 				new Parameterization(command.getParameter("ch.elexis.RechnungErstellen.parameter"),
 					new TreeToStringConverter().convertToString(tSelection));
