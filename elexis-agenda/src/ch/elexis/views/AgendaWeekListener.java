@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeekListener.java 4751 2008-12-04 21:40:15Z rgw_ch $
+ *  $Id: AgendaWeekListener.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -31,7 +31,7 @@ public class AgendaWeekListener implements BackingStoreListener, HeartListener,
 	AgendaWeekListener(AgendaWeek mine){
 		parent=mine;
 		GlobalEvents.getInstance().addActivationListener(this, mine.getViewSite().getPart());
-		parent.pinger=new ch.elexis.actions.Synchronizer(parent);
+		//parent.pinger=new ch.elexis.actions.Synchronizer(parent);
 	}
 	public void reloadContents(Class<? extends PersistentObject> clazz) {
 		if(clazz.equals(Termin.class)){
@@ -46,7 +46,9 @@ public class AgendaWeekListener implements BackingStoreListener, HeartListener,
 	}
 
 	public void heartbeat() {
-		parent.pinger.doSync();
+		if(parent.pinger!=null){
+			parent.pinger.doSync();
+		}
 	}
 
 	public void activation(boolean mode) {

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DayBar.java 5280 2009-05-09 10:46:12Z rgw_ch $
+ *  $Id: DayBar.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.IPlannable;
@@ -44,6 +45,7 @@ public class DayBar extends Composite {
 	AgendaWeek container;
 	private Termin actTermin;
 	private TimeTool myDay;
+	Activator agenda=Activator.getDefault();
 	
 	public DayBar(AgendaWeek parent){
 		super(parent.cWeekDisplay,SWT.BORDER);
@@ -66,8 +68,8 @@ public class DayBar extends Composite {
 		addMouseListener(new MouseAdapter(){
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				container.actDate.set(myDay);
-				new TerminDialog(container,null).open();
+				agenda.setActDate(myDay);
+				new TerminDialog(null).open();
 				recalc();
 			}});
 	}
@@ -113,8 +115,8 @@ public class DayBar extends Composite {
 			myLabel.addMouseListener(new MouseAdapter(){
 				@Override
 				public void mouseDoubleClick(MouseEvent e) {
-					container.actDate.set(t.getDay());
-					new TerminDialog(container,t).open();
+					agenda.setActDate(t.getDay());
+					new TerminDialog(t).open();
 					parent.recalc();
 				}
 			});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,6 @@ public class TagesView extends BaseAgendaView{
 		Composite top=new Composite(parent,SWT.NONE);
 		top.setLayout(new GridLayout(5,false));
 		top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		actDate=new TimeTool();
 		bToday=new Button(top,SWT.CENTER|SWT.PUSH|SWT.FLAT);
 		bToday.setImage(Desk.getImage(Activator.IMG_HOME));
 		bToday.setToolTipText(Messages.TagesView_showToday); 
@@ -69,7 +68,7 @@ public class TagesView extends BaseAgendaView{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TimeTool dat=new TimeTool();
-				actDate.set(dat);
+				agenda.setActDate(dat);
 				updateDate();
 			}
 			
@@ -82,7 +81,7 @@ public class TagesView extends BaseAgendaView{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				//TimeTool dat=Activator.getDefault().theDay;
-				actDate.addHours(-24);
+				agenda.addDays(-1);
 				updateDate();
 			}
 		});
@@ -94,7 +93,7 @@ public class TagesView extends BaseAgendaView{
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DateSelectorDialog dsl=new DateSelectorDialog(bDay.getShell(),actDate);
+				DateSelectorDialog dsl=new DateSelectorDialog(bDay.getShell(),agenda.getActDate());
 				//Point pt=bDay.getLocation();
 				//dsl.getShell().setLocation(pt.x, pt.y);
 				dsl.create();
@@ -102,13 +101,13 @@ public class TagesView extends BaseAgendaView{
 				dsl.getShell().setLocation(m.x,m.y);
 				if(dsl.open()==Dialog.OK){
 					TimeTool dat=dsl.getSelectedDate();
-					actDate.set(dat);
+					agenda.setActDate(dat);
 					updateDate();
 				}
 			}
 			
 		});
-		bDay.setText(actDate.toString(TimeTool.DATE_GER));
+		bDay.setText(agenda.getActDate().toString(TimeTool.DATE_GER));
 		
 		Button bPlus=new Button(top,SWT.PUSH);
 		bPlus.setToolTipText(Messages.TagesView_nextDay); 
@@ -117,7 +116,7 @@ public class TagesView extends BaseAgendaView{
 		bPlus.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				actDate.addHours(24);
+				agenda.addDays(1);
 				updateDate();
 			}
 		});
@@ -194,9 +193,6 @@ public class TagesView extends BaseAgendaView{
 				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
 					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
 				
-				// update configuration
-				updateConfig();
-				
 				// show reason if its configured
 				if (Hub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
 					if (p instanceof Termin) {
@@ -217,26 +213,12 @@ public class TagesView extends BaseAgendaView{
 		
 	}
 
-	/**
-	 * Move AG_SHOW_REASON config from globalCfg to userCfg
-	 * This method should be eliminated after some time, e. g. August 2008
-	 */
-	@Deprecated
-	private void updateConfig() {
-		// test whether global configuration is set, but user configuration not yet
-		String userCfgValue = Hub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, null);
-		if (userCfgValue == null) {
-			String globalCfgValue = Hub.globalCfg.get(PreferenceConstants.AG_SHOW_REASON, null);
-			if (globalCfgValue != null) {
-				// global configuration is set; deprecated configuration. update user configuration
-				Hub.userCfg.set(PreferenceConstants.AG_SHOW_REASON, globalCfgValue);
-			}
-		}
-	}
 		
 	public void updateDate(){
-		pinger.doSync();
-		bDay.setText(actDate.toString(TimeTool.WEEKDAY)+", "+actDate.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
+		if(pinger!=null){
+			pinger.doSync();
+		}
+		bDay.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)+", "+agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		tv.refresh();
 	}
 	
@@ -259,7 +241,7 @@ public class TagesView extends BaseAgendaView{
 			ev.fireSelectionEvent(pat);
 			Konsultation kons=GlobalEvents.getSelectedKons();
 
-			String sVgl=actDate.toString(TimeTool.DATE_COMPACT);
+			String sVgl=agenda.getActDate().toString(TimeTool.DATE_COMPACT);
 			if((kons==null) || 	// Falls nicht die richtige Kons selektiert ist, passende Kons für heute suchen
 					!(kons.getFall().getPatient().getId().equals(pat.getId())) || 
 					!(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))){

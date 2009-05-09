@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Synchronizer.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *  $Id: Synchronizer.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -28,14 +28,13 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.Log;
-import ch.elexis.views.BaseAgendaView;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 /**
- * Der Synchromizer synchronisiert die lokalen Daten mit dem Agenda-Server.
+ * Der Synchronizer synchronisiert die lokalen Daten mit dem Agenda-Server.
  * Ausserdem kann optional eine externe Agenda synchronisiert werden.
  * @author gerry
  *
@@ -46,7 +45,7 @@ public class Synchronizer{
 	int lastSync;
 	static boolean pingPause=false;
 	private Hashtable<String,String> map;
-	private final BaseAgendaView base;
+	Activator agenda;
 	
 	Query<Patient> qPat=new Query<Patient>(Patient.class);
 	/**
@@ -55,8 +54,8 @@ public class Synchronizer{
 		dann erfolgt bei jedem Heartbeat eine Synchronisation (ausser, wenn pingPause
 	 * auf true gesetzt wurde). 
 	 */
-	public Synchronizer(final BaseAgendaView dayView){
-		base=dayView;
+	public Synchronizer(){
+	
 		if(Hub.globalCfg.get(PreferenceConstants.AG_SYNC_ENABLED, false)==true){
 			String base=PreferenceInitializer.getDefaultDBPath();
 			String typ=Hub.globalCfg.get(PreferenceConstants.AG_SYNC_TYPE, "hsqldb"); //$NON-NLS-1$
@@ -114,8 +113,8 @@ public class Synchronizer{
 			PreparedStatement psUpdate;
 			
 			StringBuilder sql=new StringBuilder(200);
-			sql.append("SELECT * FROM agnTermine WHERE deleted='0' AND Tag=").append(JdbcLink.wrap(base.getDate().toString(TimeTool.DATE_COMPACT))) //$NON-NLS-1$
-				.append(" AND BeiWem=").append(JdbcLink.wrap(map.get(base.getBereich()))); //$NON-NLS-1$
+			sql.append("SELECT * FROM agnTermine WHERE deleted='0' AND Tag=").append(JdbcLink.wrap(agenda.getActDate().toString(TimeTool.DATE_COMPACT))) //$NON-NLS-1$
+				.append(" AND BeiWem=").append(JdbcLink.wrap(map.get(agenda.getActResource()))); //$NON-NLS-1$
 
 			try{
 				//  1. Synchronisation von remote nach lokal
@@ -134,7 +133,7 @@ public class Synchronizer{
 						if((t==null) || (t.state()<PersistentObject.DELETED)){
 							t=new Termin(				// Sonst lokal neu erstellen
 								id,
-								base.getBereich(),
+								agenda.getActResource(),
 								res.getString("Tag"),von,bis, //$NON-NLS-1$
 								res.getString("TerminTyp"), //$NON-NLS-1$
 								res.getString("TerminStatus") //$NON-NLS-1$
@@ -153,7 +152,7 @@ public class Synchronizer{
 							if(my_lasteditMinutes<lasteditMinutes){	// Wenn remot neuer ist
 								t.set(new String[]{"Tag","Typ","Status","Beginn","Dauer","BeiWem","lastedit"}, new String[]{ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 									res.getString("Tag"), res.getString("TerminTyp"), res.getString("TerminStatus"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-									Integer.toString(von),Integer.toString(dauer),base.getBereich(),Integer.toString(lasteditMinutes)
+									Integer.toString(von),Integer.toString(dauer),agenda.getActResource(),Integer.toString(lasteditMinutes)
 								});
 								setTermin(t,res);
 							}
@@ -166,8 +165,8 @@ public class Synchronizer{
 				// 2. Synchronisation von lokal nach remote
 				sql.setLength(0);
 				//Lokale Termine
-				sql.append("SELECT * FROM AGNTERMINE WHERE deleted='0' AND Tag=").append(JdbcLink.wrap(base.getDate().toString(TimeTool.DATE_COMPACT))) //$NON-NLS-1$
-				.append(" AND Bereich=").append(JdbcLink.wrap(base.getBereich())); //$NON-NLS-1$
+				sql.append("SELECT * FROM AGNTERMINE WHERE deleted='0' AND Tag=").append(JdbcLink.wrap(agenda.getActDate().toString(TimeTool.DATE_COMPACT))) //$NON-NLS-1$
+				.append(" AND Bereich=").append(JdbcLink.wrap(agenda.getActResource())); //$NON-NLS-1$
 				res=stmMine.query(sql.toString());
 				psInsert=sync.getConnection().prepareStatement(
 						"INSERT INTO agnTermine (Tag, Beginn, Dauer, BeiWem, PatID, Personalien, Grund, TerminTyp, TerminStatus , Angelegt, Lastedit, ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"); //$NON-NLS-1$

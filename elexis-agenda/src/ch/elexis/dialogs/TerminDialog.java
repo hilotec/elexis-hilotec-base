@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 4729 2008-12-04 12:05:06Z rgw_ch $
+ *  $Id: TerminDialog.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -65,7 +65,6 @@ import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.TimeInput;
 import ch.elexis.util.TimeInput.TimeInputListener;
-import ch.elexis.views.BaseAgendaView;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
@@ -112,14 +111,15 @@ public class TerminDialog extends TitleAreaDialog {
 	Text tNr, tName, tBem;
 	Combo cbTyp, cbStatus, cbMandant;
 	Text tGrund;
+	Activator agenda=Activator.getDefault();
 	boolean bModified;
 	
-	public TerminDialog(final BaseAgendaView parent, IPlannable act){
-		super(parent.getViewSite().getShell());
+	public TerminDialog(IPlannable act){
+		super(Desk.getTopShell());
 		// base=parent;
-		actDate = parent.getDate();
+
 		if (act == null) {
-			act = new Termin.Free(parent.getDate().toString(TimeTool.DATE_COMPACT), 0, 30);
+			act = new Termin.Free(agenda.getActDate().toString(TimeTool.DATE_COMPACT), 0, 30);
 		}
 		if (act instanceof Termin) {
 			actPatient = ((Termin) act).getPatient();
@@ -133,7 +133,7 @@ public class TerminDialog extends TitleAreaDialog {
 		actPlannable = act;
 		bereiche =
 			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
-		actBereich = parent.getBereich();
+		actBereich = agenda.getActResource();
 		tMap = Plannables.getTimePrefFor(actBereich);
 		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
 		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$

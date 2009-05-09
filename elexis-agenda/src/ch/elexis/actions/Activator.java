@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 5280 2009-05-09 10:46:12Z rgw_ch $
+ *  $Id: Activator.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -17,7 +17,11 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
+import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Einen Activator braucht man immer dann, wenn man irgendwelche Dinge sicher zu
@@ -33,10 +37,11 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 
 	public static Log log = Log.get("Agenda"); //$NON-NLS-1$
-	// public TimeTool theDay;
-	// public Synchronizer pinger;
 	public static String IMG_HOME = "ch.elexis.agenda.home";
-
+	private String actResource;
+	private TimeTool actDate;
+		
+	
 	/**
 	 * The constructor
 	 */
@@ -91,5 +96,49 @@ public class Activator extends AbstractUIPlugin {
 				"ch.elexis.agenda", path); //$NON-NLS-1$
 	}
 
+
+	public String[] getResources(){
+		return Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,Messages.TagesView_14).split(",");
+	}
+	
+	public String getActResource(){
+		if(actResource==null){
+			actResource=Activator.getDefault().getResources()[0];
+		}
+		return actResource;
+	}
+	
+	public void setActResource(String resname){
+		actResource = resname;
+		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, resname);
+	}
+	
+ 
+	public TimeTool getActDate(){
+		if (actDate == null) {
+			actDate = new TimeTool();
+		}
+		return new TimeTool(actDate);
+	}
+	
+	public void setActDate(String date){
+		if (actDate == null) {
+			actDate = new TimeTool();
+		}
+		actDate.set(date);
+	}
+	
+	public void setActDate(TimeTool date){
+		if (actDate == null) {
+			actDate = new TimeTool();
+		}
+		actDate.set(date);
+	}
+
+	public TimeTool addDays(int day){
+		actDate.addDays(day);
+		return new TimeTool(actDate);
+	}
+	
 	
 }

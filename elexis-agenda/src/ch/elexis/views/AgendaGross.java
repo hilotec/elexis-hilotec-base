@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 4405 2008-09-09 20:27:31Z danlutz $
+ *  $Id: AgendaGross.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -81,7 +81,6 @@ public class AgendaGross extends BaseAgendaView {
 	@Override
 	public void create(Composite parent) {
 		parent.setLayout(new FillLayout());
-		actDate=new TimeTool();
 		
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new FormLayout());
@@ -105,7 +104,7 @@ public class AgendaGross extends BaseAgendaView {
 			Button bChange=new Button(cButtons,SWT.RADIO);
 			bChange.setText(bereich);
 			bChange.addSelectionListener(chb);
-			if(bereich.equals(actBereich)){
+			if(bereich.equals(agenda.getActResource())){
 				bChange.setSelection(true);
 			}
 		}
@@ -125,15 +124,14 @@ public class AgendaGross extends BaseAgendaView {
 		right.setLayout(new GridLayout());
 		cal=new DatePicker(right,SWT.NONE);
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		cal.setDate(actDate.getTime());
+		cal.setDate(agenda.getActDate().getTime());
 		Button bToday=new Button(right,SWT.PUSH);
 		bToday.setText("Heute");
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bToday.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				actDate=new TimeTool();
-				cal.setDate(actDate.getTime());
+				cal.setDate(agenda.getActDate().getTime());
 				updateDate();
 			}
 			
@@ -149,11 +147,11 @@ public class AgendaGross extends BaseAgendaView {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String tx=dayMessage.getText();
-				TagesNachricht tn=TagesNachricht.load(actDate);
+				TagesNachricht tn=TagesNachricht.load(agenda.getActDate());
 				if(tn.exists()){
 					tn.setLangtext(tx);
 				}else{
-					tn=new TagesNachricht(actDate," - ",tx);
+					tn=new TagesNachricht(agenda.getActDate()," - ",tx);
 				}
 			}
 			
@@ -204,7 +202,7 @@ public class AgendaGross extends BaseAgendaView {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				actDate.setTime(cal.getDate());
+				agenda.setActDate(new TimeTool(cal.getDate().getTime()));
 				updateDate();
 			}
 
@@ -222,7 +220,7 @@ public class AgendaGross extends BaseAgendaView {
 	}
 	
 	protected void setDayMessage() {
-		TagesNachricht tn=TagesNachricht.load(actDate);
+		TagesNachricht tn=TagesNachricht.load(agenda.getActDate());
 		lbDayString.setText("");
 		dayMessage.setText("");
 		if(tn.exists()){
@@ -343,7 +341,7 @@ public class AgendaGross extends BaseAgendaView {
 			ev.fireSelectionEvent(pat);
 			Konsultation kons=GlobalEvents.getSelectedKons();
 
-			String sVgl=actDate.toString(TimeTool.DATE_COMPACT);
+			String sVgl=agenda.getActDate().toString(TimeTool.DATE_COMPACT);
 			if((kons==null) || 	// Falls nicht die richtige Kons selektiert ist, passende Kons für heute suchen
 					!(kons.getFall().getPatient().getId().equals(pat.getId())) || 
 					!(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))){

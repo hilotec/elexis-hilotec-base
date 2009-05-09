@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 4768 2008-12-08 13:34:46Z rgw_ch $
+ *  $Id: AgendaWeek.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -129,7 +129,7 @@ public class AgendaWeek extends BaseAgendaView {
 			days[d] = new DayBar(this);
 		}
 		makePrivateActions();
-		actDate = new TimeTool(actWeek);
+		agenda.setActDate(actWeek);
 		setWeek(actWeek);
 		awl = new AgendaWeekListener(this);
 	}
@@ -140,12 +140,12 @@ public class AgendaWeek extends BaseAgendaView {
 		if (bCal != null && (!bCal.isDisposed())) {
 			bCal.setText(Integer.toString(actWeek.get(TimeTool.WEEK_OF_YEAR)) + ". Woche");
 			for (int i = 0; i < days.length; i++) {
-				days[i].set(ttContained, actBereich);
+				days[i].set(ttContained, agenda.getActResource());
 				dayLabels[i].setText(ttContained.toString(TimeTool.WEEKDAY) + ", "
 					+ ttContained.toString(TimeTool.DATE_GER));
 				ttContained.addHours(24);
 			}
-			actDate.set(actWeek);
+			agenda.setActDate(actWeek);
 		}
 	}
 	

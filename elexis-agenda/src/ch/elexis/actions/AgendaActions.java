@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: AgendaActions.java 4780 2008-12-09 18:10:22Z rgw_ch $
+ *  $Id: AgendaActions.java 5282 2009-05-09 14:55:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -28,7 +28,9 @@ import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminStatusDialog;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Some common actions for the agenda
@@ -48,6 +50,7 @@ public class AgendaActions {
 	/** free a previously blocked time range */
 	public static IAction unblockAction;
 	
+		
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
@@ -58,7 +61,7 @@ public class AgendaActions {
 	}
 	
 	static void makeActions(){
-
+		
 		unblockAction=new Action(Messages.AgendaActions_unblock){ 
 			@Override
 			public void run(){
