@@ -50,9 +50,9 @@ import ch.rgw.tools.TimeTool;
 public abstract class BaseView extends ViewPart implements BackingStoreListener, HeartListener,
 		ActivationListener {
 	
-	private IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
-	private IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
-	private IAction printPatientAction;
+	IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
+	IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
+	IAction printPatientAction;
 	MenuManager menu=new MenuManager();
 	Activator agenda=Activator.getDefault();
 		

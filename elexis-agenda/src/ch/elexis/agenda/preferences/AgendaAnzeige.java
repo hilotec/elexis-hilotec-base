@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, D. Lutz and Elexis
+ * Copyright (c) 2005-2009, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: AgendaAnzeige.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ * $Id: AgendaAnzeige.java 5283 2009-05-09 16:45:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
@@ -20,10 +20,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.rgw.tools.StringTool;
 
 public class AgendaAnzeige extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {

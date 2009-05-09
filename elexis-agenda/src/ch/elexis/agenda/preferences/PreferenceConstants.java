@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 3951 2008-05-22 19:34:27Z rgw_ch $
+ *  $Id: PreferenceConstants.java 5283 2009-05-09 16:45:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
@@ -26,6 +26,9 @@ public class PreferenceConstants {
 	public static final String AG_DAYPREFERENCES	= "agenda/tagesvorgaben";
 	public static final String AG_SHOW_REASON       = "agenda/show_reason";
 	public static final String AG_BEREICH           = "agenda/bereich";
+	
+	public static final String AG_PIXEL_PER_MINUTE  = "agenda/proportional/pixelperminute";
+	public static final String AG_RESOURCESTOSHOW	= "agenda/proportional/bereichezeigen";
 	
 	public static final String AG_SYNC_TYPE			= "agenda/sync/db_type";
 	public static final String AG_SYNC_HOST			= "agenda/sync/db_host";
