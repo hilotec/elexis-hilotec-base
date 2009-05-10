@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5286 2009-05-10 08:06:16Z rgw_ch $
+ *  $Id: AgendaParallel.java 5287 2009-05-10 15:31:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -42,22 +43,29 @@ public class AgendaParallel extends BaseView {
 	
 	private Label[] labels;
 	private ProportionalSheet sheet;
-	
+	private Composite header;
 	
 	public AgendaParallel(){
 		
 	}
 	
+	public Composite getHeader(){
+		return header;
+	}
+	
 	@Override
 	protected void create(Composite parent){
-		parent.setBackground(Desk.getColor(Desk.COL_RED));
-		ScrolledComposite bounding = new ScrolledComposite(parent, SWT.V_SCROLL);
+		Composite wrapper=new Composite(parent,SWT.NONE);
+		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		wrapper.setLayout(new GridLayout());
+		header=new Composite(wrapper,SWT.BORDER);
+		ScrolledComposite bounding = new ScrolledComposite(wrapper, SWT.V_SCROLL);
 		bounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		bounding.setBackground(Desk.getColor(Desk.COL_GREEN));
+		//bounding.setBackground(Desk.getColor(Desk.COL_RED));
 		sheet=new ProportionalSheet(bounding,this);
-		sheet.setSize(sheet.computeSize(SWT.DEFAULT,SWT.DEFAULT));
+		//sheet.setSize(sheet.computeSize(SWT.DEFAULT,SWT.DEFAULT));
 		bounding.setContent(sheet);
-		bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		//bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
 		
