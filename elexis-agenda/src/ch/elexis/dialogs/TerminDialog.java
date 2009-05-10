@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 5282 2009-05-09 14:55:35Z rgw_ch $
+ *  $Id: TerminDialog.java 5284 2009-05-10 05:56:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -56,7 +56,6 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
@@ -90,7 +89,6 @@ public class TerminDialog extends TitleAreaDialog {
 	};
 	int rasterIndex = Hub.userCfg.get("agenda/dayView/raster", 3); //$NON-NLS-1$
 	Hashtable<String, String> tMap;
-	TimeTool actDate;
 	double minutes;
 	double pixelPerMinute;
 	
@@ -106,8 +104,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Patient actPatient;
 	IPlannable actPlannable;
 	// TagesView base;
-	String actBereich;
-	String[] bereiche;
+	//String[] bereiche;
 	Text tNr, tName, tBem;
 	Combo cbTyp, cbStatus, cbMandant;
 	Text tGrund;
@@ -131,10 +128,7 @@ public class TerminDialog extends TitleAreaDialog {
 			Desk.getColorRegistry().put(Desk.COL_GREEN, new RGB(0, 255, 0));
 		}
 		actPlannable = act;
-		bereiche =
-			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
-		actBereich = agenda.getActResource();
-		tMap = Plannables.getTimePrefFor(actBereich);
+		tMap = Plannables.getTimePrefFor(agenda.getActResource());
 		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
 		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$
 	}
@@ -152,12 +146,13 @@ public class TerminDialog extends TitleAreaDialog {
 		topRow.setLayout(new GridLayout(3, false));
 		// oben links
 		dp = new DatePicker(topRow, SWT.NONE);
-		dp.setDate(actDate.getTime());
-		actDate.setTime(dp.getDate());
+		dp.setDate(agenda.getActDate().getTime());
+		//actDate.setTime(dp.getDate());
 		dp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
-				actDate.setTime(dp.getDate());
+				//actDate.setTime(dp.getDate());
+				agenda.setActDate(new TimeTool(dp.getDate().getTime()));
 				dayBar.redraw();
 				slider.set();
 			}
@@ -339,7 +334,7 @@ public class TerminDialog extends TitleAreaDialog {
 					actPatient = null;
 					// actTermin=null;
 					actPlannable =
-						new Termin.Free(actDate.toString(TimeTool.DATE_COMPACT), tiVon
+						new Termin.Free(agenda.getActDate().toString(TimeTool.DATE_COMPACT), tiVon
 							.getTimeAsMinutes(), niDauer.getValue());
 					// TODO actPnannable und slider
 				}
@@ -352,8 +347,8 @@ public class TerminDialog extends TitleAreaDialog {
 		tName = new Text(cBottom, SWT.BORDER | SWT.READ_ONLY);
 		tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbMandant = new Combo(cBottom, SWT.SINGLE);
-		cbMandant.setItems(bereiche);
-		cbMandant.setText(actBereich);
+		cbMandant.setItems(agenda.getResources());
+		cbMandant.setText(agenda.getActResource());
 		cbMandant.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
@@ -479,8 +474,10 @@ public class TerminDialog extends TitleAreaDialog {
 	private void setAll(){
 		tiVon.setTimeInMinutes(actPlannable.getStartMinute());
 		dp.setDate(new TimeTool(actPlannable.getDay()).getTime());
-		actDate.setTime(dp.getDate());
-		actBereich = cbMandant.getText();
+		//actDate.setTime(dp.getDate());
+		agenda.setActDate(new TimeTool(dp.getDate().getTime()));
+		agenda.setActResource(cbMandant.getText());
+		//actBereich = cbMandant.getText();
 		
 		if (actPlannable instanceof Termin.Free) {
 			setCombo(cbTyp, Termin.typStandard(), 0);
@@ -522,7 +519,7 @@ public class TerminDialog extends TitleAreaDialog {
 	}
 	
 	private void setEnablement(){
-		TimeSpan ts = new TimeSpan(tiVon.setTimeTool(new TimeTool(actDate)), niDauer.getValue());
+		TimeSpan ts = new TimeSpan(tiVon.setTimeTool(agenda.getActDate()), niDauer.getValue());
 		if (actPlannable instanceof Termin.Free) {
 			if (Plannables.collides(ts, dayBar.list, null)) {
 				enable(false);
@@ -593,7 +590,7 @@ public class TerminDialog extends TitleAreaDialog {
 		 * 
 		 */
 		void recalc(){
-			list = Plannables.loadTermine(actBereich, actDate);
+			list = Plannables.loadTermine(agenda.getActResource(), agenda.getActDate());
 			
 			tagStart = ts * 60;
 			tagEnd = te * 60;
@@ -751,7 +748,7 @@ public class TerminDialog extends TitleAreaDialog {
 		Termin actTermin = null;
 		if (actPlannable instanceof Termin.Free) {
 			actTermin =
-				new Termin(actBereich, actDate.toString(TimeTool.DATE_COMPACT), von, bis, typ,
+				new Termin(agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ,
 					status);
 		} else {
 			actTermin = (Termin) actPlannable;
@@ -762,7 +759,7 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin.set(new String[] {
 				"BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status"
 			}, new String[] {
-				actBereich, actDate.toString(TimeTool.DATE_COMPACT), Integer.toString(von),
+				agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), Integer.toString(von),
 				Integer.toString(bis - von), typ, status
 			});
 		}

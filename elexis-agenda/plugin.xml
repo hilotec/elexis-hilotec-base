@@ -28,7 +28,7 @@
       <view
             allowMultiple="false"
             category="ch.elexis.agenda.Views"
-            class="ch.elexis.views.AgendaParallel"
+            class="ch.elexis.agenda.ui.AgendaParallel"
             id="ch.elexis.agenda.parallelview"
             name="Parallelanzeige"
             restorable="true">

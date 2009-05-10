@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 5282 2009-05-09 14:55:35Z rgw_ch $
+ *  $Id: AgendaGross.java 5284 2009-05-10 05:56:38Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -317,7 +317,9 @@ public class AgendaGross extends BaseAgendaView {
 			Button source=(Button)ev.getSource();
 			String bereich=source.getText();
 			setBereich(bereich);
-			pinger.doSync();
+			if(pinger!=null){
+				pinger.doSync();
+			}
 			tv.refresh();
 		}
 		

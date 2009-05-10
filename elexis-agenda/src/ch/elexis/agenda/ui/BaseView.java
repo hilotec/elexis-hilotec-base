@@ -58,8 +58,9 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 		
 	@Override
 	public void createPartControl(Composite parent){
-	// TODO Auto-generated method stub
-	
+		makeActions();
+		create(parent);
+		refresh();
 	}
 	
 	abstract protected void create(Composite parent);
@@ -109,8 +110,7 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	}
 	
 	public void heartbeat(){
-	// TODO Auto-generated method stub
-	
+		refresh();
 	}
 	
 	public void activation(boolean mode){
@@ -315,7 +315,7 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 		IMenuManager mgr=getViewSite().getActionBars().getMenuManager();
 		mgr.add(bereichMenu);
 		mgr.add(dayLimitsAction);
-		mgr.add(newViewAction);
+		//mgr.add(newViewAction);
 		mgr.add(exportAction);
 		mgr.add(importAction);
 		mgr.add(printAction);
