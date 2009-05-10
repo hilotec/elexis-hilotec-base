@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.Desk;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
@@ -20,6 +23,13 @@ public class ProportionalSheet extends Composite {
 	public ProportionalSheet(Composite parent, BaseView v) {
 		super(parent, SWT.NONE);
 		view = v;
+		addControlListener(new ControlAdapter(){
+
+			@Override
+			public void controlResized(ControlEvent e) {
+				recalc();
+			}});
+		setBackground(Desk.getColor(Desk.COL_BLUE));
 	}
 
 	void setRangeCount(int c) {

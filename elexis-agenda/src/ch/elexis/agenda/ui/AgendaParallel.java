@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5283 2009-05-09 16:45:09Z rgw_ch $
+ *  $Id: AgendaParallel.java 5285 2009-05-10 06:51:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -23,6 +23,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.preferences.PreferenceConstants;
@@ -49,9 +50,12 @@ public class AgendaParallel extends BaseView {
 	
 	@Override
 	protected void create(Composite parent){
+		parent.setBackground(Desk.getColor(Desk.COL_RED));
 		ScrolledComposite bounding = new ScrolledComposite(parent, SWT.V_SCROLL);
 		bounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		bounding.setBackground(Desk.getColor(Desk.COL_GREEN));
 		sheet=new ProportionalSheet(bounding,this);
+		sheet.setSize(sheet.computeSize(SWT.DEFAULT,SWT.DEFAULT));
 		bounding.setContent(sheet);
 		
 	}
