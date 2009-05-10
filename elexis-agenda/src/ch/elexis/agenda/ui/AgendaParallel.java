@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5285 2009-05-10 06:51:47Z rgw_ch $
+ *  $Id: AgendaParallel.java 5286 2009-05-10 08:06:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -57,6 +57,10 @@ public class AgendaParallel extends BaseView {
 		sheet=new ProportionalSheet(bounding,this);
 		sheet.setSize(sheet.computeSize(SWT.DEFAULT,SWT.DEFAULT));
 		bounding.setContent(sheet);
+		bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		bounding.setExpandHorizontal(true);
+		bounding.setExpandVertical(true);
+		
 		
 	}
 	
@@ -71,6 +75,7 @@ public class AgendaParallel extends BaseView {
 		String resources=Hub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(agenda.getResources(),","));
 		if(resources!=null){
 			String[] toShow=resources.split(",");
+			sheet.setRangeCount(toShow.length);
 			for(int i=0;i<toShow.length;i++){
 				List<IPlannable> termine=Plannables.loadTermine(toShow[i], agenda.getActDate());
 				sheet.addAppointments(termine, i);
