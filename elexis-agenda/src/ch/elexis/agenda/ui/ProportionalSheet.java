@@ -22,7 +22,6 @@ public class ProportionalSheet extends Composite {
 	
 	int left_offset, padding;
 	private AgendaParallel view;
-	private int count;
 	private MenuManager contextMenuManager;
 	
 	public ProportionalSheet(Composite parent, AgendaParallel v) {
@@ -45,9 +44,6 @@ public class ProportionalSheet extends Composite {
 		padding=PADDING_DEFAULT;
 	}
 
-	void setRangeCount(int c) {
-		count = c;
-	}
 
 	MenuManager getContextMenuManager(){
 		return contextMenuManager;
@@ -87,12 +83,17 @@ public class ProportionalSheet extends Composite {
 				sc.setMinSize(getSize());
 				//sc.layout();
 			}
+			String[] resources=view.getDisplayedResources();
+			int count=resources.length;
 			Point textSize=SWTHelper.getStringBounds(this, "88:88");
 			left_offset=textSize.x+2;
 			double width = mySize.x-2*left_offset;
 			double widthPerColumn = width / count;
 			Composite header=view.getHeader();
-			
+			for(int i=0;i<count;i++){
+				int lx=left_offset+(int) Math.round(i*(widthPerColumn+padding));
+				
+			}
 			for (Control c : getChildren()) {
 				TerminLabel l = (TerminLabel) c;
 				int lx = left_offset+(int) Math.round(l.getColumn()*(widthPerColumn+padding));
