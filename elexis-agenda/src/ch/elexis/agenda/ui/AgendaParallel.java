@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5288 2009-05-10 19:09:48Z rgw_ch $
+ *  $Id: AgendaParallel.java 5289 2009-05-11 05:07:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -58,6 +58,7 @@ public class AgendaParallel extends BaseView {
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
 		header = new Composite(wrapper, SWT.BORDER);
+		header.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ScrolledComposite bounding = new ScrolledComposite(wrapper, SWT.V_SCROLL);
 		bounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		// bounding.setBackground(Desk.getColor(Desk.COL_RED));
@@ -90,7 +91,7 @@ public class AgendaParallel extends BaseView {
 	@Override
 	protected void refresh(){
 		String[] toShow = getDisplayedResources();
-		sheet.setRangeCount(toShow.length);
+		//sheet.setRangeCount(toShow.length);
 		for (int i = 0; i < toShow.length; i++) {
 			List<IPlannable> termine = Plannables.loadTermine(toShow[i], agenda.getActDate());
 			sheet.addAppointments(termine, i);

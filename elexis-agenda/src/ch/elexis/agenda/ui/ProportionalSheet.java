@@ -8,8 +8,10 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.data.IPlannable;
@@ -90,9 +92,16 @@ public class ProportionalSheet extends Composite {
 			double width = mySize.x-2*left_offset;
 			double widthPerColumn = width / count;
 			Composite header=view.getHeader();
+			GridData gd=(GridData)header.getLayoutData();
+			gd.heightHint=textSize.y+2;
+			for(Control c:header.getChildren()){
+				c.dispose();
+			}
 			for(int i=0;i<count;i++){
 				int lx=left_offset+(int) Math.round(i*(widthPerColumn+padding));
-				
+				Label l=new Label(header, SWT.NONE);
+				l.setText(resources[i]);
+				l.setBounds(lx, 0, l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, textSize.y+2);
 			}
 			for (Control c : getChildren()) {
 				TerminLabel l = (TerminLabel) c;
