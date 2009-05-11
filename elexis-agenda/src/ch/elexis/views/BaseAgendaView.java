@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 5282 2009-05-09 14:55:35Z rgw_ch $
+ *  $Id: BaseAgendaView.java 5290 2009-05-11 17:37:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -140,6 +140,8 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 
 	public void heartbeat() {
 		log.log("Heartbeat", Log.DEBUGMSG);
+		reloadContents(Termin.class);
+		//GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
 		//pinger.doSync();
 	}
 

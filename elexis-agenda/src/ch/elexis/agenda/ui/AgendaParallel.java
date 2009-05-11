@@ -11,22 +11,26 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5289 2009-05-11 05:07:20Z rgw_ch $
+ *  $Id: AgendaParallel.java 5290 2009-05-11 17:37:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.data.PersistentObject;
+import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
@@ -40,15 +44,14 @@ import ch.rgw.tools.StringTool;
 public class AgendaParallel extends BaseView {
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0";
 	
-	private Label[] labels;
 	private ProportionalSheet sheet;
-	private Composite header;
+	private ColumnHeader header;
 	
 	public AgendaParallel(){
 
 	}
 	
-	public Composite getHeader(){
+	public ColumnHeader getHeader(){
 		return header;
 	}
 	
@@ -57,7 +60,7 @@ public class AgendaParallel extends BaseView {
 		Composite wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
-		header = new Composite(wrapper, SWT.BORDER);
+		header = new ColumnHeader(wrapper, this);
 		header.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ScrolledComposite bounding = new ScrolledComposite(wrapper, SWT.V_SCROLL);
 		bounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -68,15 +71,32 @@ public class AgendaParallel extends BaseView {
 		// bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
+		new PersistentObjectDragSource2(bounding,new PersistentObjectDragSource2.Draggable(){
+
+			public List<PersistentObject> getSelection() {
+				System.out.println("Dragging");
+				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>(1);
+				ret.add(GlobalEvents.getInstance().getSelectedObject(Termin.class));
+				return ret;
+			}});
 		
 	}
 	
+	@Override
+	public void setFocus(){
+		sheet.setFocus();
+	}
 	@Override
 	protected IPlannable getSelection(){
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	/**
+	 * Return the resources to display. This are by default all defined resources, but users
+	 * can exclude some of them from display 
+	 * @return a stering array with all resources to display
+	 */
 	public String[] getDisplayedResources(){
 		String resources =
 			Hub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(agenda
@@ -90,16 +110,14 @@ public class AgendaParallel extends BaseView {
 	
 	@Override
 	protected void refresh(){
-		String[] toShow = getDisplayedResources();
-		//sheet.setRangeCount(toShow.length);
-		for (int i = 0; i < toShow.length; i++) {
-			List<IPlannable> termine = Plannables.loadTermine(toShow[i], agenda.getActDate());
-			sheet.addAppointments(termine, i);
-		}
-		sheet.recalc();
+		sheet.refresh();
 		
 	}
 	
+	/**
+	 * Return the scale factor, i.e. the number of Pixels to use for one minute.
+	 * @return thepixel-per-minute scale.
+	 */
 	public static double getPixelPerMinute(){
 		String ppm =
 			Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 5282 2009-05-09 14:55:35Z rgw_ch $
+ *  $Id: Activator.java 5290 2009-05-11 17:37:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -19,7 +19,11 @@ import org.osgi.framework.BundleContext;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
+import ch.elexis.data.Patient;
 import ch.elexis.util.Log;
 import ch.rgw.tools.TimeTool;
 
@@ -40,8 +44,7 @@ public class Activator extends AbstractUIPlugin {
 	public static String IMG_HOME = "ch.elexis.agenda.home";
 	private String actResource;
 	private TimeTool actDate;
-		
-	
+
 	/**
 	 * The constructor
 	 */
@@ -56,7 +59,9 @@ public class Activator extends AbstractUIPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -66,7 +71,9 @@ public class Activator extends AbstractUIPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void stop(BundleContext context) throws Exception {
 		// pinger.pause(true);
@@ -96,49 +103,78 @@ public class Activator extends AbstractUIPlugin {
 				"ch.elexis.agenda", path); //$NON-NLS-1$
 	}
 
-
-	public String[] getResources(){
-		return Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,Messages.TagesView_14).split(",");
+	public String[] getResources() {
+		return Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
+				Messages.TagesView_14).split(",");
 	}
-	
-	public String getActResource(){
-		if(actResource==null){
-			actResource=Activator.getDefault().getResources()[0];
+
+	public String getActResource() {
+		if (actResource == null) {
+			actResource = Activator.getDefault().getResources()[0];
 		}
 		return actResource;
 	}
-	
-	public void setActResource(String resname){
+
+	public void setActResource(String resname) {
 		actResource = resname;
 		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, resname);
 	}
-	
- 
-	public TimeTool getActDate(){
+
+	public TimeTool getActDate() {
 		if (actDate == null) {
 			actDate = new TimeTool();
 		}
 		return new TimeTool(actDate);
 	}
-	
-	public void setActDate(String date){
-		if (actDate == null) {
-			actDate = new TimeTool();
-		}
-		actDate.set(date);
-	}
-	
-	public void setActDate(TimeTool date){
+
+	public void setActDate(String date) {
 		if (actDate == null) {
 			actDate = new TimeTool();
 		}
 		actDate.set(date);
 	}
 
-	public TimeTool addDays(int day){
+	public void setActDate(TimeTool date) {
+		if (actDate == null) {
+			actDate = new TimeTool();
+		}
+		actDate.set(date);
+	}
+
+	public TimeTool addDays(int day) {
 		actDate.addDays(day);
 		return new TimeTool(actDate);
 	}
-	
-	
+
+	public void dispatchTermin(Termin t) {
+		GlobalEvents ev = GlobalEvents.getInstance();
+		Patient pat = t.getPatient();
+		ev.fireSelectionEvent(t);
+		if (pat != null) {
+			ev.fireSelectionEvent(pat);
+			Konsultation kons = GlobalEvents.getSelectedKons();
+
+			String sVgl = getActDate().toString(TimeTool.DATE_COMPACT);
+			if ((kons == null)
+					|| // Falls nicht die richtige Kons selektiert ist, passende
+						// Kons für heute suchen
+					!(kons.getFall().getPatient().getId().equals(pat.getId()))
+					|| !(new TimeTool(kons.getDatum())
+							.toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
+				Fall[] faelle = pat.getFaelle();
+				TimeTool ttVgl = new TimeTool();
+				for (Fall f : faelle) {
+					Konsultation[] konsen = f.getBehandlungen(true);
+					for (Konsultation k : konsen) {
+						ttVgl.set(k.getDatum());
+						if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
+							ev.fireSelectionEvent(k);
+							return;
+						}
+					}
+				}
+
+			}
+		}
+	}
 }

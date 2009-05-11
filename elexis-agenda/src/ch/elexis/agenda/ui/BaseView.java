@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Sponsoring:
+ * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
+ * 
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: BaseView.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.agenda.ui;
 
 import org.eclipse.jface.action.Action;
@@ -60,9 +76,18 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	public void createPartControl(Composite parent){
 		makeActions();
 		create(parent);
+		GlobalEvents.getInstance().addActivationListener(this, this);
 		refresh();
 	}
 	
+	
+	@Override
+	public void dispose() {
+		GlobalEvents.getInstance().removeActivationListener(this, this);
+		super.dispose();
+	}
+
+
 	abstract protected void create(Composite parent);
 	
 	abstract protected void refresh();
@@ -114,12 +139,18 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	}
 	
 	public void activation(boolean mode){
-	// TODO Auto-generated method stub
-	
+			
 	}
 	
 	public void visible(boolean mode){
-	// TODO Auto-generated method stub
+		if(mode){
+			Hub.heart.addListener(this);
+			GlobalEvents.getInstance().addBackingStoreListener(this);
+		}else{
+			Hub.heart.removeListener(this);
+			GlobalEvents.getInstance().removeBackingStoreListener(this);
+		}
+
 	
 	}
 	
