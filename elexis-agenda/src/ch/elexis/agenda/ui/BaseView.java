@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *  $Id: BaseView.java 5291 2009-05-12 05:08:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -68,7 +69,7 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	
 	IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
 	IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
-	IAction printPatientAction;
+	IAction printPatientAction, dayFwdAction, dayBackAction,showCalendarAction;
 	MenuManager menu=new MenuManager();
 	Activator agenda=Activator.getDefault();
 		
@@ -76,8 +77,9 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	public void createPartControl(Composite parent){
 		makeActions();
 		create(parent);
+		
 		GlobalEvents.getInstance().addActivationListener(this, this);
-		refresh();
+		internalRefresh();
 	}
 	
 	
@@ -94,10 +96,9 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	
 	abstract protected IPlannable getSelection();
 	
-	@Override
-	public void setFocus(){
-	// TODO Auto-generated method stub
-	
+	private void internalRefresh(){
+		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.DATE_GER));
+		refresh();
 	}
 	
 	protected void updateActions(){
@@ -120,16 +121,7 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 			});
 		} else if (clazz.equals(Anwender.class)) {
 			updateActions();
-			/*
-			if (tv != null) {
-				if (!tv.getControl().isDisposed()) {
-					tv.getControl().setFont(
-						Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_DEFAULTFONT));
-				}
-			}
-			*/
 			agenda.setActResource(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
-			setPartName("Agenda "+agenda.getActResource()); //$NON-NLS-1$
 		}
 		
 	}
@@ -301,6 +293,40 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 				ict.doImport(agenda.getActResource());
 			}
 		};
+		
+		dayFwdAction=new Action("Tag vorwärts"){
+			{
+				setToolTipText("Nächsten Tag anzeigen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
+			}
+			@Override
+			public void run(){
+				agenda.addDays(1);
+				internalRefresh();
+			}
+		};
+		
+		dayBackAction=new Action("Tag zurück"){
+			{
+				setToolTipText("Vorherigen Tag anzeigen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
+			}
+			@Override
+			public void run(){
+				agenda.addDays(-1);
+				internalRefresh();
+			}
+		};
+		showCalendarAction=new Action("Tag auswählen"){
+			{
+				setToolTipText("Einen Kalender zur Auswahl des Tages anzeigen");
+				//setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
+			}
+			@Override
+			public void run(){
+				
+			}
+		};
 		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
 			Menu mine;
 			{
@@ -326,7 +352,7 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 			private void fillMenu(){
 				String[] sMandanten=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis).split(","); 
 				for(String m:sMandanten){
-					MenuItem it=new MenuItem(mine,SWT.NONE);
+					MenuItem it=new MenuItem(mine,SWT.CHECK);
 					it.setText(m);
 					it.addSelectionListener(new SelectionAdapter(){
 
@@ -351,6 +377,10 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 		mgr.add(importAction);
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
+		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
+		tmr.add(dayBackAction);
+		tmr.add(showCalendarAction);
+		tmr.add(dayFwdAction);
 	}
 
 

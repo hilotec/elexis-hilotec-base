@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5291 2009-05-12 05:08:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -101,7 +101,7 @@ public class ProportionalSheet extends Composite {
 		}
 		int s=apps.size();
 		while(s<tlabels.size()){
-			tlabels.remove(0);
+			tlabels.remove(0).dispose();
 		}
 		while(s>tlabels.size()){
 			tlabels.add(new TerminLabel(this));
@@ -123,20 +123,6 @@ public class ProportionalSheet extends Composite {
 		recalc();
 	}
 
-	/*
-	 * @Override public Point computeSize(int hint, int hint2){ Point
-	 * parentSize=getParent().getSize(); int w=parentSize.x; int
-	 * h=(int)Math.round(AgendaParallel.getPixelPerMinute()*60*24); return new
-	 * Point(w,h);
-	 * 
-	 * }
-	 */
-	/*
-	 * @Override public Point computeSize(int hint, int hint2, boolean changed){
-	 * //return super.computeSize(hint, hint2, changed);
-	 * 
-	 * }
-	 */
 	void recalc() {
 		double ppm = AgendaParallel.getPixelPerMinute();
 		int height = (int) Math.round(ppm * 60 * 24);
@@ -164,6 +150,7 @@ public class ProportionalSheet extends Composite {
 			header.recalc(widthPerColumn, left_offset, padding, textSize.y);
 
 			for (TerminLabel l:tlabels) {
+				l.refresh();
 				int lx = left_offset
 						+ (int) Math.round(l.getColumn()
 								* (widthPerColumn + padding));
@@ -172,7 +159,7 @@ public class ProportionalSheet extends Composite {
 				int lw = (int) Math.round(widthPerColumn);
 				int lh = (int) Math.round(t.getDauer() * ppm);
 				l.setBounds(lx, ly, lw, lh);
-				l.refresh();
+				
 			}
 			sc.layout();
 		}
@@ -182,7 +169,7 @@ public class ProportionalSheet extends Composite {
 
 		public void paintControl(PaintEvent e) {
 			GC gc = e.gc;
-
+			
 			int y = 0;
 			TimeTool runner = new TimeTool();
 			runner.set("00:00");
