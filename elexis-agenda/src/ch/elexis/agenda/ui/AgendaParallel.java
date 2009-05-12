@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *  $Id: AgendaParallel.java 5292 2009-05-12 18:29:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -19,12 +19,23 @@ package ch.elexis.agenda.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
@@ -57,6 +68,7 @@ public class AgendaParallel extends BaseView {
 	
 	@Override
 	protected void create(Composite parent){
+		makePrivateActions();
 		Composite wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
@@ -68,7 +80,7 @@ public class AgendaParallel extends BaseView {
 		sheet = new ProportionalSheet(bounding, this);
 		// sheet.setSize(sheet.computeSize(SWT.DEFAULT,SWT.DEFAULT));
 		bounding.setContent(sheet);
-		// bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
 		new PersistentObjectDragSource2(bounding,new PersistentObjectDragSource2.Draggable(){
@@ -128,5 +140,53 @@ public class AgendaParallel extends BaseView {
 			Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
 			return Double.parseDouble(DEFAULT_PIXEL_PER_MINUTE);
 		}
+	}
+	
+	private void makePrivateActions(){
+		final IAction zoomAction=new Action("Zoom",Action.AS_DROP_DOWN_MENU){
+			Menu mine;
+			{
+				setToolTipText("Massstab einstellen");
+				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png"));
+				setMenuCreator(new IMenuCreator(){
+
+					public void dispose() {
+						mine.dispose();
+					}
+
+					public Menu getMenu(Control parent) {
+						mine=new Menu(parent);
+						fillMenu();
+						return mine;
+					}
+
+					public Menu getMenu(Menu parent) {
+						mine=new Menu(parent);
+						fillMenu();
+						return mine;
+					}});
+			}
+			private void fillMenu(){
+				for(String s:new String[]{"40","60","80","100","120","140","160","200","300"}){
+					MenuItem it=new MenuItem(mine,SWT.RADIO);
+					it.setText(s+"%");
+					it.addSelectionListener(new SelectionAdapter(){
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							MenuItem mi=(MenuItem)e.getSource();
+							int scale=Integer.parseInt(mi.getText().split("%")[0]);
+							double factor=scale/100.0;
+							Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double.toString(factor));
+							sheet.recalc();
+						}
+						
+					});
+				}
+			}
+		};
+		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
+		tmr.add(new Separator());
+		tmr.add(zoomAction);
 	}
 }

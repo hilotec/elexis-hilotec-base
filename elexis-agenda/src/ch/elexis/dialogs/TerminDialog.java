@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 5284 2009-05-10 05:56:38Z rgw_ch $
+ *  $Id: TerminDialog.java 5292 2009-05-12 18:29:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -734,6 +734,10 @@ public class TerminDialog extends TitleAreaDialog {
 		
 	}
 	
+	public void setTime(TimeTool time){
+		tiVon.setText(time.toString(TimeTool.TIME_SMALL));
+		slider.set();
+	}
 	@Override
 	protected void okPressed(){
 		createTermin(false);

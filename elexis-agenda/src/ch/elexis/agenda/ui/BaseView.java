@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5291 2009-05-12 05:08:33Z rgw_ch $
+ *  $Id: BaseView.java 5292 2009-05-12 18:29:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -22,6 +22,8 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -50,6 +52,7 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
@@ -69,7 +72,7 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	
 	IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
 	IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
-	IAction printPatientAction, dayFwdAction, dayBackAction,showCalendarAction;
+	IAction printPatientAction, dayFwdAction, dayBackAction,showCalendarAction,todayAction;
 	MenuManager menu=new MenuManager();
 	Activator agenda=Activator.getDefault();
 		
@@ -77,7 +80,6 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	public void createPartControl(Composite parent){
 		makeActions();
 		create(parent);
-		
 		GlobalEvents.getInstance().addActivationListener(this, this);
 		internalRefresh();
 	}
@@ -97,7 +99,8 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 	abstract protected IPlannable getSelection();
 	
 	private void internalRefresh(){
-		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.DATE_GER));
+		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)
+				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
 		refresh();
 	}
 	
@@ -324,9 +327,26 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 			}
 			@Override
 			public void run(){
-				
+				DateSelectorDialog dsl=new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
+				if(dsl.open()==Dialog.OK){
+					agenda.setActDate(dsl.getSelectedDate());
+					internalRefresh();
+				}
 			}
 		};
+		
+		todayAction=new Action("heute"){
+			{
+				setToolTipText("heutigen Tag anzeigen");
+				setImageDescriptor(Activator.getImageDescriptor("icons/calendar_view_day.png"));
+			}
+			@Override
+			public void run(){
+				agenda.setActDate(new TimeTool());
+				internalRefresh();
+			}
+		};
+		
 		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
 			Menu mine;
 			{
@@ -378,6 +398,8 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
 		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
+		tmr.add(todayAction);
+		tmr.add(new Separator());
 		tmr.add(dayBackAction);
 		tmr.add(showCalendarAction);
 		tmr.add(dayFwdAction);

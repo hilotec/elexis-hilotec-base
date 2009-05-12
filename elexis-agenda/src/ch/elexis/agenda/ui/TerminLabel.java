@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *  $Id: TerminLabel.java 5292 2009-05-12 18:29:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -56,6 +56,7 @@ public class TerminLabel extends Composite {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				agenda.setActDate(t.getDay());
+				agenda.setActResource(t.getBereich());
 				new TerminDialog(t).open();
 				refresh();
 			}
