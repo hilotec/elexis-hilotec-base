@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ColumnHeader.java 5293 2009-05-13 13:37:42Z rgw_ch $
+ *  $Id: ColumnHeader.java 5294 2009-05-13 15:25:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -46,6 +46,7 @@ public class ColumnHeader extends Composite {
 	AgendaParallel view;
 	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen";
 	static final String IMG_PERSONS_PATH="icons/personen.png";
+	ImageHyperlink ihRes;
 	
 	ColumnHeader(Composite parent, AgendaParallel v){
 		super(parent,SWT.NONE);
@@ -54,19 +55,8 @@ public class ColumnHeader extends Composite {
 		if(Desk.getImage(IMG_PERSONS_NAME)==null){
 			Desk.getImageRegistry().put(IMG_PERSONS_NAME, Activator.getImageDescriptor(IMG_PERSONS_PATH));
 		}
-		
-	}
-	
-	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
-		GridData gd=(GridData)getLayoutData();
-		gd.heightHint=textSize+2;
-		for(Control c:getChildren()){
-			c.dispose();
-		}
-		ImageHyperlink ihRes=new ImageHyperlink(this,SWT.NONE);
+		ihRes=new ImageHyperlink(this,SWT.NONE);
 		ihRes.setImage(Desk.getImage(IMG_PERSONS_NAME));
-		Point bSize=ihRes.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		ihRes.setBounds(0, 0, bSize.x, bSize.y);
 		ihRes.setToolTipText("Bereiche für Anzeige auswählen");
 		ihRes.addHyperlinkListener(new HyperlinkAdapter(){
 
@@ -76,6 +66,19 @@ public class ColumnHeader extends Composite {
 			}
 			
 		});
+		
+	}
+	
+	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
+		GridData gd=(GridData)getLayoutData();
+		gd.heightHint=textSize+2;
+		for(Control c:getChildren()){
+			if(c instanceof Label){
+				c.dispose();
+			}
+		}
+		Point bSize=ihRes.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		ihRes.setBounds(0, 0, bSize.x, bSize.y);
 		String[] labels=view.getDisplayedResources();
 		int count=labels.length;
 		for(int i=0;i<count;i++){

@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5293 2009-05-13 13:37:42Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5294 2009-05-13 15:25:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -53,12 +53,12 @@ public class ProportionalSheet extends Composite {
 	private AgendaParallel view;
 	private MenuManager contextMenuManager;
 	private List<TerminLabel> tlabels;
-	private double ppm;
+	double ppm;
 	private int sheetHeight;
 	private String[] resources;
 	private int textWidth;
-	private double sheetWidth;
-	private double widthPerColumn;
+	double sheetWidth;
+	double widthPerColumn;
 	
 	
 	public ProportionalSheet(Composite parent, AgendaParallel v) {
@@ -220,20 +220,19 @@ public class ProportionalSheet extends Composite {
 
 			for (TerminLabel l:tlabels) {
 				l.refresh();
-				int lx = left_offset
-						+ (int) Math.round(l.getColumn()
-								* (widthPerColumn + padding));
-				Termin t = l.getTermin();
-				int ly = (int) Math.round(t.getBeginn() * ppm);
-				int lw = (int) Math.round(widthPerColumn);
-				int lh = (int) Math.round(t.getDauer() * ppm);
-				l.setBounds(lx, ly, lw, lh);
 				
 			}
 			sc.layout();
 		}
 	}
 
+	public double getPpm(){
+		return ppm;
+	}
+	
+	public double getWIdthPerColumn(){
+		return widthPerColumn;
+	}
 	class TimePainter implements PaintListener {
 
 		public void paintControl(PaintEvent e) {
