@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5292 2009-05-12 18:29:57Z rgw_ch $
+ *  $Id: AgendaParallel.java 5293 2009-05-13 13:37:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -120,6 +120,9 @@ public class AgendaParallel extends BaseView {
 		}
 	}
 	
+	void clear(){
+		sheet.clear();
+	}
 	@Override
 	protected void refresh(){
 		sheet.refresh();

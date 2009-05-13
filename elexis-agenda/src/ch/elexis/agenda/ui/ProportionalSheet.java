@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5292 2009-05-12 18:29:57Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5293 2009-05-13 13:37:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -141,11 +141,25 @@ public class ProportionalSheet extends Composite {
 		return contextMenuManager;
 	}
 
+	public void clear(){
+		while(tlabels!=null && tlabels.size()>0){
+			tlabels.remove(0).dispose();
+		}
+		recalc();
+		
+	}
 	synchronized void refresh() {
 		String[] resnames=view.getDisplayedResources();
 		Query<Termin> qbe = new Query(Termin.class);
 		String day = Activator.getDefault().getActDate().toString(TimeTool.DATE_COMPACT);
 		qbe.add("Tag", "=", day);
+		qbe.startGroup();
+		
+		for(String n:resnames){
+			qbe.add("BeiWem", "=", n);
+			qbe.or();
+		}
+		qbe.endGroup();
 		List<Termin> apps=qbe.execute();
 		Collections.sort(apps);
 		if(tlabels==null){
