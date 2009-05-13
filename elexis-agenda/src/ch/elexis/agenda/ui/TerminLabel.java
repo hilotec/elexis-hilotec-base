@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5294 2009-05-13 15:25:14Z rgw_ch $
+ *  $Id: TerminLabel.java 5295 2009-05-13 20:54:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -132,6 +132,7 @@ public class TerminLabel extends Composite {
 		gd.widthHint=10;
 		gd.heightHint=lh;
 		state.setBackground(Plannables.getStatusColor(t));
+		state.setToolTipText(t.getStatus());
 		layout();
 	}
 }
