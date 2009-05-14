@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5295 2009-05-13 20:54:17Z rgw_ch $
+ *  $Id: TerminLabel.java 5298 2009-05-14 22:11:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -43,12 +43,12 @@ public class TerminLabel extends Composite {
 	private Termin t;
 	private int column;
 	private Composite state;
-	ProportionalSheet parent;
+	IAgendaLayout ial;
 	Activator agenda = Activator.getDefault();
 
-	TerminLabel(ProportionalSheet parent) {
-		super(parent, SWT.BORDER);
-		this.parent = parent;
+	public TerminLabel(IAgendaLayout al) {
+		super(al.getParent(),SWT.BORDER);
+		ial=al;
 		GridLayout gl = new GridLayout(2, false);
 		gl.marginHeight = 1;
 		gl.marginWidth = 1;
@@ -84,29 +84,29 @@ public class TerminLabel extends Composite {
 						return ret;
 					}
 				});
-		lbl.setMenu(parent.getContextMenuManager().createContextMenu(lbl));
+		lbl.setMenu(ial.getContextMenuManager().createContextMenu(lbl));
 
 	}
 
-	void set(Termin t, int col) {
+	public void set(Termin t, int col) {
 		this.t = t;
 		this.column = col;
 	}
 
-	TerminLabel(ProportionalSheet parent, Termin trm, int col) {
+	public TerminLabel(IAgendaLayout parent, Termin trm, int col) {
 		this(parent);
 		set(trm, col);
 	}
 
-	int getColumn() {
+	public int getColumn() {
 		return column;
 	}
 
-	Termin getTermin() {
+	public Termin getTermin() {
 		return t;
 	}
 
-	void refresh() {
+	public void refresh() {
 		Color back = Plannables.getTypColor(t);
 		lbl.setBackground(back);
 		// l.setBackground(Desk.getColor(Desk.COL_GREY20));
@@ -119,12 +119,12 @@ public class TerminLabel extends Composite {
 		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbl.setToolTipText(sb.toString());
 		
-		int lx = parent.left_offset
+		int lx = ial.getLeftOffset()
 				+ (int) Math.round(getColumn()
-						* (parent.widthPerColumn + parent.padding));
-		int ly = (int) Math.round(t.getBeginn() * parent.ppm);
-		int lw = (int) Math.round(parent.widthPerColumn);
-		int lh = (int) Math.round(t.getDauer() * parent.ppm);
+						* (ial.getWidthPerColumn() + ial.getPadding()));
+		int ly = (int) Math.round(t.getBeginn() * ial.getPixelPerMinute());
+		int lw = (int) Math.round(ial.getWidthPerColumn());
+		int lh = (int) Math.round(t.getDauer() * ial.getPixelPerMinute());
 		setBounds(lx, ly, lw, lh);
 		GridData gd=(GridData)state.getLayoutData();
 		Point s=lbl.computeSize(SWT.DEFAULT, SWT.DEFAULT);

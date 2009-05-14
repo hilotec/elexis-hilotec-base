@@ -11,26 +11,19 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5292 2009-05-12 18:29:57Z rgw_ch $
+ *  $Id: BaseView.java 5298 2009-05-14 22:11:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -67,203 +60,248 @@ import ch.rgw.tools.TimeTool;
  * @author Gerry
  * 
  */
-public abstract class BaseView extends ViewPart implements BackingStoreListener, HeartListener,
-		ActivationListener {
-	
-	IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
-	IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
-	IAction printPatientAction, dayFwdAction, dayBackAction,showCalendarAction,todayAction;
-	MenuManager menu=new MenuManager();
-	Activator agenda=Activator.getDefault();
-		
+public abstract class BaseView extends ViewPart implements
+		BackingStoreListener, HeartListener, ActivationListener {
+	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0";
+
+	public IAction newTerminAction, blockAction, terminKuerzenAction,
+			terminVerlaengernAction, terminAendernAction;
+	public IAction dayLimitsAction, newViewAction, printAction, exportAction,
+			importAction;
+	public IAction printPatientAction, dayFwdAction, dayBackAction,
+			showCalendarAction, todayAction;
+	MenuManager menu = new MenuManager();
+	protected Activator agenda = Activator.getDefault();
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		makeActions();
 		create(parent);
 		GlobalEvents.getInstance().addActivationListener(this, this);
 		internalRefresh();
 	}
-	
-	
+
 	@Override
 	public void dispose() {
 		GlobalEvents.getInstance().removeActivationListener(this, this);
 		super.dispose();
 	}
 
-
 	abstract protected void create(Composite parent);
-	
+
 	abstract protected void refresh();
-	
+
 	abstract protected IPlannable getSelection();
-	
-	private void internalRefresh(){
-		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)
-				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
-		refresh();
+
+	private void internalRefresh() {
+		if (Hub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
+			showCalendarAction.setText(agenda.getActDate().toString(
+					TimeTool.WEEKDAY)
+					+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
+			refresh();
+		}
 	}
-	
-	protected void updateActions(){
-		dayLimitsAction.setEnabled(Hub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
-		boolean canChangeAppointments=Hub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
+
+	protected void updateActions() {
+		dayLimitsAction.setEnabled(Hub.acl
+				.request(ACLContributor.CHANGE_DAYSETTINGS));
+		boolean canChangeAppointments = Hub.acl
+				.request(ACLContributor.CHANGE_APPOINTMENTS);
 		newTerminAction.setEnabled(canChangeAppointments);
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);
 		AgendaActions.updateActions();
-		refresh();
+		internalRefresh();
 	}
-	public void reloadContents(Class<? extends PersistentObject> clazz){
+
+	public void reloadContents(Class<? extends PersistentObject> clazz) {
 		if (clazz.equals(Termin.class)) {
 			Desk.getDisplay().asyncExec(new Runnable() {
-				public void run(){
-					refresh();
-					
+				public void run() {
+					internalRefresh();
+
 				}
 			});
 		} else if (clazz.equals(Anwender.class)) {
 			updateActions();
-			agenda.setActResource(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+			agenda.setActResource(Hub.userCfg.get(
+					PreferenceConstants.AG_BEREICH, agenda.getActResource()));
 		}
-		
+
 	}
-	
-	public void heartbeat(){
-		refresh();
+
+	public void heartbeat() {
+		internalRefresh();
 	}
-	
-	public void activation(boolean mode){
-			
+
+	public void activation(boolean mode) {
+
 	}
-	
-	public void visible(boolean mode){
-		if(mode){
+
+	public void visible(boolean mode) {
+		if (mode) {
 			Hub.heart.addListener(this);
 			GlobalEvents.getInstance().addBackingStoreListener(this);
-		}else{
+		} else {
 			Hub.heart.removeListener(this);
 			GlobalEvents.getInstance().removeBackingStoreListener(this);
 		}
 
-	
 	}
-	
-	protected void makeActions(){
-		dayLimitsAction=new Action("Tagesgrenzen"){
+
+	/**
+	 * Return the scale factor, i.e. the number of Pixels to use for one minute.
+	 * @return thepixel-per-minute scale.
+	 */
+	public static double getPixelPerMinute(){
+		String ppm =
+			Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
+		try {
+			double ret = Double.parseDouble(ppm);
+			return ret;
+		} catch (NumberFormatException ne) {
+			Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
+			return Double.parseDouble(DEFAULT_PIXEL_PER_MINUTE);
+		}
+	}
+	protected void makeActions() {
+		dayLimitsAction = new Action("Tagesgrenzen") {
 			@Override
-			public void run(){
-				new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						agenda.getActDate().toString(TimeTool.DATE_COMPACT),agenda.getActResource())
-						.open();
+			public void run() {
+				new TagesgrenzenDialog(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(), agenda
+						.getActDate().toString(TimeTool.DATE_COMPACT), agenda
+						.getActResource()).open();
 				refresh();
 			}
 		};
 
-		blockAction=new Action(Messages.TagesView_lockPeriod){ 
+		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
-			public void run(){
-				IPlannable p=getSelection();
-				if(p!=null){
-					if(p instanceof Termin.Free){
-						new Termin(agenda.getActResource(),agenda.getActDate().toString(TimeTool.DATE_COMPACT),p.getStartMinute(),
-								p.getDurationInMinutes()+p.getStartMinute(),Termin.typReserviert(),Termin.statusLeer());
-						GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+			public void run() {
+				IPlannable p = getSelection();
+				if (p != null) {
+					if (p instanceof Termin.Free) {
+						new Termin(agenda.getActResource(), agenda.getActDate()
+								.toString(TimeTool.DATE_COMPACT), p
+								.getStartMinute(), p.getDurationInMinutes()
+								+ p.getStartMinute(), Termin.typReserviert(),
+								Termin.statusLeer());
+						GlobalEvents.getInstance()
+								.fireUpdateEvent(Termin.class);
 					}
 				}
 
 			}
 		};
-		terminAendernAction=new Action(Messages.TagesView_changeTermin){ 
+		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText(Messages.TagesView_changeThisTermin); 
+				setToolTipText(Messages.TagesView_changeThisTermin);
 			}
+
 			@Override
-			public void run(){
-				TerminDialog dlg=new TerminDialog(
-						(Termin)GlobalEvents.getInstance().getSelectedObject(Termin.class));
+			public void run() {
+				TerminDialog dlg = new TerminDialog((Termin) GlobalEvents
+						.getInstance().getSelectedObject(Termin.class));
 				dlg.open();
-				refresh();
-				
+				internalRefresh();
+
 			}
 		};
-		terminKuerzenAction=new Action(Messages.TagesView_shortenTermin){ 
+		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
 			@Override
-			public void run(){
-				Termin t=(Termin) GlobalEvents.getInstance().getSelectedObject(Termin.class);
-				if(t!=null) {
-					t.setDurationInMinutes(t.getDurationInMinutes()>>1);
+			public void run() {
+				Termin t = (Termin) GlobalEvents.getInstance()
+						.getSelectedObject(Termin.class);
+				if (t != null) {
+					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
 					GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
 				}
 			}
 		};
-		terminVerlaengernAction=new Action(Messages.TagesView_enlargeTermin){ 
+		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
 			@Override
-			public void run(){
-				Termin t=(Termin) GlobalEvents.getInstance().getSelectedObject(Termin.class);
-				if(t!=null) {
+			public void run() {
+				Termin t = (Termin) GlobalEvents.getInstance()
+						.getSelectedObject(Termin.class);
+				if (t != null) {
 					agenda.setActDate(t.getDay());
-					Termin n=Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
-					if(n!=null){
+					Termin n = Plannables.getFollowingTermin(agenda
+							.getActResource(), agenda.getActDate(), t);
+					if (n != null) {
 						t.setEndTime(n.getStartTime());
-						//t.setDurationInMinutes(t.getDurationInMinutes()+15);
-						GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
+						GlobalEvents.getInstance()
+								.fireUpdateEvent(Termin.class);
 					}
 				}
 			}
 		};
-		newTerminAction=new Action(Messages.TagesView_newTermin){ 
+		newTerminAction = new Action(Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText(Messages.TagesView_createNewTermin); 
+				setToolTipText(Messages.TagesView_createNewTermin);
 			}
+
 			@Override
-			public void run(){
+			public void run() {
 				new TerminDialog(null).open();
-				refresh();
+				internalRefresh();
 			}
 		};
-		printAction=new Action("Tagesliste drucken"){
+		printAction = new Action("Tagesliste drucken") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Termine des gewählten Tages ausdrucken");
 			}
+
 			@Override
-			public void run(){
-				IPlannable[] liste=Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
-				new TerminListeDruckenDialog(getViewSite().getShell(),liste).open();
-				refresh();
+			public void run() {
+				IPlannable[] liste = Plannables.loadDay(
+						agenda.getActResource(), agenda.getActDate());
+				new TerminListeDruckenDialog(getViewSite().getShell(), liste)
+						.open();
+				internalRefresh();
 			}
 		};
-		printPatientAction=new Action("Patienten-Termine drucken"){
+		printPatientAction = new Action("Patienten-Termine drucken") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Zukünftige Termine des ausgewählten Patienten drucken");
 			}
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient patient = GlobalEvents.getSelectedPatient();
 				if (patient != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
 					qbe.add("Wer", "=", patient.getId());
 					qbe.add("deleted", "<>", "1");
-					qbe.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
+					qbe.add("Tag", ">=", new TimeTool()
+							.toString(TimeTool.DATE_COMPACT));
 					qbe.orderBy(false, "Tag", "Beginn");
-					java.util.List<Termin> list=qbe.execute();
+					java.util.List<Termin> list = qbe.execute();
 					if (list != null) {
-						boolean directPrint = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
-								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
+						boolean directPrint = Hub.localCfg
+								.get(
+										PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
+										PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
 
-						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list.toArray(new Termin[0]));
+						TermineDruckenDialog dlg = new TermineDruckenDialog(
+								getViewSite().getShell(), list
+										.toArray(new Termin[0]));
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
 							dlg.open();
 							if (dlg.doPrint()) {
 								dlg.close();
 							} else {
-								SWTHelper.alert("Fehler beim Drucken",
-										"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+								SWTHelper
+										.alert(
+												"Fehler beim Drucken",
+												"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 							}
 						} else {
 							dlg.setBlockOnOpen(true);
@@ -273,131 +311,97 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 				}
 			}
 		};
-		exportAction=new Action("Agenda exportieren"){
+		exportAction = new Action("Agenda exportieren") {
 			{
 				setToolTipText("Termine eines Bereichs exportieren");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
+
 			@Override
-			public void run(){
-				ICalTransfer ict=new ICalTransfer();
-				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda.getActResource());
+			public void run() {
+				ICalTransfer ict = new ICalTransfer();
+				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda
+						.getActResource());
 			}
 		};
-		
-		importAction=new Action("Termine importieren"){
+
+		importAction = new Action("Termine importieren") {
 			{
 				setToolTipText("Termine aus einer iCal-Datei importieren");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
+
 			@Override
-			public void run(){
-				ICalTransfer ict=new ICalTransfer();
+			public void run() {
+				ICalTransfer ict = new ICalTransfer();
 				ict.doImport(agenda.getActResource());
 			}
 		};
-		
-		dayFwdAction=new Action("Tag vorwärts"){
+
+		dayFwdAction = new Action("Tag vorwärts") {
 			{
 				setToolTipText("Nächsten Tag anzeigen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
 			}
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.addDays(1);
 				internalRefresh();
 			}
 		};
-		
-		dayBackAction=new Action("Tag zurück"){
+
+		dayBackAction = new Action("Tag zurück") {
 			{
 				setToolTipText("Vorherigen Tag anzeigen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
 			}
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.addDays(-1);
 				internalRefresh();
 			}
 		};
-		showCalendarAction=new Action("Tag auswählen"){
+		showCalendarAction = new Action("Tag auswählen") {
 			{
 				setToolTipText("Einen Kalender zur Auswahl des Tages anzeigen");
-				//setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
+				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
 			}
+
 			@Override
-			public void run(){
-				DateSelectorDialog dsl=new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
-				if(dsl.open()==Dialog.OK){
+			public void run() {
+				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite()
+						.getShell(), agenda.getActDate());
+				if (dsl.open() == Dialog.OK) {
 					agenda.setActDate(dsl.getSelectedDate());
 					internalRefresh();
 				}
 			}
 		};
-		
-		todayAction=new Action("heute"){
+
+		todayAction = new Action("heute") {
 			{
 				setToolTipText("heutigen Tag anzeigen");
-				setImageDescriptor(Activator.getImageDescriptor("icons/calendar_view_day.png"));
+				setImageDescriptor(Activator
+						.getImageDescriptor("icons/calendar_view_day.png"));
 			}
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.setActDate(new TimeTool());
 				internalRefresh();
 			}
 		};
+
 		
-		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
-			Menu mine;
-			{
-				setToolTipText(Messages.TagesView_selectBereich); 
-				setMenuCreator(new IMenuCreator(){
-
-					public void dispose() {
-						mine.dispose();
-					}
-
-					public Menu getMenu(Control parent) {
-						mine=new Menu(parent);
-						fillMenu();
-						return mine;
-					}
-
-					public Menu getMenu(Menu parent) {
-						mine=new Menu(parent);
-						fillMenu();
-						return mine;
-					}});
-			}
-			private void fillMenu(){
-				String[] sMandanten=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis).split(","); 
-				for(String m:sMandanten){
-					MenuItem it=new MenuItem(mine,SWT.CHECK);
-					it.setText(m);
-					it.addSelectionListener(new SelectionAdapter(){
-
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							MenuItem mi=(MenuItem)e.getSource();
-							agenda.setActResource(mi.getText());
-							refresh();
-						}
-						
-					});
-				}
-			}
-			
-		};
-		
-		IMenuManager mgr=getViewSite().getActionBars().getMenuManager();
-		mgr.add(bereichMenu);
+		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(dayLimitsAction);
-		//mgr.add(newViewAction);
 		mgr.add(exportAction);
 		mgr.add(importAction);
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
-		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
+		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
 		tmr.add(todayAction);
 		tmr.add(new Separator());
 		tmr.add(dayBackAction);
@@ -405,6 +409,4 @@ public abstract class BaseView extends ViewPart implements BackingStoreListener,
 		tmr.add(dayFwdAction);
 	}
 
-
-	
 }

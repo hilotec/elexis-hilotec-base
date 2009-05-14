@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *  $Id: BaseAgendaView.java 5298 2009-05-14 22:11:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -167,6 +167,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		if(pinger!=null){
 			pinger.doSync();
 		}
+		reloadContents(Termin.class);
 	}
 
 	public abstract void setTermin(Termin t);
@@ -405,7 +406,7 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 						public void widgetSelected(SelectionEvent e) {
 							MenuItem mi=(MenuItem)e.getSource();
 							setBereich(mi.getText());
-							tv.refresh();
+							//tv.refresh();
 						}
 						
 					});

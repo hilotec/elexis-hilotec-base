@@ -1,20 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Sponsoring:
- * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
- * 
- * Contributors:
- *    G. Weirich - initial implementation
- *    
- *  $Id: AgendaParallel.java 5298 2009-05-14 22:11:19Z rgw_ch $
- *******************************************************************************/
-
-package ch.elexis.agenda.ui;
+package ch.elexis.agenda.ui.week;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,25 +24,18 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.ui.BaseView;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.PersistentObjectDragSource2;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
-/**
- * A View to display ressources side by side in the same view.
- * 
- * @author gerry
- * 
- */
-public class AgendaParallel extends BaseView {
-
-	
+public class AgendaWeek extends BaseView {
+		
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
 	
-	public AgendaParallel(){
+	public AgendaWeek(){
 
 	}
 	
@@ -66,13 +43,15 @@ public class AgendaParallel extends BaseView {
 		return header;
 	}
 	
+
+	
 	@Override
-	protected void create(Composite parent){
+	protected void create(Composite parent) {
 		makePrivateActions();
 		Composite wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
-		header = new ColumnHeader(wrapper, this);
+		header = new ch.elexis.agenda.ui.week.ColumnHeader(wrapper, this);
 		header.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ScrolledComposite bounding = new ScrolledComposite(wrapper, SWT.V_SCROLL);
 		bounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -91,27 +70,31 @@ public class AgendaParallel extends BaseView {
 				ret.add(GlobalEvents.getInstance().getSelectedObject(Termin.class));
 				return ret;
 			}});
-		
+
+
 	}
-	
+
 	@Override
-	public void setFocus(){
-		sheet.setFocus();
-	}
-	@Override
-	protected IPlannable getSelection(){
+	protected IPlannable getSelection() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected void refresh() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
 	
-	/**
-	 * Return the resources to display. This are by default all defined resources, but users
-	 * can exclude some of them from display 
-	 * @return a stering array with all resources to display
-	 */
-	public String[] getDisplayedResources(){
+	public String[] getDisplayedDays(){
 		String resources =
-			Hub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(agenda
+			Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(agenda
 				.getResources(), ","));
 		if (resources == null) {
 			return new String[0];
@@ -119,17 +102,6 @@ public class AgendaParallel extends BaseView {
 			return resources.split(",");
 		}
 	}
-	
-	void clear(){
-		sheet.clear();
-	}
-	@Override
-	protected void refresh(){
-		sheet.refresh();
-		
-	}
-	
-	
 	
 	private void makePrivateActions(){
 		final IAction zoomAction=new Action("Zoom",Action.AS_DROP_DOWN_MENU){
@@ -178,4 +150,5 @@ public class AgendaParallel extends BaseView {
 		tmr.add(new Separator());
 		tmr.add(zoomAction);
 	}
+
 }

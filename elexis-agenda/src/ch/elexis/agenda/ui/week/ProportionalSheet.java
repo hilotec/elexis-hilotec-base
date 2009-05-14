@@ -1,20 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Sponsoring:
- * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
- * 
- * Contributors:
- *    G. Weirich - initial implementation
- *    
- *  $Id: ProportionalSheet.java 5298 2009-05-14 22:11:19Z rgw_ch $
- *******************************************************************************/
-
-package ch.elexis.agenda.ui;
+package ch.elexis.agenda.ui.week;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,6 +23,9 @@ import org.eclipse.swt.widgets.ScrollBar;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.ui.BaseView;
+import ch.elexis.agenda.ui.IAgendaLayout;
+import ch.elexis.agenda.ui.TerminLabel;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.util.SWTHelper;
@@ -49,18 +36,18 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 	static final int LEFT_OFFSET_DEFAULT = 20;
 	static final int PADDING_DEFAULT = 5;
 
-	private int left_offset, padding;
-	private AgendaParallel view;
+	int left_offset, padding;
+	private AgendaWeek view;
 	private MenuManager contextMenuManager;
 	private List<TerminLabel> tlabels;
-	private double ppm;
+	double ppm;
 	private int sheetHeight;
 	private String[] resources;
 	private int textWidth;
-	private double sheetWidth;
-	private double widthPerColumn;
+	double sheetWidth;
+	double widthPerColumn;
 
-	public ProportionalSheet(Composite parent, AgendaParallel v) {
+	public ProportionalSheet(Composite parent, AgendaWeek v) {
 		super(parent, SWT.NO_BACKGROUND);
 		view = v;
 		addControlListener(new ControlAdapter() {
@@ -147,18 +134,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 	}
 
 	synchronized void refresh() {
-		String[] resnames = view.getDisplayedResources();
+		//String[] resnames = view.getDisplayedResources();
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		String day = Activator.getDefault().getActDate().toString(
+		TimeTool ttMonday=Activator.getDefault().getActDate();
+		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
+		ttMonday.chop(3);
+		TimeTool ttSunday=new TimeTool(ttMonday);
+		ttSunday.addDays(7);
+		//ttSunday.addMinutes(-1);
+		String from = ttMonday.toString(
 				TimeTool.DATE_COMPACT);
-		qbe.add("Tag", "=", day);
-		qbe.startGroup();
-
-		for (String n : resnames) {
-			qbe.add("BeiWem", "=", n);
-			qbe.or();
-		}
-		qbe.endGroup();
+		String until=ttSunday.toString(TimeTool.DATE_COMPACT);
+		qbe.add("Tag", ">=", from);
+		qbe.add("Tag", "<", until);
+		qbe.add("BdeiWem", "=", Activator.getDefault().getActResource());
 		List<Termin> apps = qbe.execute();
 		Collections.sort(apps);
 		if (tlabels == null) {
@@ -176,21 +165,16 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		while (ipi.hasNext()) {
 			TerminLabel tl = iptl.next();
 			Termin t = ipi.next();
-			String m = t.getBereich();
-			int idx = StringTool.getIndex(resnames, m);
-			if (idx == -1) {
-				ipi.remove();
-				iptl.remove();
-			} else {
-				tl.set(t, idx);
-			}
+			TimeTool ttStart=t.getStartTime();
+			int days=ttMonday.daysTo(ttStart);
+			tl.set(t, days);
 		}
 		recalc();
 	}
 
 	void recalc() {
 		if (tlabels != null) {
-			ppm = AgendaParallel.getPixelPerMinute();
+			ppm = BaseView.getPixelPerMinute();
 			sheetHeight = (int) Math.round(ppm * 60 * 24);
 			ScrolledComposite sc = (ScrolledComposite) getParent();
 			Point mySize = getSize();
@@ -206,7 +190,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				if (bar != null) {
 					barWidth = bar.getSize().x;
 				}
-				resources = view.getDisplayedResources();
+				resources = view.getDisplayedDays();
 				int count = resources.length;
 				Point textSize = SWTHelper.getStringBounds(this, "88:88");
 				textWidth = textSize.x;
@@ -233,13 +217,13 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		return widthPerColumn;
 	}
 
+	public int getPadding(){
+		return padding;
+	}
 	public int getLeftOffset(){
 		return left_offset;
 	}
 	
-	public int getPadding(){
-		return padding;
-	}
 	class TimePainter implements PaintListener {
 
 		public void paintControl(PaintEvent e) {
@@ -252,7 +236,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 			Point textSize = gc.textExtent("88:88");
 			int textwidth = textSize.x;
 
-			int quarter = (int) Math.round(15.0 * AgendaParallel
+			int quarter = (int) Math.round(15.0 * BaseView
 					.getPixelPerMinute());
 			int w = ProportionalSheet.this.getSize().x - 5;
 			int left = 0;

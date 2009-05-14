@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ColumnHeader.java 5294 2009-05-13 15:25:14Z rgw_ch $
+ *  $Id: ColumnHeader.java 5298 2009-05-14 22:11:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -34,6 +34,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.ui.week.AgendaWeek;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
@@ -69,6 +70,7 @@ public class ColumnHeader extends Composite {
 		
 	}
 	
+
 	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
 		GridData gd=(GridData)getLayoutData();
 		gd.heightHint=textSize+2;
