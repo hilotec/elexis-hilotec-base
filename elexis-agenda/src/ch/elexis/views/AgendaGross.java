@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 5284 2009-05-10 05:56:38Z rgw_ch $
+ *  $Id: AgendaGross.java 5300 2009-05-15 16:51:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -63,11 +63,12 @@ import com.tiff.common.ui.datepicker.DatePicker;
 
 /**
  * A larger view for the agenda with more features than the compact "TagesView"
+ * 
  * @author gerry
- *
+ * 
  */
 public class AgendaGross extends BaseAgendaView {
-	public static final String ID= "ch.elexis.agenda.largeview";
+	public static final String ID = "ch.elexis.agenda.largeview";
 	DatePicker cal;
 	Composite cButtons;
 	Composite right;
@@ -75,130 +76,131 @@ public class AgendaGross extends BaseAgendaView {
 	Text terminDetail;
 	Label lbDetails;
 	Label lbDayString;
-	private static final String[] columnTitles={"von","bis","Typ","Status","Personalien", "Grund"};
-	private static final int[] columnWidths={30,30,50,70,300, 200};
+	private static final String[] columnTitles = { "von", "bis", "Typ",
+			"Status", "Personalien", "Grund" };
+	private static final int[] columnWidths = { 30, 30, 50, 70, 300, 200 };
 
 	@Override
 	public void create(Composite parent) {
 		parent.setLayout(new FillLayout());
-		
-		Composite ret=new Composite(parent,SWT.NONE);
+
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FormLayout());
-		//Button tv=new Button(ret,SWT.PUSH);
-		cButtons=new Composite(ret,SWT.BORDER);
+		// Button tv=new Button(ret,SWT.PUSH);
+		cButtons = new Composite(ret, SWT.BORDER);
 		cButtons.setLayout(new RowLayout());
-		FormData fdTop=new FormData();
-		fdTop.top=new FormAttachment(0,3);
-		fdTop.left=new FormAttachment(0,3);
-		fdTop.right=new FormAttachment(100,-3);
+		FormData fdTop = new FormData();
+		fdTop.top = new FormAttachment(0, 3);
+		fdTop.left = new FormAttachment(0, 3);
+		fdTop.right = new FormAttachment(100, -3);
 		cButtons.setLayoutData(fdTop);
-		right=new Composite(ret,SWT.BORDER);
-		FormData fdRight=new FormData();
-		fdRight.right=new FormAttachment(100,-5);
-		fdRight.top=new FormAttachment(cButtons,0);
-		fdRight.bottom=new FormAttachment(100,-5);
+		right = new Composite(ret, SWT.BORDER);
+		FormData fdRight = new FormData();
+		fdRight.right = new FormAttachment(100, -5);
+		fdRight.top = new FormAttachment(cButtons, 0);
+		fdRight.bottom = new FormAttachment(100, -5);
 		right.setLayoutData(fdRight);
-		String[] bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
-		ChangeBereichAdapter chb=new ChangeBereichAdapter();
-		for(String bereich:bereiche){
-			Button bChange=new Button(cButtons,SWT.RADIO);
+		String[] bereiche = Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
+				Messages.TagesView_14).split(",");
+		ChangeBereichAdapter chb = new ChangeBereichAdapter();
+		for (String bereich : bereiche) {
+			Button bChange = new Button(cButtons, SWT.RADIO);
 			bChange.setText(bereich);
 			bChange.addSelectionListener(chb);
-			if(bereich.equals(agenda.getActResource())){
+			if (bereich.equals(agenda.getActResource())) {
 				bChange.setSelection(true);
 			}
 		}
-		tv=new TableViewer(ret,SWT.FULL_SELECTION|SWT.SINGLE);
-		FormData fdTV=new FormData();
-		fdTV.left=new FormAttachment(0,0);
-		fdTV.top=new FormAttachment(cButtons,0);
-		fdTV.right=new FormAttachment(right,4);
-		fdTV.bottom=new FormAttachment(100,-4);
-		//fdTV.bottom=new FormAttachment(0,0);
+		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
+		FormData fdTV = new FormData();
+		fdTV.left = new FormAttachment(0, 0);
+		fdTV.top = new FormAttachment(cButtons, 0);
+		fdTV.right = new FormAttachment(right, 4);
+		fdTV.bottom = new FormAttachment(100, -4);
+		// fdTV.bottom=new FormAttachment(0,0);
 		tv.getControl().setLayoutData(fdTV);
-		
-		
-		//fdRight.left=new FormAttachment(tv,5);
-		//fdRight.bottom=new FormAttachment(0,0);
-		
+
+		// fdRight.left=new FormAttachment(tv,5);
+		// fdRight.bottom=new FormAttachment(0,0);
+
 		right.setLayout(new GridLayout());
-		cal=new DatePicker(right,SWT.NONE);
+		cal = new DatePicker(right, SWT.NONE);
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cal.setDate(agenda.getActDate().getTime());
-		Button bToday=new Button(right,SWT.PUSH);
+		Button bToday = new Button(right, SWT.PUSH);
 		bToday.setText("Heute");
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		bToday.addSelectionListener(new SelectionAdapter(){
+		bToday.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				cal.setDate(agenda.getActDate().getTime());
 				updateDate();
 			}
-			
+
 		});
-		dayMessage=SWTHelper.createText(right, 4, SWT.V_SCROLL);
+		dayMessage = SWTHelper.createText(right, 4, SWT.V_SCROLL);
 
 		// set text field's maximum width to the width of the calendar
 		GridData gd = (GridData) dayMessage.getLayoutData();
 		gd.widthHint = cal.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-		
-		dayMessage.addFocusListener(new FocusAdapter(){
+
+		dayMessage.addFocusListener(new FocusAdapter() {
 
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				String tx=dayMessage.getText();
-				TagesNachricht tn=TagesNachricht.load(agenda.getActDate());
-				if(tn.exists()){
+				String tx = dayMessage.getText();
+				TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
+				if (tn.exists()) {
 					tn.setLangtext(tx);
-				}else{
-					tn=new TagesNachricht(agenda.getActDate()," - ",tx);
+				} else {
+					tn = new TagesNachricht(agenda.getActDate(), " - ", tx);
 				}
 			}
-			
+
 		});
-		terminDetail=SWTHelper.createText(right, 5, SWT.NONE);
+		terminDetail = SWTHelper.createText(right, 5, SWT.NONE);
 		terminDetail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		lbDetails=new Label(right,SWT.WRAP);
+		lbDetails = new Label(right, SWT.WRAP);
 		lbDetails.setText("-");
 		lbDetails.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		lbDayString=new Label(ret,SWT.NONE);
-		FormData fdBottom=new FormData();
-		fdBottom.left=new FormAttachment(0,0);
-		fdBottom.bottom=new FormAttachment(100,0);
-		fdBottom.right=new FormAttachment(100,0);
-		
+		lbDayString = new Label(ret, SWT.NONE);
+		FormData fdBottom = new FormData();
+		fdBottom.left = new FormAttachment(0, 0);
+		fdBottom.bottom = new FormAttachment(100, 0);
+		fdBottom.right = new FormAttachment(100, 0);
+
 		tv.setLabelProvider(new AgendaLabelProvider());
-		Table table=tv.getTable();
-	
-		GC gc=new GC(table);
-		FontMetrics fm=gc.getFontMetrics();
-		int average=fm.getAverageCharWidth();
-		int nw=gc.getCharWidth('0');
+		Table table = tv.getTable();
+
+		GC gc = new GC(table);
+		FontMetrics fm = gc.getFontMetrics();
+		int average = fm.getAverageCharWidth();
+		int nw = gc.getCharWidth('0');
 		gc.dispose();
-		columnWidths[0]=8*nw;
-		columnWidths[1]=columnWidths[0];
-		int w=10;
-		for(int i=0;i<Termin.TerminTypes.length;i++){
-			if(Termin.TerminTypes[i].length()>w){
-				w=Termin.TerminTypes[i].length();
+		columnWidths[0] = 8 * nw;
+		columnWidths[1] = columnWidths[0];
+		int w = 10;
+		for (int i = 0; i < Termin.TerminTypes.length; i++) {
+			if (Termin.TerminTypes[i].length() > w) {
+				w = Termin.TerminTypes[i].length();
 			}
 		}
-		columnWidths[2]=(w+1)*average;
-		w=10;
-		for(int i=0;i<Termin.TerminStatus.length;i++){
-			if(Termin.TerminStatus[i].length()>w){
-				w=Termin.TerminStatus[i].length();
+		columnWidths[2] = (w + 1) * average;
+		w = 10;
+		for (int i = 0; i < Termin.TerminStatus.length; i++) {
+			if (Termin.TerminStatus[i].length() > w) {
+				w = Termin.TerminStatus[i].length();
 			}
 		}
-		columnWidths[3]=(w+1)*average;
-		for(int i=0;i<columnTitles.length;i++){
-			TableColumn tc=new TableColumn(table,SWT.NONE);
+		columnWidths[3] = (w + 1) * average;
+		for (int i = 0; i < columnTitles.length; i++) {
+			TableColumn tc = new TableColumn(table, SWT.NONE);
 			tc.setText(columnTitles[i]);
 			tc.setWidth(columnWidths[i]);
 		}
 		table.setHeaderVisible(true);
 		makePrivateActions();
-		cal.addSelectionListener(new SelectionAdapter(){
+		cal.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -211,19 +213,19 @@ public class AgendaGross extends BaseAgendaView {
 		// set initial widget values
 		initialize();
 	}
-	
+
 	/*
 	 * Intialize dayMessage field
 	 */
 	protected void initialize() {
 		setDayMessage();
 	}
-	
+
 	protected void setDayMessage() {
-		TagesNachricht tn=TagesNachricht.load(agenda.getActDate());
+		TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
 		lbDayString.setText("");
 		dayMessage.setText("");
-		if(tn.exists()){
+		if (tn.exists()) {
 			lbDayString.setText(tn.getZeile());
 			dayMessage.setText(tn.getLangtext());
 		}
@@ -231,7 +233,9 @@ public class AgendaGross extends BaseAgendaView {
 
 	protected void updateDate() {
 		setDayMessage();
-		pinger.doSync();
+		if (pinger != null) {
+			pinger.doSync();
+		}
 		tv.refresh();
 	}
 
@@ -240,15 +244,15 @@ public class AgendaGross extends BaseAgendaView {
 		tv.getControl().setFocus();
 	}
 
-	
-	private class AgendaLabelProvider extends LabelProvider implements ITableColorProvider, ITableLabelProvider{
+	private class AgendaLabelProvider extends LabelProvider implements
+			ITableColorProvider, ITableLabelProvider {
 
 		public Color getBackground(Object element, int columnIndex) {
-			if(element instanceof IPlannable){
-				IPlannable p=(IPlannable)element;
-				if(columnIndex==3){
+			if (element instanceof IPlannable) {
+				IPlannable p = (IPlannable) element;
+				if (columnIndex == 3) {
 					return Plannables.getStatusColor(p);
-				}else{
+				} else {
 					return Plannables.getTypColor(p);
 				}
 			}
@@ -256,11 +260,11 @@ public class AgendaGross extends BaseAgendaView {
 		}
 
 		public Color getForeground(Object element, int columnIndex) {
-			if(element instanceof IPlannable){
-				IPlannable p=(IPlannable) element;
-				if(columnIndex==3){
+			if (element instanceof IPlannable) {
+				IPlannable p = (IPlannable) element;
+				if (columnIndex == 3) {
 					return SWTHelper.getContrast(Plannables.getStatusColor(p));
-				}else{
+				} else {
 					return SWTHelper.getContrast(Plannables.getTypColor(p));
 				}
 			}
@@ -269,17 +273,16 @@ public class AgendaGross extends BaseAgendaView {
 
 		public Image getColumnImage(Object element, int columnIndex) {
 			/*
-			if(element instanceof IPlannable){
-				IPlannable p=(IPlannable)element;
-				return Plannables.getTypImage(p);
-			}*/
+			 * if(element instanceof IPlannable){ IPlannable
+			 * p=(IPlannable)element; return Plannables.getTypImage(p); }
+			 */
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			if(element instanceof IPlannable){
-				IPlannable ip=(IPlannable)element;
-				switch(columnIndex){
+			if (element instanceof IPlannable) {
+				IPlannable ip = (IPlannable) element;
+				switch (columnIndex) {
 				case 0:
 					return Plannables.getStartTimeAsString(ip);
 				case 1:
@@ -296,11 +299,11 @@ public class AgendaGross extends BaseAgendaView {
 						String grund = termin.getGrund();
 						if (grund != null) {
 							String[] tokens = grund.split("[\r\n]+");
-							if(tokens.length>0){
+							if (tokens.length > 0) {
 								grund = tokens[0];
 							}
 						}
-						return grund==null ? "" : grund;
+						return grund == null ? "" : grund;
 					} else {
 						return "";
 					}
@@ -308,75 +311,85 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return "?"; //$NON-NLS-1$
 		}
-		
+
 	}
-	private class ChangeBereichAdapter extends SelectionAdapter{
+
+	private class ChangeBereichAdapter extends SelectionAdapter {
 
 		@Override
 		public void widgetSelected(SelectionEvent ev) {
-			Button source=(Button)ev.getSource();
-			String bereich=source.getText();
+			Button source = (Button) ev.getSource();
+			String bereich = source.getText();
 			setBereich(bereich);
-			if(pinger!=null){
+			if (pinger != null) {
 				pinger.doSync();
 			}
 			tv.refresh();
 		}
-		
+
 	}
+
 	@Override
 	public void setTermin(Termin t) {
-		Patient pat=t.getPatient();
-		StringBuilder sb=new StringBuilder(200);
-		TimeSpan ts=t.getTimeSpan();
-		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-		.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
-		.append(t.getType()).append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
+		Patient pat = t.getPatient();
+		StringBuilder sb = new StringBuilder(200);
+		TimeSpan ts = t.getTimeSpan();
+		sb
+				.append(ts.from.toString(TimeTool.TIME_SMALL))
+				.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
+				.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(t.getType())
+				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
-		GlobalEvents ev=GlobalEvents.getInstance();
+		GlobalEvents ev = GlobalEvents.getInstance();
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/")
-		.append(t.getCreateTime().toString(TimeTool.FULL_GER));
+		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append(
+				t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
 		ev.fireSelectionEvent(t);
-		if(pat!=null){
+		if (pat != null) {
 			ev.fireSelectionEvent(pat);
-			Konsultation kons=GlobalEvents.getSelectedKons();
+			Konsultation kons = GlobalEvents.getSelectedKons();
 
-			String sVgl=agenda.getActDate().toString(TimeTool.DATE_COMPACT);
-			if((kons==null) || 	// Falls nicht die richtige Kons selektiert ist, passende Kons für heute suchen
-					!(kons.getFall().getPatient().getId().equals(pat.getId())) || 
-					!(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))){
-				Fall[] faelle=pat.getFaelle();
-				TimeTool ttVgl=new TimeTool();							
-				for(Fall f:faelle){
-					Konsultation[] konsen=f.getBehandlungen(true);
-					for(Konsultation k:konsen){
+			String sVgl = agenda.getActDate().toString(TimeTool.DATE_COMPACT);
+			if ((kons == null)
+					|| // Falls nicht die richtige Kons selektiert ist, passende
+						// Kons für heute suchen
+					!(kons.getFall().getPatient().getId().equals(pat.getId()))
+					|| !(new TimeTool(kons.getDatum())
+							.toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
+				Fall[] faelle = pat.getFaelle();
+				TimeTool ttVgl = new TimeTool();
+				for (Fall f : faelle) {
+					Konsultation[] konsen = f.getBehandlungen(true);
+					for (Konsultation k : konsen) {
 						ttVgl.set(k.getDatum());
-						if(ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)){
+						if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
 							ev.fireSelectionEvent(k);
 							return;
 						}
 					}
 				}
-				
+
 			}
-			
-		}		
-		
+
+		}
+
 	}
-	
-	private void makePrivateActions(){
-		newViewAction=new Action("Neues Fenster"){
+
+	private void makePrivateActions() {
+		newViewAction = new Action("Neues Fenster") {
 			@Override
-			public void run(){
+			public void run() {
 				try {
-					getViewSite().getPage().showView(ID, StringTool.unique("Agenda"), IWorkbenchPage.VIEW_VISIBLE);
+					getViewSite().getPage().showView(ID,
+							StringTool.unique("Agenda"),
+							IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}
 			}
 		};
 	}
-	 
+
 }

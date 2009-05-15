@@ -29,31 +29,31 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 public class AgendaWeek extends BaseView {
-		
+
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
-	
-	public AgendaWeek(){
+
+	public AgendaWeek() {
 
 	}
-	
-	public ColumnHeader getHeader(){
+
+	public ColumnHeader getHeader() {
 		return header;
 	}
-	
 
-	
 	@Override
 	protected void create(Composite parent) {
 		makePrivateActions();
 		Composite wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
-		header = new ch.elexis.agenda.ui.week.ColumnHeader(wrapper, this);
+		header = new ColumnHeader(wrapper, this);
 		header.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		ScrolledComposite bounding = new ScrolledComposite(wrapper, SWT.V_SCROLL);
+		ScrolledComposite bounding = new ScrolledComposite(wrapper,
+				SWT.V_SCROLL);
 		bounding.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		// bounding.setBackground(Desk.getColor(Desk.COL_RED));
 		sheet = new ProportionalSheet(bounding, this);
@@ -62,16 +62,23 @@ public class AgendaWeek extends BaseView {
 		bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
-		new PersistentObjectDragSource2(bounding,new PersistentObjectDragSource2.Draggable(){
+		new PersistentObjectDragSource2(bounding,
+				new PersistentObjectDragSource2.Draggable() {
 
-			public List<PersistentObject> getSelection() {
-				System.out.println("Dragging");
-				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>(1);
-				ret.add(GlobalEvents.getInstance().getSelectedObject(Termin.class));
-				return ret;
-			}});
+					public List<PersistentObject> getSelection() {
+						System.out.println("Dragging");
+						ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>(
+								1);
+						ret.add(GlobalEvents.getInstance().getSelectedObject(
+								Termin.class));
+						return ret;
+					}
+				});
 
+	}
 
+	void clear() {
+		sheet.clear();
 	}
 
 	@Override
@@ -91,62 +98,78 @@ public class AgendaWeek extends BaseView {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public String[] getDisplayedDays(){
-		String resources =
-			Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(agenda
-				.getResources(), ","));
+
+	public String[] getDisplayedDays() {
+		TimeTool ttMonday = Activator.getDefault().getActDate();
+		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
+		ttMonday.chop(3);
+		String resources = Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
+				StringTool.join(TimeTool.Wochentage, ","));
 		if (resources == null) {
 			return new String[0];
 		} else {
-			return resources.split(",");
+			ArrayList<String> ret = new ArrayList<String>(resources.length());
+			for (String wd : TimeTool.Wochentage) {
+				if (resources.indexOf(wd) != -1) {
+					ret.add(ttMonday.toString(TimeTool.DATE_COMPACT));
+				}
+				ttMonday.addDays(1);
+			}
+			return ret.toArray(new String[0]);
 		}
 	}
-	
-	private void makePrivateActions(){
-		final IAction zoomAction=new Action("Zoom",Action.AS_DROP_DOWN_MENU){
+
+	private void makePrivateActions() {
+		final IAction zoomAction = new Action("Zoom", Action.AS_DROP_DOWN_MENU) {
 			Menu mine;
 			{
 				setToolTipText("Massstab einstellen");
-				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png"));
-				setMenuCreator(new IMenuCreator(){
+				setImageDescriptor(Activator
+						.getImageDescriptor("icons/zoom.png"));
+				setMenuCreator(new IMenuCreator() {
 
 					public void dispose() {
 						mine.dispose();
 					}
 
 					public Menu getMenu(Control parent) {
-						mine=new Menu(parent);
+						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
 
 					public Menu getMenu(Menu parent) {
-						mine=new Menu(parent);
+						mine = new Menu(parent);
 						fillMenu();
 						return mine;
-					}});
+					}
+				});
 			}
-			private void fillMenu(){
-				for(String s:new String[]{"40","60","80","100","120","140","160","200","300"}){
-					MenuItem it=new MenuItem(mine,SWT.RADIO);
-					it.setText(s+"%");
-					it.addSelectionListener(new SelectionAdapter(){
+
+			private void fillMenu() {
+				for (String s : new String[] { "40", "60", "80", "100", "120",
+						"140", "160", "200", "300" }) {
+					MenuItem it = new MenuItem(mine, SWT.RADIO);
+					it.setText(s + "%");
+					it.addSelectionListener(new SelectionAdapter() {
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							MenuItem mi=(MenuItem)e.getSource();
-							int scale=Integer.parseInt(mi.getText().split("%")[0]);
-							double factor=scale/100.0;
-							Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double.toString(factor));
+							MenuItem mi = (MenuItem) e.getSource();
+							int scale = Integer.parseInt(mi.getText()
+									.split("%")[0]);
+							double factor = scale / 100.0;
+							Hub.localCfg.set(
+									PreferenceConstants.AG_PIXEL_PER_MINUTE,
+									Double.toString(factor));
 							sheet.recalc();
 						}
-						
+
 					});
 				}
 			}
 		};
-		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
+		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
 		tmr.add(new Separator());
 		tmr.add(zoomAction);
 	}

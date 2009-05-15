@@ -40,13 +40,15 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 	private AgendaWeek view;
 	private MenuManager contextMenuManager;
 	private List<TerminLabel> tlabels;
-	double ppm;
+	private double ppm;
 	private int sheetHeight;
 	private String[] resources;
 	private int textWidth;
-	double sheetWidth;
-	double widthPerColumn;
+	private double sheetWidth;
+	private double widthPerColumn;
 
+	
+	
 	public ProportionalSheet(Composite parent, AgendaWeek v) {
 		super(parent, SWT.NO_BACKGROUND);
 		view = v;
@@ -134,20 +136,15 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 	}
 
 	synchronized void refresh() {
-		//String[] resnames = view.getDisplayedResources();
+		String[] days = view.getDisplayedDays();
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		TimeTool ttMonday=Activator.getDefault().getActDate();
-		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
-		ttMonday.chop(3);
-		TimeTool ttSunday=new TimeTool(ttMonday);
-		ttSunday.addDays(7);
-		//ttSunday.addMinutes(-1);
-		String from = ttMonday.toString(
-				TimeTool.DATE_COMPACT);
-		String until=ttSunday.toString(TimeTool.DATE_COMPACT);
-		qbe.add("Tag", ">=", from);
-		qbe.add("Tag", "<", until);
-		qbe.add("BdeiWem", "=", Activator.getDefault().getActResource());
+		qbe.add("BeiWem", "=", Activator.getDefault().getActResource());
+		qbe.startGroup();
+		for(String date:days){
+			qbe.add("Tag", "=", date);
+			qbe.or();
+		}
+		qbe.endGroup();
 		List<Termin> apps = qbe.execute();
 		Collections.sort(apps);
 		if (tlabels == null) {
@@ -165,9 +162,9 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		while (ipi.hasNext()) {
 			TerminLabel tl = iptl.next();
 			Termin t = ipi.next();
-			TimeTool ttStart=t.getStartTime();
-			int days=ttMonday.daysTo(ttStart);
-			tl.set(t, days);
+			String dStart=t.getDay();
+			int column=StringTool.getIndex(days, dStart);
+			tl.set(t, column);
 		}
 		recalc();
 	}

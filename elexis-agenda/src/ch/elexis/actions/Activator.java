@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 5290 2009-05-11 17:37:52Z rgw_ch $
+ *  $Id: Activator.java 5300 2009-05-15 16:51:59Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -142,6 +142,9 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public TimeTool addDays(int day) {
+		if(actDate==null){
+			actDate=new TimeTool();
+		}
 		actDate.addDays(day);
 		return new TimeTool(actDate);
 	}

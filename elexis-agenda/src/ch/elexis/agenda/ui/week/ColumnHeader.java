@@ -1,8 +1,13 @@
 package ch.elexis.agenda.ui.week;
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -11,7 +16,11 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
+import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 public class ColumnHeader extends Composite {
 	AgendaWeek view;
@@ -27,12 +36,12 @@ public class ColumnHeader extends Composite {
 		}
 		ihRes=new ImageHyperlink(this,SWT.NONE);
 		ihRes.setImage(Desk.getImage(IMG_PERSONS_NAME));
-		ihRes.setToolTipText("Bereiche für Anzeige auswählen");
+		ihRes.setToolTipText("Tage für Anzeige auswählen");
 		ihRes.addHyperlinkListener(new HyperlinkAdapter(){
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				//new SelectResourceDlg().open(); 
+				new SelectDaysDlg().open(); 
 			}
 			
 		});
@@ -60,5 +69,54 @@ public class ColumnHeader extends Composite {
 			lx+=off;
 			l.setBounds(lx, 0, inner, textSize+2);
 		}
+	}
+	
+	class SelectDaysDlg extends TitleAreaDialog{
+		SelectDaysDlg(){
+			super(ColumnHeader.this.getShell());
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite ret=(Composite) super.createDialogArea(parent);
+			ret.setLayout(new GridLayout());
+			String[] days=view.getDisplayedDays();
+			for (String s:TimeTool.Wochentage){
+				Button b=new Button(ret,SWT.CHECK);
+				b.setText(s);
+				if(StringTool.getIndex(days, s)!=-1){
+					b.setSelection(true);
+				}
+			}
+			return ret;
+		}
+
+		@Override
+		public void create() {
+			super.create();
+			getShell().setText("Anzeige konfigurieren");
+			setTitle("Anzuzeigende Wochentage");
+			setMessage("Bitte geben Sie ein,welche Wochentage angezeigt werden sollen");
+		}
+
+		@Override
+		protected void okPressed() {
+			Composite dlg=(Composite)getDialogArea();
+			String[] res=TimeTool.Wochentage;
+			ArrayList<String> sel=new ArrayList<String>(res.length);
+			for(Control c:dlg.getChildren()){
+				if(c instanceof Button){
+					if(((Button) c).getSelection()){
+						sel.add(((Button)c).getText());
+					}
+				}
+			}
+			view.clear();
+			Hub.localCfg.set(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(sel, ","));
+			view.refresh();
+			
+			super.okPressed();
+		}
+		
 	}
 }
