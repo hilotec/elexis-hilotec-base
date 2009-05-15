@@ -8,6 +8,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
@@ -26,12 +28,14 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.BaseView;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class AgendaWeek extends BaseView {
+	private IAction weekFwdAction, weekBackAction,showCalendarAction;
 
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
@@ -89,13 +93,19 @@ public class AgendaWeek extends BaseView {
 
 	@Override
 	protected void refresh() {
-		// TODO Auto-generated method stub
+		sheet.refresh();
 
 	}
 
+	private void internalRefresh(){
+		showCalendarAction.setText(agenda.getActDate().toString(
+			TimeTool.WEEKDAY)
+			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
+		sheet.refresh();
+	}
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
+		sheet.setFocus();
 
 	}
 
@@ -120,6 +130,48 @@ public class AgendaWeek extends BaseView {
 	}
 
 	private void makePrivateActions() {
+		weekFwdAction = new Action("Woche vorwärts") {
+			{
+				setToolTipText("Nächste Woche anzeigen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
+			}
+
+			@Override
+			public void run() {
+				agenda.addDays(7);
+				internalRefresh();
+			}
+		};
+
+		weekBackAction = new Action("Woche zurück") {
+			{
+				setToolTipText("Vorherige Woche anzeigen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
+			}
+
+			@Override
+			public void run() {
+				agenda.addDays(-7);
+				internalRefresh();
+			}
+		};
+		showCalendarAction = new Action("Soche auswählen") {
+			{
+				setToolTipText("Einen Kalender zur Auswahl des Datums anzeigen");
+				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
+			}
+
+			@Override
+			public void run() {
+				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite()
+						.getShell(), agenda.getActDate());
+				if (dsl.open() == Dialog.OK) {
+					agenda.setActDate(dsl.getSelectedDate());
+					internalRefresh();
+				}
+			}
+		};
+
 		final IAction zoomAction = new Action("Zoom", Action.AS_DROP_DOWN_MENU) {
 			Menu mine;
 			{
@@ -170,6 +222,10 @@ public class AgendaWeek extends BaseView {
 			}
 		};
 		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
+		tmr.add(new Separator());
+		tmr.add(weekBackAction);
+		tmr.add(showCalendarAction);
+		tmr.add(weekFwdAction);
 		tmr.add(new Separator());
 		tmr.add(zoomAction);
 	}

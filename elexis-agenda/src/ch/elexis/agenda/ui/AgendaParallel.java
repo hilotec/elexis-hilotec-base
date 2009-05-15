@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: AgendaParallel.java 5301 2009-05-15 19:12:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
@@ -41,10 +43,12 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 /**
  * A View to display ressources side by side in the same view.
@@ -54,7 +58,7 @@ import ch.rgw.tools.StringTool;
  */
 public class AgendaParallel extends BaseView {
 
-	
+	private IAction dayFwdAction, dayBackAction,showCalendarAction;
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
 	
@@ -126,12 +130,59 @@ public class AgendaParallel extends BaseView {
 	@Override
 	protected void refresh(){
 		sheet.refresh();
-		
 	}
 	
-	
+	private void internalRefresh(){
+		showCalendarAction.setText(agenda.getActDate().toString(
+			TimeTool.WEEKDAY)
+			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
+		refresh();
+	}
+
 	
 	private void makePrivateActions(){
+		dayFwdAction = new Action("Tag vorwärts") {
+			{
+				setToolTipText("Nächsten Tag anzeigen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
+			}
+
+			@Override
+			public void run() {
+				agenda.addDays(1);
+				internalRefresh();
+			}
+		};
+
+		dayBackAction = new Action("Tag zurück") {
+			{
+				setToolTipText("Vorherigen Tag anzeigen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
+			}
+
+			@Override
+			public void run() {
+				agenda.addDays(-1);
+				internalRefresh();
+			}
+		};
+		showCalendarAction = new Action("Tag auswählen") {
+			{
+				setToolTipText("Einen Kalender zur Auswahl des Tages anzeigen");
+				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
+			}
+
+			@Override
+			public void run() {
+				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite()
+						.getShell(), agenda.getActDate());
+				if (dsl.open() == Dialog.OK) {
+					agenda.setActDate(dsl.getSelectedDate());
+					internalRefresh();
+				}
+			}
+		};
+
 		final IAction zoomAction=new Action("Zoom",Action.AS_DROP_DOWN_MENU){
 			Menu mine;
 			{
@@ -176,6 +227,11 @@ public class AgendaParallel extends BaseView {
 		};
 		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
 		tmr.add(new Separator());
+		tmr.add(dayBackAction);
+		tmr.add(showCalendarAction);
+		tmr.add(dayFwdAction);
+		tmr.add(new Separator());
 		tmr.add(zoomAction);
+		
 	}
 }

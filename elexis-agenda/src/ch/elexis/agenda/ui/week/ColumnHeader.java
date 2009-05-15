@@ -62,7 +62,7 @@ public class ColumnHeader extends Composite {
 		for(int i=0;i<count;i++){
 			int lx=left_offset+(int) Math.round(i*(widthPerColumn+padding));
 			Label l=new Label(this, SWT.NONE);
-			l.setText(labels[i]);
+			l.setText(new TimeTool(labels[i]).toString(TimeTool.DATE_GER));
 			int outer=(int)Math.round(widthPerColumn);
 			int inner=l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			int off=(outer-inner)/2;

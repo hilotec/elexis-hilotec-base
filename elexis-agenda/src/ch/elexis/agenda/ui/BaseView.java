@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: BaseView.java 5301 2009-05-15 19:12:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -68,8 +68,7 @@ public abstract class BaseView extends ViewPart implements
 			terminVerlaengernAction, terminAendernAction;
 	public IAction dayLimitsAction, newViewAction, printAction, exportAction,
 			importAction;
-	public IAction printPatientAction, dayFwdAction, dayBackAction,
-			showCalendarAction, todayAction;
+	public IAction printPatientAction, todayAction;
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
 
@@ -95,9 +94,6 @@ public abstract class BaseView extends ViewPart implements
 
 	private void internalRefresh() {
 		if (Hub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
-			showCalendarAction.setText(agenda.getActDate().toString(
-					TimeTool.WEEKDAY)
-					+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
 			refresh();
 		}
 	}
@@ -338,48 +334,7 @@ public abstract class BaseView extends ViewPart implements
 			}
 		};
 
-		dayFwdAction = new Action("Tag vorwärts") {
-			{
-				setToolTipText("Nächsten Tag anzeigen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
-			}
-
-			@Override
-			public void run() {
-				agenda.addDays(1);
-				internalRefresh();
-			}
-		};
-
-		dayBackAction = new Action("Tag zurück") {
-			{
-				setToolTipText("Vorherigen Tag anzeigen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
-			}
-
-			@Override
-			public void run() {
-				agenda.addDays(-1);
-				internalRefresh();
-			}
-		};
-		showCalendarAction = new Action("Tag auswählen") {
-			{
-				setToolTipText("Einen Kalender zur Auswahl des Tages anzeigen");
-				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
-			}
-
-			@Override
-			public void run() {
-				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite()
-						.getShell(), agenda.getActDate());
-				if (dsl.open() == Dialog.OK) {
-					agenda.setActDate(dsl.getSelectedDate());
-					internalRefresh();
-				}
-			}
-		};
-
+		
 		todayAction = new Action("heute") {
 			{
 				setToolTipText("heutigen Tag anzeigen");
@@ -403,10 +358,7 @@ public abstract class BaseView extends ViewPart implements
 		mgr.add(printPatientAction);
 		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
 		tmr.add(todayAction);
-		tmr.add(new Separator());
-		tmr.add(dayBackAction);
-		tmr.add(showCalendarAction);
-		tmr.add(dayFwdAction);
+		
 	}
 
 }
