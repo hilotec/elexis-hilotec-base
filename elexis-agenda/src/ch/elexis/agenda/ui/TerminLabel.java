@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: TerminLabel.java 5299 2009-05-15 06:37:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -47,7 +47,7 @@ public class TerminLabel extends Composite {
 	Activator agenda = Activator.getDefault();
 
 	public TerminLabel(IAgendaLayout al) {
-		super(al.getParent(),SWT.BORDER);
+		super(al.getComposite(),SWT.BORDER);
 		ial=al;
 		GridLayout gl = new GridLayout(2, false);
 		gl.marginHeight = 1;

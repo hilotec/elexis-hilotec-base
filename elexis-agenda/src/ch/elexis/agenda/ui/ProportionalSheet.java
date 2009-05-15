@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5299 2009-05-15 06:37:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -125,6 +125,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 
 	}
 
+	
 	private boolean isBetween(int x, double lower, double upper) {
 		int y = (int) Math.round(lower);
 		int z = (int) Math.round(upper);
@@ -199,7 +200,6 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				if (mySize.y != sheetHeight) {
 					setSize(mySize.x, sheetHeight);
 					sc.setMinSize(getSize());
-					// sc.layout();
 				}
 				ScrollBar bar = sc.getVerticalBar();
 				int barWidth = 14;
@@ -218,7 +218,6 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 
 				for (TerminLabel l : tlabels) {
 					l.refresh();
-
 				}
 				sc.layout();
 			}
@@ -276,5 +275,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 			}
 		}
 
+	}
+	public Composite getComposite() {
+		return this;
 	}
 }

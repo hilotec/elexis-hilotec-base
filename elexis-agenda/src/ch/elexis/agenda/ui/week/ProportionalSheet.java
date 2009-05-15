@@ -261,4 +261,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		}
 
 	}
+
+	public Composite getComposite() {
+		return this;
+	}
 }
