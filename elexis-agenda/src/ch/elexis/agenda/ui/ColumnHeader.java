@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ColumnHeader.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: ColumnHeader.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -34,7 +34,6 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.ui.week.AgendaWeek;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 

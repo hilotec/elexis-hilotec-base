@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: AgendaWeek.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.agenda.ui.week;
 
 import java.util.ArrayList;
@@ -155,7 +167,7 @@ public class AgendaWeek extends BaseView {
 				internalRefresh();
 			}
 		};
-		showCalendarAction = new Action("Soche auswählen") {
+		showCalendarAction = new Action("Woche auswählen") {
 			{
 				setToolTipText("Einen Kalender zur Auswahl des Datums anzeigen");
 				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));

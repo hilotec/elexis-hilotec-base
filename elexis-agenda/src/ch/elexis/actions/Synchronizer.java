@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Synchronizer.java 5282 2009-05-09 14:55:35Z rgw_ch $
+ *  $Id: Synchronizer.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -39,6 +39,7 @@ import ch.rgw.tools.JdbcLink.Stm;
  * @author gerry
  *
  */
+@Deprecated
 public class Synchronizer{
 
 	JdbcLink sync;
@@ -232,7 +233,7 @@ public class Synchronizer{
 		String[] px=Termin.findID(pers);
 		px[1]=px[1].replaceFirst("\\([mw]\\)", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		qPat.clear();
-		List list=qPat.queryFields(new String[]{"Name","Vorname","Geburtsdatum"}, px, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		List<Patient> list=qPat.queryFields(new String[]{"Name","Vorname","Geburtsdatum"}, px, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if((list==null) || (list.size()!=1)){
 			t.set("Wer", pers); //$NON-NLS-1$
 		}else{

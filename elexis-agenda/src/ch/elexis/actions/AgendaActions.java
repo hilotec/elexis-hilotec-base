@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: AgendaActions.java 5282 2009-05-09 14:55:35Z rgw_ch $
+ *  $Id: AgendaActions.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -28,9 +28,7 @@ import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminStatusDialog;
-import ch.rgw.tools.TimeTool;
 
 /**
  * Some common actions for the agenda

@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5301 2009-05-15 19:12:12Z rgw_ch $
+ *  $Id: AgendaParallel.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -45,7 +45,6 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.util.PersistentObjectDragSource2;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;

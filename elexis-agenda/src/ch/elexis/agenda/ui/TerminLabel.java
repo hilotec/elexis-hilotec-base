@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5299 2009-05-15 06:37:17Z rgw_ch $
+ *  $Id: TerminLabel.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -23,7 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -127,7 +126,6 @@ public class TerminLabel extends Composite {
 		int lh = (int) Math.round(t.getDauer() * ial.getPixelPerMinute());
 		setBounds(lx, ly, lw, lh);
 		GridData gd=(GridData)state.getLayoutData();
-		Point s=lbl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		gd.minimumWidth=10;
 		gd.widthHint=10;
 		gd.heightHint=lh;

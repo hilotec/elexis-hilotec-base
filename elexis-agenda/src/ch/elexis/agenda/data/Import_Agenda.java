@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Import_Agenda.java 5171 2009-02-21 19:51:16Z rgw_ch $
+ * $Id: Import_Agenda.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
@@ -44,7 +44,7 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.JdbcLink.Stm;
 
-
+@Deprecated
 public class Import_Agenda extends ImporterPage{
 	public static final String drop=
 	"DROP INDEX it ON AGNTERMINE;"+

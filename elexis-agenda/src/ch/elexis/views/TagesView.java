@@ -15,7 +15,10 @@ package ch.elexis.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +27,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
@@ -33,15 +39,16 @@ import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.data.*;
+import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.*;
+import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeSpan;
+import ch.rgw.tools.TimeTool;
 
 public class TagesView extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.tagesview"; //$NON-NLS-1$

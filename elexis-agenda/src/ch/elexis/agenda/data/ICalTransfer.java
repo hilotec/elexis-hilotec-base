@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ICalTransfer.java 4780 2008-12-09 18:10:22Z rgw_ch $
+ * $Id: ICalTransfer.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -24,7 +24,6 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
@@ -182,6 +181,7 @@ public class ICalTransfer {
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void okPressed(){
 			if (!lFilename.getText().equals(NOFILESELECTED)) {
@@ -201,7 +201,7 @@ public class ICalTransfer {
 					for (Component comp : comps) {
 						if (comp instanceof VEvent) { // TimeZone not supported
 							VEvent event = (VEvent) comp;
-							PropertyList props = event.getProperties();
+							//PropertyList props = event.getProperties();
 							DtStart start = event.getStartDate();
 							DtEnd end = event.getEndDate();
 							if (start != null) {

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaDefinitionen.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ * $Id: AgendaDefinitionen.java 5302 2009-05-16 08:51:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
@@ -19,13 +19,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
-import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.preferences.inputs.MultilineFieldEditor;
-import ch.elexis.preferences.inputs.StringListFieldEditor;
-import ch.rgw.tools.StringTool;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.preferences.inputs.MultilineFieldEditor;
+import ch.rgw.tools.StringTool;
 
 public class AgendaDefinitionen extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {
