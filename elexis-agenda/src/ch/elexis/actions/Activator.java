@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: Activator.java 5300 2009-05-15 16:51:59Z rgw_ch $
+ *  $Id: Activator.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -149,6 +149,10 @@ public class Activator extends AbstractUIPlugin {
 		return new TimeTool(actDate);
 	}
 
+	/**
+	 * propagate a termin selection through the system
+	 * @param t
+	 */
 	public void dispatchTermin(Termin t) {
 		GlobalEvents ev = GlobalEvents.getInstance();
 		Patient pat = t.getPatient();

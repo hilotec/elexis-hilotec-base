@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui.week;
@@ -116,12 +116,6 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 
 		});
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
-		contextMenuManager = new MenuManager();
-		contextMenuManager.add(AgendaActions.terminStatusAction);
-		contextMenuManager.add(view.terminKuerzenAction);
-		contextMenuManager.add(view.terminVerlaengernAction);
-		contextMenuManager.add(view.terminAendernAction);
-		contextMenuManager.add(AgendaActions.delTerminAction);
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
 

@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: TerminLabel.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -19,6 +19,9 @@ package ch.elexis.agenda.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -27,9 +30,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
+import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
+import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
@@ -44,10 +54,13 @@ public class TerminLabel extends Composite {
 	private Composite state;
 	IAgendaLayout ial;
 	Activator agenda = Activator.getDefault();
+	private IAction terminKuerzenAction, terminVerlaengernAction,
+			terminAendernAction;
 
 	public TerminLabel(IAgendaLayout al) {
-		super(al.getComposite(),SWT.BORDER);
-		ial=al;
+		super(al.getComposite(), SWT.BORDER);
+		ial = al;
+		makeActions();
 		GridLayout gl = new GridLayout(2, false);
 		gl.marginHeight = 1;
 		gl.marginWidth = 1;
@@ -71,19 +84,7 @@ public class TerminLabel extends Composite {
 			}
 
 		});
-		new PersistentObjectDragSource2(this,
-				new PersistentObjectDragSource2.Draggable() {
-
-					public List<PersistentObject> getSelection() {
-						System.out.println("Dragging");
-						ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>(
-								1);
-						ret.add(GlobalEvents.getInstance().getSelectedObject(
-								Termin.class));
-						return ret;
-					}
-				});
-		lbl.setMenu(ial.getContextMenuManager().createContextMenu(lbl));
+		new TerminLabelMenu();
 
 	}
 
@@ -105,6 +106,14 @@ public class TerminLabel extends Composite {
 		return t;
 	}
 
+	public void updateActions(){
+		boolean canChangeAppointments = Hub.acl
+		.request(ACLContributor.CHANGE_APPOINTMENTS);
+		terminKuerzenAction.setEnabled(canChangeAppointments);
+		terminVerlaengernAction.setEnabled(canChangeAppointments);
+		terminAendernAction.setEnabled(canChangeAppointments);
+	
+	}
 	public void refresh() {
 		Color back = Plannables.getTypColor(t);
 		lbl.setBackground(back);
@@ -117,7 +126,7 @@ public class TerminLabel extends Composite {
 		lbl.setText(t.getTitle());
 		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbl.setToolTipText(sb.toString());
-		
+
 		int lx = ial.getLeftOffset()
 				+ (int) Math.round(getColumn()
 						* (ial.getWidthPerColumn() + ial.getPadding()));
@@ -125,12 +134,73 @@ public class TerminLabel extends Composite {
 		int lw = (int) Math.round(ial.getWidthPerColumn());
 		int lh = (int) Math.round(t.getDauer() * ial.getPixelPerMinute());
 		setBounds(lx, ly, lw, lh);
-		GridData gd=(GridData)state.getLayoutData();
-		gd.minimumWidth=10;
-		gd.widthHint=10;
-		gd.heightHint=lh;
+		GridData gd = (GridData) state.getLayoutData();
+		gd.minimumWidth = 10;
+		gd.widthHint = 10;
+		gd.heightHint = lh;
 		state.setBackground(Plannables.getStatusColor(t));
 		state.setToolTipText(t.getStatus());
+		if (lbl.getMenu() == null) {
+			lbl.setMenu(ial.getContextMenuManager().createContextMenu(lbl));
+		}
 		layout();
 	}
+
+	class TerminLabelMenu {
+		TerminLabelMenu() {
+			MenuManager contextMenuManager = new MenuManager();
+			contextMenuManager.add(AgendaActions.terminStatusAction);
+			contextMenuManager.add(terminKuerzenAction);
+			contextMenuManager.add(terminVerlaengernAction);
+			contextMenuManager.add(terminAendernAction);
+			contextMenuManager.add(AgendaActions.delTerminAction);
+			TerminLabel.this.lbl.setMenu(contextMenuManager.createContextMenu(TerminLabel.this.lbl));
+		}
+		
+	};
+
+	private void makeActions() {
+		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+				setToolTipText(Messages.TagesView_changeThisTermin);
+			}
+
+			@Override
+			public void run() {
+				agenda.setActResource(t.getBereich());
+				TerminDialog dlg = new TerminDialog((Termin) GlobalEvents
+						.getInstance().getSelectedObject(Termin.class));
+				dlg.open();
+				refresh();
+
+			}
+		};
+		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
+			@Override
+			public void run() {
+				if (t != null) {
+					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
+					GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+				}
+			}
+		};
+		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
+			@Override
+			public void run() {
+				if (t != null) {
+					agenda.setActDate(t.getDay());
+					Termin n = Plannables.getFollowingTermin(agenda
+							.getActResource(), agenda.getActDate(), t);
+					if (n != null) {
+						t.setEndTime(n.getStartTime());
+						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
+						refresh();
+						//GlobalEvents.getInstance()	.fireUpdateEvent(Termin.class);
+					}
+				}
+			}
+		};
+	}
+
 }

@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaWeek.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: AgendaWeek.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.ui.week;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -34,20 +33,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.IPlannable;
-import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.ui.BaseView;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.DateSelectorDialog;
-import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class AgendaWeek extends BaseView {
-	private IAction weekFwdAction, weekBackAction,showCalendarAction;
+	private IAction weekFwdAction, weekBackAction, showCalendarAction;
 
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
@@ -78,19 +73,11 @@ public class AgendaWeek extends BaseView {
 		bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
-		new PersistentObjectDragSource2(bounding,
-				new PersistentObjectDragSource2.Draggable() {
-
-					public List<PersistentObject> getSelection() {
-						System.out.println("Dragging");
-						ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>(
-								1);
-						ret.add(GlobalEvents.getInstance().getSelectedObject(
-								Termin.class));
-						return ret;
-					}
-				});
-
+		TimeTool tt=new TimeTool();
+		for (String s : getDisplayedDays()) {
+			tt.set(s);
+			checkDay(null, tt);
+		}
 	}
 
 	void clear() {
@@ -105,16 +92,17 @@ public class AgendaWeek extends BaseView {
 
 	@Override
 	protected void refresh() {
+		TimeTool ttMonday=agenda.getActDate();
+		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
+		StringBuilder sb=new StringBuilder(ttMonday.toString(TimeTool.DATE_GER));
+		ttMonday.addDays(6);
+		sb.append("-").append(ttMonday.toString(TimeTool.DATE_GER));
+		
+		showCalendarAction.setText(sb.toString());
 		sheet.refresh();
 
 	}
 
-	private void internalRefresh(){
-		showCalendarAction.setText(agenda.getActDate().toString(
-			TimeTool.WEEKDAY)
-			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
-		sheet.refresh();
-	}
 	@Override
 	public void setFocus() {
 		sheet.setFocus();
@@ -151,7 +139,12 @@ public class AgendaWeek extends BaseView {
 			@Override
 			public void run() {
 				agenda.addDays(7);
-				internalRefresh();
+				TimeTool tt = new TimeTool();
+				for (String s : getDisplayedDays()) {
+					tt.set(s);
+					checkDay(null, tt);
+				}
+				refresh();
 			}
 		};
 
@@ -164,7 +157,12 @@ public class AgendaWeek extends BaseView {
 			@Override
 			public void run() {
 				agenda.addDays(-7);
-				internalRefresh();
+				TimeTool tt = new TimeTool();
+				for (String s : getDisplayedDays()) {
+					tt.set(s);
+					checkDay(null, tt);
+				}
+				refresh();
 			}
 		};
 		showCalendarAction = new Action("Woche auswählen") {
@@ -179,7 +177,13 @@ public class AgendaWeek extends BaseView {
 						.getShell(), agenda.getActDate());
 				if (dsl.open() == Dialog.OK) {
 					agenda.setActDate(dsl.getSelectedDate());
-					internalRefresh();
+					TimeTool tt = new TimeTool();
+					for (String s : getDisplayedDays()) {
+						tt.set(s);
+						checkDay(null, tt);
+					}
+
+					refresh();
 				}
 			}
 		};

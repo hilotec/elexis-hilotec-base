@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: AgendaParallel.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -60,6 +60,7 @@ public class AgendaParallel extends BaseView {
 	private IAction dayFwdAction, dayBackAction,showCalendarAction;
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
+	private Composite wrapper;
 	
 	public AgendaParallel(){
 
@@ -71,8 +72,7 @@ public class AgendaParallel extends BaseView {
 	
 	@Override
 	protected void create(Composite parent){
-		makePrivateActions();
-		Composite wrapper = new Composite(parent, SWT.NONE);
+		wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
 		header = new ColumnHeader(wrapper, this);
@@ -94,7 +94,11 @@ public class AgendaParallel extends BaseView {
 				ret.add(GlobalEvents.getInstance().getSelectedObject(Termin.class));
 				return ret;
 			}});
-		
+		makePrivateActions();
+		for(String s:getDisplayedResources()){
+			checkDay(s,null);
+		}
+		refresh();
 	}
 	
 	@Override
@@ -128,15 +132,14 @@ public class AgendaParallel extends BaseView {
 	}
 	@Override
 	protected void refresh(){
+		showCalendarAction.setText(agenda.getActDate().toString(
+				TimeTool.WEEKDAY)
+				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
 		sheet.refresh();
+		wrapper.layout();
+		getViewSite().getActionBars().getToolBarManager().update(true);
 	}
 	
-	private void internalRefresh(){
-		showCalendarAction.setText(agenda.getActDate().toString(
-			TimeTool.WEEKDAY)
-			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
-		refresh();
-	}
 
 	
 	private void makePrivateActions(){
@@ -149,7 +152,10 @@ public class AgendaParallel extends BaseView {
 			@Override
 			public void run() {
 				agenda.addDays(1);
-				internalRefresh();
+				for(String s:getDisplayedResources()){
+					checkDay(s,null);
+				}
+				refresh();
 			}
 		};
 
@@ -162,7 +168,11 @@ public class AgendaParallel extends BaseView {
 			@Override
 			public void run() {
 				agenda.addDays(-1);
-				internalRefresh();
+				for(String s:getDisplayedResources()){
+					checkDay(s,null);
+				}
+
+				refresh();
 			}
 		};
 		showCalendarAction = new Action("Tag auswählen") {
@@ -177,7 +187,11 @@ public class AgendaParallel extends BaseView {
 						.getShell(), agenda.getActDate());
 				if (dsl.open() == Dialog.OK) {
 					agenda.setActDate(dsl.getSelectedDate());
-					internalRefresh();
+					for(String s:getDisplayedResources()){
+						checkDay(s,null);
+					}
+
+					refresh();
 				}
 			}
 		};
@@ -225,12 +239,13 @@ public class AgendaParallel extends BaseView {
 			}
 		};
 		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
+
 		tmr.add(new Separator());
 		tmr.add(dayBackAction);
 		tmr.add(showCalendarAction);
 		tmr.add(dayFwdAction);
 		tmr.add(new Separator());
 		tmr.add(zoomAction);
-		
+		tmr.add(new Separator("agenda_right"));
 	}
 }

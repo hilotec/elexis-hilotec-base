@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ColumnHeader.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: ColumnHeader.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui.week;
@@ -32,6 +32,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -75,7 +76,21 @@ public class ColumnHeader extends Composite {
 		for(int i=0;i<count;i++){
 			int lx=left_offset+(int) Math.round(i*(widthPerColumn+padding));
 			Label l=new Label(this, SWT.NONE);
-			l.setText(new TimeTool(labels[i]).toString(TimeTool.DATE_GER));
+			TimeTool tt=new TimeTool(labels[i]);
+			StringBuilder sb=new StringBuilder(tt.toString(TimeTool.WEEKDAY));
+			sb.append(", ").append(tt.toString(TimeTool.DATE_GER));
+			String coltext=sb.toString();
+			Point extend=SWTHelper.getStringBounds(this, coltext);
+			if(extend.x>widthPerColumn){
+				coltext=coltext.substring(0, coltext.length()-4);
+				extend=SWTHelper.getStringBounds(this, coltext);
+				if(extend.x>widthPerColumn){
+					coltext=coltext.substring(0,2);
+				}
+				
+			}
+			l.setText(coltext);
+			
 			int outer=(int)Math.round(widthPerColumn);
 			int inner=l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			int off=(outer-inner)/2;

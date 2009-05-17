@@ -11,10 +11,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: BaseView.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
+
+import java.util.Calendar;
+import java.util.Hashtable;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -49,6 +52,7 @@ import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -61,8 +65,7 @@ public abstract class BaseView extends ViewPart implements
 		BackingStoreListener, HeartListener, ActivationListener {
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0";
 
-	public IAction newTerminAction, blockAction, terminKuerzenAction,
-			terminVerlaengernAction, terminAendernAction;
+	public IAction newTerminAction, blockAction;
 	public IAction dayLimitsAction, newViewAction, printAction, exportAction,
 			importAction;
 	public IAction printPatientAction, todayAction;
@@ -95,15 +98,44 @@ public abstract class BaseView extends ViewPart implements
 		}
 	}
 
+	protected void checkDay(String resource, TimeTool date) {
+		if(date==null){
+			date = agenda.getActDate();
+		}
+		String day=date.toString(TimeTool.DATE_COMPACT);
+		if(resource==null){
+			resource=agenda.getActResource();
+		}
+		Query<Termin> qbe = new Query<Termin>(Termin.class);
+		qbe.add("Tag", "=", day);
+		qbe.add("BeiWem", "=", resource);
+		if (qbe.execute().isEmpty()) {
+			Hashtable<String, String> map = Plannables.getDayPrefFor(resource);
+			int d = date.get(Calendar.DAY_OF_WEEK);
+			String ds = map.get(TimeTool.wdays[d - 1]);
+			if (StringTool.isNothing(ds)) {
+				ds = "0000-0800\n1800-2359";
+			}
+			String[] flds = ds.split("\r*\n\r*");
+			for (String fld : flds) {
+				String from = fld.substring(0, 4);
+				String until = fld.replaceAll("-", "").substring(4);
+				new Termin(resource, day, TimeTool
+						.getMinutesFromTimeString(from), TimeTool
+						.getMinutesFromTimeString(until), Termin
+						.typReserviert(), Termin.statusLeer());
+			}
+
+		}
+
+	}
+
 	protected void updateActions() {
 		dayLimitsAction.setEnabled(Hub.acl
 				.request(ACLContributor.CHANGE_DAYSETTINGS));
 		boolean canChangeAppointments = Hub.acl
 				.request(ACLContributor.CHANGE_APPOINTMENTS);
 		newTerminAction.setEnabled(canChangeAppointments);
-		terminKuerzenAction.setEnabled(canChangeAppointments);
-		terminVerlaengernAction.setEnabled(canChangeAppointments);
-		terminAendernAction.setEnabled(canChangeAppointments);
 		AgendaActions.updateActions();
 		internalRefresh();
 	}
@@ -145,19 +177,22 @@ public abstract class BaseView extends ViewPart implements
 
 	/**
 	 * Return the scale factor, i.e. the number of Pixels to use for one minute.
+	 * 
 	 * @return thepixel-per-minute scale.
 	 */
-	public static double getPixelPerMinute(){
-		String ppm =
-			Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
+	public static double getPixelPerMinute() {
+		String ppm = Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE,
+				DEFAULT_PIXEL_PER_MINUTE);
 		try {
 			double ret = Double.parseDouble(ppm);
 			return ret;
 		} catch (NumberFormatException ne) {
-			Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
+			Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE,
+					DEFAULT_PIXEL_PER_MINUTE);
 			return Double.parseDouble(DEFAULT_PIXEL_PER_MINUTE);
 		}
 	}
+
 	protected void makeActions() {
 		dayLimitsAction = new Action("Tagesgrenzen") {
 			@Override
@@ -188,51 +223,7 @@ public abstract class BaseView extends ViewPart implements
 
 			}
 		};
-		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText(Messages.TagesView_changeThisTermin);
-			}
-
-			@Override
-			public void run() {
-				TerminDialog dlg = new TerminDialog((Termin) GlobalEvents
-						.getInstance().getSelectedObject(Termin.class));
-				dlg.open();
-				internalRefresh();
-
-			}
-		};
-		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
-			@Override
-			public void run() {
-				Termin t = (Termin) GlobalEvents.getInstance()
-						.getSelectedObject(Termin.class);
-				if (t != null) {
-					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
-					GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
-				}
-			}
-		};
-		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
-			@Override
-			public void run() {
-				Termin t = (Termin) GlobalEvents.getInstance()
-						.getSelectedObject(Termin.class);
-				if (t != null) {
-					agenda.setActDate(t.getDay());
-					Termin n = Plannables.getFollowingTermin(agenda
-							.getActResource(), agenda.getActDate(), t);
-					if (n != null) {
-						t.setEndTime(n.getStartTime());
-						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
-						GlobalEvents.getInstance()
-								.fireUpdateEvent(Termin.class);
-					}
-				}
-			}
-		};
-		newTerminAction = new Action(Messages.TagesView_newTermin) {
+				newTerminAction = new Action(Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText(Messages.TagesView_createNewTermin);
@@ -331,7 +322,6 @@ public abstract class BaseView extends ViewPart implements
 			}
 		};
 
-		
 		todayAction = new Action("heute") {
 			{
 				setToolTipText("heutigen Tag anzeigen");
@@ -346,7 +336,6 @@ public abstract class BaseView extends ViewPart implements
 			}
 		};
 
-		
 		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(dayLimitsAction);
 		mgr.add(exportAction);
@@ -355,7 +344,7 @@ public abstract class BaseView extends ViewPart implements
 		mgr.add(printPatientAction);
 		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
 		tmr.add(todayAction);
-		
+
 	}
 
 }

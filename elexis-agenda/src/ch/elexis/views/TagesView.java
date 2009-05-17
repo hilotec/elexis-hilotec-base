@@ -227,9 +227,11 @@ public class TagesView extends BaseAgendaView {
 	}
 
 	public void updateDate() {
+		/*
 		if (pinger != null) {
 			pinger.doSync();
 		}
+		*/
 		bDay.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)
 				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		tv.refresh();

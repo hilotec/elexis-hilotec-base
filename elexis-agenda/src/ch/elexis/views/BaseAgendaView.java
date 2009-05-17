@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: BaseAgendaView.java 5311 2009-05-17 14:41:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -42,7 +42,6 @@ import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.Synchronizer;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.BackingStoreListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
@@ -67,7 +66,7 @@ import ch.rgw.tools.TimeTool;
 
 public abstract class BaseAgendaView extends ViewPart implements BackingStoreListener,  HeartListener, ActivationListener{
 
-	protected Synchronizer pinger;
+	//protected Synchronizer pinger;
 	protected SelectionListener sListen=new SelectionListener();
 	TableViewer tv;
 	BaseAgendaView self;
@@ -164,9 +163,11 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		agenda.setActResource(b);
 		setPartName("Agenda "+b); //$NON-NLS-1$
 		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, b);
+		/*
 		if(pinger!=null){
 			pinger.doSync();
 		}
+		*/
 		reloadContents(Termin.class);
 	}
 
