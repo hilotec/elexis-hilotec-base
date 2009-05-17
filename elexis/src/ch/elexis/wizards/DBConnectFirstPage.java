@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DBConnectFirstPage.java 4771 2008-12-08 13:36:36Z rgw_ch $
+ *  $Id: DBConnectFirstPage.java 5313 2009-05-17 17:07:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.wizards;
+// 17.5.2009: added H2
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -42,7 +43,7 @@ public class DBConnectFirstPage extends WizardPage {
 	JdbcLink j = null;
 	
 	static final String[] supportedDB = new String[] {
-		"mySQl", "PostgreSQL", "hsqlDB (inProc)", "hsqlDB (Server)"
+		"mySQl", "PostgreSQL", "hsqlDB (inProc)", "hsqlDB (Server)", "H2"
 	};
 	
 	public DBConnectFirstPage(String pageName){
@@ -115,6 +116,11 @@ public class DBConnectFirstPage extends WizardPage {
 					defaultUser = "sa";
 					defaultPassword = "";
 					break;
+				case 4:
+					server.setEnabled(false);
+					dbName.setEnabled(true);
+					defaultUser="sa";
+					defaultPassword ="";
 				default:
 					break;
 				}

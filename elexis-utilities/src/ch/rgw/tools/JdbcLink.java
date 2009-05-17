@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 public class JdbcLink {
 	public static final String getVersion(){
-		return "2.3.3";
+		return "3.0.0";
 	}
 	
 	public int lastErrorCode;
@@ -86,6 +86,19 @@ public class JdbcLink {
 		return new JdbcLink(driver, connect, "hsqldb");
 	}
 	
+	/**
+	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu
+	 * bekommen. Da H2 einen mysql-compatibility-mode hat, kann man
+	 * mysql als flavor angeben.
+	 * @param database
+	 * @return
+	 */
+	public static JdbcLink createH2Link(String database){
+		log.log(Level.INFO, "Creating H2-Link");
+		String driver="org.h2.Driver";
+		String connect="jdbc:h2:"+database+";MODE=MySQL";
+		return new JdbcLink(driver,connect,"mysql");
+	}
 	/**
 	 * Bequemlichkeitsmethode für einen JdbcLink auf einen 4D-Server
 	 * 

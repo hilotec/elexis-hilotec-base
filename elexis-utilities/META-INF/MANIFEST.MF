@@ -38,5 +38,6 @@ Export-Package: .,
  org.jdom.xpath;uses:="org.jdom"
 Require-Bundle: ch.elexis.postgresql.connector;bundle-version="1.0.0";resolution:=optional,
  ch.elexis.mysql.connector;resolution:=optional,
- ch.elexis.hsql.connector;resolution:=optional
+ ch.elexis.hsql.connector;resolution:=optional,
+ ch.elexis.h2.connector;bundle-version="1.0.0";resolution:=optional
 
