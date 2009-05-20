@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDialogs.java 4873 2008-12-30 09:55:57Z rgw_ch $
+ * $Id: RnDialogs.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -40,6 +40,7 @@ import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.MoneyInput;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -91,7 +92,7 @@ public class RnDialogs {
 			Money ret = MoneyInput.getFromTextField(amount);
 			if (ret != null) {
 				ret = ret.multiply(-1.0);
-				rn.addZahlung(ret, bemerkung.getText());
+				rn.addZahlung(ret, bemerkung.getText(),new TimeTool(dp.getDate().getTime()));
 				super.okPressed();
 			} else {
 				ErrorDialog
@@ -147,7 +148,7 @@ public class RnDialogs {
 			// Number num=df.parse(amount.getText());
 			Money ret = MoneyInput.getFromTextField(amount);
 			if (ret != null) {
-				rn.addZahlung(ret, bemerkung.getText());
+				rn.addZahlung(ret, bemerkung.getText(),new TimeTool(dp.getDate().getTime()));
 				super.okPressed();
 			} else {
 				ErrorDialog

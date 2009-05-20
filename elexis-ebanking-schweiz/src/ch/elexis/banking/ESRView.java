@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ESRView.java 5020 2009-01-23 16:33:54Z rgw_ch $
+ *  $Id: ESRView.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -280,7 +280,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 													rn.addZahlung(zahlung,
 														Messages.ESRView_storno_for + rn.getNr()
 															+ " / " //$NON-NLS-1$
-															+ rec.getPatient().getPatCode());
+															+ rec.getPatient().getPatCode(), new TimeTool(rec.getValuta()));
 													rec.setGebucht(null);
 												} else {
 													Rechnung rn = rec.getRechnung();
@@ -306,7 +306,7 @@ public class ESRView extends ViewPart implements ActivationListener, UserListene
 													
 													rn.addZahlung(zahlung, Messages.ESRView_vesrfor
 														+ rn.getNr() + " / " //$NON-NLS-1$
-														+ rec.getPatient().getPatCode());
+														+ rec.getPatient().getPatCode(), new TimeTool(rec.getValuta()));
 													rec.setGebucht(null);
 												}
 											}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Zahlung.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ * $Id: Zahlung.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -20,9 +20,12 @@ public class Zahlung extends PersistentObject {
 		addMapping("ZAHLUNGEN","RechnungsID","Betragx100=Betrag","Datum=S:D:Datum","Bemerkung");
 	}
 	
-	public Zahlung(Rechnung rn,Money Betrag, String text){
+	public Zahlung(Rechnung rn,Money Betrag, String text, TimeTool date){
 		create(null);
-		String Datum=new TimeTool().toString(TimeTool.DATE_GER);
+		if(date==null){
+			date=new TimeTool();
+		}
+		String Datum=date.toString(TimeTool.DATE_GER);
 		set(new String[]{"RechnungsID","Betragx100","Datum","Bemerkung"},
 				rn.getId(),Betrag.getCentsAsString(),Datum,text);
 		new AccountTransaction(this);

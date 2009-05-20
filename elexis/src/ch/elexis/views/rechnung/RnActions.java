@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 5057 2009-01-27 17:44:06Z rgw_ch $
+ * $Id: RnActions.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -332,7 +332,7 @@ public class RnActions {
 							accountAmount.negate();
 							new AccountTransaction(patient, null, accountAmount, null,
 								"Anzahlung von Kontoguthaben auf Rechnung " + actRn.getNr());
-							actRn.addZahlung(amount, "Anzahlung von Kontoguthaben");
+							actRn.addZahlung(amount, "Anzahlung von Kontoguthaben",null);
 						}
 					}
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MahnlaufCommand.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ *  $Id: MahnlaufCommand.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -51,7 +51,7 @@ public class MahnlaufCommand extends AbstractHandler {
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_1);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 1. Mahnung");
+				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 1. Mahnung",null);
 			}
 		}
 		// 1. Mahnung zu 2. Mahnung
@@ -72,7 +72,7 @@ public class MahnlaufCommand extends AbstractHandler {
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_2);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 2. Mahnung");
+				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 2. Mahnung",null);
 			}
 		}
 		// 2. Mahnung zu 3. Mahnung
@@ -93,7 +93,7 @@ public class MahnlaufCommand extends AbstractHandler {
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_3);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 3. Mahnung");
+				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 3. Mahnung",null);
 			}
 		}
 		

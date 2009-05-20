@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 5128 2009-02-12 10:44:49Z rgw_ch $
+ *  $Id: Rechnung.java 5316 2009-05-20 11:34:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -274,7 +274,7 @@ public class Rechnung extends PersistentObject {
 	 */
 	public void storno(final boolean reopen){
 		Money betrag = getBetrag();
-		new Zahlung(this, betrag, "Storno");
+		new Zahlung(this, betrag, "Storno",null);
 		if (reopen == true) {
 			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 			qbe.add("RechnungsID", "=", getId());
@@ -414,7 +414,7 @@ public class Rechnung extends PersistentObject {
 	}
 	
 	/** Eine Zahlung zufügen */
-	public void addZahlung(final Money betrag, final String text){
+	public void addZahlung(final Money betrag, final String text, TimeTool date){
 		if (betrag.isZero()) {
 			return;
 		}
@@ -453,7 +453,7 @@ public class Rechnung extends PersistentObject {
 		} else if (newOffen.getCents() < oldOffenCents) {
 			setStatus(RnStatus.TEILZAHLUNG);
 		}
-		new Zahlung(this, betrag, text);
+		new Zahlung(this, betrag, text, date);
 	}
 	
 	/** EIne Liste aller Zahlungen holen */
