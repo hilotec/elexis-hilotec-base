@@ -56,6 +56,10 @@ public class StringTool {
 	public static final String space = " ";
 	public static final String equals = "=";
 	public static final String crlf = "\r\n";
+	public static final String lf="\n";
+	public static final String one="1";
+	public static final String zero="0";
+	
 	public static final String numbers = "[0-9]+";
 	public static final String wordSeparators = "[\\t ,\\.:\\?!\\n\\r]";
 	public static final String lineSeparators = "[\\n\\r\\.\\?!]";
