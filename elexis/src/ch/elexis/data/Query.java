@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 5052 2009-01-27 06:20:15Z rgw_ch $
+ * $Id: Query.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -41,6 +41,12 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 
 public class Query<T>{
+	public static final String EQUALS="=";
+	public static final String GREATER=">";
+	public static final String LESS="<";
+	public static final String LESS_OR_EQUAL="<=";
+	public static final String GREATER_OR_EQUAL=">=";
+	public static final String NOT_EQUAL="<>";
 	// private Query(){/* leer */}
 	private StringBuffer sql;
 	private static Log log=Log.get("Query");

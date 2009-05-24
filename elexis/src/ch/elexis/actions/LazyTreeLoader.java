@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LazyTreeLoader.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: LazyTreeLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

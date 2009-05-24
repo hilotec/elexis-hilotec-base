@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 5132 2009-02-14 10:35:52Z rgw_ch $
+ * $Id: Xid.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,6 +45,11 @@ import ch.rgw.tools.VersionInfo;
  * 
  */
 public class Xid extends PersistentObject {
+	public static final String QUALITY = "quality";
+	public static final String ID_IN_DOMAIN = "domain_id";
+	private static final String DOMAIN = "domain";
+	private static final String OBJECT = "object";
+	public static final String TYPE = "type";
 	private static final String VERSION = "1.0.0";
 	private static final String TABLENAME = "XID";
 	private static Log log = Log.get("XID");
@@ -79,7 +84,7 @@ public class Xid extends PersistentObject {
 	public final static String DOMAIN_OID = "www.xid.ch/id/oid";
 	
 	static {
-		addMapping(TABLENAME, "type", "object", "domain", "domain_id", "quality");
+		addMapping(TABLENAME, TYPE, OBJECT, DOMAIN, ID_IN_DOMAIN, QUALITY);
 		domains = new HashMap<String, XIDDomain>();
 		domainMap = new HashMap<String, String>();
 		String storedDomains = Hub.globalCfg.get("LocalXIDDomains", null);
@@ -149,7 +154,7 @@ public class Xid extends PersistentObject {
 		}
 		Xid xid = findXID(domain, domain_id);
 		if (xid != null) {
-			if (xid.get("object").equals(o.getId())) {
+			if (xid.get(OBJECT).equals(o.getId())) {
 				return;
 			}
 			throw new XIDException("XID " + domain + ":" + domain_id + " is not unique");
@@ -160,7 +165,7 @@ public class Xid extends PersistentObject {
 		}
 		create(null);
 		set(new String[] {
-			"type", "object", "domain", "domain_id", "quality"
+			TYPE, OBJECT, DOMAIN, ID_IN_DOMAIN, QUALITY
 		}, new String[] {
 			o.getClass().getName(), o.getId(), domain, domain_id, Integer.toString(val)
 		});
@@ -172,7 +177,7 @@ public class Xid extends PersistentObject {
 	 * @return the quality
 	 */
 	public int getQuality(){
-		return checkZero(get("quality"));
+		return checkZero(get(QUALITY));
 	}
 	
 	/**
@@ -190,7 +195,7 @@ public class Xid extends PersistentObject {
 	 * @return
 	 */
 	public String getDomain(){
-		return get("domain");
+		return get(DOMAIN);
 	}
 	
 	/**
@@ -199,7 +204,7 @@ public class Xid extends PersistentObject {
 	 * @return
 	 */
 	public String getDomainId(){
-		return get("domain_id");
+		return get(ID_IN_DOMAIN);
 	}
 	
 	/**
@@ -208,7 +213,7 @@ public class Xid extends PersistentObject {
 	 * @return the object or null if it could not be restored.
 	 */
 	public PersistentObject getObject(){
-		PersistentObject po = Hub.poFactory.createFromString(get("type") + "::" + get("object"));
+		PersistentObject po = Hub.poFactory.createFromString(get(TYPE) + "::" + get(OBJECT));
 		return po;
 	}
 	
@@ -220,7 +225,7 @@ public class Xid extends PersistentObject {
 			text = po.getLabel();
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(text).append(": ").append(get("domain")).append("->").append(get("domain_id"));
+		ret.append(text).append(": ").append(get(DOMAIN)).append("->").append(get(ID_IN_DOMAIN));
 		return ret.toString();
 	}
 	
@@ -244,8 +249,8 @@ public class Xid extends PersistentObject {
 			domain = dom;
 		}
 		Query<Xid> qbe = new Query<Xid>(Xid.class);
-		qbe.add("domain", "=", domain);
-		qbe.add("domain_id", "=", id);
+		qbe.add(DOMAIN, Query.EQUALS, domain);
+		qbe.add(ID_IN_DOMAIN, Query.EQUALS, id);
 		List<Xid> ret = qbe.execute();
 		if (ret.size() == 1) {
 			return ret.get(0);
@@ -286,8 +291,8 @@ public class Xid extends PersistentObject {
 			domain = dom;
 		}
 		Query<Xid> qbe = new Query<Xid>(Xid.class);
-		qbe.add("domain", "=", domain);
-		qbe.add("object", "=", o.getId());
+		qbe.add(DOMAIN, Query.EQUALS, domain);
+		qbe.add(OBJECT, Query.EQUALS, o.getId());
 		List<Xid> ret = qbe.execute();
 		if (ret.size() == 1) {
 			return ret.get(0);

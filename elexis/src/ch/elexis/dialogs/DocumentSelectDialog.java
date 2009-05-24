@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentSelectDialog.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: DocumentSelectDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -41,6 +41,9 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class DocumentSelectDialog extends TitleAreaDialog {
+	private static final String DELETE_DOCUMENT = "Dokument löschen";
+	private static final String DELETE_TEMPLATE = "Vorlage löschen";
+	private static final String OPEN_DOCUMENT = "Dokument öffnen";
 	/** select an existing document out of the list of all documtents of the given mandator */
 	public static final int TYPE_LOAD_DOCUMENT = 0;
 	/** create a new document using one of the templates of the given mandator */
@@ -84,9 +87,9 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		makeActions();
 		switch (type) {
 		case TYPE_LOAD_DOCUMENT:
-			setTitle("Dokument öffnen");
+			setTitle(OPEN_DOCUMENT);
 			setMessage("Bitte wählen Sie das gewünschte Dokument aus untenstehender Liste und klicken Sie auf OK");
-			getShell().setText("Dokument öffnen");
+			getShell().setText(OPEN_DOCUMENT);
 			break;
 		case TYPE_CREATE_DOC_WITH_TEMPLATE:
 			setTitle("Brief mit Vorlage erstellen");
@@ -121,24 +124,24 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			public Object[] getElements(Object inputElement){
 				Query<Brief> qbe = new Query<Brief>(Brief.class);
 				if (type == TYPE_LOAD_DOCUMENT) {
-					qbe.add("Typ", "<>", Brief.TEMPLATE);
+					qbe.add(Brief.TYPE, Query.NOT_EQUAL, Brief.TEMPLATE);
 				} else {
-					String sys = type == TYPE_LOAD_SYSTEMPLATE ? "=" : "<>";
-					qbe.add("Typ", "=", Brief.TEMPLATE);
-					qbe.add("BehandlungsID", sys, "SYS");
+					String sys = type == TYPE_LOAD_SYSTEMPLATE ? Query.EQUALS : Query.NOT_EQUAL;
+					qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
+					qbe.add(Brief.KONSULTATION_ID, sys, "SYS");
 					qbe.startGroup();
-					qbe.add("DestID", "=", Hub.actMandant.getId());
+					qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
 					qbe.or();
-					qbe.add("DestID", "=", "");
+					qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
 					qbe.endGroup();
 				}
 				qbe.and();
-				qbe.add("geloescht", "<>", "1");
+				qbe.add("geloescht", Query.NOT_EQUAL, StringTool.one);
 				
 				if (type != TYPE_LOAD_DOCUMENT) {
-					qbe.orderBy(false, "Betreff");
+					qbe.orderBy(false, Brief.SUBJECT);
 				} else {
-					qbe.orderBy(false, "Datum");
+					qbe.orderBy(false, Brief.DATE);
 				}
 				List<Brief> l = qbe.execute();
 				return l.toArray();
@@ -189,22 +192,22 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 
 			}
 		};
-		deleteTemplateAction = new Action("Vorlage löschen") {
+		deleteTemplateAction = new Action(DELETE_TEMPLATE) {
 			@Override
 			public void run(){
 				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
-				if (MessageDialog.openConfirm(getShell(), "Vorlage löschen",
+				if (MessageDialog.openConfirm(getShell(), DELETE_TEMPLATE,
 					"Wirklich die Vorlage " + sel.getBetreff() + " löschen?") == true) {
 					sel.delete();
 					tv.refresh();
 				}
 			}
 		};
-		deleteTextAction = new Action("Dokument löschen") {
+		deleteTextAction = new Action(DELETE_DOCUMENT) {
 			@Override
 			public void run(){
 				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
-				if (MessageDialog.openConfirm(getShell(), "Dokument löschen",
+				if (MessageDialog.openConfirm(getShell(), DELETE_DOCUMENT,
 					"Wirklich das Dokument " + sel.getBetreff() + " löschen?") == true) {
 					sel.set("geloescht", "1");
 					tv.refresh();

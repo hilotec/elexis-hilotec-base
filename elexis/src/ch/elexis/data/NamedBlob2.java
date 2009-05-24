@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob2.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: NamedBlob2.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -27,7 +27,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class NamedBlob2 extends PersistentObject {
-	private static final String TABLENAME = "HEAP2";
+	public static final String TABLENAME = "HEAP2";
 
 	/**
 	 * return the contents as array of bytes

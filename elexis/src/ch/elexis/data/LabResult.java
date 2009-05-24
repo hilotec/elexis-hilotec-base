@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 5057 2009-01-27 17:44:06Z rgw_ch $
+ *  $Id: LabResult.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -25,6 +25,13 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class LabResult extends PersistentObject {
+	public static final String LABRESULT_UNSEEN = "Labresult:unseen";
+	public static final String DATE = "Datum";
+	public static final String FLAGS = "Flags";
+	public static final String COMMENT = "Kommentar";
+	public static final String RESULT = "Resultat";
+	public static final String ITEM_ID = "ItemID";
+	public static final String PATIENT_ID = "PatientID";
 	public static final int PATHOLOGIC = 1 << 0;
 	public static final int OBSERVE = 1 << 1; // Anwender erklärt den Parameter für
 	// beobachtungswürdig
@@ -39,8 +46,8 @@ public class LabResult extends PersistentObject {
 	}
 	
 	static {
-		addMapping("LABORWERTE", "PatientID", "Datum=S:D:Datum", "ItemID", "Resultat", "Kommentar",
-			"Flags", "Quelle=Origin");
+		addMapping(TABLENAME, PATIENT_ID, DATE_FIELD, ITEM_ID, RESULT, COMMENT,
+			FLAGS, "Quelle=Origin");
 		
 	}
 	
@@ -51,7 +58,7 @@ public class LabResult extends PersistentObject {
 		final String comment){
 		create(null);
 		String[] fields = {
-			"PatientID", "Datum", "ItemID", "Resultat", "Kommentar", "Flags"
+			PATIENT_ID, DATE, ITEM_ID, RESULT, COMMENT, FLAGS
 		};
 		int flags = isPathologic(p, item, result) ? PATHOLOGIC : 0;
 		String[] vals =
@@ -75,7 +82,7 @@ public class LabResult extends PersistentObject {
 			}
 		} else /* if(item.getTyp().equals(LabItem.typ.NUMERIC)) */{
 			String nr;
-			if (p.getGeschlecht().equalsIgnoreCase("m")) {
+			if (p.getGeschlecht().equalsIgnoreCase(Person.MALE)) {
 				nr = item.getRefM();
 			} else {
 				nr = item.getRefW();
@@ -125,32 +132,32 @@ public class LabResult extends PersistentObject {
 	}
 	
 	public Patient getPatient(){
-		return Patient.load(get("PatientID"));
+		return Patient.load(get(PATIENT_ID));
 	}
 	
 	public String getDate(){
-		return get("Datum");
+		return get(DATE);
 	}
 	
 	public LabItem getItem(){
-		return LabItem.load(get("ItemID"));
+		return LabItem.load(get(ITEM_ID));
 	}
 	
 	public String getResult(){
-		return checkNull(get("Resultat"));
+		return checkNull(get(RESULT));
 	}
 	
 	public void setResult(final String res){
 		int flags = isPathologic(getPatient(), getItem(), res) ? PATHOLOGIC : 0;
 		set(new String[] {
-			"Resultat", "Flags"
+			RESULT, FLAGS
 		}, new String[] {
 			checkNull(res), Integer.toString(flags)
 		});
 	}
 	
 	public String getComment(){
-		return checkNull(get("Kommentar"));
+		return checkNull(get(COMMENT));
 		
 	}
 	
@@ -165,11 +172,11 @@ public class LabResult extends PersistentObject {
 		} else {
 			flags &= ~(flag);
 		}
-		setInt("Flags", flags);
+		setInt(FLAGS, flags);
 	}
 	
 	public int getFlags(){
-		return checkZero(get("Flags"));
+		return checkZero(get(FLAGS));
 	}
 	
 	protected LabResult(){}
@@ -189,9 +196,9 @@ public class LabResult extends PersistentObject {
 	
 	public static LabResult getForDate(final Patient pat, final TimeTool date, final LabItem item){
 		Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-		qbe.add("ItemID", "=", item.getId());
-		qbe.add("PatientID", "=", pat.getId());
-		qbe.add("Datum", "=", date.toString(TimeTool.DATE_COMPACT));
+		qbe.add(ITEM_ID, Query.EQUALS, item.getId());
+		qbe.add(PATIENT_ID, Query.EQUALS, pat.getId());
+		qbe.add(DATE, Query.EQUALS, date.toString(TimeTool.DATE_COMPACT));
 		List<LabResult> res = qbe.execute();
 		if ((res != null) && (res.size() > 0)) {
 			return res.get(0);
@@ -226,7 +233,7 @@ public class LabResult extends PersistentObject {
 				}
 			}
 		}
-		NamedBlob unseen = NamedBlob.load("Labresult:unseen");
+		NamedBlob unseen = NamedBlob.load(LABRESULT_UNSEEN);
 		String results = StringTool.join(n, ",");
 		unseen.putString(results);
 		// unseen.set("lastupdate", new TimeTool().toString(TimeTool.TIMESTAMP));
@@ -236,9 +243,9 @@ public class LabResult extends PersistentObject {
 	 * Remove a lab result from the list of unseen results.
 	 */
 	public void removeFromUnseen(){
-		NamedBlob unseen = NamedBlob.load("Labresult:unseen");
+		NamedBlob unseen = NamedBlob.load(LABRESULT_UNSEEN);
 		String results = unseen.getString();
-		results = results.replaceAll(getId(), "");
+		results = results.replaceAll(getId(), StringTool.leer);
 		unseen.putString(results.replaceAll(",,", ","));
 		// unseen.set("lastupdate", new TimeTool().toString(TimeTool.TIMESTAMP));
 	}
@@ -250,7 +257,7 @@ public class LabResult extends PersistentObject {
 	 */
 	public static List<LabResult> getUnseen(){
 		LinkedList<LabResult> ret = new LinkedList<LabResult>();
-		NamedBlob unseen = NamedBlob.load("Labresult:unseen");
+		NamedBlob unseen = NamedBlob.load(LABRESULT_UNSEEN);
 		String results = unseen.getString();
 		if (results.length() > 0) {
 			for (String id : results.split(",")) {
@@ -269,7 +276,7 @@ public class LabResult extends PersistentObject {
 	 * @return a timestamp (as in System.CurrentTimeMillis())
 	 */
 	public static long getLastUpdateUnseen(){
-		NamedBlob unseen = NamedBlob.load("Labresult:unseen");
+		NamedBlob unseen = NamedBlob.load(LABRESULT_UNSEEN);
 		long lastup = unseen.getLastUpdate();
 		return lastup;
 	}

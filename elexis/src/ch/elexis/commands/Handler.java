@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Handler.java 4430 2008-09-22 17:22:09Z rgw_ch $
+ *  $Id: Handler.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -36,8 +36,10 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class Handler {
+	private static final String STR_MONITOR = "monitor"; //$NON-NLS-1$
+	private static final String STR_PARAM = "param"; //$NON-NLS-1$
 	private static HashMap<String, Object> paramMap = new HashMap<String, Object>();
-	public static final String DEFAULTPARAM="ch.elexis.commands.defaultParameter";
+	public static final String DEFAULTPARAM="ch.elexis.commands.defaultParameter"; //$NON-NLS-1$
 	
 	
 	/**
@@ -49,8 +51,8 @@ public class Handler {
 	 */
 	public static Object executeWithProgress(IViewSite origin, String commandID, Object param, IProgressMonitor monitor){
 		HashMap<String,Object> hp=new HashMap<String,Object>();
-		hp.put("param", param);
-		hp.put("monitor", monitor);
+		hp.put(STR_PARAM, param);
+		hp.put(STR_MONITOR, monitor);
 		return execute(origin,commandID,hp);
 	}
 	/**
@@ -63,7 +65,7 @@ public class Handler {
 	public static Object execute(IViewSite origin, String commandID, Object param){
 		HashMap<String,Object> hp=new HashMap<String,Object>();
 		if(param!=null){
-			hp.put("param", param);
+			hp.put(STR_PARAM, param);
 		}
 		return execute(origin,commandID,hp);
 	}
@@ -82,7 +84,7 @@ public class Handler {
 		if(np!=null){
 			HashMap<String, Object> map=(HashMap<String, Object>) getParam(np);
 			if(map!=null){
-				return map.get("param");
+				return map.get(STR_PARAM);
 			}
 		}
 		return null;
@@ -99,7 +101,7 @@ public class Handler {
 		String np=params.get(Handler.DEFAULTPARAM);
 		HashMap<String, Object> map=(HashMap<String, Object>) getParam(np);
 		if(map!=null){
-			return (IProgressMonitor)map.get("monitor");
+			return (IProgressMonitor)map.get(STR_MONITOR);
 		}
 		return null;
 	}
@@ -124,7 +126,7 @@ public class Handler {
 		ICommandService cmdService = (ICommandService) origin.getService(ICommandService.class);
 		try {
 			Command command = cmdService.getCommand(commandID);
-			String name = StringTool.unique("CommandHandler");
+			String name = StringTool.unique("CommandHandler"); //$NON-NLS-1$
 			paramMap.put(name, params);
 			Parameterization px = new Parameterization(new DefaultParameter(), name);
 			ParameterizedCommand parmCommand =
@@ -135,7 +137,7 @@ public class Handler {
 			return handlerService.executeCommand(parmCommand, null);
 			
 		} catch (Exception ex) {
-			throw new RuntimeException("add.command not found");
+			throw new RuntimeException("add.command not found"); //$NON-NLS-1$
 		}
 	}
 	
@@ -146,7 +148,7 @@ public class Handler {
 		}
 		
 		public String getName(){
-			return "param";
+			return STR_PARAM;
 		}
 		
 		public IParameterValues getValues() throws ParameterValuesException{

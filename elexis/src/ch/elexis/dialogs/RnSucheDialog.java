@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnSucheDialog.java 1153 2006-10-22 19:10:08Z rgw_ch $
+ * $Id: RnSucheDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -22,22 +22,26 @@ import ch.elexis.util.SWTHelper;
 
 public class RnSucheDialog extends TitleAreaDialog {
 	LabeledInputField liNummer, liName;
-	String nummer,name;
-	public RnSucheDialog(Shell shell){
+	String nummer, name;
+
+	public RnSucheDialog(Shell shell) {
 		super(shell);
 	}
-	public String getNummer(){
+
+	public String getNummer() {
 		return nummer;
 	}
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		LabeledInputField.Tableau tbl=new LabeledInputField.Tableau(parent);
-		tbl.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-		liNummer=tbl.addComponent(Messages.getString("RnSucheDialog.number")); //$NON-NLS-1$
-		liName=tbl.addComponent(Messages.getString("RnSucheDialog.name")); //$NON-NLS-1$
+		LabeledInputField.Tableau tbl = new LabeledInputField.Tableau(parent);
+		tbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		liNummer = tbl.addComponent(Messages.getString("RnSucheDialog.number")); //$NON-NLS-1$
+		liName = tbl.addComponent(Messages.getString("RnSucheDialog.name")); //$NON-NLS-1$
 		return tbl;
 	}
 
@@ -51,9 +55,9 @@ public class RnSucheDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		nummer=liNummer.getText();
-		name=liName.getText();
+		nummer = liNummer.getText();
+		name = liName.getText();
 		super.okPressed();
 	}
-	
+
 }

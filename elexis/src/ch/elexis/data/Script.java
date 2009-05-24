@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: Script.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.data;
 
 import java.util.List;
@@ -68,7 +81,7 @@ public class Script extends NamedBlob2 {
 		StringBuffer sb = new StringBuffer();
 		while(matcher.find()){
 			boolean bMatched=false;
-			String var=matcher.group().replaceAll("[\\[\\]]", "");
+			String var=matcher.group().replaceAll("[\\[\\]]", StringTool.leer);
 			String[] fields=var.split("\\.");
 			if(fields.length>1){
 				String fqname="ch.elexis.data."+fields[0];

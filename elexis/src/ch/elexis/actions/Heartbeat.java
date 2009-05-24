@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Heartbeat.java 4138 2008-07-13 19:39:30Z rgw_ch $
+ * $Id: Heartbeat.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -63,7 +63,7 @@ public class Heartbeat {
 	private LinkedList<HeartListener> highFrequencyListeners;
 	private LinkedList<HeartListener> mediumFrequencyListeners;
 	private LinkedList<HeartListener> lowFrequencyListeners;
-	private static Log log=Log.get("Heartbeat");
+	private static Log log=Log.get("Heartbeat"); //$NON-NLS-1$
 	
 	private Heartbeat(){
 		theBeat=new beat();
@@ -94,7 +94,7 @@ public class Heartbeat {
 	 */
 	public void resume(boolean immediately){
 		isSuspended=false;
-		log.log("resume", Log.DEBUGMSG);
+		log.log("resume", Log.DEBUGMSG); //$NON-NLS-1$
 		if(immediately){
 			theBeat.run();
 		}
@@ -103,7 +103,7 @@ public class Heartbeat {
 	 * Heartbeat aussetzen (geht im Hintergrund weiter, wird aber nicht mehr weitergeleitet)
 	 */
 	public void suspend(){
-		log.log("suspending", Log.DEBUGMSG);
+		log.log("suspending", Log.DEBUGMSG); //$NON-NLS-1$
 		isSuspended=true;
 	}
 	
@@ -111,7 +111,7 @@ public class Heartbeat {
 	 * Heartbeat stoppen (kann dann nicht mehr gestartet werden)
 	 */
 	public void stop(){
-		log.log("stopping", Log.DEBUGMSG);
+		log.log("stopping", Log.DEBUGMSG); //$NON-NLS-1$
 		pacer.cancel();
 	}
 	/**
@@ -183,7 +183,7 @@ public class Heartbeat {
 					public void run(){
 						// low frequency
 						if (counter % FREQUENCY_LOW_MULTIPLIER == 0) {
-							log.log("Heartbeat low", Log.DEBUGMSG);
+							log.log("Heartbeat low", Log.DEBUGMSG); //$NON-NLS-1$
 							for (HeartListener l : lowFrequencyListeners) {
 								l.heartbeat();
 							}
@@ -191,14 +191,14 @@ public class Heartbeat {
 						}
 							// medium frequency
 						if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
-							log.log("Heartbeat medium", Log.DEBUGMSG);
+							log.log("Heartbeat medium", Log.DEBUGMSG); //$NON-NLS-1$
 							for (HeartListener l : mediumFrequencyListeners) {
 								l.heartbeat();
 							}		
 						}
 								// high frequency
 						if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
-							log.log("Heartbeat high", Log.DEBUGMSG);
+							log.log("Heartbeat high", Log.DEBUGMSG); //$NON-NLS-1$
 							for (HeartListener l : highFrequencyListeners) {
 								l.heartbeat();
 							}		

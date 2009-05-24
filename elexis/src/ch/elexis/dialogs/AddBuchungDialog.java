@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AddBuchungDialog.java 4708 2008-12-02 16:44:44Z rgw_ch $
+ * $Id: AddBuchungDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -73,7 +73,7 @@ public class AddBuchungDialog extends TitleAreaDialog {
 			Money mBetrag=MoneyInput.getFromTextField(betrag);
 			new AccountTransaction(pat,null,mBetrag,null,text.getText());
 		}catch(Exception ex){
-			SWTHelper.showError("Fehler bei Betrageingabe", "Kann den eingegebenen Betrag nicht interpretieren");
+			SWTHelper.showError(Messages.getString("AddBuchungDialog.ErrorInAmount"), Messages.getString("AddBuchungDialog.CannotInterpretAmount")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		super.okPressed();
 	}

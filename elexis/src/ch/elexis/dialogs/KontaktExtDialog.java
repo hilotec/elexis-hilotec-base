@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktExtDialog.java 3997 2008-06-02 08:33:52Z rgw_ch $
+ * $Id: KontaktExtDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -60,8 +60,8 @@ public class KontaktExtDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle(k.getLabel());
-		setMessage("Bitte geben Sie die notwendigen Identifikationsdaten ein");
-		getShell().setText("Identifikationselemente");
+		setMessage(Messages.getString("KontaktExtDialog.pleaseENterDetails")); //$NON-NLS-1$
+		getShell().setText(Messages.getString("KontaktExtDialog.indetityDetails")); //$NON-NLS-1$
 	}
 	@Override
 	protected void okPressed() {
@@ -182,17 +182,7 @@ public class KontaktExtDialog extends TitleAreaDialog {
 			editor.setEditor(text);
 			text.setFocus();
 		}
-		/*
-		private void cursorDown(){
-			int row=table.getSelectionIndex();
-			cursor.setSelection(row+1,cursor.getColumn());
-			table.setSelection(row+1);
-			LabItem it=(LabItem)cursor.getRow().getData("Item");
-			if(it==null){
-				cursorDown();
-			}
-		}
-*/
+		
 	}
 	
 	

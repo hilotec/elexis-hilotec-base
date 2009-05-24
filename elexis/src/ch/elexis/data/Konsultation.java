@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 5170 2009-02-21 19:44:23Z rgw_ch $
+ *  $Id: Konsultation.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -49,16 +49,22 @@ import ch.rgw.tools.VersionedResource.ResourceItem;
  */
 public class Konsultation extends PersistentObject implements
 		Comparable<Konsultation> {
+	public static final String ENTRY = "Eintrag";
+	public static final String DATE = "Datum";
+	public static final String BILL_ID = "RechnungsID";
+	public static final String CASE_ID = "FallID";
+	public static final String MANDATOR_ID = "MandantID";
+	private static final String TABLENAME = "BEHANDLUNGEN";
 	volatile int actEntry;
 	private JdbcLink j = getConnection();
 
 	protected String getTableName() {
-		return "BEHANDLUNGEN";
+		return TABLENAME;
 	}
 
 	static {
-		addMapping("BEHANDLUNGEN", "MandantID", "Datum=S:D:Datum", "FallID",
-				"RechnungsID", "Eintrag=S:V:Eintrag",
+		addMapping(TABLENAME, MANDATOR_ID, "Datum=S:D:Datum", CASE_ID,
+				BILL_ID, "Eintrag=S:V:Eintrag",
 				"Diagnosen=JOINT:BehandlungsID:DiagnoseID:BEHDL_DG_JOINT");
 	}
 
@@ -90,14 +96,14 @@ public class Konsultation extends PersistentObject implements
 
 	/** Den zugehörigen Fall holen */
 	public Fall getFall() {
-		return Fall.load(get("FallID"));
+		return Fall.load(get(CASE_ID));
 	}
 
 	/** Die Konsultation einem Fall zuordnen */
 	public void setFall(Fall f) {
 		if (isEditable(true)) {
 			Fall alt = getFall();
-			set("FallID", f.getId());
+			set(CASE_ID, f.getId());
 			if (alt != null) {
 				List<Verrechnet> vv = getLeistungen();
 				for (Verrechnet v : vv) {
@@ -125,7 +131,7 @@ public class Konsultation extends PersistentObject implements
 							"Zu einem abgeschlossenen Fall kann keine neue Konsultation erstellt werden");
 		} else {
 			create(null);
-			set(new String[] { "Datum", "FallID", "MandantID" }, new TimeTool()
+			set(new String[] { DATE, CASE_ID, MANDATOR_ID }, new TimeTool()
 					.toString(TimeTool.DATE_GER), fall.getId(), Hub.actMandant
 					.getId());
 			fall.getPatient().setInfoElement("LetzteBehandlung", getId());
@@ -144,12 +150,12 @@ public class Konsultation extends PersistentObject implements
 	}
 
 	public int getHeadVersion() {
-		VersionedResource vr = getVersionedResource("Eintrag", false);
+		VersionedResource vr = getVersionedResource(ENTRY, false);
 		return vr.getHeadVersion();
 	}
 
 	public VersionedResource getEintrag() {
-		VersionedResource vr = getVersionedResource("Eintrag", true);
+		VersionedResource vr = getVersionedResource(ENTRY, true);
 		return vr;
 	}
 
@@ -279,7 +285,7 @@ public class Konsultation extends PersistentObject implements
 	 */
 	public void setEintrag(VersionedResource eintrag, boolean force) {
 		if (force || isEintragEditable()) {
-			setVersionedResource("Eintrag", eintrag.getHead());
+			setVersionedResource(ENTRY, eintrag.getHead());
 		}
 	}
 
@@ -293,7 +299,7 @@ public class Konsultation extends PersistentObject implements
 	 */
 	public void updateEintrag(String eintrag, boolean force) {
 		if (force || isEintragEditable()) {
-			setVersionedResource("Eintrag", eintrag);
+			setVersionedResource(ENTRY, eintrag);
 			GlobalEvents.getInstance().fireObjectEvent(this,
 					GlobalEvents.CHANGETYPE.update);
 		}
@@ -302,18 +308,18 @@ public class Konsultation extends PersistentObject implements
 	public void purgeEintrag() {
 		VersionedResource vr = getEintrag();
 		vr.purge();
-		setBinary("Eintrag", vr.serialize());
+		setBinary(ENTRY, vr.serialize());
 	}
 
 	/** Den zugeordneten Mandanten holen */
 	public Mandant getMandant() {
-		return Mandant.load(get("MandantID"));
+		return Mandant.load(get(MANDATOR_ID));
 	}
 
 	/** Die Konsultation einem Mandanten zuordnen */
 	public void setMandant(Mandant m) {
 		if (m != null) {
-			set("MandantID", m.getId());
+			set(MANDATOR_ID, m.getId());
 		}
 	}
 
@@ -326,24 +332,24 @@ public class Konsultation extends PersistentObject implements
 	public void setDatum(String dat, boolean force) {
 		if (dat != null) {
 			if (force || isEditable(true)) {
-				set("Datum", dat);
+				set(DATE, dat);
 			}
 		}
 	}
 
 	/** das Behandlungsdatum auslesen */
 	public String getDatum() {
-		String ret = get("Datum");
+		String ret = get(DATE);
 		return ret;
 	}
 
 	public Rechnung getRechnung() {
-		return Rechnung.load(get("RechnungsID"));
+		return Rechnung.load(get(BILL_ID));
 	}
 
 	public void setRechnung(Rechnung r) {
 		if (r != null) {
-			set("RechnungsID", r.getId());
+			set(BILL_ID, r.getId());
 		}
 	}
 
@@ -573,8 +579,8 @@ public class Konsultation extends PersistentObject implements
 	@SuppressWarnings("unchecked")
 	public List<Verrechnet> getLeistungen() {
 		Query qbe = new Query(Verrechnet.class);
-		qbe.add("Konsultation", "=", getId());
-		qbe.orderBy(false, "Klasse", "Leistg_code");
+		qbe.add(Verrechnet.KONSULTATION, Query.EQUALS, getId());
+		qbe.orderBy(false, Verrechnet.CLASS, Verrechnet.LEISTG_CODE);
 		List ret = qbe.execute();
 		return (List<Verrechnet>) ret;
 	}
@@ -623,7 +629,7 @@ public class Konsultation extends PersistentObject implements
 					// art.einzelAbgabe(1); -> this is done by the optifier now
 					Prescription p = new Prescription(art, getFall()
 							.getPatient(), "", "");
-					p.set("RezeptID", "Direktabgabe");
+					p.set(Prescription.REZEPT_ID, "Direktabgabe");
 				}
 			}
 			return result;
@@ -761,76 +767,6 @@ public class Konsultation extends PersistentObject implements
 		}
 	}
 
-	/**
-	 * Den tatsächlich verrechneten Preis (in Rappen) eines Artikels holen
-	 * 
-	 * @Deprecated public Money getEffPreis(IVerrechenbar v){ StringBuilder
-	 *             sb=new StringBuilder();
-	 *             sb.append("SELECT VK_PREIS,SCALE FROM LEISTUNGEN WHERE BEHANDLUNG="
-	 *             ) .append(getWrappedId()).append(" AND KLASSE=")
-	 *             .append(JdbcLink.wrap(v.getClass().getName())) .append("AND
-	 *             LEISTG_CODE=").append(JdbcLink.wrap(v.getId())); Stm
-	 *             stm=j.getStatement(); try{ ResultSet
-	 *             rs=stm.query(sb.toString()); if(rs!=null && rs.next()){
-	 *             double base=rs.getDouble(1); double
-	 *             scale=rs.getDouble(2)/100.0; return new
-	 *             Money((int)Math.round(base*scale)); } return new Money();
-	 *             }catch(Exception ex){ ExHandler.handle(ex); return new
-	 *             Money(); }finally{ j.releaseStatement(stm); } }
-	 */
-	/**
-	 * (Beliebige) Konsultationsspezifische Details zu einem Verrechnungscode
-	 * werden in einer HAshtable gespeichert, die hier rückgelesen werden kann.
-	 * 
-	 * @param v
-	 * @return
-	 * 
-	 * @SuppressWarnings("unchecked") public Hashtable getDetailsFor(Verrechnet
-	 *                                v){ Stm stm=j.getStatement(); try {
-	 *                                StringBuilder sb=new StringBuilder();
-	 *                                sb.append("SELECT DETAIL FROM LEISTUNGEN
-	 *                                WHERE BEHANDLUNG=
-	 *                                ") .append(getWrappedId()) .append("AND
-	 *                                LEISTG_CODE
-	 *                                =").append(JdbcLink.wrap(v.getId()));
-	 * 
-	 *                                ResultSet rs=stm.query(sb.toString());
-	 *                                Hashtable ret=new Hashtable(); if(rs!=null
-	 *                                && rs.next()){ byte[] blob=rs.getBytes(1);
-	 *                                if(blob!=null && blob.length>1){
-	 *                                ret=StringTool
-	 *                                .fold(blob,StringTool.GUESS,null); }
-	 *                                rs.close(); } return ret; } catch
-	 *                                (Exception e) { ExHandler.handle(e);
-	 *                                return null; }finally{
-	 *                                j.releaseStatement(stm); } }
-	 * @SuppressWarnings("unchecked") public void flushDetailsFor(IVerrechenbar
-	 *                                v, Hashtable hash){ if(!isEditable(true)){
-	 *                                return; } byte[]
-	 *                                bin=StringTool.flatten(hash); Hashtable
-	 *                                res=StringTool.fold(bin); if(res==null){
-	 *                                MessageDialog
-	 *                                .openError(null,"Interner Fehler"
-	 *                                ,"Hashtable nicht
-	 *                                wiederherstellbar.\nBitte melden Sie
-	 *                                diesen Fehler, und wie\ner genau
-	 *                                entstand"); return; } StringBuilder
-	 *                                sql=new StringBuilder(1000);
-	 *                                sql.append("UPDATE LEISTUNGEN SET DETAIL=?
-	 *                                WHERE BEHANDLUNG=")
-	 *                                .append(getWrappedId())
-	 *                                .append("AND LEISTG_CODE="
-	 *                                ).append(JdbcLink.wrap(v.getId()));
-	 * 
-	 *                                String cmd=sql.toString();
-	 *                                PreparedStatement
-	 *                                stm=j.prepareStatement(cmd); try{
-	 *                                stm.setBytes(1,bin); stm.executeUpdate();
-	 *                                }catch(Exception ex){
-	 *                                ExHandler.handle(ex);
-	 *                                log.log("Fehler beim Ausführen der Abfrage "
-	 *                                +cmd,Log.ERRORS); } }
-	 */
 	@Override
 	public boolean delete() {
 		return delete(true);
@@ -852,7 +788,7 @@ public class Konsultation extends PersistentObject implements
 
 	private boolean delete_dependent() {
 		for (Verrechnet vv : new Query<Verrechnet>(Verrechnet.class,
-				"Konsultation", getId()).execute()) {
+				Verrechnet.KONSULTATION, getId()).execute()) {
 			vv.delete();
 		}
 		j.exec("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID="

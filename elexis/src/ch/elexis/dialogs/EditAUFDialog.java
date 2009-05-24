@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditAUFDialog.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: EditAUFDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -77,7 +77,7 @@ public class EditAUFDialog extends TitleAreaDialog {
 			if (fall != null) {
 				tGrund.setText(fall.getGrund());
 			}
-			tProzent.setText("100");
+			tProzent.setText("100"); //$NON-NLS-1$
 			dpVon.setDate(tt.getTime());
 			dpBis.setDate(tt.getTime());
 		}
@@ -109,12 +109,12 @@ public class EditAUFDialog extends TitleAreaDialog {
 		if (auf == null) {
 			auf = new AUF(fall, von, bis, tProzent.getText(), tGrund.getText());
 			if (!StringTool.isNothing(zus)) {
-				auf.set("Zusatz", zus);
+				auf.set(AUF.ZUSATZ, zus);
 			}
 		} else {
 			fall = auf.getFall();
 			String[] parms = new String[] {
-				"FallID", "von", "bis", "Grund", "Prozent", "Zusatz"
+				AUF.CASE_ID, AUF.DATE_FROM, AUF.DATE_UNTIL, AUF.REASON, AUF.PERCENT, AUF.ZUSATZ
 			};
 			String[] vals = new String[] {
 				fall.getId(), von, bis, tGrund.getText(), tProzent.getText(), zus

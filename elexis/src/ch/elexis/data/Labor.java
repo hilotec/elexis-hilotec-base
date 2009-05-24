@@ -8,24 +8,30 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Labor.java 4270 2008-08-13 14:41:33Z rgw_ch $
+ *  $Id: Labor.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
+
 public class Labor extends Organisation {
 	static {
-		addMapping("KONTAKT", "Name	=Bezeichnung1", "Zusatz1=Bezeichnung2", "Zusatz2=ExtInfo", "Kuerzel=PatientNr", "Ansprechperson=Bezeichnung3", "istOrganisation", "istLabor");
+		addMapping(Kontakt.TABLENAME, "Name	=Bezeichnung1", "Zusatz1=Bezeichnung2", "Zusatz2=ExtInfo", "Kuerzel=PatientNr", "Ansprechperson=Bezeichnung3", "istOrganisation", "istLabor");
 	}
 
 	@Override
 	protected String getConstraint() {
-		return "istLabor='1'";
+		return new StringBuilder(Kontakt.IS_LAB)
+		.append(Query.EQUALS)
+		.append(JdbcLink.wrap(StringTool.one))
+		.toString();
 	}
 
 	@Override
 	protected void setConstraint() {
-		set(new String[] { "istLabor", "istOrganisation" }, "1", "1");
+		set(new String[] { Kontakt.IS_LAB,Kontakt.IS_ORGANIZATION }, StringTool.one, StringTool.one);
 	}
 
 	public Labor(String Kuerzel, String Name) {

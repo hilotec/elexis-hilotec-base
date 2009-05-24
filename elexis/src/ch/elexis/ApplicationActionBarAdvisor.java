@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationActionBarAdvisor.java 4733 2008-12-04 19:13:07Z rgw_ch $
+ * $Id: ApplicationActionBarAdvisor.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -34,8 +34,8 @@ import ch.rgw.tools.StringTool;
  * Konstruktion der globalen Aktionen (Menu, Toolbar etc.)
  */
 public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
-	public static final String IMPORTER_GROUP = "elexis.FileImports";
-	public static final String ADDITIONS = "elexis.fileAdditions";
+	public static final String IMPORTER_GROUP = "elexis.FileImports"; //$NON-NLS-1$
+	public static final String ADDITIONS = "elexis.fileAdditions"; //$NON-NLS-1$
 	
 	// Actions - important to allocate these only in makeActions, and then use
 	// them
@@ -77,14 +77,14 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		// register(MainMenuActions.showPerspectiveAction);
 		
 		// create open perspective actions according to the list of Sidebar
-		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, "true").equalsIgnoreCase("true")) {
-			List<IConfigurationElement> ex = Extensions.getExtensions("ch.elexis.Sidebar");
+		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, Boolean.toString(true)).equalsIgnoreCase(Boolean.toString(true))) {
+			List<IConfigurationElement> ex = Extensions.getExtensions("ch.elexis.Sidebar"); //$NON-NLS-1$
 			openPerspectiveActions = new IAction[ex.size()];
 			int i = 0;
 			for (IConfigurationElement ice : ex) {
-				String name = ice.getAttribute("name");
-				String id = ice.getAttribute("ID");
-				String icon = ice.getAttribute("icon");
+				String name = ice.getAttribute("name"); //$NON-NLS-1$
+				String id = ice.getAttribute("ID"); //$NON-NLS-1$
+				String icon = ice.getAttribute("icon"); //$NON-NLS-1$
 				IPerspectiveDescriptor perspectiveDescriptor =
 					PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
 				if (perspectiveDescriptor != null) {
@@ -95,21 +95,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 			}
 		}
 		
-		/*
-		 * if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS,
-		 * "true").equalsIgnoreCase("true")) { String sbdef =
-		 * Hub.localCfg.get(PreferenceConstants.SIDEBAR, ""); //$NON-NLS-1$ String[] pers =
-		 * sbdef.split(","); //$NON-NLS-1$ openPerspectiveActions = new IAction[pers.length]; int i
-		 * = 0; for (String per : pers) { if (!StringTool.isNothing(per)) { String[] def =
-		 * per.split(":"); //$NON-NLS-1$ String perspectiveId = def[1];
-		 * 
-		 * IPerspectiveDescriptor perspectiveDescriptor =
-		 * PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId( perspectiveId);
-		 * if (perspectiveDescriptor != null) { openPerspectiveActions[i] = new
-		 * OpenPerspectiveAction(perspectiveDescriptor); } }
-		 * 
-		 * i++; } }
-		 */
 	}
 	
 	protected void fillMenuBar(IMenuManager menuBar){
@@ -150,7 +135,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		
 		windowMenu.add(GlobalActions.fixLayoutAction);
 		GlobalActions.perspectiveMenu =
-			new MenuManager(Messages.ApplicationActionBarAdvisor_7, "openPerspective"); //$NON-NLS-2$
+			new MenuManager(Messages.ApplicationActionBarAdvisor_7, "openPerspective"); //$NON-NLS-1$
 		GlobalActions.perspectiveList =
 			ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
 		GlobalActions.perspectiveMenu.add(savePerspectiveAction);
@@ -191,7 +176,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		tbm.add(GlobalActions.printAdresse);
 		
 		coolBar.add(tbm);
-		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, "true").equalsIgnoreCase("true")) {
+		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, Boolean.toString(true)).equalsIgnoreCase(Boolean.toString(true))) {
 			ToolBarManager tb2 = new ToolBarManager();
 			// ci.getToolBarManager().add(new Separator());
 			for (IAction action : openPerspectiveActions) {

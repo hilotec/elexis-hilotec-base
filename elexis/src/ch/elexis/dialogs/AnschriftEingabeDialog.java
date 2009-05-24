@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnschriftEingabeDialog.java 2178 2007-03-27 13:53:51Z rgw_ch $
+ *  $Id: AnschriftEingabeDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 
 public class AnschriftEingabeDialog extends TitleAreaDialog {
 	Text str,plz,ort,land,postanschrift;
@@ -85,7 +86,7 @@ public class AnschriftEingabeDialog extends TitleAreaDialog {
 				an.setOrt(ort.getText());
 				an.setLand(land.getText());
 				an.write(k);
-				k.set("Anschrift",""); // clear the old postal to make createStdAnschrift save a new one
+				k.set(Kontakt.ANSCHRIFT,StringTool.leer); // clear the old postal to make createStdAnschrift save a new one
 				postanschrift.setText(k.createStdAnschrift());
 			}
 			
@@ -98,8 +99,8 @@ public class AnschriftEingabeDialog extends TitleAreaDialog {
 		gd.heightHint = 4 * size.y;
 		postanschrift.setLayoutData(gd);
 		// get Postanschrift (may be empty if it's not yet defined)
-		String pa = k.get("Anschrift");
-		pa = pa.replaceAll("[\\r\\n]\\n","\n");
+		String pa = k.get(Kontakt.ANSCHRIFT);
+		pa = pa.replaceAll("[\\r\\n]\\n",StringTool.lf); //$NON-NLS-1$
 		postanschrift.setText(pa);
 		
 		// postanschrift info message
@@ -121,8 +122,8 @@ public class AnschriftEingabeDialog extends TitleAreaDialog {
 		an.setOrt(ort.getText());
 		an.setLand(land.getText());
 		an.write(k);
-		String pa=postanschrift.getText().replaceAll("\\r\\n", "\n");
-		k.set("Anschrift",pa); //$NON-NLS-1$
+		String pa=postanschrift.getText().replaceAll("\\r\\n", StringTool.lf); //$NON-NLS-1$
+		k.set(Kontakt.ANSCHRIFT,pa); //$NON-NLS-1$
 		super.okPressed();
 	}
 	

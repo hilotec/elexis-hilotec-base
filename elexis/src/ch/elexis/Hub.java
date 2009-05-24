@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 5235 2009-04-07 16:28:16Z rgw_ch $
+ *    $Id: Hub.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -70,6 +70,7 @@ import ch.rgw.tools.VersionInfo;
 public class Hub extends AbstractUIPlugin {
 	// Globale Konstanten
 	public static final boolean DEBUGMODE = false;
+	public static final String APPLICATION_NAME="Elexis"; //$NON-NLS-1$
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.5.0"; //$NON-NLS-1$
@@ -131,13 +132,13 @@ public class Hub extends AbstractUIPlugin {
 		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
 		setUserDir(userDir);
 		String[] args = Platform.getApplicationArgs();
-		String config = "default";
+		String config = "default"; //$NON-NLS-1$
 		for (String s : args) {
 			if (s.startsWith("--use-config=")) { //$NON-NLS-1$
 				String[] c = s.split("="); //$NON-NLS-1$
 				config = c[1];
 				localCfg = localCfg.getBranch(config, true);
-			} else if (s.startsWith("--plaf=")) {
+			} else if (s.startsWith("--plaf=")) { //$NON-NLS-1$
 				String[] c = s.split("="); //$NON-NLS-1$
 				String plaf = c[1];
 				localCfg.set(PreferenceConstants.USR_PLAF, plaf);
@@ -151,8 +152,8 @@ public class Hub extends AbstractUIPlugin {
 		userCfg = localCfg;
 		mandantCfg = localCfg;
 		
-		String basePath = UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis"));
-		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath));
+		String basePath = UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis")); //$NON-NLS-1$
+		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath)); //$NON-NLS-1$
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -179,7 +180,7 @@ public class Hub extends AbstractUIPlugin {
 		int maxLogfileSize = -1;
 		String logPath;
 		if (logfileName == null) {
-			logPath = new File(userDir, "elexis.log").getAbsolutePath();
+			logPath = new File(userDir, "elexis.log").getAbsolutePath(); //$NON-NLS-1$
 		} else if (logfileName.equalsIgnoreCase("none")) { //$NON-NLS-1$
 			logPath = "none"; //$NON-NLS-1$
 		} else {
@@ -205,7 +206,7 @@ public class Hub extends AbstractUIPlugin {
 	private void initializeLock(){
 		final int timeoutSeconds = 600;
 		try {
-			final LockFile lockfile = new LockFile(userDir, "elexislock", 4, timeoutSeconds);
+			final LockFile lockfile = new LockFile(userDir, "elexislock", 4, timeoutSeconds); //$NON-NLS-1$
 			final int n = lockfile.lock();
 			if (n == 0) {
 				SWTHelper.alert(Messages.Hub_toomanyinstances,
@@ -298,7 +299,7 @@ public class Hub extends AbstractUIPlugin {
 		} else {
 			mandantCfg =
 				new SqlSettings(PersistentObject.getConnection(),
-					"USERCONFIG", "Param", "Value", "UserID=" + m.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
+					"USERCONFIG", "Param", "Value", "UserID=" + m.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		actMandant = m;
 		setWindowText(null);
@@ -309,7 +310,7 @@ public class Hub extends AbstractUIPlugin {
 	
 	public static void setWindowText(Patient pat){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Elexis ").append(Version).append(" - ");
+		sb.append("Elexis ").append(Version).append(" - "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (Hub.actUser == null) {
 			sb.append(Messages.Hub_nouserloggedin);
 		} else {
@@ -319,7 +320,7 @@ public class Hub extends AbstractUIPlugin {
 			sb.append(Messages.Hub_nomandantor);
 			
 		} else {
-			sb.append(" / ").append(Hub.actMandant.getLabel());
+			sb.append(" / ").append(Hub.actMandant.getLabel()); //$NON-NLS-1$
 		}
 		if (pat == null) {
 			pat = GlobalEvents.getSelectedPatient();
@@ -329,8 +330,8 @@ public class Hub extends AbstractUIPlugin {
 		} else {
 			String nr = pat.getPatCode();
 			String alter = pat.getAlter();
-			sb.append("  / ").append(pat.getLabel()).append("(").append(alter).append(") - ")
-				.append("[").append(nr).append("]");
+			sb.append("  / ").append(pat.getLabel()).append("(").append(alter).append(") - ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				.append("[").append(nr).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (Reminder.findForPatient(pat, Hub.actUser).size() != 0) {
 				sb.append(Messages.Hub_message_reminders);
@@ -364,8 +365,8 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	public static String getId(){
-		return "Elexis v." + Version + ", r." + getRevision(false) + " "
-			+ System.getProperty("os.name") + "/" + System.getProperty("os.version");
+		return "Elexis v." + Version + ", r." + getRevision(false) + " " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ System.getProperty("os.name") + "/" + System.getProperty("os.version"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**
@@ -375,16 +376,16 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5235 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5317 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
-			File base = new File(getBasePath() + "/rsc/compiletime.txt");
+			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
 			if (base.canRead()) {
 				String dat = FileTool.readFile(base);
-				if (dat.equals("@TODAY@")) {
+				if (dat.equals("@TODAY@")) { //$NON-NLS-1$
 					res += Messages.Hub_38;
 				} else {
-					res += ", " + new TimeTool(dat + "00").toString(TimeTool.FULL_GER);
+					res += ", " + new TimeTool(dat + "00").toString(TimeTool.FULL_GER); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} else {
 				res += Messages.Hub_compiletimenotknown;
@@ -469,7 +470,7 @@ public class Hub extends AbstractUIPlugin {
 	
 	public void setUserDir(File dir){
 		userDir = dir;
-		localCfg.set("elexis-userDir", dir.getAbsolutePath());
+		localCfg.set("elexis-userDir", dir.getAbsolutePath()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -484,20 +485,20 @@ public class Hub extends AbstractUIPlugin {
 			String userhome = null;
 			
 			if (localCfg != null) {
-				userhome = localCfg.get("elexis-userDir", null);
+				userhome = localCfg.get("elexis-userDir", null); //$NON-NLS-1$
 			}
 			if (userhome == null) {
-				userhome = System.getProperty("user.home");
+				userhome = System.getProperty("user.home"); //$NON-NLS-1$
 			}
 			if (StringTool.isNothing(userhome)) {
-				userhome = System.getenv("java.io.tempdir");
+				userhome = System.getenv("java.io.tempdir"); //$NON-NLS-1$
 			}
-			userDir = new File(userhome, "elexis");
+			userDir = new File(userhome, "elexis"); //$NON-NLS-1$
 		}
 		if (!userDir.exists()) {
 			if (!userDir.mkdirs()) {
-				System.err.print("fatal: could not create Userdir");
-				SWTHelper.alert("Panic exit", "could not create userdir "
+				System.err.print("fatal: could not create Userdir"); //$NON-NLS-1$
+				SWTHelper.alert("Panic exit", "could not create userdir " //$NON-NLS-1$ //$NON-NLS-2$
 					+ userDir.getAbsolutePath());
 				System.exit(-5);
 			}
@@ -513,7 +514,7 @@ public class Hub extends AbstractUIPlugin {
 	 */
 	public static File getTempDir(){
 		File ret = null;
-		String temp = System.getProperty("java.io.tmpdir");
+		String temp = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 		if (!StringTool.isNothing(temp)) {
 			ret = new File(temp);
 			if (ret.exists() && ret.isDirectory()) {

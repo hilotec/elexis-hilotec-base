@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,18 +53,18 @@ public class Desk implements IApplication {
 	private static ColorRegistry theColorRegistry = null;
 	private static HashMap<String, Cursor> cursors = null;
 	
-	public static final String COL_RED = "rot";
-	public static final String COL_GREEN = "gruen";
-	public static final String COL_BLUE = "blau";
-	public static final String COL_SKYBLUE = "himmelblau";
-	public static final String COL_LIGHTBLUE = "hellblau";
-	public static final String COL_BLACK = "schwarz";
-	public static final String COL_GREY = "grau";
-	public static final String COL_WHITE = "weiss";
-	public static final String COL_DARKGREY = "dunkelgrau";
-	public static final String COL_LIGHTGREY = "hellgrau";
-	public static final String COL_GREY60 = "grau60";
-	public static final String COL_GREY20 = "grau20";
+	public static final String COL_RED = "rot"; //$NON-NLS-1$
+	public static final String COL_GREEN = "gruen"; //$NON-NLS-1$
+	public static final String COL_BLUE = "blau"; //$NON-NLS-1$
+	public static final String COL_SKYBLUE = "himmelblau"; //$NON-NLS-1$
+	public static final String COL_LIGHTBLUE = "hellblau"; //$NON-NLS-1$
+	public static final String COL_BLACK = "schwarz"; //$NON-NLS-1$
+	public static final String COL_GREY = "grau"; //$NON-NLS-1$
+	public static final String COL_WHITE = "weiss"; //$NON-NLS-1$
+	public static final String COL_DARKGREY = "dunkelgrau"; //$NON-NLS-1$
+	public static final String COL_LIGHTGREY = "hellgrau"; //$NON-NLS-1$
+	public static final String COL_GREY60 = "grau60"; //$NON-NLS-1$
+	public static final String COL_GREY20 = "grau20"; //$NON-NLS-1$
 	
 	/** Returning to some home place */
 	public static final String IMG_HOME = "home"; //$NON-NLS-1$
@@ -115,37 +115,37 @@ public class Desk implements IApplication {
 	/** wizard/doing things automagically */
 	public static final String IMG_WIZARD = "wizard"; //$NON-NLS-1$
 	/** add something to an existing object */
-	public static final String IMG_ADDITEM = "add"; // $NON_NLS-1$
+	public static final String IMG_ADDITEM = "add"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** remove something from an existing object */
-	public static final String IMG_REMOVEITEM = "minus"; // $NON_NLS-1$
+	public static final String IMG_REMOVEITEM = "minus"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** excalamation mark red */
-	public static final String IMG_AUSRUFEZ_ROT = "ausrufezeichen_rot"; // $NON_NLS-1$
+	public static final String IMG_AUSRUFEZ_ROT = "ausrufezeichen_rot"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** exclamantion mark */
-	public static final String IMG_AUSRUFEZ = "ausrufezeichen"; // $NON_NLS-1$
+	public static final String IMG_AUSRUFEZ = "ausrufezeichen"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** computer network */
-	public static final String IMG_NETWORK = "netzwerk"; // $NON_NLS-1$
+	public static final String IMG_NETWORK = "netzwerk"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** a book */
-	public static final String IMG_BOOK = "buch";
+	public static final String IMG_BOOK = "buch"; //$NON-NLS-1$
 	/** a person */
-	public static final String IMG_PERSON = "person"; // $NON_NLS-1$
+	public static final String IMG_PERSON = "person"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** a person with an OK mark */
-	public static final String IMG_PERSON_OK = "personOK"; // $NON_NLS-1$
+	public static final String IMG_PERSON_OK = "personOK"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** a diskette symbol */
-	public static final String IMG_DISK = "diskette"; // $NON_NLS-1$
+	public static final String IMG_DISK = "diskette"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** a closed lock */
-	public static final String IMG_LOCK_CLOSED = "schloss_zu"; // $NON_NLS-1$
+	public static final String IMG_LOCK_CLOSED = "schloss_zu"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** An opened lock */
-	public static final String IMG_LOCK_OPEN = "schloss_offen"; // $NON_NLS-1$
+	public static final String IMG_LOCK_OPEN = "schloss_offen"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** Clipboard symbol */
-	public static final String IMG_CLIPBOARD = "clipboard"; // $NON_NLS-1$
+	public static final String IMG_CLIPBOARD = "clipboard"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** Arrow right */
-	public static final String IMG_NEXT = "arrow_next"; // $NON_NLS-1$
+	public static final String IMG_NEXT = "arrow_next"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** Arrow left */
-	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$
+	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** clear input field */
-	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$
+	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$ //$NON-NLS-1$
 	
-	public static final String CUR_HYPERLINK = "cursor_hyperlink";
+	public static final String CUR_HYPERLINK = "cursor_hyperlink"; //$NON-NLS-1$
 	
 	public Desk(){
 		getDisplay();
@@ -156,7 +156,7 @@ public class Desk implements IApplication {
 	
 	public Object start(IApplicationContext context) throws Exception{
 		Map<String, String> args = context.getArguments();
-		if (args.containsKey("--clean-all")) {
+		if (args.containsKey("--clean-all")) { //$NON-NLS-1$
 			String p = PreferenceInitializer.getDefaultDBPath();
 			FileTool.deltree(p);
 			Hub.localCfg.clear();
@@ -212,9 +212,9 @@ public class Desk implements IApplication {
 	static String getImageBase(){
 		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, null);
 		if (imageBase == null) {
-			imageBase = "/rsc/plaf/modern/icons/";
+			imageBase = "/rsc/plaf/modern/icons/"; //$NON-NLS-1$
 		} else {
-			imageBase += "/icons/";
+			imageBase += "/icons/"; //$NON-NLS-1$
 		}
 		return imageBase;
 	}
@@ -279,15 +279,15 @@ public class Desk implements IApplication {
 	public static ImageDescriptor getImageDescriptor(String imagename){
 		ImageDescriptor ret = theImageRegistry.getDescriptor(imagename);
 		if (ret == null) {
-			ret = Hub.getImageDescriptor(getImageBase() + imagename + ".png");
+			ret = Hub.getImageDescriptor(getImageBase() + imagename + ".png"); //$NON-NLS-1$
 			if (ret == null) {
-				ret = Hub.getImageDescriptor(getImageBase() + imagename + ".gif");
+				ret = Hub.getImageDescriptor(getImageBase() + imagename + Messages.Desk_32);
 			}
 			if (ret == null) {
-				ret = Hub.getImageDescriptor(getImageBase() + imagename + ".ico");
+				ret = Hub.getImageDescriptor(getImageBase() + imagename + Messages.Desk_33);
 			}
 			if (ret == null) {
-				ret = Hub.getImageDescriptor("rsc/" + imagename);
+				ret = Hub.getImageDescriptor("rsc/" + imagename); //$NON-NLS-1$
 			}
 			if (ret != null) {
 				theImageRegistry.put(imagename, ret);
@@ -363,7 +363,7 @@ public class Desk implements IApplication {
 	}
 	
 	public static Font getFont(String name, int height, int style){
-		String key = name + ":" + Integer.toString(height) + ":" + Integer.toString(style);
+		String key = name + ":" + Integer.toString(height) + ":" + Integer.toString(style); //$NON-NLS-1$ //$NON-NLS-2$
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(key)) {
 			FontData[] fd = new FontData[] {

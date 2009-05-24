@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectLoader.java 5063 2009-01-29 08:51:34Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -27,7 +27,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 /**
  * This is a replacement for the former BackgroundJob-System. Since it became clear that the
  * database access takes less than 10% of the total time needed for reload of a CommonViewer, the
- * BackgroundJobs were not adequate for this task. Furthermore, there werde several issues with
+ * BackgroundJobs were not adequate for this task. Furthermore, there were several issues with
  * those widely used jobs.
  * 
  * PersistentObjectLoader is a much simpler replacement and does not load in background.
@@ -36,8 +36,8 @@ import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
  * 
  */
 public abstract class PersistentObjectLoader implements CommonContentProvider, IWorker {
-	public final static String PARAM_FIELDNAMES = "fieldnames";
-	public final static String PARAM_VALUES = "fieldvalues";
+	public final static String PARAM_FIELDNAMES = "fieldnames"; //$NON-NLS-1$
+	public final static String PARAM_VALUES = "fieldvalues"; //$NON-NLS-1$
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
 	private LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
@@ -47,7 +47,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		this.cv = cv;
 		this.qbe = qbe;
-		dj = new DelayableJob("Lade Daten", this);
+		dj = new DelayableJob(Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
 	}
 	
 	public Query<? extends PersistentObject> getQuery(){

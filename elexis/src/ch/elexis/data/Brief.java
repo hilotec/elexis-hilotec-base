@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Brief.java 4782 2008-12-09 18:10:43Z rgw_ch $
+ *  $Id: Brief.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -29,6 +29,16 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class Brief extends PersistentObject {
+	public static final String MIME_TYPE = "MimeType";
+	public static final String DATE_MODIFIED = "modifiziert";
+	public static final String DATE = "Datum";
+	public static final String TYPE = "Typ";
+	public static final String KONSULTATION_ID = "BehandlungsID";
+	public static final String DESTINATION_ID = "DestID";
+	public static final String SENDER_ID = "AbsenderID";
+	public static final String PATIENT_ID = "PatientID";
+	public static final String SUBJECT = "Betreff";
+	public static final String TABLENAME = "BRIEFE";
 	public static final String TEMPLATE = "Vorlagen";
 	public static final String AUZ = "AUF-Zeugnis";
 	public static final String RP = "Rezept";
@@ -42,12 +52,12 @@ public class Brief extends PersistentObject {
 	
 	@Override
 	protected String getTableName(){
-		return "BRIEFE";
+		return TABLENAME;
 	}
 	
 	static {
-		addMapping("BRIEFE", "Betreff", "PatientID", "Datum=S:D:Datum", "AbsenderID", "DestID",
-			"BehandlungsID", "Typ", "modifiziert=S:D:modifiziert", "geloescht", "MimeType",
+		addMapping(TABLENAME, SUBJECT, PATIENT_ID, DATE_FIELD, SENDER_ID, DESTINATION_ID,
+			KONSULTATION_ID, TYPE, "modifiziert=S:D:modifiziert", "geloescht", MIME_TYPE,
 			"gedruckt=S:D:gedruckt", "Path");
 	}
 	
@@ -72,7 +82,7 @@ public class Brief extends PersistentObject {
 			if (Datum == null) {
 				Datum = new TimeTool();
 			}
-			String pat = "", bhdl = "";
+			String pat = StringTool.leer, bhdl = StringTool.leer;
 			if (bh != null) {
 				bhdl = bh.getId();
 				pat = bh.getFall().getPatient().getId();
@@ -83,11 +93,11 @@ public class Brief extends PersistentObject {
 			}
 			String dat = Datum.toString(TimeTool.DATE_GER);
 			set(new String[] {
-				"Betreff", "PatientID", "Datum", "AbsenderID", "modifiziert", "DestID",
-				"BehandlungsID", "Typ", "geloescht"
+				SUBJECT, PATIENT_ID, DATE, SENDER_ID, DATE_MODIFIED, DESTINATION_ID,
+				KONSULTATION_ID, TYPE, "geloescht"
 			}, new String[] {
-				Betreff, pat, dat, Absender == null ? "" : Absender.getId(), dat, dst, bhdl, typ,
-				"0"
+				Betreff, pat, dat, Absender == null ? StringTool.leer : Absender.getId(), dat, dst, bhdl, typ,
+				StringTool.zero
 			});
 			new contents(this);
 			getConnection().commit();
@@ -100,15 +110,15 @@ public class Brief extends PersistentObject {
 	}
 	
 	public void setPatient(Person k){
-		set("PatientID", k.getId());
+		set(PATIENT_ID, k.getId());
 	}
 	
 	public void setTyp(String typ){
-		set("Typ", typ);
+		set(TYPE, typ);
 	}
 	
 	public String getTyp(){
-		String t = get("Typ");
+		String t = get(TYPE);
 		if (t == null) {
 			return "Brief";
 		}
@@ -119,7 +129,7 @@ public class Brief extends PersistentObject {
 	public boolean save(String cnt){
 		contents c = contents.load(getId());
 		c.save(cnt);
-		set("modifiziert", new TimeTool().toString(TimeTool.DATE_COMPACT));
+		set(DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
 		return true;
 	}
 	
@@ -129,8 +139,8 @@ public class Brief extends PersistentObject {
 			// if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){
 			contents c = contents.load(getId());
 			c.save(in);
-			set("modifiziert", new TimeTool().toString(TimeTool.DATE_COMPACT));
-			set("MimeType", mimetype);
+			set(DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
+			set(MIME_TYPE, mimetype);
 			return true;
 			// }
 			// return false;
@@ -152,7 +162,7 @@ public class Brief extends PersistentObject {
 	
 	/** Mime-Typ des Inhalts holen */
 	public String getMimeType(){
-		String gm = get("MimeType");
+		String gm = get(MIME_TYPE);
 		if (StringTool.isNothing(gm)) {
 			return MIMETYPE_OO2;
 		}
@@ -168,7 +178,7 @@ public class Brief extends PersistentObject {
 	
 	public boolean delete(){
 		getConnection().exec("UPDATE HEAP SET deleted='1' WHERE ID=" + getWrappedId());
-		String konsID = get("BehandlungsID");
+		String konsID = get(KONSULTATION_ID);
 		if (!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))) {
 			Konsultation kons = Konsultation.load(konsID);
 			if ((kons != null) && (kons.isEditable(false))) {
@@ -196,24 +206,24 @@ public class Brief extends PersistentObject {
 	}
 	
 	public String getBetreff(){
-		return checkNull(get("Betreff"));
+		return checkNull(get(SUBJECT));
 	}
 	
 	public void setBetreff(String nBetreff){
-		set("Betreff", nBetreff);
+		set(SUBJECT, nBetreff);
 	}
 	
 	public String getDatum(){
-		return get("Datum");
+		return get(DATE);
 	}
 	
 	public Kontakt getAdressat(){
-		String dest = get("DestID");
+		String dest = get(DESTINATION_ID);
 		return dest == null ? null : Kontakt.load(dest);
 	}
 	
 	public Person getPatient(){
-		Person pat = Person.load(get("PatientID"));
+		Person pat = Person.load(get(PATIENT_ID));
 		if ((pat != null) && (pat.state() > INVALID_ID)) {
 			return pat;
 		}
@@ -221,12 +231,15 @@ public class Brief extends PersistentObject {
 	}
 	
 	public String getLabel(){
-		return checkNull(get("Datum")) + " " + checkNull(get("Betreff"));
+		return checkNull(get(DATE)) + StringTool.space + checkNull(get(SUBJECT));
 	}
 	
 	private static class contents extends PersistentObject {
+		private static final String CONTENTS = "inhalt";
+		static final String CONTENT_TABLENAME = "HEAP";
+
 		static {
-			addMapping("HEAP", "inhalt");
+			addMapping(CONTENT_TABLENAME, CONTENTS);
 		}
 		
 		private contents(Brief br){
@@ -238,7 +251,7 @@ public class Brief extends PersistentObject {
 		}
 		
 		byte[] getBinary(){
-			return getBinary("inhalt");
+			return getBinary(CONTENTS);
 		}
 		
 		private String read(){
@@ -252,11 +265,11 @@ public class Brief extends PersistentObject {
 		
 		private void save(String contents){
 			byte[] comp = CompEx.Compress(contents, CompEx.BZIP2);
-			setBinary("inhalt", comp);
+			setBinary(CONTENTS, comp);
 		}
 		
 		private void save(byte[] contents){
-			setBinary("inhalt", contents);
+			setBinary(CONTENTS, contents);
 		}
 		
 		@Override
@@ -270,7 +283,7 @@ public class Brief extends PersistentObject {
 		
 		@Override
 		protected String getTableName(){
-			return "HEAP";
+			return CONTENT_TABLENAME;
 		}
 		
 	}

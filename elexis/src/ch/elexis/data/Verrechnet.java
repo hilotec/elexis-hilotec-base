@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 4814 2008-12-13 11:48:09Z rgw_ch $
+ * $Id: Verrechnet.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -36,10 +36,24 @@ import ch.rgw.tools.TimeTool;
  */
 public class Verrechnet extends PersistentObject {
 	
+	public static final String DETAIL = "Detail";
+	private static final String SCALE2 = "Scale2";
+	private static final String SCALE = "Scale";
+	public static final String LEISTG_CODE = "Leistg_code";
+	public static final String LEISTG_TXT = "Leistg_txt";
+	public static final String KONSULTATION = "Konsultation";
+	public static final String PRICE_SELLING = "VK_Preis";
+	public static final String SCALE_SELLING = "VK_Scale";
+	public static final String SCALE_TP_SELLING = "VK_TP";
+	public static final String COST_BUYING = "EK_Kosten";
+	public static final String COUNT = "Zahl";
+	public static final String CLASS = "Klasse";
+	public static final String TABLENAME = "LEISTUNGEN";
+
 	static {
-		addMapping("LEISTUNGEN", "Konsultation=Behandlung", "Leistg_txt",
-			"Leistg_code", "Klasse", "Zahl", "EK_Kosten", "VK_TP", "VK_Scale",
-			"VK_Preis", "Scale", "Scale2", "ExtInfo=Detail");
+		addMapping(TABLENAME, "Konsultation=Behandlung", LEISTG_TXT,
+			LEISTG_CODE, CLASS, COUNT, COST_BUYING, SCALE_TP_SELLING, SCALE_SELLING,
+			PRICE_SELLING, SCALE, SCALE2, "ExtInfo=Detail");
 	}
 	
 	public Verrechnet(final IVerrechenbar iv, final Konsultation kons,
@@ -51,8 +65,8 @@ public class Verrechnet extends PersistentObject {
 		double factor = iv.getFactor(dat, fall);
 		long preis = Math.round(tp * factor);
 		set(new String[] {
-			"Konsultation", "Leistg_txt", "Leistg_code", "Klasse", "Zahl",
-			"EK_Kosten", "VK_TP", "VK_Scale", "VK_Preis", "Scale", "Scale2"
+			KONSULTATION, LEISTG_TXT, LEISTG_CODE, CLASS, COUNT,
+			COST_BUYING, SCALE_TP_SELLING, SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2
 		}, new String[] {
 			kons.getId(), iv.getText(), iv.getId(), iv.getClass().getName(),
 			Integer.toString(zahl), iv.getKosten(dat).getCentsAsString(),
@@ -65,11 +79,11 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	public String getText(){
-		return checkNull(get("Leistg_txt"));
+		return checkNull(get(LEISTG_TXT));
 	}
 	
 	public void setText(String text){
-		set("Leistg_txt", text);
+		set(LEISTG_TXT, text);
 	}
 	
 	/**
@@ -77,7 +91,7 @@ public class Verrechnet extends PersistentObject {
 	 * @return
 	 */
 	public double getTPW(){
-		return checkZeroDouble(get("VK_Scale"));
+		return checkZeroDouble(get(SCALE_SELLING));
 	}
 	
 	/**
@@ -91,7 +105,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	public void setPrimaryScaleFactor(double scale){
 		int sca = (int) Math.round(scale * 100);
-		setInt("Scale", sca);
+		setInt(SCALE, sca);
 	}
 	
 	/**
@@ -101,7 +115,7 @@ public class Verrechnet extends PersistentObject {
 	 * @return the primary svcale factor as double
 	 */
 	public double getPrimaryScaleFactor(){
-		int sca = checkZero(get("Scale"));
+		int sca = checkZero(get(SCALE));
 		if(sca==0){
 			return 1.0;
 		}
@@ -117,7 +131,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	public void setSecondaryScaleFactor(double scale){
 		int sca = (int) Math.round(scale * 100);
-		setInt("Scale2", sca);
+		setInt(SCALE2, sca);
 	}
 	
 	/**
@@ -127,7 +141,7 @@ public class Verrechnet extends PersistentObject {
 	 * @return the factor
 	 */
 	public double getSecondaryScaleFactor(){
-		int sca = checkZero(get("Scale2"));
+		int sca = checkZero(get(SCALE2));
 		if(sca==0){
 			return 1.0;
 		}
@@ -140,7 +154,7 @@ public class Verrechnet extends PersistentObject {
 	 * @param tp
 	 */
 	public void setTP(double tp){
-		set("VK_TP",Long.toString(Math.round(tp)));
+		set(SCALE_TP_SELLING,Long.toString(Math.round(tp)));
 	}
 	/**
 	 * Den effektiven Preis setzen (braucht nicht TP*Scale zu sein
@@ -149,7 +163,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	@Deprecated
 	public void setPreis(final Money m){
-		set("VK_Preis", m.getCentsAsString());
+		set(PRICE_SELLING, m.getCentsAsString());
 	}
 	
 	/**
@@ -157,7 +171,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	public Money getKosten(){
 		//System.out.println(getText());
-		return new Money(checkZero(get("EK_Kosten")));
+		return new Money(checkZero(get(COST_BUYING)));
 	}
 	
 	/**
@@ -167,7 +181,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	@Deprecated
 	public Money getEffPreis(){
-		return new Money(checkZero(get("VK_Preis")));
+		return new Money(checkZero(get(PRICE_SELLING)));
 		/*
 		 * double
 		 * amount=checkZero(get("VK_Preis"))*checkZero(get("Scale"))/100.0;
@@ -191,7 +205,7 @@ public class Verrechnet extends PersistentObject {
 	 * Den Preis nach Anwendung des Taxpunktwerts (aber ohne sonstige Skalierungen) holen
 	 */
 	public Money getBruttoPreis(){
-		int tp=checkZero(get("VK_TP"));
+		int tp=checkZero(get(SCALE_TP_SELLING));
 		Konsultation k = getKons();
 		Fall fall = k.getFall();
 		TimeTool date = new TimeTool(k.getDatum());
@@ -215,7 +229,7 @@ public class Verrechnet extends PersistentObject {
 			factor = v.getFactor(date, fall);
 			tp = v.getTP(date, fall);
 		}else{
-			tp=checkZero(get("VK_TP"));
+			tp=checkZero(get(SCALE_TP_SELLING));
 		}
 		return new Money((int) Math.round(factor * tp));
 	}
@@ -230,21 +244,21 @@ public class Verrechnet extends PersistentObject {
 		int tp = v.getTP(date, fall);
 		long preis = Math.round(tp * factor);
 		set(new String[] {
-			"VK_Scale", "VK_TP", "VK_Preis"
+			SCALE_SELLING, SCALE_TP_SELLING, PRICE_SELLING
 		}, Double.toString(factor), Integer.toString(tp), Long.toString(preis));
 	}
 	
 	public Konsultation getKons(){
-		return Konsultation.load(get("Konsultation"));
+		return Konsultation.load(get(KONSULTATION));
 	}
 	
 	/** Wie oft wurde die Leistung bei derselben Kons. verrechnet? */
 	public int getZahl(){
-		return checkZero(get("Zahl"));
+		return checkZero(get(COUNT));
 	}
 	
 	public void setZahl(final int z){
-		set("Zahl", Integer.toString(z));
+		set(COUNT, Integer.toString(z));
 	}
 	
 	public String getCode(){
@@ -263,13 +277,13 @@ public class Verrechnet extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setDetail(final String key, final String value){
-		Hashtable ext = getHashtable("Detail");
+		Hashtable ext = getHashtable(DETAIL);
 		if(value==null){
 			ext.remove(key);
 		}else{
 			ext.put(key, value);
 		}
-		setHashtable("Detail", ext);
+		setHashtable(DETAIL, ext);
 		
 	}
 	
@@ -280,7 +294,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public String getDetail(final String key){
-		Hashtable ext = getHashtable("Detail");
+		Hashtable ext = getHashtable(DETAIL);
 		return (String) ext.get(key);
 	}
 	
@@ -304,7 +318,7 @@ public class Verrechnet extends PersistentObject {
 	public boolean isInstance(final IVerrechenbar tmpl){
 		String[] res = new String[2];
 		get(new String[] {
-			"Klasse", "Leistg_code"
+			CLASS, LEISTG_CODE
 		}, res);
 		if (tmpl.getClass().getName().equals(res[0])) {
 			if (tmpl.getId().equals(res[1])) {
@@ -320,7 +334,7 @@ public class Verrechnet extends PersistentObject {
 	public IVerrechenbar getVerrechenbar(){
 		String[] res = new String[2];
 		get(new String[] {
-			"Klasse", "Leistg_code"
+			CLASS, LEISTG_CODE
 		}, res);
 		try {
 			return (IVerrechenbar) Hub.poFactory.createFromString(res[0] + "::"
@@ -333,12 +347,12 @@ public class Verrechnet extends PersistentObject {
 	
 	@Override
 	public String getLabel(){
-		return checkNull(get("Leistg_txt"));
+		return checkNull(get(LEISTG_TXT));
 	}
 	
 	@Override
 	protected String getTableName(){
-		return "LEISTUNGEN";
+		return TABLENAME;
 	}
 	
 	public static Verrechnet load(final String id){

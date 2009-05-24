@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DBConnectFirstPage.java 5313 2009-05-17 17:07:36Z rgw_ch $
+ *  $Id: DBConnectFirstPage.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.wizards;
 // 17.5.2009: added H2
@@ -19,6 +19,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -37,7 +38,7 @@ import ch.rgw.tools.JdbcLink;
 
 public class DBConnectFirstPage extends WizardPage {
 	
-	List dbTypes;
+	Combo dbTypes;
 	Text server, dbName;
 	String defaultUser, defaultPassword;
 	JdbcLink j = null;
@@ -90,7 +91,7 @@ public class DBConnectFirstPage extends WizardPage {
 		twd.heightHint = 5;
 		sep.setLayoutData(twd);
 		tk.createLabel(body, Messages.getString("DBConnectFirstPage.enterType")); //$NON-NLS-1$
-		dbTypes = new List(body, SWT.BORDER);
+		dbTypes = new Combo(body, SWT.BORDER|SWT.SIMPLE);
 		dbTypes.setItems(supportedDB);
 		dbTypes.addSelectionListener(new SelectionAdapter() {
 			@Override

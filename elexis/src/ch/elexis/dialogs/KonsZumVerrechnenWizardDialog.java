@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenWizardDialog.java 5167 2009-02-21 19:01:52Z rgw_ch $
+ *  $Id: KonsZumVerrechnenWizardDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -31,19 +31,19 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
-	private static final String CONFIG = "dialogs/konszumverrechnen/";
-	private static final String ALLMARKED = "Alle Fälle vorschlagen, die zum Abrechnen vorgemerkt sind und ausserdem:";
-	private static final String TAGEN_BZW_DEM = "Tagen bzw. dem";
-	private static final String RECHNUNGEN_ERSTELLEN = "Rechnungen erstellen";
-	private static final String BEHANDLUNGEN_ZUM_VERRECHNEN_AUTOMATISCH_AUSWAEHLEN = "Verrechnungsvorschlag erstellen";
-	private static final String RECHNUNGS_AUTOMATIK = "Rechnungs-Automatik";
-	private static final String TREATMENT_TRIMESTER = "Alle Behandlungen des vergangenen Quartals vorschlagen";
-	private static final String TREATMENT_AMOUNTHIGHER = "Alle Behandlungsserien vorschlagen, deren Betrag höher ist als:";
-	private static final String TREATMENTENDBEFORE = "Alle Behandlungsserien vorschlagen, die geendet haben vor:";
-	private final static String TREATMENTBEGINBEFORE = "Alle Behandlungsserien vorschlagen, welche angefangen haben vor:";
+	private static final String CONFIG = "dialogs/konszumverrechnen/"; //$NON-NLS-1$
+	private static final String ALLMARKED = Messages.getString("KonsZumVerrechnenWizardDialog.selectCasesToCharge"); //$NON-NLS-1$
+	private static final String TAGEN_BZW_DEM = Messages.getString("KonsZumVerrechnenWizardDialog.daysOrDate"); //$NON-NLS-1$
+	private static final String RECHNUNGEN_ERSTELLEN = Messages.getString("KonsZumVerrechnenWizardDialog.createBills"); //$NON-NLS-1$
+	private static final String BEHANDLUNGEN_ZUM_VERRECHNEN_AUTOMATISCH_AUSWAEHLEN = Messages.getString("KonsZumVerrechnenWizardDialog.createProposal"); //$NON-NLS-1$
+	private static final String RECHNUNGS_AUTOMATIK = Messages.getString("KonsZumVerrechnenWizardDialog.billingAUtomation"); //$NON-NLS-1$
+	private static final String TREATMENT_TRIMESTER = Messages.getString("KonsZumVerrechnenWizardDialog.choseAllQuartal"); //$NON-NLS-1$
+	private static final String TREATMENT_AMOUNTHIGHER = Messages.getString("KonsZumVerrechnenWizardDialog.chooseFromAmount"); //$NON-NLS-1$
+	private static final String TREATMENTENDBEFORE = Messages.getString("KonsZumVerrechnenWizardDialog.choseEndeDate"); //$NON-NLS-1$
+	private final static String TREATMENTBEGINBEFORE = Messages.getString("KonsZumVerrechnenWizardDialog.chooseBeginningDate"); //$NON-NLS-1$
 
-	private static final String SKIPSELECTION = "Alle  so ermittelten Rechnungen direkt erstellen (Vorschlag überspringen).";
-	private static final String CFG_SKIP=CONFIG+"skipselection";
+	private static final String SKIPSELECTION = Messages.getString("KonsZumVerrechnenWizardDialog.skipProposal"); //$NON-NLS-1$
+	private static final String CFG_SKIP=CONFIG+"skipselection"; //$NON-NLS-1$
 	
 	Button cbMarked, cbBefore, cbAmount, cbTime, cbQuartal, cbSkip;
 	//DatePickerCombo dp1, dp2;
@@ -76,12 +76,12 @@ public class KonsZumVerrechnenWizardDialog extends TitleAreaDialog {
 		cbTime.setText(TREATMENTENDBEFORE);
 
 		ddc2=new DayDateCombo(ret, "",TAGEN_BZW_DEM);
-		int prev = Hub.localCfg.get(CONFIG + "beginBefore", 30)*-1;
+		int prev = Hub.localCfg.get(CONFIG + "beginBefore", 30)*-1; //$NON-NLS-1$
 		TimeTool ttNow=new TimeTool();
 		ttNow.addDays(prev);
 		ddc1.setDays(prev);
 		
-		prev = Hub.localCfg.get(CONFIG + "endBefore", 20)*-1;
+		prev = Hub.localCfg.get(CONFIG + "endBefore", 20)*-1; //$NON-NLS-1$
 		ddc2.setDays(prev);
 		ddc1.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Anwender.java 5266 2009-04-23 13:41:31Z rgw_ch $
+ *  $Id: Anwender.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -32,6 +32,7 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.io.SqlSettings;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -48,14 +49,17 @@ import ch.rgw.tools.StringTool;
  */
 public class Anwender extends Person {
 
+	public static final String ADMINISTRATOR = "Administrator";
+	private static final String LABEL = "Label";
+
 	static {
-		addMapping("KONTAKT", "ExtInfo", "istAnwender", "Label=Bezeichnung3",
+		addMapping(Kontakt.TABLENAME, Kontakt.EXT_INFO, Kontakt.IS_USER, "Label=Bezeichnung3",
 				"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
 	}
 
 	public Anwender(final String Username, final String Password) {
 		create(null);
-		set(new String[] { "Name" }, Username);
+		set(new String[] {Person.NAME}, Username);
 		setLabel(Username);
 		setPwd(Password);
 		setInfoElement("Groups", "Anwender");
@@ -75,11 +79,11 @@ public class Anwender extends Person {
 	 */
 	@Override
 	public boolean isValid() {
-		String label = get("Label");
+		String label = get(LABEL);
 		if (StringTool.isNothing(label)) {
 			return false;
 		}
-		if (label.equals("Administrator")) {
+		if (label.equals(ADMINISTRATOR)) {
 			return true; // Admin is always valid
 		}
 		return super.isValid();
@@ -94,9 +98,9 @@ public class Anwender extends Person {
 	 */
 	@Override
 	public String getLabel(final boolean shortLabel) {
-		String l = get("Label");
+		String l = get(LABEL);
 		if (StringTool.isNothing(l)) {
-			l = checkNull(get("Name")) + " " + checkNull(get("Vorname"));
+			l = checkNull(get(Person.NAME)) + StringTool.space + checkNull(get(Person.FIRSTNAME));
 			if (StringTool.isNothing(l)) {
 				l = "unbekannt";
 			}
@@ -111,7 +115,7 @@ public class Anwender extends Person {
 	public void setLabel(final String label) {
 		String oldlabel = getLabel();
 		if (!label.equals(oldlabel)) {
-			set("Label", label);
+			set(LABEL, label);
 		}
 	}
 
@@ -148,7 +152,7 @@ public class Anwender extends Person {
 	@Override
 	public String getKuerzel() {
 		String[] res = new String[2];
-		get(new String[] { "Name", "Vorname" }, res);
+		get(new String[] { Person.NAME, Person.FIRSTNAME }, res);
 		return res[0].substring(0, 1) + res[1].substring(0, 1);
 	}
 
@@ -162,12 +166,12 @@ public class Anwender extends Person {
 
 	@Override
 	protected String getConstraint() {
-		return "istAnwender='1'";
+		return Kontakt.IS_USER+StringTool.equals+JdbcLink.wrap(StringTool.one);
 	}
 
 	@Override
 	protected void setConstraint() {
-		set("istAnwender", "1");
+		set(Kontakt.IS_USER, StringTool.one);
 	}
 
 	protected Anwender() {/* leer */
@@ -187,8 +191,8 @@ public class Anwender extends Person {
 		// Rechteverwaltung vorhanden ist
 		Anwender admin = new Anwender();
 		admin.create(null);
-		admin.set(new String[] { "Name", "Label", "istAnwender" },
-				"Administrator", "Administrator", "1");
+		admin.set(new String[] { Person.NAME, LABEL, Kontakt.IS_USER },
+				ADMINISTRATOR, ADMINISTRATOR, StringTool.one);
 		Hub.actUser = admin;
 		Hub.acl.grant(admin, 
 			new ACE(ACE.ACE_IMPLICIT,"WriteInfoStore"),
@@ -224,13 +228,13 @@ public class Anwender extends Person {
 		Hub.actUser = null;
 		Hub.mainActions.adaptForUser();
 		Query<Anwender> qbe = new Query<Anwender>(Anwender.class);
-		qbe.add("Label", "=", text);
+		qbe.add(LABEL, StringTool.equals, text);
 		List<Anwender> list = qbe.execute();
 		if ((list == null) || (list.size() < 1)) {
 			return false;
 		}
 		Anwender a = list.get(0);
-		Hashtable km = a.getHashtable("ExtInfo");
+		Hashtable km = a.getHashtable(Kontakt.EXT_INFO);
 		if (km == null) {
 			log.log("Fehler in der Datenstruktur ExtInfo von " + a.getLabel(),
 					Log.ERRORS);
@@ -249,7 +253,7 @@ public class Anwender extends Person {
 			String MandantID = null;
 			if (!StringTool.isNothing(MandantLabel)) {
 				MandantID = new Query<Mandant>(Mandant.class).findSingle(
-						"Label", "=", MandantLabel);
+						LABEL, StringTool.equals, MandantLabel);
 			}
 			if (MandantID != null) {
 				Hub.setMandant(Mandant.load(MandantID));

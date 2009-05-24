@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Eigenleistung.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ * $Id: Eigenleistung.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,11 +17,18 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class Eigenleistung extends VerrechenbarAdapter {
+	public static final String CODESYSTEM_NAME = "Eigenleistung";
+	public static final String TIME = "Zeit";
+	public static final String VK_PREIS = "VK_Preis";
+	public static final String EK_PREIS = "EK_Preis";
+	public static final String BEZEICHNUNG = "Bezeichnung";
+	public static final String CODE = "Code";
+	public static final String EIGENLEISTUNGEN = "EIGENLEISTUNGEN";
 	public static final String XIDDOMAIN = "www.xid.ch/id/customservices";
 	
 	static {
-		addMapping("EIGENLEISTUNGEN", "Code", "Bezeichnung", "EK_Preis", "VK_Preis", "Zeit");
-		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Eigenleistungen", Xid.ASSIGNMENT_LOCAL
+		addMapping(EIGENLEISTUNGEN, CODE, BEZEICHNUNG, EK_PREIS, VK_PREIS, TIME);
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, CODESYSTEM_NAME, Xid.ASSIGNMENT_LOCAL
 			| Xid.QUALITY_GUID);
 	}
 	
@@ -31,43 +38,43 @@ public class Eigenleistung extends VerrechenbarAdapter {
 	
 	@Override
 	protected String getTableName(){
-		return "EIGENLEISTUNGEN";
+		return EIGENLEISTUNGEN;
 	}
 	
 	@Override
 	public String getCode(){
-		return get("Code");
+		return get(CODE);
 	}
 	
 	@Override
 	public String getText(){
-		return get("Bezeichnung");
+		return get(BEZEICHNUNG);
 	}
 	
 	public String[] getDisplayedFields(){
 		return new String[] {
-			"Code", "Bezeichnung"
+			CODE, BEZEICHNUNG
 		};
 	}
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Eigenleistung";
+		return CODESYSTEM_NAME;
 	}
 	
 	@Override
 	public Money getKosten(final TimeTool dat){
-		return new Money(checkZero(get("EK_Preis")));
+		return new Money(checkZero(get(EK_PREIS)));
 	}
 	
 	public Money getPreis(final TimeTool dat, final Fall fall){
-		return new Money(checkZero(get("VK_Preis")));
+		return new Money(checkZero(get(VK_PREIS)));
 	}
 	
 	public Eigenleistung(final String code, final String name, final String ek, final String vk){
 		create(null);
 		set(new String[] {
-			"Code", "Bezeichnung", "EK_Preis", "VK_Preis"
+			CODE, BEZEICHNUNG, EK_PREIS, VK_PREIS
 		}, code, name, ek, vk);
 	}
 	

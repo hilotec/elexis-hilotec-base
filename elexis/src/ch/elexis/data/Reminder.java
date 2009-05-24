@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Reminder.java 4692 2008-11-21 10:20:50Z rgw_ch $
+ *  $Id: Reminder.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -37,14 +37,23 @@ import ch.rgw.tools.TimeTool;
  */
 public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	
+	public static final String MESSAGE = "Message";
+	public static final String RESPONSIBLE = "Responsible";
+	public static final String TYPE = "Typ";
+	public static final String STATUS = "Status";
+	public static final String DUE = "Due";
+	public static final String CREATOR = "Creator";
+	public static final String KONTAKT_ID = "IdentID";
+	static final String TABLENAME = "REMINDERS";
+
 	@Override
 	protected String getTableName(){
-		return "REMINDERS";
+		return TABLENAME;
 	}
 	
 	static {
-		addMapping("REMINDERS", "IdentID", "Creator=OriginID", "Due=S:D:DateDue", "Status", "Typ",
-			"Params", "Message", "Responsible",
+		addMapping(TABLENAME, KONTAKT_ID, "Creator=OriginID", "Due=S:D:DateDue", STATUS, TYPE,
+			"Params", MESSAGE, RESPONSIBLE,
 			"Responsibles=JOINT:ResponsibleID:ReminderID:REMINDERS_RESPONSIBLE_LINK");
 	}
 	
@@ -92,7 +101,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 			ident = Hub.actUser;
 		}
 		set(new String[] {
-			"IdentID", "Creator", "Due", "Status", "Typ", "Params", "Message"
+			KONTAKT_ID, CREATOR, DUE, STATUS, TYPE, "Params", MESSAGE
 		}, new String[] {
 			ident.getId(), Hub.actUser.getId(), due,
 			Byte.toString((byte) Status.geplant.ordinal()), Byte.toString((byte) typ.ordinal()),
@@ -118,16 +127,16 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	
 	@Override
 	public String getLabel(){
-		Kontakt k = Kontakt.load(get("IdentID"));
+		Kontakt k = Kontakt.load(get(KONTAKT_ID));
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(get("Due")).append(" (").append(k.get("Bezeichnung1")).append("): ").append(
-			get("Message"));
+		sb.append(get(DUE)).append(" (").append(k.get("Bezeichnung1")).append("): ").append(
+			get(MESSAGE));
 		return sb.toString();
 	}
 	
 	public Typ getTyp(){
-		String t = get("Typ");
+		String t = get(TYPE);
 		if (StringTool.isNothing(t)) {
 			t = "1";
 		}
@@ -136,7 +145,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	}
 	
 	public Status getStatus(){
-		String t = get("Status");
+		String t = get(STATUS);
 		if (StringTool.isNothing(t)) {
 			t = "0";
 		}
@@ -156,15 +165,15 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	}
 	
 	public String getMessage(){
-		return checkNull(get("Message"));
+		return checkNull(get(MESSAGE));
 	}
 	
 	public void setStatus(final Status s){
-		set("Status", Byte.toString((byte) s.ordinal()));
+		set(STATUS, Byte.toString((byte) s.ordinal()));
 	}
 	
 	public TimeTool getDateDue(){
-		TimeTool ret = new TimeTool(get("Due"));
+		TimeTool ret = new TimeTool(get(DUE));
 		ret.chop(3);
 		return ret;
 	}
@@ -197,7 +206,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	}
 	
 	public Anwender getCreator(){
-		return Anwender.load(checkNull(get("Creator")));
+		return Anwender.load(checkNull(get(CREATOR)));
 	}
 	
 	/**
@@ -207,8 +216,8 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	 */
 	public static List<Reminder> findForToday(){
 		Query<Reminder> qbe = new Query<Reminder>(Reminder.class);
-		qbe.add("Due", "<=", new TimeTool().toString(TimeTool.DATE_COMPACT));
-		qbe.add("Status", "<>", Integer.toString(Status.erledigt.ordinal()));
+		qbe.add(DUE, Query.LESS_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
+		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.erledigt.ordinal()));
 		List<Reminder> ret = qbe.execute();
 		return ret;
 	}
@@ -224,14 +233,14 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	 */
 	public static List<Reminder> findForPatient(final Patient p, final Kontakt responsible){
 		Query<Reminder> qbe = new Query<Reminder>(Reminder.class);
-		qbe.add("IdentID", "=", p.getId());
-		qbe.add("Status", "<>", Integer.toString(Status.erledigt.ordinal()));
-		qbe.add("Due", "<=", new TimeTool().toString(TimeTool.DATE_COMPACT));
+		qbe.add(KONTAKT_ID, Query.EQUALS, p.getId());
+		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.erledigt.ordinal()));
+		qbe.add(DUE, Query.LESS_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
 		if (responsible != null) {
 			qbe.startGroup();
-			qbe.add("Responsible", "=", responsible.getId());
+			qbe.add(RESPONSIBLE, Query.EQUALS, responsible.getId());
 			qbe.or();
-			qbe.add("Responsible", "", null);
+			qbe.add(RESPONSIBLE, StringTool.leer, null);
 			qbe.endGroup();
 		}
 		return qbe.execute();
@@ -244,9 +253,9 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	 */
 	public static List<Reminder> findToShowOnStartup(final Anwender a){
 		Query<Reminder> qbe = new Query<Reminder>(Reminder.class);
-		qbe.add("Due", "<=", new TimeTool().toString(TimeTool.DATE_COMPACT));
-		qbe.add("Status", "<>", Integer.toString(Status.erledigt.ordinal()));
-		qbe.add("Typ", "=", Integer.toString(Typ.anzeigeProgstart.ordinal()));
+		qbe.add(DUE, Query.LESS_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
+		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.erledigt.ordinal()));
+		qbe.add(TYPE, Query.EQUALS, Integer.toString(Typ.anzeigeProgstart.ordinal()));
 		return qbe.execute();
 	}
 	
@@ -287,7 +296,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	}
 	
 	public Patient getKontakt(){
-		Patient ret = Patient.load(get("IdentID"));
+		Patient ret = Patient.load(get(KONTAKT_ID));
 		if (ret.exists()) {
 			return ret;
 		}

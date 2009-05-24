@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, medshare and Elexis
+ * Copyright (c) 2007-2009, medshare and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added Anschrift
  *    
- * $Id: KontaktErfassenDialog.java 4261 2008-08-12 08:03:13Z rgw_ch $
+ * $Id: KontaktErfassenDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 

@@ -33,6 +33,10 @@ public class Messages extends NLS {
 
 	public static String ApplicationWorkbenchAdvisor_9;
 
+	public static String Desk_32;
+
+	public static String Desk_33;
+
 	public static String Desk_37;
 
 	public static String Hub_12;

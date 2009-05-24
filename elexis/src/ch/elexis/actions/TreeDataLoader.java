@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TreeDataLoader.java 5106 2009-02-06 18:00:17Z rgw_ch $
+ * $Id: TreeDataLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -53,10 +53,10 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 	 * Tree<PersistentObject>(root, po); } }
 	 */
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
-		monitor.beginTask("Lade Daten", IProgressMonitor.UNKNOWN);
+		monitor.beginTask(Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		root.clear();
 		qbe.clear();
-		qbe.add(parentColumn, "=", "NIL");
+		qbe.add(parentColumn, "=", "NIL"); //$NON-NLS-1$ //$NON-NLS-2$
 		applyQueryFilters();
 		for (PersistentObject po : qbe.execute()) {
 			new Tree<PersistentObject>(root, po);
@@ -90,7 +90,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 			Tree<PersistentObject> t = (Tree<PersistentObject>) element;
 			if (!t.hasChildren()) {
 				qbe.clear();
-				qbe.add(parentColumn, "=", t.contents.getId());
+				qbe.add(parentColumn, "=", t.contents.getId()); //$NON-NLS-1$
 				applyQueryFilters();
 				for (PersistentObject po : qbe.execute()) {
 					new Tree<PersistentObject>(t, po);

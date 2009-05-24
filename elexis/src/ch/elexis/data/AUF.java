@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF.java 3472 2007-12-20 20:57:14Z rgw_ch $
+ *  $Id: AUF.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -18,19 +18,27 @@ import ch.rgw.tools.TimeTool;
 
 public class AUF extends PersistentObject {
 
+	public static final String PERCENT = "Prozent";
+	public static final String REASON = "Grund";
+	public static final String CASE_ID = "FallID";
+	public static final String PATIENT_ID = "PatientID";
+	public static final String TABLENAME = "AUF";
+	public static final String ZUSATZ="Zusatz";
+	public static final String DATE_FROM="von";
+	public static final String DATE_UNTIL="bis";
 	static{
-		addMapping("AUF","PatientID","FallID",
+		addMapping(TABLENAME,PATIENT_ID,CASE_ID,
 				"von=S:D:DatumVon",
 				"bis=S:D:DatumBis",
-				"Grund",
-				"Prozent","Zusatz=AUFZusatz","Erstellt=S:D:DatumAUZ");
+				REASON,
+				PERCENT,"Zusatz=AUFZusatz","Erstellt=S:D:DatumAUZ");
 	}
 	public AUF(Fall f,String von, String bis, String proz,String grund){
 		if(f!=null){
 			Patient p=f.getPatient();
 			if(p!=null){
 				create(null);
-				set(new String[]{"PatientID","FallID","von","bis","Prozent","Grund","Erstellt"},
+				set(new String[]{PATIENT_ID,CASE_ID,"von","bis",PERCENT,REASON,"Erstellt"},
 						p.getId(),f.getId(),von,bis,proz,grund,new TimeTool().toString(TimeTool.DATE_GER));
 			}
 		}
@@ -39,7 +47,7 @@ public class AUF extends PersistentObject {
 	}
 	@Override
 	public String getLabel() {
-		String[] f={"von","bis","Prozent","Grund","Erstellt"};
+		String[] f={"von","bis",PERCENT,REASON,"Erstellt"};
 		String[] v=new String[f.length];
 		get(f,v);
 		StringBuilder sb=new StringBuilder();
@@ -55,7 +63,7 @@ public class AUF extends PersistentObject {
 		return getFall().getPatient();
 	}
 	public Fall getFall(){
-		return Fall.load(get("FallID"));
+		return Fall.load(get(CASE_ID));
 	}
 	public TimeTool getBeginn(){
 		return new TimeTool(checkNull(get("von")));
@@ -70,17 +78,17 @@ public class AUF extends PersistentObject {
 		set("bis",date);
 	}
 	public String getGrund(){
-		return checkNull(get("Grund"));
+		return checkNull(get(REASON));
 	}
 	public String getZusatz(){
 		return checkNull(get("Zusatz"));
 	}
 	public String getProzent(){
-		return checkNull(get("Prozent"));
+		return checkNull(get(PERCENT));
 	}
 	@Override
 	protected String getTableName() {
-		return "AUF";
+		return TABLENAME;
 	}
 	public static AUF load(String id){
 		return new AUF(id);

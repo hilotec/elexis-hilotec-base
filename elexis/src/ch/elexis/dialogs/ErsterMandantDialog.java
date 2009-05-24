@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErsterMandantDialog.java 5272 2009-04-28 16:48:15Z rgw_ch $
+ *  $Id: ErsterMandantDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Person;
 import ch.elexis.util.SWTHelper;
@@ -116,7 +117,8 @@ public class ErsterMandantDialog extends TitleAreaDialog {
 		if(cbAnrede.getText().startsWith("F")){
 			g=Person.FEMALE;
 		}
-		m.set(new String[]{"Name","Vorname","Titel","Geschlecht","E-Mail","Telefon1","Fax","Strasse","Plz","Ort"}, 
+		m.set(new String[]{Person.NAME,Person.FIRSTNAME,"Titel",Person.SEX,
+				"E-Mail",Person.PHONE1,"Fax",Kontakt.STREET,Kontakt.ZIP,Kontakt.PLACE}, 
 				tLastname.getText(),tFirstname.getText(), tTitle.getText(),g,
 				email,tPhone.getText(),tFax.getText(),tStreet.getText(),tZip.getText(),
 				tStreet.getText());

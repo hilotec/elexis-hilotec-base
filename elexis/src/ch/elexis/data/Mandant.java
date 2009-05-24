@@ -8,10 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Mandant.java 5266 2009-04-23 13:41:31Z rgw_ch $
+ *    $Id: Mandant.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
+
+import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
 
 
 /**
@@ -23,12 +26,14 @@ package ch.elexis.data;
  */
 public class Mandant extends Anwender {
 	
+	public static final String BILLER = "Rechnungssteller";
+
 	static {
-		addMapping("KONTAKT", "ExtInfo", "istMandant", "Label=Bezeichnung3");
+		addMapping(Kontakt.TABLENAME, EXTINFO, IS_MANDATOR, "Label=Bezeichnung3");
 	}
 	
 	public boolean isValid(){
-		if (get("istMandant").equals("1")) {
+		if (get(IS_MANDATOR).equals(StringTool.one)) {
 			return super.isValid();
 		}
 		return false;
@@ -36,12 +41,12 @@ public class Mandant extends Anwender {
 	
 	
 	public Rechnungssteller getRechnungssteller(){
-		Rechnungssteller ret = Rechnungssteller.load(getInfoString("Rechnungssteller"));
+		Rechnungssteller ret = Rechnungssteller.load(getInfoString(BILLER));
 		return ret.isValid() ? ret : Rechnungssteller.load(getId());
 	}
 	
 	public void setRechnungssteller(Kontakt rs){
-		setInfoElement("Rechnungssteller", rs.getId());
+		setInfoElement(BILLER, rs.getId());
 	}
 	
 	protected Mandant(String id){
@@ -57,8 +62,8 @@ public class Mandant extends Anwender {
 	
 	public static Mandant load(String id){
 		Mandant ret = new Mandant(id);
-		String ism = ret.get("istMandant");
-		if (ism != null && ism.equals("1")) {
+		String ism = ret.get(IS_MANDATOR);
+		if (ism != null && ism.equals(StringTool.one)) {
 			return ret;
 		}
 		return null;
@@ -69,20 +74,17 @@ public class Mandant extends Anwender {
 	}
 	
 	protected String getConstraint(){
-		return "istMandant='1'";
+		return new StringBuilder(IS_MANDATOR)
+		.append(Query.EQUALS)
+		.append(JdbcLink.wrap(StringTool.one))
+		.toString();
+		
 	}
 	
 	@Override
 	protected void setConstraint(){
-		set("istMandant", "1");
-		set("istAnwender", "1");
+		set(new String[]{IS_MANDATOR,IS_USER},new String[]{StringTool.one,StringTool.one});
 	}
-	/**
-	 * Initiale Rechte setzen. initializes only deprecated fields. Will probalbly soon be removed.
-	 * 
-	 * protected static void init(){
-	 * Hub.acl.grant("Alle","ReadEAN","ReadKSK","ReadNIF","ReadAgendaLabel");
-	 * Hub.acl.grant("Admin","WriteEAN","WriteKSK","WriteNIF","WriteAgendaLabel"); }
-	 */
+	
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Sticker.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ *    $Id: Sticker.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -31,12 +31,16 @@ import ch.rgw.tools.JdbcLink.Stm;
  *
  */
 public class Sticker extends PersistentObject implements Comparable<Sticker>{
+	public static final String IMAGE_ID = "BildID";
+	public static final String BACKGROUND = "bg";
+	public static final String FOREGROUND = "vg";
+	public static final String NAME = "Name";
 	static final String TABLENAME="ETIKETTEN";
 	static final String LINKTABLE="ETIKETTEN_OBJECT_LINK";
 		
 	static{
 		addMapping(
-			TABLENAME, "Datum=S:D:Datum","BildID=Image","vg=foreground","bg=background","Name",
+			TABLENAME, DATE_FIELD,"BildID=Image","vg=foreground","bg=background",NAME,
 				"wert=importance"
 			
 		);
@@ -50,7 +54,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker>{
 		if(bg==null){
 			bg=Desk.getColor(Desk.COL_WHITE);
 		}
-		set(new String[]{"Name","vg", "bg"}, new String[]{
+		set(new String[]{NAME,FOREGROUND, BACKGROUND}, new String[]{
 				name,
 				Desk.createColor(fg.getRGB()),
 				Desk.createColor(bg.getRGB())
@@ -80,7 +84,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker>{
 		return ret;
 	}
 	public Image getImage(){
-		DBImage image=DBImage.load(get("BildID"));
+		DBImage image=DBImage.load(get(IMAGE_ID));
 		if(image!=null){
 			Image ret=Desk.getImage(image.getName());
 			if(ret==null){
@@ -93,42 +97,42 @@ public class Sticker extends PersistentObject implements Comparable<Sticker>{
 	}
 	
 	public void setImage(DBImage image){
-		set("BildID",image.getId());
+		set(IMAGE_ID,image.getId());
 	}
 	
 	public void setForeground( String fg){
-		set("vg",fg);
+		set(FOREGROUND,fg);
 	}
 	public void setForeground(Color fg){
 		if(fg!=null){
-			set("vg",Desk.createColor(fg.getRGB()));
+			set(FOREGROUND,Desk.createColor(fg.getRGB()));
 		}
 	}
 	public Color getForeground(){
-		String vg=get("vg");
+		String vg=get(FOREGROUND);
 		return Desk.getColorFromRGB(vg);
 
 	}
 	
 	public void setBackground(String bg){
-		set("bg",bg);
+		set(BACKGROUND,bg);
 	}
 	public void setBackground(Color bg){
 		if(bg!=null){
-			set("bg",Desk.createColor(bg.getRGB()));
+			set(BACKGROUND,Desk.createColor(bg.getRGB()));
 		}
 	}
 	public void register(){
-		Desk.getImageRegistry().put(get("Name"), new DBImageDescriptor(get("Name")));
+		Desk.getImageRegistry().put(get(NAME), new DBImageDescriptor(get(NAME)));
 	}
 	
 	public Color getBackground(){
-		String bg=get("bg");
+		String bg=get(BACKGROUND);
 		return Desk.getColorFromRGB(bg);
 	}
 	@Override
 	public String getLabel() {
-		return get("Name");
+		return get(NAME);
 	}
 
 	public int getWert(){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 5064 2009-01-29 16:20:49Z rgw_ch $
+ *  $Id: KontaktSelektor.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -59,6 +59,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListener {
+	private static final String SELECT_CONTACT = "Kontakt auswählen";
+
 	// Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
 	public static final int HINTSIZE = 12;
 	
@@ -151,7 +153,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			if (tt.set(hints[HINT_BIRTHDATE])) {
 				hints[HINT_BIRTHDATE] = tt.toString(TimeTool.DATE_GER);
 			} else {
-				hints[HINT_BIRTHDATE] = "";
+				hints[HINT_BIRTHDATE] = StringTool.leer;
 			}
 		}
 		if (!StringTool.isNothing(hints[HINT_SEX])) {
@@ -359,7 +361,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	@Override
 	public void create(){
 		super.create();
-		getShell().setText("Kontakt auswählen");
+		getShell().setText(SELECT_CONTACT);
 	}
 	
 	/*
@@ -452,9 +454,9 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		
 		public void apply(Query<? extends PersistentObject> qbe){
 			if (type == 1) {
-				qbe.add("istPerson", "=", "1");
+				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringTool.one);
 			} else if (type == 2) {
-				qbe.add("istPerson", "=", "0");
+				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringTool.zero);
 			}
 		}
 		

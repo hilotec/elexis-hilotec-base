@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DBImage.java 4045 2008-06-17 11:00:42Z rgw_ch $
+ *    $Id: DBImage.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -26,21 +26,24 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 public class DBImage extends PersistentObject {
+	private static final String TITLE = "Titel";
+	public static final String DATE = "Datum";
+	public static final String IMAGE = "Bild";
 	public static final String DBVERSION="1.0.0";
 	public static final String TABLENAME="DBIMAGE";
 		
 	static{
 		addMapping(
-			TABLENAME, "Datum=S:D:Datum","Titel=Title","Bild"
+			TABLENAME, DATE_FIELD,"Titel=Title",IMAGE
 		);
 	}
 	@Override
 	public String getLabel() {
-		return get("Datum")+" - "+get("Titel");
+		return get(DATE)+" - "+get(TITLE);
 	}
 
 	public String getName(){
-		return get("Titel");
+		return get(TITLE);
 	}
 	public DBImage(String name, InputStream source){
 		ImageLoader iml=new ImageLoader();
@@ -49,8 +52,8 @@ public class DBImage extends PersistentObject {
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			iml.save(baos, SWT.IMAGE_PNG);
 			create(null);
-			set("Titel",name);
-			setBinary("Bild", baos.toByteArray());
+			set(TITLE,name);
+			setBinary(IMAGE, baos.toByteArray());
 		}catch(Exception ex){
 			SWTHelper.showError("Image error", "Bild ungültig","Das Bild konnte nicht geladen werden "+ex.getMessage());
 			ExHandler.handle(ex);
@@ -58,7 +61,7 @@ public class DBImage extends PersistentObject {
 	}
 
 	public Image getImage(){
-		byte[] in=getBinary("Bild");
+		byte[] in=getBinary(IMAGE);
 		ByteArrayInputStream bais=new ByteArrayInputStream(in);
 		try{
 			Image ret=new Image(Desk.getDisplay(),bais);

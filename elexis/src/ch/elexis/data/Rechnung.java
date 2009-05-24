@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 5316 2009-05-20 11:34:51Z rgw_ch $
+ *  $Id: Rechnung.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -34,6 +34,17 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
 public class Rechnung extends PersistentObject {
+	public static final String REMARK = "Bemerkung";
+	public static final String BILL_STATE_DATE = "StatusDatum";
+	public static final String BILL_DATE = "RnDatum";
+	public static final String BILL_AMOUNT_CENTS = "Betragx100";
+	public static final String BILL_DATE_UNTIL = "RnDatumBis";
+	public static final String BILL_DATE_FROM = "RnDatumVon";
+	public static final String BILL_STATE = "RnStatus";
+	public static final String MANDATOR_ID = "MandantID";
+	public static final String CASE_ID = "FallID";
+	public static final String BILL_NUMBER = "RnNummer";
+	static final String TABLENAME = "RECHNUNGEN";
 	// public static final DecimalFormat geldFormat=new DecimalFormat("0.00");
 	// Texte für Trace-Meldungen
 	public static final String STATUS_CHANGED = "Statusänderung";
@@ -44,9 +55,9 @@ public class Rechnung extends PersistentObject {
 	public static final String REMARKS = "Bemerkungen";
 	
 	static {
-		addMapping("RECHNUNGEN", "RnNummer", "FallID", "MandantID", "RnDatum=S:D:RnDatum",
-			"RnStatus", "StatusDatum=S:D:StatusDatum", "RnDatumVon=S:D:RnDatumVon",
-			"RnDatumBis=S:D:RnDatumBis", "Betragx100=Betrag", "ExtInfo",
+		addMapping(TABLENAME, BILL_NUMBER, CASE_ID, MANDATOR_ID, "RnDatum=S:D:RnDatum",
+			BILL_STATE, "StatusDatum=S:D:StatusDatum", "RnDatumVon=S:D:RnDatumVon",
+			"RnDatumBis=S:D:RnDatumBis", "Betragx100=Betrag", EXTINFO,
 			"Zahlungen=LIST:RechnungsID:ZAHLUNGEN:Datum");
 	}
 	
@@ -55,8 +66,8 @@ public class Rechnung extends PersistentObject {
 		create(null);
 		String Datum = new TimeTool().toString(TimeTool.DATE_GER);
 		set(new String[] {
-			"RnNummer", "MandantID", "FallID", "RnDatumVon", "RnDatumBis", "Betragx100",
-			"RnStatus", "RnDatum"
+			BILL_NUMBER, MANDATOR_ID, CASE_ID, BILL_DATE_FROM, BILL_DATE_UNTIL, BILL_AMOUNT_CENTS,
+			BILL_STATE, BILL_DATE
 		}, nr, m.getId(), f.getId(), von, bis, Betrag.getCentsAsString(), Integer.toString(status),
 			Datum);
 		
@@ -104,7 +115,7 @@ public class Rechnung extends PersistentObject {
 			}
 			if (m == null) {
 				m = bm;
-				ret.set("MandantID", m.getId());
+				ret.set(MANDATOR_ID, m.getId());
 			} else {
 				/*
 				 * if(!bm.equals(m)){ log.log("Rechnung kann nicht mit Behandlungen verschiedener
@@ -127,7 +138,7 @@ public class Rechnung extends PersistentObject {
 			}
 			if (f == null) {
 				f = bf;
-				ret.set("FallID", f.getId());
+				ret.set(CASE_ID, f.getId());
 				f.setBillingDate(null); // ggf. Rechnungsvorschlag löschen
 			} else {
 				if (!f.getId().equals(bf.getId())) {
@@ -189,15 +200,15 @@ public class Rechnung extends PersistentObject {
 		 */
 
 		String Datum = new TimeTool().toString(TimeTool.DATE_GER);
-		ret.set("RnDatumVon", startDate.toString(TimeTool.DATE_GER));
-		ret.set("RnDatumBis", endDate.toString(TimeTool.DATE_GER));
-		ret.set("RnDatum", Datum);
+		ret.set(BILL_DATE_FROM, startDate.toString(TimeTool.DATE_GER));
+		ret.set(BILL_DATE_UNTIL, endDate.toString(TimeTool.DATE_GER));
+		ret.set(BILL_DATE, Datum);
 		ret.setStatus(RnStatus.OFFEN);
 		// summe.roundTo5();
-		ret.set("Betragx100", summe.getCentsAsString());
+		ret.set(BILL_AMOUNT_CENTS, summe.getCentsAsString());
 		// ret.setExtInfo("Rundungsdifferenz", summe.getFracAsString());
 		String nr = getNextRnNummer();
-		ret.set("RnNummer", nr);
+		ret.set(BILL_NUMBER, nr);
 		if (!result.isOK()) {
 			ret.delete();
 			return result;
@@ -240,17 +251,17 @@ public class Rechnung extends PersistentObject {
 	
 	/** Die Rechnungsnummer holen */
 	public String getNr(){
-		return get("RnNummer");
+		return get(BILL_NUMBER);
 	}
 	
 	/** Den Fall dieser Rechnung holen */
 	public Fall getFall(){
-		return Fall.load(get("FallID"));
+		return Fall.load(get(CASE_ID));
 	}
 	
 	/** Den Mandanten zu dieser Rechnung holen */
 	public Mandant getMandant(){
-		return Mandant.load(get("MandantID"));
+		return Mandant.load(get(MANDATOR_ID));
 	}
 	
 	/** Eine Liste aller Konsultationen dieser Rechnung holen */
@@ -277,9 +288,9 @@ public class Rechnung extends PersistentObject {
 		new Zahlung(this, betrag, "Storno",null);
 		if (reopen == true) {
 			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-			qbe.add("RechnungsID", "=", getId());
+			qbe.add(Konsultation.BILL_ID, Query.EQUALS, getId());
 			for (Konsultation k : qbe.execute()) {
-				k.set("RechnungsID", null);
+				k.set(Konsultation.BILL_ID, null);
 			}
 			/*
 			 * getConnection().exec( "UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID=" +
@@ -294,23 +305,23 @@ public class Rechnung extends PersistentObject {
 	
 	/** Datum der Rechnung holen */
 	public String getDatumRn(){
-		return get("RnDatum");
+		return get(BILL_DATE);
 	}
 	
 	/** Datum der ersten Konsultation dieser Rechnung holen */
 	public String getDatumVon(){
-		return get("RnDatumVon");
+		return get(BILL_DATE_FROM);
 	}
 	
 	/** Datum der letzten Konsultation dieser Rechnung holen */
 	public String getDatumBis(){
-		String raw = get("RnDatumBis");
-		return raw == null ? "" : raw.trim();
+		String raw = get(BILL_DATE_UNTIL);
+		return raw == null ? StringTool.leer : raw.trim();
 	}
 	
 	/** Totalen Rechnungsbetrag holen */
 	public Money getBetrag(){
-		int raw = checkZero(get("Betragx100"));
+		int raw = checkZero(get(BILL_AMOUNT_CENTS));
 		return new Money(raw);
 	}
 	
@@ -330,14 +341,14 @@ public class Rechnung extends PersistentObject {
 	public boolean setBetrag(final Money betrag){
 		// use absolute value to fix earlier bug
 		
-		int oldVal = Math.abs(checkZero(get("Betragx100")));
+		int oldVal = Math.abs(checkZero(get(BILL_AMOUNT_CENTS)));
 		if (oldVal != 0) {
 			int newVal = betrag.getCents();
 			int diff = Math.abs(oldVal - newVal);
 			
 			if ((diff > 500) || ((diff * 50) > oldVal)) {
 				Money old = new Money(oldVal);
-				String nr = checkNull(get("RnNummer"));
+				String nr = checkNull(get(BILL_NUMBER));
 				String message =
 					"Der errechnete Rechnungsbetrag (" + betrag.getAmountAsString()
 						+ ") weicht vom Rechnungsbetrag (" + old.getAmountAsString()
@@ -348,19 +359,19 @@ public class Rechnung extends PersistentObject {
 				}
 			}
 			Query<AccountTransaction> qa = new Query<AccountTransaction>(AccountTransaction.class);
-			qa.add("RechnungsID", "=", getId());
-			qa.add("ZahlungsID", "", null);
+			qa.add(AccountTransaction.BILL_ID, Query.EQUALS, getId());
+			qa.add(AccountTransaction.PAYMENT_ID, StringTool.leer, null);
 			List<AccountTransaction> as = qa.execute();
 			if ((as != null) && (as.size() == 1)) {
 				AccountTransaction at = as.get(0);
 				if (at.exists()) {
 					Money negBetrag = new Money(betrag);
 					negBetrag.negate();
-					at.set("Betrag", negBetrag.getCentsAsString());
+					at.set(AccountTransaction.AMOUNT, negBetrag.getCentsAsString());
 				}
 			}
 		}
-		set("Betragx100", betrag.getCentsAsString());
+		set(BILL_AMOUNT_CENTS, betrag.getCentsAsString());
 		
 		return true;
 	}
@@ -396,7 +407,7 @@ public class Rechnung extends PersistentObject {
 	/** Rechnungsstatus holen */
 	public int getStatus(){
 		try {
-			int i = Integer.parseInt(checkNull(get("RnStatus")));
+			int i = Integer.parseInt(checkNull(get(BILL_STATE)));
 			if ((i < 0) || (i >= RnStatus.getStatusTexts().length)) {
 				return RnStatus.UNBEKANNT;
 			}
@@ -408,8 +419,8 @@ public class Rechnung extends PersistentObject {
 	
 	/** Rechnungsstatus setzen */
 	public void setStatus(final int stat){
-		set("RnStatus", Integer.toString(stat));
-		set("StatusDatum", new TimeTool().toString(TimeTool.DATE_GER));
+		set(BILL_STATE, Integer.toString(stat));
+		set(BILL_STATE_DATE, new TimeTool().toString(TimeTool.DATE_GER));
 		addTrace(STATUS_CHANGED, Integer.toString(stat));
 	}
 	
@@ -468,17 +479,17 @@ public class Rechnung extends PersistentObject {
 	}
 	
 	public String getBemerkung(){
-		return getExtInfo("Bemerkung");
+		return getExtInfo(REMARK);
 	}
 	
 	public void setBemerkung(final String bem){
-		setExtInfo("Bemerkung", bem);
+		setExtInfo(REMARK, bem);
 	}
 	
 	public String getExtInfo(final String key){
 		Hashtable<String, String> ext = loadExtension();
 		String ret = ext.get(key);
-		return ret == null ? "" : ret;
+		return checkNull(ret);
 	}
 	
 	public void setExtInfo(final String key, final String value){
@@ -534,7 +545,7 @@ public class Rechnung extends PersistentObject {
 	}
 	
 	public String getRnDatumFrist(){
-		String stat = get("StatusDatum");
+		String stat = get(BILL_STATE_DATE);
 		int frist = 0;
 		switch (getStatus()) {
 		case RnStatus.OFFEN_UND_GEDRUCKT:
@@ -562,12 +573,12 @@ public class Rechnung extends PersistentObject {
 	
 	@SuppressWarnings("unchecked")
 	public Hashtable<String, String> loadExtension(){
-		return getHashtable("ExtInfo");
+		return getHashtable(EXTINFO);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void flushExtension(final Hashtable ext){
-		setHashtable("ExtInfo", ext);
+		setHashtable(EXTINFO, ext);
 	}
 	
 	public static Rechnung load(final String id){
@@ -587,7 +598,7 @@ public class Rechnung extends PersistentObject {
 	 *         existiert.
 	 */
 	public static Rechnung getFromNr(final String Rnnr){
-		String id = new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", Rnnr);
+		String id = new Query<Rechnung>(Rechnung.class).findSingle(BILL_NUMBER, Query.EQUALS, Rnnr);
 		Rechnung ret = load(id);
 		if (ret.isValid()) {
 			return ret;
@@ -639,9 +650,9 @@ public class Rechnung extends PersistentObject {
 	@Override
 	public boolean delete(){
 		for (Zahlung z : getZahlungen()) {
-			z.set("RechnungsID", ""); // avoid log entries
+			z.set(Zahlung.BILL_ID, StringTool.leer); // avoid log entries
 			z.delete();
-			z.set("RechnungsID", getId());
+			z.set(Zahlung.BILL_ID, getId());
 		}
 		return super.delete();
 	}
@@ -699,7 +710,7 @@ public class Rechnung extends PersistentObject {
 	
 	@Override
 	protected String getTableName(){
-		return "RECHNUNGEN";
+		return TABLENAME;
 	}
 	
 }

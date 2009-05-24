@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2009, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 4996 2009-01-21 17:49:02Z rgw_ch $
+ *  $Id: HistoryLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -130,9 +130,9 @@ public class HistoryLoader extends BackgroundJob {
 					if (multiline) {
 						// TODO use system line separator
 						// replace Windows line separator
-						s = s.replaceAll("\r\n", "<br/>");
+						s = s.replaceAll("\r\n", "<br/>"); //$NON-NLS-1$ //$NON-NLS-2$
 						// replace remaining "manual" line separators
-						s = s.replaceAll("\n", "<br/>");
+						s = s.replaceAll("\n", "<br/>"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					
 				} else {

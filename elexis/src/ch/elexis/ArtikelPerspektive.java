@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelPerspektive.java 5194 2009-02-24 16:31:36Z rgw_ch $
+ *  $Id: ArtikelPerspektive.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis;
 
@@ -32,7 +32,7 @@ public class ArtikelPerspektive implements IPerspectiveFactory {
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
 		
-		IFolderLayout ifr = layout.createFolder("rechts", SWT.RIGHT, 1.0f, editorArea); //$NON-NLS-1$
+		IFolderLayout ifr = layout.createFolder("right", SWT.RIGHT, 1.0f, editorArea); //$NON-NLS-1$
 		ifr.addView(ArtikelView.ID);
 		ifr.addView(LagerView.ID);
 		ifr.addView(KompendiumView.ID);

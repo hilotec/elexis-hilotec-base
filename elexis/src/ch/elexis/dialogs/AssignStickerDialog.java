@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AssignStickerDialog.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ * $Id: AssignStickerDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -35,30 +35,30 @@ public class AssignStickerDialog extends TitleAreaDialog {
 	Table table;
 	List<Sticker> alleEtiketten;
 	List<Sticker> mineEtiketten;
-	
-	public AssignStickerDialog(Shell shell, PersistentObject obj){
+
+	public AssignStickerDialog(Shell shell, PersistentObject obj) {
 		super(shell);
-		mine=obj;
-		mineEtiketten=mine.getStickers();
+		mine = obj;
+		mineEtiketten = mine.getStickers();
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		Label lbl=new Label(ret,SWT.WRAP);
-		lbl.setText("Bitte bestätigen Sie alle benötigten Sticker mit Häkchen");
-		table=new Table(ret,SWT.CHECK|SWT.SINGLE);
+		Label lbl = new Label(ret, SWT.WRAP);
+		lbl.setText(Messages.getString("AssignStickerDialog.PleaseConfirm")); //$NON-NLS-1$
+		table = new Table(ret, SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Query<Sticker> qbe=new Query<Sticker>(Sticker.class);
-		alleEtiketten=qbe.execute();
-		for(Sticker et:alleEtiketten){
-			TableItem it=new TableItem(table,SWT.NONE);
-			if(mineEtiketten.contains(et)){
+		Query<Sticker> qbe = new Query<Sticker>(Sticker.class);
+		alleEtiketten = qbe.execute();
+		for (Sticker et : alleEtiketten) {
+			TableItem it = new TableItem(table, SWT.NONE);
+			if (mineEtiketten.contains(et)) {
 				it.setChecked(true);
 			}
-			it.setText(et.getLabel()+ "("+et.getWert()+")");
+			it.setText(et.getLabel() + "(" + et.getWert() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			it.setImage(et.getImage());
 			it.setForeground(et.getForeground());
 			it.setBackground(et.getBackground());
@@ -70,27 +70,29 @@ public class AssignStickerDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Sticker");
-		setMessage("Geben Sie bitte die Sticker für "+mine.getLabel()+" ein.");
-		getShell().setText("Elexis Sticker");
+		setTitle("Sticker"); //$NON-NLS-1$
+		// TODO setMessage(Messages.getString("test",mine.getLabel()));
+		setMessage("Geben Sie bitte die Sticker für " + mine.getLabel()
+				+ " ein.");
+		getShell().setText("Elexis Sticker"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void okPressed() {
-		
-		for(TableItem it:table.getItems()){
-			Sticker et=(Sticker)it.getData();
-			if(it.getChecked()){
-				if(!mineEtiketten.contains(et)){
+
+		for (TableItem it : table.getItems()) {
+			Sticker et = (Sticker) it.getData();
+			if (it.getChecked()) {
+				if (!mineEtiketten.contains(et)) {
 					mine.addSticker(et);
 				}
-			}else{
-				if(mineEtiketten.contains(et)){
+			} else {
+				if (mineEtiketten.contains(et)) {
 					mine.removeSticker(et);
 				}
 			}
 		}
 		super.okPressed();
 	}
-	
+
 }

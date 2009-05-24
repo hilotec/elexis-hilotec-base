@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 5191 2009-02-24 15:48:18Z rgw_ch $
+ *  $Id: NamedBlob.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -33,6 +33,9 @@ import ch.rgw.tools.TimeTool;
  */
 public class NamedBlob extends PersistentObject {
 	
+	public static final String TABLENAME = "HEAP";
+	public static final String CONTENTS = "inhalt";
+
 	/**
 	 * return the contents as Hashtable (will probably fail if the data was not stored using
 	 * put(Hashtable)
@@ -41,7 +44,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public Hashtable getHashtable(){
-		return getHashtable("inhalt");
+		return getHashtable(CONTENTS);
 	}
 	
 	/**
@@ -52,7 +55,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void put(final Hashtable in){
-		setHashtable("inhalt", in);
+		setHashtable(CONTENTS, in);
 		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
@@ -62,7 +65,7 @@ public class NamedBlob extends PersistentObject {
 	 * @return the previously stored string.
 	 */
 	public String getString(){
-		byte[] comp = getBinary("inhalt");
+		byte[] comp = getBinary(CONTENTS);
 		if ((comp == null) || (comp.length == 0)) {
 			return "";
 		}
@@ -82,7 +85,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public void putString(final String string){
 		byte[] comp = CompEx.Compress(string, CompEx.ZIP);
-		setBinary("inhalt", comp);
+		setBinary(CONTENTS, comp);
 		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
@@ -93,11 +96,11 @@ public class NamedBlob extends PersistentObject {
 	
 	@Override
 	protected String getTableName(){
-		return "HEAP";
+		return TABLENAME;
 	}
 	
 	static {
-		addMapping("HEAP", "inhalt", "Datum=S:D:datum");
+		addMapping(TABLENAME, CONTENTS, "Datum=S:D:datum");
 	}
 	
 	/**

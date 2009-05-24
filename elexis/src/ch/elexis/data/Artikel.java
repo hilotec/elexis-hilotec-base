@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ * $Id: Artikel.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -31,6 +31,7 @@ import ch.rgw.tools.TimeTool;
  * verordnet werden kann
  */
 public class Artikel extends VerrechenbarAdapter {
+	protected static final String CODECLASS = "Codeclass";
 	public static final String XID_PHARMACODE = "www.xid.ch/id/pharmacode/ch";
 	public static final String SUB_ID = "SubID";
 	public static final String ARTIKEL = "Artikel";
@@ -61,7 +62,7 @@ public class Artikel extends VerrechenbarAdapter {
 	}
 	static {
 		addMapping(TABLENAME, LIEFERANT_ID, NAME, MAXBESTAND, MINBESTAND, ISTBESTAND, EK_PREIS,
-			VK_PREIS, TYP, EXT_INFO, "EAN", SUB_ID, "Eigenname=Name_intern", "Codeclass", "Klasse");
+			VK_PREIS, TYP, EXT_INFO, "EAN", SUB_ID, "Eigenname=Name_intern", CODECLASS, "Klasse");
 		Xid
 			.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode",
 				Xid.ASSIGNMENT_REGIONAL);

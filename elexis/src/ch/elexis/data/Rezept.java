@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 4668 2008-11-08 17:10:23Z rgw_ch $
+ *  $Id: Rezept.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -17,6 +17,7 @@ import java.util.List;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import org.jdom.*;
 
@@ -28,13 +29,19 @@ import org.jdom.*;
  * 
  */
 public class Rezept extends PersistentObject {
+	public static final String LINES = "Zeilen";
+	public static final String LETTER_ID = "BriefID";
+	public static final String DATE = "Datum";
+	public static final String MANDATOR_ID = "MandantID";
+	public static final String PATIENT_ID = "PatientID";
+
 	@Override
 	protected String getTableName(){
 		return "REZEPTE";
 	}
 	
 	static {
-		addMapping("REZEPTE", "PatientID", "MandantID", "Datum=S:D:Datum", "Text=RpTxt", "BriefID",
+		addMapping("REZEPTE", PATIENT_ID, MANDATOR_ID, DATE_FIELD, "Text=RpTxt", LETTER_ID,
 			"Zeilen=LIST:RezeptID:PATIENT_ARTIKEL_JOINT");
 	}
 	
@@ -45,21 +52,21 @@ public class Rezept extends PersistentObject {
 	public Rezept(final Patient pat){
 		create(null);
 		set(new String[] {
-			"PatientID", "MandantID", "Datum"
+			PATIENT_ID, MANDATOR_ID, DATE
 		}, pat.getId(), Hub.actMandant.getId(), new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
 	public Patient getPatient(){
-		return Patient.load(get("PatientID"));
+		return Patient.load(get(PATIENT_ID));
 	}
 	
 	public Mandant getMandant(){
-		Mandant mret = Mandant.load(get("MandantID"));
+		Mandant mret = Mandant.load(get(MANDATOR_ID));
 		return mret;
 	}
 	
 	public String getDate(){
-		return get("Datum");
+		return get(DATE);
 	}
 	
 	public String getText(){
@@ -79,7 +86,7 @@ public class Rezept extends PersistentObject {
 	 * @return der Brief oder null, wenn keiner existiert.
 	 */
 	public Brief getBrief(){
-		Brief brief = Brief.load(get("BriefID"));
+		Brief brief = Brief.load(get(LETTER_ID));
 		if (brief.exists()) {
 			return brief;
 		}
@@ -90,7 +97,7 @@ public class Rezept extends PersistentObject {
 		if (brief == null) {
 			log.log("Null Brief gesetzt bei setBrief", Log.ERRORS);
 		} else {
-			set("BriefID", brief.getId());
+			set(LETTER_ID, brief.getId());
 		}
 	}
 	
@@ -105,23 +112,9 @@ public class Rezept extends PersistentObject {
 	
 	/**
 	 * Alle Rezeotzeilen als Liste holen
-	 * 
-	 * @Deprecated public List<RpZeile> getLinesOld(){ String raw=getText(); ArrayList<RpZeile>
-	 *             ret=new ArrayList<RpZeile>(); if(!StringTool.isNothing(raw)){ for(String
-	 *             l:raw.split("\\n")){ RpZeile z=new RpZeile(l); ret.add(z); } } return ret; }
 	 */
 	public List<Prescription> getLines(){
-		List<String> list = getList("Zeilen", false);
-		// Kompatibilitätslayer
-		/*
-		 * if(list.isEmpty()){ Query<Artikel> qbe=new Query<Artikel>(Artikel.class); List<RpZeile>
-		 * rz=getLinesOld(); List<Prescription> lr=new ArrayList<Prescription>(rz.size());
-		 * for(RpZeile r:rz){ qbe.clear(); Artikel art=Artikel.load(qbe.findSingle("Name",
-		 * "=",r.name)); if(art!=null){ Prescription p=new Prescription(art, getPatient(), r.ds,
-		 * r.bem); p.setBeginDate(getDate()); p.set("RezeptID", getId()); lr.add(p); } } return lr;
-		 * }
-		 */
-		// Ende KOmpatibilitätslayer
+		List<String> list = getList(LINES, false);
 		List<Prescription> ret = new ArrayList<Prescription>(list.size());
 		for (String s : list) {
 			ret.add(Prescription.load(s));
@@ -129,35 +122,18 @@ public class Rezept extends PersistentObject {
 		return ret;
 	}
 	
-	/**
-	 * Eine Rezeptzeile entfernen deprecated use removePrescripion Deprecated
-	 */
-	/*
-	 * public void removeLine(final RpZeile z){ String raw=getText(); String zs=z.toString();
-	 * raw=raw.replaceFirst(zs, ""); raw=raw.replaceFirst("^\\r*\\n", "");
-	 * set("Text",raw.replaceAll("\\r*\\n\\r*\\n", "\n")); }
-	 */
-
-	/**
-	 * Eine Rezeptzeile hinzufügen deprecated use addPrescription
-	 * 
-	 * Deprecated public void addLine(final RpZeile z){ String raw=getText();
-	 * if(StringTool.isNothing(raw)){ raw=z.toString(); }else{ raw.replaceFirst("\\n$","");
-	 * raw+="\n"+z.toString(); } set("Text",raw); }
-	 */
-	
-	/**
+		/**
 	 * Eine Rezeptzeile entfernen
 	 */
 	public void removePrescription(final Prescription p){
-		p.set("RezeptID", "");
+		p.set(Prescription.REZEPT_ID, StringTool.leer);
 	}
 	
 	/**
 	 * Eine Rezeptzeile hinzufügen
 	 */
 	public void addPrescription(final Prescription p){
-		p.set("RezeptID", getId());
+		p.set(Prescription.REZEPT_ID, getId());
 	}
 	
 	@Override
@@ -173,7 +149,7 @@ public class Rezept extends PersistentObject {
 		List<Prescription> lines = getLines();
 		Document ret = new Document();
 		Element root = new Element("Rezept");
-		root.setAttribute("Datum", getDate());
+		root.setAttribute(DATE, getDate());
 		root.setAttribute("Patient", getPatient().getLabel());
 		root.setAttribute("Aussteller", getMandant().getLabel());
 		ret.setRootElement(root);
@@ -204,11 +180,11 @@ public class Rezept extends PersistentObject {
 		public RpZeile(final String in){
 			String[] parts = in.split(fieldSeparator);
 			
-			num = parts.length > 0 ? parts[0] : "";
-			name = parts.length > 1 ? parts[1] : "";
-			pck = parts.length > 2 ? parts[2] : "";
-			ds = parts.length > 3 ? parts[3] : "";
-			bem = parts.length > 4 ? parts[4] : "";
+			num = parts.length > 0 ? parts[0] : StringTool.leer;
+			name = parts.length > 1 ? parts[1] : StringTool.leer;
+			pck = parts.length > 2 ? parts[2] : StringTool.leer;
+			ds = parts.length > 3 ? parts[3] : StringTool.leer;
+			bem = parts.length > 4 ? parts[4] : StringTool.leer;
 			
 		}
 		
@@ -262,17 +238,6 @@ public class Rezept extends PersistentObject {
 		}
 		
 	}
-	/*
-	 * public Document asXML(){ SAXBuilder builder = new SAXBuilder(); String raw=getText(); try {
-	 * Document doc = builder.build(raw); Element root=doc.getRootElement(); List<Element>
-	 * list=root.getChildren();{ for(Element el:list){ if(el.getName().equals("Header")){
-	 * importAuftrag(root,el); } } } } catch (JDOMException e) {
-	 * SWTHelper.alert("Fehler beim Datenimport","Die XML-Datei enthält formale Fehler");
-	 * ExHandler.handle(e); } catch (IOException e) {
-	 * SWTHelper.alert("Fehler beim Datenimport","Die Importdatei konnte nicht geöffnet werden");
-	 * ExHandler.handle(e); }
-	 * 
-	 * }
-	 */
+	
 
 }

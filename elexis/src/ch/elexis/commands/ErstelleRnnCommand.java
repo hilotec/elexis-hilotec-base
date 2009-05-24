@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErstelleRnnCommand.java 5280 2009-05-09 10:46:12Z rgw_ch $
+ *  $Id: ErstelleRnnCommand.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -49,16 +49,16 @@ import ch.rgw.tools.Tree;
  * 
  */
 public class ErstelleRnnCommand extends AbstractHandler {
-	public static final String ID = "bill.create";
+	public static final String ID = "bill.create"; //$NON-NLS-1$
 	
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent eev) throws ExecutionException{
 		Tree<?> tSelection = null;
-		String px = eev.getParameter("ch.elexis.RechnungErstellen.parameter");
+		String px = eev.getParameter("ch.elexis.RechnungErstellen.parameter"); //$NON-NLS-1$
 		try {
 			tSelection = (Tree<?>) new TreeToStringConverter().convertToObject(px);
 		} catch (ParameterValueConversionException pe) {
-			throw new ExecutionException("Bad parameter " + pe.getMessage());
+			throw new ExecutionException("Bad parameter " + pe.getMessage()); //$NON-NLS-1$
 		}
 		IProgressMonitor monitor = Handler.getMonitor(eev);
 		Result<Rechnung> res = null;
@@ -95,10 +95,10 @@ public class ErstelleRnnCommand extends AbstractHandler {
 			if (rejected != 0) {
 				SWTHelper
 					.showError(
-						"Fehlerhafte Falldefinitionen",
+						Messages.getString("ErstelleRnnCommand.BadCaseDefinition"), //$NON-NLS-1$
 						Integer.toString(rejected)
-							+ " Rechnungen wurden nicht erstellt, weil die Fälle nicht alle notwendigen Angaben enthalten. "
-							+ "Bitte kontrollieren Sie die Fall-Details");
+							+ Messages.getString("ErstelleRnnCommand.BillsNotCreatedMissingData") //$NON-NLS-1$
+							+ Messages.getString("ErstelleRnnCommand.ErstelleRnnCheckCaseDetails")); //$NON-NLS-1$
 			} else {
 				tSelection.remove(tPat);
 			}
@@ -112,7 +112,7 @@ public class ErstelleRnnCommand extends AbstractHandler {
 		try {
 			Command command = cmdService.getCommand(ID);
 			Parameterization px =
-				new Parameterization(command.getParameter("ch.elexis.RechnungErstellen.parameter"),
+				new Parameterization(command.getParameter("ch.elexis.RechnungErstellen.parameter"), //$NON-NLS-1$
 					new TreeToStringConverter().convertToString(tSelection));
 			ParameterizedCommand parmCommand =
 				new ParameterizedCommand(command, new Parameterization[] {
@@ -122,7 +122,7 @@ public class ErstelleRnnCommand extends AbstractHandler {
 			return handlerService.executeCommand(parmCommand, null);
 			
 		} catch (Exception ex) {
-			throw new RuntimeException("add.command not found");
+			throw new RuntimeException("add.command not found"); //$NON-NLS-1$
 		}
 	}
 }

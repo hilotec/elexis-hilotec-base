@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MahnlaufCommand.java 5316 2009-05-20 11:34:51Z rgw_ch $
+ *  $Id: MahnlaufCommand.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -29,71 +29,74 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class MahnlaufCommand extends AbstractHandler {
-	public final static String ID = "bill.reminder";
+	private static final String STR_STATUS_DATUM = "StatusDatum"; //$NON-NLS-1$
+	private static final String STR_MANDANT_I_D = "MandantID"; //$NON-NLS-1$
+	private static final String STR_RN_STATUS = "RnStatus"; //$NON-NLS-1$
+	public final static String ID = "bill.reminder"; //$NON-NLS-1$
 	
 	public Object execute(ExecutionEvent arg0) throws ExecutionException{
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
-		qbe.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT));
-		qbe.add("MandantID", "=", Hub.actMandant.getId());
+		qbe.add(STR_RN_STATUS, "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT)); //$NON-NLS-1$
+		qbe.add(STR_MANDANT_I_D, "=", Hub.actMandant.getId()); //$NON-NLS-1$
 		TimeTool tt = new TimeTool();
 		// Rechnung zu 1. Mahnung
 		int days = Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL1ST, 30);
 		Money betrag = new Money();
 		try {
-			betrag = new Money(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT1ST, "0.00"));
+			betrag = new Money(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT1ST, "0.00")); //$NON-NLS-1$
 		} catch (ParseException ex) {
 			ExHandler.handle(ex);
 			
 		}
 		tt.addHours(days * 24 * -1);
-		qbe.add("StatusDatum", "<", tt.toString(TimeTool.DATE_COMPACT));
+		qbe.add(STR_STATUS_DATUM, "<", tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
 		List<Rechnung> list = qbe.execute();
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_1);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 1. Mahnung",null);
+				rn.addZahlung(new Money(betrag).multiply(-1.0), Messages.MahnlaufCommand_Mahngebuehr1,null);
 			}
 		}
 		// 1. Mahnung zu 2. Mahnung
 		qbe.clear();
-		qbe.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_1_GEDRUCKT));
-		qbe.add("MandantID", "=", Hub.actMandant.getId());
+		qbe.add(STR_RN_STATUS, "=", Integer.toString(RnStatus.MAHNUNG_1_GEDRUCKT)); //$NON-NLS-1$
+		qbe.add(STR_MANDANT_I_D, "=", Hub.actMandant.getId()); //$NON-NLS-1$
 		tt = new TimeTool();
 		days = Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL2ND, 10);
 		try {
-			betrag = new Money(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT2ND, "0.00"));
+			betrag = new Money(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT2ND, "0.00")); //$NON-NLS-1$
 		} catch (ParseException ex) {
 			ExHandler.handle(ex);
 			betrag = new Money();
 		}
 		tt.addHours(days * 24 * -1);
-		qbe.add("StatusDatum", "<", tt.toString(TimeTool.DATE_COMPACT));
+		qbe.add(STR_STATUS_DATUM, "<", tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
 		list = qbe.execute();
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_2);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 2. Mahnung",null);
+				rn.addZahlung(new Money(betrag).multiply(-1.0), Messages.MahnlaufCommand_Mahngebühr2,null);
 			}
 		}
 		// 2. Mahnung zu 3. Mahnung
 		qbe.clear();
-		qbe.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2_GEDRUCKT));
-		qbe.add("MandantID", "=", Hub.actMandant.getId());
+		qbe.add(STR_RN_STATUS, "=", Integer.toString(RnStatus.MAHNUNG_2_GEDRUCKT)); //$NON-NLS-1$
+		qbe.add(STR_MANDANT_I_D, "=", Hub.actMandant.getId()); //$NON-NLS-1$
 		tt = new TimeTool();
 		days = Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL3RD, 10);
 		try {
-			betrag = new Money(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT3RD, "0.00"));
+			betrag = new Money(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT3RD, "0.00")); //$NON-NLS-1$
 		} catch (ParseException ex) {
 			ExHandler.handle(ex);
 			betrag = new Money();
 		}
 		tt.addHours(days * 24 * -1);
-		qbe.add("StatusDatum", "<", tt.toString(TimeTool.DATE_COMPACT));
+		qbe.add(STR_STATUS_DATUM, "<", tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
 		list = qbe.execute();
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_3);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), "Mahngebühr 3. Mahnung",null);
+				rn.addZahlung(new Money(betrag).multiply(-1.0), Messages.MahnlaufCommand_Mahngebuehr3,null);
 			}
 		}
 		

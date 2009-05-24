@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 4269 2008-08-13 13:44:50Z rgw_ch $
+ *  $Id: LabItem.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,14 +35,24 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class LabItem extends PersistentObject implements Comparable<LabItem>{
+	public static final String REF_MALE = "RefMann";
+	public static final String REF_FEMALE_OR_TEXT = "RefFrauOrTx";
+	public static final String PRIO = "prio";
+	public static final String GROUP = "Gruppe";
+	public static final String TYPE = "Typ";
+	public static final String UNIT = "Einheit";
+	public static final String LAB_ID = "LaborID";
+	public static final String TITLE = "titel";
+	public static final String SHORTNAME = "kuerzel";
+	private static final String LABITEMS = "LABORITEMS";
 	private static final Pattern varPattern=Pattern.compile(TextContainer.TEMPLATE_REGEXP);
 	@Override
 	protected String getTableName() {
-		return "LABORITEMS";
+		return LABITEMS;
 	}
 	static{
-		addMapping("LABORITEMS","kuerzel","titel","LaborID",
-				"RefMann","RefFrauOrTx","Einheit","Typ","Gruppe","prio");
+		addMapping(LABITEMS,SHORTNAME,TITLE,LAB_ID,
+				REF_MALE,REF_FEMALE_OR_TEXT,UNIT,TYPE,GROUP,PRIO);
 	}
 	public enum typ{NUMERIC,TEXT,ABSOLUTE,FORMULA};
 	
@@ -63,15 +73,15 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		}
 		if(labor==null){
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-			String labid=qbe.findSingle("istLabor","=","1");
+			String labid=qbe.findSingle(Kontakt.IS_LAB,Query.EQUALS,StringTool.one);
 			if(labid==null){
 				labor=new Labor("Eigen","Eigenlabor");
 			}else{
 				labor=Labor.load(labid);
 			}
 		}
-		set(new String[]{"kuerzel","titel","LaborID","RefMann",
-				"RefFrauOrTx","Einheit","Typ","Gruppe","prio"},
+		set(new String[]{SHORTNAME,TITLE,LAB_ID,REF_MALE,
+				REF_FEMALE_OR_TEXT,UNIT,TYPE,GROUP,PRIO},
 				k,t,labor.getId(),RefMann,RefFrau,Unit,tp,grp,seq);
 	}
 
@@ -79,28 +89,28 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		return new LabItem(id);
 	}
 	public String getEinheit(){
-		return checkNull(get("Einheit"));
+		return checkNull(get(UNIT));
 	}
 	public String getGroup(){
-		return checkNull(get("Gruppe"));
+		return checkNull(get(GROUP));
 	}
 	public String getPrio(){
-		return checkNull(get("prio"));
+		return checkNull(get(PRIO));
 	}
 	public String getKuerzel(){
-		return checkNull(get("kuerzel"));
+		return checkNull(get(SHORTNAME));
 	}
 	public String getName(){
-		return checkNull(get("titel"));
+		return checkNull(get(TITLE));
 	}
 	public Labor getLabor(){
-		return Labor.load(get("LaborID"));
+		return Labor.load(get(LAB_ID));
 	}
 	public typ getTyp(){
-		String t=get("Typ");
-		if(t.equals("0")){
+		String t=get(TYPE);
+		if(t.equals(StringTool.zero)){
 			return typ.NUMERIC;
-		}else if(t.equals("1")){
+		}else if(t.equals(StringTool.one)){
 			return typ.TEXT;
 		}else if(t.equals("2")){
 			return typ.ABSOLUTE;
@@ -122,8 +132,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			return  null;
 		}
 		Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
-		qbe.add("PatientID", "=", pat.getId());
-		qbe.add("Datum", "=", date.toString(TimeTool.DATE_COMPACT));
+		qbe.add(LabResult.PATIENT_ID, Query.EQUALS, pat.getId());
+		qbe.add(LabResult.DATE, Query.EQUALS, date.toString(TimeTool.DATE_COMPACT));
 		List<LabResult> results=qbe.execute();
 		String formel=getFormula();
 		boolean bMatched=false;
@@ -142,7 +152,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			String var=matcher.group();
 			String[] fields=var.split("\\.");
 			if(fields.length>1){
-				String repl="\""+pat.get(fields[1].replaceFirst("\\]", ""))+"\"";
+				String repl="\""+pat.get(fields[1].replaceFirst("\\]", StringTool.leer))+"\"";
 				//formel=matcher.replaceFirst(repl);
 				matcher.appendReplacement(sb, repl);
 				bMatched=true;
@@ -166,22 +176,22 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	 * @return a name that is made of the group and the priority values.
 	 */
 	public String makeVarName(){
-		String[] group=getGroup().split(" ",2);
+		String[] group=getGroup().split(StringTool.space,2);
 		String num=getPrio().trim();
 		return group[0]+"_"+num;
 	}
 	public String getRefW(){
-		String ret= checkNull(get("RefFrauOrTx")).split("##")[0];
+		String ret= checkNull(get(REF_FEMALE_OR_TEXT)).split("##")[0];
 		return ret;
 	}
 	public String getRefM(){
-		return checkNull(get("RefMann"));
+		return checkNull(get(REF_MALE));
 	}
 	public void setRefW(String r){
-		set("RefFrauOrTx",r);
+		set(REF_FEMALE_OR_TEXT,r);
 	}
 	public void setRefM(String r){
-		set("RefMann",r);
+		set(REF_MALE,r);
 	}
 	
 	public void setFormula(String f){
@@ -189,10 +199,10 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		if(!StringTool.isNothing(f)){
 			val+="##"+f;
 		}
-		set("RefFrauOrTx",val);
+		set(REF_FEMALE_OR_TEXT,val);
 	}
 	public String getFormula(){
-		String[] all=get("RefFrauOrTx").split("##");
+		String[] all=get(REF_FEMALE_OR_TEXT).split("##");
 		return all.length>1 ? all[1] : "";
 	}
 	protected LabItem() {/* leer */}
@@ -206,13 +216,13 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	@Override
 	public String getLabel() {
 		StringBuilder sb=new StringBuilder();
-		String [] fields={"kuerzel","titel","RefMann","RefFrauOrTx","Einheit",
-				        "Typ","Gruppe","prio"};
+		String [] fields={SHORTNAME,TITLE,REF_MALE,REF_FEMALE_OR_TEXT,UNIT,
+				        TYPE,GROUP,PRIO};
 		String[] vals=new String[fields.length];
 		get(fields,vals);
 		sb.append(vals[0]).append(", ").append(vals[1]);
-		if(vals[5].equals("0")){
-			sb.append(" (").append(vals[2]).append("-").append(vals[3]).append(" ").append(vals[4]).append(")");
+		if(vals[5].equals(StringTool.zero)){
+			sb.append(" (").append(vals[2]).append("-").append(vals[3]).append(StringTool.space).append(vals[4]).append(")");
 		}else{
 			sb.append(" (").append(vals[3]).append(")");
 		}
@@ -223,7 +233,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 
 	public String getShortLabel(){
 		StringBuilder sb=new StringBuilder();
-		String[] fields={"titel","Einheit","LaborID"};
+		String[] fields={TITLE,UNIT,LAB_ID};
 		String[] vals=new String[fields.length];
 		get(fields,vals);
 		Labor lab=Labor.load(vals[2]);

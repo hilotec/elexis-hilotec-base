@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Zahlung.java 5316 2009-05-20 11:34:51Z rgw_ch $
+ * $Id: Zahlung.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -16,8 +16,14 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class Zahlung extends PersistentObject {
+	public static final String DATE = "Datum";
+	public static final String AMMOUNT_CENTS = "Betragx100";
+	public static final String REMARK = "Bemerkung";
+	public static final String BILL_ID = "RechnungsID";
+	static final String TABLENAME = "ZAHLUNGEN";
+
 	static{
-		addMapping("ZAHLUNGEN","RechnungsID","Betragx100=Betrag","Datum=S:D:Datum","Bemerkung");
+		addMapping(TABLENAME,BILL_ID,"Betragx100=Betrag","Datum=S:D:Datum",REMARK);
 	}
 	
 	public Zahlung(Rechnung rn,Money Betrag, String text, TimeTool date){
@@ -26,7 +32,7 @@ public class Zahlung extends PersistentObject {
 			date=new TimeTool();
 		}
 		String Datum=date.toString(TimeTool.DATE_GER);
-		set(new String[]{"RechnungsID","Betragx100","Datum","Bemerkung"},
+		set(new String[]{BILL_ID,AMMOUNT_CENTS,DATE,REMARK},
 				rn.getId(),Betrag.getCentsAsString(),Datum,text);
 		new AccountTransaction(this);
 		rn.addTrace(Rechnung.PAYMENT, Betrag.getAmountAsString());
@@ -47,17 +53,17 @@ public class Zahlung extends PersistentObject {
 	}
 
 	public String getBemerkung(){
-		return get("Bemerkung");
+		return get(REMARK);
 	}
 
 	public Rechnung getRechnung(){
-		return Rechnung.load(get("RechnungsID"));
+		return Rechnung.load(get(BILL_ID));
 	}
 	public Money getBetrag(){
-		return new Money(checkZero(get("Betragx100")));
+		return new Money(checkZero(get(AMMOUNT_CENTS)));
 	}
 	public String getDatum(){
-		return get("Datum");
+		return get(DATE);
 	}
 	public static Zahlung load(String id){
 		return new Zahlung(id);
@@ -77,7 +83,7 @@ public class Zahlung extends PersistentObject {
 
 	@Override
 	protected String getTableName() {
-		return "ZAHLUNGEN";
+		return TABLENAME;
 	}
 
 }

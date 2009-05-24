@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 5153 2009-02-20 11:50:09Z rgw_ch $
+ *    $Id: Fall.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -41,6 +41,8 @@ import ch.rgw.tools.TimeTool;
  */
 public class Fall extends PersistentObject {
 	
+	public static final String PATIENT_ID = "PatientID";
+	static final String TABLENAME = "FAELLE";
 	public static final String TYPE_DISEASE = "Krankheit";
 	public static final String TYPE_ACCIDENT = "Unfall";
 	public static final String TYPE_MATERNITY = "Mutterschaft";
@@ -50,11 +52,11 @@ public class Fall extends PersistentObject {
 	
 	@Override
 	protected String getTableName(){
-		return "FAELLE";
+		return TABLENAME;
 	}
 	
 	static {
-		addMapping("FAELLE", "PatientID", "res=Diagnosen", "DatumVon=S:D:DatumVon",
+		addMapping(TABLENAME, PATIENT_ID, "res=Diagnosen", "DatumVon=S:D:DatumVon",
 			"DatumBis=S:D:DatumBis", "GarantID", "Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum",
 			"Bezeichnung", "Grund", "xGesetz=Gesetz", "Kostentraeger=KostentrID", "VersNummer",
 			"FallNummer", "RnPlanung=BetriebsNummer", "ExtInfo");
@@ -93,7 +95,7 @@ public class Fall extends PersistentObject {
 		if (!super.isValid()) {
 			return false;
 		}
-		Patient p = Patient.load(get("PatientID"));
+		Patient p = Patient.load(get(PATIENT_ID));
 		if ((p == null) || (!p.isValid())) {
 			return false;
 		}
@@ -144,7 +146,7 @@ public class Fall extends PersistentObject {
 		String Abrechnungsmethode){
 		create(null);
 		set(new String[] {
-			"PatientID", "Bezeichnung", "Grund", "DatumVon"
+			PATIENT_ID, "Bezeichnung", "Grund", "DatumVon"
 		}, PatientID, Bezeichnung, Grund, new TimeTool().toString(TimeTool.DATE_GER));
 		if (Abrechnungsmethode == null) {
 			String[] billings = getAbrechnungsSysteme();
@@ -453,7 +455,7 @@ public class Fall extends PersistentObject {
 	}
 	
 	public Patient getPatient(){
-		return Patient.load(get("PatientID"));
+		return Patient.load(get(PATIENT_ID));
 	}
 	
 	public String getGrund(){

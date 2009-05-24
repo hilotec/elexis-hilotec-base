@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 5219 2009-03-21 18:55:10Z rgw_ch $
+ * $Id: GlobalActions.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -93,10 +93,10 @@ import ch.rgw.tools.TimeTool;
  */
 public class GlobalActions {
 	// globally used command ids (for key bindings / actions)
-	public static final String RENAME_COMMAND = "org.eclipse.ui.edit.rename";
-	public static final String DELETE_COMMAND = "org.eclipse.ui.edit.delete";
-	public static final String PROPERTIES_COMMAND = "org.eclipse.ui.file.properties";
-	public static final String DEFAULTPERSPECTIVECFG = "/default_perspective";
+	public static final String RENAME_COMMAND = "org.eclipse.ui.edit.rename"; //$NON-NLS-1$
+	public static final String DELETE_COMMAND = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
+	public static final String PROPERTIES_COMMAND = "org.eclipse.ui.file.properties"; //$NON-NLS-1$
+	public static final String DEFAULTPERSPECTIVECFG = "/default_perspective"; //$NON-NLS-1$
 	
 	public static IWorkbenchAction exitAction, newWindowAction, copyAction, cutAction, pasteAction;
 	public static IAction loginAction, importAction, testAction, aboutAction, helpAction,
@@ -163,8 +163,8 @@ public class GlobalActions {
 			@Override
 			public void run(){
 				File base = new File(Hub.getBasePath()).getParentFile().getParentFile();
-				String book = base.getAbsolutePath() + File.separator + "elexis.pdf";
-				Program proggie = Program.findProgram(".pdf");
+				String book = base.getAbsolutePath() + File.separator + "elexis.pdf"; //$NON-NLS-1$
+				Program proggie = Program.findProgram(".pdf"); //$NON-NLS-1$
 				if (proggie != null) {
 					proggie.execute(book);
 				} else {
@@ -213,7 +213,7 @@ public class GlobalActions {
 			};
 		savePerspectiveAsDefaultAction = new Action(Messages.getString("GlobalActions.saveasstartperspective")) { //$NON-NLS-1$
 			{
-				setId("start");
+				setId("start"); //$NON-NLS-1$
 				// setActionDefinitionId(Hub.COMMAND_PREFIX+"startPerspective");
 			}
 			
@@ -356,10 +356,10 @@ public class GlobalActions {
 								(Patient) GlobalEvents.getInstance().getSelectedObject(
 									Patient.class);
 							String pid =
-								StringTool.addModulo10(actPatient.getPatCode()) + "-"
+								StringTool.addModulo10(actPatient.getPatCode()) + "-" //$NON-NLS-1$
 									+ new TimeTool().toString(TimeTool.TIME_COMPACT);
 							gc.drawString(
-								Messages.getString("GlobalActions.OrderID") + ": " + pid, 0, 0); //$NON-NLS-1$
+								Messages.getString("GlobalActions.OrderID") + ": " + pid, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
 							FontMetrics fmt = gc.getFontMetrics();
 							y += fmt.getHeight();
 							String pers = actPatient.getPersonalia();
@@ -446,8 +446,8 @@ public class GlobalActions {
 				public void run(){
 					Patient actPatient =
 						(Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
-					String printer = Hub.localCfg.get("Drucker/Einzelblatt/Name", null);
-					String tray = Hub.localCfg.get("Drucker/Einzelblatt/Schacht", null);
+					String printer = Hub.localCfg.get("Drucker/Einzelblatt/Name", null); //$NON-NLS-1$
+					String tray = Hub.localCfg.get("Drucker/Einzelblatt/Schacht", null); //$NON-NLS-1$
 					
 					MessageBox mb =
 						new MessageBox(Desk.getDisplay().getActiveShell(), SWT.ICON_INFORMATION
@@ -464,8 +464,8 @@ public class GlobalActions {
 				public void run(){
 					Patient actPatient =
 						(Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
-					String printer = Hub.localCfg.get("Drucker/A4/Name", null);
-					String tray = Hub.localCfg.get("Drucker/A4/Schacht", null);
+					String printer = Hub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
+					String tray = Hub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
 					
 					new TemplateDrucker("Roentgen-Blatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
 				}
@@ -741,7 +741,7 @@ public class GlobalActions {
 	 * @return a PrinterData object describing the selected printer
 	 */
 	private PrinterData getPrinterData(final String type){
-		String cfgPrefix = "Drucker/" + type + "/"; //$NON-NLS-1$ $NON-NLS-2$
+		String cfgPrefix = "Drucker/" + type + "/"; //$NON-NLS-1$ //$NON-NLS-2$ $NON-NLS-2$
 		
 		PrinterData pd = null;
 		String printer = Hub.localCfg.get(cfgPrefix + "Name", null); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientErfassenDialog.java 4116 2008-07-07 16:41:50Z rgw_ch $
+ *  $Id: PatientErfassenDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -56,7 +56,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 	private String getField(String name){
 		String ret=fld.get(name);
 		if(ret==null){
-			ret="";
+			ret=StringTool.leer;
 		}
 		return ret;
 	}
@@ -137,13 +137,13 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 			ret[6]=tOrt.getText();
 			ret[7]=tTel.getText();
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-			qbe.add("Bezeichnung1","=",ret[0], true);
-			qbe.add("Bezeichnung2","=",ret[1], true);
+			qbe.add("Bezeichnung1",Query.EQUALS,ret[0], true);
+			qbe.add("Bezeichnung2",Query.EQUALS,ret[1], true);
 			List<Kontakt> list=qbe.execute();
 			if( (list!=null) && (!list.isEmpty())){
 				Kontakt k=list.get(0);
 				if(k.istPerson()){
-					k.set("istPatient","1");
+					k.set(Kontakt.IS_PATIENT,StringTool.one);
 					if(MessageDialog.openConfirm(getShell(),Messages.getString("PatientErfassenDialog.personExists"),Messages.getString("PatientErfassenDialog.personWithThisNameExists"))==false){ //$NON-NLS-1$ //$NON-NLS-2$
 						// abort dialog
 						super.cancelPressed();
@@ -152,7 +152,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 				}
 			}
 			Patient pat=new Patient(ret[0],ret[1],check,ret[2]);
-				pat.set(new String[]{"Strasse","Plz","Ort","Telefon1"},
+				pat.set(new String[]{Kontakt.STREET,Kontakt.ZIP,Kontakt.PLACE,Kontakt.PHONE1},
 				new String[]{ret[4],ret[5],ret[6],ret[7]});
 
 			if(check!=null){

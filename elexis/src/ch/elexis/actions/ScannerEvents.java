@@ -65,9 +65,9 @@ public class ScannerEvents implements Listener {
 	 */
 	private String getBarcode(StringBuffer strBuf) {
 		String barcode = strBuf.toString();
-		barcode = barcode.replaceAll(new Character(SWT.CR).toString(), "");
-		barcode = barcode.replaceAll(new Character(SWT.LF).toString(), "");
-		barcode = barcode.replaceAll(new Character((char) 0).toString(), "");
+		barcode = barcode.replaceAll(new Character(SWT.CR).toString(), ""); //$NON-NLS-1$
+		barcode = barcode.replaceAll(new Character(SWT.LF).toString(), ""); //$NON-NLS-1$
+		barcode = barcode.replaceAll(new Character((char) 0).toString(), ""); //$NON-NLS-1$
 		if (barcode.length() > barcodeLength) {
 			return barcode.substring(barcode.length() - barcodeLength);
 		}

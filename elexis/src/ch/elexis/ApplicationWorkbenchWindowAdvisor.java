@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationWorkbenchWindowAdvisor.java 4828 2008-12-17 16:43:33Z rgw_ch $
+ * $Id: ApplicationWorkbenchWindowAdvisor.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -46,9 +46,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
 		configurer.setShowProgressIndicator(true);
-		configurer.setTitle("Elexis");
+		configurer.setTitle(Hub.APPLICATION_NAME);
 		configurer.setShowFastViewBars(true);
-		if (Hub.localCfg.get(PreferenceConstants.SHOWPERSPECTIVESELECTOR, "false").equals("true")) {
+		if (Hub.localCfg.get(PreferenceConstants.SHOWPERSPECTIVESELECTOR, Boolean.toString(false)).equals(Boolean.toString(true))) {
 			configurer.setShowPerspectiveBar(true);
 		} else {
 			configurer.setShowPerspectiveBar(false);

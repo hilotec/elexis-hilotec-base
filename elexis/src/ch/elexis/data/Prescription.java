@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Prescription.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: Prescription.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -28,17 +28,27 @@ import ch.rgw.tools.TimeTool;
  */
 public class Prescription extends PersistentObject {
 	
+	public static final String TERMS = "terms";
+	public static final String DATE_UNTIL = "DatumBis";
+	public static final String DATE_FROM = "DatumVon";
+	public static final String COUNT = "Anzahl";
+	public static final String REMARK = "Bemerkung";
+	public static final String DOSAGE = "Dosis";
+	public static final String REZEPT_ID = "RezeptID";
+	public static final String ARTICLE_ID = "ArtikelID";
+	public static final String PATIENT_ID = "PatientID";
+	private static final String TABLENAME = "PATIENT_ARTIKEL_JOINT";
 	static{
-		addMapping("PATIENT_ARTIKEL_JOINT","PatientID","ArtikelID","RezeptID","DatumVon=S:D:DateFrom",
-				"DatumBis=S:D:DateUntil","Dosis","Bemerkung","Anzahl","ExtInfo");
+		addMapping(TABLENAME,PATIENT_ID,ARTICLE_ID,REZEPT_ID,"DatumVon=S:D:DateFrom",
+				"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,EXTINFO);
 	}
 	
 	public Prescription(Artikel a, Patient p, String d, String b){
 		create(null);
-		set(new String[]{"ArtikelID","PatientID","Dosis","Bemerkung","DatumVon"},a.getId(),p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
+		set(new String[]{ARTICLE_ID,PATIENT_ID,DOSAGE,REMARK,DATE_FROM},a.getId(),p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	public Prescription(Prescription other){
-		String[] fields=new String[]{"ArtikelID","PatientID","Dosis","Bemerkung"};
+		String[] fields=new String[]{ARTICLE_ID,PATIENT_ID,DOSAGE,REMARK};
 		String[] vals=new String[fields.length];
 		if(other.get(fields, vals)){
 			create(null);
@@ -61,19 +71,19 @@ public class Prescription extends PersistentObject {
 	 * @param date may be null to set it as today
 	 */
 	public void setBeginDate(String date){
-		set("DatumVon",date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
+		set(DATE_FROM,date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
 	}
 	
 	public String getBeginDate(){
-		return checkNull(get("DatumVon"));
+		return checkNull(get(DATE_FROM));
 	}
 	
 	public void setEndDate(String date){
-		set("DatumBis",date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
+		set(DATE_UNTIL,date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
 	}
 	
 	public String getEndDate(){
-		return checkNull(get("DatumBis"));
+		return checkNull(get(DATE_UNTIL));
 	}
 	
 	@Override
@@ -90,10 +100,10 @@ public class Prescription extends PersistentObject {
 	}
 	
 	public Artikel getArtikel(){
-		return Artikel.load(get("ArtikelID"));	
+		return Artikel.load(get(ARTICLE_ID));	
 	}
 	public String getDosis(){
-		return checkNull(get("Dosis"));
+		return checkNull(get(DOSAGE));
 	}
 	
 	public void setDosis(String newDose){
@@ -103,7 +113,7 @@ public class Prescription extends PersistentObject {
 		}
 	}
 	public String getBemerkung(){
-		return checkNull(get("Bemerkung"));
+		return checkNull(get(REMARK));
 	
 	}
 	
@@ -115,7 +125,7 @@ public class Prescription extends PersistentObject {
 		if(Hub.acl.request(AccessControlDefaults.MEDICATION_MODIFY)){
 			TimeTool today=new TimeTool();
 			today.addHours(-24);
-			addTerm(today,"0");
+			addTerm(today,StringTool.zero);
 			return true;
 		}
 		return false;
@@ -138,24 +148,24 @@ public class Prescription extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addTerm(TimeTool begin, String dose){
-		Hashtable<String, Object> extInfo=getHashtable("ExtInfo");
-		String raw=(String)extInfo.get("terms");
+		Hashtable<String, Object> extInfo=getHashtable(EXTINFO);
+		String raw=(String)extInfo.get(TERMS);
 		if(raw==null){
 			raw="";
 		}
-		String lastBegin=get("DatumVon");
-		String lastDose=get("Dosis");
+		String lastBegin=get(DATE_FROM);
+		String lastDose=get(DOSAGE);
 		StringBuilder line=new StringBuilder();
 		line.append(StringTool.flattenSeparator)
 			.append(lastBegin)
 			.append("::").append(lastDose);
 		raw+=line.toString();
-		extInfo.put("terms", raw);
-		setHashtable("ExtInfo",extInfo);
-		set("DatumVon",begin.toString(TimeTool.DATE_GER));
-		set("Dosis",dose);
+		extInfo.put(TERMS, raw);
+		setHashtable(EXTINFO,extInfo);
+		set(DATE_FROM,begin.toString(TimeTool.DATE_GER));
+		set(DOSAGE,dose);
 		if(dose.equals("0")){
-			set("DatumBis",begin.toString(TimeTool.DATE_GER));
+			set(DATE_UNTIL,begin.toString(TimeTool.DATE_GER));
 		}
 	}
 	
@@ -166,8 +176,8 @@ public class Prescription extends PersistentObject {
 	 */
 	public SortedMap<TimeTool, String> getTerms(){
 		TreeMap<TimeTool, String> ret=new TreeMap<TimeTool,String>();
-		Hashtable extInfo=getHashtable("ExtInfo");
-		String raw=(String)extInfo.get("terms");
+		Hashtable extInfo=getHashtable(EXTINFO);
+		String raw=(String)extInfo.get(TERMS);
 		if(raw!=null){
 			String[] terms=raw.split(StringTool.flattenSeparator);
 			for(String term:terms){
@@ -180,23 +190,17 @@ public class Prescription extends PersistentObject {
 				ret.put(date, dose);
 			}
 		}
-		ret.put(new TimeTool(get("DatumVon")), get("Dosis"));
+		ret.put(new TimeTool(get(DATE_FROM)), get(DOSAGE));
 		return ret;
 	}
 	
 	
 	@Override
 	protected String getTableName() {
-		return "PATIENT_ARTIKEL_JOINT";
+		return TABLENAME;
 	}
 	@Override
 	public boolean isDragOK() {
 		return true;
 	}
-	/*
-	static class Term{
-		String begin;
-		String dose;
-	}
-	*/
 }

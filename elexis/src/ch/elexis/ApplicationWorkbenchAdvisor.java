@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 5003 2009-01-22 19:42:21Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -72,24 +72,24 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         
         // look whether we have do to some work before creating the workbench
         try{
-    		final Class<?> up=Class.forName("ch.elexis.PreStartUpdate");
-    		Hub.log.log("Found PreStartUpdate, executing", Log.SYNCMARK);
+    		final Class<?> up=Class.forName("ch.elexis.PreStartUpdate"); //$NON-NLS-1$
+    		Hub.log.log("Found PreStartUpdate, executing", Log.SYNCMARK); //$NON-NLS-1$
     		//Object psu=up.newInstance();
     		//psu=null;
     		Hub.addShutdownJob(new ShutdownJob(){
 
 				public void doit() throws Exception {
-		    		File file=new File(FileTool.getBasePath(up),"PreStartUpdate.class");
+		    		File file=new File(FileTool.getBasePath(up),"PreStartUpdate.class"); //$NON-NLS-1$
 		    		if(file.delete()){
-		    			Hub.log.log("Deleted PreStartUpdate successfully", Log.SYNCMARK);
+		    			Hub.log.log("Deleted PreStartUpdate successfully", Log.SYNCMARK); //$NON-NLS-1$
 		    		}else{
-		    			Hub.log.log("Could not delete PreStartUpdate",Log.ERRORS);
+		    			Hub.log.log("Could not delete PreStartUpdate",Log.ERRORS); //$NON-NLS-1$
 		    		}
 				}});
         }catch(ClassNotFoundException cnf){
     		// nothing
     	}catch(Exception ex){
-    		Hub.log.log("Error executing PreStartUpdate "+ex.getMessage(), Log.ERRORS);
+    		Hub.log.log("Error executing PreStartUpdate "+ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
     	}
 
         //Hub.jobPool.activate("PatientenListe",Job.LONG);
@@ -120,7 +120,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		// check if there is a valid user
 		if ((Hub.actUser == null) || !Hub.actUser.isValid()) {
 			// no valid user, exit (don't consider this as an error)
-			Hub.log.log("Exit because no valid user logged-in", Log.WARNINGS);
+			Hub.log.log("Exit because no valid user logged-in", Log.WARNINGS); //$NON-NLS-1$
             PersistentObject.disconnect();
             System.exit(0);
 		}

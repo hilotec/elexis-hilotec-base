@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktMatcher.java 4151 2008-07-19 06:29:47Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -37,9 +37,9 @@ public class KontaktMatcher {
 	public enum CreateMode{FAIL,CREATE,ASK};
 	
 	public static Kontakt findKontakt(final String name, final String strasse, final String plz, final String ort){
-		Organisation o=findOrganisation(name, "", strasse, plz, ort, CreateMode.FAIL);
+		Organisation o=findOrganisation(name, StringTool.leer, strasse, plz, ort, CreateMode.FAIL);
 		if(o==null){
-			Person p=findPerson(name, "", "", "", strasse, plz, ort, "", CreateMode.FAIL);
+			Person p=findPerson(name, StringTool.leer, StringTool.leer, StringTool.leer, strasse, plz, ort, StringTool.leer, CreateMode.FAIL);
 			return p;
 		}else{
 			return o;
@@ -63,14 +63,14 @@ public class KontaktMatcher {
 		hints[HINT_ZIP]=plz;
 		hints[HINT_PLACE]=ort;
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
-		qbe.add("Name", "=", name);
+		qbe.add(Organisation.NAME1, Query.EQUALS, name);
 		if(!StringTool.isNothing(zusatz)){
 			qbe.add("Zusatz1", "=", zusatz);
 		}
 		List<Organisation> found=qbe.execute();
 		if(found.size()==0){
 			if(createMode==CreateMode.CREATE){
-				Organisation org= new Organisation(name,zusatz==null ? "" : zusatz);
+				Organisation org= new Organisation(name,StringTool.unNull(zusatz));
 				addAddress(org,strasse,plz,ort);
 				return org;
 			}else if(createMode==CreateMode.ASK){
@@ -128,7 +128,7 @@ public class KontaktMatcher {
 		hints[HINT_ZIP]=plz;
 		hints[HINT_PLACE]=ort;
 		if(isPatient){
-			hints[HINT_PATIENT]="1";
+			hints[HINT_PATIENT]=StringTool.one;
 		}
 		Query<Person> qbe=new Query<Person>(Person.class);
 		String sex="";
@@ -136,11 +136,11 @@ public class KontaktMatcher {
 		
 		if(!StringTool.isNothing(name)){
 			qbe.startGroup();
-			qbe.add("Name", "LIKE", name+"%",true);
+			qbe.add(Person.NAME, "LIKE", name+"%",true);
 			String un=StringTool.unambiguify(name);
 			if(!un.equalsIgnoreCase(name)){
 				qbe.or();
-				qbe.add("Name", "LIKE", un+"%",true);
+				qbe.add(Person.NAME, "LIKE", un+"%",true);
 			}
 			qbe.endGroup();
 			qbe.and();
@@ -148,11 +148,11 @@ public class KontaktMatcher {
 		
 		if(!StringTool.isNothing(vorname)){
 			qbe.startGroup();
-			qbe.add("Vorname", "LIKE", vorname+"%",true);
+			qbe.add(Person.FIRSTNAME, "LIKE", vorname+"%",true);
 			String un=StringTool.unambiguify(vorname);
 			if(!un.equalsIgnoreCase(vorname)){
 				qbe.or();
-				qbe.add("Vorname", "LIKE", un+"%",true);
+				qbe.add(Person.FIRSTNAME, "LIKE", un+"%",true);
 			}
 			qbe.endGroup();
 			qbe.and();
@@ -161,7 +161,7 @@ public class KontaktMatcher {
 			TimeTool tt=new TimeTool();
 			if(tt.set(gebdat)){
 				birthdate=tt.toString(TimeTool.DATE_GER);
-				qbe.add("Geburtsdatum", "=", tt.toString(TimeTool.DATE_COMPACT));
+				qbe.add(Person.BIRTHDATE, Query.EQUALS, tt.toString(TimeTool.DATE_COMPACT));
 			}
 		}
 		if(!StringTool.isNothing(gender)){
@@ -177,7 +177,7 @@ public class KontaktMatcher {
 					sex=StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
 				}
 			}
-			qbe.add("Geschlecht", "=", sex);
+			qbe.add(Person.SEX, Query.EQUALS, sex);
 		}
 		List<Person> found=qbe.execute();
 		if(found.size()==0){
@@ -188,7 +188,7 @@ public class KontaktMatcher {
 			}else if(createMode==CreateMode.ASK){
 				return (Person)KontaktSelektor.showInSync(Person.class, "Person nicht gefunden",
 						name+" "+vorname+
-						(StringTool.isNothing(gebdat) ? "" : ", "+gebdat)+
+						(StringTool.isNothing(gebdat) ? StringTool.leer : ", "+gebdat)+
 						", "+strasse+", "+plz+" "+ort,
 						resolve1,hints);
 			}
@@ -201,7 +201,7 @@ public class KontaktMatcher {
 		if(createMode==CreateMode.ASK){
 			return (Person)KontaktSelektor.showInSync(Person.class, "Person nicht eindeutig",
 					name+" "+vorname+
-					(StringTool.isNothing(gebdat) ? "" : ", "+gebdat)+
+					(StringTool.isNothing(gebdat) ? StringTool.leer : ", "+gebdat)+
 					", "+strasse+", "+plz+" "+ort,
 					resolve1,hints);
 		}else{
@@ -234,7 +234,7 @@ public class KontaktMatcher {
 			
 			// If we have the same street address, that's also a good hint
 			if(!StringTool.isNothing(strasse)){
-				if(isSameStreet(kk[i].get("Strasse"),strasse)){
+				if(isSameStreet(kk[i].get(Kontakt.STREET),strasse)){
 					score[i]+=3;
 				}else{
 					score[i]-=2;	
@@ -243,14 +243,14 @@ public class KontaktMatcher {
 			
 			// If we have the same zip or the same olace, that's a quite weak hint.
 			if(!StringTool.isNothing(plz)){
-				if(plz.equals(kk[i].get("Plz"))){
+				if(plz.equals(kk[i].get(Kontakt.ZIP))){
 					score[i]+=2;
 				}else{
 					score[i]-=1;
 				}
 			}
 			if(!StringTool.isNothing(ort)){
-				if(ort.equals(kk[i].get("Ort"))){
+				if(ort.equals(kk[i].get(Kontakt.PLACE))){
 					score[i]+=1;
 				}else{
 					score[i]-=1;
@@ -321,7 +321,7 @@ public class KontaktMatcher {
 			}
 			if(m1l>1){
 				for(int i=1;i<m1l;i++){
-					m2.append(" ").append(m1[i]);
+					m2.append(StringTool.space).append(m1[i]);
 				}
 			}
 		}
@@ -336,11 +336,11 @@ public class KontaktMatcher {
 		}else if(ort.length>2){
 			StringBuilder plz=new StringBuilder();
 			for(int i=1;i<ort.length;i++){
-				plz.append(ort[i]).append(" ");
+				plz.append(ort[i]).append(StringTool.space);
 			}
 			addAddress(k,str,ort[0],plz.toString());
 		}else{
-			addAddress(k,str,ort[0],"");
+			addAddress(k,str,ort[0],StringTool.leer);
 		}
 	}
 	public static void addAddress(final Kontakt k, final String str, String plz, final String ort){

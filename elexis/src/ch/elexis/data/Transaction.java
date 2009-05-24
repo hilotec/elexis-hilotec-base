@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Transaction.java 23 2006-03-24 15:36:01Z rgw_ch $
+ *  $Id: Transaction.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -18,8 +18,9 @@ import java.util.ArrayList;
 /**
  * Transaktionsorientierte Datenspeicherung
  * @author Gerry
- *
+ *@deprecated we don't need this really
  */
+@Deprecated
 public class Transaction {
     ArrayList<String> fields,values;
     PersistentObject o;

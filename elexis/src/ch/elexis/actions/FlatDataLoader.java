@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5175 2009-02-22 17:54:06Z rgw_ch $
+ * $Id: FlatDataLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -34,7 +34,7 @@ import ch.elexis.util.viewers.CommonViewer;
  * 
  */
 public class FlatDataLoader extends PersistentObjectLoader implements ILazyContentProvider {
-	private static final String LOADMESSAGE = "Lade Daten...";
+	private static final String LOADMESSAGE = "Lade Daten..."; //$NON-NLS-1$
 	private List<? extends PersistentObject> raw = null;
 	private List<? extends PersistentObject> filtered = null;
 	protected String orderField;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: NeuerFallDialog.java 2866 2007-07-22 17:30:40Z rgw_ch $
+ *    $Id: NeuerFallDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -26,20 +26,22 @@ import ch.elexis.views.FallDetailBlatt2;
 public class NeuerFallDialog extends TitleAreaDialog {
 	Fall fall;
 	Patient pat;
-	
-	public NeuerFallDialog(Shell shell, Fall f){
+
+	public NeuerFallDialog(Shell shell, Fall f) {
 		super(shell);
-		fall=f;
-		if(fall==null){
-			pat=GlobalEvents.getSelectedPatient();
-			fall=pat.neuerFall(Messages.getString("NeuerFallDialog.0"), Messages.getString("NeuerFallDialog.1"), Messages.getString("NeuerFallDialog.2")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		fall = f;
+		if (fall == null) {
+			pat = GlobalEvents.getSelectedPatient();
+			fall = pat
+					.neuerFall(
+							Messages.getString("NeuerFallDialog.0"), Messages.getString("NeuerFallDialog.1"), Messages.getString("NeuerFallDialog.2")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			GlobalEvents.getInstance().fireSelectionEvent(fall);
 		}
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		FallDetailBlatt2 fdb=new FallDetailBlatt2(parent);
+		FallDetailBlatt2 fdb = new FallDetailBlatt2(parent);
 		return fdb;
 	}
 
@@ -52,18 +54,11 @@ public class NeuerFallDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected void okPressed() {
-		// TODO Auto-generated method stub
-		super.okPressed();
-	}
-
-	@Override
 	protected void cancelPressed() {
 		fall.delete();
-		//GlobalEvents.getInstance().clearSelection(Fall.class, null);
+		// GlobalEvents.getInstance().clearSelection(Fall.class, null);
 		GlobalEvents.getInstance().fireUpdateEvent(Fall.class);
 		super.cancelPressed();
 	}
-	
-	
+
 }
