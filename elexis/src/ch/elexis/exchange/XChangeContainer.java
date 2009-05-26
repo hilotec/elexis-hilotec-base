@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich, SGAM.Informatics and Elexis
+ * Copyright (c) 2007-2009, G. Weirich, SGAM.Informatics and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XChangeContainer.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ * $Id: XChangeContainer.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -43,30 +43,32 @@ import ch.elexis.exchange.elements.XidElement;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver {
-	public static final String Version = "1.0.2";
+	private static final String PLURAL = "s"; //$NON-NLS-1$
+	public static final String Version = "1.0.2"; //$NON-NLS-1$
 	public static final Namespace ns =
-		Namespace.getNamespace("xChange", "http://informatics.sgam.ch/xChange");
+		Namespace.getNamespace("xChange", "http://informatics.sgam.ch/xChange"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final Namespace nsxsi =
-		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance");
+		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final Namespace nsschema =
-		Namespace.getNamespace("schemaLocation", "http://informatics.sgam.ch/xChange xchange.xsd");
+		Namespace.getNamespace("schemaLocation", "http://informatics.sgam.ch/xChange xchange.xsd"); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	public static final String ROOT_ELEMENT = "xChange";
-	public static final String ROOTPATH = "/" + ROOT_ELEMENT + "/";
+	public static final String ROOT_ELEMENT = "xChange"; //$NON-NLS-1$
+	public static final String ROOTPATH = StringTool.slash + ROOT_ELEMENT + StringTool.slash;
 	
-	public static final String ENCLOSE_CONTACTS = ContactElement.XMLNAME + "s";
-	public static final String PATIENT_ELEMENT = "patient";
-	public static final String ENCLOSE_DOCUMENTS = DocumentElement.XMLNAME + "s";
-	public static final String ENCLOSE_RECORDS = RecordElement.XMLNAME + "s";
-	public static final String ENCLOSE_FINDINGS = FindingElement.XMLNAME + "s";
-	public static final String ENCLOSE_MEDICATIONS = MedicationElement.XMLNAME + "s";
-	public static final String ENCLOSE_RISKS = RiskElement.XMLNAME + "s";
-	public static final String ENCLOSE_EPISODES = "anamnesis";
+	public static final String ENCLOSE_CONTACTS = ContactElement.XMLNAME + PLURAL;
+	public static final String PATIENT_ELEMENT = "patient"; //$NON-NLS-1$
+	public static final String ENCLOSE_DOCUMENTS = DocumentElement.XMLNAME + PLURAL;
+	public static final String ENCLOSE_RECORDS = RecordElement.XMLNAME + PLURAL;
+	public static final String ENCLOSE_FINDINGS = FindingElement.XMLNAME + PLURAL;
+	public static final String ENCLOSE_MEDICATIONS = MedicationElement.XMLNAME + PLURAL;
+	public static final String ENCLOSE_RISKS = RiskElement.XMLNAME + PLURAL;
+	public static final String ENCLOSE_EPISODES = "anamnesis"; //$NON-NLS-1$
 	
 	protected Element eRoot;
-	protected static Log log = Log.get("XChange");
+	protected static Log log = Log.get("XChange"); //$NON-NLS-1$
 	
 	protected HashMap<String, byte[]> binFiles = new HashMap<String, byte[]>();
 	protected HashMap<XChangeElement, UserChoice> choices =
@@ -78,7 +80,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 		new HashMap<PersistentObject, XChangeElement>();
 	
 	protected List<IExchangeContributor> lex =
-		Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution");
+		Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	public abstract Kontakt findContact(String id);
 	
@@ -98,7 +100,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 		if (eContacts == null) {
 			eContacts = new ContactsElement(this);
 			eRoot.addContent(eContacts.getElement());
-			choices.put(eContacts, new UserChoice(true, "Kontakte", eContacts));
+			choices.put(eContacts, new UserChoice(true, Messages.XChangeContainer_kontakte, eContacts));
 		} else {
 			List<ContactElement> lContacts =
 				(List<ContactElement>) eContacts.getChildren(ContactElement.XMLNAME,
@@ -148,7 +150,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 		
 		MedicalElement eMedical = new MedicalElement(this, pat);
 		ret.add(eMedical);
-		choices.put(eMedical, new UserChoice(true, "Krankengeschichte", eMedical));
+		choices.put(eMedical, new UserChoice(true, Messages.XChangeContainer_kg, eMedical));
 		for (IExchangeContributor iex : lex) {
 			iex.exportHook(eMedical);
 		}
@@ -156,7 +158,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	}
 	
 	public List<ContactElement> getContactElements(){
-		return (List<ContactElement>) getElements(ROOTPATH + ENCLOSE_CONTACTS + "/"
+		return (List<ContactElement>) getElements(ROOTPATH + ENCLOSE_CONTACTS + StringTool.slash
 			+ ContactElement.XMLNAME);
 	}
 	
@@ -197,7 +199,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 								}
 							} catch (JDOMException e) {
 								ExHandler.handle(e);
-								log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS);
+								log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS); //$NON-NLS-1$
 							}
 						}
 						
@@ -261,7 +263,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	@SuppressWarnings("unchecked")
 	public List<? extends XChangeElement> getElements(String path){
 		LinkedList<XChangeElement> ret = new LinkedList<XChangeElement>();
-		String[] trace = path.split("/");
+		String[] trace = path.split(StringTool.slash);
 		Element runner = eRoot;
 		for (int i = 2; i < trace.length - 1; i++) {
 			runner = runner.getChild(trace[i], ns);
@@ -270,7 +272,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 			}
 		}
 		String name = trace[trace.length - 1];
-		if (trace.equals("*")) {
+		if (trace.equals("*")) { //$NON-NLS-1$
 			return runner.getChildren();
 		}
 		return runner.getChildren(name, ns);

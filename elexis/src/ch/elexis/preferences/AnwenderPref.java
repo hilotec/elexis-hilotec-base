@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnwenderPref.java 5272 2009-04-28 16:48:15Z rgw_ch $
+ *  $Id: AnwenderPref.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 import java.util.Hashtable;
@@ -44,7 +44,10 @@ import ch.elexis.util.LabeledInputField.InputData.Typ;
 
 public class AnwenderPref extends PreferencePage implements
 		IWorkbenchPreferencePage {
-	public static final String ID="ch.elexis.anwenderprefs";
+	private static final String EXT_INFO = "ExtInfo"; //$NON-NLS-1$
+
+
+	public static final String ID="ch.elexis.anwenderprefs"; //$NON-NLS-1$
 	
 	
 	private LabeledInputField.AutoForm lfa;
@@ -98,12 +101,12 @@ public class AnwenderPref extends PreferencePage implements
 		for(int i=0;i<mands.length;i++){
 			mands[i]=ml.get(i).getLabel();
 		}
-		String grp=Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, "Admin");
+		String grp=Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, "Admin"); //$NON-NLS-1$
 		def=new InputData[]{
-				new InputData("Kürzel","Label",Typ.STRING,null),
-				new InputData("Passwort","ExtInfo",Typ.STRING,"UsrPwd"),
-				new InputData("Gruppe","ExtInfo","Groups",grp.split(",")),
-				new InputData("Für Mandant","ExtInfo","Mandant",mands)
+				new InputData(Messages.AnwenderPref_kuerzel,"Label",Typ.STRING,null), //$NON-NLS-1$
+				new InputData(Messages.AnwenderPref_passwort,EXT_INFO,Typ.STRING,"UsrPwd"), 
+				new InputData(Messages.AnwenderPref_gruppe,EXT_INFO,"Groups",grp.split(",")), //$NON-NLS-1$ //$NON-NLS-2$
+				new InputData(Messages.AnwenderPref_fuerMandant,Messages.AnwenderPref_12,"Mandant",mands) //$NON-NLS-1$
 		};
 	}
 

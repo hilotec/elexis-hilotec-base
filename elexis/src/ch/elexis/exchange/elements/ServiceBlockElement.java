@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2009, G. Weirich, SGAM.informatics and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: ServiceBlockElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.exchange.elements;
 
 import java.util.List;
@@ -13,7 +26,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.StringTool;
 
-@SuppressWarnings("serial")
+
 public class ServiceBlockElement extends XChangeElement {
 	public static final String XMLNAME = "serviceblock";
 	public static final String ENCLOSING = "serviceblocks";

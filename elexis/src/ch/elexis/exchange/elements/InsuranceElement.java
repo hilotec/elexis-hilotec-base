@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: InsuranceElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: InsuranceElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,7 +21,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.TimeTool;
 
-@SuppressWarnings("serial")
+
 public class InsuranceElement extends XChangeElement {
 	public static final String XMLNAME = "insurance";
 	public static final String ATTR_COMPANYREF = "companyref";

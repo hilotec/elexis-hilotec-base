@@ -48,7 +48,7 @@ import ch.rgw.tools.net.NetTool;
 public class StringTool {
 
 	public static final String Version() {
-		return "2.0.1";
+		return "2.0.2";
 	}
 
 	private static String default_charset = "utf-8";
@@ -59,6 +59,8 @@ public class StringTool {
 	public static final String lf="\n";
 	public static final String one="1";
 	public static final String zero="0";
+	public static final String slash="/";
+	public static final String backslash="\\";
 	
 	public static final String numbers = "[0-9]+";
 	public static final String wordSeparators = "[\\t ,\\.:\\?!\\n\\r]";

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicationElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: MedicationElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -22,7 +22,6 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
-@SuppressWarnings("serial")
 public class MedicationElement extends XChangeElement {
 	public static final String XMLNAME = "medication";
 	public static final String ATTRIB_BEGINDATE = "startDate";

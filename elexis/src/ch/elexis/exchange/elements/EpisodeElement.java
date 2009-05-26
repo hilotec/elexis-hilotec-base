@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EpisodeElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: EpisodeElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -22,7 +22,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
-@SuppressWarnings("serial")
+
 public class EpisodeElement extends XChangeElement {
 	public static final String XMLNAME = "episode";
 	public static final String ATTR_BEGINDATE = "beginDate";
@@ -43,7 +43,7 @@ public class EpisodeElement extends XChangeElement {
 	public EpisodeElement(XChangeContainer parent, Konsultation k, IDiagnose dg){
 		super(parent);
 		setAttribute(ATTR_BEGINDATE, new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
-		setAttribute("id", XMLTool.idToXMLID(StringTool.unique("episode")));
+		setAttribute(ID, XMLTool.idToXMLID(StringTool.unique("episode")));
 		DiagnosisElement eDiag = new DiagnosisElement(parent, dg);
 		add(eDiag);
 		setAttribute(ATTR_TITLE, dg.getLabel());

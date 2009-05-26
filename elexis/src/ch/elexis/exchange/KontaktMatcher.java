@@ -34,6 +34,8 @@ import ch.rgw.tools.TimeTool;
  */
 
 public class KontaktMatcher {
+	private static final String SEP = ", "; //$NON-NLS-1$
+
 	public enum CreateMode{FAIL,CREATE,ASK};
 	
 	public static Kontakt findKontakt(final String name, final String strasse, final String plz, final String ort){
@@ -65,7 +67,7 @@ public class KontaktMatcher {
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
 		qbe.add(Organisation.NAME1, Query.EQUALS, name);
 		if(!StringTool.isNothing(zusatz)){
-			qbe.add("Zusatz1", "=", zusatz);
+			qbe.add("Zusatz1", Query.EQUALS, zusatz); //$NON-NLS-1$
 		}
 		List<Organisation> found=qbe.execute();
 		if(found.size()==0){
@@ -74,8 +76,8 @@ public class KontaktMatcher {
 				addAddress(org,strasse,plz,ort);
 				return org;
 			}else if(createMode==CreateMode.ASK){
-				return (Organisation)KontaktSelektor.showInSync(Organisation.class, "Organisation nicht gefunden",
-						name+", "+strasse+", "+plz+" "+ort,
+				return (Organisation)KontaktSelektor.showInSync(Organisation.class, Messages.KontaktMatcher_OrganizationNotFound,
+						name+SEP+strasse+SEP+plz+StringTool.space+ort,
 						resolve1,hints);
 			}
 		}
@@ -84,8 +86,8 @@ public class KontaktMatcher {
 		}
 		// more than 1 hit
 		if(createMode==CreateMode.ASK){
-			return (Organisation)KontaktSelektor.showInSync(Organisation.class, "Organisation nicht eindeutig",
-					name+", "+strasse+", "+plz+" "+ort,
+			return (Organisation)KontaktSelektor.showInSync(Organisation.class, Messages.KontaktMatcher_OrganizationNotUnique,
+					name+SEP+strasse+SEP+plz+StringTool.space+ort,
 					resolve1,hints);
 		}else{
 			return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
@@ -131,16 +133,16 @@ public class KontaktMatcher {
 			hints[HINT_PATIENT]=StringTool.one;
 		}
 		Query<Person> qbe=new Query<Person>(Person.class);
-		String sex="";
-		String birthdate="";
+		String sex=StringTool.leer;
+		String birthdate=StringTool.leer;
 		
 		if(!StringTool.isNothing(name)){
 			qbe.startGroup();
-			qbe.add(Person.NAME, "LIKE", name+"%",true);
+			qbe.add(Person.NAME, "LIKE", name+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
 			String un=StringTool.unambiguify(name);
 			if(!un.equalsIgnoreCase(name)){
 				qbe.or();
-				qbe.add(Person.NAME, "LIKE", un+"%",true);
+				qbe.add(Person.NAME, "LIKE", un+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			qbe.endGroup();
 			qbe.and();
@@ -148,11 +150,11 @@ public class KontaktMatcher {
 		
 		if(!StringTool.isNothing(vorname)){
 			qbe.startGroup();
-			qbe.add(Person.FIRSTNAME, "LIKE", vorname+"%",true);
+			qbe.add(Person.FIRSTNAME, "LIKE", vorname+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
 			String un=StringTool.unambiguify(vorname);
 			if(!un.equalsIgnoreCase(vorname)){
 				qbe.or();
-				qbe.add(Person.FIRSTNAME, "LIKE", un+"%",true);
+				qbe.add(Person.FIRSTNAME, "LIKE", un+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			qbe.endGroup();
 			qbe.and();
@@ -166,13 +168,13 @@ public class KontaktMatcher {
 		}
 		if(!StringTool.isNothing(gender)){
 			String gl=gender.toLowerCase();
-			if(gl.startsWith("f") || gl.startsWith("w")){
+			if(gl.startsWith("f") || gl.startsWith("w")){ //$NON-NLS-1$ //$NON-NLS-2$
 				sex=Person.FEMALE;
-			}else if(gl.startsWith("m")){
+			}else if(gl.startsWith("m")){ //$NON-NLS-1$
 				sex=Person.MALE;
 			}else{
 				if(StringTool.isNothing(vorname)){
-					sex="?";
+					sex="?"; //$NON-NLS-1$
 				}else{
 					sex=StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
 				}
@@ -186,10 +188,10 @@ public class KontaktMatcher {
 				addAddress(ret,strasse,plz,ort);
 				return ret;
 			}else if(createMode==CreateMode.ASK){
-				return (Person)KontaktSelektor.showInSync(Person.class, "Person nicht gefunden",
-						name+" "+vorname+
-						(StringTool.isNothing(gebdat) ? StringTool.leer : ", "+gebdat)+
-						", "+strasse+", "+plz+" "+ort,
+				return (Person)KontaktSelektor.showInSync(Person.class, Messages.KontaktMatcher_PersonNotFound,
+						name+"StringTool.Space"+vorname+ //$NON-NLS-1$
+						(StringTool.isNothing(gebdat) ? StringTool.leer : SEP+gebdat)+
+						SEP+strasse+SEP+plz+" "+ort,
 						resolve1,hints);
 			}
 			return null;
@@ -199,10 +201,10 @@ public class KontaktMatcher {
 		}
 		// more than 1 hit
 		if(createMode==CreateMode.ASK){
-			return (Person)KontaktSelektor.showInSync(Person.class, "Person nicht eindeutig",
+			return (Person)KontaktSelektor.showInSync(Person.class, Messages.KontaktMatcher_PersonNotUnique,
 					name+" "+vorname+
-					(StringTool.isNothing(gebdat) ? StringTool.leer : ", "+gebdat)+
-					", "+strasse+", "+plz+" "+ort,
+					(StringTool.isNothing(gebdat) ? StringTool.leer : SEP+gebdat)+
+					SEP+strasse+SEP+plz+" "+ort,
 					resolve1,hints);
 		}else{
 			return (Person)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort,natel);
@@ -227,7 +229,7 @@ public class KontaktMatcher {
 			
 			// If we have the same mobile number, that's a strong hint
 			if(!StringTool.isNothing(natel)){
-				if(normalizePhone(kk[i].get("NatelNr")).equals(normalizePhone(natel))){
+				if(normalizePhone(kk[i].get("NatelNr")).equals(normalizePhone(natel))){ //$NON-NLS-1$
 					score[i]+=5;
 				}
 			}
@@ -275,7 +277,7 @@ public class KontaktMatcher {
 	 * @return always a two element array, [0] is zip or "", [1] is place or ""
 	 */
 	public static String[] normalizeAddress(String str){
-		String[] ret=str.split("\\s+",2);
+		String[] ret=str.split("\\s+",2); //$NON-NLS-1$
 		if(ret.length<2){
 			String[] rx=new String[2];
 			rx[0]="";
@@ -290,7 +292,7 @@ public class KontaktMatcher {
 	 * @return
 	 */
 	public static String normalizePhone(final String nr){
-		return nr.replaceAll("[\\s-:\\.]", "");
+		return nr.replaceAll("[\\s-:\\.]", StringTool.leer); //$NON-NLS-1$
 	}
 	
 	/**
@@ -309,13 +311,13 @@ public class KontaktMatcher {
 		return true;
 	}
 	static String[] normalizeStrasse(final String strasse){
-		String[] m1=StringTool.normalizeCase(strasse).split("\\s");
+		String[] m1=StringTool.normalizeCase(strasse).split("\\s"); //$NON-NLS-1$
 		int m1l=m1.length;
 		StringBuilder m2=new StringBuilder();
 		m2.append(m1[0]);
 		String nr="0";
 		if(m1l>1){
-			if(m1[m1l-1].matches("[0-9]+[a-zA-Z]")){
+			if(m1[m1l-1].matches("[0-9]+[a-zA-Z]")){ //$NON-NLS-1$
 				nr=m1[m1l-1];
 				m1l-=1;
 			}
@@ -330,7 +332,7 @@ public class KontaktMatcher {
 	}
 	
 	public static void addAddress(final Kontakt k, String str, String plzort){
-		String[] ort=plzort.split("[\\s+]");
+		String[] ort=plzort.split("[\\s+]"); //$NON-NLS-1$
 		if(ort.length==2){
 			addAddress(k,str,ort[0],ort[1]);
 		}else if(ort.length>2){
@@ -349,8 +351,8 @@ public class KontaktMatcher {
 			an.setStrasse(str);
 		}
 		if(!StringTool.isNothing(plz)){
-			if(plz.matches("[A-Z]{1,3}[\\s\\-]+[A-Za-z0-9]+")){
-				String[] plzx=plz.split("[\\s\\-]+", 1);
+			if(plz.matches("[A-Z]{1,3}[\\s\\-]+[A-Za-z0-9]+")){ //$NON-NLS-1$
+				String[] plzx=plz.split("[\\s\\-]+", 1); //$NON-NLS-1$
 				if(plzx.length>1){
 					plz=plzx[1];
 					an.setLand(plzx[0]);
@@ -400,15 +402,15 @@ public class KontaktMatcher {
 		return false;
 	}
 	static String simpleName(final String name){
-		String[] ret=name.split("\\s*[- ]\\s*");
+		String[] ret=name.split("\\s*[- ]\\s*"); //$NON-NLS-1$
 		return ret[0];
 	}
 	
 	final static String resolve1=
-		"Es kann nicht automatisch entschieden werden, ob dieser Kontakt in der\n"+
-		"Datenbank enthalten ist, bzw. welchem existierenden Kontakt dies entspricht.\n" +
-		"Bitte wählen Sie unten aus, welchem Kontakt dieser neue Eintrag entspricht,\n" +
-		"oder Klicken Sie 'Neu erstellen', um den Kontakt neu zu erstellen.\n"+
-		"'Cancel' bricht den Importvorgang ab.";
+		Messages.KontaktMatcher_noauto1+
+		Messages.KontaktMatcher_noauto2 +
+		Messages.KontaktMatcher_noauto3 +
+		Messages.KontaktMatcher_noauto4+
+		Messages.KontaktMatcher_noauto5;
 
 }

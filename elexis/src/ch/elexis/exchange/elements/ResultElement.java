@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: ResultElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -22,7 +22,6 @@ import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
-@SuppressWarnings("serial")
 public class ResultElement extends XChangeElement {
 	public static final String XMLNAME = "result";
 	public static final String ATTR_DATE = "timestamp";
@@ -33,20 +32,21 @@ public class ResultElement extends XChangeElement {
 	public static final String ELEMENT_IMAGE = "image";
 	public static final String ELEMENT_TEXTRESULT = "textResult";
 	public static final String ELEMENT_DOCRESULT = "documentRef";
-	
+
 	@Override
-	public String getXMLName(){
+	public String getXMLName() {
 		return XMLNAME;
 	}
-	
-	public ResultElement(XChangeContainer parent, Element el){
+
+	public ResultElement(XChangeContainer parent, Element el) {
 		super(parent, el);
 	}
-	
-	public static ResultElement addResult(MedicalElement me, LabResult lr){
+
+	public static ResultElement addResult(MedicalElement me, LabResult lr) {
 		List<FindingElement> findings = me.getAnalyses();
 		for (FindingElement fe : findings) {
-			if (fe.getXid().getID().equals(XMLTool.idToXMLID(lr.getItem().getId()))) {
+			if (fe.getXid().getID().equals(
+					XMLTool.idToXMLID(lr.getItem().getId()))) {
 				ResultElement re = new ResultElement(me.getContainer(), lr);
 				me.addAnalyse(re);
 				return re;
@@ -58,20 +58,22 @@ public class ResultElement extends XChangeElement {
 		me.addAnalyse(re);
 		return re;
 	}
-	
-	private ResultElement(XChangeContainer home, LabResult lr){
+
+	private ResultElement(XChangeContainer home, LabResult lr) {
 		super(home);
 		setAttribute("id", XMLTool.idToXMLID(lr.getId()));
-		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATETIME_XML));
+		setAttribute(ATTR_DATE, new TimeTool(lr.getDate())
+				.toString(TimeTool.DATETIME_XML));
 		setAttribute(ATTR_LABITEM, XMLTool.idToXMLID(lr.getItem().getId()));
-		ResultElement eResult = new ResultElement(getContainer(), (Element) null);
+		ResultElement eResult = new ResultElement(getContainer(),
+				(Element) null);
 		eResult.setText(lr.getResult());
 		add(eResult);
 		// setAttribute(ATTR_NORMAL,); // TODO
 		home.addChoice(this, lr.getLabel(), lr);
 	}
-	
-	public void setText(String text){
+
+	public void setText(String text) {
 
 	}
 }

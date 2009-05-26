@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockContainer.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: BlockContainer.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -49,11 +49,11 @@ public class BlockContainer extends XChangeContainer {
 		eRoot = new Element(ROOT_ELEMENT, ns);
 		eRoot.addNamespaceDeclaration(nsxsi);
 		eRoot.addNamespaceDeclaration(nsschema);
-		eRoot.setAttribute("timestamp", new TimeTool().toString(TimeTool.DATETIME_XML));
-		eRoot.setAttribute("id", XMLTool.idToXMLID(StringTool.unique("xChange")));
-		eRoot.setAttribute("origin", XMLTool.idToXMLID(Hub.actMandant.getId()));
-		eRoot.setAttribute("destination", "undefined");
-		eRoot.setAttribute("responsible", XMLTool.idToXMLID(Hub.actMandant.getId()));
+		eRoot.setAttribute("timestamp", new TimeTool().toString(TimeTool.DATETIME_XML)); //$NON-NLS-1$
+		eRoot.setAttribute("id", XMLTool.idToXMLID(StringTool.unique("xChange"))); //$NON-NLS-1$ //$NON-NLS-2$
+		eRoot.setAttribute("origin", XMLTool.idToXMLID(Hub.actMandant.getId())); //$NON-NLS-1$
+		eRoot.setAttribute("destination", "undefined"); //$NON-NLS-1$ //$NON-NLS-2$
+		eRoot.setAttribute("responsible", XMLTool.idToXMLID(Hub.actMandant.getId())); //$NON-NLS-1$
 		doc.setRootElement(eRoot);
 		lbs = new ServiceBlocksElement(this, null);
 		eRoot.addContent(lbs.getElement());
@@ -84,17 +84,17 @@ public class BlockContainer extends XChangeContainer {
 	
 	public boolean finalizeExport(){
 		FileDialog fd = new FileDialog(Desk.getTopShell(), SWT.SAVE);
-		fd.setText("Blockbeschreibung als XChange-Datei speichern");
+		fd.setText(Messages.BlockContainer_Blockbeschreibung);
 		fd.setFilterExtensions(new String[] {
-			"*.xchange"
+			"*.xchange" //$NON-NLS-1$
 		});
 		fd.setFilterNames(new String[] {
-			"SGAM-xChange Dateien"
+			Messages.BlockContainer_xchangefiles
 		});
 		String filename = fd.open();
 		if (filename != null) {
 			Format format = Format.getPrettyFormat();
-			format.setEncoding("utf-8");
+			format.setEncoding("utf-8"); //$NON-NLS-1$
 			XMLOutputter xmlo = new XMLOutputter(format);
 			String xmlAspect = xmlo.outputString(doc);
 			try {
@@ -113,7 +113,7 @@ public class BlockContainer extends XChangeContainer {
 			ServiceBlockElement sbe = new ServiceBlockElement(this, (Leistungsblock) output);
 			lbs.add(sbe);
 		}
-		return new Result<XChangeElement>(SEVERITY.ERROR, 1, "Can't handle object type "
+		return new Result<XChangeElement>(SEVERITY.ERROR, 1, "Can't handle object type " //$NON-NLS-1$
 			+ output.getClass().getName(), null, true);
 	}
 	
@@ -131,7 +131,7 @@ public class BlockContainer extends XChangeContainer {
 				}
 			}
 		}
-		return new Result<String>("OK");
+		return new Result<String>("OK"); //$NON-NLS-1$
 	}
 	
 	public Result<Object> load(Element input, Object context){

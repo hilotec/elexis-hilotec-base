@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ContactElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: ContactElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -34,22 +34,22 @@ import ch.rgw.tools.TimeTool;
  */
 @SuppressWarnings("serial")
 public class ContactElement extends XChangeElement {
-	public static final String XMLNAME = "contact";
-	public static final String ATTR_BIRTHDATE = "birthdate";
-	public static final String ATTR_FIRSTNAME = "firstname";
-	public static final String ATTR_MIDDLENAME = "middlename";
-	public static final String ATTR_LASTNAME = "lastname";
-	public static final String ATTR_SEX = "sex";
-	public static final String ATTR_SALUTATION = "salutation";
-	public static final String ATTR_TITLE = "title";
-	public static final String ATTR_TYPE = "type";
-	public static final String ATTR_SHORTNAME = "shortname";
-	public static final String ELEM_XID = "xid";
-	public static final String ELEM_ADDRESS = "address";
-	public static final String VALUE_PERSON = "person";
-	public static final String VALUE_ORGANIZATION = "organization";
-	public static final String VALUE_MALE = "male";
-	public static final String VALUE_FEMALE = "female";
+	public static final String XMLNAME = "contact"; //$NON-NLS-1$
+	public static final String ATTR_BIRTHDATE = "birthdate"; //$NON-NLS-1$
+	public static final String ATTR_FIRSTNAME = "firstname"; //$NON-NLS-1$
+	public static final String ATTR_MIDDLENAME = "middlename"; //$NON-NLS-1$
+	public static final String ATTR_LASTNAME = "lastname"; //$NON-NLS-1$
+	public static final String ATTR_SEX = "sex"; //$NON-NLS-1$
+	public static final String ATTR_SALUTATION = "salutation"; //$NON-NLS-1$
+	public static final String ATTR_TITLE = "title"; //$NON-NLS-1$
+	public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
+	public static final String ATTR_SHORTNAME = "shortname"; //$NON-NLS-1$
+	public static final String ELEM_XID = "xid"; //$NON-NLS-1$
+	public static final String ELEM_ADDRESS = "address"; //$NON-NLS-1$
+	public static final String VALUE_PERSON = "person"; //$NON-NLS-1$
+	public static final String VALUE_ORGANIZATION = "organization"; //$NON-NLS-1$
+	public static final String VALUE_MALE = "male"; //$NON-NLS-1$
+	public static final String VALUE_FEMALE = "female"; //$NON-NLS-1$
 	
 	public ContactElement(XChangeContainer home){
 		super(home);
@@ -90,7 +90,7 @@ public class ContactElement extends XChangeElement {
 			setAttribute(ATTR_TYPE, VALUE_PERSON);
 			setAttribute(ATTR_LASTNAME, p.getName());
 			setAttribute(ATTR_FIRSTNAME, p.getVorname());
-			if (p.getGeschlecht().startsWith("m")) {
+			if (p.getGeschlecht().startsWith("m")) { //$NON-NLS-1$
 				setAttribute(ATTR_SEX, VALUE_MALE);
 			} else {
 				setAttribute(ATTR_SEX, VALUE_FEMALE);
@@ -104,31 +104,31 @@ public class ContactElement extends XChangeElement {
 			setAttribute(ATTR_TYPE, VALUE_ORGANIZATION);
 			setAttribute(ATTR_LASTNAME, k.getLabel());
 		}
-		add(new AddressElement(parent, k.getAnschrift(), "default"));
+		add(new AddressElement(parent, k.getAnschrift(), "default")); //$NON-NLS-1$
 		parent.addMapping(this, k);
 	}
 	
 	public List<ContactRefElement> getAssociations(){
 		List<ContactRefElement> ret =
-			(List<ContactRefElement>) getChildren("connection", ContactRefElement.class);
+			(List<ContactRefElement>) getChildren("connection", ContactRefElement.class); //$NON-NLS-1$
 		return ret;
 	}
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Name\t\t\t\t").append(getAttr("lastname")).append("\n");
-		sb.append("Vorname(n)\t\t\t").append(getAttr("firstname"));
-		String middle = getAttr("middlename");
+		sb.append(Messages.getString("ContactElement.Name")).append(getAttr(ATTR_LASTNAME)).append(StringTool.lf); //$NON-NLS-1$
+		sb.append(Messages.getString("ContactElement.vorname")).append(getAttr(ATTR_FIRSTNAME)); //$NON-NLS-1$
+		String middle = getAttr(ATTR_MIDDLENAME);
 		if (middle.length() > 0) {
-			sb.append(" ").append(middle);
+			sb.append(StringTool.space).append(middle);
 		}
-		sb.append("\nGeburtsdatum\t\t");
-		TimeTool geb = new TimeTool(getAttr("birthdate"));
-		sb.append(geb.toString(TimeTool.DATE_GER)).append("\n");
-		sb.append("PID: ").append(getAttr("id")).append("\n\n");
+		sb.append(Messages.getString("ContactElement.gebdat")); //$NON-NLS-1$
+		TimeTool geb = new TimeTool(getAttr(ATTR_BIRTHDATE));
+		sb.append(geb.toString(TimeTool.DATE_GER)).append(StringTool.lf);
+		sb.append("PID: ").append(getAttr(ID)).append(StringTool.lf+StringTool.lf); //$NON-NLS-1$ //$NON-NLS-2$
 		List<AddressElement> addresses = getAddresses();
 		for (AddressElement adr : addresses) {
-			sb.append(adr.toString()).append("\n");
+			sb.append(adr.toString()).append(StringTool.lf);
 		}
 		return sb.toString();
 	}

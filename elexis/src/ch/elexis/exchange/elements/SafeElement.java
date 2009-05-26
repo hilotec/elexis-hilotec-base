@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: SafeElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: SafeElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -18,6 +18,7 @@ import org.jdom.Namespace;
 
 import ch.rgw.tools.StringTool;
 
+@SuppressWarnings("serial")
 public class SafeElement extends Element {
 	public SafeElement(String name, Namespace ns){
 		super(name, ns);

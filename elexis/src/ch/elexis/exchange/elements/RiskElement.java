@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RiskElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: RiskElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,7 +17,6 @@ import org.jdom.Element;
 
 import ch.elexis.exchange.XChangeContainer;
 
-@SuppressWarnings("serial")
 public class RiskElement extends XChangeElement {
 	public static final String XMLNAME = "risk";
 	public static final String ATTR_CONFIRMEDBY = "confirmedBy";

@@ -51,6 +51,16 @@ public class Messages extends NLS {
 	
 	public static String Ablauf_heartrate;
 	
+	public static String AnwenderPref_12;
+
+	public static String AnwenderPref_fuerMandant;
+
+	public static String AnwenderPref_gruppe;
+
+	public static String AnwenderPref_kuerzel;
+
+	public static String AnwenderPref_passwort;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

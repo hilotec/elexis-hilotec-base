@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedicalElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: MedicalElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -35,7 +35,7 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  * 
  */
-@SuppressWarnings("serial")
+
 public class MedicalElement extends XChangeElement {
 	public static final String XMLNAME = "medical";
 	private DocumentsElement eDocuments;
@@ -71,7 +71,7 @@ public class MedicalElement extends XChangeElement {
 		}
 		
 		Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-		qbe.add("PatientID", "=", p.getId());
+		qbe.add(LabResult.PATIENT_ID, Query.EQUALS, p.getId());
 		List<LabResult> labs = qbe.execute();
 		if (labs != null) {
 			for (LabResult lr : labs) {
@@ -80,7 +80,7 @@ public class MedicalElement extends XChangeElement {
 		}
 		
 		Query<Brief> qb = new Query<Brief>(Brief.class);
-		qb.add("PatientID", "=", p.getId());
+		qb.add(LabResult.PATIENT_ID, Query.EQUALS, p.getId());
 		List<Brief> lBriefe = qb.execute();
 		if ((lBriefe != null) && (lBriefe.size()) > 0) {
 			for (Brief b : lBriefe) {
