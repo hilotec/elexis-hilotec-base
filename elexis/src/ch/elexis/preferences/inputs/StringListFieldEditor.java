@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Sgam.informatics
+ * Copyright (c) 2006-2009, G. Weirich and Sgam.informatics
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class StringListFieldEditor extends ListEditor{
 	@Override
 	protected String getNewInputObject() {
 		InputDialog id=new InputDialog(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				title,message,"",null); //$NON-NLS-1$
+				title,message,StringTool.leer,null); //$NON-NLS-1$
 		id.open();
 		return id.getValue();
 	}

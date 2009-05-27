@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: SidebarPreferences.java 5194 2009-02-24 16:31:36Z rgw_ch $
+ *    $Id: SidebarPreferences.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -41,7 +41,7 @@ public class SidebarPreferences extends FieldEditorPreferencePage implements
 	public SidebarPreferences(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
-		setDescription("Definition der Starterleiste");
+		setDescription(Messages.SidebarPreferences_DefinitisonStarterBar);
 		// noDefaultAndApplyButton();
 	}
 	
@@ -52,15 +52,15 @@ public class SidebarPreferences extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors(){
 		sb =
-			new BooleanFieldEditor(PreferenceConstants.SHOWSIDEBAR, "Startleiste anzeigen",
+			new BooleanFieldEditor(PreferenceConstants.SHOWSIDEBAR, Messages.SidebarPreferences_ShowStartBar,
 				getFieldEditorParent());
 		
 		addField(sb);
 		addField(new BooleanFieldEditor(PreferenceConstants.SHOWPERSPECTIVESELECTOR,
-			"Perspektivenleiste anzeigen", getFieldEditorParent()));
+			Messages.SidebarPreferences_SchowPerspectives, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.SHOWTOOLBARITEMS,
-			"Perspektivenauswahl in Toolbar", getFieldEditorParent()));
-		addField(new Perspektivenliste(PreferenceConstants.SIDEBAR, "Perspektiven",
+			Messages.SidebarPreferences_PerspectivesInToolbar, getFieldEditorParent()));
+		addField(new Perspektivenliste(PreferenceConstants.SIDEBAR, Messages.SidebarPreferences_Perspectives,
 			getFieldEditorParent()));
 	}
 	
@@ -85,7 +85,7 @@ class Perspektivenliste extends ListEditor {
 	
 	@Override
 	protected String createList(String[] items){
-		return StringTool.join(items, ",");
+		return StringTool.join(items, ","); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -99,7 +99,7 @@ class Perspektivenliste extends ListEditor {
 	
 	@Override
 	protected String[] parseString(String stringList){
-		return stringList.split(",");
+		return stringList.split(","); //$NON-NLS-1$
 	}
 	
 }
@@ -118,15 +118,15 @@ class PerspektivenAuswahl extends Dialog {
 		list = new List(parent, SWT.BORDER | SWT.SINGLE);
 		list.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
-		IExtensionPoint exp = exr.getExtensionPoint("ch.elexis.Sidebar");
+		IExtensionPoint exp = exr.getExtensionPoint("ch.elexis.Sidebar"); //$NON-NLS-1$
 		if (exp != null) {
 			IExtension[] extensions = exp.getExtensions();
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					String name = el.getAttribute("name");
-					String ID = el.getAttribute("ID");
-					list.add(name + ":" + ID);
+					String name = el.getAttribute("name"); //$NON-NLS-1$
+					String ID = el.getAttribute("ID"); //$NON-NLS-1$
+					list.add(name + ":" + ID); //$NON-NLS-1$
 				}
 			}
 		}
@@ -137,12 +137,12 @@ class PerspektivenAuswahl extends Dialog {
 	@Override
 	public void create(){
 		super.create();
-		getShell().setText("Verfügbare Perspektiven");
+		getShell().setText(Messages.SidebarPreferences_AvailablePerspectives);
 	}
 	
 	@Override
 	protected void okPressed(){
-		selection = StringTool.join(list.getSelection(), ",");
+		selection = StringTool.join(list.getSelection(), ","); //$NON-NLS-1$
 		super.okPressed();
 		
 	};

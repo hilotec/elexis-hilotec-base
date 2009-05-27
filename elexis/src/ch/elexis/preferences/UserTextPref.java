@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2009, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: UserTextPref.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: UserTextPref.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -27,16 +27,16 @@ import ch.rgw.io.InMemorySettings;
 public class UserTextPref extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
-	public static final String ID = "ch.elexis.preferences.UserPreferences";
+	public static final String ID = "ch.elexis.preferences.UserPreferences"; //$NON-NLS-1$
 
 	private static final String[] fields = { EnhancedTextField.MACRO_KEY };
 
-	private static final String[] texte = { "Makro-Zeichen" };
+	private static final String[] texte = { Messages.UserTextPref_MacroKey };
 
 	public UserTextPref() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(new InMemorySettings()));
-		setDescription("Benutzereinstellungen");
+		setDescription(Messages.UserTextPref_UserPreferences);
 	}
 
 	@Override

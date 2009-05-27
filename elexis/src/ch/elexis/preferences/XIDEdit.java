@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: XIDEdit.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.preferences;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -32,13 +44,13 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 		table = new Table(parent, SWT.FULL_SELECTION);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		TableColumn tc0 = new TableColumn(table, SWT.NONE);
-		tc0.setText("Kurzname");
+		tc0.setText(Messages.XIDEdit_ShortName);
 		tc0.setWidth(150);
 		TableColumn tc1 = new TableColumn(table, SWT.NONE);
-		tc1.setText("Domainname");
+		tc1.setText(Messages.XIDEdit_DomainName);
 		tc1.setWidth(300);
 		TableColumn tc2 = new TableColumn(table, SWT.NONE);
-		tc2.setText("Anzeige");
+		tc2.setText(Messages.XIDEdit_Display);
 		tc2.setWidth(50);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -49,10 +61,10 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 			it.setText(1, dom);
 			StringBuilder sb = new StringBuilder();
 			if (xd.isDisplayedFor(Person.class)) {
-				sb.append("P");
+				sb.append("P"); //$NON-NLS-1$
 			}
 			if (xd.isDisplayedFor(Organisation.class)) {
-				sb.append("O");
+				sb.append("O"); //$NON-NLS-1$
 			}
 			it.setText(2, sb.toString());
 			
@@ -69,10 +81,10 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 						// it.setText(0,Xid.getSimpleNameForXIDDomain(dom));
 						StringBuilder sb = new StringBuilder();
 						if (xd.isDisplayedFor(Person.class)) {
-							sb.append("P");
+							sb.append("P"); //$NON-NLS-1$
 						}
 						if (xd.isDisplayedFor(Organisation.class)) {
-							sb.append("O");
+							sb.append("O"); //$NON-NLS-1$
 						}
 						it.setText(2, sb.toString());
 					}
@@ -101,7 +113,7 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText("XID Optionen");
+			getShell().setText(Messages.XIDEdit_XidOpetions);
 		}
 		
 		@Override
@@ -112,11 +124,11 @@ public class XIDEdit extends PreferencePage implements IWorkbenchPreferencePage 
 			tShort = new Text(ret, SWT.BORDER);
 			tShort.setText(mine.getSimpleName());
 			new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
-			new Label(ret, SWT.NONE).setText("Anzeigen bei:");
+			new Label(ret, SWT.NONE).setText(Messages.XIDEdit_ShowWith);
 			bPerson = new Button(ret, SWT.CHECK);
 			bOrg = new Button(ret, SWT.CHECK);
-			bPerson.setText("Personen");
-			bOrg.setText("Organisationen");
+			bPerson.setText(Messages.XIDEdit_Persons);
+			bOrg.setText(Messages.XIDEdit_Organizations);
 			if (mine.isDisplayedFor(Person.class)) {
 				bPerson.setSelection(true);
 			}

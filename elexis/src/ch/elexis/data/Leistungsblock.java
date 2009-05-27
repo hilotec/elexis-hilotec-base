@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsblock.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ * $Id: Leistungsblock.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -23,10 +23,13 @@ import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 
 public class Leistungsblock extends PersistentObject implements ICodeElement {
+	public static final String LEISTUNGEN = "Leistungen";
+	public static final String MANDANT_ID = "MandantID";
+	public static final String NAME = "Name";
 	public static final String XIDDOMAIN = "www.xid.ch/id/elexis_leistungsblock";
 	
 	static {
-		addMapping("LEISTUNGSBLOCK", "Name", "MandantID", "Leistungen");
+		addMapping("LEISTUNGSBLOCK", NAME, MANDANT_ID, LEISTUNGEN);
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Leistungsblock", Xid.ASSIGNMENT_LOCAL
 			| Xid.QUALITY_GUID);
 	}
@@ -34,13 +37,13 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	public Leistungsblock(String Name, Mandant m){
 		create(null);
 		String[] f = new String[] {
-			"Name", "MandantID"
+			NAME, MANDANT_ID
 		};
 		set(f, Name, m.getId());
 	}
 	
 	public String getName(){
-		return checkNull(get("Name"));
+		return checkNull(get(NAME));
 	}
 	/**
 	 * return a List of elements contained in this block will never return null, but the list might
@@ -123,15 +126,15 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	
 	@Override
 	public String getLabel(){
-		return get("Name");
+		return get(NAME);
 	}
 	
 	public String getText(){
-		return get("Name");
+		return get(NAME);
 	}
 	
 	public String getCode(){
-		return get("Name");
+		return get(NAME);
 	}
 	
 	@Override
@@ -155,7 +158,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 				lst = new ArrayList<ICodeElement>();
 			}
 			String storable = toString(lst);
-			setBinary("Leistungen", CompEx.Compress(storable, CompEx.ZIP));
+			setBinary(LEISTUNGEN, CompEx.Compress(storable, CompEx.ZIP));
 			return true;
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
@@ -167,7 +170,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 		ArrayList<ICodeElement> lst = new ArrayList<ICodeElement>();
 		try {
 			lst = new ArrayList<ICodeElement>();
-			byte[] compressed = getBinary("Leistungen");
+			byte[] compressed = getBinary(LEISTUNGEN);
 			if (compressed != null) {
 				String storable = new String(CompEx.expand(compressed), "UTF-8");
 				for (String p : storable.split(",")) {
@@ -182,7 +185,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	
 	@Deprecated
 	public boolean isEmpty(){
-		byte[] comp = getBinary("Leistungen");
+		byte[] comp = getBinary(LEISTUNGEN);
 		return (comp == null);
 	}
 	

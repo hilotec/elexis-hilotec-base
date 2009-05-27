@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -17,7 +17,6 @@ import java.io.File;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -25,10 +24,12 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Brief;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
+import ch.rgw.tools.StringTool;
 
 /**
  * Vorgabewerte setzen, wo nötig. Bitte in den drei Funktionen dieser Klasse
@@ -46,76 +47,76 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore localstore = new SettingsPreferenceStore(Hub.localCfg);
 		
 		// Datenbank
-		localstore.setDefault(PreferenceConstants.DB_NAME,"hsql");
-        localstore.setDefault(PreferenceConstants.DB_CLASS,"org.hsqldb.jdbcDriver");
+		localstore.setDefault(PreferenceConstants.DB_NAME,"hsql"); //$NON-NLS-1$
+        localstore.setDefault(PreferenceConstants.DB_CLASS,"org.hsqldb.jdbcDriver"); //$NON-NLS-1$
         String base=getDefaultDBPath();
         
-        localstore.setDefault(PreferenceConstants.DB_CONNECT,"jdbc:hsqldb:"+base+"/db");
-        localstore.setDefault(PreferenceConstants.DB_USERNAME,"sa");
-        localstore.setDefault(PreferenceConstants.DB_PWD,"");
-        localstore.setDefault(PreferenceConstants.DB_TYP,"hsqldb");
+        localstore.setDefault(PreferenceConstants.DB_CONNECT,"jdbc:hsqldb:"+base+"/db"); //$NON-NLS-1$ //$NON-NLS-2$
+        localstore.setDefault(PreferenceConstants.DB_USERNAME,"sa"); //$NON-NLS-1$
+        localstore.setDefault(PreferenceConstants.DB_PWD,""); //$NON-NLS-1$
+        localstore.setDefault(PreferenceConstants.DB_TYP,"hsqldb"); //$NON-NLS-1$
         
         //Ablauf
-        File userhome=new File(System.getProperty("user.home")+File.separator+"elexis");
+        File userhome=new File(System.getProperty("user.home")+File.separator+"elexis"); //$NON-NLS-1$ //$NON-NLS-2$
         if(!userhome.exists()){
         	userhome.mkdirs();
         }
-        localstore.setDefault(PreferenceConstants.ABL_LOGFILE,userhome.getAbsolutePath()+File.separator+"elexis.log");
+        localstore.setDefault(PreferenceConstants.ABL_LOGFILE,userhome.getAbsolutePath()+File.separator+"elexis.log"); //$NON-NLS-1$
         localstore.setDefault(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString());
         localstore.setDefault(PreferenceConstants.ABL_LOGLEVEL,2);
         localstore.setDefault(PreferenceConstants.ABL_LOGALERT,1);
-        localstore.setDefault(PreferenceConstants.ABL_TRACE,"none");
+        localstore.setDefault(PreferenceConstants.ABL_TRACE,"none"); //$NON-NLS-1$
         localstore.setDefault(PreferenceConstants.ABL_BASEPATH, userhome.getAbsolutePath());
         localstore.setDefault(PreferenceConstants.ABL_CACHELIFETIME, PersistentObject.CACHE_DEFAULT_LIFETIME);
         localstore.setDefault(PreferenceConstants.ABL_HEARTRATE, 30);
         Hub.localCfg.set(PreferenceConstants.ABL_BASEPATH, userhome.getAbsolutePath());
         
         // Texterstellung
-        if(System.getProperty("os.name").toLowerCase().startsWith("win")){
-        	localstore.setDefault(PreferenceConstants.P_TEXTMODUL,"NOA-Text");
-        	if(localstore.getString(PreferenceConstants.P_TEXTMODUL).equals("")){
-        		localstore.setValue(PreferenceConstants.P_TEXTMODUL,"NOA-Text");
+        if(System.getProperty("os.name").toLowerCase().startsWith("win")){ //$NON-NLS-1$ //$NON-NLS-2$
+        	localstore.setDefault(PreferenceConstants.P_TEXTMODUL,"NOA-Text"); //$NON-NLS-1$
+        	if(localstore.getString(PreferenceConstants.P_TEXTMODUL).equals(StringTool.leer)){
+        		localstore.setValue(PreferenceConstants.P_TEXTMODUL,"NOA-Text"); //$NON-NLS-1$
         	}
 		}else{
-			localstore.setDefault(PreferenceConstants.P_TEXTMODUL, "OpenOffice Wrapper");
-			if(localstore.getString(PreferenceConstants.P_TEXTMODUL).equals("")){
-				localstore.setValue(PreferenceConstants.P_TEXTMODUL,"OpenOffice Wrapper");
+			localstore.setDefault(PreferenceConstants.P_TEXTMODUL, "OpenOffice Wrapper"); //$NON-NLS-1$
+			if(localstore.getString(PreferenceConstants.P_TEXTMODUL).equals("")){ //$NON-NLS-1$
+				localstore.setValue(PreferenceConstants.P_TEXTMODUL,"OpenOffice Wrapper"); //$NON-NLS-1$
 			}
 		}
         File elexisbase=new File(Hub.getBasePath());
-    	File fDef=new File(elexisbase.getParentFile().getParent()+"/ooo");
+    	File fDef=new File(elexisbase.getParentFile().getParent()+"/ooo"); //$NON-NLS-1$
     	String defaultbase;
     	if(fDef.exists()){
     		defaultbase=fDef.getAbsolutePath();
     	}else{
-    		defaultbase=Hub.localCfg.get(PreferenceConstants.P_OOBASEDIR,".");
+    		defaultbase=Hub.localCfg.get(PreferenceConstants.P_OOBASEDIR,"."); //$NON-NLS-1$
     	}
-		System.setProperty("openoffice.path.name",defaultbase);
+		System.setProperty("openoffice.path.name",defaultbase); //$NON-NLS-1$
 		localstore.setDefault(PreferenceConstants.P_OOBASEDIR,defaultbase);	
         localstore.setValue(PreferenceConstants.P_OOBASEDIR,defaultbase);
 		
 		// Dokument
 		StringBuilder sb=new StringBuilder();
-		sb.append("Alle,").append(Brief.UNKNOWN).append(",").append(Brief.AUZ).append(",")
-			.append(Brief.RP).append(",").append(Brief.LABOR);
+		sb.append("Alle,").append(Brief.UNKNOWN).append(",").append(Brief.AUZ).append(",") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			.append(Brief.RP).append(",").append(Brief.LABOR); //$NON-NLS-1$
 
 		localstore.setDefault(PreferenceConstants.DOC_CATEGORY,sb.toString());
         Hub.localCfg.flush();
 	}
 	public static String getDefaultDBPath() {
 		String base;
-		File f=new File(Hub.getBasePath()+"/rsc/demodata");
+		File f=new File(Hub.getBasePath()+"/rsc/demodata"); //$NON-NLS-1$
         if(f.exists() && f.canWrite()){
         	base=f.getAbsolutePath();
         }else{
-        	base=System.getenv("TEMP");
+        	base=System.getenv("TEMP"); //$NON-NLS-1$
         	if(base==null){
-        		base=System.getenv("TMP");
+        		base=System.getenv("TMP"); //$NON-NLS-1$
         		if(base==null){
-        			base=System.getProperty("user.home");
+        			base=System.getProperty("user.home"); //$NON-NLS-1$
         		}
         	}
-        	base+="/elexisdata";
+        	base+="/elexisdata"; //$NON-NLS-1$
         	f=new File(base);
         	if(!f.exists()){
         		f.mkdirs();
@@ -142,8 +143,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		Desk.getColorRegistry().put(Desk.COL_GREY60, new RGB(153,153,153));
 		Desk.getColorRegistry().put(Desk.COL_GREY20, new RGB(51,51,51));
 		
-		FontData[] small=	new FontData[]{new FontData("Helvetica",7,SWT.NORMAL)};
-		Hub.userCfg.set(PreferenceConstants.USR_SMALLFONT+"_default", PreferenceConverter.getStoredRepresentation(small));
+		FontData[] small=	new FontData[]{new FontData("Helvetica",7,SWT.NORMAL)}; //$NON-NLS-1$
+		Hub.userCfg.set(PreferenceConstants.USR_SMALLFONT+"_default", PreferenceConverter.getStoredRepresentation(small)); //$NON-NLS-1$
 	}
 	
 	/** 
@@ -155,7 +156,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	public void initializeGlobalPreferences(){
 		IPreferenceStore global = new SettingsPreferenceStore(Hub.globalCfg);
-		global.setDefault(PreferenceConstants.ABL_TRACE,"none");
+		global.setDefault(PreferenceConstants.ABL_TRACE,"none"); //$NON-NLS-1$
 		Hub.globalCfg.flush();
 	}
 	
@@ -165,10 +166,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * Hier alle Zugriffsrechte voreinstellen
 	 */
 	public void initializeGrants(){
-		Hub.globalCfg.set("groups", "Alle,Admin,Anwender");
-		Hub.acl.grant("Alle",AccessControlDefaults.getAlle());
-       	//Hub.acl.grant("Admin",AccessControlDefaults.Admin);
-       	Hub.acl.grant("Anwender",AccessControlDefaults.getAnwender());
+		Hub.globalCfg.set("groups", StringConstants.ROLES_DEFAULT);
+		Hub.acl.grant(StringConstants.ROLE_ALL,AccessControlDefaults.getAlle());
+       	Hub.acl.grant(StringConstants.ROLE_USERS,AccessControlDefaults.getAnwender());
         Hub.acl.flush();
 	}
 }

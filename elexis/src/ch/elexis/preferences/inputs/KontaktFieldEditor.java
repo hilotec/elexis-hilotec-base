@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktFieldEditor.java 5064 2009-01-29 16:20:49Z rgw_ch $
+ * $Id: KontaktFieldEditor.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences.inputs;
@@ -31,7 +31,7 @@ import ch.rgw.io.Settings;
 public class KontaktFieldEditor extends FieldEditor {
 	private Label contactLabel;
 	private Settings cfg;
-	private String defaultText = "[Bitte auswählen]";
+	private String defaultText = Messages.getString("KontaktFieldEditor.PleaseSelect"); //$NON-NLS-1$
 	private Kontakt selected;
 	
 	protected KontaktFieldEditor(){
@@ -105,8 +105,8 @@ public class KontaktFieldEditor extends FieldEditor {
 				@Override
 				public void mouseUp(MouseEvent e){
 					KontaktSelektor ksl =
-						new KontaktSelektor(parent.getShell(), Kontakt.class, "Kontakt wählen",
-							"Bitte wählen Sie den gewünschten Kontakt");
+						new KontaktSelektor(parent.getShell(), Kontakt.class, Messages.getString("KontaktFieldEditor.SelectContact"), //$NON-NLS-1$
+							Messages.getString("KontaktFieldEditor.PleaseSelectContact")); //$NON-NLS-1$
 					if (ksl.open() == Dialog.OK) {
 						selected = (Kontakt) ksl.getSelection();
 						contactLabel.setText(selected.getLabel());

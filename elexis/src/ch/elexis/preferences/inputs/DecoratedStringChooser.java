@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DecoratedStringChooser.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ * $Id: DecoratedStringChooser.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences.inputs;
@@ -51,12 +51,12 @@ public class DecoratedStringChooser extends Composite {
 		setLayout(new GridLayout(typCols, true));
 		Label expl = new Label(this, SWT.WRAP);
 		expl
-				.setText("Mit Doppelklick auf eines der Felder können Sie Änderungen vornehmen");
+				.setText(Messages.getString("DecoratedStringChooser.howToChange")); //$NON-NLS-1$
 		expl.setLayoutData(SWTHelper.getFillGridData(typCols, false, 1, false));
 		for (int i = 0; i < num; i++) {
 			Label lab = new Label(this, SWT.NONE);
 			lab.setText(strings[i].getText());
-			String coldesc = cfg.get(strings[i].getText(), "FFFFFF");
+			String coldesc = cfg.get(strings[i].getText(), "FFFFFF"); //$NON-NLS-1$
 			Color background = Desk.getColorFromRGB(coldesc);
 			lab.setBackground(background);
 			GridData gd = new GridData(GridData.FILL_BOTH);

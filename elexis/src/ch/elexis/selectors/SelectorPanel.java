@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5137 2009-02-16 18:19:14Z rgw_ch $
+ * $Id: SelectorPanel.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -53,7 +53,7 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		setLayout(layout);
 		tActions = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		
-		aClr = new Action("Felder leeren") {
+		aClr = new Action(Messages.SelectorPanel_clearFields) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLEAR));
 			}

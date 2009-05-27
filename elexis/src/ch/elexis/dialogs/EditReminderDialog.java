@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditReminderDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: EditReminderDialog.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -197,9 +197,9 @@ public class EditReminderDialog extends TitleAreaDialog {
 
 			// update current selection depending on the status
 			Reminder.Status s = mine.getStatus();
-			if (s.equals(Reminder.Status.erledigt)) {
+			if (s.equals(Reminder.Status.STATE_DONE)) {
 				bDone.setSelection(true);
-			} else if (s.equals(Reminder.Status.unerledigt)) {
+			} else if (s.equals(Reminder.Status.STATE_UNDONE)) {
 				bRejected.setSelection(true);
 			} else {
 				bDue.setSelection(true);
@@ -278,11 +278,11 @@ public class EditReminderDialog extends TitleAreaDialog {
 									text.getText() });
 		}
 		if (bDone.getSelection()) {
-			mine.setStatus(Reminder.Status.erledigt);
+			mine.setStatus(Reminder.Status.STATE_DONE);
 		} else if (bRejected.getSelection()) {
-			mine.setStatus(Reminder.Status.unerledigt);
+			mine.setStatus(Reminder.Status.STATE_UNDONE);
 		} else {
-			mine.setStatus(Reminder.Status.geplant);
+			mine.setStatus(Reminder.Status.STATE_PLANNED);
 		}
 		int[] resps = lUser.getSelectionIndices();
 		if (resps.length > 0) {

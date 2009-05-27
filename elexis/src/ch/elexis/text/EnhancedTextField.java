@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: EnhancedTextField.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -75,8 +75,8 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class EnhancedTextField extends Composite {
-	public static final String MACRO_KEY = "enhancedtextfield/macro_key";
-	public static final String MACRO_KEY_DEFAULT = "#";
+	public static final String MACRO_KEY = "enhancedtextfield/macro_key"; //$NON-NLS-1$
+	public static final String MACRO_KEY_DEFAULT = "#"; //$NON-NLS-1$
 	
 	StyledText text;
 	Hashtable<String, IKonsExtension> hXrefs;
@@ -89,10 +89,10 @@ public class EnhancedTextField extends Composite {
 	boolean dirty;
 	MenuManager menuMgr;
 	private Konsultation actKons;
-	private static Pattern outline = Pattern.compile("^\\S+:", Pattern.MULTILINE);
-	private static Pattern bold = Pattern.compile("\\*\\S+\\*");
-	private static Pattern italic = Pattern.compile("\\/\\S+\\/");
-	private static Pattern underline = Pattern.compile("_\\S+_");
+	private static Pattern outline = Pattern.compile("^\\S+:", Pattern.MULTILINE); //$NON-NLS-1$
+	private static Pattern bold = Pattern.compile("\\*\\S+\\*"); //$NON-NLS-1$
+	private static Pattern italic = Pattern.compile("\\/\\S+\\/"); //$NON-NLS-1$
+	private static Pattern underline = Pattern.compile("_\\S+_"); //$NON-NLS-1$
 	private IAction copyAction, cutAction, pasteAction;
 	private IMenuListener globalMenuListener;
 	private UserChangeListener ucl = new UserChangeListener();
@@ -184,7 +184,7 @@ public class EnhancedTextField extends Composite {
 				manager.add(GlobalActions.copyAction);
 				manager.add(GlobalActions.pasteAction);
 				manager.add(new Separator());
-				manager.add(new Action("als Makro...") {
+				manager.add(new Action(Messages.EnhancedTextField_asMacro) {
 					String tx;
 					{
 						tx = text.getSelectionText();
@@ -199,12 +199,12 @@ public class EnhancedTextField extends Composite {
 					public void run(){
 						
 						InputDialog in =
-							new InputDialog(parent.getShell(), "Neues Makro erstellen",
-								"Geben Sie bitte einen Namen für das Makro ein", null, null);
+							new InputDialog(parent.getShell(), Messages.EnhancedTextField_newMacro,
+								Messages.EnhancedTextField_enterNameforMacro, null, null);
 						if (in.open() == Dialog.OK) {
 							StringBuilder name = new StringBuilder(in.getValue());
 							name.reverse();
-							Hub.userCfg.set("makros/" + name, tx);
+							Hub.userCfg.set("makros/" + name, tx); //$NON-NLS-1$
 						}
 					}
 					
@@ -221,7 +221,7 @@ public class EnhancedTextField extends Composite {
 						}
 					}
 					if (bAdditions) {
-						manager.add(new Action("Querverweis entfernen") {
+						manager.add(new Action(Messages.EnhancedTextField_RemoveXref) {
 							Samdas.XRef actRef = null;
 							{
 								setEnabled(false);
@@ -243,7 +243,7 @@ public class EnhancedTextField extends Composite {
 										if (ex != null) {
 											eRemove = xref;
 											text.replaceTextRange(actRef.getPos(), actRef
-												.getLength(), "");
+												.getLength(), StringTool.leer);
 											ex.removeXRef(actRef.getProvider(), actRef.getID());
 										}
 									}
@@ -305,7 +305,7 @@ public class EnhancedTextField extends Composite {
 	 */
 	void doFormat(String tx){
 		text.setStyleRange(null);
-		if (tx.startsWith("<")) {
+		if (tx.startsWith("<")) { //$NON-NLS-1$
 			doFormatXML(tx);
 			tx = text.getText();
 		} else {
@@ -354,7 +354,6 @@ public class EnhancedTextField extends Composite {
 		// Obsoleted, do not rely
 	}
 	
-	@SuppressWarnings("unchecked")
 	void doFormatXML(String tx){
 		samdas = new Samdas(tx);
 		record = samdas.getRecord();
@@ -369,13 +368,13 @@ public class EnhancedTextField extends Composite {
 			StyleRange n = new StyleRange();
 			n.start = m.getPos();
 			n.length = m.getLength();
-			if (type.equalsIgnoreCase("emphasized")) {
+			if (type.equalsIgnoreCase("emphasized")) { //$NON-NLS-1$
 				n.strikeout = true;
-			} else if (type.equalsIgnoreCase("bold")) {
+			} else if (type.equalsIgnoreCase("bold")) { //$NON-NLS-1$
 				n.fontStyle = SWT.BOLD;
-			} else if (type.equalsIgnoreCase("italic")) {
+			} else if (type.equalsIgnoreCase("italic")) { //$NON-NLS-1$
 				n.fontStyle = SWT.ITALIC;
-			} else if (type.equalsIgnoreCase("underlined")) {
+			} else if (type.equalsIgnoreCase("underlined")) { //$NON-NLS-1$
 				n.underline = true;
 			}
 			if ((n.start + n.length) > textlen) {
@@ -429,7 +428,6 @@ public class EnhancedTextField extends Composite {
 	 * @param id
 	 *            vom Provider vergebene Identifikation für diesen Querverweis (beliebiger String)
 	 */
-	@SuppressWarnings("unchecked")
 	public void insertXRef(int pos, String string, String provider, String id){
 		if (pos == -1) {
 			pos = text.getCaretOffset();
@@ -453,13 +451,13 @@ public class EnhancedTextField extends Composite {
 	 *            '*' bold, '/' italic, '_', underline
 	 */
 	public void createMarkup(char type, int pos, int len){
-		String typ = "bold";
+		String typ = "bold"; //$NON-NLS-1$
 		switch (type) {
 		case '/':
-			typ = "italic";
+			typ = "italic"; //$NON-NLS-1$
 			break;
 		case '_':
-			typ = "underline";
+			typ = "underline"; //$NON-NLS-1$
 			break;
 		}
 		Samdas.Markup markup = new Samdas.Markup(pos, len, typ);
@@ -492,7 +490,7 @@ public class EnhancedTextField extends Composite {
 				int start = e.start;
 				while (--start >= 0) {
 					String t = text.getTextRange(start, 1);
-					if (t.matches("\\S")) {
+					if (t.matches("\\S")) { //$NON-NLS-1$
 						s.append(t);
 					} else {
 						break;
@@ -500,7 +498,7 @@ public class EnhancedTextField extends Composite {
 				}
 				// Dann prüfen, ob dieses Wort einem Makronamen entspricht
 				String code = s.toString();
-				String comp = Hub.userCfg.get("makros/" + code, null);
+				String comp = Hub.userCfg.get("makros/" + code, null); //$NON-NLS-1$
 				if (comp != null) { // Ja -> Makri umwandeln
 					start += 1;
 					text.replaceTextRange(start, (e.end - start), comp);
@@ -510,11 +508,11 @@ public class EnhancedTextField extends Composite {
 				} else { // Nein -> prüfen, ob es einem Leistungsblocknamen
 					// entspricht
 					Query<Leistungsblock> qbe = new Query<Leistungsblock>(Leistungsblock.class);
-					qbe.add("Name", "=", s.reverse().toString());
+					qbe.add(Leistungsblock.NAME, Query.EQUALS, s.reverse().toString());
 					qbe.startGroup();
-					qbe.add("MandantID", "=", Hub.actMandant.getId());
+					qbe.add(Leistungsblock.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
 					qbe.or();
-					qbe.add("MandantID", "", null);
+					qbe.add(Leistungsblock.MANDANT_ID, StringTool.leer, null);
 					qbe.endGroup();
 					List<Leistungsblock> list = qbe.execute();
 					if ((list != null) && (list.size() > 0) && (actKons != null)) {
@@ -523,12 +521,12 @@ public class EnhancedTextField extends Composite {
 							Result<IVerrechenbar> result = actKons.addLeistung((IVerrechenbar) ice);
 							if (!result.isOK()) {
 								SWTHelper
-									.alert("Diese Verrechnung ist ungültig", result.toString());
+									.alert(Messages.EnhancedTextField_ThisChargeIsInvalid, result.toString());
 								// also see KonsDetailView.DropReceiver
 							}
 						}
 						start += 1;
-						text.replaceTextRange(start, e.end - start, "");
+						text.replaceTextRange(start, e.end - start, StringTool.leer);
 						e.doit = false;
 						actKons.updateEintrag(getDocumentAsText(), false);
 						setDirty(false);
@@ -540,10 +538,10 @@ public class EnhancedTextField extends Composite {
 				// Wenn ein : gedrückt wurde, prüfen, ob es ein Wort am
 				// Zeilenanfang ist und ggf.
 				// fett formatieren.
-			} else if (e.text.equals(":")) {
+			} else if (e.text.equals(":")) { //$NON-NLS-1$
 				int lineStart = text.getOffsetAtLine(text.getLineAtOffset(e.start));
 				String line = text.getText(lineStart, e.start - 1);
-				if (line.matches("^\\S+")) {
+				if (line.matches("^\\S+")) { //$NON-NLS-1$
 					/*
 					 * StyleRange n=new StyleRange(); n.start=lineStart; n.length=line.length();
 					 * n.fontStyle=SWT.BOLD; text.setStyleRange(n);
@@ -555,9 +553,9 @@ public class EnhancedTextField extends Composite {
 			// Wort dasselbe
 			// Zeichen steht
 			// und wenn ja, entsprechende Formatierung anwenden.
-			else if (e.text.matches("[\\*/_]")) {
+			else if (e.text.matches("[\\*/_]")) { //$NON-NLS-1$
 				int start = e.start;
-				String t = "";
+				String t = ""; //$NON-NLS-1$
 				while (--start >= 0) {
 					t = text.getTextRange(start, 1);
 					if (t.equals(e.text)) {
@@ -565,7 +563,7 @@ public class EnhancedTextField extends Composite {
 						e.doit = true;
 						break;
 					}
-					if (t.matches("\\s")) {
+					if (t.matches(Messages.EnhancedTextField_5)) {
 						break;
 					}
 				}
@@ -681,20 +679,20 @@ public class EnhancedTextField extends Composite {
 	
 	private void makeActions(){
 		// copyAction=ActionFactory.COPY.create();
-		cutAction = new Action("cu&t") {
+		cutAction = new Action(Messages.EnhancedTextField_cutAction) {
 			@Override
 			public void run(){
 				text.cut();
 			}
 			
 		};
-		pasteAction = new Action("&Paste") {
+		pasteAction = new Action(Messages.EnhancedTextField_pasteAction) {
 			@Override
 			public void run(){
 				text.paste();
 			}
 		};
-		copyAction = new Action("&copy") {
+		copyAction = new Action(Messages.EnhancedTextField_copyAction) {
 			@Override
 			public void run(){
 				text.copy();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DokumentKategorie.java 602 2006-07-26 21:21:07Z rgw_ch $
+ *    $Id: DokumentKategorie.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -25,7 +25,7 @@ public class DokumentKategorie extends FieldEditorPreferencePage implements
 	public DokumentKategorie() {
 		super(GRID);
 		 setPreferenceStore(new SettingsPreferenceStore(Hub.globalCfg));
-        setDescription("Dokument-Kategorien");
+        setDescription(Messages.DokumentKategorie_dokumentKategorien);
 
 	}
 

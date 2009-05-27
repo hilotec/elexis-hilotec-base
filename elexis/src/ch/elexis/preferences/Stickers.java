@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Stickers.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ *    $Id: Stickers.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -111,7 +111,7 @@ public class  Stickers extends PreferencePage implements
 		Composite bottom=new Composite(ret,SWT.NONE);
 		bottom.setLayout(new GridLayout(2,false));
 		bNew=new Button(bottom,SWT.PUSH);
-		bNew.setText("Neuer Sticker");
+		bNew.setText(Messages.Stickers_NewSticker);
 		bNew.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -124,7 +124,7 @@ public class  Stickers extends PreferencePage implements
 			
 		});
 		bRemove=new Button(bottom,SWT.PUSH);
-		bRemove.setText("Sticker löschen");
+		bRemove.setText(Messages.Stickers_DeleteSticker);
 		bRemove.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -176,7 +176,7 @@ public class  Stickers extends PreferencePage implements
 		});
 		*/
 		Button bNewImage=new Button(bottom,SWT.PUSH);
-		bNewImage.setText("Bild...");
+		bNewImage.setText(Messages.Stickers_Image);
 		bNewImage.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -193,7 +193,7 @@ public class  Stickers extends PreferencePage implements
 		GridData gdFore=new GridData(32,16);
 		cFore.setLayoutData(gdFore);
 		Button bFore=new Button(bottom,SWT.PUSH);
-		bFore.setText("Textfarbe");
+		bFore.setText(Messages.Stickers_TextColor);
 		bFore.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -213,7 +213,7 @@ public class  Stickers extends PreferencePage implements
 		GridData gdBack=GridDataFactory.copyData(gdFore);
 		cBack.setLayoutData(gdBack);
 		Button bBack=new Button(bottom,SWT.PUSH);
-		bBack.setText("Hintergrund");
+		bBack.setText(Messages.Stickers_BackgroundColor);
 		bBack.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -238,7 +238,7 @@ public class  Stickers extends PreferencePage implements
 				}
 				
 			}});
-		new Label(bottom,SWT.NONE).setText("'Wert' des Stickers");
+		new Label(bottom,SWT.NONE).setText(Messages.Stickers_ValueOfSticker);
 		bNew.setEnabled(false);
 		bRemove.setEnabled(false);
 		return ret;

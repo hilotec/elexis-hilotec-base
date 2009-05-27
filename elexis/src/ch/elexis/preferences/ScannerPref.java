@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ScannerPref.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: ScannerPref.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -36,18 +34,14 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.ScannerEvents;
-import ch.elexis.preferences.inputs.ComboFieldEditor;
-import ch.elexis.util.viewers.CommonViewer.Message;
-
-
 
 public class ScannerPref extends FieldEditorPreferencePage implements
-IWorkbenchPreferencePage {
-	public static String ID = "ch.elexis.preferences.ScannerPrefs";
-	
+		IWorkbenchPreferencePage {
+	public static final String ID = "ch.elexis.preferences.ScannerPrefs"; //$NON-NLS-1$
+
 	private static class TextScannerListener implements Listener {
 		final Text textfield;
-		
+
 		public TextScannerListener(Text textfield) {
 			super();
 			this.textfield = textfield;
@@ -57,47 +51,46 @@ IWorkbenchPreferencePage {
 			if (textfield.isFocusControl()) {
 				String str = textfield.getText();
 				if (str != null && str.length() > 0) {
-					str += "; ";
+					str += "; "; //$NON-NLS-1$
 				}
 				if (event.character > 31) {
 					str += event.character;
 				}
-				str += "(" + event.keyCode + ")";
+				str += "(" + event.keyCode + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				textfield.setText(str);
 			}
 		}
 	}
-	
-	
-	TextScannerListener txtScannerListener; 
-	Button backupDefaultButton;
-	
-	SettingsPreferenceStore prefs=new SettingsPreferenceStore(Hub.globalCfg);
-	
-    public ScannerPref() {
-        super(GRID);
-       
-        prefs.setDefault(PreferenceConstants.SCANNER_PREFIX_CODE, 0); //$NON-NLS-1$
-        prefs.setDefault(PreferenceConstants.SCANNER_POSTFIX_CODE, 123456789); //$NON-NLS-1$
-        prefs.setDefault(PreferenceConstants.BARCODE_LENGTH, 13); //$NON-NLS-1$
-        
-        setPreferenceStore(prefs);
-        setDescription("Einstellungen für externen Scanner"); 
-    }
 
-     @Override
-    protected void createFieldEditors()
-    {
-    	 addField(new IntegerFieldEditor(PreferenceConstants.SCANNER_PREFIX_CODE,"Scanner Prefixcode"
-					,getFieldEditorParent(), 10));
-    	 
-    	 addField(new IntegerFieldEditor(PreferenceConstants.SCANNER_POSTFIX_CODE,"Scanner Postfixcode"
-					,getFieldEditorParent(), 10));
-    	 
-    	 addField(new IntegerFieldEditor(PreferenceConstants.BARCODE_LENGTH, "Barcodelänge"
-					,getFieldEditorParent(), 50));
-    }
-     
+	TextScannerListener txtScannerListener;
+	Button backupDefaultButton;
+
+	SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.globalCfg);
+
+	public ScannerPref() {
+		super(GRID);
+
+		prefs.setDefault(PreferenceConstants.SCANNER_PREFIX_CODE, 0); //$NON-NLS-1$
+		prefs.setDefault(PreferenceConstants.SCANNER_POSTFIX_CODE, 123456789); //$NON-NLS-1$
+		prefs.setDefault(PreferenceConstants.BARCODE_LENGTH, 13); //$NON-NLS-1$
+
+		setPreferenceStore(prefs);
+		setDescription(Messages.ScannerPref_SettingsForScanner);
+	}
+
+	@Override
+	protected void createFieldEditors() {
+		addField(new IntegerFieldEditor(
+				PreferenceConstants.SCANNER_PREFIX_CODE, Messages.ScannerPref_ScannerPrefix,
+				getFieldEditorParent(), 10));
+
+		addField(new IntegerFieldEditor(
+				PreferenceConstants.SCANNER_POSTFIX_CODE,
+				Messages.ScannerPref_ScannerPostfix, getFieldEditorParent(), 10));
+
+		addField(new IntegerFieldEditor(PreferenceConstants.BARCODE_LENGTH,
+				Messages.ScannerPref_Barcodelength, getFieldEditorParent(), 50));
+	}
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -105,19 +98,20 @@ IWorkbenchPreferencePage {
 
 		GridLayout noMarginLayout = new GridLayout(3, false);
 		noMarginLayout.marginLeft = 0;
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(noMarginLayout);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label lblTest = new Label(comp, SWT.NONE);
-		lblTest.setText("Test");
+		lblTest.setText(Messages.ScannerPref_test);
 		lblTest.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		final Text txtTest = new Text(comp, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		final Text txtTest = new Text(comp, SWT.BORDER | SWT.MULTI
+				| SWT.READ_ONLY | SWT.WRAP);
 		txtTest.setLayoutData(new GridData(GridData.FILL_BOTH));
 		txtScannerListener = new TextScannerListener(txtTest);
 		getShell().getDisplay().addFilter(SWT.KeyDown, txtScannerListener);
-		
+
 		backupDefaultButton = getShell().getDefaultButton();
 		final Button hiddenBtn = new Button(parent, SWT.PUSH);
 		hiddenBtn.setVisible(false);
@@ -131,25 +125,27 @@ IWorkbenchPreferencePage {
 				getShell().setDefaultButton(backupDefaultButton);
 			}
 		});
-		
+
 		Button btnClear = new Button(comp, SWT.PUSH);
-		btnClear.setText("Testfeld löschen");
+		btnClear.setText(Messages.ScannerPref_clear);
 		btnClear.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				txtTest.setText("");
+				txtTest.setText(""); //$NON-NLS-1$
 				txtTest.setFocus();
 			}
-			
+
 		});
-		
+
 		Button btnSteuerblatt = new Button(parent, SWT.PUSH);
-		btnSteuerblatt.setText("Steuerblatt drucken..");
+		btnSteuerblatt.setText(Messages.ScannerPref_printSheet);
 		btnSteuerblatt.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MessageDialog.openInformation(getShell(), "Steuerblatt für Scanner drucken..", "Noch nicht implementiert");
+				MessageDialog.openInformation(getShell(),
+						Messages.ScannerPref_printSettingsSheet,
+						Messages.ScannerPref_NotImplemented);
 			}
 		});
 
@@ -158,27 +154,24 @@ IWorkbenchPreferencePage {
 
 	@Override
 	public boolean performOk() {
-    	prefs.flush();
-    	boolean ok = super.performOk();
-    	ScannerEvents.getInstance().reloadCodes();
-    	return ok;
+		prefs.flush();
+		boolean ok = super.performOk();
+		ScannerEvents.getInstance().reloadCodes();
+		return ok;
 	}
 
-	public void init(IWorkbench workbench)
-    {
-        // TODO Auto-generated method stub
+	public void init(IWorkbench workbench) {
+		// TODO Auto-generated method stub
 
-    }
-	
-	
+	}
+
 	@Override
 	public void dispose() {
 		if (txtScannerListener != null) {
-			getShell().getDisplay().removeFilter(SWT.KeyDown, txtScannerListener);
+			getShell().getDisplay().removeFilter(SWT.KeyDown,
+					txtScannerListener);
 		}
 		super.dispose();
 	}
-	
-	
 
 }

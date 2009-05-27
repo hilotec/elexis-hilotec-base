@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Reminder.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Reminder.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -46,6 +46,13 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	public static final String KONTAKT_ID = "IdentID";
 	static final String TABLENAME = "REMINDERS";
 
+	public static final String STATE_PLANNED="geplant";
+	public static final String STATE_DUE="fällig";
+	public static final String STATE_OVERDUE="überfällig";
+	public static final String DONE="erledigt";
+	public static final String UNDONE="unerledigt";
+	
+	
 	@Override
 	protected String getTableName(){
 		return TABLENAME;
@@ -68,7 +75,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 		};
 	
 	public enum Status {
-		geplant, faellig, ueberfaellig, erledigt, unerledigt
+		STATE_PLANNED, STATE_DUE, STATE_OVERDUE, STATE_DONE, STATE_UNDONE
 	}
 	
 	Reminder(){/* leer */}
@@ -104,7 +111,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 			KONTAKT_ID, CREATOR, DUE, STATUS, TYPE, "Params", MESSAGE
 		}, new String[] {
 			ident.getId(), Hub.actUser.getId(), due,
-			Byte.toString((byte) Status.geplant.ordinal()), Byte.toString((byte) typ.ordinal()),
+			Byte.toString((byte) Status.STATE_PLANNED.ordinal()), Byte.toString((byte) typ.ordinal()),
 			params, msg
 		});
 	}
@@ -150,15 +157,15 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 			t = "0";
 		}
 		Status ret = Status.values()[Byte.parseByte(t)];
-		if (ret == Status.geplant) {
+		if (ret == Status.STATE_PLANNED) {
 			TimeTool now = new TimeTool();
 			now.chop(3);
 			TimeTool mine = getDateDue();
 			if (now.isEqual(mine)) {
-				return Status.faellig;
+				return Status.STATE_DUE;
 			}
 			if (now.isAfter(mine)) {
-				return Status.ueberfaellig;
+				return Status.STATE_OVERDUE;
 			}
 		}
 		return ret;
@@ -217,7 +224,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	public static List<Reminder> findForToday(){
 		Query<Reminder> qbe = new Query<Reminder>(Reminder.class);
 		qbe.add(DUE, Query.LESS_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
-		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.erledigt.ordinal()));
+		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.STATE_DONE.ordinal()));
 		List<Reminder> ret = qbe.execute();
 		return ret;
 	}
@@ -234,7 +241,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	public static List<Reminder> findForPatient(final Patient p, final Kontakt responsible){
 		Query<Reminder> qbe = new Query<Reminder>(Reminder.class);
 		qbe.add(KONTAKT_ID, Query.EQUALS, p.getId());
-		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.erledigt.ordinal()));
+		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.STATE_DONE.ordinal()));
 		qbe.add(DUE, Query.LESS_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
 		if (responsible != null) {
 			qbe.startGroup();
@@ -254,7 +261,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	public static List<Reminder> findToShowOnStartup(final Anwender a){
 		Query<Reminder> qbe = new Query<Reminder>(Reminder.class);
 		qbe.add(DUE, Query.LESS_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
-		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.erledigt.ordinal()));
+		qbe.add(STATUS, Query.NOT_EQUAL, Integer.toString(Status.STATE_DONE.ordinal()));
 		qbe.add(TYPE, Query.EQUALS, Integer.toString(Typ.anzeigeProgstart.ordinal()));
 		return qbe.execute();
 	}
@@ -283,7 +290,7 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 			if (r.getDateDue().isAfter(today)) {
 				continue;
 			}
-			if (r.getStatus() == Status.erledigt) {
+			if (r.getStatus() == Status.STATE_DONE) {
 				continue;
 			}
 			if ((bOnlyPopup == true) && (r.getTyp() != Typ.anzeigeOeffnen)) {

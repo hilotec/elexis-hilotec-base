@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PrinterPreferencePage.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ * $Id: PrinterPreferencePage.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -26,10 +26,19 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.StringTool;
 
 public class PrinterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
-
+	private static final String ARROW = "->"; //$NON-NLS-1$
+	private static final String PRINTERWITH=Messages.PrinterPreferencePage_PrinterWith;
+	private static final String TRAYFOR=Messages.PrinterPreferencePage_TrayFor;
+	private static final String LABELS=Messages.PrinterPreferencePage_Labels;
+	private static final String PAPER_ESR=Messages.PrinterPreferencePage_PaperWithESR;
+	private static final String PAPER_PLAIN_A4=Messages.PrinterPreferencePage_PaperA4Plain;
+	private static final String PAPER_PLAIN_A5=Messages.PrinterPreferencePage_PaperA5Plain;
+	private static final String SHEETFEEDER=Messages.PrinterPreferencePage_SheetFeeder;
+	
 	Text tEtiketten,tEtikettenschacht,tA5,tA5Schacht,tA4ESR,tA4ESRSchacht,tA4,tA4Schacht;
 	Text tEinzelblatt;
 	Text tEinzelblattSchacht;
@@ -43,21 +52,21 @@ public class PrinterPreferencePage extends PreferencePage implements
 		psel=new PrinterSelector();
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout(3,false));
-		new Label(ret,SWT.NONE).setText("Drucker mit Etiketten");
+		new Label(ret,SWT.NONE).setText(PRINTERWITH+LABELS);
 		tEtiketten=new Text(ret,SWT.BORDER|SWT.READ_ONLY);
 		tEtiketten.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		tEtiketten.setData("EtikettenDrucker");
+		tEtiketten.setData(Messages.PrinterPreferencePage_Labelrinter);
 		bEtiketten=new Button(ret,SWT.PUSH);
-		bEtiketten.setText(" ->");
+		bEtiketten.setText(" ->"); //$NON-NLS-1$
 		bEtiketten.setData(tEtiketten);
 		bEtiketten.addSelectionListener(psel);
-		new Label(ret,SWT.NONE).setText("Schacht für Etiketten");
+		new Label(ret,SWT.NONE).setText(TRAYFOR+LABELS);
 		tEtikettenschacht=new Text(ret,SWT.BORDER);
 		tEtikettenschacht.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE);
 		new Label(ret, SWT.NONE);  // placeholder
 		cEtiketten = new Button(ret, SWT.CHECK);
-		cEtiketten.setText("Drucker jedes Mal auswählen");
+		cEtiketten.setText(Messages.PrinterPreferencePage_ChosePrinterAlways);
 		cEtiketten.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		cEtiketten.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -65,77 +74,77 @@ public class PrinterPreferencePage extends PreferencePage implements
 			}
 		});
 		
-		new Label(ret,SWT.NONE).setText("Drucker mit A4-Papier mit ESR");
+		new Label(ret,SWT.NONE).setText(PRINTERWITH+PAPER_ESR);
 		tA4ESR=new Text(ret,SWT.BORDER|SWT.READ_ONLY);
 		tA4ESR.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		Button b=new Button(ret,SWT.PUSH);
 		b.setData(tA4ESR);
 		b.addSelectionListener(psel);
-		b.setText("->");
-		new Label(ret,SWT.NONE).setText("Schacht mit A4-Papier mit ESR");
+		b.setText(ARROW);
+		new Label(ret,SWT.NONE).setText(TRAYFOR+PAPER_ESR);
 		tA4ESRSchacht=new Text(ret,SWT.BORDER);
 		tA4ESRSchacht.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE);
 		
-		new Label(ret,SWT.NONE).setText("Drucker mit weissen A4-Papier");
+		new Label(ret,SWT.NONE).setText(PRINTERWITH+PAPER_PLAIN_A4);
 		tA4=new Text(ret,SWT.BORDER|SWT.READ_ONLY);
 		tA4.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		b=new Button(ret,SWT.PUSH);
 		b.setData(tA4);
 		b.addSelectionListener(psel);
-		b.setText("->");
-		new Label(ret,SWT.NONE).setText("Schacht mit weissem A4-Papier");
+		b.setText(ARROW);
+		new Label(ret,SWT.NONE).setText(TRAYFOR+PAPER_PLAIN_A4);
 		tA4Schacht=new Text(ret,SWT.BORDER);
 		tA4Schacht.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE);
 		
-		new Label(ret,SWT.NONE).setText("Drucker mit A5-Papier");
+		new Label(ret,SWT.NONE).setText(PRINTERWITH+PAPER_PLAIN_A5);
 		tA5=new Text(ret,SWT.BORDER|SWT.READ_ONLY);
 		tA5.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		b=new Button(ret,SWT.PUSH);
 		b.setData(tA5);
 		b.addSelectionListener(psel);
-		b.setText("->");
-		new Label(ret,SWT.NONE).setText("Schacht mit A5-Papier");
+		b.setText(ARROW);
+		new Label(ret,SWT.NONE).setText(TRAYFOR+PAPER_PLAIN_A5);
 		tA5Schacht=new Text(ret,SWT.BORDER);
 		tA5Schacht.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE);
 		
-		new Label(ret,SWT.NONE).setText("Drucker mit Einzelblatteinzug");
+		new Label(ret,SWT.NONE).setText(PRINTERWITH+SHEETFEEDER);
 		tEinzelblatt=new Text(ret,SWT.BORDER|SWT.READ_ONLY);
 		tEinzelblatt.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		b=new Button(ret,SWT.PUSH);
 		b.setData(tEinzelblatt);
 		b.addSelectionListener(psel);
-		b.setText("->");
-		new Label(ret,SWT.NONE).setText("Schacht für Einzelblatteinzug");
+		b.setText(ARROW);
+		new Label(ret,SWT.NONE).setText(TRAYFOR+SHEETFEEDER);
 		tEinzelblattSchacht=new Text(ret,SWT.BORDER);
 		tEinzelblattSchacht.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE);
 		
-		tEtiketten.setText(Hub.localCfg.get("Drucker/Etiketten/Name",""));
-		tEtikettenschacht.setText(Hub.localCfg.get("Drucker/Etiketten/Schacht",""));
-		cEtiketten.setSelection(Hub.localCfg.get("Drucker/Etiketten/Choose", false));
+		tEtiketten.setText(Hub.localCfg.get("Drucker/Etiketten/Name",StringTool.leer)); //$NON-NLS-1$
+		tEtikettenschacht.setText(Hub.localCfg.get("Drucker/Etiketten/Schacht",StringTool.leer)); //$NON-NLS-1$
+		cEtiketten.setSelection(Hub.localCfg.get("Drucker/Etiketten/Choose", false)); //$NON-NLS-1$
 		setEtikettenSelection();
-		tA4ESR.setText(Hub.localCfg.get("Drucker/A4ESR/Name",""));
-		tA4ESRSchacht.setText(Hub.localCfg.get("Drucker/A4ESR/Schacht",""));
-		tA4.setText(Hub.localCfg.get("Drucker/A4/Name",""));
-		tA4Schacht.setText(Hub.localCfg.get("Drucker/A4/Schacht",""));
-		tA5.setText(Hub.localCfg.get("Drucker/A5/Name",""));
-		tA5Schacht.setText(Hub.localCfg.get("Drucker/A5/Schacht",""));
-		tEinzelblatt.setText(Hub.localCfg.get("Drucker/Einzelblatt/Name",""));
-		tEinzelblattSchacht.setText(Hub.localCfg.get("Drucker/Einzelblatt/Schacht",""));
+		tA4ESR.setText(Hub.localCfg.get("Drucker/A4ESR/Name",StringTool.leer)); //$NON-NLS-1$
+		tA4ESRSchacht.setText(Hub.localCfg.get("Drucker/A4ESR/Schacht",StringTool.leer)); //$NON-NLS-1$
+		tA4.setText(Hub.localCfg.get("Drucker/A4/Name",StringTool.leer)); //$NON-NLS-1$
+		tA4Schacht.setText(Hub.localCfg.get("Drucker/A4/Schacht",StringTool.leer)); //$NON-NLS-1$
+		tA5.setText(Hub.localCfg.get("Drucker/A5/Name",StringTool.leer)); //$NON-NLS-1$
+		tA5Schacht.setText(Hub.localCfg.get("Drucker/A5/Schacht",StringTool.leer)); //$NON-NLS-1$
+		tEinzelblatt.setText(Hub.localCfg.get("Drucker/Einzelblatt/Name",StringTool.leer)); //$NON-NLS-1$
+		tEinzelblattSchacht.setText(Hub.localCfg.get("Drucker/Einzelblatt/Schacht",StringTool.leer)); //$NON-NLS-1$
 		new Label(ret,SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		bClear=new Button(ret,SWT.PUSH);
-		bClear.setText("Druckereinstellungen löschen");
+		bClear.setText(Messages.PrinterPreferencePage_ClearPrinterSettings);
 		bClear.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		bClear.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				tEtiketten.setText("");
-				tA4.setText("");
-				tA4ESR.setText("");
-				tA5.setText("");
+				tEtiketten.setText(StringTool.leer);
+				tA4.setText(StringTool.leer);
+				tA4ESR.setText(StringTool.leer);
+				tA5.setText(StringTool.leer);
 			}
 		});
 		return ret;
@@ -159,9 +168,9 @@ public class PrinterPreferencePage extends PreferencePage implements
 		boolean selection = cEtiketten.getSelection();
 		
 		if (selection) {
-			tEtiketten.setText("");
+			tEtiketten.setText(StringTool.leer);
 			tEtiketten.setData(null);
-			tEtikettenschacht.setText("");
+			tEtikettenschacht.setText(StringTool.leer);
 		}
 		
 		tEtiketten.setEnabled(!selection);
@@ -174,24 +183,24 @@ public class PrinterPreferencePage extends PreferencePage implements
 	}
 	@Override
 	protected void performApply() {
-		Hub.localCfg.set("Drucker/Etiketten/Name",tEtiketten.getText());
-		Hub.localCfg.set("Drucker/Etiketten/Schacht",tEtikettenschacht.getText());
+		Hub.localCfg.set("Drucker/Etiketten/Name",tEtiketten.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/Etiketten/Schacht",tEtikettenschacht.getText()); //$NON-NLS-1$
 		Object data = tEtiketten.getData();
 		if (data instanceof PrinterData) {
 			PrinterData pdata = (PrinterData) data;
-			Hub.localCfg.set("Drucker/Etiketten/Driver", pdata.driver);
+			Hub.localCfg.set("Drucker/Etiketten/Driver", pdata.driver); //$NON-NLS-1$
 		} else {
-			Hub.localCfg.set("Drucker/Etiketten/Driver", "");
+			Hub.localCfg.set("Drucker/Etiketten/Driver", StringTool.leer); //$NON-NLS-1$
 		}
 		
-		Hub.localCfg.set("Drucker/A4ESR/Name",tA4ESR.getText());
-		Hub.localCfg.set("Drucker/A4ESR/Schacht",tA4ESRSchacht.getText());
-		Hub.localCfg.set("Drucker/A4/Name",tA4.getText());
-		Hub.localCfg.set("Drucker/A4/Schacht",tA4Schacht.getText());
-		Hub.localCfg.set("Drucker/A5/Name",tA5.getText());
-		Hub.localCfg.set("Drucker/A5/Schacht",tA5Schacht.getText());
-		Hub.localCfg.set("Drucker/Einzelblatt/Name",tEinzelblatt.getText());
-		Hub.localCfg.set("Drucker/Einzelblatt/Schacht",tEinzelblattSchacht.getText());
+		Hub.localCfg.set("Drucker/A4ESR/Name",tA4ESR.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/A4ESR/Schacht",tA4ESRSchacht.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/A4/Name",tA4.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/A4/Schacht",tA4Schacht.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/A5/Name",tA5.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/A5/Schacht",tA5Schacht.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/Einzelblatt/Name",tEinzelblatt.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/Einzelblatt/Schacht",tEinzelblattSchacht.getText()); //$NON-NLS-1$
 	}
 	
 }

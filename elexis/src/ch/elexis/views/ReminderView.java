@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: ReminderView.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -94,13 +94,13 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				} else {
 					if (ownReminderAction.isChecked()) {
 						qbe.clear();
-						qbe.add("Creator", "=", Hub.actUser.getId());
+						qbe.add(Reminder.CREATOR, Query.EQUALS, Hub.actUser.getId());
 						allReminders.addAll(qbe.execute());
 					}
 					// compatibility to old reminders where responsible
 					// was given instead of n:m
 					qbe.clear();
-					qbe.add("Responsible", "=", Hub.actUser.getId());
+					qbe.add(Reminder.RESPONSIBLE, Query.EQUALS, Hub.actUser.getId());
 					allReminders.addAll(qbe.execute());
 					// ..to be removed later
 				}
@@ -157,11 +157,11 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			if (element instanceof Reminder) {
 				Reminder.Status stat = ((Reminder) element).getStatus();
 				cfg = Hub.userCfg.getBranch(PreferenceConstants.USR_REMINDERCOLORS, true);
-				if (stat == Reminder.Status.faellig) {
+				if (stat == Reminder.Status.STATE_DUE) {
 					return Desk.getColorFromRGB(cfg.get("fällig", "FFFFFF"));
-				} else if (stat == Reminder.Status.ueberfaellig) {
+				} else if (stat == Reminder.Status.STATE_OVERDUE) {
 					return Desk.getColorFromRGB(cfg.get("überfällig", "FF0000"));
-				} else if (stat == Reminder.Status.geplant) {
+				} else if (stat == Reminder.Status.STATE_PLANNED) {
 					return Desk.getColorFromRGB(cfg.get("geplant", "00FF00"));
 				} else {
 					return null;

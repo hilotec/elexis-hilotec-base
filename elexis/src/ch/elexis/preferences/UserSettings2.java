@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: UserSettings2.java 4061 2008-06-21 23:22:04Z rgw_ch $
+ * $Id: UserSettings2.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -23,18 +23,23 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import ch.elexis.Hub;
+import ch.elexis.data.Person;
 import ch.elexis.preferences.inputs.MultilineFieldEditor;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.Patientenblatt2;
+import ch.rgw.tools.StringTool;
 
 public class UserSettings2 extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
-	public static final String EXPANDABLE_COMPOSITES_BASE="view/expandableComposites";
-	public static final String EXPANDABLE_COMPOSITES=EXPANDABLE_COMPOSITES_BASE+"/setting";
-	public static final String STATES=EXPANDABLE_COMPOSITES_BASE+"/states/";
-	public static final String OPEN="1";
-	public static final String CLOSED="2";
-	public static final String REMEMBER_STATE="3";
+	public static final String REMEMBER_LAST_STATE = Messages.UserSettings2_RememberLastState;
+	public static final String ALWAYS_CLOSED = Messages.UserSettings2_AlwaysClosed;
+	public static final String ALWAYS_OPEN = Messages.UserSettings2_AlwaysOpen;
+	public static final String EXPANDABLE_COMPOSITES_BASE="view/expandableComposites"; //$NON-NLS-1$
+	public static final String EXPANDABLE_COMPOSITES=EXPANDABLE_COMPOSITES_BASE+"/setting"; //$NON-NLS-1$
+	public static final String STATES=EXPANDABLE_COMPOSITES_BASE+"/states/"; //$NON-NLS-1$
+	public static final String OPEN="1"; //$NON-NLS-1$
+	public static final String CLOSED="2"; //$NON-NLS-1$
+	public static final String REMEMBER_STATE="3"; //$NON-NLS-1$
 	
 	private SettingsPreferenceStore prefs=new SettingsPreferenceStore(Hub.userCfg);
 	public UserSettings2(){
@@ -49,21 +54,21 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors() {
 		addField(new RadioGroupFieldEditor(EXPANDABLE_COMPOSITES,
-				"Erweiterbare Felder",1,new String[][]{
-				{"Immer geöffnet",OPEN},
-				{"Immer geschlossen",CLOSED},
-				{"Letzten Zustand merken",REMEMBER_STATE}	
+				Messages.UserSettings2_ExtendableFields,1,new String[][]{
+				{ALWAYS_OPEN,OPEN},
+				{ALWAYS_CLOSED,CLOSED},
+				{REMEMBER_LAST_STATE,REMEMBER_STATE}	
 				
 		},getFieldEditorParent()));
 		new Label(getFieldEditorParent(),SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		new Label(getFieldEditorParent(),SWT.NONE).setText("Anzuzeigende Felder in Patientenliste");
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWPATNR,"Patient-Nr", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWNAME,"Name",getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,"Vorname",getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,"Geburtsdatum",getFieldEditorParent()));
+		new Label(getFieldEditorParent(),SWT.NONE).setText(Messages.UserSettings2_FieldsInList);
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWPATNR,Messages.UserSettings2_PatientNr, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWNAME,Messages.UserSettings2_PatientName,getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,Messages.UserSettings2_PatientFirstname,getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,Messages.UserSettings2_Birthdate,getFieldEditorParent()));
 		new Label(getFieldEditorParent(),SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		new Label(getFieldEditorParent(),SWT.NONE).setText("Zusatzfelder im Patient-Detail-Blatt");
-		addField(new MultilineFieldEditor(Patientenblatt2.CFG_EXTRAFIELDS,"",5,SWT.NONE, 
+		new Label(getFieldEditorParent(),SWT.NONE).setText(Messages.UserSettings2_AddidtionalFields);
+		addField(new MultilineFieldEditor(Patientenblatt2.CFG_EXTRAFIELDS,StringTool.leer,5,SWT.NONE, 
 				true,getFieldEditorParent()));
 		
 	}

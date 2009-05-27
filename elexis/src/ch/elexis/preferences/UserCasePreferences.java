@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, Daniel Lutz and Elexis
+ * Copyright (c) 2007-2009, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: UserCasePreferences.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ *  $Id: UserCasePreferences.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -27,22 +27,22 @@ import ch.rgw.io.InMemorySettings;
 public class UserCasePreferences extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
-	public static final String ID = "ch.elexis.preferences.UserCasePreferences";
+	public static final String ID = "ch.elexis.preferences.UserCasePreferences"; //$NON-NLS-1$
 
 	public UserCasePreferences() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(new InMemorySettings()));
-		setDescription("Fälle");
+		setDescription(Messages.UserCasePreferences_Cases);
 	}
 
 	@Override
 	protected void createFieldEditors() {
 		addField(new StringFieldEditor(PreferenceConstants.USR_DEFCASELABEL,
-				"Standard-Bezeichnung", getFieldEditorParent()));
+				Messages.UserCasePreferences_DefaultName, getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.USR_DEFCASEREASON,
-				"Standard-Grund", getFieldEditorParent()));
+				Messages.UserCasePreferences_DefaultReason, getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.USR_DEFLAW,
-				"Standard-Abrechnungssystem", getFieldEditorParent()));
+				Messages.UserCasePreferences_DefaultBillingSystem, getFieldEditorParent()));
 	}
 
 	public void init(IWorkbench workbench) {

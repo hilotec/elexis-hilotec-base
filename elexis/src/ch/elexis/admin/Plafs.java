@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plafs.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ *  $Id: Plafs.java 5320 2009-05-27 16:51:14Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -22,7 +22,7 @@ import ch.elexis.util.PlatformHelper;
 import ch.rgw.tools.ExHandler;
 
 /**
- * Stub for lazter development of plafs: Provide Strings not omly depending of the locale but also
+ * Stub for later development of plafs: Provide Strings not only depending of the locale but also
  * of the plaf. A client request a String and Plafs returns the value of that String matching the
  * actual plaf
  * 
