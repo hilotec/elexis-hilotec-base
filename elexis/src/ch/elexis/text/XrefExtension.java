@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XrefExtension.java 4627 2008-10-22 18:27:21Z rgw_ch $
+ *  $Id: XrefExtension.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -26,7 +26,7 @@ import ch.elexis.views.TextView;
 import ch.rgw.tools.ExHandler;
 
 public class XrefExtension implements IKonsExtension {
-	public static final String providerID = "ch.elexis.text.DocXRef";
+	public static final String providerID = "ch.elexis.text.DocXRef"; //$NON-NLS-1$
 	EnhancedTextField tx;
 	
 	public String connect(EnhancedTextField tf){

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Samdas.java 5223 2009-03-26 20:34:27Z rgw_ch $
+ *  $Id: Samdas.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -37,11 +37,14 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class Samdas {
-	public static final Namespace ns = Namespace.getNamespace("samdas", "http://www.elexis.ch/XSD");
+	public static final String ELEM_ROOT = "EMR"; //$NON-NLS-1$
+	public static final String ELEM_TEXT = "text"; //$NON-NLS-1$
+	public static final String ELEM_RECORD = "record"; //$NON-NLS-1$
+	public static final Namespace ns = Namespace.getNamespace("samdas", "http://www.elexis.ch/XSD"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final Namespace nsxsi =
-		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance");
+		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final Namespace nsschema =
-		Namespace.getNamespace("schemaLocation", "http://www.elexis.ch/XSD EMR.xsd");
+		Namespace.getNamespace("schemaLocation", "http://www.elexis.ch/XSD EMR.xsd"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private Document doc;
 	private Element eRoot;
@@ -66,10 +69,10 @@ public class Samdas {
 			// formale Fehler oder kann nicht gelesen werden");
 			// ExHandler.handle(e);
 			doc = new Document();
-			eRoot = new Element("EMR", ns);
+			eRoot = new Element(ELEM_ROOT, ns);
 			doc.setRootElement(eRoot);
-			Element record = new Element("record", ns);
-			Element text = new Element("text", ns);
+			Element record = new Element(ELEM_RECORD, ns);
+			Element text = new Element(ELEM_TEXT, ns);
 			doc.getRootElement().addContent(record);
 			record.addContent(text);
 			text.setText(input);
@@ -82,7 +85,7 @@ public class Samdas {
 	 */
 	public Samdas(){
 		doc = new Document();
-		eRoot = new Element("EMR", ns);
+		eRoot = new Element(ELEM_ROOT, ns);
 		// eRoot.addNamespaceDeclaration(nsxsi);
 		// eRoot.addNamespaceDeclaration(nsschema);
 		doc.setRootElement(eRoot);
@@ -104,14 +107,14 @@ public class Samdas {
 	/** Shortcut für Dokumente, die sowieso nur einen Record haben */
 	public String getRecordText(){
 		Element rec = getRecordElement();
-		String ret = rec.getChildText("text", ns);
-		return ret == null ? "" : ret;
+		String ret = rec.getChildText(ELEM_TEXT, ns);
+		return ret == null ? "" : ret; //$NON-NLS-1$
 	}
 	
 	public Element getRecordElement(){
-		Element ret = eRoot.getChild("record", ns);
+		Element ret = eRoot.getChild(ELEM_RECORD, ns);
 		if (ret == null) {
-			ret = new Element("record", ns);
+			ret = new Element(ELEM_RECORD, ns);
 			eRoot.addContent(ret);
 		}
 		return ret;
@@ -132,6 +135,12 @@ public class Samdas {
 	 * 
 	 */
 	public static class Record {
+		private static final String ELEM_SECTION = "section"; //$NON-NLS-1$
+		public static final String ELEM_MARKUP = "markup"; //$NON-NLS-1$
+		public static final String ELEM_XREF = "xref"; //$NON-NLS-1$
+		public static final String ATTR_DATE = "date"; //$NON-NLS-1$
+		public static final String ATTR_RESPONSIBLE_EAN = "responsibleEAN"; //$NON-NLS-1$
+		public static final String ATTR_AUTHOR = "author"; //$NON-NLS-1$
 		private Element eRecord;
 		
 		public Record(Element e){
@@ -139,21 +148,21 @@ public class Samdas {
 		}
 		
 		public String getAuthor(){
-			return eRecord.getAttributeValue("author");
+			return eRecord.getAttributeValue(ATTR_AUTHOR);
 		}
 		
 		public String getResponsibleEAN(){
-			return eRecord.getAttributeValue("responsibleEAN");
+			return eRecord.getAttributeValue(ATTR_RESPONSIBLE_EAN);
 		}
 		
 		public TimeTool getDate(){
-			return new TimeTool(eRecord.getAttributeValue("date"));
+			return new TimeTool(eRecord.getAttributeValue(ATTR_DATE));
 		}
 		
 		public Element getTextElement(){
-			Element ret = eRecord.getChild("text", ns);
+			Element ret = eRecord.getChild(ELEM_TEXT, ns);
 			if (ret == null) {
-				ret = new Element("text", ns);
+				ret = new Element(ELEM_TEXT, ns);
 				eRecord.addContent(ret);
 			}
 			return ret;
@@ -171,7 +180,7 @@ public class Samdas {
 		
 		@SuppressWarnings("unchecked")
 		public List<XRef> getXrefs(){
-			List<Element> lElm = eRecord.getChildren("xref", ns);
+			List<Element> lElm = eRecord.getChildren(ELEM_XREF, ns);
 			List<XRef> ret = new ArrayList<XRef>(lElm.size());
 			for (Element el : lElm) {
 				ret.add(new XRef(el));
@@ -181,7 +190,7 @@ public class Samdas {
 		
 		@SuppressWarnings("unchecked")
 		public List<Markup> getMarkups(){
-			List<Element> lElm = eRecord.getChildren("markup", ns);
+			List<Element> lElm = eRecord.getChildren(ELEM_MARKUP, ns);
 			List<Markup> ret = new ArrayList<Markup>(lElm.size());
 			for (Element el : lElm) {
 				ret.add(new Markup(el));
@@ -191,7 +200,7 @@ public class Samdas {
 		
 		@SuppressWarnings("unchecked")
 		public List<Section> getSections(){
-			List<Element> lElm = eRecord.getChildren("section", ns);
+			List<Element> lElm = eRecord.getChildren(ELEM_SECTION, ns);
 			List<Section> ret = new ArrayList<Section>(lElm.size());
 			for (Element el : lElm) {
 				ret.add(new Section(el));
@@ -226,6 +235,8 @@ public class Samdas {
 	 * 
 	 */
 	public static class Range {
+		public static final String ATTR_LENGTH = "length"; //$NON-NLS-1$
+		public static final String ATTR_FROM = "from"; //$NON-NLS-1$
 		protected Element el;
 		
 		Range(Element e){
@@ -234,20 +245,20 @@ public class Samdas {
 		
 		Range(String typ, int pos, int length){
 			el = new Element(typ, ns);
-			el.setAttribute("from", Integer.toString(pos));
-			el.setAttribute("length", Integer.toString(length));
+			el.setAttribute(ATTR_FROM, Integer.toString(pos));
+			el.setAttribute(ATTR_LENGTH, Integer.toString(length));
 		}
 		
 		public int getPos(){
-			return Integer.parseInt(el.getAttributeValue("from"));
+			return Integer.parseInt(el.getAttributeValue(ATTR_FROM));
 		}
 		
 		public void setPos(int p){
-			el.setAttribute("from", Integer.toString(p));
+			el.setAttribute(ATTR_FROM, Integer.toString(p));
 		}
 		
 		public int getLength(){
-			return Integer.parseInt(el.getAttributeValue("length"));
+			return Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
 		}
 	}
 	
@@ -260,22 +271,25 @@ public class Samdas {
 	 */
 	public static class XRef extends Range {
 		
+		public static final String ATTR_ID = "id"; //$NON-NLS-1$
+		public static final String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
+
 		XRef(Element e){
 			super(e);
 		}
 		
 		public XRef(String provider, String id, int pos, int length){
-			super("xref", pos, length);
-			el.setAttribute("provider", provider);
-			el.setAttribute("id", id);
+			super("xref", pos, length); //$NON-NLS-1$
+			el.setAttribute(ATTR_PROVIDER, provider);
+			el.setAttribute(ATTR_ID, id);
 		}
 		
 		public String getProvider(){
-			return el.getAttributeValue("provider");
+			return el.getAttributeValue(ATTR_PROVIDER);
 		}
 		
 		public String getID(){
-			return el.getAttributeValue("id");
+			return el.getAttributeValue(ATTR_ID);
 		}
 	}
 	
@@ -286,17 +300,19 @@ public class Samdas {
 	 * 
 	 */
 	public static class Markup extends Range {
+		public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
+
 		Markup(Element e){
 			super(e);
 		}
 		
 		public Markup(int pos, int length, String typ){
-			super("markup", pos, length);
-			el.setAttribute("type", typ);
+			super("markup", pos, length); //$NON-NLS-1$
+			el.setAttribute(ATTR_TYPE, typ);
 		}
 		
 		public String getType(){
-			return el.getAttributeValue("type");
+			return el.getAttributeValue(ATTR_TYPE);
 		}
 	}
 	
@@ -307,13 +323,15 @@ public class Samdas {
 	 * 
 	 */
 	public static class Section extends Range {
+		private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+
 		Section(Element e){
 			super(e);
 		}
 		
 		public Section(int pos, int length, String name){
-			super("section", pos, length);
-			el.setAttribute("name", name);
+			super("section", pos, length); //$NON-NLS-1$
+			el.setAttribute(ATTR_NAME, name);
 		}
 	}
 	
@@ -330,36 +348,36 @@ public class Samdas {
 		
 		Finding(String typ, String date, String labEAN, boolean abnormal){
 			el = new Element(typ);
-			el.setAttribute("date", date);
-			el.setAttribute("labEAN", labEAN);
-			el.setAttribute("abnormal", Boolean.toString(abnormal).toLowerCase());
+			el.setAttribute("date", date); //$NON-NLS-1$
+			el.setAttribute("labEAN", labEAN); //$NON-NLS-1$
+			el.setAttribute("abnormal", Boolean.toString(abnormal).toLowerCase()); //$NON-NLS-1$
 		}
 		
 		public TimeTool getDate(){
-			return new TimeTool(el.getAttributeValue("date"));
+			return new TimeTool(el.getAttributeValue("date")); //$NON-NLS-1$
 		}
 		
 		public boolean isAbnormal(){
-			return (el.getAttributeValue("abormal").equals("true"));
+			return (el.getAttributeValue("abormal").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	@Deprecated
 	public static class Analyse extends Finding {
 		public Analyse(){
-			super(new Element("analysis"));
+			super(new Element("analysis")); //$NON-NLS-1$
 		}
 	}
 	@Deprecated
 	public static class Image extends Finding {
 		public Image(){
-			super(new Element("image"));
+			super(new Element("image")); //$NON-NLS-1$
 		}
 	}
 	@Deprecated
 	public static class ECG extends Finding {
 		public ECG(){
-			super(new Element("ecg"));
+			super(new Element("ecg")); //$NON-NLS-1$
 		}
 	}
 	

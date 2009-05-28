@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 4771 2008-12-08 13:36:36Z rgw_ch $
+ *  $Id: TextContainer.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -62,42 +62,49 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class TextContainer {
-	
+
+	private static final String WARNING_SIGN = "??"; //$NON-NLS-1$
+	private static final String EXTENSION_POINT_TEXT = "ch.elexis.Text"; //$NON-NLS-1$
+	private static final String MATCH_SQUARE_BRACKET = "[\\[\\]]"; //$NON-NLS-1$
+	private static final String TEMPLATE_NOT_FOUND_HEADER=Messages.TextContainer_TemplateNotFoundHeader;
+	private static final String TEMPLATE_NOT_FOUND_BODY = Messages.TextContainer_TemplateNotFoundBody;
+
 	private ITextPlugin plugin = null;
-	private static Log log = Log.get("TextContainer");
+	private static Log log = Log.get("TextContainer"); //$NON-NLS-1$
 	private Shell shell;
-	public static final String TEMPLATE_REGEXP =
-		"\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]";
-	public static final String TEMPLATE_INDIRECT_REGEXP =
-		"\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]";
-	public static final String GENDERIZE_REGEXP = "\\[[a-zA-Z]+:mwn?:[^\\[]+\\]";
-	public static final String IDATACCESS_REGEXP =
-		"\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]";
-	
+	public static final String MATCH_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]"; //$NON-NLS-1$
+	public static final String MATCH_INDIRECT_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]"; //$NON-NLS-1$
+	public static final String MATCH_GENDERIZE = "\\[[a-zA-Z]+:mwn?:[^\\[]+\\]"; //$NON-NLS-1$
+	public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; //$NON-NLS-1$
+
 	/**
-	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin
-	 * findet, wählt er ein rudimentäres Standardplugin aus (das in der aktuellen Version nur eine
-	 * Fehlermeldung ausgibt)
+	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin
+	 * Wenn er kein Textplugin findet, wählt er ein rudimentäres Standardplugin
+	 * aus (das in der aktuellen Version nur eine Fehlermeldung ausgibt)
 	 */
-	public TextContainer(){
+	public TextContainer() {
 		if (plugin == null) {
-			String ExtensionToUse = Hub.localCfg.get(PreferenceConstants.P_TEXTMODUL, null);
+			String ExtensionToUse = Hub.localCfg.get(
+					PreferenceConstants.P_TEXTMODUL, null);
 			IExtensionRegistry exr = Platform.getExtensionRegistry();
-			IExtensionPoint exp = exr.getExtensionPoint("ch.elexis.Text");
+			IExtensionPoint exp = exr.getExtensionPoint(EXTENSION_POINT_TEXT);
 			if (exp != null) {
 				IExtension[] extensions = exp.getExtensions();
 				for (IExtension ex : extensions) {
-					IConfigurationElement[] elems = ex.getConfigurationElements();
+					IConfigurationElement[] elems = ex
+							.getConfigurationElements();
 					for (IConfigurationElement el : elems) {
 						if ((ExtensionToUse == null)
-							|| el.getAttribute("name").equals(ExtensionToUse)) {
+								|| el.getAttribute("name").equals( //$NON-NLS-1$
+										ExtensionToUse)) {
 							try {
-								plugin = (ITextPlugin) el.createExecutableExtension("Klasse");
+								plugin = (ITextPlugin) el
+										.createExecutableExtension("Klasse"); //$NON-NLS-1$
 							} catch (/* Core */Exception e) {
 								ExHandler.handle(e);
 							}
 						}
-						
+
 					}
 				}
 			}
@@ -106,32 +113,33 @@ public class TextContainer {
 			plugin = new DefaultTextPlugin();
 		}
 	}
-	
-	public TextContainer(final IViewSite s){
+
+	public TextContainer(final IViewSite s) {
 		this();
 		shell = s.getShell();
 	}
-	
-	public TextContainer(final Shell s){
+
+	public TextContainer(final Shell s) {
 		this();
 		shell = s;
 	}
-	
-	public void setFocus(){
+
+	public void setFocus() {
 		plugin.setFocus();
 	}
-	
-	public ITextPlugin getPlugin(){
+
+	public ITextPlugin getPlugin() {
 		return plugin;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		plugin.dispose();
 	}
-	
+
 	/**
-	 * Ein Dokument aus einer namentlich genannten Vorlage erstellen. Die Vorlage muss entweder dem
-	 * aktuellen Mandanten oder allen Mandanten zugeordet sein.
+	 * Ein Dokument aus einer namentlich genannten Vorlage erstellen. Die
+	 * Vorlage muss entweder dem aktuellen Mandanten oder allen Mandanten
+	 * zugeordet sein.
 	 * 
 	 * @param templatename
 	 *            Name der Vorlage
@@ -143,31 +151,34 @@ public class TextContainer {
 	 *            TODO
 	 * @return Ein Brief-Objekt oder null bei Fehler
 	 */
-	public Brief createFromTemplateName(final Konsultation kons, final String templatename,
-		final String typ, final Kontakt adressat, final String subject){
+
+
+	public Brief createFromTemplateName(final Konsultation kons,
+			final String templatename, final String typ,
+			final Kontakt adressat, final String subject) {
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
-		qbe.add("Typ", "=", Brief.TEMPLATE);
+		qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.and();
-		qbe.add("Betreff", "=", templatename);
+		qbe.add(Brief.SUBJECT, Query.EQUALS, templatename);
 		qbe.startGroup();
-		qbe.add("DestID", "=", Hub.actMandant.getId());
+		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
 		qbe.or();
-		qbe.add("DestID", "=", "");
+		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
 		qbe.endGroup();
 		List<Brief> list = qbe.execute();
 		if ((list == null) || (list.size() == 0)) {
-			SWTHelper.showError("Dokumentvorlage nicht gefunden", "Die benötigte Formatvorlage "
-				+ templatename + " wurde nicht gefunden.");
+			SWTHelper.showError(TEMPLATE_NOT_FOUND_HEADER,
+					TEMPLATE_NOT_FOUND_BODY + templatename);
 			return null;
 		}
 		Brief template = list.get(0);
 		return createFromTemplate(kons, template, typ, adressat, subject);
 	}
-	
+
 	/**
-	 * Ein Dokument aus einer Vorlage erstellen. Dabei werden Datensatz-Variablen durch die
-	 * entsprechenden Inhalte ersetzt und geschlechtsspezifische Formulierungen entsprechend
-	 * gewählt.
+	 * Ein Dokument aus einer Vorlage erstellen. Dabei werden
+	 * Datensatz-Variablen durch die entsprechenden Inhalte ersetzt und
+	 * geschlechtsspezifische Formulierungen entsprechend gewählt.
 	 * 
 	 * @param template
 	 *            die Vorlage
@@ -179,12 +190,13 @@ public class TextContainer {
 	 *            der Adressat
 	 * @return true bei Erfolg
 	 */
-	public Brief createFromTemplate(final Konsultation kons, final Brief template,
-		final String typ, Kontakt adressat, final String subject){
+	public Brief createFromTemplate(final Konsultation kons,
+			final Brief template, final String typ, Kontakt adressat,
+			final String subject) {
 		if (adressat == null) {
-			KontaktSelektor ksel =
-				new KontaktSelektor(shell, Kontakt.class, "Adressaten auswählen",
-					"Bitte wählen Sie den Adressaten für den Brief aus");
+			KontaktSelektor ksel = new KontaktSelektor(shell, Kontakt.class,
+					Messages.TextContainer_SelectDestinationHeader,
+					Messages.TextContainer_SelectDestinationBody);
 			if (ksel.open() != Dialog.OK) {
 				return null;
 			}
@@ -193,37 +205,42 @@ public class TextContainer {
 		// Konsultation kons=getBehandlung();
 		if (template == null) {
 			if (plugin.createEmptyDocument()) {
-				Brief brief =
-					new Brief(subject == null ? "leeres Dokument" : subject, null, Hub.actUser,
-						adressat, kons, typ);
+				Brief brief = new Brief(subject == null ? Messages.TextContainer_EmptyDocument
+						: subject, null, Hub.actUser, adressat, kons, typ);
 				addBriefToKons(brief, kons);
 				return brief;
 			}
 		} else {
 			if (plugin.loadFromByteArray(template.loadBinary(), true) == true) {
-				final Brief ret =
-					new Brief(subject == null ? template.getBetreff() : subject, null, Hub.actUser,
-						adressat, kons, typ);
-				
-				plugin.findOrReplace(TEMPLATE_REGEXP, new ReplaceCallback() {
-					public Object replace(final String in){
-						return replaceFields(ret, in.replaceAll("[\\[\\]]", ""));
+				final Brief ret = new Brief(subject == null ? template
+						.getBetreff() : subject, null, Hub.actUser, adressat,
+						kons, typ);
+
+				plugin.findOrReplace(MATCH_TEMPLATE, new ReplaceCallback() {
+					public Object replace(final String in) {
+						return replaceFields(ret, in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
-				plugin.findOrReplace(TEMPLATE_INDIRECT_REGEXP, new ReplaceCallback() {
-					public Object replace(final String in){
-						return replaceIndirectFields(ret, in.replaceAll("[\\[\\]]", ""));
+				plugin.findOrReplace(MATCH_INDIRECT_TEMPLATE,
+						new ReplaceCallback() {
+							public Object replace(final String in) {
+								return replaceIndirectFields(ret, in
+										.replaceAll(MATCH_SQUARE_BRACKET,
+												StringTool.leer));
+							}
+						});
+				plugin.findOrReplace(MATCH_GENDERIZE, new ReplaceCallback() {
+					public String replace(final String in) {
+						return genderize(ret, in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
-				plugin.findOrReplace(GENDERIZE_REGEXP, new ReplaceCallback() {
-					public String replace(final String in){
-						return genderize(ret, in.replaceAll("[\\[\\]]", ""));
-					}
-				});
-				plugin.findOrReplace(IDATACCESS_REGEXP, new ReplaceCallback() {
-					public Object replace(final String in){
-						String[][] ref =
-							ScriptUtil.loadDataFromPlugin(in.replaceAll("[\\[\\]]", ""));
+				plugin.findOrReplace(MATCH_IDATACCESS, new ReplaceCallback() {
+					public Object replace(final String in) {
+						String[][] ref = ScriptUtil.loadDataFromPlugin(in
+								.replaceAll(MATCH_SQUARE_BRACKET,
+										StringTool.leer));
 						return ref;
 					}
 				});
@@ -234,57 +251,51 @@ public class TextContainer {
 		}
 		return null;
 	}
-	
-	private Object replaceFields(final Brief brief, final String b){
-		String[] q = b.split("\\.");
+
+	@SuppressWarnings("unchecked")
+	private Object replaceFields(final Brief brief, final String b) {
+		String[] q = b.split("\\."); //$NON-NLS-1$
 		if (q.length != 2) {
-			log.log("falsches Variablenformat " + b, Log.WARNINGS); // Kann eigentlich nie vorkommen
-																	// ?!?
+			log.log(Messages.TextContainer_BadVariableFormat + b, Log.WARNINGS); // Kann
+			// eigentlich
+			// nie
+			// vorkommen
+			// ?!?
 			return null;
 		}
-		if (q[0].equals("Datum")) {
+		if (q[0].equals("Datum")) { //$NON-NLS-1$
 			return new TimeTool().toString(TimeTool.DATE_GER);
 		}
-		if (q[0].indexOf(":") != -1) {
+		if (q[0].indexOf(":") != -1) { //$NON-NLS-1$
 			String[][] ref = ScriptUtil.loadDataFromPlugin(b);
 			return ref;
 		}
 		PersistentObject o = resolveObject(brief, q[0]);
 		if (o == null) {
-			return "??" + b + "??";
+			return WARNING_SIGN + b + WARNING_SIGN;
 		}
-		/*
-		 * int pdp=q[1].indexOf(':'); if(pdp!=-1){ String pid=o.get(q[1].substring(0,pdp));
-		 * if(!StringTool.isNothing(pid)){
-		 * 
-		 * } String plf=q[1].substring(pdp+1);
-		 * 
-		 * PersistentObject po=resolveObject(brief,q[1].substring(0,pdp)); }
-		 */
+
 		String ret = o.get(q[1]);
-		if ((ret == null) || (ret.startsWith("**"))) {
-			/*
-			 * if(o instanceof Kontakt){ if(q[1].equals("Anschrift")){ String
-			 * an=((Kontakt)o).getPostAnschrift(true).replaceAll("\\r",""); return an; } }
-			 */
-			if (!(o.map("ExtInfo").startsWith("**"))) {
-				Hashtable ext = o.getHashtable("ExtInfo");
+		if ((ret == null) || (ret.startsWith("**"))) { //$NON-NLS-1$
+		
+			if (!(o.map(PersistentObject.EXTINFO).startsWith("**"))) { //$NON-NLS-1$
+				Hashtable ext = o.getHashtable(PersistentObject.EXTINFO);
 				String an = (String) ext.get(q[1]);
 				if (an != null) {
 					return an;
 				}
 			}
-			log.log("Nicht erkanntes Feld in " + b, Log.WARNINGS);
+			log.log("Nicht erkanntes Feld in " + b, Log.WARNINGS); //$NON-NLS-1$
 			return "???" + b + "???";
 		}
-		
-		if (ret.startsWith("<?xml")) {
+
+		if (ret.startsWith("<?xml")) { //$NON-NLS-1$
 			Samdas samdas = new Samdas(ret);
 			ret = samdas.getRecordText();
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Resolve an indirect field, e. g. Fall.Kostentrager.Bezeichnung1
 	 * 
@@ -294,158 +305,161 @@ public class TextContainer {
 	 *            the filed to resolv
 	 * @return the resolved value
 	 */
-	private Object replaceIndirectFields(final Brief brief, final String field){
-		String[] tokens = field.split("\\.");
+	private Object replaceIndirectFields(final Brief brief, final String field) {
+		String[] tokens = field.split("\\."); //$NON-NLS-1$
 		if (tokens.length <= 2) {
-			return "??" + field + "??";
+			return WARNING_SIGN + field + WARNING_SIGN;
 		}
-		
+
 		String firstToken = tokens[0];
 		String valueToken = tokens[tokens.length - 1];
-		
+
 		// resolve the first field
 		PersistentObject first = resolveObject(brief, firstToken);
 		if (first == null) {
-			return "??" + field + "??";
+			return WARNING_SIGN + field + WARNING_SIGN;
 		}
-		
+
 		// resolve intermediate objects
 		PersistentObject current = first;
 		for (int i = 1; i < tokens.length - 1; i++) {
 			PersistentObject next = resolveIndirectObject(current, tokens[i]);
 			if (next == null) {
-				return "??" + field + "??";
+				return WARNING_SIGN + field + WARNING_SIGN;
 			}
 			current = next;
 		}
-		
+
 		// resolve value
-		
+
 		PersistentObject o = current;
-		
+
 		String value = o.get(valueToken);
-		if ((value == null) || (value.startsWith("**"))) {
-			log.log("Nicht erkanntes Feld in " + field, Log.WARNINGS);
-			return "???" + field + "???";
+		if ((value == null) || (value.startsWith("**"))) { //$NON-NLS-1$
+			log.log("Nicht erkanntes Feld in " + field, Log.WARNINGS); //$NON-NLS-1$
+			return WARNING_SIGN + field + WARNING_SIGN;
 		}
-		
-		if (value.startsWith("<?xml")) {
+
+		if (value.startsWith("<?xml")) { //$NON-NLS-1$
 			Samdas samdas = new Samdas(value);
 			value = samdas.getRecordText();
 		}
 		return value;
 	}
-	
-	private PersistentObject resolveIndirectObject(PersistentObject parent, String field){
+
+	private PersistentObject resolveIndirectObject(PersistentObject parent,
+			String field) {
 		if (parent instanceof Fall) {
 			Fall fall = (Fall) parent;
-			
+
 			return fall.getReferencedObject(field);
 		} else {
 			// not yet supported
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Format für Genderize: [Feld:mw:formulierung Mann/formulierung Frau] oder
 	 * [Feld:mwn:mann/frau/neutral]
 	 */
-	private String genderize(final Brief brief, final String in){
-		String[] q = in.split(":");
+	private String genderize(final Brief brief, final String in) {
+		String[] q = in.split(":"); //$NON-NLS-1$
 		PersistentObject o = resolveObject(brief, q[0]);
 		if (o == null) {
 			return "???";
 		}
 		if (q.length != 3) {
-			log.log("falsches genderize Format " + in, Log.ERRORS);
+			log.log("falsches genderize Format " + in, Log.ERRORS); //$NON-NLS-1$
 			return null;
 		}
 		if (!(o instanceof Kontakt)) {
-			return "<* Feldtyp nur für Kontakte *>";
+			return Messages.TextContainer_FieldTypeForContactsOnly;
 		}
 		Kontakt k = (Kontakt) o;
-		String[] g = q[2].split("/");
+		String[] g = q[2].split("/"); //$NON-NLS-1$
 		if (g.length < 2) {
-			return "<* falsch defniertes Feld *>";
+			return Messages.TextContainer_BadFieldDefinition;
 		}
 		if (k.istPerson()) {
 			Person p = Person.load(k.getId());
-			
-			if (p.get("Geschlecht").equalsIgnoreCase("m")) {
-				if (q[1].startsWith("m")) {
+
+			if (p.get(Person.SEX).equals(Person.MALE)) {
+				if (q[1].startsWith("m")) { //$NON-NLS-1$
 					return g[0];
 				}
 				return g[1];
 			} else {
-				if (q[1].startsWith("w")) {
+				if (q[1].startsWith("w")) { //$NON-NLS-1$
 					return g[0];
 				}
 				return g[1];
 			}
 		} else {
 			if (g.length < 3) {
-				return "<* Feld nur für Personen definiert *>";
+				return Messages.TextContainer_FieldTypeForPersonsOnly;
 			}
 			return g[2];
 		}
 	}
-	
-	private PersistentObject resolveObject(final Brief actBrief, final String k){
+
+	private PersistentObject resolveObject(final Brief actBrief, final String k) {
 		PersistentObject ret = null;
-		if (k.equalsIgnoreCase("Mandant")) {
+		if (k.equalsIgnoreCase("Mandant")) { //$NON-NLS-1$
 			ret = Hub.actMandant;
-		} else if (k.equalsIgnoreCase("Anwender")) {
+		} else if (k.equalsIgnoreCase("Anwender")) { //$NON-NLS-1$
 			ret = Hub.actUser;
-		} else if (k.equalsIgnoreCase("Adressat")) {
+		} else if (k.equalsIgnoreCase("Adressat")) { //$NON-NLS-1$
 			ret = actBrief.getAdressat();
 		} else {
 			try {
-				String fqname = "ch.elexis.data." + k;
-				ret = GlobalEvents.getInstance().getSelectedObject(Class.forName(fqname));
+				String fqname = "ch.elexis.data." + k; //$NON-NLS-1$
+				ret = GlobalEvents.getInstance().getSelectedObject(
+						Class.forName(fqname));
 			} catch (Throwable ex) {
-				log.log("Nicht erkannter Feldtyp in " + k, Log.WARNINGS);
+				log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
 				ret = null;
 			}
 		}
 		if (ret == null) {
-			log.log("Nicht erkannter Feldtyp in " + k, Log.WARNINGS);
+			log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
 		}
 		return ret;
 	}
-	
-	private void addBriefToKons(final Brief brief, final Konsultation kons){
+
+	private void addBriefToKons(final Brief brief, final Konsultation kons) {
 		if (kons != null) {
-			String label = "\n[ " + brief.getLabel() + " ]";
+			String label = "\n[ " + brief.getLabel() + " ]"; //$NON-NLS-1$ //$NON-NLS-2$
 			kons.addXRef(XrefExtension.providerID, brief.getId(), -1, label);
 		}
 	}
-	
+
 	/**
-	 * Dokument speichern. Wenn noch kein Adressat vorhanden ist, wird eine Auswahl angeboten.
+	 * Dokument speichern. Wenn noch kein Adressat vorhanden ist, wird eine
+	 * Auswahl angeboten.
 	 * 
 	 * @param brief
 	 *            das zu speichernde Dokument
 	 * @param typ
 	 *            Typ des Dokuments
 	 */
-	public void saveBrief(Brief brief, final String typ){
+	public void saveBrief(Brief brief, final String typ) {
 		if ((brief == null) || (brief.getAdressat() == null)) {
-			KontaktSelektor ksl =
-				new KontaktSelektor(shell, Kontakt.class, "Adressat auswählen",
-					"Geben Sie bitte den Adressaten für den Brief an");
+			KontaktSelektor ksl = new KontaktSelektor(shell, Kontakt.class,
+					Messages.TextContainer_SelectAdresseeHeader,
+					Messages.TextContainer_SelectAdresseeBody);
 			if (ksl.open() == Dialog.OK) {
-				brief =
-					new Brief("ein Brief", null, Hub.actUser, (Kontakt) ksl.getSelection(),
-						Konsultation.getAktuelleKons(), typ);
+				brief = new Brief(Messages.TextContainer_Letter, null, Hub.actUser, (Kontakt) ksl
+						.getSelection(), Konsultation.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
 			if (StringTool.isNothing(brief.getBetreff())) {
-				InputDialog dlg =
-					new InputDialog(shell, "Dokument speichern",
-						"Geben Sie bitte einen Titel oder Betreff für das Dokument ein", brief
-							.getBetreff(), null);
+				InputDialog dlg = new InputDialog(
+						shell,
+						Messages.TextContainer_SaveDocumentHeader,
+						Messages.TextContainer_SaveDocumentBody,
+						brief.getBetreff(), null);
 				if (dlg.open() == Dialog.OK) {
 					brief.setBetreff(dlg.getValue());
 				} else {
@@ -454,53 +468,54 @@ public class TextContainer {
 			}
 			byte[] contents = plugin.storeToByteArray();
 			if (contents == null) {
-				log.log("Nullwert beim Speichern", Log.ERRORS);
+				log.log(Messages.TextContainer_NullSaveHeader, Log.ERRORS);
 			}
 			brief.save(contents, plugin.getMimeType());
 			GlobalEvents.getInstance().fireUpdateEvent(Brief.class);
 		}
 	}
-	
+
 	/**
-	 * Den Aktuellen Inhalt des Textpuffers als Vorlage speichern. Name und zuzuordender Mandant
-	 * werden per Dialog erfragt.
+	 * Den Aktuellen Inhalt des Textpuffers als Vorlage speichern. Name und
+	 * zuzuordender Mandant werden per Dialog erfragt.
 	 * 
 	 */
-	public void saveTemplate(String name){
+	public void saveTemplate(String name) {
 		SaveTemplateDialog std = new SaveTemplateDialog(shell, name);
 		// InputDialog dlg=new
 		// InputDialog(getViewSite().getShell(),"Vorlage speichern","Geben Sie bitte einen Namen für die Vorlage ein","",null);
 		if (std.open() == Dialog.OK) {
 			String title = std.title;
-			Brief brief =
-				new Brief(title, null, Hub.actUser, std.selectedMand, null, Brief.TEMPLATE);
+			Brief brief = new Brief(title, null, Hub.actUser, std.selectedMand,
+					null, Brief.TEMPLATE);
 			if (std.bSysTemplate) {
-				brief.set("BehandlungsID", "SYS");
+				brief.set(Brief.KONSULTATION_ID, "SYS"); //$NON-NLS-1$
 			}
 			byte[] tmpl = plugin.storeToByteArray();
 			if (tmpl == null) {
-				log.log("Null wert beim Speichern des Template", Log.ERRORS);
+				log.log(Messages.TextContainer_NullSaveBody, Log.ERRORS);
 			}
 			brief.save(tmpl, plugin.getMimeType());
 			// text.clear();
 		}
 	}
-	
+
 	/** Einen Brief einlesen */
-	public boolean open(final Brief brief){
+	public boolean open(final Brief brief) {
 		if (brief == null) {
-			log.log("Null brief zum öffnen", Log.WARNINGS);
+			log.log(Messages.TextContainer_NullOpen, Log.WARNINGS);
 			return false;
 		}
 		System.out.print(brief.getLabel());
 		byte[] arr = brief.loadBinary();
 		if (arr == null) {
-			log.log("Fehlerhafter Brief in Datenbank " + brief.getLabel(), Log.WARNINGS);
+			log.log(Messages.TextContainer_ErroneousLetter + brief.getLabel(),
+					Log.WARNINGS);
 			return false;
 		}
 		return plugin.loadFromByteArray(arr, false);
 	}
-	
+
 	class SaveTemplateDialog extends TitleAreaDialog {
 		Text name;
 		Combo cMands;
@@ -510,49 +525,50 @@ public class TextContainer {
 		List<Mandant> lMands;
 		Mandant selectedMand;
 		String tmplName;
-		
-		protected SaveTemplateDialog(final Shell parentShell, String templateName){
+
+		protected SaveTemplateDialog(final Shell parentShell,
+				String templateName) {
 			super(parentShell);
 			tmplName = templateName;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
-			setTitle("Dokumentvorlage speichern");
-			setMessage("Bitte geben Sie einen Namen für die Vorlage, und den Mandanten bei dem sie auftauchen soll ein");
-			getShell().setText("Dokumentvorlage");
+			setTitle(Messages.TextContainer_SaveTemplateHeader);
+			setMessage(Messages.TextContainer_SaveTemplateBody);
+			getShell().setText(Messages.TextContainer_Template);
 		}
-		
+
 		@Override
-		protected Control createDialogArea(final Composite parent){
+		protected Control createDialogArea(final Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
-			new Label(ret, SWT.NONE).setText("Name der Vorlage");
+			new Label(ret, SWT.NONE).setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (tmplName != null) {
 				name.setText(tmplName);
 			}
-			new Label(ret, SWT.NONE).setText("Mandant");
+			new Label(ret, SWT.NONE).setText(Messages.TextContainer_Mandator);
 			Composite line = new Composite(ret, SWT.NONE);
 			line.setLayout(new FillLayout());
 			line.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			cMands = new Combo(line, SWT.SINGLE);
 			Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 			lMands = qbe.execute();
-			cMands.add("Alle");
+			cMands.add(Messages.TextContainer_All);
 			for (Mandant m : lMands) {
 				cMands.add(m.getLabel());
 			}
 			btSysTemplate = new Button(line, SWT.CHECK);
-			btSysTemplate.setText("Als System-Vorlage");
+			btSysTemplate.setText(Messages.TextContainer_SystemTemplate);
 			return ret;
 		}
-		
+
 		@Override
-		protected void okPressed(){
+		protected void okPressed() {
 			title = name.getText();
 			bSysTemplate = btSysTemplate.getSelection();
 			int i = cMands.getSelectionIndex();
@@ -564,21 +580,23 @@ public class TextContainer {
 				}
 			}
 			Query<Brief> qbe = new Query<Brief>(Brief.class);
-			qbe.add("Typ", "=", Brief.TEMPLATE);
+			qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
 			if (selectedMand != null) {
 				qbe.startGroup();
-				qbe.add("DestID", "=", selectedMand.getId());
+				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, selectedMand
+						.getId());
 				qbe.or();
-				qbe.add("DestID", "=", "");
+				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
 				qbe.endGroup();
 				qbe.and();
 			}
-			qbe.add("geloescht", "<>", "1");
-			qbe.add("Betreff", "=", title);
+			qbe.add("geloescht", Query.NOT_EQUAL, StringTool.one); //$NON-NLS-1$
+			qbe.add(Brief.SUBJECT, Query.EQUALS, title);
 			List<Brief> l = qbe.execute();
 			if (l.size() > 0) {
-				if (MessageDialog.openQuestion(getShell(), "Vorlage schon vorhanden",
-					"Soll die vorhandene Vorlage mit demselben Namen überschrieben werden?")) {
+				if (MessageDialog
+						.openQuestion(getShell(), Messages.TextContainer_TemplateExistsCaption,
+								Messages.TextContainer_TemplateExistsBody)) {
 					Brief old = l.get(0);
 					old.delete();
 				} else {
@@ -587,123 +605,135 @@ public class TextContainer {
 			}
 			super.okPressed();
 		}
-		
+
 	}
-	
-	public boolean replace(final String pattern, final ReplaceCallback cb){
+
+	public boolean replace(final String pattern, final ReplaceCallback cb) {
 		return plugin.findOrReplace(pattern, cb);
 	}
-	
-	public boolean replace(final String pattern, final String repl){
+
+	public boolean replace(final String pattern, final String repl) {
 		return plugin.findOrReplace(pattern, new ReplaceCallback() {
-			public String replace(final String in){
+			public String replace(final String in) {
 				return repl;
 			}
 		});
 	}
-	
+
 	static class DefaultTextPlugin implements ITextPlugin {
-		private static final String expl =
-			"<form>Es konnte keine Verbindung mit einem Textprogramm "
-				+ "hergestellt werden. Mögliche Gründe könnten sein:"
-				+ "<li>Es ist kein Text-Plugin geladen</li>"
-				+ "<li>Das Text-Plugin wurde nicht richtig konfiguriert</li>"
-				+ "<li>Ein externes Textprogramm wurde gelöscht</li></form>";
-		
-		public Composite createContainer(final Composite parent, final ITextPlugin.ICallback h){
+		private static final String expl = Messages.TextContainer_NoPlugin1
+				+ Messages.TextContainer_NoPlugin2
+				+ Messages.TextContainer_Noplugin3
+				+ Messages.TextContainer_NoPlugin4
+				+ Messages.TextContainer_NoPLugin5;
+
+		public Composite createContainer(final Composite parent,
+				final ITextPlugin.ICallback h) {
 			parent.setLayout(new FillLayout());
 			// Composite ret=new Composite(parent,SWT.BORDER);
 			Form form = Desk.getToolkit().createForm(parent);
-			form.setText("Texterstellung nicht möglich");
+			form.setText(Messages.TextContainer_NoPluginCaption);
 			form.getBody().setLayout(new FillLayout());
-			FormText ft = Desk.getToolkit().createFormText(form.getBody(), false);
+			FormText ft = Desk.getToolkit().createFormText(form.getBody(),
+					false);
 			ft.setText(expl, true, false);
 			return form.getBody();
 		}
-		
-		public void dispose(){}
-		
-		public void showMenu(final boolean b){}
-		
-		public void showToolbar(final boolean b){}
-		
-		public boolean createEmptyDocument(){
+
+		public void dispose() {
+		}
+
+		public void showMenu(final boolean b) {
+		}
+
+		public void showToolbar(final boolean b) {
+		}
+
+		public boolean createEmptyDocument() {
 			return false;
 		}
-		
-		public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate){
+
+		public boolean loadFromByteArray(final byte[] bs,
+				final boolean asTemplate) {
 			return false;
 		}
-		
-		public boolean findOrReplace(final String pattern, final ReplaceCallback cb){
+
+		public boolean findOrReplace(final String pattern,
+				final ReplaceCallback cb) {
 			return false;
 		}
-		
-		public byte[] storeToByteArray(){
+
+		public byte[] storeToByteArray() {
 			return null;
 		}
-		
-		public boolean clear(){
+
+		public boolean clear() {
 			return false;
 		}
-		
+
 		public void setInitializationData(final IConfigurationElement config,
-			final String propertyName, final Object data) throws CoreException{}
-		
-		public boolean loadFromStream(final InputStream is, final boolean asTemplate){
+				final String propertyName, final Object data)
+				throws CoreException {
+		}
+
+		public boolean loadFromStream(final InputStream is,
+				final boolean asTemplate) {
 			// TODO Automatisch erstellter Methoden-Stub
 			return false;
 		}
-		
+
 		public boolean print(final String printer, final String tray,
-			final boolean waitUntilFinished){
+				final boolean waitUntilFinished) {
 			return false;
 		}
-		
-		public boolean insertTable(final String marke, final int props, final String[][] contents,
-			final int[] columnSizes){
+
+		public boolean insertTable(final String marke, final int props,
+				final String[][] contents, final int[] columnSizes) {
 			return false;
 		}
-		
-		public void setFocus(){
+
+		public void setFocus() {
 
 		}
-		
-		public PageFormat getFormat(){
+
+		public PageFormat getFormat() {
 			return PageFormat.USER;
 		}
-		
-		public void setFormat(final PageFormat f){
+
+		public void setFormat(final PageFormat f) {
 
 		}
-		
-		public Object insertTextAt(final int x, final int y, final int w, final int h,
-			final String text, final int adjust){
+
+		public Object insertTextAt(final int x, final int y, final int w,
+				final int h, final String text, final int adjust) {
 			return null;
 		}
-		
-		public boolean setFont(final String name, final int style, final float size){
+
+		public boolean setFont(final String name, final int style,
+				final float size) {
 			return false;
 		}
-		
-		public Object insertText(final String marke, final String text, final int adjust){
+
+		public Object insertText(final String marke, final String text,
+				final int adjust) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public Object insertText(final Object pos, final String text, final int adjust){
+
+		public Object insertText(final Object pos, final String text,
+				final int adjust) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public String getMimeType(){
-			return "text/nothing";
+
+		public String getMimeType() {
+			return "text/nothing"; //$NON-NLS-1$
 		}
-		
-		public void setSaveOnFocusLost(final boolean bSave){
-		// TODO Auto-generated method stub
-		
+
+		public void setSaveOnFocusLost(final boolean bSave) {
+			// TODO Auto-generated method stub
+
 		}
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExternalLink.java 4630 2008-10-23 11:28:46Z rgw_ch $
+ *  $Id: ExternalLink.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -24,7 +24,7 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 public class ExternalLink implements IKonsExtension {
-	public static final String ID="ch.elexis.text.ExternalLink";
+	public static final String ID="ch.elexis.text.ExternalLink"; //$NON-NLS-1$
 	//EnhancedTextField mine;
 	public String connect(EnhancedTextField tf) {
 		tf.addXrefHandler(ID, this);
@@ -40,7 +40,7 @@ public class ExternalLink implements IKonsExtension {
 	public boolean doXRef(String refProvider, String refID) {
 		try{
 			int r=refID.lastIndexOf('.');
-			String ext="";
+			String ext=""; //$NON-NLS-1$
 			if(r!=-1){
 				ext=refID.substring(r+1);
 			}
@@ -54,7 +54,7 @@ public class ExternalLink implements IKonsExtension {
 			}
 		}catch(Exception ex){
 			ExHandler.handle(ex);
-			SWTHelper.showError("Konnte Datei nicht starten", ex.getMessage());
+			SWTHelper.showError(Messages.ExternalLink_CouldNotStartFile, ex.getMessage());
 		}
 
 		return true;

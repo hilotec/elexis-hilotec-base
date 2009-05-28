@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DatabaseCleaner.java 2327 2007-05-04 16:34:57Z rgw_ch $
+ * $Id: DatabaseCleaner.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -53,12 +53,12 @@ public class DatabaseCleaner {
 		for(Konsultation k:list){
 			Fall fall=k.getFall();
 			if(fall==null){
-				blame(k,"Kein Fall für Konsultation");
+				blame(k,Messages.getString("DatabaseCleaner.NoCaseForKons")); //$NON-NLS-1$
 				continue;
 			}
 			Mandant m=k.getMandant();
 			if(m==null){
-				blame(k,"Kein Mandant für Konsultation");
+				blame(k,Messages.getString("DatabaseCleaner.NoMandatorForKons")); //$NON-NLS-1$
 				continue;
 			}
 		}
@@ -66,20 +66,20 @@ public class DatabaseCleaner {
 	}
 	public void checkRechnungen(){
 		Query<Rechnung> qbe=new Query<Rechnung>(Rechnung.class);
-		List<Rechnung> list=(List<Rechnung>)qbe.queryExpression("SELECT ID FROM RECHNUNGEN WHERE FallID is null", new LinkedList<Rechnung>());
+		List<Rechnung> list=(List<Rechnung>)qbe.queryExpression("SELECT ID FROM RECHNUNGEN WHERE FallID is null", new LinkedList<Rechnung>()); //$NON-NLS-1$
 		for(Rechnung rn:list){
 			if(true){
-				blame(rn,"Kein Fall für die Rechnung");
+				blame(rn,Messages.getString("DatabaseCleaner.NoCaseForBill")); //$NON-NLS-1$
 				Query<Konsultation> qk=new Query<Konsultation>(Konsultation.class);
 				qk.add("RechnungsID", "=", rn.getId());
 				List<Konsultation> lk=qk.execute();
 				for(Konsultation k:lk){
 					Fall f=k.getFall();
 					Patient pat=f.getPatient();
-					note("betrifft "+pat.getLabel()+", "+f.getLabel()+", "+k.getLabel());
+					note(Messages.getString("DatabaseCleaner.concerning")+pat.getLabel()+", "+f.getLabel()+", "+k.getLabel()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				if(purge){
-					PersistentObject.getConnection().exec("UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID="+rn.getWrappedId());
+					PersistentObject.getConnection().exec("UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID="+rn.getWrappedId()); //$NON-NLS-1$
 				}
 			}
 			
@@ -87,7 +87,7 @@ public class DatabaseCleaner {
 	}
 	void blame(PersistentObject o, String msg){
 		try{
-			osw.write(("\r\n"+msg+": "+o.getId()+", "+o.getLabel()+"\r\n").getBytes("iso-8859-1"));
+			osw.write(("\r\n"+msg+": "+o.getId()+", "+o.getLabel()+"\r\n").getBytes("iso-8859-1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			purgeList.add(o);
 		}catch(Exception ex){
 			ExHandler.handle(ex);
@@ -95,7 +95,7 @@ public class DatabaseCleaner {
 	}
 	void note(String msg){
 		try{
-			osw.write(("  -- "+msg+"\r\n").getBytes("iso-8859-1"));
+			osw.write(("  -- "+msg+"\r\n").getBytes("iso-8859-1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 		}

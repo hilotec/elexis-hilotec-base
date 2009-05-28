@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    D. Lutz	 - DBBased Importer
+ *    
+ * $Id: ImporterPage.java 5171 2009-02-21 19:51:16Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.util;
 
 import org.eclipse.swt.SWT;

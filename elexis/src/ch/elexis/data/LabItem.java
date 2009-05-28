@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabItem.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: LabItem.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,7 +45,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	public static final String TITLE = "titel";
 	public static final String SHORTNAME = "kuerzel";
 	private static final String LABITEMS = "LABORITEMS";
-	private static final Pattern varPattern=Pattern.compile(TextContainer.TEMPLATE_REGEXP);
+	private static final Pattern varPattern=Pattern.compile(TextContainer.MATCH_TEMPLATE);
 	@Override
 	protected String getTableName() {
 		return LABITEMS;

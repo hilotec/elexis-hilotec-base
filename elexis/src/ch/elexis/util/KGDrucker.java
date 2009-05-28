@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation, based on RechnungsDrucker
  *
- * $Id: KGDrucker.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ * $Id: KGDrucker.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -25,44 +25,52 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Patient;
 import ch.elexis.views.KGPrintView;
 import ch.rgw.tools.ExHandler;
-
+@Deprecated
 public class KGDrucker {
-    KGPrintView kgp;
-    IWorkbenchPage kgPage;
-    //IProgressMonitor monitor;
-    Patient patient;
+	KGPrintView kgp;
+	IWorkbenchPage kgPage;
+	// IProgressMonitor monitor;
+	Patient patient;
 
-    public void doPrint(Patient pat) {
-        this.patient = pat;
-        kgPage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+	public void doPrint(Patient pat) {
+		this.patient = pat;
+		kgPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage();
+		IProgressService progressService = PlatformUI.getWorkbench()
+				.getProgressService();
 
-        try{
-            kgp=(KGPrintView)kgPage.showView(KGPrintView.ID);
-            progressService.runInUI(
-                      PlatformUI.getWorkbench().getProgressService(),
-                      new IRunnableWithProgress() {
-                         public void run(IProgressMonitor monitor) {
-                             monitor.beginTask(Messages.getString("KGDrucker.printEMR"),1); //$NON-NLS-1$
-                             	// gw 23.7.2006 an neues Selectionmodell angepasst
-                             Patient actPatient=GlobalEvents.getSelectedPatient();
-                             if (kgp.doPrint(actPatient, monitor) == false) {
-                                 ErrorDialog.openError(null,Messages.getString("KGDrucker.errorPrinting"),Messages.getString("KGDrucker.couldntprint")+patient.getLabel()+Messages.getString("KGDrucker.emr"),null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		try {
+			kgp = (KGPrintView) kgPage.showView(KGPrintView.ID);
+			progressService.runInUI(PlatformUI.getWorkbench()
+					.getProgressService(), new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask(
+							Messages.getString("KGDrucker.printEMR"), 1); //$NON-NLS-1$
+					// gw 23.7.2006 an neues Selectionmodell angepasst
+					Patient actPatient = GlobalEvents.getSelectedPatient();
+					if (kgp.doPrint(actPatient, monitor) == false) {
+						ErrorDialog
+								.openError(
+										null,
+										Messages
+												.getString("KGDrucker.errorPrinting"), Messages.getString("KGDrucker.couldntprint") + patient.getLabel() + Messages.getString("KGDrucker.emr"), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-                             }
+					}
 
-                             monitor.done();
-                         }
-                      },
-                      null);
+					monitor.done();
+				}
+			}, null);
 
+			kgPage.hideView(kgp);
 
-            kgPage.hideView(kgp);
-
-        }catch(Exception ex){
-            ExHandler.handle(ex);
-            ErrorDialog.openError(null,Messages.getString("KGDrucker.errorPrinting"),Messages.getString("KGDrucker.couldntShow"), //$NON-NLS-1$ //$NON-NLS-2$
-                    new Status(Status.ERROR,"ch.elexis",1,ex.getMessage(),null)); //$NON-NLS-1$
-        }
-    }
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			ErrorDialog
+					.openError(
+							null,
+							Messages.getString("KGDrucker.errorPrinting"), Messages.getString("KGDrucker.couldntShow"), //$NON-NLS-1$ //$NON-NLS-2$
+							new Status(Status.ERROR,
+									"ch.elexis", 1, ex.getMessage(), null)); //$NON-NLS-1$
+		}
+	}
 }

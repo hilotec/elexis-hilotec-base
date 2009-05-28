@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Script.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Script.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -34,7 +34,7 @@ import ch.rgw.tools.StringTool;
  *
  */
 public class Script extends NamedBlob2 {
-	private static final Pattern varPattern=Pattern.compile(TextContainer.TEMPLATE_REGEXP);
+	private static final Pattern varPattern=Pattern.compile(TextContainer.MATCH_TEMPLATE);
 	private static final String PREFIX="Script:";
 	private static Interpreter scripter=new Interpreter();
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ResultAdapter.java 4382 2008-09-07 13:58:58Z rgw_ch $
+ *  $Id: ResultAdapter.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -28,6 +28,8 @@ import ch.rgw.tools.Result;
  */
 public class ResultAdapter {
 	
+	private static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
+
 	/**
 	 * Den Status als Eclipse IStatus bzw. MultiStatus abholen
 	 * 
@@ -43,19 +45,19 @@ public class ResultAdapter {
 			if (list.size() == 1) {
 				Result.msg r = list.get(0);
 				return new org.eclipse.core.runtime.Status(getSeverityAsStatus(r.getSeverity()),
-					"ch.elexis", r.getCode(), r.getText() == null ? "?" : r.getText(), null); //$NON-NLS-1$
+					PLUGIN_ID, r.getCode(), r.getText() == null ? "?" : r.getText(), null); //$NON-NLS-1$
 			} else {
 				ArrayList<IStatus> as = new ArrayList<IStatus>();
 				Result.msg r = list.get(0);
 				for (Result.msg m : list) {
 					as.add(new org.eclipse.core.runtime.Status(
 						getSeverityAsStatus(m.getSeverity()),
-						"ch.elexis", m.getCode(), m.getText(), null)); //$NON-NLS-1$
+						PLUGIN_ID, m.getCode(), m.getText(), null)); //$NON-NLS-1$
 					if (m.getSeverity().ordinal() > r.getSeverity().ordinal()) {
 						r = m;
 					}
 				}
-				return new MultiStatus("ch.elexis", r.getCode(), as.toArray(new IStatus[0]), r
+				return new MultiStatus(PLUGIN_ID, r.getCode(), as.toArray(new IStatus[0]), r
 					.getText() == null ? "?" : r.getText(), null); //$NON-NLS-1$
 			}
 		}

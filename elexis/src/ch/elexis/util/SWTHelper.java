@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ * $Id: SWTHelper.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -50,7 +50,7 @@ public class SWTHelper {
 	 * selektiert, wenn das Control den Focus erhaelt. Siehe setSelectOnFocus().
 	 */
 	private static FocusListener selectOnFocusListener = null;
-	private static Log log = Log.get("Global: ");
+	private static Log log = Log.get("Global: "); //$NON-NLS-1$
 	
 	/** Ein Objekt innerhalb des parents zentrieren */
 	public static void center(final Shell parent, final Composite child){
@@ -130,7 +130,7 @@ public class SWTHelper {
 	 *            Nachricht
 	 */
 	public static void showError(final String logHeader, final String title, final String message){
-		log.log(logHeader + ": " + title + "->" + message, Log.ERRORS);
+		log.log(logHeader + ": " + title + "->" + message, Log.ERRORS); //$NON-NLS-1$ //$NON-NLS-2$
 		Desk.getDisplay().syncExec(new Runnable() {
 			public void run(){
 				Shell shell = Desk.getDisplay().getActiveShell();
@@ -356,7 +356,7 @@ public class SWTHelper {
 		if (lines > 1) {
 			lNum = SWT.MULTI | SWT.WRAP;
 		}
-		Text ret = tk.createText(parent, "", lNum | flags | SWT.BORDER);
+		Text ret = tk.createText(parent, "", lNum | flags | SWT.BORDER); //$NON-NLS-1$
 		GridData gd = getFillGridData(1, true, 1, true);
 		int h = Math.round(ret.getFont().getFontData()[0].height);
 		gd.minimumHeight = (lines + 1) * (h + 2);
@@ -383,7 +383,7 @@ public class SWTHelper {
 	 */
 	public static boolean blameEmptyString(final String test, final String name){
 		if (StringTool.isNothing(test)) {
-			showError("Falscher Parameter", name + " hat keinen gültigen Inhalt");
+			showError(Messages.getString("SWTHelper.BadParameter"), name + Messages.getString("SWTHelper.HasNoValidContents")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *    $Id: PersistentObject.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -103,7 +103,7 @@ import ch.rgw.tools.net.NetTool;
  * @author gerry
  */
 public abstract class PersistentObject {
-	protected static final String EXTINFO="ExtInfo";
+	public static final String EXTINFO="ExtInfo";
 	protected static final String DATE_FIELD="Datum=S:D:Datum";
 	public static final int CACHE_DEFAULT_LIFETIME = 15;
 	public static final int CACHE_MIN_LIFETIME = 5;
@@ -184,14 +184,14 @@ public abstract class PersistentObject {
 		 */
 		if (demo.exists() && demo.isDirectory()) {
 			j = JdbcLink.createInProcHsqlDBLink(demo.getAbsolutePath() + "/db");
-			if (getConnection().connect("sa", "")) {
+			if (getConnection().connect("sa", StringTool.leer)) {
 				return connect(getConnection());
 			} else {
 				MessageDialog
 						.openError(
 								Desk.getTopShell(),
 								"Fehler mit Demo-Datenbank",
-								"Es wurde zar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
+								"Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
 				return false;
 			}
 		}
@@ -208,11 +208,11 @@ public abstract class PersistentObject {
 		 * connectstring="jdbc:db2:elexis"; user="testperson"; pwd="blabla";
 		 * typ="db2";
 		 */
-		if (driver.equals("")) {
+		if (driver.equals(StringTool.leer)) {
 			String d = PreferenceInitializer.getDefaultDBPath();
 			j = JdbcLink.createInProcHsqlDBLink(d);
 			user = "sa";
-			pwd = "";
+			pwd = StringTool.leer;
 			typ = getConnection().DBFlavor;
 		} else {
 			j = new JdbcLink(driver, connectstring, typ);
@@ -906,9 +906,9 @@ public abstract class PersistentObject {
 			}
 		} else if (mapped.startsWith("**")) { // If the field could not be
 			// mapped
-			String exi = map("ExtInfo"); // Try to find it in ExtInfo
+			String exi = map(EXTINFO); // Try to find it in ExtInfo
 			if (!exi.startsWith("**")) {
-				Hashtable ht = getHashtable("ExtInfo");
+				Hashtable ht = getHashtable(EXTINFO);
 				Object res = ht.get(field);
 				if (res instanceof String) {
 					return (String) res;

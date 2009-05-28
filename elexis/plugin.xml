@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 5266 2009-04-23 13:41:31Z rgw_ch $ 
+<!-- $Id: plugin.xml 5321 2009-05-28 12:06:28Z rgw_ch $ 
  * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -130,22 +130,11 @@
             id="ch.elexis.PatDetail"
             name="Patient Detail (alt)"/>
       <view
-            category="ch.elexis.codesKategorie"
-            class="ch.elexis.views.PlzView"
-            icon="rsc/mail.png"
-            id="ch.elexis.Plz"
-            name="%elexis.plzView"/>
-      <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RezepteView"
             icon="rsc/rezept_view.png"
             id="ch.elexis.Rezepte"
             name="%elexis.prescriptionView"/>
-      <view
-            allowMultiple="false"
-            class="ch.elexis.views.Starter"
-            id="Starter"
-            name="%elexis.launcherView"/>
       <view
             category="ch.elexis.datenKategorie"
             class="ch.elexis.views.PatientenListeView"

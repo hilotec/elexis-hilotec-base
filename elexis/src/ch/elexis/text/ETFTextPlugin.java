@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFTextPlugin.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: ETFTextPlugin.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -32,6 +32,7 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class ETFTextPlugin implements ITextPlugin {
+	private static final String CHARSET = "UTF-8"; //$NON-NLS-1$
 	EnhancedTextField etf;
 	ICallback handler;
 	boolean bSaveOnFocusLost = false;
@@ -67,7 +68,7 @@ public class ETFTextPlugin implements ITextPlugin {
 	}
 
 	public boolean createEmptyDocument() {
-		etf.setText("");
+		etf.setText(StringTool.leer);
 		return true;
 	}
 
@@ -85,7 +86,7 @@ public class ETFTextPlugin implements ITextPlugin {
 	}
 
 	public String getMimeType() {
-		return "text/xml";
+		return "text/xml"; //$NON-NLS-1$
 	}
 
 	public boolean insertTable(String place, int properties,
@@ -126,9 +127,9 @@ public class ETFTextPlugin implements ITextPlugin {
 	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
 		try {
 			byte[] exp = CompEx.expand(bs);
-			String cnt = "";
+			String cnt = StringTool.leer;
 			if (exp != null) {
-				cnt = new String(exp, "UTF-8");
+				cnt = new String(exp, CHARSET);
 			}
 			etf.setText(cnt);
 			return true;
@@ -141,7 +142,7 @@ public class ETFTextPlugin implements ITextPlugin {
 	public byte[] storeToByteArray() {
 		try {
 			String cnt = etf.getDocumentAsText();
-			byte[] exp = cnt.getBytes("UTF-8");
+			byte[] exp = cnt.getBytes(CHARSET);
 			return CompEx.Compress(exp, CompEx.ZIP);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);

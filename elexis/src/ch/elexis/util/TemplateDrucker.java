@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, G. Weirich, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2009, G. Weirich, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation, based on RechnungsDrucker
  *    
- * $Id$
+ * $Id: TemplateDrucker.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
