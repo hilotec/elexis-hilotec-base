@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Patient.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -45,6 +45,7 @@ import ch.rgw.tools.TimeTool.TimeFormatException;
  * 
  */
 public class Patient extends Person {
+	public static final String GROUP = "Gruppe";
 	public static final String DIAGNOSEN = "Diagnosen";
 	private final JdbcLink j = getConnection();
 	public static final String PATID = "PatientNr";
@@ -57,6 +58,7 @@ public class Patient extends Person {
 	public static final String PLACE = "Ort";
 	public static final String PHONE1 = "Telefon1";
 	public static final String FAX = "Fax";
+	public static final String BALANCE = "Konto";
 
 	static {
 		addMapping(
@@ -70,7 +72,7 @@ public class Patient extends Person {
 				"Faelle				=LIST:PatientID:FAELLE:DatumVon",
 				"Garanten			=JOINT:GarantID:PatientID:PATIENT_GARANT_JOINT:ch.elexis.data.Kontakt",
 				"Dauermedikation	=JOINT:ArtikelID:PatientID:PATIENT_ARTIKEL_JOINT:ch.elexis.data.Artikel",
-				"Konto				=LIST:PatientID:KONTO", "Gruppe", "PatientNr",
+				BALANCE+"			=LIST:PatientID:KONTO", GROUP, "PatientNr",
 				"istPatient");
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 4810 2008-12-12 11:13:10Z psiska $
+ *  $Id: LaborView.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -105,9 +105,13 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class LaborView extends ViewPart implements SelectionListener,
 		ActivationListener, BackingStoreListener, ISaveablePart2 {
-	public static final String ID = "ch.elexis.Labor";
-	private static final String ICON = "labor_view";
-	private static Log log = Log.get("LaborView");
+	private static final String KEY_TEXT = "Text"; //$NON-NLS-1$
+	private static final String PATTERN_DECIMAL = "[0-9\\.]+"; //$NON-NLS-1$
+	private static final String KEY_VALUES = "Values"; //$NON-NLS-1$
+	private static final String KEY_ITEM = "Item"; //$NON-NLS-1$
+	public static final String ID = "ch.elexis.Labor"; //$NON-NLS-1$
+	private static final String ICON = "labor_view"; //$NON-NLS-1$
+	private static Log log = Log.get("LaborView"); //$NON-NLS-1$
 
 	final static int NUMCOLUMNS = 7; // Pro Seite angezeigte Laborspalten
 	final static int COL_OFFSET = 2; // Für Information benötigte Spalten
@@ -141,9 +145,11 @@ public class LaborView extends ViewPart implements SelectionListener,
 	private final FormToolkit tk = Desk.getToolkit();
 	private Form form;
 	// Formula handling
-	private final Pattern varsPattern = Pattern.compile("[a-zA-Z0-9]+_[0-9]+");
+	private final static Pattern varsPattern = Pattern
+			.compile("[a-zA-Z0-9]+_[0-9]+"); //$NON-NLS-1$
 	private final HashMap<String, List<LabItem>> formulaRelations = new HashMap<String, List<LabItem>>();
-	private final ArrayList<LabItem> lFormulas = new ArrayList<LabItem>();
+
+	// private final ArrayList<LabItem> lFormulas = new ArrayList<LabItem>();
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -178,9 +184,9 @@ public class LaborView extends ViewPart implements SelectionListener,
 			public void handleEvent(final Event event) {
 				TableItem item = (TableItem) event.item;
 				String text = item.getText(event.index);
-				LabItem it = (LabItem) item.getData("Item");
+				LabItem it = (LabItem) item.getData(KEY_ITEM);
 				if (it != null) {
-					LabResult[] lrs = (LabResult[]) item.getData("Values");
+					LabResult[] lrs = (LabResult[]) item.getData(KEY_VALUES);
 					if (lrs != null) {
 						int screenIdx = event.index - COL_OFFSET;
 						if ((screenIdx >= 0) && (screenIdx < lrs.length)) {
@@ -229,13 +235,13 @@ public class LaborView extends ViewPart implements SelectionListener,
 			public void widgetDefaultSelected(final SelectionEvent e) {
 
 				TableItem row = cursor.getRow();
-				LabItem li = (LabItem) row.getData("Item");
+				LabItem li = (LabItem) row.getData(KEY_ITEM);
 				if (li == null) {
 					cursorDown();
 					return;
 				}
 				int column = cursor.getColumn();
-				if (columns[column].getText().matches("[0-9\\.]+")) {
+				if (columns[column].getText().matches(PATTERN_DECIMAL)) {
 					doEdit(row.getText(column));
 				}
 
@@ -250,14 +256,14 @@ public class LaborView extends ViewPart implements SelectionListener,
 				}
 				TableItem row = cursor.getRow();
 				e.doit = false;
-				if (row.getData("Item") == null) {
+				if (row.getData(KEY_ITEM) == null) {
 					return;
 				}
 				if (e.character > 0x30) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(e.character);
 					int column = cursor.getColumn();
-					if (columns[column].getText().matches("[0-9\\.]+")) {
+					if (columns[column].getText().matches(PATTERN_DECIMAL)) {
 						doEdit(sb.toString());
 					}
 				}
@@ -272,7 +278,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 				if (li.getTyp().equals(LabItem.typ.TEXT)
 						|| (lr.getComment().length() > 0)) {
 					new DisplayTextDialog(getViewSite().getShell(),
-							"Textbefund", li.getName(), lr.getComment()).open();
+							Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
 				}
 				super.mouseDoubleClick(e);
 			}
@@ -285,7 +291,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 				importAction, xmlAction);
 		IToolBarManager tm = getViewSite().getActionBars().getToolBarManager();
 		List<IAction> importers = Extensions.getClasses(Extensions
-				.getExtensions("ch.elexis.LaborDatenImport"), "ToolbarAction",
+				.getExtensions(Messages.getString("LaborView.0")), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
 				false);
 		for (IAction ac : importers) {
 			tm.add(ac);
@@ -298,7 +304,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 		tm.add(fwdAction);
 		tm.add(printAction);
 		// menu.createToolbar(newAction,backAction,fwdAction,printAction);
-		final MenuManager mgr = new MenuManager("path");
+		final MenuManager mgr = new MenuManager("path"); //$NON-NLS-1$
 		Menu menu = mgr.createContextMenu(cursor);
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
@@ -343,12 +349,12 @@ public class LaborView extends ViewPart implements SelectionListener,
 	LabResult actResult() {
 		TableItem it = cursor.getRow();
 		int idx = cursor.getColumn();
-		LabItem lit = (LabItem) it.getData("Item");
+		LabItem lit = (LabItem) it.getData(KEY_ITEM);
 		if (lit != null) {
-			LabResult[] lrs = (LabResult[]) it.getData("Values");
+			LabResult[] lrs = (LabResult[]) it.getData(KEY_VALUES);
 			if (lrs == null) {
 				lrs = new LabResult[NUMCOLUMNS];
-				it.setData("Values", lrs);
+				it.setData(KEY_VALUES, lrs);
 			}
 			return lrs[idx - COL_OFFSET];
 		}
@@ -375,12 +381,12 @@ public class LaborView extends ViewPart implements SelectionListener,
 					// auf
 					// alle
 					// Daten
-					LabItem lit = (LabItem) it.getData("Item");
+					LabItem lit = (LabItem) it.getData(KEY_ITEM);
 					if (lit != null) {
-						LabResult[] lrs = (LabResult[]) it.getData("Values");
+						LabResult[] lrs = (LabResult[]) it.getData(KEY_VALUES);
 						if (lrs == null) {
 							lrs = new LabResult[NUMCOLUMNS];
-							it.setData("Values", lrs);
+							it.setData(KEY_VALUES, lrs);
 						}
 						LabResult lr = lrs[idx - COL_OFFSET];
 						TimeTool ttDaten = new TimeTool(sDaten[idx_values]);
@@ -388,7 +394,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 						if (lr == null) {
 							if (t.length() > 0) {
 								lr = new LabResult(actPatient, ttDaten, lit,
-										text.getText(), "");
+										text.getText(), ""); //$NON-NLS-1$
 								lrs[idx - COL_OFFSET] = lr;
 							}
 						} else {
@@ -412,7 +418,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 										if (artifact == null) {
 											artifact = new LabResult(
 													actPatient, ttDaten, litem,
-													evaluated, "");
+													evaluated, ""); //$NON-NLS-1$
 										} else {
 											artifact.setResult(evaluated);
 										}
@@ -435,7 +441,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 					table.setFocus();
 				}
 				if (e.character == SWT.DEL) {
-					text.setText("");
+					text.setText(""); //$NON-NLS-1$
 				} else if (e.character == SWT.ESC) {
 					text.dispose();
 					table.setFocus();
@@ -453,7 +459,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 		}
 		cursor.setSelection(row + 1, cursor.getColumn());
 		table.setSelection(row + 1);
-		LabItem it = (LabItem) cursor.getRow().getData("Item");
+		LabItem it = (LabItem) cursor.getRow().getData(KEY_ITEM);
 		if (it == null) {
 			cursorDown();
 		}
@@ -492,9 +498,9 @@ public class LaborView extends ViewPart implements SelectionListener,
 			// Hier müssen wir ausnahmsweise direkt auf den JdbcLink zugreifen
 			Stm stm = PersistentObject.getConnection().getStatement();
 			ResultSet rs = stm
-					.query("SELECT DISTINCT Datum FROM LABORWERTE WHERE PatientID="
+					.query("SELECT DISTINCT Datum FROM LABORWERTE WHERE PatientID=" //$NON-NLS-1$
 							+ actPatient.getWrappedId()
-							+ " AND deleted='0' ORDER BY Datum");
+							+ " AND deleted='0' ORDER BY Datum"); //$NON-NLS-1$
 			LinkedList<String> lDaten = new LinkedList<String>();
 			try {
 				int col = 0;
@@ -509,10 +515,10 @@ public class LaborView extends ViewPart implements SelectionListener,
 				ExHandler.handle(ex);
 			}
 			// Referenzwerte je nach Geschlecht eintragen
-			boolean s = (actPatient.getGeschlecht().equals("m"));
+			boolean s = (actPatient.getGeschlecht().equals("m")); //$NON-NLS-1$
 			for (int i = 0; i < rows.length; i++) {
 				TableItem ti = rows[i];
-				LabItem li = (LabItem) ti.getData("Item");
+				LabItem li = (LabItem) ti.getData(KEY_ITEM);
 				if (li != null) {
 					if (s == true) {
 						ti.setText(1, li.getRefM());
@@ -522,7 +528,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 				}
 			}
 		} else {
-			form.setText("Kein Patient ausgewählt");
+			form.setText(Messages.getString("LaborView.NoPatientSelected")); //$NON-NLS-1$
 		}
 	}
 
@@ -543,14 +549,14 @@ public class LaborView extends ViewPart implements SelectionListener,
 		// Dann alte Einträge löschen
 		String[] line = new String[NUMCOLUMNS + COL_OFFSET];
 		for (int i = COL_OFFSET; i < NUMCOLUMNS + COL_OFFSET; i++) {
-			line[i] = "";
-			columns[i].setText("");
+			line[i] = ""; //$NON-NLS-1$
+			columns[i].setText(""); //$NON-NLS-1$
 		}
 		// Zeilentitel und Wertelisten vorbelegen
 		for (int i = 0; i < rows.length; i++) {
-			line[0] = ((String) rows[i].getData("Text"));
+			line[0] = ((String) rows[i].getData(KEY_TEXT));
 			rows[i].setText(line);
-			rows[i].setData("Values", new LabResult[NUMCOLUMNS]);
+			rows[i].setData(KEY_VALUES, new LabResult[NUMCOLUMNS]);
 		}
 		firstColumn = (p == 0) ? 0 : (p * (NUMCOLUMNS - 1));
 		lastColumn = firstColumn + NUMCOLUMNS - 1;
@@ -565,13 +571,13 @@ public class LaborView extends ViewPart implements SelectionListener,
 		// aktuellen Seite
 		String sBegin = sDaten[firstColumn];
 		Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-		qbe.add("PatientID", "=", actPatient.getId());
-		qbe.add("Datum", ">=", sBegin);
+		qbe.add(LabResult.PATIENT_ID, Query.EQUALS, actPatient.getId());
+		qbe.add(LabResult.DATE, Query.GREATER_OR_EQUAL, sBegin);
 
 		// int numvalid=NUMCOLUMNS; // Wieviele Spalten können tatsächlich
 		// angezeigt werden?
 		if (lastColumn < sDaten.length) {
-			qbe.add("Datum", "<=", sDaten[lastColumn]);
+			qbe.add(LabResult.DATE, Query.LESS_OR_EQUAL, sDaten[lastColumn]);
 		} else {
 			lastColumn = sDaten.length - 1;
 		}
@@ -592,7 +598,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 		for (LabResult lr : list) {
 			LabItem lit = lr.getItem();
 			if (lit == null) {
-				log.log("Fehlerhaftes LabResult " + lr.getId(), Log.WARNINGS);
+				log.log("Fehlerhaftes LabResult " + lr.getId(), Log.WARNINGS); //$NON-NLS-1$
 				continue;
 			}
 			tt.set(lr.getDate());
@@ -608,11 +614,11 @@ public class LaborView extends ViewPart implements SelectionListener,
 			}
 			rows[row].setText(col_display, lr.getResult()); // Spalte für die
 			// Anzeige
-			LabResult[] lrs = (LabResult[]) rows[row].getData("Values"); // LabResult
+			LabResult[] lrs = (LabResult[]) rows[row].getData(KEY_VALUES); // LabResult
 			// anfügen
 			if (lrs == null) {
 				lrs = new LabResult[NUMCOLUMNS];
-				rows[row].setData("Values", lrs);
+				rows[row].setData(KEY_VALUES, lrs);
 			}
 			lrs[col_values - firstColumn] = lr;
 		}
@@ -631,7 +637,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 		for (String g : lGroupNames) {
 			List<LabItem> groupItems = hGroups.get(g);
 			if (groupItems == null) {
-				log.log("Fehler bei Laborgruppe " + g, Log.ERRORS);
+				log.log("Fehler bei Laborgruppe " + g, Log.ERRORS); //$NON-NLS-1$
 				continue;
 			}
 			TableItem ti = new TableItem(table, SWT.NONE);
@@ -639,23 +645,23 @@ public class LaborView extends ViewPart implements SelectionListener,
 					.getSystemColor(SWT.COLOR_DARK_BLUE));
 
 			// split group order token and group name
-			Matcher m = Pattern.compile("(\\S+)\\s+(.+)").matcher(g);
+			Matcher m = Pattern.compile("(\\S+)\\s+(.+)").matcher(g); //$NON-NLS-1$
 			if (m.matches()) {
 				String name = m.group(2);
 				ti.setText(0, name);
-				ti.setData("Text", name);
+				ti.setData(KEY_TEXT, name);
 			} else {
-				ti.setText("? " + g + " ?");
-				ti.setData("Text", "? " + g + " ?");
+				ti.setText("? " + g + " ?"); //$NON-NLS-1$ //$NON-NLS-2$
+				ti.setData(KEY_TEXT, "? " + g + " ?"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			lTI.add(ti);
 			line += 1;
 			for (LabItem it : groupItems) {
 				TableItem ti2 = new TableItem(table, SWT.NONE);
-				ti2.setData("Item", it);
+				ti2.setData(KEY_ITEM, it);
 				ti2.setText(it.getShortLabel());
-				ti2.setData("Text", it.getShortLabel());
+				ti2.setData(KEY_TEXT, it.getShortLabel());
 				lTI.add(ti2);
 				if (it.getTyp().equals(LabItem.typ.FORMULA)) {
 					String formel = it.getFormula();
@@ -673,8 +679,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 				hLabItems.put(it.getId(), line++);
 			}
 			TableItem tiSpace = new TableItem(table, SWT.NONE);
-			tiSpace.setText(" ");
-			tiSpace.setData("Text", " ");
+			tiSpace.setText(" "); //$NON-NLS-1$
+			tiSpace.setData(KEY_TEXT, " "); //$NON-NLS-1$
 			lTI.add(tiSpace);
 			line += 1;
 		}
@@ -717,9 +723,9 @@ public class LaborView extends ViewPart implements SelectionListener,
 
 	public LabResult getSelectedResult() {
 		TableItem item = cursor.getRow();
-		LabItem it = (LabItem) item.getData("Item");
+		LabItem it = (LabItem) item.getData(KEY_ITEM);
 		if (it != null) {
-			LabResult[] lrs = (LabResult[]) item.getData("Values");
+			LabResult[] lrs = (LabResult[]) item.getData(KEY_VALUES);
 			if (lrs != null) {
 				LabResult lr = lrs[cursor.getColumn() - COL_OFFSET];
 				if (lr != null) {
@@ -754,11 +760,11 @@ public class LaborView extends ViewPart implements SelectionListener,
 							String nDat = dat.toString(TimeTool.DATE_COMPACT);
 							Query<LabResult> qbe = new Query<LabResult>(
 									LabResult.class);
-							qbe.add("Datum", "=", dOld
+							qbe.add(LabResult.DATE, Query.EQUALS, dOld
 									.toString(TimeTool.DATE_COMPACT));
-							qbe.add("PatientID", "=", actPatient.getId());
+							qbe.add(LabResult.PATIENT_ID,Query.EQUALS, actPatient.getId());
 							for (LabResult lr : qbe.execute()) {
-								lr.set("Datum", nDat);
+								lr.set(LabResult.DATE, nDat);
 							}
 							loadValues();
 							loadPage(actPage);
@@ -771,18 +777,18 @@ public class LaborView extends ViewPart implements SelectionListener,
 		}
 		columns[0].setWidth(200);
 		columns[1].setWidth(70);
-		columns[0].setText("Parameter");
-		columns[1].setText("Referenz");
+		columns[0].setText(Messages.getString("LaborView.parameter")); //$NON-NLS-1$
+		columns[1].setText(Messages.getString("LaborView.reference")); //$NON-NLS-1$
 	}
 
 	private void makeActions() {
-		fwdAction = new Action("Nächste Seite") {
+		fwdAction = new Action(Messages.getString("LaborView.nextPage")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				loadPage(actPage + 1);
 			}
 		};
-		backAction = new Action("vorherige Seite") {
+		backAction = new Action(Messages.getString("LaborView.prevPage")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				if (actPage > 0) {
@@ -790,7 +796,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 				}
 			}
 		};
-		printAction = new Action("Drucken...") {
+		printAction = new Action(Messages.getString("LaborView.print")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				try {
@@ -808,24 +814,24 @@ public class LaborView extends ViewPart implements SelectionListener,
 				}
 			}
 		};
-		importAction = new Action("Import...") {
+		importAction = new Action(Messages.getString("LaborView.import")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
-				setToolTipText("Laborwerte von externen Labors oder Apparaten importieren");
+				setToolTipText(Messages.getString("LaborView.importToolTip")); //$NON-NLS-1$
 			}
 
 			@Override
 			public void run() {
 				Importer imp = new Importer(getViewSite().getShell(),
-						"ch.elexis.LaborDatenImport");
+						"ch.elexis.LaborDatenImport"); //$NON-NLS-1$
 				imp.create();
-				imp.setMessage("Datenquellen auswählen");
-				imp.getShell().setText("Labor-Importer");
-				imp.setTitle("Import von externen Laborbefunden");
+				imp.setMessage(Messages.getString("LaborView.selectDataSource")); //$NON-NLS-1$
+				imp.getShell().setText(Messages.getString("LaborView.labImporterCaption")); //$NON-NLS-1$
+				imp.setTitle(Messages.getString("LaborView.labImporterText")); //$NON-NLS-1$
 				imp.open();
 			}
 		};
-		xmlAction = new Action("XML export...") {
+		xmlAction = new Action(Messages.getString("LaborView.xmlExport")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				Document doc = makeXML();
@@ -837,7 +843,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(
-									fout, "UTF-8");
+									fout, "UTF-8"); //$NON-NLS-1$
 							XMLOutputter xout = new XMLOutputter(Format
 									.getPrettyFormat());
 							xout.output(doc, cout);
@@ -845,15 +851,14 @@ public class LaborView extends ViewPart implements SelectionListener,
 							fout.close();
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
-							SWTHelper.alert("Fehler", "Konnte Datei " + fname
-									+ " nicht schreiben");
+							SWTHelper.alert(Messages.getString("LaborView.ErrorCaption"), Messages.getString("LaborView.couldntwrite") + fname); //$NON-NLS-1$ //$NON-NLS-2$
 
 						}
 					}
 				}
 			}
 		};
-		newAction = new Action("Neues Datum...") {
+		newAction = new Action(Messages.getString("LaborView.newDate")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				DateSelectorDialog dsd = new DateSelectorDialog(getViewSite()
@@ -874,7 +879,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 
 			}
 		};
-		setStateAction = new Action("pathologisch", Action.AS_CHECK_BOX) {
+		setStateAction = new Action(Messages.getString("LaborView.pathologic"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				LabResult lr = getSelectedResult();
@@ -896,43 +901,43 @@ public class LaborView extends ViewPart implements SelectionListener,
 		Document doc = null;
 		try {
 			doc = new Document();
-			Element r = new Element("Laborblatt");
-			r.setAttribute("Erstellt", new TimeTool()
+			Element r = new Element("Laborblatt"); //$NON-NLS-1$
+			r.setAttribute("Erstellt", new TimeTool() //$NON-NLS-1$
 					.toString(TimeTool.FULL_GER));
 			Patient actpat = (Patient) GlobalEvents.getInstance()
 					.getSelectedObject(Patient.class);
 			if (actpat != null) {
-				r.setAttribute("Patient", actpat.getLabel());
+				r.setAttribute("Patient", actpat.getLabel()); //$NON-NLS-1$
 			}
 			doc.setRootElement(r);
 
-			Element Daten = new Element("Daten");
+			Element Daten = new Element("Daten"); //$NON-NLS-1$
 			for (String d : sDaten) {
-				Element dat = new Element("Datum");
-				dat.setAttribute("Tag", d);
+				Element dat = new Element("Datum"); //$NON-NLS-1$
+				dat.setAttribute("Tag", d); //$NON-NLS-1$
 				Daten.addContent(dat);
 			}
 			r.addContent(Daten);
 			for (String g : lGroupNames) {
-				Element eGroup = new Element("Gruppe");
-				eGroup.setAttribute("Name", g);
+				Element eGroup = new Element("Gruppe"); //$NON-NLS-1$
+				eGroup.setAttribute("Name", g); //$NON-NLS-1$
 				List<LabItem> items = hGroups.get(g);
 				if (items == null) {
-					log.log("Ungültige Gruppe " + g, Log.WARNINGS);
+					log.log("Ungültige Gruppe " + g, Log.WARNINGS); //$NON-NLS-1$
 					continue;
 				}
 				if (items.size() == 0) {
 					continue;
 				}
 				for (LabItem it : items) {
-					Element eItem = new Element("Parameter");
-					eItem.setAttribute("Name", it.getName());
-					eItem.setAttribute("Kürzel", it.getKuerzel());
-					eItem.setAttribute("Einheit", it.getEinheit());
+					Element eItem = new Element("Parameter"); //$NON-NLS-1$
+					eItem.setAttribute("Name", it.getName()); //$NON-NLS-1$
+					eItem.setAttribute("Kürzel", it.getKuerzel()); //$NON-NLS-1$
+					eItem.setAttribute("Einheit", it.getEinheit()); //$NON-NLS-1$
 					boolean hasContent = false;
 					for (String t : sDaten) {
-						Element eResult = new Element("Resultat");
-						eResult.setAttribute("Datum", t);
+						Element eResult = new Element("Resultat"); //$NON-NLS-1$
+						eResult.setAttribute("Datum", t); //$NON-NLS-1$
 						eItem.addContent(eResult);
 						List<LabResult> results = new LinkedList<LabResult>(); // hValues.get(t);
 						for (LabResult lr : results) {
@@ -944,9 +949,9 @@ public class LaborView extends ViewPart implements SelectionListener,
 						}
 					}
 					if (hasContent == true) {
-						Element ref = new Element("Referenz");
-						ref.setAttribute("m", it.get("RefMann"));
-						ref.setAttribute("f", it.get("RefFrauOrTx"));
+						Element ref = new Element("Referenz"); //$NON-NLS-1$
+						ref.setAttribute("m", it.get("RefMann")); //$NON-NLS-1$ //$NON-NLS-2$
+						ref.setAttribute("f", it.get("RefFrauOrTx")); //$NON-NLS-1$ //$NON-NLS-2$
 						eItem.addContent(ref);
 						eGroup.addContent(eItem);
 					}

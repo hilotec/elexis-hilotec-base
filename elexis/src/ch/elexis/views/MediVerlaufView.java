@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MediVerlaufView.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id: MediVerlaufView.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -58,7 +58,7 @@ import ch.rgw.tools.TimeTool;
 public class MediVerlaufView extends ViewPart implements SelectionListener, ActivationListener{
 	TableViewer tv;
 	MediAbgabe[] mListe;
-	private static final String[] columns={"Von","Bis","Medikament","Dosierung"};
+	private static final String[] columns={Messages.getString("MediVerlaufView.dateFrom"),Messages.getString("MediVerlaufView.dateUntil"),Messages.getString("MediVerlaufView.medicament"),Messages.getString("MediVerlaufView.dosage")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static final int[] colwidth={90,90,300,200};
 	int sortCol=0;
 	MediSorter sorter=new MediSorter();
@@ -139,10 +139,10 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 				case 1: return ma.bis;
 				case 2: return ma.medi;
 				case 3: return ma.dosis;
-				default: return "??";
+				default: return "??"; //$NON-NLS-1$
 				}
 			}
-			return "?";
+			return "?"; //$NON-NLS-1$
 		}
 
 	}
@@ -159,13 +159,13 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 					PlatformUI.getWorkbench().getProgressService(),
 					new IRunnableWithProgress(){
 						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							monitor.beginTask("Medikamente einlesen", IProgressMonitor.UNKNOWN);
-							monitor.subTask("Suche Verschreibungen...");
+							monitor.beginTask(Messages.getString("MediVerlaufView.reading"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+							monitor.subTask(Messages.getString("MediVerlaufView.findPrescriptions")); //$NON-NLS-1$
 							Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
-							qbe.add("PatientID", "=", GlobalEvents.getSelectedPatient().getId());
+							qbe.add(Prescription.PATIENT_ID, Query.EQUALS, GlobalEvents.getSelectedPatient().getId());
 							List<Prescription> list=qbe.execute();
 							LinkedList<MediAbgabe> alle=new LinkedList<MediAbgabe>();
-							monitor.subTask("suche Medikamente...");
+							monitor.subTask(Messages.getString("MediVerlaufView.findMedicaments")); //$NON-NLS-1$
 							try{
 							for(Prescription p:list){
 								Map<TimeTool,String> terms=p.getTerms();
@@ -174,15 +174,15 @@ public class MediVerlaufView extends ViewPart implements SelectionListener, Acti
 									if(i<tts.length-1){
 										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER),tts[i+1].toString(TimeTool.DATE_GER),p));
 									}else{
-										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER)," ... ",p));
+										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER)," ... ",p)); //$NON-NLS-1$
 									}
 								}
-								alle.add(new MediAbgabe(tts[tts.length-1].toString(TimeTool.DATE_GER)," ... ",p));
+								alle.add(new MediAbgabe(tts[tts.length-1].toString(TimeTool.DATE_GER)," ... ",p)); //$NON-NLS-1$
 							}
 							}catch(Exception ex){
 								ExHandler.handle(ex);
 							}
-							monitor.subTask("sortiere...");
+							monitor.subTask(Messages.getString("MediVerlaufView.sorting")); //$NON-NLS-1$
 							mListe=alle.toArray(new MediAbgabe[0]);
 							tv.refresh(false);					
 							monitor.done();

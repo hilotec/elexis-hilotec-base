@@ -8,28 +8,31 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BezugsKontakt.java 4161 2008-07-21 04:55:32Z rgw_ch $
+ * $Id: BezugsKontakt.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
 public class BezugsKontakt extends PersistentObject {
-	private static final String tablename="KONTAKT_ADRESS_JOINT";
+	public static final String RELATION = "Bezug"; //$NON-NLS-1$
+	public static final String OTHER_ID = "otherID"; //$NON-NLS-1$
+	public static final String MY_ID = "myID"; //$NON-NLS-1$
+	private static final String tablename="KONTAKT_ADRESS_JOINT"; //$NON-NLS-1$
 	static{
-		addMapping(tablename,"myID","otherID","Bezug");
+		addMapping(tablename,MY_ID,OTHER_ID,RELATION);
 	}
 	
 	public BezugsKontakt(Kontakt kontakt, Kontakt adr, String bezug) {
 		create(null);
-		set(new String[]{"myID","otherID","Bezug"},kontakt.getId(),adr.getId(),bezug);
+		set(new String[]{MY_ID,OTHER_ID,RELATION},kontakt.getId(),adr.getId(),bezug);
 	}
 	@Override
 	public String getLabel() {
-		Kontakt k=Kontakt.load(get("otherID"));
+		Kontakt k=Kontakt.load(get(OTHER_ID));
 		if(k.isValid()){
-			return get("Bezug")+": "+k.getLabel();
+			return get(RELATION)+": "+k.getLabel(); //$NON-NLS-1$
 		}else{
-			return "Angegebener Kontakt nicht vorhanden";
+			return Messages.getString("BezugsKontakt.ContactDoesntExist"); //$NON-NLS-1$
 		}
 		
 	}
@@ -38,11 +41,11 @@ public class BezugsKontakt extends PersistentObject {
 	}
 
 	public Kontakt getBezugsKontakt(){
-		return Kontakt.load(get("otherID"));
+		return Kontakt.load(get(OTHER_ID));
 	}
 	
 	public String getBezug(){
-		return checkNull(get("Bezug"));
+		return checkNull(get(RELATION));
 	}
 	@Override
 	protected String getTableName() {

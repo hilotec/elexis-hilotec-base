@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Kontakt.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *    $Id: Kontakt.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 
@@ -38,6 +38,11 @@ import ch.rgw.tools.StringTool;
  *
  */
 public class Kontakt extends PersistentObject{
+	public static final String KUERZEL = "Kuerzel";
+	public static final String E_MAIL = "E-MAIL";
+	public static final String WEBSITE = "Website";
+	public static final String MOBILEPHONE = "NatelNr";
+	public static final String FAX = "Fax";
 	public static final String IS_LAB = "istLabor"; //$NON-NLS-1$
 	public static final String IS_MANDATOR = "istMandant"; //$NON-NLS-1$
 	public static final String IS_USER = "istAnwender"; //$NON-NLS-1$
@@ -70,9 +75,9 @@ public class Kontakt extends PersistentObject{
 		NAME2,
 		NAME3,
 		"Kuerzel		= PatientNr",	 //$NON-NLS-1$
-		REMARK,PHONE1,PHONE2,"E-Mail=EMail","Website",EXT_INFO, //$NON-NLS-1$ //$NON-NLS-2$
+		REMARK,PHONE1,PHONE2,"E-Mail=EMail",WEBSITE,EXT_INFO, //$NON-NLS-1$ //$NON-NLS-2$
 		IS_ORGANIZATION,IS_PERSON,IS_PATIENT,IS_USER,IS_MANDATOR,
-		IS_LAB,STREET,ZIP,PLACE,COUNTRY,"Fax",ANSCHRIFT,"NatelNr" //$NON-NLS-1$ //$NON-NLS-2$
+		IS_LAB,STREET,ZIP,PLACE,COUNTRY,FAX,ANSCHRIFT,MOBILEPHONE
 		);
 	}
 	

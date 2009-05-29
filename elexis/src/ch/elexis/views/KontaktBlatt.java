@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktBlatt.java 3997 2008-06-02 08:33:52Z rgw_ch $
+ * $Id: KontaktBlatt.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -32,6 +32,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
@@ -49,10 +50,18 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.AutoForm;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
+import ch.rgw.tools.StringTool;
 
 public class KontaktBlatt extends Composite implements SelectionListener, ActivationListener{
-	static final String[] types={"istOrganisation","istLabor","istPerson","istPatient","istAnwender","istMandant"};
-	static final String[] typLabels={"Organisation","Labor","Person","Patient","Anwender","Mandant"};
+	private static final String MOBIL = Messages.getString("KontaktBlatt.MobilePhone"); //$NON-NLS-1$
+	private static final String VORNAME = Messages.getString("KontaktBlatt.FirstName"); //$NON-NLS-1$
+	private static final String NAME = Messages.getString("KontaktBlatt.LastName"); //$NON-NLS-1$
+	private static final String TEL_DIREKT = Messages.getString("KontaktBlatt.OhoneDirect"); //$NON-NLS-1$
+	private static final String ANSPRECHPERSON = Messages.getString("KontaktBlatt.ContactPerson"); //$NON-NLS-1$
+	private static final String ZUSATZ = Messages.getString("KontaktBlatt.Addidtional"); //$NON-NLS-1$
+	private static final String BEZEICHNUNG = Messages.getString("KontaktBlatt.Name"); //$NON-NLS-1$
+	static final String[] types={"istOrganisation","istLabor","istPerson","istPatient","istAnwender","istMandant"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	static final String[] typLabels={Messages.getString("KontaktBlatt.Organization"),Messages.getString("KontaktBlatt.Laboratory"),Messages.getString("KontaktBlatt.Person"),Messages.getString("KontaktBlatt.Patient"),Messages.getString("KontaktBlatt.User"),Messages.getString("KontaktBlatt.Mandator")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	private Button[] bTypes=new Button[types.length];
 	private TypButtonAdapter tba=new TypButtonAdapter();
 	private IViewSite site;
@@ -61,31 +70,30 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 	AutoForm afDetails;
 	
 	static final InputData[] def=new InputData[]{
-		new InputData("Bezeichnung1"),
-		new InputData("Bezeichnung2"),
-		new InputData("Bezeichnung3"),
-		new InputData("Geschlecht"),
-		new InputData("Strasse"),
-		new InputData("Plz"),
-		new InputData("Ort"),
-		new InputData("Land"),
-		new InputData("Telefon1"),
-		new InputData("Telefon2"),
-		new InputData("Mobil-Tel.","NatelNr",Typ.STRING,null),
-		new InputData("Fax"),
-		new InputData("E-Mail"),
-		new InputData("Website"),
-		new InputData("Kürzel/ID","Kuerzel",Typ.STRING,null),
-		new InputData("Bemerkung"),
-		//new InputData("EAN","ExtInfo",Typ.STRING,"EAN"),
-		new InputData("Titel"),
-		new InputData("Externe IDs","UUID",new LabeledInputField.IContentProvider(){
+		new InputData(Messages.getString("KontaktBlatt.Bez1"),Kontakt.NAME1,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Bez2"),Kontakt.NAME2,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Bez3"),Kontakt.NAME3,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Sex"),Person.SEX,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Street"),"Strasse",Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Zip"),Kontakt.ZIP,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Place"),Kontakt.PLACE,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Country"),Kontakt.COUNTRY,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Phone1"),Kontakt.PHONE1,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Phone2"),Kontakt.PHONE2,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Mobile"),Kontakt.MOBILEPHONE,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Fax"),Kontakt.FAX,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Mail"),Kontakt.E_MAIL,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.www"),Kontakt.WEBSITE,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.shortLabel"),Kontakt.KUERZEL,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.remark"),Kontakt.REMARK,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.title"),Person.TITLE,Typ.STRING,null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.extid"),"UUID",new LabeledInputField.IContentProvider(){ //$NON-NLS-1$ //$NON-NLS-2$
 
 			public void displayContent(PersistentObject po, InputData ltf) {
 				StringBuilder sb=new StringBuilder();
 				Xid xid=po.getXid();
 				String dom=Xid.getSimpleNameForXIDDomain(xid.getDomain());
-				sb.append(dom).append(": ").append(xid.getDomainId());
+				sb.append(dom).append(": ").append(xid.getDomainId()); //$NON-NLS-1$
 				ltf.setText(sb.toString());
 			}
 
@@ -96,7 +104,7 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 					XIDDomain xd=Xid.getDomain(dom);
 					if((k.istPerson() && xd.isDisplayedFor(Person.class)) || 
 						(k.istOrganisation() && xd.isDisplayedFor(Organisation.class)))	{
-						extFlds.add(Xid.getSimpleNameForXIDDomain(dom)+"="+dom);
+						extFlds.add(Xid.getSimpleNameForXIDDomain(dom)+"="+dom); //$NON-NLS-1$
 					}
 				}
 				KontaktExtDialog dlg=new KontaktExtDialog(Desk.getTopShell(),(Kontakt) po,extFlds.toArray(new String[0]));
@@ -134,7 +142,7 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 		Composite cAnschrift=tk.createComposite(body);
 		cAnschrift.setLayout(new GridLayout(2, false));
 		cAnschrift.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		Hyperlink hAnschrift=tk.createHyperlink(cAnschrift,"Anschrift",SWT.NONE);
+		Hyperlink hAnschrift=tk.createHyperlink(cAnschrift,Messages.getString("KontaktBlatt.Postal"),SWT.NONE); //$NON-NLS-1$
 		hAnschrift.addHyperlinkListener(new HyperlinkAdapter(){
 
 			@Override
@@ -144,7 +152,7 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 			}
 			
 		});
-		lbAnschrift=tk.createLabel(cAnschrift,"",SWT.WRAP);
+		lbAnschrift=tk.createLabel(cAnschrift,StringConstants.EMPTY,SWT.WRAP);
 		lbAnschrift.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		//GlobalEvents.getInstance().addSelectionListener(this);
 		GlobalEvents.getInstance().addActivationListener(this, site.getPart());
@@ -160,24 +168,24 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 			String[] ret=new String[types.length];
 			actKontakt.get(types,ret);
 			for(int i=0;i<types.length;i++){
-				bTypes[i].setSelection((ret[i]==null) ? false : "1".equals( ret[i] ));
+				bTypes[i].setSelection((ret[i]==null) ? false : StringTool.one.equals( ret[i] ));
 				if(Hub.acl.request(AccessControlDefaults.KONTAKT_MODIFY)==false){
 					bTypes[i].setEnabled(false);
 				}
 			}
 			if(bTypes[0].getSelection()==true){
-				def[0].setLabel("Bezeichnung");
-				def[1].setLabel("Zusatz");
-				def[2].setLabel("Ansprechperson");
+				def[0].setLabel(BEZEICHNUNG);
+				def[1].setLabel(ZUSATZ);
+				def[2].setLabel(ANSPRECHPERSON);
 				def[3].setEditable(false);
-				def[3].setText("");
-				def[10].setLabel("Tel. direkt");
+				def[3].setText(StringConstants.EMPTY);
+				def[10].setLabel(TEL_DIREKT);
 			}else{
-				def[0].setLabel("Name");
-				def[1].setLabel("Vorname");
-				def[2].setLabel("Zusatz");
+				def[0].setLabel(NAME);
+				def[1].setLabel(VORNAME);
+				def[2].setLabel(ZUSATZ);
 				def[3].setEditable(true);
-				def[10].setLabel("Mobil");
+				def[10].setLabel(MOBIL);
 			}
 			lbAnschrift.setText(actKontakt.getPostAnschrift(false));
 			form.reflow(true);
@@ -198,48 +206,48 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 			String type=(String)b.getData();
 			
 			if(b.getSelection()==true){
-				if(type.equals("istOrganisation")){
-					select("1","x","0","0","0","0");
-					def[0].setLabel("Bezeichnung");
-					def[1].setLabel("Zusatz");
-					def[2].setLabel("Ansprechperson");
-					def[3].setText("");
-					def[10].setLabel("Tel. direkt");
-				}else if(type.equals("istLabor")){
-					select("1","1","0","0","0","0");
-					def[0].setLabel("Bezeichnung");
-					def[1].setLabel("Zusatz");
-					def[2].setLabel("Laborleiter");
-					def[10].setLabel("Tel. direkt");
+				if(type.equals("istOrganisation")){ //$NON-NLS-1$
+					select("1","x","0","0","0","0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					def[0].setLabel(BEZEICHNUNG);
+					def[1].setLabel(ZUSATZ);
+					def[2].setLabel(ANSPRECHPERSON);
+					def[3].setText(""); //$NON-NLS-1$
+					def[10].setLabel(TEL_DIREKT);
+				}else if(type.equals("istLabor")){ //$NON-NLS-1$
+					select("1","1","0","0","0","0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					def[0].setLabel(BEZEICHNUNG);
+					def[1].setLabel(ZUSATZ);
+					def[2].setLabel(Messages.getString("KontaktBlatt.LabAdmin")); //$NON-NLS-1$
+					def[10].setLabel(TEL_DIREKT);
 				}else{
-					def[0].setLabel("Name");
-					def[1].setLabel("Vorname");
-					def[2].setLabel("Zusatz");
-					def[10].setLabel("Mobil");
-					if("istPerson".equals( type )){
-						select("0","0","1","x","x","x");
-					}else if(type.equals("istPatient")){
-						select("0","0","1","1","x","x");
-					}else if(type.equals("istAnwender")){
-						select("0","0","1","x","1","x");
-					}else if(type.equals("istMandant")){
-						select("0","0","1","x","1","1");
+					def[0].setLabel(NAME);
+					def[1].setLabel(VORNAME);
+					def[2].setLabel(ZUSATZ);
+					def[10].setLabel(MOBIL);
+					if("istPerson".equals( type )){ //$NON-NLS-1$
+						select("0","0","1","x","x","x"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					}else if(type.equals("istPatient")){ //$NON-NLS-1$
+						select("0","0","1","1","x","x"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					}else if(type.equals("istAnwender")){ //$NON-NLS-1$
+						select("0","0","1","x","1","x"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					}else if(type.equals("istMandant")){ //$NON-NLS-1$
+						select("0","0","1","x","1","1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 					}
 				}
 			}else{
-				actKontakt.set(type,"0");
+				actKontakt.set(type,"0"); //$NON-NLS-1$
 			}
 		}
 		void select(String... fields){
 			alTypes.clear();
 			alValues.clear();
 			for(int i=0;i<fields.length;i++){
-				if(fields[i].equals("x")){
+				if(fields[i].equals("x")){ //$NON-NLS-1$
 					continue;
 				}
 				alTypes.add(types[i]);
 				alValues.add(fields[i]);
-				bTypes[i].setSelection(fields[i].equals("1"));
+				bTypes[i].setSelection(fields[i].equals("1")); //$NON-NLS-1$
 			}
 			actKontakt.set(alTypes.toArray(new String[0]),alValues.toArray(new String[0]));
 		}
@@ -263,7 +271,7 @@ public class KontaktBlatt extends Composite implements SelectionListener, Activa
 		
 	}
 
-	public void clearEvent(Class template) {
+	public void clearEvent(Class<? extends PersistentObject> template) {
 		setEnabled(false);
 		
 	}

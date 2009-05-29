@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Person.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -25,7 +25,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class Person extends Kontakt {
-	private static final String TITLE = "Titel"; //$NON-NLS-1$
+	public static final String TITLE = "Titel"; //$NON-NLS-1$
 	public static final String MOBILE = "Natel"; //$NON-NLS-1$
 	public static final String SEX = "Geschlecht"; //$NON-NLS-1$
 	public static final String BIRTHDATE = "Geburtsdatum"; //$NON-NLS-1$

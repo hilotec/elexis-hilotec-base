@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktDetailView.java 1617 2007-01-18 14:13:02Z rgw_ch $
+ * $Id: KontaktDetailView.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -23,7 +23,7 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.actions.GlobalActions;
 
 public class KontaktDetailView extends ViewPart implements ISaveablePart2 {
-	public static final String ID="ch.elexis.KontaktDetailView";
+	public static final String ID="ch.elexis.KontaktDetailView"; //$NON-NLS-1$
 	KontaktBlatt kb;
 	
 	public KontaktDetailView() {

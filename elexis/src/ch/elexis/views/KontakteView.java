@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontakteView.java 5063 2009-01-29 08:51:34Z rgw_ch $
+ * $Id: KontakteView.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -26,6 +26,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.StringConstants;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
@@ -44,166 +45,178 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.ExHandler;
 
-public class KontakteView extends ViewPart implements ControlFieldListener, ISaveablePart2 {
-	public static final String ID = "ch.elexis.Kontakte";
+public class KontakteView extends ViewPart implements ControlFieldListener,
+		ISaveablePart2 {
+	public static final String ID = "ch.elexis.Kontakte"; //$NON-NLS-1$
 	private CommonViewer cv;
 	private ViewerConfigurer vc;
 	IAction dupKontakt, delKontakt, createKontakt;
-	private String[] fields = {
-		"Kuerzel", "Bezeichnung1", "Bezeichnung2", "Strasse", "Plz", "Ort"
-	};
+
+	private String[] fields = { Kontakt.SHORT_LABEL + Query.EQUALS + Messages.getString("KontakteView.shortLabel"), //$NON-NLS-1$
+			Kontakt.NAME1 + Query.EQUALS + Messages.getString("KontakteView.text1"), //$NON-NLS-1$
+			Kontakt.NAME2 + Query.EQUALS + Messages.getString("KontakteView.text2"), //$NON-NLS-1$
+			Kontakt.STREET + Query.EQUALS + Messages.getString("KontakteView.street"), //$NON-NLS-1$
+			Kontakt.ZIP + Query.EQUALS + Messages.getString("KontakteView.zip"), //$NON-NLS-1$
+			Kontakt.PLACE + Query.EQUALS + Messages.getString("KontakteView.place") }; //$NON-NLS-1$
 	private ViewMenus menu;
-	
-	public KontakteView(){}
-	
+
+	public KontakteView() {
+	}
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		cv = new CommonViewer();
-		vc =
-			new ViewerConfigurer(
-				// new ViewerConfigurer.DefaultContentProvider(cv, Anschrift.class),
-				// new LazyContentProvider(cv,dataloader, AccessControlDefaults.KONTAKT_DISPLAY),
+		vc = new ViewerConfigurer(
 				new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class)),
-				new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, fields),
-				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
+				new DefaultLabelProvider(), new DefaultControlFieldProvider(cv,
+						fields), new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,
+						SWT.NONE, null));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		makeActions();
 		cv.setObjectCreateAction(getViewSite(), createKontakt);
 		menu = new ViewMenus(getViewSite());
-		menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt, dupKontakt);
+		menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt,
+				dupKontakt);
 		menu.createMenu(GlobalActions.printKontaktEtikette);
 		menu.createToolbar(GlobalActions.printKontaktEtikette);
-		// cv.getViewerWidget().addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 		vc.getContentProvider().startListening();
 		vc.getControlFieldProvider().addChangeListener(this);
 		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
-			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
 				try {
-					KontaktDetailView kdv =
-						(KontaktDetailView) getSite().getPage().showView(KontaktDetailView.ID);
+					KontaktDetailView kdv = (KontaktDetailView) getSite()
+							.getPage().showView(KontaktDetailView.ID);
 					kdv.kb.selectionEvent(obj);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}
-				
+
 			}
 		});
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		vc.getContentProvider().stopListening();
 		vc.getControlFieldProvider().removeChangeListener(this);
 		super.dispose();
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		vc.getControlFieldProvider().setFocus();
 	}
-	
-	public void changed(HashMap<String, String> values){
+
+	public void changed(HashMap<String, String> values) {
 		GlobalEvents.getInstance().clearSelection(Kontakt.class);
 	}
-	
-	public void reorder(String field){
-	// TODO Auto-generated method stub
-	
+
+	public void reorder(String field) {
+		// TODO Auto-generated method stub
+
 	}
-	
+
 	/**
-	 * ENTER has been pressed in the control fields, select the first listed patient
+	 * ENTER has been pressed in the control fields, select the first listed
+	 * patient
 	 */
 	// this is also implemented in PatientenListeView
-	public void selected(){
+	public void selected() {
 		StructuredViewer viewer = cv.getViewerWidget();
-		Object[] elements = cv.getConfigurer().getContentProvider().getElements(viewer.getInput());
-		
+		Object[] elements = cv.getConfigurer().getContentProvider()
+				.getElements(viewer.getInput());
+
 		if (elements != null && elements.length > 0) {
 			Object element = elements[0];
 			/*
-			 * just selecting the element in the viewer doesn't work if the control fields are not
-			 * empty (i. e. the size of items changes): cv.setSelection(element, true); bug in
-			 * TableViewer with style VIRTUAL? work-arount: just globally select the element without
+			 * just selecting the element in the viewer doesn't work if the
+			 * control fields are not empty (i. e. the size of items changes):
+			 * cv.setSelection(element, true); bug in TableViewer with style
+			 * VIRTUAL? work-arount: just globally select the element without
 			 * visual representation in the viewer
 			 */
 			if (element instanceof PersistentObject) {
 				// globally select this object
-				GlobalEvents.getInstance().fireSelectionEvent((PersistentObject) element);
+				GlobalEvents.getInstance().fireSelectionEvent(
+						(PersistentObject) element);
 			}
 		}
 	}
-	
+
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
-	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
-	 * Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
+	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
+	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose(){
+	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-	
-	public void doSave(IProgressMonitor monitor){ /* leer */}
-	
-	public void doSaveAs(){ /* leer */}
-	
-	public boolean isDirty(){
+
+	public void doSave(IProgressMonitor monitor) { /* leer */
+	}
+
+	public void doSaveAs() { /* leer */
+	}
+
+	public boolean isDirty() {
 		return true;
 	}
-	
-	public boolean isSaveAsAllowed(){
+
+	public boolean isSaveAsAllowed() {
 		return false;
 	}
-	
-	public boolean isSaveOnCloseNeeded(){
+
+	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
-	
-	private void makeActions(){
-		delKontakt = new Action("Löschen") {
+
+	private void makeActions() {
+		delKontakt = new Action(Messages.getString("KontakteView.delete")) { //$NON-NLS-1$
 			@Override
-			public void run(){
+			public void run() {
 				Object[] o = cv.getSelection();
 				if (o != null) {
 					Kontakt k = (Kontakt) o[0];
 					k.delete();
-					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
+					cv.getConfigurer().getControlFieldProvider()
+							.fireChangedEvent();
 				}
 			}
 		};
-		dupKontakt = new Action("Kontakt duplizieren") {
+		dupKontakt = new Action(Messages.getString("KontakteView.duplicate")) { //$NON-NLS-1$
 			@Override
-			public void run(){
+			public void run() {
 				Object[] o = cv.getSelection();
 				if (o != null) {
 					Kontakt k = (Kontakt) o[0];
 					Kontakt dup;
 					if (k.istPerson()) {
 						Person p = Person.load(k.getId());
-						dup =
-							new Person(p.getName(), p.getVorname(), p.getGeburtsdatum(), p
-								.getGeschlecht());
+						dup = new Person(p.getName(), p.getVorname(), p
+								.getGeburtsdatum(), p.getGeschlecht());
 					} else {
 						Organisation org = Organisation.load(k.getId());
-						dup = new Organisation(org.get("Name"), org.get("Zusatz1"));
+						dup = new Organisation(org.get(Organisation.NAME1), org
+								.get(Organisation.NAME2));
 					}
 					dup.setAnschrift(k.getAnschrift());
-					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
+					cv.getConfigurer().getControlFieldProvider()
+							.fireChangedEvent();
 					// cv.getViewerWidget().refresh();
 				}
 			}
 		};
-		createKontakt = new Action("Neuen Kontakt erstellen") {
+		createKontakt = new Action(Messages.getString("KontakteView.create")) { //$NON-NLS-1$
 			@Override
-			public void run(){
-				String[] flds = cv.getConfigurer().getControlFieldProvider().getValues();
-				String[] predef = new String[] {
-					flds[1], flds[2], "", "", flds[3], flds[4], flds[5]
-				};
-				KontaktErfassenDialog ked =
-					new KontaktErfassenDialog(getViewSite().getShell(), predef);
+			public void run() {
+				String[] flds = cv.getConfigurer().getControlFieldProvider()
+						.getValues();
+				String[] predef = new String[] { flds[1], flds[2], StringConstants.EMPTY, StringConstants.EMPTY,
+						flds[3], flds[4], flds[5] };
+				KontaktErfassenDialog ked = new KontaktErfassenDialog(
+						getViewSite().getShell(), predef);
 				ked.open();
 			}
 		};

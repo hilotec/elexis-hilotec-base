@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LagerView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: LagerView.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -49,7 +49,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.WidgetProvider;
 
 public class LagerView extends ViewPart implements DoubleClickListener, BackingStoreListener,
 		ISaveablePart2 {
-	public static final String ID = "ch.elexis.LagerView";
+	public static final String ID = "ch.elexis.LagerView"; //$NON-NLS-1$
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	
@@ -120,13 +120,13 @@ public class LagerView extends ViewPart implements DoubleClickListener, BackingS
 				case 6:
 					return art.getLieferant().getLabel();
 				default:
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 			} else {
 				if (columnIndex == 0) {
 					return element.toString();
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 				
 			}
 			
@@ -177,7 +177,7 @@ public class LagerView extends ViewPart implements DoubleClickListener, BackingS
 	
 	class LagerWidgetProvider implements WidgetProvider {
 		String[] columns = {
-			"Pharmacode", "Name", "Ist", "Min", "Max", "Kontrolle", "Lieferant"
+			Messages.getString("LagerView.pharmacode"), Messages.getString("LagerView.name"), Messages.getString("LagerView.istBestand"), Messages.getString("LagerView.minBestand"), Messages.getString("LagerView.maxBestand"), Messages.getString("LagerView.controlled"), Messages.getString("LagerView.dealer") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		};
 		int[] colwidth = {
 			60, 300, 40, 40, 40, 40, 200

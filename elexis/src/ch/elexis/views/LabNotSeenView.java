@@ -57,14 +57,14 @@ import ch.rgw.tools.Log;
  * 
  */
 public class LabNotSeenView extends ViewPart implements HeartListener {
-	public final static String ID = "ch.elexis.LabNotSeenView";
+	public final static String ID = "ch.elexis.LabNotSeenView"; //$NON-NLS-1$
 	CheckboxTableViewer tv;
 	LabResult[] unseen = null;
 	private long lastUpdate = 0;
-	private Log log = Log.get("LabNotSeen");
+	private Log log = Log.get("LabNotSeen"); //$NON-NLS-1$
 	
 	private static final String[] columnHeaders = {
-		"Patient", "Parameter", "Normbereich", "Datum", "Wert"
+		Messages.getString("LabNotSeenView.patient"), Messages.getString("LabNotSeenView.parameter"), Messages.getString("LabNotSeenView.normRange"), Messages.getString("LabNotSeenView.date"), Messages.getString("LabNotSeenView.value") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	};
 	private static final int[] colWidths = new int[] {
 		250, 100, 60, 70, 50
@@ -155,7 +155,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		
 		public String getColumnText(final Object element, final int columnIndex){
 			if (element instanceof String) {
-				return columnIndex == 0 ? (String) element : "";
+				return columnIndex == 0 ? (String) element : ""; //$NON-NLS-1$
 			}
 			LabResult lr = (LabResult) element;
 			switch (columnIndex) {
@@ -165,7 +165,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 				return lr.getItem().getName();
 			case 2:
 				Patient pat = lr.getPatient();
-				if (pat.getGeschlecht().equalsIgnoreCase("m")) {
+				if (pat.getGeschlecht().equalsIgnoreCase("m")) { //$NON-NLS-1$
 					return lr.getItem().getRefM();
 				} else {
 					return lr.getItem().getRefW();
@@ -175,7 +175,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 			case 4:
 				return lr.getResult();
 			}
-			return "?";
+			return "?"; //$NON-NLS-1$
 		}
 		
 		public Color getBackground(final Object element){
@@ -203,7 +203,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		public Object[] getElements(final Object inputElement){
 			if (unseen == null) {
 				return new Object[] {
-					"..lade.."
+					Messages.getString("LabNotSeenView.loading") //$NON-NLS-1$
 				};
 			}
 			return unseen;
@@ -221,12 +221,12 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		long last = LabResult.getLastUpdateUnseen();
 		if (lastUpdate != 0) {
 			if (lastUpdate >= last) {
-				log.log(Level.FINE, "Heartbeat unused");
+				log.log(Level.FINE, "Heartbeat unused"); //$NON-NLS-1$
 				return;
 			}
 		}
 		lastUpdate = last;
-		log.log(Level.FINE, "Heartbeat used");
+		log.log(Level.FINE, "Heartbeat used"); //$NON-NLS-1$
 		unseen = LabResult.getUnseen().toArray(new LabResult[0]);
 		Desk.getDisplay().asyncExec(new Runnable() {
 			public void run(){
@@ -237,9 +237,9 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 	}
 	
 	private void makeActions(){
-		markAllAction = new RestrictedAction(AccessControlDefaults.LAB_SEEN, "Alle markieren") {
+		markAllAction = new RestrictedAction(AccessControlDefaults.LAB_SEEN, Messages.getString("LabNotSeenView.markAll")) { //$NON-NLS-1$
 			{
-				setToolTipText("Alle Einträge als gelesen markieren");
+				setToolTipText(Messages.getString("LabNotSeenView.markAllToolTip")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_TICK));
 			}
 			
@@ -254,9 +254,9 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		};
 		markPersonAction =
 			new RestrictedAction(AccessControlDefaults.LAB_SEEN,
-				"Alle des gewählten Patienten markieren") {
+				Messages.getString("LabNotSeenView.markAllofPatient")) { //$NON-NLS-1$
 				{
-					setToolTipText("Alle Einträge des gewählten patienten als gelesen markieren");
+					setToolTipText(Messages.getString("LabNotSeenView.markAllOfPatientToolTip")); //$NON-NLS-1$
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PERSON_OK));
 				}
 				

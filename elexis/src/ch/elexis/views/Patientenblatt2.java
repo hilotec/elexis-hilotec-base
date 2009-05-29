@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt.java 3558 2008-01-17 14:35:23Z danlutz $
+ * $Id: Patientenblatt2.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 
@@ -50,6 +50,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
@@ -117,17 +118,17 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	    	}
 	    	
 	    	ArrayList<InputData> fields=new ArrayList<InputData>(20);
-	    	fields.add(new InputData("Name","Name",InputData.Typ.STRING,null));
-			fields.add(new InputData("Vorname","Vorname",InputData.Typ.STRING,null));
-			fields.add(new InputData("Geburtsdatum","Geburtsdatum",InputData.Typ.DATE,null));
-			fields.add(new InputData("Geschlecht","Geschlecht",null,new String[]{Person.FEMALE,Person.MALE},false));
-			fields.add(new InputData("Telefon 1","Telefon1",InputData.Typ.STRING,null));
-			fields.add(new InputData("Telefon 2","Telefon2",InputData.Typ.STRING,null));
-			fields.add(new InputData("Mobil","Natel",InputData.Typ.STRING,null));
-			fields.add(new InputData("Fax","Fax",InputData.Typ.STRING,null));
-			fields.add(new InputData("E-Mail","E-Mail",InputData.Typ.STRING,null));
-			fields.add(new InputData("Gruppe","Gruppe",InputData.Typ.STRING,null));
-			fields.add(new InputData("Konto","Konto",new LabeledInputField.IContentProvider(){
+	    	fields.add(new InputData("Name",Patient.NAME,InputData.Typ.STRING,null));
+			fields.add(new InputData("Vorname",Patient.FIRSTNAME,InputData.Typ.STRING,null));
+			fields.add(new InputData("Geburtsdatum",Patient.BIRTHDATE,InputData.Typ.DATE,null));
+			fields.add(new InputData("Geschlecht",Patient.SEX,null,new String[]{Person.FEMALE,Person.MALE},false));
+			fields.add(new InputData("Telefon 1",Patient.PHONE1,InputData.Typ.STRING,null));
+			fields.add(new InputData("Telefon 2",Patient.PHONE2,InputData.Typ.STRING,null));
+			fields.add(new InputData("Mobil",Patient.MOBILE,InputData.Typ.STRING,null));
+			fields.add(new InputData("Fax",Patient.FAX,InputData.Typ.STRING,null));
+			fields.add(new InputData("E-Mail",Patient.E_MAIL,InputData.Typ.STRING,null));
+			fields.add(new InputData("Gruppe",Patient.GROUP,InputData.Typ.STRING,null));
+			fields.add(new InputData("Konto",Patient.BALANCE,new LabeledInputField.IContentProvider(){
 
 				public void displayContent(PersistentObject po, InputData ltf) {
 					ltf.setText(actPatient.getKontostand().getAmountAsString());
@@ -142,10 +143,10 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 				
 			}));
 
-	    	String[] userfields=Hub.userCfg.get(CFG_EXTRAFIELDS,"").split(",");
+	    	String[] userfields=Hub.userCfg.get(CFG_EXTRAFIELDS,StringConstants.EMPTY).split(StringConstants.COMMA);
 	    	for(String extfield:userfields){
 	    		if(!StringTool.isNothing(extfield)){
-	    			fields.add(new InputData(extfield,"ExtInfo",InputData.Typ.STRING,extfield));
+	    			fields.add(new InputData(extfield,Patient.EXTINFO,InputData.Typ.STRING,extfield));
 	    		}
 	    	}
 			ipp=new InputPanel(cUserfields,2,6,fields.toArray(new InputData[0]));
@@ -416,7 +417,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
             return;
         }
 
-		form.setText(StringTool.unNull(p.get("Name"))+" "+StringTool.unNull(p.get("Vorname"))+" ("+p.getPatCode()+")");
+		form.setText(StringTool.unNull(p.getName())+" "+StringTool.unNull(p.get("Vorname"))+" ("+p.getPatCode()+")");
         inpAdresse.setText(p.getPostAnschrift(false),false,false);
         UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
 		inpZusatzAdresse.clear();

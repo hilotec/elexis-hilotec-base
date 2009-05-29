@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatFilterImpl.java 4268 2008-08-13 08:35:03Z rgw_ch $
+ * $Id: PatFilterImpl.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -45,8 +45,8 @@ public class PatFilterImpl implements IPatFilter {
 	public int accept(Patient p, PersistentObject o){
 		if(o instanceof Kontakt){
 			Query<BezugsKontakt> qbe=new Query<BezugsKontakt>(BezugsKontakt.class);
-			qbe.add("myID", "=", p.getId());
-			qbe.add("otherID", "=", o.getId());
+			qbe.add(BezugsKontakt.MY_ID, Query.EQUALS, p.getId());
+			qbe.add(BezugsKontakt.OTHER_ID, Query.EQUALS, o.getId());
 			if(qbe.execute().size()>0){
 				return ACCEPT;
 			}
@@ -82,8 +82,8 @@ public class PatFilterImpl implements IPatFilter {
 			return REJECT;
 		}else if(o instanceof Artikel){
 			Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
-			qbe.add("PatientID", "=", p.getId());
-			qbe.add("ArtikelID", "=",o.getId());
+			qbe.add(Prescription.PATIENT_ID, Query.EQUALS, p.getId());
+			qbe.add(Prescription.ARTICLE_ID, Query.EQUALS,o.getId());
 			if(qbe.execute().size()>0){
 				return ACCEPT;
 			}
@@ -91,8 +91,8 @@ public class PatFilterImpl implements IPatFilter {
 		}else if(o instanceof Prescription){
 			Artikel art=((Prescription)o).getArtikel();
 			Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
-			qbe.add("PatientID", "=", p.getId());
-			qbe.add("ArtikelID", "=", art.getId());
+			qbe.add(Prescription.PATIENT_ID, Query.EQUALS, p.getId());
+			qbe.add(Prescription.ARTICLE_ID, Query.EQUALS, art.getId());
 			if(qbe.execute().size()>0){
 				return ACCEPT;
 			}
@@ -112,7 +112,7 @@ public class PatFilterImpl implements IPatFilter {
 				return DONT_HANDLE;
 			}
 			String op=val[1];
-			if(op.equals("=")){
+			if(op.equals(Query.EQUALS)){
 				return test.equalsIgnoreCase(val[2]) ? ACCEPT : REJECT;
 			}else if(op.equals("LIKE")){
 				return test.toLowerCase().contains(val[2].toLowerCase()) ? ACCEPT : REJECT;

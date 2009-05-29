@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborblattView.java 2812 2007-07-15 15:25:59Z rgw_ch $
+ *  $Id: LaborblattView.java 5324 2009-05-29 15:30:24Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -31,24 +31,25 @@ import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 
-public class LaborblattView extends ViewPart implements ICallback{
-	public static final String ID="ch.elexis.Laborblatt";
+public class LaborblattView extends ViewPart implements ICallback {
+	public static final String ID = "ch.elexis.Laborblatt"; //$NON-NLS-1$
 	TextContainer text;
-	
+
 	public LaborblattView() {
 	}
 
 	@Override
-	public void dispose(){
-		if(text!=null){
+	public void dispose() {
+		if (text != null) {
 			text.dispose();
 		}
 		super.dispose();
 	}
+
 	@Override
 	public void createPartControl(Composite parent) {
-		text=new TextContainer(getViewSite());
-		text.getPlugin().createContainer(parent,this);
+		text = new TextContainer(getViewSite());
+		text.getPlugin().createContainer(parent, this);
 
 	}
 
@@ -57,89 +58,97 @@ public class LaborblattView extends ViewPart implements ICallback{
 		// TODO Automatisch erstellter Methoden-Stub
 
 	}
-	public boolean createLaborblatt(final Patient pat,final String[] header, final TableItem[] rows){
-		Brief br=text.createFromTemplateName(Konsultation.getAktuelleKons(),"Laborblatt",Brief.LABOR,pat, null);
-		if(br==null){
+
+	public boolean createLaborblatt(final Patient pat, final String[] header,
+			final TableItem[] rows) {
+		Brief br = text.createFromTemplateName(Konsultation.getAktuelleKons(),
+				Messages.getString("LaborblattView.LabTemplateName"), Brief.LABOR, pat, null); //$NON-NLS-1$
+		if (br == null) {
 			return false;
 		}
-		Table table=rows[0].getParent();
-		int cols=table.getColumnCount();
-		int[] colsizes=new int[cols];
-		float first=25;
-		float second=10;
-		if(cols>2){
-			int rest=Math.round((100f-first-second)/(cols-2f));
-			for(int i=2;i<cols;i++){
-				colsizes[i]=rest;
+		Table table = rows[0].getParent();
+		int cols = table.getColumnCount();
+		int[] colsizes = new int[cols];
+		float first = 25;
+		float second = 10;
+		if (cols > 2) {
+			int rest = Math.round((100f - first - second) / (cols - 2f));
+			for (int i = 2; i < cols; i++) {
+				colsizes[i] = rest;
 			}
 		}
-		colsizes[0]=Math.round(first);
-		colsizes[1]=Math.round(second);
+		colsizes[0] = Math.round(first);
+		colsizes[1] = Math.round(second);
 
-		LinkedList<String[]> usedRows=new LinkedList<String[]>();
+		LinkedList<String[]> usedRows = new LinkedList<String[]>();
 		usedRows.add(header);
-		for(int i=0;i<rows.length;i++){
-			boolean used=false;
-			String[] row=new String[cols];
-			for(int j=0;j<cols;j++){
-				row[j]=rows[i].getText(j);
-				if((j>1) && (row[j].length()>0)){
-					used=true;
-					//break;
+		for (int i = 0; i < rows.length; i++) {
+			boolean used = false;
+			String[] row = new String[cols];
+			for (int j = 0; j < cols; j++) {
+				row[j] = rows[i].getText(j);
+				if ((j > 1) && (row[j].length() > 0)) {
+					used = true;
+					// break;
 				}
 			}
-			if(used==true){
+			if (used == true) {
 				usedRows.add(row);
 			}
-		}	
-		String[][] fld=usedRows.toArray(new String[0][]);
-		return text.getPlugin().insertTable("[Laborwerte]",ITextPlugin.FIRST_ROW_IS_HEADER,fld, colsizes);
+		}
+		String[][] fld = usedRows.toArray(new String[0][]);
+		return text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
+				ITextPlugin.FIRST_ROW_IS_HEADER, fld, colsizes);
 	}
 
 	@SuppressWarnings("unchecked")
-	public boolean createLaborblatt(Patient pat, Document doc){
-		/*Brief br=*/text.createFromTemplateName(Konsultation.getAktuelleKons(),"Laborblatt",Brief.LABOR,pat, null);
-		
-	    ArrayList<String[]> rows=new ArrayList<String[]>();
-	    Element root=doc.getRootElement();
-	    String druckdat=root.getAttributeValue("Erstellt");
-	    Element daten=root.getChild("Daten");
-	    List datlist=daten.getChildren();
-	    int cols=datlist.size()+1;
-	    String[] firstline=new String[cols];
-	    firstline[0]=druckdat;
-	    for(int i=1;i<cols;i++){
-	    	Element dat=(Element)datlist.get(i-1);
-	    	firstline[i]=dat.getAttributeValue("Tag");
-	    }
-	    rows.add(firstline);
-	    List groups=root.getChildren("Gruppe");
-	    for(Element el:(List<Element>)groups){
-	    	rows.add(new String[]{el.getAttribute("Name").getValue()});
-	    	List<Element> params=el.getChildren("Parameter");
-	    	for(Element param:params){
-	    		Element ref=param.getChild("Referenz");
-	    		String[] row=new String[cols];
-	    		StringBuilder sb=new StringBuilder();
-	    		sb.append(param.getAttributeValue("Name"))
-	    			.append(" (").append(ref.getAttributeValue("min"))
-	    			.append("-").append(ref.getAttributeValue("max")).append(") ")
-	    			.append(param.getAttributeValue("Einheit"));
-	    		row[0]=sb.toString();
-	    		List<Element> results=param.getChildren("Resultat");
-	    		int i=1;
-	    		for(Element result:results){
-	    			row[i++]=result.getValue();
-	    		}
-	    		rows.add(row);
-	    	}
-	    }
-	    return text.getPlugin().insertTable("[Laborwerte]",ITextPlugin.FIRST_ROW_IS_HEADER,rows.toArray(new String[0][]), null);
+	public boolean createLaborblatt(Patient pat, Document doc) {
+		/* Brief br= */text.createFromTemplateName(Konsultation
+				.getAktuelleKons(), Messages.getString("LaborblattView.LabTemplateName"), Brief.LABOR, pat, null); //$NON-NLS-1$
+
+		ArrayList<String[]> rows = new ArrayList<String[]>();
+		Element root = doc.getRootElement();
+		String druckdat = root.getAttributeValue(Messages.getString("LaborblattView.created")); //$NON-NLS-1$
+		Element daten = root.getChild("Daten"); //$NON-NLS-1$
+		List datlist = daten.getChildren();
+		int cols = datlist.size() + 1;
+		String[] firstline = new String[cols];
+		firstline[0] = druckdat;
+		for (int i = 1; i < cols; i++) {
+			Element dat = (Element) datlist.get(i - 1);
+			firstline[i] = dat.getAttributeValue("Tag"); //$NON-NLS-1$
+		}
+		rows.add(firstline);
+		List groups = root.getChildren("Gruppe"); //$NON-NLS-1$
+		for (Element el : (List<Element>) groups) {
+			rows.add(new String[] { el.getAttribute("Name").getValue() }); //$NON-NLS-1$
+			List<Element> params = el.getChildren("Parameter"); //$NON-NLS-1$
+			for (Element param : params) {
+				Element ref = param.getChild("Referenz"); //$NON-NLS-1$
+				String[] row = new String[cols];
+				StringBuilder sb = new StringBuilder();
+				sb.append(param.getAttributeValue("Name")).append(" (").append( //$NON-NLS-1$ //$NON-NLS-2$
+						ref.getAttributeValue("min")).append("-").append( //$NON-NLS-1$ //$NON-NLS-2$
+						ref.getAttributeValue("max")).append(") ").append( //$NON-NLS-1$ //$NON-NLS-2$
+						param.getAttributeValue("Einheit")); //$NON-NLS-1$
+				row[0] = sb.toString();
+				List<Element> results = param.getChildren("Resultat"); //$NON-NLS-1$
+				int i = 1;
+				for (Element result : results) {
+					row[i++] = result.getValue();
+				}
+				rows.add(row);
+			}
+		}
+		return text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
+				ITextPlugin.FIRST_ROW_IS_HEADER, rows.toArray(new String[0][]),
+				null);
 
 	}
+
 	public void save() {
 		// TODO Automatisch erstellter Methoden-Stub
-		
+
 	}
 
 	public boolean saveAs() {
