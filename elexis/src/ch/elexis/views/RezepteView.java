@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezepteView.java 4810 2008-12-12 11:13:10Z psiska $
+ *  $Id: RezepteView.java 5326 2009-05-29 20:08:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +43,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
@@ -67,16 +69,15 @@ import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
 
 /**
- * Eine View zum Anzeigen von Rezepten. Links wird eine Liste mit allen Rezepten
- * des aktuellen Patienten angezeigt, rechts die Prescriptions des aktuellen
- * Rezepts.
+ * Eine View zum Anzeigen von Rezepten. Links wird eine Liste mit allen Rezepten des aktuellen
+ * Patienten angezeigt, rechts die Prescriptions des aktuellen Rezepts.
  * 
  * @author Gerry
  */
-public class RezepteView extends ViewPart implements SelectionListener,
-		ActivationListener, ISaveablePart2 {
-	public static final String ID = "ch.elexis.Rezepte";
-	static final String ICON = "rezept_view";
+public class RezepteView extends ViewPart implements SelectionListener, ActivationListener,
+		ISaveablePart2 {
+	public static final String ID = "ch.elexis.Rezepte"; //$NON-NLS-1$
+	static final String ICON = "rezept_view"; //$NON-NLS-1$
 	private final FormToolkit tk = Desk.getToolkit();
 	private Form master;
 	ListViewer lv;
@@ -88,9 +89,9 @@ public class RezepteView extends ViewPart implements SelectionListener,
 	private Action printAction;
 	private Patient actPatient;
 	private PersistentObjectDropTarget dropTarget;
-
+	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		Image icon = Desk.getImage(ICON);
 		if (icon != null) {
 			setTitleImage(icon);
@@ -102,54 +103,52 @@ public class RezepteView extends ViewPart implements SelectionListener,
 		SashForm sash = new SashForm(master.getBody(), SWT.NONE);
 		lv = new ListViewer(sash, SWT.V_SCROLL);
 		lv.setContentProvider(new IStructuredContentProvider() {
-
-			public Object[] getElements(final Object inputElement) {
+			
+			public Object[] getElements(final Object inputElement){
 				Query<Rezept> qbe = new Query<Rezept>(Rezept.class);
-				Patient act = (Patient) GlobalEvents.getInstance()
-						.getSelectedObject(Patient.class);
+				Patient act = (Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
 				if (act != null) {
-					qbe.add("PatientID", "=", act.getId());
-					qbe.orderBy(true, new String[] { "Datum" });
+					qbe.add(Rezept.PATIENT_ID, Query.EQUALS, act.getId());
+					qbe.orderBy(true, new String[] {
+						Rezept.DATE
+					});
 					List<Rezept> list = qbe.execute();
 					return list.toArray();
 				} else {
 					return new Object[0];
 				}
 			}
-
-			public void dispose() { /* leer */
+			
+			public void dispose(){ /* leer */
 			}
-
-			public void inputChanged(final Viewer viewer,
-					final Object oldInput, final Object newInput) { /* leer */
+			
+			public void inputChanged(final Viewer viewer, final Object oldInput,
+				final Object newInput){ /* leer */
 			}
-
+			
 		});
 		lv.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(final Object element) {
+			public String getText(final Object element){
 				if (element instanceof Rezept) {
 					Rezept rp = (Rezept) element;
 					return rp.getLabel();
 				}
 				return element.toString();
 			}
-
+			
 		});
-		lv.addSelectionChangedListener(GlobalEvents.getInstance()
-				.getDefaultListener());
+		lv.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 		lvRpLines = new ListViewer(sash);
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		// menus.createToolbar(newRpAction, addLineAction, printAction );
-		menus.createMenu(newRpAction, addLineAction, printAction,
-				deleteRpAction);
-		menus.createViewerContextMenu(lvRpLines, removeLineAction,
-				changeMedicationAction);
+		menus.createMenu(newRpAction, addLineAction, printAction, deleteRpAction);
+		menus.createViewerContextMenu(lvRpLines, removeLineAction, changeMedicationAction);
 		IToolBarManager tm = getViewSite().getActionBars().getToolBarManager();
-		List<IAction> importers = Extensions.getClasses(Extensions
-				.getExtensions("ch.elexis.RezeptHook"), "RpToolbarAction",
-				false);
+		List<IAction> importers =
+			Extensions.getClasses(Extensions.getExtensions("ch.elexis.RezeptHook"), //$NON-NLS-1$
+				"RpToolbarAction", false); //$NON-NLS-1$
 		for (IAction ac : importers) {
 			tm.add(ac);
 		}
@@ -160,56 +159,53 @@ public class RezepteView extends ViewPart implements SelectionListener,
 		tm.add(addLineAction);
 		tm.add(printAction);
 		lv.setInput(getViewSite());
-
+		
 		/* Implementation Drag&Drop */
 		PersistentObjectDropTarget.Receiver dtr = new PersistentObjectDropTarget.Receiver() {
-
-			public boolean accept(PersistentObject o) {
+			
+			public boolean accept(PersistentObject o){
 				// TODO Auto-generated method stub
 				return true;
 			}
-
-			public void dropped(PersistentObject o, DropTargetEvent ev) {
-				Rezept actR = (Rezept) GlobalEvents.getInstance()
-						.getSelectedObject(Rezept.class);
+			
+			public void dropped(PersistentObject o, DropTargetEvent ev){
+				Rezept actR = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 				if (actR == null) {
 					SWTHelper
-							.showError(
-									"Kein Rezept ausgewählt",
-									"Bitte wählen Sie zuerst ein Rezept aus, dem dieser Artikel zugefügt werden soll");
+						.showError(Messages.getString("RezepteView.NoPrescriptionSelected"), //$NON-NLS-1$
+							Messages.getString("RezepteView.PleaseChoosaAPrescription")); //$NON-NLS-1$
 					return;
 				}
 				if (o instanceof Artikel) {
 					Artikel art = (Artikel) o;
-
-					Prescription p = new Prescription(art, actR.getPatient(),
-							"", "");
+					
+					Prescription p =
+						new Prescription(art, actR.getPatient(), StringConstants.EMPTY,
+							StringConstants.EMPTY);
 					p.setBeginDate(null);
 					actR.addPrescription(p);
 					refresh();
 				} else if (o instanceof Prescription) {
 					Prescription pre = (Prescription) o;
-					Prescription now = new Prescription(pre.getArtikel(), actR
-							.getPatient(), pre.getDosis(), pre.getBemerkung());
+					Prescription now =
+						new Prescription(pre.getArtikel(), actR.getPatient(), pre.getDosis(), pre
+							.getBemerkung());
 					now.setBeginDate(null);
 					actR.addPrescription(now);
 					refresh();
 				}
-
+				
 			}
 		};
-
+		
 		// final TextTransfer textTransfer = TextTransfer.getInstance();
 		// Transfer[] types = new Transfer[] {textTransfer};
-		dropTarget = new PersistentObjectDropTarget("Rezept", lvRpLines
-				.getControl(), dtr);
-
+		dropTarget = new PersistentObjectDropTarget("Rezept", lvRpLines.getControl(), dtr); //$NON-NLS-1$
+		
 		lvRpLines.setContentProvider(new RezeptContentProvider());
 		lvRpLines.setLabelProvider(new RezeptLabelProvider());
-		lvRpLines
-				.getControl()
-				.setToolTipText(
-						"Ziehen Sie Medikamente zum Hinzufügen mit der Maus auf diese Fläche");
+		lvRpLines.getControl().setToolTipText(
+			Messages.getString("RezepteView.DragMedicamentsHere")); //$NON-NLS-1$
 		/* lvRpLines.addDragSupport(DND.DROP_COPY,types, */
 		new PersistentObjectDragSource(lvRpLines);
 		lvRpLines.setInput(getViewSite());
@@ -217,43 +213,35 @@ public class RezepteView extends ViewPart implements SelectionListener,
 		printAction.setEnabled(false);
 		GlobalEvents.getInstance().addActivationListener(this, this);
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEvents.getInstance().removeSelectionListener(this);
 		GlobalEvents.getInstance().removeActivationListener(this, this);
-		lv.removeSelectionChangedListener(GlobalEvents.getInstance()
-				.getDefaultListener());
+		lv.removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
 	}
-
-	public void refresh() {
-		Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(
-				Rezept.class);
+	
+	public void refresh(){
+		Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 		if (rp == null) {
-			/*
-			 * form.setText(""); ausgestellt.setText("");
-			 * rpText.setText("",false,false);
-			 */
 			lvRpLines.refresh(true);
 			addLineAction.setEnabled(false);
 			printAction.setEnabled(false);
 		} else {
-			// form.setText("Rezept vom "+rp.getDate());
-			// ausgestellt.setText(rp.getMandant().getLabel());
 			lvRpLines.refresh(true);
 			addLineAction.setEnabled(true);
 			printAction.setEnabled(true);
 			master.setText(rp.getPatient().getLabel());
 		}
 	}
-
-	public void selectionEvent(final PersistentObject obj) {
+	
+	public void selectionEvent(final PersistentObject obj){
 		if (obj instanceof Patient) {
 			actPatient = (Patient) obj;
 			GlobalEvents.getInstance().clearSelection(Rezept.class);
@@ -266,29 +254,24 @@ public class RezepteView extends ViewPart implements SelectionListener,
 			actPatient = ((Rezept) obj).getPatient();
 			refresh();
 		}
-
-		// Patient
-		// p=(Patient)GlobalEvents.getInstance().getSelectedObject(getViewSite(),Patient.class);
-		// master.setText(p.getLabel());
-
+		
 	}
-
-	private void makeActions() {
-		newRpAction = new Action("Neues Rezept") {
+	
+	private void makeActions(){
+		newRpAction = new Action(Messages.getString("RezepteView.newPrescriptionAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText("Ein neues Rezept erstellen");
+				setToolTipText(Messages.getString("RezepteView.newPrescriptonTooltip")); //$NON-NLS-1$
 			}
-
+			
 			@Override
-			public void run() {
-				Patient act = (Patient) GlobalEvents.getInstance()
-						.getSelectedObject(Patient.class);
+			public void run(){
+				Patient act = (Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
 				if (act == null) {
-					MessageBox mb = new MessageBox(getViewSite().getShell(),
-							SWT.ICON_INFORMATION | SWT.OK);
-					mb.setText("Kann kein Rezept erstellen");
-					mb.setMessage("Es ist kein Patient selektiert.");
+					MessageBox mb =
+						new MessageBox(getViewSite().getShell(), SWT.ICON_INFORMATION | SWT.OK);
+					mb.setText(Messages.getString("RezepteView.newPrescriptionError")); //$NON-NLS-1$
+					mb.setMessage(Messages.getString("RezepteView.noPatientSelected")); //$NON-NLS-1$
 					mb.open();
 					return;
 				}
@@ -296,9 +279,8 @@ public class RezepteView extends ViewPart implements SelectionListener,
 				if (fall == null) {
 					Konsultation k = act.getLetzteKons(false);
 					if (k == null) {
-						SWTHelper
-								.alert("Kein Fall ausgewählt",
-										"Erstellen oder wählen Sie bitte den Fall, zu dem dieses Rp gehört");
+						SWTHelper.alert(Messages.getString("RezepteView.noCaseSelected"), //$NON-NLS-1$
+							Messages.getString("RezepteView.pleaseCreateOrChooseCase")); //$NON-NLS-1$
 						return;
 					} else {
 						fall = k.getFall();
@@ -308,45 +290,42 @@ public class RezepteView extends ViewPart implements SelectionListener,
 				lv.refresh();
 			}
 		};
-		deleteRpAction = new Action("Rezept löschen") {
+		deleteRpAction = new Action(Messages.getString("RezepteView.deletePrescriptionActiom")) { //$NON-NLS-1$
 			@Override
-			public void run() {
-				Rezept rp = (Rezept) GlobalEvents.getInstance()
-						.getSelectedObject(Rezept.class);
-				if (MessageDialog.openConfirm(getViewSite().getShell(),
-						"Rezept löschen", "Wollen Sie wirklich das Rezept vom "
-								+ rp.getDate() + " unwiderruflich löschen?")) {
+			public void run(){
+				Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
+				if (MessageDialog.openConfirm(getViewSite().getShell(), Messages.getString("RezepteView.deletePrescriptionActiom"), //$NON-NLS-1$
+					MessageFormat.format(
+						Messages.getString("RezepteView.deletePrescriptionConfirm"), rp //$NON-NLS-1$
+							.getDate()))) {
 					rp.delete();
 					lv.refresh();
 				}
 			}
 		};
-		removeLineAction = new Action("Zeile löschen") {
+		removeLineAction = new Action(Messages.getString("RezepteView.deleteLineAction")) { //$NON-NLS-1$
 			@Override
-			public void run() {
-				Rezept rp = (Rezept) GlobalEvents.getInstance()
-						.getSelectedObject(Rezept.class);
-				IStructuredSelection sel = (IStructuredSelection) lvRpLines
-						.getSelection();
+			public void run(){
+				Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
+				IStructuredSelection sel = (IStructuredSelection) lvRpLines.getSelection();
 				Prescription p = (Prescription) sel.getFirstElement();
 				if ((rp != null) && (p != null)) {
 					rp.removePrescription(p);
 					lvRpLines.refresh();
 				}
 				/*
-				 * RpZeile z=(RpZeile)sel.getFirstElement(); if((rp!=null) &&
-				 * (z!=null)){ rp.removeLine(z); lvRpLines.refresh(); }
+				 * RpZeile z=(RpZeile)sel.getFirstElement(); if((rp!=null) && (z!=null)){
+				 * rp.removeLine(z); lvRpLines.refresh(); }
 				 */
 			}
 		};
-		addLineAction = new Action("Neue Zeile") {
+		addLineAction = new Action(Messages.getString("RezepteView.newLineAction")) { //$NON-NLS-1$
 			@Override
-			public void run() {
+			public void run(){
 				try {
-					LeistungenView lv1 = (LeistungenView) getViewSite()
-							.getPage().showView(LeistungenView.ID);
-					GlobalEvents.getInstance()
-							.setCodeSelectorTarget(dropTarget);
+					LeistungenView lv1 =
+						(LeistungenView) getViewSite().getPage().showView(LeistungenView.ID);
+					GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
 					CTabItem[] tabItems = lv1.ctab.getItems();
 					for (CTabItem tab : tabItems) {
 						ICodeElement ics = (ICodeElement) tab.getData();
@@ -360,61 +339,52 @@ public class RezepteView extends ViewPart implements SelectionListener,
 				}
 			}
 		};
-		printAction = new Action("Drucken") {
+		printAction = new Action(Messages.getString("RezepteView.printAction")) { //$NON-NLS-1$
 			@Override
-			public void run() {
+			public void run(){
 				try {
-					RezeptBlatt rp = (RezeptBlatt) getViewSite().getPage()
-							.showView(RezeptBlatt.ID);
-					Rezept actR = (Rezept) GlobalEvents.getInstance()
-							.getSelectedObject(Rezept.class);
+					RezeptBlatt rp = (RezeptBlatt) getViewSite().getPage().showView(RezeptBlatt.ID);
+					Rezept actR =
+						(Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 					rp.createRezept(actR);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
 			}
 		};
-		changeMedicationAction = new RestrictedAction(
-				AccessControlDefaults.MEDICATION_MODIFY, "Ändern...") {
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText("Einnahmevorschriften ändern");
-			}
-
-			public void doRun() {
-				Rezept rp = (Rezept) GlobalEvents.getInstance()
-						.getSelectedObject(Rezept.class);
-				IStructuredSelection sel = (IStructuredSelection) lvRpLines
-						.getSelection();
-				Prescription pr = (Prescription) sel.getFirstElement();
-				if (pr != null) {
-					new MediDetailDialog(getViewSite().getShell(), pr).open();
-					lvRpLines.refresh();
+		changeMedicationAction =
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages.getString("RezepteView.ChangeLink")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText(Messages.getString("RezepteView.ChangeTooltip")); //$NON-NLS-1$
 				}
-			}
-		};
-		addLineAction.setImageDescriptor(Desk
-				.getImageDescriptor(Desk.IMG_ADDITEM));
-		printAction.setImageDescriptor(Desk
-				.getImageDescriptor(Desk.IMG_PRINTER));
-		deleteRpAction.setImageDescriptor(Desk
-				.getImageDescriptor(Desk.IMG_DELETE));
+				
+				public void doRun(){
+					Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
+					IStructuredSelection sel = (IStructuredSelection) lvRpLines.getSelection();
+					Prescription pr = (Prescription) sel.getFirstElement();
+					if (pr != null) {
+						new MediDetailDialog(getViewSite().getShell(), pr).open();
+						lvRpLines.refresh();
+					}
+				}
+			};
+		addLineAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
+		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
+		deleteRpAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 	}
-
-	public void activation(final boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void activation(final boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(final boolean mode) {
+	
+	public void visible(final boolean mode){
 		if (mode == true) {
 			GlobalEvents.getInstance().addSelectionListener(this);
-			Rezept actRezept = (Rezept) GlobalEvents.getInstance()
-					.getSelectedObject(Rezept.class);
-			Patient global = (Patient) GlobalEvents.getInstance()
-					.getSelectedObject(Patient.class);
-			if ((actRezept == null)
-					|| (!actRezept.getPatient().getId().equals(global.getId()))) {
+			Rezept actRezept = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
+			Patient global = (Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
+			if ((actRezept == null) || (!actRezept.getPatient().getId().equals(global.getId()))) {
 				selectionEvent(global);
 			} else {
 				selectionEvent(actRezept);
@@ -424,70 +394,67 @@ public class RezepteView extends ViewPart implements SelectionListener,
 			GlobalEvents.getInstance().removeSelectionListener(this);
 		}
 	}
-
-	private static class RezeptContentProvider implements
-			IStructuredContentProvider {
-
-		public Object[] getElements(final Object inputElement) {
-			Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(
-					Rezept.class);
+	
+	private static class RezeptContentProvider implements IStructuredContentProvider {
+		
+		public Object[] getElements(final Object inputElement){
+			Rezept rp = (Rezept) GlobalEvents.getInstance().getSelectedObject(Rezept.class);
 			if (rp == null) {
 				return new Prescription[0];
 			}
 			List<Prescription> list = rp.getLines();
 			return list.toArray();
 		}
-
-		public void dispose() { /* leer */
+		
+		public void dispose(){ /* leer */
 		}
-
-		public void inputChanged(final Viewer viewer, final Object oldInput,
-				final Object newInput) { /* leer */
+		
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){ /* leer */
 		}
 	}
-
+	
 	private static class RezeptLabelProvider extends LabelProvider {
-
+		
 		@Override
-		public String getText(final Object element) {
+		public String getText(final Object element){
 			if (element instanceof Prescription) {
 				Prescription z = (Prescription) element;
 				return z.getLabel();
 			}
-			return "?";
+			return "?"; //$NON-NLS-1$
 		}
-
+		
 	}
-
-	public void clearEvent(final Class<? extends PersistentObject> template) {
+	
+	public void clearEvent(final Class<? extends PersistentObject> template){
 		lvRpLines.refresh();
 	}
-
+	
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-
-	public void doSave(final IProgressMonitor monitor) { /* leer */
+	
+	public void doSave(final IProgressMonitor monitor){ /* leer */
 	}
-
-	public void doSaveAs() { /* leer */
+	
+	public void doSaveAs(){ /* leer */
 	}
-
-	public boolean isDirty() {
+	
+	public boolean isDirty(){
 		return true;
 	}
-
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
 }

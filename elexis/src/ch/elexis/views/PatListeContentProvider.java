@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: PatListeContentProvider.java 5326 2009-05-29 20:08:32Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.views;
 
 import java.util.HashMap;
@@ -70,7 +82,7 @@ public class PatListeContentProvider implements CommonContentProvider, ILazyCont
 		}
 		if (pfilter != null) {
 			pats = new String[] {
-				"Lade Daten..."
+				Messages.getString("PatListeContentProvider.LoadingData") //$NON-NLS-1$
 			};
 			((TableViewer) viewer.getViewerWidget()).setItemCount(1);
 		}
@@ -80,11 +92,11 @@ public class PatListeContentProvider implements CommonContentProvider, ILazyCont
 			return new Object[0];
 		}
 		
-		Job job = new Job("Lade Patientenliste") {
+		Job job = new Job(Messages.getString("PatListeContentProvider.LoadingPatients")) { //$NON-NLS-1$
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor){
-				monitor.beginTask("Patientenliste laden...", IProgressMonitor.UNKNOWN);
+				monitor.beginTask(Messages.getString("PatListeContentProvider.LoadPatients"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				
 				qbe.clear();
 				if (pfilter != null) {
@@ -183,7 +195,7 @@ public class PatListeContentProvider implements CommonContentProvider, ILazyCont
 		if (pats.length > index) {
 			((TableViewer) viewer.getViewerWidget()).replace(pats[index], index);
 		} else {
-			((TableViewer) viewer.getViewerWidget()).replace("-", index);
+			((TableViewer) viewer.getViewerWidget()).replace("-", index); //$NON-NLS-1$
 		}
 	}
 	

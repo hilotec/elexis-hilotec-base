@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ * $Id: PatientenListeView.java 5326 2009-05-29 20:08:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -39,10 +39,12 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.data.Sticker;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Person;
+import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
+import ch.elexis.data.Sticker;
 import ch.elexis.dialogs.PatientErfassenDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
@@ -62,7 +64,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
  */
 public class PatientenListeView extends ViewPart implements ActivationListener, ISaveablePart2,
 		HeartListener, UserListener {
-	public static final String ID = "ch.elexis.PatListView";
+	public static final String ID = "ch.elexis.PatListView"; //$NON-NLS-1$
 	private CommonViewer cv;
 	private ViewerConfigurer vc;
 	private ViewMenus menus;
@@ -113,16 +115,16 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		cv = new CommonViewer();
 		ArrayList<String> fields = new ArrayList<String>();
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, false)) {
-			fields.add("PatientNr");
+			fields.add(Patient.PATID + Query.EQUALS + Messages.getString("PatientenListeView.PatientNr")); //$NON-NLS-1$
 		}
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWNAME, true)) {
-			fields.add("Name");
+			fields.add(Patient.NAME + Query.EQUALS + Messages.getString("PatientenListeView.PatientName")); //$NON-NLS-1$
 		}
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME, true)) {
-			fields.add("Vorname");
+			fields.add(Patient.FIRSTNAME + Query.EQUALS + Messages.getString("PatientenListeView.PantientFirstName")); //$NON-NLS-1$
 		}
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB, true)) {
-			fields.add("Geburtsdatum");
+			fields.add(Patient.BIRTHDATE + Query.EQUALS + Messages.getString("PatientenListeView.PatientBirthdate")); //$NON-NLS-1$
 		}
 		plcp = new PatListeContentProvider(cv, fields.toArray(new String[0]), this);
 		makeActions();
@@ -177,7 +179,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				if (et != null && (im = et.getImage()) != null) {
 					return im;
 				} else {
-					if (pat.getGeschlecht().equals("m")) {
+					if (pat.getGeschlecht().equals(Person.MALE)) {
 						return Desk.getImage(Desk.IMG_MANN);
 					} else {
 						return Desk.getImage(Desk.IMG_FRAU);
@@ -206,10 +208,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				if (et != null) {
 					return et.getForeground();
 				}
-				/*
-				 * if(((Patient)element).getBemerkung().contains(":VIP:")){ return
-				 * Desk.theColorRegistry.get(Desk.COL_RED); }
-				 */
 			}
 			
 			return null;
@@ -223,10 +221,10 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 	
 	private void makeActions(){
 		
-		filterAction = new Action("Liste filtern", Action.AS_CHECK_BOX) {
+		filterAction = new Action(Messages.getString("PatientenListeView.FilteList"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
-				setToolTipText("Liste filtern");
+				setToolTipText(Messages.getString("PatientenListeView.FilterList")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -234,7 +232,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				GridData gd = (GridData) plfb.getLayoutData();
 				if (filterAction.isChecked()) {
 					gd.heightHint = 80;
-					// gd.minimumHeight=15;
 					plfb.reset();
 					plcp.setFilter(plfb);
 					
@@ -248,10 +245,10 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 			
 		};
 		
-		newPatAction = new Action("Neuer Patient") {
+		newPatAction = new Action(Messages.getString("PatientenListeView.NewPatientAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText("Neuen Patienteneintrag erstellen");
+				setToolTipText(Messages.getString("PatientenListeView.NewPationtToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -259,7 +256,7 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				// access rights guard
 				if (!Hub.acl.request(AccessControlDefaults.PATIENT_INSERT)) {
 					SWTHelper
-						.alert("Fehlende Rechte", "Sie dürfen keinen neuen Patienten anlegen.");
+						.alert(Messages.getString("PatientenListeView.MissingRights"), Messages.getString("PatientenListeView.YouMayNotCreatePatient")); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
 				HashMap<String, String> ctlFields = new HashMap<String, String>();
@@ -296,14 +293,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 				}
 			}
 		};
-		/*
-		 * importVCardAction=new Action("Aus vCard importieren"){
-		 * 
-		 * @Override public void run(){ FileDialog fd=new
-		 * FileDialog(getViewSite().getShell(),SWT.OPEN); String cardname=fd.open();
-		 * if(cardname!=null){ try { VCard card=new VCard(new FileInputStream(cardname)); String
-		 * name=card.getElement("N"); } catch (Exception e) { ExHandler.handle(e); } } } };
-		 */
 	}
 	
 	public void activation(final boolean mode){
@@ -353,15 +342,6 @@ public class PatientenListeView extends ViewPart implements ActivationListener, 
 		cv.notify(CommonViewer.Message.update);
 	}
 	
-	/*
-	 * public void selectionEvent(PersistentObject obj, IViewSite site) { if(obj instanceof
-	 * Patient){ actPatient=(Patient)obj; Konsultation b=actPatient.getLetzteBehandlung(); Fall
-	 * f=b.getFall(); GlobalEvents.getInstance().fireSelectionEvent(f,getViewSite());
-	 * GlobalEvents.getInstance().fireSelectionEvent(b,getViewSite()); }
-	 * 
-	 * }
-	 */
-
 	/**
 	 * Select Patient when user presses ENTER in the control fields. If mor than one Patients are
 	 * listed, the first one is selected. (This listener only implements selected().)

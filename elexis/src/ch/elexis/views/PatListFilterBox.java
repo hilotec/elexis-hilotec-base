@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 5048 2009-01-26 21:44:06Z rgw_ch $
+ * $Id: PatListFilterBox.java 5326 2009-05-29 20:08:32Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -56,10 +56,10 @@ import ch.rgw.tools.IFilter;
  */
 public class PatListFilterBox extends ListDisplay<PersistentObject> implements IFilter {
 	PersistentObjectDropTarget dropTarget;
-	private static final String ETIKETTE = "Sticker...";
-	private static final String FELD = "Feld...";
-	private static final String LEEREN = " Leeren";
-	private static final String NB_PREFIX = "PLF_FLD:";
+	private static final String ETIKETTE = Messages.getString("PatListFilterBox.Sticker"); //$NON-NLS-1$
+	private static final String FELD = Messages.getString("PatListFilterBox.Field"); //$NON-NLS-1$
+	private static final String LEEREN = Messages.getString("PatListFilterBox.DoEmpty"); //$NON-NLS-1$
+	private static final String NB_PREFIX = "PLF_FLD:"; //$NON-NLS-1$
 	private ArrayList<IPatFilter> filters = new ArrayList<IPatFilter>();
 	private IPatFilter defaultFilter = new PatFilterImpl();
 	private boolean parseError = false;
@@ -71,9 +71,9 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			
 			public String getLabel(Object o){
 				if (o instanceof NamedBlob) {
-					return "Feld: " + ((NamedBlob) o).getString();
+					return Messages.getString("PatListFilterBox.Field2") + ((NamedBlob) o).getString(); //$NON-NLS-1$
 				} else if (o instanceof PersistentObject) {
-					return o.getClass().getSimpleName() + ":" + ((PersistentObject) o).getLabel();
+					return o.getClass().getSimpleName() + ":" + ((PersistentObject) o).getLabel(); //$NON-NLS-1$
 				} else {
 					return o.toString();
 				}
@@ -92,7 +92,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		makeActions();
 		setMenu(removeFilterAction);
 		addHyperlinks(FELD, ETIKETTE, LEEREN);
-		dropTarget = new PersistentObjectDropTarget("Statfilter", this, new DropReceiver());
+		dropTarget = new PersistentObjectDropTarget("Statfilter", this, new DropReceiver()); //$NON-NLS-1$
 		
 	}
 	
@@ -228,7 +228,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText("Etikette/n für Filter auswählen");
+			getShell().setText(Messages.getString("PatListFilterBox.ChooseSticker")); //$NON-NLS-1$
 		}
 		
 		@Override
@@ -269,7 +269,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText("Filterbedingung eingeben");
+			getShell().setText(Messages.getString("PatListFilterBox.SetFilter")); //$NON-NLS-1$
 		}
 		
 		@Override
@@ -277,14 +277,14 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			Composite ret = (Composite) super.createDialogArea(parent);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(3, false));
-			new Label(ret, SWT.NONE).setText("Feld");
-			new Label(ret, SWT.NONE).setText(" ");
-			new Label(ret, SWT.NONE).setText("Wert");
+			new Label(ret, SWT.NONE).setText(Messages.getString("PatListFilterBox.Field3")); //$NON-NLS-1$
+			new Label(ret, SWT.NONE).setText(" "); //$NON-NLS-1$
+			new Label(ret, SWT.NONE).setText(Messages.getString("PatListFilterBox.VValue")); //$NON-NLS-1$
 			tFeld = new Text(ret, SWT.BORDER);
 			tFeld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			cbOp = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
 			cbOp.setItems(new String[] {
-				"=", "LIKE", "Regexp"
+				"=", "LIKE", "Regexp" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			});
 			cbOp.select(0);
 			tValue = new Text(ret, SWT.BORDER);
@@ -297,7 +297,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 			String fld = tFeld.getText();
 			if (fld.length() > 0) {
 				value = NamedBlob.load(NB_PREFIX + fld);
-				value.putString(fld + "::" + cbOp.getText() + "::" + tValue.getText());
+				value.putString(fld + "::" + cbOp.getText() + "::" + tValue.getText()); //$NON-NLS-1$ //$NON-NLS-2$
 				PatListFilterBox.this.add(value);
 			}
 			super.okPressed();
@@ -305,10 +305,10 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	}
 	
 	private void makeActions(){
-		removeFilterAction = new Action("entfernen") {
+		removeFilterAction = new Action(Messages.getString("PatListFilterBox.removeAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText("Diese Filterbedingung entfernen");
+				setToolTipText(Messages.getString("PatListFilterBox.removeToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override

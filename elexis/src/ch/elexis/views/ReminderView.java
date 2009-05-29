@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ReminderView.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ * $Id: ReminderView.java 5326 2009-05-29 20:08:32Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -52,7 +52,7 @@ import ch.rgw.tools.TimeTool;
 
 public class ReminderView extends ViewPart implements ActivationListener, BackingStoreListener,
 		SelectionListener, HeartListener {
-	public static final String ID = "ch.elexis.reminderview";
+	public static final String ID = "ch.elexis.reminderview"; //$NON-NLS-1$
 	private IAction newReminderAction, deleteReminderAction, onlyOpenReminderAction,
 			ownReminderAction;
 	private RestrictedAction othersReminderAction;
@@ -158,11 +158,11 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				Reminder.Status stat = ((Reminder) element).getStatus();
 				cfg = Hub.userCfg.getBranch(PreferenceConstants.USR_REMINDERCOLORS, true);
 				if (stat == Reminder.Status.STATE_DUE) {
-					return Desk.getColorFromRGB(cfg.get("fällig", "FFFFFF"));
+					return Desk.getColorFromRGB(cfg.get("fällig", "FFFFFF")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (stat == Reminder.Status.STATE_OVERDUE) {
-					return Desk.getColorFromRGB(cfg.get("überfällig", "FF0000"));
+					return Desk.getColorFromRGB(cfg.get("überfällig", "FF0000")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (stat == Reminder.Status.STATE_PLANNED) {
-					return Desk.getColorFromRGB(cfg.get("geplant", "00FF00"));
+					return Desk.getColorFromRGB(cfg.get("geplant", "00FF00")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					return null;
 				}
@@ -177,10 +177,10 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 	}
 	
 	private void makeActions(){
-		newReminderAction = new Action("Neu...") {
+		newReminderAction = new Action(Messages.getString("ReminderView.newReminderAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText("Einen neuen Reminder erstellen");
+				setToolTipText(Messages.getString("ReminderView.newReminderToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -190,10 +190,10 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				cv.notify(CommonViewer.Message.update_keeplabels);
 			}
 		};
-		deleteReminderAction = new Action("Löschen") {
+		deleteReminderAction = new Action(Messages.getString("ReminderView.deleteAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText("Markierten Reminder löschen");
+				setToolTipText(Messages.getString("ReminderView.deleteToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -206,9 +206,9 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				}
 			}
 		};
-		onlyOpenReminderAction = new Action("Nur fällige", Action.AS_CHECK_BOX) {
+		onlyOpenReminderAction = new Action(Messages.getString("ReminderView.onlyDueAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
-				setToolTipText("Nur aktive Reminder anzeigen");
+				setToolTipText(Messages.getString("ReminderView.onlyDueToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -218,9 +218,9 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				cv.notify(CommonViewer.Message.update_keeplabels);
 			}
 		};
-		ownReminderAction = new Action("Von mir erstellte", Action.AS_CHECK_BOX) {
+		ownReminderAction = new Action(Messages.getString("ReminderView.myRemindersAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
-				setToolTipText("Auch von mir erstellte Reminder für andere Anwender anzeigen");
+				setToolTipText(Messages.getString("ReminderView.myRemindersToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -231,10 +231,10 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			}
 		};
 		othersReminderAction =
-			new RestrictedAction(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS, "Fremde",
+			new RestrictedAction(AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS, Messages.getString("ReminderView.foreignAction"), //$NON-NLS-1$
 				Action.AS_CHECK_BOX) {
 				{
-					setToolTipText("Auch Reminders anderer Anwender anzeigen");
+					setToolTipText(Messages.getString("ReminderView.foreignTooltip")); //$NON-NLS-1$
 				}
 				
 				@Override
@@ -246,11 +246,11 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 			};
 		
 		selectPatientAction =
-			new RestrictedAction(AccessControlDefaults.PATIENT_DISPLAY, "Patient aktivieren",
+			new RestrictedAction(AccessControlDefaults.PATIENT_DISPLAY, Messages.getString("ReminderView.activatePatientAction"), //$NON-NLS-1$
 				Action.AS_UNSPECIFIED) {
 				{
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PERSON));
-					setToolTipText("Patient aktivieren, der zu dieser Pendenz gehört");
+					setToolTipText(Messages.getString("ReminderView.activatePatientTooltip")); //$NON-NLS-1$
 				}
 				
 				public void doRun(){
@@ -317,9 +317,9 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 					if (list.size() != 0) {
 						StringBuilder sb = new StringBuilder();
 						for (Reminder r : list) {
-							sb.append(r.getMessage()).append("\n\n");
+							sb.append(r.getMessage()).append("\n\n"); //$NON-NLS-1$
 						}
-						SWTHelper.alert("Wichtige Reminders zu diesem Patienten", sb.toString());
+						SWTHelper.alert(Messages.getString("ReminderView.importantRemindersCaption"), sb.toString()); //$NON-NLS-1$
 					}
 				}
 				
@@ -362,7 +362,7 @@ public class ReminderView extends ViewPart implements ActivationListener, Backin
 				}
 				Patient act = GlobalEvents.getSelectedPatient();
 				if (act != null) {
-					if (!check.get("IdentID").equals(act.getId())) {
+					if (!check.get("IdentID").equals(act.getId())) { //$NON-NLS-1$
 						if (check.getTyp() != Reminder.Typ.anzeigeTodoAll) {
 							return false;
 						}
