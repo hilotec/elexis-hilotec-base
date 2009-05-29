@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KonsListe.java 4810 2008-12-12 11:13:10Z psiska $
+ * $Id: KonsListe.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -39,7 +39,7 @@ import ch.elexis.util.ViewMenus;
 
 public class KonsListe extends ViewPart implements ActivationListener, SelectionListener,
 		BackingStoreListener, ISaveablePart2 {
-	public static final String ID = "ch.elexis.HistoryView";
+	public static final String ID = "ch.elexis.HistoryView"; //$NON-NLS-1$
 	HistoryDisplay liste;
 	Patient actPatient;
 	ViewMenus menus;
@@ -54,8 +54,6 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(newKonsAction, filterAction);
-		// GlobalEvents.getInstance().addSelectionListener(this,
-		// getViewSite().getWorkbenchWindow());
 		GlobalEvents.getInstance().addActivationListener(this, this);
 	}
 	
@@ -68,7 +66,6 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 	
 	@Override
 	public void setFocus(){
-	// TODO Auto-generated method stub
 	
 	}
 	
@@ -92,7 +89,7 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 		liste.start(filter);
 	}
 	
-	public void clearEvent(final Class template){
+	public void clearEvent(final Class<? extends PersistentObject> template){
 		if (template.equals(Patient.class)) {
 			liste.stop();
 			liste.load(null, true);
@@ -116,9 +113,9 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 	}
 	
 	private void makeActions(){
-		newKonsAction = new Action("Neue Konsultation") {
+		newKonsAction = new Action(Messages.getString("KonsListe.NewConsultation")) { //$NON-NLS-1$
 			{
-				setToolTipText("Neue Konsultation erstellen");
+				setToolTipText(Messages.getString("KonsListe.CreateNewConsultation")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
 			
@@ -134,9 +131,9 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 					if (k != null) {
 						fall = k.getFall();
 					} else {
-						if (SWTHelper.askYesNo("Kein Fall ausgewählt",
-							"Soll ein neuern Fall für diese Konsultation erstellt werden?")) {
-							fall = actPatient.neuerFall("Allgemein", "Krankheit", "KVG");
+						if (SWTHelper.askYesNo(Messages.getString("KonsListe.NoCaseSelectedCaption"), //$NON-NLS-1$
+							Messages.getString("KonsListe.NoCaseSelectedBody"))) { //$NON-NLS-1$
+							fall = actPatient.neuerFall(Messages.getString("KonsListe.General"), Messages.getString("KonsListe.Illness"), "KVG"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						} else {
 							return;
 						}
@@ -148,10 +145,10 @@ public class KonsListe extends ViewPart implements ActivationListener, Selection
 				GlobalEvents.getInstance().fireSelectionEvent(k);
 			}
 		};
-		filterAction = new Action("Liste Filtern", Action.AS_CHECK_BOX) {
+		filterAction = new Action(Messages.getString("KonsListe.FilterListAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
-				setToolTipText("Liste der Konsultationen filtern");
+				setToolTipText(Messages.getString("KonsListe.FilterListToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override

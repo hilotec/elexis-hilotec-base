@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: AUF2.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -48,8 +48,8 @@ import ch.rgw.tools.ExHandler;
  * 
  */
 public class AUF2 extends ViewPart implements ActivationListener, SelectionListener {
-	public static final String ID = "ch.elexis.auf";
-	private static final String ICON = "auf_view";
+	public static final String ID = "ch.elexis.auf"; //$NON-NLS-1$
+	private static final String ICON = "auf_view"; //$NON-NLS-1$
 	TableViewer tv;
 	private Action newAUF, delAUF, modAUF, printAUF;
 	
@@ -100,8 +100,8 @@ public class AUF2 extends ViewPart implements ActivationListener, SelectionListe
 				public void run(){
 					Patient pat = GlobalEvents.getSelectedPatient();
 					if (pat == null) {
-						SWTHelper.showError("Kein patient selektiert",
-							"Wählen aus, wen diese AUF betreffen soll");
+						SWTHelper.showError(Messages.getString("AUF2.NoPatientSelected"), //$NON-NLS-1$
+							Messages.getString("AUF2.PleaseDoSelectPatient")); //$NON-NLS-1$
 						return;
 					}
 					if (GlobalEvents.getSelectedFall() == null) {
@@ -195,8 +195,8 @@ public class AUF2 extends ViewPart implements ActivationListener, SelectionListe
 				return new Object[0];
 			}
 			Query<AUF> qbe = new Query<AUF>(AUF.class);
-			qbe.add("PatientID", "=", pat.getId());
-			qbe.orderBy(true, "von", "bis");
+			qbe.add(AUF.PATIENT_ID, Query.EQUALS, pat.getId());
+			qbe.orderBy(true, AUF.DATE_FROM, AUF.DATE_UNTIL);
 			List<AUF> list = qbe.execute();
 			return list.toArray();
 		}

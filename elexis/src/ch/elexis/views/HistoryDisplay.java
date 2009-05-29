@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-s008, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2009, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryDisplay.java 3957 2008-05-23 11:26:57Z rgw_ch $
+ *  $Id: HistoryDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -26,7 +26,10 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.*;
+import ch.elexis.actions.BackgroundJob;
+import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.HistoryLoader;
+import ch.elexis.actions.KonsFilter;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.data.Fall;
@@ -35,120 +38,132 @@ import ch.elexis.data.Patient;
 import ch.elexis.preferences.PreferenceConstants;
 
 /**
- * Anzeige der vergangenen Konsultationen.
- * Es sollen einerseits "sofort" die letzten 3 oder 4 Kons angezeigt werden,
- * andererseits aber je nach Anforderung auch frühere nachgeladen werden.
- * Dies ist noch nicht korrekt implemetiert - aktuell werden immer alle Kons. 
- * geladen.
+ * Anzeige der vergangenen Konsultationen. Es sollen einerseits "sofort" die
+ * letzten 3 oder 4 Kons angezeigt werden, andererseits aber je nach Anforderung
+ * auch frühere nachgeladen werden. Dies ist noch nicht korrekt implemetiert -
+ * aktuell werden immer alle Kons. geladen.
+ * 
  * @author Gerry
- *
+ * 
  */
-public class HistoryDisplay extends ScrolledComposite implements BackgroundJobListener, UserListener{
+public class HistoryDisplay extends ScrolledComposite implements
+		BackgroundJobListener, UserListener {
 	FormText text;
 	ArrayList<Konsultation> lKons;
 	StringBuilder sb;
 	HistoryLoader loader;
 	private boolean bLock;
-	HistoryDisplay self=this;
-	
+	HistoryDisplay self = this;
+
 	boolean multiline = false;
-	
-	public HistoryDisplay(Composite parent, final IViewSite site){
+
+	public HistoryDisplay(Composite parent, final IViewSite site) {
 		this(parent, site, false);
 	}
-	public HistoryDisplay(Composite parent, final IViewSite site, boolean multiline){
-		super(parent,SWT.V_SCROLL|SWT.BORDER);
+
+	public HistoryDisplay(Composite parent, final IViewSite site,
+			boolean multiline) {
+		super(parent, SWT.V_SCROLL | SWT.BORDER);
 		this.multiline = multiline;
-		lKons=new ArrayList<Konsultation>(20);
-		text=Desk.getToolkit().createFormText(this,false);
+		lKons = new ArrayList<Konsultation>(20);
+		text = Desk.getToolkit().createFormText(this, false);
 		text.setWhitespaceNormalized(true);
-		text.setColor("blau",Desk.getColorRegistry().get("blau"));
-		text.setColor("gruen",	Desk.getColorRegistry().get("hellgrau"));
+		text.setColor(Desk.COL_BLUE, Desk.getColorRegistry().get(Desk.COL_BLUE));
+		text.setColor(Desk.COL_GREEN, Desk.getColorRegistry().get(Desk.COL_LIGHTGREY));
 		setContent(text);
-		text.addHyperlinkListener(new HyperlinkAdapter(){
+		text.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				String id=(String)e.getHref();
-				Konsultation k=Konsultation.load(id);
+				String id = (String) e.getHref();
+				Konsultation k = Konsultation.load(id);
 				GlobalEvents.getInstance().fireSelectionEvent(k);
 			}
-			
+
 		});
-		text.setText("Kein Patient ausgewählt",false,false);
-		sb=new StringBuilder(1000);
-		addControlListener(new ControlAdapter(){
+		text.setText(Messages.getString("HistoryDisplay.NoPatientSelected"), false, false); //$NON-NLS-1$
+		sb = new StringBuilder(1000);
+		addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				text.setSize(text.computeSize(self.getSize().x-15,SWT.DEFAULT));
+				text.setSize(text.computeSize(self.getSize().x - 15,
+						SWT.DEFAULT));
 			}
-			
+
 		});
 		GlobalEvents.getInstance().addUserListener(this);
 	}
-	
-	
+
 	@Override
 	public void dispose() {
 		GlobalEvents.getInstance().removeUserListener(this);
 		super.dispose();
 	}
-	public void setFilter(KonsFilter f){
+
+	public void setFilter(KonsFilter f) {
 		stop();
 		loader.setFilter(f);
 	}
-	public void start(){
+
+	public void start() {
 		start(null);
 	}
-	public void start(KonsFilter f){
-			stop();
-			sb.setLength(0);
-			loader=new HistoryLoader(sb,lKons,multiline);
-			loader.setFilter(f);
-			loader.addListener(this);
-			loader.schedule();
+
+	public void start(KonsFilter f) {
+		stop();
+		sb.setLength(0);
+		loader = new HistoryLoader(sb, lKons, multiline);
+		loader.setFilter(f);
+		loader.addListener(this);
+		loader.schedule();
 	}
-	public void stop(){
-		if(loader!=null){
+
+	public void stop() {
+		if (loader != null) {
 			loader.removeListener(this);
 			loader.cancel();
-			loader=null;
+			loader = null;
 		}
 	}
-	public void load(Fall fall, boolean clear){
-		if(clear){
+
+	public void load(Fall fall, boolean clear) {
+		if (clear) {
 			lKons.clear();
 		}
-		if(fall!=null){
-			Konsultation[] kons=fall.getBehandlungen(true);
-			for(Konsultation k:kons){
+		if (fall != null) {
+			Konsultation[] kons = fall.getBehandlungen(true);
+			for (Konsultation k : kons) {
 				lKons.add(k);
 			}
 		}
 	}
-	public void load(Patient pat){
+
+	public void load(Patient pat) {
 		lKons.clear();
-		Fall[] faelle=pat.getFaelle();
-		for(Fall f:faelle){
-			load(f,false);
+		Fall[] faelle = pat.getFaelle();
+		for (Fall f : faelle) {
+			load(f, false);
 		}
 	}
 
 	public void jobFinished(BackgroundJob j) {
-		Desk.getDisplay().asyncExec(new Runnable(){
+		Desk.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				String s=(String)loader.getData();
-				//System.out.println(s);
-				
+				String s = (String) loader.getData();
+				// System.out.println(s);
+
 				// check if widget is valid
 				if (!isDisposed()) {
-					text.setText(s,true,true);
-					text.setSize(text.computeSize(self.getSize().x-10,SWT.DEFAULT));
+					text.setText(s, true, true);
+					text.setSize(text.computeSize(self.getSize().x - 10,
+							SWT.DEFAULT));
 				}
-			}});
+			}
+		});
 	}
+
 	public void UserChanged() {
-		if(text!=null && (!text.isDisposed())){
+		if (text != null && (!text.isDisposed())) {
 			text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUFZeugnis.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ *  $Id: AUFZeugnis.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -27,7 +27,7 @@ import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.text.ITextPlugin.PageFormat;
 
 public class AUFZeugnis extends ViewPart implements ICallback, ActivationListener {
-	public static final String ID = "ch.elexis.AUFView";
+	public static final String ID = "ch.elexis.AUFView"; //$NON-NLS-1$
 	TextContainer text;
 	Brief actBrief;
 	
@@ -57,7 +57,7 @@ public class AUFZeugnis extends ViewPart implements ICallback, ActivationListene
 	
 	public void createAUZ(final AUF auf){
 		actBrief =
-			text.createFromTemplateName(Konsultation.getAktuelleKons(), "AUF-Zeugnis", Brief.AUZ,
+			text.createFromTemplateName(Konsultation.getAktuelleKons(), "AUF-Zeugnis", Brief.AUZ, //$NON-NLS-1$
 				null, null);
 		text.getPlugin().setFormat(PageFormat.A5);
 	}

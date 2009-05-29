@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultContentProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ *  $Id: DefaultContentProvider.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -77,7 +77,7 @@ public class DefaultContentProvider implements CommonContentProvider {
 		List<PersistentObject> list = qbe.execute();
 		if (list == null) {
 			return new String[] {
-				Messages.getString("DefaultContentProvider.noData")}; //$NON-NLS-1$
+				Messages.getString("NoDataAvailable")}; //$NON-NLS-1$
 		} else {
 			return list.toArray();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, D. Lutz and Elexis
+ * Copyright (c) 2006-2009, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- *  $Id$
+ *  $Id: PatientenListeControlFieldProvider.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;

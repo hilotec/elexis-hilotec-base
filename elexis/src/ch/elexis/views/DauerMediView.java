@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DauerMediView.java 4376 2008-09-05 16:58:02Z rgw_ch $
+ * $Id: DauerMediView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 import org.eclipse.jface.action.Action;
@@ -31,7 +31,7 @@ import ch.elexis.util.SWTHelper;
  *
  */
 public class DauerMediView extends ViewPart implements ActivationListener, SelectionListener{
-	public final static String ID="ch.elexis.dauermedikationview";
+	public final static String ID="ch.elexis.dauermedikationview"; //$NON-NLS-1$
 	private IAction toClipBoardAction;
 	FixMediDisplay dmd;
 	public DauerMediView() {
@@ -80,9 +80,9 @@ public class DauerMediView extends ViewPart implements ActivationListener, Selec
 		}
 	}
 	private void makeActions(){
-		toClipBoardAction=new Action("Kopieren"){
+		toClipBoardAction=new Action(Messages.getString("DauerMediView.copy")){ //$NON-NLS-1$
 			{
-				setToolTipText("In Zwischenablage kopieren");
+				setToolTipText(Messages.getString("DauerMediView.copyToClipboard")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
 			}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FixMediDisplay.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ * $Id: FixMediDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Desk;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
@@ -41,6 +42,7 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.views.codesystems.LeistungenView;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -52,16 +54,16 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class FixMediDisplay extends ListDisplay<Prescription> {
-	private static final String TTCOST = "Tagestherapiekosten: ";
+	private static final String TTCOST = Messages.getString("FixMediDisplay.DailyCost"); //$NON-NLS-1$
 	private LDListener dlisten;
 	private IAction stopMedicationAction, changeMedicationAction, removeMedicationAction;
 	FixMediDisplay self;
 	Label lCost;
 	PersistentObjectDropTarget target;
-	static final String REZEPT = "Rezept... ";
-	static final String LISTE = "Liste... ";
-	static final String HINZU = "Hinzu... ";
-	static final String KOPIEREN = "Kopieren ";
+	static final String REZEPT = Messages.getString("FixMediDisplay.Prescription"); //$NON-NLS-1$
+	static final String LISTE = Messages.getString("FixMediDisplay.UsageList"); //$NON-NLS-1$
+	static final String HINZU = Messages.getString("FixMediDisplay.AddItem"); //$NON-NLS-1$
+	static final String KOPIEREN = Messages.getString("FixMediDisplay.Copy"); //$NON-NLS-1$
 	
 	public FixMediDisplay(Composite parent, IViewSite s){
 		super(parent, SWT.NONE, null);
@@ -77,7 +79,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			removeMedicationAction);
 		setDLDListener(dlisten);
 		target =
-			new PersistentObjectDropTarget("Fixmedikation", this,
+			new PersistentObjectDropTarget(Messages.getString("FixMediDisplay.FixMedikation"), this, //$NON-NLS-1$
 				new PersistentObjectDropTarget.Receiver() {
 					
 					public boolean accept(PersistentObject o){
@@ -94,8 +96,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						if (o instanceof Artikel) {
 							Prescription pre =
 								new Prescription((Artikel) o, GlobalEvents.getSelectedPatient(),
-									"", "");
-							pre.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
+									StringTool.leer, StringTool.leer);
+							pre.set(Prescription.DATE_FROM, new TimeTool().toString(TimeTool.DATE_GER));
 							MediDetailDialog dlg = new MediDetailDialog(getShell(), pre);
 							if (dlg.open() == Window.OK) {
 								// self.add(pre);
@@ -107,7 +109,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							Prescription now =
 								new Prescription(pre.getArtikel(), GlobalEvents
 									.getSelectedPatient(), pre.getDosis(), pre.getBemerkung());
-							now.set("DatumVon", new TimeTool().toString(TimeTool.DATE_GER));
+							now.set(Prescription.DATE_FROM, new TimeTool().toString(TimeTool.DATE_GER));
 							// self.add(now);
 							reload();
 						}
@@ -138,12 +140,12 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				float num = 0;
 				try {
 					String dosis = pr.getDosis();
-					if (dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")) {
-						String[] dose = dosis.split("[xX]");
+					if (dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")) { //$NON-NLS-1$
+						String[] dose = dosis.split("[xX]"); //$NON-NLS-1$
 						int count = Integer.parseInt(dose[0]);
 						num = getNum(dose[1]) * count;
 					} else if (dosis.indexOf('-') != -1) {
-						String[] dos = dosis.split("-");
+						String[] dos = dosis.split("-"); //$NON-NLS-1$
 						if (dos.length > 2) {
 							for (String d : dos) {
 								num += getNum(d);
@@ -173,9 +175,9 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				lCost.setText(TTCOST + Double.toString(rounded));
 			} else {
 				if (rounded == 0.0) {
-					lCost.setText(TTCOST + "?");
+					lCost.setText(TTCOST + "?"); //$NON-NLS-1$
 				} else {
-					lCost.setText(TTCOST + ">" + Double.toString(rounded));
+					lCost.setText(TTCOST + ">" + Double.toString(rounded)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -183,7 +185,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	
 	private float getNum(String n){
 		if (n.indexOf('/') != -1) {
-			String[] bruch = n.split("/");
+			String[] bruch = n.split(StringConstants.SLASH);
 			float zaehler = Float.parseFloat(bruch[0]);
 			float nenner = Float.parseFloat(bruch[1]);
 			return zaehler / nenner;
@@ -240,10 +242,10 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	private void makeActions(){
 		
 		changeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, "Ändern...") {
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-					setToolTipText("Dauermedikation modifizieren");
+					setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
 				}
 				
 				public void doRun(){
@@ -257,10 +259,10 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			};
 		
 		stopMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, "Stoppen") {
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
-					setToolTipText("Diese Medikation stoppen");
+					setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
 				}
 				
 				public void doRun(){
@@ -275,10 +277,10 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			};
 		
 		removeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, "Löschen") {
+			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-					setToolTipText("Medikation unwiederruflich löschen");
+					setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
 				}
 				
 				public void doRun(){

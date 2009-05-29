@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *    $Id: PersistentObject.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -560,11 +560,21 @@ public abstract class PersistentObject {
 		return sb.toString();
 	}
 
+	/** An object with this ID does not exist */
 	public static final int INEXISTENT = 0;
+	/** This id is not valid */
 	public static final int INVALID_ID = 1;
+	/** An object with this ID exists but is marked deleted */
 	public static final int DELETED = 2;
+	/** This is an existing object */
 	public static final int EXISTS = 3;
 
+	/**
+	 * Check the state of an object with this ID 
+	 * Note: This method accesses the database and therefore is much more costly thah
+	 * the simple instantaniation of a PersistentObject
+	 * @return a value between INEXISTENT and EXISTS
+	 */
 	public int state() {
 		if (StringTool.isNothing(getId())) {
 			return INVALID_ID;
@@ -603,6 +613,7 @@ public abstract class PersistentObject {
 	 * Check whether the object exists in the database. This is the case for all
 	 * objects in the database for which state() returns neither INVALID_ID nor
 	 * INEXISTENT.
+	 * Note: objects marked as deleted will also return true!
 	 * 
 	 * @return true, if the object is available in the database, false otherwise
 	 */
@@ -723,6 +734,10 @@ public abstract class PersistentObject {
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
+	/**
+	 * get all stickers of this object
+	 * @return a List of Sticker objects
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Sticker> getStickers() {
 		String ID = new StringBuilder().append("ETK").append(getId())
@@ -758,6 +773,10 @@ public abstract class PersistentObject {
 		return ret;
 	}
 
+	/**
+	 * Remove a Sticker from this object
+	 * @param et the Sticker to remove
+	 */
 	@SuppressWarnings("unchecked")
 	public void removeSticker(Sticker et) {
 		String ID = new StringBuilder().append("ETK").append(getId())
@@ -773,6 +792,10 @@ public abstract class PersistentObject {
 		getConnection().exec(sb.toString());
 	}
 
+	/**
+	 * Add a Sticker to this object
+	 * @param et the Sticker to add
+	 */
 	@SuppressWarnings("unchecked")
 	public void addSticker(Sticker et) {
 		String ID = new StringBuilder().append("STK").append(getId())
@@ -802,7 +825,7 @@ public abstract class PersistentObject {
 	}
 
 	/**
-	 * Darf dieses Objekt mit Drag&Drop verschoben werden
+	 * Darf dieses Objekt mit Drag&Drop verschoben werden?
 	 * 
 	 * @return true wenn ja.
 	 */
@@ -849,6 +872,9 @@ public abstract class PersistentObject {
 	 * dem cache bedient, um die Zahl der Datenbankzugriffe zu minimieren. Nach
 	 * Ablauf der lifetime erfolgt wieder ein Zugriff auf die Datenbank, wobei
 	 * auch der cache wieder erneuert wird.
+	 * Wenn das Feld nicht als Tabellenfeld existiert, wird es in EXTINFO gesucht. 
+	 * Wenn es auch dort nicht gefunden wird, wird eine Methode namens getFeldname 
+	 * gesucht.  
 	 * 
 	 * @param field
 	 *            Name des Felds
@@ -1017,7 +1043,7 @@ public abstract class PersistentObject {
 	 * 
 	 * @param field
 	 *            Feldname der Hashtable
-	 * @return eine Hashtable (ggf. leer)
+	 * @return eine Hashtable (ggf. leer). Nie null.
 	 */
 	@SuppressWarnings("unchecked")
 	public Hashtable getHashtable(final String field) {
@@ -1055,7 +1081,7 @@ public abstract class PersistentObject {
 	 *            das Feld, wie in der mapping-Deklaration angegeben
 	 * @param reverse
 	 *            wenn true wird rückwärts sortiert
-	 * @return eine Liste mit den IDs (String!) der verknüpften Datensätze.
+	 * @return eine Liste mit den IDs (String!) der verknüpften Datensätze oder null, wenn das Feld keine 1:n-Verknüofung ist
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getList(final String field, final boolean reverse) {
@@ -1152,7 +1178,7 @@ public abstract class PersistentObject {
 	 *            Name des Feldes
 	 * @param value
 	 *            Einzusetzender Wert (der vorherige Wert wird überschrieben)
-	 * @return 0 bei Fehler
+	 * @return true bei Erfolg
 	 */
 	public boolean set(final String field, String value) {
 		String mapped = map(field);
@@ -1220,9 +1246,7 @@ public abstract class PersistentObject {
 
 	/**
 	 * Eine Hashtable speichern. Diese wird zunächst in ein byte[] geplättet,
-	 * dann wird sicherheitshalber geprüft, ob sie wirklich aus diesem Array
-	 * wiederhergestellt werden kann, und wenn ja, wird sie gespeichert.
-	 * 
+	 * und so gespeichert.
 	 * @param field
 	 * @param hash
 	 * @return 0 bei Fehler
@@ -1234,14 +1258,6 @@ public abstract class PersistentObject {
 		}
 		try {
 			byte[] bin = flatten(hash);
-			/*
-			 * Hashtable res=StringTool.fold(bin); if(res==null){ String
-			 * ls=StringTool.flattenStrings(hash); //byte[]
-			 * bin2=StringTool.flatten(hash,StringTool.ZIP,null);
-			 * log.log("Hashtable:
-			 * "+ls,Log.ERRORS); throw new Exception("Hashtable nicht
-			 * wiederherstellbar"); }
-			 */
 			cache.put(getKey(field), hash, getCacheTime());
 			return setBinary(field, bin);
 		} catch (Throwable ex) {
@@ -1412,29 +1428,6 @@ public abstract class PersistentObject {
 		log.log("Fehlerhaftes Mapping: " + mapped, Log.ERRORS);
 	}
 
-	/*
-	 * 
-	 * public int addToList(String field, String oID, String... extra) { String
-	 * mapped=map(field); if(mapped.startsWith("JOINT:")){ String[]
-	 * m=mapped.split(":");// m[1] FremdID, m[2] eigene ID, m[3] Name Joint
-	 * if(m.length>3){ StringBuffer head=new StringBuffer(100); StringBuffer
-	 * tail=new StringBuffer(100);
-	 * head.append("INSERT INTO ").append(m[3]).append("
-	 * (ID,").append(m[2]) .append(",").append(m[1]); tail.append(") VALUES
-	 * (").append(JdbcLink.wrap(StringTool.unique("aij"))).append(",")
-	 * .append(getWrappedId()).append(",").append(JdbcLink.wrap(oID));
-	 * if(extra!=null){ for(String s : extra){ String[] def=s.split("=");
-	 * if(def.length!=2){ log.log("Fehlerhafter Aufruf addToList
-	 * "+s,Log.ERRORS); return 0; } head.append(",").append(def[0]);
-	 * tail.append(",").append(JdbcLink.wrap(def[1])); } }
-	 * head.append(tail).append(")"); if(tracetable!=null){ String
-	 * sql=head.toString(); doTrace(sql); return j.exec(sql); } return
-	 * j.exec(head.toString()); //j.exec("INSERT INTO ADRESS_IDENT_JOINT
-	 * (IdentID,AdressID) VALUES
-	 * ("+getWrappedId()+","+adr.getWrappedId()+")"); } } log.log("Fehlerhaftes
-	 * Mapping: "+mapped,Log.ERRORS); return 0; }
-	 */
-
 	/**
 	 * Ein neues Objekt erstellen und in die Datenbank eintragen
 	 * 
@@ -1460,11 +1453,11 @@ public abstract class PersistentObject {
 
 	/**
 	 * Ein Objekt und ggf. dessen XID's aus der Datenbank löschen
-	 * 
+	 * the object is not deleted but rather marked as deleted.  A purge must
+	 * be applied to remove the object really 
 	 * @return true on success
 	 */
 	public boolean delete() {
-		// we change this to ratehr set the deleted-flag than really delete
 		if (set("deleted", "1")) {
 			List<Xid> xids = new Query<Xid>(Xid.class, "object", getId())
 					.execute();
@@ -2027,7 +2020,7 @@ public abstract class PersistentObject {
 
 	/**
 	 * Utility function to create or modify a table consistently. Should be used
-	 * by all plugins that contributa data types derived from PersistentObject
+	 * by all plugins that contribute data types derived from PersistentObject
 	 * 
 	 * @param sqlScript
 	 *            create string
@@ -2077,7 +2070,7 @@ public abstract class PersistentObject {
 
 	/**
 	 * Utility function to remove a table and all objects defined therein
-	 * consistentliy To kame sure dependen data are deleted as well, we call
+	 * consistentliy To make sure dependent data are deleted as well, we call
 	 * each object's delete operator individually before dropping the table
 	 * 
 	 * @param name
@@ -2092,6 +2085,12 @@ public abstract class PersistentObject {
 		getConnection().exec("DROP TABLE " + name);
 	}
 
+	/**
+	 * Convert a Hashtable into a compressed byte array. Note: the resulting array is java-specific, but
+	 * stable through jre Versions (serialVersionUID: 1421746759512286392L)
+	 * @param hash the hashtable to store
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public byte[] flatten(final Hashtable hash) {
 		try {
@@ -2110,6 +2109,12 @@ public abstract class PersistentObject {
 		}
 	}
 
+	/**
+	 * Recreate a Hashtable from a byte array as created by flatten()
+	 * @param flat the byte array 
+	 * @return the original Hashtable or null if no Hashtable could be created
+	 * from the array 
+	 */
 	@SuppressWarnings("unchecked")
 	private Hashtable fold(final byte[] flat) {
 		try {

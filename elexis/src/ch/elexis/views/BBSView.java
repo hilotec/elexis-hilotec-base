@@ -1,7 +1,15 @@
-// $Id: BBSView.java 5024 2009-01-23 16:36:39Z rgw_ch $
-/*
- * Created on 10.09.2005
- */
+/*******************************************************************************
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *  $Id: BBSView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -48,7 +56,7 @@ import ch.rgw.tools.Tree;
  */
 @Deprecated
 public class BBSView extends ViewPart implements ISelectionChangedListener, ISaveablePart2 {
-	public static final String ID = "ch.elexis.BBSView";
+	public static final String ID = "ch.elexis.BBSView"; //$NON-NLS-1$
 	private CommonViewer headlines;
 	private ViewerConfigurer vc;
 	private ScrolledForm form;
@@ -63,15 +71,15 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 	public void createPartControl(Composite parent){
 		SashForm sash = new SashForm(parent, SWT.NONE);
 		qbe = new Query<BBSEntry>(BBSEntry.class);
-		loader = new LazyTreeLoader<BBSEntry>("BBS", qbe, "reference", new String[] {
-			"datum", "time", "Thema"
+		loader = new LazyTreeLoader<BBSEntry>("BBS", qbe, "reference", new String[] { //$NON-NLS-1$ //$NON-NLS-2$
+			"datum", "time", "Thema" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		});
 		headlines = new CommonViewer();
 		vc =
 			new ViewerConfigurer(new TreeContentProvider(headlines, loader),
 				new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(
 					headlines, new String[] {
-						"Thema"
+						"Thema" //$NON-NLS-1$
 					}), new NewThread(), new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
 					SWT.NONE, null));
 		headlines.create(vc, sash, SWT.NONE, getViewSite());
@@ -79,8 +87,8 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 		tk = Desk.getToolkit();
 		form = tk.createScrolledForm(sash);
 		form.getBody().setLayout(new GridLayout(1, false));
-		form.setText("Bitte links ein Thema auswählen");
-		origin = tk.createLabel(form.getBody(), "");
+		form.setText(Messages.getString("BBSView.PleaseEnterSubject")); //$NON-NLS-1$
+		origin = tk.createLabel(form.getBody(), ""); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		origin.setLayoutData(gd);
 		msg = tk.createFormText(form.getBody(), false);
@@ -88,13 +96,13 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 			new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL
 				| GridData.FILL_VERTICAL);
 		msg.setLayoutData(gd);
-		msg.setColor("rot", Desk.getColor(Desk.COL_RED));
-		msg.setColor("grün", Desk.getColor(Desk.COL_GREEN));
-		msg.setColor("blau", Desk.getColor(Desk.COL_BLUE));
-		input = tk.createText(form.getBody(), "", SWT.WRAP | SWT.MULTI | SWT.BORDER);
+		msg.setColor(Messages.getString("BBSView.rot"), Desk.getColor(Desk.COL_RED)); //$NON-NLS-1$
+		msg.setColor(Messages.getString("BBSView.gruen"), Desk.getColor(Desk.COL_GREEN)); //$NON-NLS-1$
+		msg.setColor(Messages.getString("BBSView.blau"), Desk.getColor(Desk.COL_BLUE)); //$NON-NLS-1$
+		input = tk.createText(form.getBody(), "", SWT.WRAP | SWT.MULTI | SWT.BORDER); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		input.setLayoutData(gd);
-		Button send = tk.createButton(form.getBody(), "Senden", SWT.PUSH);
+		Button send = tk.createButton(form.getBody(), Messages.getString("BBSView.DoSend"), SWT.PUSH); //$NON-NLS-1$
 		send.addSelectionListener(new SelectionAdapter() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -140,36 +148,36 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 	public void setDisplay(){
 		Object[] sel = headlines.getSelection();
 		if (sel == null || sel.length == 0) {
-			form.setText("Keine Nachricht ausgewählt");
+			form.setText(Messages.getString("BBSView.14")); //$NON-NLS-1$
 			return;
 		}
 		BBSEntry en = ((Tree<BBSEntry>) sel[0]).contents;
 		form.setText(en.getTopic());
 		StringBuilder sb = new StringBuilder();
-		sb.append(en.getAuthor().getLabel()).append(" schrieb am ").append(en.getDate()).append(
-			" um ").append(en.getTime()).append(" Uhr:");
+		sb.append(en.getAuthor().getLabel()).append(Messages.getString("BBSView.15")).append(en.getDate()).append( //$NON-NLS-1$
+			Messages.getString("BBSView.16")).append(en.getTime()).append(Messages.getString("BBSView.17")); //$NON-NLS-1$ //$NON-NLS-2$
 		origin.setText(sb.toString());
 		try{
-			msg.setText("<form><p>" + en.getText() + "</p></form>", true, true);
+			msg.setText(Messages.getString("BBSView.18") + en.getText() + Messages.getString("BBSView.19"), true, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}catch(Exception ex){
 			ExHandler.handle(ex);
 
 		}
-		input.setText("");
+		input.setText(Messages.getString("BBSView.20")); //$NON-NLS-1$
 	}
 	
 	class NewThread implements ViewerConfigurer.ButtonProvider {
 		
 		public Button createButton(Composite parent){
 			Button ret = new Button(parent, SWT.PUSH);
-			ret.setText("Neues Thema...");
+			ret.setText(Messages.getString("BBSView.21")); //$NON-NLS-1$
 			ret.addSelectionListener(new SelectionAdapter() {
 				
 				@Override
 				public void widgetSelected(SelectionEvent e){
 					new BBSEntry(
 						headlines.getConfigurer().getControlFieldProvider().getValues()[0],
-						Hub.actUser, null, "");
+						Hub.actUser, null, Messages.getString("BBSView.22")); //$NON-NLS-1$
 					loader.invalidate();
 					headlines.notify(CommonViewer.Message.update);
 					setDisplay();

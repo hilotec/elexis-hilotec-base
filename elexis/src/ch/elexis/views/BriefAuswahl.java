@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *    $Id: BriefAuswahl.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -182,15 +182,15 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 					Patient actPat = GlobalEvents.getSelectedPatient();
 					if (actPat != null) {
 						Query<Brief> qbe = new Query<Brief>(Brief.class);
-						qbe.add("PatientID", "=", actPat.getId());
+						qbe.add(Brief.PATIENT_ID, Query.EQUALS, actPat.getId());
 						if (cat.equals("Alle")) {
-							qbe.add("Typ", "<>", Brief.TEMPLATE);
+							qbe.add(Brief.TYPE, Query.NOT_EQUAL, Brief.TEMPLATE);
 						} else {
-							qbe.add("Typ", "=", cat);
+							qbe.add(Brief.TYPE, Query.EQUALS, cat);
 						}
 						cv.getConfigurer().getControlFieldProvider().setQuery(
 								qbe);
-						List list = qbe.execute();
+						List<Brief> list = qbe.execute();
 						return list.toArray();
 					} else {
 						return new Brief[0];

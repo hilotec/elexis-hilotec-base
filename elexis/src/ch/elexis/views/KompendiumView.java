@@ -1,4 +1,16 @@
-// $Id: KompendiumView.java 1765 2007-02-09 05:59:42Z rgw_ch $
+/*******************************************************************************
+ * Copyright (c) 2006-2009, G. Weirich, Daniel Lutz and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Daniel Lutz - initial implementation based on RnPrintView
+ *
+ * $Id: KompendiumView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *******************************************************************************/
+
 package ch.elexis.views;
 
 import java.io.BufferedReader;
@@ -24,7 +36,7 @@ import ch.rgw.tools.StringTool;
  * Diese View reichtet einen Browser aufs Arzneimittel-Kompendium ein.
  */
 public class KompendiumView extends ViewPart implements ISaveablePart2{
-	public static final String ID="ch.elexis.Kompendium";
+	public static final String ID="ch.elexis.Kompendium"; //$NON-NLS-1$
 	Browser browser;
 	@Override
 	public void createPartControl(Composite parent) {
@@ -38,7 +50,7 @@ public class KompendiumView extends ViewPart implements ISaveablePart2{
 			}
 			
 		});
-		browser.setUrl("http://www.kompendium.ch/Search.aspx");
+		browser.setUrl("http://www.kompendium.ch/Search.aspx"); //$NON-NLS-1$
 		
 	}
 
@@ -66,7 +78,7 @@ public class KompendiumView extends ViewPart implements ISaveablePart2{
 			 return ret.toString();
 			} catch (IOException e) {
 				ExHandler.handle(e);
-				return "";
+				return ""; //$NON-NLS-1$
 			 }
 	}
 	/* ******

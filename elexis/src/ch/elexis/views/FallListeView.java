@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FallListeView.java 5025 2009-01-23 17:14:06Z rgw_ch $
+ *  $Id: FallListeView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -76,7 +76,7 @@ import ch.rgw.tools.IFilter;
  */
 public class FallListeView extends ViewPart implements SelectionListener, ActivationListener,
 		ISaveablePart2 {
-	public static final String ID = "ch.elexis.FallListeView";
+	public static final String ID = "ch.elexis.FallListeView"; //$NON-NLS-1$
 	CommonViewer fallViewer;
 	CommonViewer behandlViewer;
 	private ViewerConfigurer fallCf, behandlCf;
@@ -99,17 +99,17 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 		form = tk.createForm(parent);
 		form.getBody().setLayout(new GridLayout());
 		SashForm sash = new SashForm(form.getBody(), SWT.VERTICAL);
-		form.setText("Kein Patient ausgewählt");
+		form.setText(Messages.getString("FallListeView.NoPatientSelected")); //$NON-NLS-1$
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ButtonProvider fallButton = new ButtonProvider() {
 			
 			public Button createButton(Composite parent1){
-				Button ret = tk.createButton(parent1, "Neuer Fall", SWT.PUSH);
+				Button ret = tk.createButton(parent1, Messages.getString("FallListeView.NewCase"), SWT.PUSH); //$NON-NLS-1$
 				ret.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e){
 						String bez = fallCf.getControlFieldProvider().getValues()[0];
-						Fall fall = actPatient.neuerFall(bez, "Krankheit", "KVG");
+						Fall fall = actPatient.neuerFall(bez, Messages.getString("FallListeView.Illness"), "KVG"); //$NON-NLS-1$ //$NON-NLS-2$
 						Konsultation b = fall.neueKonsultation();
 						b.setMandant(Hub.actMandant);
 						fallCf.getControlFieldProvider().clearValues();
@@ -137,7 +137,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 							return actPatient.getFaelle();
 						} else {
 							IFilter filter = fallCf.getControlFieldProvider().createFilter();
-							List<String> list = actPatient.getList("Faelle", true);
+							List<String> list = actPatient.getList(Messages.getString("FallListeView.Cases"), true); //$NON-NLS-1$
 							ArrayList<Fall> arr = new ArrayList<Fall>();
 							for (String s : list) {
 								Fall f = Fall.load(s);
@@ -169,7 +169,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 				}
 				
 			}, new DefaultControlFieldProvider(fallViewer, new String[] {
-				"Bezeichnung"
+				Messages.getString("FallListeView.Label") //$NON-NLS-1$
 			}), fallButton, new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.SINGLE,
 				fallViewer));
 		fallViewer.create(fallCf, sash, SWT.NONE, getViewSite());
@@ -178,7 +178,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 		behandlViewer = new CommonViewer();
 		ButtonProvider behandlButton = new ButtonProvider() {
 			public Button createButton(Composite parent1){
-				Button ret = tk.createButton(parent1, "Neue Konsultation", SWT.PUSH);
+				Button ret = tk.createButton(parent1, Messages.getString("FallListeView.NewKons"), SWT.PUSH); //$NON-NLS-1$
 				ret.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e){
@@ -220,7 +220,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 				}
 			}, new DefaultLabelProvider(), new DefaultControlFieldProvider(behandlViewer,
 				new String[] {
-					"Datum"
+					Messages.getString("FallListeView.Date") //$NON-NLS-1$
 				}), behandlButton, new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LIST,
 				SWT.SINGLE | SWT.V_SCROLL, behandlViewer));
 		Composite cf = new Composite(sash, SWT.BORDER);
@@ -256,7 +256,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 		
 		Menu fallMenu = fallMenuMgr.createContextMenu(fallViewer.getViewerWidget().getControl());
 		fallViewer.getViewerWidget().getControl().setMenu(fallMenu);
-		getSite().registerContextMenu("ch.elexis.FallListeMenu", fallMenuMgr,
+		getSite().registerContextMenu("ch.elexis.FallListeMenu", fallMenuMgr, //$NON-NLS-1$
 			fallViewer.getViewerWidget());
 		
 		MenuManager behdlMenuMgr = new MenuManager();
@@ -272,7 +272,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 		Menu behdlMenu =
 			behdlMenuMgr.createContextMenu(behandlViewer.getViewerWidget().getControl());
 		behandlViewer.getViewerWidget().getControl().setMenu(behdlMenu);
-		getSite().registerContextMenu("ch.elexis.BehandlungsListeMenu", behdlMenuMgr,
+		getSite().registerContextMenu("ch.elexis.BehandlungsListeMenu", behdlMenuMgr, //$NON-NLS-1$
 			behandlViewer.getViewerWidget());
 	}
 	
@@ -316,7 +316,7 @@ public class FallListeView extends ViewPart implements SelectionListener, Activa
 			GlobalEvents.getInstance().clearSelection(Konsultation.class);
 			GlobalEvents.getInstance().clearSelection(Fall.class);
 			if (actPatient == null) {
-				form.setText("Kein Patient ausgewählt");
+				form.setText(Messages.getString("FallListeView.NoPatientSelected")); //$NON-NLS-1$
 			} else {
 				form.setText(actPatient.getLabel());
 			}

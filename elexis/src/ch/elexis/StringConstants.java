@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: StringConstants.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *    $Id: StringConstants.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;
@@ -19,6 +19,13 @@ package ch.elexis;
  *
  */
 public class StringConstants {
+	public static final String SLASH="/";
+	public static final String BACKSLASH="\\";
+	public static final String SPACE=" ";
+	public static final String EMPTY="";
+	public static final String COMMA=",";
+	public static final String COLON=":";
+	public static final String DOUBLECOLON="::";
 	
 	public static final String ROLE_NAMING="Rolle";
 	public static final String ROLES_NAMING="Rollen";

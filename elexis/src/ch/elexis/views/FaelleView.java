@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2009, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FaelleView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: FaelleView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -173,10 +173,10 @@ public class FaelleView extends ViewPart implements ActivationListener,
 	}
 
 	private void makeActions() {
-		konsFilterAction = new Action("Konsultationen filtern",
+		konsFilterAction = new Action(Messages.getString("FaelleView.FilterConsultations"), //$NON-NLS-1$
 				Action.AS_CHECK_BOX) {
 			{
-				setToolTipText("Nur Konsultationen dieses Falls anzeigen");
+				setToolTipText(Messages.getString("FaelleView.ShowOnlyConsOfThisCase")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
 
@@ -226,7 +226,7 @@ public class FaelleView extends ViewPart implements ActivationListener,
 		}
 
 		public String getId() {
-			return "ch.elexis.FallFilter";
+			return "ch.elexis.FallFilter"; //$NON-NLS-1$
 		}
 
 		public boolean select(final Object toTest) {

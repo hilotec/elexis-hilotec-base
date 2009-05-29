@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 4829 2008-12-17 17:05:11Z psiska $
+ *  $Id: KonsDetailView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
+import java.text.MessageFormat;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -46,6 +46,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
@@ -81,10 +82,12 @@ import ch.rgw.tools.VersionedResource.ResourceItem;
  */
 public class KonsDetailView extends ViewPart implements SelectionListener,
 		ActivationListener, ISaveablePart2, ObjectListener {
-	public static final String ID = "ch.elexis.Konsdetail";
-	public static final String CFG_VERTRELATION = "vertrelation";
-	static final String ICON = "consult_view";
-	static Log log = Log.get("Detail");
+	private static final String NO_CONS_SELECTED = Messages
+			.getString("KonsDetailView.NoConsSelected"); //$NON-NLS-1$
+	public static final String ID = "ch.elexis.Konsdetail"; //$NON-NLS-1$
+	public static final String CFG_VERTRELATION = "vertrelation"; //$NON-NLS-1$
+	static final String ICON = "consult_view"; //$NON-NLS-1$
+	static Log log = Log.get("Detail"); //$NON-NLS-1$
 	Hashtable<String, IKonsExtension> hXrefs;
 	EnhancedTextField text;
 	Label lBeh, lVersion;
@@ -92,7 +95,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 	Combo cbFall;
 	private Konsultation actKons;
 	FormToolkit tk;
-	Form form /* ,bottm */;
+	Form form;
 
 	private DiagnosenDisplay dd;
 	private VerrechnungsDisplay vd;
@@ -108,8 +111,8 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 	@Override
 	public void saveState(IMemento memento) {
 		int[] w = sash.getWeights();
-		memento.putString(CFG_VERTRELATION, Integer.toString(w[0]) + ","
-				+ Integer.toString(w[1]));
+		memento.putString(CFG_VERTRELATION, Integer.toString(w[0])
+				+ StringConstants.COMMA + Integer.toString(w[1]));
 		super.saveState(memento);
 	}
 
@@ -124,25 +127,28 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 		tk = Desk.getToolkit();
 		form = tk.createForm(sash);
 		form.getBody().setLayout(new GridLayout(1, true));
-		form.setText("Keine Konsultation ausgewählt");
+		form.setText(NO_CONS_SELECTED);
 		cEtiketten = new Composite(form.getBody(), SWT.NONE);
 		cEtiketten.setLayout(new RowLayout(SWT.HORIZONTAL));
 		cEtiketten.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cDesc = new Composite(form.getBody(), SWT.NONE);
 		cDesc.setLayout(new RowLayout(SWT.HORIZONTAL));
 		cDesc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		lBeh = tk.createLabel(cDesc, "Keine Konsultation ausgewählt");
-		emFont = Desk.getFont("Helvetica", 11, SWT.BOLD);
+		lBeh = tk.createLabel(cDesc, NO_CONS_SELECTED);
+		emFont = Desk.getFont("Helvetica", 11, SWT.BOLD); //$NON-NLS-1$
 		lBeh.setFont(emFont);
 		lBeh.setBackground(p.getBackground());
-		hlMandant = tk.createHyperlink(cDesc, "--", SWT.NONE);
+		hlMandant = tk.createHyperlink(cDesc, "--", SWT.NONE); //$NON-NLS-1$
 		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				KontaktSelektor ksl = new KontaktSelektor(getSite().getShell(),
-						Mandant.class, "Mandant auswählen",
-						"Auf wen soll diese Kons verrechnet werden?");
+				KontaktSelektor ksl = new KontaktSelektor(
+						getSite().getShell(),
+						Mandant.class,
+						Messages
+								.getString("KonsDetailView.SelectMandatorCaption"), //$NON-NLS-1$
+						Messages.getString("KonsDetailView.SelectMandatorBody")); //$NON-NLS-1$
 				if (ksl.open() == Dialog.OK) {
 					actKons.setMandant((Mandant) ksl.getSelection());
 					setKons(actKons);
@@ -151,10 +157,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 
 		});
 		hlMandant.setBackground(p.getBackground());
-		// GridData gdBeh=new
-		// GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
-		// lBeh.setLayoutData(gdBeh);
-		// lFall=tk.createLabel(form.getBody(),"Kein Fall ausgewählt");
+
 		cbFall = new Combo(form.getBody(), SWT.SINGLE);
 		cbFall.addSelectionListener(new SelectionAdapter() {
 
@@ -167,18 +170,27 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				if (!nFall.getId().equals(actFall.getId())) {
 					if (!nFall.isOpen()) {
 						SWTHelper
-								.alert("Fall geschlossen",
-										"Die Konsultation kann nicht einem geschlossenen Fall zugeordnet werden");
+								.alert(
+										Messages
+												.getString("KonsDetailView.CaseClosedCaption"), //$NON-NLS-1$
+										Messages
+												.getString("KonsDetailView.CaseClosedBody")); //$NON-NLS-1$
 					} else {
 						MessageDialog msd = new MessageDialog(
 								getViewSite().getShell(),
-								"Fallzuordnung ändern",
+								Messages
+										.getString("KonsDetailView.ChangeCaseCaption"), //$NON-NLS-1$
 								Desk.getImage(Desk.IMG_LOGO48),
-								"Möchten Sie diese Behandlung vom Fall:\n'"
-										+ actFall.getLabel() + "' zum Fall:\n'"
-										+ nFall.getLabel() + "' transferieren?",
-								MessageDialog.QUESTION, new String[] { "Ja",
-										"Nein" }, 0);
+								MessageFormat
+										.format(
+												"Möchten Sie diese Behandlung vom Fall:\n'{0}' zum Fall:\n'{1}' transferieren?",
+												actFall.getLabel(), nFall
+														.getLabel()),
+								MessageDialog.QUESTION,
+								new String[] {
+										Messages
+												.getString("KonsDetailView.Yes"), //$NON-NLS-1$
+										Messages.getString("KonsDetailView.No") }, 0); //$NON-NLS-1$
 						if (msd.open() == 0) {
 							actKons.setFall(nFall);
 							setKons(actKons);
@@ -192,7 +204,8 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				| GridData.GRAB_HORIZONTAL);
 		cbFall.setLayoutData(gdFall);
 
-		lVersion = tk.createLabel(form.getBody(), "<aktuell>");
+		lVersion = tk.createLabel(form.getBody(), Messages
+				.getString("KonsDetailView.actual")); //$NON-NLS-1$
 		GridData gdVer = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL);
 		lVersion.setLayoutData(gdVer);
@@ -201,7 +214,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 		hXrefs = new Hashtable<String, IKonsExtension>();
 		@SuppressWarnings("unchecked")
 		List<IKonsExtension> xrefs = Extensions.getClasses(
-				"ch.elexis.KonsExtension", "KonsExtension");
+				"ch.elexis.KonsExtension", "KonsExtension"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (IKonsExtension x : xrefs) {
 			String provider = x.connect(text);
 			hXrefs.put(provider, x);
@@ -254,9 +267,9 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 		} else {
 			String state = memento.getString(CFG_VERTRELATION);
 			if (state == null) {
-				state = "80,20";
+				state = "80,20"; //$NON-NLS-1$
 			}
-			String[] sw = state.split(",");
+			String[] sw = state.split(StringConstants.COMMA);
 			sashWeights = new int[] { Integer.parseInt(sw[0]),
 					Integer.parseInt(sw[1]) };
 		}
@@ -290,20 +303,12 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 			form.setText(pat.getPersonalia());
 			List<Sticker> etis = pat.getStickers();
 			if (etis != null && etis.size() > 0) {
-				Point size = form.getHead().getSize();
-				// RowLayout rl=new RowLayout(SWT.HORIZONTAL);
-				// rl.fill=true;
-				// rl.justify=true;
-				// rl.pack=true;
-				// rl.wrap=true;
-				// cEtiketten.setLayout(rl);
+				// Point size = form.getHead().getSize();
 				for (Sticker et : etis) {
 					if (et != null) {
 						et.createForm(cEtiketten);
 					}
-					// new Label(cEtiketten,SWT.NONE).setText(et.getLabel());
 				}
-				// form.getBody().layout(true,true);
 			}
 			Fall[] faelle = pat.getFaelle();
 			cbFall.removeAll();
@@ -313,8 +318,6 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 			}
 		}
 		form.layout();
-		// lFall.setText("");
-		// lBeh.setText("");
 	}
 
 	@Override
@@ -333,8 +336,6 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				Fall act = b.getFall();
 				setPatient(act.getPatient());
 				setKonsText(b, b.getHeadVersion());
-				// form.setText(b.getFall().getPatient().getLabel());
-				// lFall.setText(b.getFall().getLabel());
 
 				Fall[] faelle = (Fall[]) cbFall.getData();
 				for (int i = 0; i < faelle.length; i++) {
@@ -345,17 +346,19 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				}
 				cbFall.setEnabled(act.isOpen());
 				Mandant m = b.getMandant();
-				lBeh.setText("Kons. vom " + b.getDatum());
+				lBeh
+						.setText(Messages
+								.getString("KonsDetailView.ConsOfDate") + b.getDatum()); //$NON-NLS-1$
 				StringBuilder sb = new StringBuilder();
 				if (m == null) {
-					sb.append("(nicht von Ihnen)");
+					sb.append(Messages.getString("KonsDetailView.NotYours")); //$NON-NLS-1$
 				} else {
 					Rechnungssteller rs = m.getRechnungssteller();
 					if (rs.getId().equals(m.getId())) {
-						sb.append("(").append(m.getLabel()).append(")");
+						sb.append("(").append(m.getLabel()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						sb.append("(").append(m.getLabel()).append("/").append(
-								rs.getLabel()).append(")");
+						sb.append("(").append(m.getLabel()).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
+								rs.getLabel()).append(")"); //$NON-NLS-1$
 					}
 				}
 				hlMandant.setText(sb.toString());
@@ -371,15 +374,15 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 					GlobalEvents.getInstance().fireSelectionEvent(b);
 				}
 			} else {
-				form.setText("Keine Konsultation ausgewählt");
-				lBeh.setText("-");
-				hlMandant.setText("--");
+				form.setText(NO_CONS_SELECTED);
+				lBeh.setText("-"); //$NON-NLS-1$
+				hlMandant.setText("--"); //$NON-NLS-1$
 				hlMandant.setEnabled(false);
-				lVersion.setText("");
+				lVersion.setText(""); //$NON-NLS-1$
 				// cbFall.removeAll();
 				dd.clear();
 				vd.clear();
-				text.setText("");
+				text.setText(""); //$NON-NLS-1$
 				text.setEnabled(false);
 			}
 			actKons = b;
@@ -389,18 +392,20 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 	}
 
 	void setKonsText(final Konsultation b, final int version) {
-		String ntext = "";
+		String ntext = ""; //$NON-NLS-1$
 		if ((version >= 0) && (version <= b.getHeadVersion())) {
 			VersionedResource vr = b.getEintrag();
 			ResourceItem entry = vr.getVersion(version);
 			ntext = entry.data;
 			StringBuilder sb = new StringBuilder();
-			sb.append("rev. ").append(version).append(" vom ").append(
-					new TimeTool(entry.timestamp).toString(TimeTool.FULL_GER))
-					.append(" (").append(entry.remark).append(")");
+			sb
+					.append("rev. ").append(version).append(Messages.getString("KonsDetailView.of")).append( //$NON-NLS-1$ //$NON-NLS-2$
+							new TimeTool(entry.timestamp)
+									.toString(TimeTool.FULL_GER))
+					.append(" (").append(entry.remark).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			lVersion.setText(sb.toString());
 		} else {
-			lVersion.setText("");
+			lVersion.setText(""); //$NON-NLS-1$
 		}
 		text.setText(ntext);
 		text.setKons(b);
@@ -429,7 +434,8 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 
 	private void makeActions() {
 
-		purgeAction = new Action("Alte Eintragsversionen entfernen") {
+		purgeAction = new Action(Messages
+				.getString("KonsDetailView.PurgeOldEntries")) { //$NON-NLS-1$
 
 			@Override
 			public void run() {
@@ -438,38 +444,45 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 			}
 
 		};
-		versionBackAction = new Action("Vorherige Version") {
+		versionBackAction = new Action(Messages
+				.getString("KonsDetailView.PreviousEntry")) { //$NON-NLS-1$
 
 			@Override
 			public void run() {
 				if (MessageDialog
 						.openConfirm(
 								getViewSite().getShell(),
-								"Konsultationstext ersetzen",
-								"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine frühere Version desselben Eintrags ersetzen?")) {
+								Messages
+										.getString("KonsDetailView.ReplaceKonsTextCaption"), //$NON-NLS-1$
+								Messages
+										.getString("KonsDetailView.ReplaceKonsTextBody"))) { //$NON-NLS-1$
 					setKonsText(actKons, displayedVersion - 1);
 					text.setDirty(true);
 				}
 			}
 
 		};
-		versionFwdAction = new Action("nächste Version") {
+		versionFwdAction = new Action(Messages
+				.getString("KonsDetailView.nextEntry")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				if (MessageDialog
 						.openConfirm(
 								getViewSite().getShell(),
-								"Konsultationstext ersetzen",
-								"Wollen Sie wirklich den aktuellen Konsultationstext gegen eine spätere Version desselben Eintrags ersetzen?")) {
+								Messages
+										.getString("KonsDetailView.ReplaceKonsTextCaption"), //$NON-NLS-1$
+								Messages
+										.getString("KonsDetailView.ReplaceKonsTextBody2"))) { //$NON-NLS-1$
 					setKonsText(actKons, displayedVersion + 1);
 					text.setDirty(true);
 				}
 			}
 		};
-		saveAction = new Action("Eintrag sichern") {
+		saveAction = new Action(Messages.getString("KonsDetailView.SaveEntry")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DISK));
-				setToolTipText("Text explizit speichern");
+				setToolTipText(Messages
+						.getString("KonsDetailView.SaveExplicit")); //$NON-NLS-1$
 			}
 
 			@Override
@@ -489,7 +502,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 	public void save() {
 		if (actKons != null) {
 			actKons.updateEintrag(text.getDocumentAsText(), false);
-			log.log("saved.", Log.DEBUGMSG);
+			log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
 		}
 	}
 
@@ -497,7 +510,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 		if ((mode == false) && (text.isDirty())) {
 			if (actKons != null) {
 				actKons.updateEintrag(text.getDocumentAsText(), false);
-				log.log("saved.", Log.DEBUGMSG);
+				log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
 			}
 			text.setDirty(false);
 		}
@@ -516,7 +529,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 
 	}
 
-	public void clearEvent(final Class template) {
+	public void clearEvent(final Class<? extends PersistentObject> template) {
 		if (template.equals(Konsultation.class)
 				|| template.equals(Patient.class)
 				|| template.equals(Fall.class)) {

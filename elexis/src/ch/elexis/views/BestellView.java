@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: BestellView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -68,9 +68,10 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 public class BestellView extends ViewPart implements ISaveablePart2 {
-	public static final String ID = "ch.elexis.BestellenView";
+	public static final String ID = "ch.elexis.BestellenView"; //$NON-NLS-1$
 	Form form;
 	FormToolkit tk = Desk.getToolkit();
 	// LabeledInputField.AutoForm tblArtikel;
@@ -90,13 +91,13 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		Table table = new Table(body, SWT.V_SCROLL | SWT.FULL_SELECTION
 				| SWT.SINGLE);
 		TableColumn tc0 = new TableColumn(table, SWT.CENTER);
-		tc0.setText("Zahl");
+		tc0.setText(Messages.getString("BestellView.Number")); //$NON-NLS-1$
 		tc0.setWidth(40);
 		TableColumn tc1 = new TableColumn(table, SWT.LEFT);
-		tc1.setText("Artikel");
+		tc1.setText(Messages.getString("BestellView.Article")); //$NON-NLS-1$
 		tc1.setWidth(280);
 		TableColumn tc2 = new TableColumn(table, SWT.LEFT);
-		tc2.setText("Lieferant");
+		tc2.setText(Messages.getString("BestellView.Dealer")); //$NON-NLS-1$
 		tc2.setWidth(250);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		table.setHeaderVisible(true);
@@ -140,13 +141,13 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 			@Override
 			public void drop(final DropTargetEvent event) {
 				String drp = (String) event.data;
-				String[] dl = drp.split(",");
+				String[] dl = drp.split(","); //$NON-NLS-1$
 				if (actBestellung == null) {
 					InputDialog dlg = new InputDialog(
 							getViewSite().getShell(),
-							"Neue Bestellung anlegen",
-							"Geben Sie bitte einen Titel für die neue Bestellung an",
-							"", null);
+							Messages.getString("BestellView.CreateNewOrder"), //$NON-NLS-1$
+							Messages.getString("BestellView.EnterOrderTitle"), //$NON-NLS-1$
+							StringTool.leer, null);
 					if (dlg.open() == Dialog.OK) {
 						setBestellung(new Bestellung(dlg.getValue(),
 								Hub.actUser));
@@ -223,18 +224,18 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					return it.art.getLabel();
 				case 2:
 					Kontakt k = it.art.getLieferant();
-					return k.exists() ? k.getLabel() : "unbekannt";
+					return k.exists() ? k.getLabel() : Messages.getString("BestellView.Unknown"); //$NON-NLS-1$
 				default:
-					return "?";
+					return "?"; //$NON-NLS-1$
 				}
 			}
-			return "??";
+			return "??"; //$NON-NLS-1$
 		}
 
 	}
 
 	private void makeActions() {
-		removeAction = new Action("Artikel entfernen") {
+		removeAction = new Action(Messages.getString("BestellView.RemoveArticle")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) tv
@@ -247,16 +248,16 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		wizardAction = new Action("Bestellung automatisch") {
+		wizardAction = new Action(Messages.getString("BestellView.AutomaticOrder")) { //$NON-NLS-1$
 			{
-				setToolTipText("Bestellung automatisch anhand des Lagebestandes erstellen");
-				setImageDescriptor(Hub.getImageDescriptor("rsc/wand.png"));
+				setToolTipText(Messages.getString("BestellView.CreateAutomaticOrder")); //$NON-NLS-1$
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
 			}
 
 			@Override
 			public void run() {
 				if (actBestellung == null) {
-					setBestellung(new Bestellung("Automatisch", Hub.actUser));
+					setBestellung(new Bestellung(Messages.getString("BestellView.Automatic"), Hub.actUser)); //$NON-NLS-1$
 				}
 				/*
 				 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
@@ -299,7 +300,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				tv.refresh(true);
 			}
 		};
-		countAction = new Action("Zahl ändern") {
+		countAction = new Action(Messages.getString("BestellView.ChangeNumber")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) tv
@@ -309,8 +310,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					int old = it.num;
 					InputDialog in = new InputDialog(
 							getViewSite().getShell(),
-							"Zahl ändern",
-							"Geben Sie bitte an, wieviele Sie bestellen wollen",
+							Messages.getString("BestellView.ChangeNumber"), //$NON-NLS-1$
+							Messages.getString("BestellView.EnterNewNumber"), //$NON-NLS-1$
 							Integer.toString(old), null);
 					if (in.open() == Dialog.OK) {
 						it.num = Integer.parseInt(in.getValue());
@@ -319,7 +320,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		saveAction = new Action("Liste speichern") {
+		saveAction = new Action(Messages.getString("BestellView.SavelIst")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				if (actBestellung != null) {
@@ -327,7 +328,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		printAction = new Action("Bestellung drucken") {
+		printAction = new Action(Messages.getString("BestellView.PrintOrder")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				if (actBestellung != null) {
@@ -364,31 +365,31 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		sendAction = new Action("Bestellung senden") {
+		sendAction = new Action(Messages.getString("BestellView.SendOrder")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				actBestellung.save();
 				List<IConfigurationElement> list = Extensions
-						.getExtensions("ch.elexis.Transporter");
+						.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
 				for (IConfigurationElement ic : list) {
-					String handler = ic.getAttribute("AcceptableTypes");
-					if (handler.contains("ch.elexis.data.Bestellung")) {
+					String handler = ic.getAttribute("AcceptableTypes"); //$NON-NLS-1$
+					if (handler.contains("ch.elexis.data.Bestellung")) { //$NON-NLS-1$
 						try {
 							IDataSender sender = (IDataSender) ic
-									.createExecutableExtension("ExporterClass");
+									.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
 							if (sender.store(actBestellung).isOK()) {
 								if (sender.finalizeExport()) {
 									SWTHelper
 											.showInfo(
-													"Bestellung durchgeführt",
-													"Der Bestellvorgang ist abgeschlossen.");
+													Messages.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
+													Messages.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
 									tv.refresh();
 								}
 							} else {
 								SWTHelper
 										.showError(
-												"Bestellung nicht möglich",
-												"Für keinen der bestellten Artikel konnte ein passendes Direktbestell-Plugin gefunden werden.");
+												Messages.getString("BestellView.OrderNotPossible"), //$NON-NLS-1$
+												Messages.getString("BestellView.NoAutomaticOrderAvailable")); //$NON-NLS-1$
 							}
 						} catch (CoreException ex) {
 							ExHandler.handle(ex);
@@ -397,15 +398,15 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		loadAction = new Action("Bestellung öffnen") {
+		loadAction = new Action(Messages.getString("BestellView.OpenOrder")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 
 				ListDialog dlg = new ListDialog(getViewSite().getShell());
 				dlg.setContentProvider(new BestellContentProvider());
 				dlg.setLabelProvider(new DefaultLabelProvider());
-				dlg.setMessage("Bitte Bestellung auswählen");
-				dlg.setTitle("Bestellung einlesen");
+				dlg.setMessage(Messages.getString("BestellView.SelectOrder")); //$NON-NLS-1$
+				dlg.setTitle(Messages.getString("BestellView.ReadOrder")); //$NON-NLS-1$
 				dlg.setInput(this);
 				if (dlg.open() == Dialog.OK) {
 					Bestellung res = (Bestellung) dlg.getResult()[0];
@@ -415,21 +416,21 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		};
 		printAction.setImageDescriptor(Desk
 				.getImageDescriptor(Desk.IMG_PRINTER));
-		printAction.setToolTipText("Bestellung drucken");
+		printAction.setToolTipText(Messages.getString("BestellView.PrintOrder")); //$NON-NLS-1$
 
 		saveAction.setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif"));
-		saveAction.setToolTipText("Bestellung speichern");
+		saveAction.setToolTipText(Messages.getString("BestellView.saveOrder")); //$NON-NLS-1$
 		sendAction
 				.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NETWORK));
-		sendAction.setToolTipText("Bestellung automatisch übermitteln");
+		sendAction.setToolTipText(Messages.getString("BestellView.transmitOrder")); //$NON-NLS-1$
 		// loadAction.setImageDescriptor(Hub.getImageDescriptor("rsc/open.gif"));
 		loadAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
-		loadAction.setToolTipText("Eine früher gespeicherte Bestellung öffnen");
+		loadAction.setToolTipText(Messages.getString("BestellView.loadEarlierOrder")); //$NON-NLS-1$
 
 		exportClipboardAction = new Action(
-				"Bestellung in Zwischenablage exportieren") {
+				Messages.getString("BestellView.copyToClipboard")) { //$NON-NLS-1$
 			{
-				setToolTipText("Bestellung in Zwischenablage exportieren für Galexis");
+				setToolTipText(Messages.getString("BestellView.copyToClipBioardForGalexis")); //$NON-NLS-1$
 			}
 
 			@Override
@@ -457,13 +458,13 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 
 					StringBuffer export = new StringBuffer();
 					for (Item item : best) {
-						String pharmaCode = item.art.get("SubID");
+						String pharmaCode = item.art.get(Artikel.PHARMACODE);
 						int num = item.num;
 						String name = item.art.getName();
-						String line = pharmaCode + ", " + num + ", " + name;
+						String line = pharmaCode + ", " + num + ", " + name; //$NON-NLS-1$ //$NON-NLS-2$
 
 						export.append(line);
-						export.append(System.getProperty("line.separator"));
+						export.append(System.getProperty("line.separator")); //$NON-NLS-1$
 					}
 
 					String clipboardText = export.toString();
@@ -476,10 +477,10 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		checkInAction = new Action("Einbuchen") {
+		checkInAction = new Action(Messages.getString("BestellView.CheckInCaption")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_TICK));
-				setToolTipText("Artikel dieser Bestellung im Lager einbuchen");
+				setToolTipText(Messages.getString("BestellView.CheckInBody")); //$NON-NLS-1$
 			}
 
 			@Override
@@ -489,8 +490,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 							.getShell(), actBestellung);
 					dialog.open();
 				} else {
-					SWTHelper.alert("Keine Bestellung",
-							"Es ist keine Bestellung geladen.");
+					SWTHelper.alert(Messages.getString("BestellView.NoOrder"), //$NON-NLS-1$
+							Messages.getString("BestellView.NoOrderLoaded")); //$NON-NLS-1$
 				}
 			}
 

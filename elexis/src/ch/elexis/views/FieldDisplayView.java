@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,28 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FieldDisplayView.java 4722 2008-12-04 10:11:09Z rgw_ch $
+ *  $Id: FieldDisplayView.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
@@ -45,9 +54,9 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  * 
  */
-public class FieldDisplayView extends ViewPart implements ActivationListener, SelectionListener,
-		HeartListener {
-	public static final String ID = "ch.elexis.dbfielddisplay";
+public class FieldDisplayView extends ViewPart implements ActivationListener,
+		SelectionListener, HeartListener {
+	public static final String ID = "ch.elexis.dbfielddisplay"; //$NON-NLS-1$
 	private IAction newViewAction, editDataAction;
 	Text text;
 	Class<? extends PersistentObject> myClass;
@@ -56,82 +65,72 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 	ScrolledForm form;
 	FormToolkit tk = Desk.getToolkit();
 	String subid;
-	String NODE = "FeldAnzeige";
-	
+	String NODE = "FeldAnzeige"; //$NON-NLS-1$
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 		form = tk.createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		form.getBody().setLayout(new GridLayout());
-		text = tk.createText(form.getBody(), "", SWT.MULTI | SWT.V_SCROLL);
+		text = tk.createText(form.getBody(), "", SWT.MULTI | SWT.V_SCROLL); //$NON-NLS-1$
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		text.addFocusListener(new FocusAdapter() {
-			
+
 			@Override
-			public void focusLost(FocusEvent arg0){
+			public void focusLost(FocusEvent arg0) {
 				if (bCanEdit) {
-					PersistentObject mine = GlobalEvents.getInstance().getSelectedObject(myClass);
+					PersistentObject mine = GlobalEvents.getInstance()
+							.getSelectedObject(myClass);
 					if (mine != null) {
 						mine.set(myField, text.getText());
 					}
 				}
 			}
-			
+
 		});
 		text.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent arg0){
+			public void keyPressed(KeyEvent arg0) {
 				arg0.doit = bCanEdit;
-				
+
 			}
-			
-			public void keyReleased(KeyEvent arg0){}
+
+			public void keyReleased(KeyEvent arg0) {
+			}
 		});
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createToolbar(newViewAction, editDataAction);
-		String nx = "Patient.Diagnosen";
+		String nx = "Patient.Diagnosen"; //$NON-NLS-1$
 		Integer canEdit = null;
 		subid = getViewSite().getSecondaryId();
 		if (subid == null) {
-			subid = "defaultData";
+			subid = "defaultData"; //$NON-NLS-1$
 		}
-		nx = Hub.userCfg.get("FieldDisplayViewData/" + subid, null);
-		canEdit = Hub.userCfg.get("FieldDisplayViewCanEdit/" + subid, 0);
-		setField(nx == null ? "Patient.Diagnosen" : nx, canEdit == null ? false : (canEdit != 0));
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+		nx = Hub.userCfg.get("FieldDisplayViewData/" + subid, null); //$NON-NLS-1$
+		canEdit = Hub.userCfg.get("FieldDisplayViewCanEdit/" + subid, 0); //$NON-NLS-1$
+		setField(nx == null ? "Patient.Diagnosen" : nx, canEdit == null ? false //$NON-NLS-1$
+				: (canEdit != 0));
+		GlobalEvents.getInstance().addActivationListener(this,
+				getViewSite().getPart());
 	}
-	
-	/*
-	 * @Override public void init(IViewSite site, IMemento memento) throws PartInitException {
-	 * super.init(site, memento); String nx="Patient.Diagnosen"; Integer canEdit=null;
-	 * if(memento!=null){ subid=site.getSecondaryId(); if(subid!=null){
-	 * nx=memento.getString(NODE+":"+subid); canEdit=memento.getInteger(NODE+":"+subid+":canEdit");
-	 * } } setField(nx==null ? "Patient.Diagnosen" : nx, canEdit==null ? false : (canEdit!=0)); }
-	 * 
-	 * 
-	 * 
-	 * @Override public void saveState(IMemento memento) { if(memento!=null){ if(subid!=null){
-	 * memento.putString(NODE+":"+subid, myClass.getSimpleName()+"."+myField);
-	 * memento.putInteger(NODE+":"+subid+":canEdit", bCanEdit ? 1 : 0); } }
-	 * super.saveState(memento); }
-	 */
 
 	@Override
-	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
+	public void dispose() {
+		GlobalEvents.getInstance().removeActivationListener(this,
+				getViewSite().getPart());
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		text.setFocus();
 	}
-	
-	public void activation(boolean mode){
+
+	public void activation(boolean mode) {
 
 	}
-	
-	public void visible(boolean mode){
+
+	public void visible(boolean mode) {
 		if (mode) {
 			GlobalEvents.getInstance().addSelectionListener(this);
 			Hub.heart.addListener(this);
@@ -140,95 +139,109 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 			GlobalEvents.getInstance().removeSelectionListener(this);
 			Hub.heart.removeListener(this);
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void clearEvent(Class template){
+	public void clearEvent(Class template) {
 		if (template.equals(myClass)) {
-			text.setText("");
+			text.setText(""); //$NON-NLS-1$
 		}
 	}
-	
-	public void selectionEvent(PersistentObject obj){
+
+	public void selectionEvent(PersistentObject obj) {
 		if (myClass.isInstance(obj)) {
 			String val = obj.get(myField);
 			if (val == null) {
-				SWTHelper.showError("Fehler bei der Felddefinition", "Das Feld " + myField
-					+ " kann nicht aufgelöst werden");
-				text.setText("");
+				SWTHelper.showError(Messages
+						.getString("FieldDisplayView.ErrorFieldCaption"), //$NON-NLS-1$
+						Messages.getString("FieldDisplayView.ErrorFieldBody") //$NON-NLS-1$
+								+ myField);
+				text.setText(StringTool.leer);
 			} else {
 				text.setText(obj.get(myField));
 			}
 		} else if (obj instanceof Anwender) {
-			String nx = Hub.userCfg.get("FieldDisplayViewData/" + subid, null);
-			Integer canEdit = Hub.userCfg.get("FieldDisplayViewCanEdit/" + subid, 0);
-			setField(nx == null ? "Patient.Diagnosen" : nx, canEdit == null ? false
-					: (canEdit != 0));
+			String nx = Hub.userCfg.get("FieldDisplayViewData/" + subid, null); //$NON-NLS-1$
+			Integer canEdit = Hub.userCfg.get("FieldDisplayViewCanEdit/" //$NON-NLS-1$
+					+ subid, 0);
+			setField(nx == null ? "Patient.Diagnosen" : nx, //$NON-NLS-1$
+					canEdit == null ? false : (canEdit != 0));
 		}
 	}
-	
-	public void heartbeat(){
-		PersistentObject mine = GlobalEvents.getInstance().getSelectedObject(myClass);
+
+	public void heartbeat() {
+		PersistentObject mine = GlobalEvents.getInstance().getSelectedObject(
+				myClass);
 		if (mine == null) {
 			clearEvent(myClass);
 		} else {
 			selectionEvent(mine);
 		}
 	}
-	
-	private void setField(String field, boolean canEdit){
-		String[] def = field.split("\\.");
+
+	@SuppressWarnings("unchecked")
+	private void setField(String field, boolean canEdit) {
+		String[] def = field.split("\\."); //$NON-NLS-1$
 		if (def.length != 2) {
-			SWTHelper.showError("Falsche Felddefinition",
-				"Bitte Feld in der Form 'Datentyp.Feldname' angeben");
+			SWTHelper.showError(Messages
+					.getString("FieldDisplayView.BadDefinitionCaption"), //$NON-NLS-1$
+					Messages.getString("FieldDisplayView.BadDefinitionBody")); //$NON-NLS-1$
 		} else {
 			myClass = resolveName(def[0]);
 			if (myClass != null) {
 				myField = def[1];
 				bCanEdit = canEdit;
 				setPartName(myField);
-				Hub.userCfg.set("FieldDisplayViewData/" + subid, myClass.getSimpleName() + "."
-					+ myField);
-				Hub.userCfg.set("FieldDisplayViewCanEdit/" + subid, canEdit);
-				
+				Hub.userCfg.set("FieldDisplayViewData/" + subid, myClass //$NON-NLS-1$
+						.getSimpleName() + "." + myField); //$NON-NLS-1$
+				Hub.userCfg.set("FieldDisplayViewCanEdit/" + subid, canEdit); //$NON-NLS-1$
+
 			}
 		}
 	}
-	
-	private Class resolveName(String k){
+
+	@SuppressWarnings("unchecked")
+	private Class resolveName(String k) {
 		Class ret = null;
-		if (k.equalsIgnoreCase("Mandant")) {
+		if (k.equalsIgnoreCase("Mandant")) { //$NON-NLS-1$
 			ret = Mandant.class;
-		} else if (k.equalsIgnoreCase("Anwender")) {
+		} else if (k.equalsIgnoreCase("Anwender")) { //$NON-NLS-1$
 			ret = Anwender.class;
 		} else {
 			try {
-				String fqname = "ch.elexis.data." + k;
+				String fqname = "ch.elexis.data." + k; //$NON-NLS-1$
 				ret = Class.forName(fqname);
 			} catch (java.lang.Exception ex) {
-				SWTHelper.showError("Feldtyp falsch", "Der gewünschte Datentyp " + k
-					+ " konnte nicht erkannt werden");
+				SWTHelper
+						.showError(
+								Messages
+										.getString("FieldDisplayView.WrongTypeCaption"), //$NON-NLS-1$
+								Messages
+										.getString("FieldDisplayView.WrongTypeBody") + k + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				ret = null;
 			}
 		}
 		return ret;
 	}
-	
-	private void makeActions(){
-		newViewAction = new Action("Neues Fenster") {
+
+	private void makeActions() {
+		newViewAction = new Action(Messages
+				.getString("FieldDisplayView.NewWindow")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
-				setToolTipText("Ein neues Fenster öffnen");
+				setToolTipText(Messages
+						.getString("FieldDisplayView.NewWindowToolTip")); //$NON-NLS-1$
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				try {
 					String fieldtype = new SelectDataDialog().run();
-					FieldDisplayView n =
-						(FieldDisplayView) getViewSite().getPage().showView(ID,
-							StringTool.unique("DataDisplay"), IWorkbenchPage.VIEW_VISIBLE);
+					FieldDisplayView n = (FieldDisplayView) getViewSite()
+							.getPage().showView(ID,
+									StringTool.unique("DataDisplay"), //$NON-NLS-1$
+									IWorkbenchPage.VIEW_VISIBLE);
 					n.setField(fieldtype, false);
 					heartbeat();
 				} catch (PartInitException e) {
@@ -236,13 +249,15 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 				}
 			}
 		};
-		editDataAction = new Action("Datentyp...") {
+		editDataAction = new Action(Messages
+				.getString("FieldDisplayView.DataTypeAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText("Den angezeigten Datentyp einstellen");
+				setToolTipText(Messages
+						.getString("FieldDisplayView.DataTypeToolTip")); //$NON-NLS-1$
 			}
-			
-			public void run(){
+
+			public void run() {
 				SelectDataDialog sdd = new SelectDataDialog();
 				if (sdd.open() == Dialog.OK) {
 					setField(sdd.result, sdd.bEditable);
@@ -251,63 +266,65 @@ public class FieldDisplayView extends ViewPart implements ActivationListener, Se
 			}
 		};
 	}
-	
+
 	class SelectDataDialog extends TitleAreaDialog {
+		private final String DATATYPE = Messages
+				.getString("FieldDisplayView.DataType"); //$NON-NLS-1$
 		String[] nodes;
 		Combo cbNodes;
 		Button btEditable;
 		String result;
 		boolean bEditable;
-		
-		SelectDataDialog(){
+
+		SelectDataDialog() {
 			super(getViewSite().getShell());
 		}
-		
-		String run(){
+
+		String run() {
 			create();
 			if (nodes.length > 1) {
 				if (open() == Dialog.OK) {
 					return result;
 				}
-				
+
 			}
 			return nodes[0];
 		}
-		
+
 		@Override
-		protected Control createDialogArea(Composite parent){
+		protected Control createDialogArea(Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			cbNodes = new Combo(ret, SWT.SINGLE);
 			cbNodes.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			nodes = Hub.localCfg.get(NODE, "Patient.Diagnosen").split(",");
+			nodes = Hub.localCfg.get(NODE, "Patient.Diagnosen").split(","); //$NON-NLS-1$ //$NON-NLS-2$
 			cbNodes.setItems(nodes);
 			btEditable = new Button(ret, SWT.CHECK);
-			btEditable.setText("Feld kann direkt geändert werden");
+			btEditable.setText(Messages
+					.getString("FieldDisplayView.FieldCanBeChanged")); //$NON-NLS-1$
 			return ret;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
-			setTitle("Datentyp");
-			setMessage(
-				"Geben Sie bitte einen Ausdruck der Form Objekttyp.Feldname ein (z.B. Patient.Diagnosen)",
-				IMessageProvider.INFORMATION);
+			setTitle(DATATYPE);
+			setMessage(Messages.getString("FieldDisplayView.EnterExpression"), //$NON-NLS-1$
+					IMessageProvider.INFORMATION);
 		}
-		
+
 		@Override
-		protected void okPressed(){
+		protected void okPressed() {
 			String tx = cbNodes.getText();
 			if (StringTool.getIndex(nodes, tx) == -1) {
-				String tm = StringTool.join(nodes, ",") + "," + tx;
+				String tm = StringTool.join(nodes, ",") + "," + tx; //$NON-NLS-1$ //$NON-NLS-2$
 				Hub.localCfg.set(NODE, tm);
 			}
 			result = tx;
 			bEditable = btEditable.getSelection();
 			super.okPressed();
 		}
-		
+
 	}
 }

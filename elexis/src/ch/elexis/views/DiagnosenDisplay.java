@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenDisplay.java 4006 2008-06-05 16:17:52Z rgw_ch $
+ *  $Id: DiagnosenDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -49,13 +49,13 @@ import ch.rgw.tools.ExHandler;
 public class DiagnosenDisplay extends Composite implements Draggable {
 	Table tDg;
 	private final Hyperlink hDg;
-	private final Log log=Log.get("DiagnosenDisplay");
+	private final Log log=Log.get("DiagnosenDisplay"); //$NON-NLS-1$
 	private final PersistentObjectDropTarget dropTarget;
 	
 	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent, final int style){
 		super(parent,style);
 		setLayout(new GridLayout());
-		hDg=Desk.getToolkit().createHyperlink(this,"Behandlungsdiagnosen",SWT.NONE);
+		hDg=Desk.getToolkit().createHyperlink(this,Messages.getString("DiagnosenDisplay.Diagnoses"),SWT.NONE); //$NON-NLS-1$
         hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
         hDg.addHyperlinkListener(new HyperlinkAdapter(){
 			@Override
@@ -65,7 +65,7 @@ public class DiagnosenDisplay extends Composite implements Draggable {
 					GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
 				}catch(Exception ex){
 					ExHandler.handle(ex);
-					log.log("Fehler beim Starten des Diagnosecodes "+ex.getMessage(),Log.ERRORS );
+					log.log(Messages.getString("DiagnosenDisplay.ErrorStartingCodeSystem")+ex.getMessage(),Log.ERRORS ); //$NON-NLS-1$
 				}
 			}
         });
@@ -74,7 +74,7 @@ public class DiagnosenDisplay extends Composite implements Draggable {
         tDg.setMenu(createDgMenu());
       
         //new PersistentObjectDragSource()
-        dropTarget=new PersistentObjectDropTarget("Diagnosen", tDg,new DropReceiver());
+        dropTarget=new PersistentObjectDropTarget(Messages.getString("DiagnosenDisplay.DiagnoseTarget"), tDg,new DropReceiver()); //$NON-NLS-1$
         new PersistentObjectDragSource2(tDg,this);
 
 	}
@@ -114,7 +114,7 @@ public class DiagnosenDisplay extends Composite implements Draggable {
 	private Menu createDgMenu(){
         Menu ret=new Menu(tDg);
         MenuItem delDg=new MenuItem(ret,SWT.NONE);
-        delDg.setText("Diagnose entfernen");
+        delDg.setText(Messages.getString("DiagnosenDisplay.RemoveDiagnoses")); //$NON-NLS-1$
         delDg.addSelectionListener(new delDgListener());
         return ret;
     }
@@ -135,7 +135,7 @@ public class DiagnosenDisplay extends Composite implements Draggable {
 			for(TableItem ti:sel){
 				IDiagnose id=(IDiagnose)ti.getData();
 				String clazz=id.getClass().getName();
-				ret.add(Hub.poFactory.createFromString(clazz+"::"+id.getCode()));
+				ret.add(Hub.poFactory.createFromString(clazz+"::"+id.getCode())); //$NON-NLS-1$
 			}
 		}
 		return ret;

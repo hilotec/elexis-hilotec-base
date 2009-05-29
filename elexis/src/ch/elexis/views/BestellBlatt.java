@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BestellBlatt.java 4739 2008-12-04 21:01:33Z rgw_ch $
+ *    $Id: BestellBlatt.java 5322 2009-05-29 10:59:45Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -28,12 +28,15 @@ import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.StringTool;
 
 public class BestellBlatt extends ViewPart implements ICallback {
-	public final static String ID = "ch.elexis.BestellBlatt";
+	public final static String ID = "ch.elexis.BestellBlatt"; //$NON-NLS-1$
 	TextContainer text;
 	Brief actBest;
-	private final static String TEMPLATENAME = "Bestellung";
+	private final static String TEMPLATENAME = Messages.getString("BestellBlatt.TemplateName"); //$NON-NLS-1$
+	private static final String ERRMSG_CAPTION=Messages.getString("BestellBlatt.CouldNotCreateOrder"); //$NON-NLS-1$
+	private static final String ERRMSG_BODY=Messages.getString("BestellBlatt.CouldNotCreateOrderBody"); //$NON-NLS-1$
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -47,7 +50,7 @@ public class BestellBlatt extends ViewPart implements ICallback {
 		int i = 1;
 		Money sum = new Money();
 		tbl[0] = new String[] {
-			"Anzahl", "Pharmacode", "Name", "Einzelpreis", "Zeilenpreis"
+			Messages.getString("BestellBlatt.Number"), Messages.getString("BestellBlatt.Pharmacode"), Messages.getString("BestellBlatt.Name"), Messages.getString("BestellBlatt.UnitPrice"), Messages.getString("BestellBlatt.LinePrice") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		};
 		// DecimalFormat df=new DecimalFormat("\u00a4\u00a4  #.00");
 		for (Item it : items) {
@@ -63,15 +66,14 @@ public class BestellBlatt extends ViewPart implements ICallback {
 			tbl[i++] = row;
 		}
 		tbl[i] = new String[] {
-			"Summe", "", "", "", sum.getAmountAsString()
+			Messages.getString("BestellBlatt.Sum"), StringTool.leer, StringTool.leer, StringTool.leer, sum.getAmountAsString() //$NON-NLS-1$
 		};
 		actBest = text.createFromTemplateName(null, TEMPLATENAME, Brief.BESTELLUNG, adressat, null);
 		if (actBest == null) {
-			SWTHelper.showError("Konnte Bestellung nicht erstellen", "Druckvorlage '"
-				+ TEMPLATENAME + "' konnte nicht geladen werden");
+			SWTHelper.showError(ERRMSG_CAPTION, ERRMSG_BODY+"'"+TEMPLATENAME+"'"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			actBest.setPatient(Hub.actUser);
-			text.getPlugin().insertTable("[" + TEMPLATENAME + "]",
+			text.getPlugin().insertTable("[" + TEMPLATENAME + "]", //$NON-NLS-1$ //$NON-NLS-2$
 				ITextPlugin.FIRST_ROW_IS_HEADER | ITextPlugin.GRID_VISIBLE, tbl, null);
 		}
 	}
