@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MediDetailDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: MediDetailDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -55,7 +55,7 @@ public class MediDetailDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		art.setDosis(dosis.getText());
-		art.set("Bemerkung",einnahme.getText());
+		art.set(Prescription.REMARK,einnahme.getText());
 		super.okPressed();
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2009, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsFilterDialog.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ *  $Id: KonsFilterDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -97,16 +97,16 @@ public class KonsFilterDialog extends TitleAreaDialog {
 		String cc = tBed.getText();
 		if (!StringTool.isNothing(cc)) {
 			StringTool.tokenizer tk =
-				new StringTool.tokenizer(cc, " ", StringTool.tokenizer.DOUBLE_QUOTED_TOKENS);
+				new StringTool.tokenizer(cc, " ", StringTool.tokenizer.DOUBLE_QUOTED_TOKENS); //$NON-NLS-1$
 			try {
 				List<String> tokens = tk.tokenize();
 				int last = 0;
 				for (String t : tokens) {
-					if (t.equals("OR")) {
+					if (t.equals("OR")) { //$NON-NLS-1$
 						last = KonsFilter.OR;
-					} else if (t.equals("AND")) {
+					} else if (t.equals("AND")) { //$NON-NLS-1$
 						last = KonsFilter.AND;
-					} else if (t.equals("NOT")) {
+					} else if (t.equals("NOT")) { //$NON-NLS-1$
 						last |= KonsFilter.NOT;
 					} else {
 						filter.addConstraint(last, t);

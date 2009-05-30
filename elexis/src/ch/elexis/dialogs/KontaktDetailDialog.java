@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktDetailDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: KontaktDetailDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -102,8 +102,8 @@ public class KontaktDetailDialog extends TitleAreaDialog {
 			}else{
 				liName=SWTHelper.createLabeledField(ret, LBL_NAME, LabeledInputField.Typ.TEXT);
 				liVorname=SWTHelper.createLabeledField(ret, LBL_ZUSATZ, LabeledInputField.Typ.TEXT);
-				liName.setText(k.get("Bezeichnung1"));
-				liVorname.setText(k.get("Bezeichnung2"));
+				liName.setText(k.get(Kontakt.NAME1));
+				liVorname.setText(k.get(Kontakt.NAME2));
 			}
 		}
 		liStrasse=SWTHelper.createLabeledField(ret, LBL_STREET, LabeledInputField.Typ.TEXT);

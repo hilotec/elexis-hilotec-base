@@ -8,10 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocumentSelectDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: DocumentSelectDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -41,9 +42,9 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class DocumentSelectDialog extends TitleAreaDialog {
-	private static final String DELETE_DOCUMENT = "Dokument löschen";
-	private static final String DELETE_TEMPLATE = "Vorlage löschen";
-	private static final String OPEN_DOCUMENT = "Dokument öffnen";
+	private static final String DELETE_DOCUMENT = Messages.getString("DocumentSelectDialog.deleteDocument"); //$NON-NLS-1$
+	private static final String DELETE_TEMPLATE = Messages.getString("DocumentSelectDialog.deleteTemplate"); //$NON-NLS-1$
+	private static final String OPEN_DOCUMENT = Messages.getString("DocumentSelectDialog.openDocument"); //$NON-NLS-1$
 	/** select an existing document out of the list of all documtents of the given mandator */
 	public static final int TYPE_LOAD_DOCUMENT = 0;
 	/** create a new document using one of the templates of the given mandator */
@@ -88,23 +89,23 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		switch (type) {
 		case TYPE_LOAD_DOCUMENT:
 			setTitle(OPEN_DOCUMENT);
-			setMessage("Bitte wählen Sie das gewünschte Dokument aus untenstehender Liste und klicken Sie auf OK");
+			setMessage(Messages.getString("DocumentSelectDialog.pleaseSelectDocument")); //$NON-NLS-1$
 			getShell().setText(OPEN_DOCUMENT);
 			break;
 		case TYPE_CREATE_DOC_WITH_TEMPLATE:
-			setTitle("Brief mit Vorlage erstellen");
-			setMessage("Wählen Sie eine Vorlage aus und klicken Sie auf OK");
-			getShell().setText("Vorlage für den Brief wählen");
+			setTitle(Messages.getString("DocumentSelectDialog.createLetterWithTemplate")); //$NON-NLS-1$
+			setMessage(Messages.getString("DocumentSelectDialog.selectTemplate")); //$NON-NLS-1$
+			getShell().setText(Messages.getString("DocumentSelectDialog.schooseTemplateForLetter")); //$NON-NLS-1$
 			break;
 		case TYPE_LOAD_TEMPLATE:
-			setTitle("Vorlage öffnen");
-			setMessage("Bitte wählen Sie die gewünschte Vorlage aus untenstehender Liste und klicken Sie OK");
-			getShell().setText("Vorlage öffnen");
+			setTitle(Messages.getString("DocumentSelectDialog.openTemplate")); //$NON-NLS-1$
+			setMessage(Messages.getString("DocumentSelectDialog.pleaseSelectTemplateFromList")); //$NON-NLS-1$
+			getShell().setText(Messages.getString("DocumentSelectDialog.openTemplate")); //$NON-NLS-1$
 			break;
 		case TYPE_LOAD_SYSTEMPLATE:
-			setTitle("Systemvorlage laden");
-			setMessage("Dies sind die vom System benötigten Vorlagen");
-			getShell().setText("Vorlage laden");
+			setTitle(Messages.getString("DocumentSelectDialog.loadSysTemplate")); //$NON-NLS-1$
+			setMessage(Messages.getString("DocumentSelectDialog.sysTemplateExplanation")); //$NON-NLS-1$
+			getShell().setText(Messages.getString("DocumentSelectDialog.loadTemplate")); //$NON-NLS-1$
 		}
 	}
 	
@@ -114,7 +115,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		if ((type & TEMPLATE) != 0) {
-			new Label(ret, SWT.NONE).setText("Betreff");
+			new Label(ret, SWT.NONE).setText(Messages.getString("DocumentSelectDialog.subject")); //$NON-NLS-1$
 			tBetreff = SWTHelper.createText(ret, 1, SWT.NONE);
 			new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		}
@@ -128,7 +129,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 				} else {
 					String sys = type == TYPE_LOAD_SYSTEMPLATE ? Query.EQUALS : Query.NOT_EQUAL;
 					qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
-					qbe.add(Brief.KONSULTATION_ID, sys, "SYS");
+					qbe.add(Brief.KONSULTATION_ID, sys, "SYS"); //$NON-NLS-1$
 					qbe.startGroup();
 					qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
 					qbe.or();
@@ -136,7 +137,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 					qbe.endGroup();
 				}
 				qbe.and();
-				qbe.add("geloescht", Query.NOT_EQUAL, StringTool.one);
+				qbe.add(Messages.getString("DocumentSelectDialog.deleted"), Query.NOT_EQUAL, StringTool.one); //$NON-NLS-1$
 				
 				if (type != TYPE_LOAD_DOCUMENT) {
 					qbe.orderBy(false, Brief.SUBJECT);
@@ -186,7 +187,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 	}
 	
 	private void makeActions(){
-		editNameAction = new Action("Betreff ändern...") {
+		editNameAction = new Action(Messages.getString("DocumentSelectDialog.changeSubjectAction")) { //$NON-NLS-1$
 			@Override
 			public void run(){
 
@@ -197,7 +198,8 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			public void run(){
 				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
 				if (MessageDialog.openConfirm(getShell(), DELETE_TEMPLATE,
-					"Wirklich die Vorlage " + sel.getBetreff() + " löschen?") == true) {
+						MessageFormat.format(Messages.getString("DocumentSelectDialog.reallyDeleteTemplate") , sel.getBetreff())) //$NON-NLS-1$
+					 == true) {
 					sel.delete();
 					tv.refresh();
 				}
@@ -208,8 +210,9 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			public void run(){
 				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
 				if (MessageDialog.openConfirm(getShell(), DELETE_DOCUMENT,
-					"Wirklich das Dokument " + sel.getBetreff() + " löschen?") == true) {
-					sel.set("geloescht", "1");
+						MessageFormat.format(Messages.getString("DocumentSelectDialog.reallyDeleteDocument"),sel.getBetreff())) //$NON-NLS-1$
+					 == true) {
+					sel.set("geloescht", StringTool.one); //$NON-NLS-1$
 					tv.refresh();
 				}
 			}

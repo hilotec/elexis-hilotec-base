@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditReminderDialog.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: EditReminderDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -45,7 +45,7 @@ import ch.rgw.tools.TimeTool;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class EditReminderDialog extends TitleAreaDialog {
-	private static final String TX_ALL = "Alle";
+	private static final String TX_ALL = Messages.getString("EditReminderDialog.all"); //$NON-NLS-1$
 	Reminder mine;
 	Text text;
 	Label pat;
@@ -75,7 +75,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		pat = new Label(cTopright, SWT.NONE);
 		pat.setText(Messages.getString("EditReminderDialog.noPatient")); //$NON-NLS-1$
 		bNoPatient = new Button(cTopright, SWT.CHECK);
-		bNoPatient.setText(Messages.getString("EditReminderDialog.noPatient"));
+		bNoPatient.setText(Messages.getString("EditReminderDialog.noPatient")); //$NON-NLS-1$
 		users = Hub.getUserList();
 		lUser = new List(ret, SWT.MULTI | SWT.V_SCROLL);
 		lUser.add(TX_ALL);
@@ -105,7 +105,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 							getShell(), Hub.actMandant,
 							DocumentSelectDialog.TYPE_LOAD_TEMPLATE);
 					if (dsl.open() == Dialog.OK) {
-						mine.set("Params", dsl.getSelectedDocument().getId());
+						mine.set("Params", dsl.getSelectedDocument().getId()); //$NON-NLS-1$
 					}
 				}
 			}
@@ -210,7 +210,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 			pat.setText(Messages
 					.getString("EditReminderDialog.noPatientSelected")); //$NON-NLS-1$
 		} else {
-			pat.setText("  " + actPatient.getLabel() + "  ");
+			pat.setText("  " + actPatient.getLabel() + "  "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -238,16 +238,16 @@ public class EditReminderDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		String shelltitle = "Reminder";
+		String shelltitle = Messages.getString("EditReminderDialog.reminderShellTitle"); //$NON-NLS-1$
 		if (mine == null) {
 			setTitle(Messages.getString("EditReminderDialog.createReminder")); //$NON-NLS-1$
 		} else {
 			setTitle(Messages.getString("EditReminderDialog.editReminder")); //$NON-NLS-1$
 			Anwender o = mine.getCreator();
 			if (o == null) {
-				shelltitle += " (unbekannt)";
+				shelltitle += Messages.getString("EditReminderDialog.unknown"); //$NON-NLS-1$
 			} else {
-				shelltitle += " (" + o.getLabel() + ")";
+				shelltitle += " (" + o.getLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		setMessage(Messages
@@ -269,7 +269,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		}
 		Reminder.Typ typ = Reminder.Typ.values()[typidx];
 		if (mine == null) {
-			mine = new Reminder(actPatient, due, typ, "", text.getText());
+			mine = new Reminder(actPatient, due, typ, "", text.getText()); //$NON-NLS-1$
 		} else {
 			mine
 					.set(new String[] { Reminder.KONTAKT_ID, Reminder.DUE, Reminder.TYPE, Reminder.MESSAGE },

@@ -9,7 +9,7 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added Anschrift
  *    
- * $Id: KontaktErfassenDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: KontaktErfassenDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -147,7 +147,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		lVorname = new Label(ret, SWT.NONE);
 		lVorname.setText(Messages.getString("KontaktErfassenDialog.firstName")); //$NON-NLS-1$
 		tVorname = new Text(ret, SWT.BORDER);
-		tVorname.setText(fld[1]==null ? "" : fld[1]);
+		tVorname.setText(fld[1]==null ? "" : fld[1]); //$NON-NLS-1$
 		tVorname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		lZusatz = new Label(ret, SWT.NONE);
@@ -176,7 +176,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		new Label(ret, SWT.NONE).setText(Messages
 				.getString("KontaktErfassenDialog.birthDate")); //$NON-NLS-1$
 		tGebDat = new Text(ret, SWT.BORDER);
-		tGebDat.setText(fld[2]==null ? "" : fld[2]);
+		tGebDat.setText(fld[2]==null ? "" : fld[2]); //$NON-NLS-1$
 		tGebDat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		new Label(ret, SWT.NONE).setText(Messages
@@ -217,7 +217,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		new Label(ret,SWT.NONE).setText(Messages.
 				getString("KontaktErfassenDialog.postanschrift"));  //$NON-NLS-1$
 		hlAnschrift=Desk.getToolkit().createHyperlink(ret, 
-				Messages.getString("KontaktErfassenDialog.postalempty"), SWT.NONE);
+				Messages.getString("KontaktErfassenDialog.postalempty"), SWT.NONE); //$NON-NLS-1$
 		hlAnschrift.addHyperlinkListener(new HyperlinkAdapter(){
 
 			@Override

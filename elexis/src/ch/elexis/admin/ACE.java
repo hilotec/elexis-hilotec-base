@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACE.java 4992 2009-01-21 06:54:51Z rgw_ch $
+ *  $Id: ACE.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -26,8 +26,8 @@ import java.io.Serializable;
 public class ACE implements Serializable {
 	private static final long serialVersionUID = 34320020090119L;
 	
-	public static final ACE ACE_ROOT = new ACE(null, "root", "Wurzel");
-	public static final ACE ACE_IMPLICIT = new ACE(ACE.ACE_ROOT, "implicit", "implizit");
+	public static final ACE ACE_ROOT = new ACE(null, "root", Messages.getString("ACE.root")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE ACE_IMPLICIT = new ACE(ACE.ACE_ROOT, "implicit", Messages.getString("ACE.implicit")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private String name;
 	private String localizedName;
@@ -104,7 +104,7 @@ public class ACE implements Serializable {
 		sp.append(getName());
 		ACE parent = getParent();
 		while ((parent != null) && (!parent.equals(ACE.ACE_ROOT))) {
-			sp.insert(0, parent.getName() + "/");
+			sp.insert(0, parent.getName() + "/"); //$NON-NLS-1$
 			parent = parent.getParent();
 		}
 		return sp.toString();

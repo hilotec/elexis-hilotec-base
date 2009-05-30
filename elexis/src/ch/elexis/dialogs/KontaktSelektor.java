@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktSelektor.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: KontaktSelektor.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -103,13 +103,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		fba = new FilterButtonAdapter();
 		title = t;
 		message = m;
-		/*
-		 * dataloader=(ListLoader)JobPool.getJobPool().getJob(which.getSimpleName());
-		 * if(dataloader==null){ dataloader=new ListLoader(which.getSimpleName(),new
-		 * Query(which),new String[]{"Bezeichnung1","Bezeichnung2"});
-		 * Hub.jobPool.addJob(dataloader); dataloader.setPriority(Job.SHORT);
-		 * dataloader.setUser(true); dataloader.schedule(); }
-		 */
+		
 		kl = new FlatDataLoader(cv, new Query<Kontakt>(which));
 		fp = new KontaktFilter(0);
 	}

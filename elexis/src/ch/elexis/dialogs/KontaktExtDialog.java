@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KontaktExtDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: KontaktExtDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -91,7 +91,7 @@ public class KontaktExtDialog extends TitleAreaDialog {
 			fields=new String[f.length];
 			
 			for(int i=0;i<f.length;i++){
-				String[] val=f[i].split("=");
+				String[] val=f[i].split("="); //$NON-NLS-1$
 				fields[i]=val[0];
 				if(val.length==2){
 					xids.put(val[0], val[1]);
@@ -142,7 +142,7 @@ public class KontaktExtDialog extends TitleAreaDialog {
 			for(int i=0;i<fields.length;i++){
 				TableItem it=table.getItem(i);
 				it.setText(0,fields[i]);
-				String val="";
+				String val=""; //$NON-NLS-1$
 				String xid=xids.get(fields[i]);
 				if(xid!=null){
 					val=k.getXid(xid);
@@ -150,7 +150,7 @@ public class KontaktExtDialog extends TitleAreaDialog {
 				if(val.length()==0){
 					val=(String)k.getInfoElement(fields[i]);
 				}
-				it.setText(1,val==null ? "" : val);
+				it.setText(1,val==null ? "" : val); //$NON-NLS-1$
 			}
 			actKontakt=k;
 		}

@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AssignStickerDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: AssignStickerDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -71,9 +72,7 @@ public class AssignStickerDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle("Sticker"); //$NON-NLS-1$
-		// TODO setMessage(Messages.getString("test",mine.getLabel()));
-		setMessage("Geben Sie bitte die Sticker für " + mine.getLabel()
-				+ " ein.");
+		setMessage(MessageFormat.format(Messages.getString("AssignStickerDialog.enterStickers"),mine.getLabel())); //$NON-NLS-1$
 		getShell().setText("Elexis Sticker"); //$NON-NLS-1$
 	}
 

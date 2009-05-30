@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 5300 2009-05-15 16:51:59Z rgw_ch $
+ *    $Id: AccessControl.java 5328 2009-05-30 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.preferences.PreferenceConstants;
@@ -59,22 +60,24 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class AccessControl {
+	public static final String KEY_GROUPS = "Groups";
+
+	public static final String DB_UID = "dbUID";
+
 	// Set this to true to make any user admin (e.g. to reset admin pwd
 	private final static boolean FORCE_ADMIN=false;
-	public static final String ALL_GROUP = Messages
-			.getString("AccessControl.GroupAll");
-	public static final String USER_GROUP = Messages
-			.getString("AccessControl.GroupUsers");
-	public static final String ADMIN_GROUP = Messages
-			.getString("AccessControl.GroupAdmin");
-	public static final String GROUP_FOR_PREFERENCEPAGE = "ch.elexis.preferences.acl";
+	
+	public static final String ALL_GROUP = StringConstants.ROLE_ALL;
+	public static final String USER_GROUP = StringConstants.ROLE_USERS;
+	public static final String ADMIN_GROUP = StringConstants.ROLE_ADMIN;
+	public static final String GROUP_FOR_PREFERENCEPAGE = "ch.elexis.preferences.acl"; //$NON-NLS-1$
 
-	private static final String BLOBNAME = "AccessControl";
-	private static final String ACLNAME = "AccessControlACL";
+	private static final String BLOBNAME = "AccessControl"; //$NON-NLS-1$
+	private static final String ACLNAME = "AccessControlACL"; //$NON-NLS-1$
 	private static Hashtable<String, ACE> rights;
 	private static Hashtable<String, List<String>> usergroups;
 	private static Hashtable<String, ACE> acls;
-	private static final Log log = Log.get("AccessControl");
+	private static final Log log = Log.get("AccessControl"); //$NON-NLS-1$
 
 	// TODO: Cleanup alte Gruppen/Anwender
 	/**
@@ -84,7 +87,7 @@ public class AccessControl {
 	public void load() {
 		NamedBlob rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		if (rset == null) {
-			log.log("Warnung: ACEs nicht gefunden, erstelle neu ", Log.ERRORS);
+			log.log("Warnung: ACEs nicht gefunden, erstelle neu ", Log.ERRORS); //$NON-NLS-1$
 			NamedBlob.createTable();
 			rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
 		}
@@ -95,11 +98,11 @@ public class AccessControl {
 			reset();
 		}
 		usergroups = new Hashtable<String, List<String>>();
-		log.log("loaded AccessControl", Log.INFOS);
+		log.log("loaded AccessControl", Log.INFOS); //$NON-NLS-1$
 		for (String k1 : rights.keySet()) {
 			log.log(k1, Log.DEBUGMSG);
 		}
-		log.log("loaded ACLs", Log.INFOS);
+		log.log("loaded ACLs", Log.INFOS); //$NON-NLS-1$
 		for (String k1 : acls.keySet()) {
 			log.log(k1, Log.DEBUGMSG);
 		}
@@ -180,7 +183,7 @@ public class AccessControl {
 				list = new ArrayList<String>();
 				Hashtable h = user.getHashtable("ExtInfo"); //$NON-NLS-1$
 				if (h != null) {
-					String grp = (String) h.get("Groups"); //$NON-NLS-1$
+					String grp = (String) h.get(KEY_GROUPS); //$NON-NLS-1$
 					if (grp != null) {
 						String[] grps = grp.split(","); //$NON-NLS-1$
 						for (String g : grps) {
@@ -298,7 +301,7 @@ public class AccessControl {
 	public void addToGroup(String group, Anwender user) {
 		String g = remove(group, user);
 		g = g + "," + group; //$NON-NLS-1$
-		user.setInfoElement("Groups", g); //$NON-NLS-1$
+		user.setInfoElement(KEY_GROUPS, g); //$NON-NLS-1$
 	}
 
 	/**
@@ -311,11 +314,11 @@ public class AccessControl {
 	 */
 	public void removeFromGroup(String group, Anwender user) {
 		String g = remove(group, user);
-		user.setInfoElement("Groups", g); //$NON-NLS-1$
+		user.setInfoElement(KEY_GROUPS, g); //$NON-NLS-1$
 	}
 
 	private String remove(String group, Anwender user) {
-		String g = (String) user.getInfoElement("Groups"); //$NON-NLS-1$
+		String g = (String) user.getInfoElement(KEY_GROUPS); //$NON-NLS-1$
 		if (g != null) {
 			g = g.replaceAll(user.getId(), ""); //$NON-NLS-1$
 			g = g.replaceAll("\\s*,*$", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -333,7 +336,7 @@ public class AccessControl {
 		ArrayList<String> ret = new ArrayList<String>();
 		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS,
 				ADMIN_GROUP);
-		for (String s : grp.split(",")) {
+		for (String s : grp.split(",")) { //$NON-NLS-1$
 			ret.add(s);
 		}
 		return ret;
@@ -419,17 +422,16 @@ public class AccessControl {
 		rights.clear();
 		grant(ALL_GROUP, AccessControlDefaults.getAlle()); //$NON-NLS-1$
 		grant(USER_GROUP, AccessControlDefaults.getAnwender()); //$NON-NLS-1$
-		// grant(ADMIN_GROUP,AccessControlDefaults.Admin); //$NON-NLS-1$
-		acls.put("dbUID", new ACE(ACE.ACE_ROOT, "dbUID", StringTool
+		acls.put(DB_UID, new ACE(ACE.ACE_ROOT, DB_UID, StringTool
 				.unique("db%id")));
 		flush();
 	}
 
 	public String getDBUID() {
-		ACE dbuid = acls.get("dbUID");
+		ACE dbuid = acls.get(DB_UID);
 		if (dbuid == null) {
-			dbuid = new ACE(ACE.ACE_ROOT, "dbUID", StringTool.unique("db%id"));
-			rights.put("dbUID", dbuid);
+			dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool.unique("db%id"));
+			rights.put(DB_UID, dbuid);
 			flush();
 		}
 		return dbuid.getLocalizedName();
