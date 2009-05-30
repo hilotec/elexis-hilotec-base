@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatListeContentProvider.java 5326 2009-05-29 20:08:32Z rgw_ch $
+ *  $Id: PatListeContentProvider.java 5329 2009-05-30 09:44:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -35,69 +35,84 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
 import ch.rgw.tools.StringTool;
 
-public class PatListeContentProvider implements CommonContentProvider, ILazyContentProvider {
+public class PatListeContentProvider implements CommonContentProvider,
+		ILazyContentProvider {
 	CommonViewer viewer;
 	Query<Patient> qbe;
 	Object[] pats;
 	boolean bValid = false;
 	boolean bUpdating = false;
-	String[] order;
+	String[] orderLabels;
+	String[] orderFields;
 	String firstOrder;
 	PatListFilterBox pfilter;
 	ViewPart site;
-	
-	public PatListeContentProvider(CommonViewer cv, String[] fieldsToOrder, ViewPart s){
+
+	public PatListeContentProvider(CommonViewer cv, String[] fieldsToOrder,
+			ViewPart s) {
 		viewer = cv;
 		site = s;
-		order = fieldsToOrder;
-		firstOrder = fieldsToOrder[0];
+		orderLabels = new String[fieldsToOrder.length];
+		orderFields = new String[fieldsToOrder.length];
+		for (int i = 0; i < fieldsToOrder.length; i++) {
+			String[] def = fieldsToOrder[i].split(Query.EQUALS);
+			orderFields[i] = def[0];
+			orderLabels[i] = def.length > 1 ? def[1] : def[0];
+		}
+		firstOrder = orderFields[0];
 	}
-	
-	public void startListening(){
-		viewer.getConfigurer().getControlFieldProvider().addChangeListener(this);
+
+	public void startListening() {
+		viewer.getConfigurer().getControlFieldProvider()
+				.addChangeListener(this);
 		qbe = new Query<Patient>(Patient.class);
 	}
-	
-	public void stopListening(){
+
+	public void stopListening() {
 		if (viewer != null) {
-			viewer.getConfigurer().getControlFieldProvider().removeChangeListener(this);
+			viewer.getConfigurer().getControlFieldProvider()
+					.removeChangeListener(this);
 		}
 	}
-	
-	public void setFilter(PatListFilterBox f){
+
+	public void setFilter(PatListFilterBox f) {
 		qbe.addPostQueryFilter(f);
 		pfilter = f;
 		bValid = false;
 	}
-	
-	public void removeFilter(PatListFilterBox f){
+
+	public void removeFilter(PatListFilterBox f) {
 		qbe.removePostQueryFilter(f);
 		pfilter = null;
 		bValid = false;
 	}
-	
-	public Object[] getElements(Object inputElement){
+
+	public Object[] getElements(Object inputElement) {
 		if (bValid || bUpdating) {
 			return pats;
 		}
 		if (pfilter != null) {
-			pats = new String[] {
-				Messages.getString("PatListeContentProvider.LoadingData") //$NON-NLS-1$
+			pats = new String[] { Messages
+					.getString("PatListeContentProvider.LoadingData") //$NON-NLS-1$
 			};
 			((TableViewer) viewer.getViewerWidget()).setItemCount(1);
 		}
-		
+
 		// viewer.getViewerWidget().refresh(true);
 		if (!Hub.acl.request(AccessControlDefaults.PATIENT_DISPLAY)) {
 			return new Object[0];
 		}
-		
-		Job job = new Job(Messages.getString("PatListeContentProvider.LoadingPatients")) { //$NON-NLS-1$
-			
+
+		Job job = new Job(Messages
+				.getString("PatListeContentProvider.LoadingPatients")) { //$NON-NLS-1$
+
 			@Override
-			protected IStatus run(IProgressMonitor monitor){
-				monitor.beginTask(Messages.getString("PatListeContentProvider.LoadPatients"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-				
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor
+						.beginTask(
+								Messages
+										.getString("PatListeContentProvider.LoadPatients"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+
 				qbe.clear();
 				if (pfilter != null) {
 					if (pfilter.aboutToStart() == false) {
@@ -106,16 +121,16 @@ public class PatListeContentProvider implements CommonContentProvider, ILazyCont
 				}
 				viewer.getConfigurer().getControlFieldProvider().setQuery(qbe);
 				String[] actualOrder;
-				int idx = StringTool.getIndex(order, firstOrder);
+				int idx = StringTool.getIndex(orderFields, firstOrder);
 				if ((idx == -1) || (idx == 0)) {
-					actualOrder = order;
+					actualOrder = orderFields;
 				} else {
-					actualOrder = new String[order.length];
+					actualOrder = new String[orderFields.length];
 					int n = 0;
 					int begin = idx;
 					do {
-						actualOrder[n++] = order[idx++];
-						if (idx >= order.length) {
+						actualOrder[n++] = orderFields[idx++];
+						if (idx >= orderFields.length) {
 							idx = 0;
 						}
 					} while (idx != begin);
@@ -128,46 +143,51 @@ public class PatListeContentProvider implements CommonContentProvider, ILazyCont
 					pats = lPats.toArray(new Patient[0]);
 				}
 				Desk.getDisplay().syncExec(new Runnable() {
-					
-					public void run(){
-						((TableViewer) viewer.getViewerWidget()).setItemCount(pats.length);
+
+					public void run() {
+						((TableViewer) viewer.getViewerWidget())
+								.setItemCount(pats.length);
 						bValid = true;
 						if (pfilter != null) {
 							pfilter.finished();
 						}
 						viewer.getViewerWidget().refresh();
 						bUpdating = false;
-						
+
 					}
-					
+
 				});
 				monitor.done();
 				return Status.OK_STATUS;
 			}
-			
+
 		};
 		job.setPriority(Job.SHORT);
 		job.setUser(false);
 		// job.setSystem(true);
 		bUpdating = true;
-		IWorkbenchSiteProgressService siteService =
-			(IWorkbenchSiteProgressService) site.getSite().getAdapter(
-				IWorkbenchSiteProgressService.class);
-		siteService.schedule(job, 0 /* now */, true /* use the half-busy cursor in the part */);
-		
-		job.setProperty(IProgressConstants.ICON_PROPERTY, Desk.getImage(Desk.IMG_AUSRUFEZ_ROT));
-		
+		IWorkbenchSiteProgressService siteService = (IWorkbenchSiteProgressService) site
+				.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		siteService.schedule(job, 0 /* now */, true /*
+													 * use the half-busy cursor
+													 * in the part
+													 */);
+
+		job.setProperty(IProgressConstants.ICON_PROPERTY, Desk
+				.getImage(Desk.IMG_AUSRUFEZ_ROT));
+
 		// job.schedule();
 		return pats;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		stopListening();
 	}
-	
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-	
-	public void changed(HashMap<String, String> vals){
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+
+	public void changed(HashMap<String, String> vals) {
 		bValid = false;
 		getElements(viewer);
 		if (viewer.getConfigurer().getControlFieldProvider().isEmpty()) {
@@ -177,30 +197,35 @@ public class PatListeContentProvider implements CommonContentProvider, ILazyCont
 		}
 		// viewer.notify(CommonViewer.Message.update);
 	}
-	
-	public void reorder(String field){
-		firstOrder = field;
-		changed(null);
+
+	public void reorder(String field) {
+		int idx = StringTool.getIndex(orderLabels, field);
+		if (idx > -1) {
+			firstOrder = orderFields[idx];
+			changed(null);
+		}
+
 	}
-	
-	public void selected(){
-	// TODO Auto-generated method stub
-	
+
+	public void selected() {
+		// TODO Auto-generated method stub
+
 	}
-	
-	public void updateElement(int index){
+
+	public void updateElement(int index) {
 		if (!bValid) {
 			getElements(viewer);
 		}
 		if (pats.length > index) {
-			((TableViewer) viewer.getViewerWidget()).replace(pats[index], index);
+			((TableViewer) viewer.getViewerWidget())
+					.replace(pats[index], index);
 		} else {
 			((TableViewer) viewer.getViewerWidget()).replace("-", index); //$NON-NLS-1$
 		}
 	}
-	
-	public void invalidate(){
+
+	public void invalidate() {
 		bValid = false;
 	}
-	
+
 }
