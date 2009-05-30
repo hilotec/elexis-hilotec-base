@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 4792 2008-12-10 15:23:09Z psiska $
+ *  $Id: TextView.java 5327 2009-05-30 06:14:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -40,12 +40,12 @@ import ch.elexis.util.*;
 import ch.rgw.tools.ExHandler;
 
 public class TextView extends ViewPart implements ActivationListener{
-	public final static String ID="ch.elexis.TextView";
+	public final static String ID="ch.elexis.TextView"; //$NON-NLS-1$
 	TextContainer txt;
 	//CommonViewer cv;
 	Composite textContainer=null;
 	private Brief actBrief;
-	private Log log=Log.get("TextView");
+	private Log log=Log.get("TextView"); //$NON-NLS-1$
 	private IAction briefLadenAction, loadTemplateAction, loadSysTemplateAction, saveTemplateAction, 
 					showMenuAction, showToolbarAction, importAction, newDocAction;
 	private ViewMenus menus;
@@ -59,7 +59,7 @@ public class TextView extends ViewPart implements ActivationListener{
 		txt=new TextContainer(getViewSite());
 		textContainer=txt.getPlugin().createContainer(parent,new SaveHandler());
 		if(textContainer==null){
-			SWTHelper.showError("Konnte TextView nicht erstellen", "Das Textplugin konnte nicht korrekt geladen werden");
+			SWTHelper.showError(Messages.getString("TextView.couldNotCreateTextView"), Messages.getString("TextView.couldNotLoadTextPlugin")); //$NON-NLS-1$ //$NON-NLS-2$
 		}else{
 			makeActions();
 			menus=new ViewMenus(getViewSite());
@@ -109,7 +109,7 @@ public class TextView extends ViewPart implements ActivationListener{
 	 */
 	public boolean createDocument(Brief template,String subject){
 		if(template==null){
-			SWTHelper.showError("Keine Vorlage ausgesucht", "Bitte wählen Sie eine Vorlage für das Dokument aus");
+			SWTHelper.showError(Messages.getString("TextView.noTemplateSelected"), Messages.getString("TextView.pleaseSelectTemplate")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		actBrief=txt.createFromTemplate(Konsultation.getAktuelleKons(),template,Brief.UNKNOWN,null, subject);
@@ -120,7 +120,7 @@ public class TextView extends ViewPart implements ActivationListener{
 		return true;
 	}
 	private void makeActions(){
-		briefLadenAction=new Action("Brief öffnen..."){
+		briefLadenAction=new Action(Messages.getString("TextView.openLetter")){ //$NON-NLS-1$
 			@Override
 			public void run() {
 				Patient actPatient=(Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class);
@@ -132,7 +132,7 @@ public class TextView extends ViewPart implements ActivationListener{
 			
 		};
 		
-		loadSysTemplateAction=new Action("Systemvorlage öffnen"){
+		loadSysTemplateAction=new Action(Messages.getString("TextView.openSysTemplate")){ //$NON-NLS-1$
 			@Override
 			public void run(){
 				DocumentSelectDialog bs=new DocumentSelectDialog(getViewSite().getShell(),Hub.actMandant,DocumentSelectDialog.TYPE_LOAD_SYSTEMPLATE);
@@ -141,7 +141,7 @@ public class TextView extends ViewPart implements ActivationListener{
 				}
 			}
 		};
-		loadTemplateAction=new Action("Vorlage öffnen"){
+		loadTemplateAction=new Action(Messages.getString("TextView.openTemplate")){ //$NON-NLS-1$
 			@Override
 			public void run(){
 				DocumentSelectDialog bs=new DocumentSelectDialog(getViewSite().getShell(),Hub.actMandant,DocumentSelectDialog.TYPE_LOAD_TEMPLATE);
@@ -150,28 +150,28 @@ public class TextView extends ViewPart implements ActivationListener{
 				}
 			}
 		};
-		saveTemplateAction=new Action("Als Vorlage speichern"){
+		saveTemplateAction=new Action(Messages.getString("TextView.saveAsTemplate")){ //$NON-NLS-1$
 			@Override
 			public void run(){
 				if(actBrief!=null){
-					txt.saveTemplate(actBrief.get("Betreff"));
+					txt.saveTemplate(actBrief.get(Messages.getString("TextView.Subject"))); //$NON-NLS-1$
 				}else{
 					txt.saveTemplate(null);
 				}
 			}
 		};
 		
-		showMenuAction=new Action("Menu anzeigen",Action.AS_CHECK_BOX){
+		showMenuAction=new Action(Messages.getString("TextView.showMenu"),Action.AS_CHECK_BOX){ //$NON-NLS-1$
 			public void run(){
 				txt.getPlugin().showMenu(isChecked());
 			}
 		};
-		showToolbarAction=new Action("Werkzeugleiste",Action.AS_CHECK_BOX){
+		showToolbarAction=new Action(Messages.getString("TextView.Toolbar"),Action.AS_CHECK_BOX){ //$NON-NLS-1$
 			public void run(){
 				txt.getPlugin().showToolbar(isChecked());
 			}
 		};
-		importAction=new Action("Text importieren"){
+		importAction=new Action(Messages.getString("TextView.importText")){ //$NON-NLS-1$
 			@Override
 			public void run(){
 				try{
@@ -194,7 +194,7 @@ public class TextView extends ViewPart implements ActivationListener{
 			}
 		};
 		
-		newDocAction=new Action("Neues Dokument"){
+		newDocAction=new Action(Messages.getString("TextView.newDocument")){ //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
@@ -205,27 +205,27 @@ public class TextView extends ViewPart implements ActivationListener{
 			}
 			
 		};
-        briefLadenAction.setImageDescriptor(Hub.getImageDescriptor("rsc/mail.png"));
-        briefLadenAction.setToolTipText("Brief zum Bearbeiten öffnen");
+        briefLadenAction.setImageDescriptor(Hub.getImageDescriptor(Messages.getString("TextView.15"))); //$NON-NLS-1$
+        briefLadenAction.setToolTipText("Brief zum Bearbeiten öffnen"); //$NON-NLS-1$
         //briefNeuAction.setImageDescriptor(Hub.getImageDescriptor("rsc/schreiben.gif"));
         //briefNeuAction.setToolTipText("Einen neuen Brief erstellen");
-        showMenuAction.setToolTipText("Menuleiste anzeigen");
-        showMenuAction.setImageDescriptor(Hub.getImageDescriptor("rsc/menubar.ico"));
-        showToolbarAction.setImageDescriptor(Hub.getImageDescriptor("rsc/toolbar.ico"));
-        showToolbarAction.setToolTipText("Werkzeugleiste anzeigen");
+        showMenuAction.setToolTipText(Messages.getString("TextView.showMenuBar")); //$NON-NLS-1$
+        showMenuAction.setImageDescriptor(Hub.getImageDescriptor("rsc/menubar.ico")); //$NON-NLS-1$
+        showToolbarAction.setImageDescriptor(Hub.getImageDescriptor("rsc/toolbar.ico")); //$NON-NLS-1$
+        showToolbarAction.setToolTipText(Messages.getString("TextView.showToolbar")); //$NON-NLS-1$
     }
 	
 		class SaveHandler implements ITextPlugin.ICallback{
 
 		public void save() {
-			log.log("Save",Log.DEBUGMSG);
+			log.log(Messages.getString("TextView.save"),Log.DEBUGMSG); //$NON-NLS-1$
 			if(actBrief!=null){
 				actBrief.save(txt.getPlugin().storeToByteArray(),txt.getPlugin().getMimeType());
 			}
 		}
 		public boolean saveAs(){
-			log.log("Save As",Log.DEBUGMSG);
-			InputDialog il=new InputDialog(getViewSite().getShell(),"Text speichern","Geben Sie bitte einen Titel für den Text ein","",null);
+			log.log(Messages.getString("TextView.saveAs"),Log.DEBUGMSG); //$NON-NLS-1$
+			InputDialog il=new InputDialog(getViewSite().getShell(),Messages.getString("TextView.saveText"),Messages.getString("TextView.enterTitle"),"",null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if(il.open()==Dialog.OK){
 				actBrief.setBetreff(il.getValue());
 				return actBrief.save(txt.getPlugin().storeToByteArray(),txt.getPlugin().getMimeType());
@@ -251,13 +251,13 @@ public class TextView extends ViewPart implements ActivationListener{
 		
 	}
 	void setName(){
-		String n="";
+		String n=""; //$NON-NLS-1$
 		if(actBrief==null){
-			setPartName("Kein Brief ausgewählt");
+			setPartName(Messages.getString("TextView.noLetterSelected")); //$NON-NLS-1$
 		}else{
 			Person pat=actBrief.getPatient();
 			if(pat!=null){
-				n=pat.getLabel()+": ";
+				n=pat.getLabel()+": "; //$NON-NLS-1$
 			}
 			n+=actBrief.getBetreff();
 			setPartName(n);
