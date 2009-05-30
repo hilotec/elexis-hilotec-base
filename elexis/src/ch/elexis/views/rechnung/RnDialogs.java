@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnDialogs.java 5316 2009-05-20 11:34:51Z rgw_ch $
+ * $Id: RnDialogs.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -184,7 +184,7 @@ public class RnDialogs {
 			cbStates.select(rn.getStatus());
 			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			new Label(ret, SWT.WRAP)
-				.setText("Achtung!\nManuelles Ändern des Status kann zu Inkonsistenzen führen!");
+				.setText(Messages.getString("RnDialogs.warningDontChangeManually")); //$NON-NLS-1$
 			return ret;
 		}
 		
@@ -223,12 +223,12 @@ public class RnDialogs {
 		@SuppressWarnings("unchecked")
 		@Override
 		protected Control createDialogArea(Composite parent){
-			lo = Extensions.getClasses("ch.elexis.RechnungsManager", "outputter");
+			lo = Extensions.getClasses("ch.elexis.RechnungsManager", "outputter"); //$NON-NLS-1$ //$NON-NLS-2$
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
 			Label lbLocal = new Label(ret, SWT.NONE);
 			lbLocal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			lbLocal.setText("(Storno erfolgt nur local; bitte ggf. an Rn-Empfänger mitteilen)");
+			lbLocal.setText(Messages.getString("RnDialogs.stornoOnlyLocal")); //$NON-NLS-1$
 			for (IRnOutputter rno : lo) {
 				if (rno.canStorno(null) && hasTrace(rno.getDescription())) {
 					Button cbStorno = new Button(ret, SWT.CHECK);
@@ -240,12 +240,12 @@ public class RnDialogs {
 				}
 			}
 			if (exporters.size() > 0) {
-				lbLocal.setText("Storno auch an folgende(s) Ausgabeziel(e) weiterleiten:");
+				lbLocal.setText(Messages.getString("RnDialogs.stornoPropagate")); //$NON-NLS-1$
 			}
 			new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(
 				1, false, 1, false));
 			bReactivate = new Button(ret, SWT.CHECK);
-			bReactivate.setText(Messages.getString("RnDialogs.reactivateConsultations"));
+			bReactivate.setText(Messages.getString("RnDialogs.reactivateConsultations")); //$NON-NLS-1$
 			bReactivate.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			bReactivate.setSelection(true);
 			/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EigenartikelDisplay.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *  $Id: EigenartikelDisplay.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -18,7 +18,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.GlobalEvents;
@@ -37,44 +40,53 @@ public class EigenartikelDisplay implements IDetailDisplay {
 	static final public InputData[] getFieldDefs(final Shell shell){
 		InputData[] ret =
 			new InputData[] {
-				new InputData("Typ", "Typ", Typ.STRING, null),
-				//new InputData("EANCode", "ExtInfo", Typ.STRING, "EAN"),
-				//new InputData("Pharmacode", "ExtInfo", Typ.STRING, "Pharmacode"),
-				new InputData("Gruppe","Codeclass",Typ.STRING,null),
-				new InputData("Einkaufspreis", "EK_Preis", Typ.CURRENCY, null),
-				new InputData("Verkaufspreis", "VK_Preis", Typ.CURRENCY, null),
-				new InputData("Max. Pckg. an Lager", "Maxbestand", Typ.STRING, null),
-				new InputData("Min. Pckg. an Lager", "Minbestand", Typ.STRING, null),
-				new InputData("Aktuell Pckg. an Lager", "Istbestand", Typ.STRING, null),
-				new InputData("Aktuell an Lager", "ExtInfo", Typ.INT, "Anbruch"),
-				new InputData("Stück pro Packung", "ExtInfo", Typ.INT, "Verpackungseinheit"),
-				new InputData("Stück pro Abgabe", "ExtInfo", Typ.INT, "Verkaufseinheit"),
-				new InputData("Lieferant", "Lieferant", new LabeledInputField.IContentProvider() {
-					public void displayContent(PersistentObject po, InputData ltf){
-						String lbl = ((Artikel) po).getLieferant().getLabel();
-						if (lbl.length() > 15) {
-							lbl = lbl.substring(0, 12) + "...";
-						}
-						ltf.setText(lbl);
-					}
-					
-					public void reloadContent(PersistentObject po, InputData ltf){
-						KontaktSelektor ksl =
-							new KontaktSelektor(shell, Kontakt.class, "Lieferant",
-								"Bitte wählen Sie, wer diesen Artikel liefert");
-						if (ksl.open() == Dialog.OK) {
-							Kontakt k = (Kontakt) ksl.getSelection();
-							((Artikel) po).setLieferant(k);
+				new InputData(Messages.EigenartikelDisplay_typ, Artikel.TYP, Typ.STRING, null),
+				new InputData(Messages.EigenartikelDisplay_group, Artikel.CODECLASS, Typ.STRING,
+					null),
+				new InputData(Messages.EigenartikelDisplay_buyPrice, Artikel.EK_PREIS,
+					Typ.CURRENCY, null),
+				new InputData(Messages.EigenartikelDisplay_sellPrice, Artikel.VK_PREIS,
+					Typ.CURRENCY, null),
+				new InputData(Messages.EigenartikelDisplay_maxOnStock, Artikel.MAXBESTAND,
+					Typ.STRING, null),
+				new InputData(Messages.EigenartikelDisplay_minOnStock, Artikel.MINBESTAND,
+					Typ.STRING, null),
+				new InputData(Messages.EigenartikelDisplay_actualOnStockPacks, Artikel.ISTBESTAND,
+					Typ.STRING, null),
+				new InputData(Messages.EigenartikelDisplay_actualOnStockPieces, Artikel.EXTINFO,
+					Typ.INT, Artikel.ANBRUCH),
+				new InputData(Messages.EigenartikelDisplay_PiecesPerPack, Artikel.EXTINFO, Typ.INT,
+					Artikel.VERPACKUNGSEINHEIT),
+				new InputData(Messages.EigenartikelDisplay_PiecesPerDose, Artikel.EXTINFO, Typ.INT,
+					Artikel.VERKAUFSEINHEIT),
+				new InputData(Messages.EigenartikelDisplay_dealer,
+					Messages.EigenartikelDisplay_dealer, new LabeledInputField.IContentProvider() {
+						public void displayContent(PersistentObject po, InputData ltf){
 							String lbl = ((Artikel) po).getLieferant().getLabel();
 							if (lbl.length() > 15) {
-								lbl = lbl.substring(0, 12) + "...";
+								lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
 							}
 							ltf.setText(lbl);
-							GlobalEvents.getInstance().fireUpdateEvent(Artikel.class);
 						}
-					}
-					
-				})
+						
+						public void reloadContent(PersistentObject po, InputData ltf){
+							KontaktSelektor ksl =
+								new KontaktSelektor(shell, Kontakt.class,
+									Messages.EigenartikelDisplay_dealer,
+									Messages.EigenartikelDisplay_pleaseChooseDealer);
+							if (ksl.open() == Dialog.OK) {
+								Kontakt k = (Kontakt) ksl.getSelection();
+								((Artikel) po).setLieferant(k);
+								String lbl = ((Artikel) po).getLieferant().getLabel();
+								if (lbl.length() > 15) {
+									lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
+								}
+								ltf.setText(lbl);
+								GlobalEvents.getInstance().fireUpdateEvent(Artikel.class);
+							}
+						}
+						
+					})
 			};
 		return ret;
 	}
@@ -89,8 +101,7 @@ public class EigenartikelDisplay implements IDetailDisplay {
 		Composite ret = form.getBody();
 		TableWrapLayout twl = new TableWrapLayout();
 		ret.setLayout(twl);
-		tblArtikel =
-			new LabeledInputField.AutoForm(ret, getFieldDefs(parent.getShell()));
+		tblArtikel = new LabeledInputField.AutoForm(ret, getFieldDefs(parent.getShell()));
 		
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
@@ -113,7 +124,7 @@ public class EigenartikelDisplay implements IDetailDisplay {
 	}
 	
 	public String getTitle(){
-		return "Eigenartikel";
+		return Messages.EigenartikelDisplay_displayTitle;
 	}
 	
 }

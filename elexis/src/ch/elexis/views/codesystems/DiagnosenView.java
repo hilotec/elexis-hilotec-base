@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenView.java 5096 2009-02-06 11:58:52Z rgw_ch $
+ *  $Id: DiagnosenView.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -31,7 +31,7 @@ import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
 
 public class DiagnosenView extends ViewPart implements ActivationListener,
 		ISaveablePart2 {
-	public final static String ID = "ch.elexis.DiagnosenView";
+	public final static String ID = "ch.elexis.DiagnosenView"; //$NON-NLS-1$
 	CTabFolder ctab;
 	CTabItem selected;
 
@@ -60,7 +60,7 @@ public class DiagnosenView extends ViewPart implements ActivationListener,
 		});
 
 		CodeSelectorFactory.makeTabs(ctab, getViewSite(),
-				"ch.elexis.Diagnosecode");
+				"ch.elexis.Diagnosecode"); //$NON-NLS-1$
 
 		GlobalEvents.getInstance().addActivationListener(this, this);
 	}

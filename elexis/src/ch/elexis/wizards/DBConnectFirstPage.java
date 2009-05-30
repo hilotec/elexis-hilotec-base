@@ -8,9 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DBConnectFirstPage.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: DBConnectFirstPage.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.wizards;
+
 // 17.5.2009: added H2
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -22,7 +23,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -44,12 +44,12 @@ public class DBConnectFirstPage extends WizardPage {
 	JdbcLink j = null;
 	
 	static final String[] supportedDB = new String[] {
-		"mySQl", "PostgreSQL", "hsqlDB (inProc)", "hsqlDB (Server)", "H2"
+		"mySQl", "PostgreSQL", "hsqlDB (inProc)", "hsqlDB (Server)", "H2" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	};
 	
 	public DBConnectFirstPage(String pageName){
 		super(
-			Messages.getString("DBConnectFirstPage.Connection"), Messages.getString("DBConnectFirstPage.typeOfDB"), Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$ //$NON-NLS-2$
+			Messages.getString("DBConnectFirstPage.Connection"), Messages.getString("DBConnectFirstPage.typeOfDB"), Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setMessage(Messages.getString("DBConnectFirstPage.selectType")); //$NON-NLS-1$
 		setDescription(Messages.getString("DBConnectFirstPage.theDescripotion")); //$NON-NLS-1$
 		
@@ -91,7 +91,7 @@ public class DBConnectFirstPage extends WizardPage {
 		twd.heightHint = 5;
 		sep.setLayoutData(twd);
 		tk.createLabel(body, Messages.getString("DBConnectFirstPage.enterType")); //$NON-NLS-1$
-		dbTypes = new Combo(body, SWT.BORDER|SWT.SIMPLE);
+		dbTypes = new Combo(body, SWT.BORDER | SWT.SIMPLE);
 		dbTypes.setItems(supportedDB);
 		dbTypes.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -102,26 +102,26 @@ public class DBConnectFirstPage extends WizardPage {
 				case 1:
 					server.setEnabled(true);
 					dbName.setEnabled(true);
-					defaultUser = "elexis";
-					defaultPassword = "elexisTest";
+					defaultUser = "elexis"; //$NON-NLS-1$
+					defaultPassword = "elexisTest"; //$NON-NLS-1$
 					break;
 				case 2:
 					server.setEnabled(false);
 					dbName.setEnabled(true);
-					defaultUser = "sa";
-					defaultPassword = "";
+					defaultUser = "sa"; //$NON-NLS-1$
+					defaultPassword = ""; //$NON-NLS-1$
 					break;
 				case 3:
 					server.setEnabled(true);
 					dbName.setEnabled(false);
-					defaultUser = "sa";
-					defaultPassword = "";
+					defaultUser = "sa"; //$NON-NLS-1$
+					defaultPassword = ""; //$NON-NLS-1$
 					break;
 				case 4:
 					server.setEnabled(false);
 					dbName.setEnabled(true);
-					defaultUser="sa";
-					defaultPassword ="";
+					defaultUser = "sa"; //$NON-NLS-1$
+					defaultPassword = ""; //$NON-NLS-1$
 				default:
 					break;
 				}
@@ -134,11 +134,11 @@ public class DBConnectFirstPage extends WizardPage {
 		});
 		tk.adapt(dbTypes, true, true);
 		tk.createLabel(body, Messages.getString("DBConnectFirstPage.serevrAddress")); //$NON-NLS-1$
-		server = tk.createText(body, "", SWT.BORDER);
+		server = tk.createText(body, "", SWT.BORDER); //$NON-NLS-1$
 		TableWrapData twr = new TableWrapData(TableWrapData.FILL_GRAB);
 		server.setLayoutData(twr);
 		tk.createLabel(body, Messages.getString("DBConnectFirstPage.databaseName")); //$NON-NLS-1$
-		dbName = tk.createText(body, "", SWT.BORDER);
+		dbName = tk.createText(body, "", SWT.BORDER); //$NON-NLS-1$
 		TableWrapData twr2 = new TableWrapData(TableWrapData.FILL_GRAB);
 		dbName.setLayoutData(twr2);
 		setControl(form);

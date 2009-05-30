@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultOutputter.java 4873 2008-12-30 09:55:57Z rgw_ch $
+ *  $Id: DefaultOutputter.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -55,14 +55,13 @@ public class DefaultOutputter implements IRnOutputter {
 	
 	public Control createSettingsControl(Composite parent){
 		Label lbl = new Label(parent, SWT.WRAP);
-		lbl
-			.setText("Für jede Rechnung das zum Abrechnungssystem des Falls gehörende\nStandard-Ausgabeziel wählen.");
+		lbl.setText(Messages.getString("DefaultOutputter.useIdividualPlugins")); //$NON-NLS-1$
 		return lbl;
 	}
 	
 	public Result<Rechnung> doOutput(TYPE type, Collection<Rechnung> rnn, final Properties props){
 		Result<Rechnung> res = new Result<Rechnung>(null);
-		props.setProperty(IRnOutputter.PROP_OUTPUT_METHOD, "asDefault");
+		props.setProperty(IRnOutputter.PROP_OUTPUT_METHOD, "asDefault"); //$NON-NLS-1$
 		for (Rechnung rn : rnn) {
 			Fall fall = rn.getFall();
 			final IRnOutputter iro = fall.getOutputter();
@@ -94,7 +93,7 @@ public class DefaultOutputter implements IRnOutputter {
 	}
 	
 	public String getDescription(){
-		return "Fall-Standardausgabe";
+		return Messages.getString("DefaultOutputter.defaultOutputForCase"); //$NON-NLS-1$
 	}
 	
 	public void saveComposite(){

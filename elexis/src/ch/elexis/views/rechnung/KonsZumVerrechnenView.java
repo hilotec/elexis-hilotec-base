@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: KonsZumVerrechnenView.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -270,9 +270,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 									"SELECT distinct PATIENTID FROM FAELLE " + //$NON-NLS-1$
 										"JOIN BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID WHERE BEHANDLUNGEN.deleted='0' AND BEHANDLUNGEN.RECHNUNGSID is null "; //$NON-NLS-1$
 								if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
-									sql +=
-										"AND BEHANDLUNGEN.MANDANTID="
-											+ Hub.actMandant.getWrappedId();
+									sql += "AND BEHANDLUNGEN.MANDANTID=" //$NON-NLS-1$
+										+ Hub.actMandant.getWrappedId();
 								}
 								ResultSet rs = stm.query(sql);
 								monitor.worked(10);
@@ -303,10 +302,10 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 					if (cont instanceof Patient) {
 						sql =
 							"SELECT distinct FAELLE.ID FROM FAELLE join BEHANDLUNGEN ON BEHANDLUNGEN.FALLID=FAELLE.ID " + //$NON-NLS-1$
-								"WHERE BEHANDLUNGEN.RECHNUNGSID is null AND BEHANDLUNGEN.DELETED='0' AND FAELLE.PATIENTID="
+								"WHERE BEHANDLUNGEN.RECHNUNGSID is null AND BEHANDLUNGEN.DELETED='0' AND FAELLE.PATIENTID=" //$NON-NLS-1$
 								+ cont.getWrappedId(); //$NON-NLS-1$
 						if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
-							sql += " AND BEHANDLUNGEN.MANDANTID=" + Hub.actMandant.getWrappedId();
+							sql += " AND BEHANDLUNGEN.MANDANTID=" + Hub.actMandant.getWrappedId(); //$NON-NLS-1$
 						}
 						rs = stm.query(sql);
 						while ((rs != null) && rs.next()) {
@@ -320,7 +319,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 						sql =
 							"SELECT ID FROM BEHANDLUNGEN WHERE RECHNUNGSID is null AND deleted='0' AND FALLID=" + cont.getWrappedId(); //$NON-NLS-1$
 						if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
-							sql += " AND MANDANTID=" + Hub.actMandant.getWrappedId();
+							sql += " AND MANDANTID=" + Hub.actMandant.getWrappedId(); //$NON-NLS-1$
 						}
 						rs = stm.query(sql);
 						while ((rs != null) && rs.next()) {
@@ -454,9 +453,9 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				@Override
 				public void run(){
 					if (((StructuredSelection) tvSel.getSelection()).size() > 0) {
-						if (!SWTHelper
-							.askYesNo("Dies erstellt alle Rechnungen in der Auswahl",
-								"Wollen Sie wirklich aus allen Konsultationen im rechten Feld Rechnungen erstellen?")) {
+						if (!SWTHelper.askYesNo(Messages
+							.getString("KonsZumVerrechnenView.RealleCreateBillsCaption"), //$NON-NLS-1$
+							Messages.getString("KonsZumVerrechnenView.ReallyCreateBillsBody"))) { //$NON-NLS-1$
 							return;
 						}
 					}
@@ -631,7 +630,8 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				
 			};
 		detailAction =
-			new RestrictedAction(AccessControlDefaults.LSTG_VERRECHNEN, "Abrechnungsdetails") {
+			new RestrictedAction(AccessControlDefaults.LSTG_VERRECHNEN, Messages
+				.getString("KonsZumVerrechnenView.billingDetails")) { //$NON-NLS-1$
 				@SuppressWarnings("unchecked")
 				@Override
 				public void doRun(){
@@ -795,7 +795,10 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(false);
 			text.getPlugin().showToolbar(false);
-			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, "Rechnungen");
+			text
+				.createFromTemplateName(
+					null,
+					"Liste", Brief.UNKNOWN, Hub.actUser, Messages.getString("KonsZumVerrechnenView.billsTitle")); //$NON-NLS-1$ //$NON-NLS-2$
 			Tree[] all = (Tree[]) tSelection.getChildren().toArray(new Tree[0]);
 			String[][] table = new String[all.length][];
 			
@@ -813,27 +816,29 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 				sb.append(p.getLabel());
 				for (Tree tFall : (Tree[]) tr.getChildren().toArray(new Tree[0])) {
 					Fall fall = (Fall) tFall.contents;
-					sb.append("\n -- Fall: ").append(fall.getLabel());
+					sb
+						.append(Messages.getString("KonsZumVerrechnenView.case")).append(fall.getLabel()); //$NON-NLS-1$
 					for (Tree tRn : (Tree[]) tFall.getChildren().toArray(new Tree[0])) {
 						Konsultation k = (Konsultation) tRn.contents;
-						sb.append("\n -- -- Kons: ").append(k.getLabel());
+						sb
+							.append(Messages.getString("KonsZumVerrechnenView.kons")).append(k.getLabel()); //$NON-NLS-1$
 					}
 				}
 				table[i][0] = sb.toString();
 			}
-			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-			text.getPlugin().insertTable("[Liste]", 0, table, new int[] {
-				90, 10
-			});
+			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
+			text.getPlugin().insertTable("[Liste]", 0, table, new int[] { //$NON-NLS-1$
+					90, 10
+				});
 			return ret;
 		}
 		
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText("Rechnungsliste");
-			setTitle("Liste drucken");
-			setMessage("Dies druckt alle aufgelisteten Patienten");
+			getShell().setText(Messages.getString("KonsZumVerrechnenView.billsList")); //$NON-NLS-1$
+			setTitle(Messages.getString("KonsZumVerrechnenView.printListCaption")); //$NON-NLS-1$
+			setMessage(Messages.getString("KonsZumVerrechnenView.printListMessage")); //$NON-NLS-1$
 			getShell().setSize(900, 700);
 			SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				getShell());

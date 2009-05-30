@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RnOutputDialog.java 4873 2008-12-30 09:55:57Z rgw_ch $
+ *  $Id: RnOutputDialog.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,14 +55,14 @@ public class RnOutputDialog extends TitleAreaDialog {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Control createDialogArea(Composite parent){
-		lo = Extensions.getClasses("ch.elexis.RechnungsManager", "outputter");
+		lo = Extensions.getClasses("ch.elexis.RechnungsManager", "outputter"); //$NON-NLS-1$ //$NON-NLS-2$
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		cbLo = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
 		cbLo.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bCopy = new Button(ret, SWT.CHECK);
-		bCopy.setText("Als Kopie markieren");
+		bCopy.setText(Messages.getString("RnOutputDialog.markAsCopy")); //$NON-NLS-1$
 		bCopy.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		final Composite bottom = new Composite(ret, SWT.NONE);
 		bottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -98,14 +99,15 @@ public class RnOutputDialog extends TitleAreaDialog {
 		super.create();
 		int num = rnn.size();
 		if (num > 1) {
-			getShell().setText("Rechnungen ausgeben");
-			setTitle(num + " Rechnungen ausgeben");
-			setMessage("Wählen Sie bitte das Ausgabeziel für diese " + num + " Rechnungen aus.");
+			getShell().setText(Messages.getString("RnOutputDialog.outputCaption")); //$NON-NLS-1$
+			setTitle(num + Messages.getString("RnOutputDialog.outputTitle")); //$NON-NLS-1$
+			setMessage(MessageFormat.format(
+				Messages.getString("RnOutputDialog.outputMessage"), num)); //$NON-NLS-1$
 			
 		} else {
-			getShell().setText("Rechnung ausgeben");
-			setTitle("Rechnung ausgeben");
-			setMessage("Wählen Sie bitte das Ausgabeziel für diese Rechnung aus");
+			getShell().setText(Messages.getString("RnOutputDialog.outputBillCaption")); //$NON-NLS-1$
+			setTitle(Messages.getString("RnOutputDialog.outputBillTitle")); //$NON-NLS-1$
+			setMessage(Messages.getString("RnOutputDialog.outputBillMessage")); //$NON-NLS-1$
 		}
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
@@ -116,8 +118,8 @@ public class RnOutputDialog extends TitleAreaDialog {
 		if (idx != -1) {
 			IRnOutputter rop = lo.get(idx);
 			rop.saveComposite();
-			/* Result<Rechnung> result= */rop.doOutput(
-				bCopy.getSelection() ? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn, new Properties());
+			/* Result<Rechnung> result= */rop.doOutput(bCopy.getSelection()
+					? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn, new Properties());
 		}
 		super.okPressed();
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnActions.java 5316 2009-05-20 11:34:51Z rgw_ch $
+ * $Id: RnActions.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -67,10 +67,10 @@ public class RnActions {
 	
 	RnActions(final RechnungsListeView view){
 		
-		printListeAction = new Action("Liste drucken") {
+		printListeAction = new Action(Messages.getString("RnActions.printListAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText("Die angezeigte Liste ausdrucken");
+				setToolTipText(Messages.getString("RnActions.printListTooltip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -79,9 +79,9 @@ public class RnActions {
 				new RnListeDruckDialog(view.getViewSite().getShell(), sel).open();
 			}
 		};
-		mahnWizardAction = new Action("Mahnungen-Automatik") {
+		mahnWizardAction = new Action(Messages.getString("RnActions.remindersAction")) { //$NON-NLS-1$
 			{
-				setToolTipText("Automatischer Mahnlauf gem. untenstehenden Angaben");
+				setToolTipText(Messages.getString("RnActions.remindersTooltip")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
 			}
 			
@@ -90,8 +90,8 @@ public class RnActions {
 				if (!MessageDialog
 					.openConfirm(
 						view.getViewSite().getShell(),
-						"Mahnlauf durchführen",
-						"Möchten Sie wirklich einen automatischen Mahnlauf durchführen?\n(lässt sich nicht rückgängig machen)")) {
+						Messages.getString("RnActions.reminderConfirmCaption"), //$NON-NLS-1$
+						Messages.getString("RnActions.reminderConfirmMessage"))) { //$NON-NLS-1$
 					return;
 				}
 				Handler.execute(view.getViewSite(), MahnlaufCommand.ID, null);
@@ -114,7 +114,7 @@ public class RnActions {
 				}
 			};
 		
-		patDetailAction = new Action("Patient details") {
+		patDetailAction = new Action(Messages.getString("RnActions.patientDetailsAction")) { //$NON-NLS-1$
 			@Override
 			public void run(){
 				IWorkbenchPage rnPage =
@@ -128,7 +128,7 @@ public class RnActions {
 			}
 			
 		};
-		editCaseAction = new Action("Fall bearbeiten") {
+		editCaseAction = new Action(Messages.getString("RnActions.edirCaseAction")) { //$NON-NLS-1$
 			
 			@Override
 			public void run(){
@@ -142,7 +142,7 @@ public class RnActions {
 			}
 			
 		};
-		delRnAction = new Action("Rechnung löschen") {
+		delRnAction = new Action(Messages.getString("RnActions.deleteBillAction")) { //$NON-NLS-1$
 			@Override
 			public void run(){
 				List<Rechnung> list = view.createList();
@@ -151,7 +151,7 @@ public class RnActions {
 				}
 			}
 		};
-		reactivateRnAction = new Action("Rechnung wieder Aktivieren") {
+		reactivateRnAction = new Action(Messages.getString("RnActions.reactivateBillAction")) { //$NON-NLS-1$
 			@Override
 			public void run(){
 				List<Rechnung> list = view.createList();
@@ -160,7 +160,7 @@ public class RnActions {
 				}
 			}
 		};
-		expandAllAction = new Action("Alle expandieren") {
+		expandAllAction = new Action(Messages.getString("RnActions.expandAllAction")) { //$NON-NLS-1$
 			@Override
 			public void run(){
 				view.cv.getViewerWidget().getControl().setRedraw(false);
@@ -168,7 +168,7 @@ public class RnActions {
 				view.cv.getViewerWidget().getControl().setRedraw(true);
 			}
 		};
-		collapseAllAction = new Action("Alle einklappen") {
+		collapseAllAction = new Action(Messages.getString("RnActions.collapseAllAction")) { //$NON-NLS-1$
 			@Override
 			public void run(){
 				view.cv.getViewerWidget().getControl().setRedraw(false);
@@ -176,9 +176,9 @@ public class RnActions {
 				view.cv.getViewerWidget().getControl().setRedraw(true);
 			}
 		};
-		reloadAction = new Action("Neu einlesen") {
+		reloadAction = new Action(Messages.getString("RnActions.reloadAction")) { //$NON-NLS-1$
 			{
-				setToolTipText("Liste neu einlesen");
+				setToolTipText(Messages.getString("RnActions.reloadTooltip")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
 			}
 			
@@ -188,9 +188,9 @@ public class RnActions {
 			}
 		};
 		
-		addPaymentAction = new Action("Buchung/Zahlung hinzufügen") {
+		addPaymentAction = new Action(Messages.getString("RnActions.addBookingAction")) { //$NON-NLS-1$
 			{
-				setToolTipText("Einen Betrag als Zahlung eingeben");
+				setToolTipText(Messages.getString("RnActions.addBookingTooltip")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 			}
 			
@@ -208,7 +208,7 @@ public class RnActions {
 			}
 		};
 		
-		addExpenseAction = new Action("Gebühr zuschlagen") {
+		addExpenseAction = new Action(Messages.getString("RnActions.addFineAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
 			}
@@ -229,9 +229,9 @@ public class RnActions {
 		
 		changeStatusAction =
 			new RestrictedAction(AccessControlDefaults.ADMIN_CHANGE_BILLSTATUS_MANUALLY,
-				"Status ändern") {
+				Messages.getString("RnActions.changeStateAction")) { //$NON-NLS-1$
 				{
-					setToolTipText("Manuelle Statusänderung (Vorsicht!");
+					setToolTipText(Messages.getString("RnActions.changeStateTooltip")); //$NON-NLS-1$
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				}
 				
@@ -248,10 +248,10 @@ public class RnActions {
 					}
 				}
 			};
-		stornoAction = new Action("Stornieren") {
+		stornoAction = new Action(Messages.getString("RnActions.stornoAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText("Rechnung für ungültig erklären");
+				setToolTipText(Messages.getString("RnActions.stornoActionTooltip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -266,9 +266,9 @@ public class RnActions {
 				}
 			}
 		};
-		increaseLevelAction = new Action("Mahnstufe erhöhen") {
+		increaseLevelAction = new Action(Messages.getString("RnActions.increaseReminderLevelAction")) { //$NON-NLS-1$
 			{
-				setToolTipText("Die Mahnstufe dieser Rechnung erhöhen");
+				setToolTipText(Messages.getString("RnActions.increadeReminderLevelTooltip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -287,16 +287,16 @@ public class RnActions {
 						actRn.setStatus(RnStatus.MAHNUNG_3);
 						break;
 					default:
-						SWTHelper.showInfo("Konnte Status nicht ändern",
-							"Diese Rechnung hatte keinen automatisch erhöhbaren Status");
+						SWTHelper.showInfo(Messages.getString("RnActions.changeStateErrorCaption"), //$NON-NLS-1$
+							Messages.getString("RnActions.changeStateErrorMessage")); //$NON-NLS-1$
 					}
 				}
 				
 			}
 		};
-		addAccountExcessAction = new Action("Positives Kontoguthaben zuweisen") {
+		addAccountExcessAction = new Action(Messages.getString("RnActions.addAccountGood")) { //$NON-NLS-1$
 			{
-				setToolTipText("Dieser Rechnung ein positives Kontoguthaben zuweisen");
+				setToolTipText(Messages.getString("RnActions.addAccountGoodTooltip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -320,7 +320,7 @@ public class RnActions {
 						
 						if (SWTHelper
 							.askYesNo(
-								"Positives Kontoguthaben",
+								Messages.getString("RnActions.transferMoneyCaption"), //$NON-NLS-1$
 								"Das Konto von Patient \""
 									+ patient.getLabel()
 									+ "\" weist ein positives Kontoguthaben auf. Wollen Sie den Betrag von "
@@ -338,10 +338,10 @@ public class RnActions {
 				}
 			}
 		};
-		rnFilterAction = new Action("Liste filtern", Action.AS_CHECK_BOX) {
+		rnFilterAction = new Action(Messages.getString("RnActions.filterListAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
-				setToolTipText("Bedingungen für die Anzeige eingeben");
+				setToolTipText(Messages.getString("RnActions.filterLIstTooltip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -400,9 +400,9 @@ public class RnActions {
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(false);
 			text.getPlugin().showToolbar(false);
-			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, "Rechnungen");
-			text.getPlugin().insertText("[Titel]",
-				"Rechnungsliste gedruckt am " + new TimeTool().toString(TimeTool.DATE_GER) + "\n",
+			text.createFromTemplateName(null, "Liste", Brief.UNKNOWN, Hub.actUser, Messages.getString("RnActions.bills")); //$NON-NLS-1$ //$NON-NLS-2$
+			text.getPlugin().insertText("[Titel]", //$NON-NLS-1$
+				Messages.getString("RnActions.billsListPrintetAt") + new TimeTool().toString(TimeTool.DATE_GER) + "\n", //$NON-NLS-1$ //$NON-NLS-2$
 				SWT.CENTER);
 			String[][] table = new String[rnn.size() + 1][];
 			Money sum = new Money();
@@ -414,18 +414,18 @@ public class RnActions {
 				Fall fall = rn.getFall();
 				Patient p = fall.getPatient();
 				table[i][0] = rn.getNr();
-				sb.append(p.getLabel()).append(" - ").append(fall.getLabel());
+				sb.append(p.getLabel()).append(" - ").append(fall.getLabel()); //$NON-NLS-1$
 				table[i][1] = sb.toString();
 				Money betrag = rn.getBetrag();
 				sum.addMoney(betrag);
 				table[i][2] = betrag.getAmountAsString();
 			}
 			table[i] = new String[3];
-			table[i][0] = "";
-			table[i][1] = "Summe";
+			table[i][0] = ""; //$NON-NLS-1$
+			table[i][1] = Messages.getString("RnActions.sum"); //$NON-NLS-1$
 			table[i][2] = sum.getAmountAsString();
-			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-			text.getPlugin().insertTable("[Liste]", 0, table, new int[] {
+			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
+			text.getPlugin().insertTable("[Liste]", 0, table, new int[] { //$NON-NLS-1$
 				10, 80, 10
 			});
 			return ret;
@@ -434,9 +434,9 @@ public class RnActions {
 		@Override
 		public void create(){
 			super.create();
-			getShell().setText("Rechnungsliste");
-			setTitle("Liste drucken");
-			setMessage("Dies druckt alle aufgelisteten Patienten");
+			getShell().setText(Messages.getString("RnActions.billsList")); //$NON-NLS-1$
+			setTitle(Messages.getString("RnActions.printListCaption")); //$NON-NLS-1$
+			setMessage(Messages.getString("RnActions.printListMessage")); //$NON-NLS-1$
 			getShell().setSize(900, 700);
 			SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				getShell());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsBlatt.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: RechnungsBlatt.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -37,6 +37,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.ObjectListener;
@@ -62,6 +63,7 @@ import ch.rgw.tools.StringTool;
 public class RechnungsBlatt extends Composite implements ActivationListener, SelectionListener,
 		ObjectListener {
 	
+	private static final String KEY_RECHNUNGSBLATT = "RechnungsBlatt/"; //$NON-NLS-1$
 	IViewSite site;
 	ListViewer buchungen;
 	org.eclipse.swt.widgets.List lbJournal;
@@ -83,44 +85,47 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 	
 	static final InputData[] rndata =
 		{
-			new InputData("RnNummer"),
-			new InputData("RnDatum"),
-			new InputData("Rechnungsstatus", "RnStatus", new LabeledInputField.IContentProvider() {
-				
-				public void displayContent(PersistentObject po, InputData ltf){
-					Rechnung r = (Rechnung) po;
-					ltf.setText(RnStatus.getStatusText(r.getStatus()));
+			new InputData(Messages.getString("RechnungsBlatt.billNumber"), Rechnung.BILL_NUMBER, Typ.STRING, null), //$NON-NLS-1$
+			new InputData(Messages.getString("RechnungsBlatt.billDate"), Rechnung.BILL_DATE, Typ.STRING, null), //$NON-NLS-1$
+			new InputData(Messages.getString("RechnungsBlatt.billState"), Rechnung.BILL_STATE, //$NON-NLS-1$
+				new LabeledInputField.IContentProvider() {
 					
-				}
-				
-				public void reloadContent(PersistentObject po, InputData ltf){
-					if (new RnDialogs.StatusAendernDialog(Hub.plugin.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
-						GlobalEvents.getInstance().fireObjectEvent((Rechnung) po,
-							GlobalEvents.CHANGETYPE.update);
+					public void displayContent(PersistentObject po, InputData ltf){
+						Rechnung r = (Rechnung) po;
+						ltf.setText(RnStatus.getStatusText(r.getStatus()));
+						
 					}
-				}
-				
-			}), new InputData("Behdl von", "RnDatumVon", Typ.STRING, null),
-			new InputData("Behdl bis", "RnDatumBis", Typ.STRING, null),
-			new InputData("Betrag total", "Betragx100", Typ.CURRENCY, null),
-			new InputData("Betrag offen", "Betragx100", new LabeledInputField.IContentProvider() {
-				
-				public void displayContent(PersistentObject po, InputData ltf){
-					Rechnung rn = (Rechnung) po;
-					Money offen = rn.getOffenerBetrag();
-					ltf.setText(offen.getAmountAsString());
-				}
-				
-				public void reloadContent(PersistentObject po, InputData ltf){
-					if (new RnDialogs.BuchungHinzuDialog(Hub.plugin.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
-						GlobalEvents.getInstance().fireObjectEvent((Rechnung) po,
-							GlobalEvents.CHANGETYPE.update);
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
+						if (new RnDialogs.StatusAendernDialog(Hub.plugin.getWorkbench()
+							.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
+							GlobalEvents.getInstance().fireObjectEvent((Rechnung) po,
+								GlobalEvents.CHANGETYPE.update);
+						}
 					}
-				}
-				
-			})
+					
+				}),
+			new InputData(Messages.getString("RechnungsBlatt.treatmentsFrom"), Rechnung.BILL_DATE_FROM, Typ.STRING, null), //$NON-NLS-1$
+			new InputData(Messages.getString("RechnungsBlatt.treatmentsUntil"), Rechnung.BILL_DATE_UNTIL, Typ.STRING, null), //$NON-NLS-1$
+			new InputData(Messages.getString("RechnungsBlatt.amountTotal"), Rechnung.BILL_AMOUNT_CENTS, Typ.CURRENCY, null), //$NON-NLS-1$
+			new InputData(Messages.getString("RechnungsBlatt.amountOpen"), Rechnung.BILL_AMOUNT_CENTS, //$NON-NLS-1$
+				new LabeledInputField.IContentProvider() {
+					
+					public void displayContent(PersistentObject po, InputData ltf){
+						Rechnung rn = (Rechnung) po;
+						Money offen = rn.getOffenerBetrag();
+						ltf.setText(offen.getAmountAsString());
+					}
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
+						if (new RnDialogs.BuchungHinzuDialog(Hub.plugin.getWorkbench()
+							.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
+							GlobalEvents.getInstance().fireObjectEvent((Rechnung) po,
+								GlobalEvents.CHANGETYPE.update);
+						}
+					}
+					
+				})
 		};
 	LabeledInputField.AutoForm rnform;
 	
@@ -147,12 +152,12 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 			@Override
 			public void expansionStateChanging(final ExpansionEvent e){
 				ExpandableComposite src = (ExpandableComposite) e.getSource();
-				saveExpandedState("RechnungsBlatt/" + src.getText(), e.getState());
+				saveExpandedState(KEY_RECHNUNGSBLATT + src.getText(), e.getState());
 			}
 			
 		};
 		
-		ecBuchungen = WidgetFactory.createExpandableComposite(tk, form, "Buchungen");
+		ecBuchungen = WidgetFactory.createExpandableComposite(tk, form, Messages.getString("RechnungsBlatt.bookings")); //$NON-NLS-1$
 		ecBuchungen.addExpansionListener(ecExpansionListener);
 		// tk.createLabel(body, "Buchungen");
 		buchungen = new ListViewer(ecBuchungen, SWT.V_SCROLL | SWT.BORDER);
@@ -168,7 +173,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 					(Rechnung) GlobalEvents.getInstance().getSelectedObject(Rechnung.class);
 				if (actRn == null) {
 					return new String[] {
-						"Keine Rechnung ausgewählt"
+						Messages.getString("RechnungsBlatt.noBillSelected") //$NON-NLS-1$
 					};
 				}
 				List<Zahlung> lz = actRn.getZahlungen();
@@ -192,9 +197,9 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 					sb.append(zahlung.getLabel());
 					String bemerkung = zahlung.getBemerkung();
 					if (!StringTool.isNothing(bemerkung)) {
-						sb.append(" (");
+						sb.append(" ("); //$NON-NLS-1$
 						sb.append(bemerkung);
-						sb.append(")");
+						sb.append(")"); //$NON-NLS-1$
 					}
 					return sb.toString();
 				} else {
@@ -203,7 +208,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 			}
 		});
 		// new Label(body,SWT.SEPARATOR|SWT.HORIZONTAL);
-		ecBemerkungen = WidgetFactory.createExpandableComposite(tk, form, "Bemerkungen");
+		ecBemerkungen = WidgetFactory.createExpandableComposite(tk, form, Messages.getString("RechnungsBlatt.remarks")); //$NON-NLS-1$
 		ecBemerkungen.addExpansionListener(ecExpansionListener);
 		tBemerkungen = SWTHelper.createText(tk, ecBemerkungen, 5, SWT.BORDER);
 		tBemerkungen.addFocusListener(new FocusAdapter() {
@@ -215,27 +220,25 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 		});
 		ecBemerkungen.setClient(tBemerkungen);
 		// tk.createLabel(body, "Statusänderungen");
-		ecStatus = WidgetFactory.createExpandableComposite(tk, form, "Statusänderungen");
+		ecStatus = WidgetFactory.createExpandableComposite(tk, form, Messages.getString("RechnungsBlatt.sateChangements")); //$NON-NLS-1$
 		ecStatus.addExpansionListener(ecExpansionListener);
 		lbJournal = new org.eclipse.swt.widgets.List(ecStatus, SWT.V_SCROLL | SWT.BORDER);
 		SWTHelper.setGridDataHeight(lbJournal, 4, true);
 		tk.adapt(lbJournal, true, true);
 		ecStatus.setClient(lbJournal);
-		// tk.createLabel(body, "Fehlermeldungen");
-		ecFehler = WidgetFactory.createExpandableComposite(tk, form, "Fehlermeldungen");
+		
+		ecFehler = WidgetFactory.createExpandableComposite(tk, form, Messages.getString("RechnungsBlatt.errorMessages")); //$NON-NLS-1$
 		ecFehler.addExpansionListener(ecExpansionListener);
 		tRejects = SWTHelper.createText(tk, ecFehler, 4, SWT.READ_ONLY | SWT.V_SCROLL);
 		ecFehler.setClient(tRejects);
-		// tk.createLabel(body, "Ausgaben");
-		ecAusgaben = WidgetFactory.createExpandableComposite(tk, form, "Ausgaben");
+		ecAusgaben = WidgetFactory.createExpandableComposite(tk, form, Messages.getString("RechnungsBlatt.outputs")); //$NON-NLS-1$
 		ecAusgaben.addExpansionListener(ecExpansionListener);
 		lbOutputs = new org.eclipse.swt.widgets.List(ecAusgaben, SWT.V_SCROLL | SWT.BORDER);
 		ecAusgaben.setClient(lbOutputs);
 		SWTHelper.setGridDataHeight(lbOutputs, 4, true);
 		tk.adapt(lbOutputs, true, true);
 		
-		// tk.createLabel(body, "Konsultationen");
-		ecKons = WidgetFactory.createExpandableComposite(tk, form, "Konsultationen");
+		ecKons = WidgetFactory.createExpandableComposite(tk, form, Messages.getString("RechnungsBlatt.consultations")); //$NON-NLS-1$
 		ecKons.addExpansionListener(ecExpansionListener);
 		konsultationenViewer = new ListViewer(ecKons, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		ecKons.setClient(konsultationenViewer.getList());
@@ -292,17 +295,17 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 							sum.addMoney(preis);
 						}
 					}
-					return konsultation.getLabel() + " (" + sum.toString() + ")";
+					return konsultation.getLabel() + " (" + sum.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (element instanceof IDiagnose) {
 					IDiagnose diagnose = (IDiagnose) element;
-					return "  - " + diagnose.getLabel();
+					return "  - " + diagnose.getLabel(); //$NON-NLS-1$
 				} else if (element instanceof Verrechnet) {
 					Verrechnet verrechnet = (Verrechnet) element;
 					int zahl = verrechnet.getZahl();
 					Money preis = verrechnet.getNettoPreis();
 					preis.multiply(zahl);
-					return "  - " + zahl + " " + verrechnet.getLabel() + " (" + preis.toString()
-						+ ")";
+					return "  - " + zahl + " " + verrechnet.getLabel() + " (" + preis.toString() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ ")"; //$NON-NLS-1$
 				} else {
 					return element.toString();
 				}
@@ -387,19 +390,19 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 	
 	public void display(){
 		rnform.reload(actRn);
-		rnAdressat.setText("");
+		rnAdressat.setText(StringConstants.EMPTY);
 		buchungen.refresh(true);
 		lbJournal.removeAll();
-		tRejects.setText("");
+		tRejects.setText(StringConstants.EMPTY);
 		lbOutputs.removeAll();
 		if (actRn != null) {
-			rnAdressat.setText("Adressat: " + actRn.getFall().getGarant().getLabel());
+			rnAdressat.setText(Messages.getString("RechnungsBlatt.adressee") + actRn.getFall().getGarant().getLabel()); //$NON-NLS-1$
 			form.setText(actRn.getLabel());
 			List<String> trace = actRn.getTrace(Rechnung.STATUS_CHANGED);
 			for (String s : trace) {
-				String[] stm = s.split("\\s*:\\s");
+				String[] stm = s.split("\\s*:\\s"); //$NON-NLS-1$
 				StringBuilder sb = new StringBuilder();
-				sb.append(stm[0]).append(" : ").append(
+				sb.append(stm[0]).append(" : ").append( //$NON-NLS-1$
 					RnStatus.getStatusText(Integer.parseInt(stm[1])));
 				lbJournal.add(sb.toString());
 			}
@@ -407,7 +410,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 				List<String> rejects = actRn.getTrace(Rechnung.REJECTED);
 				StringBuilder rjj = new StringBuilder();
 				for (String r : rejects) {
-					rjj.append(r).append("\n------\n");
+					rjj.append(r).append("\n------\n"); //$NON-NLS-1$
 				}
 				tRejects.setText(rjj.toString());
 			}
@@ -420,12 +423,12 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 		
 		konsultationenViewer.refresh();
 		
-		setExpandedState(ecBuchungen, "RechnungsBlatt/" + ecBuchungen.getText());
-		setExpandedState(ecBemerkungen, "RechnungsBlatt/" + ecBemerkungen.getText());
-		setExpandedState(ecStatus, "RechnungsBlatt/" + ecStatus.getText());
-		setExpandedState(ecFehler, "RechnungsBlatt/" + ecFehler.getText());
-		setExpandedState(ecAusgaben, "RechnungsBlatt/" + ecAusgaben.getText());
-		setExpandedState(ecKons, "RechnungsBlatt/" + ecKons.getText());
+		setExpandedState(ecBuchungen, KEY_RECHNUNGSBLATT + ecBuchungen.getText());
+		setExpandedState(ecBemerkungen, KEY_RECHNUNGSBLATT + ecBemerkungen.getText());
+		setExpandedState(ecStatus, KEY_RECHNUNGSBLATT + ecStatus.getText());
+		setExpandedState(ecFehler, KEY_RECHNUNGSBLATT + ecFehler.getText());
+		setExpandedState(ecAusgaben, KEY_RECHNUNGSBLATT + ecAusgaben.getText());
+		setExpandedState(ecKons, KEY_RECHNUNGSBLATT + ecKons.getText());
 		
 		form.reflow(true);
 	}

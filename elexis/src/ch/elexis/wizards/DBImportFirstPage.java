@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - adapted for importing data from other databases
  *    
- *  $Id: DBImportFirstPage.java 4771 2008-12-08 13:36:36Z rgw_ch $
+ *  $Id: DBImportFirstPage.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.wizards;
 
@@ -39,7 +39,7 @@ public class DBImportFirstPage extends WizardPage {
 	JdbcLink j = null;
 	
 	static final String[] supportedDB = new String[] {
-		"mySQl", "PostgreSQL", "ODBC"
+		"mySQl", "PostgreSQL", "ODBC" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	};
 	static final int MYSQL = 0;
 	static final int POSTGRESQL = 1;
@@ -47,7 +47,7 @@ public class DBImportFirstPage extends WizardPage {
 	
 	public DBImportFirstPage(String pageName){
 		super(
-			Messages.getString("DBImportFirstPage.connection"), Messages.getString("DBImportFirstPage.typeOfDB"), Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$ //$NON-NLS-2$
+			Messages.getString("DBImportFirstPage.connection"), Messages.getString("DBImportFirstPage.typeOfDB"), Hub.getImageDescriptor("rsc/elexis48.png")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setMessage(Messages.getString("DBImportFirstPage.selectType") //$NON-NLS-1$
 			+ Messages.getString("DBImportFirstPage.enterNameODBC")); //$NON-NLS-1$
 		setDescription(Messages.getString("DBImportFirstPage.theDesrciption")); //$NON-NLS-1$
@@ -79,14 +79,14 @@ public class DBImportFirstPage extends WizardPage {
 				case POSTGRESQL:
 					server.setEnabled(true);
 					dbName.setEnabled(true);
-					defaultUser = "";
-					defaultPassword = "";
+					defaultUser = ""; //$NON-NLS-1$
+					defaultPassword = ""; //$NON-NLS-1$
 					break;
 				case ODBC:
 					server.setEnabled(false);
 					dbName.setEnabled(true);
-					defaultUser = "sa";
-					defaultPassword = "";
+					defaultUser = "sa"; //$NON-NLS-1$
+					defaultPassword = ""; //$NON-NLS-1$
 					break;
 				default:
 					break;
@@ -101,12 +101,12 @@ public class DBImportFirstPage extends WizardPage {
 		
 		tk.adapt(dbTypes, true, true);
 		tk.createLabel(body, Messages.getString("DBImportFirstPage.serverAddress")); //$NON-NLS-1$
-		server = tk.createText(body, "", SWT.BORDER);
+		server = tk.createText(body, "", SWT.BORDER); //$NON-NLS-1$
 		
 		TableWrapData twr = new TableWrapData(TableWrapData.FILL_GRAB);
 		server.setLayoutData(twr);
 		tk.createLabel(body, Messages.getString("DBImportFirstPage.databaseName")); //$NON-NLS-1$
-		dbName = tk.createText(body, "", SWT.BORDER);
+		dbName = tk.createText(body, "", SWT.BORDER); //$NON-NLS-1$
 		TableWrapData twr2 = new TableWrapData(TableWrapData.FILL_GRAB);
 		dbName.setLayoutData(twr2);
 		if (wiz.preset != null && wiz.preset.length > 1) {

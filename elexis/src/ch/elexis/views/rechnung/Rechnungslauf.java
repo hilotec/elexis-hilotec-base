@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 5170 2009-02-21 19:44:23Z rgw_ch $
+ *  $Id: Rechnungslauf.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -20,12 +20,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.commands.Handler;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -56,7 +56,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		this.ttLastBefore = ttLastBefore;
 		this.mLimit = mLimit;
 		this.bQuartal = bQuartal;
-		this.bSkip=bSkip;
+		this.bSkip = bSkip;
 		hKons = new Hashtable<Konsultation, Patient>(1000);
 		ttHeute = new TimeTool();
 		limitQuartal = new TimeTool();
@@ -78,20 +78,18 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		InterruptedException{
 		String kMandantID = Hub.actMandant.getId();
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add("RechnungsID", "", null);
-		// if(Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL)==false){
-		qbe.add("MandantID", "=", kMandantID);
-		// }
-		monitor.beginTask("Analysiere Konsultationen", IProgressMonitor.UNKNOWN);
-		monitor.subTask("Lese Konsultationen ein");
+		qbe.add(Konsultation.BILL_ID, StringConstants.EMPTY, null);
+		qbe.add(Konsultation.MANDATOR_ID, Query.EQUALS, kMandantID);
+		monitor.beginTask(Messages.getString("Rechnungslauf.analyzingConsultations"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.subTask(Messages.getString("Rechnungslauf.readingConsultations")); //$NON-NLS-1$
 		List<Konsultation> list = qbe.execute();
-		ArrayList<Konsultation> listbasic=new ArrayList<Konsultation>(list); 
-		HashMap<Fall, Object> hSkipCase=new HashMap<Fall, Object>();
+		ArrayList<Konsultation> listbasic = new ArrayList<Konsultation>(list);
+		HashMap<Fall, Object> hSkipCase = new HashMap<Fall, Object>();
 		TimeTool now = new TimeTool();
 		TimeTool cmp = new TimeTool();
-		Iterator<Konsultation> it=listbasic.iterator();
+		Iterator<Konsultation> it = listbasic.iterator();
 		while (it.hasNext()) {
-			Konsultation k=it.next();
+			Konsultation k = it.next();
 			monitor.worked(1);
 			if (hKons.get(k) != null) {
 				continue;
@@ -100,7 +98,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			if ((kFall == null) || (!kFall.exists())) {
 				continue;
 			}
-			if(hSkipCase.get(kFall)!=null){
+			if (hSkipCase.get(kFall) != null) {
 				continue;
 			}
 			String kfID = kFall.getId();
@@ -112,11 +110,11 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			if (bMarked) { // Alle zur Verrechnung markierten Fälle abrechnen
 				TimeTool bd = kFall.getBillingDate();
 				if ((bd != null) && (bd.isBeforeOrEqual(now))) {
-					Iterator<Konsultation> i2=list.iterator();
-					while(i2.hasNext()) {
-						Konsultation k2=i2.next();
-						String fid = k2.get("FallID");
-						String mid = k2.get("MandantID");
+					Iterator<Konsultation> i2 = list.iterator();
+					while (i2.hasNext()) {
+						Konsultation k2 = i2.next();
+						String fid = k2.get(Konsultation.CASE_ID);
+						String mid = k2.get(Konsultation.MANDATOR_ID);
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 							i2.remove();
@@ -128,11 +126,11 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				// bestimmten Datum
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(ttFirstBefore)) {
-					Iterator<Konsultation> i2=list.iterator();
-					while(i2.hasNext()) {
-						Konsultation k2=i2.next();
-						String fid = k2.get("FallID");
-						String mid = k2.get("MandantID");
+					Iterator<Konsultation> i2 = list.iterator();
+					while (i2.hasNext()) {
+						Konsultation k2 = i2.next();
+						String fid = k2.get(Konsultation.CASE_ID);
+						String mid = k2.get(Konsultation.MANDATOR_ID);
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 							i2.remove();
@@ -144,18 +142,18 @@ public class Rechnungslauf implements IRunnableWithProgress {
 			if (ttLastBefore != null) { // Alle Serien mit letzter Kons vor einem bestimmten Datum
 				cmp.set(k.getDatum());
 				if (cmp.isBefore(ttLastBefore)) {
-					Iterator<Konsultation> i2=list.iterator();
-					while(i2.hasNext()) {
-						Konsultation k2=i2.next();
-						String fid = k2.get("FallID");
-						String mid = k2.get("MandantID");
+					Iterator<Konsultation> i2 = list.iterator();
+					while (i2.hasNext()) {
+						Konsultation k2 = i2.next();
+						String fid = k2.get(Konsultation.CASE_ID);
+						String mid = k2.get(Konsultation.MANDATOR_ID);
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							cmp.set(k2.getDatum());
-							if(cmp.isAfter(ttLastBefore)){
-								hSkipCase.put(kFall, "1");
+							if (cmp.isAfter(ttLastBefore)) {
+								hSkipCase.put(kFall, "1"); //$NON-NLS-1$
 								i2.remove();
 								break;
-							}else{
+							} else {
 								hKons.put(k2, kPatient);
 								i2.remove();
 							}
@@ -167,12 +165,12 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				Money sum = new Money();
 				Map<Konsultation, Patient> list2 = new HashMap<Konsultation, Patient>(100);
 				for (Konsultation k2 : list) {
-					String fid = k2.get("FallID");
-					String mid = k2.get("MandantID");
+					String fid = k2.get(Konsultation.CASE_ID);
+					String mid = k2.get(Konsultation.MANDATOR_ID);
 					if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 						list2.put(k2, kPatient);
-						List<Verrechnet> lstg=k2.getLeistungen();
-						for(Verrechnet v:lstg){
+						List<Verrechnet> lstg = k2.getLeistungen();
+						for (Verrechnet v : lstg) {
 							sum.addMoney(v.getNettoPreis());
 						}
 					}
@@ -189,22 +187,22 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				}
 			}
 		}
-		if(ttLastBefore!=null){
-			for( Fall fall:hSkipCase.keySet()){
-				for(Konsultation kd:fall.getBehandlungen(false)){
+		if (ttLastBefore != null) {
+			for (Fall fall : hSkipCase.keySet()) {
+				for (Konsultation kd : fall.getBehandlungen(false)) {
 					hKons.remove(kd);
 				}
 			}
 		}
-		monitor.subTask("erstelle Listen");
+		monitor.subTask(Messages.getString("Rechnungslauf.creatingLists")); //$NON-NLS-1$
 		Enumeration<Konsultation> en = hKons.keys();
 		while (en.hasMoreElements()) {
 			kzv.selectKonsultation(en.nextElement());
 			monitor.worked(1);
 		}
-		if(bSkip){
-			monitor.subTask("erstelle Rechnungen");
-			Handler.executeWithProgress(kzv.getViewSite(), "bill.create", kzv.tSelection, monitor);
+		if (bSkip) {
+			monitor.subTask(Messages.getString("Rechnungslauf.creatingBills")); //$NON-NLS-1$
+			Handler.executeWithProgress(kzv.getViewSite(), "bill.create", kzv.tSelection, monitor); //$NON-NLS-1$
 		}
 		monitor.done();
 		

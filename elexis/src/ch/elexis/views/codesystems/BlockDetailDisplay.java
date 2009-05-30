@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockDetailDisplay.java 5070 2009-01-30 17:49:34Z rgw_ch $
+ *  $Id: BlockDetailDisplay.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -48,6 +48,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.ICodeElement;
@@ -72,7 +73,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	ListViewer lLst;
 	Button bNew, bEigen;
 	List<Mandant> lMandanten;
-	private static Log log = Log.get("BlockDetail");
+	private static Log log = Log.get("BlockDetail"); //$NON-NLS-1$
 	private Action removeLeistung, moveUpAction, moveDownAction, editAction;
 	IViewSite site;
 	
@@ -83,16 +84,17 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		Composite body = form.getBody();
 		body.setBackground(parent.getBackground());
 		body.setLayout(new GridLayout(2, false));
-		tk.createLabel(body, "Name").setBackground(parent.getBackground());
-		tName = tk.createText(body, "", SWT.BORDER);
+		tk
+			.createLabel(body, Messages.getString("BlockDetailDisplay.name")).setBackground(parent.getBackground()); //$NON-NLS-1$
+		tName = tk.createText(body, "", SWT.BORDER); //$NON-NLS-1$
 		tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tk.createLabel(body, "Mandant").setBackground(parent.getBackground());
+		tk.createLabel(body, StringConstants.MANDATOR).setBackground(parent.getBackground());
 		cbMandant = new Combo(body, SWT.NONE);
 		cbMandant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.adapt(cbMandant);
 		Query<Mandant> qm = new Query<Mandant>(Mandant.class);
 		lMandanten = qm.execute();
-		cbMandant.add("Alle");
+		cbMandant.add(Messages.getString("BlockDetailDisplay.all")); //$NON-NLS-1$
 		for (PersistentObject m : lMandanten) {
 			cbMandant.add(m.getLabel());
 		}
@@ -106,16 +108,16 @@ public class BlockDetailDisplay implements IDetailDisplay {
 						Leistungsblock.class);
 				if (idx > 0) {
 					PersistentObject m = lMandanten.get(idx - 1);
-					lb.set("MandantID", m.getId());
+					lb.set(Leistungsblock.MANDANT_ID, m.getId());
 				} else {
-					lb.set("MandantID", "");
+					lb.set(Leistungsblock.MANDANT_ID, StringConstants.EMPTY);
 				}
 				
 			}
 			
 		});
 		Group gList = new Group(body, SWT.BORDER);
-		gList.setText("Leistungen");
+		gList.setText(Messages.getString("BlockDetailDisplay.services")); //$NON-NLS-1$
 		gList.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		gList.setLayout(new FillLayout());
 		tk.adapt(gList);
@@ -148,7 +150,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			@Override
 			public String getText(final Object element){
 				ICodeElement v = (ICodeElement) element;
-				return v.getCode() + " " + v.getText();
+				return v.getCode() + StringConstants.SPACE + v.getText();
 			}
 			
 		});
@@ -169,7 +171,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			
 			public void drop(final DropTargetEvent event){
 				String drp = (String) event.data;
-				String[] dl = drp.split(",");
+				String[] dl = drp.split(","); //$NON-NLS-1$
 				for (String obj : dl) {
 					PersistentObject dropped = Hub.poFactory.createFromString(obj);
 					if (dropped instanceof ICodeElement) {
@@ -192,7 +194,9 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			}
 			
 		});
-		bNew = tk.createButton(body, "Vordefinierte Leistungen hinzufügen", SWT.PUSH);
+		bNew =
+			tk.createButton(body,
+				Messages.getString("BlockDetailDisplay.addPredefinedServices"), SWT.PUSH); //$NON-NLS-1$
 		bNew.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bNew.addSelectionListener(new SelectionAdapter() {
 			
@@ -202,16 +206,17 @@ public class BlockDetailDisplay implements IDetailDisplay {
 					site.getPage().showView(LeistungenView.ID);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log
-						.log("Fehler beim Starten des Leistungscodes " + ex.getMessage(),
-							Log.ERRORS);
+					log.log("Fehler beim Starten des Leistungscodes " + ex.getMessage(), //$NON-NLS-1$
+						Log.ERRORS);
 				}
 				
 			}
 			
 		});
 		
-		bEigen = tk.createButton(body, "Eigene Leistungen hinzufügen", SWT.PUSH);
+		bEigen =
+			tk.createButton(body,
+				Messages.getString("BlockDetailDisplay.addSelfDefinedServices"), SWT.PUSH); //$NON-NLS-1$
 		bEigen.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bEigen.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -258,12 +263,12 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	public void display(final Object obj){
 		if (obj == null) {
 			bNew.setEnabled(false);
-			tName.setText("");
+			tName.setText(StringConstants.EMPTY);
 			cbMandant.select(0);
 		} else {
 			Leistungsblock lb = (Leistungsblock) obj;
-			tName.setText(lb.get("Name"));
-			String mId = lb.get("MandantID");
+			tName.setText(lb.get(Messages.getString("BlockDetailDisplay.name"))); //$NON-NLS-1$
+			String mId = lb.get(Leistungsblock.MANDANT_ID);
 			int sel = 0;
 			if (!StringTool.isNothing(mId)) {
 				String[] items = cbMandant.getItems();
@@ -276,7 +281,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	}
 	
 	public String getTitle(){
-		return "Blöcke";
+		return Messages.getString("BlockDetailDisplay.blocks"); //$NON-NLS-1$
 	}
 	
 	class EigenLeistungDlg extends TitleAreaDialog {
@@ -293,13 +298,13 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		public void create(){
 			super.create();
 			if (result instanceof Eigenleistung) {
-				setTitle("Eigenleistung anpassen");
-				setMessage("Bitte geben Sie Name, Kürzel und Daten für diese Eigenleistung ein");
+				setTitle(Messages.getString("BlockDetailDisplay.editServiceCaption")); //$NON-NLS-1$
+				setMessage(Messages.getString("BlockDetailDisplay.editServiceBody")); //$NON-NLS-1$
 			} else if (result == null) {
-				setTitle("Eigenleistung definieren");
-				setMessage("Bitte geben Sie Name, Kürzel und Daten für die gewünschte Eigenleistung ein");
+				setTitle(Messages.getString("BlockDetailDisplay.defineServiceCaption")); //$NON-NLS-1$
+				setMessage(Messages.getString("BlockDetailDisplay.defineServiceBody")); //$NON-NLS-1$
 			}
-			getShell().setText("Eigenleistung");
+			getShell().setText(Messages.getString("BlockDetailDisplay.SerlfDefinedService")); //$NON-NLS-1$
 		}
 		
 		@Override
@@ -307,25 +312,26 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
-			new Label(ret, SWT.NONE).setText("Name");
+			new Label(ret, SWT.NONE).setText(Messages.getString("BlockDetailDisplay.name")); //$NON-NLS-1$
 			tName = new Text(ret, SWT.BORDER);
 			tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			new Label(ret, SWT.NONE).setText("Kürzel");
+			new Label(ret, SWT.NONE).setText(Messages.getString("BlockDetailDisplay.shortname")); //$NON-NLS-1$
 			tKurz = new Text(ret, SWT.BORDER);
 			tKurz.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			new Label(ret, SWT.NONE).setText("Kosten (Rp.)");
+			new Label(ret, SWT.NONE).setText(Messages.getString("BlockDetailDisplay.costInCents")); //$NON-NLS-1$
 			tEK = new Text(ret, SWT.BORDER);
 			tEK.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			new Label(ret, SWT.NONE).setText("Preis (Rp.)");
+			new Label(ret, SWT.NONE).setText(Messages.getString("BlockDetailDisplay.priceInCents")); //$NON-NLS-1$
 			tVK = new Text(ret, SWT.BORDER);
 			tVK.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			new Label(ret, SWT.NONE).setText("Zeitbedarf");
+			new Label(ret, SWT.NONE)
+				.setText(Messages.getString("BlockDetailDisplay.timeInMinutes")); //$NON-NLS-1$
 			tTime = new Text(ret, SWT.BORDER);
 			tTime.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (result instanceof Eigenleistung) {
 				Eigenleistung el = (Eigenleistung) result;
-				tName.setText(el.get("Bezeichnung"));
-				tKurz.setText(el.get("Code"));
+				tName.setText(el.get(Messages.getString("BlockDetailDisplay.title"))); //$NON-NLS-1$
+				tKurz.setText(el.get(Messages.getString("BlockDetailDisplay.code"))); //$NON-NLS-1$
 				tEK.setText(el.getKosten(new TimeTool()).getCentsAsString());
 				tVK.setText(el.getPreis(new TimeTool(), null).getCentsAsString());
 			}
@@ -340,7 +346,8 @@ public class BlockDetailDisplay implements IDetailDisplay {
 						.getText());
 			} else if (result instanceof Eigenleistung) {
 				((Eigenleistung) result).set(new String[] {
-					"Code", "Bezeichnung", "EK_Preis", "VK_Preis"
+					Eigenleistung.CODE, Eigenleistung.BEZEICHNUNG, Eigenleistung.EK_PREIS,
+					Eigenleistung.VK_PREIS
 				}, new String[] {
 					tKurz.getText(), tName.getText(), tEK.getText(), tVK.getText()
 				});
@@ -351,48 +358,49 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	};
 	
 	private void makeActions(){
-		removeLeistung = new Action("Entfernen") {
-			@Override
-			public void run(){
-				Leistungsblock lb =
-					(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(
-						Leistungsblock.class);
-				if (lb != null) {
-					IStructuredSelection sel = (IStructuredSelection) lLst.getSelection();
-					Object o = sel.getFirstElement();
-					if (o != null) {
-						lb.removeElement((ICodeElement) o);
-						lLst.refresh();
+		removeLeistung = new Action(Messages.getString("BlockDetailDisplay.remove")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					Leistungsblock lb =
+						(Leistungsblock) GlobalEvents.getInstance().getSelectedObject(
+							Leistungsblock.class);
+					if (lb != null) {
+						IStructuredSelection sel = (IStructuredSelection) lLst.getSelection();
+						Object o = sel.getFirstElement();
+						if (o != null) {
+							lb.removeElement((ICodeElement) o);
+							lLst.refresh();
+						}
 					}
 				}
-			}
-		};
-		moveUpAction = new Action("nach oben") {
-			@Override
-			public void run(){
-				moveElement(-1);
-			}
-		};
-		moveDownAction = new Action("nach unten") {
-			@Override
-			public void run(){
-				moveElement(1);
-			}
-		};
-		editAction = new Action("Ändern...") {
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText("Dieses Element anpassen");
-			}
-			
-			@Override
-			public void run(){
-				IVerrechenbar iv =
-					(IVerrechenbar) ((IStructuredSelection) lLst.getSelection()).getFirstElement();
-				EigenLeistungDlg eld = new EigenLeistungDlg(site.getShell(), iv);
-				eld.open();
-			}
-		};
+			};
+		moveUpAction = new Action(Messages.getString("BlockDetailDisplay.moveUp")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					moveElement(-1);
+				}
+			};
+		moveDownAction = new Action(Messages.getString("BlockDetailDisplay.moveDown")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					moveElement(1);
+				}
+			};
+		editAction = new Action(Messages.getString("BlockDetailDisplay.changeAction")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText(Messages.getString("BlockDetailDisplay.changeActionTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					IVerrechenbar iv =
+						(IVerrechenbar) ((IStructuredSelection) lLst.getSelection())
+							.getFirstElement();
+					EigenLeistungDlg eld = new EigenLeistungDlg(site.getShell(), iv);
+					eld.open();
+				}
+			};
 	}
 	
 	private void moveElement(final int off){

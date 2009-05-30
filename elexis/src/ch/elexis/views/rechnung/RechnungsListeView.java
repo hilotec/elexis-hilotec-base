@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsListeView.java 5170 2009-02-21 19:44:23Z rgw_ch $
+ * $Id: RechnungsListeView.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -39,7 +39,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.preferences.PreferenceConstants;
-import ch.rgw.tools.Money;
 import ch.elexis.util.MoneyInput;
 import ch.elexis.util.NumberInput;
 import ch.elexis.util.SWTHelper;
@@ -47,6 +46,7 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.Tree;
 
 /**
@@ -57,6 +57,12 @@ import ch.rgw.tools.Tree;
  * 
  */
 public class RechnungsListeView extends ViewPart implements BackingStoreListener {
+	private static final String REMINDER_3 = Messages.getString("RechnungsListeView.reminder3"); //$NON-NLS-1$
+	
+	private static final String REMINDER_2 = Messages.getString("RechnungsListeView.reminder2"); //$NON-NLS-1$
+	
+	private static final String REMINDER_1 = Messages.getString("RechnungsListeView.reminder1"); //$NON-NLS-1$
+	
 	public final static String ID = "ch.elexis.RechnungsListeView"; //$NON-NLS-1$
 	
 	CommonViewer cv;
@@ -115,7 +121,6 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
 					.getAmountAsString());
 				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT3RD, mi3rd.getMoney(false)
 					.getAmountAsString());
-				// Hub.mandantCfg.dump(null);
 			}
 			
 		};
@@ -124,11 +129,9 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
 		Form fSum = tk.createForm(bottom);
 		Form fWizard = tk.createForm(bottom);
 		fSum.setText(Messages.getString("RechnungsListeView.sum")); //$NON-NLS-1$
-		fWizard.setText("Mahnungen-Automatik");
-		// Composite cSum=new Composite(comp,SWT.NONE);
+		fWizard.setText(Messages.getString("RechnungsListeView.dunningAutomatics")); //$NON-NLS-1$
 		Composite cSum = fSum.getBody();
 		cSum.setLayout(new GridLayout(2, false));
-		// fSum.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.createLabel(cSum, Messages.getString("RechnungsListeView.patInList")); //$NON-NLS-1$
 		tPat = tk.createText(cSum, "", SWT.BORDER | SWT.READ_ONLY); //$NON-NLS-1$
 		tPat.setLayoutData(new GridData(100, SWT.DEFAULT));
@@ -144,30 +147,30 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
 		Composite cW = fWizard.getBody();
 		cW.setLayout(new GridLayout(4, true));
 		
-		tk.createLabel(cW, "Abstand in Tagen");
+		tk.createLabel(cW, Messages.getString("RechnungsListeView.delayInDays")); //$NON-NLS-1$
 		
-		niDaysTo1st = new NumberInput(cW, "1. Mahnung");
+		niDaysTo1st = new NumberInput(cW, REMINDER_1);
 		niDaysTo1st.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		niDaysTo1st.getControl().addSelectionListener(mahnWizardListener);
 		niDaysTo1st.setValue(Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL1ST, 30));
-		niDaysTo2nd = new NumberInput(cW, "2. Mahnung");
+		niDaysTo2nd = new NumberInput(cW, REMINDER_2);
 		niDaysTo2nd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		niDaysTo2nd.getControl().addSelectionListener(mahnWizardListener);
 		niDaysTo2nd.setValue(Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL2ND, 10));
-		niDaysTo3rd = new NumberInput(cW, "3. Mahnung");
+		niDaysTo3rd = new NumberInput(cW, REMINDER_3);
 		niDaysTo3rd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		niDaysTo3rd.getControl().addSelectionListener(mahnWizardListener);
 		niDaysTo3rd.setValue(Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL3RD, 5));
-		tk.createLabel(cW, "Gebühr");
-		mi1st = new MoneyInput(cW, "1. Mahnung");
+		tk.createLabel(cW, Messages.getString("RechnungsListeView.fine")); //$NON-NLS-1$
+		mi1st = new MoneyInput(cW, REMINDER_1);
 		mi1st.addSelectionListener(mahnWizardListener);
 		mi1st.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT1ST, new Money()
 			.getAmountAsString()));
-		mi2nd = new MoneyInput(cW, "2. Mahnung");
+		mi2nd = new MoneyInput(cW, REMINDER_2);
 		mi2nd.addSelectionListener(mahnWizardListener);
 		mi2nd.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT2ND, new Money()
 			.getAmountAsString()));
-		mi3rd = new MoneyInput(cW, "3. Mahnung");
+		mi3rd = new MoneyInput(cW, REMINDER_3);
 		mi3rd.addSelectionListener(mahnWizardListener);
 		mi3rd.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT3RD, new Money()
 			.getAmountAsString()));
@@ -177,8 +180,8 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
 			.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ViewMenus menu = new ViewMenus(getViewSite());
 		actions = new RnActions(this);
-		menu.createToolbar(actions.reloadAction, actions.mahnWizardAction,
-			actions.rnFilterAction, null, actions.rnExportAction);
+		menu.createToolbar(actions.reloadAction, actions.mahnWizardAction, actions.rnFilterAction,
+			null, actions.rnExportAction);
 		menu.createMenu(actions.expandAllAction, actions.collapseAllAction,
 			actions.printListeAction, actions.addAccountExcessAction);
 		MenuManager mgr = new MenuManager();
@@ -200,7 +203,7 @@ public class RechnungsListeView extends ViewPart implements BackingStoreListener
 	
 	}
 	
-	public void reloadContents(final Class clazz){
+	public void reloadContents(final Class<? extends PersistentObject> clazz){
 		if (clazz.equals(Rechnung.class)) {
 			cv.notify(CommonViewer.Message.update);
 		}

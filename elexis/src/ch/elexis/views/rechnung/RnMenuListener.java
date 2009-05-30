@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnMenuListener.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: RnMenuListener.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -25,25 +25,25 @@ import ch.elexis.data.RnStatus;
 import ch.rgw.tools.Tree;
 
 public class RnMenuListener implements IMenuListener {
-		
+	
 	RechnungsListeView view;
+	
 	RnMenuListener(RechnungsListeView view){
-		this.view=view;
+		this.view = view;
 	}
 	
-
-	public void menuAboutToShow(IMenuManager manager) {
-		Object[] o=view.cv.getSelection();
-		if(o!=null && o.length>0){
-			if(o.length==1){
-				Tree t=(Tree)o[0];
-				if(t.contents instanceof Rechnung){
-					Rechnung rn=(Rechnung)t.contents;
-					if(rn.getStatus()==RnStatus.FEHLERHAFT){
+	public void menuAboutToShow(IMenuManager manager){
+		Object[] o = view.cv.getSelection();
+		if (o != null && o.length > 0) {
+			if (o.length == 1) {
+				Tree t = (Tree) o[0];
+				if (t.contents instanceof Rechnung) {
+					Rechnung rn = (Rechnung) t.contents;
+					if (rn.getStatus() == RnStatus.FEHLERHAFT) {
 						manager.add(view.actions.delRnAction);
 						manager.add(view.actions.reactivateRnAction);
-					}else{
-						((RestrictedAction)view.actions.changeStatusAction).reflectRight();
+					} else {
+						((RestrictedAction) view.actions.changeStatusAction).reflectRight();
 						manager.add(view.actions.rnExportAction);
 						manager.add(view.actions.addPaymentAction);
 						manager.add(view.actions.addExpenseAction);
@@ -51,22 +51,22 @@ public class RnMenuListener implements IMenuListener {
 						manager.add(new Separator());
 						manager.add(view.actions.changeStatusAction);
 						manager.add(view.actions.stornoAction);
-						boolean bSomething=rn.getStatus()!=RnStatus.STORNIERT;
+						boolean bSomething = rn.getStatus() != RnStatus.STORNIERT;
 						view.actions.rnExportAction.setEnabled(bSomething);
 						view.actions.addPaymentAction.setEnabled(bSomething);
 						view.actions.addExpenseAction.setEnabled(bSomething);
 						view.actions.increaseLevelAction.setEnabled(bSomething);
 						view.actions.stornoAction.setEnabled(bSomething);
 					}
-				}else if(t.contents instanceof Fall){
-					//Fall fall=(Fall)t.contents;
+				} else if (t.contents instanceof Fall) {
+					// Fall fall=(Fall)t.contents;
 					manager.add(view.actions.editCaseAction);
-				}else if(t.contents instanceof Patient){
+				} else if (t.contents instanceof Patient) {
 					manager.add(view.actions.patDetailAction);
 				}
 			}
 		}
-
+		
 	}
-
+	
 }

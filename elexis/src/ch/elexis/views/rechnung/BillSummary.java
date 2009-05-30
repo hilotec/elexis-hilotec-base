@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2009, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: BillSummary.java 4771 2008-12-08 13:36:36Z rgw_ch $
+ *  $Id: BillSummary.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -61,10 +61,10 @@ import ch.rgw.tools.Money;
 public class BillSummary extends ViewPart implements SelectionListener, ActivationListener,
 		ISaveablePart2 {
 	
-	public static final String ID = "ch.elexis.views.rechnung.BillSummary";
+	public static final String ID = "ch.elexis.views.rechnung.BillSummary"; //$NON-NLS-1$
 	
 	// command from org.eclipse.ui
-	private static final String COMMAND_COPY = "org.eclipse.ui.edit.copy";
+	private static final String COMMAND_COPY = "org.eclipse.ui.edit.copy"; //$NON-NLS-1$
 	
 	private FormToolkit tk;
 	private Form form;
@@ -86,12 +86,12 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 	private static final int GARANT = 5;
 	
 	private static final String[] COLUMN_TEXT = {
-		"Nummer", // NUMBER
-		"Datum", // DATE
-		"Betrag", // AMOUNT
-		"Offen", // AMOUNT_DUE
-		"Status", // STATUS
-		"Rechnungsempfänger", // GARANT
+		Messages.getString("BillSummary.number"), // NUMBER //$NON-NLS-1$
+		Messages.getString("BillSummary.date"), // DATE //$NON-NLS-1$
+		Messages.getString("BillSummary.amount"), // AMOUNT //$NON-NLS-1$
+		Messages.getString("BillSummary.open"), // AMOUNT_DUE //$NON-NLS-1$
+		Messages.getString("BillSummary.state"), // STATUS //$NON-NLS-1$
+		Messages.getString("BillSummary.receiver"), // GARANT //$NON-NLS-1$
 	};
 	
 	private static final int[] COLUMN_WIDTH = {
@@ -157,16 +157,16 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 		generalArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		generalArea.setLayout(new GridLayout(2, false));
 		
-		tk.createLabel(generalArea, "Total:");
-		totalLabel = tk.createLabel(generalArea, "");
+		tk.createLabel(generalArea, Messages.getString("BillSummary.total")); //$NON-NLS-1$
+		totalLabel = tk.createLabel(generalArea, ""); //$NON-NLS-1$
 		totalLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		tk.createLabel(generalArea, "Bezahlt:");
-		paidLabel = tk.createLabel(generalArea, "");
+		tk.createLabel(generalArea, Messages.getString("BillSummary.paid")); //$NON-NLS-1$
+		paidLabel = tk.createLabel(generalArea, ""); //$NON-NLS-1$
 		paidLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
-		tk.createLabel(generalArea, "Offen:");
-		openLabel = tk.createLabel(generalArea, "");
+		tk.createLabel(generalArea, Messages.getString("BillSummary.open2")); //$NON-NLS-1$
+		openLabel = tk.createLabel(generalArea, ""); //$NON-NLS-1$
 		openLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		// bills
@@ -190,7 +190,7 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 			public Object[] getElements(Object inputElement){
 				if (actPatient == null) {
 					return new Object[] {
-						"Kein Patient ausgewählt."
+						Messages.getString("BillSummary.NoPatientSelected") //$NON-NLS-1$
 					};
 				}
 				
@@ -220,18 +220,18 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 			
 			public String getColumnText(Object element, int columnIndex){
 				if (!(element instanceof Rechnung)) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 				
 				Rechnung rechnung = (Rechnung) element;
-				String text = "";
+				String text = ""; //$NON-NLS-1$
 				
 				switch (columnIndex) {
 				case NUMBER:
-					text = rechnung.get("RnNummer");
+					text = rechnung.get(Rechnung.BILL_NUMBER);
 					break;
 				case DATE:
-					text = rechnung.get("RnDatum");
+					text = rechnung.get(Rechnung.BILL_DATE);
 					break;
 				case AMOUNT:
 					text = rechnung.getBetrag().toString();
@@ -285,11 +285,11 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 	private void setPatient(Patient patient){
 		actPatient = patient;
 		
-		String title = "";
+		String title = ""; //$NON-NLS-1$
 		if (actPatient != null) {
 			title = actPatient.getLabel();
 		} else {
-			title = "Kein Patient ausgewählt";
+			title = Messages.getString("BillSummary.NoPatientSelected2"); //$NON-NLS-1$
 		}
 		form.setText(title);
 		
@@ -307,9 +307,9 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 			return;
 		}
 		
-		String totalText = "";
-		String paidText = "";
-		String openText = "";
+		String totalText = ""; //$NON-NLS-1$
+		String paidText = ""; //$NON-NLS-1$
+		String openText = ""; //$NON-NLS-1$
 		
 		if (actPatient != null) {
 			Money total = new Money(0);
@@ -414,22 +414,22 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 	 */
 
 	private void makeActions(){
-		exportToClipboardAction = new Action("Export (Zwischenablage)") {
-			{
-				setToolTipText("Zusammenfassung in Zwischenablage kopieren");
-			}
-			
-			public void run(){
-				exportToClipboard();
-			}
-		};
+		exportToClipboardAction = new Action(Messages.getString("BillSummary.exportToClipboard")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("BillSummary.SummaryToClipboard")); //$NON-NLS-1$
+				}
+				
+				public void run(){
+					exportToClipboard();
+				}
+			};
 		exportToClipboardAction.setActionDefinitionId(COMMAND_COPY);
 		GlobalActions.registerActionHandler(this, exportToClipboardAction);
 	}
 	
 	private void exportToClipboard(){
-		String clipboardText = "";
-		String lineSeparator = System.getProperty("line.separator");
+		String clipboardText = ""; //$NON-NLS-1$
+		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		
 		if (actPatient != null) {
 			List<Rechnung> rechnungen = getRechnungen(actPatient);
@@ -437,31 +437,31 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 			StringBuffer sbHeader = new StringBuffer();
 			
 			sbHeader.append(COLUMN_TEXT[NUMBER]);
-			sbHeader.append("\t");
+			sbHeader.append("\t"); //$NON-NLS-1$
 			sbHeader.append(COLUMN_TEXT[DATE]);
-			sbHeader.append("\t");
+			sbHeader.append("\t"); //$NON-NLS-1$
 			sbHeader.append(COLUMN_TEXT[AMOUNT]);
-			sbHeader.append("\t");
+			sbHeader.append("\t"); //$NON-NLS-1$
 			sbHeader.append(COLUMN_TEXT[AMOUNT_DUE]);
-			sbHeader.append("\t");
+			sbHeader.append("\t"); //$NON-NLS-1$
 			sbHeader.append(COLUMN_TEXT[STATUS]);
-			sbHeader.append("\t");
+			sbHeader.append("\t"); //$NON-NLS-1$
 			sbHeader.append(COLUMN_TEXT[GARANT]);
 			sbHeader.append(lineSeparator);
 			sbTable.append(sbHeader);
 			
 			for (Rechnung rechnung : rechnungen) {
 				StringBuffer sbLine = new StringBuffer();
-				sbLine.append(rechnung.get("RnNummer"));
-				sbLine.append("\t");
-				sbLine.append(rechnung.get("RnDatum"));
-				sbLine.append("\t");
+				sbLine.append(rechnung.get(Rechnung.BILL_NUMBER));
+				sbLine.append("\t"); //$NON-NLS-1$
+				sbLine.append(rechnung.get(Rechnung.BILL_DATE));
+				sbLine.append("\t"); //$NON-NLS-1$
 				sbLine.append(rechnung.getBetrag().toString());
-				sbLine.append("\t");
+				sbLine.append("\t"); //$NON-NLS-1$
 				sbLine.append(rechnung.getOffenerBetrag().toString());
-				sbLine.append("\t");
+				sbLine.append("\t"); //$NON-NLS-1$
 				sbLine.append(RnStatus.getStatusText(rechnung.getStatus()));
-				sbLine.append("\t");
+				sbLine.append("\t"); //$NON-NLS-1$
 				sbLine.append(rechnung.getFall().getGarant().getLabel());
 				sbLine.append(lineSeparator);
 				sbTable.append(sbLine);
@@ -469,7 +469,7 @@ public class BillSummary extends ViewPart implements SelectionListener, Activati
 			
 			clipboardText = sbTable.toString();
 		} else {
-			clipboardText = "Keine Rechnungen verfügbar.";
+			clipboardText = Messages.getString("BillSummary.noBillsAvailable"); //$NON-NLS-1$
 		}
 		
 		Clipboard clipboard = new Clipboard(Desk.getDisplay());

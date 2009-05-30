@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DBConnectSecondPage.java 5313 2009-05-17 17:07:36Z rgw_ch $
+ *    $Id: DBConnectSecondPage.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.wizards;
@@ -41,10 +41,10 @@ public class DBConnectSecondPage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite form = new Composite(parent,SWT.NONE);
 		form.setLayout(new GridLayout(1,false));
-		new Label(form,SWT.NONE).setText("Datenbank-Username");
+		new Label(form,SWT.NONE).setText(Messages.getString("DBConnectSecondPage.databaseUsername")); //$NON-NLS-1$
 		name=new Text(form,SWT.BORDER);
 		name.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		new Label(form,SWT.NONE).setText("Datenbank-Passwort");
+		new Label(form,SWT.NONE).setText(Messages.getString("DBConnectSecondPage.databasePassword")); //$NON-NLS-1$
 		pwd=new Text(form,SWT.BORDER);
 		pwd.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		setControl(form);

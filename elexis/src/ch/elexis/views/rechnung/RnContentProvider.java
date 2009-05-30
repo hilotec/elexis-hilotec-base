@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnContentProvider.java 5117 2009-02-09 17:47:19Z rgw_ch $
+ * $Id: RnContentProvider.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -41,6 +41,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Tree;
 
@@ -63,7 +64,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 	RechnungsListeView rlv;
 	String[] constraints;
 	
-	private final Log log = Log.get("Rechnungenlader");
+	private final Log log = Log.get("Rechnungenlader"); //$NON-NLS-1$
 	
 	RnContentProvider(final RechnungsListeView l, final CommonViewer cv){
 		this.cv = cv;
@@ -200,34 +201,38 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 			if (Hub.actMandant == null) {
 				return null;
 			}
-			q1.add("MandantID", "=", Hub.actMandant.getId());
+			q1.add(Rechnung.MANDATOR_ID, Query.EQUALS, Hub.actMandant.getId());
 		}
 		if (val[2] != null) {
-			q1.add("RnNummer", "=", val[2]); //$NON-NLS-1$ //$NON-NLS-2$
+			q1.add(Rechnung.BILL_NUMBER, Query.EQUALS, val[2]); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		} else if (val[3] != null) {
-			q1.add("Betragx100", "=", val[3]); //$NON-NLS-1$ //$NON-NLS-2$
+			q1.add(Rechnung.BILL_AMOUNT_CENTS, Query.EQUALS, val[3]); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			if (Integer.parseInt(val[0]) == RnStatus.ZU_DRUCKEN) {
 				q1.startGroup();
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer.toString(RnStatus.OFFEN));
 				q1.or();
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_1));
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2));
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer.toString(RnStatus.MAHNUNG_1));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer.toString(RnStatus.MAHNUNG_2));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer.toString(RnStatus.MAHNUNG_3));
 				q1.endGroup();
 				q1.and();
 			} else if (Integer.parseInt(val[0]) == RnStatus.AUSSTEHEND) {
 				q1.startGroup();
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.OFFEN_UND_GEDRUCKT));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer
+					.toString(RnStatus.OFFEN_UND_GEDRUCKT));
 				q1.or();
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_1_GEDRUCKT));
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_2_GEDRUCKT));
-				q1.add("RnStatus", "=", Integer.toString(RnStatus.MAHNUNG_3_GEDRUCKT));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer
+					.toString(RnStatus.MAHNUNG_1_GEDRUCKT));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer
+					.toString(RnStatus.MAHNUNG_2_GEDRUCKT));
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, Integer
+					.toString(RnStatus.MAHNUNG_3_GEDRUCKT));
 				q1.endGroup();
 				q1.and();
-			} else if (!val[0].equals("0")) {
-				q1.add("RnStatus", "=", val[0]); //$NON-NLS-1$
+			} else if (!val[0].equals(StringTool.zero)) {
+				q1.add(Rechnung.BILL_STATE, Query.EQUALS, val[0]); //$NON-NLS-1$
 			}
 			if (val[1] != null) {
 				Patient act = Patient.load(val[1]);
@@ -239,7 +244,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 						q1.or();
 						for (Fall fall : faelle) {
 							// if (fall.isOpen()) {
-							q1.add("FallID", "=", fall.getId());
+							q1.add(Rechnung.CASE_ID, Query.EQUALS, fall.getId());
 							// }
 						}
 						q1.endGroup();
@@ -291,7 +296,7 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		}
 		List<Rechnung> rechnungen = q1.execute();
 		if (rechnungen == null) {
-			log.log("Fehler bei der Abfrage der Rechnungen", Log.ERRORS);
+			log.log(Messages.getString("RnContentProvider.errorRetriveingBillds"), Log.ERRORS); //$NON-NLS-1$
 			return;
 		}
 		monitor.worked(100);
@@ -304,21 +309,21 @@ class RnContentProvider implements ViewerConfigurer.CommonContentProvider, ITree
 		mOpen = new Money();
 		for (Rechnung rn : rechnungen) {
 			if ((rn == null) || (!rn.exists())) {
-				log.log("Fehlerhafte Rechnung", Log.ERRORS);
+				log.log("Fehlerhafte Rechnung", Log.ERRORS); //$NON-NLS-1$
 				continue;
 			}
 			mAmount.addMoney(rn.getOffenerBetrag());
 			mOpen.addMoney(rn.getAnzahlung());
 			Fall fall = rn.getFall();
 			if (fall == null) {
-				log.log("Rechnung " + rn.getId() + " hat keinen Fall", Log.WARNINGS);
+				log.log("Rechnung " + rn.getId() + " hat keinen Fall", Log.WARNINGS); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
 			Tree<Fall> tFall = hFaelle.get(fall.getId());
 			if (tFall == null) {
 				Patient pat = fall.getPatient();
 				if (pat == null) {
-					log.log("Fall " + fall.getId() + " hat keinen Patienten", Log.WARNINGS);
+					log.log("Fall " + fall.getId() + " hat keinen Patienten", Log.WARNINGS); //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
 				}
 				Tree<Patient> tPat = hPats.get(pat.getId());

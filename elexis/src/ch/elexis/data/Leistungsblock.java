@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistungsblock.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ * $Id: Leistungsblock.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -23,14 +23,15 @@ import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 
 public class Leistungsblock extends PersistentObject implements ICodeElement {
-	public static final String LEISTUNGEN = "Leistungen";
-	public static final String MANDANT_ID = "MandantID";
-	public static final String NAME = "Name";
-	public static final String XIDDOMAIN = "www.xid.ch/id/elexis_leistungsblock";
+	public static final String TABLENAME = "LEISTUNGSBLOCK"; //$NON-NLS-1$
+	public static final String LEISTUNGEN = "Leistungen"; //$NON-NLS-1$
+	public static final String MANDANT_ID = "MandantID"; //$NON-NLS-1$
+	public static final String NAME = "Name"; //$NON-NLS-1$
+	public static final String XIDDOMAIN = "www.xid.ch/id/elexis_leistungsblock"; //$NON-NLS-1$
 	
 	static {
-		addMapping("LEISTUNGSBLOCK", NAME, MANDANT_ID, LEISTUNGEN);
-		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Leistungsblock", Xid.ASSIGNMENT_LOCAL
+		addMapping(TABLENAME, NAME, MANDANT_ID, LEISTUNGEN);
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Leistungsblock", Xid.ASSIGNMENT_LOCAL //$NON-NLS-1$
 			| Xid.QUALITY_GUID);
 	}
 	
@@ -45,6 +46,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	public String getName(){
 		return checkNull(get(NAME));
 	}
+	
 	/**
 	 * return a List of elements contained in this block will never return null, but the list might
 	 * be empty
@@ -118,9 +120,9 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	public String toString(List<ICodeElement> lst){
 		StringBuilder st = new StringBuilder();
 		for (ICodeElement v : lst) {
-			st.append(((PersistentObject) v).storeToString()).append(",");
+			st.append(((PersistentObject) v).storeToString()).append(","); //$NON-NLS-1$
 		}
-		return st.toString().replaceFirst(",$", "");
+		return st.toString().replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 	}
 	
@@ -139,7 +141,7 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	
 	@Override
 	protected String getTableName(){
-		return "LEISTUNGSBLOCK";
+		return TABLENAME;
 	}
 	
 	public static Leistungsblock load(String id){
@@ -172,8 +174,8 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 			lst = new ArrayList<ICodeElement>();
 			byte[] compressed = getBinary(LEISTUNGEN);
 			if (compressed != null) {
-				String storable = new String(CompEx.expand(compressed), "UTF-8");
-				for (String p : storable.split(",")) {
+				String storable = new String(CompEx.expand(compressed), "UTF-8"); //$NON-NLS-1$
+				for (String p : storable.split(",")) { //$NON-NLS-1$
 					lst.add((ICodeElement) Hub.poFactory.createFromString(p));
 				}
 			}
@@ -190,11 +192,11 @@ public class Leistungsblock extends PersistentObject implements ICodeElement {
 	}
 	
 	public String getCodeSystemName(){
-		return "Block";
+		return "Block"; //$NON-NLS-1$
 	}
 	
 	public String getCodeSystemCode(){
-		return "999";
+		return "999"; //$NON-NLS-1$
 	}
 	
 	@Override

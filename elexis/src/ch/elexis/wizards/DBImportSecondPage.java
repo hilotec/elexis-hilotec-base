@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - adapted for importing data from other databases
  *    
- *    $Id: DBImportSecondPage.java 1183 2006-10-29 15:11:21Z rgw_ch $
+ *    $Id: DBImportSecondPage.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.wizards;
@@ -26,7 +26,7 @@ import ch.elexis.util.SWTHelper;
 public class DBImportSecondPage extends WizardPage {
 	Text name,pwd;
 	public DBImportSecondPage(String pageName) {
-		super("Credentials");
+		super("Credentials"); //$NON-NLS-1$
 		setTitle(Messages.getString("DBImportSecondPage.userDetails")); //$NON-NLS-1$
 		setMessage(Messages.getString("DBImportSecondPage.enterUsername")+ //$NON-NLS-1$
 				Messages.getString("DBImportSecondPage.enterPassword")); //$NON-NLS-1$

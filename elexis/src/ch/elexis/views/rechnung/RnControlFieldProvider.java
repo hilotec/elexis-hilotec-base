@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnControlFieldProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ * $Id: RnControlFieldProvider.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -53,10 +53,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 	// stats={"Alle","Bezahlt","Offen","Offen&Gedruckt","1. Mahnung","2. Mahnung","3. Mahnung","In Betreibung","Teilverlust","Totalverlust"};
 	final static String[] stats =
 		{
-			"Alle", "Offen", "Offen & gedruckt", "Teilw. bezahlt", "Bezahlt", "Zuviel bezahlt",
-			"Zahlungserinnerung", "ZE gedruckt", "2. Mahnung", "2. M. gedruckt", "3. Mahnung",
-			"3. M. gedruckt", "In Betreibung", "Teilverlust", "Totalverlust", "Storniert",
-			"Fehlerhaft", "zu drucken", "ausstehend", "mahnstopp"
+			Messages.getString("RnControlFieldProvider.all"), Messages.getString("RnControlFieldProvider.open"), Messages.getString("RnControlFieldProvider.openAndPrinted"), Messages.getString("RnControlFieldProvider.partlyPaid"), Messages.getString("RnControlFieldProvider.paid"), Messages.getString("RnControlFieldProvider.overpaid"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			Messages.getString("RnControlFieldProvider.reminder"), Messages.getString("RnControlFieldProvider.reminderPrinted"), Messages.getString("RnControlFieldProvider.reminder2"), Messages.getString("RnControlFieldProvider.reminder2Printed"), Messages.getString("RnControlFieldProvider.reminder3"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			Messages.getString("RnControlFieldProvider.reminder3Printed"), Messages.getString("RnControlFieldProvider.enforcement"), Messages.getString("RnControlFieldProvider.partlyLost"), Messages.getString("RnControlFieldProvider.totallyLost"), Messages.getString("RnControlFieldProvider.storno"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			Messages.getString("RnControlFieldProvider.erroneous"), Messages.getString("RnControlFieldProvider.toPrint"), Messages.getString("RnControlFieldProvider.toBePaid"), Messages.getString("RnControlFieldProvider.dontRemind") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		};
 	
 	final static int[] statInts =
@@ -70,8 +70,8 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 		};
 	
 	final static int STAT_DEFAULT_INDEX = 1;
-	private final static String ALLE = "[ --- Alle Patienten --- ]";
-	private final static String ALL = "Alle";
+	private final static String ALLE = Messages.getString("RnControlFieldProvider.allPatients"); //$NON-NLS-1$
+	private final static String ALL = Messages.getString("RnControlFieldProvider.all"); //$NON-NLS-1$
 	
 	Combo cbStat;
 	Combo cbZType;
@@ -95,8 +95,8 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 			public void linkActivated(final HyperlinkEvent e){
 				Patient oldPatient = actPatient;
 				KontaktSelektor ksl =
-					new KontaktSelektor(parent.getShell(), Patient.class, "Patient auswählen",
-						"Bitte wählen Sie einen Patienteneintrag oder Abbrechen für 'Alle'", true);
+					new KontaktSelektor(parent.getShell(), Patient.class, Messages.getString("RnControlFieldProvider.selectPatientCaption"), //$NON-NLS-1$
+						Messages.getString("RnControlFieldProvider.selectPatientMessage"), true); //$NON-NLS-1$
 				if (ksl.open() == Dialog.OK) {
 					actPatient = (Patient) ksl.getSelection();
 					if (actPatient != null) {
@@ -118,11 +118,11 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 			}
 		};
 		new Label(ret, SWT.NONE).setText(Messages.getString("RnControlFieldProvider.state")); //$NON-NLS-1$
-		SWTHelper.createHyperlink(ret, "   Patient   ", hlPatient);
+		SWTHelper.createHyperlink(ret, Messages.getString("RnControlFieldProvider.patient2"), hlPatient); //$NON-NLS-1$
 		new Label(ret, SWT.NONE)
 			.setText(Messages.getString("RnControlFieldProvider.PaymentSystem")); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.getString("RnControlFieldProvider.invoideNr")); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText("Betrag");
+		new Label(ret, SWT.NONE).setText(Messages.getString("RnControlFieldProvider.amount")); //$NON-NLS-1$
 		// / ^ labels / values
 		cbStat = new Combo(ret, SWT.READ_ONLY);
 		cbStat.setVisibleItemCount(stats.length);
@@ -183,19 +183,19 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 		if (selIdx != -1) {
 			ret[0] = Integer.toString(statInts[selIdx]);
 		} else {
-			ret[0] = "1"; //$NON-NLS-1$
+			ret[0] = StringTool.one;
 		}
 		if (actPatient != null) {
 			ret[1] = actPatient.getId();
 		}
 		ret[2] = tNr.getText();
-		ret[3] = tBetrag.getText().replaceAll("\\.", "");
+		ret[3] = tBetrag.getText().replaceAll("\\.", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (StringTool.isNothing(ret[2])) {
 			ret[2] = null;
 		} else { // Wenn RnNummer gegeben ist, alles andere auf Standard.
 			clearValues();
 			tNr.setText(ret[2]);
-			ret[0] = "0";
+			ret[0] = StringTool.zero;
 			ret[1] = null;
 			ret[3] = null;
 		}
@@ -204,7 +204,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 		} else {
 			clearValues();
 			tBetrag.setText(ret[3]);
-			ret[0] = "0";
+			ret[0] = StringTool.zero;
 			ret[1] = null;
 			ret[2] = null;
 		}
@@ -217,8 +217,6 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 	
 	public void clearValues(){
 		cbStat.select(0);
-		//dpVon.setDate(new TimeTool("1.1.1900").getTime()); //$NON-NLS-1$
-		//dpBis.setData(new TimeTool("31.12.2999").getTime()); //$NON-NLS-1$
 		tNr.setText(""); //$NON-NLS-1$
 		actPatient = null;
 		lPatient.setText(ALLE);
@@ -232,16 +230,6 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 
 	}
 	
-	/*
-	 * public void setQuery(final Query q) { String[] val=getValues(); q.add("RnStatus","=",val[0]);
-	 * //$NON-NLS-1$ //$NON-NLS-2$ if(val[1]!=null){ q.add("RnDatum",">=",val[1]); //$NON-NLS-1$
-	 * //$NON-NLS-2$ } if(val[2]!=null){ q.add("RnDatum","<=",val[2]); //$NON-NLS-1$ //$NON-NLS-2$ }
-	 * if(val[3]!=null){ q.add("RnNummer", "=", val[3]); //$NON-NLS-1$ //$NON-NLS-2$ }
-	 * if(actPatient!=null){ Fall[] faelle=actPatient.getFaelle(); if((faelle!=null) &&
-	 * (faelle.length>0)){ q.startGroup(); q.insertFalse(); q.or(); for(Fall fall:faelle){
-	 * if(fall.isOpen()){ q.add("FallID", "=", fall.getId()); } } q.endGroup(); } } }
-	 */
-
 	public IFilter createFilter(){
 		return new IFilter() {
 			
@@ -255,7 +243,7 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 		Desk.getDisplay().syncExec(new Runnable() {
 			public void run(){
 				HashMap<String, String> hm = new HashMap<String, String>();
-				hm.put("Status", "0");
+				hm.put(Messages.getString("RnControlFieldProvider.state"), StringTool.zero); //$NON-NLS-1$
 				for (ControlFieldListener lis : listeners) {
 					lis.changed(hm); //$NON-NLS-1$ //$NON-NLS-2$
 					

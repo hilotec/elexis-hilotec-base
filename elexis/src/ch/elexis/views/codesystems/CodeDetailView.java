@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CodeDetailView.java 5137 2009-02-16 18:19:14Z rgw_ch $
+ * $Id: CodeDetailView.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -50,9 +50,9 @@ import ch.rgw.tools.ExHandler;
 
 public class CodeDetailView extends ViewPart implements SelectionListener, ActivationListener,
 		ISaveablePart2 {
-	public final static String ID = "ch.elexis.codedetailview";
+	public final static String ID = "ch.elexis.codedetailview"; //$NON-NLS-1$
 	private CTabFolder ctab;
-	private IAction importAction /* ,deleteAction */;
+	private IAction importAction;
 	private ViewMenus viewmenus;
 	private Hashtable<String, ImporterPage> importers;
 	
@@ -61,13 +61,11 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 		parent.setLayout(new FillLayout());
 		ctab = new CTabFolder(parent, SWT.NONE);
 		importers = new Hashtable<String, ImporterPage>();
-		// List<IDetailDisplay>
-		// list=Extensions.getClasses("ch.elexis.Diagnosecode","CodeDetailDisplay");
 		addCustomBlocksPage();
 		importers.put(ctab.getItem(0).getText(), new BlockImporter());
 		
-		addPagesFor("ch.elexis.Diagnosecode");
-		addPagesFor("ch.elexis.Verrechnungscode");
+		addPagesFor("ch.elexis.Diagnosecode"); //$NON-NLS-1$
+		addPagesFor("ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		if (ctab.getItemCount() > 0) {
 			ctab.setSelection(0);
 			
@@ -108,27 +106,28 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 	}
 	
 	private void makeActions(){
-		importAction = new Action("Import...") {
-			@Override
-			public void run(){
-				CTabItem it = ctab.getSelection();
-				if (it != null) {
-					ImporterPage top = importers.get(it.getText());
-					if (top != null) {
-						ImportDialog dlg = new ImportDialog(getViewSite().getShell(), top);
-						dlg.create();
-						dlg.setTitle(top.getTitle());
-						dlg.setMessage(top.getDescription());
-						dlg.getShell().setText("Datenimport");
-						if (dlg.open() == Dialog.OK) {
-							top.run(false);
+		importAction = new Action(Messages.getString("CodeDetailView.importActionTitle")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					CTabItem it = ctab.getSelection();
+					if (it != null) {
+						ImporterPage top = importers.get(it.getText());
+						if (top != null) {
+							ImportDialog dlg = new ImportDialog(getViewSite().getShell(), top);
+							dlg.create();
+							dlg.setTitle(top.getTitle());
+							dlg.setMessage(top.getDescription());
+							dlg.getShell().setText(
+								Messages.getString("CodeDetailView.importerCaption")); //$NON-NLS-1$
+							if (dlg.open() == Dialog.OK) {
+								top.run(false);
+							}
 						}
 					}
+					
 				}
 				
-			}
-			
-		};
+			};
 		
 	}
 	
@@ -152,17 +151,17 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 		for (IConfigurationElement ce : list) {
 			try {
 				System.out.println(ce.getName());
-				if ("Artikel".equals(ce.getName())) {
+				if ("Artikel".equals(ce.getName())) { //$NON-NLS-1$
 					continue;
 				}
 				IDetailDisplay d =
-					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay");
+					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
 				CodeSelectorFactory cs =
-					(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory");
-				String a = ce.getAttribute("ImporterClass");
+					(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
+				String a = ce.getAttribute("ImporterClass"); //$NON-NLS-1$
 				ImporterPage ip = null;
 				if (a != null) {
-					ip = (ImporterPage) ce.createExecutableExtension("ImporterClass");
+					ip = (ImporterPage) ce.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
 					if (ip != null) {
 						importers.put(d.getTitle(), ip);
 					}
@@ -176,8 +175,8 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
-				mb.setText("Fehler");
-				mb.setMessage("Fehler beim Initialisieren des Codesystems " + ce.getName() + ":\n"
+				mb.setText(Messages.getString("CodeDetailView.errorCaption")); //$NON-NLS-1$
+				mb.setMessage(Messages.getString("CodeDetailView.errorBody") + ce.getName() + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ ex.getLocalizedMessage());
 				mb.open();
 			}

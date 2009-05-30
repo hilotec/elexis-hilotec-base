@@ -10,7 +10,7 @@
  *    Gerry Weirich - adapted to use the new AccountTransaction-class
  *    				  actions added
  *    
- *  $Id: AccountView.java 5170 2009-02-21 19:44:23Z rgw_ch $
+ *  $Id: AccountView.java 5331 2009-05-30 13:01:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -62,9 +62,10 @@ import ch.rgw.tools.Money;
 public class AccountView extends ViewPart implements SelectionListener, ActivationListener,
 		ISaveablePart2 {
 	
-	public static final String ID = "ch.elexis.views.rechnung.AccountView";
+	public static final String ID = "ch.elexis.views.rechnung.AccountView"; //$NON-NLS-1$
 	
-	private static final String ACCOUNT_EXCESS_JOB_NAME = "Guthaben berechnen";
+	private static final String ACCOUNT_EXCESS_JOB_NAME =
+		Messages.getString("AccountView.calculateBalance"); //$NON-NLS-1$
 	private BackgroundJob accountExcessJob;
 	
 	private FormToolkit tk;
@@ -84,10 +85,10 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 	private static final int REMARKS = 3;
 	
 	private static final String[] COLUMN_TEXT = {
-		"Datum", // DATE
-		"Betrag", // AMOUNT
-		"Rechnung", // BILL
-		"Bemerkungen", // REMARKS
+		Messages.getString("AccountView.date"), // DATE //$NON-NLS-1$
+		Messages.getString("AccountView.amount"), // AMOUNT //$NON-NLS-1$
+		Messages.getString("AccountView.bill"), // BILL //$NON-NLS-1$
+		Messages.getString("AccountView.remarks"), // REMARKS //$NON-NLS-1$
 	};
 	
 	private static final int[] COLUMN_WIDTH = {
@@ -109,13 +110,13 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 		Composite accountArea = tk.createComposite(form.getBody());
 		accountArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		accountArea.setLayout(new GridLayout(3, false));
-		tk.createLabel(accountArea, "Konto:");
-		tk.createLabel(accountArea, "Kontostand:");
-		balanceLabel = tk.createLabel(accountArea, "");
+		tk.createLabel(accountArea, Messages.getString("AccountView.account")); //$NON-NLS-1$
+		tk.createLabel(accountArea, Messages.getString("AccountView.accountAmount")); //$NON-NLS-1$
+		balanceLabel = tk.createLabel(accountArea, ""); //$NON-NLS-1$
 		balanceLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tk.createLabel(accountArea, ""); // dummy
-		tk.createLabel(accountArea, "Rechnungsguthaben:");
-		excessLabel = tk.createLabel(accountArea, "");
+		tk.createLabel(accountArea, ""); // dummy //$NON-NLS-1$
+		tk.createLabel(accountArea, Messages.getString("AccountView.goodFromBills")); //$NON-NLS-1$
+		excessLabel = tk.createLabel(accountArea, ""); //$NON-NLS-1$
 		excessLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		// account entries
@@ -139,40 +140,17 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 			public Object[] getElements(Object inputElement){
 				if (actPatient == null) {
 					return new Object[] {
-						"Kein Patient ausgewählt."
+						Messages.getString("AccountView.NoPatientSelected") //$NON-NLS-1$
 					};
 				}
 				Query<AccountTransaction> qa =
 					new Query<AccountTransaction>(AccountTransaction.class);
-				qa.add("PatientID", "=", actPatient.getId());
+				qa.add(AccountTransaction.PATIENT_ID, Query.EQUALS, actPatient.getId());
 				qa.orderBy(false, new String[] {
-					"Datum"
+					AccountTransaction.DATE
 				});
 				return qa.execute().toArray();
 				
-				/*
-				 * List<AccountEntry> entries = new ArrayList<AccountEntry>();
-				 * 
-				 * StringBuilder sql = new StringBuilder();
-				 * sql.append("SELECT DATUM, BETRAG, BEMERKUNG FROM KONTO ");
-				 * sql.append("  WHERE PatientID = "); sql.append(actPatient.getWrappedId());
-				 * sql.append("  ORDER BY DATUM"); Stm stm =
-				 * PersistentObject.getConnection().getStatement();
-				 * 
-				 * try { ResultSet res = stm.query(sql.toString()); while (res.next()) { String
-				 * sDate = res.getString(1); String sAmount = res.getString(2); String remarks =
-				 * res.getString(3);
-				 * 
-				 * TimeTool date = new TimeTool(sDate); Money amount = new Money(0);
-				 * amount.addCent(sAmount);
-				 * 
-				 * AccountEntry entry = new AccountEntry(date, amount, remarks); entries.add(entry);
-				 * } } catch (Exception ex) { ExHandler.handle(ex); return new Object[0]; } finally
-				 * { PersistentObject.getConnection().releaseStatement(stm); }
-				 * 
-				 * 
-				 * return entries.toArray();
-				 */
 			}
 			
 			public void dispose(){
@@ -216,7 +194,7 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 					if (rechnung != null && rechnung.exists()) {
 						text = rechnung.getNr();
 					} else {
-						text = "";
+						text = ""; //$NON-NLS-1$
 					}
 					break;
 				case REMARKS:
@@ -287,11 +265,11 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 		accountExcessJob.invalidate();
 		accountExcessJob.schedule();
 		
-		String title = "";
+		String title = ""; //$NON-NLS-1$
 		if (actPatient != null) {
 			title = actPatient.getLabel();
 		} else {
-			title = "Kein Patient ausgewählt";
+			title = Messages.getString("AccountView.NoPatientSelected2"); //$NON-NLS-1$
 		}
 		form.setText(title);
 		
@@ -309,8 +287,8 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 			return;
 		}
 		
-		String balanceText = "";
-		String excessText = "";
+		String balanceText = ""; //$NON-NLS-1$
+		String excessText = Messages.getString("AccountView.23"); //$NON-NLS-1$
 		
 		if (actPatient != null) {
 			balanceText = actPatient.getKontostand().getAmountAsString();
@@ -407,42 +385,41 @@ public class AccountView extends ViewPart implements SelectionListener, Activati
 	 */
 
 	private void makeActions(){
-		addPaymentAction = new Action("Buchung/Zahlung hinzufügen") {
-			{
-				setToolTipText("Einen Betrag als Zahlung eingeben");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
-			}
-			
-			@Override
-			public void run(){
-				if (new AddBuchungDialog(getViewSite().getShell(), actPatient).open() == Dialog.OK) {
-					setPatient(actPatient);
+		addPaymentAction = new Action(Messages.getString("AccountView.addBookingCaption")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("AccountView.addBookingBody")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 				}
-			}
-		};
-		removePaymentAction = new Action("Buchung/Zahlung löschen") {
-			{
-				setToolTipText("Markierte Buchung löschen");
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-			}
-			
-			@Override
-			public void run(){
-				AccountTransaction at =
-					(AccountTransaction) GlobalEvents.getInstance().getSelectedObject(
-						AccountTransaction.class);
-				if (at != null) {
-					if (SWTHelper
-						.askYesNo(
-							"Zahlung wirklich löschen?",
-							"Bitte beachten Sie, dass manuelles Löschen von Zahlungen zu Buchhaltungsfehlern führen kann. Wirklich löschen?")) {
-						at.delete();
+				
+				@Override
+				public void run(){
+					if (new AddBuchungDialog(getViewSite().getShell(), actPatient).open() == Dialog.OK) {
 						setPatient(actPatient);
 					}
 				}
-			}
-			
-		};
+			};
+		removePaymentAction = new Action(Messages.getString("AccountView.deleteBookingAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("AccountView.deleteBookingTooltip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+				}
+				
+				@Override
+				public void run(){
+					AccountTransaction at =
+						(AccountTransaction) GlobalEvents.getInstance().getSelectedObject(
+							AccountTransaction.class);
+					if (at != null) {
+						if (SWTHelper.askYesNo(Messages
+							.getString("AccountView.deleteBookingConfirmCaption"), //$NON-NLS-1$
+							Messages.getString("AccountView.deleteBookingConfirmBody"))) { //$NON-NLS-1$
+							at.delete();
+							setPatient(actPatient);
+						}
+					}
+				}
+				
+			};
 	}
 	
 	class AccountExcessJob extends BackgroundJob {
