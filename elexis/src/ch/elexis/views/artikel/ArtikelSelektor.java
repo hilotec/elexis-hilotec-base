@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ArtikelSelektor.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *    $Id: ArtikelSelektor.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -55,7 +55,7 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.ExHandler;
 
 public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
-	public static final String ID = "ch.elexis.ArtikelSelektor";
+	public static final String ID = "ch.elexis.ArtikelSelektor"; //$NON-NLS-1$
 	CTabFolder ctab;
 	TableViewer tv;
 	
@@ -65,16 +65,16 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 		ctab = new CTabFolder(parent, SWT.NONE);
 		ctab.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		java.util.List<IConfigurationElement> list =
-			Extensions.getExtensions("ch.elexis.Verrechnungscode");
+			Extensions.getExtensions("ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		ctab.addSelectionListener(new TabSelectionListener());
 		for (IConfigurationElement ice : list) {
-			if ("Artikel".equals(ice.getName())) {
+			if ("Artikel".equals(ice.getName())) { //$NON-NLS-1$
 				try {
 					CodeSelectorFactory cs =
-						(CodeSelectorFactory) ice.createExecutableExtension("CodeSelectorFactory");
+						(CodeSelectorFactory) ice.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
 					CTabItem ci = new CTabItem(ctab, SWT.NONE);
 					ci.setText(cs.getCodeSystemName());
-					ci.setData("csf",cs);
+					ci.setData("csf",cs); //$NON-NLS-1$
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
@@ -84,7 +84,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 		Composite c = new Composite(ctab, SWT.NONE);
 		c.setLayout(new GridLayout());
 		ci.setControl(c);
-		ci.setText("Lagerartikel");
+		ci.setText("Lagerartikel"); //$NON-NLS-1$
 		Table table = new Table(c, SWT.SIMPLE | SWT.V_SCROLL);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv = new TableViewer(table);
@@ -132,12 +132,12 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 				Object[] sel = isel.toArray();
 				for (Object s : sel) {
 					if (s instanceof PersistentObject) {
-						sb.append(((PersistentObject) s).storeToString()).append(",");
+						sb.append(((PersistentObject) s).storeToString()).append(","); //$NON-NLS-1$
 					} else {
-						sb.append("error").append(",");
+						sb.append("error").append(","); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				event.data = sb.toString().replace(",$", "");
+				event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 		});
@@ -185,7 +185,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 				Artikel art = (Artikel) element;
 				String ret = art.getInternalName();
 				if (art.isLagerartikel()) {
-					ret += " (" + Integer.toString(art.getTotalCount()) + ")";
+					ret += " (" + Integer.toString(art.getTotalCount()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return ret;
 			}
@@ -227,7 +227,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 			if(top!=null){
 				if(top.getControl()==null){
 					CommonViewer cv = new CommonViewer();
-					CodeSelectorFactory cs=(CodeSelectorFactory) top.getData("csf");
+					CodeSelectorFactory cs=(CodeSelectorFactory) top.getData("csf"); //$NON-NLS-1$
 					ViewerConfigurer vc = cs.createViewerConfigurer(cv);
 					Composite c = new Composite(ctab, SWT.NONE);
 					c.setLayout(new GridLayout());

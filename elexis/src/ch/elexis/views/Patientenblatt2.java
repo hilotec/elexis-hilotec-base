@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt2.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ * $Id: Patientenblatt2.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 
 
@@ -81,21 +81,23 @@ import ch.rgw.tools.StringTool;
  * Ersatz für Patientenblatt mit erweiterter Funktionalität (Lock, Nutzung von InputPanel)
  */
 public class Patientenblatt2 extends Composite implements GlobalEvents.SelectionListener, ActivationListener{
+	private static final String KEY_DBFIELD = "dbfield"; //$NON-NLS-1$
+	private static final String KEY_PATIENTENBLATT = "Patientenblatt/"; //$NON-NLS-1$
 	private final FormToolkit tk;
 	private InputPanel ipp;
 	private IAction lockAction;
 	MenuItem delZA;
-	private final static String CFG_BEZUGSKONTAKTTYPEN="views/patientenblatt/Bezugskontakttypen";
-	public final static String CFG_EXTRAFIELDS="views/patientenblatt/extrafelder";
-	private final static String SPLITTER="#!>";
+	private final static String CFG_BEZUGSKONTAKTTYPEN="views/patientenblatt/Bezugskontakttypen"; //$NON-NLS-1$
+	public final static String CFG_EXTRAFIELDS="views/patientenblatt/extrafelder"; //$NON-NLS-1$
+	private final static String SPLITTER="#!>"; //$NON-NLS-1$
 
-	private final static String[] lbExpandable={"Diagnosen","Persönliche Anamnese",/*"Familienanamnese",
-			"Systemanamnese",*/"Allergien","Risiken","Bemerkungen"};
+	private final static String[] lbExpandable={Messages.getString("Patientenblatt2.diagnosesLbl"),Messages.getString("Patientenblatt2.persAnamnesisLbl"),/*"Familienanamnese", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
+			"Systemanamnese",*/Messages.getString("Patientenblatt2.allergiesLbl"),Messages.getString("Patientenblatt2.risksLbl"),Messages.getString("Patientenblatt2.remarksLbk")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private final Text[] txExpandable=new Text[lbExpandable.length];
-	private final static String[] dfExpandable={"Diagnosen","PersAnamnese",/*"FamilienAnamnese",
-			"SystemAnamnese",*/"Allergien","Risiken","Bemerkung"};
+	private final static String[] dfExpandable={"Diagnosen","PersAnamnese",/*"FamilienAnamnese", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
+			"SystemAnamnese",*/"Allergien","Risiken","Bemerkung"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private final ExpandableComposite[] ec=new ExpandableComposite[lbExpandable.length];
-	private final static String FIXMEDIKATION="Fixmedikation"; 
+	private final static String FIXMEDIKATION=Messages.getString("Patientenblatt2.fixmedication");  //$NON-NLS-1$
 	//private final static String[] lbLists={"Fixmedikation"/*,"Reminders" */};
 	private final FormText inpAdresse;
 	private final ListDisplay<BezugsKontakt> inpZusatzAdresse /*, dlReminder */;
@@ -118,17 +120,17 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	    	}
 	    	
 	    	ArrayList<InputData> fields=new ArrayList<InputData>(20);
-	    	fields.add(new InputData("Name",Patient.NAME,InputData.Typ.STRING,null));
-			fields.add(new InputData("Vorname",Patient.FIRSTNAME,InputData.Typ.STRING,null));
-			fields.add(new InputData("Geburtsdatum",Patient.BIRTHDATE,InputData.Typ.DATE,null));
-			fields.add(new InputData("Geschlecht",Patient.SEX,null,new String[]{Person.FEMALE,Person.MALE},false));
-			fields.add(new InputData("Telefon 1",Patient.PHONE1,InputData.Typ.STRING,null));
-			fields.add(new InputData("Telefon 2",Patient.PHONE2,InputData.Typ.STRING,null));
-			fields.add(new InputData("Mobil",Patient.MOBILE,InputData.Typ.STRING,null));
-			fields.add(new InputData("Fax",Patient.FAX,InputData.Typ.STRING,null));
-			fields.add(new InputData("E-Mail",Patient.E_MAIL,InputData.Typ.STRING,null));
-			fields.add(new InputData("Gruppe",Patient.GROUP,InputData.Typ.STRING,null));
-			fields.add(new InputData("Konto",Patient.BALANCE,new LabeledInputField.IContentProvider(){
+	    	fields.add(new InputData(Messages.getString("Patientenblatt2.name"),Patient.NAME,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.firstname"),Patient.FIRSTNAME,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.birthdate"),Patient.BIRTHDATE,InputData.Typ.DATE,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.sex"),Patient.SEX,null,new String[]{Person.FEMALE,Person.MALE},false)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.phone1"),Patient.PHONE1,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.phone2"),Patient.PHONE2,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.mobile"),Patient.MOBILE,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.fax"),Patient.FAX,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.email"),Patient.E_MAIL,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.group"),Patient.GROUP,InputData.Typ.STRING,null)); //$NON-NLS-1$
+			fields.add(new InputData(Messages.getString("Patientenblatt2.balance"),Patient.BALANCE,new LabeledInputField.IContentProvider(){ //$NON-NLS-1$
 
 				public void displayContent(PersistentObject po, InputData ltf) {
 					ltf.setText(actPatient.getKontostand().getAmountAsString());
@@ -164,20 +166,6 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
         tk=Desk.getToolkit();
     	form=tk.createScrolledForm(this);
         form.getBody().setLayout(new GridLayout());
-        /*
-        form.getBody().addControlListener(new ControlAdapter(){
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle si=form.getBody().getBounds();
-				cUserfields.setSize(si.width, si.height);
-				ipp.layout();
-				GridData gd=(GridData)cUserfields.getLayoutData();
-				gd.heightHint=ipp.getSize().y;
-			}
-        	
-        });
-        */
         cUserfields=new Composite(form.getBody(),SWT.NONE);
         cUserfields.setLayout(new GridLayout());
         cUserfields.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -186,11 +174,11 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
         Composite cPersonalien=tk.createComposite(form.getBody());
         cPersonalien.setLayout(new GridLayout(2,false));
         cPersonalien.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-        hHA=tk.createHyperlink(cPersonalien,"Anschrift",SWT.NONE);
+        hHA=tk.createHyperlink(cPersonalien,Messages.getString("Patientenblatt2.postal"),SWT.NONE); //$NON-NLS-1$
 		hHA.addHyperlinkListener(hr);
 		hHA.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		inpAdresse=tk.createFormText(cPersonalien,false);
-		inpAdresse.setText("---\n",false,false);
+		inpAdresse.setText("---\n",false,false); //$NON-NLS-1$
 		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		
 		IExpansionListener ecExpansionListener =  new ExpansionAdapter(){
@@ -198,13 +186,13 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
             public void expansionStateChanging(final ExpansionEvent e)
             {
             	ExpandableComposite src=(ExpandableComposite)e.getSource();
-                UserSettings2.saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
+                UserSettings2.saveExpandedState(KEY_PATIENTENBLATT+src.getText(), e.getState());
             }
             
         };
 		
-        ecZA=WidgetFactory.createExpandableComposite(tk, form, "Zusatzadressen");
-        UserSettings2.setExpandedState(ecZA,"Patientenblatt/Zusatzadressen");
+        ecZA=WidgetFactory.createExpandableComposite(tk, form, Messages.getString("Patientenblatt2.additionalAdresses")); //$NON-NLS-1$
+        UserSettings2.setExpandedState(ecZA,"Patientenblatt/Zusatzadressen"); //$NON-NLS-1$
 
         ecZA.addExpansionListener(ecExpansionListener);
         
@@ -216,7 +204,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 			 */
 			
 			public void hyperlinkActivated(final String l) {
-				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,"Kontakt für Zusatzadresse","Bitte wählen Sie aus, wer als Zusatzadresse aufgenommen werden soll");
+				KontaktSelektor ksl=new KontaktSelektor(getShell(),Kontakt.class,Messages.getString("Patientenblatt2.contactForAdditionalAddress"),Messages.getString("Patientenblatt2.pleaseSelectardress")); //$NON-NLS-1$ //$NON-NLS-2$
 				if(ksl.open()==Dialog.OK){
 					Kontakt k=(Kontakt) ksl.getSelection();
 					BezugsKontaktAuswahl bza=new BezugsKontaktAuswahl();
@@ -238,49 +226,49 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 				StringBuffer sb = new StringBuffer();
 				sb.append(bezugsKontakt.getLabel());
 				
-				Kontakt other = Kontakt.load(bezugsKontakt.get("otherID"));
+				Kontakt other = Kontakt.load(bezugsKontakt.get(BezugsKontakt.OTHER_ID));
 				if (other.exists()) {
 					List<String> tokens = new ArrayList<String>();
 					
-					String telefon1 = other.get("Telefon1");
-					String telefon2 = other.get("Telefon2");
-					String mobile = other.get("NatelNr");
-					String eMail = other.get("E-Mail");
-					String fax = other.get("Fax");
+					String telefon1 = other.get(Kontakt.PHONE1);
+					String telefon2 = other.get(Kontakt.PHONE2);
+					String mobile = other.get(Kontakt.MOBILEPHONE);
+					String eMail = other.get(Kontakt.E_MAIL);
+					String fax = other.get(Kontakt.FAX);
 					
 					if (!StringTool.isNothing(telefon1)) {
-						tokens.add("T1: " + telefon1);
+						tokens.add("T1: " + telefon1); //$NON-NLS-1$
 					}
 					if (!StringTool.isNothing(telefon2)) {
-						tokens.add("T2: " + telefon2);
+						tokens.add("T2: " + telefon2); //$NON-NLS-1$
 					}
 					if (!StringTool.isNothing(mobile)) {
-						tokens.add("M: " + mobile);
+						tokens.add("M: " + mobile); //$NON-NLS-1$
 					}
 					if (!StringTool.isNothing(fax)) {
-						tokens.add("F: " + fax);
+						tokens.add("F: " + fax); //$NON-NLS-1$
 					}
 					if (!StringTool.isNothing(eMail)) {
 						tokens.add(eMail);
 					}
 					for (String token : tokens) {
-						sb.append(", ");
+						sb.append(", "); //$NON-NLS-1$
 						sb.append(token);
 					}
 					return sb.toString();
 				}
-				return "?";
+				return "?"; //$NON-NLS-1$
 			}});
-		inpZusatzAdresse.addHyperlinks("Hinzu...");
+		inpZusatzAdresse.addHyperlinks(Messages.getString("Patientenblatt2.add")); //$NON-NLS-1$
 		inpZusatzAdresse.setMenu(createZusatzAdressMenu());
 		
         ecZA.setClient(inpZusatzAdresse);
 		for(int i=0;i<lbExpandable.length;i++){
             ec[i]=WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
-            UserSettings2.setExpandedState(ec[i], "Patientenblatt/"+lbExpandable[i]);
-			txExpandable[i]=tk.createText(ec[i], "" , SWT.MULTI);
+            UserSettings2.setExpandedState(ec[i], KEY_PATIENTENBLATT+lbExpandable[i]);
+			txExpandable[i]=tk.createText(ec[i], "" , SWT.MULTI); //$NON-NLS-1$
 			txExpandable[i].addFocusListener(new Focusreact(dfExpandable[i]));
-            ec[i].setData("dbfield",dfExpandable[i]);
+            ec[i].setData(KEY_DBFIELD,dfExpandable[i]);
             ec[i].addExpansionListener(new ExpansionAdapter(){
                 @Override
                 public void expansionStateChanging(final ExpansionEvent e)
@@ -289,24 +277,23 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
                     if(e.getState()==true){
                         Text tx=(Text)src.getClient();
                         if (actPatient != null) {
-                        	tx.setText(StringTool.unNull(actPatient.get((String)src.getData("dbfield"))));
+                        	tx.setText(StringTool.unNull(actPatient.get((String)src.getData(KEY_DBFIELD))));
                         } else {
-                        	tx.setText("");
+                        	tx.setText(""); //$NON-NLS-1$
                         }
                     }
-                    UserSettings2.saveExpandedState("Patientenblatt/"+src.getText(), e.getState());
+                    UserSettings2.saveExpandedState(KEY_PATIENTENBLATT+src.getText(), e.getState());
                 }
                 
             });
             ec[i].setClient(txExpandable[i]);
 		}
 		ecdm=WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
-		UserSettings2.setExpandedState(ecdm, "Patientenblatt/"+FIXMEDIKATION);
+		UserSettings2.setExpandedState(ecdm, KEY_PATIENTENBLATT+FIXMEDIKATION);
 		ecdm.addExpansionListener(ecExpansionListener);
 		dmd=new FixMediDisplay(ecdm,site);
 		ecdm.setClient(dmd);
 		makeActions();
-		//form.getToolBarManager().add(lockAction);
 		viewmenu=new ViewMenus(viewsite);
 		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,GlobalActions.printBlatt,GlobalActions.printRoeBlatt);
         viewmenu.createToolbar(lockAction);
@@ -353,26 +340,26 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
     {
             Menu ret=new Menu(inpZusatzAdresse);
             delZA=new MenuItem(ret,SWT.NONE);
-            delZA.setText("Adresse entfernen");
+            delZA.setText(Messages.getString("Patientenblatt2.removeAddress")); //$NON-NLS-1$
             delZA.addSelectionListener(new SelectionAdapter(){
                 @Override
                 public void widgetSelected(final SelectionEvent e)
                 {
                 	if(!bLocked){
                 		BezugsKontakt a=(BezugsKontakt)inpZusatzAdresse.getSelection();
-                		actPatient.removeBezugsKontakt(Kontakt.load(a.get("otherID")));
+                		actPatient.removeBezugsKontakt(Kontakt.load(a.get(BezugsKontakt.OTHER_ID)));
                 		setPatient(actPatient);
                 	}
                 }
                 
             });
             MenuItem showZA=new MenuItem(ret,SWT.NONE);
-            showZA.setText("Adresse zeigen...");
+            showZA.setText(Messages.getString("Patientenblatt2.showAddress")); //$NON-NLS-1$
             showZA.addSelectionListener(new SelectionAdapter(){
             	 @Override
                  public void widgetSelected(final SelectionEvent e)
                  {
-                     Kontakt a=Kontakt.load(((BezugsKontakt)inpZusatzAdresse.getSelection()).get("otherID"));
+                     Kontakt a=Kontakt.load(((BezugsKontakt)inpZusatzAdresse.getSelection()).get(BezugsKontakt.OTHER_ID));
                      KontaktDetailDialog kdd=new KontaktDetailDialog(form.getShell(),a);
                      kdd.open();
                  }
@@ -411,15 +398,15 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		ipp.getAutoForm().reload(actPatient);
 		
 		if(actPatient==null){
-            form.setText("Kein Patient ausgewählt");
-            inpAdresse.setText("",false,false);
+            form.setText(Messages.getString("Patientenblatt2.noPatientSelected")); //$NON-NLS-1$
+            inpAdresse.setText(StringConstants.EMPTY,false,false);
             inpZusatzAdresse.clear();
             return;
         }
 
-		form.setText(StringTool.unNull(p.getName())+" "+StringTool.unNull(p.get("Vorname"))+" ("+p.getPatCode()+")");
+		form.setText(StringTool.unNull(p.getName())+StringConstants.SPACE+StringTool.unNull(p.getVorname())+" ("+p.getPatCode()+")");  //$NON-NLS-1$ //$NON-NLS-2$
         inpAdresse.setText(p.getPostAnschrift(false),false,false);
-        UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen");
+        UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen"); //$NON-NLS-1$
 		inpZusatzAdresse.clear();
 		for(BezugsKontakt za : p.getBezugsKontakte()){
 			inpZusatzAdresse.add(za);
@@ -427,19 +414,17 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		
         
 		for(int i=0;i<dfExpandable.length;i++){
-			UserSettings2.setExpandedState(ec[i], "Patientenblatt/"+ec[i].getText());
+			UserSettings2.setExpandedState(ec[i], KEY_PATIENTENBLATT+ec[i].getText());
             if(ec[i].isExpanded()==true){
                 txExpandable[i].setText(p.get(dfExpandable[i]));
             }
 		}
 		dmd.reload();
-		//setExpandedState(ecdm, "Patientenblatt/"+lbLists[0]);
 		form.reflow(true);
 		setLocked(true);
 	}
     public void refresh(){
     	form.reflow(true);
-        //wf.getForm().redraw();
     }
 
     public void selectionEvent(final PersistentObject obj)
@@ -453,10 +438,10 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
     }
 	
 	private void makeActions(){
-		lockAction=new RestrictedAction(AccessControlDefaults.PATIENT_MODIFY,"gesichert",Action.AS_CHECK_BOX){
+		lockAction=new RestrictedAction(AccessControlDefaults.PATIENT_MODIFY,Messages.getString("Patientenblatt2.saved"),Action.AS_CHECK_BOX){ //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
-				setToolTipText("Blatt gegen Änderungen sichern");
+				setToolTipText(Messages.getString("Patientenblatt2.savedToolTip")); //$NON-NLS-1$
 				setChecked(true);
 			}
 			@Override
@@ -504,7 +489,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	
 	class BezugsKontaktAuswahl extends Dialog{
 		Combo cbType;
-		String result="";
+		String result=""; //$NON-NLS-1$
 		
 		public BezugsKontaktAuswahl() {
 			super(Patientenblatt2.this.getShell());
@@ -513,16 +498,16 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		@Override
 		public void create() {
 			super.create();
-			getShell().setText("Art des Bezugskontakts");
+			getShell().setText(Messages.getString("Patientenblatt2.kindOfRelation")); //$NON-NLS-1$
 		}
 
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite ret=(Composite)super.createDialogArea(parent);
-			new Label(ret,SWT.NONE).setText("Bitte geben Sie die Art des Bezugskontakts ein");
+			new Label(ret,SWT.NONE).setText(Messages.getString("Patientenblatt2.pleaseEnterKindOfRelationship")); //$NON-NLS-1$
 			cbType=new Combo(ret,SWT.NONE);
 			cbType.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			String bez=Hub.globalCfg.get(CFG_BEZUGSKONTAKTTYPEN, "");
+			String bez=Hub.globalCfg.get(CFG_BEZUGSKONTAKTTYPEN, ""); //$NON-NLS-1$
 			cbType.setItems(bez.split(SPLITTER));
 			return ret;
 		}
@@ -532,7 +517,7 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 			result=cbType.getText();
 			String[] items=cbType.getItems();
 			String nitem=cbType.getText();
-			String res="";
+			String res=""; //$NON-NLS-1$
 			if(StringTool.getIndex(items, nitem)==-1){
 				res=nitem+SPLITTER;
 			}

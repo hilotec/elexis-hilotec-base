@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: Artikel.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -31,22 +31,23 @@ import ch.rgw.tools.TimeTool;
  * verordnet werden kann
  */
 public class Artikel extends VerrechenbarAdapter {
+	public static final String EAN = "EAN";
 	protected static final String CODECLASS = "Codeclass";
 	public static final String XID_PHARMACODE = "www.xid.ch/id/pharmacode/ch";
 	public static final String SUB_ID = "SubID";
 	public static final String ARTIKEL = "Artikel";
-	private static final String LIEFERANT_ID = "LieferantID";
+	public static final String LIEFERANT_ID = "LieferantID";
 	public static final String PHARMACODE = "Pharmacode";
 	public static final String EXT_INFO = "ExtInfo";
-	private static final String ANBRUCH = "Anbruch";
+	public static final String ANBRUCH = "Anbruch";
 	public static final String MINBESTAND = "Minbestand";
 	public static final String MAXBESTAND = "Maxbestand";
-	private static final String VERKAUFSEINHEIT = "Verkaufseinheit";
-	private static final String VERPACKUNGSEINHEIT = "Verpackungseinheit";
-	private static final String ISTBESTAND = "Istbestand";
-	private static final String VK_PREIS = "VK_Preis";
-	private static final String EK_PREIS = "EK_Preis";
-	private static final String EIGENNAME = "Eigenname";
+	public static final String VERKAUFSEINHEIT = "Verkaufseinheit";
+	public static final String VERPACKUNGSEINHEIT = "Verpackungseinheit";
+	public static final String ISTBESTAND = "Istbestand";
+	public static final String VK_PREIS = "VK_Preis";
+	public static final String EK_PREIS = "EK_Preis";
+	public static final String EIGENNAME = "Eigenname";
 	public static final String TYP = "Typ";
 	public static final String NAME = "Name";
 	public static final String TABLENAME = "ARTIKEL";
@@ -62,7 +63,7 @@ public class Artikel extends VerrechenbarAdapter {
 	}
 	static {
 		addMapping(TABLENAME, LIEFERANT_ID, NAME, MAXBESTAND, MINBESTAND, ISTBESTAND, EK_PREIS,
-			VK_PREIS, TYP, EXT_INFO, "EAN", SUB_ID, "Eigenname=Name_intern", CODECLASS, "Klasse");
+			VK_PREIS, TYP, EXT_INFO, EAN, SUB_ID, "Eigenname=Name_intern", CODECLASS, "Klasse");
 		Xid
 			.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode",
 				Xid.ASSIGNMENT_REGIONAL);
@@ -471,12 +472,12 @@ public class Artikel extends VerrechenbarAdapter {
 	}
 	
 	public String getEAN(){
-		String ean = get("EAN");
+		String ean = get(EAN);
 		return ean;
 	}
 	
 	public void setEAN(String ean){
-		set("EAN", ean);
+		set(EAN, ean);
 	}
 	
 	@SuppressWarnings("unchecked")

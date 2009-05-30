@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.views.artikel;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
@@ -63,10 +64,10 @@ public class ArtikelContextMenu {
 	}
 	
 	private void makeActions(final Artikel art){
-		deleteAction = new Action("Löschen") {
+		deleteAction = new Action(Messages.ArtikelContextMenu_deleteAction) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText(art.getClass().getName() + " löschen");
+				setToolTipText(art.getClass().getName() + Messages.ArtikelContextMenu_deleteActionToolTip);
 			}
 			
 			@Override
@@ -74,7 +75,8 @@ public class ArtikelContextMenu {
 				Artikel act =
 					(Artikel) GlobalEvents.getInstance().getSelectedObject(art.getClass());
 				if (MessageDialog.openConfirm(cv.getViewerWidget().getControl().getShell(),
-					"Löschen bestätigen", "Wollen Sie wirklich " + act.getName() + " löschen?")) {
+					Messages.ArtikelContextMenu_deleteActionConfirmCaption, 
+					MessageFormat.format(Messages.ArtikelContextMenu_deleteConfirmBody,act.getName()))) {
 					act.delete();
 					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
 					cv.notify(CommonViewer.Message.update);
@@ -82,10 +84,10 @@ public class ArtikelContextMenu {
 				
 			}
 		};
-		createAction = new Action("Neu...") {
+		createAction = new Action(Messages.ArtikelContextMenu_newAction) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText("Einen neuen Artikel erstellen");
+				setToolTipText(Messages.ArtikelContextMenu_newActionTooltip);
 			}
 			
 			@Override
@@ -93,11 +95,11 @@ public class ArtikelContextMenu {
 				InputDialog inp =
 					new InputDialog(cv.getViewerWidget().getControl().getShell(), art.getClass()
 						.getName()
-						+ " erstellen", "Bitte geben Sie einen Namen für den neuen Artikel ein",
-						"", null);
+						+ Messages.ArtikelContextMenu_create, Messages.ArtikelContextMenu_pleaseEnterNameForArticle,
+						"", null); //$NON-NLS-1$
 				if (inp.open() == InputDialog.OK) {
 					String name = inp.getValue();
-					Artikel n = new Artikel(name, art.getCodeSystemName(), "");
+					Artikel n = new Artikel(name, art.getCodeSystemName(), ""); //$NON-NLS-1$
 					if (add == null) {
 						ArtikelDetailDialog ad =
 							new ArtikelDetailDialog(cv.getViewerWidget().getControl().getShell(), n);
@@ -109,10 +111,10 @@ public class ArtikelContextMenu {
 				
 			}
 		};
-		editAction = new Action("Eigenschaften...") {
+		editAction = new Action(Messages.ArtikelContextMenu_propertiesAction) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText("Eigenschaften dieses Artikels bearbeiten");
+				setToolTipText(Messages.ArtikelContextMenu_propertiesTooltip);
 			}
 			
 			@Override

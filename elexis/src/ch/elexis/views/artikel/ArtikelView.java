@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ArtikelView.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ * $Id: ArtikelView.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -52,7 +52,9 @@ import ch.rgw.tools.ExHandler;
 
 public class ArtikelView extends ViewPart implements SelectionListener, ActivationListener,
 		ISaveablePart2 {
-	public static final String ID = "ch.elexis.artikelview";
+	private static final String KEY_CE = "ce"; //$NON-NLS-1$
+	private static final String KEY_DETAIL = "detail"; //$NON-NLS-1$
+	public static final String ID = "ch.elexis.artikelview"; //$NON-NLS-1$
 	private CTabFolder ctab;
 	private IAction importAction /* ,deleteAction */;
 	private ViewMenus viewmenus;
@@ -66,7 +68,7 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 		// List<IDetailDisplay>
 		// list=Extensions.getClasses("ch.elexis.Diagnosecode","CodeDetailDisplay");
 		addCustomBlocksPage();
-		addPagesFor("ch.elexis.Verrechnungscode");
+		addPagesFor("ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		if (ctab.getItemCount() > 0) {
 			ctab.setSelection(0);
 			
@@ -81,15 +83,15 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 					MasterDetailsPage page = (MasterDetailsPage) top.getControl();
 					if (page == null) {
 						try {
-							IDetailDisplay det = (IDetailDisplay) top.getData("detail");
-							IConfigurationElement ce = (IConfigurationElement) top.getData("ce");
+							IDetailDisplay det = (IDetailDisplay) top.getData(KEY_DETAIL);
+							IConfigurationElement ce = (IConfigurationElement) top.getData(KEY_CE);
 							CodeSelectorFactory cs =
 								(CodeSelectorFactory) ce
-									.createExecutableExtension("CodeSelectorFactory");
-							String a = ce.getAttribute("ImporterClass");
+									.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
+							String a = ce.getAttribute("ImporterClass"); //$NON-NLS-1$
 							ImporterPage ip = null;
 							if (a != null) {
-								ip = (ImporterPage) ce.createExecutableExtension("ImporterClass");
+								ip = (ImporterPage) ce.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
 								if (ip != null) {
 									importers.put(det.getTitle(), ip);
 								}
@@ -140,7 +142,7 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 	}
 	
 	private void makeActions(){
-		importAction = new Action("Import...") {
+		importAction = new Action(Messages.ArtikelView_importAction) {
 			@Override
 			public void run(){
 				CTabItem it = ctab.getSelection();
@@ -151,7 +153,7 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 						dlg.create();
 						dlg.setTitle(top.getTitle());
 						dlg.setMessage(top.getDescription());
-						dlg.getShell().setText("Datenimport");
+						dlg.getShell().setText(Messages.ArtikelView_importCaption);
 						if (dlg.open() == Dialog.OK) {
 							top.run(false);
 						}
@@ -190,19 +192,19 @@ public class ArtikelView extends ViewPart implements SelectionListener, Activati
 		for (IConfigurationElement ce : list) {
 			try {
 				// System.out.println(ce.getName());
-				if (!"Artikel".equals(ce.getName())) {
+				if (!"Artikel".equals(ce.getName())) { //$NON-NLS-1$
 					continue;
 				}
 				IDetailDisplay d =
-					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay");
+					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
 				CTabItem ct = new CTabItem(ctab, SWT.NONE);
 				ct.setText(d.getTitle());
-				ct.setData("ce", ce);
-				ct.setData("detail", d);
+				ct.setData(KEY_CE, ce);
+				ct.setData(KEY_DETAIL, d);
 			} catch (Exception ex) {
 				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
-				mb.setText("Fehler");
-				mb.setMessage("Fehler beim Initialisieren des Codesystems " + ce.getName() + ":\n"
+				mb.setText(Messages.ArtikelView_errorCaption);
+				mb.setMessage(Messages.ArtikelView_errorText + ce.getName() + ":\n" //$NON-NLS-2$ //$NON-NLS-1$
 					+ ex.getLocalizedMessage());
 				mb.open();
 			}

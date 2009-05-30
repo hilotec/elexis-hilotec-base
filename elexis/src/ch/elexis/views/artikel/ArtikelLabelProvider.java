@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelLabelProvider.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *  $Id: ArtikelLabelProvider.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -40,7 +40,7 @@ public class ArtikelLabelProvider extends DefaultLabelProvider implements ITable
 			Artikel art = (Artikel) element;
 			String ret = art.getInternalName();
 			if (art.isLagerartikel()) {
-				ret += " (" + Integer.toString(art.getTotalCount()) + ")";
+				ret += " (" + Integer.toString(art.getTotalCount()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return ret;
 		}

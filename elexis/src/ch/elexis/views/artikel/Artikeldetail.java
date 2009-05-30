@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Artikeldetail.java 4683 2008-11-15 20:39:23Z rgw_ch $
+ *  $Id: Artikeldetail.java 5330 2009-05-30 11:24:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.artikel;
 
@@ -35,41 +35,41 @@ import ch.elexis.util.LabeledInputField.InputData.Typ;
 
 public class Artikeldetail extends ViewPart implements GlobalEvents.SelectionListener,
 		ActivationListener, ISaveablePart2 {
-	public static final String ID = "ch.elexis.ArtikelDetail";
+	public static final String ID = "ch.elexis.ArtikelDetail"; //$NON-NLS-1$
 	
 	static final public InputData[] getFieldDefs(final Shell shell){
 		InputData[] ret =
 			new InputData[] {
-				new InputData("Typ", "Typ", Typ.STRING, null),
-				new InputData("EANCode", "ExtInfo", Typ.STRING, "EAN"),
-				new InputData("Pharmacode", "ExtInfo", Typ.STRING, "Pharmacode"),
-				new InputData("Einkaufspreis", "EK_Preis", Typ.CURRENCY, null),
-				new InputData("Verkaufspreis", "VK_Preis", Typ.CURRENCY, null),
-				new InputData("Max. Pckg. an Lager", "Maxbestand", Typ.STRING, null),
-				new InputData("Min. Pckg. an Lager", "Minbestand", Typ.STRING, null),
-				new InputData("Aktuell Pckg. an Lager", "Istbestand", Typ.STRING, null),
-				new InputData("Aktuell an Lager", "ExtInfo", Typ.INT, "Anbruch"),
-				new InputData("Stück pro Packung", "ExtInfo", Typ.INT, "Verpackungseinheit"),
-				new InputData("Stück pro Abgabe", "ExtInfo", Typ.INT, "Verkaufseinheit"),
-				new InputData("Lieferant", "Lieferant", new LabeledInputField.IContentProvider() {
+				new InputData(Messages.Artikeldetail_typ, Artikel.TYP, Typ.STRING, null),
+				new InputData(Messages.Artikeldetail_EAN, Artikel.EAN, Typ.STRING, null),
+				new InputData(Messages.Artikeldetail_Pharmacode, Artikel.EXTINFO, Typ.STRING, "Pharmacode"), //$NON-NLS-2$
+				new InputData(Messages.Artikeldetail_Einkaufspreis, Artikel.EK_PREIS, Typ.CURRENCY, null),
+				new InputData(Messages.Artikeldetail_Verkaufspreis, Artikel.VK_PREIS, Typ.CURRENCY, null),
+				new InputData(Messages.Artikeldetail_maxbestand, Artikel.MAXBESTAND, Typ.STRING, null),
+				new InputData(Messages.Artikeldetail_minbestand, Artikel.MINBESTAND, Typ.STRING, null),
+				new InputData(Messages.Artikeldetail_istbestand, Artikel.ISTBESTAND, Typ.STRING, null),
+				new InputData(Messages.Artikeldetail_istbestandAnbruch, Artikel.EXTINFO, Typ.INT, "Anbruch"), //$NON-NLS-2$
+				new InputData(Messages.Artikeldetail_verpackungseinheit, Artikel.EXTINFO, Typ.INT, "Verpackungseinheit"), //$NON-NLS-2$
+				new InputData(Messages.Artikeldetail_stueckProAbgabe, Artikel.EXTINFO, Typ.INT, "Verkaufseinheit"), //$NON-NLS-2$
+				new InputData(Messages.Artikeldetail_lieferant, Artikel.LIEFERANT_ID, new LabeledInputField.IContentProvider() {
 					public void displayContent(PersistentObject po, InputData ltf){
 						String lbl = ((Artikel) po).getLieferant().getLabel();
 						if (lbl.length() > 15) {
-							lbl = lbl.substring(0, 12) + "...";
+							lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
 						}
 						ltf.setText(lbl);
 					}
 					
 					public void reloadContent(PersistentObject po, InputData ltf){
 						KontaktSelektor ksl =
-							new KontaktSelektor(shell, Kontakt.class, "Lieferant",
-								"Bitte wählen Sie, wer diesen Artikel liefert");
+							new KontaktSelektor(shell, Kontakt.class, Messages.Artikeldetail_lieferant,
+								Messages.Artikeldetail_LieferantWaehlen);
 						if (ksl.open() == Dialog.OK) {
 							Kontakt k = (Kontakt) ksl.getSelection();
 							((Artikel) po).setLieferant(k);
 							String lbl = ((Artikel) po).getLieferant().getLabel();
 							if (lbl.length() > 15) {
-								lbl = lbl.substring(0, 12) + "...";
+								lbl = lbl.substring(0, 12) + "..."; //$NON-NLS-1$
 							}
 							ltf.setText(lbl);
 							GlobalEvents.getInstance().fireUpdateEvent(Artikel.class);
