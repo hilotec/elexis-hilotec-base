@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *    $Id: PersistentObject.java 5336 2009-05-31 18:58:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -210,7 +210,8 @@ public abstract class PersistentObject {
 		 */
 		if (driver.equals(StringTool.leer)) {
 			String d = PreferenceInitializer.getDefaultDBPath();
-			j = JdbcLink.createInProcHsqlDBLink(d);
+			j=JdbcLink.createH2Link(d);
+			//j = JdbcLink.createInProcHsqlDBLink(d);
 			user = "sa";
 			pwd = StringTool.leer;
 			typ = getConnection().DBFlavor;
