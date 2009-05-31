@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 5335 2009-05-31 18:57:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -47,6 +47,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore localstore = new SettingsPreferenceStore(Hub.localCfg);
 		
 		// Datenbank
+		/*
 		localstore.setDefault(PreferenceConstants.DB_NAME,"hsql"); //$NON-NLS-1$
         localstore.setDefault(PreferenceConstants.DB_CLASS,"org.hsqldb.jdbcDriver"); //$NON-NLS-1$
         String base=getDefaultDBPath();
@@ -55,7 +56,15 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         localstore.setDefault(PreferenceConstants.DB_USERNAME,"sa"); //$NON-NLS-1$
         localstore.setDefault(PreferenceConstants.DB_PWD,""); //$NON-NLS-1$
         localstore.setDefault(PreferenceConstants.DB_TYP,"hsqldb"); //$NON-NLS-1$
+        */
+		localstore.setDefault(PreferenceConstants.DB_NAME,"h2"); //$NON-NLS-1$
+        localstore.setDefault(PreferenceConstants.DB_CLASS,"org.h2.Driver"); //$NON-NLS-1$
+        String base=getDefaultDBPath();
         
+        localstore.setDefault(PreferenceConstants.DB_CONNECT,"jdbc:h2:"+base+"/db;MODE=MySQL"); //$NON-NLS-1$ //$NON-NLS-2$
+        localstore.setDefault(PreferenceConstants.DB_USERNAME,"sa"); //$NON-NLS-1$
+        localstore.setDefault(PreferenceConstants.DB_PWD,""); //$NON-NLS-1$
+        localstore.setDefault(PreferenceConstants.DB_TYP,"mysql"); //$NON-NLS-1$
         //Ablauf
         File userhome=new File(System.getProperty("user.home")+File.separator+"elexis"); //$NON-NLS-1$ //$NON-NLS-2$
         if(!userhome.exists()){
