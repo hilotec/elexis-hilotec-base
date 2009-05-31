@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 5321 2009-05-28 12:06:28Z rgw_ch $ 
+<!-- $Id: plugin.xml 5332 2009-05-31 13:11:41Z rgw_ch $ 
  * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -59,7 +59,7 @@
             id="ch.elexis.AbrechnungPerspektive"
             name="%elexis.accountingPerspective">
          <description>
-            Eine Perspektive zum Rechnungen erstellen und ausdrucken
+            %perspective.description.0
          </description>
       </perspective>
       <perspective
@@ -86,7 +86,7 @@
             class="ch.elexis.BestellPerspektive"
             icon="rsc/cart.png"
             id="ch.elexis.bestellperspektive"
-            name="Bestellungen"/>
+            name="%perspective.name.0"/>
    </extension>
    <extension
          id="ElexisProduct"
@@ -95,7 +95,7 @@
       <product
             application="ch.elexis.ElexisApp"
             description="%elexis.banner"
-            name="Medelexis Nucleus">
+            name="%product.name.0">
          <property
                name="appName"
                value="Medelexis Nucleus"/>
@@ -128,7 +128,7 @@
             class="ch.elexis.views.PatientDetailView"
             icon="rsc/person.ico"
             id="ch.elexis.PatDetail"
-            name="Patient Detail (alt)"/>
+            name="%view.name.0"/>
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RezepteView"
@@ -347,24 +347,24 @@
             class="ch.elexis.views.FieldDisplayView"
             icon="rsc/daten.gif"
             id="ch.elexis.dbfielddisplay"
-            name="Datenanzeige"/>
+            name="%view.name.1"/>
       <view
             category="ch.elexis.datenKategorie"
             class="ch.elexis.views.ODDBView"
             id="ch.elexis.ODDBView"
-            name="Open Drug Database"/>
+            name="%view.name.2"/>
       <view
             category="ch.elexis.datenKategorie"
             class="ch.elexis.views.MediVerlaufView"
             id="ch.elexis.medverlaufview"
-            name="Medikamente-Verlauf"/>
+            name="%view.name.3"/>
       <view
             category="ch.elexis.messungenKategorie"
             class="ch.elexis.views.LabNotSeenView"
             fastViewWidthRatio="0.4"
             icon="rsc/reagensask.ico"
             id="ch.elexis.LabNotSeenView"
-            name="Labor neu">
+            name="%view.name.4">
       </view>
       <view
             category="ch.elexis.abrechnungKategorie"
@@ -384,7 +384,7 @@
             class="ch.elexis.views.ScriptView"
             icon="rsc/script_code.png"
             id="ch.elexis.scriptsView"
-            name="Script">
+            name="%view.name.5">
       </view>
 	<category
             id="ch.elexis.messungenKategorie"
@@ -476,7 +476,7 @@
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.preferences.UserTextPref"
             id="ch.elexis.preferences.usertext"
-            name="Texteingabe"/>
+            name="%page.name.0"/>
       <page
             category="ch.elexis.LaborPref"
             class="ch.elexis.preferences.LabGroupPrefs"
@@ -485,18 +485,18 @@
       <page
             class="ch.elexis.preferences.LagerverwaltungPrefs"
             id="ch.elexis.preferences.LagerverwaltungPrefs"
-            name="Lagerverwaltung"/>
+            name="%page.name.1"/>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.preferences.UserSettings2"
             id="ch.elexis.userSetting2"
-            name="Ansicht">
+            name="%page.name.2">
       </page>
       <page
             category="ch.elexis.LaborPref"
             class="ch.elexis.preferences.LabSettings"
             id="ch.elexis.LaborNeuPrefs"
-            name="Einstellungen">
+            name="%page.name.3">
       </page>
       <page
             category="ch.elexis.preferences.UserPreferences"
@@ -512,19 +512,19 @@
       <page
             class="ch.elexis.preferences.Stickers"
             id="ch.elexis.prefs.sticker"
-            name="Sticker">
+            name="%page.name.4">
       </page>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.preferences.FontPreference"
             id="ch.elexis.user.fontselector"
-            name="Schriftarten">
+            name="%page.name.5">
       </page>
       <page
             category="ch.elexis.preferences.UserPreferences"
             class="ch.elexis.preferences.XIDEdit"
             id="ch.elexis.preferences.xid.edit"
-            name="XIDs">
+            name="%page.name.6">
       </page>
    </extension>
    <extension
@@ -539,43 +539,43 @@
             name="%elexis.loginCommand"/>
       <category
             id="ch.elexis.commands.kategorie"
-            name="Elexis"/>
+            name="%category.name.0"/>
       <command
             categoryId="ch.elexis.commands.kategorie"
             id="ch.elexis.commands.import"
             name="%elexis.importCommand"/>
       <command
             categoryId="ch.elexis.commands.kategorie"
-            description="Verbindung zu einer Datenbank herstellen"
+            description="%command.description.0"
             id="ch.elexis.commands.connectWizard"
             name="%elexis.connectCommand"/>
       <command
-            description="Zum Anfang zurückgehen"
+            description="%command.description.1"
             id="ch.elexis.commands.home"
-            name="Home"/>
+            name="%command.name.0"/>
       <command
             categoryId="ch.elexis.commands.bills"
             defaultHandler="ch.elexis.commands.ErstelleRnnCommand"
             id="bill.create"
-            name="Rechnungen Erstellen">
+            name="%command.name.1">
          <commandParameter
                id="ch.elexis.RechnungErstellen.parameter"
-               name="billables"
+               name="%commandParameter.name.0"
                optional="true"
                typeId="ch.elexis.TreeType">
          </commandParameter>
       </command>
       <category
-            description="Billing related commands"
+            description="%category.description.0"
             id="ch.elexis.commands.bills"
-            name="bills">
+            name="%category.name.1">
       </category>
       <command
             categoryId="ch.elexis.commands.bills"
             defaultHandler="ch.elexis.commands.MahnlaufCommand"
-            description="Mahnungen erstellen"
+            description="%command.description.2"
             id="bill.reminder"
-            name="Mahnlauf">
+            name="%command.name.2">
       </command>
       <commandParameterType
             converter="ch.elexis.commands.TreeToStringConverter"
@@ -585,9 +585,9 @@
       <command
             categoryId="ch.elexis.commands.kategorie"
             defaultHandler="ch.elexis.commands.ExportiereBloeckeCommand"
-            description="Leistungsblöcke exportieren"
+            description="%command.description.3"
             id="serviceblocks.export"
-            name="ExportServices">
+            name="%command.name.3">
       </command>
    </extension>
    <extension
@@ -663,9 +663,9 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            description="context for billing"
+            description="%context.description.0"
             id="ch.elexis.context.billing"
-            name="billing"
+            name="%context.name.0"
             parentId="org.eclipse.ui.contexts.window">
       </context>
    </extension>
