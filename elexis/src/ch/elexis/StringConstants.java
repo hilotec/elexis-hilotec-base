@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: StringConstants.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ *    $Id: StringConstants.java 5334 2009-05-31 15:22:48Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;
@@ -21,23 +21,23 @@ package ch.elexis;
  * 
  */
 public class StringConstants {
-	public static final String SLASH = "/";
-	public static final String BACKSLASH = "\\";
-	public static final String SPACE = " ";
-	public static final String EMPTY = "";
-	public static final String COMMA = ",";
-	public static final String COLON = ":";
-	public static final String DOUBLECOLON = "::";
+	public static final String SLASH = "/"; //$NON-NLS-1$
+	public static final String BACKSLASH = "\\"; //$NON-NLS-1$
+	public static final String SPACE = " "; //$NON-NLS-1$
+	public static final String EMPTY = ""; //$NON-NLS-1$
+	public static final String COMMA = ","; //$NON-NLS-1$
+	public static final String COLON = ":"; //$NON-NLS-1$
+	public static final String DOUBLECOLON = "::"; //$NON-NLS-1$
 	
-	public static final String MANDATOR = "Mandant";
-	public static final String USER = "Anwender";
+	public static final String MANDATOR = Messages.StringConstants_mandator;
+	public static final String USER = Messages.StringConstants_user;
 	
-	public static final String ROLE_NAMING = "Rolle";
-	public static final String ROLES_NAMING = "Rollen";
+	public static final String ROLE_NAMING = Messages.StringConstants_role;
+	public static final String ROLES_NAMING = Messages.StringConstants_roles;
 	
-	public static final String ROLE_ADMIN = "Admin";
-	public static final String ROLE_USERS = "Anwender";
-	public static final String ROLE_ALL = "Alle";
-	public static final String ROLES_DEFAULT = ROLE_ADMIN + "," + ROLE_USERS + "," + ROLE_ALL;
+	public static final String ROLE_ADMIN = Messages.StringConstants_admin;
+	public static final String ROLE_USERS = Messages.StringConstants_user;
+	public static final String ROLE_ALL = Messages.StringConstants_all;
+	public static final String ROLES_DEFAULT = ROLE_ADMIN + "," + ROLE_USERS + "," + ROLE_ALL; //$NON-NLS-1$ //$NON-NLS-2$
 	
 }

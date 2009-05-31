@@ -82,6 +82,17 @@ public class Messages extends NLS {
 	public static String LoginDialog_login;
 
 	public static String LoginDialog_terminate;
+	public static String StringConstants_admin;
+
+	public static String StringConstants_all;
+
+	public static String StringConstants_mandator;
+
+	public static String StringConstants_role;
+
+	public static String StringConstants_roles;
+
+	public static String StringConstants_user;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
