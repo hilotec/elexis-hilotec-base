@@ -74,6 +74,9 @@ public class SAT {
 	 *         the sender's ID
 	 */
 	public Result<HashMap<String, Object>> unwrap(byte[] encrypted){
+		if(encrypted==null){
+			return new Result<HashMap<String,Object>>(Result.SEVERITY.ERROR,8,ERR_SERVER+"-> Null packet from server",null,true);
+		}
 		if(encrypted.length<25){	// is probably an error message
 			return new Result<HashMap<String, Object>>(Result.SEVERITY.ERROR,7, ERR_SERVER+new String(encrypted),null, true);
 		}
