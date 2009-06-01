@@ -46,6 +46,7 @@ public interface Cryptologist {
 	 */
 	public Result<byte[]> decrypt(byte[] encrypted);
 	
+	public enum VERIFY_RESULT{OK,SIGNER_UNKNOWN,BAD_SIGNATURE,INTERNAL_ERROR}
 	/**
 	 * Verify a MAC
 	 * 
@@ -57,7 +58,7 @@ public interface Cryptologist {
 	 *            name of the signer's public key
 	 * @return
 	 */
-	public Result<String> verify(byte[] data, byte[] signature, String signerKeyName);
+	public VERIFY_RESULT verify(byte[] data, byte[] signature, String signerKeyName);
 	
 	public boolean hasCertificateOf(String alias);
 	

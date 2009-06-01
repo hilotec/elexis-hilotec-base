@@ -189,28 +189,25 @@ public class JCECrypter implements Cryptologist {
 		return null;
 	}
 
-	public Result<String> verify(byte[] data, byte[] signature,
+	public VERIFY_RESULT verify(byte[] data, byte[] signature,
 			String signerKeyName) {
 		try {
 			Signature sig = Signature.getInstance("SHA1withRSA", "BC");
 			PublicKey pk = km.getPublicKey(signerKeyName);
 			if (pk == null) {
-				return new Result<String>(Result.SEVERITY.WARNING, 1,
-						"No key found", signerKeyName, true);
+				return  VERIFY_RESULT.SIGNER_UNKNOWN;
 			}
 			sig.initVerify(pk);
 			sig.update(data);
 			if (sig.verify(signature)) {
-				return new Result<String>("OK");
+				return VERIFY_RESULT.OK;
 			} else {
-				return new Result<String>(Result.SEVERITY.ERROR, 2,
-						"Signature failed", signerKeyName, true);
+				return VERIFY_RESULT.BAD_SIGNATURE;
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
-		return new Result<String>(Result.SEVERITY.FATAL, 3, "could not verify",
-				signerKeyName, true);
+		return VERIFY_RESULT.INTERNAL_ERROR;
 	}
 
 	public boolean hasCertificateOf(String alias) {

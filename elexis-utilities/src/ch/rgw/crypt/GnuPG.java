@@ -639,12 +639,11 @@ public class GnuPG implements Cryptologist {
 		return null;
 	}
 	
-	public Result<String> verify(byte[] data, byte[] signature, String signerKeyName){
+	public VERIFY_RESULT verify(byte[] data, byte[] signature, String signerKeyName){
 		if (verify(StringTool.createString(data), StringTool.createString(signature))) {
-			return new Result<String>("OK");
+			return Cryptologist.VERIFY_RESULT.OK;
 		} else {
-			return new Result<String>(Result.SEVERITY.ERROR, 1, "Signature not valid",
-				signerKeyName, true);
+			return Cryptologist.VERIFY_RESULT.BAD_SIGNATURE;
 		}
 	}
 	

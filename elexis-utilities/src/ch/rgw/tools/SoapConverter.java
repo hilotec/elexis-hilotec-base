@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -43,7 +44,7 @@ public class SoapConverter {
 	public static final String TYPE_INTEGRAL = "integral";
 	public static final String TYPE_FLOAT = "float";
 	public static final String TYPE_ARRAY = "array";
-	public static final String TYPE_HASH = "hash";
+	public static final String TYPE_MAP = "map";
 	public static final String TYPE_SIGNATURE = "signature";
 	
 	private Document doc;
@@ -99,7 +100,7 @@ public class SoapConverter {
 		return null;
 	}
 	
-	public HashMap<String, Object> loadHash(Element parm){
+	public Map<String, Object> loadHash(Element parm){
 		HashMap<String, Object> ret = new HashMap<String, Object>();
 		List<Element> params = parm.getChildren("parameter", ns);
 		for (Element param : params) {
@@ -115,7 +116,7 @@ public class SoapConverter {
 					res = Double.parseDouble(s);
 				} else if (type.equals(TYPE_ARRAY)) {
 					res = Base64Coder.decode(s);
-				} else if (type.equals(TYPE_HASH)) {
+				} else if (type.equals(TYPE_MAP)) {
 					res = loadHash(param);
 				} else {
 					res = "** unsupported type ** "+type;
@@ -129,7 +130,7 @@ public class SoapConverter {
 		return ret;
 	}
 	
-	public HashMap<String, Object> getParameters(){
+	public Map<String, Object> getParameters(){
 		if (bValid) {
 			Element body = eRoot.getChild("Body", ns);
 			return loadHash(body);
@@ -201,16 +202,16 @@ public class SoapConverter {
 			String res = new String(Base64Coder.encode((byte[]) obj));
 			createParameter(parent, name, TYPE_ARRAY).setText(res);
 		} else if (obj instanceof HashMap) {
-			addHashMap(parent, name, (HashMap<String, Object>) obj);
+			addMap(parent, name, (Map<String, Object>) obj);
 		} else {
 			throw new Exception("Invalid type for SoapConverter: "+obj.getClass().getName());
 		}
 	}
 	
-	public void addHashMap(Element parent, String name, HashMap<String, Object> hash)
+	public void addMap(Element parent, String name, Map<String, Object> map)
 		throws Exception{
-		Element ret = createParameter(parent, name, TYPE_HASH);
-		Set<Entry<String, Object>> entries = hash.entrySet();
+		Element ret = createParameter(parent, name, TYPE_MAP);
+		Set<Entry<String, Object>> entries = map.entrySet();
 		for (Entry<String, Object> entry : entries) {
 			addObject(ret, entry.getKey(), entry.getValue());
 		}
