@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: FlatDataLoader.java 5340 2009-06-02 12:12:31Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -63,9 +63,12 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		}
 		Desk.asyncExec(new Runnable() {
 			public void run(){
-				tv.setItemCount(0);
-				filtered = raw;
-				tv.setItemCount(raw.size());
+				// Avoid access to disposed table
+				if (tv != null && !tv.getTable().isDisposed()) {
+					tv.setItemCount(0);
+					filtered = raw;
+					tv.setItemCount(raw.size());
+				}
 			}
 		});
 		
