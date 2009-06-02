@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BlockImporter.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ *    $Id: BlockImporter.java 5339 2009-06-02 12:07:59Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -39,7 +39,7 @@ public class BlockImporter extends ImporterPage {
 		
 		String filename = results[0];
 		if (StringTool.isNothing(filename)) {
-			return new Status(SWT.ERROR, "ch.elexis", "No file given"); //$NON-NLS-1$ //$NON-NLS-2$
+			return new Status(Status.ERROR, "ch.elexis", "No file given"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		try {
@@ -51,7 +51,7 @@ public class BlockImporter extends ImporterPage {
 				return Status.CANCEL_STATUS;
 			}
 		} catch (Exception ex) {
-			return new Status(SWT.ERROR, "ch.elexis", "file not found: " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+			return new Status(Status.ERROR, "ch.elexis", "file not found: " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 	}
