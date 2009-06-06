@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *  $Id: KonsDetailView.java 5342 2009-06-06 09:49:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -348,7 +348,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				Mandant m = b.getMandant();
 				lBeh
 						.setText(Messages
-								.getString("KonsDetailView.ConsOfDate") + b.getDatum()); //$NON-NLS-1$
+								.getString("KonsDetailView.ConsOfDate")+" " + b.getDatum()); //$NON-NLS-1$
 				StringBuilder sb = new StringBuilder();
 				if (m == null) {
 					sb.append(Messages.getString("KonsDetailView.NotYours")); //$NON-NLS-1$
