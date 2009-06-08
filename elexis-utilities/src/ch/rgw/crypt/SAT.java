@@ -69,16 +69,19 @@ public class SAT {
 	 * @return a hashmap with the Parameters and an additional parameter
 	 *         "ADM_SIGNED_BY" containing the sender's ID
 	 */
-	public Var unwrap(byte[] encrypted) throws Exception{
+	public Var unwrap(byte[] encrypted, boolean bCheckSignature) throws CryptologistException {
 		if (encrypted == null) {
-			throw new Exception("Null packet from server");
+			throw new CryptologistException("Null packet from server",
+					CryptologistException.ERR_BAD_PARAMETER);
 		}
 		if (encrypted.length < 25) { // is probably an error message
-			throw new Exception(new String(encrypted));
+			throw new CryptologistException(new String(encrypted),
+					CryptologistException.ERR_SHORT_BLOCK);
 		}
 		Result<byte[]> dec = crypt.decrypt(encrypted);
 		if ((dec == null) || (!dec.isOK())) {
-			return new Var(Var.KEY_ERROR,"Could not decrypt");
+			throw new CryptologistException("Decryption failed",
+					CryptologistException.ERR_DECRYPTION_FAILURE);
 		}
 		byte[] decrypted = dec.get();
 		SoapConverter sc = new SoapConverter();
@@ -88,22 +91,28 @@ public class SAT {
 			Long ts = (Long) fields.get(ADM_TIMESTAMP);
 			byte[] signature = (byte[]) fields.get(ADM_SIGNATURE);
 			if ((StringTool.isNothing(user)) || (signature == null)) {
-				throw new Exception("Bad protocol");
+				throw new CryptologistException("Bad protocol",
+						CryptologistException.ERR_BAD_PROTOCOL);
 			}
 			if (ts == null || ((System.currentTimeMillis() - ts) > 300000)) {
-				throw new Exception("timeout");
+				throw new CryptologistException("timeout",
+						CryptologistException.ERR_TIMEOUT);
 			}
 			Map<String, Object> ret = (Map<String, Object>) fields
 					.get(ADM_PAYLOAD);
+			if(!bCheckSignature){
+				return new Var(ret);
+			}
 			byte[] digest = calcDigest(sc);
-			if(crypt.verify(digest, signature, user)==VERIFY_RESULT.OK){
+			if (crypt.verify(digest, signature, user) == VERIFY_RESULT.OK) {
 				ret.put(ADM_SIGNED_BY, user);
 				return new Var(ret);
 			} else {
-				return new Var(Var.KEY_ERROR,RESULT_BAD_SIGNATURE);
+				throw new CryptologistException("User unknown",
+						CryptologistException.ERR_USER_UNKNOWN);
 			}
 		} else {
-			return new Var(Var.KEY_ERROR,"Invalid Message");
+			return new Var(Var.KEY_ERROR, "Invalid Message");
 		}
 
 	}
@@ -123,13 +132,18 @@ public class SAT {
 	 *            public key
 	 * @return a byte array containing the signed and encrypted Hashmap. This
 	 *         will remain valid for 5 Minutes.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public byte[] wrap(Var var, String dest) throws Exception {
+	public byte[] wrap(Var var, String dest) throws CryptologistException {
 
 		SoapConverter sc = new SoapConverter();
 		sc.create("xidClient", "0.1.0", "elexis.ch");
-		sc.addMap(null, ADM_PAYLOAD, var);
+		try {
+			sc.addMap(null, ADM_PAYLOAD, var);
+		} catch (Exception ex) {
+			throw new CryptologistException("Internal Cryptologist error",
+					CryptologistException.ERR_INTERNAL);
+		}
 		sc.addIntegral(ADM_TIMESTAMP, System.currentTimeMillis());
 		sc.addString(ADM_SIGNED_BY, crypt.getUser());
 		byte[] digest = calcDigest(sc);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 5342 2009-06-06 09:49:11Z rgw_ch $
+ *  $Id: KonsDetailView.java 5343 2009-06-08 07:18:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -183,9 +183,9 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 								Desk.getImage(Desk.IMG_LOGO48),
 								MessageFormat
 										.format(
-												"Möchten Sie diese Behandlung vom Fall:\n'{0}' zum Fall:\n'{1}' transferieren?",
+												Messages.getString("KonsDetailView.ConfirmChangeConsToCase"), new Object[]{
 												actFall.getLabel(), nFall
-														.getLabel()),
+														.getLabel()}),
 								MessageDialog.QUESTION,
 								new String[] {
 										Messages
