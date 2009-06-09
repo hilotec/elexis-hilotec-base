@@ -164,7 +164,6 @@ Export-Package: .,
    org.eclipse.ui.forms.events,
    org.eclipse.swt.widgets,
    org.eclipse.jface.dialogs",
- ch.elexis.util.rs232,
  ch.elexis.util.viewers;
   uses:="ch.rgw.tools,
    ch.elexis.actions,
