@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ * $Id: LaborLeistung.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -53,11 +53,12 @@ public class LaborLeistung extends VerrechenbarAdapter {
 		return "ARTIKEL"; //$NON-NLS-1$
 	}
 	
+	/*
 	public String[] getDisplayedFields(){
 		return new String[] {
 			"Code", "Text"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+	*/
 	@Override
 	public String getCode(){
 		return get("Code"); //$NON-NLS-1$

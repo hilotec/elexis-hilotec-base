@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanelProvider.java 5137 2009-02-16 18:19:14Z rgw_ch $
+ * $Id: SelectorPanelProvider.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Properties;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
@@ -71,24 +72,26 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		}
 		for (FieldDescriptor<? extends PersistentObject> field : fields) {
 			ActiveControl ac = null;
+			Properties p=new Properties();
+			p.setProperty(ActiveControl.PROP_DISPLAYNAME, field.sAnzeige);
 			switch (field.tFeldTyp) {
 			case HYPERLINK:
 			case STRING:
-				ac = new TextField(panel.getFieldParent(), 0, field.sAnzeige);
+				ac = new TextField(panel.getFieldParent(), 0, p);
 				break;
 			case CURRENCY:
-				ac = new MoneyField(panel.getFieldParent(), 0, field.sAnzeige);
+				ac = new MoneyField(panel.getFieldParent(), 0, p);
 				break;
 			case DATE:
-				ac = new DateField(panel.getFieldParent(), 0, field.sAnzeige);
+				ac = new DateField(panel.getFieldParent(), 0, p);
 				break;
 			
 			case COMBO:
 				ac =
-					new ComboField(panel.getFieldParent(), 0, field.sAnzeige, (String[]) field.ext);
+					new ComboField(panel.getFieldParent(), 0, p, (String[]) field.ext);
 				break;
 			case INT:
-				ac = new IntegerField(panel.getFieldParent(), 0, field.sAnzeige);
+				ac = new IntegerField(panel.getFieldParent(), 0, p);
 			}
 			ac.setData(ActiveControl.PROP_FIELDNAME, field.sFeldname);
 			ac.setData(ActiveControl.PROP_HASHNAME, field.sHashname);

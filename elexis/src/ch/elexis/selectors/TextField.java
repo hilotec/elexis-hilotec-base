@@ -8,9 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextField.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: TextField.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
+
+import java.util.Properties;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -20,8 +22,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class TextField extends ActiveControl {
 	
-	public TextField(Composite parent, int displayBits, String displayName){
-		super(parent, displayBits, displayName);
+	public TextField(Composite parent, int displayBits, Properties properties){
+		super(parent, displayBits, properties);
 		setControl(new Text(this,SWT.BORDER));
 		getTextControl().addModifyListener(new ModifyListener(){
 

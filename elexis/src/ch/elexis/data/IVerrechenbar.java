@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 5073 2009-02-01 15:24:52Z rgw_ch $
+ * $Id: IVerrechenbar.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -64,7 +64,7 @@ public interface IVerrechenbar extends ICodeElement {
 	public String getXidDomain();
 	
 	// public AbstractDataLoaderJob getDataloader();
-	public String[] getDisplayedFields();
+	//public String[] getDisplayedFields();
 	
 	public static class DefaultComparator implements Comparator<IVerrechenbar> {
 		public int compare(final IVerrechenbar v1, final IVerrechenbar v2){

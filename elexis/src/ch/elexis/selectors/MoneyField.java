@@ -8,16 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MoneyField.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: MoneyField.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
+
+import java.util.Properties;
 
 import org.eclipse.swt.widgets.Composite;
 
 public class MoneyField extends TextField {
 	
-	public MoneyField(Composite parent, int displayBits, String displayName){
-		super(parent, displayBits, displayName);
+	public MoneyField(Composite parent, int displayBits, Properties props){
+		super(parent, displayBits, props);
 	}
 	
 }

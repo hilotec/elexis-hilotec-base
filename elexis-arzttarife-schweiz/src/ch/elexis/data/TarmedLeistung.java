@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedLeistung.java 5192 2009-02-24 15:48:29Z rgw_ch $
+ * $Id: TarmedLeistung.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -168,10 +168,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 				"Parent", "DigniQuali", "DigniQuanti", "Sparte"}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
+	/*
 	public String[] getDisplayedFields(){
 		return new String[] {
 			"ID", "Text"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	*/
 	
 	@Override
 	public String getLabel(){

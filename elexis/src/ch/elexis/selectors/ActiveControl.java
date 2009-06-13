@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ActiveControl.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: ActiveControl.java 5354 2009-06-13 20:03:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
 
 import java.util.LinkedList;
+import java.util.Properties;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -38,10 +39,10 @@ public abstract class ActiveControl extends Composite {
 	protected Label lbl;
 	protected Control ctl;
 	protected Composite controllers;
-	private String displayName;
+	private Properties properties;
 	private LinkedList<ActiveControlListener> listeners;
 
-	/** Constant to hide the label (Default: éabel is visible) */
+	/** Constant to hide the label (Default: Label is visible) */
 	public static final int HIDE_LABEL = 0x0001;
 	/** Display label and control lined up horizontally (default: vertically) */
 	public static final int DISPLAY_HORIZONTAL = 0x0002;
@@ -67,9 +68,9 @@ public abstract class ActiveControl extends Composite {
 	 * @param show
 	 *            ho to display the label
 	 */
-	public ActiveControl(Composite parent, int displayBits, String displayName) {
+	public ActiveControl(Composite parent, int displayBits, Properties properties) {
 		super(parent, SWT.NONE);
-		this.displayName = displayName;
+		this.properties = properties;
 		if ((displayBits & (DISPLAY_HORIZONTAL | HIDE_LABEL)) == DISPLAY_HORIZONTAL) {
 			setLayout(new GridLayout(3, false));
 		} else {
@@ -77,7 +78,7 @@ public abstract class ActiveControl extends Composite {
 		}
 		if ((displayBits & HIDE_LABEL) == 0) {
 			lbl = new Label(this, SWT.NONE);
-			lbl.setText(displayName);
+			lbl.setText(properties.getProperty(PROP_DISPLAYNAME));
 			controllers = new Composite(this, SWT.NONE);
 			// controllers.setBackground(Desk.getColor(Desk.COL_GREEN));
 			GridData gd = new GridData(SWT.RIGHT, SWT.BOTTOM, false, false);
@@ -154,11 +155,11 @@ public abstract class ActiveControl extends Composite {
 	}
 
 	public String getDisplayName() {
-		return displayName;
+		return properties.getProperty(PROP_DISPLAYNAME);
 	}
 
 	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+		properties.setProperty(PROP_DISPLAYNAME, displayName);
 	}
 
 	public void setEnabled(boolean bEnable) {
