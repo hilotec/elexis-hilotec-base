@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanelProvider.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ * $Id: SelectorPanelProvider.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -28,6 +28,7 @@ import ch.elexis.selectors.ActiveControl;
 import ch.elexis.selectors.ActiveControlListener;
 import ch.elexis.selectors.ComboField;
 import ch.elexis.selectors.DateField;
+import ch.elexis.selectors.FieldDescriptor;
 import ch.elexis.selectors.IntegerField;
 import ch.elexis.selectors.MoneyField;
 import ch.elexis.selectors.SelectorPanel;
@@ -72,29 +73,27 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		}
 		for (FieldDescriptor<? extends PersistentObject> field : fields) {
 			ActiveControl ac = null;
-			Properties p=new Properties();
-			p.setProperty(ActiveControl.PROP_DISPLAYNAME, field.sAnzeige);
-			switch (field.tFeldTyp) {
+			switch (field.getFieldType()) {
 			case HYPERLINK:
 			case STRING:
-				ac = new TextField(panel.getFieldParent(), 0, p);
+				ac = new TextField(panel.getFieldParent(), 0, field.getLabel());
 				break;
 			case CURRENCY:
-				ac = new MoneyField(panel.getFieldParent(), 0, p);
+				ac = new MoneyField(panel.getFieldParent(), 0, field.getLabel());
 				break;
 			case DATE:
-				ac = new DateField(panel.getFieldParent(), 0, p);
+				ac = new DateField(panel.getFieldParent(), 0, field.getLabel());
 				break;
 			
 			case COMBO:
 				ac =
-					new ComboField(panel.getFieldParent(), 0, p, (String[]) field.ext);
+					new ComboField(panel.getFieldParent(), 0, field.getLabel(), (String[]) field.getExtension());
 				break;
 			case INT:
-				ac = new IntegerField(panel.getFieldParent(), 0, p);
+				ac = new IntegerField(panel.getFieldParent(), 0, field.getLabel());
 			}
-			ac.setData(ActiveControl.PROP_FIELDNAME, field.sFeldname);
-			ac.setData(ActiveControl.PROP_HASHNAME, field.sHashname);
+			ac.setData(ActiveControl.PROP_FIELDNAME, field.getFieldname());
+			ac.setData(ActiveControl.PROP_HASHNAME, field.getHashname());
 			panel.addField(ac);
 		}
 		/*
@@ -146,7 +145,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		HashMap<String, String> vals = panel.getValues();
 		String[] ret = new String[fields.length];
 		for (int i = 0; i < ret.length; i++) {
-			ret[i] = vals.get(fields[i].sAnzeige);
+			ret[i] = vals.get(fields[i].getLabel());
 		}
 		return ret;
 	}
@@ -154,7 +153,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 	public boolean isEmpty(){
 		HashMap<String, String> vals = panel.getValues();
 		for (FieldDescriptor<? extends PersistentObject> fd : fields) {
-			if (vals.get(fd.sAnzeige).length() > 0) {
+			if (vals.get(fd.getLabel()).length() > 0) {
 				return false;
 			}
 		}

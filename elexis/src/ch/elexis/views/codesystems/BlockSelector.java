@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockSelector.java 5137 2009-02-16 18:19:14Z rgw_ch $
+ *  $Id: BlockSelector.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -42,10 +42,10 @@ import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.selectors.FieldDescriptor;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultLabelProvider;
-import ch.elexis.util.viewers.FieldDescriptor;
 import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;

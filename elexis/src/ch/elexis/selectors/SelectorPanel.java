@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ * $Id: SelectorPanel.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -35,31 +36,33 @@ import ch.rgw.tools.LimitSizeStack;
 public class SelectorPanel extends Composite implements ActiveControlListener {
 	boolean bCeaseFire, bExclusive;
 	private LinkedList<ActiveControlListener> listeners = new LinkedList<ActiveControlListener>();
-	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(50);
+	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(
+			50);
 	private Composite cFields;
 	private ToolBarManager tActions;
 	private ToolBar tb;
 	private IAction aClr;
-	
-	public SelectorPanel(Composite parent, IAction... actions){
+
+	public SelectorPanel(Composite parent, IAction... actions) {
 		super(parent, SWT.NONE);
 		setBackground(parent.getBackground());
 		/*
-		 * RowLayout layout = new RowLayout(SWT.HORIZONTAL); layout.fill = true; layout.pack = true;
+		 * RowLayout layout = new RowLayout(SWT.HORIZONTAL); layout.fill = true;
+		 * layout.pack = true;
 		 */
 		FormLayout layout = new FormLayout();
 		layout.marginLeft = 0;
 		layout.marginRight = 0;
 		setLayout(layout);
 		tActions = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
-		
+
 		aClr = new Action(Messages.SelectorPanel_clearFields) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLEAR));
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				clearValues();
 			}
 		};
@@ -85,16 +88,27 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		cFields.setLayout(new FillLayout());
 		pack();
 	}
-	
-	public Composite getFieldParent(){
+
+	public Composite getFieldParent() {
 		return cFields;
 	}
-	
-	public void setExclusive(boolean excl){
+
+	/**
+	 * If set, writing in one field will clear all oder fields in the panel
+	 * 
+	 * @param excl
+	 *            true if there can only one field with text
+	 */
+	public void setExclusive(boolean excl) {
 		bExclusive = excl;
 	}
-	
-	public void addActions(final IAction... actions){
+
+	/**
+	 * Add Actions to display in the uper right corner of the panel
+	 * 
+	 * @param actions
+	 */
+	public void addActions(final IAction... actions) {
 		for (IAction ac : actions) {
 			if (ac != null) {
 				tActions.add(ac);
@@ -103,26 +117,22 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			}
 		}
 	}
-	
-	/*
-	 * private static class ActionAdapter extends HyperlinkAdapter implements
-	 * IPropertyChangeListener { IAction ac; ImageHyperlink hp;
-	 * 
-	 * ActionAdapter(final IAction action, final ImageHyperlink hp){ ac = action; this.hp = hp; }
-	 * 
-	 * @Override public void linkActivated(HyperlinkEvent e){ ac.run(); }
-	 * 
-	 * public void propertyChange(PropertyChangeEvent event){ hp.getImage().dispose();
-	 * hp.setImage(ac.getImageDescriptor().createImage()); }
-	 * 
-	 * }
-	 */
 
-	public void addField(ActiveControl ac){
+	/**
+	 * Add a field to the panel
+	 * 
+	 * @param ac
+	 */
+	public void addField(ActiveControl ac) {
 		ac.addListener(this);
 	}
-	
-	public void addFields(ActiveControl... activeControls){
+
+	/**
+	 * Add a number of fields to the Panel
+	 * 
+	 * @param activeControls
+	 */
+	public void addFields(ActiveControl... activeControls) {
 		ActiveControl last = null;
 		for (ActiveControl ac : activeControls) {
 			ac.addListener(this);
@@ -136,8 +146,13 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		}
 		layout();
 	}
-	
-	public void removeField(String field){
+
+	/**
+	 * Remove a field from the panel
+	 * 
+	 * @param field
+	 */
+	public void removeField(String field) {
 		for (Control c : cFields.getChildren()) {
 			if (c instanceof ActiveControl) {
 				if (((ActiveControl) c).getLabel().equalsIgnoreCase(field)) {
@@ -147,11 +162,14 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			}
 		}
 	}
-	
-	public void clearValues(){
-		
+
+	/**
+	 * Clear all fields to their default "empty" value
+	 */
+	public void clearValues() {
+
 		Desk.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				bCeaseFire = true;
 				for (Control c : cFields.getChildren()) {
 					if (c instanceof ActiveControl) {
@@ -163,8 +181,14 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			}
 		});
 	}
-	
-	public HashMap<String, String> getValues(){
+
+	/**
+	 * Return the values of all fields.
+	 * 
+	 * @return A HashMap with the label of each field as keys and the respective
+	 *         field contents as values
+	 */
+	public HashMap<String, String> getValues() {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		for (Control c : cFields.getChildren()) {
 			if (c instanceof ActiveControl) {
@@ -174,8 +198,25 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		}
 		return ret;
 	}
-	
-	public void contentsChanged(ActiveControl field){
+	/**
+	 * Return all ActiveControls attached to this panel
+	 * @return al List that might be empty but is never null
+	 */
+	public List<ActiveControl> getControls(){
+		LinkedList<ActiveControl> ret=new LinkedList<ActiveControl>();
+		for (Control c : cFields.getChildren()) {
+			if (c instanceof ActiveControl) {
+				ActiveControl ac = (ActiveControl) c;
+				ret.add(ac);
+			}
+		}
+		return ret;
+	}
+	/**
+	 * From ActiveControlListener: Notify that the contents of a field has changed
+	 * This will in turn notify the SelectorListeners attached to this panel
+	 */
+	public void contentsChanged(ActiveControl field) {
 		if (bExclusive && (field != null)) {
 			for (Control c : cFields.getChildren()) {
 				if (c instanceof ActiveControl) {
@@ -201,16 +242,28 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			bCeaseFire = false;
 		}
 	}
-	
-	public void addSelectorListener(ActiveControlListener l){
+
+	/**
+	 * Add a listener to the list of listeners that will be notified, if one of the fields has been changed
+	 * @param l
+	 */
+	public void addSelectorListener(ActiveControlListener l) {
 		listeners.add(l);
 	}
-	
-	public void removeSelectorListener(ActiveControlListener l){
+
+	/**
+	 * Remove a listener from the list of SelectorListeners
+	 * @param l
+	 */
+	public void removeSelectorListener(ActiveControlListener l) {
 		listeners.remove(l);
 	}
-	
-	public void titleClicked(final ActiveControl field){
+	/**
+	 * From ActiveControlListener: Notify that the user clicked the label of a field
+	 * This will in turn notify the SelectorListeners attached to this panel
+	 */
+
+	public void titleClicked(final ActiveControl field) {
 		if (!bCeaseFire) {
 			bCeaseFire = true;
 			for (ActiveControlListener lis : listeners) {
@@ -218,23 +271,36 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			}
 			bCeaseFire = true;
 		}
-		
+
 	}
-	
+
 	private class TraceElement {
 		ActiveControl control;
 		String value;
-		
-		TraceElement(ActiveControl ac){
+
+		TraceElement(ActiveControl ac) {
 			control = ac;
 			value = ac.getText();
 			undoList.push(this);
 		}
 	}
-	
-	public void invalidContents(ActiveControl field){
+
+	/**
+	 * inform the user, that a field has invalid content
+	 */
+	public void invalidContents(ActiveControl field) {
 		aClr.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ACHTUNG));
-		aClr.setToolTipText((String) field.getData(ActiveControl.POP_ERRMSG));
-		
+		aClr.setToolTipText((String) field.getData(ActiveControl.PROP_ERRMSG));
+
+	}
+	
+	public void setLock(boolean bLocked){
+		for (Control c : cFields.getChildren()) {
+			if (c instanceof ActiveControl) {
+				ActiveControl ac = (ActiveControl) c;
+				ac.setEnabled(bLocked);
+			}
+		}
+
 	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistungsCodeSelectorFactory.java 5192 2009-02-24 15:48:29Z rgw_ch $
+ * $Id: PhysioLeistungsCodeSelectorFactory.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -17,9 +17,9 @@ import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PhysioLeistung;
 import ch.elexis.data.Query;
+import ch.elexis.selectors.FieldDescriptor;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultLabelProvider;
-import ch.elexis.util.viewers.FieldDescriptor;
 import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;

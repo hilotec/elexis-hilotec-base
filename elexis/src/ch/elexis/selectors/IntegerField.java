@@ -8,18 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IntegerField.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ *  $Id: IntegerField.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
-
-import java.util.Properties;
 
 import org.eclipse.swt.widgets.Composite;
 
 public class IntegerField extends TextField {
 
-	public IntegerField(Composite parent, int displayBits, Properties props) {
-		super(parent, displayBits, props);
+	public IntegerField(Composite parent, int displayBits, String displayName) {
+		super(parent, displayBits, displayName);
 		// TODO Auto-generated constructor stub
 	}
 

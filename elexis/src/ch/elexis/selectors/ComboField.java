@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ComboField.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ *  $Id: ComboField.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
 
@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 public class ComboField extends ActiveControl {
 	Combo combo;
 	
-	public ComboField(Composite parent, int displayBits, Properties props, String... values){
-		super(parent, displayBits, props);
+	public ComboField(Composite parent, int displayBits, String displayName, String... values){
+		super(parent, displayBits, displayName);
 		combo=new Combo(parent,SWT.READ_ONLY|SWT.SINGLE);
 		combo.setItems(values);
 		setControl(combo);

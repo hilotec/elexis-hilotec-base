@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ActiveControl.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ *  $Id: ActiveControl.java 5355 2009-06-14 10:35:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
 
@@ -30,8 +30,8 @@ import ch.elexis.util.SWTHelper;
 
 /**
  * An Element consisting of a label and a control that is able to link itself to
- * the database and act on user input
- * 
+ * the database and act on user input.
+ * Properties are defined in the data-member of the underlying Control
  * @author Gerry
  * 
  */
@@ -39,7 +39,6 @@ public abstract class ActiveControl extends Composite {
 	protected Label lbl;
 	protected Control ctl;
 	protected Composite controllers;
-	private Properties properties;
 	private LinkedList<ActiveControlListener> listeners;
 
 	/** Constant to hide the label (Default: Label is visible) */
@@ -48,6 +47,10 @@ public abstract class ActiveControl extends Composite {
 	public static final int DISPLAY_HORIZONTAL = 0x0002;
 	/** Label reacts on mouse clicks (and informs listeners) */
 	public static final int LABEL_IS_HYPERLINK = 0x0004;
+	/** Contents can not be edited by user */
+	public static final int READONLY=0x0008;
+	/** Field links itself to the database */
+	public static final int LINK_TO_DB=0x0010;
 
 	/** Displayed label of the field */
 	public static final String PROP_DISPLAYNAME = "displayName"; //$NON-NLS-1$
@@ -56,7 +59,8 @@ public abstract class ActiveControl extends Composite {
 	/** Name in the Hashtable if fieldName denotes a hash field */
 	public static final String PROP_HASHNAME = "hashName"; //$NON-NLS-1$
 	/** Message to display if the field contents is invalid */
-	public static final String POP_ERRMSG = "invalidContents"; //$NON-NLS-1$
+	public static final String PROP_ERRMSG = "invalidContents"; //$NON-NLS-1$
+	
 
 	/**
 	 * create a new field
@@ -68,9 +72,8 @@ public abstract class ActiveControl extends Composite {
 	 * @param show
 	 *            ho to display the label
 	 */
-	public ActiveControl(Composite parent, int displayBits, Properties properties) {
+	public ActiveControl(Composite parent, int displayBits, String displayName) {
 		super(parent, SWT.NONE);
-		this.properties = properties;
 		if ((displayBits & (DISPLAY_HORIZONTAL | HIDE_LABEL)) == DISPLAY_HORIZONTAL) {
 			setLayout(new GridLayout(3, false));
 		} else {
@@ -78,7 +81,8 @@ public abstract class ActiveControl extends Composite {
 		}
 		if ((displayBits & HIDE_LABEL) == 0) {
 			lbl = new Label(this, SWT.NONE);
-			lbl.setText(properties.getProperty(PROP_DISPLAYNAME));
+			lbl.setText(displayName);
+			setData(PROP_DISPLAYNAME,displayName);
 			controllers = new Composite(this, SWT.NONE);
 			// controllers.setBackground(Desk.getColor(Desk.COL_GREEN));
 			GridData gd = new GridData(SWT.RIGHT, SWT.BOTTOM, false, false);
@@ -155,11 +159,12 @@ public abstract class ActiveControl extends Composite {
 	}
 
 	public String getDisplayName() {
-		return properties.getProperty(PROP_DISPLAYNAME);
+		return (String) getData(PROP_DISPLAYNAME);
 	}
 
 	public void setDisplayName(String displayName) {
-		properties.setProperty(PROP_DISPLAYNAME, displayName);
+		setData(PROP_DISPLAYNAME, displayName);
+		lbl.setText(displayName);
 	}
 
 	public void setEnabled(boolean bEnable) {
@@ -170,5 +175,9 @@ public abstract class ActiveControl extends Composite {
 
 	public Composite getControllerComposite() {
 		return controllers;
+	}
+	
+	public String getProperty(String name){
+		return (String)getData(name);
 	}
 }
