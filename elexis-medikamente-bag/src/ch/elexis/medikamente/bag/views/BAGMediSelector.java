@@ -32,7 +32,7 @@ public class BAGMediSelector extends CodeSelectorFactory {
 		{
 			new FieldDescriptor<BAGMedi>(FIELD_NAME),
 			new FieldDescriptor<BAGMedi>(FIELD_SUBSTANCE),
-			new FieldDescriptor<BAGMedi>(FIELD_NOTES),
+			new FieldDescriptor<BAGMedi>(FIELD_NOTES)
 		};
 	BagMediContentProvider fdl;
 	
@@ -98,17 +98,17 @@ public class BAGMediSelector extends CodeSelectorFactory {
 			
 			@Override
 			public void run(){
-				if(fdl.toggleGenericsOnly()){
+				if (fdl.toggleGenericsOnly()) {
 					setImageDescriptor(image_on);
-				}else{
+				} else {
 					setImageDescriptor(image_off);
 				}
 				slp.fireChangedEvent();
 			}
 		};
 		onStockAction = new Action("Nur Lagerartikel") {
-			ImageDescriptor image_on=null;
-			ImageDescriptor image_off=null;
+			ImageDescriptor image_on = null;
+			ImageDescriptor image_off = null;
 			{
 				String img_off = "icons" + File.separator + "lager.png";
 				String img_on = "icons" + File.separator + "lager_on.png";
@@ -120,10 +120,10 @@ public class BAGMediSelector extends CodeSelectorFactory {
 			
 			@Override
 			public void run(){
-
-				if(fdl.toggleStockOnly()){
+				
+				if (fdl.toggleStockOnly()) {
 					setImageDescriptor(image_on);
-				}else{
+				} else {
 					setImageDescriptor(image_off);
 				}
 				slp.fireChangedEvent();
