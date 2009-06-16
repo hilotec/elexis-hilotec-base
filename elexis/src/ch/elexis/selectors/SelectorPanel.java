@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanel.java 5355 2009-06-14 10:35:19Z rgw_ch $
+ * $Id: SelectorPanel.java 5359 2009-06-16 20:13:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import ch.elexis.Desk;
 import ch.rgw.tools.LimitSizeStack;
+import ch.rgw.tools.StringTool;
 
 public class SelectorPanel extends Composite implements ActiveControlListener {
 	boolean bCeaseFire, bExclusive;
@@ -185,8 +186,8 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	/**
 	 * Return the values of all fields.
 	 * 
-	 * @return A HashMap with the label of each field as keys and the respective
-	 *         field contents as values
+	 * @return A HashMap with the label and the database fieldname (if any) of
+	 *         each field as keys and the respective field contents as values
 	 */
 	public HashMap<String, String> getValues() {
 		HashMap<String, String> ret = new HashMap<String, String>();
@@ -194,16 +195,22 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			if (c instanceof ActiveControl) {
 				ActiveControl ac = (ActiveControl) c;
 				ret.put(ac.getLabel(), ac.getText());
+				String fld = ac.getProperty(ActiveControl.PROP_FIELDNAME);
+				if (!StringTool.isNothing(fld)) {
+					ret.put(fld, ac.getText());
+				}
 			}
 		}
 		return ret;
 	}
+
 	/**
 	 * Return all ActiveControls attached to this panel
+	 * 
 	 * @return al List that might be empty but is never null
 	 */
-	public List<ActiveControl> getControls(){
-		LinkedList<ActiveControl> ret=new LinkedList<ActiveControl>();
+	public List<ActiveControl> getControls() {
+		LinkedList<ActiveControl> ret = new LinkedList<ActiveControl>();
 		for (Control c : cFields.getChildren()) {
 			if (c instanceof ActiveControl) {
 				ActiveControl ac = (ActiveControl) c;
@@ -212,9 +219,11 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		}
 		return ret;
 	}
+
 	/**
-	 * From ActiveControlListener: Notify that the contents of a field has changed
-	 * This will in turn notify the SelectorListeners attached to this panel
+	 * From ActiveControlListener: Notify that the contents of a field has
+	 * changed This will in turn notify the SelectorListeners attached to this
+	 * panel
 	 */
 	public void contentsChanged(ActiveControl field) {
 		if (bExclusive && (field != null)) {
@@ -244,7 +253,9 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	}
 
 	/**
-	 * Add a listener to the list of listeners that will be notified, if one of the fields has been changed
+	 * Add a listener to the list of listeners that will be notified, if one of
+	 * the fields has been changed
+	 * 
 	 * @param l
 	 */
 	public void addSelectorListener(ActiveControlListener l) {
@@ -253,14 +264,17 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 
 	/**
 	 * Remove a listener from the list of SelectorListeners
+	 * 
 	 * @param l
 	 */
 	public void removeSelectorListener(ActiveControlListener l) {
 		listeners.remove(l);
 	}
+
 	/**
-	 * From ActiveControlListener: Notify that the user clicked the label of a field
-	 * This will in turn notify the SelectorListeners attached to this panel
+	 * From ActiveControlListener: Notify that the user clicked the label of a
+	 * field This will in turn notify the SelectorListeners attached to this
+	 * panel
 	 */
 
 	public void titleClicked(final ActiveControl field) {
@@ -293,8 +307,8 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 		aClr.setToolTipText((String) field.getData(ActiveControl.PROP_ERRMSG));
 
 	}
-	
-	public void setLock(boolean bLocked){
+
+	public void setLock(boolean bLocked) {
 		for (Control c : cFields.getChildren()) {
 			if (c instanceof ActiveControl) {
 				ActiveControl ac = (ActiveControl) c;

@@ -8,20 +8,20 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanelProvider.java 5355 2009-06-14 10:35:19Z rgw_ch $
+ * $Id: SelectorPanelProvider.java 5359 2009-06-16 20:13:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Properties;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.selectors.ActiveControl;
@@ -36,6 +36,7 @@ import ch.elexis.selectors.TextField;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.IFilter;
+import ch.rgw.tools.StringTool;
 import ch.rgw.tools.Tree;
 
 public class SelectorPanelProvider implements ControlFieldProvider {
@@ -168,8 +169,20 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 		panel.setFocus();
 	}
 	
-	public void setQuery(Query<? extends PersistentObject> q){
-	// TODO Auto-generated method stub
+	public void setQuery(final Query<? extends PersistentObject> q){
+		Desk.syncExec(new Runnable(){
+			public void run(){
+				HashMap<String, String> vals=panel.getValues();
+				for(FieldDescriptor<? extends PersistentObject> field:fields){
+					String name=field.getFieldname();
+					String value=vals.get(name);
+					if(!StringTool.isNothing(value)){
+						q.add(name,Query.LIKE, value+"%",true);
+					}
+				}		
+			}
+		});
+		
 	
 	}
 	

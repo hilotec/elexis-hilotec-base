@@ -452,7 +452,7 @@ public class Desk implements IApplication {
 	 * @param runnable
 	 */
 	public static void syncExec(Runnable runnable){
-		// getDisplay().syncExec(runnable);
-		BusyIndicator.showWhile(getDisplay(), runnable);
+		getDisplay().syncExec(runnable);
+		//BusyIndicator.showWhile(getDisplay(), runnable);
 	}
 }
