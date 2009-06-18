@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    A. Kaufmann - Allow extraction of arbitrary fields
  *    
- * $Id: ScriptUtil.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: ScriptUtil.java 5360 2009-06-18 09:53:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -31,7 +32,7 @@ public class ScriptUtil {
 	 *            form "plugin:dependent_object:all|date|last:data-name[.Field]:parameters"
 	 * @return the result of the
 	 */
-	public static String[][] loadDataFromPlugin(final String connector){
+	public static Object loadDataFromPlugin(final String connector){
 		String[] adr = connector.split(":");
 		if (adr.length < 4) {
 			SWTHelper.showError("Datenzugriff-Fehler", "Das Datenfeld " + connector
@@ -59,7 +60,7 @@ public class ScriptUtil {
 					ida = (IDataAccess) ic.createExecutableExtension("class");
 					Result<Object> ret = ida.getObject(desc, ref, dates, params);
 					if (ret.isOK()) {
-						return (String[][]) ret.get();
+						return ret.get();
 					} else {
 						ResultAdapter.displayResult(ret, "Fehler beim  Einsetzen von Feldern");
 					}

@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    
- * $Id: DataAccessor.java 5121 2009-02-10 17:42:57Z rgw_ch $
+ * $Id: DataAccessor.java 5360 2009-06-18 09:53:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -36,9 +37,9 @@ public class DataAccessor implements IDataAccess {
 	Hashtable<String, String> hash;
 	Hashtable<String, String[]> columns;
 	ArrayList<String> parameters;
-	
+
 	@SuppressWarnings("unchecked")
-	public DataAccessor(){
+	public DataAccessor() {
 		Messwert setup = Messwert.getSetup();
 		columns = new Hashtable<String, String[]>();
 		parameters = new ArrayList<String>();
@@ -53,19 +54,20 @@ public class DataAccessor implements IDataAccess {
 					parameters.add(n);
 					columns.put(n, flds);
 				}
-				
+
 			}
 		}
 	}
-	
-	public List<Element> getList(){
+
+	public List<Element> getList() {
 		ArrayList<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
-			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n, Patient.class, 1));
+			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n,
+					Patient.class, 1));
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * return the Object denoted by the given description
 	 * 
@@ -74,18 +76,19 @@ public class DataAccessor implements IDataAccess {
 	 * @param dependentObject
 	 *            ad this time, only Patient is supported
 	 * @param dates
-	 *            one off all,last,date
+	 *            one off all,first, last,date
 	 * @param params
 	 *            not used
 	 */
 	@SuppressWarnings("unchecked")
 	public Result<Object> getObject(final String descriptor,
-		final PersistentObject dependentObject, final String dates, final String[] params){
+			final PersistentObject dependentObject, final String dates,
+			final String[] params) {
 		Result<Object> ret = null;
 		if (!(dependentObject instanceof Patient)) {
-			ret =
-				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-					"Ungültiger Parameter", dependentObject, true);
+			ret = new Result<Object>(Result.SEVERITY.ERROR,
+					IDataAccess.INVALID_PARAMETERS, "Ungültiger Parameter",
+					dependentObject, true);
 		} else {
 			Patient pat = (Patient) dependentObject;
 			String[] data = descriptor.split("\\.");
@@ -106,10 +109,12 @@ public class DataAccessor implements IDataAccess {
 				values[0][i] = keys[i].split("=")[0];
 			}
 			int i = 1;
+			Messwert mwrt = null;
 			if (dates.equals("all")) {
 				for (Messwert m : list) {
 					String date = m.get("Datum");
-					values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
+					values[i][0] = new TimeTool(date)
+							.toString(TimeTool.DATE_GER);
 					Hashtable befs = m.getHashtable("Befunde");
 					for (int j = 1; j < cols.length; j++) {
 						String vv = (String) befs.get(keys[j]);
@@ -126,49 +131,99 @@ public class DataAccessor implements IDataAccess {
 				ret = new Result<Object>(values);
 			} else if (dates.equals("last")) {
 				TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				Messwert last = null;
 				for (Messwert m : list) {
 					TimeTool vgl = new TimeTool(m.get("Datum"));
 					if (vgl.isAfter(today)) {
 						today = vgl;
-						last = m;
+						mwrt = m;
 					}
 				}
-				if (last == null) {
-					ret =
-						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-							"Nicht gefunden", params, true);
-				} else {
-					values[1][0] = today.toString(TimeTool.DATE_GER);
-					Hashtable befs = last.getHashtable("Befunde");
-					for (int j = 1; j < keys.length; j++) {
-						values[1][j] = (String) befs.get(keys[j]);
+				if (mwrt == null) {
+					ret = new Result<Object>(Result.SEVERITY.ERROR,
+							IDataAccess.OBJECT_NOT_FOUND, "Nicht gefunden",
+							params, true);
+				}
+
+			} else if (dates.equals("first")) {
+				TimeTool firstdate = null;
+
+				if (list.size() > 0) {
+					mwrt = list.get(0);
+					firstdate = new TimeTool(mwrt.get("Datum"));
+					for (Messwert m : list) {
+						TimeTool vgl = new TimeTool(m.get("Datum"));
+						if (vgl.isBefore(firstdate)) {
+							mwrt = m;
+							firstdate = vgl;
+							break;
+						}
 					}
-					ret = new Result<Object>(values);
+				}
+
+				if (mwrt == null) {
+					ret = new Result<Object>(Result.SEVERITY.ERROR,
+							IDataAccess.OBJECT_NOT_FOUND, "Nicht gefunden",
+							params, true);
 				}
 			} else { // bestimmtes Datum
 				TimeTool find = new TimeTool();
 				if (find.set(params[0]) == false) {
-					ret =
-						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-							"Datum erwartet", params, true);
+					ret = new Result<Object>(Result.SEVERITY.ERROR,
+							IDataAccess.INVALID_PARAMETERS, "Datum erwartet",
+							params, true);
 				} else {
 					for (Messwert m : list) {
 						TimeTool vgl = new TimeTool(m.get("Datum"));
 						if (vgl.isEqual(find)) {
-							values[1][0] = vgl.toString(TimeTool.DATE_GER);
-							Hashtable befs = m.getHashtable("Befunde");
-							for (int j = 0; j < keys.length; j++) {
-								values[1][j + 1] = (String) befs.get(keys[j]);
-							}
-							ret = new Result<Object>(values);
+							mwrt = m;
+							break;
 						}
 					}
 				}
 			}
+			if (mwrt != null) {
+				values[1][0] = mwrt.get("Datum");
+				Hashtable befs = mwrt.getHashtable("Befunde");
+				for (int j = 1; j < keys.length; j++) {
+					values[1][j] = (String) befs.get(keys[j]);
+				}
+				// Nachsehen ob Feldnamen angegeben wurden, wenn ja geben wir
+				// nur das gewuenschte Feld zurueck.
+				if (data.length > 1) {
+					String fname = data[1];
+					String num = fname.substring(1);
+					// Bei Feldnamen in der Form Fn benutzen wir n als Index
+					// sonst wird einfach die Spaltenueberschrift benutzt.
+					// F0 entspricht dabei dem Datum
+
+					if (fname.matches("F[0-9]*")) {
+						int index = Integer.parseInt(num);
+						if (index < values[1].length) {
+							ret = new Result<Object>(values[1][index]);
+						} else {
+							ret = new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS,
+									"Ungueltiger Feldindex", fname, true);
+						}
+					} else {
+						for (int j = 0; (j < keys.length) && (ret == null); j++) {
+							if (values[0][j].compareTo(fname) == 0) {
+								ret = new Result<Object>(values[1][j]);
+							}
+						}
+						if (ret == null) {
+							ret = new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS,
+									"Ungueltiger Feldname", fname, true);
+						}
+					}
+				} else {
+					ret = new Result<Object>(values);
+				}
+			}
 		}
-		
+
 		return ret;
 	}
-	
+
 }

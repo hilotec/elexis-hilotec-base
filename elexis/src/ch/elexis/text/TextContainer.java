@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    A. Kaufmann - better support for IDataAccess
  *    
- *  $Id: TextContainer.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *  $Id: TextContainer.java 5360 2009-06-18 09:53:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -66,7 +67,7 @@ public class TextContainer {
 	private static final String WARNING_SIGN = "??"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_TEXT = "ch.elexis.Text"; //$NON-NLS-1$
 	private static final String MATCH_SQUARE_BRACKET = "[\\[\\]]"; //$NON-NLS-1$
-	private static final String TEMPLATE_NOT_FOUND_HEADER=Messages.TextContainer_TemplateNotFoundHeader;
+	private static final String TEMPLATE_NOT_FOUND_HEADER = Messages.TextContainer_TemplateNotFoundHeader;
 	private static final String TEMPLATE_NOT_FOUND_BODY = Messages.TextContainer_TemplateNotFoundBody;
 
 	private ITextPlugin plugin = null;
@@ -75,7 +76,8 @@ public class TextContainer {
 	public static final String MATCH_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]"; //$NON-NLS-1$
 	public static final String MATCH_INDIRECT_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]"; //$NON-NLS-1$
 	public static final String MATCH_GENDERIZE = "\\[[a-zA-Z]+:mwn?:[^\\[]+\\]"; //$NON-NLS-1$
-	public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; //$NON-NLS-1$
+	//public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; //$NON-NLS-1$
+	public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
 
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin
@@ -152,7 +154,6 @@ public class TextContainer {
 	 * @return Ein Brief-Objekt oder null bei Fehler
 	 */
 
-
 	public Brief createFromTemplateName(final Konsultation kons,
 			final String templatename, final String typ,
 			final Kontakt adressat, final String subject) {
@@ -205,8 +206,10 @@ public class TextContainer {
 		// Konsultation kons=getBehandlung();
 		if (template == null) {
 			if (plugin.createEmptyDocument()) {
-				Brief brief = new Brief(subject == null ? Messages.TextContainer_EmptyDocument
-						: subject, null, Hub.actUser, adressat, kons, typ);
+				Brief brief = new Brief(
+						subject == null ? Messages.TextContainer_EmptyDocument
+								: subject, null, Hub.actUser, adressat, kons,
+						typ);
 				addBriefToKons(brief, kons);
 				return brief;
 			}
@@ -238,10 +241,8 @@ public class TextContainer {
 				});
 				plugin.findOrReplace(MATCH_IDATACCESS, new ReplaceCallback() {
 					public Object replace(final String in) {
-						String[][] ref = ScriptUtil.loadDataFromPlugin(in
-								.replaceAll(MATCH_SQUARE_BRACKET,
-										StringTool.leer));
-						return ref;
+						return ScriptUtil.loadDataFromPlugin(in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				saveBrief(ret, typ);
@@ -267,8 +268,7 @@ public class TextContainer {
 			return new TimeTool().toString(TimeTool.DATE_GER);
 		}
 		if (q[0].indexOf(":") != -1) { //$NON-NLS-1$
-			String[][] ref = ScriptUtil.loadDataFromPlugin(b);
-			return ref;
+			return ScriptUtil.loadDataFromPlugin(b);
 		}
 		PersistentObject o = resolveObject(brief, q[0]);
 		if (o == null) {
@@ -277,7 +277,7 @@ public class TextContainer {
 
 		String ret = o.get(q[1]);
 		if ((ret == null) || (ret.startsWith("**"))) { //$NON-NLS-1$
-		
+
 			if (!(o.map(PersistentObject.EXTINFO).startsWith("**"))) { //$NON-NLS-1$
 				Hashtable ext = o.getHashtable(PersistentObject.EXTINFO);
 				String an = (String) ext.get(q[1]);
@@ -417,12 +417,14 @@ public class TextContainer {
 				ret = GlobalEvents.getInstance().getSelectedObject(
 						Class.forName(fqname));
 			} catch (Throwable ex) {
-				log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
+				log.log(Messages.TextContainer_UnrecognizedFieldType + k,
+						Log.WARNINGS);
 				ret = null;
 			}
 		}
 		if (ret == null) {
-			log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
+			log.log(Messages.TextContainer_UnrecognizedFieldType + k,
+					Log.WARNINGS);
 		}
 		return ret;
 	}
@@ -449,17 +451,17 @@ public class TextContainer {
 					Messages.TextContainer_SelectAdresseeHeader,
 					Messages.TextContainer_SelectAdresseeBody);
 			if (ksl.open() == Dialog.OK) {
-				brief = new Brief(Messages.TextContainer_Letter, null, Hub.actUser, (Kontakt) ksl
-						.getSelection(), Konsultation.getAktuelleKons(), typ);
+				brief = new Brief(Messages.TextContainer_Letter, null,
+						Hub.actUser, (Kontakt) ksl.getSelection(), Konsultation
+								.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
 			if (StringTool.isNothing(brief.getBetreff())) {
-				InputDialog dlg = new InputDialog(
-						shell,
+				InputDialog dlg = new InputDialog(shell,
 						Messages.TextContainer_SaveDocumentHeader,
-						Messages.TextContainer_SaveDocumentBody,
-						brief.getBetreff(), null);
+						Messages.TextContainer_SaveDocumentBody, brief
+								.getBetreff(), null);
 				if (dlg.open() == Dialog.OK) {
 					brief.setBetreff(dlg.getValue());
 				} else {
@@ -545,7 +547,8 @@ public class TextContainer {
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
-			new Label(ret, SWT.NONE).setText(Messages.TextContainer_TemplateName);
+			new Label(ret, SWT.NONE)
+					.setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (tmplName != null) {
@@ -594,9 +597,9 @@ public class TextContainer {
 			qbe.add(Brief.SUBJECT, Query.EQUALS, title);
 			List<Brief> l = qbe.execute();
 			if (l.size() > 0) {
-				if (MessageDialog
-						.openQuestion(getShell(), Messages.TextContainer_TemplateExistsCaption,
-								Messages.TextContainer_TemplateExistsBody)) {
+				if (MessageDialog.openQuestion(getShell(),
+						Messages.TextContainer_TemplateExistsCaption,
+						Messages.TextContainer_TemplateExistsBody)) {
 					Brief old = l.get(0);
 					old.delete();
 				} else {

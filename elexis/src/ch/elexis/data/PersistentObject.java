@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5336 2009-05-31 18:58:48Z rgw_ch $
+ *    $Id: PersistentObject.java 5360 2009-06-18 09:53:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -849,7 +849,7 @@ public abstract class PersistentObject {
 		String prefix = getTableName();
 		String res = mapping.get(prefix + f);
 		if (res == null) {
-			log.log("Fehler bei der Felddefinition " + f, Log.ERRORS);
+			log.log("field is not mapped " + f, Log.INFOS);
 			return "**ERROR:" + f + "**";
 		}
 		return res;
