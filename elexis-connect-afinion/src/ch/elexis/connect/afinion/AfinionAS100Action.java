@@ -30,7 +30,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		setToolTipText(Messages.getString("AfinionAS100Action.ToolTip"));
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.afinion", "icons/afinion.png"));
 		
-		_ctrl = new Connection(Messages.getString("AfinionAS100Action.ConnectionName"),Hub.localCfg.get(Preferences.PORT, Messages.getString("AfinionAS100Action.DefaultPort")),
+		_ctrl = new AfinionConnection(Messages.getString("AfinionAS100Action.ConnectionName"),Hub.localCfg.get(Preferences.PORT, Messages.getString("AfinionAS100Action.DefaultPort")),
 				Hub.localCfg.get(Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")),this);
 		
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y"))
