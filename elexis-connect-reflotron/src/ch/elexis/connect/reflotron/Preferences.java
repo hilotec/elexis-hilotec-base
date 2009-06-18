@@ -7,11 +7,13 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -20,9 +22,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.rs232.AuslesenDialog;
 import ch.elexis.rs232.Connection;
-import ch.elexis.rs232.LogConnection;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 
@@ -48,51 +48,83 @@ public class Preferences extends PreferencePage implements
 		Hub.log.log("Start von createContents", Log.DEBUGMSG);
 		String[] param = Hub.localCfg.get(PARAMS, "9600,8,n,1,20").split(",");
 
-		Composite ret = new Composite(parent, SWT.NONE);
+		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		new Label(ret, SWT.NONE)
-				.setText(Messages.getString("Preferences.Port"));
-		ports = new Combo(ret, SWT.SINGLE);
+		
+		Label lblPorts = new Label(ret,SWT.NONE);
+		lblPorts.setText(Messages.getString("Preferences.Port"));
+		lblPorts.setLayoutData(new GridData(SWT.NONE));
+		ports=new Combo(ret,SWT.SINGLE);
 		ports.setItems(Connection.getComPorts());
-		ports.setText(Hub.localCfg.get(PORT, Messages
-				.getString("ReflotronSprintAction.DefaultPort")));
-		new Label(ret, SWT.NONE)
-				.setText(Messages.getString("Preferences.Baud"));
-		speed = new Text(ret, SWT.BORDER);
+		ports.setText(Hub.localCfg.get(PORT, Messages.getString("ReflotronSprintAction.DefaultPort")));
+		
+		Label lblSpeed = new Label(ret,SWT.NONE);
+		lblSpeed.setText(Messages.getString("Preferences.Baud"));
+		lblSpeed.setLayoutData(new GridData(SWT.NONE));
+		speed=new Text(ret,SWT.BORDER);
+		speed.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		speed.setText(param[0]);
-		new Label(ret, SWT.NONE).setText(Messages
-				.getString("Preferences.Databits"));
-		data = new Text(ret, SWT.BORDER);
+		
+		Label lblData = new Label(ret,SWT.NONE);
+		lblData.setText(Messages.getString("Preferences.Databits"));
+		lblData.setLayoutData(new GridData(SWT.NONE));
+		data=new Text(ret,SWT.BORDER);
 		data.setText(param[1]);
-		new Label(ret, SWT.NONE).setText(Messages
-				.getString("Preferences.Parity"));
-		parity = new Button(ret, SWT.CHECK);
+		
+		Label lblParity = new Label(ret,SWT.NONE);
+		lblParity.setText(Messages.getString("Preferences.Parity"));
+		lblParity.setLayoutData(new GridData(SWT.NONE));
+		parity=new Button(ret,SWT.CHECK);
+		parity.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		parity.setSelection(!param[2].equalsIgnoreCase("n"));
-		new Label(ret, SWT.NONE).setText(Messages
-				.getString("Preferences.Stopbits"));
-		stop = new Text(ret, SWT.BORDER);
+		
+		Label lblStop = new Label(ret,SWT.NONE);
+		lblStop.setText(Messages.getString("Preferences.Stopbits"));
+		lblStop.setLayoutData(new GridData(SWT.NONE));
+		stop=new Text(ret,SWT.BORDER);
 		stop.setText(param[3]);
-		new Label(ret, SWT.NONE).setText(Messages
-				.getString("Preferences.Timeout"));
-		timeout = new Text(ret, SWT.BORDER);
+		
+		Label lblTimeout = new Label(ret, SWT.NONE);
+		lblTimeout.setText(Messages.getString("Preferences.Timeout"));
+		lblTimeout.setLayoutData(new GridData(SWT.NONE));
 		String timeoutStr = "20";
 		if (param.length > 4) {
 			timeoutStr = param[4];
 		}
-		timeout.setText(timeoutStr);
-		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Log"));
-		log = new Button(ret, SWT.CHECK);
+		timeout = new Text(ret, SWT.BORDER);
+		timeout.setText(timeoutStr+"  ");
+		
+		new Label(ret,SWT.NONE).setText(Messages.getString("Preferences.Log"));
+		log=new Button(ret,SWT.CHECK);
 		log.setSelection(Hub.localCfg.get(LOG, "n").equalsIgnoreCase("y"));
-
+		
 		// Input lesen
-		Group group = new Group(ret, SWT.FILL);
-		group.setLayout(new GridLayout(2, false));
+		Group group = new Group(ret, SWT.NONE);
+		group.setLayout(new GridLayout(3, false));
+		group.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		group.setText("Daten auslesen");
 
 		new Label(group, SWT.NONE).setText("Logdatei");
 		logFile = new Text(group, SWT.BORDER);
-		logFile.setText("C:/refletron_data.txt");
+		logFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		logFile.setText("C:/afinion_data.txt");
+		
+		Button btnBrowse = new Button(group, SWT.NONE);
+		btnBrowse.setText("Durchsuchen");
+		
+		btnBrowse.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(getShell());
+				dialog.open();
+				if (dialog.getFileName() != null) {
+					logFile.setText(dialog.getFileName());
+				}
+			}
+			
+		});
 
 		Button btnStart = new Button(group, SWT.NONE);
 		btnStart.setText("Start");
