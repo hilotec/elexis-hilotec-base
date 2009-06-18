@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 4890 2008-12-31 12:39:19Z rgw_ch $
+ * $Id: TarmedOptifier.java 5361 2009-06-18 12:07:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -44,7 +44,7 @@ public class TarmedOptifier implements IOptifier {
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
 	 */
-	public Result<Konsultation> optify(Konsultation kons){
+	public Result<Object> optify(Konsultation kons){
 		LinkedList<TarmedLeistung> postponed = new LinkedList<TarmedLeistung>();
 		for (Verrechnet vv : kons.getLeistungen()) {
 			IVerrechenbar iv = vv.getVerrechenbar();

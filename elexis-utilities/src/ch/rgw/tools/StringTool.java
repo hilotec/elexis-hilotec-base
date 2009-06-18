@@ -64,7 +64,7 @@ public class StringTool {
 	
 	public static final String numbers = "[0-9]+";
 	public static final String wordSeparators = "[\\t ,\\.:\\?!\\n\\r]";
-	public static final String lineSeparators = "[\\n\\r\\.\\?!]";
+	public static final String lineSeparators = "[\\n\\r\\.\\?!;]";
 	// public static final String wordChars="a-zA-ZäöüÄÖÜéèàâê\'";
 	public static final String wordChars = "\\p{L}\'";
 	private static int ipHash;

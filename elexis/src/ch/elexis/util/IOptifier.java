@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IOptifier.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: IOptifier.java 5361 2009-06-18 12:07:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -27,7 +27,7 @@ public interface IOptifier {
 	/**
 	 * Eine Konsultation optifizieren
 	 */
-	public ch.rgw.tools.Result<Konsultation> optify(Konsultation kons);
+	public Result<Object> optify(Konsultation kons);
 	
 	/**
 	 * Eine Leistung einer Konsultation hinzufügen; die anderen Leistungen der Kons ggf. anpassen

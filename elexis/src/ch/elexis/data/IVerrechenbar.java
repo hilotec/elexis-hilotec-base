@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ * $Id: IVerrechenbar.java 5361 2009-06-18 12:07:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -86,8 +86,8 @@ public interface IVerrechenbar extends ICodeElement {
 	
 	public static class DefaultOptifier implements IOptifier {
 		
-		public Result<Konsultation> optify(final Konsultation kons){
-			return new Result<Konsultation>(kons);
+		public Result<Object> optify(final Konsultation kons){
+			return new Result<Object>(kons);
 		}
 		
 		public Result<IVerrechenbar> add(final IVerrechenbar code, final Konsultation kons){

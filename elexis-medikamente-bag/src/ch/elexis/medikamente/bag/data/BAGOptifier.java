@@ -10,8 +10,8 @@ import ch.rgw.tools.Result;
 
 public class BAGOptifier implements IOptifier {
 
-	public Result<Konsultation> optify(final Konsultation kons) {
-		return new Result<Konsultation>(kons);
+	public Result<Object> optify(final Konsultation kons) {
+		return new Result<Object>(kons);
 	}
 
 	public Result<IVerrechenbar> add(final IVerrechenbar code, final Konsultation kons) {
