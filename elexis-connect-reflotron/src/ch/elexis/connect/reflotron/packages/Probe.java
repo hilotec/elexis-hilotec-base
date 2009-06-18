@@ -9,10 +9,8 @@ public class Probe {
 	private String resultat;
 	private String hint;
 	private String zusatztext;
-	private Patient patient;
 
-	public Probe(final String[] strArray, final Patient pat) {
-		this.patient = pat;
+	public Probe(final String[] strArray) {
 		parse(strArray);
 	}
 
@@ -26,23 +24,34 @@ public class Probe {
 		int dateIndex = strArray[1].indexOf(".");
 		int timeIndex = strArray[1].indexOf(":");
 
-		String dateStr = strArray[1].substring(dateIndex - 2, 8);
-		String timeStr = strArray[1].substring(timeIndex - 2, 8);
+		String dateStr = strArray[1].substring(dateIndex - 2, dateIndex + 6);
+		String timeStr = strArray[1].substring(timeIndex - 2, timeIndex + 6);
 
 		date = new TimeTool(dateStr);
 		date.set(timeStr);
 
-		ident = strArray[2];
-		resultat = strArray[3];
-		hint = strArray[4];
-		zusatztext = strArray[5];
+		if (strArray.length > 2) {
+			ident = strArray[2].trim();
+		}
+		
+		if (strArray.length > 3) {
+			resultat = strArray[3].trim();
+		}
+		
+		if (strArray.length > 4) {
+			hint = strArray[4].trim();
+		}
+		
+		if (strArray.length > 5) {
+			zusatztext = strArray[5].trim();
+		}
 	}
 
 	/**
 	 * Schreibt Labordaten
 	 */
-	public void write() throws PackageException {
-		if (getResultat().length() != 24) {
+	public void write(Patient patient) throws PackageException {
+		if (getResultat().length() < 21) {
 			throw new PackageException("Resultat der Probe zu klein!");
 		}
 
