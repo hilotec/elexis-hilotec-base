@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 4466 2008-09-27 19:53:07Z rgw_ch $
+ * $Id: Connection.java 5363 2009-06-18 16:10:36Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -32,31 +32,35 @@ import java.util.TooManyListenersException;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
-public class Connection implements SerialPortEventListener {
+public abstract class Connection implements SerialPortEventListener {
 	private static final String simulate = null; // "c:/abx.txt";
+
+	public static final int PASS_THRU = 0;
+	public static final int AWAIT_START = 1;
+	public static final int AWAIT_END = 2;
+	public static final int AWAIT_CHECKSUM = 3;
+	public static final int AWAIT_LINE = 4;
+	
+	protected final StringBuilder sbFrame = new StringBuilder();
+	protected final StringBuilder sbLine = new StringBuilder();
+	protected int frameStart, frameEnd, overhang, checksumBytes;
+	protected final ComPortListener listener;
+	protected long endTime;
+	protected int timeToWait;
+	
+	private static byte lineSeparator;;
 
 	private CommPortIdentifier portId;
 	private SerialPort sPort;
 	private boolean bOpen;
 	private OutputStream os;
 	private InputStream is;
-	private final ComPortListener listener;
 	private final String myPort;
 	private final String[] mySettings;
 	private final String name;
-	private int frameStart, frameEnd, overhang, checksumBytes;
-	private long endTime;
-	private int timeToWait;
-	private static final int PASS_THRU = 0;
-	private static final int AWAIT_START = 1;
-	private static final int AWAIT_END = 2;
-	private static final int AWAIT_CHECKSUM = 3;
-	private static final int AWAIT_LINE = 4;
-	private static byte lineSeparator;;
+
 	private int state = PASS_THRU;
-	private final StringBuilder sbFrame = new StringBuilder();
-	private final StringBuilder sbLine = new StringBuilder();
-	private Watchdog watchdog;
+
 	private Thread watchdogThread;
 	public static final String XON = "\013";
 	public final static String XOFF = "\015";
@@ -204,7 +208,6 @@ public class Connection implements SerialPortEventListener {
 		int oldDatabits = sPort.getDataBits();
 		int oldStopbits = sPort.getStopBits();
 		int oldParity = sPort.getParity();
-		int oldFlowControl = sPort.getFlowControlMode();
 
 		// Set connection parameters, if set fails return parameters object
 		// to original state.
@@ -280,79 +283,26 @@ public class Connection implements SerialPortEventListener {
 	 * Handles SerialPortEvents. The two types of SerialPortEvents that this
 	 * program is registered to listen for are DATA_AVAILABLE and BI. During
 	 * DATA_AVAILABLE the port buffer is read until it is drained, when no more
-	 * data is availble and 30ms has passed the method returns. When a BI event
+	 * data is available and 30ms has passed the method returns. When a BI event
 	 * occurs the words BREAK RECEIVED are written to the messageAreaIn.
 	 */
 
 	public void serialEvent(final SerialPortEvent e) {
-		int newData;
 		if (e.getEventType() == SerialPortEvent.BI) {
-			state = PASS_THRU;
+			setState(PASS_THRU);
 			watchdogThread.interrupt();
 			listener.gotBreak(this);
 		} else {
 			try {
-				switch (state) {
-				case PASS_THRU:
-					sbFrame.setLength(0);
-					while ((newData = is.read()) != -1) {
-						sbFrame.append((char) newData);
-					}
-					listener.gotChunk(this, sbFrame.toString());
-					break;
-				case AWAIT_START:
-					while ((newData = is.read()) != -1) {
-						if (newData == frameStart) {
-							state = AWAIT_END;
-							sbFrame.append((char) frameStart);
-							serialEvent(e);
-						}
-					}
-					break;
-				case AWAIT_END:
-					while ((newData = is.read()) != -1) {
-						sbFrame.append((char) newData);
-						if (newData == frameEnd) {
-							state = AWAIT_CHECKSUM;
-							serialEvent(e);
-						}
-					}
-					endTime = System.currentTimeMillis() + timeToWait;
-					break;
-				case AWAIT_CHECKSUM:
-					while ((overhang > 0) && ((newData = is.read()) != -1)) {
-						sbFrame.append((char) newData);
-						overhang -= 1;
-					}
-					if (overhang == 0) {
-						listener.gotChunk(this, sbFrame.toString());
-						sbFrame.setLength(0);
-						watchdogThread.interrupt();
-						state = AWAIT_START;
-						overhang = checksumBytes;
-						serialEvent(e);
-					}
-					break;
-				case AWAIT_LINE:
-					while ((newData = is.read()) != -1) {
-						// System.out.println(new
-						// StringBuilder().append((char)newData).toString());
-						if (newData == lineSeparator) {
-							String res = sbLine.toString();
-							sbLine.setLength(0);
-							listener.gotChunk(this, res);
-						} else {
-							sbLine.append((char) newData);
-						}
-					}
-				}
-
+				serialEvent(this.state, is, e);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
 		}
-
 	}
+
+	public abstract void serialEvent(final int state,
+			final InputStream inputStream, final SerialPortEvent e) throws IOException;
 
 	public void close() {
 		if ((watchdogThread != null) && watchdogThread.isAlive()) {
@@ -423,6 +373,18 @@ public class Connection implements SerialPortEventListener {
 			}
 			listener.timeout();
 		}
-
 	}
+	
+	protected void interruptWatchdog() {
+		this.watchdogThread.interrupt();
+	}
+
+	public byte getLineSeparator() {
+		return lineSeparator;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
 }
