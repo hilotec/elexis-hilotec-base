@@ -32,7 +32,7 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 		setToolTipText(Messages.getString("AbacusJuniorAction.ToolTip"));
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.medshare.connect.abacusjunior", "icons/abacusjunior.ico"));
 		
-		_ctrl = new Connection(Messages.getString("AbacusJuniorAction.ConnectionName"),Hub.localCfg.get(Preferences.PORT, Messages.getString("AbacusJuniorAction.DefaultPort")),
+		_ctrl = new AbacusConnection(Messages.getString("AbacusJuniorAction.ConnectionName"),Hub.localCfg.get(Preferences.PORT, Messages.getString("AbacusJuniorAction.DefaultPort")),
 				Hub.localCfg.get(Preferences.PARAMS, Messages.getString("AbacusJuniorAction.DefaultParams")),this);
 		
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y"))
