@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.connect.afinion.packages.PackageException;
@@ -13,7 +16,6 @@ import ch.elexis.connect.afinion.packages.Record;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
-import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.rs232.Connection;
 import ch.elexis.rs232.Connection.ComPortListener;
 import ch.elexis.util.SWTHelper;
@@ -23,6 +25,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	Connection _ctrl;
 	Labor _myLab;
 	Patient _actPatient;
+	Thread msgDialogThread;
 	Logger _log;
 	
 	public  AfinionAS100Action(){
@@ -50,29 +53,66 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			_log = new Logger(false);
 		}		
 	}
-	@Override
-	public void run(){
-		if(isChecked()){
-			KontaktSelektor ksl=new KontaktSelektor(Hub.getActiveShell(),Patient.class,Messages.getString("AfinionAS100Action.Patient.Title"),Messages.getString("AfinionAS100Action.Patient.Text"));
-			ksl.create();
-			ksl.getShell().setText(Messages.getString("AfinionAS100Action.Patient.Title"));
-			if(ksl.open()==org.eclipse.jface.dialogs.Dialog.OK){
-				_actPatient=(Patient)ksl.getSelection();
-				
-				_log.logStart();
-				if(_ctrl.connect()){
-					_ctrl.awaitFrame(1, 4, 0, 6000);
-					return;
-				}else{
-					_log.log("Error");	
-					SWTHelper.showError(Messages.getString("AfinionAS100Action.RS232.Error.Title"), Messages.getString("AfinionAS100Action.RS232.Error.Text"));
+	
+	public void showRunningInfo() {
+		msgDialogThread = new Thread() {
+			MessageDialog dialog;
+
+			public void run() {
+				dialog = new MessageDialog(Desk.getTopShell(),
+						"Afinion AS100",
+						null, // accept the default window icon
+						"Daten können nun empfangen werden..",
+						MessageDialog.INFORMATION, new String[] { "Ok",
+								"Abbrechen" }, 0);
+				if (dialog.open() == Dialog.CANCEL) {
+					_ctrl.sendBreak();
+					_ctrl.close();
+					setChecked(false);
+					_log.logEnd();
 				}
 			}
-		}else{
-			if(_ctrl.isOpen()) {
-				_actPatient=null;
+		};
+		Desk.getDisplay().asyncExec(msgDialogThread);
+	}
+
+	private void closeRunningInfo() {
+		if (msgDialogThread != null && !msgDialogThread.isInterrupted()) {
+			msgDialogThread.interrupt();
+		}
+	}
+	
+	@Override
+	public void run(){
+		if (isChecked()) {
+			showRunningInfo();
+			_log.logStart();
+			if (_ctrl.connect()) {
+				String timeoutStr = Hub.localCfg
+						.get(
+								Preferences.TIMEOUT,
+								Messages
+										.getString("AfinionAS100Action.DefaultTimeout"));
+				int timeout = 20;
+				try {
+					timeout = Integer.parseInt(timeoutStr);
+				} catch (NumberFormatException e) {
+					// Do nothing. Use default value
+				}
+				_ctrl.awaitFrame(1, 4, 0, timeout);
+				return;
+			} else {
+				closeRunningInfo();
+				_log.log("Error");
+				SWTHelper.showError(Messages
+						.getString("AfinionAS100Action.RS232.Error.Title"),
+						_ctrl.getErrorMessage());
+			}
+		} else {
+			if (_ctrl.isOpen()) {
 				_ctrl.sendBreak();
 				_ctrl.close();
+				closeRunningInfo();
 			}
 		}
 		setChecked(false);
@@ -87,6 +127,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		_log.logEnd();
 		SWTHelper.showError(Messages.getString("AfinionAS100Action.RS232.Break.Title"), Messages.getString("AfinionAS100Action.RS232.Break.Text"));
 	}
+	
 	public void gotChunk(final Connection connection, final String data) 
 	{
 		_log.logRX(data);
@@ -96,7 +137,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		try {
 			record.write();
 		} catch(PackageException e) {
-			SWTHelper.showError(Messages.getString("ReflotronSprintAction.ProbeError.Title"), e.getMessage());
+			SWTHelper.showError(Messages.getString("AfinionAS100Action.ProbeError.Title"), e.getMessage());
 		}
 
 		_log.log("Saved");

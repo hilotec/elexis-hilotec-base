@@ -7,7 +7,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -23,7 +22,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.rs232.AuslesenDialog;
 import ch.elexis.rs232.Connection;
+import ch.elexis.rs232.LogConnection;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 
@@ -32,6 +33,7 @@ public class Preferences extends PreferencePage implements
 
 public static final String AFINION_BASE="connectors/afinion/";
 public static final String PORT=AFINION_BASE+"port";
+public static final String TIMEOUT = AFINION_BASE + "timeout";
 public static final String PARAMS=AFINION_BASE+"params";
 public static final String LOG=AFINION_BASE+"log";
 
@@ -45,7 +47,7 @@ public Preferences() {
 @Override
 protected Control createContents(final Composite parent) {
 	Hub.log.log("Start von createContents", Log.DEBUGMSG);
-	String[] param=Hub.localCfg.get(PARAMS, "9600,8,n,1,20").split(",");
+	String[] param=Hub.localCfg.get(PARAMS, "9600,8,n,1").split(",");
 	
 	Composite ret=new Composite(parent,SWT.NONE);
 	ret.setLayout(new GridLayout(2, false));
@@ -87,12 +89,10 @@ protected Control createContents(final Composite parent) {
 	Label lblTimeout = new Label(ret, SWT.NONE);
 	lblTimeout.setText(Messages.getString("Preferences.Timeout"));
 	lblTimeout.setLayoutData(new GridData(SWT.NONE));
-	String timeoutStr = "20";
-	if (param.length > 4) {
-		timeoutStr = param[4];
-	}
+	String timeoutStr = Hub.localCfg.get(TIMEOUT, Messages
+			.getString("AfinionAS100Action.DefaultTimeout"));
 	timeout = new Text(ret, SWT.BORDER);
-	timeout.setText(timeoutStr+"  ");
+	timeout.setText(timeoutStr);
 	
 	new Label(ret,SWT.NONE).setText(Messages.getString("Preferences.Log"));
 	log=new Button(ret,SWT.CHECK);
@@ -192,9 +192,10 @@ public boolean performOk() {
 	sb.append(speed.getText()).append(",")
 		.append(data.getText()).append(",")
 		.append(parity.getSelection() ? "y" : "n").append(",")
-		.append(stop.getText()).append(",").append(timeout.getText());
+		.append(stop.getText());
 	Hub.localCfg.set(PARAMS, sb.toString());
 	Hub.localCfg.set(PORT, ports.getText());
+	Hub.localCfg.set(TIMEOUT, timeout.getText());
 	Hub.localCfg.set(LOG, log.getSelection() ? "y" : "n");
 	Hub.localCfg.flush();
 	return super.performOk();

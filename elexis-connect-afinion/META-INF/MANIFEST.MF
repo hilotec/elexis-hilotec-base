@@ -9,3 +9,5 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.importer.div,
  ch.rgw.utility
 Bundle-Vendor: elexis.ch
+Bundle-ClassPath: lib/jacksum.jar,
+ .
