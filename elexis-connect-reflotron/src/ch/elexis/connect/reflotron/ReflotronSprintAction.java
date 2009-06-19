@@ -3,12 +3,10 @@ package ch.elexis.connect.reflotron;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
@@ -30,7 +28,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	Connection _ctrl;
 	Labor _myLab;
 	Logger _log;
-	MessageDialog dialog;
+	Thread msgDialogThread;
 	Patient selectedPatient;
 
 	public ReflotronSprintAction() {
@@ -67,56 +65,66 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		}
 	}
 
-	public void showRunning() {
-		Desk.getDisplay().asyncExec(new Runnable() {
+	public void showRunningInfo() {
+		msgDialogThread = new Thread() {
+			MessageDialog dialog;
 
 			public void run() {
-				dialog = new MessageDialog(
-						Desk.getTopShell(),
+				dialog = new MessageDialog(Desk.getTopShell(),
 						"Reflotron",
-						null, // accept
-						// the
-						// default
-						// window
-						// icon
-						"Daten werden im Hintergrund gelesen..",
-						MessageDialog.INFORMATION,
-						new String[] { IDialogConstants.OK_LABEL }, 0);
-				dialog.open();
+						null, // accept the default window icon
+						"Refletrondaten können nun empfangen werden..",
+						MessageDialog.INFORMATION, new String[] { "Ok",
+								"Abbrechen" }, 0);
+				if (dialog.open() == Dialog.CANCEL) {
+					_ctrl.sendBreak();
+					_ctrl.close();
+					setChecked(false);
+					_log.logEnd();
+				}
 			}
-		});
+		};
+		Desk.getDisplay().asyncExec(msgDialogThread);
 	}
 
-	public void closeRunning() {
-		if (dialog != null) {
-			dialog.close();
+	private void closeRunningInfo() {
+		if (msgDialogThread != null && !msgDialogThread.isInterrupted()) {
+			msgDialogThread.interrupt();
 		}
 	}
 
 	@Override
 	public void run() {
 		if (isChecked()) {
-			showRunning();
+			showRunningInfo();
 			_log.logStart();
 			if (_ctrl.connect()) {
-				_ctrl.awaitFrame(1, 4, 0, 6000);
+				String timeoutStr = Hub.localCfg
+						.get(
+								Preferences.TIMEOUT,
+								Messages
+										.getString("ReflotronSprintAction.DefaultTimeout"));
+				int timeout = 20;
+				try {
+					timeout = Integer.parseInt(timeoutStr);
+				} catch (NumberFormatException e) {
+					// Do nothing. Use default value
+				}
+				_ctrl.awaitFrame(1, 4, 0, timeout);
 				return;
 			} else {
+				closeRunningInfo();
 				_log.log("Error");
-				SWTHelper
-						.showError(
-								Messages
-										.getString("ReflotronSprintAction.RS232.Error.Title"),
-								Messages
-										.getString("ReflotronSprintAction.RS232.Error.Text"));
+				SWTHelper.showError(Messages
+						.getString("ReflotronSprintAction.RS232.Error.Title"),
+						_ctrl.getErrorMessage());
 			}
-			_log.logEnd();
 		} else {
 			if (_ctrl.isOpen()) {
 				_ctrl.sendBreak();
 				_ctrl.close();
+				closeRunningInfo();
 			}
-			closeRunning();
 		}
 		setChecked(false);
 		_log.logEnd();
@@ -142,8 +150,14 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			Patient probePat = null;
 			String filter = null;
 			if (probe.getIdent() != null) {
+				String patName = probe.getIdent();
+				// Wenn erstes Zeichen nicht Zahl, dann wahrscheinlich Pat-ID
+				if (!Character.isDigit(patName.charAt(0))) {
+					patName = patName.substring(0, 1).toUpperCase()
+							+ patName.substring(1);
+				}
 				Query<Patient> patQuery = new Query<Patient>(Patient.class);
-				patQuery.add(Patient.NAME, Query.EQUALS, probe.getIdent());
+				patQuery.add(Patient.NAME, "like", patName + "%");
 
 				List<Patient> patientList = patQuery.execute();
 
@@ -154,15 +168,24 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				}
 			}
 			
-			if ((selectedPatient == null && probe.getIdent().equals(""))
-					|| (selectedPatient != null && !selectedPatient
-							.equals(probePat))) {
+			boolean showSelectionDialog = false;
+			if (selectedPatient == null) {
 				if (probePat != null) {
-					filter = probePat.getName();
+					selectedPatient = probePat;
+				} else {
+					showSelectionDialog = true;
 				}
-				
+			} else {
+				if (probePat != null) {
+					if (!probePat.equals(selectedPatient)) {
+						showSelectionDialog = true;
+					}
+				}
+			}
+
+			if (showSelectionDialog) {
 				Desk.getDisplay().syncExec(new Runnable() {
-					public void run(){
+					public void run() {
 						KontaktSelektor ksl = new KontaktSelektor(
 								Hub.getActiveShell(),
 								Patient.class,
@@ -171,10 +194,11 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 								Messages
 										.getString("ReflotronSprintAction.Patient.Text"));
 						ksl.create();
-						ksl.getShell()
-						.setText(
-								Messages
-										.getString("ReflotronSprintAction.Patient.Title"));
+						ksl
+								.getShell()
+								.setText(
+										Messages
+												.getString("ReflotronSprintAction.Patient.Title"));
 						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 							selectedPatient = (Patient) ksl.getSelection();
 						}
@@ -200,10 +224,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		}
 
 		_log.log("Saved");
-		_ctrl.close();
-		setChecked(false);
 		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
-		_log.logEnd();
 	}
 
 	public void timeout() {
@@ -213,6 +234,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				.getString("ReflotronSprintAction.RS232.Timeout.Title"),
 				Messages.getString("ReflotronSprintAction.RS232.Timeout.Text"));
 		setChecked(false);
+		closeRunningInfo();
 		_log.logEnd();
 	}
 }
