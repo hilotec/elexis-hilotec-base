@@ -51,14 +51,14 @@ public class Probe {
 	 * Schreibt Labordaten
 	 */
 	public void write(Patient patient) throws PackageException {
-		if (getResultat().length() < 21) {
+		if (getResultat().length() < 19) {
 			throw new PackageException("Resultat der Probe zu klein!");
 		}
 
 		String paramName;
 		String value;
 		String unit;
-		if (getResultat().length() > 19) {
+		if (getResultat().length() > 20) {
 			if (getResultat().charAt(20) == 'C') {
 				// Enzym
 				paramName = getResultat().substring(0, 4).trim().toUpperCase();
@@ -74,7 +74,7 @@ public class Probe {
 			// Substrat
 			paramName = getResultat().substring(0, 4).trim().toUpperCase();
 			value = getResultat().substring(5, 11).trim();
-			unit = getResultat().substring(12, 21).trim();
+			unit = getResultat().substring(12, getResultat().length()).trim();
 		}
 
 		Value val = Value.getValue(paramName, unit);

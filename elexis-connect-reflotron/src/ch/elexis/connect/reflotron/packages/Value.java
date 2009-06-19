@@ -44,7 +44,7 @@ public class Value {
 		_shortName = getString(paramName, "kuerzel");
 		_longName = getString(paramName, "text");
 		_unit = getString(paramName, "unit");
-		if (unit != null && unit.equals(_unit)) {
+		if (unit != null && !unit.equals(_unit)) {
 			throw new PackageException("Einheit ist verschieden: " + unit
 					+ " - " + _unit);
 		}
