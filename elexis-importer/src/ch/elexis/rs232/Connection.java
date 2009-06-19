@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 5374 2009-06-19 08:02:13Z michael_imhof $
+ * $Id: Connection.java 5377 2009-06-19 09:58:08Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -47,6 +47,7 @@ public abstract class Connection implements SerialPortEventListener {
 	protected final ComPortListener listener;
 	protected long endTime;
 	protected int timeToWait;
+	private int timeout;
 	
 	private static byte lineSeparator;;
 
@@ -257,6 +258,7 @@ public abstract class Connection implements SerialPortEventListener {
 		frameStart = start;
 		frameEnd = end;
 		overhang = following;
+		this.timeout = timeout;
 		endTime = System.currentTimeMillis() + (timeout * 1000);
 		watchdogThread = new Thread(new Watchdog());
 		timeToWait = timeout;
@@ -277,6 +279,7 @@ public abstract class Connection implements SerialPortEventListener {
 		lineSeparator = delimiter;
 		// sbLine.setLength(0);
 		state = AWAIT_LINE;
+		this.timeout = timeout;
 		endTime = System.currentTimeMillis() + (timeout * 1000);
 		watchdogThread = new Thread(new Watchdog());
 		timeToWait = timeout;
@@ -292,6 +295,7 @@ public abstract class Connection implements SerialPortEventListener {
 	 */
 
 	public void serialEvent(final SerialPortEvent e) {
+		endTime = System.currentTimeMillis() + (timeout * 1000);
 		if (e.getEventType() == SerialPortEvent.BI) {
 			setState(PASS_THRU);
 			watchdogThread.interrupt();
@@ -310,6 +314,7 @@ public abstract class Connection implements SerialPortEventListener {
 			final InputStream inputStream, final SerialPortEvent e) throws IOException;
 
 	public void close() {
+		endTime = System.currentTimeMillis();
 		if ((watchdogThread != null) && watchdogThread.isAlive()) {
 			watchdogThread.interrupt();
 		}
