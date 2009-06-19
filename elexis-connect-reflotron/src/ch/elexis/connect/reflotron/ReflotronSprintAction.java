@@ -167,7 +167,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 					filter = probe.getIdent();
 				}
 			}
-			
+
 			boolean showSelectionDialog = false;
 			if (selectedPatient == null) {
 				if (probePat != null) {

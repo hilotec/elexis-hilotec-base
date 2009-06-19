@@ -49,7 +49,7 @@ public class Preferences extends PreferencePage implements
 	@Override
 	protected Control createContents(final Composite parent) {
 		Hub.log.log("Start von createContents", Log.DEBUGMSG);
-		String[] param = Hub.localCfg.get(PARAMS, "9600,8,n,1,20").split(",");
+		String[] param = Hub.localCfg.get(PARAMS, "9600,8,n,1").split(",");
 
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
