@@ -44,7 +44,7 @@ public class LogConnection extends Connection {
 			}
 			ExHandler.handle(ex);
 		}
-		
+		fos.flush();
 	}
 
 	@Override

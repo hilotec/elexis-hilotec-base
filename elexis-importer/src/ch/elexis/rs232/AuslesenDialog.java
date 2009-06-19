@@ -12,28 +12,19 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.util.SWTHelper;
 
+/**
+ * Dialog startet Connection und liest RS232 Input bis
+ * Benutzer dialog schliesst. Wird von LogConnection verwendet.
+ * @author immi
+ *
+ */
 public class AuslesenDialog extends Dialog implements Connection.ComPortListener {
 	Connection conn;
-	final Runnable auslesenRunnable;
 	Label label;
 	final String schnittstelle;
-	
-	private class AuslesenRunnable implements Runnable {
-		public void run() {
-			if(conn.connect()){
-				conn.awaitFrame(1, 4, 0, 3600);
-				return;
-			} else{
-				String title = MessageFormat.format("{0} Schnittstelle auslesen", schnittstelle);
-				String msg = MessageFormat.format("Fehler beim Auslesen!", new Object[0]);
-				SWTHelper.showError(title, msg);
-			}
-		}
-	}
 
 	public AuslesenDialog(Shell parentShell, final String text) {
 		super(parentShell);
-		this.auslesenRunnable = new AuslesenRunnable();
 		this.schnittstelle = text;
 	}
 	
@@ -45,17 +36,14 @@ public class AuslesenDialog extends Dialog implements Connection.ComPortListener
 	protected Control createDialogArea(Composite parent) {
 		Composite ret=(Composite)super.createDialogArea(parent);
 		label = new Label(ret,SWT.NONE);
-		label.setText("Warten auf Daten..                 ");
+		label.setText("Daten vom Gerät werden fortlaufend ins Log geschrieben..");
 		return ret;
 	}
-
-
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		newShell.setText(schnittstelle);
 		super.configureShell(newShell);
-		newShell.getDisplay().asyncExec(auslesenRunnable);
 	}
 
 	@Override
@@ -68,9 +56,15 @@ public class AuslesenDialog extends Dialog implements Connection.ComPortListener
 
 	@Override
 	public int open() {
-		int retVal = super.open();
-		
-		return retVal;
+		if(conn.connect()){
+			conn.awaitFrame(1, 4, 0, 3600000);
+			return super.open();
+		} else{
+			String title = MessageFormat.format("{0} Schnittstelle auslesen", schnittstelle);
+			SWTHelper.showError(title, conn.getErrorMessage());
+			close();
+		}
+		return CANCEL;
 	}
 
 	@Override

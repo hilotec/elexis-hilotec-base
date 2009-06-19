@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 5363 2009-06-18 16:10:36Z michael_imhof $
+ * $Id: Connection.java 5374 2009-06-19 08:02:13Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -69,6 +69,8 @@ public abstract class Connection implements SerialPortEventListener {
 	public static final String NAK = "\025";
 	public static final String CR = "\015";
 	public static final String LF = "\012";
+	
+	private String errorMsg = "";
 
 	public interface ComPortListener {
 		public void gotChunk(Connection conn, String chunk);
@@ -87,6 +89,7 @@ public abstract class Connection implements SerialPortEventListener {
 	}
 
 	public boolean connect() {
+		errorMsg = "";
 		SerialParameters sp = new SerialParameters();
 		sp.setPortName(myPort);
 		sp.setBaudRate(mySettings[0]);
@@ -117,6 +120,7 @@ public abstract class Connection implements SerialPortEventListener {
 			}
 			return true;
 		} catch (Exception ex) {
+			errorMsg = ex.getMessage();
 			ExHandler.handle(ex);
 			return false;
 		}
@@ -132,7 +136,7 @@ public abstract class Connection implements SerialPortEventListener {
 	 * Gives a timeout of 30 seconds on the portOpen to allow other applications
 	 * to reliquish the port if have it open and no longer need it.
 	 */
-	public void openConnection(final SerialParameters parameters)
+	private void openConnection(final SerialParameters parameters)
 			throws SerialConnectionException {
 
 		// Obtain a CommPortIdentifier object for the port you want to open.
@@ -150,7 +154,7 @@ public abstract class Connection implements SerialPortEventListener {
 		try {
 			sPort = (SerialPort) portId.open(name, 30000);
 		} catch (PortInUseException e) {
-			throw new SerialConnectionException(e.getMessage());
+			throw new SerialConnectionException("Com-Port wird verwendet!");
 		}
 
 		// Set the parameters of the connection. If they won't set, close the
@@ -247,7 +251,7 @@ public abstract class Connection implements SerialPortEventListener {
 	 *            number of seconds to wait for a frame to complete before givng
 	 *            up
 	 */
-	public void awaitFrame(final int start, final int end, final int following,
+	public synchronized void awaitFrame(final int start, final int end, final int following,
 			final int timeout) {
 		state = AWAIT_START;
 		frameStart = start;
@@ -296,6 +300,7 @@ public abstract class Connection implements SerialPortEventListener {
 			try {
 				serialEvent(this.state, is, e);
 			} catch (Exception ex) {
+				errorMsg = ex.getMessage();
 				ExHandler.handle(ex);
 			}
 		}
@@ -316,6 +321,7 @@ public abstract class Connection implements SerialPortEventListener {
 					Thread.sleep(5000);
 					sPort.close();
 					bOpen = false;
+					errorMsg = "";
 
 				} catch (Exception ex) {
 
@@ -387,4 +393,7 @@ public abstract class Connection implements SerialPortEventListener {
 		this.state = state;
 	}
 
+	public String getErrorMessage() {
+		return errorMsg;
+	}
 }
