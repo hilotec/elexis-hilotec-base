@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeContributor.java 5079 2009-02-03 18:28:09Z rgw_ch $
+ *  $Id: XChangeContributor.java 5381 2009-06-22 11:01:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 
@@ -50,7 +50,7 @@ public class XChangeContributor implements IExchangeContributor {
 				de.setHint(img.getInfo());
 				de.setDefaultXid(img.getId());
 				me.getContainer().addBinary(img.getId(), data);
-				me.getContainer().addChoice(de, img.getLabel());
+				me.getContainer().addChoice(de.getElement(), img.getLabel());
 				me.addDocument(de);
 			}
 		}
@@ -60,9 +60,9 @@ public class XChangeContributor implements IExchangeContributor {
 	@SuppressWarnings("unchecked")
 	public void importHook(XChangeContainer container, PersistentObject context){
 		String rootpath = container.getProperty("ROOTPATH");
-		List<RecordElement> records =
-			(List<RecordElement>) container.getElements(rootpath + "/records/record");
-		for (RecordElement re : records) {
+		List<Element> records =
+			(List<Element>) container.getElements(rootpath + "/records/record");
+		for (Element re : records) {
 			/*
 			 * List<Element> xrefs=re.getChildren("xref", container.getNamespace()); Samdas smd=new
 			 * Samdas(k.getEintrag().getHead()); if(xrefs!=null){ for(Element e:xrefs){ String
