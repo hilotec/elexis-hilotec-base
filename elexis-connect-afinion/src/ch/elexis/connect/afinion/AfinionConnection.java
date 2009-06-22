@@ -26,18 +26,18 @@ public class AfinionConnection extends Connection {
 		super(portName, port, settings, l);
 	}
 	
-	/**
-	 * Berechnet CRC Pruefsumme
-	 * @param content
+	/** 
+	 * Crc calculation
+	 * @param array
 	 * @return
 	 */
-	private static long getCRC(String content) {
-		int crc = 0xFFFF;
-		for (int i=0; i<content.length(); i++) {
-			char ch = content.charAt(i);
-			ch ^= crc | 0xFF;
-			ch ^= ch << 4;
-			crc = (crc >> 8) ^ (ch << 8) ^ (ch << 3) ^ (ch >> 4);
+	private static long getCrc(byte[] array) {
+		char crc = 0xFFFF;
+		for (byte b: array) {
+			char value = (char)b;
+			value ^= crc & 0xFF;
+			value ^= (value << 4) & 0xFF;
+			crc = (char)((crc >>> 8) ^ (value << 8) ^ (value << 3) ^ (value >>> 4));
 		}
 		return crc;
 	}
@@ -56,18 +56,17 @@ public class AfinionConnection extends Connection {
 		strBuf.append(ACK);
 		System.out.print("<ETB>");
 		strBuf.append(ETB);
-			
-		Crc16 crc16 = new Crc16();
-		crc16.update(strBuf.toString().getBytes());
+	
+		long crc = getCrc(strBuf.toString().getBytes());
 		
-		System.out.print(Long.toHexString(crc16.getValue()));
-		strBuf.append(Long.toHexString(crc16.getValue()));
+		System.out.print(Long.toHexString(crc));
+		strBuf.append(Long.toHexString(crc));
 		System.out.print("<DLE>");
 		strBuf.append(DLE);
 		System.out.print("<ETX>");
 		strBuf.append(ETX);
 
-		System.out.println();
+		System.out.println("Send: " + strBuf.toString());
 		send(strBuf.toString());
 	}
 	
@@ -79,7 +78,7 @@ public class AfinionConnection extends Connection {
 		strBuf.append(NAK);
 		strBuf.append(ETB);
 		
-		long crc = getCRC(strBuf.toString());
+		long crc = getCrc(strBuf.toString().getBytes());
 		
 		strBuf.append(crc);
 		strBuf.append(DLE);
