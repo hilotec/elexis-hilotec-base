@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XChangeElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ *  $Id: XChangeElement.java 5382 2009-06-22 16:19:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -115,6 +115,9 @@ public abstract class XChangeElement {
 	
 	public XChangeElement getChild(String name, Class<? extends XChangeElement> clazz){
 		Element el = ex.getChild(name, getContainer().getNamespace());
+		if(el==null){
+			return null;
+		}
 		XChangeElement ret;
 		try {
 			ret =
