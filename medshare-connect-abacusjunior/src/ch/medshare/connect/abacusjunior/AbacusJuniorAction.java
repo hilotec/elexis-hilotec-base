@@ -91,7 +91,7 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 	}
 	public void gotChunk(final Connection connection, final byte[] bytes) 
 	{
-		String data = bytes.toString();
+		String data = new String(bytes);
 		_log.logRX(data);
 		
 		char id = data.charAt(1);
