@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypEnum.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MesswertTypEnum.java 5387 2009-06-23 11:49:44Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -53,7 +53,7 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 	}
 
 	public String getDefault() {
-		return Double.toString(defVal);
+		return Integer.toString(defVal);
 	}
 
 	public void setDefault(String str) {
