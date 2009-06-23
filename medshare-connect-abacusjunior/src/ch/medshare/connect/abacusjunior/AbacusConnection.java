@@ -8,9 +8,16 @@ import java.io.InputStream;
 import ch.elexis.rs232.Connection;
 
 public class AbacusConnection extends Connection {
+	public static final int PASS_THRU = 0;
+	public static final int AWAIT_START = 1;
+	public static final int AWAIT_END = 2;
+	public static final int AWAIT_CHECKSUM = 3;
+	public static final int AWAIT_LINE = 4;
+	
 	public AbacusConnection(String portName, String port, String settings,
 			ComPortListener l) {
 		super(portName, port, settings, l);
+		setState(PASS_THRU);
 	}
 
 	/**
@@ -25,7 +32,7 @@ public class AbacusConnection extends Connection {
 			while ((newData = inputStream.read()) != -1) {
 				sbFrame.append((char) newData);
 			}
-			listener.gotChunk(this, sbFrame.toString());
+			listener.gotChunk(this, sbFrame.toString().getBytes());
 			break;
 		case AWAIT_START:
 			while ((newData = inputStream.read()) != -1) {
@@ -52,7 +59,7 @@ public class AbacusConnection extends Connection {
 				overhang -= 1;
 			}
 			if (overhang == 0) {
-				listener.gotChunk(this, sbFrame.toString());
+				listener.gotChunk(this, sbFrame.toString().getBytes());
 				sbFrame.setLength(0);
 				interruptWatchdog();
 				setState(AWAIT_START);
@@ -65,12 +72,30 @@ public class AbacusConnection extends Connection {
 				if (newData == getLineSeparator()) {
 					String res = sbLine.toString();
 					sbLine.setLength(0);
-					listener.gotChunk(this, res);
+					listener.gotChunk(this, res.getBytes());
 				} else {
 					sbLine.append((char) newData);
 				}
 			}
 		}
+	}
 
+	@Override
+	public synchronized void awaitFrame(int start, int end, int following,
+			int timeout) {
+		setState(AWAIT_START);
+		super.awaitFrame(start, end, following, timeout);
+	}
+
+	@Override
+	public void readLine(byte delimiter, int timeout) {
+		setState(AWAIT_LINE);
+		super.readLine(delimiter, timeout);
+	}
+	
+	@Override
+	public void breakInterrupt(final int state) {
+		setState(PASS_THRU);
+		super.breakInterrupt(state);
 	}
 }

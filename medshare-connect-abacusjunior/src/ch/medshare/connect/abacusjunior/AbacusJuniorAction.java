@@ -89,8 +89,9 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 		_log.logEnd();
 		SWTHelper.showError(Messages.getString("AbacusJuniorAction.RS232.Break.Title"), Messages.getString("AbacusJuniorAction.RS232.Break.Text"));
 	}
-	public void gotChunk(final Connection connection, final String data) 
+	public void gotChunk(final Connection connection, final byte[] bytes) 
 	{
+		String data = bytes.toString();
 		_log.logRX(data);
 		
 		char id = data.charAt(1);
