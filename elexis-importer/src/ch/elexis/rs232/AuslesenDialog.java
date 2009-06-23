@@ -74,9 +74,9 @@ public class AuslesenDialog extends Dialog implements Connection.ComPortListener
 		super.cancelPressed();
 	}
 	
-	public void gotBreak(Connection conn){}
+	public void gotBreak(final Connection conn){}
 	
-	public void gotChunk(Connection conn, String chunk){}
+	public void gotChunk(final Connection conn, final byte[] bytes){}
 	
 	public void timeout(){}
 	
