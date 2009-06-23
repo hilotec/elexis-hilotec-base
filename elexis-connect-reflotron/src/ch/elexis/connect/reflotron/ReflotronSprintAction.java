@@ -165,7 +165,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 
 				if (patientList.size() == 1) {
 					probePat = patientList.get(0);
-				} else {
+				} else if (!Character.isDigit(patName.charAt(0))) {
 					filter = probe.getIdent();
 				}
 			}
@@ -180,6 +180,10 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			} else {
 				if (probePat != null) {
 					if (!probePat.equals(selectedPatient)) {
+						showSelectionDialog = true;
+					}
+				} else if (filter != null) {
+					if (!filter.toLowerCase().equals(selectedPatient.getName().toLowerCase())) {
 						showSelectionDialog = true;
 					}
 				}
@@ -203,6 +207,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 												.getString("ReflotronSprintAction.Patient.Title"));
 						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 							selectedPatient = (Patient) ksl.getSelection();
+						} else {
+							selectedPatient = null;
 						}
 
 					}
