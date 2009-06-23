@@ -37,6 +37,6 @@ public class ReflotronConnection extends Connection {
 			}
 		}
 			
-		this.listener.gotChunk(this, strBuf.toString());
+		this.listener.gotChunk(this, strBuf.toString().getBytes());
 	}
 }

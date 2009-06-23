@@ -140,14 +140,16 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				.getString("ReflotronSprintAction.RS232.Break.Text"));
 	}
 
-	public void gotChunk(final Connection connection, final String data) {
-		_log.logRX(data);
+	public void gotChunk(final Connection connection, final byte[] data) {
+		String content = data.toString();
+		_log.logRX(content);
 
-		String[] strArray = data.split("\r\n");
+		String[] strArray = content.split("\r\n");
 		if (strArray.length > 3) {
 			Probe probe = new Probe(strArray);
 			selectedPatient = GlobalEvents.getSelectedPatient();
 			Patient probePat = null;
+			//TODO: Filter fuer KontaktSelektor
 			String filter = null;
 			if (probe.getIdent() != null) {
 				String patName = probe.getIdent();
