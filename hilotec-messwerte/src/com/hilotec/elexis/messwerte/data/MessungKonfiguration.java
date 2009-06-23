@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id$
+ * $Id: MessungKonfiguration.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -29,6 +29,26 @@ import ch.elexis.Hub;
 import ch.elexis.util.Log;
 
 public class MessungKonfiguration {
+	public static final String ATTR_TYPE = "type";
+	public static final String NAME_DATAFIELD = "datafield";
+	public static final String ATTR_SOURCE = "source";
+	public static final String ELEMENT_VAR = "var";
+	public static final String ATTR_INTERPRETER = "interpreter";
+	public static final String ELEMENT_FORMULA = "formula";
+	public static final String NAME_CALCFIELD = "calcfield";
+	public static final String ATTR_VALUE = "value";
+	public static final String NAME_ENUMFIELD = "enumfield";
+	public static final String NAME_STRINGFIELD = "strfield";
+	public static final String NAME_BOOLFIELD = "boolfield";
+	public static final String NAME_NUMFIELD = "numfield";
+	public static final String ATTR_DEFAULT = "default";
+	public static final String ATTR_UNIT = "unit";
+	public static final String ATTR_TITLE = "title";
+	public static final String ATTR_NAME = "name";
+	public static final String ELEMENT_DATATYPE = "datatype";
+	public static final String CONFIG_FILENAME = "messwerte.xml";
+	
+	
 	private static MessungKonfiguration the_one_and_only_instance = null;
 	ArrayList<MessungTyp> types;
 	private final Log log = Log.get("DataConfiguration"); 
@@ -42,7 +62,7 @@ public class MessungKonfiguration {
 	
 	private MessungKonfiguration() {
 		types = new ArrayList<MessungTyp>();
-		readFromXML(Hub.getWritableUserDir()+File.separator+"messwerte.xml");
+		readFromXML(Hub.getWritableUserDir()+File.separator+CONFIG_FILENAME);
 	}
 	
 	private void readFromXML(String path) {
@@ -57,11 +77,11 @@ public class MessungKonfiguration {
 			Element rootel = doc.getDocumentElement();
 			
 			// datatype-Deklarationen durchgehen und einlesen
-			NodeList nl = rootel.getElementsByTagName("datatype");
+			NodeList nl = rootel.getElementsByTagName(ELEMENT_DATATYPE);
 			for (int i = 0; i < nl.getLength(); i++) {
 				Element edt = (Element) nl.item(i);
-				String name = edt.getAttribute("name");
-				String title = edt.getAttribute("title");
+				String name = edt.getAttribute(ATTR_NAME);
+				String title = edt.getAttribute(ATTR_TITLE);
 				if (title.length() == 0) {
 					title = name;
 				}
@@ -76,35 +96,35 @@ public class MessungKonfiguration {
 					}
 
 					Element edtf = (Element) ndtf;
-					String fn = edtf.getAttribute("name");
-					String ft = edtf.getAttribute("title");
+					String fn = edtf.getAttribute(ATTR_NAME);
+					String ft = edtf.getAttribute(ATTR_TITLE);
 					if (ft.equals("")) {
 						ft = fn;
 					}
 					
 					//OldMesswertTyp dft;
 					IMesswertTyp typ;
-					if (edtf.getNodeName().equals("numfield")) {
-						typ = new MesswertTypNum(fn, ft, edtf.getAttribute("unit"));
-						if (edtf.hasAttribute("default")) {
-							typ.setDefault(edtf.getAttribute("default"));
+					if (edtf.getNodeName().equals(NAME_NUMFIELD)) {
+						typ = new MesswertTypNum(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						if (edtf.hasAttribute(ATTR_DEFAULT)) {
+							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
-					} else if (edtf.getNodeName().equals("boolfield")) {
-						typ = new MesswertTypBool(fn, ft, edtf.getAttribute("unit"));
-						if (edtf.hasAttribute("default")) {
-							typ.setDefault(edtf.getAttribute("default"));
+					} else if (edtf.getNodeName().equals(NAME_BOOLFIELD)) {
+						typ = new MesswertTypBool(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						if (edtf.hasAttribute(ATTR_DEFAULT)) {
+							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
-					} else if (edtf.getNodeName().equals("strfield")) {
-						typ = new MesswertTypStr(fn, ft, edtf.getAttribute("unit"));
-						if (edtf.hasAttribute("default")) {
-							typ.setDefault(edtf.getAttribute("default"));
+					} else if (edtf.getNodeName().equals(NAME_STRINGFIELD)) {
+						typ = new MesswertTypStr(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						if (edtf.hasAttribute(ATTR_DEFAULT)) {
+							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
-					} else if (edtf.getNodeName().equals("enumfield")) {
-						MesswertTypEnum en = new MesswertTypEnum(fn, ft, edtf.getAttribute("unit"));
+					} else if (edtf.getNodeName().equals(NAME_ENUMFIELD)) {
+						MesswertTypEnum en = new MesswertTypEnum(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = en;
 						
-						if (edtf.hasAttribute("default")) {
-							typ.setDefault(edtf.getAttribute("default"));
+						if (edtf.hasAttribute(ATTR_DEFAULT)) {
+							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
 					
 						NodeList children = edtf.getChildNodes();
@@ -114,8 +134,8 @@ public class MessungKonfiguration {
 							}
 							
 							Element choice = (Element) children.item(k);
-							en.addChoice(choice.getAttribute("title"),
-								Integer.parseInt(choice.getAttribute("value")));
+							en.addChoice(choice.getAttribute(ATTR_TITLE),
+								Integer.parseInt(choice.getAttribute(ATTR_VALUE)));
 						}
 						
 						// Wenn kein vernuenftiger Standardwert angegeben wurde
@@ -124,32 +144,32 @@ public class MessungKonfiguration {
 							for (int k = 0; k < children.getLength(); k++) {
 								if (children.item(k).getNodeType() == Node.ELEMENT_NODE) {
 									Element choice = (Element) children.item(k);
-									typ.setDefault(choice.getAttribute("value"));
+									typ.setDefault(choice.getAttribute(ATTR_VALUE));
 									break;
 								}
 							}
 						}
-					} else if (edtf.getNodeName().equals("calcfield")) {
-						MesswertTypCalc calc = new MesswertTypCalc(fn, ft, edtf.getAttribute("unit"));
+					} else if (edtf.getNodeName().equals(NAME_CALCFIELD)) {
+						MesswertTypCalc calc = new MesswertTypCalc(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = calc;
 						
-						Element formula = (Element) edtf.getElementsByTagName("formula").item(0);
-						calc.setFormula(formula.getTextContent(), formula.getAttribute("interpreter"));
+						Element formula = (Element) edtf.getElementsByTagName(ELEMENT_FORMULA).item(0);
+						calc.setFormula(formula.getTextContent(), formula.getAttribute(ATTR_INTERPRETER));
 						
-						NodeList children = edtf.getElementsByTagName("var");
+						NodeList children = edtf.getElementsByTagName(ELEMENT_VAR);
 						for (int k = 0; k < children.getLength(); k++) {
 							Node n = children.item(k);
 							if (n.getNodeType() != Node.ELEMENT_NODE) {
 								continue;
 							}
 							Element var = (Element) n;
-							calc.addVariable(var.getAttribute("name"), var.getAttribute("source"));
+							calc.addVariable(var.getAttribute(ATTR_NAME), var.getAttribute(ATTR_SOURCE));
 						}
-					} else if (edtf.getNodeName().equals("datafield")) {
-						MesswertTypData data = new MesswertTypData(fn, ft, edtf.getAttribute("unit"));
+					} else if (edtf.getNodeName().equals(NAME_DATAFIELD)) {
+						MesswertTypData data = new MesswertTypData(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = data;
 						
-						data.setRefType(edtf.getAttribute("type"));
+						data.setRefType(edtf.getAttribute(ATTR_TYPE));
 					} else {
 						log.log("Unbekannter Feldtyp: '" + edtf.getNodeName() + "'", Log.ERRORS);
 						continue;

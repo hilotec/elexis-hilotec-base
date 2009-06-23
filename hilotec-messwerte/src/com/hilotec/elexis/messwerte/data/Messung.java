@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2009, A. Kaufmann and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,15 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id$
+ * $Id: Messung.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hilotec.elexis.messwerte.Activator;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -24,7 +26,7 @@ import ch.rgw.tools.TimeTool;
 
 public class Messung extends PersistentObject {
 	private static final String VERSION = "1";
-	public static final String PLUGIN_ID = "com.hilotec.elexis.messwerte";
+	public static final String PLUGIN_ID = Activator.PLUGIN_ID;
 	private static final String TABLENAME = "COM_HILOTEC_ELEXIS_MESSWERTE_MESSUNGEN";
 	
 	static {
