@@ -141,7 +141,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	}
 
 	public void gotChunk(final Connection connection, final byte[] data) {
-		String content = data.toString();
+		String content = new String(data);
 		_log.logRX(content);
 
 		String[] strArray = content.split("\r\n");
