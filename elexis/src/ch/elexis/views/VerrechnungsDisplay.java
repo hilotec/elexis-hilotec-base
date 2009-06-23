@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: VerrechnungsDisplay.java 5361 2009-06-18 12:07:37Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 5397 2009-06-23 20:04:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -329,6 +329,7 @@ public class VerrechnungsDisplay extends Composite {
 							}
 						}
 						setLeistungen(GlobalEvents.getSelectedKons());
+						v.getVerrechenbar().getOptifier().optify(GlobalEvents.getSelectedKons());
 					} catch (NumberFormatException ne) {
 						SWTHelper
 								.showError(
