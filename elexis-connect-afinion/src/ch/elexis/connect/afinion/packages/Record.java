@@ -10,22 +10,21 @@ public class Record {
 	private SubRecordPart part4;
 	private Patient patient;
 
-	public Record(final String content, final Patient pat) {
+	public Record(final byte[] bytes, final Patient pat) {
 		this.patient = pat;
-		parse(content);
+		parse(bytes);
 	}
 	
-	private void parse(String content) {
-		header = new HeaderPart(content);
-		content = content.substring(header.length());
-		part1 = new SubRecordPart(content);
-		content = content.substring(part1.length());
-		part2 = new SubRecordPart(content);
-		content = content.substring(part2.length());
-		part3 = new SubRecordPart(content);
-		content = content.substring(part3.length());
-		part4 = new SubRecordPart(content);
-		content = content.substring(part4.length());
+	private void parse(byte[] bytes) {
+		header = new HeaderPart(bytes);
+		int pos = header.length();
+		part1 = new SubRecordPart(bytes, pos);
+		pos += header.length();
+		part2 = new SubRecordPart(bytes, pos);
+		pos += header.length();
+		part3 = new SubRecordPart(bytes, pos);
+		pos += header.length();
+		part4 = new SubRecordPart(bytes, pos);
 	}
 	
 	public void write() throws PackageException {

@@ -6,26 +6,14 @@ public class HeaderPart extends AbstractPart {
 	private int recordNum;
 	private TimeTool date;
 
-	public HeaderPart(final String content) {
-		parse(content);
+	public HeaderPart(final byte[] bytes) {
+		parse(bytes);
 	}
 	
-	public void parse(final String content) {
-		String recordNumStr = content.substring(0, 4);
-		String dateSecondStr = content.substring(60, 64); //Seconds since 1.1.1970
-		
-		try {
-			recordNum = Integer.parseInt(recordNumStr);
-		} catch(NumberFormatException e) {
-			// TODO: Exception handling
-		}
-		
-		try {
-			long dateSeconds = Integer.parseInt(dateSecondStr);
-			date = new TimeTool(dateSeconds * 1000);
-		} catch(NumberFormatException e) {
-			// TODO: Exception handling
-		}
+	public void parse(final byte[] bytes) {
+		int recordNum = getInteger(bytes, 0);
+		int dateSeconds = getInteger(bytes, 60); //Seconds since 1.1.1970
+		date = new TimeTool(dateSeconds * 1000);
 	}
 
 	@Override

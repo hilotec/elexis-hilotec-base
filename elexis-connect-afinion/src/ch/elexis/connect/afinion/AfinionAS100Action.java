@@ -128,9 +128,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		SWTHelper.showError(Messages.getString("AfinionAS100Action.RS232.Break.Title"), Messages.getString("AfinionAS100Action.RS232.Break.Text"));
 	}
 	
-	public void gotChunk(final Connection connection, final String data) 
-	{
-		_log.logRX(data);
+	public void gotChunk(final Connection connection, final byte[] data) {
+		_log.logRX(data.toString());
 		
 		// Record lesen
 		Record record = new Record(data, _actPatient);
@@ -147,7 +146,6 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
 		_log.logEnd();
 	}
-
 	
 	public void timeout() {
 		_ctrl.close();
