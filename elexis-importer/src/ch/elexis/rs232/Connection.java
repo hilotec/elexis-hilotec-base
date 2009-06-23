@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 5377 2009-06-19 09:58:08Z michael_imhof $
+ * $Id: Connection.java 5389 2009-06-23 14:28:03Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -34,12 +34,6 @@ import ch.rgw.tools.ExHandler;
 
 public abstract class Connection implements SerialPortEventListener {
 	private static final String simulate = null; // "c:/abx.txt";
-
-	public static final int PASS_THRU = 0;
-	public static final int AWAIT_START = 1;
-	public static final int AWAIT_END = 2;
-	public static final int AWAIT_CHECKSUM = 3;
-	public static final int AWAIT_LINE = 4;
 	
 	protected final StringBuilder sbFrame = new StringBuilder();
 	protected final StringBuilder sbLine = new StringBuilder();
@@ -60,7 +54,7 @@ public abstract class Connection implements SerialPortEventListener {
 	private final String[] mySettings;
 	private final String name;
 
-	private int state = PASS_THRU;
+	private int state;
 
 	private Thread watchdogThread;
 	public static final String XON = "\013";
@@ -74,9 +68,9 @@ public abstract class Connection implements SerialPortEventListener {
 	private String errorMsg = "";
 
 	public interface ComPortListener {
-		public void gotChunk(Connection conn, String chunk);
+		public void gotChunk(final Connection conn, final byte[] bytes);
 
-		public void gotBreak(Connection conn);
+		public void gotBreak(final Connection conn);
 
 		public void timeout();
 	}
@@ -108,7 +102,7 @@ public abstract class Connection implements SerialPortEventListener {
 							final String in = FileTool.readFile(
 									new File(simulate)).replaceAll("\\r\\n",
 									"\r");
-							listener.gotChunk(mine, in);
+							listener.gotChunk(mine, in.getBytes());
 						} catch (Exception ex) {
 
 						}
@@ -254,7 +248,6 @@ public abstract class Connection implements SerialPortEventListener {
 	 */
 	public synchronized void awaitFrame(final int start, final int end, final int following,
 			final int timeout) {
-		state = AWAIT_START;
 		frameStart = start;
 		frameEnd = end;
 		overhang = following;
@@ -278,7 +271,6 @@ public abstract class Connection implements SerialPortEventListener {
 	public void readLine(byte delimiter, int timeout) {
 		lineSeparator = delimiter;
 		// sbLine.setLength(0);
-		state = AWAIT_LINE;
 		this.timeout = timeout;
 		endTime = System.currentTimeMillis() + (timeout * 1000);
 		watchdogThread = new Thread(new Watchdog());
@@ -297,9 +289,7 @@ public abstract class Connection implements SerialPortEventListener {
 	public void serialEvent(final SerialPortEvent e) {
 		endTime = System.currentTimeMillis() + (timeout * 1000);
 		if (e.getEventType() == SerialPortEvent.BI) {
-			setState(PASS_THRU);
-			watchdogThread.interrupt();
-			listener.gotBreak(this);
+			breakInterrupt(state);
 		} else {
 			try {
 				serialEvent(this.state, is, e);
@@ -312,6 +302,11 @@ public abstract class Connection implements SerialPortEventListener {
 
 	public abstract void serialEvent(final int state,
 			final InputStream inputStream, final SerialPortEvent e) throws IOException;
+	
+	public void breakInterrupt(final int state) {
+		this.watchdogThread.interrupt();
+		listener.gotBreak(this);
+	}
 
 	public void close() {
 		endTime = System.currentTimeMillis();
@@ -352,8 +347,13 @@ public abstract class Connection implements SerialPortEventListener {
 	}
 
 	public boolean send(final String data) {
+		return send(data.getBytes());
+	}
+	
+	public boolean send(final byte[] bytes) {
 		try {
-			os.write(data.getBytes());
+			os.write(bytes);
+			os.flush();
 			return true;
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
@@ -396,6 +396,10 @@ public abstract class Connection implements SerialPortEventListener {
 
 	public void setState(int state) {
 		this.state = state;
+	}
+	
+	public int getState() {
+		return this.state;
 	}
 
 	public String getErrorMessage() {
