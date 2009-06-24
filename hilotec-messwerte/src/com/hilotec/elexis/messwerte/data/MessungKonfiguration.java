@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MessungKonfiguration.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MessungKonfiguration.java 5403 2009-06-24 12:07:31Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -41,10 +41,13 @@ public class MessungKonfiguration {
 	public static final String NAME_STRINGFIELD = "strfield";
 	public static final String NAME_BOOLFIELD = "boolfield";
 	public static final String NAME_NUMFIELD = "numfield";
+	public static final String NAME_SCALEFIELD = "scalefield";
 	public static final String ATTR_DEFAULT = "default";
 	public static final String ATTR_UNIT = "unit";
 	public static final String ATTR_TITLE = "title";
 	public static final String ATTR_NAME = "name";
+	public static final String ATTR_MAX = "max";
+	public static final String ATTR_MIN = "min";
 	public static final String ELEMENT_DATATYPE = "datatype";
 	public static final String CONFIG_FILENAME = "messwerte.xml";
 	
@@ -170,6 +173,21 @@ public class MessungKonfiguration {
 						typ = data;
 						
 						data.setRefType(edtf.getAttribute(ATTR_TYPE));
+					} else if (edtf.getNodeName().equals(NAME_SCALEFIELD)) {
+						MesswertTypScale scale = new MesswertTypScale(fn, ft,
+							edtf.getAttribute(ATTR_UNIT));
+						typ = scale;
+						if (edtf.hasAttribute(ATTR_DEFAULT)) {
+							scale.setDefault(edtf.getAttribute(ATTR_DEFAULT));
+						}
+						if (edtf.hasAttribute(ATTR_MIN)) {
+							scale.setMin(Integer.parseInt(
+								edtf.getAttribute(ATTR_MIN)));
+						}
+						if (edtf.hasAttribute(ATTR_MAX)) {
+							scale.setMax(Integer.parseInt(
+								edtf.getAttribute(ATTR_MAX)));
+						}
 					} else {
 						log.log("Unbekannter Feldtyp: '" + edtf.getNodeName() + "'", Log.ERRORS);
 						continue;

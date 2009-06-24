@@ -15,6 +15,7 @@
 		<numfield	name="hfreq"	title="Herzfrequenz"					unit="1/Min" />
 		<boolfield	name="hfrm"		title="HF Regelmässig" />
 		<boolfield	name="herger"	title="Herzgeräusch" />
+		<scalefield	name="arfaeh"	title="Arbeitsfähigkeit" min="0" max="5" default="5" />
 	</datatype>
 	
 	<datatype		name="ekg"		title="EKG">
