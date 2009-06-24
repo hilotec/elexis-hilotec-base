@@ -1,5 +1,5 @@
 % *******************************************************************************
-% * Copyright (c) 2008 by Elexis
+% * Copyright (c) 2008-2009 by Elexis
 % * All rights reserved. This document and the accompanying materials
 % * are made available under the terms of the Eclipse Public License v1.0
 % * which accompanies this distribution, and is available at
@@ -18,27 +18,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{makeidx}
 \makeindex
-% Hier ein etwas skurriler Block, der dazu dient, die Unterschiede
-% zwischen pdflatex und latex auszubügeln
-% Grafiken müssen als png oder gif (für pdflatex) und als eps (für Latex)
-% vorhanden sein. Die Endung kann man beim \includegraphics jeweils weglassen,
-% das System nimmt je nach Renderer die geeignete Variante.
 
-\newif\ifpdf
-\ifx\pdfoutput\undefined
-	\pdffalse              	%normales LaTeX wird ausgeführt
-\else
-	\pdfoutput=1
-	\pdftrue               	%pdfLaTeX wird ausgeführt
-\fi
-
-\ifpdf
-	\usepackage[pdftex]{graphicx}
-	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
-\else
-	\usepackage[dvips]{graphicx}
-	\DeclareGraphicsExtensions{.eps}
-\fi
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
 
 \usepackage{floatflt}
 \usepackage[]{hyperref}
@@ -47,6 +29,6 @@
 \title{}
 \author{Gerry Weirich}
 \maketitle
-\section{Einführung}
+\section{EinfÃ¼hrung}
 
-\end{document}
+\end{document} 
