@@ -10,7 +10,7 @@
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: DataAccessor.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: DataAccessor.java 5399 2009-06-24 05:37:36Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -86,6 +86,10 @@ public class DataAccessor implements IDataAccess {
 	 */
 	private Messung sucheMessung(List<Messung> messungen, String suchbegriff) {
 		Messung messung = null;
+		
+		if (messungen.size() == 0) {
+			return null;
+		}
 		
 		if (suchbegriff.equals("last")) {
 			// Neuste Messung suchen
