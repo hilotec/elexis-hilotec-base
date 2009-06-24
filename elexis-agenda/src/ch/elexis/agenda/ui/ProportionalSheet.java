@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5311 2009-05-17 14:41:45Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5401 2009-06-24 05:58:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -25,6 +25,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -37,15 +38,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ScrollBar;
 
 import ch.elexis.actions.Activator;
-import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
+import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ProportionalSheet extends Composite implements IAgendaLayout{
+public class ProportionalSheet extends Composite implements IAgendaLayout {
 	static final int LEFT_OFFSET_DEFAULT = 20;
 	static final int PADDING_DEFAULT = 5;
 
@@ -106,15 +108,55 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				}
 			}
 
-
 		});
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
+		new PersistentObjectDropTarget(this,
+				new PersistentObjectDropTarget.Receiver() {
+
+					public boolean accept(PersistentObject o) {
+						return true;
+					}
+
+					public void dropped(PersistentObject o, DropTargetEvent e) {
+						System.out.println("dropped");
+						String resource = "";
+						for (int i = 0; i < resources.length; i++) {
+							double lower = left_offset + i
+									* (widthPerColumn + padding);
+							double upper = lower + widthPerColumn;
+							if (isBetween(e.x, lower, upper)) {
+								resource = resources[i];
+								break;
+							}
+						}
+						int minute = (int) Math.round(e.y / ppm);
+						TimeTool tt = new TimeTool(Activator.getDefault()
+								.getActDate());
+						int hour = minute / 60;
+						minute = minute - (60 * hour);
+						int raster = 15;
+						minute = ((minute + (raster >> 1)) / raster) * raster;
+						tt.set(TimeTool.AM_PM, TimeTool.AM);
+						tt.set(TimeTool.HOUR, hour);
+						tt.set(TimeTool.MINUTE, minute);
+						if (resource.length() > 0) {
+							Activator.getDefault().setActResource(resource);
+						}
+						TerminDialog dlg = new TerminDialog(null);
+						dlg.create();
+						dlg.setTime(tt);
+						if (dlg.open() == Dialog.OK) {
+
+							refresh();
+						}
+
+					}
+				});
 
 	}
 
-	
 	private boolean isBetween(int x, double lower, double upper) {
 		int y = (int) Math.round(lower);
 		int z = (int) Math.round(upper);
@@ -221,13 +263,14 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		return widthPerColumn;
 	}
 
-	public int getLeftOffset(){
+	public int getLeftOffset() {
 		return left_offset;
 	}
-	
-	public int getPadding(){
+
+	public int getPadding() {
 		return padding;
 	}
+
 	class TimePainter implements PaintListener {
 
 		public void paintControl(PaintEvent e) {
@@ -265,6 +308,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		}
 
 	}
+
 	public Composite getComposite() {
 		return this;
 	}

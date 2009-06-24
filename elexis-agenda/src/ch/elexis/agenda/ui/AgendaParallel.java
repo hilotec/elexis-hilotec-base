@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5311 2009-05-17 14:41:45Z rgw_ch $
+ *  $Id: AgendaParallel.java 5401 2009-06-24 05:58:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -86,14 +86,6 @@ public class AgendaParallel extends BaseView {
 		bounding.setMinSize(sheet.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
-		new PersistentObjectDragSource2(bounding,new PersistentObjectDragSource2.Draggable(){
-
-			public List<PersistentObject> getSelection() {
-				System.out.println("Dragging");
-				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>(1);
-				ret.add(GlobalEvents.getInstance().getSelectedObject(Termin.class));
-				return ret;
-			}});
 		makePrivateActions();
 		for(String s:getDisplayedResources()){
 			checkDay(s,null);

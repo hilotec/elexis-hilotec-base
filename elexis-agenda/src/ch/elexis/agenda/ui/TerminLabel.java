@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5311 2009-05-17 14:41:45Z rgw_ch $
+ *  $Id: TerminLabel.java 5401 2009-06-24 05:58:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -30,8 +30,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -84,6 +82,14 @@ public class TerminLabel extends Composite {
 			}
 
 		});
+		new PersistentObjectDragSource2(lbl,new PersistentObjectDragSource2.Draggable(){
+
+			public List<PersistentObject> getSelection() {
+				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>();
+				ret.add(TerminLabel.this.t);
+				return ret;
+			}});
+
 		new TerminLabelMenu();
 
 	}
