@@ -3,6 +3,7 @@ package ch.elexis.agenda.ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
@@ -25,7 +26,8 @@ import ch.elexis.util.viewers.CommonViewer.Message;
 
 public class TerminListeView extends ViewPart implements ActivationListener, SelectionListener {
 	ScrolledForm form;
-	CommonViewer cv;
+	CommonViewer cv=new CommonViewer();
+	FlatDataLoader fdl;
 	
 	public TerminListeView() {
 		// TODO Auto-generated constructor stub
@@ -37,7 +39,7 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body=form.getBody();
 		body.setLayout(new GridLayout());
-		FlatDataLoader fdl=new FlatDataLoader(cv,new Query<Termin>(Termin.class));
+		fdl=new FlatDataLoader(cv,new Query<Termin>(Termin.class));
 		fdl.addQueryFilter(new QueryFilter(){
 
 			public void apply(Query<? extends PersistentObject> qbe) {
@@ -48,12 +50,12 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, p.getId());
 				}
 			}});
-		cv=new CommonViewer();
-		ViewerConfigurer vc=new ViewerConfigurer(fdl,new DefaultLabelProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE,SWT.NONE,cv));
-		GlobalEvents.getInstance().addActivationListener(this, this);
-		cv.create(vc, body, SWT.NONE, this);
 		
+		ViewerConfigurer vc=new ViewerConfigurer(fdl,new DefaultLabelProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,SWT.NONE,cv));
+		cv.create(vc, body, SWT.NONE, this);
+		new Label(body,SWT.NONE).setText("bottom");
+		GlobalEvents.getInstance().addActivationListener(this, this);		
 	}
 
 	@Override
@@ -75,6 +77,7 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 
 	public void visible(boolean mode) {
 		if(mode){
+			selectionEvent(GlobalEvents.getSelectedPatient());
 			GlobalEvents.getInstance().addSelectionListener(this);
 		}else{
 			GlobalEvents.getInstance().removeSelectionListener(this);
@@ -90,7 +93,7 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 	public void selectionEvent(PersistentObject obj) {
 		if(obj instanceof Patient){
 			form.setText(((Patient)obj).getLabel());
-			cv.notify(Message.update);
+			fdl.inputChanged(cv.getViewerWidget(), this, this);
 		}
 	}
 	

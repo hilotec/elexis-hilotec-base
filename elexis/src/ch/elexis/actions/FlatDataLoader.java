@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: FlatDataLoader.java 5340 2009-06-02 12:12:31Z michael_imhof $
+ * $Id: FlatDataLoader.java 5421 2009-06-25 15:55:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -26,6 +26,7 @@ import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
  * A PersistentObjectLoader for flat tables
@@ -85,7 +86,10 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	 */
 	protected void setQuery(){
 		qbe.clear();
-		cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
+		ControlFieldProvider cfp=cv.getConfigurer().getControlFieldProvider();
+		if(cfp!=null){
+			cfp.setQuery(qbe);
+		}
 	}
 	public void updateElement(int index){
 		if (index >= 0 && index < filtered.size()) {
