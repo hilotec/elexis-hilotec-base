@@ -11,7 +11,7 @@ import java.util.Date;
 
 import ch.rgw.tools.ExHandler;
 
-public class LogConnection extends Connection {
+public class LogConnection extends AbstractConnection {
 	final FileOutputStream fos;
 
 	public LogConnection(String portName, String port, String settings,
@@ -24,7 +24,6 @@ public class LogConnection extends Connection {
 		fos = new FileOutputStream(logFile, true);
 	}
 
-	@Override
 	public void serialEvent(final int state, final InputStream inputStream,
 			final SerialPortEvent e) throws IOException {
 		int data;

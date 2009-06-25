@@ -19,8 +19,8 @@ import ch.elexis.util.SWTHelper;
  * @author immi
  * 
  */
-public class AuslesenDialog extends Dialog implements Connection.ComPortListener {
-	Connection conn;
+public class AuslesenDialog extends Dialog implements AbstractConnection.ComPortListener {
+	AbstractConnection conn;
 	Label label;
 	final String schnittstelle;
 	
@@ -29,7 +29,7 @@ public class AuslesenDialog extends Dialog implements Connection.ComPortListener
 		this.schnittstelle = text;
 	}
 	
-	public void setConnection(Connection connection){
+	public void setConnection(AbstractConnection connection){
 		this.conn = connection;
 	}
 	
@@ -54,12 +54,13 @@ public class AuslesenDialog extends Dialog implements Connection.ComPortListener
 	
 	@Override
 	public int open(){
-		if (conn.connect()) {
+		String msg = conn.connect();
+		if (msg == null) {
 			conn.awaitFrame(1, 4, 0, 3600000);
 			return super.open();
 		} else {
 			String title = MessageFormat.format("{0} Schnittstelle auslesen", schnittstelle);
-			SWTHelper.showError(title, conn.getErrorMessage());
+			SWTHelper.showError(title, msg);
 			close();
 		}
 		return CANCEL;
@@ -74,9 +75,9 @@ public class AuslesenDialog extends Dialog implements Connection.ComPortListener
 		super.cancelPressed();
 	}
 	
-	public void gotBreak(final Connection conn){}
+	public void gotBreak(final AbstractConnection conn){}
 	
-	public void gotChunk(final Connection conn, final byte[] bytes){}
+	public void gotData(final AbstractConnection conn, final byte[] bytes){}
 	
 	public void timeout(){}
 	
