@@ -33,6 +33,13 @@
             name="Parallelanzeige"
             restorable="true">
       </view>
+      <view
+            category="ch.elexis.agenda.Views"
+            class="ch.elexis.agenda.ui.TerminListeView"
+            id="ch.elexis.agenda.Terminliste"
+            name="%Terminliste"
+            restorable="true">
+      </view>
    </extension>
       <extension
          point="org.eclipse.ui.preferencePages">
