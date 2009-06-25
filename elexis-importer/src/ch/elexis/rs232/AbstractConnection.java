@@ -44,13 +44,6 @@ public abstract class AbstractConnection implements PortEventListener {
 	private int state;
 
 	private Thread watchdogThread;
-	public static final String XON = "\013";
-	public final static String XOFF = "\015";
-	public final static String STX = "\002";
-	public final static String ETX = "\003";
-	public static final String NAK = "\025";
-	public static final String CR = "\015";
-	public static final String LF = "\012";
 
 	public interface ComPortListener {
 		public void gotData(AbstractConnection conn, byte[] bytes);
@@ -234,25 +227,6 @@ public abstract class AbstractConnection implements PortEventListener {
 		watchdogThread = new Thread(new Watchdog());
 		timeToWait = timeout;
 		checksumBytes = overhang;
-		watchdogThread.start();
-	}
-
-	/**
-	 * Read a line of input from the serial port. A line is defined as a series
-	 * of bytes delimited by the given delimiter (e.g. \n).
-	 * 
-	 * @param delimiter
-	 *            The delimiter to recognize the end of line
-	 * @param timeout
-	 *            number of seconds to wait at most before giving up
-	 */
-	public void readLine(byte delimiter, int timeout) {
-		lineSeparator = delimiter;
-		// sbLine.setLength(0);
-		this.timeout = timeout;
-		endTime = System.currentTimeMillis() + (timeout * 1000);
-		watchdogThread = new Thread(new Watchdog());
-		timeToWait = timeout;
 		watchdogThread.start();
 	}
 
