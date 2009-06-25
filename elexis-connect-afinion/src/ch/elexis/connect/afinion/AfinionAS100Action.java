@@ -16,13 +16,13 @@ import ch.elexis.connect.afinion.packages.Record;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
-import ch.elexis.rs232.Connection;
-import ch.elexis.rs232.Connection.ComPortListener;
+import ch.elexis.rs232.AbstractConnection;
+import ch.elexis.rs232.AbstractConnection.ComPortListener;
 import ch.elexis.util.SWTHelper;
 
 public class AfinionAS100Action extends Action implements ComPortListener {
 	
-	Connection _ctrl;
+	AbstractConnection _ctrl;
 	Labor _myLab;
 	Patient _actPatient;
 	Thread msgDialogThread;
@@ -87,7 +87,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		if (isChecked()) {
 			showRunningInfo();
 			_log.logStart();
-			if (_ctrl.connect()) {
+			String msg = _ctrl.connect();
+			if (msg == null) {
 				String timeoutStr = Hub.localCfg
 						.get(
 								Preferences.TIMEOUT,
@@ -106,7 +107,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				_log.log("Error");
 				SWTHelper.showError(Messages
 						.getString("AfinionAS100Action.RS232.Error.Title"),
-						_ctrl.getErrorMessage());
+						msg);
 			}
 		} else {
 			if (_ctrl.isOpen()) {
@@ -119,7 +120,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		_log.logEnd();
 	}
 	
-	public void gotBreak(final Connection connection) {
+	public void gotBreak(final AbstractConnection connection) {
 		_actPatient=null;
 		connection.close();
 		setChecked(false);
@@ -128,7 +129,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		SWTHelper.showError(Messages.getString("AfinionAS100Action.RS232.Break.Title"), Messages.getString("AfinionAS100Action.RS232.Break.Text"));
 	}
 	
-	public void gotChunk(final Connection connection, final byte[] data) {
+	public void gotData(final AbstractConnection connection, final byte[] data) {
 		_log.logRX(data.toString());
 		
 		// Record lesen
