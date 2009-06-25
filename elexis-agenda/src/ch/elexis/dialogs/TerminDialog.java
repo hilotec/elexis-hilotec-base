@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 5292 2009-05-12 18:29:57Z rgw_ch $
+ *  $Id: TerminDialog.java 5423 2009-06-25 18:04:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -422,9 +422,22 @@ public class TerminDialog extends TitleAreaDialog {
 		@Override
 		public void widgetSelected(final SelectionEvent e){
 			if (e.getSource().equals(cbTyp)) {
+				String type=cbTyp.getItem(cbTyp.getSelectionIndex());
 				if (actPlannable instanceof Termin) {
-					((Termin) actPlannable).setType(cbTyp.getItem(cbTyp.getSelectionIndex()));
+					((Termin) actPlannable).setType(type);
 					bModified = true;
+				}else if(actPlannable instanceof Termin.Free){
+					Hashtable<String,String> map=Plannables.getTimePrefFor(agenda.getActResource());
+					String nt=map.get(type);
+					if(nt==null){
+						nt=map.get("std");
+						if(nt==null){
+							nt="10";
+						}
+					}
+					int en=Integer.parseInt(nt);
+					niDauer.setValue(en);
+					slider.set();
 				}
 			} else if (e.getSource().equals(cbStatus)) {
 				if (actPlannable instanceof Termin) {
