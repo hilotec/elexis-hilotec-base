@@ -5,9 +5,9 @@ import gnu.io.SerialPortEvent;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ch.elexis.rs232.Connection;
+import ch.elexis.rs232.AbstractConnection;
 
-public class ReflotronConnection extends Connection {
+public class ReflotronConnection extends AbstractConnection {
 	private static final int STX = 0x02;
 	private static final int ETX = 0x03;
 
@@ -37,6 +37,6 @@ public class ReflotronConnection extends Connection {
 			}
 		}
 			
-		this.listener.gotChunk(this, strBuf.toString().getBytes());
+		this.listener.gotData(this, strBuf.toString().getBytes());
 	}
 }

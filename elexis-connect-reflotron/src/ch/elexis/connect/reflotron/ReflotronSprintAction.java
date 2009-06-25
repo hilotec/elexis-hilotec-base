@@ -19,13 +19,13 @@ import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.rs232.Connection;
-import ch.elexis.rs232.Connection.ComPortListener;
+import ch.elexis.rs232.AbstractConnection;
+import ch.elexis.rs232.AbstractConnection.ComPortListener;
 import ch.elexis.util.SWTHelper;
 
 public class ReflotronSprintAction extends Action implements ComPortListener {
 
-	Connection _ctrl;
+	AbstractConnection _ctrl;
 	Labor _myLab;
 	Logger _log;
 	Thread msgDialogThread;
@@ -98,7 +98,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		if (isChecked()) {
 			showRunningInfo();
 			_log.logStart();
-			if (_ctrl.connect()) {
+			String msg = _ctrl.connect();
+			if (msg == null) {
 				String timeoutStr = Hub.localCfg
 						.get(
 								Preferences.TIMEOUT,
@@ -117,7 +118,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				_log.log("Error");
 				SWTHelper.showError(Messages
 						.getString("ReflotronSprintAction.RS232.Error.Title"),
-						_ctrl.getErrorMessage());
+						msg);
 			}
 		} else {
 			if (_ctrl.isOpen()) {
@@ -130,7 +131,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		_log.logEnd();
 	}
 
-	public void gotBreak(final Connection connection) {
+	public void gotBreak(final AbstractConnection connection) {
 		connection.close();
 		setChecked(false);
 		_log.log("Break");
@@ -140,7 +141,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				.getString("ReflotronSprintAction.RS232.Break.Text"));
 	}
 
-	public void gotChunk(final Connection connection, final byte[] data) {
+	public void gotData(final AbstractConnection connection, final byte[] data) {
 		String content = new String(data);
 		_log.logRX(content);
 
