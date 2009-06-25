@@ -8,7 +8,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.FlatDataLoader;
-import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
