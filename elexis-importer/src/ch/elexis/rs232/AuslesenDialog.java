@@ -19,41 +19,42 @@ import ch.elexis.util.SWTHelper;
  * @author immi
  * 
  */
-public class AuslesenDialog extends Dialog implements AbstractConnection.ComPortListener {
+public class AuslesenDialog extends Dialog implements
+		AbstractConnection.ComPortListener {
 	AbstractConnection conn;
 	Label label;
 	final String schnittstelle;
-	
-	public AuslesenDialog(Shell parentShell, final String text){
+
+	public AuslesenDialog(Shell parentShell, final String text) {
 		super(parentShell);
 		this.schnittstelle = text;
 	}
-	
-	public void setConnection(AbstractConnection connection){
+
+	public void setConnection(AbstractConnection connection) {
 		this.conn = connection;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = (Composite) super.createDialogArea(parent);
 		label = new Label(ret, SWT.NONE);
 		label.setText("Daten vom Gerät werden fortlaufend ins Log geschrieben..");
 		return ret;
 	}
-	
+
 	@Override
-	protected void configureShell(Shell newShell){
+	protected void configureShell(Shell newShell) {
 		newShell.setText(schnittstelle);
 		super.configureShell(newShell);
 	}
-	
+
 	@Override
-	protected void createButtonsForButtonBar(Composite parent){
+	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
-	
+
 	@Override
-	public int open(){
+	public int open() {
 		String msg = conn.connect();
 		if (msg == null) {
 			conn.awaitFrame(1, 4, 0, 3600000);
@@ -65,20 +66,23 @@ public class AuslesenDialog extends Dialog implements AbstractConnection.ComPort
 		}
 		return CANCEL;
 	}
-	
+
 	@Override
-	protected void cancelPressed(){
+	protected void cancelPressed() {
 		if (conn.isOpen()) {
 			conn.close();
 			conn = null;
 		}
 		super.cancelPressed();
 	}
-	
-	public void gotBreak(final AbstractConnection conn){}
-	
-	public void gotData(final AbstractConnection conn, final byte[] bytes){}
-	
-	public void timeout(){}
-	
+
+	public void gotBreak(final AbstractConnection conn) {
+	}
+
+	public void gotData(final AbstractConnection conn, final byte[] bytes) {
+	}
+
+	public void timeout() {
+	}
+
 }

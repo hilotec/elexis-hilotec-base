@@ -37,8 +37,8 @@ public class LogConnection extends AbstractConnection {
 			fos.write("\r\n-- END\r\n".getBytes());
 		} catch (Exception ex) {
 			try {
-			fos.write(("\r\n-- ERROR: " + ex.getMessage() + "\r\n").getBytes());
-			} catch(IOException ioe) {
+				fos.write(("\r\n-- ERROR: " + ex.getMessage() + "\r\n").getBytes());
+			} catch (IOException ioe) {
 				// Do nothing
 			}
 			ExHandler.handle(ex);
@@ -52,7 +52,7 @@ public class LogConnection extends AbstractConnection {
 			if (this.fos != null) {
 				this.fos.close();
 			}
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			ExHandler.handle(ex);
 		}
 		super.close();

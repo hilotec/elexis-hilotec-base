@@ -29,7 +29,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	protected long endTime;
 	protected int timeToWait;
 	private int timeout;
-	
+
 	private static byte lineSeparator;
 
 	private CommPortIdentifier portId;
@@ -83,9 +83,7 @@ public abstract class AbstractConnection implements PortEventListener {
 					public void run() {
 						try {
 							Thread.sleep(1000);
-							final String in = FileTool.readFile(
-									new File(simulate)).replaceAll("\\r\\n",
-									"\r");
+							final String in = FileTool.readFile(new File(simulate)).replaceAll("\\r\\n", "\r");
 							listener.gotData(mine, in.getBytes());
 						} catch (Exception ex) {
 
@@ -119,8 +117,7 @@ public abstract class AbstractConnection implements PortEventListener {
 
 		// Obtain a CommPortIdentifier object for the port you want to open.
 		try {
-			portId = CommPortIdentifier.getPortIdentifier(parameters
-					.getPortName());
+			portId = CommPortIdentifier.getPortIdentifier(parameters.getPortName());
 		} catch (NoSuchPortException e) {
 			throw new SerialConnectionException(e.getMessage());
 		}
@@ -194,9 +191,7 @@ public abstract class AbstractConnection implements PortEventListener {
 		// Set connection parameters, if set fails return parameters object
 		// to original state.
 		try {
-			sPort.setSerialPortParams(parameters.getBaudRate(), parameters
-					.getDatabits(), parameters.getStopbits(), parameters
-					.getParity());
+			sPort.setSerialPortParams(parameters.getBaudRate(), parameters.getDatabits(), parameters.getStopbits(), parameters.getParity());
 		} catch (UnsupportedCommOperationException e) {
 			parameters.setBaudRate(oldBaudRate);
 			parameters.setDatabits(oldDatabits);
@@ -229,8 +224,8 @@ public abstract class AbstractConnection implements PortEventListener {
 	 *            number of seconds to wait for a frame to complete before givng
 	 *            up
 	 */
-	public synchronized void awaitFrame(final int start, final int end, final int following,
-			final int timeout) {
+	public synchronized void awaitFrame(final int start, final int end,
+			final int following, final int timeout) {
 		frameStart = start;
 		frameEnd = end;
 		overhang = following;
@@ -283,8 +278,9 @@ public abstract class AbstractConnection implements PortEventListener {
 	}
 
 	public abstract void serialEvent(final int state,
-			final InputStream inputStream, final SerialPortEvent e) throws IOException;
-	
+			final InputStream inputStream, final SerialPortEvent e)
+			throws IOException;
+
 	public void breakInterrupt(final int state) {
 		this.watchdogThread.interrupt();
 		listener.gotBreak(this);
@@ -329,7 +325,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	public boolean send(final String data) {
 		return send(data.getBytes());
 	}
-	
+
 	public boolean send(final byte[] bytes) {
 		try {
 			os.write(bytes);
@@ -343,8 +339,7 @@ public abstract class AbstractConnection implements PortEventListener {
 
 	@SuppressWarnings("unchecked")
 	public static String[] getComPorts() {
-		Enumeration<CommPortIdentifier> ports = CommPortIdentifier
-				.getPortIdentifiers();
+		Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 		ArrayList<String> p = new ArrayList<String>();
 		while (ports.hasMoreElements()) {
 			CommPortIdentifier port = ports.nextElement();
@@ -365,7 +360,7 @@ public abstract class AbstractConnection implements PortEventListener {
 			listener.timeout();
 		}
 	}
-	
+
 	protected void interruptWatchdog() {
 		this.watchdogThread.interrupt();
 	}
@@ -377,7 +372,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	public void setState(int state) {
 		this.state = state;
 	}
-	
+
 	public int getState() {
 		return this.state;
 	}

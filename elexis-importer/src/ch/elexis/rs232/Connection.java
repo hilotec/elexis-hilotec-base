@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 5411 2009-06-25 12:04:45Z michael_imhof $
+ * $Id: Connection.java 5412 2009-06-25 12:33:58Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -90,9 +90,7 @@ public class Connection implements PortEventListener {
 					public void run() {
 						try {
 							Thread.sleep(1000);
-							final String in = FileTool.readFile(
-									new File(simulate)).replaceAll("\\r\\n",
-									"\r");
+							final String in = FileTool.readFile(new File(simulate)).replaceAll("\\r\\n", "\r");
 							listener.gotChunk(mine, in);
 						} catch (Exception ex) {
 
@@ -126,8 +124,7 @@ public class Connection implements PortEventListener {
 
 		// Obtain a CommPortIdentifier object for the port you want to open.
 		try {
-			portId = CommPortIdentifier.getPortIdentifier(parameters
-					.getPortName());
+			portId = CommPortIdentifier.getPortIdentifier(parameters.getPortName());
 		} catch (NoSuchPortException e) {
 			throw new SerialConnectionException(e.getMessage());
 		}
@@ -202,9 +199,7 @@ public class Connection implements PortEventListener {
 		// Set connection parameters, if set fails return parameters object
 		// to original state.
 		try {
-			sPort.setSerialPortParams(parameters.getBaudRate(), parameters
-					.getDatabits(), parameters.getStopbits(), parameters
-					.getParity());
+			sPort.setSerialPortParams(parameters.getBaudRate(), parameters.getDatabits(), parameters.getStopbits(), parameters.getParity());
 		} catch (UnsupportedCommOperationException e) {
 			parameters.setBaudRate(oldBaudRate);
 			parameters.setDatabits(oldDatabits);
@@ -395,8 +390,7 @@ public class Connection implements PortEventListener {
 
 	@SuppressWarnings("unchecked")
 	public static String[] getComPorts() {
-		Enumeration<CommPortIdentifier> ports = CommPortIdentifier
-				.getPortIdentifiers();
+		Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 		ArrayList<String> p = new ArrayList<String>();
 		while (ports.hasMoreElements()) {
 			CommPortIdentifier port = ports.nextElement();
