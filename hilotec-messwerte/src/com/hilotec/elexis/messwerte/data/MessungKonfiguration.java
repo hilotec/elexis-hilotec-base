@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MessungKonfiguration.java 5403 2009-06-24 12:07:31Z freakypenguin $
+ * $Id: MessungKonfiguration.java 5405 2009-06-25 08:39:05Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -48,6 +48,7 @@ public class MessungKonfiguration {
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_MAX = "max";
 	public static final String ATTR_MIN = "min";
+	public static final String ATTR_LINES = "lines";
 	public static final String ELEMENT_DATATYPE = "datatype";
 	public static final String CONFIG_FILENAME = "messwerte.xml";
 	
@@ -118,9 +119,16 @@ public class MessungKonfiguration {
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
 					} else if (edtf.getNodeName().equals(NAME_STRINGFIELD)) {
-						typ = new MesswertTypStr(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypStr str =  new MesswertTypStr(fn, ft,
+							edtf.getAttribute(ATTR_UNIT));
+						typ = str;
+						
 						if (edtf.hasAttribute(ATTR_DEFAULT)) {
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
+						}
+						if (edtf.hasAttribute(ATTR_LINES)) {
+							str.setLines(
+								Integer.parseInt(edtf.getAttribute("lines")));
 						}
 					} else if (edtf.getNodeName().equals(NAME_ENUMFIELD)) {
 						MesswertTypEnum en = new MesswertTypEnum(fn, ft, edtf.getAttribute(ATTR_UNIT));
