@@ -3,24 +3,16 @@ package ch.elexis.connect.afinion;
 import gnu.io.SerialPortEvent;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import jonelo.jacksum.algorithm.Crc16;
+import ch.elexis.rs232.AbstractConnection;
 
-import ch.elexis.rs232.Connection;
-import ch.rgw.tools.ExHandler;
-
-public class AfinionConnection extends Connection {
+public class AfinionConnection extends AbstractConnection {
 	private static final int NUL = 0x00;
 	private static final int STX = 0x02;
 	private static final int ETX = 0x03;
@@ -330,7 +322,7 @@ public class AfinionConnection extends Connection {
 							System.out.print(data);
 							baos.write(data);
 						}
-						listener.gotChunk(this, baos.toByteArray());
+						listener.gotData(this, baos.toByteArray());
 					} else if (headerStr.indexOf("0024:record.control") != -1) {
 						
 					} else if (headerStr.indexOf("cmdack") != -1) {
@@ -403,11 +395,8 @@ public class AfinionConnection extends Connection {
 	}
 
 	@Override
-	public boolean connect() {
+	public String connect() {
 		setState(INIT);
 		return super.connect();
 	}
-
-
-	
 }
