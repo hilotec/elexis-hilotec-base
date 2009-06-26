@@ -1,9 +1,17 @@
 package ch.elexis.connect.afinion.packages;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+/**
+ * Diese Klasse ist Platzhalter für eine SubRecord
+ * @author immi
+ *
+ */
 public class SubRecordPart extends AbstractPart {
-	private double min;
-	private double max;
-	private double result;
+	private float min;
+	private float max;
+	private float result;
 	private int decimals;
 	private boolean valid;
 	private String unit;
@@ -14,13 +22,17 @@ public class SubRecordPart extends AbstractPart {
 	}
 	
 	public void parse(final byte[] bytes, final int pos) {
-		min = getInteger(bytes, pos);
-		max = getInteger(bytes, pos + 4);
-		result = getInteger(bytes, pos + 8);
+		min = getFloat(bytes, pos);
+		max = getFloat(bytes, pos + 4);
+		result = getFloat(bytes, pos + 8);
 		decimals = getInteger(bytes, pos + 12);
-		valid = (getInteger(bytes, pos + 16) == 0);
+		valid = (getInteger(bytes, pos + 16) > 0);
 		unit = getString(bytes, pos + 20, 9);
 		kuerzel = getString(bytes, pos + 29, 9);
+		
+		if (result < min || result > max) {
+			valid = false;
+		}
 	}
 	
 	@Override
@@ -39,6 +51,10 @@ public class SubRecordPart extends AbstractPart {
 	public double getResult() {
 		return result;
 	}
+	
+	public String getResultStr() {
+		return new DecimalFormat("#.##").format(result);
+	}
 
 	public int getDecimals() {
 		return decimals;
@@ -54,5 +70,19 @@ public class SubRecordPart extends AbstractPart {
 
 	public String getKuerzel() {
 		return kuerzel;
+	}
+	
+	public String toString() {
+		NumberFormat nf = new DecimalFormat("###.##");
+		
+		String str = "";
+		str += "Min: " + nf.format(min) + "\n";
+		str += "Max: " + nf.format(max) + "\n";
+		str += "Result: " + nf.format(result) + "\n";
+		str += "Decimals: " + decimals + "\n";
+		str += "Valid: " + valid + "\n";
+		str += "Unit: " + unit + "\n";
+		str += "Kuerzel: " + kuerzel + "\n";
+		return str;
 	}
 }

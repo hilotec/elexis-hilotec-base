@@ -2,37 +2,90 @@ package ch.elexis.connect.afinion.packages;
 
 import ch.elexis.data.Patient;
 
+/**
+ * Diese Klasse ist Platzhalter für eine Patient Record
+ * 
+ * @author immi
+ * 
+ */
 public class Record {
 	private HeaderPart header;
-	private SubRecordPart part1;
-	private SubRecordPart part2;
-	private SubRecordPart part3;
-	private SubRecordPart part4;
-	private Patient patient;
-
-	public Record(final byte[] bytes, final Patient pat) {
-		this.patient = pat;
+	private SubRecordPart[] parts = new SubRecordPart[4];
+	private boolean isValid = false;
+	
+	public Record(final byte[] bytes){
 		parse(bytes);
 	}
 	
-	private void parse(byte[] bytes) {
+	/**
+	 * Header, Subparts werden geparst Footer interessiert nicht
+	 * 
+	 * @param bytes
+	 */
+	private void parse(byte[] bytes){
 		header = new HeaderPart(bytes);
 		int pos = header.length();
-		part1 = new SubRecordPart(bytes, pos);
-		pos += header.length();
-		part2 = new SubRecordPart(bytes, pos);
-		pos += header.length();
-		part3 = new SubRecordPart(bytes, pos);
-		pos += header.length();
-		part4 = new SubRecordPart(bytes, pos);
+		for (int i = 0; i < 4; i++) {
+			parts[i] = new SubRecordPart(bytes, pos);
+			if (parts[i].isValid()) {
+				isValid = true;
+			}
+			pos += parts[i].length();
+		}
 	}
 	
-	public void write() throws PackageException {
-		Value val = Value.getValue(part1.getKuerzel(), part1.getUnit());
-		String value = new Double(part1.getResult()).toString();
-
-		val.fetchValue(patient, value, "", this.header.getDate());
+	public String getId(){
+		return this.header.getId();
 	}
 	
+	public int getRunNr(){
+		return this.header.getRunNr();
+	}
+	
+	public boolean isValid() {
+		return this.isValid;
+	}
+	
+	public String getText(){
+		String text = "";
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i].isValid()) {
+				if (text.length() > 0) {
+					text += ", ";
+				}
+				text += parts[i].getKuerzel() 
+				+ " = " + parts[i].getResultStr() 
+				+ " " + parts[i].getUnit();
+			}
+		}
+		return text;
+	}
+	
+	/**
+	 * Schreibt die Werte in die Datenbank
+	 * 
+	 * @param patient
+	 * @throws PackageException
+	 */
+	public void write(Patient patient) throws PackageException{
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i].isValid()) {
+				Value val = Value.getValue(parts[i].getKuerzel(), parts[i].getUnit());
+				val.fetchValue(patient, parts[i].getResultStr(), "", this.header.getDate());
+			}
+		}
+	}
+	
+	public String toString(){
+		String str = "Header\n";
+		str += header.toString() + "\n";
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i].isValid()) {
+				str += "SubRecord " + i + "\n";
+				str += parts[i].toString() + "\n";
+			}
+		}
+		return str;
+	}
 	
 }

@@ -11,7 +11,7 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
 public class Value {
-	private static final String BUNDLE_NAME = "ch.elexis.connect.reflotron.packages.valuetexts";
+	private static final String BUNDLE_NAME = "ch.elexis.connect.afinion.packages.valuetexts";
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
@@ -44,7 +44,7 @@ public class Value {
 		_shortName = getString(paramName, "kuerzel");
 		_longName = getString(paramName, "text");
 		_unit = getString(paramName, "unit");
-		if (unit != null && unit.equals(_unit)) {
+		if (unit != null && !unit.equals(_unit)) {
 			throw new PackageException("Einheit ist verschieden: " + unit
 					+ " - " + _unit);
 		}
