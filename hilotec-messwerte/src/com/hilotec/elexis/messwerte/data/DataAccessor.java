@@ -10,7 +10,7 @@
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: DataAccessor.java 5399 2009-06-24 05:37:36Z freakypenguin $
+ * $Id: DataAccessor.java 5424 2009-06-26 08:50:41Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -90,26 +90,34 @@ public class DataAccessor implements IDataAccess {
 		if (messungen.size() == 0) {
 			return null;
 		}
-		
-		if (suchbegriff.equals("last")) {
-			// Neuste Messung suchen
-			TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-			for (Messung m: messungen) {
-				TimeTool vgl = new TimeTool(m.getDatum());
-				if (vgl.isAfter(today)) {
-					today = vgl;
-					messung = m;
+
+		if (suchbegriff.matches("last.*") ||
+			suchbegriff.matches("first.*"))
+		{
+			TimeTool lowerbound = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
+			TimeTool upperbound = new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
+			int factor = 1;
+			
+			if (suchbegriff.matches("last.*")) {
+				if (suchbegriff.matches("lastbefore.*")) {
+					upperbound = new TimeTool(suchbegriff.substring(11));
+				}
+			} else {
+				factor = -1;
+				if (suchbegriff.matches("firstsince.*")) {
+					lowerbound = new TimeTool(suchbegriff.substring(11));
 				}
 			}
-		} else if (suchbegriff.equals("first")) {
-			// Aelteste Messung suchen
-			messung = messungen.get(0);
-			TimeTool firstdate = new TimeTool(messung.getDatum());
+			
+			TimeTool cur = null;
 			for (Messung m: messungen) {
 				TimeTool vgl = new TimeTool(m.getDatum());
-				if (vgl.isBefore(firstdate)) {
+				if ((vgl.compareTo(lowerbound) >= 0) &&
+						(vgl.compareTo(upperbound) <= 0) &&
+					((cur == null) || (cur.compareTo(vgl) * factor <= 0)))
+				{
 					messung = m;
-					firstdate = vgl;
+					cur = vgl;
 				}
 			}
 		} else {
