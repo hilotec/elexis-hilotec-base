@@ -8,6 +8,8 @@ import java.io.File;
  *
  */
 public interface IDocumentManager {
+	public static final String NAME = "DocumentManagement";
+
 	/** List Categories for Documents */
 	public String[] getCategories();
 	
