@@ -11,10 +11,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
+
+import ch.elexis.Desk;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
@@ -29,6 +36,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	protected long endTime;
 	protected int timeToWait;
 	private int timeout;
+	private boolean closed = false;
 
 	private static byte lineSeparator;
 
@@ -51,6 +59,10 @@ public abstract class AbstractConnection implements PortEventListener {
 		public void gotBreak(AbstractConnection conn);
 
 		public void timeout();
+		
+		public void cancelled();
+		
+		public void closed();
 	}
 
 	public AbstractConnection(final String portName, final String port,
@@ -112,15 +124,17 @@ public abstract class AbstractConnection implements PortEventListener {
 		try {
 			portId = CommPortIdentifier.getPortIdentifier(parameters.getPortName());
 		} catch (NoSuchPortException e) {
-			throw new SerialConnectionException(e.getMessage());
+			String msg = e.getMessage();
+			if (msg == null || msg.length() == 0) {
+				msg = e.getClass().getSimpleName();
+			}
+			throw new SerialConnectionException(msg);
 		}
 
 		// Open the port represented by the CommPortIdentifier object. Give
-		// the open call a relatively long timeout of 30 seconds to allow
-		// a different application to reliquish the port if the user
-		// wants to.
+		// the open call a timeout of 1 seconds
 		try {
-			sPort = (SerialPort) portId.open(name, 30000);
+			sPort = (SerialPort) portId.open(name, 1000);
 		} catch (PortInUseException e) {
 			throw new SerialConnectionException("Com-Port wird verwendet!");
 		}
@@ -163,6 +177,7 @@ public abstract class AbstractConnection implements PortEventListener {
 		try {
 			sPort.enableReceiveTimeout(30);
 		} catch (UnsupportedCommOperationException e) {
+			throw new SerialConnectionException("Unsupported Com operation");
 		}
 		bOpen = true;
 	}
@@ -217,14 +232,14 @@ public abstract class AbstractConnection implements PortEventListener {
 	 *            number of seconds to wait for a frame to complete before givng
 	 *            up
 	 */
-	public synchronized void awaitFrame(final int start, final int end,
+	public synchronized void awaitFrame(final Shell shell, final String text, final int start, final int end,
 			final int following, final int timeout) {
 		frameStart = start;
 		frameEnd = end;
 		overhang = following;
 		this.timeout = timeout;
 		endTime = System.currentTimeMillis() + (timeout * 1000);
-		watchdogThread = new Thread(new Watchdog());
+		watchdogThread = new Thread(new Watchdog(shell, text));
 		timeToWait = timeout;
 		checksumBytes = overhang;
 		watchdogThread.start();
@@ -261,7 +276,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	}
 
 	public void close() {
-		endTime = System.currentTimeMillis();
+		closed = true;
 		if ((watchdogThread != null) && watchdogThread.isAlive()) {
 			watchdogThread.interrupt();
 		}
@@ -270,7 +285,7 @@ public abstract class AbstractConnection implements PortEventListener {
 
 			public void run() {
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(500);
 					sPort.close();
 					bOpen = false;
 				} catch (Exception ex) {
@@ -323,15 +338,67 @@ public abstract class AbstractConnection implements PortEventListener {
 	}
 
 	class Watchdog implements Runnable {
+		final Shell shell;
+		final String text;
+		
+		
+		public Watchdog(Shell shell, String text) {
+			super();
+			this.shell = shell;
+			this.text = text;
+		}
+
+
 		public void run() {
-			while (System.currentTimeMillis() < endTime) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ex) {
-					return;
+			final IRunnableWithProgress runnableWithProgress = new IRunnableWithProgress() {
+				private int count = 0;
+
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException,
+						InterruptedException {
+					monitor.setTaskName("Bitte warten..");
+					while (!monitor.isCanceled() && System.currentTimeMillis() < endTime && !closed) {
+						if (count == 160) {
+							monitor.beginTask(text, 100);
+							count = 0;
+						}
+						
+						if (monitor.isCanceled()) {
+							monitor.done();
+							return;
+						}
+
+						monitor.worked(1);
+						count++;
+						
+						Thread.sleep(10); // 0.5s.
+					}
+					if (monitor.isCanceled()) {
+						listener.cancelled();
+					} else if (closed) {
+						listener.closed();
+					} else {
+						listener.timeout();
+					}
+					monitor.done();
 				}
-			}
-			listener.timeout();
+			};
+
+			Thread monitorDialogThread = new Thread() {
+				public void run() {
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(
+							shell);
+					try {
+						dialog.run(true, true, runnableWithProgress);
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			
+			Desk.getDisplay().asyncExec(monitorDialogThread);
 		}
 	}
 

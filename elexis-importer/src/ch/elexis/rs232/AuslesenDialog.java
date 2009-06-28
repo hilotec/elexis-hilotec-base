@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;
 
 /**
@@ -57,7 +58,7 @@ public class AuslesenDialog extends Dialog implements
 	public int open() {
 		String msg = conn.connect();
 		if (msg == null) {
-			conn.awaitFrame(1, 4, 0, 3600000);
+			conn.awaitFrame(Desk.getTopShell(), "Schnittstelle wird ausgelesen..", 1, 4, 0, 3600000);
 			return super.open();
 		} else {
 			String title = MessageFormat.format("{0} Schnittstelle auslesen", schnittstelle);
@@ -85,4 +86,13 @@ public class AuslesenDialog extends Dialog implements
 	public void timeout() {
 	}
 
+	@Override
+	public void cancelled(){
+		
+	}
+
+	@Override
+	public void closed(){
+		
+	}
 }
