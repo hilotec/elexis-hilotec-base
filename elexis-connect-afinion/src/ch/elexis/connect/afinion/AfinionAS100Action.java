@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
@@ -37,7 +38,12 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		setToolTipText(Messages.getString("AfinionAS100Action.ToolTip"));
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.afinion",
 			"icons/afinion.png"));
-		
+	}
+	
+	private void initConnection(){
+		if (_ctrl != null && _ctrl.isOpen()) {
+			_ctrl.close();
+		}
 		_ctrl =
 			new AfinionConnection(Messages.getString("AfinionAS100Action.ConnectionName"),
 				Hub.localCfg.get(Preferences.PORT, Messages
@@ -57,30 +63,6 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			}
 		} else {
 			_log = new Logger(false);
-		}
-	}
-	
-	public void showRunningInfo(){
-		msgDialogThread = new Thread() {
-			MessageDialog dialog;
-			
-			public void run(){
-				dialog =
-					new MessageDialog(Desk.getTopShell(), "Afinion AS100",
-						null, // accept the default window icon
-						"Messdaten werden gelesen. Dies kann einige Minuten dauern..",
-						MessageDialog.INFORMATION, new String[] {
-							"Ok"
-						}, 0);
-				dialog.open();
-			}
-		};
-		Desk.getDisplay().asyncExec(msgDialogThread);
-	}
-	
-	private void closeRunningInfo(){
-		if (msgDialogThread != null && !msgDialogThread.isInterrupted()) {
-			msgDialogThread.interrupt();
 		}
 	}
 	
@@ -107,15 +89,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				
 				String text = patientStr + "Run: " + record.getRunNr() + "\n" + record.getText();
 				
-				MessageDialog dialog = new MessageDialog(Desk.getTopShell(), "Afinion AS100", null, // accept
-					// the
-					// default
-					// window
-					// icon
-					text, MessageDialog.INFORMATION, new String[] {
-						"Ok", "Abbrechen"
-					}, 0);
-				if (dialog.open() != Dialog.CANCEL) {
+				boolean ok = MessageDialog.openConfirm(Desk.getTopShell(), "Afinion AS100", text);
+				if (ok) {
 					boolean showSelectionDialog = false;
 					if (selectedPatient == null) {
 						if (probePat != null) {
@@ -168,7 +143,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	@Override
 	public void run(){
 		if (isChecked()) {
-			showRunningInfo();
+			initConnection();
 			_log.logStart();
 			String msg = _ctrl.connect();
 			if (msg == null) {
@@ -181,10 +156,10 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				} catch (NumberFormatException e) {
 					// Do nothing. Use default value
 				}
-				_ctrl.awaitFrame(1, 4, 0, timeout);
+				_ctrl.awaitFrame(Desk.getTopShell(),
+					"Daten werden aus dem Afinion AS100 gelesen..", 1, 4, 0, timeout);
 				return;
 			} else {
-				closeRunningInfo();
 				_log.log("Error");
 				SWTHelper
 					.showError(Messages.getString("AfinionAS100Action.RS232.Error.Title"), msg);
@@ -193,7 +168,6 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			if (_ctrl.isOpen()) {
 				_ctrl.sendBreak();
 				_ctrl.close();
-				closeRunningInfo();
 			}
 		}
 		setChecked(false);
@@ -226,8 +200,6 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	public void gotData(final AbstractConnection connection, final byte[] data){
 		_log.logRX(data.toString());
 		
-		closeRunningInfo();
-		
 		// Record lesen
 		Record[] records = new Record[10];
 		int pos = 0;
@@ -239,6 +211,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			}
 			pos += 256;
 		}
+		
+		_ctrl.close();
 		
 		selectedPatient = GlobalEvents.getSelectedPatient();
 		
@@ -252,7 +226,20 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
 		
 		SWTHelper.showInfo("Afinion AS100", "Alle Messwerte wurden gelesen");
+	}
+	
+	public void closed() {
 		_ctrl.close();
+		_log.log("Closed");
+		setChecked(false);
+		_log.logEnd();
+	}
+	
+	public void cancelled() {
+		_ctrl.close();
+		_log.log("Cancelled");
+		setChecked(false);
+		_log.logEnd();
 	}
 	
 	public void timeout(){
