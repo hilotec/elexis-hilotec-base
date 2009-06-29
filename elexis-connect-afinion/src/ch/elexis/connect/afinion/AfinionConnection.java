@@ -5,9 +5,7 @@ import gnu.io.SerialPortEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import ch.elexis.rs232.AbstractConnection;
@@ -33,11 +31,13 @@ public class AfinionConnection extends AbstractConnection {
 	// 1 Minute Wartezeit vorbei
 	public static final int WAIT_TIME_FINISHED = 2;
 	// Patient Record Request gesendet. Wartet auf Record Meldung
-	public static final int AWAIT_RECORDS = 4;
+	public static final int PAT_REQUEST_SENDED = 4;
+	// Patient Record Request acknowledge
+	public static final int PAT_REQUEST_ACK = 5;
 	// Records werden gelesen
-	public static final int RECORDS_READING = 5;
+	public static final int RECORDS_READING = 6;
 	// Request beendet
-	public static final int REQUEST_FINISHED = 6;
+	public static final int REQUEST_FINISHED = 7;
 	
 	private String awaitPacketNr;
 	private String ackPacketNr = null;
@@ -46,31 +46,38 @@ public class AfinionConnection extends AbstractConnection {
 	
 	private long last_time_ms = 0;
 	
+	private Calendar currentCal = new GregorianCalendar();
+	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
-	private static final boolean debug = false;
+	private static final boolean debug = true;
 	
 	public AfinionConnection(String portName, String port, String settings, ComPortListener l){
 		super(portName, port, settings, l);
 		setState(INIT);
 	}
 	
+	public void setCurrentDate(Calendar cal){
+		this.currentCal = cal;
+		setState(WAIT_TIME_FINISHED);
+	}
+	
 	/**
-	 * Wenn variable debug = true, dann werden alle bytes in
-	 * die console geloggt.
+	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt.
+	 * 
 	 * @param text
 	 */
-	private void debug(String text) {
+	private void debug(String text){
 		if (debug) {
 			System.out.print(text);
 		}
 	}
 	
 	/**
-	 * Wenn variable debug = true, dann werden alle bytes in
-	 * die console geloggt.
+	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt.
+	 * 
 	 * @param text
 	 */
-	private void debugln(String text) {
+	private void debugln(String text){
 		if (debug) {
 			System.out.println(text);
 		}
@@ -130,10 +137,27 @@ public class AfinionConnection extends AbstractConnection {
 		return packetNrStr;
 	}
 	
-	private void addDate(StringBuffer strBuf, Date date){
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
-		String dateString = formatter.format(date);
-		strBuf.append(dateString);
+	/**
+	 * Fuegt Datum als String yyyyMMdd HH:mm:ss dazu (ohne Timezone-Umwandlung)
+	 */
+	private void addDate(StringBuffer strBuf){
+		int day = this.currentCal.get(Calendar.DATE);
+		int month = this.currentCal.get(Calendar.MONTH) + 1;
+		int year = this.currentCal.get(Calendar.YEAR);
+		int hour = this.currentCal.get(Calendar.HOUR_OF_DAY);
+		int minutes = this.currentCal.get(Calendar.MINUTE);
+		int seconds = this.currentCal.get(Calendar.SECOND);
+		
+		String dayStr = (day < 10 ? "0" : "") + Integer.valueOf(day).toString();
+		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString();
+		String yearStr = Integer.valueOf(year).toString();
+		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString();
+		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString();
+		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString();
+		
+		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":"
+		+ secondStr;
+		strBuf.append(dateStr);
 	}
 	
 	private void addContentStart(ByteArrayOutputStream os){
@@ -234,14 +258,14 @@ public class AfinionConnection extends AbstractConnection {
 		}
 	}
 	
-	private String sendPatRecordRequest(Date date){
+	private String sendPatRecordRequest(){
 		debug("-->");
 		
 		StringBuffer contentBuf = new StringBuffer();
 		String packetNrStr = nextPacketNr();
 		contentBuf.append(packetNrStr);
 		contentBuf.append("0025:record,patient@");
-		addDate(contentBuf, date);
+		addDate(contentBuf);
 		
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -305,7 +329,7 @@ public class AfinionConnection extends AbstractConnection {
 		debugln(getByteStr(os.toByteArray()));
 	}
 	
-	private void checkState() {
+	private void checkState(){
 		if (getState() == INIT) {
 			setState(WAITING);
 			last_time_ms = new GregorianCalendar().getTimeInMillis();
@@ -316,7 +340,7 @@ public class AfinionConnection extends AbstractConnection {
 				setState(WAIT_TIME_FINISHED);
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
-		} else if (getState() == AWAIT_RECORDS) {
+		} else if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
 			// Resend nach 10 sekunden
 			long time_ms = new GregorianCalendar().getTimeInMillis();
 			if (time_ms - last_time_ms > RESEND_IN_MS) {
@@ -325,6 +349,7 @@ public class AfinionConnection extends AbstractConnection {
 			}
 		}
 	}
+	
 	private void acknowledge(final InputStream inputStream) throws IOException{
 		readToEnd(inputStream);
 		debugln("");
@@ -334,7 +359,7 @@ public class AfinionConnection extends AbstractConnection {
 	private void handlePatientRecord(final InputStream inputStream) throws IOException{
 		StringBuffer logBuffer = new StringBuffer();
 		// nächste 2560 Bytes lesen
-
+		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		// <DLE><ETB> suchen
 		int data = inputStream.read();
@@ -350,7 +375,7 @@ public class AfinionConnection extends AbstractConnection {
 			}
 			if (data == DLE) { // <DLE><DLE> wird zweites DLE nicht beachtet
 				data = inputStream.read();
-			} 
+			}
 			if (debug) {
 				logBuffer.append(getText(data));
 			}
@@ -378,9 +403,8 @@ public class AfinionConnection extends AbstractConnection {
 		checkState();
 		
 		if (getState() == WAIT_TIME_FINISHED) {
-			Calendar cal = new GregorianCalendar();
-			awaitPacketNr = sendPatRecordRequest(cal.getTime());
-			setState(AWAIT_RECORDS);
+			setState(PAT_REQUEST_SENDED);
+			awaitPacketNr = sendPatRecordRequest();
 		}
 		
 		int data = inputStream.read();
@@ -397,6 +421,8 @@ public class AfinionConnection extends AbstractConnection {
 				debug(packetNr);
 				if (!packetNr.equals(awaitPacketNr)) {
 					ackPacketNr = packetNr;
+				} else {
+					setState(PAT_REQUEST_ACK);
 				}
 				// ACK/ NAK
 				data = inputStream.read();
@@ -417,9 +443,11 @@ public class AfinionConnection extends AbstractConnection {
 					debug("@");
 					String headerStr = header.toString();
 					if (headerStr.indexOf("0025:record,patient") != -1) {
-						if (getState() == AWAIT_RECORDS) {
+						if (getState() == PAT_REQUEST_ACK) {
 							setState(RECORDS_READING);
 							handlePatientRecord(inputStream);
+						} else {
+							setState(WAIT_TIME_FINISHED);
 						}
 					} else if (headerStr.indexOf("0024:record.control") != -1) {
 						acknowledge(inputStream);
@@ -429,7 +457,6 @@ public class AfinionConnection extends AbstractConnection {
 						acknowledge(inputStream);
 					} else if (headerStr.indexOf("cmdcmpl") != -1) {
 						setState(REQUEST_FINISHED);
-						close();
 					} else if (headerStr.indexOf("debugmsg") != -1) {
 						acknowledge(inputStream);
 					} else if (headerStr.indexOf("FFFF:IC") != -1) {

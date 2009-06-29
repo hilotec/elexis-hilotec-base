@@ -2,11 +2,12 @@ package ch.elexis.connect.afinion;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
@@ -25,12 +26,13 @@ import ch.elexis.util.SWTHelper;
 
 public class AfinionAS100Action extends Action implements ComPortListener {
 	
-	AbstractConnection _ctrl;
+	AfinionConnection _ctrl;
 	Labor _myLab;
 	Thread msgDialogThread;
 	Thread infoDialogThread;
 	Patient selectedPatient;
 	Logger _log;
+	Record lastRecord = null;
 	
 	public AfinionAS100Action(){
 		super(Messages.getString("AfinionAS100Action.ButtonName"), AS_CHECK_BOX);
@@ -49,6 +51,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					.getString("AfinionAS100Action.DefaultPort")), Hub.localCfg.get(
 					Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")),
 				this);
+		
+		_ctrl.setCurrentDate(new GregorianCalendar(2007, 5, 26, 0, 0, 0));
 		
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) {
 			try {
@@ -120,114 +124,152 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	}
 	
 	/**
+	 * Einzelner Messwert wird verarbeitet
+	 * @param probe
+	 */
+	private void processRecord(final Record record) {
+			Desk.getDisplay().syncExec(new Runnable() {
+				
+				public void run(){
+					selectedPatient = GlobalEvents.getSelectedPatient();
+					Patient probePat = null;
+					String vorname = null;
+					String name = null;
+					String patientStr = "Patient: Unbekannt (" + record.getId() + ")\n";
+					
+					if (record.getId() != null) {
+						String patIdStr = record.getId();
+						Long patId = null;
+						try {
+							patId = new Long(patIdStr);
+						} catch(NumberFormatException e) {
+							// Do nothing
+						}
+						
+						// Patient-ID oder Name?
+						Query<Patient> patQuery = new Query<Patient>(Patient.class);
+						if (patId != null) {
+							patQuery.add(Patient.PATID, "=", patIdStr);
+						} else {
+							String[] parts = patIdStr.split(",");
+							if (parts.length > 1) {
+								vorname = parts[1].toUpperCase();
+								if (parts[1].length() > 1) {
+									vorname = parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1);
+								}
+								patQuery.add(Patient.FIRSTNAME, "like", vorname + "%");
+							}
+							if (parts.length > 0) {
+								name = parts[0].toUpperCase();
+								if (parts[0].length() > 1) {
+									name = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1);
+								}
+								patQuery.add(Patient.NAME, "like", name + "%");
+							}
+						}
+						List<Patient> patientList = patQuery.execute();
+						
+						if (patientList.size() == 1) {
+							probePat = patientList.get(0);
+							patientStr =
+								"Patient: " + probePat.getName() + ", " + probePat.getVorname() + " ("
+									+ record.getId() + ")\n";
+						}
+					}
+					
+					String text = patientStr + "Run: " + record.getRunNr() + "\n" + record.getText();
+					
+					boolean ok = MessageDialog.openConfirm(Desk.getTopShell(), "Afinion AS100", text);
+					if (ok) {
+						boolean showSelectionDialog = false;
+						if (selectedPatient == null) {
+							if (probePat != null) {
+								selectedPatient = probePat;
+							} else {
+								showSelectionDialog = true;
+							}
+						} else {
+							if (probePat == null) {
+								showSelectionDialog = true;
+							}
+						}
+						
+						if (showSelectionDialog) {
+							Desk.getDisplay().syncExec(new Runnable() {
+								public void run(){
+									// TODO: Filter vorname/name in KontaktSelektor einbauen
+									KontaktSelektor ksl =
+										new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
+											.getString("ReflotronSprintAction.Patient.Title"), Messages
+											.getString("ReflotronSprintAction.Patient.Text"));
+									ksl.create();
+									ksl.getShell().setText(
+										Messages.getString("ReflotronSprintAction.Patient.Title"));
+									if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
+										selectedPatient = (Patient) ksl.getSelection();
+									} else {
+										selectedPatient = null;
+									}
+									
+								}
+							});
+						}
+						if (selectedPatient != null) {
+							try {
+								record.write(selectedPatient);
+							} catch (PackageException e) {
+								SWTHelper.showError(Messages
+									.getString("ReflotronSprintAction.ProbeError.Title"), e.getMessage());
+							}
+						} else {
+							SWTHelper.showError(Messages.getString("ReflotronSprintAction.Patient.Title"),
+								"Kein Patient ausgewählt!");
+						}
+					_log.log("Saved");
+					GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+				}
+			}
+		});
+	}
+	
+	/**
 	 * Messagedaten von Afinion wurden gelesen
 	 */
 	public void gotData(final AbstractConnection connection, final byte[] data){
-		_log.logRX(data.toString());
+		_log.logRX(new String(data));
 		
 		// Record lesen
-		Record lastRecord = null;
-		Record[] records = new Record[10];
 		int pos = 0;
 		int i=0;
-		while (i < 10 && lastRecord == null) {
+		int validRecords = 0;
+		while (i < 10) {
 			byte[] subbytes = subBytes(data, pos, 256);
-			records[i] = new Record(subbytes);
-			if (records[i].isValid()) {
-				lastRecord = records[i];
+			Record tmpRecord = new Record(subbytes);
+			if (tmpRecord.isValid()) {
+				lastRecord = tmpRecord;
+				System.out.println(lastRecord.toString());
+				validRecords++;
 			}
 			pos += 256;
 			i++;
 		}
-		_ctrl.close();
 		
-		lastRecord = new Record(new byte[256]);
-		
-		if (lastRecord != null) {
-			selectedPatient = GlobalEvents.getSelectedPatient();
-			Patient probePat = null;
-			// TODO: Filter fuer KontaktSelektor
-			String filter = null;
-			if (lastRecord.getId() != null) {
-				String patId = lastRecord.getId();
-				
-				// Wenn erstes Zeichen nicht Zahl, dann wahrscheinlich Pat-ID
-				if (patId != null && patId.length() > 0) {
-					Query<Patient> patQuery = new Query<Patient>(Patient.class);
-					if (!Character.isDigit(patId.charAt(0))) {
-						String patName = patId.toUpperCase();
-						if (patId.length() > 1) {
-							patName = patId.substring(0, 1).toUpperCase() + patId.substring(1);
-						}
-						patQuery.add(Patient.NAME, "like", patName + "%");
-					} else {
-						patQuery.add(Patient.PATID, "=", patId);
-					}
-					List<Patient> patientList = patQuery.execute();
-					
-					if (patientList.size() == 1) {
-						probePat = patientList.get(0);
-					} else if (!Character.isDigit(patId.charAt(0))) {
-						filter = lastRecord.getId();
-					}
-				}
-			}
-			
-			boolean showSelectionDialog = false;
-			if (selectedPatient == null) {
-				if (probePat != null) {
-					selectedPatient = probePat;
-				} else {
-					showSelectionDialog = true;
-				}
-			} else {
-				if (probePat != null) {
-					if (!probePat.equals(selectedPatient)) {
-						showSelectionDialog = true;
-					}
-				} else if (filter != null) {
-					if (!filter.toLowerCase().equals(selectedPatient.getName().toLowerCase())) {
-						showSelectionDialog = true;
-					}
-				}
-			}
-			
-			if (showSelectionDialog) {
-				Desk.getDisplay().syncExec(new Runnable() {
-					public void run(){
-						KontaktSelektor ksl =
-							new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
-								.getString("ReflotronSprintAction.Patient.Title"), Messages
-								.getString("ReflotronSprintAction.Patient.Text"));
-						ksl.create();
-						ksl.getShell().setText(
-							Messages.getString("ReflotronSprintAction.Patient.Title"));
-						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
-							selectedPatient = (Patient) ksl.getSelection();
-						} else {
-							selectedPatient = null;
-						}
-						
-					}
-				});
-			}
-			if (selectedPatient != null) {
-				try {
-					lastRecord.write(selectedPatient);
-				} catch (PackageException e) {
-					SWTHelper.showError(Messages
-						.getString("ReflotronSprintAction.ProbeError.Title"), e.getMessage());
-				}
-			} else {
-				SWTHelper.showError(Messages.getString("ReflotronSprintAction.Patient.Title"),
-					"Kein Patient ausgewählt!");
-			}
+		if (validRecords > 1) { // Last set of records
+			Calendar cal = lastRecord.getCalendar();
+			cal.add(Calendar.SECOND, -1);
+			_ctrl.setCurrentDate(cal);
 		} else {
-			SWTHelper.showInfo("Afinion AS100", "Keine Messdaten vorhanden!");
-		}
+			_ctrl.close();
 		
-		_log.log("Saved");
-		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+			if (lastRecord != null) {
+				processRecord(lastRecord);
+			} else {
+				SWTHelper.showInfo("Afinion AS100", "Keine Messdaten vorhanden!");
+			}
+			
+			_log.log("Saved");
+			GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+		}
 	}
 	
 	public void closed() {

@@ -1,5 +1,7 @@
 package ch.elexis.connect.afinion.packages;
 
+import java.util.Calendar;
+
 import ch.elexis.data.Patient;
 
 /**
@@ -36,6 +38,10 @@ public class Record {
 	
 	public String getId(){
 		return this.header.getId();
+	}
+	
+	public Calendar getCalendar() {
+		return this.header.getCalendar();
 	}
 	
 	public int getRunNr(){

@@ -1,20 +1,13 @@
 package ch.elexis.connect.afinion;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -22,9 +15,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.rs232.AuslesenDialog;
 import ch.elexis.rs232.Connection;
-import ch.elexis.rs232.LogConnection;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 
@@ -99,49 +90,6 @@ protected Control createContents(final Composite parent) {
 	log.setSelection(Hub.localCfg.get(LOG, "n").equalsIgnoreCase("y"));
 
 	return ret;
-}
-
-/**
- * Liest Wert des Text-Widgets
- */
-private String getText(Text text, String defaultText) {
-	String retText = "";
-	if (text != null) {
-		retText = text.getText();
-	}
-	if (retText == null || retText.length() == 0) {
-		retText = defaultText;
-	}
-	return retText;
-}
-
-/**
- * Startet Auslesen der Schnittstelle
- */
-private void startTest() {
-	String logFileName = getText(logFile, null);
-	if (logFileName == null) {
-		SWTHelper
-				.showError("Schnittstelle auslesen", "Logdatei unbekannt!");
-	}
-	File file = new File(logFileName);
-	try {
-		if (!file.exists()) {
-			file.createNewFile();
-		}
-		AuslesenDialog dialog = new AuslesenDialog(getShell(), "Afinion S100");
-		final LogConnection connection = new LogConnection(Messages
-				.getString("ReflotronSprintAction.ConnectionName"),
-				Hub.localCfg.get(Preferences.PORT, Messages
-						.getString("ReflotronSprintAction.DefaultPort")),
-				Hub.localCfg.get(Preferences.PARAMS, Messages
-						.getString("ReflotronSprintAction.DefaultParams")),
-						dialog, logFileName);
-		dialog.setConnection(connection);
-		dialog.open();
-	} catch (IOException e) {
-		SWTHelper.showError("Schnittstelle auslesen", e.getMessage());
-	}
 }
 
 public void init(final IWorkbench workbench) {
