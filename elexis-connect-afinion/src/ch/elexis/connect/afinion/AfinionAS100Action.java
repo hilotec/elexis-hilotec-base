@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
@@ -61,6 +63,24 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		} else {
 			_log = new Logger(false);
 		}
+	}
+	
+	/**
+	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
+	 * 
+	 * @param title
+	 *            Titel
+	 * @param message
+	 *            Nachricht
+	 */
+	public static void showError(final String title, final String message){
+		Desk.getDisplay().asyncExec(new Runnable() {
+			
+			public void run(){
+				Shell shell = Desk.getTopShell();
+				MessageDialog.openError(shell, title, message);
+			}
+		});
 	}
 	
 	@Override
@@ -148,11 +168,10 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			String filter = null;
 			if (lastRecord.getId() != null) {
 				String patId = lastRecord.getId();
-				patId="1";
-				Query<Patient> patQuery = new Query<Patient>(Patient.class);
 				
 				// Wenn erstes Zeichen nicht Zahl, dann wahrscheinlich Pat-ID
 				if (patId != null && patId.length() > 0) {
+					Query<Patient> patQuery = new Query<Patient>(Patient.class);
 					if (!Character.isDigit(patId.charAt(0))) {
 						String patName = patId.toUpperCase();
 						if (patId.length() > 1) {
