@@ -41,6 +41,9 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			"ch.elexis.connect.reflotron", "icons/reflotron.png"));
 	}
 	
+	/**
+	 * Serielle Verbindung wird initialisiert
+	 */
 	private void initConnection(){
 		if (_ctrl != null && _ctrl.isOpen()) {
 			_ctrl.close();
@@ -103,13 +106,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	
 	/**
 	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
-	 * 
-	 * @param title
-	 *            Titel
-	 * @param message
-	 *            Nachricht
 	 */
-	public static void showError(final String title, final String message){
+	private static void showError(final String title, final String message){
 		Desk.getDisplay().asyncExec(new Runnable() {
 			
 			public void run(){
@@ -120,23 +118,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	}
 	
 	/**
-	 * Eine Standard-Infomeldung asynchron im UI-Thread zeigen
-	 * 
-	 * @param title
-	 *            Titel
-	 * @param message
-	 *            Nachricht
+	 * Unterbruche wird von serieller Schnittstelle geschickt.
 	 */
-	public static void showInfo(final String title, final String message){
-		Desk.getDisplay().asyncExec(new Runnable() {
-			
-			public void run(){
-				Shell shell = Desk.getTopShell();
-				MessageDialog.openInformation(shell, title, message);
-			}
-		});
-	}
-	
 	public void gotBreak(final AbstractConnection connection){
 		connection.close();
 		setChecked(false);
@@ -146,6 +129,10 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			.getString("ReflotronSprintAction.RS232.Break.Text"));
 	}
 	
+	/**
+	 * Einzelne Probe wird verarbeitet
+	 * @param probe
+	 */
 	private void processProbe(final Probe probe) {
 			Desk.getDisplay().syncExec(new Runnable() {
 				
@@ -250,6 +237,9 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			});
 		}
 	
+	/**
+	 * Daten werden von der Seriellen Schnittstelle geliefert
+	 */
 	public void gotData(final AbstractConnection connection, final byte[] data){
 		String content = new String(data);
 		_log.logRX(content);
@@ -268,6 +258,9 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
 	}
 	
+	/**
+	 * Verbindung zu serieller Schnittstelle wurde getrennt
+	 */
 	public void closed() {
 		_ctrl.close();
 		_log.log("Closed");
@@ -275,6 +268,9 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		_log.logEnd();
 	}
 	
+	/**
+	 * Verbindung zu serieller Schnittstelle wurde vom Benutzer abgebrochen
+	 */
 	public void cancelled(){
 		_ctrl.close();
 		_log.log("Cancelled");
@@ -282,6 +278,9 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		_log.logEnd();
 	}
 	
+	/**
+	 * Verbindung zu serieller Schnittstelle hat timeout erreicht.
+	 */
 	public void timeout(){
 		_ctrl.close();
 		_log.log("Timeout");
