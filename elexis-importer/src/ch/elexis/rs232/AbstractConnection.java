@@ -54,6 +54,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	private Thread watchdogThread;
 
 	public interface ComPortListener {
+		
 		public void gotData(AbstractConnection conn, byte[] bytes);
 
 		public void gotBreak(AbstractConnection conn);
