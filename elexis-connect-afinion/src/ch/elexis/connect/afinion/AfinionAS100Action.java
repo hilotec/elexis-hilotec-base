@@ -55,7 +55,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		
 		
 		Calendar cal = new GregorianCalendar();
-		cal.add(Calendar.MINUTE, -1);
+		cal.add(Calendar.HOUR, -1);
 		_ctrl.setCurrentDate(cal);
 		
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -265,7 +265,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			Record tmpRecord = new Record(subbytes);
 			if (tmpRecord.isValid()) {
 				lastRecord = tmpRecord;
-				System.out.println(lastRecord.toString());
+				//System.out.println(lastRecord.toString());
 				validRecords++;
 			}
 			pos += 256;
