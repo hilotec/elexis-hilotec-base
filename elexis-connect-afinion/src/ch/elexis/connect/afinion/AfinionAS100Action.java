@@ -53,7 +53,10 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")), //$NON-NLS-1$
 				this);
 		
-		_ctrl.setCurrentDate(new GregorianCalendar(2007, 5, 26, 0, 0, 0));
+		
+		Calendar cal = new GregorianCalendar();
+		cal.add(Calendar.MINUTE, -1);
+		_ctrl.setCurrentDate(cal);
 		
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
@@ -155,7 +158,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					} else {
 						String[] parts = patIdStr.split(","); //$NON-NLS-1$
 						if (parts.length > 1) {
-							vorname = parts[1].toUpperCase();
+							vorname = parts[1].trim().toUpperCase();
 							if (parts[1].length() > 1) {
 								vorname =
 									parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1);
@@ -163,7 +166,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 							patQuery.add(Patient.FIRSTNAME, "like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						if (parts.length > 0) {
-							name = parts[0].toUpperCase();
+							name = parts[0].trim().toUpperCase();
 							if (parts[0].length() > 1) {
 								name =
 									parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1);
@@ -192,16 +195,10 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 						.getString("AfinionAS100Action.DeviceName"), text); //$NON-NLS-1$
 				if (ok) {
 					boolean showSelectionDialog = false;
-					if (selectedPatient == null) {
-						if (probePat != null) {
-							selectedPatient = probePat;
-						} else {
-							showSelectionDialog = true;
-						}
+					if (probePat != null) {
+						selectedPatient = probePat;
 					} else {
-						if (probePat == null) {
-							showSelectionDialog = true;
-						}
+						showSelectionDialog = true;
 					}
 					
 					if (showSelectionDialog) {
@@ -275,9 +272,9 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			i++;
 		}
 		
-		if (validRecords > 1) { // Last set of records
+		if (validRecords == 10) { // Read next 10 records
 			Calendar cal = lastRecord.getCalendar();
-			cal.add(Calendar.SECOND, -1);
+			cal.add(Calendar.SECOND, 1);
 			_ctrl.setCurrentDate(cal);
 		} else {
 			_ctrl.close();

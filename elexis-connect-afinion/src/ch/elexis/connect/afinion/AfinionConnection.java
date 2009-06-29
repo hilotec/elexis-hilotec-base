@@ -29,7 +29,7 @@ public class AfinionConnection extends AbstractConnection {
 	// 1 Minute warten
 	public static final int WAITING = 1;
 	// 1 Minute Wartezeit vorbei
-	public static final int WAIT_TIME_FINISHED = 2;
+	public static final int SEND_REQUEST = 2;
 	// Patient Record Request gesendet. Wartet auf Record Meldung
 	public static final int PAT_REQUEST_SENDED = 4;
 	// Patient Record Request acknowledge
@@ -49,7 +49,7 @@ public class AfinionConnection extends AbstractConnection {
 	private Calendar currentCal = new GregorianCalendar();
 	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
-	private static final boolean debug = false;
+	private static final boolean debug = true;
 	
 	public AfinionConnection(String portName, String port, String settings, ComPortListener l){
 		super(portName, port, settings, l);
@@ -58,7 +58,6 @@ public class AfinionConnection extends AbstractConnection {
 	
 	public void setCurrentDate(Calendar cal){
 		this.currentCal = cal;
-		setState(WAIT_TIME_FINISHED);
 	}
 	
 	/**
@@ -149,7 +148,7 @@ public class AfinionConnection extends AbstractConnection {
 		int seconds = this.currentCal.get(Calendar.SECOND);
 		
 		String dayStr = (day < 10 ? "0" : "") + Integer.valueOf(day).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString();
 		String yearStr = Integer.valueOf(year).toString();
 		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -337,14 +336,14 @@ public class AfinionConnection extends AbstractConnection {
 			// 1 Minute warten bis Request gesendet wird.
 			long time_ms = new GregorianCalendar().getTimeInMillis();
 			if (time_ms - last_time_ms > WAIT_IN_MS) {
-				setState(WAIT_TIME_FINISHED);
+				setState(SEND_REQUEST);
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
 		} else if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
 			// Resend nach 10 sekunden
 			long time_ms = new GregorianCalendar().getTimeInMillis();
 			if (time_ms - last_time_ms > RESEND_IN_MS) {
-				setState(WAIT_TIME_FINISHED);
+				setState(SEND_REQUEST);
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
 		}
@@ -353,7 +352,9 @@ public class AfinionConnection extends AbstractConnection {
 	private void acknowledge(final InputStream inputStream) throws IOException{
 		readToEnd(inputStream);
 		debugln(""); //$NON-NLS-1$
-		sendPacketACK(ackPacketNr);
+		if (ackPacketNr != null) {
+			sendPacketACK(ackPacketNr);
+		}
 	}
 	
 	private void handlePatientRecord(final InputStream inputStream) throws IOException{
@@ -367,7 +368,7 @@ public class AfinionConnection extends AbstractConnection {
 		while (data != -1 && data != ETB) {
 			while (data != -1 && data != DLE) {
 				if (debug) {
-					logBuffer.append(getText(data));
+					//logBuffer.append(getText(data));
 				}
 				baos.write(data);
 				data = inputStream.read();
@@ -402,9 +403,9 @@ public class AfinionConnection extends AbstractConnection {
 		
 		checkState();
 		
-		if (getState() == WAIT_TIME_FINISHED) {
-			setState(PAT_REQUEST_SENDED);
+		if (getState() == SEND_REQUEST) {
 			awaitPacketNr = sendPatRecordRequest();
+			setState(PAT_REQUEST_SENDED);
 		}
 		
 		int data = inputStream.read();
@@ -446,20 +447,20 @@ public class AfinionConnection extends AbstractConnection {
 						if (getState() == PAT_REQUEST_ACK) {
 							setState(RECORDS_READING);
 							handlePatientRecord(inputStream);
-						} else {
-							setState(WAIT_TIME_FINISHED);
 						}
 					} else if (headerStr.indexOf("0024:record.control") != -1) { //$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("cmdack") != -1) { //$NON-NLS-1$
+					} else if (headerStr.indexOf("cmdack") != -1) {//$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("cmderr") != -1) { //$NON-NLS-1$
+					} else if (headerStr.indexOf("cmderr") != -1) {//$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("cmdcmpl") != -1) { //$NON-NLS-1$
-						setState(REQUEST_FINISHED);
-					} else if (headerStr.indexOf("debugmsg") != -1) { //$NON-NLS-1$
+						setState(SEND_REQUEST);
+					} else if (headerStr.indexOf("cmdcmpl") != -1) {//$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("FFFF:IC") != -1) { //$NON-NLS-1$
+						setState(SEND_REQUEST);
+					} else if (headerStr.indexOf("debugmsg") != -1) {//$NON-NLS-1$
+						acknowledge(inputStream);
+					} else if (headerStr.indexOf("FFFF:IC") != -1) {//$NON-NLS-1$
 						acknowledge(inputStream);
 					}
 				}
@@ -477,7 +478,7 @@ public class AfinionConnection extends AbstractConnection {
 				debugln("<ETB>"); //$NON-NLS-1$
 			} else {
 				if (debug) {
-					debug(getText(data));
+					//debug(getText(data));
 				}
 			}
 		} else if (data == NUL) {
@@ -485,7 +486,7 @@ public class AfinionConnection extends AbstractConnection {
 			while ((data = inputStream.read()) == NUL) {}
 		} else {
 			if (debug) {
-				debug(getText(data));
+				//debug(getText(data));
 			}
 		}
 	}
@@ -499,7 +500,6 @@ public class AfinionConnection extends AbstractConnection {
 		try {
 			handleEvent(inputStream);
 		} catch (IOException ex) {
-			setState(WAIT_TIME_FINISHED);
 			if (ackPacketNr != null) {
 				sendPacketNAK(ackPacketNr);
 				ackPacketNr = null;
