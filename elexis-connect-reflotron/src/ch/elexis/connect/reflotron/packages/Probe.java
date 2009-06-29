@@ -21,8 +21,8 @@ public class Probe {
 	 *            Array[7]
 	 */
 	private void parse(final String[] strArray) {
-		int dateIndex = strArray[1].indexOf(".");
-		int timeIndex = strArray[1].indexOf(":");
+		int dateIndex = strArray[1].indexOf("."); //$NON-NLS-1$
+		int timeIndex = strArray[1].indexOf(":"); //$NON-NLS-1$
 
 		String dateStr = strArray[1].substring(dateIndex - 2, dateIndex + 6);
 		String timeStr = strArray[1].substring(timeIndex - 2, timeIndex + 6);
@@ -52,7 +52,7 @@ public class Probe {
 	 */
 	public void write(Patient patient) throws PackageException {
 		if (getResultat().length() < 19) {
-			throw new PackageException("Resultat der Probe zu klein!");
+			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
 		}
 
 		String paramName;
@@ -79,7 +79,7 @@ public class Probe {
 
 		Value val = Value.getValue(paramName, unit);
 
-		val.fetchValue(patient, value, "", getDate());
+		val.fetchValue(patient, value, "", getDate()); //$NON-NLS-1$
 	}
 
 	public TimeTool getDate() {

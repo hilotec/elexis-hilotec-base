@@ -32,10 +32,10 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	Patient selectedPatient;
 	
 	public ReflotronSprintAction(){
-		super(Messages.getString("ReflotronSprintAction.ButtonName"), AS_CHECK_BOX);
-		setToolTipText(Messages.getString("ReflotronSprintAction.ToolTip"));
+		super(Messages.getString("ReflotronSprintAction.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
+		setToolTipText(Messages.getString("ReflotronSprintAction.ToolTip")); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-			"ch.elexis.connect.reflotron", "icons/reflotron.png"));
+			"ch.elexis.connect.reflotron", "icons/reflotron.png")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -46,20 +46,20 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new ReflotronConnection(Messages.getString("ReflotronSprintAction.ConnectionName"),
+			new ReflotronConnection(Messages.getString("ReflotronSprintAction.ConnectionName"), //$NON-NLS-1$
 				Hub.localCfg.get(Preferences.PORT, Messages
-					.getString("ReflotronSprintAction.DefaultPort")), Hub.localCfg.get(
-					Preferences.PARAMS, Messages.getString("ReflotronSprintAction.DefaultParams")),
+					.getString("ReflotronSprintAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
+					Preferences.PARAMS, Messages.getString("ReflotronSprintAction.DefaultParams")), //$NON-NLS-1$
 				this);
 		
-		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) {
+		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				_log =
-					new Logger(System.getProperty("user.home") + File.separator + "elexis"
-						+ File.separator + "reflotron.log");
+					new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
+						+ File.separator + "reflotron.log"); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
-				SWTHelper.showError(Messages.getString("ReflotronSprintAction.LogError.Title"),
-					Messages.getString("ReflotronSprintAction.LogError.Text"));
+				SWTHelper.showError(Messages.getString("ReflotronSprintAction.LogError.Title"), //$NON-NLS-1$
+					Messages.getString("ReflotronSprintAction.LogError.Text")); //$NON-NLS-1$
 				_log = new Logger();
 			}
 		} else {
@@ -76,7 +76,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			if (msg == null) {
 				String timeoutStr =
 					Hub.localCfg.get(Preferences.TIMEOUT, Messages
-						.getString("ReflotronSprintAction.DefaultTimeout"));
+						.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
 				int timeout = 20;
 				try {
 					timeout = Integer.parseInt(timeoutStr);
@@ -84,11 +84,11 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 					// Do nothing. Use default value
 				}
 				_ctrl.awaitFrame(Desk.getTopShell(),
-					"Elexis wartet auf Daten aus dem Reflotrongerät..", 1, 4, 0, timeout);
+					Messages.getString("ReflotronSprintAction.WaitMsg"), 1, 4, 0, timeout); //$NON-NLS-1$
 				return;
 			} else {
-				_log.log("Error");
-				SWTHelper.showError(Messages.getString("ReflotronSprintAction.RS232.Error.Title"),
+				_log.log("Error"); //$NON-NLS-1$
+				SWTHelper.showError(Messages.getString("ReflotronSprintAction.RS232.Error.Title"), //$NON-NLS-1$
 					msg);
 			}
 		} else {
@@ -120,10 +120,10 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	public void gotBreak(final AbstractConnection connection){
 		connection.close();
 		setChecked(false);
-		_log.log("Break");
+		_log.log("Break"); //$NON-NLS-1$
 		_log.logEnd();
-		SWTHelper.showError(Messages.getString("ReflotronSprintAction.RS232.Break.Title"), Messages
-			.getString("ReflotronSprintAction.RS232.Break.Text"));
+		SWTHelper.showError(Messages.getString("ReflotronSprintAction.RS232.Break.Title"), Messages //$NON-NLS-1$
+			.getString("ReflotronSprintAction.RS232.Break.Text")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -139,27 +139,27 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 					// TODO: Filter fuer KontaktSelektor
 					String vorname = null;
 					String name = null;
-					String patientStr = "Patient: Unbekannt (" + probe.getIdent() + ")\n";
+					String patientStr = Messages.getString("ReflotronSprintAction.UnknownPatientMsg") + probe.getIdent() + ")\n"; //$NON-NLS-1$ //$NON-NLS-2$
 					if (probe.getIdent() != null) {
 						String patName = probe.getIdent();
 						
 						// Name/Vorname?
 						Query<Patient> patQuery = new Query<Patient>(Patient.class);
 						if (patName != null && patName.length() > 0) {
-							String[] parts = patName.split(",");
+							String[] parts = patName.split(","); //$NON-NLS-1$
 							if (parts.length > 1) {
 								vorname = parts[1].toUpperCase();
 								if (parts[1].length() > 1) {
 									vorname = parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1);
 								}
-								patQuery.add(Patient.FIRSTNAME, "like", vorname + "%");
+								patQuery.add(Patient.FIRSTNAME, "like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							if (parts.length > 0) {
 								name = parts[0].toUpperCase();
 								if (parts[0].length() > 1) {
 									name = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1);
 								}
-								patQuery.add(Patient.NAME, "like", name + "%");
+								patQuery.add(Patient.NAME, "like", name + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							
 							List<Patient> patientList = patQuery.execute();
@@ -167,15 +167,15 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 							if (patientList.size() == 1) {
 								probePat = patientList.get(0);
 								patientStr =
-									"Patient: " + probePat.getName() + ", " + probePat.getVorname() + " ("
-										+ probe.getIdent() + ")\n";
+									Messages.getString("ReflotronSprintAction.PatientHeaderString") + probePat.getName() + Messages.getString("ReflotronSprintAction.29") + probePat.getVorname() + " (" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+										+ probe.getIdent() + ")\n"; //$NON-NLS-1$
 							}
 						}
 					}
 					
-					String text = patientStr + "Wert: " + probe.getResultat() + "\n";
+					String text = patientStr + Messages.getString("ReflotronSprintAction.WertHeaderString") + probe.getResultat() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 					
-					boolean ok = MessageDialog.openConfirm(Desk.getTopShell(), "Afinion AS100", text);
+					boolean ok = MessageDialog.openConfirm(Desk.getTopShell(), Messages.getString("ReflotronSprintAction.DeviceName"), text); //$NON-NLS-1$
 					if (ok) {
 						boolean showSelectionDialog = false;
 						if (probePat != null) {
@@ -190,11 +190,11 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 									// TODO: Filter vorname/name in KontaktSelektor einbauen
 									KontaktSelektor ksl =
 										new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
-											.getString("ReflotronSprintAction.Patient.Title"), Messages
-											.getString("ReflotronSprintAction.Patient.Text"));
+											.getString("ReflotronSprintAction.Patient.Title"), Messages //$NON-NLS-1$
+											.getString("ReflotronSprintAction.Patient.Text")); //$NON-NLS-1$
 									ksl.create();
 									ksl.getShell().setText(
-										Messages.getString("ReflotronSprintAction.Patient.Title"));
+										Messages.getString("ReflotronSprintAction.Patient.Title")); //$NON-NLS-1$
 									if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 										selectedPatient = (Patient) ksl.getSelection();
 									} else {
@@ -209,11 +209,11 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 								probe.write(selectedPatient);
 							} catch (PackageException e) {
 								showError(Messages
-									.getString("ReflotronSprintAction.ProbeError.Title"), e.getMessage());
+									.getString("ReflotronSprintAction.ProbeError.Title"), e.getMessage()); //$NON-NLS-1$
 							}
 						} else {
-							showError(Messages.getString("ReflotronSprintAction.Patient.Title"),
-								"Kein Patient ausgewählt!");
+							showError(Messages.getString("ReflotronSprintAction.Patient.Title"), //$NON-NLS-1$
+								Messages.getString("ReflotronSprintAction.NoPatientMsg")); //$NON-NLS-1$
 						}
 					}
 				}
@@ -227,17 +227,17 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		String content = new String(data);
 		_log.logRX(content);
 		
-		String[] strArray = content.split("\r\n");
+		String[] strArray = content.split("\r\n"); //$NON-NLS-1$
 		if (strArray.length > 3) {
 			Probe probe = new Probe(strArray);
 			processProbe(probe);
 		} else {
 			if (content != null && content.length() > 0) {
-				showError("Reflotron", "Unvollständige Daten: " + content + "\nBitte schicken sie die Daten nochmals (F5)!");
+				showError("Reflotron", Messages.getString("ReflotronSprintAction.IncompleteDataRecordMsg") + content + Messages.getString("ReflotronSprintAction.ResendMsg")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		
-		_log.log("Saved");
+		_log.log("Saved"); //$NON-NLS-1$
 		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
 	}
 	
@@ -246,7 +246,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 */
 	public void closed() {
 		_ctrl.close();
-		_log.log("Closed");
+		_log.log("Closed"); //$NON-NLS-1$
 		setChecked(false);
 		_log.logEnd();
 	}
@@ -256,7 +256,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 */
 	public void cancelled(){
 		_ctrl.close();
-		_log.log("Cancelled");
+		_log.log("Cancelled"); //$NON-NLS-1$
 		setChecked(false);
 		_log.logEnd();
 	}
@@ -266,9 +266,9 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 */
 	public void timeout(){
 		_ctrl.close();
-		_log.log("Timeout");
-		SWTHelper.showError(Messages.getString("ReflotronSprintAction.RS232.Timeout.Title"),
-			Messages.getString("ReflotronSprintAction.RS232.Timeout.Text"));
+		_log.log("Timeout"); //$NON-NLS-1$
+		SWTHelper.showError(Messages.getString("ReflotronSprintAction.RS232.Timeout.Title"), //$NON-NLS-1$
+			Messages.getString("ReflotronSprintAction.RS232.Timeout.Text")); //$NON-NLS-1$
 		setChecked(false);
 		_log.logEnd();
 	}
