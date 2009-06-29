@@ -148,14 +148,14 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						if (patName != null && patName.length() > 0) {
 							String[] parts = patName.split(","); //$NON-NLS-1$
 							if (parts.length > 1) {
-								vorname = parts[1].toUpperCase();
+								vorname = parts[1].trim().toUpperCase();
 								if (parts[1].length() > 1) {
 									vorname = parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1);
 								}
 								patQuery.add(Patient.FIRSTNAME, "like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							if (parts.length > 0) {
-								name = parts[0].toUpperCase();
+								name = parts[0].trim().toUpperCase();
 								if (parts[0].length() > 1) {
 									name = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1);
 								}
