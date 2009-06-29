@@ -5,10 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
