@@ -210,11 +210,11 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 								// TODO: Filter vorname/name in KontaktSelektor einbauen
 								KontaktSelektor ksl =
 									new KontaktSelektor(Hub.getActiveShell(), Patient.class,
-										Messages.getString("ReflotronSprintAction.Patient.Title"), //$NON-NLS-1$
-										Messages.getString("ReflotronSprintAction.Patient.Text")); //$NON-NLS-1$
+										Messages.getString("AfinionAS100Action.Patient.Title"), //$NON-NLS-1$
+										Messages.getString("AfinionAS100Action.Patient.Text")); //$NON-NLS-1$
 								ksl.create();
 								ksl.getShell().setText(
-									Messages.getString("ReflotronSprintAction.Patient.Title")); //$NON-NLS-1$
+									Messages.getString("AfinionAS100Action.Patient.Title")); //$NON-NLS-1$
 								if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 									selectedPatient = (Patient) ksl.getSelection();
 								} else {
@@ -229,12 +229,12 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 							record.write(selectedPatient);
 						} catch (PackageException e) {
 							SWTHelper.showError(Messages
-								.getString("ReflotronSprintAction.ProbeError.Title"), e //$NON-NLS-1$
+								.getString("AfinionAS100Action.ProbeError.Title"), e //$NON-NLS-1$
 								.getMessage());
 						}
 					} else {
 						SWTHelper.showError(Messages
-							.getString("ReflotronSprintAction.Patient.Title"), //$NON-NLS-1$
+							.getString("AfinionAS100Action.Patient.Title"), //$NON-NLS-1$
 							Messages.getString("AfinionAS100Action.NoPatientSelectedMsg")); //$NON-NLS-1$
 					}
 					_log.log("Saved"); //$NON-NLS-1$
