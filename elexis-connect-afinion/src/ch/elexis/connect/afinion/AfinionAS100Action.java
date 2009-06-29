@@ -248,7 +248,16 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	 * Messagedaten von Afinion wurden gelesen
 	 */
 	public void gotData(final AbstractConnection connection, final byte[] data){
-		_log.logRX(new String(data));
+		_log.logRaw("--> \"");
+		_log.logRaw("<DLE>");
+		_log.logRaw("<STX>");
+		_log.logRaw(new String(data));
+		_log.logRaw("<DLE>");
+		_log.logRaw("<ETB>");
+		_log.logRaw("03A3");
+		_log.logRaw("<DLE>");
+		_log.logRaw("<ETX>");
+		_log.logRaw(" \"");
 		
 		// Record lesen
 		int pos = 0;
