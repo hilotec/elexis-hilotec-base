@@ -105,17 +105,17 @@ public class AfinionConnection extends AbstractConnection {
 		int counter = 1;
 		for (byte b : bytes) {
 			if (strBuf.length() > 0) {
-				strBuf.append(", ");
+				strBuf.append(", "); //$NON-NLS-1$
 				if (counter > 16) {
-					strBuf.append("\n");
+					strBuf.append("\n"); //$NON-NLS-1$
 					counter = 1;
 				}
 			}
 			String byteStr = Long.toHexString((long) b);
 			while (byteStr.length() < 2) {
-				byteStr = "0" + byteStr;
+				byteStr = "0" + byteStr; //$NON-NLS-1$
 			}
-			strBuf.append("0x" + byteStr);
+			strBuf.append("0x" + byteStr); //$NON-NLS-1$
 			
 			counter++;
 		}
@@ -132,7 +132,7 @@ public class AfinionConnection extends AbstractConnection {
 		String packetNrStr = new Integer(pc_packet_nr).toString();
 		pc_packet_nr++;
 		while (packetNrStr.length() < 4) {
-			packetNrStr = "0" + packetNrStr;
+			packetNrStr = "0" + packetNrStr; //$NON-NLS-1$
 		}
 		return packetNrStr;
 	}
@@ -148,29 +148,29 @@ public class AfinionConnection extends AbstractConnection {
 		int minutes = this.currentCal.get(Calendar.MINUTE);
 		int seconds = this.currentCal.get(Calendar.SECOND);
 		
-		String dayStr = (day < 10 ? "0" : "") + Integer.valueOf(day).toString();
-		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString();
+		String dayStr = (day < 10 ? "0" : "") + Integer.valueOf(day).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		String yearStr = Integer.valueOf(year).toString();
-		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString();
-		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString();
-		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString();
+		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":"
+		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		+ secondStr;
 		strBuf.append(dateStr);
 	}
 	
 	private void addContentStart(ByteArrayOutputStream os){
-		debug("<DLE>");
+		debug("<DLE>"); //$NON-NLS-1$
 		os.write(DLE);
-		debug("<STX>");
+		debug("<STX>"); //$NON-NLS-1$
 		os.write(STX);
 	}
 	
 	private void addContentEnd(ByteArrayOutputStream os){
-		debug("<DLE>");
+		debug("<DLE>"); //$NON-NLS-1$
 		os.write(DLE);
-		debug("<ETB>");
+		debug("<ETB>"); //$NON-NLS-1$
 		os.write(ETB);
 	}
 	
@@ -179,33 +179,33 @@ public class AfinionConnection extends AbstractConnection {
 		
 		String crcStr = Long.toHexString(crc).toUpperCase();
 		while (crcStr.length() < 4) {
-			crcStr = "0" + crcStr;
+			crcStr = "0" + crcStr; //$NON-NLS-1$
 		}
 		debug(crcStr);
 		os.write(crcStr.getBytes());
-		debug("<DLE>");
+		debug("<DLE>"); //$NON-NLS-1$
 		os.write(DLE);
-		debug("<ETX>");
+		debug("<ETX>"); //$NON-NLS-1$
 		os.write(ETX);
-		debugln("");
+		debugln(""); //$NON-NLS-1$
 	}
 	
 	private void sendPacketACK(String packetNr){
-		debug("-->");
+		debug("-->"); //$NON-NLS-1$
 		
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			addContentStart(os);
 			debug(packetNr);
 			os.write(packetNr.getBytes());
-			debug("<ACK>");
+			debug("<ACK>"); //$NON-NLS-1$
 			os.write(ACK);
 			addContentEnd(os);
 			addEnding(os);
 			
-			debugln("Send: " + getByteStr(os.toByteArray()));
+			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
-				debugln("OK");
+				debugln("OK"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -213,7 +213,7 @@ public class AfinionConnection extends AbstractConnection {
 	}
 	
 	private void sendMessageACK(){
-		debug("-->");
+		debug("-->"); //$NON-NLS-1$
 		
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -221,15 +221,15 @@ public class AfinionConnection extends AbstractConnection {
 			String packetNr = nextPacketNr();
 			debug(packetNr);
 			os.write(packetNr.getBytes());
-			String cmdack = "0025:cmdack@";
+			String cmdack = "0025:cmdack@"; //$NON-NLS-1$
 			debug(cmdack);
 			os.write(cmdack.getBytes());
 			addContentEnd(os);
 			addEnding(os);
 			
-			debugln("Send: " + getByteStr(os.toByteArray()));
+			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
-				debugln("OK");
+				debugln("OK"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -237,21 +237,21 @@ public class AfinionConnection extends AbstractConnection {
 	}
 	
 	private void sendPacketNAK(String packetNr){
-		debug("-->");
+		debug("-->"); //$NON-NLS-1$
 		
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			addContentStart(os);
 			debug(packetNr);
 			os.write(packetNr.getBytes());
-			debug("<NAK>");
+			debug("<NAK>"); //$NON-NLS-1$
 			os.write(NAK);
 			addContentEnd(os);
 			addEnding(os);
 			
-			debugln("Send: " + getByteStr(os.toByteArray()));
+			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
-				debugln("OK");
+				debugln("OK"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -259,12 +259,12 @@ public class AfinionConnection extends AbstractConnection {
 	}
 	
 	private String sendPatRecordRequest(){
-		debug("-->");
+		debug("-->"); //$NON-NLS-1$
 		
 		StringBuffer contentBuf = new StringBuffer();
 		String packetNrStr = nextPacketNr();
 		contentBuf.append(packetNrStr);
-		contentBuf.append("0025:record,patient@");
+		contentBuf.append("0025:record,patient@"); //$NON-NLS-1$
 		addDate(contentBuf);
 		
 		try {
@@ -275,9 +275,9 @@ public class AfinionConnection extends AbstractConnection {
 			addContentEnd(os);
 			addEnding(os);
 			
-			debugln("Send: " + getByteStr(os.toByteArray()));
+			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
-				debugln("OK");
+				debugln("OK"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -288,25 +288,25 @@ public class AfinionConnection extends AbstractConnection {
 	
 	private String getText(int value){
 		if (value == NUL) {
-			return "<NUL>";
+			return "<NUL>"; //$NON-NLS-1$
 		}
 		if (value == STX) {
-			return "<STX>";
+			return "<STX>"; //$NON-NLS-1$
 		}
 		if (value == ETX) {
-			return "<ETX>";
+			return "<ETX>"; //$NON-NLS-1$
 		}
 		if (value == ACK) {
-			return "<ACK>";
+			return "<ACK>"; //$NON-NLS-1$
 		}
 		if (value == DLE) {
-			return "<DLE>";
+			return "<DLE>"; //$NON-NLS-1$
 		}
 		if (value == NAK) {
-			return "<NAK>";
+			return "<NAK>"; //$NON-NLS-1$
 		}
 		if (value == ETB) {
-			return "<ETB>";
+			return "<ETB>"; //$NON-NLS-1$
 		}
 		
 		return new Character((char) value).toString();
@@ -325,7 +325,7 @@ public class AfinionConnection extends AbstractConnection {
 			data = inputStream.read();
 		}
 		os.write(data);
-		debugln("");
+		debugln(""); //$NON-NLS-1$
 		debugln(getByteStr(os.toByteArray()));
 	}
 	
@@ -352,7 +352,7 @@ public class AfinionConnection extends AbstractConnection {
 	
 	private void acknowledge(final InputStream inputStream) throws IOException{
 		readToEnd(inputStream);
-		debugln("");
+		debugln(""); //$NON-NLS-1$
 		sendPacketACK(ackPacketNr);
 	}
 	
@@ -409,11 +409,11 @@ public class AfinionConnection extends AbstractConnection {
 		
 		int data = inputStream.read();
 		if (data == DLE) {
-			debug("<DLE>");
+			debug("<DLE>"); //$NON-NLS-1$
 			data = inputStream.read();
 			if (data == STX) {
-				debug("<STX>");
-				String packetNr = "";
+				debug("<STX>"); //$NON-NLS-1$
+				String packetNr = ""; //$NON-NLS-1$
 				for (int i = 0; i < 4; i++) {
 					data = inputStream.read();
 					packetNr += (char) data;
@@ -440,31 +440,31 @@ public class AfinionConnection extends AbstractConnection {
 						data = inputStream.read();
 					}
 					debug(logBuffer.toString());
-					debug("@");
+					debug("@"); //$NON-NLS-1$
 					String headerStr = header.toString();
-					if (headerStr.indexOf("0025:record,patient") != -1) {
+					if (headerStr.indexOf("0025:record,patient") != -1) { //$NON-NLS-1$
 						if (getState() == PAT_REQUEST_ACK) {
 							setState(RECORDS_READING);
 							handlePatientRecord(inputStream);
 						} else {
 							setState(WAIT_TIME_FINISHED);
 						}
-					} else if (headerStr.indexOf("0024:record.control") != -1) {
+					} else if (headerStr.indexOf("0024:record.control") != -1) { //$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("cmdack") != -1) {
+					} else if (headerStr.indexOf("cmdack") != -1) { //$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("cmderr") != -1) {
+					} else if (headerStr.indexOf("cmderr") != -1) { //$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("cmdcmpl") != -1) {
+					} else if (headerStr.indexOf("cmdcmpl") != -1) { //$NON-NLS-1$
 						setState(REQUEST_FINISHED);
-					} else if (headerStr.indexOf("debugmsg") != -1) {
+					} else if (headerStr.indexOf("debugmsg") != -1) { //$NON-NLS-1$
 						acknowledge(inputStream);
-					} else if (headerStr.indexOf("FFFF:IC") != -1) {
+					} else if (headerStr.indexOf("FFFF:IC") != -1) { //$NON-NLS-1$
 						acknowledge(inputStream);
 					}
 				}
 			} else if (data == ETX) {
-				debugln("<ETX>");
+				debugln("<ETX>"); //$NON-NLS-1$
 				if (ackPacketNr != null) {
 					sendPacketACK(ackPacketNr);
 					ackPacketNr = null;
@@ -474,7 +474,7 @@ public class AfinionConnection extends AbstractConnection {
 					shouldMessageAcknowledge = false;
 				}
 			} else if (data == ETB) {
-				debugln("<ETB>");
+				debugln("<ETB>"); //$NON-NLS-1$
 			} else {
 				if (debug) {
 					debug(getText(data));
