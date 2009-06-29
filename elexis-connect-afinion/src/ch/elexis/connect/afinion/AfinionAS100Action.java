@@ -65,24 +65,6 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		}
 	}
 	
-	/**
-	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
-	 * 
-	 * @param title
-	 *            Titel
-	 * @param message
-	 *            Nachricht
-	 */
-	public static void showError(final String title, final String message){
-		Desk.getDisplay().asyncExec(new Runnable() {
-			
-			public void run(){
-				Shell shell = Desk.getTopShell();
-				MessageDialog.openError(shell, title, message);
-			}
-		});
-	}
-	
 	@Override
 	public void run(){
 		if (isChecked()) {
