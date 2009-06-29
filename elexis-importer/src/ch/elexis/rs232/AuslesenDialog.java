@@ -86,12 +86,10 @@ public class AuslesenDialog extends Dialog implements
 	public void timeout() {
 	}
 
-	@Override
 	public void cancelled(){
 		
 	}
 
-	@Override
 	public void closed(){
 		
 	}
