@@ -32,7 +32,7 @@ public class HeaderPart extends AbstractPart {
 		
 		int dateSeconds = getInteger(bytes, 60); //Seconds since 1.1.1970 00:00 UTC
 		cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		cal.set(1999, 0, 1, 0, 0, 0);
+		cal.set(1970, 0, 1, 0, 0, 0);
 		cal.set(Calendar.SECOND, dateSeconds);
 		cal.getTime();
 	}
