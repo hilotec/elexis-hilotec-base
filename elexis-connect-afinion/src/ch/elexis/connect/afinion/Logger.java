@@ -36,13 +36,16 @@ public class Logger {
 	public void logRX(String s)
 	{
 		String debug = s.replace("<", "<LT>").replace(">", "<GT>");
+		debug = debug.replace("\000", "<NUL>");
 		debug = debug.replace("\001", "<SOH>");
 		debug = debug.replace("\002", "<STX>");
 		debug = debug.replace("\003", "<ETX>");
 		debug = debug.replace("\004", "<EOT>");
 		debug = debug.replace("\005", "<ENQ>");
 		debug = debug.replace("\006", "<ACK>");
+		debug = debug.replace("\016", "<DLE>");
 		debug = debug.replace("\021", "<NAK>");
+		debug = debug.replace("\023", "<ETB>");
 		debug = debug.replace(" ", "<SPACE>");
 		debug = debug.replace("\n", "<LF>");
 		debug = debug.replace("\t", "<HT>");
@@ -54,13 +57,16 @@ public class Logger {
 	public void logTX(String s)
 	{
 		String debug = s.replace("<", "<LT>").replace(">", "<GT>");
+		debug = debug.replace("\000", "<NUL>");
 		debug = debug.replace("\001", "<SOH>");
 		debug = debug.replace("\002", "<STX>");
 		debug = debug.replace("\003", "<ETX>");
 		debug = debug.replace("\004", "<EOT>");
 		debug = debug.replace("\005", "<ENQ>");
 		debug = debug.replace("\006", "<ACK>");
+		debug = debug.replace("\016", "<DLE>");
 		debug = debug.replace("\021", "<NAK>");
+		debug = debug.replace("\023", "<ETB>");
 		debug = debug.replace(" ", "<SPACE>");
 		debug = debug.replace("\n", "<LF>");
 		debug = debug.replace("\t", "<HT>");
