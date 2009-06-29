@@ -144,20 +144,12 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 					String name = null;
 					String patientStr = "Patient: Unbekannt (" + probe.getIdent() + ")\n";
 					if (probe.getIdent() != null) {
-						String patIdStr = probe.getIdent();
-						Long patId = null;
-						try {
-							patId = new Long(patIdStr);
-						} catch(NumberFormatException e) {
-							// Do nothing
-						}
+						String patName = probe.getIdent();
 						
-						// Patient-ID oder Name?
+						// Name/Vorname?
 						Query<Patient> patQuery = new Query<Patient>(Patient.class);
-						if (patId != null) {
-							patQuery.add(Patient.PATID, "=", patIdStr);
-						} else {
-							String[] parts = patIdStr.split(",");
+						if (patName != null && patName.length() > 0) {
+							String[] parts = patName.split(",");
 							if (parts.length > 1) {
 								vorname = parts[1].toUpperCase();
 								if (parts[1].length() > 1) {
@@ -172,15 +164,15 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 								}
 								patQuery.add(Patient.NAME, "like", name + "%");
 							}
-						}
-						
-						List<Patient> patientList = patQuery.execute();
-						
-						if (patientList.size() == 1) {
-							probePat = patientList.get(0);
-							patientStr =
-								"Patient: " + probePat.getName() + ", " + probePat.getVorname() + " ("
-									+ probe.getIdent() + ")\n";
+							
+							List<Patient> patientList = patQuery.execute();
+							
+							if (patientList.size() == 1) {
+								probePat = patientList.get(0);
+								patientStr =
+									"Patient: " + probePat.getName() + ", " + probePat.getVorname() + " ("
+										+ probe.getIdent() + ")\n";
+							}
 						}
 					}
 					
@@ -189,16 +181,10 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 					boolean ok = MessageDialog.openConfirm(Desk.getTopShell(), "Afinion AS100", text);
 					if (ok) {
 						boolean showSelectionDialog = false;
-						if (selectedPatient == null) {
-							if (probePat != null) {
-								selectedPatient = probePat;
-							} else {
-								showSelectionDialog = true;
-							}
+						if (probePat != null) {
+							selectedPatient = probePat;
 						} else {
-							if (probePat == null) {
-								showSelectionDialog = true;
-							}
+							showSelectionDialog = true;
 						}
 						
 						if (showSelectionDialog) {

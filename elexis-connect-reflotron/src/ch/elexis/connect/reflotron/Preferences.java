@@ -101,43 +101,6 @@ public class Preferences extends PreferencePage implements
 		log = new Button(ret, SWT.CHECK);
 		log.setSelection(Hub.localCfg.get(LOG, "n").equalsIgnoreCase("y"));
 
-		// Input lesen
-		Group group = new Group(ret, SWT.NONE);
-		group.setLayout(new GridLayout(3, false));
-		group.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
-		group.setText("Daten auslesen");
-
-		new Label(group, SWT.NONE).setText("Logdatei");
-		logFile = new Text(group, SWT.BORDER);
-		logFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		logFile.setText("C:/reflotron_data.txt");
-
-		Button btnBrowse = new Button(group, SWT.NONE);
-		btnBrowse.setText("Durchsuchen");
-
-		btnBrowse.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(getShell());
-				dialog.open();
-				if (dialog.getFileName() != null) {
-					logFile.setText(dialog.getFileName());
-				}
-			}
-
-		});
-
-		Button btnStart = new Button(group, SWT.NONE);
-		btnStart.setText("Start");
-
-		btnStart.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				startTest();
-			}
-		});
-
 		return ret;
 	}
 
