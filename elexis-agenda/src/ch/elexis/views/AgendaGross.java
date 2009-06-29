@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 5311 2009-05-17 14:41:45Z rgw_ch $
+ *  $Id: AgendaGross.java 5437 2009-06-29 06:17:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -133,6 +133,8 @@ public class AgendaGross extends BaseAgendaView {
 		bToday.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				TimeTool dat = new TimeTool();
+				agenda.setActDate(dat);
 				cal.setDate(agenda.getActDate().getTime());
 				updateDate();
 			}
