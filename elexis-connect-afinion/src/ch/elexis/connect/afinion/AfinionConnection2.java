@@ -18,11 +18,11 @@ public class AfinionConnection2 extends AbstractConnection {
 	private static final int DLE = 0x10;
 	private static final int NAK = 0x15;
 	private static final int ETB = 0x17;
+	private static final int LF = 0x0D;
 	
 	private static final long RESEND_IN_MS = 30000; // 30 Sekunden
 	
 	private boolean shouldMessageAcknowledge = false;
-	
 	
 	// Patientenrequest senden
 	public static final int SEND_PAT_REQUEST = 2;
@@ -114,6 +114,7 @@ public class AfinionConnection2 extends AbstractConnection {
 	
 	/**
 	 * Textausgabe für debugging
+	 * 
 	 * @param value
 	 * @return
 	 */
@@ -177,7 +178,7 @@ public class AfinionConnection2 extends AbstractConnection {
 		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ secondStr;
+			+ secondStr;
 		strBuf.append(dateStr);
 	}
 	
@@ -281,6 +282,7 @@ public class AfinionConnection2 extends AbstractConnection {
 	
 	/**
 	 * Patienteanfrage wird gesendet
+	 * 
 	 * @return
 	 */
 	private String sendPatRecordRequest(){
@@ -323,20 +325,36 @@ public class AfinionConnection2 extends AbstractConnection {
 				os.write(data);
 				data = inputStream.read();
 			}
+		}
+		debugln(""); //$NON-NLS-1$
+		debug(getByteStr(os.toByteArray()));
+		debugln("<DLE><ETX>");
+	}
+	
+	/**
+	 * Liest Stream bis zum nächsten <DEL><ETX>
+	 */
+	private void readToLF(final InputStream inputStream) throws IOException{
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		
+		int data = inputStream.read();
+		while (data != -1 && data != LF) {
 			os.write(data);
 			data = inputStream.read();
 		}
-		os.write(data);
 		debugln(""); //$NON-NLS-1$
-		debugln(getByteStr(os.toByteArray()));
+		debug(getByteStr(os.toByteArray()));
+		debugln("<LF>");
 	}
 	
 	/**
 	 * Liest Datenstream bis <DLE><ETX> und sendet anschliessend das Ack
+	 * 
 	 * @param inputStream
 	 * @throws IOException
 	 */
-	private void readToEndAndACK(final String packetNr, final InputStream inputStream) throws IOException{
+	private void readToEndAndACK(final String packetNr, final InputStream inputStream)
+		throws IOException{
 		readToEnd(inputStream);
 		debugln(""); //$NON-NLS-1$
 		if (packetNr != null) {
@@ -347,46 +365,38 @@ public class AfinionConnection2 extends AbstractConnection {
 	/**
 	 * Verarbeitet Patientendaten
 	 */
-	private void handlePatientRecord(final String packetNr, final InputStream inputStream) throws IOException{
-		StringBuffer logBuffer = new StringBuffer();
+	private void handlePatientRecord(final String packetNr, final InputStream inputStream)
+		throws IOException {
 		// nächste 2560 Bytes lesen
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		// <DLE><ETB> suchen
 		int data = inputStream.read();
-		int pos = 0;
 		while (data != -1 && data != ETB) {
 			while (data != -1 && data != DLE) {
-				if (debug) {
-					//logBuffer.append(getText(data));
-				}
 				baos.write(data);
 				data = inputStream.read();
-				pos++;
 			}
 			if (data == DLE) { // <DLE><DLE> wird zweites DLE nicht beachtet
 				data = inputStream.read();
 			}
-			if (debug) {
-				logBuffer.append(getText(data));
-			}
-			baos.write(data);
-			data = inputStream.read();
-			pos++;
 		}
+		
+		byte[] bytes = baos.toByteArray();
+		
 		if (debug) {
-			logBuffer.append(getText(data));
-			debugln(logBuffer.toString());
+			debug(getByteStr(bytes));
+			debugln("<DLE><ETB>");
 		}
 		
 		readToEnd(inputStream);
 		
-		if (baos.size() < 2560) {
+		if (bytes.length < 2560) {
 			sendPacketNAK(packetNr);
 		} else {
 			sendPacketACK(packetNr);
 			sendMessageACK();
-			listener.gotData(this, baos.toByteArray());
+			listener.gotData(this, bytes);
 		}
 	}
 	
@@ -409,26 +419,33 @@ public class AfinionConnection2 extends AbstractConnection {
 				// ACK/ NAK
 				data = inputStream.read();
 				if (data == NAK) {
-					// Do nothing
+					debug("<NAK>");
+					data = inputStream.read(); // <DLE>
+					debug(getText(data));
+					data = inputStream.read(); // <ETB>
+					debug(getText(data));
+					readToEnd(inputStream);
 				} else if (data == ACK) {
+					debug("<ACK>");
+					data = inputStream.read(); // <DLE>
+					debug(getText(data));
+					data = inputStream.read(); // <ETB>
+					debug(getText(data));
+					readToEnd(inputStream);
 					if (packetNr.equals(awaitPacketNr)) {
 						// Request wurde bestaetigt
 						setState(PAT_REQUEST_ACK);
 					}
 				} else {
-					StringBuffer logBuffer = new StringBuffer();
 					// Content lesen
 					StringBuffer header = new StringBuffer();
 					while ((data != -1) && (data != '@')) {
-						if (debug) {
-							logBuffer.append(getText(data));
-						}
 						header.append((char) data);
 						data = inputStream.read();
 					}
-					debug(logBuffer.toString());
-					debug("@"); //$NON-NLS-1$
 					String headerStr = header.toString();
+					debug(headerStr);
+					debug("@"); //$NON-NLS-1$
 					if (headerStr.indexOf("0025:record,patient") != -1) { //$NON-NLS-1$
 						if (getState() == PAT_REQUEST_ACK) {
 							handlePatientRecord(packetNr, inputStream);
@@ -450,12 +467,12 @@ public class AfinionConnection2 extends AbstractConnection {
 					}
 				}
 			} else {
-			   // Sollte nicht vorkommen
-		       readToEnd(inputStream);
+				// Sollte nicht vorkommen
+				readToEnd(inputStream);
 			}
 		} else {
 			// {Text} <LF>
-			readToEnd(inputStream);
+			readToLF(inputStream);
 		}
 		
 		if (getState() == SEND_PAT_REQUEST) {
@@ -480,22 +497,22 @@ public class AfinionConnection2 extends AbstractConnection {
 	public void serialEvent(final int state, final InputStream inputStream, final SerialPortEvent e)
 		throws IOException{
 		
-		switch(e.getEventType()) {
-        case SerialPortEvent.BI:
-        case SerialPortEvent.OE:
-        case SerialPortEvent.FE:
-        case SerialPortEvent.PE:
-        case SerialPortEvent.CD:
-        case SerialPortEvent.CTS:
-        case SerialPortEvent.DSR:
-        case SerialPortEvent.RI:
-        case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-            break;
-        case SerialPortEvent.DATA_AVAILABLE:
-        	dataAvailable(inputStream);
-            break;
-        }
-
+		switch (e.getEventType()) {
+		case SerialPortEvent.BI:
+		case SerialPortEvent.OE:
+		case SerialPortEvent.FE:
+		case SerialPortEvent.PE:
+		case SerialPortEvent.CD:
+		case SerialPortEvent.CTS:
+		case SerialPortEvent.DSR:
+		case SerialPortEvent.RI:
+		case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
+			break;
+		case SerialPortEvent.DATA_AVAILABLE:
+			dataAvailable(inputStream);
+			break;
+		}
+		
 	}
 	
 	@Override
@@ -508,5 +525,24 @@ public class AfinionConnection2 extends AbstractConnection {
 	public String connect(){
 		setState(SEND_PAT_REQUEST);
 		return super.connect();
+	}
+	
+	private String getStateText(int state){
+		switch (state) {
+		case SEND_PAT_REQUEST:
+			return "SEND_PAT_REQUEST";
+		case PAT_REQUEST_SENDED:
+			return "SEND_PAT_REQUEST";
+		case PAT_REQUEST_ACK:
+			return "SEND_PAT_REQUEST";
+		default:
+			break;
+		}
+		return "#" + state;
+	}
+	
+	public void setState(int state){
+		debugln(getStateText(getState()) + " -> " + getStateText(state));
+		super.setState(state);
 	}
 }
