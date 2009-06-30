@@ -51,7 +51,7 @@ public class AfinionConnection extends AbstractConnection {
 	private Calendar currentCal = new GregorianCalendar();
 	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
-	private static final boolean debug = true;
+	private static final boolean debug = false;
 	
 	public AfinionConnection(String portName, String port, String settings, ComPortListener l){
 		super(portName, port, settings, l);
