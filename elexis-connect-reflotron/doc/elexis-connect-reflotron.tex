@@ -37,14 +37,14 @@
 	\end{center}
 \pagebreak
 
-\section{EinfÃ¼hrung}
-Dieses Plugin dient dazu, das Laborger\"at 'Reflotron sprint'\footnote{Firma Roche Diagnostics} an Elexis anzubinden. Mit diesem Plugin k\"onnen die vom Reflotron gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
+\section{Einf\"uhrung}
+Dieses Plugin dient dazu, das Laborger\"at 'Reflotron sprint'\footnote{Firma Roche Diagnostics} an Elexis anzubinden. Mit diesem Plugin k\"onnen die, vom Reflotron gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
 
 \subsection{Voraussetzungen}
-Dieses Plugin ben\"otigt Elexis V1.4.0 oder h\"oher sowie einen Reflotron sprint Ger\"at. Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle (Alternative: USB To RS-232 Adapter) und ein korrekt gerade verdrahtetes serielles Kabel (kein Nullmodemkabel) zur Verbindung des Reflotrons mit dem PC ben\"otigt.
+Dieses Plugin ben\"otigt Elexis V1.4.1 oder h\"oher sowie einen Reflotron sprint Ger\"at. Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle (Alternative: USB To RS-232 Adapter) und ein korrekt gerade verdrahtetes serielles Kabel (kein Nullmodemkabel) zur Verbindung des Reflotrons mit dem PC ben\"otigt.
 
 \section{Installation und Konfiguration}
-Installieren Sie auf dem im Labor befindlichen PC das Plugin wie gewohnt. Verbinden Sie dann bei \textbf{ausgeschalteten} Ger\"aten den Reflotron mit der einem seriellen Port des Computers. 
+Installieren Sie auf dem, sich im Labor befindlichen PC das Plugin wie gewohnt. Verbinden Sie dann bei \textbf{ausgeschalteten} Ger\"aten den Reflotron mit einem seriellen Port des Computers. 
 \subsection{Daten\"ubertragung am Reflotron einschalten}
 Die serielle Datenkommunikation ist im Reflotron standardm\"assig inaktiv. Damit das Reflotron Ger\"at Daten \"uber die Schnittstelle an den Computer sendet, muss die Daten\"ubertragung eingeschaltet werden. Wie dies gemacht wird, ist im Manual zum Reflotron im Kapitel 6 (Insbesondere Seite 6.9) beschrieben. Es folgt hier nur eine Kurzform f\"ur ge\"ubte Techniker:\\
 F2, User Level Setup\\
@@ -63,13 +63,13 @@ BCC: Odd\\
 \\
 Mit Esc zur\"uck (Werte sind gespeichert).
 \subsection{Elexis Konfiguration}
-Starten Sie dann Elexis und gehen Sie dort zu \textsc{Datei-Einstellungen-Datenaustausch-Roche Reflotron sprint} (S. Abb. \ref{fig:config}).
+Starten Sie Elexis und gehen Sie dort zu \textsc{Datei-Einstellungen-Datenaustausch-Roche Reflotron sprint} (S. Abb. \ref{fig:config}).
 \begin{figure}[h]
     \includegraphics{config}
     \caption{Einstellungen Reflotron sprint}
     \label{fig:config}
 \end{figure}
-Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte m\"ussen mit den Einstellungen auf dem Reflotron Ger\"at \"ubereinstimmen. Wichtig: Nach dem \"Andern dieser Parameter m\"ussen Sie Elexis neu starten.
+Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte m\"ussen mit den Einstellungen auf dem Reflotron Ger\"at \"ubereinstimmen. Der Wert Timeout (Sek) bestimmt, wie lange Elexis maximal auf Resultate warten soll, bevor die Verbindung getrennt wird. Die Option Logging verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unnötigen Daten gefülllt. Wichtig: Nach dem \"Andern dieser Parameter m\"ussen Sie Elexis neu starten.
 
 \section{Verwendung}
 \begin{figure}[h]
@@ -102,9 +102,9 @@ Damit eine automatische Zuweisung des Patienten m\"oglich wird, muss auf dem Ref
 \\
 Eingabeformat: \textbf{Namen,Vornamen} (ohne Leerzeichen nach dem Komma!)\\
 \\
-Der Patientennamen k\"onnen Sie nach Dr\"ucken der Taste Home erfassen und mit Enter auf die aktive Messkammer \"ubernehmen. Das m\"ussen Sie tun, bevor Sie die Messkammer schliessen.\\
+Den Patientennamen k\"onnen Sie nach Dr\"ucken der Taste Home erfassen und mit Enter auf die aktive Messkammer \"ubernehmen. Das m\"ussen Sie tun, bevor Sie die Messkammer schliessen.\\
 \\
-Das Reflotron verlangt von Zeit zu Zeit die Checkstreifen. Bei solchen Check Messungen messen Sie keine Patienten Proben in einer andern Messkammer und stellen Sie Elexis dabei auch nicht auf Empfang. Die Fehlermeldung des Ger\"ates "Kein Datentransfer"  k\"onnen Sie in diesem Fall ignorieren.
+Das Reflotron verlangt von Zeit zu Zeit die Checkstreifen. Bei solchen Check Messungen messen Sie keine Patienten Proben in einer andern Messkammer und stellen Sie Elexis dabei auch nicht auf Empfang. Die Fehlermeldung des Ger\"ates 'Kein Datentransfer'  k\"onnen Sie in diesem Fall ignorieren.
 
 \section{Plattformen}
 Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, dass unter Linux die seriellen Ports nicht COM1 usw., sondern /dev/ttyS0 usw. heissen.
@@ -115,5 +115,5 @@ Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, das
     \caption{Reflotron Kabelkonfiguration}
     \label{fig:kabel}
 \end{figure}
-Es wird ein normales serielles Kabel ben\"otigt (kein Nulllmodemkabel!). Das Kabel muss vom 25-poligen Stecker (m\"annlich) auf den 9-poligen Stecker (weiblich) gem\"ass Abb. \ref{fig:kabel} verdrahtet sein.
+Es wird ein normales serielles Kabel ben\"otigt (kein Nullmodemkabel!). Das Kabel muss vom 25-poligen Stecker (m\"annlich) auf den 9-poligen Stecker (weiblich) gem\"ass Abb. \ref{fig:kabel} verdrahtet sein.
 \end{document}
