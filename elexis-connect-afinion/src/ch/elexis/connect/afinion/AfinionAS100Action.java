@@ -27,7 +27,7 @@ import ch.elexis.util.SWTHelper;
 
 public class AfinionAS100Action extends Action implements ComPortListener {
 	
-	AfinionConnection _ctrl;
+	AfinionConnection2 _ctrl;
 	Labor _myLab;
 	Thread msgDialogThread;
 	Thread infoDialogThread;
@@ -47,15 +47,18 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new AfinionConnection(Messages.getString("AfinionAS100Action.ConnectionName"), //$NON-NLS-1$
+			new AfinionConnection2(Messages.getString("AfinionAS100Action.ConnectionName"), //$NON-NLS-1$
 				Hub.localCfg.get(Preferences.PORT, Messages
 					.getString("AfinionAS100Action.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
 					Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")), //$NON-NLS-1$
 				this);
 		
-		
+		// 00:00:00 des heutigen Tages
 		Calendar cal = new GregorianCalendar();
-		cal.add(Calendar.HOUR, -1);
+		cal.add(Calendar.DATE, -200);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
 		_ctrl.setCurrentDate(cal);
 		
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -264,9 +267,16 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			byte[] subbytes = subBytes(data, pos, 256);
 			Record tmpRecord = new Record(subbytes);
 			if (tmpRecord.isValid()) {
-				lastRecord = tmpRecord;
-				//System.out.println(lastRecord.toString());
-				validRecords++;
+				Calendar lastCal = null;
+				if (lastRecord != null) {
+					lastCal = lastRecord.getCalendar();
+				}
+				Calendar tmpCal = tmpRecord.getCalendar();
+				if (lastCal == null || lastCal.before(tmpCal)) {
+					lastRecord = tmpRecord;
+					System.out.println(lastRecord.toString());
+					validRecords++;
+				}
 			}
 			pos += 256;
 			i++;

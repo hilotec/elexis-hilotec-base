@@ -7,9 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import ch.elexis.rs232.AbstractConnection;
 
+/**
+ * Ueberarbeitete Version des Handshakes zwischen PC und Afinion
+ * @author immi
+ *
+ */
 public class AfinionConnection2 extends AbstractConnection {
 	private static final int NUL = 0x00;
 	private static final int STX = 0x02;
@@ -20,10 +26,15 @@ public class AfinionConnection2 extends AbstractConnection {
 	private static final int ETB = 0x17;
 	private static final int LF = 0x0D;
 	
+	private static final long STARTUP_DELAY_IN_MS = 0; // 60 Sekunden
 	private static final long RESEND_IN_MS = 30000; // 30 Sekunden
 	
 	private boolean shouldMessageAcknowledge = false;
 	
+	// Initialisierung
+	public static final int INIT = 0;
+	// 1 Minute warten
+	public static final int WAITING = 1;
 	// Patientenrequest senden
 	public static final int SEND_PAT_REQUEST = 2;
 	// Patient Record Request gesendet. Wartet auf Record Ack Meldung
@@ -40,11 +51,11 @@ public class AfinionConnection2 extends AbstractConnection {
 	private Calendar currentCal = new GregorianCalendar();
 	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
-	private static final boolean debug = false;
+	private static final boolean debug = true;
 	
 	public AfinionConnection2(String portName, String port, String settings, ComPortListener l){
 		super(portName, port, settings, l);
-		setState(SEND_PAT_REQUEST);
+		setState(INIT);
 	}
 	
 	public void setCurrentDate(Calendar cal){
@@ -325,9 +336,10 @@ public class AfinionConnection2 extends AbstractConnection {
 				os.write(data);
 				data = inputStream.read();
 			}
+			data = inputStream.read();
 		}
-		debugln(""); //$NON-NLS-1$
-		debug(getByteStr(os.toByteArray()));
+		
+		debug(os.toString());
 		debugln("<DLE><ETX>");
 	}
 	
@@ -342,8 +354,7 @@ public class AfinionConnection2 extends AbstractConnection {
 			os.write(data);
 			data = inputStream.read();
 		}
-		debugln(""); //$NON-NLS-1$
-		debug(getByteStr(os.toByteArray()));
+		debug("...");
 		debugln("<LF>");
 	}
 	
@@ -380,6 +391,7 @@ public class AfinionConnection2 extends AbstractConnection {
 			if (data == DLE) { // <DLE><DLE> wird zweites DLE nicht beachtet
 				data = inputStream.read();
 			}
+			data = inputStream.read();
 		}
 		
 		byte[] bytes = baos.toByteArray();
@@ -449,6 +461,8 @@ public class AfinionConnection2 extends AbstractConnection {
 					if (headerStr.indexOf("0025:record,patient") != -1) { //$NON-NLS-1$
 						if (getState() == PAT_REQUEST_ACK) {
 							handlePatientRecord(packetNr, inputStream);
+						} else {
+							readToEndAndACK(packetNr, inputStream);
 						}
 					} else if (headerStr.indexOf("0024:record.control") != -1) { //$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
@@ -475,19 +489,34 @@ public class AfinionConnection2 extends AbstractConnection {
 			readToLF(inputStream);
 		}
 		
-		if (getState() == SEND_PAT_REQUEST) {
-			awaitPacketNr = sendPatRecordRequest();
-			setState(PAT_REQUEST_SENDED);
+		// Initialisierung
+		if (getState() == INIT) {
+			last_time_ms = new GregorianCalendar().getTimeInMillis();
+			setState(WAITING);
 		}
 		
+		// 1 Minute delay 
+		if (getState() == WAITING) {
+			long time_ms = new GregorianCalendar().getTimeInMillis();
+			if (time_ms - last_time_ms > STARTUP_DELAY_IN_MS) {
+				setState(SEND_PAT_REQUEST);
+				last_time_ms = new GregorianCalendar().getTimeInMillis();
+			}
+		}
+			
 		// Überprüft Status. Nach x Sekunden wird Request nochmals gesendet
-		if (getState() == PAT_REQUEST_SENDED) {
+		if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
 			// Resend nach 30 sekunden
 			long time_ms = new GregorianCalendar().getTimeInMillis();
 			if (time_ms - last_time_ms > RESEND_IN_MS) {
 				setState(SEND_PAT_REQUEST);
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
+		}
+		
+		if (getState() == SEND_PAT_REQUEST) {
+			awaitPacketNr = sendPatRecordRequest();
+			setState(PAT_REQUEST_SENDED);
 		}
 	}
 	
@@ -517,18 +546,22 @@ public class AfinionConnection2 extends AbstractConnection {
 	
 	@Override
 	public void breakInterrupt(final int state){
-		setState(SEND_PAT_REQUEST);
+		setState(INIT);
 		super.breakInterrupt(state);
 	}
 	
 	@Override
 	public String connect(){
-		setState(SEND_PAT_REQUEST);
+		setState(INIT);
 		return super.connect();
 	}
 	
 	private String getStateText(int state){
 		switch (state) {
+		case INIT:
+			return "INIT";
+		case WAITING:
+			return "WAITING";
 		case SEND_PAT_REQUEST:
 			return "SEND_PAT_REQUEST";
 		case PAT_REQUEST_SENDED:
