@@ -413,7 +413,7 @@ public class AfinionConnection2 extends AbstractConnection {
 	}
 	
 	private void dataAvailable(final InputStream inputStream) throws IOException{
-		
+		debug("<--"); //$NON-NLS-1$
 		int data = inputStream.read();
 		if (data == DLE) {
 			debug("<DLE>"); //$NON-NLS-1$
