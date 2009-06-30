@@ -7,16 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import ch.elexis.rs232.AbstractConnection;
 
-/**
- * Ueberarbeitete Version des Handshakes zwischen PC und Afinion
- * @author immi
- *
- */
-public class AfinionConnection2 extends AbstractConnection {
+public class AfinionConnectionOld extends AbstractConnection {
 	private static final int NUL = 0x00;
 	private static final int STX = 0x02;
 	private static final int ETX = 0x03;
@@ -24,25 +18,29 @@ public class AfinionConnection2 extends AbstractConnection {
 	private static final int DLE = 0x10;
 	private static final int NAK = 0x15;
 	private static final int ETB = 0x17;
-	private static final int LF = 0x0D;
 	
-	private static final long STARTUP_DELAY_IN_MS = 0; // 60 Sekunden
+	private static final long WAIT_IN_MS = 1000; // 1 Sekunden
 	private static final long RESEND_IN_MS = 30000; // 30 Sekunden
 	
 	private boolean shouldMessageAcknowledge = false;
 	
-	// Initialisierung
+	// Abfrage noch nicht gestartet
 	public static final int INIT = 0;
 	// 1 Minute warten
 	public static final int WAITING = 1;
-	// Patientenrequest senden
-	public static final int SEND_PAT_REQUEST = 2;
-	// Patient Record Request gesendet. Wartet auf Record Ack Meldung
-	public static final int PAT_REQUEST_SENDED = 3;
-	// Patient Record Request Acknowledge erhalten. Nun können Daten gelesen werden.
-	public static final int PAT_REQUEST_ACK = 4;
+	// 1 Minute Wartezeit vorbei
+	public static final int SEND_REQUEST = 2;
+	// Patient Record Request gesendet. Wartet auf Record Meldung
+	public static final int PAT_REQUEST_SENDED = 4;
+	// Patient Record Request acknowledge
+	public static final int PAT_REQUEST_ACK = 5;
+	// Records werden gelesen
+	public static final int RECORDS_READING = 6;
+	// Request beendet
+	public static final int REQUEST_FINISHED = 7;
 	
 	private String awaitPacketNr;
+	private String ackPacketNr = null;
 	
 	private static int pc_packet_nr = 21;
 	
@@ -51,9 +49,9 @@ public class AfinionConnection2 extends AbstractConnection {
 	private Calendar currentCal = new GregorianCalendar();
 	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
-	private static final boolean debug = true;
+	private static final boolean debug = false;
 	
-	public AfinionConnection2(String portName, String port, String settings, ComPortListener l){
+	public AfinionConnectionOld(String portName, String port, String settings, ComPortListener l){
 		super(portName, port, settings, l);
 		setState(INIT);
 	}
@@ -86,6 +84,9 @@ public class AfinionConnection2 extends AbstractConnection {
 	
 	/**
 	 * Crc calculation
+	 * 
+	 * @param array
+	 * @return
 	 */
 	private static long getCrc(byte[] array){
 		char crc = 0xFFFF;
@@ -98,9 +99,6 @@ public class AfinionConnection2 extends AbstractConnection {
 		return crc;
 	}
 	
-	/**
-	 * Retourniert Byte-Array als Textausgabe.
-	 */
 	private String getByteStr(byte[] bytes){
 		StringBuffer strBuf = new StringBuffer();
 		int counter = 1;
@@ -121,38 +119,6 @@ public class AfinionConnection2 extends AbstractConnection {
 			counter++;
 		}
 		return strBuf.toString();
-	}
-	
-	/**
-	 * Textausgabe für debugging
-	 * 
-	 * @param value
-	 * @return
-	 */
-	private String getText(int value){
-		if (value == NUL) {
-			return "<NUL>"; //$NON-NLS-1$
-		}
-		if (value == STX) {
-			return "<STX>"; //$NON-NLS-1$
-		}
-		if (value == ETX) {
-			return "<ETX>"; //$NON-NLS-1$
-		}
-		if (value == ACK) {
-			return "<ACK>"; //$NON-NLS-1$
-		}
-		if (value == DLE) {
-			return "<DLE>"; //$NON-NLS-1$
-		}
-		if (value == NAK) {
-			return "<NAK>"; //$NON-NLS-1$
-		}
-		if (value == ETB) {
-			return "<ETB>"; //$NON-NLS-1$
-		}
-		
-		return new Character((char) value).toString();
 	}
 	
 	/**
@@ -189,7 +155,7 @@ public class AfinionConnection2 extends AbstractConnection {
 		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ secondStr;
+		+ secondStr;
 		strBuf.append(dateStr);
 	}
 	
@@ -291,11 +257,6 @@ public class AfinionConnection2 extends AbstractConnection {
 		}
 	}
 	
-	/**
-	 * Patienteanfrage wird gesendet
-	 * 
-	 * @return
-	 */
 	private String sendPatRecordRequest(){
 		debug("-->"); //$NON-NLS-1$
 		
@@ -324,9 +285,32 @@ public class AfinionConnection2 extends AbstractConnection {
 		return packetNrStr;
 	}
 	
-	/**
-	 * Liest Stream bis zum nächsten <DEL><ETX>
-	 */
+	private String getText(int value){
+		if (value == NUL) {
+			return "<NUL>"; //$NON-NLS-1$
+		}
+		if (value == STX) {
+			return "<STX>"; //$NON-NLS-1$
+		}
+		if (value == ETX) {
+			return "<ETX>"; //$NON-NLS-1$
+		}
+		if (value == ACK) {
+			return "<ACK>"; //$NON-NLS-1$
+		}
+		if (value == DLE) {
+			return "<DLE>"; //$NON-NLS-1$
+		}
+		if (value == NAK) {
+			return "<NAK>"; //$NON-NLS-1$
+		}
+		if (value == ETB) {
+			return "<ETB>"; //$NON-NLS-1$
+		}
+		
+		return new Character((char) value).toString();
+	}
+	
 	private void readToEnd(final InputStream inputStream) throws IOException{
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		
@@ -336,187 +320,174 @@ public class AfinionConnection2 extends AbstractConnection {
 				os.write(data);
 				data = inputStream.read();
 			}
-			data = inputStream.read();
-		}
-		
-		debug(os.toString());
-		debugln("<DLE><ETX>");
-	}
-	
-	/**
-	 * Liest Stream bis zum nächsten <DEL><ETX>
-	 */
-	private void readToLF(final InputStream inputStream) throws IOException{
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
-		int data = inputStream.read();
-		while (data != -1 && data != LF) {
 			os.write(data);
 			data = inputStream.read();
 		}
-		debug("...");
-		debugln("<LF>");
+		os.write(data);
+		debugln(""); //$NON-NLS-1$
+		debugln(getByteStr(os.toByteArray()));
 	}
 	
-	/**
-	 * Liest Datenstream bis <DLE><ETX> und sendet anschliessend das Ack
-	 * 
-	 * @param inputStream
-	 * @throws IOException
-	 */
-	private void readToEndAndACK(final String packetNr, final InputStream inputStream)
-		throws IOException{
-		readToEnd(inputStream);
-		debugln(""); //$NON-NLS-1$
-		if (packetNr != null) {
-			sendPacketACK(packetNr);
+	private void checkState(){
+		if (getState() == INIT) {
+			setState(WAITING);
+			last_time_ms = new GregorianCalendar().getTimeInMillis();
+		} else if (getState() == WAITING) {
+			// 1 Minute warten bis Request gesendet wird.
+			long time_ms = new GregorianCalendar().getTimeInMillis();
+			if (time_ms - last_time_ms > WAIT_IN_MS) {
+				setState(SEND_REQUEST);
+				last_time_ms = new GregorianCalendar().getTimeInMillis();
+			}
+		} else if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
+			// Resend nach 10 sekunden
+			long time_ms = new GregorianCalendar().getTimeInMillis();
+			if (time_ms - last_time_ms > RESEND_IN_MS) {
+				setState(SEND_REQUEST);
+				last_time_ms = new GregorianCalendar().getTimeInMillis();
+			}
 		}
 	}
 	
-	/**
-	 * Verarbeitet Patientendaten
-	 */
-	private void handlePatientRecord(final String packetNr, final InputStream inputStream)
-		throws IOException {
+	private void acknowledge(final InputStream inputStream) throws IOException{
+		readToEnd(inputStream);
+		debugln(""); //$NON-NLS-1$
+		if (ackPacketNr != null) {
+			sendPacketACK(ackPacketNr);
+		}
+	}
+	
+	private void handlePatientRecord(final InputStream inputStream) throws IOException{
+		StringBuffer logBuffer = new StringBuffer();
 		// nächste 2560 Bytes lesen
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		// <DLE><ETB> suchen
 		int data = inputStream.read();
+		int pos = 0;
 		while (data != -1 && data != ETB) {
 			while (data != -1 && data != DLE) {
+				if (debug) {
+					//logBuffer.append(getText(data));
+				}
 				baos.write(data);
 				data = inputStream.read();
+				pos++;
 			}
 			if (data == DLE) { // <DLE><DLE> wird zweites DLE nicht beachtet
 				data = inputStream.read();
 			}
+			if (debug) {
+				logBuffer.append(getText(data));
+			}
+			baos.write(data);
 			data = inputStream.read();
+			pos++;
 		}
-		
-		byte[] bytes = baos.toByteArray();
-		
 		if (debug) {
-			debug(getByteStr(bytes));
-			debugln("<DLE><ETB>");
+			logBuffer.append(getText(data));
+			debugln(logBuffer.toString());
 		}
 		
 		readToEnd(inputStream);
-		
-		if (bytes.length < 2560) {
-			sendPacketNAK(packetNr);
+		if (baos.size() < 2560) {
+			sendPacketNAK(ackPacketNr);
 		} else {
-			sendPacketACK(packetNr);
+			sendPacketACK(ackPacketNr);
 			sendMessageACK();
-			listener.gotData(this, bytes);
+			listener.gotData(this, baos.toByteArray());
 		}
 	}
 	
-	private void dataAvailable(final InputStream inputStream) throws IOException{
-		debug("<--"); //$NON-NLS-1$
+	private void handleEvent(final InputStream inputStream) throws IOException{
+		
+		checkState();
+		
+		if (getState() == SEND_REQUEST) {
+			awaitPacketNr = sendPatRecordRequest();
+			setState(PAT_REQUEST_SENDED);
+		}
+		
 		int data = inputStream.read();
 		if (data == DLE) {
 			debug("<DLE>"); //$NON-NLS-1$
 			data = inputStream.read();
 			if (data == STX) {
 				debug("<STX>"); //$NON-NLS-1$
-				
 				String packetNr = ""; //$NON-NLS-1$
 				for (int i = 0; i < 4; i++) {
 					data = inputStream.read();
 					packetNr += (char) data;
 				}
 				debug(packetNr);
-				
+				if (!packetNr.equals(awaitPacketNr)) {
+					ackPacketNr = packetNr;
+				} else {
+					setState(PAT_REQUEST_ACK);
+				}
 				// ACK/ NAK
 				data = inputStream.read();
-				if (data == NAK) {
-					debug("<NAK>");
-					data = inputStream.read(); // <DLE>
-					debug(getText(data));
-					data = inputStream.read(); // <ETB>
-					debug(getText(data));
-					readToEnd(inputStream);
-				} else if (data == ACK) {
-					debug("<ACK>");
-					data = inputStream.read(); // <DLE>
-					debug(getText(data));
-					data = inputStream.read(); // <ETB>
-					debug(getText(data));
-					readToEnd(inputStream);
-					if (packetNr.equals(awaitPacketNr)) {
-						// Request wurde bestaetigt
-						setState(PAT_REQUEST_ACK);
-					}
+				if (data == NAK || data == ACK) {
+					// Ok, nichts zu machen
 				} else {
+					StringBuffer logBuffer = new StringBuffer();
 					// Content lesen
 					StringBuffer header = new StringBuffer();
 					while ((data != -1) && (data != '@')) {
+						if (debug) {
+							logBuffer.append(getText(data));
+						}
 						header.append((char) data);
 						data = inputStream.read();
 					}
-					String headerStr = header.toString();
-					debug(headerStr);
+					debug(logBuffer.toString());
 					debug("@"); //$NON-NLS-1$
+					String headerStr = header.toString();
 					if (headerStr.indexOf("0025:record,patient") != -1) { //$NON-NLS-1$
 						if (getState() == PAT_REQUEST_ACK) {
-							handlePatientRecord(packetNr, inputStream);
-						} else {
-							readToEndAndACK(packetNr, inputStream);
+							setState(RECORDS_READING);
+							handlePatientRecord(inputStream);
 						}
 					} else if (headerStr.indexOf("0024:record.control") != -1) { //$NON-NLS-1$
-						readToEndAndACK(packetNr, inputStream);
+						acknowledge(inputStream);
 					} else if (headerStr.indexOf("cmdack") != -1) {//$NON-NLS-1$
-						readToEndAndACK(packetNr, inputStream);
+						acknowledge(inputStream);
 					} else if (headerStr.indexOf("cmderr") != -1) {//$NON-NLS-1$
-						readToEndAndACK(packetNr, inputStream);
-						setState(SEND_PAT_REQUEST);
+						acknowledge(inputStream);
+						setState(SEND_REQUEST);
 					} else if (headerStr.indexOf("cmdcmpl") != -1) {//$NON-NLS-1$
-						readToEndAndACK(packetNr, inputStream);
-						setState(SEND_PAT_REQUEST);
+						acknowledge(inputStream);
+						setState(SEND_REQUEST);
 					} else if (headerStr.indexOf("debugmsg") != -1) {//$NON-NLS-1$
-						readToEndAndACK(packetNr, inputStream);
+						acknowledge(inputStream);
 					} else if (headerStr.indexOf("FFFF:IC") != -1) {//$NON-NLS-1$
-						readToEndAndACK(packetNr, inputStream);
+						acknowledge(inputStream);
 					}
 				}
+			} else if (data == ETX) {
+				debugln("<ETX>"); //$NON-NLS-1$
+				if (ackPacketNr != null) {
+					sendPacketACK(ackPacketNr);
+					ackPacketNr = null;
+				}
+				if (shouldMessageAcknowledge) {
+					sendMessageACK();
+					shouldMessageAcknowledge = false;
+				}
+			} else if (data == ETB) {
+				debugln("<ETB>"); //$NON-NLS-1$
 			} else {
-				// Sollte nicht vorkommen
-				readToEnd(inputStream);
+				if (debug) {
+					//debug(getText(data));
+				}
 			}
+		} else if (data == NUL) {
+			// NUL ignorieren
+			while ((data = inputStream.read()) == NUL) {}
 		} else {
-			// {Text} <LF>
-			readToLF(inputStream);
-		}
-		
-		// Initialisierung
-		if (getState() == INIT) {
-			last_time_ms = new GregorianCalendar().getTimeInMillis();
-			setState(WAITING);
-		}
-		
-		// 1 Minute delay 
-		if (getState() == WAITING) {
-			long time_ms = new GregorianCalendar().getTimeInMillis();
-			if (time_ms - last_time_ms > STARTUP_DELAY_IN_MS) {
-				setState(SEND_PAT_REQUEST);
-				last_time_ms = new GregorianCalendar().getTimeInMillis();
+			if (debug) {
+				//debug(getText(data));
 			}
-		}
-			
-		// Überprüft Status. Nach x Sekunden wird Request nochmals gesendet
-		if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
-			// Resend nach 30 sekunden
-			long time_ms = new GregorianCalendar().getTimeInMillis();
-			if (time_ms - last_time_ms > RESEND_IN_MS) {
-				setState(SEND_PAT_REQUEST);
-				last_time_ms = new GregorianCalendar().getTimeInMillis();
-			}
-		}
-		
-		if (getState() == SEND_PAT_REQUEST) {
-			awaitPacketNr = sendPatRecordRequest();
-			setState(PAT_REQUEST_SENDED);
 		}
 	}
 	
@@ -526,22 +497,16 @@ public class AfinionConnection2 extends AbstractConnection {
 	public void serialEvent(final int state, final InputStream inputStream, final SerialPortEvent e)
 		throws IOException{
 		
-		switch (e.getEventType()) {
-		case SerialPortEvent.BI:
-		case SerialPortEvent.OE:
-		case SerialPortEvent.FE:
-		case SerialPortEvent.PE:
-		case SerialPortEvent.CD:
-		case SerialPortEvent.CTS:
-		case SerialPortEvent.DSR:
-		case SerialPortEvent.RI:
-		case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-			break;
-		case SerialPortEvent.DATA_AVAILABLE:
-			dataAvailable(inputStream);
-			break;
+		try {
+			handleEvent(inputStream);
+		} catch (IOException ex) {
+			if (ackPacketNr != null) {
+				sendPacketNAK(ackPacketNr);
+				ackPacketNr = null;
+			}
+			;
+			throw ex;
 		}
-		
 	}
 	
 	@Override
@@ -554,28 +519,5 @@ public class AfinionConnection2 extends AbstractConnection {
 	public String connect(){
 		setState(INIT);
 		return super.connect();
-	}
-	
-	private String getStateText(int state){
-		switch (state) {
-		case INIT:
-			return "INIT";
-		case WAITING:
-			return "WAITING";
-		case SEND_PAT_REQUEST:
-			return "SEND_PAT_REQUEST";
-		case PAT_REQUEST_SENDED:
-			return "SEND_PAT_REQUEST";
-		case PAT_REQUEST_ACK:
-			return "SEND_PAT_REQUEST";
-		default:
-			break;
-		}
-		return "#" + state;
-	}
-	
-	public void setState(int state){
-		debugln(getStateText(getState()) + " -> " + getStateText(state));
-		super.setState(state);
 	}
 }

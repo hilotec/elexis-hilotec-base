@@ -27,7 +27,7 @@ import ch.elexis.util.SWTHelper;
 
 public class AfinionAS100Action extends Action implements ComPortListener {
 	
-	AfinionConnection2 _ctrl;
+	AfinionConnection _ctrl;
 	Labor _myLab;
 	Thread msgDialogThread;
 	Thread infoDialogThread;
@@ -47,16 +47,16 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new AfinionConnection2(Messages.getString("AfinionAS100Action.ConnectionName"), //$NON-NLS-1$
+			new AfinionConnection(Messages.getString("AfinionAS100Action.ConnectionName"), //$NON-NLS-1$
 				Hub.localCfg.get(Preferences.PORT, Messages
 					.getString("AfinionAS100Action.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
 					Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")), //$NON-NLS-1$
 				this);
 		
-		// 00:00:00 des heutigen Tages
+		// 01:00:00 des heutigen Tages
 		Calendar cal = new GregorianCalendar();
-		cal.add(Calendar.DATE, -200);
-		cal.set(Calendar.HOUR, 0);
+		cal.add(Calendar.DATE, -1);
+		cal.add(Calendar.HOUR, -cal.get(Calendar.HOUR_OF_DAY));
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		_ctrl.setCurrentDate(cal);
