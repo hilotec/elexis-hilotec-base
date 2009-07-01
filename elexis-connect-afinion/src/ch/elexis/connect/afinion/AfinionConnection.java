@@ -396,7 +396,6 @@ public class AfinionConnection extends AbstractConnection {
 				}
 				data = inputStream.read();
 			}
-			data = inputStream.read();
 		}
 		
 		byte[] bytes = baos.toByteArray();
