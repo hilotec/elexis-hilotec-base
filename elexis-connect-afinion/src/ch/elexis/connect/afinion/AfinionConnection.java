@@ -389,6 +389,11 @@ public class AfinionConnection extends AbstractConnection {
 				data = inputStream.read();
 			}
 			if (data == DLE) { // <DLE><DLE> wird zweites DLE nicht beachtet
+				baos.write(data);
+				data = inputStream.read();
+				if (data != DLE) {
+					baos.write(data);
+				}
 				data = inputStream.read();
 			}
 			data = inputStream.read();
