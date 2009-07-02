@@ -27,10 +27,11 @@ public class Preferences extends PreferencePage implements
 	public static final String TIMEOUT = REFLOTRON_BASE + "timeout"; //$NON-NLS-1$
 	public static final String PARAMS = REFLOTRON_BASE + "params"; //$NON-NLS-1$
 	public static final String LOG = REFLOTRON_BASE + "log"; //$NON-NLS-1$
+	public static final String BACKGROUND = REFLOTRON_BASE + "background"; //$NON-NLS-1$
 
 	Combo ports;
 	Text speed, data, stop, timeout, logFile;
-	Button parity, log;
+	Button parity, log, background;
 
 	public Preferences() {
 		super(Messages.getString("ReflotronSprintAction.ButtonName")); //$NON-NLS-1$
@@ -87,6 +88,10 @@ public class Preferences extends PreferencePage implements
 				.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
 		timeout = new Text(ret, SWT.BORDER);
 		timeout.setText(timeoutStr);
+		
+		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Backgroundprocess")); //$NON-NLS-1$
+		background = new Button(ret, SWT.CHECK);
+		background.setSelection(Hub.localCfg.get(BACKGROUND, "n").equalsIgnoreCase("y")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		new Label(ret, SWT.NONE).setText(Messages.getString("Preferences.Log")); //$NON-NLS-1$
 		log = new Button(ret, SWT.CHECK);
@@ -110,6 +115,7 @@ public class Preferences extends PreferencePage implements
 		Hub.localCfg.set(PORT, ports.getText());
 		Hub.localCfg.set(TIMEOUT, timeout.getText());
 		Hub.localCfg.set(LOG, log.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
+		Hub.localCfg.set(BACKGROUND, background.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
 		Hub.localCfg.flush();
 		return super.performOk();
 	}
