@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import ch.elexis.rs232.AbstractConnection;
 
@@ -28,8 +27,6 @@ public class AfinionConnection extends AbstractConnection {
 	
 	private static final long STARTUP_DELAY_IN_MS = 2000; // 60 Sekunden
 	private static final long RESEND_IN_MS = 30000; // 30 Sekunden
-	
-	private boolean shouldMessageAcknowledge = false;
 	
 	// Initialisierung
 	public static final int INIT = 0;
