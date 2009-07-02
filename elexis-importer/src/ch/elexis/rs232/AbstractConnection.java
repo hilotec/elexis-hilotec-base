@@ -234,13 +234,17 @@ public abstract class AbstractConnection implements PortEventListener {
 	 *            up
 	 */
 	public synchronized void awaitFrame(final Shell shell, final String text, final int start, final int end,
-			final int following, final int timeout) {
+			final int following, final int timeout, final boolean background) {
 		frameStart = start;
 		frameEnd = end;
 		overhang = following;
 		this.timeout = timeout;
 		endTime = System.currentTimeMillis() + (timeout * 1000);
-		watchdogThread = new Thread(new Watchdog(shell, text));
+		if (background) {
+			watchdogThread = new Thread(new BackgroundWatchdog());
+		} else {
+			watchdogThread = new Thread(new MonitoredWatchdog(shell, text));
+		}
 		timeToWait = timeout;
 		checksumBytes = overhang;
 		watchdogThread.start();
@@ -338,12 +342,30 @@ public abstract class AbstractConnection implements PortEventListener {
 		return p.toArray(new String[0]);
 	}
 
-	class Watchdog implements Runnable {
+	class BackgroundWatchdog implements Runnable {
+
+		public void run() {
+			while (System.currentTimeMillis() < endTime && !closed) {
+				try {
+					Thread.sleep(1000); // 1s.
+				} catch (InterruptedException ex) {
+					return;
+				}
+			}
+			if (closed) {
+				listener.closed();
+			} else {
+				listener.timeout();
+			}
+		}
+	}
+	
+	class MonitoredWatchdog implements Runnable {
 		final Shell shell;
 		final String text;
 		
 		
-		public Watchdog(Shell shell, String text) {
+		public MonitoredWatchdog(Shell shell, String text) {
 			super();
 			this.shell = shell;
 			this.text = text;
@@ -372,7 +394,7 @@ public abstract class AbstractConnection implements PortEventListener {
 						monitor.worked(1);
 						count++;
 						
-						Thread.sleep(10); // 0.5s.
+						Thread.sleep(10); // 0.001s.
 					}
 					if (monitor.isCanceled()) {
 						listener.cancelled();
