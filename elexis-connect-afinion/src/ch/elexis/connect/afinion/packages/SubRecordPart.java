@@ -5,8 +5,9 @@ import java.text.NumberFormat;
 
 /**
  * Diese Klasse ist Platzhalter für eine SubRecord
+ * 
  * @author immi
- *
+ * 
  */
 public class SubRecordPart extends AbstractPart {
 	private float min;
@@ -16,12 +17,12 @@ public class SubRecordPart extends AbstractPart {
 	private boolean valid;
 	private String unit;
 	private String kuerzel;
-
-	public SubRecordPart(final byte[] bytes, final int pos) {
+	
+	public SubRecordPart(final byte[] bytes, final int pos){
 		parse(bytes, pos);
 	}
 	
-	public void parse(final byte[] bytes, final int pos) {
+	public void parse(final byte[] bytes, final int pos){
 		min = getFloat(bytes, pos);
 		max = getFloat(bytes, pos + 4);
 		result = getFloat(bytes, pos + 8);
@@ -36,53 +37,51 @@ public class SubRecordPart extends AbstractPart {
 	}
 	
 	@Override
-	public int length() {
+	public int length(){
 		return 40;
 	}
-
-	public double getMin() {
+	
+	public double getMin(){
 		return min;
 	}
-
-	public double getMax() {
+	
+	public double getMax(){
 		return max;
 	}
-
-	public double getResult() {
+	
+	public double getResult(){
 		return result;
 	}
 	
-	public String getResultStr() {
+	public String getResultStr(){
 		return new DecimalFormat("#.##").format(result);
 	}
-
-	public int getDecimals() {
+	
+	public int getDecimals(){
 		return decimals;
 	}
-
-	public boolean isValid() {
+	
+	public boolean isValid(){
 		return valid;
 	}
-
-	public String getUnit() {
+	
+	public String getUnit(){
 		return unit;
 	}
-
-	public String getKuerzel() {
+	
+	public String getKuerzel(){
 		return kuerzel;
 	}
 	
-	public String toString() {
+	public String toString(){
 		NumberFormat nf = new DecimalFormat("###.##");
 		
 		String str = "";
-		str += "Min: " + nf.format(min) + "\n";
-		str += "Max: " + nf.format(max) + "\n";
-		str += "Result: " + nf.format(result) + "\n";
-		str += "Decimals: " + decimals + "\n";
-		str += "Valid: " + valid + "\n";
-		str += "Unit: " + unit + "\n";
-		str += "Kuerzel: " + kuerzel + "\n";
+		str += " " + kuerzel + ": " + nf.format(result) + unit + ";";
+		str += " Min:" + nf.format(min) + ";";
+		str += " Max:" + nf.format(max) + ";";
+		str += " Decimals:" + decimals + ";";
+		str += " Valid:" + valid + ";";
 		return str;
 	}
 }

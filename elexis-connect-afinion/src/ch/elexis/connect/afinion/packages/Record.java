@@ -40,7 +40,7 @@ public class Record {
 		return this.header.getId();
 	}
 	
-	public Calendar getCalendar() {
+	public Calendar getCalendar(){
 		return this.header.getCalendar();
 	}
 	
@@ -48,7 +48,7 @@ public class Record {
 		return this.header.getRunNr();
 	}
 	
-	public boolean isValid() {
+	public boolean isValid(){
 		return this.isValid;
 	}
 	
@@ -59,9 +59,9 @@ public class Record {
 				if (text.length() > 0) {
 					text += ", ";
 				}
-				text += parts[i].getKuerzel() 
-				+ " = " + parts[i].getResultStr() 
-				+ " " + parts[i].getUnit();
+				text +=
+					parts[i].getKuerzel() + " = " + parts[i].getResultStr() + " "
+						+ parts[i].getUnit();
 			}
 		}
 		return text;
@@ -83,11 +83,10 @@ public class Record {
 	}
 	
 	public String toString(){
-		String str = "Header\n";
-		str += header.toString() + "\n";
+		String str = header.toString() + "\n";
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i].isValid()) {
-				str += "SubRecord " + i + "\n";
+				str += "S-Record " + i + ";";
 				str += parts[i].toString() + "\n";
 			}
 		}

@@ -9,13 +9,18 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import ch.elexis.rs232.AbstractConnection;
+import ch.elexis.util.Log;
 
 /**
  * Ueberarbeitete Version des Handshakes zwischen PC und Afinion
+ * 
  * @author immi
- *
+ * 
  */
 public class AfinionConnection extends AbstractConnection {
+	
+	Log _elexislog = Log.get("AfinionConnection");
+	
 	private static final int NUL = 0x00;
 	private static final int STX = 0x02;
 	private static final int ETX = 0x03;
@@ -38,6 +43,8 @@ public class AfinionConnection extends AbstractConnection {
 	public static final int PAT_REQUEST_SENDED = 3;
 	// Patient Record Request Acknowledge erhalten. Nun können Daten gelesen werden.
 	public static final int PAT_REQUEST_ACK = 4;
+	// Beenden
+	public static final int ENDING = 99;
 	
 	private String awaitPacketNr;
 	
@@ -48,7 +55,7 @@ public class AfinionConnection extends AbstractConnection {
 	private Calendar currentCal = new GregorianCalendar();
 	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
-	private static final boolean debug = false;
+	private static final boolean debugToConsole = false;
 	
 	public AfinionConnection(String portName, String port, String settings, ComPortListener l){
 		super(portName, port, settings, l);
@@ -60,12 +67,14 @@ public class AfinionConnection extends AbstractConnection {
 	}
 	
 	/**
-	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt.
+	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt. In jedem Fall wird
+	 * ins Elexis Log geloggt
 	 * 
 	 * @param text
 	 */
 	private void debug(String text){
-		if (debug) {
+		_elexislog.log(text, Log.DEBUGMSG);
+		if (debugToConsole) {
 			System.out.print(text);
 		}
 	}
@@ -76,7 +85,8 @@ public class AfinionConnection extends AbstractConnection {
 	 * @param text
 	 */
 	private void debugln(String text){
-		if (debug) {
+		_elexislog.log(text, Log.DEBUGMSG);
+		if (debugToConsole) {
 			System.out.println(text);
 		}
 	}
@@ -188,6 +198,9 @@ public class AfinionConnection extends AbstractConnection {
 		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			+ secondStr;
 		strBuf.append(dateStr);
+		String text = "Request starting at:" + dateStr;
+		System.out.println(text);
+		_elexislog.log(text, Log.INFOS);
 	}
 	
 	private void addContentStart(ByteArrayOutputStream os){
@@ -374,7 +387,7 @@ public class AfinionConnection extends AbstractConnection {
 	 * Verarbeitet Patientendaten
 	 */
 	private void handlePatientRecord(final String packetNr, final InputStream inputStream)
-		throws IOException {
+		throws IOException{
 		// nächste 2560 Bytes lesen
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -397,10 +410,8 @@ public class AfinionConnection extends AbstractConnection {
 		
 		byte[] bytes = baos.toByteArray();
 		
-		if (debug) {
-			debug(getByteStr(bytes));
-			debugln("<DLE><ETB>");
-		}
+		debug(getByteStr(bytes));
+		debugln("<DLE><ETB>");
 		
 		readToEnd(inputStream);
 		
@@ -471,10 +482,10 @@ public class AfinionConnection extends AbstractConnection {
 						readToEndAndACK(packetNr, inputStream);
 					} else if (headerStr.indexOf("cmderr") != -1) {//$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
-						setState(SEND_PAT_REQUEST);
+// setState(SEND_PAT_REQUEST);
 					} else if (headerStr.indexOf("cmdcmpl") != -1) {//$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
-//						setState(SEND_PAT_REQUEST);
+// setState(SEND_PAT_REQUEST);
 					} else if (headerStr.indexOf("debugmsg") != -1) {//$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
 					} else if (headerStr.indexOf("FFFF:IC") != -1) {//$NON-NLS-1$
@@ -496,7 +507,7 @@ public class AfinionConnection extends AbstractConnection {
 			setState(WAITING);
 		}
 		
-		// 1 Minute delay 
+		// 1 Minute delay
 		if (getState() == WAITING) {
 			long time_ms = new GregorianCalendar().getTimeInMillis();
 			if (time_ms - last_time_ms > STARTUP_DELAY_IN_MS) {
@@ -504,7 +515,7 @@ public class AfinionConnection extends AbstractConnection {
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
 		}
-			
+		
 		// Überprüft Status. Nach x Sekunden wird Request nochmals gesendet
 		if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
 			// Resend nach 30 sekunden
