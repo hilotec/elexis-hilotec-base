@@ -9,4 +9,6 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  ch.elexis.importer.div,
  ch.elexis.arzttarife_ch,
- ch.rgw.utility
+ ch.rgw.utility,
+ ch.elexis.agenda;bundle-version="1.4.0",
+ ch.elexis.icpc;bundle-version="1.4.0"

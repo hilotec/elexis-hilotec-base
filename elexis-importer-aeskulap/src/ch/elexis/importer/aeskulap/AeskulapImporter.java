@@ -32,15 +32,15 @@ import au.com.bytecode.opencsv.CSVReader;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.Mandant;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
+import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.elexis.text.IDocumentManager;
-import ch.elexis.util.Extensions;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
@@ -53,17 +53,25 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class AeskulapImporter extends ImporterPage {
-	public static final String CATEGORY_AESKULAP_DOKUMENTE = "Aeskulap-Dokumente";
-	public static final String CATEGORY_AESKULAP_BRIEFE = "Aeskulap-Briefe";
+
+	/**
+	 * Mapping as Aeskulap-ArztNr, Agenda-Kürzel, Anwender-Kürzel
+	 */
+	final static String[][] MANDANT_MAPPING={
+		{"1","Kurath","kj"},
+		{"2","Anderegg","as"},
+		{"3","MPA","MPA"}
+	};
 	// we'll use these local XID's to reference the external data
-	private final static String IMPORT_XID = "elexis.ch/aeskulap_import";
-	private final static String PATID = IMPORT_XID + "/PatID";
-	private final static String GARANTID = IMPORT_XID + "/garantID";
+	final static String IMPORT_XID = "elexis.ch/aeskulap_import";
+	final static String PATID = IMPORT_XID + "/PatID";
+	final static String GARANTID = IMPORT_XID + "/garantID";
 
-	private static final int MONITOR_TOTAL = 10000000;
-	private static final float MONITOR_PERTASK = MONITOR_TOTAL / 7;
+	static final int MONITOR_TOTAL = 10000000;
+	static float numtasks = 0;
+	static float MONITOR_PERTASK = MONITOR_TOTAL;
 
-	Button bFile, bDir, bOnlyF, bOnlyM, bGuess, bAgenda, bTexte, bKG;
+	Button bFile, bDir, bOnlyF, bOnlyM, bGuess, bAgenda, bTexte, bKG, bStamm;
 	FileBasedImporter fbi;
 	DirectoryBasedImporter dbi;
 	String fname;
@@ -71,7 +79,7 @@ public class AeskulapImporter extends ImporterPage {
 
 	int assumeGender;
 
-	boolean bType, bImportAgenda, bImportDocs, bImportKG;
+	boolean bType, bImportAgenda, bImportDocs, bImportKG, bImportStamm;
 
 	static {
 		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte KG-ID",
@@ -84,6 +92,26 @@ public class AeskulapImporter extends ImporterPage {
 		// TODO Auto-generated constructor stub
 	}
 
+	static Mandant getMandant(String aeskulapNr){
+		for(String[] l:MANDANT_MAPPING){
+			if(l[0].equals(aeskulapNr)){
+				String id=new Query<Mandant>(Mandant.class).findSingle("Label", "=", l[2]);
+				if(id!=null){
+					return Mandant.load(id);
+				}
+			}
+		}
+		return null;
+	}
+	
+	static String getLabel(String aeskulapNr){
+		for(String[] l:MANDANT_MAPPING){
+			if(l[0].equals(aeskulapNr)){
+				return l[1];
+			}
+		}
+		return "?";
+	}
 	/**
 	 * We accept two possible sources for data: a ';' delimited file (*.csv)
 	 * containing only basic personal patient data, or a more elaborate source
@@ -97,11 +125,16 @@ public class AeskulapImporter extends ImporterPage {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		bFile = new Button(ret, SWT.RADIO);
+		Group gStamm = new Group(ret, SWT.NONE);
+		gStamm.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		gStamm.setLayout(new GridLayout());
+		bStamm = new Button(gStamm, SWT.CHECK);
+		bStamm.setText("a) Stammdaten");
+		bFile = new Button(gStamm, SWT.RADIO);
 		bFile.setText("Import aus einer CSV-Datei");
-		fbi = new FileBasedImporter(ret, this);
+		fbi = new FileBasedImporter(gStamm, this);
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Group gSex = new Group(ret, SWT.BORDER);
+		Group gSex = new Group(gStamm, SWT.BORDER);
 		gSex.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gSex.setLayout(new FillLayout());
 		gSex.setText("Auswahl der Patientendaten in dieser Datei");
@@ -113,19 +146,16 @@ public class AeskulapImporter extends ImporterPage {
 		bGuess.setText("Gemischt");
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
 				.getFillGridData(1, true, 1, false));
-		Group grp = new Group(ret, SWT.NONE);
-		grp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		grp.setLayout(new GridLayout());
-		bDir = new Button(grp, SWT.RADIO);
-		bDir.setText("Import aus 5 Excel-Dateien in einem Verzeichnis");
-		dbi = new DirectoryBasedImporter(grp, this);
+		bDir = new Button(gStamm, SWT.RADIO);
+		bDir.setText("Import aus Excel-Dateien in einem Verzeichnis");
+		dbi = new DirectoryBasedImporter(gStamm, this);
 		dbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		bAgenda = new Button(grp, SWT.CHECK);
-		bAgenda.setText("Auch Agenda-Einträge");
-		bTexte = new Button(grp, SWT.CHECK);
-		bTexte.setText("Auch Briefe/Dokumente");
-		bKG = new Button(grp, SWT.CHECK);
-		bKG.setText("Auch KG-Einträge");
+		bAgenda = new Button(ret, SWT.CHECK);
+		bAgenda.setText("b) Agenda-Einträge");
+		bTexte = new Button(ret, SWT.CHECK);
+		bTexte.setText("c) Briefe/Dokumente");
+		bKG = new Button(ret, SWT.CHECK);
+		bKG.setText("d) KG-Einträge");
 		return ret;
 	}
 
@@ -137,14 +167,15 @@ public class AeskulapImporter extends ImporterPage {
 	 */
 	@Override
 	public void collect() {
+		if (bStamm.getSelection()) {
+			bImportStamm = true;
+			numtasks += 5;
+		}
 		bType = bFile.getSelection();
 		if (bType) {
 			fname = fbi.tFname.getText();
 		} else {
 			fname = dbi.tFname.getText();
-			bImportAgenda = bAgenda.getSelection();
-			bImportDocs = bTexte.getSelection();
-			bImportKG = bKG.getSelection();
 		}
 		if (bOnlyF.getSelection()) {
 			assumeGender = 0;
@@ -153,6 +184,20 @@ public class AeskulapImporter extends ImporterPage {
 		} else {
 			assumeGender = 2;
 		}
+
+		if (bAgenda.getSelection()) {
+			bImportAgenda = true;
+			numtasks++;
+		}
+		if (bTexte.getSelection()) {
+			bImportDocs = true;
+			numtasks+=3;
+		}
+		if (bKG.getSelection()) {
+			bImportKG = true;
+			numtasks++;
+		}
+		MONITOR_PERTASK = MONITOR_TOTAL / numtasks;
 		super.collect();
 	}
 
@@ -170,45 +215,47 @@ public class AeskulapImporter extends ImporterPage {
 			return Status.CANCEL_STATUS;
 		}
 
-		monitor.beginTask("Importiere Aeskulap Stammdaten", MONITOR_TOTAL);
-		if (bType) {
-			monitor.subTask("Importiere Patienten");
-			CSVReader reader = new CSVReader(new FileReader(dir), ';');
-			String[] line = reader.readNext(); // skip first line
-			while ((line = reader.readNext()) != null) {
-				if (Xid.findXID(PATID, line[0]) != null) { // avoid duplicate
-					// import
-					continue;
-				}
-				if (line.length < 6) {
-					continue;
-				}
-				String s;
-				if (assumeGender == 0) {
-					s = "w";
-				} else if (assumeGender == 1) {
-					s = "m";
-				} else {
-					// the user didn't help us, so we'll have to guess the
-					// patient's gender.
-					s = StringTool.isFemale(line[2]) ? "w" : "m";
-				}
+		monitor.beginTask("Importiere Aeskulap Daten", MONITOR_TOTAL);
+		if (bImportStamm) {
+			if (bType) {
+				monitor.subTask("Importiere Patienten");
+				CSVReader reader = new CSVReader(new FileReader(dir), ';');
+				String[] line = reader.readNext(); // skip first line
+				while ((line = reader.readNext()) != null) {
+					if (Xid.findXID(PATID, line[0]) != null) { // avoid
+						// duplicate
+						// import
+						continue;
+					}
+					if (line.length < 6) {
+						continue;
+					}
+					String s;
+					if (assumeGender == 0) {
+						s = "w";
+					} else if (assumeGender == 1) {
+						s = "m";
+					} else {
+						// the user didn't help us, so we'll have to guess the
+						// patient's gender.
+						s = StringTool.isFemale(line[2]) ? "w" : "m";
+					}
 
-				Patient pat = new Patient(line[1], line[2], line[6], s);
-				pat.set("PatientNr", line[0]);
-				monitor.subTask(line[1]);
-				Anschrift an = pat.getAnschrift();
-				an.setStrasse(line[3]);
-				an.setPlz(line[4]);
-				an.setOrt(line[5]);
-				pat.setAnschrift(an);
-				pat.addXid(PATID, line[0], true);
-				monitor.worked(10);
-			}
-		} else {
-			monitor.subTask("Importiere Adressen");
-			ExcelWrapper hofs;
-			if (true) {
+					Patient pat = new Patient(line[1], line[2], line[6], s);
+					pat.set("PatientNr", line[0]);
+					monitor.subTask(line[1]);
+					Anschrift an = pat.getAnschrift();
+					an.setStrasse(line[3]);
+					an.setPlz(line[4]);
+					an.setOrt(line[5]);
+					pat.setAnschrift(an);
+					pat.addXid(PATID, line[0], true);
+					monitor.worked(10);
+				}
+			} else {
+				monitor.subTask("Importiere Adressen");
+				ExcelWrapper hofs;
+
 				hofs = checkImport(dir + File.separator + "adressen.xls");
 				if (hofs != null) {
 					importAdressen(hofs, monitor);
@@ -231,25 +278,34 @@ public class AeskulapImporter extends ImporterPage {
 					importPatienten(hofs, monitor);
 				}
 				monitor.subTask("Importiere Fälle");
+				System.gc();
+				Thread.sleep(100);
 				hofs = checkImport(dir + File.separator + "pat_garanten.xls");
 				if (hofs != null) {
 					importPatGaranten(hofs, monitor);
 				}
 			}
-			if (bImportDocs) {
-				monitor.subTask("Importiere Dokumente");
-				Object os = Extensions.findBestService(IDocumentManager.NAME);
-				if (os != null) {
-					IDocumentManager dm = (IDocumentManager) os;
-					dm.addCategorie(CATEGORY_AESKULAP_DOKUMENTE);
-					hofs = checkImport(dir + File.separator + "dokumente.xls");
-					if (hofs != null) {
-						importDocs(hofs, monitor);
-					}
-				}
-			}
-
-			monitor.worked(1);
+		}
+		if (bImportDocs) {
+			System.gc();
+			Thread.sleep(100);
+			new DokuImporter(dir, monitor);
+			System.gc();
+			Thread.sleep(100);
+			new BriefeImporter(dir, monitor);
+			System.gc();
+			Thread.sleep(100);
+			new DateienImporter(dir,monitor);
+		}
+		if(bImportAgenda){
+			System.gc();
+			Thread.sleep(100);
+			new AgendaImporter(dir, monitor);
+		}
+		if(bImportKG){
+			System.gc();
+			Thread.sleep(100);
+			new KGImporter(new File(dir,"KG_DATA.xml"),monitor);
 		}
 		monitor.done();
 		return Status.OK_STATUS;
@@ -309,6 +365,8 @@ public class AeskulapImporter extends ImporterPage {
 			an.setStrasse(getField(5));
 			an.setPlz(getField(6));
 			an.setOrt(getField(7));
+			String arzt = getField(8);
+			p.set("Gruppe", getLabel(arzt));
 			p.setAnschrift(an);
 			p.set("Telefon1", getField(18));
 			p.set("Telefon2", getField(17));
@@ -485,52 +543,22 @@ public class AeskulapImporter extends ImporterPage {
 		return true;
 	}
 
-	private boolean importDocs(final ExcelWrapper hofs,
-			final IProgressMonitor moni) {
-		float last = hofs.getLastRow();
-		float first = hofs.getFirstRow();
-		hofs.setFieldTypes(new Class[] { String.class, String.class,
-				Integer.class, String.class, String.class });
-		int perLine = Math.round(MONITOR_PERTASK / (last - first));
-		Object os = Extensions.findBestService(IDocumentManager.NAME);
-		if (os != null) {
-			IDocumentManager dm = (IDocumentManager) os;
-			for (int line = Math.round(first + 1); line <= last; line++) {
-				actLine = hofs.getRow(line).toArray(new String[0]);
-				String patno = getField(0);
-				String konsid = getField(1);
-				String docno = getField(2);
-				String date = getField(3);
-				String title = getField(4);
-				Patient pat = (Patient) Xid.findObject(PATID, patno);
-				if (pat != null) {
-					if (patno.equals("1004")) {
-						System.out.println("ok");
-					}
-					File file = findFile("Doku_1", new StringBuilder("Doc_")
-							.append(patno).append("_").append(docno).toString());
-					if (file != null) {
-						dm.addDocument(pat, title, CATEGORY_AESKULAP_DOKUMENTE,
-								"", file, date);
-					}
-				}
-
-				moni.worked(perLine);
-				if (moni.isCanceled()) {
-					return false;
-				}
-			}
-			return true;
+	static ExcelWrapper checkImport(final String file) {
+		ExcelWrapper hofs = new ExcelWrapper();
+		if (hofs.load(file, 0)) {
+			return hofs;
+		} else {
+			SWTHelper.showError("Fehler beim Import", "Konnte " + file
+					+ " nicht lesen");
 		}
-		return false;
+		return null;
 	}
 
-	File findFile(String subdir, final String basename) {
-		File fSubdir = new File(fname, subdir);
-		if (!fSubdir.exists()) {
+	static File findFile(File dir, final String basename) {
+		if (!dir.exists()) {
 			return null;
 		}
-		File[] r = fSubdir.listFiles(new FileFilter() {
+		File[] r = dir.listFiles(new FileFilter() {
 
 			public boolean accept(File pathname) {
 				String pn = pathname.getName();
@@ -542,17 +570,6 @@ public class AeskulapImporter extends ImporterPage {
 		});
 		if (r.length > 0) {
 			return r[0];
-		}
-		return null;
-	}
-
-	ExcelWrapper checkImport(final String file) {
-		ExcelWrapper hofs = new ExcelWrapper();
-		if (hofs.load(file, 0)) {
-			return hofs;
-		} else {
-			SWTHelper.showError("Fehler beim Import", "Konnte " + file
-					+ " nicht lesen");
 		}
 		return null;
 	}
