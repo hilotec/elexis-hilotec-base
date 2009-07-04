@@ -37,6 +37,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	Log _elexislog = Log.get("AfinionAS100Action");
 	Record lastRecord = null;
 	boolean background;
+	int debugRecord = 0; // test only!! for production must be 0!
 	
 	public AfinionAS100Action(){
 		super(Messages.getString("AfinionAS100Action.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
@@ -57,7 +58,10 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				this);
 		
 		Calendar cal = new GregorianCalendar();
-// test only: cal.add(Calendar.DATE, -200);
+		if (debugRecord != 0) {
+			// beim debuggen wollen wir alle Records sehen!
+			cal.add(Calendar.DATE, -365);
+		}
 		cal.add(Calendar.HOUR, -cal.get(Calendar.HOUR_OF_DAY));
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
@@ -146,55 +150,69 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				Patient probePat = null;
 				String vorname = null;
 				String name = null;
-				String patientStr =
-					Messages.getString("AfinionAS100Action.UnknownPatientHeaderString") + record.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				String patientElexisStr =
+					Messages.getString("AfinionAS100Action.UnknownPatientHeaderString");
+				String patientDeviceStr = record.getId();
+				Long patId = null;
 				
-				if (record.getId() != null) {
-					String patIdStr = record.getId();
-					Long patId = null;
-					try {
-						patId = new Long(patIdStr);
-					} catch (NumberFormatException e) {
-						// Do nothing
-					}
+				if (patientDeviceStr != null) {
 					
-					// Patient-ID oder Name?
+					// Suchkriterium für Patientenzuordnung
 					Query<Patient> patQuery = new Query<Patient>(Patient.class);
-					if (patId != null) {
-						patQuery.add(Patient.PATID, "=", patIdStr); //$NON-NLS-1$
-					} else {
-						String[] parts = patIdStr.split(","); //$NON-NLS-1$
+					if (patientDeviceStr != null && patientDeviceStr.length() > 0) {
+						String[] parts = patientDeviceStr.split(","); //$NON-NLS-1$
 						if (parts.length > 1) {
-							vorname = parts[1].trim().toUpperCase();
-							if (parts[1].length() > 1) {
-								vorname =
-									parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1);
+							try {
+								patId = new Long(parts[0]);
+							} catch (NumberFormatException e) {
+								// Do nothing
 							}
-							patQuery.add(Patient.FIRSTNAME, "like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+							
+							if (patId != null) { // PatId, Name
+								name = getFirstUpper(parts[1]);
+							} else { // Name, Vorname
+								name = getFirstUpper(parts[0]);
+								vorname = getFirstUpper(parts[1]);
+								patQuery.add(Patient.FIRSTNAME, "like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						} else if (parts.length == 1) {
+							try {
+								patId = new Long(patientDeviceStr);
+							} catch (NumberFormatException e) {
+								// Do nothing
+							}
+							if (patId == null) { // PatId, Name
+								name = getFirstUpper(patientDeviceStr);
+							}
 						}
-						if (parts.length > 0) {
-							name = parts[0].trim().toUpperCase();
-							if (parts[0].length() > 1) {
-								name =
-									parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1);
-							}
+						
+						if (patId != null) {
+							patQuery.add(Patient.PATID, "=", patId.toString()); //$NON-NLS-1$
+						}
+						
+						if (name != null && name.length() > 0) {
 							patQuery.add(Patient.NAME, "like", name + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
-					}
-					List<Patient> patientList = patQuery.execute();
-					
-					if (patientList.size() == 1) {
-						probePat = patientList.get(0);
-						patientStr =
-							Messages.getString("AfinionAS100Action.PatientHeaderString") + probePat.getName() + ", " + probePat.getVorname() + " (" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								+ record.getId() + ")"; //$NON-NLS-1$
+						if (vorname != null && vorname.length() > 0) {
+							patQuery.add(Patient.FIRSTNAME, "like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						List<Patient> patientList = patQuery.execute();
+						
+						if (patientList.size() == 1) {
+							probePat = patientList.get(0);
+							patientDeviceStr = record.getId(); //$NON-NLS-1$
+							patientElexisStr = probePat.getName() + " " + probePat.getVorname();
+						}
 					}
 				}
 				
+				if ((patientDeviceStr == null) || (patientDeviceStr.equals(""))) {
+					patientDeviceStr = Messages.getString("AfinionAS100Action.NoPatientInfo");
+				}
 				String text =
 					MessageFormat
 						.format(
-							Messages.getString("AfinionAS100Action.ValueInfoMsg"), patientStr, record.getRunNr(), record //$NON-NLS-1$
+							Messages.getString("AfinionAS100Action.ValueInfoMsg"), patientDeviceStr, patientElexisStr, record.getRunNr(), record //$NON-NLS-1$
 								.getText());
 				
 				boolean ok =
@@ -261,7 +279,17 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			byte[] subbytes = subBytes(data, pos, 256);
 			Record tmpRecord = new Record(subbytes);
 			if (tmpRecord.isValid()) {
-				lastRecord = tmpRecord;
+				if (debugRecord != 0) {
+					// lets debug that given record
+					if (tmpRecord.getRecordNum() <= debugRecord) {
+						lastRecord = tmpRecord;
+					}
+					if (tmpRecord.getRecordNum() == debugRecord) {
+						validRecords = 0;
+					}
+				} else {
+					lastRecord = tmpRecord;
+				}
 				String text = lastRecord.toString();
 				System.out.println(text);
 				_elexislog.log(text, Log.INFOS);
@@ -315,5 +343,20 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			.getString("AfinionAS100Action.RS232.Timeout.Text")); //$NON-NLS-1$
 		setChecked(false);
 		_rs232log.logEnd();
+	}
+	
+	/**
+	 * Erstes Zeichen wird Uppercase gemacht
+	 */
+	private String getFirstUpper(String str){
+		if (str == null) {
+			return null;
+		}
+		str = str.trim();
+		String retStr = str.toUpperCase();
+		if (str.length() > 1) {
+			retStr = str.substring(0, 1).toUpperCase() + str.substring(1).trim();
+		}
+		return retStr;
 	}
 }

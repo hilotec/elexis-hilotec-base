@@ -81,7 +81,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				} catch (NumberFormatException e) {
 					// Do nothing. Use default value
 				}
-				_ctrl.awaitFrame(Desk.getTopShell(), Messages.getString("ReflotronSprintAction.WaitMsg"), 1, 4, 0, timeout, background); //$NON-NLS-1$
+				_ctrl.awaitFrame(Desk.getTopShell(), Messages.getString("ReflotronSprintAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
 				return;
 			} else {
 				_log.log("Error"); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				if (probe.getIdent() != null) {
 					String patName = probe.getIdent();
 
-					// Name/Vorname?
+					// Suchkriterium für Patientenzuordnung
 					Query<Patient> patQuery = new Query<Patient>(Patient.class);
 					if (patName != null && patName.length() > 0) {
 						String[] parts = patName.split(","); //$NON-NLS-1$

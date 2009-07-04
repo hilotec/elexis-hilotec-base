@@ -40,6 +40,10 @@ public class Record {
 		return this.header.getId();
 	}
 	
+	public int getRecordNum(){
+		return this.header.getRecordNum();
+	}
+	
 	public Calendar getCalendar(){
 		return this.header.getCalendar();
 	}

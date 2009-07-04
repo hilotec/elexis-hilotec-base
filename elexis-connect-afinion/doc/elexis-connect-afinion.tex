@@ -60,7 +60,12 @@ Weitere Informationen zur Funktion Patienten-ID finden Sie im Manual zum Afinion
 \pagebreak
 \subsection{Elexis Konfiguration}
 Starten Sie Elexis und gehen Sie dort zu \textsc{Datei-Einstellungen-Datenaustausch- Afinion AS100 Analyzer} (S. Abb. \ref{fig:config}).
-Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte m\"ussen mit den Einstellungen auf dem Afinion Ger\"at \"ubereinstimmen (siehe oben). Der Wert Timeout (Sek) bestimmt, wie lange Elexis maximal auf Resultate warten soll, bevor die Verbindung getrennt wird. Die Option Logging verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unnötigen Daten gefülllt. Wichtig: Nach dem \"Andern dieser Parameter m\"ussen Sie Elexis neu starten.
+Hier stellen Sie den seriellen Port und die Schnittstellenparameter ein. Die Werte m\"ussen mit den Einstellungen auf dem Afinion Ger\"at \"ubereinstimmen (siehe oben). Wichtig: Nach dem \"Andern dieser Parameter m\"ussen Sie Elexis neu starten.\\
+\\
+\textbf{Weitere Konfigurationswerte:}\\
+\textbf{Timeout (Sek):} Der Wert bestimmt, wie lange Elexis maximal auf Resultate warten soll, bevor die Verbindung getrennt wird.\\
+\textbf{Im Hintergrund:} Damit beeinflussen Sie das Verhalten von Elexis. Bei eingeschalteter Option wird die \"Ubertragung im Hintergrund ausgef\"uhrt und sie k\"onnen weiter in Elexis arbeiten. Bei ausgeschalteter Option erscheint die Abb. \ref{fig:connected}\\
+\textbf{Logging:} Diese Option verwenden Sie bitte nur auf Anweisung des Supports, ansonsten wird Ihr Computer mit unn\"otigen Daten gef\"ullt.\\
 \begin{figure}[h]
     \includegraphics{config}
     \caption{Einstellungen Afinion AS100 Analyzer}
@@ -90,7 +95,7 @@ Wenn Sie die Probe auf dem Afinion Ger\"at quittiert haben, k\"onnen Sie das Res
 \\
 \\
 \textbf{Wichtig:}\\
-Es werden nur Werte an Elexis \"ubertragen, welche innerhalb der letzten Stunde gemessen wurden. \"Altere Messwerte m\"ussen Sie manuell in Elexis eingeben.
+Es werden nur Werte an Elexis \"ubertragen, welche am aktuellen Tag gemessen wurden. \"Altere Messwerte m\"ussen Sie manuell in Elexis eingeben.
 \begin{figure}[h]
     \includegraphics{messwert}
     \caption{Messwert vom Afinion eingetroffen}
@@ -98,12 +103,15 @@ Es werden nur Werte an Elexis \"ubertragen, welche innerhalb der letzten Stunde 
 \end{figure}
 
 \subsection{Anweisungen zum Afinion}
-Damit eine automatische Zuweisung des Patienten m\"oglich wird, muss auf dem Afinion der Patient der Messung zugeordnet werden (siehe auch 'Afinion Funktion Patienten-ID'). Auf dem Afinion kann die Patienten-ID numerisch oder als Text (Handy-Tastatur) eingegeben werden. Wenn Sie den Patientennamen eingeben, m\"ussen Sie zwingend folgendes Eingabeformat einhalten:\\
-\\
-Eingabeformat: \textbf{Namen,Vornamen} (ohne Leerzeichen nach dem Komma!)\\
+Damit eine automatische Zuweisung des Patienten m\"oglich wird, muss auf dem Afinion der Patient der Messung zugeordnet werden (siehe auch 'Afinion Funktion Patienten-ID'). Auf dem Afinion kann die Patienten-ID numerisch oder als Text (Handy-Tastatur) eingegeben werden. Sie m\"ussen Sie zwingend eines der folgenden Eingabeformat einhalten (ohne Leerzeichen nach dem Komma!):\\
+\begin{itemize}
+\item \textbf{PatNummer}
+\item \textbf{PatNummer,Namen}\\Tipp: Es kann auch nur der erste Buchstaben des Namens eingegeben werden
+\item \textbf{Namen,Vornamen}\\Tipp: Namen und/oder Vornamen k\"onnen auch abgek\"urzt eingegeben werden
+\end{itemize}
+
 \section{Fehlerbehandlung}
 Wenn das Ger\"at nicht reagiert k\"onnen die Verbindung mit Cancel gem\"ass Abb. \ref{fig:connected} abbrechen. Ansonsten bleibt die Verbindung bis zum Ablauf des konfigurierten Timeouts bestehen.\\
-Es kann vorkommen, dass das Ger\"at nicht den tats\"achlich zuletzt gemessenen Wert \"ubertr\"agt (Kontrollieren Sie dies bei JEDER Messung). Wenn dieses Problem auftritt, starten Sie sowohl Elexis, wie auch das Afinion Ger\"at neu. Wenn der Effekt anh\"alt, enth\"alt das Ger\"at korrupte Daten. Warten Sie in diesem Fall 1 Stunde bis Sie die n\"achste Messung durchf\"uhren (vorher Afinion neu starten). 
 \section{Plattformen}
 Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, dass unter Linux die seriellen Ports nicht COM1 usw., sondern /dev/ttyS0 usw. heissen.
 
