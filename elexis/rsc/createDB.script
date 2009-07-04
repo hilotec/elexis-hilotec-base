@@ -49,8 +49,8 @@ CREATE TABLE KONTAKT(
 	Telefon2		VARCHAR(30),				# phone2
 	Fax				VARCHAR(30),				# you'll guess it
 	NatelNr			VARCHAR(30),				# mobile
-	EMail			VARCHAR(30),				# guess 
-	Website			VARCHAR(40),
+	EMail			VARCHAR(50),				# guess 
+	Website			VARCHAR(80),
 	Gruppe			VARCHAR(10),				# mandator group
 	PatientNr		VARCHAR(40),				# external identifier
 	Anschrift		TEXT,						# postal (address sticker)
