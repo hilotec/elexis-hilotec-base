@@ -110,7 +110,7 @@ public class Preferences extends PreferencePage implements
 		StringBuilder sb = new StringBuilder();
 		sb.append(speed.getText()).append(",").append(data.getText()).append( //$NON-NLS-1$
 				",").append(parity.getSelection() ? "y" : "n").append(",") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				.append(stop.getText());
+			.append(stop.getText());
 		Hub.localCfg.set(PARAMS, sb.toString());
 		Hub.localCfg.set(PORT, ports.getText());
 		Hub.localCfg.set(TIMEOUT, timeout.getText());
