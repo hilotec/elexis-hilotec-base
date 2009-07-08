@@ -14,6 +14,7 @@ public class Record {
 	private HeaderPart header;
 	private SubRecordPart[] parts = new SubRecordPart[4];
 	private boolean isValid = false;
+	private boolean isOutOfRange = false;
 	
 	public Record(final byte[] bytes){
 		parse(bytes);
@@ -31,6 +32,9 @@ public class Record {
 			parts[i] = new SubRecordPart(bytes, pos);
 			if (parts[i].isValid()) {
 				isValid = true;
+			}
+			if (parts[i].isOutOfRange()) {
+				isOutOfRange = true;
 			}
 			pos += parts[i].length();
 		}
@@ -54,6 +58,10 @@ public class Record {
 	
 	public boolean isValid(){
 		return this.isValid;
+	}
+	
+	public boolean isOutOfRange(){
+		return this.isOutOfRange;
 	}
 	
 	public String getText(){
@@ -89,10 +97,8 @@ public class Record {
 	public String toString(){
 		String str = header.toString() + "\n";
 		for (int i = 0; i < parts.length; i++) {
-			if (parts[i].isValid()) {
-				str += "S-Record " + i + ";";
-				str += parts[i].toString() + "\n";
-			}
+			str += "S-Record " + i + ";";
+			str += parts[i].toString() + "\n";
 		}
 		return str;
 	}

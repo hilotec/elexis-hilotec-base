@@ -15,6 +15,7 @@ public class SubRecordPart extends AbstractPart {
 	private float result;
 	private int decimals;
 	private boolean valid;
+	private boolean outOfRange;
 	private String unit;
 	private String kuerzel;
 	
@@ -31,8 +32,9 @@ public class SubRecordPart extends AbstractPart {
 		unit = getString(bytes, pos + 20, 9);
 		kuerzel = getString(bytes, pos + 29, 9);
 		
+		outOfRange = false;
 		if (result < min || result > max) {
-			valid = false;
+			outOfRange = true;
 		}
 	}
 	
@@ -65,6 +67,10 @@ public class SubRecordPart extends AbstractPart {
 		return valid;
 	}
 	
+	public boolean isOutOfRange(){
+		return outOfRange;
+	}
+	
 	public String getUnit(){
 		return unit;
 	}
@@ -81,6 +87,7 @@ public class SubRecordPart extends AbstractPart {
 		str += " Min:" + nf.format(min) + ";";
 		str += " Max:" + nf.format(max) + ";";
 		str += " Decimals:" + decimals + ";";
+		str += " OutOfRange:" + outOfRange + ";";
 		str += " Valid:" + valid + ";";
 		return str;
 	}

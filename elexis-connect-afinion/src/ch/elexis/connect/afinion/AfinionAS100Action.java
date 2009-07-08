@@ -1,7 +1,10 @@
 package ch.elexis.connect.afinion;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -38,6 +41,23 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	Record lastRecord = null;
 	boolean background;
 	int debugRecord = 0; // test only!! for production must be 0!
+	String simulate = null; // test only!! for production must be null!
+	
+	// "c:/temp/afinion/test.log"; oder null
+	// Anweisung zum Logfile:
+	// Wenn das Häckchen "Logging" in der Konfiguration eingeschaltet ist, werden die empfangenen
+	// Resultate vom Afinion Gerät in ein Logfile geschrieben: C:\Users\tony\elexis\afinion.log
+	// Dieses Logfile enthält pro Verbindung eine Section:
+	// -S- "'08.07.2009, 21:51:38'" == Section Start
+	// -E- "'08.07.2009, 21:52:11'" == Section Ende
+	// Dazwischen werden die erhaltenen Daten mit <-- "..." geloggt.
+	// Für die Simulation muss der Bereich zwischen den Anführungszeichen aus <-- "..." in einem
+	// eigenständigen Logfile vorliegen. Die Binären Daten müssen dabei unverändert übernommen
+	// werden.
+	// Tipp: Logfile kopieren, mit Ultradedit in der HEX-Darstellung editieren und überzählige
+	// Zeichen löschen (Ausschneiden). Beim speichern sollte es dann i.O. sein.
+	// Kontrolle: Die Dateigrösse sollte 2568 Bytes sein (immer 10 Resultate à 256 Bytes plus 8
+	// Bytes footer)
 	
 	public AfinionAS100Action(){
 		super(Messages.getString("AfinionAS100Action.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
@@ -59,6 +79,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		
 		Calendar cal = new GregorianCalendar();
 		if (debugRecord != 0) {
+			SWTHelper.showInfo("Debugging!!!", "Record " + debugRecord); //$NON-NLS-2$
 			// beim debuggen wollen wir alle Records sehen!
 			cal.add(Calendar.DATE, -365);
 		}
@@ -86,26 +107,56 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	@Override
 	public void run(){
 		if (isChecked()) {
-			initConnection();
-			_rs232log.logStart();
-			String msg = _ctrl.connect();
-			if (msg == null) {
-				String timeoutStr =
-					Hub.localCfg.get(Preferences.TIMEOUT, Messages
-						.getString("AfinionAS100Action.DefaultTimeout")); //$NON-NLS-1$
-				int timeout = 20;
-				try {
-					timeout = Integer.parseInt(timeoutStr);
-				} catch (NumberFormatException e) {
-					// Do nothing. Use default value
+			if (simulate == null) {
+				initConnection();
+				_rs232log.logStart();
+				String msg = _ctrl.connect();
+				if (msg == null) {
+					String timeoutStr =
+						Hub.localCfg.get(Preferences.TIMEOUT, Messages
+							.getString("AfinionAS100Action.DefaultTimeout")); //$NON-NLS-1$
+					int timeout = 20;
+					try {
+						timeout = Integer.parseInt(timeoutStr);
+					} catch (NumberFormatException e) {
+						// Do nothing. Use default value
+					}
+					_ctrl
+						.awaitFrame(
+							Desk.getTopShell(),
+							Messages.getString("AfinionAS100Action.WaitMsg"), 1, 4, 0, timeout, background, false); //$NON-NLS-1$
+					return;
+				} else {
+					_rs232log.log("Error"); //$NON-NLS-1$
+					SWTHelper.showError(
+						Messages.getString("AfinionAS100Action.RS232.Error.Title"), msg); //$NON-NLS-1$
 				}
-				_ctrl.awaitFrame(Desk.getTopShell(), Messages
-					.getString("AfinionAS100Action.WaitMsg"), 1, 4, 0, timeout, background, false); //$NON-NLS-1$
-				return;
 			} else {
-				_rs232log.log("Error"); //$NON-NLS-1$
-				SWTHelper
-					.showError(Messages.getString("AfinionAS100Action.RS232.Error.Title"), msg); //$NON-NLS-1$
+				SWTHelper.showInfo("Simulating!!!", simulate); //$NON-NLS-2$
+				// test only
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				try {
+					FileInputStream inputStream = new FileInputStream(simulate);
+					int test = inputStream.read();
+					int ETX = 0x03;
+					int DLE = 0x10;
+					while (test != -1 && test != ETX) {
+						while (test != -1 && test != DLE) {
+							baos.write(test);
+							test = inputStream.read();
+						}
+						test = inputStream.read();
+					}
+					
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				byte[] data = baos.toByteArray();
+				gotData(null, data);
 			}
 		} else {
 			if (_ctrl.isOpen()) {
@@ -209,11 +260,15 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				if ((patientDeviceStr == null) || (patientDeviceStr.equals(""))) {
 					patientDeviceStr = Messages.getString("AfinionAS100Action.NoPatientInfo");
 				}
+				String warning = "";
+				if (record.isOutOfRange()) {
+					warning = Messages.getString("AfinionAS100Action.ValueOutOfRangeWarning");
+				}
 				String text =
 					MessageFormat
 						.format(
 							Messages.getString("AfinionAS100Action.ValueInfoMsg"), patientDeviceStr, patientElexisStr, record.getRunNr(), record //$NON-NLS-1$
-								.getText());
+								.getText(), warning);
 				
 				boolean ok =
 					MessageDialog.openConfirm(Desk.getTopShell(), Messages
@@ -269,7 +324,9 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	 * Messagedaten von Afinion wurden gelesen
 	 */
 	public void gotData(final AbstractConnection connection, final byte[] data){
-		_rs232log.logRX(new String(data));
+		if (_rs232log != null) {
+			_rs232log.logRX(new String(data));
+		}
 		
 		// Record lesen
 		int pos = 0;
@@ -278,6 +335,9 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		while (i < 10) {
 			byte[] subbytes = subBytes(data, pos, 256);
 			Record tmpRecord = new Record(subbytes);
+			String text = tmpRecord.toString();
+			System.out.println("DEBUG: " + text);
+			_elexislog.log(text, Log.DEBUGMSG);
 			if (tmpRecord.isValid()) {
 				if (debugRecord != 0) {
 					// lets debug that given record
@@ -290,7 +350,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				} else {
 					lastRecord = tmpRecord;
 				}
-				String text = lastRecord.toString();
+				text = lastRecord.toString();
 				System.out.println(text);
 				_elexislog.log(text, Log.INFOS);
 				validRecords++;
@@ -302,11 +362,15 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		if (validRecords == 10) { // Read next 10 records
 			Calendar cal = lastRecord.getCalendar();
 			cal.add(Calendar.SECOND, 1);
-			_ctrl.setCurrentDate(cal);
-			_ctrl.setState(AfinionConnection.SEND_PAT_REQUEST);
+			if (_ctrl != null) {
+				_ctrl.setCurrentDate(cal);
+				_ctrl.setState(AfinionConnection.SEND_PAT_REQUEST);
+			}
 		} else {
-			_ctrl.setState(AfinionConnection.ENDING);
-			_ctrl.close();
+			if (_ctrl != null) {
+				_ctrl.setState(AfinionConnection.ENDING);
+				_ctrl.close();
+			}
 			setChecked(false);
 			
 			if (lastRecord != null) {
