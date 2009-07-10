@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2008 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 4697 2008-11-25 12:57:05Z rgw_ch $
+ * $Id: HL7.java 5547 2009-07-10 15:45:44Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -439,7 +439,7 @@ public class HL7 {
 					date = field[22];
 				} else {
 					date = field[6];
-					if (date.length() == 0) {
+					if (StringTool.isNothing(date)) {
 						return new TimeTool();
 					}
 				}

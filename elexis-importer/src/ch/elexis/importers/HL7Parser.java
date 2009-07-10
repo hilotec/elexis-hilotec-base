@@ -7,6 +7,8 @@
 package ch.elexis.importers;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.util.LinkedList;
 import java.util.List;
 
 import ch.elexis.actions.GlobalEvents;
@@ -81,8 +83,8 @@ public class HL7Parser {
 				if (qrr.size() != 0) {
 					LabResult lrr = qrr.get(0);
 					
-					if (!SWTHelper.askYesNo("Laborwert wurde schon importiert: " + lrr.getLabel(),
-						"Überschreiben?")) {
+					if (!SWTHelper.askYesNo("Laborwert wurde schon importiert: " + pat.getLabel(),
+						lrr.getLabel()+" Überschreiben?")) {
 						obx = obr.nextOBX(obx);
 						continue;
 					}
@@ -185,6 +187,36 @@ public class HL7Parser {
 		return r;
 		
 	}
+	
+	public void importFromDir(final File dir, final File archiveDir, Result<?> res, boolean bCreatePatientIfNotExists){
+		File[] files=dir.listFiles(new FileFilter(){
+
+			public boolean accept(File pathname) {
+				if(pathname.isDirectory()){
+					if(!pathname.getName().equalsIgnoreCase(archiveDir.getName())){
+						return true;
+					}
+				}else{
+					if(pathname.getName().toLowerCase().endsWith(".hl7")){
+						return true;
+					}
+				}
+				return false;
+			}});
+		for(File file:files){
+			if(file.isDirectory()){
+				importFromDir(file,archiveDir,res,bCreatePatientIfNotExists);
+			}else{
+				Result<?> r=importFile(file, archiveDir, bCreatePatientIfNotExists);
+				if(res==null){
+					res=r;
+				}else{
+					res.add(r.getSeverity(),1,"",null,true);
+				}
+			}
+		}
+	}
+	
 	
 	/**
 	 * Equivalent to importFile(new File(file), null)
