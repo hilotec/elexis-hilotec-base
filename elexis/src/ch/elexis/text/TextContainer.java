@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - better support for IDataAccess
  *    
- *  $Id: TextContainer.java 5360 2009-06-18 09:53:05Z rgw_ch $
+ *  $Id: TextContainer.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -717,6 +717,10 @@ public class TextContainer {
 			return false;
 		}
 
+		public boolean setStyle(final int style){
+			return false;
+		}
+		
 		public Object insertText(final String marke, final String text,
 				final int adjust) {
 			// TODO Auto-generated method stub

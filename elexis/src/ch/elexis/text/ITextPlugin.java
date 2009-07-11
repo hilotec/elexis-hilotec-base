@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ITextPlugin.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *  $Id: ITextPlugin.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -139,6 +139,12 @@ public interface ITextPlugin extends IExecutableExtension{
 	 * but a similar font was set.
 	 */
 	public boolean setFont(String name, int style, float size);
+	
+	/** Set style for all following operations (until the next call to setFont or setStyle) 
+	 * @param style SWT.MIN, SWT.NORMAL, SWT.BOLD (thin, normal or bold)
+	 * @return false on error. True on success
+	 */
+	public boolean setStyle(int style);
 	
 	/** Insert text at a position specified by a regular expression
 	 * @param marke regular expression, that describes the insertion point. Only the first match will be used, and

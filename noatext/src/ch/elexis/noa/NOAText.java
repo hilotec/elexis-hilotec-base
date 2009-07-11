@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NOAText.java 4486 2008-09-28 06:31:41Z rgw_ch $
+ *  $Id: NOAText.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
 package ch.elexis.noa;
 
@@ -87,8 +87,8 @@ public class NOAText implements ITextPlugin {
 	private final Log log = Log.get("NOAText");
 	IOfficeApplication office;
 	private String font;
-	private float hi;
-	private int stil;
+	private float hi = 0;
+	private int stil = -1;
 	
 	public NOAText(){
 		System.out.println("noa loaded");
@@ -644,6 +644,11 @@ public class NOAText implements ITextPlugin {
 		return true;
 	}
 	
+	public boolean setStyle(final int style){
+		stil = style;
+		return true;
+	}
+	
 	private com.sun.star.beans.XPropertySet setFormat(final XTextCursor xtc)
 		throws UnknownPropertyException, PropertyVetoException, IllegalArgumentException,
 		WrappedTargetException{
@@ -652,7 +657,13 @@ public class NOAText implements ITextPlugin {
 				com.sun.star.beans.XPropertySet.class, xtc);
 		if (font != null) {
 			charProps.setPropertyValue("CharFontName", font);
+		}
+		if (hi > 0)
+		{
 			charProps.setPropertyValue("CharHeight", new Float(hi));
+		}
+		if (stil > -1)
+		{
 			switch (stil) {
 			case SWT.MIN:
 				charProps.setPropertyValue("CharWeight", 15f /* FontWeight.ULTRALIGHT */);
@@ -668,7 +679,7 @@ public class NOAText implements ITextPlugin {
 		
 		return charProps;
 	}
-	
+
 	class closeListener implements ICloseListener {
 		
 		private IOfficeApplication officeAplication = null;

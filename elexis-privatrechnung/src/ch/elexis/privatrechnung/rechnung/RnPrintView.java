@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnPrintView.java 4707 2008-12-02 16:44:17Z rgw_ch $
+ * $Id: RnPrintView.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
@@ -97,14 +97,17 @@ public class RnPrintView extends ViewPart {
 			}
 			
 		});
-		Object pos = tc.getPlugin().insertText("[Leistungen]", "Leistungen\n", SWT.LEFT);
+		Object pos = null;
+		// Das Wort Leistungen soll jeder selbst in die Vorlage nehmen:
+		// pos = tc.getPlugin().insertText("[Leistungen]", "Leistungen\n\n", SWT.LEFT);
+		pos = tc.getPlugin().insertText("[Leistungen]", "", SWT.LEFT);
 		Money sum = new Money();
 		for (Konsultation k : kons) {
-			tc.getPlugin().setFont("Helvetica", SWT.BOLD, 12);
+			tc.getPlugin().setStyle(SWT.BOLD);
 			pos =
 				tc.getPlugin().insertText(pos,
 					new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + "\n", SWT.LEFT);
-			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 10);
+			tc.getPlugin().setStyle(SWT.NORMAL);
 			for (Verrechnet vv : k.getLeistungen()) {
 				Money preis = vv.getNettoPreis();
 				int zahl = vv.getZahl();
@@ -121,7 +124,7 @@ public class RnPrintView extends ViewPart {
 		pos =
 			tc.getPlugin().insertText(
 				pos,
-				"____________________________________________________________________\nTotal:\t\t\t"
+				"____________________________________________________________________\nTotal:\t\t"
 					+ sum.getAmountAsString(), SWT.LEFT);
 		String toPrinter = Hub.localCfg.get("Drucker/A4/Name", null);
 		tc.getPlugin().print(toPrinter, null, false);

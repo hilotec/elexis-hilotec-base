@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ETFTextPlugin.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *  $Id: ETFTextPlugin.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -171,6 +171,10 @@ public class ETFTextPlugin implements ITextPlugin {
 		return true;
 	}
 
+	public boolean setStyle(final int style){
+		return false;
+	}
+	
 	public void setFormat(PageFormat f) {
 		// TODO Auto-generated method stub
 

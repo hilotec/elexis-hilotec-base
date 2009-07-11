@@ -165,6 +165,11 @@ public class ElexisTextPlugin implements ITextPlugin {
 		return true;
 	}
 
+	public boolean setStyle(final int style){
+		this.style = style;
+		return true;
+	}
+	
 	public void showMenu(final boolean b) {
 	}
 
