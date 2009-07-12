@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 4819 2008-12-15 15:36:48Z rgw_ch $
+ *  $Id: TextContainer.java 5552 2009-07-12 17:23:52Z tschaller $
  *******************************************************************************/
 
 package ch.elexis.oowrapper3;
@@ -370,6 +370,11 @@ public class TextContainer implements ITextPlugin {
 	}
 	
 	public boolean setFont(String name, int style, float size){
+		
+		return false;
+	}
+	
+	public boolean setStyle(int style){
 		
 		return false;
 	}
