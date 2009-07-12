@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOText.java 5227 2009-03-27 13:09:56Z rgw_ch $
+ *  $Id: OOText.java 5551 2009-07-12 17:16:36Z tschaller $
  *******************************************************************************/
 
 package ch.rgw.oowrapper;
@@ -1025,6 +1025,12 @@ public class OOText implements ITextPlugin{
 		stil=style;
 		return true;
 	}
+
+	public boolean setStyle(final int style) {
+		stil=style;
+		return true;
+	}
+
 	public String getMimeType() {
 		return MIMETYPE_OO2;
 	}
