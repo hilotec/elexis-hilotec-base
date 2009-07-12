@@ -75,6 +75,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
+import ch.elexis.util.SWTHelper;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
@@ -493,6 +495,15 @@ public class OfficePanel extends Composite {
 					documentDescriptor);
 			loadDocumentOperation.run(progressMonitor);
 			document = loadDocumentOperation.getDocument();
+			if (document == null) {
+				Exception ex = loadDocumentOperation.getException();
+				// something went wrong --> inform the user (or at least the supporter/developer)
+				String errMsg = "loadDocumentOperation.getDocument() failed"; //$NON-NLS-2$
+				if (ex != null) {
+					errMsg = ex.getMessage();
+				}
+				SWTHelper.showError("Error", errMsg + "\n" + url.toString()); //$NON-NLS-2$
+			}
 		} catch (InvocationTargetException invocationTargetException) {
 			documentLoadingOperationDone();
 			throw new CoreException(new Status(IStatus.ERROR, NOAUIPlugin.PLUGIN_ID, IStatus.ERROR,
