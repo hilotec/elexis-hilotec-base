@@ -120,6 +120,13 @@
             </commandParameter>
          </command>
       </extension>
+      <extension
+            point="ch.elexis.PersistentReference">
+         <Factory
+               Class="ch.elexis.agenda.data.TerminFactory"
+               name="Termin">
+         </Factory>
+      </extension>
    
 
 </plugin>

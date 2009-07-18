@@ -11,13 +11,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaParallel.java 5401 2009-06-24 05:58:11Z rgw_ch $
+ *  $Id: AgendaParallel.java 5563 2009-07-18 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -38,13 +35,9 @@ import org.eclipse.swt.widgets.MenuItem;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.data.IPlannable;
-import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.DateSelectorDialog;
-import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;

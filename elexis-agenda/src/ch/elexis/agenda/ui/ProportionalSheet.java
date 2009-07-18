@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5401 2009-06-24 05:58:11Z rgw_ch $
+ *  $Id: ProportionalSheet.java 5563 2009-07-18 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -35,11 +35,14 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -62,6 +65,30 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 	private double sheetWidth;
 	private double widthPerColumn;
 
+	private TimeTool setTerminTo(int x, int y){
+		String resource = "";
+		for (int i = 0; i < resources.length; i++) {
+			double lower = left_offset + i * (widthPerColumn + padding);
+			double upper = lower + widthPerColumn;
+			if (isBetween(x, lower, upper)) {
+				resource = resources[i];
+				break;
+			}
+		}
+		int minute = (int) Math.round(y / ppm);
+		TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
+		int hour = minute / 60;
+		minute = minute - (60 * hour);
+		int raster = 15;
+		minute = ((minute + (raster >> 1)) / raster) * raster;
+		tt.set(TimeTool.AM_PM, TimeTool.AM);
+		tt.set(TimeTool.HOUR, hour);
+		tt.set(TimeTool.MINUTE, minute);
+		if (resource.length() > 0) {
+			Activator.getDefault().setActResource(resource);
+		}
+		return tt;
+	}
 	public ProportionalSheet(Composite parent, AgendaParallel v) {
 		super(parent, SWT.NO_BACKGROUND);
 		view = v;
@@ -77,28 +104,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				String resource = "";
-				for (int i = 0; i < resources.length; i++) {
-					double lower = left_offset + i * (widthPerColumn + padding);
-					double upper = lower + widthPerColumn;
-					if (isBetween(e.x, lower, upper)) {
-						resource = resources[i];
-						break;
-					}
-				}
-				int minute = (int) Math.round(e.y / ppm);
-				TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
-				int hour = minute / 60;
-				minute = minute - (60 * hour);
-				int raster = 15;
-				minute = ((minute + (raster >> 1)) / raster) * raster;
-				tt.set(TimeTool.AM_PM, TimeTool.AM);
-				tt.set(TimeTool.HOUR, hour);
-				tt.set(TimeTool.MINUTE, minute);
-				if (resource.length() > 0) {
-					Activator.getDefault().setActResource(resource);
-				}
-
+				
+				TimeTool tt=setTerminTo(e.x,e.y);
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();
 				dlg.setTime(tt);
@@ -109,6 +116,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			}
 
 		});
+		
+	
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
@@ -119,42 +128,18 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 						return true;
 					}
 
-					public void dropped(PersistentObject o, DropTargetEvent e) {
-						System.out.println("dropped");
-						String resource = "";
-						for (int i = 0; i < resources.length; i++) {
-							double lower = left_offset + i
-									* (widthPerColumn + padding);
-							double upper = lower + widthPerColumn;
-							if (isBetween(e.x, lower, upper)) {
-								resource = resources[i];
-								break;
-							}
-						}
-						int minute = (int) Math.round(e.y / ppm);
-						TimeTool tt = new TimeTool(Activator.getDefault()
-								.getActDate());
-						int hour = minute / 60;
-						minute = minute - (60 * hour);
-						int raster = 15;
-						minute = ((minute + (raster >> 1)) / raster) * raster;
-						tt.set(TimeTool.AM_PM, TimeTool.AM);
-						tt.set(TimeTool.HOUR, hour);
-						tt.set(TimeTool.MINUTE, minute);
-						if (resource.length() > 0) {
-							Activator.getDefault().setActResource(resource);
-						}
-						TerminDialog dlg = new TerminDialog(null);
-						dlg.create();
-						dlg.setTime(tt);
-						if (dlg.open() == Dialog.OK) {
-
-							refresh();
-						}
-
-					}
-				});
-
+			public void dropped(PersistentObject o, DropTargetEvent e) {
+				Point pt=Display.getCurrent().map(null, ProportionalSheet.this, e.x, e.y);
+				TimeTool tt=setTerminTo(pt.x,pt.y);
+				TerminLabel tl=(TerminLabel)e.widget;
+				Termin t=tl.getTermin();
+				if(t!=null){
+					t.setStartTime(tt);
+					t.setBereich(Activator.getDefault().getActResource());
+					tl.refresh();					
+					refresh();
+				}
+			}});
 	}
 
 	private boolean isBetween(int x, double lower, double upper) {

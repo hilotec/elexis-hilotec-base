@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 5423 2009-06-25 18:04:34Z rgw_ch $
+ *  $Id: TerminDialog.java 5563 2009-07-18 06:53:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
