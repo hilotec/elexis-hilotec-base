@@ -19,7 +19,7 @@
 	</datatype>
 	
 	<datatype		name="ekg"		title="EKG">
-		<enumfield	name="position"	title="Position">
+		<enumfield	name="position"	title="Position" default="1">
 			<option	value="1" 		title="sitzend" />
 			<option value="2" 		title="liegend" />
 		</enumfield>

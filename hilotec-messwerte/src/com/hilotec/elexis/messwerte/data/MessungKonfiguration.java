@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MessungKonfiguration.java 5405 2009-06-25 08:39:05Z freakypenguin $
+ * $Id: MessungKonfiguration.java 5565 2009-07-20 14:36:55Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -17,16 +17,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
+import ch.elexis.util.PlatformHelper;
 
 public class MessungKonfiguration {
 	public static final String ATTR_TYPE = "type";
@@ -73,9 +80,29 @@ public class MessungKonfiguration {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
+		SchemaFactory sfac = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
 		try {
+			String schemapath = PlatformHelper.getBasePath(
+				"com.hilotec.elexis.messwerte") + File.separator + "rsc" +
+				File.separator+"messwerte.xsd";
+			Schema s = sfac.newSchema(new File(schemapath));
+			factory.setSchema(s);
+			
 			builder = factory.newDocumentBuilder();
+			builder.setErrorHandler(new ErrorHandler() {
+				public void error(SAXParseException exception)
+						throws SAXException {
+					throw exception;
+				}
+				public void fatalError(SAXParseException exception)
+						throws SAXException {
+					throw exception;
+				}
+				public void warning(SAXParseException exception)
+						throws SAXException {
+					throw exception;
+				}});
 			doc = builder.parse(new FileInputStream(path));
 			
 			Element rootel = doc.getDocumentElement();
@@ -204,6 +231,8 @@ public class MessungKonfiguration {
 				}
 				types.add(dt);
 			}
+		} catch (Error e) {
+			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(), Log.ERRORS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(), Log.ERRORS);
