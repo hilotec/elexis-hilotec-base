@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *    $Id: BriefAuswahl.java 5566 2009-07-20 15:04:38Z freakypenguin $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -293,7 +293,9 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 			@Override
 			public void run() {
 				CTabItem sel = ctab.getSelection();
-				if (sel != null) {
+				if ((sel != null) && SWTHelper.askYesNo("Dokument löschen", 
+					"Wollen Sie dieses Dokument wirklich unwiderruflich löschen?"))
+				{
 					CommonViewer cv = (CommonViewer) sel.getData();
 					Object[] o = cv.getSelection();
 					if ((o != null) && (o.length > 0)) {
