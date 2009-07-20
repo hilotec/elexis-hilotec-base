@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ *  $Id: LaborView.java 5569 2009-07-20 15:59:30Z freakypenguin $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -562,7 +562,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 		lastColumn = firstColumn + NUMCOLUMNS - 1;
 
 		// Keine Anzeigbaren Daten vorhanden?
-		if ((sDaten.length == 0) || (sDaten.length < firstColumn)) {
+		if ((sDaten == null) || (sDaten.length == 0) || (sDaten.length < firstColumn)) {
 			loadPage(p - 1);
 			return;
 		}
@@ -867,6 +867,10 @@ public class LaborView extends ViewPart implements SelectionListener,
 				Point m = Desk.getDisplay().getCursorLocation();
 				dsd.getShell().setLocation(m.x, m.y);
 				if (dsd.open() == Dialog.OK) {
+					if (sDaten == null) {
+						return;
+					}
+					
 					String date = dsd.getSelectedDate().toString(
 							TimeTool.DATE_COMPACT);
 					String[] nDates = new String[sDaten.length + 1];
