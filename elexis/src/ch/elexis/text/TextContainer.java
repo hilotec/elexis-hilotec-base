@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - better support for IDataAccess
  *    
- *  $Id: TextContainer.java 5548 2009-07-11 21:29:11Z tschaller $
+ *  $Id: TextContainer.java 5567 2009-07-20 15:24:43Z freakypenguin $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -573,6 +573,13 @@ public class TextContainer {
 		@Override
 		protected void okPressed() {
 			title = name.getText();
+			if (title.length() == 0) {
+				MessageDialog.openError(getShell(),
+					Messages.TextContainer_TemplateTitleEmptyCaption,
+					Messages.TextContainer_TemplateTitleEmptyBody);
+				return;
+			}
+			
 			bSysTemplate = btSysTemplate.getSelection();
 			int i = cMands.getSelectionIndex();
 			if (i != -1) {

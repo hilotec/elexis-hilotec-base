@@ -48,6 +48,8 @@ public class Messages extends NLS {
 	public static String TextContainer_TemplateNotFoundBody;
 	public static String TextContainer_TemplateNotFoundHeader;
 	public static String TextContainer_UnrecognizedFieldType;
+	public static String TextContainer_TemplateTitleEmptyCaption;
+	public static String TextContainer_TemplateTitleEmptyBody;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
