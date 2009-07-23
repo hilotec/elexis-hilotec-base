@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationActionBarAdvisor.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: ApplicationActionBarAdvisor.java 5571 2009-07-23 14:19:41Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis;
@@ -22,6 +22,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.internal.ActionSetContributionItem;
+import org.eclipse.ui.internal.PlaceholderFolderLayout;
 
 import ch.elexis.actions.GlobalActions;
 import static ch.elexis.actions.GlobalActions.*;
@@ -153,6 +155,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		
 		/* helpMenu.add(testAction); */
 		helpMenu.add(GlobalActions.helpAction);
+		helpMenu.add(new Separator("additions"));
 		helpMenu.add(new Separator());
 		helpMenu.add(GlobalActions.aboutAction);
 	}
