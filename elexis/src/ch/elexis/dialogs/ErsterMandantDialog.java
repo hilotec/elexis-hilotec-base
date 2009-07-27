@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErsterMandantDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ *  $Id: ErsterMandantDialog.java 5572 2009-07-27 06:27:03Z freakypenguin $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -105,7 +105,7 @@ public class ErsterMandantDialog extends TitleAreaDialog {
 			return;
 		}
 		String email=tEmail.getText();
-		if(StringTool.isMailAddress(email)){
+		if(!StringTool.isMailAddress(email)){
 			SWTHelper.showError(Messages.getString("ErsterMandantDialog.mailnvalidCaption"), Messages.getString("ErsterMandantDialog.mailInvaildBody")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
