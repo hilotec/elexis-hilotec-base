@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CodeDetailView.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ * $Id: CodeDetailView.java 5573 2009-07-27 06:48:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
@@ -42,6 +43,7 @@ import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ImporterPage;
+import ch.elexis.util.Log;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer;
@@ -174,11 +176,14 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 				
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
+				Hub.log.log("Fehler beim Initialisieren von "+ce.getName(), Log.WARNINGS);
+				/*
 				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
 				mb.setText(Messages.getString("CodeDetailView.errorCaption")); //$NON-NLS-1$
 				mb.setMessage(Messages.getString("CodeDetailView.errorBody") + ce.getName() + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ ex.getLocalizedMessage());
 				mb.open();
+				*/
 			}
 		}
 	}

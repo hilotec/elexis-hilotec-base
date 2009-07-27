@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5252 2009-04-17 08:09:16Z tschaller $
+ * $Id: XMLExporter.java 5573 2009-07-27 06:48:47Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -111,6 +111,7 @@ import ch.rgw.tools.XMLTool;
 public class XMLExporter implements IRnOutputter {
 	public static final Namespace ns =
 		Namespace.getNamespace("invoice", "http://www.xmlData.ch/xmlInvoice/XSD");
+	public static final String FIELDNAME_TIMESTAMPXML = "TimeStampXML";
 	Fall actFall;
 	Patient actPatient;
 	Mandant actMandant;
@@ -459,10 +460,14 @@ public class XMLExporter implements IRnOutputter {
 		root.addContent(invoice);
 		String ts = null;
 		if (type.equals(IRnOutputter.TYPE.COPY)) {
-			ts = rn.getExtInfo("TimeStampXML");
+			ts = rn.getExtInfo(FIELDNAME_TIMESTAMPXML);
+			if (StringTool.isNothing(ts)) {
+				ts = Long.toString(new Date().getTime() / 1000);
+				rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
+			}
 		} else {
 			ts = Long.toString(new Date().getTime() / 1000);
-			rn.setExtInfo("TimeStampXML", ts);
+			rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
 		}
 		
 		invoice.setAttribute("invoice_timestamp", ts); // 10152
