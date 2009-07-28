@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Patient.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ *  $Id: Patient.java 5579 2009-07-28 10:00:49Z freakypenguin $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -251,6 +252,7 @@ public class Patient extends Person {
 	public Fall neuerFall(final String Bezeichnung, final String grund,
 			final String Abrechnungsmethode) {
 		Fall fall = new Fall(getId(), Bezeichnung, grund, Abrechnungsmethode);
+		GlobalEvents.getInstance().fireUpdateEvent(Fall.class);
 		return fall;
 	}
 
