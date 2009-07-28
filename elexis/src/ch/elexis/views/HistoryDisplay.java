@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *  $Id: HistoryDisplay.java 5583 2009-07-28 17:11:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.actions.BackgroundJob;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.HistoryLoader;
@@ -36,6 +37,8 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.util.Log;
+import ch.rgw.tools.ExHandler;
 
 /**
  * Anzeige der vergangenen Konsultationen. Es sollen einerseits "sofort" die
@@ -154,10 +157,15 @@ public class HistoryDisplay extends ScrolledComposite implements
 
 				// check if widget is valid
 				if (!isDisposed()) {
-					text.setText(s, true, true);
-					text.setSize(text.computeSize(self.getSize().x - 10,
-							SWT.DEFAULT));
+					try{
+					text.setText(s,true,true);
+					text.setSize(text.computeSize(self.getSize().x-10,SWT.DEFAULT));
+					}catch(Exception ex){
+						ExHandler.handle(ex);
+						Hub.log.log("Text kann nicht geparsed werden "+s, Log.ERRORS);
+					}
 				}
+				
 			}
 		});
 	}
