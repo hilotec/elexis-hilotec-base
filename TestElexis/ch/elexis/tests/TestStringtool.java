@@ -17,6 +17,10 @@ public class TestStringtool extends TestCase {
 	
 	}
 	
+	public void testMatchMail() throws Exception{
+		String mailaddr="psiska@students.unibe.ch";
+		assertTrue(StringTool.isMailAddress(mailaddr));
+	}
 	public void testAmbiguify() throws Exception{
 		String n1="abcädefüghiöjklè";
 		String n2="abcaedefÜghiOejklé";
