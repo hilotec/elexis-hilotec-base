@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  *    
- * $Id: Query.java 5359 2009-06-16 20:13:48Z rgw_ch $
+ * $Id: Query.java 5578 2009-07-28 09:49:26Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -49,7 +49,7 @@ public class Query<T>{
 	public static final String NOT_EQUAL="<>";
 	public static final String LIKE="LIKE";
 	// private Query(){/* leer */}
-	private StringBuffer sql;
+	private StringBuilder sql;
 	private static Log log=Log.get("Query");
 	//private boolean restrictions;
 	private PersistentObject template;
@@ -108,7 +108,7 @@ public class Query<T>{
      */
 	public void clear()
 	{
-		sql=new StringBuffer(200);
+		sql=new StringBuilder(500);
 		String table=template.getTableName();
 		sql.append(left).append(table);
 		String cns=template.getConstraint();
