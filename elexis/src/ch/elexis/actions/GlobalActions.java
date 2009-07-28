@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: GlobalActions.java 5582 2009-07-28 16:27:48Z freakypenguin $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -582,7 +582,9 @@ public class GlobalActions {
 								Messages.getString("GlobalActions.97")); //$NON-NLS-1$
 					}
 					GlobalEvents.getInstance().clearSelection(Konsultation.class);
-					GlobalEvents.getInstance().fireSelectionEvent(k.getFall());
+					if (k != null) {
+						GlobalEvents.getInstance().fireSelectionEvent(k.getFall());
+					}
 				}
 			};
 		openFallaction = new Action(Messages.getString("GlobalActions.EditCase")) { //$NON-NLS-1$

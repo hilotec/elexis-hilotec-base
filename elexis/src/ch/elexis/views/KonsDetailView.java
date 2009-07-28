@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 5343 2009-06-08 07:18:51Z rgw_ch $
+ *  $Id: KonsDetailView.java 5582 2009-07-28 16:27:48Z freakypenguin $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -449,6 +449,9 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 
 			@Override
 			public void run() {
+				if (actKons == null) {
+					return;
+				}
 				if (MessageDialog
 						.openConfirm(
 								getViewSite().getShell(),
@@ -466,6 +469,9 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				.getString("KonsDetailView.nextEntry")) { //$NON-NLS-1$
 			@Override
 			public void run() {
+				if (actKons == null) {
+					return;
+				}
 				if (MessageDialog
 						.openConfirm(
 								getViewSite().getShell(),
