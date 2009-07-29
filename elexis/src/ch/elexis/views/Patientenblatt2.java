@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt2.java 5330 2009-05-30 11:24:09Z rgw_ch $
+ * $Id: Patientenblatt2.java 5584 2009-07-29 06:44:53Z freakypenguin $
  *******************************************************************************/
 
 
@@ -24,6 +24,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -286,6 +288,17 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
                 }
                 
             });
+            txExpandable[i].addKeyListener(new KeyListener() {
+                @Override
+                public void keyReleased(KeyEvent e) {
+                        Text tx = (Text) e.getSource();
+                        tx.redraw();
+                        form.getBody().layout(true);
+                }  
+                @Override
+                public void keyPressed(KeyEvent e) {} 
+});
+            
             ec[i].setClient(txExpandable[i]);
 		}
 		ecdm=WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
