@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: HistoryLoader.java 5585 2009-07-29 15:38:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -124,9 +124,7 @@ public class HistoryLoader extends BackgroundJob {
 						Samdas samdas = new Samdas(s);
 						s = samdas.getRecordText();
 					}
-					s = s.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
-					s = s.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
-					s = s.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+					s=maskHTML(s);
 					if (multiline) {
 						// TODO use system line separator
 						// replace Windows line separator
@@ -138,7 +136,7 @@ public class HistoryLoader extends BackgroundJob {
 				} else {
 					s = ""; //$NON-NLS-1$
 				}
-				String label = k.getLabel();
+				String label = maskHTML(k.getLabel());
 				// label+="<br/>"+k.getFall().getLabel();
 				sb.append("<p><a href=\"") //$NON-NLS-1$
 					.append(k.getId()).append("\">") //$NON-NLS-1$
@@ -153,6 +151,13 @@ public class HistoryLoader extends BackgroundJob {
 			monitor.done();
 		}
 		return Status.CANCEL_STATUS;
+	}
+	
+	private String maskHTML(String input){
+		String s=input.replaceAll("<","&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		s=s.replaceAll(">","&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		s=s.replaceAll("&","&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+		return s;
 	}
 	
 	@Override
