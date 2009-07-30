@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="elexis_switzerland"
+      id="ch.medelexis.features.switzerland"
       label="Elexis Feature for Switzerland"
-      version="1.0.0"
-      provider-name="elexis.ch">
+      version="2.0.0"
+      provider-name="Medelexis AG">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -62,6 +62,13 @@
 
    <plugin
          id="ch.elexis.diagnosecodes_ch"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.elexis.labortarif.ch2009"
          download-size="0"
          install-size="0"
          version="0.0.0"
