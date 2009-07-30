@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt2.java 5584 2009-07-29 06:44:53Z freakypenguin $
+ * $Id: Patientenblatt2.java 5587 2009-07-30 06:15:08Z rgw_ch $
  *******************************************************************************/
 
 
@@ -289,13 +289,13 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
                 
             });
             txExpandable[i].addKeyListener(new KeyListener() {
-                @Override
+
                 public void keyReleased(KeyEvent e) {
                         Text tx = (Text) e.getSource();
                         tx.redraw();
                         form.getBody().layout(true);
                 }  
-                @Override
+
                 public void keyPressed(KeyEvent e) {} 
 });
             
