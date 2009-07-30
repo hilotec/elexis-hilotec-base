@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5360 2009-06-18 09:53:05Z rgw_ch $
+ *    $Id: PersistentObject.java 5593 2009-07-30 21:01:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1146,7 +1146,6 @@ public abstract class PersistentObject {
 
 			Stm stm = getConnection().getStatement();
 			ResultSet rs = stm.query(sql.toString());
-			getConnection().releaseStatement(stm);
 			LinkedList<String[]> list = new LinkedList<String[]>();
 			try {
 				while ((rs != null) && rs.next()) {
@@ -1157,12 +1156,16 @@ public abstract class PersistentObject {
 					}
 					list.add(line);
 				}
+				rs.close();
 				return list;
 
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				log.log("Fehler beim Lesen der Liste ", Log.ERRORS);
 				return null;
+			}finally{
+				getConnection().releaseStatement(stm);
+				
 			}
 		} else {
 			log.log("Fehlerhaftes Mapping " + mapped, Log.ERRORS);
