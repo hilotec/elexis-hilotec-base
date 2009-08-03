@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<queries>
+	<query title="Älter als 30, Bluthochdruck">
+		<cols>
+			<col name="alter" source="Patient.Alter" />
+			<col name="name" source="Patient.Name" />
+			<col name="vorname" source="Patient.Vorname" />
+			<col name="bdvorher" source="Messwerte:Patient:firstsince=[startdatum]:status.bddia" />
+			<col name="bdnacher" source="Messwerte:Patient:lastbefore=[enddatum]:status.bddia" />
+			<col name="kosten" source="kostenBereich" />
+		</cols>
+		<where>
+			<and>
+				<greaterthan a="[alter]" b="30" />
+				<greaterthan a="[bdvorher]" b="120" />
+			</and>
+		</where>
+	</query>
+
+	<query title="Herzinfarkte, Alter 30-60">
+		<cols>
+			<col name="alter" source="Patient.Alter" />
+			<col name="infarkt" source="Messwerte:Patient:first:infarkt.schweregrad" />
+		</cols>
+		<where>
+			<and>
+				<greaterthan a="[alter]" b="30" />
+				<lessthan a="[alter]" b="60" />
+				<greaterthan a="[infarkt]" b="0" />
+			</and>
+		</where>
+	</query>
+
+	<query title="Herzinfarkt schwerer 3, Arbeitsfähigkeit">
+		<cols>
+			<col name="alter" source="Patient.Alter" />
+			<col name="name" source="Patient.Name" />
+			<col name="vorname" source="Patient.Vorname" />
+			<col name="infarkt" source="Messwerte:Patient:first:infarkt.schweregrad" />
+			<col name="afvorher" source="Messwerte:Patient:first:status.arfaeh" />
+			<col name="afnacher" source="Messwerte:Patient:last:status.arfaeh" />
+		</cols>
+		<where>
+			<greaterthan a="[infarkt]" b="3" />
+		</where>
+	</query>
+</queries>
