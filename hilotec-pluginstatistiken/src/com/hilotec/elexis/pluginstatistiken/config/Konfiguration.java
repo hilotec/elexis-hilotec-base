@@ -88,7 +88,13 @@ public class Konfiguration {
 				KonfigurationQuery kq = new KonfigurationQuery(qe.getAttribute(ATTR_TITLE));
 				
 				Element colse = (Element) qe.getElementsByTagName(ELEM_COLS).item(0);
-				Element wheree = (Element) qe.getElementsByTagName(ELEM_WHERE).item(0);
+				Element wheree;
+				NodeList wel = qe.getElementsByTagName(ELEM_WHERE);
+				if (wel == null || wel.getLength() == 0) {
+					wheree = null;
+				} else {
+					wheree = (Element) wel.item(0);
+				}
 				
 				NodeList colsList = colse.getChildNodes();
 				for (int j = 0; j < colsList.getLength(); j++) {
@@ -102,17 +108,19 @@ public class Konfiguration {
 				}
 				
 				
-				Element whereOp = null;
-				NodeList wl = wheree.getChildNodes();
-				for (int j = 0; j < wl.getLength(); j++) {
-					if (wl.item(j).getNodeType() == Node.ELEMENT_NODE) {
-						whereOp = (Element) wl.item(j);
-						break;
-					}
-				}
-				KonfigurationWhere where = new KonfigurationWhere(whereOp);
-				kq.setWhere(where);
 				
+				if (wheree != null) {
+					Element whereOp = null;
+					NodeList wl = wheree.getChildNodes();
+					for (int j = 0; j < wl.getLength(); j++) {
+						if (wl.item(j).getNodeType() == Node.ELEMENT_NODE) {
+							whereOp = (Element) wl.item(j);
+							break;
+						}
+					}
+					KonfigurationWhere where = new KonfigurationWhere(whereOp);
+					kq.setWhere(where);
+				}
 				queries.add(kq);
 			}
 		} catch (Exception e) {

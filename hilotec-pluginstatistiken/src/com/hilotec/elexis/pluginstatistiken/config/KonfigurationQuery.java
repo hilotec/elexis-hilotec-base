@@ -109,7 +109,7 @@ public class KonfigurationQuery {
 		monitor.beginTask("Verarbeite Patienten", patienten.size());
 		for (Patient p: patienten) {
 			Datensatz ds = new Datensatz(this, p, startDatum, endDatum);
-			if (ds.isValid() && where.matches(ds)) {
+			if (ds.isValid() && (where == null || where.matches(ds))) {
 				data.add(ds);
 			}
 			monitor.worked(1);
