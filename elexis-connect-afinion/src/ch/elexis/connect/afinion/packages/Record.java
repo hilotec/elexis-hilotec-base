@@ -72,7 +72,7 @@ public class Record {
 					text += ", ";
 				}
 				text +=
-					parts[i].getKuerzel() + " = " + parts[i].getResultStr() + " "
+					parts[i].getKuerzel() + " " + parts[i].getResultStr() + " "
 						+ parts[i].getUnit();
 			}
 		}

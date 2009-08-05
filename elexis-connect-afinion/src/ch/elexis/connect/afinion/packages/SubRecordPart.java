@@ -56,6 +56,12 @@ public class SubRecordPart extends AbstractPart {
 	}
 	
 	public String getResultStr(){
+		if (result < min) {
+			return "<" + new DecimalFormat("#.##").format(min);
+		}
+		if (result > max) {
+			return ">" + new DecimalFormat("#.##").format(max);
+		}
 		return new DecimalFormat("#.##").format(result);
 	}
 	

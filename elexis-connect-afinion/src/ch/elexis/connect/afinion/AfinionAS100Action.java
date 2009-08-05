@@ -41,7 +41,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	Record lastRecord = null;
 	boolean background;
 	int debugRecord = 0; // test only!! for production must be 0!
-	String simulate = null; // test only!! for production must be null!
+	String simulate = null; // "C:\\Temp\\Afinion\\afinion.log"; // declare filename to the log for test only!! for production must be null!
 	
 	// "c:/temp/afinion/test.log"; oder null
 	// Anweisung zum Logfile:
@@ -261,9 +261,11 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					patientDeviceStr = Messages.getString("AfinionAS100Action.NoPatientInfo");
 				}
 				String warning = "";
-				if (record.isOutOfRange()) {
-					warning = Messages.getString("AfinionAS100Action.ValueOutOfRangeWarning");
-				}
+//				Gemäss Mail von Frau Rytz (Axis-Shield) vom 3.8.09: Anstelle der Warnung soll der Wert als <min oder >max angezeigt werden
+//				Wurde in SubRecordPart.getResultStr implementiert				
+//				if (record.isOutOfRange()) {
+//					warning = Messages.getString("AfinionAS100Action.ValueOutOfRangeWarning");
+//				}
 				String text =
 					MessageFormat
 						.format(
