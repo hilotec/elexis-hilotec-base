@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DisplayTextDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: DisplayTextDialog.java 5608 2009-08-08 19:16:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -30,17 +30,16 @@ import ch.elexis.util.SWTHelper;
 
 public class DisplayTextDialog extends TitleAreaDialog {
 	String t, m, cnt;
-
-	public DisplayTextDialog(Shell parentShell, String title, String message,
-			String content) {
+	
+	public DisplayTextDialog(Shell parentShell, String title, String message, String content){
 		super(parentShell);
 		t = title;
 		m = message;
 		cnt = content;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		ScrolledForm form = Desk.getToolkit().createScrolledForm(parent);
 		form.getBody().setLayout(new ColumnLayout());
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -52,7 +51,7 @@ public class DisplayTextDialog extends TitleAreaDialog {
 			if (cnt.length() > 300) {
 				getShell().setSize(800, 600);
 			}
-
+			
 		} else {
 			cnt = cnt.replaceAll("<", "&lt;");
 			cnt = cnt.replaceAll(">", "&gt;");
@@ -61,18 +60,17 @@ public class DisplayTextDialog extends TitleAreaDialog {
 			cnt = cnt.replaceAll("\\\\\\.br\\\\", "<br/>");
 			cnt = cnt.replaceAll("\\\\\\.BR\\\\", "<br/>");
 			cnt = cnt.replaceAll("\\n\\n", "\\n");
-
+			
 			ret = Desk.getToolkit().createFormText(form.getBody(), false);
 			// ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			((FormText) ret).setText("<form><p>" + cnt + "</p></form>", true,
-					true);
+			((FormText) ret).setText("<form><p>" + cnt + "</p></form>", true, true);
 		}
 		SWTHelper.center(Desk.getTopShell(), getShell());
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText(t);
 		setTitle(GlobalEvents.getSelectedPatient().getLabel());
@@ -84,5 +82,5 @@ public class DisplayTextDialog extends TitleAreaDialog {
 		getShell().setBounds(0, 0, w, h);
 		SWTHelper.center(getShell());
 	}
-
+	
 }
