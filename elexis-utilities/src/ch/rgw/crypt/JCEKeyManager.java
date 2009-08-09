@@ -44,21 +44,25 @@ import ch.rgw.tools.TimeTool;
  */
 
 public class JCEKeyManager {
+	// private static final String CERTIFICATE_SIGNATURE_ALGO =
+	// "SHA256WithRSAEncryption";
+	private static final String CERTIFICATE_SIGNATURE_ALGO = "SHA256withRSA";
+
 	public static String Version() {
-		return "0.1.5";
+		return "0.1.6";
 	}
 
-	private KeyStore ks;
+	protected KeyStore ks;
 	private static SecureRandom _srnd;
-	private static Logger log;
+	protected static Logger log;
 
 	@SuppressWarnings("unused")
 	private JCEKeyManager() {
 	}
 
-	char[] storePwd = null;
-	String ksType;
-	String ksFile;
+	protected char[] storePwd = null;
+	protected String ksType;
+	private String ksFile;
 
 	static {
 		log = Logger.getLogger("KeyManager");
@@ -84,12 +88,7 @@ public class JCEKeyManager {
 	 *            password for the keystore must not be null.
 	 */
 	public JCEKeyManager(String keystoreFile, String type, char[] keystorePwd) {
-		try {
-			_srnd = SecureRandom.getInstance("SHA1PRNG");
-		} catch (NoSuchAlgorithmException e) {
-			ExHandler.handle(e);
-			_srnd = new SecureRandom();
-		} // Create random
+		this(type, keystorePwd);
 		if (StringTool.isNothing(keystoreFile)) {
 			ksFile = System.getProperty("user.home") + "/.keystore";
 		} else {
@@ -97,19 +96,29 @@ public class JCEKeyManager {
 		}
 		log.log(Level.FINE, "ksPathName: " + ksFile);
 
+		File fks = new File(ksFile);
+		if (!fks.exists()) {
+			File fksPath = fks.getParentFile();
+			if (!fksPath.exists()) {
+				fksPath.mkdirs();
+			}
+		}
+
+	}
+
+	public JCEKeyManager(String type, char[] storepwd) {
+		try {
+			_srnd = SecureRandom.getInstance("SHA1PRNG");
+		} catch (NoSuchAlgorithmException e) {
+			ExHandler.handle(e);
+			_srnd = new SecureRandom();
+		} // Create random
 		if (StringTool.isNothing(type)) {
 			ksType = "jks";
 		} else {
 			ksType = type;
 		}
-		File fks=new File(ksFile);
-		if(!fks.exists()){
-			File fksPath=fks.getParentFile();
-			if(!fksPath.exists()){
-				fksPath.mkdirs();
-			}
-		}
-		storePwd = keystorePwd;
+		storePwd = storepwd;
 	}
 
 	/**
@@ -126,7 +135,8 @@ public class JCEKeyManager {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			log.log(Level.SEVERE,
-					"No Keystore found or could not open Keystore: "+ex.getMessage());
+					"No Keystore found or could not open Keystore: "
+							+ ex.getMessage());
 			return false;
 		}
 		return true;
@@ -271,10 +281,10 @@ public class JCEKeyManager {
 
 		try {
 			String[] n = cert.getSubjectX500Principal().getName().split(",");
-			for(String sub:n){
-				if(sub.startsWith("CN")){
-					String[] fx=sub.split("\\s*=\\s*");
-					if(fx.length>1){
+			for (String sub : n) {
+				if (sub.startsWith("CN")) {
+					String[] fx = sub.split("\\s*=\\s*");
+					if (fx.length > 1) {
 						ks.setCertificateEntry(fx[1].trim(), cert);
 						return true;
 					}
@@ -332,8 +342,9 @@ public class JCEKeyManager {
 		certGen.setNotAfter(ttUntil.getTime());
 		certGen.setSubjectDN(new X500Principal("CN=" + subject));
 		certGen.setPublicKey(pk);
-		certGen.setSignatureAlgorithm("SHA256WithRSAEncryption");
-		X509Certificate cert = certGen.generate(signingKey, "BC");
+		certGen.setSignatureAlgorithm(CERTIFICATE_SIGNATURE_ALGO);
+		// X509Certificate cert = certGen.generate(signingKey, "BC");
+		X509Certificate cert = certGen.generate(signingKey);
 		ks.setCertificateEntry(subject, cert);
 		return cert;
 	}
@@ -342,7 +353,6 @@ public class JCEKeyManager {
 			char[] keyPwd) throws Exception {
 		String alias = getName(cert);
 		ks.setKeyEntry(alias, kpriv, keyPwd, new Certificate[] { cert });
-
 		return true;
 	}
 
@@ -398,7 +408,8 @@ public class JCEKeyManager {
 	 * (params != null) { kpg.initialize(params); } KeyPair kp =
 	 * kpg.generateKeyPair();
 	 * 
-	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; } }
+	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; }
+	 * }
 	 */
 
 	public SecureRandom getRandom() {

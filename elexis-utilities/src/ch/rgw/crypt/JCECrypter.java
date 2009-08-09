@@ -10,7 +10,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -26,15 +25,20 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class JCECrypter implements Cryptologist {
-	public static short VERSION=0x0100;
+	private static final String KEY_ALGO = "AES";
+	//private static final String SIGNATURE_ALGO = "SHA1withRSA";
+	private static final String SIGNATURE_ALGO = "SHA512withRSA";
+	private static final String SYMM_CIPHER_ALGO = "Blowfish";
+	private static final String RSA_ALGO = "RSA/ECB/PKCS1Padding";
+	public static short VERSION=0x0101;
 	public static short MAGIC=(short)0xefde;
 	public static short  KEY_MARKER=0x10;
 	public static short  IV_MARKER=0x20;
 	public static short  DATA_MARKER=0x30;
 	
-	private JCEKeyManager km;
-	private String userKey;
-	private char[] pwd;
+	protected JCEKeyManager km;
+	protected String userKey;
+	protected char[] pwd;
 
 	/**
 	 * Create a new Crypter. If the named keystore does not exist, it well
@@ -47,13 +51,7 @@ public class JCECrypter implements Cryptologist {
 	 */
 	public JCECrypter(String keystore, char[] kspwd, String mykey, char[] keypwd)
 			throws Exception {
-	
-		
-		userKey = mykey;
-		pwd = keypwd;
-		Security
-		.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
-
+		this(kspwd,mykey,keypwd);
 		if (keystore == null) {
 			keystore = System.getProperty("user.home") + File.separator
 					+ ".JCECrypter";
@@ -76,6 +74,14 @@ public class JCECrypter implements Cryptologist {
 		}
 	}
 
+	protected JCECrypter(char[] kspwd, String mykey, char[] keypwd) {
+		userKey = mykey;
+		pwd = keypwd;
+		//Security
+		//.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
+		
+	}
+	
 	@Override
 	protected void finalize() throws Throwable {
 		if (pwd != null) {
@@ -91,7 +97,7 @@ public class JCECrypter implements Cryptologist {
 		try {
 			PrivateKey pk = km.getPrivateKey(userKey, pwd);
 			//Cipher rsaCip = Cipher.getInstance("RSA/None/OAEPPadding", "BC");
-			Cipher rsaCip=Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			Cipher rsaCip=Cipher.getInstance(RSA_ALGO);
 			rsaCip.init(Cipher.DECRYPT_MODE, pk);
 			ByteArrayInputStream bais=new ByteArrayInputStream(encrypted);
 			DataInputStream di=new DataInputStream(bais);
@@ -107,7 +113,7 @@ public class JCECrypter implements Cryptologist {
 			int len=di.readInt();
 			byte[] d=new byte[len];
 			di.readFully(d);
-			Key bfKey = (SecretKey)new SecretKeySpec(rsaCip.doFinal(d), "Blowfish");
+			Key bfKey = (SecretKey)new SecretKeySpec(rsaCip.doFinal(d), SYMM_CIPHER_ALGO);
             /*
 			mark=di.readShort();
             if(mark!=IV_MARKER){
@@ -118,7 +124,7 @@ public class JCECrypter implements Cryptologist {
 			di.readFully(d);
 			byte[] iv=rsaCip.doFinal(d);
 			*/
-			Cipher aesCip=Cipher.getInstance("Blowfish");
+			Cipher aesCip=Cipher.getInstance(SYMM_CIPHER_ALGO);
 			aesCip.init(Cipher.DECRYPT_MODE, bfKey /*, new IvParameterSpec(iv)*/);
 			mark=di.readShort();
 			if(mark!=DATA_MARKER){
@@ -139,13 +145,13 @@ public class JCECrypter implements Cryptologist {
 		try {
 			PublicKey cert = km.getPublicKey(receiverKeyName);
 			Cipher bfCip = Cipher.getInstance(
-					"Blowfish");
+					SYMM_CIPHER_ALGO);
 			byte[] bfKey=generateBlowfishKey();
-			SecretKeySpec spec=new SecretKeySpec(bfKey,"Blowfish");
+			SecretKeySpec spec=new SecretKeySpec(bfKey,SYMM_CIPHER_ALGO);
 			bfCip.init(Cipher.ENCRYPT_MODE, spec);
 	        
 	        //Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
-			Cipher rsaCip=Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			Cipher rsaCip=Cipher.getInstance(RSA_ALGO);
 	        rsaCip.init(Cipher.ENCRYPT_MODE, cert);
 	
 	        ByteArrayOutputStream baos=new ByteArrayOutputStream();
@@ -176,7 +182,8 @@ public class JCECrypter implements Cryptologist {
 	}
 	public byte[] sign(byte[] source) {
 		try {
-			Signature sig = Signature.getInstance("SHA1withRSA", "BC");
+			//Signature sig = Signature.getInstance("SHA1withRSA", "BC");
+			Signature sig = Signature.getInstance(SIGNATURE_ALGO);
 			PrivateKey pk = km.getPrivateKey(userKey, pwd);
 			SecureRandom sr = new SecureRandom();
 			sig.initSign(pk, sr);
@@ -192,7 +199,8 @@ public class JCECrypter implements Cryptologist {
 	public VERIFY_RESULT verify(byte[] data, byte[] signature,
 			String signerKeyName) {
 		try {
-			Signature sig = Signature.getInstance("SHA1withRSA", "BC");
+			//Signature sig = Signature.getInstance("SHA1withRSA", "BC");
+			Signature sig = Signature.getInstance(SIGNATURE_ALGO);
 			PublicKey pk = km.getPublicKey(signerKeyName);
 			if (pk == null) {
 				return  VERIFY_RESULT.SIGNER_UNKNOWN;
@@ -275,7 +283,7 @@ public class JCECrypter implements Cryptologist {
 
 	private byte[] generateBlowfishKey(){
 		try{
-			KeyGenerator key_gen = KeyGenerator.getInstance("Blowfish"); 
+			KeyGenerator key_gen = KeyGenerator.getInstance(SYMM_CIPHER_ALGO); 
 			SecretKey key= key_gen.generateKey();
 			return key.getEncoded();
 		}catch(Exception ex){
@@ -285,7 +293,8 @@ public class JCECrypter implements Cryptologist {
 	}
 	private Key generateAESKey() {
 		try{
-			KeyGenerator key_gen = KeyGenerator.getInstance("AES", "BC"); 
+			//KeyGenerator key_gen = KeyGenerator.getInstance("AES", "BC"); 
+			KeyGenerator key_gen = KeyGenerator.getInstance(KEY_ALGO);
 			key_gen.init(128, km.getRandom()); 
 			Key aes_key = key_gen.generateKey();
 			return aes_key;
