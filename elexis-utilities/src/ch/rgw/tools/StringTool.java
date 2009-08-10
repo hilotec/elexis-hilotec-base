@@ -952,6 +952,9 @@ public class StringTool {
 	}
 
 	public static boolean isMailAddress(final String in) {
+		if(StringTool.isNothing(in)){
+			return false;
+		}
 		return in.matches("\\w[\\w|\\.\\-]+@\\w[\\w\\.\\-]+\\.[a-zA-Z]{2,4}");
 		// oder \w[\w|\.\-]+@\w[\w\.\-]+\.[a-zA-Z]{2,4}
 	}
