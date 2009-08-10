@@ -11,6 +11,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -308,6 +309,17 @@ public class JCECrypter implements Cryptologist {
 		return km.getCertificate(alias);
 	}
 
+	public byte[] getCertificateEncoded(String alias) throws CryptologistException{
+		X509Certificate cert=getCertificate(alias);
+		if(cert!=null){
+			try{
+				return cert.getEncoded();
+			}catch(CertificateEncodingException ce){
+				throw new CryptologistException("Could not encode certificate", CryptologistException.ERR_CERTIFICATE_ENCODING);
+			}
+		}
+		return null;
+	}
 	public boolean isFunctional() {
 		return true;
 	}

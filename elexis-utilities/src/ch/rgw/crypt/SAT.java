@@ -41,6 +41,7 @@ import ch.rgw.tools.Var;
  * 
  */
 public class SAT {
+	public static final String USER_UNKNOWN = "User unknown";
 	public static final String RESULT_BAD_SIGNATURE = "Bad signature";
 	public static final String ADM_TIMESTAMP = "ADM_timestamp";
 	public static final String ADM_SIGNED_BY = "ADM_user";
@@ -48,7 +49,10 @@ public class SAT {
 	public static final String ADM_SIGNATURE = "ADM_signature";
 	public static final String ERR_SERVER = "Server error: ";
 	public static final String ERR_DECRYPT = "Decrypt error: ";
-
+	private static final String VERSION="0.3.0";
+	private String ident="xidClient";
+	private String prov="elexis.ch";
+	
 	Cryptologist crypt;
 
 	/**
@@ -61,6 +65,11 @@ public class SAT {
 		crypt = c;
 	}
 
+	public SAT(String creator, String provider, Cryptologist c){
+		this(c);
+		ident=creator;
+		prov=provider;
+	}
 	/**
 	 * Decrypt, and verify a packet (using our preconfigured Cryptologist)
 	 * 
@@ -108,7 +117,7 @@ public class SAT {
 				ret.put(ADM_SIGNED_BY, user);
 				return new Var(ret);
 			} else {
-				throw new CryptologistException("User unknown",
+				throw new CryptologistException(USER_UNKNOWN,
 						CryptologistException.ERR_USER_UNKNOWN);
 			}
 		} else {
@@ -137,11 +146,11 @@ public class SAT {
 	public byte[] wrap(Var var, String dest) throws CryptologistException {
 
 		SoapConverter sc = new SoapConverter();
-		sc.create("xidClient", "0.1.0", "elexis.ch");
+		sc.create(ident, VERSION, prov);
 		try {
 			sc.addMap(null, ADM_PAYLOAD, var);
 		} catch (Exception ex) {
-			throw new CryptologistException("Internal Cryptologist error",
+			throw new CryptologistException("Internal Cryptologist error: "+ex.getMessage(),
 					CryptologistException.ERR_INTERNAL);
 		}
 		sc.addIntegral(ADM_TIMESTAMP, System.currentTimeMillis());
