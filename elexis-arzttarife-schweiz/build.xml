@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 4530 2008-10-02 10:36:20Z rgw_ch $
+ * $Id: build.xml 5622 2009-08-11 16:58:45Z rgw_ch $
 -->
 <project name="elexis-arzttarife-schweiz" default="all">
 	<property name="pluginname" value="elexis-arzttarife-schweiz" />
@@ -27,7 +27,7 @@
 				<path refid="eclipseclasses" />
 				<pathelement location="${dist}/plugins/ch.elexis.ebanking_ch_${version}" />
 				<pathelement location="${dist}/plugins/ch.elexis.artikel_ch_${version}" />
-
+				<pathelement location="${dist}/plugins/ch.elexis.labortarif.ch2009_${version}" />
 			</classpath>
 		</javac>
 		<copy file="${sourcedir}/createDB.script" tofile="${plugindir}/createDB.script" />
