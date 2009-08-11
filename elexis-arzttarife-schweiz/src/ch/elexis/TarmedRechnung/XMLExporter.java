@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5573 2009-07-27 06:48:47Z rgw_ch $
+ * $Id: XMLExporter.java 5619 2009-08-11 16:56:27Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -77,6 +77,7 @@ import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.data.RnStatus.REJECTCODE;
+import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.tarmedprefs.PreferenceConstants;
@@ -634,7 +635,27 @@ public class XMLExporter implements IRnOutputter {
 						.setAttribute("obligation", Boolean.toString(TarmedLeistung
 							.isObligation(vv)));
 					
-				} else if (v instanceof LaborLeistung) {
+				} else if (v instanceof Labor2009Tarif){
+					el = new Element("record_lab", ns); // 28000
+					el.setAttribute("tariff_type", v.getCodeSystemCode());
+					Labor2009Tarif ll = (Labor2009Tarif) v;
+					double mult = ll.getFactor(tt, actFall);
+					Money preis = vv.getNettoPreis();
+					double korr = preis.getCents() / mult;
+					el.setAttribute("unit", XMLTool.doubleToXmlDouble(
+							korr / 100.0, 2)); // 28470
+					el.setAttribute("unit_factor", XMLTool.doubleToXmlDouble(
+							mult, 2)); // 28480
+					Money mAmountLocal = new Money(preis);
+					mAmountLocal.multiply(zahl);
+					el.setAttribute("amount", XMLTool
+							.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute("vat_rate", "0"); // 28590
+					el.setAttribute("obligation", "true"); // 28630
+					el.setAttribute("validate", "true"); // 28620
+					mAnalysen.addMoney(mAmountLocal);
+					
+				}else if (v instanceof LaborLeistung) {
 					el = new Element("record_lab", ns); // 28000
 					el.setAttribute("tariff_type", "316"); // 28060
 					LaborLeistung ll = (LaborLeistung) v;

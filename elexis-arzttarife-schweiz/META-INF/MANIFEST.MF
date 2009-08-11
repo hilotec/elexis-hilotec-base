@@ -12,7 +12,8 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  ch.elexis.ebanking_ch,
  ch.rgw.utility,
- ch.elexis.importer.div;bundle-version="1.4.0"
+ ch.elexis.importer.div;bundle-version="1.4.0",
+ ch.elexis.labortarif.ch2009;bundle-version="0.0.1"
 Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.arzttarife_schweiz,
  ch.elexis.data,
