@@ -16,10 +16,12 @@ package ch.rgw.crypt;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +33,6 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.SoapConverter;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.Var;
 
 /**
  * Secure Authenticated Transmission The Transmitter stores a hashtable in an
@@ -41,6 +42,11 @@ import ch.rgw.tools.Var;
  * 
  */
 public class SAT {
+	/** A key to store the return value of a call */
+	public static final String KEY_RESULT="return";
+	/** A key to store error conditions */
+	public static final String KEY_ERROR="error";
+
 	public static final String USER_UNKNOWN = "User unknown";
 	public static final String RESULT_BAD_SIGNATURE = "Bad signature";
 	public static final String ADM_TIMESTAMP = "ADM_timestamp";
@@ -78,7 +84,7 @@ public class SAT {
 	 * @return a hashmap with the Parameters and an additional parameter
 	 *         "ADM_SIGNED_BY" containing the sender's ID
 	 */
-	public Var unwrap(byte[] encrypted, boolean bCheckSignature) throws CryptologistException {
+	public Map<String,Serializable> unwrap(byte[] encrypted, boolean bCheckSignature) throws CryptologistException {
 		if (encrypted == null) {
 			throw new CryptologistException("Null packet from server",
 					CryptologistException.ERR_BAD_PARAMETER);
@@ -95,7 +101,7 @@ public class SAT {
 		byte[] decrypted = dec.get();
 		SoapConverter sc = new SoapConverter();
 		if (sc.load(decrypted)) {
-			Map<String, Object> fields = sc.getParameters();
+			Map<String, Serializable> fields = sc.getParameters();
 			String user = (String) fields.get(ADM_SIGNED_BY);
 			Long ts = (Long) fields.get(ADM_TIMESTAMP);
 			byte[] signature = (byte[]) fields.get(ADM_SIGNATURE);
@@ -107,21 +113,23 @@ public class SAT {
 				throw new CryptologistException("timeout",
 						CryptologistException.ERR_TIMEOUT);
 			}
-			Map<String, Object> ret = (Map<String, Object>) fields
+			Map<String, Serializable> ret = (Map<String, Serializable>) fields
 					.get(ADM_PAYLOAD);
 			if(!bCheckSignature){
-				return new Var(ret);
+				return ret;
 			}
 			byte[] digest = calcDigest(sc);
 			if (crypt.verify(digest, signature, user) == VERIFY_RESULT.OK) {
 				ret.put(ADM_SIGNED_BY, user);
-				return new Var(ret);
+				return ret;
 			} else {
 				throw new CryptologistException(USER_UNKNOWN,
 						CryptologistException.ERR_USER_UNKNOWN);
 			}
 		} else {
-			return new Var(Var.KEY_ERROR, "Invalid Message");
+			HashMap<String, Serializable> result=new HashMap<String, Serializable>();
+			result.put(KEY_ERROR, "Invalid Message");
+			return result;
 		}
 
 	}
@@ -143,7 +151,7 @@ public class SAT {
 	 *         will remain valid for 5 Minutes.
 	 * @throws Exception
 	 */
-	public byte[] wrap(Var var, String dest) throws CryptologistException {
+	public byte[] wrap(Map<String, Serializable> var, String dest) throws CryptologistException {
 
 		SoapConverter sc = new SoapConverter();
 		sc.create(ident, VERSION, prov);

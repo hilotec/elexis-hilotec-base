@@ -15,6 +15,7 @@ package ch.rgw.tools;
 
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,13 +101,13 @@ public class SoapConverter {
 		return null;
 	}
 	
-	public Map<String, Object> loadHash(Element parm){
-		HashMap<String, Object> ret = new HashMap<String, Object>();
+	public Map<String, Serializable> loadHash(Element parm){
+		HashMap<String, Serializable> ret = new HashMap<String, Serializable>();
 		List<Element> params = parm.getChildren("parameter", ns);
 		for (Element param : params) {
 			String type = param.getAttributeValue("type");
 			String s = param.getText();
-			Object res = null;
+			Serializable res = null;
 			try {
 				if (type.equals(TYPE_STRING)) {
 					res = s;
@@ -117,7 +118,7 @@ public class SoapConverter {
 				} else if (type.equals(TYPE_ARRAY)) {
 					res = Base64Coder.decode(s);
 				} else if (type.equals(TYPE_MAP)) {
-					res = loadHash(param);
+					res = (Serializable) loadHash(param);
 				} else {
 					res = "** unsupported type ** "+type;
 				}
@@ -130,7 +131,7 @@ public class SoapConverter {
 		return ret;
 	}
 	
-	public Map<String, Object> getParameters(){
+	public Map<String, Serializable> getParameters(){
 		if (bValid) {
 			Element body = eRoot.getChild("Body", ns);
 			return loadHash(body);
@@ -191,7 +192,7 @@ public class SoapConverter {
 		createParameter(eBody, name, TYPE_ARRAY).setText(res);
 	}
 	
-	public void addObject(Element parent, String name, Object obj) throws Exception{
+	public void addObject(Element parent, String name, Serializable obj) throws Exception{
 		if (obj instanceof String) {
 			createParameter(parent, name, TYPE_STRING).setText((String) obj);
 		} else if ((obj instanceof Double) || (obj instanceof Float)) {
@@ -202,17 +203,17 @@ public class SoapConverter {
 			String res = new String(Base64Coder.encode((byte[]) obj));
 			createParameter(parent, name, TYPE_ARRAY).setText(res);
 		} else if (obj instanceof HashMap) {
-			addMap(parent, name, (Map<String, Object>) obj);
+			addMap(parent, name, (Map<String, Serializable>) obj);
 		} else {
 			throw new Exception("Invalid type for SoapConverter: "+obj.getClass().getName());
 		}
 	}
 	
-	public void addMap(Element parent, String name, Map<String, Object> map)
+	public void addMap(Element parent, String name, Map<String, Serializable> map)
 		throws Exception{
 		Element ret = createParameter(parent, name, TYPE_MAP);
-		Set<Entry<String, Object>> entries = map.entrySet();
-		for (Entry<String, Object> entry : entries) {
+		Set<Entry<String, Serializable>> entries = map.entrySet();
+		for (Entry<String, Serializable> entry : entries) {
 			addObject(ret, entry.getKey(), entry.getValue());
 		}
 	}
