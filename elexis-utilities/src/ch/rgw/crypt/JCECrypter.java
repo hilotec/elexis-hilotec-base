@@ -31,7 +31,7 @@ public class JCECrypter implements Cryptologist {
 	private static final String SIGNATURE_ALGO = "SHA512withRSA";
 	private static final String SYMM_CIPHER_ALGO = "Blowfish";
 	private static final String RSA_ALGO = "RSA/ECB/PKCS1Padding";
-	public static short VERSION=0x0101;
+	public static short VERSION=0x0102;
 	public static short MAGIC=(short)0xefde;
 	public static short  KEY_MARKER=0x10;
 	public static short  IV_MARKER=0x20;
@@ -115,16 +115,6 @@ public class JCECrypter implements Cryptologist {
 			byte[] d=new byte[len];
 			di.readFully(d);
 			Key bfKey = (SecretKey)new SecretKeySpec(rsaCip.doFinal(d), SYMM_CIPHER_ALGO);
-            /*
-			mark=di.readShort();
-            if(mark!=IV_MARKER){
-            	return new Result<byte[]>(Result.SEVERITY.ERROR,3,"unexpected block marker",null,true);
-            }
-        	len=di.readInt();
-			d=new byte[len];
-			di.readFully(d);
-			byte[] iv=rsaCip.doFinal(d);
-			*/
 			Cipher aesCip=Cipher.getInstance(SYMM_CIPHER_ALGO);
 			aesCip.init(Cipher.DECRYPT_MODE, bfKey /*, new IvParameterSpec(iv)*/);
 			mark=di.readShort();
