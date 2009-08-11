@@ -3,8 +3,11 @@ package ch.elexis.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -16,7 +19,6 @@ import ch.rgw.crypt.Cryptologist;
 import ch.rgw.crypt.JCECrypter;
 import ch.rgw.crypt.SAT;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.Var;
 
 public class TestSAT extends TestCase {
 	static String homedir;
@@ -119,7 +121,7 @@ public class TestSAT extends TestCase {
 	public void testWrap() throws Exception{
 		crypt = new JCECrypter(null, null, alicename, alicepwd.toCharArray());
 		SAT sat = new SAT(crypt);
-		Var hash = new Var();
+		HashMap<String, Serializable> hash = new HashMap<String, Serializable>();
 		hash.put("test", "Ein Testtext");
 		byte[] result = sat.wrap(hash, bobname);
 		assertNotNull(result);
@@ -130,8 +132,8 @@ public class TestSAT extends TestCase {
 	public void testUnwrap() throws Exception{
 		crypt = new JCECrypter(null, null, bobname, bobpwd.toCharArray());
 		SAT sat = new SAT(crypt);
-		Var res = sat.unwrap(encrypted, true);
-		assertTrue(res.isOK());
+		Map<String,Serializable> res = sat.unwrap(encrypted, true);
+		assertNull(res.get("error"));
 		String val = (String) res.get("test");
 		assertEquals(val, "Ein Testtext");
 		assertEquals(alicename, res.get(SAT.ADM_SIGNED_BY));
