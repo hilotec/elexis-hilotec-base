@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 5552 2009-07-12 17:23:52Z tschaller $
+ *  $Id: TextContainer.java 5628 2009-08-12 19:54:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.oowrapper3;
 
-import java.awt.font.TextHitInfo;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -385,8 +384,8 @@ public class TextContainer implements ITextPlugin {
 	}
 	
 	public void setSaveOnFocusLost(boolean save){
-		bSaveOnFocusLost=save;
-	
+		bSaveOnFocusLost = save;
+		
 	}
 	
 	public void showMenu(boolean b){
@@ -421,13 +420,14 @@ public class TextContainer implements ITextPlugin {
 	private class SaveDelegate implements IDispatchDelegate {
 		
 		public void dispatch(Object[] arg0){
-			if(textHandler!=null){
+			if (textHandler != null) {
 				textHandler.save();
 			}
 			
 		}
 		
 	}
+	
 	static class PrintProperties implements IPrintProperties {
 		private String mPages = "";
 		
@@ -444,6 +444,5 @@ public class TextContainer implements ITextPlugin {
 		}
 		
 	}
-	
 	
 }
