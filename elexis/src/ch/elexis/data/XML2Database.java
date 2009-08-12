@@ -199,7 +199,7 @@ public class XML2Database {
 	 * Exports an array 
 	 * @return
 	 */
-	public static String exportAll(
+	public static String exportData(
 			final List<? extends PersistentObject> dataList) {
 		StringBuffer buffer = new StringBuffer(HEADER);
 		buffer.append("<" + LIST_TAG + ">\n");
