@@ -125,14 +125,14 @@ public class SoapConverter {
 					res = Base64Coder.decode(s);
 				} else if (type.equals(TYPE_MAP)) {
 					res = (Serializable) loadHash(param);
-				}else if( type.equals(TYPE_SERIALIZED)){
-					byte[] barr=Base64Coder.decode(s);
-					ByteArrayInputStream bais=new ByteArrayInputStream(barr);
-					ObjectInputStream ois=new ObjectInputStream(bais);
-					res=(Serializable)ois.readObject();
+				} else if (type.equals(TYPE_SERIALIZED)) {
+					byte[] barr = Base64Coder.decode(s);
+					ByteArrayInputStream bais = new ByteArrayInputStream(barr);
+					ObjectInputStream ois = new ObjectInputStream(bais);
+					res = (Serializable) ois.readObject();
 					bais.close();
 					ois.close();
-					
+
 				} else {
 					res = "** unsupported type ** " + type;
 				}
@@ -208,32 +208,35 @@ public class SoapConverter {
 
 	public void addObject(Element parent, String name, Serializable obj)
 			throws Exception {
-		if (obj instanceof String) {
-			createParameter(parent, name, TYPE_STRING).setText((String) obj);
-		} else if ((obj instanceof Double) || (obj instanceof Float)) {
-			createParameter(parent, name, TYPE_FLOAT).setText(
-					Double.toString((Double) obj));
-		} else if ((obj instanceof Integer) || (obj instanceof Long)
-				|| (obj instanceof Byte)) {
-			createParameter(parent, name, TYPE_INTEGRAL)
-					.setText(obj.toString());
-		} else if (obj instanceof byte[]) {
-			String res = new String(Base64Coder.encode((byte[]) obj));
-			createParameter(parent, name, TYPE_ARRAY).setText(res);
-		} else if (obj instanceof HashMap) {
-			addMap(parent, name, (Map<String, Serializable>) obj);
-		} else if (obj instanceof Serializable) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream os = new ObjectOutputStream(baos);
-			os.writeObject(obj);
-			os.close();
-			baos.close();
-			byte[] barr = baos.toByteArray();
-			createParameter(parent, name, TYPE_SERIALIZED).setText(
-					new String(Base64Coder.encode(barr)));
-		} else {
-			throw new Exception("Invalid type for SoapConverter: "
-					+ obj.getClass().getName());
+		if (obj != null) {
+			if (obj instanceof String) {
+				createParameter(parent, name, TYPE_STRING)
+						.setText((String) obj);
+			} else if ((obj instanceof Double) || (obj instanceof Float)) {
+				createParameter(parent, name, TYPE_FLOAT).setText(
+						Double.toString((Double) obj));
+			} else if ((obj instanceof Integer) || (obj instanceof Long)
+					|| (obj instanceof Byte)) {
+				createParameter(parent, name, TYPE_INTEGRAL).setText(
+						obj.toString());
+			} else if (obj instanceof byte[]) {
+				String res = new String(Base64Coder.encode((byte[]) obj));
+				createParameter(parent, name, TYPE_ARRAY).setText(res);
+			} else if (obj instanceof HashMap) {
+				addMap(parent, name, (Map<String, Serializable>) obj);
+			} else if (obj instanceof Serializable) {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream os = new ObjectOutputStream(baos);
+				os.writeObject(obj);
+				os.close();
+				baos.close();
+				byte[] barr = baos.toByteArray();
+				createParameter(parent, name, TYPE_SERIALIZED).setText(
+						new String(Base64Coder.encode(barr)));
+			} else {
+				throw new Exception("Invalid type for SoapConverter: "
+						+ obj.getClass().getName());
+			}
 		}
 	}
 
