@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5593 2009-07-30 21:01:12Z rgw_ch $
+ *    $Id: PersistentObject.java 5624 2009-08-12 11:22:28Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -2136,5 +2136,20 @@ public abstract class PersistentObject {
 			return null;
 		}
 	}
-
+	
+	/**
+	 * Returns array of field names of the database fields.<br>
+	 * Used for export functionality
+	 */
+	protected String[] getExportFields() {
+		throw new IllegalArgumentException("No export fields for " + getClass().getSimpleName() + " available");
+	}
+	
+	/**
+	 * Exports a persistentobject to an xml string 
+	 * @return
+	 */
+	public String exportData() {
+		return XML2Database.exportData(this);
+	}
 }
