@@ -258,11 +258,4 @@ Export-Package: .,
    org.eclipse.jface.viewers,
    org.eclipse.swt.widgets,
    org.eclipse.jface.dialogs",
- com.tiff.common.ui.datepicker;uses:="org.eclipse.swt.events,org.eclipse.swt.graphics,org.eclipse.swt.widgets",
- org.apache.commons.logging,
- org.apache.commons.logging.impl;
-  uses:="javax.servlet,
-   org.apache.log,
-   org.apache.commons.logging,
-   org.apache.log4j,
-   org.apache.avalon.framework.logger"
+ com.tiff.common.ui.datepicker;uses:="org.eclipse.swt.events,org.eclipse.swt.graphics,org.eclipse.swt.widgets"

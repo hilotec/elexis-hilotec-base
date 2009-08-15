@@ -9,18 +9,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 4535 2008-10-02 10:36:52Z rgw_ch $
+ * $Id: build.xml 5629 2009-08-15 13:02:30Z rgw_ch $
 -->
 <project name="elexis-importer-div" default="all">
 	<property name="sourcedir" value="${source}/elexis-importer/" />
 	<property name="plugindir" value="${dist}/plugins/ch.elexis.importer.div_${version}" />
-
-
-	<target name="checkout" unless="unplugged">
-		<exec executable="svn" dir="${sourcedir}">
-			<arg line="update" />
-		</exec>
-	</target>
 
 	<target name="all">
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
