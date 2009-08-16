@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,6 +161,24 @@ public class FileTool {
 		}
 		// bis.close();
 		bos.flush();
+	}
+	
+	public static byte[] copyStreamsWithChecksum(InputStream is, OutputStream os, String algo) throws Exception{
+		MessageDigest md=MessageDigest.getInstance(algo);
+		BufferedOutputStream bos = new BufferedOutputStream(os);
+		BufferedInputStream bis = new BufferedInputStream(is);
+		byte[] buffer = new byte[65535];
+		while (true) {
+			int r = bis.read(buffer);
+			if (r == -1) {
+				break;
+			}
+			md.update(buffer, 0, r);
+			bos.write(buffer, 0, r);
+		}
+		// bis.close();
+		bos.flush();
+		return md.digest();
 	}
 	
 	public static String readFile(File name){
