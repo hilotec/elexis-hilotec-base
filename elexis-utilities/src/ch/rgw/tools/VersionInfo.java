@@ -12,7 +12,7 @@ package ch.rgw.tools;
 public class VersionInfo implements Comparable<VersionInfo> {
 	
 	public static String Version(){
-		return "1.6.0";
+		return "1.7.0";
 	}
 	
 	String orig;
@@ -58,6 +58,23 @@ public class VersionInfo implements Comparable<VersionInfo> {
 	
 	public String version(){
 		return orig;
+	}
+	public boolean matches(VersionInfo pattern){
+		for(int i=0;i<3;i++){
+			if(!matchElements(spl[0], pattern.spl[0])){
+				return false;
+			}
+		}
+		return true;
+	}
+	private boolean matchElements(final String a, final String b){
+		if(a.equals("*") || b.equals("*")){
+			return true;
+		}
+		if(compareElem(a, b)==0){
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean isNewer(final String other){
