@@ -9,10 +9,10 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: VerifierDialog.java 4136 2008-07-13 19:22:35Z rgw_ch $
+ *  $Id: VerifierDialog.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.dialogs;
+package ch.elexis.extdoc.dialogs;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -45,7 +45,7 @@ import ch.elexis.actions.JobPool;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 

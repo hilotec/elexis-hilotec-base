@@ -9,10 +9,10 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: FileEditDialog.java 4136 2008-07-13 19:22:35Z rgw_ch $
+ *  $Id: FileEditDialog.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.dialogs;
+package ch.elexis.extdoc.dialogs;
 
 import java.io.File;
 import java.util.Calendar;

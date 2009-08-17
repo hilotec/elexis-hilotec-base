@@ -8,9 +8,9 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: ExterneDokumente.java 2391 2007-05-18 12:46:08Z danlutz $
+ *  $Id: ExterneDokumente.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.preferences;
+package ch.elexis.extdoc.preferences;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
+import ch.elexis.preferences.SettingsPreferenceStore;
 
 /**
  * Einstellungen zur Verknüpfung externen Dokumenten

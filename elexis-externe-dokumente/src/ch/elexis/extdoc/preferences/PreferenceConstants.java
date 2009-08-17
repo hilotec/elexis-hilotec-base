@@ -8,10 +8,10 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: PreferenceConstants.java 2391 2007-05-18 12:46:08Z danlutz $
+ *  $Id: PreferenceConstants.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.preferences;
+package ch.elexis.extdoc.preferences;
 
 public class PreferenceConstants {
 	public static final String BASIS_PFAD = "ch.elexis.externe_dokumente/BasisPfad";

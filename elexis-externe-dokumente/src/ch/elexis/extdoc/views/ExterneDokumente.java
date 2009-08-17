@@ -9,10 +9,10 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: ExterneDokumente.java 4136 2008-07-13 19:22:35Z rgw_ch $
+ *  $Id: ExterneDokumente.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.views;
+package ch.elexis.extdoc.views;
 
 
 import java.io.File;
@@ -69,9 +69,9 @@ import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.dialogs.FileEditDialog;
-import ch.elexis.dialogs.VerifierDialog;
-import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.extdoc.dialogs.FileEditDialog;
+import ch.elexis.extdoc.dialogs.VerifierDialog;
+import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
@@ -486,7 +486,7 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				ch.elexis.views.ExterneDokumente.this.fillContextMenu(manager);
+				ch.elexis.extdoc.views.ExterneDokumente.this.fillContextMenu(manager);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
