@@ -5,10 +5,10 @@ import java.io.File;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
-import ch.elexis.util.Plannables;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
