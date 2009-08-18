@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ *  $Id: TermineDruckenDialog.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -22,10 +22,10 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.Hub;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Brief;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 

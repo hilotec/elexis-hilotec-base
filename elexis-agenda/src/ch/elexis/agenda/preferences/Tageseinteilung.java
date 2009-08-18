@@ -26,7 +26,7 @@ import ch.elexis.agenda.Messages;
 
 import ch.elexis.Hub;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.util.Plannables;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.util.SWTHelper;
 
 public class Tageseinteilung extends PreferencePage implements

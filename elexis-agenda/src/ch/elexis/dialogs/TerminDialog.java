@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TerminDialog.java 5563 2009-07-18 06:53:39Z rgw_ch $
+ *  $Id: TerminDialog.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -56,14 +56,14 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.util.Plannables;
+import ch.elexis.agenda.util.TimeInput;
+import ch.elexis.agenda.util.TimeInput.TimeInputListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
 import ch.elexis.util.NumberInput;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.TimeInput;
-import ch.elexis.util.TimeInput.TimeInputListener;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;

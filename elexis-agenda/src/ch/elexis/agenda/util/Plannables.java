@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plannables.java 4724 2008-12-04 10:11:27Z rgw_ch $
+ *  $Id: Plannables.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.agenda.util;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -25,6 +25,7 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.Query;
+import ch.elexis.util.Log;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;

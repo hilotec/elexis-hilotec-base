@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AgendaImages.java 5280 2009-05-09 10:46:12Z rgw_ch $
+ * $Id: AgendaImages.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
@@ -35,8 +35,8 @@ import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.preferences.SettingsPreferenceStore;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.PlatformHelper;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;

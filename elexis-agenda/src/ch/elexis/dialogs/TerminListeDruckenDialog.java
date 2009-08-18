@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminListeDruckenDialog.java 3731 2008-03-19 21:41:32Z rgw_ch $
+ *  $Id: TerminListeDruckenDialog.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Hub;
 import ch.elexis.agenda.data.IPlannable;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Brief;
 import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 
 public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallback {

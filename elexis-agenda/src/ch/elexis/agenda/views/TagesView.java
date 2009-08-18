@@ -11,7 +11,7 @@
  *  $Id: TagesView.java 1247 2006-11-07 20:08:28Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.views;
+package ch.elexis.agenda.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
@@ -42,8 +42,8 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.dialogs.DateSelectorDialog;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;

@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5401 2009-06-24 05:58:11Z rgw_ch $
+ *  $Id: TerminLabel.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -39,10 +39,10 @@ import ch.elexis.actions.GlobalEvents;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.util.PersistentObjectDragSource2;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 
 public class TerminLabel extends Composite {

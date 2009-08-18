@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: TimeInput.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: TimeInput.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.util;
+package ch.elexis.agenda.util;
 
 import java.util.ArrayList;
 
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 

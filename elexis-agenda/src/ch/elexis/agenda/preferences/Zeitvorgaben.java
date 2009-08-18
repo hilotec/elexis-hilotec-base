@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Zeitvorgaben.java 3947 2008-05-22 18:33:28Z rgw_ch $
+ * $Id: Zeitvorgaben.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.util.Plannables;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;

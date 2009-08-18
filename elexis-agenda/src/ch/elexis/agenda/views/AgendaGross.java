@@ -8,9 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 5437 2009-06-29 06:17:06Z rgw_ch $
+ *  $Id: AgendaGross.java 5641 2009-08-18 08:45:21Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.views;
+package ch.elexis.agenda.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -49,10 +49,10 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.TagesNachricht;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
-import ch.elexis.util.Plannables;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
