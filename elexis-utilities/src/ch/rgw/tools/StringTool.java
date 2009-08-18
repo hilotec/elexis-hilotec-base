@@ -1071,7 +1071,27 @@ public class StringTool {
 		}
 		return "";
 	}
+	  /**
+	   * Parse a String but don't throw expetion if not parsable. Return 0 instead
+	   * @param string
+	   * @return
+	   */
+	  public static int parseSafeInt(String string){
+		  try{
+			  return Integer.parseInt(string);
+		  }catch(NumberFormatException ne){
+			  return 0;
+		  }
+	  }
 
+
+	  public static double parseSafeDouble(String string){
+		  try{
+			  return Double.parseDouble(string);
+		  }catch(NumberFormatException ne){
+			  return 0;
+		  }
+	  }
 	/**
 	 * String mit unterschiedlicher möglicher Schreibweise in einheitliche
 	 * Schreibweise bringen
