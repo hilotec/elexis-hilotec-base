@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypEnum.java 5387 2009-06-23 11:49:44Z freakypenguin $
+ * $Id: MesswertTypEnum.java 5640 2009-08-18 08:28:08Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -19,6 +19,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
+
+import ch.rgw.tools.StringTool;
 
 
 /**
@@ -43,7 +45,7 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 	}
 	
 	public String erstelleDarstellungswert(Messwert messwert) {
-		int wert = Integer.parseInt(messwert.getWert());
+		int wert = StringTool.parseSafeInt(messwert.getWert());
 		for (int i = 0; i < values.size(); i++) {
 			if (values.get(i) == wert) {
 				return choices.get(i);
@@ -57,7 +59,7 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 	}
 
 	public void setDefault(String str) {
-		defVal = Integer.parseInt(str);
+		defVal = StringTool.parseSafeInt(str);
 	}
 	
 	/**

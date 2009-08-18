@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypCalc.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MesswertTypCalc.java 5640 2009-08-18 08:28:08Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -87,6 +87,12 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	 *         der Variable ab.
 	 */
 	private Object holeVariable(Messung messung, String name, String source) {
+		if(messung==null){
+			return "messung?";
+		}
+		if(source==null){
+			return "source?";
+		}
 		String[] parts = source.split("\\.");
 		Messwert messwert = messung.getMesswert(parts[0]);
 		IMesswertTyp typ = messwert.getTyp();
