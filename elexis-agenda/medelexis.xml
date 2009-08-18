@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service:service category="feature" id="ch.elexis.agenda" name="Elexis-Agenda" provider="support@medelexis.ch" type="Organisation" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+  <service:conditions>
+  	<service:roles>
+  		<service:role daysperpayment="365" name="default"
+  			available="true">
+  			<service:pricePerDB amount="25.00" currency="CHF"></service:pricePerDB>
+  			<service:pricePerMandator amount="5.00" currency="CHF" />
+  		</service:role>
+  	</service:roles>
+  </service:conditions>
+  <service:description>Mehrplatz- und Mehrbenutzerfähige Agenda mit mehreren Views</service:description>
+</service:service>

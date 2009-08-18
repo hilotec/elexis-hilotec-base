@@ -2,7 +2,7 @@ package ch.elexis.util;
 
 import java.io.File;
 
-public class UtilFile {
+public class FileUtility {
 	public static String DIRECTORY_SEPARATOR = File.separator;
 
     public static final String ZIP_EXTENSION = ".gz"; //$NON-NLS-1$

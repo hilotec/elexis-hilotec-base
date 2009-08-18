@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Hub.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *    $Id: Hub.java 5645 2009-08-18 14:27:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -50,7 +50,7 @@ import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.UtilFile;
+import ch.elexis.util.FileUtility;
 import ch.rgw.io.FileTool;
 import ch.rgw.io.LockFile;
 import ch.rgw.io.Settings;
@@ -152,8 +152,8 @@ public class Hub extends AbstractUIPlugin {
 		userCfg = localCfg;
 		mandantCfg = localCfg;
 		
-		String basePath = UtilFile.getFilepath(PlatformHelper.getBasePath("ch.elexis")); //$NON-NLS-1$
-		localCfg.set("elexis-basepath", UtilFile.getFilepath(basePath)); //$NON-NLS-1$
+		String basePath = FileUtility.getFilepath(PlatformHelper.getBasePath("ch.elexis")); //$NON-NLS-1$
+		localCfg.set("elexis-basepath", FileUtility.getFilepath(basePath)); //$NON-NLS-1$
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -376,7 +376,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5317 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5645 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
