@@ -10,4 +10,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Mehrplatz- und Mehrbenutzerfähige Agenda mit mehreren Views</service:description>
+  <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
