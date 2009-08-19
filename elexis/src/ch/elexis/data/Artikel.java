@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 5623 2009-08-12 11:22:14Z michael_imhof $
+ * $Id: Artikel.java 5652 2009-08-19 13:13:09Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -583,5 +583,23 @@ public class Artikel extends VerrechenbarAdapter {
 		return new String[] { EAN, SUB_ID, LIEFERANT_ID, "Klasse",
 				NAME, MAXBESTAND, MINBESTAND, ISTBESTAND, EK_PREIS, VK_PREIS,
 				TYP, CODECLASS, EXT_INFO };
+	}
+
+	@Override
+	protected boolean isSameValue(String[] fields, String... values) {
+		// Pharmacode to compare
+		String newPharmacode = null;
+		for (int i=0; i<fields.length; i++) {
+			if (fields[i].equals(PHARMACODE)) {
+				newPharmacode = values[i];
+			}
+		}
+		// Current pharmacode
+		String thisPharmacode = get(PHARMACODE);
+		
+		if (newPharmacode == null || thisPharmacode == null) {
+			return false;
+		}
+		return newPharmacode.equals(thisPharmacode);
 	}
 }

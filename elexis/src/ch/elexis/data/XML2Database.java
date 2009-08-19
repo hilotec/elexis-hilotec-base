@@ -37,6 +37,7 @@ public class XML2Database {
 	private final static String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	private final static String LIST_TAG = "DATALIST";
 	private final static String PRIMARY_KEY_TAG = "PRIMARY";
+	private final static String XID_TAG = "XID";
 	private final static String CLASS_ATTRIBUTE = "javaclass";
 	private final static String TEXT_TAG = "#text"; // Tags to ignore
 
@@ -129,6 +130,11 @@ public class XML2Database {
 			// Primary key
 			openElement(PRIMARY_KEY_TAG);
 			addValue(object.getId());
+			closeElement();
+			
+			// XID
+			openElement(XID_TAG);
+			addValue(object.getXid().getId());
 			closeElement();
 
 			// Fields
@@ -251,7 +257,8 @@ public class XML2Database {
 
 			Constructor<? extends PersistentObject> constructor = javaClass.getDeclaredConstructor(String.class);
 			PersistentObject po = constructor.newInstance(primaryValue);
-			if (!po.exists()) {
+			
+			if (!po.isSameValue(fields, results)) {
 				po.create(null);
 				po.set(fields, results);
 			} else if (overwrite) {

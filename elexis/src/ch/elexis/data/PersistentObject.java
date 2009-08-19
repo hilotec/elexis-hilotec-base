@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PersistentObject.java 5624 2009-08-12 11:22:28Z michael_imhof $
+ *    $Id: PersistentObject.java 5652 2009-08-19 13:13:09Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -2143,6 +2143,27 @@ public abstract class PersistentObject {
 	 */
 	protected String[] getExportFields() {
 		throw new IllegalArgumentException("No export fields for " + getClass().getSimpleName() + " available");
+	}
+
+	/**
+	 * Compares the current persistent object with the values passed as parameters. <br>
+	 * This is the default implementation an compares the identity with the field "ID".<br>
+	 * Method should be overwritten for special cases <br>
+	 */
+	protected boolean isSameValue(final String[] fields, final String... values) {
+		// Default the field ID will be compared
+		String newId = null;
+		for (int i=0; i<fields.length; i++) {
+			if (fields[i].equals("ID")) {
+				newId = values[i];
+			}
+		}
+		String thisId = get("ID");
+		
+		if (newId == null || thisId == null) {
+			return false;
+		}
+		return newId.equals(thisId);
 	}
 	
 	/**
