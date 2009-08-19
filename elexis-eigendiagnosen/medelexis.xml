@@ -8,4 +8,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Eigendiagnosen (ausserhalb der vordefinierten Systeme) definieren</service:description>
+  <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
