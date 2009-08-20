@@ -3,6 +3,7 @@ package ch.elexis.data;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -27,21 +28,24 @@ import com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl;
  * Import is reading an xml sheet and updating the database.<br>
  * XML structure looks like: <br>
  * <ARTIKEL javaclass="ch.elexis.data.Artikel"> <br>
- *	 <PRIMARY>r895a3a395be62a6e19c1103</PRIMARY> <br>
+ *	 <UID field="ID">r895a3a395be62a6e19c1103</UID> <br>
  *	 <EAN>7680573770024</EAN>  <br>
  *   ... other field values <br>
  * </ARTIKEL> <br>
  *
  */
 public class XML2Database {
+	protected static Log log = Log.get("XMLData");
+
 	private final static String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	private final static String LIST_TAG = "DATALIST";
-	private final static String PRIMARY_KEY_TAG = "PRIMARY";
-	private final static String XID_TAG = "XID";
+	private final static String UID_TAG = "UID";
+	private final static String UID_FIELD_ATTRIBUTE = "field";
 	private final static String CLASS_ATTRIBUTE = "javaclass";
 	private final static String TEXT_TAG = "#text"; // Tags to ignore
 
-	protected static Log log = Log.get("XMLData");
+	@SuppressWarnings("unchecked")
+	private HashMap<Class, HashMap<String, List<String>>> cache = new HashMap<Class, HashMap<String, List<String>>>();
 
 	private static class DataField {
 		final String name;
@@ -128,13 +132,9 @@ public class XML2Database {
 			addAttribute(CLASS_ATTRIBUTE, object.getClass().getName());
 
 			// Primary key
-			openElement(PRIMARY_KEY_TAG);
-			addValue(object.getId());
-			closeElement();
-			
-			// XID
-			openElement(XID_TAG);
-			addValue(object.getXid().getId());
+			openElement(UID_TAG);
+			addAttribute(UID_FIELD_ATTRIBUTE, object.getExportUIDField());
+			addValue(object.get(object.getExportUIDField()));
 			closeElement();
 
 			// Fields
@@ -153,16 +153,117 @@ public class XML2Database {
 	}
 
 	/********************************************************************************
-	 * PUBLIC METHODS
+	 * PRIVATE METHODS
 	 */
+
+	@SuppressWarnings("unchecked")
+	private List<String> getValues(Class javaClass, String uidField,
+			String uidValue) {
+		HashMap<String, List<String>> map = cache.get(javaClass);
+		if (map == null) {
+			map = new HashMap<String, List<String>>();
+			cache.put(javaClass, map);
+
+			Query<PersistentObject> query = new Query<PersistentObject>(javaClass);
+			List<PersistentObject> poList = query.execute();
+			for (PersistentObject po : poList) {
+				String value = po.get(uidField);
+				List<String> idList = map.get(value);
+				if (idList == null) {
+					idList = new Vector<String>();
+					map.put(value, idList);
+				}
+				idList.add(po.getId());
+			}
+		}
+		return map.get(uidValue);
+	}
+
+	/**
+	 * Import 
+	 * @param tableNode
+	 * @param overwrite
+	 * @throws ClassNotFoundException 
+	 */
+	@SuppressWarnings("unchecked")
+	private void importData(final Node tableNode, final boolean overwrite) {
+		try {
+			String className = tableNode.getAttributes().getNamedItem(CLASS_ATTRIBUTE).getNodeValue();
+			Class javaClass = Class.forName(className);
+			String uidField = null;
+			String uidValue = null;
+
+			// Read fields
+			List<DataField> fieldList = new Vector<DataField>();
+			NodeList nodeList = tableNode.getChildNodes();
+			for (int index = 0; index < nodeList.getLength(); index++) {
+				Node fieldNode = nodeList.item(index);
+				if (!TEXT_TAG.equals(fieldNode.getNodeName())) {
+					if (UID_TAG.equals(fieldNode.getNodeName())) {
+						uidValue = fieldNode.getTextContent();
+						uidField = fieldNode.getAttributes().getNamedItem(UID_FIELD_ATTRIBUTE).getNodeValue();
+					} else {
+						fieldList.add(new DataField(fieldNode.getNodeName(), fieldNode.getTextContent()));
+					}
+				}
+			}
+
+			// Create PersistentObject
+			String[] fields = new String[fieldList.size()];
+			String[] results = new String[fieldList.size()];
+
+			for (int i = 0; i < fieldList.size(); i++) {
+				fields[i] = fieldList.get(i).name;
+				results[i] = fieldList.get(i).value;
+			}
+
+			// Check uidField
+			Constructor<PersistentObject> constructor = javaClass.getDeclaredConstructor();
+			PersistentObject po = constructor.newInstance();
+			if (!uidField.equals(po.getExportUIDField())) {
+				throw new IllegalArgumentException("UID fields are different!");
+			}
+
+			// Read values
+			List<String> list = getValues(javaClass, uidField, uidValue);
+
+			if (list == null || list.size() == 0) {
+				// Create new
+				po.create(null);
+				po.set(fields, results);
+			} else if (overwrite) {
+				for (String idValue : list) {
+					Constructor<PersistentObject> tmpConstr = javaClass.getDeclaredConstructor(String.class);
+					PersistentObject tmpPo = tmpConstr.newInstance(idValue);
+					System.out.println("Name: " + tmpPo.get("Name"));
+					tmpPo.set(fields, results);
+				}
+			}
+		} catch (Exception e) {
+			log.log(e.getMessage(), Log.ERRORS);
+		}
+	}
+
+	/**
+	 * Parsing XML Document with SAX
+	 */
+	private Document readXmlDocument(InputSource is, String docDescription)
+			throws SAXException, ParserConfigurationException,
+			java.io.IOException {
+		if (is == null) {
+			return null;
+		}
+		DocumentBuilder builder = new DocumentBuilderFactoryImpl().newDocumentBuilder();
+		return builder.parse(is);
+	}
 
 	/**
 	 * Imports data into database. <br>
 	 * XML could be a list of data objects or only one data object
 	 */
-	public static void importData(final String data, final boolean overwrite) {
+	private void importXML(final String xml, final boolean overwrite) {
 		try {
-			Document document = readXmlDocument(new InputSource(new StringReader(data)), "Import");
+			Document document = readXmlDocument(new InputSource(new StringReader(xml)), "Import");
 			NodeList rootNodeList = document.getChildNodes();
 			for (int rootIndex = 0; rootIndex < rootNodeList.getLength(); rootIndex++) {
 				Node rootNode = rootNodeList.item(rootIndex);
@@ -191,6 +292,18 @@ public class XML2Database {
 		}
 	}
 
+	/********************************************************************************
+	 * PUBLIC METHODS
+	 */
+
+	/**
+	 * Imports data into database. <br>
+	 * XML could be a list of data objects or only one data object
+	 */
+	public static void importData(final String data, final boolean overwrite) {
+		new XML2Database().importXML(data, overwrite);
+	}
+
 	/**
 	 * Exports a persistent object 
 	 * @return
@@ -214,71 +327,5 @@ public class XML2Database {
 		}
 		buffer.append("</" + LIST_TAG + ">\n");
 		return buffer.toString();
-	}
-
-	/********************************************************************************
-	 * PRIVATE METHODS
-	 */
-
-	/**
-	 * Import 
-	 * @param tableNode
-	 * @param overwrite
-	 * @throws ClassNotFoundException 
-	 */
-	private static void importData(final Node tableNode, final boolean overwrite) {
-		try {
-			String className = tableNode.getAttributes().getNamedItem(CLASS_ATTRIBUTE).getNodeValue();
-			Class javaClass = Class.forName(className);
-			String primaryValue = null;
-
-			// Read fields
-			List<DataField> fieldList = new Vector<DataField>();
-			NodeList nodeList = tableNode.getChildNodes();
-			for (int index = 0; index < nodeList.getLength(); index++) {
-				Node fieldNode = nodeList.item(index);
-				if (!TEXT_TAG.equals(fieldNode.getNodeName())) {
-					if (PRIMARY_KEY_TAG.equals(fieldNode.getNodeName())) {
-						primaryValue = fieldNode.getTextContent();
-					} else {
-						fieldList.add(new DataField(fieldNode.getNodeName(), fieldNode.getTextContent()));
-					}
-				}
-			}
-
-			// Create PersistentObject
-			String[] fields = new String[fieldList.size()];
-			String[] results = new String[fieldList.size()];
-
-			for (int i = 0; i < fieldList.size(); i++) {
-				fields[i] = fieldList.get(i).name;
-				results[i] = fieldList.get(i).value;
-			}
-
-			Constructor<? extends PersistentObject> constructor = javaClass.getDeclaredConstructor(String.class);
-			PersistentObject po = constructor.newInstance(primaryValue);
-			
-			if (!po.isSameValue(fields, results)) {
-				po.create(null);
-				po.set(fields, results);
-			} else if (overwrite) {
-				po.set(fields, results);
-			}
-		} catch (Exception e) {
-			log.log(e.getMessage(), Log.ERRORS);
-		}
-	}
-
-	/**
-	 * Parsing XML Document with SAX
-	 */
-	private static Document readXmlDocument(InputSource is,
-			String docDescription) throws SAXException,
-			ParserConfigurationException, java.io.IOException {
-		if (is == null) {
-			return null;
-		}
-		DocumentBuilder builder = new DocumentBuilderFactoryImpl().newDocumentBuilder();
-		return builder.parse(is);
 	}
 }
