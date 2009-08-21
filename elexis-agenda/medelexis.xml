@@ -9,6 +9,7 @@
   		</service:role>
   	</service:roles>
   </service:conditions>
+  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-organisation/plugin-agenda.html</service:docURL>
   <service:description>Mehrplatz- und Mehrbenutzerfähige Agenda mit mehreren Views</service:description>
   <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
