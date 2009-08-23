@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Private Abrechnung
 Bundle-SymbolicName: ch.elexis.privatrechnung;singleton:=true
-Bundle-Version: 0.0.1
+Bundle-Version: 0.5.0
 Bundle-Vendor: elexis.ch
 Require-Bundle: ch.elexis,
  org.eclipse.jface,
