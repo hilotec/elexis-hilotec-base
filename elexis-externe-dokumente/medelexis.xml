@@ -3,9 +3,9 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="8.50"></service:pricePerDB></service:role>
+  			<service:pricePerDB amount="8.50" currency="CHF"></service:pricePerDB></service:role>
   	</service:roles>
   </service:conditions>
-  <service:description>service:description</service:description>
+  <service:description>Einfache Einbindung eines beliebigen Dokumentenverzeichnisses (Dateinamen müssen bestimmten Konventionen folgen)</service:description>
   <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
