@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <service:service category="feature" id="ch.elexis.icpc.fire" name="ICPC-Fire" provider="weirich@elexis.ch" type="Statistik" version="1.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+  <service:conditions>
+  	<service:roles>
+  		<service:role>
+  			<service:pricePerDB amount="3.50" currency="CHF" /></service:role>
+  	</service:roles>
+  </service:conditions>
   <service:description>Fire Exporter zum ICPC-Modul</service:description>
   <service:depends>ch.elexis.icpc</service:depends>
 </service:service>
