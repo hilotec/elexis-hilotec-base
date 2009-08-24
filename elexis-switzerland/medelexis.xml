@@ -8,5 +8,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Abrechnungs-, eBanking und Diagnoscode-Plugins für Gebrauch in der Deutschschweiz</service:description>
-  <service:depends>ch.elexis.artikel_ch ch.elexis.arzttarife_ch ch.elexis.ebanking_ch ch.elexis.medikamente.bag ch.elexis.icpc ch.elexis.icpc.fire ch.elexis.diagnosecodes_ch ch.elexis.labortarif.ch2009</service:depends>
+  <service:depends>ch.elexis.artikel_ch ch.elexis.arzttarife_ch ch.elexis.ebanking_ch ch.elexis.medikamente.bag ch.elexis.icpc ch.elexis.icpc.fire ch.elexis.diagnosecodes_ch ch.elexis.labortarif.ch2009 ch.medelexis.nucleus</service:depends>
 </service:service>
