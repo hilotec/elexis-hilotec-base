@@ -3,7 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="7.00" ></service:pricePerDB></service:role>
+  			<service:pricePerDB amount="7.00" currency="CHF"></service:pricePerDB></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Einbinden von Verweisen auf Bilder im KG-Text</service:description>

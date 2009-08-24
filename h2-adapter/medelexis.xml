@@ -4,11 +4,11 @@
   	<service:roles>
   		<service:role available="true" name="default"
   			daysperpayment="365">
-  			<service:pricePerDB amount="0.0" currency="CHF">
+  			<service:pricePerDB amount="5.00" currency="CHF">
   			</service:pricePerDB>
   		</service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Verbindung mit der Java-Datenbank H2</service:description>
-  <service:depends>ch.rgw.utility</service:depends>
+  <service:depends>ch.rgw.utilities ch.medelexis.nucleus</service:depends>
 </service:service>
