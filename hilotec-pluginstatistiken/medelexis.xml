@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <service:service category="feature" id="com.hilotec.elexis.pluginstatistiken" name="Hilotec Messwerte Statistik" provider="info@hilotec.com" type="Statistik" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+  <service:conditions>
+  	<service:roles>
+  		<service:role>
+  			<service:pricePerDB amount="3.50" ></service:pricePerDB></service:role>
+  	</service:roles>
+  </service:conditions>
   <service:description>Statistikmodul zu Hilotec-Messwerte</service:description>
   <service:depends>com.hilotec.elexis.messwerte</service:depends>
 </service:service>
