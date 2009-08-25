@@ -7,6 +7,7 @@
   			<service:pricePerMandator amount="2.50" /></service:role>
   	</service:roles>
   </service:conditions>
+  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-organisation/plugin-nachrichten.html</service:docURL>
   <service:description>Versenden Sie Kurznachrichten an Mitarbeiter/innen</service:description>
   <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
