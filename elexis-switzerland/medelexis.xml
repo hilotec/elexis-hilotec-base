@@ -3,7 +3,7 @@
   <service:conditions validFrom="2001-01-01" validUntil="2010-31-12">
   	<service:roles>
   		<service:role available="true" daysperpayment="365" name="default">
-  			<service:pricePerDB currency="CHF" amount="45.00"></service:pricePerDB>
+  			<service:pricePerDB currency="CHF" amount="65.00"></service:pricePerDB>
   			<service:pricePerMandator amount="15.00" currency="CHF" /></service:role>
   	</service:roles>
   </service:conditions>

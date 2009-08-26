@@ -3,7 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="12.50" currency="CHF" /></service:role>
+  			<service:pricePerDB amount="55.00" currency="CHF" /></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Plugin zur Erfassung und Darstellugn beliebiger tabellarischer Messwerte</service:description>

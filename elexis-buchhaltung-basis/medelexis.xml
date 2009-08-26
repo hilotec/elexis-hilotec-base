@@ -3,8 +3,8 @@
   <service:conditions>
   	<service:roles>
   		<service:role available="true" daysperpayment="365" name="default">
-  			<service:pricePerDB amount="36.00" currency="CHF" /><service:pricePerMandator
-  				amount="7.00" currency="CHF" /></service:role>
+  			<service:pricePerDB amount="78.00" currency="CHF" /><service:pricePerMandator
+  				amount="25.00" currency="CHF" /></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Einige einfache Buchhaltungs-Abfragen</service:description>

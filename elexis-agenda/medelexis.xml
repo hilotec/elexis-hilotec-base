@@ -4,8 +4,8 @@
   	<service:roles>
   		<service:role daysperpayment="365" name="default"
   			available="true">
-  			<service:pricePerDB amount="35.00" currency="CHF"></service:pricePerDB>
-  			<service:pricePerMandator amount="5.00" currency="CHF" />
+  			<service:pricePerDB amount="135.00" currency="CHF"></service:pricePerDB>
+  			<service:pricePerMandator amount="25.00" currency="CHF" ></service:pricePerMandator>
   		</service:role>
   	</service:roles>
   </service:conditions>

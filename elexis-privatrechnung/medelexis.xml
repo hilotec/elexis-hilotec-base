@@ -3,8 +3,8 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="5.00"></service:pricePerDB>
-  			<service:pricePerMandator amount="40.00"></service:pricePerMandator></service:role>
+  			<service:pricePerDB amount="7.50"></service:pricePerDB>
+  			<service:pricePerMandator amount="45.00"></service:pricePerMandator></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Einbindung eines Privattarifs in Elexis</service:description>
