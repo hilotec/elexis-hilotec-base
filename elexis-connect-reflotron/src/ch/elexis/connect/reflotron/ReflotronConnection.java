@@ -11,6 +11,7 @@ import ch.elexis.util.Log;
 public class ReflotronConnection extends AbstractConnection {
 	private static final int STX = 0x02;
 	private static final int ETX = 0x03;
+	private static StringBuffer textBuf = new StringBuffer();
 	Log _elexislog = Log.get("ReflotronConnection");
 	
 	public ReflotronConnection(String portName, String port, String settings, ComPortListener l){
@@ -22,22 +23,33 @@ public class ReflotronConnection extends AbstractConnection {
 	 */
 	public void serialEvent(final int state, final InputStream inputStream, final SerialPortEvent e)
 		throws IOException{
-		StringBuffer strBuf = new StringBuffer();
-		
 		int data = inputStream.read();
-		// Start of TeXt
-		while ((data != -1) && (data != STX)) {
+		if (data == STX) {
+			_elexislog.log("Start of stream: " + data +  " (STX)", Log.DEBUGMSG);
+			textBuf = new StringBuffer();
 			data = inputStream.read();
+		} else {
+			_elexislog.log("Continue stream..", Log.DEBUGMSG);
 		}
 		
-		if (data != -1) {
+		while ((data != -1) && (data != ETX)) {
+			textBuf.append((char) data);
 			data = inputStream.read();
-			while ((data != -1) && (data != ETX)) {
-				strBuf.append((char) data);
-				data = inputStream.read();
-			}
 		}
-		_elexislog.log("buffer: " + strBuf.toString(), Log.DEBUGMSG);
-		this.listener.gotData(this, strBuf.toString().getBytes());
+		// Log output
+		String text = "";
+		if (data == -1) {
+			text = " (EOF)";
+		}
+		if (data == ETX) {
+			text = " (ETX)";
+		}
+		_elexislog.log("End of stream: " + data + text, Log.DEBUGMSG);
+		
+		if (data == ETX) {
+			_elexislog.log("buffer: " + textBuf.toString(), Log.DEBUGMSG);
+			this.listener.gotData(this, textBuf.toString().getBytes());
+			textBuf = new StringBuffer();
+		}
 	}
 }
