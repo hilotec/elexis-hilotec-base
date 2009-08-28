@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Termin.java 5415 2009-06-25 13:04:43Z rgw_ch $
+ *    $Id: Termin.java 5686 2009-08-28 05:25:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -40,6 +40,10 @@ import ch.rgw.tools.VersionInfo;
 
 public class Termin extends PersistentObject implements Cloneable,
 		Comparable<Termin>, IPlannable {
+	
+	public static final String FLD_PATIENT="Wer";
+	public static final String FLD_TERMINSTATUS = "Status";
+	public static final String FLD_CREATOR = "ErstelltVon";
 	public static final String FLD_LASTEDIT = "lastedit";
 	public static final String FLD_GRUND = "Grund";
 	public static final String FLD_DAUER = "Dauer";
@@ -51,7 +55,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	public static String[] TerminBereiche;
 	private static final JdbcLink j = getConnection();
 
-	public static final String FLD_PATIENT="Wer";
+
 	
 	
 	// static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
@@ -81,9 +85,9 @@ public class Termin extends PersistentObject implements Cloneable,
 
 	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;";
 	static {
-		addMapping("AGNTERMINE", "BeiWem=Bereich", "Wer=PatID", FLD_TAG,
+		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT+"=PatID", FLD_TAG,
 				FLD_BEGINN, FLD_DAUER, FLD_GRUND, "Typ=TerminTyp",
-				"Status=TerminStatus", "ErstelltVon", "ErstelltWann=Angelegt",
+				FLD_TERMINSTATUS+"=TerminStatus", FLD_CREATOR, "ErstelltWann=Angelegt",
 				FLD_LASTEDIT, "PalmID", "flags", "deleted", "Extension",
 				"linkgroup");
 		TimeTool.setDefaultResolution(60000);
@@ -230,7 +234,7 @@ public class Termin extends PersistentObject implements Cloneable,
 		create(null);
 
 		String ts = createTimeStamp();
-		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", "Status",
+		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", FLD_TERMINSTATUS,
 				"ErstelltWann", FLD_LASTEDIT }, bereich, Tag, Integer
 				.toString(von), Integer.toString(bis - von), typ, status, ts,
 				ts);
@@ -244,7 +248,7 @@ public class Termin extends PersistentObject implements Cloneable,
 			final int von, final int bis, final String typ, final String status) {
 		create(ID);
 		String ts = createTimeStamp();
-		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", "Status",
+		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", FLD_TERMINSTATUS,
 				"ErstelltWann", FLD_LASTEDIT }, bereich, Tag, Integer
 				.toString(von), Integer.toString(bis - von), typ, status, ts,
 				ts);
@@ -427,7 +431,7 @@ public class Termin extends PersistentObject implements Cloneable,
 			return;
 		}
 		if (!checkLock()) {
-			set(new String[] { "Status", FLD_LASTEDIT }, stat, createTimeStamp());
+			set(new String[] { FLD_TERMINSTATUS, FLD_LASTEDIT }, stat, createTimeStamp());
 		}
 	}
 
@@ -453,7 +457,7 @@ public class Termin extends PersistentObject implements Cloneable,
 			final int bis, final String typ, final String status) {
 		if (!checkLock()) {
 			set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ",
-					"Status", FLD_LASTEDIT }, bereich, tag,
+					FLD_TERMINSTATUS, FLD_LASTEDIT }, bereich, tag,
 					Integer.toString(von), Integer.toString(bis - von), typ,
 					status, createTimeStamp());
 		}
@@ -465,7 +469,7 @@ public class Termin extends PersistentObject implements Cloneable,
 		String Tag = wann.toString(TimeTool.DATE_COMPACT);
 		int Beginn = wann.get(TimeTool.HOUR_OF_DAY) * 60
 				+ wann.get(TimeTool.MINUTE);
-		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", "Status",
+		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", FLD_TERMINSTATUS,
 				"Wer", FLD_GRUND, FLD_LASTEDIT }, bereich, Tag, Integer
 				.toString(Beginn), Integer.toString(dauer), typ, status, pat
 				.getId(), Grund, createTimeStamp());
@@ -491,7 +495,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	}
 
 	public String getStatus() {
-		return get("Status");
+		return get(FLD_TERMINSTATUS);
 	}
 
 	public int getLastedit() {
@@ -605,7 +609,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	/** Exakte Übereinstimmung */
 	public boolean isEqual(final Termin ae) {
 		return super.isMatching(ae, 0, FLD_TAG, FLD_BEGINN, FLD_DAUER, "BeiWem",
-				"Typ", "Status", "ErstelltVon", "Wer");
+				"Typ", FLD_TERMINSTATUS, FLD_CREATOR, "Wer");
 	}
 
 	public TimeTool getStartTime() {
@@ -766,7 +770,7 @@ public class Termin extends PersistentObject implements Cloneable,
 
 	public String dump() {
 		StringBuffer res = new StringBuffer(200);
-		String[] fields = { FLD_TAG, "BeiWem", "Wer", "Typ", "Status" };
+		String[] fields = { FLD_TAG, "BeiWem", "Wer", "Typ", FLD_TERMINSTATUS };
 		String[] result = new String[fields.length];
 		get(fields, result);
 		// result[1]=Mandant.load(result[1]).getLabel();
