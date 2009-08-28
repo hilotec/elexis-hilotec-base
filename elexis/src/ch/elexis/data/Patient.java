@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Patient.java 5579 2009-07-28 10:00:49Z freakypenguin $
+ * 
+ *  $Id: Patient.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.util.SWTHelper;
@@ -74,7 +75,7 @@ public class Patient extends Person {
 				"Garanten			=JOINT:GarantID:PatientID:PATIENT_GARANT_JOINT:ch.elexis.data.Kontakt",
 				"Dauermedikation	=JOINT:ArtikelID:PatientID:PATIENT_ARTIKEL_JOINT:ch.elexis.data.Artikel",
 				BALANCE+"			=LIST:PatientID:KONTO", GROUP, "PatientNr",
-				"istPatient");
+		"istPatient");
 	}
 
 	public String getDiagnosen() {
@@ -202,7 +203,7 @@ public class Patient extends Person {
 	public Konsultation getLetzteKons(final boolean create) {
 		if (Hub.actMandant == null) {
 			SWTHelper.showError("Kein Mandant angemeldet",
-					"Es ist kein Mandant angemeldet.");
+			"Es ist kein Mandant angemeldet.");
 			return null;
 		}
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
@@ -275,11 +276,11 @@ public class Patient extends Person {
 			while (true) {
 				String lockid = PersistentObject.lock("PatNummer", true);
 				String pid = j
-						.queryString("SELECT WERT FROM CONFIG WHERE PARAM='PatientNummer'");
+				.queryString("SELECT WERT FROM CONFIG WHERE PARAM='PatientNummer'");
 				if (StringTool.isNothing(pid)) {
 					pid = "0";
 					j
-							.exec("INSERT INTO CONFIG (PARAM,WERT) VALUES ('PatientNummer','0')");
+					.exec("INSERT INTO CONFIG (PARAM,WERT) VALUES ('PatientNummer','0')");
 				}
 				int lastNum = Integer.parseInt(pid) + 1;
 				rc = Integer.toString(lastNum);
@@ -287,8 +288,8 @@ public class Patient extends Person {
 						+ "' where param='PatientNummer'");
 				PersistentObject.unlock("PatNummer", lockid);
 				String exists = j
-						.queryString("SELECT ID FROM KONTAKT WHERE PatientNr="
-								+ JdbcLink.wrap(rc));
+				.queryString("SELECT ID FROM KONTAKT WHERE PatientNr="
+						+ JdbcLink.wrap(rc));
 				if (exists == null) {
 					break;
 				}
@@ -442,13 +443,13 @@ public class Patient extends Person {
 	@Override
 	protected String getConstraint() {
 		return new StringBuilder(Kontakt.IS_PATIENT).append(Query.EQUALS)
-				.append(JdbcLink.wrap(StringTool.one)).toString();
+		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 
 	@Override
 	protected void setConstraint() {
 		set(new String[] { Kontakt.IS_PATIENT, Kontakt.IS_PERSON },
-				StringTool.one, StringTool.one);
+				StringConstants.ONE, StringConstants.ONE);
 	}
 
 	@Override
@@ -527,7 +528,7 @@ public class Patient extends Person {
 		return true;
 	}
 
-	
+
 	public String getAlter() {
 		TimeTool now = new TimeTool();
 		TimeTool bd = new TimeTool(getGeburtsdatum());

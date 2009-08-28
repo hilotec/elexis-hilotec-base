@@ -8,8 +8,8 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    A. Kaufmann - better support for IDataAccess
- *    
- *  $Id: TextContainer.java 5567 2009-07-20 15:24:43Z freakypenguin $
+ * 
+ *  $Id: TextContainer.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -44,6 +44,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -94,14 +95,14 @@ public class TextContainer {
 				IExtension[] extensions = exp.getExtensions();
 				for (IExtension ex : extensions) {
 					IConfigurationElement[] elems = ex
-							.getConfigurationElements();
+					.getConfigurationElements();
 					for (IConfigurationElement el : elems) {
 						if ((ExtensionToUse == null)
 								|| el.getAttribute("name").equals( //$NON-NLS-1$
 										ExtensionToUse)) {
 							try {
 								plugin = (ITextPlugin) el
-										.createExecutableExtension("Klasse"); //$NON-NLS-1$
+								.createExecutableExtension("Klasse"); //$NON-NLS-1$
 							} catch (/* Core */Exception e) {
 								ExHandler.handle(e);
 							}
@@ -209,7 +210,7 @@ public class TextContainer {
 				Brief brief = new Brief(
 						subject == null ? Messages.TextContainer_EmptyDocument
 								: subject, null, Hub.actUser, adressat, kons,
-						typ);
+								typ);
 				addBriefToKons(brief, kons);
 				return brief;
 			}
@@ -227,12 +228,12 @@ public class TextContainer {
 				});
 				plugin.findOrReplace(MATCH_INDIRECT_TEMPLATE,
 						new ReplaceCallback() {
-							public Object replace(final String in) {
-								return replaceIndirectFields(ret, in
-										.replaceAll(MATCH_SQUARE_BRACKET,
-												StringTool.leer));
-							}
-						});
+					public Object replace(final String in) {
+						return replaceIndirectFields(ret, in
+								.replaceAll(MATCH_SQUARE_BRACKET,
+										StringTool.leer));
+					}
+				});
 				plugin.findOrReplace(MATCH_GENDERIZE, new ReplaceCallback() {
 					public String replace(final String in) {
 						return genderize(ret, in.replaceAll(
@@ -453,7 +454,7 @@ public class TextContainer {
 			if (ksl.open() == Dialog.OK) {
 				brief = new Brief(Messages.TextContainer_Letter, null,
 						Hub.actUser, (Kontakt) ksl.getSelection(), Konsultation
-								.getAktuelleKons(), typ);
+						.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
@@ -461,7 +462,7 @@ public class TextContainer {
 				InputDialog dlg = new InputDialog(shell,
 						Messages.TextContainer_SaveDocumentHeader,
 						Messages.TextContainer_SaveDocumentBody, brief
-								.getBetreff(), null);
+						.getBetreff(), null);
 				if (dlg.open() == Dialog.OK) {
 					brief.setBetreff(dlg.getValue());
 				} else {
@@ -548,7 +549,7 @@ public class TextContainer {
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
 			new Label(ret, SWT.NONE)
-					.setText(Messages.TextContainer_TemplateName);
+			.setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (tmplName != null) {
@@ -575,11 +576,11 @@ public class TextContainer {
 			title = name.getText();
 			if (title.length() == 0) {
 				MessageDialog.openError(getShell(),
-					Messages.TextContainer_TemplateTitleEmptyCaption,
-					Messages.TextContainer_TemplateTitleEmptyBody);
+						Messages.TextContainer_TemplateTitleEmptyCaption,
+						Messages.TextContainer_TemplateTitleEmptyBody);
 				return;
 			}
-			
+
 			bSysTemplate = btSysTemplate.getSelection();
 			int i = cMands.getSelectionIndex();
 			if (i != -1) {
@@ -600,7 +601,7 @@ public class TextContainer {
 				qbe.endGroup();
 				qbe.and();
 			}
-			qbe.add("geloescht", Query.NOT_EQUAL, StringTool.one); //$NON-NLS-1$
+			qbe.add("geloescht", Query.NOT_EQUAL, StringConstants.ONE); //$NON-NLS-1$
 			qbe.add(Brief.SUBJECT, Query.EQUALS, title);
 			List<Brief> l = qbe.execute();
 			if (l.size() > 0) {
@@ -632,10 +633,10 @@ public class TextContainer {
 
 	static class DefaultTextPlugin implements ITextPlugin {
 		private static final String expl = Messages.TextContainer_NoPlugin1
-				+ Messages.TextContainer_NoPlugin2
-				+ Messages.TextContainer_Noplugin3
-				+ Messages.TextContainer_NoPlugin4
-				+ Messages.TextContainer_NoPLugin5;
+		+ Messages.TextContainer_NoPlugin2
+		+ Messages.TextContainer_Noplugin3
+		+ Messages.TextContainer_NoPlugin4
+		+ Messages.TextContainer_NoPLugin5;
 
 		public Composite createContainer(final Composite parent,
 				final ITextPlugin.ICallback h) {
@@ -683,7 +684,7 @@ public class TextContainer {
 
 		public void setInitializationData(final IConfigurationElement config,
 				final String propertyName, final Object data)
-				throws CoreException {
+		throws CoreException {
 		}
 
 		public boolean loadFromStream(final InputStream is,
@@ -727,7 +728,7 @@ public class TextContainer {
 		public boolean setStyle(final int style){
 			return false;
 		}
-		
+
 		public Object insertText(final String marke, final String text,
 				final int adjust) {
 			// TODO Auto-generated method stub

@@ -7,12 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Rechnungssteller.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *    $Id: Rechnungssteller.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.elexis.StringConstants;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -26,18 +27,18 @@ public class Rechnungssteller extends Kontakt {
 	public static Rechnungssteller load(String id){
 		return new Rechnungssteller(id);
 	}
-	
+
 	protected Rechnungssteller(String id){
 		super(id);
 	}
-	
-	
+
+
 	/**
 	 * usually but not mandatory, the biller will be a user
 	 */
 	@Override
 	public String getLabel() {
-		if(get(IS_USER).equals(StringTool.one)){
+		if(get(IS_USER).equals(StringConstants.ONE)){
 			String l= get("Label");
 			if(!StringTool.isNothing(l)){
 				return l;

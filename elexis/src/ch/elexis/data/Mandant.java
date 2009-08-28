@@ -7,14 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Mandant.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *    $Id: Mandant.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.elexis.StringConstants;
 import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.StringTool;
 
 
 /**
@@ -25,66 +25,66 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class Mandant extends Anwender {
-	
+
 	public static final String BILLER = "Rechnungssteller";
 
 	static {
 		addMapping(Kontakt.TABLENAME, EXTINFO, IS_MANDATOR, "Label=Bezeichnung3");
 	}
-	
+
 	public boolean isValid(){
-		if (get(IS_MANDATOR).equals(StringTool.one)) {
+		if (get(IS_MANDATOR).equals(StringConstants.ONE)) {
 			return super.isValid();
 		}
 		return false;
 	}
-	
-	
+
+
 	public Rechnungssteller getRechnungssteller(){
 		Rechnungssteller ret = Rechnungssteller.load(getInfoString(BILLER));
 		return ret.isValid() ? ret : Rechnungssteller.load(getId());
 	}
-	
+
 	public void setRechnungssteller(Kontakt rs){
 		setInfoElement(BILLER, rs.getId());
 	}
-	
+
 	protected Mandant(String id){
 		super(id);
 	}
-	
+
 	public Mandant(final String Name, final String Vorname, final String Geburtsdatum,
-		final String s){
+			final String s){
 		super(Name, Vorname, Geburtsdatum, s);
 	}
-	
+
 	protected Mandant(){/* leer */}
-	
+
 	public static Mandant load(String id){
 		Mandant ret = new Mandant(id);
 		String ism = ret.get(IS_MANDATOR);
-		if (ism != null && ism.equals(StringTool.one)) {
+		if (ism != null && ism.equals(StringConstants.ONE)) {
 			return ret;
 		}
 		return null;
 	}
-	
+
 	public Mandant(String name, String pwd){
 		super(name, pwd);
 	}
-	
+
 	protected String getConstraint(){
 		return new StringBuilder(IS_MANDATOR)
 		.append(Query.EQUALS)
-		.append(JdbcLink.wrap(StringTool.one))
+		.append(JdbcLink.wrap(StringConstants.ONE))
 		.toString();
-		
+
 	}
-	
+
 	@Override
 	protected void setConstraint(){
-		set(new String[]{IS_MANDATOR,IS_USER},new String[]{StringTool.one,StringTool.one});
+		set(new String[]{IS_MANDATOR,IS_USER},new String[]{StringConstants.ONE,StringConstants.ONE});
 	}
-	
-	
+
+
 }

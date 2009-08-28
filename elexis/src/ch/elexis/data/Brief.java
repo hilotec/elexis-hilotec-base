@@ -7,11 +7,12 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Brief.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *  $Id: Brief.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
+import ch.elexis.StringConstants;
 import ch.elexis.text.XrefExtension;
 import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
@@ -47,35 +48,35 @@ public class Brief extends PersistentObject {
 	public static final String BESTELLUNG = "Bestellung";
 	public static final String RECHNUNG = "Rechnung";
 	public static final String SYSTEMPLATE = "Systemvorlagen";
-	
+
 	public static final String MIMETYPE_OO2 = "application/vnd.oasis.opendocument.text";
-	
+
 	@Override
 	protected String getTableName(){
 		return TABLENAME;
 	}
-	
+
 	static {
 		addMapping(TABLENAME, SUBJECT, PATIENT_ID, DATE_FIELD, SENDER_ID, DESTINATION_ID,
-			KONSULTATION_ID, TYPE, "modifiziert=S:D:modifiziert", "geloescht", MIME_TYPE,
-			"gedruckt=S:D:gedruckt", "Path");
+				KONSULTATION_ID, TYPE, "modifiziert=S:D:modifiziert", "geloescht", MIME_TYPE,
+				"gedruckt=S:D:gedruckt", "Path");
 	}
-	
+
 	protected Brief(){/* leer */
 	}
-	
+
 	protected Brief(String id){
 		super(id);
 	}
-	
+
 	/** Einen Brief anhand der ID aus der Datenbank laden */
 	public static Brief load(String id){
 		return new Brief(id);
 	}
-	
+
 	/** Einen neuen Briefeintrag erstellen */
 	public Brief(String Betreff, TimeTool Datum, Kontakt Absender, Kontakt dest, Konsultation bh,
-		String typ){
+			String typ){
 		getConnection().setAutoCommit(false);
 		try {
 			super.create(null);
@@ -93,11 +94,11 @@ public class Brief extends PersistentObject {
 			}
 			String dat = Datum.toString(TimeTool.DATE_GER);
 			set(new String[] {
-				SUBJECT, PATIENT_ID, DATE, SENDER_ID, DATE_MODIFIED, DESTINATION_ID,
-				KONSULTATION_ID, TYPE, "geloescht"
+					SUBJECT, PATIENT_ID, DATE, SENDER_ID, DATE_MODIFIED, DESTINATION_ID,
+					KONSULTATION_ID, TYPE, "geloescht"
 			}, new String[] {
-				Betreff, pat, dat, Absender == null ? StringTool.leer : Absender.getId(), dat, dst, bhdl, typ,
-				StringTool.zero
+					Betreff, pat, dat, Absender == null ? StringTool.leer : Absender.getId(), dat, dst, bhdl, typ,
+							StringConstants.ZERO
 			});
 			new contents(this);
 			getConnection().commit();
@@ -108,15 +109,15 @@ public class Brief extends PersistentObject {
 			getConnection().setAutoCommit(true);
 		}
 	}
-	
+
 	public void setPatient(Person k){
 		set(PATIENT_ID, k.getId());
 	}
-	
+
 	public void setTyp(String typ){
 		set(TYPE, typ);
 	}
-	
+
 	public String getTyp(){
 		String t = get(TYPE);
 		if (t == null) {
@@ -124,7 +125,7 @@ public class Brief extends PersistentObject {
 		}
 		return t;
 	}
-	
+
 	/** Speichern als Text */
 	public boolean save(String cnt){
 		contents c = contents.load(getId());
@@ -132,7 +133,7 @@ public class Brief extends PersistentObject {
 		set(DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
 		return true;
 	}
-	
+
 	/** Speichern in Binärformat */
 	public boolean save(byte[] in, String mimetype){
 		if (in != null) {
@@ -147,19 +148,19 @@ public class Brief extends PersistentObject {
 		}
 		return false;
 	}
-	
+
 	/** Binärformat laden */
 	public byte[] loadBinary(){
 		contents c = contents.load(getId());
 		return c.getBinary();
 	}
-	
+
 	/** Textformat laden */
 	public String read(){
 		contents c = contents.load(getId());
 		return c.read();
 	}
-	
+
 	/** Mime-Typ des Inhalts holen */
 	public String getMimeType(){
 		String gm = get(MIME_TYPE);
@@ -168,14 +169,14 @@ public class Brief extends PersistentObject {
 		}
 		return gm;
 	}
-	
+
 	public static boolean canHandle(String mimetype){
 		/*
 		 * if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){ return true; }
 		 */
 		return true;
 	}
-	
+
 	public boolean delete(){
 		getConnection().exec("UPDATE HEAP SET deleted='1' WHERE ID=" + getWrappedId());
 		String konsID = get(KONSULTATION_ID);
@@ -187,7 +188,7 @@ public class Brief extends PersistentObject {
 		}
 		return super.delete();
 	}
-	
+
 	/** Einen Brief unwiederruflich löschen */
 	public boolean remove(){
 		getConnection().setAutoCommit(false);
@@ -204,24 +205,24 @@ public class Brief extends PersistentObject {
 		}
 		return true;
 	}
-	
+
 	public String getBetreff(){
 		return checkNull(get(SUBJECT));
 	}
-	
+
 	public void setBetreff(String nBetreff){
 		set(SUBJECT, nBetreff);
 	}
-	
+
 	public String getDatum(){
 		return get(DATE);
 	}
-	
+
 	public Kontakt getAdressat(){
 		String dest = get(DESTINATION_ID);
 		return dest == null ? null : Kontakt.load(dest);
 	}
-	
+
 	public Person getPatient(){
 		Person pat = Person.load(get(PATIENT_ID));
 		if ((pat != null) && (pat.state() > INVALID_ID)) {
@@ -229,11 +230,11 @@ public class Brief extends PersistentObject {
 		}
 		return null;
 	}
-	
+
 	public String getLabel(){
 		return checkNull(get(DATE)) + StringTool.space + checkNull(get(SUBJECT));
 	}
-	
+
 	private static class contents extends PersistentObject {
 		private static final String CONTENTS = "inhalt";
 		static final String CONTENT_TABLENAME = "HEAP";
@@ -241,19 +242,19 @@ public class Brief extends PersistentObject {
 		static {
 			addMapping(CONTENT_TABLENAME, CONTENTS);
 		}
-		
+
 		private contents(Brief br){
 			create(br.getId());
 		}
-		
+
 		private contents(String id){
 			super(id);
 		}
-		
+
 		byte[] getBinary(){
 			return getBinary(CONTENTS);
 		}
-		
+
 		private String read(){
 			byte[] raw = getBinary();
 			if (raw != null) {
@@ -262,29 +263,29 @@ public class Brief extends PersistentObject {
 			}
 			return "";
 		}
-		
+
 		private void save(String contents){
 			byte[] comp = CompEx.Compress(contents, CompEx.BZIP2);
 			setBinary(CONTENTS, comp);
 		}
-		
+
 		private void save(byte[] contents){
 			setBinary(CONTENTS, contents);
 		}
-		
+
 		@Override
 		public String getLabel(){
 			return getId();
 		}
-		
+
 		static contents load(String id){
 			return new contents(id);
 		}
-		
+
 		@Override
 		protected String getTableName(){
 			return CONTENT_TABLENAME;
 		}
-		
+
 	}
 }

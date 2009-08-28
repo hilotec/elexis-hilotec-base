@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: DocumentSelectDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ * 
+ *  $Id: DocumentSelectDialog.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -19,13 +19,21 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
@@ -53,7 +61,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 	public static final int TYPE_LOAD_TEMPLATE = 2;
 	/** open a system template of the given mandator for editing or export */
 	public static final int TYPE_LOAD_SYSTEMPLATE = 4;
-	
+
 	static final int TEMPLATE = TYPE_LOAD_TEMPLATE | TYPE_LOAD_SYSTEMPLATE;
 	Person rel;
 	int type;
@@ -65,7 +73,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 	private Action editNameAction;
 	private Action deleteTemplateAction;
 	private Action deleteTextAction;
-	
+
 	/**
 	 * Create a new DocumentSelector. If the user clicks OK, the selected Brief will be in result.
 	 * 
@@ -79,12 +87,12 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		rel = p;
 		type = typ;
 	}
-	
+
 	@Override
 	public void create(){
 		super.create();
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
-		
+
 		makeActions();
 		switch (type) {
 		case TYPE_LOAD_DOCUMENT:
@@ -108,7 +116,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			getShell().setText(Messages.getString("DocumentSelectDialog.loadTemplate")); //$NON-NLS-1$
 		}
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
@@ -121,7 +129,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		}
 		tv = new TableViewer(ret, SWT.V_SCROLL);
 		tv.setContentProvider(new IStructuredContentProvider() {
-			
+
 			public Object[] getElements(Object inputElement){
 				Query<Brief> qbe = new Query<Brief>(Brief.class);
 				if (type == TYPE_LOAD_DOCUMENT) {
@@ -137,8 +145,8 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 					qbe.endGroup();
 				}
 				qbe.and();
-				qbe.add(Messages.getString("DocumentSelectDialog.deleted"), Query.NOT_EQUAL, StringTool.one); //$NON-NLS-1$
-				
+				qbe.add(Messages.getString("DocumentSelectDialog.deleted"), Query.NOT_EQUAL, StringConstants.ONE); //$NON-NLS-1$
+
 				if (type != TYPE_LOAD_DOCUMENT) {
 					qbe.orderBy(false, Brief.SUBJECT);
 				} else {
@@ -147,9 +155,9 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 				List<Brief> l = qbe.execute();
 				return l.toArray();
 			}
-			
+
 			public void dispose(){}
-			
+
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
 		});
 		tv.setLabelProvider(new DefaultLabelProvider());
@@ -162,7 +170,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		tv.setInput(this);
 		return ret;
 	}
-	
+
 	@Override
 	protected void okPressed(){
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
@@ -177,15 +185,15 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		}
 		super.okPressed();
 	}
-	
+
 	public Brief getSelectedDocument(){
 		return result;
 	}
-	
+
 	public String getBetreff(){
 		return betreff;
 	}
-	
+
 	private void makeActions(){
 		editNameAction = new Action(Messages.getString("DocumentSelectDialog.changeSubjectAction")) { //$NON-NLS-1$
 			@Override
@@ -199,7 +207,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
 				if (MessageDialog.openConfirm(getShell(), DELETE_TEMPLATE,
 						MessageFormat.format(Messages.getString("DocumentSelectDialog.reallyDeleteTemplate") , sel.getBetreff())) //$NON-NLS-1$
-					 == true) {
+						== true) {
 					sel.delete();
 					tv.refresh();
 				}
@@ -211,8 +219,8 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 				Brief sel = (Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
 				if (MessageDialog.openConfirm(getShell(), DELETE_DOCUMENT,
 						MessageFormat.format(Messages.getString("DocumentSelectDialog.reallyDeleteDocument"),sel.getBetreff())) //$NON-NLS-1$
-					 == true) {
-					sel.set("geloescht", StringTool.one); //$NON-NLS-1$
+						== true) {
+					sel.set("geloescht", StringConstants.ONE); //$NON-NLS-1$
 					tv.refresh();
 				}
 			}

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: PatientErfassenDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *  $Id: PatientErfassenDialog.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -47,12 +48,12 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 	public Patient getResult(){
 		return result;
 	}
-	
+
 	public PatientErfassenDialog(final Shell parent, final HashMap<String, String> fields){
 		super(parent);
 		fld=fields;
 	}
-	
+
 	private String getField(String name){
 		String ret=fld.get(name);
 		if(ret==null){
@@ -85,22 +86,22 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		tGebDat=new Text(ret,SWT.BORDER);
 		tGebDat.setText(getField(Patient.DOB));
 		tGebDat.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		
+
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.street")); //$NON-NLS-1$
 		tStrasse=new Text(ret,SWT.BORDER);
 		tStrasse.setText(getField(Patient.STREET));
 		tStrasse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		
+
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.zip")); //$NON-NLS-1$
 		tPlz=new Text(ret,SWT.BORDER);
 		tPlz.setText(getField(Patient.ZIP));
 		tPlz.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		
+
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.city")); //$NON-NLS-1$
 		tOrt=new Text(ret,SWT.BORDER);
 		tOrt.setText(getField(Patient.PLACE));
 		tOrt.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		
+
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.phone")); //$NON-NLS-1$
 		tTel=new Text(ret,SWT.BORDER);
 		tTel.setText(getField(Patient.PHONE1));
@@ -143,7 +144,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 			if( (list!=null) && (!list.isEmpty())){
 				Kontakt k=list.get(0);
 				if(k.istPerson()){
-					k.set(Kontakt.IS_PATIENT,StringTool.one);
+					k.set(Kontakt.IS_PATIENT,StringConstants.ONE);
 					if(MessageDialog.openConfirm(getShell(),Messages.getString("PatientErfassenDialog.personExists"),Messages.getString("PatientErfassenDialog.personWithThisNameExists"))==false){ //$NON-NLS-1$ //$NON-NLS-2$
 						// abort dialog
 						super.cancelPressed();
@@ -152,8 +153,8 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 				}
 			}
 			Patient pat=new Patient(ret[0],ret[1],check,ret[2]);
-				pat.set(new String[]{Kontakt.STREET,Kontakt.ZIP,Kontakt.PLACE,Kontakt.PHONE1},
-				new String[]{ret[4],ret[5],ret[6],ret[7]});
+			pat.set(new String[]{Kontakt.STREET,Kontakt.ZIP,Kontakt.PLACE,Kontakt.PHONE1},
+					new String[]{ret[4],ret[5],ret[6],ret[7]});
 
 			if(check!=null){
 				check.add(TimeTool.YEAR, 18);
@@ -168,7 +169,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 								new String[]{ret[4],ret[5],ret[6],ret[7]});
 					}
 				}
-				*/
+				 */
 			}
 
 			GlobalEvents.getInstance().fireSelectionEvent(pat);
@@ -180,9 +181,9 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 			return;
 		}catch(PersonDataException pe){
 			ExHandler.handle(pe);
-			SWTHelper.showError("Unplausible Angaben", "Bitte überprüfen Sie die Eingaben nochmals.");			
+			SWTHelper.showError("Unplausible Angaben", "Bitte überprüfen Sie die Eingaben nochmals.");
 		}
-		
+
 	}
-	
+
 }

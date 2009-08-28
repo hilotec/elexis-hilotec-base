@@ -57,11 +57,9 @@ public class StringTool {
 	public static final String equals = "=";
 	public static final String crlf = "\r\n";
 	public static final String lf="\n";
-	public static final String one="1";
-	public static final String zero="0";
 	public static final String slash="/";
 	public static final String backslash="\\";
-	
+
 	public static final String numbers = "[0-9]+";
 	public static final String wordSeparators = "[\\t ,\\.:\\?!\\n\\r]";
 	public static final String lineSeparators = "[\\n\\r\\.\\?!;]";
@@ -365,7 +363,7 @@ public class StringTool {
 			baos.close();
 			return baos.toByteArray();
 		} catch (Exception ex) {
-			ExHandler.handle(ex); 
+			ExHandler.handle(ex);
 			return null;
 		}
 	}
@@ -424,7 +422,7 @@ public class StringTool {
 			}
 
 			Hashtable<Object, Object> res = (Hashtable<Object, Object>) ois
-					.readObject();
+			.readObject();
 			ois.close();
 			bais.close();
 			return res;
@@ -714,10 +712,10 @@ public class StringTool {
 			out[2] = '1'; // Version
 			for (int i = 0; i < src.length; i++) {
 				int i1 = (src[i] & 0xff) >> 4;
-				byte o1 = (byte) (i1 + 65);
-				byte o2 = (byte) ((src[i] & 0x0f) + 65);
-				out[2 * i + 3] = o1;
-				out[2 * i + 4] = o2;
+			byte o1 = (byte) (i1 + 65);
+			byte o2 = (byte) ((src[i] & 0x0f) + 65);
+			out[2 * i + 3] = o1;
+			out[2 * i + 4] = o2;
 			}
 			return new String(out, default_charset);
 
@@ -765,7 +763,7 @@ public class StringTool {
 		if (ipHash == 0) {
 			Iterator<String> it = NetTool.IPs.iterator();
 			while (it.hasNext()) {
-				ipHash += ((String) it.next()).hashCode();
+				ipHash += (it.next()).hashCode();
 			}
 		}
 
@@ -782,7 +780,7 @@ public class StringTool {
 		long idx=sequence%salties.length;
 		char start=salties[(int)idx];
 		return start+Long.toHexString(t4)
-				+ Long.toHexString((long) (Math.random() * 1000)) + sequence;
+		+ Long.toHexString((long) (Math.random() * 1000)) + sequence;
 	}
 
 	/**
@@ -902,7 +900,7 @@ public class StringTool {
 		}
 
 		private StringBuffer readToMatching(final char open, final char close)
-				throws IOException {
+		throws IOException {
 			StringBuffer ret = new StringBuffer();
 			int level = 1;
 			while (pos < mine.length()) {
@@ -918,7 +916,7 @@ public class StringTool {
 					if ((mode & CRLF_MATTERS) != 0) {
 						throw new IOException(
 								"Unexpected end of line while looking for "
-										+ close);
+								+ close);
 					}
 				}
 			}
@@ -1011,7 +1009,7 @@ public class StringTool {
 			return orig;
 		}
 		return orig.substring(0, 1).toUpperCase()
-				+ orig.substring(1).toLowerCase();
+		+ orig.substring(1).toLowerCase();
 	}
 
 	/**
@@ -1071,27 +1069,27 @@ public class StringTool {
 		}
 		return "";
 	}
-	  /**
-	   * Parse a String but don't throw expetion if not parsable. Return 0 instead
-	   * @param string
-	   * @return
-	   */
-	  public static int parseSafeInt(String string){
-		  try{
-			  return Integer.parseInt(string);
-		  }catch(NumberFormatException ne){
-			  return 0;
-		  }
-	  }
+	/**
+	 * Parse a String but don't throw expetion if not parsable. Return 0 instead
+	 * @param string
+	 * @return
+	 */
+	public static int parseSafeInt(String string){
+		try{
+			return Integer.parseInt(string);
+		}catch(NumberFormatException ne){
+			return 0;
+		}
+	}
 
 
-	  public static double parseSafeDouble(String string){
-		  try{
-			  return Double.parseDouble(string);
-		  }catch(NumberFormatException ne){
-			  return 0;
-		  }
-	  }
+	public static double parseSafeDouble(String string){
+		try{
+			return Double.parseDouble(string);
+		}catch(NumberFormatException ne){
+			return 0;
+		}
+	}
 	/**
 	 * String mit unterschiedlicher möglicher Schreibweise in einheitliche
 	 * Schreibweise bringen
@@ -1122,7 +1120,7 @@ public class StringTool {
 			return src;
 		}
 	}
-	
+
 	/**
 	 * convert a String Array from a source encoding to this platform's default encoding
 	 * @param src the source Array
@@ -1171,20 +1169,20 @@ public class StringTool {
 		return null;
 	}
 
-	
+
 	/** Array für den modulo-10-Prüfsummencode */
 	private static final int[][] mod10Checksum = {
-			{ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5, 0 },
-			{ 9, 4, 6, 8, 2, 7, 1, 3, 5, 0, 9 },
-			{ 4, 6, 8, 2, 7, 1, 3, 5, 0, 9, 8 },
-			{ 6, 8, 2, 7, 1, 3, 5, 0, 9, 4, 7 },
-			{ 8, 2, 7, 1, 3, 5, 0, 9, 4, 6, 6 },
-			{ 2, 7, 1, 3, 5, 0, 9, 4, 6, 8, 5 },
-			{ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2, 4 },
-			{ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7, 3 },
-			{ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1, 2 },
-			{ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1 } };
-	
+		{ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5, 0 },
+		{ 9, 4, 6, 8, 2, 7, 1, 3, 5, 0, 9 },
+		{ 4, 6, 8, 2, 7, 1, 3, 5, 0, 9, 8 },
+		{ 6, 8, 2, 7, 1, 3, 5, 0, 9, 4, 7 },
+		{ 8, 2, 7, 1, 3, 5, 0, 9, 4, 6, 6 },
+		{ 2, 7, 1, 3, 5, 0, 9, 4, 6, 8, 5 },
+		{ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2, 4 },
+		{ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7, 3 },
+		{ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1, 2 },
+		{ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1 } };
+
 	private static final char[] salties={
 		'q','w','e','r','t','z','u','o','i','p',
 		'a','s','d','f','g','h','j','k','l','y',

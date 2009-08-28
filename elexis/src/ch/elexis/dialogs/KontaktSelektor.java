@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: KontaktSelektor.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ * 
+ *  $Id: KontaktSelektor.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Desk;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.PersistentObjectLoader.QueryFilter;
@@ -63,7 +64,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 
 	// Name, Vorname, gebdat, strasse, plz, ort, tel, zusatz, fax, email
 	public static final int HINTSIZE = 12;
-	
+
 	public static final int HINT_NAME = 0;
 	public static final int HINT_FIRSTNAME = 1;
 	public static final int HINT_BIRTHDATE = 2;
@@ -76,25 +77,25 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	public static final int HINT_MAIL = 9;
 	public static final int HINT_SEX = 10;
 	public static final int HINT_PATIENT = 11;
-	
+
 	// private Class clazz;
 	CommonViewer cv;
 	ViewerConfigurer vc;
-	private String title;
-	private String message;
+	private final String title;
+	private final String message;
 	private Object selection;
 	Button bAll, bPersons, bOrgs;
 	KontaktFilter fp;
 	FilterButtonAdapter fba;
 	String[] hints;
 	// int type;
-	
+
 	boolean showBezugsKontakt = false;
 	String extraText = null;
 	private ListViewer bezugsKontaktViewer = null;
 	private boolean isSelecting = false;
-	private FlatDataLoader kl;
-	
+	private final FlatDataLoader kl;
+
 	@SuppressWarnings("unchecked")
 	public KontaktSelektor(Shell parentShell, Class which, String t, String m){
 		super(parentShell);
@@ -103,31 +104,31 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		fba = new FilterButtonAdapter();
 		title = t;
 		message = m;
-		
+
 		kl = new FlatDataLoader(cv, new Query<Kontakt>(which));
 		fp = new KontaktFilter(0);
 	}
-	
+
 	public KontaktSelektor(Shell parentShell, Class<? extends PersistentObject> which, String t,
-		String m, boolean showBezugsKontakt){
+			String m, boolean showBezugsKontakt){
 		this(parentShell, which, t, m);
-		
+
 		this.showBezugsKontakt = showBezugsKontakt;
 	}
-	
+
 	public KontaktSelektor(Shell parentShell, Class<? extends PersistentObject> which, String t,
-		String m, String extra){
+			String m, String extra){
 		this(parentShell, which, t, m);
 		extraText = extra;
 	}
-	
+
 	@Override
 	public boolean close(){
 		cv.removeDoubleClickListener(this);
 		cv.dispose();
 		return super.close();
 	}
-	
+
 	/**
 	 * Provide a few hints in case the user clicks "Neu erstellen". The hints is an array of up to
 	 * 10 Strings as used in KontaktErfassenDialog
@@ -158,7 +159,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			}
 		}
 	}
-	
+
 	/*
 	 * (Kein Javadoc)
 	 * 
@@ -171,24 +172,24 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		if (showBezugsKontakt) {
 			new Label(ret, SWT.NONE).setText("Bezugskontakte");
 			bezugsKontaktViewer = new ListViewer(ret, SWT.SINGLE);
 			bezugsKontaktViewer.getControl().setLayoutData(
-				SWTHelper.getFillGridData(1, true, 1, false));
-			
+					SWTHelper.getFillGridData(1, true, 1, false));
+
 			bezugsKontaktViewer.setContentProvider(new IStructuredContentProvider() {
 				public Object[] getElements(Object inputElement){
 					Patient patient = GlobalEvents.getSelectedPatient();
 					if (patient != null) {
 						ArrayList<PersistentObject> elements = new ArrayList<PersistentObject>();
 						ArrayList<String> addedKontakte = new ArrayList<String>();
-						
+
 						// add the patient itself
 						elements.add(patient);
 						addedKontakte.add(patient.getId());
-						
+
 						List<BezugsKontakt> bezugsKontakte = patient.getBezugsKontakte();
 						if (bezugsKontakte != null) {
 							for (BezugsKontakt bezugsKontakt : bezugsKontakte) {
@@ -196,7 +197,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 								addedKontakte.add(bezugsKontakt.get("otherID"));
 							}
 						}
-						
+
 						// required contacts of biling system
 						Fall[] faelle = patient.getFaelle();
 						for (Fall fall : faelle) {
@@ -204,12 +205,12 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 							if (reqs != null) {
 								for (String req : reqs.split(";")) {
 									final String[] r = req.split(":");
-									
+
 									// no valid entry
 									if (r.length < 2) {
 										continue;
 									}
-									
+
 									// only consider contacts
 									if (r[1].equals("K")) {
 										String kontaktID = fall.getInfoString(r[0]);
@@ -224,30 +225,30 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 								}
 							}
 						}
-						
+
 						return elements.toArray();
 					}
-					
+
 					return new Object[] {};
 				}
-				
+
 				public void dispose(){
-				// nothing to do
+					// nothing to do
 				}
-				
+
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-				// nothing to do
+					// nothing to do
 				}
 			});
 			bezugsKontaktViewer.setLabelProvider(new DefaultLabelProvider());
 			bezugsKontaktViewer.setInput(this);
-			
+
 			bezugsKontaktViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event){
 					if (isSelecting) {
 						return;
 					}
-					
+
 					IStructuredSelection sel =
 						(IStructuredSelection) cv.getViewerWidget().getSelection();
 					if (sel.size() > 0) {
@@ -260,7 +261,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		} else {
 			bezugsKontaktViewer = null;
 		}
-		
+
 		if (showBezugsKontakt) {
 			new Label(ret, SWT.NONE).setText("Andere Kontakte");
 		}
@@ -268,39 +269,39 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			new Label(ret, SWT.WRAP).setText(extraText);
 		}
 		vc = new ViewerConfigurer(
-		// new LazyContentProvider(cv,dataloader, null),
-			kl, new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
-				"Kuerzel", "Bezeichnung1"
-			}), new ViewerConfigurer.ButtonProvider() {
-				
-				public Button createButton(final Composite parent){
-					Button ret = new Button(parent, SWT.PUSH);
-					ret.setText("Neu erstellen...");
-					ret.addSelectionListener(new SelectionAdapter() {
-						
-						@Override
-						public void widgetSelected(SelectionEvent e){
-							if (hints == null) {
-								hints = new String[3];
-								hints[0] = vc.getControlFieldProvider().getValues()[1];
+				// new LazyContentProvider(cv,dataloader, null),
+				kl, new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
+						"Kuerzel", "Bezeichnung1"
+				}), new ViewerConfigurer.ButtonProvider() {
+
+					public Button createButton(final Composite parent){
+						Button ret = new Button(parent, SWT.PUSH);
+						ret.setText("Neu erstellen...");
+						ret.addSelectionListener(new SelectionAdapter() {
+
+							@Override
+							public void widgetSelected(SelectionEvent e){
+								if (hints == null) {
+									hints = new String[3];
+									hints[0] = vc.getControlFieldProvider().getValues()[1];
+								}
+								KontaktErfassenDialog ked =
+									new KontaktErfassenDialog(parent.getShell(), hints);
+								ked.open();
+								selection = ked.getResult();
+								okPressed();
+								// cv.getViewerWidget().refresh();
+								// cv.getViewerWidget().setSelection(new StructuredSelection(kr), true);
 							}
-							KontaktErfassenDialog ked =
-								new KontaktErfassenDialog(parent.getShell(), hints);
-							ked.open();
-							selection = ked.getResult();
-							okPressed();
-							// cv.getViewerWidget().refresh();
-							// cv.getViewerWidget().setSelection(new StructuredSelection(kr), true);
-						}
-						
-					});
-					return ret;
-				}
-				
-				public boolean isAlwaysEnabled(){
-					return false;
-				}
-			}, new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+
+						});
+						return ret;
+					}
+
+					public boolean isAlwaysEnabled(){
+						return false;
+					}
+				}, new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		Composite types = new Composite(ret, SWT.BORDER);
 		types.setLayout(new FillLayout());
 		types.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -324,14 +325,14 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		cv.addDoubleClickListener(this);
 		// cv.getViewerWidget().addFilter(filter);
 		kl.addQueryFilter(fp);
-		
+
 		if (showBezugsKontakt) {
 			cv.getViewerWidget().addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event){
 					if (isSelecting) {
 						return;
 					}
-					
+
 					if (bezugsKontaktViewer != null) {
 						IStructuredSelection sel =
 							(IStructuredSelection) bezugsKontaktViewer.getSelection();
@@ -344,20 +345,20 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 				}
 			});
 		}
-		
+
 		return ret;
 	}
-	
+
 	public Object getSelection(){
 		return selection;
 	}
-	
+
 	@Override
 	public void create(){
 		super.create();
 		getShell().setText(SELECT_CONTACT);
 	}
-	
+
 	/*
 	 * (Kein Javadoc)
 	 * 
@@ -369,20 +370,20 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		vc.getContentProvider().stopListening();
 		super.cancelPressed();
 	}
-	
+
 	private Object getBezugsKontaktSelection(){
 		Object bezugsKontakt = null;
-		
+
 		if (bezugsKontaktViewer != null) {
 			IStructuredSelection sel = (IStructuredSelection) bezugsKontaktViewer.getSelection();
 			if (sel.size() > 0) {
 				bezugsKontakt = sel.getFirstElement();
 			}
 		}
-		
+
 		return bezugsKontakt;
 	}
-	
+
 	/*
 	 * (Kein Javadoc)
 	 * 
@@ -390,7 +391,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	 */
 	@Override
 	protected void okPressed(){
-		
+
 		Object bKSel = getBezugsKontaktSelection();
 		if (bKSel instanceof Kontakt) {
 			selection = bKSel;
@@ -414,11 +415,11 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 		cv.removeDoubleClickListener(this);
 		super.okPressed();
 	}
-	
+
 	public void doubleClicked(PersistentObject obj, CommonViewer cv){
 		okPressed();
 	}
-	
+
 	class FilterButtonAdapter extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e){
@@ -434,75 +435,75 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 			}
 		}
 	}
-	
+
 	static class KontaktFilter implements QueryFilter {
 		int type;
-		
+
 		KontaktFilter(int t){
 			type = t;
 		}
-		
+
 		void setType(int t){
 			type = t;
 		}
-		
+
 		public void apply(Query<? extends PersistentObject> qbe){
 			if (type == 1) {
-				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringTool.one);
+				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringConstants.ONE);
 			} else if (type == 2) {
-				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringTool.zero);
+				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringConstants.ZERO);
 			}
 		}
-		
+
 	}
-	
+
 	public static Kontakt showInSync(Class<? extends Kontakt> clazz, String title, String message,
-		String extra){
+			String extra){
 		InSync rn = new InSync(clazz, title, message, extra, null);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
-		
+
 	}
-	
+
 	public static Kontakt showInSync(Class<? extends Kontakt> clazz, String title, String message){
 		InSync rn = new InSync(clazz, title, message, null, null);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
-		
+
 	}
-	
+
 	public static Kontakt showInSync(Class<? extends Kontakt> clazz, String title, String message,
-		String extra, String[] hints){
+			String extra, String[] hints){
 		InSync rn = new InSync(clazz, title, message, extra, hints);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
-		
+
 	}
-	
+
 	public static Kontakt showInSync(Class<? extends Kontakt> clazz, String title, String message,
-		String[] hints){
+			String[] hints){
 		InSync rn = new InSync(clazz, title, message, null, hints);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
-		
+
 	}
-	
+
 	private static class InSync implements Runnable {
 		Kontakt ret;
 		String title, message;
 		Class<? extends Kontakt> clazz;
 		String extra;
 		String[] hints;
-		
+
 		InSync(Class<? extends Kontakt> clazz, String title, String message, String extra,
-			String[] hints){
+				String[] hints){
 			this.title = title;
 			this.message = message;
 			this.clazz = clazz;
 			this.extra = extra;
 			this.hints = hints;
 		}
-		
+
 		public void run(){
 			Shell shell = Desk.getDisplay().getActiveShell();
 			KontaktSelektor ksl = new KontaktSelektor(shell, clazz, title, message, extra);
@@ -515,6 +516,6 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 				ret = null;
 			}
 		}
-		
+
 	}
 }

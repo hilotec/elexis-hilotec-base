@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Person.java 5687 2009-08-28 05:26:29Z rgw_ch $
+ * 
+ *  $Id: Person.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -39,7 +39,7 @@ public class Person extends Kontakt {
 		addMapping(Kontakt.TABLENAME, "Name			=	Bezeichnung1", //$NON-NLS-1$
 				"Vorname		=   Bezeichnung2", "Zusatz 		=	Bezeichnung3", //$NON-NLS-1$ //$NON-NLS-2$
 				"Geburtsdatum	=	S:D:Geburtsdatum", SEX, "Natel=NatelNr", //$NON-NLS-1$ //$NON-NLS-2$
-				Kontakt.IS_PERSON, TITLE); //$NON-NLS-2$
+				Kontakt.IS_PERSON, TITLE);
 	}
 
 	public String getName() {
@@ -108,7 +108,7 @@ public class Person extends Kontakt {
 	 * @throws PersonDataException
 	 */
 	public Person(String name, String vorname, TimeTool gebDat, String s)
-			throws PersonDataException {
+	throws PersonDataException {
 		name = name.trim();
 		vorname = vorname.trim();
 		if ((StringTool.isNothing(name))
@@ -198,12 +198,12 @@ public class Person extends Kontakt {
 	@Override
 	protected String getConstraint() {
 		return new StringBuilder(Kontakt.IS_PERSON).append(StringTool.equals)
-				.append(JdbcLink.wrap(StringTool.one)).toString();
+		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 
 	@Override
 	protected void setConstraint() {
-		set(Kontakt.IS_PERSON, StringTool.one);
+		set(Kontakt.IS_PERSON, StringConstants.ONE);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class Person extends Kontakt {
 		}
 
 		static final String[] causes = new String[] { NAME, FIRSTNAME,
-				BIRTHDATE, "Geschlecht (m oder w)" }; //$NON-NLS-1$
+			BIRTHDATE, "Geschlecht (m oder w)" }; //$NON-NLS-1$
 
 		public CAUSE cause;
 

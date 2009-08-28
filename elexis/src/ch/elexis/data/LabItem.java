@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: LabItem.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * 
+ *  $Id: LabItem.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import bsh.EvalError;
 import bsh.Interpreter;
-
+import ch.elexis.StringConstants;
 import ch.elexis.text.TextContainer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -55,8 +55,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 				REF_MALE,REF_FEMALE_OR_TEXT,UNIT,TYPE,GROUP,PRIO);
 	}
 	public enum typ{NUMERIC,TEXT,ABSOLUTE,FORMULA};
-	
-	public LabItem(String k,String t, Kontakt labor, String RefMann, String RefFrau, 
+
+	public LabItem(String k,String t, Kontakt labor, String RefMann, String RefFrau,
 			String Unit, typ type,String grp,String seq){
 		String tp="1";
 		if(type==typ.NUMERIC){
@@ -73,7 +73,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		}
 		if(labor==null){
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-			String labid=qbe.findSingle(Kontakt.IS_LAB,Query.EQUALS,StringTool.one);
+			String labid=qbe.findSingle(Kontakt.IS_LAB,Query.EQUALS,StringConstants.ONE);
 			if(labid==null){
 				labor=new Labor("Eigen","Eigenlabor");
 			}else{
@@ -108,22 +108,22 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	}
 	public typ getTyp(){
 		String t=get(TYPE);
-		if(t.equals(StringTool.zero)){
+		if(t.equals(StringConstants.ZERO)){
 			return typ.NUMERIC;
-		}else if(t.equals(StringTool.one)){
+		}else if(t.equals(StringConstants.ONE)){
 			return typ.TEXT;
 		}else if(t.equals("2")){
 			return typ.ABSOLUTE;
 		}else{
 			return typ.FORMULA;
 		}
-		
+
 	}
 	/**
 	 * Evaluate a formula-based LabItem for a given Patient at a given date.
-	 * It will try to retrieve all LabValues it depends on of that Patient and date 
+	 * It will try to retrieve all LabValues it depends on of that Patient and date
 	 * and then calculate the result. If there are not all necessare values given,
-	 * it will return "?formula?". 
+	 * it will return "?formula?".
 	 * @param date The date to consider for calculating
 	 * @return the result or "?formel?" if no result could be calculated.
 	 */
@@ -163,7 +163,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			return null;
 		}
 		Interpreter scripter=new Interpreter();
-		
+
 		try {
 			return scripter.eval(sb.toString()).toString();
 		} catch (EvalError e) {
@@ -193,7 +193,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 	public void setRefM(String r){
 		set(REF_MALE,r);
 	}
-	
+
 	public void setFormula(String f){
 		String val=getRefW();
 		if(!StringTool.isNothing(f)){
@@ -206,29 +206,29 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		return all.length>1 ? all[1] : "";
 	}
 	protected LabItem() {/* leer */}
-	
+
 
 	protected LabItem(String id) {
 		super(id);
 	}
-	
+
 
 	@Override
 	public String getLabel() {
 		StringBuilder sb=new StringBuilder();
 		String [] fields={SHORTNAME,TITLE,REF_MALE,REF_FEMALE_OR_TEXT,UNIT,
-				        TYPE,GROUP,PRIO};
+				TYPE,GROUP,PRIO};
 		String[] vals=new String[fields.length];
 		get(fields,vals);
 		sb.append(vals[0]).append(", ").append(vals[1]);
-		if(vals[5].equals(StringTool.zero)){
+		if(vals[5].equals(StringConstants.ZERO)){
 			sb.append(" (").append(vals[2]).append("-").append(vals[3]).append(StringTool.space).append(vals[4]).append(")");
 		}else{
 			sb.append(" (").append(vals[3]).append(")");
 		}
 		sb.append("[").append(vals[6]).append(", ").append(vals[7]).append("]");
 		return sb.toString();
-		
+
 	}
 
 	public String getShortLabel(){
@@ -242,16 +242,16 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			labName=lab.get("Bezeichnung1");
 		}
 		sb.append(vals[0]).append(" (").append(vals[1]).append("; ")
-			.append(labName).append(")");
+		.append(labName).append(")");
 		return sb.toString();
 	}
-	
+
 	public int compareTo(LabItem other) {
 		// check for null; put null values at the end
 		if (other == null) {
 			return -1;
 		}
-		
+
 		// first, compare the groups
 		String mineGroup = getGroup();
 		String otherGroup = other.getGroup();
@@ -259,7 +259,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 			// groups differ, just compare groups
 			return mineGroup.compareTo(otherGroup);
 		}
-		
+
 		// compare item priorities
 		String mine=getPrio();
 		String others=other.getPrio();

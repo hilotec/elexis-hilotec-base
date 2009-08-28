@@ -7,14 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Labor.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *  $Id: Labor.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.elexis.StringConstants;
 import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.StringTool;
 
 public class Labor extends Organisation {
 	static {
@@ -25,13 +25,13 @@ public class Labor extends Organisation {
 	protected String getConstraint() {
 		return new StringBuilder(Kontakt.IS_LAB)
 		.append(Query.EQUALS)
-		.append(JdbcLink.wrap(StringTool.one))
+		.append(JdbcLink.wrap(StringConstants.ONE))
 		.toString();
 	}
 
 	@Override
 	protected void setConstraint() {
-		set(new String[] { Kontakt.IS_LAB,Kontakt.IS_ORGANIZATION }, StringTool.one, StringTool.one);
+		set(new String[] { Kontakt.IS_LAB,Kontakt.IS_ORGANIZATION }, StringConstants.ONE, StringConstants.ONE);
 	}
 
 	public Labor(String Kuerzel, String Name) {

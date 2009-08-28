@@ -7,12 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Organisation.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *  $Id: Organisation.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.elexis.StringConstants;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
@@ -33,9 +34,9 @@ public class Organisation extends Kontakt {
 				"Ansprechperson=Bezeichnung3",Kontakt.IS_ORGANIZATION, //$NON-NLS-1$
 				"Zusatz3=TITEL", //$NON-NLS-1$
 				"Tel. direkt=NatelNr" //$NON-NLS-1$
-				);
+		);
 	}
-	
+
 	@Override
 	public boolean isValid(){
 		return super.isValid();
@@ -46,26 +47,26 @@ public class Organisation extends Kontakt {
 	}
 	Organisation(){/* leer */}
 	protected Organisation(final String id){
-	    super(id);
-    }
+		super(id);
+	}
 	/** Eine Organisation bei gegebener ID aus der Datenbank einlesen */
-    public static Organisation load(final String id){
-        return new Organisation(id);
-    }
-    /** Eine neue Organisation erstellen */
-    public Organisation(final String Name, final String Zusatz1){
-    	create(null);
-    	set(new String[]{NAME,ZUSATZ1},new String[]{Name,Zusatz1});
-    }
+	public static Organisation load(final String id){
+		return new Organisation(id);
+	}
+	/** Eine neue Organisation erstellen */
+	public Organisation(final String Name, final String Zusatz1){
+		create(null);
+		set(new String[]{NAME,ZUSATZ1},new String[]{Name,Zusatz1});
+	}
 	@Override
 	protected String getConstraint() {
 		return new StringBuilder(Kontakt.IS_ORGANIZATION)
-			.append(StringTool.equals)
-			.append(JdbcLink.wrap(StringTool.one)).toString();
+		.append(StringTool.equals)
+		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 	@Override
 	protected void setConstraint() {
-		set(Kontakt.IS_ORGANIZATION,StringTool.one);
+		set(Kontakt.IS_ORGANIZATION,StringConstants.ONE);
 	}
-    
+
 }

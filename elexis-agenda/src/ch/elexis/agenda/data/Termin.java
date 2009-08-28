@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Termin.java 5686 2009-08-28 05:25:39Z rgw_ch $
+ * 
+ *    $Id: Termin.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.preferences.PreferenceConstants;
@@ -39,12 +40,12 @@ import ch.rgw.tools.VersionInfo;
  */
 
 public class Termin extends PersistentObject implements Cloneable,
-		Comparable<Termin>, IPlannable {
-	
+Comparable<Termin>, IPlannable {
+
+	public static final String FLD_TERMINTYP = "Typ";
 	public static final String FLD_PATIENT="Wer";
 	public static final String FLD_TERMINSTATUS = "Status";
 	public static final String FLD_CREATOR = "ErstelltVon";
-	public static final String FLD_LASTEDIT = "lastedit";
 	public static final String FLD_GRUND = "Grund";
 	public static final String FLD_DAUER = "Dauer";
 	public static final String FLD_BEGINN = "Beginn";
@@ -56,45 +57,45 @@ public class Termin extends PersistentObject implements Cloneable,
 	private static final JdbcLink j = getConnection();
 
 
-	
-	
+
+
 	// static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
 	// static final String
 	// DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";
 	public static final String createDB = "CREATE TABLE AGNTERMINE("
-			+ "ID              VARCHAR(127) primary key,"
-			+ "lastupdate BIGINT,"
-			+ // we need that size to be able to import ics files
-			"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25),"
-			+ "Tag             CHAR(8)," + "Beginn          CHAR(4),"
-			+ "Dauer           CHAR(4)," + "Grund           TEXT,"
-			+ "TerminTyp       VARCHAR(50)," + "TerminStatus    VARCHAR(50),"
-			+ "ErstelltVon     VARCHAR(25)," + "Angelegt        VARCHAR(10),"
-			+ "lastedit	     VARCHAR(10),"
-			+ "PalmID          INTEGER default 0,"
-			+ "flags           VARCHAR(10),"
-			+ "deleted         CHAR(2) default '0'," + "Extension       TEXT,"
-			+ "linkgroup	    VARCHAR(20)" + ");"
-			+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);"
-			+ "CREATE INDEX pattern on AGNTERMINE (PatID);"
-			+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);"
-			+ "INSERT INTO AGNTERMINE (ID) VALUES ('1');";
+		+ "ID              VARCHAR(127) primary key,"
+		+ "lastupdate BIGINT,"
+		+ // we need that size to be able to import ics files
+		"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25),"
+		+ "Tag             CHAR(8)," + "Beginn          CHAR(4),"
+		+ "Dauer           CHAR(4)," + "Grund           TEXT,"
+		+ "TerminTyp       VARCHAR(50)," + "TerminStatus    VARCHAR(50),"
+		+ "ErstelltVon     VARCHAR(25)," + "Angelegt        VARCHAR(10),"
+		+ "lastedit	     VARCHAR(10),"
+		+ "PalmID          INTEGER default 0,"
+		+ "flags           VARCHAR(10),"
+		+ "deleted         CHAR(2) default '0'," + "Extension       TEXT,"
+		+ "linkgroup	    VARCHAR(20)" + ");"
+		+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);"
+		+ "CREATE INDEX pattern on AGNTERMINE (PatID);"
+		+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);"
+		+ "INSERT INTO AGNTERMINE (ID) VALUES ('1');";
 
 	private static final String upd122 = "ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);"
-			+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);";
+		+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);";
 
 	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;";
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT+"=PatID", FLD_TAG,
 				FLD_BEGINN, FLD_DAUER, FLD_GRUND, "Typ=TerminTyp",
 				FLD_TERMINSTATUS+"=TerminStatus", FLD_CREATOR, "ErstelltWann=Angelegt",
-				FLD_LASTEDIT, "PalmID", "flags", "deleted", "Extension",
-				"linkgroup");
+				FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, "Extension",
+		"linkgroup");
 		TimeTool.setDefaultResolution(60000);
 		TerminTypes = Hub.globalCfg
-				.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
+		.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
 		TerminStatus = Hub.globalCfg
-				.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
+		.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
 		TerminBereiche = Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
 				Messages.TagesView_14).split(",");
 		if ((TerminTypes == null) || (TerminTypes.length < 3)) {
@@ -107,31 +108,31 @@ public class Termin extends PersistentObject implements Cloneable,
 		if (Version == null) {
 			init();
 		} else {
-			VersionInfo vi = new VersionInfo(Version.get("Wer"));
+			VersionInfo vi = new VersionInfo(Version.get(FLD_PATIENT));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("1.1.0")) {
 					if (j.DBFlavor.equalsIgnoreCase("postgresql")) {
 						j
-								.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);");
+						.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);");
 						j
-								.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);");
+						.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);");
 						j
-								.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);");
+						.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);");
 					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) {
 						j
-								.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);");
+						.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);");
 						j
-								.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);");
+						.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);");
 						j
-								.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);");
+						.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);");
 					}
 				} else if (vi.isOlder("1.2.1")) {
 					if (j.DBFlavor.equalsIgnoreCase("postgresql")) {
 						j
-								.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);");
+						.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);");
 					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) {
 						j
-								.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);");
+						.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);");
 					}
 				} else if (vi.isOlder("1.2.3")) {
 					createOrModifyTable(upd122);
@@ -139,7 +140,7 @@ public class Termin extends PersistentObject implements Cloneable,
 				if (vi.isOlder("1.2.4")) {
 					createOrModifyTable(upd124);
 				}
-				Version.set("Wer", VERSION);
+				Version.set(FLD_PATIENT, VERSION);
 			}
 		}
 	}
@@ -171,21 +172,21 @@ public class Termin extends PersistentObject implements Cloneable,
 					.getBytes("UTF-8"));
 			j.execScript(bais, true, false);
 			Hub.userCfg.set(PreferenceConstants.AG_SHOWDELETED + "_default",
-					"0");
+			"0");
 			Hub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN + "_default",
-					"Frei,Reserviert,Normal,Extra,Besuch");
+			"Frei,Reserviert,Normal,Extra,Besuch");
 			Hub.globalCfg.set(PreferenceConstants.AG_TERMINSTATUS + "_default",
-					"-,geplant,eingetroffen,fertig,verpasst,abgesagt");
+			"-,geplant,eingetroffen,fertig,verpasst,abgesagt");
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX
 					+ Termin.typFrei(), "icons/gruen.png");
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX
 					+ Termin.typReserviert(), "icons/einbahn.png");
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + "Normal",
-					"icons/kons.ico");
+			"icons/kons.ico");
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + "Extra",
-					"icons/blaulicht.ico");
+			"icons/blaulicht.ico");
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + "Besuch",
-					"icons/ambulanz.ico");
+			"icons/ambulanz.ico");
 			ACLContributor.initialize();
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
@@ -234,7 +235,7 @@ public class Termin extends PersistentObject implements Cloneable,
 		create(null);
 
 		String ts = createTimeStamp();
-		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", FLD_TERMINSTATUS,
+		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, FLD_TERMINTYP, FLD_TERMINSTATUS,
 				"ErstelltWann", FLD_LASTEDIT }, bereich, Tag, Integer
 				.toString(von), Integer.toString(bis - von), typ, status, ts,
 				ts);
@@ -248,7 +249,7 @@ public class Termin extends PersistentObject implements Cloneable,
 			final int von, final int bis, final String typ, final String status) {
 		create(ID);
 		String ts = createTimeStamp();
-		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", FLD_TERMINSTATUS,
+		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, FLD_TERMINTYP, FLD_TERMINSTATUS,
 				"ErstelltWann", FLD_LASTEDIT }, bereich, Tag, Integer
 				.toString(von), Integer.toString(bis - von), typ, status, ts,
 				ts);
@@ -373,7 +374,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	public boolean checkLock() {
 		if (isLocked()) {
 			SWTHelper.alert("Termin gesperrt",
-					"Dieser Termin kann nicht geändert oder gelöscht werden.");
+			"Dieser Termin kann nicht geändert oder gelöscht werden.");
 			return true;
 		}
 		return false;
@@ -396,20 +397,20 @@ public class Termin extends PersistentObject implements Cloneable,
 			if (msd.open() == 0) {
 				linked = getLinked(this);
 				for (Termin ae : (List<Termin>) linked) {
-					ae.set(new String[] { FLD_LASTEDIT, "deleted" },
-							new String[] { createTimeStamp(), "1" });
+					ae.set(new String[] { FLD_LASTEDIT, FLD_DELETED },
+							new String[] { createTimeStamp(), StringConstants.ONE });
 				}
 			}
 
 		}
 
-		String deleted = get("deleted");
-		if (deleted.equals("1")) {
-			deleted = "0";
+		String deleted = get(FLD_DELETED);
+		if (deleted.equals(StringConstants.ONE)) {
+			deleted = StringConstants.ZERO;
 		} else {
-			deleted = "1";
+			deleted = StringConstants.ONE;
 		}
-		set(new String[] { "deleted", FLD_LASTEDIT }, deleted, createTimeStamp());
+		set(new String[] { FLD_DELETED, FLD_LASTEDIT }, deleted, createTimeStamp());
 		return true;
 	}
 
@@ -421,7 +422,7 @@ public class Termin extends PersistentObject implements Cloneable,
 			if (Type.equals(typFrei())) {
 				super.delete();
 			} else {
-				set(new String[] { "Typ", FLD_LASTEDIT }, Type, createTimeStamp());
+				set(new String[] { FLD_TERMINTYP, FLD_LASTEDIT }, Type, createTimeStamp());
 			}
 		}
 	}
@@ -456,7 +457,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	public void set(final String bereich, final String tag, final int von,
 			final int bis, final String typ, final String status) {
 		if (!checkLock()) {
-			set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ",
+			set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, FLD_TERMINTYP,
 					FLD_TERMINSTATUS, FLD_LASTEDIT }, bereich, tag,
 					Integer.toString(von), Integer.toString(bis - von), typ,
 					status, createTimeStamp());
@@ -468,9 +469,9 @@ public class Termin extends PersistentObject implements Cloneable,
 			final String Grund) {
 		String Tag = wann.toString(TimeTool.DATE_COMPACT);
 		int Beginn = wann.get(TimeTool.HOUR_OF_DAY) * 60
-				+ wann.get(TimeTool.MINUTE);
-		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, "Typ", FLD_TERMINSTATUS,
-				"Wer", FLD_GRUND, FLD_LASTEDIT }, bereich, Tag, Integer
+		+ wann.get(TimeTool.MINUTE);
+		set(new String[] { "BeiWem", FLD_TAG, FLD_BEGINN, FLD_DAUER, FLD_TERMINTYP, FLD_TERMINSTATUS,
+				FLD_PATIENT, FLD_GRUND, FLD_LASTEDIT }, bereich, Tag, Integer
 				.toString(Beginn), Integer.toString(dauer), typ, status, pat
 				.getId(), Grund, createTimeStamp());
 	}
@@ -480,7 +481,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	 * }
 	 */
 	public String getPersonalia() {
-		String patid = get("Wer");
+		String patid = get(FLD_PATIENT);
 		Patient pat = Patient.load(patid);
 		String Personalien = "";
 		if (pat.exists()) {
@@ -488,7 +489,7 @@ public class Termin extends PersistentObject implements Cloneable,
 		} else {
 			Personalien = patid;
 		}
-		if (get("deleted").equals("1")) {
+		if (get(FLD_DELETED).equals(StringConstants.ONE)) {
 			return Personalien + " (gelöscht)";
 		}
 		return Personalien;
@@ -504,19 +505,19 @@ public class Termin extends PersistentObject implements Cloneable,
 
 	public void setPatient(final Patient pers) {
 		if (!checkLock()) {
-			set(new String[] { "Wer", FLD_LASTEDIT }, pers.getId(),
+			set(new String[] { FLD_PATIENT, FLD_LASTEDIT }, pers.getId(),
 					createTimeStamp());
 		}
 	}
 
 	public void setText(final String text) {
 		if (!checkLock()) {
-			set(new String[] { "Wer", FLD_LASTEDIT }, text, createTimeStamp());
+			set(new String[] { FLD_PATIENT, FLD_LASTEDIT }, text, createTimeStamp());
 		}
 	}
 
 	public Patient getPatient() {
-		String pid = get("Wer");
+		String pid = get(FLD_PATIENT);
 		Patient pat = Patient.load(pid);
 		if (pat.exists()) {
 			return pat;
@@ -525,7 +526,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	}
 
 	public String getText() {
-		return get("Wer");
+		return get(FLD_PATIENT);
 	}
 
 	/*
@@ -547,9 +548,9 @@ public class Termin extends PersistentObject implements Cloneable,
 	public static String[] findID(final String pers) {
 
 		String[] ret = new String[3];
-		ret[0] = "";
-		ret[1] = "";
-		ret[2] = "";
+		ret[0] = StringConstants.EMPTY;
+		ret[1] = StringConstants.EMPTY;
+		ret[2] = StringConstants.EMPTY;
 		if (StringTool.isNothing(pers)) {
 			return ret;
 		}
@@ -594,14 +595,14 @@ public class Termin extends PersistentObject implements Cloneable,
 	}
 
 	public boolean isDeleted() {
-		return get("deleted").equals("1");
+		return get("deleted").equals(StringConstants.ONE);
 	}
 
 	/** standard equals: Gleiche Zeit, gleiche Dauer, gleicher Bereich */
 	public boolean equals(final Object o) {
 		if (o instanceof Termin) {
 			return super.isMatching((Termin) o, 0, FLD_TAG, FLD_BEGINN, FLD_DAUER,
-					"BeiWem");
+			"BeiWem");
 		}
 		return false;
 	}
@@ -609,7 +610,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	/** Exakte Übereinstimmung */
 	public boolean isEqual(final Termin ae) {
 		return super.isMatching(ae, 0, FLD_TAG, FLD_BEGINN, FLD_DAUER, "BeiWem",
-				"Typ", FLD_TERMINSTATUS, FLD_CREATOR, "Wer");
+				FLD_TERMINTYP, FLD_TERMINSTATUS, FLD_CREATOR, FLD_PATIENT);
 	}
 
 	public TimeTool getStartTime() {
@@ -634,9 +635,9 @@ public class Termin extends PersistentObject implements Cloneable,
 		}
 		String Tag = t.toString(TimeTool.DATE_COMPACT);
 		int Beginn = (t.get(TimeTool.HOUR_OF_DAY) * 60)
-				+ t.get(TimeTool.MINUTE);
+		+ t.get(TimeTool.MINUTE);
 		if (Beginn > 0) {
-			set(new String[] { FLD_TAG, FLD_BEGINN, "lasetedit" }, Tag, Integer
+			set(new String[] { FLD_TAG, FLD_BEGINN, FLD_LASTEDIT }, Tag, Integer
 					.toString(Beginn), createTimeStamp());
 			return true;
 		}
@@ -673,7 +674,7 @@ public class Termin extends PersistentObject implements Cloneable,
 		TimeTool d = new TimeTool(vals[0]);
 		d.addMinutes(checkZero(vals[2]));
 		String f = d.toString(TimeTool.WEEKDAY) + ", "
-				+ d.toString(TimeTool.LARGE_GER);
+		+ d.toString(TimeTool.LARGE_GER);
 		if (level > 0) {
 			d.addMinutes(checkZero(vals[1]));
 			f += "-" + d.toString(TimeTool.TIME_SMALL);
@@ -770,7 +771,7 @@ public class Termin extends PersistentObject implements Cloneable,
 
 	public String dump() {
 		StringBuffer res = new StringBuffer(200);
-		String[] fields = { FLD_TAG, "BeiWem", "Wer", "Typ", FLD_TERMINSTATUS };
+		String[] fields = { FLD_TAG, "BeiWem", FLD_PATIENT, FLD_TERMINTYP, FLD_TERMINSTATUS };
 		String[] result = new String[fields.length];
 		get(fields, result);
 		// result[1]=Mandant.load(result[1]).getLabel();
@@ -786,11 +787,11 @@ public class Termin extends PersistentObject implements Cloneable,
 		StringBuilder sb = new StringBuilder();
 		TimeSpan ts = getTimeSpan();
 		sb.append(new TimeTool(getDay()).toString(TimeTool.DATE_GER)).append(
-				",");
+		",");
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(
 				ts.until.toString(TimeTool.TIME_SMALL)).append(" ").append(
-				getPersonalia()).append(" (").append(getType()).append(",")
-				.append(getStatus()).append(") ");
+						getPersonalia()).append(" (").append(getType()).append(",")
+						.append(getStatus()).append(") ");
 		return sb.toString();
 	}
 
@@ -811,7 +812,7 @@ public class Termin extends PersistentObject implements Cloneable,
 	}
 
 	public String getType() {
-		return get("Typ");
+		return get(FLD_TERMINTYP);
 	}
 
 	public void setStartMinute(final int min) {
@@ -860,7 +861,7 @@ public class Termin extends PersistentObject implements Cloneable,
 		}
 
 		public String getText() {
-			return "";
+			return StringConstants.EMPTY;
 		}
 
 		public String getTitle() {

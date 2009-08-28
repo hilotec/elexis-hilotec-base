@@ -7,16 +7,25 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ * 
  * $Id$
  *******************************************************************************/
 
 package ch.elexis.exchange;
 
-import static ch.elexis.dialogs.KontaktSelektor.*;
+import static ch.elexis.dialogs.KontaktSelektor.HINTSIZE;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_BIRTHDATE;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_FIRSTNAME;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_NAME;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_PATIENT;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_PLACE;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_SEX;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_STREET;
+import static ch.elexis.dialogs.KontaktSelektor.HINT_ZIP;
 
 import java.util.List;
 
+import ch.elexis.StringConstants;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
@@ -37,7 +46,7 @@ public class KontaktMatcher {
 	private static final String SEP = ", "; //$NON-NLS-1$
 
 	public enum CreateMode{FAIL,CREATE,ASK};
-	
+
 	public static Kontakt findKontakt(final String name, final String strasse, final String plz, final String ort){
 		Organisation o=findOrganisation(name, StringTool.leer, strasse, plz, ort, CreateMode.FAIL);
 		if(o==null){
@@ -49,7 +58,7 @@ public class KontaktMatcher {
 	}
 	/**
 	 * Find the organization mathcing the given parameters
-	 * @param name 
+	 * @param name
 	 * @param strasse
 	 * @param plz
 	 * @param ort
@@ -57,7 +66,7 @@ public class KontaktMatcher {
 	 * @return the organization that matches best the given parameters or null if no
 	 * such organization was found
 	 */
-	public static Organisation findOrganisation(final String name, final String zusatz, final String strasse, 
+	public static Organisation findOrganisation(final String name, final String zusatz, final String strasse,
 			final String plz, final String ort, final CreateMode createMode){
 		String[] hints=new String[HINTSIZE];
 		hints[HINT_NAME]=name;
@@ -93,7 +102,7 @@ public class KontaktMatcher {
 			return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
 		}
 	}
-	
+
 	public static Patient findPatient(final String name, final String vorname, final String gebdat,
 			final String gender, final String strasse, final String plz, final String ort,
 			final String natel, final CreateMode createMode){
@@ -119,8 +128,8 @@ public class KontaktMatcher {
 	 * @return the found person or null if no matching person wasd found
 	 */
 	public static Person findPerson(final String name, final String vorname, final String gebdat,
-				final String gender, final String strasse, final String plz, final String ort,
-				final String natel, final CreateMode createMode, final boolean isPatient){
+			final String gender, final String strasse, final String plz, final String ort,
+			final String natel, final CreateMode createMode, final boolean isPatient){
 		String[] hints=new String[HINTSIZE];
 		hints[HINT_NAME]=name;
 		hints[HINT_FIRSTNAME]=vorname;
@@ -130,12 +139,12 @@ public class KontaktMatcher {
 		hints[HINT_ZIP]=plz;
 		hints[HINT_PLACE]=ort;
 		if(isPatient){
-			hints[HINT_PATIENT]=StringTool.one;
+			hints[HINT_PATIENT]=StringConstants.ONE;
 		}
 		Query<Person> qbe=new Query<Person>(Person.class);
 		String sex=StringTool.leer;
 		String birthdate=StringTool.leer;
-		
+
 		if(!StringTool.isNothing(name)){
 			qbe.startGroup();
 			qbe.add(Person.NAME, "LIKE", name+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -147,7 +156,7 @@ public class KontaktMatcher {
 			qbe.endGroup();
 			qbe.and();
 		}
-		
+
 		if(!StringTool.isNothing(vorname)){
 			qbe.startGroup();
 			qbe.add(Person.FIRSTNAME, "LIKE", vorname+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -222,27 +231,27 @@ public class KontaktMatcher {
 	 */
 	public static Kontakt matchAddress(final Kontakt[] kk, final String strasse, final String plz, final String ort,
 			final String natel){
-		
+
 		int[] score=new int[kk.length];
-		
+
 		for(int i=0;i<kk.length;i++){
-			
+
 			// If we have the same mobile number, that's a strong hint
 			if(!StringTool.isNothing(natel)){
 				if(normalizePhone(kk[i].get("NatelNr")).equals(normalizePhone(natel))){ //$NON-NLS-1$
 					score[i]+=5;
 				}
 			}
-			
+
 			// If we have the same street address, that's also a good hint
 			if(!StringTool.isNothing(strasse)){
 				if(isSameStreet(kk[i].get(Kontakt.STREET),strasse)){
 					score[i]+=3;
 				}else{
-					score[i]-=2;	
+					score[i]-=2;
 				}
 			}
-			
+
 			// If we have the same zip or the same olace, that's a quite weak hint.
 			if(!StringTool.isNothing(plz)){
 				if(plz.equals(kk[i].get(Kontakt.ZIP))){
@@ -270,7 +279,7 @@ public class KontaktMatcher {
 		}
 		return found;
 	}
-	
+
 	/**
 	 * try to figure out which part of a string is the zip and which is the place
 	 * @param str a string containing possibly zip and possibly place
@@ -294,7 +303,7 @@ public class KontaktMatcher {
 	public static String normalizePhone(final String nr){
 		return nr.replaceAll("[\\s-:\\.]", StringTool.leer); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Try to figure out if two street strings denote the same street address
 	 * @return true if the streets seem to be equal
@@ -328,9 +337,9 @@ public class KontaktMatcher {
 			}
 		}
 		return new String[]{m2.toString(),nr};
-		
+
 	}
-	
+
 	public static void addAddress(final Kontakt k, String str, String plzort){
 		String[] ort=plzort.split("[\\s+]"); //$NON-NLS-1$
 		if(ort.length==2){
@@ -370,7 +379,7 @@ public class KontaktMatcher {
 	/**
 	 * Decide whether a person is identical to given personal data. Normalize all names:
 	 * Ulmlaute will be converted, accents will be eliminatet and double names will be reduced
-	 * to their first part. 
+	 * to their first part.
 	 * @return true if the given person seems to be the same than the given personalia
 	 */
 	public static boolean isSame(final Person a, final String nameB, final String firstnameB, final String gebDatB){
@@ -394,7 +403,7 @@ public class KontaktMatcher {
 					}
 				}
 			}
-			
+
 		}catch(Throwable t){
 			ExHandler.handle(t);
 
@@ -405,7 +414,7 @@ public class KontaktMatcher {
 		String[] ret=name.split("\\s*[- ]\\s*"); //$NON-NLS-1$
 		return ret[0];
 	}
-	
+
 	final static String resolve1=
 		Messages.KontaktMatcher_noauto1+
 		Messages.KontaktMatcher_noauto2 +

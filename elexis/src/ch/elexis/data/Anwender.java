@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Anwender.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *  $Id: Anwender.java 5688 2009-08-28 06:26:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.PatientPerspektive;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.ACE;
@@ -54,7 +55,7 @@ public class Anwender extends Person {
 
 	static {
 		addMapping(Kontakt.TABLENAME, Kontakt.EXT_INFO, Kontakt.IS_USER, "Label=Bezeichnung3",
-				"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
+		"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
 	}
 
 	public Anwender(final String Username, final String Password) {
@@ -166,12 +167,12 @@ public class Anwender extends Person {
 
 	@Override
 	protected String getConstraint() {
-		return Kontakt.IS_USER+StringTool.equals+JdbcLink.wrap(StringTool.one);
+		return Kontakt.IS_USER+StringTool.equals+JdbcLink.wrap(StringConstants.ONE);
 	}
 
 	@Override
 	protected void setConstraint() {
-		set(Kontakt.IS_USER, StringTool.one);
+		set(Kontakt.IS_USER, StringConstants.ONE);
 	}
 
 	protected Anwender() {/* leer */
@@ -192,21 +193,21 @@ public class Anwender extends Person {
 		Anwender admin = new Anwender();
 		admin.create(null);
 		admin.set(new String[] { Person.NAME, LABEL, Kontakt.IS_USER },
-				ADMINISTRATOR, ADMINISTRATOR, StringTool.one);
+				ADMINISTRATOR, ADMINISTRATOR, StringConstants.ONE);
 		Hub.actUser = admin;
-		Hub.acl.grant(admin, 
-			new ACE(ACE.ACE_IMPLICIT,"WriteInfoStore"),
-			new ACE(ACE.ACE_IMPLICIT,"LoadInfoStore"),
-			new ACE(ACE.ACE_IMPLICIT,"WriteGroups"),
-			new ACE(ACE.ACE_IMPLICIT,"ReadGroups"));
+		Hub.acl.grant(admin,
+				new ACE(ACE.ACE_IMPLICIT,"WriteInfoStore"),
+				new ACE(ACE.ACE_IMPLICIT,"LoadInfoStore"),
+				new ACE(ACE.ACE_IMPLICIT,"WriteGroups"),
+				new ACE(ACE.ACE_IMPLICIT,"ReadGroups"));
 		Hashtable hash = admin.getInfoStore();
 		hash.put("UsrPwd", "admin");
 		hash.put("Groups", "Admin,Anwender");
 		admin.flushInfoStore(hash);
-		Hub.acl.grant("Admin", 
-			new ACE(ACE.ACE_IMPLICIT,"ReadUsrPwd"),
-			new ACE(ACE.ACE_IMPLICIT,"WriteUsrPwd"),
-			new ACE(ACE.ACE_IMPLICIT,"CreateAndDelete"),
+		Hub.acl.grant("Admin",
+				new ACE(ACE.ACE_IMPLICIT,"ReadUsrPwd"),
+				new ACE(ACE.ACE_IMPLICIT,"WriteUsrPwd"),
+				new ACE(ACE.ACE_IMPLICIT,"CreateAndDelete"),
 				new ACE(ACE.ACE_IMPLICIT,"WriteGroups"));
 		Hub.acl.grant("System", new ACE(ACE.ACE_IMPLICIT,"ReadUsrPwd"));
 
@@ -240,7 +241,7 @@ public class Anwender extends Person {
 					Log.ERRORS);
 			MessageDialog.openError(null, "Interner Fehler",
 					"Die Datenstruktur ExtInfo von " + a.getLabel()
-							+ " ist beschädigt.");
+					+ " ist beschädigt.");
 			a.setHashtable("ExtInfo", new Hashtable());
 		}
 		String pwd = (String) km.get("UsrPwd");
@@ -263,16 +264,16 @@ public class Anwender extends Person {
 					Hub.setMandant(m);
 				} else {
 					List<Mandant> ml = new Query<Mandant>(Mandant.class)
-							.execute();
+					.execute();
 					if ((ml != null) && (ml.size() > 0)) {
 						m = ml.get(0);
 						Hub.setMandant(m);
 
 					} else {
 						SWTHelper
-								.showError(
-										"Kein Mandant definiert",
-										"Sie können Elexis erst normal benutzen, wenn Sie mindestens einen Mandanten definiert haben");
+						.showError(
+								"Kein Mandant definiert",
+						"Sie können Elexis erst normal benutzen, wenn Sie mindestens einen Mandanten definiert haben");
 						// new
 						// ErrorDialog(Desk.theDisplay.getActiveShell(),"Kein
 						// Mandant definiert","Sie können Elexis erst benutzen,
@@ -296,7 +297,7 @@ public class Anwender extends Person {
 			try {
 				Desk.updateFont(PreferenceConstants.USR_DEFAULTFONT);
 				IWorkbenchWindow win = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow();
+				.getActiveWorkbenchWindow();
 				PlatformUI.getWorkbench().showPerspective(perspektive, win);
 				Hub.heart.resume(true);
 				GlobalEvents.getInstance().fireSelectionEvent(Hub.actUser);
@@ -307,7 +308,7 @@ public class Anwender extends Person {
 				ExHandler.handle(ex);
 				SWTHelper.showError("Perspektive nicht gefunden",
 						"Konnte die eingestellte Startperspektive "
-								+ perspektive + " nicht laden.");
+						+ perspektive + " nicht laden.");
 				return true;
 			}
 
