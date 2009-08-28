@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Person.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ *  $Id: Person.java 5687 2009-08-28 05:26:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
+import ch.elexis.StringConstants;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -155,6 +156,20 @@ public class Person extends Kontakt {
 
 	}
 
+	/**
+	 * Initialen holen
+	 */
+	public String getInitials(){
+		StringBuilder ret=new StringBuilder();
+		String name=getName();
+		String vorname=getVorname();
+		String sex=getGeschlecht();
+		String geb=getGeburtsdatum();
+		ret.append((name.length()>0) ? name.substring(0,1): name).append(".");
+		ret.append((vorname.length()>0) ? vorname.substring(0,1) : vorname).append(".(")
+		.append(sex).append("), ").append(geb);
+		return ret.toString();
+	}
 	/** Einen String mit den Personalien holen */
 	public String getPersonalia() {
 		StringBuffer ret = new StringBuffer(200);
