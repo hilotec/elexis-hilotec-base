@@ -3,7 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role available="true" name="default"
-  			daysperpayment="365">
+  			daysperpayment="365" priceClass="fixed-low">
   			<service:pricePerDB amount="5.00" currency="CHF">
   			</service:pricePerDB>
   		</service:role>

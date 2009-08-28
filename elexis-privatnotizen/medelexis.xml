@@ -2,7 +2,7 @@
 <service:service category="feature" id="ch.elexis.privatnotizen" name="Elexis-Privatnotizen" provider="weirich@elexis.ch" type="KG-Führung" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
-  		<service:role available="true">
+  		<service:role available="true" priceClass="fixed-basic">
   			<service:pricePerDB amount="50.00" currency="CHF" />
   		</service:role>
   	</service:roles>

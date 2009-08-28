@@ -2,8 +2,9 @@
 <service:service category="feature" id="ch.elexis.privatrechnung" name="Privatrechnung v1" provider="weirich@elexis.ch" type="Basis-System" version="0.5.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
-  		<service:role>
-  			<service:pricePerDB amount="50.00"></service:pricePerDB></service:role>
+  		<service:role priceClass="fixed-basic">
+  			<service:pricePerDB amount="50.00"></service:pricePerDB>
+  		</service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Einbindung eines Privattarifs in Elexis</service:description>

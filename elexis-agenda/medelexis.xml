@@ -3,9 +3,9 @@
   <service:conditions>
   	<service:roles>
   		<service:role daysperpayment="365" name="default"
-  			available="true">
+  			available="true" priceClass="free">
   			<service:pricePerDB amount="135.00" currency="CHF"></service:pricePerDB>
-  			<service:pricePerMandator amount="25.00" currency="CHF" ></service:pricePerMandator>
+  			<service:pricePerMandator amount="25.00" currency="CHF"></service:pricePerMandator>
   		</service:role>
   	</service:roles>
   </service:conditions>
