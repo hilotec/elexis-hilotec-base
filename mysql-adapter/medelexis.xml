@@ -10,5 +10,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Verbindung mit einem MySQL-Server</service:description>
-  <service:depends>ch.rgw.utilities ch.medelexis.nucleus</service:depends>
+  <service:depends>ch.rgw.utility ch.medelexis.nucleus</service:depends>
 </service:service>
