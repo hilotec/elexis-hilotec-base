@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.buchhaltung.basis" name="Elexis Basis-Buchhaltung" provider="weirich@elexis.ch" type="Finanz" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.elexis.buchhaltung.basis" name="Elexis Basis-Buchhaltung" provider="weirich@elexis.ch" type="Finanzen" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
   		<service:role available="true" daysperpayment="365" name="default">
-  			<service:pricePerDB amount="78.00" currency="CHF" /><service:pricePerMandator
-  				amount="25.00" currency="CHF" /></service:role>
+  			<service:pricePerDB amount="50.00" currency="CHF" /></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Einige einfache Buchhaltungs-Abfragen</service:description>

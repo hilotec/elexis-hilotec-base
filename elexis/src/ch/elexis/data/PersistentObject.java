@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *    $Id: PersistentObject.java 5689 2009-08-28 07:48:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -105,7 +105,7 @@ import ch.rgw.tools.net.NetTool;
 public abstract class PersistentObject {
 	public static final String EXTINFO="ExtInfo";
 	public static final String FLD_DELETED="deleted";
-	public static final String FLD_LASTEDIT="lastedit";
+	public static final String FLD_LASTUPDATE="lastupdate";
 	protected static final String DATE_FIELD="Datum=S:D:Datum";
 	public static final int CACHE_DEFAULT_LIFETIME = 15;
 	public static final int CACHE_MIN_LIFETIME = 5;

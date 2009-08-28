@@ -3,9 +3,9 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="3.50" ></service:pricePerDB></service:role>
+  			<service:pricePerDB amount="5.00" ></service:pricePerDB></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Statistikmodul zu Hilotec-Messwerte</service:description>
-  <service:depends>com.hilotec.elexis.messwerte</service:depends>
+  <service:depends>com.hilotec.elexis.messwerte ch.medelexis.nucleus</service:depends>
 </service:service>

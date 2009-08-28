@@ -3,7 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role available="true" daysperpayment="365" name="default">
-  			<service:pricePerDB amount="12.50" currency="CHF" /></service:role>
+  			<service:pricePerDB amount="5.00" currency="CHF" /></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Verbindung von Elexis zum Roche Reflotron</service:description>

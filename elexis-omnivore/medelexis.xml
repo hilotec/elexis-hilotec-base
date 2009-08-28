@@ -3,9 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="7.50"></service:pricePerDB>
-  			<service:pricePerMandator amount="3.50">
-  			</service:pricePerMandator></service:role>
+  			<service:pricePerDB amount="5.00"></service:pricePerDB></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Einfaches Dokumentenmanagementsystem zum filesystemzentrierten Import und flacher Speicherung</service:description>

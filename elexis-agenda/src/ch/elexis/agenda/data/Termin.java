@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Termin.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *    $Id: Termin.java 5689 2009-08-28 07:48:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.data;
@@ -50,6 +50,7 @@ Comparable<Termin>, IPlannable {
 	public static final String FLD_DAUER = "Dauer";
 	public static final String FLD_BEGINN = "Beginn";
 	public static final String FLD_TAG = "Tag";
+	public static final String FLD_LASTEDIT="lastedit";
 	public static final String VERSION = "1.2.4";
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;

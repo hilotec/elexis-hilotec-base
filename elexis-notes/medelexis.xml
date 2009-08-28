@@ -3,9 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="55.00" currency="CHF" /><service:pricePerMandator
-  				amount="7.50">
-</service:pricePerMandator></service:role>
+  			<service:pricePerDB amount="50.00" currency="CHF" /></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Nicht patientenspezifische Notizen, Merkblätter etc. mit Stichwort- und Themensuche</service:description>

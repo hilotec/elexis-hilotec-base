@@ -3,8 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role>
-  			<service:pricePerDB amount="12.50"></service:pricePerDB>
-  			<service:pricePerMandator amount="2.50" /></service:role>
+  			<service:pricePerDB amount="50.00"></service:pricePerDB></service:role>
   	</service:roles>
   </service:conditions>
   <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-organisation/plugin-nachrichten.html</service:docURL>

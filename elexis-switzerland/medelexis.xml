@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.features.switzerland.de" name="Elexis Schweiz (deutsch)" provider="support@medelexis.ch" type="Kern" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.elexis.features.switzerland.de" name="Elexis Schweiz (deutsch)" provider="support@medelexis.ch" type="Basis-System" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions validFrom="2001-01-01" validUntil="2010-31-12">
   	<service:roles>
   		<service:role available="true" daysperpayment="365" name="default">
-  			<service:pricePerDB currency="CHF" amount="65.00"></service:pricePerDB>
-  			<service:pricePerMandator amount="15.00" currency="CHF" /></service:role>
+  			<service:pricePerDB currency="CHF" amount="50.00"></service:pricePerDB></service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Abrechnungs-, eBanking und Diagnoscode-Plugins für Gebrauch in der Deutschschweiz</service:description>
