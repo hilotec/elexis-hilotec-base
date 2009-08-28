@@ -19,7 +19,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Result.SEVERITY;
 
 public class Optifier implements IOptifier {
-	
+
 	/**
 	 * Add and recalculate the various possible amendments
 	 */
@@ -31,21 +31,21 @@ public class Optifier implements IOptifier {
 				return new Result<IVerrechenbar>(code);
 			} else {
 				return new Result<IVerrechenbar>(res.getSeverity(), res.getCode(), res.toString(),
-					code, true);
+						code, true);
 			}
 		}
 		return new Result<IVerrechenbar>(SEVERITY.ERROR, 2, "No Lab2009Tariff", null, true);
 	}
-	
+
 	public Result<Object> optify(Konsultation kons){
 		try {
-			
+
 			TimeTool date = new TimeTool(kons.getDatum());
 			TimeTool deadline = new TimeTool("31.12.2011");
 			if (date.isBefore(new TimeTool("01.07.2009"))) {
 				return new Result<Object>(SEVERITY.WARNING, 3, "Code not yet valid", null, false);
 			}
-			
+
 			List<Verrechnet> list = kons.getLeistungen();
 			Verrechnet v470710 = null;
 			Verrechnet v470720 = null;
@@ -54,7 +54,7 @@ public class Optifier implements IOptifier {
 			int z4707 = 0;
 			int z470710 = 0;
 			int z470720 = 0;
-			
+
 			for (Verrechnet v : list) {
 				IVerrechenbar iv = v.getVerrechenbar();
 				if (iv instanceof Labor2009Tarif) {
@@ -66,14 +66,14 @@ public class Optifier implements IOptifier {
 							z4707 = 1;
 						} else {
 							return new Result<Object>(SEVERITY.WARNING, 1,
-								"4707.00 only once per cons", v, false);
+									"4707.00 only once per cons", v, false);
 						}
 					} else if (cc.equals("4707.10")) { // Fachbereich C
 						v470710 = v;
 					} else if (cc.equals("4707.20")) { // Fachbereich
 						// nicht-C
 						v470720 = v;
-					} else if (cc.equals("4703.00") || cc.equals("4704.00") || cc.equals("4706.00")) {
+					} else if (cc.equals("4703.00") || cc.equals("4701.00") || cc.equals("4704.00") || cc.equals("4706.00")) {
 						continue;
 					} else {
 						Labor2009Tarif vlt = (Labor2009Tarif) iv;
@@ -93,7 +93,7 @@ public class Optifier implements IOptifier {
 			while (((4 + 2 * z470710 + z470720) > 24) && z470720 > 0) {
 				z470720--;
 			}
-			
+
 			if (z470710 == 0) {
 				if (v470710 != null) {
 					v470710.delete();
@@ -104,7 +104,7 @@ public class Optifier implements IOptifier {
 				}
 				v470710.setZahl(z470710);
 			}
-			
+
 			if (z470720 == 0) {
 				if (v470720 != null) {
 					v470720.delete();
@@ -115,7 +115,7 @@ public class Optifier implements IOptifier {
 				}
 				v470720.setZahl(z470720);
 			}
-			
+
 			if (z4707 == 0 && ((z470710 + z470720) > 0)) {
 				doCreate(kons, "4707.00");
 			}
@@ -128,7 +128,7 @@ public class Optifier implements IOptifier {
 					if (date.isAfterOrEqual(deadline)) {
 						v4708.delete();
 						return new Result<Object>(SEVERITY.WARNING, 2,
-							"4708.00 only until 2011-12-31", null, false);
+								"4708.00 only until 2011-12-31", null, false);
 					}
 				}
 			}
@@ -139,12 +139,12 @@ public class Optifier implements IOptifier {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return new Result<Object>(SEVERITY.ERROR, 1, "Tariff not installed correctly", null,
-				true);
-			
+					true);
+
 		}
-		
+
 	}
-	
+
 	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons){
 		List<Verrechnet> l = kons.getLeistungen();
 		l.remove(code);
@@ -154,20 +154,20 @@ public class Optifier implements IOptifier {
 			return new Result<Verrechnet>(code);
 		} else {
 			return new Result<Verrechnet>(res.getSeverity(), res.getCode(), res.toString(), code,
-				true);
+					true);
 		}
 	}
-	
+
 	private Verrechnet doCreate(Konsultation kons, String code) throws Exception{
 		String z =
 			new Query<Labor2009Tarif>(Labor2009Tarif.class).findSingle(Labor2009Tarif.FLD_CODE,
-				Query.EQUALS, code);
+					Query.EQUALS, code);
 		if (z != null) {
 			return new Verrechnet(Labor2009Tarif.load(z), kons, 1);
 		} else {
 			throw new Exception("Tariff not installed correctly");
 		}
-		
+
 	}
-	
+
 }
