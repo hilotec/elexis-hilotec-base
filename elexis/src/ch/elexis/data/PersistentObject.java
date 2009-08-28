@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5689 2009-08-28 07:48:40Z rgw_ch $
+ *    $Id: PersistentObject.java 5693 2009-08-28 15:36:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -103,10 +103,10 @@ import ch.rgw.tools.net.NetTool;
  * @author gerry
  */
 public abstract class PersistentObject {
-	public static final String EXTINFO="ExtInfo";
-	public static final String FLD_DELETED="deleted";
-	public static final String FLD_LASTUPDATE="lastupdate";
-	protected static final String DATE_FIELD="Datum=S:D:Datum";
+	public static final String EXTINFO = "ExtInfo";
+	public static final String FLD_DELETED = "deleted";
+	public static final String FLD_LASTUPDATE = "lastupdate";
+	protected static final String DATE_FIELD = "Datum=S:D:Datum";
 	public static final int CACHE_DEFAULT_LIFETIME = 15;
 	public static final int CACHE_MIN_LIFETIME = 5;
 
@@ -212,8 +212,8 @@ public abstract class PersistentObject {
 		 */
 		if (driver.equals(StringTool.leer)) {
 			String d = PreferenceInitializer.getDefaultDBPath();
-			j=JdbcLink.createH2Link(d);
-			//j = JdbcLink.createInProcHsqlDBLink(d);
+			j = JdbcLink.createH2Link(d);
+			// j = JdbcLink.createInProcHsqlDBLink(d);
 			user = "sa";
 			pwd = StringTool.leer;
 			typ = getConnection().DBFlavor;
@@ -573,9 +573,10 @@ public abstract class PersistentObject {
 	public static final int EXISTS = 3;
 
 	/**
-	 * Check the state of an object with this ID
-	 * Note: This method accesses the database and therefore is much more costly thah
-	 * the simple instantaniation of a PersistentObject
+	 * Check the state of an object with this ID Note: This method accesses the
+	 * database and therefore is much more costly thah the simple
+	 * instantaniation of a PersistentObject
+	 * 
 	 * @return a value between INEXISTENT and EXISTS
 	 */
 	public int state() {
@@ -615,8 +616,7 @@ public abstract class PersistentObject {
 	/**
 	 * Check whether the object exists in the database. This is the case for all
 	 * objects in the database for which state() returns neither INVALID_ID nor
-	 * INEXISTENT.
-	 * Note: objects marked as deleted will also return true!
+	 * INEXISTENT. Note: objects marked as deleted will also return true!
 	 * 
 	 * @return true, if the object is available in the database, false otherwise
 	 */
@@ -739,6 +739,7 @@ public abstract class PersistentObject {
 
 	/**
 	 * get all stickers of this object
+	 * 
 	 * @return a List of Sticker objects
 	 */
 	@SuppressWarnings("unchecked")
@@ -778,7 +779,9 @@ public abstract class PersistentObject {
 
 	/**
 	 * Remove a Sticker from this object
-	 * @param et the Sticker to remove
+	 * 
+	 * @param et
+	 *            the Sticker to remove
 	 */
 	@SuppressWarnings("unchecked")
 	public void removeSticker(Sticker et) {
@@ -797,7 +800,9 @@ public abstract class PersistentObject {
 
 	/**
 	 * Add a Sticker to this object
-	 * @param et the Sticker to add
+	 * 
+	 * @param et
+	 *            the Sticker to add
 	 */
 	@SuppressWarnings("unchecked")
 	public void addSticker(Sticker et) {
@@ -874,10 +879,9 @@ public abstract class PersistentObject {
 	 * gelesen. Dann werden weitere Lesezugriffe während der <i>lifetime</i> aus
 	 * dem cache bedient, um die Zahl der Datenbankzugriffe zu minimieren. Nach
 	 * Ablauf der lifetime erfolgt wieder ein Zugriff auf die Datenbank, wobei
-	 * auch der cache wieder erneuert wird.
-	 * Wenn das Feld nicht als Tabellenfeld existiert, wird es in EXTINFO gesucht.
-	 * Wenn es auch dort nicht gefunden wird, wird eine Methode namens getFeldname
-	 * gesucht.
+	 * auch der cache wieder erneuert wird. Wenn das Feld nicht als Tabellenfeld
+	 * existiert, wird es in EXTINFO gesucht. Wenn es auch dort nicht gefunden
+	 * wird, wird eine Methode namens getFeldname gesucht.
 	 * 
 	 * @param field
 	 *            Name des Felds
@@ -958,6 +962,8 @@ public abstract class PersistentObject {
 					return "";
 				} else if (ro instanceof String) {
 					return (String) ro;
+				} else if (ro instanceof Integer) {
+					return Integer.toString((Integer) ro);
 				} else if (ro instanceof PersistentObject) {
 					return ((PersistentObject) ro).getLabel();
 				} else {
@@ -1084,7 +1090,8 @@ public abstract class PersistentObject {
 	 *            das Feld, wie in der mapping-Deklaration angegeben
 	 * @param reverse
 	 *            wenn true wird rückwärts sortiert
-	 * @return eine Liste mit den IDs (String!) der verknüpften Datensätze oder null, wenn das Feld keine 1:n-Verknüofung ist
+	 * @return eine Liste mit den IDs (String!) der verknüpften Datensätze oder
+	 *         null, wenn das Feld keine 1:n-Verknüofung ist
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getList(final String field, final boolean reverse) {
@@ -1165,7 +1172,7 @@ public abstract class PersistentObject {
 				ExHandler.handle(ex);
 				log.log("Fehler beim Lesen der Liste ", Log.ERRORS);
 				return null;
-			}finally{
+			} finally {
 				getConnection().releaseStatement(stm);
 
 			}
@@ -1253,6 +1260,7 @@ public abstract class PersistentObject {
 	/**
 	 * Eine Hashtable speichern. Diese wird zunächst in ein byte[] geplättet,
 	 * und so gespeichert.
+	 * 
 	 * @param field
 	 * @param hash
 	 * @return 0 bei Fehler
@@ -1458,9 +1466,10 @@ public abstract class PersistentObject {
 	}
 
 	/**
-	 * Ein Objekt und ggf. dessen XID's aus der Datenbank löschen
-	 * the object is not deleted but rather marked as deleted.  A purge must
-	 * be applied to remove the object really
+	 * Ein Objekt und ggf. dessen XID's aus der Datenbank löschen the object is
+	 * not deleted but rather marked as deleted. A purge must be applied to
+	 * remove the object really
+	 * 
 	 * @return true on success
 	 */
 	public boolean delete() {
@@ -1684,7 +1693,7 @@ public abstract class PersistentObject {
 						return "";
 					}
 				case 'N':
-					int val=rs.getInt(mapped.substring(4));
+					int val = rs.getInt(mapped.substring(4));
 					return Integer.toString(val);
 				case 'C':
 					InputStream is = rs.getBinaryStream(mapped.substring(4));
@@ -2092,9 +2101,12 @@ public abstract class PersistentObject {
 	}
 
 	/**
-	 * Convert a Hashtable into a compressed byte array. Note: the resulting array is java-specific, but
-	 * stable through jre Versions (serialVersionUID: 1421746759512286392L)
-	 * @param hash the hashtable to store
+	 * Convert a Hashtable into a compressed byte array. Note: the resulting
+	 * array is java-specific, but stable through jre Versions
+	 * (serialVersionUID: 1421746759512286392L)
+	 * 
+	 * @param hash
+	 *            the hashtable to store
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -2117,9 +2129,11 @@ public abstract class PersistentObject {
 
 	/**
 	 * Recreate a Hashtable from a byte array as created by flatten()
-	 * @param flat the byte array
+	 * 
+	 * @param flat
+	 *            the byte array
 	 * @return the original Hashtable or null if no Hashtable could be created
-	 * from the array
+	 *         from the array
 	 */
 	@SuppressWarnings("unchecked")
 	private Hashtable fold(final byte[] flat) {
@@ -2144,18 +2158,21 @@ public abstract class PersistentObject {
 	 * Used for export functionality
 	 */
 	protected String[] getExportFields() {
-		throw new IllegalArgumentException("No export fields for " + getClass().getSimpleName() + " available");
+		throw new IllegalArgumentException("No export fields for "
+				+ getClass().getSimpleName() + " available");
 	}
 
 	/**
 	 * Returns uid field. The uid should be world wide universal.
 	 */
 	protected String getExportUIDField() {
-		throw new IllegalArgumentException("No export uid field for " + getClass().getSimpleName() + " available");
+		throw new IllegalArgumentException("No export uid field for "
+				+ getClass().getSimpleName() + " available");
 	}
 
 	/**
 	 * Exports a persistentobject to an xml string
+	 * 
 	 * @return
 	 */
 	public String exportData() {
