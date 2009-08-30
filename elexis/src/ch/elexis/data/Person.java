@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Person.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: Person.java 5700 2009-08-30 06:41:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -158,15 +158,16 @@ public class Person extends Kontakt {
 
 	/**
 	 * Initialen holen
+	 * @param num Auf wieviele Stellen der Name gekürzt werden soll
 	 */
-	public String getInitials(){
+	public String getInitials(int num){
 		StringBuilder ret=new StringBuilder();
 		String name=getName();
 		String vorname=getVorname();
 		String sex=getGeschlecht();
-		String geb=getGeburtsdatum();
-		ret.append((name.length()>0) ? name.substring(0,1): name).append(".");
-		ret.append((vorname.length()>0) ? vorname.substring(0,1) : vorname).append(".(")
+		String geb=getGeburtsdatum().substring(6);
+		ret.append((name.length()>num-1) ? name.substring(0,num): name).append(".");
+		ret.append((vorname.length()>num-1) ? vorname.substring(0,num) : vorname).append(".(")
 		.append(sex).append("), ").append(geb);
 		return ret.toString();
 	}
