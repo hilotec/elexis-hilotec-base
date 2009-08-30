@@ -9,6 +9,7 @@
   		</service:role>
   	</service:roles>
   </service:conditions>
+  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-database.html</service:docURL>
   <service:description>Verbindung mit der Java-Datenbank HSQL</service:description>
   <service:depends>ch.rgw.utility ch.medelexis.nucleus</service:depends>
 </service:service>
