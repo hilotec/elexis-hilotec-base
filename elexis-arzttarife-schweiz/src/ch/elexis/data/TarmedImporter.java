@@ -8,8 +8,8 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
- *    
- * $Id: TarmedImporter.java 4942 2009-01-13 17:48:53Z rgw_ch $
+ * 
+ * $Id: TarmedImporter.java 5703 2009-09-01 09:35:43Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -44,16 +44,16 @@ import ch.rgw.tools.JdbcLink.Stm;
  * 
  */
 public class TarmedImporter extends ImporterPage {
-	
+
 	private static final String SRC_ENCODING = "iso-8859-1";
-	
+
 	JdbcLink j, pj;
 	Stm source, dest;
 	// Text tDb;
 	private String lang;
-	
+
 	public TarmedImporter(){}
-	
+
 	/**
 	 * Verbindungsversuch
 	 * 
@@ -66,7 +66,7 @@ public class TarmedImporter extends ImporterPage {
 			String db = results[2];
 			String user = results[3];
 			String password = results[4];
-			
+
 			if (type.equals("MySQL")) { //$NON-NLS-1$
 				j = JdbcLink.createMySqlLink(server, db);
 				return j.connect(user, password);
@@ -78,31 +78,31 @@ public class TarmedImporter extends ImporterPage {
 				return j.connect(user, password);
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public String getTitle(){
 		return "TarMed code"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		if (connect() == false) {
 			return new Status(Status.ERROR,
-				"tarmed", 1, Messages.TarmedImporter_couldntConnect, null); //$NON-NLS-1$ 
+					"tarmed", 1, Messages.TarmedImporter_couldntConnect, null); //$NON-NLS-1$
 		}
-		
+
 		pj = PersistentObject.getConnection();
 		lang = JdbcLink.wrap(Hub.localCfg.get(PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
-		
+
 		// pj.exec("DROP TABLE TARMED");
 		int count = j.queryInt("SELECT COUNT(*) FROM LEISTUNG"); //$NON-NLS-1$
 		count += j.queryInt("SELECT COUNT(*) FROM KAPITEL_TEXT") + 13; //$NON-NLS-1$
 		monitor.beginTask(Messages.TarmedImporter_importLstg, count);
 		monitor.subTask(Messages.TarmedImporter_connecting);
-		
+
 		try {
 			source = j.getStatement();
 			dest = pj.getStatement();
@@ -112,13 +112,14 @@ public class TarmedImporter extends ImporterPage {
 			pj.exec("DELETE FROM TARMED_EXTENSION"); //$NON-NLS-1$
 			monitor.subTask(Messages.TarmedImporter_definitions);
 			importDefinition("ANAESTHESIE", "DIGNI_QUALI", "DIGNI_QUANTI", "LEISTUNG_BLOECKE", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				"LEISTUNG_GRUPPEN", "LEISTUNG_TYP", "PFLICHT", "REGEL_EL_ABR", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				"SEITE", "SEX", "SPARTE", "ZR_EINHEIT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					"LEISTUNG_GRUPPEN", "LEISTUNG_TYP", "PFLICHT", "REGEL_EL_ABR", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					"SEITE", "SEX", "SPARTE", "ZR_EINHEIT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			monitor.worked(13);
 			monitor.subTask(Messages.TarmedImporter_chapter);
 			ResultSet res = source.query("SELECT * FROM KAPITEL_TEXT WHERE SPRACHE=" + lang); //$NON-NLS-1$
 			while (res.next()) {
 				String code = res.getString("KNR"); //$NON-NLS-1$
+
 				if (code.trim().equals("I")) { //$NON-NLS-1$
 					continue;
 				}
@@ -140,11 +141,11 @@ public class TarmedImporter extends ImporterPage {
 			res = source.query("SELECT * FROM LEISTUNG"); //$NON-NLS-1$
 			PreparedStatement preps_extension =
 				pj
-					.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
+				.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
 			count = 0;
 			while (res.next() == true) {
 				String cc = res.getString("LNR");
-				if (cc.equals("03.0020")) {
+				if (cc.equals("39.0305") || cc.equals("39.0300")) {
 					System.out.println(cc);
 				}
 				TarmedLeistung tl = TarmedLeistung.load(cc);
@@ -152,20 +153,20 @@ public class TarmedImporter extends ImporterPage {
 					tl.set("DigniQuanti", convert(res, "QT_DIGNITAET"));
 					tl.set("Sparte", convert(res, "Sparte"));
 				} else {
-					tl = new TarmedLeistung(cc, res.getString("KNR"), //$NON-NLS-1$ 
-						"0000", convert(res, "QT_DIGNITAET"), convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					tl = new TarmedLeistung(cc, res.getString("KNR"), //$NON-NLS-1$
+							"0000", convert(res, "QT_DIGNITAET"), convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				tl.set(new String[] {
-					"GueltigVon", "GueltigBis"
+						"GueltigVon", "GueltigBis"
 				}, res.getString("GUELTIG_VON"), res.getString("GUELTIG_BIS"));
 				Stm sub = j.getStatement();
 				String dqua =
 					sub
-						.queryString("SELECT QL_DIGNITAET FROM LEISTUNG_DIGNIQUALI WHERE LNR=" + tl.getWrappedId()); //$NON-NLS-1$
+					.queryString("SELECT QL_DIGNITAET FROM LEISTUNG_DIGNIQUALI WHERE LNR=" + tl.getWrappedId()); //$NON-NLS-1$
 				String kurz = ""; //$NON-NLS-1$
 				ResultSet rsub =
 					sub
-						.query("SELECT * FROM LEISTUNG_TEXT WHERE SPRACHE=" + lang + " AND LNR=" + tl.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
+					.query("SELECT * FROM LEISTUNG_TEXT WHERE SPRACHE=" + lang + " AND LNR=" + tl.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (rsub.next() == true) {
 					kurz = convert(rsub, "BEZ_255"); //$NON-NLS-1$
 					String med = convert(rsub, "MED_INTERPRET"); //$NON-NLS-1$
@@ -177,23 +178,23 @@ public class TarmedImporter extends ImporterPage {
 				}
 				rsub.close();
 				tl.set(new String[] {
-					"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
+						"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
 				Hashtable<String, String> ext = tl.loadExtension();
 				put(ext, res, "LEISTUNG_TYP", "SEITE", "SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				
+						"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+						"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 				rsub =
 					sub
-						.query("SELECT LNR_MASTER FROM LEISTUNG_HIERARCHIE WHERE LNR_SLAVE=" + tl.getWrappedId()); //$NON-NLS-1$
+					.query("SELECT LNR_MASTER FROM LEISTUNG_HIERARCHIE WHERE LNR_SLAVE=" + tl.getWrappedId()); //$NON-NLS-1$
 				if (rsub.next()) {
 					ext.put("Bezug", rsub.getString(1)); //$NON-NLS-1$
 				}
 				rsub.close();
 				rsub =
 					sub
-						.query("SELECT LNR_SLAVE,TYP FROM LEISTUNG_KOMBINATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
+					.query("SELECT LNR_SLAVE,TYP FROM LEISTUNG_KOMBINATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
 				String kombination_and = ""; //$NON-NLS-1$
 				String kombination_or = ""; //$NON-NLS-1$
 				while (rsub.next()) {
@@ -218,7 +219,7 @@ public class TarmedImporter extends ImporterPage {
 				}
 				rsub =
 					sub
-						.query("SELECT * FROM LEISTUNG_KUMULATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
+					.query("SELECT * FROM LEISTUNG_KUMULATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
 				String exclusion = ""; //$NON-NLS-1$
 				String inclusion = ""; //$NON-NLS-1$
 				String exclusive = ""; //$NON-NLS-1$
@@ -274,7 +275,7 @@ public class TarmedImporter extends ImporterPage {
 			res.close();
 			monitor.done();
 			return Status.OK_STATUS;
-			
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		} finally {
@@ -287,9 +288,9 @@ public class TarmedImporter extends ImporterPage {
 		}
 		return Status.CANCEL_STATUS;
 	}
-	
+
 	private void put(final Hashtable<String, String> h, final ResultSet r, final String... vv)
-		throws Exception{
+	throws Exception{
 		for (String v : vv) {
 			String val = r.getString(v);
 			if (val != null) {
@@ -297,12 +298,12 @@ public class TarmedImporter extends ImporterPage {
 			}
 		}
 	}
-	
+
 	private void importDefinition(final String... strings){
 		Stm stm = j.getStatement();
 		PreparedStatement ps =
 			pj
-				.prepareStatement("INSERT INTO TARMED_DEFINITIONEN (Spalte,Kuerzel,Titel) VALUES (?,?,?)"); //$NON-NLS-1$
+			.prepareStatement("INSERT INTO TARMED_DEFINITIONEN (Spalte,Kuerzel,Titel) VALUES (?,?,?)"); //$NON-NLS-1$
 		try {
 			for (String s : strings) {
 				ResultSet res = stm.query("SELECT * FROM CT_" + s + " WHERE SPRACHE=" + lang); //$NON-NLS-1$ //$NON-NLS-2$
@@ -320,20 +321,20 @@ public class TarmedImporter extends ImporterPage {
 			j.releaseStatement(stm);
 		}
 	}
-	
+
 	@Override
 	public String getDescription(){
 		return Messages.TarmedImporter_enterSource + Messages.TarmedImporter_setupSource
-			+ Messages.TarmedImporter_setupSource2;
+		+ Messages.TarmedImporter_setupSource2;
 	}
-	
+
 	@Override
 	public Composite createPage(final Composite parent){
 		DBBasedImporter obi = new ImporterPage.DBBasedImporter(parent, this);
 		obi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return obi;
 	}
-	
+
 	private String convert(ResultSet res, String field) throws Exception{
 		byte[] raw = res.getBytes(field);
 		if (raw == null) {

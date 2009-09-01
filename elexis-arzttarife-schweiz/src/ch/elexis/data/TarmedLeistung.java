@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: TarmedLeistung.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ * 
+ * $Id: TarmedLeistung.java 5703 2009-09-01 09:35:43Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -47,21 +47,21 @@ import ch.rgw.tools.JdbcLink.Stm;
 public class TarmedLeistung extends VerrechenbarAdapter {
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
 	Hashtable<String, String> ext;
-	private static final String VERSION = "1.1.0";
+	private static final String VERSION = "1.1.1";
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
 	public static final String SIDE = "Seite";
 	public static final String PFLICHTLEISTUNG = "obligation";
 	private static final String upd110 = "ALTER TABLE TARMED ADD lastupdate BIGINT";
-	
+
 	private static final JdbcLink j = getConnection();
 	static {
 		String checkExist = j.queryString("SELECT * FROM TARMED WHERE ID LIKE '10%'");
 		if (checkExist == null) {
 			String filepath =
 				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator
-					+ "createDB.script";
+				+ "createDB.script";
 			Stm stm = j.getStatement();
 			try {
 				FileInputStream fis = new FileInputStream(filepath);
@@ -69,15 +69,15 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			} catch (Exception e) {
 				ExHandler.handle(e);
 				SWTHelper.showError("Kann Tarmed-Datenbank nicht erstellen",
-					"create-Script nicht gefunden in " + filepath);
+						"create-Script nicht gefunden in " + filepath);
 			} finally {
 				j.releaseStatement(stm);
 			}
-			
+
 		}
 		addMapping("TARMED", "Parent", "DigniQuali", "DigniQuanti", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"Sparte", "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
+				"Sparte", "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 		);
 		TarmedLeistung tlv = TarmedLeistung.load("Version");
 		if (!tlv.exists()) {
@@ -86,122 +86,126 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			tlv.set("Nick", VERSION);
 		}
 		VersionInfo vi = new VersionInfo(tlv.get("Nick"));
-		if (vi.isOlder(VERSION)) {
+		if (vi.isOlder("1.1.0")) {
 			createOrModifyTable(upd110);
+			tlv.set("Nick", VERSION);
+		}
+		if(vi.isOlder("1.1.1")){
+			createOrModifyTable("Update TARMED set gueltigbis='20993112' where id='39.0305'");
 			tlv.set("Nick", VERSION);
 		}
 		tarmedComparator = new TarmedComparator();
 		tarmedOptifier = new TarmedOptifier();
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Tarmed", Xid.ASSIGNMENT_LOCAL);
 	}
-	
+
 	public String getXidDomain(){
 		return XIDDOMAIN;
 	}
-	
+
 	/** Text zu einem Code der qualitativen Dignität holen */
 	public static String getTextForDigniQuali(final String dql){
 		if (dql == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return checkNull(j
-			.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUALI' AND KUERZEL=" + JdbcLink.wrap(dql))); //$NON-NLS-1$
+				.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUALI' AND KUERZEL=" + JdbcLink.wrap(dql))); //$NON-NLS-1$
 	}
-	
+
 	/** Kurz-Code für eine qualitative Dignität holen */
 	public static String getCodeForDigniQuali(final String kurz){
 		if (kurz == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return checkNull(j
-			.queryString("SELECT KUERZEL FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUALI' AND TITEL=" + JdbcLink.wrap(kurz))); //$NON-NLS-1$
+				.queryString("SELECT KUERZEL FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUALI' AND TITEL=" + JdbcLink.wrap(kurz))); //$NON-NLS-1$
 	}
-	
+
 	/** Text für einen Code für quantitative Dignität holen */
 	public static String getTextForDigniQuanti(final String dqn){
 		if (dqn == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return checkNull(j
-			.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUANTI' AND KUERZEL=" + JdbcLink.wrap(dqn))); //$NON-NLS-1$
+				.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='DIGNI_QUANTI' AND KUERZEL=" + JdbcLink.wrap(dqn))); //$NON-NLS-1$
 	}
-	
+
 	/** Text für einen Sparten-Code holen */
 	public static String getTextForSparte(final String sparte){
 		if (sparte == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return checkNull(j
-			.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='SPARTE' AND KUERZEL=" + JdbcLink.wrap(sparte))); //$NON-NLS-1$
+				.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='SPARTE' AND KUERZEL=" + JdbcLink.wrap(sparte))); //$NON-NLS-1$
 	}
-	
+
 	/** Text für eine Anästhesie-Risikoklasse holen */
 	public static String getTextForRisikoKlasse(final String klasse){
 		if (klasse == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return checkNull(j
-			.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='ANAESTHESIE' AND KUERZEL=" + JdbcLink.wrap(klasse))); //$NON-NLS-1$
+				.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='ANAESTHESIE' AND KUERZEL=" + JdbcLink.wrap(klasse))); //$NON-NLS-1$
 	}
-	
+
 	/** Text für einen ZR_EINHEIT-Code holen (Sitzung, Monat usw.) */
 	public static String getTextForZR_Einheit(final String einheit){
 		if (einheit == null) {
 			return ""; //$NON-NLS-1$
 		}
 		return checkNull(j
-			.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='ZR_EINHEIT' AND KUERZEL=" + JdbcLink.wrap(einheit))); //$NON-NLS-1$
+				.queryString("SELECT titel FROM TARMED_DEFINITIONEN WHERE SPALTE='ZR_EINHEIT' AND KUERZEL=" + JdbcLink.wrap(einheit))); //$NON-NLS-1$
 	}
-	
+
 	/** Alle Codes für Quantitative Dignität holen */
 	public static String[] getDigniQuantiCodes(){
 		return null;
 	}
-	
+
 	/** Konstruktor wird nur vom Importer gebraucht */
 	public TarmedLeistung(final String code, final String parent, final String DigniQuali,
-		final String DigniQuanti, final String sparte){
+			final String DigniQuanti, final String sparte){
 		create(code);
 		j.exec("INSERT INTO TARMED_EXTENSION (CODE) VALUES (" + getWrappedId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		set(
-			new String[] {
-				"Parent", "DigniQuali", "DigniQuanti", "Sparte"}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				new String[] {
+						"Parent", "DigniQuali", "DigniQuanti", "Sparte"}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	/*
 	public String[] getDisplayedFields(){
 		return new String[] {
 			"ID", "Text"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	*/
-	
+	 */
+
 	@Override
 	public String getLabel(){
 		return getId() + " " + getText(); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	protected String getTableName(){
 		return "TARMED"; //$NON-NLS-1$
 	}
-	
+
 	/** Code liefern */
 	@Override
 	public String getCode(){
 		return getId();
 	}
-	
+
 	/** Text liefern */
 	@Override
 	public String getText(){
 		return get("Text"); //$NON-NLS-1$
 	}
-	
+
 	/** Text setzen (wird nur vom Importer gebraucht */
 	public void setText(final String tx){
 		set("Text", tx); //$NON-NLS-1$
 	}
-	
+
 	/** Erweiterte Informationen laden */
 	@SuppressWarnings("unchecked")
 	public Hashtable<String, String> loadExtension(){
@@ -222,18 +226,18 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			ext = new Hashtable<String, String>();
 		} finally {
 			j.releaseStatement(stm);
-			
+
 		}
 		return ext;
 	}
-	
+
 	/** Erweiterte Informationen rückspeichern */
 	public void flushExtension(){
 		if (ext != null) {
 			byte[] flat = StringTool.flatten(ext, StringTool.ZIP, null);
 			PreparedStatement preps =
 				j
-					.prepareStatement("UPDATE TARMED_EXTENSION SET limits=? WHERE CODE=" + getWrappedId()); //$NON-NLS-1$
+				.prepareStatement("UPDATE TARMED_EXTENSION SET limits=? WHERE CODE=" + getWrappedId()); //$NON-NLS-1$
 			try {
 				preps.setBytes(1, flat);
 				preps.execute();
@@ -242,101 +246,101 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			}
 		}
 	}
-	
+
 	/** Medizinische Interpretation auslesen */
 	public String getMedInterpretation(){
 		return checkNull(j
-			.queryString("SELECT med_interpret FROM TARMED_EXTENSION WHERE CODE=" + getWrappedId())); //$NON-NLS-1$
+				.queryString("SELECT med_interpret FROM TARMED_EXTENSION WHERE CODE=" + getWrappedId())); //$NON-NLS-1$
 	}
-	
+
 	/** Medizinische Interpretation setzen (Wird nur vom Importer gebraucht) */
 	public void setMedInterpretation(final String text){
 		j
-			.exec("UPDATE TARMED_EXTENSION SET med_interpret=" + JdbcLink.wrap(text) + " WHERE CODE=" + getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
+		.exec("UPDATE TARMED_EXTENSION SET med_interpret=" + JdbcLink.wrap(text) + " WHERE CODE=" + getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/** Technische Interpretation auslesen */
 	public String getTechInterpretation(){
 		return checkNull(j
-			.queryString("SELECT tech_interpret FROM TARMED_EXTENSION WHERE CODE=" + getWrappedId())); //$NON-NLS-1$
+				.queryString("SELECT tech_interpret FROM TARMED_EXTENSION WHERE CODE=" + getWrappedId())); //$NON-NLS-1$
 	}
-	
+
 	/** Technische Intepretation setzen (Wird nur vom Importer gebraucht */
 	public void setTechInterpretation(final String text){
 		j
-			.exec("UPDATE TARMED_EXTENSION SET tech_interpret=" + JdbcLink.wrap(text) + " WHERE CODE=" + getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
+		.exec("UPDATE TARMED_EXTENSION SET tech_interpret=" + JdbcLink.wrap(text) + " WHERE CODE=" + getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/** Qualitative Dignität holen (als code) */
 	public String getDigniQuali(){
 		return checkNull(get("DigniQuali")); //$NON-NLS-1$
 	}
-	
+
 	/** Qualitative Dignität als Text holen */
 	public String getDigniQualiAsText(){
 		return checkNull(getTextForDigniQuali(get("DigniQuali"))); //$NON-NLS-1$
 	}
-	
+
 	/** Qualitative Dinität setzen (Wird nur vom Importer gebraucht) */
 	public void setDigniQuali(final String dql){
 		set("DigniQuali", dql); //$NON-NLS-1$
 	}
-	
+
 	/** Quantitative Dignität als code holen */
 	public String getDigniQuanti(){
 		return checkNull(get("DigniQuanti")); //$NON-NLS-1$
 	}
-	
+
 	/** Quantitative Dignität als Text holen */
 	public String getDigniQuantiAsText(){
 		return checkNull(getTextForDigniQuanti(get("DigniQuanti"))); //$NON-NLS-1$
 	}
-	
+
 	/** Sparte holen (als Code) */
 	public String getSparte(){
 		return checkNull(get("Sparte")); //$NON-NLS-1$
 	}
-	
+
 	/** Sparte als Text holen */
 	public String getSparteAsText(){
 		return checkNull(getTextForSparte(get("Sparte"))); //$NON-NLS-1$
 	}
-	
+
 	/** Name des verwendeten Codesystems holen (liefert immer "Tarmed") */
 	@Override
 	public String getCodeSystemName(){
 		return "Tarmed"; //$NON-NLS-1$
 	}
-	
+
 	protected TarmedLeistung(final String id){
 		super(id);
 	}
-	
+
 	public TarmedLeistung(){/* leer */}
-	
+
 	/** Eine Position einlesen */
 	public static TarmedLeistung load(final String id){
 		return new TarmedLeistung(id);
 	}
-	
+
 	/** Eine Position vom code einlesen */
 	public static IVerrechenbar getFromCode(final String code){
 		return new TarmedLeistung(code);
 	}
-	
+
 	/**
 	 * Konfigurierbarer Filter für die Anzeige des Tarmed-Codebaums in Abhängigkeit vom gewählten
 	 * Mandanten (Nur zur Dignität passende Einträge anzeigen)
 	 * 
 	 * @author gerry
 	 */
-	
+
 	public static class MandantFilter implements IFilter {
-		
+
 		MandantFilter(final Mandant m){
 
 		}
-		
+
 		public boolean select(final Object object){
 			if (object instanceof TarmedLeistung) {
 				/* TarmedLeistung tl = (TarmedLeistung) object; */
@@ -344,9 +348,9 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			}
 			return false;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Komparator zum Sortieren der Codes. Es wird einfach nach Codeziffer sortiert. Wirft eine
 	 * ClassCastException, wenn die Objekte nicht TarmedLeistungen sind.
@@ -354,45 +358,45 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	 * @author gerry
 	 */
 	static class TarmedComparator implements Comparator {
-		
+
 		public int compare(final Object o1, final Object o2){
 			TarmedLeistung tl1 = (TarmedLeistung) o1;
 			TarmedLeistung tl2 = (TarmedLeistung) o2;
 			return tl1.getCode().compareTo(tl2.getCode());
 		}
-		
+
 	}
-	
+
 	@Override
 	public IOptifier getOptifier(){
 		return tarmedOptifier;
 	}
-	
+
 	@Override
 	public Comparator getComparator(){
 		return tarmedComparator;
 	}
-	
+
 	@Override
 	public IFilter getFilter(final Mandant m){
 		return new MandantFilter(m);
 	}
-	
+
 	@Override
 	public boolean isDragOK(){
 		return (!StringTool.isNothing(getDigniQuali().trim()));
 	}
-	
+
 	public int getAL(){
 		loadExtension();
 		return (int) Math.round(checkZeroDouble(ext.get("TP_AL")) * 100); //$NON-NLS-1$
 	}
-	
+
 	public int getTL(){
 		loadExtension();
 		return (int) Math.round(checkZeroDouble(ext.get("TP_TL")) * 100); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Preis der Leistung in Rappen public int getPreis(TimeTool date, String subgroup) {
 	 * loadExtension(); String t=ext.get("TP_TL"); String a=ext.get("TP_AL"); double tl=0.0; double
@@ -410,12 +414,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		min += checkZeroDouble(ext.get("WECHSEL_MIN")); //$NON-NLS-1$
 		return (int) Math.round(min);
 	}
-	
+
 	public String getExclusion(){
 		loadExtension();
 		return checkNull(ext.get("exclusion")); //$NON-NLS-1$
 	}
-	
+
 	public int getTP(final TimeTool date, final Fall fall){
 		loadExtension();
 		String t = ext.get("TP_TL"); //$NON-NLS-1$
@@ -434,11 +438,11 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		}
 		return (int) Math.round((tl + al) * 100.0);
 	}
-	
+
 	public double getFactor(final TimeTool date, final Fall fall){
 		return getVKMultiplikator(date, fall);
 	}
-	
+
 	/**
 	 * Returns the GueltigVon value
 	 * 
@@ -452,7 +456,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the GueltigBis value
 	 * 
@@ -466,7 +470,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public List<IAction> getActions(final Verrechnet kontext){
 		List<IAction> ret = super.getActions(kontext);
@@ -478,7 +482,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		});
 		return ret;
 	}
-	
+
 	public static boolean isObligation(Verrechnet v){
 		IVerrechenbar vv = v.getVerrechenbar();
 		if (vv instanceof TarmedLeistung) {
@@ -489,7 +493,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		}
 		return false;
 	}
-	
+
 	public static String getSide(Verrechnet v){
 		IVerrechenbar vv = v.getVerrechenbar();
 		if (vv instanceof TarmedLeistung) {
