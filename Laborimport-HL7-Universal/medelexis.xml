@@ -2,9 +2,10 @@
 <service:service category="feature" id="ch.elexis.laborimport.hl7.allg" name="Laborimport HL7" provider="weirich@elexis.ch" type="Laboranbindung" version="1.3.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
-  		<service:role>
+  		<service:role priceClass="fixed-basic">
   			<service:pricePerDB amount="35.00" />
-  			<service:pricePerMandator amount="2.50" ></service:pricePerMandator></service:role>
+  			<service:pricePerMandator amount="2.50"></service:pricePerMandator>
+  		</service:role>
   	</service:roles>
   </service:conditions>
   <service:description>Import von Laborresultaten aus HL7-Dateien</service:description>
