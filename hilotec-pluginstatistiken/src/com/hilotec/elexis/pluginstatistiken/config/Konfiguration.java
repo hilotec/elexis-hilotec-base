@@ -16,17 +16,23 @@ package com.hilotec.elexis.pluginstatistiken.config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
+import com.hilotec.elexis.pluginstatistiken.schnittstelle.IDatenquelle;
+
 import ch.elexis.Hub;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
 
 /**
@@ -37,14 +43,23 @@ import ch.elexis.util.Log;
 public class Konfiguration {
 	public static final String STATISTIKEN_FILENAME = "statistiken.xml";
 	public static final String ELEM_QUERY = "query";
+	public static final String ELEM_FROM = "from";
 	public static final String ELEM_COLS = "cols";
 	public static final String ELEM_WHERE = "where";
+	public static final String ELEM_JOIN = "join";
 	public static final String ATTR_TITLE = "title";
 	public static final String ATTR_NAME = "name";
 	public static final String ATTR_SOURCE = "source";
+	public static final String ATTR_TABLE = "table";
+	public static final String ATTR_AS = "as";
+	public static final String ATTR_TYPE = "type";
+	
+	public static final String DATASOURCE_EXT = "com.hilotec.elexis.pluginstatistiken.Datenquelle";
+	
 	
 	Log log = Log.get("Messwertstatistiken");
 	ArrayList<KonfigurationQuery> queries;
+	HashMap<String, IDatenquelle> datenquellen;
 	
 	private static Konfiguration the_one_and_only_instance = null; 
 	public static Konfiguration getInstance() {
@@ -59,6 +74,8 @@ public class Konfiguration {
 	 */
 	private Konfiguration() {
 		queries = new ArrayList<KonfigurationQuery>();
+		datenquellen = new HashMap<String, IDatenquelle>();
+		datenquellenInitialisieren();
 		readFromXML(Hub.getWritableUserDir()+File.separator+STATISTIKEN_FILENAME);
 	}
 	
@@ -71,6 +88,7 @@ public class Konfiguration {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
+		
 		
 		try {
 			builder = factory.newDocumentBuilder();
@@ -87,6 +105,30 @@ public class Konfiguration {
 				Element qe = (Element) qn;
 				KonfigurationQuery kq = new KonfigurationQuery(qe.getAttribute(ATTR_TITLE));
 				
+				Element frome = (Element) qe.getElementsByTagName(ELEM_FROM).item(0);
+				kq.setFrom(frome.getAttribute(ATTR_TABLE), frome.getAttribute(ATTR_AS));
+				
+				// Joins verabeiten
+				NodeList jl = qe.getElementsByTagName(ELEM_JOIN);
+				for (int j = 0; j < jl.getLength(); j++) {
+					Element je = (Element) jl.item(j);
+
+						// Bedingunsoperation suchen
+						KonfigurationWhere where = null;
+						NodeList jchildren = je.getChildNodes();
+						for (int k = 0; k < jchildren.getLength(); k++) {
+							if (jchildren.item(k).getNodeType() == Node.ELEMENT_NODE) {
+								where = new KonfigurationWhere((Element) jchildren.item(k));
+								break;
+							}
+						}
+						
+						kq.addJoin(new KonfigurationQuery.Join(
+							je.getAttribute(ATTR_TABLE), je.getAttribute(ATTR_AS), where,
+							KonfigurationQuery.Join.JType.JOIN_INNER));
+				}
+				
+				// Spaltendefinitionen
 				Element colse = (Element) qe.getElementsByTagName(ELEM_COLS).item(0);
 				Element wheree;
 				NodeList wel = qe.getElementsByTagName(ELEM_WHERE);
@@ -108,7 +150,7 @@ public class Konfiguration {
 				}
 				
 				
-				
+				// Where-Klausel
 				if (wheree != null) {
 					Element whereOp = null;
 					NodeList wl = wheree.getChildNodes();
@@ -129,10 +171,35 @@ public class Konfiguration {
 		}
 	}
 	
+	private void datenquellenInitialisieren() {
+		for (IConfigurationElement ic :
+			Extensions.getExtensions(DATASOURCE_EXT))
+		{
+			try {
+				IDatenquelle dq;
+				dq = (IDatenquelle) ic.createExecutableExtension("class");
+				datenquellen.put(dq.getName(), dq);
+			} catch (CoreException ce) {
+				log.log("Initialisieren der Datenquelle " +
+					ic.getAttribute("name") + " fehlgeschlagen: " +
+					ce.getMessage(), Log.ERRORS);
+			}
+			
+			
+		}
+	}
+	
 	/**
 	 * Alle Abfragen in dieser Konfiguration zurzueckgeben
 	 */
 	public List<KonfigurationQuery> getQueries() {
 		return queries;
+	}
+	
+	/**
+	 * Bestimmte Datenquelle holen
+	 */
+	public IDatenquelle getDatenquelle(String name) {
+		return datenquellen.get(name);
 	}
 }

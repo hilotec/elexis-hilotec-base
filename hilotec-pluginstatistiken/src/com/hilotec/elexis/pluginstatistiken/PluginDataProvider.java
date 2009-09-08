@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import com.hilotec.elexis.pluginstatistiken.config.Konfiguration;
 import com.hilotec.elexis.pluginstatistiken.config.KonfigurationQuery;
 
+import ch.rgw.tools.Log;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 import ch.unibe.iam.scg.archie.annotations.GetProperty;
@@ -66,8 +67,14 @@ public class PluginDataProvider extends AbstractTimeSeries {
 		final List<Comparable<?>[]> content = new ArrayList<Comparable<?>[]>();
 		
 		final SimpleDateFormat gerFormat = new SimpleDateFormat(DATE_PRESCRIPTION_FORMAT);
-		List<Datensatz> data = query.getDaten(gerFormat.format(this.getStartDate().getTime()),
-				gerFormat.format(this.getEndDate().getTime()), monitor);
+		List<Datensatz> data;
+		try {
+			data = query.getDaten(gerFormat.format(this.getStartDate().getTime()),
+					gerFormat.format(this.getEndDate().getTime()), monitor);
+		} catch (PluginstatistikException e) {
+			Log.get("Messwertstatistiken").log(e.getMessage(),Log.ERRORS);
+			return Status.CANCEL_STATUS;
+		}
 		List<String> names = query.getColNames();
 		
 		for (Datensatz ds: data) {

@@ -14,206 +14,111 @@
 package com.hilotec.elexis.pluginstatistiken;
 
 import java.util.HashMap;
-import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 import com.hilotec.elexis.pluginstatistiken.config.KonfigurationQuery;
-
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Verrechnet;
-import ch.elexis.util.Extensions;
-import ch.elexis.util.IDataAccess;
-import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.Result;
-import ch.rgw.tools.TimeTool;
+import com.hilotec.elexis.pluginstatistiken.schnittstelle.IDatensatz;
 
 
 /**
- * Einzeiner Datensatz einer Abfrage (ist jeweils mit einem bestimmten Patient
- * verknuepft.
+ * Einzelner Datensatz einer Abfrage. Ein Datensatz besteht jeweils aus einem
+ * oder mehreren internen Datensaetzen (einer pro Tabelle die in der Abfrage
+ * referenziert wird, also fuer From und alle Joins)
  *
  * @author Antoine Kaufmann
  */
 public class Datensatz {
-	private Patient patient;
-	private boolean valid = true;
-	HashMap<String,String> fieldMap;
-	
-	/**
-	 * Hilfsfunktion die alle Vorkommen eines bestimmten Strings in einem
-	 * Stringbuffer ersetzt.
-	 * 
-	 * @param sb   Stringbuffer
-	 * @param find Zu suchenden Text
-	 * @param repl Text durch den ersetzt werden soll
-	 */
-	private void replaceInSB(StringBuffer sb, String find, String repl) {
-		int pos;
-		int findll = find.length();
-		
-		while (true) {
-			pos = sb.indexOf(find);
-			if (pos < 0) {
-				return;
-			}
-			
-			sb.replace(pos, pos + findll, repl);
-		}
-	}
-	
-	/**
-	 * Berechnet die Kosten aller Konsultationen des Patienten während der
-	 * angegebenen Zeitspanne.
-	 * 
-	 * @return Kosten als String
-	 */
-	private String getKostenVonBis(String startDatum, String endDatum) {
-		double wert = 0.0;
-		TimeTool start = new TimeTool(startDatum);
-		TimeTool end = new TimeTool(endDatum);
-		
-		Fall[] faelle = patient.getFaelle();
-		for (Fall f: faelle) {
-			TimeTool beginn = new TimeTool(f.getBeginnDatum());
-			TimeTool ende = new TimeTool(f.getEndDatum());
-			
-			if (beginn.isAfter(end) || ende.isBefore(beginn)) {
-				continue;
-			}
-			
-			Konsultation[] konsultationen = f.getBehandlungen(false);
-			for (Konsultation k: konsultationen) {
-				TimeTool datum = new TimeTool(k.getDatum());
-				if (datum.isBefore(start) || datum.isAfter(end)) {
-					continue;
-				}
-				
-				List<Verrechnet> leistungen = k.getLeistungen();
-				for (Verrechnet l: leistungen) {
-					wert += l.getNettoPreis().multiply(l.getZahl()).
-						getAmount();
-				}
-			}
-		}
-		
-		return Double.toString(wert);
-	}
-	
-	
-	/**
-	 * Hilfsfunktion, die Daten von einem Plugin ueber die IDataAccess-
-	 * Schnittstelle holt.
-	 * 
-	 * @param source Zugriffsstring (durch : getrennt)
-	 * 
-	 * @return String vom Plugin
-	 */
-	private String getPluginData(String source) {
-		String[] adr = source.split(":");
-		if (adr.length < 4) {
-			SWTHelper.showError("Datenzugriff-Fehler", "Das Datenfeld " +
-				source + " wird falsch angesprochen");
-			return null;
-		}
-		String plugin = adr[0];
-		String dependendObject = adr[1];
-		String dates = adr[2];
-		String desc = adr[3];
-		String[] params = null;
-		if (adr.length == 5) {
-			params = adr[4].split("\\.");
-		}
-		
-		PersistentObject ref = null;
-		if (dependendObject.equals("Patient")) {
-			ref = patient;
-		}
-		for (IConfigurationElement ic : Extensions.getExtensions("ch.elexis.DataAccess")) {
-			String icName = ic.getAttribute("name");
-			if (icName.equals(plugin)) {
-				IDataAccess ida;
-				try {
-					ida = (IDataAccess) ic.createExecutableExtension("class");
-					Result<Object> ret = ida.getObject(desc, ref, dates, params);
-					if (ret.isOK()) {
-						return (String) ret.get();
-					} else {
-						return null;
-					}
-				} catch (CoreException e) {
-					ExHandler.handle(e);
-				}
-				
-			}
-		}
-		return null;
-	}
-	
+	HashMap<String, IDatensatz> internalRows;
+	HashMap<String, String> spalten;
+
 	/**
 	 * Konstruktor fuer Datensatz
 	 * 
 	 * @param q          Abfrage zu der dieser Datensatz gehoeren soll
-	 * @param p          Patient
+	 * @param ids        Roher Datensatz von der Datenquelle
 	 * @param startDatum Startdatum des Bereichs der als Parameter angegeben
 	 *                   wurde.
 	 * @param endDatum   Enddatum des Bereiches
 	 */
-	public Datensatz(KonfigurationQuery q, Patient p, String startDatum,
-		String endDatum)
+	public Datensatz(KonfigurationQuery q, String startDatum,
+			String endDatum)
 	{
-		patient = p;
-		
-		List<String> names = q.getColNames();
-		List<String> sources = q.getColSources();
-		fieldMap = new HashMap<String,String>();
-		for (int i = 0; i < names.size(); i++) {
-			StringBuffer sb = new StringBuffer(sources.get(i));
-			String data;
-
-			replaceInSB(sb, "[startdatum]", startDatum);
-			replaceInSB(sb, "[enddatum]", endDatum);
-			if (sb.indexOf(":") >= 0) {
-				data = getPluginData(sb.toString());
-			} else if (sb.toString().equals("kostenBereich")) {
-				data = getKostenVonBis(startDatum, endDatum);
-			} else {
-				data = patient.get(sb.substring(sb.indexOf(".") + 1));
-			}
-			
-			if (data == null) {
-				valid = false;
-				break;
-			} else {
-				fieldMap.put(names.get(i), data);
-			}
-		}
-	
+		internalRows = new HashMap<String,IDatensatz>();
+		spalten = new HashMap<String,String>();
 	}
-	
+
 	/**
-	 * Bestimmtes Feld des Datensatzes auslesen anhand des Namens
+	 * Kopierkonstruktor
+	 */
+	public Datensatz(Datensatz orig) {
+		internalRows = new HashMap<String,IDatensatz>(orig.internalRows);
+		spalten = new HashMap<String,String>(orig.spalten);
+	}
+
+	/**
+	 * Neue Abfragespalte anhaengen
+	 * 
+	 * @param name   Spaltenname
+	 * @param source Datenquelle fuer die Spalte; Dabei kann es sich entweder
+	 *               um einen Verweis auf eine andere Spalte, oder auf eine
+	 *               Tabellenspalte handeln.
+	 */
+	public void addSpalte(String name, String source) {
+		spalten.put(name, source);
+	}
+
+	/**
+	 * Internen Datensatz hinzufuegen. Bei Joins, die zu NULL-Werten fuehren,
+	 * muss trotzdem ein interner Datensatz angelegt werden mit dem
+	 * entsprechenden Namen, und null als ids.
+	 * 
+	 * @param as  Alias der Tabelle die diesen Datensatz stellt
+	 * @param ids Interner Datensatz
+	 */
+	public void addIntDs(String as, IDatensatz ids) {
+		internalRows.put(as, ids);
+	}
+
+
+	/**
+	 * Bestimmtes Feld des Datensatzes auslesen. Dabei koennen sowohl Felder
+	 * ausgelesen werden, die direkt als Spalte in der Abfrage drin sind
+	 * anhand des Namens, als auch Spalten aus anderen Tabellen in der Abfrage,
+	 * die in der Form Alias.Spalte angesprochen werden koennen. Alias ist
+	 * hierbei der Tabellen Name, der in der Konfiguration als "as" angegeben
+	 * wurde.
 	 * 
 	 * @param name Name des Felds
 	 * 
-	 * @return Wert des Feldes
+	 * @return Wert des Feldes oder null, wenn das Feld nicht gefunden wurde.
 	 */
 	public String getFeld(String name) {
-		if (!valid) {
-			return null;
+		String source = spalten.get(name);
+		if (source != null) {
+			return getIntFeld(source);
 		}
-		return fieldMap.get(name);
+		return getIntFeld(name);
 	}
 
 	/**
-	 * Prueft ob der Datensatz gueltig ist.
+	 * Wert aus einer Tabelle auslesen. Der Spaltenbezeichner muss die Form
+	 * Alias.Spalte haben.
+	 * 
+	 * @param name Spalte, die ausgelesen werden soll
+	 * 
+	 * @return Wert der Spalte, oder null, wenn diese nicht gefunden wurde
 	 */
-	public boolean isValid() {
-		return valid;
+	private String getIntFeld(String name) {
+		if (name.indexOf('.') < 0) {
+			return null;
+		}
+		String parts[] = name.split("\\.");
+		String as = parts[0];
+		String spalte = parts[1];
+
+		IDatensatz ids = internalRows.get(as);
+		if (ids == null) {
+			return null;
+		}
+		return ids.getSpalte(spalte);
 	}
 }

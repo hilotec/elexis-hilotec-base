@@ -24,4 +24,12 @@
             name="Messwerte">
       </DataAccess>
    </extension>
+   <extension
+         point="com.hilotec.elexis.pluginstatistiken.Datenquelle">
+      <Datenquelle
+            class="com.hilotec.elexis.messwerte.data.PluginstatistikenDatenquelle"
+            name="Messwerte">
+      </Datenquelle>
+   </extension>
 </plugin>
+

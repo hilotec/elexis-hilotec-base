@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: Messung.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: Messung.java 5710 2009-09-08 14:04:56Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -114,6 +114,9 @@ public class Messung extends PersistentObject {
 	 * @return Messwert
 	 */
 	public Messwert getMesswert(String name) {
+		return getMesswert(name, true);
+	}
+	public Messwert getMesswert(String name, boolean create) {
 		Query<Messwert> query = new Query<Messwert>(Messwert.class);
 		query.add("MessungID", Query.EQUALS, getId());
 		query.and();
@@ -121,8 +124,11 @@ public class Messung extends PersistentObject {
 		List<Messwert> list = query.execute();
 		
 		if (list.size() == 0) {
-			// Messwert existiert noch nicht, wir legen ihn neu an
-			return new Messwert(this, name);
+			if (create) {
+				// Messwert existiert noch nicht, wir legen ihn neu an
+				return new Messwert(this, name);
+			}
+			return null;
 		}
 		
 		return list.get(0);
@@ -180,6 +186,19 @@ public class Messung extends PersistentObject {
 			query.and();
 			query.add("TypName", Query.EQUALS, typ.getName());
 		}
+		return query.execute();
+	}
+	
+	/**
+	 * Alle Messungen eines bestimmten Typs zusammensuchen.
+	 * 
+	 * @param typ Typ der zu suchenden Messung
+	 * 
+	 * @return Liste mit den Messungen
+	 */
+	public static List<Messung> getMessungen(MessungTyp typ) {
+		Query<Messung> query = new Query<Messung>(Messung.class);
+		query.add("TypName", Query.EQUALS, typ.getName());
 		return query.execute();
 	}
 }

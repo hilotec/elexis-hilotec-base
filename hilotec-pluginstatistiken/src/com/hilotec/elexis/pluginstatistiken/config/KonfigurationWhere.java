@@ -23,9 +23,11 @@ import org.w3c.dom.Node;
 import ch.elexis.util.Log;
 
 import com.hilotec.elexis.pluginstatistiken.Datensatz;
+import com.hilotec.elexis.pluginstatistiken.PluginstatistikException;
 
 /**
- * Where-Klausel fuer eine Abfrage
+ * Where-Klausel fuer eine Abfrage. (Eigentlich allgemein Bedingungsklauseln,
+ * wird beispielsweise auch fuer die Join-Bedingung benutzt). 
  * 
  * @author Antoine Kaufmann
  */
@@ -113,13 +115,21 @@ public class KonfigurationWhere {
 	 * @param ds   Datensatz
 	 * 
 	 * @return Wert des Attributs
+	 * @throws PluginstatistikException 
 	 */
-	private String attrValue(Element e, String name, Datensatz ds) {
+	private String attrValue(Element e, String name, Datensatz ds)
+		throws PluginstatistikException
+	{
 		String val = e.getAttribute(name);
 		// Wenn es sich um Verweise auf Feldnamen handelt, muessen wir
 		// die erst aufloesen
 		if (val.matches(REGEX_PLUGINREF)) {
-			val = ds.getFeld(val.substring(1, val.length() - 1));
+			String feld = ds.getFeld(val.substring(1, val.length() - 1));
+			if (feld == null) {
+				throw new PluginstatistikException("Ungueltige Referenz: '" + "'");
+			} else {
+				val = feld;
+			}
 		}
 		return val;
 	}
@@ -143,8 +153,11 @@ public class KonfigurationWhere {
 	 * geparst)
 	 * 
 	 * @param e Aktuelles DOM-Element das gerade verarbeitet wird. 
+	 * @throws PluginstatistikException 
 	 */
-	private boolean matchesElement(Element e, Datensatz ds) {
+	private boolean matchesElement(Element e, Datensatz ds)
+		throws PluginstatistikException
+	{
 		ElementTyp typ = getTyp(e);
 		List<Element> children;
 		String a,b;
@@ -199,15 +212,17 @@ public class KonfigurationWhere {
 			
 		case E_INVALID:
 		default:
-			Log.get("Messwertstatistiken").log("Ungueltige Operation: " + e.getTagName(), Log.ERRORS);
+			Log.get("Messwertstatistiken").log("Ungueltige Operation: " +
+				e.getTagName(), Log.ERRORS);
 			return false;
 		}
 	}
 	
 	/**
 	 * Prueft ob der Datensatz zur Where-Klausel passt
+	 * @throws PluginstatistikException 
 	 */
-	public boolean matches(Datensatz ds) {
+	public boolean matches(Datensatz ds) throws PluginstatistikException {
 		return matchesElement(element, ds);
 	}
 }
