@@ -7,7 +7,7 @@
   		</service:role>
   	</service:roles>
   </service:conditions>
-  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-dokumente/plugin-omnivore.html</service:docURL>
+  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-dokumente/omnivore.html</service:docURL>
   <service:description>Einfaches Dokumentenmanagementsystem zum filesystemzentrierten Import und flacher Speicherung</service:description>
   <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
