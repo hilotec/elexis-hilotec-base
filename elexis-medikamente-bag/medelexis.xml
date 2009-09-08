@@ -7,5 +7,6 @@
   		</service:role>
   	</service:roles>
   </service:conditions>
+  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-sonstige/medikamente-sl.html</service:docURL>
   <service:description>Medikamentenauswahl basierend auf der Spezialitätenliste</service:description>
 </service:service>

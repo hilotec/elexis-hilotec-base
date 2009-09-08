@@ -8,6 +8,7 @@
   		</service:role>
   	</service:roles>
   </service:conditions>
+  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-organisation/plugin-hilotec-messwerte.html</service:docURL>
   <service:description>XML konfigurierbares Messwerte-Plugin</service:description>
   <service:depends>ch.medelexis.nucleus</service:depends>
 </service:service>
