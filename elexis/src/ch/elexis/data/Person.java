@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Person.java 5700 2009-08-30 06:41:20Z rgw_ch $
+ *  $Id: Person.java 5712 2009-09-10 06:46:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -34,38 +34,38 @@ public class Person extends Kontakt {
 	public static final String NAME = "Name"; //$NON-NLS-1$
 	public static final String MALE = "m"; //$NON-NLS-1$
 	public static final String FEMALE = "w"; //$NON-NLS-1$
-
+	
 	static {
 		addMapping(Kontakt.TABLENAME, "Name			=	Bezeichnung1", //$NON-NLS-1$
-				"Vorname		=   Bezeichnung2", "Zusatz 		=	Bezeichnung3", //$NON-NLS-1$ //$NON-NLS-2$
-				"Geburtsdatum	=	S:D:Geburtsdatum", SEX, "Natel=NatelNr", //$NON-NLS-1$ //$NON-NLS-2$
-				Kontakt.IS_PERSON, TITLE);
+			"Vorname		=   Bezeichnung2", "Zusatz 		=	Bezeichnung3", //$NON-NLS-1$ //$NON-NLS-2$
+			"Geburtsdatum	=	S:D:Geburtsdatum", SEX, "Natel=NatelNr", //$NON-NLS-1$ //$NON-NLS-2$
+			Kontakt.IS_PERSON, TITLE);
 	}
-
+	
 	public String getName() {
 		return checkNull(get(NAME));
 	}
-
+	
 	public String getVorname() {
 		return checkNull(get(FIRSTNAME));
 	}
-
+	
 	public String getGeburtsdatum() {
 		return checkNull(get(BIRTHDATE));
 	}
-
+	
 	public String getGeschlecht() {
 		return checkNull(get(SEX));
 	}
-
+	
 	public String getNatel() {
 		return get(MOBILE);
 	}
-
+	
 	public boolean isValid() {
 		return super.isValid();
 	}
-
+	
 	/** Eine Person mit gegebener Id aus der Datenbank einlesen */
 	public static Person load(String id) {
 		Person ret = new Person(id);
@@ -74,15 +74,15 @@ public class Person extends Kontakt {
 		}
 		return ret;
 	}
-
+	
 	protected Person(String id) {
 		super(id);
 	}
-
+	
 	public Person() {
 		// System.out.println("Person");
 	}
-
+	
 	/** Eine neue Person erstellen */
 	public Person(String Name, String Vorname, String Geburtsdatum, String s) {
 		create(null);
@@ -92,7 +92,7 @@ public class Person extends Kontakt {
 		String[] fields = new String[] { NAME, FIRSTNAME, BIRTHDATE, SEX };
 		set(fields, vals);
 	}
-
+	
 	/**
 	 * This constructor is more critical than the previous one
 	 * 
@@ -126,7 +126,7 @@ public class Person extends Kontakt {
 			int oYear = gebDat.get(TimeTool.YEAR);
 			if (oYear > myYear || oYear < myYear - 120) {
 				throw new PersonDataException(
-						PersonDataException.CAUSE.BIRTHDATE);
+					PersonDataException.CAUSE.BIRTHDATE);
 			}
 			dat = gebDat.toString(TimeTool.DATE_COMPACT);
 		}
@@ -138,7 +138,7 @@ public class Person extends Kontakt {
 		String[] vals = new String[] { name, vorname, dat, s };
 		set(fields, vals);
 	}
-
+	
 	/**
 	 * Return a short or long label for this Person
 	 * 
@@ -146,16 +146,16 @@ public class Person extends Kontakt {
 	 */
 	public String getLabel(boolean shortLabel) {
 		StringBuilder sb = new StringBuilder();
-
+		
 		if (shortLabel) {
 			sb.append(getVorname()).append(StringTool.space).append(getName());
 			return sb.toString();
 		} else {
 			return getPersonalia();
 		}
-
+		
 	}
-
+	
 	/**
 	 * Initialen holen
 	 * @param num Auf wieviele Stellen der Name gekürzt werden soll
@@ -165,7 +165,10 @@ public class Person extends Kontakt {
 		String name=getName();
 		String vorname=getVorname();
 		String sex=getGeschlecht();
-		String geb=getGeburtsdatum().substring(6);
+		String geb=getGeburtsdatum();
+		if(geb.length()>7){
+			geb=geb.substring(6);
+		}
 		ret.append((name.length()>num-1) ? name.substring(0,num): name).append(".");
 		ret.append((vorname.length()>num-1) ? vorname.substring(0,num) : vorname).append(".(")
 		.append(sex).append("), ").append(geb);
@@ -175,7 +178,7 @@ public class Person extends Kontakt {
 	public String getPersonalia() {
 		StringBuffer ret = new StringBuffer(200);
 		String[] fields = new String[] { NAME, FIRSTNAME, BIRTHDATE, SEX,
-				TITLE };
+			TITLE };
 		String[] vals = new String[fields.length];
 		get(fields, vals);
 		if (!StringTool.isNothing(vals[4])) {
@@ -195,18 +198,18 @@ public class Person extends Kontakt {
 		}
 		return ret.toString();
 	}
-
+	
 	@Override
 	protected String getConstraint() {
 		return new StringBuilder(Kontakt.IS_PERSON).append(StringTool.equals)
 		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
-
+	
 	@Override
 	protected void setConstraint() {
 		set(Kontakt.IS_PERSON, StringConstants.ONE);
 	}
-
+	
 	/**
 	 * Statistik für ein bestimmtes Objekt führen
 	 * 
@@ -215,22 +218,22 @@ public class Person extends Kontakt {
 	public void countItem(ICodeElement ice) {
 		statForItem((PersistentObject) ice);
 	}
-
+	
 	@SuppressWarnings("serial")
 	public static class PersonDataException extends Exception {
 		enum CAUSE {
 			LASTNAME, FIRSTNAME, BIRTHDATE, SEX
 		}
-
+		
 		static final String[] causes = new String[] { NAME, FIRSTNAME,
 			BIRTHDATE, "Geschlecht (m oder w)" }; //$NON-NLS-1$
-
+		
 		public CAUSE cause;
-
+		
 		PersonDataException(CAUSE cause) {
 			super(causes[cause.ordinal()]);
 			this.cause = cause;
 		}
 	}
-
+	
 }
