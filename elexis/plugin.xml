@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 5629 2009-08-15 13:02:30Z rgw_ch $ 
+<!-- $Id: plugin.xml 5713 2009-09-11 16:49:04Z rgw_ch $ 
  * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -525,6 +525,12 @@
             class="ch.elexis.preferences.XIDEdit"
             id="ch.elexis.preferences.xid.edit"
             name="%page.name.6">
+      </page>
+      <page
+            category="ch.elexis.LaborPref"
+            class="ch.elexis.preferences.LaborPrefs2"
+            id="ch.elexis.laborprefs2"
+            name="Laboritems und Gruppen">
       </page>
    </extension>
    <extension

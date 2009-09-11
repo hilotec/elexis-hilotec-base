@@ -421,7 +421,9 @@ CREATE TABLE LABORITEMS(
 	Einheit		VARCHAR(20),
 	typ			CHAR(1),
 	Gruppe		VARCHAR(25),
-	prio		CHAR(3)
+	prio		CHAR(3),
+	billingcode	VARCHAR(20)
+	
 );
 	
 CREATE INDEX labit1 on LABORITEMS(kuerzel);

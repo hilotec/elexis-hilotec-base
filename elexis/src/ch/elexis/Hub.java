@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Hub.java 5645 2009-08-18 14:27:37Z rgw_ch $
+ * 
+ *    $Id: Hub.java 5713 2009-09-11 16:49:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -35,7 +35,6 @@ import org.osgi.framework.BundleContext;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.Heartbeat;
-//import ch.elexis.actions.JobPool;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControl;
 import ch.elexis.data.Anwender;
@@ -47,10 +46,10 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
+import ch.elexis.util.FileUtility;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.FileUtility;
 import ch.rgw.io.FileTool;
 import ch.rgw.io.LockFile;
 import ch.rgw.io.Settings;
@@ -75,7 +74,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.5.0"; //$NON-NLS-1$
 	public static final String Version = "2.0.0"; //$NON-NLS-1$
-	public static final String DBVersion = "1.8.0"; //$NON-NLS-1$
+	public static final String DBVersion = "1.8.1"; //$NON-NLS-1$
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private static List<ShutdownJob> shutdownJobs = new LinkedList<ShutdownJob>();
@@ -176,7 +175,7 @@ public class Hub extends AbstractUIPlugin {
 	 * called by constructor
 	 */
 	private void initializeLog(final Settings cfg){
-		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null); //$NON-NLS-1$
+		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null);
 		int maxLogfileSize = -1;
 		String logPath;
 		if (logfileName == null) {
@@ -198,7 +197,7 @@ public class Hub extends AbstractUIPlugin {
 		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT, Log.ERRORS));
 		// Exception handler initialiseren, Output wie log, auf eigene Klassen
 		// begrenzen
-		ExHandler.setOutput(logPath); //$NON-NLS-1$
+		ExHandler.setOutput(logPath);
 		ExHandler.setClasses(mine);
 		
 	}
@@ -293,7 +292,7 @@ public class Hub extends AbstractUIPlugin {
 		}
 		if (m == null) {
 			if ((mainActions != null) && (mainActions.mainWindow != null)
-				&& (mainActions.mainWindow.getShell() != null)) {
+					&& (mainActions.mainWindow.getShell() != null)) {
 				mandantCfg = userCfg;
 			}
 		} else {
@@ -331,7 +330,7 @@ public class Hub extends AbstractUIPlugin {
 			String nr = pat.getPatCode();
 			String alter = pat.getAlter();
 			sb.append("  / ").append(pat.getLabel()).append("(").append(alter).append(") - ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				.append("[").append(nr).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
+			.append("[").append(nr).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (Reminder.findForPatient(pat, Hub.actUser).size() != 0) {
 				sb.append(Messages.Hub_message_reminders);
@@ -366,7 +365,7 @@ public class Hub extends AbstractUIPlugin {
 	
 	public static String getId(){
 		return "Elexis v." + Version + ", r." + getRevision(false) + " " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ System.getProperty("os.name") + "/" + System.getProperty("os.version"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		+ System.getProperty("os.name") + "/" + System.getProperty("os.version"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**
@@ -376,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5645 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5713 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
