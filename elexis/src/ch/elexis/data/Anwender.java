@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Anwender.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: Anwender.java 5715 2009-09-12 17:59:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -51,7 +51,7 @@ import ch.rgw.tools.StringTool;
 public class Anwender extends Person {
 
 	public static final String ADMINISTRATOR = "Administrator";
-	private static final String LABEL = "Label";
+	public static final String LABEL = "Label";
 
 	static {
 		addMapping(Kontakt.TABLENAME, Kontakt.EXT_INFO, Kontakt.IS_USER, "Label=Bezeichnung3",

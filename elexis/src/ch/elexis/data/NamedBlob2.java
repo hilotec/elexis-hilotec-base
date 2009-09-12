@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob2.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: NamedBlob2.java 5715 2009-09-12 17:59:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -27,6 +27,8 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class NamedBlob2 extends PersistentObject {
+	public static final String FLD_DATUM = "Datum";
+	public static final String FLD_CONTENTS = "Contents";
 	public static final String TABLENAME = "HEAP2";
 
 	/**
@@ -35,7 +37,7 @@ public class NamedBlob2 extends PersistentObject {
 	 * @return the contents
 	 */
 	public byte[] getBytes() {
-		byte[] comp = getBinary("Contents");
+		byte[] comp = getBinary(FLD_CONTENTS);
 		if ((comp == null) || (comp.length == 0)) {
 			return null;
 		}
@@ -52,8 +54,8 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	public void putBytes(byte[] in) {
 		byte[] comp = CompEx.Compress(in, CompEx.ZIP);
-		setBinary("Contents", comp);
-		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
+		setBinary(FLD_CONTENTS, comp);
+		set(FLD_DATUM, new TimeTool().toString(TimeTool.DATE_GER));
 	}
 
 	/**
@@ -64,7 +66,7 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public Hashtable getHashtable() {
-		return getHashtable("Contents");
+		return getHashtable(FLD_CONTENTS);
 	}
 
 	/**
@@ -75,8 +77,8 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void put(final Hashtable in) {
-		setHashtable("Contents", in);
-		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
+		setHashtable(FLD_CONTENTS, in);
+		set(FLD_DATUM, new TimeTool().toString(TimeTool.DATE_GER));
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class NamedBlob2 extends PersistentObject {
 	 * @return the previously stored string.
 	 */
 	public String getString() {
-		byte[] comp = getBinary("Contents");
+		byte[] comp = getBinary(FLD_CONTENTS);
 		if ((comp == null) || (comp.length == 0)) {
 			return "";
 		}
@@ -106,8 +108,8 @@ public class NamedBlob2 extends PersistentObject {
 	 */
 	public void putString(final String string) {
 		byte[] comp = CompEx.Compress(string, CompEx.ZIP);
-		setBinary("Contents", comp);
-		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
+		setBinary(FLD_CONTENTS, comp);
+		set(FLD_DATUM, new TimeTool().toString(TimeTool.DATE_GER));
 	}
 
 	@Override
@@ -121,7 +123,7 @@ public class NamedBlob2 extends PersistentObject {
 	}
 
 	static {
-		addMapping(TABLENAME, "Contents", "Datum=S:D:datum", "lastupdate");
+		addMapping(TABLENAME, FLD_CONTENTS, "Datum=S:D:datum", "lastupdate");
 	}
 
 	/**
@@ -137,8 +139,13 @@ public class NamedBlob2 extends PersistentObject {
 	public static NamedBlob2 create(String name, boolean bFailIfExists) {
 		NamedBlob2 nb = load(name);
 		if (nb == null) {
-			nb = new NamedBlob2();
-			nb.create(name);
+			nb = new NamedBlob2(name);
+			if(nb.state()==PersistentObject.DELETED){
+				nb.undelete();
+				nb.set(FLD_CONTENTS, null);
+			}else{
+				nb.create(name);
+			}
 		} else {
 			if (bFailIfExists) {
 				return null;
@@ -177,7 +184,7 @@ public class NamedBlob2 extends PersistentObject {
 	public static void cleanup(final String prefix, final TimeTool older) {
 		if (Hub.acl.request(AccessControlDefaults.AC_PURGE)) {
 			Query<NamedBlob2> qbe = new Query<NamedBlob2>(NamedBlob2.class);
-			qbe.add("Datum", "<", older.toString(TimeTool.DATE_COMPACT));
+			qbe.add(FLD_DATUM, "<", older.toString(TimeTool.DATE_COMPACT));
 			for (NamedBlob2 nb : qbe.execute()) {
 				if (nb.getId().startsWith(prefix)) {
 					nb.delete();
