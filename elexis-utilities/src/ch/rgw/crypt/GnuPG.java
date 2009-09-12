@@ -691,5 +691,10 @@ public class GnuPG implements Cryptologist {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	public byte[] getCertificateEncoded(String alias)
+			throws CryptologistException {
+		return null;
+	}
 	
 }

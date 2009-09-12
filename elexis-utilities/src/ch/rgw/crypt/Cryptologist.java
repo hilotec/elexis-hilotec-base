@@ -2,6 +2,7 @@ package ch.rgw.crypt;
 
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import ch.rgw.tools.Result;
@@ -78,4 +79,7 @@ public interface Cryptologist {
 	public String getUser();
 	
 	public boolean isFunctional();
+
+	public byte[] getCertificateEncoded(String alias)
+			throws CryptologistException;
 }
