@@ -123,7 +123,7 @@ public class SAT {
 				ret.put(ADM_SIGNED_BY, user);
 				return ret;
 			} else {
-				throw new CryptologistException(USER_UNKNOWN,
+				throw new CryptologistException(USER_UNKNOWN+": "+user,
 						CryptologistException.ERR_USER_UNKNOWN);
 			}
 		} else {
