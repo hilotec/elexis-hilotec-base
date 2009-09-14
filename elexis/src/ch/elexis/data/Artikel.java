@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Artikel.java 5655 2009-08-20 09:10:37Z michael_imhof $
+ * $Id: Artikel.java 5727 2009-09-14 12:05:30Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -586,7 +586,9 @@ public class Artikel extends VerrechenbarAdapter {
 	}
 	
 	@Override
-	protected String getExportUIDField() {
-		return PHARMACODE;
+	protected String getExportUIDValue() {
+		String pharmacode = getExt(PHARMACODE);
+		String ean = get(EAN);
+		return ean + "_" + pharmacode;
 	}
 }
