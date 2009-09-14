@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: SWTHelper.java 5725 2009-09-14 12:04:18Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.util;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -185,7 +186,49 @@ public class SWTHelper {
 			Shell shell = Desk.getTopShell();
 			ret = MessageDialog.openConfirm(shell, title, message);
 		}
-		
+	}
+	
+	/**
+	 * Eine mit Ja, Nein oder Abbrechen zu beantwortende Frage im UI-Thread zeigen
+	 * 
+	 * @param title
+	 *            Titel
+	 * @param message
+	 *            Nachricht
+	 * @return true: User hat Ja geklickt
+	 */
+	public static Boolean askYesNoCancel(final String title,
+			final String message) {
+		InSyncYesNoCancel rn = new InSyncYesNoCancel(title, message);
+		Desk.getDisplay().syncExec(rn);
+		return rn.ret;
+	}
+
+	private static class InSyncYesNoCancel implements Runnable {
+		Boolean ret = null;
+		String title, message;
+
+		InSyncYesNoCancel(final String title, final String message) {
+			this.title = title;
+			this.message = message;
+		}
+
+		public void run() {
+			Shell shell = Desk.getTopShell();
+			MessageDialog dialog = new MessageDialog(shell, title, null, // accept
+			// the
+			// default
+			// window
+			// icon
+			message, MessageDialog.QUESTION, new String[] {
+					IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
+					IDialogConstants.CANCEL_LABEL }, 0);
+			// ok is the default
+			int result = dialog.open();
+			if (result != 2) {
+				ret = result == 0;
+			}
+		}
 	}
 	
 	/**
