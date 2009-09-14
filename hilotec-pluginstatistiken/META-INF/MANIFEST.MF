@@ -5,9 +5,9 @@ Bundle-SymbolicName: com.hilotec.elexis.pluginstatistiken;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-Vendor: hilotec.com
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: ch.unibe.iam.scg.archie;bundle-version="1.1.0",
- ch.elexis;bundle-version="2.0.0",
- org.eclipse.core.runtime;bundle-version="3.5.0",
- org.eclipse.swt;bundle-version="3.5.0",
- ch.rgw.utility;bundle-version="2.0.0"
+Require-Bundle: ch.unibe.iam.scg.archie,
+ ch.elexis,
+ org.eclipse.core.runtime,
+ org.eclipse.swt,
+ ch.rgw.utility
 Export-Package: com.hilotec.elexis.pluginstatistiken.schnittstelle
