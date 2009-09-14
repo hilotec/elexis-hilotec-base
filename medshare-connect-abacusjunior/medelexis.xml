@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.medelexis.gcal.sync" name="Verbindung Abacus Junior" provider="support@medshare.org" type="Geräteanbindung" version="1.4.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.medshare.connect.abacusjunior" name="Abacus Junior Laborgerätanbindung" provider="support@medelexis.ch" type="Geräteanbindung" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
-  		<service:role priceClass="fixed-low">
-  			<service:pricePerDB amount="5.00" />
+  		<service:role available="true" daysperpayment="365"
+  			name="default" priceClass="fixed-low">
+  			<service:pricePerDB amount="8.50" currency="CHF" />
   		</service:role>
   	</service:roles>
   </service:conditions>
-  <service:description>Verbindet den Abacus Junior mit Elexis</service:description>
+  <service:description>Verbindung von Elexis zum Abacus Junior</service:description>
   <service:depends>ch.medelexis.nucleus ch.elexis.importer.div</service:depends>
 </service:service>
