@@ -9,5 +9,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.elexis,
  ch.rgw.utility,
- org.eclipse.ui.forms;bundle-version="3.4.0"
+ org.eclipse.ui.forms
 Eclipse-LazyStart: true
