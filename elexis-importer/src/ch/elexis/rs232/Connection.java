@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 5412 2009-06-25 12:33:58Z michael_imhof $
+ * $Id: Connection.java 5720 2009-09-14 08:35:10Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -90,7 +90,7 @@ public class Connection implements PortEventListener {
 					public void run() {
 						try {
 							Thread.sleep(1000);
-							final String in = FileTool.readFile(new File(simulate)).replaceAll("\\r\\n", "\r");
+							final String in = FileTool.readTextFile(new File(simulate)).replaceAll("\\r\\n", "\r");
 							listener.gotChunk(mine, in);
 						} catch (Exception ex) {
 

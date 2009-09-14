@@ -91,7 +91,7 @@ public abstract class AbstractConnection implements PortEventListener {
 						try {
 							Thread.sleep(1000);
 							final String in =
-								FileTool.readFile(new File(simulate)).replaceAll("\\r\\n", "\r");
+								FileTool.readTextFile(new File(simulate)).replaceAll("\\r\\n", "\r");
 							listener.gotData(mine, in.getBytes());
 						} catch (Exception ex) {
 
