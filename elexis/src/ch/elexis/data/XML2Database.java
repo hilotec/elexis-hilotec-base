@@ -40,7 +40,7 @@ public class XML2Database {
 	private final static String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	private final static String LIST_TAG = "DATALIST";
 	private final static String UID_TAG = "UID";
-	private final static String UID_FIELD_ATTRIBUTE = "field";
+	private final static String UID_VERSION_ATTRIBUTE = "version";
 	private final static String CLASS_ATTRIBUTE = "javaclass";
 	private final static String TEXT_TAG = "#text"; // Tags to ignore
 
@@ -133,8 +133,8 @@ public class XML2Database {
 
 			// Primary key
 			openElement(UID_TAG);
-			addAttribute(UID_FIELD_ATTRIBUTE, object.getExportUIDField());
-			addValue(object.get(object.getExportUIDField()));
+			addAttribute(UID_VERSION_ATTRIBUTE, object.getExportUIDVersion());
+			addValue(object.getExportUIDValue());
 			closeElement();
 
 			// Fields
@@ -157,8 +157,7 @@ public class XML2Database {
 	 */
 
 	@SuppressWarnings("unchecked")
-	private List<String> getValues(Class javaClass, String uidField,
-			String uidValue) {
+	private List<String> getValues(Class javaClass, String uidValue) {
 		HashMap<String, List<String>> map = cache.get(javaClass);
 		if (map == null) {
 			map = new HashMap<String, List<String>>();
@@ -167,7 +166,7 @@ public class XML2Database {
 			Query<PersistentObject> query = new Query<PersistentObject>(javaClass);
 			List<PersistentObject> poList = query.execute();
 			for (PersistentObject po : poList) {
-				String value = po.get(uidField);
+				String value = po.getExportUIDValue();
 				List<String> idList = map.get(value);
 				if (idList == null) {
 					idList = new Vector<String>();
@@ -190,8 +189,8 @@ public class XML2Database {
 		try {
 			String className = tableNode.getAttributes().getNamedItem(CLASS_ATTRIBUTE).getNodeValue();
 			Class javaClass = Class.forName(className);
-			String uidField = null;
 			String uidValue = null;
+			String uidVersion = null;
 
 			// Read fields
 			List<DataField> fieldList = new Vector<DataField>();
@@ -201,7 +200,10 @@ public class XML2Database {
 				if (!TEXT_TAG.equals(fieldNode.getNodeName())) {
 					if (UID_TAG.equals(fieldNode.getNodeName())) {
 						uidValue = fieldNode.getTextContent();
-						uidField = fieldNode.getAttributes().getNamedItem(UID_FIELD_ATTRIBUTE).getNodeValue();
+						if (fieldNode.getAttributes().getNamedItem(UID_VERSION_ATTRIBUTE) == null) {
+							throw new IllegalArgumentException("No UID export version found!");
+						}
+						uidVersion = fieldNode.getAttributes().getNamedItem(UID_VERSION_ATTRIBUTE).getNodeValue();
 					} else {
 						fieldList.add(new DataField(fieldNode.getNodeName(), fieldNode.getTextContent()));
 					}
@@ -220,12 +222,12 @@ public class XML2Database {
 			// Check uidField
 			Constructor<PersistentObject> constructor = javaClass.getDeclaredConstructor();
 			PersistentObject po = constructor.newInstance();
-			if (!uidField.equals(po.getExportUIDField())) {
-				throw new IllegalArgumentException("UID fields are different!");
+			if (!uidVersion.equals(po.getExportUIDVersion())) {
+				throw new IllegalArgumentException("UID export versions are different!");
 			}
-
+			
 			// Read values
-			List<String> list = getValues(javaClass, uidField, uidValue);
+			List<String> list = getValues(javaClass, uidValue);
 
 			if (list == null || list.size() == 0) {
 				// Create new

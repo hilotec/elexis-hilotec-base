@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5693 2009-08-28 15:36:06Z rgw_ch $
+ *    $Id: PersistentObject.java 5726 2009-09-14 12:04:50Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -2163,11 +2163,22 @@ public abstract class PersistentObject {
 	}
 
 	/**
-	 * Returns uid field. The uid should be world wide universal.
+	 * Returns uid value. The uid should be world wide universal.<br>
+	 * If this code changes, then the method getExportUIDVersion has to be overwritten<br>
+	 * and the returned value incremented.
+	 * 
 	 */
-	protected String getExportUIDField() {
-		throw new IllegalArgumentException("No export uid field for "
+	protected String getExportUIDValue() {
+		throw new IllegalArgumentException("No export uid value for "
 				+ getClass().getSimpleName() + " available");
+	}
+	
+	/**
+	 * Checks the version of the export functionality. If the method<br>
+	 * getExportUIDValue() changes, this method should return a new number.<br>
+	 */
+	protected String getExportUIDVersion() {
+		return "1";
 	}
 
 	/**
