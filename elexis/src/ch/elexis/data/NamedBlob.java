@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: NamedBlob.java 5721 2009-09-14 08:38:34Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.rgw.compress.CompEx;
 import ch.rgw.io.FileTool;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.TimeTool;
 
@@ -141,8 +143,13 @@ public class NamedBlob extends PersistentObject {
 			}
 			File file = new File("c:\\temp" + File.separator + id.replaceAll(":", "\\\\"));
 			if (file.exists()) {
-				String fi = FileTool.readFile(file);
-				ni.putString(fi);
+				String fi = null;
+				try {
+					fi = FileTool.readTextFile(file);
+					ni.putString(fi);
+				} catch(IOException e) {
+					ExHandler.handle(e);
+				}
 			}
 		}
 		return ni;
