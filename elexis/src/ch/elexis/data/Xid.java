@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Xid.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: Xid.java 5729 2009-09-14 17:11:01Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -126,6 +126,10 @@ public class Xid extends PersistentObject {
 			xd.addDisplayOption(Person.class);
 		}
 	}
+
+	public static final String FLD_OBJECT = "object";
+	public static final String FLD_DOMAIN_ID = "domain_id";
+	public static final String FLD_DOMAIN = "domain";
 	
 	/**
 	 * create a new XID. Does nothing if identical XID already exists.
