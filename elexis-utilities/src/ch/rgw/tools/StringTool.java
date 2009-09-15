@@ -1075,8 +1075,11 @@ public class StringTool {
 	 * @return
 	 */
 	public static int parseSafeInt(String string){
+		if(string==null){
+			return 0;
+		}
 		try{
-			return Integer.parseInt(string);
+			return Integer.parseInt(string.trim());
 		}catch(NumberFormatException ne){
 			return 0;
 		}
@@ -1084,10 +1087,13 @@ public class StringTool {
 
 
 	public static double parseSafeDouble(String string){
+		if(string==null){
+			return 0.0;
+		}
 		try{
-			return Double.parseDouble(string);
+			return Double.parseDouble(string.trim());
 		}catch(NumberFormatException ne){
-			return 0;
+			return 0.0;
 		}
 	}
 	/**
