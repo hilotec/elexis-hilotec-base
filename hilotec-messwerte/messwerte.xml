@@ -52,4 +52,19 @@
 			</formula>
 		</calcfield>
 	</datatype>
+	<datatype name="MMS" title="MMS">
+		<calcfield name="Score" title="Score" places="1">
+			<var></var></calcfield></datatype>
+	<datatype name="Uhrentest" title="Uhrentest">
+		<boolfield name="q1" title="Ist die 12 oben?"></boolfield>
+		<boolfield name="q2" title="Sind 12 Zahlen vorhanden?"></boolfield>
+		<boolfield name="q3" title="Sind 2 unterscheidbare Zeiger vorhanden?"></boolfield>
+		<boolfield name="q4" title="Stimmt die gezeichnete Zeit?"></boolfield>
+		<calcfield name="Auswertung" title="Auswertung">
+			<var name="q1" source="q1"></var>
+			<var name="q2" source="q2"></var>
+			<var name="q3" source="q3"></var>
+			<var name="q4" source="q4"></var>
+			<formula interpreter="beanshell">if(q1==true) return "ja"; else return "nein";</formula>
+		</calcfield></datatype>
 </datatypes>
