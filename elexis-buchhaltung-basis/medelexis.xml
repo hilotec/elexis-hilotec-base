@@ -9,5 +9,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Einige einfache Buchhaltungs-Abfragen</service:description>
-  <service:depends>ch.unibe.iam.scg.archie ch.medelexis.nucleus</service:depends>
+  <service:depends>ch.unibe.iam.scg.archie ch.medelexis.nucleus ch.elexis.ebanking_ch</service:depends>
 </service:service>
