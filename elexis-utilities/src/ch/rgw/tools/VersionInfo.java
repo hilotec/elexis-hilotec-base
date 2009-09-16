@@ -12,7 +12,7 @@ package ch.rgw.tools;
 public class VersionInfo implements Comparable<VersionInfo> {
 	
 	public static String Version(){
-		return "1.7.0";
+		return "1.8.0";
 	}
 	
 	String orig;
@@ -32,7 +32,7 @@ public class VersionInfo implements Comparable<VersionInfo> {
 		}
 	}
 	
-	public String maior(){
+	public String getMaior(){
 		if ((spl == null) || (spl.length < 1)) {
 			return "0";
 		}
@@ -42,36 +42,55 @@ public class VersionInfo implements Comparable<VersionInfo> {
 		return spl[0];
 	}
 	
-	public String minor(){
+	public String getMinor(){
 		if ((spl == null) || (spl.length < 2)) {
 			return "0";
 		}
 		return spl[1];
 	}
 	
-	public String rev(){
+	public String getRevision(){
 		if ((spl == null) || (spl.length < 3)) {
 			return "0";
 		}
 		return spl[2];
 	}
 	
+	public String getBuildTag(){
+		if ((spl == null) || (spl.length < 4)) {
+			return "";
+		} else {
+			return spl[3];
+		}
+	}
+	
 	public String version(){
 		return orig;
 	}
+	
 	public boolean matches(VersionInfo pattern){
-		for(int i=0;i<3;i++){
-			if(!matchElements(spl[0], pattern.spl[0])){
+		for (int i = 0; i < 3; i++) {
+			if(i>=spl.length){
+				if(i>=pattern.spl.length){
+					return true;
+				}
+				return false;
+			}
+			if(i>=pattern.spl.length){
+				return false;
+			}
+			if (!matchElements(spl[0], pattern.spl[0])) {
 				return false;
 			}
 		}
 		return true;
 	}
+	
 	private boolean matchElements(final String a, final String b){
-		if(a.equals("*") || b.equals("*")){
+		if (a.equals("*") || b.equals("*")) {
 			return true;
 		}
-		if(compareElem(a, b)==0){
+		if (compareElem(a, b) == 0) {
 			return true;
 		}
 		return false;
@@ -103,22 +122,26 @@ public class VersionInfo implements Comparable<VersionInfo> {
 	}
 	
 	public boolean isNewerMaior(final VersionInfo vo){
-		return compareElem(this.maior(), vo.maior()) > 0;
+		return compareElem(this.getMaior(), vo.getMaior()) > 0;
 	}
 	
 	public boolean isNewerMinor(final VersionInfo vo){
-		if(isNewerMaior(vo)){
+		if (isNewerMaior(vo)) {
 			return true;
 		}
-		if(isOlder(vo)){
+		if (isOlder(vo)) {
 			return false;
 		}
-		return compareElem(this.minor(), vo.minor()) > 0;
+		return compareElem(this.getMinor(), vo.getMinor()) > 0;
 	}
 	
 	public boolean isNewerRev(final VersionInfo vo){
-		return isNewerMaior(vo) ? true : isNewerMinor(vo) ? true
-				: compareElem(this.rev(), vo.rev()) > 0;
+		return isNewerMaior(vo) ? true : isNewerMinor(vo) ? true : compareElem(this.getRevision(),
+			vo.getRevision()) > 0;
+	}
+	
+	public boolean isNewerBuild(final VersionInfo vo){
+		return isNewerRev(vo) ? true : compareElem(this.getBuildTag(), vo.getBuildTag()) > 0;
 	}
 	
 	public boolean isEqual(final VersionInfo vo){
@@ -126,16 +149,19 @@ public class VersionInfo implements Comparable<VersionInfo> {
 	}
 	
 	public int compareTo(final VersionInfo vo){
-		int c = compareElem(this.maior(), vo.maior());
+		int c = compareElem(this.getMaior(), vo.getMaior());
 		if (c != 0) {
 			return c;
 		}
-		c = compareElem(this.minor(), vo.minor());
+		c = compareElem(this.getMinor(), vo.getMinor());
 		if (c != 0) {
 			return c;
 		}
-		return compareElem(this.rev(), vo.rev());
-		
+		c = compareElem(this.getRevision(), vo.getRevision());
+		if (c != 0) {
+			return c;
+		}
+		return compareElem(this.getBuildTag(), vo.getBuildTag());
 	}
 	
 	private int compareElem(final String a, final String b){
