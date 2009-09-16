@@ -8,5 +8,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Nicht patientenspezifische Notizen, Merkblätter etc. mit Stichwort- und Themensuche</service:description>
-  <service:depends>ch.medelexis.nucleus</service:depends>
+  <service:depends>ch.medelexis.nucleus ch.elexis.Textplugin ch.rgw.utility</service:depends>
 </service:service>
