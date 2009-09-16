@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 5619 2009-08-11 16:56:27Z rgw_ch $
+ * $Id: XMLExporter.java 5734 2009-09-16 13:14:16Z michael_imhof $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -434,7 +434,7 @@ public class XMLExporter implements IRnOutputter {
 		// rev());
 		Element spackage = new Element("package", ns); // 10070
 		spackage.setText("Elexis");
-		spackage.setAttribute("version", vi.maior() + vi.minor() + vi.rev()); // 10071
+		spackage.setAttribute("version", vi.getMaior() + vi.getMinor() + vi.getRevision()); // 10071
 		spackage.setAttribute("id", "0"); // 10072
 		prolog.addContent(spackage);
 		
@@ -450,7 +450,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element validator = new Element("validator", ns); // 10100
 		validator.setAttribute("focus", "tarmed"); // 10111
-		validator.setAttribute("version_software", vi.maior() + vi.minor() + vi.rev()); // 10130
+		validator.setAttribute("version_software", vi.getMaior() + vi.getMinor() + vi.getRevision()); // 10130
 		validator.setAttribute("version_db", "401"); // 10131
 		validator.setAttribute("id", "0"); // 10132
 		validator.setText("Elexis TarmedVerifier");
