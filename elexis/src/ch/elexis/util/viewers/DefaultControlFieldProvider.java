@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DefaultControlFieldProvider.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ *  $Id: DefaultControlFieldProvider.java 5739 2009-09-18 09:37:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -46,9 +46,10 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.Tree;
 
 /**
- * Standardimplementation des ControlFieldProviders. Erzeugt ein Composite mit je einem
- * Texteingabefeld für jedes beim Konstruktor übergebene Feld. Feuert einen ChangedEvent, wenn
- * mindestens zwei Zeichen in eins der Felder eingegeben wurden.
+ * Standardimplementation des ControlFieldProviders. Erzeugt ein Composite mit
+ * je einem Texteingabefeld für jedes beim Konstruktor übergebene Feld. Feuert
+ * einen ChangedEvent, wenn mindestens zwei Zeichen in eins der Felder
+ * eingegeben wurden.
  * 
  * @author Gerry
  */
@@ -62,8 +63,9 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 	private final FormToolkit tk;
 	protected CommonViewer myViewer;
 	boolean bCeaseFire;
-	
-	public DefaultControlFieldProvider(final CommonViewer viewer, final String[] flds){
+
+	public DefaultControlFieldProvider(final CommonViewer viewer,
+			final String[] flds) {
 		fields = new String[flds.length];
 		dbFields = new String[fields.length];
 		myViewer = viewer;
@@ -84,8 +86,8 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		listeners = new LinkedList<ControlFieldListener>();
 		tk = Desk.getToolkit();
 	}
-	
-	public Composite createControl(final Composite parent){
+
+	public Composite createControl(final Composite parent) {
 		// Form form=tk.createForm(parent);
 		// form.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		// Composite ret=form.getBody();
@@ -94,74 +96,75 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		layout.marginWidth = 0;
 		ret.setLayout(layout);
 		ret.setBackground(parent.getBackground());
-		
+
 		ImageHyperlink hClr = tk.createImageHyperlink(ret, SWT.NONE); //$NON-NLS-1$
 		hClr.setImage(Desk.getImage(Desk.IMG_CLEAR));
 		hClr.addHyperlinkListener(new HyperlinkAdapter() {
-			
+
 			@Override
-			public void linkActivated(final HyperlinkEvent e){
+			public void linkActivated(final HyperlinkEvent e) {
 				clearValues();
 			}
-			
+
 		});
 		hClr.setBackground(parent.getBackground());
-		
+
 		Composite inner = new Composite(ret, SWT.NONE);
 		GridLayout lRet = new GridLayout(fields.length, true);
 		inner.setLayout(lRet);
 		inner.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		for (String l : fields) {
 			Hyperlink hl = tk.createHyperlink(inner, l, SWT.NONE);
 			hl.addHyperlinkListener(new HyperlinkAdapter() {
-				
+
 				@Override
-				public void linkActivated(final HyperlinkEvent e){
+				public void linkActivated(final HyperlinkEvent e) {
 					Hyperlink h = (Hyperlink) e.getSource();
 					fireSortEvent(h.getText());
 				}
-				
+
 			});
 			hl.setBackground(parent.getBackground());
 		}
-		
+
 		createSelectors(fields.length);
 		for (int i = 0; i < selectors.length; i++) {
 			selectors[i] = new ElexisText(tk.createText(inner, "", SWT.BORDER)); //$NON-NLS-1$
 			selectors[i].addModifyListener(ml);
 			selectors[i].addSelectionListener(sl);
 			selectors[i].setToolTipText(Messages
-				.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
-			selectors[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+					.getString("DefaultControlFieldProvider.enterFilter")); //$NON-NLS-1$
+			selectors[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1,
+					false));
 			SWTHelper.setSelectOnFocus((Text) selectors[i].getWidget());
 		}
-		
+
 		return ret;
 	}
-	
-	protected void createSelectors(int length){
+
+	protected void createSelectors(int length) {
 		selectors = new ElexisText[fields.length];
 	}
-	
-	public void setFocus(){
+
+	public void setFocus() {
 		selectors[0].setFocus();
 	}
-	
-	public boolean isModified(){
+
+	public boolean isModified() {
 		return modified;
 	}
-	
-	public String[] getDBFields(){
+
+	public String[] getDBFields() {
 		return dbFields;
 	}
-	
+
 	/**
-	 * Reaktion auf Eingaben in die Filterfelder. Reagiert erst wenn mindestens zwei Zeichen
-	 * eingegeben wurden oder das Feld geleert wurde.
+	 * Reaktion auf Eingaben in die Filterfelder. Reagiert erst wenn mindestens
+	 * zwei Zeichen eingegeben wurden oder das Feld geleert wurde.
 	 * */
 	class ModListener implements ModifyListener {
-		public void modifyText(final ModifyEvent e){
+		public void modifyText(final ModifyEvent e) {
 			modified = true;
 			Text t = (Text) e.getSource();
 			String s = t.getText();
@@ -174,27 +177,28 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 				lastFiltered[i] = selectors[i].getText();
 			}
 			fireChangedEvent();
-			
+
 		}
 	}
-	
+
 	/**
-	 * Reaktion auf ENTER den Filterfelder. Weist den Viewer an, eine Selektion vorzunehmen.
+	 * Reaktion auf ENTER den Filterfelder. Weist den Viewer an, eine Selektion
+	 * vorzunehmen.
 	 */
 	class SelListener implements SelectionListener {
-		public void widgetSelected(final SelectionEvent e){
+		public void widgetSelected(final SelectionEvent e) {
 			fireSelectedEvent();
 		}
-		
-		public void widgetDefaultSelected(final SelectionEvent e){
+
+		public void widgetDefaultSelected(final SelectionEvent e) {
 			widgetSelected(e);
 		}
 	}
-	
-	public void fireChangedEvent(){
+
+	public void fireChangedEvent() {
 		if (!bCeaseFire) {
 			Desk.getDisplay().syncExec(new Runnable() {
-				public void run(){
+				public void run() {
 					HashMap<String, String> hm = new HashMap<String, String>();
 					for (int i = 0; i < fields.length; i++) {
 						hm.put(fields[i], lastFiltered[i]);
@@ -206,40 +210,40 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 			});
 		}
 	}
-	
-	public void fireSortEvent(final String text){
+
+	public void fireSortEvent(final String text) {
 		if (!bCeaseFire) {
 			for (ControlFieldListener ls : listeners) {
 				ls.reorder(text);
 			}
 		}
 	}
-	
-	public void fireSelectedEvent(){
+
+	public void fireSelectedEvent() {
 		if (!bCeaseFire) {
 			for (ControlFieldListener ls : listeners) {
 				ls.selected();
 			}
 		}
 	}
-	
-	public void addChangeListener(final ControlFieldListener cl){
+
+	public void addChangeListener(final ControlFieldListener cl) {
 		listeners.add(cl);
 	}
-	
-	public void removeChangeListener(final ControlFieldListener cl){
+
+	public void removeChangeListener(final ControlFieldListener cl) {
 		listeners.remove(cl);
 	}
-	
-	public String[] getValues(){
+
+	public String[] getValues() {
 		return lastFiltered;
 	}
-	
+
 	/**
-	 * Alle Eingabefelder löschen und einen "changeEvent" feuern". Aber nur, wenn die Felder nicht
-	 * schon vorher leer waren.
+	 * Alle Eingabefelder löschen und einen "changeEvent" feuern". Aber nur,
+	 * wenn die Felder nicht schon vorher leer waren.
 	 */
-	public void clearValues(){
+	public void clearValues() {
 		if (!isEmpty()) {
 			bCeaseFire = true;
 			for (int i = 0; i < selectors.length; i++) {
@@ -251,8 +255,8 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 			fireChangedEvent();
 		}
 	}
-	
-	public void setQuery(final Query q){
+
+	public void setQuery(final Query q) {
 		boolean ch = false;
 		for (int i = 0; i < fields.length; i++) {
 			if (!lastFiltered[i].equals(StringTool.leer)) {
@@ -264,21 +268,22 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		if (ch) {
 			q.insertTrue();
 		}
-		
+
 	}
-	
-	public IFilter createFilter(){
+
+	public IFilter createFilter() {
 		return new DefaultFilter();
 	}
-	
+
 	private class DefaultFilter extends ViewerFilter implements IFilter {
-		
+
 		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element){
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
 			return select(element);
 		}
-		
-		public boolean select(Object element){
+
+		public boolean select(Object element) {
 			PersistentObject po = null;
 			if (element instanceof Tree) {
 				po = (PersistentObject) ((Tree) element).contents;
@@ -287,7 +292,8 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 			} else {
 				return false;
 			}
-			if (po.isMatching(dbFields, PersistentObject.MATCH_LIKE, lastFiltered)) {
+			if (po.isMatching(dbFields, PersistentObject.MATCH_LIKE,
+					lastFiltered)) {
 				return true;
 			} else {
 				if (element instanceof Tree) {
@@ -301,10 +307,10 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 				}
 			}
 		}
-		
+
 	}
-	
-	public boolean isEmpty(){
+
+	public boolean isEmpty() {
 		for (String s : lastFiltered) {
 			if (!s.equals(StringTool.leer)) {
 				return false;
@@ -312,12 +318,12 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 		}
 		return true;
 	}
-	
-	public void ceaseFire(final boolean bCeaseFire){
+
+	public void ceaseFire(final boolean bCeaseFire) {
 		this.bCeaseFire = bCeaseFire;
 	}
-	
-	public CommonViewer getCommonViewer(){
+
+	public CommonViewer getCommonViewer() {
 		return this.myViewer;
 	}
 }
