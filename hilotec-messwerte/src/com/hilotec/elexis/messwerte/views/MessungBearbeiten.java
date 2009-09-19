@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: MessungBearbeiten.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MessungBearbeiten.java 5741 2009-09-19 09:04:41Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;
@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -51,9 +52,13 @@ public class MessungBearbeiten extends TitleAreaDialog {
 	}
 	
 	@Override
-	protected Control createDialogArea(final Composite parent) {
-		Composite comp = new Composite(parent,SWT.NONE);
-
+	protected Control createDialogArea(Composite parent) {
+		ScrolledComposite scroll = new ScrolledComposite(parent,
+				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		Composite comp = new Composite(scroll, SWT.NONE);
+		scroll.setContent(comp);
+		
 		comp.setLayout(new GridLayout());
 		comp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
@@ -72,7 +77,8 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			widgetMap.put(messwert, dft.createWidget(comp, messwert));
 		}
 		
-		return comp;
+		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		return scroll;
 	}
 	
 	@Override
