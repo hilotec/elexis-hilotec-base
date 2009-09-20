@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.bouncycastle.crypto.digests.MD5Digest;
+
+import sun.misc.JarIndex;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Log;
@@ -669,6 +672,91 @@ public class FileTool {
 			}
 			if (zipIn != null) {
 				zipIn.close();
+			}
+		}
+	}
+	
+	/**
+	 * Unzips a file in the file directory
+	 */
+	public static final void unjar(final String filenamePath)
+			throws IOException {
+		final int BUFFER = 2048;
+		int count;
+		byte data[] = new byte[BUFFER];
+
+		if (filenamePath == null || filenamePath.length() == 0) {
+			throw new IllegalArgumentException("No file to unjar!");
+		}
+
+		String baseJarDirName = getFilepath(filenamePath);
+		String unjaredDirName = getNakedFilename(filenamePath);
+		String baseUnjaredDirName = getFilepath(filenamePath)
+				+ DIRECTORY_SEPARATOR + unjaredDirName;
+		File baseUnjaredDir = new File(baseUnjaredDirName);
+		if (!baseUnjaredDir.exists()) {
+			baseUnjaredDir.mkdirs();
+		}
+
+		FileInputStream fileInputstream = null;
+		JarInputStream jarIn = null;
+		try {
+			fileInputstream = new FileInputStream(filenamePath);
+			jarIn = new JarInputStream(new BufferedInputStream(fileInputstream));
+			JarEntry entry;
+			while ((entry = jarIn.getNextJarEntry()) != null) {
+				String entryFilenamePath = entry.getName();
+				if (!entryFilenamePath.startsWith(unjaredDirName)) {
+					entryFilenamePath = unjaredDirName + DIRECTORY_SEPARATOR
+							+ entryFilenamePath;
+				}
+
+				// Check entry sub directory
+				String entryPathname = getFilepath(entryFilenamePath);
+				if (entryPathname != null && entryPathname.length() > 0) {
+					File entryPath = new File(baseJarDirName
+							+ DIRECTORY_SEPARATOR + entryPathname);
+					if (!entryPath.exists()) {
+						entryPath.mkdirs();
+					}
+				}
+
+				// Check entry file
+				String entryFilename = getFilename(entryFilenamePath);
+				if (entryFilename != null & entryFilename.length() > 0) {
+					File outputFile = new File(baseJarDirName
+							+ DIRECTORY_SEPARATOR + entryFilenamePath);
+					if (!outputFile.exists()) {
+						outputFile.createNewFile();
+					}
+
+					// write the files to the disk();
+					BufferedOutputStream dest = null;
+					FileOutputStream fileOutputstream = null;
+					try {
+						fileOutputstream = new FileOutputStream(outputFile);
+						dest = new BufferedOutputStream(fileOutputstream,
+								BUFFER);
+						while ((count = jarIn.read(data, 0, BUFFER)) != -1) {
+							dest.write(data, 0, count);
+						}
+						dest.flush();
+					} finally {
+						if (fileOutputstream != null) {
+							fileOutputstream.close();
+						}
+						if (dest != null) {
+							dest.close();
+						}
+					}
+				}
+			}
+		} finally {
+			if (fileInputstream != null) {
+				fileInputstream.close();
+			}
+			if (jarIn != null) {
+				jarIn.close();
 			}
 		}
 	}
