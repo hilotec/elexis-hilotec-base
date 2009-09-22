@@ -416,4 +416,13 @@ public class JCEKeyManager {
 		return _srnd;
 	}
 
+	public boolean removeKey(String alias){
+		try {
+			ks.deleteEntry(alias);
+			return true;
+		} catch (KeyStoreException e) {
+			ExHandler.handle(e);
+			return false;
+		}
+	}
 }
