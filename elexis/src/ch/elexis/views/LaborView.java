@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 5569 2009-07-20 15:59:30Z freakypenguin $
+ *  $Id: LaborView.java 5747 2009-09-22 14:56:40Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -641,7 +641,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 				continue;
 			}
 			TableItem ti = new TableItem(table, SWT.NONE);
-			ti.setForeground(Desk.theDisplay
+			ti.setForeground(Desk.getDisplay()
 					.getSystemColor(SWT.COLOR_DARK_BLUE));
 
 			// split group order token and group name

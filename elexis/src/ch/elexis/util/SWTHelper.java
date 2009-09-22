@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SWTHelper.java 5725 2009-09-14 12:04:18Z michael_imhof $
+ * $Id: SWTHelper.java 5747 2009-09-22 14:56:40Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -91,9 +91,6 @@ public class SWTHelper {
 	
 	/** Eine Alertbox anzeigen (synchron) */
 	public static void alert(final String title, final String message){
-		if (Desk.getDisplay() == null) {
-			Desk.theDisplay = PlatformUI.createDisplay();
-		}
 		Shell shell = Desk.getDisplay().getActiveShell();
 		if (shell == null) {
 			shell = new Shell(Desk.getDisplay());
