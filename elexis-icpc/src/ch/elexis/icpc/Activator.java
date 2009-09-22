@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Activator.java 4741 2008-12-04 21:34:54Z rgw_ch $
+ * 
+ *    $Id: Activator.java 5745 2009-09-22 09:34:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -23,29 +23,28 @@ public class Activator extends AbstractUIPlugin {
 	
 //	 The plug-in ID
 	public static final String PLUGIN_ID = "ch.elexis.icpc";
-
+	
 	// The shared instance
 	private static Activator plugin;
-
+	
 	//private static FormToolkit tk=Desk.getToolkit();
 	/**
 	 * The constructor
 	 */
 	public Activator() {
 		plugin = this;
-		log=Log.get("ICPC");
 	}
-
+	
 	static Log log;
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		
 		super.start(context);
+		log=Log.get("ICPC");
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
@@ -54,7 +53,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = null;
 		super.stop(context);
 	}
-
+	
 	/**
 	 * Returns the shared instance
 	 *

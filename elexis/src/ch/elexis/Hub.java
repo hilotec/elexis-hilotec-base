@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5722 2009-09-14 08:38:49Z michael_imhof $
+ *    $Id: Hub.java 5745 2009-09-22 09:34:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -130,44 +130,6 @@ public class Hub extends AbstractUIPlugin {
 		getWritableUserDir();
 		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
 		setUserDir(userDir);
-		String[] args = Platform.getApplicationArgs();
-		String config = "default"; //$NON-NLS-1$
-		for (String s : args) {
-			if (s.startsWith("--use-config=")) { //$NON-NLS-1$
-				String[] c = s.split("="); //$NON-NLS-1$
-				config = c[1];
-				localCfg = localCfg.getBranch(config, true);
-			} else if (s.startsWith("--plaf=")) { //$NON-NLS-1$
-				String[] c = s.split("="); //$NON-NLS-1$
-				String plaf = c[1];
-				localCfg.set(PreferenceConstants.USR_PLAF, plaf);
-				localCfg.flush();
-			}
-		}
-		initializeLog(localCfg);
-		log.log(Messages.Hub_12 + config, Log.INFOS);
-		// Damit Anfragen auf userCfg und mandantCfg bei nicht eingeloggtem User
-		// keine NPE werfen
-		userCfg = localCfg;
-		mandantCfg = localCfg;
-		
-		String basePath = FileUtility.getFilepath(PlatformHelper.getBasePath("ch.elexis")); //$NON-NLS-1$
-		localCfg.set("elexis-basepath", FileUtility.getFilepath(basePath)); //$NON-NLS-1$
-		
-		// Java Version prüfen
-		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		log.log("Elexis " + Version + ", build " + getRevision(true) + Messages.Hub_19 + //$NON-NLS-1$ //$NON-NLS-2$
-			Messages.Hub_20 + vI.version(), Log.SYNCMARK);
-		
-		if (vI.isOlder(neededJRE)) {
-			String msg = Messages.Hub_21 + neededJRE;
-			getLog().log(new Status(Status.ERROR, "ch.elexis", //$NON-NLS-1$
-				-1, msg, new Exception(msg)));
-			SWTHelper.alert(Messages.Hub_23, msg);
-			log.log(msg, Log.FATALS);
-		}
-		log.log(Messages.Hub_24 + getBasePath(), Log.INFOS);
-		pin.initializeDefaultPreferences();
 		
 	}
 	
@@ -240,8 +202,46 @@ public class Hub extends AbstractUIPlugin {
 	 */
 	@Override
 	public void start(final BundleContext context) throws Exception{
-		// log.log("Basedir: "+getBasePath(),Log.DEBUGMSG);
 		super.start(context);
+		String[] args = Platform.getApplicationArgs();
+		String config = "default"; //$NON-NLS-1$
+		for (String s : args) {
+			if (s.startsWith("--use-config=")) { //$NON-NLS-1$
+				String[] c = s.split("="); //$NON-NLS-1$
+				config = c[1];
+				localCfg = localCfg.getBranch(config, true);
+			} else if (s.startsWith("--plaf=")) { //$NON-NLS-1$
+				String[] c = s.split("="); //$NON-NLS-1$
+				String plaf = c[1];
+				localCfg.set(PreferenceConstants.USR_PLAF, plaf);
+				localCfg.flush();
+			}
+		}
+		initializeLog(localCfg);
+		log.log(Messages.Hub_12 + config, Log.INFOS);
+		// Damit Anfragen auf userCfg und mandantCfg bei nicht eingeloggtem User
+		// keine NPE werfen
+		userCfg = localCfg;
+		mandantCfg = localCfg;
+		
+		String basePath = FileUtility.getFilepath(PlatformHelper.getBasePath("ch.elexis")); //$NON-NLS-1$
+		localCfg.set("elexis-basepath", FileUtility.getFilepath(basePath)); //$NON-NLS-1$
+		
+		// Java Version prüfen
+		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		log.log("Elexis " + Version + ", build " + getRevision(true) + Messages.Hub_19 + //$NON-NLS-1$ //$NON-NLS-2$
+			Messages.Hub_20 + vI.version(), Log.SYNCMARK);
+		
+		if (vI.isOlder(neededJRE)) {
+			String msg = Messages.Hub_21 + neededJRE;
+			getLog().log(new Status(Status.ERROR, "ch.elexis", //$NON-NLS-1$
+				-1, msg, new Exception(msg)));
+			SWTHelper.alert(Messages.Hub_23, msg);
+			log.log(msg, Log.FATALS);
+		}
+		log.log(Messages.Hub_24 + getBasePath(), Log.INFOS);
+		pin.initializeDefaultPreferences();
+		
 		heart = Heartbeat.getInstance();
 		initializeLock();
 	}
@@ -375,7 +375,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5722 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5745 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$

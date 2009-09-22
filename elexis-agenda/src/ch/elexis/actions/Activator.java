@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  * 
- *  $Id: Activator.java 5744 2009-09-21 11:31:41Z rgw_ch $
+ *  $Id: Activator.java 5745 2009-09-22 09:34:47Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -50,10 +50,6 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public Activator() {
 		plugin = this;
-		AgendaActions.makeActions();
-		log.log("activated", Log.DEBUGMSG);
-		Desk.getImageRegistry().put(IMG_HOME,
-			getImageDescriptor("icons/calendar_view_day.png"));
 	}
 	
 	/*
@@ -65,7 +61,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		// pinger=new Synchronizer();
+		AgendaActions.makeActions();
+		//log.log("activated", Log.DEBUGMSG);
+		Desk.getImageRegistry().put(IMG_HOME,
+			getImageDescriptor("icons/calendar_view_day.png"));
 	}
 	
 	/*
