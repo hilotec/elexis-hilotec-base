@@ -23,7 +23,6 @@ import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
-import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
@@ -516,7 +515,7 @@ public class HL7 {
 		}
 		
 		void open() {
-			Desk.theDisplay.syncExec(new Runnable() {
+			Desk.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(), Patient.class,
 							PatientSelektorAdapter.this.title, PatientSelektorAdapter.this.message);
