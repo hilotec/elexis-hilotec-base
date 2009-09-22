@@ -25,7 +25,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -34,6 +33,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -45,8 +45,6 @@ import ch.rgw.io.FileTool;
 import ch.rgw.tools.StringTool;
 
 public class Desk implements IApplication {
-	/** @deprecated use getDisplay() */
-	public static Display theDisplay = null;
 	private static FormToolkit theToolkit = null;
 	
 	private static ImageRegistry theImageRegistry = null;
@@ -325,23 +323,28 @@ public class Desk implements IApplication {
 	public static ColorRegistry getColorRegistry(){
 		
 		if (theColorRegistry == null) {
-			theColorRegistry = new ColorRegistry(theDisplay, true);
+			theColorRegistry = new ColorRegistry(getDisplay(), true);
 		}
 		return theColorRegistry;
 	}
 	
 	public static FormToolkit getToolkit(){
 		if (theToolkit == null) {
-			theToolkit = new FormToolkit(theDisplay);
+			theToolkit = new FormToolkit(getDisplay());
 		}
 		return theToolkit;
 	}
 	
 	public static Display getDisplay(){
-		if (theDisplay == null) {
-			theDisplay = PlatformUI.createDisplay();
+		Display display = null;
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null) {
+			display = workbench.getDisplay();
 		}
-		return theDisplay;
+		if (display == null) {
+			display = new Shell().getDisplay();
+		}
+		return display;
 	}
 	
 	public static void updateFont(String cfgName){
@@ -424,17 +427,7 @@ public class Desk implements IApplication {
 	}
 	
 	public static Shell getTopShell(){
-		Shell ret = null;
-		if (theDisplay != null) {
-			ret = theDisplay.getActiveShell();
-		}
-		if (ret == null) {
-			ret = Hub.getActiveShell();
-		}
-		if (ret == null) {
-			ret = new Shell(theDisplay);
-		}
-		return ret;
+		return getDisplay().getActiveShell();
 	}
 	
 	/**
