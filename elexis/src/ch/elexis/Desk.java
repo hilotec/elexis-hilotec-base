@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ * 
  *    $Id: Desk.java 3916 2008-05-11 14:48:53Z rgw_ch $
  *******************************************************************************/
 
@@ -33,7 +33,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -47,6 +46,7 @@ import ch.rgw.tools.StringTool;
 public class Desk implements IApplication {
 	private static FormToolkit theToolkit = null;
 	
+	private static Display theDisplay=null;
 	private static ImageRegistry theImageRegistry = null;
 	private static ColorRegistry theColorRegistry = null;
 	private static HashMap<String, Cursor> cursors = null;
@@ -197,8 +197,8 @@ public class Desk implements IApplication {
 	}
 	
 	public void stop(){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/**
@@ -336,6 +336,13 @@ public class Desk implements IApplication {
 	}
 	
 	public static Display getDisplay(){
+		if(theDisplay==null){
+			theDisplay=PlatformUI.createDisplay();
+		}
+		return theDisplay;
+	}
+	/* doesn't work.
+	public static Display getDisplay(){
 		Display display = null;
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) {
@@ -346,7 +353,7 @@ public class Desk implements IApplication {
 		}
 		return display;
 	}
-	
+	 */
 	public static void updateFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		FontData[] fd =
@@ -409,8 +416,9 @@ public class Desk implements IApplication {
 		return theColorRegistry.get(col);
 	}
 	
+	
 	/**
-	 * Eine Hex-String Beeschreibung einer Farbe liefern
+	 * Eine Hex-String Beschreibung einer Farbe liefern
 	 * 
 	 * @param rgb
 	 *            Die Farbe in RGB-Form
@@ -420,7 +428,7 @@ public class Desk implements IApplication {
 		StringBuilder sb = new StringBuilder();
 		sb.append(StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.red), 2)).append(
 			StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.green), 2)).append(
-			StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.blue), 2));
+				StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.blue), 2));
 		String srgb = sb.toString();
 		theColorRegistry.put(srgb, rgb);
 		return srgb;

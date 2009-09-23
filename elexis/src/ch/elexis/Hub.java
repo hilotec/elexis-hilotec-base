@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5745 2009-09-22 09:34:47Z rgw_ch $
+ *    $Id: Hub.java 5750 2009-09-23 11:00:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -267,6 +267,8 @@ public class Hub extends AbstractUIPlugin {
 		globalCfg = null;
 		super.stop(context);
 		plugin = null;
+		// shutdownjobs are executed after the workbench has been shut down.
+		// So those jobs must not use any of the workbench's resources.
 		if ((shutdownJobs != null) && (shutdownJobs.size() > 0)) {
 			Shell shell = new Shell(Display.getDefault());
 			MessageDialog dlg =
@@ -375,7 +377,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5745 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5750 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
