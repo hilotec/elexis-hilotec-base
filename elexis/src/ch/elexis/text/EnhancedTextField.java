@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: EnhancedTextField.java 5752 2009-09-23 16:35:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -178,7 +178,7 @@ public class EnhancedTextField extends Composite {
 		menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			@SuppressWarnings("unchecked")
+
 			public void menuAboutToShow(IMenuManager manager){
 				manager.add(GlobalActions.cutAction);
 				manager.add(GlobalActions.copyAction);
