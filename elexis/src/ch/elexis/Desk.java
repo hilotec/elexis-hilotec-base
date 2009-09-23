@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.Workbench;
 
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
@@ -146,7 +147,6 @@ public class Desk implements IApplication {
 	public static final String CUR_HYPERLINK = "cursor_hyperlink"; //$NON-NLS-1$
 	
 	public Desk(){
-		getDisplay();
 		getImageRegistry();
 		getColorRegistry();
 		getToolkit();
@@ -335,25 +335,16 @@ public class Desk implements IApplication {
 		return theToolkit;
 	}
 	
-	public static Display getDisplay(){
-		if(theDisplay==null){
-			theDisplay=PlatformUI.createDisplay();
+	public static Display getDisplay() {
+		if(theDisplay == null){
+			theDisplay=Display.getCurrent();
+		}
+		if (theDisplay == null) {
+			return new Shell().getDisplay();
 		}
 		return theDisplay;
 	}
-	/* doesn't work.
-	public static Display getDisplay(){
-		Display display = null;
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench != null) {
-			display = workbench.getDisplay();
-		}
-		if (display == null) {
-			display = new Shell().getDisplay();
-		}
-		return display;
-	}
-	 */
+
 	public static void updateFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		FontData[] fd =
