@@ -337,9 +337,12 @@ public class Desk implements IApplication {
 	
 	public static Display getDisplay() {
 		if(theDisplay == null){
-			theDisplay=Display.getCurrent();
+			if (PlatformUI.isWorkbenchRunning()) {
+				theDisplay = PlatformUI.createDisplay();
+			}
 		}
 		if (theDisplay == null) {
+			//TODO: new Shell() may not supported in future release!
 			return new Shell().getDisplay();
 		}
 		return theDisplay;
