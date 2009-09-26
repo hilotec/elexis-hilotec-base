@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceInitializer.java 5335 2009-05-31 18:57:42Z rgw_ch $
+ *  $Id: PreferenceInitializer.java 5755 2009-09-26 19:16:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -58,7 +58,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         localstore.setDefault(PreferenceConstants.DB_TYP,"hsqldb"); //$NON-NLS-1$
         */
 		localstore.setDefault(PreferenceConstants.DB_NAME,"h2"); //$NON-NLS-1$
-        localstore.setDefault(PreferenceConstants.DB_CLASS,"org.h2.Driver"); //$NON-NLS-1$
+        //localstore.setDefault(PreferenceConstants.DB_CLASS,"org.h2.Driver"); //$NON-NLS-1$
         String base=getDefaultDBPath();
         
         localstore.setDefault(PreferenceConstants.DB_CONNECT,"jdbc:h2:"+base+"/db;MODE=MySQL"); //$NON-NLS-1$ //$NON-NLS-2$

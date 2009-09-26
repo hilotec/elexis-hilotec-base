@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 5755 2009-09-26 19:16:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -59,7 +59,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     {
         loginshell=new Shell(Desk.getDisplay());
         Log.setAlert(loginshell);
-        if(PersistentObject.connect(Hub.localCfg)==false){
+        if(PersistentObject.connect(Hub.localCfg, loginshell)==false){
             Log.setAlertLevel(Log.ERRORS);
             Hub.log.log(Messages.ApplicationWorkbenchAdvisor_0+PersistentObject.getConnection().lastErrorString,Log.ERRORS);
             MessageDialog.openError(loginshell,Messages.ApplicationWorkbenchAdvisor_1,Messages.ApplicationWorkbenchAdvisor_2+PersistentObject.getConnection().lastErrorString);
