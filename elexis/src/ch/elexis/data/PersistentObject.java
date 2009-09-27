@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5758 2009-09-27 16:13:57Z rgw_ch $
+ *    $Id: PersistentObject.java 5760 2009-09-27 18:43:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -205,6 +205,7 @@ public abstract class PersistentObject {
 			if ((provider!=null) && provider.startsWith("Medelexis")) {
 				WizardDialog wd = new WizardDialog(loginshell,
 						new DBConnectWizard());
+				SWTHelper.center(wd.getShell());
 				wd.open();
 				Hub.localCfg.flush();
 				SWTHelper.showInfo("Datenbankverbindung geändert", "Bitte starten Sie Elexis erneut");
