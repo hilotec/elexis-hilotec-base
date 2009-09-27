@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5755 2009-09-26 19:16:57Z rgw_ch $
+ *    $Id: PersistentObject.java 5758 2009-09-27 16:13:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -198,8 +198,10 @@ public abstract class PersistentObject {
 		String user = localstore.getString(PreferenceConstants.DB_USERNAME);
 		String pwd = localstore.getString(PreferenceConstants.DB_PWD);
 		String typ = localstore.getString(PreferenceConstants.DB_TYP);
+		log.log("Driver is "+driver, Log.INFOS);
 		if (driver.equals(StringTool.leer)) {
 			String provider=System.getProperty("elexis-provider");
+			log.log("Provider is "+provider, Log.INFOS);
 			if ((provider!=null) && provider.startsWith("Medelexis")) {
 				WizardDialog wd = new WizardDialog(loginshell,
 						new DBConnectWizard());
