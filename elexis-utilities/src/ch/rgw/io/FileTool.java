@@ -408,8 +408,8 @@ public class FileTool {
 	}
 
 	/**
-	 * Kopiert Streams und erstellt MD5-Checksumme.
-	 * Streams werden nicht geschlossen, aber output wird geflusht.
+	 * Kopiert Streams und erstellt MD5-Checksumme. Streams werden nicht
+	 * geschlossen, aber output wird geflusht.
 	 */
 	public static byte[] copyStreamsWithChecksum(InputStream is,
 			OutputStream os, String algo) throws IOException {
@@ -436,7 +436,8 @@ public class FileTool {
 			}
 			bos.write(buffer, 0, r);
 		}
-		// bis.close(); Closing woild kill an outer zipinput or objectinputstream
+		// bis.close(); Closing woild kill an outer zipinput or
+		// objectinputstream
 		bos.flush();
 		// bos.close closing would kill an outer zipoutput or objectoutputstream
 		if (md == null) {
@@ -592,23 +593,68 @@ public class FileTool {
 	}
 
 	/**
+	 * doesn't work because it depends on same DIRECTORY_SEPARATORs in
+	 * zipper and unzipper
+	 * 
 	 * Unzips a file in the file directory
+	 * 
+	 * public static final void unzip(final String filenamePath) throws
+	 * IOException { final int BUFFER = 2048; int count; byte data[] = new
+	 * byte[BUFFER];
+	 * 
+	 * if (filenamePath == null || filenamePath.length() == 0) { throw new
+	 * IllegalArgumentException("No file to unzip!"); }
+	 * 
+	 * String baseZipDirName = getFilepath(filenamePath); String unzippedDirName
+	 * = getNakedFilename(filenamePath); String baseUnzippedDirName =
+	 * getFilepath(filenamePath) + DIRECTORY_SEPARATOR + unzippedDirName; File
+	 * baseUnzippedDir = new File(baseUnzippedDirName); if
+	 * (!baseUnzippedDir.exists()) { baseUnzippedDir.mkdirs(); }
+	 * 
+	 * FileInputStream fileInputstream = null; ZipInputStream zipIn = null; try
+	 * { fileInputstream = new FileInputStream(filenamePath); zipIn = new
+	 * ZipInputStream(new BufferedInputStream(fileInputstream)); ZipEntry entry;
+	 * while ((entry = zipIn.getNextEntry()) != null) {
+	 * 
+	 * String entryFilenamePath = entry.getName(); if
+	 * (!entryFilenamePath.startsWith(unzippedDirName)) { entryFilenamePath =
+	 * unzippedDirName + DIRECTORY_SEPARATOR + entryFilenamePath; }
+	 * 
+	 * // Check entry sub directory String entryPathname =
+	 * getFilepath(entryFilenamePath); if (entryPathname != null &&
+	 * entryPathname.length() > 0) { File entryPath = new File(baseZipDirName +
+	 * DIRECTORY_SEPARATOR + entryPathname); if (!entryPath.exists()) {
+	 * entryPath.mkdirs(); } }
+	 * 
+	 * // Check entry file String entryFilename =
+	 * getFilename(entryFilenamePath); if (entryFilename != null &
+	 * entryFilename.length() > 0) { File outputFile = new File(baseZipDirName +
+	 * DIRECTORY_SEPARATOR + entryFilenamePath); if (!outputFile.exists()) {
+	 * outputFile.createNewFile(); }
+	 * 
+	 * // write the files to the disk(); BufferedOutputStream dest = null;
+	 * FileOutputStream fileOutputstream = null; try { fileOutputstream = new
+	 * FileOutputStream(outputFile); dest = new
+	 * BufferedOutputStream(fileOutputstream, BUFFER); while ((count =
+	 * zipIn.read(data, 0, BUFFER)) != -1) { dest.write(data, 0, count); }
+	 * dest.flush(); } finally { if (fileOutputstream != null) {
+	 * fileOutputstream.close(); } if (dest != null) { dest.close(); } } } } }
+	 * finally { if (fileInputstream != null) { fileInputstream.close(); } if
+	 * (zipIn != null) { zipIn.close(); } } }
 	 */
-	public static final void unzip(final String filenamePath)
-			throws IOException {
-		final int BUFFER = 2048;
-		int count;
-		byte data[] = new byte[BUFFER];
 
-		if (filenamePath == null || filenamePath.length() == 0) {
+	/**
+	 * unzip a file into a directory with the same name than the file and in the
+	 * file's directory
+	 */
+	public static final void unzip(final String file) throws IOException{
+		if (file == null || file.length() == 0) {
 			throw new IllegalArgumentException("No file to unzip!");
 		}
 
-		String baseZipDirName = getFilepath(filenamePath);
-		String unzippedDirName = getNakedFilename(filenamePath);
-		String baseUnzippedDirName = getFilepath(filenamePath)
-				+ DIRECTORY_SEPARATOR + unzippedDirName;
-		File baseUnzippedDir = new File(baseUnzippedDirName);
+		String baseZipDirName = getFilepath(file);
+		String unzippedDirName = getNakedFilename(file);
+		File baseUnzippedDir = new File(baseZipDirName, unzippedDirName);
 		if (!baseUnzippedDir.exists()) {
 			baseUnzippedDir.mkdirs();
 		}
@@ -616,56 +662,9 @@ public class FileTool {
 		FileInputStream fileInputstream = null;
 		ZipInputStream zipIn = null;
 		try {
-			fileInputstream = new FileInputStream(filenamePath);
+			fileInputstream = new FileInputStream(file);
 			zipIn = new ZipInputStream(new BufferedInputStream(fileInputstream));
-			ZipEntry entry;
-			while ((entry = zipIn.getNextEntry()) != null) {
-				String entryFilenamePath = entry.getName();
-				if (!entryFilenamePath.startsWith(unzippedDirName)) {
-					entryFilenamePath = unzippedDirName + DIRECTORY_SEPARATOR
-							+ entryFilenamePath;
-				}
-
-				// Check entry sub directory
-				String entryPathname = getFilepath(entryFilenamePath);
-				if (entryPathname != null && entryPathname.length() > 0) {
-					File entryPath = new File(baseZipDirName
-							+ DIRECTORY_SEPARATOR + entryPathname);
-					if (!entryPath.exists()) {
-						entryPath.mkdirs();
-					}
-				}
-
-				// Check entry file
-				String entryFilename = getFilename(entryFilenamePath);
-				if (entryFilename != null & entryFilename.length() > 0) {
-					File outputFile = new File(baseZipDirName
-							+ DIRECTORY_SEPARATOR + entryFilenamePath);
-					if (!outputFile.exists()) {
-						outputFile.createNewFile();
-					}
-
-					// write the files to the disk();
-					BufferedOutputStream dest = null;
-					FileOutputStream fileOutputstream = null;
-					try {
-						fileOutputstream = new FileOutputStream(outputFile);
-						dest = new BufferedOutputStream(fileOutputstream,
-								BUFFER);
-						while ((count = zipIn.read(data, 0, BUFFER)) != -1) {
-							dest.write(data, 0, count);
-						}
-						dest.flush();
-					} finally {
-						if (fileOutputstream != null) {
-							fileOutputstream.close();
-						}
-						if (dest != null) {
-							dest.close();
-						}
-					}
-				}
-			}
+			unzip(zipIn,baseUnzippedDir);
 		} finally {
 			if (fileInputstream != null) {
 				fileInputstream.close();
@@ -675,7 +674,26 @@ public class FileTool {
 			}
 		}
 	}
-	
+
+	private static void unzip(ZipInputStream zis, File directory) throws IOException {
+		ZipEntry entry;
+		while ((entry = zis.getNextEntry()) != null) {
+			if (entry.isDirectory()) {
+				File subdir = new File(directory, entry.getName());
+				if (!subdir.exists()) {
+					subdir.mkdirs();
+				}
+				unzip(zis, subdir);
+			} else {
+				FileOutputStream fos = new FileOutputStream(new File(directory,
+						entry.getName()));
+				FileTool.copyStreams(zis, fos);
+				fos.close();
+			}
+		}
+
+	}
+
 	/**
 	 * Unzips a file in the file directory
 	 */
