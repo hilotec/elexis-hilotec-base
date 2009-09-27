@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 5628 2009-08-12 19:54:18Z rgw_ch $
+ *  $Id: TextContainer.java 5759 2009-09-27 18:42:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.oowrapper3;
@@ -124,7 +124,7 @@ public class TextContainer implements ITextPlugin {
 	public boolean createEmptyDocument(){
 		try {
 			clean();
-			Bundle bundle = Platform.getBundle("ch.elexis.oowrapper3");
+			Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
 			Path path = new Path("rsc/empty.odt");
 			InputStream is = FileLocator.openStream(bundle, path, false);
 			FileOutputStream fos = new FileOutputStream(myFile);
