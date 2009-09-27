@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 5713 2009-09-11 16:49:04Z rgw_ch $ 
+<!-- $Id: plugin.xml 5757 2009-09-27 14:56:27Z rgw_ch $ 
  * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -95,13 +95,29 @@
       <product
             application="ch.elexis.ElexisApp"
             description="%elexis.banner"
-            name="Medelexis Kern">
+            name="Elexis">
          <property
                name="appName"
-               value="Medelexis Kern"/>
+               value="Elexis"/>
          <property
                name="preferenceCustomization"
                value="elexisprefs.ini"/>
+         <property
+               name="aboutImage"
+               value="rsc/elexis48.gif">
+         </property>
+         <property
+               name="aboutText"
+               value="Elexis - die Praxis.&#x0A;(c) 2005-2009 by G. Weirich and Elexis&#x0A;http://www.elexis.ch&#x0A;&#x0A;Informationen und Referenzinstallation:&#x0A;Gerry Weirich&#x0A;Rietstrasse 30&#x0A;8201 Schaffhausen">
+         </property>
+         <property
+               name="windowImages"
+               value="rsc/elexis2_16.gif,rsc/elexis32_2.gif,rsc/elexis48.gif">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,445,15">
+         </property>
       </product>
    </extension>
    <extension
