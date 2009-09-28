@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: SWTHelper.java 5747 2009-09-22 14:56:40Z michael_imhof $
+ * 
+ * $Id: SWTHelper.java 5762 2009-09-28 08:16:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -30,11 +30,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -55,29 +55,52 @@ public class SWTHelper {
 	
 	/** Ein Objekt innerhalb des parents zentrieren */
 	public static void center(final Shell parent, final Composite child){
-		Rectangle par = parent.getBounds();
-		Rectangle ch = child.getBounds();
-		int xOff = (par.width - ch.width) / 2;
-		int yOff = (par.height - ch.height) / 2;
-		child.setBounds(par.x + xOff, par.y + yOff, ch.width, ch.height);
+		if (parent != null && child != null) {
+			Rectangle par = parent.getBounds();
+			Rectangle ch = child.getBounds();
+			if (par != null && ch != null) {
+				int xOff = (par.width - ch.width) / 2;
+				int yOff = (par.height - ch.height) / 2;
+				child.setBounds(par.x + xOff, par.y + yOff, ch.width, ch.height);
+			}
+		}
 	}
 	
 	/** Ein Objekt innerhalb des parents zentrieren */
 	public static void center(final Shell parent, final Shell child){
-		Rectangle par = parent.getBounds();
-		Rectangle ch = child.getBounds();
-		int xOff = (par.width - ch.width) / 2;
-		int yOff = (par.height - ch.height) / 2;
-		child.setBounds(par.x + xOff, par.y + yOff, ch.width, ch.height);
+		if (parent != null && child != null) {
+			Rectangle par = parent.getBounds();
+			Rectangle ch = child.getBounds();
+			if (par != null && ch != null) {
+				int xOff = (par.width - ch.width) / 2;
+				int yOff = (par.height - ch.height) / 2;
+				child.setBounds(par.x + xOff, par.y + yOff, ch.width, ch.height);
+			}
+		}
 	}
 	
-	/** Ein Objekt auf dem Bildschirm zentrieren */
+	/**
+	 * Ein Objekt auf dem Bildschirm zentrieren. Robust. Sollte nie eine Exception werfen. Ändert im
+	 * Zweifelsfall nichts an der Position.
+	 * */
 	public static void center(final Shell child){
-		Rectangle par = Desk.getDisplay().getBounds();
-		Rectangle ch = child.getBounds();
-		int xOff = (par.width - ch.width) / 2;
-		int yOff = (par.height - ch.height) / 2;
-		child.setBounds(par.x + xOff, par.y + yOff, ch.width, ch.height);
+		if (child != null) {
+			Display display = Desk.getDisplay();
+			if (display != null) {
+				Rectangle par = display.getBounds();
+				if (par != null) {
+					Rectangle ch = child.getBounds();
+					if (ch != null) {
+						ch.width = Math.max(30, ch.width);
+						ch.height = Math.max(20, ch.height);
+						int xOff = (par.width - ch.width) / 2;
+						int yOff = (par.height - ch.height) / 2;
+						child.setBounds(par.x + xOff, par.y + yOff, ch.width, ch.height);
+					}
+				}
+			}
+			
+		}
 	}
 	
 	/** Einen Text zentriert in ein Rechteck schreiben */
@@ -194,32 +217,33 @@ public class SWTHelper {
 	 *            Nachricht
 	 * @return true: User hat Ja geklickt
 	 */
-	public static Boolean askYesNoCancel(final String title,
-			final String message) {
+	public static Boolean askYesNoCancel(final String title, final String message){
 		InSyncYesNoCancel rn = new InSyncYesNoCancel(title, message);
 		Desk.getDisplay().syncExec(rn);
 		return rn.ret;
 	}
-
+	
 	private static class InSyncYesNoCancel implements Runnable {
 		Boolean ret = null;
 		String title, message;
-
-		InSyncYesNoCancel(final String title, final String message) {
+		
+		InSyncYesNoCancel(final String title, final String message){
 			this.title = title;
 			this.message = message;
 		}
-
-		public void run() {
+		
+		public void run(){
 			Shell shell = Desk.getTopShell();
-			MessageDialog dialog = new MessageDialog(shell, title, null, // accept
-			// the
-			// default
-			// window
-			// icon
-			message, MessageDialog.QUESTION, new String[] {
+			MessageDialog dialog =
+				new MessageDialog(shell, title, null, // accept
+					// the
+					// default
+					// window
+					// icon
+					message, MessageDialog.QUESTION, new String[] {
 					IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
-					IDialogConstants.CANCEL_LABEL }, 0);
+					IDialogConstants.CANCEL_LABEL
+				}, 0);
 			// ok is the default
 			int result = dialog.open();
 			if (result != 2) {
@@ -423,15 +447,16 @@ public class SWTHelper {
 	 */
 	public static boolean blameEmptyString(final String test, final String name){
 		if (StringTool.isNothing(test)) {
-			showError(Messages.getString("SWTHelper.BadParameter"), name + Messages.getString("SWTHelper.HasNoValidContents")); //$NON-NLS-1$ //$NON-NLS-2$
+			showError(
+				Messages.getString("SWTHelper.BadParameter"), name + Messages.getString("SWTHelper.HasNoValidContents")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;
 	}
 	
 	/**
-	 * Adds a FocusListener to <code>text</code> so that the text is selected as soon as the
-	 * control gets the focus. The selection is cleared when the focus is lost.
+	 * Adds a FocusListener to <code>text</code> so that the text is selected as soon as the control
+	 * gets the focus. The selection is cleared when the focus is lost.
 	 * 
 	 * @param text
 	 *            the Text control to add a focus listener to
