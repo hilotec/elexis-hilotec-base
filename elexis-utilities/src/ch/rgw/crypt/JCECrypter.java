@@ -104,7 +104,7 @@ public class JCECrypter implements Cryptologist {
 			DataInputStream di=new DataInputStream(bais);
 			int magic=di.readShort();
 			if(magic!=MAGIC){
-				return new Result<byte[]>(Result.SEVERITY.ERROR,1,"Bad format",null,true);
+				return new Result<byte[]>(Result.SEVERITY.ERROR,1,"Bad data format while trying to decrypt",null,true);
 			}
 			int version=di.readShort();
 			int mark=di.readShort();
