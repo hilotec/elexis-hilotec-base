@@ -8,13 +8,15 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: IMesswertTyp.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: IMesswertTyp.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
+
+import com.hilotec.elexis.messwerte.data.Messwert;
 
 public interface IMesswertTyp {
 	/**

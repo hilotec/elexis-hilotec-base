@@ -11,22 +11,34 @@
  * $Id: MesswertTypNum.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.util.SWTHelper;
+import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.MesswertBase;
+
 
 /**
  * @author Antoine Kaufmann
  */
-public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
-	double defVal = 0.0;
+public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
+	int defVal = 0;
 	
-	public MesswertTypNum(String n, String t, String u) {
+	/**
+	 * Kleinster auswaehlbarer Wert
+	 */
+	int min = 0;
+	
+	/**
+	 * Groesster auswaehlbarer Wert 
+	 */
+	int max = 0;
+	
+	public MesswertTypScale(String n, String t, String u) {
 		super(n, t, u);
 	}
 	
@@ -35,21 +47,37 @@ public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
 	}
 
 	public String getDefault() {
-		return Double.toString(defVal);
+		return Integer.toString(defVal);
 	}
 
 	public void setDefault(String str) {
-		defVal = Double.parseDouble(str);
+		defVal = Integer.parseInt(str);
+	}
+	
+	/**
+	 * Groesster auswaehlbarer Wert setzen
+	 */
+	public void setMax(int m) {
+		max = m;
+	}
+	
+	/**
+	 * Kleinster auswaehlbarer Wert setzen
+	 */
+	public void setMin(int m) {
+		min = m;
 	}
 	
 	public Widget createWidget(Composite parent, Messwert messwert) {
-		Text text = SWTHelper.createText(parent, 1, SWT.NONE);
-		text.setText(messwert.getWert());
-		return text;
+		Spinner spinner = new Spinner(parent, SWT.NONE);
+		spinner.setMinimum(min);
+		spinner.setMaximum(max);
+		spinner.setSelection(Integer.parseInt(messwert.getWert()));
+		return spinner;
 	}
 	
 	public void saveInput(Widget widget, Messwert messwert) {
-		Text text = (Text) widget;
-		messwert.setWert(text.getText());
+		Spinner spinner = (Spinner) widget;
+		messwert.setWert(Integer.toString(spinner.getSelection()));
 	}
 }

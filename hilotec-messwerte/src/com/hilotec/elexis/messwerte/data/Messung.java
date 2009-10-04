@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: Messung.java 5710 2009-09-08 14:04:56Z freakypenguin $
+ * $Id: Messung.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hilotec.elexis.messwerte.Activator;
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;

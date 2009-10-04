@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: MessungBearbeiten.java 5741 2009-09-19 09:04:41Z freakypenguin $
+ * $Id: MessungBearbeiten.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;
@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-import com.hilotec.elexis.messwerte.data.IMesswertTyp;
 import com.hilotec.elexis.messwerte.data.Messung;
 import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 import ch.elexis.util.SWTHelper;

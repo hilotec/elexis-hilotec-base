@@ -10,13 +10,16 @@
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: DataAccessor.java 5424 2009-06-26 08:50:41Z freakypenguin $
+ * $Id: DataAccessor.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypData;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;

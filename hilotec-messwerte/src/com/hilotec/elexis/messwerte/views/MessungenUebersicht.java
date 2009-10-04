@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: MessungenUebersicht.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MessungenUebersicht.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;
@@ -33,11 +33,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-import com.hilotec.elexis.messwerte.data.IMesswertTyp;
 import com.hilotec.elexis.messwerte.data.Messung;
 import com.hilotec.elexis.messwerte.data.MessungKonfiguration;
 import com.hilotec.elexis.messwerte.data.MessungTyp;
 import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
 
 import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;

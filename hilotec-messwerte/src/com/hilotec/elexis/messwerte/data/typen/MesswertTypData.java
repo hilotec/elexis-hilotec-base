@@ -8,10 +8,10 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypData.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MesswertTypData.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
 import java.util.List;
 
@@ -19,6 +19,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
+
+import com.hilotec.elexis.messwerte.data.Messung;
+import com.hilotec.elexis.messwerte.data.MessungKonfiguration;
+import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.MesswertBase;
 
 import ch.elexis.data.Patient;
 
@@ -46,7 +51,7 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 		if (messwert.getWert().equals("")) {
 			return "";
 		}
-		Messung m = new Messung(messwert.getWert());
+		Messung m = Messung.load(messwert.getWert());
 		return  m.getDatum();
 	}
 

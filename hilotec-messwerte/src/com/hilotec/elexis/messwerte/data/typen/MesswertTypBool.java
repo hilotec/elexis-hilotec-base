@@ -8,60 +8,51 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypStr.java 5405 2009-06-25 08:39:05Z freakypenguin $
+ * $Id: MesswertTypBool.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
-import org.eclipse.swt.SWT;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.SWT;
 
-import ch.elexis.util.SWTHelper;
+import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.MesswertBase;
 
 /**
  * @author Antoine Kaufmann
  */
-public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
-	String  defVal = "";
+public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
+	boolean defVal;
 	
-	/**
-	 * Anzahl Zeilen, die das Textfeld haben soll
-	 */
-	int lines = 1;
-	
-	public MesswertTypStr(String n, String t, String u) {
+	public MesswertTypBool(String n, String t, String u) {
 		super(n, t, u);
+		defVal = false;
 	}
 	
 	public String erstelleDarstellungswert(Messwert messwert) {
-		return messwert.getWert();
+		return (Boolean.parseBoolean(messwert.getWert()) ? "Ja" : "Nein");
 	}
 
 	public String getDefault() {
-		return defVal;
+		return Boolean.toString(defVal);
 	}
 	
 	public void setDefault(String def) {
-		defVal = def;
+		defVal = Boolean.parseBoolean(def);
 	}
 	
-	/**
-	 * Anzahl der anzuzeigenden Zeilen setzen
-	 */
-	public void setLines(int l) {
-		lines = l;
+	public Widget createWidget(Composite parent, Messwert messwert) {
+		Button button = new Button(parent, SWT.CHECK);
+		button.setSelection(Boolean.parseBoolean(messwert.getWert()));
+		return button;
 	}
 
-	public Widget createWidget(Composite parent, Messwert messwert) {
-		Text text = SWTHelper.createText(parent, lines, SWT.NONE);
-		text.setText(messwert.getWert());
-		return text;
-	}
-	
 	public void saveInput(Widget widget, Messwert messwert) {
-		Text text = (Text) widget;
-		messwert.setWert(text.getText());
+		Button button = (Button) widget;
+		messwert.setWert(Boolean.toString(button.getSelection()));
 	}
 }

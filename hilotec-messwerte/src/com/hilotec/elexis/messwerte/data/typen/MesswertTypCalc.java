@@ -8,10 +8,10 @@
  * Contributors:
  *    A. Kaufmann - initial implementation
  * 
- * $Id: MesswertTypCalc.java 5731 2009-09-15 16:12:20Z rgw_ch $
+ * $Id: MesswertTypCalc.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
 import java.util.ArrayList;
 
@@ -19,6 +19,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+
+import com.hilotec.elexis.messwerte.data.Messung;
+import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.MesswertBase;
 
 import bsh.EvalError;
 import bsh.Interpreter;

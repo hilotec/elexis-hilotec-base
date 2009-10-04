@@ -8,10 +8,10 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypEnum.java 5640 2009-08-18 08:28:08Z rgw_ch $
+ * $Id: MesswertTypEnum.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
 import java.util.ArrayList;
 
@@ -19,6 +19,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
+
+import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.MesswertBase;
 
 import ch.rgw.tools.StringTool;
 

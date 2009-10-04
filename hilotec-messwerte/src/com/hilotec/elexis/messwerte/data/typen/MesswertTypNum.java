@@ -8,34 +8,28 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MesswertTypNum.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: MesswertTypNum.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
-package com.hilotec.elexis.messwerte.data;
+package com.hilotec.elexis.messwerte.data.typen;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.Text;
 
+import com.hilotec.elexis.messwerte.data.Messwert;
+import com.hilotec.elexis.messwerte.data.MesswertBase;
+
+import ch.elexis.util.SWTHelper;
 
 /**
  * @author Antoine Kaufmann
  */
-public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
-	int defVal = 0;
+public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
+	double defVal = 0.0;
 	
-	/**
-	 * Kleinster auswaehlbarer Wert
-	 */
-	int min = 0;
-	
-	/**
-	 * Groesster auswaehlbarer Wert 
-	 */
-	int max = 0;
-	
-	public MesswertTypScale(String n, String t, String u) {
+	public MesswertTypNum(String n, String t, String u) {
 		super(n, t, u);
 	}
 	
@@ -44,37 +38,21 @@ public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
 	}
 
 	public String getDefault() {
-		return Integer.toString(defVal);
+		return Double.toString(defVal);
 	}
 
 	public void setDefault(String str) {
-		defVal = Integer.parseInt(str);
-	}
-	
-	/**
-	 * Groesster auswaehlbarer Wert setzen
-	 */
-	public void setMax(int m) {
-		max = m;
-	}
-	
-	/**
-	 * Kleinster auswaehlbarer Wert setzen
-	 */
-	public void setMin(int m) {
-		min = m;
+		defVal = Double.parseDouble(str);
 	}
 	
 	public Widget createWidget(Composite parent, Messwert messwert) {
-		Spinner spinner = new Spinner(parent, SWT.NONE);
-		spinner.setMinimum(min);
-		spinner.setMaximum(max);
-		spinner.setSelection(Integer.parseInt(messwert.getWert()));
-		return spinner;
+		Text text = SWTHelper.createText(parent, 1, SWT.NONE);
+		text.setText(messwert.getWert());
+		return text;
 	}
 	
 	public void saveInput(Widget widget, Messwert messwert) {
-		Spinner spinner = (Spinner) widget;
-		messwert.setWert(Integer.toString(spinner.getSelection()));
+		Text text = (Text) widget;
+		messwert.setWert(text.getText());
 	}
 }

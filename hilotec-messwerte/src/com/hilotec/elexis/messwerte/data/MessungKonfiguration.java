@@ -8,7 +8,7 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: MessungKonfiguration.java 5565 2009-07-20 14:36:55Z freakypenguin $
+ * $Id: MessungKonfiguration.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -30,6 +30,15 @@ import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypBool;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypCalc;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypData;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypEnum;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypNum;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypScale;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypStr;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;

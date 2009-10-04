@@ -8,12 +8,13 @@
  * Contributors:
  *    A. Kaufmann - initial implementation 
  *    
- * $Id: Messwert.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: Messwert.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
 
 import com.hilotec.elexis.messwerte.Activator;
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
 
 import ch.elexis.data.PersistentObject;
 
