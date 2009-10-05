@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: ExportFireHandler.java 5208 2009-03-16 12:08:58Z rgw_ch $
+ * 
+ *    $Id: ExportFireHandler.java 5771 2009-10-05 10:02:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.fire.handlers;
@@ -45,37 +45,38 @@ import ch.rgw.tools.XMLTool;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class ExportFireHandler extends AbstractHandler {
+	public static final String FIRESTICKERNAME = "Fire (ICPC)";
 	private static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD";
 	private Sticker fireSticker;
-
+	
 	public ExportFireHandler() {
-		String id = new Query<Sticker>(Sticker.class).findSingle("name", "=",
-				"Fire (ICPC)");
+		String id = new Query<Sticker>(Sticker.class).findSingle(Sticker.NAME, Query.EQUALS,
+			FIRESTICKERNAME);
 		if (id == null) {
-			fireSticker = new Sticker("Fire (ICPC)", Desk
-					.getColor(Desk.COL_BLUE), Desk.getColor(Desk.COL_GREY));
+			fireSticker = new Sticker(FIRESTICKERNAME, Desk
+				.getColor(Desk.COL_BLUE), Desk.getColor(Desk.COL_GREY));
 		} else {
 			fireSticker = Sticker.load(id);
 		}
 	}
-
+	
 	/**
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+		.getActiveWorkbenchWindowChecked(event);
 		String lastupdate = Hub.globalCfg.get(CFGPARAM, null);
 		if (lastupdate == null) {
 			lastupdate = "20090101";
 		}
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 		TimeTool ttFrom = new TimeTool(lastupdate);
-		qbe.add("Datum", ">=", ttFrom.toString(TimeTool.DATE_COMPACT));
+		qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL, ttFrom.toString(TimeTool.DATE_COMPACT));
 		List<Konsultation> konsen = qbe.execute();
 		Hub.globalCfg.set(CFGPARAM, new TimeTool()
-				.toString(TimeTool.DATE_COMPACT));
+		.toString(TimeTool.DATE_COMPACT));
 		if (konsen.size() > 0) {
 			FileDialog fd = new FileDialog(Hub.getActiveShell(), SWT.SAVE);
 			fd.setFileName("elexis-fire"+new TimeTool().toString(TimeTool.DATE_COMPACT)+".xml");
@@ -99,14 +100,14 @@ public class ExportFireHandler extends AbstractHandler {
 						k.addSticker(fireSticker);
 						Element eKons = new Element("konsultation");
 						eKons.addContent(createSub("konsdate", new TimeTool(k
-								.getDatum()).toString(TimeTool.DATE_ISO)));
+							.getDatum()).toString(TimeTool.DATE_ISO)));
 						eKons.addContent(createSub("patid", pat.getPatCode()));
 						eKons.addContent(createSub("patyear", Integer
-								.toString(new TimeTool(pat.getGeburtsdatum())
-										.get(TimeTool.YEAR))));
+							.toString(new TimeTool(pat.getGeburtsdatum())
+							.get(TimeTool.YEAR))));
 						eKons.addContent(createSub("patgender", pat
-								.getGeschlecht().equals(Person.MALE) ? "male"
-								: "female"));
+							.getGeschlecht().equals(Person.MALE) ? "male"
+									: "female"));
 						eKons.addContent(createSub("arzt", TarmedRequirements.getEAN(k.getMandant())));
 						eRoot.addContent(eKons);
 						Analyzer an=new Analyzer(k);
@@ -123,10 +124,10 @@ public class ExportFireHandler extends AbstractHandler {
 				}
 			}
 		}
-
+		
 		return null;
 	}
-
+	
 	private Element createSub(String name, String contents) {
 		Element ret = new Element(name);
 		ret.setText(contents);

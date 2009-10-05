@@ -7,14 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Analyzer.java 5208 2009-03-16 12:08:58Z rgw_ch $
+ * 
+ *    $Id: Analyzer.java 5771 2009-10-05 10:02:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.fire.handlers;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import org.jdom.Element;
 
@@ -29,7 +28,6 @@ import ch.elexis.data.Person;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.Encounter;
-import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.IcpcCode;
 import ch.elexis.icpc.fire.ui.Preferences;
 import ch.elexis.util.SWTHelper;
@@ -37,18 +35,18 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class Analyzer {
-	private Konsultation mine;
-	private XChangeContributor xc = new XChangeContributor();
-	private Patient pat;
+	private final Konsultation mine;
+	private final XChangeContributor xc = new XChangeContributor();
+	private final Patient pat;
 	private String bdSystTab, bdDiastTab, pulseTab, heightTab, weightTab,
-			waistTab;
-
+	waistTab;
+	
 	public void addVitalElement(Element eKons) {
 		Element elVital = new Element("vital");
 		readVital(elVital);
 		eKons.addContent(elVital);
 	}
-
+	
 	public void addMediElements(Element eKons){
 		Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
 		qbe.add("DatumVon", "=", mine.getDatum());
@@ -115,7 +113,7 @@ public class Analyzer {
 			addElement(eLab, "laborwert", lr.getResult());
 		}
 	}
-
+	
 	public Analyzer(Konsultation k) {
 		mine = k;
 		pat = k.getFall().getPatient();
@@ -135,21 +133,21 @@ public class Analyzer {
 									xc.setPatient(pat);
 								}
 							}
-
+							
 						}
 					}
 				}
 			}
 		}
 	}
-
+	
 	private void readVital(Element el) {
 		String[] split = bdSystTab.split("\\s*\\:\\s*");
 		String bdsyst = null, bddiast = null;
 		if (split.length > 1) {
 			HashMap<String, String> vals = xc.getResult(split[0].trim(), mine
-					.getDatum());
-
+				.getDatum());
+			
 			if (bdSystTab.equals(bdDiastTab)) {
 				String bd = vals.get(split[1].trim());
 				if (bd != null) {
@@ -159,14 +157,14 @@ public class Analyzer {
 						bddiast = bds[1].trim();
 					}
 				}
-
+				
 			} else {
 				bdsyst = vals.get(split[1]).trim();
 				split = bdDiastTab.split("\\s:\\s");
 				if (split.length > 1) {
 					vals = xc.getResult(split[0].trim(), mine.getDatum());
 					bddiast = vals.get(split[1]).trim();
-
+					
 				}
 			}
 		}
@@ -185,12 +183,12 @@ public class Analyzer {
 		addVitalParm(el, "gewicht", weightTab);
 		addVitalParm(el, "bauchumfang", waistTab);
 	}
-
+	
 	private String addVitalParm(Element el, String elName, String p) {
 		String[] split = p.split("\\s*\\:\\s*");
 		if (split.length > 1) {
 			HashMap<String, String> vals = xc.getResult(split[0].trim(), mine
-					.getDatum());
+				.getDatum());
 			if (vals != null) {
 				String res = vals.get(split[1].trim());
 				if (res != null) {
@@ -202,17 +200,17 @@ public class Analyzer {
 		}
 		return null;
 	}
-
+	
 	private String getOrFail(String prefs) {
 		String ret = Hub.globalCfg.get(prefs, null);
 		if (ret == null) {
 			SWTHelper
-					.showError("ICPC/Fire",
-							"Bitte konfigurieren Sie das Fire Plugin (Datei-Einstellungen)");
+			.showError("ICPC/Fire",
+			"Bitte konfigurieren Sie das Fire Plugin (Datei-Einstellungen)");
 		}
 		return ret;
 	}
-
+	
 	private void addElement(Element parent, String title, String value) {
 		Element child = new Element(title);
 		child.setText(value);
