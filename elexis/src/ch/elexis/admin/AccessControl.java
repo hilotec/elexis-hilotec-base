@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: AccessControl.java 5767 2009-10-05 05:11:47Z rgw_ch $
+ * 
+ *    $Id: AccessControl.java 5770 2009-10-05 08:47:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -26,7 +26,6 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.io.InMemorySettings;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
@@ -62,35 +61,35 @@ import ch.rgw.tools.StringTool;
  */
 public class AccessControl {
 	public static final String KEY_GROUPS = "Groups";
-
+	
 	public static final String DB_UID = "dbUID";
-
+	
 	// Set this to true to make any user admin (e.g. to reset admin pwd
 	private final static boolean FORCE_ADMIN = false;
-
+	
 	public static final String ALL_GROUP = StringConstants.ROLE_ALL;
 	public static final String USER_GROUP = StringConstants.ROLE_USERS;
 	public static final String ADMIN_GROUP = StringConstants.ROLE_ADMIN;
 	public static final String GROUP_FOR_PREFERENCEPAGE = "ch.elexis.preferences.acl"; //$NON-NLS-1$
-
+	
 	private static final String BLOBNAME = "AccessControl"; //$NON-NLS-1$
 	private static final String ACLNAME = "AccessControlACL"; //$NON-NLS-1$
 	private static Hashtable<String, ACE> rights;
 	private static Hashtable<String, List<String>> usergroups;
 	private static Hashtable<String, ACE> acls;
 	private static final Log log = Log.get("AccessControl"); //$NON-NLS-1$
-
+	
 	// TODO: Cleanup alte Gruppen/Anwender
 	/**
 	 * Die Zugriffsrechte aus den globalen Settings laden.
 	 */
-	@SuppressWarnings("unchecked")//$NON-NLS-1$
+	@SuppressWarnings("unchecked")
 	public void load() {
-		NamedBlob rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
+		NamedBlob rset = NamedBlob.load(BLOBNAME);
 		if (rset == null) {
 			log.log("Warnung: ACEs nicht gefunden, erstelle neu ", Log.ERRORS); //$NON-NLS-1$
 			NamedBlob.createTable();
-			rset = NamedBlob.load(BLOBNAME); //$NON-NLS-1$
+			rset = NamedBlob.load(BLOBNAME);
 		}
 		NamedBlob aclset = NamedBlob.load(ACLNAME);
 		rights = rset.getHashtable();
@@ -108,7 +107,7 @@ public class AccessControl {
 			log.log(k1, Log.DEBUGMSG);
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte zurücksichern. Alle Rechte, die seit dem letzten flush
 	 * geändert wurden, sind nur temporär bis zum nächsten flush()!
@@ -117,7 +116,7 @@ public class AccessControl {
 		NamedBlob.load(BLOBNAME).put(rights);
 		NamedBlob.load(ACLNAME).put(acls);
 	}
-
+	
 	/**
 	 * Zugriffsrecht für den aktuell angemeldeten Anwender erfragen.
 	 * 
@@ -129,7 +128,7 @@ public class AccessControl {
 	public boolean request(ACE right) {
 		return (request(Hub.actUser, right));
 	}
-
+	
 	/**
 	 * Zugriffsrecht für einen Anwender erfragen
 	 * 
@@ -173,7 +172,7 @@ public class AccessControl {
 			if (rights.get(user.getId() + right) != null) {
 				return true;
 			}
-
+			
 			// Wenn das Recht für eine Gruppe, zu der der User gehört, besteht
 			List<String> list = usergroups.get(user.getId() + "#groups#"); //$NON-NLS-1$
 			// we cache the groups during runtime. If not yet in cache, load
@@ -184,7 +183,7 @@ public class AccessControl {
 				list = new ArrayList<String>();
 				Hashtable h = user.getHashtable("ExtInfo"); //$NON-NLS-1$
 				if (h != null) {
-					String grp = (String) h.get(KEY_GROUPS); //$NON-NLS-1$
+					String grp = (String) h.get(KEY_GROUPS);
 					if (grp != null) {
 						String[] grps = grp.split(","); //$NON-NLS-1$
 						for (String g : grps) {
@@ -196,7 +195,7 @@ public class AccessControl {
 			}
 			// The list is never null here, but might be empty
 			for (String g : list) {
-				if (ADMIN_GROUP.equals(g)) { //$NON-NLS-1$
+				if (ADMIN_GROUP.equals(g)) {
 					// If the user is member of the admin groups, he has any
 					// right
 					return true;
@@ -215,7 +214,7 @@ public class AccessControl {
 			return false;
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrecht(e) erteilen
 	 * 
@@ -226,11 +225,11 @@ public class AccessControl {
 	 */
 	public void grant(Anwender user, ACE... elements) {
 		for (ACE right : elements) {
-			rights.put(user.getId() + right.getCanonicalName(), right); //$NON-NLS-1$
+			rights.put(user.getId() + right.getCanonicalName(), right);
 			acls.put(right.getCanonicalName(), right);
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte entziehen
 	 * 
@@ -244,7 +243,7 @@ public class AccessControl {
 			rights.remove(user.getId() + right.getCanonicalName());
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte erteilen
 	 * 
@@ -259,7 +258,7 @@ public class AccessControl {
 			acls.put(right.getCanonicalName(), right);
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrechte entziehem
 	 * 
@@ -273,24 +272,24 @@ public class AccessControl {
 			rights.remove(group + right.getCanonicalName());
 		}
 	}
-
+	
 	/**
 	 * Zugriffsrecht für "self" erteilen
 	 * 
 	 */
 	public void grantForSelf(ACE... elements) {
 		for (ACE r : elements) {
-			rights.put("Self" + r.getCanonicalName(), r); //$NON-NLS-1$ //$NON-NLS-2$
+			rights.put("Self" + r.getCanonicalName(), r); //$NON-NLS-1$
 			acls.put(r.getCanonicalName(), r);
 		}
 	}
-
+	
 	public void revokeFromSelf(ACE... strings) {
 		for (ACE e : strings) {
 			rights.remove("Self" + e.getCanonicalName()); //$NON-NLS-1$
 		}
 	}
-
+	
 	/**
 	 * Einen Anwender einer Gruppe zufügen
 	 * 
@@ -302,9 +301,9 @@ public class AccessControl {
 	public void addToGroup(String group, Anwender user) {
 		String g = remove(group, user);
 		g = g + "," + group; //$NON-NLS-1$
-		user.setInfoElement(KEY_GROUPS, g); //$NON-NLS-1$
+		user.setInfoElement(KEY_GROUPS, g);
 	}
-
+	
 	/**
 	 * Einen Anwender aus einer Gruppe entfernen
 	 * 
@@ -315,11 +314,11 @@ public class AccessControl {
 	 */
 	public void removeFromGroup(String group, Anwender user) {
 		String g = remove(group, user);
-		user.setInfoElement(KEY_GROUPS, g); //$NON-NLS-1$
+		user.setInfoElement(KEY_GROUPS, g);
 	}
-
+	
 	private String remove(String group, Anwender user) {
-		String g = (String) user.getInfoElement(KEY_GROUPS); //$NON-NLS-1$
+		String g = (String) user.getInfoElement(KEY_GROUPS);
 		if (g != null) {
 			g = g.replaceAll(user.getId(), ""); //$NON-NLS-1$
 			g = g.replaceAll("\\s*,*$", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -327,7 +326,7 @@ public class AccessControl {
 		}
 		return ""; //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Alle Gruppen holen
 	 * 
@@ -336,13 +335,13 @@ public class AccessControl {
 	public List<String> getGroups() {
 		ArrayList<String> ret = new ArrayList<String>();
 		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS,
-				ADMIN_GROUP);
+			ADMIN_GROUP);
 		for (String s : grp.split(",")) { //$NON-NLS-1$
 			ret.add(s);
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * Eine Liste aller Gruppen holen, die in bestimmtes Recht haben
 	 * 
@@ -354,7 +353,7 @@ public class AccessControl {
 		ArrayList<String> ret = new ArrayList<String>();
 		String right = rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
-
+		
 		Enumeration<String> e = rights.keys();
 		while (e.hasMoreElements()) {
 			String k = e.nextElement();
@@ -369,7 +368,7 @@ public class AccessControl {
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * Alle Anwender efragen, die ein bestimmtes Recht haben
 	 * 
@@ -382,7 +381,7 @@ public class AccessControl {
 		ArrayList<Anwender> ret = new ArrayList<Anwender>();
 		String right = rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
-
+		
 		Enumeration<String> e = rights.keys();
 		while (e.hasMoreElements()) {
 			String k = e.nextElement();
@@ -397,12 +396,12 @@ public class AccessControl {
 		}
 		return ret;
 	}
-
+	
 	public void deleteGrant(ACE grantACE) {
 		String grant = grantACE.getCanonicalName();
-
+		
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + grant); //$NON-NLS-1$
-
+		
 		Enumeration<String> e = rights.keys();
 		while (e.hasMoreElements()) {
 			String k = e.nextElement();
@@ -413,34 +412,33 @@ public class AccessControl {
 		}
 		acls.remove(grantACE);
 	}
-
+	
 	public Settings asSettings() {
 		return new InMemorySettings(rights);
 	}
-
+	
 	/** Alles auf Standard zurücksetzen und dbUID generieren */
 	public void reset() {
 		rights.clear();
-		grant(ALL_GROUP, AccessControlDefaults.getAlle()); //$NON-NLS-1$
-		grant(USER_GROUP, AccessControlDefaults.getAnwender()); //$NON-NLS-1$
+		grant(ALL_GROUP, AccessControlDefaults.getAlle());
+		grant(USER_GROUP, AccessControlDefaults.getAnwender());
 		acls.put(DB_UID, new ACE(ACE.ACE_ROOT, DB_UID, StringTool
-				.unique("db%id")));
+			.unique("db%id")));
 		flush();
 	}
-
-	public String getDBUID(boolean bCreate) {
+	
+	public String getDBUID(boolean bCreate) throws InsufficientRightsException{
 		if (request(AccessControlDefaults.ADMIN_ACE)) {
 			ACE dbuid = acls.get(DB_UID);
 			if (bCreate || dbuid == null) {
 				dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool
-						.unique("db%id"));
+					.unique("db%id"));
 				rights.put(DB_UID, dbuid);
 				flush();
 			}
 			return dbuid.getLocalizedName();
 		}else{
-			SWTHelper.showError("Insufficvient rights", "You dont hyve sufficient rights for the requested operation");
-			return null;
+			throw new InsufficientRightsException("You dont hyve sufficient rights for the requested operation");
 		}
 	}
 }
