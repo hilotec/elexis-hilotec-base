@@ -2,7 +2,6 @@ package ch.rgw.crypt;
 
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import ch.rgw.tools.Result;
@@ -10,7 +9,7 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * A Cryptologist knows how to create keys and certificates, and encrypt, decrypt, sign and verify
- * byte arrays. 
+ * byte arrays.
  * 
  * @author gerry
  * 
@@ -69,6 +68,8 @@ public interface Cryptologist {
 	
 	public boolean addCertificate(byte[] certEncoded);
 	
+	public boolean removeCertificate(String alias);
+	
 	public KeyPair generateKeys(String alias, char[] pwd, TimeTool validFrom, TimeTool validUntil);
 	
 	public X509Certificate getCertificate(String alias);
@@ -79,7 +80,7 @@ public interface Cryptologist {
 	public String getUser();
 	
 	public boolean isFunctional();
-
+	
 	public byte[] getCertificateEncoded(String alias)
-			throws CryptologistException;
+	throws CryptologistException;
 }

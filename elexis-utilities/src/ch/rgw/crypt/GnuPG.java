@@ -1,10 +1,18 @@
 //$Id: GnuPG.java 4442 2008-09-25 20:30:29Z rgw_ch $
 package ch.rgw.crypt;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import ch.rgw.tools.ExHandler;
@@ -47,7 +55,7 @@ public class GnuPG implements Cryptologist {
 	private String gpg_err;
 	private boolean gpgOK;
 	private char[] passphrase;
-	private String identity;
+	private final String identity;
 	
 	public void setPassphrase(char[] pwd){
 		passphrase = pwd;
@@ -388,12 +396,12 @@ public class GnuPG implements Cryptologist {
 		boolean success;
 		StringBuilder sb = new StringBuilder();
 		sb.append("Key-Type: DSA\n Key-Length: 2048\n Subkey-Type: ELG-E\n Subkey-Length: 2048")
-			.append("\n Name-Real: ").append(name);
+		.append("\n Name-Real: ").append(name);
 		if (!StringTool.isNothing(bem)) {
 			sb.append("\n Name-Comment: ").append(bem);
 		}
 		sb.append("\n Name-Email: ").append(mail).append("\n Expire-Date: 0").append(
-			"\n Passphrase: ").append(pwd).append("\n %commit\n");
+		"\n Passphrase: ").append(pwd).append("\n %commit\n");
 		
 		success = runGnuPG("--gen-key", sb.toString());
 		if (success && this.gpg_exitCode != 0) {
@@ -407,7 +415,7 @@ public class GnuPG implements Cryptologist {
 		boolean success;
 		StringBuilder sb = new StringBuilder();
 		sb.append("passwd\n").append(oldpwd).append("\n").append(newpwd).append("\n")
-			.append(newpwd).append("\n").append("quit\n");
+		.append(newpwd).append("\n").append("quit\n");
 		success = runGnuPG("--edit-key " + key, sb.toString());
 		if (success && this.gpg_exitCode != 0) {
 			success = false;
@@ -672,29 +680,34 @@ public class GnuPG implements Cryptologist {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	public String getUser() {
 		return identity;
 	}
-
+	
 	public X509Certificate getCertificate(String alias) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	public boolean isFunctional() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	public boolean addCertificate(byte[] certEncoded) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	public byte[] getCertificateEncoded(String alias)
-			throws CryptologistException {
+	throws CryptologistException {
 		return null;
+	}
+	
+	public boolean removeCertificate(String alias){
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }
