@@ -188,6 +188,9 @@ public class JCEKeyManager {
 	 * @return den gesuchten Schlüssel oder null - nicht gefunden
 	 */
 	public PublicKey getPublicKey(String alias) {
+		if(alias==null){
+			return null;
+		}
 		if (ks == null) {
 			log.log(Level.WARNING, "Keystore nicht geladen");
 			if (!load(true)) {
