@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: AccessControl.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ *    $Id: AccessControl.java 5767 2009-10-05 05:11:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -26,6 +26,7 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.NamedBlob;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.io.InMemorySettings;
 import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
@@ -65,8 +66,8 @@ public class AccessControl {
 	public static final String DB_UID = "dbUID";
 
 	// Set this to true to make any user admin (e.g. to reset admin pwd
-	private final static boolean FORCE_ADMIN=false;
-	
+	private final static boolean FORCE_ADMIN = false;
+
 	public static final String ALL_GROUP = StringConstants.ROLE_ALL;
 	public static final String USER_GROUP = StringConstants.ROLE_USERS;
 	public static final String ADMIN_GROUP = StringConstants.ROLE_ADMIN;
@@ -427,13 +428,19 @@ public class AccessControl {
 		flush();
 	}
 
-	public String getDBUID() {
-		ACE dbuid = acls.get(DB_UID);
-		if (dbuid == null) {
-			dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool.unique("db%id"));
-			rights.put(DB_UID, dbuid);
-			flush();
+	public String getDBUID(boolean bCreate) {
+		if (request(AccessControlDefaults.ADMIN_ACE)) {
+			ACE dbuid = acls.get(DB_UID);
+			if (bCreate || dbuid == null) {
+				dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool
+						.unique("db%id"));
+				rights.put(DB_UID, dbuid);
+				flush();
+			}
+			return dbuid.getLocalizedName();
+		}else{
+			SWTHelper.showError("Insufficvient rights", "You dont hyve sufficient rights for the requested operation");
+			return null;
 		}
-		return dbuid.getLocalizedName();
 	}
 }

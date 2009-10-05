@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AccessControlDefaults.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ * $Id: AccessControlDefaults.java 5767 2009-10-05 05:11:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -41,6 +41,7 @@ public class AccessControlDefaults {
 		new ACE(ACCOUNTING_GLOBAL, "createBills", Messages.getString("AccessControlDefaults.createBills")); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE ACCOUNTING_BILLMODIFY =
 		new ACE(ACCOUNTING_GLOBAL, "modifyBills", Messages.getString("AccessControlDefaults.modifyBills")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE ADMIN_ACE=new ACE(ADMIN,"ACE","ACE modifizieren");
 	
 	public static final ACE ACL_USERS = new ACE(ACE_ACCESS, "Rechte erteilen", Messages.getString("AccessControlDefaults.grantRights")); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE DELETE = new ACE(ACE.ACE_ROOT, "Löschen", Messages.getString("AccessControlDefaults.delete")); //$NON-NLS-1$ //$NON-NLS-2$

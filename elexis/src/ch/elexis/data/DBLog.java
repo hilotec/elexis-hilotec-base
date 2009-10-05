@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DBLog.java 4450 2008-09-27 19:49:01Z rgw_ch $
+ * $Id: DBLog.java 5767 2009-10-05 05:11:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,7 +21,7 @@ public class DBLog extends PersistentObject {
 	private static final String TABLENAME = "LOGS";
 
 	public static enum TYP {
-		DELETE, UNDELETE
+		DELETE, UNDELETE, UNKNOWN
 	};
 
 	static {
@@ -31,10 +31,21 @@ public class DBLog extends PersistentObject {
 
 	public DBLog(PersistentObject obj, TYP typ) {
 		create(null);
+		if (typ==null){
+			typ=TYP.UNKNOWN;
+		}
+		String user="?";
+		if(Hub.actUser!=null){
+			user=Hub.actUser.getId();
+		}
+		String hostname="?";
+		if(NetTool.hostname!=null){
+			hostname=NetTool.hostname;
+		}
 		set(new String[] { "OID", "Datum", "typ", "userID", "station" },
 				new String[] { obj.getId(),
 						new TimeTool().toString(TimeTool.DATE_GER), typ.name(),
-						Hub.actUser.getId(), NetTool.hostname });
+						user, hostname});
 	}
 
 	public static DBLog load(String id) {
