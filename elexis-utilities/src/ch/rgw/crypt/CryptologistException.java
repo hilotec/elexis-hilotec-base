@@ -11,6 +11,7 @@ public class CryptologistException extends Exception {
 	public static final int ERR_INTERNAL = 6;
 	public static final int ERR_USER_UNKNOWN = 7;
 	public static final int ERR_CERTIFICATE_ENCODING = 8;
+	public static final int ERR_ENCRYPTION_FAILURE = 9;
 	
 	private int code=0;
 	public CryptologistException(String message, int code){

@@ -705,6 +705,9 @@ public class StringTool {
 	 *         only of [0-9A-P]*
 	 */
 	public static String enPrintableStrict(byte[] src) {
+		if(src==null){
+			return null;
+		}
 		byte[] out = new byte[(src.length << 1) + 3];
 		try {
 			out[0] = 'E'; // header

@@ -168,6 +168,9 @@ public class SAT {
 		sc.addArray(ADM_SIGNATURE, signature);
 		String xml = sc.toString();
 		byte[] wrapped = crypt.encrypt(StringTool.getBytes(xml), dest);
+		if(wrapped==null){
+			throw new CryptologistException("Encry<ption failed", CryptologistException.ERR_ENCRYPTION_FAILURE);
+		}
 		return wrapped;
 	}
 	
