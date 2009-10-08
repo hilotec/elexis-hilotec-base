@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: AccessControl.java 5770 2009-10-05 08:47:27Z rgw_ch $
+ *    $Id: AccessControl.java 5775 2009-10-08 10:56:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -438,7 +438,7 @@ public class AccessControl {
 			}
 			return dbuid.getLocalizedName();
 		}else{
-			throw new InsufficientRightsException("You dont hyve sufficient rights for the requested operation");
+			throw new InsufficientRightsException("You don't have sufficient rights for the requested operation");
 		}
 	}
 }
