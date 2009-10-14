@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: FixMediDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ * 
+ * $Id: FixMediDisplay.java 5777 2009-10-14 12:36:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -55,7 +55,7 @@ import ch.rgw.tools.TimeTool;
  */
 public class FixMediDisplay extends ListDisplay<Prescription> {
 	private static final String TTCOST = Messages.getString("FixMediDisplay.DailyCost"); //$NON-NLS-1$
-	private LDListener dlisten;
+	private final LDListener dlisten;
 	private IAction stopMedicationAction, changeMedicationAction, removeMedicationAction;
 	FixMediDisplay self;
 	Label lCost;
@@ -79,7 +79,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			removeMedicationAction);
 		setDLDListener(dlisten);
 		target =
-			new PersistentObjectDropTarget(Messages.getString("FixMediDisplay.FixMedikation"), this, //$NON-NLS-1$
+			new PersistentObjectDropTarget(
+				Messages.getString("FixMediDisplay.FixMedikation"), this, //$NON-NLS-1$
 				new PersistentObjectDropTarget.Receiver() {
 					
 					public boolean accept(PersistentObject o){
@@ -97,7 +98,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							Prescription pre =
 								new Prescription((Artikel) o, GlobalEvents.getSelectedPatient(),
 									StringTool.leer, StringTool.leer);
-							pre.set(Prescription.DATE_FROM, new TimeTool().toString(TimeTool.DATE_GER));
+							pre.set(Prescription.DATE_FROM, new TimeTool()
+							.toString(TimeTool.DATE_GER));
 							MediDetailDialog dlg = new MediDetailDialog(getShell(), pre);
 							if (dlg.open() == Window.OK) {
 								// self.add(pre);
@@ -109,7 +111,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							Prescription now =
 								new Prescription(pre.getArtikel(), GlobalEvents
 									.getSelectedPatient(), pre.getDosis(), pre.getBemerkung());
-							now.set(Prescription.DATE_FROM, new TimeTool().toString(TimeTool.DATE_GER));
+							now.set(Prescription.DATE_FROM, new TimeTool()
+							.toString(TimeTool.DATE_GER));
 							// self.add(now);
 							reload();
 						}
@@ -140,29 +143,37 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				float num = 0;
 				try {
 					String dosis = pr.getDosis();
-					if (dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")) { //$NON-NLS-1$
-						String[] dose = dosis.split("[xX]"); //$NON-NLS-1$
-						int count = Integer.parseInt(dose[0]);
-						num = getNum(dose[1]) * count;
-					} else if (dosis.indexOf('-') != -1) {
-						String[] dos = dosis.split("-"); //$NON-NLS-1$
-						if (dos.length > 2) {
-							for (String d : dos) {
-								num += getNum(d);
+					if (dosis != null) {
+						if (dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")) { //$NON-NLS-1$
+							String[] dose = dosis.split("[xX]"); //$NON-NLS-1$
+							int count = Integer.parseInt(dose[0]);
+							num = getNum(dose[1]) * count;
+						} else if (dosis.indexOf('-') != -1) {
+							String[] dos = dosis.split("-"); //$NON-NLS-1$
+							if (dos.length > 2) {
+								for (String d : dos) {
+									num += getNum(d);
+								}
+							} else {
+								num = getNum(dos[1]);
 							}
 						} else {
-							num = getNum(dos[1]);
+							canCalculate = false;
 						}
-					} else {
-						canCalculate = false;
+					}else{
+						canCalculate=false;
 					}
 					Artikel art = pr.getArtikel();
-					int ve = art.guessVE();
-					if (ve != 0) {
-						Money price = pr.getArtikel().getVKPreis();
-						cost += num * price.getAmount() / ve;
-					} else {
-						canCalculate = false;
+					if (art != null) {
+						int ve = art.guessVE();
+						if (ve != 0) {
+							Money price = pr.getArtikel().getVKPreis();
+							cost += num * price.getAmount() / ve;
+						} else {
+							canCalculate = false;
+						}
+					}else{
+						canCalculate=false;
 					}
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
@@ -242,57 +253,60 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	private void makeActions(){
 		
 		changeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-					setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
+				.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+				setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
+			}
+			
+			public void doRun(){
+				Prescription pr = getSelection();
+				if (pr != null) {
+					new MediDetailDialog(getShell(), pr).open();
+					reload();
+					redraw();
 				}
-				
-				public void doRun(){
-					Prescription pr = (Prescription) getSelection();
-					if (pr != null) {
-						new MediDetailDialog(getShell(), pr).open();
-						reload();
-						redraw();
-					}
-				}
-			};
+			}
+		};
 		
 		stopMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
-					setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
+				.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+				setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
+			}
+			
+			public void doRun(){
+				Prescription pr = getSelection();
+				if (pr != null) {
+					remove(pr);
+					pr.delete(); // this does not delete but stop the Medication. Sorry for
+					// that
+					reload();
 				}
-				
-				public void doRun(){
-					Prescription pr = (Prescription) getSelection();
-					if (pr != null) {
-						remove(pr);
-						pr.delete(); // this does not delete but stop the Medication. Sorry for
-						// that
-						reload();
-					}
-				}
-			};
+			}
+		};
 		
 		removeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-					setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
+			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages
+				.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+				setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
+			}
+			
+			public void doRun(){
+				Prescription pr = getSelection();
+				if (pr != null) {
+					remove(pr);
+					pr.remove(); // this does, in fact, remove the medication from the
+					// database
+					reload();
 				}
-				
-				public void doRun(){
-					Prescription pr = (Prescription) getSelection();
-					if (pr != null) {
-						remove(pr);
-						pr.remove(); // this does, in fact, remove the medication from the
-						// database
-						reload();
-					}
-				}
-			};
+			}
+		};
 		
 	}
 	
