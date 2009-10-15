@@ -4,7 +4,7 @@
   	<service:roles>
   		<service:role available="true" daysperpayment="365"
   			name="default" priceClass="fixed-basic">
-  			<service:pricePerDB currency="CHF" amount="50.00"></service:pricePerDB>
+  			<service:pricePerMandator currency="CHF" amount="50.00" />
   		</service:role>
   	</service:roles>
   </service:conditions>

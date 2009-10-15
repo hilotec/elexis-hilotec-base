@@ -3,8 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role priceClass="fixed-basic">
-  			<service:pricePerDB amount="35.00" />
-  			<service:pricePerMandator amount="2.50"></service:pricePerMandator>
+  			<service:pricePerMandator amount="35.00" />
   		</service:role>
   	</service:roles>
   </service:conditions>

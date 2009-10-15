@@ -3,8 +3,7 @@
   <service:conditions>
   	<service:roles>
   		<service:role priceClass="fixed-basic">
-  			<service:pricePerDB currency="CHF" amount="50.00">
-  			</service:pricePerDB>
+  			<service:pricePerMandator currency="CHF" amount="50.00" />
   		</service:role>
   	</service:roles>
   </service:conditions>
