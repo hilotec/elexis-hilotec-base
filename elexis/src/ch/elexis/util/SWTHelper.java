@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: SWTHelper.java 5762 2009-09-28 08:16:34Z rgw_ch $
+ * $Id: SWTHelper.java 5778 2009-10-15 15:20:49Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -241,8 +241,8 @@ public class SWTHelper {
 					// window
 					// icon
 					message, MessageDialog.QUESTION, new String[] {
-					IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
-					IDialogConstants.CANCEL_LABEL
+					Messages.getString("SWTHelper.yes"), Messages.getString("SWTHelper.no"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Messages.getString("SWTHelper.cancel") //$NON-NLS-1$ 
 				}, 0);
 			// ok is the default
 			int result = dialog.open();
