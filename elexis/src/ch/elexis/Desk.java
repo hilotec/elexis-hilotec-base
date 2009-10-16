@@ -147,9 +147,6 @@ public class Desk implements IApplication {
 	public static final String CUR_HYPERLINK = "cursor_hyperlink"; //$NON-NLS-1$
 	
 	public Desk(){
-		getImageRegistry();
-		getColorRegistry();
-		getToolkit();
 	}
 	
 	public Object start(IApplicationContext context) throws Exception{
@@ -275,7 +272,7 @@ public class Desk implements IApplication {
 	 * @return
 	 */
 	public static ImageDescriptor getImageDescriptor(String imagename){
-		ImageDescriptor ret = theImageRegistry.getDescriptor(imagename);
+		ImageDescriptor ret = getImageRegistry().getDescriptor(imagename);
 		if (ret == null) {
 			ret = Hub.getImageDescriptor(getImageBase() + imagename + ".png"); //$NON-NLS-1$
 			if (ret == null) {
@@ -288,7 +285,7 @@ public class Desk implements IApplication {
 				ret = Hub.getImageDescriptor("rsc/" + imagename); //$NON-NLS-1$
 			}
 			if (ret != null) {
-				theImageRegistry.put(imagename, ret);
+				getImageRegistry().put(imagename, ret);
 			}
 		}
 		return ret;
@@ -303,13 +300,13 @@ public class Desk implements IApplication {
 	 * @return the Image or null if no such image was found
 	 */
 	public static Image getImage(String name){
-		Image ret = theImageRegistry.get(name);
+		Image ret = getImageRegistry().get(name);
 		if (ret == null) {
 			ImageDescriptor id = getImageDescriptor(name);
 			if (id != null) {
 				ret = id.createImage();
-				// theImageRegistry.remove(name);
-				// theImageRegistry.put(name, ret);
+				// getImageRegistry().remove(name);
+				// getImageRegistry().put(name, ret);
 			}
 		}
 		return ret;
@@ -317,7 +314,7 @@ public class Desk implements IApplication {
 	
 	/** shortcut for getColorRegistry().get(String col) */
 	public static Color getColor(String desc){
-		return theColorRegistry.get(desc);
+		return getColorRegistry().get(desc);
 	}
 	
 	public static ColorRegistry getColorRegistry(){
@@ -342,8 +339,7 @@ public class Desk implements IApplication {
 			}
 		}
 		if (theDisplay == null) {
-			//TODO: new Shell() may not supported in future release!
-			return new Shell().getDisplay();
+			return PlatformUI.createDisplay();
 		}
 		return theDisplay;
 	}
@@ -401,13 +397,13 @@ public class Desk implements IApplication {
 	 */
 	public static Color getColorFromRGB(final String coldesc){
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
-		if (!theColorRegistry.hasValueFor(col)) {
+		if (!getColorRegistry().hasValueFor(col)) {
 			RGB rgb =
 				new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(
 					2, 4), 16), Integer.parseInt(col.substring(4, 6), 16));
-			theColorRegistry.put(col, rgb);
+			getColorRegistry().put(col, rgb);
 		}
-		return theColorRegistry.get(col);
+		return getColorRegistry().get(col);
 	}
 	
 	
@@ -424,7 +420,7 @@ public class Desk implements IApplication {
 			StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.green), 2)).append(
 				StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.blue), 2));
 		String srgb = sb.toString();
-		theColorRegistry.put(srgb, rgb);
+		getColorRegistry().put(srgb, rgb);
 		return srgb;
 	}
 	
