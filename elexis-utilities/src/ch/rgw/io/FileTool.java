@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +18,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -29,8 +29,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.bouncycastle.crypto.digests.MD5Digest;
-
-import sun.misc.JarIndex;
 
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Log;
@@ -60,15 +58,13 @@ public class FileTool {
 	public static final int FAIL_IF_EXISTS = 2;
 
 	private static String getCorrectSeparators(final String pathOrFilename) {
-		return pathOrFilename.replace("\\", DIRECTORY_SEPARATOR).replace("//",
-				DIRECTORY_SEPARATOR).replace("/", DIRECTORY_SEPARATOR);
+		return pathOrFilename.replace("\\", DIRECTORY_SEPARATOR).replace("//", DIRECTORY_SEPARATOR).replace("/", DIRECTORY_SEPARATOR);
 	}
 
 	private static String removeMultipleSeparators(String pathOrFilename) {
 		String doubleSeparator = DIRECTORY_SEPARATOR + DIRECTORY_SEPARATOR;
 		while (pathOrFilename.indexOf(doubleSeparator) >= 0) {
-			pathOrFilename = pathOrFilename.replaceAll(doubleSeparator,
-					DIRECTORY_SEPARATOR);
+			pathOrFilename = pathOrFilename.replaceAll(doubleSeparator, DIRECTORY_SEPARATOR);
 		}
 		return pathOrFilename;
 	}
@@ -82,8 +78,7 @@ public class FileTool {
 		if (correctFilenamePath.indexOf(DIRECTORY_SEPARATOR) < 0) {
 			return "";
 		}
-		return correctFilenamePath.substring(0, correctFilenamePath
-				.lastIndexOf(DIRECTORY_SEPARATOR));
+		return correctFilenamePath.substring(0, correctFilenamePath.lastIndexOf(DIRECTORY_SEPARATOR));
 	}
 
 	/**
@@ -95,9 +90,7 @@ public class FileTool {
 		if (correctFilenamePath.indexOf(DIRECTORY_SEPARATOR) < 0) {
 			return filenamePath;
 		}
-		return correctFilenamePath.substring(correctFilenamePath
-				.lastIndexOf(DIRECTORY_SEPARATOR) + 1, correctFilenamePath
-				.length());
+		return correctFilenamePath.substring(correctFilenamePath.lastIndexOf(DIRECTORY_SEPARATOR) + 1, correctFilenamePath.length());
 	}
 
 	/**
@@ -138,8 +131,7 @@ public class FileTool {
 		File dir = new File(path);
 		if (dir.exists()) {
 			if (!dir.isDirectory()) {
-				throw new IllegalArgumentException(
-						"Eingabe ist kein gueltiges Verzeichnis", null);
+				throw new IllegalArgumentException("Eingabe ist kein gueltiges Verzeichnis", null);
 			}
 		} else {
 			if (!dir.mkdirs()) {
@@ -159,8 +151,7 @@ public class FileTool {
 	public static String getCorrectPath(String path)
 			throws IllegalArgumentException {
 		if (path == null) {
-			throw new IllegalArgumentException(
-					"Bitte geben Sie ein Verzeichnis ein!", null);
+			throw new IllegalArgumentException("Bitte geben Sie ein Verzeichnis ein!", null);
 		}
 		path = getCorrectSeparators(path);
 		path = removeMultipleSeparators(path);
@@ -250,8 +241,7 @@ public class FileTool {
 			return ".";
 		}
 		String found = null;
-		Pattern p = Pattern
-				.compile(".*?file:(\\/{1,2})(.+?)[^\\\\\\/]+\\.(jar|class).*");
+		Pattern p = Pattern.compile(".*?file:(\\/{1,2})(.+?)[^\\\\\\/]+\\.(jar|class).*");
 		Matcher m = p.matcher(raw);
 		if (m.matches()) {
 			found = m.group(2);
@@ -300,7 +290,7 @@ public class FileTool {
 	 */
 	public static boolean copyFile(File src, File dest, int if_exists) {
 		if (src.canRead() == false) {
-			log.log(Messages.getString("FileTool.cantReadSource"), Log.ERRORS); //$NON-NLS-1$
+			log.log(MessageFormat.format(Messages.getString("FileTool.cantReadSource"), src.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 			return false;
 		}
 		if (dest.exists()) {
@@ -311,10 +301,7 @@ public class FileTool {
 			switch (if_exists) {
 			case REPLACE_IF_EXISTS:
 				if (dest.delete() == false) {
-					log
-							.log(
-									Messages
-											.getString("FileTool.cantDeleteTarget"), Log.ERRORS); //$NON-NLS-1$
+					log.log(MessageFormat.format(Messages.getString("FileTool.cantDeleteTarget"), dest.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 					return false;
 				}
 				break;
@@ -322,29 +309,21 @@ public class FileTool {
 				File bak = new File(pname + ".bak");
 				if (bak.exists() == true) {
 					if (bak.delete() == false) {
-						log
-								.log(
-										Messages
-												.getString("FileTool.backupExists"), Log.ERRORS); //$NON-NLS-1$
+						log.log(MessageFormat.format(Messages.getString("FileTool.backupExists"), bak.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 						return false;
 					}
 				}
 				if (dest.renameTo(bak) == false) {
-					log
-							.log(
-									Messages
-											.getString("FileTool.cantRenameTarget"), Log.ERRORS); //$NON-NLS-1$
+					log.log(MessageFormat.format(Messages.getString("FileTool.cantRenameTarget"), bak.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 					return false;
 				}
 				dest = new File(pname);
 				break;
 			case FAIL_IF_EXISTS:
-				log
-						.log(
-								Messages.getString("FileTool.targetExists"), Log.ERRORS); //$NON-NLS-1$
+				log.log(MessageFormat.format(Messages.getString("FileTool.targetExists"), dest.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 				return false;
 			default:
-				log.log(Messages.getString("FileTool.badCopyMode"), Log.ERRORS); //$NON-NLS-1$
+				log.log(MessageFormat.format(Messages.getString("FileTool.badCopyMode"), src.getAbsolutePath(), if_exists), Log.ERRORS); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -354,15 +333,11 @@ public class FileTool {
 		BufferedInputStream bis = null;
 		try {
 			if (dest.createNewFile() == false) {
-				log
-						.log(
-								Messages.getString("FileTool.couldnotcreate") + dest.getAbsolutePath() + Messages.getString("FileTool.fil"), Log.ERRORS); //$NON-NLS-1$ //$NON-NLS-2$
+				log.log(MessageFormat.format(Messages.getString("FileTool.couldnotcreate"), dest.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 				return false;
 			}
 			if (dest.canWrite() == false) {
-				log
-						.log(
-								Messages.getString("FileTool.cantWriteTarget"), Log.ERRORS); //$NON-NLS-1$
+				log.log(MessageFormat.format(Messages.getString("FileTool.cantWriteTarget"), dest.getAbsolutePath()), Log.ERRORS); //$NON-NLS-1$
 				return false;
 			}
 
@@ -549,8 +524,7 @@ public class FileTool {
 	public static File resolveFile(String filepath) {
 		Pattern p = Pattern.compile("%(.+?)%");
 		Matcher m = p.matcher(filepath);
-		Settings env = CfgSettings.open(".environment",
-				"System Environment für java");
+		Settings env = CfgSettings.open(".environment", "System Environment für java");
 		while (m.find() == true) {
 			String f = m.group(1);
 			String rep = env.get(f, "");
@@ -655,8 +629,7 @@ public class FileTool {
 					FileOutputStream fileOutputstream = null;
 					try {
 						fileOutputstream = new FileOutputStream(outputFile);
-						dest = new BufferedOutputStream(fileOutputstream,
-								BUFFER);
+						dest = new BufferedOutputStream(fileOutputstream, BUFFER);
 						while ((count = zipIn.read(data, 0, BUFFER)) != -1) {
 							dest.write(data, 0, count);
 						}
@@ -770,8 +743,7 @@ public class FileTool {
 					FileOutputStream fileOutputstream = null;
 					try {
 						fileOutputstream = new FileOutputStream(outputFile);
-						dest = new BufferedOutputStream(fileOutputstream,
-								BUFFER);
+						dest = new BufferedOutputStream(fileOutputstream, BUFFER);
 						while ((count = jarIn.read(data, 0, BUFFER)) != -1) {
 							dest.write(data, 0, count);
 						}
@@ -822,8 +794,7 @@ public class FileTool {
 
 			new BufferedInputStream(new FileInputStream(source));
 
-			BufferedInputStream in = new BufferedInputStream(
-					new FileInputStream(source));
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(source));
 			try {
 				byte[] buffer = new byte[1024];
 				while (true) {
@@ -887,13 +858,11 @@ public class FileTool {
 
 			String[] children = srcDir.list();
 			for (int i = 0; i < children.length; i++) {
-				copyDirectory(new File(srcDir, children[i]), new File(dstDir,
-						children[i]));
+				copyDirectory(new File(srcDir, children[i]), new File(dstDir, children[i]));
 			}
 		} else {
 			// Copying a File
-			copyFile(new File(srcDir.getPath()), new File(dstDir.getPath()),
-					FileTool.REPLACE_IF_EXISTS);
+			copyFile(new File(srcDir.getPath()), new File(dstDir.getPath()), FileTool.REPLACE_IF_EXISTS);
 		}
 	}
 }
