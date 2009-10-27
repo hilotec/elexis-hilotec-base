@@ -353,7 +353,7 @@ public class FileTool {
 			}
 		} catch (IOException ex) {
 			ExHandler.handle(ex);
-			log.log(ex.getMessage(), Log.ERRORS);
+			log.log(MessageFormat.format(Messages.getString("FileTool.cantCopy"), dest.getAbsolutePath(), ex.getMessage()), Log.ERRORS); //$NON-NLS-1$
 			return false;
 		} finally {
 			try {
