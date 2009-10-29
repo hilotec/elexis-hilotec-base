@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: RechnungsBlatt.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ * 
+ * $Id: RechnungsBlatt.java 5787 2009-10-29 13:49:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -36,6 +36,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.GlobalEvents;
@@ -61,7 +62,7 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsBlatt extends Composite implements ActivationListener, SelectionListener,
-		ObjectListener {
+ObjectListener {
 	
 	private static final String KEY_RECHNUNGSBLATT = "RechnungsBlatt/"; //$NON-NLS-1$
 	IViewSite site;
@@ -76,57 +77,61 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 	Label rnAdressat;
 	ListViewer konsultationenViewer;
 	
-	private ExpandableComposite ecBuchungen;
-	private ExpandableComposite ecBemerkungen;
-	private ExpandableComposite ecStatus;
-	private ExpandableComposite ecFehler;
-	private ExpandableComposite ecAusgaben;
-	private ExpandableComposite ecKons;
+	private final ExpandableComposite ecBuchungen;
+	private final ExpandableComposite ecBemerkungen;
+	private final ExpandableComposite ecStatus;
+	private final ExpandableComposite ecFehler;
+	private final ExpandableComposite ecAusgaben;
+	private final ExpandableComposite ecKons;
 	
 	static final InputData[] rndata =
-		{
-			new InputData(Messages.getString("RechnungsBlatt.billNumber"), Rechnung.BILL_NUMBER, Typ.STRING, null), //$NON-NLS-1$
-			new InputData(Messages.getString("RechnungsBlatt.billDate"), Rechnung.BILL_DATE, Typ.STRING, null), //$NON-NLS-1$
-			new InputData(Messages.getString("RechnungsBlatt.billState"), Rechnung.BILL_STATE, //$NON-NLS-1$
-				new LabeledInputField.IContentProvider() {
-					
-					public void displayContent(PersistentObject po, InputData ltf){
-						Rechnung r = (Rechnung) po;
-						ltf.setText(RnStatus.getStatusText(r.getStatus()));
-						
+	{
+		new InputData(Messages.getString("RechnungsBlatt.billNumber"), Rechnung.BILL_NUMBER, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("RechnungsBlatt.billDate"), Rechnung.BILL_DATE, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("RechnungsBlatt.billState"), Rechnung.BILL_STATE, //$NON-NLS-1$
+			new LabeledInputField.IContentProvider() {
+			
+			public void displayContent(PersistentObject po, InputData ltf){
+				Rechnung r = (Rechnung) po;
+				ltf.setText(RnStatus.getStatusText(r.getStatus()));
+				
+			}
+			
+			public void reloadContent(PersistentObject po, InputData ltf){
+				if (new RnDialogs.StatusAendernDialog(Hub.plugin.getWorkbench()
+					.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
+					GlobalEvents.getInstance().fireObjectEvent(po,
+						GlobalEvents.CHANGETYPE.update);
+				}
+			}
+			
+		}),
+		new InputData(Messages.getString("RechnungsBlatt.treatmentsFrom"), Rechnung.BILL_DATE_FROM, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("RechnungsBlatt.treatmentsUntil"), Rechnung.BILL_DATE_UNTIL, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("RechnungsBlatt.amountTotal"), Rechnung.BILL_AMOUNT_CENTS, Typ.CURRENCY, null), //$NON-NLS-1$
+		new InputData(Messages.getString("RechnungsBlatt.amountOpen"), Rechnung.BILL_AMOUNT_CENTS, //$NON-NLS-1$
+			new LabeledInputField.IContentProvider() {
+			
+			public void displayContent(PersistentObject po, InputData ltf){
+				Rechnung rn = (Rechnung) po;
+				Money offen = rn.getOffenerBetrag();
+				ltf.setText(offen.getAmountAsString());
+			}
+			
+			public void reloadContent(PersistentObject po, InputData ltf){
+				try {
+					if (new RnDialogs.BuchungHinzuDialog(Hub.plugin.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
+						GlobalEvents.getInstance().fireObjectEvent(po,
+							GlobalEvents.CHANGETYPE.update);
 					}
-					
-					public void reloadContent(PersistentObject po, InputData ltf){
-						if (new RnDialogs.StatusAendernDialog(Hub.plugin.getWorkbench()
-							.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
-							GlobalEvents.getInstance().fireObjectEvent((Rechnung) po,
-								GlobalEvents.CHANGETYPE.update);
-						}
-					}
-					
-				}),
-			new InputData(Messages.getString("RechnungsBlatt.treatmentsFrom"), Rechnung.BILL_DATE_FROM, Typ.STRING, null), //$NON-NLS-1$
-			new InputData(Messages.getString("RechnungsBlatt.treatmentsUntil"), Rechnung.BILL_DATE_UNTIL, Typ.STRING, null), //$NON-NLS-1$
-			new InputData(Messages.getString("RechnungsBlatt.amountTotal"), Rechnung.BILL_AMOUNT_CENTS, Typ.CURRENCY, null), //$NON-NLS-1$
-			new InputData(Messages.getString("RechnungsBlatt.amountOpen"), Rechnung.BILL_AMOUNT_CENTS, //$NON-NLS-1$
-				new LabeledInputField.IContentProvider() {
-					
-					public void displayContent(PersistentObject po, InputData ltf){
-						Rechnung rn = (Rechnung) po;
-						Money offen = rn.getOffenerBetrag();
-						ltf.setText(offen.getAmountAsString());
-					}
-					
-					public void reloadContent(PersistentObject po, InputData ltf){
-						if (new RnDialogs.BuchungHinzuDialog(Hub.plugin.getWorkbench()
-							.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
-							GlobalEvents.getInstance().fireObjectEvent((Rechnung) po,
-								GlobalEvents.CHANGETYPE.update);
-						}
-					}
-					
-				})
-		};
+				} catch (ElexisException e) {
+					SWTHelper.showError("Buchung kann nicht hinzugefügt werden", e.getLocalizedMessage());
+				}
+			}
+			
+		})
+	};
 	LabeledInputField.AutoForm rnform;
 	
 	public RechnungsBlatt(Composite parent, IViewSite site){
@@ -273,11 +278,11 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 			}
 			
 			public void dispose(){
-			// nothing to do
+				// nothing to do
 			}
 			
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-			// nothing to do
+				// nothing to do
 			}
 		});
 		konsultationenViewer.setLabelProvider(new LabelProvider() {
@@ -305,7 +310,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 					Money preis = verrechnet.getNettoPreis();
 					preis.multiply(zahl);
 					return "  - " + zahl + " " + verrechnet.getLabel() + " (" + preis.toString() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ ")"; //$NON-NLS-1$
+					+ ")"; //$NON-NLS-1$
 				} else {
 					return element.toString();
 				}
@@ -352,7 +357,7 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 	}
 	
 	public void activation(boolean mode){
-	/* egal */
+		/* egal */
 	}
 	
 	public void visible(boolean mode){
@@ -441,8 +446,8 @@ public class RechnungsBlatt extends Composite implements ActivationListener, Sel
 	}
 	
 	public void objectCreated(PersistentObject o){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void objectDeleted(PersistentObject o){

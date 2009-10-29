@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: RnActions.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ * 
+ * $Id: RnActions.java 5787 2009-10-29 13:49:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.RestrictedAction;
@@ -88,31 +89,45 @@ public class RnActions {
 			@Override
 			public void run(){
 				if (!MessageDialog
-					.openConfirm(
-						view.getViewSite().getShell(),
-						Messages.getString("RnActions.reminderConfirmCaption"), //$NON-NLS-1$
-						Messages.getString("RnActions.reminderConfirmMessage"))) { //$NON-NLS-1$
+						.openConfirm(
+							view.getViewSite().getShell(),
+							Messages.getString("RnActions.reminderConfirmCaption"), //$NON-NLS-1$
+							Messages.getString("RnActions.reminderConfirmMessage"))) { //$NON-NLS-1$
 					return;
 				}
 				Handler.execute(view.getViewSite(), MahnlaufCommand.ID, null);
 				view.cfp.clearValues();
 				view.cfp.cbStat
-					.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length - 3]);
+				.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length - 3]);
 				view.cfp.fireChangedEvent();
 			}
 		};
 		rnExportAction = new Action(Messages.getString("RechnungsListeView.printAction")) { //$NON-NLS-1$
-				{
-					setToolTipText(Messages.getString("RechnungsListeView.printToolTip")); //$NON-NLS-1$
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
-				}
-				
-				@Override
-				public void run(){
-					List<Rechnung> list = view.createList();
-					new RnOutputDialog(view.getViewSite().getShell(), list).open();
-				}
-			};
+			{
+				setToolTipText(Messages.getString("RechnungsListeView.printToolTip")); //$NON-NLS-1$
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
+				/*
+				GlobalEvents.getInstance().addSelectionListener(new GlobalEvents.SelectionListener() {
+					
+					public void selectionEvent(PersistentObject obj){
+						if(obj instanceof Rechnung)
+					
+					}
+					
+					public void clearEvent(Class<? extends PersistentObject> template){
+					// TODO Auto-generated method stub
+					
+					}
+				})
+				 */
+			}
+			
+			@Override
+			public void run(){
+				List<Rechnung> list = view.createList();
+				new RnOutputDialog(view.getViewSite().getShell(), list).open();
+			}
+		};
 		
 		patDetailAction = new Action(Messages.getString("RnActions.patientDetailsAction")) { //$NON-NLS-1$
 			@Override
@@ -121,7 +136,7 @@ public class RnActions {
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					/* PatientDetailView fdv=(PatientDetailView) */rnPage
-						.showView(PatientDetailView2.ID);
+					.showView(PatientDetailView2.ID);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
@@ -199,10 +214,14 @@ public class RnActions {
 				List<Rechnung> list = view.createList();
 				if (list.size() > 0) {
 					Rechnung actRn = list.get(0);
-					if (new RnDialogs.BuchungHinzuDialog(view.getViewSite().getShell(), actRn)
+					try {
+						if (new RnDialogs.BuchungHinzuDialog(view.getViewSite().getShell(), actRn)
 						.open() == Dialog.OK) {
-						GlobalEvents.getInstance().fireObjectEvent(actRn,
-							GlobalEvents.CHANGETYPE.update);
+							GlobalEvents.getInstance().fireObjectEvent(actRn,
+								GlobalEvents.CHANGETYPE.update);
+						}
+					} catch (ElexisException e) {
+						SWTHelper.showError("Zahlung hinzufügen ist nicht möglich", e.getLocalizedMessage());
 					}
 				}
 			}
@@ -218,10 +237,14 @@ public class RnActions {
 				List<Rechnung> list = view.createList();
 				if (list.size() > 0) {
 					Rechnung actRn = list.get(0);
-					if (new RnDialogs.GebuehrHinzuDialog(view.getViewSite().getShell(), actRn)
+					try {
+						if (new RnDialogs.GebuehrHinzuDialog(view.getViewSite().getShell(), actRn)
 						.open() == Dialog.OK) {
-						GlobalEvents.getInstance().fireObjectEvent(actRn,
-							GlobalEvents.CHANGETYPE.update);
+							GlobalEvents.getInstance().fireObjectEvent(actRn,
+								GlobalEvents.CHANGETYPE.update);
+						}
+					} catch (ElexisException e) {
+						SWTHelper.showError("Zahlung hinzufügen ist nicht möglich", e.getLocalizedMessage());
 					}
 				}
 			}
@@ -230,24 +253,24 @@ public class RnActions {
 		changeStatusAction =
 			new RestrictedAction(AccessControlDefaults.ADMIN_CHANGE_BILLSTATUS_MANUALLY,
 				Messages.getString("RnActions.changeStateAction")) { //$NON-NLS-1$
-				{
-					setToolTipText(Messages.getString("RnActions.changeStateTooltip")); //$NON-NLS-1$
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				}
-				
-				@Override
-				public void doRun(){
-					List<Rechnung> list = view.createList();
-					if (list.size() > 0) {
-						Rechnung actRn = list.get(0);
-						if (new RnDialogs.StatusAendernDialog(view.getViewSite().getShell(), actRn)
-							.open() == Dialog.OK) {
-							GlobalEvents.getInstance().fireObjectEvent(actRn,
-								GlobalEvents.CHANGETYPE.update);
-						}
+			{
+				setToolTipText(Messages.getString("RnActions.changeStateTooltip")); //$NON-NLS-1$
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+			}
+			
+			@Override
+			public void doRun(){
+				List<Rechnung> list = view.createList();
+				if (list.size() > 0) {
+					Rechnung actRn = list.get(0);
+					if (new RnDialogs.StatusAendernDialog(view.getViewSite().getShell(), actRn)
+					.open() == Dialog.OK) {
+						GlobalEvents.getInstance().fireObjectEvent(actRn,
+							GlobalEvents.CHANGETYPE.update);
 					}
 				}
-			};
+			}
+		};
 		stornoAction = new Action(Messages.getString("RnActions.stornoAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
@@ -319,9 +342,9 @@ public class RnActions {
 						}
 						
 						if (SWTHelper
-							.askYesNo(
-								Messages.getString("RnActions.transferMoneyCaption"), //$NON-NLS-1$
-								"Das Konto von Patient \""
+								.askYesNo(
+									Messages.getString("RnActions.transferMoneyCaption"), //$NON-NLS-1$
+									"Das Konto von Patient \""
 									+ patient.getLabel()
 									+ "\" weist ein positives Kontoguthaben auf. Wollen Sie den Betrag von "
 									+ amount.toString() + " dieser Rechnung \"" + actRn.getNr()
@@ -448,8 +471,8 @@ public class RnActions {
 		}
 		
 		public void save(){
-		// TODO Auto-generated method stub
-		
+			// TODO Auto-generated method stub
+			
 		}
 		
 		public boolean saveAs(){

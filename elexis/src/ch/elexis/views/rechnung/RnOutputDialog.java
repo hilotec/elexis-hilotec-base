@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: RnOutputDialog.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ * 
+ *  $Id: RnOutputDialog.java 5787 2009-10-29 13:49:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -16,6 +16,7 @@ package ch.elexis.views.rechnung;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,18 +35,19 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Rechnung;
+import ch.elexis.data.RnStatus;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.IRnOutputter;
 import ch.elexis.util.SWTHelper;
 
 public class RnOutputDialog extends TitleAreaDialog {
-	private Collection<Rechnung> rnn;
+	private final Collection<Rechnung> rnn;
 	private List<IRnOutputter> lo;
 	private Combo cbLo;
 	private Button bCopy;
-	private List<Control> ctls = new ArrayList<Control>();
-	private StackLayout stack = new StackLayout();
+	private final List<Control> ctls = new ArrayList<Control>();
+	private final StackLayout stack = new StackLayout();
 	
 	public RnOutputDialog(Shell shell, Collection<Rechnung> rnn){
 		super(shell);
@@ -118,8 +120,20 @@ public class RnOutputDialog extends TitleAreaDialog {
 		if (idx != -1) {
 			IRnOutputter rop = lo.get(idx);
 			rop.saveComposite();
+			Iterator<Rechnung> it=rnn.iterator();
+			boolean bFlag=false;
+			while(it.hasNext()){
+				Rechnung r=it.next();
+				if(r.getStatus()==RnStatus.STORNIERT){
+					it.remove();
+					bFlag=true;
+				}
+			}
+			if(bFlag){
+				SWTHelper.alert("Stornierte Rechnungen in Liste", "Stornierte Rechnungen werden nicht ausgegeben.");
+			}
 			/* Result<Rechnung> result= */rop.doOutput(bCopy.getSelection()
-					? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn, new Properties());
+				? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn, new Properties());
 		}
 		super.okPressed();
 	}

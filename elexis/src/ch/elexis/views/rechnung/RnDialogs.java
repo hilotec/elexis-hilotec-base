@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: RnDialogs.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ * 
+ * $Id: RnDialogs.java 5787 2009-10-29 13:49:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.util.Extensions;
@@ -45,6 +46,8 @@ import ch.rgw.tools.TimeTool;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class RnDialogs {
+	public static final int ERR_STORNO = 1;
+	private static final String RECHNUNG_IST_STORNIERT = "Rechnung ist storniert";
 	
 	public static class GebuehrHinzuDialog extends TitleAreaDialog {
 		Rechnung rn;
@@ -52,8 +55,11 @@ public class RnDialogs {
 		Text amount;
 		Text bemerkung;
 		
-		public GebuehrHinzuDialog(Shell shell, Rechnung r){
+		public GebuehrHinzuDialog(Shell shell, Rechnung r) throws ElexisException{
 			super(shell);
+			if(r.getStatus()==RnStatus.STORNIERT){
+				throw new ElexisException(getClass(), RECHNUNG_IST_STORNIERT, ERR_STORNO);
+			}
 			rn = r;
 		}
 		
@@ -96,22 +102,28 @@ public class RnDialogs {
 				super.okPressed();
 			} else {
 				ErrorDialog
-					.openError(
-						getShell(),
-						Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
-						new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
+				.openError(
+					getShell(),
+					Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
+					new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 		}
 	}
 	
+	
+	
 	public static class BuchungHinzuDialog extends TitleAreaDialog {
+		
 		Rechnung rn;
 		DatePickerCombo dp;
 		Text amount, bemerkung;
 		
-		public BuchungHinzuDialog(Shell shell, Rechnung r){
+		public BuchungHinzuDialog(Shell shell, Rechnung r) throws ElexisException{
 			super(shell);
+			if(r.getStatus()==RnStatus.STORNIERT){
+				throw new ElexisException(getClass(), RECHNUNG_IST_STORNIERT, ERR_STORNO);
+			}
 			rn = r;
 		}
 		
@@ -119,6 +131,7 @@ public class RnDialogs {
 		protected Control createDialogArea(Composite parent){
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
+			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.date")); //$NON-NLS-1$
 			dp = new DatePickerCombo(ret, SWT.NONE);
 			dp.setDate(new Date());
@@ -130,6 +143,7 @@ public class RnDialogs {
 			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.remark")); //$NON-NLS-1$
 			bemerkung = new Text(ret, SWT.MULTI | SWT.BORDER);
 			bemerkung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			amount.setText(rn.getOffenerBetrag().getAmountAsString());
 			amount.setFocus();
 			return ret;
 		}
@@ -152,10 +166,10 @@ public class RnDialogs {
 				super.okPressed();
 			} else {
 				ErrorDialog
-					.openError(
-						getShell(),
-						Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
-						new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
+				.openError(
+					getShell(),
+					Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
+					new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 		}
@@ -184,7 +198,7 @@ public class RnDialogs {
 			cbStates.select(rn.getStatus());
 			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			new Label(ret, SWT.WRAP)
-				.setText(Messages.getString("RnDialogs.warningDontChangeManually")); //$NON-NLS-1$
+			.setText(Messages.getString("RnDialogs.warningDontChangeManually")); //$NON-NLS-1$
 			return ret;
 		}
 		
