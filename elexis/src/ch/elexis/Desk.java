@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.internal.Workbench;
 
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
@@ -335,15 +334,16 @@ public class Desk implements IApplication {
 	public static Display getDisplay() {
 		if(theDisplay == null){
 			if (PlatformUI.isWorkbenchRunning()) {
-				theDisplay = PlatformUI.createDisplay();
+				theDisplay=PlatformUI.getWorkbench().getDisplay();
+				//theDisplay = PlatformUI.createDisplay();
 			}
 		}
 		if (theDisplay == null) {
-			return PlatformUI.createDisplay();
+			theDisplay= PlatformUI.createDisplay();
 		}
 		return theDisplay;
 	}
-
+	
 	public static void updateFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		FontData[] fd =
