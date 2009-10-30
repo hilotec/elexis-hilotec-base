@@ -156,7 +156,8 @@ CREATE TABLE PATIENT_ARTIKEL_JOINT(
 	lastupdate      BIGINT,
 	deleted			CHAR(1) default '0',
 	PatientID		VARCHAR(25),					# foreign key from KONTAKT
-	ArtikelID		VARCHAR(25),					# foreign key from ARTIKEL
+	ArtikelID		VARCHAR(25),					# foreign key from ARTIKEL  !!!! DEPRECATED DO NOT USE !!!
+	Artikel			VARCHAR(80),					# cheap copy of article. replaces ArtikelID
 	RezeptID		VARCHAR(25),					# prescription where this article was last given
 	DateFrom		CHAR(8),						# first date
 	DateUntil		CHAR(8),						# last date
@@ -422,7 +423,7 @@ CREATE TABLE LABORITEMS(
 	typ			CHAR(1),
 	Gruppe		VARCHAR(25),
 	prio		CHAR(3),
-	billingcode	VARCHAR(20)
+	billingcode	VARCHAR(20)						# Code for automatic billing (from e.g EAL2009)
 	
 );
 	
@@ -590,6 +591,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.1');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.2');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.0.0');
 

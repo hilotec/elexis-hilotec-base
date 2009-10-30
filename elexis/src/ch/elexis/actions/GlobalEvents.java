@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: GlobalEvents.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ * $Id: GlobalEvents.java 5789 2009-10-30 13:39:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -16,6 +16,9 @@ package ch.elexis.actions;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -206,10 +209,10 @@ public class GlobalEvents implements IPartListener2 {
 	
 	/**
 	 * Add a listener that will be informed as a View gets activated or deactivated, and
-	 * becomes visible or invisible. 
-	 * @param l the Activationlistener. If a listener is added twice, it will be called 
-	 * twice. 
-	 * @param part The workbench part to observe 
+	 * becomes visible or invisible.
+	 * @param l the Activationlistener. If a listener is added twice, it will be called
+	 * twice.
+	 * @param part The workbench part to observe
 	 */
 	public void addActivationListener(final ActivationListener l, final IWorkbenchPart part){
 		LinkedList<ActivationListener> list = activationListeners.get(part);
@@ -224,7 +227,7 @@ public class GlobalEvents implements IPartListener2 {
 	 * Remove an activationlistener. If the same listener has been added more than once, only
 	 * one call will be removed.
 	 * @param l The listener to remove. If no such listener was added, nothing happens
-	 * @param part the worbench part this listener was attached to. If no such par exists, 
+	 * @param part the worbench part this listener was attached to. If no such par exists,
 	 * nothing happens
 	 */
 	public void removeActivationListener(final ActivationListener l, final IWorkbenchPart part){
@@ -279,15 +282,15 @@ public class GlobalEvents implements IPartListener2 {
 			log.log("fireSelectionEvent mit Null Objekt ", Log.DEBUGMSG); //$NON-NLS-1$
 		} else {
 			log
-				.log(
-					"fireSelectionEvent: " + selected.getClass().getName() + "::" + selected.getId(), Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
+			.log(
+				"fireSelectionEvent: " + selected.getClass().getName() + "::" + selected.getId(), Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// TODO Das ist unbefriedigend. Lieber Abhängigkeit Pat/Fall/Kons beim Klienten auflösen
 		if (selected instanceof Patient) {
 			Hub.setWindowText((Patient) selected);
 			Fall f = (Fall) SelectionTracker.getObject(Fall.class);
 			if ((f == null) || (f.getPatient() == null)
-				|| (!f.getPatient().getId().equals(selected.getId()))) {
+					|| (!f.getPatient().getId().equals(selected.getId()))) {
 				/*
 				 * Konsultation b=((Patient)selected).getLetzteKons(); if(b!=null){ f=b.getFall();
 				 * doDispatchEvent(win,f); doDispatchEvent(win,b); }
@@ -397,7 +400,7 @@ public class GlobalEvents implements IPartListener2 {
 					Tree t = (Tree) obj[0];
 					if (t.contents instanceof PersistentObject) {
 						GlobalEvents.getInstance()
-							.fireSelectionEvent((PersistentObject) t.contents);
+						.fireSelectionEvent((PersistentObject) t.contents);
 					}
 				}
 			}
@@ -418,10 +421,10 @@ public class GlobalEvents implements IPartListener2 {
 	}
 	
 	public void clearSelection(final Class<? extends PersistentObject> template /*
-																				 * ,
-																				 * IWorkbenchWindow
-																				 * win
-																				 */){
+	 * ,
+	 * IWorkbenchWindow
+	 * win
+	 */){
 		log.log("clearSelection: " + template.getName(), Log.DEBUGMSG); //$NON-NLS-1$
 		
 		SelectionTracker.clearObject(template);
@@ -507,13 +510,13 @@ public class GlobalEvents implements IPartListener2 {
 	}
 	
 	public void partBroughtToTop(final IWorkbenchPartReference partRef){
-	// partActivated(partRef);
-	
+		// partActivated(partRef);
+		
 	}
 	
 	public void partClosed(final IWorkbenchPartReference partRef){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void partDeactivated(final IWorkbenchPartReference partRef){
@@ -527,8 +530,8 @@ public class GlobalEvents implements IPartListener2 {
 	}
 	
 	public void partOpened(final IWorkbenchPartReference partRef){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void partHidden(final IWorkbenchPartReference partRef){
@@ -552,8 +555,8 @@ public class GlobalEvents implements IPartListener2 {
 	}
 	
 	public void partInputChanged(final IWorkbenchPartReference partRef){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	};
 	
 	/**
@@ -604,5 +607,17 @@ public class GlobalEvents implements IPartListener2 {
 		public void changed();
 		
 		public IFilter getFilter();
+	}
+	
+	private class SelectionEventJob extends Job{
+		public SelectionEventJob(){
+			super("FireSelectionEvent");
+		}
+		
+		@Override
+		protected IStatus run(IProgressMonitor monitor){
+			
+			return null;
+		}
 	}
 }

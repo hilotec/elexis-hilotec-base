@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: VerrechnungsDisplay.java 5704 2009-09-02 12:00:53Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 5789 2009-10-30 13:39:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -45,6 +45,7 @@ import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Prescription;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -109,6 +110,9 @@ public class VerrechnungsDisplay extends Composite {
 	public void addPersistentObject(PersistentObject o){
 		Konsultation actKons = GlobalEvents.getSelectedKons();
 		if (actKons != null) {
+			if(o instanceof Prescription){
+				o=((Prescription)o).getArtikel();
+			}
 			if (o instanceof IVerrechenbar) {
 				if (Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
 					SWTHelper.alert(Messages.getString("VerrechnungsDisplay.missingRightsCaption"), //$NON-NLS-1$
@@ -138,6 +142,9 @@ public class VerrechnungsDisplay extends Composite {
 					return true;
 				}
 				if (o instanceof Leistungsblock) {
+					return true;
+				}
+				if(o instanceof Prescription){
 					return true;
 				}
 			}

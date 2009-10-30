@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: Prescription.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ * $Id: Prescription.java 5789 2009-10-30 13:39:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -28,7 +28,7 @@ import ch.rgw.tools.TimeTool;
  * verknüpft mit einem Patienten.
  */
 public class Prescription extends PersistentObject {
-
+	
 	public static final String TERMS = "terms";
 	public static final String DATE_UNTIL = "DatumBis";
 	public static final String DATE_FROM = "DatumVon";
@@ -36,20 +36,22 @@ public class Prescription extends PersistentObject {
 	public static final String REMARK = "Bemerkung";
 	public static final String DOSAGE = "Dosis";
 	public static final String REZEPT_ID = "RezeptID";
-	public static final String ARTICLE_ID = "ArtikelID";
+	private static final String ARTICLE_ID = "ArtikelID";
+	public static final String ARTICLE="Artikel";
 	public static final String PATIENT_ID = "PatientID";
 	private static final String TABLENAME = "PATIENT_ARTIKEL_JOINT";
 	static{
-		addMapping(TABLENAME,PATIENT_ID,ARTICLE_ID,REZEPT_ID,"DatumVon=S:D:DateFrom",
-				"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,EXTINFO);
+		addMapping(TABLENAME,PATIENT_ID,ARTICLE,ARTICLE_ID,REZEPT_ID,"DatumVon=S:D:DateFrom",
+			"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,EXTINFO);
 	}
-
+	
 	public Prescription(Artikel a, Patient p, String d, String b){
 		create(null);
-		set(new String[]{ARTICLE_ID,PATIENT_ID,DOSAGE,REMARK,DATE_FROM},a.getId(),p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
+		String article=a.storeToString();
+		set(new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK,DATE_FROM},article,p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	public Prescription(Prescription other){
-		String[] fields=new String[]{ARTICLE_ID,PATIENT_ID,DOSAGE,REMARK};
+		String[] fields=new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK};
 		String[] vals=new String[fields.length];
 		if(other.get(fields, vals)){
 			create(null);
@@ -62,11 +64,11 @@ public class Prescription extends PersistentObject {
 	}
 	protected Prescription() {
 	}
-
+	
 	protected Prescription(String id) {
 		super(id);
 	}
-
+	
 	/**
 	 * Set the begin date of this prescription
 	 * @param date may be null to set it as today
@@ -74,19 +76,19 @@ public class Prescription extends PersistentObject {
 	public void setBeginDate(String date){
 		set(DATE_FROM,date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
 	}
-
+	
 	public String getBeginDate(){
 		return checkNull(get(DATE_FROM));
 	}
-
+	
 	public void setEndDate(String date){
 		set(DATE_UNTIL,date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
 	}
-
+	
 	public String getEndDate(){
 		return checkNull(get(DATE_UNTIL));
 	}
-
+	
 	@Override
 	public String getLabel(){
 		return getSimpleLabel()+" "+getDosis();
@@ -99,14 +101,26 @@ public class Prescription extends PersistentObject {
 			return "Fehler";
 		}
 	}
-
+	
+	/**
+	 * return the article contained in this prescription. In earlier versions of elexis, this was the Article ID, now it is
+	 * a String representation of the Article itself (which allows for reconstruction of the subclass used). For compatibility reasons
+	 * we use the old technique for old prescriptions.
+	 * @return
+	 */
 	public Artikel getArtikel(){
-		return Artikel.load(get(ARTICLE_ID));
+		// compatibility layer
+		String art=get(ARTICLE);
+		if(StringTool.isNothing(art)){
+			return Artikel.load(get(ARTICLE_ID));
+		}
+		return (Artikel)Hub.poFactory.createFromString(art);
+		
 	}
 	public String getDosis(){
 		return checkNull(get(DOSAGE));
 	}
-
+	
 	public void setDosis(String newDose){
 		String oldDose=getDosis();
 		if(!oldDose.equals(newDose)){
@@ -115,9 +129,9 @@ public class Prescription extends PersistentObject {
 	}
 	public String getBemerkung(){
 		return checkNull(get(REMARK));
-
+		
 	}
-
+	
 	/**
 	 * Ein Medikament stoppen
 	 */
@@ -131,7 +145,7 @@ public class Prescription extends PersistentObject {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Ein Medikament aus der Datenbank löschen
 	 * @return
@@ -169,7 +183,7 @@ public class Prescription extends PersistentObject {
 			set(DATE_UNTIL,begin.toString(TimeTool.DATE_GER));
 		}
 	}
-
+	
 	/**
 	 * A listing of all adinistration periods of this prescription. This is to retrieve later
 	 * when and how the article was prescribed
@@ -194,8 +208,8 @@ public class Prescription extends PersistentObject {
 		ret.put(new TimeTool(get(DATE_FROM)), get(DOSAGE));
 		return ret;
 	}
-
-
+	
+	
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
