@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FixMediDisplay.java 5777 2009-10-14 12:36:51Z rgw_ch $
+ * $Id: FixMediDisplay.java 5790 2009-10-30 13:45:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -94,6 +94,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 					}
 					
 					public void dropped(PersistentObject o, DropTargetEvent e){
+						
 						if (o instanceof Artikel) {
 							Prescription pre =
 								new Prescription((Artikel) o, GlobalEvents.getSelectedPatient(),
@@ -107,7 +108,13 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							}
 							
 						} else if (o instanceof Prescription) {
+							Prescription[] existing=GlobalEvents.getSelectedPatient().getFixmedikation();
 							Prescription pre = (Prescription) o;
+							for(Prescription pe:existing){
+								if(pe.equals(pre)){
+									return;
+								}
+							}
 							Prescription now =
 								new Prescription(pre.getArtikel(), GlobalEvents
 									.getSelectedPatient(), pre.getDosis(), pre.getBemerkung());
