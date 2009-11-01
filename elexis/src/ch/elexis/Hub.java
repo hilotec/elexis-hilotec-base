@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5789 2009-10-30 13:39:20Z rgw_ch $
+ *    $Id: Hub.java 5791 2009-11-01 16:53:31Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis;
@@ -125,7 +125,6 @@ public class Hub extends AbstractUIPlugin {
 	private static File userDir;
 	
 	public Hub(){
-		plugin = this;
 		log = Log.get("Elexis startup"); //$NON-NLS-1$
 		getWritableUserDir();
 		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
@@ -136,7 +135,7 @@ public class Hub extends AbstractUIPlugin {
 	/*
 	 * called by constructor
 	 */
-	private void initializeLog(final Settings cfg){
+	private static void initializeLog(final Settings cfg){
 		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null);
 		int maxLogfileSize = -1;
 		String logPath;
@@ -164,7 +163,7 @@ public class Hub extends AbstractUIPlugin {
 		
 	}
 	
-	private void initializeLock(){
+	private static void initializeLock(){
 		final int timeoutSeconds = 600;
 		try {
 			final LockFile lockfile = new LockFile(userDir, "elexislock", 4, timeoutSeconds); //$NON-NLS-1$
@@ -196,13 +195,24 @@ public class Hub extends AbstractUIPlugin {
 		return localCfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS);
 	}
 	
+	@Override
+	public void start(final BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		startUpBundle();
+	}
+	
+	@Override
+	public void stop(final BundleContext context) throws Exception {
+		plugin = null;
+		super.stop(context);
+	}
+	
 	/**
 	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench, durchgeführt werden
 	 * sollen.
 	 */
-	@Override
-	public void start(final BundleContext context) throws Exception{
-		super.start(context);
+	public void startUpBundle() {
 		String[] args = Platform.getApplicationArgs();
 		String config = "default"; //$NON-NLS-1$
 		for (String s : args) {
@@ -249,8 +259,7 @@ public class Hub extends AbstractUIPlugin {
 	/**
 	 * Programmende
 	 */
-	@Override
-	public void stop(final BundleContext context) throws Exception{
+	public static void preShutdown() {
 		heart.stop();
 		//JobPool.getJobPool().dispose();
 		if (Hub.actUser != null) {
@@ -265,8 +274,6 @@ public class Hub extends AbstractUIPlugin {
 		}
 		PersistentObject.disconnect();
 		globalCfg = null;
-		super.stop(context);
-		plugin = null;
 		// shutdownjobs are executed after the workbench has been shut down.
 		// So those jobs must not use any of the workbench's resources.
 		if ((shutdownJobs != null) && (shutdownJobs.size() > 0)) {
@@ -281,7 +288,11 @@ public class Hub extends AbstractUIPlugin {
 			dlg.setBlockOnOpen(false);
 			dlg.open();
 			for (ShutdownJob job : shutdownJobs) {
-				job.doit();
+				try {
+					job.doit();
+				} catch(Exception e) {
+					log.log("Error starting job: " + e.getMessage(), Log.ERRORS);
+				}
 			}
 			dlg.close();
 		}
@@ -377,7 +388,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5789 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5791 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
