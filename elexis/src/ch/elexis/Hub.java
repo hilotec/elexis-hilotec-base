@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5794 2009-11-04 08:58:53Z rgw_ch $
+ *    $Id: Hub.java 5797 2009-11-06 07:06:35Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis;
@@ -261,7 +261,7 @@ public class Hub extends AbstractUIPlugin {
 	/**
 	 * Programmende
 	 */
-	public static void preShutdown() {
+	public static void postShutdown() {
 		heart.stop();
 		//JobPool.getJobPool().dispose();
 		if (Hub.actUser != null) {
@@ -389,7 +389,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5794 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5797 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$

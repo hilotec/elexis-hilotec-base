@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 5791 2009-11-01 16:53:31Z michael_imhof $
+ *  $Id: ApplicationWorkbenchAdvisor.java 5797 2009-11-06 07:06:35Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis;
@@ -150,8 +150,12 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public boolean preShutdown(){
 		GlobalActions.fixLayoutAction.setChecked(false);
-		Hub.preShutdown();
 		return super.preShutdown();
 	}
-	
+
+	@Override
+	public void postShutdown() {
+		Hub.postShutdown();
+		super.postShutdown();
+	}
 }
