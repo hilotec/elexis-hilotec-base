@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 5747 2009-09-22 14:56:40Z michael_imhof $
+ *  $Id: LaborView.java 5798 2009-11-06 15:48:43Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -274,11 +274,13 @@ public class LaborView extends ViewPart implements SelectionListener,
 			@Override
 			public void mouseDoubleClick(final MouseEvent e) {
 				LabResult lr = actResult();
-				LabItem li = lr.getItem();
-				if (li.getTyp().equals(LabItem.typ.TEXT)
-						|| (lr.getComment().length() > 0)) {
-					new DisplayTextDialog(getViewSite().getShell(),
-							Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
+				if (lr != null) {
+					LabItem li = lr.getItem();
+					if (li.getTyp().equals(LabItem.typ.TEXT)
+							|| (lr.getComment().length() > 0)) {
+						new DisplayTextDialog(getViewSite().getShell(),
+								Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
+					}
 				}
 				super.mouseDoubleClick(e);
 			}
@@ -356,7 +358,10 @@ public class LaborView extends ViewPart implements SelectionListener,
 				lrs = new LabResult[NUMCOLUMNS];
 				it.setData(KEY_VALUES, lrs);
 			}
-			return lrs[idx - COL_OFFSET];
+			int column = idx - COL_OFFSET;
+			if (column >= 0) {
+				return lrs[idx - COL_OFFSET];
+			}
 		}
 		return null;
 	}
