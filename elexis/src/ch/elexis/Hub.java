@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5797 2009-11-06 07:06:35Z michael_imhof $
+ *    $Id: Hub.java 5799 2009-11-07 08:31:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -113,8 +113,6 @@ public class Hub extends AbstractUIPlugin {
 	/** Der Initialisierer für die Voreinstellungen */
 	public static final PreferenceInitializer pin = new PreferenceInitializer();;
 	
-	/** Hintergrundjobs zum Nachladen von Daten */
-	//public static final JobPool jobPool = JobPool.getJobPool();;
 	
 	/** Factory für interne PersistentObjects */
 	public static final PersistentObjectFactory poFactory = new PersistentObjectFactory();
@@ -122,8 +120,17 @@ public class Hub extends AbstractUIPlugin {
 	/** Heartbeat */
 	public static Heartbeat heart;
 	
+	/** Beschreibbares Verzeichnis für userspezifische Konfigurationsdaten etc.
+	 * Achtung: "User" meint hier: den eingeloggten Betriebssystem-User, nicht den
+	 * Elexis-User. In Windows wird userDir meist %USERPROFILE%\elexis sein, in Linux
+	 * ~./elexis. Es kann mit getWritableUserDir() geholt werden.
+	 * */
 	private static File userDir;
 	
+	/**
+	 * Consructor. No Eclipse dependend initializations here because the Platform has not been
+	 * iniatialized fully yet
+	 */
 	public Hub(){
 		log = Log.get("Elexis startup"); //$NON-NLS-1$
 		getWritableUserDir();
@@ -133,7 +140,8 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	/*
-	 * called by constructor
+	 * called in startup sequence after initialization of the platform but before
+	 * initalization of the workbench
 	 */
 	private static void initializeLog(final Settings cfg){
 		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null);
@@ -257,6 +265,7 @@ public class Hub extends AbstractUIPlugin {
 		heart = Heartbeat.getInstance();
 		initializeLock();
 	}
+	
 	
 	/**
 	 * Programmende
@@ -389,7 +398,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5797 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5799 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
@@ -497,7 +506,9 @@ public class Hub extends AbstractUIPlugin {
 	 * will be created. If it could not be created, the application will refuse to start.
 	 * 
 	 * @return a directory that exists always and is always writable and readable for plugins of the
-	 *         currently running elexis instance
+	 *         currently running elexis instance. Caution: this directory is not necessarily shared
+	 *         among different OS-Users. In Windows it is normally %USERPROFILE%\elexis,
+	 *         in Linux ~./elexis
 	 */
 	public static File getWritableUserDir(){
 		if (userDir == null) {
