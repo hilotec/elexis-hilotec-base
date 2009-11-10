@@ -136,6 +136,7 @@ public abstract class AbstractData {
 		String[] parts = pattern.split("\\."); //$NON-NLS-1$
 		String decimalPattern = parts[0].replace('X', '#').replace('F', ' ')
 				.trim();
+		decimalPattern = decimalPattern.substring(0, decimalPattern.length() - 1) + "0";
 		l1 = decimalPattern.length();
 		if (parts.length > 1) {
 			decimalPattern += "." //$NON-NLS-1$
