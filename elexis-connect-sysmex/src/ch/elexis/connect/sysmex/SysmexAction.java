@@ -325,9 +325,9 @@ public class SysmexAction extends Action implements ComPortListener {
 		if (shutdownThread != null) {
 			shutdownThread.interrupt();
 			shutdownThread = null;
-			_ctrl.close();
-			setChecked(false);
 		}
+		_ctrl.close();
+		setChecked(false);
 	}
 
 	/**
