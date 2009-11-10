@@ -158,12 +158,6 @@ public class Desk implements IApplication {
 		}
 		
 		try {
-			// Wir wollen die schicken runden Tabs von Eclipse 3.x
-			PlatformUI.getPreferenceStore().setValue(
-				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
-			// Aber die Animationen sind eher nervend, nicht?
-			PlatformUI.getPreferenceStore().setValue(
-				IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 			
 			int returnCode =
 				PlatformUI.createAndRunWorkbench(getDisplay(), new ApplicationWorkbenchAdvisor());

@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ApplicationWorkbenchWindowAdvisor.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: ApplicationWorkbenchWindowAdvisor.java 5814 2009-11-10 22:04:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -53,7 +55,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		} else {
 			configurer.setShowPerspectiveBar(false);
 		}
-		
+		// Wir wollen die schicken runden Tabs von Eclipse 3.x
+		PlatformUI.getPreferenceStore().setValue(
+			IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+		// Aber die Animationen sind eher nervend, nicht?
+		PlatformUI.getPreferenceStore().setValue(
+			IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+	
 	}
 	
 	@Override
