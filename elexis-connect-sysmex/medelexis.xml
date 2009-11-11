@@ -7,6 +7,6 @@
   		</service:role>
   	</service:roles>
   </service:conditions>
-  <service:description>Verbindung von Elexis zum Sysmex<service:description>
+  <service:description>Verbindung von Elexis zum Sysmex</service:description>
   <service:depends>ch.medelexis.nucleus ch.elexis.importer.div</service:depends>
 </service:service>
