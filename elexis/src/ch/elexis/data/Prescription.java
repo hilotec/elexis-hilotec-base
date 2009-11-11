@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: Prescription.java 5789 2009-10-30 13:39:20Z rgw_ch $
+ * $Id: Prescription.java 5818 2009-11-11 14:21:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -51,7 +51,7 @@ public class Prescription extends PersistentObject {
 		set(new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK,DATE_FROM},article,p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	public Prescription(Prescription other){
-		String[] fields=new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK};
+		String[] fields=new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK,ARTICLE_ID};
 		String[] vals=new String[fields.length];
 		if(other.get(fields, vals)){
 			create(null);
