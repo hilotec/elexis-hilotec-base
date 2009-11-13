@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: OrderImportDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: OrderImportDialog.java 5822 2009-11-13 07:44:41Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -41,6 +41,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -63,6 +64,7 @@ import ch.rgw.tools.StringTool;
  *
  */
 public class OrderImportDialog extends TitleAreaDialog {
+	private static final String ALLE_MARKIEREN = " Alle markieren ";
 	private static final int DIFF_SPINNER_MIN = 1;
 	private static final int DIFF_SPINNER_DEFAULT = 1;
 	
@@ -170,14 +172,40 @@ public class OrderImportDialog extends TitleAreaDialog {
 		viewer.setContentProvider(new ViewerContentProvider());
 		viewer.setInput(this);
 		
-		Button importButton = new Button(mainArea, SWT.PUSH);
+		Composite cButtons=new Composite(mainArea,SWT.NONE);
+		cButtons.setLayout(new GridLayout(2,false));
+		final Button clickAllButton=new Button(cButtons,SWT.PUSH);
+		clickAllButton.setText(ALLE_MARKIEREN);
+		clickAllButton.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean bv=true;
+				if(clickAllButton.getText().equals(ALLE_MARKIEREN)){
+					bv=true;
+					clickAllButton.setText("Alle demarkieren");
+				}else{
+					bv=false;
+					clickAllButton.setText(ALLE_MARKIEREN);
+				}
+					
+				for(OrderElement oe:orderElements){
+					oe.setVerified(bv);
+				}
+				viewer.refresh(true);
+			}
+			
+		});
+		Button importButton = new Button(cButtons, SWT.PUSH);
+		GridData gd=new GridData(SWT.RIGHT,SWT.CENTER,false,false);
+		importButton.setLayoutData(gd);
 		importButton.setText("Lagerbestände anpassen");
 		importButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doImport();
 			}
 		});
-		
+		cButtons.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return mainArea;
 	}
 	
@@ -221,7 +249,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 					OrderElement orderElement = (OrderElement) element;
 					if (value instanceof Boolean) {
 						Boolean bValue = (Boolean) value;
-						orderElement.setVeified(bValue.booleanValue());
+						orderElement.setVerified(bValue.booleanValue());
 					}
 					viewer.update(orderElement, null);
 				}
@@ -259,7 +287,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 						try {
 							int amount = Integer.parseInt(text);
 							orderElement.setAmount(amount);
-							orderElement.setVeified(true);
+							orderElement.setVerified(true);
 						} catch (NumberFormatException ex) {
 							// ignore invalid value
 						}
@@ -337,7 +365,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 			updateOrderElement(orderElement, newAmount);
 		} else {
 			ScannerEvents.beep();
-			SWTHelper.alert("Artikel nicht bestellt", "Diser Artikel wurde nicht bestellt. Der Bestand kann nicht automatisch angepasst werden.");
+			SWTHelper.alert("Artikel nicht bestellt", "Dieser Artikel wurde nicht bestellt. Der Bestand kann nicht automatisch angepasst werden.");
 		}
 	}
 
@@ -358,7 +386,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 	
 	private void updateOrderElement(OrderElement orderElement, int newAmount) {
 		orderElement.setAmount(newAmount);
-		orderElement.setVeified(true);
+		orderElement.setVerified(true);
 		viewer.update(orderElement, null);
 	}
 	
@@ -375,7 +403,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 
 					// reset amount
 					orderElement.setAmount(0);
-					orderElement.setVeified(false);
+					orderElement.setVerified(false);
 				}
 			}
 		} catch(Exception ex){
@@ -545,7 +573,7 @@ public class OrderImportDialog extends TitleAreaDialog {
 			return verified;
 		}
 		
-		void setVeified(boolean verified) {
+		void setVerified(boolean verified) {
 			this.verified = verified;
 		}
 	}
