@@ -42,17 +42,17 @@
 
 
 \section{Einf\"uhrung}
-Dieses Plugin dient dazu, die Laborger\"ate 'Sysmex KX-21', 'Sysmex KX-21N' und 'pocH-100i' \footnote{Firma Sysmex Digitana} an Elexis anzubinden. Mit diesem Plugin k\"onnen die, vom Sysmex gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
+Dieses Plugin dient dazu, die Laborger\"ate\footnote{Firma Sysmex Digitana} 'Sysmex KX-21', 'Sysmex KX-21N' und 'pocH-100i' an Elexis anzubinden. Mit diesem Plugin k\"onnen die, vom Ger\"at gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden.
 
 \subsection{Voraussetzungen}
-Dieses Plugin ben\"otigt Elexis V1.4.1 oder h\"oher sowie ein pocH-100i oder ein Sysmex Ger\"at (Modell KX-21 oder KX-21N). Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle und ein korrekt, gekreuzt verdrahtetes serielles Kabel (Nullmodemkabel) zur Verbindung des Sysmexs mit dem PC ben\"otigt \footnote{Alternative: RS-232 Adapter f\"ur USB oder Bluetooth}.
+Dieses Plugin ben\"otigt Elexis V1.4.1 oder h\"oher sowie ein pocH-100i oder ein Sysmex Ger\"at (Modell KX-21 oder KX-21N). Ausserdem wird ein PC mit mindestens einer freien seriellen Schnittstelle und ein korrekt, gekreuzt verdrahtetes serielles Kabel (Nullmodemkabel) zur Verbindung des Ger\"ates mit dem PC ben\"otigt\footnote{Alternative: RS-232 Adapter f\"ur USB oder Bluetooth}.
 
 \section{Installation und Konfiguration}
 Installieren Sie auf dem, sich im Labor befindlichen PC das Plugin wie gewohnt. Verbinden Sie dann bei \textbf{ausgeschalteten} Ger\"aten das Sysmex mit einem seriellen Port des Computers. 
 \subsection{Daten\"ubertragung am Sysmex einschalten}
-Die serielle Datenkommunikation ist im Sysmex standardm\"assig inaktiv. Damit das Sysmex Ger\"at Daten \"uber die Schnittstelle an den Computer sendet, muss die Daten\"uber-tragung eingeschaltet werden. Wie dies gemacht wird, ist in der Gebrauchsanweisung zum Sysmex beschrieben (KX-21N: Kapitel 6, Seite 6.9). Es folgt hier nur eine Kurzform f\"ur ge\"ubte Techniker:\\
+Die serielle Datenkommunikation ist im Sysmex standardm\"assig inaktiv. Damit das Sysmex Ger\"at Daten \"uber die Schnittstelle an den Computer sendet, muss die Daten\"uber-tragung eingeschaltet werden. Wie dies gemacht wird, ist in der Gebrauchsanweisung zum Sysmex beschrieben (z.B. KX-21N: Kapitel 6, Seite 6.9). Es folgt hier nur eine Kurzform f\"ur ge\"ubte Techniker:\\
 \\
-\textbf{Kommunikationsparameter:}\\
+\textbf{Kommunikationsparameter f\"ur KX-21 und KX-21N:}\\
 Select, 6 (Einstellungen), 5 (Labor-EDV-Einst)\\
  - Verbindung: aktiv (mit Pfeiltasten li/re)\\
  - Ausgabeformat: \textbf{K-1000} oder \textbf{KX21N}\\
@@ -66,8 +66,24 @@ Select, 6 (Einstellungen), 5 (Labor-EDV-Einst)\\
  - RTS/CTS: Ignore\\
 Select, \"Ubern. (mit Pfeiltasten li/re), Enter\\
 \\
-(*): Empfehlung; eingestellter Wert muss mit Elexis Konfiguration \"ubereinstimmen!
-
+(*): Empfehlung; eingestellter Wert muss mit Elexis Konfiguration \"ubereinstimmen!\\
+\textbf{Kommunikationsparameter f\"ur pocH-100i:}\\
+Men\"u, Einstell., Host-\"Ubertragung\\
+ - Anschluss: seriell\\
+ - Autoausg.: Aktiv\\
+ - Format: \textbf{KX-21N}\\
+ - \"U-Rate: 9600bps (*)\\
+ - Datenl\"an.: 8 bits (*)\\
+Pfeil nach rechts\\
+ - Stop-Bit: 1 bit (*)\\
+ - Parit\"at: Deaktiv. (*)\\
+ - Protokoll: Class A\\
+ - \"U-Intervall: 2\\
+ - RTS/CTS: Deaktiv.\\
+Speichern, OK\\
+\\
+(*): Empfehlung; eingestellter Wert muss mit Elexis Konfiguration \"ubereinstimmen!\\
+\\
 \subsection{Elexis Konfiguration}
 Starten Sie Elexis und gehen Sie dort zu \textsc{Datei-Einstellungen-Datenaustausch-Sysmex} (S. Abb. \ref{fig:config}).
 \begin{figure}[h]
@@ -98,7 +114,7 @@ Wenn das Plugin korrekt installiert ist, erscheint in der Labor-View automatisch
 \end{figure}
 Die Verbindung bleibt bestehen bis ein Wert \"uber-tragen wurde oder das Timeout gem\"ass Konfiguration abgelaufen ist. Das Sysmex Ger\"at ben\"otigt f\"ur die Tests ca. 45 Sekunden. Jedesmal wenn ein Test abgeschlossen ist, wird das Resultat an den Computer gesendet.\\
 \\
-\textbf{Wichtig:} Der PC muss dabei auf Empfang sein, ansonsten erscheint auf dem Sysmex Ger\"at eine Fehlermeldung\footnote{Sysmex: Piepston kann mit 'C' abgeschaltet werden. Dar\"uber hinaus muss danach aber die automatische \"Ubertragung aus- und wieder eingeschaltet werden. Siehe dazu Kapitel 'Installation und Konfiguration'}.
+\textbf{Wichtig:} Der PC muss dabei auf Empfang sein, ansonsten erscheint auf dem Ger\"at eine Fehlermeldung\footnote{Sysmex: Piepston kann mit 'C' abgeschaltet werden. Dar\"uber hinaus muss danach aber die automatische \"Ubertragung aus- und wieder eingeschaltet werden. Siehe dazu Kapitel 'Installation und Konfiguration'}.
 Nach der \"Ubertragung eines Messresultates bleibt die Schnittstelle noch f\"ur 5 Sekunden aktiv (dies f\"ur den Fall, dass manuell mehrere Werte auf dem Ger\"at f\"ur die \"Ubertragung selektiert wurden). Anschliessend wird die Schnittstelle beendet und muss vor der n\"achsten Messung erneut eingeschaltet werden.
 \begin{figure}[h]
     \centering
@@ -108,7 +124,7 @@ Nach der \"Ubertragung eines Messresultates bleibt die Schnittstelle noch f\"ur 
 \end{figure}
 Wenn Elexis ein Resultat empf\"angt, muss der Anwender dieses einem Patienten zuordnen. Dazu wird das Elexis Fenster f\"ur die Patientenselektion angezeigt.\\
 \\
-Es kann passieren, dass die Daten\"ubetragung zwischen Sysmex und Computer fehlschl\"agt. In diesem Fall kann ein oder mehrere Messwerte auf dem Sysmex folgendermassen erneut gesendet werden (siehe n\"achste Seite).\\
+Es kann passieren, dass die Daten\"ubetragung zwischen Sysmex und Computer fehlschl\"agt. In diesem Fall kann ein oder mehrere Messwerte auf dem Sysmex folgendermassen erneut gesendet werden (siehe n\"achstes Kapitel).\\
 
 \subsection{Messwerte erneut senden}
 \textbf{Sysmex KX-21:}\\
@@ -125,8 +141,10 @@ Enter zum Selektieren des Messerts f\"ur die \"Ubertragung (es k\"onnen mehrere 
 1 (Host)\\
 \\
 \textbf{pocH-100i:}\\
-TODO\\
-\\
+Men\"u\\
+Datensp.\\
+Mit Pfeiltasten (nach oben/unten) zum gew\"unschten Messwert navigieren\\
+Host\\
 \section{Plattformen}
 Dieses Plugin wurde unter Windows XP und Vista getestet. Beachten Sie bitte, dass unter Linux die seriellen Ports nicht COM1 usw., sondern /dev/ttyS0 usw. heissen.
 \section{Kabelspezifikation}
