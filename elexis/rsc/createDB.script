@@ -528,6 +528,7 @@ CREATE TABLE HEAP2(
 CREATE TABLE LOGS(
 	ID			VARCHAR(25) primary key,	# log entry's id
 	lastupdate  BIGINT,
+	deleted     char(1) default '0',
 	OID			VARCHAR(80),				# foreign key on modified object
 	datum		CHAR(8),					# date of modification
 	typ			VARCHAR(20),				

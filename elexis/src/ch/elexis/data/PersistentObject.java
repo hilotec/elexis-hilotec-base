@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5763 2009-09-28 08:33:13Z rgw_ch $
+ *    $Id: PersistentObject.java 5828 2009-11-19 11:46:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -1986,7 +1986,7 @@ public abstract class PersistentObject {
 		try {
 			return Long.parseLong(get("lastupdate"));
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
+			//ExHandler.handle(ex);
 			return 0L;
 		}
 	}
