@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextContainer.java 5759 2009-09-27 18:42:56Z rgw_ch $
+ *  $Id: TextContainer.java 5831 2009-11-19 20:46:35Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.oowrapper3;
 
+import java.awt.Frame;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.framework.Bundle;
@@ -68,10 +70,12 @@ public class TextContainer implements ITextPlugin {
 	private boolean bSaveOnFocusLost;
 	
 	public Composite createContainer(Composite parent, ICallback handler){
+		new Frame();	// initialize AWT
 		panel = new OfficePanel(parent, SWT.NONE);
+		panel.setLayout(new FillLayout());
 		parent.setLayout(new GridLayout());
 		panel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		panel.setBuildAlwaysNewFrames(true);
+		panel.setBuildAlwaysNewFrames(false);
 		textHandler = handler;
 		return panel;
 	}
