@@ -41,7 +41,7 @@ public class SysmexAction extends Action implements ComPortListener {
 	private ShutdownThread shutdownThread = null;
 
 	// Declare filename to the log for test only!! for production must be null!
-	String simulate = "C:\\tmp\\sysmex.log"; 
+	String simulate = null; //"C:\\tmp\\sysmex.log"; 
 
 	private class ShutdownThread extends Thread {
 		private boolean shouldShutdown = false;
