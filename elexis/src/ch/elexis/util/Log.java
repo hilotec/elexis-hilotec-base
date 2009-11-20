@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Log.java 5275 2009-05-01 15:39:07Z rgw_ch $
+ * $Id: Log.java 5839 2009-11-20 12:43:14Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -193,6 +193,40 @@ public class Log {
 			}
 		}
 	}
+	
+	/**
+	 * Eine Exception als Log-Nachricht ausgeben.
+	 * 
+	 * @param t
+	 *            die Exception
+	 * @param message
+	 *            die Nachricht
+	 * @param level
+	 *            der level
+	 */
+	public void log(final Throwable t, String message, final int level){
+		if (message == null || message.length() == 0) {
+			message = t.getMessage();
+			if (message == null || message.length() == 0) {
+				message = t.getClass().toString();
+			}
+		}
+		log(message, level);
+		t.printStackTrace(out);
+	}
+	
+	/**
+	 * Eine Exception als Log-Nachricht ausgeben.
+	 * 
+	 * @param t
+	 *            die Exception
+	 * @param level
+	 *            der level
+	 */
+	public void log(final Throwable t) {
+		log(t, null, Log.ERRORS);
+	}
+	
 	
 	public static void trace(String msg){
 		StringBuffer mark = new StringBuffer(100);
