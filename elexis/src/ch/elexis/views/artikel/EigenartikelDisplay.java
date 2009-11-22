@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EigenartikelDisplay.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ *  $Id: EigenartikelDisplay.java 5840 2009-11-22 15:37:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -60,7 +60,7 @@ public class EigenartikelDisplay implements IDetailDisplay {
 				new InputData(Messages.EigenartikelDisplay_PiecesPerDose, Artikel.EXTINFO, Typ.INT,
 					Artikel.VERKAUFSEINHEIT),
 				new InputData(Messages.EigenartikelDisplay_dealer,
-					Messages.EigenartikelDisplay_dealer, new LabeledInputField.IContentProvider() {
+					Artikel.LIEFERANT_ID, new LabeledInputField.IContentProvider() {
 						public void displayContent(PersistentObject po, InputData ltf){
 							String lbl = ((Artikel) po).getLieferant().getLabel();
 							if (lbl.length() > 15) {
