@@ -32,7 +32,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 	
 	static final String FROM_SUBSTANCE =
 		"SELECT j.product FROM " + BAGMedi.JOINTTABLE + " j, " + Substance.TABLENAME
-			+ " s WHERE j.Substance=s.ID AND s.name LIKE ";
+		+ " s WHERE j.Substance=s.ID AND s.name LIKE ";
 	
 	public BagMediContentProvider(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
@@ -75,7 +75,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 				String notes = values.get(BAGMediSelector.FIELD_NOTES);
 				String names = values.get(BAGMediSelector.FIELD_NAME);
 				if (StringTool.isNothing(subst) && StringTool.isNothing(notes)) {
-					qbe.add(BAGMedi.NAME, "Like", names + "%");
+					qbe.add(BAGMedi.NAME, "Like", names + "%",true);
 					if (bOnlyGenerics) {
 						qbe.add("Generikum", "LIKE", "G%");
 					}
