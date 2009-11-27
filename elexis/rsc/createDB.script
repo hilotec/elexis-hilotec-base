@@ -49,7 +49,7 @@ CREATE TABLE KONTAKT(
 	Telefon2		VARCHAR(30),				# phone2
 	Fax				VARCHAR(30),				# you'll guess it
 	NatelNr			VARCHAR(30),				# mobile
-	EMail			VARCHAR(50),				# guess 
+	EMail			VARCHAR(80),				# guess 
 	Website			VARCHAR(80),
 	Gruppe			VARCHAR(10),				# mandator group
 	PatientNr		VARCHAR(40),				# external identifier
@@ -592,6 +592,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.2');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.4');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.0.0');
 
