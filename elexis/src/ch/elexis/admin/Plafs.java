@@ -7,12 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Plafs.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ * 
+ *  $Id: Plafs.java 5845 2009-11-28 08:44:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.util.HashMap;
 
@@ -76,7 +77,11 @@ public class Plafs {
 				}
 			}
 			dais.close();
-		} catch (Exception ex) {
+		} catch(EOFException ee){
+			// nope
+			p.put("plaf", "none");
+		}
+		catch (Exception ex) {
 			ExHandler.handle(ex);
 			p.put("plaf", "none");
 		}

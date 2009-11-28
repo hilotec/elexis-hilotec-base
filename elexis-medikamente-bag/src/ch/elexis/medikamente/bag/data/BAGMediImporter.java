@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: BAGMediImporter.java 3985 2008-06-01 06:19:16Z rgw_ch $
+ * 
+ *  $Id: BAGMediImporter.java 5845 2009-11-28 08:44:19Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.ElexisException;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -38,14 +39,14 @@ public class BAGMediImporter extends ImporterPage {
 	public BAGMediImporter() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
 	public Composite createPage(final Composite parent) {
 		FileBasedImporter fbi=new FileBasedImporter(parent,this);
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
 	}
-
+	
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
 		ExcelWrapper ew=new ExcelWrapper();
@@ -55,8 +56,8 @@ public class BAGMediImporter extends ImporterPage {
 			monitor.beginTask("Import BAG-Medikamente", l-f);
 			int counter=0;
 			ew.setFieldTypes(new Class[]{String.class,Character.class,Integer.class,Integer.class,Integer.class,
-					Character.class,String.class,String.class,Double.class,Double.class,String.class,Integer.class,
-					Integer.class,String.class,Integer.class});
+				Character.class,String.class,String.class,Double.class,Double.class,String.class,Integer.class,
+				Integer.class,String.class,Integer.class});
 			for(int i=f;i<l;i++){
 				List<String> row=ew.getRow(i);
 				monitor.subTask(row.get(7));
@@ -76,13 +77,13 @@ public class BAGMediImporter extends ImporterPage {
 		}
 		return Status.CANCEL_STATUS;
 	}
-
+	
 	/**
 	 * Import a medicament from one row of the BAG-Medi file
 	 * @param row
 	 * @return
 	 */
-	public static boolean importUpdate(final String[] row){
+	public static boolean importUpdate(final String[] row) throws ElexisException{
 		String pharmacode="0";
 		BAGMedi imp=null;
 		// Kein Pharmacode, dann nach Name suchen
@@ -100,10 +101,13 @@ public class BAGMediImporter extends ImporterPage {
 				ExHandler.handle(ex);
 				log.log(Level.WARNING, "Pharmacode falsch: "+row[2]);
 			}
-	
+			
 			qbe.clear();
 			qbe.add(Artikel.SUB_ID, "=", pharmacode);
 			List<Artikel> lArt=qbe.execute();
+			if(lArt==null){
+				throw new ElexisException(BAGMediImporter.class, "Article list was null while scanning for "+pharmacode, ElexisException.EE_UNEXPECTED_RESPONSE,true);
+			}
 			if(lArt.size()>1){
 				// Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
 				Iterator<Artikel> it=lArt.iterator();
@@ -124,18 +128,18 @@ public class BAGMediImporter extends ImporterPage {
 			imp=new BAGMedi(row[7],pharmacode);
 			
 			String sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+			.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 			PersistentObject.getConnection().exec(sql);
 			
 		}else{
 			
 			String sql=new StringBuilder().append("SELECT ID FROM ")
-				.append(BAGMedi.EXTTABLE).append(" WHERE ID=")
-				.append(imp.getWrappedId()).toString();
+			.append(BAGMedi.EXTTABLE).append(" WHERE ID=")
+			.append(imp.getWrappedId()).toString();
 			String extid=PersistentObject.getConnection().queryString(sql);
 			if(extid==null){
 				sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-					.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 				PersistentObject.getConnection().exec(sql);
 			}
 			
@@ -143,15 +147,15 @@ public class BAGMediImporter extends ImporterPage {
 		imp.update(row);
 		return true;
 	}
-
+	
 	@Override
 	public String getDescription() {
 		return "Import Medikamentenliste BAG";
 	}
-
+	
 	@Override
 	public String getTitle() {
 		return "Medi-BAG";
 	}
-
+	
 }
