@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Log.java 5839 2009-11-20 12:43:14Z michael_imhof $
+ * $Id: Log.java 5852 2009-12-02 14:41:17Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -234,6 +234,22 @@ public class Log {
 		mark.append(new TimeTool().toString(TimeTool.FULL_GER));
 		mark.append(": ").append(msg); //$NON-NLS-1$
 		out.println(mark.toString());
+	}
+	
+	public boolean isDebug() {
+		return DEBUGMSG <= LogLevel;
+	}
+	
+	public boolean isInfo() {
+		return INFOS <= LogLevel;
+	}
+	
+	public boolean isWarn() {
+		return WARNINGS <= LogLevel;
+	}
+	
+	public boolean isError() {
+		return ERRORS <= LogLevel;
 	}
 	
 	private Log(){ /* leer */}
