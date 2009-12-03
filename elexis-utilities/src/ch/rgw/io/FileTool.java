@@ -862,7 +862,8 @@ public class FileTool {
 			}
 		} else {
 			// Copying a File
-			log.log("Copy file: " + srcDir.getPath(), Log.DEBUGMSG);
+			log.log("Copy file: " + srcDir.getPath() + " to "
+					+ dstDir.getPath(), Log.DEBUGMSG);
 			copyFile(new File(srcDir.getPath()), new File(dstDir.getPath()), FileTool.REPLACE_IF_EXISTS);
 		}
 	}
