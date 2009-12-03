@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: plugins.xml 5404 2009-06-24 16:24:22Z rgw_ch $
+ * $Id: plugins.xml 5854 2009-12-03 10:24:42Z rgw_ch $
 -->
 <project name="elexis-plugins" default="all" basedir="../../">
 
@@ -25,12 +25,13 @@
              Standarddistribution dabei -->
 		<ant antfile="../elexis-artikel-schweiz/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-ebanking-schweiz/build.xml" inheritrefs="true" />
+		<ant antfile="../elexis-labortarif-ch2009/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-arzttarife-schweiz/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-befunde/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-mail/build.xml" inheritrefs="true" />
 		<ant antfile="../elexis-medikamente-bag/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-labortarif-ch2009/build.xml" inheritrefs="true" />
+
 
 		<available file="../mysql-adapter/build.xml" property="mysql.ok" />
 		<antcall target="mysql" inheritrefs="true" />

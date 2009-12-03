@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 5629 2009-08-15 13:02:30Z rgw_ch $
+ * $Id: build.xml 5854 2009-12-03 10:24:42Z rgw_ch $
 -->
 <project name="elexis-utilities" default="all">
 	<property name="pluginname" value="elexis-utilities/" />
@@ -28,7 +28,7 @@
 	
 	<target name="all">
 
-		<ant antfile="${origin}" target="copy_plugin">
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
 			<property name="copydest" value="${plugindir}" />
 			<property name="copysrc" value="${sourcedir}" />
 		</ant>
@@ -38,6 +38,6 @@
 		<tstamp />
 		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip" />
 		<!--  ant antfile="../BuildElexis/rsc/build/build.xml" target="texify"/ -->
-		<ant antfile="${origin}" target="make_addition" />
+		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition" />
 	</target>
 </project>
