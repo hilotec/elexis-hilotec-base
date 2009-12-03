@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: SettingsPreferenceStore.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: SettingsPreferenceStore.java 5853 2009-12-03 09:56:21Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -158,6 +158,10 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 
 	public void putValue(String name, String value) {
 		set(name, value);
+	}
+	
+	public void remove(String name) {
+		remove(name);
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
