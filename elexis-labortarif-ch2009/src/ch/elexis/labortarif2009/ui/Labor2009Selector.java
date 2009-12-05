@@ -9,6 +9,7 @@ package ch.elexis.labortarif2009.ui;
 import org.eclipse.swt.SWT;
 
 import ch.elexis.actions.FlatDataLoader;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.labortarif2009.data.Labor2009Tarif;
@@ -22,7 +23,7 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class Labor2009Selector extends CodeSelectorFactory {
-	FlatDataLoader fdl;
+	PersistentObjectLoader fdl;
 	CommonViewer cv;
 	Query<Labor2009Tarif> qbe = new Query<Labor2009Tarif>(Labor2009Tarif.class);
 	SelectorPanelProvider slp;

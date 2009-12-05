@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: KontakteView.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ * 
+ * $Id: KontakteView.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -30,6 +30,7 @@ import ch.elexis.StringConstants;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
@@ -46,39 +47,41 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
 import ch.rgw.tools.ExHandler;
 
 public class KontakteView extends ViewPart implements ControlFieldListener,
-		ISaveablePart2 {
+ISaveablePart2 {
 	public static final String ID = "ch.elexis.Kontakte"; //$NON-NLS-1$
 	private CommonViewer cv;
 	private ViewerConfigurer vc;
 	IAction dupKontakt, delKontakt, createKontakt;
-
-	private String[] fields = { Kontakt.SHORT_LABEL + Query.EQUALS + Messages.getString("KontakteView.shortLabel"), //$NON-NLS-1$
-			Kontakt.NAME1 + Query.EQUALS + Messages.getString("KontakteView.text1"), //$NON-NLS-1$
-			Kontakt.NAME2 + Query.EQUALS + Messages.getString("KontakteView.text2"), //$NON-NLS-1$
-			Kontakt.STREET + Query.EQUALS + Messages.getString("KontakteView.street"), //$NON-NLS-1$
-			Kontakt.ZIP + Query.EQUALS + Messages.getString("KontakteView.zip"), //$NON-NLS-1$
-			Kontakt.PLACE + Query.EQUALS + Messages.getString("KontakteView.place") }; //$NON-NLS-1$
+	PersistentObjectLoader loader;
+	
+	private final String[] fields = { Kontakt.SHORT_LABEL + Query.EQUALS + Messages.getString("KontakteView.shortLabel"), //$NON-NLS-1$
+		Kontakt.NAME1 + Query.EQUALS + Messages.getString("KontakteView.text1"), //$NON-NLS-1$
+		Kontakt.NAME2 + Query.EQUALS + Messages.getString("KontakteView.text2"), //$NON-NLS-1$
+		Kontakt.STREET + Query.EQUALS + Messages.getString("KontakteView.street"), //$NON-NLS-1$
+		Kontakt.ZIP + Query.EQUALS + Messages.getString("KontakteView.zip"), //$NON-NLS-1$
+		Kontakt.PLACE + Query.EQUALS + Messages.getString("KontakteView.place") }; //$NON-NLS-1$
 	private ViewMenus menu;
-
+	
 	public KontakteView() {
 	}
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		cv = new CommonViewer();
+		loader=new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class));
 		vc = new ViewerConfigurer(
-				new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class)),
-				new DefaultLabelProvider(), new DefaultControlFieldProvider(cv,
-						fields), new ViewerConfigurer.DefaultButtonProvider(),
+			loader,
+			new DefaultLabelProvider(), new DefaultControlFieldProvider(cv,
+				fields), new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,
-						SWT.NONE, null));
+					SWT.NONE, null));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		makeActions();
 		cv.setObjectCreateAction(getViewSite(), createKontakt);
 		menu = new ViewMenus(getViewSite());
 		menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt,
-				dupKontakt);
+			dupKontakt);
 		menu.createMenu(GlobalActions.printKontaktEtikette);
 		menu.createToolbar(GlobalActions.printKontaktEtikette);
 		vc.getContentProvider().startListening();
@@ -87,36 +90,35 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
 				try {
 					KontaktDetailView kdv = (KontaktDetailView) getSite()
-							.getPage().showView(KontaktDetailView.ID);
+					.getPage().showView(KontaktDetailView.ID);
 					kdv.kb.selectionEvent(obj);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}
-
+				
 			}
 		});
 	}
-
+	
 	public void dispose() {
 		vc.getContentProvider().stopListening();
 		vc.getControlFieldProvider().removeChangeListener(this);
 		super.dispose();
 	}
-
+	
 	@Override
 	public void setFocus() {
 		vc.getControlFieldProvider().setFocus();
 	}
-
+	
 	public void changed(HashMap<String, String> values) {
 		GlobalEvents.getInstance().clearSelection(Kontakt.class);
 	}
-
+	
 	public void reorder(String field) {
-		// TODO Auto-generated method stub
-
+		loader.setOrderField(field);
 	}
-
+	
 	/**
 	 * ENTER has been pressed in the control fields, select the first listed
 	 * patient
@@ -125,8 +127,8 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 	public void selected() {
 		StructuredViewer viewer = cv.getViewerWidget();
 		Object[] elements = cv.getConfigurer().getContentProvider()
-				.getElements(viewer.getInput());
-
+		.getElements(viewer.getInput());
+		
 		if (elements != null && elements.length > 0) {
 			Object element = elements[0];
 			/*
@@ -139,11 +141,11 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 			if (element instanceof PersistentObject) {
 				// globally select this object
 				GlobalEvents.getInstance().fireSelectionEvent(
-						(PersistentObject) element);
+					(PersistentObject) element);
 			}
 		}
 	}
-
+	
 	/*
 	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
 	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
@@ -153,25 +155,25 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-
+	
 	public void doSave(IProgressMonitor monitor) { /* leer */
 	}
-
+	
 	public void doSaveAs() { /* leer */
 	}
-
+	
 	public boolean isDirty() {
 		return true;
 	}
-
+	
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
-
+	
 	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
-
+	
 	private void makeActions() {
 		delKontakt = new Action(Messages.getString("KontakteView.delete")) { //$NON-NLS-1$
 			@Override
@@ -181,7 +183,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 					Kontakt k = (Kontakt) o[0];
 					k.delete();
 					cv.getConfigurer().getControlFieldProvider()
-							.fireChangedEvent();
+					.fireChangedEvent();
 				}
 			}
 		};
@@ -195,15 +197,15 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 					if (k.istPerson()) {
 						Person p = Person.load(k.getId());
 						dup = new Person(p.getName(), p.getVorname(), p
-								.getGeburtsdatum(), p.getGeschlecht());
+							.getGeburtsdatum(), p.getGeschlecht());
 					} else {
 						Organisation org = Organisation.load(k.getId());
 						dup = new Organisation(org.get(Organisation.NAME1), org
-								.get(Organisation.NAME2));
+							.get(Organisation.NAME2));
 					}
 					dup.setAnschrift(k.getAnschrift());
 					cv.getConfigurer().getControlFieldProvider()
-							.fireChangedEvent();
+					.fireChangedEvent();
 					// cv.getViewerWidget().refresh();
 				}
 			}
@@ -212,11 +214,11 @@ public class KontakteView extends ViewPart implements ControlFieldListener,
 			@Override
 			public void run() {
 				String[] flds = cv.getConfigurer().getControlFieldProvider()
-						.getValues();
+				.getValues();
 				String[] predef = new String[] { flds[1], flds[2], StringConstants.EMPTY, StringConstants.EMPTY,
-						flds[3], flds[4], flds[5] };
+					flds[3], flds[4], flds[5] };
 				KontaktErfassenDialog ked = new KontaktErfassenDialog(
-						getViewSite().getShell(), predef);
+					getViewSite().getShell(), predef);
 				ked.open();
 			}
 		};

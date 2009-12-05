@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KontaktSelektor.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: KontaktSelektor.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -41,6 +41,7 @@ import ch.elexis.Desk;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.actions.PersistentObjectLoader.QueryFilter;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Fall;
@@ -94,7 +95,7 @@ public class KontaktSelektor extends TitleAreaDialog implements DoubleClickListe
 	String extraText = null;
 	private ListViewer bezugsKontaktViewer = null;
 	private boolean isSelecting = false;
-	private final FlatDataLoader kl;
+	private final PersistentObjectLoader kl;
 
 	@SuppressWarnings("unchecked")
 	public KontaktSelektor(Shell parentShell, Class which, String t, String m){

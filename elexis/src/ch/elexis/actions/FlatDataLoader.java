@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: FlatDataLoader.java 5421 2009-06-25 15:55:16Z rgw_ch $
+ * 
+ * $Id: FlatDataLoader.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -38,12 +38,13 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	private static final String LOADMESSAGE = "Lade Daten..."; //$NON-NLS-1$
 	private List<? extends PersistentObject> raw = null;
 	private List<? extends PersistentObject> filtered = null;
-	protected String orderField;
-	
 	public FlatDataLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
 	}
 	
+	/**
+	 * From @see DelayableJob.IWorker
+	 */
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
 		if (filtered != null) {
@@ -75,7 +76,7 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		
 		return Status.OK_STATUS;
 	}
-
+	
 	public void setResult(List<PersistentObject> res){
 		raw=res;
 	}
@@ -99,9 +100,5 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 				tv.replace(filtered.get(index), index);
 			}
 		}
-	}
-	
-	public void setOrderField(String name){
-		orderField = name;
 	}
 }

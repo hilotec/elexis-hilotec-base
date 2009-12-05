@@ -7,13 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistungsCodeSelectorFactory.java 5355 2009-06-14 10:35:19Z rgw_ch $
+ * $Id: PhysioLeistungsCodeSelectorFactory.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
 import ch.elexis.actions.FlatDataLoader;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PhysioLeistung;
 import ch.elexis.data.Query;
@@ -48,7 +49,7 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 				return !(o.getId().equals("VERSION"));
 			}
 		});
-		FlatDataLoader fdl = new FlatDataLoader(cv, qbe);
+		PersistentObjectLoader fdl = new FlatDataLoader(cv, qbe);
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
 		ViewerConfigurer vc =
 			new ViewerConfigurer(fdl, new DefaultLabelProvider(), slp,

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: DelayableJob.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *    $Id: DelayableJob.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -20,20 +20,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * A job that does not execute immediately on launch but waits if there comes anothar call - e.g a
+ * A job that does not execute immediately on launch but waits if there comes another call - e.g a
  * key press of the user. The time the job waits is configurable but can also be adaptive - it
  * remembers the time between earlier calls and decides accordingly, how long it should wait next
  * time.
- * 
+ * The use if this class is to prevent lengthy operations to run unnecessarily - only the last of a
+ * series of calls will be executed
  * @author gerry
  * 
  */
 public class DelayableJob extends Job {
-	private IWorker worker;
+	private final IWorker worker;
 	public static final int DELAY_ADAPTIVE = -1;
 	private long lastCall = 0L;
 	private int lastDelay = 200;
-	private HashMap<String, Object> privdata = new HashMap<String, Object>();
+	private final HashMap<String, Object> privdata = new HashMap<String, Object>();
 	
 	public DelayableJob(String name, IWorker worker){
 		super(name);
@@ -51,7 +52,7 @@ public class DelayableJob extends Job {
 	 * @param delayMillis
 	 */
 	public void launch(int delayMillis){
-
+		
 		this.cancel();
 		if (delayMillis == DELAY_ADAPTIVE) {
 			if (lastCall == 0) {

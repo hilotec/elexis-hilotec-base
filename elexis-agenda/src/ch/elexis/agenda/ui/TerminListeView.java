@@ -10,6 +10,7 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.actions.GlobalEvents.ActivationListener;
 import ch.elexis.actions.GlobalEvents.SelectionListener;
 import ch.elexis.actions.PersistentObjectLoader.QueryFilter;
@@ -22,17 +23,16 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.util.viewers.CommonViewer.Message;
 
 public class TerminListeView extends ViewPart implements ActivationListener, SelectionListener {
 	ScrolledForm form;
 	CommonViewer cv=new CommonViewer();
-	FlatDataLoader fdl;
+	PersistentObjectLoader fdl;
 	
 	public TerminListeView() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		form=Desk.getToolkit().createScrolledForm(parent);
@@ -41,7 +41,7 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 		body.setLayout(new GridLayout());
 		fdl=new FlatDataLoader(cv,new Query<Termin>(Termin.class));
 		fdl.addQueryFilter(new QueryFilter(){
-
+			
 			public void apply(Query<? extends PersistentObject> qbe) {
 				Patient p=GlobalEvents.getSelectedPatient();
 				if(p==null){
@@ -52,29 +52,29 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 			}});
 		
 		ViewerConfigurer vc=new ViewerConfigurer(fdl,new DefaultLabelProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,SWT.NONE,cv));
+			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,SWT.NONE,cv));
 		cv.create(vc, body, SWT.NONE, this);
 		new Label(body,SWT.NONE).setText("bottom");
-		GlobalEvents.getInstance().addActivationListener(this, this);		
+		GlobalEvents.getInstance().addActivationListener(this, this);
 	}
-
+	
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void activation(boolean mode) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public void dispose() {
 		GlobalEvents.getInstance().removeActivationListener(this, this);
 		super.dispose();
 	}
-
+	
 	public void visible(boolean mode) {
 		if(mode){
 			selectionEvent(GlobalEvents.getSelectedPatient());
@@ -83,13 +83,13 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 			GlobalEvents.getInstance().removeSelectionListener(this);
 		}
 	}
-
+	
 	public void clearEvent(Class<? extends PersistentObject> template) {
 		if(template.equals(Patient.class)){
 			form.setText("No Patient selected");
 		}
 	}
-
+	
 	public void selectionEvent(PersistentObject obj) {
 		if(obj instanceof Patient){
 			form.setText(((Patient)obj).getLabel());
@@ -98,5 +98,5 @@ public class TerminListeView extends ViewPart implements ActivationListener, Sel
 	}
 	
 	
-
+	
 }

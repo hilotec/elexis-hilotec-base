@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: PersistentObjectLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ * $Id: PersistentObjectLoader.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -40,9 +40,10 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	public final static String PARAM_VALUES = "fieldvalues"; //$NON-NLS-1$
 	protected CommonViewer cv;
 	protected Query<? extends PersistentObject> qbe;
-	private LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
+	private final LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
 	// protected IFilter viewerFilter;
 	protected DelayableJob dj;
+	protected String orderField;
 	
 	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		this.cv = cv;
@@ -110,12 +111,12 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	 *            the field name after which the table should e reordered
 	 */
 	public void reorder(String field){
+		setOrderField(field);
 		dj.launch(20);
-		
 	}
 	
 	public void selected(){
-
+		
 	}
 	
 	public void addQueryFilter(QueryFilter fp){
@@ -136,6 +137,10 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 				fp.apply(qbe);
 			}
 		}
+	}
+	
+	public void setOrderField(String name){
+		orderField = name;
 	}
 	
 	/**

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungCodeSelectorFactory.java 5097 2009-02-06 11:58:59Z rgw_ch $
+ * $Id: LaborleistungCodeSelectorFactory.java 5859 2009-12-05 10:54:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -16,6 +16,7 @@ package ch.elexis.views;
 import org.eclipse.swt.SWT;
 
 import ch.elexis.actions.FlatDataLoader;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.data.LaborLeistung;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -29,7 +30,7 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
 	// private AbstractDataLoaderJob dataloader;
 	private ViewerConfigurer vc;
-	private FlatDataLoader fdl;
+	private PersistentObjectLoader fdl;
 	
 	public LaborleistungCodeSelectorFactory(){}
 	
