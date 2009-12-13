@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FaelleView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *  $Id: FaelleView.java 5865 2009-12-13 12:30:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -167,16 +167,22 @@ public class FaelleView extends ViewPart implements ActivationListener,
 
 	public void reloadContents(final Class clazz) {
 		if (clazz.equals(Fall.class)) {
-			tv.refresh(true);
+			Desk.asyncExec(new Runnable() {
+				public void run() {
+					tv.refresh(true);
+				}
+			});
 		}
 
 	}
 
 	private void makeActions() {
-		konsFilterAction = new Action(Messages.getString("FaelleView.FilterConsultations"), //$NON-NLS-1$
+		konsFilterAction = new Action(Messages
+				.getString("FaelleView.FilterConsultations"), //$NON-NLS-1$
 				Action.AS_CHECK_BOX) {
 			{
-				setToolTipText(Messages.getString("FaelleView.ShowOnlyConsOfThisCase")); //$NON-NLS-1$
+				setToolTipText(Messages
+						.getString("FaelleView.ShowOnlyConsOfThisCase")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
 
