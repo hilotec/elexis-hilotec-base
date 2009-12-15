@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FlatDataLoader.java 5859 2009-12-05 10:54:40Z rgw_ch $
+ * $Id: FlatDataLoader.java 5868 2009-12-15 14:10:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -29,19 +29,28 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
- * A PersistentObjectLoader for flat tables
+ * A PersistentObjectLoader for flat tables. This is also an ILazyContentProvider for
+ * Structured Viewers and a ContentProvider for @see CommonViewer
  * 
  * @author Gerry
  * 
  */
 public class FlatDataLoader extends PersistentObjectLoader implements ILazyContentProvider {
-	private static final String LOADMESSAGE = "Lade Daten..."; //$NON-NLS-1$
+	//private static final String LOADMESSAGE = "Lade Daten..."; //$NON-NLS-1$
 	private List<? extends PersistentObject> raw = null;
 	private List<? extends PersistentObject> filtered = null;
+	
 	public FlatDataLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		super(cv, qbe);
 	}
 	
+	/**
+	 * Constructor without CommonViewer. Do not in Connection with CommonViewers
+	 * @param qbe
+	 */
+	public FlatDataLoader(Query<? extends PersistentObject> qbe){
+		super(null,qbe);
+	}
 	/**
 	 * From @see DelayableJob.IWorker
 	 */

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: DelayableJob.java 5859 2009-12-05 10:54:40Z rgw_ch $
+ *    $Id: DelayableJob.java 5868 2009-12-15 14:10:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -83,6 +83,12 @@ public class DelayableJob extends Job {
 		privdata.put(key, value);
 	}
 	
+	/**
+	 * retrieve a formerly set data object
+	 * @param key the unique key
+	 * @return the object associated with this key. This can be null if no such object exists,
+	 * or if null was associated with this key
+	 */
 	public Object getRuntimeData(String key){
 		return privdata.get(key);
 	}

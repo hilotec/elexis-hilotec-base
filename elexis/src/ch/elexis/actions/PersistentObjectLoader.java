@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PersistentObjectLoader.java 5859 2009-12-05 10:54:40Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 5868 2009-12-15 14:10:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -30,7 +30,8 @@ import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
  * BackgroundJobs were not adequate for this task. Furthermore, there were several issues with
  * those widely used jobs.
  * 
- * PersistentObjectLoader is a much simpler replacement and does not load in background.
+ * PersistentObjectLoader is a much simpler replacement and does not load in background. Instead it uses
+ * a @see DelayableJob to perform loading.
  * 
  * @author Gerry
  * 

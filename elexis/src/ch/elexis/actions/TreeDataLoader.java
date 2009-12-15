@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: TreeDataLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ * $Id: TreeDataLoader.java 5868 2009-12-15 14:10:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -28,17 +28,36 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.Tree;
 
+/**
+ * A PerssistentObjectLoader for Tree-like structures.
+ * This reads its contents from a table that has a "parent"-field to denote ancestry
+ * @author gerry
+ *
+ */
 public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeContentProvider {
 	protected String parentColumn;
 	protected Tree<PersistentObject> root;
 	protected CodeSelectorFactory home;
 	
+	/**
+	 * Create a TreeDataLoader from a @see CommonViewer
+	 * @param cv he CommonViewer
+	 * @param qbe the Query to load the data
+	 * @param parentField the name of the field that contains ancestry information
+	 */
 	public TreeDataLoader(CommonViewer cv, Query<? extends PersistentObject> qbe, String parentField){
 		super(cv, qbe);
 		parentColumn = parentField;
 		root = new Tree<PersistentObject>(null, null);
 	}
 	
+	/**
+	 * Create a TreeDataLoader from a @see CodeSelectorFactory
+	 * @param csf the CodeSelectorFactory
+	 * @param cv the CommonViewer
+	 * @param qbe the query to load data
+	 * @param parentField the name of the field that contains ancestry information
+	 */
 	public TreeDataLoader(CodeSelectorFactory csf, CommonViewer cv,
 		Query<? extends PersistentObject> qbe, String parentField){
 		super(cv, qbe);
