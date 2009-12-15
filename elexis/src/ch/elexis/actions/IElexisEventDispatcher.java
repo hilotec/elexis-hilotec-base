@@ -7,17 +7,17 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: IElexisEventDispatcher.java 5796 2009-11-06 05:47:57Z rgw_ch $
+ * 
+ * $Id: IElexisEventDispatcher.java 5867 2009-12-15 12:41:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
 /**
  * An IElexisEventDispatcher can be authoritative for a specific kind of originating Object
- * and/or for a specific EventType. It does so by registering with 
+ * and/or for a specific EventType. It does so by registering with
  * ElexisEventDistpatcher#registerDispatcher
- * in that case, Events of the goven Object/type will always be sent to the dispatcher instead
+ * in that case, Events of the given Object/type will always be sent to the dispatcher instead
  * of sent directly to the listeners. Also, ElexisEvent#addListener and removeListener is
  * forwarded to the custom dispatcher.
  * @author gerry

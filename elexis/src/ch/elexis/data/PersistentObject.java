@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5828 2009-11-19 11:46:25Z rgw_ch $
+ *    $Id: PersistentObject.java 5867 2009-12-15 12:41:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -585,12 +585,10 @@ public abstract class PersistentObject {
 		StringBuilder sb = new StringBuilder("SELECT ID FROM ");
 		sb.append(getTableName()).append(" WHERE ID='").append(id).append("'");
 		String obj = j.queryString(sb.toString());
-		if (id.equals(obj)) {
+		if (id.equalsIgnoreCase(obj)) {
 			String deleted = get("deleted");
 			if (deleted == null) { // if we cant't find the column called
-				// 'deleted',
-				// the object exists
-				// anyway
+				// 'deleted', the object exists anyway
 				return EXISTS;
 			}
 			if (showDeleted) {

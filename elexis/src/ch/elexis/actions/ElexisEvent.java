@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ * 
  * $Id: LazyTreeLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
  *******************************************************************************/
 
@@ -39,16 +39,37 @@ public class ElexisEvent {
 		this.type=type;
 	}
 	
+	/**
+	 * Retrieve the object this event is about.
+	 * @return the object that might be null (if the event concern a class)
+	 */
 	public PersistentObject getObject(){
 		return obj;
 	}
+	
+	/**
+	 * Retrieve the class this event is about
+	 * @return the class (that might me null)
+	 */
 	public Class<? extends PersistentObject> getObjectClass(){
 		return objClass;
 	}
 	
+	/**
+	 * Retrieve the event type
+	 * @return one ore more of the oabove EVENT_xxx flags
+	 */
 	public int getType(){
 		return type;
 	}
+	
+	/**
+	 * Check whether this event matches a template event. this method is
+	 * only used internally by the framework and not intended to be called
+	 * or overridden by clients
+	 * @param event the template
+	 * @return true on match
+	 */
 	public boolean matches(ElexisEvent event){
 		if(event.getObject()!=null){
 			if(!getObject().getId().equals(event.getObject().getId())){
