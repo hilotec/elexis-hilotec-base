@@ -33,7 +33,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -50,6 +49,7 @@ public class Desk implements IApplication {
 	private static ImageRegistry theImageRegistry = null;
 	private static ColorRegistry theColorRegistry = null;
 	private static HashMap<String, Cursor> cursors = null;
+	private static Map<String,String> args=null;
 	
 	public static final String COL_RED = "rot"; //$NON-NLS-1$
 	public static final String COL_GREEN = "gruen"; //$NON-NLS-1$
@@ -148,8 +148,9 @@ public class Desk implements IApplication {
 	public Desk(){
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object start(IApplicationContext context) throws Exception{
-		Map<String, String> args = context.getArguments();
+		args = context.getArguments();
 		if (args.containsKey("--clean-all")) { //$NON-NLS-1$
 			String p = PreferenceInitializer.getDefaultDBPath();
 			FileTool.deltree(p);
@@ -191,6 +192,17 @@ public class Desk implements IApplication {
 		
 	}
 	
+	/**
+	 * return a command line argument/launch parameter
+	 * @param name name of the argument
+	 * @return
+	 */
+	public static String getCommandLineArgument(String name){
+		if(args==null){
+			return null;
+		}
+		return args.get(name);
+	}
 	/**
 	 * get the base directory for images. This is dependend from the plaf chosen. If no plaf was
 	 * chosen, "modern" will be assumed.

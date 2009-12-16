@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: KontaktImporterBlatt.java 4100 2008-07-05 13:17:13Z rgw_ch $
+ * 
+ * $Id: KontaktImporterBlatt.java 5869 2009-12-16 15:41:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -44,12 +44,12 @@ import ch.rgw.tools.VCard;
  * A class to import data from different sources  into the contacts
  * To simplify things we request specific formats
  * <ul>
- * <li>A Microsoft(tm) Excel(tm) 97(tm) Spreadsheet(tm) containing a page 0 with the following fields:<br/> 
+ * <li>A Microsoft(tm) Excel(tm) 97(tm) Spreadsheet(tm) containing a page 0 with the following fields:<br/>
  *  "ID","IstPerson", "Titel", "Bezeichnung1",
  * "Bezeichnung2","Zusatz", "Geburtsdatum","Geschlecht","E-Mail","Website","Telefon 1","Telefon 2",
  * "Mobil","Strasse","Plz","Ort","Postadresse","EAN".
  * All fields are strings. The field istPerson one is interpreted boolean where empty or "0" maps to false, all other
- * values map to true. 
+ * values map to true.
  * Each field must be present but may be empty.</li>
  * <li>A File in CSV format containing the above fields</li>
  * <li>some preset files</li>
@@ -104,7 +104,7 @@ public class KontaktImporterBlatt extends Composite{
 		bKeep.setText("ID beibehalten (Achtung: Bitte Handbuch beachten)");
 		bKeep.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		bKeep.addSelectionListener(new SelectionAdapter(){
-
+			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				bKeepID=bKeep.getSelection();
@@ -112,7 +112,7 @@ public class KontaktImporterBlatt extends Composite{
 			
 		});
 	}
-
+	
 	public boolean doImport(final IProgressMonitor moni){
 		if(filename!=null && filename.length()>0){
 			switch(method){
@@ -126,7 +126,7 @@ public class KontaktImporterBlatt extends Composite{
 	public boolean importKK(final String file){
 		ExcelWrapper exw=new ExcelWrapper();
 		exw.setFieldTypes(new Class[]{Integer.class,String.class,String.class,String.class,
-				String.class,Integer.class,Integer.class});
+			String.class,Integer.class,Integer.class});
 		exw.load(file, 0);
 		
 		String[] row;
@@ -140,7 +140,7 @@ public class KontaktImporterBlatt extends Composite{
 			}
 			log.log("Importiere "+StringTool.join(row, " "), Log.INFOS);
 			String bagnr=StringTool.getSafe(row,0);
-			String name=StringTool.getSafe(row,1); 
+			String name=StringTool.getSafe(row,1);
 			String zweig=StringTool.getSafe(row,2);
 			String adresse=StringTool.getSafe(row,3);
 			String typ=StringTool.getSafe(row,4);
@@ -164,7 +164,7 @@ public class KontaktImporterBlatt extends Composite{
 		String[] plzOrt=m1[m1.length-1].split(" ",2);
 		if(m1.length==1){
 			ret[0]="";
-		
+			
 		}else{
 			ret[0]=m1[0];
 		}

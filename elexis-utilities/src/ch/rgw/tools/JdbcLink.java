@@ -5,7 +5,15 @@ package ch.rgw.tools;
 import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.Vector;
 import java.util.logging.Level;
 
@@ -168,7 +176,7 @@ public class JdbcLink {
 			// Class.forName("org.firebirdsql.jdbc.FBDriver");
 			// "jdbc:mysql://<host>:<port>/<dbname>"
 			// "jdbc:odbc:<dsn>
-			log.log(Level.INFO, "Loading database driver");
+			log.log(Level.INFO, "Loading database driver "+sDrv);
 			conn = DriverManager.getConnection(sConn, user, password);
 			statements = new Vector<Stm>();
 			lastErrorCode = CONNECT_SUCCESS;
@@ -248,7 +256,7 @@ public class JdbcLink {
 			switch (in[i]) {
 			case 0:
 			case 34:
-
+				
 			case '\'':
 				if (flavor.startsWith("hsql")) {
 					out[j++] = '\'';
@@ -310,7 +318,7 @@ public class JdbcLink {
 				}
 				
 			} else {
-				return (Stm) statements.remove(0);
+				return statements.remove(0);
 			}
 		}
 	}
@@ -414,7 +422,7 @@ public class JdbcLink {
 	public synchronized void disconnect(){
 		try {
 			while ((statements != null) && (!statements.isEmpty())) {
-				Stm stm = (Stm) statements.remove(0);
+				Stm stm = statements.remove(0);
 				stm.delete();
 				stm = null;
 			}
@@ -793,7 +801,7 @@ public class JdbcLink {
 						w.write(JdbcLink.wrap((String) o));
 					}
 					break;
-				
+					
 				default:
 					String t = o.getClass().getName();
 					log.log("Unknown type " + t, Log.ERRORS);
