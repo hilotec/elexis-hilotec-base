@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: LoginDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *    $Id: LoginDialog.java 5870 2009-12-16 20:55:33Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -31,6 +31,7 @@ public class LoginDialog extends TitleAreaDialog {
 	boolean hasUsers;
 	public LoginDialog(Shell parentShell) {
 		super(parentShell);
+		
 		Query<Anwender> qbe=new Query<Anwender>(Anwender.class);
 		List<Anwender> list=qbe.execute();
 		hasUsers=(list.size()>1);

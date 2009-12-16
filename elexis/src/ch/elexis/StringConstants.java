@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: StringConstants.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *    $Id: StringConstants.java 5870 2009-12-16 20:55:33Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;
@@ -42,5 +42,5 @@ public class StringConstants {
 	public static final String ROLE_USERS = Messages.StringConstants_user;
 	public static final String ROLE_ALL = Messages.StringConstants_all;
 	public static final String ROLES_DEFAULT = ROLE_ADMIN + "," + ROLE_USERS + "," + ROLE_ALL; //$NON-NLS-1$ //$NON-NLS-2$
-
+	public static final String SWTBOT_ID="org.eclipse.swtbot.widget.key";
 }
