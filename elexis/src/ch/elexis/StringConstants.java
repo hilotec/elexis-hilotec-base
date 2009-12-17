@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: StringConstants.java 5871 2009-12-17 09:52:13Z rgw_ch $
+ *    $Id: StringConstants.java 5872 2009-12-17 14:20:24Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;
@@ -33,8 +33,6 @@ public class StringConstants {
 	
 	public static final String ONE="1";
 	public static final String ZERO="0";
-	
-	
 	public static final String MANDATOR = Messages.StringConstants_mandator;
 	public static final String USER = Messages.StringConstants_user;
 	
