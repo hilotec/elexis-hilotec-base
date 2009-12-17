@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: StringConstants.java 5870 2009-12-16 20:55:33Z rgw_ch $
+ *    $Id: StringConstants.java 5871 2009-12-17 09:52:13Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;
@@ -28,16 +28,19 @@ public class StringConstants {
 	public static final String COMMA = ","; //$NON-NLS-1$
 	public static final String COLON = ":"; //$NON-NLS-1$
 	public static final String DOUBLECOLON = "::"; //$NON-NLS-1$
+	public static final String SEMICOLON = ";";
+	public static final String CRLF = "\r\n";
+	
 	public static final String ONE="1";
 	public static final String ZERO="0";
-
-
+	
+	
 	public static final String MANDATOR = Messages.StringConstants_mandator;
 	public static final String USER = Messages.StringConstants_user;
-
+	
 	public static final String ROLE_NAMING = Messages.StringConstants_role;
 	public static final String ROLES_NAMING = Messages.StringConstants_roles;
-
+	
 	public static final String ROLE_ADMIN = Messages.StringConstants_admin;
 	public static final String ROLE_USERS = Messages.StringConstants_user;
 	public static final String ROLE_ALL = Messages.StringConstants_all;
