@@ -8,14 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IDataSender.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: IDataSender.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
 
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.elements.XChangeElement;
-import ch.rgw.tools.Result;
 
 /**
  * A generic mediator between Elexis Objects and XML-Files. Any number of Objects can be sent to the
@@ -31,17 +30,18 @@ public interface IDataSender {
 	 * 
 	 * @param output
 	 *            an object this IDataSender can handle
-	 * @return the XML element created or an error code
+	 * @return the XML element created 
+	 * @throws XChangeException if an error occurred
 	 */
-	public Result<XChangeElement> store(Object output);
+	public XChangeElement store(Object output) throws XChangeException;
 	
 	/**
 	 * Send the stored objects to this IDataSender's ultimate destinaion (e.g. file, URL). The
 	 * IDataTransfer is invalid after finalizing.
 	 * 
-	 * @return true on success
+	 * @throws XChangeException
 	 */
-	public boolean finalizeExport();
+	public void finalizeExport() throws XChangeException;
 	
 	/**
 	 * Ask if this IDataSender can handle a certain type

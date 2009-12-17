@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExportiereBloeckeCommand.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ *  $Id: ExportiereBloeckeCommand.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -21,19 +21,32 @@ import org.eclipse.core.commands.ExecutionException;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.BlockContainer;
+import ch.elexis.exchange.XChangeException;
+import ch.rgw.tools.ExHandler;
 
 public class ExportiereBloeckeCommand extends AbstractHandler {
 	public static final String ID = "serviceblocks.export";
-	
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		Query<Leistungsblock> qbe = new Query<Leistungsblock>(Leistungsblock.class);
+
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Query<Leistungsblock> qbe = new Query<Leistungsblock>(
+				Leistungsblock.class);
 		List<Leistungsblock> bloecke = qbe.execute();
 		BlockContainer bc = new BlockContainer();
 		for (Leistungsblock block : bloecke) {
-			bc.store(block);
+			try {
+				bc.store(block);
+			} catch (XChangeException xx) {
+				ExHandler.handle(xx);
+			}
 		}
-		
-		return new Boolean(bc.finalizeExport());
+
+		try {
+			bc.finalizeExport();
+		} catch (XChangeException e) {
+			ExHandler.handle(e);
+			throw new ExecutionException(e.getMessage());
+		}
+		return null;
 	}
-	
+
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockContainer.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ *  $Id: BlockContainer.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -82,7 +82,7 @@ public class BlockContainer extends XChangeContainer {
 		return false;
 	}
 	
-	public boolean finalizeExport(){
+	public void finalizeExport() throws XChangeException{
 		FileDialog fd = new FileDialog(Desk.getTopShell(), SWT.SAVE);
 		fd.setText(Messages.BlockContainer_Blockbeschreibung);
 		fd.setFilterExtensions(new String[] {
@@ -103,18 +103,19 @@ public class BlockContainer extends XChangeContainer {
 				fos.close();
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
+				throw new XChangeException("Output failed "+ex.getMessage());
 			}
 		}
-		return false;
+	
 	}
 	
-	public Result<XChangeElement> store(Object output){
+	public XChangeElement store(Object output) throws XChangeException{
 		if (output instanceof Leistungsblock) {
 			ServiceBlockElement sbe = new ServiceBlockElement(this, (Leistungsblock) output);
 			lbs.add(sbe);
+			return sbe;
 		}
-		return new Result<XChangeElement>(SEVERITY.ERROR, 1, "Can't handle object type " //$NON-NLS-1$
-			+ output.getClass().getName(), null, true);
+		throw new XChangeException("Can't handle object type "+output.getClass().getName());
 	}
 	
 	public Result<?> finalizeImport(){

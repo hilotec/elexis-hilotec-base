@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientMenuPopulator.java 5326 2009-05-29 20:08:32Z rgw_ch $
+ *  $Id: PatientMenuPopulator.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -35,6 +35,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Patient;
 import ch.elexis.dialogs.AssignStickerDialog;
 import ch.elexis.exchange.IDataSender;
+import ch.elexis.exchange.XChangeException;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus.IMenuPopulator;
@@ -43,8 +44,8 @@ import ch.rgw.tools.ExHandler;
 public class PatientMenuPopulator implements IMenuPopulator {
 	IAction exportKGAction, delPatAction, stickerAction;
 	PatientenListeView mine;
-	
-	public IAction[] fillMenu(){
+
+	public IAction[] fillMenu() {
 		LinkedList<IAction> ret = new LinkedList<IAction>();
 		ret.add(stickerAction);
 		if (Hub.acl.request(AccessControlDefaults.KONTAKT_DELETE)) {
@@ -53,139 +54,155 @@ public class PatientMenuPopulator implements IMenuPopulator {
 		if (Hub.acl.request(AccessControlDefaults.KONTAKT_EXPORT)) {
 			ret.add(exportKGAction);
 		}
-		delPatAction.setEnabled(Hub.acl.request(AccessControlDefaults.KONTAKT_DELETE));
-		exportKGAction.setEnabled(Hub.acl.request(AccessControlDefaults.KONTAKT_EXPORT));
+		delPatAction.setEnabled(Hub.acl
+				.request(AccessControlDefaults.KONTAKT_DELETE));
+		exportKGAction.setEnabled(Hub.acl
+				.request(AccessControlDefaults.KONTAKT_EXPORT));
 		return ret.toArray(new IAction[0]);
 	}
-	
-	PatientMenuPopulator(PatientenListeView plv){
+
+	PatientMenuPopulator(PatientenListeView plv) {
 		mine = plv;
-		stickerAction =
-			new RestrictedAction(AccessControlDefaults.KONTAKT_ETIKETTE, Messages
-				.getString("PatientMenuPopulator.StickerAction")) { //$NON-NLS-1$
-				{
-					setToolTipText(Messages.getString("PatientMenuPopulator.StickerToolTip")); //$NON-NLS-1$
-				}
-				
-				@Override
-				public void doRun(){
-					Patient p = mine.getSelectedPatient();
-					AssignStickerDialog aed = new AssignStickerDialog(Hub.getActiveShell(), p);
-					aed.open();
-				}
-				
-			};
-		delPatAction = new Action(Messages.getString("PatientMenuPopulator.DeletePatientAction")) { //$NON-NLS-1$
-				@Override
-				public void run(){
-					// access rights guard
-					if (!Hub.acl.request(AccessControlDefaults.KONTAKT_DELETE)) {
-						SWTHelper
+		stickerAction = new RestrictedAction(
+				AccessControlDefaults.KONTAKT_ETIKETTE, Messages
+						.getString("PatientMenuPopulator.StickerAction")) { //$NON-NLS-1$
+			{
+				setToolTipText(Messages
+						.getString("PatientMenuPopulator.StickerToolTip")); //$NON-NLS-1$
+			}
+
+			@Override
+			public void doRun() {
+				Patient p = mine.getSelectedPatient();
+				AssignStickerDialog aed = new AssignStickerDialog(Hub
+						.getActiveShell(), p);
+				aed.open();
+			}
+
+		};
+		delPatAction = new Action(Messages
+				.getString("PatientMenuPopulator.DeletePatientAction")) { //$NON-NLS-1$
+			@Override
+			public void run() {
+				// access rights guard
+				if (!Hub.acl.request(AccessControlDefaults.KONTAKT_DELETE)) {
+					SWTHelper
 							.alert(
-								Messages
-									.getString("PatientMenuPopulator.DeletePatientRefusalCaption"), Messages.getString("PatientMenuPopulator.DeletePatientRefusalBody")); //$NON-NLS-1$ //$NON-NLS-2$
-						return;
-					}
-					
-					Patient p = mine.getSelectedPatient();
-					if (p != null) {
-						if (MessageDialog.openConfirm(mine.getViewSite().getShell(), Messages
-							.getString("PatientMenuPopulator.DeletePatientConfirm"), p.getLabel()) == true) { //$NON-NLS-1$
-							if (p.delete(false) == false) {
-								SWTHelper.alert(Messages
-									.getString("PatientMenuPopulator.DeletePatientRejectCaption"), //$NON-NLS-1$
 									Messages
-										.getString("PatientMenuPopulator.DeletePatientRejectBody")); //$NON-NLS-1$
-							} else {
-								mine.reload();
-							}
+											.getString("PatientMenuPopulator.DeletePatientRefusalCaption"), Messages.getString("PatientMenuPopulator.DeletePatientRefusalBody")); //$NON-NLS-1$ //$NON-NLS-2$
+					return;
+				}
+
+				Patient p = mine.getSelectedPatient();
+				if (p != null) {
+					if (MessageDialog
+							.openConfirm(
+									mine.getViewSite().getShell(),
+									Messages
+											.getString("PatientMenuPopulator.DeletePatientConfirm"), p.getLabel()) == true) { //$NON-NLS-1$
+						if (p.delete(false) == false) {
+							SWTHelper
+									.alert(
+											Messages
+													.getString("PatientMenuPopulator.DeletePatientRejectCaption"), //$NON-NLS-1$
+											Messages
+													.getString("PatientMenuPopulator.DeletePatientRejectBody")); //$NON-NLS-1$
+						} else {
+							mine.reload();
 						}
 					}
 				}
-				
-			};
-		exportKGAction =
-			new Action(
+			}
+
+		};
+		exportKGAction = new Action(
 				Messages.getString("PatientMenuPopulator.ExportEMRAction"), Action.AS_DROP_DOWN_MENU) { //$NON-NLS-1$
-				Menu menu = null;
-				{
-					setToolTipText(Messages.getString("PatientMenuPopulator.ExportEMRToolTip")); //$NON-NLS-1$
-					setMenuCreator(new IMenuCreator() {
-						
-						public void dispose(){
-							if (menu != null) {
-								menu.dispose();
-								menu = null;
-							}
-							
+			Menu menu = null;
+			{
+				setToolTipText(Messages
+						.getString("PatientMenuPopulator.ExportEMRToolTip")); //$NON-NLS-1$
+				setMenuCreator(new IMenuCreator() {
+
+					public void dispose() {
+						if (menu != null) {
+							menu.dispose();
+							menu = null;
 						}
-						
-						public Menu getMenu(Control parent){
-							menu = new Menu(parent);
-							createMenu();
-							return menu;
+
+					}
+
+					public Menu getMenu(Control parent) {
+						menu = new Menu(parent);
+						createMenu();
+						return menu;
+					}
+
+					public Menu getMenu(Menu parent) {
+						menu = new Menu(parent);
+						createMenu();
+						return menu;
+					}
+
+				});
+			}
+
+			void createMenu() {
+				Patient p = mine.getSelectedPatient();
+				if (p != null) {
+					List<IConfigurationElement> list = Extensions
+							.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
+					for (final IConfigurationElement ic : list) {
+						String name = ic.getAttribute("name"); //$NON-NLS-1$
+						System.out.println(name);
+						String handler = ic.getAttribute("AcceptableTypes"); //$NON-NLS-1$
+						if (handler == null) {
+							continue;
 						}
-						
-						public Menu getMenu(Menu parent){
-							menu = new Menu(parent);
-							createMenu();
-							return menu;
-						}
-						
-					});
-				}
-				
-				void createMenu(){
-					Patient p = mine.getSelectedPatient();
-					if (p != null) {
-						List<IConfigurationElement> list =
-							Extensions.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
-						for (final IConfigurationElement ic : list) {
-							String name = ic.getAttribute("name"); //$NON-NLS-1$
-							System.out.println(name);
-							String handler = ic.getAttribute("AcceptableTypes"); //$NON-NLS-1$
-							if (handler == null) {
-								continue;
-							}
-							if (handler.contains("ch.elexis.data.Patient") //$NON-NLS-1$
+						if (handler.contains("ch.elexis.data.Patient") //$NON-NLS-1$
 								|| (handler.contains("ch.elexis.data.*"))) { //$NON-NLS-1$
-								MenuItem it = new MenuItem(menu, SWT.NONE);
-								it.setText(ic.getAttribute("name")); //$NON-NLS-1$
-								it.addSelectionListener(new SelectionAdapter() {
-									@Override
-									public void widgetSelected(SelectionEvent e){
-										Patient pat = mine.getSelectedPatient();
-										try {
-											IDataSender sender =
-												(IDataSender) ic
-													.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
-											if (sender.store(pat).isOK() && sender.finalizeExport()) {
-												SWTHelper.showInfo(Messages
-													.getString("PatientMenuPopulator.EMRExported"),//$NON-NLS-1$ 
-													MessageFormat.format(
-														Messages.getString("PatientMenuPopulator.ExportEmrSuccess"), //$NON-NLS-1$
-														pat.getLabel()));
-											} else {
-												SWTHelper
-													.showError(
+							MenuItem it = new MenuItem(menu, SWT.NONE);
+							it.setText(ic.getAttribute("name")); //$NON-NLS-1$
+							it.addSelectionListener(new SelectionAdapter() {
+								@Override
+								public void widgetSelected(SelectionEvent e) {
+									Patient pat = mine.getSelectedPatient();
+									try {
+										IDataSender sender = (IDataSender) ic
+												.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
+										sender.store(pat);
+										sender.finalizeExport();
+										SWTHelper
+												.showInfo(
 														Messages
-															.getString("PatientMenuPopulator.ErrorCaption"), //$NON-NLS-1$ 
+																.getString("PatientMenuPopulator.EMRExported"),//$NON-NLS-1$ 
 														MessageFormat
-															.format(
-																Messages.getString("PatientMenuPopulator.ExportEmrFailure"), //$NON-NLS-1$
-																pat.getLabel()));
-												
-											}
-										} catch (CoreException e1) {
-											ExHandler.handle(e1);
-										}
+																.format(
+																		Messages
+																				.getString("PatientMenuPopulator.ExportEmrSuccess"), //$NON-NLS-1$
+																		pat
+																				.getLabel()));
+									} catch (CoreException e1) {
+										ExHandler.handle(e1);
+									} catch (XChangeException xx) {
+										SWTHelper
+												.showError(
+														Messages
+																.getString("PatientMenuPopulator.ErrorCaption"), //$NON-NLS-1$ 
+														MessageFormat
+																.format(
+																		Messages
+																				.getString("PatientMenuPopulator.ExportEmrFailure"), //$NON-NLS-1$
+																		pat
+																				.getLabel()));
+
 									}
-								});
-								
-							}
+								}
+							});
+
 						}
 					}
 				}
-			};
+			}
+		};
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XChangeContainer.java 5381 2009-06-22 11:01:17Z rgw_ch $
+ * $Id: XChangeContainer.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -33,6 +33,7 @@ import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactRefElement;
 import ch.elexis.exchange.elements.ContactsElement;
 import ch.elexis.exchange.elements.DocumentElement;
+import ch.elexis.exchange.elements.EpisodeElement;
 import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.exchange.elements.MedicationElement;
@@ -47,7 +48,7 @@ import ch.rgw.tools.StringTool;
 
 public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	private static final String PLURAL = "s"; //$NON-NLS-1$
-	public static final String Version = "1.0.2"; //$NON-NLS-1$
+	public static final String Version = "2.0.0"; //$NON-NLS-1$
 	public static final Namespace ns = Namespace.getNamespace(
 			"xChange", "http://informatics.sgam.ch/xChange"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final Namespace nsxsi = Namespace.getNamespace(
@@ -70,15 +71,26 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	public static final String ENCLOSE_MEDICATIONS = MedicationElement.XMLNAME
 			+ PLURAL;
 	public static final String ENCLOSE_RISKS = RiskElement.XMLNAME + PLURAL;
-	public static final String ENCLOSE_EPISODES = "anamnesis"; //$NON-NLS-1$
+	public static final String ENCLOSE_EPISODES = EpisodeElement.XMLNAME
+			+ PLURAL;
 
 	protected Element eRoot;
 	protected static Log log = Log.get("XChange"); //$NON-NLS-1$
 
 	protected HashMap<String, byte[]> binFiles = new HashMap<String, byte[]>();
+	/**
+	 * Collection of all UserChoices to display to tzhe user for selection
+	 */
 	protected HashMap<Element, UserChoice> choices = new HashMap<Element, UserChoice>();
 
+	/**
+	 * Mapping between element in the xChange Container to the corresponding internal data object
+	 */
 	private HashMap<XChangeElement, PersistentObject> mapElementToObject = new HashMap<XChangeElement, PersistentObject>();
+	
+	/**
+	 * Mapping from an internal data object to an element in the xChange Container
+	 */
 	private HashMap<PersistentObject, XChangeElement> mapObjectToElement = new HashMap<PersistentObject, XChangeElement>();
 
 	protected List<IExchangeContributor> lex = Extensions.getClasses(
@@ -88,7 +100,8 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 
 	/**
 	 * Add a new Contact to the file. It will only be added, if it does not yet
-	 * exist Rule for the created ID: If a Contact has a really unique ID (EAN,
+	 * exist.
+	 * Rule for the created ID: If a Contact has a really unique ID (EAN,
 	 * Unique Patient Identifier) then this shold be used. Otherwise a unique id
 	 * should be generated (here we take the existing id from Elexis which is by
 	 * definition already a UUID)
@@ -120,7 +133,9 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 		}
 		ContactElement contact = new ContactElement(this, k);
 		eContacts.add(contact);
-		choices.put(contact.getElement(), new UserChoice(true, k.getLabel(), k));
+		choices
+				.put(contact.getElement(),
+						new UserChoice(true, k.getLabel(), k));
 		return contact;
 	}
 
@@ -140,6 +155,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	public UserChoice getChoice(XChangeElement key) {
 		return choices.get(key.getElement());
 	}
+
 	public UserChoice getChoice(Element key) {
 		return choices.get(key);
 	}
@@ -147,10 +163,11 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	public void addChoice(Element key, String name) {
 		choices.put(key, new UserChoice(true, name, key));
 	}
+
 	public void addChoice(XChangeElement key, String name) {
 		choices.put(key.getElement(), new UserChoice(true, name, key));
 	}
-	
+
 	public ContactElement addPatient(Patient pat) {
 		ContactElement ret = addContact(pat);
 		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
@@ -256,6 +273,7 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	public void addChoice(XChangeElement e, String name, Object o) {
 		choices.put(e.getElement(), new UserChoice(true, name, o));
 	}
+
 	public void addChoice(Element e, String name, Object o) {
 		choices.put(e, new UserChoice(true, name, o));
 	}
@@ -353,27 +371,55 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 
 	protected Properties props;
 
+	/**
+	 * A UserChoice contains the information, whether the user selected the associated object
+	 * for transfer
+	 * @author gerry
+	 *
+	 */
 	public static class UserChoice {
 		boolean bSelected;
 		String title;
 		Object object;
 
+		/**
+		 * Include the object in the transfer
+		 * @param bSelection
+		 */
 		public void select(boolean bSelection) {
 			bSelected = bSelection;
 		}
 
+		/**
+		 * tell wether the object is selected for transfer
+		 * @return
+		 */
 		public boolean isSelected() {
 			return bSelected;
 		}
 
+		/**
+		 * get the Title to display to the user when asked for selection
+		 * @return
+		 */
 		public String getTitle() {
 			return title;
 		}
 
+		/**
+		 * Get the associated object
+		 * @return
+		 */
 		public Object getObject() {
 			return object;
 		}
 
+		/**
+		 * Create a new UserChoice
+		 * @param bSelected true if initially selected
+		 * @param title title to display to the user in selection form
+		 * @param object the object to select for transfer
+		 */
 		public UserChoice(boolean bSelected, String title, Object object) {
 			this.bSelected = bSelected;
 			this.title = title;

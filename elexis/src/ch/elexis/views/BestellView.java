@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ * $Id: BestellView.java 5873 2009-12-17 22:51:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -62,6 +62,7 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Bestellung.Item;
 import ch.elexis.dialogs.OrderImportDialog;
 import ch.elexis.exchange.IDataSender;
+import ch.elexis.exchange.XChangeException;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
@@ -143,8 +144,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				String drp = (String) event.data;
 				String[] dl = drp.split(","); //$NON-NLS-1$
 				if (actBestellung == null) {
-					InputDialog dlg = new InputDialog(
-							getViewSite().getShell(),
+					InputDialog dlg = new InputDialog(getViewSite().getShell(),
 							Messages.getString("BestellView.CreateNewOrder"), //$NON-NLS-1$
 							Messages.getString("BestellView.EnterOrderTitle"), //$NON-NLS-1$
 							StringTool.leer, null);
@@ -224,7 +224,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					return it.art.getLabel();
 				case 2:
 					Kontakt k = it.art.getLieferant();
-					return k.exists() ? k.getLabel() : Messages.getString("BestellView.Unknown"); //$NON-NLS-1$
+					return k.exists() ? k.getLabel() : Messages
+							.getString("BestellView.Unknown"); //$NON-NLS-1$
 				default:
 					return "?"; //$NON-NLS-1$
 				}
@@ -235,7 +236,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	}
 
 	private void makeActions() {
-		removeAction = new Action(Messages.getString("BestellView.RemoveArticle")) { //$NON-NLS-1$
+		removeAction = new Action(Messages
+				.getString("BestellView.RemoveArticle")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) tv
@@ -248,16 +250,19 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		wizardAction = new Action(Messages.getString("BestellView.AutomaticOrder")) { //$NON-NLS-1$
+		wizardAction = new Action(Messages
+				.getString("BestellView.AutomaticOrder")) { //$NON-NLS-1$
 			{
-				setToolTipText(Messages.getString("BestellView.CreateAutomaticOrder")); //$NON-NLS-1$
+				setToolTipText(Messages
+						.getString("BestellView.CreateAutomaticOrder")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
 			}
 
 			@Override
 			public void run() {
 				if (actBestellung == null) {
-					setBestellung(new Bestellung(Messages.getString("BestellView.Automatic"), Hub.actUser)); //$NON-NLS-1$
+					setBestellung(new Bestellung(Messages
+							.getString("BestellView.Automatic"), Hub.actUser)); //$NON-NLS-1$
 				}
 				/*
 				 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
@@ -274,7 +279,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					if ((a == null) || (!a.exists())) {
 						continue;
 					}
-					String name = a.getLabel();
+					// String name = a.getLabel();
 					int ist = a.getIstbestand();
 					int min = a.getMinbestand();
 					int max = a.getMaxbestand();
@@ -308,8 +313,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				if ((sel != null) && (!sel.isEmpty())) {
 					Item it = (Item) sel.getFirstElement();
 					int old = it.num;
-					InputDialog in = new InputDialog(
-							getViewSite().getShell(),
+					InputDialog in = new InputDialog(getViewSite().getShell(),
 							Messages.getString("BestellView.ChangeNumber"), //$NON-NLS-1$
 							Messages.getString("BestellView.EnterNewNumber"), //$NON-NLS-1$
 							Integer.toString(old), null);
@@ -336,7 +340,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					List<Item> list = actBestellung.asList();
 					ArrayList<Item> best = new ArrayList<Item>();
 					Kontakt adressat = null;
-					Iterator iter = list.iterator();
+					Iterator<Item> iter = list.iterator();
 					while (iter.hasNext()) {
 						Item it = (Item) iter.next();
 						if (adressat == null) {
@@ -377,22 +381,27 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 						try {
 							IDataSender sender = (IDataSender) ic
 									.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
-							if (sender.store(actBestellung).isOK()) {
-								if (sender.finalizeExport()) {
-									SWTHelper
-											.showInfo(
-													Messages.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
-													Messages.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
-									tv.refresh();
-								}
-							} else {
-								SWTHelper
-										.showError(
-												Messages.getString("BestellView.OrderNotPossible"), //$NON-NLS-1$
-												Messages.getString("BestellView.NoAutomaticOrderAvailable")); //$NON-NLS-1$
-							}
+
+							sender.store(actBestellung);
+							sender.finalizeExport();
+							SWTHelper
+									.showInfo(
+											Messages
+													.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
+											Messages
+													.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
+							tv.refresh();
+
 						} catch (CoreException ex) {
 							ExHandler.handle(ex);
+						} catch (XChangeException xx) {
+							SWTHelper
+									.showError(
+											Messages
+													.getString("BestellView.OrderNotPossible"), //$NON-NLS-1$
+											Messages
+													.getString("BestellView.NoAutomaticOrderAvailable " + xx.getMessage())); //$NON-NLS-1$
+
 						}
 					}
 				}
@@ -416,21 +425,25 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		};
 		printAction.setImageDescriptor(Desk
 				.getImageDescriptor(Desk.IMG_PRINTER));
-		printAction.setToolTipText(Messages.getString("BestellView.PrintOrder")); //$NON-NLS-1$
+		printAction
+				.setToolTipText(Messages.getString("BestellView.PrintOrder")); //$NON-NLS-1$
 
 		saveAction.setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif"));
 		saveAction.setToolTipText(Messages.getString("BestellView.saveOrder")); //$NON-NLS-1$
 		sendAction
 				.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NETWORK));
-		sendAction.setToolTipText(Messages.getString("BestellView.transmitOrder")); //$NON-NLS-1$
+		sendAction.setToolTipText(Messages
+				.getString("BestellView.transmitOrder")); //$NON-NLS-1$
 		// loadAction.setImageDescriptor(Hub.getImageDescriptor("rsc/open.gif"));
 		loadAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
-		loadAction.setToolTipText(Messages.getString("BestellView.loadEarlierOrder")); //$NON-NLS-1$
+		loadAction.setToolTipText(Messages
+				.getString("BestellView.loadEarlierOrder")); //$NON-NLS-1$
 
-		exportClipboardAction = new Action(
-				Messages.getString("BestellView.copyToClipboard")) { //$NON-NLS-1$
+		exportClipboardAction = new Action(Messages
+				.getString("BestellView.copyToClipboard")) { //$NON-NLS-1$
 			{
-				setToolTipText(Messages.getString("BestellView.copyToClipBioardForGalexis")); //$NON-NLS-1$
+				setToolTipText(Messages
+						.getString("BestellView.copyToClipBioardForGalexis")); //$NON-NLS-1$
 			}
 
 			@Override
@@ -439,7 +452,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					List<Item> list = actBestellung.asList();
 					ArrayList<Item> best = new ArrayList<Item>();
 					Kontakt adressat = null;
-					Iterator iter = list.iterator();
+					Iterator<Item> iter = list.iterator();
 					while (iter.hasNext()) {
 						Item it = (Item) iter.next();
 						if (adressat == null) {
@@ -477,7 +490,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				}
 			}
 		};
-		checkInAction = new Action(Messages.getString("BestellView.CheckInCaption")) { //$NON-NLS-1$
+		checkInAction = new Action(Messages
+				.getString("BestellView.CheckInCaption")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_TICK));
 				setToolTipText(Messages.getString("BestellView.CheckInBody")); //$NON-NLS-1$
