@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XChangeContainer.java 5873 2009-12-17 22:51:30Z rgw_ch $
+ * $Id: XChangeContainer.java 5874 2009-12-17 23:34:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -139,23 +139,44 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 		return contact;
 	}
 
+	/**
+	 * Map a database object to an xChange container element and vice versa
+	 * @param element the Element
+	 * @param obj the Object
+	 */
 	public void addMapping(XChangeElement element, PersistentObject obj) {
 		mapElementToObject.put(element, obj);
 		mapObjectToElement.put(obj, element);
 	}
 
+	/**
+	 * Return the database Object that maps to a specified Element
+	 * @param element the Element
+	 * @return the object or null if no such mapping exists
+	 */
 	public PersistentObject getMapping(XChangeElement element) {
 		return mapElementToObject.get(element);
 	}
 
+	/**
+	 * return the Container Element that is mapped to a specified database object
+	 * @param obj the object
+	 * @return the element or null if no such mapping exists
+	 */
 	public XChangeElement getMapping(PersistentObject obj) {
 		return mapObjectToElement.get(obj);
 	}
 
+	/**
+	 * Retrieve the UserChoice attributed to a given Element 
+	 * @param key teh element
+	 * @return the UserChoice or null if no such UserChoice exists
+	 */
 	public UserChoice getChoice(XChangeElement key) {
 		return choices.get(key.getElement());
 	}
 
+	
 	public UserChoice getChoice(Element key) {
 		return choices.get(key);
 	}
