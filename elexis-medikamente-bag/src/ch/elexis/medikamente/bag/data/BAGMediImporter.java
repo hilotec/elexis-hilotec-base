@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: BAGMediImporter.java 5845 2009-11-28 08:44:19Z rgw_ch $
+ *  $Id: BAGMediImporter.java 5876 2009-12-18 11:59:23Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -81,6 +81,22 @@ public class BAGMediImporter extends ImporterPage {
 	/**
 	 * Import a medicament from one row of the BAG-Medi file
 	 * @param row
+	 * <pre>
+	 * 		row[0] = ID,bzw Name
+	 * 		row[1] = Generikum
+	 * 		row[2] = Pharmacode
+	 * 	 	row[3] = BAG-Dossier
+	 * 		row[4] = Swissmedic-Nr
+	 * 		row[5] = Swissmedic-Liste
+	 * 	 	row[6]
+	 * 		row[7] = Namen
+	 * 		row[8] = EK-Preis
+	 *      row[9] = VK-Preis
+	 *      row[10]= Limitatio (Y/N)
+	 *      row[11]= LimitatioPts
+	 *      row[12]= Gruppe (optional)
+	 *      row[13]= Substance (optional)
+	 * </pre>
 	 * @return
 	 */
 	public static boolean importUpdate(final String[] row) throws ElexisException{
