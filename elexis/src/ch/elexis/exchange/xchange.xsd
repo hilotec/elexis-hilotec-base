@@ -952,7 +952,8 @@
 
 	<xs:complexType name="financialType">
 		<xs:sequence>
-			<xs:element name="services" type="xChange:servicesType"></xs:element>
+
+			<xs:element name="servicesRendered" type="xChange:servicesRenderedType" maxOccurs="unbounded" minOccurs="0"></xs:element>
 		</xs:sequence>
 		<xs:attribute name="dateFrom" type="xs:date"></xs:attribute>
 		<xs:attribute name="dateUntil" type="xs:date"></xs:attribute>
@@ -965,5 +966,15 @@
 		<xs:sequence>
 			<xs:element name="service" type="xChange:serviceType" maxOccurs="unbounded" minOccurs="1"></xs:element>
 		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="servicesRenderedType">
+		<xs:sequence>
+			<xs:element name="service" type="xChange:serviceType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+		</xs:sequence>
+		<xs:attribute name="provider" type="xs:IDREF"></xs:attribute>
+		<xs:attribute name="receiver" type="xs:IDREF"></xs:attribute>
+		<xs:attribute name="time" type="xs:dateTime"></xs:attribute>
+		<xs:attribute name="encounter" type="xs:IDREF"></xs:attribute>
 	</xs:complexType>
 </xs:schema>

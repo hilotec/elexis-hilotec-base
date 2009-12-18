@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BlockContainer.java 5873 2009-12-17 22:51:30Z rgw_ch $
+ *  $Id: BlockContainer.java 5875 2009-12-18 06:26:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -70,10 +70,7 @@ public class BlockContainer extends XChangeContainer {
 		
 	}
 	
-	@Override
-	public Kontakt findContact(String id){
-		return null;
-	}
+	
 	
 	public boolean canHandle(Class<? extends PersistentObject> clazz){
 		if (clazz.equals(Leistungsblock.class)) {

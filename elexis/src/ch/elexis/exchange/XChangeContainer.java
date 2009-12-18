@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XChangeContainer.java 5874 2009-12-17 23:34:39Z rgw_ch $
+ * $Id: XChangeContainer.java 5875 2009-12-18 06:26:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -46,7 +46,7 @@ import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
-public abstract class XChangeContainer implements IDataSender, IDataReceiver {
+public class XChangeContainer{
 	private static final String PLURAL = "s"; //$NON-NLS-1$
 	public static final String Version = "2.0.0"; //$NON-NLS-1$
 	public static final Namespace ns = Namespace.getNamespace(
@@ -96,50 +96,9 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 	protected List<IExchangeContributor> lex = Extensions.getClasses(
 			"ch.elexis.Transporter", "xChangeContribution"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	public abstract Kontakt findContact(String id);
+	//public abstract Kontakt findContact(String id);
 
-	/**
-	 * Add a new Contact to the file. It will only be added, if it does not yet
-	 * exist.
-	 * Rule for the created ID: If a Contact has a really unique ID (EAN,
-	 * Unique Patient Identifier) then this shold be used. Otherwise a unique id
-	 * should be generated (here we take the existing id from Elexis which is by
-	 * definition already a UUID)
-	 * 
-	 * @param k
-	 *            the contact to insert
-	 * @return the Element node of the newly inserted (or earlier inserted)
-	 *         contact
-	 */
-	@SuppressWarnings("unchecked")
-	public ContactElement addContact(Kontakt k) {
-		Element ec = eRoot.getChild(ENCLOSE_CONTACTS, ns);
-		ContactsElement eContacts = new ContactsElement(this, ec);
-		if (ec == null) {
-			eContacts = new ContactsElement(this);
-			eRoot.addContent(eContacts.getElement());
-			choices.put(eContacts.getElement(), new UserChoice(true,
-					Messages.XChangeContainer_kontakte, eContacts));
-		} else {
-			List<ContactElement> lContacts = (List<ContactElement>) eContacts
-					.getChildren(ContactElement.XMLNAME, ContactElement.class);
-			for (ContactElement e : (List<ContactElement>) lContacts) {
-				XidElement xid = e.getXid();
-				if ((xid != null) && (xid.match(k) == XidElement.XIDMATCH.SURE)) {
-					e.setContainer(this);
-					return e;
-				}
-			}
-		}
-		ContactElement contact = new ContactElement(this, k);
-		eContacts.add(contact);
-		choices
-				.put(contact.getElement(),
-						new UserChoice(true, k.getLabel(), k));
-		return contact;
-	}
-
-	/**
+		/**
 	 * Map a database object to an xChange container element and vice versa
 	 * @param element the Element
 	 * @param obj the Object
@@ -189,24 +148,18 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 		choices.put(key.getElement(), new UserChoice(true, name, key));
 	}
 
-	public ContactElement addPatient(Patient pat) {
-		ContactElement ret = addContact(pat);
-		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
-
-		for (BezugsKontakt bz : bzl) {
-			ret.add(new ContactRefElement(this, bz));
+	public ContactsElement getContactsElement(){
+		Element ec = eRoot.getChild(ENCLOSE_CONTACTS, ns);
+		ContactsElement eContacts = new ContactsElement(this, ec);
+		if (ec == null) {
+			eContacts = new ContactsElement(this);
+			eRoot.addContent(eContacts.getElement());
+			choices.put(eContacts.getElement(), new UserChoice(true,
+					Messages.XChangeContainer_kontakte, eContacts));
 		}
-
-		MedicalElement eMedical = new MedicalElement(this, pat);
-		ret.add(eMedical);
-		choices.put(eMedical.getElement(), new UserChoice(true,
-				Messages.XChangeContainer_kg, eMedical));
-		for (IExchangeContributor iex : lex) {
-			iex.exportHook(eMedical);
-		}
-		return ret;
+		return eContacts;
 	}
-
+	
 	public List<Element> getContactElements() {
 		return getElements(ROOTPATH + ENCLOSE_CONTACTS + StringTool.slash
 				+ ContactElement.XMLNAME);
@@ -447,4 +400,43 @@ public abstract class XChangeContainer implements IDataSender, IDataReceiver {
 			this.object = object;
 		}
 	}
+	
+	public ContactElement addContact(Kontakt k) {
+		ContactsElement eContacts=getContactsElement();
+		List<ContactElement> lContacts = (List<ContactElement>) eContacts
+				.getChildren(ContactElement.XMLNAME, ContactElement.class);
+		for (ContactElement e : (List<ContactElement>) lContacts) {
+			XidElement xid = e.getXid();
+			if ((xid != null) && (xid.match(k) == XidElement.XIDMATCH.SURE)) {
+				e.setContainer(this);
+				return e;
+			}
+		}
+		ContactElement contact = new ContactElement(this, k);
+		eContacts.add(contact);
+		addChoice(contact.getElement(),k.getLabel(),k);
+		return contact;
+	}
+
+	public ContactElement addPatient(Patient pat) {
+		ContactElement ret = addContact(pat);
+		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
+
+		for (BezugsKontakt bz : bzl) {
+			ret.add(new ContactRefElement(this, bz));
+		}
+
+		MedicalElement eMedical = new MedicalElement(this, pat);
+		ret.add(eMedical);
+		/*
+		choices.put(eMedical.getElement(), new UserChoice(true,
+				Messages.XChangeContainer_kg, eMedical));
+		for (IExchangeContributor iex : lex) {
+			iex.exportHook(eMedical);
+		}
+		*/
+		return ret;
+	}
+
+
 }
