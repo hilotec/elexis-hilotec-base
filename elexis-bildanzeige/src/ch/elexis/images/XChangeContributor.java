@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: XChangeContributor.java 5381 2009-06-22 11:01:17Z rgw_ch $
+ * 
+ *  $Id: XChangeContributor.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 
@@ -27,7 +27,6 @@ import ch.elexis.exchange.IExchangeDataHandler;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.DocumentElement;
 import ch.elexis.exchange.elements.MedicalElement;
-import ch.elexis.exchange.elements.RecordElement;
 import ch.rgw.tools.XMLTool;
 
 public class XChangeContributor implements IExchangeContributor {
@@ -42,7 +41,7 @@ public class XChangeContributor implements IExchangeContributor {
 		for (Bild img : images) {
 			byte[] data = img.getData();
 			if (data != null && data.length > 0) {
-				DocumentElement de = new DocumentElement(me.getContainer(), (Element) null);
+				DocumentElement de = new DocumentElement();
 				de.setMimetype("image/jpeg");
 				de.setDate(XMLTool.dateToXmlDate(img.getDate()));
 				de.setTitle(img.getTitle());
@@ -61,7 +60,7 @@ public class XChangeContributor implements IExchangeContributor {
 	public void importHook(XChangeContainer container, PersistentObject context){
 		String rootpath = container.getProperty("ROOTPATH");
 		List<Element> records =
-			(List<Element>) container.getElements(rootpath + "/records/record");
+			container.getElements(rootpath + "/records/record");
 		for (Element re : records) {
 			/*
 			 * List<Element> xrefs=re.getChildren("xref", container.getNamespace()); Samdas smd=new
@@ -83,14 +82,14 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
-	// Nothing
-	
+	throws CoreException{
+		// Nothing
+		
 	}
 	
 	public boolean init(MedicalElement me, boolean bExport){
 		if (bExport) {
-
+			
 		}
 		return true;
 	}

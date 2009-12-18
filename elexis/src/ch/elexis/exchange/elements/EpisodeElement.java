@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: EpisodeElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: EpisodeElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,11 +17,10 @@ import org.jdom.Element;
 
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
-
 
 public class EpisodeElement extends XChangeElement {
 	public static final String XMLNAME = "episode";
@@ -36,19 +35,16 @@ public class EpisodeElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public EpisodeElement(XChangeContainer parent, Element el){
-		super(parent, el);
-	}
-	
-	public EpisodeElement(XChangeContainer parent, Konsultation k, IDiagnose dg){
-		super(parent);
+	public EpisodeElement asExporter(xChangeExporter parent, Konsultation k, IDiagnose dg){
+		asExporter(parent);
 		setAttribute(ATTR_BEGINDATE, new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
 		setAttribute(ID, XMLTool.idToXMLID(StringTool.unique("episode")));
-		DiagnosisElement eDiag = new DiagnosisElement(parent, dg);
+		DiagnosisElement eDiag = new DiagnosisElement().asExporter(parent, dg);
 		add(eDiag);
 		setAttribute(ATTR_TITLE, dg.getLabel());
-		InsuranceElement eInsurance = new InsuranceElement(parent, k);
+		InsuranceElement eInsurance = new InsuranceElement().asExporter(parent, k);
 		add(eInsurance);
+		return this;
 	}
 	
 	// public EpisodeElement(XChangeContainer parent, )
@@ -76,7 +72,7 @@ public class EpisodeElement extends XChangeElement {
 		DiagnosisElement dia =
 			(DiagnosisElement) getChild(ELEMENT_DIAGNOSIS, DiagnosisElement.class);
 		if (dia != null) {
-			DiagnosisElement de = new DiagnosisElement(getContainer());
+			DiagnosisElement de = new DiagnosisElement();
 			String ret = de.getCode() + " (" + de.getCodeSystem() + ")";
 			return ret;
 		}
@@ -88,14 +84,11 @@ public class EpisodeElement extends XChangeElement {
 			return ELEMENT_DIAGNOSIS;
 		}
 		
-		public DiagnosisElement(XChangeContainer parent){
-			super(parent);
-		}
-		
-		public DiagnosisElement(XChangeContainer parent, IDiagnose dg){
-			super(parent);
+		public DiagnosisElement asExporter(xChangeExporter parent, IDiagnose dg){
+			asExporter(parent);
 			setAttribute(ATTR_CODESYSTEM, dg.getCodeSystemName());
 			setAttribute(ATTR_CODE, dg.getCode());
+			return this;
 		}
 		
 		public String getCodeSystem(){

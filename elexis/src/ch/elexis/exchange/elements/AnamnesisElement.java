@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: AnamnesisElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: AnamnesisElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,65 +21,52 @@ import org.jdom.Element;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.exchange.XChangeContainer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class AnamnesisElement extends XChangeElement {
 	public static final String XMLNAME = "anamnesis";
-
+	
 	HashMap<IDiagnose, EpisodeElement> hLink = new HashMap<IDiagnose, EpisodeElement>();
 	HashMap<Element, IDiagnose> hBacklink;
 	HashMap<String, Element> hElements;
 	MedicalElement eMed;
-
-	public String getXMLName() {
+	
+	public String getXMLName(){
 		return XMLNAME;
 	}
-
-	/*
-	 * public List<EpisodeElement> getEpisodes(){ List<EpisodeElement> ret=new
-	 * LinkedList<EpisodeElement>(); List<Element>
-	 * episodes=getElements("episode"); for(Element episode:episodes){
-	 * ret.add(new EpisodeElement(eMed.parent)); } return ret; }
-	 */
-	public AnamnesisElement(XChangeContainer parent, Element el) {
-		super(parent, el);
-	}
-
-	public List<EpisodeElement> getEpisodes() {
-		List<EpisodeElement> lep = (List<EpisodeElement>) getChildren(
-				EpisodeElement.XMLNAME, EpisodeElement.class);
+	
+	public List<EpisodeElement> getEpisodes(){
+		List<EpisodeElement> lep =
+			(List<EpisodeElement>) getChildren(EpisodeElement.XMLNAME, EpisodeElement.class);
 		return lep;
 	}
-
+	
 	/**
-	 * link a record element to this anamnesis (every episode has a number of
-	 * treatments related to that episode) We try to find an episode for each of
-	 * the diagnoses of the Konsultation given
+	 * link a record element to this anamnesis (every episode has a number of treatments related to
+	 * that episode) We try to find an episode for each of the diagnoses of the Konsultation given
 	 * 
 	 * @param k
 	 * @param r
 	 */
-	public void link(Konsultation k, RecordElement r) {
+	public void link(Konsultation k, RecordElement r){
 		List<IDiagnose> kdl = k.getDiagnosen();
 		for (IDiagnose dg : kdl) {
 			EpisodeElement episode = hLink.get(dg);
 			if (episode == null) {
-				episode = new EpisodeElement(getContainer(), k, dg);
+				episode = new EpisodeElement().asExporter(sender, k, dg);
 				hLink.put(dg, episode);
 				add(episode);
 			}
-			EpisodeRefElement episodeRef = new EpisodeRefElement(
-					getContainer(), episode);
+			EpisodeRefElement episodeRef = new EpisodeRefElement().asExporter(sender, episode);
 			r.add(episodeRef);
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public void doImport(RecordElement r, Konsultation k) {
-		List<EpisodeElement> eRefs = (List<EpisodeElement>) r.getChildren(
-				EpisodeElement.XMLNAME, EpisodeElement.class);
+	public void doImport(RecordElement r, Konsultation k){
+		List<EpisodeElement> eRefs =
+			(List<EpisodeElement>) r.getChildren(EpisodeElement.XMLNAME, EpisodeElement.class);
 		if (eRefs != null) {
 			for (EpisodeElement eRef : eRefs) {
 				String id = eRef.getAttr(ID);
@@ -93,28 +80,26 @@ public class AnamnesisElement extends XChangeElement {
 			}
 		}
 	}
-
-	public PersistentObject doImport(PersistentObject context) {
+	
+	public PersistentObject doImport(PersistentObject context){
 		return null;
 	}
-
-	public String toString() {
+	
+	public String toString(){
 		StringBuilder ret = new StringBuilder();
 		List<EpisodeElement> episodes = null; // getEpisodes();
 		for (EpisodeElement episode : episodes) {
 			ret.append(episode.getDiagnosis()).append(": ").append(
-					new TimeTool(episode.getBeginDate())
-							.toString(TimeTool.DATE_GER));
+				new TimeTool(episode.getBeginDate()).toString(TimeTool.DATE_GER));
 			String end = episode.getEndDate();
 			if (end.equals(StringTool.leer)) {
 				ret.append(": offen.");
 			} else {
-				ret.append("-").append(
-						new TimeTool(end).toString(TimeTool.DATE_GER));
+				ret.append("-").append(new TimeTool(end).toString(TimeTool.DATE_GER));
 			}
 			ret.append(StringTool.lf).append(episode.getText()).append(StringTool.lf);
 		}
-
+		
 		return ret.toString();
 	}
 	

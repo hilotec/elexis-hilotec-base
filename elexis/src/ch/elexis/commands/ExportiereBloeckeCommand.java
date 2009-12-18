@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExportiereBloeckeCommand.java 5873 2009-12-17 22:51:30Z rgw_ch $
+ *  $Id: ExportiereBloeckeCommand.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -20,7 +20,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.Query;
-import ch.elexis.exchange.BlockContainer;
+import ch.elexis.exchange.BlockExporter;
 import ch.elexis.exchange.XChangeException;
 import ch.rgw.tools.ExHandler;
 
@@ -31,7 +31,7 @@ public class ExportiereBloeckeCommand extends AbstractHandler {
 		Query<Leistungsblock> qbe = new Query<Leistungsblock>(
 				Leistungsblock.class);
 		List<Leistungsblock> bloecke = qbe.execute();
-		BlockContainer bc = new BlockContainer();
+		BlockExporter bc = new BlockExporter();
 		for (Leistungsblock block : bloecke) {
 			try {
 				bc.store(block);

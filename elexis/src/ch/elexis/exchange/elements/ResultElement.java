@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,16 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ResultElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: ResultElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import java.util.List;
 
-import org.jdom.Element;
-
 import ch.elexis.data.LabResult;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
@@ -32,48 +30,44 @@ public class ResultElement extends XChangeElement {
 	public static final String ELEMENT_IMAGE = "image";
 	public static final String ELEMENT_TEXTRESULT = "textResult";
 	public static final String ELEMENT_DOCRESULT = "documentRef";
-
+	
 	@Override
 	public String getXMLName() {
 		return XMLNAME;
 	}
-
-	public ResultElement(XChangeContainer parent, Element el) {
-		super(parent, el);
-	}
-
+	
 	public static ResultElement addResult(MedicalElement me, LabResult lr) {
 		List<FindingElement> findings = me.getAnalyses();
 		for (FindingElement fe : findings) {
 			if (fe.getXid().getID().equals(
-					XMLTool.idToXMLID(lr.getItem().getId()))) {
-				ResultElement re = new ResultElement(me.getContainer(), lr);
+				XMLTool.idToXMLID(lr.getItem().getId()))) {
+				ResultElement re = new ResultElement().asExporter(me.sender, lr);
 				me.addAnalyse(re);
 				return re;
 			}
 		}
-		FindingElement fe = new FindingElement(me.getContainer(), lr.getItem());
+		FindingElement fe = new FindingElement().asExporter(me.sender, lr.getItem());
 		me.addFindingItem(fe);
-		ResultElement re = new ResultElement(me.getContainer(), lr);
+		ResultElement re = new ResultElement().asExporter(me.sender, lr);
 		me.addAnalyse(re);
 		return re;
 	}
-
-	private ResultElement(XChangeContainer home, LabResult lr) {
-		super(home);
+	
+	private ResultElement asExporter(xChangeExporter home, LabResult lr) {
+		asExporter(home);
 		setAttribute("id", XMLTool.idToXMLID(lr.getId()));
 		setAttribute(ATTR_DATE, new TimeTool(lr.getDate())
-				.toString(TimeTool.DATETIME_XML));
+		.toString(TimeTool.DATETIME_XML));
 		setAttribute(ATTR_LABITEM, XMLTool.idToXMLID(lr.getItem().getId()));
-		ResultElement eResult = new ResultElement(getContainer(),
-				(Element) null);
+		ResultElement eResult = new ResultElement();
 		eResult.setText(lr.getResult());
 		add(eResult);
 		// setAttribute(ATTR_NORMAL,); // TODO
-		home.addChoice(this, lr.getLabel(), lr);
+		home.getContainer().addChoice(this, lr.getLabel(), lr);
+		return this;
 	}
-
+	
 	public void setText(String text) {
-
+		
 	}
 }

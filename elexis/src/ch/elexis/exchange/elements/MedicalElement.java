@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: MedicalElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: MedicalElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import org.jdom.Element;
 
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -27,6 +25,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -49,22 +48,15 @@ public class MedicalElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public MedicalElement(XChangeContainer parent, Element el){
-		super(parent, el);
-	}
-	
-	/**
-	 * Create a new MedicalElement from the EMR of Patient p
-	 */
-	public MedicalElement(XChangeContainer parent, Patient p){
-		super(parent);
-		parent.addMapping(this, p);
-		add(new AnamnesisElement(getContainer(), null));
+	public MedicalElement asExporter(xChangeExporter parent, Patient p){
+		asExporter(parent);
+		parent.getContainer().addMapping(this, p);
+		add(new AnamnesisElement());
 		Fall[] faelle = p.getFaelle();
 		for (Fall fall : faelle) {
 			Konsultation[] kons = fall.getBehandlungen(false);
 			for (Konsultation k : kons) {
-				RecordElement record = new RecordElement(getContainer(), k);
+				RecordElement record = new RecordElement().asExporter(sender, k);
 				getAnamnesis().link(k, record);
 				addRecord(record);
 			}
@@ -84,27 +76,27 @@ public class MedicalElement extends XChangeElement {
 		List<Brief> lBriefe = qb.execute();
 		if ((lBriefe != null) && (lBriefe.size()) > 0) {
 			for (Brief b : lBriefe) {
-				addDocument(new DocumentElement(getContainer(), b));
+				addDocument(new DocumentElement().asExporter(sender, b));
 			}
 			
 		}
 		Prescription[] medis = p.getFixmedikation();
 		for (Prescription medi : medis) {
-			add(new MedicationElement(getContainer(), medi));
+			add(new MedicationElement().asExporter(parent, medi));
 		}
 		String risks = p.get("Risiken");
 		if (!StringTool.isNothing(risks)) {
 			for (String r : risks.split("[\\n\\r]+")) {
-				add(new RiskElement(getContainer(), r));
+				add(new RiskElement().asExporter(sender, r));
 			}
 		}
 		risks = p.get("Allergien");
 		if (!StringTool.isNothing(risks)) {
 			for (String r : risks.split("[\\n\\r]+")) {
-				add(new RiskElement(getContainer(), r));
+				add(new RiskElement().asExporter(sender, r));
 			}
 		}
-		
+		return this;
 	}
 	
 	public void add(AnamnesisElement ae){
@@ -114,7 +106,7 @@ public class MedicalElement extends XChangeElement {
 	
 	public void add(RiskElement re){
 		if (eRisks == null) {
-			eRisks = new RisksElement(getContainer(), null);
+			eRisks = new RisksElement();
 			add(eRisks);
 			getContainer().addChoice(eRisks, "Risiken");
 		}
@@ -123,7 +115,7 @@ public class MedicalElement extends XChangeElement {
 	
 	public void add(MedicationElement med){
 		if (eMedications == null) {
-			eMedications = new MedicationsElement(getContainer(), null);
+			eMedications = new MedicationsElement();
 			getContainer().addChoice(eMedications, "Medikamente");
 			add(eMedications);
 		}
@@ -140,7 +132,7 @@ public class MedicalElement extends XChangeElement {
 			elAnamnesis =
 				(AnamnesisElement) getChild(AnamnesisElement.XMLNAME, AnamnesisElement.class);
 			if (elAnamnesis == null) {
-				elAnamnesis = new AnamnesisElement(getContainer(), null);
+				elAnamnesis = new AnamnesisElement();
 			}
 		}
 		return elAnamnesis;
@@ -158,7 +150,7 @@ public class MedicalElement extends XChangeElement {
 				(RecordsElement) getChild(getContainer().ENCLOSE_RECORDS, RecordsElement.class);
 		}
 		if (eRecords == null) {
-			eRecords = new RecordsElement(getContainer(), null);
+			eRecords = new RecordsElement();
 			add(eRecords);
 			getContainer().addChoice(eRecords, "KG-Einträge", eRecords);
 		}
@@ -175,7 +167,7 @@ public class MedicalElement extends XChangeElement {
 			eAnalyses = (AnalysesElement) getChild(FindingElement.ENCLOSING, AnalysesElement.class);
 		}
 		if (eAnalyses == null) {
-			eAnalyses = new AnalysesElement(getContainer());
+			eAnalyses = new AnalysesElement();
 			add(eAnalyses);
 			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
 		}
@@ -187,7 +179,7 @@ public class MedicalElement extends XChangeElement {
 			eAnalyses = (AnalysesElement) getChild(FindingElement.ENCLOSING, AnalysesElement.class);
 		}
 		if (eAnalyses == null) {
-			eAnalyses = new AnalysesElement(getContainer());
+			eAnalyses = new AnalysesElement();
 			add(eAnalyses);
 			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
 		}
@@ -203,7 +195,7 @@ public class MedicalElement extends XChangeElement {
 					DocumentsElement.class);
 		}
 		if (eDocuments == null) {
-			eDocuments = new DocumentsElement(getContainer(), null);
+			eDocuments = new DocumentsElement();
 			add(eDocuments);
 			getContainer().addChoice(eDocuments, "Dokumente", eDocuments);
 		}

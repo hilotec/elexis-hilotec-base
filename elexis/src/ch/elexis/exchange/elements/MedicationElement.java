@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,15 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: MedicationElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: MedicationElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import org.jdom.Element;
-
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
@@ -39,12 +37,9 @@ public class MedicationElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public MedicationElement(XChangeContainer parent, Element el){
-		super(parent, el);
-	}
 	
-	public MedicationElement(XChangeContainer parent, Prescription pr){
-		super(parent);
+	public MedicationElement asExporter(xChangeExporter parent, Prescription pr){
+		asExporter(parent);
 		Artikel art = pr.getArtikel();
 		String begin = pr.getBeginDate();
 		String end = pr.getEndDate();
@@ -57,8 +52,9 @@ public class MedicationElement extends XChangeElement {
 		setAttribute(ATTRIB_FREQUENCY, dose);
 		setAttribute(ATTRIB_PRODUCT, art.getLabel());
 		setAttribute(ATTRIB_REMARK, remark);
-		add(new XidElement(parent, art));
-		parent.addChoice(this, pr.getLabel(), pr);
+		add(new XidElement().asExporter(parent, art));
+		parent.getContainer().addChoice(this, pr.getLabel(), pr);
+		return this;
 	}
 	
 	public String getFirstDate(){

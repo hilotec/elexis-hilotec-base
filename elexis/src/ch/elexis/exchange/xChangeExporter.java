@@ -1,39 +1,41 @@
+/*******************************************************************************
+ * Copyright (c) 2009-2010, G. Weirich, SGAM.Informatics and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ * 
+ * $Id: xChangeExporter.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.exchange;
 
 import java.util.List;
-
-import org.jdom.Element;
 
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.exchange.XChangeContainer.UserChoice;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactRefElement;
 import ch.elexis.exchange.elements.ContactsElement;
 import ch.elexis.exchange.elements.MedicalElement;
-import ch.elexis.exchange.elements.XChangeElement;
 import ch.elexis.exchange.elements.XidElement;
 
-public class xChangeSender implements IDataSender {
-	private XChangeContainer container = new XChangeContainer();
-
+public abstract class xChangeExporter implements IDataSender {
+	private final XChangeContainer container = new XChangeContainer();
+	
 	public boolean canHandle(Class<? extends PersistentObject> clazz) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	public void finalizeExport() throws XChangeException {
-		// TODO Auto-generated method stub
-
+	
+	
+	public XChangeContainer getContainer(){
+		return container;
 	}
-
-	public XChangeElement store(Object output) throws XChangeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * Add a new Contact to the file. It will only be added, if it does not yet
 	 * exist. Rule for the created ID: If a Contact has a really unique ID (EAN,
@@ -50,38 +52,38 @@ public class xChangeSender implements IDataSender {
 	public ContactElement addContact(Kontakt k) {
 		ContactsElement eContacts=container.getContactsElement();
 		List<ContactElement> lContacts = (List<ContactElement>) eContacts
-				.getChildren(ContactElement.XMLNAME, ContactElement.class);
-		for (ContactElement e : (List<ContactElement>) lContacts) {
+		.getChildren(ContactElement.XMLNAME, ContactElement.class);
+		for (ContactElement e : lContacts) {
 			XidElement xid = e.getXid();
 			if ((xid != null) && (xid.match(k) == XidElement.XIDMATCH.SURE)) {
-				e.setContainer(container);
+				// TODO
+				//e.setContainer(container);
 				return e;
 			}
 		}
-		ContactElement contact = new ContactElement(container, k);
+		ContactElement contact = new ContactElement().asExporter(this, k);
 		eContacts.add(contact);
 		container.addChoice(contact.getElement(),k.getLabel(),k);
 		return contact;
 	}
-
+	
 	public ContactElement addPatient(Patient pat) {
 		ContactElement ret = addContact(pat);
 		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
-
+		
 		for (BezugsKontakt bz : bzl) {
-			ret.add(new ContactRefElement(container, bz));
+			ret.add(new ContactRefElement().asExporter(this, bz));
 		}
-
-		MedicalElement eMedical = new MedicalElement(container, pat);
+		
+		MedicalElement eMedical = new MedicalElement().asExporter(this, pat);
 		ret.add(eMedical);
-		/*
-		choices.put(eMedical.getElement(), new UserChoice(true,
-				Messages.XChangeContainer_kg, eMedical));
-		for (IExchangeContributor iex : lex) {
+		
+		getContainer().addChoice(eMedical.getElement(), Messages.XChangeContainer_kg, eMedical);
+		for (IExchangeContributor iex : getContainer().getXChangeContributors()) {
 			iex.exportHook(eMedical);
 		}
-		*/
+		
 		return ret;
 	}
-
+	
 }

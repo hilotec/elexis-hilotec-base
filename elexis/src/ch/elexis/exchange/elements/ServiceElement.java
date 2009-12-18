@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009 by G. Weirich 
- * This program is based on the Sgam-Exchange project, 
+ * Copyright (c) 2010 by G. Weirich
+ * This program is based on the Sgam-Exchange project,
  * (c) SGAM-Informatics
- * All rights resevred 
+ * All rights resevred
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ServiceElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ * 
+ *  $Id: ServiceElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -18,6 +18,7 @@ import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.TimeTool;
 
 public class ServiceElement extends XChangeElement {
@@ -32,19 +33,16 @@ public class ServiceElement extends XChangeElement {
 	public static final String ATTR_PRICE = "price";
 	public static final String ELEMENT_XID = XidElement.XMLNAME;
 	
-	public ServiceElement(XChangeContainer p, IVerrechenbar iv){
-		super(p);
+	public ServiceElement asExporter(xChangeExporter p, IVerrechenbar iv){
+		asExporter(p);
 		setAttribute(ATTR_NAME, iv.getText());
 		setAttribute(ATTR_CONTRACT_CODE, iv.getCode());
 		setAttribute(ATTR_CONTRACT_NAME, iv.getCodeSystemName());
 		setAttribute(ATTR_MINUTES, Integer.toString(iv.getMinutes()));
 		setAttribute(ATTR_COST, iv.getKosten(new TimeTool()).getCentsAsString());
 		setAttribute(ATTR_PRICE, Integer.toString(iv.getTP(new TimeTool(), null)));
-		add(new XidElement(p, iv));
-	}
-	
-	public ServiceElement(XChangeContainer c, Element el){
-		super(c, el);
+		add(new XidElement().asExporter(p, iv));
+		return this;
 	}
 	
 	public IVerrechenbar createObject(XChangeContainer home, Element el){

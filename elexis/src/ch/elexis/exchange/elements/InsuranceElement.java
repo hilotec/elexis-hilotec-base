@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,16 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: InsuranceElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: InsuranceElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import org.jdom.Element;
-
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.TimeTool;
 
 
@@ -35,24 +33,22 @@ public class InsuranceElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public InsuranceElement(XChangeContainer p, Element el){
-		super(p, el);
-	}
 	
-	public InsuranceElement(XChangeContainer p, Konsultation k){
-		super(p);
+	public InsuranceElement asExporter(xChangeExporter p, Konsultation k){
+		asExporter(p);
 		Fall fall = k.getFall();
 		Kontakt garant = fall.getGarant();
 		setAttribute(ATTR_DATEFROM, new TimeTool(fall.getBeginnDatum()).toString(TimeTool.DATE_ISO));
 		if (!fall.isOpen()) {
 			setAttribute(ATTR_DATEUNTIL, new TimeTool(fall.getEndDatum())
-				.toString(TimeTool.DATE_ISO));
+			.toString(TimeTool.DATE_ISO));
 		}
 		setAttribute(ATTR_REASON, translateReason(fall.getGrund()));
 		ContactElement eGarant = p.addContact(garant);
 		setAttribute(ATTR_COMPANYREF, eGarant.getID());
-		ContractElement eContract = new ContractElement(p);
+		ContractElement eContract = new ContractElement();
 		add(eContract);
+		return this;
 	}
 	
 	public String translateReason(String grund){
@@ -81,15 +77,13 @@ public class InsuranceElement extends XChangeElement {
 			return XMLNAME;
 		}
 		
-		public ContractElement(XChangeContainer parent){
-			super(parent);
-		}
 		
-		public ContractElement(XChangeContainer p, Fall fall){
-			super(p);
+		public ContractElement asExporter(xChangeExporter p, Fall fall){
+			asExporter(p);
 			setAttribute(ATTR_COUNTRY, "CH");
 			setAttribute(ATTR_NAME, fall.getAbrechnungsSystem());
 			setAttribute(ATTR_CASEID, fall.getId());
+			return this;
 		}
 	}
 	

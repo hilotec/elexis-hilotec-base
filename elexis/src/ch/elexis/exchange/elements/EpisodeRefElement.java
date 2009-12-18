@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: EpisodeRefElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: EpisodeRefElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import org.jdom.Element;
-
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 
 public class EpisodeRefElement extends XChangeElement {
 	public static final String XMLNAME = "episode";
@@ -25,12 +23,9 @@ public class EpisodeRefElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public EpisodeRefElement(XChangeContainer parent, Element el){
-		super(parent, el);
-	}
-	
-	public EpisodeRefElement(XChangeContainer parent, EpisodeElement episode){
-		super(parent);
+	public EpisodeRefElement asExporter(xChangeExporter parent, EpisodeElement episode){
+		asExporter(parent);
 		setAttribute("ref", episode.getAttr(ID));
+		return this;
 	}
 }

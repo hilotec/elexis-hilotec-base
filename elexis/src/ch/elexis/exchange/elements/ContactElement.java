@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,20 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ContactElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: ContactElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import java.util.List;
 
-import org.jdom.Element;
-
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.exchange.KontaktMatcher;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -51,13 +49,6 @@ public class ContactElement extends XChangeElement {
 	public static final String VALUE_MALE = "male"; //$NON-NLS-1$
 	public static final String VALUE_FEMALE = "female"; //$NON-NLS-1$
 	
-	public ContactElement(XChangeContainer home){
-		super(home);
-	}
-	
-	public ContactElement(XChangeContainer home, Element el){
-		super(home, el);
-	}
 	
 	public void add(AddressElement ae){
 		super.add(ae);
@@ -75,15 +66,10 @@ public class ContactElement extends XChangeElement {
 		return (List<AddressElement>) getChildren(ELEM_ADDRESS, AddressElement.class);
 	}
 	
-	/**
-	 * Create a ContactElement from a Kontakt
-	 * 
-	 * @param parent
-	 * @param k
-	 */
-	public ContactElement(XChangeContainer parent, Kontakt k){
-		super(parent);
-		XidElement eXid = new XidElement(parent, k);
+	
+	public ContactElement asExporter(xChangeExporter parent, Kontakt k){
+		asExporter(parent);
+		XidElement eXid = new XidElement().asExporter(parent, k);
 		add(eXid);
 		if (k.istPerson()) {
 			Person p = Person.load(k.getId());
@@ -104,8 +90,9 @@ public class ContactElement extends XChangeElement {
 			setAttribute(ATTR_TYPE, VALUE_ORGANIZATION);
 			setAttribute(ATTR_LASTNAME, k.getLabel());
 		}
-		add(new AddressElement(parent, k.getAnschrift(), "default")); //$NON-NLS-1$
-		parent.addMapping(this, k);
+		add(new AddressElement().asExporter(parent, k.getAnschrift(), "default")); //$NON-NLS-1$
+		parent.getContainer().addMapping(this, k);
+		return this;
 	}
 	
 	public List<ContactRefElement> getAssociations(){
@@ -125,7 +112,7 @@ public class ContactElement extends XChangeElement {
 		sb.append(Messages.getString("ContactElement.gebdat")); //$NON-NLS-1$
 		TimeTool geb = new TimeTool(getAttr(ATTR_BIRTHDATE));
 		sb.append(geb.toString(TimeTool.DATE_GER)).append(StringTool.lf);
-		sb.append("PID: ").append(getAttr(ID)).append(StringTool.lf+StringTool.lf); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append("PID: ").append(getAttr(ID)).append(StringTool.lf+StringTool.lf); //$NON-NLS-1$
 		List<AddressElement> addresses = getAddresses();
 		for (AddressElement adr : addresses) {
 			sb.append(adr.toString()).append(StringTool.lf);

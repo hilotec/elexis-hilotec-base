@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: MetaElement.java 5080 2009-02-03 18:28:58Z rgw_ch $
+ * 
+ *  $Id: MetaElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import org.jdom.Element;
+import ch.elexis.exchange.xChangeExporter;
 
-import ch.elexis.exchange.XChangeContainer;
-
-@SuppressWarnings("serial")
 public class MetaElement extends XChangeElement {
 	public static final String XMLNAME = "meta";
 	public static final String ATTR_NAME = "name";
@@ -28,14 +25,11 @@ public class MetaElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public MetaElement(XChangeContainer home, Element el){
-		super(home, el);
-	}
-	
-	public MetaElement(XChangeContainer home, String name, String value){
-		super(home);
+	public MetaElement asExporter(xChangeExporter home, String name, String value){
+		asExporter(home);
 		setAttribute(ATTR_NAME, name);
 		setAttribute(ATTR_VALUE, value);
+		return this;
 	}
 	
 }

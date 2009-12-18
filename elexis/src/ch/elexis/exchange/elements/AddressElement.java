@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich, SGAM.informatics and Elexis
+ * Copyright (c) 2006-2010, G. Weirich, SGAM.informatics and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,18 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: AddressElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: AddressElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import org.jdom.Element;
-
 import ch.elexis.data.Anschrift;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 import ch.rgw.tools.StringTool;
 
 public class AddressElement extends XChangeElement {
-
+	
 	public static final String XMLNAME = "address";
 	public static final String ATTR_STREET = "street";
 	public static final String ATTR_ZIP = "zip";
@@ -28,32 +26,29 @@ public class AddressElement extends XChangeElement {
 	public static final String ATTR_COUNTRY = "country";
 	public static final String ATTR_DESCRIPTION = "description";
 	public static final String VALUE_DEFAULT = "default";
-
-	public AddressElement(XChangeContainer parent, Element el) {
-		super(parent, el);
-	}
-
-	public AddressElement(XChangeContainer parent, Anschrift an, String bezug) {
-		super(parent);
+	
+	
+	public AddressElement asExporter(xChangeExporter parent, Anschrift an, String bezug){
+		asExporter(parent);
 		setAnschrift(an);
 		setBezug(bezug);
+		return this;
 	}
-
 	public void setAnschrift(Anschrift an) {
 		setAttribute(ATTR_STREET, an.getStrasse());
 		setAttribute(ATTR_ZIP, an.getPlz());
 		setAttribute(ATTR_CITY, an.getOrt());
 		setAttribute(ATTR_COUNTRY, an.getLand());
 	}
-
+	
 	public void setBezug(String bezug) {
 		setAttribute(ATTR_DESCRIPTION, bezug);
 	}
-
+	
 	public String getBezug() {
 		return getAttr(ATTR_DESCRIPTION);
 	}
-
+	
 	public Anschrift getAnschrift() {
 		Anschrift ret = new Anschrift();
 		ret.setLand(getAttr(ATTR_COUNTRY));
@@ -62,18 +57,18 @@ public class AddressElement extends XChangeElement {
 		ret.setStrasse(getAttr(ATTR_STREET));
 		return ret;
 	}
-
+	
 	public String toString() {
 		StringBuilder ret = new StringBuilder();
 		ret.append(getAttr(ATTR_STREET)).append(", ").append(getAttr(ATTR_ZIP))
-				.append(StringTool.space).append(getAttr(ATTR_CITY)).append(
-						StringTool.space).append(getAttr(ATTR_COUNTRY));
+		.append(StringTool.space).append(getAttr(ATTR_CITY)).append(
+			StringTool.space).append(getAttr(ATTR_COUNTRY));
 		return ret.toString();
 	}
-
+	
 	@Override
 	public String getXMLName() {
 		return XMLNAME;
 	}
-
+	
 }

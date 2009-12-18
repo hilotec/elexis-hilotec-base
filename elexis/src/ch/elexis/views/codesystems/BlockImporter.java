@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: BlockImporter.java 5339 2009-06-02 12:07:59Z michael_imhof $
+ * 
+ *    $Id: BlockImporter.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -17,10 +17,8 @@ import java.io.FileInputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.elexis.exchange.BlockContainer;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
@@ -44,7 +42,7 @@ public class BlockImporter extends ImporterPage {
 		
 		try {
 			FileInputStream fips = new FileInputStream(filename);
-			BlockContainer blc = new BlockContainer(fips);
+			ch.elexis.exchange.BlockImporter blc = new ch.elexis.exchange.BlockImporter(fips);
 			if (blc.finalizeImport().isOK()) {
 				return Status.OK_STATUS;
 			} else {

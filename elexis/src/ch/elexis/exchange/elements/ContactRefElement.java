@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,15 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ContactRefElement.java 5319 2009-05-26 14:55:24Z rgw_ch $
+ * 
+ *  $Id: ContactRefElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import org.jdom.Element;
-
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
-import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.xChangeExporter;
 
 public class ContactRefElement extends XChangeElement {
 	
@@ -28,18 +26,16 @@ public class ContactRefElement extends XChangeElement {
 		return "contactref";
 	}
 	
-	public ContactRefElement(XChangeContainer parent, Element el){
-		super(parent, el);
-	}
 	
-	public ContactRefElement(XChangeContainer parent, BezugsKontakt bk){
-		super(parent);
+	public ContactRefElement asExporter(xChangeExporter parent, BezugsKontakt bk){
+		asExporter(parent);
 		Kontakt bezug = bk.getBezugsKontakt();
 		String beziehung = bk.getBezug();
 		setDescription(beziehung);
 		ContactElement ce = parent.addContact(bezug);
 		setId(ce.getID());
-		parent.addChoice(this, bk.getLabel(), bk);
+		parent.getContainer().addChoice(this, bk.getLabel(), bk);
+		return this;
 	}
 	
 	public void setDescription(String type){
