@@ -199,34 +199,41 @@ public class JCECrypter implements Cryptologist {
 	}
 
 	public void encrypt(InputStream source, OutputStream dest,
-			String receiverKeyName) throws Exception {
+			String receiverKeyName) throws CryptologistException {
 		final int BUFLEN = 65535;
-		PublicKey cert = km.getPublicKey(receiverKeyName);
-		Cipher bfCip = Cipher.getInstance(SYMM_CIPHER_ALGO);
-		byte[] bfKey = generateBlowfishKey();
-		SecretKeySpec spec = new SecretKeySpec(bfKey, SYMM_CIPHER_ALGO);
-		bfCip.init(Cipher.ENCRYPT_MODE, spec);
+		try {
+			PublicKey cert = km.getPublicKey(receiverKeyName);
+			Cipher bfCip = Cipher.getInstance(SYMM_CIPHER_ALGO);
+			byte[] bfKey = generateBlowfishKey();
+			SecretKeySpec spec = new SecretKeySpec(bfKey, SYMM_CIPHER_ALGO);
+			bfCip.init(Cipher.ENCRYPT_MODE, spec);
 
-		// Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
-		Cipher rsaCip = Cipher.getInstance(RSA_ALGO);
-		rsaCip.init(Cipher.ENCRYPT_MODE, cert);
+			// Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
+			Cipher rsaCip = Cipher.getInstance(RSA_ALGO);
+			rsaCip.init(Cipher.ENCRYPT_MODE, cert);
 
-		DataOutputStream dao = new DataOutputStream(dest);
+			DataOutputStream dao = new DataOutputStream(dest);
 
-		dao.writeShort(MAGIC);
-		dao.writeShort(VERSION);
-		writeBlock(dao, rsaCip.doFinal(bfKey), KEY_MARKER);
-		// writeBlock(dao,rsaCip.doFinal(aes_iv),IV_MARKER);
-		// aesCip.init(Cipher.ENCRYPT_MODE, aesKey,new IvParameterSpec(aes_iv));
-		byte[] buffer = new byte[BUFLEN];
-		int in;
-		while ((in = source.read(buffer)) == BUFLEN) {
-			writeBlock(dao, bfCip.doFinal(buffer), DATA_MARKER);
+			dao.writeShort(MAGIC);
+			dao.writeShort(VERSION);
+			writeBlock(dao, rsaCip.doFinal(bfKey), KEY_MARKER);
+			// writeBlock(dao,rsaCip.doFinal(aes_iv),IV_MARKER);
+			// aesCip.init(Cipher.ENCRYPT_MODE, aesKey,new
+			// IvParameterSpec(aes_iv));
+			byte[] buffer = new byte[BUFLEN];
+			int in;
+			while ((in = source.read(buffer)) == BUFLEN) {
+				writeBlock(dao, bfCip.doFinal(buffer), DATA_MARKER);
+			}
+			if (in > 0) {
+				writeBlock(dao, bfCip.doFinal(buffer, 0, in), DATA_MARKER);
+			}
+			dao.flush();
+		} catch (Exception e) {
+			throw new CryptologistException("Ebcryption failed: "
+					+ e.getMessage(),
+					CryptologistException.ERR_ENCRYPTION_FAILURE);
 		}
-		if (in > 0) {
-			writeBlock(dao, bfCip.doFinal(buffer, 0, in), DATA_MARKER);
-		}
-		dao.flush();
 
 	}
 

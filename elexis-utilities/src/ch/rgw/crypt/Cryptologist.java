@@ -1,5 +1,7 @@
 package ch.rgw.crypt;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -28,6 +30,8 @@ public interface Cryptologist {
 	 */
 	public byte[] encrypt(byte[] source, String receiverKeyName);
 	
+	public void encrypt(InputStream source, OutputStream dest, String receiverKeyName) throws CryptologistException;
+	
 	/**
 	 * Sign a byte array (create and sign a MAC)
 	 * 
@@ -45,6 +49,7 @@ public interface Cryptologist {
 	 * @return the plain array or null of decryption failed
 	 */
 	public Result<byte[]> decrypt(byte[] encrypted);
+	public void decrypt(InputStream source, OutputStream dest) throws CryptologistException;
 	
 	public enum VERIFY_RESULT{OK,SIGNER_UNKNOWN,BAD_SIGNATURE,INTERNAL_ERROR}
 	/**

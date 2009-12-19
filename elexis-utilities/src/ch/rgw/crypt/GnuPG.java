@@ -709,5 +709,17 @@ public class GnuPG implements Cryptologist {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	public void decrypt(InputStream source, OutputStream dest)
+			throws CryptologistException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void encrypt(InputStream source, OutputStream dest,
+			String receiverKeyName) throws CryptologistException {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
