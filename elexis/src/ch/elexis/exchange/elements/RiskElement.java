@@ -8,12 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RiskElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: RiskElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 
 public class RiskElement extends XChangeElement {
 	public static final String XMLNAME = "risk";
@@ -29,7 +29,7 @@ public class RiskElement extends XChangeElement {
 	}
 	
 	
-	public RiskElement asExporter(xChangeExporter parent, String name){
+	public RiskElement asExporter(XChangeExporter parent, String name){
 		asExporter(parent);
 		setAttribute(ATTR_SUBSTANCE, name);
 		parent.getContainer().addChoice(this, name);

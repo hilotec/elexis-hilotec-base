@@ -14,7 +14,7 @@ package ch.elexis.befunde.xchange;
 
 import ch.elexis.befunde.Messwert;
 import ch.elexis.data.Xid;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.exchange.elements.MetaElement;
 import ch.elexis.exchange.elements.ResultElement;
@@ -22,7 +22,7 @@ import ch.elexis.exchange.elements.XidElement;
 
 public class BefundeItem extends FindingElement {
 	
-	BefundeItem asExporter(xChangeExporter home, Messwert mw, String field){
+	BefundeItem asExporter(XChangeExporter home, Messwert mw, String field){
 		super.asExporter(home);
 		setAttribute(ATTR_NAME, mw.getLabel() + ":" + field);
 		setAttribute(ATTR_GROUP, "Messwert");

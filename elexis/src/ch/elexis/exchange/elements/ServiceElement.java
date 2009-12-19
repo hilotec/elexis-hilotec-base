@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ServiceElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: ServiceElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -18,7 +18,7 @@ import ch.elexis.data.Eigenleistung;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.TimeTool;
 
 public class ServiceElement extends XChangeElement {
@@ -33,7 +33,7 @@ public class ServiceElement extends XChangeElement {
 	public static final String ATTR_PRICE = "price";
 	public static final String ELEMENT_XID = XidElement.XMLNAME;
 	
-	public ServiceElement asExporter(xChangeExporter p, IVerrechenbar iv){
+	public ServiceElement asExporter(XChangeExporter p, IVerrechenbar iv){
 		asExporter(p);
 		setAttribute(ATTR_NAME, iv.getText());
 		setAttribute(ATTR_CONTRACT_CODE, iv.getCode());

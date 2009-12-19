@@ -15,7 +15,7 @@ package ch.elexis.befunde.xchange;
 import java.util.List;
 
 import ch.elexis.befunde.Messwert;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.exchange.elements.FindingElement;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.exchange.elements.MetaElement;
@@ -57,7 +57,7 @@ public class BefundElement extends ResultElement {
 		return bf;
 	}
 	
-	BefundElement asExporter(xChangeExporter home, Messwert mw, String field){
+	BefundElement asExporter(XChangeExporter home, Messwert mw, String field){
 		asExporter(home);
 		TimeTool tt = new TimeTool(mw.getDate());
 		String date = tt.toString(TimeTool.DATE_COMPACT);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ContactElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: ContactElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -20,7 +20,7 @@ import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.exchange.KontaktMatcher;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -67,7 +67,7 @@ public class ContactElement extends XChangeElement {
 	}
 	
 	
-	public ContactElement asExporter(xChangeExporter parent, Kontakt k){
+	public ContactElement asExporter(XChangeExporter parent, Kontakt k){
 		asExporter(parent);
 		XidElement eXid = new XidElement().asExporter(parent, k);
 		add(eXid);

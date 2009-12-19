@@ -8,12 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MetaElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: MetaElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 
 public class MetaElement extends XChangeElement {
 	public static final String XMLNAME = "meta";
@@ -25,7 +25,7 @@ public class MetaElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public MetaElement asExporter(xChangeExporter home, String name, String value){
+	public MetaElement asExporter(XChangeExporter home, String name, String value){
 		asExporter(home);
 		setAttribute(ATTR_NAME, name);
 		setAttribute(ATTR_VALUE, value);

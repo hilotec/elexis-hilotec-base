@@ -8,14 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MedicationElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: MedicationElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
@@ -38,7 +38,7 @@ public class MedicationElement extends XChangeElement {
 	}
 	
 	
-	public MedicationElement asExporter(xChangeExporter parent, Prescription pr){
+	public MedicationElement asExporter(XChangeExporter parent, Prescription pr){
 		asExporter(parent);
 		Artikel art = pr.getArtikel();
 		String begin = pr.getBeginDate();

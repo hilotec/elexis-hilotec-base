@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: xChangeExporter.java 5879 2009-12-19 06:05:57Z rgw_ch $
+ * $Id: XChangeExporter.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -24,7 +24,7 @@ import ch.elexis.exchange.elements.ContactsElement;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.elexis.exchange.elements.XidElement;
 
-public abstract class xChangeExporter implements IDataSender {
+public abstract class XChangeExporter implements IDataSender {
 	private final XChangeContainer container = new XChangeContainer();
 	
 	public boolean canHandle(Class<? extends PersistentObject> clazz) {

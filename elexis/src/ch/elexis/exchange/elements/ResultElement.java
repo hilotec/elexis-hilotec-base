@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ResultElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: ResultElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -16,7 +16,7 @@ package ch.elexis.exchange.elements;
 import java.util.List;
 
 import ch.elexis.data.LabResult;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
@@ -53,7 +53,7 @@ public class ResultElement extends XChangeElement {
 		return re;
 	}
 	
-	private ResultElement asExporter(xChangeExporter home, LabResult lr) {
+	private ResultElement asExporter(XChangeExporter home, LabResult lr) {
 		asExporter(home);
 		setAttribute("id", XMLTool.idToXMLID(lr.getId()));
 		setAttribute(ATTR_DATE, new TimeTool(lr.getDate())

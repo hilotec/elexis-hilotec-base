@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XidElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: XidElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,7 +21,7 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.XMLTool;
 
@@ -54,7 +54,7 @@ public class XidElement extends XChangeElement {
 		return (xid.getQuality() & 3);
 	}
 	
-	public XidElement asExporter(xChangeExporter home, IVerrechenbar iv){
+	public XidElement asExporter(XChangeExporter home, IVerrechenbar iv){
 		asExporter(home);
 		if (iv instanceof PersistentObject) {
 			PersistentObject po = (PersistentObject) iv;
@@ -65,7 +65,7 @@ public class XidElement extends XChangeElement {
 		return this;
 	}
 	
-	public XidElement asExporter(xChangeExporter home, LabItem li){
+	public XidElement asExporter(XChangeExporter home, LabItem li){
 		asExporter(home);
 		setAttribute(ID, XMLTool.idToXMLID(li.getId()));
 		StringBuilder domainRoot = new StringBuilder(FindingElement.XIDBASE);
@@ -81,7 +81,7 @@ public class XidElement extends XChangeElement {
 		return this;
 	}
 	
-	public XidElement asExporter(xChangeExporter home, Artikel art){
+	public XidElement asExporter(XChangeExporter home, Artikel art){
 		asExporter(home);
 		setAttribute(ID, XMLTool.idToXMLID(art.getId()));
 		String ean = art.getEAN();
@@ -95,7 +95,7 @@ public class XidElement extends XChangeElement {
 		return this;
 	}
 	
-	public XidElement asExporter(xChangeExporter home, Kontakt k){
+	public XidElement asExporter(XChangeExporter home, Kontakt k){
 		asExporter(home);
 		Xid best = k.getXid();
 		String id = XMLTool.idToXMLID(k.getId());
@@ -274,7 +274,7 @@ public class XidElement extends XChangeElement {
 			return ELEMENT_IDENTITY;
 		}
 		
-		public Identity asExporter(xChangeExporter home, String domain, String domain_id,
+		public Identity asExporter(XChangeExporter home, String domain, String domain_id,
 			int quality, boolean isGuid){
 			asExporter(home);
 			setAttribute(ATTR_IDENTITY_DOMAIN, domain);

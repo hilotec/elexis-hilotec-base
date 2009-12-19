@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ServiceBlockElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: ServiceBlockElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,7 +21,7 @@ import ch.elexis.data.ICodeElement;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 
 public class ServiceBlockElement extends XChangeElement {
@@ -29,7 +29,7 @@ public class ServiceBlockElement extends XChangeElement {
 	public static final String ENCLOSING = "serviceblocks";
 	public static final String ATTR_NAME = "name";
 	
-	public ServiceBlockElement asExporter(xChangeExporter p, Leistungsblock lb){
+	public ServiceBlockElement asExporter(XChangeExporter p, Leistungsblock lb){
 		asExporter(p);
 		setAttribute(ATTR_NAME, lb.getName());
 		List<ICodeElement> ics = lb.getElements();

@@ -8,12 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EpisodeRefElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: EpisodeRefElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 
 public class EpisodeRefElement extends XChangeElement {
 	public static final String XMLNAME = "episode";
@@ -23,7 +23,7 @@ public class EpisodeRefElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public EpisodeRefElement asExporter(xChangeExporter parent, EpisodeElement episode){
+	public EpisodeRefElement asExporter(XChangeExporter parent, EpisodeElement episode){
 		asExporter(parent);
 		setAttribute("ref", episode.getAttr(ID));
 		return this;

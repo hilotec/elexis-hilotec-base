@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: DocumentElement.java 5879 2009-12-19 06:05:57Z rgw_ch $
+ *  $Id: DocumentElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,7 +17,7 @@ import org.jdom.Element;
 
 import ch.elexis.data.Brief;
 import ch.elexis.data.Kontakt;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
@@ -44,7 +44,7 @@ public class DocumentElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public DocumentElement asExporter(xChangeExporter parent, Brief b){
+	public DocumentElement asExporter(XChangeExporter parent, Brief b){
 		asExporter(parent);
 		setAttribute(ATTR_MIMETYPE, b.getMimeType());
 		setDefaultXid(b.getId());

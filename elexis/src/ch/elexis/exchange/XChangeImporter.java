@@ -4,7 +4,7 @@ import org.jdom.Element;
 
 import ch.rgw.tools.Result;
 
-public class xChangeImporter implements IDataReceiver {
+public class XChangeImporter implements IDataReceiver {
 	private XChangeContainer container;
 	
 	public Result finalizeImport(){

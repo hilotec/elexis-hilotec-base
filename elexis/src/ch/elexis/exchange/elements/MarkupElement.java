@@ -8,12 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MarkupElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: MarkupElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.text.Samdas.XRef;
 
 public class MarkupElement extends XChangeElement {
@@ -31,7 +31,7 @@ public class MarkupElement extends XChangeElement {
 	}
 	
 	
-	public MarkupElement asExporter(xChangeExporter home, XRef xref){
+	public MarkupElement asExporter(XChangeExporter home, XRef xref){
 		asExporter(home);
 		setAttribute(ATTR_POS, Integer.toString(xref.getPos()));
 		setAttribute(ATTR_LEN, Integer.toString(xref.getLength()));

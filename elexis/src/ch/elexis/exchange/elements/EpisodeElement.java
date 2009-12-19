@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EpisodeElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: EpisodeElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,7 +17,7 @@ import org.jdom.Element;
 
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
@@ -35,7 +35,7 @@ public class EpisodeElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public EpisodeElement asExporter(xChangeExporter parent, Konsultation k, IDiagnose dg){
+	public EpisodeElement asExporter(XChangeExporter parent, Konsultation k, IDiagnose dg){
 		asExporter(parent);
 		setAttribute(ATTR_BEGINDATE, new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
 		setAttribute(ID, XMLTool.idToXMLID(StringTool.unique("episode")));
@@ -84,7 +84,7 @@ public class EpisodeElement extends XChangeElement {
 			return ELEMENT_DIAGNOSIS;
 		}
 		
-		public DiagnosisElement asExporter(xChangeExporter parent, IDiagnose dg){
+		public DiagnosisElement asExporter(XChangeExporter parent, IDiagnose dg){
 			asExporter(parent);
 			setAttribute(ATTR_CODESYSTEM, dg.getCodeSystemName());
 			setAttribute(ATTR_CODE, dg.getCode());

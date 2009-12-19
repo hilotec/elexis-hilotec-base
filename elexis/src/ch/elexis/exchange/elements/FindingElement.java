@@ -8,13 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: FindingElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: FindingElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import ch.elexis.data.LabItem;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 
 public class FindingElement extends XChangeElement {
 	public static final String ENCLOSING = "findings";
@@ -37,7 +37,7 @@ public class FindingElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	FindingElement asExporter(xChangeExporter home, LabItem li){
+	FindingElement asExporter(XChangeExporter home, LabItem li){
 		asExporter(home);
 		
 		setAttribute(ATTR_NAME, li.getKuerzel());

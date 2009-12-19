@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MedicalElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: MedicalElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -25,7 +25,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -48,7 +48,7 @@ public class MedicalElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public MedicalElement asExporter(xChangeExporter parent, Patient p){
+	public MedicalElement asExporter(XChangeExporter parent, Patient p){
 		asExporter(parent);
 		parent.getContainer().addMapping(this, p);
 		add(new AnamnesisElement());

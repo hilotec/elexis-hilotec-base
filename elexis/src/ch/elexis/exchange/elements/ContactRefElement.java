@@ -8,14 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ContactRefElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: ContactRefElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 
 public class ContactRefElement extends XChangeElement {
 	
@@ -27,7 +27,7 @@ public class ContactRefElement extends XChangeElement {
 	}
 	
 	
-	public ContactRefElement asExporter(xChangeExporter parent, BezugsKontakt bk){
+	public ContactRefElement asExporter(XChangeExporter parent, BezugsKontakt bk){
 		asExporter(parent);
 		Kontakt bezug = bk.getBezugsKontakt();
 		String beziehung = bk.getBezug();

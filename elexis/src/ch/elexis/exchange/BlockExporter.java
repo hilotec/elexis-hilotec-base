@@ -21,7 +21,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
-public class BlockExporter extends xChangeExporter {
+public class BlockExporter extends XChangeExporter {
 	Document doc;
 	Element eRoot;
 	ServiceBlocksElement lbs;

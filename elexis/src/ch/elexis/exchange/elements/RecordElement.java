@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RecordElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: RecordElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -19,7 +19,7 @@ import org.jdom.Element;
 
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.elexis.text.Samdas;
 import ch.elexis.text.Samdas.Record;
 import ch.elexis.text.Samdas.XRef;
@@ -35,7 +35,7 @@ public class RecordElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public RecordElement asExporter(xChangeExporter c, Konsultation k){
+	public RecordElement asExporter(XChangeExporter c, Konsultation k){
 		asExporter(c);
 		
 		setAttribute("date", new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));

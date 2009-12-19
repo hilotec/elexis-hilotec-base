@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeElement.java 5879 2009-12-19 06:05:57Z rgw_ch $
+ *  $Id: XChangeElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -17,8 +17,8 @@ import org.jdom.Element;
 
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.xChangeExporter;
-import ch.elexis.exchange.xChangeImporter;
+import ch.elexis.exchange.XChangeExporter;
+import ch.elexis.exchange.XChangeImporter;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
@@ -30,21 +30,21 @@ import ch.rgw.tools.Result;
  */
 public abstract class XChangeElement {
 	protected static final String ID = "id";
-	protected xChangeExporter sender;
-	private xChangeImporter reader;
+	protected XChangeExporter sender;
+	private XChangeImporter reader;
 	protected Element ex;
 	
 	protected XChangeElement(){
 		ex = new Element(getXMLName(), XChangeContainer.ns);
 	}
 	
-	public XChangeElement asImporter(xChangeImporter reader, Element el){
+	public XChangeElement asImporter(XChangeImporter reader, Element el){
 		this.reader = reader;
 		ex = el == null ? new Element(getXMLName(), XChangeContainer.ns) : el;
 		return this;
 	}
 	
-	public XChangeElement asExporter(xChangeExporter sender){
+	public XChangeElement asExporter(XChangeExporter sender){
 		this.sender = sender;
 		if (ex == null) {
 			ex = new Element(getXMLName(), XChangeContainer.ns);
@@ -73,12 +73,12 @@ public abstract class XChangeElement {
 		ex = e;
 	}
 	
-	public void setReader(xChangeImporter reader){
+	public void setReader(XChangeImporter reader){
 		sender = null;
 		this.reader = reader;
 	}
 	
-	public void setWriter(xChangeExporter writer){
+	public void setWriter(XChangeExporter writer){
 		reader = null;
 		sender = writer;
 	}
@@ -95,7 +95,7 @@ public abstract class XChangeElement {
 		}
 	}
 	
-	public xChangeExporter getSender(){
+	public XChangeExporter getSender(){
 		return sender;
 	}
 	/*

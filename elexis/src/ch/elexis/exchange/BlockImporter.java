@@ -12,7 +12,7 @@ import ch.elexis.exchange.elements.ServiceBlocksElement;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
-public class BlockImporter extends xChangeImporter {
+public class BlockImporter extends XChangeImporter {
 	
 	public BlockImporter(InputStream is){
 		SAXBuilder builder = new SAXBuilder();

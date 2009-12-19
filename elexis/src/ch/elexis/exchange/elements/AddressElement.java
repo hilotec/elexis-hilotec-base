@@ -8,13 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: AddressElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: AddressElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
 
 import ch.elexis.data.Anschrift;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 
 public class AddressElement extends XChangeElement {
@@ -28,7 +28,7 @@ public class AddressElement extends XChangeElement {
 	public static final String VALUE_DEFAULT = "default";
 	
 	
-	public AddressElement asExporter(xChangeExporter parent, Anschrift an, String bezug){
+	public AddressElement asExporter(XChangeExporter parent, Anschrift an, String bezug){
 		asExporter(parent);
 		setAnschrift(an);
 		setBezug(bezug);

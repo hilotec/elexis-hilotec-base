@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: InsuranceElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: InsuranceElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -16,7 +16,7 @@ package ch.elexis.exchange.elements;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
-import ch.elexis.exchange.xChangeExporter;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.TimeTool;
 
 
@@ -34,7 +34,7 @@ public class InsuranceElement extends XChangeElement {
 	}
 	
 	
-	public InsuranceElement asExporter(xChangeExporter p, Konsultation k){
+	public InsuranceElement asExporter(XChangeExporter p, Konsultation k){
 		asExporter(p);
 		Fall fall = k.getFall();
 		Kontakt garant = fall.getGarant();
@@ -78,7 +78,7 @@ public class InsuranceElement extends XChangeElement {
 		}
 		
 		
-		public ContractElement asExporter(xChangeExporter p, Fall fall){
+		public ContractElement asExporter(XChangeExporter p, Fall fall){
 			asExporter(p);
 			setAttribute(ATTR_COUNTRY, "CH");
 			setAttribute(ATTR_NAME, fall.getAbrechnungsSystem());
