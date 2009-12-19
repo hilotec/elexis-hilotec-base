@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: xChangeExporter.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ * $Id: xChangeExporter.java 5879 2009-12-19 06:05:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -84,6 +84,18 @@ public abstract class xChangeExporter implements IDataSender {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Add a binary content to the Container
+	 * 
+	 * @param id
+	 *            a unique identifier for the content
+	 * @param contents
+	 *            the content
+	 */
+	public void addBinary(String id, byte[] contents){
+		container.binFiles.put(id, contents);
 	}
 	
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeContributor.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: XChangeContributor.java 5879 2009-12-19 06:05:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 
@@ -48,7 +48,7 @@ public class XChangeContributor implements IExchangeContributor {
 				de.setOriginator(Hub.actMandant);
 				de.setHint(img.getInfo());
 				de.setDefaultXid(img.getId());
-				me.getContainer().addBinary(img.getId(), data);
+				me.getSender().addBinary(img.getId(), data);
 				me.getContainer().addChoice(de.getElement(), img.getLabel());
 				me.addDocument(de);
 			}

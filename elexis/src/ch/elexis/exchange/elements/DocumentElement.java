@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: DocumentElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: DocumentElement.java 5879 2009-12-19 06:05:57Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -49,7 +49,7 @@ public class DocumentElement extends XChangeElement {
 		setAttribute(ATTR_MIMETYPE, b.getMimeType());
 		setDefaultXid(b.getId());
 		setAttribute(ATTR_PLACEMENT, PLACEMENT_INFILE);
-		parent.getContainer().addBinary(getID(), b.loadBinary());
+		parent.addBinary(getID(), b.loadBinary());
 		
 		setTitle(b.getLabel());
 		setDestination(b.getAdressat());

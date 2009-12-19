@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: XChangeElement.java 5879 2009-12-19 06:05:57Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -115,6 +115,10 @@ public abstract class XChangeElement {
 		return ret == null ? "" : ret;
 	}
 	
+	/**
+	 * append a XID that consists solely of the local identity id
+	 * @param id
+	 */
 	public void setDefaultXid(String id){
 		XidElement xid = new XidElement();
 		xid.addIdentity(Xid.DOMAIN_ELEXIS, id, Xid.ASSIGNMENT_LOCAL, true);
@@ -140,10 +144,20 @@ public abstract class XChangeElement {
 	
 	public XidElement getXid(){
 		XidElement xid = new XidElement();
-		xid.asImporter(reader, ex.getChild(XidElement.XMLNAME, getContainer().getNamespace()));
+		Element el=ex.getChild(XidElement.XMLNAME, getContainer().getNamespace());
+		if(el==null){
+			return null;
+		}
+		xid.setElement(el);
 		return xid;
 	}
 	
+	/**
+	 * FInd all children of a specified subclass of XChangeElement with a specified element name
+	 * @param name
+	 * @param clazz
+	 * @return a possibly empty list or null on errors
+	 */
 	public List<? extends XChangeElement> getChildren(final String name,
 		final Class<? extends XChangeElement> clazz){
 		LinkedList<XChangeElement> ret = new LinkedList<XChangeElement>();
@@ -178,6 +192,12 @@ public abstract class XChangeElement {
 		}
 	}
 	
+	/**
+	 * create a string representation of this Element. Subclasses should override
+	 * @param format one of gthe FORMAT constants
+	 * @return a String representation if the format was supported. The default implementation returns
+	 * always "Format not supported"
+	 */
 	public Result<String> toString(final FORMAT format){
 		return new Result<String>(Result.SEVERITY.ERROR, FORMAT_NOT_SUPPORTED,
 				"Format not supported", null, true);
