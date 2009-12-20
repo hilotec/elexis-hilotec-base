@@ -18,7 +18,7 @@ public class BlockImporter extends XChangeImporter {
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			Document doc = builder.build(is);
-			getContainer().eRoot = doc.getRootElement();
+			getContainer().setDocument(doc);
 		} catch (Exception e) {
 			ExHandler.handle(e);
 		}
@@ -27,9 +27,9 @@ public class BlockImporter extends XChangeImporter {
 	
 	@Override
 	public Result<?> finalizeImport(){
-		if (getContainer().eRoot != null) {
+		if (getContainer().getRoot() != null) {
 			ServiceBlocksElement eBlocks = new ServiceBlocksElement();
-			eBlocks.asImporter(this, getContainer().eRoot.getChild(ServiceBlockElement.ENCLOSING,
+			eBlocks.asImporter(this, getContainer().getRoot().getChild(ServiceBlockElement.ENCLOSING,
 				XChangeContainer.ns));
 			if (eBlocks != null) {
 				List<ServiceBlockElement> lBlocks =

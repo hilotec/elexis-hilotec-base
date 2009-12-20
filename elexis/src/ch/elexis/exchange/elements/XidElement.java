@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XidElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ *  $Id: XidElement.java 5884 2009-12-20 13:30:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -269,7 +269,11 @@ public class XidElement extends XChangeElement {
 		return candidates;
 	}
 	
-	static class Identity extends XChangeElement {
+	public static class Identity extends XChangeElement {
+		
+		public Identity(){
+			
+		}
 		public String getXMLName(){
 			return ELEMENT_IDENTITY;
 		}

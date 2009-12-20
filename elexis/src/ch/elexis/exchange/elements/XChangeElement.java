@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ *  $Id: XChangeElement.java 5884 2009-12-20 13:30:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -34,7 +34,7 @@ public abstract class XChangeElement {
 	private XChangeImporter reader;
 	protected Element ex;
 	
-	protected XChangeElement(){
+	public XChangeElement(){
 		ex = new Element(getXMLName(), XChangeContainer.ns);
 	}
 	
@@ -144,7 +144,7 @@ public abstract class XChangeElement {
 	
 	public XidElement getXid(){
 		XidElement xid = new XidElement();
-		Element el=ex.getChild(XidElement.XMLNAME, getContainer().getNamespace());
+		Element el=ex.getChild(XidElement.XMLNAME, XChangeContainer.ns);
 		if(el==null){
 			return null;
 		}
@@ -164,8 +164,8 @@ public abstract class XChangeElement {
 		for (Object el : ex.getChildren(name, XChangeContainer.ns)) {
 			try {
 				XChangeElement xc =
-					clazz.getConstructor(XChangeContainer.class, Element.class).newInstance(
-						getContainer(), el);
+					clazz.getConstructor().newInstance();
+				xc.setElement((Element)el);
 				ret.add(xc);
 			} catch (Exception e) {
 				ExHandler.handle(e);

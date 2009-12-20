@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ContactElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ *  $Id: ContactElement.java 5884 2009-12-20 13:30:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -76,7 +76,7 @@ public class ContactElement extends XChangeElement {
 			setAttribute(ATTR_TYPE, VALUE_PERSON);
 			setAttribute(ATTR_LASTNAME, p.getName());
 			setAttribute(ATTR_FIRSTNAME, p.getVorname());
-			if (p.getGeschlecht().startsWith("m")) { //$NON-NLS-1$
+			if (p.getGeschlecht().equals(Person.MALE)) { //$NON-NLS-1$
 				setAttribute(ATTR_SEX, VALUE_MALE);
 			} else {
 				setAttribute(ATTR_SEX, VALUE_FEMALE);

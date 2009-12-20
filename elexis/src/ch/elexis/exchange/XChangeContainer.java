@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeContainer.java 5879 2009-12-19 06:05:57Z rgw_ch $
+ * $Id: XChangeContainer.java 5884 2009-12-20 13:30:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -20,11 +20,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
+import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.elements.ContactElement;
 import ch.elexis.exchange.elements.ContactsElement;
@@ -39,6 +43,8 @@ import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.XMLTool;
 
 public class XChangeContainer {
 	private static final String PLURAL = "s"; //$NON-NLS-1$
@@ -62,7 +68,10 @@ public class XChangeContainer {
 	public static final String ENCLOSE_RISKS = RiskElement.XMLNAME + PLURAL;
 	public static final String ENCLOSE_EPISODES = EpisodeElement.XMLNAME + PLURAL;
 	
-	protected Element eRoot;
+	private Document doc;
+	private Element eHeader = new Element("header", ns);
+	private Element eRoot;
+
 	protected static Log log = Log.get("XChange"); //$NON-NLS-1$
 	
 	protected HashMap<String, byte[]> binFiles = new HashMap<String, byte[]>();
@@ -87,6 +96,46 @@ public class XChangeContainer {
 		Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	// public abstract Kontakt findContact(String id);
+	
+	public XChangeContainer(){
+		doc = new Document();
+		eRoot = new Element(XChangeContainer.ROOT_ELEMENT, XChangeContainer.ns);
+		eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
+		eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
+		eRoot.setAttribute("timestamp", new TimeTool()
+				.toString(TimeTool.DATETIME_XML));
+		eRoot.setAttribute("id", XMLTool
+				.idToXMLID(StringTool.unique("xChange")));
+		eRoot.setAttribute("origin", XMLTool.idToXMLID(Hub.actMandant.getId()));
+		eRoot.setAttribute("destination", "undefined");
+		eRoot.setAttribute("responsible", XMLTool.idToXMLID(Hub.actMandant
+				.getId()));
+		doc.setRootElement(eRoot);
+
+		eHeader.setAttribute("creatorName", "Elexis");
+		eHeader.setAttribute("creatorID", "ch.elexis");
+		eHeader.setAttribute("creatorVersion", Hub.Version);
+		eHeader.setAttribute("protocolVersion", XChangeContainer.Version);
+		eHeader.setAttribute("language", "de");
+		eRoot.addContent(eHeader);
+
+	}
+
+	public void setDocument(Document doc){
+		this.doc=doc;
+		eRoot=doc.getRootElement();
+	}
+	
+	public String toString(){
+		Format format = Format.getPrettyFormat();
+		format.setEncoding("utf-8");
+		XMLOutputter xmlo = new XMLOutputter(format);
+		String xmlAspect = xmlo.outputString(doc);
+		return xmlAspect;
+	}
+	public Document getDocument(){
+		return doc;
+	}
 	
 	public List<IExchangeContributor> getXChangeContributors(){
 		return lex;

@@ -8,11 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeExporter.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ * $Id: XChangeExporter.java 5884 2009-12-20 13:30:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
 import java.util.List;
+
+import org.jdom.Document;
+import org.jdom.Element;
 
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Kontakt;
@@ -32,6 +35,13 @@ public abstract class XChangeExporter implements IDataSender {
 		return false;
 	}
 	
+	public Element getRoot(){
+		return container.getRoot();
+	}
+	
+	public Document getDocument(){
+		return container.getDocument();
+	}
 	
 	public XChangeContainer getContainer(){
 		return container;
@@ -67,6 +77,12 @@ public abstract class XChangeExporter implements IDataSender {
 		return contact;
 	}
 	
+	/**
+	 * Add a Patient to the Container.This will as well export the medical history of the patient and ist
+	 * thus the starting point for exporting the EMR.
+	 * @param pat the Patient to export
+	 * @return the ContactElement that was created from the Patient (containing the Medical-Element)
+	 */
 	public ContactElement addPatient(Patient pat) {
 		ContactElement ret = addContact(pat);
 		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
