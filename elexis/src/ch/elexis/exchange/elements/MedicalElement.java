@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MedicalElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ *  $Id: MedicalElement.java 5887 2009-12-21 17:15:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -56,7 +56,7 @@ public class MedicalElement extends XChangeElement {
 		for (Fall fall : faelle) {
 			Konsultation[] kons = fall.getBehandlungen(false);
 			for (Konsultation k : kons) {
-				RecordElement record = new RecordElement().asExporter(sender, k);
+				RecordElement record = new RecordElement().asExporter(parent, k);
 				getAnamnesis().link(k, record);
 				addRecord(record);
 			}
