@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5869 2009-12-16 15:41:25Z rgw_ch $
+ *    $Id: PersistentObject.java 5885 2009-12-21 14:25:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -559,17 +559,20 @@ public abstract class PersistentObject {
 	
 	/**
 	 * Check the state of an object with this ID Note: This method accesses the database and
-	 * therefore is much more costly thah the simple instantaniation of a PersistentObject
+	 * therefore is much more costly than the simple instantaniation of a PersistentObject
 	 * 
 	 * @return a value between INEXISTENT and EXISTS
 	 */
+	
 	public int state(){
 		if (StringTool.isNothing(getId())) {
 			return INVALID_ID;
 		}
+		
 		StringBuilder sb = new StringBuilder("SELECT ID FROM ");
-		sb.append(getTableName()).append(" WHERE ID='").append(id).append("'");
+		sb.append(getTableName()).append(" WHERE ID=").append(getWrappedId());
 		String obj = j.queryString(sb.toString());
+		
 		if (id.equalsIgnoreCase(obj)) {
 			String deleted = get("deleted");
 			if (deleted == null) { // if we cant't find the column called
