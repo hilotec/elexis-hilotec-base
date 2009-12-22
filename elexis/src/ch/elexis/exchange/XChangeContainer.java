@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeContainer.java 5891 2009-12-22 11:32:54Z rgw_ch $
+ * $Id: XChangeContainer.java 5894 2009-12-22 18:41:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -66,9 +66,10 @@ public class XChangeContainer {
 	public static final String ENCLOSE_EPISODES = EpisodeElement.XMLNAME + PLURAL;
 	
 	private Document doc;
-	private Element eHeader = new Element("header", ns);
+	private final Element eHeader = new Element("header", ns);
 	private Element eRoot;
-
+	private boolean bValid = false;
+	
 	protected static Log log = Log.get("XChange"); //$NON-NLS-1$
 	
 	protected HashMap<String, byte[]> binFiles = new HashMap<String, byte[]>();
@@ -100,24 +101,24 @@ public class XChangeContainer {
 		eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
 		eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
 		eRoot.setAttribute("timestamp", new TimeTool()
-				.toString(TimeTool.DATETIME_XML));
+		.toString(TimeTool.DATETIME_XML));
 		eRoot.setAttribute("id", XMLTool
-				.idToXMLID(StringTool.unique("xChange")));
+			.idToXMLID(StringTool.unique("xChange")));
 		eRoot.setAttribute("origin", XMLTool.idToXMLID(Hub.actMandant.getId()));
 		eRoot.setAttribute("destination", "undefined");
 		eRoot.setAttribute("responsible", XMLTool.idToXMLID(Hub.actMandant
-				.getId()));
+			.getId()));
 		doc.setRootElement(eRoot);
-
+		
 		eHeader.setAttribute("creatorName", "Elexis");
 		eHeader.setAttribute("creatorID", "ch.elexis");
 		eHeader.setAttribute("creatorVersion", Hub.Version);
 		eHeader.setAttribute("protocolVersion", XChangeContainer.Version);
 		eHeader.setAttribute("language", "de");
 		eRoot.addContent(eHeader);
-
+		
 	}
-
+	
 	public void setDocument(Document doc){
 		this.doc=doc;
 		eRoot=doc.getRootElement();
@@ -132,6 +133,14 @@ public class XChangeContainer {
 	}
 	public Document getDocument(){
 		return doc;
+	}
+	
+	public boolean isValid(){
+		return bValid;
+	}
+	
+	public void setValid(boolean bValid){
+		this.bValid=bValid;
 	}
 	
 	public List<IExchangeContributor> getXChangeContributors(){

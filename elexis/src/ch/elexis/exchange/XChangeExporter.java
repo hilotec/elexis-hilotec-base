@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeExporter.java 5884 2009-12-20 13:30:34Z rgw_ch $
+ * $Id: XChangeExporter.java 5894 2009-12-22 18:41:02Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -29,6 +29,7 @@ import ch.elexis.exchange.elements.XidElement;
 
 public abstract class XChangeExporter implements IDataSender {
 	private final XChangeContainer container = new XChangeContainer();
+	
 	
 	public boolean canHandle(Class<? extends PersistentObject> clazz) {
 		// TODO Auto-generated method stub
@@ -113,5 +114,6 @@ public abstract class XChangeExporter implements IDataSender {
 	public void addBinary(String id, byte[] contents){
 		container.binFiles.put(id, contents);
 	}
+	
 	
 }

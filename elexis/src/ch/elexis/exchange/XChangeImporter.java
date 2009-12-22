@@ -8,15 +8,17 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeImporter.java 5892 2009-12-22 11:41:50Z rgw_ch $
+ * $Id: XChangeImporter.java 5894 2009-12-22 18:41:02Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
 
+import java.io.CharArrayReader;
 import java.util.List;
 
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
 import ch.elexis.exchange.elements.XChangeElement;
@@ -25,8 +27,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class XChangeImporter implements IDataReceiver {
-	private XChangeContainer container=new XChangeContainer();
-	private Log log=Log.get("xChange Importer");
+	private final XChangeContainer container=new XChangeContainer();
+	private final Log log=Log.get("xChange Importer");
 	
 	public Result finalizeImport(){
 		// TODO Auto-generated method stub
@@ -37,7 +39,7 @@ public class XChangeImporter implements IDataReceiver {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	/**
 	 * Find the registered Data handler that matches best the given element
 	 * 
@@ -97,5 +99,21 @@ public class XChangeImporter implements IDataReceiver {
 	
 	public XChangeContainer getContainer(){
 		return container;
+	}
+	
+	
+	public boolean load(String input){
+		SAXBuilder builder = new SAXBuilder();
+		try {
+			CharArrayReader car = new CharArrayReader(input.toCharArray());
+			container.setDocument(builder.build(car));
+			container.setValid(true);
+		} catch (Exception e) {
+			ExHandler.handle(e);
+			container.setValid(false);
+		}
+		return container.isValid();
+		
+		
 	}
 }
