@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RecordElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ *  $Id: RecordElement.java 5890 2009-12-22 11:18:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
+import ch.elexis.StringConstants;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
 import ch.elexis.exchange.XChangeExporter;
@@ -29,6 +30,10 @@ import ch.rgw.tools.XMLTool;
 import ch.rgw.tools.VersionedResource.ResourceItem;
 
 public class RecordElement extends XChangeElement {
+	static final String ELEMENT_TEXT = "text";
+	static final String ATTR_AUTHOR = "author";
+	static final String ATTR_RESPONSIBLE = "responsible";
+	static final String ATTR_DATE = "date";
 	public static final String XMLNAME = "record";
 	
 	public String getXMLName(){
@@ -38,27 +43,27 @@ public class RecordElement extends XChangeElement {
 	public RecordElement asExporter(XChangeExporter c, Konsultation k){
 		asExporter(c);
 		
-		setAttribute("date", new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
+		setAttribute(ATTR_DATE, new TimeTool(k.getDatum()).toString(TimeTool.DATE_ISO));
 		Kontakt kMandant = k.getMandant();
 		if (kMandant == null) {
-			setAttribute("responsible", "unknown");
+			setAttribute(ATTR_RESPONSIBLE, "unknown");
 		} else {
 			ContactElement cMandant = c.addContact(kMandant);
-			setAttribute("responsible", cMandant.getID());
+			setAttribute(ATTR_RESPONSIBLE, cMandant.getID());
 		}
 		setAttribute(ID, XMLTool.idToXMLID(k.getId()));
 		c.getContainer().addChoice(this, k.getLabel(), k);
 		VersionedResource vr = k.getEintrag();
 		ResourceItem entry = vr.getVersion(vr.getHeadVersion());
 		if (entry != null) {
-			setAttribute("author", entry.remark);
+			setAttribute(ATTR_AUTHOR, entry.remark);
 			
 			Samdas samdas = new Samdas(k.getEintrag().getHead());
 			Record record = samdas.getRecord();
 			if (record != null) {
 				String st = record.getText();
 				if (st != null) {
-					Element eText = new Element("text", getContainer().getNamespace());
+					Element eText = new Element(ELEMENT_TEXT, getContainer().getNamespace());
 					eText.addContent(st);
 					getElement().addContent(eText);
 					List<XRef> xrefs = record.getXrefs();
@@ -76,19 +81,19 @@ public class RecordElement extends XChangeElement {
 	@SuppressWarnings("unchecked")
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("\nEintrag vom ").append(getAttr("date")).append(" erstellt von ").append(
-			getAttr("author")).append("\n");
+		sb.append(Messages.getString("RecordElement.EntryDate")).append(getAttr(ATTR_DATE)).append(Messages.getString("RecordElement.CreatedBy")).append( //$NON-NLS-1$ //$NON-NLS-2$
+			getAttr(ATTR_AUTHOR)).append("\n");
 		List<Element> children = getElement().getChildren();
 		if (children != null) {
 			for (Element child : children) {
-				if (child.getName().equals("text")) {
+				if (child.getName().equals(ELEMENT_TEXT)) {
 					continue;
 				}
 				sb.append(child.getName()).append(":\n");
 				sb.append(child.getText()).append("\n");
 			}
 		}
-		Element eText = getElement().getChild("text");
+		Element eText = getElement().getChild(ELEMENT_TEXT);
 		if (eText != null) {
 			String text = eText.getText();
 			sb.append(text).append("\n------------------------------\n");

@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeElement.java 5889 2009-12-22 07:31:49Z rgw_ch $
+ *  $Id: XChangeElement.java 5890 2009-12-22 11:18:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -186,8 +186,10 @@ public abstract class XChangeElement {
 		XChangeElement ret;
 		try {
 			ret =
-				clazz.getConstructor(XChangeContainer.class, Element.class).newInstance(
-					getContainer(), el);
+				clazz.getConstructor().newInstance();
+			ret.setWriter(getSender());
+			ret.setReader(getReader());
+			ret.setElement(el);
 			return ret;
 		} catch (Exception e) {
 			ExHandler.handle(e);

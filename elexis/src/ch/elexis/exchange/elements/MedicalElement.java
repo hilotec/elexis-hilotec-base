@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MedicalElement.java 5888 2009-12-22 07:03:38Z rgw_ch $
+ *  $Id: MedicalElement.java 5890 2009-12-22 11:18:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -84,13 +84,13 @@ public class MedicalElement extends XChangeElement {
 		for (Prescription medi : medis) {
 			add(new MedicationElement().asExporter(parent, medi));
 		}
-		String risks = p.get("Risiken");
+		String risks = p.get(Patient.FLD_RISKS); //$NON-NLS-1$
 		if (!StringTool.isNothing(risks)) {
 			for (String r : risks.split("[\\n\\r]+")) {
 				add(new RiskElement().asExporter(sender, r));
 			}
 		}
-		risks = p.get("Allergien");
+		risks = p.get(Patient.FLD_ALLERGIES); //$NON-NLS-1$
 		if (!StringTool.isNothing(risks)) {
 			for (String r : risks.split("[\\n\\r]+")) {
 				add(new RiskElement().asExporter(sender, r));
@@ -108,7 +108,7 @@ public class MedicalElement extends XChangeElement {
 		if (eRisks == null) {
 			eRisks = new RisksElement();
 			add(eRisks);
-			getContainer().addChoice(eRisks, "Risiken");
+			getContainer().addChoice(eRisks, "Risiken"); 
 		}
 		eRisks.add(re);
 	}
@@ -116,7 +116,7 @@ public class MedicalElement extends XChangeElement {
 	public void add(MedicationElement med){
 		if (eMedications == null) {
 			eMedications = new MedicationsElement();
-			getContainer().addChoice(eMedications, "Medikamente");
+			getContainer().addChoice(eMedications, Messages.getString("MedicalElement.Medcaments")); //$NON-NLS-1$
 			add(eMedications);
 		}
 		eMedications.add(med);
@@ -149,12 +149,14 @@ public class MedicalElement extends XChangeElement {
 	public void addRecord(RecordElement rc){
 		if (eRecords == null) {
 			eRecords =
-				(RecordsElement) getChild(getContainer().ENCLOSE_RECORDS, RecordsElement.class);
+				(RecordsElement) getChild(XChangeContainer.ENCLOSE_RECORDS, RecordsElement.class);
 		}
 		if (eRecords == null) {
 			eRecords = new RecordsElement();
+			eRecords.setReader(getReader());
+			eRecords.setWriter(getSender());
 			add(eRecords);
-			getContainer().addChoice(eRecords, "KG-Einträge", eRecords);
+			getContainer().addChoice(eRecords, Messages.getString("MedicalElement.EMREntries"), eRecords); //$NON-NLS-1$
 		}
 		eRecords.add(rc);
 	}
@@ -171,7 +173,7 @@ public class MedicalElement extends XChangeElement {
 		if (eAnalyses == null) {
 			eAnalyses = new AnalysesElement();
 			add(eAnalyses);
-			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
+			getContainer().addChoice(eAnalyses, Messages.getString("MedicalElement.Findings"), eAnalyses); //$NON-NLS-1$
 		}
 		eAnalyses.add(le);
 	}
@@ -183,7 +185,7 @@ public class MedicalElement extends XChangeElement {
 		if (eAnalyses == null) {
 			eAnalyses = new AnalysesElement();
 			add(eAnalyses);
-			getContainer().addChoice(eAnalyses, "Befunde", eAnalyses);
+			getContainer().addChoice(eAnalyses, Messages.getString("MedicalElement.Findings"), eAnalyses); //$NON-NLS-1$
 		}
 		eAnalyses.add(fe);
 	}
@@ -199,7 +201,7 @@ public class MedicalElement extends XChangeElement {
 		if (eDocuments == null) {
 			eDocuments = new DocumentsElement();
 			add(eDocuments);
-			getContainer().addChoice(eDocuments, "Dokumente", eDocuments);
+			getContainer().addChoice(eDocuments, Messages.getString("MedicalElement.Documents"), eDocuments); //$NON-NLS-1$
 		}
 		List<DocumentElement> lEx =
 			(List<DocumentElement>) eDocuments.getChildren(DocumentElement.XMLNAME,
