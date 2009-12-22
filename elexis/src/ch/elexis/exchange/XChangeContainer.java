@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeContainer.java 5884 2009-12-20 13:30:34Z rgw_ch $
+ * $Id: XChangeContainer.java 5891 2009-12-22 11:32:54Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -22,11 +22,9 @@ import java.util.Map.Entry;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.jdom.xpath.XPath;
 
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
@@ -41,7 +39,6 @@ import ch.elexis.exchange.elements.RiskElement;
 import ch.elexis.exchange.elements.XChangeElement;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
@@ -213,59 +210,6 @@ public class XChangeContainer {
 	
 	public List<Element> getContactElements(){
 		return getElements(ROOTPATH + ENCLOSE_CONTACTS + StringTool.slash + ContactElement.XMLNAME);
-	}
-	
-	/**
-	 * Find the registered Data handler that matches best the given element
-	 * 
-	 * @param el
-	 *            Element o be imported
-	 * @return the best matching handler or null if no handler exists at all for the given data type
-	 */
-	@SuppressWarnings("unchecked")
-	public IExchangeDataHandler findImportHandler(XChangeElement el){
-		IExchangeDataHandler ret = null;
-		int matchedRestrictions = 0;
-		for (IExchangeContributor iex : lex) {
-			IExchangeDataHandler[] handlers = iex.getImportHandlers();
-			for (IExchangeDataHandler cand : handlers) {
-				if (cand.getDatatype().equalsIgnoreCase(el.getXMLName())) {
-					if (ret == null) {
-						ret = cand;
-					}
-					String[] restrictions = cand.getRestrictions();
-					if (restrictions != null) {
-						int matches = 0;
-						for (String r : restrictions) {
-							try {
-								XPath xpath = XPath.newInstance(r);
-								List<Object> nodes = xpath.selectNodes(el);
-								if (nodes.size() > 0) {
-									if (++matches > matchedRestrictions) {
-										ret = cand;
-										matchedRestrictions = matches;
-									} else if (matches == matchedRestrictions) {
-										if (ret.getValue() < cand.getValue()) {
-											ret = cand;
-										}
-									}
-								}
-							} catch (JDOMException e) {
-								ExHandler.handle(e);
-								log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS); //$NON-NLS-1$
-							}
-						}
-						
-					} else {
-						if (ret.getValue() < cand.getValue()) {
-							ret = cand;
-						}
-					}
-					
-				}
-			}
-		}
-		return ret;
 	}
 	
 	
