@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: plugins.xml 5854 2009-12-03 10:24:42Z rgw_ch $
+ * $Id: plugins.xml 5893 2009-12-22 18:38:55Z rgw_ch $
 -->
 <project name="elexis-plugins" default="all" basedir="../../">
 
@@ -84,8 +84,8 @@
 		<available file="../elexis-eigendiagnosen/build.xml" property="eigendiagnosen.ok" />
 		<antcall target="eigendiagnosen" inheritrefs="true" />
 
-		<available file="../Sgam-xChange/build.xml" property="sgamxchange.ok" />
-		<antcall target="sgamxchange" inheritrefs="true" />
+		<!-- available file="../Sgam-xChange/build.xml" property="sgamxchange.ok" />
+		<antcall target="sgamxchange" inheritrefs="true" / -->
 		<available file="../elexis-trustx-embed/build.xml" property="trustx.ok" />
 		<antcall target="trustx" inheritrefs="true" />
 		<available file="../elexis-importer-aerztekasse/build.xml" property="aekasse.ok" />
