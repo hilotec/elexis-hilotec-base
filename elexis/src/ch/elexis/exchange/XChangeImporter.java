@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeImporter.java 5891 2009-12-22 11:32:54Z rgw_ch $
+ * $Id: XChangeImporter.java 5892 2009-12-22 11:41:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -91,6 +91,9 @@ public class XChangeImporter implements IDataReceiver {
 		return ret;
 	}
 	
+	public void addBinary(String id, byte[] cnt){
+		container.binFiles.put(id, cnt);
+	}
 	
 	public XChangeContainer getContainer(){
 		return container;
