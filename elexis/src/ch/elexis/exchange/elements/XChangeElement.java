@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeElement.java 5884 2009-12-20 13:30:34Z rgw_ch $
+ *  $Id: XChangeElement.java 5888 2009-12-22 07:03:38Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -95,6 +95,9 @@ public abstract class XChangeElement {
 		}
 	}
 	
+	public XChangeImporter getReader(){
+		return reader;
+	}
 	public XChangeExporter getSender(){
 		return sender;
 	}

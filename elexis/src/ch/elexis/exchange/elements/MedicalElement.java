@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MedicalElement.java 5887 2009-12-21 17:15:28Z rgw_ch $
+ *  $Id: MedicalElement.java 5888 2009-12-22 07:03:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -51,7 +51,7 @@ public class MedicalElement extends XChangeElement {
 	public MedicalElement asExporter(XChangeExporter parent, Patient p){
 		asExporter(parent);
 		parent.getContainer().addMapping(this, p);
-		add(new AnamnesisElement());
+		add(new AnamnesisElement(parent));
 		Fall[] faelle = p.getFaelle();
 		for (Fall fall : faelle) {
 			Konsultation[] kons = fall.getBehandlungen(false);
@@ -132,7 +132,9 @@ public class MedicalElement extends XChangeElement {
 			elAnamnesis =
 				(AnamnesisElement) getChild(AnamnesisElement.XMLNAME, AnamnesisElement.class);
 			if (elAnamnesis == null) {
-				elAnamnesis = new AnamnesisElement();
+				elAnamnesis = new AnamnesisElement(getSender());
+				elAnamnesis.setReader(getReader());
+				
 			}
 		}
 		return elAnamnesis;

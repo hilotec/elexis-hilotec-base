@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: AnamnesisElement.java 5877 2009-12-18 17:34:42Z rgw_ch $
+ *  $Id: AnamnesisElement.java 5888 2009-12-22 07:03:38Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -21,6 +21,7 @@ import org.jdom.Element;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -32,6 +33,9 @@ public class AnamnesisElement extends XChangeElement {
 	HashMap<String, Element> hElements;
 	MedicalElement eMed;
 	
+	public AnamnesisElement(XChangeExporter sender){
+		setWriter(sender);
+	}
 	public String getXMLName(){
 		return XMLNAME;
 	}
