@@ -7,12 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 4108 2008-07-06 18:07:37Z rgw_ch $
+ *  $Id: ExcelWrapper.java 5897 2009-12-23 15:41:16Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.importers;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,10 +49,28 @@ public class ExcelWrapper {
 	 * @param file filename of the Excel file 
 	 * @param page page to use
 	 * @return true on success
+	 * @deprecated use load(InputStream) instead
 	 */
 	public boolean load(final String file,final int page){
 		try{
 			fs=new POIFSFileSystem(new FileInputStream(file));
+			HSSFWorkbook wb = new HSSFWorkbook(fs);
+			sheet = wb.getSheetAt(page);
+			return true;
+		}catch(Exception ex){
+			return false;
+		}
+	}
+	
+	/**
+	 * Load a specific page of the given Excel Spreadsheet
+	 * @param bytes Excel content as byte array
+	 * @param page page to use
+	 * @return true on success
+	 */
+	public boolean load(final InputStream inputStream,final int page){
+		try{
+			fs=new POIFSFileSystem(inputStream);
 			HSSFWorkbook wb = new HSSFWorkbook(fs);
 			sheet = wb.getSheetAt(page);
 			return true;
