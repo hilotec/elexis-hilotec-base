@@ -8,10 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: BAGMediImporter.java 5876 2009-12-18 11:59:23Z michael_imhof $
+ *  $Id: BAGMediImporter.java 5895 2009-12-23 15:27:35Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,8 +51,13 @@ public class BAGMediImporter extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+		FileInputStream is = new FileInputStream(results[0]);
+		return doImport(is, monitor);
+	}
+	
+	public IStatus doImport(final InputStream inputStream, final IProgressMonitor monitor) throws ElexisException {
 		ExcelWrapper ew=new ExcelWrapper();
-		if(ew.load(results[0], 0)){
+		if(ew.load(inputStream, 0)){
 			int f=ew.getFirstRow()+1;
 			int l=ew.getLastRow();
 			monitor.beginTask("Import BAG-Medikamente", l-f);
@@ -99,7 +106,7 @@ public class BAGMediImporter extends ImporterPage {
 	 * </pre>
 	 * @return
 	 */
-	public static boolean importUpdate(final String[] row) throws ElexisException{
+	public static boolean importUpdate(final String[] row) throws ElexisException {
 		String pharmacode="0";
 		BAGMedi imp=null;
 		// Kein Pharmacode, dann nach Name suchen
