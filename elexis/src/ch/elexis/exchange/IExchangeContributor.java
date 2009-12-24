@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,11 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ * 
  *  $Id: IExchangeContributor.java 2618 2007-06-24 10:08:05Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
-
-import java.util.List;
 
 import org.eclipse.core.runtime.IExecutableExtension;
 
@@ -27,7 +25,8 @@ import ch.elexis.exchange.elements.MedicalElement;
  *
  */
 public interface IExchangeContributor extends IExecutableExtension{
-
+	public static final String ExtensionPointName="ch.elexis.xCHangeContribution";
+	
 	/**
 	 * An Element is to be exported. The method can contribute its own data
 	 */
@@ -48,9 +47,4 @@ public interface IExchangeContributor extends IExecutableExtension{
 	 */
 	public boolean init(MedicalElement me, boolean bExport);
 	
-	/**
-	 * Request a List of all data types this Contributor can handle during import
-	 * @return a LIst of IExchangeDataHandlers
-	 */
-	public IExchangeDataHandler[] getImportHandlers();
 }

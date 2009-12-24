@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeContainer.java 5894 2009-12-22 18:41:02Z rgw_ch $
+ * $Id: XChangeContainer.java 5898 2009-12-24 09:21:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -90,8 +91,8 @@ public class XChangeContainer {
 	private final HashMap<PersistentObject, XChangeElement> mapObjectToElement =
 		new HashMap<PersistentObject, XChangeElement>();
 	
-	private final List<IExchangeContributor> lex =
-		Extensions.getClasses("ch.elexis.Transporter", "xChangeContribution"); //$NON-NLS-1$ //$NON-NLS-2$
+	private final List<IConfigurationElement> lex =
+		Extensions.getExtensions(IExchangeContributor.ExtensionPointName);
 	
 	// public abstract Kontakt findContact(String id);
 	
@@ -143,7 +144,7 @@ public class XChangeContainer {
 		this.bValid=bValid;
 	}
 	
-	public List<IExchangeContributor> getXChangeContributors(){
+	public List<IConfigurationElement> getXChangeContributors(){
 		return lex;
 	}
 	/**

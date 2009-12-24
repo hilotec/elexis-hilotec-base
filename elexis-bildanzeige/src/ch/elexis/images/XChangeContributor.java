@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeContributor.java 5879 2009-12-19 06:05:57Z rgw_ch $
+ *  $Id: XChangeContributor.java 5898 2009-12-24 09:21:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 
@@ -23,7 +23,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.IExchangeContributor;
-import ch.elexis.exchange.IExchangeDataHandler;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.DocumentElement;
 import ch.elexis.exchange.elements.MedicalElement;
@@ -94,27 +93,4 @@ public class XChangeContributor implements IExchangeContributor {
 		return true;
 	}
 	
-	public IExchangeDataHandler[] getImportHandlers(){
-		return new IExchangeDataHandler[] {
-			new ImportHandler()
-		};
-	}
-	
-	static class ImportHandler implements IExchangeDataHandler {
-		
-		public String getDatatype(){
-			return DocumentElement.XMLNAME;
-		}
-		
-		public String[] getRestrictions(){
-			String[] ret = new String[1];
-			ret[0] = "@mimetype=image/jpeg";
-			return ret;
-		}
-		
-		public int getValue(){
-			return 1;
-		}
-		
-	}
 }

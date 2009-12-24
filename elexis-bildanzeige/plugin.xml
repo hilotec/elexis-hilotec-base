@@ -8,18 +8,20 @@
             name="elexis-bildanzeige"/>
    </extension>
    <extension
-         point="ch.elexis.Transporter">
-      <Transporter
-            AcceptableTypes="ch.elexis.data.Konsultation"
-            name="Bildanzeige"
-            xChangeContribution="ch.elexis.images.XChangeContributor">
-      </Transporter>
-   </extension>
-   <extension
          point="ch.elexis.PersistentReference">
       <Factory
             Class="ch.elexis.images.BildFactory"
             name="Bildanzeige">
       </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.xCHangeContribution">
+      <Contributor
+            Actor="ch.elexis.images.XChangeContributor"
+            ElementType="document"
+            name="elexis-bildanzeige"
+            restrictions="(@mimetype=image/jpeg)"
+            value="1">
+      </Contributor>
    </extension>
 </plugin>

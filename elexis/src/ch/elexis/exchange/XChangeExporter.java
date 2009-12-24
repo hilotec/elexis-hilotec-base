@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeExporter.java 5894 2009-12-22 18:41:02Z rgw_ch $
+ * $Id: XChangeExporter.java 5898 2009-12-24 09:21:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
@@ -96,10 +96,11 @@ public abstract class XChangeExporter implements IDataSender {
 		ret.add(eMedical);
 		
 		getContainer().addChoice(eMedical.getElement(), Messages.XChangeContainer_kg, eMedical);
+		/*
 		for (IExchangeContributor iex : getContainer().getXChangeContributors()) {
 			iex.exportHook(eMedical);
 		}
-		
+		 */
 		return ret;
 	}
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeImporter.java 5894 2009-12-22 18:41:02Z rgw_ch $
+ * $Id: XChangeImporter.java 5898 2009-12-24 09:21:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -16,6 +16,8 @@ package ch.elexis.exchange;
 import java.io.CharArrayReader;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -27,8 +29,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class XChangeImporter implements IDataReceiver {
-	private final XChangeContainer container=new XChangeContainer();
-	private final Log log=Log.get("xChange Importer");
+	private final XChangeContainer container = new XChangeContainer();
+	private final Log log = Log.get("xChange Importer");
 	
 	public Result finalizeImport(){
 		// TODO Auto-generated method stub
@@ -48,49 +50,71 @@ public class XChangeImporter implements IDataReceiver {
 	 * @return the best matching handler or null if no handler exists at all for the given data type
 	 */
 	@SuppressWarnings("unchecked")
-	public IExchangeDataHandler findImportHandler(XChangeElement el){
-		IExchangeDataHandler ret = null;
+	public IExchangeContributor findImportHandler(XChangeElement el){
 		int matchedRestrictions = 0;
-		for (IExchangeContributor iex : container.getXChangeContributors()) {
-			IExchangeDataHandler[] handlers = iex.getImportHandlers();
-			for (IExchangeDataHandler cand : handlers) {
-				if (cand.getDatatype().equalsIgnoreCase(el.getXMLName())) {
-					if (ret == null) {
-						ret = cand;
-					}
-					String[] restrictions = cand.getRestrictions();
-					if (restrictions != null) {
-						int matches = 0;
-						for (String r : restrictions) {
-							try {
-								XPath xpath = XPath.newInstance(r);
-								List<Object> nodes = xpath.selectNodes(el);
-								if (nodes.size() > 0) {
-									if (++matches > matchedRestrictions) {
-										ret = cand;
-										matchedRestrictions = matches;
-									} else if (matches == matchedRestrictions) {
-										if (ret.getValue() < cand.getValue()) {
-											ret = cand;
-										}
+		IConfigurationElement cand = null;
+		for (IConfigurationElement ice : container.getXChangeContributors()) {
+			String datatype = ice.getAttribute("ElementType");
+			if (datatype.equalsIgnoreCase(el.getXMLName())) {
+				if (cand == null) {
+					cand = ice;
+				}
+				String restriction = ice.getAttribute("restrictions");
+				if (restriction != null) {
+					String[] restrictions = restriction.split(",");
+					int matches = 0;
+					for (String r : restrictions) {
+						try {
+							XPath xpath = XPath.newInstance(r);
+							List<Object> nodes = xpath.selectNodes(el);
+							if (nodes.size() > 0) {
+								if (++matches > matchedRestrictions) {
+									cand = ice;
+									matchedRestrictions = matches;
+								} else if (matches == matchedRestrictions) {
+									if (compareValues(ice, cand) == -1) {
+										cand = ice;
 									}
 								}
-							} catch (JDOMException e) {
-								ExHandler.handle(e);
-								log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS); //$NON-NLS-1$
 							}
-						}
-						
-					} else {
-						if (ret.getValue() < cand.getValue()) {
-							ret = cand;
+						} catch (JDOMException e) {
+							ExHandler.handle(e);
+							log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS); //$NON-NLS-1$
 						}
 					}
 					
+				} else {
+					if (compareValues(ice, cand) == -1)
+						cand = ice;
 				}
 			}
+			
 		}
-		return ret;
+		if (cand != null) {
+			try {
+				return (IExchangeContributor) cand.createExecutableExtension("Actor");
+			} catch (CoreException ce) {
+				ExHandler.handle(ce);
+			}
+		}
+		return null;
+	}
+	
+	int compareValues(IConfigurationElement ic1, IConfigurationElement ic2){
+		int r1 = 0;
+		int r2 = 0;
+		String v1 = ic1.getAttribute("value");
+		String v2 = ic2.getAttribute("value");
+		if (v1 != null && v1.matches("[0-9]+")) {
+			r1 = Integer.parseInt(v1);
+		}
+		if (v2 != null && v2.matches("[0-9]+")) {
+			r2 = Integer.parseInt(v2);
+		}
+		if (r1 == r2) {
+			return 0;
+		}
+		return r1 > r2 ? -1 : 1;
 	}
 	
 	public void addBinary(String id, byte[] cnt){
@@ -100,7 +124,6 @@ public class XChangeImporter implements IDataReceiver {
 	public XChangeContainer getContainer(){
 		return container;
 	}
-	
 	
 	public boolean load(String input){
 		SAXBuilder builder = new SAXBuilder();
@@ -113,7 +136,6 @@ public class XChangeImporter implements IDataReceiver {
 			container.setValid(false);
 		}
 		return container.isValid();
-		
 		
 	}
 }

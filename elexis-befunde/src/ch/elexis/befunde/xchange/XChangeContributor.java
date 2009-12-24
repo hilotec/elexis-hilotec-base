@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ * 
  *  $Id: PrintFindingsDialog.java 2516 2007-06-12 15:56:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde.xchange;
@@ -24,7 +24,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.exchange.IExchangeContributor;
-import ch.elexis.exchange.IExchangeDataHandler;
 import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.elements.MedicalElement;
 import ch.rgw.tools.StringTool;
@@ -52,7 +51,7 @@ import ch.rgw.tools.TimeTool;
  */
 public class XChangeContributor implements IExchangeContributor {
 	private Hashtable<String, Object> hash;
-	private Hashtable<String, String[]> params = new Hashtable<String, String[]>();
+	private final Hashtable<String, String[]> params = new Hashtable<String, String[]>();
 	private String[] paramNames;
 	private Patient actPatient = null;
 	private HashMap<String, List<Messwert>> messwerte;
@@ -162,8 +161,8 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void importHook(XChangeContainer container, PersistentObject context){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public boolean init(MedicalElement me, boolean export){
@@ -172,13 +171,8 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
-
-	}
-	
-	public IExchangeDataHandler[] getImportHandlers(){
-		// TODO Auto-generated method stub
-		return null;
+	throws CoreException{
+		
 	}
 	
 }
