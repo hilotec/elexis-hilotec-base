@@ -4,45 +4,19 @@ import java.io.FileOutputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.exchange.elements.ServiceBlockElement;
 import ch.elexis.exchange.elements.ServiceBlocksElement;
 import ch.elexis.exchange.elements.XChangeElement;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.XMLTool;
 
 public class BlockExporter extends XChangeExporter {
-	Document doc;
-	Element eRoot;
 	ServiceBlocksElement lbs;
-	
-	public BlockExporter(){
-		doc = new Document();
-		eRoot = new Element(getContainer().ROOT_ELEMENT, getContainer().ns);
-		eRoot.addNamespaceDeclaration(getContainer().nsxsi);
-		eRoot.addNamespaceDeclaration(getContainer().nsschema);
-		eRoot.setAttribute("timestamp", new TimeTool().toString(TimeTool.DATETIME_XML)); //$NON-NLS-1$
-		eRoot.setAttribute("id", XMLTool.idToXMLID(StringTool.unique("xChange"))); //$NON-NLS-1$ //$NON-NLS-2$
-		eRoot.setAttribute("origin", XMLTool.idToXMLID(Hub.actMandant.getId())); //$NON-NLS-1$
-		eRoot.setAttribute("destination", "undefined"); //$NON-NLS-1$ //$NON-NLS-2$
-		eRoot.setAttribute("responsible", XMLTool.idToXMLID(Hub.actMandant.getId())); //$NON-NLS-1$
-		doc.setRootElement(eRoot);
-		//lbs = new ServiceBlocksElement(this, null);
-		eRoot.addContent(lbs.getElement());
-	}
-	
-	
-	
 	
 	
 	public boolean canHandle(Class<? extends PersistentObject> clazz){
@@ -66,7 +40,7 @@ public class BlockExporter extends XChangeExporter {
 			Format format = Format.getPrettyFormat();
 			format.setEncoding("utf-8"); //$NON-NLS-1$
 			XMLOutputter xmlo = new XMLOutputter(format);
-			String xmlAspect = xmlo.outputString(doc);
+			String xmlAspect = xmlo.outputString(getDocument());
 			try {
 				FileOutputStream fos = new FileOutputStream(filename);
 				fos.write(xmlAspect.getBytes());

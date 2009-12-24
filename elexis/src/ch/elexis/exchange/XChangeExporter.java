@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeExporter.java 5898 2009-12-24 09:21:06Z rgw_ch $
+ * $Id: XChangeExporter.java 5899 2009-12-24 12:42:10Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -96,6 +97,9 @@ public abstract class XChangeExporter implements IDataSender {
 		ret.add(eMedical);
 		
 		getContainer().addChoice(eMedical.getElement(), Messages.XChangeContainer_kg, eMedical);
+		for(IConfigurationElement ice:getContainer().getXChangeContributors()){
+			
+		}
 		/*
 		for (IExchangeContributor iex : getContainer().getXChangeContributors()) {
 			iex.exportHook(eMedical);

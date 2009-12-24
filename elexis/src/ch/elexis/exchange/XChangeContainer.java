@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeContainer.java 5898 2009-12-24 09:21:06Z rgw_ch $
+ * $Id: XChangeContainer.java 5899 2009-12-24 12:42:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -45,20 +46,31 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
 public class XChangeContainer {
-	private static final String PLURAL = "s"; //$NON-NLS-1$
 	public static final String Version = "2.0.0"; //$NON-NLS-1$
+	public static final String ATTR_LANGUAGE = "language";
+	private static final String ATTR_PROTOCOL_VERSION = "protocolVersion";
+	private static final String ATTR_CREATOR_VERSION = "creatorVersion";
+	private static final String ATTR_CREATOR_ID = "creatorID";
+	public static final String ATTR_CREATOR_NAME = "creatorName";
+	public static final String ATTR_RESPONSIBLE = "responsible";
+	public static final String ATTR_DESTINATION = "destination";
+	public static final String ATTR_ORIGIN = "origin";
+	private static final String XCHANGE_MAGIC = "xChange";
+	private static final String ATTR_ID = "id";
+	public static final String ATTR_TIMESTAMP = "timestamp";
+	private static final String PLURAL = "s"; //$NON-NLS-1$
 	public static final Namespace ns =
-		Namespace.getNamespace("xChange", "http://informatics.sgam.ch/xChange"); //$NON-NLS-1$ //$NON-NLS-2$
+		Namespace.getNamespace(XCHANGE_MAGIC, "http://informatics.sgam.ch/xChange"); //$NON-NLS-1$
 	public static final Namespace nsxsi =
 		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final Namespace nsschema =
 		Namespace.getNamespace("schemaLocation", "http://informatics.sgam.ch/xChange xchange.xsd"); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	public static final String ROOT_ELEMENT = "xChange"; //$NON-NLS-1$
+	public static final String ROOT_ELEMENT = XCHANGE_MAGIC;
 	public static final String ROOTPATH = StringTool.slash + ROOT_ELEMENT + StringTool.slash;
 	
 	public static final String ENCLOSE_CONTACTS = ContactElement.XMLNAME + PLURAL;
-	public static final String PATIENT_ELEMENT = "patient"; //$NON-NLS-1$
+	//public static final String PATIENT_ELEMENT = "patient"; //$NON-NLS-1$
 	public static final String ENCLOSE_DOCUMENTS = DocumentElement.XMLNAME + PLURAL;
 	public static final String ENCLOSE_RECORDS = RecordElement.XMLNAME + PLURAL;
 	public static final String ENCLOSE_FINDINGS = FindingElement.XMLNAME + PLURAL;
@@ -101,21 +113,21 @@ public class XChangeContainer {
 		eRoot = new Element(XChangeContainer.ROOT_ELEMENT, XChangeContainer.ns);
 		eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
 		eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
-		eRoot.setAttribute("timestamp", new TimeTool()
+		eRoot.setAttribute(ATTR_TIMESTAMP, new TimeTool()
 		.toString(TimeTool.DATETIME_XML));
-		eRoot.setAttribute("id", XMLTool
-			.idToXMLID(StringTool.unique("xChange")));
-		eRoot.setAttribute("origin", XMLTool.idToXMLID(Hub.actMandant.getId()));
-		eRoot.setAttribute("destination", "undefined");
-		eRoot.setAttribute("responsible", XMLTool.idToXMLID(Hub.actMandant
+		eRoot.setAttribute(ATTR_ID, XMLTool
+			.idToXMLID(StringTool.unique(XCHANGE_MAGIC)));
+		eRoot.setAttribute(ATTR_ORIGIN, XMLTool.idToXMLID(Hub.actMandant.getId()));
+		eRoot.setAttribute(ATTR_DESTINATION, "undefined");
+		eRoot.setAttribute(ATTR_RESPONSIBLE, XMLTool.idToXMLID(Hub.actMandant
 			.getId()));
 		doc.setRootElement(eRoot);
 		
-		eHeader.setAttribute("creatorName", "Elexis");
-		eHeader.setAttribute("creatorID", "ch.elexis");
-		eHeader.setAttribute("creatorVersion", Hub.Version);
-		eHeader.setAttribute("protocolVersion", XChangeContainer.Version);
-		eHeader.setAttribute("language", "de");
+		eHeader.setAttribute(ATTR_CREATOR_NAME, "Elexis");
+		eHeader.setAttribute(ATTR_CREATOR_ID, "ch.elexis");
+		eHeader.setAttribute(ATTR_CREATOR_VERSION, Hub.Version);
+		eHeader.setAttribute(ATTR_PROTOCOL_VERSION, XChangeContainer.Version);
+		eHeader.setAttribute(ATTR_LANGUAGE, Locale.getDefault().toString());
 		eRoot.addContent(eHeader);
 		
 	}
