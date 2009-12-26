@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: AccessControlDefaults.java 5767 2009-10-05 05:11:47Z rgw_ch $
+ * 
+ * $Id: AccessControlDefaults.java 5905 2009-12-26 17:29:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -19,7 +19,7 @@ package ch.elexis.admin;
  * Zugriffs-Konfigurationsdialog eingelesen. Rechte, die mit ACTION beginnen, beziehen sich auf
  * Menu- Toolbar- und Shortcut- Actionen. Präfix READ_ ist ein Recht, eine bestimmte Property eines
  * Kontakts (aus den ExtInfo) zu lesen, WRITE_ ist das Recht, eine solche Property zu schreiben.
- * Andere Bezeichnungen sind unterschiedliche Rechte und sollten möglichst Deskriptiv sein (Man muss
+ * Andere Bezeichnungen sind unterschiedliche Rechte und sollten möglichst deskriptiv sein (Man muss
  * nicht lange überlegen, welches Recht wohl mit LEISTUNGEN_VERRECHNEN verliehen wird). Es werden
  * bei der Einrichtung 3 Gruppen angelegt: Alle, Anwender und Admin. Weitere Gruppen können
  * nachträglich beliebig erstellt werden.
@@ -33,6 +33,7 @@ public class AccessControlDefaults {
 	public static final ACE ACCOUNTING = new ACE(ACE.ACE_ROOT, "Rechnungen", Messages.getString("AccessControlDefaults.Bills")); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE ACCOUNTING_CREATE = new ACE(ACCOUNTING, "erstellen", Messages.getString("AccessControlDefaults.create"));; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE ACCOUNTING_MODIFY = new ACE(ACCOUNTING, "bearbeiten", Messages.getString("AccessControlDefaults.edit")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE ACCOUNTING_STATS = new ACE(ACCOUNTING, "statistiken", "statistics");
 	public static final ACE ACE_ACCESS = new ACE(ADMIN, "Zugriff", Messages.getString("AccessControlDefaults.Access"));	 //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE ACCOUNTING_GLOBAL =
 		new ACE(ACE.ACE_ROOT, "AccountingGlobal", Messages.getString("AccessControlDefaults.accountingGlobal")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -131,10 +132,10 @@ public class AccessControlDefaults {
 	public static final ACE AC_SHOWVIEW = new ACE(ACTIONS, "Viewauswahl", Messages.getString("AccessControlDefaults.selectView")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static final ACE[] Alle =
-		{
-			AC_EXIT, AC_ABOUT, AC_HELP, AC_LOGIN,
-			new ACE(ACE.ACE_ROOT, "LoadInfoStore", Messages.getString("AccessControlDefaults.loadInfoStore")) //$NON-NLS-1$ //$NON-NLS-2$
-		};
+	{
+		AC_EXIT, AC_ABOUT, AC_HELP, AC_LOGIN,
+		new ACE(ACE.ACE_ROOT, "LoadInfoStore", Messages.getString("AccessControlDefaults.loadInfoStore")) //$NON-NLS-1$ //$NON-NLS-2$
+	};
 	
 	private static final ACE[] Anwender = {
 		DATA, ACTIONS, DOCUMENT, KONS, LEISTUNGEN, ACCOUNTING
@@ -147,5 +148,5 @@ public class AccessControlDefaults {
 	public static ACE[] getAnwender(){
 		return Anwender;
 	}
-
+	
 }
