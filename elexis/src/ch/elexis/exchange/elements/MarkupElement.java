@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: MarkupElement.java 5880 2009-12-19 19:25:22Z rgw_ch $
+ *  $Id: MarkupElement.java 5908 2009-12-27 08:48:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -36,7 +36,7 @@ public class MarkupElement extends XChangeElement {
 		setAttribute(ATTR_POS, Integer.toString(xref.getPos()));
 		setAttribute(ATTR_LEN, Integer.toString(xref.getLength()));
 		setAttribute(ATTR_TYPE, xref.getProvider());
-		add(new MetaElement().asExporter(home, ID, xref.getID()));
+		add(new MetaElement().asExporter(home, ATTR_ID, xref.getID()));
 		add(new MetaElement().asExporter(home, "provider", xref.getProvider()));
 		return this;
 	}

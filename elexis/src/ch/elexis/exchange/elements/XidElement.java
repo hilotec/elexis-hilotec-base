@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XidElement.java 5884 2009-12-20 13:30:34Z rgw_ch $
+ *  $Id: XidElement.java 5908 2009-12-27 08:48:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -58,7 +58,7 @@ public class XidElement extends XChangeElement {
 		asExporter(home);
 		if (iv instanceof PersistentObject) {
 			PersistentObject po = (PersistentObject) iv;
-			setAttribute(ID, XMLTool.idToXMLID(po.getId()));
+			setAttribute(ATTR_ID, XMLTool.idToXMLID(po.getId()));
 			addIdentities(po, iv.getXidDomain(), po.getId(), Xid.ASSIGNMENT_LOCAL, true);
 			
 		}
@@ -67,7 +67,7 @@ public class XidElement extends XChangeElement {
 	
 	public XidElement asExporter(XChangeExporter home, LabItem li){
 		asExporter(home);
-		setAttribute(ID, XMLTool.idToXMLID(li.getId()));
+		setAttribute(ATTR_ID, XMLTool.idToXMLID(li.getId()));
 		StringBuilder domainRoot = new StringBuilder(FindingElement.XIDBASE);
 		Labor lab = li.getLabor();
 		if (lab == null || (!lab.isValid())) {
@@ -83,7 +83,7 @@ public class XidElement extends XChangeElement {
 	
 	public XidElement asExporter(XChangeExporter home, Artikel art){
 		asExporter(home);
-		setAttribute(ID, XMLTool.idToXMLID(art.getId()));
+		setAttribute(ATTR_ID, XMLTool.idToXMLID(art.getId()));
 		String ean = art.getEAN();
 		if (!StringTool.isNothing(ean)) {
 			addIdentities(art, Xid.DOMAIN_EAN, ean, Xid.ASSIGNMENT_REGIONAL, false);
@@ -104,7 +104,7 @@ public class XidElement extends XChangeElement {
 		} else {
 			k.addXid(Xid.DOMAIN_ELEXIS, id, true);
 		}
-		setAttribute(ID, XMLTool.idToXMLID(k.getId()));
+		setAttribute(ATTR_ID, XMLTool.idToXMLID(k.getId()));
 		List<Xid> xids = k.getXids();
 		for (Xid xid : xids) {
 			int val = xid.getQuality();
@@ -183,7 +183,7 @@ public class XidElement extends XChangeElement {
 					Xid.ASSIGNMENT_LOCAL, true);
 			add(best);
 		}
-		setAttribute(ID, XMLTool.idToXMLID(best.getAttr(ATTR_IDENTITY_DOMAIN_ID)));
+		setAttribute(ATTR_ID, XMLTool.idToXMLID(best.getAttr(ATTR_IDENTITY_DOMAIN_ID)));
 	}
 	
 	/**
@@ -198,7 +198,7 @@ public class XidElement extends XChangeElement {
 	 */
 	@SuppressWarnings("unchecked")
 	public XIDMATCH match(PersistentObject po){
-		if (po.getId().equals(getAttr(ID))) {
+		if (po.getId().equals(getAttr(ATTR_ID))) {
 			return XIDMATCH.SURE;
 		}
 		int sure = 0;

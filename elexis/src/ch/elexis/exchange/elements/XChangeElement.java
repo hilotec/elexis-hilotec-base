@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeElement.java 5890 2009-12-22 11:18:52Z rgw_ch $
+ *  $Id: XChangeElement.java 5908 2009-12-27 08:48:11Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.exchange.elements;
 
@@ -29,7 +29,8 @@ import ch.rgw.tools.Result;
  * 
  */
 public abstract class XChangeElement {
-	protected static final String ID = "id";
+	public static final String ATTR_ID = "id";
+	public static final String ATTR_DATE="date";
 	protected XChangeExporter sender;
 	private XChangeImporter reader;
 	protected Element ex;
@@ -130,11 +131,11 @@ public abstract class XChangeElement {
 	}
 	
 	public String getID(){
-		String rawID = getAttr(ID);
+		String rawID = getAttr(ATTR_ID);
 		if (rawID.length() == 0) {
 			XidElement eXid = getXid();
 			if (eXid != null) {
-				rawID = eXid.getAttr(ID);
+				rawID = eXid.getAttr(ATTR_ID);
 			}
 		}
 		// return XMLTool.xmlIDtoID(rawID);

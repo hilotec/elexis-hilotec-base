@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ContactElement.java 5884 2009-12-20 13:30:34Z rgw_ch $
+ *  $Id: ContactElement.java 5908 2009-12-27 08:48:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -112,7 +112,7 @@ public class ContactElement extends XChangeElement {
 		sb.append(Messages.getString("ContactElement.gebdat")); //$NON-NLS-1$
 		TimeTool geb = new TimeTool(getAttr(ATTR_BIRTHDATE));
 		sb.append(geb.toString(TimeTool.DATE_GER)).append(StringTool.lf);
-		sb.append("PID: ").append(getAttr(ID)).append(StringTool.lf+StringTool.lf); //$NON-NLS-1$
+		sb.append("PID: ").append(getAttr(ATTR_ID)).append(StringTool.lf+StringTool.lf); //$NON-NLS-1$
 		List<AddressElement> addresses = getAddresses();
 		for (AddressElement adr : addresses) {
 			sb.append(adr.toString()).append(StringTool.lf);

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: AnamnesisElement.java 5888 2009-12-22 07:03:38Z rgw_ch $
+ *  $Id: AnamnesisElement.java 5908 2009-12-27 08:48:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -73,7 +73,7 @@ public class AnamnesisElement extends XChangeElement {
 			(List<EpisodeElement>) r.getChildren(EpisodeElement.XMLNAME, EpisodeElement.class);
 		if (eRefs != null) {
 			for (EpisodeElement eRef : eRefs) {
-				String id = eRef.getAttr(ID);
+				String id = eRef.getAttr(ATTR_ID);
 				Element episode = hElements.get(id);
 				if (episode != null) {
 					IDiagnose dg = hBacklink.get(episode);
