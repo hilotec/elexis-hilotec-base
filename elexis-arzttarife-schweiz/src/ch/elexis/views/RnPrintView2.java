@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: RnPrintView2.java 4956 2009-01-15 11:08:40Z rgw_ch $
+ * 
+ * $Id: RnPrintView2.java 5909 2009-12-29 16:40:00Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -58,14 +58,14 @@ import ch.rgw.tools.XMLTool;
  * waits for each page to be printed before starting the next.
  * 
  * We also corrected several problems around the TrustCenter-system. Tokens are printed only on TG bills and
- * only if the mandator has a TC contract. 
+ * only if the mandator has a TC contract.
  * Tokens are computed correctly now with the TC number as identifier in TG bills and left as ESR in TP bills.
  * @author Gerry
  *
  */
 public class RnPrintView2 extends ViewPart {
 	public static final String ID="ch.elexis.arzttarife_ch.printview2";
-
+	
 	private double cmAvail=21.4;				// Verfügbare Druckhöhe in cm
 	private static double cmPerLine=0.67;		// Höhe pro Zeile (0.65 plus Toleranz)
 	private static double cmFirstPage=13.0;		// Platz auf der ersten Seite
@@ -76,29 +76,29 @@ public class RnPrintView2 extends ViewPart {
 	private Brief actBrief;
 	TextContainer text;
 	TarmedACL ta=TarmedACL.getInstance();
-
+	
 	public RnPrintView2() {
 		
 	}
-
+	
 	@Override
 	public void createPartControl(final Composite parent) {
 		text=new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent, new ITextPlugin.ICallback(){
-
+			
 			public void save() {
 				// TODO Auto-generated method stub
 				
 			}
-
+			
 			public boolean saveAs() {
 				// TODO Auto-generated method stub
 				return false;
 			}});
 	}
-
+	
 	private void createBrief(final String template, final Kontakt adressat){
-		actBrief=text.createFromTemplateName(null,template,Brief.RECHNUNG,adressat, Messages.RnPrintView_tarmedBill);	
+		actBrief=text.createFromTemplateName(null,template,Brief.RECHNUNG,adressat, Messages.RnPrintView_tarmedBill);
 	}
 	private boolean deleteBrief() {
 		if (actBrief != null) {
@@ -109,7 +109,7 @@ public class RnPrintView2 extends ViewPart {
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
-
+		
 	}
 	/**
 	 * Druckt die Rechnung auf eine Vorlage, deren Ränder alle auf 0.5cm eingestellt sein müssen, und die unterhalb
@@ -117,11 +117,11 @@ public class RnPrintView2 extends ViewPart {
 	 * Zweite und Folgeseiten müssen gem Tarmedrechnung formatiert sein.
 	 * @param rn die Rechnung
 	 * @param saveFile Filename für eine XML-Kopie der Rechnung oder null: Keine Kopie
-	 * @param withForms 
-	 * @param monitor 
+	 * @param withForms
+	 * @param monitor
 	 * @return
-	 */ 
-	@SuppressWarnings("unchecked") 
+	 */
+	@SuppressWarnings("unchecked")
 	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType, final String saveFile, final boolean withESR, final boolean withForms, final boolean doVerify, final IProgressMonitor monitor){
 		Mandant mSave=Hub.actMandant;
 		monitor.subTask(rn.getLabel());
@@ -147,7 +147,7 @@ public class RnPrintView2 extends ViewPart {
 		Rechnungssteller rs=mnd.getRechnungssteller();
 		String tcCode=null;
 		if(TarmedRequirements.hasTCContract(rs) && paymentMode.equals("TG")){
-			 tcCode=TarmedRequirements.getTCCode(rs);
+			tcCode=TarmedRequirements.getTCCode(rs);
 		}else if(paymentMode.equals("TP")){
 			tcCode="01";
 		}
@@ -210,13 +210,13 @@ public class RnPrintView2 extends ViewPart {
 			String sMigel=balance.getAttributeValue("amount_migel");
 			String sPhysio=balance.getAttributeValue("amount_physio");
 			String sOther=balance.getAttributeValue("amount_unclassified");
-			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed).append("\n"); 
-			sb.append(Messages.RnPrintView_medicaments).append(sMedikament).append("\n"); 
-			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append("\n"); 
-			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append("\n"); 
-			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio).append("\n"); 
-			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append("\n"); 
-
+			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed).append("\n");
+			sb.append(Messages.RnPrintView_medicaments).append(sMedikament).append("\n");
+			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append("\n");
+			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append("\n");
+			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio).append("\n");
+			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append("\n");
+			
 			for(Zahlung z:extra){
 				Money betrag=new Money(z.getBetrag()).multiply(-1.0);
 				if(!betrag.isNegative()){
@@ -229,15 +229,15 @@ public class RnPrintView2 extends ViewPart {
 			sb.append(Messages.RnPrintView_sum).append(mEZDue);
 			
 			if(!mPaid.isZero()){
-				sb.append(Messages.RnPrintView_prepaid).append(mPaid.getAmountAsString()).append("\n"); 
+				sb.append(Messages.RnPrintView_prepaid).append(mPaid.getAmountAsString()).append("\n");
 				//sb.append("Noch zu zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
-				sb.append(Messages.RnPrintView_topay).append(mEZDue.subtractMoney(mPaid).roundTo5().getAmountAsString()).append("\n"); 
+				sb.append(Messages.RnPrintView_topay).append(mEZDue.subtractMoney(mPaid).roundTo5().getAmountAsString()).append("\n");
 			}
-		
+			
 			
 			text.getPlugin().setFont("Serif",SWT.NORMAL, 9); //$NON-NLS-1$
 			text.replace("\\[Leistungen\\]",sb.toString());
-		
+			
 			if(esr.printBESR(bank,adressat,rs,mEZDue.roundTo5().getCentsAsString(),text)==false){
 				// avoid dead letters
 				deleteBrief();;
@@ -287,10 +287,10 @@ public class RnPrintView2 extends ViewPart {
 		}else{
 			text.replace("\\[F5\\]",Messages.RnPrintView_no); //$NON-NLS-1$
 		}
-
+		
 		// Vergütungsart F17
 		// replaced with Fall.payment
-	
+		
 		if(fall.getAbrechnungsSystem().equals("UVG")){ //$NON-NLS-1$
 			text.replace("\\[F58\\]",fall.getBeginnDatum()); //$NON-NLS-1$
 		}else{
@@ -467,7 +467,7 @@ public class RnPrintView2 extends ViewPart {
 		StringBuilder footer=new StringBuilder(100);
 		//Element balance=invoice.getChild("balance",ns); //$NON-NLS-1$
 		
-	
+		
 		cursor=text.getPlugin().insertTextAt(0,220,190,45," ",SWT.LEFT); //$NON-NLS-1$
 		cursor=print(cursor,tp,true,"\tTARMED AL \t"); //$NON-NLS-1$
 		footer.append(balance.getAttributeValue("amount_tarmed.mt")) //$NON-NLS-1$
@@ -493,17 +493,17 @@ public class RnPrintView2 extends ViewPart {
 		
 		footer.setLength(0);
 		footer.append("\n\n").append("■ Gesamtbetrag\t\tCHF\t\t").append(df.format(sumTotal)) //$NON-NLS-1$ //$NON-NLS-2$
-			.append("\tdavon PFL \t").append(df.format(sumPfl)).append("\tAnzahlung \t") //$NON-NLS-1$ //$NON-NLS-2$
-			.append(mPaid.getAmountAsString()).append("\tFälliger Betrag \t").append(mDue.getAmountAsString()) //$NON-NLS-1$
-			.append("\n\n■ MwSt.Nr. \t\t"); //$NON-NLS-1$
+		.append("\tdavon PFL \t").append(df.format(sumPfl)).append("\tAnzahlung \t") //$NON-NLS-1$ //$NON-NLS-2$
+		.append(mPaid.getAmountAsString()).append("\tFälliger Betrag \t").append(mDue.getAmountAsString()) //$NON-NLS-1$
+		.append("\n\n■ MwSt.Nr. \t\t"); //$NON-NLS-1$
 		cursor=print(cursor,tp,true,footer.toString());
 		cursor=print(cursor,tp,false,"keine\n\n"); //$NON-NLS-1$
 		cursor=print(cursor,tp,true,"  Code\tSatz\t\tBetrag\tMwSt\n"); //$NON-NLS-1$
 		tp.setFont("Helvetica",SWT.NORMAL,9); //$NON-NLS-1$
 		footer.setLength(0);
 		footer.append("■ 0\t0\t\t").append(df.format(mwst0)).append("\t 0.00\n") //$NON-NLS-1$ //$NON-NLS-2$
-			.append("■ 1\t7.6\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074*mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			.append("■ 2\t2.4\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.024*mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		.append("■ 1\t7.6\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074*mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		.append("■ 2\t2.4\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.024*mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cursor=print(cursor,tp,false,footer.toString());
 		cursor=print(cursor,tp,true,"\n Total\t\t\t"); //$NON-NLS-1$
 		footer.setLength(0);
@@ -518,12 +518,17 @@ public class RnPrintView2 extends ViewPart {
 			// avoid dead letters
 			deleteBrief();;
 			Hub.setMandant(mSave);
-		 	return false;
+			return false;
 		}
 		monitor.worked(2);
 		// avoid dead letters
 		deleteBrief();;
 		Hub.setMandant(mSave);
+		try {
+			Thread.sleep(5);
+		} catch (InterruptedException e) {
+			//never mind
+		}
 		return true;
 	}
 	private void insertPage(final int page,final Kontakt adressat, final Rechnung rn){
@@ -546,7 +551,7 @@ public class RnPrintView2 extends ViewPart {
 		return text;
 		
 	}
-	*/
+	 */
 	private Object print(final Object cur, final ITextPlugin p, final boolean small, final String text){
 		if(small){
 			p.setFont("Helvetica",SWT.BOLD,7); //$NON-NLS-1$
@@ -619,7 +624,7 @@ public class RnPrintView2 extends ViewPart {
 	private class RnComparator implements Comparator<Element>{
 		TimeTool tt0=new TimeTool();
 		TimeTool tt1=new TimeTool();
-
+		
 		public int compare(Element e0, Element e1) {
 			if(!tt0.set(e0.getAttributeValue("date_begin"))){
 				return 1;
