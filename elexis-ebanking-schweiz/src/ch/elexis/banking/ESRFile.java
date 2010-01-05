@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ESRFile.java 4950 2009-01-14 13:21:08Z rgw_ch $
+ * 
+ *  $Id: ESRFile.java 5915 2010-01-05 07:14:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -51,16 +51,16 @@ public class ESRFile {
 		
 		if (!file.exists()) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 1,
-				Messages.ESRFile_esrfile_not_founde, null, true);
+					Messages.ESRFile_esrfile_not_founde, null, true);
 		}
 		if (!file.canRead()) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2,
-				Messages.ESRFile_cannot_read_esr, null, true);
+					Messages.ESRFile_cannot_read_esr, null, true);
 		}
 		byte[] md5 = FileTool.checksum(file);
 		name = file.getName();
 		if (md5 != null) {
-			hash = StringTool.createString(md5);
+			hash = StringTool.enPrintableStrict(md5);
 		} else {
 			hash = name;
 		}
@@ -69,7 +69,7 @@ public class ESRFile {
 		List<ESRRecord> list = qesr.execute();
 		if (list.size() > 0) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
-				Messages.ESRFile_file_already_read, null, true);
+					Messages.ESRFile_file_already_read, null, true);
 		}
 		try {
 			InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
@@ -96,7 +96,7 @@ public class ESRFile {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, "Exception while parsing",
-				list, true);
+					list, true);
 		}
 		
 	}
