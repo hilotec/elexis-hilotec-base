@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: DBUpdate.java 5843 2009-11-27 06:09:20Z rgw_ch $
+ * $Id: DBUpdate.java 5919 2010-01-05 12:01:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -253,7 +253,11 @@ public class DBUpdate {
 		"ALTER TABLE LOGS ADD deleted CHAR(1) default '0';",
 		
 		// 1.8.4
-		"ALTER TABLE KONTAKT MODIFY EMail VARCHAR(80);"
+		"ALTER TABLE KONTAKT MODIFY EMail VARCHAR(80);",
+		
+		// 1.8.5
+		"ALTER TABLE ARTIKEL ADD ValidFrom CHAR(8);",
+		"ALTER TABLE ARTIKEL ADD ValidTo   CHAR(8);"
 		
 	};
 	static Log log = Log.get("DBUpdate");

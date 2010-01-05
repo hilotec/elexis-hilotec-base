@@ -141,6 +141,8 @@ CREATE TABLE ARTIKEL(
 	Codeclass		VARCHAR(10),					# used differently
 	ExtID			VARCHAR(25),					# used differently
 	LastImport		CHAR(8),						# date of last import (yyyymmdd)
+	ValidFrom		CHAR(8),			
+	ValidTo			CHAR(8),
 	ExtInfo			BLOB							# additional informations (hashtable)
 );
 
@@ -592,6 +594,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.4');
-INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.0.0');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.5');
+INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.1.0');
 

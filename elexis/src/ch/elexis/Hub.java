@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5869 2009-12-16 15:41:25Z rgw_ch $
+ *    $Id: Hub.java 5919 2010-01-05 12:01:40Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -73,7 +73,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.5.0"; //$NON-NLS-1$
-	public static final String Version = "2.0.3"; //$NON-NLS-1$
+	public static final String Version = "2.1.0"; //$NON-NLS-1$
 	public static final String DBVersion = "1.8.4"; //$NON-NLS-1$
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -398,7 +398,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5869 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5919 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
