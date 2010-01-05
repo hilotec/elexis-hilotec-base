@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ESRRecord.java 5185 2009-02-24 15:47:28Z rgw_ch $
+ * 
+ *  $Id: ESRRecord.java 5920 2010-01-05 15:01:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -36,12 +36,12 @@ public class ESRRecord extends PersistentObject {
 	
 	public static enum MODE {
 		Gutschrift_edv, Storno_edv, Korrektur_edv, Gutschrift_Schalter, Storno_Schalter,
-			Korrektur_Schalter, Summenrecord, Unbekannt
+		Korrektur_Schalter, Summenrecord, Unbekannt
 	};
 	
 	public static enum REJECT {
 		OK, ESRREJECT, MASSENREJECT, BETRAG, MANDANT, RN_NUMMER, PAT_NUMMER, DUPLIKAT, ANDERE,
-			PAT_FALSCH
+		PAT_FALSCH
 	};
 	
 	private static final String createDB="DROP TABLE "+TABLENAME+";" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -69,7 +69,7 @@ public class ESRRecord extends PersistentObject {
 	"CREATE INDEX ESR2 ON "+TABLENAME+" (PATIENTID);"+ //$NON-NLS-1$ //$NON-NLS-2$
 	"CREATE INDEX ESR3 ON "+TABLENAME+" (REJECTCODE);" + //$NON-NLS-1$ //$NON-NLS-2$
 	"INSERT INTO "+TABLENAME+" (ID,FILE) VALUES ('1','"+VERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+	
 	private static final String upd2="ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;";
 	static {
 		addMapping(
@@ -184,10 +184,10 @@ public class ESRRecord extends PersistentObject {
 		if (mode.equals(MODE.Summenrecord)) {
 			// Betrag (führende Nullen entfernen)
 			vals[4] = Integer.toString(Integer.parseInt(codeline.substring(39, 51).trim())); // Totalbetrag
-																								// 12-stellig
+			// 12-stellig
 		} else {
 			vals[4] = Integer.toString(Integer.parseInt(codeline.substring(39, 49).trim())); // Zeilenbetrag
-																								// 10-stellig
+			// 10-stellig
 			String esrline = codeline.substring(12, 39);
 			
 			// Von der RechnungsNummer führende Nullen wegbringen
@@ -207,7 +207,13 @@ public class ESRRecord extends PersistentObject {
 					mandantID = ""; //$NON-NLS-1$
 				} else {
 					m = rn.getMandant();
-					mandantID = m.getId();
+					if(m==null){
+						rejectCode=REJECT.MANDANT;
+						vals[6]="";
+						mandantID="";
+					}else{
+						mandantID = m.getId();
+					}
 				}
 				
 			}
@@ -215,7 +221,7 @@ public class ESRRecord extends PersistentObject {
 			long patnr = Long.parseLong(PatNr); // führende Nullen wegbringen
 			String PatID =
 				new Query<Patient>(Patient.class)
-					.findSingle("PatientNr", "=", Long.toString(patnr)); //$NON-NLS-1$ //$NON-NLS-2$
+				.findSingle("PatientNr", "=", Long.toString(patnr)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (PatID == null) {
 				if (rejectCode == REJECT.OK) {
 					rejectCode = REJECT.PAT_NUMMER;
