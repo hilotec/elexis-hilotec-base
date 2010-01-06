@@ -12,6 +12,7 @@ import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.scripting.TarmedTaxpunktkorrektur;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -39,7 +40,7 @@ public class Optifier implements IOptifier {
 
 	public Result<Object> optify(Konsultation kons){
 		try {
-
+			boolean haveKons=false;
 			TimeTool date = new TimeTool(kons.getDatum());
 			TimeTool deadline = new TimeTool("31.12.2011");
 			if (date.isBefore(new TimeTool("01.07.2009"))) {
@@ -84,6 +85,8 @@ public class Optifier implements IOptifier {
 						}
 						z4708 += v.getZahl();
 					}
+				}else if(iv.getCode().equals("00.0010") || iv.getCode().equals("00.0060")){ // Kons erste 5 Minuten 
+					haveKons=true;
 				}
 			}
 			// reduce amendments to max. 24 TP
@@ -94,7 +97,7 @@ public class Optifier implements IOptifier {
 				z470720--;
 			}
 
-			if (z470710 == 0) {
+			if (z470710 == 0 || haveKons==false) {
 				if (v470710 != null) {
 					v470710.delete();
 				}
@@ -105,7 +108,7 @@ public class Optifier implements IOptifier {
 				v470710.setZahl(z470710);
 			}
 
-			if (z470720 == 0) {
+			if (z470720 == 0 || haveKons==false) {
 				if (v470720 != null) {
 					v470720.delete();
 				}
@@ -116,10 +119,10 @@ public class Optifier implements IOptifier {
 				v470720.setZahl(z470720);
 			}
 
-			if (z4707 == 0 && ((z470710 + z470720) > 0)) {
+			if (z4707 == 0 && ((z470710 + z470720) > 0) && haveKons==true) {
 				doCreate(kons, "4707.00");
 			}
-			if (z4708 > 0) {
+			if (z4708 > 0 && haveKons==true) {
 				if (v4708 == null) {
 					if (date.isBefore(deadline)) {
 						v4708 = doCreate(kons, "4708.00");
