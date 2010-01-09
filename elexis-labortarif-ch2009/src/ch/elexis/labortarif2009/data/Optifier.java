@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and medelexis AG
+ * Copyright (c) 2009-2010, G. Weirich and medelexis AG
  * All rights reserved.
  * $Id: Optifier.java 140 2009-06-23 20:00:16Z  $
  *******************************************************************************/
@@ -8,11 +8,12 @@ package ch.elexis.labortarif2009.data;
 
 import java.util.List;
 
+import ch.elexis.Hub;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.scripting.TarmedTaxpunktkorrektur;
+import ch.elexis.labortarif2009.ui.Preferences;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -20,7 +21,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Result.SEVERITY;
 
 public class Optifier implements IOptifier {
-
+	
 	/**
 	 * Add and recalculate the various possible amendments
 	 */
@@ -37,8 +38,11 @@ public class Optifier implements IOptifier {
 		}
 		return new Result<IVerrechenbar>(SEVERITY.ERROR, 2, "No Lab2009Tariff", null, true);
 	}
-
+	
 	public Result<Object> optify(Konsultation kons){
+		if(Hub.localCfg.get(Preferences.OPTIMIZE, true)==false){
+			return new Result<Object>(kons);
+		}
 		try {
 			boolean haveKons=false;
 			TimeTool date = new TimeTool(kons.getDatum());
@@ -46,7 +50,7 @@ public class Optifier implements IOptifier {
 			if (date.isBefore(new TimeTool("01.07.2009"))) {
 				return new Result<Object>(SEVERITY.WARNING, 3, "Code not yet valid", null, false);
 			}
-
+			
 			List<Verrechnet> list = kons.getLeistungen();
 			Verrechnet v470710 = null;
 			Verrechnet v470720 = null;
@@ -55,7 +59,7 @@ public class Optifier implements IOptifier {
 			int z4707 = 0;
 			int z470710 = 0;
 			int z470720 = 0;
-
+			
 			for (Verrechnet v : list) {
 				IVerrechenbar iv = v.getVerrechenbar();
 				if (iv instanceof Labor2009Tarif) {
@@ -85,7 +89,7 @@ public class Optifier implements IOptifier {
 						}
 						z4708 += v.getZahl();
 					}
-				}else if(iv.getCode().equals("00.0010") || iv.getCode().equals("00.0060")){ // Kons erste 5 Minuten 
+				}else if(iv.getCode().equals("00.0010") || iv.getCode().equals("00.0060")){ // Kons erste 5 Minuten
 					haveKons=true;
 				}
 			}
@@ -96,7 +100,7 @@ public class Optifier implements IOptifier {
 			while (((4 + 2 * z470710 + z470720) > 24) && z470720 > 0) {
 				z470720--;
 			}
-
+			
 			if (z470710 == 0 || haveKons==false) {
 				if (v470710 != null) {
 					v470710.delete();
@@ -107,7 +111,7 @@ public class Optifier implements IOptifier {
 				}
 				v470710.setZahl(z470710);
 			}
-
+			
 			if (z470720 == 0 || haveKons==false) {
 				if (v470720 != null) {
 					v470720.delete();
@@ -118,7 +122,7 @@ public class Optifier implements IOptifier {
 				}
 				v470720.setZahl(z470720);
 			}
-
+			
 			if (z4707 == 0 && ((z470710 + z470720) > 0) && haveKons==true) {
 				doCreate(kons, "4707.00");
 			}
@@ -143,11 +147,11 @@ public class Optifier implements IOptifier {
 			ExHandler.handle(ex);
 			return new Result<Object>(SEVERITY.ERROR, 1, "Tariff not installed correctly", null,
 					true);
-
+			
 		}
-
+		
 	}
-
+	
 	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons){
 		List<Verrechnet> l = kons.getLeistungen();
 		l.remove(code);
@@ -160,17 +164,17 @@ public class Optifier implements IOptifier {
 					true);
 		}
 	}
-
+	
 	private Verrechnet doCreate(Konsultation kons, String code) throws Exception{
 		String z =
 			new Query<Labor2009Tarif>(Labor2009Tarif.class).findSingle(Labor2009Tarif.FLD_CODE,
-					Query.EQUALS, code);
+				Query.EQUALS, code);
 		if (z != null) {
 			return new Verrechnet(Labor2009Tarif.load(z), kons, 1);
 		} else {
 			throw new Exception("Tariff not installed correctly");
 		}
-
+		
 	}
-
+	
 }

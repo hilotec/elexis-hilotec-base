@@ -10,6 +10,8 @@ import java.util.LinkedList;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -31,69 +33,75 @@ import ch.rgw.io.Settings;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
-public class Preferences extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private static final String SPECNUM = "specnum";
-	public static final String FACHDEF="abrechnung/labor2009/fachdef";
-	int langdef=0;
-	Settings cfg=Hub.mandantCfg;
-	LinkedList<Button> buttons=new LinkedList<Button>();
+	public static final String FACHDEF = "abrechnung/labor2009/fachdef";
+	public static final String OPTIMIZE = "abrechnung/labor2009/optify";
+	int langdef = 0;
+	Settings cfg = Hub.mandantCfg;
+	LinkedList<Button> buttons = new LinkedList<Button>();
 	
-	public Preferences() {
+	public Preferences(){
 		String lang = JdbcLink.wrap(Hub.localCfg.get( // d,f,i
-				PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
+			PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
 		if (lang.startsWith("F")) {
 			langdef = 1;
 		} else if (lang.startsWith("I")) {
 			langdef = 2;
 		}
-
+		
 	}
-
 	
 	@Override
-	protected Control createContents(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createContents(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
-		new Label(ret,SWT.NONE).setText("Bitte Taxpunktwert eintragen");
-		MultiplikatorEditor me=new MultiplikatorEditor(ret,Labor2009Tarif.MULTIPLICATOR_NAME);
+		new Label(ret, SWT.NONE).setText("Bitte Taxpunktwert eintragen");
+		MultiplikatorEditor me = new MultiplikatorEditor(ret, Labor2009Tarif.MULTIPLICATOR_NAME);
 		me.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Fachspec[] specs=Importer.loadFachspecs(langdef);
-		Group group=new Group(ret,SWT.BORDER);
+		Fachspec[] specs = Importer.loadFachspecs(langdef);
+		Group group = new Group(ret, SWT.BORDER);
 		group.setText("Fachspezialitäten");
 		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		group.setLayout(new GridLayout());
-		String[] olddef=cfg.getStringArray(FACHDEF);
-		for(Fachspec spec:specs){
-			Button b=new Button(group,SWT.CHECK);
+		String[] olddef = cfg.getStringArray(FACHDEF);
+		for (Fachspec spec : specs) {
+			Button b = new Button(group, SWT.CHECK);
 			b.setText(spec.name);
 			b.setData(SPECNUM, spec.code);
 			b.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			if(olddef!=null && StringTool.getIndex(olddef, Integer.toString(spec.code))!=-1){
+			if (olddef != null && StringTool.getIndex(olddef, Integer.toString(spec.code)) != -1) {
 				b.setSelection(true);
 			}
 			buttons.add(b);
 		}
+		final Button bOptify = new Button(ret, SWT.CHECK);
+		bOptify.setSelection(Hub.localCfg.get(OPTIMIZE, true));
+		bOptify.setText("Automatische Verrechnung von Zuschlägen");
+		bOptify.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				Hub.localCfg.set(OPTIMIZE, bOptify.getSelection());
+			}
+		});
 		return ret;
 	}
-
-	public void init(IWorkbench workbench) {
+	
+	public void init(IWorkbench workbench){
 		// TODO Auto-generated method stub
-
+		
 	}
-
-
+	
 	@Override
-	protected void performApply() {
-		LinkedList<String> bb=new LinkedList<String>();
-		for(Button b:buttons){
-			if(b.getSelection()){
-				bb.add(((Integer)b.getData(SPECNUM)).toString());
+	protected void performApply(){
+		LinkedList<String> bb = new LinkedList<String>();
+		for (Button b : buttons) {
+			if (b.getSelection()) {
+				bb.add(((Integer) b.getData(SPECNUM)).toString());
 			}
 		}
 		Hub.mandantCfg.set(FACHDEF, StringTool.join(bb, StringConstants.COMMA));
 		super.performApply();
 	}
-
 	
 }
