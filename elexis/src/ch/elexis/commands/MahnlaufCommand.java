@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MahnlaufCommand.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: MahnlaufCommand.java 5931 2010-01-14 22:14:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.commands;
 
@@ -75,7 +75,7 @@ public class MahnlaufCommand extends AbstractHandler {
 		for (Rechnung rn : list) {
 			rn.setStatus(RnStatus.MAHNUNG_2);
 			if (!betrag.isZero()) {
-				rn.addZahlung(new Money(betrag).multiply(-1.0), Messages.MahnlaufCommand_Mahngebühr2,null);
+				rn.addZahlung(new Money(betrag).multiply(-1.0), Messages.MahnlaufCommand_Mahngebuehr2,null);
 			}
 		}
 		// 2. Mahnung zu 3. Mahnung

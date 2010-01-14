@@ -9,7 +9,7 @@ public class Messages extends NLS {
 	public static String FallPlaneRechnung_PlanBillingPleaseEnterPositiveInteger;
 	public static String MahnlaufCommand_Mahngebuehr1;
 	public static String MahnlaufCommand_Mahngebuehr3;
-	public static String MahnlaufCommand_Mahngebühr2;
+	public static String MahnlaufCommand_Mahngebuehr2;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
