@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Medical.java 1742 2007-02-06 20:48:17Z rgw_ch $
+ *  $Id: Medical.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -17,14 +17,14 @@ import ch.elexis.data.Artikel;
 public class Medical extends Artikel{
 	@Override
 	protected String getConstraint() {
-		return "Typ='Medical'";
+		return "Typ='Medical'"; //$NON-NLS-1$
 	}
 	protected void setConstraint(){
-		set("Typ","Medical");
+		set("Typ","Medical"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	@Override
 	public String getCodeSystemName() {
-			return "Medicals";
+			return "Medicals"; //$NON-NLS-1$
 	}
 	@Override
 	public String getCode() {
@@ -43,7 +43,7 @@ public class Medical extends Artikel{
 	}
 	
 	public String getLabel(){
-		return get("Name");
+		return get("Name"); //$NON-NLS-1$
 	}
 
 }

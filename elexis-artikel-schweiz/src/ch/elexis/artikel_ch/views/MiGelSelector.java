@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelSelector.java 5014 2009-01-23 16:31:33Z rgw_ch $
+ *  $Id: MiGelSelector.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -50,7 +50,7 @@ public class MiGelSelector extends CodeSelectorFactory {
 		// new LazyContentProvider(cv,dataloader,null),
 			new MigelLoader(cv), new DefaultLabelProvider(), new DefaultControlFieldProvider(cv,
 				new String[] {
-					"SubID=Code", "Name"
+					"SubID=Code", "Name" //$NON-NLS-1$ //$NON-NLS-2$
 				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 				SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 	}
@@ -68,7 +68,7 @@ public class MiGelSelector extends CodeSelectorFactory {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "MiGeL";
+		return "MiGeL"; //$NON-NLS-1$
 	}
 	
 }

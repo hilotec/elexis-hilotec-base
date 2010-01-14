@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
  *    
- *  $Id: MedikamentImporter.java 4857 2008-12-25 20:13:41Z rgw_ch $
+ *  $Id: MedikamentImporter.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -42,42 +42,42 @@ import ch.rgw.tools.ExHandler;
  * 
  */
 public class MedikamentImporter extends ImporterPage {
-	static final String EQUALS = "=";
-	private static final String MWST_TYP = "MWSt-Typ";
-	private static final String EAN = "EAN";
-	private static final String HERSTELLER = "Hersteller";
-	private static final String LAGERART = "Lagerart";
-	private static final String KASSENTYP = "Kassentyp";
-	private static final String VK_PREIS = "VK_Preis";
+	static final String EQUALS = "="; //$NON-NLS-1$
+	private static final String MWST_TYP = "MWSt-Typ"; //$NON-NLS-1$
+	private static final String EAN = "EAN"; //$NON-NLS-1$
+	private static final String HERSTELLER = "Hersteller"; //$NON-NLS-1$
+	private static final String LAGERART = "Lagerart"; //$NON-NLS-1$
+	private static final String KASSENTYP = "Kassentyp"; //$NON-NLS-1$
+	private static final String VK_PREIS = "VK_Preis"; //$NON-NLS-1$
 	
 	// Button bClear;
 	// boolean bDelete;
 	public MedikamentImporter(){}
 	
-	final static String SUBID = "SubID";
-	final static String NAME = "Name";
-	final static String MEDIKAMENT = "Medikament";
-	final static String MEDICAL = "Medical";
-	final static String EK_PREIS = "EK_Preis";
+	final static String SUBID = "SubID"; //$NON-NLS-1$
+	final static String NAME = "Name"; //$NON-NLS-1$
+	final static String MEDIKAMENT = "Medikament"; //$NON-NLS-1$
+	final static String MEDICAL = "Medical"; //$NON-NLS-1$
+	final static String EK_PREIS = "EK_Preis"; //$NON-NLS-1$
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		File file = new File(results[0]);
 		long l = file.length();
-		InputStreamReader ir = new InputStreamReader(new FileInputStream(file), "iso-8859-1");
+		InputStreamReader ir = new InputStreamReader(new FileInputStream(file), "iso-8859-1"); //$NON-NLS-1$
 		BufferedReader br = new BufferedReader(ir);
 		int cachetime = PersistentObject.getDefaultCacheLifetime();
 		PersistentObject.setDefaultCacheLifetime(2);
 		String in;
-		String mode = " (Modus: Daten ergänzen/update)";
+		String mode = Messages.MedikamentImporter_ModeOfImport;
 		/*
 		 * if(bDelete==true){ if(SWTHelper.askYesNo("Wirklich Daten löschen", "Achtung: Wenn die
 		 * alten Daten gelöscht werden, kann es\nsein, dass bestehende Bezüge ungültig werden.")){
 		 * PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Medikament'");
 		 * mode=" (Modus: Alles neu erstellen)"; } }
 		 */
-		monitor.beginTask("Medikamenten Import" + mode, (int) (l / 100));
+		monitor.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
 		Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
 		int counter = 0;
 		String titel, ek, vk, kasse, mwst;
@@ -85,13 +85,13 @@ public class MedikamentImporter extends ImporterPage {
 			String reca = new String(in.substring(0, 2)); // recordart
 			String cmut = new String(in.substring(2, 3)); // mutationscode
 			String pkraw = new String(in.substring(3, 10)).trim(); // Pharmacode
-			String pk = "0";
+			String pk = "0"; //$NON-NLS-1$
 			try {
 				long pkl = Long.parseLong(pkraw); // führende Nullen entfernen
 				pk = Long.toString(pkl);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				log.log("Falscher Pharmacode: pkraw", Log.ERRORS);
+				log.log(Messages.MedikamentImporter_BadPharmaCode, Log.ERRORS);
 			}
 			
 			// String id=qbe.findSingle(SUBID, EQUALS, pk);
@@ -115,21 +115,21 @@ public class MedikamentImporter extends ImporterPage {
 			}
 			Artikel a = lArt.size() > 0 ? lArt.get(0) : null;
 			if ((a == null) || (!a.exists())) {
-				if (cmut.equals("3") || (!reca.equals("11"))) { // ausser handel
+				if (cmut.equals("3") || (!reca.equals("11"))) { // ausser handel //$NON-NLS-1$ //$NON-NLS-2$
 					// oder kein
 					// Stammsatz
 					continue; // Dann Artikel nicht neu erstellen, falls er
 					// nicht existiert
 				}
 			} else {
-				if (cmut.equals("3")) { // Wen n er existiert, muss er gelöscht
+				if (cmut.equals("3")) { // Wen n er existiert, muss er gelöscht //$NON-NLS-1$
 					// werden
 					a.delete();
 					continue;
 				}
 			}
 			
-			if (reca.equals("11")) { // Stammsatz
+			if (reca.equals("11")) { // Stammsatz //$NON-NLS-1$
 				titel = new String(in.substring(10, 60)).trim(); // Text
 				ek = new String(in.substring(60, 66)).trim(); // EK-Preis
 				vk = new String(in.substring(66, 72)).trim(); // VK-Preis
@@ -142,13 +142,13 @@ public class MedikamentImporter extends ImporterPage {
 				mwst = new String(in.substring(96, 97)); // MWSt-Typ
 				
 				if (a == null) {
-					if (mwst.equals("1")) {
+					if (mwst.equals("1")) { //$NON-NLS-1$
 						a = new Artikel(titel, MEDICAL, pk);
 					} else {
 						a = new Artikel(titel, MEDIKAMENT, pk);
 					}
 				}
-				if (vk.matches("0+")) {
+				if (vk.matches("0+")) { //$NON-NLS-1$
 					a.set(EK_PREIS, ek);
 					a.set(EAN, ean);
 				} else {
@@ -166,12 +166,12 @@ public class MedikamentImporter extends ImporterPage {
 				ext.put(EAN, ean);
 				ext.put(MWST_TYP, mwst);
 				a.setHashtable(Artikel.EXT_INFO, ext);
-			} else if (reca.equals("10")) { // Update-Satz
+			} else if (reca.equals("10")) { // Update-Satz //$NON-NLS-1$
 				ek = new String(in.substring(10, 16));
 				vk = new String(in.substring(16, 22));
 				kasse = new String(in.substring(22, 23));
 				mwst = new String(in.substring(23, 24));
-				if (vk.matches("0+")) {
+				if (vk.matches("0+")) { //$NON-NLS-1$
 					a.set(EK_PREIS, ek);
 				} else {
 					String[] fields = {
@@ -181,8 +181,8 @@ public class MedikamentImporter extends ImporterPage {
 				}
 				
 			} else {
-				SWTHelper.showError("Falsches Dateiformat",
-					"Es können nur IGM-10 und IGM-11 Dateien importiert werden");
+				SWTHelper.showError(Messages.MedikamentImporter_BadFileFormat,
+					Messages.MedikamentImporter_OnlyIGM10AndIGM11);
 				return Status.CANCEL_STATUS;
 			}
 			
@@ -209,12 +209,12 @@ public class MedikamentImporter extends ImporterPage {
 	
 	@Override
 	public String getTitle(){
-		return "Medikamente";
+		return Messages.MedikamentImporter_WindowTitleMedicaments;
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Bitte wählen Sie die Datei (IGM10 oder IGM11 -Format) aus, aus der die Artikel importiert werden sollen";
+		return Messages.MedikamentImporter_PleaseChoseFile;
 	}
 	
 	@Override

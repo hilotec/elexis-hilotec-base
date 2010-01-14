@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentControlFieldProvider.java 5014 2009-01-23 16:31:33Z rgw_ch $
+ *  $Id: MedikamentControlFieldProvider.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -50,9 +50,9 @@ public class MedikamentControlFieldProvider extends DefaultControlFieldProvider 
 				public void keyPressed(KeyEvent e){
 					if (e.character == SWT.CR) {
 						String text = selector.getText();
-						text = text.replaceAll(new Character(SWT.CR).toString(), "");
-						text = text.replaceAll(new Character(SWT.LF).toString(), "");
-						text = text.replaceAll(new Character((char) 0).toString(), "");
+						text = text.replaceAll(new Character(SWT.CR).toString(), ""); //$NON-NLS-1$
+						text = text.replaceAll(new Character(SWT.LF).toString(), ""); //$NON-NLS-1$
+						text = text.replaceAll(new Character((char) 0).toString(), ""); //$NON-NLS-1$
 						Event scannerEvent = new Event();
 						scannerEvent.text = selector.getText();
 						scannerEvent.widget = selector.getWidget();
@@ -84,7 +84,7 @@ public class MedikamentControlFieldProvider extends DefaultControlFieldProvider 
 		}
 		if (text != null) {
 			Query<Medikament> query = new Query<Medikament>(Medikament.class);
-			query.add("EAN", "=", e.text);
+			query.add("EAN", "=", e.text); //$NON-NLS-1$
 			List<Medikament> medikamentList = query.execute();
 			if (medikamentList.size() == 0) {
 				ScannerEvents.beep();

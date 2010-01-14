@@ -37,9 +37,9 @@ public class MedicalControlFieldProvider extends DefaultControlFieldProvider imp
 				public void keyPressed(KeyEvent e) {
 					if (e.character == SWT.CR) {
 						String text = selector.getText();
-						text = text.replaceAll(new Character(SWT.CR).toString(), "");
-						text = text.replaceAll(new Character(SWT.LF).toString(), "");
-						text = text.replaceAll(new Character((char)0).toString(), "");
+						text = text.replaceAll(new Character(SWT.CR).toString(), ""); //$NON-NLS-1$
+						text = text.replaceAll(new Character(SWT.LF).toString(), ""); //$NON-NLS-1$
+						text = text.replaceAll(new Character((char)0).toString(), ""); //$NON-NLS-1$
 						Event scannerEvent = new Event();
 						scannerEvent.text = selector.getText();
 						scannerEvent.widget = selector.getWidget();
@@ -69,7 +69,7 @@ public class MedicalControlFieldProvider extends DefaultControlFieldProvider imp
 		}
 		if (text != null) {
 			Query<Medical> query = new Query<Medical>(Medical.class);
-			query.add("EAN", "=", e.text);
+			query.add("EAN", "=", e.text); //$NON-NLS-1$
 			List<Medical> medicalList = query.execute();
 			if (medicalList.size() == 0) {
 				ScannerEvents.beep();

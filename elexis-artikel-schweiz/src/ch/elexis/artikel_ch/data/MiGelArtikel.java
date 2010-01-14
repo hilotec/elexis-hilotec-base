@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelArtikel.java 4921 2009-01-07 18:29:42Z rgw_ch $
+ *  $Id: MiGelArtikel.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -18,32 +18,32 @@ import ch.rgw.tools.StringTool;
 
 public class MiGelArtikel extends Artikel{
 	public MiGelArtikel(String code, String text, String unit, Money price){
-		create("MiGeL"+code);
+		create("MiGeL"+code); //$NON-NLS-1$
 		String shortname=StringTool.getFirstLine(text,120);
-		set(new String[]{"Name","Typ","SubID"},new String[]{shortname,"MiGeL",code});
-		setExt("FullText",text);
-		setExt("unit",unit==null? "-" : unit);
-		set("VK_Preis",price.getCentsAsString());
+		set(new String[]{"Name","Typ","SubID"},new String[]{shortname,"MiGeL",code}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		setExt("FullText",text); //$NON-NLS-1$
+		setExt("unit",unit==null? "-" : unit); //$NON-NLS-1$ //$NON-NLS-2$
+		set("VK_Preis",price.getCentsAsString()); //$NON-NLS-1$
 	}
 	@Override
 	protected String getConstraint() {
-		return "Typ='MiGeL'";
+		return "Typ='MiGeL'"; //$NON-NLS-1$
 	}
 	protected void setConstraint(){
-	    set("Typ","MiGeL");
+	    set("Typ","MiGeL"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override
 	public String getLabel() {
-		return getCode()+" "+get("Name");
+		return getCode()+" "+get("Name"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	@Override
 	public String getCode() {
-		return checkNull(get("SubID"));
+		return checkNull(get("SubID")); //$NON-NLS-1$
 	}
 	@Override
 	public String getCodeSystemName() {
-			return "MiGeL";
+			return "MiGeL"; //$NON-NLS-1$
 	}
 	public static MiGelArtikel load(String id){
 		return new MiGelArtikel(id);

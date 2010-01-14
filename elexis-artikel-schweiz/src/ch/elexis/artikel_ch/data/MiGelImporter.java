@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MiGelImporter.java 4921 2009-01-07 18:29:42Z rgw_ch $
+ * $Id: MiGelImporter.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -39,43 +39,43 @@ import ch.rgw.tools.StringTool;
 
 public class MiGelImporter extends ImporterPage
 {
-	private static final String SRC_ENCODING="iso-8859-1";
+	private static final String SRC_ENCODING="iso-8859-1"; //$NON-NLS-1$
 	boolean bDelete=false;
 	Button bClear;
 	String mode;
 	public MiGelImporter(){}
 	@Override
 	public String getTitle() {
-		return "MiGel";
+		return "MiGel"; //$NON-NLS-1$
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Bitte wählen Sie die Datei (CSV- oder Text-Format) aus, aus der die Artikel importiert werden sollen";
+		return Messages.MiGelImporter_PleaseSelectFile;
 	}
 
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
-		mode=" (Modus: Daten ergänzen/update)";
+		mode=Messages.MiGelImporter_ModeUpdateAdd;
 		if(bDelete==true){
-			PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='MiGeL'");
-			mode=" (Modus: Alles neu erstellen)";
+			PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='MiGeL'"); //$NON-NLS-1$
+			mode=Messages.MiGelImporter_ModeCreateNew;
 		}			
 		final String line=
-			"([0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9]) +L? +(.+)  +(.+)  +(.+)  +.+";
+			"([0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9]) +L? +(.+)  +(.+)  +(.+)  +.+"; //$NON-NLS-1$
 		try{
 			File file=new File(results[0]);
 			long l=file.length();
-			monitor.beginTask("MiGeL Import "+mode, (int)l/100);
-			if(file.getName().toLowerCase().endsWith("csv")){
+			monitor.beginTask("MiGeL Import "+mode, (int)l/100); //$NON-NLS-1$
+			if(file.getName().toLowerCase().endsWith("csv")){ //$NON-NLS-1$
 				return importCSV(file,monitor);
 			}else{
 			//long l=file.length();
-				InputStreamReader is=new InputStreamReader(new FileInputStream(file),"iso-8859-1");
+				InputStreamReader is=new InputStreamReader(new FileInputStream(file),"iso-8859-1"); //$NON-NLS-1$
 				BufferedReader br=new BufferedReader(is);
 				
 				String in;
-				monitor.subTask("MiGel - Import");
+				monitor.subTask("MiGel - Import"); //$NON-NLS-1$
 				Pattern pat=Pattern.compile(line);
 				//Query qbe=new Query(MiGelArtikel.class);
 				LineFeeder lf=new LineFeeder(br);
@@ -107,14 +107,14 @@ public class MiGelImporter extends ImporterPage
 		Composite ret=new ImporterPage.FileBasedImporter(parent,this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
 		bClear=new Button(parent,SWT.CHECK|SWT.WRAP);
-		bClear.setText("Alle Daten vorher löschen (empfehlenswert)");
+		bClear.setText(Messages.MiGelImporter_ClearAllData);
 		bClear.setSelection(true);
 		bClear.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		return ret;
 
 	}
 	class LineFeeder{
-		static final String codeline="[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9].+";
+		static final String codeline="[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9]\\.[0-9].+"; //$NON-NLS-1$
 		String prev;
 		BufferedReader br;
 		LineFeeder(final BufferedReader b) throws Exception{
@@ -147,13 +147,13 @@ public class MiGelImporter extends ImporterPage
 				br.close();
 				return ret;
 			}
-			while(!prev.matches(codeline) && !prev.startsWith(" ")){
-				if(ret.matches(".*- +[CHIM]?$")){
-					ret=ret.replaceFirst("- +[CHIM]?$",prev.trim());					
-				}else if(ret.matches(".* +[CHIM]$")){
-					ret=ret.replaceFirst("[CHIM]$",prev.trim());
+			while(!prev.matches(codeline) && !prev.startsWith(" ")){ //$NON-NLS-1$
+				if(ret.matches(".*- +[CHIM]?$")){ //$NON-NLS-1$
+					ret=ret.replaceFirst("- +[CHIM]?$",prev.trim());					 //$NON-NLS-1$
+				}else if(ret.matches(".* +[CHIM]$")){ //$NON-NLS-1$
+					ret=ret.replaceFirst("[CHIM]$",prev.trim()); //$NON-NLS-1$
 				}else{
-					ret+=" "+prev.trim();
+					ret+=" "+prev.trim(); //$NON-NLS-1$
 				}
 				prev=br.readLine();
 				if(prev==null){
@@ -175,7 +175,7 @@ public class MiGelImporter extends ImporterPage
 		InputStreamReader isr=new InputStreamReader(new FileInputStream(file),SRC_ENCODING);
 		CSVReader reader = new CSVReader(isr);
 	    String [] line;
-		monitor.subTask("MiGel einlesen");
+		monitor.subTask(Messages.MiGelImporter_ReadMigel);
 	    while ((line = reader.readNext()) != null) {
 	    	if(line.length<3){
 	    		continue;

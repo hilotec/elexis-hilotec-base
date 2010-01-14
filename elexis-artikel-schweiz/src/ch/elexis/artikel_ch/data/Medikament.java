@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Medikament.java 4946 2009-01-13 17:50:10Z rgw_ch $
+ *  $Id: Medikament.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -18,21 +18,21 @@ public class Medikament extends Artikel {
 	
 	@Override
 	protected String getConstraint(){
-		return "Typ='Medikament'";
+		return "Typ='Medikament'";  //$NON-NLS-1$
 	}
 	
 	protected void setConstraint(){
-		set("Typ", "Medikament");
+		set("Typ", "Medikament"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override
 	public String getCodeSystemName(){
-		return "Medikamente";
+		return Messages.Medikament_CodeSystemNameMedicaments;
 	}
 	
 	@Override
 	public String getLabel(){
-		return get("Name");
+		return get("Name"); //$NON-NLS-1$
 	}
 	
 	@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ArtikelFactory.java 3551 2008-01-17 12:51:34Z rgw_ch $
+ *  $Id: ArtikelFactory.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -26,14 +26,14 @@ public class ArtikelFactory extends PersistentObjectFactory {
 	@Override
 	public PersistentObject createFromString(String code) {
 	    try{
-	        String[] ci=code.split("::");
+	        String[] ci=code.split("::"); //$NON-NLS-1$
 	        // Workaround for compatibility with older package structure
-	        if(ci[0].startsWith("ch.elexis.data")){
+	        if(ci[0].startsWith("ch.elexis.data")){ //$NON-NLS-1$
 	        	int ix=ci[0].lastIndexOf('.');
-	        	ci[0]="ch.elexis.artikel_ch.data"+ci[0].substring(ix);
+	        	ci[0]="ch.elexis.artikel_ch.data"+ci[0].substring(ix); //$NON-NLS-1$
 	        }
 	        Class clazz=Class.forName(ci[0]);
-	        Method load=clazz.getMethod("load",new Class[]{String.class});
+	        Method load=clazz.getMethod("load",new Class[]{String.class}); //$NON-NLS-1$
 	        return  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
 	    }catch(Exception ex){
 	    	

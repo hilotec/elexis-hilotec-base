@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelDetailDisplay.java 4734 2008-12-04 21:00:25Z rgw_ch $
+ *  $Id: MiGelDetailDisplay.java 5932 2010-01-14 22:30:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -61,7 +61,7 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 			}
 			
 		});
-		ifPreis = new LabeledInputField(ret, "Preis, Einheit");
+		ifPreis = new LabeledInputField(ret, Messages.MiGelDetailDisplay_PriceUnit);
 		tLong = SWTHelper.createText(tk, ret, 4, SWT.READ_ONLY);
 		
 		/*
@@ -83,14 +83,14 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 			act = (MiGelArtikel) obj;
 			form.setText(act.getLabel());
 			ifName.setText(act.getInternalName());
-			ifPreis.setText(new Money(act.getVKPreis()).getAmountAsString() + " "
-				+ act.getExt("unit"));
-			tLong.setText(act.getExt("FullText"));
+			ifPreis.setText(new Money(act.getVKPreis()).getAmountAsString() + " " //$NON-NLS-1$
+				+ act.getExt("unit")); //$NON-NLS-1$
+			tLong.setText(act.getExt("FullText")); //$NON-NLS-1$
 		}
 	}
 	
 	public String getTitle(){
-		return "MiGeL";
+		return "MiGeL"; //$NON-NLS-1$
 	}
 	
 }
