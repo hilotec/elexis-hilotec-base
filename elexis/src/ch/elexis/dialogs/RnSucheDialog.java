@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnSucheDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: RnSucheDialog.java 5941 2010-01-17 14:47:05Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
