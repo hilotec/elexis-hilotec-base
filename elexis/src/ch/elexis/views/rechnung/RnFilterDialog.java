@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RnFilterDialog.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ * $Id: RnFilterDialog.java 5938 2010-01-17 14:31:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -84,19 +84,19 @@ public class RnFilterDialog extends TitleAreaDialog {
 		}
 		TimeTool tt = diRnVon.getDate();
 		if (tt != null) {
-			al.add("RnDatum >=" + tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
+			al.add("RnDatum >=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		tt = diRnBis.getDate();
 		if (tt != null) {
-			al.add("RnDatum <=" + tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
+			al.add("RnDatum <=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		tt = diStatVon.getDate();
 		if (tt != null) {
-			al.add("StatusDatum >=" + tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
+			al.add("StatusDatum >=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		tt = diStatBis.getDate();
 		if (tt != null) {
-			al.add("StatusDatum <=" + tt.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$
+			al.add("StatusDatum <=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		if (al.size() > 0) {
 			ret = al.toArray(new String[0]);
