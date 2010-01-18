@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,39 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: ApplicationActionBarAdvisor.java 5571 2009-07-23 14:19:41Z michael_imhof $
+ * 
+ * $Id: ApplicationActionBarAdvisor.java 5948 2010-01-18 17:59:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
 
+import static ch.elexis.actions.GlobalActions.perspectiveMenu;
+import static ch.elexis.actions.GlobalActions.resetPerspectiveAction;
+import static ch.elexis.actions.GlobalActions.savePerspectiveAction;
+import static ch.elexis.actions.GlobalActions.savePerspectiveAsAction;
+import static ch.elexis.actions.GlobalActions.savePerspectiveAsDefaultAction;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
-import org.eclipse.ui.internal.ActionSetContributionItem;
-import org.eclipse.ui.internal.PlaceholderFolderLayout;
 
 import ch.elexis.actions.GlobalActions;
-import static ch.elexis.actions.GlobalActions.*;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.rgw.tools.ExHandler;
@@ -198,7 +211,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	 * @author danlutz
 	 */
 	class OpenPerspectiveAction extends Action {
-		private IPerspectiveDescriptor perspectiveDescriptor;
+		private final IPerspectiveDescriptor perspectiveDescriptor;
 		
 		/**
 		 * Create a new action for opening a perspective
@@ -220,10 +233,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 				
 				setImageDescriptor(perspectiveDescriptor.getImageDescriptor());
 			}
-
+			
 			setToolTipText((StringTool.isNothing(name) ? perspectiveDescriptor.getLabel() : name)
 				+ Messages.ApplicationActionBarAdvisor_10);
-
+			
 			
 			this.perspectiveDescriptor = perspectiveDescriptor;
 		}
