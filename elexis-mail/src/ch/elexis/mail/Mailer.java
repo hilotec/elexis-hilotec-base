@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    R. Zweifel - SMTP-Authentifizierung
  *    
- *  $Id: Mailer.java 4458 2008-09-27 19:51:35Z rgw_ch $
+ *  $Id: Mailer.java 5953 2010-01-22 20:51:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.mail;
@@ -31,7 +31,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import ch.elexis.Hub;
-import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
