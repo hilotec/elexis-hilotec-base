@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PrinterPreferencePage.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ * $Id: PrinterPreferencePage.java 5960 2010-01-25 13:17:40Z tschaller $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -34,12 +34,13 @@ public class PrinterPreferencePage extends PreferencePage implements
 	private static final String PRINTERWITH=Messages.PrinterPreferencePage_PrinterWith;
 	private static final String TRAYFOR=Messages.PrinterPreferencePage_TrayFor;
 	private static final String LABELS=Messages.PrinterPreferencePage_Labels;
+	private static final String LABEL_ORIENTATION=Messages.PrinterPreferencePage_LabelOrientation;
 	private static final String PAPER_ESR=Messages.PrinterPreferencePage_PaperWithESR;
 	private static final String PAPER_PLAIN_A4=Messages.PrinterPreferencePage_PaperA4Plain;
 	private static final String PAPER_PLAIN_A5=Messages.PrinterPreferencePage_PaperA5Plain;
 	private static final String SHEETFEEDER=Messages.PrinterPreferencePage_SheetFeeder;
 	
-	Text tEtiketten,tEtikettenschacht,tA5,tA5Schacht,tA4ESR,tA4ESRSchacht,tA4,tA4Schacht;
+	Text tEtiketten,tEtikettenschacht,tEtikettenAusrichtung,tA5,tA5Schacht,tA4ESR,tA4ESRSchacht,tA4,tA4Schacht;
 	Text tEinzelblatt;
 	Text tEinzelblattSchacht;
 	Button bEtiketten;
@@ -63,6 +64,10 @@ public class PrinterPreferencePage extends PreferencePage implements
 		new Label(ret,SWT.NONE).setText(TRAYFOR+LABELS);
 		tEtikettenschacht=new Text(ret,SWT.BORDER);
 		tEtikettenschacht.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+		new Label(ret,SWT.NONE);
+		new Label(ret,SWT.NONE).setText(LABEL_ORIENTATION);
+		tEtikettenAusrichtung=new Text(ret,SWT.BORDER);
+		tEtikettenAusrichtung.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE);
 		new Label(ret, SWT.NONE);  // placeholder
 		cEtiketten = new Button(ret, SWT.CHECK);
@@ -124,6 +129,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 		
 		tEtiketten.setText(Hub.localCfg.get("Drucker/Etiketten/Name",StringTool.leer)); //$NON-NLS-1$
 		tEtikettenschacht.setText(Hub.localCfg.get("Drucker/Etiketten/Schacht",StringTool.leer)); //$NON-NLS-1$
+		tEtikettenAusrichtung.setText(Hub.localCfg.get("Drucker/Etiketten/Ausrichtung",StringTool.leer)); //$NON-NLS-1$
 		cEtiketten.setSelection(Hub.localCfg.get("Drucker/Etiketten/Choose", false)); //$NON-NLS-1$
 		setEtikettenSelection();
 		tA4ESR.setText(Hub.localCfg.get("Drucker/A4ESR/Name",StringTool.leer)); //$NON-NLS-1$
@@ -171,10 +177,12 @@ public class PrinterPreferencePage extends PreferencePage implements
 			tEtiketten.setText(StringTool.leer);
 			tEtiketten.setData(null);
 			tEtikettenschacht.setText(StringTool.leer);
+			tEtikettenAusrichtung.setText(StringTool.leer);
 		}
 		
 		tEtiketten.setEnabled(!selection);
 		tEtikettenschacht.setEnabled(!selection);
+		tEtikettenAusrichtung.setEnabled(!selection);
 		bEtiketten.setEnabled(!selection);
 	}
 	
@@ -185,6 +193,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 	protected void performApply() {
 		Hub.localCfg.set("Drucker/Etiketten/Name",tEtiketten.getText()); //$NON-NLS-1$
 		Hub.localCfg.set("Drucker/Etiketten/Schacht",tEtikettenschacht.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/Etiketten/Ausrichtung",tEtikettenAusrichtung.getText()); //$NON-NLS-1$
 		Object data = tEtiketten.getData();
 		if (data instanceof PrinterData) {
 			PrinterData pdata = (PrinterData) data;

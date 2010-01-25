@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +7,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: GlobalActions.java 5582 2009-07-28 16:27:48Z freakypenguin $
+ * $Id: GlobalActions.java 5960 2010-01-25 13:17:40Z tschaller $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -346,6 +345,15 @@ public class GlobalActions {
 				public void run(){
 					PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
 					if (pd != null) {
+						// 25.01.2010 patch tschaller: page orientation of printer driver is not handled correctly (we always get porttrait even when the printer settings have landscape stored)
+						Integer iOrientation = -1;
+						String sOrientation = Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
+						try{
+							iOrientation = Integer.parseInt(sOrientation);
+						}
+						catch(NumberFormatException ex){
+						}
+						if (iOrientation!=-1) pd.orientation = iOrientation;
 						Printer prn = new Printer(pd);
 						if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
 							GC gc = new GC(prn);
@@ -399,6 +407,15 @@ public class GlobalActions {
 				public void run(){
 					PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
 					if (pd != null) {
+						// 25.01.2010 patch tschaller: page orientation of printer driver is not handled correctly (we always get porttrait even when the printer settings have landscape stored)
+						Integer iOrientation = -1;
+						String sOrientation = Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
+						try{
+							iOrientation = Integer.parseInt(sOrientation);
+						}
+						catch(NumberFormatException ex){
+						}
+						if (iOrientation!=-1) pd.orientation = iOrientation;
 						Printer prn = new Printer(pd);
 						if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
 							GC gc = new GC(prn);
@@ -706,8 +723,19 @@ public class GlobalActions {
 	}
 	
 	protected void printAdr(final Kontakt k){
-		PrinterData pd = getPrinterData(Messages.getString("GlobalActions.printersticker")); //$NON-NLS-1$
+		// 25.01.2010 patch tschaller: there was always the printer selection dialog. With printEtikette it wasn't so I copied the hardcoded string from there
+		//PrinterData pd = getPrinterData(Messages.getString("GlobalActions.printersticker")); //$NON-NLS-1$
+		PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
 		if (pd != null) {
+			// 25.01.2010 patch tschaller: page orientation of printer driver is not handled correctly (we always get porttrait even when the printer settings have landscape stored)
+			Integer iOrientation = -1;
+			String sOrientation = Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
+			try{
+				iOrientation = Integer.parseInt(sOrientation);
+			}
+			catch(NumberFormatException ex){
+			}
+			if (iOrientation!=-1) pd.orientation = iOrientation;
 			Printer prn = new Printer(pd);
 			if (prn.startJob("Etikette drucken") == true) { //$NON-NLS-1$
 				GC gc = new GC(prn);

@@ -81,6 +81,8 @@ public class Messages extends NLS {
 
 	public static String PrinterPreferencePage_Labels;
 
+	public static String PrinterPreferencePage_LabelOrientation;
+
 	public static String PrinterPreferencePage_PaperA4Plain;
 
 	public static String PrinterPreferencePage_PaperA5Plain;
