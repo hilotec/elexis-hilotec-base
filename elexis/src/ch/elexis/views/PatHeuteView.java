@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PatHeuteView.java 5905 2009-12-26 17:29:29Z rgw_ch $
+ * $Id: PatHeuteView.java 5958 2010-01-25 10:28:33Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -404,14 +404,23 @@ ISaveablePart2, BackgroundJobListener {
 							fw.write(Messages.getString("PatHeuteView.csvHeader")); //$NON-NLS-1$
 							for (StatCounter st : sums) {
 								StringBuilder sb = new StringBuilder();
-								String code = st.v.getCode();
-								String text = st.v.getText();
+								String code = "unknown";
+								String text = "unknown";
+								if (st.v != null) {
+									code = st.v.getCode();
+									text = st.v.getText();
+								}
 								if (text == null) {
 									text = ""; //$NON-NLS-1$
 								} else {
 									text = text.replaceAll(";", ","); //$NON-NLS-1$ //$NON-NLS-2$
 								}
-								sb.append(st.v.getCodeSystemName()).append("; ").append( //$NON-NLS-1$
+								if(st.v!=null && st.v.getCodeSystemName()!=null){
+									sb.append(st.v.getCodeSystemName());
+								}else{
+									sb.append("Codesystem?");
+								}
+								sb.append("; ").append( //$NON-NLS-1$
 									code == null ? "" : code) //$NON-NLS-1$
 									.append("; ").append(text).append(";") //$NON-NLS-1$ //$NON-NLS-2$
 									.append(st.num).append(";").append( //$NON-NLS-1$
@@ -589,11 +598,23 @@ ISaveablePart2, BackgroundJobListener {
 		}
 		
 		public int compareTo(StatCounter o){
-			int vgroup = StringTool.compareWithNull(v.getCodeSystemName(), o.v.getCodeSystemName());
+			String v1 = null, v2 = null;
+			String vc1 = null, vc2 = null;
+			if (v != null) {
+				v1 = v.getCodeSystemName();
+				vc1 = v.getCode();
+			}
+			IVerrechenbar iv = o.v;
+			if (iv != null) {
+				v2 = iv.getCodeSystemName();
+				vc2 = iv.getCode();
+			}
+			int vgroup = StringTool.compareWithNull(v1, v2);
 			if (vgroup != 0) {
 				return vgroup;
 			}
-			int vCode = StringTool.compareWithNull(v.getCode(), o.v.getCode());
+			
+			int vCode = StringTool.compareWithNull(vc1, vc2);
 			if (vCode != 0) {
 				return vCode;
 			}
