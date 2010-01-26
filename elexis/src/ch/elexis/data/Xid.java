@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: Xid.java 5903 2009-12-25 07:25:08Z rgw_ch $
+ * 
+ * $Id: Xid.java 5966 2010-01-26 08:27:00Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -72,16 +72,16 @@ public class Xid extends PersistentObject {
 	 * Quality value for an ID that can be used as global identifier
 	 */
 	public static final int ASSIGNMENT_GLOBAL = 3;
-
+	
 	/**
 	 * Marker that the ID is a GUID (that is, guaranteed to exist only once
 	 * through time and space)
 	 */
 	public static final int QUALITY_GUID = 4;
-
+	
 	private static HashMap<String, XIDDomain> domains;
 	private static HashMap<String, String> domainMap;
-
+	
 	public static final String DOMAIN_ELEXIS = "www.elexis.ch/xid";
 	public static final String DOMAIN_AHV = "www.ahv.ch/xid";
 	public static final String DOMAIN_SWISS_PASSPORT = "www.xid.ch/id/passport/ch";
@@ -89,7 +89,7 @@ public class Xid extends PersistentObject {
 	public static final String DOMAIN_GERMAN_PASSPORT = "www.xid.ch/id/passport/de";
 	public final static String DOMAIN_EAN = "www.xid.ch/id/ean";
 	public final static String DOMAIN_OID = "www.xid.ch/id/oid";
-
+	
 	static {
 		addMapping(TABLENAME, TYPE, OBJECT, DOMAIN, ID_IN_DOMAIN, QUALITY);
 		domains = new HashMap<String, XIDDomain>();
@@ -97,15 +97,15 @@ public class Xid extends PersistentObject {
 		String storedDomains = Hub.globalCfg.get("LocalXIDDomains", null);
 		if (storedDomains == null) {
 			domains.put(DOMAIN_ELEXIS, new XIDDomain(DOMAIN_ELEXIS, "UUID",
-					ASSIGNMENT_LOCAL | QUALITY_GUID,
-					"ch.elexis.data.PersistentObject"));
+				ASSIGNMENT_LOCAL | QUALITY_GUID,
+			"ch.elexis.data.PersistentObject"));
 			domains.put(DOMAIN_AHV, new XIDDomain(DOMAIN_AHV, "AHV",
-					ASSIGNMENT_REGIONAL, "ch.elexis.data.Person"));
+				ASSIGNMENT_REGIONAL, "ch.elexis.data.Person"));
 			domains.put(DOMAIN_OID, new XIDDomain(DOMAIN_OID, "OID",
-					ASSIGNMENT_GLOBAL | QUALITY_GUID,
-					"ch.elexis.data.PersistentObject"));
+				ASSIGNMENT_GLOBAL | QUALITY_GUID,
+			"ch.elexis.data.PersistentObject"));
 			domains.put(DOMAIN_EAN, new XIDDomain(DOMAIN_EAN, "EAN",
-					ASSIGNMENT_REGIONAL, "ch.elexis.data.Kontakt"));
+				ASSIGNMENT_REGIONAL, "ch.elexis.data.Kontakt"));
 			storeDomains();
 		} else {
 			for (String dom : storedDomains.split(";")) {
@@ -122,7 +122,7 @@ public class Xid extends PersistentObject {
 					displayOptions = spl[3];
 				}
 				domains.put(spl[0], new XIDDomain(spl[0], simpleName, Integer
-						.parseInt(spl[1]), displayOptions));
+					.parseInt(spl[1]), displayOptions));
 				domainMap.put(simpleName, spl[0]);
 			}
 		}
@@ -135,11 +135,11 @@ public class Xid extends PersistentObject {
 			xd.addDisplayOption(Person.class);
 		}
 	}
-
+	
 	public static final String FLD_OBJECT = "object";
 	public static final String FLD_DOMAIN_ID = "domain_id";
 	public static final String FLD_DOMAIN = "domain";
-
+	
 	/**
 	 * create a new XID. Does nothing if identical XID already exists.
 	 * 
@@ -155,13 +155,18 @@ public class Xid extends PersistentObject {
 	 * @throws XIDException
 	 *             if a XID with same domain and domain_id but different object
 	 *             or quality already exists.
+	 *             if the domain was not rgeistered
 	 */
 	public Xid(final PersistentObject o, final String domain,
-			final String domain_id) throws XIDException {
-		Integer val = domains.get(domain).quality;
+		final String domain_id) throws XIDException {
+		XIDDomain dom=domains.get(domain);
+		if(dom==null){
+			throw new XIDException("Domain not registered: "+domain);
+		}
+		Integer val = dom.quality;
 		if (val == null) {
 			throw new XIDException("XID Domain " + domain
-					+ " is not registered");
+				+ " is not registered");
 		}
 		if (val > 9) {
 			val = (val & 7) + 4;
@@ -172,19 +177,19 @@ public class Xid extends PersistentObject {
 				return;
 			}
 			throw new XIDException("XID " + domain + ":" + domain_id
-					+ " is not unique");
+				+ " is not unique");
 		}
 		xid = findXID(o, domain);
 		if (xid != null) {
 			throw new XIDException("XID " + domain + ": " + domain_id
-					+ " was already assigned");
+				+ " was already assigned");
 		}
 		create(null);
 		set(new String[] { TYPE, OBJECT, DOMAIN, ID_IN_DOMAIN, QUALITY },
-				new String[] { o.getClass().getName(), o.getId(), domain,
-						domain_id, Integer.toString(val) });
+			new String[] { o.getClass().getName(), o.getId(), domain,
+			domain_id, Integer.toString(val) });
 	}
-
+	
 	/**
 	 * Get the quality of this xid
 	 * 
@@ -193,7 +198,7 @@ public class Xid extends PersistentObject {
 	public int getQuality() {
 		return checkZero(get(QUALITY));
 	}
-
+	
 	/**
 	 * Tell whether this XID is a GUID
 	 * 
@@ -202,7 +207,7 @@ public class Xid extends PersistentObject {
 	public boolean isGUID() {
 		return (getQuality() & QUALITY_GUID) != 0;
 	}
-
+	
 	/**
 	 * get the Domain this Xid is from
 	 * 
@@ -211,7 +216,7 @@ public class Xid extends PersistentObject {
 	public String getDomain() {
 		return get(DOMAIN);
 	}
-
+	
 	/**
 	 * get the id of this Xid in its domain
 	 * 
@@ -220,7 +225,7 @@ public class Xid extends PersistentObject {
 	public String getDomainId() {
 		return get(ID_IN_DOMAIN);
 	}
-
+	
 	/**
 	 * Get the object that is identified with this XID
 	 * 
@@ -228,10 +233,10 @@ public class Xid extends PersistentObject {
 	 */
 	public PersistentObject getObject() {
 		PersistentObject po = Hub.poFactory.createFromString(get(TYPE) + "::"
-				+ get(OBJECT));
+			+ get(OBJECT));
 		return po;
 	}
-
+	
 	@Override
 	public String getLabel() {
 		PersistentObject po = getObject();
@@ -241,14 +246,14 @@ public class Xid extends PersistentObject {
 		}
 		StringBuilder ret = new StringBuilder();
 		ret.append(text).append(": ").append(get(DOMAIN)).append("->").append(
-				get(ID_IN_DOMAIN));
+			get(ID_IN_DOMAIN));
 		return ret.toString();
 	}
-
+	
 	public static Xid load(final String id) {
 		return new Xid(id);
 	}
-
+	
 	/**
 	 * Find a XID from a domain and a domain_id
 	 * 
@@ -274,7 +279,7 @@ public class Xid extends PersistentObject {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Find a PersistentObject from a domain and a domain_id
 	 * 
@@ -286,14 +291,14 @@ public class Xid extends PersistentObject {
 	 *         null if no such Object was found
 	 */
 	public static PersistentObject findObject(final String domain,
-			final String id) {
+		final String id) {
 		Xid xid = findXID(domain, id);
 		if (xid != null) {
 			return xid.getObject();
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Find the Xid of a given domain for the given Object
 	 * 
@@ -318,7 +323,7 @@ public class Xid extends PersistentObject {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Register a new domain for use with our XID System locally (this will not
 	 * affect the central XID registry at www.xid.ch)
@@ -330,18 +335,18 @@ public class Xid extends PersistentObject {
 	 * @return true on success, false if that domain could not be registered
 	 */
 	public static boolean localRegisterXIDDomain(final String domain,
-			String simpleName, final int quality) {
+		String simpleName, final int quality) {
 		if (domains.containsKey(domain)) {
 			log
-					.log("XID Domain " + domain + " bereits registriert",
-							Log.ERRORS);
+			.log("XID Domain " + domain + " bereits registriert",
+				Log.ERRORS);
 		} else {
 			if (domain.matches(".*[;#].*")) {
 				log.log("XID Domain " + domain + " ungültig", Log.ERRORS);
 			} else {
 				domains.put(domain, new XIDDomain(domain,
-						simpleName == null ? "" : simpleName, quality,
-						"Kontakt"));
+					simpleName == null ? "" : simpleName, quality,
+				"Kontakt"));
 				if (simpleName != null) {
 					domainMap.put(simpleName, domain);
 				}
@@ -351,7 +356,7 @@ public class Xid extends PersistentObject {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Register a local xid domain if it does not exist. Does nothing if a
 	 * domain with the given domain name exists already
@@ -365,13 +370,13 @@ public class Xid extends PersistentObject {
 	 * @return true on success
 	 */
 	public static boolean localRegisterXIDDomainIfNotExists(
-			final String domain, String simpleName, final int quality) {
+		final String domain, String simpleName, final int quality) {
 		if (domains.get(domain) != null) {
 			return true;
 		}
 		return localRegisterXIDDomain(domain, simpleName, quality);
 	}
-
+	
 	/**
 	 * Get the ID quality of an Object of a given domain
 	 * 
@@ -387,7 +392,7 @@ public class Xid extends PersistentObject {
 		}
 		return xd.getQuality();
 	}
-
+	
 	public static String getSimpleNameForXIDDomain(final String domain) {
 		XIDDomain xd = domains.get(domain);
 		if (xd == null) {
@@ -395,7 +400,7 @@ public class Xid extends PersistentObject {
 		}
 		return xd.simple_name;
 	}
-
+	
 	public static XIDDomain getDomain(String name) {
 		String dom = domainMap.get(name);
 		if (dom != null) {
@@ -403,37 +408,37 @@ public class Xid extends PersistentObject {
 		}
 		return domains.get(name);
 	}
-
+	
 	protected Xid(final String id) {
 		super(id);
 	}
-
+	
 	protected Xid() {
 	}
-
+	
 	@Override
 	protected String getTableName() {
 		return TABLENAME;
 	}
-
+	
 	@SuppressWarnings("serial")
 	public static class XIDException extends Exception {
 		public XIDException(final String reason) {
 			super(reason);
 		}
 	}
-
+	
 	private static void storeDomains() {
 		StringBuilder sb = new StringBuilder();
 		for (String k : domains.keySet()) {
 			XIDDomain xd = domains.get(k);
 			sb.append(k).append("#").append(xd.getQuality()).append("#")
-					.append(xd.getSimpleName()).append("#").append(
-							xd.getDisplayOptions()).append(";");
+			.append(xd.getSimpleName()).append("#").append(
+				xd.getDisplayOptions()).append(";");
 		}
 		Hub.globalCfg.set("LocalXIDDomains", sb.toString());
 	}
-
+	
 	/**
 	 * return a list of all known domains
 	 * 
@@ -442,16 +447,16 @@ public class Xid extends PersistentObject {
 	public static Set<String> getXIDDomains() {
 		return domains.keySet();
 	}
-
+	
 	public static class XIDDomain {
 		String domain_name;
 		String simple_name;
 		int quality;
 		ArrayList<Class<? extends PersistentObject>> displayOptions = new ArrayList<Class<? extends PersistentObject>>();
-
+		
 		@SuppressWarnings("unchecked")
 		public XIDDomain(String dname, String simplename, int quality,
-				String options) {
+			String options) {
 			domain_name = dname;
 			simple_name = simplename;
 			this.quality = quality;
@@ -463,40 +468,40 @@ public class Xid extends PersistentObject {
 				}
 			}
 		}
-
+		
 		public String getSimpleName() {
 			return simple_name;
 		}
-
+		
 		public void setSimpleName(String simple_name) {
 			this.simple_name = simple_name;
 			storeDomains();
 		}
-
+		
 		public String getDomainName() {
 			return domain_name;
 		}
-
+		
 		public int getQuality() {
 			return quality;
 		}
-
+		
 		public void addDisplayOption(Class<? extends PersistentObject> clazz) {
 			if (!displayOptions.contains(clazz)) {
 				displayOptions.add(clazz);
 				storeDomains();
 			}
 		}
-
+		
 		public void removeDisplayOption(Class<? extends PersistentObject> clazz) {
 			displayOptions.remove(clazz);
 			storeDomains();
 		}
-
+		
 		public boolean isDisplayedFor(Class<? extends PersistentObject> clazz) {
 			return displayOptions.contains(clazz);
 		}
-
+		
 		String getDisplayOptions() {
 			StringBuilder r = new StringBuilder();
 			for (Class<? extends PersistentObject> clazz : displayOptions) {
