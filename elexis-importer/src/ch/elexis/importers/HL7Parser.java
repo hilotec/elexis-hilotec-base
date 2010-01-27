@@ -1,5 +1,5 @@
 /**
- * (c) 2007-2008 by G. Weirich
+ * (c) 2007-2010 by G. Weirich
  * All rights reserved
  * $Id: HL7.java 4431 2008-09-23 13:55:57Z rgw_ch $
  */
@@ -8,10 +8,9 @@ package ch.elexis.importers;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.LinkedList;
 import java.util.List;
 
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
@@ -27,28 +26,28 @@ public class HL7Parser {
 	private static final String COMMENT_NAME = "Kommentar";
 	private static final String COMMENT_CODE = "kommentar";
 	private static final String COMMENT_GROUP = "00 Kommentar";
-	
+
 	public String myLab = "?";
-	
-	public HL7Parser(String mylab){
+
+	public HL7Parser(String mylab) {
 		myLab = mylab;
 	}
-	
-	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound){
+
+	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound) {
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
-			return new Result<Object>(Result.SEVERITY.ERROR, 1, "Lab not found", hl7.getFilename(),
-				true);
+			return new Result<Object>(Result.SEVERITY.ERROR, 1,
+					"Lab not found", hl7.getFilename(), true);
 		}
 		final Kontakt labor = res.get();
 		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
 		if (!r2.isOK()) {
 			return r2;
 		}
-		Patient pat = (Patient)r2.get();
-		
+		Patient pat = (Patient) r2.get();
+
 		HL7.OBR obr = hl7.firstOBR();
-		
+
 		int nummer = 0;
 		String dat = new TimeTool().toString(TimeTool.DATE_GER);
 		while (obr != null) {
@@ -67,10 +66,10 @@ public class HL7Parser {
 					if (obx.isFormattedText() || obx.isPlainText()) {
 						typ = LabItem.typ.TEXT;
 					}
-					li =
-						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(), obx
-							.getRefRange(), obx.getUnits(), typ, "Z Automatisch_" + dat, Integer
-							.toString(nummer++));
+					li = new LabItem(obx.getItemCode(), itemname, labor, obx
+							.getRefRange(), obx.getRefRange(), obx.getUnits(),
+							typ, "Z Automatisch_" + dat, Integer
+									.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
@@ -82,23 +81,24 @@ public class HL7Parser {
 				List<LabResult> qrr = qr.execute();
 				if (qrr.size() != 0) {
 					LabResult lrr = qrr.get(0);
-					
-					if (!SWTHelper.askYesNo("Laborwert wurde schon importiert: " + pat.getLabel(),
-						lrr.getLabel()+" Überschreiben?")) {
+
+					if (!SWTHelper.askYesNo(
+							"Laborwert wurde schon importiert: "
+									+ pat.getLabel(), lrr.getLabel()
+									+ " Überschreiben?")) {
 						obx = obr.nextOBX(obx);
 						continue;
 					}
 				}
 				if (obx.isFormattedText() || (obx.isPlainText())) {
-					lr =
-						new LabResult(pat, obr.getDate(), li, "text", obx.getResultValue() + "\n"
-							+ obx.getComment());
+					lr = new LabResult(pat, obr.getDate(), li, "text", obx
+							.getResultValue()
+							+ "\n" + obx.getComment());
 				} else {
-					lr =
-						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
-							.getComment());
+					lr = new LabResult(pat, obr.getDate(), li, obx
+							.getResultValue(), obx.getComment());
 				}
-				
+
 				if (obx.isPathologic()) {
 					lr.setFlag(LabResult.PATHOLOGIC, true);
 				}
@@ -106,15 +106,15 @@ public class HL7Parser {
 			}
 			obr = obr.nextOBR(obr);
 		}
-		
+
 		// add comments as a LabResult
-		
+
 		String comments = hl7.getComments();
 		if (!StringTool.isNothing(comments)) {
 			obr = hl7.firstOBR();
 			if (obr != null) {
 				TimeTool commentsDate = obr.getDate();
-				
+
 				// find LabItem
 				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
 				qbe.add("LaborID", "=", labor.getId());
@@ -125,13 +125,12 @@ public class HL7Parser {
 				if (list.size() < 1) {
 					// LabItem doesn't yet exist
 					LabItem.typ typ = LabItem.typ.TEXT;
-					li =
-						new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "", "", typ,
-							COMMENT_GROUP, Integer.toString(nummer++));
+					li = new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "",
+							"", typ, COMMENT_GROUP, Integer.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
-				
+
 				// add LabResult
 				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId());
@@ -143,22 +142,23 @@ public class HL7Parser {
 				}
 			}
 		}
-		
+
 		return new Result<Object>("OK");
 	}
-	
+
 	/**
-	 * Import the given HL7 file. Optionally, move the file into the given archive directory
+	 * Import the given HL7 file. Optionally, move the file into the given
+	 * archive directory
 	 * 
 	 * @param file
 	 *            the file to be imported (full path)
 	 * @param archiveDir
-	 *            a directory where the file should be moved to on success, or null if it should not
-	 *            be moved.
+	 *            a directory where the file should be moved to on success, or
+	 *            null if it should not be moved.
 	 * @return the result as type Result
 	 */
 	public Result<?> importFile(final File file, final File archiveDir,
-		boolean bCreatePatientIfNotExists){
+			boolean bCreatePatientIfNotExists) {
 		HL7 hl7 = new HL7("Labor " + myLab, myLab);
 		Result<Object> r = hl7.load(file.getAbsolutePath());
 		if (r.isOK()) {
@@ -170,54 +170,60 @@ public class HL7Parser {
 						if (file.exists() && file.isFile() && file.canRead()) {
 							File newFile = new File(archiveDir, file.getName());
 							if (!file.renameTo(newFile)) {
-								SWTHelper.showError("Fehler beim Archivieren", "Die Datei "
-									+ file.getAbsolutePath()
-									+ " konnte nicht ins Archiv verschoben werden.");
+								SWTHelper
+										.showError(
+												"Fehler beim Archivieren",
+												"Die Datei "
+														+ file
+																.getAbsolutePath()
+														+ " konnte nicht ins Archiv verschoben werden.");
 							}
 						}
 					}
 				}
-			}else{
+			} else {
 				ResultAdapter.displayResult(ret, "Fehler beim Einlesen");
 			}
-			
-			GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+			ElexisEventDispatcher.reload(LabItem.class);
 			return ret;
 		}
 		return r;
-		
+
 	}
-	
-	public void importFromDir(final File dir, final File archiveDir, Result<?> res, boolean bCreatePatientIfNotExists){
-		File[] files=dir.listFiles(new FileFilter(){
+
+	public void importFromDir(final File dir, final File archiveDir,
+			Result<?> res, boolean bCreatePatientIfNotExists) {
+		File[] files = dir.listFiles(new FileFilter() {
 
 			public boolean accept(File pathname) {
-				if(pathname.isDirectory()){
-					if(!pathname.getName().equalsIgnoreCase(archiveDir.getName())){
+				if (pathname.isDirectory()) {
+					if (!pathname.getName().equalsIgnoreCase(
+							archiveDir.getName())) {
 						return true;
 					}
-				}else{
-					if(pathname.getName().toLowerCase().endsWith(".hl7")){
+				} else {
+					if (pathname.getName().toLowerCase().endsWith(".hl7")) {
 						return true;
 					}
 				}
 				return false;
-			}});
-		for(File file:files){
-			if(file.isDirectory()){
-				importFromDir(file,archiveDir,res,bCreatePatientIfNotExists);
-			}else{
-				Result<?> r=importFile(file, archiveDir, bCreatePatientIfNotExists);
-				if(res==null){
-					res=r;
-				}else{
-					res.add(r.getSeverity(),1,"",null,true);
+			}
+		});
+		for (File file : files) {
+			if (file.isDirectory()) {
+				importFromDir(file, archiveDir, res, bCreatePatientIfNotExists);
+			} else {
+				Result<?> r = importFile(file, archiveDir,
+						bCreatePatientIfNotExists);
+				if (res == null) {
+					res = r;
+				} else {
+					res.add(r.getSeverity(), 1, "", null, true);
 				}
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Equivalent to importFile(new File(file), null)
 	 * 
@@ -225,7 +231,8 @@ public class HL7Parser {
 	 *            the file to be imported (full path)
 	 * @return
 	 */
-	public Result<?> importFile(final String filepath, boolean bCreatePatientIfNotExists){
+	public Result<?> importFile(final String filepath,
+			boolean bCreatePatientIfNotExists) {
 		return importFile(new File(filepath), null, bCreatePatientIfNotExists);
 	}
 }
