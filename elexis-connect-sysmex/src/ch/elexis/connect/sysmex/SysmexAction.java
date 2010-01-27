@@ -13,7 +13,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.connect.sysmex.packages.AbstractData;
 import ch.elexis.connect.sysmex.packages.KX21Data;
 import ch.elexis.connect.sysmex.packages.KX21NData;
@@ -29,7 +29,7 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 
 public class SysmexAction extends Action implements ComPortListener {
-
+	
 	AbstractConnection _ctrl;
 	Labor _myLab;
 	Logger _rs232log;
@@ -37,26 +37,26 @@ public class SysmexAction extends Action implements ComPortListener {
 	Thread msgDialogThread;
 	Patient selectedPatient;
 	boolean background = false;
-
+	
 	private ShutdownThread shutdownThread = null;
-
+	
 	// Declare filename to the log for test only!! for production must be null!
-	String simulate = null; //"C:\\tmp\\sysmex.log"; 
-
+	String simulate = null; // "C:\\tmp\\sysmex.log";
+	
 	private class ShutdownThread extends Thread {
 		private boolean shouldShutdown = false;
-
-		public void startSequence() {
+		
+		public void startSequence(){
 			_elexislog.log("Start sysmex shutdown sequence", Log.DEBUGMSG);
 			shouldShutdown = true;
 		}
-
-		public void stopSequence() {
+		
+		public void stopSequence(){
 			_elexislog.log("Stop sysmex shutdown sequence", Log.DEBUGMSG);
 			shouldShutdown = false;
 		}
-
-		public void run() {
+		
+		public void run(){
 			try {
 				while (true) {
 					_elexislog.log("Waiting for sysmex shutdown..", Log.DEBUGMSG);
@@ -66,7 +66,7 @@ public class SysmexAction extends Action implements ComPortListener {
 					_elexislog.log("Sysmex shutdown sequence started (5 sec)..", Log.DEBUGMSG);
 					Thread.sleep(5000);
 					_elexislog.log("Sysmex shutdown sequence over. Should shutdown sysmex="
-							+ shouldShutdown, Log.DEBUGMSG);
+						+ shouldShutdown, Log.DEBUGMSG);
 					if (shouldShutdown) {
 						_elexislog.log("Shutdown", Log.INFOS); //$NON-NLS-1$
 						close();
@@ -77,34 +77,37 @@ public class SysmexAction extends Action implements ComPortListener {
 			}
 		}
 	};
-
-	public SysmexAction() {
+	
+	public SysmexAction(){
 		super(Messages.getString("SysmexAction.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
 		setToolTipText(Messages.getString("SysmexAction.ToolTip")); //$NON-NLS-1$
-		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.sysmex", "icons/sysmex.png")); //$NON-NLS-1$ //$NON-NLS-2$
+		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+			"ch.elexis.connect.sysmex", "icons/sysmex.png")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
+	
 	/**
 	 * Serielle Verbindung wird initialisiert
 	 */
-	private void initConnection() {
+	private void initConnection(){
 		if (_ctrl != null && _ctrl.isOpen()) {
 			_ctrl.close();
 		}
-		_ctrl = new SysmexConnection(Messages.getString("SysmexAction.ConnectionName"), //$NON-NLS-1$
-		Hub.localCfg.get(Preferences.PORT, Messages.getString("SysmexAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
-		Preferences.PARAMS, Messages.getString("SysmexAction.DefaultParams")), //$NON-NLS-1$
-		this);
+		_ctrl =
+			new SysmexConnection(
+				Messages.getString("SysmexAction.ConnectionName"), //$NON-NLS-1$
+				Hub.localCfg.get(Preferences.PORT, Messages.getString("SysmexAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
+					Preferences.PARAMS, Messages.getString("SysmexAction.DefaultParams")), //$NON-NLS-1$
+					this);
 	}
-
-	private void initPreferences() {
+	
+	private void initPreferences(){
 		if (Hub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				_rs232log = new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
-						+ File.separator + "sysmex.log"); //$NON-NLS-1$
+					+ File.separator + "sysmex.log"); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
 				SWTHelper.showError(Messages.getString("SysmexAction.LogError.Title"), //$NON-NLS-1$
-				Messages.getString("SysmexAction.LogError.Text")); //$NON-NLS-1$
+					Messages.getString("SysmexAction.LogError.Text")); //$NON-NLS-1$
 				_rs232log = new Logger();
 			}
 		} else {
@@ -113,31 +116,36 @@ public class SysmexAction extends Action implements ComPortListener {
 		background = Hub.localCfg.get(Preferences.BACKGROUND, "n") //$NON-NLS-1$
 		.equalsIgnoreCase("y"); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public void run() {
+	public void run(){
 		if (isChecked()) {
 			initPreferences();
 			if (simulate == null) {
 				initConnection();
 				String msg = _ctrl.connect();
 				if (msg == null) {
-					String timeoutStr = Hub.localCfg.get(Preferences.TIMEOUT, Messages.getString("SysmexAction.DefaultTimeout")); //$NON-NLS-1$
+					String timeoutStr =
+						Hub.localCfg.get(Preferences.TIMEOUT, Messages
+							.getString("SysmexAction.DefaultTimeout")); //$NON-NLS-1$
 					int timeout = 20;
 					try {
 						timeout = Integer.parseInt(timeoutStr);
 					} catch (NumberFormatException e) {
 						// Do nothing. Use default value
 					}
-					_ctrl.awaitFrame(Desk.getTopShell(), Messages.getString("SysmexAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
+					_ctrl
+					.awaitFrame(
+						Desk.getTopShell(),
+						Messages.getString("SysmexAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
 					SWTHelper.showError(Messages.getString("SysmexAction.RS232.Error.Title"), //$NON-NLS-1$
-					msg);
+						msg);
 				}
 			} else {
-				SWTHelper.showInfo("Simulating!!!", simulate); //$NON-NLS-2$
+				SWTHelper.showInfo("Simulating!!!", simulate);
 				// test only
 				FileInputStream inputStream = null;
 				try {
@@ -180,47 +188,49 @@ public class SysmexAction extends Action implements ComPortListener {
 		}
 		setChecked(false);
 	}
-
+	
 	/**
 	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
 	 */
-	private static void showError(final String title, final String message) {
+	private static void showError(final String title, final String message){
 		Desk.getDisplay().asyncExec(new Runnable() {
-
-			public void run() {
+			
+			public void run(){
 				Shell shell = Desk.getTopShell();
 				MessageDialog.openError(shell, title, message);
 			}
 		});
 	}
-
+	
 	/**
 	 * Unterbruche wird von serieller Schnittstelle geschickt.
 	 */
-	public void gotBreak(final AbstractConnection connection) {
+	public void gotBreak(final AbstractConnection connection){
 		connection.close();
 		setChecked(false);
 		_elexislog.log("Break", Log.INFOS); //$NON-NLS-1$
 		SWTHelper.showError(Messages.getString("SysmexAction.RS232.Break.Title"), Messages //$NON-NLS-1$
-		.getString("SysmexAction.RS232.Break.Text")); //$NON-NLS-1$
+			.getString("SysmexAction.RS232.Break.Text")); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Einzelne Probe wird verarbeitet
 	 * 
 	 * @param probe
 	 */
-	private void processProbe(final AbstractData probe) {
+	private void processProbe(final AbstractData probe){
 		Desk.getDisplay().syncExec(new Runnable() {
-
-			public void run() {
-				selectedPatient = GlobalEvents.getSelectedPatient();
+			
+			public void run(){
+				selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 				Desk.getDisplay().syncExec(new Runnable() {
-					public void run() {
+					public void run(){
 						// TODO: Filter vorname/name in KontaktSelektor
 						// einbauen
-						KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages.getString("SysmexAction.Patient.Title"), Messages //$NON-NLS-1$
-						.getString("SysmexAction.Patient.Text")); //$NON-NLS-1$
+						KontaktSelektor ksl =
+							new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
+								.getString("SysmexAction.Patient.Title"), Messages //$NON-NLS-1$
+								.getString("SysmexAction.Patient.Text")); //$NON-NLS-1$
 						ksl.create();
 						ksl.getShell().setText(Messages.getString("SysmexAction.Patient.Title")); //$NON-NLS-1$
 						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
@@ -228,37 +238,38 @@ public class SysmexAction extends Action implements ComPortListener {
 						} else {
 							selectedPatient = null;
 						}
-
+						
 					}
 				});
 				if (selectedPatient != null) {
 					try {
 						probe.write(selectedPatient);
 					} catch (PackageException e) {
-						showError(Messages.getString("SysmexAction.ProbeError.Title"), e.getMessage()); //$NON-NLS-1$
+						showError(
+							Messages.getString("SysmexAction.ProbeError.Title"), e.getMessage()); //$NON-NLS-1$
 					}
 				} else {
 					showError(Messages.getString("SysmexAction.Patient.Title"), //$NON-NLS-1$
-					Messages.getString("SysmexAction.NoPatientMsg")); //$NON-NLS-1$
+						Messages.getString("SysmexAction.NoPatientMsg")); //$NON-NLS-1$
 				}
 			}
 		});
 	}
-
+	
 	/**
 	 * Daten werden von der Seriellen Schnittstelle geliefert
 	 */
-	public void gotData(final AbstractConnection connection, final byte[] data) {
+	public void gotData(final AbstractConnection connection, final byte[] data){
 		stopShutdownSequence();
-
+		
 		String content = new String(data);
 		if (connection != null) {
 			_rs232log.logSTX();
 			_rs232log.log(content);
 		}
-
+		
 		AbstractData analysisData = null;
-		String model = (String) Hub.localCfg.get(Preferences.MODEL, Preferences.MODEL_KX21);
+		String model = Hub.localCfg.get(Preferences.MODEL, Preferences.MODEL_KX21);
 		if (Preferences.MODEL_KX21N.equals(model)) {
 			analysisData = new KX21NData();
 		} else if (Preferences.MODEL_POCH.equals(model)) {
@@ -266,34 +277,34 @@ public class SysmexAction extends Action implements ComPortListener {
 		} else {
 			analysisData = new KX21Data();
 		}
-
+		
 		if (content.length() == analysisData.getSize()) {
 			analysisData.parse(content);
 			processProbe(analysisData);
 		} else {
 			showError(Messages.getString("SysmexAction.ErrorTitle"), //$NON-NLS-1$
-			Messages.getString("SysmexAction.WrongDataFormat")); //$NON-NLS-1$
-
+				Messages.getString("SysmexAction.WrongDataFormat")); //$NON-NLS-1$
+			
 		}
-
+		
 		if (connection != null) {
 			_rs232log.logETX();
 		}
-		GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
-
+		ElexisEventDispatcher.reload(LabItem.class);
+		
 		boolean background = Hub.localCfg.get(Preferences.BACKGROUND, "n").equalsIgnoreCase("y");
 		if (!background) {
 			startShutdownSequence();
 		}
 	}
-
-	private void stopShutdownSequence() {
+	
+	private void stopShutdownSequence(){
 		if (shutdownThread != null) {
 			shutdownThread.stopSequence();
 		}
 	}
-
-	private void startShutdownSequence() {
+	
+	private void startShutdownSequence(){
 		if (shutdownThread == null) {
 			shutdownThread = new ShutdownThread();
 			shutdownThread.setPriority(Thread.MIN_PRIORITY);
@@ -301,8 +312,8 @@ public class SysmexAction extends Action implements ComPortListener {
 		}
 		shutdownThread.startSequence();
 	}
-
-	private void close() {
+	
+	private void close(){
 		if (shutdownThread != null) {
 			shutdownThread.interrupt();
 			shutdownThread = null;
@@ -310,30 +321,30 @@ public class SysmexAction extends Action implements ComPortListener {
 		_ctrl.close();
 		setChecked(false);
 	}
-
+	
 	/**
 	 * Verbindung zu serieller Schnittstelle wurde getrennt
 	 */
-	public void closed() {
+	public void closed(){
 		_elexislog.log("Closed", Log.INFOS); //$NON-NLS-1$
 		close();
 	}
-
+	
 	/**
 	 * Verbindung zu serieller Schnittstelle wurde vom Benutzer abgebrochen
 	 */
-	public void cancelled() {
+	public void cancelled(){
 		_elexislog.log("Cancelled", Log.INFOS); //$NON-NLS-1$
 		close();
 	}
-
+	
 	/**
 	 * Verbindung zu serieller Schnittstelle hat timeout erreicht.
 	 */
-	public void timeout() {
+	public void timeout(){
 		_elexislog.log("Timeout", Log.INFOS); //$NON-NLS-1$
 		SWTHelper.showError(Messages.getString("SysmexAction.RS232.Timeout.Title"), //$NON-NLS-1$
-		Messages.getString("SysmexAction.RS232.Timeout.Text")); //$NON-NLS-1$
+			Messages.getString("SysmexAction.RS232.Timeout.Text")); //$NON-NLS-1$
 		close();
 	}
 }
