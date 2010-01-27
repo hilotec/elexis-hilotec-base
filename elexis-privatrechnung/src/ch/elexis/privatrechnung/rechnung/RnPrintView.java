@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: RnPrintView.java 5548 2009-07-11 21:29:11Z tschaller $
+ * 
+ * $Id: RnPrintView.java 5973 2010-01-27 17:36:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.banking.ESR;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -49,7 +49,7 @@ public class RnPrintView extends ViewPart {
 		tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback() {
 			
 			public void save(){
-			// we don't save
+				// we don't save
 			}
 			
 			public boolean saveAs(){
@@ -61,8 +61,8 @@ public class RnPrintView extends ViewPart {
 	
 	@Override
 	public void setFocus(){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class RnPrintView extends ViewPart {
 		
 		Result<Rechnung> ret = new Result<Rechnung>();
 		fall = rn.getFall();
-		GlobalEvents.getInstance().fireSelectionEvent(fall);
+		ElexisEventDispatcher.fireSelectionEvent(fall);
 		Kontakt adressat = fall.getGarant();// .getRequiredContact("Rechnungsempfänger");
 		if (!adressat.isValid()) {
 			adressat = fall.getPatient();
@@ -125,7 +125,7 @@ public class RnPrintView extends ViewPart {
 			tc.getPlugin().insertText(
 				pos,
 				"____________________________________________________________________\nTotal:\t\t"
-					+ sum.getAmountAsString(), SWT.LEFT);
+				+ sum.getAmountAsString(), SWT.LEFT);
 		String toPrinter = Hub.localCfg.get("Drucker/A4/Name", null);
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());
