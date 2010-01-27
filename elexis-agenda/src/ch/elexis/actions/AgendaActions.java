@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  *    
- *  $Id: AgendaActions.java 5302 2009-05-16 08:51:07Z rgw_ch $
+ *  $Id: AgendaActions.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -32,99 +32,109 @@ import ch.elexis.dialogs.TerminStatusDialog;
 
 /**
  * Some common actions for the agenda
+ * 
  * @author gerry
- *
+ * 
  */
 public class AgendaActions {
-	
+
 	/** modify an appointment */
-	public static IAction changeTerminStatusAction; 
+	public static IAction changeTerminStatusAction;
 	/** delete an appointment */
 	public static IAction delTerminAction;
 	/** Display or change the state of an appointment */
 	public static IAction terminStatusAction;
-	
-	//public static IAction terminLeerAction;
+
+	// public static IAction terminLeerAction;
 	/** free a previously blocked time range */
 	public static IAction unblockAction;
-	
-		
+
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
-	public static void updateActions(){
-		changeTerminStatusAction.setEnabled(Hub.acl.request(ACLContributor.USE_AGENDA));
-		terminStatusAction.setEnabled(Hub.acl.request(ACLContributor.USE_AGENDA));
-		delTerminAction.setEnabled(Hub.acl.request(ACLContributor.DELETE_APPOINTMENTS));
+	public static void updateActions() {
+		changeTerminStatusAction.setEnabled(Hub.acl
+				.request(ACLContributor.USE_AGENDA));
+		terminStatusAction.setEnabled(Hub.acl
+				.request(ACLContributor.USE_AGENDA));
+		delTerminAction.setEnabled(Hub.acl
+				.request(ACLContributor.DELETE_APPOINTMENTS));
 	}
-	
-	static void makeActions(){
-		
-		unblockAction=new Action(Messages.AgendaActions_unblock){ 
+
+	static void makeActions() {
+
+		unblockAction = new Action(Messages.AgendaActions_unblock) {
 			@Override
-			public void run(){
-				Termin t=(Termin) GlobalEvents.getInstance().getSelectedObject(Termin.class);
-				if((t!=null) && (t.getType().equals(Termin.typReserviert()))){
+			public void run() {
+				Termin t = (Termin) ElexisEventDispatcher
+						.getSelected(Termin.class);
+				if ((t != null) && (t.getType().equals(Termin.typReserviert()))) {
 					t.delete();
-					GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+					ElexisEventDispatcher.reload(Termin.class);
 				}
 			}
 		};
-		
-		
-		changeTerminStatusAction=new Action(Messages.AgendaActions_state){ 
-			public void run(){
-				TerminStatusDialog dlg=new TerminStatusDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+
+		changeTerminStatusAction = new Action(Messages.AgendaActions_state) {
+			public void run() {
+				TerminStatusDialog dlg = new TerminStatusDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getShell());
 				dlg.open();
 			}
 		};
-		delTerminAction=new Action(Messages.AgendaActions_deleteDate){ 
+		delTerminAction = new Action(Messages.AgendaActions_deleteDate) {
 			{
-				setImageDescriptor(Desk.getImageRegistry().getDescriptor(Desk.IMG_DELETE));
-				setToolTipText(Messages.AgendaActions_deleteDate); 
+				setImageDescriptor(Desk.getImageRegistry().getDescriptor(
+						Desk.IMG_DELETE));
+				setToolTipText(Messages.AgendaActions_deleteDate);
 			}
+
 			@Override
-			public void run(){
-				Termin t=(Termin)GlobalEvents.getInstance().getSelectedObject(Termin.class);
+			public void run() {
+				Termin t = (Termin) ElexisEventDispatcher
+						.getSelected(Termin.class);
 				t.delete();
-				GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};
-		terminStatusAction=new Action(Messages.AgendaActions_state,Action.AS_DROP_DOWN_MENU){ 
-			Menu mine=null;
+		terminStatusAction = new Action(Messages.AgendaActions_state,
+				Action.AS_DROP_DOWN_MENU) {
+			Menu mine = null;
 			{
-				setMenuCreator(new IMenuCreator(){
+				setMenuCreator(new IMenuCreator() {
 					public void dispose() {
-						if(mine!=null){
+						if (mine != null) {
 							mine.dispose();
 						}
 					}
 
 					public Menu getMenu(Control parent) {
-						mine=new Menu(parent);
+						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
 
 					public Menu getMenu(Menu parent) {
-						mine=new Menu(parent);
+						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
-					
+
 				});
 			}
-			void fillMenu(){
-				for(String t:Termin.TerminStatus){
-					MenuItem it=new MenuItem(mine,SWT.NONE);
+
+			void fillMenu() {
+				for (String t : Termin.TerminStatus) {
+					MenuItem it = new MenuItem(mine, SWT.NONE);
 					it.setText(t);
-					it.addSelectionListener(new SelectionAdapter(){
+					it.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							Termin act=(Termin)GlobalEvents.getInstance().getSelectedObject(Termin.class);
-							MenuItem it=(MenuItem)e.getSource();
+							Termin act = (Termin) ElexisEventDispatcher
+									.getSelected(Termin.class);
+							MenuItem it = (MenuItem) e.getSource();
 							act.setStatus(it.getText());
-							GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+							ElexisEventDispatcher.reload(Termin.class);
 						}
 					});
 				}

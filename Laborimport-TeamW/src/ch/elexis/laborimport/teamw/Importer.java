@@ -1,5 +1,5 @@
 /**
- * (c) 2007 by G. Weirich
+ * (c) 2007-2010 by G. Weirich
  * All rights reserved
  * 
  * Adapted from Viollier to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
@@ -275,8 +276,7 @@ public class Importer extends ImporterPage {
 							}
 						}
 					}
-					
-					GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+					ElexisEventDispatcher.reload(LabItem.class);
 					return resultParse;
 				} else {
 					return resultKontakt;

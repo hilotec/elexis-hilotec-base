@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborView.java 5798 2009-11-06 15:48:43Z michael_imhof $
+ *  $Id: LaborView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -67,16 +67,19 @@ import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.BackingStoreListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.DateSelectorDialog;
 import ch.elexis.dialogs.DisplayTextDialog;
@@ -103,8 +106,8 @@ import ch.rgw.tools.JdbcLink.Stm;
  * 
  * @author gerry
  */
-public class LaborView extends ViewPart implements SelectionListener,
-		ActivationListener, BackingStoreListener, ISaveablePart2 {
+public class LaborView extends ViewPart implements IActivationListener,
+		ISaveablePart2 {
 	private static final String KEY_TEXT = "Text"; //$NON-NLS-1$
 	private static final String PATTERN_DECIMAL = "[0-9\\.]+"; //$NON-NLS-1$
 	private static final String KEY_VALUES = "Values"; //$NON-NLS-1$
@@ -148,8 +151,29 @@ public class LaborView extends ViewPart implements SelectionListener,
 	private final static Pattern varsPattern = Pattern
 			.compile("[a-zA-Z0-9]+_[0-9]+"); //$NON-NLS-1$
 	private final HashMap<String, List<LabItem>> formulaRelations = new HashMap<String, List<LabItem>>();
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
+			Patient.class) {
+		public void runInUi(ElexisEvent ev) {
+			selectPatient((Patient) ev.getObject());
+		}
+	};
 
-	// private final ArrayList<LabItem> lFormulas = new ArrayList<LabItem>();
+	private ElexisEventListener eeli_labitem = new ElexisEventListener() {
+		private final ElexisEvent eetmpl = new ElexisEvent(null, LabItem.class,
+				ElexisEvent.EVENT_RELOAD);
+
+		public ElexisEvent getElexisEventFilter() {
+			return eetmpl;
+		}
+
+		public void catchElexisEvent(ElexisEvent ev) {
+			Desk.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					rebuild();
+				}
+			});
+		}
+	};
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -278,7 +302,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 					LabItem li = lr.getItem();
 					if (li.getTyp().equals(LabItem.typ.TEXT)
 							|| (lr.getComment().length() > 0)) {
-						new DisplayTextDialog(getViewSite().getShell(),
+						new DisplayTextDialog(
+								getViewSite().getShell(),
 								Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
 					}
 				}
@@ -292,9 +317,10 @@ public class LaborView extends ViewPart implements SelectionListener,
 		menu.createMenu(newAction, backAction, fwdAction, printAction,
 				importAction, xmlAction);
 		IToolBarManager tm = getViewSite().getActionBars().getToolBarManager();
-		List<IAction> importers = Extensions.getClasses(Extensions
-				.getExtensions(Messages.getString("LaborView.0")), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
-				false);
+		List<IAction> importers = Extensions
+				.getClasses(Extensions.getExtensions(Messages
+						.getString("LaborView.0")), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
+						false);
 		for (IAction ac : importers) {
 			tm.add(ac);
 		}
@@ -322,14 +348,12 @@ public class LaborView extends ViewPart implements SelectionListener,
 		cursor.setMenu(menu);
 		// menu.createControlContextMenu(cursor, setStateAction);
 		rebuild();
-		GlobalEvents.getInstance().addActivationListener(this, this);
-		GlobalEvents.getInstance().addBackingStoreListener(this);
+		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 
 	@Override
 	public void dispose() {
-		GlobalEvents.getInstance().removeActivationListener(this, this);
-		GlobalEvents.getInstance().removeBackingStoreListener(this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
 
@@ -342,8 +366,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 		createColumns();
 		loadItems();
 		createRows();
-		actPatient = (Patient) GlobalEvents.getInstance().getSelectedObject(
-				Patient.class);
+		actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		loadValues();
 		showBusy(false);
 	}
@@ -490,6 +513,11 @@ public class LaborView extends ViewPart implements SelectionListener,
 
 	}
 
+	private void selectPatient(Patient p) {
+		actPatient = p;
+		loadValues();
+	}
+
 	/*
 	 * Daten eines neuen Patienten einlesen
 	 */
@@ -567,7 +595,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 		lastColumn = firstColumn + NUMCOLUMNS - 1;
 
 		// Keine Anzeigbaren Daten vorhanden?
-		if ((sDaten == null) || (sDaten.length == 0) || (sDaten.length < firstColumn)) {
+		if ((sDaten == null) || (sDaten.length == 0)
+				|| (sDaten.length < firstColumn)) {
 			loadPage(p - 1);
 			return;
 		}
@@ -646,8 +675,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 				continue;
 			}
 			TableItem ti = new TableItem(table, SWT.NONE);
-			ti.setForeground(Desk.getDisplay()
-					.getSystemColor(SWT.COLOR_DARK_BLUE));
+			ti.setForeground(Desk.getDisplay().getSystemColor(
+					SWT.COLOR_DARK_BLUE));
 
 			// split group order token and group name
 			Matcher m = Pattern.compile("(\\S+)\\s+(.+)").matcher(g); //$NON-NLS-1$
@@ -767,7 +796,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 									LabResult.class);
 							qbe.add(LabResult.DATE, Query.EQUALS, dOld
 									.toString(TimeTool.DATE_COMPACT));
-							qbe.add(LabResult.PATIENT_ID,Query.EQUALS, actPatient.getId());
+							qbe.add(LabResult.PATIENT_ID, Query.EQUALS,
+									actPatient.getId());
 							for (LabResult lr : qbe.execute()) {
 								lr.set(LabResult.DATE, nDat);
 							}
@@ -807,8 +837,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 				try {
 					LaborblattView lb = (LaborblattView) getViewSite()
 							.getPage().showView(LaborblattView.ID);
-					Patient pat = (Patient) GlobalEvents.getInstance()
-							.getSelectedObject(Patient.class);
+					Patient pat = (Patient) ElexisEventDispatcher.getInstance()
+							.getSelected(Patient.class);
 					String[] headers = new String[columns.length];
 					for (int i = 0; i < headers.length; i++) {
 						headers[i] = columns[i].getText();
@@ -830,8 +860,11 @@ public class LaborView extends ViewPart implements SelectionListener,
 				Importer imp = new Importer(getViewSite().getShell(),
 						"ch.elexis.LaborDatenImport"); //$NON-NLS-1$
 				imp.create();
-				imp.setMessage(Messages.getString("LaborView.selectDataSource")); //$NON-NLS-1$
-				imp.getShell().setText(Messages.getString("LaborView.labImporterCaption")); //$NON-NLS-1$
+				imp
+						.setMessage(Messages
+								.getString("LaborView.selectDataSource")); //$NON-NLS-1$
+				imp.getShell().setText(
+						Messages.getString("LaborView.labImporterCaption")); //$NON-NLS-1$
 				imp.setTitle(Messages.getString("LaborView.labImporterText")); //$NON-NLS-1$
 				imp.open();
 			}
@@ -856,7 +889,10 @@ public class LaborView extends ViewPart implements SelectionListener,
 							fout.close();
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
-							SWTHelper.alert(Messages.getString("LaborView.ErrorCaption"), Messages.getString("LaborView.couldntwrite") + fname); //$NON-NLS-1$ //$NON-NLS-2$
+							SWTHelper
+									.alert(
+											Messages
+													.getString("LaborView.ErrorCaption"), Messages.getString("LaborView.couldntwrite") + fname); //$NON-NLS-1$ //$NON-NLS-2$
 
 						}
 					}
@@ -875,7 +911,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 					if (sDaten == null) {
 						return;
 					}
-					
+
 					String date = dsd.getSelectedDate().toString(
 							TimeTool.DATE_COMPACT);
 					String[] nDates = new String[sDaten.length + 1];
@@ -888,7 +924,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 
 			}
 		};
-		setStateAction = new Action(Messages.getString("LaborView.pathologic"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
+		setStateAction = new Action(
+				Messages.getString("LaborView.pathologic"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				LabResult lr = getSelectedResult();
@@ -913,8 +950,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 			Element r = new Element("Laborblatt"); //$NON-NLS-1$
 			r.setAttribute("Erstellt", new TimeTool() //$NON-NLS-1$
 					.toString(TimeTool.FULL_GER));
-			Patient actpat = (Patient) GlobalEvents.getInstance()
-					.getSelectedObject(Patient.class);
+			Patient actpat = (Patient) ElexisEventDispatcher.getInstance()
+					.getSelected(Patient.class);
 			if (actpat != null) {
 				r.setAttribute("Patient", actpat.getLabel()); //$NON-NLS-1$
 			}
@@ -959,8 +996,8 @@ public class LaborView extends ViewPart implements SelectionListener,
 					}
 					if (hasContent == true) {
 						Element ref = new Element("Referenz"); //$NON-NLS-1$
-						ref.setAttribute("m", it.get("RefMann")); //$NON-NLS-1$ //$NON-NLS-2$
-						ref.setAttribute("f", it.get("RefFrauOrTx")); //$NON-NLS-1$ //$NON-NLS-2$
+						ref.setAttribute(Person.MALE, it.get("RefMann")); //$NON-NLS-1$ //$NON-NLS-2$
+						ref.setAttribute(Person.FEMALE, it.get("RefFrauOrTx")); //$NON-NLS-1$ //$NON-NLS-2$
 						eItem.addContent(ref);
 						eGroup.addContent(eItem);
 					}
@@ -978,9 +1015,10 @@ public class LaborView extends ViewPart implements SelectionListener,
 
 	public void visible(final boolean mode) {
 		if (mode == true) {
-			GlobalEvents.getInstance().addSelectionListener(this);
-			Patient act = (Patient) GlobalEvents.getInstance()
-					.getSelectedObject(Patient.class);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_labitem,
+					eeli_pat);
+			Patient act = (Patient) ElexisEventDispatcher
+					.getSelected(Patient.class);
 			if ((act != null)
 					&& ((actPatient == null) || (!act.getId().equals(
 							actPatient.getId())))) {
@@ -988,17 +1026,13 @@ public class LaborView extends ViewPart implements SelectionListener,
 				loadValues();
 			}
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_labitem,
+					eeli_pat);
 		}
 
 	}
 
 	public void activation(final boolean mode) {
-	}
-
-	public void clearEvent(final Class template) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/***********************************************************************************************
@@ -1031,11 +1065,7 @@ public class LaborView extends ViewPart implements SelectionListener,
 
 	public void reloadContents(final Class clazz) {
 		if (clazz.equals(LabItem.class)) {
-			Desk.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					rebuild();
-				}
-			});
+
 		}
 	}
 

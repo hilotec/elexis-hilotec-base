@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: GlobalEvents.java 5789 2009-10-30 13:39:20Z rgw_ch $
+ * $Id: GlobalEvents.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -30,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -63,30 +64,28 @@ import ch.rgw.tools.Tree;
  * 
  * @author Gerry
  * 
+ * @deprecated use ElexisEventDispatcher
  */
-public class GlobalEvents implements IPartListener2 {
+
+@Deprecated
+public class GlobalEvents {
 	private static Log log = Log.get("GlobalEvents"); //$NON-NLS-1$
 	
 	private final LinkedList<SelectionListener> selectionListeners;
 	private final LinkedList<BackingStoreListener> storeListeners;
 	private final LinkedList<ObjectListener> objectListeners;
-	private final Hashtable<IWorkbenchPart, LinkedList<ActivationListener>> activationListeners;
-	private final ObjectFilterRegistry filters = new ObjectFilterRegistry();
 	private final LinkedList<UserListener> userListeners;
 	
 	private ICodeSelectorTarget codeSelectorTarget = null;
 	private static GlobalEvents theInstance;
-	private static GlobalListener theListener;
 	
 	private GlobalEvents(){
 		selectionListeners = new LinkedList<SelectionListener>();
 		storeListeners = new LinkedList<BackingStoreListener>();
-		activationListeners = new Hashtable<IWorkbenchPart, LinkedList<ActivationListener>>();
+	
 		objectListeners = new LinkedList<ObjectListener>();
 		userListeners = new LinkedList<UserListener>();
-		theListener = new GlobalListener();
-		
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(this);
+	
 	}
 	
 	/**
@@ -96,7 +95,7 @@ public class GlobalEvents implements IPartListener2 {
 	 * 
 	 * @return
 	 */
-	public static GlobalEvents getInstance(){
+	private static GlobalEvents getInstance(){
 		if (theInstance == null) {
 			theInstance = new GlobalEvents();
 		}
@@ -107,6 +106,7 @@ public class GlobalEvents implements IPartListener2 {
 	 * Convenience-Methoden
 	 * 
 	 */
+	/*
 	public static Patient getSelectedPatient(){
 		return (Patient) getInstance().getSelectedObject(Patient.class);
 	}
@@ -118,16 +118,7 @@ public class GlobalEvents implements IPartListener2 {
 	public static Konsultation getSelectedKons(){
 		return (Konsultation) getInstance().getSelectedObject(Konsultation.class);
 	}
-	
-	/**
-	 * Einen Standardlistener holen, der ISelectionEvents von StructuredViewers der Workbench holt
-	 * und an GlobalEvents weiterleitet.
-	 * 
-	 * @return
-	 */
-	public GlobalListener getDefaultListener(){
-		return theListener;
-	}
+	*/
 	
 	/**
 	 * Einen ObjectListener hinzufügen. ObjectListeners werden informiert, wenn ein PersistentObject
@@ -159,11 +150,11 @@ public class GlobalEvents implements IPartListener2 {
 	 *            den Listener
 	 * @param win
 	 *            das Fenster, das beobachtet werden soll.
-	 */
-	public void addSelectionListener(final SelectionListener l /* , IWorkbenchWindow win */){
+	 
+	public void addSelectionListener(final SelectionListener l){
 		selectionListeners.add(l);
 	}
-	
+	*/
 	/**
 	 * Einen listener entfernen. Dies muss unbedingt bei dispose gemacht werden, da es sonst beim
 	 * nächsten Aufrufversuch eine Exception gibt.
@@ -176,11 +167,11 @@ public class GlobalEvents implements IPartListener2 {
 	
 	/**
 	 * Add a listener that will be informed, as user or mandantor changes
-	 */
+	 
 	public void addUserListener(final UserListener l){
 		userListeners.add(l);
 	}
-	
+	*/
 	/**
 	 * remove a previously added UserListener
 	 * 
@@ -193,11 +184,11 @@ public class GlobalEvents implements IPartListener2 {
 	/**
 	 * add a listener that will be informed, as Members of a given class should be reloiaded from
 	 * the database
-	 */
+	 
 	public void addBackingStoreListener(final BackingStoreListener l){
 		storeListeners.add(l);
 	}
-	
+	*/
 	/**
 	 * remove a previously added BackingStoreIstener
 	 * 
@@ -207,35 +198,6 @@ public class GlobalEvents implements IPartListener2 {
 		storeListeners.remove(l);
 	}
 	
-	/**
-	 * Add a listener that will be informed as a View gets activated or deactivated, and
-	 * becomes visible or invisible.
-	 * @param l the Activationlistener. If a listener is added twice, it will be called
-	 * twice.
-	 * @param part The workbench part to observe
-	 */
-	public void addActivationListener(final ActivationListener l, final IWorkbenchPart part){
-		LinkedList<ActivationListener> list = activationListeners.get(part);
-		if (list == null) {
-			list = new LinkedList<ActivationListener>();
-			activationListeners.put(part, list);
-		}
-		list.add(l);
-	}
-	
-	/**
-	 * Remove an activationlistener. If the same listener has been added more than once, only
-	 * one call will be removed.
-	 * @param l The listener to remove. If no such listener was added, nothing happens
-	 * @param part the worbench part this listener was attached to. If no such par exists,
-	 * nothing happens
-	 */
-	public void removeActivationListener(final ActivationListener l, final IWorkbenchPart part){
-		LinkedList<ActivationListener> list = activationListeners.get(part);
-		if (list != null) {
-			list.remove(l);
-		}
-	}
 	
 	/**
 	 * Die Lebenszustands-Änderung eines Objekts anzeigen
@@ -245,7 +207,7 @@ public class GlobalEvents implements IPartListener2 {
 		update, delete, create
 	};
 	
-	public void fireObjectEvent(final PersistentObject o, final CHANGETYPE type){
+	private void fireObjectEvent(final PersistentObject o, final CHANGETYPE type){
 		Desk.getDisplay().asyncExec(new Runnable() {
 			
 			public void run(){
@@ -276,7 +238,10 @@ public class GlobalEvents implements IPartListener2 {
 	 *            wo die Auswahl erfolgte
 	 */
 	
-	public void fireSelectionEvent(final PersistentObject selected /* , IWorkbenchWindow win */){
+	public void fireSelectionEvent(final PersistentObject po){
+		ElexisEventDispatcher.fireSelectionEvent(po);
+	}
+	private void oldfireSelectionEvent(final PersistentObject selected /* , IWorkbenchWindow win */){
 		
 		if (selected == null) {
 			log.log("fireSelectionEvent mit Null Objekt ", Log.DEBUGMSG); //$NON-NLS-1$
@@ -342,19 +307,25 @@ public class GlobalEvents implements IPartListener2 {
 	 * @param clazz
 	 */
 	@SuppressWarnings("unchecked")
-	public void fireUpdateEvent(final Class clazz){
+	private void oldfireUpdateEvent(final Class clazz){
 		for (BackingStoreListener lis : storeListeners) {
 			lis.reloadContents(clazz);
 		}
+	}
+	public void fireUpdateEvent(final Class clazz){
+		ElexisEventDispatcher.reload(clazz);
 	}
 	
 	/**
 	 * Die Information senden, dass entweder der Anwender oder der Mandant geändert haben
 	 */
 	public void fireUserEvent(){
+		/*
 		for (UserListener l : userListeners) {
 			l.UserChanged();
 		}
+		*/
+		ElexisEventDispatcher.getInstance().fire(new ElexisEvent(Hub.actUser, Anwender.class, ElexisEvent.EVENT_USER_CHANGED));
 	}
 	
 	/**
@@ -380,33 +351,6 @@ public class GlobalEvents implements IPartListener2 {
 	 */
 	public interface BackingStoreListener {
 		public void reloadContents(Class<? extends PersistentObject> clazz);
-	}
-	
-	private static class GlobalListener implements ISelectionChangedListener {
-		boolean daempfung;
-		
-		public void selectionChanged(final SelectionChangedEvent event){
-			if (daempfung) {
-				return;
-			}
-			daempfung = true;
-			StructuredSelection sel = (StructuredSelection) event.getSelection();
-			
-			Object[] obj = sel.toArray();
-			if ((obj != null) && (obj.length != 0)) {
-				if (obj[0] instanceof PersistentObject) {
-					GlobalEvents.getInstance().fireSelectionEvent((PersistentObject) obj[0]);
-				} else if (obj[0] instanceof Tree) {
-					Tree t = (Tree) obj[0];
-					if (t.contents instanceof PersistentObject) {
-						GlobalEvents.getInstance()
-						.fireSelectionEvent((PersistentObject) t.contents);
-					}
-				}
-			}
-			daempfung = false;
-		}
-		
 	}
 	
 	/**
@@ -494,130 +438,6 @@ public class GlobalEvents implements IPartListener2 {
 		
 	}
 	
-	public interface ActivationListener {
-		public void activation(boolean mode);
-		
-		public void visible(boolean mode);
-	}
 	
-	public void partActivated(final IWorkbenchPartReference partRef){
-		LinkedList<ActivationListener> list = activationListeners.get(partRef.getPart(false));
-		if (list != null) {
-			for (ActivationListener l : list) {
-				l.activation(true);
-			}
-		}
-	}
 	
-	public void partBroughtToTop(final IWorkbenchPartReference partRef){
-		// partActivated(partRef);
-		
-	}
-	
-	public void partClosed(final IWorkbenchPartReference partRef){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void partDeactivated(final IWorkbenchPartReference partRef){
-		LinkedList<ActivationListener> list = activationListeners.get(partRef.getPart(false));
-		if (list != null) {
-			for (ActivationListener l : list) {
-				l.activation(false);
-			}
-		}
-		
-	}
-	
-	public void partOpened(final IWorkbenchPartReference partRef){
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void partHidden(final IWorkbenchPartReference partRef){
-		LinkedList<ActivationListener> list = activationListeners.get(partRef.getPart(false));
-		if (list != null) {
-			for (ActivationListener l : list) {
-				l.visible(false);
-			}
-		}
-		
-	}
-	
-	public void partVisible(final IWorkbenchPartReference partRef){
-		LinkedList<ActivationListener> list = activationListeners.get(partRef.getPart(false));
-		if (list != null) {
-			for (ActivationListener l : list) {
-				l.visible(true);
-			}
-		}
-		
-	}
-	
-	public void partInputChanged(final IWorkbenchPartReference partRef){
-		// TODO Auto-generated method stub
-		
-	};
-	
-	/**
-	 * Register a ICodeSelectorTarget. This is informed when an alement is chosen in a CodeSelector.
-	 * 
-	 * @param target
-	 *            the ICodeSelectorTarget to set.
-	 */
-	public void setCodeSelectorTarget(final ICodeSelectorTarget target){
-		if (codeSelectorTarget != null) {
-			codeSelectorTarget.registered(false);
-		}
-		codeSelectorTarget = target;
-		codeSelectorTarget.registered(true);
-	}
-	
-	/**
-	 * Unregister the currently registered ICodeSelectorTarget.
-	 */
-	public void removeCodeSelectorTarget(){
-		if (codeSelectorTarget != null) {
-			codeSelectorTarget.registered(false);
-		}
-		
-		codeSelectorTarget = null;
-	}
-	
-	/**
-	 * Reeturns the currently registered ICodeSelectorTarget.
-	 * 
-	 * @return the registered ICodeSelectorTarget
-	 */
-	public ICodeSelectorTarget getCodeSelectorTarget(){
-		return codeSelectorTarget;
-	}
-	
-	public ObjectFilterRegistry getObjectFilters(){
-		return filters;
-	}
-	
-	public interface IObjectFilterProvider {
-		public void activate();
-		
-		public void deactivate();
-		
-		public String getId();
-		
-		public void changed();
-		
-		public IFilter getFilter();
-	}
-	
-	private class SelectionEventJob extends Job{
-		public SelectionEventJob(){
-			super("FireSelectionEvent");
-		}
-		
-		@Override
-		protected IStatus run(IProgressMonitor monitor){
-			
-			return null;
-		}
-	}
 }

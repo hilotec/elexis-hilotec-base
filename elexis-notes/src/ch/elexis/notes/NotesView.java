@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesView.java 5056 2009-01-27 13:04:37Z rgw_ch $
+ *  $Id: NotesView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -35,10 +35,11 @@ import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
-import ch.elexis.data.PersistentObject;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.text.ExternalLink;
 import ch.elexis.text.Samdas;
 import ch.elexis.util.Extensions;
@@ -48,24 +49,26 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 /**
- * The eclipse View for the notes. Contains a master-Part (NotesList) and a details-part
- * (NotesDetail)
+ * The eclipse View for the notes. Contains a master-Part (NotesList) and a
+ * details-part (NotesDetail)
  * 
  * @author gerry
  * 
  */
-public class NotesView extends ViewPart implements ActivationListener, SelectionListener {
+public class NotesView extends ViewPart implements IActivationListener,
+		ElexisEventListener {
 	private static final String PREFERRED_SCANSERVICE = "ScanToPDFService";
 	ScrolledForm fMaster;
 	NotesList master;
 	NotesDetail detail;
 	boolean hasScanner = false;
-	private IAction newCategoryAction, newNoteAction, delNoteAction, scanAction;
+	private IAction newCategoryAction, newNoteAction, delNoteAction,
+			scanAction;
 	FormToolkit tk = Desk.getToolkit();
-	
+
 	@Override
-	public void createPartControl(Composite parent){
-		
+	public void createPartControl(Composite parent) {
+
 		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
 		fMaster = tk.createScrolledForm(sash);
 		fMaster.getBody().setLayout(new GridLayout());
@@ -85,62 +88,49 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 		fMaster.getToolBarManager().add(new Separator());
 		newNoteAction.setEnabled(false);
 		detail.setEnabled(false);
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+		GlobalEventDispatcher.addActivationListener(this, getViewSite()
+				.getPart());
 		fMaster.updateToolBar();
-		sash.setWeights(new int[] {
-			3, 7
-		});
+		sash.setWeights(new int[] { 3, 7 });
 		// fDetail.updateToolBar();
 		// fDetail.reflow(true);
 	}
-	
-	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
+
+	public void dispose() {
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
+				.getPart());
 	}
-	
+
 	@Override
-	public void setFocus(){
-	// TODO Auto-generated method stub
-	
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
 	}
-	
-	public void activation(boolean mode){}
-	
-	public void visible(boolean mode){
+
+	public void activation(boolean mode) {
+	}
+
+	public void visible(boolean mode) {
 		if (mode) {
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(this);
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
 	}
-	
-	public void clearEvent(Class template){
-		if (template.equals(Note.class)) {
-			newNoteAction.setEnabled(false);
-		}
-		
-	}
-	
-	public void selectionEvent(PersistentObject obj){
-		if (obj instanceof Note) {
-			Note note = (Note) obj;
-			detail.setEnabled(true);
-			detail.setNote(note);
-			newNoteAction.setEnabled(true);
-		}
-	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		newCategoryAction = new Action("Neue Kategorie") {
 			{
 				setToolTipText("Eine neue Haupt-Kategorie erstellen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
-			
-			public void run(){
-				InputDialog id =
-					new InputDialog(getViewSite().getShell(), "Neue Hauptkategorie erstellen",
-						"Bitte geben Sie einen namen für die neue Kategorie ein", "", null);
+
+			public void run() {
+				InputDialog id = new InputDialog(
+						getViewSite().getShell(),
+						"Neue Hauptkategorie erstellen",
+						"Bitte geben Sie einen namen für die neue Kategorie ein",
+						"", null);
 				if (id.open() == Dialog.OK) {
 					/* Note note= */new Note(null, id.getValue(), "");
 					master.tv.refresh();
@@ -152,12 +142,11 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 				setToolTipText("Neue Notiz oder Unterkategorie erstellen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 			}
-			
-			public void run(){
-				Note act = (Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
+
+			public void run() {
+				Note act = (Note) ElexisEventDispatcher.getSelected(Note.class);
 				if (act != null) {
-					InputDialog id =
-						new InputDialog(
+					InputDialog id = new InputDialog(
 							getViewSite().getShell(),
 							"Neue Notiz erstellen",
 							"Bitte geben Sie einen namen für die neue Notiz oder Unterkategorie ein",
@@ -168,97 +157,139 @@ public class NotesView extends ViewPart implements ActivationListener, Selection
 					}
 				}
 			}
-			
+
 		};
 		delNoteAction = new Action("Löschen...") {
 			{
 				setToolTipText("Notiz und alle Unterkategorien löschen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
-			
-			public void run(){
-				Note act = (Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
+
+			public void run() {
+				Note act = (Note) ElexisEventDispatcher.getSelected(Note.class);
 				if (act != null) {
-					if (SWTHelper.askYesNo("Notiz(en) löschen",
-						"Wirklich diesen Eintrag und alle Untereinträge löschen?")) {
+					if (SWTHelper
+							.askYesNo("Notiz(en) löschen",
+									"Wirklich diesen Eintrag und alle Untereinträge löschen?")) {
 						act.delete();
 						master.tv.refresh();
 					}
 				}
 			}
-			
+
 		};
-		// Check if there is a scanner service available and if so, create a "Scan" button
+		// Check if there is a scanner service available and if so, create a
+		// "Scan" button
 		if (Extensions.isServiceAvailable(PREFERRED_SCANSERVICE)) {
 			hasScanner = true;
 			scanAction = new Action("Scannen...") {
 				{
 					setToolTipText("Document mit dem Scanner einlesen");
-					ImageDescriptor imgScanner =
-						AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.notes", "icons"
-							+ File.separator + "scanner.ico");
+					ImageDescriptor imgScanner = AbstractUIPlugin
+							.imageDescriptorFromPlugin("ch.elexis.notes",
+									"icons" + File.separator + "scanner.ico");
 					setImageDescriptor(imgScanner);
 				}
-				
-				public void run(){
+
+				public void run() {
 					try {
-						Object scanner = Extensions.findBestService(PREFERRED_SCANSERVICE);
+						Object scanner = Extensions
+								.findBestService(PREFERRED_SCANSERVICE);
 						if (scanner != null) {
-							Result<byte[]> res =
-								(Result<byte[]>) Extensions.executeService(scanner, "acquire",
-									new Class[0], new Object[0]);
+							Result<byte[]> res = (Result<byte[]>) Extensions
+									.executeService(scanner, "acquire",
+											new Class[0], new Object[0]);
 							if (res.isOK()) {
-								Note act =
-									(Note) GlobalEvents.getInstance().getSelectedObject(Note.class);
+								Note act = (Note) ElexisEventDispatcher
+										.getSelected(Note.class);
 								byte[] pdf = res.get();
-								InputDialog id =
-									new InputDialog(
+								InputDialog id = new InputDialog(
 										getViewSite().getShell(),
 										"Neues Dokument importieren",
 										"Bitte geben Sie einen Namen für das eben gescannte Document ein",
 										"", null);
 								if (id.open() == Dialog.OK) {
 									String name = id.getValue();
-									String basedir = Hub.localCfg.get(Preferences.CFGTREE, null);
+									String basedir = Hub.localCfg.get(
+											Preferences.CFGTREE, null);
 									if (basedir == null) {
-										SWTHelper.alert("Basisverzeichnis falsch",
-											"Es ist kein Basisverzeichnis definiert");
+										SWTHelper
+												.alert(
+														"Basisverzeichnis falsch",
+														"Es ist kein Basisverzeichnis definiert");
 										return;
 									}
-									File file =
-										new File(basedir, name.replaceAll("\\s", "_") + ".pdf");
+									File file = new File(basedir, name
+											.replaceAll("\\s", "_")
+											+ ".pdf");
 									if (!file.createNewFile()) {
-										SWTHelper.alert("Importfehler", "Kann Datei "
-											+ file.getAbsolutePath() + " nicht schreiben");
+										SWTHelper
+												.alert(
+														"Importfehler",
+														"Kann Datei "
+																+ file
+																		.getAbsolutePath()
+																+ " nicht schreiben");
 										return;
 									}
-									FileOutputStream fout = new FileOutputStream(file);
-									BufferedOutputStream bout = new BufferedOutputStream(fout);
+									FileOutputStream fout = new FileOutputStream(
+											file);
+									BufferedOutputStream bout = new BufferedOutputStream(
+											fout);
 									bout.write(pdf);
 									bout.close();
 									Samdas samdas = new Samdas(name);
 									Samdas.Record record = samdas.getRecord();
-									Samdas.XRef xref =
-										new Samdas.XRef(ExternalLink.ID, file.getAbsolutePath(), 0,
-											name.length());
+									Samdas.XRef xref = new Samdas.XRef(
+											ExternalLink.ID, file
+													.getAbsolutePath(), 0, name
+													.length());
 									record.add(xref);
-									XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
-									String cnt = xo.outputString(samdas.getDocument());
-									byte[] nb = CompEx.Compress(cnt.getBytes("utf-8"), CompEx.ZIP);
-									/* Note note= */new Note(act, name, nb, "text/xml");
+									XMLOutputter xo = new XMLOutputter(Format
+											.getRawFormat());
+									String cnt = xo.outputString(samdas
+											.getDocument());
+									byte[] nb = CompEx.Compress(cnt
+											.getBytes("utf-8"), CompEx.ZIP);
+									/* Note note= */new Note(act, name, nb,
+											"text/xml");
 									master.tv.refresh();
 								}
-								
+
 							}
 						}
-						
+
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						SWTHelper.showError("Fehler beim Import", ex.getMessage());
+						SWTHelper.showError("Fehler beim Import", ex
+								.getMessage());
 					}
 				}
 			};
 		}
-		
+
+	}
+
+	public void catchElexisEvent(final ElexisEvent ev) {
+		Desk.asyncExec(new Runnable() {
+			public void run() {
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					Note note = (Note) ev.getObject();
+					detail.setEnabled(true);
+					detail.setNote(note);
+					newNoteAction.setEnabled(true);
+
+				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+					newNoteAction.setEnabled(false);
+				}
+			}
+		});
+	}
+
+	private final ElexisEvent eetmpl = new ElexisEvent(null, Note.class,
+			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
+		return eetmpl;
 	}
 }

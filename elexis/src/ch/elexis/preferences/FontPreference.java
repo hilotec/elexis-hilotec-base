@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FontPreference.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *    $Id: FontPreference.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences;
 
@@ -19,6 +19,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Anwender;
 
@@ -47,9 +49,7 @@ public class FontPreference extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		boolean ret=super.performOk();
 		Desk.updateFont(PreferenceConstants.USR_DEFAULTFONT);
-		GlobalEvents.getInstance().fireSelectionEvent(Hub.actUser);
-		GlobalEvents.getInstance().fireUserEvent();
-		GlobalEvents.getInstance().fireUpdateEvent(Anwender.class);
+		ElexisEventDispatcher.getInstance().fire(new ElexisEvent(Hub.actUser, Anwender.class, ElexisEvent.EVENT_USER_CHANGED));
 		return ret;
 	}
 	

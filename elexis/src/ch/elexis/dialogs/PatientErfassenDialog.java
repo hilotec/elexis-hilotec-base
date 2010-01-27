@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: PatientErfassenDialog.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: PatientErfassenDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.StringConstants;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -158,7 +158,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 
 			if(check!=null){
 				check.add(TimeTool.YEAR, 18);
-				TimeTool today=new TimeTool();
+				//TimeTool today=new TimeTool();
 				/*
 				if(check.isAfter(today)){
 					InputDialog id=new InputDialog(getShell(),"Patient ist minderjährig","Bitte geben Sie Name und Vorname des gesetzlichen Vertretes an","",null);
@@ -172,7 +172,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 				 */
 			}
 
-			GlobalEvents.getInstance().fireSelectionEvent(pat);
+			ElexisEventDispatcher.fireSelectionEvent(pat);
 			result=pat;
 			super.okPressed();
 		} catch (TimeFormatException e) {

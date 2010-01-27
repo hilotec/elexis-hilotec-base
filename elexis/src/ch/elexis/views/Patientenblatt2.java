@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt2.java 5608 2009-08-08 19:16:42Z rgw_ch $
+ * $Id: Patientenblatt2.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -51,10 +51,13 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.RestrictedAction;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.BezugsKontakt;
@@ -80,8 +83,7 @@ import ch.rgw.tools.StringTool;
  * Detailansicht eines Patientrecords Ersatz für Patientenblatt mit erweiterter Funktionalität
  * (Lock, Nutzung von InputPanel)
  */
-public class Patientenblatt2 extends Composite implements GlobalEvents.SelectionListener,
-		ActivationListener {
+public class Patientenblatt2 extends Composite implements IActivationListener {
 	private static final String KEY_DBFIELD = "dbfield"; //$NON-NLS-1$
 	private static final String KEY_PATIENTENBLATT = "Patientenblatt/"; //$NON-NLS-1$
 	private final FormToolkit tk;
@@ -91,6 +93,19 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	private final static String CFG_BEZUGSKONTAKTTYPEN = "views/patientenblatt/Bezugskontakttypen"; //$NON-NLS-1$
 	public final static String CFG_EXTRAFIELDS = "views/patientenblatt/extrafelder"; //$NON-NLS-1$
 	private final static String SPLITTER = "#!>"; //$NON-NLS-1$
+	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class) {
+		public void runInUi(ElexisEvent ev) {
+			setPatient(ElexisEventDispatcher.getSelectedPatient());
+			
+		}
+	};
+	
+	private ElexisEventListenerImpl eeli_user=new ElexisEventListenerImpl(Anwender.class,ElexisEvent.EVENT_USER_CHANGED) {
+		public void runInUi(ElexisEvent ev) {
+			setPatient(ElexisEventDispatcher.getSelectedPatient());
+			recreateUserpanel();
+		}
+	};
 	
 	private final static String[] lbExpandable =
 		{
@@ -353,14 +368,13 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,
 			GlobalActions.printBlatt, GlobalActions.printRoeBlatt);
 		viewmenu.createToolbar(lockAction);
-		GlobalEvents.getInstance().addActivationListener(this, site.getPart());
+		GlobalEventDispatcher.addActivationListener(this, site.getPart());
 		tk.paintBordersFor(form.getBody());
 	}
 	
 	@Override
 	public void dispose(){
-		GlobalEvents.getInstance().removeSelectionListener(this);
-		GlobalEvents.getInstance().removeActivationListener(this, viewsite.getPart());
+		GlobalEventDispatcher.removeActivationListener(this, viewsite.getPart());
 		super.dispose();
 	}
 	
@@ -437,18 +451,8 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 		}
 	}
 	
-	void setPatient(final Patient p){
-		/*
-		 * work-around: The ExpandableComposites for Zusatzadressen and DauerMedi are expanded
-		 * correctly only if the method setPatientInternal is called twice. Just calling
-		 * form.reflow() doesn't help, not even calling it twice. Maybe the problem is that some
-		 * ExpandableComposites contain controls with a layout not implementing ILayoutExtension.
-		 */
-		// setPatientInternal(p);
-		setPatientInternal(p);
-	}
 	
-	private void setPatientInternal(final Patient p){
+	public void setPatient(final Patient p){
 		actPatient = p;
 		ipp.getAutoForm().reload(actPatient);
 		
@@ -481,15 +485,6 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	
 	public void refresh(){
 		form.reflow(true);
-	}
-	
-	public void selectionEvent(final PersistentObject obj){
-		if (obj instanceof Patient) {
-			setPatient((Patient) obj);
-		} else if (obj instanceof Anwender) {
-			setPatient(GlobalEvents.getSelectedPatient());
-			recreateUserpanel();
-		}
 	}
 	
 	private void makeActions(){
@@ -536,17 +531,12 @@ public class Patientenblatt2 extends Composite implements GlobalEvents.Selection
 	
 	public void visible(final boolean mode){
 		if (mode == true) {
-			setPatient((Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class));
-			GlobalEvents.getInstance().addSelectionListener(this);
+			setPatient((Patient) ElexisEventDispatcher.getInstance().getSelected(Patient.class));
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat,eeli_user);
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat,eeli_user);
 		}
 		
-	}
-	
-	public void clearEvent(final Class<? extends PersistentObject> template){
-	// TODO Auto-generated method stub
-	
 	}
 	
 	class BezugsKontaktAuswahl extends Dialog {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id: ESRView2.java 5020 2009-01-23 16:33:54Z rgw_ch $
+ *  $Id: ESRView2.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -38,9 +38,9 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.AbstractDataLoaderJob;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.JobPool;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.ACE;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -54,7 +54,7 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ESRView2 extends ViewPart implements ActivationListener {
+public class ESRView2 extends ViewPart implements IActivationListener {
 	public static final String ID = "ch.elexis.banking.ESRView2";
 	
 	private static final String JOB_NAME = "ESR-Loader2";
@@ -109,7 +109,7 @@ public class ESRView2 extends ViewPart implements ActivationListener {
 	@Override
 	public void dispose(){
 		//Hub.acl.revokeFromSelf(DISPLAY_ESR);
-		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
 	
 	@Override
@@ -138,7 +138,7 @@ public class ESRView2 extends ViewPart implements ActivationListener {
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(/* loadESRFile */);
 		menus.createMenu(/* loadESRFile */);
-		esrl = new ESRSelectionListener(getViewSite());
+		esrl = new ESRSelectionListener();
 		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
 			public void doubleClicked(PersistentObject obj, CommonViewer cv){
 				ESRRecordDialog erd =
@@ -149,7 +149,7 @@ public class ESRView2 extends ViewPart implements ActivationListener {
 			}
 			
 		});
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 		
 	}
 	

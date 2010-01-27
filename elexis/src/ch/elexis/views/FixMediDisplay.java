@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FixMediDisplay.java 5790 2009-10-30 13:45:48Z rgw_ch $
+ * $Id: FixMediDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -25,7 +25,8 @@ import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Desk;
 import ch.elexis.StringConstants;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.CodeSelectorHandler;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Artikel;
@@ -97,7 +98,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						
 						if (o instanceof Artikel) {
 							Prescription pre =
-								new Prescription((Artikel) o, GlobalEvents.getSelectedPatient(),
+								new Prescription((Artikel) o, (Patient)ElexisEventDispatcher.getSelected(Patient.class),
 									StringTool.leer, StringTool.leer);
 							pre.set(Prescription.DATE_FROM, new TimeTool()
 							.toString(TimeTool.DATE_GER));
@@ -108,7 +109,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							}
 							
 						} else if (o instanceof Prescription) {
-							Prescription[] existing=GlobalEvents.getSelectedPatient().getFixmedikation();
+							Prescription[] existing=((Patient)ElexisEventDispatcher.getSelected(Patient.class)).getFixmedikation();
 							Prescription pre = (Prescription) o;
 							for(Prescription pe:existing){
 								if(pe.equals(pre)){
@@ -116,7 +117,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 								}
 							}
 							Prescription now =
-								new Prescription(pre.getArtikel(), GlobalEvents
+								new Prescription(pre.getArtikel(), ElexisEventDispatcher
 									.getSelectedPatient(), pre.getDosis(), pre.getBemerkung());
 							now.set(Prescription.DATE_FROM, new TimeTool()
 							.toString(TimeTool.DATE_GER));
@@ -141,7 +142,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	
 	public void reload(){
 		clear();
-		Patient act = GlobalEvents.getSelectedPatient();
+		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		double cost = 0.0;
 		boolean canCalculate = true;
 		if (act != null) {
@@ -223,14 +224,14 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			try {
 				if (l.equals(HINZU)) {
 					site.getPage().showView(LeistungenView.ID);
-					GlobalEvents.getInstance().setCodeSelectorTarget(target);
+					CodeSelectorHandler.getInstance().setCodeSelectorTarget(target);
 				} else if (l.equals(LISTE)) {
 					
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
-					rpb.createEinnahmeliste(GlobalEvents.getSelectedPatient(), getAll().toArray(
+					rpb.createEinnahmeliste(ElexisEventDispatcher.getSelectedPatient(), getAll().toArray(
 						new Prescription[0]));
 				} else if (l.equals(REZEPT)) {
-					Rezept rp = new Rezept(GlobalEvents.getSelectedPatient());
+					Rezept rp = new Rezept(ElexisEventDispatcher.getSelectedPatient());
 					for (Prescription p : getAll().toArray(new Prescription[0])) {
 						/*
 						 * rp.addLine(new RpZeile("1",p.getArtikel().getLabel(),"",

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NotesList.java 5056 2009-01-27 13:04:37Z rgw_ch $
+ *  $Id: NotesList.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.notes;
@@ -31,7 +31,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 
@@ -48,19 +48,20 @@ public class NotesList extends Composite {
 	String filterExpr;
 	NotesFilter notesFilter = new NotesFilter();
 	HashMap<Note, String> matches = new HashMap<Note, String>();
-	
-	NotesList(Composite parent){
+
+	NotesList(Composite parent) {
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		this.parent = parent;
 		Composite cFilter = new Composite(this, SWT.NONE);
 		cFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cFilter.setLayout(new GridLayout(3, false));
-		ImageHyperlink clearSearchFieldHyperlink = new ImageHyperlink(cFilter, SWT.NONE);
+		ImageHyperlink clearSearchFieldHyperlink = new ImageHyperlink(cFilter,
+				SWT.NONE);
 		clearSearchFieldHyperlink.setImage(Desk.getImage(Desk.IMG_CLEAR));
 		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(HyperlinkEvent e){
+			public void linkActivated(HyperlinkEvent e) {
 				tFilter.setText("");
 				filterExpr = "";
 				matches.clear();
@@ -73,7 +74,7 @@ public class NotesList extends Composite {
 		tFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tFilter.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e){
+			public void widgetDefaultSelected(SelectionEvent e) {
 				filterExpr = tFilter.getText().toLowerCase();
 				matches.clear();
 				if (filterExpr.length() == 0) {
@@ -83,27 +84,31 @@ public class NotesList extends Composite {
 					tv.addFilter(notesFilter);
 					tv.expandAll();
 				}
-				
+
 			}
 		});
 		tv = new TreeViewer(this, SWT.NONE);
-		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tv.getControl().setLayoutData(
+				SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setContentProvider(new NotesContentProvider());
 		tv.setLabelProvider(new DefaultLabelProvider());
 		tv.setUseHashlookup(true);
 		tv.setInput(parent);
-		tv.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
+		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance()
+				.getDefaultListener());
 	}
-	
-	public void dispose(){
-		tv.removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
+
+	public void dispose() {
+		tv.removeSelectionChangedListener(GlobalEventDispatcher.getInstance()
+				.getDefaultListener());
 	}
-	
+
 	class NotesFilter extends ViewerFilter {
-		
+
 		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element){
-			
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+
 			if (filterExpr.length() == 0) {
 				return true;
 			}
@@ -116,19 +121,19 @@ public class NotesList extends Composite {
 			}
 			return bMatch;
 		}
-		
-		private boolean isMatch(Note n, String t){
+
+		private boolean isMatch(Note n, String t) {
 			if (matches.get(n) != null) {
 				return true;
 			}
-			
+
 			String lbl = n.getLabel().toLowerCase();
 			if (lbl.startsWith(t) || n.getKeywords().contains(t)) {
 				matches.put(n, t);
-				
+
 				return true;
 			}
-			
+
 			List<Note> l = n.getChildren();
 			for (Note note : l) {
 				if (isMatch(note, t)) {
@@ -138,7 +143,7 @@ public class NotesList extends Composite {
 			}
 			return false;
 		}
-		
+
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseAgendaView.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: BaseAgendaView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
@@ -41,9 +41,11 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.BackingStoreListener;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -54,7 +56,6 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
@@ -64,24 +65,57 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-public abstract class BaseAgendaView extends ViewPart implements BackingStoreListener,  HeartListener, ActivationListener{
+public abstract class BaseAgendaView extends ViewPart implements HeartListener,
+		IActivationListener {
 
-	//protected Synchronizer pinger;
-	protected SelectionListener sListen=new SelectionListener();
+	// protected Synchronizer pinger;
+	protected SelectionListener sListen = new SelectionListener();
 	TableViewer tv;
 	BaseAgendaView self;
-	protected IAction newTerminAction, blockAction,terminKuerzenAction,terminVerlaengernAction,terminAendernAction;
-	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
+	protected IAction newTerminAction, blockAction, terminKuerzenAction,
+			terminVerlaengernAction, terminAendernAction;
+	protected IAction dayLimitsAction, newViewAction, printAction,
+			exportAction, importAction;
 	protected IAction printPatientAction;
-	MenuManager menu=new MenuManager();
-	protected Log log=Log.get("Agenda");
-	Activator agenda=Activator.getDefault();
-	
-	protected BaseAgendaView(){
-		self=this;
+	MenuManager menu = new MenuManager();
+	protected Log log = Log.get("Agenda");
+	Activator agenda = Activator.getDefault();
+
+	private ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(
+			Termin.class, ElexisEvent.EVENT_RELOAD) {
+		public void runInUi(ElexisEvent ev) {
+			if (!tv.getControl().isDisposed()) {
+				tv.refresh(true);
+			}
+
+		}
+	};
+
+	private ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
+			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+		public void runInUi(ElexisEvent ev) {
+			updateActions();
+			if (tv != null) {
+				if (!tv.getControl().isDisposed()) {
+					tv
+							.getControl()
+							.setFont(
+									Desk
+											.getFont(ch.elexis.preferences.PreferenceConstants.USR_DEFAULTFONT));
+				}
+			}
+			setBereich(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda
+					.getActResource()));
+
+		}
+	};
+
+	protected BaseAgendaView() {
+		self = this;
 	}
+
 	abstract public void create(Composite parent);
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		setBereich(agenda.getActResource());
@@ -89,27 +123,29 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		makeActions();
 		tv.setContentProvider(new AgendaContentProvider());
 		tv.setUseHashlookup(true);
-		tv.addDoubleClickListener(new IDoubleClickListener(){
+		tv.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
-				if((sel==null || (sel.isEmpty()))){
-					newTerminAction.run();					
-				}else{
-					IPlannable pl=(IPlannable)sel.getFirstElement();
-					TerminDialog dlg=new TerminDialog(pl);
+				IStructuredSelection sel = (IStructuredSelection) tv
+						.getSelection();
+				if ((sel == null || (sel.isEmpty()))) {
+					newTerminAction.run();
+				} else {
+					IPlannable pl = (IPlannable) sel.getFirstElement();
+					TerminDialog dlg = new TerminDialog(pl);
 					dlg.open();
 					tv.refresh(true);
 				}
 
-			}});
+			}
+		});
 
 		menu.setRemoveAllWhenShown(true);
-		menu.addMenuListener(new IMenuListener(){
+		menu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				if(GlobalEvents.getInstance().getSelectedObject(Termin.class)==null){
+				if (ElexisEventDispatcher.getSelected(Termin.class) == null) {
 					manager.add(newTerminAction);
 					manager.add(blockAction);
-				}else{
+				} else {
 					manager.add(AgendaActions.terminStatusAction);
 					manager.add(terminKuerzenAction);
 					manager.add(terminVerlaengernAction);
@@ -117,17 +153,25 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 					manager.add(AgendaActions.delTerminAction);
 				}
 			}
-			
+
 		});
 
-		Menu cMenu=menu.createContextMenu(tv.getControl());
+		Menu cMenu = menu.createContextMenu(tv.getControl());
 		tv.getControl().setMenu(cMenu);
 
-		GlobalEvents.getInstance().addBackingStoreListener(this);
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+		// GlobalEvents.getInstance().addBackingStoreListener(this);
+		GlobalEventDispatcher.addActivationListener(this, getViewSite()
+				.getPart());
 		tv.setInput(getViewSite());
-		//pinger=new ch.elexis.actions.Synchronizer();
+		// pinger=new ch.elexis.actions.Synchronizer();
 		updateActions();
+	}
+
+	@Override
+	public void dispose() {
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
+				.getPart());
+		super.dispose();
 	}
 
 	@Override
@@ -136,81 +180,89 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 
 	}
 
-
 	public void heartbeat() {
 		log.log("Heartbeat", Log.DEBUGMSG);
-		reloadContents(Termin.class);
-		//GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
-		//pinger.doSync();
+		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class,
+				ElexisEvent.EVENT_RELOAD));
+		// GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+		// pinger.doSync();
 	}
 
-	public void activation(boolean mode) {/* leer */}
+	public void activation(boolean mode) {/* leer */
+	}
 
 	public void visible(boolean mode) {
-		if(mode==true){
+		if (mode == true) {
 			Hub.heart.addListener(this);
 			tv.addSelectionChangedListener(sListen);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_termin,
+					eeli_user);
 			heartbeat();
-		}else{
+		} else {
 			Hub.heart.removeListener(this);
 			tv.removeSelectionChangedListener(sListen);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_termin,
+					eeli_user);
 		}
-		
+
 	};
 
-
-	public void setBereich(String b){
+	public void setBereich(String b) {
 		agenda.setActResource(b);
-		setPartName("Agenda "+b); //$NON-NLS-1$
+		setPartName("Agenda " + b); //$NON-NLS-1$
 		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, b);
-		/*
-		if(pinger!=null){
-			pinger.doSync();
-		}
-		*/
-		reloadContents(Termin.class);
+		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class,
+				ElexisEvent.EVENT_RELOAD));
 	}
 
 	public abstract void setTermin(Termin t);
-	
-	class AgendaContentProvider implements IStructuredContentProvider{
+
+	class AgendaContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			if(Hub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)){
-				return Plannables.loadDay(agenda.getActResource(),agenda.getActDate());
-			}else{
+			if (Hub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
+				return Plannables.loadDay(agenda.getActResource(), agenda
+						.getActDate());
+			} else {
 				return new Object[0];
 			}
 
 		}
 
-		public void dispose() { /* leer */}
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {/* leer */}
-		
+		public void dispose() { /* leer */
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {/* leer */
+		}
+
 	};
-	class SelectionListener implements ISelectionChangedListener{
+
+	class SelectionListener implements ISelectionChangedListener {
 
 		StructuredViewer sv;
 
 		public void selectionChanged(SelectionChangedEvent event) {
-			IStructuredSelection sel=(IStructuredSelection)event.getSelection();
-			if(( sel==null) || sel.isEmpty()){
-				GlobalEvents.getInstance().clearSelection(Termin.class);
-			}else{
-				Object o=sel.getFirstElement();
-				GlobalEvents ev=GlobalEvents.getInstance();
-				if(o instanceof Termin){
-					setTermin((Termin)o);
-				}else if(o instanceof Termin.Free){
-					ev.clearSelection(Termin.class);
+			IStructuredSelection sel = (IStructuredSelection) event
+					.getSelection();
+			if ((sel == null) || sel.isEmpty()) {
+				ElexisEventDispatcher.clearSelection(Termin.class);
+			} else {
+				Object o = sel.getFirstElement();
+				if (o instanceof Termin) {
+					setTermin((Termin) o);
+				} else if (o instanceof Termin.Free) {
+					ElexisEventDispatcher.clearSelection(Termin.class);
 				}
 			}
 		}
-		
+
 	}
-	protected void updateActions(){
-		dayLimitsAction.setEnabled(Hub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
-		boolean canChangeAppointments=Hub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
+
+	protected void updateActions() {
+		dayLimitsAction.setEnabled(Hub.acl
+				.request(ACLContributor.CHANGE_DAYSETTINGS));
+		boolean canChangeAppointments = Hub.acl
+				.request(ACLContributor.CHANGE_APPOINTMENTS);
 		newTerminAction.setEnabled(canChangeAppointments);
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
@@ -218,130 +270,152 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		AgendaActions.updateActions();
 		tv.refresh();
 	}
-	
-	protected void makeActions(){
-		dayLimitsAction=new Action("Tagesgrenzen"){
+
+	protected void makeActions() {
+		dayLimitsAction = new Action("Tagesgrenzen") {
 			@Override
-			public void run(){
-				new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						agenda.getActDate().toString(TimeTool.DATE_COMPACT),agenda.getActResource())
-						.open();
+			public void run() {
+				new TagesgrenzenDialog(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(), agenda
+						.getActDate().toString(TimeTool.DATE_COMPACT), agenda
+						.getActResource()).open();
 				tv.refresh(true);
 			}
 		};
 
-		blockAction=new Action(Messages.TagesView_lockPeriod){ 
+		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
-			public void run(){
-				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
-				if(sel!=null && !sel.isEmpty()){
-					IPlannable p=(IPlannable)sel.getFirstElement();
-					if(p instanceof Termin.Free){
-						new Termin(agenda.getActResource(),agenda.getActDate().toString(TimeTool.DATE_COMPACT),p.getStartMinute(),
-								p.getDurationInMinutes()+p.getStartMinute(),Termin.typReserviert(),Termin.statusLeer());
-						GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+			public void run() {
+				IStructuredSelection sel = (IStructuredSelection) tv
+						.getSelection();
+				if (sel != null && !sel.isEmpty()) {
+					IPlannable p = (IPlannable) sel.getFirstElement();
+					if (p instanceof Termin.Free) {
+						new Termin(agenda.getActResource(), agenda.getActDate()
+								.toString(TimeTool.DATE_COMPACT), p
+								.getStartMinute(), p.getDurationInMinutes()
+								+ p.getStartMinute(), Termin.typReserviert(),
+								Termin.statusLeer());
+						ElexisEventDispatcher.reload(Termin.class);
 					}
 				}
 
 			}
 		};
-		terminAendernAction=new Action(Messages.TagesView_changeTermin){ 
+		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText(Messages.TagesView_changeThisTermin); 
+				setToolTipText(Messages.TagesView_changeThisTermin);
 			}
+
 			@Override
-			public void run(){
-				TerminDialog dlg=new TerminDialog(
-						(Termin)GlobalEvents.getInstance().getSelectedObject(Termin.class));
+			public void run() {
+				TerminDialog dlg = new TerminDialog(
+						(Termin) ElexisEventDispatcher
+								.getSelected(Termin.class));
 				dlg.open();
-				if(tv!=null){
+				if (tv != null) {
 					tv.refresh(true);
 				}
 			}
 		};
-		terminKuerzenAction=new Action(Messages.TagesView_shortenTermin){ 
+		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
 			@Override
-			public void run(){
-				Termin t=(Termin) GlobalEvents.getInstance().getSelectedObject(Termin.class);
-				if(t!=null) {
-					t.setDurationInMinutes(t.getDurationInMinutes()>>1);
-					GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+			public void run() {
+				Termin t = (Termin) ElexisEventDispatcher
+						.getSelected(Termin.class);
+				if (t != null) {
+					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
+					ElexisEventDispatcher.update(t);
 				}
 			}
 		};
-		terminVerlaengernAction=new Action(Messages.TagesView_enlargeTermin){ 
+		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
 			@Override
-			public void run(){
-				Termin t=(Termin) GlobalEvents.getInstance().getSelectedObject(Termin.class);
-				if(t!=null) {
+			public void run() {
+				Termin t = (Termin) ElexisEventDispatcher
+						.getSelected(Termin.class);
+				if (t != null) {
 					agenda.setActDate(t.getDay());
-					Termin n=Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
-					if(n!=null){
+					Termin n = Plannables.getFollowingTermin(agenda
+							.getActResource(), agenda.getActDate(), t);
+					if (n != null) {
 						t.setEndTime(n.getStartTime());
-						//t.setDurationInMinutes(t.getDurationInMinutes()+15);
-						GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
+						ElexisEventDispatcher.update(t);
 					}
 				}
 			}
 		};
-		newTerminAction=new Action(Messages.TagesView_newTermin){ 
+		newTerminAction = new Action(Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText(Messages.TagesView_createNewTermin); 
+				setToolTipText(Messages.TagesView_createNewTermin);
 			}
+
 			@Override
-			public void run(){
-				TerminDialog dlg=new TerminDialog(null);
+			public void run() {
+				TerminDialog dlg = new TerminDialog(null);
 				dlg.open();
-				if(tv!=null){
+				if (tv != null) {
 					tv.refresh(true);
 				}
 			}
 		};
-		printAction=new Action("Tagesliste drucken"){
+		printAction = new Action("Tagesliste drucken") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Termine des gewählten Tages ausdrucken");
 			}
+
 			@Override
-			public void run(){
-				IPlannable[] liste=Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
-				TerminListeDruckenDialog dlg=new TerminListeDruckenDialog(getViewSite().getShell(),liste);
+			public void run() {
+				IPlannable[] liste = Plannables.loadDay(
+						agenda.getActResource(), agenda.getActDate());
+				TerminListeDruckenDialog dlg = new TerminListeDruckenDialog(
+						getViewSite().getShell(), liste);
 				dlg.open();
-				if(tv!=null){
+				if (tv != null) {
 					tv.refresh(true);
 				}
 			}
 		};
-		printPatientAction=new Action("Patienten-Termine drucken"){
+		printPatientAction = new Action("Patienten-Termine drucken") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Zukünftige Termine des ausgewählten Patienten drucken");
 			}
+
 			@Override
-			public void run(){
-				Patient patient = GlobalEvents.getSelectedPatient();
+			public void run() {
+				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
 					qbe.add("Wer", "=", patient.getId());
 					qbe.add("deleted", "<>", "1");
-					qbe.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
+					qbe.add("Tag", ">=", new TimeTool()
+							.toString(TimeTool.DATE_COMPACT));
 					qbe.orderBy(false, "Tag", "Beginn");
-					java.util.List<Termin> list=qbe.execute();
+					java.util.List<Termin> list = qbe.execute();
 					if (list != null) {
-						boolean directPrint = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
-								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
+						boolean directPrint = Hub.localCfg
+								.get(
+										PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
+										PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
 
-						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list.toArray(new Termin[0]));
+						TermineDruckenDialog dlg = new TermineDruckenDialog(
+								getViewSite().getShell(), list
+										.toArray(new Termin[0]));
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
 							dlg.open();
 							if (dlg.doPrint()) {
 								dlg.close();
 							} else {
-								SWTHelper.alert("Fehler beim Drucken",
-										"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+								SWTHelper
+										.alert(
+												"Fehler beim Drucken",
+												"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 							}
 						} else {
 							dlg.setBlockOnOpen(true);
@@ -351,72 +425,80 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 				}
 			}
 		};
-		exportAction=new Action("Agenda exportieren"){
+		exportAction = new Action("Agenda exportieren") {
 			{
 				setToolTipText("Termine eines Bereichs exportieren");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
+
 			@Override
-			public void run(){
-				ICalTransfer ict=new ICalTransfer();
-				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda.getActResource());
+			public void run() {
+				ICalTransfer ict = new ICalTransfer();
+				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda
+						.getActResource());
 			}
 		};
-		
-		importAction=new Action("Termine importieren"){
+
+		importAction = new Action("Termine importieren") {
 			{
 				setToolTipText("Termine aus einer iCal-Datei importieren");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
+
 			@Override
-			public void run(){
-				ICalTransfer ict=new ICalTransfer();
+			public void run() {
+				ICalTransfer ict = new ICalTransfer();
 				ict.doImport(agenda.getActResource());
 			}
 		};
-		final IAction bereichMenu=new Action(Messages.TagesView_bereich,Action.AS_DROP_DOWN_MENU){ 
+		final IAction bereichMenu = new Action(Messages.TagesView_bereich,
+				Action.AS_DROP_DOWN_MENU) {
 			Menu mine;
 			{
-				setToolTipText(Messages.TagesView_selectBereich); 
-				setMenuCreator(new IMenuCreator(){
+				setToolTipText(Messages.TagesView_selectBereich);
+				setMenuCreator(new IMenuCreator() {
 
 					public void dispose() {
 						mine.dispose();
 					}
 
 					public Menu getMenu(Control parent) {
-						mine=new Menu(parent);
+						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
 
 					public Menu getMenu(Menu parent) {
-						mine=new Menu(parent);
+						mine = new Menu(parent);
 						fillMenu();
 						return mine;
-					}});
+					}
+				});
 			}
-			private void fillMenu(){
-				String[] sMandanten=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis).split(","); 
-				for(String m:sMandanten){
-					MenuItem it=new MenuItem(mine,SWT.NONE);
+
+			private void fillMenu() {
+				String[] sMandanten = Hub.globalCfg.get(
+						PreferenceConstants.AG_BEREICHE,
+						Messages.TagesView_praxis).split(",");
+				for (String m : sMandanten) {
+					MenuItem it = new MenuItem(mine, SWT.NONE);
 					it.setText(m);
-					it.addSelectionListener(new SelectionAdapter(){
+					it.addSelectionListener(new SelectionAdapter() {
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							MenuItem mi=(MenuItem)e.getSource();
+							MenuItem mi = (MenuItem) e.getSource();
 							setBereich(mi.getText());
-							//tv.refresh();
+							// tv.refresh();
 						}
-						
+
 					});
 				}
 			}
-			
+
 		};
-		
-		IMenuManager mgr=getViewSite().getActionBars().getMenuManager();
+
+		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(bereichMenu);
 		mgr.add(dayLimitsAction);
 		mgr.add(newViewAction);
@@ -425,27 +507,5 @@ public abstract class BaseAgendaView extends ViewPart implements BackingStoreLis
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
 	}
-
-	// BackingStoreListener
-	public void reloadContents(Class<? extends PersistentObject> clazz) {
-		if(clazz.equals(Termin.class)){
-			Desk.getDisplay().asyncExec(new Runnable(){
-				public void run() {
-					if(!tv.getControl().isDisposed()){
-						tv.refresh(true);
-					}
-				}});
-		}else if(clazz.equals(Anwender.class)){
-			updateActions();
-			if(tv!=null){
-				if(!tv.getControl().isDisposed()){
-					tv.getControl().setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_DEFAULTFONT));
-				}
-			}
-			setBereich(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
-		}
-		
-	}
-
 
 }

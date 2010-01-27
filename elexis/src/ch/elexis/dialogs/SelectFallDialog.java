@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: SelectFallDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: SelectFallDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Fall;
 import ch.elexis.util.SWTHelper;
 
@@ -36,8 +36,7 @@ public class SelectFallDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		list = new org.eclipse.swt.widgets.List(parent, SWT.BORDER);
 		list.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Fall actFall = (Fall) GlobalEvents.getInstance().getSelectedObject(
-				Fall.class);
+		Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		faelle = actFall.getPatient().getFaelle();
 		for (Fall f : faelle) {
 			list.add(f.getLabel());

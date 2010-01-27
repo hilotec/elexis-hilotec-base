@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 5566 2009-07-20 15:04:38Z freakypenguin $
+ *    $Id: BriefAuswahl.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -35,10 +35,12 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -55,8 +57,8 @@ import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
 
-public class BriefAuswahl extends ViewPart implements SelectionListener,
-		ActivationListener, ISaveablePart2 {
+public class BriefAuswahl extends ViewPart implements ElexisEventListener,
+		IActivationListener, ISaveablePart2 {
 
 	public final static String ID = "ch.elexis.BriefAuswahlView";
 	private final FormToolkit tk;
@@ -110,7 +112,7 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 			ct.setData(page.cv);
 			ct.setControl(page);
 		}
-		
+
 		ctab.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -118,8 +120,8 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 			}
 
 		});
-		
-		GlobalEvents.getInstance().addActivationListener(this, this);
+
+		GlobalEventDispatcher.addActivationListener(this, this);
 		menus.createMenu(briefNeuAction, briefLadenAction, editNameAction,
 				deleteAction);
 		menus.createToolbar(briefNeuAction, briefLadenAction, deleteAction);
@@ -129,8 +131,8 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 
 	@Override
 	public void dispose() {
-		GlobalEvents.getInstance().removeSelectionListener(this);
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+		ElexisEventDispatcher.getInstance().removeListeners(this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		for (CTabItem it : ctab.getItems()) {
 			CommonViewer cv = (CommonViewer) it.getData();
 			if (!cv.getViewerWidget().getControl().isDisposed()) {
@@ -145,26 +147,24 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 	}
 
 	public void relabel() {
-		Patient pat = GlobalEvents.getSelectedPatient();
-		if (pat == null) {
-			form.setText("Kein Patient ausgewählt");
-		} else {
-			form.setText(pat.getLabel());
-			CTabItem sel = ctab.getSelection();
-			if (sel != null) {
-				CommonViewer cv = (CommonViewer) sel.getData();
-				cv.notify(CommonViewer.Message.update);
+		Desk.asyncExec(new Runnable() {
+			public void run() {
+				Patient pat = (Patient)ElexisEventDispatcher.getSelected(Patient.class);
+				if (pat == null) {
+					form.setText("Kein Patient ausgewählt");
+				} else {
+					form.setText(pat.getLabel());
+					CTabItem sel = ctab.getSelection();
+					if (sel != null) {
+						CommonViewer cv = (CommonViewer) sel.getData();
+						cv.notify(CommonViewer.Message.update);
+					}
+				}
 			}
-		}
-
+		});
+		
 	}
 
-	public void selectionEvent(final PersistentObject obj) {
-		if (obj instanceof Patient) {
-			relabel();
-		}
-
-	}
 
 	class sPage extends Composite {
 		private final CommonViewer cv;
@@ -174,31 +174,34 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 			super(parent, SWT.NONE);
 			setLayout(new GridLayout());
 			cv = new CommonViewer();
-			vc = new ViewerConfigurer(new DefaultContentProvider(cv,
-					Brief.class) {
+			vc = new ViewerConfigurer(
+					new DefaultContentProvider(cv, Brief.class) {
 
-				@Override
-				public Object[] getElements(final Object inputElement) {
-					Patient actPat = GlobalEvents.getSelectedPatient();
-					if (actPat != null) {
-						Query<Brief> qbe = new Query<Brief>(Brief.class);
-						qbe.add(Brief.PATIENT_ID, Query.EQUALS, actPat.getId());
-						if (cat.equals("Alle")) {
-							qbe.add(Brief.TYPE, Query.NOT_EQUAL, Brief.TEMPLATE);
-						} else {
-							qbe.add(Brief.TYPE, Query.EQUALS, cat);
+						@Override
+						public Object[] getElements(final Object inputElement) {
+							Patient actPat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+							if (actPat != null) {
+								Query<Brief> qbe = new Query<Brief>(Brief.class);
+								qbe.add(Brief.PATIENT_ID, Query.EQUALS, actPat
+										.getId());
+								if (cat.equals("Alle")) {
+									qbe.add(Brief.TYPE, Query.NOT_EQUAL,
+											Brief.TEMPLATE);
+								} else {
+									qbe.add(Brief.TYPE, Query.EQUALS, cat);
+								}
+								cv.getConfigurer().getControlFieldProvider()
+										.setQuery(qbe);
+								List<Brief> list = qbe.execute();
+								return list.toArray();
+							} else {
+								return new Brief[0];
+							}
 						}
-						cv.getConfigurer().getControlFieldProvider().setQuery(
-								qbe);
-						List<Brief> list = qbe.execute();
-						return list.toArray();
-					} else {
-						return new Brief[0];
-					}
-				}
 
-			}, new DefaultLabelProvider(), new DefaultControlFieldProvider(cv,
-					new String[] { "Betreff=Titel" }),
+					}, new DefaultLabelProvider(),
+					new DefaultControlFieldProvider(cv,
+							new String[] { "Betreff=Titel" }),
 					new ViewerConfigurer.DefaultButtonProvider(),
 					new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LIST,
 							SWT.V_SCROLL, cv));
@@ -293,9 +296,10 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 			@Override
 			public void run() {
 				CTabItem sel = ctab.getSelection();
-				if ((sel != null) && SWTHelper.askYesNo("Dokument löschen", 
-					"Wollen Sie dieses Dokument wirklich unwiderruflich löschen?"))
-				{
+				if ((sel != null)
+						&& SWTHelper
+								.askYesNo("Dokument löschen",
+										"Wollen Sie dieses Dokument wirklich unwiderruflich löschen?")) {
 					CommonViewer cv = (CommonViewer) sel.getData();
 					Object[] o = cv.getSelection();
 					if ((o != null) && (o.length > 0)) {
@@ -355,17 +359,11 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 
 	public void visible(final boolean mode) {
 		if (mode == true) {
-			selectionEvent(GlobalEvents.getInstance().getSelectedObject(
-					Patient.class));
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(this);
+			relabel();
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
-
-	}
-
-	public void clearEvent(final Class template) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -395,5 +393,14 @@ public class BriefAuswahl extends ViewPart implements SelectionListener,
 
 	public boolean isSaveOnCloseNeeded() {
 		return true;
+	}
+
+	public void catchElexisEvent(ElexisEvent ev) {
+		relabel();
+	}
+
+	private static ElexisEvent template=new ElexisEvent(null,Patient.class,ElexisEvent.EVENT_SELECTED|ElexisEvent.EVENT_DESELECTED);
+	public ElexisEvent getElexisEventFilter() {
+		return template;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EnhancedTextField.java 5752 2009-09-23 16:35:09Z rgw_ch $
+ *  $Id: EnhancedTextField.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -51,6 +51,9 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ApplicationActionBarAdvisor;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEvents.UserListener;
@@ -67,9 +70,9 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 /**
- * Ein StyledText mit erweiterten Eigenschaften. Kann XML-Dokumente von SAmDaS-Typ lesen. Aus
- * Kompatibiltätsgründen können auch reine Texteinträge gelesen werden, werden beim Speichern aber
- * nach XML gewandelt.
+ * Ein StyledText mit erweiterten Eigenschaften. Kann XML-Dokumente von
+ * SAmDaS-Typ lesen. Aus Kompatibiltätsgründen können auch reine Texteinträge
+ * gelesen werden, werden beim Speichern aber nach XML gewandelt.
  * 
  * @author Gerry
  * 
@@ -77,7 +80,7 @@ import ch.rgw.tools.StringTool;
 public class EnhancedTextField extends Composite {
 	public static final String MACRO_KEY = "enhancedtextfield/macro_key"; //$NON-NLS-1$
 	public static final String MACRO_KEY_DEFAULT = "#"; //$NON-NLS-1$
-	
+
 	StyledText text;
 	Hashtable<String, IKonsExtension> hXrefs;
 	ETFDropReceiver dropper;
@@ -89,51 +92,54 @@ public class EnhancedTextField extends Composite {
 	boolean dirty;
 	MenuManager menuMgr;
 	private Konsultation actKons;
-	private static Pattern outline = Pattern.compile("^\\S+:", Pattern.MULTILINE); //$NON-NLS-1$
+	private static Pattern outline = Pattern.compile(
+			"^\\S+:", Pattern.MULTILINE); //$NON-NLS-1$
 	private static Pattern bold = Pattern.compile("\\*\\S+\\*"); //$NON-NLS-1$
 	private static Pattern italic = Pattern.compile("\\/\\S+\\/"); //$NON-NLS-1$
 	private static Pattern underline = Pattern.compile("_\\S+_"); //$NON-NLS-1$
 	private IAction copyAction, cutAction, pasteAction;
 	private IMenuListener globalMenuListener;
-	private UserChangeListener ucl = new UserChangeListener();
-	
-	public void addMenuListener(IMenuListener ml){
+	private ElexisEventListener ucl = new UserChangeListener();
+
+	public void addMenuListener(IMenuListener ml) {
 		menuMgr.addMenuListener(ml);
 	}
-	
-	public void removeMenuListener(IMenuListener ml){
+
+	public void removeMenuListener(IMenuListener ml) {
 		menuMgr.removeMenuListener(ml);
 	}
-	
-	public void setXrefs(Hashtable<String, IKonsExtension> xrefs){
+
+	public void setXrefs(Hashtable<String, IKonsExtension> xrefs) {
 		hXrefs = xrefs;
 	}
-	
-	public void addXrefHandler(String id, IKonsExtension xref){
+
+	public void addXrefHandler(String id, IKonsExtension xref) {
 		if (hXrefs == null) {
 			hXrefs = new Hashtable<String, IKonsExtension>();
 		}
 		hXrefs.put(id, xref);
 	}
-	
+
 	/**
 	 * Only needed for billing macros
 	 * 
 	 * @param k
 	 *            kons to bill, can be null then billing macros are disabled
 	 */
-	public void setKons(Konsultation k){
+	public void setKons(Konsultation k) {
 		actKons = k;
 	}
-	
-	public void connectGlobalActions(IViewSite site){
+
+	public void connectGlobalActions(IViewSite site) {
 		makeActions();
 		IActionBars actionBars = site.getActionBars();
-		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
+				copyAction);
 		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), cutAction);
-		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pasteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
+				pasteAction);
 		globalMenuListener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				if (text.getSelectionCount() == 0) {
 					copyAction.setEnabled(false);
 					cutAction.setEnabled(false);
@@ -141,32 +147,34 @@ public class EnhancedTextField extends Composite {
 					copyAction.setEnabled(true);
 					cutAction.setEnabled(true);
 				}
-				
+
 			}
 		};
-		ApplicationActionBarAdvisor.editMenu.addMenuListener(globalMenuListener);
-		GlobalEvents.getInstance().addUserListener(ucl);
+		ApplicationActionBarAdvisor.editMenu
+				.addMenuListener(globalMenuListener);
+		ElexisEventDispatcher.getInstance().addListeners(ucl);
 	}
-	
-	public void disconnectGlobalActions(IViewSite site){
+
+	public void disconnectGlobalActions(IViewSite site) {
 		IActionBars actionBars = site.getActionBars();
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), null);
 		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), null);
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), null);
-		ApplicationActionBarAdvisor.editMenu.removeMenuListener(globalMenuListener);
-		GlobalEvents.getInstance().removeUserListener(ucl);
-		
+		ApplicationActionBarAdvisor.editMenu
+				.removeMenuListener(globalMenuListener);
+		ElexisEventDispatcher.getInstance().removeListeners(ucl);
+
 	}
-	
-	public void addDropReceiver(Class clazz, IKonsExtension ext){
+
+	public void addDropReceiver(Class clazz, IKonsExtension ext) {
 		dropper.addReceiver(clazz, ext);
 	}
-	
-	public void removeDropReceiver(Class clazz, IKonsExtension ext){
+
+	public void removeDropReceiver(Class clazz, IKonsExtension ext) {
 		dropper.removeReceiver(clazz, ext);
 	}
-	
-	public EnhancedTextField(final Composite parent){
+
+	public EnhancedTextField(final Composite parent) {
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		text = new StyledText(this, SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
@@ -179,7 +187,7 @@ public class EnhancedTextField extends Composite {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(GlobalActions.cutAction);
 				manager.add(GlobalActions.copyAction);
 				manager.add(GlobalActions.pasteAction);
@@ -194,20 +202,22 @@ public class EnhancedTextField extends Composite {
 							setEnabled(true);
 						}
 					}
-					
+
 					@Override
-					public void run(){
-						
-						InputDialog in =
-							new InputDialog(parent.getShell(), Messages.EnhancedTextField_newMacro,
-								Messages.EnhancedTextField_enterNameforMacro, null, null);
+					public void run() {
+
+						InputDialog in = new InputDialog(parent.getShell(),
+								Messages.EnhancedTextField_newMacro,
+								Messages.EnhancedTextField_enterNameforMacro,
+								null, null);
 						if (in.open() == Dialog.OK) {
-							StringBuilder name = new StringBuilder(in.getValue());
+							StringBuilder name = new StringBuilder(in
+									.getValue());
 							name.reverse();
 							Hub.userCfg.set("makros/" + name, tx); //$NON-NLS-1$
 						}
 					}
-					
+
 				});
 				if (hXrefs != null) {
 					boolean bAdditions = false;
@@ -221,7 +231,8 @@ public class EnhancedTextField extends Composite {
 						}
 					}
 					if (bAdditions) {
-						manager.add(new Action(Messages.EnhancedTextField_RemoveXref) {
+						manager.add(new Action(
+								Messages.EnhancedTextField_RemoveXref) {
 							Samdas.XRef actRef = null;
 							{
 								setEnabled(false);
@@ -231,28 +242,34 @@ public class EnhancedTextField extends Composite {
 									setEnabled(true);
 								}
 							}
-							
+
 							@Override
-							public void run(){
+							public void run() {
 								List<Samdas.XRef> xrefs = record.getXrefs();
 								Samdas.XRef eRemove = null;
 								for (Samdas.XRef xref : xrefs) {
-									if ((xref.getProvider().equals(actRef.getProvider()))
-										&& (xref.getID().equals(actRef.getID()))) {
-										IKonsExtension ex = hXrefs.get(actRef.getProvider());
+									if ((xref.getProvider().equals(actRef
+											.getProvider()))
+											&& (xref.getID().equals(actRef
+													.getID()))) {
+										IKonsExtension ex = hXrefs.get(actRef
+												.getProvider());
 										if (ex != null) {
 											eRemove = xref;
-											text.replaceTextRange(actRef.getPos(), actRef
-												.getLength(), StringTool.leer);
-											ex.removeXRef(actRef.getProvider(), actRef.getID());
+											text.replaceTextRange(actRef
+													.getPos(), actRef
+													.getLength(),
+													StringTool.leer);
+											ex.removeXRef(actRef.getProvider(),
+													actRef.getID());
 										}
 									}
-									
+
 								}
 								record.remove(eRemove);
 								doFormat(getDocumentAsText());
 							}
-							
+
 						});
 					}
 				}
@@ -262,8 +279,8 @@ public class EnhancedTextField extends Composite {
 		text.setMenu(menu);
 		text.setWordWrap(true);
 		text.addMouseListener(new MouseAdapter() {
-			
-			public void mouseDoubleClick(MouseEvent e){
+
+			public void mouseDoubleClick(MouseEvent e) {
 				// System.out.println("Line="+e.y/text.getLineHeight());
 				// System.out.println("Caret="+text.getCaretOffset());
 				if (e.button != 1) {
@@ -271,13 +288,15 @@ public class EnhancedTextField extends Composite {
 				} else {
 					if (links != null) {
 						try {
-							int ch = text.getOffsetAtLocation(new Point(e.x, e.y));
+							int ch = text.getOffsetAtLocation(new Point(e.x,
+									e.y));
 							Samdas.XRef lr = findLinkRef(ch);
 							if (lr != null) {
-								IKonsExtension xr = hXrefs.get(lr.getProvider());
+								IKonsExtension xr = hXrefs
+										.get(lr.getProvider());
 								xr.doXRef(lr.getProvider(), lr.getID());
 							}
-							
+
 						} catch (IllegalArgumentException iax) {
 							/* Klick ausserhalb des Textbereichs: egal */
 						}
@@ -287,23 +306,23 @@ public class EnhancedTextField extends Composite {
 		});
 		text.addExtendedModifyListener(new RangeTracker());
 		new PersistentObjectDropTarget(text, dropper);
-		
+
 		dirty = false;
 	}
-	
-	public boolean isDirty(){
+
+	public boolean isDirty() {
 		return dirty;
 	}
-	
-	public void setDirty(boolean d){
+
+	public void setDirty(boolean d) {
 		dirty = d;
 	}
-	
+
 	/**
-	 * Text formatieren (d.h. Style-Ranges erstellen. Es wird unterschieden zwischen dem KG-Eintrag
-	 * alten Stils und dem neuen XML-basierten format.
+	 * Text formatieren (d.h. Style-Ranges erstellen. Es wird unterschieden
+	 * zwischen dem KG-Eintrag alten Stils und dem neuen XML-basierten format.
 	 */
-	void doFormat(String tx){
+	void doFormat(String tx) {
 		text.setStyleRange(null);
 		if (tx.startsWith("<")) { //$NON-NLS-1$
 			doFormatXML(tx);
@@ -313,9 +332,9 @@ public class EnhancedTextField extends Composite {
 			record = samdas.getRecord();
 			text.setText(tx);
 		}
-		
+
 		// Überschriften formatieren
-		
+
 		// obsoleted by markups!
 		Matcher matcher = outline.matcher(tx);
 		while (matcher.find() == true) {
@@ -325,7 +344,7 @@ public class EnhancedTextField extends Composite {
 			n.fontStyle = SWT.BOLD;
 			text.setStyleRange(n);
 		}
-		
+
 		matcher = bold.matcher(tx);
 		while (matcher.find() == true) {
 			StyleRange n = new StyleRange();
@@ -342,7 +361,7 @@ public class EnhancedTextField extends Composite {
 			n.fontStyle = SWT.ITALIC;
 			text.setStyleRange(n);
 		}
-		
+
 		matcher = underline.matcher(tx);
 		while (matcher.find() == true) {
 			StyleRange n = new StyleRange();
@@ -353,8 +372,8 @@ public class EnhancedTextField extends Composite {
 		}
 		// Obsoleted, do not rely
 	}
-	
-	void doFormatXML(String tx){
+
+	void doFormatXML(String tx) {
 		samdas = new Samdas(tx);
 		record = samdas.getRecord();
 		List<Samdas.XRef> xrefs = record.getXrefs();
@@ -387,7 +406,7 @@ public class EnhancedTextField extends Composite {
 				// fehlerhaftes Markup entfernen.
 				record.remove(m);
 			}
-			
+
 		}
 		if (hXrefs != null) {
 			for (Samdas.XRef xref : xrefs) {
@@ -401,7 +420,7 @@ public class EnhancedTextField extends Composite {
 				if (xProvider.doLayout(n, xref.getProvider(), xref.getID()) == true) {
 					links.add(xref);
 				}
-				
+
 				if ((n.start + n.length) > text.getCharCount()) {
 					n.length = text.getCharCount() - n.start;
 				}
@@ -413,9 +432,9 @@ public class EnhancedTextField extends Composite {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Querverweis einfügen.
 	 * 
@@ -426,9 +445,10 @@ public class EnhancedTextField extends Composite {
 	 * @param provider
 	 *            XRef-Provider wie beim Extensionpoint XREf angegeben
 	 * @param id
-	 *            vom Provider vergebene Identifikation für diesen Querverweis (beliebiger String)
+	 *            vom Provider vergebene Identifikation für diesen Querverweis
+	 *            (beliebiger String)
 	 */
-	public void insertXRef(int pos, String string, String provider, String id){
+	public void insertXRef(int pos, String string, String provider, String id) {
 		if (pos == -1) {
 			pos = text.getCaretOffset();
 		} else {
@@ -437,20 +457,20 @@ public class EnhancedTextField extends Composite {
 		int len = string.trim().length();
 		text.insert(string);
 		record.setText(text.getText());
-		
+
 		Samdas.XRef xref = new Samdas.XRef(provider, id, pos, len);
 		record.add(xref);
 		setDirty(true);
 		doFormat(getDocumentAsText());
 	}
-	
+
 	/**
 	 * Markup erstellen
 	 * 
 	 * @param type
 	 *            '*' bold, '/' italic, '_', underline
 	 */
-	public void createMarkup(char type, int pos, int len){
+	public void createMarkup(char type, int pos, int len) {
 		String typ = "bold"; //$NON-NLS-1$
 		switch (type) {
 		case '/':
@@ -464,24 +484,24 @@ public class EnhancedTextField extends Composite {
 		record.add(markup);
 		doFormat(getDocumentAsText());
 	}
-	
+
 	/**
 	 * Den Text mit len zeichen ab start durch nt ersetzen
 	 */
-	public void replace(int start, int len, String nt){
+	public void replace(int start, int len, String nt) {
 		text.replaceTextRange(start, len, nt);
 	}
-	
+
 	class ETFVerifyListener implements VerifyListener {
-		public void verifyText(VerifyEvent e){
-			
+		public void verifyText(VerifyEvent e) {
+
 			// if(e.text.length()<2){ wieso das??? weiss nicht mehr, was ich
 			// damit wollte
 			dirty = true;
 			// }
-			
+
 			String macroKey = Hub.userCfg.get(MACRO_KEY, MACRO_KEY_DEFAULT);
-			
+
 			// Wenn der macroKey gedrückt wurde, das Wort rückwärts von der
 			// aktuellen Position
 			// bis zum letzten whitespace scannen.
@@ -507,44 +527,53 @@ public class EnhancedTextField extends Composite {
 					text.setCaretOffset(start + comp.length());
 				} else { // Nein -> prüfen, ob es einem Leistungsblocknamen
 					// entspricht
-					Query<Leistungsblock> qbe = new Query<Leistungsblock>(Leistungsblock.class);
-					qbe.add(Leistungsblock.NAME, Query.EQUALS, s.reverse().toString());
+					Query<Leistungsblock> qbe = new Query<Leistungsblock>(
+							Leistungsblock.class);
+					qbe.add(Leistungsblock.NAME, Query.EQUALS, s.reverse()
+							.toString());
 					qbe.startGroup();
-					qbe.add(Leistungsblock.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
+					qbe.add(Leistungsblock.MANDANT_ID, Query.EQUALS,
+							Hub.actMandant.getId());
 					qbe.or();
 					qbe.add(Leistungsblock.MANDANT_ID, StringTool.leer, null);
 					qbe.endGroup();
 					List<Leistungsblock> list = qbe.execute();
-					if ((list != null) && (list.size() > 0) && (actKons != null)) {
+					if ((list != null) && (list.size() > 0)
+							&& (actKons != null)) {
 						Leistungsblock lb = list.get(0);
 						for (ICodeElement ice : lb.getElements()) {
-							Result<IVerrechenbar> result = actKons.addLeistung((IVerrechenbar) ice);
+							Result<IVerrechenbar> result = actKons
+									.addLeistung((IVerrechenbar) ice);
 							if (!result.isOK()) {
 								SWTHelper
-									.alert(Messages.EnhancedTextField_ThisChargeIsInvalid, result.toString());
+										.alert(
+												Messages.EnhancedTextField_ThisChargeIsInvalid,
+												result.toString());
 								// also see KonsDetailView.DropReceiver
 							}
 						}
 						start += 1;
-						text.replaceTextRange(start, e.end - start, StringTool.leer);
+						text.replaceTextRange(start, e.end - start,
+								StringTool.leer);
 						e.doit = false;
 						actKons.updateEintrag(getDocumentAsText(), false);
 						setDirty(false);
-						GlobalEvents.getInstance().fireObjectEvent(actKons,
-							GlobalEvents.CHANGETYPE.update);
+						ElexisEventDispatcher.update(actKons);
 					}
-					
+
 				}
 				// Wenn ein : gedrückt wurde, prüfen, ob es ein Wort am
 				// Zeilenanfang ist und ggf.
 				// fett formatieren.
 			} else if (e.text.equals(":")) { //$NON-NLS-1$
-				int lineStart = text.getOffsetAtLine(text.getLineAtOffset(e.start));
+				int lineStart = text.getOffsetAtLine(text
+						.getLineAtOffset(e.start));
 				String line = text.getText(lineStart, e.start - 1);
 				if (line.matches("^\\S+")) { //$NON-NLS-1$
 					/*
-					 * StyleRange n=new StyleRange(); n.start=lineStart; n.length=line.length();
-					 * n.fontStyle=SWT.BOLD; text.setStyleRange(n);
+					 * StyleRange n=new StyleRange(); n.start=lineStart;
+					 * n.length=line.length(); n.fontStyle=SWT.BOLD;
+					 * text.setStyleRange(n);
 					 */
 					createMarkup('*', lineStart, line.length());
 				}
@@ -571,68 +600,71 @@ public class EnhancedTextField extends Composite {
 				 * e.doit=true; Desk.theDisplay.asyncExec(new Runnable(){
 				 * 
 				 * public void run() { int off=text.getCaretOffset();
-				 * actKons.updateEintrag(getDocumentAsText(), false); setDirty(false);
+				 * actKons.updateEintrag(getDocumentAsText(), false);
+				 * setDirty(false);
 				 * //GlobalEvents.getInstance().fireObjectEvent(actKons,
-				 * GlobalEvents.CHANGETYPE.update); setText(getDocumentAsText());
-				 * text.setCaretOffset(off); }t });
+				 * GlobalEvents.CHANGETYPE.update);
+				 * setText(getDocumentAsText()); text.setCaretOffset(off); }t
+				 * });
 				 */
 
 			}
-			
+
 		}
-		
+
 	}
-	
-	public void setText(String ntext){
+
+	public void setText(String ntext) {
 		doFormat(ntext);
 		setDirty(false);
 	}
-	
-	public void putCaretToEnd(){
+
+	public void putCaretToEnd() {
 		text.setCaretOffset(text.getCharCount());
 		text.setFocus();
 	}
-	
+
 	/**
 	 * Alle Änderungen seit dem letzten speichern zurücknehmen
 	 * 
 	 * @TODO: multi-undo
 	 */
-	public void undo(){
+	public void undo() {
 		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
 		String oldText = xo.outputString(samdas.getDocument());
 		setText(oldText);
 	}
-	
+
 	/**
 	 * Liefert das dem Textfeld zugrundeliegende Samdas
 	 */
-	public Samdas getContents(){
+	public Samdas getContents() {
 		return samdas;
 	}
-	
+
 	/**
 	 * Liefert den Inhalt des Textfields als jdom-Document zurück
 	 */
-	public Document getDocument(){
+	public Document getDocument() {
 		record.setText(text.getText());
 		// StyleRange[] rgs=text.getStyleRanges();
 		return samdas.getDocument();
 	}
-	
+
 	/**
 	 * Liefert den Inhalt des Textfelds als XML-Text zurück
 	 */
-	public String getDocumentAsText(){
+	public String getDocumentAsText() {
 		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
 		return xo.outputString(getDocument());
 	}
-	
-	Samdas.XRef findLinkRef(int cp){
+
+	Samdas.XRef findLinkRef(int cp) {
 		Samdas.XRef ret = null;
 		if (links != null) {
 			for (Samdas.XRef lr : links) {
-				if ((lr.getPos() <= cp) && ((lr.getPos() + lr.getLength()) >= cp)) {
+				if ((lr.getPos() <= cp)
+						&& ((lr.getPos() + lr.getLength()) >= cp)) {
 					ret = lr;
 					break;
 				}
@@ -640,27 +672,28 @@ public class EnhancedTextField extends Composite {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Liefert das zugrundeliegende Text-Control zurueck
 	 * 
 	 * @return das zugrundeliegende Text-Control
 	 */
-	public Control getControl(){
+	public Control getControl() {
 		return text;
 	}
-	
+
 	/**
-	 * Wenn Änderungen des Texts stattfinden, müssen unsere xref- und markup- EInträge ggf
-	 * mitverschoben werden. Leider können wir dazu nicht die sowieso immer nachgeführten
-	 * StyleRanges verwenden, weil StyledText da immer nur Kopien rausgibt :-(
+	 * Wenn Änderungen des Texts stattfinden, müssen unsere xref- und markup-
+	 * EInträge ggf mitverschoben werden. Leider können wir dazu nicht die
+	 * sowieso immer nachgeführten StyleRanges verwenden, weil StyledText da
+	 * immer nur Kopien rausgibt :-(
 	 * 
 	 * @author gerry
 	 * 
 	 */
 	class RangeTracker implements ExtendedModifyListener {
-		
-		public void modifyText(ExtendedModifyEvent event){
+
+		public void modifyText(ExtendedModifyEvent event) {
 			if (ranges != null) {
 				int pos = event.start;
 				int len = event.length;
@@ -674,37 +707,50 @@ public class EnhancedTextField extends Composite {
 				}
 			}
 		}
-		
+
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		// copyAction=ActionFactory.COPY.create();
 		cutAction = new Action(Messages.EnhancedTextField_cutAction) {
 			@Override
-			public void run(){
+			public void run() {
 				text.cut();
 			}
-			
+
 		};
 		pasteAction = new Action(Messages.EnhancedTextField_pasteAction) {
 			@Override
-			public void run(){
+			public void run() {
 				text.paste();
 			}
 		};
 		copyAction = new Action(Messages.EnhancedTextField_copyAction) {
 			@Override
-			public void run(){
+			public void run() {
 				text.copy();
 			}
 		};
-		
+
 	}
-	
-	class UserChangeListener implements UserListener {
-		public void UserChanged(){
-			text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+
+	class UserChangeListener implements ElexisEventListener {
+		ElexisEvent filter = new ElexisEvent(null, null,
+				ElexisEvent.EVENT_USER_CHANGED);
+
+		public void catchElexisEvent(ElexisEvent ev) {
+			Desk.asyncExec(new Runnable() {
+				public void run() {
+					text.setFont(Desk
+							.getFont(PreferenceConstants.USR_DEFAULTFONT));
+
+				}
+			});
 		}
-		
+
+		public ElexisEvent getElexisEventFilter() {
+			return filter;
+		}
+
 	}
 }

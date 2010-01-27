@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - better support for IDataAccess
  * 
- *  $Id: TextContainer.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: TextContainer.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -45,6 +45,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -95,14 +96,14 @@ public class TextContainer {
 				IExtension[] extensions = exp.getExtensions();
 				for (IExtension ex : extensions) {
 					IConfigurationElement[] elems = ex
-					.getConfigurationElements();
+							.getConfigurationElements();
 					for (IConfigurationElement el : elems) {
 						if ((ExtensionToUse == null)
 								|| el.getAttribute("name").equals( //$NON-NLS-1$
 										ExtensionToUse)) {
 							try {
 								plugin = (ITextPlugin) el
-								.createExecutableExtension("Klasse"); //$NON-NLS-1$
+										.createExecutableExtension("Klasse"); //$NON-NLS-1$
 							} catch (/* Core */Exception e) {
 								ExHandler.handle(e);
 							}
@@ -210,7 +211,7 @@ public class TextContainer {
 				Brief brief = new Brief(
 						subject == null ? Messages.TextContainer_EmptyDocument
 								: subject, null, Hub.actUser, adressat, kons,
-								typ);
+						typ);
 				addBriefToKons(brief, kons);
 				return brief;
 			}
@@ -228,12 +229,12 @@ public class TextContainer {
 				});
 				plugin.findOrReplace(MATCH_INDIRECT_TEMPLATE,
 						new ReplaceCallback() {
-					public Object replace(final String in) {
-						return replaceIndirectFields(ret, in
-								.replaceAll(MATCH_SQUARE_BRACKET,
-										StringTool.leer));
-					}
-				});
+							public Object replace(final String in) {
+								return replaceIndirectFields(ret, in
+										.replaceAll(MATCH_SQUARE_BRACKET,
+												StringTool.leer));
+							}
+						});
 				plugin.findOrReplace(MATCH_GENDERIZE, new ReplaceCallback() {
 					public String replace(final String in) {
 						return genderize(ret, in.replaceAll(
@@ -415,8 +416,7 @@ public class TextContainer {
 		} else {
 			try {
 				String fqname = "ch.elexis.data." + k; //$NON-NLS-1$
-				ret = GlobalEvents.getInstance().getSelectedObject(
-						Class.forName(fqname));
+				ret = ElexisEventDispatcher.getSelected((Class<? extends PersistentObject>)Class.forName(fqname));
 			} catch (Throwable ex) {
 				log.log(Messages.TextContainer_UnrecognizedFieldType + k,
 						Log.WARNINGS);
@@ -454,7 +454,7 @@ public class TextContainer {
 			if (ksl.open() == Dialog.OK) {
 				brief = new Brief(Messages.TextContainer_Letter, null,
 						Hub.actUser, (Kontakt) ksl.getSelection(), Konsultation
-						.getAktuelleKons(), typ);
+								.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
@@ -462,7 +462,7 @@ public class TextContainer {
 				InputDialog dlg = new InputDialog(shell,
 						Messages.TextContainer_SaveDocumentHeader,
 						Messages.TextContainer_SaveDocumentBody, brief
-						.getBetreff(), null);
+								.getBetreff(), null);
 				if (dlg.open() == Dialog.OK) {
 					brief.setBetreff(dlg.getValue());
 				} else {
@@ -474,7 +474,7 @@ public class TextContainer {
 				log.log(Messages.TextContainer_NullSaveHeader, Log.ERRORS);
 			}
 			brief.save(contents, plugin.getMimeType());
-			GlobalEvents.getInstance().fireUpdateEvent(Brief.class);
+			ElexisEventDispatcher.reload(Brief.class);
 		}
 	}
 
@@ -549,7 +549,7 @@ public class TextContainer {
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
 			new Label(ret, SWT.NONE)
-			.setText(Messages.TextContainer_TemplateName);
+					.setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (tmplName != null) {
@@ -633,10 +633,10 @@ public class TextContainer {
 
 	static class DefaultTextPlugin implements ITextPlugin {
 		private static final String expl = Messages.TextContainer_NoPlugin1
-		+ Messages.TextContainer_NoPlugin2
-		+ Messages.TextContainer_Noplugin3
-		+ Messages.TextContainer_NoPlugin4
-		+ Messages.TextContainer_NoPLugin5;
+				+ Messages.TextContainer_NoPlugin2
+				+ Messages.TextContainer_Noplugin3
+				+ Messages.TextContainer_NoPlugin4
+				+ Messages.TextContainer_NoPLugin5;
 
 		public Composite createContainer(final Composite parent,
 				final ITextPlugin.ICallback h) {
@@ -684,7 +684,7 @@ public class TextContainer {
 
 		public void setInitializationData(final IConfigurationElement config,
 				final String propertyName, final Object data)
-		throws CoreException {
+				throws CoreException {
 		}
 
 		public boolean loadFromStream(final InputStream is,
@@ -725,7 +725,7 @@ public class TextContainer {
 			return false;
 		}
 
-		public boolean setStyle(final int style){
+		public boolean setStyle(final int style) {
 			return false;
 		}
 

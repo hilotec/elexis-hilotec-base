@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5919 2010-01-05 12:01:40Z rgw_ch $
+ *    $Id: Hub.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -32,8 +32,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.Heartbeat;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControl;
@@ -127,8 +129,13 @@ public class Hub extends AbstractUIPlugin {
 	 * */
 	private static File userDir;
 	
+	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class){
+		public void runInUi(ElexisEvent ev){
+			setWindowText((Patient)ev.getObject());
+		}
+	};
 	/**
-	 * Consructor. No Eclipse dependend initializations here because the Platform has not been
+	 * Constructor. No Eclipse dependend initializations here because the Platform has not been
 	 * iniatialized fully yet
 	 */
 	public Hub(){
@@ -208,10 +215,13 @@ public class Hub extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		startUpBundle();
+		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
 	}
 	
 	@Override
 	public void stop(final BundleContext context) throws Exception {
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
+		heart.stop();
 		plugin = null;
 		PersistentObject.disconnect();
 		globalCfg = null;
@@ -271,7 +281,7 @@ public class Hub extends AbstractUIPlugin {
 	 * Programmende
 	 */
 	public static void postShutdown() {
-		heart.stop();
+		//heart.stop();
 		//JobPool.getJobPool().dispose();
 		if (Hub.actUser != null) {
 			Anwender.logoff();
@@ -325,9 +335,7 @@ public class Hub extends AbstractUIPlugin {
 		}
 		actMandant = m;
 		setWindowText(null);
-		GlobalEvents.getInstance().fireSelectionEvent(Hub.actMandant);
-		GlobalEvents.getInstance().fireUpdateEvent(Mandant.class);
-		GlobalEvents.getInstance().fireUserEvent();
+		ElexisEventDispatcher.getInstance().fire(new ElexisEvent(Hub.actMandant,Mandant.class,ElexisEvent.EVENT_MANDATOR_CHANGED));
 	}
 	
 	public static void setWindowText(Patient pat){
@@ -345,7 +353,7 @@ public class Hub extends AbstractUIPlugin {
 			sb.append(" / ").append(Hub.actMandant.getLabel()); //$NON-NLS-1$
 		}
 		if (pat == null) {
-			pat = GlobalEvents.getSelectedPatient();
+			pat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		}
 		if (pat == null) {
 			sb.append(Messages.Hub_nopatientselected);
@@ -398,7 +406,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5919 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 5970 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
@@ -472,7 +480,7 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * A job that executes during sstop() of the plugin (that means after the workbench is shut down
+	 * A job that executes during stop() of the plugin (that means after the workbench is shut down
 	 * 
 	 * @author gerry
 	 * 

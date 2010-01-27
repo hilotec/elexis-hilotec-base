@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: TerminLabel.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -35,7 +35,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
@@ -82,13 +82,15 @@ public class TerminLabel extends Composite {
 			}
 
 		});
-		new PersistentObjectDragSource2(lbl,new PersistentObjectDragSource2.Draggable(){
+		new PersistentObjectDragSource2(lbl,
+				new PersistentObjectDragSource2.Draggable() {
 
-			public List<PersistentObject> getSelection() {
-				ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>();
-				ret.add(TerminLabel.this.t);
-				return ret;
-			}});
+					public List<PersistentObject> getSelection() {
+						ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
+						ret.add(TerminLabel.this.t);
+						return ret;
+					}
+				});
 
 		new TerminLabelMenu();
 
@@ -112,14 +114,15 @@ public class TerminLabel extends Composite {
 		return t;
 	}
 
-	public void updateActions(){
+	public void updateActions() {
 		boolean canChangeAppointments = Hub.acl
-		.request(ACLContributor.CHANGE_APPOINTMENTS);
+				.request(ACLContributor.CHANGE_APPOINTMENTS);
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);
-	
+
 	}
+
 	public void refresh() {
 		Color back = Plannables.getTypColor(t);
 		lbl.setBackground(back);
@@ -160,9 +163,10 @@ public class TerminLabel extends Composite {
 			contextMenuManager.add(terminVerlaengernAction);
 			contextMenuManager.add(terminAendernAction);
 			contextMenuManager.add(AgendaActions.delTerminAction);
-			TerminLabel.this.lbl.setMenu(contextMenuManager.createContextMenu(TerminLabel.this.lbl));
+			TerminLabel.this.lbl.setMenu(contextMenuManager
+					.createContextMenu(TerminLabel.this.lbl));
 		}
-		
+
 	};
 
 	private void makeActions() {
@@ -175,8 +179,9 @@ public class TerminLabel extends Composite {
 			@Override
 			public void run() {
 				agenda.setActResource(t.getBereich());
-				TerminDialog dlg = new TerminDialog((Termin) GlobalEvents
-						.getInstance().getSelectedObject(Termin.class));
+				TerminDialog dlg = new TerminDialog(
+						(Termin) ElexisEventDispatcher
+								.getSelected(Termin.class));
 				dlg.open();
 				refresh();
 
@@ -187,7 +192,7 @@ public class TerminLabel extends Composite {
 			public void run() {
 				if (t != null) {
 					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
-					GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
+					ElexisEventDispatcher.update(t);
 				}
 			}
 		};
@@ -202,7 +207,8 @@ public class TerminLabel extends Composite {
 						t.setEndTime(n.getStartTime());
 						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
 						refresh();
-						//GlobalEvents.getInstance()	.fireUpdateEvent(Termin.class);
+						// GlobalEvents.getInstance()
+						// .fireUpdateEvent(Termin.class);
 					}
 				}
 			}

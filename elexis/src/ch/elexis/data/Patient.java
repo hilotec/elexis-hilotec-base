@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Patient.java 5890 2009-12-22 11:18:52Z rgw_ch $
+ *  $Id: Patient.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -18,7 +18,7 @@ import java.util.List;
 
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -76,8 +76,8 @@ public class Patient extends Person {
 				"Faelle				=LIST:PatientID:FAELLE:DatumVon",
 				"Garanten			=JOINT:GarantID:PatientID:PATIENT_GARANT_JOINT:ch.elexis.data.Kontakt",
 				"Dauermedikation	=JOINT:ArtikelID:PatientID:PATIENT_ARTIKEL_JOINT:ch.elexis.data.Artikel",
-				BALANCE+"			=LIST:PatientID:KONTO", GROUP, "PatientNr",
-		"istPatient");
+				BALANCE + "			=LIST:PatientID:KONTO", GROUP, "PatientNr",
+				"istPatient");
 	}
 
 	public String getDiagnosen() {
@@ -205,7 +205,7 @@ public class Patient extends Person {
 	public Konsultation getLetzteKons(final boolean create) {
 		if (Hub.actMandant == null) {
 			SWTHelper.showError("Kein Mandant angemeldet",
-			"Es ist kein Mandant angemeldet.");
+					"Es ist kein Mandant angemeldet.");
 			return null;
 		}
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
@@ -255,7 +255,7 @@ public class Patient extends Person {
 	public Fall neuerFall(final String Bezeichnung, final String grund,
 			final String Abrechnungsmethode) {
 		Fall fall = new Fall(getId(), Bezeichnung, grund, Abrechnungsmethode);
-		GlobalEvents.getInstance().fireUpdateEvent(Fall.class);
+		ElexisEventDispatcher.reload(Fall.class);
 		return fall;
 	}
 
@@ -278,11 +278,11 @@ public class Patient extends Person {
 			while (true) {
 				String lockid = PersistentObject.lock("PatNummer", true);
 				String pid = j
-				.queryString("SELECT WERT FROM CONFIG WHERE PARAM='PatientNummer'");
+						.queryString("SELECT WERT FROM CONFIG WHERE PARAM='PatientNummer'");
 				if (StringTool.isNothing(pid)) {
 					pid = "0";
 					j
-					.exec("INSERT INTO CONFIG (PARAM,WERT) VALUES ('PatientNummer','0')");
+							.exec("INSERT INTO CONFIG (PARAM,WERT) VALUES ('PatientNummer','0')");
 				}
 				int lastNum = Integer.parseInt(pid) + 1;
 				rc = Integer.toString(lastNum);
@@ -290,8 +290,8 @@ public class Patient extends Person {
 						+ "' where param='PatientNummer'");
 				PersistentObject.unlock("PatNummer", lockid);
 				String exists = j
-				.queryString("SELECT ID FROM KONTAKT WHERE PatientNr="
-						+ JdbcLink.wrap(rc));
+						.queryString("SELECT ID FROM KONTAKT WHERE PatientNr="
+								+ JdbcLink.wrap(rc));
 				if (exists == null) {
 					break;
 				}
@@ -445,7 +445,7 @@ public class Patient extends Person {
 	@Override
 	protected String getConstraint() {
 		return new StringBuilder(Kontakt.IS_PATIENT).append(Query.EQUALS)
-		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
+				.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 
 	@Override
@@ -529,7 +529,6 @@ public class Patient extends Person {
 	public boolean isDragOK() {
 		return true;
 	}
-
 
 	public String getAlter() {
 		TimeTool now = new TimeTool();

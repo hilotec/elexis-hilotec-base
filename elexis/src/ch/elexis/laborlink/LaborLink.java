@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, D. Lutz and Elexis
+ * Copyright (c) 2006-2010, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
  *    
- *    $Id: LaborLink.java 5024 2009-01-23 16:36:39Z rgw_ch $
+ *    $Id: LaborLink.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.laborlink;
@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.LabGroup;
@@ -93,7 +94,7 @@ public class LaborLink implements IKonsExtension {
 		ret[0]=new Action("Labor verordnen") {
 			@Override
 			public void run() {
-				Patient patient = GlobalEvents.getSelectedPatient();
+				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient == null) {
 					return;
 				}

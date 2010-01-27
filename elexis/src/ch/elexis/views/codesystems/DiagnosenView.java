@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenView.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ *  $Id: DiagnosenView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -24,12 +24,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
 
-public class DiagnosenView extends ViewPart implements ActivationListener,
+public class DiagnosenView extends ViewPart implements IActivationListener,
 		ISaveablePart2 {
 	public final static String ID = "ch.elexis.DiagnosenView"; //$NON-NLS-1$
 	CTabFolder ctab;
@@ -62,11 +63,11 @@ public class DiagnosenView extends ViewPart implements ActivationListener,
 		CodeSelectorFactory.makeTabs(ctab, getViewSite(),
 				"ch.elexis.Diagnosecode"); //$NON-NLS-1$
 
-		GlobalEvents.getInstance().addActivationListener(this, this);
+		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 
 	public void dispose() {
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
 
@@ -87,7 +88,7 @@ public class DiagnosenView extends ViewPart implements ActivationListener,
 			}
 
 			// remove any ICodeSelectiorTarget, since it's no more needed
-			GlobalEvents.getInstance().removeCodeSelectorTarget();
+			CodeSelectorHandler.getInstance().removeCodeSelectorTarget();
 		}
 
 	}

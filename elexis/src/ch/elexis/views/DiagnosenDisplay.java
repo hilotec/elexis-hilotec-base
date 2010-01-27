@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *  $Id: DiagnosenDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -34,7 +34,8 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.CodeSelectorHandler;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
@@ -49,93 +50,112 @@ import ch.rgw.tools.ExHandler;
 public class DiagnosenDisplay extends Composite implements Draggable {
 	Table tDg;
 	private final Hyperlink hDg;
-	private final Log log=Log.get("DiagnosenDisplay"); //$NON-NLS-1$
+	private final Log log = Log.get("DiagnosenDisplay"); //$NON-NLS-1$
 	private final PersistentObjectDropTarget dropTarget;
-	
-	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent, final int style){
-		super(parent,style);
+
+	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent,
+			final int style) {
+		super(parent, style);
 		setLayout(new GridLayout());
-		hDg=Desk.getToolkit().createHyperlink(this,Messages.getString("DiagnosenDisplay.Diagnoses"),SWT.NONE); //$NON-NLS-1$
-        hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
-        hDg.addHyperlinkListener(new HyperlinkAdapter(){
+		hDg = Desk.getToolkit().createHyperlink(this,
+				Messages.getString("DiagnosenDisplay.Diagnoses"), SWT.NONE); //$NON-NLS-1$
+		hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL));
+		hDg.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
-				try{
+				try {
 					page.showView(DiagnosenView.ID);
-					GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
-				}catch(Exception ex){
+					CodeSelectorHandler.getInstance().setCodeSelectorTarget(
+							dropTarget);
+				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log.log(Messages.getString("DiagnosenDisplay.ErrorStartingCodeSystem")+ex.getMessage(),Log.ERRORS ); //$NON-NLS-1$
+					log
+							.log(
+									Messages
+											.getString("DiagnosenDisplay.ErrorStartingCodeSystem") + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
 				}
 			}
-        });
-        tDg=Desk.getToolkit().createTable(this,SWT.SINGLE|SWT.WRAP);
-        tDg.setLayoutData(new GridData(GridData.FILL_BOTH));
-        tDg.setMenu(createDgMenu());
-      
-        //new PersistentObjectDragSource()
-        dropTarget=new PersistentObjectDropTarget(Messages.getString("DiagnosenDisplay.DiagnoseTarget"), tDg,new DropReceiver()); //$NON-NLS-1$
-        new PersistentObjectDragSource2(tDg,this);
+		});
+		tDg = Desk.getToolkit().createTable(this, SWT.SINGLE | SWT.WRAP);
+		tDg.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tDg.setMenu(createDgMenu());
+
+		// new PersistentObjectDragSource()
+		dropTarget = new PersistentObjectDropTarget(
+				Messages.getString("DiagnosenDisplay.DiagnoseTarget"), tDg, new DropReceiver()); //$NON-NLS-1$
+		new PersistentObjectDragSource2(tDg, this);
 
 	}
-	public void clear(){
+
+	public void clear() {
 		tDg.removeAll();
 	}
-	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
+
+	private final class DropReceiver implements
+			PersistentObjectDropTarget.Receiver {
 		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
-			 Konsultation actKons=GlobalEvents.getSelectedKons();
-			 if(o instanceof IDiagnose){
-				 actKons.addDiagnose((IDiagnose)o);
-		         setDiagnosen(actKons);
-		     }
+			Konsultation actKons = (Konsultation) ElexisEventDispatcher
+					.getSelected(Konsultation.class);
+			if (o instanceof IDiagnose) {
+				actKons.addDiagnose((IDiagnose) o);
+				setDiagnosen(actKons);
+			}
 		}
 
 		public boolean accept(final PersistentObject o) {
-			if(o instanceof IVerrechenbar){
+			if (o instanceof IVerrechenbar) {
 				return true;
 			}
-			if(o instanceof IDiagnose){
+			if (o instanceof IDiagnose) {
 				return true;
 			}
 			return false;
 		}
 	}
-	void setDiagnosen(final Konsultation b){
-        List<IDiagnose> dgl=b.getDiagnosen();
-        tDg.removeAll();
-        for(IDiagnose dg:dgl){
-            TableItem ti=new TableItem(tDg,SWT.WRAP);
-            ti.setText(dg.getLabel());
-            ti.setData(dg);
-        }
-        //tDg.setEnabled(b.getStatus()==RnStatus.NICHT_VON_HEUTE);
-        
-    }
-	private Menu createDgMenu(){
-        Menu ret=new Menu(tDg);
-        MenuItem delDg=new MenuItem(ret,SWT.NONE);
-        delDg.setText(Messages.getString("DiagnosenDisplay.RemoveDiagnoses")); //$NON-NLS-1$
-        delDg.addSelectionListener(new delDgListener());
-        return ret;
-    }
-	class delDgListener extends SelectionAdapter{
-        @Override
+
+	void setDiagnosen(final Konsultation b) {
+		List<IDiagnose> dgl = b.getDiagnosen();
+		tDg.removeAll();
+		for (IDiagnose dg : dgl) {
+			TableItem ti = new TableItem(tDg, SWT.WRAP);
+			ti.setText(dg.getLabel());
+			ti.setData(dg);
+		}
+		// tDg.setEnabled(b.getStatus()==RnStatus.NICHT_VON_HEUTE);
+
+	}
+
+	private Menu createDgMenu() {
+		Menu ret = new Menu(tDg);
+		MenuItem delDg = new MenuItem(ret, SWT.NONE);
+		delDg.setText(Messages.getString("DiagnosenDisplay.RemoveDiagnoses")); //$NON-NLS-1$
+		delDg.addSelectionListener(new delDgListener());
+		return ret;
+	}
+
+	class delDgListener extends SelectionAdapter {
+		@Override
 		public void widgetSelected(final SelectionEvent e) {
-        	int sel=tDg.getSelectionIndex();
-        	TableItem ti=tDg.getItem(sel);
-            GlobalEvents.getSelectedKons().removeDiagnose((IDiagnose)ti.getData());
-            tDg.remove(sel);
-            // setBehandlung(actBehandlung);
-        }
-    }
+			int sel = tDg.getSelectionIndex();
+			TableItem ti = tDg.getItem(sel);
+			((Konsultation) ElexisEventDispatcher
+					.getSelected(Konsultation.class))
+					.removeDiagnose((IDiagnose) ti.getData());
+			tDg.remove(sel);
+			// setBehandlung(actBehandlung);
+		}
+	}
+
 	public List<PersistentObject> getSelection() {
-		TableItem[] sel=tDg.getSelection();
-		ArrayList<PersistentObject> ret=new ArrayList<PersistentObject>();
-		if((sel!=null) && (sel.length>0)){
-			for(TableItem ti:sel){
-				IDiagnose id=(IDiagnose)ti.getData();
-				String clazz=id.getClass().getName();
-				ret.add(Hub.poFactory.createFromString(clazz+"::"+id.getCode())); //$NON-NLS-1$
+		TableItem[] sel = tDg.getSelection();
+		ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
+		if ((sel != null) && (sel.length > 0)) {
+			for (TableItem ti : sel) {
+				IDiagnose id = (IDiagnose) ti.getData();
+				String clazz = id.getClass().getName();
+				ret.add(Hub.poFactory.createFromString(clazz
+						+ "::" + id.getCode())); //$NON-NLS-1$
 			}
 		}
 		return ret;

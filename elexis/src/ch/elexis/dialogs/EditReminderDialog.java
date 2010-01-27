@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EditReminderDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ *  $Id: EditReminderDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Reminder;
@@ -45,7 +45,8 @@ import ch.rgw.tools.TimeTool;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class EditReminderDialog extends TitleAreaDialog {
-	private static final String TX_ALL = Messages.getString("EditReminderDialog.all"); //$NON-NLS-1$
+	private static final String TX_ALL = Messages
+			.getString("EditReminderDialog.all"); //$NON-NLS-1$
 	Reminder mine;
 	Text text;
 	Label pat;
@@ -146,7 +147,7 @@ public class EditReminderDialog extends TitleAreaDialog {
 		if (mine == null) {
 			// new reminder
 
-			actPatient = GlobalEvents.getSelectedPatient();
+			actPatient = ElexisEventDispatcher.getSelectedPatient();
 			text.setText(StringTool.leer);
 			cbType.select(1);
 
@@ -238,7 +239,8 @@ public class EditReminderDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		String shelltitle = Messages.getString("EditReminderDialog.reminderShellTitle"); //$NON-NLS-1$
+		String shelltitle = Messages
+				.getString("EditReminderDialog.reminderShellTitle"); //$NON-NLS-1$
 		if (mine == null) {
 			setTitle(Messages.getString("EditReminderDialog.createReminder")); //$NON-NLS-1$
 		} else {
@@ -271,11 +273,10 @@ public class EditReminderDialog extends TitleAreaDialog {
 		if (mine == null) {
 			mine = new Reminder(actPatient, due, typ, "", text.getText()); //$NON-NLS-1$
 		} else {
-			mine
-					.set(new String[] { Reminder.KONTAKT_ID, Reminder.DUE, Reminder.TYPE, Reminder.MESSAGE },
-							new String[] { actPatient.getId(), due,
-									Byte.toString((byte) typ.ordinal()),
-									text.getText() });
+			mine.set(new String[] { Reminder.KONTAKT_ID, Reminder.DUE,
+					Reminder.TYPE, Reminder.MESSAGE }, new String[] {
+					actPatient.getId(), due,
+					Byte.toString((byte) typ.ordinal()), text.getText() });
 		}
 		if (bDone.getSelection()) {
 			mine.setStatus(Reminder.Status.STATE_DONE);

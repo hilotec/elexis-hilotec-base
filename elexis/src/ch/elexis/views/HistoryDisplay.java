@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich, D. Lutz, P. Schönbucher and Elexis
+ * Copyright (c) 2006-2010, G. Weirich, D. Lutz, P. Schönbucher and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: HistoryDisplay.java 5583 2009-07-28 17:11:11Z rgw_ch $
+ *  $Id: HistoryDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -28,11 +28,12 @@ import org.eclipse.ui.forms.widgets.FormText;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.BackgroundJob;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.HistoryLoader;
 import ch.elexis.actions.KonsFilter;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
-import ch.elexis.actions.GlobalEvents.UserListener;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -50,7 +51,7 @@ import ch.rgw.tools.ExHandler;
  * 
  */
 public class HistoryDisplay extends ScrolledComposite implements
-		BackgroundJobListener, UserListener {
+		BackgroundJobListener, ElexisEventListener {
 	FormText text;
 	ArrayList<Konsultation> lKons;
 	StringBuilder sb;
@@ -71,8 +72,11 @@ public class HistoryDisplay extends ScrolledComposite implements
 		lKons = new ArrayList<Konsultation>(20);
 		text = Desk.getToolkit().createFormText(this, false);
 		text.setWhitespaceNormalized(true);
-		text.setColor(Desk.COL_BLUE, Desk.getColorRegistry().get(Desk.COL_BLUE));
-		text.setColor(Desk.COL_GREEN, Desk.getColorRegistry().get(Desk.COL_LIGHTGREY));
+		text
+				.setColor(Desk.COL_BLUE, Desk.getColorRegistry().get(
+						Desk.COL_BLUE));
+		text.setColor(Desk.COL_GREEN, Desk.getColorRegistry().get(
+				Desk.COL_LIGHTGREY));
 		setContent(text);
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -80,11 +84,13 @@ public class HistoryDisplay extends ScrolledComposite implements
 			public void linkActivated(HyperlinkEvent e) {
 				String id = (String) e.getHref();
 				Konsultation k = Konsultation.load(id);
-				GlobalEvents.getInstance().fireSelectionEvent(k);
+				ElexisEventDispatcher.fireSelectionEvent(k);
 			}
 
 		});
-		text.setText(Messages.getString("HistoryDisplay.NoPatientSelected"), false, false); //$NON-NLS-1$
+		text
+				.setText(
+						Messages.getString("HistoryDisplay.NoPatientSelected"), false, false); //$NON-NLS-1$
 		sb = new StringBuilder(1000);
 		addControlListener(new ControlAdapter() {
 			@Override
@@ -94,12 +100,12 @@ public class HistoryDisplay extends ScrolledComposite implements
 			}
 
 		});
-		GlobalEvents.getInstance().addUserListener(this);
+		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
 
 	@Override
 	public void dispose() {
-		GlobalEvents.getInstance().removeUserListener(this);
+		ElexisEventDispatcher.getInstance().removeListeners(this);
 		super.dispose();
 	}
 
@@ -142,10 +148,12 @@ public class HistoryDisplay extends ScrolledComposite implements
 	}
 
 	public void load(Patient pat) {
-		lKons.clear();
-		Fall[] faelle = pat.getFaelle();
-		for (Fall f : faelle) {
-			load(f, false);
+		if (pat != null) {
+			lKons.clear();
+			Fall[] faelle = pat.getFaelle();
+			for (Fall f : faelle) {
+				load(f, false);
+			}
 		}
 	}
 
@@ -157,22 +165,37 @@ public class HistoryDisplay extends ScrolledComposite implements
 
 				// check if widget is valid
 				if (!isDisposed()) {
-					try{
-					text.setText(s,true,true);
-					text.setSize(text.computeSize(self.getSize().x-10,SWT.DEFAULT));
-					}catch(Exception ex){
+					try {
+						text.setText(s, true, true);
+						text.setSize(text.computeSize(self.getSize().x - 10,
+								SWT.DEFAULT));
+					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						Hub.log.log("Text kann nicht geparsed werden "+s, Log.ERRORS);
+						Hub.log.log("Text kann nicht geparsed werden " + s,
+								Log.ERRORS);
 					}
 				}
-				
+
 			}
 		});
 	}
 
-	public void UserChanged() {
-		if (text != null && (!text.isDisposed())) {
-			text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
-		}
+	public void catchElexisEvent(ElexisEvent ev) {
+		Desk.asyncExec(new Runnable() {
+
+			public void run() {
+				if (text != null && (!text.isDisposed())) {
+					text.setFont(Desk
+							.getFont(PreferenceConstants.USR_DEFAULTFONT));
+				}
+			}
+		});
+	}
+
+	private final ElexisEvent eetemplate = new ElexisEvent(null, null,
+			ElexisEvent.EVENT_USER_CHANGED);
+
+	public ElexisEvent getElexisEventFilter() {
+		return eetemplate;
 	}
 }

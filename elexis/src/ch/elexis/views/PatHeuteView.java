@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PatHeuteView.java 5958 2010-01-25 10:28:33Z rgw_ch $
+ * $Id: PatHeuteView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -50,11 +50,14 @@ import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.AbstractDataLoaderJob;
 import ch.elexis.actions.BackgroundJob;
+import ch.elexis.actions.CodeSelectorHandler;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
@@ -85,8 +88,8 @@ import ch.rgw.tools.TimeTool;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
-public class PatHeuteView extends ViewPart implements SelectionListener, ActivationListener,
-ISaveablePart2, BackgroundJobListener {
+public class PatHeuteView extends ViewPart implements IActivationListener,
+		ISaveablePart2, BackgroundJobListener {
 	public static final String ID = "ch.elexis.PatHeuteView"; //$NON-NLS-1$
 	static final String LEISTUNG_HINZU = Messages.getString("PatHeuteView.add"); //$NON-NLS-1$
 	static final String STAT_LEEREN = Messages.getString("PatHeuteView.empty"); //$NON-NLS-1$
@@ -110,8 +113,16 @@ ISaveablePart2, BackgroundJobListener {
 	// private double sumSelected;
 	private final Query<Konsultation> qbe;
 	Composite parent;
-	
-	public PatHeuteView(){
+	private ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
+			Konsultation.class) {
+
+		public void runInUi(ElexisEvent ev) {
+			selection((Konsultation) ev.getObject());
+
+		}
+	};
+
+	public PatHeuteView() {
 		super();
 		datVon = new TimeTool();
 		datBis = new TimeTool();
@@ -119,77 +130,81 @@ ISaveablePart2, BackgroundJobListener {
 		kload = new KonsLoader(qbe);
 		kload.addListener(this);
 	}
-	
+
 	@Override
-	public void createPartControl(final Composite parent){
+	public void createPartControl(final Composite parent) {
 		setPartName(Messages.getString("PatHeuteView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		this.parent = parent;
 		makeActions();
-		ldFilter = new ListDisplay<IVerrechenbar>(parent, SWT.NONE, new ListDisplay.LDListener() {
-			
-			public String getLabel(final Object o){
-				return ((IVerrechenbar) o).getCode();
-			}
-			
-			public void hyperlinkActivated(final String l){
-				if (l.equals(LEISTUNG_HINZU)) {
-					try {
-						if (StringTool.isNothing(LeistungenView.ID)) {
-							SWTHelper.alert(Messages.getString("PatHeuteView.error"), //$NON-NLS-1$
-							"LeistungenView.ID"); //$NON-NLS-1$
-						}
-						getViewSite().getPage().showView(LeistungenView.ID);
-						GlobalEvents.getInstance().setCodeSelectorTarget(dropTarget);
-					} catch (Exception ex) {
-						ExHandler.handle(ex);
+		ldFilter = new ListDisplay<IVerrechenbar>(parent, SWT.NONE,
+				new ListDisplay.LDListener() {
+
+					public String getLabel(final Object o) {
+						return ((IVerrechenbar) o).getCode();
 					}
-				} else if (l.equals(STAT_LEEREN)) {
-					ldFilter.clear();
-				}
-				
-			}
-			
-		});
+
+					public void hyperlinkActivated(final String l) {
+						if (l.equals(LEISTUNG_HINZU)) {
+							try {
+								if (StringTool.isNothing(LeistungenView.ID)) {
+									SWTHelper.alert(Messages
+											.getString("PatHeuteView.error"), //$NON-NLS-1$
+											"LeistungenView.ID"); //$NON-NLS-1$
+								}
+								getViewSite().getPage().showView(
+										LeistungenView.ID);
+								CodeSelectorHandler.getInstance()
+										.setCodeSelectorTarget(dropTarget);
+							} catch (Exception ex) {
+								ExHandler.handle(ex);
+							}
+						} else if (l.equals(STAT_LEEREN)) {
+							ldFilter.clear();
+						}
+
+					}
+
+				});
 		ldFilter.addHyperlinks(LEISTUNG_HINZU, STAT_LEEREN);
 		ldFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		((GridData) ldFilter.getLayoutData()).heightHint = 0;
 		dropTarget = new PersistentObjectDropTarget("Statfilter", ldFilter, //$NON-NLS-1$
-			new DropReceiver());
+				new DropReceiver());
 		Composite top = new Composite(parent, SWT.BORDER);
 		top.setLayout(new RowLayout());
 		final DatePickerCombo dpc = new DatePickerCombo(top, SWT.BORDER);
 		dpc.setDate(datVon.getTime());
 		dpc.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(final SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e) {
 				datVon.setTimeInMillis(dpc.getDate().getTime());
 			}
-			
+
 		});
 		final DatePickerCombo dpb = new DatePickerCombo(top, SWT.BORDER);
 		dpb.setDate(datBis.getTime());
 		dpb.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(final SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e) {
 				datBis.setTimeInMillis(dpb.getDate().getTime());
 			}
-			
+
 		});
 		final Button bOpenKons = new Button(top, SWT.CHECK);
 		bOpenKons.setText(Messages.getString("PatHeuteView.open")); //$NON-NLS-1$
 		bOpenKons.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e) {
 				bOpen = bOpenKons.getSelection();
 			}
 		});
 		final Button bClosedKons = new Button(top, SWT.CHECK);
 		bClosedKons.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e) {
 				bClosed = bClosedKons.getSelection();
 			}
 		});
@@ -197,44 +212,51 @@ ISaveablePart2, BackgroundJobListener {
 		bOpenKons.setSelection(bOpen);
 		bClosedKons.setSelection(bClosed);
 		cv = new CommonViewer();
-		vc = new ViewerConfigurer(new DefaultContentProvider(cv, Patient.class) {
-			@Override
-			public Object[] getElements(final Object inputElement){
-				if (!Hub.acl.request(AccessControlDefaults.ACCOUNTING_STATS)) {
-					return new Konsultation[0];
-				}
-				if (kons == null) {
-					kons = new Konsultation[0];
-					kload.schedule();
-				}
-				
-				return kons;
-			}
-		}, new DefaultLabelProvider() {
-			
-			@Override
-			public String getText(final Object element){
-				if (element instanceof Konsultation) {
-					Fall fall = ((Konsultation) element).getFall();
-					if (fall == null) {
-						return Messages.getString("PatHeuteView.noCase") + ((Konsultation) element).getLabel(); //$NON-NLS-1$
+		vc = new ViewerConfigurer(
+				new DefaultContentProvider(cv, Patient.class) {
+					@Override
+					public Object[] getElements(final Object inputElement) {
+						if (!Hub.acl
+								.request(AccessControlDefaults.ACCOUNTING_STATS)) {
+							return new Konsultation[0];
+						}
+						if (kons == null) {
+							kons = new Konsultation[0];
+							kload.schedule();
+						}
+
+						return kons;
 					}
-					Patient pat = fall.getPatient();
-					return pat.getLabel();
-				}
-				return super.getText(element);
-			}
-			
-		}, null, new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-			SimpleWidgetProvider.TYPE_LIST, SWT.V_SCROLL, cv));
+				},
+				new DefaultLabelProvider() {
+
+					@Override
+					public String getText(final Object element) {
+						if (element instanceof Konsultation) {
+							Fall fall = ((Konsultation) element).getFall();
+							if (fall == null) {
+								return Messages
+										.getString("PatHeuteView.noCase") + ((Konsultation) element).getLabel(); //$NON-NLS-1$
+							}
+							Patient pat = fall.getPatient();
+							return pat.getLabel();
+						}
+						return super.getText(element);
+					}
+
+				}, null, new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LIST,
+						SWT.V_SCROLL, cv));
 		cv.create(vc, parent, SWT.BORDER, getViewSite());
-		
+
 		form = tk.createForm(parent);
 		form.setText(Messages.getString("PatHeuteView.all")); //$NON-NLS-1$
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Composite bottom = form.getBody();
 		bottom.setLayout(new GridLayout(2, false));
-		tk.createLabel(bottom, Messages.getString("PatHeuteView.consultations")); //$NON-NLS-1$
+		tk
+				.createLabel(bottom, Messages
+						.getString("PatHeuteView.consultations")); //$NON-NLS-1$
 		tPat = tk.createText(bottom, "", SWT.BORDER); //$NON-NLS-1$
 		tPat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tPat.setEditable(false);
@@ -263,109 +285,104 @@ ISaveablePart2, BackgroundJobListener {
 		tTime2.setEditable(false);
 		tMoney2.setEditable(false);
 		ViewMenus menus = new ViewMenus(getViewSite());
-		
+
 		menus.createMenu(printAction, reloadAction, statAction);
 		menus.createToolbar(reloadAction, filterAction);
-		
+
 		// setFocus();
 		cv.getConfigurer().getContentProvider().startListening();
-		GlobalEvents.getInstance().addActivationListener(this, this);
+		GlobalEventDispatcher.addActivationListener(this, this);
 		kload.schedule();
-		
+
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		cv.getConfigurer().getContentProvider().stopListening();
 		kload.removeListener(this);
-		GlobalEvents.getInstance().removeActivationListener(this, this);
-		
+		GlobalEventDispatcher.removeActivationListener(this, this);
+
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		cv.notify(CommonViewer.Message.update);
-		
+
 	}
-	
-	public void selectionEvent(final PersistentObject obj){
-		if (obj instanceof Konsultation) {
-			tTime2.setText(Integer.toString(((Konsultation) obj).getMinutes()));
-			double m = ((Konsultation) obj).getUmsatz();
-			DecimalFormat df = new DecimalFormat("0.00"); //$NON-NLS-1$
-			tMoney2.setText(df.format(m / 100.0));
-			final Patient pat =
-				(Patient) GlobalEvents.getInstance().getSelectedObject(Patient.class);
-			final Patient bPat = ((Konsultation) obj).getFall().getPatient();
-			if ((pat == null) || (!pat.getId().equals(bPat.getId()))) {
-				
-				GlobalEvents.getInstance().fireSelectionEvent(bPat);
-				
-			}
+
+	private void selection(final Konsultation k) {
+		tTime2.setText(Integer.toString(k.getMinutes()));
+		double m = k.getUmsatz();
+		DecimalFormat df = new DecimalFormat("0.00"); //$NON-NLS-1$
+		tMoney2.setText(df.format(m / 100.0));
+		final Patient pat = (Patient) ElexisEventDispatcher
+				.getSelected(Patient.class);
+		final Patient bPat = k.getFall().getPatient();
+		if ((pat == null) || (!pat.getId().equals(bPat.getId()))) {
+			ElexisEventDispatcher.fireSelectionEvent(bPat);
 		}
-		
+
 	}
-	
-	public void activation(final boolean mode){ /* leer */
+
+	public void activation(final boolean mode) { /* leer */
 	}
-	
-	public void visible(final boolean mode){
+
+	public void visible(final boolean mode) {
 		if (mode == true) {
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_kons);
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_kons);
 		}
-		
+
 	}
-	
-	public void clearEvent(final Class<? extends PersistentObject> template){
-		
-	}
-	
+
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
-	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
-	 * Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
+	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
+	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose(){
+	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-	
-	public void doSave(final IProgressMonitor monitor){ /* leer */
+
+	public void doSave(final IProgressMonitor monitor) { /* leer */
 	}
-	
-	public void doSaveAs(){ /* leer */
+
+	public void doSaveAs() { /* leer */
 	}
-	
-	public boolean isDirty(){
+
+	public boolean isDirty() {
 		return true;
 	}
-	
-	public boolean isSaveAsAllowed(){
+
+	public boolean isSaveAsAllowed() {
 		return false;
 	}
-	
-	public boolean isSaveOnCloseNeeded(){
+
+	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
-	
+
 	class StatLoader extends Job {
-		
-		StatLoader(){
+
+		StatLoader() {
 			super(Messages.getString("PatHeuteView.calculateStats")); //$NON-NLS-1$
 			setPriority(Job.LONG);
 			setUser(true);
 		}
-		
+
 		@Override
-		protected IStatus run(IProgressMonitor monitor){
+		protected IStatus run(IProgressMonitor monitor) {
 			HashMap<IVerrechenbar, StatCounter> counter = new HashMap<IVerrechenbar, StatCounter>();
-			monitor.beginTask(Messages.getString("PatHeuteView.calculateStats"), kons.length + 20); //$NON-NLS-1$
-			
-			System.out.println(Messages.getString("PatHeuteView.consElexis") + kons.length); //$NON-NLS-1$
+			monitor
+					.beginTask(
+							Messages.getString("PatHeuteView.calculateStats"), kons.length + 20); //$NON-NLS-1$
+
+			System.out
+					.println(Messages.getString("PatHeuteView.consElexis") + kons.length); //$NON-NLS-1$
 			int serviceCounter = 0;
-			
+
 			for (Konsultation k : kons) {
 				List<Verrechnet> list = k.getLeistungen();
 				serviceCounter += list.size();
@@ -382,26 +399,30 @@ ISaveablePart2, BackgroundJobListener {
 					return Status.CANCEL_STATUS;
 				}
 			}
-			
-			System.out.println(Messages.getString("PatHeuteView.servicesElexis") + serviceCounter); //$NON-NLS-1$
-			
-			final List<StatCounter> sums = new LinkedList<StatCounter>(counter.values());
+
+			System.out.println(Messages
+					.getString("PatHeuteView.servicesElexis") + serviceCounter); //$NON-NLS-1$
+
+			final List<StatCounter> sums = new LinkedList<StatCounter>(counter
+					.values());
 			Collections.sort(sums);
 			monitor.worked(20);
 			monitor.done();
 			Desk.asyncExec(new Runnable() {
-				public void run(){
-					FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
-					fd.setFilterExtensions(new String[] {
-						"*.csv", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
-					fd.setFilterNames(new String[] {
-						"CSV", Messages.getString("PatHeuteView.allFiles")}); //$NON-NLS-1$ //$NON-NLS-2$
+				public void run() {
+					FileDialog fd = new FileDialog(getSite().getShell(),
+							SWT.SAVE);
+					fd.setFilterExtensions(new String[] { "*.csv", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+					fd
+							.setFilterNames(new String[] {
+									"CSV", Messages.getString("PatHeuteView.allFiles") }); //$NON-NLS-1$ //$NON-NLS-2$
 					fd.setFileName("elexis-stat.csv"); //$NON-NLS-1$
 					String fname = fd.open();
 					if (fname != null) {
 						try {
 							FileWriter fw = new FileWriter(fname);
-							fw.write(Messages.getString("PatHeuteView.csvHeader")); //$NON-NLS-1$
+							fw.write(Messages
+									.getString("PatHeuteView.csvHeader")); //$NON-NLS-1$
 							for (StatCounter st : sums) {
 								StringBuilder sb = new StringBuilder();
 								String code = "unknown";
@@ -415,63 +436,74 @@ ISaveablePart2, BackgroundJobListener {
 								} else {
 									text = text.replaceAll(";", ","); //$NON-NLS-1$ //$NON-NLS-2$
 								}
-								if(st.v!=null && st.v.getCodeSystemName()!=null){
+								if (st.v != null
+										&& st.v.getCodeSystemName() != null) {
 									sb.append(st.v.getCodeSystemName());
-								}else{
+								} else {
 									sb.append("Codesystem?");
 								}
-								sb.append("; ").append( //$NON-NLS-1$
-									code == null ? "" : code) //$NON-NLS-1$
-									.append("; ").append(text).append(";") //$NON-NLS-1$ //$NON-NLS-2$
-									.append(st.num).append(";").append( //$NON-NLS-1$
-										st.cost.getAmountAsString()).append(";").append( //$NON-NLS-1$
-											st.sum.getAmountAsString()).append(";").append( //$NON-NLS-1$
-												st.getGewinn().getAmountAsString()).append("\r\n"); //$NON-NLS-1$
+								sb
+										.append("; ").append( //$NON-NLS-1$
+												code == null ? "" : code) //$NON-NLS-1$
+										.append("; ").append(text).append(";") //$NON-NLS-1$ //$NON-NLS-2$
+										.append(st.num).append(";").append( //$NON-NLS-1$
+												st.cost.getAmountAsString())
+										.append(";").append( //$NON-NLS-1$
+												st.sum.getAmountAsString())
+										.append(";").append( //$NON-NLS-1$
+												st.getGewinn()
+														.getAmountAsString())
+										.append("\r\n"); //$NON-NLS-1$
 								fw.write(sb.toString());
 							}
 							fw.close();
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
-							SWTHelper.showError(Messages.getString("PatHeuteView.errorWriting"), ex //$NON-NLS-1$
-								.getMessage());
+							SWTHelper.showError(Messages
+									.getString("PatHeuteView.errorWriting"), ex //$NON-NLS-1$
+									.getMessage());
 						}
 					}
-					
+
 				}
 			});
 			return Status.OK_STATUS;
 		}
-		
+
 	}
-	
+
 	class KonsLoader extends AbstractDataLoaderJob {
 		IVerrechenbar[] lfiltered;
-		
-		KonsLoader(final Query<Konsultation> qbe){
+
+		KonsLoader(final Query<Konsultation> qbe) {
 			super(
-				Messages.getString("PatHeuteView.loadConsultations"), qbe, new String[] { Messages.getString("PatHeuteView.date")}); //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.getString("PatHeuteView.loadConsultations"), qbe, new String[] { Messages.getString("PatHeuteView.date") }); //$NON-NLS-1$ //$NON-NLS-2$
 			setPriority(Job.LONG);
 			setUser(true);
 		}
-		
+
 		@Override
-		public IStatus execute(final IProgressMonitor monitor){
+		public IStatus execute(final IProgressMonitor monitor) {
 			if (Hub.actUser == null) {
 				return Status.CANCEL_STATUS;
 			}
-			monitor.beginTask(Messages.getString("PatHeuteView.loadKons"), 1000); //$NON-NLS-1$
+			monitor
+					.beginTask(
+							Messages.getString("PatHeuteView.loadKons"), 1000); //$NON-NLS-1$
 			qbe.clear();
 			qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL, datVon
-				.toString(TimeTool.DATE_COMPACT));
-			qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, datBis.toString(TimeTool.DATE_COMPACT));
+					.toString(TimeTool.DATE_COMPACT));
+			qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, datBis
+					.toString(TimeTool.DATE_COMPACT));
 			if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 				if (Hub.actMandant == null) {
 					monitor.done();
 					return Status.OK_STATUS;
 				}
-				qbe.add(Konsultation.MANDATOR_ID, Query.EQUALS, Hub.actMandant.getId());
+				qbe.add(Konsultation.MANDATOR_ID, Query.EQUALS, Hub.actMandant
+						.getId());
 			}
-			
+
 			if (bOpen && !bClosed) {
 				qbe.add("RechnungsID", StringConstants.EMPTY, null); //$NON-NLS-1$
 			}
@@ -482,7 +514,7 @@ ISaveablePart2, BackgroundJobListener {
 				qbe.insertFalse();
 			}
 			qbe.addPostQueryFilter(new IFilter() {
-				public boolean select(final Object toTest){
+				public boolean select(final Object toTest) {
 					if (filterAction.isChecked()) {
 						Konsultation k = (Konsultation) toTest;
 						List<IVerrechenbar> lFilt = ldFilter.getAll();
@@ -495,7 +527,7 @@ ISaveablePart2, BackgroundJobListener {
 					}
 					return true;
 				}
-				
+
 			});
 			@SuppressWarnings("unchecked")
 			List<Konsultation> list = qbe.execute();
@@ -519,7 +551,8 @@ ISaveablePart2, BackgroundJobListener {
 				for (PersistentObject o : list) {
 					ret[i++] = (Konsultation) o;
 					if (lfiltered != null) {
-						List<Verrechnet> lstg = ((Konsultation) o).getLeistungen();
+						List<Verrechnet> lstg = ((Konsultation) o)
+								.getLeistungen();
 						for (Verrechnet v : lstg) {
 							int num = v.getZahl();
 							Money preis = v.getEffPreis().multiply(num);
@@ -540,7 +573,7 @@ ISaveablePart2, BackgroundJobListener {
 						result = new Konsultation[0];
 						return Status.CANCEL_STATUS;
 					}
-					
+
 				}
 				numPat = ret.length;
 				result = ret;
@@ -548,15 +581,15 @@ ISaveablePart2, BackgroundJobListener {
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 		@Override
-		public int getSize(){
+		public int getSize() {
 			return 100;
 		}
-		
+
 	}
-	
-	public void jobFinished(final BackgroundJob j){
+
+	public void jobFinished(final BackgroundJob j) {
 		if (j.isValid()) {
 			kons = (Konsultation[]) j.getData();
 			if (!Hub.acl.request(AccessControlDefaults.ACCOUNTING_STATS)) {
@@ -571,33 +604,33 @@ ISaveablePart2, BackgroundJobListener {
 		} else {
 			kons = new Konsultation[0];
 		}
-		
+
 	};
-	
+
 	private static class StatCounter implements Comparable<StatCounter> {
 		IVerrechenbar v;
 		Money sum;
 		Money cost;
 		int num;
-		
-		StatCounter(IVerrechenbar vv){
+
+		StatCounter(IVerrechenbar vv) {
 			v = vv;
 			sum = new Money();
 			cost = new Money();
 			num = 0;
 		}
-		
-		void add(int num, Money price, Money cost){
-			
+
+		void add(int num, Money price, Money cost) {
+
 			Money totalPrice = price.multiply(num);
 			Money totalCost = cost.multiply(num);
 			this.num += num;
 			sum.addMoney(totalPrice);
 			this.cost.addMoney(totalCost);
-			
+
 		}
-		
-		public int compareTo(StatCounter o){
+
+		public int compareTo(StatCounter o) {
 			String v1 = null, v2 = null;
 			String vc1 = null, vc2 = null;
 			if (v != null) {
@@ -613,29 +646,31 @@ ISaveablePart2, BackgroundJobListener {
 			if (vgroup != 0) {
 				return vgroup;
 			}
-			
+
 			int vCode = StringTool.compareWithNull(vc1, vc2);
 			if (vCode != 0) {
 				return vCode;
 			}
 			return sum.getCents() - o.sum.getCents();
 		}
-		
-		public Money getGewinn(){
+
+		public Money getGewinn() {
 			Money ret = new Money(sum);
 			ret.subtractMoney(cost);
 			return ret;
 		}
 	}
-	
-	private void makeActions(){
-		statAction = new Action(Messages.getString("PatHeuteView.statisticsAction")) { //$NON-NLS-1$
+
+	private void makeActions() {
+		statAction = new Action(Messages
+				.getString("PatHeuteView.statisticsAction")) { //$NON-NLS-1$
 			{
-				setToolTipText(Messages.getString("PatHeuteView.statisticsToolTip")); //$NON-NLS-1$
+				setToolTipText(Messages
+						.getString("PatHeuteView.statisticsToolTip")); //$NON-NLS-1$
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				StatLoader loader = new StatLoader();
 				loader.schedule();
 			}
@@ -643,38 +678,41 @@ ISaveablePart2, BackgroundJobListener {
 		printAction = new Action(Messages.getString("PatHeuteView.printList")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText(Messages.getString("PatHeuteView.printListToolTip")); //$NON-NLS-1$
+				setToolTipText(Messages
+						.getString("PatHeuteView.printListToolTip")); //$NON-NLS-1$
 			}
-			
+
 			@Override
-			public void run(){
-				TerminListeDialog tld = new TerminListeDialog(getViewSite().getShell());
+			public void run() {
+				TerminListeDialog tld = new TerminListeDialog(getViewSite()
+						.getShell());
 				tld.open();
 			}
 		};
-		
-		reloadAction = new Action(Messages.getString("PatHeuteView.reloadAction")) { //$NON-NLS-1$
+
+		reloadAction = new Action(Messages
+				.getString("PatHeuteView.reloadAction")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
 				setToolTipText(Messages.getString("PatHeuteView.reloadToolTip")); //$NON-NLS-1$
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				kons = null;
 				kload.schedule();
 			}
 		};
-		
-		filterAction =
-			new Action(Messages.getString("PatHeuteView.filterAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
+
+		filterAction = new Action(Messages
+				.getString("PatHeuteView.filterAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 				setToolTipText(Messages.getString("PatHeuteView.filterToolTip")); //$NON-NLS-1$
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				GridData gd = (GridData) ldFilter.getLayoutData();
 				if (filterAction.isChecked()) {
 					gd.heightHint = 50;
@@ -684,22 +722,22 @@ ISaveablePart2, BackgroundJobListener {
 				}
 				parent.layout(true);
 			}
-			
+
 		};
-		
+
 	}
-	
+
 	class TerminListeDialog extends TitleAreaDialog implements ICallback {
 		IVerrechenbar[] lfiltered;
 		int[] numLeistung;
 		Money[] perLeistung;
-		
-		public TerminListeDialog(final Shell shell){
+
+		public TerminListeDialog(final Shell shell) {
 			super(shell);
 		}
-		
+
 		@Override
-		protected Control createDialogArea(final Composite parent){
+		protected Control createDialogArea(final Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
 			TextContainer text = new TextContainer(getShell());
 			ret.setLayout(new FillLayout());
@@ -717,8 +755,10 @@ ISaveablePart2, BackgroundJobListener {
 					perLeistung[i] = new Money();
 				}
 			}
-			text.createFromTemplateName(null, Messages.getString("PatHeuteView.billingList"), //$NON-NLS-1$
-				Brief.UNKNOWN, Hub.actUser, Messages.getString("PatHeuteView.billing")); //$NON-NLS-1$
+			text.createFromTemplateName(null, Messages
+					.getString("PatHeuteView.billingList"), //$NON-NLS-1$
+					Brief.UNKNOWN, Hub.actUser, Messages
+							.getString("PatHeuteView.billing")); //$NON-NLS-1$
 			String[][] table = new String[kons.length + add][];
 			table[0] = new String[2];
 			table[0][0] = Messages.getString("PatHeuteView.consultation"); //$NON-NLS-1$
@@ -728,7 +768,7 @@ ISaveablePart2, BackgroundJobListener {
 				table[i + 1] = new String[2];
 				Konsultation k = kons[i];
 				table[i + 1][0] = k.getFall().getPatient().getLabel() + "\n" //$NON-NLS-1$
-				+ k.getLabel();
+						+ k.getLabel();
 				StringBuilder sb = new StringBuilder();
 				List<Verrechnet> lstg = k.getLeistungen();
 				Money subsum = new Money();
@@ -745,10 +785,10 @@ ISaveablePart2, BackgroundJobListener {
 					}
 					subsum.addMoney(preis);
 					sb.append(num).append(" ").append(v.getLabel()).append(" ") //$NON-NLS-1$ //$NON-NLS-2$
-					.append(preis.getAmountAsString()).append("\n"); //$NON-NLS-1$
+							.append(preis.getAmountAsString()).append("\n"); //$NON-NLS-1$
 				}
 				sb
-				.append(Messages.getString("PatHeuteView.total")).append(subsum.getAmountAsString()); //$NON-NLS-1$
+						.append(Messages.getString("PatHeuteView.total")).append(subsum.getAmountAsString()); //$NON-NLS-1$
 				total.addMoney(subsum);
 				table[i + 1][1] = sb.toString();
 			}
@@ -761,56 +801,59 @@ ISaveablePart2, BackgroundJobListener {
 					table[kons.length + 2 + i][0] = lfiltered[i].getCode();
 					StringBuilder sb = new StringBuilder();
 					sb
-					.append(Messages.getString("PatHeuteView.billedTotal")).append(numLeistung[i]).append( //$NON-NLS-1$
-						Messages.getString("PatHeuteView.times")).append( //$NON-NLS-1$
-							perLeistung[i].getAmountAsString());
+							.append(
+									Messages
+											.getString("PatHeuteView.billedTotal")).append(numLeistung[i]).append( //$NON-NLS-1$
+									Messages.getString("PatHeuteView.times")).append( //$NON-NLS-1$
+									perLeistung[i].getAmountAsString());
 					table[kons.length + 2 + i][1] = sb.toString();
 				}
 			}
 			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
-			text.getPlugin().insertTable("[Liste]", //$NON-NLS-1$
-				ITextPlugin.FIRST_ROW_IS_HEADER, table, new int[] {
-				30, 70
-			});
+			text.getPlugin().insertTable(
+					"[Liste]", //$NON-NLS-1$
+					ITextPlugin.FIRST_ROW_IS_HEADER, table,
+					new int[] { 30, 70 });
 			return ret;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
 			getShell().setText(Messages.getString("PatHeuteView.billingList")); //$NON-NLS-1$
 			setTitle(Messages.getString("PatHeuteView.printBillingList")); //$NON-NLS-1$
 			setMessage(Messages.getString("PatHeuteView.printBillingExpl")); //$NON-NLS-1$
 			getShell().setSize(900, 700);
-			SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				getShell());
+			SWTHelper.center(Hub.plugin.getWorkbench()
+					.getActiveWorkbenchWindow().getShell(), getShell());
 		}
-		
+
 		@Override
-		protected void okPressed(){
+		protected void okPressed() {
 			super.okPressed();
 		}
-		
-		public void save(){
+
+		public void save() {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
-		public boolean saveAs(){
+
+		public boolean saveAs() {
 			// TODO Auto-generated method stub
 			return false;
 		}
-		
+
 	}
-	
-	private final class DropReceiver implements PersistentObjectDropTarget.Receiver {
-		public void dropped(final PersistentObject o, final DropTargetEvent ev){
+
+	private final class DropReceiver implements
+			PersistentObjectDropTarget.Receiver {
+		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 			if (o instanceof IVerrechenbar) {
 				ldFilter.add((IVerrechenbar) o);
 			}
 		}
-		
-		public boolean accept(final PersistentObject o){
+
+		public boolean accept(final PersistentObject o) {
 			if (o instanceof IVerrechenbar) {
 				return true;
 			}

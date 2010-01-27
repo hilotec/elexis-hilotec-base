@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OmnivoreView.java 4720 2008-12-04 10:10:34Z rgw_ch $
+ *  $Id: OmnivoreView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.views;
@@ -50,48 +50,72 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.omnivore.data.DocHandle;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 /**
- * A class do receive documents by drag&drop. Documents are imported into the database and linked to
- * the selected patient. On double-click they are opened with their associated application.
+ * A class do receive documents by drag&drop. Documents are imported into the
+ * database and linked to the selected patient. On double-click they are opened
+ * with their associated application.
  */
 
-public class OmnivoreView extends ViewPart implements ActivationListener, SelectionListener {
+public class OmnivoreView extends ViewPart implements IActivationListener {
 	private TableViewer viewer;
 	private Table table;
 	private Action importAction, editAction, deleteAction;
 	private Action doubleClickAction;
-	private String[] colLabels = {
-		"Datum", "Titel", "Stichwörter"
-	};
-	private int[] colWidth = {
-		80, 150, 500
-	};
+	private String[] colLabels = { "Datum", "Titel", "Stichwörter" };
+	private int[] colWidth = { 80, 150, 500 };
 	private int sortMode = SORTMODE_DATE;
 	private boolean bReverse = false;
 	static final int SORTMODE_DATE = 0;
 	static final int SORTMODE_TITLE = 1;
-	
+
 	private static final String SORTMODE_DEF = "omnivore/sortmode";
-	
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
+			Patient.class, ElexisEvent.EVENT_SELECTED) {
+
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			viewer.refresh();
+		}
+
+	};
+
+	private ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
+			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			String[] defsort = Hub.userCfg.get(SORTMODE_DEF, "0,1").split(",");
+			try {
+				sortMode = Integer.parseInt(defsort[0]);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+			bReverse = defsort.length > 1 ? defsort[1].equals("1") : false;
+			viewer.refresh();
+		}
+	};
+
 	class ViewContentProvider implements IStructuredContentProvider {
-		public void inputChanged(Viewer v, Object oldInput, Object newInput){}
-		
-		public void dispose(){}
-		
-		public Object[] getElements(Object parent){
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+
+		public void dispose() {
+		}
+
+		public Object[] getElements(Object parent) {
 			Query<DocHandle> qbe = new Query<DocHandle>(DocHandle.class);
-			Patient pat = GlobalEvents.getSelectedPatient();
+			Patient pat = ElexisEventDispatcher.getSelectedPatient();
 			if (pat != null) {
 				qbe.add("PatID", "=", pat.getId());
 				return qbe.execute().toArray();
@@ -100,9 +124,10 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 			}
 		}
 	}
-	
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index){
+
+	class ViewLabelProvider extends LabelProvider implements
+			ITableLabelProvider {
+		public String getColumnText(Object obj, int index) {
 			switch (index) {
 			case 0:
 				return ((DocHandle) obj).get("Datum");
@@ -114,28 +139,30 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 				return "?";
 			}
 		}
-		
-		public Image getColumnImage(Object obj, int index){
+
+		public Image getColumnImage(Object obj, int index) {
 			return null; // getImage(obj);
 		}
-		
-		public Image getImage(Object obj){
+
+		public Image getImage(Object obj) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJ_ELEMENT);
+					ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
-	
+
 	class Sorter extends ViewerSorter {
-		
+
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2){
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			if ((e1 instanceof DocHandle) && (e2 instanceof DocHandle)) {
 				DocHandle d1 = (DocHandle) e1;
 				DocHandle d2 = (DocHandle) e2;
 				String c1, c2;
 				if (sortMode == SORTMODE_DATE) {
-					c1 = new TimeTool(d1.get("Datum")).toString(TimeTool.DATE_COMPACT);
-					c2 = new TimeTool(d2.get("Datum")).toString(TimeTool.DATE_COMPACT);
+					c1 = new TimeTool(d1.get("Datum"))
+							.toString(TimeTool.DATE_COMPACT);
+					c2 = new TimeTool(d2.get("Datum"))
+							.toString(TimeTool.DATE_COMPACT);
 				} else if (sortMode == SORTMODE_TITLE) {
 					c1 = d1.get("Titel").toLowerCase();
 					c2 = d2.get("Titel").toLowerCase();
@@ -151,13 +178,13 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 			}
 			return 0;
 		}
-		
+
 	}
-	
+
 	class SortListener extends SelectionAdapter {
-		
+
 		@Override
-		public void widgetSelected(SelectionEvent e){
+		public void widgetSelected(SelectionEvent e) {
 			TableColumn col = (TableColumn) e.getSource();
 			if (col.getData().equals(0)) {
 				if (sortMode == SORTMODE_DATE) {
@@ -170,26 +197,28 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 				}
 				sortMode = SORTMODE_TITLE;
 			}
-			Hub.userCfg
-				.set(SORTMODE_DEF, Integer.toString(sortMode) + "," + (bReverse ? "1" : "0"));
+			Hub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode) + ","
+					+ (bReverse ? "1" : "0"));
 			viewer.refresh();
 		}
-		
+
 	}
-	
+
 	/**
 	 * The constructor.
 	 */
-	public OmnivoreView(){
+	public OmnivoreView() {
 		DocHandle.load("1"); // make sure the table is created
 	}
-	
+
 	/**
-	 * This is a callback that will allow us to create the viewer and initialize it.
+	 * This is a callback that will allow us to create the viewer and initialize
+	 * it.
 	 */
-	public void createPartControl(Composite parent){
-		
-		table = new Table(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+	public void createPartControl(Composite parent) {
+
+		table = new Table(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
+				| SWT.FULL_SELECTION);
 		SortListener sortListener = new SortListener();
 		TableColumn[] cols = new TableColumn[colLabels.length];
 		for (int i = 0; i < colLabels.length; i++) {
@@ -210,44 +239,44 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		Transfer[] transferTypes = new Transfer[] {
-			FileTransfer.getInstance()
-		};
-		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
-			
-			@Override
-			public void dragEnter(DropTargetEvent event){
-				event.detail = DND.DROP_COPY;
-			}
-			
-			@Override
-			public void drop(DropTargetEvent event){
-				String[] files = (String[]) event.data;
-				for (String file : files) {
-					DocHandle.assimilate(file);
-					viewer.refresh();
-				}
-				
-			}
-			
-		});
-		GlobalEvents.getInstance().addActivationListener(this, this);
-		selectionEvent(Hub.actUser);
+		Transfer[] transferTypes = new Transfer[] { FileTransfer.getInstance() };
+		viewer.addDropSupport(DND.DROP_COPY, transferTypes,
+				new DropTargetAdapter() {
+
+					@Override
+					public void dragEnter(DropTargetEvent event) {
+						event.detail = DND.DROP_COPY;
+					}
+
+					@Override
+					public void drop(DropTargetEvent event) {
+						String[] files = (String[]) event.data;
+						for (String file : files) {
+							DocHandle.assimilate(file);
+							viewer.refresh();
+						}
+
+					}
+
+				});
+		GlobalEventDispatcher.getInstance().addActivationListener(this, this);
+		eeli_pat.catchElexisEvent(ElexisEvent.changePatientEvent);
 		viewer.setInput(getViewSite());
-		
+
 	}
-	
+
 	@Override
-	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+	public void dispose() {
+		GlobalEventDispatcher.getInstance()
+				.removeActivationListener(this, this);
 		super.dispose();
 	}
-	
-	private void hookContextMenu(){
+
+	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				OmnivoreView.this.fillContextMenu(manager);
 			}
 		});
@@ -255,41 +284,42 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
-	
-	private void contributeToActionBars(){
+
+	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
-	
-	private void fillLocalPullDown(IMenuManager manager){
+
+	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(importAction);
 		// manager.add(new Separator());
 		// manager.add(action2);
 	}
-	
-	private void fillContextMenu(IMenuManager manager){
+
+	private void fillContextMenu(IMenuManager manager) {
 		manager.add(editAction);
 		manager.add(deleteAction);
 		// manager.add(action2);
 		// Other plug-ins can contribute there actions here
 		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-	
-	private void fillLocalToolBar(IToolBarManager manager){
+
+	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(importAction);
 		// manager.add(action2);
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		importAction = new Action("Importiere") {
 			{
 				setToolTipText("Externes Dokument importieren");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
-			
-			public void run(){
-				FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.OPEN);
+
+			public void run() {
+				FileDialog fd = new FileDialog(getViewSite().getShell(),
+						SWT.OPEN);
 				String filename = fd.open();
 				if (filename != null) {
 					DocHandle.assimilate(filename);
@@ -297,19 +327,20 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 				}
 			}
 		};
-		
+
 		deleteAction = new Action("Löschen") {
 			{
 				setToolTipText("Dokument löschen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
-			
-			public void run(){
+
+			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
 				DocHandle dh = (DocHandle) obj;
-				if (SWTHelper.askYesNo("Wirklich löschen?", "Möchten Sie " + dh.get("Titel")
-					+ " wirklich löschen?")) {
+				if (SWTHelper.askYesNo("Wirklich löschen?", "Möchten Sie "
+						+ dh.get("Titel") + " wirklich löschen?")) {
 					dh.delete();
 					viewer.refresh();
 				}
@@ -320,75 +351,60 @@ public class OmnivoreView extends ViewPart implements ActivationListener, Select
 				setToolTipText("Dokumentbeschreibung bearbeiten");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 			}
-			
-			public void run(){
+
+			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
 				FileImportDialog fid = new FileImportDialog((DocHandle) obj);
 				if (fid.open() == Dialog.OK) {
 					viewer.refresh(true);
 				}
-				
+
 			}
 		};
 		doubleClickAction = new Action() {
-			public void run(){
+			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
 				DocHandle dh = (DocHandle) obj;
 				dh.execute();
-				
+
 			}
 		};
 	}
-	
-	private void hookDoubleClickAction(){
+
+	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
 		});
 	}
-	
+
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus(){
+	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-	
-	public void activation(boolean mode){
-	// TODO Auto-generated method stub
-	
+
+	public void activation(boolean mode) {
+		// TODO Auto-generated method stub
+
 	}
-	
-	public void visible(boolean mode){
+
+	public void visible(boolean mode) {
 		if (mode) {
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat,
+					eeli_user);
 			viewer.refresh();
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat,
+					eeli_user);
 		}
-		
+
 	}
-	
-	public void clearEvent(Class template){
-	// TODO Auto-generated method stub
-	
-	}
-	
-	public void selectionEvent(PersistentObject obj){
-		if (obj instanceof Patient) {
-			viewer.refresh();
-		} else if (obj instanceof Anwender) {
-			String[] defsort = Hub.userCfg.get(SORTMODE_DEF, "0,1").split(",");
-			try {
-				sortMode = Integer.parseInt(defsort[0]);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-			bReverse = defsort.length > 1 ? defsort[1].equals("1") : false;
-			viewer.refresh();
-		}
-	}
+
 }

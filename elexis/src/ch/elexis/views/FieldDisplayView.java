@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: FieldDisplayView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *  $Id: FieldDisplayView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -36,9 +36,11 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Mandant;
@@ -54,8 +56,8 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  * 
  */
-public class FieldDisplayView extends ViewPart implements ActivationListener,
-		SelectionListener, HeartListener {
+public class FieldDisplayView extends ViewPart implements IActivationListener,
+		ElexisEventListener, HeartListener {
 	public static final String ID = "ch.elexis.dbfielddisplay"; //$NON-NLS-1$
 	private IAction newViewAction, editDataAction;
 	Text text;
@@ -80,8 +82,8 @@ public class FieldDisplayView extends ViewPart implements ActivationListener,
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (bCanEdit) {
-					PersistentObject mine = GlobalEvents.getInstance()
-							.getSelectedObject(myClass);
+					PersistentObject mine = ElexisEventDispatcher
+							.getSelected(myClass);
 					if (mine != null) {
 						mine.set(myField, text.getText());
 					}
@@ -111,14 +113,14 @@ public class FieldDisplayView extends ViewPart implements ActivationListener,
 		canEdit = Hub.userCfg.get("FieldDisplayViewCanEdit/" + subid, 0); //$NON-NLS-1$
 		setField(nx == null ? "Patient.Diagnosen" : nx, canEdit == null ? false //$NON-NLS-1$
 				: (canEdit != 0));
-		GlobalEvents.getInstance().addActivationListener(this,
-				getViewSite().getPart());
+		GlobalEventDispatcher.addActivationListener(this, getViewSite()
+				.getPart());
 	}
 
 	@Override
 	public void dispose() {
-		GlobalEvents.getInstance().removeActivationListener(this,
-				getViewSite().getPart());
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
+				.getPart());
 	}
 
 	@Override
@@ -132,51 +134,67 @@ public class FieldDisplayView extends ViewPart implements ActivationListener,
 
 	public void visible(boolean mode) {
 		if (mode) {
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(this);
 			Hub.heart.addListener(this);
 			heartbeat();
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(this);
 			Hub.heart.removeListener(this);
 		}
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public void clearEvent(Class template) {
-		if (template.equals(myClass)) {
-			text.setText(""); //$NON-NLS-1$
-		}
-	}
+	public void catchElexisEvent(final ElexisEvent ev) {
+		final PersistentObject po = ev.getObject();
+		if (ev.getClass().equals(myClass) && po != null) {
+			Desk.asyncExec(new Runnable() {
+				public void run() {
+					if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+						String val = po.get(myField);
+						if (val == null) {
+							SWTHelper
+									.showError(
+											Messages
+													.getString("FieldDisplayView.ErrorFieldCaption"), //$NON-NLS-1$
+											Messages
+													.getString("FieldDisplayView.ErrorFieldBody") //$NON-NLS-1$
+													+ myField);
+							text.setText(StringTool.leer);
+						} else {
+							text.setText(po.get(myField));
+						}
+					} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+						text.setText(""); //$NON-NLS-1$
 
-	public void selectionEvent(PersistentObject obj) {
-		if (myClass.isInstance(obj)) {
-			String val = obj.get(myField);
-			if (val == null) {
-				SWTHelper.showError(Messages
-						.getString("FieldDisplayView.ErrorFieldCaption"), //$NON-NLS-1$
-						Messages.getString("FieldDisplayView.ErrorFieldBody") //$NON-NLS-1$
-								+ myField);
-				text.setText(StringTool.leer);
-			} else {
-				text.setText(obj.get(myField));
-			}
-		} else if (obj instanceof Anwender) {
+					}
+
+				}
+			});
+		} else if (ev.getClass().equals(Anwender.class)) {
 			String nx = Hub.userCfg.get("FieldDisplayViewData/" + subid, null); //$NON-NLS-1$
 			Integer canEdit = Hub.userCfg.get("FieldDisplayViewCanEdit/" //$NON-NLS-1$
 					+ subid, 0);
 			setField(nx == null ? "Patient.Diagnosen" : nx, //$NON-NLS-1$
 					canEdit == null ? false : (canEdit != 0));
+
 		}
 	}
 
+	final private ElexisEvent template = new ElexisEvent(null, null,
+			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
+		return template;
+	}
+
 	public void heartbeat() {
-		PersistentObject mine = GlobalEvents.getInstance().getSelectedObject(
-				myClass);
+		PersistentObject mine = ElexisEventDispatcher.getSelected(myClass);
 		if (mine == null) {
-			clearEvent(myClass);
+			catchElexisEvent(new ElexisEvent(mine, myClass,
+					ElexisEvent.EVENT_DESELECTED));
 		} else {
-			selectionEvent(mine);
+			catchElexisEvent(new ElexisEvent(mine, myClass,
+					ElexisEvent.EVENT_SELECTED));
 		}
 	}
 
@@ -327,4 +345,5 @@ public class FieldDisplayView extends ViewPart implements ActivationListener,
 		}
 
 	}
+
 }

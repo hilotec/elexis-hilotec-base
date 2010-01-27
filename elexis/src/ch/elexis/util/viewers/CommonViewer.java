@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CommonViewer.java 5063 2009-01-29 08:51:34Z rgw_ch $
+ * $Id: CommonViewer.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Desk;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.PersistentObjectDragSource;
@@ -41,55 +42,59 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.Tree;
 
 /**
- * Basis des Viewer-Systems. Ein Viewer zeigt eine Liste von Objekten einer bestimmten
- * PersistentObject -Unterklasse an und ermöglicht das Filtern der Anzeige sowie das Erstellen neuer
- * Objekte dieser Klasse. Der CommonViewer stellt nur die Oberfläche bereit (oben ein Feld zum
- * Filtern, in der Mitte die Liste und unten ein Button zum Erstellen eines neuen Objekts). Die
- * Funktionalität muss von einem ViewerConfigurer bereitgestellt werden. Dieser ist wiederum nur ein
- * Container zur Breitstellung verschiedener Provider. NB: CommonViewer ist eigentlich ein
- * Antipattern (nämlich ein Golden Hammer). Er verkürzt Entwicklungszeit, aber auf Kosten der
- * Flexibilität und der optimalen Anpassung Wann immer Zeit und Ressourcen genügen, sollte einer
- * individuellen Lösung der Vorzug gegeben werden.
+ * Basis des Viewer-Systems. Ein Viewer zeigt eine Liste von Objekten einer
+ * bestimmten PersistentObject -Unterklasse an und ermöglicht das Filtern der
+ * Anzeige sowie das Erstellen neuer Objekte dieser Klasse. Der CommonViewer
+ * stellt nur die Oberfläche bereit (oben ein Feld zum Filtern, in der Mitte die
+ * Liste und unten ein Button zum Erstellen eines neuen Objekts). Die
+ * Funktionalität muss von einem ViewerConfigurer bereitgestellt werden. Dieser
+ * ist wiederum nur ein Container zur Breitstellung verschiedener Provider. NB:
+ * CommonViewer ist eigentlich ein Antipattern (nämlich ein Golden Hammer). Er
+ * verkürzt Entwicklungszeit, aber auf Kosten der Flexibilität und der optimalen
+ * Anpassung Wann immer Zeit und Ressourcen genügen, sollte einer individuellen
+ * Lösung der Vorzug gegeben werden.
  * 
  * @see ViewerConfigurer
  * @author Gerry
  */
-public class CommonViewer implements ISelectionChangedListener, IDoubleClickListener {
-	
+public class CommonViewer implements ISelectionChangedListener,
+		IDoubleClickListener {
+
 	protected ViewerConfigurer vc;
 	protected StructuredViewer viewer;
 	protected Button bNew;
 	private IAction createObjectAction;
 	private Composite parent;
-	
+
 	public enum Message {
 		update, empty, notempty, update_keeplabels
 	}
-	
+
 	private HashSet<DoubleClickListener> dlListeners;
 	private MenuManager mgr;
 	private Composite composite;
-	
-	public Composite getParent(){
+
+	public Composite getParent() {
 		return parent;
 	}
-	
-	public CommonViewer(){
+
+	public CommonViewer() {
 
 	}
-	
-	public void setObjectCreateAction(IViewSite site, IAction action){
+
+	public void setObjectCreateAction(IViewSite site, IAction action) {
 		site.getActionBars().getToolBarManager().add(action);
 		action.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 		createObjectAction = action;
 	}
-	
+
 	/**
 	 * Den Viewer erstellen
 	 * 
 	 * @param c
-	 *            ViewerConfigurer, der die Funktionalität bereitstellt. Alle Felder des Configurers
-	 *            müssen vor Aufruf von create() gültig gesetzt sein.
+	 *            ViewerConfigurer, der die Funktionalität bereitstellt. Alle
+	 *            Felder des Configurers müssen vor Aufruf von create() gültig
+	 *            gesetzt sein.
 	 * @param parent
 	 *            Parent.Komponente
 	 * @param style
@@ -97,18 +102,19 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 	 * @param input
 	 *            Input Objekt für den Viewer
 	 */
-	public void create(ViewerConfigurer c, Composite parent, int style, Object input){
+	public void create(ViewerConfigurer c, Composite parent, int style,
+			Object input) {
 		vc = c;
 		this.parent = parent;
 		Composite ret = new Composite(parent, style);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		ret.setLayout(layout);
-		
+
 		if (parent.getLayout() instanceof GridLayout) {
-			GridData gd =
-				new GridData(GridData.GRAB_VERTICAL | GridData.FILL_VERTICAL
-					| GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+			GridData gd = new GridData(GridData.GRAB_VERTICAL
+					| GridData.FILL_VERTICAL | GridData.GRAB_HORIZONTAL
+					| GridData.FILL_HORIZONTAL);
 			ret.setLayoutData(gd);
 		}
 		ControlFieldProvider cfp = vc.getControlFieldProvider();
@@ -117,9 +123,9 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 			ctlf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		}
 		viewer = vc.getWidgetProvider().createViewer(ret);
-		GridData gdView =
-			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.FILL_VERTICAL);
+		GridData gdView = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL
+				| GridData.FILL_VERTICAL);
 		gdView.verticalAlignment = SWT.FILL;
 		viewer.setUseHashlookup(true);
 		viewer.getControl().setLayoutData(gdView);
@@ -128,54 +134,58 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 		viewer.addSelectionChangedListener(this);
 		bNew = vc.getButtonProvider().createButton(ret);
 		if (bNew != null) {
-			GridData gdNew = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+			GridData gdNew = new GridData(GridData.GRAB_HORIZONTAL
+					| GridData.FILL_HORIZONTAL);
 			bNew.setLayoutData(gdNew);
 			if (vc.getButtonProvider().isAlwaysEnabled() == false) {
 				bNew.setEnabled(false);
 			}
 		}
 		/*
-		 * 3 viewer.getControl().addMouseListener(new MouseAdapter(){ public void
-		 * mouseDoubleClick(MouseEvent e) { log.log("Doppelklick",Log.DEBUGMSG);
+		 * 3 viewer.getControl().addMouseListener(new MouseAdapter(){ public
+		 * void mouseDoubleClick(MouseEvent e) {
+		 * log.log("Doppelklick",Log.DEBUGMSG);
 		 * ctl.doubleClicked(getSelection()); }});
 		 */
 		/*
-		 * viewer.addDragSupport(DND.DROP_COPY,new Transfer[] {TextTransfer.getInstance()},
+		 * viewer.addDragSupport(DND.DROP_COPY,new Transfer[]
+		 * {TextTransfer.getInstance()},
 		 */
 		new PersistentObjectDragSource(viewer);
 		if (mgr != null) {
-			viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+			viewer.getControl().setMenu(
+					mgr.createContextMenu(viewer.getControl()));
 		}
 		viewer.setInput(input);
 		viewer.getControl().pack();
 		composite = ret;
 	}
-	
-	public Composite getComposite(){
+
+	public Composite getComposite() {
 		return composite;
 	}
-	
+
 	/**
 	 * Die aktuelle Auswahl des Viewers liefern
 	 * 
 	 * @return null oder ein Array mit den selektierten Objekten-
 	 */
-	public Object[] getSelection(){
+	public Object[] getSelection() {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		if (sel != null) {
 			return sel.toArray();
 		}
 		return null;
-		
+
 	}
-	
+
 	/**
 	 * Das selektierte Element des Viewers einstellen
 	 * 
 	 * @param o
 	 *            Das Element
 	 */
-	public void setSelection(Object o, boolean fireEvents){
+	public void setSelection(Object o, boolean fireEvents) {
 		if (fireEvents == false) {
 			viewer.removeSelectionChangedListener(this);
 			viewer.setSelection(new StructuredSelection(o), true);
@@ -183,33 +193,34 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 		} else {
 			viewer.setSelection(new StructuredSelection(o), true);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Den darunterliegenden JFace-Viewer liefern
 	 */
-	public StructuredViewer getViewerWidget(){
+	public StructuredViewer getViewerWidget() {
 		return viewer;
 	}
-	
-	public ViewerConfigurer getConfigurer(){
+
+	public ViewerConfigurer getConfigurer() {
 		return vc;
 	}
-	
+
 	/**
 	 * den Viewer über eine Änderung benachrichtigen
 	 * 
 	 * @param m
-	 *            eine Message: update: der Viewer muss neu eingelesen werden empty: Die Auswahl ist
-	 *            leer. notempty: Die Auswahl ist nicht (mehr) leer.
+	 *            eine Message: update: der Viewer muss neu eingelesen werden
+	 *            empty: Die Auswahl ist leer. notempty: Die Auswahl ist nicht
+	 *            (mehr) leer.
 	 */
-	public void notify(final Message m){
+	public void notify(final Message m) {
 		if (viewer.getControl().isDisposed()) {
 			return;
 		}
 		Desk.getDisplay().asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				switch (m) {
 				case update:
 					if (!viewer.getControl().isDisposed()) {
@@ -242,34 +253,35 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 				}
 			}
 		});
-		
+
 	}
-	
-	public void selectionChanged(SelectionChangedEvent event){
+
+	public void selectionChanged(SelectionChangedEvent event) {
 		Object[] sel = getSelection();
 		if (sel != null && sel.length != 0) {
 			if (sel[0] instanceof Tree) {
 				sel[0] = ((Tree) sel[0]).contents;
 			}
 			if (sel[0] instanceof PersistentObject) {
-				GlobalEvents.getInstance().fireSelectionEvent((PersistentObject) sel[0]);
+				ElexisEventDispatcher
+						.fireSelectionEvent((PersistentObject) sel[0]);
 			}
 		}
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		viewer.removeSelectionChangedListener(this);
 	}
-	
-	public void addDoubleClickListener(DoubleClickListener dl){
+
+	public void addDoubleClickListener(DoubleClickListener dl) {
 		if (dlListeners == null) {
 			dlListeners = new HashSet<DoubleClickListener>();
 			getViewerWidget().addDoubleClickListener(this);
 		}
 		dlListeners.add(dl);
 	}
-	
-	public void removeDoubleClickListener(DoubleClickListener dl){
+
+	public void removeDoubleClickListener(DoubleClickListener dl) {
 		if (dlListeners == null) {
 			return;
 		}
@@ -279,35 +291,38 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 			dlListeners = null;
 		}
 	}
-	
+
 	/**
-	 * Kontextmenu an den unterleigenden Viewer binden. Falls dieser zum Zeitpunkt des Aufrufs
-	 * dieser Methode noch nicht existiert, wird das Einbinden verzögert.
+	 * Kontextmenu an den unterleigenden Viewer binden. Falls dieser zum
+	 * Zeitpunkt des Aufrufs dieser Methode noch nicht existiert, wird das
+	 * Einbinden verzögert.
 	 * 
 	 * @param mgr
 	 *            ein fertig konfigurierter jface-MenuManager
 	 */
-	public void setContextMenu(MenuManager mgr){
+	public void setContextMenu(MenuManager mgr) {
 		this.mgr = mgr;
 		if (viewer != null) {
-			viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+			viewer.getControl().setMenu(
+					mgr.createContextMenu(viewer.getControl()));
 		}
 	}
-	
-	public Button getButton(){
+
+	public Button getButton() {
 		return bNew;
 	}
-	
+
 	public interface DoubleClickListener {
 		public void doubleClicked(PersistentObject obj, CommonViewer cv);
 	}
-	
-	public void doubleClick(DoubleClickEvent event){
+
+	public void doubleClick(DoubleClickEvent event) {
 		if (dlListeners != null) {
 			Iterator it = dlListeners.iterator();
 			while (it.hasNext()) {
 				DoubleClickListener dl = (DoubleClickListener) it.next();
-				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) event
+						.getSelection();
 				if ((sel != null) && (!sel.isEmpty())) {
 					Object element = sel.getFirstElement();
 					PersistentObject po;
@@ -319,8 +334,8 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 					dl.doubleClicked(po, this);
 				}
 			}
-			
+
 		}
-		
+
 	}
 }

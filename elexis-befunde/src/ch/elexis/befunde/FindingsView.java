@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: FindingsView.java 4963 2009-01-16 23:31:48Z rgw_ch $
+ *    $Id: FindingsView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -36,9 +36,11 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -48,26 +50,28 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * This is a replacement for "MesswerteView" wich is more flexible in displayable elements. It can
- * show arbitrary textual or numerical findings
+ * This is a replacement for "MesswerteView" wich is more flexible in
+ * displayable elements. It can show arbitrary textual or numerical findings
  * 
  * @author gerry
  * 
  */
-public class FindingsView extends ViewPart implements ActivationListener, SelectionListener {
-	
+public class FindingsView extends ViewPart implements IActivationListener,
+		ElexisEventListener {
+
 	public static final String ID = "elexis-befunde.findingsView";
 	private CTabFolder ctabs;
 	private ScrolledForm form;
 	private Hashtable hash;
-	private Action newValueAction, editValueAction, deleteValueAction, printValuesAction;
-	
-	public FindingsView(){
-	// TODO Auto-generated constructor stub
+	private Action newValueAction, editValueAction, deleteValueAction,
+			printValuesAction;
+
+	public FindingsView() {
+		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void createPartControl(final Composite parent){
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
 		form = Desk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -88,70 +92,59 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 		}
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
-		menu.createToolbar(newValueAction, editValueAction, printValuesAction, deleteValueAction);
+		menu.createToolbar(newValueAction, editValueAction, printValuesAction,
+				deleteValueAction);
 		ctabs.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(final SelectionEvent e){
+			public void widgetSelected(final SelectionEvent e) {
 				CTabItem it = ctabs.getSelection();
 				if (it != null) {
 					FindingsPage page = (FindingsPage) it.getControl();
-					page.setPatient(GlobalEvents.getSelectedPatient());
+					page.setPatient(ElexisEventDispatcher.getSelectedPatient());
 				}
 			}
-			
+
 		});
-		
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+
+		GlobalEventDispatcher.addActivationListener(this, getViewSite()
+				.getPart());
 		if (ctabs.getItemCount() > 0) {
 			ctabs.setSelection(0);
-			((FindingsPage) (ctabs.getItem(0)).getControl()).setPatient(GlobalEvents
-				.getSelectedPatient());
+			((FindingsPage) (ctabs.getItem(0)).getControl())
+					.setPatient(ElexisEventDispatcher.getSelectedPatient());
 		}
-		
-	}
-	
-	@Override
-	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
-	}
-	
-	@Override
-	public void setFocus(){
-	// TODO Auto-generated method stub
-	
-	}
-	
-	public void activation(final boolean mode){
 
 	}
-	
-	public void visible(final boolean mode){
+
+	@Override
+	public void dispose() {
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
+				.getPart());
+	}
+
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void activation(final boolean mode) {
+
+	}
+
+	public void visible(final boolean mode) {
 		if (mode) {
-			GlobalEvents.getInstance().addSelectionListener(this);
-			setPatient(GlobalEvents.getSelectedPatient());
+			ElexisEventDispatcher.getInstance().addListeners(this);
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
 	}
-	
-	public void clearEvent(final Class template){
-		if (template.equals(Patient.class)) {
-			setPatient(null);
-		}
-	}
-	
-	public void selectionEvent(final PersistentObject obj){
-		if (obj instanceof Patient) {
-			setPatient((Patient) obj);
-		}
-		
-	}
-	
-	private void setPatient(final Patient p){
+
+	private void setPatient(final Patient p) {
 		if (p == null) {
 			form.setText("Kein Patient ausgewählt");
-			
+
 		} else {
 			form.setText(p.getLabel());
 		}
@@ -162,16 +155,16 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 			fp.setPatient(p);
 		}
 	}
-	
+
 	class FindingsPage extends Composite {
-		
+
 		Table table;
 		TableColumn[] tc;
 		TableItem[] items;
 		String myparm;
 		String[] flds = null;
-		
-		FindingsPage(final Composite parent, final String param){
+
+		FindingsPage(final Composite parent, final String param) {
 			super(parent, SWT.NONE);
 			parent.setLayout(new FillLayout());
 			myparm = param;
@@ -189,7 +182,8 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 				tc[0].setWidth(80);
 				for (int i = 1; i <= flds.length; i++) {
 					tc[i] = new TableColumn(table, SWT.NONE);
-					flds[i - 1] = flds[i - 1].split(Messwert.SETUP_CHECKSEPARATOR)[0];
+					flds[i - 1] = flds[i - 1]
+							.split(Messwert.SETUP_CHECKSEPARATOR)[0];
 					String[] header = flds[i - 1].split("=", 2);
 					tc[i].setText(header[0]);
 					if (header.length > 1) {
@@ -200,24 +194,24 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 				tc[flds.length].setWidth(600);
 			}
 			table.addMouseListener(new MouseAdapter() {
-				
+
 				@Override
-				public void mouseDoubleClick(final MouseEvent e){
+				public void mouseDoubleClick(final MouseEvent e) {
 					TableItem[] it = table.getSelection();
 					if (it.length == 1) {
-						EditFindingDialog dlg =
-							new EditFindingDialog(getSite().getShell(), (Messwert) it[0].getData(),
-								myparm);
+						EditFindingDialog dlg = new EditFindingDialog(getSite()
+								.getShell(), (Messwert) it[0].getData(), myparm);
 						if (dlg.open() == Dialog.OK) {
-							setPatient(GlobalEvents.getSelectedPatient());
+							setPatient(ElexisEventDispatcher
+									.getSelectedPatient());
 						}
 					}
 				}
-				
+
 			});
 		}
-		
-		public String[][] getFields(){
+
+		public String[][] getFields() {
 			if (flds != null) {
 				String[][] ret = new String[table.getItemCount() + 1][flds.length + 1];
 				ret[0][0] = "Datum"; //$NON-NLS-1$
@@ -234,8 +228,8 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 			}
 			return new String[0][0];
 		}
-		
-		void setPatient(final Patient pat){
+
+		void setPatient(final Patient pat) {
 			if (pat != null) {
 				Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
 				qbe.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -243,8 +237,8 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 				List<Messwert> list = qbe.execute();
 				table.removeAll();
 				Collections.sort(list, new Comparator<Messwert>() {
-					
-					public int compare(final Messwert o1, final Messwert o2){
+
+					public int compare(final Messwert o1, final Messwert o2) {
 						TimeTool t1 = new TimeTool(o1.get("Datum"));
 						TimeTool t2 = new TimeTool(o2.get("Datum"));
 						return t1.compareTo(t2);
@@ -256,62 +250,67 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 					item.setData(m);
 					Hashtable hash = m.getHashtable("Befunde"); //$NON-NLS-1$
 					for (int i = 0; i < flds.length; i++) {
-						item.setText(i + 1, PersistentObject.checkNull((String) hash.get(flds[i])));
+						item.setText(i + 1, PersistentObject
+								.checkNull((String) hash.get(flds[i])));
 					}
 				}
 			}
-			
+
 		}
 	}
-	
+
 	/**
-	 * Actions are objects for user - interactions. An action can be displayd as a menun item or as
-	 * toolbar item, and it can be active or inactive. Here we need only one action to add a new
-	 * measurement for a selectable date.
+	 * Actions are objects for user - interactions. An action can be displayd as
+	 * a menun item or as toolbar item, and it can be active or inactive. Here
+	 * we need only one action to add a new measurement for a selectable date.
 	 * 
-	 * Actions sind Objekte zur Benutzerinteraktion. Eine Action kann als Menueitem oder als
-	 * Toolbaritem dargestellt werden, und sie kann aktiv oder inaktiv sein. Diese Action hier dient
-	 * einfach der Eingabe eines neuen Messwerts a einem wählbaren Datum.
+	 * Actions sind Objekte zur Benutzerinteraktion. Eine Action kann als
+	 * Menueitem oder als Toolbaritem dargestellt werden, und sie kann aktiv
+	 * oder inaktiv sein. Diese Action hier dient einfach der Eingabe eines
+	 * neuen Messwerts a einem wählbaren Datum.
 	 * 
 	 */
-	private void makeActions(){
-		newValueAction = new Action(Messages.getString("MesswerteView.enterNewValue")) { //$NON-NLS-1$
-				{
-					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
-					setToolTipText("Eine neue Messung hinzufügen");
-				}
-				
-				@Override
-				public void run(){
-					CTabItem ci = ctabs.getSelection();
-					if (ci != null) {
-						FindingsPage page = (FindingsPage) ci.getControl();
-						EditFindingDialog dlg =
-							new EditFindingDialog(getSite().getShell(), null, page.myparm);
-						if (dlg.open() == Dialog.OK) {
-							page.setPatient(GlobalEvents.getSelectedPatient());
-						}
+	private void makeActions() {
+		newValueAction = new Action(Messages
+				.getString("MesswerteView.enterNewValue")) { //$NON-NLS-1$
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
+				setToolTipText("Eine neue Messung hinzufügen");
+			}
+
+			@Override
+			public void run() {
+				CTabItem ci = ctabs.getSelection();
+				if (ci != null) {
+					FindingsPage page = (FindingsPage) ci.getControl();
+					EditFindingDialog dlg = new EditFindingDialog(getSite()
+							.getShell(), null, page.myparm);
+					if (dlg.open() == Dialog.OK) {
+						page.setPatient(ElexisEventDispatcher
+								.getSelectedPatient());
 					}
 				}
-			};
+			}
+		};
 		editValueAction = new Action("Edit...") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText("Text ansehen oder ändern");
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				CTabItem ci = ctabs.getSelection();
 				if (ci != null) {
 					FindingsPage page = (FindingsPage) ci.getControl();
 					TableItem[] it = page.table.getSelection();
 					if (it.length == 1) {
-						EditFindingDialog dlg =
-							new EditFindingDialog(getSite().getShell(), (Messwert) it[0].getData(),
+						EditFindingDialog dlg = new EditFindingDialog(getSite()
+								.getShell(), (Messwert) it[0].getData(),
 								page.myparm);
 						if (dlg.open() == Dialog.OK) {
-							page.setPatient(GlobalEvents.getSelectedPatient());
+							page.setPatient(ElexisEventDispatcher
+									.getSelectedPatient());
 						}
 					}
 				}
@@ -322,11 +321,12 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 				setToolTipText("Die gewählte Messung löschen");
 			}
-			
+
 			@Override
-			public void run(){
-				if (SWTHelper.askYesNo("Messwert löschen",
-					"Wollen Sie wirklich diese Messung unwiderruflich löschen?")) {
+			public void run() {
+				if (SWTHelper
+						.askYesNo("Messwert löschen",
+								"Wollen Sie wirklich diese Messung unwiderruflich löschen?")) {
 					CTabItem ci = ctabs.getSelection();
 					if (ci != null) {
 						FindingsPage page = (FindingsPage) ci.getControl();
@@ -334,7 +334,8 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 						if (it.length == 1) {
 							Messwert mw = (Messwert) it[0].getData();
 							mw.delete();
-							page.setPatient(GlobalEvents.getSelectedPatient());
+							page.setPatient(ElexisEventDispatcher
+									.getSelectedPatient());
 						}
 					}
 				}
@@ -345,18 +346,40 @@ public class FindingsView extends ViewPart implements ActivationListener, Select
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText("Diese Messwerte drucken");
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				CTabItem top = ctabs.getSelection();
 				if (top != null) {
 					FindingsPage fp = (FindingsPage) top.getControl();
 					String[][] table = fp.getFields();
-					new PrintFindingsDialog(getViewSite().getShell(), table).open();
+					new PrintFindingsDialog(getViewSite().getShell(), table)
+							.open();
 				}
 			}
 		};
-		
+
 	}
-	
+
+	public void catchElexisEvent(final ElexisEvent ev) {
+		Desk.asyncExec(new Runnable() {
+
+			public void run() {
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					setPatient((Patient) ev.getObject());
+				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+					setPatient(null);
+				}
+
+			}
+		});
+	}
+
+	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
+			ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_SELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
+		return eetmpl;
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ChapterDisplay.java 5015 2009-01-23 16:31:47Z rgw_ch $
+ *    $Id: ChapterDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.IcpcCode;
@@ -44,137 +44,142 @@ import ch.elexis.util.viewers.ViewerConfigurer.ContentProviderAdapter;
 import ch.elexis.views.codesystems.ICodeSelectorTarget;
 import ch.rgw.tools.StringTool;
 
-
 public class ChapterDisplay extends Composite {
-	private static final String UC2_HEADING="ICPCChapter/"; 
-	FormToolkit tk=Desk.getToolkit();
+	private static final String UC2_HEADING = "ICPCChapter/";
+	FormToolkit tk = Desk.getToolkit();
 	ScrolledForm fLeft;
-	String chapter; 
+	String chapter;
 	ExpandableComposite[] ec;
 	Text tCrit, tIncl, tExcl, tNote;
-	
-	public ChapterDisplay(Composite parent, final String chapter){
+
+	public ChapterDisplay(Composite parent, final String chapter) {
 		super(parent, SWT.NONE);
-		this.chapter=chapter;
-		setLayout(new GridLayout(2,false));
-		fLeft=tk.createScrolledForm(this);
+		this.chapter = chapter;
+		setLayout(new GridLayout(2, false));
+		fLeft = tk.createScrolledForm(this);
 		fLeft.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		fLeft.setText(chapter);
-		Composite cLeft=fLeft.getBody();
+		Composite cLeft = fLeft.getBody();
 		cLeft.setLayout(new GridLayout());
 		cLeft.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		final Composite cRight=tk.createComposite(this);
+		final Composite cRight = tk.createComposite(this);
 		cRight.setLayout(new GridLayout());
 		cRight.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ec=new ExpandableComposite[IcpcCode.components.length];
-		
-		for(int i=0;i<ec.length;i++){
-			String c=IcpcCode.components[i];
-			ec[i]=tk.createExpandableComposite(cLeft, ExpandableComposite.TWISTIE);
-	        ec[i].setText(c);
-            UserSettings2.setExpandedState(ec[i], UC2_HEADING+c.substring(0,1));
-            Composite inlay=new Composite(ec[i],SWT.NONE);
-            inlay.setLayout(new FillLayout());
-			CommonViewer cv=new CommonViewer();
-			ViewerConfigurer vc=new ViewerConfigurer(new ComponentContentProvider(c), 
-					new DefaultLabelProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE,SWT.SINGLE,cv));
+		ec = new ExpandableComposite[IcpcCode.components.length];
+
+		for (int i = 0; i < ec.length; i++) {
+			String c = IcpcCode.components[i];
+			ec[i] = tk.createExpandableComposite(cLeft,
+					ExpandableComposite.TWISTIE);
+			ec[i].setText(c);
+			UserSettings2.setExpandedState(ec[i], UC2_HEADING
+					+ c.substring(0, 1));
+			Composite inlay = new Composite(ec[i], SWT.NONE);
+			inlay.setLayout(new FillLayout());
+			CommonViewer cv = new CommonViewer();
+			ViewerConfigurer vc = new ViewerConfigurer(
+					new ComponentContentProvider(c),
+					new DefaultLabelProvider(), new SimpleWidgetProvider(
+							SimpleWidgetProvider.TYPE_TABLE, SWT.SINGLE, cv));
 			ec[i].setData(cv);
 			cv.create(vc, inlay, SWT.NONE, this);
-			cv.addDoubleClickListener(new CommonViewer.DoubleClickListener(){
+			cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
 				public void doubleClicked(PersistentObject obj, CommonViewer cv) {
-					ICodeSelectorTarget target = GlobalEvents.getInstance().getCodeSelectorTarget();
-						if (target != null) {
-								target.codeSelected(obj);
+					ICodeSelectorTarget target = CodeSelectorHandler
+							.getInstance().getCodeSelectorTarget();
+					if (target != null) {
+						target.codeSelected(obj);
+					}
+				}
+			});
+			cv.getViewerWidget().addSelectionChangedListener(
+					new ISelectionChangedListener() {
+
+						public void selectionChanged(SelectionChangedEvent event) {
+							IStructuredSelection sel = (IStructuredSelection) event
+									.getSelection();
+							if (!sel.isEmpty()) {
+								IcpcCode code = (IcpcCode) sel
+										.getFirstElement();
+								tCrit.setText(code.get("criteria"));
+								tIncl.setText(code.get("inclusion"));
+								tExcl.setText(code.get("exclusion"));
+								tNote.setText(code.get("note"));
+								cRight.layout();
+							}
+
 						}
-					}
-				});
-			cv.getViewerWidget().addSelectionChangedListener(new ISelectionChangedListener(){
+					});
+			ec[i].addExpansionListener(new ExpansionAdapter() {
+				@Override
+				public void expansionStateChanging(final ExpansionEvent e) {
+					ExpandableComposite src = (ExpandableComposite) e
+							.getSource();
 
-				public void selectionChanged(SelectionChangedEvent event) {
-					IStructuredSelection sel=(IStructuredSelection)event.getSelection();
-					if(!sel.isEmpty()){
-						IcpcCode code=(IcpcCode)sel.getFirstElement();
-						tCrit.setText(code.get("criteria"));
-						tIncl.setText(code.get("inclusion"));
-						tExcl.setText(code.get("exclusion"));
-						tNote.setText(code.get("note"));
-						cRight.layout();
+					if (e.getState() == true) {
+						CommonViewer cv = (CommonViewer) src.getData();
+						cv.notify(CommonViewer.Message.update);
 					}
-					
-				}});
-	        ec[i].addExpansionListener(new ExpansionAdapter(){
-                @Override
-                public void expansionStateChanging(final ExpansionEvent e)
-                {
-                	ExpandableComposite src=(ExpandableComposite)e.getSource();
-                	
-                    if(e.getState()==true){
-                    	CommonViewer cv=(CommonViewer)src.getData();
-                    	cv.notify(CommonViewer.Message.update);
-                    }
-                    UserSettings2.saveExpandedState(UC2_HEADING+src.getText().substring(0, 1), e.getState());
-                }
-	            public void expansionStateChanged(ExpansionEvent e){
-	                fLeft.reflow(true);
-	            }
+					UserSettings2.saveExpandedState(UC2_HEADING
+							+ src.getText().substring(0, 1), e.getState());
+				}
 
-                
-            });
-            ec[i].setClient(inlay);
+				public void expansionStateChanged(ExpansionEvent e) {
+					fLeft.reflow(true);
+				}
+
+			});
+			ec[i].setClient(inlay);
 		}
-		
-		Section sCrit=tk.createSection(cRight, Section.EXPANDED);
+
+		Section sCrit = tk.createSection(cRight, Section.EXPANDED);
 		sCrit.setText("Kriterien");
-		tCrit=tk.createText(sCrit, "\n", SWT.BORDER|SWT.MULTI);
+		tCrit = tk.createText(sCrit, "\n", SWT.BORDER | SWT.MULTI);
 		sCrit.setClient(tCrit);
-		Section sIncl=tk.createSection(cRight,Section.EXPANDED);
+		Section sIncl = tk.createSection(cRight, Section.EXPANDED);
 		sIncl.setText("Einschliesslich");
-		tIncl=tk.createText(sIncl,"\n",SWT.BORDER|SWT.MULTI);
+		tIncl = tk.createText(sIncl, "\n", SWT.BORDER | SWT.MULTI);
 		sIncl.setClient(tIncl);
-		Section sExcl=tk.createSection(cRight,Section.EXPANDED);
+		Section sExcl = tk.createSection(cRight, Section.EXPANDED);
 		sExcl.setText("Ausser");
-		tExcl=tk.createText(sExcl, "", SWT.BORDER|SWT.MULTI);
-		Section sNote=tk.createSection(cRight,Section.EXPANDED);
-		tNote=tk.createText(cRight, "\n", SWT.BORDER|SWT.MULTI);
+		tExcl = tk.createText(sExcl, "", SWT.BORDER | SWT.MULTI);
+		Section sNote = tk.createSection(cRight, Section.EXPANDED);
+		tNote = tk.createText(cRight, "\n", SWT.BORDER | SWT.MULTI);
 		sNote.setText("Anmerkung");
-		
-	}
-	
-	
 
-	class ComponentContentProvider extends ContentProviderAdapter{
+	}
+
+	class ComponentContentProvider extends ContentProviderAdapter {
 		private String component;
-		
-		public ComponentContentProvider( String component){
-			this.component=component;
+
+		public ComponentContentProvider(String component) {
+			this.component = component;
 		}
-		public Object[] getElements(Object inputElement){
-			Query<IcpcCode> qbe=new Query<IcpcCode>(IcpcCode.class);
-			qbe.add("ID", "Like", chapter.substring(0, 1)+"%");
+
+		public Object[] getElements(Object inputElement) {
+			Query<IcpcCode> qbe = new Query<IcpcCode>(IcpcCode.class);
+			qbe.add("ID", "Like", chapter.substring(0, 1) + "%");
 			qbe.add("component", StringTool.equals, component.substring(0, 1));
-			List<IcpcCode> codes=qbe.execute();
+			List<IcpcCode> codes = qbe.execute();
 			return codes.toArray();
 		}
-		
+
 	}
 
-
-
-	public void setComponent(String mode){
-		for(int i=0;i<ec.length;i++){
+	public void setComponent(String mode) {
+		for (int i = 0; i < ec.length; i++) {
 			ec[i].setEnabled(true);
 		}
-		if("RFE".equals(mode)){
+		if ("RFE".equals(mode)) {
 			// all components enabled
-			
-		}else if("DG".equals(mode)){
+
+		} else if ("DG".equals(mode)) {
 			// only 1 and 7 enabled
-			for(int i=1;i<6;i++){
+			for (int i = 1; i < 6; i++) {
 				ec[i].setEnabled(false);
 				ec[i].setExpanded(false);
 			}
-		}else if("PROC".equals(mode)){
+		} else if ("PROC".equals(mode)) {
 			// 2,3,5,6 enabled
 			ec[0].setEnabled(false);
 			ec[0].setExpanded(false);

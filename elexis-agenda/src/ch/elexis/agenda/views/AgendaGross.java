@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AgendaGross.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: AgendaGross.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
@@ -43,7 +43,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.TagesNachricht;
@@ -236,10 +236,8 @@ public class AgendaGross extends BaseAgendaView {
 	protected void updateDate() {
 		setDayMessage();
 		/*
-		if (pinger != null) {
-			pinger.doSync();
-		}
-		*/
+		 * if (pinger != null) { pinger.doSync(); }
+		 */
 		tv.refresh();
 	}
 
@@ -326,10 +324,8 @@ public class AgendaGross extends BaseAgendaView {
 			String bereich = source.getText();
 			setBereich(bereich);
 			/*
-			if (pinger != null) {
-				pinger.doSync();
-			}
-			*/
+			 * if (pinger != null) { pinger.doSync(); }
+			 */
 			tv.refresh();
 		}
 
@@ -347,20 +343,20 @@ public class AgendaGross extends BaseAgendaView {
 				.append(t.getType())
 				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
-		GlobalEvents ev = GlobalEvents.getInstance();
 		sb.setLength(0);
 		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append(
 				t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
-		ev.fireSelectionEvent(t);
+		ElexisEventDispatcher.fireSelectionEvent(t);
 		if (pat != null) {
-			ev.fireSelectionEvent(pat);
-			Konsultation kons = GlobalEvents.getSelectedKons();
+			ElexisEventDispatcher.fireSelectionEvent(pat);
+			Konsultation kons = (Konsultation) ElexisEventDispatcher
+					.getSelected(Konsultation.class);
 
 			String sVgl = agenda.getActDate().toString(TimeTool.DATE_COMPACT);
 			if ((kons == null)
 					|| // Falls nicht die richtige Kons selektiert ist, passende
-						// Kons für heute suchen
+					// Kons für heute suchen
 					!(kons.getFall().getPatient().getId().equals(pat.getId()))
 					|| !(new TimeTool(kons.getDatum())
 							.toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
@@ -371,7 +367,7 @@ public class AgendaGross extends BaseAgendaView {
 					for (Konsultation k : konsen) {
 						ttVgl.set(k.getDatum());
 						if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
-							ev.fireSelectionEvent(k);
+							ElexisEventDispatcher.fireSelectionEvent(k);
 							return;
 						}
 					}

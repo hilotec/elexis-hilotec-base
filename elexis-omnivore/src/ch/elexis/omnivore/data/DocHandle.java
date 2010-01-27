@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 5188 2009-02-24 15:47:51Z rgw_ch $
+ *  $Id: DocHandle.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -20,11 +20,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.program.Program;
 
-import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.views.FileImportDialog;
@@ -182,7 +180,7 @@ public class DocHandle extends PersistentObject {
 	protected DocHandle(){}
 	
 	public static void assimilate(String f){
-		Patient act = GlobalEvents.getSelectedPatient();
+		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
 			SWTHelper
 				.showError("Kein Patient ausgewählt",

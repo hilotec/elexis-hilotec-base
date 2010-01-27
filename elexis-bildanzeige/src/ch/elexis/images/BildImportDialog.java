@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BildImportDialog.java 4135 2008-07-13 19:18:15Z rgw_ch $
+ * $Id: BildImportDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -23,10 +23,16 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.util.SWTHelper;
 
 public class BildImportDialog extends TitleAreaDialog {
@@ -36,46 +42,49 @@ public class BildImportDialog extends TitleAreaDialog {
 	Text Titel;
 	Text info;
 	public Bild result;
-	
-	BildImportDialog(Shell shell, ImageLoader iml){
+
+	BildImportDialog(Shell shell, ImageLoader iml) {
 		super(shell);
-		this.iml=iml;
+		this.iml = iml;
 	}
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		Composite cImage=new Composite(ret,SWT.BORDER);
+		Composite cImage = new Composite(ret, SWT.BORDER);
 		cImage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		img=new Image(Desk.getDisplay(),iml.data[0]);
-		cImage.addPaintListener(new PaintListener(){
+		img = new Image(Desk.getDisplay(), iml.data[0]);
+		cImage.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				GC gc=e.gc;
+				GC gc = e.gc;
 				gc.drawImage(img, 0, 0);
 			}
-			
+
 		});
 
-		Group gFormat=new Group(ret,SWT.BORDER);
+		Group gFormat = new Group(ret, SWT.BORDER);
 		gFormat.setText("Speicherformat");
-		bJPEG=new Button(gFormat,SWT.RADIO);
+		bJPEG = new Button(gFormat, SWT.RADIO);
 		bJPEG.setText("JPEG: kleiner, leicht ungenau");
-		bPNG=new Button(gFormat,SWT.RADIO);
+		bPNG = new Button(gFormat, SWT.RADIO);
 		bPNG.setText("PNG: grösser, Exaktes Bild");
 		gFormat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gFormat.setLayout(new GridLayout());
 		bJPEG.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bPNG.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText("Titel für das Bild");
-		Titel=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText("Titel für das Bild");
+		Titel = new Text(ret, SWT.BORDER);
 		Titel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText("Ausführlichere Beschreibung des Bilds");
-		info=new Text(ret,SWT.BORDER|SWT.MULTI);
+		new Label(ret, SWT.NONE)
+				.setText("Ausführlichere Beschreibung des Bilds");
+		info = new Text(ret, SWT.BORDER | SWT.MULTI);
 		info.setText("\n");
 		info.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}
+
 	@Override
 	public void create() {
 		super.create();
@@ -84,21 +93,24 @@ public class BildImportDialog extends TitleAreaDialog {
 		setMessage("Geben Sie bitte einen Titel und das gewünschte Speicherformat an");
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
+
 	@Override
 	protected void okPressed() {
-		ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		int format=SWT.IMAGE_PNG;
-		if(bJPEG.getSelection()){
-			format=SWT.IMAGE_JPEG;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int format = SWT.IMAGE_PNG;
+		if (bJPEG.getSelection()) {
+			format = SWT.IMAGE_JPEG;
 		}
 		iml.save(baos, format);
-		result=new Bild(GlobalEvents.getSelectedPatient(),Titel.getText(),baos.toByteArray());
+		result = new Bild(ElexisEventDispatcher.getSelectedPatient(), Titel
+				.getText(), baos.toByteArray());
 		result.set("Info", info.getText());
 		img.dispose();
 		super.okPressed();
 	}
+
 	@Override
-	protected void cancelPressed(){
+	protected void cancelPressed() {
 		img.dispose();
 		super.cancelPressed();
 	}

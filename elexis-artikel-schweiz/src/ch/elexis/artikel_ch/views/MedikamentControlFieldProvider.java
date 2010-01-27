@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentControlFieldProvider.java 5932 2010-01-14 22:30:04Z rgw_ch $
+ *  $Id: MedikamentControlFieldProvider.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ScannerEvents;
 import ch.elexis.artikel_ch.data.Medikament;
 import ch.elexis.data.Konsultation;
@@ -90,7 +90,8 @@ public class MedikamentControlFieldProvider extends DefaultControlFieldProvider 
 				ScannerEvents.beep();
 			}
 			for (Medikament medikament : medikamentList) {
-				Konsultation kons = GlobalEvents.getSelectedKons();
+				Konsultation kons = (Konsultation) ElexisEventDispatcher
+						.getSelected(Konsultation.class);
 				if (kons != null) {
 					detailView.addToVerechnung(medikament);
 				} else {

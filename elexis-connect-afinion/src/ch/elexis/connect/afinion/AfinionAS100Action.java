@@ -16,6 +16,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.connect.afinion.packages.PackageException;
 import ch.elexis.connect.afinion.packages.Record;
@@ -197,7 +198,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		Desk.getDisplay().syncExec(new Runnable() {
 			
 			public void run(){
-				selectedPatient = GlobalEvents.getSelectedPatient();
+				selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 				Patient probePat = null;
 				String vorname = null;
 				String name = null;
@@ -316,7 +317,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 							Messages.getString("AfinionAS100Action.NoPatientSelectedMsg")); //$NON-NLS-1$
 					}
 					_rs232log.log("Saved"); //$NON-NLS-1$
-					GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+					ElexisEventDispatcher.reload(LabItem.class);
 				}
 			}
 		});
@@ -384,7 +385,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			}
 			
 			_rs232log.log("Saved"); //$NON-NLS-1$
-			GlobalEvents.getInstance().fireUpdateEvent(LabItem.class);
+			ElexisEventDispatcher.reload(LabItem.class);
 		}
 	}
 	

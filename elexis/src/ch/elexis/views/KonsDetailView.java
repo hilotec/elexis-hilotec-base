@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsDetailView.java 5582 2009-07-28 16:27:48Z freakypenguin $
+ *  $Id: KonsDetailView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -47,11 +47,13 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.ObjectListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
@@ -80,8 +82,8 @@ import ch.rgw.tools.VersionedResource.ResourceItem;
  * @author gerry
  * 
  */
-public class KonsDetailView extends ViewPart implements SelectionListener,
-		ActivationListener, ISaveablePart2, ObjectListener {
+public class KonsDetailView extends ViewPart implements ElexisEventListener,
+		IActivationListener, ISaveablePart2 {
 	private static final String NO_CONS_SELECTED = Messages
 			.getString("KonsDetailView.NoConsSelected"); //$NON-NLS-1$
 	public static final String ID = "ch.elexis.Konsdetail"; //$NON-NLS-1$
@@ -107,6 +109,29 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 	Composite cEtiketten;
 	private int[] sashWeights = null;
 	private SashForm sash;
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
+			Patient.class) {
+
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			if ((actKons == null)
+					|| (!(actKons.getFall().getPatient().equals(ev.getObject())))) {
+				{
+					setKons(((Patient) ev.getObject()).getLetzteKons(false));
+				}
+			}
+
+		}
+
+	};
+
+	private ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
+			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			adaptMenus();
+		}
+	};
 
 	@Override
 	public void saveState(IMemento memento) {
@@ -183,9 +208,11 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 								Desk.getImage(Desk.IMG_LOGO48),
 								MessageFormat
 										.format(
-												Messages.getString("KonsDetailView.ConfirmChangeConsToCase"), new Object[]{
-												actFall.getLabel(), nFall
-														.getLabel()}),
+												Messages
+														.getString("KonsDetailView.ConfirmChangeConsToCase"),
+												new Object[] {
+														actFall.getLabel(),
+														nFall.getLabel() }),
 								MessageDialog.QUESTION,
 								new String[] {
 										Messages
@@ -252,11 +279,11 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				: sashWeights);
 
 		menu.createToolbar(GlobalActions.neueKonsAction, saveAction);
-		GlobalEvents.getInstance().addActivationListener(this, this);
-		GlobalEvents.getInstance().addObjectListener(this);
+		GlobalEventDispatcher.addActivationListener(this, this);
 		text.connectGlobalActions(getViewSite());
 		adaptMenus();
-		setKons(GlobalEvents.getSelectedKons());
+		setKons((Konsultation) ElexisEventDispatcher
+				.getSelected(Konsultation.class));
 	}
 
 	@Override
@@ -283,9 +310,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 	 */
 	@Override
 	public void dispose() {
-		GlobalEvents.getInstance().removeSelectionListener(this);
-		GlobalEvents.getInstance().removeActivationListener(this, this);
-		GlobalEvents.getInstance().removeObjectListener(this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		text.disconnectGlobalActions(getViewSite());
 		emFont.dispose();
 		super.dispose();
@@ -297,7 +322,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 			cc.dispose();
 		}
 		if (pat == null) {
-			pat = GlobalEvents.getSelectedPatient();
+			pat = ElexisEventDispatcher.getSelectedPatient();
 		}
 		if (pat != null) {
 			form.setText(pat.getPersonalia());
@@ -348,7 +373,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				Mandant m = b.getMandant();
 				lBeh
 						.setText(Messages
-								.getString("KonsDetailView.ConsOfDate")+" " + b.getDatum()); //$NON-NLS-1$
+								.getString("KonsDetailView.ConsOfDate") + " " + b.getDatum()); //$NON-NLS-1$
 				StringBuilder sb = new StringBuilder();
 				if (m == null) {
 					sb.append(Messages.getString("KonsDetailView.NotYours")); //$NON-NLS-1$
@@ -367,11 +392,11 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 				dd.setDiagnosen(b);
 				vd.setLeistungen(b);
 				text.setEnabled(true);
-				if ((GlobalEvents.getSelectedKons() == null)
-						|| (!GlobalEvents.getSelectedKons().getId().equals(
-								b.getId()))) {
+				if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null)
+						|| (!ElexisEventDispatcher.getSelected(
+								Konsultation.class).getId().equals(b.getId()))) {
 					inChange = true;
-					GlobalEvents.getInstance().fireSelectionEvent(b);
+					ElexisEventDispatcher.fireSelectionEvent(b);
 				}
 			} else {
 				form.setText(NO_CONS_SELECTED);
@@ -414,24 +439,6 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 		versionFwdAction.setEnabled(version != b.getHeadVersion());
 	}
 
-	public void selectionEvent(final PersistentObject first) {
-		if (first instanceof Konsultation) {
-			setKons((Konsultation) first);
-		} else if (first instanceof Patient) {
-			// letzte Konsultation waehlen, falls aktuelle Konsultation nicht
-			// zum Patienten gehoert
-			if ((actKons == null)
-					|| (!(actKons.getFall().getPatient().equals(first)))) {
-				{
-					setKons(((Patient) first).getLetzteKons(false));
-				}
-			}
-		} else if (first instanceof Anwender) {
-			adaptMenus();
-		}
-
-	}
-
 	private void makeActions() {
 
 		purgeAction = new Action(Messages
@@ -440,7 +447,7 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 			@Override
 			public void run() {
 				actKons.purgeEintrag();
-				GlobalEvents.getInstance().fireSelectionEvent(actKons);
+				ElexisEventDispatcher.fireSelectionEvent(actKons);
 			}
 
 		};
@@ -525,22 +532,16 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 
 	public void visible(final boolean mode) {
 		if (mode == true) {
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(this, eeli_pat,
+					eeli_user);
 			adaptMenus();
-			selectionEvent(GlobalEvents.getInstance().getSelectedObject(
-					Patient.class));
+			setKons((Konsultation) ElexisEventDispatcher
+					.getSelected(Konsultation.class));
 		} else {
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(this, eeli_pat,
+					eeli_user);
 		}
 
-	}
-
-	public void clearEvent(final Class<? extends PersistentObject> template) {
-		if (template.equals(Konsultation.class)
-				|| template.equals(Patient.class)
-				|| template.equals(Fall.class)) {
-			setKons(null);
-		}
 	}
 
 	public void adaptMenus() {
@@ -580,35 +581,61 @@ public class KonsDetailView extends ViewPart implements SelectionListener,
 		return true;
 	}
 
-	public void objectChanged(final PersistentObject o) {
-		if ((o != null) && (actKons != null)
-				&& (o.getId().equals(actKons.getId()))) {
-			setKons((Konsultation) o);
-		}
-
-	}
-
-	public void objectCreated(final PersistentObject o) {
-		if (o instanceof Fall) {
-			if (actKons != null) {
-				Fall fall = (Fall) o;
-				if (fall.getPatient().getId().equals(
-						actKons.getFall().getPatient().getId())) {
-					setPatient(fall.getPatient());
-				}
-			}
-		}
-
-	}
-
-	public void objectDeleted(final PersistentObject o) {
-		if (o instanceof Konsultation) {
-			setKons(null);
-		}
-
-	}
-
+	/*
+	 * public void objectCreated(final PersistentObject o) { if (o instanceof
+	 * Fall) { if (actKons != null) { Fall fall = (Fall) o; if
+	 * (fall.getPatient().getId().equals(
+	 * actKons.getFall().getPatient().getId())) { setPatient(fall.getPatient());
+	 * } } }
+	 * 
+	 * }
+	 */
 	public void addToVerechnung(Artikel artikel) {
 		vd.addPersistentObject(artikel);
+	}
+
+	public void catchElexisEvent(final ElexisEvent ev) {
+		Desk.asyncExec(new Runnable() {
+			public void run() {
+				switch (ev.getType()) {
+				case ElexisEvent.EVENT_DELETE:
+					if (actKons.equals(ev.getObject())) {
+						setKons(null);
+					}
+					break;
+				case ElexisEvent.EVENT_UPDATE:
+					if ((ev.getObject() != null) && (actKons != null)
+							&& (ev.getObject().getId().equals(actKons.getId()))) {
+						setKons((Konsultation) ev.getObject());
+					}
+					break;
+				case ElexisEvent.EVENT_DESELECTED:
+					setKons(null);
+					break;
+
+				case ElexisEvent.EVENT_SELECTED:
+					setKons((Konsultation) ev.getObject());
+					break;
+				}
+			}
+		});
+	}
+
+	private void clear(final Class<? extends PersistentObject> template) {
+		if (template.equals(Konsultation.class)
+				|| template.equals(Patient.class)
+				|| template.equals(Fall.class)) {
+			setKons(null);
+		}
+	}
+
+	final private ElexisEvent eetemplate = new ElexisEvent(null,
+			Konsultation.class, ElexisEvent.EVENT_CREATE
+					| ElexisEvent.EVENT_DELETE | ElexisEvent.EVENT_DESELECTED
+					| ElexisEvent.EVENT_RELOAD | ElexisEvent.EVENT_SELECTED
+					| ElexisEvent.EVENT_UPDATE);
+
+	public ElexisEvent getElexisEventFilter() {
+		return eetemplate;
 	}
 }

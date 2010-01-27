@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2010, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: ExterneDokumente.java 5639 2009-08-17 15:47:53Z rgw_ch $
+ *  $Id: ExterneDokumente.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.extdoc.views;
@@ -61,12 +61,15 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.BackgroundJob;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.extdoc.dialogs.FileEditDialog;
@@ -88,7 +91,7 @@ import ch.rgw.tools.TimeTool;
 
 // TODO datum
 
-public class ExterneDokumente extends ViewPart implements SelectionListener, ActivationListener {
+public class ExterneDokumente extends ViewPart implements IActivationListener {
 	//private static final String NONE = "Keine Dokumente";
 
 	// Erwartete Anzahl Dokumente falls noch nicht bekannt
@@ -125,6 +128,13 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 	
 	private Log log = Log.get("Externe Dokumente");
 	
+	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class,ElexisEvent.EVENT_SELECTED){
+		@Override
+		public void runInUi(ElexisEvent ev){
+			actPatient = (Patient) ev.getObject();
+			refresh();
+		}
+	};
 	class DataLoader extends BackgroundJob {
 		public DataLoader(String jobName) {
 			super(jobName);
@@ -476,8 +486,8 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 		contributeToActionBars();
 		
 		// Welcher Patient ist im aktuellen WorkbenchWindow selektiert?
-		actPatient=(Patient)GlobalEvents.getInstance().getSelectedObject(Patient.class);
-		GlobalEvents.getInstance().addActivationListener(this,this);
+		actPatient=(Patient)ElexisEventDispatcher.getSelected(Patient.class);
+		GlobalEventDispatcher.addActivationListener(this,this);
 		
 	}
 
@@ -669,19 +679,12 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 	 */
 	@Override
 	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this,this);
+		GlobalEventDispatcher.removeActivationListener(this,this);
 	}
 	
 	// Die Methode des SelectionListeners
-	/**
-	 * Wenn der Anwender einen neuen Patienten auswählt, müssen wir ja die Messwerte dieses
-	 * Patienten einlesen. Wir müssen deshalb merken, wenn die Patientenauswahl geändert wird,
-	 * und dann die Werte des neuen Patienten einlesen.
-	 */
 	public void selectionEvent(PersistentObject obj) {
 		if(obj instanceof Patient){
-			actPatient = (Patient) obj;
-			refresh();
 		}
 	}
 
@@ -709,15 +712,10 @@ public class ExterneDokumente extends ViewPart implements SelectionListener, Act
 	 */
 	public void visible(boolean mode) {
 		if(mode==true){
-			GlobalEvents.getInstance().addSelectionListener(this);
-			selectionEvent(GlobalEvents.getInstance().getSelectedObject(Patient.class));
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
+			eeli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),Patient.class,ElexisEvent.EVENT_SELECTED));
 		}else{
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void clearEvent(Class template) {
-		// leer
 	}
 }

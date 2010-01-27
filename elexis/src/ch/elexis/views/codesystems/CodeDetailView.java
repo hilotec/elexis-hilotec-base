@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: CodeDetailView.java 5573 2009-07-27 06:48:47Z rgw_ch $
+ * $Id: CodeDetailView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.codesystems;
 
@@ -30,16 +30,14 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ImporterPage;
@@ -50,51 +48,51 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.IDetailDisplay;
 import ch.rgw.tools.ExHandler;
 
-public class CodeDetailView extends ViewPart implements SelectionListener, ActivationListener,
+public class CodeDetailView extends ViewPart implements IActivationListener,
 		ISaveablePart2 {
 	public final static String ID = "ch.elexis.codedetailview"; //$NON-NLS-1$
 	private CTabFolder ctab;
 	private IAction importAction;
 	private ViewMenus viewmenus;
 	private Hashtable<String, ImporterPage> importers;
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		ctab = new CTabFolder(parent, SWT.NONE);
 		importers = new Hashtable<String, ImporterPage>();
 		addCustomBlocksPage();
 		importers.put(ctab.getItem(0).getText(), new BlockImporter());
-		
+
 		addPagesFor("ch.elexis.Diagnosecode"); //$NON-NLS-1$
 		addPagesFor("ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		if (ctab.getItemCount() > 0) {
 			ctab.setSelection(0);
-			
+
 		}
 		ctab.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				CTabItem top = ctab.getSelection();
 				if (top != null) {
 					String t = top.getText();
 					importAction.setEnabled(importers.get(t) != null);
-					MasterDetailsPage page = (MasterDetailsPage) top.getControl();
+					MasterDetailsPage page = (MasterDetailsPage) top
+							.getControl();
 					ViewerConfigurer vc = page.cv.getConfigurer();
 					vc.getControlFieldProvider().setFocus();
 				}
 			}
-			
+
 		});
 		makeActions();
 		viewmenus = new ViewMenus(getViewSite());
 		viewmenus.createMenu(importAction /* ,deleteAction */);
-		GlobalEvents.getInstance().addSelectionListener(this);
-		GlobalEvents.getInstance().addActivationListener(this, this);
-		
+		GlobalEventDispatcher.addActivationListener(this, this);
+
 	}
-	
-	private void addCustomBlocksPage(){
+
+	private void addCustomBlocksPage() {
 		BlockSelector cs = new BlockSelector();
 		BlockDetailDisplay bdd = new BlockDetailDisplay();
 		MasterDetailsPage page = new MasterDetailsPage(ctab, cs, bdd);
@@ -102,53 +100,56 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 		ct.setText(bdd.getTitle());
 		ct.setControl(page);
 		ct.setData(bdd);
-		page.sash.setWeights(new int[] {
-			30, 70
-		});
+		page.sash.setWeights(new int[] { 30, 70 });
 	}
-	
-	private void makeActions(){
-		importAction = new Action(Messages.getString("CodeDetailView.importActionTitle")) { //$NON-NLS-1$
-				@Override
-				public void run(){
-					CTabItem it = ctab.getSelection();
-					if (it != null) {
-						ImporterPage top = importers.get(it.getText());
-						if (top != null) {
-							ImportDialog dlg = new ImportDialog(getViewSite().getShell(), top);
-							dlg.create();
-							dlg.setTitle(top.getTitle());
-							dlg.setMessage(top.getDescription());
-							dlg.getShell().setText(
-								Messages.getString("CodeDetailView.importerCaption")); //$NON-NLS-1$
-							if (dlg.open() == Dialog.OK) {
-								top.run(false);
-							}
+
+	private void makeActions() {
+		importAction = new Action(Messages
+				.getString("CodeDetailView.importActionTitle")) { //$NON-NLS-1$
+			@Override
+			public void run() {
+				CTabItem it = ctab.getSelection();
+				if (it != null) {
+					ImporterPage top = importers.get(it.getText());
+					if (top != null) {
+						ImportDialog dlg = new ImportDialog(getViewSite()
+								.getShell(), top);
+						dlg.create();
+						dlg.setTitle(top.getTitle());
+						dlg.setMessage(top.getDescription());
+						dlg
+								.getShell()
+								.setText(
+										Messages
+												.getString("CodeDetailView.importerCaption")); //$NON-NLS-1$
+						if (dlg.open() == Dialog.OK) {
+							top.run(false);
 						}
 					}
-					
 				}
-				
-			};
-		
+
+			}
+
+		};
+
 	}
-	
+
 	private class ImportDialog extends TitleAreaDialog {
 		ImporterPage importer;
-		
-		public ImportDialog(Shell parentShell, ImporterPage i){
+
+		public ImportDialog(Shell parentShell, ImporterPage i) {
 			super(parentShell);
 			importer = i;
 		}
-		
+
 		@Override
-		protected Control createDialogArea(Composite parent){
+		protected Control createDialogArea(Composite parent) {
 			return importer.createPage(parent);
 		}
-		
+
 	}
-	
-	private void addPagesFor(String point){
+
+	private void addPagesFor(String point) {
 		List<IConfigurationElement> list = Extensions.getExtensions(point);
 		for (IConfigurationElement ce : list) {
 			try {
@@ -156,14 +157,15 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 				if ("Artikel".equals(ce.getName())) { //$NON-NLS-1$
 					continue;
 				}
-				IDetailDisplay d =
-					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
-				CodeSelectorFactory cs =
-					(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
+				IDetailDisplay d = (IDetailDisplay) ce
+						.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
+				CodeSelectorFactory cs = (CodeSelectorFactory) ce
+						.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
 				String a = ce.getAttribute("ImporterClass"); //$NON-NLS-1$
 				ImporterPage ip = null;
 				if (a != null) {
-					ip = (ImporterPage) ce.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
+					ip = (ImporterPage) ce
+							.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
 					if (ip != null) {
 						importers.put(d.getTitle(), ip);
 					}
@@ -173,29 +175,32 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 				ct.setText(d.getTitle());
 				ct.setControl(page);
 				ct.setData(d);
-				
+
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				Hub.log.log("Fehler beim Initialisieren von "+ce.getName(), Log.WARNINGS);
+				Hub.log.log("Fehler beim Initialisieren von " + ce.getName(),
+						Log.WARNINGS);
 				/*
-				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
-				mb.setText(Messages.getString("CodeDetailView.errorCaption")); //$NON-NLS-1$
-				mb.setMessage(Messages.getString("CodeDetailView.errorBody") + ce.getName() + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ ex.getLocalizedMessage());
-				mb.open();
-				*/
+				 * MessageBox mb = new MessageBox(getViewSite().getShell(),
+				 * SWT.ICON_ERROR | SWT.OK);
+				 * mb.setText(Messages.getString("CodeDetailView.errorCaption"
+				 * )); //$NON-NLS-1$
+				 * mb.setMessage(Messages.getString("CodeDetailView.errorBody")
+				 * + ce.getName() + ":\n" //$NON-NLS-1$ //$NON-NLS-2$ +
+				 * ex.getLocalizedMessage()); mb.open();
+				 */
 			}
 		}
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		if (ctab.getItemCount() > 0) {
 			ctab.setFocus();
 		}
 	}
-	
-	public void selectionEvent(PersistentObject obj){
+
+	public void selectionEvent(PersistentObject obj) {
 		if (obj != null) {
 			CTabItem top = ctab.getSelection();
 			if (top != null) {
@@ -209,44 +214,46 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 			}
 		}
 	}
-	
+
 	class MasterDetailsPage extends Composite {
 		SashForm sash;
 		CommonViewer cv;
-		
-		MasterDetailsPage(Composite parent, CodeSelectorFactory master, IDetailDisplay detail){
+
+		MasterDetailsPage(Composite parent, CodeSelectorFactory master,
+				IDetailDisplay detail) {
 			super(parent, SWT.NONE);
 			setLayout(new FillLayout());
 			sash = new SashForm(this, SWT.NONE);
 			cv = new CommonViewer();
-			cv.create(master.createViewerConfigurer(cv), sash, SWT.NONE, getViewSite());
+			cv.create(master.createViewerConfigurer(cv), sash, SWT.NONE,
+					getViewSite());
 			cv.getViewerWidget().addSelectionChangedListener(
-				GlobalEvents.getInstance().getDefaultListener());
+					GlobalEventDispatcher.getInstance().getDefaultListener());
 			/* Composite page= */detail.createDisplay(sash, getViewSite());
 			cv.getConfigurer().getContentProvider().startListening();
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
-	public void dispose(){
-		GlobalEvents.getInstance().removeSelectionListener(this);
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+	public void dispose() {
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		if ((ctab != null) && (!ctab.isDisposed())) {
 			for (CTabItem ct : ctab.getItems()) {
-				((MasterDetailsPage) ct.getControl()).cv
-					.getViewerWidget()
-					.removeSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
-				((MasterDetailsPage) ct.getControl()).cv.getConfigurer().getContentProvider()
-					.stopListening();
+				((MasterDetailsPage) ct.getControl()).cv.getViewerWidget()
+						.removeSelectionChangedListener(
+								GlobalEventDispatcher.getInstance()
+										.getDefaultListener());
+				((MasterDetailsPage) ct.getControl()).cv.getConfigurer()
+						.getContentProvider().stopListening();
 			}
 		}
-		
+
 	}
-	
+
 	/** Vom ActivationListener */
-	public void activation(boolean mode){
+	public void activation(boolean mode) {
 		CTabItem top = ctab.getSelection();
 		if (top != null) {
 			MasterDetailsPage page = (MasterDetailsPage) top.getControl();
@@ -257,41 +264,43 @@ public class CodeDetailView extends ViewPart implements SelectionListener, Activ
 				vc.getControlFieldProvider().clearValues();
 			}
 		}
-		
-	}
-	
-	public void visible(boolean mode){
 
 	}
-	
-	public void clearEvent(Class template){
-	// TODO Auto-generated method stub
-	
+
+	public void visible(boolean mode) {
+
 	}
-	
+
+	public void clearEvent(Class template) {
+		// TODO Auto-generated method stub
+
+	}
+
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
-	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
-	 * Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
+	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
+	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose(){
+	public int promptToSaveOnClose() {
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-	
-	public void doSave(IProgressMonitor monitor){ /* leer */}
-	
-	public void doSaveAs(){ /* leer */}
-	
-	public boolean isDirty(){
+
+	public void doSave(IProgressMonitor monitor) { /* leer */
+	}
+
+	public void doSaveAs() { /* leer */
+	}
+
+	public boolean isDirty() {
 		return true;
 	}
-	
-	public boolean isSaveAsAllowed(){
+
+	public boolean isSaveAsAllowed() {
 		return false;
 	}
-	
-	public boolean isSaveOnCloseNeeded(){
+
+	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
 }

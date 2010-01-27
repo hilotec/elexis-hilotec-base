@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - Allow extraction of arbitrary fields
  *    
- * $Id: ScriptUtil.java 5360 2009-06-18 09:53:05Z rgw_ch $
+ * $Id: ScriptUtil.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -17,26 +17,28 @@ package ch.elexis.util;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class ScriptUtil {
-	
+
 	/**
-	 * Get a data type from a plugin that implements IDataAccess and plugs into the EP DatAccess
+	 * Get a data type from a plugin that implements IDataAccess and plugs into
+	 * the EP DatAccess
 	 * 
 	 * @param connector
-	 *            the string describing the desitred data. the connector string follows the general
-	 *            form "plugin:dependent_object:all|date|last:data-name[.Field]:parameters"
+	 *            the string describing the desitred data. the connector string
+	 *            follows the general form
+	 *            "plugin:dependent_object:all|date|last:data-name[.Field]:parameters"
 	 * @return the result of the
 	 */
-	public static Object loadDataFromPlugin(final String connector){
+	public static Object loadDataFromPlugin(final String connector) {
 		String[] adr = connector.split(":");
 		if (adr.length < 4) {
-			SWTHelper.showError("Datenzugriff-Fehler", "Das Datenfeld " + connector
-				+ " wird falsch angesprochen");
+			SWTHelper.showError("Datenzugriff-Fehler", "Das Datenfeld "
+					+ connector + " wird falsch angesprochen");
 			return null;
 		}
 		String plugin = adr[0];
@@ -47,27 +49,30 @@ public class ScriptUtil {
 		if (adr.length == 5) {
 			params = adr[4].split("\\.");
 		}
-		
+
 		PersistentObject ref = null;
 		if (dependendObject.equals("Patient")) {
-			ref = GlobalEvents.getSelectedPatient();
+			ref = ElexisEventDispatcher.getSelectedPatient();
 		}
-		for (IConfigurationElement ic : Extensions.getExtensions("ch.elexis.DataAccess")) {
+		for (IConfigurationElement ic : Extensions
+				.getExtensions("ch.elexis.DataAccess")) {
 			String icName = ic.getAttribute("name");
 			if (icName.equals(plugin)) {
 				IDataAccess ida;
 				try {
 					ida = (IDataAccess) ic.createExecutableExtension("class");
-					Result<Object> ret = ida.getObject(desc, ref, dates, params);
+					Result<Object> ret = ida
+							.getObject(desc, ref, dates, params);
 					if (ret.isOK()) {
 						return ret.get();
 					} else {
-						ResultAdapter.displayResult(ret, "Fehler beim  Einsetzen von Feldern");
+						ResultAdapter.displayResult(ret,
+								"Fehler beim  Einsetzen von Feldern");
 					}
 				} catch (CoreException e) {
 					ExHandler.handle(e);
 				}
-				
+
 			}
 		}
 		return null;

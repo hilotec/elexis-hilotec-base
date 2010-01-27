@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: VerrechenbarAdapter.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: VerrechenbarAdapter.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Desk;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.dialogs.AddElementToBlockDialog;
 import ch.elexis.util.IOptifier;
@@ -151,10 +152,10 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements IV
 				AddElementToBlockDialog adb = new AddElementToBlockDialog(Desk.getTopShell());
 				if (adb.open() == Dialog.OK) {
 					ICodeElement ice =
-						(ICodeElement) GlobalEvents.getInstance().getSelectedObject(el.getClass());
+						(ICodeElement) ElexisEventDispatcher.getSelected(el.getClass());
 					Leistungsblock lb = adb.getResult();
 					lb.addElement(ice);
-					GlobalEvents.getInstance().fireUpdateEvent(Leistungsblock.class);
+					ElexisEventDispatcher.reload(Leistungsblock.class);
 				}
 			}
 		};

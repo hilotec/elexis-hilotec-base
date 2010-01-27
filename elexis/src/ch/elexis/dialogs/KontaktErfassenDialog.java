@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, medshare and Elexis
+ * Copyright (c) 2007-2010, medshare and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added Anschrift
  *    
- * $Id: KontaktErfassenDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ * $Id: KontaktErfassenDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -35,6 +35,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Anwender;
@@ -422,7 +423,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 					new String[] { "Strasse", "Plz", "Ort", "Telefon1", "Fax", "E-Mail" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					new String[] { ret[4], ret[5], ret[6], ret[7], tFax.getText(), tEmail.getText() });
 
-			GlobalEvents.getInstance().fireSelectionEvent(newKontakt);
+			ElexisEventDispatcher.fireSelectionEvent(newKontakt);
 
 		} catch (TimeFormatException e) {
 			ExHandler.handle(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PatientDetailView2.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ *  $Id: PatientDetailView2.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -21,8 +21,8 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Patient;
 
 public class PatientDetailView2 extends ViewPart implements ISaveablePart2 {
@@ -36,15 +36,16 @@ public class PatientDetailView2 extends ViewPart implements ISaveablePart2 {
 		if (icon != null) {
 			setTitleImage(icon);
 		}
-		setPartName(Messages.getString("PatientDetailView2.patientDetailViewName")); //$NON-NLS-1$
+		setPartName(Messages
+				.getString("PatientDetailView2.patientDetailViewName")); //$NON-NLS-1$
 		parent.setLayout(new FillLayout());
 		pb = new Patientenblatt2(parent, getViewSite());
 
 	}
 
 	public void refresh() {
-		pb.setPatient((Patient) GlobalEvents.getInstance().getSelectedObject(
-				Patient.class));
+		pb.setPatient((Patient) ElexisEventDispatcher
+				.getSelected(Patient.class));
 		pb.refresh();
 	}
 

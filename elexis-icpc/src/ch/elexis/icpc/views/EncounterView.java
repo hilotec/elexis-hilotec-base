@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,32 +8,45 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterView.java 5015 2009-01-23 16:31:47Z rgw_ch $
+ *    $Id: EncounterView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.SelectionListener;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.icpc.CodeSelectorFactory;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.ViewerConfigurer;
 
-public class EncounterView extends ViewPart implements ActivationListener,
-		SelectionListener {
+public class EncounterView extends ViewPart implements IActivationListener{
 	public static final String ID="ch.elexis.icpc.encounterView";
 	private EncounterDisplay display;
 	
+	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class,ElexisEvent.EVENT_SELECTED){
+
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			display.setEncounter(null);
+		}
+		
+	};
+	
+	private ElexisEventListenerImpl eeli_enc=new ElexisEventListenerImpl(Encounter.class,ElexisEvent.EVENT_SELECTED){
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			display.setEncounter((Encounter) ev.getObject());
+		}
+	};
 	public EncounterView() {
 		// TODO Auto-generated constructor stub
 	}
@@ -43,13 +56,13 @@ public class EncounterView extends ViewPart implements ActivationListener,
 		parent.setLayout(new GridLayout());
 		display=new EncounterDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		GlobalEvents.getInstance().addActivationListener(this, getViewSite().getPart());
+		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 		
 	}
 
 	@Override
 	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, getViewSite().getPart());
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
 	@Override
 	public void setFocus() {
@@ -63,9 +76,9 @@ public class EncounterView extends ViewPart implements ActivationListener,
 
 	public void visible(boolean mode) {
 		if(mode){
-			GlobalEvents.getInstance().addSelectionListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_enc,eeli_pat);
 		}else{
-			GlobalEvents.getInstance().removeSelectionListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_enc,eeli_pat);
 		}
 
 	}

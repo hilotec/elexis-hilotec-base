@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: BaseView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -32,9 +32,11 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
-import ch.elexis.actions.GlobalEvents.BackingStoreListener;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
@@ -45,7 +47,6 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
@@ -61,8 +62,8 @@ import ch.rgw.tools.TimeTool;
  * @author Gerry
  * 
  */
-public abstract class BaseView extends ViewPart implements
-		BackingStoreListener, HeartListener, ActivationListener {
+public abstract class BaseView extends ViewPart implements HeartListener,
+		IActivationListener {
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0";
 
 	public IAction newTerminAction, blockAction;
@@ -72,17 +73,34 @@ public abstract class BaseView extends ViewPart implements
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
 
+	private ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(
+			Termin.class, ElexisEvent.EVENT_RELOAD) {
+		public void runInUi(ElexisEvent ev) {
+			internalRefresh();
+		}
+	};
+
+	private ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
+			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+		public void runInUi(ElexisEvent ev) {
+			updateActions();
+			agenda.setActResource(Hub.userCfg.get(
+					PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+
+		}
+	};
+
 	@Override
 	public void createPartControl(Composite parent) {
 		makeActions();
 		create(parent);
-		GlobalEvents.getInstance().addActivationListener(this, this);
+		GlobalEventDispatcher.addActivationListener(this, this);
 		internalRefresh();
 	}
 
 	@Override
 	public void dispose() {
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
 
@@ -99,12 +117,12 @@ public abstract class BaseView extends ViewPart implements
 	}
 
 	protected void checkDay(String resource, TimeTool date) {
-		if(date==null){
+		if (date == null) {
 			date = agenda.getActDate();
 		}
-		String day=date.toString(TimeTool.DATE_COMPACT);
-		if(resource==null){
-			resource=agenda.getActResource();
+		String day = date.toString(TimeTool.DATE_COMPACT);
+		if (resource == null) {
+			resource = agenda.getActResource();
 		}
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
 		qbe.add("Tag", "=", day);
@@ -140,22 +158,6 @@ public abstract class BaseView extends ViewPart implements
 		internalRefresh();
 	}
 
-	public void reloadContents(Class<? extends PersistentObject> clazz) {
-		if (clazz.equals(Termin.class)) {
-			Desk.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					internalRefresh();
-
-				}
-			});
-		} else if (clazz.equals(Anwender.class)) {
-			updateActions();
-			agenda.setActResource(Hub.userCfg.get(
-					PreferenceConstants.AG_BEREICH, agenda.getActResource()));
-		}
-
-	}
-
 	public void heartbeat() {
 		internalRefresh();
 	}
@@ -167,10 +169,13 @@ public abstract class BaseView extends ViewPart implements
 	public void visible(boolean mode) {
 		if (mode) {
 			Hub.heart.addListener(this);
-			GlobalEvents.getInstance().addBackingStoreListener(this);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_termin,
+					eeli_user);
 		} else {
 			Hub.heart.removeListener(this);
-			GlobalEvents.getInstance().removeBackingStoreListener(this);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_termin,
+					eeli_user);
+
 		}
 
 	}
@@ -216,14 +221,13 @@ public abstract class BaseView extends ViewPart implements
 								.getStartMinute(), p.getDurationInMinutes()
 								+ p.getStartMinute(), Termin.typReserviert(),
 								Termin.statusLeer());
-						GlobalEvents.getInstance()
-								.fireUpdateEvent(Termin.class);
+						ElexisEventDispatcher.reload(Termin.class);
 					}
 				}
 
 			}
 		};
-				newTerminAction = new Action(Messages.TagesView_newTermin) {
+		newTerminAction = new Action(Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText(Messages.TagesView_createNewTermin);
@@ -258,7 +262,7 @@ public abstract class BaseView extends ViewPart implements
 
 			@Override
 			public void run() {
-				Patient patient = GlobalEvents.getSelectedPatient();
+				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
 					qbe.add("Wer", "=", patient.getId());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 4741 2008-12-04 21:34:54Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -33,7 +33,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -47,8 +48,8 @@ public class EpisodesDisplay extends Composite {
 	ScrolledForm form;
 	Patient actPatient;
 	TreeViewer tvEpisodes;
-	
-	public EpisodesDisplay(final Composite parent){
+
+	public EpisodesDisplay(final Composite parent) {
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		form = Desk.getToolkit().createScrolledForm(this);
@@ -56,26 +57,30 @@ public class EpisodesDisplay extends Composite {
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
 		tvEpisodes = new TreeViewer(body);
-		tvEpisodes.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tvEpisodes.getControl().setLayoutData(
+				SWTHelper.getFillGridData(1, true, 1, true));
 		tvEpisodes.setLabelProvider(new EpisodesLabelProvider());
 		tvEpisodes.setContentProvider(new EpisodecontentProvider());
-		tvEpisodes.addSelectionChangedListener(GlobalEvents.getInstance().getDefaultListener());
-		/* PersistentObjectDragSource pods= */new PersistentObjectDragSource(tvEpisodes);
-		// lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()},
+		tvEpisodes.addSelectionChangedListener(GlobalEventDispatcher
+				.getInstance().getDefaultListener());
+		/* PersistentObjectDragSource pods= */new PersistentObjectDragSource(
+				tvEpisodes);
+		// lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[]
+		// {TextTransfer.getInstance()},
 		// pods);
 		new PersistentObjectDropTarget(tvEpisodes.getControl(), new Receiver());
-		setPatient(GlobalEvents.getSelectedPatient());
+		setPatient(ElexisEventDispatcher.getSelectedPatient());
 	}
-	
-	public void setPatient(final Patient pat){
+
+	public void setPatient(final Patient pat) {
 		actPatient = pat;
 		if (pat != null) {
 			tvEpisodes.setInput(pat);
 		}
 		tvEpisodes.refresh();
 	}
-	
-	public Episode getSelectedEpisode(){
+
+	public Episode getSelectedEpisode() {
 		Tree widget = tvEpisodes.getTree();
 		TreeItem[] sel = widget.getSelection();
 		if ((sel == null) || (sel.length == 0)) {
@@ -89,11 +94,11 @@ public class EpisodesDisplay extends Composite {
 		} while (p != null);
 		return getEpisodeFromItem(f);
 	}
-	
-	private Episode getEpisodeFromItem(final TreeItem t){
+
+	private Episode getEpisodeFromItem(final TreeItem t) {
 		String etext = t.getText();
 		for (Object o : ((ITreeContentProvider) tvEpisodes.getContentProvider())
-			.getElements(actPatient)) {
+				.getElements(actPatient)) {
 			if (o instanceof Episode) {
 				Episode ep = (Episode) o;
 				if (ep.getLabel().equals(etext)) {
@@ -103,10 +108,10 @@ public class EpisodesDisplay extends Composite {
 		}
 		return null;
 	}
-	
+
 	class EpisodecontentProvider implements ITreeContentProvider {
-		
-		public Object[] getChildren(final Object parentElement){
+
+		public Object[] getChildren(final Object parentElement) {
 			if (parentElement instanceof Episode) {
 				Episode ep = (Episode) parentElement;
 				ArrayList<String> ret = new ArrayList<String>();
@@ -120,20 +125,20 @@ public class EpisodesDisplay extends Composite {
 			}
 			return null;
 		}
-		
-		public Object getParent(final Object element){
+
+		public Object getParent(final Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public boolean hasChildren(final Object element){
+
+		public boolean hasChildren(final Object element) {
 			if (element instanceof Episode) {
 				return true;
 			}
 			return false;
 		}
-		
-		public Object[] getElements(final Object inputElement){
+
+		public Object[] getElements(final Object inputElement) {
 			if (actPatient != null) {
 				Query<Episode> qbe = new Query<Episode>(Episode.class);
 				qbe.add("PatientID", "=", actPatient.getId());
@@ -142,24 +147,25 @@ public class EpisodesDisplay extends Composite {
 				return list.toArray();
 			}
 			return new Object[0];
-			
+
 		}
-		
-		public void dispose(){
-		// TODO Auto-generated method stub
-		
+
+		public void dispose() {
+			// TODO Auto-generated method stub
+
 		}
-		
-		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
-		// TODO Auto-generated method stub
-		
+
+		public void inputChanged(final Viewer viewer, final Object oldInput,
+				final Object newInput) {
+			// TODO Auto-generated method stub
+
 		}
-		
+
 	}
-	
+
 	class EpisodesLabelProvider extends LabelProvider implements IColorProvider {
 		@Override
-		public String getText(final Object element){
+		public String getText(final Object element) {
 			if (element instanceof Episode) {
 				return ((Episode) element).getLabel();
 			} else if (element instanceof String) {
@@ -167,13 +173,13 @@ public class EpisodesDisplay extends Composite {
 			}
 			return super.getText(element);
 		}
-		
-		public Color getBackground(final Object element){
+
+		public Color getBackground(final Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public Color getForeground(final Object element){
+
+		public Color getForeground(final Object element) {
 			if (element instanceof Episode) {
 				Episode e = (Episode) element;
 				if (e.getStatus() == Episode.INACTIVE) {
@@ -182,19 +188,19 @@ public class EpisodesDisplay extends Composite {
 			}
 			return Desk.getColor(Desk.COL_BLACK);
 		}
-		
+
 	}
-	
+
 	class Receiver implements PersistentObjectDropTarget.Receiver {
-		
-		public boolean accept(final PersistentObject o){
+
+		public boolean accept(final PersistentObject o) {
 			if (o instanceof IDiagnose) {
 				return true;
 			}
 			return false;
 		}
-		
-		public void dropped(final PersistentObject o, final DropTargetEvent e){
+
+		public void dropped(final PersistentObject o, final DropTargetEvent e) {
 			Tree tree = tvEpisodes.getTree();
 			Point point = tree.toControl(e.x, e.y);
 			TreeItem item = tree.getItem(point);
@@ -209,6 +215,6 @@ public class EpisodesDisplay extends Composite {
 				}
 			}
 		}
-		
+
 	}
 }

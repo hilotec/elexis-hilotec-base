@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUFZeugnis.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *  $Id: AUFZeugnis.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
-import ch.elexis.actions.GlobalEvents;
-import ch.elexis.actions.GlobalEvents.ActivationListener;
+import ch.elexis.actions.GlobalEventDispatcher;
+import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.AUF;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Konsultation;
@@ -26,7 +26,7 @@ import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.text.ITextPlugin.PageFormat;
 
-public class AUFZeugnis extends ViewPart implements ICallback, ActivationListener {
+public class AUFZeugnis extends ViewPart implements ICallback, IActivationListener {
 	public static final String ID = "ch.elexis.AUFView"; //$NON-NLS-1$
 	TextContainer text;
 	Brief actBrief;
@@ -35,7 +35,7 @@ public class AUFZeugnis extends ViewPart implements ICallback, ActivationListene
 	
 	@Override
 	public void dispose(){
-		GlobalEvents.getInstance().removeActivationListener(this, this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 		if (text != null) {
 			text.dispose();
 		}
@@ -47,7 +47,7 @@ public class AUFZeugnis extends ViewPart implements ICallback, ActivationListene
 		setTitleImage(Desk.getImage(Desk.IMG_PRINTER));
 		text = new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent, this);
-		GlobalEvents.getInstance().addActivationListener(this, this);
+		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 	
 	@Override

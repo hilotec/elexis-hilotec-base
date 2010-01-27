@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Konsultation.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Konsultation.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -23,7 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.actions.GlobalEvents;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.text.Samdas;
 import ch.elexis.util.Log;
@@ -63,8 +63,8 @@ public class Konsultation extends PersistentObject implements
 	}
 
 	static {
-		addMapping(TABLENAME, MANDATOR_ID, "Datum=S:D:Datum", CASE_ID,
-				BILL_ID, "Eintrag=S:V:Eintrag",
+		addMapping(TABLENAME, MANDATOR_ID, "Datum=S:D:Datum", CASE_ID, BILL_ID,
+				"Eintrag=S:V:Eintrag",
 				"Diagnosen=JOINT:BehandlungsID:DiagnoseID:BEHDL_DG_JOINT");
 	}
 
@@ -116,7 +116,7 @@ public class Konsultation extends PersistentObject implements
 	/** Eine neue Konsultation zu einem Fall erstellen */
 	Konsultation(Fall fall) {
 		if (fall == null) {
-			fall = GlobalEvents.getSelectedFall();
+			fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 			if (fall == null) {
 				MessageDialog
 						.openError(
@@ -135,8 +135,6 @@ public class Konsultation extends PersistentObject implements
 					.toString(TimeTool.DATE_GER), fall.getId(), Hub.actMandant
 					.getId());
 			fall.getPatient().setInfoElement("LetzteBehandlung", getId());
-			GlobalEvents.getInstance().fireObjectEvent(this,
-					GlobalEvents.CHANGETYPE.create);
 		}
 	}
 
@@ -300,8 +298,7 @@ public class Konsultation extends PersistentObject implements
 	public void updateEintrag(String eintrag, boolean force) {
 		if (force || isEintragEditable()) {
 			setVersionedResource(ENTRY, eintrag);
-			GlobalEvents.getInstance().fireObjectEvent(this,
-					GlobalEvents.CHANGETYPE.update);
+			ElexisEventDispatcher.update(this);
 		}
 	}
 
@@ -698,9 +695,11 @@ public class Konsultation extends PersistentObject implements
 
 	}
 
-	/** Wieviel Umsatz (in Rappen) bringt uns diese Konsultation ein?
+	/**
+	 * Wieviel Umsatz (in Rappen) bringt uns diese Konsultation ein?
+	 * 
 	 * @deprecated not accurate. use getLeistungen()
-	 *  */
+	 * */
 	@Deprecated
 	public double getUmsatz() {
 		double sum = 0.0;
@@ -723,7 +722,8 @@ public class Konsultation extends PersistentObject implements
 
 	}
 
-	/** Wieviel vom Umsatz bleibt uns von dieser Konsultation? 
+	/**
+	 * Wieviel vom Umsatz bleibt uns von dieser Konsultation?
 	 * 
 	 * */
 	@Deprecated
@@ -813,8 +813,8 @@ public class Konsultation extends PersistentObject implements
 	 * @author gerry new concept due to some obscure selection problems
 	 */
 	public static Konsultation getAktuelleKons() {
-		Konsultation ret = GlobalEvents.getSelectedKons();
-		Patient pat = GlobalEvents.getSelectedPatient();
+		Konsultation ret = (Konsultation)ElexisEventDispatcher.getSelected(Konsultation.class);
+		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if ((ret != null)
 				&& ((pat == null) || (ret.getFall().getPatient().getId()
 						.equals(pat.getId())))) {
