@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ElexisEvent.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: ElexisEvent.java 5974 2010-01-28 10:55:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -35,17 +35,17 @@ public class ElexisEvent {
 	public static final int EVENT_USER_CHANGED = 0x0040;
 	/** the mandator changed */
 	public static final int EVENT_MANDATOR_CHANGED = 0x080;
-
+	
 	PersistentObject obj;
 	Class<?> objClass;
 	int type;
-
+	
 	public ElexisEvent(final PersistentObject o, final Class<?> c, final int type) {
 		obj = o;
 		objClass = c;
 		this.type = type;
 	}
-
+	
 	/**
 	 * Retrieve the object this event is about.
 	 * 
@@ -54,7 +54,7 @@ public class ElexisEvent {
 	public PersistentObject getObject() {
 		return obj;
 	}
-
+	
 	/**
 	 * Retrieve the class this event is about
 	 * 
@@ -68,7 +68,7 @@ public class ElexisEvent {
 		}
 		return objClass;
 	}
-
+	
 	/**
 	 * Retrieve the event type
 	 * 
@@ -77,7 +77,7 @@ public class ElexisEvent {
 	public int getType() {
 		return type;
 	}
-
+	
 	/**
 	 * Check whether this event matches a template event. this method is only
 	 * used internally by the framework and not intended to be called or
@@ -103,10 +103,14 @@ public class ElexisEvent {
 			if ((type & event.getType()) == 0) {
 				return false;
 			}
-		}	
+		}
 		return true;
 	}
 	
-	public static ElexisEvent changeUserEvent=new ElexisEvent(Hub.actUser,Anwender.class,ElexisEvent.EVENT_USER_CHANGED);
-	public static ElexisEvent changePatientEvent=new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),Patient.class,EVENT_SELECTED);
+	public static ElexisEvent createUserEvent(){
+		return new ElexisEvent(Hub.actUser,Anwender.class,ElexisEvent.EVENT_USER_CHANGED);
+	}
+	public static ElexisEvent createPatientEvent(){
+		return new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),Patient.class,EVENT_SELECTED);
+	}
 }
