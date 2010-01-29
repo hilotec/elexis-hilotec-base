@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    A. Kaufmann - initial implementation 
+ *    G. Weirich - modify to API Changes in 2.1 (ElexisEventDispatcher)
  *    
- * $Id: MesswertBase.java 5386 2009-06-23 11:34:17Z rgw_ch $
+ * $Id: OurComboWidget.java 5981 2010-01-29 05:56:10Z rgw_ch $
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken;
