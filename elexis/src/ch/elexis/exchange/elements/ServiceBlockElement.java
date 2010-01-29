@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ServiceBlockElement.java 5969 2010-01-26 17:31:21Z rgw_ch $
+ *  $Id: ServiceBlockElement.java 5980 2010-01-29 05:55:25Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -102,7 +102,7 @@ public class ServiceBlockElement extends XChangeElement {
 					}
 				}
 				if (!bFound) {
-					if (!bFound) { // we di not have a object with matching XID
+					if (!bFound) { // we do not have a object with matching XID
 						String contract = se.getAttr("contractName");
 						String code = se.getAttr("contractCode");
 						String lname = se.getAttr("name");
@@ -112,7 +112,7 @@ public class ServiceBlockElement extends XChangeElement {
 								CodeSelectorFactory cof = factories.get(ice);
 								if (cof != null) {
 									PersistentObject po = cof.findElement(code);
-									if (po != null && po.exists()) {
+									if (po != null /* && po.exists() */) {
 										bMatched = true;
 										ret.addElement((ICodeElement) po);
 										break;
