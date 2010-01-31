@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: KontaktBlatt.java 5983 2010-01-29 17:39:42Z rgw_ch $
+ * $Id: KontaktBlatt.java 6002 2010-01-31 09:41:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -251,50 +251,55 @@ public class KontaktBlatt extends Composite implements ElexisEventListener, IAct
 			Kontakt act = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
 			if (act != null) {
 				catchElexisEvent(new ElexisEvent(act, Kontakt.class, ElexisEvent.EVENT_SELECTED));
-				ElexisEventDispatcher.getInstance().addListeners(this);
 			}
+			ElexisEventDispatcher.getInstance().addListeners(this);
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
 		
 	}
 	
-	public void catchElexisEvent(ElexisEvent ev){
-		if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-			if (!isEnabled()) {
-				setEnabled(true);
-			}
-			actKontakt = (Kontakt) ev.getObject();
-			afDetails.reload(actKontakt);
-			String[] ret = new String[types.length];
-			actKontakt.get(types, ret);
-			for (int i = 0; i < types.length; i++) {
-				bTypes[i].setSelection((ret[i] == null) ? false : StringConstants.ONE
-						.equals(ret[i]));
-				if (Hub.acl.request(AccessControlDefaults.KONTAKT_MODIFY) == false) {
-					bTypes[i].setEnabled(false);
+	public void catchElexisEvent(final ElexisEvent ev){
+		
+		Desk.asyncExec(new Runnable() {
+			public void run(){
+				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+					if (!isEnabled()) {
+						setEnabled(true);
+					}
+					actKontakt = (Kontakt) ev.getObject();
+					afDetails.reload(actKontakt);
+					String[] ret = new String[types.length];
+					actKontakt.get(types, ret);
+					for (int i = 0; i < types.length; i++) {
+						bTypes[i].setSelection((ret[i] == null) ? false : StringConstants.ONE
+								.equals(ret[i]));
+						if (Hub.acl.request(AccessControlDefaults.KONTAKT_MODIFY) == false) {
+							bTypes[i].setEnabled(false);
+						}
+					}
+					if (bTypes[0].getSelection() == true) {
+						def[0].setLabel(BEZEICHNUNG);
+						def[1].setLabel(ZUSATZ);
+						def[2].setLabel(ANSPRECHPERSON);
+						def[3].setEditable(false);
+						def[3].setText(StringConstants.EMPTY);
+						def[10].setLabel(TEL_DIREKT);
+					} else {
+						def[0].setLabel(NAME);
+						def[1].setLabel(VORNAME);
+						def[2].setLabel(ZUSATZ);
+						def[3].setEditable(true);
+						def[10].setLabel(MOBIL);
+					}
+					lbAnschrift.setText(actKontakt.getPostAnschrift(false));
+					form.reflow(true);
+					
+				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+					setEnabled(false);
 				}
 			}
-			if (bTypes[0].getSelection() == true) {
-				def[0].setLabel(BEZEICHNUNG);
-				def[1].setLabel(ZUSATZ);
-				def[2].setLabel(ANSPRECHPERSON);
-				def[3].setEditable(false);
-				def[3].setText(StringConstants.EMPTY);
-				def[10].setLabel(TEL_DIREKT);
-			} else {
-				def[0].setLabel(NAME);
-				def[1].setLabel(VORNAME);
-				def[2].setLabel(ZUSATZ);
-				def[3].setEditable(true);
-				def[10].setLabel(MOBIL);
-			}
-			lbAnschrift.setText(actKontakt.getPostAnschrift(false));
-			form.reflow(true);
-			
-		} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-			setEnabled(false);
-		}
+		});
 	}
 	
 	private final ElexisEvent eetemplate =

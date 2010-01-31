@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 5983 2010-01-29 17:39:42Z rgw_ch $
+ *  $Id: RezepteView.java 6002 2010-01-31 09:41:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -94,14 +94,20 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		
 		public void runInUi(ElexisEvent ev){
-			actPatient = (Patient) ev.getObject();
-			ElexisEventDispatcher.getInstance().fire(
-				new ElexisEvent(null, Rezept.class, ElexisEvent.EVENT_DESELECTED));
-			addLineAction.setEnabled(false);
-			printAction.setEnabled(false);
-			lv.refresh(true);
-			refresh();
-			master.setText(actPatient.getLabel());
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				actPatient = (Patient) ev.getObject();
+				ElexisEventDispatcher.getInstance().fire(
+					new ElexisEvent(null, Rezept.class, ElexisEvent.EVENT_DESELECTED));
+				addLineAction.setEnabled(false);
+				printAction.setEnabled(false);
+				lv.refresh(true);
+				refresh();
+				master.setText(actPatient.getLabel());
+			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+				actPatient = null;
+				ElexisEventDispatcher.clearSelection(Rezept.class);
+				refresh();
+			}
 		}
 	};
 	
@@ -394,14 +400,16 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_rp);
 			Rezept actRezept = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
 			Patient global = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
-			if ((actRezept == null) || (!actRezept.getPatient().getId().equals(global.getId()))) {
-				eeli_pat.catchElexisEvent(new ElexisEvent(global, Patient.class,
-					ElexisEvent.EVENT_SELECTED));
-			} else {
-				eeli_rp.catchElexisEvent(new ElexisEvent(actRezept, Rezept.class,
-					ElexisEvent.EVENT_SELECTED));
+			if (global != null) {
+				if ((actRezept == null) || (!actRezept.getPatient().getId().equals(global.getId()))) {
+					eeli_pat.catchElexisEvent(new ElexisEvent(global, Patient.class,
+						ElexisEvent.EVENT_SELECTED));
+				} else {
+					eeli_rp.catchElexisEvent(new ElexisEvent(actRezept, Rezept.class,
+						ElexisEvent.EVENT_SELECTED));
+				}
+				addLineAction.setEnabled(actRezept != null);
 			}
-			addLineAction.setEnabled(actRezept != null);
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_rp);
 		}
