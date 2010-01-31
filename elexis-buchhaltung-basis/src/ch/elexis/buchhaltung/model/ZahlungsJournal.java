@@ -34,8 +34,8 @@ import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 public class ZahlungsJournal extends AbstractTimeSeries {
-	private static final String NAME = "Zahlungsjournal";
-	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
+	private static final String NAME = Messages.ZahlungsJournal_PaymentJournal;
+	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant"; //$NON-NLS-1$
 	private boolean bOnlyActiveMandator;
 	
 	public ZahlungsJournal(){
@@ -58,10 +58,10 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		Query<AccountTransaction> qbe = new Query<AccountTransaction>(AccountTransaction.class);
 		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
 		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
-		qbe.add("Datum", ">=", ttStart.toString(TimeTool.DATE_COMPACT));
-		qbe.add("Datum", "<=", ttEnd.toString(TimeTool.DATE_COMPACT));
+		qbe.add("Datum", ">=", ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("Datum", "<=", ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(NAME, total);
-		monitor.subTask("Datenbankabfrage");
+		monitor.subTask(Messages.ZahlungsJournal_DatabaseQuery);
 		List<AccountTransaction> transactions = qbe.execute();
 		int sum = transactions.size();
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
@@ -82,7 +82,7 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 				continue;
 			}
 			String remark = at.getRemark();
-			if (remark.toLowerCase().contains("storno")) {
+			if (remark.toLowerCase().contains("storno")) { //$NON-NLS-1$
 				continue;
 			}
 			if (pat != null) {
@@ -91,12 +91,12 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 					if(rn==null){
 						continue;
 					}
-					if(!actMnId.equals(rn.get("MandantID"))){
+					if(!actMnId.equals(rn.get("MandantID"))){ //$NON-NLS-1$
 						continue;
 					}
 				}
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
-				row[0] = pif.format(pat.get("PatientNr"));
+				row[0] = pif.format(pat.get("PatientNr")); //$NON-NLS-1$
 				row[1] = new DateTool(at.getDate());
 				row[2] = at.getAmount();
 				row[4] = at.getRemark();
@@ -104,13 +104,13 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 				if (rn != null) {
 					Money rnAmount = rn.getBetrag();
 					if (rnAmount.isMoreThan(amount)) {
-						row[3] = "TZ";
+						row[3] = Messages.ZahlungsJournal_TZ;
 					} else {
-						row[3] = "ZA";
+						row[3] = Messages.ZahlungsJournal_ZA;
 					}
 					
 				} else {
-					row[3] = "AD";
+					row[3] = Messages.ZahlungsJournal_AD;
 				}
 				
 				if (monitor.isCanceled()) {
@@ -133,11 +133,11 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 	@Override
 	protected List<String> createHeadings(){
 		ArrayList<String> ret = new ArrayList<String>();
-		ret.add("Patient-Nr");
-		ret.add("Datum");
-		ret.add("Betrag");
-		ret.add("Typ");
-		ret.add("Text");
+		ret.add(Messages.ZahlungsJournal_PatientNr);
+		ret.add(Messages.ZahlungsJournal_Date);
+		ret.add(Messages.ZahlungsJournal_Amount);
+		ret.add(Messages.ZahlungsJournal_Type);
+		ret.add(Messages.ZahlungsJournal_Text);
 		return ret;
 	}
 	

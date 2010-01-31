@@ -41,7 +41,7 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
  *
  */
 public class FakturaJournal extends AbstractTimeSeries {
-	private static final String NAME = "Faktura Journal";
+	private static final String NAME = Messages.FakturaJournal_FakturaJournal;
 	private boolean bOnlyActiveMandator;
 	
 	public FakturaJournal(){
@@ -62,10 +62,10 @@ public class FakturaJournal extends AbstractTimeSeries {
 		Query<AccountTransaction> qbe = new Query<AccountTransaction>(AccountTransaction.class);
 		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
 		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
-		qbe.add("Datum", ">=", ttStart.toString(TimeTool.DATE_COMPACT));
-		qbe.add("Datum", "<=", ttEnd.toString(TimeTool.DATE_COMPACT));
+		qbe.add("Datum", ">=", ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("Datum", "<=", ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(NAME, total);
-		monitor.subTask("Datenbankabfrage");
+		monitor.subTask(Messages.FakturaJournal_DatabaseQuery);
 		List<AccountTransaction> transactions = qbe.execute();
 		int sum = transactions.size();
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
@@ -94,17 +94,17 @@ public class FakturaJournal extends AbstractTimeSeries {
 					}
 				}
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
-				row[0] = pif.format(pat.get("PatientNr"));
+				row[0] = pif.format(pat.get("PatientNr")); //$NON-NLS-1$
 				row[1] = new DateTool(at.getDate());
 				row[2] = at.getAmount();
 				row[4] = at.getRemark();
 				if (((Money) row[2]).isNegative()) {
-					row[3] = "FA";
+					row[3] = Messages.FakturaJournal_FA;
 				} else {
-					if (((String) row[4]).toLowerCase().contains("storno")) {
-						row[3] = "ST";
+					if (((String) row[4]).toLowerCase().contains("storno")) { //$NON-NLS-1$
+						row[3] = Messages.FakturaJournal_ST;
 					} else {
-						row[3] = "GU";
+						row[3] = Messages.FakturaJournal_GU;
 					}
 				}
 				if (monitor.isCanceled()) {
@@ -127,18 +127,18 @@ public class FakturaJournal extends AbstractTimeSeries {
 	@Override
 	protected List<String> createHeadings(){
 		List<String> ret = new ArrayList<String>();
-		ret.add("Patient-Nr.");
-		ret.add("Datum");
-		ret.add("Betrag");
-		ret.add("Typ");
-		ret.add("Text");
+		ret.add(Messages.FakturaJournal_PatientNr);
+		ret.add(Messages.FakturaJournal_Date);
+		ret.add(Messages.FakturaJournal_Amount);
+		ret.add(Messages.FakturaJournal_Type);
+		ret.add(Messages.FakturaJournal_Text);
 		return ret;
 	}
 	
 	@Override
 	public String getDescription(){
 		
-		return "Faktura";
+		return Messages.FakturaJournal_Faktura;
 	}
 	
 }

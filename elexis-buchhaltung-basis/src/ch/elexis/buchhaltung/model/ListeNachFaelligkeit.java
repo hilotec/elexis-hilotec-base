@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, G. Weirich
+ * Copyright (c) 2008-2010 G. Weirich
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ * 
  * $Id: ListeNachFaelligkeit.java 1058 2008-12-23 09:09:52Z  $
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 
 import ch.elexis.Hub;
 import ch.elexis.buchhaltung.util.DateTool;
@@ -41,11 +40,11 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
  * 
  */
 public class ListeNachFaelligkeit extends AbstractDataProvider {
-	private static final String ANALYSIERE_RECHNUNGEN = "Analysiere Rechnungen";
-	private static final String DATENBANKABFRAGE = "Datenbankabfrage";
-	private static final String NAME = "Rechnungen nach Fälligkeitsdatum";
-	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen";
-	private static final String DUE_DATE_TEXT = "Stichtag";
+	private static final String ANALYSIERE_RECHNUNGEN = Messages.ListeNachFaelligkeit_AnalyzingBills;
+	private static final String DATENBANKABFRAGE = Messages.ListeNachFaelligkeit_DatabaseQuery;
+	private static final String NAME = Messages.ListeNachFaelligkeit_BillsAfterDaysDue;
+	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen"; //$NON-NLS-1$
+	private static final String DUE_DATE_TEXT = "Stichtag"; //$NON-NLS-1$
 	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
 	private int dueAfter;
 	private DateTool stichTag = new DateTool();
@@ -92,7 +91,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		monitor.beginTask(NAME, totalwork);
 		monitor.subTask(DATENBANKABFRAGE);
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
-		qbe.add("RnStatus", "<>", Integer.toString(RnStatus.BEZAHLT));
+		qbe.add("RnStatus", "<>", Integer.toString(RnStatus.BEZAHLT)); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
 		int size=rnn.size();
@@ -109,7 +108,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			if(bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))){
+			if(bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))){ //$NON-NLS-1$
 				continue;
 			}
 			if (RnStatus.isActive(rn.getStatus())) {
@@ -121,7 +120,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 					if (fall != null) {
 						Patient pat = fall.getPatient();
 						if (pat != null) {
-							row[0] = pif.format(pat.get("PatientNr"));
+							row[0] = pif.format(pat.get("PatientNr")); //$NON-NLS-1$
 							row[1] = Integer.parseInt(rn.getNr());
 							row[2] = new DateTool(date);
 							row[3] = rn.getBetrag();
@@ -141,10 +140,10 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	@Override
 	protected List<String> createHeadings(){
 		List<String> ret = new ArrayList<String>();
-		ret.add("Patient-Nr");
-		ret.add("Rechnungs Nr.");
-		ret.add("Fällig am");
-		ret.add("Betrag");
+		ret.add(Messages.ListeNachFaelligkeit_PatientNr);
+		ret.add(Messages.ListeNachFaelligkeit_BillNr);
+		ret.add(Messages.ListeNachFaelligkeit_Due);
+		ret.add(Messages.ListeNachFaelligkeit_Amount);
 		return ret;
 	}
 	

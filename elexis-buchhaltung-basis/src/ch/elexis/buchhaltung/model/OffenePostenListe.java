@@ -41,14 +41,14 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
  *
  */
 public class OffenePostenListe extends AbstractDataProvider {
-	private static final String OFFENE_RECHNUNGEN_PER = "Offene Rechnungen per ";
-	private static final String OFFENE_POSTEN = "Offene Posten";
-	private static final String ANALYSIERE_RECHNUNGEN = "Analysiere Rechnungen";
-	private static final String DATENBANKABFRAGE = "Datenbankabfrage";
+	private static final String OFFENE_RECHNUNGEN_PER = Messages.OffenePostenListe_OpenBillsPer;
+	private static final String OFFENE_POSTEN = Messages.OffenePostenListe_Open;
+	private static final String ANALYSIERE_RECHNUNGEN = Messages.OffenePostenListe_AnalyzingBills;
+	private static final String DATENBANKABFRAGE = Messages.OffenePostenListe_DatabaseQuery;
 	private static final String NAME = OFFENE_POSTEN;
-	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
-	private static final String FIELD_AUSGANGSDATUM="Ausgangsdatum";
-	private static final String FIELD_STICHTAG="Stichtag";
+	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant"; //$NON-NLS-1$
+	private static final String FIELD_AUSGANGSDATUM="Ausgangsdatum"; //$NON-NLS-1$
+	private static final String FIELD_STICHTAG="Stichtag"; //$NON-NLS-1$
 	
 	private TimeTool stichtag = new TimeTool();
 	private TimeTool startTag = new TimeTool();
@@ -114,10 +114,10 @@ public class OffenePostenListe extends AbstractDataProvider {
 			totalwork);
 		monitor.subTask(DATENBANKABFRAGE);
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
-		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT));
-		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT));
+		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		if(bOnlyActiveMandator){
-			qbe.add("MandantID", "=", Hub.actMandant.getId());
+			qbe.add("MandantID", "=", Hub.actMandant.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
@@ -145,7 +145,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 					int status = rn.getStatusAtDate(now);
 					if (RnStatus.isActive(status)) {
 						Comparable[] row = new Comparable[this.getDataSet().getHeadings().size()];
-						row[0] = pif.format(pat.get("PatientNr"));
+						row[0] = pif.format(pat.get("PatientNr")); //$NON-NLS-1$
 						row[1] = rn.getNr();
 						List<Zahlung> zahlungen = rn.getZahlungen();
 						for (Zahlung z : zahlungen) {
@@ -173,10 +173,10 @@ public class OffenePostenListe extends AbstractDataProvider {
 	@Override
 	protected List<String> createHeadings(){
 		List<String> ret = new ArrayList<String>();
-		ret.add("Patient-Nr");
-		ret.add("Rechnungs-Nr");
-		ret.add("Rechnungs-Status");
-		ret.add("Offener Betrag");
+		ret.add(Messages.OffenePostenListe_PatientNr);
+		ret.add(Messages.OffenePostenListe_BillNr);
+		ret.add(Messages.OffenePostenListe_BillState);
+		ret.add(Messages.OffenePostenListe_OpenAmount);
 		return ret;
 	}
 	
