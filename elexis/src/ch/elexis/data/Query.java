@@ -8,8 +8,8 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
- *    
- * $Id: Query.java 5578 2009-07-28 09:49:26Z rgw_ch $
+ * 
+ * $Id: Query.java 6023 2010-01-31 21:51:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -35,7 +35,7 @@ import ch.rgw.tools.JdbcLink.Stm;
 /**
  * Query manages all database queries of PersistentObjects and derived classes
  * 
- * Die Query-Klasse erledigt alle Datenbankabfragen auf PersistentObjects und 
+ * Die Query-Klasse erledigt alle Datenbankabfragen auf PersistentObjects und
  * davon abgeleitete Klassen.
  * @author Gerry
  */
@@ -53,59 +53,59 @@ public class Query<T>{
 	private static Log log=Log.get("Query");
 	//private boolean restrictions;
 	private PersistentObject template;
-    private Method load;
-    private final static String left="SELECT ID FROM ";
-    private String link=" WHERE ";
-    private String lastQuery="";
-    private final LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
-    private String ordering;
-    private ArrayList<String> exttables=new ArrayList<String>(2);
-    
-/**
- * Konstruktor 
- * @param cl Die Klasse, auf die die Abfrage angewendet werden soll (z.B. Patient.class)
- */
-    public Query(final Class<? extends PersistentObject> cl){
-
+	private Method load;
+	private final static String left="SELECT ID FROM ";
+	private String link=" WHERE ";
+	private String lastQuery="";
+	private final LinkedList<IFilter> postQueryFilters=new LinkedList<IFilter>();
+	private String ordering;
+	private final ArrayList<String> exttables=new ArrayList<String>(2);
+	
+	/**
+	 * Konstruktor
+	 * @param cl Die Klasse, auf die die Abfrage angewendet werden soll (z.B. Patient.class)
+	 */
+	public Query(final Class<? extends PersistentObject> cl){
+		
 		try{
 			template=Hub.poFactory.createTemplate(cl);
-           //template=cl.newInstance();
-            load=cl.getMethod("load",new Class[]{String.class});
-            clear();
-            
+			//template=cl.newInstance();
+			load=cl.getMethod("load",new Class[]{String.class});
+			clear();
+			
 		}
 		catch(Throwable ex){
-		    log.log("Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
-            ExHandler.handle(ex);
-        }
-
+			log.log("Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
+			ExHandler.handle(ex);
+		}
+		
 		
 	}
-    /**
-     * Bequemlichkeits-Konstruktor, der gleich eine Bedingung einträgt
-     * @param cl Klasse, auf die Abfrage angewendet wird
-     * @param field Feldname
-     * @param value Gesuchter Wert von Feldname
-     */
-    public Query(final Class<? extends PersistentObject> cl,final String field,final String value){
+	/**
+	 * Bequemlichkeits-Konstruktor, der gleich eine Bedingung einträgt
+	 * @param cl Klasse, auf die Abfrage angewendet wird
+	 * @param field Feldname
+	 * @param value Gesuchter Wert von Feldname
+	 */
+	public Query(final Class<? extends PersistentObject> cl,final String field,final String value){
 		try{
 			template=Hub.poFactory.createTemplate(cl);
-           //template=cl.newInstance();
-            load=cl.getMethod("load",new Class[]{String.class});
-            clear();
-            add(field,"=",value);
-            
+			//template=cl.newInstance();
+			load=cl.getMethod("load",new Class[]{String.class});
+			clear();
+			add(field,"=",value);
+			
 		}
 		catch(Throwable ex){
-		    log.log("Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
-            ExHandler.handle(ex);
-        }
-
-    }    
-    /** 
-     * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue
-     * Abfrage zu verwenden.
-     */
+			log.log("Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
+			ExHandler.handle(ex);
+		}
+		
+	}
+	/**
+	 * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue
+	 * Abfrage zu verwenden.
+	 */
 	public void clear()
 	{
 		sql=new StringBuilder(500);
@@ -139,27 +139,27 @@ public class Query<T>{
 			link=" AND ";
 		}
 	}
-    /**
-     * Folgende Ausdrücke bis endGroup gruppieren
-     */
-    public void startGroup(){
-    	append("(");
-    	link="";
-    }
-    /**
-     * Gruppierung ende
-     */
-    public void endGroup(){
-        sql.append(")");
-    }
-    /** Bedingung einsetzen, die immer erfüllt ist */
-    public void insertTrue(){
-        append("1=1");
-    }
-    /** Bedingung einsetzen, die nie erfüllt ist */
-    public void insertFalse(){
-        append("1=0");
-    }
+	/**
+	 * Folgende Ausdrücke bis endGroup gruppieren
+	 */
+	public void startGroup(){
+		append("(");
+		link="";
+	}
+	/**
+	 * Gruppierung ende
+	 */
+	public void endGroup(){
+		sql.append(")");
+	}
+	/** Bedingung einsetzen, die immer erfüllt ist */
+	public void insertTrue(){
+		append("1=1");
+	}
+	/** Bedingung einsetzen, die nie erfüllt ist */
+	public void insertFalse(){
+		append("1=0");
+	}
 	/**
 	 * AND-Verknüpfung anfügen.
 	 */
@@ -169,7 +169,7 @@ public class Query<T>{
 		}
 	}
 	/**
-	 * OR-Verknüpfung anfügen 
+	 * OR-Verknüpfung anfügen
 	 */
 	public void or(){
 		link=" OR ";
@@ -205,8 +205,8 @@ public class Query<T>{
 					wert=sb.substring(0,8);
 				}else{
 					// replace single digits as in 1.2.1932 with double digits as in 01.02.1932
-				    wert=wert.replaceAll("[^0-9]([0-9])\\.","0$1.");
-				    // remove dots
+					wert=wert.replaceAll("[^0-9]([0-9])\\.","0$1.");
+					// remove dots
 					sb=new StringBuilder(wert.replaceAll("\\.",""));
 					// String must consist of 8 or more digits (ddmmYYYY)
 					sb.append(filler);
@@ -236,18 +236,18 @@ public class Query<T>{
 					sql.insert(ix, firsttable);
 				}
 			}
-
+			
 			if(exttables.size()==1){
 				sql.insert(7, firsttable);  // Select ID from firsttable,secondtable
 			}
 			append(table+".ID="+firsttable+"ID");
 			//append(mapped,operator,wert);
-
+			
 		}else if(mapped.matches(".*:.*")){
 			log.log("Ungültiges Feld "+feld,Log.ERRORS);
 			return false;
 		}
-
+		
 		if(wert==null){
 			if(operator.equalsIgnoreCase("is") || operator.equals("=")){
 				// let's be a bit fault tolerant
@@ -256,12 +256,12 @@ public class Query<T>{
 			append(mapped,"is",operator,"null");
 		}else{
 			wert=PersistentObject.getConnection().wrapFlavored(wert);
-		    //wert = JdbcLink.wrap(wert);
-		    if (toLower) {
-		    	mapped = "lower(" + mapped + ")";
-		        wert = "lower(" + wert + ")";
-		    }
-		    append(mapped, operator, wert);
+			//wert = JdbcLink.wrap(wert);
+			if (toLower) {
+				mapped = "lower(" + mapped + ")";
+				wert = "lower(" + wert + ")";
+			}
+			append(mapped, operator, wert);
 		}
 		
 		return true;
@@ -276,7 +276,7 @@ public class Query<T>{
 	}
 	/**
 	 * Bequemlichkeitsmethode für eine Abfrage, die nur einen einzigen Treffer
-	 * liefern soll. Die Syntax ist wie bei der add() Methode, aber die Abfrage wird gleich ausgeführt 
+	 * liefern soll. Die Syntax ist wie bei der add() Methode, aber die Abfrage wird gleich ausgeführt
 	 * @param f Feld
 	 * @param op Vergleichsoperator (s. auch unter add())
 	 * @param v Wert (@see Query#add() )
@@ -294,69 +294,69 @@ public class Query<T>{
 	 * AND verknüpft werden. Dies ist dasselbe, wie mehrere Aufrufe nacheinander von add()
 	 * und and(), aber die Abfrage wird gleich ausgeführt und die Resultate werden nach den
 	 * übergebenen Feldern sortiert, in der Reihenfolge, in der sie übergeben wurden.
-	 * @param fields Die Felder, die in die abfrage eingesetzt werden sollen 
+	 * @param fields Die Felder, die in die abfrage eingesetzt werden sollen
 	 * @param values die Werte, nach denen gesucht werden soll. Wenn values für ein Feld leer
 	 * ist (null oder ""), dann wird dieses Feld aus der Abfrage weggelassen
 	 * @param exact false, wenn die Abfrage mit LIKE erfolgen soll, sonst mit =
 	 * @return eine Liste mit den gefundenen Objekten
 	 */
-    public List<T> queryFields(final String[] fields,final String[] values, final boolean exact){
-    	clear();
-        String op="=";
-        if(exact==false){
-            op=" LIKE ";
-        }
-        and();
-        for(int i=0;i<fields.length;i++){
-            if(StringTool.isNothing(values[i])){
-                continue;
-            }
-            add(fields[i],op,values[i]);
-        }
-        return execute();
-    }
-    
-    public PreparedStatement getPreparedStatement(final PreparedStatement previous){
-    	try{
-	    	if(previous!=null){
-	    		previous.close();
-	    	}
-	    	PreparedStatement ps=PersistentObject.getConnection().prepareStatement(sql.toString());
-	    	return ps;
-    	}catch(Exception ex){
-    		ExHandler.handle(ex);
-    		log.log("Fehler beim PreparedStatement ",Log.ERRORS);
-    		return null;
-    	}
-    }
-    
-    public ArrayList<String> execute(final PreparedStatement ps, final String[] values){
-    	
-    	try{
-	    	for(int i=0;i<values.length;i++){
-	    		ps.setString(i+1,values[i]);
-	    	}
-	    	if(ps.execute()==true){
-	    		ArrayList<String> ret=new ArrayList<String>();
-	    		ResultSet res=ps.getResultSet();
-	    		while(res.next()){
-	    			ret.add(res.getString(1));
-	    		}
-	    		return ret;
-	    	}
-    	}catch(Exception ex){
-    		ExHandler.handle(ex);
-    		log.log("Fehler beim Ausführen von "+sql.toString(),Log.ERRORS);
-    	}
-    	return null;
-    }
-    /**
-     * Sortierung angeben. Dies muss als letzter Befehl nach einer Reihe von add() Sequenzen
-     * erfolgen.
-     * @param reverse true bei umgekehrter Sortierung
-     * @param n1 Beliebig viele Strings, die in absteigender Priorität die Felder angeben,
-     * nach denen sortiert werden soll.
-     */
+	public List<T> queryFields(final String[] fields,final String[] values, final boolean exact){
+		clear();
+		String op="=";
+		if(exact==false){
+			op=" LIKE ";
+		}
+		and();
+		for(int i=0;i<fields.length;i++){
+			if(StringTool.isNothing(values[i])){
+				continue;
+			}
+			add(fields[i],op,values[i]);
+		}
+		return execute();
+	}
+	
+	public PreparedStatement getPreparedStatement(final PreparedStatement previous){
+		try{
+			if(previous!=null){
+				previous.close();
+			}
+			PreparedStatement ps=PersistentObject.getConnection().prepareStatement(sql.toString());
+			return ps;
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			log.log("Fehler beim PreparedStatement ",Log.ERRORS);
+			return null;
+		}
+	}
+	
+	public ArrayList<String> execute(final PreparedStatement ps, final String[] values){
+		
+		try{
+			for(int i=0;i<values.length;i++){
+				ps.setString(i+1,values[i]);
+			}
+			if(ps.execute()==true){
+				ArrayList<String> ret=new ArrayList<String>();
+				ResultSet res=ps.getResultSet();
+				while(res.next()){
+					ret.add(res.getString(1));
+				}
+				return ret;
+			}
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			log.log("Fehler beim Ausführen von "+sql.toString(),Log.ERRORS);
+		}
+		return null;
+	}
+	/**
+	 * Sortierung angeben. Dies muss als letzter Befehl nach einer Reihe von add() Sequenzen
+	 * erfolgen.
+	 * @param reverse true bei umgekehrter Sortierung
+	 * @param n1 Beliebig viele Strings, die in absteigender Priorität die Felder angeben,
+	 * nach denen sortiert werden soll.
+	 */
 	public void orderBy(final boolean reverse, final String... n1){
 		StringBuilder sb=new StringBuilder();
 		sb.append(" ORDER BY ");
@@ -378,6 +378,17 @@ public class Query<T>{
 		sb.delete(sb.length()-1,10000);
 		ordering=sb.toString();
 	}
+	/**
+	 * execute query and include elements that are marked deleted
+	 * @return
+	 */
+	public List<T> executeWithDeleted(){
+		boolean bShowDeleted=PersistentObject.isShowDeleted();
+		PersistentObject.setShowDeleted(true);
+		List<T> ret=execute();
+		PersistentObject.setShowDeleted(bShowDeleted);
+		return ret;
+	}
 	
 	/**
 	 * Die zusammengestellte Abfrage ausführen
@@ -394,9 +405,9 @@ public class Query<T>{
 		lastQuery=sql.toString();
 		//log.log("Executing query: "+lastQuery,Log.DEBUGMSG);
 		LinkedList<T> ret=new LinkedList<T>();
-        return (List<T>)queryExpression(lastQuery,ret);
+		return (List<T>)queryExpression(lastQuery,ret);
 	}
-    
+	
 	public Collection<T> execute(final Collection<T> collection){
 		if(ordering!=null){
 			sql.append(ordering);
@@ -408,56 +419,56 @@ public class Query<T>{
 	/**
 	 * Eine komplexe selbst zusammengestellte Abfrage ausführen. Die Methoden von Query erlauben
 	 * eine einfache Zusammenstellung einer SQL-Abfrage, Für spezielle Fälle will man aber vielleicht die
-	 * SQL-Abfrage doch selber direkt angeben. Dies kann hier erfolgen. 
+	 * SQL-Abfrage doch selber direkt angeben. Dies kann hier erfolgen.
 	 * @param expr ein für die verwendete Datenbank akzeptabler SQL-String. Es soll nach Möglichkeit nur
 	 * Standard-SQL verwendet werden, um sich nicht von einer bestimmten Datenbank abhängig zu machen.
 	 * Die Abfrage muss nur nach dem Feld ID fragen; das Objekt wird von query selbst hergestellt.
 	 * @return Eine Liste der Objekte, die als Antwort auf die Anfrage geliefert wurden.
 	 */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public Collection<T> queryExpression(final String expr, Collection<T> ret){
-        //LinkedList<T> ret=new LinkedList<T>();
-        if(ret==null){
-    		ret=new LinkedList<T>();
-        }
-        Stm stm=null;
-        try{
-            stm=PersistentObject.getConnection().getStatement();
-            /*
+		//LinkedList<T> ret=new LinkedList<T>();
+		if(ret==null){
+			ret=new LinkedList<T>();
+		}
+		Stm stm=null;
+		try{
+			stm=PersistentObject.getConnection().getStatement();
+			/*
             if(Hub.acl.request("Query"+template.getClass().getSimpleName())==false){
                 log.log("Nicht genügend Rechte zum Lesen von "+template.getClass().getSimpleName(),Log.ERRORS);
                 return null;
             }*/
-            ResultSet res=stm.query(expr);
-            while((res!=null) && (res.next()==true)){
-                String id=res.getString(1);
-                T o=(T)load.invoke(null,new Object[]{id});
-                if(o==null){
-                	continue;
-                }
-                boolean bAdd=true;
-                for(IFilter fi:postQueryFilters){
-                	if(fi.select(o)==false){
-                		bAdd=false;
-                		break;
-                	}
-                }
-                if(bAdd==true){
-                	ret.add(o);
-                }
-
-            }
-            return ret;
-            
-        }catch(Exception ex){
-            log.log("Fehler bei Datenbankabfrage ",Log.ERRORS);
-            ExHandler.handle(ex);
-            return null;
-        }finally{
-        	PersistentObject.getConnection().releaseStatement(stm);
-        }
-    }
-    /*
+			ResultSet res=stm.query(expr);
+			while((res!=null) && (res.next()==true)){
+				String id=res.getString(1);
+				T o=(T)load.invoke(null,new Object[]{id});
+				if(o==null){
+					continue;
+				}
+				boolean bAdd=true;
+				for(IFilter fi:postQueryFilters){
+					if(fi.select(o)==false){
+						bAdd=false;
+						break;
+					}
+				}
+				if(bAdd==true){
+					ret.add(o);
+				}
+				
+			}
+			return ret;
+			
+		}catch(Exception ex){
+			log.log("Fehler bei Datenbankabfrage ",Log.ERRORS);
+			ExHandler.handle(ex);
+			return null;
+		}finally{
+			PersistentObject.getConnection().releaseStatement(stm);
+		}
+	}
+	/*
     public PersistentObject createFromID(String id){
     	try{
     		return(PersistentObject)load.invoke(null,new Object[]{id});
@@ -467,13 +478,13 @@ public class Query<T>{
     		return null;
     	}
     }
-    */
-    /**
-     * Die Grösse des zu erwartenden Resultats abfragen. Dieses Resultat stimmt nur ungefähr, da
-     * es bis zur tatsächlichen Abfrage noch Änderungen geben kann, und da allfällige
-     * postQueryFilter das Resultat verkleinern könnten.
-     * @return die ungefähre Zahl der erwarteten Objekte.
-     */
+	 */
+	/**
+	 * Die Grösse des zu erwartenden Resultats abfragen. Dieses Resultat stimmt nur ungefähr, da
+	 * es bis zur tatsächlichen Abfrage noch Änderungen geben kann, und da allfällige
+	 * postQueryFilter das Resultat verkleinern könnten.
+	 * @return die ungefähre Zahl der erwarteten Objekte.
+	 */
 	public int size() {
 		try{
 			Stm stm=PersistentObject.getConnection().getStatement();
@@ -485,26 +496,26 @@ public class Query<T>{
 			return 10000;
 		}
 	}
-    public String getLastQuery(){
-        return lastQuery;
-    }
-    public String getActualQuery(){
-    	return sql.toString();
-    }
- 
-    /**
-     * PostQueryFilters sind Filter-Objeckte, die <i>nach</i> der Datenbankanfrage auf
-     * das zurückgelieferte Resultat angewendet werden. Diese sind weniger effizient,
-     * als Filter, die bereits im Query-String enthalten sind, aber sie erlauben
-     * Datenbankunabhängig feinere Filterungen.
-     * Sie sind auch die einzige Möglichkeit, auf komprimierte oder codierte Felder
-     * zu filtern. 
-     * @param f ein Filter
-     */
-    public void addPostQueryFilter(final IFilter f){
-    	postQueryFilters.add(f);
-    }
-    public void removePostQueryFilter(final IFilter f){
-    	postQueryFilters.remove(f);
-    }
+	public String getLastQuery(){
+		return lastQuery;
+	}
+	public String getActualQuery(){
+		return sql.toString();
+	}
+	
+	/**
+	 * PostQueryFilters sind Filter-Objeckte, die <i>nach</i> der Datenbankanfrage auf
+	 * das zurückgelieferte Resultat angewendet werden. Diese sind weniger effizient,
+	 * als Filter, die bereits im Query-String enthalten sind, aber sie erlauben
+	 * Datenbankunabhängig feinere Filterungen.
+	 * Sie sind auch die einzige Möglichkeit, auf komprimierte oder codierte Felder
+	 * zu filtern.
+	 * @param f ein Filter
+	 */
+	public void addPostQueryFilter(final IFilter f){
+		postQueryFilters.add(f);
+	}
+	public void removePostQueryFilter(final IFilter f){
+		postQueryFilters.remove(f);
+	}
 }
