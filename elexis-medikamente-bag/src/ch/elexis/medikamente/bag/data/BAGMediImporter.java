@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: BAGMediImporter.java 5895 2009-12-23 15:27:35Z michael_imhof $
+ *  $Id: BAGMediImporter.java 6024 2010-01-31 21:51:25Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -120,6 +120,7 @@ public class BAGMediImporter extends ImporterPage {
 				// strip leading zeroes
 				int pcode=Integer.parseInt(row[2].trim());
 				pharmacode=Integer.toString(pcode);
+				
 			}catch(Exception ex){
 				ExHandler.handle(ex);
 				log.log(Level.WARNING, "Pharmacode falsch: "+row[2]);
@@ -127,7 +128,7 @@ public class BAGMediImporter extends ImporterPage {
 			
 			qbe.clear();
 			qbe.add(Artikel.SUB_ID, "=", pharmacode);
-			List<Artikel> lArt=qbe.execute();
+			List<Artikel> lArt=qbe.executeWithDeleted();
 			if(lArt==null){
 				throw new ElexisException(BAGMediImporter.class, "Article list was null while scanning for "+pharmacode, ElexisException.EE_UNEXPECTED_RESPONSE,true);
 			}
@@ -135,15 +136,26 @@ public class BAGMediImporter extends ImporterPage {
 				// Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
 				Iterator<Artikel> it=lArt.iterator();
 				boolean hasValid=false;
+				Artikel res=null;
 				while(it.hasNext()){
 					Artikel ax=it.next();
 					if(hasValid || (!ax.isValid())){
+						if(res==null){
+							res=ax;
+						}
 						it.remove();
 					}else{
 						hasValid=true;
 					}
 				}
-				
+				if(!hasValid){
+					if(res!=null){
+						if(res.isDeleted()){
+							res.undelete();
+							lArt.add(res);
+						}
+					}
+				}
 			}
 			imp=lArt.size()>0 ? BAGMedi.load(lArt.get(0).getId()) : null;
 		}
