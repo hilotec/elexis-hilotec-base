@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: FallDetailBlatt2.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *  $Id: FallDetailBlatt2.java 6005 2010-01-31 10:49:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -55,35 +55,35 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
  */
 public class FallDetailBlatt2 extends Composite {
 	private static final String SELECT_CONTACT_BODY = Messages
-			.getString("FallDetailBlatt2.PleaseSelectContactFor"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.PleaseSelectContactFor"); //$NON-NLS-1$
 	private static final String SELECT_CONTACT_CAPTION = Messages
-			.getString("FallDetailBlatt2.PleaseSelectCpntactCaption"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.PleaseSelectCpntactCaption"); //$NON-NLS-1$
 	private static final String LABEL = Messages
-			.getString("FallDetailBlatt2.Labek"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.Labek"); //$NON-NLS-1$
 	private static final String RECHNUNGSEMPFAENGER = Messages
-			.getString("FallDetailBlatt2.BillAdressee"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.BillAdressee"); //$NON-NLS-1$
 	private static final String VERSICHERUNGSNUMMER = Messages
-			.getString("FallDetailBlatt2.InsuranceNumber"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.InsuranceNumber"); //$NON-NLS-1$
 	private static final String KOSTENTRAEGER = Messages
-			.getString("FallDetailBlatt2.Guarantor"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.Guarantor"); //$NON-NLS-1$
 	private static final String ABRECHNUNGSMETHODE = Messages
-			.getString("FallDetailBlatt2.BillingMethod"); //$NON-NLS-1$
+	.getString("FallDetailBlatt2.BillingMethod"); //$NON-NLS-1$
 	private final FormToolkit tk;
 	private final ScrolledForm form;
 	String[] Abrechnungstypen = Fall.getAbrechnungsSysteme();
 	private Fall actFall;
 	DayDateCombo ddc;
-
+	
 	public static final String[] Reasons = { Fall.TYPE_DISEASE,
-			Fall.TYPE_ACCIDENT, Fall.TYPE_MATERNITY, Fall.TYPE_PREVENTION,
-			Fall.TYPE_BIRTHDEFECT, Fall.TYPE_OTHER };
+		Fall.TYPE_ACCIDENT, Fall.TYPE_MATERNITY, Fall.TYPE_PREVENTION,
+		Fall.TYPE_BIRTHDEFECT, Fall.TYPE_OTHER };
 	public static final String[] dgsys = null;
 	Combo cAbrechnung, cReason;
 	DatePickerCombo dpVon, dpBis;
 	Text tBezeichnung, tGarant;
 	Hyperlink autoFill;
 	List<Control> lReqs = new ArrayList<Control>();
-
+	
 	public FallDetailBlatt2(final Composite parent) {
 		super(parent, SWT.NONE);
 		tk = Desk.getToolkit();
@@ -96,9 +96,9 @@ public class FallDetailBlatt2 extends Composite {
 		cpAbrechnung.setLayout(new GridLayout(2, false));
 		cAbrechnung = new Combo(cpAbrechnung, SWT.READ_ONLY);
 		autoFill = tk.createHyperlink(cpAbrechnung, Messages
-				.getString("FallDetailBlatt2.ApplyData"), SWT.NONE); //$NON-NLS-1$
+			.getString("FallDetailBlatt2.ApplyData"), SWT.NONE); //$NON-NLS-1$
 		autoFill.addHyperlinkListener(new HyperlinkAdapter() {
-
+			
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
 				Fall f = getFall();
@@ -107,11 +107,11 @@ public class FallDetailBlatt2 extends Composite {
 				}
 				String abr = f.getAbrechnungsSystem();
 				// make sure compatibility methods are called
-
+				
 				String ktNew = f.getInfoString(KOSTENTRAEGER);
 				String ktOld = f.get(Messages
-						.getString("FallDetailBlatt2.GuarantorNoSpecialChars")); //$NON-NLS-1$
-
+					.getString("FallDetailBlatt2.GuarantorNoSpecialChars")); //$NON-NLS-1$
+				
 				if (StringTool.isNothing(ktNew)) {
 					Kontakt k = Kontakt.load(ktOld);
 					if (k.isValid()) {
@@ -121,34 +121,34 @@ public class FallDetailBlatt2 extends Composite {
 				String vnNew = f.getInfoString(VERSICHERUNGSNUMMER);
 				// String vnOld=f.getVersNummer();
 				String vnOld = f.get(Messages
-						.getString("FallDetailBlatt2.InsNumber")); //$NON-NLS-1$
+					.getString("FallDetailBlatt2.InsNumber")); //$NON-NLS-1$
 				if (StringTool.isNothing(vnNew)) {
 					f.setRequiredString(VERSICHERUNGSNUMMER, vnOld);
 				}
-
+				
 				Fall[] faelle = f.getPatient().getFaelle();
 				for (Fall f0 : faelle) {
 					if (f0.getId().equals(f.getId())) {
 						// ignore current Fall
 						continue;
 					}
-
+					
 					if (f0.getAbrechnungsSystem().equals(abr)) {
 						if (f.getInfoString(RECHNUNGSEMPFAENGER).equals("")) {
 							f.setInfoString(RECHNUNGSEMPFAENGER, f0
-									.get("GarantID")); //$NON-NLS-1$
+								.get("GarantID")); //$NON-NLS-1$
 						}
 						if (f.getInfoString(KOSTENTRAEGER).equals("")) {
 							f
-									.setInfoString(
-											KOSTENTRAEGER,
-											f0
-													.get(Messages
-															.getString("FallDetailBlatt2.GuarantorNoSpecialChars"))); //$NON-NLS-1$
+							.setInfoString(
+								KOSTENTRAEGER,
+								f0
+								.get(Messages
+									.getString("FallDetailBlatt2.GuarantorNoSpecialChars"))); //$NON-NLS-1$
 						}
 						if (f.getInfoString(VERSICHERUNGSNUMMER).equals("")) { //$NON-NLS-1$
 							f.setInfoString(VERSICHERUNGSNUMMER, f0
-									.getInfoString(VERSICHERUNGSNUMMER));
+								.getInfoString(VERSICHERUNGSNUMMER));
 						}
 						// TODO break? or looking for the most current Fall?
 						break;
@@ -158,7 +158,7 @@ public class FallDetailBlatt2 extends Composite {
 			}
 		});
 		cAbrechnung.setItems(Abrechnungstypen);
-
+		
 		cAbrechnung.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -169,45 +169,45 @@ public class FallDetailBlatt2 extends Composite {
 						if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY)) {
 							if (SWTHelper
 									.askYesNo(
-											Messages
-													.getString("FallDetailBlatt2.DontChangeBillingSystemCaption"), //$NON-NLS-1$
-											Messages
-													.getString("FallDetailBlatt2.DontChangeBillingSystemBody"))) { //$NON-NLS-1$
+										Messages
+										.getString("FallDetailBlatt2.DontChangeBillingSystemCaption"), //$NON-NLS-1$
+										Messages
+										.getString("FallDetailBlatt2.DontChangeBillingSystemBody"))) { //$NON-NLS-1$
 								fall.setAbrechnungsSystem(cAbrechnung
-										.getItem(i));
+									.getItem(i));
 								setFall(fall);
 								ElexisEventDispatcher.fireSelectionEvent(fall
-										.getPatient());
+									.getPatient());
 								return;
 							}
 						} else {
 							SWTHelper
-									.alert(
-											Messages
-													.getString("FallDetailBlatt2.CantChangeBillingSystemCaption"), //$NON-NLS-1$
-											Messages
-													.getString("FallDetailBlatt2.CantChangeBillingSystemBody")); //$NON-NLS-1$
+							.alert(
+								Messages
+								.getString("FallDetailBlatt2.CantChangeBillingSystemCaption"), //$NON-NLS-1$
+								Messages
+								.getString("FallDetailBlatt2.CantChangeBillingSystemBody")); //$NON-NLS-1$
 						}
 						String gesetz = fall.getAbrechnungsSystem();
 						if (ch.rgw.tools.StringTool.isNothing(gesetz)) {
 							gesetz = Messages
-									.getString("FallDetailBlatt2.free"); //$NON-NLS-1$
+							.getString("FallDetailBlatt2.free"); //$NON-NLS-1$
 						}
 						cAbrechnung.select(cAbrechnung.indexOf(gesetz));
-
+						
 					} else {
 						fall.setAbrechnungsSystem(Abrechnungstypen[i]);
 						setFall(fall);
 						ElexisEventDispatcher.fireSelectionEvent(fall
-								.getPatient());
+							.getPatient());
 						// Falls noch kein Garant gesetzt ist: Garanten des
 						// letzten Falles zum
 						// selben Gesetz nehmen
 					}
-
+					
 				}
 			}
-
+			
 		});
 		tk.createLabel(top, LABEL);
 		tBezeichnung = tk.createText(top, StringTool.leer);
@@ -224,9 +224,9 @@ public class FallDetailBlatt2 extends Composite {
 			}
 		});
 		tBezeichnung
-				.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.createLabel(top, Messages
-				.getString("FallDetailBlatt2.ReasonForInsurance")); //$NON-NLS-1$
+			.getString("FallDetailBlatt2.ReasonForInsurance")); //$NON-NLS-1$
 		cReason = new Combo(top, SWT.READ_ONLY);
 		cReason.setItems(Reasons);
 		cReason.addSelectionListener(new SelectionAdapter() {
@@ -244,32 +244,32 @@ public class FallDetailBlatt2 extends Composite {
 		tk.createLabel(top, Messages.getString("FallDetailBlatt2.StartDate")); //$NON-NLS-1$
 		dpVon = new DatePickerCombo(top, SWT.NONE);
 		dpVon.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				Fall fall = getFall();
 				fall.setBeginnDatum(new TimeTool(dpVon.getDate().getTime())
-						.toString(TimeTool.DATE_GER));
+				.toString(TimeTool.DATE_GER));
 				ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 			}
-
+			
 		});
 		tk.createLabel(top, Messages.getString("FallDetailBlatt2.EndDate")); //$NON-NLS-1$
 		dpBis = new DatePickerCombo(top, SWT.NONE);
 		dpBis.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				Fall fall = getFall();
 				fall.setEndDatum(new TimeTool(dpBis.getDate().getTime())
-						.toString(TimeTool.DATE_GER));
+				.toString(TimeTool.DATE_GER));
 				ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 			}
-
+			
 		});
 		ddc = new DayDateCombo(
-				top,
-				Messages.getString("FallDetailBlatt2.ProposeForBillingIn"), Messages.getString("FallDetailBlatt2.DaysOrAfter")); //$NON-NLS-1$ //$NON-NLS-2$
+			top,
+			Messages.getString("FallDetailBlatt2.ProposeForBillingIn"), Messages.getString("FallDetailBlatt2.DaysOrAfter")); //$NON-NLS-1$ //$NON-NLS-2$
 		ddc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		ddc.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -283,20 +283,20 @@ public class FallDetailBlatt2 extends Composite {
 		});
 		tk.adapt(ddc);
 		tk.createSeparator(top, SWT.HORIZONTAL).setLayoutData(
-				SWTHelper.getFillGridData(2, true, 1, false));
-
+			SWTHelper.getFillGridData(2, true, 1, false));
+		
 		Hyperlink hlGarant = tk.createHyperlink(top, RECHNUNGSEMPFAENGER,
-				SWT.NONE);
+			SWT.NONE);
 		hlGarant.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
 				KontaktSelektor ksl = new KontaktSelektor(
-						getShell(),
-						Kontakt.class,
-						Messages
-								.getString("FallDetailBlatt2.SelectGuarantorCaption"), //$NON-NLS-1$
-						Messages
-								.getString("FallDetailBlatt2.SelectGuarantorBody"), true); //$NON-NLS-1$
+					getShell(),
+					Kontakt.class,
+					Messages
+					.getString("FallDetailBlatt2.SelectGuarantorCaption"), //$NON-NLS-1$
+					Messages
+					.getString("FallDetailBlatt2.SelectGuarantorBody"), true); //$NON-NLS-1$
 				if (ksl.open() == Dialog.OK) {
 					Kontakt sel = (Kontakt) ksl.getSelection();
 					Fall fall = getFall();
@@ -304,40 +304,41 @@ public class FallDetailBlatt2 extends Composite {
 						fall.setGarant(sel);
 						setFall(fall);
 						ElexisEventDispatcher.fireSelectionEvent(fall
-								.getPatient());
+							.getPatient());
 					}
 				}
 			}
 		});
-
+		
 		tGarant = tk.createText(top, "");
 		tGarant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.paintBordersFor(top);
 		setFall(getFall());
-
+		
 	}
-
+	
 	class Focusreact implements FocusListener {
 		private final String field;
-
+		
 		Focusreact(final String dbField) {
 			field = dbField;
 		}
-
+		
 		public void focusGained(final FocusEvent e) { /* nichts */
 		}
-
+		
 		public void focusLost(final FocusEvent e) {
 			String newval = ((Text) e.getSource()).getText();
 			Fall fall = getFall();
 			if (fall != null) {
 				fall.setInfoString(field, newval);
+				ElexisEventDispatcher.update(fall);
 				ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 			}
 		}
-
+		
 	}
-
+	
 	public void setFall(final Fall f) {
 		actFall = f;
 		for (Control c : lReqs) {
@@ -351,7 +352,7 @@ public class FallDetailBlatt2 extends Composite {
 			cReason.select(0);
 			return;
 		}
-
+		
 		form.setText(f.getLabel());
 		tBezeichnung.setText(f.getBezeichnung());
 		String grund = f.getGrund();
@@ -386,31 +387,31 @@ public class FallDetailBlatt2 extends Composite {
 					String val = f.getInfoString(r[0]);
 					Text tx = tk.createText(form.getBody(), val);
 					tx.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-							false));
+						false));
 					tx.addFocusListener(new Focusreact(r[0]));
 					lReqs.add(tx);
 				} else if (r[1].equals("D")) { //$NON-NLS-1$
 					lReqs.add(tk.createLabel(form.getBody(), r[0]));
 					final DatePickerCombo dp = new DatePickerCombo(form
-							.getBody(), SWT.NONE);
+						.getBody(), SWT.NONE);
 					String dat = f.getInfoString(r[0]);
 					if (tt.set(dat)) {
 						dp.setDate(tt.getTime());
 					}
 					dp.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-							false));
+						false));
 					dp.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(final SelectionEvent e) {
 							TimeTool tt = new TimeTool(dp.getDate().getTime());
 							f.setInfoString(r[0], tt
-									.toString(TimeTool.DATE_GER));
+								.toString(TimeTool.DATE_GER));
 						}
 					});
 					lReqs.add(dp);
 				} else if (r[1].equals("K")) { //$NON-NLS-1$
 					Hyperlink hl = tk.createHyperlink(form.getBody(), r[0],
-							SWT.NONE);
+						SWT.NONE);
 					String val = f.getInfoString(r[0]);
 					if (val.startsWith("**ERROR")) { //$NON-NLS-1$
 						val = "";
@@ -423,10 +424,10 @@ public class FallDetailBlatt2 extends Composite {
 						@Override
 						public void linkActivated(final HyperlinkEvent e) {
 							KontaktSelektor ksl = new KontaktSelektor(
-									getShell(), Kontakt.class,
-									SELECT_CONTACT_CAPTION, MessageFormat
-											.format(SELECT_CONTACT_BODY,
-													new Object[] { r[0] }),
+								getShell(), Kontakt.class,
+								SELECT_CONTACT_CAPTION, MessageFormat
+								.format(SELECT_CONTACT_BODY,
+									new Object[] { r[0] }),
 									true);
 							// "Bitte wählen Sie den Kontakt für " + r[0] +
 							// " aus", true);
@@ -438,12 +439,12 @@ public class FallDetailBlatt2 extends Composite {
 										fall.setInfoString(r[0], sel.getId());
 									} else {
 										fall.setInfoString(r[0],
-												StringTool.leer);
+											StringTool.leer);
 									}
 									setFall(fall);
 									ElexisEventDispatcher
-											.fireSelectionEvent(fall
-													.getPatient());
+									.fireSelectionEvent(fall
+										.getPatient());
 								}
 							}
 						}
@@ -451,7 +452,7 @@ public class FallDetailBlatt2 extends Composite {
 					lReqs.add(hl);
 					tx.setEditable(false);
 					tx.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-							false));
+						false));
 					lReqs.add(tx);
 				}
 			}
@@ -460,9 +461,9 @@ public class FallDetailBlatt2 extends Composite {
 			form.reflow(true);
 			form.redraw();
 		}
-
+		
 	}
-
+	
 	private Fall getFall() {
 		if (actFall == null) {
 			Fall ret = (Fall) ElexisEventDispatcher.getSelected(Fall.class);

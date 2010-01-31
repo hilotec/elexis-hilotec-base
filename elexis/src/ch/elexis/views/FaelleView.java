@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: FaelleView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *  $Id: FaelleView.java 6005 2010-01-31 10:49:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -54,17 +54,17 @@ public class FaelleView extends ViewPart implements IActivationListener {
 	ViewMenus menus;
 	private IAction konsFilterAction;
 	private final FallKonsFilter filter = new FallKonsFilter();
-	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-			Patient.class) {
-		public void runInUi(ElexisEvent ev) {
+	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+		public void runInUi(ElexisEvent ev){
 			tv.refresh();
 		}
 	};
-
-	private ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(
-			Fall.class) {
-
-		public void runInUi(final ElexisEvent ev) {
+	
+	private final ElexisEventListenerImpl eeli_fall =
+		new ElexisEventListenerImpl(Fall.class, ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE
+			| ElexisEvent.EVENT_RELOAD | ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
+		
+		public void runInUi(final ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				tv.refresh(true);
 				if (konsFilterAction.isChecked()) {
@@ -75,46 +75,44 @@ public class FaelleView extends ViewPart implements IActivationListener {
 			}
 		}
 	};
-
-	public FaelleView() {
+	
+	public FaelleView(){
 		makeActions();
 	}
-
+	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		setPartName(Messages.getString("FaelleView.partName")); //$NON-NLS-1$
 		parent.setLayout(new GridLayout());
 		tv = new TableViewer(parent);
-		tv.getControl().setLayoutData(
-				SWTHelper.getFillGridData(1, true, 1, true));
+		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setContentProvider(new FaelleContentProvider());
 		tv.setLabelProvider(new FaelleLabelProvider());
-		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance()
-				.getDefaultListener());
+		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(neuerFallAction, konsFilterAction);
-		menus.createViewerContextMenu(tv, delFallAction, openFallaction,
-				reopenFallAction, makeBillAction);
+		menus.createViewerContextMenu(tv, delFallAction, openFallaction, reopenFallAction,
+			makeBillAction);
 		GlobalEventDispatcher.addActivationListener(this, this);
 		tv.setInput(getViewSite());
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-
+	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	class FaelleLabelProvider extends DefaultLabelProvider {
-
+		
 		@Override
-		public Image getColumnImage(final Object element, final int columnIndex) {
+		public Image getColumnImage(final Object element, final int columnIndex){
 			if (element instanceof Fall) {
 				Fall fall = (Fall) element;
 				if (fall.isValid()) {
@@ -125,110 +123,103 @@ public class FaelleView extends ViewPart implements IActivationListener {
 			}
 			return super.getColumnImage(element, columnIndex);
 		}
-
+		
 	}
-
+	
 	class FaelleContentProvider implements IStructuredContentProvider {
-
-		public Object[] getElements(final Object inputElement) {
-			Patient act = (Patient) ElexisEventDispatcher
-					.getSelected(Patient.class);
+		
+		public Object[] getElements(final Object inputElement){
+			Patient act = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 			if (act == null) {
 				return new Object[0];
 			} else {
 				return act.getFaelle();
 			}
-
+			
 		}
-
-		public void dispose() {
+		
+		public void dispose(){
 			// TODO Auto-generated method stub
-
+			
 		}
-
-		public void inputChanged(final Viewer viewer, final Object oldInput,
-				final Object newInput) {
-
+		
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
+			
 		}
-
+		
 	}
-
-	public void activation(final boolean mode) {
-
+	
+	public void activation(final boolean mode){
+		
 	}
-
-	public void visible(final boolean mode) {
+	
+	public void visible(final boolean mode){
 		if (mode) {
 			tv.refresh(true);
-			ElexisEventDispatcher.getInstance().addListeners(eeli_fall,
-					eeli_pat);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_pat);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_fall,
-					eeli_pat);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_fall, eeli_pat);
 		}
 	}
-
-	private void makeActions() {
-		konsFilterAction = new Action(Messages
-				.getString("FaelleView.FilterConsultations"), //$NON-NLS-1$
-				Action.AS_CHECK_BOX) {
+	
+	private void makeActions(){
+		konsFilterAction = new Action(Messages.getString("FaelleView.FilterConsultations"), //$NON-NLS-1$
+			Action.AS_CHECK_BOX) {
 			{
-				setToolTipText(Messages
-						.getString("FaelleView.ShowOnlyConsOfThisCase")); //$NON-NLS-1$
+				setToolTipText(Messages.getString("FaelleView.ShowOnlyConsOfThisCase")); //$NON-NLS-1$
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				if (!isChecked()) {
-					ObjectFilterRegistry.getInstance().unregisterObjectFilter(
-							Konsultation.class, filter);
+					ObjectFilterRegistry.getInstance().unregisterObjectFilter(Konsultation.class,
+						filter);
 				} else {
-					ObjectFilterRegistry.getInstance().registerObjectFilter(
-							Konsultation.class, filter);
-					filter.setFall((Fall) ElexisEventDispatcher
-							.getSelected(Fall.class));
+					ObjectFilterRegistry.getInstance().registerObjectFilter(Konsultation.class,
+						filter);
+					filter.setFall((Fall) ElexisEventDispatcher.getSelected(Fall.class));
 				}
 			}
-
+			
 		};
 	}
-
+	
 	class FallKonsFilter implements IObjectFilterProvider, IFilter {
-
+		
 		Fall mine;
 		boolean bDaempfung;
-
-		void setFall(final Fall fall) {
+		
+		void setFall(final Fall fall){
 			mine = fall;
 			ElexisEventDispatcher.reload(Konsultation.class);
 		}
-
-		public void activate() {
+		
+		public void activate(){
 			bDaempfung = true;
 			konsFilterAction.setChecked(true);
 			bDaempfung = false;
 		}
-
-		public void changed() {
+		
+		public void changed(){
 			// don't mind
 		}
-
-		public void deactivate() {
+		
+		public void deactivate(){
 			bDaempfung = true;
 			konsFilterAction.setChecked(false);
 			bDaempfung = false;
 		}
-
-		public IFilter getFilter() {
+		
+		public IFilter getFilter(){
 			return this;
 		}
-
-		public String getId() {
+		
+		public String getId(){
 			return "ch.elexis.FallFilter"; //$NON-NLS-1$
 		}
-
-		public boolean select(final Object toTest) {
+		
+		public boolean select(final Object toTest){
 			if (mine == null) {
 				return true;
 			}
@@ -240,14 +231,14 @@ public class FaelleView extends ViewPart implements IActivationListener {
 			}
 			return false;
 		}
-
+		
 	}
-
-	private final ElexisEvent template = new ElexisEvent(null, null,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED
-					| ElexisEvent.EVENT_RELOAD);
-
-	public ElexisEvent getElexisEventFilter() {
+	
+	private final ElexisEvent template =
+		new ElexisEvent(null, null, ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED
+			| ElexisEvent.EVENT_RELOAD);
+	
+	public ElexisEvent getElexisEventFilter(){
 		return template;
 	}
 }
