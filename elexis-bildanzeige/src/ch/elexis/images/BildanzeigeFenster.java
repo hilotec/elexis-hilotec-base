@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BildanzeigeFenster.java 4072 2008-06-25 08:05:38Z rgw_ch $
+ *    $Id: BildanzeigeFenster.java 6014 2010-01-31 19:17:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -74,7 +74,7 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 	
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		Button bClose=createButton(parent, org.eclipse.jface.dialogs.Dialog.OK, "Schliessen", true);
+		Button bClose=createButton(parent, org.eclipse.jface.dialogs.Dialog.OK, Messages.BildanzeigeFenster_Close, true);
 		bClose.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -83,7 +83,7 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 			}
 			
 		});
-		Button bExport=createButton(parent,4,"Export...",false);
+		Button bExport=createButton(parent,4,Messages.BildanzeigeFenster_Export,false);
 		bExport.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -93,7 +93,7 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 					File file=new File(fname);
 					try{
 						if(!file.createNewFile() || !file.canWrite()){
-							SWTHelper.showError("Fehler", "Kann Datei "+fname+" nicht erstellen");
+							SWTHelper.showError(Messages.BildanzeigeFenster_Error, Messages.BildanzeigeFenster_Cannot+fname+Messages.BildanzeigeFenster_Create);
 						}else{
 							byte[] arr=bild.getData();
 							FileOutputStream fout=new FileOutputStream(file);
@@ -101,7 +101,7 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 							fout.close();
 						}
 					}catch(Exception ex){
-							SWTHelper.showError("Fehler", "Fehler beim Schreiben von "+fname);
+							SWTHelper.showError(Messages.BildanzeigeFenster_Error, Messages.BildanzeigeFenster_ErrorWriting+fname);
 					}
 				}
 			}
@@ -114,7 +114,7 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 		super.create();
 		getShell().setText(bild.getPatient().getLabel());
 		setTitle(bild.getLabel());
-		setMessage(bild.get("Info"));
+		setMessage(bild.get("Info")); //$NON-NLS-1$
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Bild.java 5186 2009-02-24 15:47:35Z rgw_ch $
+ *    $Id: Bild.java 6014 2010-01-31 19:17:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -25,46 +25,46 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Bild extends PersistentObject {
-	public static final String DBVERSION = "1.2.0";
-	public static final String TABLENAME = "BILDANZEIGE";
+	public static final String DBVERSION = "1.2.0"; //$NON-NLS-1$
+	public static final String TABLENAME = "BILDANZEIGE"; //$NON-NLS-1$
 	public static final String createDB=
-		"CREATE TABLE "+TABLENAME+" ("+
-		"ID				VARCHAR(25) primary key,"+
-		"lastupdate		BIGINT,"+	
-		"deleted		CHAR(1) default '0',"+
-		"PatID			VARCHAR(25),"+
-		"Datum			CHAR(8),"+
-		"Title 			VARCHAR(30),"+	
-		"Info			TEXT,"+
-		"Keywords		VARCHAR(80),"+
-		"isRef			char(2),"+
-		"Bild			BLOB);"+
-		"CREATE INDEX BANZ1 ON "+TABLENAME+" (PatID);"+
-		"CREATE INDEX BANZ2 ON "+TABLENAME+" (Keywords);" +
-		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');";
+		"CREATE TABLE "+TABLENAME+" ("+ //$NON-NLS-1$ //$NON-NLS-2$
+		"ID				VARCHAR(25) primary key,"+ //$NON-NLS-1$
+		"lastupdate		BIGINT,"+	 //$NON-NLS-1$
+		"deleted		CHAR(1) default '0',"+ //$NON-NLS-1$
+		"PatID			VARCHAR(25),"+ //$NON-NLS-1$
+		"Datum			CHAR(8),"+ //$NON-NLS-1$
+		"Title 			VARCHAR(30),"+	 //$NON-NLS-1$
+		"Info			TEXT,"+ //$NON-NLS-1$
+		"Keywords		VARCHAR(80),"+ //$NON-NLS-1$
+		"isRef			char(2),"+ //$NON-NLS-1$
+		"Bild			BLOB);"+ //$NON-NLS-1$
+		"CREATE INDEX BANZ1 ON "+TABLENAME+" (PatID);"+ //$NON-NLS-1$ //$NON-NLS-2$
+		"CREATE INDEX BANZ2 ON "+TABLENAME+" (Keywords);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 
 	static {
-		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Bild", "Info");
-		Bild start = load("1");
+		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Bild", "Info"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		Bild start = load("1"); //$NON-NLS-1$
 		if (start == null) {
 			init();
 		} else {
-			VersionInfo vi = new VersionInfo(start.get("Titel"));
+			VersionInfo vi = new VersionInfo(start.get("Titel")); //$NON-NLS-1$
 			if (vi.isOlder(DBVERSION)) {
-				if(vi.isOlder("1.2.0")){
+				if(vi.isOlder("1.2.0")){ //$NON-NLS-1$
 					getConnection().exec(
-						"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
-					start.set("Titel", DBVERSION);
+						"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"); //$NON-NLS-1$ //$NON-NLS-2$
+					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				}
-				if (vi.isOlder("1.1.0")) {
+				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
 					getConnection().exec(
-						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
-					start.set("Titel", DBVERSION);
+						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
+					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				} else {
 					SWTHelper
-						.showError("Versionskonsflikt",
-							"Die Datentabelle für Bildanzeige hat eine zu alte Versionsnummer. Dies kann zu Fehlern führen");
+						.showError(Messages.Bild_VersionConflict,
+							Messages.Bild_BadVersionNUmber);
 				}
 			}
 		}
@@ -79,38 +79,38 @@ public class Bild extends PersistentObject {
 	
 	public Bild(Patient patient, String Titel, byte[] data){
 		if (patient == null) {
-			SWTHelper.showError("Kein Patient ausgewählt",
-				"Sie müssen einen Patienten auswählen, um ein Bildzuzuordnen");
+			SWTHelper.showError(Messages.Bild_NoPatientSelected,
+				Messages.Bild_YouShouldSelectAPatient);
 			return;
 		}
 		create(null);
 		set(new String[] {
-			"PatID", "Titel", "Datum"
+			"PatID", "Titel", "Datum" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}, patient.getId(), Titel, new TimeTool().toString(TimeTool.DATE_COMPACT));
-		setBinary("Bild", data);
+		setBinary("Bild", data); //$NON-NLS-1$
 	}
 	
 	public Patient getPatient(){
-		return Patient.load(get("PatID"));
+		return Patient.load(get("PatID")); //$NON-NLS-1$
 	}
 	
 	@Override
 	public String getLabel(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(checkNull(get("Titel"))).append(" (").append(get("Datum")).append(")");
+		sb.append(checkNull(get("Titel"))).append(" (").append(get("Datum")).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		return sb.toString();
 	}
 	
 	public String getDate(){
-		return get("Datum");
+		return get("Datum"); //$NON-NLS-1$
 	}
 	
 	public String getTitle(){
-		return get("Titel");
+		return get("Titel"); //$NON-NLS-1$
 	}
 	
 	public String getInfo(){
-		return get("Info");
+		return get("Info"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class Bild extends PersistentObject {
 	 * @return ein SWT-Image
 	 */
 	public Image createImage(){
-		byte[] data = getBinary("Bild");
+		byte[] data = getBinary("Bild"); //$NON-NLS-1$
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		Image ret = new Image(Desk.getDisplay(), bais);
 		return ret;
@@ -135,12 +135,12 @@ public class Bild extends PersistentObject {
 	}
 	
 	public byte[] getData(){
-		return getBinary("Bild");
+		return getBinary("Bild"); //$NON-NLS-1$
 	}
 	
 	@Override
 	protected String getTableName(){
-		return "BILDANZEIGE";
+		return "BILDANZEIGE"; //$NON-NLS-1$
 	}
 	
 	protected Bild(String id){

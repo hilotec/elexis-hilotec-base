@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BildImportDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: BildImportDialog.java 6014 2010-01-31 19:17:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -65,22 +65,22 @@ public class BildImportDialog extends TitleAreaDialog {
 		});
 
 		Group gFormat = new Group(ret, SWT.BORDER);
-		gFormat.setText("Speicherformat");
+		gFormat.setText(Messages.BildImportDialog_StorageFormat);
 		bJPEG = new Button(gFormat, SWT.RADIO);
-		bJPEG.setText("JPEG: kleiner, leicht ungenau");
+		bJPEG.setText(Messages.BildImportDialog_JPEG_Description);
 		bPNG = new Button(gFormat, SWT.RADIO);
-		bPNG.setText("PNG: grösser, Exaktes Bild");
+		bPNG.setText(Messages.BildImportDialog_PNG_Description);
 		gFormat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gFormat.setLayout(new GridLayout());
 		bJPEG.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bPNG.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret, SWT.NONE).setText("Titel für das Bild");
+		new Label(ret, SWT.NONE).setText(Messages.BildImportDialog_TitleOfImage);
 		Titel = new Text(ret, SWT.BORDER);
 		Titel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret, SWT.NONE)
-				.setText("Ausführlichere Beschreibung des Bilds");
+				.setText(Messages.BildImportDialog_DescriptionOfImage);
 		info = new Text(ret, SWT.BORDER | SWT.MULTI);
-		info.setText("\n");
+		info.setText("\n"); //$NON-NLS-1$
 		info.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}
@@ -88,9 +88,9 @@ public class BildImportDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		getShell().setText("Bild importieren");
-		setTitle("Dieses Bild importieren?");
-		setMessage("Geben Sie bitte einen Titel und das gewünschte Speicherformat an");
+		getShell().setText(Messages.BildImportDialog_ImportCaption);
+		setTitle(Messages.BildImportDialog_ImportTitle);
+		setMessage(Messages.BildImportDialog_ImportMessage);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 
@@ -104,7 +104,7 @@ public class BildImportDialog extends TitleAreaDialog {
 		iml.save(baos, format);
 		result = new Bild(ElexisEventDispatcher.getSelectedPatient(), Titel
 				.getText(), baos.toByteArray());
-		result.set("Info", info.getText());
+		result.set("Info", info.getText()); //$NON-NLS-1$
 		img.dispose();
 		super.okPressed();
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: KonsExtension.java 4135 2008-07-13 19:18:15Z rgw_ch $
+ *    $Id: KonsExtension.java 6014 2010-01-31 19:17:37Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -32,7 +32,7 @@ public class KonsExtension implements IKonsExtension {
 	EnhancedTextField mine;
 	public String connect(EnhancedTextField tf) {
 		mine=tf;
-		return "bildanzeige";
+		return "bildanzeige"; //$NON-NLS-1$
 	}
 
 	public boolean doLayout(StyleRange n, String provider, String id) {
@@ -48,7 +48,7 @@ public class KonsExtension implements IKonsExtension {
 
 	public IAction[] getActions() {
 		IAction[] ret=new IAction[1];
-		ret[0]= new Action("Bild einfügen..."){
+		ret[0]= new Action(Messages.KonsExtension_InsertImage){
 			@Override
 			public void run() {
 				FileDialog fd=new FileDialog(Desk.getTopShell());
@@ -60,12 +60,12 @@ public class KonsExtension implements IKonsExtension {
 						BildImportDialog bid=new BildImportDialog(Desk.getTopShell(),iml);
 						if(bid.open()==Dialog.OK){
 							Bild bild=bid.result;
-							mine.insertXRef(-1, "Bild: "+bild.get("Titel"), "bildanzeige", bild.getId());
+							mine.insertXRef(-1, Messages.KonsExtension_Image+bild.get("Titel"), "bildanzeige", bild.getId()); //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						
 					}catch(Throwable t){
 						ExHandler.handle(t);
-						SWTHelper.showError("Fehler beim Laden", "Das Bild konnte nicht geladen werden "+t.getMessage());
+						SWTHelper.showError(Messages.KonsExtension_ErrorLoading, Messages.KonsExtension_ImageCouldnotBeLoaded+t.getMessage());
 					}
 				}
 			}

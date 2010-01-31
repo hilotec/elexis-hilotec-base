@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XChangeContributor.java 5898 2009-12-24 09:21:06Z rgw_ch $
+ *  $Id: XChangeContributor.java 6014 2010-01-31 19:17:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.images;
 
@@ -29,19 +29,19 @@ import ch.elexis.exchange.elements.MedicalElement;
 import ch.rgw.tools.XMLTool;
 
 public class XChangeContributor implements IExchangeContributor {
-	public static final String PLUGIN_ID = "ch.elexis.bildanzeige";
+	public static final String PLUGIN_ID = "ch.elexis.bildanzeige"; //$NON-NLS-1$
 	
 	public void exportHook(MedicalElement me){
 		
 		Patient p = (Patient) me.getContainer().getMapping(me);
 		Query<Bild> qbe = new Query<Bild>(Bild.class);
-		qbe.add("PatID", "=", p.getId());
+		qbe.add("PatID", "=", p.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Bild> images = qbe.execute();
 		for (Bild img : images) {
 			byte[] data = img.getData();
 			if (data != null && data.length > 0) {
 				DocumentElement de = new DocumentElement();
-				de.setMimetype("image/jpeg");
+				de.setMimetype("image/jpeg"); //$NON-NLS-1$
 				de.setDate(XMLTool.dateToXmlDate(img.getDate()));
 				de.setTitle(img.getTitle());
 				de.setOriginator(Hub.actMandant);
@@ -57,9 +57,9 @@ public class XChangeContributor implements IExchangeContributor {
 	
 	@SuppressWarnings("unchecked")
 	public void importHook(XChangeContainer container, PersistentObject context){
-		String rootpath = container.getProperty("ROOTPATH");
+		String rootpath = container.getProperty("ROOTPATH"); //$NON-NLS-1$
 		List<Element> records =
-			container.getElements(rootpath + "/records/record");
+			container.getElements(rootpath + "/records/record"); //$NON-NLS-1$
 		for (Element re : records) {
 			/*
 			 * List<Element> xrefs=re.getChildren("xref", container.getNamespace()); Samdas smd=new
