@@ -15,13 +15,13 @@ package ch.elexis.actions;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
@@ -45,46 +45,32 @@ import ch.elexis.data.PersistentObject;
  * @author gerry
  * 
  */
-public class ElexisEventDispatcher {
+public class ElexisEventDispatcher extends Job {
 	private final LinkedList<ElexisEventListener> listeners;
 	private static ElexisEventDispatcher theInstance;
-	// private final LinkedList<DispatchJob> jobsWaiting;
 	private final HashMap<Class<?>, IElexisEventDispatcher> dispatchers;
 	private final HashMap<Class<?>, PersistentObject> lastSelection;
-	private final DispatchJob dispatcher;
 	private final LinkedList<ElexisEvent> eventQueue;
-	private boolean bIdle = true;
+	private boolean bStop = false;
+	private final Lock eventQueueLock = new ReentrantLock(true);
 	
 	public static ElexisEventDispatcher getInstance(){
 		if (theInstance == null) {
 			theInstance = new ElexisEventDispatcher();
+			theInstance.schedule();
 		}
 		return theInstance;
 	}
 	
 	private ElexisEventDispatcher(){
+		super("elexis event dispatcher");
+		setSystem(true);
+		setUser(false);
+		setPriority(Job.DECORATE);
 		listeners = new LinkedList<ElexisEventListener>();
-		// jobsWaiting = new LinkedList<DispatchJob>();
-		dispatcher = new DispatchJob();
 		dispatchers = new HashMap<Class<?>, IElexisEventDispatcher>();
 		lastSelection = new HashMap<Class<?>, PersistentObject>();
 		eventQueue = new LinkedList<ElexisEvent>();
-		dispatcher.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event){
-				synchronized (eventQueue) {
-					if (eventQueue.isEmpty()) {
-						bIdle = true;
-					} else {
-						dispatcher.setEvent(eventQueue.getFirst());
-						dispatcher.schedule();
-					}
-				}
-				super.done(event);
-			}
-			
-		});
-		
 	}
 	
 	/**
@@ -139,14 +125,16 @@ public class ElexisEventDispatcher {
 	 *            el.getElexisEventFilter()
 	 */
 	public void addListeners(ElexisEventListener... els){
-		for (ElexisEventListener el : els) {
-			ElexisEvent ev = el.getElexisEventFilter();
-			Class<?> cl = ev.getObjectClass();
-			IElexisEventDispatcher ed = dispatchers.get(cl);
-			if (ed != null) {
-				ed.addListener(el);
-			} else {
-				listeners.add(el);
+		synchronized (listeners) {
+			for (ElexisEventListener el : els) {
+				ElexisEvent ev = el.getElexisEventFilter();
+				Class<?> cl = ev.getObjectClass();
+				IElexisEventDispatcher ed = dispatchers.get(cl);
+				if (ed != null) {
+					ed.addListener(el);
+				} else {
+					listeners.add(el);
+				}
 			}
 		}
 	}
@@ -159,14 +147,16 @@ public class ElexisEventDispatcher {
 	 *            The Listener to remove
 	 */
 	public void removeListeners(ElexisEventListener... els){
-		for (ElexisEventListener el : els) {
-			ElexisEvent ev = el.getElexisEventFilter();
-			Class<?> cl = ev.getObjectClass();
-			IElexisEventDispatcher ed = dispatchers.get(cl);
-			if (ed != null) {
-				ed.removeListener(el);
-			} else {
-				listeners.remove(el);
+		synchronized (listeners) {
+			for (ElexisEventListener el : els) {
+				ElexisEvent ev = el.getElexisEventFilter();
+				Class<?> cl = ev.getObjectClass();
+				IElexisEventDispatcher ed = dispatchers.get(cl);
+				if (ed != null) {
+					ed.removeListener(el);
+				} else {
+					listeners.remove(el);
+				}
 			}
 		}
 	}
@@ -193,58 +183,16 @@ public class ElexisEventDispatcher {
 		} else if (ee.getType() == ElexisEvent.EVENT_DESELECTED) {
 			lastSelection.remove(ee.getObjectClass());
 		}
-		
-		/*
-		 * if (jobsWaiting.size() == 0) { job = new DispatchJob(); job.addJobChangeListener(new
-		 * JobChangeAdapter() {
-		 * 
-		 * @Override public void done(IJobChangeEvent event) { jobsWaiting.add((DispatchJob)
-		 * event.getJob()); super.done(event); }
-		 * 
-		 * }); } else { job = jobsWaiting.remove(); }
-		 */
-		
-		synchronized (eventQueue) {
-			if (bIdle) {
-				dispatcher.setEvent(ee);
-				dispatcher.schedule();
-			} else {
-				eventQueue.add(ee);
-			}
+		IElexisEventDispatcher ied = dispatchers.get(ee.getObjectClass());
+		if (ied != null) {
+			ied.fire(ee);
 		}
-	}
-	
-	private class DispatchJob extends Job {
-		private ElexisEvent event;
-		
-		public DispatchJob(){
-			super("Dispatch Elexis events");
-			setSystem(true);
-			setUser(false);
-			setPriority(Job.DECORATE);
+		eventQueueLock.lock();
+		try {
+			eventQueue.add(ee);
+		} finally {
+			eventQueueLock.unlock();
 		}
-		
-		public void setEvent(ElexisEvent event){
-			this.event = event;
-		}
-		
-		@Override
-		protected IStatus run(IProgressMonitor monitor){
-			bIdle=false;
-			IElexisEventDispatcher ied = dispatchers.get(event.getClass());
-			if (ied != null) {
-				ied.fire(event);
-			} else {
-				for (ElexisEventListener l : listeners) {
-					if (event.matches(l.getElexisEventFilter())) {
-						l.catchElexisEvent(event);
-					}
-				}
-			}
-			
-			return Status.OK_STATUS;
-		}
-		
 	}
 	
 	/**
@@ -301,5 +249,41 @@ public class ElexisEventDispatcher {
 	/** shortcut */
 	public static Patient getSelectedPatient(){
 		return (Patient) getSelected(Patient.class);
+	}
+	
+	public void shutDown(){
+		bStop=true;
+	}
+	@Override
+	protected IStatus run(IProgressMonitor monitor){
+		while (!bStop) {
+			ElexisEvent ee = null;
+			if (eventQueueLock.tryLock()) {
+				try {
+					if (!eventQueue.isEmpty()) {
+						ee = eventQueue.removeFirst();
+					}
+				} finally {
+					eventQueueLock.unlock();
+				}
+			}
+			if (ee != null) {
+				synchronized (listeners) {
+					for (ElexisEventListener l : listeners) {
+						if (ee.matches(l.getElexisEventFilter())) {
+							l.catchElexisEvent(ee);
+						}
+					}
+				}
+			} else {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException iex) {
+					// janusode
+				}
+			}
+			
+		}
+		return Status.OK_STATUS;
 	}
 }
