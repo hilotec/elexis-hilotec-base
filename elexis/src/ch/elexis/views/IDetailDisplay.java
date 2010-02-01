@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: IDetailDisplay.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ * 
+ *  $Id: IDetailDisplay.java 6041 2010-02-01 13:53:45Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -39,4 +39,5 @@ public interface IDetailDisplay {
 	public void display(Object obj);
 	
 	public String getTitle();
+	
 }
