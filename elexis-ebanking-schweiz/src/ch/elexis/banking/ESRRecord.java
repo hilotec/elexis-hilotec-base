@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ESRRecord.java 5920 2010-01-05 15:01:37Z rgw_ch $
+ *  $Id: ESRRecord.java 6045 2010-02-01 15:41:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -29,6 +29,11 @@ import ch.rgw.tools.VersionInfo;
  * 
  */
 public class ESRRecord extends PersistentObject {
+	public static final String FLD_REJECT_CODE = "RejectCode";
+	public static final String MANDANT_ID = "MandantID";
+	public static final String PATIENT_ID = "PatientID";
+	public static final String RECHNUNGS_ID = "RechnungsID";
+	public static final String CODE = "Code";
 	private static final String VERSION = "2"; //$NON-NLS-1$
 	private static final String TABLENAME = "ESRRECORDS"; //$NON-NLS-1$
 	private static final int POSITION_PAT_NR = 11;
@@ -74,12 +79,12 @@ public class ESRRecord extends PersistentObject {
 	static {
 		addMapping(
 			TABLENAME,
-			"ID", "Datum=S:D:DATUM", //$NON-NLS-1$ //$NON-NLS-2$
+			PersistentObject.DATE_FIELD,
 			"Eingelesen=S:D:EINGELESEN", //$NON-NLS-1$
 			"Verarbeitet=S:D:VERARBEITET", //$NON-NLS-1$
 			"Gutgeschrieben=S:D:GUTSCHRIFT", //$NON-NLS-1$
 			"BetragInRp=BETRAGINRP", //$NON-NLS-1$
-			"Code", "RechnungsID", "PatientID", "MandantID", "RejectCode", "Gebucht=S:D:GEBUCHT", "File" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "Gebucht=S:D:GEBUCHT", "File" //$NON-NLS-1$ //$NON-NLS-2$
 		);
 		ESRRecord init = load("1"); //$NON-NLS-1$
 		if (init == null) {
@@ -108,7 +113,7 @@ public class ESRRecord extends PersistentObject {
 	}
 	
 	public Rechnung getRechnung(){
-		String rnid = get("RechnungsID"); //$NON-NLS-1$
+		String rnid = get(RECHNUNGS_ID);
 		return Rechnung.load(rnid);
 	}
 	
@@ -117,13 +122,13 @@ public class ESRRecord extends PersistentObject {
 	}
 	
 	public MODE getTyp(){
-		int m = getInt("Code"); //$NON-NLS-1$
+		int m = getInt(CODE);
 		MODE ret = MODE.values()[m];
 		return ret;
 	}
 	
 	public REJECT getRejectCode(){
-		int code = getInt("RejectCode"); //$NON-NLS-1$
+		int code = getInt(FLD_REJECT_CODE);
 		return REJECT.values()[code];
 	}
 	
@@ -132,7 +137,7 @@ public class ESRRecord extends PersistentObject {
 			date = new TimeTool();
 		}
 		set("Gebucht", date.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
-		set("RejectCode", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+		set(FLD_REJECT_CODE, "0"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -243,7 +248,7 @@ public class ESRRecord extends PersistentObject {
 		set(
 			new String[] {
 				"Datum", "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				"BetragInRp", "Code", "RechnungsID", "PatientID", "MandantID", "RejectCode", "File"}, vals); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				"BetragInRp", CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "File"}, vals); //$NON-NLS-1$ //$NON-NLS-2$
 		
 	}
 	
@@ -279,7 +284,7 @@ public class ESRRecord extends PersistentObject {
 	}
 	
 	public Patient getPatient(){
-		String pid = get("PatientID"); //$NON-NLS-1$
+		String pid = get(PATIENT_ID);
 		return Patient.load(pid);
 	}
 	
@@ -292,6 +297,6 @@ public class ESRRecord extends PersistentObject {
 	}
 	
 	public String getESRCode(){
-		return MODE.values()[checkZero(get("Code"))].toString(); //$NON-NLS-1$
+		return MODE.values()[checkZero(get(CODE))].toString();
 	}
 }
