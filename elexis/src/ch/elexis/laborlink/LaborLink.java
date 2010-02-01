@@ -8,8 +8,8 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
- *    
- *    $Id: LaborLink.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *    $Id: LaborLink.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.laborlink;
@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.LabGroup;
 import ch.elexis.data.LabItem;
@@ -67,33 +66,35 @@ public class LaborLink implements IKonsExtension {
 	
 	EnhancedTextField textField;
 	
-	public String connect(EnhancedTextField textField) {
+	public String connect(EnhancedTextField textField){
 		this.textField = textField;
 		return PROVIDER_ID;
 	}
-
-	public boolean doLayout(StyleRange n, String provider, String id) {
-		n.background=Desk.getColorFromRGB(LABOR_COLOR);
-		return true;
-	}
-
-	public boolean doXRef(String refProvider, String refID) {
-		// update LaborView and show it
-		LaborView laborView = (LaborView) Hub.plugin.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().findView(LaborView.ID);
-		if (laborView != null) {
-			laborView.rebuild();
-			Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(laborView);
-		}
-
+	
+	public boolean doLayout(StyleRange n, String provider, String id){
+		n.background = Desk.getColorFromRGB(LABOR_COLOR);
 		return true;
 	}
 	
-	public IAction[] getActions() {
-		IAction[] ret=new IAction[1];
-		ret[0]=new Action("Labor verordnen") {
+	public boolean doXRef(String refProvider, String refID){
+		// update LaborView and show it
+		LaborView laborView =
+			(LaborView) Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+			.findView(LaborView.ID);
+		if (laborView != null) {
+			laborView.rebuild();
+			Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+			.activate(laborView);
+		}
+		
+		return true;
+	}
+	
+	public IAction[] getActions(){
+		IAction[] ret = new IAction[1];
+		ret[0] = new Action("Labor verordnen") {
 			@Override
-			public void run() {
+			public void run(){
 				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient == null) {
 					return;
@@ -102,30 +103,30 @@ public class LaborLink implements IKonsExtension {
 				
 				// insert XRef
 				textField.insertXRef(-1, "Labor", PROVIDER_ID, "");
-
-				LaborVerordnungDialog dialog = new LaborVerordnungDialog(Desk.getTopShell(),
-						patient, date);
+				
+				LaborVerordnungDialog dialog =
+					new LaborVerordnungDialog(Desk.getTopShell(), patient, date);
 				dialog.open();
 			}
 		};
 		return ret;
 	}
-
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeXRef(String refProvider, String refID) {
-		// nothing to do
-	}
-
-	public void insert(Object o, int pos) {
+	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+	throws CoreException{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	public void removeXRef(String refProvider, String refID){
+		// nothing to do
+	}
+	
+	public void insert(Object o, int pos){
+		// TODO Auto-generated method stub
+		
+	}
+	
 	static class LaborVerordnungDialog extends TitleAreaDialog {
 		// height of laborViewer
 		private static final int LINES_TO_SHOW = 20;
@@ -138,38 +139,38 @@ public class LaborLink implements IKonsExtension {
 		private TreeViewer laborViewer = null;
 		private ComboViewer userViewer = null;
 		
-		//	Gruppen von Laboritems
+		// Gruppen von Laboritems
 		private Hashtable<String, Group> hGroups;
-		//	Rueckverlinkung hGroups
-		private Hashtable<LabItem, Group> hLabItems;  
-		//	Alphabetische Gruppenliste
+		// Rueckverlinkung hGroups
+		private Hashtable<LabItem, Group> hLabItems;
+		// Alphabetische Gruppenliste
 		private List<String> lGroupNames;
 		
 		private List<Group> customGroups;
 		
-		public LaborVerordnungDialog(Shell parentShell, Patient patient, TimeTool date) {
+		public LaborVerordnungDialog(Shell parentShell, Patient patient, TimeTool date){
 			super(parentShell);
 			this.patient = patient;
 			this.date = date;
 		}
-
-		/** 
+		
+		/**
 		 * Liste der Laboritems, Gruppiert nach groups und Sequenznummer aufbauen
-		 *
+		 * 
 		 */
 		@SuppressWarnings("unchecked")
 		private void loadItems(){
 			hGroups = new Hashtable<String, Group>();
 			hLabItems = new Hashtable<LabItem, Group>();
 			lGroupNames = new ArrayList<String>();
-
+			
 			Query<LabItem> query = new Query<LabItem>(LabItem.class);
 			List<LabItem> lItems = query.execute();
 			if (lItems == null) {
 				// error
 				return;
 			}
-
+			
 			for (LabItem it : lItems) {
 				String groupName = it.getGroup();
 				Group group = hGroups.get(groupName);
@@ -196,7 +197,7 @@ public class LaborLink implements IKonsExtension {
 		/**
 		 * Load User-defined LabGroups
 		 */
-		private void loadCustomGroups() {
+		private void loadCustomGroups(){
 			customGroups = new ArrayList<Group>();
 			
 			Query<LabGroup> query = new Query<LabGroup>(LabGroup.class);
@@ -209,13 +210,13 @@ public class LaborLink implements IKonsExtension {
 				}
 			}
 		}
-
+		
 		/**
 		 * Selects already measured values. The current selection is preserved.
-		 *
+		 * 
 		 */
 		@SuppressWarnings("unchecked")
-		private void selectMeasured() {
+		private void selectMeasured(){
 			if (laborViewer != null && date != null) {
 				Query<LabResult> query = new Query<LabResult>(LabResult.class);
 				query.add("PatientID", "=", patient.getId());
@@ -232,7 +233,9 @@ public class LaborLink implements IKonsExtension {
 					for (LabItem item : items) {
 						Group group = hLabItems.get(item);
 						if (group != null) {
-							TreePath treePath = new TreePath(new Object[] {group, item});
+							TreePath treePath = new TreePath(new Object[] {
+								group, item
+							});
 							treePaths.add(treePath);
 						}
 					}
@@ -247,7 +250,7 @@ public class LaborLink implements IKonsExtension {
 			}
 		}
 		
-		private void selectLastSelectedUser() {
+		private void selectLastSelectedUser(){
 			String id = Hub.userCfg.get(LAST_SELECTED_USER, "");
 			Anwender user = Anwender.load(id);
 			if (user != null && user.exists()) {
@@ -256,7 +259,7 @@ public class LaborLink implements IKonsExtension {
 			}
 		}
 		
-		private void saveLastSelectedUser() {
+		private void saveLastSelectedUser(){
 			Anwender user = getSelectedUser();
 			String id = "";
 			if (user != null) {
@@ -266,7 +269,7 @@ public class LaborLink implements IKonsExtension {
 		}
 		
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(Composite parent){
 			loadItems();
 			loadCustomGroups();
 			
@@ -278,62 +281,65 @@ public class LaborLink implements IKonsExtension {
 			label = new Label(composite, SWT.NONE);
 			label.setText("Laborwerte:");
 			
-			laborViewer = new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			laborViewer =
+				new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 			GridData gd = SWTHelper.getFillGridData(1, true, 1, true);
 			// initially, show 10 lines
 			gd.heightHint = laborViewer.getTree().getItemHeight() * LINES_TO_SHOW;
 			laborViewer.getControl().setLayoutData(gd);
-
+			
 			label = new Label(composite, SWT.NONE);
 			label.setText("Verantwortliche Person:");
 			
-			userViewer = new ComboViewer(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			userViewer =
+				new ComboViewer(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL
+					| SWT.BORDER);
 			userViewer.getControl().setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 			
 			laborViewer.setContentProvider(new ITreeContentProvider() {
-			    public Object[] getElements(Object inputElement) {
-			    	int size = lGroupNames.size() + customGroups.size();
-			    	Group[] elements = new Group[size];
-
-			    	int base1 = 0;
-			    	int base2 = lGroupNames.size();
-
-			    	for (int i = 0; i < lGroupNames.size(); i++) {
-			    		String groupName = lGroupNames.get(i);
-			    		elements[base1 + i] = hGroups.get(groupName);
-			    	}
-			    	
-			    	for (int i = 0; i < customGroups.size(); i++) {
-			    		elements[base2 + i] = customGroups.get(i);
-			    	}
-			    	
-			    	return elements;
-			    }
-			    
-			    public Object[] getChildren(Object parentElement) {
-			    	if (parentElement instanceof Group) {
-			    		Group group = (Group) parentElement;
-			    		return group.items.toArray();
-			    	} else {
-			    		return null;
-			    	}
-			    }
-			    
-			    public boolean hasChildren(Object element) {
-			    	return (element instanceof Group);
-			    }
-			    
-			    public Object[] getParent(Object element) {
-			    	return null;
-			    }
-			    
-			    public void dispose() {
-			    	// nothing to do
-			    }
-			    
-			    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			    	// nothing to do
-			    }
+				public Object[] getElements(Object inputElement){
+					int size = lGroupNames.size() + customGroups.size();
+					Group[] elements = new Group[size];
+					
+					int base1 = 0;
+					int base2 = lGroupNames.size();
+					
+					for (int i = 0; i < lGroupNames.size(); i++) {
+						String groupName = lGroupNames.get(i);
+						elements[base1 + i] = hGroups.get(groupName);
+					}
+					
+					for (int i = 0; i < customGroups.size(); i++) {
+						elements[base2 + i] = customGroups.get(i);
+					}
+					
+					return elements;
+				}
+				
+				public Object[] getChildren(Object parentElement){
+					if (parentElement instanceof Group) {
+						Group group = (Group) parentElement;
+						return group.items.toArray();
+					} else {
+						return null;
+					}
+				}
+				
+				public boolean hasChildren(Object element){
+					return (element instanceof Group);
+				}
+				
+				public Object[] getParent(Object element){
+					return null;
+				}
+				
+				public void dispose(){
+					// nothing to do
+				}
+				
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+					// nothing to do
+				}
 			});
 			
 			laborViewer.setLabelProvider(new DefaultLabelProvider());
@@ -341,24 +347,24 @@ public class LaborLink implements IKonsExtension {
 			laborViewer.setInput(this);
 			
 			userViewer.setContentProvider(new IStructuredContentProvider() {
-			    public Object[] getElements(Object inputElement) {
-			    	Query<Anwender> query = new Query<Anwender>(Anwender.class);
-			    	List<Anwender> users = query.execute();
-			    	if (users != null) {
-			    		return users.toArray();
-			    	} else {
-			    		// error, return empty list
-			    		return new Object[] {};
-			    	}
-			    }
-			    
-			    public void dispose() {
-			    	// nothing to do
-			    }
-			    
-			    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			    	// nothing to do
-			    }
+				public Object[] getElements(Object inputElement){
+					Query<Anwender> query = new Query<Anwender>(Anwender.class);
+					List<Anwender> users = query.execute();
+					if (users != null) {
+						return users.toArray();
+					} else {
+						// error, return empty list
+						return new Object[] {};
+					}
+				}
+				
+				public void dispose(){
+					// nothing to do
+				}
+				
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+					// nothing to do
+				}
 			});
 			
 			userViewer.setLabelProvider(new DefaultLabelProvider());
@@ -380,19 +386,19 @@ public class LaborLink implements IKonsExtension {
 			
 			return composite;
 		}
-
+		
 		@Override
-		protected Control createContents(Composite parent) {
+		protected Control createContents(Composite parent){
 			Control contents = super.createContents(parent);
 			setTitle("Labor Verordnen");
 			setMessage("Bitte wählen Sie die gewünschten Laborwerte und die"
-					+ " verantwortliche Person aus. (Der verantwortlichen Person"
-					+ " wird eine Pendenz zugeordnet.)");
+				+ " verantwortliche Person aus. (Der verantwortlichen Person"
+				+ " wird eine Pendenz zugeordnet.)");
 			getShell().setText("Labor Verordnen");
 			return contents;
 		}
-
-		private boolean hasResult(LabItem labItem, TimeTool date) {
+		
+		private boolean hasResult(LabItem labItem, TimeTool date){
 			Query<LabResult> query = new Query<LabResult>(LabResult.class);
 			query.add("Datum", "=", date.toString(TimeTool.DATE_ISO));
 			query.add("ItemID", "=", labItem.getId());
@@ -403,9 +409,8 @@ public class LaborLink implements IKonsExtension {
 				return false;
 			}
 		}
-
-
-		private void createLabItems(List<LabItem> items) {
+		
+		private void createLabItems(List<LabItem> items){
 			if (items != null) {
 				for (LabItem labItem : items) {
 					if (!hasResult(labItem, date)) {
@@ -415,15 +420,16 @@ public class LaborLink implements IKonsExtension {
 			}
 		}
 		
-		private void createReminder(Anwender user) {
-			Reminder reminder = new Reminder(patient, date.toString(TimeTool.DATE_ISO),
+		private void createReminder(Anwender user){
+			Reminder reminder =
+				new Reminder(patient, date.toString(TimeTool.DATE_ISO),
 					Reminder.Typ.anzeigeTodoAll, "", "Labor");
 			if (user != null) {
 				reminder.set("Responsible", user.getId());
 			}
 		}
 		
-		private List<LabItem> getSelectedItems() {
+		private List<LabItem> getSelectedItems(){
 			List<LabItem> labItems = new ArrayList<LabItem>();
 			
 			IStructuredSelection sel = (IStructuredSelection) laborViewer.getSelection();
@@ -441,7 +447,7 @@ public class LaborLink implements IKonsExtension {
 			return labItems;
 		}
 		
-		private Anwender getSelectedUser() {
+		private Anwender getSelectedUser(){
 			Object sel = ((IStructuredSelection) userViewer.getSelection()).getFirstElement();
 			if (sel instanceof Anwender) {
 				return (Anwender) sel;
@@ -451,10 +457,10 @@ public class LaborLink implements IKonsExtension {
 		}
 		
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			createLabItems(getSelectedItems());
 			createReminder(getSelectedUser());
-
+			
 			saveLastSelectedUser();
 			
 			super.okPressed();
@@ -465,7 +471,7 @@ public class LaborLink implements IKonsExtension {
 			String shortName;
 			List<LabItem> items;
 			
-			Group(String name, List<LabItem> items) {
+			Group(String name, List<LabItem> items){
 				this.name = name;
 				this.items = items;
 				
@@ -478,14 +484,14 @@ public class LaborLink implements IKonsExtension {
 				}
 			}
 			
-			Group(LabGroup labGroup) {
+			Group(LabGroup labGroup){
 				this.name = labGroup.getName();
 				this.shortName = this.name;
 				
 				items = labGroup.getItems();
 			}
 			
-			public String toString() {
+			public String toString(){
 				return shortName;
 			}
 		}

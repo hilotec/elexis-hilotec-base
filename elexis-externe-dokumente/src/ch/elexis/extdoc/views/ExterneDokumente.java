@@ -8,12 +8,11 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
- *    
- *  $Id: ExterneDokumente.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *  $Id: ExterneDokumente.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.extdoc.views;
-
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -66,7 +65,6 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
@@ -80,20 +78,17 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-
 /**
- * Diese Ansicht zeigt externe Dokumente an. Die Dokumente
- * liegen in einem Verzeichnis im Dateisystem. Dieses Verzeichnis
- * kann in den Einstellungen angegeben werden.
- * Falls ein Patient ausgewaehlt ist, wird nach einem bestimmten
- * Schema nach diesem Patienten gefiltert.
+ * Diese Ansicht zeigt externe Dokumente an. Die Dokumente liegen in einem Verzeichnis im
+ * Dateisystem. Dieses Verzeichnis kann in den Einstellungen angegeben werden. Falls ein Patient
+ * ausgewaehlt ist, wird nach einem bestimmten Schema nach diesem Patienten gefiltert.
  */
 
 // TODO datum
 
 public class ExterneDokumente extends ViewPart implements IActivationListener {
-	//private static final String NONE = "Keine Dokumente";
-
+	// private static final String NONE = "Keine Dokumente";
+	
 	// Erwartete Anzahl Dokumente falls noch nicht bekannt
 	private static final int DEFAULT_SIZE = 1;
 	
@@ -101,11 +96,13 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	private Button path2CheckBox;
 	private Button path3CheckBox;
 	
-	private String[] paths = {null, null, null};
+	private final String[] paths = {
+		null, null, null
+	};
 	
 	/*
-	private Combo pathCombo;
-	*/
+	 * private Combo pathCombo;
+	 */
 	private TableViewer viewer;
 	private Action doubleClickAction;
 	private Action openAction;
@@ -116,8 +113,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	
 	private Patient actPatient;
 	/*
-	private String actPath = null;
-	*/
+	 * private String actPath = null;
+	 */
 	
 	// work-around to get the job
 	// TODO cleaner design
@@ -126,31 +123,33 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	// letzte bekannte Anzahl Dokumente (fuer getSize())
 	int lastSize = DEFAULT_SIZE;
 	
-	private Log log = Log.get("Externe Dokumente");
+	private final Log log = Log.get("Externe Dokumente");
 	
-	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class,ElexisEvent.EVENT_SELECTED){
+	private final ElexisEventListenerImpl eeli_pat =
+		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
 		@Override
 		public void runInUi(ElexisEvent ev){
 			actPatient = (Patient) ev.getObject();
 			refresh();
 		}
 	};
+	
 	class DataLoader extends BackgroundJob {
-		public DataLoader(String jobName) {
+		public DataLoader(String jobName){
 			super(jobName);
 		}
 		
 		/**
 		 * Filter fuer die folgende Festlegung:
 		 * 
-		 *  - Die ersten 6 Zeichen des Nachnamens. Falls kuerzer, mit Leerzeichen aufgefuellt
-		 *  - Der Vorname (nur der erste, falls es mehrere gibt)
-		 *  - Bezeichnung, durch ein Leerzeichen getrennt. 
+		 * - Die ersten 6 Zeichen des Nachnamens. Falls kuerzer, mit Leerzeichen aufgefuellt - Der
+		 * Vorname (nur der erste, falls es mehrere gibt) - Bezeichnung, durch ein Leerzeichen
+		 * getrennt.
 		 */
 		class MyFilenameFilter implements FilenameFilter {
-			private Pattern pattern;
+			private final Pattern pattern;
 			
-			MyFilenameFilter(String lastname, String firstname) {
+			MyFilenameFilter(String lastname, String firstname){
 				// only use first part of firstname
 				firstname = firstToken(firstname);
 				
@@ -177,54 +176,57 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			}
 			
-			public boolean accept(File dir, String name) {
+			public boolean accept(File dir, String name){
 				Matcher matcher = pattern.matcher(name);
 				return matcher.matches();
 			}
 			
-			private String cleanName(String name) {
+			private String cleanName(String name){
 				String cleanName = name.replaceAll("[-_\\p{Space}]+", "");
 				return cleanName;
 			}
 			
-			private String firstToken(String text) {
+			private String firstToken(String text){
 				String firstToken = text.replaceFirst("[-_\\p{Space}].*", "");
 				return firstToken;
 			}
 		}
-
-	    public IStatus execute(IProgressMonitor monitor) {
-	    	if (actPatient != null) {
-		    	List<File> list = new ArrayList<File>();
-	    		
-		    	list.addAll(loadFiles(paths[0]));
-		    	list.addAll(loadFiles(paths[1]));
-		    	list.addAll(loadFiles(paths[2]));
-	    		
-	    		if (list.size() > 0) {
-	    			result = list;
-	    		} else {
-	    			result = "Keine Dateien gefunden";
-	    		}
+		
+		public IStatus execute(IProgressMonitor monitor){
+			if (actPatient != null) {
+				List<File> list = new ArrayList<File>();
+				
+				list.addAll(loadFiles(paths[0]));
+				list.addAll(loadFiles(paths[1]));
+				list.addAll(loadFiles(paths[2]));
+				
+				if (list.size() > 0) {
+					result = list;
+				} else {
+					result = "Keine Dateien gefunden";
+				}
 			} else {
 				result = "Kein Patient ausgewählt";
 			}
-	    	
-	    	return Status.OK_STATUS;
-	    }
-	    
-	    /**
-	     * Load files
-	     * @param path the path from where to load files; may be null
-	     * @return a list of files (maybe empty)
-	     */
-	    private List<File> loadFiles(String path) {
-	    	List<File> list = new ArrayList<File>();
-	    	
+			
+			return Status.OK_STATUS;
+		}
+		
+		/**
+		 * Load files
+		 * 
+		 * @param path
+		 *            the path from where to load files; may be null
+		 * @return a list of files (maybe empty)
+		 */
+		private List<File> loadFiles(String path){
+			List<File> list = new ArrayList<File>();
+			
 			if (!StringTool.isNothing(path)) {
 				File mainDirectory = new File(path);
 				if (mainDirectory.isDirectory()) {
-					MyFilenameFilter filter = new MyFilenameFilter(actPatient.getName(), actPatient.getVorname());
+					MyFilenameFilter filter =
+						new MyFilenameFilter(actPatient.getName(), actPatient.getVorname());
 					File[] files = mainDirectory.listFiles(filter);
 					for (File file : files) {
 						list.add(file);
@@ -233,60 +235,65 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 			
 			return list;
-	    }
-
-	    public int getSize() {
-	    	return lastSize;
-	    }
+		}
+		
+		public int getSize(){
+			return lastSize;
+		}
 	}
-
+	
 	class ViewContentProvider implements IStructuredContentProvider, BackgroundJobListener {
 		BackgroundJob job;
 		
-		public ViewContentProvider() {
+		public ViewContentProvider(){
 			job = new DataLoader("Externe Dokumente");
 			globalJob = job;
-	    	if(JobPool.getJobPool().getJob(job.getJobname())==null){
-	    		JobPool.getJobPool().addJob(job);
-	    	}
-	    	job.addListener(this);
-
-		}
-
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		}
-		public void dispose() {
-	    	job.removeListener(this);
-		}
-		@SuppressWarnings("unchecked")
-		public Object[] getElements(Object parent) {
-	        Object result = job.getData();
-	        if(result == null){
-	        	JobPool.getJobPool().activate(job.getJobname(),Job.LONG);
-	            return new String[]{"Lade..."};
-	        } else {
-	        	if (result instanceof List) {
-	        		return ((List) result).toArray();
-	        	} else if (result instanceof String) {
-	        		return new Object[] {result};
-	        	} else {
-	        		return null;
-	        	}
-	        }
+			if (JobPool.getJobPool().getJob(job.getJobname()) == null) {
+				JobPool.getJobPool().addJob(job);
+			}
+			job.addListener(this);
+			
 		}
 		
-	    public void jobFinished(BackgroundJob j)
-	    {
-	        //int size=((Object[])j.getData()).length;
-	        viewer.refresh(true);
-	        
-	    }
+		public void inputChanged(Viewer v, Object oldInput, Object newInput){}
+		
+		public void dispose(){
+			job.removeListener(this);
+		}
+		
+		@SuppressWarnings("unchecked")
+		public Object[] getElements(Object parent){
+			Object result = job.getData();
+			if (result == null) {
+				JobPool.getJobPool().activate(job.getJobname(), Job.LONG);
+				return new String[] {
+					"Lade..."
+				};
+			} else {
+				if (result instanceof List) {
+					return ((List) result).toArray();
+				} else if (result instanceof String) {
+					return new Object[] {
+						result
+					};
+				} else {
+					return null;
+				}
+			}
+		}
+		
+		public void jobFinished(BackgroundJob j){
+			// int size=((Object[])j.getData()).length;
+			viewer.refresh(true);
+			
+		}
 	}
+	
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		private static final int DATE_COLUMN = 0;
 		private static final int NAME_COLUMN = 1;
 		
-		public String getColumnText(Object obj, int index) {
+		public String getColumnText(Object obj, int index){
 			switch (index) {
 			case DATE_COLUMN:
 				return getDate(obj);
@@ -296,7 +303,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			return "";
 		}
 		
-		public String getText(Object obj) {
+		public String getText(Object obj){
 			if (obj instanceof File) {
 				File file = (File) obj;
 				return file.getName();
@@ -306,22 +313,23 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				return "";
 			}
 		}
-
-		public String getDate(Object obj) {
+		
+		public String getDate(Object obj){
 			if (obj instanceof File) {
 				File file = (File) obj;
 				long modified = file.lastModified();
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(modified);
 				TimeTool tl = new TimeTool(cal.getTimeInMillis());
-				String modifiedTime = tl.toString(TimeTool.DATE_ISO) + " " + tl.toString(TimeTool.TIME_SMALL);
+				String modifiedTime =
+					tl.toString(TimeTool.DATE_ISO) + " " + tl.toString(TimeTool.TIME_SMALL);
 				return modifiedTime;
 			} else {
 				return "";
 			}
 		}
-
-		public Image getColumnImage(Object obj, int index) {
+		
+		public Image getColumnImage(Object obj, int index){
 			switch (index) {
 			case NAME_COLUMN:
 				return getImage(obj);
@@ -329,29 +337,31 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			return null;
 		}
 		
-		public Image getImage(Object obj) {
+		public Image getImage(Object obj){
 			if (!(obj instanceof File)) {
 				return null;
 			}
 			
 			File file = (File) obj;
 			if (file.isDirectory()) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+					ISharedImages.IMG_OBJ_FOLDER);
 			} else {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+					ISharedImages.IMG_OBJ_FILE);
 			}
 		}
 	}
 	
 	class TimestampComparator extends ViewerComparator {
-	    public int compare(Viewer viewer, Object e1, Object e2) {
+		public int compare(Viewer viewer, Object e1, Object e2){
 			if (e1 == null) {
 				return 1;
 			}
 			if (e2 == null) {
 				return -1;
 			}
-
+			
 			File file1 = (File) e1;
 			File file2 = (File) e2;
 			
@@ -365,21 +375,19 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			} else {
 				return 0;
 			}
-
-	    }
+			
+		}
 	}
-
+	
 	/**
 	 * The constructor.
 	 */
-	public ExterneDokumente() {
-	}
-
+	public ExterneDokumente(){}
+	
 	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
+	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.horizontalSpacing = 0;
 		gridLayout.verticalSpacing = 0;
@@ -390,7 +398,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		Composite topArea = new Composite(parent, SWT.NONE);
 		topArea.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 		topArea.setLayout(new GridLayout());
-
+		
 		Composite bottomArea = new Composite(parent, SWT.NONE);
 		bottomArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		bottomArea.setLayout(new GridLayout());
@@ -400,14 +408,14 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		String item1 = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD, "");
 		String item2 = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD2, "");
 		String item3 = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD3, "");
-
+		
 		// check boxes
 		
 		Composite pathArea = new Composite(topArea, SWT.NONE);
 		pathArea.setLayout(new GridLayout(3, false));
 		
 		SelectionAdapter checkBoxListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				refresh();
 			}
 		};
@@ -418,84 +426,77 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		paths[0] = item1;
 		path1CheckBox.addSelectionListener(checkBoxListener);
 		
-		
 		path2CheckBox = new Button(pathArea, SWT.CHECK);
 		path2CheckBox.setText(item2);
 		path2CheckBox.addSelectionListener(checkBoxListener);
-
+		
 		path3CheckBox = new Button(pathArea, SWT.CHECK);
 		path3CheckBox.setText(item3);
 		path3CheckBox.addSelectionListener(checkBoxListener);
-
+		
 		// combo box
-
+		
 		/*
-		pathCombo = new Combo(topArea, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
-		pathCombo.add(item1);
-		pathCombo.add(item2);
-		actPath = item1;
-		pathCombo.setText(actPath);
-		pathCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				actPath = pathCombo.getText();
-				refresh();
-			}
-		});
-		*/
-
+		 * pathCombo = new Combo(topArea, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
+		 * pathCombo.add(item1); pathCombo.add(item2); actPath = item1; pathCombo.setText(actPath);
+		 * pathCombo.addSelectionListener(new SelectionAdapter() { public void
+		 * widgetSelected(SelectionEvent e) { actPath = pathCombo.getText(); refresh(); } });
+		 */
+		
 		// table
 		
-		viewer = new TableViewer(bottomArea, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		viewer =
+			new TableViewer(bottomArea, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
+				| SWT.FULL_SELECTION);
 		
 		Table table = viewer.getTable();
 		
+		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		table.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+		table.setHeaderVisible(true);
+		table.setLinesVisible(false);
 		
-        table.setHeaderVisible(true);
-        table.setLinesVisible(false);
-
-        TableColumn tc;
-
-        tc = new TableColumn(table, SWT.LEFT);
-        tc.setText("Datum");
-        tc.setWidth(120);
-        tc.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent event) {
-                        // TODO sort by Datum
-                }
-        });
-
-        tc = new TableColumn(table, SWT.LEFT);
-        tc.setText("Name");
-        tc.setWidth(400);
-        tc.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent event) {
-                        // TODO sort by Name
-                }
-        });
-        
+		TableColumn tc;
+		
+		tc = new TableColumn(table, SWT.LEFT);
+		tc.setText("Datum");
+		tc.setWidth(120);
+		tc.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event){
+				// TODO sort by Datum
+			}
+		});
+		
+		tc = new TableColumn(table, SWT.LEFT);
+		tc.setText("Name");
+		tc.setWidth(400);
+		tc.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event){
+				// TODO sort by Name
+			}
+		});
+		
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setComparator(new TimestampComparator());
 		viewer.setInput(getViewSite());
-
+		
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
 		
 		// Welcher Patient ist im aktuellen WorkbenchWindow selektiert?
-		actPatient=(Patient)ElexisEventDispatcher.getSelected(Patient.class);
-		GlobalEventDispatcher.addActivationListener(this,this);
+		actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+		GlobalEventDispatcher.addActivationListener(this, this);
 		
 	}
-
-	private void hookContextMenu() {
+	
+	private void hookContextMenu(){
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
+			public void menuAboutToShow(IMenuManager manager){
 				ch.elexis.extdoc.views.ExterneDokumente.this.fillContextMenu(manager);
 			}
 		});
@@ -503,21 +504,21 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
-
-	private void contributeToActionBars() {
+	
+	private void contributeToActionBars(){
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
-
-	private void fillLocalPullDown(IMenuManager manager) {
+	
+	private void fillLocalPullDown(IMenuManager manager){
 		manager.add(openAction);
 		manager.add(renameAction);
 		manager.add(editAction);
 		manager.add(verifyAction);
 	}
-
-	private void fillContextMenu(IMenuManager manager) {
+	
+	private void fillContextMenu(IMenuManager manager){
 		manager.add(openAction);
 		manager.add(renameAction);
 		manager.add(editAction);
@@ -526,14 +527,14 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-	private void fillLocalToolBar(IToolBarManager manager) {
+	private void fillLocalToolBar(IToolBarManager manager){
 		manager.add(openAction);
 		manager.add(editAction);
 	}
-
-	private void makeActions() {
+	
+	private void makeActions(){
 		openAction = new Action() {
-			public void run() {
+			public void run(){
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -550,13 +551,13 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		openAction.setToolTipText("Datei öffnen");
 		
 		doubleClickAction = new Action() {
-			public void run() {
+			public void run(){
 				openAction.run();
 			}
 		};
 		
 		editAction = new Action() {
-			public void run() {
+			public void run(){
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -572,15 +573,16 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		GlobalActions.registerActionHandler(this, editAction);
 		
 		deleteAction = new Action() {
-			public void run() {
+			public void run(){
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
 					if (element instanceof File) {
 						File file = (File) element;
 						
-						if (SWTHelper.askYesNo("Dokument löschen", "Soll das Dokument " + file.getName() + " wirklich gelöscht werden?"
-								+ " (Achtung: Diese Aktion kann nicht rückgängig gemacht werden!)")) {
+						if (SWTHelper.askYesNo("Dokument löschen", "Soll das Dokument "
+							+ file.getName() + " wirklich gelöscht werden?"
+							+ " (Achtung: Diese Aktion kann nicht rückgängig gemacht werden!)")) {
 							
 							log.log("Datei Löschen: " + file.getAbsolutePath(), Log.INFOS);
 							file.delete();
@@ -596,7 +598,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		GlobalActions.registerActionHandler(this, deleteAction);
 		
 		renameAction = new Action() {
-			public void run() {
+			public void run(){
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -610,9 +612,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		renameAction.setToolTipText("Datei umbenennen");
 		renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
 		GlobalActions.registerActionHandler(this, renameAction);
-
+		
 		verifyAction = new Action() {
-			public void run() {
+			public void run(){
 				new VerifierDialog(getViewSite().getShell(), actPatient).open();
 				
 				// files may have been renamed
@@ -620,18 +622,19 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 		};
 		verifyAction.setText("Dateien überprüfen");
-		verifyAction.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
+		verifyAction
+		.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
 	}
-
-	private void hookDoubleClickAction() {
+	
+	private void hookDoubleClickAction(){
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
+			public void doubleClick(DoubleClickEvent event){
 				doubleClickAction.run();
 			}
 		});
 	}
 	
-	private void refresh() {
+	private void refresh(){
 		paths[0] = null;
 		paths[1] = null;
 		paths[2] = null;
@@ -649,72 +652,66 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		globalJob.invalidate();
 		viewer.refresh(true);
 	}
-
-	/*
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Externe Dokumente",
-			message);
-	}
-	*/
 	
-	private void openFileEditorDialog(File file) {
-		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file); 
+	/*
+	 * private void showMessage(String message) { MessageDialog.openInformation(
+	 * viewer.getControl().getShell(), "Externe Dokumente", message); }
+	 */
+	
+	private void openFileEditorDialog(File file){
+		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file);
 		fed.open();
 		refresh();
 	}
-
+	
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus() {
+	public void setFocus(){
 		viewer.getControl().setFocus();
 	}
 	
 	/**
-	 * Wichtig! Alle Listeners, die eine View einhängt, müssen in dispose() wieder ausgehängt werden.
-	 * Sonst kommt es zu Exceptions, wenn der Anwender eine View schliesst und später ein Objekt
-	 * selektiert.
+	 * Wichtig! Alle Listeners, die eine View einhängt, müssen in dispose() wieder ausgehängt
+	 * werden. Sonst kommt es zu Exceptions, wenn der Anwender eine View schliesst und später ein
+	 * Objekt selektiert.
 	 */
 	@Override
 	public void dispose(){
-		GlobalEventDispatcher.removeActivationListener(this,this);
+		GlobalEventDispatcher.removeActivationListener(this, this);
 	}
 	
 	// Die Methode des SelectionListeners
-	public void selectionEvent(PersistentObject obj) {
-		if(obj instanceof Patient){
-		}
+	public void selectionEvent(PersistentObject obj){
+		if (obj instanceof Patient) {}
 	}
-
 	
-	// Die  beiden Methoden des ActivationListeners
+	// Die beiden Methoden des ActivationListeners
 	/**
 	 * Die View wird aktiviert (z.B angeklickt oder mit Tab)
 	 */
-	public void activation(boolean mode) {
+	public void activation(boolean mode){
 		/* Interessiert uns nicht */
 	}
-
+	
 	/**
-	 * Die View wird sichtbar (mode=true). Immer dann hängen wir unseren SelectionListener ein. 
-	 * (Benutzeraktionen interessieren uns ja nur dann, wenn wir etwas damit machen 
-	 * müssen, also sichtbar sind. Im unsichtbaren Zustand würde das Abfangen von 
-	 * SelectionEvents nur unnötig Ressourcen verbrauchen.
-	 * Aber weil es ja sein könnte, dass der Anwender, während wir im Hintergrund waren, 
-	 * etliche Aktionen durchgefürt hat, über die wir jetzt nicht informiert sind, 
-	 * "simulieren" wir beim Sichtbar-Werden gleich einen selectionEvent, um uns zu infomieren,
-	 * welcher Patient jetzt gerade selektiert ist.
+	 * Die View wird sichtbar (mode=true). Immer dann hängen wir unseren SelectionListener ein.
+	 * (Benutzeraktionen interessieren uns ja nur dann, wenn wir etwas damit machen müssen, also
+	 * sichtbar sind. Im unsichtbaren Zustand würde das Abfangen von SelectionEvents nur unnötig
+	 * Ressourcen verbrauchen. Aber weil es ja sein könnte, dass der Anwender, während wir im
+	 * Hintergrund waren, etliche Aktionen durchgefürt hat, über die wir jetzt nicht informiert
+	 * sind, "simulieren" wir beim Sichtbar-Werden gleich einen selectionEvent, um uns zu
+	 * infomieren, welcher Patient jetzt gerade selektiert ist.
 	 * 
-	 * Oder die View wird unsichtbar (mode=false). Dann hängen wir unseren SelectionListener aus
-	 * und faulenzen ein wenig.
+	 * Oder die View wird unsichtbar (mode=false). Dann hängen wir unseren SelectionListener aus und
+	 * faulenzen ein wenig.
 	 */
-	public void visible(boolean mode) {
-		if(mode==true){
+	public void visible(boolean mode){
+		if (mode == true) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-			eeli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),Patient.class,ElexisEvent.EVENT_SELECTED));
-		}else{
+			eeli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),
+				Patient.class, ElexisEvent.EVENT_SELECTED));
+		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		}
 	}

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    Daniel Lutz - initial implementation, based on RechnungsDrucker
- *    
- * $Id: TemplateDrucker.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ * $Id: TemplateDrucker.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Patient;
 import ch.elexis.views.TemplatePrintView;
 import ch.rgw.tools.ExHandler;
@@ -36,12 +35,12 @@ public class TemplateDrucker {
 	String template;
 	String printer;
 	String tray;
-
-	public TemplateDrucker(String template, String printer, String tray) {
+	
+	public TemplateDrucker(String template, String printer, String tray){
 		this.template = template;
 		this.printer = null;
 		this.tray = null;
-
+		
 		if (!StringTool.isNothing(printer)) {
 			this.printer = printer;
 		}
@@ -49,58 +48,48 @@ public class TemplateDrucker {
 			this.tray = tray;
 		}
 	}
-
-	public void doPrint(Patient pat) {
+	
+	public void doPrint(Patient pat){
 		this.patient = pat;
-		page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage();
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
-
+		page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+		
 		try {
 			tpw = (TemplatePrintView) page.showView(TemplatePrintView.ID);
-			progressService.runInUI(PlatformUI.getWorkbench()
-					.getProgressService(), new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					monitor
-							.beginTask(
-									Messages
-											.getString("TemplateDrucker.printing") + template + "...", 1); //$NON-NLS-1$
-
-					Patient actPatient = (Patient) ElexisEventDispatcher
-							.getSelected(Patient.class);
-					if (tpw.doPrint(actPatient, template, printer, tray,
-							monitor) == false) {
-						Status status = new Status(
-								Status.ERROR,
-								"ch.elexis",
-								Status.ERROR,
-								Messages
-										.getString("TemplateDrucker.errorPrinting"),
-								null);
+			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
+				new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor){
+					monitor.beginTask(
+						Messages.getString("TemplateDrucker.printing") + template + "...", 1); //$NON-NLS-1$
+					
+					Patient actPatient =
+						(Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					if (tpw.doPrint(actPatient, template, printer, tray, monitor) == false) {
+						Status status =
+							new Status(Status.ERROR, "ch.elexis", Status.ERROR, Messages
+								.getString("TemplateDrucker.errorPrinting"), null);
 						ErrorDialog
-								.openError(
-										null,
-										Messages
-												.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.docname") + template + Messages.getString("TemplateDrucker.couldntPrint"), status); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+						.openError(
+							null,
+							Messages.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.docname") + template + Messages.getString("TemplateDrucker.couldntPrint"), status); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						
 					}
-
+					
 					monitor.done();
 				}
 			}, null);
-
+			
 			page.hideView(tpw);
-
+			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			Status status = new Status(Status.ERROR, "ch.elexis", 1, StringTool
-					.unNull(ex.getMessage()), ex);
+			Status status =
+				new Status(Status.ERROR, "ch.elexis", 1, StringTool.unNull(ex.getMessage()), ex);
 			ErrorDialog
-					.openError(
-							null,
-							Messages.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.couldntOpen"), //$NON-NLS-1$ //$NON-NLS-2$
-							status);
+			.openError(
+				null,
+				Messages.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.couldntOpen"), //$NON-NLS-1$ //$NON-NLS-2$
+				status);
 		}
 	}
 }

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: VerrechenbarAdapter.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ * $Id: VerrechenbarAdapter.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.dialogs.AddElementToBlockDialog;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.JdbcLink;
@@ -87,15 +86,15 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements IV
 		String from = von.toString(TimeTool.DATE_COMPACT);
 		Stm stm = getConnection().getStatement();
 		sql.append("UPDATE VK_PREISE SET DATUM_BIS=").append(JdbcLink.wrap(from)).append(
-			" WHERE (DATUM_BIS=").append(JdbcLink.wrap(eoue)).append(
-			" OR DATUM_BIS='99991231') AND TYP=").append(JdbcLink.wrap(typ));
+		" WHERE (DATUM_BIS=").append(JdbcLink.wrap(eoue)).append(
+		" OR DATUM_BIS='99991231') AND TYP=").append(JdbcLink.wrap(typ));
 		stm.exec(sql.toString());
 		sql.setLength(0);
 		sql.append("INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,MULTIPLIKATOR,TYP) VALUES (")
-			.append(JdbcLink.wrap(von.toString(TimeTool.DATE_COMPACT))).append(",").append(
-				JdbcLink.wrap(bis.toString(TimeTool.DATE_COMPACT))).append(",").append(
+		.append(JdbcLink.wrap(von.toString(TimeTool.DATE_COMPACT))).append(",").append(
+			JdbcLink.wrap(bis.toString(TimeTool.DATE_COMPACT))).append(",").append(
 				JdbcLink.wrap(Double.toString(factor))).append(",").append(JdbcLink.wrap(typ))
-			.append(");");
+				.append(");");
 		stm.exec(sql.toString());
 		getConnection().releaseStatement(stm);
 	}

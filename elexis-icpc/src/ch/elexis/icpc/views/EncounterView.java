@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: EncounterView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *    $Id: EncounterView.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -21,80 +21,83 @@ import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Encounter;
 import ch.elexis.util.SWTHelper;
 
-public class EncounterView extends ViewPart implements IActivationListener{
-	public static final String ID="ch.elexis.icpc.encounterView";
+public class EncounterView extends ViewPart implements IActivationListener {
+	public static final String ID = "ch.elexis.icpc.encounterView";
 	private EncounterDisplay display;
 	
-	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class,ElexisEvent.EVENT_SELECTED){
-
+	private final ElexisEventListenerImpl eeli_pat =
+		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
+		
 		@Override
-		public void runInUi(ElexisEvent ev) {
+		public void runInUi(ElexisEvent ev){
 			display.setEncounter(null);
 		}
 		
 	};
 	
-	private ElexisEventListenerImpl eeli_enc=new ElexisEventListenerImpl(Encounter.class,ElexisEvent.EVENT_SELECTED){
+	private final ElexisEventListenerImpl eeli_enc =
+		new ElexisEventListenerImpl(Encounter.class, ElexisEvent.EVENT_SELECTED) {
 		@Override
-		public void runInUi(ElexisEvent ev) {
+		public void runInUi(ElexisEvent ev){
 			display.setEncounter((Encounter) ev.getObject());
 		}
 	};
-	public EncounterView() {
+	
+	public EncounterView(){
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
-		display=new EncounterDisplay(parent);
+		display = new EncounterDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 		
 	}
-
+	
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
+	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 		// TODO Auto-generated method stub
-
+		
 	}
-
-	public void activation(boolean mode) {
-
+	
+	public void activation(boolean mode){
+		
 	}
-
-	public void visible(boolean mode) {
-		if(mode){
-			ElexisEventDispatcher.getInstance().addListeners(eeli_enc,eeli_pat);
-		}else{
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_enc,eeli_pat);
+	
+	public void visible(boolean mode){
+		if (mode) {
+			ElexisEventDispatcher.getInstance().addListeners(eeli_enc, eeli_pat);
+		} else {
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_enc, eeli_pat);
 		}
-
+		
 	}
-
-	public void clearEvent(Class template) {
+	
+	public void clearEvent(Class template){
 		// TODO Auto-generated method stub
-
+		
 	}
-
-	public void selectionEvent(PersistentObject obj) {
-		if(obj instanceof Encounter){
-			display.setEncounter((Encounter)obj);
-		}else if(obj instanceof Patient){
+	
+	public void selectionEvent(PersistentObject obj){
+		if (obj instanceof Encounter) {
+			display.setEncounter((Encounter) obj);
+		} else if (obj instanceof Patient) {
 			display.setEncounter(null);
 		}
-
+		
 	}
-
+	
 }
