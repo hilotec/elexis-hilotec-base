@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ArtikelView.java 6023 2010-01-31 21:51:08Z rgw_ch $
+ * $Id: ArtikelView.java 6042 2010-02-01 14:22:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -36,6 +36,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
@@ -235,20 +238,34 @@ ISaveablePart2 {
 	class MasterDetailsPage extends Composite {
 		SashForm sash;
 		CommonViewer cv;
+		IDetailDisplay detailDisplay;
+		
+		ElexisEventListenerImpl eeli_div;
 		
 		MasterDetailsPage(Composite parent, CodeSelectorFactory master,
 			IDetailDisplay detail) {
 			super(parent, SWT.NONE);
+			eeli_div=new ElexisEventListenerImpl(detail.getElementClass()){
+				@Override
+				public void runInUi(ElexisEvent ev){
+					detailDisplay.display(ev.getObject());
+				}
+			};
 			setLayout(new FillLayout());
 			sash = new SashForm(this, SWT.NONE);
 			cv = new CommonViewer();
 			cv.create(master.createViewerConfigurer(cv), sash, SWT.NONE,
 				getViewSite());
-			cv.getViewerWidget().addSelectionChangedListener(
-				GlobalEventDispatcher.getInstance().getDefaultListener());
+			//cv.getViewerWidget().addSelectionChangedListener(
+			//GlobalEventDispatcher.getInstance().getDefaultListener());
 			/* Composite page= */detail.createDisplay(sash, getViewSite());
 			cv.getConfigurer().getContentProvider().startListening();
-			
+			detailDisplay = detail;
+			ElexisEventDispatcher.getInstance().addListeners(eeli_div);
+		}
+		
+		public void dispose(){
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_div);
 		}
 		
 	}
@@ -258,12 +275,14 @@ ISaveablePart2 {
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		if ((ctab != null) && (!ctab.isDisposed())) {
 			for (CTabItem ct : ctab.getItems()) {
-				((MasterDetailsPage) ct.getControl()).cv.getViewerWidget()
-				.removeSelectionChangedListener(
-					GlobalEventDispatcher.getInstance()
-					.getDefaultListener());
-				((MasterDetailsPage) ct.getControl()).cv.getConfigurer()
+				MasterDetailsPage page = (MasterDetailsPage) ct.getControl();
+				//((MasterDetailsPage) ct.getControl()).cv.getViewerWidget()
+				//.removeSelectionChangedListener(
+				//	GlobalEventDispatcher.getInstance()
+				//	.getDefaultListener());
+				page.cv.getConfigurer()
 				.getContentProvider().stopListening();
+				page.dispose();
 			}
 		}
 		
