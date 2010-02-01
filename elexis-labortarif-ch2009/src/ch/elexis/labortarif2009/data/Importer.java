@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and medelexis AG
+ * Copyright (c) 2009-2010, G. Weirich and medelexis AG
  * All rights reserved.
  * $Id: Importer.java 132 2009-06-14 17:34:31Z  $
  *******************************************************************************/
@@ -57,15 +57,15 @@ public class Importer extends ImporterPage {
 				int last = exw.getLastRow();
 				int count = last - first;
 				monitor.beginTask("Import EAL 2009", count);
-				for (int i = first+1 ; i <= last; i++) {
+				for (int i = first + 1; i <= last; i++) {
 					String[] line = exw.getRow(i).toArray(new String[0]);
 					String chapter = StringTool.getSafe(line, 0);
 					String code = StringTool.getSafe(line, 2);
-					String tp = StringTool.getSafe(line, 4);
+					String tp = StringTool.getSafe(line, 3);
 					String name = StringTool.limitLength(StringTool.getSafe(
-							line, 5), 254);
-					String lim = StringTool.getSafe(line, 6);
-					String fach = StringTool.getSafe(line, 7);
+							line, 4), 254);
+					String lim = StringTool.getSafe(line, 5);
+					String fach = StringTool.getSafe(line, 6);
 
 					String id = new Query<Labor2009Tarif>(Labor2009Tarif.class)
 							.findSingle(Labor2009Tarif.FLD_CODE, Query.EQUALS,
@@ -77,11 +77,13 @@ public class Importer extends ImporterPage {
 								Labor2009Tarif.FLD_NAME,
 								Labor2009Tarif.FLD_LIMITATIO,
 								Labor2009Tarif.FLD_FACHBEREICH,
-								Labor2009Tarif.FLD_FACHSPEC}, chapter,
-								code, tp, name, lim, fach, Integer.toString(Fachspec.getFachspec(specs, i)));
+								Labor2009Tarif.FLD_FACHSPEC }, chapter, code,
+								tp, name, lim, fach, Integer.toString(Fachspec
+										.getFachspec(specs, i)));
 
 					} else {
-						new Labor2009Tarif(chapter, code, tp, name, lim, fach, Fachspec.getFachspec(specs, i));
+						new Labor2009Tarif(chapter, code, tp, name, lim, fach,
+								Fachspec.getFachspec(specs, i));
 					}
 					monitor.worked(1);
 					if (monitor.isCanceled()) {
@@ -110,14 +112,14 @@ public class Importer extends ImporterPage {
 		String specs = PlatformHelper.getBasePath(Constants.pluginID)
 				+ File.separator + "rsc" + File.separator + "arztpraxen.xls";
 		ExcelWrapper x = new ExcelWrapper();
-		x.setFieldTypes(new Class[]{Integer.class,String.class,Integer.class,Integer.class});
+		x.setFieldTypes(new Class[] { Integer.class, String.class,
+				Integer.class, Integer.class });
 		if (x.load(specs, langdef)) {
 			int first = x.getFirstRow();
 			int last = x.getLastRow();
 			Fachspec[] fspecs = new Fachspec[last - first + 1];
-			for (int i = first ; i <= last; i++) {
-				fspecs[i] = new Fachspec(x.getRow(i).toArray(
-						new String[0]));
+			for (int i = first; i <= last; i++) {
+				fspecs[i] = new Fachspec(x.getRow(i).toArray(new String[0]));
 			}
 			return fspecs;
 		}
@@ -140,16 +142,19 @@ public class Importer extends ImporterPage {
 			this.until = until;
 			this.name = name;
 		}
-		
+
 		/**
 		 * Find the spec a given row belongs to
-		 * @param specs a list of all specs
-		 * @param row the row to match
+		 * 
+		 * @param specs
+		 *            a list of all specs
+		 * @param row
+		 *            the row to match
 		 * @return the spec number or -1 if no spec
 		 */
-		public static int getFachspec(Fachspec[] specs, int row){
-			for(Fachspec spec:specs){
-				if(spec.from<=row && spec.until>=row){
+		public static int getFachspec(Fachspec[] specs, int row) {
+			for (Fachspec spec : specs) {
+				if (spec.from <= row && spec.until >= row) {
 					return spec.code;
 				}
 			}
