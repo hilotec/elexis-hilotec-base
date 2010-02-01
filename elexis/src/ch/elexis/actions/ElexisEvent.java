@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ElexisEvent.java 5974 2010-01-28 10:55:44Z rgw_ch $
+ * $Id: ElexisEvent.java 6040 2010-02-01 12:54:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -40,7 +40,7 @@ public class ElexisEvent {
 	Class<?> objClass;
 	int type;
 	
-	public ElexisEvent(final PersistentObject o, final Class<?> c, final int type) {
+	public ElexisEvent(final PersistentObject o, final Class<?> c, final int type){
 		obj = o;
 		objClass = c;
 		this.type = type;
@@ -51,7 +51,7 @@ public class ElexisEvent {
 	 * 
 	 * @return the object that might be null (if the event concern a class)
 	 */
-	public PersistentObject getObject() {
+	public PersistentObject getObject(){
 		return obj;
 	}
 	
@@ -60,7 +60,7 @@ public class ElexisEvent {
 	 * 
 	 * @return the class (that might be null)
 	 */
-	public Class<?> getObjectClass() {
+	public Class<?> getObjectClass(){
 		if (objClass == null) {
 			if (obj != null) {
 				return obj.getClass();
@@ -74,21 +74,20 @@ public class ElexisEvent {
 	 * 
 	 * @return one ore more of the oabove EVENT_xxx flags
 	 */
-	public int getType() {
+	public int getType(){
 		return type;
 	}
 	
 	/**
-	 * Check whether this event matches a template event. this method is only
-	 * used internally by the framework and not intended to be called or
-	 * overridden by clients
+	 * Check whether this event matches a template event. this method is only used internally by the
+	 * framework and not intended to be called or overridden by clients
 	 * 
 	 * @param event
 	 *            the template
 	 * @return true on match
 	 */
 	
-	public boolean matches(final ElexisEvent event){
+	boolean matches(final ElexisEvent event){
 		if (event.getObject() != null) {
 			if (!getObject().getId().equals(event.getObject().getId())) {
 				return false;
@@ -107,10 +106,37 @@ public class ElexisEvent {
 		return true;
 	}
 	
-	public static ElexisEvent createUserEvent(){
-		return new ElexisEvent(Hub.actUser,Anwender.class,ElexisEvent.EVENT_USER_CHANGED);
+	boolean isSame(ElexisEvent other){
+		if (other == null) {
+			return false;
+		}
+		if (other.obj == null) {
+			if (this.obj == null) {
+				if (other.objClass != null) {
+					if (other.objClass.equals(this.objClass)) {
+						if (other.type == this.type) {
+							return true;
+						}
+					}
+				}
+			}
+		} else {
+			if (other.obj.equals(this.obj)) {
+				if (other.type == this.type) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
+	
+	
+	public static ElexisEvent createUserEvent(){
+		return new ElexisEvent(Hub.actUser, Anwender.class, ElexisEvent.EVENT_USER_CHANGED);
+	}
+	
 	public static ElexisEvent createPatientEvent(){
-		return new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),Patient.class,EVENT_SELECTED);
+		return new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), Patient.class,
+			EVENT_SELECTED);
 	}
 }

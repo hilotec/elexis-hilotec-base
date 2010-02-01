@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    $Id: Hub.java 6040 2010-02-01 12:54:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -70,7 +70,7 @@ import ch.rgw.tools.VersionInfo;
  */
 public class Hub extends AbstractUIPlugin {
 	// Globale Konstanten
-	public static final boolean DEBUGMODE = false;
+	public final boolean DEBUGMODE;
 	public static final String APPLICATION_NAME="Elexis"; //$NON-NLS-1$
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class Hub extends AbstractUIPlugin {
 	 * */
 	private static File userDir;
 	
-	private ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class){
+	private final ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class){
 		public void runInUi(ElexisEvent ev){
 			setWindowText((Patient)ev.getObject());
 		}
@@ -139,6 +139,11 @@ public class Hub extends AbstractUIPlugin {
 	 * iniatialized fully yet
 	 */
 	public Hub(){
+		if(System.getProperty("DEBUGMODE").equals("true")){
+			DEBUGMODE=true;
+		}else{
+			DEBUGMODE=false;
+		}
 		log = Log.get("Elexis startup"); //$NON-NLS-1$
 		getWritableUserDir();
 		localCfg = new SysSettings(SysSettings.USER_SETTINGS, Desk.class);
@@ -406,7 +411,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 5970 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 6040 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$

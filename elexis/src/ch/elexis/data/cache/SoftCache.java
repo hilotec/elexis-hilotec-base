@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: SoftCache.java 4700 2008-11-28 16:01:51Z rgw_ch $
+ * 
+ *    $Id: SoftCache.java 6040 2010-02-01 12:54:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data.cache;
@@ -120,13 +120,13 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 		if (total != 0) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("--------- cache statistics ------\n").append("Total read:\t").append(total)
-				.append("\n").append("cache hits:\t").append(hits).append(" (").append(
-					hits * 100 / total).append("%)\n").append("object expired:\t").append(expired)
+			.append("\n").append("cache hits:\t").append(hits).append(" (").append(
+				hits * 100 / total).append("%)\n").append("object expired:\t").append(expired)
 				.append(" (").append(expired * 100 / total).append("%)\n")
 				.append("cache missed:\t").append(misses).append(" (").append(misses * 100 / total)
 				.append("%)\n").append("object removed:\t").append(removed).append(" (").append(
 					removed * 100 / total).append("%)\n").append("Object inserts:\t").append(
-					inserts).append("\n");
+						inserts).append("\n");
 			log.log(sb.toString(), Log.INFOS);
 		}
 		
@@ -148,11 +148,11 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 			it.remove();
 		}
 		
-		if (Hub.DEBUGMODE) {
+		if (Hub.plugin.DEBUGMODE) {
 			long freeAfter = Runtime.getRuntime().freeMemory();
 			StringBuilder sb = new StringBuilder();
 			sb.append("Cache purge: Free memore before: ").append(freeBefore).append(
-				", free memory after: ").append(freeAfter).append("\n");
+			", free memory after: ").append(freeAfter).append("\n");
 			Hub.log.log(sb.toString(), Log.INFOS);
 		}
 	}

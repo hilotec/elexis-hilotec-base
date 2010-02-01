@@ -14,6 +14,7 @@
 package ch.elexis.actions;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,8 +25,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import ch.elexis.ElexisException;
+import ch.elexis.Hub;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.util.Log;
 
 /**
  * The Elexis event dispatcher system manages and distributes the information of changing, creating,
@@ -53,6 +56,7 @@ public class ElexisEventDispatcher extends Job {
 	private final LinkedList<ElexisEvent> eventQueue;
 	private boolean bStop = false;
 	private final Lock eventQueueLock = new ReentrantLock(true);
+	private final Log log=Log.get("EventDispatcher");
 	
 	public static ElexisEventDispatcher getInstance(){
 		if (theInstance == null) {
@@ -167,6 +171,9 @@ public class ElexisEventDispatcher extends Job {
 	 * be sent to all registered listeners. The call to the dispatcher or the listener will always
 	 * be in a separate thread and not in the UI thread.So care has to be taken if the callee has to
 	 * change the UI
+	 * Note: Only one Event is dispatched at a given time. If more events arrive, they will be pushed
+	 * into a FIFO-Queue. If more than one equivalent event is pushed into the queue, only the last
+	 * entered will be dispatched.
 	 * 
 	 * @param ee
 	 *            the event to fire.
@@ -189,6 +196,12 @@ public class ElexisEventDispatcher extends Job {
 		}
 		eventQueueLock.lock();
 		try {
+			Iterator<ElexisEvent> it=eventQueue.iterator();
+			while(it.hasNext()){
+				if(it.next().isSame(ee)){
+					it.remove();
+				}
+			}
 			eventQueue.add(ee);
 		} finally {
 			eventQueueLock.unlock();
@@ -268,6 +281,9 @@ public class ElexisEventDispatcher extends Job {
 				}
 			}
 			if (ee != null) {
+				if(Hub.plugin.DEBUGMODE){
+					log.log(ee.getObjectClass().getName(), Log.DEBUGMSG);
+				}
 				synchronized (listeners) {
 					for (ElexisEventListener l : listeners) {
 						if (ee.matches(l.getElexisEventFilter())) {
