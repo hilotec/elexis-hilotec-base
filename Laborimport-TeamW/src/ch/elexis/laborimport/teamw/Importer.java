@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.GlobalEvents;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
