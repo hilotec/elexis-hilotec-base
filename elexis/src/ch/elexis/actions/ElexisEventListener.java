@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: LazyTreeLoader.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: ElexisEventListener.java 6048 2010-02-01 20:35:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

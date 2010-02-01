@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LagerView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: LagerView.java 6048 2010-02-01 20:35:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -36,7 +36,7 @@ import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
-import ch.elexis.actions.ElexisReloadEventListenerImpl;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
@@ -55,7 +55,7 @@ public class LagerView extends ViewPart implements DoubleClickListener,
 	public static final String ID = "ch.elexis.LagerView"; //$NON-NLS-1$
 	CommonViewer cv;
 	ViewerConfigurer vc;
-	ElexisReloadEventListenerImpl eeli_article=new ElexisReloadEventListenerImpl(Artikel.class) {
+	ElexisEventListenerImpl eeli_article=new ElexisEventListenerImpl(Artikel.class,ElexisEvent.EVENT_RELOAD) {
 		public void catchElexisEvent(ElexisEvent ev) {
 			cv.notify(CommonViewer.Message.update);
 		}

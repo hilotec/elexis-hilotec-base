@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ElexisEvent.java 6040 2010-02-01 12:54:14Z rgw_ch $
+ * $Id: ElexisEvent.java 6048 2010-02-01 20:35:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -105,7 +105,13 @@ public class ElexisEvent {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Decide whether an Event is logically identically to an other (i.e. describes the same
+	 * operation on the same (type of) object)
+	 * @param other the other event to compare
+	 * @return true if both events are logically identical
+	 */
 	boolean isSame(ElexisEvent other){
 		if (other == null) {
 			return false;
@@ -130,11 +136,18 @@ public class ElexisEvent {
 		return false;
 	}
 	
-	
+	/**
+	 * Shortcut to create a "User Changed" event
+	 * @return
+	 */
 	public static ElexisEvent createUserEvent(){
 		return new ElexisEvent(Hub.actUser, Anwender.class, ElexisEvent.EVENT_USER_CHANGED);
 	}
 	
+	/**
+	 * Shortcut to create a "Patient changed" event
+	 * @return
+	 */
 	public static ElexisEvent createPatientEvent(){
 		return new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), Patient.class,
 			EVENT_SELECTED);

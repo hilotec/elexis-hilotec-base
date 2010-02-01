@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: DelayableJob.java 5868 2009-12-15 14:10:44Z rgw_ch $
+ *    $Id: DelayableJob.java 6048 2010-02-01 20:35:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -77,7 +77,7 @@ public class DelayableJob extends Job {
 	 * @param key
 	 *            a unique key
 	 * @param value
-	 *            n arbitrary object
+	 *            an arbitrary object
 	 */
 	public void setRuntimeData(String key, Object value){
 		privdata.put(key, value);
