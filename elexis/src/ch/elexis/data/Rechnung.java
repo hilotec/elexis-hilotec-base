@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Rechnung.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -57,7 +57,7 @@ public class Rechnung extends PersistentObject {
 	static {
 		addMapping(TABLENAME, BILL_NUMBER, CASE_ID, MANDATOR_ID, "RnDatum=S:D:RnDatum",
 			BILL_STATE, "StatusDatum=S:D:StatusDatum", "RnDatumVon=S:D:RnDatumVon",
-			"RnDatumBis=S:D:RnDatumBis", "Betragx100=Betrag", EXTINFO,
+			"RnDatumBis=S:D:RnDatumBis", "Betragx100=Betrag", FLD_EXTINFO,
 			"Zahlungen=LIST:RechnungsID:ZAHLUNGEN:Datum");
 	}
 	
@@ -288,9 +288,9 @@ public class Rechnung extends PersistentObject {
 		new Zahlung(this, betrag, "Storno",null);
 		if (reopen == true) {
 			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-			qbe.add(Konsultation.BILL_ID, Query.EQUALS, getId());
+			qbe.add(Konsultation.FLD_BILL_ID, Query.EQUALS, getId());
 			for (Konsultation k : qbe.execute()) {
-				k.set(Konsultation.BILL_ID, null);
+				k.set(Konsultation.FLD_BILL_ID, null);
 			}
 			/*
 			 * getConnection().exec( "UPDATE BEHANDLUNGEN SET RECHNUNGSID=NULL WHERE RECHNUNGSID=" +
@@ -573,12 +573,12 @@ public class Rechnung extends PersistentObject {
 	
 	@SuppressWarnings("unchecked")
 	public Hashtable<String, String> loadExtension(){
-		return getHashtable(EXTINFO);
+		return getHashtable(FLD_EXTINFO);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void flushExtension(final Hashtable ext){
-		setHashtable(EXTINFO, ext);
+		setHashtable(FLD_EXTINFO, ext);
 	}
 	
 	public static Rechnung load(final String id){

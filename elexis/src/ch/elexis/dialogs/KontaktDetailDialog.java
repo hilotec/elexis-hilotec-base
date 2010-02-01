@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktDetailDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ *  $Id: KontaktDetailDialog.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -102,8 +102,8 @@ public class KontaktDetailDialog extends TitleAreaDialog {
 			}else{
 				liName=SWTHelper.createLabeledField(ret, LBL_NAME, LabeledInputField.Typ.TEXT);
 				liVorname=SWTHelper.createLabeledField(ret, LBL_ZUSATZ, LabeledInputField.Typ.TEXT);
-				liName.setText(k.get(Kontakt.NAME1));
-				liVorname.setText(k.get(Kontakt.NAME2));
+				liName.setText(k.get(Kontakt.FLD_NAME1));
+				liVorname.setText(k.get(Kontakt.FLD_NAME2));
 			}
 		}
 		liStrasse=SWTHelper.createLabeledField(ret, LBL_STREET, LabeledInputField.Typ.TEXT);
@@ -117,7 +117,7 @@ public class KontaktDetailDialog extends TitleAreaDialog {
 			liStrasse.setText(an.getStrasse());
 			liPlz.setText(an.getPlz());
 			liOrt.setText(an.getOrt());
-			liTel.setText(k.get(Kontakt.PHONE1));
+			liTel.setText(k.get(Kontakt.FLD_PHONE1));
 			liFax.setText(k.get(LBL_FAX));
 			liMail.setText(k.get(LBL_MAIL));
 		}
@@ -165,7 +165,7 @@ public class KontaktDetailDialog extends TitleAreaDialog {
 		an.setPlz(liPlz.getText());
 		an.setOrt(liOrt.getText());
 		k.setAnschrift(an);
-		k.set(Kontakt.PHONE1, liTel.getText());
+		k.set(Kontakt.FLD_PHONE1, liTel.getText());
 		k.set(LBL_MAIL, liMail.getText());
 		super.okPressed();
 	}

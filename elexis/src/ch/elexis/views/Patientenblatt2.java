@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt2.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: Patientenblatt2.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -148,36 +148,36 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		
 		ArrayList<InputData> fields = new ArrayList<InputData>(20);
 		fields.add(new InputData(
-			Messages.getString("Patientenblatt2.name"), Patient.NAME, InputData.Typ.STRING, null)); //$NON-NLS-1$
+			Messages.getString("Patientenblatt2.name"), Patient.FLD_NAME, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.firstname"), Patient.FIRSTNAME, InputData.Typ.STRING, null)); //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.firstname"), Patient.FLD_FIRSTNAME, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
 				Messages.getString("Patientenblatt2.birthdate"), Patient.BIRTHDATE, InputData.Typ.DATE, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.sex"), Patient.SEX, null, new String[] { Person.FEMALE, Person.MALE}, false)); //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.sex"), Patient.FLD_SEX, null, new String[] { Person.FEMALE, Person.MALE}, false)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.phone1"), Patient.PHONE1, InputData.Typ.STRING, null)); //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.phone1"), Patient.FLD_PHONE1, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.phone2"), Patient.PHONE2, InputData.Typ.STRING, null)); //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.phone2"), Patient.FLD_PHONE2, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
 				Messages.getString("Patientenblatt2.mobile"), Patient.MOBILE, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields.add(new InputData(
-			Messages.getString("Patientenblatt2.fax"), Patient.FAX, InputData.Typ.STRING, null)); //$NON-NLS-1$
+			Messages.getString("Patientenblatt2.fax"), Patient.FLD_FAX, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.email"), Patient.E_MAIL, InputData.Typ.STRING, null)); //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.email"), Patient.FLD_E_MAIL, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.group"), Patient.GROUP, InputData.Typ.STRING, null)); //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.group"), Patient.FLD_GROUP, InputData.Typ.STRING, null)); //$NON-NLS-1$
 		fields
 			.add(new InputData(
-				Messages.getString("Patientenblatt2.balance"), Patient.BALANCE, new LabeledInputField.IContentProvider() { //$NON-NLS-1$
+				Messages.getString("Patientenblatt2.balance"), Patient.FLD_BALANCE, new LabeledInputField.IContentProvider() { //$NON-NLS-1$
 				
 					public void displayContent(PersistentObject po, InputData ltf){
 						ltf.setText(actPatient.getKontostand().getAmountAsString());
@@ -197,7 +197,7 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		for (String extfield : userfields) {
 			if (!StringTool.isNothing(extfield)) {
 				fields
-					.add(new InputData(extfield, Patient.EXTINFO, InputData.Typ.STRING, extfield));
+					.add(new InputData(extfield, Patient.FLD_EXTINFO, InputData.Typ.STRING, extfield));
 			}
 		}
 		ipp = new InputPanel(cUserfields, 2, 6, fields.toArray(new InputData[0]));
@@ -287,11 +287,11 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 					if (other.exists()) {
 						List<String> tokens = new ArrayList<String>();
 						
-						String telefon1 = other.get(Kontakt.PHONE1);
-						String telefon2 = other.get(Kontakt.PHONE2);
-						String mobile = other.get(Kontakt.MOBILEPHONE);
-						String eMail = other.get(Kontakt.E_MAIL);
-						String fax = other.get(Kontakt.FAX);
+						String telefon1 = other.get(Kontakt.FLD_PHONE1);
+						String telefon2 = other.get(Kontakt.FLD_PHONE2);
+						String mobile = other.get(Kontakt.FLD_MOBILEPHONE);
+						String eMail = other.get(Kontakt.FLD_E_MAIL);
+						String fax = other.get(Kontakt.FLD_FAX);
 						
 						if (!StringTool.isNothing(telefon1)) {
 							tokens.add("T1: " + telefon1); //$NON-NLS-1$

@@ -210,7 +210,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 							} else { // Name, Vorname
 								name = getFirstUpper(parts[0]);
 								vorname = getFirstUpper(parts[1]);
-								patQuery.add(Patient.FIRSTNAME,
+								patQuery.add(Patient.FLD_FIRSTNAME,
 										"like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 						} else if (parts.length == 1) {
@@ -218,14 +218,14 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						}
 
 						if (patId != null) {
-							patQuery.add(Patient.PATID, "=", patId.toString()); //$NON-NLS-1$
+							patQuery.add(Patient.FLD_PATID, "=", patId.toString()); //$NON-NLS-1$
 						}
 
 						if (name != null && name.length() > 0) {
-							patQuery.add(Patient.NAME, "like", name + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+							patQuery.add(Patient.FLD_NAME, "like", name + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						if (vorname != null && vorname.length() > 0) {
-							patQuery.add(Patient.FIRSTNAME,
+							patQuery.add(Patient.FLD_FIRSTNAME,
 									"like", vorname + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 

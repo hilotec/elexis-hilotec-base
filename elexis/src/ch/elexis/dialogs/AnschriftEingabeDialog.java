@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AnschriftEingabeDialog.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: AnschriftEingabeDialog.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -86,7 +86,7 @@ public class AnschriftEingabeDialog extends TitleAreaDialog {
 				an.setOrt(ort.getText());
 				an.setLand(land.getText());
 				an.write(k);
-				k.set(Kontakt.ANSCHRIFT,StringTool.leer); // clear the old postal to make createStdAnschrift save a new one
+				k.set(Kontakt.FLD_ANSCHRIFT,StringTool.leer); // clear the old postal to make createStdAnschrift save a new one
 				postanschrift.setText(k.createStdAnschrift());
 			}
 			
@@ -99,7 +99,7 @@ public class AnschriftEingabeDialog extends TitleAreaDialog {
 		gd.heightHint = 4 * size.y;
 		postanschrift.setLayoutData(gd);
 		// get Postanschrift (may be empty if it's not yet defined)
-		String pa = k.get(Kontakt.ANSCHRIFT);
+		String pa = k.get(Kontakt.FLD_ANSCHRIFT);
 		pa = pa.replaceAll("[\\r\\n]\\n",StringTool.lf); //$NON-NLS-1$
 		postanschrift.setText(pa);
 		
@@ -123,7 +123,7 @@ public class AnschriftEingabeDialog extends TitleAreaDialog {
 		an.setLand(land.getText());
 		an.write(k);
 		String pa=postanschrift.getText().replaceAll("\\r\\n", StringTool.lf); //$NON-NLS-1$
-		k.set(Kontakt.ANSCHRIFT,pa); //$NON-NLS-1$
+		k.set(Kontakt.FLD_ANSCHRIFT,pa); //$NON-NLS-1$
 		super.okPressed();
 	}
 	

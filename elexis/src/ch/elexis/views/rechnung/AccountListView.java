@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: AccountListView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: AccountListView.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -260,7 +260,7 @@ public class AccountListView extends ViewPart implements IActivationListener,
 			List<AccountListEntry> entries = new ArrayList<AccountListEntry>();
 
 			Query<Patient> query = new Query<Patient>(Patient.class);
-			query.orderBy(false, Patient.NAME, Patient.FIRSTNAME);
+			query.orderBy(false, Patient.FLD_NAME, Patient.FLD_FIRSTNAME);
 			List<Patient> patients = query.execute();
 			if (patients == null) {
 				result = new Object[0];
@@ -296,7 +296,7 @@ public class AccountListView extends ViewPart implements IActivationListener,
 			this.patient = patient;
 
 			String[] values = new String[3];
-			patient.get(new String[] { Patient.NAME, Patient.FIRSTNAME,
+			patient.get(new String[] { Patient.FLD_NAME, Patient.FLD_FIRSTNAME,
 					Patient.BIRTHDATE }, values);
 			this.name = values[0];
 			this.vorname = values[1];

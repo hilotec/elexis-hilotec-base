@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Artikeldetail.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: Artikeldetail.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.artikel;
 
@@ -45,16 +45,16 @@ public class Artikeldetail extends ViewPart implements IActivationListener,
 
 	static final public InputData[] getFieldDefs(final Shell shell) {
 		InputData[] ret = new InputData[] {
-				new InputData(Messages.Artikeldetail_typ, Artikel.TYP,
+				new InputData(Messages.Artikeldetail_typ, Artikel.FLD_TYP,
 						Typ.STRING, null),
-				new InputData(Messages.Artikeldetail_EAN, Artikel.EAN,
+				new InputData(Messages.Artikeldetail_EAN, Artikel.FLD_EAN,
 						Typ.STRING, null),
 				new InputData(Messages.Artikeldetail_Pharmacode,
-						Artikel.EXTINFO, Typ.STRING, "Pharmacode"), //$NON-NLS-2$
+						Artikel.FLD_EXTINFO, Typ.STRING, "Pharmacode"), //$NON-NLS-2$
 				new InputData(Messages.Artikeldetail_Einkaufspreis,
-						Artikel.EK_PREIS, Typ.CURRENCY, null),
+						Artikel.FLD_EK_PREIS, Typ.CURRENCY, null),
 				new InputData(Messages.Artikeldetail_Verkaufspreis,
-						Artikel.VK_PREIS, Typ.CURRENCY, null),
+						Artikel.FLD_VK_PREIS, Typ.CURRENCY, null),
 				new InputData(Messages.Artikeldetail_maxbestand,
 						Artikel.MAXBESTAND, Typ.STRING, null),
 				new InputData(Messages.Artikeldetail_minbestand,
@@ -62,13 +62,13 @@ public class Artikeldetail extends ViewPart implements IActivationListener,
 				new InputData(Messages.Artikeldetail_istbestand,
 						Artikel.ISTBESTAND, Typ.STRING, null),
 				new InputData(Messages.Artikeldetail_istbestandAnbruch,
-						Artikel.EXTINFO, Typ.INT, "Anbruch"), //$NON-NLS-2$
+						Artikel.FLD_EXTINFO, Typ.INT, "Anbruch"), //$NON-NLS-2$
 				new InputData(Messages.Artikeldetail_verpackungseinheit,
-						Artikel.EXTINFO, Typ.INT, "Verpackungseinheit"), //$NON-NLS-2$
+						Artikel.FLD_EXTINFO, Typ.INT, "Verpackungseinheit"), //$NON-NLS-2$
 				new InputData(Messages.Artikeldetail_stueckProAbgabe,
-						Artikel.EXTINFO, Typ.INT, "Verkaufseinheit"), //$NON-NLS-2$
+						Artikel.FLD_EXTINFO, Typ.INT, "Verkaufseinheit"), //$NON-NLS-2$
 				new InputData(Messages.Artikeldetail_lieferant,
-						Artikel.LIEFERANT_ID,
+						Artikel.FLD_LIEFERANT_ID,
 						new LabeledInputField.IContentProvider() {
 							public void displayContent(PersistentObject po,
 									InputData ltf) {

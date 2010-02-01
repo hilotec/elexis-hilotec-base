@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: PatientErfassenDialog.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: PatientErfassenDialog.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -68,43 +68,43 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout(2,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.Name")); //$NON-NLS-1$
 		tName=new Text(ret,SWT.BORDER);
-		tName.setText(getField(Patient.NAME));
+		tName.setText(getField(Patient.FLD_NAME));
 		tName.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.firstName")); //$NON-NLS-1$
 		tVorname=new Text(ret,SWT.BORDER);
-		tVorname.setText(getField(Patient.FIRSTNAME));
+		tVorname.setText(getField(Patient.FLD_FIRSTNAME));
 		tVorname.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.sex")); //$NON-NLS-1$
 		cbSex=new Combo(ret, SWT.SINGLE);
 		cbSex.setItems(new String[]{Messages.getString("PatientErfassenDialog.male"),Messages.getString("PatientErfassenDialog.female")}); //$NON-NLS-1$ //$NON-NLS-2$
-		if(StringTool.isNothing(getField(Patient.SEX))){
+		if(StringTool.isNothing(getField(Patient.FLD_SEX))){
 			cbSex.select(0);
 		}else{
-			cbSex.select(StringTool.isFemale(getField(Patient.FIRSTNAME)) ? 1:0);
+			cbSex.select(StringTool.isFemale(getField(Patient.FLD_FIRSTNAME)) ? 1:0);
 		}
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.birthDate")); //$NON-NLS-1$
 		tGebDat=new Text(ret,SWT.BORDER);
-		tGebDat.setText(getField(Patient.DOB));
+		tGebDat.setText(getField(Patient.FLD_DOB));
 		tGebDat.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.street")); //$NON-NLS-1$
 		tStrasse=new Text(ret,SWT.BORDER);
-		tStrasse.setText(getField(Patient.STREET));
+		tStrasse.setText(getField(Patient.FLD_STREET));
 		tStrasse.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.zip")); //$NON-NLS-1$
 		tPlz=new Text(ret,SWT.BORDER);
-		tPlz.setText(getField(Patient.ZIP));
+		tPlz.setText(getField(Patient.FLD_ZIP));
 		tPlz.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.city")); //$NON-NLS-1$
 		tOrt=new Text(ret,SWT.BORDER);
-		tOrt.setText(getField(Patient.PLACE));
+		tOrt.setText(getField(Patient.FLD_PLACE));
 		tOrt.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 
 		new Label(ret,SWT.NONE).setText(Messages.getString("PatientErfassenDialog.phone")); //$NON-NLS-1$
 		tTel=new Text(ret,SWT.BORDER);
-		tTel.setText(getField(Patient.PHONE1));
+		tTel.setText(getField(Patient.FLD_PHONE1));
 		tTel.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 		return ret;
 	}
@@ -144,7 +144,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 			if( (list!=null) && (!list.isEmpty())){
 				Kontakt k=list.get(0);
 				if(k.istPerson()){
-					k.set(Kontakt.IS_PATIENT,StringConstants.ONE);
+					k.set(Kontakt.FLD_IS_PATIENT,StringConstants.ONE);
 					if(MessageDialog.openConfirm(getShell(),Messages.getString("PatientErfassenDialog.personExists"),Messages.getString("PatientErfassenDialog.personWithThisNameExists"))==false){ //$NON-NLS-1$ //$NON-NLS-2$
 						// abort dialog
 						super.cancelPressed();
@@ -153,7 +153,7 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 				}
 			}
 			Patient pat=new Patient(ret[0],ret[1],check,ret[2]);
-			pat.set(new String[]{Kontakt.STREET,Kontakt.ZIP,Kontakt.PLACE,Kontakt.PHONE1},
+			pat.set(new String[]{Kontakt.FLD_STREET,Kontakt.FLD_ZIP,Kontakt.FLD_PLACE,Kontakt.FLD_PHONE1},
 					new String[]{ret[4],ret[5],ret[6],ret[7]});
 
 			if(check!=null){

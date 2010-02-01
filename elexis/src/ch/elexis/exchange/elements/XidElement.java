@@ -6,7 +6,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: XidElement.java 5908 2009-12-27 08:48:11Z rgw_ch $
+ *  $Id: XidElement.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -73,7 +73,7 @@ public class XidElement extends XChangeElement {
 		if (lab == null || (!lab.isValid())) {
 			domainRoot.append("unknown");
 		} else {
-			domainRoot.append(lab.get(Kontakt.NAME1));
+			domainRoot.append(lab.get(Kontakt.FLD_NAME1));
 		}
 		String domain = domainRoot.toString();
 		Xid.localRegisterXIDDomainIfNotExists(domain, li.getLabel(), Xid.ASSIGNMENT_LOCAL);

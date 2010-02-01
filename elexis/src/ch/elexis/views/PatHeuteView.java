@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PatHeuteView.java 6023 2010-01-31 21:51:08Z rgw_ch $
+ * $Id: PatHeuteView.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -500,7 +500,7 @@ ISaveablePart2, BackgroundJobListener {
 					monitor.done();
 					return Status.OK_STATUS;
 				}
-				qbe.add(Konsultation.MANDATOR_ID, Query.EQUALS, Hub.actMandant
+				qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, Hub.actMandant
 					.getId());
 			}
 			

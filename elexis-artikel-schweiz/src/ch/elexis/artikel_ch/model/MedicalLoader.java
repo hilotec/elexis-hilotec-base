@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MedicalLoader.java 5014 2009-01-23 16:31:33Z rgw_ch $
+ * $Id: MedicalLoader.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.model;
@@ -23,6 +23,6 @@ public class MedicalLoader extends FlatDataLoader {
 
 	public MedicalLoader(CommonViewer cv){
 		super(cv,new Query<Medical>(Medical.class));
-		orderField=Medical.NAME;
+		orderField=Medical.FLD_NAME;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: KontakteView.java 6002 2010-01-31 09:41:20Z rgw_ch $
+ * $Id: KontakteView.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -56,12 +56,12 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	PersistentObjectLoader loader;
 	
 	private final String[] fields = {
-		Kontakt.SHORT_LABEL + Query.EQUALS + Messages.getString("KontakteView.shortLabel"), //$NON-NLS-1$
-		Kontakt.NAME1 + Query.EQUALS + Messages.getString("KontakteView.text1"), //$NON-NLS-1$
-		Kontakt.NAME2 + Query.EQUALS + Messages.getString("KontakteView.text2"), //$NON-NLS-1$
-		Kontakt.STREET + Query.EQUALS + Messages.getString("KontakteView.street"), //$NON-NLS-1$
-		Kontakt.ZIP + Query.EQUALS + Messages.getString("KontakteView.zip"), //$NON-NLS-1$
-		Kontakt.PLACE + Query.EQUALS + Messages.getString("KontakteView.place")}; //$NON-NLS-1$
+		Kontakt.FLD_SHORT_LABEL + Query.EQUALS + Messages.getString("KontakteView.shortLabel"), //$NON-NLS-1$
+		Kontakt.FLD_NAME1 + Query.EQUALS + Messages.getString("KontakteView.text1"), //$NON-NLS-1$
+		Kontakt.FLD_NAME2 + Query.EQUALS + Messages.getString("KontakteView.text2"), //$NON-NLS-1$
+		Kontakt.FLD_STREET + Query.EQUALS + Messages.getString("KontakteView.street"), //$NON-NLS-1$
+		Kontakt.FLD_ZIP + Query.EQUALS + Messages.getString("KontakteView.zip"), //$NON-NLS-1$
+		Kontakt.FLD_PLACE + Query.EQUALS + Messages.getString("KontakteView.place")}; //$NON-NLS-1$
 	private ViewMenus menu;
 	
 	public KontakteView(){}
@@ -197,8 +197,8 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 					} else {
 						Organisation org = Organisation.load(k.getId());
 						dup =
-							new Organisation(org.get(Organisation.NAME1), org
-								.get(Organisation.NAME2));
+							new Organisation(org.get(Organisation.FLD_NAME1), org
+								.get(Organisation.FLD_NAME2));
 					}
 					dup.setAnschrift(k.getAnschrift());
 					cv.getConfigurer().getControlFieldProvider().fireChangedEvent();
@@ -228,8 +228,8 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		public String getText(Object element){
 			String[] fields =
 				new String[] {
-				Kontakt.NAME1, Kontakt.NAME2, Kontakt.NAME3, Kontakt.STREET, Kontakt.ZIP,
-				Kontakt.PLACE, Kontakt.PHONE1
+				Kontakt.FLD_NAME1, Kontakt.FLD_NAME2, Kontakt.FLD_NAME3, Kontakt.FLD_STREET, Kontakt.FLD_ZIP,
+				Kontakt.FLD_PLACE, Kontakt.FLD_PHONE1
 			};
 			String[] values=new String[fields.length];
 			((Kontakt)element).get(fields, values);

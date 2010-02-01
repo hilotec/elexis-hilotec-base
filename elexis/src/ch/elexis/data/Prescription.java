@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: Prescription.java 5818 2009-11-11 14:21:44Z rgw_ch $
+ * $Id: Prescription.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -42,7 +42,7 @@ public class Prescription extends PersistentObject {
 	private static final String TABLENAME = "PATIENT_ARTIKEL_JOINT";
 	static{
 		addMapping(TABLENAME,PATIENT_ID,ARTICLE,ARTICLE_ID,REZEPT_ID,"DatumVon=S:D:DateFrom",
-			"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,EXTINFO);
+			"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,FLD_EXTINFO);
 	}
 	
 	public Prescription(Artikel a, Patient p, String d, String b){
@@ -163,7 +163,7 @@ public class Prescription extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addTerm(TimeTool begin, String dose){
-		Hashtable<String, Object> extInfo=getHashtable(EXTINFO);
+		Hashtable<String, Object> extInfo=getHashtable(FLD_EXTINFO);
 		String raw=(String)extInfo.get(TERMS);
 		if(raw==null){
 			raw="";
@@ -176,7 +176,7 @@ public class Prescription extends PersistentObject {
 		.append("::").append(lastDose);
 		raw+=line.toString();
 		extInfo.put(TERMS, raw);
-		setHashtable(EXTINFO,extInfo);
+		setHashtable(FLD_EXTINFO,extInfo);
 		set(DATE_FROM,begin.toString(TimeTool.DATE_GER));
 		set(DOSAGE,dose);
 		if(dose.equals("0")){
@@ -191,7 +191,7 @@ public class Prescription extends PersistentObject {
 	 */
 	public SortedMap<TimeTool, String> getTerms(){
 		TreeMap<TimeTool, String> ret=new TreeMap<TimeTool,String>();
-		Hashtable extInfo=getHashtable(EXTINFO);
+		Hashtable extInfo=getHashtable(FLD_EXTINFO);
 		String raw=(String)extInfo.get(TERMS);
 		if(raw!=null){
 			String[] terms=raw.split(StringTool.flattenSeparator);

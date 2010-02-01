@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Labor.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: Labor.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -23,7 +23,7 @@ public class Labor extends Organisation {
 
 	@Override
 	protected String getConstraint() {
-		return new StringBuilder(Kontakt.IS_LAB)
+		return new StringBuilder(Kontakt.FLD_IS_LAB)
 		.append(Query.EQUALS)
 		.append(JdbcLink.wrap(StringConstants.ONE))
 		.toString();
@@ -31,7 +31,7 @@ public class Labor extends Organisation {
 
 	@Override
 	protected void setConstraint() {
-		set(new String[] { Kontakt.IS_LAB,Kontakt.IS_ORGANIZATION }, StringConstants.ONE, StringConstants.ONE);
+		set(new String[] { Kontakt.FLD_IS_LAB,Kontakt.FLD_IS_ORGANIZATION }, StringConstants.ONE, StringConstants.ONE);
 	}
 
 	public Labor(String Kuerzel, String Name) {

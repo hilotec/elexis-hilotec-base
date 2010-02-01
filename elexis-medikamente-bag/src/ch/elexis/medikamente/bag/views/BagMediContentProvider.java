@@ -67,7 +67,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 			}
 			if (values.isEmpty()) {
 				qbe.orderBy(false, new String[] {
-					BAGMedi.NAME
+					BAGMedi.FLD_NAME
 				});
 				medis = qbe.execute().toArray(new BAGMedi[0]);
 			} else {
@@ -75,7 +75,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 				String notes = values.get(BAGMediSelector.FIELD_NOTES);
 				String names = values.get(BAGMediSelector.FIELD_NAME);
 				if (StringTool.isNothing(subst) && StringTool.isNothing(notes)) {
-					qbe.add(BAGMedi.NAME, "Like", names + "%",true);
+					qbe.add(BAGMedi.FLD_NAME, "Like", names + "%",true);
 					if (bOnlyGenerics) {
 						qbe.add("Generikum", "LIKE", "G%");
 					}
@@ -83,7 +83,7 @@ public class BagMediContentProvider extends FlatDataLoader {
 						qbe.add(Artikel.MAXBESTAND, ">", "0");
 					}
 					qbe.orderBy(false, new String[] {
-						BAGMedi.NAME
+						BAGMedi.FLD_NAME
 					});
 					medis = qbe.execute().toArray(new BAGMedi[0]);
 				} else {

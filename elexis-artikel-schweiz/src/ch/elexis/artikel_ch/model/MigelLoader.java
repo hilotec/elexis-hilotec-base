@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MigelLoader.java 5014 2009-01-23 16:31:33Z rgw_ch $
+ * $Id: MigelLoader.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.model;
@@ -21,6 +21,6 @@ import ch.elexis.util.viewers.CommonViewer;
 public class MigelLoader extends FlatDataLoader {
 	public MigelLoader(CommonViewer cv){
 		super(cv,new Query<MiGelArtikel>(MiGelArtikel.class));
-		orderField=MiGelArtikel.NAME;
+		orderField=MiGelArtikel.FLD_NAME;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Eigenartikel.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id: Eigenartikel.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,12 +21,12 @@ public class Eigenartikel extends Artikel {
 
 	@Override
 	protected String getConstraint() {
-		return new StringBuilder(Artikel.TYP).append(Query.EQUALS).append(
+		return new StringBuilder(Artikel.FLD_TYP).append(Query.EQUALS).append(
 				JdbcLink.wrap(TYPNAME)).toString();
 	}
 
 	protected void setConstraint() {
-		set(Artikel.TYP, TYPNAME);
+		set(Artikel.FLD_TYP, TYPNAME);
 	}
 
 	@Override
@@ -36,16 +36,16 @@ public class Eigenartikel extends Artikel {
 
 	@Override
 	public String getLabel() {
-		return get(Artikel.NAME);
+		return get(Artikel.FLD_NAME);
 	}
 
 	@Override
 	public String getCode() {
-		return get(Artikel.SUB_ID);
+		return get(Artikel.FLD_SUB_ID);
 	}
 
 	public String getGroup() {
-		return checkNull(get(Artikel.CODECLASS));
+		return checkNull(get(Artikel.FLD_CODECLASS));
 	}
 
 	public static Eigenartikel load(String id) {

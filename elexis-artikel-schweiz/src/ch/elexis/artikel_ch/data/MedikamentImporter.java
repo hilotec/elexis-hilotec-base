@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    G. Weirich 1/08 - major redesign to implement IGM updates etc. 
- *    
- *  $Id: MedikamentImporter.java 5932 2010-01-14 22:30:04Z rgw_ch $
+ *    G. Weirich 1/08 - major redesign to implement IGM updates etc.
+ * 
+ *  $Id: MedikamentImporter.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -77,7 +77,8 @@ public class MedikamentImporter extends ImporterPage {
 		 * PersistentObject.getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Medikament'");
 		 * mode=" (Modus: Alles neu erstellen)"; } }
 		 */
-		monitor.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
+		monitor
+		.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
 		Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
 		int counter = 0;
 		String titel, ek, vk, kasse, mwst;
@@ -158,14 +159,14 @@ public class MedikamentImporter extends ImporterPage {
 					a.set(fields, ek, vk, ean);
 				}
 				
-				Hashtable ext = a.getHashtable(Artikel.EXT_INFO);
-				ext.put(Artikel.PHARMACODE, pk);
+				Hashtable ext = a.getHashtable(Artikel.FLD_EXTINFO);
+				ext.put(Artikel.FLD_PHARMACODE, pk);
 				ext.put(KASSENTYP, kasse);
 				ext.put(LAGERART, lager);
 				ext.put(HERSTELLER, hix);
 				ext.put(EAN, ean);
 				ext.put(MWST_TYP, mwst);
-				a.setHashtable(Artikel.EXT_INFO, ext);
+				a.setHashtable(Artikel.FLD_EXTINFO, ext);
 			} else if (reca.equals("10")) { // Update-Satz //$NON-NLS-1$
 				ek = new String(in.substring(10, 16));
 				vk = new String(in.substring(16, 22));

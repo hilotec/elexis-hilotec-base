@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnungslauf.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ *  $Id: Rechnungslauf.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -78,8 +78,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		InterruptedException{
 		String kMandantID = Hub.actMandant.getId();
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add(Konsultation.BILL_ID, StringConstants.EMPTY, null);
-		qbe.add(Konsultation.MANDATOR_ID, Query.EQUALS, kMandantID);
+		qbe.add(Konsultation.FLD_BILL_ID, StringConstants.EMPTY, null);
+		qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, kMandantID);
 		monitor.beginTask(Messages.getString("Rechnungslauf.analyzingConsultations"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		monitor.subTask(Messages.getString("Rechnungslauf.readingConsultations")); //$NON-NLS-1$
 		List<Konsultation> list = qbe.execute();
@@ -113,8 +113,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					Iterator<Konsultation> i2 = list.iterator();
 					while (i2.hasNext()) {
 						Konsultation k2 = i2.next();
-						String fid = k2.get(Konsultation.CASE_ID);
-						String mid = k2.get(Konsultation.MANDATOR_ID);
+						String fid = k2.get(Konsultation.FLD_CASE_ID);
+						String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 							i2.remove();
@@ -129,8 +129,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					Iterator<Konsultation> i2 = list.iterator();
 					while (i2.hasNext()) {
 						Konsultation k2 = i2.next();
-						String fid = k2.get(Konsultation.CASE_ID);
-						String mid = k2.get(Konsultation.MANDATOR_ID);
+						String fid = k2.get(Konsultation.FLD_CASE_ID);
+						String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							hKons.put(k2, kPatient);
 							i2.remove();
@@ -145,8 +145,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					Iterator<Konsultation> i2 = list.iterator();
 					while (i2.hasNext()) {
 						Konsultation k2 = i2.next();
-						String fid = k2.get(Konsultation.CASE_ID);
-						String mid = k2.get(Konsultation.MANDATOR_ID);
+						String fid = k2.get(Konsultation.FLD_CASE_ID);
+						String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
 						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 							cmp.set(k2.getDatum());
 							if (cmp.isAfter(ttLastBefore)) {
@@ -165,8 +165,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				Money sum = new Money();
 				Map<Konsultation, Patient> list2 = new HashMap<Konsultation, Patient>(100);
 				for (Konsultation k2 : list) {
-					String fid = k2.get(Konsultation.CASE_ID);
-					String mid = k2.get(Konsultation.MANDATOR_ID);
+					String fid = k2.get(Konsultation.FLD_CASE_ID);
+					String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
 					if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
 						list2.put(k2, kPatient);
 						List<Verrechnet> lstg = k2.getLeistungen();

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MedikamentLoader.java 5133 2009-02-14 10:36:03Z rgw_ch $
+ * $Id: MedikamentLoader.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.model;
@@ -22,6 +22,6 @@ public class MedikamentLoader extends FlatDataLoader {
 	
 	public MedikamentLoader(CommonViewer cv){
 		super(cv,new Query<Medikament>(Medikament.class));
-		orderField=Medikament.NAME;
+		orderField=Medikament.FLD_NAME;
 	}
 }

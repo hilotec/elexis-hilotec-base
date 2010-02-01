@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EditAUFDialog.java 6039 2010-02-01 11:04:53Z rgw_ch $
+ *  $Id: EditAUFDialog.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -118,12 +118,12 @@ public class EditAUFDialog extends TitleAreaDialog {
 		if (auf == null) {
 			auf = new AUF(fall, von, bis, tProzent.getText(), tGrund.getText());
 			if (!StringTool.isNothing(zus)) {
-				auf.set(AUF.ZUSATZ, zus);
+				auf.set(AUF.FLD_ZUSATZ, zus);
 			}
 		} else {
 			fall = auf.getFall();
-			String[] parms = new String[] { AUF.CASE_ID, AUF.DATE_FROM,
-				AUF.DATE_UNTIL, AUF.REASON, AUF.PERCENT, AUF.ZUSATZ };
+			String[] parms = new String[] { AUF.FLD_CASE_ID, AUF.FLD_DATE_FROM,
+				AUF.FLD_DATE_UNTIL, AUF.FLD_REASON, AUF.FLD_PERCENT, AUF.FLD_ZUSATZ };
 			String[] vals = new String[] { fall.getId(), von, bis,
 				tGrund.getText(), tProzent.getText(), zus };
 			auf.set(parms, vals);

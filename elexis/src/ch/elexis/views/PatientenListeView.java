@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: PatientenListeView.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -126,16 +126,16 @@ public class PatientenListeView extends ViewPart implements
 		cv = new CommonViewer();
 		ArrayList<String> fields = new ArrayList<String>();
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, false)) {
-			fields.add(Patient.PATID + Query.EQUALS
+			fields.add(Patient.FLD_PATID + Query.EQUALS
 					+ Messages.getString("PatientenListeView.PatientNr")); //$NON-NLS-1$
 		}
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWNAME, true)) {
-			fields.add(Patient.NAME + Query.EQUALS
+			fields.add(Patient.FLD_NAME + Query.EQUALS
 					+ Messages.getString("PatientenListeView.PatientName")); //$NON-NLS-1$
 		}
 		if (Hub.userCfg
 				.get(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME, true)) {
-			fields.add(Patient.FIRSTNAME
+			fields.add(Patient.FLD_FIRSTNAME
 					+ Query.EQUALS
 					+ Messages
 							.getString("PatientenListeView.PantientFirstName")); //$NON-NLS-1$
@@ -297,25 +297,25 @@ public class PatientenListeView extends ViewPart implements
 				if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR,
 						false)) {
 					if (i < fx.length) {
-						ctlFields.put(Patient.PATID, fx[i++]);
+						ctlFields.put(Patient.FLD_PATID, fx[i++]);
 					}
 				}
 				if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWNAME,
 						true)) {
 					if (i < fx.length) {
-						ctlFields.put(Patient.NAME, fx[i++]);
+						ctlFields.put(Patient.FLD_NAME, fx[i++]);
 					}
 				}
 				if (Hub.userCfg.get(
 						PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME, true)) {
 					if (i < fx.length) {
-						ctlFields.put(Patient.FIRSTNAME, fx[i++]);
+						ctlFields.put(Patient.FLD_FIRSTNAME, fx[i++]);
 					}
 				}
 				if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWDOB,
 						true)) {
 					if (i < fx.length) {
-						ctlFields.put(Patient.DOB, fx[i++]);
+						ctlFields.put(Patient.FLD_DOB, fx[i++]);
 					}
 				}
 				PatientErfassenDialog ped = new PatientErfassenDialog(

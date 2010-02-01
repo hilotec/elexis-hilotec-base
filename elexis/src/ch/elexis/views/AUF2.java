@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUF2.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: AUF2.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -228,8 +228,8 @@ public class AUF2 extends ViewPart implements IActivationListener {
 				return new Object[0];
 			}
 			Query<AUF> qbe = new Query<AUF>(AUF.class);
-			qbe.add(AUF.PATIENT_ID, Query.EQUALS, pat.getId());
-			qbe.orderBy(true, AUF.DATE_FROM, AUF.DATE_UNTIL);
+			qbe.add(AUF.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
+			qbe.orderBy(true, AUF.FLD_DATE_FROM, AUF.FLD_DATE_UNTIL);
 			List<AUF> list = qbe.execute();
 			return list.toArray();
 		}

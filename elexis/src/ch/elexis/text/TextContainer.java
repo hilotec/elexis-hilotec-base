@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - better support for IDataAccess
  * 
- *  $Id: TextContainer.java 6043 2010-02-01 14:34:06Z rgw_ch $
+ *  $Id: TextContainer.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -273,8 +273,8 @@ public class TextContainer {
 		String ret = o.get(q[1]);
 		if ((ret == null) || (ret.startsWith("**"))) { //$NON-NLS-1$
 			
-			if (!(o.map(PersistentObject.EXTINFO).startsWith("**"))) { //$NON-NLS-1$
-				Hashtable ext = o.getHashtable(PersistentObject.EXTINFO);
+			if (!(o.map(PersistentObject.FLD_EXTINFO).startsWith("**"))) { //$NON-NLS-1$
+				Hashtable ext = o.getHashtable(PersistentObject.FLD_EXTINFO);
 				String an = (String) ext.get(q[1]);
 				if (an != null) {
 					return an;

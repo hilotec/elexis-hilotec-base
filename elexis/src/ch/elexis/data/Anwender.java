@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Anwender.java 6043 2010-02-01 14:34:06Z rgw_ch $
+ *  $Id: Anwender.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -54,7 +54,7 @@ public class Anwender extends Person {
 	public static final String LABEL = "Label";
 	
 	static {
-		addMapping(Kontakt.TABLENAME, Kontakt.EXT_INFO, Kontakt.IS_USER, "Label=Bezeichnung3",
+		addMapping(Kontakt.TABLENAME, FLD_EXTINFO, Kontakt.FLD_IS_USER, "Label=Bezeichnung3",
 		"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
 	}
 	
@@ -171,12 +171,12 @@ public class Anwender extends Person {
 	
 	@Override
 	protected String getConstraint(){
-		return Kontakt.IS_USER + StringTool.equals + JdbcLink.wrap(StringConstants.ONE);
+		return Kontakt.FLD_IS_USER + StringTool.equals + JdbcLink.wrap(StringConstants.ONE);
 	}
 	
 	@Override
 	protected void setConstraint(){
-		set(Kontakt.IS_USER, StringConstants.ONE);
+		set(Kontakt.FLD_IS_USER, StringConstants.ONE);
 	}
 	
 	protected Anwender(){/* leer */
@@ -197,7 +197,7 @@ public class Anwender extends Person {
 		Anwender admin = new Anwender();
 		admin.create(null);
 		admin.set(new String[] {
-			Person.NAME, LABEL, Kontakt.IS_USER
+			Person.NAME, LABEL, Kontakt.FLD_IS_USER
 		}, ADMINISTRATOR, ADMINISTRATOR, StringConstants.ONE);
 		Hub.actUser = admin;
 		Hub.acl.grant(admin, new ACE(ACE.ACE_IMPLICIT, "WriteInfoStore"), new ACE(ACE.ACE_IMPLICIT,
@@ -236,7 +236,7 @@ public class Anwender extends Person {
 			return false;
 		}
 		Anwender a = list.get(0);
-		Hashtable km = a.getHashtable(Kontakt.EXT_INFO);
+		Hashtable km = a.getHashtable(FLD_EXTINFO);
 		if (km == null) {
 			log.log("Fehler in der Datenstruktur ExtInfo von " + a.getLabel(), Log.ERRORS);
 			MessageDialog.openError(null, "Interner Fehler", "Die Datenstruktur ExtInfo von "

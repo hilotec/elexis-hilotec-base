@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Person.java 5712 2009-09-10 06:46:05Z rgw_ch $
+ *  $Id: Person.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -39,7 +39,7 @@ public class Person extends Kontakt {
 		addMapping(Kontakt.TABLENAME, "Name			=	Bezeichnung1", //$NON-NLS-1$
 			"Vorname		=   Bezeichnung2", "Zusatz 		=	Bezeichnung3", //$NON-NLS-1$ //$NON-NLS-2$
 			"Geburtsdatum	=	S:D:Geburtsdatum", SEX, "Natel=NatelNr", //$NON-NLS-1$ //$NON-NLS-2$
-			Kontakt.IS_PERSON, TITLE);
+			Kontakt.FLD_IS_PERSON, TITLE);
 	}
 	
 	public String getName() {
@@ -201,13 +201,13 @@ public class Person extends Kontakt {
 	
 	@Override
 	protected String getConstraint() {
-		return new StringBuilder(Kontakt.IS_PERSON).append(StringTool.equals)
+		return new StringBuilder(Kontakt.FLD_IS_PERSON).append(StringTool.equals)
 		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 	
 	@Override
 	protected void setConstraint() {
-		set(Kontakt.IS_PERSON, StringConstants.ONE);
+		set(Kontakt.FLD_IS_PERSON, StringConstants.ONE);
 	}
 	
 	/**

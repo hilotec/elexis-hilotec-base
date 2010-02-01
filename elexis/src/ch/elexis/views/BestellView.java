@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 5873 2009-12-17 22:51:30Z rgw_ch $
+ * $Id: BestellView.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -471,7 +471,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 
 					StringBuffer export = new StringBuffer();
 					for (Item item : best) {
-						String pharmaCode = item.art.get(Artikel.PHARMACODE);
+						String pharmaCode = item.art.get(Artikel.FLD_PHARMACODE);
 						int num = item.num;
 						String name = item.art.getName();
 						String line = pharmaCode + ", " + num + ", " + name; //$NON-NLS-1$ //$NON-NLS-2$

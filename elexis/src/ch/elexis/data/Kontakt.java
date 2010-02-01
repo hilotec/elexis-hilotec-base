@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Kontakt.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *    $Id: Kontakt.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 
@@ -39,30 +39,29 @@ import ch.rgw.tools.StringTool;
  *
  */
 public class Kontakt extends PersistentObject{
-	public static final String KUERZEL = "Kuerzel";
-	public static final String E_MAIL = "E-Mail";
-	public static final String WEBSITE = "Website";
-	public static final String MOBILEPHONE = "NatelNr";
-	public static final String FAX = "Fax";
-	public static final String IS_LAB = "istLabor"; //$NON-NLS-1$
-	public static final String IS_MANDATOR = "istMandant"; //$NON-NLS-1$
-	public static final String IS_USER = "istAnwender"; //$NON-NLS-1$
-	public static final String SHORT_LABEL = "Kuerzel"; //$NON-NLS-1$
-	public static final String IS_ORGANIZATION = "istOrganisation"; //$NON-NLS-1$
-	public static final String IS_PATIENT = "istPatient"; //$NON-NLS-1$
-	public static final String IS_PERSON = "istPerson"; //$NON-NLS-1$
-	public static final String EXT_INFO = "ExtInfo"; //$NON-NLS-1$
-	public static final String ANSCHRIFT = "Anschrift"; //$NON-NLS-1$
-	public static final String COUNTRY = "Land"; //$NON-NLS-1$
-	public static final String PLACE = "Ort"; //$NON-NLS-1$
-	public static final String ZIP = "Plz"; //$NON-NLS-1$
-	public static final String STREET = "Strasse"; //$NON-NLS-1$
-	public static final String PHONE2 = "Telefon2"; //$NON-NLS-1$
-	public static final String PHONE1 = "Telefon1"; //$NON-NLS-1$
-	public static final String REMARK = "Bemerkung"; //$NON-NLS-1$
-	public static final String NAME3 = "Bezeichnung3"; //$NON-NLS-1$
-	public static final String NAME2 = "Bezeichnung2"; //$NON-NLS-1$
-	public static final String NAME1 = "Bezeichnung1"; //$NON-NLS-1$
+	//public static final String FLD_KUERZEL = "Kuerzel";
+	public static final String FLD_E_MAIL = "E-Mail";
+	public static final String FLD_WEBSITE = "Website";
+	public static final String FLD_MOBILEPHONE = "NatelNr";
+	public static final String FLD_FAX = "Fax";
+	public static final String FLD_IS_LAB = "istLabor"; //$NON-NLS-1$
+	public static final String FLD_IS_MANDATOR = "istMandant"; //$NON-NLS-1$
+	public static final String FLD_IS_USER = "istAnwender"; //$NON-NLS-1$
+	public static final String FLD_SHORT_LABEL = "Kuerzel"; //$NON-NLS-1$
+	public static final String FLD_IS_ORGANIZATION = "istOrganisation"; //$NON-NLS-1$
+	public static final String FLD_IS_PATIENT = "istPatient"; //$NON-NLS-1$
+	public static final String FLD_IS_PERSON = "istPerson"; //$NON-NLS-1$
+	public static final String FLD_ANSCHRIFT = "Anschrift"; //$NON-NLS-1$
+	public static final String FLD_COUNTRY = "Land"; //$NON-NLS-1$
+	public static final String FLD_PLACE = "Ort"; //$NON-NLS-1$
+	public static final String FLD_ZIP = "Plz"; //$NON-NLS-1$
+	public static final String FLD_STREET = "Strasse"; //$NON-NLS-1$
+	public static final String FLD_PHONE2 = "Telefon2"; //$NON-NLS-1$
+	public static final String FLD_PHONE1 = "Telefon1"; //$NON-NLS-1$
+	public static final String FLD_REMARK = "Bemerkung"; //$NON-NLS-1$
+	public static final String FLD_NAME3 = "Bezeichnung3"; //$NON-NLS-1$
+	public static final String FLD_NAME2 = "Bezeichnung2"; //$NON-NLS-1$
+	public static final String FLD_NAME1 = "Bezeichnung1"; //$NON-NLS-1$
 	protected static final String TABLENAME = "KONTAKT"; //$NON-NLS-1$
 	volatile String Bezug;
 	protected String getTableName() {
@@ -70,18 +69,18 @@ public class Kontakt extends PersistentObject{
 	}
 	static{
 		addMapping(TABLENAME,
-				"BezugsKontakte = JOINT:myID:otherID:KONTAKT_ADRESS_JOINT", //$NON-NLS-1$
-				"MyReminders		= LIST:IdentID:REMINDERS",	 //$NON-NLS-1$
-				NAME1,
-				NAME2,
-				NAME3,
-				"Kuerzel		= PatientNr",	 //$NON-NLS-1$
-				REMARK,PHONE1,PHONE2,"E-Mail=EMail",WEBSITE,EXT_INFO, //$NON-NLS-1$
-				IS_ORGANIZATION,IS_PERSON,IS_PATIENT,IS_USER,IS_MANDATOR,
-				IS_LAB,STREET,ZIP,PLACE,COUNTRY,FAX,ANSCHRIFT,MOBILEPHONE
+			"BezugsKontakte = JOINT:myID:otherID:KONTAKT_ADRESS_JOINT", //$NON-NLS-1$
+			"MyReminders		= LIST:IdentID:REMINDERS",	 //$NON-NLS-1$
+			FLD_NAME1,
+			FLD_NAME2,
+			FLD_NAME3,
+			"Kuerzel		= PatientNr",	 //$NON-NLS-1$
+			FLD_REMARK,FLD_PHONE1,FLD_PHONE2,"E-Mail=EMail",FLD_WEBSITE,FLD_EXTINFO, //$NON-NLS-1$
+			FLD_IS_ORGANIZATION,FLD_IS_PERSON,FLD_IS_PATIENT,FLD_IS_USER,FLD_IS_MANDATOR,
+			FLD_IS_LAB,FLD_STREET,FLD_ZIP,FLD_PLACE,FLD_COUNTRY,FLD_FAX,FLD_ANSCHRIFT,FLD_MOBILEPHONE
 		);
 	}
-
+	
 	/**
 	 * Returns a label describing this Kontakt.
 	 * 
@@ -94,7 +93,7 @@ public class Kontakt extends PersistentObject{
 		// return the long label
 		return getLabel(false);
 	}
-
+	
 	/**
 	 * Returns a label describing this Kontakt.
 	 * 
@@ -112,16 +111,16 @@ public class Kontakt extends PersistentObject{
 	 */
 	public String getLabel(boolean shortLabel) {
 		StringBuilder bld=new StringBuilder();
-
+		
 		if (shortLabel) {
-			bld.append(get(NAME1));
-			String bez3=get(NAME3);
+			bld.append(get(FLD_NAME1));
+			String bez3=get(FLD_NAME3);
 			if(!StringTool.isNothing(bez3)){
 				bld.append("(").append(bez3).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			String[] ret=new String[6];
-			get(new String[]{NAME1,NAME2,NAME3,STREET,ZIP,PLACE},ret);
+			get(new String[]{FLD_NAME1,FLD_NAME2,FLD_NAME3,FLD_STREET,FLD_ZIP,FLD_PLACE},ret);
 			bld.append(ret[0]).append(StringTool.space).append(checkNull(ret[1]));
 			if(!StringTool.isNothing(ret[2])){
 				bld.append("(").append(ret[2]).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -130,17 +129,17 @@ public class Kontakt extends PersistentObject{
 			.append(checkNull(ret[4]))
 			.append(StringTool.space).append(checkNull(ret[5]));
 		}
-
+		
 		return bld.toString();
 	}
-
+	
 	public boolean isValid(){
 		if(!super.isValid()){
 			return false;
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Ein Array mit allen zu diesem Kontakt definierten Bezugskontakten holen
 	 * @return Ein Adress-Array, das auch die Länge null haben kann
@@ -150,7 +149,7 @@ public class Kontakt extends PersistentObject{
 		qbe.add("myID", StringTool.equals, getId()); //$NON-NLS-1$
 		return qbe.execute();
 	}
-
+	
 	/** Die Anschrift dieses Kontakts holen */
 	public Anschrift getAnschrift(){
 		return new Anschrift(this);
@@ -158,28 +157,28 @@ public class Kontakt extends PersistentObject{
 	/** Die Anschrift dieses Kontakts setzen */
 	public void setAnschrift(Anschrift adr){
 		if(adr!=null){
-			set(new String[]{STREET,ZIP,PLACE,COUNTRY},
-					adr.getStrasse(),adr.getPlz(),adr.getOrt(),
-					adr.getLand());
+			set(new String[]{FLD_STREET,FLD_ZIP,FLD_PLACE,FLD_COUNTRY},
+				adr.getStrasse(),adr.getPlz(),adr.getOrt(),
+				adr.getLand());
 		}
 	}
-
+	
 	public String getPostAnschrift(boolean multiline){
-		String an=get(ANSCHRIFT);
+		String an=get(FLD_ANSCHRIFT);
 		if(StringTool.isNothing(an)){
 			an=createStdAnschrift();
 		}
 		an=an.replaceAll("[\\r\\n]\\n",StringTool.lf); //$NON-NLS-1$
 		return multiline==true ? an : an.replaceAll("\\n",StringTool.space); //$NON-NLS-1$
 	}
-
+	
 	public String createStdAnschrift(){
 		Anschrift an=getAnschrift();
 		String ret=StringTool.leer;
 		StringBuilder sb=new StringBuilder();
 		if(istPerson()==true){
 			Person p=Person.load(getId());
-
+			
 			// TODO default salutation should be configurable
 			String salutation;
 			if(p.getGeschlecht().equals(Person.MALE)){
@@ -189,7 +188,7 @@ public class Kontakt extends PersistentObject{
 			}
 			sb.append(salutation);
 			sb.append(StringTool.lf);
-
+			
 			String titel=p.get("Titel"); //$NON-NLS-1$
 			if(!StringTool.isNothing(titel)){
 				sb.append(titel).append(StringTool.space);
@@ -201,7 +200,7 @@ public class Kontakt extends PersistentObject{
 		} else{
 			Organisation o = Organisation.load(getId());
 			String[] rx=new String[2];
-			o.get(new String[]{NAME1,NAME2},rx);
+			o.get(new String[]{FLD_NAME1,FLD_NAME2},rx);
 			sb.append(rx[0]).append(StringTool.space).append(checkNull(rx[1])).append(StringTool.lf);
 			sb.append(an.getEtikette(false, true));
 			ret = sb.toString();
@@ -209,9 +208,9 @@ public class Kontakt extends PersistentObject{
 			ret= an.getEtikette(true, true);
 		}*/
 		// create the postal if it does not exist yet
-		String old=get(ANSCHRIFT);
+		String old=get(FLD_ANSCHRIFT);
 		if(StringTool.isNothing(old)){
-			set(ANSCHRIFT,ret);
+			set(FLD_ANSCHRIFT,ret);
 		}
 		return ret;
 	}
@@ -227,7 +226,7 @@ public class Kontakt extends PersistentObject{
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Zusatzadresse aus der Liste entfernen
 	 * @param adr die Adresse
@@ -237,11 +236,11 @@ public class Kontakt extends PersistentObject{
 			getConnection().exec("DELETE FROM KONTAKT_ADRESS_JOINT WHERE otherID="+adr.getWrappedId()); //$NON-NLS-1$
 		}
 	}
-
+	
 	protected Kontakt(String id){
 		super(id);
 	}
-
+	
 	/** Kontakt mit gegebener Id aus der Datanbank einlesen */
 	public static Kontakt load(String id){
 		return new Kontakt(id);
@@ -249,11 +248,11 @@ public class Kontakt extends PersistentObject{
 	protected Kontakt(){
 		// System.out.println("Kontakt");
 	}
-
+	
 	public String getMailAddress(){
 		return checkNull(get("E-Mail")); //$NON-NLS-1$
 	}
-
+	
 	/** Die Reminders zu diesem Kontakt holen */
 	public Reminder[] getRelatedReminders(){
 		List<String> l=getList("MyReminders",false); //$NON-NLS-1$
@@ -264,7 +263,7 @@ public class Kontakt extends PersistentObject{
 		}
 		return ret;
 	}
-
+	
 	@Override
 	public boolean delete() {
 		for(Reminder r:getRelatedReminders()){
@@ -275,7 +274,7 @@ public class Kontakt extends PersistentObject{
 		}
 		return super.delete();
 	}
-
+	
 	/** Ein Element aus dem Infostore auslesen
 	 *	Der Rückgabewert ist ein Object oder Null.
 	 *  Wenn die Rechte des aktuellen Anwenders zum Lesen
@@ -285,7 +284,7 @@ public class Kontakt extends PersistentObject{
 	 *  better check permissions on inout fields. gw
 	 */
 	public Object getInfoElement(String elem){
-
+		
 		//if(Hub.acl.request("Read"+elem)==true){
 		return getInfoStore().get(elem);
 		//}else{
@@ -293,7 +292,7 @@ public class Kontakt extends PersistentObject{
 		//	return null;
 		//}
 	}
-
+	
 	/**
 	 * Convenience-Methode und einen String aus dem Infostore auszulesen.
 	 * @param elem Name des Elements
@@ -303,7 +302,7 @@ public class Kontakt extends PersistentObject{
 	public String getInfoString(String elem){
 		return checkNull((String)getInfoElement(elem));
 	}
-
+	
 	/**
 	 * Ein Element in den Infostore schreiben. Wenn ein Element mit demselben
 	 * Namen schon existiert, wird es überschrieben.
@@ -316,10 +315,10 @@ public class Kontakt extends PersistentObject{
 	@SuppressWarnings("unchecked")
 	public void setInfoElement(String elem, Object val){
 		//if(Hub.acl.request("Write"+elem)==true){
-		Hashtable extinfos=getHashtable(EXT_INFO);
+		Hashtable extinfos=getHashtable(FLD_EXTINFO);
 		if(extinfos!=null){
 			extinfos.put(elem,val);
-			setHashtable(EXT_INFO,extinfos);
+			setHashtable(FLD_EXTINFO,extinfos);
 		}
 		/*}else{
     		log.log("Unzureichende Rechte zum Schreiben von "+elem,Log.WARNINGS);
@@ -336,7 +335,7 @@ public class Kontakt extends PersistentObject{
 	 */
 	@SuppressWarnings("unchecked")
 	public Hashtable getInfoStore(){
-		return getHashtable(EXT_INFO);
+		return getHashtable(FLD_EXTINFO);
 		/*
     	if(Hub.acl.request("LoadInfoStore")==true){
     		return getHashtable("ExtInfo");
@@ -354,7 +353,7 @@ public class Kontakt extends PersistentObject{
 	 */
 	@SuppressWarnings("unchecked")
 	public void flushInfoStore(Hashtable store){
-		setHashtable(EXT_INFO,store);
+		setHashtable(FLD_EXTINFO,store);
 		/*
     	if(Hub.acl.request("WriteInfoStore")==true){
     		setHashtable("ExtInfo",store);
@@ -363,8 +362,8 @@ public class Kontakt extends PersistentObject{
     	}
 		 */
 	}
-
-
+	
+	
 	/**
 	 * Einen Kontakt finden, der einen bestimmten Eintrag im Infostore enthält.
 	 * Falls mehrere passende Kontakte vorhanden sind, wird nur der erste
@@ -387,7 +386,7 @@ public class Kontakt extends PersistentObject{
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Statistik für einen bestimmten Objekttyp holen
 	 * @param typ Der Typ (getClass().getName()) des Objekts.
@@ -396,7 +395,7 @@ public class Kontakt extends PersistentObject{
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getStatForItem(String typ){
-		Hashtable exi=getHashtable(EXT_INFO);
+		Hashtable exi=getHashtable(FLD_EXTINFO);
 		ArrayList<statL> al=(ArrayList<statL>)exi.get(typ);
 		ArrayList<String> ret=new ArrayList<String>(al==null ? 1 : al.size());
 		if(al!=null){
@@ -416,7 +415,7 @@ public class Kontakt extends PersistentObject{
 	 */
 	@SuppressWarnings("unchecked")
 	public void statForItem(PersistentObject lst) {
-		Hashtable exi=getHashtable(EXT_INFO);
+		Hashtable exi=getHashtable(FLD_EXTINFO);
 		String typ=lst.getClass().getName();
 		String ident=lst.storeToString();
 		// Die Rangliste für diesen Objekttyp auslesen bzw. neu anlegen.
@@ -442,7 +441,7 @@ public class Kontakt extends PersistentObject{
 		}
 		Collections.sort(l);		// Liste sortieren
 		exi.put(typ,l);
-		setHashtable(EXT_INFO,exi);
+		setHashtable(FLD_EXTINFO,exi);
 	}
 	public static class statL implements Comparable<statL>, Serializable{
 		private static final long serialVersionUID = 10455663346456L;
@@ -457,32 +456,32 @@ public class Kontakt extends PersistentObject{
 			return ot.c-c;
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public void statForString(String typ,String toStat){
-		Hashtable exi=getHashtable(EXT_INFO);
+		Hashtable exi=getHashtable(FLD_EXTINFO);
 		MFUList<String> l=(MFUList<String>)exi.get(typ);
 		if(l==null){
 			l=new MFUList<String>(5,15);
 		}
 		l.count(toStat);
 		exi.put(typ, l);
-		setHashtable(EXT_INFO, exi);
+		setHashtable(FLD_EXTINFO, exi);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public List<String> getStatForString(String typ){
-		Hashtable exi=getHashtable(EXT_INFO);
+		Hashtable exi=getHashtable(FLD_EXTINFO);
 		MFUList<String> al=(MFUList<String>)exi.get(typ);
 		if(al==null){
 			al=new MFUList<String>(5,15);
 		}
 		return al.getAll();
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public MFUList<String> getMFU(String typ){
-		Hashtable exi=getHashtable(EXT_INFO);
+		Hashtable exi=getHashtable(FLD_EXTINFO);
 		MFUList<String> l=(MFUList<String>)exi.get(typ);
 		if(l==null){
 			l=new MFUList<String>(5,15);
@@ -491,26 +490,26 @@ public class Kontakt extends PersistentObject{
 	}
 	@SuppressWarnings("unchecked")
 	public void setMFU(String typ, MFUList<String> mfu){
-		Hashtable exi=getHashtable(EXT_INFO);
+		Hashtable exi=getHashtable(FLD_EXTINFO);
 		exi.put(typ, mfu);
-		setHashtable(EXT_INFO, exi);
+		setHashtable(FLD_EXTINFO, exi);
 	}
 	public String getKuerzel(){
-		return get(SHORT_LABEL);
+		return get(FLD_SHORT_LABEL);
 	}
 	public String getBemerkung(){
-		return get(REMARK);
+		return get(FLD_REMARK);
 	}
 	public void setBemerkung(String b){
-		set(REMARK,b);
+		set(FLD_REMARK,b);
 	}
 	public boolean istPerson(){
-		return checkNull(get(IS_PERSON)).equals(StringConstants.ONE);
+		return checkNull(get(FLD_IS_PERSON)).equals(StringConstants.ONE);
 	}
 	public boolean istPatient(){
-		return checkNull(get(IS_PATIENT)).equals(StringConstants.ONE);
+		return checkNull(get(FLD_IS_PATIENT)).equals(StringConstants.ONE);
 	}
 	public boolean istOrganisation() {
-		return checkNull(get(IS_ORGANIZATION)).equals(StringConstants.ONE);
+		return checkNull(get(FLD_IS_ORGANIZATION)).equals(StringConstants.ONE);
 	}
 }

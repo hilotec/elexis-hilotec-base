@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Rechnungssteller.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *    $Id: Rechnungssteller.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -38,7 +38,7 @@ public class Rechnungssteller extends Kontakt {
 	 */
 	@Override
 	public String getLabel() {
-		if(get(IS_USER).equals(StringConstants.ONE)){
+		if(get(FLD_IS_USER).equals(StringConstants.ONE)){
 			String l= get("Label");
 			if(!StringTool.isNothing(l)){
 				return l;

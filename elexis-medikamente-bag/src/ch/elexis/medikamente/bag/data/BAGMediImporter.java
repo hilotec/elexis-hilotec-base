@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: BAGMediImporter.java 6024 2010-01-31 21:51:25Z rgw_ch $
+ *  $Id: BAGMediImporter.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
@@ -111,7 +111,7 @@ public class BAGMediImporter extends ImporterPage {
 		BAGMedi imp=null;
 		// Kein Pharmacode, dann nach Name suchen
 		if(StringTool.isNothing(row[2].trim())){
-			String mid=qbe.findSingle(Artikel.NAME, "=", row[7]);
+			String mid=qbe.findSingle(Artikel.FLD_NAME, "=", row[7]);
 			if(mid!=null){
 				imp=BAGMedi.load(mid);
 			}
@@ -127,7 +127,7 @@ public class BAGMediImporter extends ImporterPage {
 			}
 			
 			qbe.clear();
-			qbe.add(Artikel.SUB_ID, "=", pharmacode);
+			qbe.add(Artikel.FLD_SUB_ID, "=", pharmacode);
 			List<Artikel> lArt=qbe.executeWithDeleted();
 			if(lArt==null){
 				throw new ElexisException(BAGMediImporter.class, "Article list was null while scanning for "+pharmacode, ElexisException.EE_UNEXPECTED_RESPONSE,true);

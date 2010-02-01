@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: EigenartikelSelektor.java 5331 2009-05-30 13:01:05Z rgw_ch $
+ *  $Id: EigenartikelSelektor.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -41,7 +41,7 @@ public class EigenartikelSelektor extends CodeSelectorFactory {
 			dataloader =
 				new ListLoader<Eigenartikel>(EIGENARTIKEL_NAME, new Query<Eigenartikel>(
 					Eigenartikel.class), new String[] {
-					Eigenartikel.NAME
+					Eigenartikel.FLD_NAME
 				});
 			JobPool.getJobPool().addJob(dataloader);
 		}
@@ -55,7 +55,7 @@ public class EigenartikelSelektor extends CodeSelectorFactory {
 			.createTemplate(Eigenartikel.class), cv);
 		return new ViewerConfigurer(new LazyContentProvider(cv, dataloader, null),
 			new DefaultLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
-				Eigenartikel.NAME
+				Eigenartikel.FLD_NAME
 			}), new ViewerConfigurer.DefaultButtonProvider(cv, Eigenartikel.class),
 			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: KontaktMatcher.java 5908 2009-12-27 08:48:11Z rgw_ch $
+ * $Id: KontaktMatcher.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -74,7 +74,7 @@ public class KontaktMatcher {
 		hints[HINT_ZIP]=plz;
 		hints[HINT_PLACE]=ort;
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
-		qbe.add(Organisation.NAME1, Query.EQUALS, name);
+		qbe.add(Organisation.FLD_NAME1, Query.EQUALS, name);
 		if(!StringTool.isNothing(zusatz)){
 			qbe.add("Zusatz1", Query.EQUALS, zusatz); //$NON-NLS-1$
 		}
@@ -245,7 +245,7 @@ public class KontaktMatcher {
 
 			// If we have the same street address, that's also a good hint
 			if(!StringTool.isNothing(strasse)){
-				if(isSameStreet(kk[i].get(Kontakt.STREET),strasse)){
+				if(isSameStreet(kk[i].get(Kontakt.FLD_STREET),strasse)){
 					score[i]+=3;
 				}else{
 					score[i]-=2;
@@ -254,14 +254,14 @@ public class KontaktMatcher {
 
 			// If we have the same zip or the same olace, that's a quite weak hint.
 			if(!StringTool.isNothing(plz)){
-				if(plz.equals(kk[i].get(Kontakt.ZIP))){
+				if(plz.equals(kk[i].get(Kontakt.FLD_ZIP))){
 					score[i]+=2;
 				}else{
 					score[i]-=1;
 				}
 			}
 			if(!StringTool.isNothing(ort)){
-				if(ort.equals(kk[i].get(Kontakt.PLACE))){
+				if(ort.equals(kk[i].get(Kontakt.FLD_PLACE))){
 					score[i]+=1;
 				}else{
 					score[i]-=1;

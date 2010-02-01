@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Organisation.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: Organisation.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -31,7 +31,7 @@ public class Organisation extends Kontakt {
 				"Name	=Bezeichnung1", //$NON-NLS-1$
 				"Zusatz1=Bezeichnung2", //$NON-NLS-1$
 				"Zusatz2=ExtInfo", //$NON-NLS-1$
-				"Ansprechperson=Bezeichnung3",Kontakt.IS_ORGANIZATION, //$NON-NLS-1$
+				"Ansprechperson=Bezeichnung3",Kontakt.FLD_IS_ORGANIZATION, //$NON-NLS-1$
 				"Zusatz3=TITEL", //$NON-NLS-1$
 				"Tel. direkt=NatelNr" //$NON-NLS-1$
 		);
@@ -60,13 +60,13 @@ public class Organisation extends Kontakt {
 	}
 	@Override
 	protected String getConstraint() {
-		return new StringBuilder(Kontakt.IS_ORGANIZATION)
+		return new StringBuilder(Kontakt.FLD_IS_ORGANIZATION)
 		.append(StringTool.equals)
 		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 	@Override
 	protected void setConstraint() {
-		set(Kontakt.IS_ORGANIZATION,StringConstants.ONE);
+		set(Kontakt.FLD_IS_ORGANIZATION,StringConstants.ONE);
 	}
 
 }

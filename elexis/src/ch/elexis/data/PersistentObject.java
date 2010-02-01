@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    $Id: PersistentObject.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -108,7 +108,7 @@ import ch.rgw.tools.net.NetTool;
  * @author gerry
  */
 public abstract class PersistentObject implements ISelectable{
-	public static final String EXTINFO = "ExtInfo";
+	public static final String FLD_EXTINFO = "ExtInfo";
 	public static final String FLD_DELETED = "deleted";
 	public static final String FLD_LASTUPDATE = "lastupdate";
 	protected static final String DATE_FIELD = "Datum=S:D:Datum";
@@ -970,9 +970,9 @@ public abstract class PersistentObject implements ISelectable{
 			}
 		} else if (mapped.startsWith("**")) { // If the field could not be
 			// mapped
-			String exi = map(EXTINFO); // Try to find it in ExtInfo
+			String exi = map(FLD_EXTINFO); // Try to find it in ExtInfo
 			if (!exi.startsWith("**")) {
-				Hashtable ht = getHashtable(EXTINFO);
+				Hashtable ht = getHashtable(FLD_EXTINFO);
 				Object res = ht.get(field);
 				if (res instanceof String) {
 					return (String) res;

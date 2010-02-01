@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Mandant.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *    $Id: Mandant.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -29,11 +29,11 @@ public class Mandant extends Anwender {
 	public static final String BILLER = "Rechnungssteller";
 
 	static {
-		addMapping(Kontakt.TABLENAME, EXTINFO, IS_MANDATOR, "Label=Bezeichnung3");
+		addMapping(Kontakt.TABLENAME, FLD_EXTINFO, FLD_IS_MANDATOR, "Label=Bezeichnung3");
 	}
 
 	public boolean isValid(){
-		if (get(IS_MANDATOR).equals(StringConstants.ONE)) {
+		if (get(FLD_IS_MANDATOR).equals(StringConstants.ONE)) {
 			return super.isValid();
 		}
 		return false;
@@ -62,7 +62,7 @@ public class Mandant extends Anwender {
 
 	public static Mandant load(String id){
 		Mandant ret = new Mandant(id);
-		String ism = ret.get(IS_MANDATOR);
+		String ism = ret.get(FLD_IS_MANDATOR);
 		if (ism != null && ism.equals(StringConstants.ONE)) {
 			return ret;
 		}
@@ -74,7 +74,7 @@ public class Mandant extends Anwender {
 	}
 
 	protected String getConstraint(){
-		return new StringBuilder(IS_MANDATOR)
+		return new StringBuilder(FLD_IS_MANDATOR)
 		.append(Query.EQUALS)
 		.append(JdbcLink.wrap(StringConstants.ONE))
 		.toString();
@@ -83,7 +83,7 @@ public class Mandant extends Anwender {
 
 	@Override
 	protected void setConstraint(){
-		set(new String[]{IS_MANDATOR,IS_USER},new String[]{StringConstants.ONE,StringConstants.ONE});
+		set(new String[]{FLD_IS_MANDATOR,FLD_IS_USER},new String[]{StringConstants.ONE,StringConstants.ONE});
 	}
 
 

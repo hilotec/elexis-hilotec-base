@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ErsterMandantDialog.java 5572 2009-07-27 06:27:03Z freakypenguin $
+ *  $Id: ErsterMandantDialog.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -120,7 +120,7 @@ public class ErsterMandantDialog extends TitleAreaDialog {
 			g=Person.FEMALE;
 		}
 		m.set(new String[]{Person.NAME,Person.FIRSTNAME,Person.TITLE,Person.SEX,
-				Person.E_MAIL,Person.PHONE1,Person.FAX,Kontakt.STREET,Kontakt.ZIP,Kontakt.PLACE}, 
+				Person.FLD_E_MAIL,Person.FLD_PHONE1,Person.FLD_FAX,Kontakt.FLD_STREET,Kontakt.FLD_ZIP,Kontakt.FLD_PLACE}, 
 				tLastname.getText(),tFirstname.getText(), tTitle.getText(),g,
 				email,tPhone.getText(),tFax.getText(),tStreet.getText(),tZip.getText(),
 				tStreet.getText());

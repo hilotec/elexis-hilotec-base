@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: KontaktBlatt.java 6002 2010-01-31 09:41:20Z rgw_ch $
+ * $Id: KontaktBlatt.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -75,58 +75,60 @@ public class KontaktBlatt extends Composite implements ElexisEventListener, IAct
 	
 	static final InputData[] def =
 		new InputData[] {
-		new InputData(Messages.getString("KontaktBlatt.Bez1"), Kontakt.NAME1, Typ.STRING, null), //$NON-NLS-1$
-		new InputData(Messages.getString("KontaktBlatt.Bez2"), Kontakt.NAME2, Typ.STRING, null), //$NON-NLS-1$
-		new InputData(Messages.getString("KontaktBlatt.Bez3"), Kontakt.NAME3, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Bez1"), Kontakt.FLD_NAME1, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Bez2"), Kontakt.FLD_NAME2, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Bez3"), Kontakt.FLD_NAME3, Typ.STRING, null), //$NON-NLS-1$
 		new InputData(Messages.getString("KontaktBlatt.Sex"), Person.SEX, Typ.STRING, null), //$NON-NLS-1$
 		new InputData(Messages.getString("KontaktBlatt.Street"), "Strasse", Typ.STRING, null), //$NON-NLS-1$
-		new InputData(Messages.getString("KontaktBlatt.Zip"), Kontakt.ZIP, Typ.STRING, null), //$NON-NLS-1$
-		new InputData(Messages.getString("KontaktBlatt.Place"), Kontakt.PLACE, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Zip"), Kontakt.FLD_ZIP, Typ.STRING, null), //$NON-NLS-1$
+		new InputData(Messages.getString("KontaktBlatt.Place"), Kontakt.FLD_PLACE, Typ.STRING, null), //$NON-NLS-1$
 		new InputData(
-			Messages.getString("KontaktBlatt.Country"), Kontakt.COUNTRY, Typ.STRING, null), //$NON-NLS-1$
+			Messages.getString("KontaktBlatt.Country"), Kontakt.FLD_COUNTRY, Typ.STRING, null), //$NON-NLS-1$
 			new InputData(
-				Messages.getString("KontaktBlatt.Phone1"), Kontakt.PHONE1, Typ.STRING, null), //$NON-NLS-1$
+				Messages.getString("KontaktBlatt.Phone1"), Kontakt.FLD_PHONE1, Typ.STRING, null), //$NON-NLS-1$
 				new InputData(
-					Messages.getString("KontaktBlatt.Phone2"), Kontakt.PHONE2, Typ.STRING, null), //$NON-NLS-1$
+					Messages.getString("KontaktBlatt.Phone2"), Kontakt.FLD_PHONE2, Typ.STRING, null), //$NON-NLS-1$
 					new InputData(
-						Messages.getString("KontaktBlatt.Mobile"), Kontakt.MOBILEPHONE, Typ.STRING, null), //$NON-NLS-1$
-						new InputData(Messages.getString("KontaktBlatt.Fax"), Kontakt.FAX, Typ.STRING, null), //$NON-NLS-1$
-						new InputData(Messages.getString("KontaktBlatt.Mail"), Kontakt.E_MAIL, Typ.STRING, null), //$NON-NLS-1$
-						new InputData(Messages.getString("KontaktBlatt.www"), Kontakt.WEBSITE, Typ.STRING, null), //$NON-NLS-1$
+						Messages.getString("KontaktBlatt.Mobile"), Kontakt.FLD_MOBILEPHONE, Typ.STRING, null), //$NON-NLS-1$
+						new InputData(Messages.getString("KontaktBlatt.Fax"), Kontakt.FLD_FAX, Typ.STRING, null), //$NON-NLS-1$
 						new InputData(
-							Messages.getString("KontaktBlatt.shortLabel"), Kontakt.KUERZEL, Typ.STRING, null), //$NON-NLS-1$
+							Messages.getString("KontaktBlatt.Mail"), Kontakt.FLD_E_MAIL, Typ.STRING, null), //$NON-NLS-1$
 							new InputData(
-								Messages.getString("KontaktBlatt.remark"), Kontakt.REMARK, Typ.STRING, null), //$NON-NLS-1$
-								new InputData(Messages.getString("KontaktBlatt.title"), Person.TITLE, Typ.STRING, null), //$NON-NLS-1$
+								Messages.getString("KontaktBlatt.www"), Kontakt.FLD_WEBSITE, Typ.STRING, null), //$NON-NLS-1$
 								new InputData(
-									Messages.getString("KontaktBlatt.extid"), "UUID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$ //$NON-NLS-2$
-										
-										public void displayContent(PersistentObject po, InputData ltf){
-											StringBuilder sb = new StringBuilder();
-											Xid xid = po.getXid();
-											String dom = Xid.getSimpleNameForXIDDomain(xid.getDomain());
-											sb.append(dom).append(": ").append(xid.getDomainId()); //$NON-NLS-1$
-											ltf.setText(sb.toString());
-										}
-										
-										public void reloadContent(PersistentObject po, InputData ltf){
-											ArrayList<String> extFlds = new ArrayList<String>();
-											Kontakt k = (Kontakt) po;
-											for (String dom : Xid.getXIDDomains()) {
-												XIDDomain xd = Xid.getDomain(dom);
-												if ((k.istPerson() && xd.isDisplayedFor(Person.class))
-														|| (k.istOrganisation() && xd.isDisplayedFor(Organisation.class))) {
-													extFlds.add(Xid.getSimpleNameForXIDDomain(dom) + "=" + dom); //$NON-NLS-1$
+									Messages.getString("KontaktBlatt.shortLabel"), Kontakt.FLD_SHORT_LABEL, Typ.STRING, null), //$NON-NLS-1$
+									new InputData(
+										Messages.getString("KontaktBlatt.remark"), Kontakt.FLD_REMARK, Typ.STRING, null), //$NON-NLS-1$
+										new InputData(Messages.getString("KontaktBlatt.title"), Person.TITLE, Typ.STRING, null), //$NON-NLS-1$
+										new InputData(
+											Messages.getString("KontaktBlatt.extid"), "UUID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$ //$NON-NLS-2$
+												
+												public void displayContent(PersistentObject po, InputData ltf){
+													StringBuilder sb = new StringBuilder();
+													Xid xid = po.getXid();
+													String dom = Xid.getSimpleNameForXIDDomain(xid.getDomain());
+													sb.append(dom).append(": ").append(xid.getDomainId()); //$NON-NLS-1$
+													ltf.setText(sb.toString());
 												}
-											}
-											KontaktExtDialog dlg =
-												new KontaktExtDialog(Desk.getTopShell(), (Kontakt) po, extFlds
-													.toArray(new String[0]));
-											dlg.open();
-											
-										}
-										
-									}),
+												
+												public void reloadContent(PersistentObject po, InputData ltf){
+													ArrayList<String> extFlds = new ArrayList<String>();
+													Kontakt k = (Kontakt) po;
+													for (String dom : Xid.getXIDDomains()) {
+														XIDDomain xd = Xid.getDomain(dom);
+														if ((k.istPerson() && xd.isDisplayedFor(Person.class))
+																|| (k.istOrganisation() && xd.isDisplayedFor(Organisation.class))) {
+															extFlds.add(Xid.getSimpleNameForXIDDomain(dom) + "=" + dom); //$NON-NLS-1$
+														}
+													}
+													KontaktExtDialog dlg =
+														new KontaktExtDialog(Desk.getTopShell(), (Kontakt) po, extFlds
+															.toArray(new String[0]));
+													dlg.open();
+													
+												}
+												
+											}),
 	};
 	private Kontakt actKontakt;
 	private final Label lbAnschrift;

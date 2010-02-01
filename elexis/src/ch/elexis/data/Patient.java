@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Patient.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: Patient.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -49,20 +49,20 @@ import ch.rgw.tools.TimeTool.TimeFormatException;
 public class Patient extends Person {
 	public static final String FLD_ALLERGIES = "Allergien";
 	public static final String FLD_RISKS = "Risiken";
-	public static final String GROUP = "Gruppe";
-	public static final String DIAGNOSEN = "Diagnosen";
+	public static final String FLD_GROUP = "Gruppe";
+	public static final String FLD_DIAGNOSES = "Diagnosen";
 	private final JdbcLink j = getConnection();
-	public static final String PATID = "PatientNr";
-	public final static String NAME = "Name";
-	public static final String FIRSTNAME = "Vorname";
-	public static final String SEX = "Geschlecht";
-	public static final String DOB = "Geburtsdatum";
-	public static final String STREET = "Strasse";
-	public static final String ZIP = "Plz";
-	public static final String PLACE = "Ort";
-	public static final String PHONE1 = "Telefon1";
-	public static final String FAX = "Fax";
-	public static final String BALANCE = "Konto";
+	public static final String FLD_PATID = "PatientNr";
+	public final static String FLD_NAME = "Name";
+	public static final String FLD_FIRSTNAME = "Vorname";
+	public static final String FLD_SEX = "Geschlecht";
+	public static final String FLD_DOB = "Geburtsdatum";
+	public static final String FLD_STREET = "Strasse";
+	public static final String FLD_ZIP = "Plz";
+	public static final String FLD_PLACE = "Ort";
+	public static final String FLD_PHONE1 = "Telefon1";
+	public static final String FLD_FAX = "Fax";
+	public static final String FLD_BALANCE = "Konto";
 
 	static {
 		addMapping(
@@ -76,12 +76,12 @@ public class Patient extends Person {
 				"Faelle				=LIST:PatientID:FAELLE:DatumVon",
 				"Garanten			=JOINT:GarantID:PatientID:PATIENT_GARANT_JOINT:ch.elexis.data.Kontakt",
 				"Dauermedikation	=JOINT:ArtikelID:PatientID:PATIENT_ARTIKEL_JOINT:ch.elexis.data.Artikel",
-				BALANCE + "			=LIST:PatientID:KONTO", GROUP, "PatientNr",
+				FLD_BALANCE + "			=LIST:PatientID:KONTO", FLD_GROUP, "PatientNr",
 				"istPatient");
 	}
 
 	public String getDiagnosen() {
-		return get(DIAGNOSEN);
+		return get(FLD_DIAGNOSES);
 	}
 
 	public String getPersAnamnese() {
@@ -209,7 +209,7 @@ public class Patient extends Person {
 			return null;
 		}
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add(Konsultation.MANDATOR_ID, Query.EQUALS, Hub.actMandant.getId());
+		qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, Hub.actMandant.getId());
 		// qbe.add("Datum", "=", new
 		// TimeTool().toString(TimeTool.DATE_COMPACT));
 
@@ -221,7 +221,7 @@ public class Patient extends Person {
 		boolean termInserted = false;
 		for (Fall fall : faelle) {
 			if (fall.isOpen()) {
-				qbe.add(Konsultation.CASE_ID, Query.EQUALS, fall.getId());
+				qbe.add(Konsultation.FLD_CASE_ID, Query.EQUALS, fall.getId());
 				qbe.or();
 				termInserted = true;
 			}
@@ -270,7 +270,7 @@ public class Patient extends Person {
 	 *         Installation eindeutig ist.
 	 */
 	public String getPatCode() {
-		String rc = get(PATID);
+		String rc = get(FLD_PATID);
 		if (!StringTool.isNothing(rc)) {
 			return rc;
 		}
@@ -316,7 +316,7 @@ public class Patient extends Person {
 				}
 				rc = code.toString();
 				Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
-				qbe.add(PATID, "LIKE", rc + "%");
+				qbe.add(FLD_PATID, "LIKE", rc + "%");
 				List<Kontakt> list = qbe.execute();
 				if (!list.isEmpty()) {
 					int l = list.size() + 1;
@@ -325,7 +325,7 @@ public class Patient extends Person {
 				}
 			}
 		}
-		set(PATID, rc);
+		set(FLD_PATID, rc);
 		return rc;
 	}
 
@@ -444,13 +444,13 @@ public class Patient extends Person {
 
 	@Override
 	protected String getConstraint() {
-		return new StringBuilder(Kontakt.IS_PATIENT).append(Query.EQUALS)
+		return new StringBuilder(Kontakt.FLD_IS_PATIENT).append(Query.EQUALS)
 				.append(JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 
 	@Override
 	protected void setConstraint() {
-		set(new String[] { Kontakt.IS_PATIENT, Kontakt.IS_PERSON },
+		set(new String[] { Kontakt.FLD_IS_PATIENT, Kontakt.FLD_IS_PERSON },
 				StringConstants.ONE, StringConstants.ONE);
 	}
 

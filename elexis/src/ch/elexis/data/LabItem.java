@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: LabItem.java 5688 2009-08-28 06:26:36Z rgw_ch $
+ *  $Id: LabItem.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -73,7 +73,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem>{
 		}
 		if(labor==null){
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-			String labid=qbe.findSingle(Kontakt.IS_LAB,Query.EQUALS,StringConstants.ONE);
+			String labid=qbe.findSingle(Kontakt.FLD_IS_LAB,Query.EQUALS,StringConstants.ONE);
 			if(labid==null){
 				labor=new Labor("Eigen","Eigenlabor");
 			}else{

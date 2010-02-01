@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EigenartikelDisplay.java 6041 2010-02-01 13:53:45Z rgw_ch $
+ *  $Id: EigenartikelDisplay.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -39,14 +39,14 @@ public class EigenartikelDisplay implements IDetailDisplay {
 	
 	static final public InputData[] getFieldDefs(final Shell shell) {
 		InputData[] ret = new InputData[] {
-			new InputData(Messages.EigenartikelDisplay_typ, Artikel.TYP,
+			new InputData(Messages.EigenartikelDisplay_typ, Artikel.FLD_TYP,
 				Typ.STRING, null),
 				new InputData(Messages.EigenartikelDisplay_group,
-					Artikel.CODECLASS, Typ.STRING, null),
+					Artikel.FLD_CODECLASS, Typ.STRING, null),
 					new InputData(Messages.EigenartikelDisplay_buyPrice,
-						Artikel.EK_PREIS, Typ.CURRENCY, null),
+						Artikel.FLD_EK_PREIS, Typ.CURRENCY, null),
 						new InputData(Messages.EigenartikelDisplay_sellPrice,
-							Artikel.VK_PREIS, Typ.CURRENCY, null),
+							Artikel.FLD_VK_PREIS, Typ.CURRENCY, null),
 							new InputData(Messages.EigenartikelDisplay_maxOnStock,
 								Artikel.MAXBESTAND, Typ.STRING, null),
 								new InputData(Messages.EigenartikelDisplay_minOnStock,
@@ -54,13 +54,13 @@ public class EigenartikelDisplay implements IDetailDisplay {
 									new InputData(Messages.EigenartikelDisplay_actualOnStockPacks,
 										Artikel.ISTBESTAND, Typ.STRING, null),
 										new InputData(Messages.EigenartikelDisplay_actualOnStockPieces,
-											Artikel.EXTINFO, Typ.INT, Artikel.ANBRUCH),
+											Artikel.FLD_EXTINFO, Typ.INT, Artikel.ANBRUCH),
 											new InputData(Messages.EigenartikelDisplay_PiecesPerPack,
-												Artikel.EXTINFO, Typ.INT, Artikel.VERPACKUNGSEINHEIT),
+												Artikel.FLD_EXTINFO, Typ.INT, Artikel.VERPACKUNGSEINHEIT),
 												new InputData(Messages.EigenartikelDisplay_PiecesPerDose,
-													Artikel.EXTINFO, Typ.INT, Artikel.VERKAUFSEINHEIT),
+													Artikel.FLD_EXTINFO, Typ.INT, Artikel.VERKAUFSEINHEIT),
 													new InputData(Messages.EigenartikelDisplay_dealer,
-														Artikel.LIEFERANT_ID,
+														Artikel.FLD_LIEFERANT_ID,
 														new LabeledInputField.IContentProvider() {
 														public void displayContent(PersistentObject po,
 															InputData ltf) {

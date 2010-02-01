@@ -9,7 +9,7 @@
  *    M. Imhof - initial implementation
  *    G. Weirich - added toHashmap
  *    
- * $Id: KontaktEntry.java 4628 2008-10-23 07:57:50Z michael_imhof $
+ * $Id: KontaktEntry.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -55,25 +55,25 @@ public class KontaktEntry {
 	public HashMap<String,String> toHashmap(){
 		HashMap<String, String> ret=new HashMap<String, String>();
 		if(countValue(name)>0){
-			ret.put(Patient.NAME, name);
+			ret.put(Patient.FLD_NAME, name);
 		}
 		if(countValue(vorname)>0){
-			ret.put(Patient.FIRSTNAME, vorname);
+			ret.put(Patient.FLD_FIRSTNAME, vorname);
 		}
 		if(countValue(adresse)>0){
-			ret.put(Patient.STREET, adresse);
+			ret.put(Patient.FLD_STREET, adresse);
 		}
 		if(countValue(plz)>0){
-			ret.put(Patient.ZIP, plz);
+			ret.put(Patient.FLD_ZIP, plz);
 		}
 		if(countValue(ort)>0){
-			ret.put(Patient.PLACE, ort);
+			ret.put(Patient.FLD_PLACE, ort);
 		}
 		if(countValue(tel)>0){
-			ret.put(Patient.PHONE1, tel);
+			ret.put(Patient.FLD_PHONE1, tel);
 		}
 		if(countValue(fax)>0){
-			ret.put(Patient.FAX, fax);
+			ret.put(Patient.FLD_FAX, fax);
 		}
 		return ret;
 	}

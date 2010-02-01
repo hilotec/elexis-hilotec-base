@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KontaktSelektor.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: KontaktSelektor.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -475,9 +475,9 @@ public class KontaktSelektor extends TitleAreaDialog implements
 
 		public void apply(Query<? extends PersistentObject> qbe) {
 			if (type == 1) {
-				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringConstants.ONE);
+				qbe.add(Kontakt.FLD_IS_PERSON, Query.EQUALS, StringConstants.ONE);
 			} else if (type == 2) {
-				qbe.add(Kontakt.IS_PERSON, Query.EQUALS, StringConstants.ZERO);
+				qbe.add(Kontakt.FLD_IS_PERSON, Query.EQUALS, StringConstants.ZERO);
 			}
 		}
 
