@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: MultilineFieldEditor.java 1281 2006-11-14 16:59:49Z rgw_ch $
+ * 
+ *  $Id: ImageChooser.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -47,18 +47,18 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 public class ImageChooser extends AbstractElementListSelectionDialog {
-
+	
 	private Object[] fElements;
 	private Hyperlink hl;
 	private Text tTitle;
 	private static String NOFILESELECTED = Messages.getString("ImageChooser.PleaseChooseFile"); //$NON-NLS-1$
 	private Button bDB, bFile;
 	private DBImage result;
-
+	
 	public DBImage getSelection() {
 		return result;
 	}
-
+	
 	public ImageChooser(Shell shell) {
 		super(shell, new LabelProvider() {
 			@Override
@@ -68,7 +68,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 				}
 				return null;
 			}
-
+			
 			@Override
 			public String getText(Object element) {
 				if (element instanceof DBImage) {
@@ -78,7 +78,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 			}
 		});
 	}
-
+	
 	/**
 	 * Sets the elements of the list.
 	 * 
@@ -88,7 +88,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 	public void setElements(Object[] elements) {
 		fElements = elements;
 	}
-
+	
 	/*
 	 * @see SelectionStatusDialog#computeResult()
 	 */
@@ -103,7 +103,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 			}
 		}
 	}
-
+	
 	private Menu createMenu(Control parent) {
 		Menu ret = new Menu(parent);
 		MenuItem item = new MenuItem(ret, SWT.NONE);
@@ -115,7 +115,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 				if (oo != null && oo.length > 0) {
 					if (SWTHelper
 							.askYesNo(Messages.getString("ImageChooser.reallyDeleteHeading"), //$NON-NLS-1$
-									Messages.getString("ImageChooser.reallyDeleteText"))) { //$NON-NLS-1$
+								Messages.getString("ImageChooser.reallyDeleteText"))) { //$NON-NLS-1$
 						for (Object o : oo) {
 							((DBImage) o).delete();
 						}
@@ -125,7 +125,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 		});
 		return ret;
 	}
-
+	
 	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
@@ -138,60 +138,60 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 		FilteredList list = createFilteredList(ret);
 		list.setMenu(createMenu(list));
 		list.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				bFile.setSelection(false);
 				bDB.setSelection(true);
 			}
-
+			
 		});
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
-				.getFillGridData(1, true, 1, false));
+			.getFillGridData(1, true, 1, false));
 		bFile = new Button(ret, SWT.RADIO);
 		bFile.setText(Messages.getString("ImageChooser.importImage")); //$NON-NLS-1$
 		Composite cBottom = new Composite(ret, SWT.BORDER);
 		cBottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		cBottom.setLayout(new GridLayout(2, false));
 		new Label(cBottom, SWT.NONE).setText(Messages.getString("ImageChooser.imageFile")); //$NON-NLS-1$
 		new Label(cBottom, SWT.NONE).setText(Messages.getString("ImageChooser.imageTitle")); //$NON-NLS-1$
 		hl = new Hyperlink(cBottom, SWT.NONE);
 		tTitle = new Text(cBottom, SWT.BORDER);
 		hl.addHyperlinkListener(new HyperlinkAdapter() {
-
+			
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				bFile.setSelection(true);
 				bDB.setSelection(false);
 				FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
 				fd.setFilterExtensions(new String[] { "*.png", "*.gif", //$NON-NLS-1$ //$NON-NLS-2$
-						"*.jpg", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+					"*.jpg", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 				fd.setFilterNames(new String[] { "Portable Network Graphics", //$NON-NLS-1$
-						"Grafics Interchange Format", "JPEG", Messages.getString("ImageChooser.allFilesDesc") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"Grafics Interchange Format", "JPEG", Messages.getString("ImageChooser.allFilesDesc") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				String filename = fd.open();
 				if (filename != null) {
 					hl.setText(filename);
 					getOkButton().setEnabled(true);
 				}
 			}
-
+			
 		});
 		hl.setText(NOFILESELECTED);
 		hl.setForeground(Desk.getColor(Desk.COL_BLUE));
 		hl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tTitle.addKeyListener(new KeyAdapter() {
-
+			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				bFile.setSelection(true);
 				bDB.setSelection(false);
 			}
-
+			
 		});
 		bDB.setSelection(true);
-
+		
 		Query<DBImage> qbe = new Query<DBImage>(DBImage.class);
 		List<DBImage> imgs = qbe.execute();
 		if (imgs != null) {
@@ -203,7 +203,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 		setSelection(getInitialElementSelections().toArray());
 		return ret;
 	}
-
+	
 	@Override
 	public void okPressed() {
 		if (bFile.getSelection()) {
@@ -211,8 +211,8 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 			if (!fname.equals(NOFILESELECTED)) {
 				try {
 					File file = new File(fname);
-					result = new DBImage(tTitle.getText() + ":" //$NON-NLS-1$
-							+ file.getName(), new FileInputStream(file));
+					result = new DBImage("ch.elexis.images", tTitle.getText() + ":" //$NON-NLS-1$
+						+ file.getName(), new FileInputStream(file));
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
@@ -220,7 +220,7 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 		}
 		super.okPressed();
 	}
-
+	
 	@Override
 	public void create() {
 		super.create();
@@ -228,5 +228,5 @@ public class ImageChooser extends AbstractElementListSelectionDialog {
 		setMessage(Messages.getString("ImageChooser.choseFileFromDBText")); //$NON-NLS-1$
 		setTitle(Messages.getString("ImageChooser.imageSelection")); //$NON-NLS-1$
 	}
-
+	
 }

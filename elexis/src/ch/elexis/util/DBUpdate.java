@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: DBUpdate.java 6050 2010-02-02 16:49:34Z rgw_ch $
+ * $Id: DBUpdate.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -258,14 +258,16 @@ public class DBUpdate {
 		// 1.8.5
 		"ALTER TABLE ARTIKEL ADD ValidFrom CHAR(8);"+
 		"ALTER TABLE ARTIKEL ADD ValidTo   CHAR(8);"+
-		"CREATE TABLE BRIEFE_AUSGABE_LOG(" +
+		"CREATE TABLE OUTPUT_LOG(" +
 		"ID				VARCHAR(25) primary key,"+
 		"lastupdate		BIGINT,"+
-		"BriefID			VARCHAR(25),"+
+		"ObjectID		VARCHAR(25),"+
+		"ObjectType		VARCHAR(80),"+
 		"Datum			CHAR(8),"+
 		"Outputter		VARCHAR(80),"+
 		"ExtInfo		BLOB);"+
-		"create INDEX bal_i1 ON BRIEFE_AUSGABE_LOG (BriefID);"
+		"create INDEX bal_i1 ON OUTPUT_LOG (ObjectID);"+
+		"ALTER TABLE DBIMAGE ADD Prefix VARCHAR(80);"
 		
 		
 	};

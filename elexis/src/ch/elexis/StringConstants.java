@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: StringConstants.java 5872 2009-12-17 14:20:24Z rgw_ch $
+ *    $Id: StringConstants.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************
  */
 package ch.elexis;
@@ -44,4 +44,7 @@ public class StringConstants {
 	public static final String ROLE_ALL = Messages.StringConstants_all;
 	public static final String ROLES_DEFAULT = ROLE_ADMIN + "," + ROLE_USERS + "," + ROLE_ALL; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String SWTBOT_ID="org.eclipse.swtbot.widget.key";
+	public static final String OPENBRACKET = "(";
+	public static final String CLOSEBRACKET = ")";
+	
 }

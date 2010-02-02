@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: DBImage.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * 
+ *    $Id: DBImage.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,46 +22,59 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageLoader;
 
 import ch.elexis.Desk;
+import ch.elexis.StringConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
+/**
+ * A DBImage is an Image stored in the database and retrievable by its name
+ * @author gerry
+ *
+ */
 public class DBImage extends PersistentObject {
-	private static final String TITLE = "Titel";
+	public static final String FLD_PREFIX = "Prefix";
+	private static final String FLD_TITLE = "Titel";
 	public static final String DATE = "Datum";
-	public static final String IMAGE = "Bild";
+	public static final String FLD_IMAGE = "Bild";
 	public static final String DBVERSION="1.0.0";
 	public static final String TABLENAME="DBIMAGE";
-		
+	
 	static{
 		addMapping(
-			TABLENAME, DATE_FIELD,"Titel=Title",IMAGE
+			TABLENAME, DATE_FIELD,FLD_PREFIX,"Titel=Title",FLD_IMAGE
 		);
 	}
 	@Override
 	public String getLabel() {
-		return get(DATE)+" - "+get(TITLE);
+		StringBuilder sb=new StringBuilder();
+		synchronized (sb){
+			sb.append(get(DATE)).append(" - ").append(get(FLD_TITLE))
+			.append(StringConstants.OPENBRACKET).append(get(FLD_PREFIX))
+			.append(StringConstants.CLOSEBRACKET);
+			return sb.toString();
+		}
 	}
-
+	
 	public String getName(){
-		return get(TITLE);
+		return get(FLD_TITLE);
 	}
-	public DBImage(String name, InputStream source){
+	public DBImage(String prefix, String name, InputStream source){
 		ImageLoader iml=new ImageLoader();
 		try{
 			iml.load(source);
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			iml.save(baos, SWT.IMAGE_PNG);
 			create(null);
-			set(TITLE,name);
-			setBinary(IMAGE, baos.toByteArray());
+			set(FLD_TITLE,name);
+			setBinary(FLD_IMAGE, baos.toByteArray());
 		}catch(Exception ex){
 			SWTHelper.showError("Image error", "Bild ungültig","Das Bild konnte nicht geladen werden "+ex.getMessage());
 			ExHandler.handle(ex);
 		}
 	}
-
+	
 	public Image getImage(){
-		byte[] in=getBinary(IMAGE);
+		byte[] in=getBinary(FLD_IMAGE);
 		ByteArrayInputStream bais=new ByteArrayInputStream(in);
 		try{
 			Image ret=new Image(Desk.getDisplay(),bais);
@@ -89,5 +102,5 @@ public class DBImage extends PersistentObject {
 		super(id);
 	}
 	protected DBImage(){}
-
+	
 }

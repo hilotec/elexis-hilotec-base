@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Brief.java 6050 2010-02-02 16:49:34Z rgw_ch $
+ *  $Id: Brief.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -189,8 +189,8 @@ public class Brief extends PersistentObject {
 		return super.delete();
 	}
 	
-	public BriefAusgabe logOutput(String outputter, String info){
-		return new BriefAusgabe(this);
+	public BriefAusgabe logOutput(IOutputter outputter){
+		return new BriefAusgabe(this,outputter);
 	}
 	/** Einen Brief unwiederruflich löschen */
 	public boolean remove(){

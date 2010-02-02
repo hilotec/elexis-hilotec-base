@@ -310,16 +310,17 @@ CREATE TABLE BRIEFE(
 CREATE INDEX i8 on BRIEFE (BehandlungsID);
 
 # Output log for letters, prescriptions etc.
-CREATE TABLE BRIEFE_AUSGABE_LOG(
+CREATE TABLE OUTPUT_LOG(
 	ID				VARCHAR(25) primary key,
 	lastupdate		BIGINT,
-	BriefID			VARCHAR(25),		# foreign key from BRIEFE
+	ObjectID		VARCHAR(25),		# foreign key from object
+	ObjectType		VARCHAR(80),		# Class ob object
 	Datum			CHAR(8),
 	Outputter		VARCHAR(80),		# identification of the output device/program
 	ExtInfo			BLOB				# outputter specific information
 );
 
-CREATE INDEX bal_i1 ON BRIEFE_AUSGABE_LOG (BriefID);
+CREATE INDEX bal_i1 ON OUTPUT_LOG (ObjectID);
 
 # Bills
 CREATE TABLE RECHNUNGEN(
@@ -600,7 +601,8 @@ CREATE TABLE DBIMAGE (
     lastupdate     BIGINT,
     deleted        CHAR(1) default '0',
     Datum          CHAR(8),
-    Title          VARCHAR(80),  
+    Prefix		   VARCHAR(80),				# A Unique ID of the image creator/importer
+    Title          VARCHAR(80),  			# A title unique within the prefix's namespace
     Bild           BLOB
 );
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  

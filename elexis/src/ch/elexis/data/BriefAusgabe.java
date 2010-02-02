@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: BriefAusgabe.java 6050 2010-02-02 16:49:34Z rgw_ch $
+ *  $Id: BriefAusgabe.java 6051 2010-02-02 17:25:48Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -23,9 +23,9 @@ public class BriefAusgabe extends PersistentObject {
 		addMapping(TABLENAME, FLD_BRIEF_ID, FLD_OUTPUTTER, DATE_FIELD, FLD_EXTINFO);
 	}
 	
-	public BriefAusgabe(Brief brief){
+	public BriefAusgabe(Brief brief,IOutputter op){
 		create(null);
-		set(new String[]{FLD_BRIEF_ID,DATE_FIELD},brief.getId(),new TimeTool().toString(TimeTool.DATE_GER));
+		set(new String[]{FLD_BRIEF_ID,DATE_FIELD,FLD_OUTPUTTER},brief.getId(),new TimeTool().toString(TimeTool.DATE_GER),op.getOutputterID());
 	}
 	@Override
 	public String getLabel(){
