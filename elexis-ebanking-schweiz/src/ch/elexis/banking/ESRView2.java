@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id: ESRView2.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: ESRView2.java 6049 2010-02-02 06:00:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -37,11 +37,15 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.AbstractDataLoaderJob;
+import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.actions.PersistentObjectLoader.QueryFilter;
 import ch.elexis.admin.ACE;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
@@ -94,7 +98,8 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	
 	CommonViewer cv;
 	ViewerConfigurer vc;
-	ESRLoader esrloader;
+	//ESRLoader esrloader;
+	FlatDataLoader fdl;
 	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT,"DisplayESR");
 	Query<ESRRecord> qbe;
 	// private Action loadESRFile;
@@ -117,14 +122,36 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		parent.setLayout(new GridLayout());
 		cv = new CommonViewer();
 		qbe = new Query<ESRRecord>(ESRRecord.class);
+		fdl=new FlatDataLoader(qbe);
+		/*
 		esrloader = (ESRLoader) JobPool.getJobPool().getJob(JOB_NAME);
 		if (esrloader == null) {
 			esrloader = new ESRLoader(qbe);
 			JobPool.getJobPool().addJob(esrloader);
 		}
-		
+		*/
+		fdl.addQueryFilter(new QueryFilter() {
+
+			public void apply(Query<? extends PersistentObject> qbe) {
+				if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
+					if (Hub.actMandant != null) {
+						qbe.startGroup();
+						qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
+						qbe.or();
+						qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null); 
+						qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL, StringConstants.ZERO); 
+						qbe.endGroup();
+						qbe.and();
+					}else{
+						qbe.insertFalse();
+					}
+				}
+
+			}
+		});
+
 		vc =
-			new ViewerConfigurer(new LazyContentProvider(cv, esrloader, DISPLAY_ESR),
+			new ViewerConfigurer(fdl,
 				new ESRLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
 					"Datum"
 				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
@@ -133,7 +160,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		
 		createColumns(cv.getViewerWidget());
 		
-		JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
+		//JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(/* loadESRFile */);
