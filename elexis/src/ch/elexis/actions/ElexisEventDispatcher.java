@@ -56,7 +56,7 @@ public class ElexisEventDispatcher extends Job {
 	private final LinkedList<ElexisEvent> eventQueue;
 	private boolean bStop = false;
 	private final Lock eventQueueLock = new ReentrantLock(true);
-	private final Log log=Log.get("EventDispatcher");
+	private final Log log = Log.get("EventDispatcher");
 	
 	public static ElexisEventDispatcher getInstance(){
 		if (theInstance == null) {
@@ -170,10 +170,9 @@ public class ElexisEventDispatcher extends Job {
 	 * that class was registered, the event will be forwarded to that dispatcher. Otherwise, it will
 	 * be sent to all registered listeners. The call to the dispatcher or the listener will always
 	 * be in a separate thread and not in the UI thread.So care has to be taken if the callee has to
-	 * change the UI
-	 * Note: Only one Event is dispatched at a given time. If more events arrive, they will be pushed
-	 * into a FIFO-Queue. If more than one equivalent event is pushed into the queue, only the last
-	 * entered will be dispatched.
+	 * change the UI Note: Only one Event is dispatched at a given time. If more events arrive, they
+	 * will be pushed into a FIFO-Queue. If more than one equivalent event is pushed into the queue,
+	 * only the last entered will be dispatched.
 	 * 
 	 * @param ee
 	 *            the event to fire.
@@ -196,9 +195,9 @@ public class ElexisEventDispatcher extends Job {
 		}
 		eventQueueLock.lock();
 		try {
-			Iterator<ElexisEvent> it=eventQueue.iterator();
-			while(it.hasNext()){
-				if(it.next().isSame(ee)){
+			Iterator<ElexisEvent> it = eventQueue.iterator();
+			while (it.hasNext()) {
+				if (it.next().isSame(ee)) {
 					it.remove();
 				}
 			}
@@ -226,7 +225,9 @@ public class ElexisEventDispatcher extends Job {
 	 *            the object that is selected now
 	 */
 	public static void fireSelectionEvent(PersistentObject po){
-		getInstance().fire(new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_SELECTED));
+		if (po != null) {
+			getInstance().fire(new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_SELECTED));
+		}
 	}
 	
 	/**
@@ -236,7 +237,9 @@ public class ElexisEventDispatcher extends Job {
 	 *            the class of which selection was removed
 	 */
 	public static void clearSelection(Class<?> clazz){
-		getInstance().fire(new ElexisEvent(null, clazz, ElexisEvent.EVENT_DESELECTED));
+		if (clazz != null) {
+			getInstance().fire(new ElexisEvent(null, clazz, ElexisEvent.EVENT_DESELECTED));
+		}
 	}
 	
 	/**
@@ -246,7 +249,9 @@ public class ElexisEventDispatcher extends Job {
 	 *            the clazz whose objects are invalidated
 	 */
 	public static void reload(Class<?> clazz){
-		getInstance().fire(new ElexisEvent(null, clazz, ElexisEvent.EVENT_RELOAD));
+		if (clazz != null) {
+			getInstance().fire(new ElexisEvent(null, clazz, ElexisEvent.EVENT_RELOAD));
+		}
 	}
 	
 	/**
@@ -256,7 +261,9 @@ public class ElexisEventDispatcher extends Job {
 	 *            the object that was modified
 	 */
 	public static void update(PersistentObject po){
-		getInstance().fire(new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_UPDATE));
+		if (po != null) {
+			getInstance().fire(new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_UPDATE));
+		}
 	}
 	
 	/** shortcut */
@@ -265,8 +272,9 @@ public class ElexisEventDispatcher extends Job {
 	}
 	
 	public void shutDown(){
-		bStop=true;
+		bStop = true;
 	}
+	
 	@Override
 	protected IStatus run(IProgressMonitor monitor){
 		while (!bStop) {
@@ -281,7 +289,7 @@ public class ElexisEventDispatcher extends Job {
 				}
 			}
 			if (ee != null) {
-				if(Hub.plugin.DEBUGMODE){
+				if (Hub.plugin.DEBUGMODE) {
 					log.log(ee.getObjectClass().getName(), Log.DEBUGMSG);
 				}
 				synchronized (listeners) {

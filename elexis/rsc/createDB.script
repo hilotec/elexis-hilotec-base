@@ -309,6 +309,18 @@ CREATE TABLE BRIEFE(
 
 CREATE INDEX i8 on BRIEFE (BehandlungsID);
 
+# Output log for letters, prescriptions etc.
+CREATE TABLE BRIEFE_AUSGABE_LOG(
+	ID				VARCHAR(25) primary key,
+	lastupdate		BIGINT,
+	BriefID			VARCHAR(25),		# foreign key from BRIEFE
+	Datum			CHAR(8),
+	Outputter		VARCHAR(80),		# identification of the output device/program
+	ExtInfo			BLOB				# outputter specific information
+);
+
+CREATE INDEX bal_i1 ON BRIEFE_AUSGABE_LOG (BriefID);
+
 # Bills
 CREATE TABLE RECHNUNGEN(
 	ID				VARCHAR(25) primary key,     # UUID
@@ -594,6 +606,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.5');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.6');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.1.0');
 

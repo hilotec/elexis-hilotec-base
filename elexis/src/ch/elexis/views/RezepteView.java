@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 6002 2010-01-31 09:41:20Z rgw_ch $
+ *  $Id: RezepteView.java 6050 2010-02-02 16:49:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -167,6 +167,15 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 					return rp.getLabel();
 				}
 				return element.toString();
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+			 */
+			@Override
+			public Image getImage(Object element){
+				// TODO Auto-generated method stub
+				return super.getImage(element);
 			}
 			
 		});
