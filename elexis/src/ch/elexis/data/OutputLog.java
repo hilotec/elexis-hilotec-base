@@ -8,16 +8,18 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: OutputLog.java 6052 2010-02-02 17:33:46Z rgw_ch $
+ *  $Id: OutputLog.java 6054 2010-02-03 07:16:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
+
+import java.util.List;
 
 import ch.rgw.tools.TimeTool;
 
 
 
 public class OutputLog extends PersistentObject{
-	public static final String FLD_OBJECT_ID = "BriefID";
+	public static final String FLD_OBJECT_ID = "ObjectID";
 	public static final String FLD_OUTPUTTER = "Outputter";
 	static final String TABLENAME="OUTPUT_LOG";
 	
@@ -32,6 +34,12 @@ public class OutputLog extends PersistentObject{
 	@Override
 	public String getLabel(){
 		return get(DATE_FIELD)+":"+get(FLD_OUTPUTTER);
+	}
+	
+	public static List<OutputLog> getOutputs(PersistentObject po){
+		Query<OutputLog> qbe=new Query<OutputLog>(OutputLog.class);
+		qbe.add(FLD_OBJECT_ID, Query.EQUALS, po.getId());
+		return qbe.execute();
 	}
 	
 	@Override

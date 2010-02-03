@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 6050 2010-02-02 16:49:34Z rgw_ch $
+ *  $Id: RezepteView.java 6054 2010-02-03 07:16:39Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -57,6 +57,7 @@ import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.OutputLog;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
@@ -90,6 +91,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	private ViewMenus menus;
 	private Action printAction;
 	private Patient actPatient;
+	private List<OutputLog> outputs;
 	private PersistentObjectDropTarget dropTarget;
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		
@@ -116,6 +118,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		public void runInUi(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				actPatient = ((Rezept) ev.getObject()).getPatient();
+				outputs=OutputLog.getOutputs(ev.getObject());
 				refresh();
 			}
 			
@@ -174,6 +177,10 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 			 */
 			@Override
 			public Image getImage(Object element){
+				if(outputs.size()>0){
+					OutputLog o=outputs.get(0);
+					
+				}
 				// TODO Auto-generated method stub
 				return super.getImage(element);
 			}
