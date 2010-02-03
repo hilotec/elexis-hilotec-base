@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *  $Id: RezepteView.java 6059 2010-02-03 17:52:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -122,7 +122,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 				refresh();
 			}else if(ev.getType()==ElexisEvent.EVENT_UPDATE){
 				actPatient = ((Rezept) ev.getObject()).getPatient();
-				refresh();
+				tv.refresh(true);
 			}
 			
 		}
