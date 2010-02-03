@@ -9,7 +9,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- $Id: plugin.xml 4252 2008-08-09 19:11:10Z rgw_ch $ 
+ $Id: plugin.xml 6060 2010-02-03 21:19:23Z rgw_ch $ 
 -->
 <plugin>
    <extension
@@ -66,6 +66,7 @@
          point="ch.elexis.Transporter">
       <Transporter
             AcceptableTypes="ch.elexis.data.Paient"
+            id="ch.elexis.befunde.transporter"
             name="Befunde"
             xChangeContribution="ch.elexis.befunde.xchange.XChangeContributor">
       </Transporter>
