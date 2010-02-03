@@ -8,21 +8,26 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: RezeptBlatt.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: RezeptBlatt.java 6053 2010-02-03 07:08:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Brief;
+import ch.elexis.data.DBImage;
+import ch.elexis.data.IOutputter;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.OutputLog;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
@@ -31,7 +36,7 @@ import ch.elexis.text.ITextPlugin.ICallback;
 import ch.rgw.tools.StringTool;
 
 public class RezeptBlatt extends ViewPart implements ICallback,
-		IActivationListener {
+		IActivationListener, IOutputter {
 	public final static String ID = "ch.elexis.RezeptBlatt"; //$NON-NLS-1$
 	TextContainer text;
 	Brief actBrief;
@@ -87,9 +92,13 @@ public class RezeptBlatt extends ViewPart implements ICallback,
 	}
 
 	public boolean createRezept(Rezept rp) {
-		return createList(
+		if (createList(
 				rp,
-				Messages.getString("RezeptBlatt.TemplateNamePrescription"), Messages.getString("RezeptBlatt.4")); //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.getString("RezeptBlatt.TemplateNamePrescription"), Messages.getString("RezeptBlatt.4"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			new OutputLog(rp, this);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean createEinnahmeliste(Patient pat, Prescription[] pres) {
@@ -127,6 +136,23 @@ public class RezeptBlatt extends ViewPart implements ICallback,
 
 	public void visible(boolean mode) {
 
+	}
+
+	public String getOutputterDescription() {
+		return "Druckerausgabe erstellt";
+	}
+
+	public String getOutputterID() {
+		return "ch.elexis.RezeptBlatt";
+	}
+
+	public String getOutputterSymbolID() {
+		DBImage img=DBImage.find(null, "printer");
+		if(img==null){
+			ByteArrayInputStream bais=new ByteArrayInputStream(Desk.getImageDescriptor(Desk.IMG_PRINTER).getImageData().data);
+			img=new DBImage(null, "printer", bais);
+		}
+		return img.getId();
 	}
 
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: DBImage.java 6051 2010-02-02 17:25:48Z rgw_ch $
+ *    $Id: DBImage.java 6053 2010-02-03 07:08:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,6 +16,7 @@ package ch.elexis.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -25,6 +26,7 @@ import ch.elexis.Desk;
 import ch.elexis.StringConstants;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 /**
  * A DBImage is an Image stored in the database and retrievable by its name
@@ -32,6 +34,7 @@ import ch.rgw.tools.ExHandler;
  *
  */
 public class DBImage extends PersistentObject {
+	public static final String DEFAULT_PREFIX = "ch.elexis.images";
 	public static final String FLD_PREFIX = "Prefix";
 	private static final String FLD_TITLE = "Titel";
 	public static final String DATE = "Datum";
@@ -58,14 +61,17 @@ public class DBImage extends PersistentObject {
 	public String getName(){
 		return get(FLD_TITLE);
 	}
-	public DBImage(String prefix, String name, InputStream source){
+	public DBImage(String prefix, final String name, final InputStream source){
 		ImageLoader iml=new ImageLoader();
+		if(StringTool.isNothing(prefix)){
+			prefix=DEFAULT_PREFIX;
+		}
 		try{
 			iml.load(source);
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			iml.save(baos, SWT.IMAGE_PNG);
 			create(null);
-			set(FLD_TITLE,name);
+			set(new String[]{FLD_PREFIX,FLD_TITLE},prefix,name);
 			setBinary(FLD_IMAGE, baos.toByteArray());
 		}catch(Exception ex){
 			SWTHelper.showError("Image error", "Bild ungültig","Das Bild konnte nicht geladen werden "+ex.getMessage());
@@ -83,6 +89,20 @@ public class DBImage extends PersistentObject {
 			SWTHelper.showError("Image Error", "Ungültiges Bild", "Das Bild ist ungültig "+ex.getMessage());
 			return null;
 		}
+	}
+	
+	public static DBImage find(String prefix, String name){
+		Query<DBImage> qbe=new Query<DBImage>(DBImage.class);
+		if(StringTool.isNothing(prefix)){
+			prefix=DEFAULT_PREFIX;
+		}
+		qbe.add(FLD_PREFIX, Query.EQUALS, prefix);
+		qbe.add(FLD_TITLE, Query.EQUALS, name);
+		List<DBImage> ret=qbe.execute();
+		if(ret!=null && ret.size()>0){
+			return ret.get(0);
+		}
+		return null;
 	}
 	
 	public static DBImage load(String id){
