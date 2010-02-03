@@ -8,10 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: IcpcImporter.java 4327 2008-08-31 21:24:08Z rgw_ch $
+ *    $Id: IcpcImporter.java 6063 2010-02-03 22:45:39Z tschaller $
  *******************************************************************************/
 
 package ch.elexis.icpc;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -27,68 +28,79 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 
-
 public class IcpcImporter extends ImporterPage {
 	ImporterPage.DBBasedImporter dbi;
-	JdbcLink j,pj;
+	JdbcLink j, pj;
 	
-	
-	public IcpcImporter() {
-		// TODO Auto-generated constructor stub
+	public IcpcImporter(){
+	// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
-	public Composite createPage(Composite parent) {
-		dbi=new ImporterPage.DBBasedImporter(parent,this);
-		dbi.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+	public Composite createPage(Composite parent){
+		dbi = new ImporterPage.DBBasedImporter(parent, this);
+		dbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return dbi;
 	}
-
+	
 	public boolean connect(){
-        String type = results[0];
-        if (type != null) {
-            String server = results[1];
-            String db = results[2];
-            String user = results[3];
-            String password = results[4];
-            
-            if (type.equals("MySQL")) {
-                j = JdbcLink.createMySqlLink(server, db);
-                return j.connect(user, password);
-            } else if (type.equals("PostgreSQL")) {
-                j = JdbcLink.createPostgreSQLLink(server, db);
-                return j.connect(user, password);
-            } else if (type.equals("ODBC")) {
-                j = JdbcLink.createODBCLink(db);
-                return j.connect(user, password);
-            }
-        }
-        
-        return false;
+		String type = results[0];
+		if (type != null) {
+			String server = results[1];
+			String db = results[2];
+			String user = results[3];
+			String password = results[4];
+			
+			if (type.equals("MySQL")) {
+				j = JdbcLink.createMySqlLink(server, db);
+				return j.connect(user, password);
+			} else if (type.equals("PostgreSQL")) {
+				j = JdbcLink.createPostgreSQLLink(server, db);
+				return j.connect(user, password);
+			} else if (type.equals("ODBC")) {
+				j = JdbcLink.createODBCLink(db);
+				return j.connect(user, password);
+			}
+		}
+		
+		return false;
 	}
+	
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		monitor.beginTask("Importiere ICPC-2", 727);
 		monitor.subTask("Verbinde");
-		if(!connect()){
+		if (!connect()) {
 			monitor.done();
-			return new Status(Status.ERROR,"Icpc",1,"Konnte keine Verbindung herstellen",null);
+			return new Status(Status.ERROR, "Icpc", 1, "Konnte keine Verbindung herstellen", null);
 		}
-		pj=PersistentObject.getConnection();
-		Stm stmSrc=j.getStatement();
+		pj = PersistentObject.getConnection();
+		Stm stmSrc = j.getStatement();
 		monitor.subTask("Lösche alte Daten");
-		pj.exec("DROP INDEX "+IcpcCode.TABLENAME+"_IDX1 ON "+IcpcCode.TABLENAME);
-		pj.exec("DROP TABLE "+IcpcCode.TABLENAME);
-		IcpcCode.initialize();
+		monitor.worked(1);
+		// patch 03.02.2010 / tschaller:
+		// nachfolgendes IcpcCode.initialize(); wirft eine Exception: org.eclipse.swt.SWTException:
+		// Invalid thread access
+		// da createOrModifyTable(createDB); bereits beim laden des Plugins ausgeführt wird, braucht
+		// es das hier gar nicht.
+		// ich beschränke mich daher auf ein delete from ch_elexis_icpc...
+		// pj.exec("DROP INDEX "+IcpcCode.TABLENAME+"_IDX1 ON "+IcpcCode.TABLENAME);
+		// pj.exec("DROP TABLE "+IcpcCode.TABLENAME);
+		// IcpcCode.initialize();
+		pj.exec("DELETE FROM " + IcpcCode.TABLENAME + " where ID != 'ver'");
 		monitor.worked(1);
 		monitor.subTask("Lese Daten ein");
-		PreparedStatement ps=pj.prepareStatement("INSERT INTO "+IcpcCode.TABLENAME+" (" +
-				"ID,component,txt,synonyms,short,icd10,criteria,inclusion,exclusion,consider,note)"+
-				"VALUES (?,?,?,?,?,?,?,?,?,?,?);");
+		PreparedStatement ps =
+			pj
+				.prepareStatement("INSERT INTO "
+					+ IcpcCode.TABLENAME
+					+ " ("
+					+ "ID,component,txt,synonyms,short,icd10,criteria,inclusion,exclusion,consider,note)"
+					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?);");
 		monitor.worked(1);
-		try{
-			ResultSet res=stmSrc.query("SELECT * FROM \"ICPC2eGM\"");
-			while(res.next()){
+		try {
+			ResultSet res = stmSrc.query("SELECT * FROM \"ICPC2eGM\"");
+			while (res.next()) {
 				ps.setString(1, res.getString(1));
 				ps.setString(2, res.getString(2));
 				ps.setString(3, res.getString(3));
@@ -101,29 +113,29 @@ public class IcpcImporter extends ImporterPage {
 				ps.setString(10, res.getString(10));
 				ps.setString(11, res.getString(11));
 				ps.execute();
-				if(monitor.isCanceled()){
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				monitor.worked(1);
 			}
 			monitor.done();
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Status(Status.ERROR,"ICPC",3,ex.getMessage(),null);
-		}finally{
+			return new Status(Status.ERROR, "ICPC", 3, ex.getMessage(), null);
+		} finally {
 			j.releaseStatement(stmSrc);
 		}
 		return Status.OK_STATUS;
 	}
-
+	
 	@Override
-	public String getDescription() {
+	public String getDescription(){
 		return "International Classification of Primary Care";
 	}
-
+	
 	@Override
-	public String getTitle() {
+	public String getTitle(){
 		return "ICPC-2";
 	}
-
+	
 }
