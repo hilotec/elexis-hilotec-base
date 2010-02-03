@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 5898 2009-12-24 09:21:06Z rgw_ch $ 
+<!-- $Id: plugin.xml 6058 2010-02-03 15:02:13Z rgw_ch $ 
  * Copyright (c) 2005-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -691,6 +691,15 @@
             name="%context.name.0"
             parentId="org.eclipse.ui.contexts.window">
       </context>
+   </extension>
+   <extension
+         point="ch.elexis.Transporter">
+      <Transporter
+            Outputter="ch.elexis.views.RezeptBlatt"
+            id="ch.elexis.RezeptBlatt"
+            name="%RezeptAusgabe"
+            type="ch.elexis.data.Rezept">
+      </Transporter>
    </extension>
 
 </plugin>

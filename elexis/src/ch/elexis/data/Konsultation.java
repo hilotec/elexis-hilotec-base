@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Konsultation.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id: Konsultation.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -63,7 +63,7 @@ Comparable<Konsultation> {
 	}
 	
 	static {
-		addMapping(TABLENAME, FLD_MANDATOR_ID, PersistentObject.DATE_FIELD, FLD_CASE_ID, FLD_BILL_ID,
+		addMapping(TABLENAME, FLD_MANDATOR_ID, PersistentObject.DATE_COMPOUND, FLD_CASE_ID, FLD_BILL_ID,
 			"Eintrag=S:V:Eintrag",
 		"Diagnosen=JOINT:BehandlungsID:DiagnoseID:BEHDL_DG_JOINT");
 	}

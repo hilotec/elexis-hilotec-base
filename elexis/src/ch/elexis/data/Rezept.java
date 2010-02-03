@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rezept.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: Rezept.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -41,7 +41,7 @@ public class Rezept extends PersistentObject {
 	}
 	
 	static {
-		addMapping("REZEPTE", PATIENT_ID, MANDATOR_ID, DATE_FIELD, "Text=RpTxt", LETTER_ID,
+		addMapping("REZEPTE", PATIENT_ID, MANDATOR_ID, DATE_COMPOUND, "Text=RpTxt", LETTER_ID,
 			"Zeilen=LIST:RezeptID:PATIENT_ARTIKEL_JOINT");
 	}
 	

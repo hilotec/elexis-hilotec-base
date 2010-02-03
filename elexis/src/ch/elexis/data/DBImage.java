@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: DBImage.java 6053 2010-02-03 07:08:27Z rgw_ch $
+ *    $Id: DBImage.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -44,7 +44,7 @@ public class DBImage extends PersistentObject {
 	
 	static{
 		addMapping(
-			TABLENAME, DATE_FIELD,FLD_PREFIX,"Titel=Title",FLD_IMAGE
+			TABLENAME, DATE_COMPOUND,FLD_PREFIX,"Titel=Title",FLD_IMAGE
 		);
 	}
 	@Override

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ESRRecord.java 6045 2010-02-01 15:41:17Z rgw_ch $
+ *  $Id: ESRRecord.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.banking;
 
@@ -79,7 +79,7 @@ public class ESRRecord extends PersistentObject {
 	static {
 		addMapping(
 			TABLENAME,
-			PersistentObject.DATE_FIELD,
+			PersistentObject.DATE_COMPOUND,
 			"Eingelesen=S:D:EINGELESEN", //$NON-NLS-1$
 			"Verarbeitet=S:D:VERARBEITET", //$NON-NLS-1$
 			"Gutgeschrieben=S:D:GUTSCHRIFT", //$NON-NLS-1$

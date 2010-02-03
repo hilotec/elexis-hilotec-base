@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: DBUpdate.java 6051 2010-02-02 17:25:48Z rgw_ch $
+ * $Id: DBUpdate.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -261,6 +261,7 @@ public class DBUpdate {
 		"CREATE TABLE OUTPUT_LOG(" +
 		"ID				VARCHAR(25) primary key,"+
 		"lastupdate		BIGINT,"+
+		"deleted        CHAR(1) default '0',"+
 		"ObjectID		VARCHAR(25),"+
 		"ObjectType		VARCHAR(80),"+
 		"Datum			CHAR(8),"+

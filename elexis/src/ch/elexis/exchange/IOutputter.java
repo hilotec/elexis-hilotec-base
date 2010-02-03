@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: IOutputter.java 6051 2010-02-02 17:25:48Z rgw_ch $
+ *  $Id: IOutputter.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.data;
+package ch.elexis.exchange;
+
+import org.eclipse.swt.graphics.Image;
 
 /**
- * A class capable to output something
+ * Ach.elexis.exchange to output something
  * @author gerry
  *
  */
@@ -22,6 +24,6 @@ public interface IOutputter {
 	public String getOutputterID();
 	/** human readable description */
 	public String getOutputterDescription();
-	/** ID of a ch.elexis.data.DBImage to symbolize this outputter */
-	public String getOutputterSymbolID();
+	/** Image to symbolize this outputter (should be 16x16 or 24x24 Pixel) */
+	public Image getSymbol();
 }

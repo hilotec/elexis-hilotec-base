@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LabResult.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *  $Id: LabResult.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -46,7 +46,7 @@ public class LabResult extends PersistentObject {
 	}
 	
 	static {
-		addMapping(TABLENAME, PATIENT_ID, DATE_FIELD, ITEM_ID, RESULT, COMMENT,
+		addMapping(TABLENAME, PATIENT_ID, DATE_COMPOUND, ITEM_ID, RESULT, COMMENT,
 			FLAGS, "Quelle=Origin");
 		
 	}

@@ -313,6 +313,7 @@ CREATE INDEX i8 on BRIEFE (BehandlungsID);
 CREATE TABLE OUTPUT_LOG(
 	ID				VARCHAR(25) primary key,
 	lastupdate		BIGINT,
+	deleted			CHAR(1) default '0',
 	ObjectID		VARCHAR(25),		# foreign key from object
 	ObjectType		VARCHAR(80),		# Class ob object
 	Datum			CHAR(8),

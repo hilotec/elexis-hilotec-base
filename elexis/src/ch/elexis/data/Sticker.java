@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Sticker.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *    $Id: Sticker.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -40,7 +40,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker>{
 		
 	static{
 		addMapping(
-			TABLENAME, DATE_FIELD,"BildID=Image","vg=foreground","bg=background",NAME,
+			TABLENAME, DATE_COMPOUND,"BildID=Image","vg=foreground","bg=background",NAME,
 				"wert=importance"
 			
 		);

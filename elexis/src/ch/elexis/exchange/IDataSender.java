@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: IDataSender.java 5873 2009-12-17 22:51:30Z rgw_ch $
+ * 
+ *  $Id: IDataSender.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -30,7 +30,7 @@ public interface IDataSender {
 	 * 
 	 * @param output
 	 *            an object this IDataSender can handle
-	 * @return the XML element created 
+	 * @return the XML element created
 	 * @throws XChangeException if an error occurred
 	 */
 	public XChangeElement store(Object output) throws XChangeException;

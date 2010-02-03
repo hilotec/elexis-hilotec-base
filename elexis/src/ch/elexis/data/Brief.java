@@ -8,11 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Brief.java 6052 2010-02-02 17:33:46Z rgw_ch $
+ *  $Id: Brief.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
 import ch.elexis.StringConstants;
+import ch.elexis.exchange.IOutputter;
 import ch.elexis.text.XrefExtension;
 import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
@@ -57,7 +58,7 @@ public class Brief extends PersistentObject {
 	}
 	
 	static {
-		addMapping(TABLENAME, SUBJECT, PATIENT_ID, DATE_FIELD, SENDER_ID, DESTINATION_ID,
+		addMapping(TABLENAME, SUBJECT, PATIENT_ID, DATE_COMPOUND, SENDER_ID, DESTINATION_ID,
 			KONSULTATION_ID, TYPE, "modifiziert=S:D:modifiziert", "geloescht", MIME_TYPE,
 			"gedruckt=S:D:gedruckt", "Path");
 	}

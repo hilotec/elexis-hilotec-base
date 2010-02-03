@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 6054 2010-02-03 07:16:39Z rgw_ch $
+ *  $Id: RezepteView.java 6058 2010-02-03 15:02:13Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
@@ -64,6 +65,7 @@ import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
+import ch.elexis.exchange.IOutputter;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -83,7 +85,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	static final String ICON = "rezept_view"; //$NON-NLS-1$
 	private final FormToolkit tk = Desk.getToolkit();
 	private Form master;
-	ListViewer lv;
+	TableViewer tv;
 	// Label ausgestellt;
 	ListViewer lvRpLines;
 	private Action newRpAction, deleteRpAction;
@@ -91,7 +93,6 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	private ViewMenus menus;
 	private Action printAction;
 	private Patient actPatient;
-	private List<OutputLog> outputs;
 	private PersistentObjectDropTarget dropTarget;
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		
@@ -102,7 +103,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 					new ElexisEvent(null, Rezept.class, ElexisEvent.EVENT_DESELECTED));
 				addLineAction.setEnabled(false);
 				printAction.setEnabled(false);
-				lv.refresh(true);
+				tv.refresh(true);
 				refresh();
 				master.setText(actPatient.getLabel());
 			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
@@ -113,12 +114,14 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		}
 	};
 	
-	private final ElexisEventListenerImpl eeli_rp = new ElexisEventListenerImpl(Rezept.class) {
+	private final ElexisEventListenerImpl eeli_rp = new ElexisEventListenerImpl(Rezept.class,ElexisEvent.EVENT_SELECTED|ElexisEvent.EVENT_UPDATE) {
 		
 		public void runInUi(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				actPatient = ((Rezept) ev.getObject()).getPatient();
-				outputs=OutputLog.getOutputs(ev.getObject());
+				refresh();
+			}else if(ev.getType()==ElexisEvent.EVENT_UPDATE){
+				actPatient = ((Rezept) ev.getObject()).getPatient();
 				refresh();
 			}
 			
@@ -136,8 +139,8 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		master.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		master.getBody().setLayout(new FillLayout());
 		SashForm sash = new SashForm(master.getBody(), SWT.NONE);
-		lv = new ListViewer(sash, SWT.V_SCROLL);
-		lv.setContentProvider(new IStructuredContentProvider() {
+		tv = new TableViewer(sash, SWT.V_SCROLL|SWT.FULL_SELECTION);
+		tv.setContentProvider(new IStructuredContentProvider() {
 			
 			public Object[] getElements(final Object inputElement){
 				Query<Rezept> qbe = new Query<Rezept>(Rezept.class);
@@ -162,7 +165,9 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 			}
 			
 		});
-		lv.setLabelProvider(new LabelProvider() {
+		tv.setLabelProvider(new LabelProvider() {
+			
+			
 			@Override
 			public String getText(final Object element){
 				if (element instanceof Rezept) {
@@ -177,16 +182,20 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 			 */
 			@Override
 			public Image getImage(Object element){
-				if(outputs.size()>0){
+				List<OutputLog> outputs=OutputLog.getOutputs((PersistentObject)element);
+				if(outputs!=null && outputs.size()>0){
 					OutputLog o=outputs.get(0);
-					
+					String outputterID=o.getOutputterID();
+					IOutputter io=OutputLog.getOutputter(outputterID);
+					if(io!=null){
+						return io.getSymbol();
+					}
 				}
-				// TODO Auto-generated method stub
-				return super.getImage(element);
+				return null;
 			}
 			
 		});
-		lv.addSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
+		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 		lvRpLines = new ListViewer(sash);
 		makeActions();
 		menus = new ViewMenus(getViewSite());
@@ -206,7 +215,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		tm.add(newRpAction);
 		tm.add(addLineAction);
 		tm.add(printAction);
-		lv.setInput(getViewSite());
+		tv.setInput(getViewSite());
 		
 		/* Implementation Drag&Drop */
 		PersistentObjectDropTarget.Receiver dtr = new PersistentObjectDropTarget.Receiver() {
@@ -270,7 +279,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
-		lv.removeSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
+		tv.removeSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 	}
 	
 	public void refresh(){
@@ -317,7 +326,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 					}
 				}
 				new Rezept(act);
-				lv.refresh();
+				tv.refresh();
 			}
 		};
 		deleteRpAction = new Action(Messages.getString("RezepteView.deletePrescriptionActiom")) { //$NON-NLS-1$
@@ -330,7 +339,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 						.getString("RezepteView.deletePrescriptionConfirm"), rp //$NON-NLS-1$
 						.getDate()))) {
 					rp.delete();
-					lv.refresh();
+					tv.refresh();
 				}
 			}
 		};
