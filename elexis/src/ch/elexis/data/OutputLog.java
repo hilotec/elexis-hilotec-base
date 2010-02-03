@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: OutputLog.java 6054 2010-02-03 07:16:39Z rgw_ch $
+ *  $Id: OutputLog.java 6055 2010-02-03 07:24:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -17,7 +17,12 @@ import java.util.List;
 import ch.rgw.tools.TimeTool;
 
 
-
+/**
+ * An OutputLog instance carries the information when and where to a PersistentObject has been sent.
+ * 
+ * @author gerry
+ *
+ */
 public class OutputLog extends PersistentObject{
 	public static final String FLD_OBJECT_ID = "ObjectID";
 	public static final String FLD_OUTPUTTER = "Outputter";
