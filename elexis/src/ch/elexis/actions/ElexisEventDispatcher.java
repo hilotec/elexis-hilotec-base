@@ -231,6 +231,19 @@ public class ElexisEventDispatcher extends Job {
 	}
 	
 	/**
+	 * inform the syste, that several objects have been selected
+	 * @param objects
+	 */
+	public static void fireSelectionEvents(PersistentObject... objects ){
+		if(objects!=null){
+			for(PersistentObject po:objects){
+				getInstance().fire(new ElexisEvent(po,po.getClass(),ElexisEvent.EVENT_SELECTED));
+			}
+		}
+	}
+	
+	
+	/**
 	 * inform the system, that no object of the specified type is selected anymore
 	 * 
 	 * @param clazz
