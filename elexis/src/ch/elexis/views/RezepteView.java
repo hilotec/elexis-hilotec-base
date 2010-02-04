@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 6059 2010-02-03 17:52:20Z rgw_ch $
+ *  $Id: RezepteView.java 6067 2010-02-04 11:37:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -148,7 +148,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 				if (act != null) {
 					qbe.add(Rezept.PATIENT_ID, Query.EQUALS, act.getId());
 					qbe.orderBy(true, new String[] {
-						Rezept.DATE
+						PersistentObject.FLD_LASTUPDATE
 					});
 					List<Rezept> list = qbe.execute();
 					return list.toArray();
