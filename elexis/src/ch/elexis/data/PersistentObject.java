@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *    $Id: PersistentObject.java 6074 2010-02-04 15:18:22Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -2098,6 +2098,7 @@ public abstract class PersistentObject implements ISelectable{
 								SWTHelper
 								.showError("Datenbank-Fehler",
 								"Konnte Datenbank-Script nicht ausführen");
+								log.log("Cannot execute db script: " + sqlScript, Log.WARNINGS);
 							}
 							moni.done();
 						} catch (UnsupportedEncodingException e) {
@@ -2109,6 +2110,7 @@ public abstract class PersistentObject implements ISelectable{
 		} catch (Exception e) {
 			SWTHelper.showError("Interner-Fehler",
 			"Konnte Datenbank-Script nicht ausführen");
+			log.log(e, "Cannot execute db script: " + sqlScript, Log.ERRORS);
 		}
 	}
 	
