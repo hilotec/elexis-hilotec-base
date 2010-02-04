@@ -8,15 +8,23 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    A. Kaufmann - better support for IDataAccess
+ *    H. Marlovits - introduced SQL Fields
  * 
- *  $Id: TextContainer.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id: TextContainer.java 6068 2010-02-04 12:14:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipInputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -60,8 +68,10 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ScriptUtil;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.JdbcLink.Stm;
 
 public class TextContainer {
 	
@@ -84,6 +94,8 @@ public class TextContainer {
 	//public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; //$NON-NLS-1$
 	public static final String MATCH_IDATACCESS =
 		"\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
+	public static final String MATCH_SQLCLAUSE = "\\[SQL[^:]*:[^\\[]+\\]"; //$NON-NLS-1$
+	public static final String DISALLOWED_SQLEXPRESSIONS = "DROP,UPDATE,CREATE,INSERT"; //$NON-NLS-1$
 	
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin
@@ -238,6 +250,12 @@ public class TextContainer {
 					public Object replace(final String in){
 						return ScriptUtil.loadDataFromPlugin(in.replaceAll(MATCH_SQUARE_BRACKET,
 							StringTool.leer));
+					}
+				});
+				plugin.findOrReplace(MATCH_SQLCLAUSE, new ReplaceCallback() {
+					public Object replace(final String in) {
+						return replaceSQLClause(ret, in.replaceAll(
+							MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				saveBrief(ret, typ);
@@ -408,9 +426,7 @@ public class TextContainer {
 		} else {
 			try {
 				String fqname = "ch.elexis.data." + k; //$NON-NLS-1$
-				ret =
-					ElexisEventDispatcher.getSelected(Class
-						.forName(fqname));
+				ret = ElexisEventDispatcher.getSelected(Class.forName(fqname));
 			} catch (Throwable ex) {
 				log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
 				ret = null;
@@ -420,6 +436,192 @@ public class TextContainer {
 			log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
 		}
 		return ret;
+	}
+	
+	/* Für eine eingebettete SQL-Abfrage in Office-Dokumenten
+	 * Format des Platzhalters, drei Varianten:
+	 *         [SQL:<Hier kommt die SQL-Abfrage hin>]
+	 *         [SQL|<FeldTrenner>:<Hier kommt die SQL-Abfrage hin>]
+	 *         [SQL|<FeldTrenner>|<DatensatzTrenner>:<Hier kommt die SQL-Abfrage hin>]
+	 * 
+	 * Die Feldtrenner kÃ¶nnen beliebige Strings sein.
+	 * Wird kein FeldTrenner respektive kein DatensatzTrenner angegeben, so werden Defaults verwendet:
+	 *    fÃ¼r FeldTrenner:      Tab     \t
+	 *    fÃ¼r DatensatzTrenner: newLine \n
+	 * In den Trennern kÃ¶nnen die escape characters \n, \r, \t, \f, \b verwendet werden.
+	 * Octal-Escapes werden zur Zeit nich unterstÃ¼tzt.
+	 * 
+	 * In der SQL-Abfrage kÃ¶nnen alle Ã¼blichen direkten und indirekten Platzhalter verwendet werden,
+	 * zBsp [Patient.ID] oder [Fall.ID], [Mandant.Vorname], [Konsultation.Datum] etc.
+	 * Diese werden zuerst ersetzt. Danach wird die eigentliche Abfrage durchgefÃ¼hrt.
+	 * 
+	 * Um die im Datenbankfeld "ExtInfo" gespeichterten Daten abzurufen, ist die folgende Hilfssyntax als
+	 * Feldabfrage vorgesehen:
+	 *    extinfo:<TabellenName>.<FeldNameInnerhalbDerHashtableAusDerExtinfo>
+	 *    Bsp:  extinfo:KONTAKT:Beruf
+	 *          Das Feld Beruf wurde in den Einstellungen "Zusatzfelder in Patient-Detail-Blatt" definiert
+	 * 
+	 * 
+	 * Auf diese Weise lÃ¤sst sich so ziemlich alles in ziemlich jeglicher Form zur Darstellung extrahieren.
+	 * 
+	 * 
+	 * Bespiele:
+	 * 
+	 * Abfrage:
+	 * [SQL:select chr(9) || prozent || '%', to_char(to_date(datumvon, 'yyyymmdd'), 'dd.mm.yyyy'), '-',
+	 *      to_char(to_date(datumbis, 'yyyymmdd'), 'dd.mm.yyyy') from auf where fallid='[Fall.ID]']
+	 * Resultat:
+	 *  100%   01.01.2010 - 07.01.2010
+	 *   50%   08.01.2010 - 15.01.2010
+	 * 
+	 * Abfrage>
+	 * [SQL|_\t_|\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n:
+	 *      select extinfo:KONTAKT.Beruf, extinfo:KONTAKT.Ledigname, Bezeichnung1, Bezeichnung2
+	 *      from KONTAKT where id ='[Patient.ID]' or id='1029']
+	 * Resultat:
+	 * Schreiner_   _BÃ¼nzli_    _HagenmÃ¼ller_  _Margrit
+	 * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	 * Lehrer_      _Germann_   _Marlovits_    _Annegret
+	 * 
+	 **********************************************************************************************************/
+	
+	@SuppressWarnings("unchecked")
+	private Object replaceSQLClause(final Brief brief, final String b) {
+		// get db/statement
+		JdbcLink j=PersistentObject.getConnection();
+		Stm stm = j.getStatement();
+		
+		// get fieldDelimiter and rowDelimiter from params, else provide default-values tab and newline
+		String sql = b;
+		String sqlPrefix = sql.split(":")[0];
+		String[] sqlPrefixParts = sqlPrefix.split("\\|");
+		String fieldDelimiter = "	";	// default: tab
+		String rowDelimiter   = "\n";	// default: newline
+		if (sqlPrefixParts.length > 1)	{
+			fieldDelimiter = sqlPrefixParts[1];
+			// replace escape sequences
+			fieldDelimiter = convertSpecialCharacters(fieldDelimiter);
+		}
+		if (sqlPrefixParts.length > 2)	{
+			rowDelimiter = sqlPrefixParts[2];
+			// replace escape sequences
+			rowDelimiter = convertSpecialCharacters(rowDelimiter);
+		}
+		
+		// strip SQL-selector from start of string -> actual SQL-statement in sql
+		sql = sql.substring(sqlPrefix.length() + 1);
+		
+		// SAFETY: disallow clauses with DROP, UPDATE, INSERT and CREATE
+		String[] disallowedList = DISALLOWED_SQLEXPRESSIONS.split(",");
+		for (int i = 0; i < disallowedList.length; i++)	{
+			String disallowed = disallowedList[i];
+			Pattern p = Pattern.compile("[^_^\\w]*" + disallowed + "\\s", Pattern.MULTILINE);
+			Matcher m = p.matcher(sql);
+			while (m.find())	{
+				return "??? '" + disallowed + "' ist in SQL-Platzhaltern nicht erlaubt ???";
+			}
+		}
+		
+		// preprocess SQL-statement:
+		// enclose extinfo:<tableName>.<hashTableFieldName> with apostrophs
+		//   -> query will just return the string itself without error
+		// will be processed later
+		Pattern p = Pattern.compile("extinfo:[\\w]+\\.[\\w]+[^\\w]", Pattern.MULTILINE);
+		Matcher m = p.matcher(sql);
+		while (m.find())	{
+			// get extinfo
+			String part = m.group();
+			// strip the delimiter [^\\w] from the end of the string
+			String stringWithoutDelim = part.substring(0, part.length() - 1);
+			// get the delimiter [^\\w]
+			String delim = part.substring(part.length() - 1);
+			// get the part <tableName> by stripping "extinfo:" and getting then the part left of "."
+			String tablePart = stringWithoutDelim.substring("extinfo:".length()).split("\\.")[0];
+			// replace the found string: don't change original, just append fieldPart to the query
+			// this way, the query returns the contents/the hashtable right after the textSpec
+			// will be processed later
+			sql = sql.replace(m.group(), "'" + stringWithoutDelim + "', " + tablePart + ".extinfo" + delim);
+		}
+		
+		// execute query
+		ResultSet rs = stm.query(sql);
+		
+		// create result by reading rows/fields and extracting hashTable fields from extInfo
+		String fieldContent = "";
+		String result       = "";
+		String lRowDelimiter = "";
+		try {
+			// loop through all rows of resultSet
+			while (rs.next())	{
+				String delimiter    = "";
+				result = result + lRowDelimiter;
+				lRowDelimiter = rowDelimiter;
+				// loop through columns
+				for (int i = 1; i < 1000; i++)	{ // hope 1000 cols is enough...
+					// list all fields, delimiter = tab
+					try	{
+						// read field contents
+						fieldContent = rs.getString(i);
+						// if field starts with "extinfo:" then read data from db-field extinfo/hashtable
+						if ((fieldContent.length() >= "extinfo:".length()) && fieldContent.substring(0, "extinfo:".length()).equalsIgnoreCase("extinfo:"))	{
+							String extInfoSpec = fieldContent.substring("extinfo:".length());
+							String extInfoField = extInfoSpec.split("\\.")[1];
+							// the actual blob contents can be found in the following field - read blob
+							i++;
+							byte[] blob =  rs.getBytes(i);
+							if (blob == null)	{
+								fieldContent = "";
+							} else	{
+								// get hashTable, read field
+								Hashtable<Object, Object> ht = fold(blob);
+								fieldContent = (String) ht.get(extInfoField);
+							}
+						}
+						// append field to result
+						result = result + delimiter + fieldContent;
+						delimiter = fieldDelimiter;
+					} catch (Exception e) {
+						// this just catches the case where i > num of columns...
+						break;
+					}
+				}
+				//result = result + rowDelimiter;
+			}
+		} catch (SQLException e) {
+			j.releaseStatement(stm);
+			e.printStackTrace();
+		}
+		// aufrÃ¤umen
+		j.releaseStatement(stm);
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Hashtable fold(final byte[] flat){
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(flat);
+			ZipInputStream zis = new ZipInputStream(bais);
+			zis.getNextEntry();
+			ObjectInputStream ois = new ObjectInputStream(zis);
+			Hashtable<Object, Object> res = (Hashtable<Object, Object>) ois.readObject();
+			ois.close();
+			bais.close();
+			return res;
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			return null;
+		}
+	}
+	
+	private String convertSpecialCharacters(final String in)	{
+		// \ddd how to replace octal values?
+		String result = in;
+		result = result.replaceAll("\\\\n", "\n");
+		result = result.replaceAll("\\\\t", "\t");
+		result = result.replaceAll("\\\\b", "\b");
+		result = result.replaceAll("\\\\r", "\r");
+		result = result.replaceAll("\\\\f", "\f");
+		return result;
 	}
 	
 	private void addBriefToKons(final Brief brief, final Konsultation kons){
