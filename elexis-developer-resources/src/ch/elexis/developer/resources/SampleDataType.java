@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: DBImage.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *    $Id: SampleDataType.java 6076 2010-02-04 20:46:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources;
