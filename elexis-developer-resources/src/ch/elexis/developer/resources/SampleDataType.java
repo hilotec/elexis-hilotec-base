@@ -14,6 +14,7 @@
 package ch.elexis.developer.resources;
 
 import ch.elexis.data.PersistentObject;
+import ch.rgw.tools.VersionInfo;
 
 /**
  * This is an example on how to derive your own type from PersistentObject and make it persisten
@@ -21,6 +22,7 @@ import ch.elexis.data.PersistentObject;
  *
  */
 public class SampleDataType extends PersistentObject {
+	static final String VERSION="1.0.0";
 	/** 
 	 * The Name of the Table objects of this class will reside in. If a plugin creates its
 	 * own table, the name MUST begin with the plugin ID to avoid name clashes. Note that dots
@@ -39,13 +41,21 @@ public class SampleDataType extends PersistentObject {
 	"Date			CHAR(8),"+						// use always this for dates
 	"Remarks		TEXT,"+
 	"FunnyStuff		BLOB);"+
-	"CREATE INDEX "+TABLENAME+"idx1 on "+TABLENAME+" (FunFactor)";
+	"CREATE INDEX "+TABLENAME+"idx1 on "+TABLENAME+" (FunFactor);"+
+	"insert into "+TABLENAME+" (ID,Title) VALUES (VERSION,"+VERSION+");";
 	
 	/**
 	 * In the static initializer we construct the table mappings and create or update the table
 	 */
 	static{
 		addMapping(TABLENAME, "Title","Fun=FunFactor","Bore=BoreFactor","Date=S:D:Date","Remarks","FunnyStuff");
+		SampleDataType version=load("VERSION");
+		VersionInfo vi=new VersionInfo(version.get("Title"));
+		if(vi.isOlder(VERSION)){
+			// we should update
+			// And then set the new version 
+			version.set("Title", VERSION);
+		}
 	}
 	/**
 	 * This should return a human readable short description of this object
@@ -54,20 +64,39 @@ public class SampleDataType extends PersistentObject {
 	public String getLabel() {
 		StringBuilder sb=new StringBuilder();
 		synchronized(sb){
-			sb.append(get("title")).append(get("FunFactor"));
+			sb.append(get("Title")).append(" has fun:").append(get("Fun"))
+			.append(" and is bored with factor ").append(get("Bore"));
 		}
 		return sb.toString();
 	}
 
+	/**
+	 * This static method should always be defined. We need this to retrieve PersistentObjects from the Database
+	 * @param id
+	 * @return
+	 */
+	public static SampleDataType load(String id){
+		return new SampleDataType(id);
+	}
 	/**
 	 * This must return the name of the Table this class will reside in. This may be an existent table
 	 * or one specificallym created by this plugin.
 	 */
 	@Override
 	protected String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
+		return TABLENAME;
 	}
 
-	
+	/**
+	 * The constructor with a String parameter must be present
+	 * @param id
+	 */
+	protected SampleDataType(String id){
+		super(id);
+	}
+	/**
+	 * The default constructor must be present
+	 */
+	public SampleDataType() {
+	}
 }

@@ -13,11 +13,15 @@
 
 package ch.elexis.developer.resources;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 
 /**
@@ -42,6 +46,11 @@ public class SampleVIew extends ViewPart implements IActivationListener{
 	 */
 	ViewerConfigurer vc;
 	
+	/**
+	 * A FlatDataLoader reads data from a table into a list of Objects
+	 */
+	FlatDataLoader fdl;
+	
 	public SampleVIew() {
 		// TODO Auto-generated constructor stub
 	}
@@ -52,7 +61,11 @@ public class SampleVIew extends ViewPart implements IActivationListener{
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
+		cv=new CommonViewer();
+		Query<SampleDataType> qbe=new Query<SampleDataType>(SampleDataType.class);
+		fdl=new FlatDataLoader(cv,qbe);
 		
+		vc=new ViewerConfigurer(fdl, new SampleDataLabelProvider(), new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 	}
 
 	@Override
