@@ -1,0 +1,25 @@
+h1(#id). Elexis developer resources
+
+(c) 2010 by G. Weirich	
+
+h2. Table of contents
+
+{toc}
+
+h2. Preface
+
+Elexis is originally a physician's practice management and electronic medical record (EMR) software. It is build on the Eclipse RCP(Rich Client Platform) and therefore extensible in many ways. The kernel is relatively small and contains some simple CRM(Customer Relationship Management) elements. Specific behaviour and capabilities are  introduced with plug-ins.
+
+Elexis is distributed under the Eclipse Public License and thus can freely be extended or modifed. This article will help you in creating plugins for Elexis.
+
+h2. Getting started
+
+h3. Prerequisites
+
+We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
+* Linux, Windows(tm) 2000 or newer,  MacOS-X 10.4 or newer 
+* Java jdk 1,5 or higher
+* Eclipse 3.5
+* A subversion client plugin for Eclipse (e.g. sublipse)
+
+h3. 
