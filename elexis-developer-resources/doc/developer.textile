@@ -19,7 +19,8 @@ h3. Prerequisites
 We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
 * Linux, Windows(tm) 2000 or newer,  MacOS-X 10.4 or newer 
 * Java jdk 1,5 or higher
-* Eclipse 3.5
-* A subversion client plugin for Eclipse (e.g. sublipse)
+* Eclipse 3.5 sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
+* A subversion client plugin for Eclipse (e.g. sublipse; Follow the instructions <a href="http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA">here</a>)
 
-h3. 
+h3. Checkout the sources
+
