@@ -56,5 +56,9 @@ Proceed to the tab "Plug-Ins"
 
 * change the "Launch with" Combobox to "plugins selected below only".
 * Click "Deselect all"
-* Select the Plugins you want to include
+* Select the Plugins you want to include (at least those above)
+* Click "add required plugins"
+* Click "validate plugins" and solve missing requirements, if any
+
+Then you should be able to start elexis with "Run".
 
