@@ -1,0 +1,14 @@
+h1. Elexis devoloper resources
+
+This plugin contains some sample files to show techniques used in elexis, along with documentation to help you getting started in developing plugins for elexis.
+
+Documentation is in .textile format, which is supported by the mylin wikitext editor. Documetnation can easily be converted into html, DocBook, or XSL-FO/PDF
+
+Please find more infrmation on the wikitext editor and the textile format here:
+
+"http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
+and here:
+"http://wiki.eclipse.org/Mylyn/Incubator/WikiText":http://wiki.eclipse.org/Mylyn/Incubator/WikiText
+
+Please note: in many eclipse environments, mylin ist installed by default. So check first before downloading the mylin plugin
+
