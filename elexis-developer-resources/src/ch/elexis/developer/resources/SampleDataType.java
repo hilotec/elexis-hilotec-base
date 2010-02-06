@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleDataType.java 6076 2010-02-04 20:46:19Z rgw_ch $
+ *    $Id: SampleDataType.java 6083 2010-02-06 11:18:49Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources;
@@ -18,85 +18,109 @@ import ch.rgw.tools.VersionInfo;
 
 /**
  * This is an example on how to derive your own type from PersistentObject and make it persisten
+ * 
  * @author gerry
- *
+ * 
  */
 public class SampleDataType extends PersistentObject {
-	static final String VERSION="1.0.0";
-	/** 
-	 * The Name of the Table objects of this class will reside in. If a plugin creates its
-	 * own table, the name MUST begin with the plugin ID to avoid name clashes. Note that dots
-	 * must be replaced by underscores due to naming restrictions of the database engines.
+	static final String VERSION = "1.0.0";
+	/**
+	 * The Name of the Table objects of this class will reside in. If a plugin creates its own
+	 * table, the name MUST begin with the plugin ID to avoid name clashes. Note that dots must be
+	 * replaced by underscores due to naming restrictions of the database engines.
 	 */
-	static final String TABLENAME="ch_elexis_developer_resources_sampletable";
+	static final String TABLENAME = "ch_elexis_developer_resources_sampletable";
 	
 	/** Definition of the database table */
-	static final String createDB="CREATE TABLE "+TABLENAME+"("+
-	"ID				VARCHAR(25) primary key,"+		// This field must always be present
-	"lastupdate		BIGINT,"+						// This field must always be present
-	"deleted		CHAR(1) default '0',"+			// This field must always be present
-	"Title          VARCHAR(50),"+
-	"FunFactor		VARCHAR(6),"+					// No numeric fields
-	"BoreFactor		VARCHAR(6),"+
-	"Date			CHAR(8),"+						// use always this for dates
-	"Remarks		TEXT,"+
-	"FunnyStuff		BLOB);"+
-	"CREATE INDEX "+TABLENAME+"idx1 on "+TABLENAME+" (FunFactor);"+
-	"insert into "+TABLENAME+" (ID,Title) VALUES (VERSION,"+VERSION+");";
+	static final String createDB =
+		"CREATE TABLE "
+		+ TABLENAME
+		+ "("
+		+ "ID				VARCHAR(25) primary key,"
+		+ // This field must always be present
+		"lastupdate		BIGINT,"
+		+ // This field must always be present
+		"deleted		CHAR(1) default '0',"
+		+ // This field must always be present
+		"Title          VARCHAR(50),"
+		+ "FunFactor		VARCHAR(6),"
+		+ // No numeric fields
+		"BoreFactor		VARCHAR(6),"
+		+ "Date			CHAR(8),"
+		+ // use always this for dates
+		"Remarks		TEXT," + "FunnyStuff		BLOB);" + "CREATE INDEX " + TABLENAME + "idx1 on "
+		+ TABLENAME + " (FunFactor);" + "insert into " + TABLENAME
+		+ " (ID,Title) VALUES (VERSION," + VERSION + ");";
 	
 	/**
 	 * In the static initializer we construct the table mappings and create or update the table
 	 */
-	static{
-		addMapping(TABLENAME, "Title","Fun=FunFactor","Bore=BoreFactor","Date=S:D:Date","Remarks","FunnyStuff");
-		SampleDataType version=load("VERSION");
-		VersionInfo vi=new VersionInfo(version.get("Title"));
-		if(vi.isOlder(VERSION)){
-			// we should update
-			// And then set the new version 
-			version.set("Title", VERSION);
+	static {
+		addMapping(TABLENAME, "Title", "Fun=FunFactor", "Bore=BoreFactor", "Date=S:D:Date",
+			"Remarks", "FunnyStuff");
+		SampleDataType version = load("VERSION");
+		if (!version.exists()) {
+			createOrModifyTable(createDB);
+		} else {
+			VersionInfo vi = new VersionInfo(version.get("Title"));
+			
+			if (vi.isOlder(VERSION)) {
+				// we should update eg. with createOrModifyTable(update.sql);
+				// And then set the new version
+				version.set("Title", VERSION);
+			}
 		}
 	}
+	
 	/**
-	 * This should return a human readable short description of this object
+	 * This should return a human readable short description of this object. The getLabel Method
+	 * should be fast because it is called frequently.
 	 */
 	@Override
-	public String getLabel() {
-		StringBuilder sb=new StringBuilder();
-		synchronized(sb){
-			sb.append(get("Title")).append(" has fun:").append(get("Fun"))
-			.append(" and is bored with factor ").append(get("Bore"));
+	public String getLabel(){
+		StringBuilder sb = new StringBuilder();
+		String[] result = new String[3];
+		get(new String[] {
+			"Title", "Fun", "Bore"
+		}, result);
+		synchronized (sb) {
+			sb.append(result[0]).append(" has fun:").append(result[1]).append(
+			" and is bored with factor ").append(result[2]);
 		}
 		return sb.toString();
 	}
-
+	
 	/**
-	 * This static method should always be defined. We need this to retrieve PersistentObjects from the Database
+	 * This static method should always be defined. We need this to retrieve PersistentObjects from
+	 * the Database
+	 * 
 	 * @param id
 	 * @return
 	 */
 	public static SampleDataType load(String id){
 		return new SampleDataType(id);
 	}
+	
 	/**
-	 * This must return the name of the Table this class will reside in. This may be an existent table
-	 * or one specificallym created by this plugin.
+	 * This must return the name of the Table this class will reside in. This may be an existent
+	 * table or one specificallym created by this plugin.
 	 */
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
-
+	
 	/**
 	 * The constructor with a String parameter must be present
+	 * 
 	 * @param id
 	 */
 	protected SampleDataType(String id){
 		super(id);
 	}
+	
 	/**
 	 * The default constructor must be present
 	 */
-	public SampleDataType() {
-	}
+	SampleDataType(){ /* do nothing */}
 }
