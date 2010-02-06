@@ -17,10 +17,44 @@ h2. Getting started
 h3. Prerequisites
 
 We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
-* Linux, Windows(tm) 2000 or newer,  MacOS-X 10.4 or newer 
+* Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.4 or newer 
 * Java jdk 1,5 or higher
 * Eclipse 3.5 sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
 * A subversion client plugin for Eclipse (e.g. sublipse; Follow the instructions <a href="http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA">here</a>)
 
 h3. Checkout the sources
+
+After installing the subclipse plugin, open the "SVN Repository exploring" perspective in Eclipse and create a new repository location with the URL https://elexis.svn.sourceforge.net/svnroot/elexis/trunk.
+
+*Do not* check out the trunk as a whole. Instead select individual projects to check out. For a minimal working elexis instance, you'll need at least the following projects:
+
+* elexis
+* elexis-utilities
+* elexis-importer
+* database adapter(s), one ore more of 
+** mysql-adapter 
+** h2-adapter
+** postgresql-adapter
+
+h3. Create a run configuration
+
+In Eclipse, chose Run-Run configurations. Right click on "Eclipse Application" and select "New". Enter an appropriate name for the project. You should see something like here:
+
+!runconfig1.png!
+
+In "Program to Run" select "Run a Product" and find *ch.elexis.ElexisProduct* in the Combobox.
+
+Then, go to the tab "Arguments":
+
+!runconfig2.png!
+
+If you do not change anything, elexis will run in the default locale of your operating system. If you want to try a different locale and language, you can add an -nl parameter in the upper box "Program arguments". The lower box "VM arguments" can be left empty for the beginning.
+
+Proceed to the tab "Plug-Ins"
+
+!runconfig3.png!
+
+* change the "Launch with" Combobox to "plugins selected below only".
+* Click "Deselect all"
+* Select the Plugins you want to include
 
