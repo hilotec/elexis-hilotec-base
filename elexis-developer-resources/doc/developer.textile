@@ -62,3 +62,10 @@ Proceed to the tab "Plug-Ins"
 
 Then you should be able to start elexis with "Run".
 
+h2. Creating a plugin
+
+Elexis plugins are basically eclipse 3.5 plugins and therefore OSGi-Bundles. You'll find a lot of literature on these topics on the web, Recommended reading includes Ed Burnette's "Rich client tutorial":http://www.eclipse.org/articles/Article-RCP-1/tutorial1.html, and Dave Springgay's "Eclipse Views tutorial":http://www.eclipse.org/articles/viewArticle/ViewArticle2.html along with other articles found on the eclipse website. There are also some books on programming OSGi Bundles and Eclipse plugins. You should have a basic knowledge on programming eclipse before proceeding.
+
+
+
+ 
