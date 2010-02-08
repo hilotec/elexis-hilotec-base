@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: IcpcCode.java 5178 2009-02-24 15:46:41Z rgw_ch $
+ * 
+ *    $Id: IcpcCode.java 6090 2010-02-08 16:56:04Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 
+import ch.elexis.Desk;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -36,7 +37,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	"short		VARCHAR(80),"+
 	"synonyms   VARCHAR(250),"+
 	"icd10		    TEXT,"+
-	"txt			TEXT,"+	
+	"txt			TEXT,"+
 	"criteria		TEXT,"+
 	"inclusion 		TEXT,"+
 	"exclusion		TEXT,"+
@@ -52,7 +53,16 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		addMapping(TABLENAME, "component", "text=txt", "short", "icd10", "criteria", "inclusion",
 			"exclusion", "consider", "note", "synonyms");
 		IcpcCode ver = IcpcCode.load("ver");
+		if(!ver.exists()){
+			try{
+				createOrModifyTable("DROP TABLE "+TABLENAME);
+			}catch (Exception e){
+				// janusode
+			}
+			createOrModifyTable(createDB);
+		}
 		VersionInfo vi = new VersionInfo(ver.get("text"));
+		
 		if (vi.isOlder(VERSION)) {
 			if (vi.isOlder("1.2.1")) {
 				createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
@@ -63,7 +73,13 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public static void initialize(){
-		createOrModifyTable(createDB);
+		Desk.syncExec(new Runnable() {
+			
+			public void run(){
+				createOrModifyTable(createDB);
+			}
+		});
+		
 	}
 	
 	public static Tree getRoot(){
@@ -117,23 +133,23 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public static final String[] classes =
-		{
-			Messages.IcpcCode_class_A, Messages.IcpcCode_class_B, Messages.IcpcCode_class_D,
-			Messages.IcpcCode_class_F, Messages.IcpcCode_class_H, Messages.IcpcCode_class_K,
-			Messages.IcpcCode_class_L, Messages.IcpcCode_class_N, Messages.IcpcCode_class_P,
-			Messages.IcpcCode_class_R, Messages.IcpcCode_class_S, Messages.IcpcCode_class_T,
-			Messages.IcpcCode_class_U, Messages.IcpcCode_class_W, Messages.IcpcCode_class_X,
-			Messages.IcpcCode_class_Y, Messages.IcpcCode_class_Z
-		};
+	{
+		Messages.IcpcCode_class_A, Messages.IcpcCode_class_B, Messages.IcpcCode_class_D,
+		Messages.IcpcCode_class_F, Messages.IcpcCode_class_H, Messages.IcpcCode_class_K,
+		Messages.IcpcCode_class_L, Messages.IcpcCode_class_N, Messages.IcpcCode_class_P,
+		Messages.IcpcCode_class_R, Messages.IcpcCode_class_S, Messages.IcpcCode_class_T,
+		Messages.IcpcCode_class_U, Messages.IcpcCode_class_W, Messages.IcpcCode_class_X,
+		Messages.IcpcCode_class_Y, Messages.IcpcCode_class_Z
+	};
 	/*
 	 * public static final String[] components_de={ };
 	 */
 	public static final String[] components =
-		{
-			Messages.IcpcCode_comp_1, Messages.IcpcCode_comp_2, Messages.IcpcCode_comp_3,
-			Messages.IcpcCode_comp_4, Messages.IcpcCode_comp_5, Messages.IcpcCode_comp_6,
-			Messages.IcpcCode_comp_7
-		};
+	{
+		Messages.IcpcCode_comp_1, Messages.IcpcCode_comp_2, Messages.IcpcCode_comp_3,
+		Messages.IcpcCode_comp_4, Messages.IcpcCode_comp_5, Messages.IcpcCode_comp_6,
+		Messages.IcpcCode_comp_7
+	};
 	
 	@SuppressWarnings("unchecked")
 	public static void reload(){
