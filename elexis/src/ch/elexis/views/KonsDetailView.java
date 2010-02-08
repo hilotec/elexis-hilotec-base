@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KonsDetailView.java 6039 2010-02-01 11:04:53Z rgw_ch $
+ *  $Id: KonsDetailView.java 6092 2010-02-08 18:25:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -61,7 +61,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.Sticker;
 import ch.elexis.dialogs.KontaktSelektor;
@@ -115,9 +114,7 @@ ISaveablePart2 {
 		public void runInUi(ElexisEvent ev){
 			Patient pat = (Patient) ev.getObject();
 			if (pat != null) {
-				if ((actKons == null) || (!(actKons.getFall().getPatient().equals(pat)))) {
-					setKons(pat.getLetzteKons(false));
-				}
+				setKons(pat.getLetzteKons(false));
 			}
 			
 		}
@@ -576,13 +573,6 @@ ISaveablePart2 {
 				}
 			}
 		});
-	}
-	
-	private void clear(final Class<? extends PersistentObject> template){
-		if (template.equals(Konsultation.class) || template.equals(Patient.class)
-				|| template.equals(Fall.class)) {
-			setKons(null);
-		}
 	}
 	
 	final private ElexisEvent eetemplate =
