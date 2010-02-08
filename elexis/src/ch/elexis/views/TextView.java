@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: TextView.java 6088 2010-02-08 11:31:38Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -192,11 +192,12 @@ public class TextView extends ViewPart implements IActivationListener {
 		};
 
 		showMenuAction = new Action(
-				Messages.getString("TextView.showMenu"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
+				Messages.getString("TextView.showMenu"), Action.AS_CHECK_BOX) { //$NON-NLS-1$			
 			public void run() {
 				txt.getPlugin().showMenu(isChecked());
 			}
 		};
+		
 		showToolbarAction = new Action(
 				Messages.getString("TextView.Toolbar"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
@@ -247,10 +248,12 @@ public class TextView extends ViewPart implements IActivationListener {
 				.getString("TextView.showMenuBar")); //$NON-NLS-1$
 		showMenuAction.setImageDescriptor(Hub
 				.getImageDescriptor("rsc/menubar.ico")); //$NON-NLS-1$
+		showMenuAction.setChecked(true);
 		showToolbarAction.setImageDescriptor(Hub
 				.getImageDescriptor("rsc/toolbar.ico")); //$NON-NLS-1$
 		showToolbarAction.setToolTipText(Messages
 				.getString("TextView.showToolbar")); //$NON-NLS-1$
+		showToolbarAction.setChecked(true);
 	}
 
 	class SaveHandler implements ITextPlugin.ICallback {
