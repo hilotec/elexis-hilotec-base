@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleVIew.java 6076 2010-02-04 20:46:19Z rgw_ch $
+ *    $Id: SampleVIew.java 6094 2010-02-09 06:06:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources;
@@ -30,10 +30,10 @@ import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 
 /**
- * This is a sample view to explain how to connect to elexis's event scheduler and how to
+ * This is a sample view to demonstrate how to connect to elexis's event scheduler and how to
  * display elexis's data types.
  * We implement IActivationListener to be informed, wenn the user can see our View. All UI funktions 
- * must only be active in that case.
+ * should only be active in that case.
  * @author gerry
  *
  */
@@ -41,7 +41,7 @@ public class SampleVIew extends ViewPart implements IActivationListener{
 
 	/**
 	 * CommonViewer is a "golden hammer". Use it for fast prototyping. In many cases
-	 * you should use mor spezialiced viewers.
+	 * you probably want to develop more spezialiced viewers.
 	 */
 	CommonViewer cv;
 	
@@ -64,7 +64,7 @@ public class SampleVIew extends ViewPart implements IActivationListener{
 	ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class){
 		/**
 		 * Wen can override runInUi (which runs in the UI thread) or catchElexisEvent which runs
-		 * in a non-UI thread. In any case the method must end quickly. For lenghty operations, start
+		 * in a non-UI thread. In any case the method must return quickly. For lenghty operations, start
 		 * a seperate thread. 
 		 */
 	
@@ -106,7 +106,7 @@ public class SampleVIew extends ViewPart implements IActivationListener{
 	}
 
 	/**
-	 * This method is called immediately before the view is created. This is the right place to
+	 * This is the right place to
 	 * create all UI elements. The parent composite already has a GridLayout.
 	 */
 	@Override
