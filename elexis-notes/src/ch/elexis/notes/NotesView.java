@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: NotesView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *  $Id: NotesView.java 6096 2010-02-09 17:56:39Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -56,19 +56,20 @@ import ch.rgw.tools.Result;
  * 
  */
 public class NotesView extends ViewPart implements IActivationListener,
-		ElexisEventListener {
+ElexisEventListener {
 	private static final String PREFERRED_SCANSERVICE = "ScanToPDFService";
+	static final String ID="ch.elexis.notes.view";
 	ScrolledForm fMaster;
 	NotesList master;
 	NotesDetail detail;
 	boolean hasScanner = false;
 	private IAction newCategoryAction, newNoteAction, delNoteAction,
-			scanAction;
+	scanAction;
 	FormToolkit tk = Desk.getToolkit();
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
-
+		
 		SashForm sash = new SashForm(parent, SWT.HORIZONTAL);
 		fMaster = tk.createScrolledForm(sash);
 		fMaster.getBody().setLayout(new GridLayout());
@@ -89,27 +90,27 @@ public class NotesView extends ViewPart implements IActivationListener,
 		newNoteAction.setEnabled(false);
 		detail.setEnabled(false);
 		GlobalEventDispatcher.addActivationListener(this, getViewSite()
-				.getPart());
+			.getPart());
 		fMaster.updateToolBar();
 		sash.setWeights(new int[] { 3, 7 });
 		// fDetail.updateToolBar();
 		// fDetail.reflow(true);
 	}
-
+	
 	public void dispose() {
 		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
-				.getPart());
+			.getPart());
 	}
-
+	
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void activation(boolean mode) {
 	}
-
+	
 	public void visible(boolean mode) {
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(this);
@@ -117,20 +118,20 @@ public class NotesView extends ViewPart implements IActivationListener,
 			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
 	}
-
+	
 	private void makeActions() {
 		newCategoryAction = new Action("Neue Kategorie") {
 			{
 				setToolTipText("Eine neue Haupt-Kategorie erstellen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
-
+			
 			public void run() {
 				InputDialog id = new InputDialog(
-						getViewSite().getShell(),
-						"Neue Hauptkategorie erstellen",
-						"Bitte geben Sie einen namen für die neue Kategorie ein",
-						"", null);
+					getViewSite().getShell(),
+					"Neue Hauptkategorie erstellen",
+					"Bitte geben Sie einen namen für die neue Kategorie ein",
+					"", null);
 				if (id.open() == Dialog.OK) {
 					/* Note note= */new Note(null, id.getValue(), "");
 					master.tv.refresh();
@@ -142,41 +143,41 @@ public class NotesView extends ViewPart implements IActivationListener,
 				setToolTipText("Neue Notiz oder Unterkategorie erstellen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 			}
-
+			
 			public void run() {
 				Note act = (Note) ElexisEventDispatcher.getSelected(Note.class);
 				if (act != null) {
 					InputDialog id = new InputDialog(
-							getViewSite().getShell(),
-							"Neue Notiz erstellen",
-							"Bitte geben Sie einen namen für die neue Notiz oder Unterkategorie ein",
-							"", null);
+						getViewSite().getShell(),
+						"Neue Notiz erstellen",
+						"Bitte geben Sie einen namen für die neue Notiz oder Unterkategorie ein",
+						"", null);
 					if (id.open() == Dialog.OK) {
 						/* Note note= */new Note(act, id.getValue(), "");
 						master.tv.refresh();
 					}
 				}
 			}
-
+			
 		};
 		delNoteAction = new Action("Löschen...") {
 			{
 				setToolTipText("Notiz und alle Unterkategorien löschen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
-
+			
 			public void run() {
 				Note act = (Note) ElexisEventDispatcher.getSelected(Note.class);
 				if (act != null) {
 					if (SWTHelper
 							.askYesNo("Notiz(en) löschen",
-									"Wirklich diesen Eintrag und alle Untereinträge löschen?")) {
+							"Wirklich diesen Eintrag und alle Untereinträge löschen?")) {
 						act.delete();
 						master.tv.refresh();
 					}
 				}
 			}
-
+			
 		};
 		// Check if there is a scanner service available and if so, create a
 		// "Scan" button
@@ -186,90 +187,90 @@ public class NotesView extends ViewPart implements IActivationListener,
 				{
 					setToolTipText("Document mit dem Scanner einlesen");
 					ImageDescriptor imgScanner = AbstractUIPlugin
-							.imageDescriptorFromPlugin("ch.elexis.notes",
-									"icons" + File.separator + "scanner.ico");
+					.imageDescriptorFromPlugin("ch.elexis.notes",
+						"icons" + File.separator + "scanner.ico");
 					setImageDescriptor(imgScanner);
 				}
-
+				
 				public void run() {
 					try {
 						Object scanner = Extensions
-								.findBestService(PREFERRED_SCANSERVICE);
+						.findBestService(PREFERRED_SCANSERVICE);
 						if (scanner != null) {
 							Result<byte[]> res = (Result<byte[]>) Extensions
-									.executeService(scanner, "acquire",
-											new Class[0], new Object[0]);
+							.executeService(scanner, "acquire",
+								new Class[0], new Object[0]);
 							if (res.isOK()) {
 								Note act = (Note) ElexisEventDispatcher
-										.getSelected(Note.class);
+								.getSelected(Note.class);
 								byte[] pdf = res.get();
 								InputDialog id = new InputDialog(
-										getViewSite().getShell(),
-										"Neues Dokument importieren",
-										"Bitte geben Sie einen Namen für das eben gescannte Document ein",
-										"", null);
+									getViewSite().getShell(),
+									"Neues Dokument importieren",
+									"Bitte geben Sie einen Namen für das eben gescannte Document ein",
+									"", null);
 								if (id.open() == Dialog.OK) {
 									String name = id.getValue();
 									String basedir = Hub.localCfg.get(
-											Preferences.CFGTREE, null);
+										Preferences.CFGTREE, null);
 									if (basedir == null) {
 										SWTHelper
-												.alert(
-														"Basisverzeichnis falsch",
-														"Es ist kein Basisverzeichnis definiert");
+										.alert(
+											"Basisverzeichnis falsch",
+										"Es ist kein Basisverzeichnis definiert");
 										return;
 									}
 									File file = new File(basedir, name
-											.replaceAll("\\s", "_")
-											+ ".pdf");
+										.replaceAll("\\s", "_")
+										+ ".pdf");
 									if (!file.createNewFile()) {
 										SWTHelper
-												.alert(
-														"Importfehler",
-														"Kann Datei "
-																+ file
-																		.getAbsolutePath()
-																+ " nicht schreiben");
+										.alert(
+											"Importfehler",
+											"Kann Datei "
+											+ file
+											.getAbsolutePath()
+											+ " nicht schreiben");
 										return;
 									}
 									FileOutputStream fout = new FileOutputStream(
-											file);
+										file);
 									BufferedOutputStream bout = new BufferedOutputStream(
-											fout);
+										fout);
 									bout.write(pdf);
 									bout.close();
 									Samdas samdas = new Samdas(name);
 									Samdas.Record record = samdas.getRecord();
 									Samdas.XRef xref = new Samdas.XRef(
-											ExternalLink.ID, file
-													.getAbsolutePath(), 0, name
-													.length());
+										ExternalLink.ID, file
+										.getAbsolutePath(), 0, name
+										.length());
 									record.add(xref);
 									XMLOutputter xo = new XMLOutputter(Format
-											.getRawFormat());
+										.getRawFormat());
 									String cnt = xo.outputString(samdas
-											.getDocument());
+										.getDocument());
 									byte[] nb = CompEx.Compress(cnt
-											.getBytes("utf-8"), CompEx.ZIP);
+										.getBytes("utf-8"), CompEx.ZIP);
 									/* Note note= */new Note(act, name, nb,
-											"text/xml");
+									"text/xml");
 									master.tv.refresh();
 								}
-
+								
 							}
 						}
-
+						
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						SWTHelper.showError("Fehler beim Import", ex
-								.getMessage());
+							.getMessage());
 					}
 				}
 			};
 		}
-
+		
 	}
-
+	
 	public void catchElexisEvent(final ElexisEvent ev) {
 		Desk.asyncExec(new Runnable() {
 			public void run() {
@@ -278,17 +279,17 @@ public class NotesView extends ViewPart implements IActivationListener,
 					detail.setEnabled(true);
 					detail.setNote(note);
 					newNoteAction.setEnabled(true);
-
+					
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
 					newNoteAction.setEnabled(false);
 				}
 			}
 		});
 	}
-
+	
 	private final ElexisEvent eetmpl = new ElexisEvent(null, Note.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
+		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+	
 	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
