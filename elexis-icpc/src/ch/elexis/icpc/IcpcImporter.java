@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: IcpcImporter.java 6063 2010-02-03 22:45:39Z tschaller $
+ * 
+ *    $Id: IcpcImporter.java 6097 2010-02-10 18:11:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -33,7 +33,7 @@ public class IcpcImporter extends ImporterPage {
 	JdbcLink j, pj;
 	
 	public IcpcImporter(){
-	// TODO Auto-generated constructor stub
+		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -92,11 +92,11 @@ public class IcpcImporter extends ImporterPage {
 		monitor.subTask("Lese Daten ein");
 		PreparedStatement ps =
 			pj
-				.prepareStatement("INSERT INTO "
-					+ IcpcCode.TABLENAME
-					+ " ("
-					+ "ID,component,txt,synonyms,short,icd10,criteria,inclusion,exclusion,consider,note)"
-					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?);");
+			.prepareStatement("INSERT INTO "
+				+ IcpcCode.TABLENAME
+				+ " ("
+				+ "ID,component,txt,synonyms,short,icd10,criteria,inclusion,exclusion,consider,note)"
+				+ "VALUES (?,?,?,?,?,?,?,?,?,?,?);");
 		monitor.worked(1);
 		try {
 			ResultSet res = stmSrc.query("SELECT * FROM \"ICPC2eGM\"");

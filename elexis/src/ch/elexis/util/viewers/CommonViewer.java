@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: CommonViewer.java 6043 2010-02-01 14:34:06Z rgw_ch $
+ * $Id: CommonViewer.java 6097 2010-02-10 18:11:07Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -304,15 +304,15 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 	
 	public void doubleClick(DoubleClickEvent event){
 		if (dlListeners != null) {
-			Iterator it = dlListeners.iterator();
+			Iterator<DoubleClickListener> it = dlListeners.iterator();
 			while (it.hasNext()) {
-				DoubleClickListener dl = (DoubleClickListener) it.next();
+				DoubleClickListener dl = it.next();
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				if ((sel != null) && (!sel.isEmpty())) {
 					Object element = sel.getFirstElement();
 					PersistentObject po;
-					if (element instanceof Tree) {
-						po = (PersistentObject) ((Tree) element).contents;
+					if (element instanceof Tree<?>) {
+						po = (PersistentObject) ((Tree<?>) element).contents;
 					} else {
 						po = (PersistentObject) element;
 					}
