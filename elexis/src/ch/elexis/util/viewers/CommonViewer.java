@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: CommonViewer.java 6097 2010-02-10 18:11:07Z rgw_ch $
+ * $Id: CommonViewer.java 6102 2010-02-11 15:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -35,8 +37,9 @@ import org.eclipse.ui.IViewSite;
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.PersistentObjectDragSource;
+import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.PersistentObjectDragSource2.Draggable;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.Tree;
 
@@ -142,7 +145,25 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 		/*
 		 * viewer.addDragSupport(DND.DROP_COPY,new Transfer[] {TextTransfer.getInstance()},
 		 */
-		new PersistentObjectDragSource(viewer);
+		new PersistentObjectDragSource2(viewer.getControl(), new Draggable() {
+			
+			public List<PersistentObject> getSelection(){
+				Object[] sel = CommonViewer.this.getSelection();
+				ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>(sel.length);
+				for (Object o : sel) {
+					if (o instanceof PersistentObject) {
+						ret.add((PersistentObject) o);
+					} else if (o instanceof Tree<?>) {
+						Object b = ((Tree<?>) o).contents;
+						if (b instanceof PersistentObject) {
+							ret.add((PersistentObject) b);
+						}
+					}
+				}
+				return ret;
+			}
+			
+		});
 		if (mgr != null) {
 			viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 		}
@@ -248,8 +269,8 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 	public void selectionChanged(SelectionChangedEvent event){
 		Object[] sel = getSelection();
 		if (sel != null && sel.length != 0) {
-			if (sel[0] instanceof Tree) {
-				sel[0] = ((Tree) sel[0]).contents;
+			if (sel[0] instanceof Tree<?>) {
+				sel[0] = ((Tree<?>) sel[0]).contents;
 			}
 			if (sel[0] instanceof PersistentObject) {
 				ElexisEventDispatcher.fireSelectionEvent((PersistentObject) sel[0]);
@@ -281,7 +302,7 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 	}
 	
 	/**
-	 * Kontextmenu an den unterleigenden Viewer binden. Falls dieser zum Zeitpunkt des Aufrufs
+	 * Kontextmenu an den unterliegenden Viewer binden. Falls dieser zum Zeitpunkt des Aufrufs
 	 * dieser Methode noch nicht existiert, wird das Einbinden verzögert.
 	 * 
 	 * @param mgr

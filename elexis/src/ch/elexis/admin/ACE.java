@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: ACE.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ * 
+ *  $Id: ACE.java 6102 2010-02-11 15:21:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.admin;
 
@@ -29,9 +29,9 @@ public class ACE implements Serializable {
 	public static final ACE ACE_ROOT = new ACE(null, "root", Messages.getString("ACE.root")); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE ACE_IMPLICIT = new ACE(ACE.ACE_ROOT, "implicit", Messages.getString("ACE.implicit")); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	private String name;
+	private final String name;
 	private String localizedName;
-	private ACE parent;
+	private final ACE parent;
 	
 	/**
 	 * Create a new ACE. This is the recommended constructor for most cases.
@@ -42,7 +42,7 @@ public class ACE implements Serializable {
 	 *            the internal, immutable name of this ACE. Should be unique. Therefore, it is
 	 *            recommended to prefix the name with the plugin ID
 	 * @param localizedName
-	 *            the name that will be presented to the user.
+	 *            the name that will be presented to the user. Thsi should be a translatable String
 	 */
 	public ACE(ACE parent, String name, String localizedName){
 		this.parent = parent;

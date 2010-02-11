@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, Daniel Lutz and Elexis
+ * Copyright (c) 2007-2010, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    D. Lutz    - final implementation
- *    G. Weirich adapted for ACE
- *    
- * $Id: RestrictedAction.java 4967 2009-01-18 16:52:11Z rgw_ch $
+ *    G. Weirich adapted for ACE and AutoAdapt
+ * 
+ * $Id: RestrictedAction.java 6102 2010-02-11 15:21:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.admin.ACE;
+import ch.elexis.data.Anwender;
 
 /**
  * Special class for actiosn requiring special access rights.
@@ -38,7 +40,25 @@ import ch.elexis.admin.ACE;
  */
 abstract public class RestrictedAction extends Action {
 	protected ACE necessaryRight;
-	private List<RestrictionListener> listeners = new ArrayList<RestrictionListener>();
+	private final List<RestrictionListener> listeners = new ArrayList<RestrictionListener>();
+	private static Pool pool=new Pool();
+	
+	/**
+	 * If AutoAdapt is enabled, the Action will reflect is visual representation according to the
+	 * current user's rights automatically. If AutoAdapt is enabled, then disableAutoAdapt MUST be
+	 * called on Disposal
+	 */
+	public void enableAutoAdapt(){
+		pool.add(this);
+		reflectRight();
+	}
+	
+	/**
+	 * Remove this RestrcitedAction from the AutoAdapt queue
+	 */
+	public void disableAutoAdapt(){
+		pool.remove(this);
+	}
 	
 	public RestrictedAction(ACE necessaryRight){
 		this.necessaryRight = necessaryRight;
@@ -140,6 +160,28 @@ abstract public class RestrictedAction extends Action {
 		
 		public RestrictionEvent(ACE necessaryRight){
 			this.necessaryRight = necessaryRight;
+		}
+	}
+	
+	static class Pool extends ArrayList<RestrictedAction> implements ElexisEventListener{
+		private final ElexisEvent eetmpl=new ElexisEvent(null,Anwender.class,ElexisEvent.EVENT_USER_CHANGED);
+		Pool(){
+			ElexisEventDispatcher.getInstance().addListeners(this);
+		}
+		
+		public void catchElexisEvent(ElexisEvent ev){
+			final ArrayList<RestrictedAction> copy=new ArrayList<RestrictedAction>(this);
+			Desk.asyncExec(new Runnable() {
+				public void run(){
+					for(RestrictedAction ra:copy){
+						ra.reflectRight();
+					}
+				}
+			});
+		}
+		
+		public ElexisEvent getElexisEventFilter(){
+			return eetmpl;
 		}
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RechnungsBlatt.java 6039 2010-02-01 11:04:53Z rgw_ch $
+ * $Id: RechnungsBlatt.java 6102 2010-02-11 15:21:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views.rechnung;
 
@@ -409,6 +409,10 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 	public void visible(boolean mode){
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_rn, eeli_user);
+			Rechnung selected=(Rechnung) ElexisEventDispatcher.getSelected(Rechnung.class);
+			if(selected!=null){
+				doSelect(selected);
+			}
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_rn, eeli_user);
 		}
