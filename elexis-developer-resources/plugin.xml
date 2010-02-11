@@ -8,7 +8,8 @@
             name="ch.elexis.developer.resources.category">
       </category>
       <view
-            class="ch.elexis.developer.resources.SampleVIew"
+            category="elexis-developer-resources.category1"
+            class="ch.elexis.developer.resources.view.SampleView"
             id="ch.elexis.developer.resources.views.sample"
             name="%SampleView"
             restorable="true">

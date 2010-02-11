@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Activator.java 6108 2010-02-11 18:26:14Z rgw_ch $
+ *    $Id: Activator.java 6116 2010-02-11 21:40:19Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources.model;
@@ -22,7 +22,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "ch.elexis.developer.resources";
+	public static final String PLUGIN_ID = "ch.elexis.developer.resources"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
