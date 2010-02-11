@@ -1,6 +1,7 @@
 h1(#id). Elexis developer resources
 
-(c) 2010 by G. Weirich	
+(c) 2010 by G. Weirich
+$Id: developer.textile 6106 2010-02-11 18:11:17Z rgw_ch $	
 
 h2. Table of contents
 
