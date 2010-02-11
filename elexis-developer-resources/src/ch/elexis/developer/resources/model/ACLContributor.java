@@ -8,9 +8,9 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ACLContributor.java 6101 2010-02-11 15:20:57Z rgw_ch $
+ *    $Id: ACLContributor.java 6108 2010-02-11 18:26:14Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.developer.resources;
+package ch.elexis.developer.resources.model;
 
 import ch.elexis.admin.ACE;
 import ch.elexis.admin.IACLContributor;
@@ -30,16 +30,16 @@ public class ACLContributor implements IACLContributor {
 	private static final String SAMPLE_ACE_MODIFY="Modify SampleDataTypes";
 	
 	/** The Node for our ACE's */
-	static final ACE MY_NODE=new ACE(ACE.ACE_ROOT,Activator.PLUGIN_ID,SAMPLE_ACE_TRANSLATABLE_NODE_NAME);
+	public static final ACE MY_NODE=new ACE(ACE.ACE_ROOT,Activator.PLUGIN_ID,SAMPLE_ACE_TRANSLATABLE_NODE_NAME);
 	/**
 	 * The right to read SampleDataTypes
 	 */
-	static final ACE ReadSDT =
+	public static final ACE ReadSDT =
 		new ACE(MY_NODE, Activator.PLUGIN_ID + "_readSDT", SAMPLE_ACE_READ);
 	
-	static final ACE ModifySDT=new ACE(MY_NODE,Activator.PLUGIN_ID+"_modifySDT",SAMPLE_ACE_MODIFY);
+	public static final ACE ModifySDT=new ACE(MY_NODE,Activator.PLUGIN_ID+"_modifySDT",SAMPLE_ACE_MODIFY);
 	
-	static final ACE CreateSDT=new ACE(MY_NODE,Activator.PLUGIN_ID+"_createSDT",SAMPLE_ACE_CREATE);
+	public static final ACE CreateSDT=new ACE(MY_NODE,Activator.PLUGIN_ID+"_createSDT",SAMPLE_ACE_CREATE);
 	
 	/**
 	 * We insert our ACEs to the Elexis AccessControl System

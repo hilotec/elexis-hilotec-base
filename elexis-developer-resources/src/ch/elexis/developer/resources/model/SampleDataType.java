@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleDataType.java 6101 2010-02-11 15:20:57Z rgw_ch $
+ *    $Id: SampleDataType.java 6108 2010-02-11 18:26:14Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.developer.resources;
+package ch.elexis.developer.resources.model;
 
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.JdbcLink;

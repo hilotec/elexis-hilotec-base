@@ -8,10 +8,10 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleVIew.java 6101 2010-02-11 15:20:57Z rgw_ch $
+ *    $Id: SampleView.java 6108 2010-02-11 18:26:14Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.developer.resources;
+package ch.elexis.developer.resources.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +30,8 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.developer.resources.model.ACLContributor;
+import ch.elexis.developer.resources.model.SampleDataType;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
@@ -44,7 +46,8 @@ import ch.rgw.tools.TimeTool;
  * @author gerry
  * 
  */
-public class SampleVIew extends ViewPart implements IActivationListener {
+
+public class SampleView extends ViewPart implements IActivationListener {
 	
 	/**
 	 * CommonViewer is a "golden hammer". Use it for fast prototyping. In many cases you probably
@@ -230,4 +233,5 @@ public class SampleVIew extends ViewPart implements IActivationListener {
 		};
 		newSDTAction.enableAutoAdapt();
 	}
+
 }

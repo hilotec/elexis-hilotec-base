@@ -8,13 +8,15 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleDataLabelProvider.java 6094 2010-02-09 06:06:06Z rgw_ch $
+ *    $Id: SampleDataLabelProvider.java 6108 2010-02-11 18:26:14Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.developer.resources;
+package ch.elexis.developer.resources.view;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import ch.elexis.developer.resources.model.SampleDataType;
 
 /**
  * A LabelProvider renders visual Representations of Objects held in a Viewer

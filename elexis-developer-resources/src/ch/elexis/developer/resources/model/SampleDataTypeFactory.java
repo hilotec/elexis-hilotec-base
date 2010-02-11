@@ -1,4 +1,4 @@
-package ch.elexis.developer.resources;
+package ch.elexis.developer.resources.model;
 
 import java.lang.reflect.Method;
 

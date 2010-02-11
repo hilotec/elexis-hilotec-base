@@ -1,7 +1,7 @@
 h1(#id). Elexis developer resources
 
 (c) 2010 by G. Weirich
-$Id: developer.textile 6106 2010-02-11 18:11:17Z rgw_ch $	
+$Id: developer.textile 6108 2010-02-11 18:26:14Z rgw_ch $	
 
 h2. Table of contents
 
@@ -13,9 +13,9 @@ Elexis is originally a physician's practice management and electronic medical re
 
 Elexis is distributed under the Eclipse Public License and thus can freely be extended or modifed. This article will help you in creating plugins for Elexis.
 
-h2. Getting started
+h1. Getting started
 
-h3. Prerequisites
+h2. Prerequisites
 
 We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
 * Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.4 or newer 
@@ -23,7 +23,7 @@ We assume that you have good knowledge of the Java programming language and at l
 * Eclipse 3.5 sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
 * A subversion client plugin for Eclipse (e.g. sublipse; Follow the instructions <a href="http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA">here</a>)
 
-h3. Checkout the sources
+h2. Checkout the sources
 
 After installing the subclipse plugin, open the "SVN Repository exploring" perspective in Eclipse and create a new repository location with the URL https://elexis.svn.sourceforge.net/svnroot/elexis/trunk.
 
@@ -37,7 +37,7 @@ After installing the subclipse plugin, open the "SVN Repository exploring" persp
 ** h2-adapter
 ** postgresql-adapter
 
-h3. Create a run configuration
+h2. Create a run configuration
 
 In Eclipse, chose Run-Run configurations. Right click on "Eclipse Application" and select "New". Enter an appropriate name for the project. You should see something like here:
 
@@ -63,31 +63,28 @@ Proceed to the tab "Plug-Ins"
 
 Then you should be able to start elexis with "Run".
 
-h2. Creating a plugin
 
-Elexis plugins are basically eclipse 3.5 plugins and therefore OSGi-Bundles. You'll find a lot of literature on these topics on the web, Recommended reading includes Ed Burnette's "Rich client tutorial":http://www.eclipse.org/articles/Article-RCP-1/tutorial1.html, and Dave Springgay's "Eclipse Views tutorial":http://www.eclipse.org/articles/viewArticle/ViewArticle2.html along with other articles found on the eclipse website. There are also some books on programming OSGi Bundles and Eclipse plugins. You should have a basic knowledge on programming eclipse before proceeding.
-
-h2. Programming guidelines
+h1. Programming guidelines
 
 You are very welcome to provide any type of plugin for elexis. Please adhere to a few rules to avoid conflicts between different plugins.
 
-h3. 1) Name of your plugin
+h2. 1) Name of your plugin
 
 You may name your plugin whatever you like but we recommend that you prefix it with your name or the name of your organization.  The prefix elexis- must not be used. this is reserved for our own plugins. We recommend, that you chose a name dervived from the Plugin ID (as described below).
 
-h3. 2) Plugin ID of your pugin
+h2. 2) Plugin ID of your pugin
 
 Every plugin must have its unique ID. It is common use that such an id consists of an inversely written url of the provider. So, all Plugins of elexis.ch have a plugin ID starting with ch.elexis. We recommend, that you use a similar naming scheme. In any case, the prefix  ch.elexis must not be used.
 
-h3. 3) Packages of your plugin
+h2. 3) Packages of your plugin
 
 Again, it is common use to name the packages of a Java programm after its originating url. Therefore, all elexis classes reside in packages prefixed with ch.elexis. We recommend that you use a similar scheme. In any case, the prefix ch.elexis must not be used.
 
-h3. 4) Name of your Tables
+h2. 4) Name of your Tables
 
 To avoid name clashes between the tables of different Plugins, it is mandatory that you prefix the names of the tables your plugin creates (if any) with the pluginID. For sql syntax reasons, every dot in the name must be replaced by an underscore. Thus the plugin ch.elexis.something will create a table like CH_ELEXIS_SOMETHING_TABLE1
 
-h3. 5) Documentation
+h2. 5) Documentation
 
 It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at th root of your plugin.
 For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be genereted automatically during build.
@@ -100,9 +97,9 @@ and here:
 More information on TeX/LaTeX can be found here:
 "http://www.latex-project.org/":http://www.latex-project.org/
 
-h2. Concepts
+h1. Concepts
 
-h3. Access privileges
+h2. Access privileges
 
 Elexis has a hierarchical privilege system that is organized in roles and users.  The meaning of a privilege is defined by the implementor.
 
@@ -123,7 +120,7 @@ A view should define by itself the necessary rights to display its content, and 
 
 The sample code of the plugin elexis-developer-resources contains examples for use of the ACLSystem (see ACLContributor.java and SampleView.java)
 
-h3. Configuration
+h2. Configuration
 
 There are four configuration areas in elexis. Programmers should take care to use the correkt place for configuration data:
 
@@ -132,7 +129,7 @@ There are four configuration areas in elexis. Programmers should take care to us
 # Hub.mandantCfg: A Settings-object that is mapped to the table USERCONFIG. Here are details concerning the actual Mandator. Keep in mind, that actUser and actMandant need not at all be the same person.
 # Hub.globalCfg: A Settings-object that is mapped to the table CONFIG. Here are all globally valid configuration details stored. 
 
-h3. Event Dispatcher system
+h2. Event Dispatcher system
  
 In elexis, a view cannot rely on being part of a specific window layout. Instead, a view can be linked to any of an arbitrary number of perspectives, can be hidden or visible or can be closed. Therefore a view must not make any assumptions on other views being available at any given moment. This aticle describes, how a view can be informed on user actions in other views anyhow.
 
@@ -149,4 +146,22 @@ This ensures that listeners are only called if their view is visible to the user
 
 The sample code of the elexis-developer-resources plugins contains extensive examples on using the ElexisEventDispatcher.
 
- 
+h1. Creating a plugin
+
+Elexis plugins are basically eclipse 3.5 plugins and therefore OSGi-Bundles. You'll find a lot of literature on these topics on the web, Recommended reading includes Ed Burnette's "Rich client tutorial":http://www.eclipse.org/articles/Article-RCP-1/tutorial1.html, and Dave Springgay's "Eclipse Views tutorial":http://www.eclipse.org/articles/viewArticle/ViewArticle2.html along with other articles found on the eclipse website. There are also some books on programming OSGi Bundles and Eclipse plugins. You should have a basic knowledge on programming eclipse before proceeding.
+
+h2. The sample plugin
+
+To provide a convenient starting point, the Plugin elexis-developer-resources is deliberately simple designed and well documented. You might want to use this to start learning about plugin development for elexis. In this article, we'll describe that plugin detailed.
+
+The following files belong to the plugin elexis-developer-resources:
+
+* Plugin.xml. This file is an eclipse requirement and contains all informations that are necessary to actually put the plugin together with the rest of the programm (and with all other plugins).
+* META-INF/manifest.mf: THe standard OSGi-Bundle. Is created autimatically
+* ch.elexis.developer.resources.view.Perspective: This file defines a perspective for the plugin.(Which is not really necessary in that case, but we want toshow, how to do it)
+*  ch.elexis.befunde.Messwert: Definition of a data type. here we create a subclass of PersistentObject and a table in the elexis database to store our values.
+    * ch.elexis.befunde.MesswertFactory: A class that can create "Messwert" -objects and thus gives the elexis-kernel the possibility to create such objects in a controlled way..
+    * ch.elexis.befunde.BefundePrefs: This defines a preference pagethat is included seamlessly with the main preferences of elexis.
+    * ch.elexis.befunde.MesswertView: A View to display ourdata
+
+  

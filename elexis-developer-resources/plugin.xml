@@ -17,14 +17,14 @@
    <extension
          point="ch.elexis.PersistentReference">
       <Factory
-            Class="ch.elexis.developer.resources.SampleDataTypeFactory"
+            Class="ch.elexis.developer.resources.model.SampleDataTypeFactory"
             name="SampleDataType">
       </Factory>
    </extension>
    <extension
          point="ch.elexis.ACLContribution">
       <ACLContribution
-            ACLContributor="ch.elexis.developer.resources.ACLContributor"
+            ACLContributor="ch.elexis.developer.resources.model.ACLContributor"
             name="Sample Data Type">
       </ACLContribution>
    </extension>
