@@ -14,5 +14,19 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="ch.elexis.PersistentReference">
+      <Factory
+            Class="ch.elexis.developer.resources.SampleDataTypeFactory"
+            name="SampleDataType">
+      </Factory>
+   </extension>
+   <extension
+         point="ch.elexis.ACLContribution">
+      <ACLContribution
+            ACLContributor="ch.elexis.developer.resources.ACLContributor"
+            name="Sample Data Type">
+      </ACLContribution>
+   </extension>
 
 </plugin>

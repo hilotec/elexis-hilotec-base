@@ -66,6 +66,69 @@ h2. Creating a plugin
 
 Elexis plugins are basically eclipse 3.5 plugins and therefore OSGi-Bundles. You'll find a lot of literature on these topics on the web, Recommended reading includes Ed Burnette's "Rich client tutorial":http://www.eclipse.org/articles/Article-RCP-1/tutorial1.html, and Dave Springgay's "Eclipse Views tutorial":http://www.eclipse.org/articles/viewArticle/ViewArticle2.html along with other articles found on the eclipse website. There are also some books on programming OSGi Bundles and Eclipse plugins. You should have a basic knowledge on programming eclipse before proceeding.
 
+h2. Programming guidelines
 
+You are very welcome to provide any type of plugin for elexis. Please adhere to a few rules to avoid conflicts between different plugins.
+
+h3. 1) Name of your plugin
+
+You may name your plugin whatever you like but we recommend that you prefix it with your name or the name of your organization.  The prefix elexis- must not be used. this is reserved for our own plugins. We recommend, that you chose a name dervived from the Plugin ID (as described below).
+
+h3. 2) Plugin ID of your pugin
+
+Every plugin must have its unique ID. It is common use that such an id consists of an inversely written url of the provider. So, all Plugins of elexis.ch have a plugin ID starting with ch.elexis. We recommend, that you use a similar naming scheme. In any case, the prefix  ch.elexis must not be used.
+
+h3. 3) Packages of your plugin
+
+Again, it is common use to name the packages of a Java programm after its originating url. Therefore, all elexis classes reside in packages prefixed with ch.elexis. We recommend that you use a similar scheme. In any case, the prefix ch.elexis must not be used.
+
+h3. 4) Name of your Tables
+
+To avoid name clashes between the tables of different Plugins, it is mandatory that you prefix the names of the tables your plugin creates (if any) with the pluginID. For sql syntax reasons, every dot in the name must be replaced by an underscore. Thus the plugin ch.elexis.something will create a table like CH_ELEXIS_SOMETHING_TABLE1
+
+h3. 5) Documentation
+
+It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at th root of your plugin.
+For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be genereted automatically during build.
+
+More information on the wikitext editor and the textile format can be found here:
+"http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
+and here:
+"http://wiki.eclipse.org/Mylyn/Incubator/WikiText":http://wiki.eclipse.org/Mylyn/Incubator/WikiText
+
+More information on TeX/LaTeX can be found here:
+"http://www.latex-project.org/":http://www.latex-project.org/
+
+h2. Concepts
+
+h3. Access rights
+
+Elexis has a hierarchical privilege system that is organized in roles and users. 
+
+ We organize the access rights as a hierarchical system of ACE(Access Control Elements), similar to a file system path. The right "foo" might supersede a right "bar" which, in turn overlays the right "baz". This dependency is written as "foo/bar/baz". The grant of a right includes all rights contained therein. So if one has the right "foo" he or she implicitely ha also the rights "bar" and "baz". 
+ 
+Each right can be granted to a single user or to a role. Any user with the role _admin_ implicitely has all rights. 
+ 
+A user who has the right "AccessControlDefaults.ACL_USERS" can grant or revoke rights to users and groups. This can be done in the preference page "Gruppen und Rechte/Zugriffssteuerung". 
+ 
+A Plugin that wants to protect one ore more of its resources with ACL's should do the following. 
+- define the Strings for naming the rights 
+- plug into the extension point ACLContribution (which includes defining a class that implements ch.elexis.admin.IACLContributor). This makes it possible for the framework to include these acls in the preference page 
+- call Hub.acl.request(right) before executing the protected operation and deny the operation if that method returns false.
+
+A Plugin can grant one or more access rights to a single user by calling Hub.acl.grant(user,strings... ) or to a usergroup by calling Hub.acl.grant(group,strings...). access rights are revoked by calling the respective Hub.acl.revoke - methods.
+
+ 
+You might want to use the pluginselexis-update or elexis-agenda as examples for how to plug into the ACL system. 
+
+Every view should define by itself the necessary rights to display its content, and should check if the loggend in user has the necessary rights before displaying its contents.
+
+ Discussions on the privilege system are welcome in the appropriate forum.
+
+
+ 
+ 
+< zurück 	  	weiter >
+[ Zurück ]
 
  
