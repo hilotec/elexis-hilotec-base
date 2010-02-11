@@ -101,34 +101,51 @@ More information on TeX/LaTeX can be found here:
 
 h2. Concepts
 
-h3. Access rights
+h3. Access privileges
 
-Elexis has a hierarchical privilege system that is organized in roles and users. 
+Elexis has a hierarchical privilege system that is organized in roles and users.  The meaning of a privilege is defined by the implementor.
 
  We organize the access rights as a hierarchical system of ACE(Access Control Elements), similar to a file system path. The right "foo" might supersede a right "bar" which, in turn overlays the right "baz". This dependency is written as "foo/bar/baz". The grant of a right includes all rights contained therein. So if one has the right "foo" he or she implicitely ha also the rights "bar" and "baz". 
  
-Each right can be granted to a single user or to a role. Any user with the role _admin_ implicitely has all rights. 
+Each privilege can be granted to a single user or to a role. Any user with the role _admin_ implicitely has all privileges. 
  
-A user who has the right "AccessControlDefaults.ACL_USERS" can grant or revoke rights to users and groups. This can be done in the preference page "Gruppen und Rechte/Zugriffssteuerung". 
+A user who has the right "ACE_USERS" can grant or revoke rights to users and groups. This can be done in the preference page "Gruppen und Rechte/Zugriffssteuerung". 
  
-A Plugin that wants to protect one ore more of its resources with ACL's should do the following. 
-- define the Strings for naming the rights 
+A Plugin that wants to protect one ore more of its resources with ACE's should do the following. 
+- define a name and a parent provilege for the right 
 - plug into the extension point ACLContribution (which includes defining a class that implements ch.elexis.admin.IACLContributor). This makes it possible for the framework to include these acls in the preference page 
 - call Hub.acl.request(right) before executing the protected operation and deny the operation if that method returns false.
 
-A Plugin can grant one or more access rights to a single user by calling Hub.acl.grant(user,strings... ) or to a usergroup by calling Hub.acl.grant(group,strings...). access rights are revoked by calling the respective Hub.acl.revoke - methods.
+A Plugin can grant one or more access rights to a single user by calling Hub.acl.grant(user,strings... ) or to a role by calling Hub.acl.grant(role,strings...). Privileges are revoked by calling the respective Hub.acl.revoke - methods. Note that privelegs are stored in the elexis database and therefore are effective for all work stations.
 
+A view should define by itself the necessary rights to display its content, and should check if the loggend in user has the necessary rights before displaying its contents. You can use ch.elexis.action.RestrictecAction to implement an Action that honors an ACE.
+
+The sample code of the plugin elexis-developer-resources contains examples for use of the ACLSystem (see ACLContributor.java and SampleView.java)
+
+h3. Configuration
+
+There are four configuration areas in elexis. Programmers should take care to use the correkt place for configuration data:
+
+# Hub.localCfg: A Settings-object that is mapped to the Userconfiguration of the underlying system (e.g. Registry HKCU in Windows, .java/preferences in Linux). These are configuration details that must be read before a connection to a database exists. That is mainly the connection details itself.
+# Hub.userCfg: A Settings-Object that ist mapped to the table USERCONFIG. Here are configuration details stored, which are specific for the logged-in user (e.g. perspective layout, window sizes, colors and fonts etc.).
+# Hub.mandantCfg: A Settings-object that is mapped to the table USERCONFIG. Here are details concerning the actual Mandator. Keep in mind, that actUser and actMandant need not at all be the same person.
+# Hub.globalCfg: A Settings-object that is mapped to the table CONFIG. Here are all globally valid configuration details stored. 
+
+h3. Event Dispatcher system
  
-You might want to use the pluginselexis-update or elexis-agenda as examples for how to plug into the ACL system. 
+In elexis, a view cannot rely on being part of a specific window layout. Instead, a view can be linked to any of an arbitrary number of perspectives, can be hidden or visible or can be closed. Therefore a view must not make any assumptions on other views being available at any given moment. This aticle describes, how a view can be informed on user actions in other views anyhow.
 
-Every view should define by itself the necessary rights to display its content, and should check if the loggend in user has the necessary rights before displaying its contents.
+The ch.elexis.actions.ElexisEventDispatcher class is the central point for exchange of informations on user selections. ElexisEventDispatcher  is a singleton that can be accessed with ElexisEventDispatcher.getInstance(). Views that receive user actions must inform the system by calling ElexisEventDispatcher.fire(ElexisEvent ee) - methods. Classes that want to be informed on user actions in other views must register one or more ElexisEventListeners on ElexisEventDispatcher. Classes that want to know which instance of a specific class was selected last, can call the ElexisEventDispatcher.getSelected(Class c)-method.
 
- Discussions on the privilege system are welcome in the appropriate forum.
+Note: To optimize performance, we recommend following rules:
 
+* At creation of your view, register only an IActivationListener.
+* In the visible-method of this listener, register the other listeners if the visible-parameter is true, and deregister them if the parameter is false.
+* On registering, call the listener-Methods yourself one time so the view is informed about the actual state.
+* On disposal of the view, do not forget to unregister the IActivatorListener.
 
- 
- 
-< zurück 	  	weiter >
-[ Zurück ]
+This ensures that listeners are only called if their view is visible to the user at the moment of the selection.
+
+The sample code of the elexis-developer-resources plugins contains extensive examples on using the ElexisEventDispatcher.
 
  
