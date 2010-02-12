@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Konsultation.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *  $Id: Konsultation.java 6127 2010-02-12 15:44:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.Messages;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.text.Samdas;
 import ch.elexis.util.Log;
@@ -533,20 +534,20 @@ Comparable<Konsultation> {
 			exists = StringTool.unique("bhdl");
 			sql
 			.append(
-				"INSERT INTO DIAGNOSEN (ID, DG_CODE, DG_TXT, KLASSE) VALUES (")
-				.append(JdbcLink.wrap(exists)).append(",").append(
-					JdbcLink.wrap(dg.getCode())).append(",").append(
-						JdbcLink.wrap(dg.getText())).append(",").append(
-							JdbcLink.wrap(dg.getClass().getName())).append(")");
+			"INSERT INTO DIAGNOSEN (ID, DG_CODE, DG_TXT, KLASSE) VALUES (")
+			.append(JdbcLink.wrap(exists)).append(",").append(
+				JdbcLink.wrap(dg.getCode())).append(",").append(
+					JdbcLink.wrap(dg.getText())).append(",").append(
+						JdbcLink.wrap(dg.getClass().getName())).append(")");
 			j.exec(sql.toString());
 			sql.setLength(0);
 		}
 		sql
 		.append(
-			"INSERT INTO BEHDL_DG_JOINT (ID,BEHANDLUNGSID,DIAGNOSEID) VALUES (")
-			.append(JdbcLink.wrap(StringTool.unique("bhdx"))).append(",")
-			.append(getWrappedId()).append(",").append(
-				JdbcLink.wrap(exists)).append(")");
+		"INSERT INTO BEHDL_DG_JOINT (ID,BEHANDLUNGSID,DIAGNOSEID) VALUES (")
+		.append(JdbcLink.wrap(StringTool.unique("bhdx"))).append(",")
+		.append(getWrappedId()).append(",").append(
+			JdbcLink.wrap(exists)).append(")");
 		j.exec(sql.toString());
 		
 		// Statistik nachführen
@@ -856,7 +857,82 @@ Comparable<Konsultation> {
 		return true;
 	}
 	
+	/*
 	public interface Listener {
 		public boolean creatingKons(Konsultation k);
+	}
+	 */
+	
+	/**
+	 * Creates a new Konsultation object, with an optional initial text.
+	 * 
+	 * @param initialText
+	 *            the initial text to be set, or null if no initial text should be set.
+	 */
+	public static void neueKons(final String initialText){
+		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
+		Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+		if (actFall == null) {
+			if (actPatient == null) {
+				SWTHelper
+				.showError(
+					Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectPatient")); //$NON-NLS-1$ //$NON-NLS-2$
+				return;
+			}
+			if (actFall == null) {
+				Konsultation k = actPatient.getLetzteKons(false);
+				if (k != null) {
+					actFall = k.getFall();
+					if (actFall == null) {
+						SWTHelper
+						.showError(
+							Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+				} else {
+					Fall[] faelle = actPatient.getFaelle();
+					if ((faelle == null) || (faelle.length == 0)) {
+						actFall =
+							actPatient.neuerFall(Fall.getDefaultCaseLabel(), Fall
+								.getDefaultCaseReason(), Fall.getDefaultCaseLaw());
+					} else {
+						actFall = faelle[0];
+					}
+				}
+			}
+		} else {
+			if (!actFall.getPatient().equals(actPatient)) {
+				Konsultation lk = actPatient.getLetzteKons(false);
+				if (lk == null) {
+					SWTHelper
+					.showError(
+						Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+					return;
+				}else{
+					actFall=lk.getFall();
+				}
+			}
+		}
+		if (!actFall.isOpen()) {
+			SWTHelper.showError(Messages.getString("GlobalActions.casclosed"), //$NON-NLS-1$
+				Messages.getString("GlobalActions.caseclosedexplanation")); //$NON-NLS-1$
+			return;
+		}
+		Konsultation actLetzte = actFall.getLetzteBehandlung();
+		if ((actLetzte != null)
+				&& actLetzte.getDatum().equals(new TimeTool().toString(TimeTool.DATE_GER))) {
+			if (MessageDialog.openQuestion(Desk.getTopShell(), Messages
+				.getString("GlobalActions.SecondForToday"), //$NON-NLS-1$
+				Messages.getString("GlobalActions.SecondForTodayQuestion")) == false) { //$NON-NLS-1$
+				return;
+			}
+		}
+		Konsultation n = actFall.neueKonsultation();
+		n.setMandant(Hub.actMandant);
+		if (initialText != null) {
+			n.updateEintrag(initialText, false);
+		}
+		ElexisEventDispatcher.fireSelectionEvent(actFall);
+		ElexisEventDispatcher.fireSelectionEvent(n);
 	}
 }
