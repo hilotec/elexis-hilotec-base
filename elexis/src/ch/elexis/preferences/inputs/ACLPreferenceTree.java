@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLPreferenceTree.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *  $Id: ACLPreferenceTree.java 6117 2010-02-12 06:15:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.preferences.inputs;
 
@@ -67,12 +67,15 @@ public class ACLPreferenceTree extends Composite {
 		super(parent, SWT.NONE);
 		acls = new Tree<ACE>(null, null);
 		for (ACE s : acl) {
-			Tree<ACE> parentTree = findParent(s);
-			if (parentTree != null) {
-				new Tree<ACE>(parentTree, s);
-			} else {
-				Hub.log.log("Could not find parent ACE " + s.getName(),
-						Log.ERRORS);
+			Tree<ACE> mine = acls.find(s, true);
+			if (mine == null) {
+				Tree<ACE> parentTree = findParent(s);
+				if (parentTree != null) {
+					new Tree<ACE>(parentTree, s);
+				} else {
+					Hub.log.log("Could not find parent ACE " + s.getName(),
+							Log.ERRORS);
+				}
 			}
 		}
 
