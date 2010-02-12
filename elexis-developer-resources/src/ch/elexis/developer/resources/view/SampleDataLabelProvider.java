@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleDataLabelProvider.java 6108 2010-02-11 18:26:14Z rgw_ch $
+ *    $Id: SampleDataLabelProvider.java 6128 2010-02-12 16:05:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources.view;
@@ -16,6 +16,7 @@ package ch.elexis.developer.resources.view;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import ch.elexis.Desk;
 import ch.elexis.developer.resources.model.SampleDataType;
 
 /**
@@ -25,7 +26,7 @@ import ch.elexis.developer.resources.model.SampleDataType;
  * 
  */
 public class SampleDataLabelProvider extends LabelProvider {
-
+	
 	/**
 	 * We can provide any image here, maybe depending on context. Or we can
 	 * return null, then no image will be shown. (We could leave away this
@@ -33,17 +34,25 @@ public class SampleDataLabelProvider extends LabelProvider {
 	 */
 	@Override
 	public Image getImage(Object element) {
-		return null;
+		SampleDataType sdt=(SampleDataType)element;
+		int fun=sdt.getFunFactor();
+		int bore=sdt.getInt("Bore");
+		if(fun>bore){
+			return Desk.getImage(Desk.IMG_OK);
+		}else{
+			return Desk.getImage(Desk.IMG_FEHLER);
+		}
+		
 	}
-
+	
 	/**
 	 * A textual Representation of the object
 	 */
 	@Override
 	public String getText(Object element) {
 		SampleDataType sdt = (SampleDataType) element; // it will always be of
-														// this type
+		// this type
 		return sdt.getLabel(); // We keep things simple here
 	}
-
+	
 }

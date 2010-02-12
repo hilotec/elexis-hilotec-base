@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleView.java 6120 2010-02-12 09:10:41Z rgw_ch $
+ *    $Id: SampleView.java 6128 2010-02-12 16:05:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources.view;
@@ -50,6 +50,8 @@ import ch.rgw.tools.TimeTool;
  */
 
 public class SampleView extends ViewPart implements IActivationListener {
+	/** We make a String constant for the ID to reference it from the perspective */
+	public static final String ID="ch.elexis.developer.resources.views.sample";
 	
 	/**
 	 * CommonViewer is a "golden hammer". Use it for fast prototyping. In many cases you probably
@@ -249,7 +251,7 @@ public class SampleView extends ViewPart implements IActivationListener {
 				Patient p = ElexisEventDispatcher.getSelectedPatient();
 				if (p == null) {
 					SWTHelper.showError(Messages.SampleView_PleaseSelectPatient,
-					Messages.SampleView_OnlyCreateObjectsIfPatIsSelected);
+						Messages.SampleView_OnlyCreateObjectsIfPatIsSelected);
 				} else {
 					int fun = (int) Math.round(100000 * Math.random());
 					int bore = (int) Math.round(100000 * Math.random());
