@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PersistentObjectLoader.java 6048 2010-02-01 20:35:29Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 6118 2010-02-12 06:15:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -23,20 +23,22 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
- * This is a replacement for the former BackgroundJob-System. Since it became clear that the
- * database access takes less than 10% of the total time needed for reload of a CommonViewer, the
- * BackgroundJobs were not adequate for this task. Furthermore, there were several issues with
- * those widely used jobs.
+ * This is a replacement for the former BackgroundJob-System. Since it became
+ * clear that the database access takes less than 10% of the total time needed
+ * for reload of a CommonViewer, the BackgroundJobs were not adequate for this
+ * task. Furthermore, there were several issues with those widely used jobs.
  * 
- * PersistentObjectLoader is a much simpler replacement and does not load in background. Instead it uses
- * a @see DelayableJob to perform loading.
+ * PersistentObjectLoader is a much simpler replacement and does not load in
+ * background. Instead it uses a @see DelayableJob to perform loading.
  * 
  * @author Gerry
  * 
  */
-public abstract class PersistentObjectLoader implements CommonContentProvider, IWorker {
+public abstract class PersistentObjectLoader implements CommonContentProvider,
+		IWorker {
 	public final static String PARAM_FIELDNAMES = "fieldnames"; //$NON-NLS-1$
 	public final static String PARAM_VALUES = "fieldvalues"; //$NON-NLS-1$
 	protected CommonViewer cv;
@@ -45,107 +47,115 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	// protected IFilter viewerFilter;
 	protected DelayableJob dj;
 	protected String orderField;
-	
-	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
+
+	public PersistentObjectLoader(CommonViewer cv,
+			Query<? extends PersistentObject> qbe) {
 		this.cv = cv;
 		this.qbe = qbe;
-		dj = new DelayableJob(Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
+		dj = new DelayableJob(
+				Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
 	}
-	
-	public Query<? extends PersistentObject> getQuery(){
+
+	public Query<? extends PersistentObject> getQuery() {
 		return qbe;
 	}
-	
+
 	/**
-	 * start listening the selector fields of the ControlField of the loader's CommonViewer. If the
-	 * user enters text or clicks the headings, a changed() or reorder() event will be fired
+	 * start listening the selector fields of the ControlField of the loader's
+	 * CommonViewer. If the user enters text or clicks the headings, a changed()
+	 * or reorder() event will be fired
 	 */
-	public void startListening(){
-		// viewerFilter = cv.getConfigurer().getControlFieldProvider().createFilter();
+	public void startListening() {
+		// viewerFilter =
+		// cv.getConfigurer().getControlFieldProvider().createFilter();
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
 	}
-	
+
 	/**
 	 * stop listening the selector fields
 	 */
-	public void stopListening(){
+	public void stopListening() {
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
-	
-	public Object[] getElements(Object inputElement){
+
+	public Object[] getElements(Object inputElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		stopListening();
 	}
-	
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		dj.launch(0);
-		
+
 	}
-	
+
 	/**
-	 * One or more of the ControlField's selectors habe been changed. We'll wait a moment for more
-	 * changes before we launch the loader.
+	 * One or more of the ControlField's selectors habe been changed. We'll wait
+	 * a moment for more changes before we launch the loader.
 	 * 
 	 * @param fields
 	 *            the field names
 	 * @param values
 	 *            the new values
 	 */
-	public void changed(HashMap<String, String> values){
-		if (cv.getConfigurer().getControlFieldProvider().isEmpty()) {
-			cv.notify(CommonViewer.Message.empty);
-		} else {
-			cv.notify(CommonViewer.Message.notempty);
+	public void changed(HashMap<String, String> values) {
+		ControlFieldProvider cfp = cv.getConfigurer().getControlFieldProvider();
+		if (cfp != null) {
+			if (cfp.isEmpty()) {
+				cv.notify(CommonViewer.Message.empty);
+			} else {
+				cv.notify(CommonViewer.Message.notempty);
+			}
 		}
 		dj.setRuntimeData(PARAM_VALUES, values);
 		dj.launch(DelayableJob.DELAY_ADAPTIVE);
 	}
-	
+
 	/**
 	 * The user request reordering of the table
 	 * 
 	 * @param field
 	 *            the field name after which the table should e reordered
 	 */
-	public void reorder(String field){
+	public void reorder(String field) {
 		setOrderField(field);
 		dj.launch(20);
 	}
-	
-	public void selected(){
-		
+
+	public void selected() {
+
 	}
-	
-	public void addQueryFilter(QueryFilter fp){
+
+	public void addQueryFilter(QueryFilter fp) {
 		synchronized (queryFilters) {
 			queryFilters.add(fp);
 		}
 	}
-	
-	public void removeQueryFilter(QueryFilter fp){
+
+	public void removeQueryFilter(QueryFilter fp) {
 		synchronized (queryFilters) {
 			queryFilters.remove(fp);
 		}
 	}
-	
-	public void applyQueryFilters(){
+
+	public void applyQueryFilters() {
 		synchronized (queryFilters) {
 			for (QueryFilter fp : queryFilters) {
 				fp.apply(qbe);
 			}
 		}
 	}
-	
-	public void setOrderField(String name){
+
+	public void setOrderField(String name) {
 		orderField = name;
 	}
-	
+
 	/**
-	 * a FilterProvider can modify the Query of this Loader. It will be called before each reload.
+	 * a FilterProvider can modify the Query of this Loader. It will be called
+	 * before each reload.
 	 * 
 	 * @author Gerry
 	 * 
@@ -153,6 +163,6 @@ public abstract class PersistentObjectLoader implements CommonContentProvider, I
 	public interface QueryFilter {
 		public void apply(Query<? extends PersistentObject> qbe);
 	}
-	
+
 	// protected abstract void applyViewerFilter();
 }

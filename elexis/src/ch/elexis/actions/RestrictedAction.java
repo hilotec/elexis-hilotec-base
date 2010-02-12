@@ -10,7 +10,7 @@
  *    D. Lutz    - final implementation
  *    G. Weirich adapted for ACE and AutoAdapt
  * 
- * $Id: RestrictedAction.java 6102 2010-02-11 15:21:12Z rgw_ch $
+ * $Id: RestrictedAction.java 6118 2010-02-12 06:15:42Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -83,7 +83,7 @@ abstract public class RestrictedAction extends Action {
 			setEnabled(true);
 		} else {
 			setEnabled(false);
-			setChecked(false);
+			//setChecked(false);
 		}
 	}
 	
