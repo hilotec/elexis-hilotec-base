@@ -1,6 +1,7 @@
 h1. Elexis devoloper resources
 
-This plugin contains some sample files to show techniques used in elexis, along with documentation to help you getting started in developing plugins for elexis.
+This plugin contains some sample files to show techniques used in elexis, along with documentation to help you getting started in developing plugins for elexis. It will create a View called 'SampleView' (or 'Beispiel' in the german environment) that displays objects of the Type SampleDataType for the momentarly selected patient. A click on the 'plus' button creates a new SamplaDataType. Right-Click on a SampleDataType opens a contect menu where the object can be deleted.
+To create or delete SampleDataType objects, privileges are necessary, that can be granted in the Settings for users and roles. 
 
 Documentation is in .textile format, which is supported by the mylin wikitext editor. Documetnation can easily be converted into html, DocBook, or XSL-FO/PDF
 

@@ -1,7 +1,7 @@
 h1(#id). Elexis developer resources
 
 (c) 2010 by G. Weirich
-$Id: developer.textile 6108 2010-02-11 18:26:14Z rgw_ch $	
+$Id: developer.textile 6119 2010-02-12 06:16:14Z rgw_ch $	
 
 h2. Table of contents
 
@@ -146,6 +146,17 @@ This ensures that listeners are only called if their view is visible to the user
 
 The sample code of the elexis-developer-resources plugins contains extensive examples on using the ElexisEventDispatcher.
 
+h2. Internationalization (il18n)
+
+In eclipse, designing your UI for different languages, is quite easy, if you think about this topic from the beginning!
+* Wherever possible, use String constants instead of constructing Strings on the fly. If you need to embed a parameter, use the MessageFormat.format(String n, param... m) technique.
+* use Eclipse's String extrenalisation feature (In the menu 'Source->externalize Strings'). This will create a messages.properties file. Create messages_de.properties, messages_fr.properties and so on as needed.
+* Use a property file editor to edit language specific Strings, In eclipse, we recommend the "Jinto plugin":http://www.guh-software.de/jinto.html from Guh-Software, which is distributed under the EPL.
+* Create also plugin.properties, plugin_de.properties, plugin_fr,properties and so on in the root directory of your plugin, to translate Strings from plugin.xml. Name translatable Strings with a % prefix and tkae them without the % as keys in the properties-files.
+* Do not forget to insert 'Bundle-localization: plugin' in MANIFEST.MF, to turn il18n for the plugin.xml Strings on.
+
+Elexis will use the messages_xx.properties and plugin_xx.properties of the locale, that matches best the operating system, or the -nl parameter. If no matching locale is found, the default (messages.properties and plugin.properties) will be used.
+
 h1. Creating a plugin
 
 Elexis plugins are basically eclipse 3.5 plugins and therefore OSGi-Bundles. You'll find a lot of literature on these topics on the web, Recommended reading includes Ed Burnette's "Rich client tutorial":http://www.eclipse.org/articles/Article-RCP-1/tutorial1.html, and Dave Springgay's "Eclipse Views tutorial":http://www.eclipse.org/articles/viewArticle/ViewArticle2.html along with other articles found on the eclipse website. There are also some books on programming OSGi Bundles and Eclipse plugins. You should have a basic knowledge on programming eclipse before proceeding.
@@ -157,11 +168,13 @@ To provide a convenient starting point, the Plugin elexis-developer-resources is
 The following files belong to the plugin elexis-developer-resources:
 
 * Plugin.xml. This file is an eclipse requirement and contains all informations that are necessary to actually put the plugin together with the rest of the programm (and with all other plugins).
-* META-INF/manifest.mf: THe standard OSGi-Bundle. Is created autimatically
-* ch.elexis.developer.resources.view.Perspective: This file defines a perspective for the plugin.(Which is not really necessary in that case, but we want toshow, how to do it)
-*  ch.elexis.befunde.Messwert: Definition of a data type. here we create a subclass of PersistentObject and a table in the elexis database to store our values.
-    * ch.elexis.befunde.MesswertFactory: A class that can create "Messwert" -objects and thus gives the elexis-kernel the possibility to create such objects in a controlled way..
-    * ch.elexis.befunde.BefundePrefs: This defines a preference pagethat is included seamlessly with the main preferences of elexis.
-    * ch.elexis.befunde.MesswertView: A View to display ourdata
+* META-INF/MANIFEST.MF: THe standard OSGi-Bundle. Is created autimatically
+* ch.elexis.developer.resources.view.Perspective: This file defines a perspective for the plugin.(Which is not really necessary in that case, but we want tos how, how to do it)
+*  ch.elexis.developer.resources.model.SampleDataType: Definition of a data type. here we create a subclass of PersistentObject and a table in the elexis database to store our values.
+* ch.elexis.developer.resources.SampleDataTypeFactory: A class that can create "SampleDataType" -objects and thus gives the elexis-kernel the possibility to create such objects in a controlled way..
+* ch.elexis.developer.resources.ACLContributor: This defines the privileges that are becessary to read, create, modify, and delete SampleDataType objects and includes the UI to grant or revoke these privileges in the Elexis preferences.  
+ * ch.elexis.developer.resources.views.SampleView: A View to display our data
+ * ch.elexis.developer.resources.views.SampleDataLabelProvider: A Class to create a human readable visual representation of a SampleDataType object.
+ * Several .properties-files that contain il18n'ed Strings.
 
   

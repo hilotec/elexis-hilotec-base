@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleDataType.java 6116 2010-02-11 21:40:19Z rgw_ch $
+ *    $Id: SampleDataType.java 6119 2010-02-12 06:16:14Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources.model;
@@ -135,8 +135,10 @@ public class SampleDataType extends PersistentObject {
 		String[] result = new String[3];
 		get(new String[] { FLD_TITLE, FLD_FUNFACTOR, FLD_BOREFACTOR }, result);
 		synchronized (sb) {
-			sb.append(result[0]).append(Messages.SampleDataType_hasFunFactor).append(result[1])
-					.append(Messages.SampleDataType_hasBoreFactor).append(result[2]);
+			sb.append(result[0]).append(Messages.SampleDataType_hasFunFactor)
+					.append(result[1]).append(
+							Messages.SampleDataType_hasBoreFactor).append(
+							result[2]);
 		}
 		return sb.toString();
 	}
