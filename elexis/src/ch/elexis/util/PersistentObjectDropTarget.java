@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,18 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: PersistentObjectDropTarget.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * 
+ * $Id: PersistentObjectDropTarget.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
@@ -27,36 +32,36 @@ import ch.elexis.views.codesystems.ICodeSelectorTarget;
  *
  */
 public class PersistentObjectDropTarget implements DropTargetListener, ICodeSelectorTarget {
-	Receiver rc;
+	IReceiver rc;
 	String name="";
-	private Color normalColor;
-    private Color highlightColor;
-	private Control mine;
-    
-	public PersistentObjectDropTarget(Control target, Receiver r){
+	private final Color normalColor;
+	private final Color highlightColor;
+	private final Control mine;
+	
+	public PersistentObjectDropTarget(Control target, IReceiver r){
 		normalColor = target.getBackground();
-    	highlightColor = target.getDisplay().getSystemColor(SWT.COLOR_RED);
-    	mine=target;
+		highlightColor = target.getDisplay().getSystemColor(SWT.COLOR_RED);
+		mine=target;
 		rc=r;
 		DropTarget dtarget=new DropTarget(target,DND.DROP_COPY);
-        final TextTransfer textTransfer = TextTransfer.getInstance();
-        Transfer[] types = new Transfer[] {textTransfer};
-        dtarget.setTransfer(types);
-        dtarget.addDropListener(this);
+		final TextTransfer textTransfer = TextTransfer.getInstance();
+		Transfer[] types = new Transfer[] {textTransfer};
+		dtarget.setTransfer(types);
+		dtarget.addDropListener(this);
 	}
 	
-	public PersistentObjectDropTarget(String name, Control target, Receiver r){
+	public PersistentObjectDropTarget(String name, Control target, IReceiver r){
 		this(target,r);
 		this.name=name;
 	}
 	public void dragEnter(DropTargetEvent event) {
 		
 		boolean bOk=false;
-        PersistentObject dropped=PersistentObjectDragSource.getDraggedObject();;
-        if(rc.accept(dropped)){
-          	bOk=true;
-        }
-        
+		PersistentObject dropped=PersistentObjectDragSource2.getDraggedObject();;
+		if(rc.accept(dropped)){
+			bOk=true;
+		}
+		
 		if(bOk){
 			event.detail=DND.DROP_COPY;
 		}else{
@@ -64,46 +69,46 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 		}
 		
 		//event.detail=DND.DROP_COPY;
-
+		
 	}
-
+	
 	public void dragLeave(DropTargetEvent event) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void dragOperationChanged(DropTargetEvent event) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void dragOver(DropTargetEvent event) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void drop(DropTargetEvent event) {
 		String drp=(String)event.data;
-        String[] dl=drp.split(","); //$NON-NLS-1$
-        for(String obj:dl){
-            PersistentObject dropped=Hub.poFactory.createFromString(obj);
-            rc.dropped(dropped,event);
-        }
-
+		String[] dl=drp.split(","); //$NON-NLS-1$
+		for(String obj:dl){
+			PersistentObject dropped=Hub.poFactory.createFromString(obj);
+			rc.dropped(dropped,event);
+		}
+		
 	}
-
+	
 	public void dropAccept(DropTargetEvent event) {
-		if(!rc.accept(PersistentObjectDragSource.getDraggedObject())){
+		if(!rc.accept(PersistentObjectDragSource2.getDraggedObject())){
 			event.detail=DND.DROP_NONE;
 		}
-
+		
 	}
-	 
-	public interface Receiver{
+	
+	public interface IReceiver{
 		public void dropped(PersistentObject o, DropTargetEvent e);
 		public boolean accept(PersistentObject o);
 	}
-
+	
 	public void codeSelected(PersistentObject obj) {
 		rc.dropped(obj, null);
 	}
@@ -116,12 +121,12 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 		
 	}
 	
-    private void highlight(boolean bOn) {
+	private void highlight(boolean bOn) {
 		if (bOn) {
 			mine.setBackground(highlightColor);
 		} else {
 			mine.setBackground(normalColor);
 		}
-    }
-
+	}
+	
 }

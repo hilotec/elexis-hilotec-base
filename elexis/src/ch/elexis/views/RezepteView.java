@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezepteView.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ *  $Id: RezepteView.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -67,7 +67,6 @@ import ch.elexis.data.Rezept;
 import ch.elexis.dialogs.MediDetailDialog;
 import ch.elexis.exchange.IOutputter;
 import ch.elexis.util.Extensions;
-import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
@@ -219,7 +218,7 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		tv.setInput(getViewSite());
 		
 		/* Implementation Drag&Drop */
-		PersistentObjectDropTarget.Receiver dtr = new PersistentObjectDropTarget.Receiver() {
+		PersistentObjectDropTarget.IReceiver dtr = new PersistentObjectDropTarget.IReceiver() {
 			
 			public boolean accept(PersistentObject o){
 				// TODO Auto-generated method stub

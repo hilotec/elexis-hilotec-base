@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ETFDropReceiver.java 6099 2010-02-11 07:42:18Z rgw_ch $
+ *  $Id: ETFDropReceiver.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -20,9 +20,9 @@ import org.eclipse.swt.graphics.Point;
 import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.IKonsExtension;
-import ch.elexis.util.PersistentObjectDropTarget.Receiver;
+import ch.elexis.util.PersistentObjectDropTarget.IReceiver;
 
-public class ETFDropReceiver implements Receiver{
+public class ETFDropReceiver implements IReceiver{
 	EnhancedTextField etf;
 	
 	Hashtable<Class<?>, IKonsExtension> targets;

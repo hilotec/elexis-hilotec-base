@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: VerrechnungsDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -149,7 +149,7 @@ public class VerrechnungsDisplay extends Composite {
 	}
 
 	private final class DropReceiver implements
-			PersistentObjectDropTarget.Receiver {
+			PersistentObjectDropTarget.IReceiver {
 		public void dropped(PersistentObject o, DropTargetEvent ev) {
 			addPersistentObject(o);
 		}

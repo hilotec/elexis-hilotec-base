@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenDisplay.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ *  $Id: DiagnosenDisplay.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -93,7 +93,7 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 	}
 
 	private final class DropReceiver implements
-			PersistentObjectDropTarget.Receiver {
+			PersistentObjectDropTarget.IReceiver {
 		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 			Konsultation actKons = (Konsultation) ElexisEventDispatcher
 					.getSelected(Konsultation.class);

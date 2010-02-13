@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PatHeuteView.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id: PatHeuteView.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -846,7 +846,7 @@ ISaveablePart2, BackgroundJobListener {
 	}
 	
 	private final class DropReceiver implements
-	PersistentObjectDropTarget.Receiver {
+	PersistentObjectDropTarget.IReceiver {
 		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 			if (o instanceof IVerrechenbar) {
 				ldFilter.add((IVerrechenbar) o);

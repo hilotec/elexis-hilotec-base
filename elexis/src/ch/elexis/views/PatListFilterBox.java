@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatListFilterBox.java 5326 2009-05-29 20:08:32Z rgw_ch $
+ * $Id: PatListFilterBox.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -96,7 +96,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		
 	}
 	
-	private class DropReceiver implements PersistentObjectDropTarget.Receiver {
+	private class DropReceiver implements PersistentObjectDropTarget.IReceiver {
 		public void dropped(final PersistentObject o, final DropTargetEvent ev){
 			PatListFilterBox.this.add(o);
 		}

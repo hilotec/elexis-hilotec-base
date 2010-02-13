@@ -7,13 +7,12 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: PersistentObjectDragSource2.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ * 
+ * $Id: PersistentObjectDragSource2.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,18 +28,18 @@ import org.eclipse.swt.widgets.Control;
 import ch.elexis.data.PersistentObject;
 
 public class PersistentObjectDragSource2 implements
-		DragSourceListener {
+DragSourceListener {
 	ISelectionRenderer renderer;
 	Control dragSource;
 	List<PersistentObject> selection;
 	protected static PersistentObject draggedObject;
 	
 	Transfer myTransfer = TextTransfer.getInstance();
-
+	
 	public PersistentObjectDragSource2(final StructuredViewer v){
 		dragSource=v.getControl();
 		renderer=new ISelectionRenderer(){
-
+			
 			public List<PersistentObject> getSelection() {
 				IStructuredSelection sel=(IStructuredSelection) v.getSelection();
 				return sel.toList();
@@ -51,7 +50,7 @@ public class PersistentObjectDragSource2 implements
 	}
 	
 	public PersistentObjectDragSource2(final Control source,
-			final ISelectionRenderer renderer) {
+		final ISelectionRenderer renderer) {
 		this.renderer = renderer;
 		dragSource = source;
 		setup();
@@ -64,21 +63,21 @@ public class PersistentObjectDragSource2 implements
 	}
 	public void dragFinished(final DragSourceEvent event) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void dragSetData(final DragSourceEvent event) {
-
+		
 		StringBuilder sb = new StringBuilder();
 		for (PersistentObject s : selection) {
 			sb.append(s.storeToString()).append(","); //$NON-NLS-1$
 		}
-
+		
 		event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
+	
 	public void dragStart(final DragSourceEvent event) {
-
+		
 		selection = renderer.getSelection();
 		// IStructuredSelection
 		// select=(IStructuredSelection)viewer.getSelection();
@@ -92,7 +91,11 @@ public class PersistentObjectDragSource2 implements
 			PersistentObjectDragSource2.draggedObject = selection.get(0);
 		}
 	}
-
+	
+	public static PersistentObject getDraggedObject(){
+		return draggedObject;
+	}
+	
 	public interface ISelectionRenderer {
 		public List<PersistentObject> getSelection();
 	}

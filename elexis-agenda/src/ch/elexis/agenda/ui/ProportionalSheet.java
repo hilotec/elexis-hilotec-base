@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ProportionalSheet.java 5563 2009-07-18 06:53:39Z rgw_ch $
+ *  $Id: ProportionalSheet.java 6132 2010-02-13 09:24:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -122,7 +122,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
 		new PersistentObjectDropTarget(this,
-				new PersistentObjectDropTarget.Receiver() {
+				new PersistentObjectDropTarget.IReceiver() {
 
 					public boolean accept(PersistentObject o) {
 						return true;

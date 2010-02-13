@@ -4,9 +4,9 @@ import ch.elexis.data.PersistentObject;
 
 public abstract class DragSourceImpl {
 	
-	protected DragSourceImpl(){
+	private DragSourceImpl(){
 		draggedObject=null;
 	}
 	
-	protected static PersistentObject draggedObject;
+	private static PersistentObject draggedObject;
 }
