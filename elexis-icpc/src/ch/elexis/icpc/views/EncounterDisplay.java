@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EncounterDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    $Id: EncounterDisplay.java 6133 2010-02-13 09:24:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -65,7 +65,7 @@ public class EncounterDisplay extends Composite {
 		gd.heightHint = 30;
 		gRfe.setLayoutData(gd);
 		podRfe = new PersistentObjectDropTarget(gRfe,
-				new PersistentObjectDropTarget.Receiver() {
+				new PersistentObjectDropTarget.IReceiver() {
 
 					public boolean accept(PersistentObject o) {
 						if (o instanceof IcpcCode) {
@@ -93,7 +93,7 @@ public class EncounterDisplay extends Composite {
 		gDiag.setText("Diagnose");
 		gDiag.setLayoutData(GridDataFactory.copyData(gd));
 		podDiag = new PersistentObjectDropTarget(gDiag,
-				new PersistentObjectDropTarget.Receiver() {
+				new PersistentObjectDropTarget.IReceiver() {
 
 					public boolean accept(PersistentObject o) {
 						if (o instanceof IcpcCode) {
@@ -118,7 +118,7 @@ public class EncounterDisplay extends Composite {
 		gProc = new Group(body, SWT.NONE);
 		gProc.setText("Procedere");
 		podProc = new PersistentObjectDropTarget(gProc,
-				new PersistentObjectDropTarget.Receiver() {
+				new PersistentObjectDropTarget.IReceiver() {
 
 					public boolean accept(PersistentObject o) {
 						if (o instanceof IcpcCode) {

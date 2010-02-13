@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 6133 2010-02-13 09:24:30Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -191,7 +191,7 @@ public class EpisodesDisplay extends Composite {
 
 	}
 
-	class Receiver implements PersistentObjectDropTarget.Receiver {
+	class Receiver implements PersistentObjectDropTarget.IReceiver {
 
 		public boolean accept(final PersistentObject o) {
 			if (o instanceof IDiagnose) {
