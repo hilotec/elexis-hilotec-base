@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KonsDetailView.java 6092 2010-02-08 18:25:51Z rgw_ch $
+ *  $Id: KonsDetailView.java 6136 2010-02-13 11:54:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -335,63 +335,57 @@ ISaveablePart2 {
 	 * Aktuelle Konsultation setzen.
 	 */
 	private void setKons(final Konsultation b){
-		boolean inChange = false;
-		if (!inChange) {
-			inChange = true;
-			if (b != null) {
-				Fall act = b.getFall();
-				setPatient(act.getPatient());
-				setKonsText(b, b.getHeadVersion());
-				
-				Fall[] faelle = (Fall[]) cbFall.getData();
-				for (int i = 0; i < faelle.length; i++) {
-					if (faelle[i].getId().equals(act.getId())) {
-						cbFall.select(i);
-						break;
-					}
+		if (b != null) {
+			Fall act = b.getFall();
+			setPatient(act.getPatient());
+			setKonsText(b, b.getHeadVersion());
+			
+			Fall[] faelle = (Fall[]) cbFall.getData();
+			for (int i = 0; i < faelle.length; i++) {
+				if (faelle[i].getId().equals(act.getId())) {
+					cbFall.select(i);
+					break;
 				}
-				cbFall.setEnabled(act.isOpen());
-				Mandant m = b.getMandant();
-				lBeh.setText(Messages.getString("KonsDetailView.ConsOfDate") + " " + b.getDatum()); //$NON-NLS-1$
-				StringBuilder sb = new StringBuilder();
-				if (m == null) {
-					sb.append(Messages.getString("KonsDetailView.NotYours")); //$NON-NLS-1$
-				} else {
-					Rechnungssteller rs = m.getRechnungssteller();
-					if (rs.getId().equals(m.getId())) {
-						sb.append("(").append(m.getLabel()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-					} else {
-						sb.append("(").append(m.getLabel()).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
-							rs.getLabel()).append(")"); //$NON-NLS-1$
-					}
-				}
-				hlMandant.setText(sb.toString());
-				hlMandant.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_REASSIGN));
-				dd.setDiagnosen(b);
-				vd.setLeistungen(b);
-				text.setEnabled(true);
-				if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null)
-						|| (!ElexisEventDispatcher.getSelected(Konsultation.class).getId().equals(
-							b.getId()))) {
-					inChange = true;
-					ElexisEventDispatcher.fireSelectionEvent(b);
-				}
-			} else {
-				form.setText(NO_CONS_SELECTED);
-				lBeh.setText("-"); //$NON-NLS-1$
-				hlMandant.setText("--"); //$NON-NLS-1$
-				hlMandant.setEnabled(false);
-				lVersion.setText(""); //$NON-NLS-1$
-				// cbFall.removeAll();
-				dd.clear();
-				vd.clear();
-				text.setText(""); //$NON-NLS-1$
-				text.setEnabled(false);
 			}
-			actKons = b;
-			cDesc.layout();
-			inChange = false;
+			cbFall.setEnabled(act.isOpen());
+			Mandant m = b.getMandant();
+			lBeh.setText(Messages.getString("KonsDetailView.ConsOfDate") + " " + b.getDatum()); //$NON-NLS-1$
+			StringBuilder sb = new StringBuilder();
+			if (m == null) {
+				sb.append(Messages.getString("KonsDetailView.NotYours")); //$NON-NLS-1$
+			} else {
+				Rechnungssteller rs = m.getRechnungssteller();
+				if (rs.getId().equals(m.getId())) {
+					sb.append("(").append(m.getLabel()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					sb.append("(").append(m.getLabel()).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
+						rs.getLabel()).append(")"); //$NON-NLS-1$
+				}
+			}
+			hlMandant.setText(sb.toString());
+			hlMandant.setEnabled(Hub.acl.request(AccessControlDefaults.KONS_REASSIGN));
+			dd.setDiagnosen(b);
+			vd.setLeistungen(b);
+			text.setEnabled(true);
+			/*
+			 * if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null) ||
+			 * (!ElexisEventDispatcher.getSelected(Konsultation.class).getId().equals( b.getId())))
+			 * { inChange = true; ElexisEventDispatcher.fireSelectionEvent(b); }
+			 */
+		} else {
+			form.setText(NO_CONS_SELECTED);
+			lBeh.setText("-"); //$NON-NLS-1$
+			hlMandant.setText("--"); //$NON-NLS-1$
+			hlMandant.setEnabled(false);
+			lVersion.setText(""); //$NON-NLS-1$
+			// cbFall.removeAll();
+			dd.clear();
+			vd.clear();
+			text.setText(""); //$NON-NLS-1$
+			text.setEnabled(false);
 		}
+		actKons = b;
+		cDesc.layout();
 	}
 	
 	void setKonsText(final Konsultation b, final int version){
